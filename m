@@ -2,216 +2,307 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B55B3EEE04
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 16:03:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BB763EEE13
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 16:06:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237333AbhHQOD7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 10:03:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:55513 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229761AbhHQOD7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 10:03:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629209005;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FQOOQWrkkMC5WZkin69mUpEkGTi3n+C8zjW3rnwQ78M=;
-        b=H7k3rNeQDVA392PUCUvl7szQSnZuN7s0La7TqQzR+oRY7lI4UjsUUOhmdbXKQTZspnHiBj
-        eA90t2BSPwt1zX/5oy8+yMMgmXsUwAtTZCcWWysL9rnkmcdj61Ka0zwz4z/cNlVskfpm+e
-        xBdrCKr1D4BMp0VlntcaaW7+FSbTtJw=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-5-b7LqrOx1PTusRyX3HA88zg-1; Tue, 17 Aug 2021 10:02:19 -0400
-X-MC-Unique: b7LqrOx1PTusRyX3HA88zg-1
-Received: by mail-wm1-f69.google.com with SMTP id u15-20020a05600c210fb02902e6a5231792so828066wml.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 07:02:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=FQOOQWrkkMC5WZkin69mUpEkGTi3n+C8zjW3rnwQ78M=;
-        b=hBkhS8xYwH2xk+n0n0rr3q4XySP+bw4UoohGqwwgcz/xyXND/mAb3aDt+RiSDZNBOw
-         uYbvPd3gw2DCMPIjNgpRhjkfqlpZ+XUBmwo4DcXxlmA0lby0uzXvtnM8591pVvNhgHRw
-         mCZP8VDfU7p3RkmgxBn3lAIUpc9IitWMBcTIdLVw96Z+1I8AvhSUtZrz/g+xxDWTohVj
-         RRsNEoaeYprj4GxgS41RM6Qaeu9ArrJ+l0DJ81jbMePUG63yuELJtEqvxS086mlm2Nv9
-         XYUp9qpHn5499053FrDdUnKmU4zf79aBvzJxJ9uiZisBPfsFFl4/Ci54kmwIEuqNQNRb
-         5kUw==
-X-Gm-Message-State: AOAM533cZQHwVAreMgTlC/u4oXZ6//+yyobDOQOzm9mqlTkI9c+bUYcZ
-        IP1klGguFNNjHHqRMKObXtqMfOULcQKTREoUN6Brw5ES71RHTDUaXjP2tVZNH7iQQWKGFHtZuAZ
-        +wMP3o2jSRrkMTlbRMKTYMIQcuLPBaO1T8P7JPtW/j8fR7Aqwl+oBY7OMnSOCp2fNDx0xLYdEAA
-        ==
-X-Received: by 2002:a05:600c:286:: with SMTP id 6mr3493270wmk.164.1629208938285;
-        Tue, 17 Aug 2021 07:02:18 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw2mh+Gs2QiKpClObPwC097nWaw3TR1+Ayjgfwgyium8cuBSjwUMakQySF9mR1p8y4p/Oko3g==
-X-Received: by 2002:a05:600c:286:: with SMTP id 6mr3493227wmk.164.1629208937948;
-        Tue, 17 Aug 2021 07:02:17 -0700 (PDT)
-Received: from [192.168.3.132] (p5b0c65c6.dip0.t-ipconnect.de. [91.12.101.198])
-        by smtp.gmail.com with ESMTPSA id h8sm2163118wmb.35.2021.08.17.07.02.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Aug 2021 07:02:17 -0700 (PDT)
-Subject: Re: [PATCH] x86/mm: fix kern_addr_valid to cope with existing but not
- present entries
-From:   David Hildenbrand <david@redhat.com>
-To:     Mike Rapoport <rppt@kernel.org>, x86@kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20210817135854.25407-1-rppt@kernel.org>
- <d35b3132-9a90-84b9-7907-ad321171b422@redhat.com>
-Organization: Red Hat
-Message-ID: <1d1b6736-49f1-266a-d93f-9eb444fc53da@redhat.com>
-Date:   Tue, 17 Aug 2021 16:02:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S237687AbhHQOH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 10:07:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46902 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230412AbhHQOH2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Aug 2021 10:07:28 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9784860EE4;
+        Tue, 17 Aug 2021 14:06:52 +0000 (UTC)
+Date:   Tue, 17 Aug 2021 16:06:49 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCHi, man-pages] mount_namespaces.7: More clearly explain
+ "locked mounts"
+Message-ID: <20210817140649.7pmz5qcelgjzgxtz@wittgenstein>
+References: <20210813220120.502058-1-mtk.manpages@gmail.com>
+ <87r1et1io8.fsf@disp2133>
+ <56bbb8ed-8ecf-a0be-5253-350727ae1d24@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <d35b3132-9a90-84b9-7907-ad321171b422@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <56bbb8ed-8ecf-a0be-5253-350727ae1d24@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 17.08.21 16:01, David Hildenbrand wrote:
-> On 17.08.21 15:58, Mike Rapoport wrote:
->> From: Mike Rapoport <rppt@linux.ibm.com>
->>
->> Jiri Olsa reported a fault when running:
->>
->> 	# cat /proc/kallsyms | grep ksys_read
->> 	ffffffff8136d580 T ksys_read
->> 	# objdump -d --start-address=0xffffffff8136d580 --stop-address=0xffffffff8136d590 /proc/kcore
->>
->> 	/proc/kcore:     file format elf64-x86-64
->>
->> 	Segmentation fault
->>
->> krava33 login: [   68.330612] general protection fault, probably for non-canonical address 0xf887ffcbff000: 0000 [#1] SMP PTI
->> [   68.333118] CPU: 12 PID: 1079 Comm: objdump Not tainted 5.14.0-rc5qemu+ #508
->> [   68.334922] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-4.fc34 04/01/2014
->> [   68.336945] RIP: 0010:kern_addr_valid+0x150/0x300
->> [   68.338082] Code: 1f 40 00 48 8b 0d e8 12 61 01 48 85 f6 0f 85 ca 00 00 00 48 81 e1 00 f0 ff ff 48 21 c1 48 b8 00 00 00 00 80 88 ff ff 48 01 ca <48> 8b 3c 02 48 f7 c7 9f ff ff ff 0f 84 d8 fe ff ff 48 89 f8 0f 1f
->> [   68.342220] RSP: 0018:ffffc90000bcbc38 EFLAGS: 00010206
->> [   68.343428] RAX: ffff888000000000 RBX: 0000000000001000 RCX: 000ffffffcbff000
->> [   68.345029] RDX: 000ffffffcbff000 RSI: 0000000000000000 RDI: 800ffffffcbff062
->> [   68.346599] RBP: ffffc90000bcbea8 R08: 0000000000001000 R09: 0000000000000000
->> [   68.349000] R10: 0000000000000000 R11: 0000000000001000 R12: 00007fcc0fd80010
->> [   68.350804] R13: ffffffff83400000 R14: 0000000000400000 R15: ffffffff843d23e0
->> [   68.352609] FS:  00007fcc111fcc80(0000) GS:ffff888275e00000(0000) knlGS:0000000000000000
->> [   68.354638] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [   68.356104] CR2: 00007fcc0fd80000 CR3: 000000011226e004 CR4: 0000000000770ee0
->> [   68.357896] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> [   68.359694] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> [   68.361597] PKRU: 55555554
->> [   68.362460] Call Trace:
->> [   68.363252]  read_kcore+0x57f/0x920
->> [   68.364289]  ? rcu_read_lock_sched_held+0x12/0x80
->> [   68.365630]  ? rcu_read_lock_sched_held+0x12/0x80
->> [   68.366955]  ? rcu_read_lock_sched_held+0x12/0x80
->> [   68.368277]  ? trace_hardirqs_on+0x1b/0xd0
->> [   68.369462]  ? rcu_read_lock_sched_held+0x12/0x80
->> [   68.370793]  ? lock_acquire+0x195/0x2f0
->> [   68.371920]  ? lock_acquire+0x195/0x2f0
->> [   68.373035]  ? rcu_read_lock_sched_held+0x12/0x80
->> [   68.374364]  ? lock_acquire+0x195/0x2f0
->> [   68.375498]  ? rcu_read_lock_sched_held+0x12/0x80
->> [   68.376831]  ? rcu_read_lock_sched_held+0x12/0x80
->> [   68.379883]  ? rcu_read_lock_sched_held+0x12/0x80
->> [   68.381268]  ? lock_release+0x22b/0x3e0
->> [   68.382458]  ? _raw_spin_unlock+0x1f/0x30
->> [   68.383685]  ? __handle_mm_fault+0xcfc/0x15f0
->> [   68.384994]  ? rcu_read_lock_sched_held+0x12/0x80
->> [   68.386389]  ? lock_acquire+0x195/0x2f0
->> [   68.387573]  ? rcu_read_lock_sched_held+0x12/0x80
->> [   68.388969]  ? lock_release+0x22b/0x3e0
->> [   68.390145]  proc_reg_read+0x55/0xa0
->> [   68.391257]  ? vfs_read+0x78/0x1b0
->> [   68.392336]  vfs_read+0xa7/0x1b0
->> [   68.393328]  ksys_read+0x68/0xe0
->> [   68.394308]  do_syscall_64+0x3b/0x90
->> [   68.395391]  entry_SYSCALL_64_after_hwframe+0x44/0xae
->> [   68.396804] RIP: 0033:0x7fcc11cf92e2
->> [   68.397824] Code: c0 e9 b2 fe ff ff 50 48 8d 3d ea 2e 0a 00 e8 95 e9 01 00 0f 1f 44 00 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 0f 05 <48> 3d 00 f0 ff ff 77 56 c3 0f 1f 44 00 00 48 83 ec 28 48 89 54 24
->> [   68.402420] RSP: 002b:00007ffd6e0f8da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
->> [   68.404357] RAX: ffffffffffffffda RBX: 0000565439305b20 RCX: 00007fcc11cf92e2
->> [   68.406061] RDX: 0000000000800000 RSI: 00007fcc0f980010 RDI: 0000000000000003
->> [   68.407747] RBP: 00007fcc11dcd300 R08: 0000000000000003 R09: 00007fcc0d980010
->> [   68.410937] R10: 0000000003826000 R11: 0000000000000246 R12: 00007fcc0f980010
->> [   68.412624] R13: 0000000000000d68 R14: 00007fcc11dcc700 R15: 0000000000800000
->> [   68.414322] Modules linked in: intel_rapl_msr intel_rapl_common nfit kvm_intel kvm irqbypass rapl iTCO_wdt iTCO_vendor_support i2c_i801 i2c_smbus lpc_ich drm drm_panel_orientation_quirks zram xfs crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel
->> [   68.419591] ---[ end trace e2c30f827226966b ]---
->> [   68.420969] RIP: 0010:kern_addr_valid+0x150/0x300
->> [   68.422308] Code: 1f 40 00 48 8b 0d e8 12 61 01 48 85 f6 0f 85 ca 00 00 00 48 81 e1 00 f0 ff ff 48 21 c1 48 b8 00 00 00 00 80 88 ff ff 48 01 ca <48> 8b 3c 02 48 f7 c7 9f ff ff ff 0f 84 d8 fe ff ff 48 89 f8 0f 1f
->> [   68.426826] RSP: 0018:ffffc90000bcbc38 EFLAGS: 00010206
->> [   68.428150] RAX: ffff888000000000 RBX: 0000000000001000 RCX: 000ffffffcbff000
->> [   68.429813] RDX: 000ffffffcbff000 RSI: 0000000000000000 RDI: 800ffffffcbff062
->> [   68.431465] RBP: ffffc90000bcbea8 R08: 0000000000001000 R09: 0000000000000000
->> [   68.433115] R10: 0000000000000000 R11: 0000000000001000 R12: 00007fcc0fd80010
->> [   68.434768] R13: ffffffff83400000 R14: 0000000000400000 R15: ffffffff843d23e0
->> [   68.436423] FS:  00007fcc111fcc80(0000) GS:ffff888275e00000(0000) knlGS:0000000000000000
->> [   68.438354] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [   68.442077] CR2: 00007fcc0fd80000 CR3: 000000011226e004 CR4: 0000000000770ee0
->> [   68.443727] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> [   68.445370] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> [   68.447010] PKRU: 55555554
->>
->> The fault happens because kern_addr_valid() dereferences existent but not
->> present PMD in the high kernel mappings.
->>
->> Such PMDs are created when free_kernel_image_pages() frees regions larger
->> than 2Mb. In this case a part of the freed memory is mapped with PMDs and
->> the set_memory_np_noalias() -> ... -> __change_page_attr() sequence will
->> mark the PMD as not present rather than wipe it completely.
->>
->> Make kern_addr_valid() to check whether higher level page table entries are
->> present before trying to dereference them to fix this issue and to avoid
->> similar issues in the future.
+On Tue, Aug 17, 2021 at 05:12:20AM +0200, Michael Kerrisk (man-pages) wrote:
+> Hi Eric,
 > 
-> Why not fix the setting code?
+> Thanks for your feedback!
 > 
->>
->> Reported-by: Jiri Olsa <jolsa@redhat.com>
->> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
->> ---
->>    arch/x86/mm/init_64.c | 6 +++---
->>    1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
->> index ddeaba947eb3..07b56e90db5d 100644
->> --- a/arch/x86/mm/init_64.c
->> +++ b/arch/x86/mm/init_64.c
->> @@ -1433,18 +1433,18 @@ int kern_addr_valid(unsigned long addr)
->>    		return 0;
->>    
->>    	p4d = p4d_offset(pgd, addr);
->> -	if (p4d_none(*p4d))
->> +	if (p4d_none(*p4d) || !p4d_present(*p4d))
->>    		return 0;
-> 
-> if (!p4d_present(*p4d))
-> 	return 0;
-> 
-> should be sufficient I think.
-> 
-> Same applies to the others.
-> 
-> 
+> On 8/16/21 6:03 PM, Eric W. Biederman wrote:
+> > Michael Kerrisk <mtk.manpages@gmail.com> writes:
+> > 
+> >> For a long time, this manual page has had a brief discussion of
+> >> "locked" mounts, without clearly saying what this concept is, or
+> >> why it exists. Expand the discussion with an explanation of what
+> >> locked mounts are, why mounts are locked, and some examples of the
+> >> effect of locking.
+> >>
+> >> Thanks to Christian Brauner for a lot of help in understanding
+> >> these details.
+> >>
+> >> Reported-by: Christian Brauner <christian.brauner@ubuntu.com>
+> >> Signed-off-by: Michael Kerrisk <mtk.manpages@gmail.com>
+> >> ---
+> >>
+> >> Hello Eric and others,
+> >>
+> >> After some quite helpful info from Chrstian Brauner, I've expanded
+> >> the discussion of locked mounts (a concept I didn't really have a
+> >> good grasp on) in the mount_namespaces(7) manual page. I would be
+> >> grateful to receive review comments, acks, etc., on the patch below.
+> >> Could you take a look please?
+> >>
+> >> Cheers,
+> >>
+> >> Michael
+> >>
+> >>  man7/mount_namespaces.7 | 73 +++++++++++++++++++++++++++++++++++++++++
+> >>  1 file changed, 73 insertions(+)
+> >>
+> >> diff --git a/man7/mount_namespaces.7 b/man7/mount_namespaces.7
+> >> index e3468bdb7..97427c9ea 100644
+> >> --- a/man7/mount_namespaces.7
+> >> +++ b/man7/mount_namespaces.7
+> >> @@ -107,6 +107,62 @@ operation brings across all of the mounts from the original
+> >>  mount namespace as a single unit,
+> >>  and recursive mounts that propagate between
+> >>  mount namespaces propagate as a single unit.)
+> >> +.IP
+> >> +In this context, "may not be separated" means that the mounts
+> >> +are locked so that they may not be individually unmounted.
+> >> +Consider the following example:
+> >> +.IP
+> >> +.RS
+> >> +.in +4n
+> >> +.EX
+> >> +$ \fBsudo mkdir /mnt/dir\fP
+> >> +$ \fBsudo sh \-c \(aqecho "aaaaaa" > /mnt/dir/a\(aq\fP
+> >> +$ \fBsudo mount \-\-bind -o ro /some/path /mnt/dir\fP
+> >> +$ \fBls /mnt/dir\fP   # Former contents of directory are invisible
+> > 
+> > Do we want a more motivating example such as a /proc/sys?
 
-Oh, and I forgot, can we come up with Fixes: and Cc: stable tags?
+Could be even be better to use an example involving /etc/shadow, e.g.:
 
--- 
-Thanks,
+sudo mount --bind /etc /mnt
+sudo mount --bind /dev/null /mnt/shadow
 
-David / dhildenb
+the procfs example might be a bit awkward (see below).
 
+> > 
+> > It has been common to mount over /proc files and directories that can be
+> > written to by the global root so that users in a mount namespace may not
+> > touch them.
+> 
+> Seems reasonable. But I want to check one thing. Can you please
+> define "global root". I'm pretty sure I know what you mean, but
+> I'd like to know your definition.
+
+(global root == root in the initial user namespace.)
+
+Some application container runtimes have a concept of "masked paths"
+where they overmount certain directories they want to hide with an empty
+tmpfs and some files they want to hide with /dev/null (see [1]).
+
+But I don't think this is a great example because this overmounting is
+mostly needed and done when you're running privileged containers (see [2]).
+
+There's usually no point in overmounting parts of procfs that are
+writable by global root. If you're running in an unprivileged container
+userns root can't write to any of the files that only global root can.
+Otherwise this would be a rather severe security issue.
+
+There might be a use-case for overmounting files that contain global
+information that are readable inside user namespaces but then one either
+has to question why they are readable in the first place or why this
+information needs to be hidden. Examples include /proc/kallsyms and
+/proc/keys.
+
+But overall the overmounting of procfs is most sensible when running
+privileged containers or when sharing pid namespaces and procfs is
+somehow bind-mounted from somewhere. But that means there's no user
+namespace in play which means that the mounts aren't locked.
+
+So if the container runtime has e.g. overmounted /proc/kcore with
+/dev/null then the privileged container can unmount it. To protect
+against this such privileged containers usually drop CAP_SYS_ADMIN.
+So the protection here comes from dropping capabilities not from locking
+mounts together. All of this makes this a bit of a confusing example.
+
+An example where locked mount protection is relied on heavily which I'm
+involved in is systemd(-nspawn). All custom mounts a container gets such
+as data shared from the host with the container are mounted in a separate
+(privileged) mount namespace before the container workload is cloned.
+The cloned container then gets a new mount + userns pair and hence, all
+the mounts it inherited are now locked.
+
+This way, you can e.g. share /etc with your container and just overmount
+/etc/shadow with /dev/null or a custom /etc/shadow (Reason for my
+example above.) without dropping capabilities that would prevent the
+container from mounting.
+
+So I'd suggest using a simple example. This is not about illustrating
+what container runtimes do but what the behavior of a mount namespace
+is. There's really no need to overcomplicate this.
+
+[1]: https://github.com/moby/moby/blob/51b06c6795160d8a1ba05d05d6491df7588b2957/oci/defaults.go#L90
+[2]: https://github.com/moby/moby/blob/51b06c6795160d8a1ba05d05d6491df7588b2957/oci/defaults.go#L110
+
+> 
+> >> +.EE
+> >> +.in
+> >> +.RE
+> >> +.IP
+> >> +The above steps, performed in a more privileged user namespace,
+> >> +have created a (read-only) bind mount that
+> >> +obscures the contents of the directory
+> >> +.IR /mnt/dir .
+> >> +For security reasons, it should not be possible to unmount
+> >> +that mount in a less privileged user namespace,
+> >> +since that would reveal the contents of the directory
+> >> +.IR /mnt/dir .
+> >  > +.IP
+> >> +Suppose we now create a new mount namespace
+> >> +owned by a (new) subordinate user namespace.
+> >> +The new mount namespace will inherit copies of all of the mounts
+> >> +from the previous mount namespace.
+> >> +However, those mounts will be locked because the new mount namespace
+> >> +is owned by a less privileged user namespace.
+> >> +Consequently, an attempt to unmount the mount fails:
+> >> +.IP
+> >> +.RS
+> >> +.in +4n
+> >> +.EX
+> >> +$ \fBsudo unshare \-\-user \-\-map\-root\-user \-\-mount \e\fP
+> >> +               \fBstrace \-o /tmp/log \e\fP
+> >> +               \fBumount /mnt/dir\fP
+> >> +umount: /mnt/dir: not mounted.
+> >> +$ \fBgrep \(aq^umount\(aq /tmp/log\fP
+> >> +umount2("/mnt/dir", 0)     = \-1 EINVAL (Invalid argument)
+> >> +.EE
+> >> +.in
+> >> +.RE
+> >> +.IP
+> >> +The error message from
+> >> +.BR mount (8)
+> >> +is a little confusing, but the
+> >> +.BR strace (1)
+> >> +output reveals that the underlying
+> >> +.BR umount2 (2)
+> >> +system call failed with the error
+> >> +.BR EINVAL ,
+> >> +which is the error that the kernel returns to indicate that
+> >> +the mount is locked.
+> > 
+> > Do you want to mention that you can unmount the entire subtree?  Either
+> > with pivot_root if it is locked to "/" or with
+> > "umount -l /path/to/propagated/directory".
+> 
+> Yes, I wondered about that, but hadn't got round to devising 
+> the scenario. How about this:
+> 
+> [[
+>        *  Following on from the previous point, note that it is possible
+>           to unmount an entire tree of mounts that propagated as a unit
+>           into a mount namespace that is owned by a less privileged user
+>           namespace, as illustrated in the following example.
+> 
+>           First, we create new user and mount namespaces using
+>           unshare(1).  In the new mount namespace, the propagation type
+>           of all mounts is set to private.  We then create a shared bind
+>           mount at /mnt, and a small hierarchy of mount points underneath
+>           that mount point.
+> 
+>               $ PS1='ns1# ' sudo unshare --user --map-root-user \
+>                                      --mount --propagation private bash
+>               ns1# echo $$        # We need the PID of this shell later
+>               778501
+>               ns1# mount --make-shared --bind /mnt /mnt
+>               ns1# mkdir /mnt/x
+>               ns1# mount --make-private -t tmpfs none /mnt/x
+>               ns1# mkdir /mnt/x/y
+>               ns1# mount --make-private -t tmpfs none /mnt/x/y
+>               ns1# grep /mnt /proc/self/mountinfo | sed 's/ - .*//'
+>               986 83 8:5 /mnt /mnt rw,relatime shared:344
+>               989 986 0:56 / /mnt/x rw,relatime
+>               990 989 0:57 / /mnt/x/y rw,relatime
+> 
+>           Continuing in the same shell session, we then create a second
+>           shell in a new mount namespace and a new subordinate (and thus
+>           less privileged) user namespace and check the state of the
+>           propagated mount points rooted at /mnt.
+> 
+>               ns1# PS1='ns2# unshare --user --map-root-user \
+>                                      --mount --propagation unchanged bash
+>               ns2# grep /mnt /proc/self/mountinfo | sed 's/ - .*//'
+>               1239 1204 8:5 /mnt /mnt rw,relatime master:344
+>               1240 1239 0:56 / /mnt/x rw,relatime
+>               1241 1240 0:57 / /mnt/x/y rw,relatime
+> 
+>           Of note in the above output is that the propagation type of the
+>           mount point /mnt has been reduced to slave, as explained near
+>           the start of this subsection.  This means that submount events
+>           will propagate from the master /mnt in "ns1", but propagation
+>           will not occur in the opposite direction.
+> 
+>           From a separate terminal window, we then use nsenter(1) to
+>           enter the mount and user namespaces corresponding to "ns1".  In
+>           that terminal window, we then recursively bind mount /mnt/x at
+>           the location /mnt/ppp.
+> 
+>               $ PS1='ns3# ' sudo nsenter -t 778501 --user --mount
+>               ns3# mount --rbind --make-private /mnt/x /mnt/ppp
+>               ns3# grep /mnt /proc/self/mountinfo | sed 's/ - .*//'
+>               986 83 8:5 /mnt /mnt rw,relatime shared:344
+>               989 986 0:56 / /mnt/x rw,relatime
+>               990 989 0:57 / /mnt/x/y rw,relatime
+>               1242 986 0:56 / /mnt/ppp rw,relatime
+>               1243 1242 0:57 / /mnt/ppp/y rw,relatime shared:518
+> 
+>           Because the propagation type of the parent mount, /mnt, was
+>           shared, the recursive bind mount propagated a small tree of
+>           mounts under the slave mount /mnt into "ns2", as can be
+>           verified by executing the following command in that shell
+>           session:
+> 
+>               ns2# grep /mnt /proc/self/mountinfo | sed 's/ - .*//'
+>               1239 1204 8:5 /mnt /mnt rw,relatime master:344
+>               1240 1239 0:56 / /mnt/x rw,relatime
+>               1241 1240 0:57 / /mnt/x/y rw,relatime
+>               1244 1239 0:56 / /mnt/ppp rw,relatime
+>               1245 1244 0:57 / /mnt/ppp/y rw,relatime master:518
+> 
+>           While it is not possible to unmount a part of that propagated
+>           subtree (/mnt/ppp/y), it is possible to unmount the entire
+>           tree, as shown by the following commands:
+> 
+>               ns2# umount /mnt/ppp/y
+>               umount: /mnt/ppp/y: not mounted.
+>               ns2# umount -l /mnt/ppp | sed 's/ - .*//'      # Succeeds...
+>               ns2# grep /mnt /proc/self/mountinfo
+>               1239 1204 8:5 /mnt /mnt rw,relatime master:344
+>               1240 1239 0:56 / /mnt/x rw,relatime
+>               1241 1240 0:57 / /mnt/x/y rw,relatime
+> ]]
+> 
+> ?
+
+I'd just add a note about mounts that propagated locked together as unit
+as being unmountable as a unit (which is intuitive but may need to be
+spelled out). But I'd leave this lenghty example as it makes the
+manpage pretty convoluted.
+
+Christian
