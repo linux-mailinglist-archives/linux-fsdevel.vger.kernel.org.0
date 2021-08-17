@@ -2,74 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE32B3EF259
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 20:57:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B6B13EF25F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 21:00:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230373AbhHQS6V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 14:58:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40454 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230040AbhHQS6V (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 14:58:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6D6EE60F58;
-        Tue, 17 Aug 2021 18:57:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629226667;
-        bh=2XcXNJckxVKqAUkQr3OnLHOMlEXeXg+rMqgZHIzsIwQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZM19eiaP830Jjnq7WpgBd757cueDeUTKGXydS3fRcMzp35BHWeA1kbaTfHQntpUKg
-         aBJBvPvUYSoLD7drxmoiyEqyQAUlakf/ToVSnsJLrO+XBdkzVmBZQdCEZYYZK/2dpl
-         ITkP1rQYvN+ddd5YSddzCS4hHinnnovMXQGVQe9/C+VPzsdbYBFfrXixrd+qkGA/wS
-         hQ4yxQTfmnpI9MO6e1AmDv7dwk34YBa1uxj3S3I+WmUWHOgWA6sjb1mhPGK4Mgj7or
-         Vf6M2m1tkPuW5Jgsy4ClIceTF4N6Xjq+Qvqt1fSUnEWqEM7Kac8PNg3IgLHQvTl/GU
-         hOjJWx0rbekdA==
-Date:   Tue, 17 Aug 2021 11:57:46 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>, Chao Yu <chao@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] f2fs: remove broken support for allocating DIO writes
-Message-ID: <YRwGqsLgyKqdbkGX@google.com>
-References: <20210728015154.171507-1-ebiggers@kernel.org>
- <YQRQRh1zUHSIzcC/@gmail.com>
- <YQS5eBljtztWwOFE@mit.edu>
- <YQd3Hbid/mFm0o24@sol.localdomain>
- <a3cdd7cb-50a7-1b37-fe58-dced586712a2@kernel.org>
- <YQg4Lukc2dXX3aJc@google.com>
- <b88328b4-db3e-0097-d8cc-f250ee678e5b@kernel.org>
- <YQidOD/zNB17fd9v@google.com>
- <YRsY6dyHyaChkQ6n@gmail.com>
- <YRtMOqzZU4c1Vjje@infradead.org>
+        id S232923AbhHQTBE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 15:01:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:41260 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229821AbhHQTBE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Aug 2021 15:01:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1629226830;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0Iol1jsgRv0ziz0DpHk2d1tnxir1N5aalgKy4jW+5WM=;
+        b=dNxhra94TFq09xxaLKsHjOzIvuOVWltF3RYnjRkHFwnGGUTUYk63MXK/OM5TKCu0lUDr6X
+        hhHHgfLHFDBOhhJ24sXS+fh847qbgIX27LsZWITEtz6J/+dm30GabVYRk0Ll18uICftLeu
+        M36E29xk7ql/wlGXECIISzaoygPQhxs=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-170-L4OrXaZuP-CRWD1DO56EOA-1; Tue, 17 Aug 2021 15:00:26 -0400
+X-MC-Unique: L4OrXaZuP-CRWD1DO56EOA-1
+Received: by mail-wm1-f72.google.com with SMTP id u15-20020a05600c210fb02902e6a5231792so63787wml.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 12:00:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0Iol1jsgRv0ziz0DpHk2d1tnxir1N5aalgKy4jW+5WM=;
+        b=NlTBUT+jwlpXozOEOUnGf6aWezdaJIihkV6CskKEqZbLs20o9yr+iWx+7e6KlKVQnM
+         WRMM26mgNVebXNfZiZLmA/YNKMyLDndSB+OlJEvPHSa2ZN8lJHoPkRo5NOlOUzo6HOHG
+         R0eBt2EiehBd0x6AUpdfHfXiU9m1tYivsPOB52kBQSf6K8HEN16aJUlw2o7RNgFfaG0C
+         qh6nC9mFlc/NhSMiW64vo3JUiyoJKYXaeAtToJ8l5l2ExYdnytk+edePAhgBJdwimYJ4
+         pLFWQMCEn9P3ulTVhD0a6WrBn4bCIQTUCB7jry+yEUnIkUUn7j7gPcMLl+9nkn2oLqC5
+         sWVQ==
+X-Gm-Message-State: AOAM533mrYmsvOxC4P+Prcrs34gwKGsezpeK0e/BaSAj9KKsSL3rJp+F
+        9wGHA+44uTbbAw6tV35g52YPpbmswfmJuOxYdceaqMulmKizoO7miL4ne6j7xbOdjKOsYJ38o/q
+        au/JlXX4ruD2hPSLP++xVEhrGpA==
+X-Received: by 2002:a05:600c:2150:: with SMTP id v16mr1685665wml.143.1629226825467;
+        Tue, 17 Aug 2021 12:00:25 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxusOQ+cZFh3y+xg/zSlKlSeE6vAgPMd91vC/vS1jIhfmj0ZcVTZCPWMnEslMdG8fY06LwZ+w==
+X-Received: by 2002:a05:600c:2150:: with SMTP id v16mr1685648wml.143.1629226825276;
+        Tue, 17 Aug 2021 12:00:25 -0700 (PDT)
+Received: from work-vm (cpc109021-salf6-2-0-cust453.10-2.cable.virginm.net. [82.29.237.198])
+        by smtp.gmail.com with ESMTPSA id z7sm2887942wmi.4.2021.08.17.12.00.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Aug 2021 12:00:24 -0700 (PDT)
+Date:   Tue, 17 Aug 2021 20:00:22 +0100
+From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     vgoyal@redhat.com, stefanha@redhat.com, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        joseph.qi@linux.alibaba.com,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [Virtio-fs] [virtiofsd PATCH v4 4/4] virtiofsd: support per-file
+ DAX in FUSE_LOOKUP
+Message-ID: <YRwHRmL/jUSqgkIU@work-vm>
+References: <20210817022220.17574-1-jefflexu@linux.alibaba.com>
+ <20210817022347.18098-1-jefflexu@linux.alibaba.com>
+ <20210817022347.18098-5-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YRtMOqzZU4c1Vjje@infradead.org>
+In-Reply-To: <20210817022347.18098-5-jefflexu@linux.alibaba.com>
+User-Agent: Mutt/2.0.7 (2021-05-04)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 08/17, Christoph Hellwig wrote:
-> On Mon, Aug 16, 2021 at 07:03:21PM -0700, Eric Biggers wrote:
-> > Freeing preallocated blocks on error would be better than nothing, although note
-> > that the preallocated blocks may have filled an arbitrary sequence of holes --
-> > so simply truncating past EOF would *not* be sufficient.
-> > 
-> > But really filesystems need to be designed to never expose uninitialized data,
-> > even if I/O errors or a sudden power failure occurs.  It is unfortunate that
-> > f2fs apparently wasn't designed with that goal in mind.
-> > 
-> > In any case, I don't think we can proceed with any other f2fs direct I/O
-> > improvements until this data leakage bug can be solved one way or another.  If
-> > my patch to remove support for allocating writes isn't acceptable and the
-> > desired solution is going to require some more invasive f2fs surgery, are you or
-> > Chao going to work on it?  I'm not sure there's much I can do here.
+* Jeffle Xu (jefflexu@linux.alibaba.com) wrote:
+> For passthrough, when the corresponding virtiofs in guest is mounted
+> with '-o dax=inode', advertise that the file is capable of per-file
+> DAX if the inode in the backend fs is marked with FS_DAX_FL flag.
 > 
-> Btw, this is generally a problem for buffered I/O as well, although the
-> window for exposing uninitialized blocks on a crash tends to be smaller.
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> ---
+>  tools/virtiofsd/passthrough_ll.c | 43 ++++++++++++++++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+> 
+> diff --git a/tools/virtiofsd/passthrough_ll.c b/tools/virtiofsd/passthrough_ll.c
+> index 5b6228210f..4cbd904248 100644
+> --- a/tools/virtiofsd/passthrough_ll.c
+> +++ b/tools/virtiofsd/passthrough_ll.c
+> @@ -171,6 +171,7 @@ struct lo_data {
+>      int allow_direct_io;
+>      int announce_submounts;
+>      int perfile_dax_cap; /* capability of backend fs */
+> +    bool perfile_dax; /* enable per-file DAX or not */
+>      bool use_statx;
+>      struct lo_inode root;
+>      GHashTable *inodes; /* protected by lo->mutex */
+> @@ -716,6 +717,10 @@ static void lo_init(void *userdata, struct fuse_conn_info *conn)
+>  
+>      if (conn->capable & FUSE_CAP_PERFILE_DAX && lo->perfile_dax_cap ) {
+>          conn->want |= FUSE_CAP_PERFILE_DAX;
+> +	lo->perfile_dax = 1;
+> +    }
+> +    else {
+> +	lo->perfile_dax = 0;
+>      }
+>  }
+>  
+> @@ -983,6 +988,41 @@ static int do_statx(struct lo_data *lo, int dirfd, const char *pathname,
+>      return 0;
+>  }
+>  
+> +/*
+> + * If the file is marked with FS_DAX_FL or FS_XFLAG_DAX, then DAX should be
+> + * enabled for this file.
+> + */
+> +static bool lo_should_enable_dax(struct lo_data *lo, struct lo_inode *dir,
+> +				 const char *name)
+> +{
+> +    int res, fd;
+> +    int ret = false;;
+> +    unsigned int attr;
+> +    struct fsxattr xattr;
+> +
+> +    if (!lo->perfile_dax)
+> +	return false;
+> +
+> +    /* Open file without O_PATH, so that ioctl can be called. */
+> +    fd = openat(dir->fd, name, O_NOFOLLOW);
+> +    if (fd == -1)
+> +        return false;
 
-How about adding a warning message when we meet an error with preallocated
-unwritten blocks? In the meantime, can we get the Eric's patches for iomap
-support? I feel that we only need to modify the preallocation and error
-handling parts?
+Doesn't that defeat the whole benefit of using O_PATH - i.e. that we
+might stumble into a /dev node or something else we're not allowed to
+open?
+
+> +    if (lo->perfile_dax_cap == DAX_CAP_FLAGS) {
+> +        res = ioctl(fd, FS_IOC_GETFLAGS, &attr);
+> +        if (!res && (attr & FS_DAX_FL))
+> +	    ret = true;
+> +    }
+> +    else if (lo->perfile_dax_cap == DAX_CAP_XATTR) {
+> +	res = ioctl(fd, FS_IOC_FSGETXATTR, &xattr);
+> +	if (!res && (xattr.fsx_xflags & FS_XFLAG_DAX))
+> +	    ret = true;
+> +    }
+
+This all looks pretty expensive for each lookup.
+
+Dave
+
+
+> +    close(fd);
+> +    return ret;
+> +}
+> +
+>  /*
+>   * Increments nlookup on the inode on success. unref_inode_lolocked() must be
+>   * called eventually to decrement nlookup again. If inodep is non-NULL, the
+> @@ -1038,6 +1078,9 @@ static int lo_do_lookup(fuse_req_t req, fuse_ino_t parent, const char *name,
+>          e->attr_flags |= FUSE_ATTR_SUBMOUNT;
+>      }
+>  
+> +    if (lo_should_enable_dax(lo, dir, name))
+> +	e->attr_flags |= FUSE_ATTR_DAX;
+> +
+>      inode = lo_find(lo, &e->attr, mnt_id);
+>      if (inode) {
+>          close(newfd);
+> -- 
+> 2.27.0
+> 
+> _______________________________________________
+> Virtio-fs mailing list
+> Virtio-fs@redhat.com
+> https://listman.redhat.com/mailman/listinfo/virtio-fs
+> 
+-- 
+Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+
