@@ -2,130 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E60D03EF517
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 23:39:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1812A3EF51B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 23:39:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234545AbhHQVj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 17:39:59 -0400
-Received: from mail.cybernetics.com ([173.71.130.66]:32910 "EHLO
-        mail.cybernetics.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231630AbhHQVj6 (ORCPT
+        id S235308AbhHQVkP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 17:40:15 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:43664 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234409AbhHQVkO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 17:39:58 -0400
-X-ASG-Debug-ID: 1629236359-0fb3b00bc411c20001-kl68QG
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id Ay0aCx67Gi3c4LJt; Tue, 17 Aug 2021 17:39:19 -0400 (EDT)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-        bh=CwgGQbJnAx7e81R8CCBmcM3i0wXVlb0O/n3+HhzHIIo=;
-        h=Content-Language:Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; b=lXI5kzRsraQZKx5
-        m/5NRRxeRPuYy/PZPjofZM7qHDKZ7dCnjSFZhsLx/MuHjoYvaunKTJdKvpBI5IpYkn8YOnWRUr8aW
-        h7pNB2NcRElMIEyeseUBXZH26eVkucNPIb8oBYnAYpBqeyH72CnMQO6V/rM49zvfZTLSNcJTOl+K5
-        Qk=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate Pro SMTP 6.2.14)
-  with ESMTPS id 11075885; Tue, 17 Aug 2021 17:39:19 -0400
-Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-To:     Jens Axboe <axboe@kernel.dk>,
-        Olivier Langlois <olivier@trillion01.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-X-ASG-Orig-Subj: Re: [PATCH] coredump: Limit what can interrupt coredumps
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Pavel Begunkov>" <asml.silence@gmail.com>
-References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
- <87eeda7nqe.fsf@disp2133>
- <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
- <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
- <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
- <87y2bh4jg5.fsf@disp2133>
- <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
- <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
- <87pmwmn5m0.fsf@disp2133>
- <4d93d0600e4a9590a48d320c5a7dd4c54d66f095.camel@trillion01.com>
- <8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com>
- <9d194813-ecb1-2fe4-70aa-75faf4e144ad@kernel.dk>
- <b36eb4a26b6aff564c6ef850a3508c5b40141d46.camel@trillion01.com>
- <0bc38b13-5a7e-8620-6dce-18731f15467e@kernel.dk>
- <24c795c6-4ec4-518e-bf9b-860207eee8c7@kernel.dk>
- <05c0cadc-029e-78af-795d-e09cf3e80087@cybernetics.com>
- <b5ab8ca0-cef5-c9b7-e47f-21c0d395f82e@kernel.dk>
- <84640f18-79ee-d8e4-5204-41a2c2330ed8@kernel.dk>
-From:   Tony Battersby <tonyb@cybernetics.com>
-Message-ID: <3168284a-0b52-7845-07b1-a72bdfed915c@cybernetics.com>
-Date:   Tue, 17 Aug 2021 17:39:18 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Tue, 17 Aug 2021 17:40:14 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id D98E422004;
+        Tue, 17 Aug 2021 21:39:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1629236379; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=4BjI4jkMUklSPtukK3yN1feQccpHPUmNABgo6WBtU7s=;
+        b=Svk2Yud092I0CIJqjITJqUrNNE+wegjRQyvCYLy3AHp30S7giHBHYYe6vwi6s0cZDe9u2X
+        GRzz22v6hEV7InHMbGsgKCCEo5Cx88XWK0jll/lIxHQVaBGp4G/SPyDsZVXd209yCu4JOv
+        gpsIPS5j/43xWUcknsRZXe4tgdz6jgo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1629236379;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=4BjI4jkMUklSPtukK3yN1feQccpHPUmNABgo6WBtU7s=;
+        b=x1SC0yBGBzMuDYvKU6t02dqk1xmnm3sLdOr/8fiTr9qvOQvtLKEAuPIFKVv1HHvto7Qwoi
+        AlLnEgn6tx5ln/Dw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7423913A77;
+        Tue, 17 Aug 2021 21:39:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id uaXUDJgsHGESMwAAMHmgww
+        (envelope-from <neilb@suse.de>); Tue, 17 Aug 2021 21:39:36 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <84640f18-79ee-d8e4-5204-41a2c2330ed8@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1629236359
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 1690
+From:   "NeilBrown" <neilb@suse.de>
+To:     kreijack@inwind.it
+Cc:     "Roman Mamedov" <rm@romanrm.net>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        "Josef Bacik" <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        "Chuck Lever" <chuck.lever@oracle.com>, "Chris Mason" <clm@fb.com>,
+        "David Sterba" <dsterba@suse.com>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH] VFS/BTRFS/NFSD: provide more unique inode number for btrfs export
+In-reply-to: <d8d67284-8d53-ed97-f387-81b27d17fdde@inwind.it>
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>,
+ <162881913686.1695.12479588032010502384@noble.neil.brown.name>,
+ <bf49ef31-0c86-62c8-7862-719935764036@libero.it>,
+ <20210816003505.7b3e9861@natsu>,
+ <ee167ffe-ad11-ea95-1bd5-c43f273b345a@libero.it>,
+ <162906443866.1695.6446438554332029261@noble.neil.brown.name>,
+ <d8d67284-8d53-ed97-f387-81b27d17fdde@inwind.it>
+Date:   Wed, 18 Aug 2021 07:39:31 +1000
+Message-id: <162923637125.9892.2416104366790758503@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/17/21 5:28 PM, Jens Axboe wrote:
->
-> Another approach - don't allow TWA_SIGNAL task_work to get queued if
-> PF_SIGNALED has been set on the task. This is similar to how we reject
-> task_work_add() on process exit, and the callers must be able to handle
-> that already.
->
-> Can you test this one on top of your 5.10-stable?
->
->
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index 07afb5ddb1c4..ca7c1ee44ada 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -602,6 +602,14 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->  		.mm_flags = mm->flags,
->  	};
->  
-> +	/*
-> +	 * task_work_add() will refuse to add work after PF_SIGNALED has
-> +	 * been set, ensure that we flush any pending TIF_NOTIFY_SIGNAL work
-> +	 * if any was queued before that.
-> +	 */
-> +	if (test_thread_flag(TIF_NOTIFY_SIGNAL))
-> +		tracehook_notify_signal();
-> +
->  	audit_core_dumps(siginfo->si_signo);
->  
->  	binfmt = mm->binfmt;
-> diff --git a/kernel/task_work.c b/kernel/task_work.c
-> index 1698fbe6f0e1..1ab28904adc4 100644
-> --- a/kernel/task_work.c
-> +++ b/kernel/task_work.c
-> @@ -41,6 +41,12 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
->  		head = READ_ONCE(task->task_works);
->  		if (unlikely(head == &work_exited))
->  			return -ESRCH;
-> +		/*
-> +		 * TIF_NOTIFY_SIGNAL notifications will interfere with
-> +		 * a core dump in progress, reject them.
-> +		 */
-> +		if ((task->flags & PF_SIGNALED) && notify == TWA_SIGNAL)
-> +			return -ESRCH;
->  		work->next = head;
->  	} while (cmpxchg(&task->task_works, head, work) != head);
->  
->
-Doesn't compile.  5.10 doesn't have TIF_NOTIFY_SIGNAL.
+On Wed, 18 Aug 2021, kreijack@inwind.it wrote:
+> On 8/15/21 11:53 PM, NeilBrown wrote:
+> > On Mon, 16 Aug 2021, kreijack@inwind.it wrote:
+> >> On 8/15/21 9:35 PM, Roman Mamedov wrote:
 
-Tony Battersby
+> >>
+> >> However looking at the 'exports' man page, it seems that NFS has already=
+ an
+> >> option to cover these cases: 'crossmnt'.
+> >>
+> >> If NFSd detects a "child" filesystem (i.e. a filesystem mounted inside a=
+n already
+> >> exported one) and the "parent" filesystem is marked as 'crossmnt',  the =
+client mount
+> >> the parent AND the child filesystem with two separate mounts, so there i=
+s not problem of inode collision.
+> >=20
+> > As you acknowledged, you haven't read the whole back-story.  Maybe you
+> > should.
+> >=20
+> > https://lore.kernel.org/linux-nfs/20210613115313.BC59.409509F4@e16-tech.c=
+om/
+> > https://lore.kernel.org/linux-nfs/162848123483.25823.15844774651164477866=
+.stgit@noble.brown/
+> > https://lore.kernel.org/linux-btrfs/162742539595.32498.136879243661557375=
+75.stgit@noble.brown/
+> >=20
+> > The flow of conversation does sometimes jump between threads.
+> >=20
+> > I'm very happy to respond you questions after you've absorbed all that.
+>=20
+> Hi Neil,
+>=20
+> I read the other threads.  And I still have the opinion that the nfsd
+> crossmnt behavior should be a good solution for the btrfs subvolumes.=20
 
+Thanks for reading it all.  Let me join the dots for you.
+
+"crossmnt" doesn't currently work because "subvolumes" aren't mount
+points.
+
+We could change btrfs so that subvolumes *are* mountpoints.  They would
+have to be automounts.  I posted patches to do that.  They were broadly
+rejected because people have many thousands of submounts that are
+concurrently active and so /proc/mounts would be multiple megabytes is
+size and working with it would become impractical.  Also, non-privileged
+users can create subvols, and may want the path names to remain private.
+But these subvols would appear in the mount table and so would no longer
+be private.
+
+Alternately we could change the "crossmnt" functionality to treat a
+change of st_dev as though it were a mount point.  I posted patches to
+do this too.  This hits the same sort of problems in a different way.
+If NFSD reports that is has crossed a "mount" by providing a different
+filesystem-id to the client, then the client will create a new mount
+point which will appear in /proc/mounts.  It might be less likely that
+many thousands of subvolumes are accessed over NFS than locally, but it
+is still entirely possible.  I don't want the NFS client to suffer a
+problem that btrfs doesn't impose locally.  And 'private' subvolumes
+could again appear on a public list if they were accessed via NFS.
+
+Thanks,
+NeilBrown
