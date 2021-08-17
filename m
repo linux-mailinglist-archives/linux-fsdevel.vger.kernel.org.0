@@ -2,129 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CCABD3EE763
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 09:43:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4860E3EE7E2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 09:56:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234741AbhHQHoV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 03:44:21 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58877 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233826AbhHQHoS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 03:44:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629186225;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5838VvxWl34iube/OP5D65XjoOZ9wT0var1ijVsRbzM=;
-        b=frePn+DYhsNpBDyUdsIZBLodHj2vJPkSe/Z+c7CA+mONrhwBgD6/Sabu7OMLhXpPKotZln
-        4pW9vkMPUxhbYKEHlReCwoHaAq/fgD7Fktq+YCO3aGBGBMiTRG5uR7GJcyUq92vVxbdbgD
-        +lGT20v5o6PC41Xh4m0DzpNkOWPj7xk=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-141-L6m9fEa9NTKVc7GcFxtxAg-1; Tue, 17 Aug 2021 03:43:44 -0400
-X-MC-Unique: L6m9fEa9NTKVc7GcFxtxAg-1
-Received: by mail-wr1-f72.google.com with SMTP id q11-20020a5d61cb0000b02901550c3fccb5so6268295wrv.14
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 00:43:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=5838VvxWl34iube/OP5D65XjoOZ9wT0var1ijVsRbzM=;
-        b=tpme7pCV5z6+ZxHlQOU5BYmB4lolBYG6SKt3Bt8nBA/x6e0ChSzwunMvUfroc0pQ1d
-         muTYgZcM+efqBzrJEZ1nN//8YsL3+GTrMgwbEsi6tYbyrVVEQu6JvdHbVpV/TaieL1nJ
-         UZz/zKPqqMkUvgxm0xNWo1nTsdSJp5JsPdskvpYA3XS7rS9K90qmTD/yMy0i8ab7og1n
-         Tbq98ahJk3gpZC4VjE9xZbFwueyVFlhHNUpT3kF5DNoTprcGIxlOuYepcxGBqMqtzNnJ
-         I7AM89CnF3nR7uLtm3lfkkRqWv60Z9LcNWITqbxZSCCeh2vu/5ef83nNj4AsiMdLPhbj
-         os1Q==
-X-Gm-Message-State: AOAM5310491nDprY5JlxQTLCOVcWG8Gc26KVJZWDd2SQv0bQsDVubFxM
-        lzMKLVf9eTsUYPzROriC5gWYjram4B97fycZbnCdoOy9U7VZag80ISqHjX4NfI8uxhe0NJTyOM9
-        ekRlTxjun2//1jSc4tt1wQ1nvXA==
-X-Received: by 2002:a5d:510b:: with SMTP id s11mr2412439wrt.63.1629186222780;
-        Tue, 17 Aug 2021 00:43:42 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz576mJqg+a1g//dMNi+H4iWIbJ4DKgGCa3uIhkAmSJJscKJ92sx9RQK5Yph1qpZR7urTQihQ==
-X-Received: by 2002:a5d:510b:: with SMTP id s11mr2412421wrt.63.1629186222583;
-        Tue, 17 Aug 2021 00:43:42 -0700 (PDT)
-Received: from krava ([83.240.61.5])
-        by smtp.gmail.com with ESMTPSA id b10sm1716224wrn.9.2021.08.17.00.43.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 00:43:42 -0700 (PDT)
-Date:   Tue, 17 Aug 2021 09:43:40 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
+        id S238597AbhHQH4n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 03:56:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57076 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234741AbhHQH4m (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Aug 2021 03:56:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AE6B66054E;
+        Tue, 17 Aug 2021 07:56:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629186969;
+        bh=ialWZUiGma+hiJ6vkQY6KCDbFYDPBfUEF0qvlOeHQf0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fCAY0aWmgY4G3vZ1IAkz6dHYzN1/ODUqsvYo7yeLWv1j+ViKOgARmsZC4Yu4KPMRL
+         HexDsoLGIYCg7MBa0n8BY1l0HUIwCv1hEpC4tcZznMNivKUF1mfg87eI/5PGA6lTNE
+         uaxV+TTbtVo9gcv3TJLjrjZe5m3F7VuMeXCO8F1rBh0oAOWBGmnYHWlTF2T5cHjP6C
+         Hwy+H7aS6lfgOASd2L1H2n+nGbRTEhRbutmNe+akyNM6uImXnGFQELvj6sOf7MWBfa
+         w584KTmHAXudd90oBkArD45WBS6UsJhHgoAnYLmpeFZEhngAaqLRPuSLJEMI/fq+Ts
+         8xywIR2CAKDTQ==
+Date:   Tue, 17 Aug 2021 10:56:02 +0300
+From:   Mike Rapoport <rppt@kernel.org>
 To:     David Hildenbrand <david@redhat.com>
-Cc:     Mike Rapoport <rppt@kernel.org>,
+Cc:     Jiri Olsa <jolsa@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Oscar Salvador <osalvador@suse.de>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Subject: Re: [BUG] general protection fault when reading /proc/kcore
-Message-ID: <YRtorMxxvhGCKJd3@krava>
+Message-ID: <YRtrktVtNlWMLVZR@kernel.org>
 References: <YRqhqz35tm3hA9CG@krava>
  <1a05d147-e249-7682-2c86-bbd157bc9c7d@redhat.com>
  <YRqqqvaZHDu1IKrD@krava>
  <2b83f03c-e782-138d-6010-1e4da5829b9a@redhat.com>
+ <YRq4typgRn342B4i@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2b83f03c-e782-138d-6010-1e4da5829b9a@redhat.com>
+In-Reply-To: <YRq4typgRn342B4i@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 16, 2021 at 08:38:43PM +0200, David Hildenbrand wrote:
-> On 16.08.21 20:12, Jiri Olsa wrote:
-> > On Mon, Aug 16, 2021 at 07:49:15PM +0200, David Hildenbrand wrote:
-> > > On 16.08.21 19:34, Jiri Olsa wrote:
-> > > > hi,
-> > > > I'm getting fault below when running:
-> > > >=20
-> > > > 	# cat /proc/kallsyms | grep ksys_read
-> > > > 	ffffffff8136d580 T ksys_read
-> > > > 	# objdump -d --start-address=3D0xffffffff8136d580 --stop-address=
+On Mon, Aug 16, 2021 at 10:13:18PM +0300, Mike Rapoport wrote:
+> On Mon, Aug 16, 2021 at 08:38:43PM +0200, David Hildenbrand wrote:
+> > On 16.08.21 20:12, Jiri Olsa wrote:
+> > > On Mon, Aug 16, 2021 at 07:49:15PM +0200, David Hildenbrand wrote:
+> > > > On 16.08.21 19:34, Jiri Olsa wrote:
+> > > > > hi,
+> > > > > I'm getting fault below when running:
+> > > > >=20
+> > > > > 	# cat /proc/kallsyms | grep ksys_read
+> > > > > 	ffffffff8136d580 T ksys_read
+> > > > > 	# objdump -d --start-address=3D0xffffffff8136d580 --stop-address=
 =3D0xffffffff8136d590 /proc/kcore
+> > > > >=20
+> > > > > 	/proc/kcore:     file format elf64-x86-64
+> > > > >=20
+> > > > > 	Segmentation fault
+> > > > >=20
+> > > > > any idea? config is attached
 > > > >=20
-> > > > 	/proc/kcore:     file format elf64-x86-64
+> > > > Just tried with a different config on 5.14.0-rc6+
 > > > >=20
-> > > > 	Segmentation fault
+> > > > [root@localhost ~]# cat /proc/kallsyms | grep ksys_read
+> > > > ffffffff8927a800 T ksys_readahead
+> > > > ffffffff89333660 T ksys_read
 > > > >=20
-> > > > any idea? config is attached
+> > > > [root@localhost ~]# objdump -d --start-address=3D0xffffffff89333660
+> > > > --stop-address=3D0xffffffff89333670
+> > > >=20
+> > > > a.out:     file format elf64-x86-64
+> > > >=20
+> > > >=20
+> > > >=20
+> > > > The kern_addr_valid(start) seems to fault in your case, which is we=
+ird,
+> > > > because it merely walks the page tables. But it seems to complain a=
+bout a
+> > > > non-canonical address 0xf887ffcbff000
+> > > >=20
+> > > > Can you post your QEMU cmdline? Did you test this on other kernel v=
+ersions?
 > > >=20
-> > > Just tried with a different config on 5.14.0-rc6+
+> > > I'm using virt-manager so:
 > > >=20
-> > > [root@localhost ~]# cat /proc/kallsyms | grep ksys_read
-> > > ffffffff8927a800 T ksys_readahead
-> > > ffffffff89333660 T ksys_read
-> > >=20
-> > > [root@localhost ~]# objdump -d --start-address=3D0xffffffff89333660
-> > > --stop-address=3D0xffffffff89333670
-> > >=20
-> > > a.out:     file format elf64-x86-64
-> > >=20
-> > >=20
-> > >=20
-> > > The kern_addr_valid(start) seems to fault in your case, which is weir=
-d,
-> > > because it merely walks the page tables. But it seems to complain abo=
-ut a
-> > > non-canonical address 0xf887ffcbff000
-> > >=20
-> > > Can you post your QEMU cmdline? Did you test this on other kernel ver=
-sions?
-> >=20
-> > I'm using virt-manager so:
-> >=20
-> > /usr/bin/qemu-system-x86_64 -name guest=3Dfedora33,debug-threads=3Don -=
-S -object secret,id=3DmasterKey0,format=3Draw,file=3D/var/lib/libvirt/qemu/=
-domain-13-fedora33/master-key.aes -machine pc-q35-5.1,accel=3Dkvm,usb=3Doff=
-,vmport=3Doff,dump-guest-core=3Doff,memory-backend=3Dpc.ram -cpu Skylake-Se=
-rver-IBRS,ss=3Don,vmx=3Don,pdcm=3Don,hypervisor=3Don,tsc-adjust=3Don,clflus=
-hopt=3Don,umip=3Don,pku=3Don,stibp=3Don,arch-capabilities=3Don,ssbd=3Don,xs=
-aves=3Don,ibpb=3Don,amd-stibp=3Don,amd-ssbd=3Don,skip-l1dfl-vmentry=3Don,ps=
-change-mc-no=3Don -m 8192 -object memory-backend-ram,id=3Dpc.ram,size=3D858=
-9934592 -overcommit mem-lock=3Doff -smp 20,sockets=3D20,cores=3D1,threads=
+> > > /usr/bin/qemu-system-x86_64 -name guest=3Dfedora33,debug-threads=3Don=
+ -S -object secret,id=3DmasterKey0,format=3Draw,file=3D/var/lib/libvirt/qem=
+u/domain-13-fedora33/master-key.aes -machine pc-q35-5.1,accel=3Dkvm,usb=3Do=
+ff,vmport=3Doff,dump-guest-core=3Doff,memory-backend=3Dpc.ram -cpu Skylake-=
+Server-IBRS,ss=3Don,vmx=3Don,pdcm=3Don,hypervisor=3Don,tsc-adjust=3Don,clfl=
+ushopt=3Don,umip=3Don,pku=3Don,stibp=3Don,arch-capabilities=3Don,ssbd=3Don,=
+xsaves=3Don,ibpb=3Don,amd-stibp=3Don,amd-ssbd=3Don,skip-l1dfl-vmentry=3Don,=
+pschange-mc-no=3Don -m 8192 -object memory-backend-ram,id=3Dpc.ram,size=3D8=
+589934592 -overcommit mem-lock=3Doff -smp 20,sockets=3D20,cores=3D1,threads=
 =3D1 -uuid 2185d5a9-dbad-4d61-aa4e-97af9fd7ebca -no-user-config -nodefaults=
  -chardev socket,id=3Dcharmonitor,fd=3D36,server,nowait -mon chardev=3Dchar=
 monitor,id=3Dmonitor,mode=3Dcontrol -rtc base=3Dutc,driftfix=3Dslew -global=
@@ -169,28 +142,51 @@ d=3Dballoon0,bus=3Dpci.5,addr=3D0x0 -object rng-random,id=3Dobjrng0,filenam=
 e=3D/dev/urandom -device virtio-rng-pci,rng=3Dobjrng0,id=3Drng0,bus=3Dpci.6=
 ,addr=3D0x0 -sandbox on,obsolete=3Ddeny,elevateprivileges=3Ddeny,spawn=3Dde=
 ny,resourcecontrol=3Ddeny -msg timestamp=3Don
+> =20
+> > > so far I tested just bpf-next/master:
+> > >    git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+> > >=20
 > >=20
-> > so far I tested just bpf-next/master:
-> >    git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-> >=20
+> > Just tried with upstream Linux (5.14.0-rc6) and your config without
+> > triggering it. I'm using "-cpu host", though, on an AMD Ryzen 9 3900X
 >=20
-> Just tried with upstream Linux (5.14.0-rc6) and your config without
-> triggering it. I'm using "-cpu host", though, on an AMD Ryzen 9 3900X
+> With Jiri's config and '-cpu <very long string>' it triggers for me on
+> v5.14-rc6.
 >=20
-> > and jsut removed my changes to make sure it wasn't me ;-)
->=20
-> :)
->=20
-> >=20
-> > I'll try to find a version that worked for me before
->=20
-> Can you try with upstream Linux as well?
+> I'll also try to take a look tomorrow.
 
-I tried with latest linus tree and v5.12 with same results
+There are some non-zero PMDs that are not present in the high kernel
+mappings. The patch below fixes for me the issue in kern_addr_valid()
+trying to access a not-present PMD. Jiri, can you check if it works for
+you?
 
-I'm now playing with the cpu config, but I'm getting some
-virt-manager errors.. so I'll need to dig in bit more
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index ddeaba947eb3..07b56e90db5d 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -1433,18 +1433,18 @@ int kern_addr_valid(unsigned long addr)
+ 		return 0;
+=20
+ 	p4d =3D p4d_offset(pgd, addr);
+-	if (p4d_none(*p4d))
++	if (p4d_none(*p4d) || !p4d_present(*p4d))
+ 		return 0;
+=20
+ 	pud =3D pud_offset(p4d, addr);
+-	if (pud_none(*pud))
++	if (pud_none(*pud) || !pud_present(*pud))
+ 		return 0;
+=20
+ 	if (pud_large(*pud))
+ 		return pfn_valid(pud_pfn(*pud));
+=20
+ 	pmd =3D pmd_offset(pud, addr);
+-	if (pmd_none(*pmd))
++	if (pmd_none(*pmd) || !pmd_present(*pmd))
+ 		return 0;
+=20
+ 	if (pmd_large(*pmd))
 
-thanks,
-jirka
-
+--=20
+Sincerely yours,
+Mike.
