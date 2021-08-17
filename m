@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33DD03EE46E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 04:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E6973EE472
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 04:36:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236354AbhHQCgP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Aug 2021 22:36:15 -0400
-Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:39828 "EHLO
-        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233528AbhHQCgP (ORCPT
+        id S236098AbhHQChK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Aug 2021 22:37:10 -0400
+Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:52674 "EHLO
+        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233528AbhHQChK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Aug 2021 22:36:15 -0400
+        Mon, 16 Aug 2021 22:37:10 -0400
 Received: from dread.disaster.area (pa49-195-182-146.pa.nsw.optusnet.com.au [49.195.182.146])
-        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id 995B41B4759;
-        Tue, 17 Aug 2021 12:35:40 +1000 (AEST)
+        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id 9EE2910B065;
+        Tue, 17 Aug 2021 12:36:35 +1000 (AEST)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1mFox0-001akg-CB; Tue, 17 Aug 2021 12:35:38 +1000
-Date:   Tue, 17 Aug 2021 12:35:38 +1000
+        id 1mFoxq-001alS-8K; Tue, 17 Aug 2021 12:36:30 +1000
+Date:   Tue, 17 Aug 2021 12:36:30 +1000
 From:   Dave Chinner <david@fromorbit.com>
 To:     "Darrick J. Wong" <djwong@kernel.org>
 Cc:     Christoph Hellwig <hch@lst.de>,
@@ -29,37 +29,39 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, nvdimm@lists.linux.dev,
         cluster-devel@redhat.com
-Subject: Re: [PATCH v2.1 19/30] iomap: switch iomap_bmap to use iomap_iter
-Message-ID: <20210817023538.GH3657114@dread.disaster.area>
+Subject: Re: [PATCH v2.1 24/30] iomap: remove iomap_apply
+Message-ID: <20210817023630.GI3657114@dread.disaster.area>
 References: <20210809061244.1196573-1-hch@lst.de>
- <20210809061244.1196573-20-hch@lst.de>
- <20210811191800.GH3601443@magnolia>
+ <20210809061244.1196573-25-hch@lst.de>
+ <20210811191826.GI3601443@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210811191800.GH3601443@magnolia>
+In-Reply-To: <20210811191826.GI3601443@magnolia>
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0
+X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
         a=QpfB3wCSrn/dqEBSktpwZQ==:117 a=QpfB3wCSrn/dqEBSktpwZQ==:17
         a=kj9zAlcOel0A:10 a=MhDmnRu9jo8A:10 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8
-        a=7-415B0cAAAA:8 a=PmpFC9ZAWq3O85gSWp8A:9 a=CjuIK1q_8ugA:10
+        a=7-415B0cAAAA:8 a=fYQ17_Ti0f76tTSopgYA:9 a=CjuIK1q_8ugA:10
         a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 11, 2021 at 12:18:00PM -0700, Darrick J. Wong wrote:
+On Wed, Aug 11, 2021 at 12:18:26PM -0700, Darrick J. Wong wrote:
 > From: Christoph Hellwig <hch@lst.de>
 > 
-> Rewrite the ->bmap implementation based on iomap_iter.
+> iomap_apply is unused now, so remove it.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> [djwong: restructure the loop to make its behavior a little clearer]
+> [djwong: rebase this patch to preserve git history of iomap loop control]
 > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 > ---
->  fs/iomap/fiemap.c |   31 +++++++++++++------------------
->  1 file changed, 13 insertions(+), 18 deletions(-)
+>  fs/iomap/apply.c      |   91 -------------------------------------------------
+>  fs/iomap/trace.h      |   40 ----------------------
+>  include/linux/iomap.h |   10 -----
+>  3 files changed, 141 deletions(-)
 
 Looks good.
 
