@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 92C7C3EF48D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 23:08:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A4EB3EF490
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Aug 2021 23:08:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235090AbhHQVIW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 17:08:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35576 "EHLO
+        id S235124AbhHQVIX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 17:08:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234899AbhHQVIP (ORCPT
+        with ESMTP id S234932AbhHQVIS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 17:08:15 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64212C06129D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 14:07:39 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id u1so517931plr.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 14:07:39 -0700 (PDT)
+        Tue, 17 Aug 2021 17:08:18 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10752C0612A3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 14:07:40 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id m24-20020a17090a7f98b0290178b1a81700so864667pjl.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 14:07:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XUdrMEiMcNwJITolVxGKhK3nS1Hy9iqS2mHu14ZIpSk=;
-        b=iwu7kfCtldNSz3EUqFtWrvTRn7eSOvGqucT5IwVIVdNymd17wz32gq6/Mr35BBRygU
-         CdrMGSoJsLEG6r4KbbfvFkcJCXvlmwyZqsZ8+xSX2QQRDQIPCkJ4cOWIdeExGmKiXnea
-         44/mcT6FV+svD1q8cyFNSxe2gSqVsTd0ZwujaWdf4zlWHX8JHF4Scdg7lzKIyLknLhfF
-         GG3S5ldwDJmqSqpUniOimC36UW2I2j2mQ0aVgb0UqdNAuvQN7p+Lu51MyMX2nKlaXT3Z
-         IOlAEPCKKKTo015giN/8MKv9yTgXBXw6COvgGJTMiZSIqOrNzWg9lCCuu7TQ+/OgcQ3Y
-         dEPw==
+        bh=a7PCxGc6lMrjJLJIFdFJeeuYjNC0VZLRn/3fPuPf6xI=;
+        b=zL7n46VT+lMteVZ6qfT5lmUStnH5sIE6ilui9EHQwEIPGtyF7JGXcfCUz70eDjmefB
+         jG6T/uBc3w9DHzfDvZ46oLyVWHUKzVaWQzG98Emf+WzLigrwJJPNUlCN2yvKCBNBCJsD
+         HiUQdxvdB3OSz8JlnBLhzMGplubb0+36nqfI0JQw3OxD5TRm4da5n5gjI4vFNd63Uve9
+         AcKqLWr5xCasC+Ozl6J6uQzT52j0qbkBhB06cPaV6QxIiLPk1JJUm+Y0WwFmY4uuA576
+         Hg7EBPdn+B6NuUf/lYiksz1+ZaiIW8YpsYc7zjwoC4L7JU006tWG/HJXDyaJfaysWVg8
+         ndwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XUdrMEiMcNwJITolVxGKhK3nS1Hy9iqS2mHu14ZIpSk=;
-        b=StdqcmqIBtNGHOaPUb2FW3KdIANd2WJCewcFLMgMHXopFmj6qOWGGvdMxXVnjurCZD
-         cPsTaJdBF8v5PQyxKA/F3US6bvAJqtIAn6w3ZRvmtVFkMbvwWt5L5ev9rPzQFPF9e0Co
-         clF47iMPgUfwQeL+rXpgn5tg6VjHT255Imdw9fBKqduI2VUUm6ZN8ZoohXVa9Zd2P2CP
-         nsg4kTJWyr7qn8m2XHnHzNX7AIHrh1HGOAYPx5weXb9sEWFg2lgIFjk60vhLQSDtPftL
-         TCK9VGCgSYnmgRAJJXBBICEtB+leRc3KqHHvGDayQRvq6vfFief0uMk9QplhtpQQhf13
-         n6+w==
-X-Gm-Message-State: AOAM531ks+qt+Tw3OyQOdJowSOwuV7qUY2NCRZmieHhCWwNc2XlPnPeO
-        XOwqag68mN1RXHN/Fp2C0vbE8g==
-X-Google-Smtp-Source: ABdhPJx39RMaveo/0rAjXWN64rt7ssEyuFIeofZv0OsyBsW8ueztIi/55BWnZ8GDKS5BJb6sGi+QWg==
-X-Received: by 2002:a63:5ec2:: with SMTP id s185mr5223304pgb.221.1629234458948;
-        Tue, 17 Aug 2021 14:07:38 -0700 (PDT)
+        bh=a7PCxGc6lMrjJLJIFdFJeeuYjNC0VZLRn/3fPuPf6xI=;
+        b=A4twbZpYvT9JEnmdSpONvcm0SuZCmJKC9FSTEBQxhTAUY/oyGr/AUnLUDHEn6DQnqk
+         Z4x4foHVVJ3S4cb0JN35Tft48p1+fs4tLTlDMcp3Mq/J7o6/YUgyOXfmDCCFktqyD8q6
+         puFHxTD7W68XnhWUDyoiao3OHEQ9LzV2Fi+dJGJArdL52aroYQRSzBXIMXOgZip/U1M9
+         khOD0t3iWmTnY0LZr0V+yZ7G2FtN5EtAaHDbMPuCJ85jGoYSkscpAa8Na8gkoQbADf3x
+         KQQGdOfr4JBvPS5kpmzVmhbfhGMzPS5GHveTeTLpYvb82Dj30IQlVG3Ys9cVp+Etfd1r
+         3Fiw==
+X-Gm-Message-State: AOAM532tnLJt3QvMmZUV9k3VjxSZS9t7ByVNePBYqeUM2wY1jIcGhysS
+        qShXzJyQA8mExKJXDKl38/GNUQ==
+X-Google-Smtp-Source: ABdhPJynze4TOX/Iit2NW0rJmK1lx9mO4rTokxcuEw6Pb//RFlXAqbaWCEaXRw+ou0O5CZhBVaWpdg==
+X-Received: by 2002:a63:480a:: with SMTP id v10mr5241690pga.113.1629234460425;
+        Tue, 17 Aug 2021 14:07:40 -0700 (PDT)
 Received: from relinquished.tfbnw.net ([2620:10d:c090:400::5:df70])
-        by smtp.gmail.com with ESMTPSA id c9sm4205194pgq.58.2021.08.17.14.07.37
+        by smtp.gmail.com with ESMTPSA id c9sm4205194pgq.58.2021.08.17.14.07.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Aug 2021 14:07:38 -0700 (PDT)
+        Tue, 17 Aug 2021 14:07:40 -0700 (PDT)
 From:   Omar Sandoval <osandov@osandov.com>
 To:     linux-btrfs@vger.kernel.org
 Cc:     kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
         Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-api@vger.kernel.org
-Subject: [PATCH v10 03/10] btrfs-progs: receive: support v2 send stream DATA tlv format
-Date:   Tue, 17 Aug 2021 14:06:49 -0700
-Message-Id: <d486c0dfadc6c2ae1705969c233c465efabc4714.1629234282.git.osandov@fb.com>
+Subject: [PATCH v10 04/10] btrfs-progs: receive: add send stream v2 cmds and attrs to send.h
+Date:   Tue, 17 Aug 2021 14:06:50 -0700
+Message-Id: <6c5db293c3628934407761057dc9b508cb191778.1629234282.git.osandov@fb.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <cover.1629234193.git.osandov@fb.com>
 References: <cover.1629234193.git.osandov@fb.com>
@@ -66,84 +66,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Boris Burkov <borisb@fb.com>
+From: Boris Burkov <boris@bur.io>
 
-The new format privileges the BTRFS_SEND_A_DATA attribute by
-guaranteeing it will always be the last attribute in any command that
-needs it, and by implicitly encoding the data length as the difference
-between the total command length in the command header and the sizes of
-the rest of the attributes (and of course the tlv_type identifying the
-DATA attribute). To parse the new stream, we must read the tlv_type and
-if it is not DATA, we proceed normally, but if it is DATA, we don't
-parse a tlv_len but simply compute the length.
-
-In addition, we add some bounds checking when parsing each chunk of
-data, as well as for the tlv_len itself.
+Send stream v2 adds three commands and several attributes associated to
+those commands. Before we implement processing them, add all the
+commands and attributes. This avoids leaving the enums in an
+intermediate state that doesn't correspond to any version of send
+stream.
 
 Signed-off-by: Boris Burkov <boris@bur.io>
 ---
- common/send-stream.c | 36 ++++++++++++++++++++++++++----------
- 1 file changed, 26 insertions(+), 10 deletions(-)
+ send.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/common/send-stream.c b/common/send-stream.c
-index 3d3585c3..4d819185 100644
---- a/common/send-stream.c
-+++ b/common/send-stream.c
-@@ -165,28 +165,44 @@ static int read_cmd(struct btrfs_send_stream *sctx)
+diff --git a/send.h b/send.h
+index 228928a0..3c47e0c7 100644
+--- a/send.h
++++ b/send.h
+@@ -98,6 +98,11 @@ enum btrfs_send_cmd {
  
- 	pos = 0;
- 	while (pos < cmd_len) {
--		struct btrfs_tlv_header *tlv_hdr;
- 		u16 tlv_type;
--		u16 tlv_len;
- 		struct btrfs_send_attribute *send_attr;
+ 	BTRFS_SEND_C_END,
+ 	BTRFS_SEND_C_UPDATE_EXTENT,
++
++	BTRFS_SEND_C_FALLOCATE,
++	BTRFS_SEND_C_SETFLAGS,
++	BTRFS_SEND_C_ENCODED_WRITE,
++
+ 	__BTRFS_SEND_C_MAX,
+ };
+ #define BTRFS_SEND_C_MAX (__BTRFS_SEND_C_MAX - 1)
+@@ -136,6 +141,16 @@ enum {
+ 	BTRFS_SEND_A_CLONE_OFFSET,
+ 	BTRFS_SEND_A_CLONE_LEN,
  
--		tlv_hdr = (struct btrfs_tlv_header *)data;
--		tlv_type = le16_to_cpu(tlv_hdr->tlv_type);
--		tlv_len = le16_to_cpu(tlv_hdr->tlv_len);
-+		if (cmd_len - pos < sizeof(__le16)) {
-+			error("send stream is truncated");
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+		tlv_type = le16_to_cpu(*(__le16 *)data);
- 
- 		if (tlv_type == 0 || tlv_type > BTRFS_SEND_A_MAX) {
--			error("invalid tlv in cmd tlv_type = %hu, tlv_len = %hu",
--					tlv_type, tlv_len);
-+			error("invalid tlv in cmd tlv_type = %hu", tlv_type);
- 			ret = -EINVAL;
- 			goto out;
- 		}
- 
- 		send_attr = &sctx->cmd_attrs[tlv_type];
- 		send_attr->tlv_type = tlv_type;
--		send_attr->tlv_len = tlv_len;
--		pos += sizeof(*tlv_hdr);
--		data += sizeof(*tlv_hdr);
- 
-+		pos += sizeof(tlv_type);
-+		data += sizeof(tlv_type);
-+		if (sctx->version == 2 && tlv_type == BTRFS_SEND_A_DATA) {
-+			send_attr->tlv_len = cmd_len - pos;
-+		} else {
-+			if (cmd_len - pos < sizeof(__le16)) {
-+				error("send stream is truncated");
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+			send_attr->tlv_len = le16_to_cpu(*(__le16 *)data);
-+			pos += sizeof(__le16);
-+			data += sizeof(__le16);
-+		}
-+		if (cmd_len - pos < send_attr->tlv_len) {
-+			error("send stream is truncated");
-+			ret = -EINVAL;
-+			goto out;
-+		}
- 		send_attr->data = data;
- 		pos += send_attr->tlv_len;
- 		data += send_attr->tlv_len;
++	BTRFS_SEND_A_FALLOCATE_MODE,
++
++	BTRFS_SEND_A_SETFLAGS_FLAGS,
++
++	BTRFS_SEND_A_UNENCODED_FILE_LEN,
++	BTRFS_SEND_A_UNENCODED_LEN,
++	BTRFS_SEND_A_UNENCODED_OFFSET,
++	BTRFS_SEND_A_COMPRESSION,
++	BTRFS_SEND_A_ENCRYPTION,
++
+ 	__BTRFS_SEND_A_MAX,
+ };
+ #define BTRFS_SEND_A_MAX (__BTRFS_SEND_A_MAX - 1)
 -- 
 2.32.0
 
