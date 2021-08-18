@@ -2,202 +2,239 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9331B3F06FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 16:46:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB1F13F0732
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 16:54:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239558AbhHROrJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Aug 2021 10:47:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54418 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239504AbhHROrH (ORCPT
+        id S239697AbhHROza (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Aug 2021 10:55:30 -0400
+Received: from out20-111.mail.aliyun.com ([115.124.20.111]:48890 "EHLO
+        out20-111.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239565AbhHROz3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Aug 2021 10:47:07 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E0FEC0613D9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 07:46:33 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id om1-20020a17090b3a8100b0017941c44ce4so9021019pjb.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 07:46:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qXzjfbGAZVCj6QW9wqbn9inaUOG8fQZNbV0kpPuNxx0=;
-        b=Lu2O8omEZVQDTWjESwBuZ+lf1zjRjIByR6Cs9riuDZ3w+cgt769dUF7Zevnrfaeh3V
-         6SvlWSJTbDeoyOGtPIPJKSZhfYhv0qGij0lqO7H+5W9GOo6r4u9lSnOnIzaoS9NU/LDb
-         x0RT1MxNKqjfJvtnKE6W3OptjH5RWYzwW6N1uO+4OqDc5P57P/e127DmlKop3dOQR6Hl
-         Em5CkDOMsII/1VtxyY+6lUxKNXcFpI5WQsMuWYdREgL8/7TniSAYig45A3qGQMeVxgZu
-         eYuh749M7iSpA6UBMZZkXpCEuF14BDq+NbURHFVaEGjxLMqR7ugt63k8KfXkIxi8l7z6
-         o3kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qXzjfbGAZVCj6QW9wqbn9inaUOG8fQZNbV0kpPuNxx0=;
-        b=EcN2ekenNcdpyl/rH9e7MumrmHp2Pgv9fdoui8F5MpzK8hV263npqamDfrM68CWSBu
-         D68WQayDHvPwTx4HYBOG7qFMxOM29t+1mWLdz1jroV8dm2xnq84QGqSdhvrf/AQLs4FI
-         2/+AIppvWxGYEPcPiNUZtAUmXbiuTY+YxnCTd3bjp7dRDWoxd4dwiYI1gUrihVoVTT4f
-         H+lZB7nQNeoOmrQymmFt272wXDNc6j3b7edT6Wv1+C9NalTW5rwJw2M4eP9MiPXcw7bD
-         q3fAJ1AbzxWDMk4ZiJXMbfONf9GcFQeResPtZCJEbmXIeSITLX3DKM2UYDQ8fHD6YdGH
-         t6Hw==
-X-Gm-Message-State: AOAM533M3nhqrQJMk+1vNX9x9H0KviQEaxSS3imxZFBg9UU/8WduznVx
-        MJTZBqnM9Xsa2hsk0/XZbx6hyg==
-X-Google-Smtp-Source: ABdhPJylCghWDfRMk3LEy2Q0liijBW1FCSA7PeHn+t5IVu5O8IgcIWLjOrUuIVZ7233b08IzPXyPqg==
-X-Received: by 2002:a17:902:7282:b029:12c:75a0:faa5 with SMTP id d2-20020a1709027282b029012c75a0faa5mr7646785pll.35.1629297992628;
-        Wed, 18 Aug 2021 07:46:32 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id y2sm130003pjl.6.2021.08.18.07.46.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Aug 2021 07:46:32 -0700 (PDT)
-Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
-To:     Tony Battersby <tonyb@cybernetics.com>,
-        Olivier Langlois <olivier@trillion01.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        io-uring <io-uring@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Pavel Begunkov>" <asml.silence@gmail.com>
-References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
- <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
- <87y2bh4jg5.fsf@disp2133>
- <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
- <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
- <87pmwmn5m0.fsf@disp2133>
- <4d93d0600e4a9590a48d320c5a7dd4c54d66f095.camel@trillion01.com>
- <8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com>
- <9d194813-ecb1-2fe4-70aa-75faf4e144ad@kernel.dk>
- <b36eb4a26b6aff564c6ef850a3508c5b40141d46.camel@trillion01.com>
- <0bc38b13-5a7e-8620-6dce-18731f15467e@kernel.dk>
- <24c795c6-4ec4-518e-bf9b-860207eee8c7@kernel.dk>
- <05c0cadc-029e-78af-795d-e09cf3e80087@cybernetics.com>
- <b5ab8ca0-cef5-c9b7-e47f-21c0d395f82e@kernel.dk>
- <84640f18-79ee-d8e4-5204-41a2c2330ed8@kernel.dk>
- <3168284a-0b52-7845-07b1-a72bdfed915c@cybernetics.com>
- <a56b633c-b88b-dfe8-11da-fcb3853a2edf@kernel.dk>
- <16ded7e5-1f44-1c51-5759-35f835115665@cybernetics.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <90c35bf6-bf65-c997-1823-36c509cf72b1@kernel.dk>
-Date:   Wed, 18 Aug 2021 08:46:30 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 18 Aug 2021 10:55:29 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.04525916|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.684325-0.00469371-0.310981;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047205;MF=wangyugui@e16-tech.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.L2MpJn6_1629298491;
+Received: from 192.168.2.112(mailfrom:wangyugui@e16-tech.com fp:SMTPD_---.L2MpJn6_1629298491)
+          by smtp.aliyun-inc.com(10.147.41.121);
+          Wed, 18 Aug 2021 22:54:52 +0800
+Date:   Wed, 18 Aug 2021 22:54:55 +0800
+From:   Wang Yugui <wangyugui@e16-tech.com>
+To:     "NeilBrown" <neilb@suse.de>
+Subject: Re: [PATCH] VFS/BTRFS/NFSD: provide more unique inode number for btrfs export
+Cc:     "Christoph Hellwig" <hch@infradead.org>,
+        "Josef Bacik" <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        "Chuck Lever" <chuck.lever@oracle.com>, "Chris Mason" <clm@fb.com>,
+        "David Sterba" <dsterba@suse.com>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+In-Reply-To: <162881913686.1695.12479588032010502384@noble.neil.brown.name>
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown> <162881913686.1695.12479588032010502384@noble.neil.brown.name>
+Message-Id: <20210818225454.9558.409509F4@e16-tech.com>
 MIME-Version: 1.0
-In-Reply-To: <16ded7e5-1f44-1c51-5759-35f835115665@cybernetics.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-Mailer: Becky! ver. 2.75.04 [en]
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/18/21 8:37 AM, Tony Battersby wrote:
-> On 8/17/21 6:05 PM, Jens Axboe wrote:
->> On 8/17/21 3:39 PM, Tony Battersby wrote:
->>> On 8/17/21 5:28 PM, Jens Axboe wrote:
->>>> Another approach - don't allow TWA_SIGNAL task_work to get queued if
->>>> PF_SIGNALED has been set on the task. This is similar to how we reject
->>>> task_work_add() on process exit, and the callers must be able to handle
->>>> that already.
->>>>
->>>> Can you test this one on top of your 5.10-stable?
->>>>
->>>>
->>>> diff --git a/fs/coredump.c b/fs/coredump.c
->>>> index 07afb5ddb1c4..ca7c1ee44ada 100644
->>>> --- a/fs/coredump.c
->>>> +++ b/fs/coredump.c
->>>> @@ -602,6 +602,14 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->>>>  		.mm_flags = mm->flags,
->>>>  	};
->>>>  
->>>> +	/*
->>>> +	 * task_work_add() will refuse to add work after PF_SIGNALED has
->>>> +	 * been set, ensure that we flush any pending TIF_NOTIFY_SIGNAL work
->>>> +	 * if any was queued before that.
->>>> +	 */
->>>> +	if (test_thread_flag(TIF_NOTIFY_SIGNAL))
->>>> +		tracehook_notify_signal();
->>>> +
->>>>  	audit_core_dumps(siginfo->si_signo);
->>>>  
->>>>  	binfmt = mm->binfmt;
->>>> diff --git a/kernel/task_work.c b/kernel/task_work.c
->>>> index 1698fbe6f0e1..1ab28904adc4 100644
->>>> --- a/kernel/task_work.c
->>>> +++ b/kernel/task_work.c
->>>> @@ -41,6 +41,12 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
->>>>  		head = READ_ONCE(task->task_works);
->>>>  		if (unlikely(head == &work_exited))
->>>>  			return -ESRCH;
->>>> +		/*
->>>> +		 * TIF_NOTIFY_SIGNAL notifications will interfere with
->>>> +		 * a core dump in progress, reject them.
->>>> +		 */
->>>> +		if ((task->flags & PF_SIGNALED) && notify == TWA_SIGNAL)
->>>> +			return -ESRCH;
->>>>  		work->next = head;
->>>>  	} while (cmpxchg(&task->task_works, head, work) != head);
->>>>  
->>>>
->>> Doesn't compile.  5.10 doesn't have TIF_NOTIFY_SIGNAL.
->> Oh right... Here's one hacked up for the 5.10 TWA_SIGNAL setup. Totally
->> untested...
->>
->> diff --git a/fs/coredump.c b/fs/coredump.c
->> index c6acfc694f65..9e899ce67589 100644
->> --- a/fs/coredump.c
->> +++ b/fs/coredump.c
->> @@ -603,6 +603,19 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->>  		.mm_flags = mm->flags,
->>  	};
->>  
->> +	/*
->> +	 * task_work_add() will refuse to add work after PF_SIGNALED has
->> +	 * been set, ensure that we flush any pending TWA_SIGNAL work
->> +	 * if any was queued before that.
->> +	 */
->> +	if (signal_pending(current) && (current->jobctl & JOBCTL_TASK_WORK)) {
->> +		task_work_run();
->> +		spin_lock_irq(&current->sighand->siglock);
->> +		current->jobctl &= ~JOBCTL_TASK_WORK;
->> +		recalc_sigpending();
->> +		spin_unlock_irq(&current->sighand->siglock);
->> +	}
->> +
->>  	audit_core_dumps(siginfo->si_signo);
->>  
->>  	binfmt = mm->binfmt;
->> diff --git a/kernel/task_work.c b/kernel/task_work.c
->> index 8d6e1217c451..93b3f262eb4a 100644
->> --- a/kernel/task_work.c
->> +++ b/kernel/task_work.c
->> @@ -39,6 +39,12 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
->>  		head = READ_ONCE(task->task_works);
->>  		if (unlikely(head == &work_exited))
->>  			return -ESRCH;
->> +		/*
->> +		 * TWA_SIGNAL notifications will interfere with
->> +		 * a core dump in progress, reject them.
->> +		 */
->> +		if ((task->flags & PF_SIGNALED) && notify == TWA_SIGNAL)
->> +			return -ESRCH;
->>  		work->next = head;
->>  	} while (cmpxchg(&task->task_works, head, work) != head);
->>  
->>
-> Tested with 5.10.59 + backport 06af8679449d + the patch above.  That
-> fixes it for me.  I tested a couple of variations to make sure.
-> 
-> Thanks!
-> 
-> Tested-by: Tony Battersby <tonyb@cybernetics.com>
+Hi,
 
-Great, thanks for testing! The 5.10 version is a bit uglier due to how
-TWA_SIGNAL used to work, but it's the most straight forward backport of
-the other version I sent.
+We use  'swab64' to combinate 'subvol id' and 'inode' into 64bit in this
+patch.
 
--- 
-Jens Axboe
+case1:
+'subvol id': 16bit => 64K, a little small because the subvol id is
+always increase?
+'inode':	48bit * 4K per node, this is big enough.
+
+case2:
+'subvol id': 24bit => 16M,  this is big enough.
+'inode':	40bit * 4K per node => 4 PB.  this is a little small?
+
+Is there a way to 'bit-swap' the subvol id, rather the current byte-swap?
+
+If not, maybe it is a better balance if we combinate 22bit subvol id and
+42 bit inode?
+
+Best Regards
+Wang Yugui (wangyugui@e16-tech.com)
+2021/08/18
+
+> 
+> [[This patch is a minimal patch which addresses the current problems
+>   with nfsd and btrfs, in a way which I think is most supportable, least
+>   surprising, and least likely to impact any future attempts to more
+>   completely fix the btrfs file-identify problem]]
+> 
+> BTRFS does not provide unique inode numbers across a filesystem.
+> It *does* provide unique inode numbers with a subvolume and
+> uses synthetic device numbers for different subvolumes to ensure
+> uniqueness for device+inode.
+> 
+> nfsd cannot use these varying device numbers.  If nfsd were to
+> synthesise different stable filesystem ids to give to the client, that
+> would cause subvolumes to appear in the mount table on the client, even
+> though they don't appear in the mount table on the server.  Also, NFSv3
+> doesn't support changing the filesystem id without a new explicit
+> mount on the client (this is partially supported in practice, but
+> violates the protocol specification).
+> 
+> So currently, the roots of all subvolumes report the same inode number
+> in the same filesystem to NFS clients and tools like 'find' notice that
+> a directory has the same identity as an ancestor, and so refuse to
+> enter that directory.
+> 
+> This patch allows btrfs (or any filesystem) to provide a 64bit number
+> that can be xored with the inode number to make the number more unique.
+> Rather than the client being certain to see duplicates, with this patch
+> it is possible but extremely rare.
+> 
+> The number than btrfs provides is a swab64() version of the subvolume
+> identifier.  This has most entropy in the high bits (the low bits of the
+> subvolume identifer), while the inoe has most entropy in the low bits.
+> The result will always be unique within a subvolume, and will almost
+> always be unique across the filesystem.
+> 
+> Signed-off-by: NeilBrown <neilb@suse.de>
+> ---
+>  fs/btrfs/inode.c     |  4 ++++
+>  fs/nfsd/nfs3xdr.c    | 17 ++++++++++++++++-
+>  fs/nfsd/nfs4xdr.c    |  9 ++++++++-
+>  fs/nfsd/xdr3.h       |  2 ++
+>  include/linux/stat.h | 17 +++++++++++++++++
+>  5 files changed, 47 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 0117d867ecf8..989fdf2032d5 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -9195,6 +9195,10 @@ static int btrfs_getattr(struct user_namespace *mnt_userns,
+>  	generic_fillattr(&init_user_ns, inode, stat);
+>  	stat->dev = BTRFS_I(inode)->root->anon_dev;
+>  
+> +	if (BTRFS_I(inode)->root->root_key.objectid != BTRFS_FS_TREE_OBJECTID)
+> +		stat->ino_uniquifier =
+> +			swab64(BTRFS_I(inode)->root->root_key.objectid);
+> +
+>  	spin_lock(&BTRFS_I(inode)->lock);
+>  	delalloc_bytes = BTRFS_I(inode)->new_delalloc_bytes;
+>  	inode_bytes = inode_get_bytes(inode);
+> diff --git a/fs/nfsd/nfs3xdr.c b/fs/nfsd/nfs3xdr.c
+> index 0a5ebc52e6a9..669e2437362a 100644
+> --- a/fs/nfsd/nfs3xdr.c
+> +++ b/fs/nfsd/nfs3xdr.c
+> @@ -340,6 +340,7 @@ svcxdr_encode_fattr3(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+>  {
+>  	struct user_namespace *userns = nfsd_user_namespace(rqstp);
+>  	__be32 *p;
+> +	u64 ino;
+>  	u64 fsid;
+>  
+>  	p = xdr_reserve_space(xdr, XDR_UNIT * 21);
+> @@ -377,7 +378,10 @@ svcxdr_encode_fattr3(struct svc_rqst *rqstp, struct xdr_stream *xdr,
+>  	p = xdr_encode_hyper(p, fsid);
+>  
+>  	/* fileid */
+> -	p = xdr_encode_hyper(p, stat->ino);
+> +	ino = stat->ino;
+> +	if (stat->ino_uniquifier && stat->ino_uniquifier != ino)
+> +		ino ^= stat->ino_uniquifier;
+> +	p = xdr_encode_hyper(p, ino);
+>  
+>  	p = encode_nfstime3(p, &stat->atime);
+>  	p = encode_nfstime3(p, &stat->mtime);
+> @@ -1151,6 +1155,17 @@ svcxdr_encode_entry3_common(struct nfsd3_readdirres *resp, const char *name,
+>  	if (xdr_stream_encode_item_present(xdr) < 0)
+>  		return false;
+>  	/* fileid */
+> +	if (!resp->dir_have_uniquifier) {
+> +		struct kstat stat;
+> +		if (fh_getattr(&resp->fh, &stat) == nfs_ok)
+> +			resp->dir_ino_uniquifier = stat.ino_uniquifier;
+> +		else
+> +			resp->dir_ino_uniquifier = 0;
+> +		resp->dir_have_uniquifier = 1;
+> +	}
+> +	if (resp->dir_ino_uniquifier &&
+> +	    resp->dir_ino_uniquifier != ino)
+> +		ino ^= resp->dir_ino_uniquifier;
+>  	if (xdr_stream_encode_u64(xdr, ino) < 0)
+>  		return false;
+>  	/* name */
+> diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+> index 7abeccb975b2..ddccf849c29c 100644
+> --- a/fs/nfsd/nfs4xdr.c
+> +++ b/fs/nfsd/nfs4xdr.c
+> @@ -3114,10 +3114,14 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct svc_fh *fhp,
+>  					fhp->fh_handle.fh_size);
+>  	}
+>  	if (bmval0 & FATTR4_WORD0_FILEID) {
+> +		u64 ino = stat.ino;
+> +		if (stat.ino_uniquifier &&
+> +		    stat.ino_uniquifier != stat.ino)
+> +			ino ^= stat.ino_uniquifier;
+>  		p = xdr_reserve_space(xdr, 8);
+>  		if (!p)
+>  			goto out_resource;
+> -		p = xdr_encode_hyper(p, stat.ino);
+> +		p = xdr_encode_hyper(p, ino);
+>  	}
+>  	if (bmval0 & FATTR4_WORD0_FILES_AVAIL) {
+>  		p = xdr_reserve_space(xdr, 8);
+> @@ -3285,6 +3289,9 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct svc_fh *fhp,
+>  			if (err)
+>  				goto out_nfserr;
+>  			ino = parent_stat.ino;
+> +			if (parent_stat.ino_uniquifier &&
+> +			    parent_stat.ino_uniquifier != ino)
+> +				ino ^= parent_stat.ino_uniquifier;
+>  		}
+>  		p = xdr_encode_hyper(p, ino);
+>  	}
+> diff --git a/fs/nfsd/xdr3.h b/fs/nfsd/xdr3.h
+> index 933008382bbe..b4f9f3c71f72 100644
+> --- a/fs/nfsd/xdr3.h
+> +++ b/fs/nfsd/xdr3.h
+> @@ -179,6 +179,8 @@ struct nfsd3_readdirres {
+>  	struct xdr_buf		dirlist;
+>  	struct svc_fh		scratch;
+>  	struct readdir_cd	common;
+> +	u64			dir_ino_uniquifier;
+> +	int			dir_have_uniquifier;
+>  	unsigned int		cookie_offset;
+>  	struct svc_rqst *	rqstp;
+>  
+> diff --git a/include/linux/stat.h b/include/linux/stat.h
+> index fff27e603814..a5188f42ed81 100644
+> --- a/include/linux/stat.h
+> +++ b/include/linux/stat.h
+> @@ -46,6 +46,23 @@ struct kstat {
+>  	struct timespec64 btime;			/* File creation time */
+>  	u64		blocks;
+>  	u64		mnt_id;
+> +	/*
+> +	 * BTRFS does not provide unique inode numbers within a filesystem,
+> +	 * depending on a synthetic 'dev' to provide uniqueness.
+> +	 * NFSd cannot make use of this 'dev' number so clients often see
+> +	 * duplicate inode numbers.
+> +	 * For BTRFS, 'ino' is unlikely to use the high bits.  It puts
+> +	 * another number in ino_uniquifier which:
+> +	 * - has most entropy in the high bits
+> +	 * - is different precisely when 'dev' is different
+> +	 * - is stable across unmount/remount
+> +	 * NFSd can xor this with 'ino' to get a substantially more unique
+> +	 * number for reporting to the client.
+> +	 * The ino_uniquifier for a directory can reasonably be applied
+> +	 * to inode numbers reported by the readdir filldir callback.
+> +	 * It is NOT currently exported to user-space.
+> +	 */
+> +	u64		ino_uniquifier;
+>  };
+>  
+>  #endif
+> -- 
+> 2.32.0
+
 
