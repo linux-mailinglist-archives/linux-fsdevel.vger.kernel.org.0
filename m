@@ -2,122 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A8B53EFFB8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 10:57:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE1203F005C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 11:24:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230412AbhHRI6O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Aug 2021 04:58:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56916 "EHLO
+        id S231373AbhHRJZV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Aug 2021 05:25:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229549AbhHRI6N (ORCPT
+        with ESMTP id S232708AbhHRJY6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Aug 2021 04:58:13 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6178AC061764
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 01:57:39 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id cn28so1991860edb.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 01:57:39 -0700 (PDT)
+        Wed, 18 Aug 2021 05:24:58 -0400
+Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8FCBC061796
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 02:24:20 -0700 (PDT)
+Received: by mail-vs1-xe31.google.com with SMTP id k24so1340112vsg.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 02:24:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tessares-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=yyB09rflCzHIn1ju5X9fd70kpkBZLkV0jkVgx5Jum1M=;
-        b=eUXyKdJAzmmk9t9EBWMwn5DQQ/3lULWEUIXsJT6jM89cXNHXUK+6MhzdMrncDYiKdE
-         3LtdGmfp1B7S/lU3UCxJLF9bM2hjDv350E1zN4Xsbsmo/pTOkY9ErxHacO2nm7Sd3mRm
-         yh/CK53CmSUPNd1H6VYQechEs9zkG9LFweVaADOOfpNXJ2osI0aUZKBPiLFqmlwViXJv
-         ha5Hk+7eKJ3jOiJYHascMT/otfIdpe320Z7iQ3AzXwXi+/BzxXKk9Qn73lvz/vD5Cyfo
-         2IhGDb9ZmPpLtOXYH4I6CLMuZi2EfYiqcXZvuNuEgUL78PluLKvPncpOhR6zSmPnXBdB
-         quHA==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=weNjlOUbvSlo89FtdXjgcNcKFVLhuC/eHiN9+JYNY0U=;
+        b=LNXJWbh1XQCj/MGANLfVcrq+UOEBnoG926gHtbuUO+Aywjv+VlRRGCZ0Xdww6yJEsV
+         mKylLOqlarFw9InKWaJiDY397rRZ+7jVsx69nT29dnyjgykMXEozM/DuZq7v0Yp8qiQJ
+         5/1tqEB5tN1ofaSyIDMX3+rfmu1yOFAHl1ERU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yyB09rflCzHIn1ju5X9fd70kpkBZLkV0jkVgx5Jum1M=;
-        b=ULxfS2J+Ls3ZCeccueHauGS8CLKlWNpS8FYP9zYrIKTxMdFyBVBdUX5zHDKPcFNLy6
-         8JEsdkkLcnY9OjeC5U19mWIoVYzj3Zlf4jW4jq38AppwzdT3bQ8a+aF9CyNijIxqsLch
-         3AGa17E4e2gZEurXmZTPj53ENWxF1ovcVwGzuRNm/SMLvpAz6+g01N0Dq5vf7xeq2Q1+
-         eDoFbcd/0sPNt9PobdEoHvHjgMzHbaJSNg5f2bke8/2U53FGRYIvDOtSOs2VkBnNPONE
-         ctsbT4VzgOD7jqQfboWz4KUyD6bXmomIHgg2Qihw6RJAOmY2dw01whUM74DkWO9GXguy
-         B3+g==
-X-Gm-Message-State: AOAM532xHf8pi/sF9bor/alYd9Qo1tEhlom9pYvITDf/0LN6a8mlSg2e
-        HBphsjbEuNgsvP378ksBN74XCw==
-X-Google-Smtp-Source: ABdhPJzGR88Pk3GJEFXwZCriKTFugvn/HeIUrvcrkEfL+IGeE0KfFWsxaBzduCrnXLd9v8ytkPDFXw==
-X-Received: by 2002:aa7:c894:: with SMTP id p20mr8907066eds.42.1629277058064;
-        Wed, 18 Aug 2021 01:57:38 -0700 (PDT)
-Received: from tsr-lap-08.nix.tessares.net ([213.211.156.192])
-        by smtp.gmail.com with ESMTPSA id n10sm1759880ejk.86.2021.08.18.01.57.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Aug 2021 01:57:37 -0700 (PDT)
-Subject: Re: [syzbot] KFENCE: use-after-free in kvm_fastop_exception
-To:     Pavel Skripkin <paskripkin@gmail.com>,
-        syzbot <syzbot+7b938780d5deeaaf938f@syzkaller.appspotmail.com>,
-        davem@davemloft.net, johan.hedberg@gmail.com, kuba@kernel.org,
-        linux-bluetooth@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, luiz.dentz@gmail.com,
-        marcel@holtmann.org, mathew.j.martineau@linux.intel.com,
-        netdev@vger.kernel.org, pabeni@redhat.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-References: <00000000000012030e05c9c8bc85@google.com>
- <58cef9e0-69de-efdb-4035-7c1ed3d23132@tessares.net>
- <6736a510-20a1-9fb5-caf4-86334cabbbb6@gmail.com>
- <32aeb66e-d4f0-26b5-a140-4477bb87067f@tessares.net>
- <3a8dd8db-61d6-603e-b270-5faf1be02c6b@gmail.com>
-From:   Matthieu Baerts <matthieu.baerts@tessares.net>
-Message-ID: <f9c5ec7f-4014-c073-164f-5152111c1d31@tessares.net>
-Date:   Wed, 18 Aug 2021 10:57:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=weNjlOUbvSlo89FtdXjgcNcKFVLhuC/eHiN9+JYNY0U=;
+        b=WNTNMczZsBBFZpJqsfBVo/B1RhhjX2zN0XSsfVaojL9SHH0oXkezJEapzMFOZYhWqD
+         tUlFRJ9LxQxg14OoUpKcpXfbGfuY7K7yjX6BwxGewL9zTL0/x5uzROhlNw98NQCVvW3f
+         MMrUNwtGOjaVrPiP81gSH21iAtbHJEBas0dizRIENGCWpIg5htIHWBJbe+1n0wiI0qdt
+         XcussYlpLg4i0Wf2mfl7Qgk6EKcuxCpVxjiaKXbhPeEmh1g+bJcJOz7JX0vwIug8d/wh
+         WbUeVx3QpaSuTAYRbXDD/TfEzQZdRfr1kf1fcXrL0qQNcWtis9GClRL+RWzksO9scQZp
+         zupg==
+X-Gm-Message-State: AOAM5337ddK/t81l4I5vueIghndAUJK2ZdKB8PwF8ahtp/LCr9hqC3Ek
+        ng1I58QH2N1EXp3jE88ypH0vGNrVqw+6Ho5BCFbrPjjIdfA=
+X-Google-Smtp-Source: ABdhPJwv5ASNxk94fnGY92MrfCrWS+Si3iK25ndQ5vWLwvAI/nJJiS2qjRY4mlnRsJKWi3QhoX0h09ZgdoO2vbLPwQw=
+X-Received: by 2002:a67:7c42:: with SMTP id x63mr6333147vsc.21.1629278659951;
+ Wed, 18 Aug 2021 02:24:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <3a8dd8db-61d6-603e-b270-5faf1be02c6b@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20210603125242.31699-1-chenguanyou@xiaomi.com>
+ <CAJfpegsEkRnU26Vvo4BTQUmx89Hahp6=RTuyEcPm=rqz8icwUQ@mail.gmail.com> <1fabb91167a86990f4723e9036a0e006293518f4.camel@mediatek.com>
+In-Reply-To: <1fabb91167a86990f4723e9036a0e006293518f4.camel@mediatek.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 18 Aug 2021 11:24:09 +0200
+Message-ID: <CAJfpegsOSWZpKHqDNE_B489dGCzLr-RVAhimVOsFkxJwMYmj9A@mail.gmail.com>
+Subject: Re: [PATCH] [fuse] alloc_page nofs avoid deadlock
+To:     Ed Tsai <ed.tsai@mediatek.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chenguanyou <chenguanyou@xiaomi.com>,
+        chenguanyou <chenguanyou9338@gmail.com>, stanley.chu@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 18/08/2021 10:55, Pavel Skripkin wrote:
-> On 8/18/21 11:21 AM, Matthieu Baerts wrote:
->> Hi Pavel,
->>
-> [snip]
->>>>
->>>> I'm pretty sure the commit c4512c63b119 ("mptcp: fix 'masking a bool'
->>>> warning") doesn't introduce the reported bug. This minor fix is
->>>> specific
->>>> to MPTCP which doesn't seem to be used here.
->>>>
->>>> I'm not sure how I can tell syzbot this is a false positive.
->>>>
->>>
->>>
->>> looks like it's fs/namei bug. Similar reports:
->>>
->>> https://syzkaller.appspot.com/bug?id=517fa734b92b7db404c409b924cf5c997640e324
->>>
->>>
->>>
->>> https://syzkaller.appspot.com/bug?id=484483daf3652b40dae18531923aa9175d392a4d
->>>
->>
->> Thank you for having checked!
->> Should we mark them as "#syz dup" if you think they have the same root
->> cause?
->>
-> 
-> I think, yes, but I want to receive feedback from fs people about this
-> bug. There were huge updates last month, and, maybe, I am missing some
-> details. Alloc/free calltrace is the same, but anyway, I want some
-> confirmation to not close different bugs by mistake :)
-> 
-> If these bugs really have same root case I will close them manually
-> after fix posted.
+On Tue, 13 Jul 2021 at 04:42, Ed Tsai <ed.tsai@mediatek.com> wrote:
+>
+> On Tue, 2021-06-08 at 17:30 +0200, Miklos Szeredi wrote:
+> > On Thu, 3 Jun 2021 at 14:52, chenguanyou <chenguanyou9338@gmail.com>
+> > wrote:
+> > >
+> > > ABA deadlock
+> > >
+> > > PID: 17172 TASK: ffffffc0c162c000 CPU: 6 COMMAND: "Thread-21"
+> > > 0 [ffffff802d16b400] __switch_to at ffffff8008086a4c
+> > > 1 [ffffff802d16b470] __schedule at ffffff80091ffe58
+> > > 2 [ffffff802d16b4d0] schedule at ffffff8009200348
+> > > 3 [ffffff802d16b4f0] bit_wait at ffffff8009201098
+> > > 4 [ffffff802d16b510] __wait_on_bit at ffffff8009200a34
+> > > 5 [ffffff802d16b5b0] inode_wait_for_writeback at ffffff800830e1e8
+> > > 6 [ffffff802d16b5e0] evict at ffffff80082fb15c
+> > > 7 [ffffff802d16b620] iput at ffffff80082f9270
+> > > 8 [ffffff802d16b680] dentry_unlink_inode at ffffff80082f4c90
+> > > 9 [ffffff802d16b6a0] __dentry_kill at ffffff80082f1710
+> > > 10 [ffffff802d16b6d0] shrink_dentry_list at ffffff80082f1c34
+> > > 11 [ffffff802d16b750] prune_dcache_sb at ffffff80082f18a8
+> > > 12 [ffffff802d16b770] super_cache_scan at ffffff80082d55ac
+> > > 13 [ffffff802d16b860] shrink_slab at ffffff8008266170
+> > > 14 [ffffff802d16b900] shrink_node at ffffff800826b420
+> > > 15 [ffffff802d16b980] do_try_to_free_pages at ffffff8008268460
+> > > 16 [ffffff802d16ba60] try_to_free_pages at ffffff80082680d0
+> > > 17 [ffffff802d16bbe0] __alloc_pages_nodemask at ffffff8008256514
+> > > 18 [ffffff802d16bc60] fuse_copy_fill at ffffff8008438268
+> > > 19 [ffffff802d16bd00] fuse_dev_do_read at ffffff8008437654
+> > > 20 [ffffff802d16bdc0] fuse_dev_splice_read at ffffff8008436f40
+> > > 21 [ffffff802d16be60] sys_splice at ffffff8008315d18
+> > > 22 [ffffff802d16bff0] __sys_trace at ffffff8008084014
+> > >
+> > > PID: 9652 TASK: ffffffc0c9ce0000 CPU: 4 COMMAND: "kworker/u16:8"
+> > > 0 [ffffff802e793650] __switch_to at ffffff8008086a4c
+> > > 1 [ffffff802e7936c0] __schedule at ffffff80091ffe58
+> > > 2 [ffffff802e793720] schedule at ffffff8009200348
+> > > 3 [ffffff802e793770] __fuse_request_send at ffffff8008435760
+> > > 4 [ffffff802e7937b0] fuse_simple_request at ffffff8008435b14
+> > > 5 [ffffff802e793930] fuse_flush_times at ffffff800843a7a0
+> > > 6 [ffffff802e793950] fuse_write_inode at ffffff800843e4dc
+> > > 7 [ffffff802e793980] __writeback_single_inode at ffffff8008312740
+> > > 8 [ffffff802e793aa0] writeback_sb_inodes at ffffff80083117e4
+> > > 9 [ffffff802e793b00] __writeback_inodes_wb at ffffff8008311d98
+> > > 10 [ffffff802e793c00] wb_writeback at ffffff8008310cfc
+> > > 11 [ffffff802e793d00] wb_workfn at ffffff800830e4a8
+> > > 12 [ffffff802e793d90] process_one_work at ffffff80080e4fac
+> > > 13 [ffffff802e793e00] worker_thread at ffffff80080e5670
+> > > 14 [ffffff802e793e60] kthread at ffffff80080eb650
+> >
+> > The issue is real.
+> >
+> > The fix, however, is not the right one.  The fundamental problem is
+> > that fuse_write_inode() blocks on a request to userspace.
+> >
+> > This is the same issue that fuse_writepage/fuse_writepages face.  In
+> > that case the solution was to copy the page contents to a temporary
+> > buffer and return immediately as if the writeback already completed.
+> >
+> > Something similar needs to be done here: send the FUSE_SETATTR
+> > request
+> > asynchronously and return immediately from fuse_write_inode().  The
+> > tricky part is to make sure that multiple time updates for the same
+> > inode aren't mixed up...
+> >
+> > Thanks,
+> > Miklos
+>
+> Dear Szeredi,
+>
+> Writeback thread calls fuse_write_inode() and wait for user Daemon to
+> complete this write inode request. The user daemon will alloc_page()
+> after taking this request, and a deadlock could happen when we try to
+> shrink dentry list under memory pressure.
+>
+> We (Mediatek) glad to work on this issue for mainline and also LTS. So
+> another problem is that we should not change the protocol or feature
+> for stable kernel.
+>
+> Use GFP_NOFS | __GFP_HIGHMEM can really avoid this by skip the dentry
+> shirnker. It works but degrade the alloc_page success rate. In a more
+> fundamental way, we could cache the contents and return immediately.
+> But how to ensure the request will be done successfully, e.g., always
+> retry if it fails from daemon.
 
-Thank you for the explanation. Sounds good to me!
+Key is where the the dirty metadata is flushed.  To prevent deadlock
+it must not be flushed from memory reclaim, so must make sure that it
+is flushed on close(2) and munmap(2) and not dirtied after that.
 
-Cheers,
-Matt
--- 
-Tessares | Belgium | Hybrid Access Solutions
-www.tessares.net
+I'm working on this currently and hope to get it ready for the next
+merge window.
+
+Thanks,
+Miklos
