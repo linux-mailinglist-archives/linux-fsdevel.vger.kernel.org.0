@@ -2,284 +2,411 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 346D73EF6D0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 02:16:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B4E33EF84C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 04:57:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235556AbhHRARI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Aug 2021 20:17:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56168 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234870AbhHRARG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Aug 2021 20:17:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7DD6460240;
-        Wed, 18 Aug 2021 00:16:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629245792;
-        bh=Q5w2pL5Af/2oITiQaTLu3p6kxOR+Gu1UXnCqCeGJDSA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rkBSfPevgbD53i4cGPYgj5j56W6rALyfO4QH5MamGVoIGAm2AzHOIz+UiFfDWdJAC
-         GyUD+LoddyqIgrQyOdhdOS88Nyebli7cXSPYr0+s22Q/a9cLp15lVU3exffQhLYgD7
-         qIO7Cf+x8gz68GYDSCQIpq8/oGd6H8eqVGR4/B6HnxhoInu5X0ogmSD62gR5q/j9Zi
-         f8xIPR0bQFM8TE/wN6GPuxqrvDhJpiAfTh5RLdMOjyHxxu2qSIyMubbs8QZ30dkea8
-         +j6gpmUaDw/9kxmnSUerkb5lsXrbD98KgQ97dloHARkUgWLWasE6333g1oiHeov3OL
-         NPh7ZLSHLeiLg==
-Date:   Tue, 17 Aug 2021 17:16:32 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Jan Kara <jack@suse.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>,
+        id S235650AbhHRC6T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Aug 2021 22:58:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57954 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234261AbhHRC6R (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 17 Aug 2021 22:58:17 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EC8DC061764
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 19:57:43 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id e15so902989plh.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Aug 2021 19:57:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+FnTWa+l0J/Bl11ZRox2L95R79IvwH5WB9vcb4noNjs=;
+        b=B7HB1mDV7CuGO7lP+Un/UxtRcn54BH1L8fJa6vhsUG/WVAgq266Qa/MHgsvJzMjVi2
+         qic9Ya/pe0TVCrPFoSRl5luDWXHbpAe3iNDCHEatCCIOsJDlJlT80QUR2kAqxpxzYaoc
+         6NZvyWWwIUVWg8U1GswcAXvOJWl4GcX2W3w2BKkYjmeNH0LGpfBiMwQdl8St7Bq//Tsx
+         3vNbUwgS2F25A4tR+n/2EIBo+acay0cUA/RjFiYhQuL0Ew9C2k3F885qcM22Tbe1+MnU
+         bq3c9/OrDyAkDsKB9cTawmsxcRKRKF+yeh+st7TiOBhsKKjtd/XEd3cdH+QlLVsw1kPY
+         48bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+FnTWa+l0J/Bl11ZRox2L95R79IvwH5WB9vcb4noNjs=;
+        b=ClgzjWHsZ9QkaSA9JrzDEaXYuLsdta3KkUoLvfKaxFn9QapzY3g1vyANAm3/Z8ahXZ
+         plNTFmswbOC7T3UIBKuhNzcYAHUCqeFIkfZ8xBiLTiCkvBRBOQYaerIc9+uj1qdxv62s
+         l0FwN6K5JfI1Cnhl6TTAQ9Y6hQqwTEbxeJrTuCi0DBIKwuUCOqwVthYvgZne3Fr22e4i
+         xKdXcZIwIeALEMkHvafrY1rBDr6qeA5dUayMvlxi1tah5ztrVetkNyvpqzN5bkCP1PC7
+         VaX/KJTEVpleVql8Zowem84J9K97Q1jhS6eH3zFHWJkNZtsRGPo12A+EVPgKwzAxxQaO
+         /8xQ==
+X-Gm-Message-State: AOAM530u1YZKNy6s4k1X5OT4cqoUFHD0fwT3O2+u68pW7G6xTiHgV3vv
+        MtwmOswZXh3PkQfPywX8nT8uyg==
+X-Google-Smtp-Source: ABdhPJwEtiInYT5XxvRdo8LhR7kiY0srELIigo3G1h8H8pTRMBxLIvwqnTYKuEq2y+uoQdYlbBYqKA==
+X-Received: by 2002:a17:90a:4b07:: with SMTP id g7mr6851261pjh.48.1629255462551;
+        Tue, 17 Aug 2021 19:57:42 -0700 (PDT)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id gz17sm3353668pjb.8.2021.08.17.19.57.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Aug 2021 19:57:42 -0700 (PDT)
+Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Tony Battersby <tonyb@cybernetics.com>,
+        Olivier Langlois <olivier@trillion01.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Matthew Bobrowski <repnop@google.com>, kernel@collabora.com
-Subject: Re: [PATCH v6 18/21] fanotify: Emit generic error info type for
- error event
-Message-ID: <20210818001632.GD12664@magnolia>
-References: <20210812214010.3197279-1-krisman@collabora.com>
- <20210812214010.3197279-19-krisman@collabora.com>
- <20210816214103.GA12664@magnolia>
- <20210817090538.GA26181@quack2.suse.cz>
- <CAOQ4uxgdJpovZ-zzJkLOdQ=YYF3ta46m0_jrt0QFSdJ9GdXR=g@mail.gmail.com>
+        io-uring <io-uring@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Pavel Begunkov>" <asml.silence@gmail.com>
+References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
+ <87eeda7nqe.fsf@disp2133>
+ <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
+ <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
+ <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
+ <87y2bh4jg5.fsf@disp2133>
+ <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
+ <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
+ <87pmwmn5m0.fsf@disp2133>
+ <4d93d0600e4a9590a48d320c5a7dd4c54d66f095.camel@trillion01.com>
+ <8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com>
+ <9d194813-ecb1-2fe4-70aa-75faf4e144ad@kernel.dk>
+ <b36eb4a26b6aff564c6ef850a3508c5b40141d46.camel@trillion01.com>
+ <0bc38b13-5a7e-8620-6dce-18731f15467e@kernel.dk>
+ <24c795c6-4ec4-518e-bf9b-860207eee8c7@kernel.dk>
+ <05c0cadc-029e-78af-795d-e09cf3e80087@cybernetics.com>
+ <b5ab8ca0-cef5-c9b7-e47f-21c0d395f82e@kernel.dk>
+ <84640f18-79ee-d8e4-5204-41a2c2330ed8@kernel.dk>
+Message-ID: <c4578bef-a21a-2435-e75a-d11d13d42923@kernel.dk>
+Date:   Tue, 17 Aug 2021 20:57:40 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgdJpovZ-zzJkLOdQ=YYF3ta46m0_jrt0QFSdJ9GdXR=g@mail.gmail.com>
+In-Reply-To: <84640f18-79ee-d8e4-5204-41a2c2330ed8@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 17, 2021 at 01:08:06PM +0300, Amir Goldstein wrote:
-> On Tue, Aug 17, 2021 at 12:05 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Mon 16-08-21 14:41:03, Darrick J. Wong wrote:
-> > > On Thu, Aug 12, 2021 at 05:40:07PM -0400, Gabriel Krisman Bertazi wrote:
-> > > > The Error info type is a record sent to users on FAN_FS_ERROR events
-> > > > documenting the type of error.  It also carries an error count,
-> > > > documenting how many errors were observed since the last reporting.
-> > > >
-> > > > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> > > >
-> > > > ---
-> > > > Changes since v5:
-> > > >   - Move error code here
-> > > > ---
-> > > >  fs/notify/fanotify/fanotify.c      |  1 +
-> > > >  fs/notify/fanotify/fanotify.h      |  1 +
-> > > >  fs/notify/fanotify/fanotify_user.c | 36 ++++++++++++++++++++++++++++++
-> > > >  include/uapi/linux/fanotify.h      |  7 ++++++
-> > > >  4 files changed, 45 insertions(+)
-> > >
-> > > <snip>
-> > >
-> > > > diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-> > > > index 16402037fc7a..80040a92e9d9 100644
-> > > > --- a/include/uapi/linux/fanotify.h
-> > > > +++ b/include/uapi/linux/fanotify.h
-> > > > @@ -124,6 +124,7 @@ struct fanotify_event_metadata {
-> > > >  #define FAN_EVENT_INFO_TYPE_FID            1
-> > > >  #define FAN_EVENT_INFO_TYPE_DFID_NAME      2
-> > > >  #define FAN_EVENT_INFO_TYPE_DFID   3
-> > > > +#define FAN_EVENT_INFO_TYPE_ERROR  4
-> > > >
-> > > >  /* Variable length info record following event metadata */
-> > > >  struct fanotify_event_info_header {
-> > > > @@ -149,6 +150,12 @@ struct fanotify_event_info_fid {
-> > > >     unsigned char handle[0];
-> > > >  };
-> > > >
-> > > > +struct fanotify_event_info_error {
-> > > > +   struct fanotify_event_info_header hdr;
-> > > > +   __s32 error;
-> > > > +   __u32 error_count;
-> > > > +};
-> > >
-> > > My apologies for not having time to review this patchset since it was
-> > > redesigned to use fanotify.  Someday it would be helpful to be able to
-> > > export more detailed error reports from XFS, but as I'm not ready to
-> > > move forward and write that today, I'll try to avoid derailling this at
-> > > the last minute.
-> >
-> > I think we are not quite there and tweaking the passed structure is easy
-> > enough so no worries. Eventually, passing some filesystem-specific blob
-> > together with the event was the plan AFAIR. You're right now is a good
-> > moment to think how exactly we want that passed.
-> >
-> > > Eventually, XFS might want to be able to report errors in file data,
-> > > file metadata, allocation group metadata, and whole-filesystem metadata.
-> > > Userspace can already gather reports from XFS about corruptions reported
-> > > by the online fsck code (see xfs_health.c).
-> >
-> > Yes, although note that the current plan is that we currently have only one
-> > error event queue, others are just added to error_count until the event is
-> > fetched by userspace (on the grounds that the first error is usually the
-> > most meaningful, the others are usually just cascading problems). But I'm
-> > not sure if this scheme would be suitable for online fsck usecase since we
-> > may discard even valid independent errors this way.
-> >
-> > > I /think/ we could subclass the file error structure that you've
-> > > provided like so:
-> > >
-> > > struct fanotify_event_info_xfs_filesystem_error {
-> > >       struct fanotify_event_info_error        base;
-> > >
-> > >       __u32 magic; /* 0x58465342 to identify xfs */
-> > >       __u32 type; /* quotas, realtime bitmap, etc. */
-> > > };
-> > >
-> > > struct fanotify_event_info_xfs_perag_error {
-> > >       struct fanotify_event_info_error        base;
-> > >
-> > >       __u32 magic; /* 0x58465342 to identify xfs */
-> > >       __u32 type; /* agf, agi, agfl, bno btree, ino btree, etc. */
-> > >       __u32 agno; /* allocation group number */
-> > > };
-> > >
-> > > struct fanotify_event_info_xfs_file_error {
-> > >       struct fanotify_event_info_error        base;
-> > >
-> > >       __u32 magic; /* 0x58465342 to identify xfs */
-> > >       __u32 type; /* extent map, dir, attr, etc. */
-> > >       __u64 offset; /* file data offset, if applicable */
-> > >       __u64 length; /* file data length, if applicable */
-> > > };
-> > >
-> > > (A real XFS implementation might have one structure with the type code
-> > > providing for a tagged union or something; I split it into three
-> > > separate structs here to avoid confusing things.)
-> >
-> > The structure of fanotify event as passed to userspace generally is:
-> >
-> > struct fanotify_event_metadata {
-> >         __u32 event_len;
-> >         __u8 vers;
-> >         __u8 reserved;
-> >         __u16 metadata_len;
-> >         __aligned_u64 mask;
-> >         __s32 fd;
-> >         __s32 pid;
-> > };
-> >
-> > If event_len is > sizeof(struct fanotify_event_metadata), userspace is
-> > expected to look for struct fanotify_event_info_header after struct
-> > fanotify_event_metadata. struct fanotify_event_info_header looks like:
-> >
-> > struct fanotify_event_info_header {
-> >         __u8 info_type;
-> >         __u8 pad;
-> >         __u16 len;
-> > };
-> >
-> > Again if the end of this info (defined by 'len') is smaller than
-> > 'event_len', there is next header with next payload of data. So for example
-> > error event will have:
-> >
-> > struct fanotify_event_metadata
-> > struct fanotify_event_info_error
-> > struct fanotify_event_info_fid
-> >
-> > Now either we could add fs specific blob into fanotify_event_info_error
-> > (but then it would be good to add 'magic' to fanotify_event_info_error now
-> > and define that if 'len' is larger, fs-specific blob follows after fixed
-> > data) or we can add another info type FAN_EVENT_INFO_TYPE_ERROR_FS_DATA
-> > (i.e., attach another structure into the event) which would contain the
-> > 'magic' and then blob of data. I don't have strong preference.
-> >
-> > > I have three questions at this point:
-> > >
-> > > 1) What's the maximum size of a fanotify event structure?  None of these
-> > > structures exceed 36 bytes, which I hope will fit in whatever size
-> > > constraints?
-> >
-> > Whole event must fit into 4G, each event info needs to fit in 64k. At least
-> > these are the limits of the interface. Practically, it would be difficult
-> > and inefficient to manipulate such huge events...
-> >
+On 8/17/21 3:28 PM, Jens Axboe wrote:
+> On 8/17/21 1:59 PM, Jens Axboe wrote:
+>> On 8/17/21 1:29 PM, Tony Battersby wrote:
+>>> On 8/17/21 2:24 PM, Jens Axboe wrote:
+>>>> On 8/17/21 12:15 PM, Jens Axboe wrote:
+>>>>> On 8/15/21 2:42 PM, Olivier Langlois wrote:
+>>>>>> On Wed, 2021-08-11 at 19:55 -0600, Jens Axboe wrote:
+>>>>>>> On 8/10/21 3:48 PM, Tony Battersby wrote:
+>>>>>>>> On 8/5/21 9:06 AM, Olivier Langlois wrote:
+>>>>>>>>> Hi all,
+>>>>>>>>>
+>>>>>>>>> I didn't forgot about this remaining issue and I have kept thinking
+>>>>>>>>> about it on and off.
+>>>>>>>>>
+>>>>>>>>> I did try the following on 5.12.19:
+>>>>>>>>>
+>>>>>>>>> diff --git a/fs/coredump.c b/fs/coredump.c
+>>>>>>>>> index 07afb5ddb1c4..614fe7a54c1a 100644
+>>>>>>>>> --- a/fs/coredump.c
+>>>>>>>>> +++ b/fs/coredump.c
+>>>>>>>>> @@ -41,6 +41,7 @@
+>>>>>>>>>  #include <linux/fs.h>
+>>>>>>>>>  #include <linux/path.h>
+>>>>>>>>>  #include <linux/timekeeping.h>
+>>>>>>>>> +#include <linux/io_uring.h>
+>>>>>>>>>  
+>>>>>>>>>  #include <linux/uaccess.h>
+>>>>>>>>>  #include <asm/mmu_context.h>
+>>>>>>>>> @@ -625,6 +626,8 @@ void do_coredump(const kernel_siginfo_t
+>>>>>>>>> *siginfo)
+>>>>>>>>>                 need_suid_safe = true;
+>>>>>>>>>         }
+>>>>>>>>>  
+>>>>>>>>> +       io_uring_files_cancel(current->files);
+>>>>>>>>> +
+>>>>>>>>>         retval = coredump_wait(siginfo->si_signo, &core_state);
+>>>>>>>>>         if (retval < 0)
+>>>>>>>>>                 goto fail_creds;
+>>>>>>>>> --
+>>>>>>>>> 2.32.0
+>>>>>>>>>
+>>>>>>>>> with my current understanding, io_uring_files_cancel is supposed to
+>>>>>>>>> cancel everything that might set the TIF_NOTIFY_SIGNAL.
+>>>>>>>>>
+>>>>>>>>> I must report that in my testing with generating a core dump
+>>>>>>>>> through a
+>>>>>>>>> pipe with the modif above, I still get truncated core dumps.
+>>>>>>>>>
+>>>>>>>>> systemd is having a weird error:
+>>>>>>>>> [ 2577.870742] systemd-coredump[4056]: Failed to get COMM: No such
+>>>>>>>>> process
+>>>>>>>>>
+>>>>>>>>> and nothing is captured
+>>>>>>>>>
+>>>>>>>>> so I have replaced it with a very simple shell:
+>>>>>>>>> $ cat /proc/sys/kernel/core_pattern 
+>>>>>>>>>> /home/lano1106/bin/pipe_core.sh %e %p
+>>>>>>>>> ~/bin $ cat pipe_core.sh 
+>>>>>>>>> #!/bin/sh
+>>>>>>>>>
+>>>>>>>>> cat > /home/lano1106/core/core.$1.$2
+>>>>>>>>>
+>>>>>>>>> BFD: warning: /home/lano1106/core/core.test.10886 is truncated:
+>>>>>>>>> expected core file size >= 24129536, found: 61440
+>>>>>>>>>
+>>>>>>>>> I conclude from my attempt that maybe io_uring_files_cancel is not
+>>>>>>>>> 100%
+>>>>>>>>> cleaning everything that it should clean.
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>> I just ran into this problem also - coredumps from an io_uring
+>>>>>>>> program
+>>>>>>>> to a pipe are truncated.  But I am using kernel 5.10.57, which does
+>>>>>>>> NOT
+>>>>>>>> have commit 12db8b690010 ("entry: Add support for TIF_NOTIFY_SIGNAL")
+>>>>>>>> or
+>>>>>>>> commit 06af8679449d ("coredump: Limit what can interrupt coredumps").
+>>>>>>>> Kernel 5.4 works though, so I bisected the problem to commit
+>>>>>>>> f38c7e3abfba ("io_uring: ensure async buffered read-retry is setup
+>>>>>>>> properly") in kernel 5.9.  Note that my io_uring program uses only
+>>>>>>>> async
+>>>>>>>> buffered reads, which may be why this particular commit makes a
+>>>>>>>> difference to my program.
+>>>>>>>>
+>>>>>>>> My io_uring program is a multi-purpose long-running program with many
+>>>>>>>> threads.  Most threads don't use io_uring but a few of them do. 
+>>>>>>>> Normally, my core dumps are piped to a program so that they can be
+>>>>>>>> compressed before being written to disk, but I can also test writing
+>>>>>>>> the
+>>>>>>>> core dumps directly to disk.  This is what I have found:
+>>>>>>>>
+>>>>>>>> *) Unpatched 5.10.57: if a thread that doesn't use io_uring triggers
+>>>>>>>> a
+>>>>>>>> coredump, the core file is written correctly, whether it is written
+>>>>>>>> to
+>>>>>>>> disk or piped to a program, even if another thread is using io_uring
+>>>>>>>> at
+>>>>>>>> the same time.
+>>>>>>>>
+>>>>>>>> *) Unpatched 5.10.57: if a thread that uses io_uring triggers a
+>>>>>>>> coredump, the core file is truncated, whether written directly to
+>>>>>>>> disk
+>>>>>>>> or piped to a program.
+>>>>>>>>
+>>>>>>>> *) 5.10.57+backport 06af8679449d: if a thread that uses io_uring
+>>>>>>>> triggers a coredump, and the core is written directly to disk, then
+>>>>>>>> it
+>>>>>>>> is written correctly.
+>>>>>>>>
+>>>>>>>> *) 5.10.57+backport 06af8679449d: if a thread that uses io_uring
+>>>>>>>> triggers a coredump, and the core is piped to a program, then it is
+>>>>>>>> truncated.
+>>>>>>>>
+>>>>>>>> *) 5.10.57+revert f38c7e3abfba: core dumps are written correctly,
+>>>>>>>> whether written directly to disk or piped to a program.
+>>>>>>> That is very interesting. Like Olivier mentioned, it's not that actual
+>>>>>>> commit, but rather the change of behavior implemented by it. Before
+>>>>>>> that
+>>>>>>> commit, we'd hit the async workers more often, whereas after we do the
+>>>>>>> correct retry method where it's driven by the wakeup when the page is
+>>>>>>> unlocked. This is purely speculation, but perhaps the fact that the
+>>>>>>> process changes state potentially mid dump is why the dump ends up
+>>>>>>> being
+>>>>>>> truncated?
+>>>>>>>
+>>>>>>> I'd love to dive into this and try and figure it out. Absent a test
+>>>>>>> case, at least the above gives me an idea of what to try out. I'll see
+>>>>>>> if it makes it easier for me to create a case that does result in a
+>>>>>>> truncated core dump.
+>>>>>>>
+>>>>>> Jens,
+>>>>>>
+>>>>>> When I have first encountered the issue, the very first thing that I
+>>>>>> did try was to create a simple test program that would synthetize the
+>>>>>> problem.
+>>>>>>
+>>>>>> After few time consumming failed attempts, I just gave up the idea and
+>>>>>> simply settle to my prod program that showcase systematically the
+>>>>>> problem every time that I kill the process with a SEGV signal.
+>>>>>>
+>>>>>> In a nutshell, all the program does is to issue read operations with
+>>>>>> io_uring on a TCP socket on which there is a constant data stream.
+>>>>>>
+>>>>>> Now that I have a better understanding of what is going on, I think
+>>>>>> that one way that could reproduce the problem consistently could be
+>>>>>> along those lines:
+>>>>>>
+>>>>>> 1. Create a pipe
+>>>>>> 2. fork a child
+>>>>>> 3. Initiate a read operation on the pipe with io_uring from the child
+>>>>>> 4. Let the parent kill its child with a core dump generating signal.
+>>>>>> 5. Write something in the pipe from the parent so that the io_uring
+>>>>>> read operation completes while the core dump is generated.
+>>>>>>
+>>>>>> I guess that I'll end up doing that if I cannot fix the issue with my
+>>>>>> current setup but here is what I have attempted so far:
+>>>>>>
+>>>>>> 1. Call io_uring_files_cancel from do_coredump
+>>>>>> 2. Same as #1 but also make sure that TIF_NOTIFY_SIGNAL is cleared on
+>>>>>> returning from io_uring_files_cancel
+>>>>>>
+>>>>>> Those attempts didn't work but lurking in the io_uring dev mailing list
+>>>>>> is starting to pay off. I thought that I did reach the bottom of the
+>>>>>> rabbit hole in my journey of understanding io_uring but the recent
+>>>>>> patch set sent by Hao Xu
+>>>>>>
+>>>>>> https://lore.kernel.org/io-uring/90fce498-968e-6812-7b6a-fdf8520ea8d9@kernel.dk/T/#t
+>>>>>>
+>>>>>> made me realize that I still haven't assimilated all the small io_uring
+>>>>>> nuances...
+>>>>>>
+>>>>>> Here is my feedback. From my casual io_uring code reader point of view,
+>>>>>> it is not 100% obvious what the difference is between
+>>>>>> io_uring_files_cancel and io_uring_task_cancel
+>>>>>>
+>>>>>> It seems like io_uring_files_cancel is cancelling polls only if they
+>>>>>> have the REQ_F_INFLIGHT flag set.
+>>>>>>
+>>>>>> I have no idea what an inflight request means and why someone would
+>>>>>> want to call io_uring_files_cancel over io_uring_task_cancel.
+>>>>>>
+>>>>>> I guess that if I was to meditate on the question for few hours, I
+>>>>>> would at some point get some illumination strike me but I believe that
+>>>>>> it could be a good idea to document in the code those concepts for
+>>>>>> helping casual readers...
+>>>>>>
+>>>>>> Bottomline, I now understand that io_uring_files_cancel does not cancel
+>>>>>> all the requests. Therefore, without fully understanding what I am
+>>>>>> doing, I am going to replace my call to io_uring_files_cancel from
+>>>>>> do_coredump with io_uring_task_cancel and see if this finally fix the
+>>>>>> issue for good.
+>>>>>>
+>>>>>> What I am trying to do is to cancel pending io_uring requests to make
+>>>>>> sure that TIF_NOTIFY_SIGNAL isn't set while core dump is generated.
+>>>>>>
+>>>>>> Maybe another solution would simply be to modify __dump_emit to make it
+>>>>>> resilient to TIF_NOTIFY_SIGNAL as Eric W. Biederman originally
+>>>>>> suggested.
+>>>>>>
+>>>>>> or maybe do both...
+>>>>>>
+>>>>>> Not sure which approach is best. If someone has an opinion, I would be
+>>>>>> curious to hear it.
+>>>>> It does indeed sound like it's TIF_NOTIFY_SIGNAL that will trigger some
+>>>>> signal_pending() and cause an interruption of the core dump. Just out of
+>>>>> curiosity, what is your /proc/sys/kernel/core_pattern set to? If it's
+>>>>> set to some piped process, can you try and set it to 'core' and see if
+>>>>> that eliminates the truncation of the core dumps for your case?
+>>>> And assuming that works, then I suspect this one would fix your issue
+>>>> even with a piped core dump:
+>>>>
+>>>> diff --git a/fs/coredump.c b/fs/coredump.c
+>>>> index 07afb5ddb1c4..852737a9ccbf 100644
+>>>> --- a/fs/coredump.c
+>>>> +++ b/fs/coredump.c
+>>>> @@ -41,6 +41,7 @@
+>>>>  #include <linux/fs.h>
+>>>>  #include <linux/path.h>
+>>>>  #include <linux/timekeeping.h>
+>>>> +#include <linux/io_uring.h>
+>>>>  
+>>>>  #include <linux/uaccess.h>
+>>>>  #include <asm/mmu_context.h>
+>>>> @@ -603,6 +604,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+>>>>  	};
+>>>>  
+>>>>  	audit_core_dumps(siginfo->si_signo);
+>>>> +	io_uring_task_cancel();
+>>>>  
+>>>>  	binfmt = mm->binfmt;
+>>>>  	if (!binfmt || !binfmt->core_dump)
+>>>>
+>>> FYI, I tested kernel 5.10.59 + backport 06af8679449d + the patch above
+>>> with my io_uring program.  The coredump locked up even when writing the
+>>> core file directly to disk; the zombie process could not be killed with
+>>> "kill -9".  Unfortunately I can't test with newer kernels without
+>>> spending some time on it, and I am too busy with other stuff right now.
+>>
+>> That sounds like 5.10-stable is missing some of the cancelation
+>> backports, and your setup makes the cancelation stall because of that.
+>> Need to go over the 11/12/13 fixes and ensure that we've got everything
+>> we need for those stable versions, particularly 5.10.
+>>
+>>> My io_uring program does async buffered reads
+>>> (io_uring_prep_read()/io_uring_prep_readv()) from a raw disk partition
+>>> (no filesystem).  One thread submits I/Os while another thread calls
+>>> io_uring_wait_cqe() and processes the completions.  To trigger the
+>>> coredump, I added an intentional abort() in the thread that submits I/Os
+>>> after running for a second.
+>>
+>> OK, so that one is also using task_work for the retry based async
+>> buffered reads, so it makes sense.
+>>
+>> Maybe a temporary work-around is to use 06af8679449d and eliminate the
+>> pipe based coredump?
 > 
-> Just keep in mind that the current scheme pre-allocates the single event slot
-> on fanotify_mark() time and (I think) we agreed to pre-allocate
-> sizeof(fsnotify_error_event) + MAX_HDNALE_SZ.
-> If filesystems would want to store some variable length fs specific info,
-> a future implementation will have to take that into account.
-
-<nod> I /think/ for the fs and AG metadata we could preallocate these,
-so long as fsnotify doesn't free them out from under us.  For inodes...
-there are many more of those, so they'd have to be allocated
-dynamically.
-
-> > > 2) If a program written for today's notification events sees a
-> > > fanotify_event_info_header from future-XFS with a header length that is
-> > > larger than FANOTIFY_INFO_ERROR_LEN, will it be able to react
-> > > appropriately?  Which is to say, ignore it on the grounds that the
-> > > length is unexpectedly large?
-> >
-> > That is the expected behavior :). But I guess separate info type for
-> > fs-specific blob might be more foolproof in this sense - when parsing
-> > events, you are expected to just skip info_types you don't understand
-> > (based on 'len' and 'type' in the common header) and generally different
-> > events have different sets of infos attached to them so you mostly have to
-> > implement this logic to be able to process events.
-> >
-> > > It /looks/ like this is the case; really I'm just fishing around here
-> > > to make sure nothing in the design of /this/ patchset would make it Very
-> > > Difficult(tm) to add more information later.
-> > >
-> > > 3) Once we let filesystem implementations create their own extended
-> > > error notifications, should we have a "u32 magic" to aid in decoding?
-> > > Or even add it to fanotify_event_info_error now?
-> >
-> > If we go via the 'separate info type' route, then the magic can go into
-> > that structure and there's no great use for 'magic' in
-> > fanotify_event_info_error.
+> Another approach - don't allow TWA_SIGNAL task_work to get queued if
+> PF_SIGNALED has been set on the task. This is similar to how we reject
+> task_work_add() on process exit, and the callers must be able to handle
+> that already.
 > 
-> My 0.02$:
-> With current patch set, filesystem reports error using:
-> fsnotify_sb_error(sb, inode, error)
+> Can you test this one on top of your 5.10-stable?
 > 
-> The optional @inode argument is encoded to a filesystem opaque
-> blob using  exportfs_encode_inode_fh(), recorded in the event
-> as a blob and reported to userspace as a blob.
 > 
-> If filesystem would like to report a different type of opaque blob
-> (e.g. xfs_perag_info), the interface should be extended to:
-> fsnotify_sb_error(sb, inode, error, info, info_len)
-> and the 'separate info type' route seems like the best and most natural
-> way to deal with the case of information that is only emitted from
-> a specific filesystem with a specific feature enabled (online fsck).
-
-<nod> This seems reasonable to me.
-
-> IOW, there is no need for fanotify_event_info_xfs_perag_error
-> in fanotify UAPI if you ask me.
+> diff --git a/fs/coredump.c b/fs/coredump.c
+> index 07afb5ddb1c4..ca7c1ee44ada 100644
+> --- a/fs/coredump.c
+> +++ b/fs/coredump.c
+> @@ -602,6 +602,14 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+>  		.mm_flags = mm->flags,
+>  	};
+>  
+> +	/*
+> +	 * task_work_add() will refuse to add work after PF_SIGNALED has
+> +	 * been set, ensure that we flush any pending TIF_NOTIFY_SIGNAL work
+> +	 * if any was queued before that.
+> +	 */
+> +	if (test_thread_flag(TIF_NOTIFY_SIGNAL))
+> +		tracehook_notify_signal();
+> +
+>  	audit_core_dumps(siginfo->si_signo);
+>  
+>  	binfmt = mm->binfmt;
+> diff --git a/kernel/task_work.c b/kernel/task_work.c
+> index 1698fbe6f0e1..1ab28904adc4 100644
+> --- a/kernel/task_work.c
+> +++ b/kernel/task_work.c
+> @@ -41,6 +41,12 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
+>  		head = READ_ONCE(task->task_works);
+>  		if (unlikely(head == &work_exited))
+>  			return -ESRCH;
+> +		/*
+> +		 * TIF_NOTIFY_SIGNAL notifications will interfere with
+> +		 * a core dump in progress, reject them.
+> +		 */
+> +		if ((task->flags & PF_SIGNALED) && notify == TWA_SIGNAL)
+> +			return -ESRCH;
+>  		work->next = head;
+>  	} while (cmpxchg(&task->task_works, head, work) != head);
+>  
 > 
-> Regarding 'magic' in fanotify_event_info_error, I also don't see the
-> need for that, because the event already has fsid which can be
-> used to identify the filesystem in question.
-> 
-> Keep in mind that the value of handle_type inside struct file_handle
-> inside struct fanotify_event_info_fid is not a universal classifier.
-> Specifically, the type 0x81 means "XFS_FILEID_INO64_GEN"
-> only in the context of XFS and it can mean something else in the
-> context of another type of filesystem.
 
-Can you pass the handle into the kernel to open a fd to file mentioned
-in the report?  I don't think userspace is supposed to know what's
-inside a file handle, and it would be helpful if it didn't matter here
-either. :)
+Olivier, I sent a 5.10 version for Nathan, any chance you can test this
+one for the current kernels? Basically this one should work for 5.11+,
+and the later 5.10 version is just for 5.10. I'm going to send it out
+separately for review.
 
-> If we add a new info record fanotify_event_info_fs_private
-> it could even be an alias to fanotify_event_info_fid with the only
-> difference that the handle[0] member is not expected to be
-> struct file_handle, but some other fs private struct.
+I do think this is the right solution, barring a tweak maybe on testing
+notify == TWA_SIGNAL first before digging into the task struct. But the
+principle is sound, and it'll work for other users of TWA_SIGNAL as
+well. None right now as far as I can tell, but the live patching is
+switching to TIF_NOTIFY_SIGNAL as well which will also cause issues with
+coredumps potentially.
 
-I ... think I prefer it being a separate info blob.
+-- 
+Jens Axboe
 
---D
-
-> 
-> Thanks,
-> Amir.
