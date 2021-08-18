@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 856B73F05CB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 16:09:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 568CB3F05CF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 16:10:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238320AbhHROKG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Aug 2021 10:10:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45746 "EHLO
+        id S238199AbhHROLL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Aug 2021 10:11:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237786AbhHROKE (ORCPT
+        with ESMTP id S235675AbhHROLL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Aug 2021 10:10:04 -0400
+        Wed, 18 Aug 2021 10:11:11 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16A94C061764;
-        Wed, 18 Aug 2021 07:09:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DDD0C061764;
+        Wed, 18 Aug 2021 07:10:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=cibSNcvbBNy3d99J0xcybasLYRaPm2YAac4xI0ywMu8=; b=dlWPccbA45UR38UUdOxp+hXJ6w
-        k6xHpfeWjanPnLTGesnuRrC3bHSxpNX/PaH/BecYbfmTwtflh1+SKGdZcgHlwoOUWnfwS+QJEWLAJ
-        2UgSTJSSgmxNuzobdkYK0nSL66Q8eB8PvsYAHQfv0aMC4zwVMQ1/CuOVNrOIfkeYz2TfGj5wGB3jV
-        T+xRI+oCQZB+H+vTJw0TYgFzT4yy6pSb4ScX+H8xP5achbWhvZia0Zom9WSkg0NOnclkRFfaaGAXT
-        MSOQPRxTqS4K6//RXhEwyAaeum4IKnrAYqqhdz5p0InvM23dKMsNFoXwhDrvd7WdAOelONE+lX613
-        KEDaOecA==;
+        bh=xF37HHtJ9cCyf/tD4T3D2NA1Hm2ffytUKSp7nde/n7w=; b=h+NlzP2kBp6K9ActIGzJh8bm2k
+        kYmcKNHroU3KyqP11rWLE/BCZqKWE+OcAmdszJ0q15QKN2pKxomWbQBihuxshlMKYZc2TpzY5V9B2
+        qQU1e5HUaE6/y5kRj85z+QBLO/TOPFKLrazdp193mD3tFKh3NtItHTuaWQDHlIY9lOpJSKddf8SfD
+        LbM4z2nIJ5weULEH+wyHBEnFwpy5CnASoEvLzYsA8J0xZFThSUXfaAH60IQ+bUe0/6XFV/eZFeNud
+        tqqnpthQDt74bWvI83WdKTiw+ohwqwJqqEP0b8cutE71m+58/Mn3Umgwa04lALjYpTl5VF+sOe8W4
+        glrPutdA==;
 Received: from [2001:4bb8:188:1b1:5a9e:9f39:5a86:b20c] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mGMEZ-003uKw-LT; Wed, 18 Aug 2021 14:08:35 +0000
+        id 1mGMG0-003uPq-K8; Wed, 18 Aug 2021 14:09:45 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Gabriel Krisman Bertazi <krisman@collabora.com>
 Cc:     Shreeya Patel <shreeya.patel@collabora.com>,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH 01/11] ext4: simplify ext4_sb_read_encoding
-Date:   Wed, 18 Aug 2021 16:06:41 +0200
-Message-Id: <20210818140651.17181-2-hch@lst.de>
+Subject: [PATCH 02/11] f2fs: simplify f2fs_sb_read_encoding
+Date:   Wed, 18 Aug 2021 16:06:42 +0200
+Message-Id: <20210818140651.17181-3-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210818140651.17181-1-hch@lst.de>
 References: <20210818140651.17181-1-hch@lst.de>
@@ -52,56 +52,59 @@ trivially.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/ext4/super.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ fs/f2fs/super.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index dfa09a277b56..a68be582bba5 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2021,24 +2021,17 @@ static const struct ext4_sb_encodings {
- 	{EXT4_ENC_UTF8_12_1, "utf8", "12.1.0"},
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 8fecd3050ccd..af63ae009582 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -260,24 +260,17 @@ static const struct f2fs_sb_encodings {
+ 	{F2FS_ENC_UTF8_12_1, "utf8", "12.1.0"},
  };
  
--static int ext4_sb_read_encoding(const struct ext4_super_block *es,
--				 const struct ext4_sb_encodings **encoding,
+-static int f2fs_sb_read_encoding(const struct f2fs_super_block *sb,
+-				 const struct f2fs_sb_encodings **encoding,
 -				 __u16 *flags)
-+static const struct ext4_sb_encodings *
-+ext4_sb_read_encoding(const struct ext4_super_block *es)
++static const struct f2fs_sb_encodings *
++f2fs_sb_read_encoding(const struct f2fs_super_block *sb)
  {
- 	__u16 magic = le16_to_cpu(es->s_encoding);
+ 	__u16 magic = le16_to_cpu(sb->s_encoding);
  	int i;
  
- 	for (i = 0; i < ARRAY_SIZE(ext4_sb_encoding_map); i++)
- 		if (magic == ext4_sb_encoding_map[i].magic)
+ 	for (i = 0; i < ARRAY_SIZE(f2fs_sb_encoding_map); i++)
+ 		if (magic == f2fs_sb_encoding_map[i].magic)
 -			break;
 -
--	if (i >= ARRAY_SIZE(ext4_sb_encoding_map))
+-	if (i >= ARRAY_SIZE(f2fs_sb_encoding_map))
 -		return -EINVAL;
-+			return &ext4_sb_encoding_map[i];
++			return &f2fs_sb_encoding_map[i];
  
--	*encoding = &ext4_sb_encoding_map[i];
--	*flags = le16_to_cpu(es->s_encoding_flags);
+-	*encoding = &f2fs_sb_encoding_map[i];
+-	*flags = le16_to_cpu(sb->s_encoding_flags);
 -
 -	return 0;
 +	return NULL;
  }
- #endif
  
-@@ -4303,10 +4296,10 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 	if (ext4_has_feature_casefold(sb) && !sb->s_encoding) {
- 		const struct ext4_sb_encodings *encoding_info;
+ struct kmem_cache *f2fs_cf_name_slab;
+@@ -3730,13 +3723,14 @@ static int f2fs_setup_casefold(struct f2fs_sb_info *sbi)
  		struct unicode_map *encoding;
--		__u16 encoding_flags;
-+		__u16 encoding_flags = le16_to_cpu(es->s_encoding_flags);
+ 		__u16 encoding_flags;
  
--		if (ext4_sb_read_encoding(es, &encoding_info,
+-		if (f2fs_sb_read_encoding(sbi->raw_super, &encoding_info,
 -					  &encoding_flags)) {
-+		encoding_info = ext4_sb_read_encoding(es);
++		encoding_info = f2fs_sb_read_encoding(sbi->raw_super);
 +		if (!encoding_info) {
- 			ext4_msg(sb, KERN_ERR,
+ 			f2fs_err(sbi,
  				 "Encoding requested by superblock is unknown");
- 			goto failed_mount;
+ 			return -EINVAL;
+ 		}
+ 
++		encoding_flags = le16_to_cpu(sbi->raw_super->s_encoding_flags);
+ 		encoding = utf8_load(encoding_info->version);
+ 		if (IS_ERR(encoding)) {
+ 			f2fs_err(sbi,
 -- 
 2.30.2
 
