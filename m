@@ -2,83 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 575A23F0D11
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 23:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F21383F0DA6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 23:46:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233719AbhHRVCC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Aug 2021 17:02:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57304 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233338AbhHRVCB (ORCPT
+        id S234207AbhHRVrF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Aug 2021 17:47:05 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:51944 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234083AbhHRVrF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Aug 2021 17:02:01 -0400
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBA23C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 14:01:26 -0700 (PDT)
-Received: by mail-pg1-x534.google.com with SMTP id 17so3612884pgp.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 14:01:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tsxhBVRZlO9and7DhCBUruAlzXa20bXVaKImjY48c7o=;
-        b=zGGJKW23TpE7PPFJ4/n391OFSE+ePfB6XhKYr42xqQdacaGLoy/MLGcJOB9KJclibB
-         29yQ1DLoZOq7YUGzImZJ1hjNXdcN4bUgBPPOpNCAUpQuExc321UUpjfAEZalmz/yrEmp
-         QMBCgYswdRECqSZZszyKnB1/zOj6k9++ko8k9sPqN4YI0mQ+MpWE8w90ykG4GHsvonXj
-         +NKnoDJPWaGnOUjnABohDzuGK/EN0y6cm+wAyrcNscAwRna0z/xgPtNqS+mR4HhFrKCd
-         yR/73F6u/b1hWv+BHa6yM7WRf5HOfuotX6pcWtI2uqTJ6KkhqyfixiY4MEVxCLYod6oS
-         Jj2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tsxhBVRZlO9and7DhCBUruAlzXa20bXVaKImjY48c7o=;
-        b=HpeHQDk15SRfpezomiA3bFHXbBLqyrIzpsEz8XqPoeXdsnbQ55aKbnaP1ZqT3PsvhA
-         jNQm/pwhP1eK6DM4IF2tYbAoittVG2sOK+cCX9KNhZ2eNxTSjEkw2QVL4AqXMHTUD1oH
-         btB2VPm5K5iBLf3/zTZ0XsIITH7arEq0ansvuuWHaw6F0I+tSZjKirjtUZO/ek09p8ff
-         /mTu7xnQv5IyHABp4xmVjG7Rprek9EbBg8NSUWWO7hv6KM431LWBgl0YqyKGAo/Xf3zB
-         uNSIIl9w95xh5rA9Tp5HX2mlkAUoKz8yhJQnM85VoariNiPfT1MkuyfVGiu6dT3Yg+qq
-         5ieg==
-X-Gm-Message-State: AOAM533tTYKQal7DjC8UF0RVr74H9FZ+nopLvTazi2Onx3aU9Rg6YBmo
-        jww4zfOXyHJO6bGPC9WQSrQrmEer5rjgM1XSydeCxA==
-X-Google-Smtp-Source: ABdhPJyC7TVzou7MS10S9DHd4c6rf2rdDWgmDabraG+KHQy+8QVQinJv59B8c4LqBnwh3oILNYKei6BontbTyhivPwk=
-X-Received: by 2002:a63:dd0e:: with SMTP id t14mr9090412pgg.279.1629320486279;
- Wed, 18 Aug 2021 14:01:26 -0700 (PDT)
+        Wed, 18 Aug 2021 17:47:05 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id BEC421FD35;
+        Wed, 18 Aug 2021 21:46:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1629323188; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EgHjDINeg2XxswsLMKYY8ZYuGYfWFxsr/oizjLTGkDI=;
+        b=m+0f9bZAyBHdJsXm1OkOfyvu516lqC/mc9IjlxxzKON9hVJFV/XJNw3erhe4jsSQTai0jF
+        Yzl4FYW5INAZ8AjDOs56/rv+GI+g8RlfugzB9XQvWIoNzOFkfoTn43BXLnVQbCXdKRQ35n
+        AMq6MDvlK9nO/2z06ZJvzXrvmgr0E9E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1629323188;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EgHjDINeg2XxswsLMKYY8ZYuGYfWFxsr/oizjLTGkDI=;
+        b=LrX1ws6muGBnWTia7XCdv35pvSAvSnCNEnEn0qFFMYpgvOoW/F1f2SFXi3tgQGDlzr5oUv
+        GDPZCQVkvJYWFQCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 91E3213DD5;
+        Wed, 18 Aug 2021 21:46:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id suahE7F/HWFwXwAAMHmgww
+        (envelope-from <neilb@suse.de>); Wed, 18 Aug 2021 21:46:25 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-References: <20210816060359.1442450-1-ruansy.fnst@fujitsu.com> <20210816060359.1442450-2-ruansy.fnst@fujitsu.com>
-In-Reply-To: <20210816060359.1442450-2-ruansy.fnst@fujitsu.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 18 Aug 2021 14:01:15 -0700
-Message-ID: <CAPcyv4jUDGDK5nXiVhEgw_Pwkjf8D=O4Nbw0Gd1YdWUJEoifpQ@mail.gmail.com>
-Subject: Re: [PATCH v7 1/8] fsdax: Output address in dax_iomap_pfn() and
- rename it
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        david <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ritesh Harjani <riteshh@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Wang Yugui" <wangyugui@e16-tech.com>
+Cc:     "Christoph Hellwig" <hch@infradead.org>,
+        "Josef Bacik" <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        "Chuck Lever" <chuck.lever@oracle.com>, "Chris Mason" <clm@fb.com>,
+        "David Sterba" <dsterba@suse.com>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH] VFS/BTRFS/NFSD: provide more unique inode number for btrfs export
+In-reply-to: <20210818225454.9558.409509F4@e16-tech.com>
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>,
+ <162881913686.1695.12479588032010502384@noble.neil.brown.name>,
+ <20210818225454.9558.409509F4@e16-tech.com>
+Date:   Thu, 19 Aug 2021 07:46:22 +1000
+Message-id: <162932318266.9892.13600254282844823374@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 15, 2021 at 11:04 PM Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
->
-> Add address output in dax_iomap_pfn() in order to perform a memcpy() in
-> CoW case.  Since this function both output address and pfn, rename it to
-> dax_iomap_direct_access().
->
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
+On Thu, 19 Aug 2021, Wang Yugui wrote:
+> Hi,
+> 
+> We use  'swab64' to combinate 'subvol id' and 'inode' into 64bit in this
+> patch.
+> 
+> case1:
+> 'subvol id': 16bit => 64K, a little small because the subvol id is
+> always increase?
+> 'inode':	48bit * 4K per node, this is big enough.
+> 
+> case2:
+> 'subvol id': 24bit => 16M,  this is big enough.
+> 'inode':	40bit * 4K per node => 4 PB.  this is a little small?
 
-Looks good to me:
+I don't know what point you are trying to make with the above.
 
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> 
+> Is there a way to 'bit-swap' the subvol id, rather the current byte-swap?
+
+Sure:
+   for (i=0; i<64; i++) {
+        new = (new << 1) | (old & 1)
+        old >>= 1;
+   }
+
+but would it gain anything significant?
+
+Remember what the goal is.  Most apps don't care at all about duplicate
+inode numbers - only a few do, and they only care about a few inodes.
+The only bug I actually have a report of is caused by a directory having
+the same inode as an ancestor.  i.e.  in lots of cases, duplicate inode
+numbers won't be noticed.
+
+The behaviour of btrfs over NFS RELIABLY causes exactly this behaviour
+of a directory having the same inode number as an ancestor.  The root of
+a subtree will *always* do this.  If we JUST changed the inode numbers
+of the roots of subtrees, then most observed problems would go away.  It
+would change from "trivial to reproduce" to "rarely happens".  The patch
+I actually propose makes it much more unlikely than that.  Even if
+duplicate inode numbers do happen, the chance of them being noticed is
+infinitesimal.  Given that, there is no point in minor tweaks unless
+they can make duplicate inode numbers IMPOSSIBLE.
+
+> 
+> If not, maybe it is a better balance if we combinate 22bit subvol id and
+> 42 bit inode?
+
+This would be better except when it is worse.  We cannot know which will
+happen more often.
+
+As long as BTRFS allows object-ids and root-ids combined to use more
+than 64 bits there can be no perfect solution.  There are many possible
+solutions that will be close to perfect in practice.  swab64() is the
+simplest that I could think of.  Picking any arbitrary cut-off (22/42,
+24/40, ...) is unlikely to be better, and could is some circumstances be
+worse.
+
+My preference would be for btrfs to start re-using old object-ids and
+root-ids, and to enforce a limit (set at mkfs or tunefs) so that the
+total number of bits does not exceed 64.  Unfortunately the maintainers
+seem reluctant to even consider this.
+
+NeilBrown
