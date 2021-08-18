@@ -2,751 +2,564 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D0C113F053D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 15:49:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6762A3F058E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 16:02:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238070AbhHRNuc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Aug 2021 09:50:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237104AbhHRNuc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Aug 2021 09:50:32 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2796A6109E;
-        Wed, 18 Aug 2021 13:49:54 +0000 (UTC)
-Date:   Wed, 18 Aug 2021 15:49:52 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: Re: [PATCH v2 1/2] vfs: add flags argument to ->get_acl() callback
-Message-ID: <20210818134952.4km5uvuaakhr6ezt@wittgenstein>
-References: <20210818133400.830078-1-mszeredi@redhat.com>
- <20210818133400.830078-2-mszeredi@redhat.com>
+        id S238113AbhHROCg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Aug 2021 10:02:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43834 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235675AbhHROCf (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Aug 2021 10:02:35 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14403C061764;
+        Wed, 18 Aug 2021 07:02:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=M49e5fRdzxP+WAz6agalOAkH+gEGzdtK28u46qYFewM=; b=pjr0KkObkq2sPqeUf9uGA3pUrI
+        BeI4o1aTpzVMvCzL+0nCOZ8t14v4865BJw5kqPdNZQgTwqIY/DWfkHsFue+nMHn0AjuWFtgl1HPxU
+        m2zqmUoYrmdkim5QL8IKEg1/lHvvZT/u+txwFV+l0NDDz/3gfR7T/0XdcBxG1InAdmcy89E8UT5vv
+        B+x3IUwayPwojdNcG6HopHyCbWtLx6O72Sbg6qISmH5M9hUuWOsf2MGduuoggxDXgw9WwHjqw2ReW
+        69GNMH1y69IhRXnH9ZfQdHTOeeMzgT6ndu4a3/nLqED1Y4wiXr5g4eLg8DdnQFuQo40b5r0HAMVOI
+        fOB45tsQ==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mGM7m-003ttm-UM; Wed, 18 Aug 2021 14:01:12 +0000
+Date:   Wed, 18 Aug 2021 15:00:58 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Shreeya Patel <shreeya.patel@collabora.com>
+Cc:     krisman@collabora.com, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jaegeuk@kernel.org, chao@kernel.org, ebiggers@google.com,
+        drosen@google.com, ebiggers@kernel.org, yuchao0@huawei.com,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, kernel@collabora.com,
+        andre.almeida@collabora.com
+Subject: Re: [PATCHi v2] fs: unicode: Add utf8-data module
+Message-ID: <YR0SmudQbJu8GXt+@infradead.org>
+References: <20210817213411.27944-1-shreeya.patel@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210818133400.830078-2-mszeredi@redhat.com>
+In-Reply-To: <20210817213411.27944-1-shreeya.patel@collabora.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 18, 2021 at 03:33:59PM +0200, Miklos Szeredi wrote:
-> Add a flags argument to the ->get_acl() callback, to allow
-> get_cached_acl_rcu() to call the ->get_acl() method with LOOKUP_RCU.
+This still seems overly complex.  I'll post a series that just uses
+request_symbol instead in a bit, everyone let me know what you think.
+
+On Wed, Aug 18, 2021 at 03:04:11AM +0530, Shreeya Patel wrote:
+> utf8data.h_shipped has a large database table which is an auto-generated
+> decodification trie for the unicode normalization functions.
+> We can avoid carrying this large table in the kernel unless it is required
+> by the filesystem during boot process.
 > 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> Hence, add utf8-data module which will be loaded only when UTF-8 encoding
+> support is needed by the filesystem, provided it is selected as M.
+> utf8-data will provide access to the data tables present in utf8data.h.
+> 
+> Also, add support for enabling utf8-data as a built-in option so that
+> filesystems that require UTF-8 encoding during boot process can access
+> the data tables without any failure.
+> 
+> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
 > ---
->  Documentation/filesystems/locking.rst | 2 +-
->  Documentation/filesystems/vfs.rst     | 2 +-
->  fs/9p/acl.c                           | 5 ++++-
->  fs/9p/acl.h                           | 2 +-
->  fs/bad_inode.c                        | 2 +-
->  fs/btrfs/acl.c                        | 5 ++++-
->  fs/btrfs/ctree.h                      | 2 +-
->  fs/ceph/acl.c                         | 5 ++++-
->  fs/ceph/super.h                       | 2 +-
->  fs/erofs/xattr.c                      | 5 ++++-
->  fs/erofs/xattr.h                      | 2 +-
->  fs/ext2/acl.c                         | 5 ++++-
->  fs/ext2/acl.h                         | 2 +-
->  fs/ext4/acl.c                         | 5 ++++-
->  fs/ext4/acl.h                         | 2 +-
->  fs/f2fs/acl.c                         | 5 ++++-
->  fs/f2fs/acl.h                         | 2 +-
->  fs/fuse/acl.c                         | 5 ++++-
->  fs/fuse/fuse_i.h                      | 2 +-
->  fs/gfs2/acl.c                         | 5 ++++-
->  fs/gfs2/acl.h                         | 2 +-
->  fs/jffs2/acl.c                        | 5 ++++-
->  fs/jffs2/acl.h                        | 2 +-
->  fs/jfs/acl.c                          | 5 ++++-
->  fs/jfs/jfs_acl.h                      | 2 +-
->  fs/nfs/nfs3_fs.h                      | 2 +-
->  fs/nfs/nfs3acl.c                      | 5 ++++-
->  fs/ocfs2/acl.c                        | 5 ++++-
->  fs/ocfs2/acl.h                        | 2 +-
->  fs/orangefs/acl.c                     | 5 ++++-
->  fs/orangefs/orangefs-kernel.h         | 2 +-
->  fs/overlayfs/inode.c                  | 5 ++++-
->  fs/overlayfs/overlayfs.h              | 2 +-
->  fs/posix_acl.c                        | 2 +-
->  fs/reiserfs/acl.h                     | 2 +-
->  fs/reiserfs/xattr_acl.c               | 5 ++++-
->  fs/xfs/xfs_acl.c                      | 5 ++++-
->  fs/xfs/xfs_acl.h                      | 4 ++--
->  include/linux/fs.h                    | 2 +-
->  39 files changed, 91 insertions(+), 40 deletions(-)
+> Changes in v2
+>  - Since there are no function pointer fields anymore, use utf8_data
+> as the name instead of utf8_ops
+>  - Remove unnecessary variable utf8data_loaded
 > 
-> diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-> index 2183fd8cc350..a6a8f2b34331 100644
-> --- a/Documentation/filesystems/locking.rst
-> +++ b/Documentation/filesystems/locking.rst
-> @@ -70,7 +70,7 @@ prototypes::
->  	const char *(*get_link) (struct dentry *, struct inode *, struct delayed_call *);
->  	void (*truncate) (struct inode *);
->  	int (*permission) (struct inode *, int, unsigned int);
-> -	int (*get_acl)(struct inode *, int);
-> +	struct posix_acl * (*get_acl)(struct inode *, int, int);
->  	int (*setattr) (struct dentry *, struct iattr *);
->  	int (*getattr) (const struct path *, struct kstat *, u32, unsigned int);
->  	ssize_t (*listxattr) (struct dentry *, char *, size_t);
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> index 14c31eced416..dc9339acb66f 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
-> @@ -432,7 +432,7 @@ As of kernel 2.6.22, the following members are defined:
->  		const char *(*get_link) (struct dentry *, struct inode *,
->  					 struct delayed_call *);
->  		int (*permission) (struct user_namespace *, struct inode *, int);
-> -		int (*get_acl)(struct inode *, int);
-> +		struct posix_acl * (*get_acl)(struct inode *, int, int);
-
-Fwiw, I think this series is sane. The only thing I'd like to see change
-is that the flag argument should really be "unsigned int" not "int".
-Other than that:
-
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-
->  		int (*setattr) (struct user_namespace *, struct dentry *, struct iattr *);
->  		int (*getattr) (struct user_namespace *, const struct path *, struct kstat *, u32, unsigned int);
->  		ssize_t (*listxattr) (struct dentry *, char *, size_t);
-> diff --git a/fs/9p/acl.c b/fs/9p/acl.c
-> index bb1b286c49ae..3ef7db80fe29 100644
-> --- a/fs/9p/acl.c
-> +++ b/fs/9p/acl.c
-> @@ -97,10 +97,13 @@ static struct posix_acl *v9fs_get_cached_acl(struct inode *inode, int type)
->  	return acl;
+>  fs/unicode/Kconfig         | 23 +++++++++++--
+>  fs/unicode/Makefile        |  3 +-
+>  fs/unicode/utf8-core.c     | 50 ++++++++++++++++++++++++++--
+>  fs/unicode/utf8-data.c     | 42 +++++++++++++++++++++++
+>  fs/unicode/utf8-norm.c     | 68 ++++++++++++++++++++++----------------
+>  fs/unicode/utf8-selftest.c | 25 ++++++--------
+>  fs/unicode/utf8n.h         | 30 +++++++++++++++++
+>  7 files changed, 193 insertions(+), 48 deletions(-)
+>  create mode 100644 fs/unicode/utf8-data.c
+> 
+> diff --git a/fs/unicode/Kconfig b/fs/unicode/Kconfig
+> index 2c27b9a5cd6c..80341fae5e63 100644
+> --- a/fs/unicode/Kconfig
+> +++ b/fs/unicode/Kconfig
+> @@ -2,13 +2,30 @@
+>  #
+>  # UTF-8 normalization
+>  #
+> +# This config option will be automatically selected when UNICODE_UTF8_DATA
+> +# is enabled. UNICODE config will provide all the UTF-8 core and normalization
+> +# functions which will use UTF-8 data tables.
+>  config UNICODE
+>  	bool "UTF-8 normalization and casefolding support"
+> +
+> +config UNICODE_UTF8_DATA
+> +	tristate "UTF-8 support for native Case-Insensitive filesystems"
+> +	select UNICODE
+>  	help
+> -	  Say Y here to enable UTF-8 NFD normalization and NFD+CF casefolding
+> -	  support.
+> +	  Say M here to enable UTF-8 NFD normalization and NFD+CF casefolding
+> +	  support as a loadable module or say Y for building it into the kernel.
+> +	  It is currently supported by EXT4 and F2FS filesystems.
+> +
+> +	  utf8data.h_shipped has a large database table which is an
+> +	  auto-generated decodification trie for the unicode normalization
+> +	  functions. Enabling UNICODE_UTF8_DATA as M will allow you to avoid
+> +	  carrying this large table into the kernel and module will only be
+> +	  loaded with the data tables whenever required by any filesystem.
+> +	  If your filesystem requires to have the utf8-data during boot time
+> +	  then you should have it built into the kernel by saying Y here to
+> +	  avoid any boot failure.
+>  
+>  config UNICODE_NORMALIZATION_SELFTEST
+>  	tristate "Test UTF-8 normalization support"
+> -	depends on UNICODE
+> +	depends on UNICODE_UTF8_DATA
+>  	default n
+> diff --git a/fs/unicode/Makefile b/fs/unicode/Makefile
+> index b88aecc86550..fc28a6e2c56f 100644
+> --- a/fs/unicode/Makefile
+> +++ b/fs/unicode/Makefile
+> @@ -2,10 +2,11 @@
+>  
+>  obj-$(CONFIG_UNICODE) += unicode.o
+>  obj-$(CONFIG_UNICODE_NORMALIZATION_SELFTEST) += utf8-selftest.o
+> +obj-$(CONFIG_UNICODE_UTF8_DATA) += utf8-data.o
+>  
+>  unicode-y := utf8-norm.o utf8-core.o
+>  
+> -$(obj)/utf8-norm.o: $(obj)/utf8data.h
+> +$(obj)/utf8-data.o: $(obj)/utf8data.h
+>  
+>  # In the normal build, the checked-in utf8data.h is just shipped.
+>  #
+> diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
+> index dc25823bfed9..4eb08385e680 100644
+> --- a/fs/unicode/utf8-core.c
+> +++ b/fs/unicode/utf8-core.c
+> @@ -192,7 +192,7 @@ static int utf8_parse_version(const char *version, unsigned int *maj,
+>  	return 0;
 >  }
 >  
-> -struct posix_acl *v9fs_iop_get_acl(struct inode *inode, int type)
-> +struct posix_acl *v9fs_iop_get_acl(struct inode *inode, int type, int flags)
+> -struct unicode_map *utf8_load(const char *version)
+> +static struct unicode_map *utf8_load_core(const char *version)
 >  {
->  	struct v9fs_session_info *v9ses;
+>  	struct unicode_map *um = NULL;
+>  	int unicode_version;
+> @@ -225,11 +225,57 @@ struct unicode_map *utf8_load(const char *version)
 >  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
-> +
->  	v9ses = v9fs_inode2v9ses(inode);
->  	if (((v9ses->flags & V9FS_ACCESS_MASK) != V9FS_ACCESS_CLIENT) ||
->  			((v9ses->flags & V9FS_ACL_MASK) != V9FS_POSIX_ACL)) {
-> diff --git a/fs/9p/acl.h b/fs/9p/acl.h
-> index e4f7e882272b..7b31cef9ef5a 100644
-> --- a/fs/9p/acl.h
-> +++ b/fs/9p/acl.h
-> @@ -16,7 +16,7 @@
->  
->  #ifdef CONFIG_9P_FS_POSIX_ACL
->  extern int v9fs_get_acl(struct inode *, struct p9_fid *);
-> -extern struct posix_acl *v9fs_iop_get_acl(struct inode *inode, int type);
-> +extern struct posix_acl *v9fs_iop_get_acl(struct inode *inode, int type, int flags);
->  extern int v9fs_acl_chmod(struct inode *, struct p9_fid *);
->  extern int v9fs_set_create_acl(struct inode *, struct p9_fid *,
->  			       struct posix_acl *, struct posix_acl *);
-> diff --git a/fs/bad_inode.c b/fs/bad_inode.c
-> index 48e16144c1f7..dd34decddaa6 100644
-> --- a/fs/bad_inode.c
-> +++ b/fs/bad_inode.c
-> @@ -121,7 +121,7 @@ static const char *bad_inode_get_link(struct dentry *dentry,
->  	return ERR_PTR(-EIO);
+>  	return um;
 >  }
+> +
+> +static void utf8_unload_core(struct unicode_map *um)
+> +{
+> +	kfree(um);
+> +}
+> +
+> +static int utf8mod_get(void)
+> +{
+> +	int ret;
+> +
+> +	spin_lock(&utf8_lock);
+> +	ret = utf8_data && try_module_get(utf8_data->owner);
+> +	spin_unlock(&utf8_lock);
+> +	return ret;
+> +}
+> +
+> +struct unicode_map *utf8_load(const char *version)
+> +{
+> +	struct unicode_map *um;
+> +
+> +	/*
+> +	 * try_then_request_module() is used here instead of using
+> +	 * request_module() because of the following problems that
+> +	 * could occur with the usage of request_module().
+> +	 * 1) Multiple calls in parallel to utf8_load() would fail if
+> +	 * kmod_concurrent_max == 0
+> +	 * 2) There would be unnecessary memory allocation and userspace
+> +	 * invocation in call_modprobe() that would always happen even if
+> +	 * the module is already loaded.
+> +	 * Hence, using try_then_request_module() would first check if the
+> +	 * module is already loaded, if not then it calls the request_module()
+> +	 * and finally would aquire the reference of the loaded module.
+> +	 */
+> +	if (!try_then_request_module(utf8mod_get(), "utf8-data")) {
+> +		pr_err("Failed to load UTF-8 module\n");
+> +		return ERR_PTR(-ENODEV);
+> +	}
+> +	um = utf8_load_core(version);
+> +	if (IS_ERR(um))
+> +		module_put(utf8_data->owner);
+> +
+> +	return um;
+> +}
+>  EXPORT_SYMBOL(utf8_load);
 >  
-> -static struct posix_acl *bad_inode_get_acl(struct inode *inode, int type)
-> +static struct posix_acl *bad_inode_get_acl(struct inode *inode, int type, int flags)
+>  void utf8_unload(struct unicode_map *um)
 >  {
->  	return ERR_PTR(-EIO);
+> -	kfree(um);
+> +	if (um) {
+> +		utf8_unload_core(um);
+> +		module_put(utf8_data->owner);
+> +	}
 >  }
-> diff --git a/fs/btrfs/acl.c b/fs/btrfs/acl.c
-> index d95eb5c8cb37..b53d55186e4a 100644
-> --- a/fs/btrfs/acl.c
-> +++ b/fs/btrfs/acl.c
-> @@ -16,13 +16,16 @@
->  #include "btrfs_inode.h"
->  #include "xattr.h"
+>  EXPORT_SYMBOL(utf8_unload);
 >  
-> -struct posix_acl *btrfs_get_acl(struct inode *inode, int type)
-> +struct posix_acl *btrfs_get_acl(struct inode *inode, int type, int flags)
->  {
->  	int size;
->  	const char *name;
->  	char *value = NULL;
->  	struct posix_acl *acl;
->  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
+> diff --git a/fs/unicode/utf8-data.c b/fs/unicode/utf8-data.c
+> new file mode 100644
+> index 000000000000..1ae3c5dda6c7
+> --- /dev/null
+> +++ b/fs/unicode/utf8-data.c
+> @@ -0,0 +1,42 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include "utf8n.h"
 > +
->  	switch (type) {
->  	case ACL_TYPE_ACCESS:
->  		name = XATTR_NAME_POSIX_ACL_ACCESS;
-> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-> index e5e53e592d4f..460a64266066 100644
-> --- a/fs/btrfs/ctree.h
-> +++ b/fs/btrfs/ctree.h
-> @@ -3686,7 +3686,7 @@ static inline int __btrfs_fs_compat_ro(struct btrfs_fs_info *fs_info, u64 flag)
->  
->  /* acl.c */
->  #ifdef CONFIG_BTRFS_FS_POSIX_ACL
-> -struct posix_acl *btrfs_get_acl(struct inode *inode, int type);
-> +struct posix_acl *btrfs_get_acl(struct inode *inode, int type, int flags);
->  int btrfs_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  		  struct posix_acl *acl, int type);
->  int btrfs_init_acl(struct btrfs_trans_handle *trans,
-> diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
-> index 529af59d9fd3..61e4f866d162 100644
-> --- a/fs/ceph/acl.c
-> +++ b/fs/ceph/acl.c
-> @@ -29,7 +29,7 @@ static inline void ceph_set_cached_acl(struct inode *inode,
->  	spin_unlock(&ci->i_ceph_lock);
->  }
->  
-> -struct posix_acl *ceph_get_acl(struct inode *inode, int type)
-> +struct posix_acl *ceph_get_acl(struct inode *inode, int type, int flags)
->  {
->  	int size;
->  	unsigned int retry_cnt = 0;
-> @@ -37,6 +37,9 @@ struct posix_acl *ceph_get_acl(struct inode *inode, int type)
->  	char *value = NULL;
->  	struct posix_acl *acl;
->  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
+> +#define __INCLUDED_FROM_UTF8NORM_C__
+> +#include "utf8data.h"
+> +#undef __INCLUDED_FROM_UTF8NORM_C__
 > +
->  	switch (type) {
->  	case ACL_TYPE_ACCESS:
->  		name = XATTR_NAME_POSIX_ACL_ACCESS;
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 6b6332a5c113..528975f199eb 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -1087,7 +1087,7 @@ void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx);
->  /* acl.c */
->  #ifdef CONFIG_CEPH_FS_POSIX_ACL
->  
-> -struct posix_acl *ceph_get_acl(struct inode *, int);
-> +struct posix_acl *ceph_get_acl(struct inode *, int, int);
->  int ceph_set_acl(struct user_namespace *mnt_userns,
->  		 struct inode *inode, struct posix_acl *acl, int type);
->  int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
-> diff --git a/fs/erofs/xattr.c b/fs/erofs/xattr.c
-> index 8dd54b420a1d..10c0d639d794 100644
-> --- a/fs/erofs/xattr.c
-> +++ b/fs/erofs/xattr.c
-> @@ -673,12 +673,15 @@ ssize_t erofs_listxattr(struct dentry *dentry,
->  }
->  
->  #ifdef CONFIG_EROFS_FS_POSIX_ACL
-> -struct posix_acl *erofs_get_acl(struct inode *inode, int type)
-> +struct posix_acl *erofs_get_acl(struct inode *inode, int type, int flags)
->  {
->  	struct posix_acl *acl;
->  	int prefix, rc;
->  	char *value = NULL;
->  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
+> +struct utf8data_table data = {
+> +	.owner = THIS_MODULE,
 > +
->  	switch (type) {
->  	case ACL_TYPE_ACCESS:
->  		prefix = EROFS_XATTR_INDEX_POSIX_ACL_ACCESS;
-> diff --git a/fs/erofs/xattr.h b/fs/erofs/xattr.h
-> index 366dcb400525..ac35b5886eff 100644
-> --- a/fs/erofs/xattr.h
-> +++ b/fs/erofs/xattr.h
-> @@ -80,7 +80,7 @@ static inline int erofs_getxattr(struct inode *inode, int index,
->  #endif	/* !CONFIG_EROFS_FS_XATTR */
->  
->  #ifdef CONFIG_EROFS_FS_POSIX_ACL
-> -struct posix_acl *erofs_get_acl(struct inode *inode, int type);
-> +struct posix_acl *erofs_get_acl(struct inode *inode, int type, int flags);
->  #else
->  #define erofs_get_acl	(NULL)
->  #endif
-> diff --git a/fs/ext2/acl.c b/fs/ext2/acl.c
-> index b9a9db98e94b..e203ebd224c4 100644
-> --- a/fs/ext2/acl.c
-> +++ b/fs/ext2/acl.c
-> @@ -141,13 +141,16 @@ ext2_acl_to_disk(const struct posix_acl *acl, size_t *size)
->   * inode->i_mutex: don't care
->   */
->  struct posix_acl *
-> -ext2_get_acl(struct inode *inode, int type)
-> +ext2_get_acl(struct inode *inode, int type, int flags)
->  {
->  	int name_index;
->  	char *value = NULL;
->  	struct posix_acl *acl;
->  	int retval;
->  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
+> +	.utf8vers = utf8vers,
 > +
->  	switch (type) {
->  	case ACL_TYPE_ACCESS:
->  		name_index = EXT2_XATTR_INDEX_POSIX_ACL_ACCESS;
-> diff --git a/fs/ext2/acl.h b/fs/ext2/acl.h
-> index 917db5f6630a..0bd53a953831 100644
-> --- a/fs/ext2/acl.h
-> +++ b/fs/ext2/acl.h
-> @@ -55,7 +55,7 @@ static inline int ext2_acl_count(size_t size)
->  #ifdef CONFIG_EXT2_FS_POSIX_ACL
->  
->  /* acl.c */
-> -extern struct posix_acl *ext2_get_acl(struct inode *inode, int type);
-> +extern struct posix_acl *ext2_get_acl(struct inode *inode, int type, int flags);
->  extern int ext2_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  			struct posix_acl *acl, int type);
->  extern int ext2_init_acl (struct inode *, struct inode *);
-> diff --git a/fs/ext4/acl.c b/fs/ext4/acl.c
-> index c5eaffccecc3..e4e27e34a221 100644
-> --- a/fs/ext4/acl.c
-> +++ b/fs/ext4/acl.c
-> @@ -142,13 +142,16 @@ ext4_acl_to_disk(const struct posix_acl *acl, size_t *size)
->   * inode->i_mutex: don't care
->   */
->  struct posix_acl *
-> -ext4_get_acl(struct inode *inode, int type)
-> +ext4_get_acl(struct inode *inode, int type, int flags)
->  {
->  	int name_index;
->  	char *value = NULL;
->  	struct posix_acl *acl;
->  	int retval;
->  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
+> +	.utf8agetab = utf8agetab,
+> +	.utf8agetab_size = ARRAY_SIZE(utf8agetab),
 > +
->  	switch (type) {
->  	case ACL_TYPE_ACCESS:
->  		name_index = EXT4_XATTR_INDEX_POSIX_ACL_ACCESS;
-> diff --git a/fs/ext4/acl.h b/fs/ext4/acl.h
-> index 84b8942a57f2..b349365c7b33 100644
-> --- a/fs/ext4/acl.h
-> +++ b/fs/ext4/acl.h
-> @@ -55,7 +55,7 @@ static inline int ext4_acl_count(size_t size)
->  #ifdef CONFIG_EXT4_FS_POSIX_ACL
->  
->  /* acl.c */
-> -struct posix_acl *ext4_get_acl(struct inode *inode, int type);
-> +struct posix_acl *ext4_get_acl(struct inode *inode, int type, int flags);
->  int ext4_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  		 struct posix_acl *acl, int type);
->  extern int ext4_init_acl(handle_t *, struct inode *, struct inode *);
-> diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-> index 239ad9453b99..4d1b348a0ab7 100644
-> --- a/fs/f2fs/acl.c
-> +++ b/fs/f2fs/acl.c
-> @@ -196,8 +196,11 @@ static struct posix_acl *__f2fs_get_acl(struct inode *inode, int type,
->  	return acl;
->  }
->  
-> -struct posix_acl *f2fs_get_acl(struct inode *inode, int type)
-> +struct posix_acl *f2fs_get_acl(struct inode *inode, int type, int flags)
->  {
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
+> +	.utf8nfdicfdata = utf8nfdicfdata,
+> +	.utf8nfdicfdata_size = ARRAY_SIZE(utf8nfdicfdata),
 > +
->  	return __f2fs_get_acl(inode, type, NULL);
->  }
->  
-> diff --git a/fs/f2fs/acl.h b/fs/f2fs/acl.h
-> index 986fd1bc780b..3b7b0deb2845 100644
-> --- a/fs/f2fs/acl.h
-> +++ b/fs/f2fs/acl.h
-> @@ -33,7 +33,7 @@ struct f2fs_acl_header {
->  
->  #ifdef CONFIG_F2FS_FS_POSIX_ACL
->  
-> -extern struct posix_acl *f2fs_get_acl(struct inode *, int);
-> +extern struct posix_acl *f2fs_get_acl(struct inode *, int, int);
->  extern int f2fs_set_acl(struct user_namespace *, struct inode *,
->  			struct posix_acl *, int);
->  extern int f2fs_init_acl(struct inode *, struct inode *, struct page *,
-> diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
-> index 52b165319be1..194cb81634f9 100644
-> --- a/fs/fuse/acl.c
-> +++ b/fs/fuse/acl.c
-> @@ -11,7 +11,7 @@
->  #include <linux/posix_acl.h>
->  #include <linux/posix_acl_xattr.h>
->  
-> -struct posix_acl *fuse_get_acl(struct inode *inode, int type)
-> +struct posix_acl *fuse_get_acl(struct inode *inode, int type, int flags)
->  {
->  	struct fuse_conn *fc = get_fuse_conn(inode);
->  	int size;
-> @@ -19,6 +19,9 @@ struct posix_acl *fuse_get_acl(struct inode *inode, int type)
->  	void *value = NULL;
->  	struct posix_acl *acl;
->  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
+> +	.utf8nfdidata = utf8nfdidata,
+> +	.utf8nfdidata_size = ARRAY_SIZE(utf8nfdidata),
 > +
->  	if (fuse_is_bad(inode))
->  		return ERR_PTR(-EIO);
->  
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 07829ce78695..ba3a419c6766 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -1216,7 +1216,7 @@ extern const struct xattr_handler *fuse_acl_xattr_handlers[];
->  extern const struct xattr_handler *fuse_no_acl_xattr_handlers[];
->  
->  struct posix_acl;
-> -struct posix_acl *fuse_get_acl(struct inode *inode, int type);
-> +struct posix_acl *fuse_get_acl(struct inode *inode, int type, int flags);
->  int fuse_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  		 struct posix_acl *acl, int type);
->  
-> diff --git a/fs/gfs2/acl.c b/fs/gfs2/acl.c
-> index 9165d70ead07..956132de223c 100644
-> --- a/fs/gfs2/acl.c
-> +++ b/fs/gfs2/acl.c
-> @@ -57,13 +57,16 @@ static struct posix_acl *__gfs2_get_acl(struct inode *inode, int type)
->  	return acl;
->  }
->  
-> -struct posix_acl *gfs2_get_acl(struct inode *inode, int type)
-> +struct posix_acl *gfs2_get_acl(struct inode *inode, int type, int flags)
->  {
->  	struct gfs2_inode *ip = GFS2_I(inode);
->  	struct gfs2_holder gh;
->  	bool need_unlock = false;
->  	struct posix_acl *acl;
->  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
+> +	.utf8data = utf8data,
+> +	.utf8data_size = ARRAY_SIZE(utf8data),
+> +};
 > +
->  	if (!gfs2_glock_is_locked_by_me(ip->i_gl)) {
->  		int ret = gfs2_glock_nq_init(ip->i_gl, LM_ST_SHARED,
->  					     LM_FLAG_ANY, &gh);
-> diff --git a/fs/gfs2/acl.h b/fs/gfs2/acl.h
-> index eccc6a43326c..cdf8f12089de 100644
-> --- a/fs/gfs2/acl.h
-> +++ b/fs/gfs2/acl.h
-> @@ -11,7 +11,7 @@
->  
->  #define GFS2_ACL_MAX_ENTRIES(sdp) ((300 << (sdp)->sd_sb.sb_bsize_shift) >> 12)
->  
-> -extern struct posix_acl *gfs2_get_acl(struct inode *inode, int type);
-> +extern struct posix_acl *gfs2_get_acl(struct inode *inode, int type, int flags);
->  extern int __gfs2_set_acl(struct inode *inode, struct posix_acl *acl, int type);
->  extern int gfs2_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  			struct posix_acl *acl, int type);
-> diff --git a/fs/jffs2/acl.c b/fs/jffs2/acl.c
-> index 55a79df70d24..35f4a0dcbd71 100644
-> --- a/fs/jffs2/acl.c
-> +++ b/fs/jffs2/acl.c
-> @@ -173,12 +173,15 @@ static void *jffs2_acl_to_medium(const struct posix_acl *acl, size_t *size)
->  	return ERR_PTR(-EINVAL);
->  }
->  
-> -struct posix_acl *jffs2_get_acl(struct inode *inode, int type)
-> +struct posix_acl *jffs2_get_acl(struct inode *inode, int type, int flags)
->  {
->  	struct posix_acl *acl;
->  	char *value = NULL;
->  	int rc, xprefix;
->  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
+> +static int __init utf8_init(void)
+> +{
+> +	unicode_register(&data);
+> +	return 0;
+> +}
 > +
->  	switch (type) {
->  	case ACL_TYPE_ACCESS:
->  		xprefix = JFFS2_XPREFIX_ACL_ACCESS;
-> diff --git a/fs/jffs2/acl.h b/fs/jffs2/acl.h
-> index 62c50da9d493..afd6f924aacb 100644
-> --- a/fs/jffs2/acl.h
-> +++ b/fs/jffs2/acl.h
-> @@ -27,7 +27,7 @@ struct jffs2_acl_header {
->  
->  #ifdef CONFIG_JFFS2_FS_POSIX_ACL
->  
-> -struct posix_acl *jffs2_get_acl(struct inode *inode, int type);
-> +struct posix_acl *jffs2_get_acl(struct inode *inode, int type, int flags);
->  int jffs2_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  		  struct posix_acl *acl, int type);
->  extern int jffs2_init_acl_pre(struct inode *, struct inode *, umode_t *);
-> diff --git a/fs/jfs/acl.c b/fs/jfs/acl.c
-> index 43c285c3d2a7..344d047bcb97 100644
-> --- a/fs/jfs/acl.c
-> +++ b/fs/jfs/acl.c
-> @@ -14,13 +14,16 @@
->  #include "jfs_xattr.h"
->  #include "jfs_acl.h"
->  
-> -struct posix_acl *jfs_get_acl(struct inode *inode, int type)
-> +struct posix_acl *jfs_get_acl(struct inode *inode, int type, int flags)
->  {
->  	struct posix_acl *acl;
->  	char *ea_name;
->  	int size;
->  	char *value = NULL;
->  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
+> +static void __exit utf8_exit(void)
+> +{
+> +	unicode_unregister();
+> +}
 > +
->  	switch(type) {
->  		case ACL_TYPE_ACCESS:
->  			ea_name = XATTR_NAME_POSIX_ACL_ACCESS;
-> diff --git a/fs/jfs/jfs_acl.h b/fs/jfs/jfs_acl.h
-> index 7ae389a7a366..e86997d1f123 100644
-> --- a/fs/jfs/jfs_acl.h
-> +++ b/fs/jfs/jfs_acl.h
-> @@ -7,7 +7,7 @@
->  
->  #ifdef CONFIG_JFS_POSIX_ACL
->  
-> -struct posix_acl *jfs_get_acl(struct inode *inode, int type);
-> +struct posix_acl *jfs_get_acl(struct inode *inode, int type, int flags);
->  int jfs_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  		struct posix_acl *acl, int type);
->  int jfs_init_acl(tid_t, struct inode *, struct inode *);
-> diff --git a/fs/nfs/nfs3_fs.h b/fs/nfs/nfs3_fs.h
-> index c8a192802dda..0f3ba2f3b8da 100644
-> --- a/fs/nfs/nfs3_fs.h
-> +++ b/fs/nfs/nfs3_fs.h
-> @@ -11,7 +11,7 @@
->   * nfs3acl.c
->   */
->  #ifdef CONFIG_NFS_V3_ACL
-> -extern struct posix_acl *nfs3_get_acl(struct inode *inode, int type);
-> +extern struct posix_acl *nfs3_get_acl(struct inode *inode, int type, int flags);
->  extern int nfs3_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  			struct posix_acl *acl, int type);
->  extern int nfs3_proc_setacls(struct inode *inode, struct posix_acl *acl,
-> diff --git a/fs/nfs/nfs3acl.c b/fs/nfs/nfs3acl.c
-> index 9ec560aa4a50..f94def1342c6 100644
-> --- a/fs/nfs/nfs3acl.c
-> +++ b/fs/nfs/nfs3acl.c
-> @@ -44,7 +44,7 @@ static void nfs3_abort_get_acl(struct posix_acl **p)
->  	cmpxchg(p, sentinel, ACL_NOT_CACHED);
->  }
->  
-> -struct posix_acl *nfs3_get_acl(struct inode *inode, int type)
-> +struct posix_acl *nfs3_get_acl(struct inode *inode, int type, int flags)
->  {
->  	struct nfs_server *server = NFS_SERVER(inode);
->  	struct page *pages[NFSACL_MAXPAGES] = { };
-> @@ -62,6 +62,9 @@ struct posix_acl *nfs3_get_acl(struct inode *inode, int type)
->  	};
->  	int status, count;
->  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
+> +module_init(utf8_init);
+> +module_exit(utf8_exit);
 > +
->  	if (!nfs_server_capable(inode, NFS_CAP_ACLS))
->  		return ERR_PTR(-EOPNOTSUPP);
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/fs/unicode/utf8-norm.c b/fs/unicode/utf8-norm.c
+> index 1d2d2e5b906a..a6276f50a18f 100644
+> --- a/fs/unicode/utf8-norm.c
+> +++ b/fs/unicode/utf8-norm.c
+> @@ -6,22 +6,18 @@
 >  
-> diff --git a/fs/ocfs2/acl.c b/fs/ocfs2/acl.c
-> index 5c72a7e6d6c5..a4df6e30c017 100644
-> --- a/fs/ocfs2/acl.c
-> +++ b/fs/ocfs2/acl.c
-> @@ -289,7 +289,7 @@ int ocfs2_iop_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  	return status;
->  }
+>  #include "utf8n.h"
 >  
-> -struct posix_acl *ocfs2_iop_get_acl(struct inode *inode, int type)
-> +struct posix_acl *ocfs2_iop_get_acl(struct inode *inode, int type, int flags)
+> -struct utf8data {
+> -	unsigned int maxage;
+> -	unsigned int offset;
+> -};
+> +/* Spinlock for protecting utf8_data */
+> +DEFINE_SPINLOCK(utf8_lock);
+>  
+> -#define __INCLUDED_FROM_UTF8NORM_C__
+> -#include "utf8data.h"
+> -#undef __INCLUDED_FROM_UTF8NORM_C__
+> +struct utf8data_table *utf8_data;
+>  
+>  int utf8version_is_supported(u8 maj, u8 min, u8 rev)
 >  {
->  	struct ocfs2_super *osb;
->  	struct buffer_head *di_bh = NULL;
-> @@ -297,6 +297,9 @@ struct posix_acl *ocfs2_iop_get_acl(struct inode *inode, int type)
->  	int had_lock;
->  	struct ocfs2_lock_holder oh;
+> -	int i = ARRAY_SIZE(utf8agetab) - 1;
+> +	int i = utf8_data->utf8agetab_size - 1;
+>  	unsigned int sb_utf8version = UNICODE_AGE(maj, min, rev);
 >  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
-> +
->  	osb = OCFS2_SB(inode->i_sb);
->  	if (!(osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL))
->  		return NULL;
-> diff --git a/fs/ocfs2/acl.h b/fs/ocfs2/acl.h
-> index f59d8d0a61fa..e005c93b9153 100644
-> --- a/fs/ocfs2/acl.h
-> +++ b/fs/ocfs2/acl.h
-> @@ -16,7 +16,7 @@ struct ocfs2_acl_entry {
->  	__le32 e_id;
->  };
->  
-> -struct posix_acl *ocfs2_iop_get_acl(struct inode *inode, int type);
-> +struct posix_acl *ocfs2_iop_get_acl(struct inode *inode, int type, int flags);
->  int ocfs2_iop_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  		      struct posix_acl *acl, int type);
->  extern int ocfs2_acl_chmod(struct inode *, struct buffer_head *);
-> diff --git a/fs/orangefs/acl.c b/fs/orangefs/acl.c
-> index 18852b9ed82b..d93841d478ed 100644
-> --- a/fs/orangefs/acl.c
-> +++ b/fs/orangefs/acl.c
-> @@ -10,12 +10,15 @@
->  #include "orangefs-bufmap.h"
->  #include <linux/posix_acl_xattr.h>
->  
-> -struct posix_acl *orangefs_get_acl(struct inode *inode, int type)
-> +struct posix_acl *orangefs_get_acl(struct inode *inode, int type, int flags)
->  {
->  	struct posix_acl *acl;
->  	int ret;
->  	char *key = NULL, *value = NULL;
->  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
-> +
->  	switch (type) {
->  	case ACL_TYPE_ACCESS:
->  		key = XATTR_NAME_POSIX_ACL_ACCESS;
-> diff --git a/fs/orangefs/orangefs-kernel.h b/fs/orangefs/orangefs-kernel.h
-> index 0e6b97682e41..370bd89c670f 100644
-> --- a/fs/orangefs/orangefs-kernel.h
-> +++ b/fs/orangefs/orangefs-kernel.h
-> @@ -106,7 +106,7 @@ enum orangefs_vfs_op_states {
->  extern int orangefs_init_acl(struct inode *inode, struct inode *dir);
->  extern const struct xattr_handler *orangefs_xattr_handlers[];
->  
-> -extern struct posix_acl *orangefs_get_acl(struct inode *inode, int type);
-> +extern struct posix_acl *orangefs_get_acl(struct inode *inode, int type, int flags);
->  extern int orangefs_set_acl(struct user_namespace *mnt_userns,
->  			    struct inode *inode, struct posix_acl *acl,
->  			    int type);
-> diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-> index 5e828a1c98a8..727154a1d3ce 100644
-> --- a/fs/overlayfs/inode.c
-> +++ b/fs/overlayfs/inode.c
-> @@ -448,12 +448,15 @@ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size)
->  	return res;
->  }
->  
-> -struct posix_acl *ovl_get_acl(struct inode *inode, int type)
-> +struct posix_acl *ovl_get_acl(struct inode *inode, int type, int flags)
->  {
->  	struct inode *realinode = ovl_inode_real(inode);
->  	const struct cred *old_cred;
->  	struct posix_acl *acl;
->  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
-> +
->  	if (!IS_ENABLED(CONFIG_FS_POSIX_ACL) || !IS_POSIXACL(realinode))
->  		return NULL;
->  
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index 6ec73db4bf9e..daf6b75b9a54 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -485,7 +485,7 @@ int ovl_xattr_set(struct dentry *dentry, struct inode *inode, const char *name,
->  int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char *name,
->  		  void *value, size_t size);
->  ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size);
-> -struct posix_acl *ovl_get_acl(struct inode *inode, int type);
-> +struct posix_acl *ovl_get_acl(struct inode *inode, int type, int flags);
->  int ovl_update_time(struct inode *inode, struct timespec64 *ts, int flags);
->  bool ovl_is_private_xattr(struct super_block *sb, const char *name);
->  
-> diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-> index f3309a7edb49..6b7f793e2b6f 100644
-> --- a/fs/posix_acl.c
-> +++ b/fs/posix_acl.c
-> @@ -138,7 +138,7 @@ struct posix_acl *get_acl(struct inode *inode, int type)
->  		set_cached_acl(inode, type, NULL);
->  		return NULL;
+> -	while (i >= 0 && utf8agetab[i] != 0) {
+> -		if (sb_utf8version == utf8agetab[i])
+> +	while (i >= 0 && utf8_data->utf8agetab[i] != 0) {
+> +		if (sb_utf8version == utf8_data->utf8agetab[i])
+>  			return 1;
+>  		i--;
 >  	}
-> -	acl = inode->i_op->get_acl(inode, type);
-> +	acl = inode->i_op->get_acl(inode, type, 0);
+> @@ -31,7 +27,7 @@ EXPORT_SYMBOL(utf8version_is_supported);
 >  
->  	if (IS_ERR(acl)) {
->  		/*
-> diff --git a/fs/reiserfs/acl.h b/fs/reiserfs/acl.h
-> index fd58618da360..bf10841b892d 100644
-> --- a/fs/reiserfs/acl.h
-> +++ b/fs/reiserfs/acl.h
-> @@ -48,7 +48,7 @@ static inline int reiserfs_acl_count(size_t size)
+>  int utf8version_latest(void)
+>  {
+> -	return utf8vers;
+> +	return utf8_data->utf8vers;
+>  }
+>  EXPORT_SYMBOL(utf8version_latest);
+>  
+> @@ -168,7 +164,7 @@ typedef const unsigned char utf8trie_t;
+>   * underlying datatype: unsigned char.
+>   *
+>   * leaf[0]: The unicode version, stored as a generation number that is
+> - *          an index into utf8agetab[].  With this we can filter code
+> + *          an index into utf8_data->utf8agetab[].  With this we can filter code
+>   *          points based on the unicode version in which they were
+>   *          defined.  The CCC of a non-defined code point is 0.
+>   * leaf[1]: Canonical Combining Class. During normalization, we need
+> @@ -330,7 +326,7 @@ static utf8leaf_t *utf8nlookup(const struct utf8data *data,
+>  	if (len == 0)
+>  		return NULL;
+>  
+> -	trie = utf8data + data->offset;
+> +	trie = utf8_data->utf8data + data->offset;
+>  	node = 1;
+>  	while (node) {
+>  		offlen = (*trie & OFFLEN) >> OFFLEN_SHIFT;
+> @@ -418,7 +414,7 @@ int utf8agemax(const struct utf8data *data, const char *s)
+>  		if (!leaf)
+>  			return -1;
+>  
+> -		leaf_age = utf8agetab[LEAF_GEN(leaf)];
+> +		leaf_age = utf8_data->utf8agetab[LEAF_GEN(leaf)];
+>  		if (leaf_age <= data->maxage && leaf_age > age)
+>  			age = leaf_age;
+>  		s += utf8clen(s);
+> @@ -446,7 +442,7 @@ int utf8agemin(const struct utf8data *data, const char *s)
+>  		leaf = utf8lookup(data, hangul, s);
+>  		if (!leaf)
+>  			return -1;
+> -		leaf_age = utf8agetab[LEAF_GEN(leaf)];
+> +		leaf_age = utf8_data->utf8agetab[LEAF_GEN(leaf)];
+>  		if (leaf_age <= data->maxage && leaf_age < age)
+>  			age = leaf_age;
+>  		s += utf8clen(s);
+> @@ -473,7 +469,7 @@ int utf8nagemax(const struct utf8data *data, const char *s, size_t len)
+>  		leaf = utf8nlookup(data, hangul, s, len);
+>  		if (!leaf)
+>  			return -1;
+> -		leaf_age = utf8agetab[LEAF_GEN(leaf)];
+> +		leaf_age = utf8_data->utf8agetab[LEAF_GEN(leaf)];
+>  		if (leaf_age <= data->maxage && leaf_age > age)
+>  			age = leaf_age;
+>  		len -= utf8clen(s);
+> @@ -501,7 +497,7 @@ int utf8nagemin(const struct utf8data *data, const char *s, size_t len)
+>  		leaf = utf8nlookup(data, hangul, s, len);
+>  		if (!leaf)
+>  			return -1;
+> -		leaf_age = utf8agetab[LEAF_GEN(leaf)];
+> +		leaf_age = utf8_data->utf8agetab[LEAF_GEN(leaf)];
+>  		if (leaf_age <= data->maxage && leaf_age < age)
+>  			age = leaf_age;
+>  		len -= utf8clen(s);
+> @@ -529,7 +525,7 @@ ssize_t utf8len(const struct utf8data *data, const char *s)
+>  		leaf = utf8lookup(data, hangul, s);
+>  		if (!leaf)
+>  			return -1;
+> -		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
+> +		if (utf8_data->utf8agetab[LEAF_GEN(leaf)] > data->maxage)
+>  			ret += utf8clen(s);
+>  		else if (LEAF_CCC(leaf) == DECOMPOSE)
+>  			ret += strlen(LEAF_STR(leaf));
+> @@ -557,7 +553,7 @@ ssize_t utf8nlen(const struct utf8data *data, const char *s, size_t len)
+>  		leaf = utf8nlookup(data, hangul, s, len);
+>  		if (!leaf)
+>  			return -1;
+> -		if (utf8agetab[LEAF_GEN(leaf)] > data->maxage)
+> +		if (utf8_data->utf8agetab[LEAF_GEN(leaf)] > data->maxage)
+>  			ret += utf8clen(s);
+>  		else if (LEAF_CCC(leaf) == DECOMPOSE)
+>  			ret += strlen(LEAF_STR(leaf));
+> @@ -690,7 +686,7 @@ int utf8byte(struct utf8cursor *u8c)
+>  
+>  		ccc = LEAF_CCC(leaf);
+>  		/* Characters that are too new have CCC 0. */
+> -		if (utf8agetab[LEAF_GEN(leaf)] > u8c->data->maxage) {
+> +		if (utf8_data->utf8agetab[LEAF_GEN(leaf)] > u8c->data->maxage) {
+>  			ccc = STOPPER;
+>  		} else if (ccc == DECOMPOSE) {
+>  			u8c->len -= utf8clen(u8c->s);
+> @@ -769,24 +765,40 @@ EXPORT_SYMBOL(utf8byte);
+>  
+>  const struct utf8data *utf8nfdi(unsigned int maxage)
+>  {
+> -	int i = ARRAY_SIZE(utf8nfdidata) - 1;
+> +	int i = utf8_data->utf8nfdidata_size - 1;
+>  
+> -	while (maxage < utf8nfdidata[i].maxage)
+> +	while (maxage < utf8_data->utf8nfdidata[i].maxage)
+>  		i--;
+> -	if (maxage > utf8nfdidata[i].maxage)
+> +	if (maxage > utf8_data->utf8nfdidata[i].maxage)
+>  		return NULL;
+> -	return &utf8nfdidata[i];
+> +	return &utf8_data->utf8nfdidata[i];
+>  }
+>  EXPORT_SYMBOL(utf8nfdi);
+>  
+>  const struct utf8data *utf8nfdicf(unsigned int maxage)
+>  {
+> -	int i = ARRAY_SIZE(utf8nfdicfdata) - 1;
+> +	int i = utf8_data->utf8nfdicfdata_size - 1;
+>  
+> -	while (maxage < utf8nfdicfdata[i].maxage)
+> +	while (maxage < utf8_data->utf8nfdicfdata[i].maxage)
+>  		i--;
+> -	if (maxage > utf8nfdicfdata[i].maxage)
+> +	if (maxage > utf8_data->utf8nfdicfdata[i].maxage)
+>  		return NULL;
+> -	return &utf8nfdicfdata[i];
+> +	return &utf8_data->utf8nfdicfdata[i];
+>  }
+>  EXPORT_SYMBOL(utf8nfdicf);
+> +
+> +void unicode_register(struct utf8data_table *data)
+> +{
+> +	spin_lock(&utf8_lock);
+> +	utf8_data = data;
+> +	spin_unlock(&utf8_lock);
+> +}
+> +EXPORT_SYMBOL(unicode_register);
+> +
+> +void unicode_unregister(void)
+> +{
+> +	spin_lock(&utf8_lock);
+> +	utf8_data = NULL;
+> +	spin_unlock(&utf8_lock);
+> +}
+> +EXPORT_SYMBOL(unicode_unregister);
+> diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/utf8-selftest.c
+> index 6fe8af7edccb..d8069f4ad452 100644
+> --- a/fs/unicode/utf8-selftest.c
+> +++ b/fs/unicode/utf8-selftest.c
+> @@ -16,6 +16,7 @@
+>  
+>  unsigned int failed_tests;
+>  unsigned int total_tests;
+> +struct unicode_map *table;
+>  
+>  /* Tests will be based on this version. */
+>  #define latest_maj 12
+> @@ -232,16 +233,9 @@ static void check_utf8_nfdicf(void)
+>  	}
 >  }
 >  
->  #ifdef CONFIG_REISERFS_FS_POSIX_ACL
-> -struct posix_acl *reiserfs_get_acl(struct inode *inode, int type);
-> +struct posix_acl *reiserfs_get_acl(struct inode *inode, int type, int flags);
->  int reiserfs_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  		     struct posix_acl *acl, int type);
->  int reiserfs_acl_chmod(struct inode *inode);
-> diff --git a/fs/reiserfs/xattr_acl.c b/fs/reiserfs/xattr_acl.c
-> index a9547144a099..0fdb4f531098 100644
-> --- a/fs/reiserfs/xattr_acl.c
-> +++ b/fs/reiserfs/xattr_acl.c
-> @@ -190,13 +190,16 @@ static void *reiserfs_posix_acl_to_disk(const struct posix_acl *acl, size_t * si
->   * inode->i_mutex: down
->   * BKL held [before 2.5.x]
+> -static void check_utf8_comparisons(void)
+> +static void check_utf8_comparisons(struct unicode_map *table)
+>  {
+>  	int i;
+> -	struct unicode_map *table = utf8_load("12.1.0");
+> -
+> -	if (IS_ERR(table)) {
+> -		pr_err("%s: Unable to load utf8 %d.%d.%d. Skipping.\n",
+> -		       __func__, latest_maj, latest_min, latest_rev);
+> -		return;
+> -	}
+>  
+>  	for (i = 0; i < ARRAY_SIZE(nfdi_test_data); i++) {
+>  		const struct qstr s1 = {.name = nfdi_test_data[i].str,
+> @@ -262,8 +256,6 @@ static void check_utf8_comparisons(void)
+>  		test_f(!utf8_strncasecmp(table, &s1, &s2),
+>  		       "%s %s comparison mismatch\n", s1.name, s2.name);
+>  	}
+> -
+> -	utf8_unload(table);
+>  }
+>  
+>  static void check_supported_versions(void)
+> @@ -274,9 +266,6 @@ static void check_supported_versions(void)
+>  	/* Unicode 9.0.0 should be supported. */
+>  	test(utf8version_is_supported(9, 0, 0));
+>  
+> -	/* Unicode 1x.0.0 (the latest version) should be supported. */
+> -	test(utf8version_is_supported(latest_maj, latest_min, latest_rev));
+> -
+>  	/* Next versions don't exist. */
+>  	test(!utf8version_is_supported(13, 0, 0));
+>  	test(!utf8version_is_supported(0, 0, 0));
+> @@ -288,10 +277,17 @@ static int __init init_test_ucd(void)
+>  	failed_tests = 0;
+>  	total_tests = 0;
+>  
+> +	table = utf8_load("12.1.0");
+> +	if (IS_ERR(table)) {
+> +		pr_err("%s: Unable to load utf8 %d.%d.%d. Could not run the tests\n",
+> +		       __func__, latest_maj, latest_min, latest_rev);
+> +		return -EINVAL;
+> +	}
+> +
+>  	check_supported_versions();
+>  	check_utf8_nfdi();
+>  	check_utf8_nfdicf();
+> -	check_utf8_comparisons();
+> +	check_utf8_comparisons(table);
+>  
+>  	if (!failed_tests)
+>  		pr_info("All %u tests passed\n", total_tests);
+> @@ -303,6 +299,7 @@ static int __init init_test_ucd(void)
+>  
+>  static void __exit exit_test_ucd(void)
+>  {
+> +	utf8_unload(table);
+>  }
+>  
+>  module_init(init_test_ucd);
+> diff --git a/fs/unicode/utf8n.h b/fs/unicode/utf8n.h
+> index 0acd530c2c79..eb73fee9efc4 100644
+> --- a/fs/unicode/utf8n.h
+> +++ b/fs/unicode/utf8n.h
+> @@ -11,6 +11,7 @@
+>  #include <linux/export.h>
+>  #include <linux/string.h>
+>  #include <linux/module.h>
+> +#include <linux/spinlock.h>
+>  
+>  /* Encoding a unicode version number as a single unsigned int. */
+>  #define UNICODE_MAJ_SHIFT		(16)
+> @@ -21,6 +22,9 @@
+>  	 ((unsigned int)(MIN) << UNICODE_MIN_SHIFT) |	\
+>  	 ((unsigned int)(REV)))
+>  
+> +extern spinlock_t utf8_lock;
+> +extern struct utf8data_table *utf8_data;
+> +
+>  /* Highest unicode version supported by the data tables. */
+>  extern int utf8version_is_supported(u8 maj, u8 min, u8 rev);
+>  extern int utf8version_latest(void);
+> @@ -105,4 +109,30 @@ extern int utf8ncursor(struct utf8cursor *u8c, const struct utf8data *data,
 >   */
-> -struct posix_acl *reiserfs_get_acl(struct inode *inode, int type)
-> +struct posix_acl *reiserfs_get_acl(struct inode *inode, int type, int flags)
->  {
->  	char *name, *value;
->  	struct posix_acl *acl;
->  	int size;
->  	int retval;
+>  extern int utf8byte(struct utf8cursor *u8c);
 >  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
+> +struct utf8data {
+> +	unsigned int maxage;
+> +	unsigned int offset;
+> +};
 > +
->  	switch (type) {
->  	case ACL_TYPE_ACCESS:
->  		name = XATTR_NAME_POSIX_ACL_ACCESS;
-> diff --git a/fs/xfs/xfs_acl.c b/fs/xfs/xfs_acl.c
-> index d02bef24b32b..5f9b541e029d 100644
-> --- a/fs/xfs/xfs_acl.c
-> +++ b/fs/xfs/xfs_acl.c
-> @@ -125,7 +125,7 @@ xfs_acl_to_disk(struct xfs_acl *aclp, const struct posix_acl *acl)
->  }
->  
->  struct posix_acl *
-> -xfs_get_acl(struct inode *inode, int type)
-> +xfs_get_acl(struct inode *inode, int type, int flags)
->  {
->  	struct xfs_inode	*ip = XFS_I(inode);
->  	struct xfs_mount	*mp = ip->i_mount;
-> @@ -137,6 +137,9 @@ xfs_get_acl(struct inode *inode, int type)
->  	};
->  	int			error;
->  
-> +	if (flags)
-> +		return ERR_PTR(-EINVAL);
+> +struct utf8data_table {
+> +	struct module *owner;
 > +
->  	trace_xfs_get_acl(ip);
->  
->  	switch (type) {
-> diff --git a/fs/xfs/xfs_acl.h b/fs/xfs/xfs_acl.h
-> index 7bdb3a4ed798..38f933f2e281 100644
-> --- a/fs/xfs/xfs_acl.h
-> +++ b/fs/xfs/xfs_acl.h
-> @@ -10,13 +10,13 @@ struct inode;
->  struct posix_acl;
->  
->  #ifdef CONFIG_XFS_POSIX_ACL
-> -extern struct posix_acl *xfs_get_acl(struct inode *inode, int type);
-> +extern struct posix_acl *xfs_get_acl(struct inode *inode, int type, int flags);
->  extern int xfs_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  		       struct posix_acl *acl, int type);
->  extern int __xfs_set_acl(struct inode *inode, struct posix_acl *acl, int type);
->  void xfs_forget_acl(struct inode *inode, const char *name);
->  #else
-> -static inline struct posix_acl *xfs_get_acl(struct inode *inode, int type)
-> +static inline struct posix_acl *xfs_get_acl(struct inode *inode, int type, int flags)
->  {
->  	return NULL;
->  }
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 640574294216..1c56d4fc4efe 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2065,7 +2065,7 @@ struct inode_operations {
->  	struct dentry * (*lookup) (struct inode *,struct dentry *, unsigned int);
->  	const char * (*get_link) (struct dentry *, struct inode *, struct delayed_call *);
->  	int (*permission) (struct user_namespace *, struct inode *, int);
-> -	struct posix_acl * (*get_acl)(struct inode *, int);
-> +	struct posix_acl * (*get_acl)(struct inode *, int, int);
->  
->  	int (*readlink) (struct dentry *, char __user *,int);
->  
+> +	const unsigned int utf8vers;
+> +
+> +	const unsigned int *utf8agetab;
+> +	int utf8agetab_size;
+> +
+> +	const struct utf8data *utf8nfdicfdata;
+> +	int utf8nfdicfdata_size;
+> +
+> +	const struct utf8data *utf8nfdidata;
+> +	int utf8nfdidata_size;
+> +
+> +	const unsigned char *utf8data;
+> +	int utf8data_size;
+> +};
+> +
+> +void unicode_register(struct utf8data_table *data);
+> +void unicode_unregister(void);
+> +
+>  #endif /* UTF8NORM_H */
 > -- 
-> 2.31.1
+> 2.30.2
 > 
+---end quoted text---
