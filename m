@@ -2,154 +2,299 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D9AE23F02D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 13:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA9E03F0347
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 14:07:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235095AbhHRLhd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Aug 2021 07:37:33 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:53379 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233798AbhHRLh3 (ORCPT
+        id S235765AbhHRMIV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Aug 2021 08:08:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45334 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233061AbhHRMIU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Aug 2021 07:37:29 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R661e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=xuyu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Ujitp3k_1629286612;
-Received: from localhost(mailfrom:xuyu@linux.alibaba.com fp:SMTPD_---0Ujitp3k_1629286612)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 18 Aug 2021 19:36:53 +0800
-From:   Xu Yu <xuyu@linux.alibaba.com>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     hch@infradead.org, djwong@kernel.org, riteshh@linux.ibm.com,
-        tytso@mit.edu, gavin.dg@linux.alibaba.com
-Subject: [PATCH] mm/swap: consider max pages in iomap_swapfile_add_extent
-Date:   Wed, 18 Aug 2021 19:36:51 +0800
-Message-Id: <db99c25a8e2a662046e498fd13e5f0c35364164a.1629286473.git.xuyu@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.2432.ga663e714
+        Wed, 18 Aug 2021 08:08:20 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 808CEC0613CF
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 05:07:45 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id s11so2012383pgr.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 05:07:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Rewus7P66Ko5awbjkU6Gxrqxmg9J8FaHehr1SO1OvDE=;
+        b=Wm0PuaQ5RsCDRRYSVFl+nW6ugfaEcL0NnUWKM9JKVxsguKQY9nMsGTWUPOafzpZXSu
+         7Y2/5QIQWOnH+Ur0AowKXdEa65frGpH9Ao1gblj041XDpq63VSmX0jZi1wZdvZYNzs1P
+         5dxb166NATnioRtovXUZertNCyPfsbKJKTjXaMA+28nVyEGAvn3R8ZdRJbysPfm3jpKb
+         VGvkst9DNgbMv1Hsu/4po4KjIcmiW1aUziz5PLxSu8+MIGoxXB5tIsPDnWmHQ/eM3V9A
+         ADi5PyXrYPcLWtz7DQDEk+BYTaQLpCBT9VdVq9kdtxpb3VHgeQacqXX22kw+/M+ktCRY
+         IyPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Rewus7P66Ko5awbjkU6Gxrqxmg9J8FaHehr1SO1OvDE=;
+        b=mKh6yF5RAOTYOJAtJQa9rzge1DDEoaIFiPBfaDziHE28eW1iXJdvu6X0WjfZ6oB6f8
+         M4k93daHBZ44rwaea66ayhBD7G5zBUHkFBzNwR+04/5XT0J0c39fjLIfHB2/sC4IV+pV
+         NF7kG2SO74ZQ2epL9H3gHR7tijxveICqegk+aMrzl+RS0ES4JYa5N6fPjsenEUwuLq68
+         B87mMCpXDpCM19YyMo81skVjMEY/4WIMd32LMW8so5mm//nsiUb8qU7VoQrwqY0PGia0
+         VbO5Xg1T57d+GlkQBQr3ETIbugOt4p5VXVaRFE7OgQwDkpo/P8PLeMLnQCz5QQtwgbbr
+         0dmg==
+X-Gm-Message-State: AOAM5303Hm7/YSkBs+gZ/WCpBN3psijTBDH6VvkZv2OHnYcDwB8AXJUn
+        n5Y7Wn7Uy3mbXCW+RKuUhmb0
+X-Google-Smtp-Source: ABdhPJx07i5R965sKLMMsK7uXsKHzdPwrYa9B7ATHBpYcHy2lp5n1qnQK/8q4ea123mE0Egup+kE1w==
+X-Received: by 2002:a63:214c:: with SMTP id s12mr8705733pgm.86.1629288464946;
+        Wed, 18 Aug 2021 05:07:44 -0700 (PDT)
+Received: from localhost ([139.177.225.253])
+        by smtp.gmail.com with ESMTPSA id y19sm6235985pfe.71.2021.08.18.05.07.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Aug 2021 05:07:44 -0700 (PDT)
+From:   Xie Yongji <xieyongji@bytedance.com>
+To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
+        sgarzare@redhat.com, parav@nvidia.com, hch@infradead.org,
+        christian.brauner@canonical.com, rdunlap@infradead.org,
+        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        bcrl@kvack.org, corbet@lwn.net, mika.penttila@nextfour.com,
+        dan.carpenter@oracle.com, joro@8bytes.org,
+        gregkh@linuxfoundation.org, zhe.he@windriver.com,
+        xiaodong.liu@intel.com, joe@perches.com, robin.murphy@arm.com
+Cc:     songmuchun@bytedance.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v11 00/12] Introduce VDUSE - vDPA Device in Userspace
+Date:   Wed, 18 Aug 2021 20:06:30 +0800
+Message-Id: <20210818120642.165-1-xieyongji@bytedance.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When the max pages (last_page in the swap header + 1) is smaller than
-the total pages (inode size) of the swapfile, iomap_swapfile_activate
-overwrites sis->max with total pages.
+This series introduces a framework that makes it possible to implement
+software-emulated vDPA devices in userspace. And to make the device
+emulation more secure, the emulated vDPA device's control path is handled
+in the kernel and only the data path is implemented in the userspace.
 
-However, frontswap_map is allocated using max pages, but cleared using
-sis->max in __frontswap_invalidate_area(). The consequence is that the
-neighbors of frontswap_map bitmap may be overwritten, and then slab is
-polluted.
+Since the emuldated vDPA device's control path is handled in the kernel,
+a message mechnism is introduced to make userspace be aware of the data
+path related changes. Userspace can use read()/write() to receive/reply
+the control messages.
 
-This fixes the issue by considering the limitation of max pages of swap
-info in iomap_swapfile_add_extent().
+In the data path, the core is mapping dma buffer into VDUSE daemon's
+address space, which can be implemented in different ways depending on
+the vdpa bus to which the vDPA device is attached.
 
-To reproduce the case, compile kernel with slub RED ZONE, then run test:
-$ sudo stress-ng -a 1 -x softlockup,resources -t 72h --metrics --times \
- --verify -v -Y /root/tmpdir/stress-ng/stress-statistic-12.yaml \
- --log-file /root/tmpdir/stress-ng/stress-logfile-12.txt \
- --temp-path /root/tmpdir/stress-ng/
+In virtio-vdpa case, we implements a MMU-based software IOTLB with
+bounce-buffering mechanism to achieve that. And in vhost-vdpa case, the dma
+buffer is reside in a userspace memory region which can be shared to the
+VDUSE userspace processs via transferring the shmfd.
 
-We'll get the error log as below:
+The details and our user case is shown below:
 
-[ 1151.015141] =============================================================================
-[ 1151.016489] BUG kmalloc-16 (Not tainted): Right Redzone overwritten
-[ 1151.017486] -----------------------------------------------------------------------------
-[ 1151.017486]
-[ 1151.018997] Disabling lock debugging due to kernel taint
-[ 1151.019873] INFO: 0x0000000084e43932-0x0000000098d17cae @offset=7392. First byte 0x0 instead of 0xcc
-[ 1151.021303] INFO: Allocated in __do_sys_swapon+0xcf6/0x1170 age=43417 cpu=9 pid=3816
-[ 1151.022538]  __slab_alloc+0xe/0x20
-[ 1151.023069]  __kmalloc_node+0xfd/0x4b0
-[ 1151.023704]  __do_sys_swapon+0xcf6/0x1170
-[ 1151.024346]  do_syscall_64+0x33/0x40
-[ 1151.024925]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[ 1151.025749] INFO: Freed in put_cred_rcu+0xa1/0xc0 age=43424 cpu=3 pid=2041
-[ 1151.026889]  kfree+0x276/0x2b0
-[ 1151.027405]  put_cred_rcu+0xa1/0xc0
-[ 1151.027949]  rcu_do_batch+0x17d/0x410
-[ 1151.028566]  rcu_core+0x14e/0x2b0
-[ 1151.029084]  __do_softirq+0x101/0x29e
-[ 1151.029645]  asm_call_irq_on_stack+0x12/0x20
-[ 1151.030381]  do_softirq_own_stack+0x37/0x40
-[ 1151.031037]  do_softirq.part.15+0x2b/0x30
-[ 1151.031710]  __local_bh_enable_ip+0x4b/0x50
-[ 1151.032412]  copy_fpstate_to_sigframe+0x111/0x360
-[ 1151.033197]  __setup_rt_frame+0xce/0x480
-[ 1151.033809]  arch_do_signal+0x1a3/0x250
-[ 1151.034463]  exit_to_user_mode_prepare+0xcf/0x110
-[ 1151.035242]  syscall_exit_to_user_mode+0x27/0x190
-[ 1151.035970]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[ 1151.036795] INFO: Slab 0x000000003b9de4dc objects=44 used=9 fp=0x00000000539e349e flags=0xfffffc0010201
-[ 1151.038323] INFO: Object 0x000000004855ba01 @offset=7376 fp=0x0000000000000000
-[ 1151.038323]
-[ 1151.039683] Redzone  000000008d0afd3d: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
-[ 1151.041180] Object   000000004855ba01: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-[ 1151.042714] Redzone  0000000084e43932: 00 00 00 c0 cc cc cc cc                          ........
-[ 1151.044120] Padding  000000000864c042: 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a  ZZZZZZZZZZZZZZZZ
-[ 1151.045615] CPU: 5 PID: 3816 Comm: stress-ng Tainted: G    B             5.10.50+ #7
-[ 1151.046846] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.org 04/01/2014
-[ 1151.048633] Call Trace:
-[ 1151.049072]  dump_stack+0x57/0x6a
-[ 1151.049585]  check_bytes_and_report+0xed/0x110
-[ 1151.050320]  check_object+0x1eb/0x290
-[ 1151.050924]  ? __x64_sys_swapoff+0x39a/0x540
-[ 1151.051646]  free_debug_processing+0x151/0x350
-[ 1151.052333]  __slab_free+0x21a/0x3a0
-[ 1151.052938]  ? _cond_resched+0x2d/0x40
-[ 1151.053529]  ? __vunmap+0x1de/0x220
-[ 1151.054139]  ? __x64_sys_swapoff+0x39a/0x540
-[ 1151.054796]  ? kfree+0x276/0x2b0
-[ 1151.055307]  kfree+0x276/0x2b0
-[ 1151.055832]  __x64_sys_swapoff+0x39a/0x540
-[ 1151.056466]  do_syscall_64+0x33/0x40
-[ 1151.057084]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[ 1151.057866] RIP: 0033:0x150340b0ffb7
-[ 1151.058481] Code: Unable to access opcode bytes at RIP 0x150340b0ff8d.
-[ 1151.059537] RSP: 002b:00007fff7f4ee238 EFLAGS: 00000246 ORIG_RAX: 00000000000000a8
-[ 1151.060768] RAX: ffffffffffffffda RBX: 00007fff7f4ee66c RCX: 0000150340b0ffb7
-[ 1151.061904] RDX: 000000000000000a RSI: 0000000000018094 RDI: 00007fff7f4ee860
-[ 1151.063033] RBP: 00007fff7f4ef980 R08: 0000000000000000 R09: 0000150340a672bd
-[ 1151.064135] R10: 00007fff7f4edca0 R11: 0000000000000246 R12: 0000000000018094
-[ 1151.065253] R13: 0000000000000005 R14: 000000000160d930 R15: 00007fff7f4ee66c
-[ 1151.066413] FIX kmalloc-16: Restoring 0x0000000084e43932-0x0000000098d17cae=0xcc
-[ 1151.066413]
-[ 1151.067890] FIX kmalloc-16: Object at 0x000000004855ba01 not freed
+------------------------    -------------------------   ----------------------------------------------
+|            Container |    |              QEMU(VM) |   |                               VDUSE daemon |
+|       ---------      |    |  -------------------  |   | ------------------------- ---------------- |
+|       |dev/vdx|      |    |  |/dev/vhost-vdpa-x|  |   | | vDPA device emulation | | block driver | |
+------------+-----------     -----------+------------   -------------+----------------------+---------
+            |                           |                            |                      |
+            |                           |                            |                      |
+------------+---------------------------+----------------------------+----------------------+---------
+|    | block device |           |  vhost device |            | vduse driver |          | TCP/IP |    |
+|    -------+--------           --------+--------            -------+--------          -----+----    |
+|           |                           |                           |                       |        |
+| ----------+----------       ----------+-----------         -------+-------                |        |
+| | virtio-blk driver |       |  vhost-vdpa driver |         | vdpa device |                |        |
+| ----------+----------       ----------+-----------         -------+-------                |        |
+|           |      virtio bus           |                           |                       |        |
+|   --------+----+-----------           |                           |                       |        |
+|                |                      |                           |                       |        |
+|      ----------+----------            |                           |                       |        |
+|      | virtio-blk device |            |                           |                       |        |
+|      ----------+----------            |                           |                       |        |
+|                |                      |                           |                       |        |
+|     -----------+-----------           |                           |                       |        |
+|     |  virtio-vdpa driver |           |                           |                       |        |
+|     -----------+-----------           |                           |                       |        |
+|                |                      |                           |    vdpa bus           |        |
+|     -----------+----------------------+---------------------------+------------           |        |
+|                                                                                        ---+---     |
+-----------------------------------------------------------------------------------------| NIC |------
+                                                                                         ---+---
+                                                                                            |
+                                                                                   ---------+---------
+                                                                                   | Remote Storages |
+                                                                                   -------------------
 
-Fixes: 0e6895ba00b7 ("ext4: implement swap_activate aops using iomap")
-Signed-off-by: Gang Deng <gavin.dg@linux.alibaba.com>
-Signed-off-by: Xu Yu <xuyu@linux.alibaba.com>
----
- fs/iomap/swapfile.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+We make use of it to implement a block device connecting to
+our distributed storage, which can be used both in containers and
+VMs. Thus, we can have an unified technology stack in this two cases.
 
-diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
-index 6250ca6a1f85..4ecf4e1f68ef 100644
---- a/fs/iomap/swapfile.c
-+++ b/fs/iomap/swapfile.c
-@@ -31,11 +31,16 @@ static int iomap_swapfile_add_extent(struct iomap_swapfile_info *isi)
- {
- 	struct iomap *iomap = &isi->iomap;
- 	unsigned long nr_pages;
-+	unsigned long max_pages;
- 	uint64_t first_ppage;
- 	uint64_t first_ppage_reported;
- 	uint64_t next_ppage;
- 	int error;
- 
-+	if (unlikely(isi->nr_pages >= isi->sis->max))
-+		return 0;
-+	max_pages = isi->sis->max - isi->nr_pages;
-+
- 	/*
- 	 * Round the start up and the end down so that the physical
- 	 * extent aligns to a page boundary.
-@@ -48,6 +53,7 @@ static int iomap_swapfile_add_extent(struct iomap_swapfile_info *isi)
- 	if (first_ppage >= next_ppage)
- 		return 0;
- 	nr_pages = next_ppage - first_ppage;
-+	nr_pages = min(nr_pages, max_pages);
- 
- 	/*
- 	 * Calculate how much swap space we're adding; the first page contains
+To test it with null-blk:
+
+  $ qemu-storage-daemon \
+      --chardev socket,id=charmonitor,path=/tmp/qmp.sock,server,nowait \
+      --monitor chardev=charmonitor \
+      --blockdev driver=host_device,cache.direct=on,aio=native,filename=/dev/nullb0,node-name=disk0 \
+      --export type=vduse-blk,id=test,node-name=disk0,writable=on,name=vduse-null,num-queues=16,queue-size=128
+
+The qemu-storage-daemon can be found at https://github.com/bytedance/qemu/tree/vduse
+
+To make the userspace VDUSE processes such as qemu-storage-daemon able
+to be run by an unprivileged user. We limit the supported device type
+to virtio block device currently. The support for other device types
+can be added after the security issue of corresponding device driver
+is clarified or fixed in the future.
+
+This series is now based on:
+
+https://lore.kernel.org/lkml/20210618084412.18257-1-zhe.he@windriver.com/
+https://lore.kernel.org/lkml/20210705071910.31965-1-jasowang@redhat.com/
+
+Future work:
+  - Improve performance
+  - Userspace library (find a way to reuse device emulation code in qemu/rust-vmm)
+  - Support more device types
+
+V10 to V11:
+- Rebased to newest kernel tree
+- Add a device attribute for message timeout
+- Add check for the reserved field of some structures
+- Add a reset callback in vdpa_config_ops and handle it in VDUSE case
+- Remove the patches that handle virtio-vdpa reset failure
+- Document the structures in include/uapi/linux/vduse.h using kernel doc
+- Add the reserved field for struct vduse_vq_config
+
+V9 to V10:
+- Forbid some userspace operations after a timeout
+- Rename VDUSE_DEV_INJECT_IRQ to VDUSE_DEV_INJECT_CONFIG_IRQ
+- Use fixed bounce buffer size
+- Fix more code indentation issues in include/linux/vdpa.h
+- Remove the section describing bounce-buffer mechanism in documentation
+- Fix some commit logs and documentation
+
+V8 to V9:
+- Add VDUSE_SET_STATUS message to replace VDUSE_START/STOP_DATAPLANE messages
+- Support packed virtqueue state
+- Handle the reset failure in both virtio-vdpa and vhost-vdpa cases
+- Add more details in documentation
+- Remove VDUSE_REQ_FLAGS_NO_REPLY flag
+- Add VDUSE_VQ_SETUP ioctl to support per-vq configuration
+- Separate config interrupt injecting out of config update
+- Flush kworker for interrupt inject during resetting
+- Validate the config_size in .get_config()
+
+V7 to V8:
+- Rebased to newest kernel tree
+- Rework VDUSE driver to handle the device's control path in kernel
+- Limit the supported device type to virtio block device
+- Export free_iova_fast()
+- Remove the virtio-blk and virtio-scsi patches (will send them alone)
+- Remove all module parameters
+- Use the same MAJOR for both control device and VDUSE devices
+- Avoid eventfd cleanup in vduse_dev_release()
+
+V6 to V7:
+- Export alloc_iova_fast()
+- Add get_config_size() callback
+- Add some patches to avoid trusting virtio devices
+- Add limited device emulation
+- Add some documents
+- Use workqueue to inject config irq
+- Add parameter on vq irq injecting
+- Rename vduse_domain_get_mapping_page() to vduse_domain_get_coherent_page()
+- Add WARN_ON() to catch message failure
+- Add some padding/reserved fields to uAPI structure
+- Fix some bugs
+- Rebase to vhost.git
+
+V5 to V6:
+- Export receive_fd() instead of __receive_fd()
+- Factor out the unmapping logic of pa and va separatedly
+- Remove the logic of bounce page allocation in page fault handler
+- Use PAGE_SIZE as IOVA allocation granule
+- Add EPOLLOUT support
+- Enable setting API version in userspace
+- Fix some bugs
+
+V4 to V5:
+- Remove the patch for irq binding
+- Use a single IOTLB for all types of mapping
+- Factor out vhost_vdpa_pa_map()
+- Add some sample codes in document
+- Use receice_fd_user() to pass file descriptor
+- Fix some bugs
+
+V3 to V4:
+- Rebase to vhost.git
+- Split some patches
+- Add some documents
+- Use ioctl to inject interrupt rather than eventfd
+- Enable config interrupt support
+- Support binding irq to the specified cpu
+- Add two module parameter to limit bounce/iova size
+- Create char device rather than anon inode per vduse
+- Reuse vhost IOTLB for iova domain
+- Rework the message mechnism in control path
+
+V2 to V3:
+- Rework the MMU-based IOMMU driver
+- Use the iova domain as iova allocator instead of genpool
+- Support transferring vma->vm_file in vhost-vdpa
+- Add SVA support in vhost-vdpa
+- Remove the patches on bounce pages reclaim
+
+V1 to V2:
+- Add vhost-vdpa support
+- Add some documents
+- Based on the vdpa management tool
+- Introduce a workqueue for irq injection
+- Replace interval tree with array map to store the iova_map
+
+Xie Yongji (12):
+  iova: Export alloc_iova_fast() and free_iova_fast()
+  file: Export receive_fd() to modules
+  vdpa: Fix some coding style issues
+  vdpa: Add reset callback in vdpa_config_ops
+  vhost-vdpa: Handle the failure of vdpa_reset()
+  vhost-iotlb: Add an opaque pointer for vhost IOTLB
+  vdpa: Add an opaque pointer for vdpa_config_ops.dma_map()
+  vdpa: factor out vhost_vdpa_pa_map() and vhost_vdpa_pa_unmap()
+  vdpa: Support transferring virtual addressing during DMA mapping
+  vduse: Implement an MMU-based software IOTLB
+  vduse: Introduce VDUSE - vDPA Device in Userspace
+  Documentation: Add documentation for VDUSE
+
+ Documentation/userspace-api/index.rst              |    1 +
+ Documentation/userspace-api/ioctl/ioctl-number.rst |    1 +
+ Documentation/userspace-api/vduse.rst              |  233 +++
+ drivers/iommu/iova.c                               |    2 +
+ drivers/vdpa/Kconfig                               |   10 +
+ drivers/vdpa/Makefile                              |    1 +
+ drivers/vdpa/ifcvf/ifcvf_main.c                    |    2 +-
+ drivers/vdpa/mlx5/net/mlx5_vnet.c                  |    2 +-
+ drivers/vdpa/vdpa.c                                |    9 +-
+ drivers/vdpa/vdpa_sim/vdpa_sim.c                   |    8 +-
+ drivers/vdpa/vdpa_user/Makefile                    |    5 +
+ drivers/vdpa/vdpa_user/iova_domain.c               |  545 +++++++
+ drivers/vdpa/vdpa_user/iova_domain.h               |   73 +
+ drivers/vdpa/vdpa_user/vduse_dev.c                 | 1611 ++++++++++++++++++++
+ drivers/vdpa/virtio_pci/vp_vdpa.c                  |    2 +-
+ drivers/vhost/iotlb.c                              |   20 +-
+ drivers/vhost/vdpa.c                               |  168 +-
+ fs/file.c                                          |    6 +
+ include/linux/file.h                               |    7 +-
+ include/linux/vdpa.h                               |   67 +-
+ include/linux/vhost_iotlb.h                        |    3 +
+ include/uapi/linux/vduse.h                         |  304 ++++
+ 22 files changed, 3008 insertions(+), 72 deletions(-)
+ create mode 100644 Documentation/userspace-api/vduse.rst
+ create mode 100644 drivers/vdpa/vdpa_user/Makefile
+ create mode 100644 drivers/vdpa/vdpa_user/iova_domain.c
+ create mode 100644 drivers/vdpa/vdpa_user/iova_domain.h
+ create mode 100644 drivers/vdpa/vdpa_user/vduse_dev.c
+ create mode 100644 include/uapi/linux/vduse.h
+
 -- 
-2.20.1.2432.ga663e714
+2.11.0
 
