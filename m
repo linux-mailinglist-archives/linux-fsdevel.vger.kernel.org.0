@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D915E3F035F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 14:08:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D601F3F0363
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 14:08:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237032AbhHRMJJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Aug 2021 08:09:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45506 "EHLO
+        id S236720AbhHRMJP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Aug 2021 08:09:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236729AbhHRMI4 (ORCPT
+        with ESMTP id S236797AbhHRMI6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Aug 2021 08:08:56 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA265C0612A7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 05:08:00 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id e7so2006662pgk.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 05:08:00 -0700 (PDT)
+        Wed, 18 Aug 2021 08:08:58 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3999C0612AB
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 05:08:04 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id j1so2457471pjv.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 05:08:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=h3cBaHMfU52s7B4IKQZfv/Mv4AwRAWrj25gFgUhSo0U=;
-        b=BSEezFXK8s9mIq1KmFaXULVeK3aSeyUogMR5eD4dSvtorIgyvtWBSxykWIDi2Mf8pr
-         X5b162/G8WPmPUAGFLqIwL0ckm9Ys6EESEOmKMZOP0yUwunUWxu3972h2sop/3olzLJy
-         +IddzNhjRBi9dNG9AR0ALhnxsPULvsgdBtWjeyQNb90yCiAG9ofU/B/rl//+ZPKJ4xvC
-         +dt5yiC6AAS7EhGnuWJ7Q9BYkTy7pDDvx8baBuxDEgJnKxcO7qGyGDW7avh8GUwYddOo
-         33vORXAaeWGUY3lf7K8R+UkAVom11YqRB/1UwDF/3jh8VGWc6YZBRKuzp3zS4SAgt24N
-         IbFQ==
+        bh=Upxg8K2RjM27bp0rNDyYgc14eCE3NIhEIdC+t18pOCs=;
+        b=lygAyD3Keugif/7sVDBS0Q0WByJtqD55lFbxdT5snDeED0JPyahQ3wtT1oTmd/nNab
+         YI0+3N8u2CnAhouYjLrt5FI/zRDPh+xjkeiBRbuBaw4yBwZcdpS5c+n+kJsgc+cZ59YU
+         u2oOzgjEWW5Mpxf4M8OXllJPqNvTAuUYwxr9efXDrsvtc2zMeb2R4jci5Q8LkpOkAGVo
+         nBYBnmI5yCDv9ZFIP+4XR0Cc3hWps8F6T+lqRcTYBnCHbMgTRfSATpE+zVZrOIiUH/c2
+         ZOw4QXOAhQ7R3EWtb2d6awNdUcI8Gp3/S07gCrocQRhZuxHdS/QRSYuMchNsJXeIysoW
+         gwvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=h3cBaHMfU52s7B4IKQZfv/Mv4AwRAWrj25gFgUhSo0U=;
-        b=pl0CdJS8wsR+8CG62LTMOKNyxx54vGUz99s2FTSHJetFvwLW7ZeX4GFs+8aqnikAau
-         cONXUdvlUK9WSlbEmc1ICY5B+bzqliv9UbFn1mkhdMmaD1ESlaVfUGnwzmzxhDBDopcQ
-         3RAnDXXkRQTyDITHyGG5qp4alQiOaamzb65o8RK046QCMaPb1MFjl1yR892YbSLmtU+L
-         LtD3W8sWLB91r+9dhVobTXNB5HYvO4fGKQS98FH/Hyke3ZG2nNJYzrzvM++yZrKhrwAO
-         ERZWTe6Wkii1bY6SPB84o6ROdf8iaSTaSpjQ5GTTB6SYwehpufey3dtv5dqZgWmZccQY
-         v9Vw==
-X-Gm-Message-State: AOAM533Hq/49dIidAVfr+cWIVq/peFReDBCeKamjCc42vEgNrtt/aQC+
-        +4KwLUpNeD9Ya7R9XDk1pfLq
-X-Google-Smtp-Source: ABdhPJylpJBebPvrUUXvngWerpOz2/KsXpZmy7xMNWLgfzpdybMKiIoAmHmo7Y5tBNvbw/zln+2/Kg==
-X-Received: by 2002:a62:e90b:0:b029:30e:4530:8dca with SMTP id j11-20020a62e90b0000b029030e45308dcamr9110885pfh.17.1629288480323;
-        Wed, 18 Aug 2021 05:08:00 -0700 (PDT)
+        bh=Upxg8K2RjM27bp0rNDyYgc14eCE3NIhEIdC+t18pOCs=;
+        b=BvSinQ7q/6DWfC8TAAKrfy/XOrVAp7X71V/7oG7Zd9OCzYLgoOkHqFdGw1zHsmr4ly
+         sGo3ndv9rmkzRsuVtd9sWhPUOE2HlfhdkK/Uvd335w93Odl794PZO1rtpAHKvdxTri/v
+         QMrfVyQfHtDv6n25ehw8ApQ+ryH5319V+iEMnGacRZphoATd6SWTn3PR4UyH/yI9Bvsn
+         RilklvJ0IP/BJvqHi6VQgJQB9EwhcO21XTagLB7ufvL31CGWKLe7p5yqKivCjMLGPJ2v
+         4EHlIftcCSRidswzQNlhYm4zfzJ8lgHRK/YVvb8MgOdsfH6kqYLoKGvDuVImhmwT45kC
+         y5AA==
+X-Gm-Message-State: AOAM530SroSkIcFlnACEGS7DHumuObrxtqChp2AmT22QzU7a4N1y9lbD
+        0wpa2BpyIilHe1kZD5mLiMs/
+X-Google-Smtp-Source: ABdhPJx2zpHHk/rm1pUU6+vYW29Qy78558N3aIjYPaB+DOhvx26kSUU8EJK1qwKqbMvnWiWPs1Xy+g==
+X-Received: by 2002:a17:90a:d149:: with SMTP id t9mr8962859pjw.0.1629288484275;
+        Wed, 18 Aug 2021 05:08:04 -0700 (PDT)
 Received: from localhost ([139.177.225.253])
-        by smtp.gmail.com with ESMTPSA id 73sm6785078pfz.73.2021.08.18.05.07.59
+        by smtp.gmail.com with ESMTPSA id y62sm6138669pfy.183.2021.08.18.05.08.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Aug 2021 05:07:59 -0700 (PDT)
+        Wed, 18 Aug 2021 05:08:03 -0700 (PDT)
 From:   Xie Yongji <xieyongji@bytedance.com>
 To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
         sgarzare@redhat.com, parav@nvidia.com, hch@infradead.org,
@@ -61,9 +61,9 @@ Cc:     songmuchun@bytedance.com,
         virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
         kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v11 04/12] vdpa: Add reset callback in vdpa_config_ops
-Date:   Wed, 18 Aug 2021 20:06:34 +0800
-Message-Id: <20210818120642.165-5-xieyongji@bytedance.com>
+Subject: [PATCH v11 05/12] vhost-vdpa: Handle the failure of vdpa_reset()
+Date:   Wed, 18 Aug 2021 20:06:35 +0800
+Message-Id: <20210818120642.165-6-xieyongji@bytedance.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210818120642.165-1-xieyongji@bytedance.com>
 References: <20210818120642.165-1-xieyongji@bytedance.com>
@@ -73,85 +73,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds a new callback to support device specific reset
-behavior. The vdpa bus driver will call the reset function
-instead of setting status to zero during resetting if device
-driver supports the new callback.
+The vdpa_reset() may fail now. This adds check to its return
+value and fail the vhost_vdpa_open().
 
 Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
 ---
- drivers/vhost/vdpa.c |  9 +++++++--
- include/linux/vdpa.h | 11 ++++++++++-
- 2 files changed, 17 insertions(+), 3 deletions(-)
+ drivers/vhost/vdpa.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-index b07aa161f7ad..b1c91b4db0ba 100644
+index b1c91b4db0ba..d99d75ad30cc 100644
 --- a/drivers/vhost/vdpa.c
 +++ b/drivers/vhost/vdpa.c
-@@ -157,7 +157,7 @@ static long vhost_vdpa_set_status(struct vhost_vdpa *v, u8 __user *statusp)
- 	struct vdpa_device *vdpa = v->vdpa;
- 	const struct vdpa_config_ops *ops = vdpa->config;
- 	u8 status, status_old;
--	int nvqs = v->nvqs;
-+	int ret, nvqs = v->nvqs;
- 	u16 i;
- 
- 	if (copy_from_user(&status, statusp, sizeof(status)))
-@@ -172,7 +172,12 @@ static long vhost_vdpa_set_status(struct vhost_vdpa *v, u8 __user *statusp)
- 	if (status != 0 && (ops->get_status(vdpa) & ~status) != 0)
- 		return -EINVAL;
- 
--	ops->set_status(vdpa, status);
-+	if (status == 0 && ops->reset) {
-+		ret = ops->reset(vdpa);
-+		if (ret)
-+			return ret;
-+	} else
-+		ops->set_status(vdpa, status);
- 
- 	if ((status & VIRTIO_CONFIG_S_DRIVER_OK) && !(status_old & VIRTIO_CONFIG_S_DRIVER_OK))
- 		for (i = 0; i < nvqs; i++)
-diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
-index 8a645f8f4476..af7ea5ad795f 100644
---- a/include/linux/vdpa.h
-+++ b/include/linux/vdpa.h
-@@ -196,6 +196,9 @@ struct vdpa_iova_range {
-  *				@vdev: vdpa device
-  *				Returns the iova range supported by
-  *				the device.
-+ * @reset:			Reset device (optional)
-+ *				@vdev: vdpa device
-+ *				Returns integer: success (0) or error (< 0)
-  * @set_map:			Set device memory mapping (optional)
-  *				Needed for device that using device
-  *				specific DMA translation (on-chip IOMMU)
-@@ -263,6 +266,7 @@ struct vdpa_config_ops {
- 			   const void *buf, unsigned int len);
- 	u32 (*get_generation)(struct vdpa_device *vdev);
- 	struct vdpa_iova_range (*get_iova_range)(struct vdpa_device *vdev);
-+	int (*reset)(struct vdpa_device *vdev);
- 
- 	/* DMA ops */
- 	int (*set_map)(struct vdpa_device *vdev, struct vhost_iotlb *iotlb);
-@@ -351,12 +355,17 @@ static inline struct device *vdpa_get_dma_dev(struct vdpa_device *vdev)
- 	return vdev->dma_dev;
+@@ -116,12 +116,13 @@ static void vhost_vdpa_unsetup_vq_irq(struct vhost_vdpa *v, u16 qid)
+ 	irq_bypass_unregister_producer(&vq->call_ctx.producer);
  }
  
--static inline void vdpa_reset(struct vdpa_device *vdev)
-+static inline int vdpa_reset(struct vdpa_device *vdev)
+-static void vhost_vdpa_reset(struct vhost_vdpa *v)
++static int vhost_vdpa_reset(struct vhost_vdpa *v)
  {
- 	const struct vdpa_config_ops *ops = vdev->config;
+ 	struct vdpa_device *vdpa = v->vdpa;
  
- 	vdev->features_valid = false;
-+	if (ops->reset)
-+		return ops->reset(vdev);
+-	vdpa_reset(vdpa);
+ 	v->in_batch = 0;
 +
- 	ops->set_status(vdev, 0);
-+
-+	return 0;
++	return vdpa_reset(vdpa);
  }
  
- static inline int vdpa_set_features(struct vdpa_device *vdev, u64 features)
+ static long vhost_vdpa_get_device_id(struct vhost_vdpa *v, u8 __user *argp)
+@@ -868,7 +869,9 @@ static int vhost_vdpa_open(struct inode *inode, struct file *filep)
+ 		return -EBUSY;
+ 
+ 	nvqs = v->nvqs;
+-	vhost_vdpa_reset(v);
++	r = vhost_vdpa_reset(v);
++	if (r)
++		goto err;
+ 
+ 	vqs = kmalloc_array(nvqs, sizeof(*vqs), GFP_KERNEL);
+ 	if (!vqs) {
 -- 
 2.11.0
 
