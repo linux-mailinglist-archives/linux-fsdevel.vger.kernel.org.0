@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BA343EFF0B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 10:22:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED7473EFFA9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 10:55:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239403AbhHRIWc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Aug 2021 04:22:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48342 "EHLO
+        id S230026AbhHRI4A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Aug 2021 04:56:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239555AbhHRIWa (ORCPT
+        with ESMTP id S229820AbhHRIz7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Aug 2021 04:22:30 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CB47C0613A4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 01:21:54 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id gt38so3237875ejc.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 01:21:54 -0700 (PDT)
+        Wed, 18 Aug 2021 04:55:59 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14241C061764;
+        Wed, 18 Aug 2021 01:55:23 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id x7so3708667ljn.10;
+        Wed, 18 Aug 2021 01:55:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tessares-net.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=IUGQJMpYD6agvdMJfJSqVaqnT5bLEbnIc4RgJSXH0jg=;
-        b=KFd67qyoRkJqm+Tr0NAOAYYZhcgR6yxB489Fw38wCDJh37MO/2O2e4e8oPY+PO6uB6
-         HH49ENUWtwE8gUtSvSSfOWgLs7LRZ3wgVA3tY71FoC81cixhJJmmkHCA2ueBmqusfYdH
-         1h9Il7+pczkTiA8ExiLy+6fUZ7wjwFSVh7WP8qSCKCYTeGvt21zrqIqrh5pgcmsivxiY
-         hU1bG4vm1e2csd8SwXEQr7ZDzQm0ENmMxUHxH3xrgueNiKd2SixlWP5Ycp734PiN3TtK
-         gcS1gpjidTmNlIyp0ks2qWTjW9va8I8qSogu4J6+7SGkfAH+/o6HVnovDpUZdE2c7Xaf
-         g6kw==
+        bh=PyuHTiYtcp7PenUOgX16JRdXO479FYx66sP5cfTDtJ8=;
+        b=bFhAKTFYhRq6nSBU53V7nBfYhXxkjiAhCqJps2SBtRGMCJIXp+7lU6McxX8loQ6meE
+         fSG/FM3TmRbrP/b8JPftQvirvT0vqmE8IBifTejnoi6fVmyDgoVZJi0A2nL7TEJ5ep6U
+         o2VSz0DNti8zycJniW8NTFPj0oSHwn9/KbdCQon5p3dgkjGpfZjfSf9d8VaQbCgzW7AF
+         xcA2d+ms1Dm0JAK5Ztk4Qxii2GLc9+YyZSyRDLbM8q8GIfUWYUD2PlJCGYGdRSa9U/SY
+         wlL63UXYJiyw80MiPemF3cVUtFHjQpfvfBbn2auULEHwWpm/C6cbpNM1CHQtc6q3bxgN
+         f9Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=IUGQJMpYD6agvdMJfJSqVaqnT5bLEbnIc4RgJSXH0jg=;
-        b=PS23gfnjzstuVIJLtuN6fbKesM6j6+9Kam9fDDA6uhLVddzkeFWdFqlWHipuXFcbNU
-         bq+an74v4Nkbp6KM6ki9v3w7UrOV0DMIXG+8BlWSVg+v5F8C97NcPWynWdp7fpLSrkn7
-         J2CPcQelJTJQtyHgaO0W44SxX176wzQd1pWc+x2jNUq9zde175S4Bxm3SNih+SuLYAyt
-         Tq1V10SVmzR+L6rhVvRYIVDpC+2ZhWLQRxX0AOKr40lMcoC7xpZpTvO9x2eD4dtTRGHl
-         qOX2KJiR074GrEZC+vEvxI2fLAXtr2j8E5Qu8qdpeuW2asxtWrxCd7Vvo3k5ODqCXvFR
-         frcA==
-X-Gm-Message-State: AOAM53265DjUiwts2O1gk6Mmt0bR/rt7mc+ppLF4yG0fE7gcc4+I0eED
-        QlraY+SiBj4kIx9mQJOPZbbwhQ==
-X-Google-Smtp-Source: ABdhPJzKr1rmco8bFNuuVJquILRCkMGTN+jBNA9OPDgxFXrFZPGoyq0JQUUheWmPtUZUeQ01JFh3Ig==
-X-Received: by 2002:a17:907:1b29:: with SMTP id mp41mr8648294ejc.459.1629274913056;
-        Wed, 18 Aug 2021 01:21:53 -0700 (PDT)
-Received: from tsr-lap-08.nix.tessares.net ([213.211.156.192])
-        by smtp.gmail.com with ESMTPSA id ko11sm1694143ejc.54.2021.08.18.01.21.51
+        bh=PyuHTiYtcp7PenUOgX16JRdXO479FYx66sP5cfTDtJ8=;
+        b=BlTUqSkQpk/9Fc47ea6C798OCLe1seYD/jZuiUYoaIcewbU9eVq+YKfq8kf29xRcNE
+         JphiwLv128X5VInOYG/JrVTe10GQI4cTRpAYCJrmV+5k1pq138UDMOcg13YiufutSwOA
+         1Q0GyJVa7ZFRf8SL7xFbYVTE6STzm3iAwb7/1d7MW6PpxMisiViO9xOubqbjmmjsGs6L
+         oOudwkfap5IAyMvJPpevV7J8S+M+z/B/bUZEcmOSrDTX8lS/IoruXQRGCg7wNtS4wIeK
+         3OfjpnB/SqFODHYvHJ3D6sKqDmMlc3bgYQ6qy757FW1qJs/FLyoQhP47p1o88C9w2tA+
+         6XFg==
+X-Gm-Message-State: AOAM532llg9xnFPxgXrmwrkGueuvVGythGXIiMGeW7xcPGt2ghsBjfly
+        Iuu5pqG0kN2Qxo0SqjYdM6g=
+X-Google-Smtp-Source: ABdhPJzBpe3DARPr+h0Pu2Yu7QwdF+94FYfIVaP5pXL2ykMkVckZmxUEm9OoslOsTrhEkgEvNsI3Fg==
+X-Received: by 2002:a2e:b611:: with SMTP id r17mr7101788ljn.10.1629276921412;
+        Wed, 18 Aug 2021 01:55:21 -0700 (PDT)
+Received: from localhost.localdomain ([46.61.204.60])
+        by smtp.gmail.com with ESMTPSA id g5sm432730lfe.174.2021.08.18.01.55.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Aug 2021 01:21:52 -0700 (PDT)
+        Wed, 18 Aug 2021 01:55:20 -0700 (PDT)
 Subject: Re: [syzbot] KFENCE: use-after-free in kvm_fastop_exception
-To:     Pavel Skripkin <paskripkin@gmail.com>,
+To:     Matthieu Baerts <matthieu.baerts@tessares.net>,
         syzbot <syzbot+7b938780d5deeaaf938f@syzkaller.appspotmail.com>,
         davem@davemloft.net, johan.hedberg@gmail.com, kuba@kernel.org,
         linux-bluetooth@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -61,81 +61,63 @@ To:     Pavel Skripkin <paskripkin@gmail.com>,
 References: <00000000000012030e05c9c8bc85@google.com>
  <58cef9e0-69de-efdb-4035-7c1ed3d23132@tessares.net>
  <6736a510-20a1-9fb5-caf4-86334cabbbb6@gmail.com>
-From:   Matthieu Baerts <matthieu.baerts@tessares.net>
-Message-ID: <32aeb66e-d4f0-26b5-a140-4477bb87067f@tessares.net>
-Date:   Wed, 18 Aug 2021 10:21:51 +0200
+ <32aeb66e-d4f0-26b5-a140-4477bb87067f@tessares.net>
+From:   Pavel Skripkin <paskripkin@gmail.com>
+Message-ID: <3a8dd8db-61d6-603e-b270-5faf1be02c6b@gmail.com>
+Date:   Wed, 18 Aug 2021 11:55:19 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <6736a510-20a1-9fb5-caf4-86334cabbbb6@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <32aeb66e-d4f0-26b5-a140-4477bb87067f@tessares.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Pavel,
-
-On 18/08/2021 10:12, Pavel Skripkin wrote:
-> On 8/18/21 11:02 AM, Matthieu Baerts wrote:
->> Hello,
->>
->> On 18/08/2021 00:21, syzbot wrote:
->>> syzbot has bisected this issue to:
+On 8/18/21 11:21 AM, Matthieu Baerts wrote:
+> Hi Pavel,
+> 
+[snip]
 >>>
->>> commit c4512c63b1193c73b3f09c598a6d0a7f88da1dd8
->>> Author: Matthieu Baerts <matthieu.baerts@tessares.net>
->>> Date:   Fri Jun 25 21:25:22 2021 +0000
+>>> I'm pretty sure the commit c4512c63b119 ("mptcp: fix 'masking a bool'
+>>> warning") doesn't introduce the reported bug. This minor fix is specific
+>>> to MPTCP which doesn't seem to be used here.
 >>>
->>>     mptcp: fix 'masking a bool' warning
+>>> I'm not sure how I can tell syzbot this is a false positive.
 >>>
->>> bisection log: 
->>> https://syzkaller.appspot.com/x/bisect.txt?x=122b0655300000
->>> start commit:   b9011c7e671d Add linux-next specific files for 20210816
->>> git tree:       linux-next
->>> final oops:    
->>> https://syzkaller.appspot.com/x/report.txt?x=112b0655300000
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=162b0655300000
->>> kernel config: 
->>> https://syzkaller.appspot.com/x/.config?x=a245d1aa4f055cc1
->>> dashboard link:
->>> https://syzkaller.appspot.com/bug?extid=7b938780d5deeaaf938f
->>> syz repro:     
->>> https://syzkaller.appspot.com/x/repro.syz?x=157a41ee300000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f78ff9300000
->>
->> I'm pretty sure the commit c4512c63b119 ("mptcp: fix 'masking a bool'
->> warning") doesn't introduce the reported bug. This minor fix is specific
->> to MPTCP which doesn't seem to be used here.
->>
->> I'm not sure how I can tell syzbot this is a false positive.
->>
+>> 
+>> 
+>> looks like it's fs/namei bug. Similar reports:
+>> 
+>> https://syzkaller.appspot.com/bug?id=517fa734b92b7db404c409b924cf5c997640e324
+>> 
+>> 
+>> https://syzkaller.appspot.com/bug?id=484483daf3652b40dae18531923aa9175d392a4d
 > 
+> Thank you for having checked!
+> Should we mark them as "#syz dup" if you think they have the same root
+> cause?
 > 
-> looks like it's fs/namei bug. Similar reports:
-> 
-> https://syzkaller.appspot.com/bug?id=517fa734b92b7db404c409b924cf5c997640e324
-> 
-> 
-> https://syzkaller.appspot.com/bug?id=484483daf3652b40dae18531923aa9175d392a4d
 
-Thank you for having checked!
-Should we mark them as "#syz dup" if you think they have the same root
-cause?
+I think, yes, but I want to receive feedback from fs people about this 
+bug. There were huge updates last month, and, maybe, I am missing some 
+details. Alloc/free calltrace is the same, but anyway, I want some 
+confirmation to not close different bugs by mistake :)
 
-> It's not false positive. I've suggested the fix here:
-> https://groups.google.com/g/syzkaller-bugs/c/HE3c2fP5nic/m/1Yk17GBeAwAJ
-> I am waiting for author comments about the fix :)
+If these bugs really have same root case I will close them manually 
+after fix posted.
+
+>> It's not false positive. I've suggested the fix here:
+>> https://groups.google.com/g/syzkaller-bugs/c/HE3c2fP5nic/m/1Yk17GBeAwAJ
+>> I am waiting for author comments about the fix :)
+>> 
+>> But, yes, syzbot bisection is often wrong, so don't rely on it much :)
 > 
-> But, yes, syzbot bisection is often wrong, so don't rely on it much :)
-
-Yes sorry, I wanted to say the bisection picked a wrong commit :)
-
-All good then if syzbot often blames the wrong modification :)
-
-Cheers,
-Matt
--- 
-Tessares | Belgium | Hybrid Access Solutions
-www.tessares.net
+> Yes sorry, I wanted to say the bisection picked a wrong commit :)
+> 
+> All good then if syzbot often blames the wrong modification :)
+> 
+With regards,
+Pavel Skripkin
