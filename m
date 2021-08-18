@@ -2,198 +2,387 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 944263F0ABF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 20:02:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D18BD3F0AC7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Aug 2021 20:07:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229667AbhHRSDK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Aug 2021 14:03:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:60056 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229468AbhHRSDJ (ORCPT
+        id S229703AbhHRSIX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Aug 2021 14:08:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45148 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229448AbhHRSIV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Aug 2021 14:03:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629309754;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1WOK3cg/zkat8VOnlJEScY0tjvfsW0d7BTmUGQi53qM=;
-        b=ZzLej1qhIxUUOvhLf7oO50EgoJItV2RXZ9BtGOA9hNsa4A1ZtbwghGzZV/QzP+GnIFx8CZ
-        Ori4UdQ0VY4EYn8iSg4IU/7xRblBqDwFBmdfcVF681FqWWObW6OpHpbldQum8uTw2BtjIc
-        7eq4rNpV6YCjGVZoAsPEqwVyMBV5Y64=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-475-0iGKoCtiOSedYfbdMvugUw-1; Wed, 18 Aug 2021 14:02:32 -0400
-X-MC-Unique: 0iGKoCtiOSedYfbdMvugUw-1
-Received: by mail-wm1-f72.google.com with SMTP id b3-20020a1c80030000b02902e6a7296cb3so853747wmd.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 11:02:32 -0700 (PDT)
+        Wed, 18 Aug 2021 14:08:21 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D567C061764
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 11:07:46 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id m24-20020a17090a7f98b0290178b1a81700so2867735pjl.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 11:07:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=bgi+u30ADL5qAUBsITAW8rYqpY0ExP8Ilge2KjgCxl0=;
+        b=aY7Gv/1P1ww0PFzv/SpBbUA8lvn4NGQ3y1ukivnK1MpNm9PZrjzO60JRCzjs1MhQQa
+         2aaT7vXl0rObrHk6OGFGlS2a9cfxsSGVpjRuCfRF1iNEe2UobdCUjC5iXKnqQRxLfH1X
+         nPm9+PPzBSBGZ9nFyg24Ty3sZG/DL4POwHy1FmJcbt/tg0JgIA2f5GCGrPfZwqJPjYEA
+         8fz60rZfghhmkzBjuFm/PGhNmfAJn/V6xaDwjzvQWrR6GMJsab6P5RzdFoFPC+6lx/At
+         htrclTm2OX1qSW4M23hQBADV9xkvYijNg/MaJSCQN9vQ/USQ7hRaQdQo4eg3dGVMNJwB
+         MxCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=1WOK3cg/zkat8VOnlJEScY0tjvfsW0d7BTmUGQi53qM=;
-        b=q+hWOC+dS+cgi9DqKRuL9Fh+5I/4eTiVu3h2okifSTsp2/4D+HNre6EXIeIru+Wvw/
-         41u31PaSwdAz+mXc0U1MhMClldvlCIp5Lt1tYrIRNBm2WxdIU98c7ZVVneKNLcVhBkq6
-         dCNHGbwdqXgMn5zkztKPVcbcn0u91eftb0aXmbU6vT077K5rm/UVkJgmKX21llWuGm0s
-         pQfNZCiLbSAyPXCheYG2ny48nIUMZxqzYT7FKJPdqh+cDCdcoeWfxbXwHaUfMbJk/bk6
-         TotDRRf6KvGBlJRkJANFnN/JiD6a/3Pxu6sMdiiP/VI8wm3Z4nKLcuyUnR/D84RgcKJ6
-         a8Fw==
-X-Gm-Message-State: AOAM533+mjesy1xE8RiKafLa8SfvV834Nw8ldXJ4dfw7ynntlClICkBv
-        mm2tyLB587KDJvu1sNfdtRFbOG4l93ipOp8Dpvcioe5eNCY0JE1z5QOsM2QZMRKtP57SBm13yuA
-        jAD758z4+oVQay5L+VlfdrPjdIWQ/GWhTaq6haq8mNjv1RccWcV6iDFMM9MnZDI6XNxpj4jfPiA
-        ==
-X-Received: by 2002:a5d:4088:: with SMTP id o8mr12064965wrp.34.1629309751429;
-        Wed, 18 Aug 2021 11:02:31 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxYzqQ/Bq4Fsnx8ibSnj4dPmYLddPg6cSohDg68p0zqhWb3HOUwbx03BKuiJ3O+8TuCOftMmQ==
-X-Received: by 2002:a5d:4088:: with SMTP id o8mr12064918wrp.34.1629309751168;
-        Wed, 18 Aug 2021 11:02:31 -0700 (PDT)
-Received: from [192.168.3.132] (p5b0c6417.dip0.t-ipconnect.de. [91.12.100.23])
-        by smtp.gmail.com with ESMTPSA id r1sm525475wrt.24.2021.08.18.11.02.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Aug 2021 11:02:30 -0700 (PDT)
-Subject: Re: [PATCH] x86/mm: fix kern_addr_valid to cope with existing but not
- present entries
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20210817135854.25407-1-rppt@kernel.org>
- <d35b3132-9a90-84b9-7907-ad321171b422@redhat.com>
- <YR1GkuNjpzYLm3qw@kernel.org>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Message-ID: <218861a5-696f-6786-d1a1-bff5929360df@redhat.com>
-Date:   Wed, 18 Aug 2021 20:02:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=bgi+u30ADL5qAUBsITAW8rYqpY0ExP8Ilge2KjgCxl0=;
+        b=YndVedgEY2InWXtv2MvUgjXp4yXCfRF3NycYZiOWyufHD7z4zsQU01rLjx+4okOKkI
+         2SYONGesmyXGzLkgjkMbzxKn1N6AETWuh2e8IvMB2UsEGRS5HiwCn+bwGf/84CbME3Pc
+         9u1a5f5n+Zvbl5EPnmXKq33BYDW9s3+WfRUSxphOiEyshFxnT4LBmHiFugYjzsJvadzs
+         u5+KHNiu8yZfb4cUyrtbB/u7lP81zAEkXtVXdOyTHutFm4SDa7x32bF+LYpzGzwuP7hA
+         Weef8PN8sD8kAK96Q+gSmnzXjQzu90VGRUrXZLVzXOUbPEtVhIPfoMLUpmiNP0Tr2fvY
+         pfgw==
+X-Gm-Message-State: AOAM533Kd5kv2RXar9TBmaWFKyXm9YVBnD731GE+COWHw0A/yRcukA9V
+        +60NoAbFbS+OtrOQvqlp0j+fhA==
+X-Google-Smtp-Source: ABdhPJz9AmKluTiUkqlSXVIa9lO7Hw37mDklIBre4pAgvVEe2KXQAYoxw1MAS0lJPPnyEadfvbgriQ==
+X-Received: by 2002:a17:90a:de16:: with SMTP id m22mr10550255pjv.38.1629310065758;
+        Wed, 18 Aug 2021 11:07:45 -0700 (PDT)
+Received: from relinquished.localdomain ([2620:10d:c090:400::5:1e84])
+        by smtp.gmail.com with ESMTPSA id b12sm472931pff.63.2021.08.18.11.07.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Aug 2021 11:07:45 -0700 (PDT)
+Date:   Wed, 18 Aug 2021 11:07:43 -0700
+From:   Omar Sandoval <osandov@osandov.com>
+To:     linux-btrfs@vger.kernel.org
+Cc:     kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH v10 06/10] btrfs-progs: receive: encoded_write fallback
+ to explicit decode and write
+Message-ID: <YR1Mb0i6Fk1LggJb@relinquished.localdomain>
+References: <cover.1629234193.git.osandov@fb.com>
+ <27ad30578c6e4347ff4161183c55ba6dee2e9227.1629234282.git.osandov@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <YR1GkuNjpzYLm3qw@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27ad30578c6e4347ff4161183c55ba6dee2e9227.1629234282.git.osandov@fb.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 18.08.21 19:42, Mike Rapoport wrote:
-> On Tue, Aug 17, 2021 at 04:01:13PM +0200, David Hildenbrand wrote:
->> On 17.08.21 15:58, Mike Rapoport wrote:
->>> From: Mike Rapoport <rppt@linux.ibm.com>
->>>
->>> Jiri Olsa reported a fault when running:
->>>
->>> 	# cat /proc/kallsyms | grep ksys_read
->>> 	ffffffff8136d580 T ksys_read
->>> 	# objdump -d --start-address=0xffffffff8136d580 --stop-address=0xffffffff8136d590 /proc/kcore
->>>
->>> 	/proc/kcore:     file format elf64-x86-64
->>>
->>> 	Segmentation fault
->>>
->>> krava33 login: [   68.330612] general protection fault, probably for non-canonical address 0xf887ffcbff000: 0000 [#1] SMP PTI
->>> [   68.333118] CPU: 12 PID: 1079 Comm: objdump Not tainted 5.14.0-rc5qemu+ #508
->>> [   68.334922] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-4.fc34 04/01/2014
->>> [   68.336945] RIP: 0010:kern_addr_valid+0x150/0x300
->>> [   68.338082] Code: 1f 40 00 48 8b 0d e8 12 61 01 48 85 f6 0f 85 ca 00 00 00 48 81 e1 00 f0 ff ff 48 21 c1 48 b8 00 00 00 00 80 88 ff ff 48 01 ca <48> 8b 3c 02 48 f7 c7 9f ff ff ff 0f 84 d8 fe ff ff 48 89 f8 0f 1f
->>> [   68.342220] RSP: 0018:ffffc90000bcbc38 EFLAGS: 00010206
->>> [   68.343428] RAX: ffff888000000000 RBX: 0000000000001000 RCX: 000ffffffcbff000
->>> [   68.345029] RDX: 000ffffffcbff000 RSI: 0000000000000000 RDI: 800ffffffcbff062
->>> [   68.346599] RBP: ffffc90000bcbea8 R08: 0000000000001000 R09: 0000000000000000
->>> [   68.349000] R10: 0000000000000000 R11: 0000000000001000 R12: 00007fcc0fd80010
->>> [   68.350804] R13: ffffffff83400000 R14: 0000000000400000 R15: ffffffff843d23e0
->>> [   68.352609] FS:  00007fcc111fcc80(0000) GS:ffff888275e00000(0000) knlGS:0000000000000000
->>> [   68.354638] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [   68.356104] CR2: 00007fcc0fd80000 CR3: 000000011226e004 CR4: 0000000000770ee0
->>> [   68.357896] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>> [   68.359694] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>> [   68.361597] PKRU: 55555554
->>> [   68.362460] Call Trace:
->>> [   68.363252]  read_kcore+0x57f/0x920
->>> [   68.364289]  ? rcu_read_lock_sched_held+0x12/0x80
->>> [   68.365630]  ? rcu_read_lock_sched_held+0x12/0x80
->>> [   68.366955]  ? rcu_read_lock_sched_held+0x12/0x80
->>> [   68.368277]  ? trace_hardirqs_on+0x1b/0xd0
->>> [   68.369462]  ? rcu_read_lock_sched_held+0x12/0x80
->>> [   68.370793]  ? lock_acquire+0x195/0x2f0
->>> [   68.371920]  ? lock_acquire+0x195/0x2f0
->>> [   68.373035]  ? rcu_read_lock_sched_held+0x12/0x80
->>> [   68.374364]  ? lock_acquire+0x195/0x2f0
->>> [   68.375498]  ? rcu_read_lock_sched_held+0x12/0x80
->>> [   68.376831]  ? rcu_read_lock_sched_held+0x12/0x80
->>> [   68.379883]  ? rcu_read_lock_sched_held+0x12/0x80
->>> [   68.381268]  ? lock_release+0x22b/0x3e0
->>> [   68.382458]  ? _raw_spin_unlock+0x1f/0x30
->>> [   68.383685]  ? __handle_mm_fault+0xcfc/0x15f0
->>> [   68.384994]  ? rcu_read_lock_sched_held+0x12/0x80
->>> [   68.386389]  ? lock_acquire+0x195/0x2f0
->>> [   68.387573]  ? rcu_read_lock_sched_held+0x12/0x80
->>> [   68.388969]  ? lock_release+0x22b/0x3e0
->>> [   68.390145]  proc_reg_read+0x55/0xa0
->>> [   68.391257]  ? vfs_read+0x78/0x1b0
->>> [   68.392336]  vfs_read+0xa7/0x1b0
->>> [   68.393328]  ksys_read+0x68/0xe0
->>> [   68.394308]  do_syscall_64+0x3b/0x90
->>> [   68.395391]  entry_SYSCALL_64_after_hwframe+0x44/0xae
->>> [   68.396804] RIP: 0033:0x7fcc11cf92e2
->>> [   68.397824] Code: c0 e9 b2 fe ff ff 50 48 8d 3d ea 2e 0a 00 e8 95 e9 01 00 0f 1f 44 00 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 0f 05 <48> 3d 00 f0 ff ff 77 56 c3 0f 1f 44 00 00 48 83 ec 28 48 89 54 24
->>> [   68.402420] RSP: 002b:00007ffd6e0f8da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
->>> [   68.404357] RAX: ffffffffffffffda RBX: 0000565439305b20 RCX: 00007fcc11cf92e2
->>> [   68.406061] RDX: 0000000000800000 RSI: 00007fcc0f980010 RDI: 0000000000000003
->>> [   68.407747] RBP: 00007fcc11dcd300 R08: 0000000000000003 R09: 00007fcc0d980010
->>> [   68.410937] R10: 0000000003826000 R11: 0000000000000246 R12: 00007fcc0f980010
->>> [   68.412624] R13: 0000000000000d68 R14: 00007fcc11dcc700 R15: 0000000000800000
->>> [   68.414322] Modules linked in: intel_rapl_msr intel_rapl_common nfit kvm_intel kvm irqbypass rapl iTCO_wdt iTCO_vendor_support i2c_i801 i2c_smbus lpc_ich drm drm_panel_orientation_quirks zram xfs crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel
->>> [   68.419591] ---[ end trace e2c30f827226966b ]---
->>> [   68.420969] RIP: 0010:kern_addr_valid+0x150/0x300
->>> [   68.422308] Code: 1f 40 00 48 8b 0d e8 12 61 01 48 85 f6 0f 85 ca 00 00 00 48 81 e1 00 f0 ff ff 48 21 c1 48 b8 00 00 00 00 80 88 ff ff 48 01 ca <48> 8b 3c 02 48 f7 c7 9f ff ff ff 0f 84 d8 fe ff ff 48 89 f8 0f 1f
->>> [   68.426826] RSP: 0018:ffffc90000bcbc38 EFLAGS: 00010206
->>> [   68.428150] RAX: ffff888000000000 RBX: 0000000000001000 RCX: 000ffffffcbff000
->>> [   68.429813] RDX: 000ffffffcbff000 RSI: 0000000000000000 RDI: 800ffffffcbff062
->>> [   68.431465] RBP: ffffc90000bcbea8 R08: 0000000000001000 R09: 0000000000000000
->>> [   68.433115] R10: 0000000000000000 R11: 0000000000001000 R12: 00007fcc0fd80010
->>> [   68.434768] R13: ffffffff83400000 R14: 0000000000400000 R15: ffffffff843d23e0
->>> [   68.436423] FS:  00007fcc111fcc80(0000) GS:ffff888275e00000(0000) knlGS:0000000000000000
->>> [   68.438354] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [   68.442077] CR2: 00007fcc0fd80000 CR3: 000000011226e004 CR4: 0000000000770ee0
->>> [   68.443727] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>> [   68.445370] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>> [   68.447010] PKRU: 55555554
->>>
->>> The fault happens because kern_addr_valid() dereferences existent but not
->>> present PMD in the high kernel mappings.
->>>
->>> Such PMDs are created when free_kernel_image_pages() frees regions larger
->>> than 2Mb. In this case a part of the freed memory is mapped with PMDs and
->>> the set_memory_np_noalias() -> ... -> __change_page_attr() sequence will
->>> mark the PMD as not present rather than wipe it completely.
->>>
->>> Make kern_addr_valid() to check whether higher level page table entries are
->>> present before trying to dereference them to fix this issue and to avoid
->>> similar issues in the future.
->>
->> Why not fix the setting code?
->   
-> Because I'm not sure it won't backfire in some other place.
-> Fixing kern_addr_valid() looks safe and easy for backporting.
+On Tue, Aug 17, 2021 at 02:06:52PM -0700, Omar Sandoval wrote:
+> From: Boris Burkov <boris@bur.io>
+> 
+> An encoded_write can fail if the file system it is being applied to does
+> not support encoded writes or if it can't find enough contiguous space
+> to accommodate the encoded extent. In those cases, we can likely still
+> process an encoded_write by explicitly decoding the data and doing a
+> normal write.
+> 
+> Add the necessary fallback path for decoding data compressed with zlib,
+> lzo, or zstd. zlib and zstd have reusable decoding context data
+> structures which we cache in the receive context so that we don't have
+> to recreate them on every encoded_write.
+> 
+> Finally, add a command line flag for force-decompress which causes
+> receive to always use the fallback path rather than first attempting the
+> encoded write.
+> 
+> Signed-off-by: Boris Burkov <boris@bur.io>
+> ---
+>  Documentation/btrfs-receive.asciidoc |   4 +
+>  cmds/receive.c                       | 266 ++++++++++++++++++++++++++-
+>  2 files changed, 261 insertions(+), 9 deletions(-)
+> 
+> diff --git a/Documentation/btrfs-receive.asciidoc b/Documentation/btrfs-receive.asciidoc
+> index e4c4d2c0..354a71dc 100644
+> --- a/Documentation/btrfs-receive.asciidoc
+> +++ b/Documentation/btrfs-receive.asciidoc
+> @@ -60,6 +60,10 @@ By default the mountpoint is searched in '/proc/self/mounts'.
+>  If '/proc' is not accessible, eg. in a chroot environment, use this option to
+>  tell us where this filesystem is mounted.
+>  
+> +--force-decompress::
+> +if the stream contains compressed data (see '--compressed-data' in
+> +`btrfs-send`(8)), always decompress it instead of writing it with encoded I/O.
+> +
+>  --dump::
+>  dump the stream metadata, one line per operation
+>  +
+> diff --git a/cmds/receive.c b/cmds/receive.c
+> index b43c298f..7506f992 100644
+> --- a/cmds/receive.c
+> +++ b/cmds/receive.c
+> @@ -40,6 +40,10 @@
+>  #include <sys/xattr.h>
+>  #include <uuid/uuid.h>
+>  
+> +#include <lzo/lzo1x.h>
+> +#include <zlib.h>
+> +#include <zstd.h>
+> +
+>  #include "kernel-shared/ctree.h"
+>  #include "ioctl.h"
+>  #include "cmds/commands.h"
+> @@ -79,6 +83,12 @@ struct btrfs_receive
+>  	struct subvol_uuid_search sus;
+>  
+>  	int honor_end_cmd;
+> +
+> +	int force_decompress;
+> +
+> +	/* Reuse stream objects for encoded_write decompression fallback */
+> +	ZSTD_DStream *zstd_dstream;
+> +	z_stream *zlib_stream;
+>  };
+>  
+>  static int finish_subvol(struct btrfs_receive *rctx)
+> @@ -989,9 +999,222 @@ static int process_update_extent(const char *path, u64 offset, u64 len,
+>  	return 0;
+>  }
+>  
+> +static int decompress_zlib(struct btrfs_receive *rctx, const char *encoded_data,
+> +			   u64 encoded_len, char *unencoded_data,
+> +			   u64 unencoded_len)
+> +{
+> +	bool init = false;
+> +	int ret;
+> +
+> +	if (!rctx->zlib_stream) {
+> +		init = true;
+> +		rctx->zlib_stream = malloc(sizeof(z_stream));
+> +		if (!rctx->zlib_stream) {
+> +			error("failed to allocate zlib stream %m");
+> +			return -ENOMEM;
+> +		}
+> +	}
+> +	rctx->zlib_stream->next_in = (void *)encoded_data;
+> +	rctx->zlib_stream->avail_in = encoded_len;
+> +	rctx->zlib_stream->next_out = (void *)unencoded_data;
+> +	rctx->zlib_stream->avail_out = unencoded_len;
+> +
+> +	if (init) {
+> +		rctx->zlib_stream->zalloc = Z_NULL;
+> +		rctx->zlib_stream->zfree = Z_NULL;
+> +		rctx->zlib_stream->opaque = Z_NULL;
+> +		ret = inflateInit(rctx->zlib_stream);
+> +	} else {
+> +		ret = inflateReset(rctx->zlib_stream);
+> +	}
+> +	if (ret != Z_OK) {
+> +		error("zlib inflate init failed: %d", ret);
+> +		return -EIO;
+> +	}
+> +
+> +	while (rctx->zlib_stream->avail_in > 0 &&
+> +	       rctx->zlib_stream->avail_out > 0) {
+> +		ret = inflate(rctx->zlib_stream, Z_FINISH);
+> +		if (ret == Z_STREAM_END) {
+> +			break;
+> +		} else if (ret != Z_OK) {
+> +			error("zlib inflate failed: %d", ret);
+> +			return -EIO;
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int decompress_zstd(struct btrfs_receive *rctx, const char *encoded_buf,
+> +			   u64 encoded_len, char *unencoded_buf,
+> +			   u64 unencoded_len)
+> +{
+> +	ZSTD_inBuffer in_buf = {
+> +		.src = encoded_buf,
+> +		.size = encoded_len
+> +	};
+> +	ZSTD_outBuffer out_buf = {
+> +		.dst = unencoded_buf,
+> +		.size = unencoded_len
+> +	};
+> +	size_t ret;
+> +
+> +	if (!rctx->zstd_dstream) {
+> +		rctx->zstd_dstream = ZSTD_createDStream();
+> +		if (!rctx->zstd_dstream) {
+> +			error("failed to create zstd dstream");
+> +			return -ENOMEM;
+> +		}
+> +	}
+> +	ret = ZSTD_initDStream(rctx->zstd_dstream);
+> +	if (ZSTD_isError(ret)) {
+> +		error("failed to init zstd stream: %s", ZSTD_getErrorName(ret));
+> +		return -EIO;
+> +	}
+> +	while (in_buf.pos < in_buf.size && out_buf.pos < out_buf.size) {
+> +		ret = ZSTD_decompressStream(rctx->zstd_dstream, &out_buf, &in_buf);
+> +		if (ret == 0) {
+> +			break;
+> +		} else if (ZSTD_isError(ret)) {
+> +			error("failed to decompress zstd stream: %s",
+> +			      ZSTD_getErrorName(ret));
+> +			return -EIO;
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int decompress_lzo(const char *encoded_data, u64 encoded_len,
+> +			  char *unencoded_data, u64 unencoded_len,
+> +			  unsigned int page_size)
+> +{
+> +	uint32_t total_len;
+> +	size_t in_pos, out_pos;
+> +
+> +	if (encoded_len < 4) {
+> +		error("lzo header is truncated");
+> +		return -EIO;
+> +	}
+> +	memcpy(&total_len, encoded_data, 4);
+> +	total_len = le32toh(total_len);
+> +	if (total_len > encoded_len) {
+> +		error("lzo header is invalid");
+> +		return -EIO;
+> +	}
+> +
+> +	in_pos = 4;
+> +	out_pos = 0;
+> +	while (in_pos < total_len && out_pos < unencoded_len) {
+> +		size_t page_remaining;
+> +		uint32_t src_len;
+> +		lzo_uint dst_len;
+> +		int ret;
+> +
+> +		page_remaining = -in_pos % page_size;
+> +		if (page_remaining < 4) {
+> +			if (total_len - in_pos <= page_remaining)
+> +				break;
+> +			in_pos += page_remaining;
+> +		}
+> +
+> +		if (total_len - in_pos < 4) {
+> +			error("lzo segment header is truncated");
+> +			return -EIO;
+> +		}
+> +
+> +		memcpy(&src_len, encoded_data + in_pos, 4);
+> +		src_len = le32toh(src_len);
+> +		in_pos += 4;
+> +		if (src_len > total_len - in_pos) {
+> +			error("lzo segment header is invalid");
+> +			return -EIO;
+> +		}
+> +
+> +		dst_len = page_size;
+> +		ret = lzo1x_decompress_safe((void *)(encoded_data + in_pos),
+> +					    src_len,
+> +					    (void *)(unencoded_data + out_pos),
+> +					    &dst_len, NULL);
+> +		if (ret != LZO_E_OK) {
+> +			error("lzo1x_decompress_safe failed: %d", ret);
+> +			return -EIO;
+> +		}
+> +
+> +		in_pos += src_len;
+> +		out_pos += dst_len;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int decompress_and_write(struct btrfs_receive *rctx,
+> +				const char *encoded_data, u64 offset,
+> +				u64 encoded_len, u64 unencoded_file_len,
+> +				u64 unencoded_len, u64 unencoded_offset,
+> +				u32 compression)
+> +{
+> +	int ret = 0;
+> +	size_t pos;
+> +	ssize_t w;
+> +	char *unencoded_data;
+> +	int page_shift;
+> +
+> +	unencoded_data = calloc(unencoded_len, 1);
+> +	if (!unencoded_data) {
+> +		error("allocating space for unencoded data failed: %m");
+> +		return -errno;
+> +	}
+> +
+> +	switch (compression) {
+> +	case BTRFS_ENCODED_IO_COMPRESSION_ZLIB:
+> +		ret = decompress_zlib(rctx, encoded_data, encoded_len,
+> +				      unencoded_data, unencoded_len);
+> +		if (ret)
+> +			goto out;
+> +		break;
+> +	case BTRFS_ENCODED_IO_COMPRESSION_ZSTD:
+> +		ret = decompress_zstd(rctx, encoded_data, encoded_len,
+> +				      unencoded_data, unencoded_len);
+> +		if (ret)
+> +			goto out;
+> +		break;
+> +	case BTRFS_ENCODED_IO_COMPRESSION_LZO_4K:
+> +	case BTRFS_ENCODED_IO_COMPRESSION_LZO_8K:
+> +	case BTRFS_ENCODED_IO_COMPRESSION_LZO_16K:
+> +	case BTRFS_ENCODED_IO_COMPRESSION_LZO_32K:
+> +	case BTRFS_ENCODED_IO_COMPRESSION_LZO_64K:
+> +		page_shift = compression - BTRFS_ENCODED_IO_COMPRESSION_LZO_4K + 12;
+> +		ret = decompress_lzo(encoded_data, encoded_len, unencoded_data,
+> +				     unencoded_len, 1U << page_shift);
+> +		if (ret)
+> +			goto out;
+> +		break;
+> +	default:
+> +		error("unknown compression: %d", compression);
+> +		ret = -EOPNOTSUPP;
+> +		goto out;
+> +	}
+> +
+> +	pos = unencoded_offset;
+> +	while (pos < unencoded_file_len) {
+> +		w = pwrite(rctx->write_fd, unencoded_data + pos,
+> +			   unencoded_file_len - pos, offset);
+> +		if (w < 0) {
+> +			ret = -errno;
+> +			error("writing unencoded data failed: %m");
+> +			goto out;
+> +		}
+> +		pos += w;
+> +		offset += w;
+> +	}
+> +out:
+> +	free(unencoded_data);
+> +	return ret;
+> +}
+> +
+>  static int process_encoded_write(const char *path, const void *data, u64 offset,
+> -	u64 len, u64 unencoded_file_len, u64 unencoded_len,
+> -	u64 unencoded_offset, u32 compression, u32 encryption, void *user)
+> +				 u64 len, u64 unencoded_file_len,
+> +				 u64 unencoded_len, u64 unencoded_offset,
+> +				 u32 compression, u32 encryption, void *user)
+>  {
+>  	int ret;
+>  	struct btrfs_receive *rctx = user;
+> @@ -1007,6 +1230,7 @@ static int process_encoded_write(const char *path, const void *data, u64 offset,
+>  		.compression = compression,
+>  		.encryption = encryption,
+>  	};
+> +	bool encoded_write = !rctx->force_decompress;
+>  
+>  	if (encryption) {
+>  		error("encoded_write: encryption not supported");
+> @@ -1023,13 +1247,21 @@ static int process_encoded_write(const char *path, const void *data, u64 offset,
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	ret = ioctl(rctx->write_fd, BTRFS_IOC_ENCODED_WRITE, &encoded);
+> -	if (ret < 0) {
+> -		ret = -errno;
+> -		error("encoded_write: writing to %s failed: %m", path);
+> -		return ret;
+> +	if (encoded_write) {
+> +		ret = ioctl(rctx->write_fd, BTRFS_IOC_ENCODED_WRITE, &encoded);
+> +		if (ret >= 0)
+> +			return 0;
+> +		/* Fall back for these errors, fail hard for anything else. */
+> +		if (errno != ENOSPC && errno != EOPNOTSUPP && errno != EINVAL) {
 
-Fair enough, however it's somewhat unexpected to find e.g., !pmd_none() 
-&& !pmd_entry() in the direct map -- where no such thing as swapping exists.
-
-Anyhow, the x86 maintainers are the right people to make a call, I'm 
-happy as long as it's fixed.
-
-
--- 
-Thanks,
-
-David / dhildenb
-
+Just caught something that I missed in the conversion, this needs to be
+ENOTTY instead of EOPNOTSUPP.
