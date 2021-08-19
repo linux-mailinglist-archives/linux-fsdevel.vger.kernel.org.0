@@ -2,72 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C9FE3F0F5B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 02:24:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4B8D3F0F62
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 02:24:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235498AbhHSAXg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Aug 2021 20:23:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46370 "EHLO
+        id S234986AbhHSAZO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Aug 2021 20:25:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235068AbhHSAXT (ORCPT
+        with ESMTP id S234970AbhHSAZM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Aug 2021 20:23:19 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9905FC06179A;
-        Wed, 18 Aug 2021 17:22:44 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id e15so2891454plh.8;
-        Wed, 18 Aug 2021 17:22:44 -0700 (PDT)
+        Wed, 18 Aug 2021 20:25:12 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C22C0613D9;
+        Wed, 18 Aug 2021 17:24:35 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id j1so3777777pjv.3;
+        Wed, 18 Aug 2021 17:24:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:subject:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=srgQrtHR6Q3yNNiUf/2UYIBAbFoMkt4HQER7V5Q0Jvk=;
-        b=i1heXBhCScGiqthuZUfuNdUuydrLc3JS+9rRLrC+lFYPi7ysv9yN61mw7hYmjg0fio
-         wMrmDXQWw8taDtMPCHwOHFxRNAJOdas630KSHwI5NAR5RUd6JJYVIz5rvZqUnDuEEvLF
-         rp/bs+ULl7Go02jYllRF/AsneIkIbLCfHpcT/3CdDfKZuq1cqb7sZf5GKRsB2RB5m2LP
-         6oJIoWON3RDAW+cLeJYJZRD1jOlIySoXh/3lMGsGN4z05SqC13OJl3B6maNWb/yrajaU
-         c3f+kwcStTvyvI1m5S6gHhhThXiPeTYlep3G5tnlmhabQO4d5TjN8SBAonDnJmWar02h
-         uiXw==
+        bh=h9Ya7+WbjLi7OVwTnSEdB2pipd5tTpPIQIluWWZlyyI=;
+        b=ab/CZiNk7D7jnpvasA1Smvs5eO9s/K3WE/Zeu9kkPHkhCnb3A7LbipBBcvRBgk+68d
+         VLJTRK+YLeEnwO+dD78CFOlz9OVgsjr/CtO6uHEu0T6SD24p8BmqV350AdkJkx3346rK
+         a54YiXOh5exwNh8ZDWIHg3GEyaXRPCJCfrus4/TDTpvBcaTjl0ua/K6o2dAj9ocBtvZS
+         nilu6IbCLhhWoX73jczPaXpTjeVU5weGlkxHWBFWnmt3zNyuRrHE1u+y2lcOAcf5wJpI
+         1ZVerfwuce74yem9Fe+er+zD8J21iM6zxF7xK8GAQx7ENU/cDEIR01QtRFKGrnphmvX9
+         3SkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:subject:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=srgQrtHR6Q3yNNiUf/2UYIBAbFoMkt4HQER7V5Q0Jvk=;
-        b=fQ01VyCcvnA40hfW+9Xwpulv99ykTcg89Yt2YL6C0cK7Vo5YbbqojOBP1DgQF7Qk7V
-         PSBZvvpHgO1kd/+ENHH4P6vcX3U+ugsBy/GE/TSNLwqrf5bb9FYlveto05HaDCE2i6ed
-         PCBNrRbpEMzSiCUUEEtLn1jDgDRCHtc06GKbIARRFtcEXIObthczmEWoxPas8kY0A0An
-         nXXYSdKgoF5DXF3boqAyV8fGUEeeN2IZ2s/WU+Mcmy+QfGccAva4SeEaeUCd2NxrCNQZ
-         QDTL+GiB3iN6RDp1KjlhRLpANceKgnpw6NevDL7YPsf789D0gfbPItFWBq3eUmCp/3p+
-         +kjg==
-X-Gm-Message-State: AOAM532XE7B/xSbrUIzDYgcpssrrAJhdPp+2HAVBiP6TGg4uTUlJMNyN
-        CHt/xJsMrlDYG7MrWbPOOUY=
-X-Google-Smtp-Source: ABdhPJwbv+titpLTPGsMS3VWTPyw9SMBEsOSM1KGXn0PWgrd1FfnbG5EsxA65BRmdC+LSiH/7fEG9g==
-X-Received: by 2002:a17:90b:1d88:: with SMTP id pf8mr11778939pjb.152.1629332564125;
-        Wed, 18 Aug 2021 17:22:44 -0700 (PDT)
+        bh=h9Ya7+WbjLi7OVwTnSEdB2pipd5tTpPIQIluWWZlyyI=;
+        b=cbR+zHcN6T0RsxTvbjlNK8M4PCvrVptG+/jZBK2jXaqEDx/f8L+VnnWFrg/S9dCg39
+         6DUiBKn34mDKRS1y+niXJ7bdKqUmRAQ9mYvlWDWVRokfMW5lMgK8chCmkdvzSNsLB7AA
+         9qkJBiFwD0z3XHGx2AOarR1VDLkUY9JKNUlMeKgFuyyKOBZ99PCCq49ENjRlGuGE2jHf
+         ++GZbkKgTaZ3upjuGUEZSfpjwLisX3avP2lJe0GgOuQj1kIQU1pS772HJZF1yUSOFwBO
+         3wfT3Embd+aaCq4g7oP78h3tgxhM1gImZtLJqR6Uvo9qEcDsec/4+kw3PNAFjXBmYy58
+         aNCA==
+X-Gm-Message-State: AOAM530JJNoy+nVyM/Qi900eMwqQYssKIvdZGQLRNPlOKDaF3RSVbCB0
+        pUlBXnI5aWdc6nayhL0GPGE=
+X-Google-Smtp-Source: ABdhPJzqANq9HcLHPxBLnoLFpaD8lpfP+HawPp+XLF1jVqsdStgNHxpTO2LaN1eFxeVSBz7ggr0pvQ==
+X-Received: by 2002:a17:902:9889:b0:12c:fd88:530b with SMTP id s9-20020a170902988900b0012cfd88530bmr9176684plp.33.1629332674693;
+        Wed, 18 Aug 2021 17:24:34 -0700 (PDT)
 Received: from [192.168.1.71] (122-61-176-117-fibre.sparkbb.co.nz. [122.61.176.117])
-        by smtp.gmail.com with ESMTPSA id j12sm942551pfj.54.2021.08.18.17.22.39
+        by smtp.gmail.com with ESMTPSA id b17sm611257pjo.39.2021.08.18.17.24.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Aug 2021 17:22:43 -0700 (PDT)
+        Wed, 18 Aug 2021 17:24:34 -0700 (PDT)
 From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
 Subject: Re: [PATCHi, man-pages] mount_namespaces.7: More clearly explain
  "locked mounts"
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     mtk.manpages@gmail.com, linux-man <linux-man@vger.kernel.org>,
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     mtk.manpages@gmail.com,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-man <linux-man@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         containers@lists.linux-foundation.org,
         Alejandro Colomar <alx.manpages@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
 References: <20210813220120.502058-1-mtk.manpages@gmail.com>
  <87r1et1io8.fsf@disp2133> <56bbb8ed-8ecf-a0be-5253-350727ae1d24@gmail.com>
- <874kboysqq.fsf@disp2133>
-Message-ID: <8efe7646-f066-443f-05dc-fbaa3907460d@gmail.com>
-Date:   Thu, 19 Aug 2021 02:22:35 +0200
+ <20210817140649.7pmz5qcelgjzgxtz@wittgenstein>
+Message-ID: <1600c787-f9f6-7f44-ed5b-dc6625963e17@gmail.com>
+Date:   Thu, 19 Aug 2021 02:24:28 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <874kboysqq.fsf@disp2133>
+In-Reply-To: <20210817140649.7pmz5qcelgjzgxtz@wittgenstein>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -75,13 +76,10 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Eric,
+Hi Christian,
 
-Thank you for you response.
-
-On 8/17/21 5:51 PM, Eric W. Biederman wrote:
-> "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com> writes:
-> 
+On 8/17/21 4:06 PM, Christian Brauner wrote:
+> On Tue, Aug 17, 2021 at 05:12:20AM +0200, Michael Kerrisk (man-pages) wrote:
 >> Hi Eric,
 >>
 >> Thanks for your feedback!
@@ -139,7 +137,20 @@ On 8/17/21 5:51 PM, Eric W. Biederman wrote:
 >>>> +$ \fBls /mnt/dir\fP   # Former contents of directory are invisible
 >>>
 >>> Do we want a more motivating example such as a /proc/sys?
->>>
+> 
+> Could be even be better to use an example involving /etc/shadow, e.g.:
+> 
+> sudo mount --bind /etc /mnt
+> sudo mount --bind /dev/null /mnt/shadow
+
+Nice! I've rewritten the example to use /etc/shadow
+instead of a bind-mounted directory at /mnt/dir.
+Thanks!
+
+> the procfs example might be a bit awkward (see below).
+
+Okay.
+
 >>> It has been common to mount over /proc files and directories that can be
 >>> written to by the global root so that users in a mount namespace may not
 >>> touch them.
@@ -148,28 +159,63 @@ On 8/17/21 5:51 PM, Eric W. Biederman wrote:
 >> define "global root". I'm pretty sure I know what you mean, but
 >> I'd like to know your definition.
 > 
-> I mean uid 0 in the initial user namespace.
+> (global root == root in the initial user namespace.)
 
-(Good. That's what I thought you meant. So far, that term is not 
-described in the manual pages. I just now added a definition of the 
-term to user_namespaces(7).)
+(As noted in the mail to Eric, I've added this definition to
+user_namespaces(7).)
 
-> This uid owns most of files in /proc.
+> Some application container runtimes have a concept of "masked paths"
+> where they overmount certain directories they want to hide with an empty
+> tmpfs and some files they want to hide with /dev/null (see [1]).
 > 
-> Container systems that don't want to use user namespaces frequently
-> mount over files in proc to prevent using some of the root privileges
-> that come simply by having uid 0.
+> But I don't think this is a great example because this overmounting is
+> mostly needed and done when you're running privileged containers (see [2]).
 > 
-> Another use is mounting over files on virtual filesystems like proc
-> to reduce the attack surface.
+> There's usually no point in overmounting parts of procfs that are
+> writable by global root. If you're running in an unprivileged container
+> userns root can't write to any of the files that only global root can.
+> Otherwise this would be a rather severe security issue.
+> 
+> There might be a use-case for overmounting files that contain global
+> information that are readable inside user namespaces but then one either
+> has to question why they are readable in the first place or why this
+> information needs to be hidden. Examples include /proc/kallsyms and
+> /proc/keys.
+> 
+> But overall the overmounting of procfs is most sensible when running
+> privileged containers or when sharing pid namespaces and procfs is
+> somehow bind-mounted from somewhere. But that means there's no user
+> namespace in play which means that the mounts aren't locked.
+> 
+> So if the container runtime has e.g. overmounted /proc/kcore with
+> /dev/null then the privileged container can unmount it. To protect
+> against this such privileged containers usually drop CAP_SYS_ADMIN.
+> So the protection here comes from dropping capabilities not from locking
+> mounts together. All of this makes this a bit of a confusing example.
+> 
+> An example where locked mount protection is relied on heavily which I'm
+> involved in is systemd(-nspawn). All custom mounts a container gets such
+> as data shared from the host with the container are mounted in a separate
+> (privileged) mount namespace before the container workload is cloned.
+> The cloned container then gets a new mount + userns pair and hence, all
+> the mounts it inherited are now locked.
+> 
+> This way, you can e.g. share /etc with your container and just overmount
+> /etc/shadow with /dev/null or a custom /etc/shadow (Reason for my
+> example above.) without dropping capabilities that would prevent the
+> container from mounting.
+> 
+> So I'd suggest using a simple example. This is not about illustrating
+> what container runtimes do but what the behavior of a mount namespace
+> is. There's really no need to overcomplicate this.
 
-Thanks for the background. I think for the moment I will go with 
-Christian's alternative suggestion (an example using /etc/shadow).
+Thanks for the detailed explanation. As noted above, I've rewritten
+the example to use /etc/shadow.
 
-> For reducing what the root user in a container can do, I think using user
-> namespaces and using a uid other than 0 in the initial user namespace.
+> [1]: https://github.com/moby/moby/blob/51b06c6795160d8a1ba05d05d6491df7588b2957/oci/defaults.go#L90
+> [2]: https://github.com/moby/moby/blob/51b06c6795160d8a1ba05d05d6491df7588b2957/oci/defaults.go#L110
 > 
-> 
+>>
 >>>> +.EE
 >>>> +.in
 >>>> +.RE
@@ -225,14 +271,8 @@ Christian's alternative suggestion (an example using /etc/shadow).
 >> [[
 >>        *  Following on from the previous point, note that it is possible
 >>           to unmount an entire tree of mounts that propagated as a unit
->                                  ^^^^^ subtree?
-
-Yes, probably better, to prevent misunderstandings. Changed (and in a few
-other places also).
-
 >>           into a mount namespace that is owned by a less privileged user
 >>           namespace, as illustrated in the following example.
-> 
 >>
 >>           First, we create new user and mount namespaces using
 >>           unshare(1).  In the new mount namespace, the propagation type
@@ -314,14 +354,25 @@ other places also).
 >>
 >> ?
 > 
-> Yes.
-> 
-> It is worth noting that in ns2 it is also possible to mount on top of
-> /mnt/ppp/y and umount from /mnt/ppp/y.
+> I'd just add a note about mounts that propagated locked together as unit
+> as being unmountable as a unit (which is intuitive but may need to be
+> spelled out). But I'd leave this lenghty example as it makes the
+> manpage pretty convoluted.
 
-Yes, good point. I've added some text, and an example for that case.
+Christian, I do sympathize with this point of view, and I hesitated
+about adding this much text to the page. But, on the other hand:
 
-Cheers,
+* Many of the pages in section 7 are intended to provide "the big
+  picture" of how things work.
+* Mount namespaces are complex and (I think) generally poorly
+  understood. So let's help people as much as we can.
+* I had already relocated this whole subsection to the end of
+  the page, so it is less obtrusive.
+
+In summary, I'm inclined to keep the text, but thank you for
+voicing your (mild) objection.
+
+Thanks,
 
 Michael
 
