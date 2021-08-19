@@ -2,229 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF0AE3F1A72
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 15:35:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 516EF3F1B04
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 15:57:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240109AbhHSNfv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Aug 2021 09:35:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:22659 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239919AbhHSNfv (ORCPT
+        id S240299AbhHSN6b convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Aug 2021 09:58:31 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:59828 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240200AbhHSN6X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Aug 2021 09:35:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629380114;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=S+Tl/O2UL95HsN9NSAci3PkitvsT8uG7yyX9Sw+EVEY=;
-        b=EdPXQaKDq0Egjd/6P3xgBfpMaAb6c/p06CzIhiYdP1CT/5ClwS3Ue/NE9e1P45KfrNyv1l
-        jhVmzLGW11YvCcWdPP/eTd/Wp/lxPyfPeo7Us368XcAbXxHLpOsdZgAkuKsz8Ozla+mSnu
-        sSBQ9ikVKlSHdOHYWMgoQMqsoRJmqYw=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-69-lL5xctNMPfqt_Vb7f45WjA-1; Thu, 19 Aug 2021 09:35:13 -0400
-X-MC-Unique: lL5xctNMPfqt_Vb7f45WjA-1
-Received: by mail-wm1-f69.google.com with SMTP id y206-20020a1c7dd70000b02902e6a442ea44so3495064wmc.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Aug 2021 06:35:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=S+Tl/O2UL95HsN9NSAci3PkitvsT8uG7yyX9Sw+EVEY=;
-        b=qOVE7wf6UsM54gL3YXa2PC8kH8j4ExGzq5n8lrlT8uaq7lScXRxqps2+Rz4fNFIIv4
-         9U1tUJMzeUcuxoDPoaVOgYQtC6ZUy9Cbkh4Ib9pw3xMeBAwE54At1tSEYh+mLn4keRYU
-         ocywWh7VzAdQg1uzlULbv/8tpOEavzprncTnHTC/z9TT2X9Vs36ej9iBfK/R0mn2FPoY
-         ghdr8U86AFWKPFiWIFEUSzzDl2Vvs5KvDI4UqoXyDrFMw3hvALkAUeTQ+Zfn8m5G2SHU
-         uLFI6yG3Pn0R/5HSjYThILut1811GayDH+dDlJ/LxHc4+ocPMZ7CcnlYkRCtGjYKiXVy
-         PR1w==
-X-Gm-Message-State: AOAM533RQYRkPIsGrOwlSMMLE0AOAchVGObxC44PhEb8XN9CdZifgcbl
-        RzeIHQYA2FZhaHR4Cokc+/6fUPjx2urQ0XvILGljdLvusGgE0fEPuaBZ7XCsh01AeSyFksVLUVO
-        r/Lxg1sLQ1u5qmLc8p1X+sV2XmQ==
-X-Received: by 2002:a05:600c:210a:: with SMTP id u10mr13912653wml.162.1629380112338;
-        Thu, 19 Aug 2021 06:35:12 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzoKtiSGvFPCIpB5RUG1rMBbQAQd/0uA6x4ZuORYE20CS6Wsk1/Sw74TxpctCpR33DxsA8WNg==
-X-Received: by 2002:a05:600c:210a:: with SMTP id u10mr13912624wml.162.1629380112054;
-        Thu, 19 Aug 2021 06:35:12 -0700 (PDT)
-Received: from [192.168.3.132] (p5b0c6bd1.dip0.t-ipconnect.de. [91.12.107.209])
-        by smtp.gmail.com with ESMTPSA id q3sm2402775wmf.37.2021.08.19.06.35.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Aug 2021 06:35:11 -0700 (PDT)
-Subject: Re: [PATCH v2] x86/mm: fix kern_addr_valid to cope with existing but
- not present entries
-To:     Mike Rapoport <rppt@kernel.org>, x86@kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Thu, 19 Aug 2021 09:58:23 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52]:57326)
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1mGiY4-000ia2-O6; Thu, 19 Aug 2021 07:57:36 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95]:52186 helo=email.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1mGiY3-00AqBr-Kq; Thu, 19 Aug 2021 07:57:36 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     bfields@fieldses.org (J. Bruce Fields)
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Laight <David.Laight@aculab.com>,
+        David Hildenbrand <david@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-References: <20210819132717.19358-1-rppt@kernel.org>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Message-ID: <68248e54-fcaf-0360-6a40-ef621fa03742@redhat.com>
-Date:   Thu, 19 Aug 2021 15:35:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Michel Lespinasse <walken@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Price <steven.price@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Marco Elver <elver@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Collin Fijalkovich <cfijalkovich@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        Christian =?utf-8?Q?K=C3=B6nig?= 
+        <ckoenig.leichtzumerken@gmail.com>,
+        "linux-unionfs\@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "\<linux-fsdevel\@vger.kernel.org\>" <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+References: <20210812084348.6521-1-david@redhat.com> <87o8a2d0wf.fsf@disp2133>
+        <60db2e61-6b00-44fa-b718-e4361fcc238c@www.fastmail.com>
+        <87lf56bllc.fsf@disp2133>
+        <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
+        <87eeay8pqx.fsf@disp2133>
+        <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
+        <87h7ft2j68.fsf@disp2133>
+        <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
+        <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
+        <20210818154217.GB24115@fieldses.org>
+Date:   Thu, 19 Aug 2021 08:56:52 -0500
+In-Reply-To: <20210818154217.GB24115@fieldses.org> (J. Bruce Fields's message
+        of "Wed, 18 Aug 2021 11:42:17 -0400")
+Message-ID: <87bl5tv8pn.fsf@disp2133>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20210819132717.19358-1-rppt@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1mGiY3-00AqBr-Kq;;;mid=<87bl5tv8pn.fsf@disp2133>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+peADQdS13oBRstgvxG3nqTM38ZOsjU00=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa03.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,XM_B_Unicode autolearn=disabled version=3.4.2
+X-Spam-Virus: No
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;bfields@fieldses.org (J. Bruce Fields)
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 496 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 4.4 (0.9%), b_tie_ro: 3.0 (0.6%), parse: 1.49
+        (0.3%), extract_message_metadata: 14 (2.8%), get_uri_detail_list: 1.83
+        (0.4%), tests_pri_-1000: 18 (3.6%), tests_pri_-950: 1.02 (0.2%),
+        tests_pri_-900: 0.95 (0.2%), tests_pri_-90: 121 (24.4%), check_bayes:
+        117 (23.6%), b_tokenize: 17 (3.4%), b_tok_get_all: 12 (2.4%),
+        b_comp_prob: 2.9 (0.6%), b_tok_touch_all: 82 (16.5%), b_finish: 0.77
+        (0.2%), tests_pri_0: 322 (65.0%), check_dkim_signature: 0.44 (0.1%),
+        check_dkim_adsp: 4.5 (0.9%), poll_dns_idle: 0.12 (0.0%), tests_pri_10:
+        2.7 (0.5%), tests_pri_500: 7 (1.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v1 0/7] Remove in-tree usage of MAP_DENYWRITE
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 19.08.21 15:27, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
-> 
-> Jiri Olsa reported a fault when running:
-> 
-> 	# cat /proc/kallsyms | grep ksys_read
-> 	ffffffff8136d580 T ksys_read
-> 	# objdump -d --start-address=0xffffffff8136d580 --stop-address=0xffffffff8136d590 /proc/kcore
-> 
-> 	/proc/kcore:     file format elf64-x86-64
-> 
-> 	Segmentation fault
-> 
-> krava33 login: [   68.330612] general protection fault, probably for non-canonical address 0xf887ffcbff000: 0000 [#1] SMP PTI
-> [   68.333118] CPU: 12 PID: 1079 Comm: objdump Not tainted 5.14.0-rc5qemu+ #508
-> [   68.334922] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-4.fc34 04/01/2014
-> [   68.336945] RIP: 0010:kern_addr_valid+0x150/0x300
-> [   68.338082] Code: 1f 40 00 48 8b 0d e8 12 61 01 48 85 f6 0f 85 ca 00 00 00 48 81 e1 00 f0 ff ff 48 21 c1 48 b8 00 00 00 00 80 88 ff ff 48 01 ca <48> 8b 3c 02 48 f7 c7 9f ff ff ff 0f 84 d8 fe ff ff 48 89 f8 0f 1f
-> [   68.342220] RSP: 0018:ffffc90000bcbc38 EFLAGS: 00010206
-> [   68.343428] RAX: ffff888000000000 RBX: 0000000000001000 RCX: 000ffffffcbff000
-> [   68.345029] RDX: 000ffffffcbff000 RSI: 0000000000000000 RDI: 800ffffffcbff062
-> [   68.346599] RBP: ffffc90000bcbea8 R08: 0000000000001000 R09: 0000000000000000
-> [   68.349000] R10: 0000000000000000 R11: 0000000000001000 R12: 00007fcc0fd80010
-> [   68.350804] R13: ffffffff83400000 R14: 0000000000400000 R15: ffffffff843d23e0
-> [   68.352609] FS:  00007fcc111fcc80(0000) GS:ffff888275e00000(0000) knlGS:0000000000000000
-> [   68.354638] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   68.356104] CR2: 00007fcc0fd80000 CR3: 000000011226e004 CR4: 0000000000770ee0
-> [   68.357896] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [   68.359694] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [   68.361597] PKRU: 55555554
-> [   68.362460] Call Trace:
-> [   68.363252]  read_kcore+0x57f/0x920
-> [   68.364289]  ? rcu_read_lock_sched_held+0x12/0x80
-> [   68.365630]  ? rcu_read_lock_sched_held+0x12/0x80
-> [   68.366955]  ? rcu_read_lock_sched_held+0x12/0x80
-> [   68.368277]  ? trace_hardirqs_on+0x1b/0xd0
-> [   68.369462]  ? rcu_read_lock_sched_held+0x12/0x80
-> [   68.370793]  ? lock_acquire+0x195/0x2f0
-> [   68.371920]  ? lock_acquire+0x195/0x2f0
-> [   68.373035]  ? rcu_read_lock_sched_held+0x12/0x80
-> [   68.374364]  ? lock_acquire+0x195/0x2f0
-> [   68.375498]  ? rcu_read_lock_sched_held+0x12/0x80
-> [   68.376831]  ? rcu_read_lock_sched_held+0x12/0x80
-> [   68.379883]  ? rcu_read_lock_sched_held+0x12/0x80
-> [   68.381268]  ? lock_release+0x22b/0x3e0
-> [   68.382458]  ? _raw_spin_unlock+0x1f/0x30
-> [   68.383685]  ? __handle_mm_fault+0xcfc/0x15f0
-> [   68.384994]  ? rcu_read_lock_sched_held+0x12/0x80
-> [   68.386389]  ? lock_acquire+0x195/0x2f0
-> [   68.387573]  ? rcu_read_lock_sched_held+0x12/0x80
-> [   68.388969]  ? lock_release+0x22b/0x3e0
-> [   68.390145]  proc_reg_read+0x55/0xa0
-> [   68.391257]  ? vfs_read+0x78/0x1b0
-> [   68.392336]  vfs_read+0xa7/0x1b0
-> [   68.393328]  ksys_read+0x68/0xe0
-> [   68.394308]  do_syscall_64+0x3b/0x90
-> [   68.395391]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> [   68.396804] RIP: 0033:0x7fcc11cf92e2
-> [   68.397824] Code: c0 e9 b2 fe ff ff 50 48 8d 3d ea 2e 0a 00 e8 95 e9 01 00 0f 1f 44 00 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 0f 05 <48> 3d 00 f0 ff ff 77 56 c3 0f 1f 44 00 00 48 83 ec 28 48 89 54 24
-> [   68.402420] RSP: 002b:00007ffd6e0f8da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-> [   68.404357] RAX: ffffffffffffffda RBX: 0000565439305b20 RCX: 00007fcc11cf92e2
-> [   68.406061] RDX: 0000000000800000 RSI: 00007fcc0f980010 RDI: 0000000000000003
-> [   68.407747] RBP: 00007fcc11dcd300 R08: 0000000000000003 R09: 00007fcc0d980010
-> [   68.410937] R10: 0000000003826000 R11: 0000000000000246 R12: 00007fcc0f980010
-> [   68.412624] R13: 0000000000000d68 R14: 00007fcc11dcc700 R15: 0000000000800000
-> [   68.414322] Modules linked in: intel_rapl_msr intel_rapl_common nfit kvm_intel kvm irqbypass rapl iTCO_wdt iTCO_vendor_support i2c_i801 i2c_smbus lpc_ich drm drm_panel_orientation_quirks zram xfs crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel
-> [   68.419591] ---[ end trace e2c30f827226966b ]---
-> [   68.420969] RIP: 0010:kern_addr_valid+0x150/0x300
-> [   68.422308] Code: 1f 40 00 48 8b 0d e8 12 61 01 48 85 f6 0f 85 ca 00 00 00 48 81 e1 00 f0 ff ff 48 21 c1 48 b8 00 00 00 00 80 88 ff ff 48 01 ca <48> 8b 3c 02 48 f7 c7 9f ff ff ff 0f 84 d8 fe ff ff 48 89 f8 0f 1f
-> [   68.426826] RSP: 0018:ffffc90000bcbc38 EFLAGS: 00010206
-> [   68.428150] RAX: ffff888000000000 RBX: 0000000000001000 RCX: 000ffffffcbff000
-> [   68.429813] RDX: 000ffffffcbff000 RSI: 0000000000000000 RDI: 800ffffffcbff062
-> [   68.431465] RBP: ffffc90000bcbea8 R08: 0000000000001000 R09: 0000000000000000
-> [   68.433115] R10: 0000000000000000 R11: 0000000000001000 R12: 00007fcc0fd80010
-> [   68.434768] R13: ffffffff83400000 R14: 0000000000400000 R15: ffffffff843d23e0
-> [   68.436423] FS:  00007fcc111fcc80(0000) GS:ffff888275e00000(0000) knlGS:0000000000000000
-> [   68.438354] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   68.442077] CR2: 00007fcc0fd80000 CR3: 000000011226e004 CR4: 0000000000770ee0
-> [   68.443727] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [   68.445370] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [   68.447010] PKRU: 55555554
-> 
-> The fault happens because kern_addr_valid() dereferences existent but not
-> present PMD in the high kernel mappings.
-> 
-> Such PMDs are created when free_kernel_image_pages() frees regions larger
-> than 2Mb. In this case a part of the freed memory is mapped with PMDs and
-> the set_memory_np_noalias() -> ... -> __change_page_attr() sequence will
-> mark the PMD as not present rather than wipe it completely.
-> 
-> Make kern_addr_valid() to check whether higher level page table entries are
-> present before trying to dereference them to fix this issue and to avoid
-> similar issues in the future.
-> 
-> Reported-by: Jiri Olsa <jolsa@redhat.com>
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> Cc: <stable@vger.kernel.org>	# 4.4+
-> ---
-> 
-> v2:
-> * drop pXd_none() checks and leave only pXd_present(), per David
-> 
-> v1: https://lore.kernel.org/lkml/20210817135854.25407-1-rppt@kernel.org
-> 
->   arch/x86/mm/init_64.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index ddeaba947eb3..879886c6cc53 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -1433,18 +1433,18 @@ int kern_addr_valid(unsigned long addr)
->   		return 0;
->   
->   	p4d = p4d_offset(pgd, addr);
-> -	if (p4d_none(*p4d))
-> +	if (!p4d_present(*p4d))
->   		return 0;
->   
->   	pud = pud_offset(p4d, addr);
-> -	if (pud_none(*pud))
-> +	if (!pud_present(*pud))
->   		return 0;
->   
->   	if (pud_large(*pud))
->   		return pfn_valid(pud_pfn(*pud));
->   
->   	pmd = pmd_offset(pud, addr);
-> -	if (pmd_none(*pmd))
-> +	if (!pmd_present(*pmd))
->   		return 0;
->   
->   	if (pmd_large(*pmd))
-> 
+bfields@fieldses.org (J. Bruce Fields) writes:
 
-Hopefully we won't have other similar BUGs in the code because we leave 
-fake swap entries lying around in the direct map.
+> On Fri, Aug 13, 2021 at 05:49:19PM -0700, Andy Lutomirski wrote:
+>> I’ll bite.  How about we attack this in the opposite direction: remove
+>> the deny write mechanism entirely.
+>
+> For what it's worth, Windows has open flags that allow denying read or
+> write opens.  They also made their way into the NFSv4 protocol, but
+> knfsd enforces them only against other NFSv4 clients.  Last I checked,
+> Samba attempted to emulate them using flock (and there's a comment to
+> that effect on the flock syscall in fs/locks.c).  I don't know what Wine
+> does.
+>
+> Pavel Shilovsky posted flags adding O_DENY* flags years ago:
+>
+> 	https://lwn.net/Articles/581005/
+>
+> I keep thinking I should look back at those some day but will probably
+> never get to it.
+>
+> I've no idea how Windows applications use them, though I'm told it's
+> common.
 
-Thanks!
+I don't know in any detail.  I just have this memory of not being able
+to open or do anything with a file on windows while any application has
+it open.
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+We limit mandatory locks to filesystems that have the proper mount flag
+and files that are sgid but are not executable.  Reusing that limit we
+could probably allow such a behavior in Linux without causing chaos.
 
--- 
-Thanks,
+Without being very strict about which files can participate I can just
+imagine someone hiding their presence by not allowing other applications
+the ability to write to utmp or a log file.
 
-David / dhildenb
+In the windows world where everything evolved with those kinds of
+restrictions it is probably fine (although super annoying).
 
+Eric
