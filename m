@@ -2,414 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 104083F1FDE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 20:26:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D7D53F1FEC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 20:33:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234491AbhHSS1Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Aug 2021 14:27:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58134 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234126AbhHSS1X (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Aug 2021 14:27:23 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E9377601FE;
-        Thu, 19 Aug 2021 18:26:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629397607;
-        bh=IvrOdL4koyqt6e94qNCenAfCZMjyQFaKZkVroyVtZE8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=OWrcTldj/jbofEX/WLXs4kIpfxEJnpAPR789wFXlg5Lc/Ya1cCBM6n7jLpJlObJ3F
-         7lDBiuzJzNPbUGdHxotnbO1rfE5A7fw73NFQ4WBC2CIE3SWaieF0y2rnDZta+45J2p
-         lgICaB5Jha1/dJa8/We0ih2wujjgbvfKm6ufEPy6a+u4hb+ZbrQsKOePtrPehKXDyM
-         127JmIOf2jIuSHqc34M3YlBbP5svoKcTCo1pDYUB5KFQ1riELC1IJN2Ln40wJeqjBq
-         wuS1M8FAdwH68+ETGEPU8vZXhTQneQ9SFoUo85PS70MgU6N/n7N64KwyDMxoLAOnTp
-         cXHk8N93ReBXQ==
-Date:   Thu, 19 Aug 2021 11:26:46 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     fstests <fstests@vger.kernel.org>
-Cc:     Xu Yu <xuyu@linux.alibaba.com>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, riteshh@linux.ibm.com, tytso@mit.edu,
-        gavin.dg@linux.alibaba.com, Christoph Hellwig <hch@infradead.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] generic: test swapping process pages in and out of a swapfile
-Message-ID: <20210819182646.GD12612@magnolia>
+        id S234568AbhHSSdw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Aug 2021 14:33:52 -0400
+Received: from mail-mw2nam12on2071.outbound.protection.outlook.com ([40.107.244.71]:33671
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233792AbhHSSdv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Aug 2021 14:33:51 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=STwLbGpSQkL22y4K7f02OkgNaBI90N3zDWvXyvqbnnDY4OLBIyg60BOPkaYbn7od66UC2w7ykPxZDHz46pe5pX7lLnHrSzplbT5KaUbG/8W7CTuRWbzkRby+f0iEin0XmouHz92B4UMyTWLqbyhgWgNddZnpoSc0FfubBynGn36Xpz1X8H8v1AU8bxxldbiHG7t7QOuBkYBDMyMvwA47FGtzv5cBBin3RoqJPEHPamqrG74NJOj4+4GQALZSMHEh1U8/BQNYcthvYkQJXjMnY+/IuxqSThO/WCCtgIDghg6Th7E7z7fybjTXMvPYR/+ZrwEPDwZr5AqFnRTPE+itAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8ZSbDLkzNWsalGd5dY10VnPSx1Ls+Qt0l27qHYAEsJ8=;
+ b=HlY67olGn5phhxTsJNQmO5wRyAV17FAfv/0CamFjYIL3dNqmRQBfwHO+jtO/pKlq0rRIEyKkPKOgkOYNnWgBiWUdG9rn/P1oEZETuARK1Rfi7LieloUN/cCQnCDtM2RR16HDkv5L4AJOcaRMdedctqd9Lukd+UKUdX9EVT57EPB4uoHAClHqCqpeZzixZJ2DAl3Ru7trVrgfMzf2ah0k6ncNW8qib7OII2zhxOGISCMB6lfKAglx+IPNwAOOF/LWVOe+TMYD+Z9V0sNACYTjEN5pIkeeMJ11oapZnN48clWiCJBln48pSy0KztTXp413TtGaaiFDQL4TO3xCHluOfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8ZSbDLkzNWsalGd5dY10VnPSx1Ls+Qt0l27qHYAEsJ8=;
+ b=iDyMNxRAspW542jmif90ApmEltSSV8vD0oQ6RKhKKsScxwiyynuGQeuz0FpL2tFDFh56hNlGLMCDdbr6JSAGqpZjQgOHRd9ZVMJJ9liBsZoFVvao1Xa7nqGuwLsp4nLKutXGvO1nfAdRFRGA8rWA4PZtGN6hPkcPNAxwYwN5XjM=
+Authentication-Results: suse.de; dkim=none (message not signed)
+ header.d=none;suse.de; dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5229.namprd12.prod.outlook.com (2603:10b6:5:398::12)
+ by DM4PR12MB5120.namprd12.prod.outlook.com (2603:10b6:5:393::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4436.19; Thu, 19 Aug
+ 2021 18:33:13 +0000
+Received: from DM4PR12MB5229.namprd12.prod.outlook.com
+ ([fe80::d560:d21:cd59:9418]) by DM4PR12MB5229.namprd12.prod.outlook.com
+ ([fe80::d560:d21:cd59:9418%6]) with mapi id 15.20.4436.019; Thu, 19 Aug 2021
+ 18:33:12 +0000
+Subject: Re: [PATCH v2 03/12] x86/sev: Add an x86 version of prot_guest_has()
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-graphics-maintainer@vmware.com,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        Borislav Petkov <bp@alien8.de>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Sathyanarayanan Kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Joerg Roedel <jroedel@suse.de>
+References: <cover.1628873970.git.thomas.lendacky@amd.com>
+ <7d55bac0cf2e73f53816bce3a3097877ed9663f3.1628873970.git.thomas.lendacky@amd.com>
+ <YR4p9TqKTLdN1A96@infradead.org>
+From:   Tom Lendacky <thomas.lendacky@amd.com>
+Message-ID: <4272eaf5-b654-2669-62ac-ba768acd6b91@amd.com>
+Date:   Thu, 19 Aug 2021 13:33:09 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+In-Reply-To: <YR4p9TqKTLdN1A96@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN6PR04CA0080.namprd04.prod.outlook.com
+ (2603:10b6:805:f2::21) To DM4PR12MB5229.namprd12.prod.outlook.com
+ (2603:10b6:5:398::12)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [10.236.30.241] (165.204.77.1) by SN6PR04CA0080.namprd04.prod.outlook.com (2603:10b6:805:f2::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4436.19 via Frontend Transport; Thu, 19 Aug 2021 18:33:11 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ab94110e-0fb4-4def-19a4-08d9633fcd20
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5120:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DM4PR12MB51206EFA62CD282E36FB8227ECC09@DM4PR12MB5120.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: c6IQE9KbkWq8ctP0zpVQosyKO7QwqqI/mMHpM1VC8ce48mHwojUQVJVl7j/OA+28xeutJgF7KbPIp5xzWox7q+zkSmMxd7ZTOdtmugd7JIZwR/vE3Se9eT4EIUQqUBiOMx6TRWHF8cK0ipRffOtR609qCmHHf4PyuI0wfFIgL8KoX3/olg8sVyYs+iqZBMrkzDX2AU/UWuYkvfoi16QIeSEmVI6IDwkg/0VWCd6yQG1e0gdrV4kE/3sB1+y0dotkhKJtTRqdLQDPaHoNQ2YTnitjPIkPtHQI7Xegvuux3HRGcBGGSaqUC9Kum22h5zc9do7ZLg2kzdlo4Rjq2WAm+FQESSAbME+0JZvpRnf8xYQ6vcRfRz0YqbEawKCX6eziHxupDOs79/04hhCh6OFUoWkOTf1rVp2DzR/M1e2mha/jG9X3EDpYFJ2IcvZfFf//UYAzieGLYNpv+WFVqEgTWBGTBenmVUebZKebQXw+wWYRtb3Rw2jRU60XRzNc0RMWW9usNQyfwZzb2QAmCIgAm8NQllaQmty5PWVxdII6qJ8ZpBY7kL2BIRkIVHcd0Gs87SlDgtEHYignP/1J5/bymEUdoAGPQvwoyNXUrN7B5EmIJcuLlWcQZFLAR6k39SC5ZnJa3ZLkPzw9K3bi0fdk0Hqrf4K5XCamEthFc6UmZozSMd8uDEyogpdFXiJJCe9Kfu6ldvR2MsXptuwStpsgM6dvAuJyj0Bc/DPNdkvKgQefUxMA//aZ7Y0jG3lEw30i
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5229.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(346002)(366004)(376002)(136003)(39860400002)(83380400001)(2906002)(66476007)(26005)(53546011)(7416002)(16576012)(66946007)(66556008)(5660300002)(6486002)(6916009)(186003)(2616005)(36756003)(478600001)(31696002)(86362001)(956004)(8936002)(4326008)(31686004)(8676002)(54906003)(38100700002)(316002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?S3pOUU1ZSEtpVWwxbGowZHRrNjUwUDhzZXhZbXVRcjNqREhHZlY5WFJSb0hJ?=
+ =?utf-8?B?aFJSWWtFbnVzVzd4VDg4S09kS2trQ2cvcjBGS3l0WjBxSytpdnBpNjRvdlBa?=
+ =?utf-8?B?NDJocnBPUnNubW81S082RkpFdVNSTDkrR0NsdGg5QnhsaHBmMWJYSWhSYWN4?=
+ =?utf-8?B?UFg5NzIvWWxPQ1FOeFBTWDQyN0ZvazBRQXpoZlRXNUtPVjRncTV5OVFWS0x0?=
+ =?utf-8?B?NDZqN3pRODZBQWVrMXdrSWJqcXU4NFg3NlVYV05XRnlPaDdyVFU5dXFxa0FS?=
+ =?utf-8?B?TC9YUTJwYWQwWnJVcGczNXdZTXFsSnh5RkJ3M3VhZ2NkV3FyRTNYUkQ2OHE0?=
+ =?utf-8?B?ZTBBZld5aURnNGJWQUNDVU8vbDc0WTNHUkNheWdTS1NiVXg2cTNUMnlPaGNF?=
+ =?utf-8?B?aWRvWk9GOXlsWDZVMWxWLytDNUVQdkg1TUZDVnR4N2IveXpBTjF2eW96NGhq?=
+ =?utf-8?B?cGh0RmJnazh0UkRkUnA3bS9xcDIydjU0ZjN2TGxCL3JtTkJCdFhtdWVqMUY5?=
+ =?utf-8?B?QnBjVEZVdGErZE1URE9SM0RsRGJFbVl5UVVlUzAxYlBlVlN2ck9zWnJRb01H?=
+ =?utf-8?B?RHFVYlZLeFQycnQwQjUyVllPV2NKR2hFaDMrWnZpeUc2L0Z3NFBFa0llRDJx?=
+ =?utf-8?B?MjlLVnZ0Z1h4enBKaDRGbkhrRkRuR0FQTWcxVlZBTitzZElWS3phQjEyZU1j?=
+ =?utf-8?B?amlGeDE1SFJhSnEyVzd3QjBwc2pMOEtLZ3JQNWg2c21hc2E2aTBwOXU0T09h?=
+ =?utf-8?B?Tms2Njh6TVBWQlAzdG93cXFHTGRJcUpHSFJJc2RVTUVXc3lOOFRBN21VLzl4?=
+ =?utf-8?B?dmo2QmRFZGM0SkRXWWFNMXNjcnZncDd1dVYrcVVDcEhxQ3o2anRmV045b0Ns?=
+ =?utf-8?B?dytJcU1VYUZQRmpCK3A0RytxN0hDRnhoOVVwLzJaTzlRK1RySW0xdWptaTFa?=
+ =?utf-8?B?TkpheG9iYjJNUlNXZjVaMTU3K1JiUmpReHhwKzNBYnFwbHB0cTU4ejlrNmNl?=
+ =?utf-8?B?OUY5dFRuclY1SUIrYjFuN0JXUE8vVG5VSThGd2srK2tLWm85WStybWRBdlRB?=
+ =?utf-8?B?SmpvNEpNZE9ZZjZDcnN6NUYxaml1a203NXdCbDlUbk5lRDMwNGFJZklzOFhB?=
+ =?utf-8?B?N1Y0Y3h4N3l2ajcwWk1yNEhCN2VtblBKL0tsODFVbHdoOCtGWWFVSjloWXBL?=
+ =?utf-8?B?OW5sMmdTV09NRzFKQlVOL3h6eUZFdmV6TnhFQWs2bDlFbVBFY1k2ZUNyamEy?=
+ =?utf-8?B?M0FsSnVFc1ZBK2FkNS9PK2lUNVQydkNVK1c2ZDBlWnltbjVpQnBnV3pmbHdS?=
+ =?utf-8?B?eVpIaDVPZ2VLcTdRNkVZRzROUVdLMFRrdmlIdDVUUWxndndGRVVndlE0NFlP?=
+ =?utf-8?B?Z2kycTdTYlJvVXdvWFNSWjVoaHlRbks1MFFZNHloZW9jM0p0bElReGJuSlhJ?=
+ =?utf-8?B?UStFZDR0K2NRcVlnOVJYeHdtbjB3NitaZllVN09HZWxxamJQY0VOYXdlYVhC?=
+ =?utf-8?B?SEtMQzJpbm1DT1VkdkpCTi8ybmUvUmd2S0oyT05CZDRHQnh4V0NPcjQxT0J5?=
+ =?utf-8?B?dVhuek9ISC9QODVDMWpmL0d6RWw2SnFBODgvLzA2d2NUZW5zK2IwZ0c0SmNG?=
+ =?utf-8?B?RHpjK2pwL1lyRWVsQnU4N0swSGowWUF5a0UyaGpNa1RmZ1pVNU5RRUdIU0c3?=
+ =?utf-8?B?TmhTTTc5UjA0RmRJZm43dlZ6VTFodEVadnI3OHEwVnQwK2tDMC9uclpkRnE1?=
+ =?utf-8?Q?PDgTPExTXOMVVygygYPkPtF3LrokcEDh7NJUAzt?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab94110e-0fb4-4def-19a4-08d9633fcd20
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5229.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2021 18:33:12.7687
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CBy2xDQApYsRKH0htVZtHiZk6/sVUWLG3Mz6LSaYwmW7WEbfsQOUYn0A2vOKwNNM6RZUhalPekNsOHHnVQCw7w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5120
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Darrick J. Wong <djwong@kernel.org>
+On 8/19/21 4:52 AM, Christoph Hellwig wrote:
+> On Fri, Aug 13, 2021 at 11:59:22AM -0500, Tom Lendacky wrote:
+>> While the name suggests this is intended mainly for guests, it will
+>> also be used for host memory encryption checks in place of sme_active().
+> 
+> Which suggest that the name is not good to start with.  Maybe protected
+> hardware, system or platform might be a better choice?
+> 
+>> +static inline bool prot_guest_has(unsigned int attr)
+>> +{
+>> +#ifdef CONFIG_AMD_MEM_ENCRYPT
+>> +	if (sme_me_mask)
+>> +		return amd_prot_guest_has(attr);
+>> +#endif
+>> +
+>> +	return false;
+>> +}
+> 
+> Shouldn't this be entirely out of line?
 
-This test is intended to perform minimal spot-checking that we can swap
-pages to a swapfile and recall them into memory without burning peoples'
-machines to the ground.
+I did it as inline originally because the presence of the function will be
+decided based on the ARCH_HAS_PROTECTED_GUEST config. For now, that is
+only selected by the AMD memory encryption support, so if I went out of
+line I could put in mem_encrypt.c. But with TDX wanting to also use it, it
+would have to be in an always built file with some #ifdefs or in its own
+file that is conditionally built based on the ARCH_HAS_PROTECTED_GUEST
+setting (they've already tried building with ARCH_HAS_PROTECTED_GUEST=y
+and AMD_MEM_ENCRYPT not set).
 
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
----
- .gitignore               |    1 
- common/cgroup2           |    5 ++
- common/config            |    1 
- common/rc                |    4 -
- src/Makefile             |    2 -
- src/usemem_and_swapoff.c |  117 ++++++++++++++++++++++++++++++++++++++
- tests/generic/728        |  141 ++++++++++++++++++++++++++++++++++++++++++++++
- tests/generic/728.out    |    9 +++
- 8 files changed, 276 insertions(+), 4 deletions(-)
- create mode 100644 src/usemem_and_swapoff.c
- create mode 100755 tests/generic/728
- create mode 100644 tests/generic/728.out
+To take it out of line, I'm leaning towards the latter, creating a new
+file that is built based on the ARCH_HAS_PROTECTED_GUEST setting.
 
-diff --git a/.gitignore b/.gitignore
-index 2d72b064..23d6f37b 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -166,6 +166,7 @@ tags
- /src/unwritten_mmap
- /src/unwritten_sync
- /src/usemem
-+/src/usemem_and_swapoff
- /src/writemod
- /src/writev_on_pagefault
- /src/xfsctl
-diff --git a/common/cgroup2 b/common/cgroup2
-index 8833c9c8..df805a16 100644
---- a/common/cgroup2
-+++ b/common/cgroup2
-@@ -17,4 +17,9 @@ _require_cgroup2()
- 	fi
- }
- 
-+_require_memcg()
-+{
-+	test -e "$CGROUP2_PATH/memory.stat" || _notrun "memcg required for test"
-+}
-+
- /bin/true
-diff --git a/common/config b/common/config
-index 9cb4ad71..e2870be0 100644
---- a/common/config
-+++ b/common/config
-@@ -272,6 +272,7 @@ export MKFS_REISER4_PROG=$(type -P mkfs.reiser4)
- export E2FSCK_PROG=$(type -P e2fsck)
- export TUNE2FS_PROG=$(type -P tune2fs)
- export FSCK_OVERLAY_PROG=$(type -P fsck.overlay)
-+export SYSTEMD_RUN_PROG="$(type -P systemd-run)"
- 
- # SELinux adds extra xattrs which can mess up our expected output.
- # So, mount with a context, and they won't be created.
-diff --git a/common/rc b/common/rc
-index a07b5ac3..081ed72f 100644
---- a/common/rc
-+++ b/common/rc
-@@ -2593,10 +2593,8 @@ _format_swapfile() {
- }
- 
- _swapon_file() {
--	local fname="$1"
--
- 	# Ignore permission complaints on filesystems that don't support perms
--	swapon "$fname" 2> >(grep -v "insecure permissions" >&2)
-+	swapon "$@" 2> >(grep -v "insecure permissions" >&2)
- }
- 
- # Check that the filesystem supports swapfiles
-diff --git a/src/Makefile b/src/Makefile
-index 884bd86a..82698279 100644
---- a/src/Makefile
-+++ b/src/Makefile
-@@ -31,7 +31,7 @@ LINUX_TARGETS = xfsctl bstat t_mtab getdevicesize preallo_rw_pattern_reader \
- 	dio-invalidate-cache stat_test t_encrypted_d_revalidate \
- 	attr_replace_test swapon mkswap t_attr_corruption t_open_tmpfiles \
- 	fscrypt-crypt-util bulkstat_null_ocount splice-test chprojid_fail \
--	detached_mounts_propagation
-+	detached_mounts_propagation usemem_and_swapoff
- 
- EXTRA_EXECS = dmerror fill2attr fill2fs fill2fs_check scaleread.sh \
- 	      btrfs_crc32c_forged_name.py
-diff --git a/src/usemem_and_swapoff.c b/src/usemem_and_swapoff.c
-new file mode 100644
-index 00000000..d86837da
---- /dev/null
-+++ b/src/usemem_and_swapoff.c
-@@ -0,0 +1,117 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2021 Oracle.  All Rights Reserved.
-+ * Author: Darrick J. Wong <djwong@kernel.org>
-+ *
-+ * Test program to try to force the VMM to swap pages in and out of memory.
-+ */
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/mman.h>
-+#include <sys/swap.h>
-+#include <sys/time.h>
-+#include <sys/resource.h>
-+
-+int main(int argc, char *argv[])
-+{
-+	struct rlimit rlim;
-+	long long nr_bytes;
-+	long pagesize;
-+	char *p, *pstart, *pend;
-+	int ret;
-+
-+	if (argc != 2 && argc != 4) {
-+		printf("Usage: %s mem_in_bytes [swapfile1 swapfile2]\n",
-+				argv[0]);
-+		return 1;
-+	}
-+
-+	pagesize = sysconf(_SC_PAGESIZE);
-+	if (pagesize < 1) {
-+		fprintf(stderr, "Cannot determine system page size.\n");
-+		return 2;
-+	}
-+
-+	errno = 0;
-+	nr_bytes = strtol(argv[1], &p, 0);
-+	if (errno) {
-+		perror(argv[1]);
-+		return 3;
-+	}
-+
-+	printf("Allocating %llu memory.\n", nr_bytes);
-+	fflush(stdout);
-+
-+	/* Allocate a large memory buffer. */
-+	pstart = malloc(nr_bytes);
-+	if (!pstart) {
-+		perror("malloc");
-+		return 4;
-+	}
-+	pend = pstart + nr_bytes;
-+
-+	printf("Dirtying memory.\n");
-+	fflush(stdout);
-+
-+	/* Dirty the memory to force this program to be swapped out. */
-+	for (p = pstart; p < pend; p += pagesize)
-+		*p = 'X';
-+
-+	/*
-+	 * If the caller does not provide any swapfile names, mlock the buffer
-+	 * to test if memory usage enforcement actually works.
-+	 */
-+	if (argc == 2) {
-+		printf("Now mlocking memory.\n");
-+		fflush(stdout);
-+
-+		rlim.rlim_cur = RLIM_INFINITY;
-+		rlim.rlim_max = RLIM_INFINITY;
-+		ret = setrlimit(RLIMIT_MEMLOCK, &rlim);
-+		if (ret) {
-+			perror("setrlimit");
-+		}
-+
-+		ret = mlock(pstart, nr_bytes);
-+		if (ret) {
-+			perror("mlock");
-+			return 0;
-+		}
-+
-+		printf("Should not have survived mlock!\n");
-+		fflush(stdout);
-+		return 6;
-+	}
-+
-+	/*
-+	 * Try to force the system to swap this program back into memory by
-+	 * activating the second swapfile (at maximum priority) and
-+	 * deactivating the first swapfile.
-+	 */
-+	printf("Now activating swapfile2.\n");
-+	fflush(stdout);
-+
-+	ret = swapon(argv[3], SWAP_FLAG_PREFER | SWAP_FLAG_PRIO_MASK);
-+	if (ret) {
-+		perror("swapon");
-+		return 7;
-+	}
-+
-+	printf("Now deactivating swapfile1.\n");
-+	fflush(stdout);
-+
-+	ret = swapoff(argv[2]);
-+	if (ret) {
-+		perror("swapoff");
-+		return 8;
-+	}
-+
-+	/* Dirty the memory again to ensure that we're still running. */
-+	for (p = pstart; p < pend; p += pagesize)
-+		*p = 'Y';
-+
-+	return 0;
-+}
-diff --git a/tests/generic/728 b/tests/generic/728
-new file mode 100755
-index 00000000..30fc5a9a
---- /dev/null
-+++ b/tests/generic/728
-@@ -0,0 +1,141 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2021 Oracle.  All Rights Reserved.
-+#
-+# FS QA Test 728
-+#
-+# Test swapping process pages in and out of a swapfile.  Because we cannot
-+# direct the virtual memory manager to flush pages to swap and do not wish to
-+# spend a large amount of time flooding the system with dirty anonymous pages,
-+# some trickery is employed here to speed things up.
-+#
-+# Specifically, this test employs the memory cgroup controller to run a modest
-+# memory consuming process with an artificially low limit on the amount of
-+# physical memory that it can use.  Combined with swap files configured with
-+# maximum priority, the hope is that the mem-user process will get paged out
-+# to the swapfile and some clever uses of swapon/swapoff will force it to be
-+# paged back in.
-+#
-+# Note that we use systemd-run to configure the memory controller so that we
-+# don't have to open-code all the cgroupv1 and cgroupv2 configuration logic in
-+# the form of shell scripts.
-+#
-+. ./common/preamble
-+_begin_fstest auto swap
-+
-+# Override the default cleanup function.
-+_cleanup()
-+{
-+	cd /
-+	rm -f $tmp.*
-+	test -n "$swapfile1" && swapoff $swapfile1 &> /dev/null
-+	test -n "$swapfile2" && swapoff $swapfile2 &> /dev/null
-+}
-+
-+. ./common/cgroup2
-+
-+# real QA test starts here
-+_supported_fs generic
-+_require_scratch_swapfile
-+_require_command "$SYSTEMD_RUN_PROG" systemd-run
-+_require_test_program "usemem_and_swapoff"
-+_require_memcg
-+
-+_scratch_mkfs >> $seqres.full
-+_scratch_mount >> $seqres.full
-+
-+swapfile1=$SCRATCH_MNT/swapfile1
-+swapfile2=$SCRATCH_MNT/swapfile2
-+_format_swapfile $swapfile1 100m >> $seqres.full
-+_format_swapfile $swapfile2 100m >> $seqres.full
-+
-+# The maximum swap priority is 32767 as defined by the kernel swap flag mask.
-+SWAP_FLAG_PRIO_MASK=32767	# 0x7ffff
-+
-+# Add the swapfile with the highest priority so that pages get sent here before
-+# any other configured swap space.
-+_swapon_file $swapfile1 -p $SWAP_FLAG_PRIO_MASK
-+
-+# Walk the swap list to make sure that our swapfile has the highest priority
-+# to boost the chances that it will get used for /some/ swap activity.
-+cat /proc/swaps >> $seqres.full
-+saw_swapfile1=0
-+saw_swapfile2=0
-+while read fname type size used priority junk; do
-+	test "$fname" = "Filename" && continue
-+	if [ "$fname" -ef "$swapfile1" ]; then
-+		test "$priority" -eq "$SWAP_FLAG_PRIO_MASK" || \
-+			echo "swapfile1 has wrong priority $priority?"
-+		saw_swapfile1=1
-+		continue
-+	fi
-+	test "$fname" -ef "$swapfile2" && saw_swapfile2=1
-+	test "$priority" -lt "$SWAP_FLAG_PRIO_MASK" || \
-+		echo "$fname: swap at same priority as test swapfile, test may fail"
-+done < /proc/swaps
-+
-+test "$saw_swapfile1" -gt 0 || \
-+	echo "swapfile1 shold be present in /proc/swaps"
-+test "$saw_swapfile2" -eq 0 || \
-+	echo "swapfile2 should not be present in /proc/swaps"
-+
-+# Configure ourselves to run a test program in a specially crafted systemd
-+# scope where DRAM usage is constrained to 10MB maximum.  The test program
-+# will try to get itself swapped out to disk.
-+runargs=(--quiet --scope --no-ask-password --same-dir -p MemoryMax=10M)
-+cmdline="$here/src/usemem_and_swapoff $((50 * 1048576))"
-+
-+# The first time, the program allocates 50MB of space and dirties every page to
-+# try to get the program swapped out to disk.  It will then try to mlock all
-+# 50MB, which it shouldn't be able to do if the memory controller is doing its
-+# job.  This is critical to test swapping the program back in.
-+#
-+# Note: The bash stdout/stderr redirection muddiness is needed to capture bash
-+# complaining about the usemem_and_swapoff program being killed by the kernel.
-+prog=( bash -c "$cmdline &> $tmp.prog" )
-+( $SYSTEMD_RUN_PROG "${runargs[@]}" "${prog[@]}" &> $tmp.wrap ) ; ret=$?
-+
-+# Record the output of the first attempt.
-+cat $tmp.prog | tee -a $seqres.full
-+grep -q Killed $tmp.wrap || \
-+	echo "mlock didn't cause OOM kill; memory limit enforcement might not be working"
-+cat $tmp.wrap >> $seqres.full
-+echo "return value $ret" >> $seqres.full
-+
-+# The second time, the program again allocates 50MB and dirties it.  However,
-+# this time the program tries to enable swapfile2 and disable swapfile1, which
-+# should result in the program being paged in from swapfile1 and paged out to
-+# swapfile2.  The program should be able to continue accessing its memory.
-+prog=( bash -c "$cmdline $swapfile1 $swapfile2 &> $tmp.prog" )
-+( $SYSTEMD_RUN_PROG "${runargs[@]}" "${prog[@]}" &> $tmp.wrap ) ; ret=$?
-+
-+# Record the output of the second attempt.
-+cat $tmp.prog | tee -a $seqres.full
-+grep -q Killed $tmp.wrap && echo "swapfile swap should not have killed program"
-+cat $tmp.wrap >> $seqres.full
-+echo "return value $ret" >> $seqres.full
-+
-+# Make sure the final state of the swap devices is what we think it should be.
-+cat /proc/swaps >> $seqres.full
-+saw_swapfile1=0
-+saw_swapfile2=0
-+while read fname type size used priority junk; do
-+	test "$fname" = "Filename" && continue
-+	test "$fname" -ef "$swapfile1" && saw_swapfile1=1
-+	if [ "$fname" -ef "$swapfile2" ]; then
-+		test "$priority" -eq "$SWAP_FLAG_PRIO_MASK" || \
-+			echo "swapfile2 has wrong priority $priority?"
-+		saw_swapfile2=1
-+		continue
-+	fi
-+done < /proc/swaps
-+
-+test "$saw_swapfile1" -eq 0 || \
-+	echo "swapfile1 should not be present in /proc/swaps"
-+test "$saw_swapfile2" -eq 1 || \
-+	echo "swapfile2 should be present in /proc/swaps"
-+
-+# success, all done
-+echo Silence is golden
-+status=0
-+exit
-diff --git a/tests/generic/728.out b/tests/generic/728.out
-new file mode 100644
-index 00000000..26bdae14
---- /dev/null
-+++ b/tests/generic/728.out
-@@ -0,0 +1,9 @@
-+QA output created by 728
-+Allocating 52428800 memory.
-+Dirtying memory.
-+Now mlocking memory.
-+Allocating 52428800 memory.
-+Dirtying memory.
-+Now activating swapfile2.
-+Now deactivating swapfile1.
-+Silence is golden
+> 
+>> +/* 0x800 - 0x8ff reserved for AMD */
+>> +#define PATTR_SME			0x800
+>> +#define PATTR_SEV			0x801
+>> +#define PATTR_SEV_ES			0x802
+> 
+> Why do we need reservations for a purely in-kernel namespace?
+> 
+> And why are you overoading a brand new generic API with weird details
+> of a specific implementation like this?
+
+There was some talk about this on the mailing list where TDX and SEV may
+need to be differentiated, so we wanted to reserve a range of values per
+technology. I guess I can remove them until they are actually needed.
+
+Thanks,
+Tom
+
+> 
