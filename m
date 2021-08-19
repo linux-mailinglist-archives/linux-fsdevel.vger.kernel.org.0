@@ -2,149 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2934E3F1044
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 04:19:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF1AB3F1228
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 05:58:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235635AbhHSCTs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Aug 2021 22:19:48 -0400
-Received: from james.kirk.hungrycats.org ([174.142.39.145]:40412 "EHLO
-        james.kirk.hungrycats.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235558AbhHSCTs (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Aug 2021 22:19:48 -0400
-Received: by james.kirk.hungrycats.org (Postfix, from userid 1002)
-        id 0FBA7B3967D; Wed, 18 Aug 2021 22:19:10 -0400 (EDT)
-Date:   Wed, 18 Aug 2021 22:19:10 -0400
-From:   Zygo Blaxell <ce3g8jdj@umail.furryterror.org>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Wang Yugui <wangyugui@e16-tech.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH] VFS/BTRFS/NFSD: provide more unique inode number for
- btrfs export
-Message-ID: <20210819021910.GB29026@hungrycats.org>
-References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
- <162881913686.1695.12479588032010502384@noble.neil.brown.name>
- <20210818225454.9558.409509F4@e16-tech.com>
- <162932318266.9892.13600254282844823374@noble.neil.brown.name>
+        id S236321AbhHSD70 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Aug 2021 23:59:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46662 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235893AbhHSD70 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 18 Aug 2021 23:59:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4475C610CB;
+        Thu, 19 Aug 2021 03:58:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629345530;
+        bh=It3UWJT/EISjJbSXJOa9YOZrmo0c8cMi/Z71oauhW1o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=B8YJS3s9/SG4ffD2pUndnBEUmZ/rGTKk143b5aSWLidLDRfF3rRHrbS3sG/KdLFoe
+         fO2i8I4B/tdR+nOAn50qXcduL736ue0ayVwSLKnC/382wpgRKNX5yQDev19DIoX1a+
+         UwlH6klunOX5kQtDhqsLRRIrl+3915OVPlaZ7Y9f2us1VPtcFk+i63959XJXFvw/M5
+         QRlP2OK4MdbEHUVxd7bTwXjGnxQc6dfcZsNPZBIVoWma/HKUPKgOERVOqcosqqCvTZ
+         s+IKizsl4Qz4slLXVbqbopf3vCpQcnfx6wBx7Iyx2br0qroybo7gYnk7e+GEniPSC5
+         7Q1M+zJjI5SCg==
+Date:   Wed, 18 Aug 2021 20:58:49 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Jan Kara <jack@suse.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Matthew Bobrowski <repnop@google.com>, kernel@collabora.com
+Subject: Re: [PATCH v6 18/21] fanotify: Emit generic error info type for
+ error event
+Message-ID: <20210819035849.GA12586@magnolia>
+References: <20210812214010.3197279-1-krisman@collabora.com>
+ <20210812214010.3197279-19-krisman@collabora.com>
+ <20210816214103.GA12664@magnolia>
+ <20210817090538.GA26181@quack2.suse.cz>
+ <CAOQ4uxgdJpovZ-zzJkLOdQ=YYF3ta46m0_jrt0QFSdJ9GdXR=g@mail.gmail.com>
+ <20210818001632.GD12664@magnolia>
+ <CAOQ4uxhccRchiajjje3C20UOKwxQUapu=RYPsM1Y0uTnS81Vew@mail.gmail.com>
+ <20210818095818.GA28119@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <162932318266.9892.13600254282844823374@noble.neil.brown.name>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210818095818.GA28119@quack2.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 19, 2021 at 07:46:22AM +1000, NeilBrown wrote:
-> On Thu, 19 Aug 2021, Wang Yugui wrote:
-> > Hi,
+On Wed, Aug 18, 2021 at 11:58:18AM +0200, Jan Kara wrote:
+> On Wed 18-08-21 06:24:26, Amir Goldstein wrote:
+> > [...]
 > > 
-> > We use  'swab64' to combinate 'subvol id' and 'inode' into 64bit in this
-> > patch.
+> > > > Just keep in mind that the current scheme pre-allocates the single event slot
+> > > > on fanotify_mark() time and (I think) we agreed to pre-allocate
+> > > > sizeof(fsnotify_error_event) + MAX_HDNALE_SZ.
+> > > > If filesystems would want to store some variable length fs specific info,
+> > > > a future implementation will have to take that into account.
+> > >
+> > > <nod> I /think/ for the fs and AG metadata we could preallocate these,
+> > > so long as fsnotify doesn't free them out from under us.
 > > 
-> > case1:
-> > 'subvol id': 16bit => 64K, a little small because the subvol id is
-> > always increase?
-> > 'inode':	48bit * 4K per node, this is big enough.
+> > fs won't get notified when the event is freed, so fsnotify must
+> > take ownership on the data structure.
+> > I was thinking more along the lines of limiting maximum size for fs
+> > specific info and pre-allocating that size for the event.
+> 
+> Agreed. If there's a sensible upperbound than preallocating this inside
+> fsnotify is likely the least problematic solution.
+> 
+> > > For inodes...
+> > > there are many more of those, so they'd have to be allocated
+> > > dynamically.
 > > 
-> > case2:
-> > 'subvol id': 24bit => 16M,  this is big enough.
-> > 'inode':	40bit * 4K per node => 4 PB.  this is a little small?
+> > The current scheme is that the size of the queue for error events
+> > is one and the single slot is pre-allocated.
+> > The reason for pre-allocate is that the assumption is that fsnotify_error()
+> > could be called from contexts where memory allocation would be
+> > inconvenient.
+> > Therefore, we can store the encoded file handle of the first erroneous
+> > inode, but we do not store any more events until user read this
+> > one event.
 > 
-> I don't know what point you are trying to make with the above.
+> Right. OTOH I can imagine allowing GFP_NOFS allocations in the error
+> context. At least for ext4 it would be workable (after all ext4 manages to
+> lock & modify superblock in its error handlers, GFP_NOFS allocation isn't
+> harder). But then if events are dynamically allocated there's still the
+> inconvenient question what are you going to do if you need to report fs
+> error and you hit ENOMEM. Just not sending the notification may have nasty
+> consequences and in the world of containerization and virtualization
+> tightly packed machines where ENOMEM happens aren't that unlikely. It is
+> just difficult to make assumptions about filesystems overall so we decided
+> to be better safe and preallocate the event.
 > 
+> Or, we could leave the allocation troubles for the filesystem and
+> fsnotify_sb_error() would be passed already allocated event (this way
+> attaching of fs-specific blobs to the event is handled as well) which it
+> would just queue. Plus we'd need to provide some helper to fill in generic
+> part of the event...
+> 
+> The disadvantage is that if there are filesystems / callsites needing
+> preallocated events, it would be painful for them. OTOH current two users -
+> ext4 & xfs - can handle allocation in the error path AFAIU.
+> 
+> Thinking about this some more, maybe we could have event preallocated (like
+> a "rescue event"). Normally we would dynamically allocate (or get passed
+> from fs) the event and only if the allocation fails, we would queue the
+> rescue event to indicate to listeners that something bad happened, there
+> was error but we could not fully report it.
+
+Yes.
+
+> But then, even if we'd go for dynamic event allocation by default, we need
+> to efficiently merge events since some fs failures (e.g. resulting in
+> journal abort in ext4) lead to basically all operations with the filesystem
+> to fail and that could easily swamp the notification system with useless
+> events.
+
+Hm.  Going out on a limb, I would guess that the majority of fs error
+flood events happen if the storage fails catastrophically.  Assuming
+that a catastrophic failure will quickly take the filesystem offline, I
+would say that for XFS we should probably send one last "and then we
+died" event and stop reporting after that.
+
+> Current system with preallocated event nicely handles this
+> situation, it is questionable how to extend it for online fsck usecase
+> where we need to queue more than one event (but even there probably needs
+> to be some sensible upper-bound). I'll think about it...
+
+At least for XFS, I was figuring that xfs_scrub errors wouldn't be
+reported via fsnotify since the repair tool is already running anyway.
+
+> > > Hmm.  For handling accumulated errors, can we still access the
+> > > fanotify_event_info_* object once we've handed it to fanotify?  If the
+> > > user hasn't picked up the event yet, it might be acceptable to set more
+> > > bits in the type mask and bump the error count.  In other words, every
+> > > time userspace actually reads the event, it'll get the latest error
+> > > state.  I /think/ that's where the design of this patchset is going,
+> > > right?
 > > 
-> > Is there a way to 'bit-swap' the subvol id, rather the current byte-swap?
+> > Sort of.
+> > fsnotify does have a concept of "merging" new event with an event
+> > already in queue.
+> > 
+> > With most fsnotify events, merge only happens if the info related
+> > to the new event (e.g. sb,inode) is the same as that off the queued
+> > event and the "merge" is only in the event mask
+> > (e.g. FS_OPEN|FS_CLOSE).
+> > 
+> > However, the current scheme for "merge" of an FS_ERROR event is only
+> > bumping err_count, even if the new reported error or inode do not
+> > match the error/inode in the queued event.
+> > 
+> > If we define error event subtypes (e.g. FS_ERROR_WRITEBACK,
+> > FS_ERROR_METADATA), then the error event could contain
+> > a field for subtype mask and user could read the subtype mask
+> > along with the accumulated error count, but this cannot be
+> > done by providing the filesystem access to modify an internal
+> > fsnotify event, so those have to be generic UAPI defined subtypes.
+> > 
+> > If you think that would be useful, then we may want to consider
+> > reserving the subtype mask field in fanotify_event_info_error in
+> > advance.
 > 
-> Sure:
->    for (i=0; i<64; i++) {
->         new = (new << 1) | (old & 1)
->         old >>= 1;
->    }
+> It depends on what exactly Darrick has in mind but I suspect we'd need a
+> fs-specific merge helper that would look at fs-specific blobs in the event
+> and decide whether events can be merged or not, possibly also handling the
+> merge by updating the blob.
+
+Yes.  If the filesystem itself were allowed to manage the lifespan of
+the fsnotify error event object then this would be trivial -- we'll own
+the object, keep it updated as needed, and fsnotify can copy the
+contents to userspace whenever convenient.
+
+(This might be a naïve view of fsnotify...)
+
+> From the POV of fsnotify that would probably
+> mean merge callback in the event itself. But I guess this needs more
+> details from Darrick and maybe we don't need to decide this at this moment
+> since nobody is close to the point of having code needing to pass fs-blobs
+> with events.
+
+<nod> We ... probably don't need to decide this now.
+
+--D
+
 > 
-> but would it gain anything significant?
-> 
-> Remember what the goal is.  Most apps don't care at all about duplicate
-> inode numbers - only a few do, and they only care about a few inodes.
-> The only bug I actually have a report of is caused by a directory having
-> the same inode as an ancestor.  i.e.  in lots of cases, duplicate inode
-> numbers won't be noticed.
-
-rsync -H and cpio's hardlink detection can be badly confused.  They will
-think distinct files with the same inode number are hardlinks.  This could
-be bad if you were making backups (though if you're making backups over
-NFS, you are probably doing something that could be done better in a
-different way).
-
-> The behaviour of btrfs over NFS RELIABLY causes exactly this behaviour
-> of a directory having the same inode number as an ancestor.  The root of
-> a subtree will *always* do this.  If we JUST changed the inode numbers
-> of the roots of subtrees, then most observed problems would go away.  It
-> would change from "trivial to reproduce" to "rarely happens".  The patch
-> I actually propose makes it much more unlikely than that.  Even if
-> duplicate inode numbers do happen, the chance of them being noticed is
-> infinitesimal.  Given that, there is no point in minor tweaks unless
-> they can make duplicate inode numbers IMPOSSIBLE.
-
-That's a good argument.  I have a different one with the same conclusion.
-
-40 bit inodes would take about 20 years to collide with 24-bit subvols--if
-you are creating an average of 1742 inodes every second.  Also at the
-same time you have to be creating a subvol every 37 seconds to occupy
-the colliding 25th bit of the subvol ID.  Only the highest inode number
-in any subvol counts--if your inode creation is spread out over several
-different subvols, you'll need to make inodes even faster.
-
-For reference, my high scores are 17 inodes per second and a subvol
-every 595 seconds (averaged over 1 year).  Burst numbers are much higher,
-but one has to spend some time _reading_ the files now and then.
-
-I've encountered other btrfs users with two orders of magnitude higher
-inode creation rates than mine.  They are barely squeaking under the
-20-year line--or they would be, if they were creating snapshots 50 times
-faster than they do today.
-
-Use cases that have the highest inode creation rates (like /tmp) tend
-to get more specialized storage solutions (like tmpfs).
-
-Cloud fleets do have higher average inode creation rates, but their
-filesystems have much shorter lifespans than 20 years, so the delta on
-both sides of the ratio cancels out.
-
-If this hack is only used for NFS, it gives us some time to come up
-with a better solution.  (On the other hand, we had 14 years already,
-and here we are...)
-
-> > If not, maybe it is a better balance if we combinate 22bit subvol id and
-> > 42 bit inode?
-> 
-> This would be better except when it is worse.  We cannot know which will
-> happen more often.
-> 
-> As long as BTRFS allows object-ids and root-ids combined to use more
-> than 64 bits there can be no perfect solution.  There are many possible
-> solutions that will be close to perfect in practice.  swab64() is the
-> simplest that I could think of.  Picking any arbitrary cut-off (22/42,
-> 24/40, ...) is unlikely to be better, and could is some circumstances be
-> worse.
-> 
-> My preference would be for btrfs to start re-using old object-ids and
-> root-ids, and to enforce a limit (set at mkfs or tunefs) so that the
-> total number of bits does not exceed 64.  Unfortunately the maintainers
-> seem reluctant to even consider this.
-
-It was considered, implemented in 2011, and removed in 2020.  Rationale
-is in commit b547a88ea5776a8092f7f122ddc20d6720528782 "btrfs: start
-deprecation of mount option inode_cache".  It made file creation slower,
-and consumed disk space, iops, and memory to run.  Nobody used it.
-Newer on-disk data structure versions (free space tree, 2015) didn't
-bother implementing inode_cache's storage requirement.
-
-> NeilBrown
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
