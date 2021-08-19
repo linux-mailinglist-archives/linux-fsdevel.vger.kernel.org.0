@@ -2,182 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 993013F1A08
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 15:08:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7345F3F1A5A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 15:27:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239440AbhHSNJZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Aug 2021 09:09:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:33638 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239300AbhHSNJY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Aug 2021 09:09:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629378528;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cbUbOPKdaOv0H6GJNKk7luvurk7xDCBvY4WXdh7nI3c=;
-        b=bzkcJasRnZri4nGm3R6yhv5DU7zeTO66uN1pVq3fc40ZebscZ+Pf+69zpsH3j4YW9Ik+i4
-        pMT4QX96QYqTl32XT2ULVulOG2tM8dBzhlNEW5TLLeWaU07GRexwVVQWXN1BCN2DyTWVqM
-        TRRWt9Y6Ez3c+8Y7B1dpGa3BU1f1/TM=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-209-JVmMAfpVPZGONN-1J4n6Cw-1; Thu, 19 Aug 2021 09:08:46 -0400
-X-MC-Unique: JVmMAfpVPZGONN-1J4n6Cw-1
-Received: by mail-wr1-f72.google.com with SMTP id a13-20020adfed0d000000b00156fd70137aso1561756wro.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Aug 2021 06:08:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cbUbOPKdaOv0H6GJNKk7luvurk7xDCBvY4WXdh7nI3c=;
-        b=nuaI9egrfIBu7EoQz66m55KyAN9YxKAVDvz5OZFsKPcXxCr5uh3qM6oaxQgdgnTBXp
-         wrczr8bZWd9PjTMoAtBducdjzXqFyym8DB4SGUiqRk+ikqgk9r020j+MO4e92GguFgZQ
-         8VmcKvONexJrY/PekpOxLmjyu5bNkLzsfVmadAehOzk7y2Lgb/kuNMFGX0sIO0XSXAqp
-         Bouupn47E1ZIcKjoYMEkPWu9fg6VRreGN72Y/IdE+z9PpvIuxWSVXxwm9z32AFJxw1Bq
-         yb+L2eF0AXvUTv7qkiHQx3U2r7ARNAwXklajEjPOikF+iVGTb3k7uUmgJJkAG+Y8vjiY
-         aSdQ==
-X-Gm-Message-State: AOAM530ZpZfM72WVKwFQHPWKauL95jMcRkzFNRXeKaqeEnewKvZGIxZY
-        jQTsXXDaiDlrYaVb4tjE7RlDE2famoKzwSf/E5gXqgK8Wp6tNwauDuSSHZvLl2aDKg26Ju56tOu
-        vHQ27JfInZ+DRWLNbUUgOZ8oEvw==
-X-Received: by 2002:a1c:7e8a:: with SMTP id z132mr5323502wmc.75.1629378524476;
-        Thu, 19 Aug 2021 06:08:44 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJza67HWrGxP2aUgu3rckgOAHvNq7+jdQQoJn1HcsGEdV1L59q0EUqs3+sIOE01BsDUVL5TJDQ==
-X-Received: by 2002:a1c:9a42:: with SMTP id c63mr13975147wme.184.1629378513422;
-        Thu, 19 Aug 2021 06:08:33 -0700 (PDT)
-Received: from work-vm (cpc109021-salf6-2-0-cust453.10-2.cable.virginm.net. [82.29.237.198])
-        by smtp.gmail.com with ESMTPSA id d4sm2942475wrp.57.2021.08.19.06.08.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Aug 2021 06:08:32 -0700 (PDT)
-Date:   Thu, 19 Aug 2021 14:08:31 +0100
-From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-To:     JeffleXu <jefflexu@linux.alibaba.com>
-Cc:     vgoyal@redhat.com, stefanha@redhat.com, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        joseph.qi@linux.alibaba.com,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [Virtio-fs] [virtiofsd PATCH v4 4/4] virtiofsd: support per-file
- DAX in FUSE_LOOKUP
-Message-ID: <YR5Xzw02IuVAN94b@work-vm>
-References: <20210817022220.17574-1-jefflexu@linux.alibaba.com>
- <20210817022347.18098-1-jefflexu@linux.alibaba.com>
- <20210817022347.18098-5-jefflexu@linux.alibaba.com>
- <YRwHRmL/jUSqgkIU@work-vm>
- <29627110-e4bf-836f-2343-1faeb36ad4d3@linux.alibaba.com>
+        id S239990AbhHSN2E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Aug 2021 09:28:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60384 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230136AbhHSN2B (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Aug 2021 09:28:01 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DB7366113D;
+        Thu, 19 Aug 2021 13:27:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629379645;
+        bh=Unyk+4jWfaoj1sbdYc2hIgW0BFQnQ4DAxZK6CoDnhvQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Dw/kcWX5+/vEr0pCBtWfhqkW1GttUEUsaGHSHvpnaItuOzH8mca25Y/KmnLX0roUx
+         Q3j8jl1EEegBR1IwnPlPSUHq8fPfbFIAqprRD5M3BeV10gnglgO72oMdDBb5HpxZGe
+         Ljlho+IgoZS/eu+LY3IDfMV82+CZwGqFmDIvq89jzEmiBv10caZR0m/m3zmHXnSju5
+         R6Fc0JnFsWrJWQghgx+KKYkRAlNYgqQ2nta2hWqW9G76BGG7vLLQgHDclyWI9lfhZq
+         gQecaciFMRsgPAuYlWO+jwpZBewxH71kGl1v2R/AQdJM2+sJJ+7zCmO/Zogt+F1aTk
+         4tDfCy83MfgEQ==
+From:   Mike Rapoport <rppt@kernel.org>
+To:     x86@kernel.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mike Rapoport <rppt@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH v2] x86/mm: fix kern_addr_valid to cope with existing but not present entries
+Date:   Thu, 19 Aug 2021 16:27:17 +0300
+Message-Id: <20210819132717.19358-1-rppt@kernel.org>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <29627110-e4bf-836f-2343-1faeb36ad4d3@linux.alibaba.com>
-User-Agent: Mutt/2.0.7 (2021-05-04)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-* JeffleXu (jefflexu@linux.alibaba.com) wrote:
-> 
-> 
-> On 8/18/21 3:00 AM, Dr. David Alan Gilbert wrote:
-> > * Jeffle Xu (jefflexu@linux.alibaba.com) wrote:
-> >> For passthrough, when the corresponding virtiofs in guest is mounted
-> >> with '-o dax=inode', advertise that the file is capable of per-file
-> >> DAX if the inode in the backend fs is marked with FS_DAX_FL flag.
-> >>
-> >> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-> >> ---
-> >>  tools/virtiofsd/passthrough_ll.c | 43 ++++++++++++++++++++++++++++++++
-> >>  1 file changed, 43 insertions(+)
-> >>
-> >> diff --git a/tools/virtiofsd/passthrough_ll.c b/tools/virtiofsd/passthrough_ll.c
-> >> index 5b6228210f..4cbd904248 100644
-> >> --- a/tools/virtiofsd/passthrough_ll.c
-> >> +++ b/tools/virtiofsd/passthrough_ll.c
-> >> @@ -171,6 +171,7 @@ struct lo_data {
-> >>      int allow_direct_io;
-> >>      int announce_submounts;
-> >>      int perfile_dax_cap; /* capability of backend fs */
-> >> +    bool perfile_dax; /* enable per-file DAX or not */
-> >>      bool use_statx;
-> >>      struct lo_inode root;
-> >>      GHashTable *inodes; /* protected by lo->mutex */
-> >> @@ -716,6 +717,10 @@ static void lo_init(void *userdata, struct fuse_conn_info *conn)
-> >>  
-> >>      if (conn->capable & FUSE_CAP_PERFILE_DAX && lo->perfile_dax_cap ) {
-> >>          conn->want |= FUSE_CAP_PERFILE_DAX;
-> >> +	lo->perfile_dax = 1;
-> >> +    }
-> >> +    else {
-> >> +	lo->perfile_dax = 0;
-> >>      }
-> >>  }
-> >>  
-> >> @@ -983,6 +988,41 @@ static int do_statx(struct lo_data *lo, int dirfd, const char *pathname,
-> >>      return 0;
-> >>  }
-> >>  
-> >> +/*
-> >> + * If the file is marked with FS_DAX_FL or FS_XFLAG_DAX, then DAX should be
-> >> + * enabled for this file.
-> >> + */
-> >> +static bool lo_should_enable_dax(struct lo_data *lo, struct lo_inode *dir,
-> >> +				 const char *name)
-> >> +{
-> >> +    int res, fd;
-> >> +    int ret = false;;
-> >> +    unsigned int attr;
-> >> +    struct fsxattr xattr;
-> >> +
-> >> +    if (!lo->perfile_dax)
-> >> +	return false;
-> >> +
-> >> +    /* Open file without O_PATH, so that ioctl can be called. */
-> >> +    fd = openat(dir->fd, name, O_NOFOLLOW);
-> >> +    if (fd == -1)
-> >> +        return false;
-> > 
-> > Doesn't that defeat the whole benefit of using O_PATH - i.e. that we
-> > might stumble into a /dev node or something else we're not allowed to
-> > open?
-> 
-> As far as I know, virtiofsd will pivot_root/chroot to the source
-> directory, and can only access files inside the source directory
-> specified by "-o source=". Then where do these unexpected files come
-> from? Besides, fd opened without O_PATH here is temporary and used for
-> FS_IOC_GETFLAGS/FS_IOC_FSGETXATTR ioctl only. It's closed when the
-> function returns.
+From: Mike Rapoport <rppt@linux.ibm.com>
 
-The guest is still allowed to mknod.
-See:
-   https://lists.gnu.org/archive/html/qemu-devel/2021-01/msg05461.html
+Jiri Olsa reported a fault when running:
 
-also it's legal to expose a root filesystem for a guest; the virtiofsd
-should *never* open a device other than O_PATH - and it's really tricky
-to do a check to see if it is a device in a race-free way.
+	# cat /proc/kallsyms | grep ksys_read
+	ffffffff8136d580 T ksys_read
+	# objdump -d --start-address=0xffffffff8136d580 --stop-address=0xffffffff8136d590 /proc/kcore
 
+	/proc/kcore:     file format elf64-x86-64
 
-> > 
-> >> +    if (lo->perfile_dax_cap == DAX_CAP_FLAGS) {
-> >> +        res = ioctl(fd, FS_IOC_GETFLAGS, &attr);
-> >> +        if (!res && (attr & FS_DAX_FL))
-> >> +	    ret = true;
-> >> +    }
-> >> +    else if (lo->perfile_dax_cap == DAX_CAP_XATTR) {
-> >> +	res = ioctl(fd, FS_IOC_FSGETXATTR, &xattr);
-> >> +	if (!res && (xattr.fsx_xflags & FS_XFLAG_DAX))
-> >> +	    ret = true;
-> >> +    }
-> > 
-> > This all looks pretty expensive for each lookup.
-> 
-> Yes. it can be somehow optimized if we can agree on the way of storing
-> the dax flag persistently.
+	Segmentation fault
 
-Dave
+krava33 login: [   68.330612] general protection fault, probably for non-canonical address 0xf887ffcbff000: 0000 [#1] SMP PTI
+[   68.333118] CPU: 12 PID: 1079 Comm: objdump Not tainted 5.14.0-rc5qemu+ #508
+[   68.334922] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-4.fc34 04/01/2014
+[   68.336945] RIP: 0010:kern_addr_valid+0x150/0x300
+[   68.338082] Code: 1f 40 00 48 8b 0d e8 12 61 01 48 85 f6 0f 85 ca 00 00 00 48 81 e1 00 f0 ff ff 48 21 c1 48 b8 00 00 00 00 80 88 ff ff 48 01 ca <48> 8b 3c 02 48 f7 c7 9f ff ff ff 0f 84 d8 fe ff ff 48 89 f8 0f 1f
+[   68.342220] RSP: 0018:ffffc90000bcbc38 EFLAGS: 00010206
+[   68.343428] RAX: ffff888000000000 RBX: 0000000000001000 RCX: 000ffffffcbff000
+[   68.345029] RDX: 000ffffffcbff000 RSI: 0000000000000000 RDI: 800ffffffcbff062
+[   68.346599] RBP: ffffc90000bcbea8 R08: 0000000000001000 R09: 0000000000000000
+[   68.349000] R10: 0000000000000000 R11: 0000000000001000 R12: 00007fcc0fd80010
+[   68.350804] R13: ffffffff83400000 R14: 0000000000400000 R15: ffffffff843d23e0
+[   68.352609] FS:  00007fcc111fcc80(0000) GS:ffff888275e00000(0000) knlGS:0000000000000000
+[   68.354638] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   68.356104] CR2: 00007fcc0fd80000 CR3: 000000011226e004 CR4: 0000000000770ee0
+[   68.357896] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   68.359694] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   68.361597] PKRU: 55555554
+[   68.362460] Call Trace:
+[   68.363252]  read_kcore+0x57f/0x920
+[   68.364289]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.365630]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.366955]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.368277]  ? trace_hardirqs_on+0x1b/0xd0
+[   68.369462]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.370793]  ? lock_acquire+0x195/0x2f0
+[   68.371920]  ? lock_acquire+0x195/0x2f0
+[   68.373035]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.374364]  ? lock_acquire+0x195/0x2f0
+[   68.375498]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.376831]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.379883]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.381268]  ? lock_release+0x22b/0x3e0
+[   68.382458]  ? _raw_spin_unlock+0x1f/0x30
+[   68.383685]  ? __handle_mm_fault+0xcfc/0x15f0
+[   68.384994]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.386389]  ? lock_acquire+0x195/0x2f0
+[   68.387573]  ? rcu_read_lock_sched_held+0x12/0x80
+[   68.388969]  ? lock_release+0x22b/0x3e0
+[   68.390145]  proc_reg_read+0x55/0xa0
+[   68.391257]  ? vfs_read+0x78/0x1b0
+[   68.392336]  vfs_read+0xa7/0x1b0
+[   68.393328]  ksys_read+0x68/0xe0
+[   68.394308]  do_syscall_64+0x3b/0x90
+[   68.395391]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+[   68.396804] RIP: 0033:0x7fcc11cf92e2
+[   68.397824] Code: c0 e9 b2 fe ff ff 50 48 8d 3d ea 2e 0a 00 e8 95 e9 01 00 0f 1f 44 00 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 0f 05 <48> 3d 00 f0 ff ff 77 56 c3 0f 1f 44 00 00 48 83 ec 28 48 89 54 24
+[   68.402420] RSP: 002b:00007ffd6e0f8da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+[   68.404357] RAX: ffffffffffffffda RBX: 0000565439305b20 RCX: 00007fcc11cf92e2
+[   68.406061] RDX: 0000000000800000 RSI: 00007fcc0f980010 RDI: 0000000000000003
+[   68.407747] RBP: 00007fcc11dcd300 R08: 0000000000000003 R09: 00007fcc0d980010
+[   68.410937] R10: 0000000003826000 R11: 0000000000000246 R12: 00007fcc0f980010
+[   68.412624] R13: 0000000000000d68 R14: 00007fcc11dcc700 R15: 0000000000800000
+[   68.414322] Modules linked in: intel_rapl_msr intel_rapl_common nfit kvm_intel kvm irqbypass rapl iTCO_wdt iTCO_vendor_support i2c_i801 i2c_smbus lpc_ich drm drm_panel_orientation_quirks zram xfs crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel
+[   68.419591] ---[ end trace e2c30f827226966b ]---
+[   68.420969] RIP: 0010:kern_addr_valid+0x150/0x300
+[   68.422308] Code: 1f 40 00 48 8b 0d e8 12 61 01 48 85 f6 0f 85 ca 00 00 00 48 81 e1 00 f0 ff ff 48 21 c1 48 b8 00 00 00 00 80 88 ff ff 48 01 ca <48> 8b 3c 02 48 f7 c7 9f ff ff ff 0f 84 d8 fe ff ff 48 89 f8 0f 1f
+[   68.426826] RSP: 0018:ffffc90000bcbc38 EFLAGS: 00010206
+[   68.428150] RAX: ffff888000000000 RBX: 0000000000001000 RCX: 000ffffffcbff000
+[   68.429813] RDX: 000ffffffcbff000 RSI: 0000000000000000 RDI: 800ffffffcbff062
+[   68.431465] RBP: ffffc90000bcbea8 R08: 0000000000001000 R09: 0000000000000000
+[   68.433115] R10: 0000000000000000 R11: 0000000000001000 R12: 00007fcc0fd80010
+[   68.434768] R13: ffffffff83400000 R14: 0000000000400000 R15: ffffffff843d23e0
+[   68.436423] FS:  00007fcc111fcc80(0000) GS:ffff888275e00000(0000) knlGS:0000000000000000
+[   68.438354] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   68.442077] CR2: 00007fcc0fd80000 CR3: 000000011226e004 CR4: 0000000000770ee0
+[   68.443727] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[   68.445370] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[   68.447010] PKRU: 55555554
 
-> -- 
-> Thanks,
-> Jeffle
-> 
+The fault happens because kern_addr_valid() dereferences existent but not
+present PMD in the high kernel mappings.
+
+Such PMDs are created when free_kernel_image_pages() frees regions larger
+than 2Mb. In this case a part of the freed memory is mapped with PMDs and
+the set_memory_np_noalias() -> ... -> __change_page_attr() sequence will
+mark the PMD as not present rather than wipe it completely.
+
+Make kern_addr_valid() to check whether higher level page table entries are
+present before trying to dereference them to fix this issue and to avoid
+similar issues in the future.
+
+Reported-by: Jiri Olsa <jolsa@redhat.com>
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+Cc: <stable@vger.kernel.org>	# 4.4+
+---
+
+v2:
+* drop pXd_none() checks and leave only pXd_present(), per David
+
+v1: https://lore.kernel.org/lkml/20210817135854.25407-1-rppt@kernel.org
+
+ arch/x86/mm/init_64.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index ddeaba947eb3..879886c6cc53 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -1433,18 +1433,18 @@ int kern_addr_valid(unsigned long addr)
+ 		return 0;
+ 
+ 	p4d = p4d_offset(pgd, addr);
+-	if (p4d_none(*p4d))
++	if (!p4d_present(*p4d))
+ 		return 0;
+ 
+ 	pud = pud_offset(p4d, addr);
+-	if (pud_none(*pud))
++	if (!pud_present(*pud))
+ 		return 0;
+ 
+ 	if (pud_large(*pud))
+ 		return pfn_valid(pud_pfn(*pud));
+ 
+ 	pmd = pmd_offset(pud, addr);
+-	if (pmd_none(*pmd))
++	if (!pmd_present(*pmd))
+ 		return 0;
+ 
+ 	if (pmd_large(*pmd))
 -- 
-Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+2.28.0
 
