@@ -2,134 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 733893F2366
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 00:54:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07B0C3F2399
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 01:18:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229533AbhHSWyu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Aug 2021 18:54:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47958 "EHLO
+        id S236809AbhHSXTP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Aug 2021 19:19:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233263AbhHSWyu (ORCPT
+        with ESMTP id S229808AbhHSXTP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Aug 2021 18:54:50 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58831C061757
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Aug 2021 15:54:13 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id k24so7317843pgh.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Aug 2021 15:54:13 -0700 (PDT)
+        Thu, 19 Aug 2021 19:19:15 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2395C061575;
+        Thu, 19 Aug 2021 16:18:37 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id w20so16352050lfu.7;
+        Thu, 19 Aug 2021 16:18:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Lv2BeH4bgVl/il3tYjXjqwuIZSwlS9CtCv+JW+Pfbnk=;
-        b=dEJPorhN3VxbZejMS9q6PqBKwfMxKo1HPdf3+5BUH3dfXPgs88YSbj05k1hkBef+nM
-         7vvU9XbId6WFv2lSIWSM6XXy2UPxLdeQ01Wfso2qKlbUco0zvIots/ul6DKzQ3DZcYNi
-         P23cHa+p9+b2jIJWKtu1dQDl7lc5qIeAeuXdBKWusDgdFF5Zj6LRxzv+LIlIsEDHbKIC
-         bA+OW2FTcspqya2PhtHxAy1glalU05anLkdQRHMAOe/TGgzUsBpfY3vrr6LgE6ZRnpxT
-         PRy9SHdri/5ppUNRZwQkgaG+JzE/XBJi92LOIl7cj7phiuPVPAc4PUoOZ9875GEsDMjs
-         SlKA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=Ry+uQ2ze+f23BW9wmso3e2NcNF5MK0mmAGV5/hmmOmo=;
+        b=uJ7HeHQontttqIGqQ2NX/14IN/xSl7wiyEI0b6WFZ9B4Dk2KIpd5De3gqj/D4hSwx0
+         gRNXb/wxBl6wkYTzjm+KZtVK0roxZgPm8z4Pq1aBHFPH6AjN/buNZ107mIV240blAWzH
+         xnfTFqB2fCWp2CG+8vtFP+AeTHM5XXl/CoU91GXHQZ6NWaP7lUV1kIsNh4ck8DBB0o3h
+         /FK+6lBKeWsGqNhpFP5rDtQcdaGZbOsPYjsHL9y50TqOaFd9YT6rv0eLFkf0yRt3VKDP
+         MBLtq/DxFcyYpau9CLyyDhmfF2txevvNvUwOPdmv5/Ml0CqAmPLH3vycy/XY2IjiQFs0
+         MK/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Lv2BeH4bgVl/il3tYjXjqwuIZSwlS9CtCv+JW+Pfbnk=;
-        b=oWxfk8keV+0xW+JWbePF3grz08cjEcgg1A/U0+kNFT18E/1zRa3rUZFzIKE48DGVPJ
-         dGjOxAw+osd3dkjZ0jCQraX2NOIgjIr2rjOnt3jLynBt6hNsR4fFJuMb5ZPUAdpQeMIS
-         LVVoHf8LWPV2j7whLrOD4pJy7+bHz3MBL3VHpZmrCYYhtHyd9+ZL65xcjKkvHoOEYTyR
-         Pr0FAsr4dDsDO6+zLTx69Pfzg5OF8XpesXxsdHpUR2XsncEGO+wcGma+wsPQGNlTvlVZ
-         1SRF7k+CGK26R4VlKLclXD9BFPCC/7BPedamyOXIvp/bmDCIT+rGF3+UYB2xmgrMK7MU
-         YXAQ==
-X-Gm-Message-State: AOAM5316eGlOn4SdARsXiIu5/u68+LcBpQ3WJkJ9Jd7iq263W69gUHce
-        1A18pNxxiUZNlcIBX4e04ngljdDpbI9n6nZ/LqNuDA==
-X-Google-Smtp-Source: ABdhPJy6c4gZ53hpbV6ORkyR2hmtHChkZnjGtdS6jdctPV28zWH0Y9aOAbm0cOMMyjXm7vkX87wjxDLfz1NQUUNKdrQ=
-X-Received: by 2002:a05:6a00:16c6:b029:32d:e190:9dd0 with SMTP id
- l6-20020a056a0016c6b029032de1909dd0mr16584327pfc.70.1629413652651; Thu, 19
- Aug 2021 15:54:12 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Ry+uQ2ze+f23BW9wmso3e2NcNF5MK0mmAGV5/hmmOmo=;
+        b=O/0vX5e4jUvP+sC3BwkzPtlDSjyT68P8s8n7zzW+OkQrbwqUFWb7VZa7Pt9dmu9DNC
+         VaNmSWZa8U/171HOlqPYwAJYMaGsSMg/u+PwmiRtMpzN2WXbjNJfYbUP815gRf0h/mrx
+         x5NxemWaGaUHDCTEHJBGefrfXkPh6kv7K2FZW/s4hdrGlvM7jRM/7X4YEo5VhaXLJioB
+         FvPjSpfApf0qzvYlYycLmxICli8Qiju8HgiwsANDTci7UXyG1s5FbYTTn6ua4vipMMaC
+         rPSZOY9BaIHyW6GpX+pRV9M6s2+3cHATDieD0ZKU3gA0KDCd75LrcuchXPkMcl4WDrvF
+         tTSQ==
+X-Gm-Message-State: AOAM531YnK3aomrYHkOxAElUMdmf1hzxl3JUvoNFfW0clGh0avUhC19R
+        +4sB7U+ReKjD26VFnQVR5WY=
+X-Google-Smtp-Source: ABdhPJx87x0dZUPkISoJL4ME1bzX8W9BQeT50/qxq+el9HtXrx76quTuHsUMVVORkAiJcCURiF15WQ==
+X-Received: by 2002:a05:6512:22cd:: with SMTP id g13mr12755777lfu.440.1629415116388;
+        Thu, 19 Aug 2021 16:18:36 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id 3sm381713ljq.136.2021.08.19.16.18.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Aug 2021 16:18:35 -0700 (PDT)
+Date:   Fri, 20 Aug 2021 02:18:33 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.cz>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Marek =?utf-8?B?QmVow7pu?= <marek.behun@nic.cz>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [RFC PATCH 05/20] ntfs: Undeprecate iocharset= mount option
+Message-ID: <20210819231833.deyfwq73tbslkizc@kari-VirtualBox>
+References: <20210808162453.1653-1-pali@kernel.org>
+ <20210808162453.1653-6-pali@kernel.org>
+ <20210819012108.3isqi4t6rmd5fd5x@kari-VirtualBox>
+ <20210819081222.vnvxfrtqctfev6xu@pali>
+ <20210819102342.6ps7lowpuomyqcdk@kari-VirtualBox>
+ <20210819220412.jicwnrevzi6s25ee@pali>
 MIME-Version: 1.0
-References: <20210816060359.1442450-1-ruansy.fnst@fujitsu.com> <20210816060359.1442450-4-ruansy.fnst@fujitsu.com>
-In-Reply-To: <20210816060359.1442450-4-ruansy.fnst@fujitsu.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 19 Aug 2021 15:54:01 -0700
-Message-ID: <CAPcyv4iOSxoy-qGfAd3i4uzwfDX0t1xTmyM0pNd+-euVMDUwrQ@mail.gmail.com>
-Subject: Re: [PATCH v7 3/8] fsdax: Replace mmap entry in case of CoW
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        david <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Ritesh Harjani <riteshh@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210819220412.jicwnrevzi6s25ee@pali>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 15, 2021 at 11:05 PM Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
->
-> We replace the existing entry to the newly allocated one in case of CoW.
-> Also, we mark the entry as PAGECACHE_TAG_TOWRITE so writeback marks this
-> entry as writeprotected.  This helps us snapshots so new write
-> pagefaults after snapshots trigger a CoW.
->
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> ---
->  fs/dax.c | 39 ++++++++++++++++++++++++++++-----------
->  1 file changed, 28 insertions(+), 11 deletions(-)
->
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 697a7b7bb96f..e49ba68cc7e4 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -734,6 +734,10 @@ static int copy_cow_page_dax(struct block_device *bdev, struct dax_device *dax_d
->         return 0;
->  }
->
-> +/* DAX Insert Flag: The state of the entry we insert */
-> +#define DAX_IF_DIRTY           (1 << 0)
-> +#define DAX_IF_COW             (1 << 1)
-> +
->  /*
->   * By this point grab_mapping_entry() has ensured that we have a locked entry
->   * of the appropriate size so we don't have to worry about downgrading PMDs to
-> @@ -741,16 +745,19 @@ static int copy_cow_page_dax(struct block_device *bdev, struct dax_device *dax_d
->   * already in the tree, we will skip the insertion and just dirty the PMD as
->   * appropriate.
->   */
-> -static void *dax_insert_entry(struct xa_state *xas,
-> -               struct address_space *mapping, struct vm_fault *vmf,
-> -               void *entry, pfn_t pfn, unsigned long flags, bool dirty)
-> +static void *dax_insert_entry(struct xa_state *xas, struct vm_fault *vmf,
-> +               void *entry, pfn_t pfn, unsigned long flags,
-> +               unsigned int insert_flags)
+On Fri, Aug 20, 2021 at 12:04:12AM +0200, Pali Rohár wrote:
+> On Thursday 19 August 2021 13:23:42 Kari Argillander wrote:
+> > On Thu, Aug 19, 2021 at 10:12:22AM +0200, Pali Rohár wrote:
+> > > On Thursday 19 August 2021 04:21:08 Kari Argillander wrote:
+> > > > On Sun, Aug 08, 2021 at 06:24:38PM +0200, Pali Rohár wrote:
+> > > > > Other fs drivers are using iocharset= mount option for specifying charset.
+> > > > > So mark iocharset= mount option as preferred and deprecate nls= mount
+> > > > > option.
+> > > >  
+> > > > One idea is also make this change to fs/fc_parser.c and then when we
+> > > > want we can drop support from all filesystem same time. This way we
+> > > > can get more deprecated code off the fs drivers. Draw back is that
+> > > > then every filesstem has this deprecated nls= option if it support
+> > > > iocharsets option. But that should imo be ok.
+> > > 
+> > > Beware that iocharset= is required only for fs which store filenames in
+> > > some specific encoding (in this case extension to UTF-16). For fs which
+> > > store filenames in raw bytes this option should not be parsed at all.
+> > 
+> > Yeah of course. I was thinking that what we do is that if key is nls=
+> > we change key to iocharset, print deprecated and then send it to driver
+> > parser as usual. This way driver parser will never know that user
+> > specifie nls= because it just get iocharset. But this is probebly too
+> > fancy way to think simple problem. Just idea. 
+> 
+> This has an issue that when you use nls= option for e.g. ext4 fs then
+> kernel starts reporting that nls= for ext4 is deprecated. But there is
+> no nls= option and neither iocharset= option for ext4. So kernel should
+> not start reporting such warnings for ext4.
 
-I'm late, so feel free to ignore this style feedback, but what about
-changing the signature to:
+It gets kinda messy. I was also thinking that but if that was
+implemented then we could first send iocharset to driver and after that
+we print deprecated if it succeeded. If it not succeed then we print
+error messages same as always.
 
-static void *dax_insert_entry(struct xa_state *xas, struct vm_fault *vmf,
-                              const struct iomap_iter *iter, void
-*entry, pfn_t pfn,
-                              unsigned long flags)
+I have not look how easily this is can be done in parser.
 
-
->  {
-> +       struct address_space *mapping = vmf->vma->vm_file->f_mapping;
->         void *new_entry = dax_make_entry(pfn, flags);
-> +       bool dirty = insert_flags & DAX_IF_DIRTY;
-> +       bool cow = insert_flags & DAX_IF_COW;
-
-...and then calculate these flags from the source data. I'm just
-reacting to "yet more flags".
-
-So, take it or leave it,
-
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> 
+> > > Therefore I'm not sure if this parsing should be in global
+> > > fs/fc_parser.c file...
+> > 
