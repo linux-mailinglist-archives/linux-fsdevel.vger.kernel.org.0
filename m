@@ -2,184 +2,263 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 516EF3F1B04
+	by mail.lfdr.de (Postfix) with ESMTP id E1E2F3F1B05
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 15:57:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240299AbhHSN6b convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Aug 2021 09:58:31 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:59828 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240200AbhHSN6X (ORCPT
+        id S240321AbhHSN6c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Aug 2021 09:58:32 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:39076 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240170AbhHSN6N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Aug 2021 09:58:23 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52]:57326)
-        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1mGiY4-000ia2-O6; Thu, 19 Aug 2021 07:57:36 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95]:52186 helo=email.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1mGiY3-00AqBr-Kq; Thu, 19 Aug 2021 07:57:36 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     bfields@fieldses.org (J. Bruce Fields)
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>,
-        David Hildenbrand <david@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Michel Lespinasse <walken@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Price <steven.price@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Marco Elver <elver@google.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Collin Fijalkovich <cfijalkovich@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Christian =?utf-8?Q?K=C3=B6nig?= 
-        <ckoenig.leichtzumerken@gmail.com>,
-        "linux-unionfs\@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "\<linux-fsdevel\@vger.kernel.org\>" <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-References: <20210812084348.6521-1-david@redhat.com> <87o8a2d0wf.fsf@disp2133>
-        <60db2e61-6b00-44fa-b718-e4361fcc238c@www.fastmail.com>
-        <87lf56bllc.fsf@disp2133>
-        <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
-        <87eeay8pqx.fsf@disp2133>
-        <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
-        <87h7ft2j68.fsf@disp2133>
-        <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
-        <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
-        <20210818154217.GB24115@fieldses.org>
-Date:   Thu, 19 Aug 2021 08:56:52 -0500
-In-Reply-To: <20210818154217.GB24115@fieldses.org> (J. Bruce Fields's message
-        of "Wed, 18 Aug 2021 11:42:17 -0400")
-Message-ID: <87bl5tv8pn.fsf@disp2133>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 19 Aug 2021 09:58:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1629381452;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=FeQUTOQZFedjwKHUiIdbPnfehFdeVRFseWj/JjhYKq0=;
+        b=JmWxT7YhtCO75/aOFP0y3fWdp2Ec65mWTeaWxI14YTP1gzq7wBT5VRRMJlUlMs8yxBUazs
+        2hSJnZ5B9mr7BD0ur7uIZePFrDixD+Y8YbUmHuRAt6hCyjRAKTVvirrCG2eHf8FMvikzVl
+        SBotARnxBp2KTZ9OweezBFAArmLLz60=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-538-m-lWQ13-N0qUjwA2FfQJCg-1; Thu, 19 Aug 2021 09:57:31 -0400
+X-MC-Unique: m-lWQ13-N0qUjwA2FfQJCg-1
+Received: by mail-wr1-f72.google.com with SMTP id x18-20020a5d49120000b0290154e9dcf3dbso1722171wrq.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Aug 2021 06:57:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FeQUTOQZFedjwKHUiIdbPnfehFdeVRFseWj/JjhYKq0=;
+        b=k5Cfo7EFDq0DJB//sNvWDhdkmyRLXjdkvlYVufVyH0jnGNg7Y0VGHsGJziTY8QJuCa
+         acHvLzhCjOLAChJrO7xNzDjqrM3qiirl6474cmS1PlB3QuMc8csuoGEItgLfLa8Gk09P
+         eWjeqXCQClPPlQSyD2ypPDu3LInhYfX6G36bHNv8+gmL13gpdk3iEcNhoxr5bY7GfO+J
+         S7ewkoRrQbGtNevX8HWZNBb0gCfxnlQtTNigIX01Yjn6ZHKP8WmrxsqGoofiwRl8NXUJ
+         FLInWGuVSBMgLgzmr9brN/OGp036wg+4ihVo2lZB69TD8N+Ux0yYTIGbfF+/3JQS0Rup
+         9cTg==
+X-Gm-Message-State: AOAM530EPe3SkZKLoX97ZpD8tsBslCPfriCLutrIpGOgIAI3FDmmWc6h
+        sIna6QumXH6D9Bp02yPmP3hM//OM7NntXyTNQD776l298A6ua3Ti4xUrBlPw9uqE9tvnzoTarmE
+        3PcXFmKdo7FOiPmDgADkqsTcu4g==
+X-Received: by 2002:adf:e746:: with SMTP id c6mr3970182wrn.276.1629381450024;
+        Thu, 19 Aug 2021 06:57:30 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwPnPPiuPzwm8tAhF9mEQ0DkA/msxGcayzoUv7cKBC+BcIMzN4u6pCJ7sEyf0pjKKrp3rXIVw==
+X-Received: by 2002:adf:e746:: with SMTP id c6mr3970164wrn.276.1629381449837;
+        Thu, 19 Aug 2021 06:57:29 -0700 (PDT)
+Received: from work-vm (cpc109021-salf6-2-0-cust453.10-2.cable.virginm.net. [82.29.237.198])
+        by smtp.gmail.com with ESMTPSA id j7sm7793993wmi.37.2021.08.19.06.57.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Aug 2021 06:57:29 -0700 (PDT)
+Date:   Thu, 19 Aug 2021 14:57:27 +0100
+From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     vgoyal@redhat.com, stefanha@redhat.com, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        joseph.qi@linux.alibaba.com,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [Virtio-fs] [virtiofsd PATCH v4 3/4] virtiofsd: support per-file
+ DAX negotiation in FUSE_INIT
+Message-ID: <YR5jRwVNeZfZVLh3@work-vm>
+References: <20210817022220.17574-1-jefflexu@linux.alibaba.com>
+ <20210817022347.18098-1-jefflexu@linux.alibaba.com>
+ <20210817022347.18098-4-jefflexu@linux.alibaba.com>
+ <YRvuzrRo2t2SyQk/@work-vm>
+ <e6426e51-7a2c-57a1-8d7b-3cb0cff89fb9@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1mGiY3-00AqBr-Kq;;;mid=<87bl5tv8pn.fsf@disp2133>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+peADQdS13oBRstgvxG3nqTM38ZOsjU00=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa03.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,XM_B_Unicode autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;bfields@fieldses.org (J. Bruce Fields)
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 496 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 4.4 (0.9%), b_tie_ro: 3.0 (0.6%), parse: 1.49
-        (0.3%), extract_message_metadata: 14 (2.8%), get_uri_detail_list: 1.83
-        (0.4%), tests_pri_-1000: 18 (3.6%), tests_pri_-950: 1.02 (0.2%),
-        tests_pri_-900: 0.95 (0.2%), tests_pri_-90: 121 (24.4%), check_bayes:
-        117 (23.6%), b_tokenize: 17 (3.4%), b_tok_get_all: 12 (2.4%),
-        b_comp_prob: 2.9 (0.6%), b_tok_touch_all: 82 (16.5%), b_finish: 0.77
-        (0.2%), tests_pri_0: 322 (65.0%), check_dkim_signature: 0.44 (0.1%),
-        check_dkim_adsp: 4.5 (0.9%), poll_dns_idle: 0.12 (0.0%), tests_pri_10:
-        2.7 (0.5%), tests_pri_500: 7 (1.4%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v1 0/7] Remove in-tree usage of MAP_DENYWRITE
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e6426e51-7a2c-57a1-8d7b-3cb0cff89fb9@linux.alibaba.com>
+User-Agent: Mutt/2.0.7 (2021-05-04)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-bfields@fieldses.org (J. Bruce Fields) writes:
+* JeffleXu (jefflexu@linux.alibaba.com) wrote:
+> 
+> 
+> On 8/18/21 1:15 AM, Dr. David Alan Gilbert wrote:
+> > * Jeffle Xu (jefflexu@linux.alibaba.com) wrote:
+> >> In FUSE_INIT negotiating phase, server/client should advertise if it
+> >> supports per-file DAX.
+> >>
+> >> Once advertising support for per-file DAX feature, virtiofsd should
+> >> support storing FS_DAX_FL flag persistently passed by
+> >> FS_IOC_SETFLAGS/FS_IOC_FSSETXATTR ioctl, and set FUSE_ATTR_DAX in
+> >> FUSE_LOOKUP accordingly if the file is capable of per-file DAX.
+> >>
+> >> Currently only ext4/xfs since linux kernel v5.8 support storing
+> >> FS_DAX_FL flag persistently, and thus advertise support for per-file
+> >> DAX feature only when the backend fs type is ext4 and xfs.
+> > 
+> > I'm a little worried about the meaning of the flags we're storing and
+> > the fact we're storing them in the normal host DAX flags.
+> > 
+> > Doesn't this mean that we're using a single host flag to mean:
+> >   a) It can be mapped as DAX on the host if it was a real DAX device
+> >   b) We can map it as DAX inside the guest with virtiofs?
+> 
+> Yes the side effect is that the host file is also dax enabled if the
+> backend fs is built upon real nvdimm device.
+> 
+> The rationale here is that, fuse daemon shall be capable of *marking*
+> the file as dax capable *persistently*, so that it can be informed that
+> this file is capable of dax later.
 
-> On Fri, Aug 13, 2021 at 05:49:19PM -0700, Andy Lutomirski wrote:
->> I’ll bite.  How about we attack this in the opposite direction: remove
->> the deny write mechanism entirely.
->
-> For what it's worth, Windows has open flags that allow denying read or
-> write opens.  They also made their way into the NFSv4 protocol, but
-> knfsd enforces them only against other NFSv4 clients.  Last I checked,
-> Samba attempted to emulate them using flock (and there's a comment to
-> that effect on the flock syscall in fs/locks.c).  I don't know what Wine
-> does.
->
-> Pavel Shilovsky posted flags adding O_DENY* flags years ago:
->
-> 	https://lwn.net/Articles/581005/
->
-> I keep thinking I should look back at those some day but will probably
-> never get to it.
->
-> I've no idea how Windows applications use them, though I'm told it's
-> common.
+Right, so my worry here is that the untrusted guest changes both it's
+own behaviour (fine) and also the behaviour of the host (less fine).
 
-I don't know in any detail.  I just have this memory of not being able
-to open or do anything with a file on windows while any application has
-it open.
+> I'm not sure if xattr (extent attribute) is a better option for this?
 
-We limit mandatory locks to filesystems that have the proper mount flag
-and files that are sgid but are not executable.  Reusing that limit we
-could probably allow such a behavior in Linux without causing chaos.
+Well, if you used an xattr for it, it wouldn't clash with whatever the
+host did (especially if it used the xattr mapping).
 
-Without being very strict about which files can participate I can just
-imagine someone hiding their presence by not allowing other applications
-the ability to write to utmp or a log file.
+Dave
 
-In the windows world where everything evolved with those kinds of
-restrictions it is probably fine (although super annoying).
+> 
+> > 
+> > what happens when we're using usernamespaces for the guest?
+> > 
+> > Dave
+> > 
+> > 
+> >> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> >> ---
+> >>  tools/virtiofsd/fuse_common.h    |  5 +++++
+> >>  tools/virtiofsd/fuse_lowlevel.c  |  6 ++++++
+> >>  tools/virtiofsd/passthrough_ll.c | 29 +++++++++++++++++++++++++++++
+> >>  3 files changed, 40 insertions(+)
+> >>
+> >> diff --git a/tools/virtiofsd/fuse_common.h b/tools/virtiofsd/fuse_common.h
+> >> index 8a75729be9..ee6fc64c23 100644
+> >> --- a/tools/virtiofsd/fuse_common.h
+> >> +++ b/tools/virtiofsd/fuse_common.h
+> >> @@ -372,6 +372,11 @@ struct fuse_file_info {
+> >>   */
+> >>  #define FUSE_CAP_HANDLE_KILLPRIV_V2 (1 << 28)
+> >>  
+> >> +/**
+> >> + * Indicates support for per-file DAX.
+> >> + */
+> >> +#define FUSE_CAP_PERFILE_DAX (1 << 29)
+> >> +
+> >>  /**
+> >>   * Ioctl flags
+> >>   *
+> >> diff --git a/tools/virtiofsd/fuse_lowlevel.c b/tools/virtiofsd/fuse_lowlevel.c
+> >> index 50fc5c8d5a..04a4f17423 100644
+> >> --- a/tools/virtiofsd/fuse_lowlevel.c
+> >> +++ b/tools/virtiofsd/fuse_lowlevel.c
+> >> @@ -2065,6 +2065,9 @@ static void do_init(fuse_req_t req, fuse_ino_t nodeid,
+> >>      if (arg->flags & FUSE_HANDLE_KILLPRIV_V2) {
+> >>          se->conn.capable |= FUSE_CAP_HANDLE_KILLPRIV_V2;
+> >>      }
+> >> +    if (arg->flags & FUSE_PERFILE_DAX) {
+> >> +        se->conn.capable |= FUSE_CAP_PERFILE_DAX;
+> >> +    }
+> >>  #ifdef HAVE_SPLICE
+> >>  #ifdef HAVE_VMSPLICE
+> >>      se->conn.capable |= FUSE_CAP_SPLICE_WRITE | FUSE_CAP_SPLICE_MOVE;
+> >> @@ -2180,6 +2183,9 @@ static void do_init(fuse_req_t req, fuse_ino_t nodeid,
+> >>      if (se->conn.want & FUSE_CAP_POSIX_ACL) {
+> >>          outarg.flags |= FUSE_POSIX_ACL;
+> >>      }
+> >> +    if (se->op.ioctl && (se->conn.want & FUSE_CAP_PERFILE_DAX)) {
+> >> +        outarg.flags |= FUSE_PERFILE_DAX;
+> >> +    }
+> >>      outarg.max_readahead = se->conn.max_readahead;
+> >>      outarg.max_write = se->conn.max_write;
+> >>      if (se->conn.max_background >= (1 << 16)) {
+> >> diff --git a/tools/virtiofsd/passthrough_ll.c b/tools/virtiofsd/passthrough_ll.c
+> >> index e170b17adb..5b6228210f 100644
+> >> --- a/tools/virtiofsd/passthrough_ll.c
+> >> +++ b/tools/virtiofsd/passthrough_ll.c
+> >> @@ -53,8 +53,10 @@
+> >>  #include <sys/syscall.h>
+> >>  #include <sys/wait.h>
+> >>  #include <sys/xattr.h>
+> >> +#include <sys/vfs.h>
+> >>  #include <syslog.h>
+> >>  #include <linux/fs.h>
+> >> +#include <linux/magic.h>
+> >>  
+> >>  #include "qemu/cutils.h"
+> >>  #include "passthrough_helpers.h"
+> >> @@ -136,6 +138,13 @@ enum {
+> >>      SANDBOX_CHROOT,
+> >>  };
+> >>  
+> >> +/* capability of storing DAX flag persistently */
+> >> +enum {
+> >> +    DAX_CAP_NONE,  /* not supported */
+> >> +    DAX_CAP_FLAGS, /* stored in flags (FS_IOC_GETFLAGS/FS_IOC_SETFLAGS) */
+> >> +    DAX_CAP_XATTR, /* stored in xflags (FS_IOC_FSGETXATTR/FS_IOC_FSSETXATTR) */
+> >> +};
+> >> +
+> >>  typedef struct xattr_map_entry {
+> >>      char *key;
+> >>      char *prepend;
+> >> @@ -161,6 +170,7 @@ struct lo_data {
+> >>      int readdirplus_clear;
+> >>      int allow_direct_io;
+> >>      int announce_submounts;
+> >> +    int perfile_dax_cap; /* capability of backend fs */
+> >>      bool use_statx;
+> >>      struct lo_inode root;
+> >>      GHashTable *inodes; /* protected by lo->mutex */
+> >> @@ -703,6 +713,10 @@ static void lo_init(void *userdata, struct fuse_conn_info *conn)
+> >>          conn->want &= ~FUSE_CAP_HANDLE_KILLPRIV_V2;
+> >>          lo->killpriv_v2 = 0;
+> >>      }
+> >> +
+> >> +    if (conn->capable & FUSE_CAP_PERFILE_DAX && lo->perfile_dax_cap ) {
+> >> +        conn->want |= FUSE_CAP_PERFILE_DAX;
+> >> +    }
+> >>  }
+> >>  
+> >>  static void lo_getattr(fuse_req_t req, fuse_ino_t ino,
+> >> @@ -3800,6 +3814,7 @@ static void setup_root(struct lo_data *lo, struct lo_inode *root)
+> >>      int fd, res;
+> >>      struct stat stat;
+> >>      uint64_t mnt_id;
+> >> +    struct statfs statfs;
+> >>  
+> >>      fd = open("/", O_PATH);
+> >>      if (fd == -1) {
+> >> @@ -3826,6 +3841,20 @@ static void setup_root(struct lo_data *lo, struct lo_inode *root)
+> >>          root->posix_locks = g_hash_table_new_full(
+> >>              g_direct_hash, g_direct_equal, NULL, posix_locks_value_destroy);
+> >>      }
+> >> +
+> >> +    /*
+> >> +     * Currently only ext4/xfs since linux kernel v5.8 support storing
+> >> +     * FS_DAX_FL flag persistently. Ext4 accesses this flag through
+> >> +     * FS_IOC_G[S]ETFLAGS ioctl, while xfs accesses this flag through
+> >> +     * FS_IOC_FSG[S]ETXATTR ioctl.
+> >> +     */
+> >> +    res = fstatfs(fd, &statfs);
+> >> +    if (!res) {
+> >> +	if (statfs.f_type == EXT4_SUPER_MAGIC)
+> >> +	    lo->perfile_dax_cap = DAX_CAP_FLAGS;
+> >> +	else if (statfs.f_type == XFS_SUPER_MAGIC)
+> >> +	    lo->perfile_dax_cap = DAX_CAP_XATTR;
+> >> +    }
+> >>  }
+> >>  
+> >>  static guint lo_key_hash(gconstpointer key)
+> >> -- 
+> >> 2.27.0
+> >>
+> >> _______________________________________________
+> >> Virtio-fs mailing list
+> >> Virtio-fs@redhat.com
+> >> https://listman.redhat.com/mailman/listinfo/virtio-fs
+> >>
+> 
+> -- 
+> Thanks,
+> Jeffle
+> 
+-- 
+Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
 
-Eric
