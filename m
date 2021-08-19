@@ -2,200 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF1AB3F1228
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 05:58:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9074C3F129D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 06:54:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236321AbhHSD70 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Aug 2021 23:59:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46662 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235893AbhHSD70 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Aug 2021 23:59:26 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4475C610CB;
-        Thu, 19 Aug 2021 03:58:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629345530;
-        bh=It3UWJT/EISjJbSXJOa9YOZrmo0c8cMi/Z71oauhW1o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=B8YJS3s9/SG4ffD2pUndnBEUmZ/rGTKk143b5aSWLidLDRfF3rRHrbS3sG/KdLFoe
-         fO2i8I4B/tdR+nOAn50qXcduL736ue0ayVwSLKnC/382wpgRKNX5yQDev19DIoX1a+
-         UwlH6klunOX5kQtDhqsLRRIrl+3915OVPlaZ7Y9f2us1VPtcFk+i63959XJXFvw/M5
-         QRlP2OK4MdbEHUVxd7bTwXjGnxQc6dfcZsNPZBIVoWma/HKUPKgOERVOqcosqqCvTZ
-         s+IKizsl4Qz4slLXVbqbopf3vCpQcnfx6wBx7Iyx2br0qroybo7gYnk7e+GEniPSC5
-         7Q1M+zJjI5SCg==
-Date:   Wed, 18 Aug 2021 20:58:49 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Jan Kara <jack@suse.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Matthew Bobrowski <repnop@google.com>, kernel@collabora.com
-Subject: Re: [PATCH v6 18/21] fanotify: Emit generic error info type for
- error event
-Message-ID: <20210819035849.GA12586@magnolia>
-References: <20210812214010.3197279-1-krisman@collabora.com>
- <20210812214010.3197279-19-krisman@collabora.com>
- <20210816214103.GA12664@magnolia>
- <20210817090538.GA26181@quack2.suse.cz>
- <CAOQ4uxgdJpovZ-zzJkLOdQ=YYF3ta46m0_jrt0QFSdJ9GdXR=g@mail.gmail.com>
- <20210818001632.GD12664@magnolia>
- <CAOQ4uxhccRchiajjje3C20UOKwxQUapu=RYPsM1Y0uTnS81Vew@mail.gmail.com>
- <20210818095818.GA28119@quack2.suse.cz>
+        id S229990AbhHSEyf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Aug 2021 00:54:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:24592 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229937AbhHSEye (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Aug 2021 00:54:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1629348838;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DYUR2yrRBDOoqdaGfM0jUoL4Nv+fDfxlMLBm1iQy4og=;
+        b=TIQWqnLW032tqGx7zIe084tew/MouWhdQMccLGzmhKmOIAf1jC6AviJvnFGxD+xGScsIUs
+        1cYvtqIwrwwZE54Sd9Nzc8SiuJVRVgN97jOgMED3WYHHQXuSJjuIV8EQNvYdcfMZK3BwCR
+        4t7AqU+RQ7NA0xkuvPc6X99C/sqEaT0=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-144-33Y66PIvM_iUAln4B1Pu0Q-1; Thu, 19 Aug 2021 00:53:56 -0400
+X-MC-Unique: 33Y66PIvM_iUAln4B1Pu0Q-1
+Received: by mail-pg1-f198.google.com with SMTP id r21-20020a63d9150000b029023ccd23c20cso2787356pgg.19
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Aug 2021 21:53:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=DYUR2yrRBDOoqdaGfM0jUoL4Nv+fDfxlMLBm1iQy4og=;
+        b=SXPwWwtLbi6+ZxDsyU0ULPEENyRFLq5gKoH4nEYBDZMzo7N8R4q3Scldq1yuaKRgl8
+         IbNpwzy7mEaXx9RN6XzliKH2T0ne4lO2hy6PmWtYeqe1dJa5hi6VXRnIxCqlFialAZxf
+         mVRtW1gIFzNuZO9ahuwvr33ZTGAjsDmIKEOg9M76mPsRfG+UwVng2QiI7xktLEBaTTB0
+         pAsG+2Ob02OPecIY3wzKkmHS4NRa8nYMBco8Wm40F7XvxWiE+TYxNMpJ4SlS0A2SKIRt
+         4C33d2uDMI2Bgy5O4Y+d5+jrBtZmYgurD9PfXiU/KJUl23E3Uov9aCVOlOMnqIvjnm8J
+         Kfrg==
+X-Gm-Message-State: AOAM533q0ctMByyhs82fJE4ZMnczK5CSPPPBzSSKc5KxBLIkgXF3Y2bI
+        tjeNulgQtRCbHOlWeiAzBbVOcT1IV4NhbquyPXCV4rc+hfeNNbWhE0DMPTryOqU4Gp+0aU8o6w1
+        iF+Wet8zixuf3S6gQ8xAyY8AkOA==
+X-Received: by 2002:a17:902:690a:b0:12d:86cf:d981 with SMTP id j10-20020a170902690a00b0012d86cfd981mr10233120plk.39.1629348835425;
+        Wed, 18 Aug 2021 21:53:55 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxTwlPzBxgGrKGY60dayzMAHDaDEDhpkimgsYFVvJXjtkvG82QRU9WAYTDsbNJJ2qLzpmLh9A==
+X-Received: by 2002:a17:902:690a:b0:12d:86cf:d981 with SMTP id j10-20020a170902690a00b0012d86cfd981mr10233102plk.39.1629348835165;
+        Wed, 18 Aug 2021 21:53:55 -0700 (PDT)
+Received: from fedora ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id r3sm1478297pff.119.2021.08.18.21.53.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Aug 2021 21:53:54 -0700 (PDT)
+Date:   Thu, 19 Aug 2021 13:14:31 +0800
+From:   Zorro Lang <zlang@redhat.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Xu Yu <xuyu@linux.alibaba.com>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, hch@infradead.org, riteshh@linux.ibm.com,
+        tytso@mit.edu, gavin.dg@linux.alibaba.com,
+        fstests <fstests@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+Subject: Re: [PATCH] generic: add swapfile maxpages regression test
+Message-ID: <20210819051431.z3q46fswvkwnwmgn@fedora>
+Mail-Followup-To: "Darrick J. Wong" <djwong@kernel.org>,
+        Xu Yu <xuyu@linux.alibaba.com>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, hch@infradead.org, riteshh@linux.ibm.com,
+        tytso@mit.edu, gavin.dg@linux.alibaba.com,
+        fstests <fstests@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+References: <db99c25a8e2a662046e498fd13e5f0c35364164a.1629286473.git.xuyu@linux.alibaba.com>
+ <20210819014326.GC12597@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210818095818.GA28119@quack2.suse.cz>
+In-Reply-To: <20210819014326.GC12597@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 18, 2021 at 11:58:18AM +0200, Jan Kara wrote:
-> On Wed 18-08-21 06:24:26, Amir Goldstein wrote:
-> > [...]
-> > 
-> > > > Just keep in mind that the current scheme pre-allocates the single event slot
-> > > > on fanotify_mark() time and (I think) we agreed to pre-allocate
-> > > > sizeof(fsnotify_error_event) + MAX_HDNALE_SZ.
-> > > > If filesystems would want to store some variable length fs specific info,
-> > > > a future implementation will have to take that into account.
-> > >
-> > > <nod> I /think/ for the fs and AG metadata we could preallocate these,
-> > > so long as fsnotify doesn't free them out from under us.
-> > 
-> > fs won't get notified when the event is freed, so fsnotify must
-> > take ownership on the data structure.
-> > I was thinking more along the lines of limiting maximum size for fs
-> > specific info and pre-allocating that size for the event.
+On Wed, Aug 18, 2021 at 06:43:26PM -0700, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
 > 
-> Agreed. If there's a sensible upperbound than preallocating this inside
-> fsnotify is likely the least problematic solution.
+> Add regression test for "mm/swap: consider max pages in
+> iomap_swapfile_add_extent".
 > 
-> > > For inodes...
-> > > there are many more of those, so they'd have to be allocated
-> > > dynamically.
-> > 
-> > The current scheme is that the size of the queue for error events
-> > is one and the single slot is pre-allocated.
-> > The reason for pre-allocate is that the assumption is that fsnotify_error()
-> > could be called from contexts where memory allocation would be
-> > inconvenient.
-> > Therefore, we can store the encoded file handle of the first erroneous
-> > inode, but we do not store any more events until user read this
-> > one event.
+> Cc: Gang Deng <gavin.dg@linux.alibaba.com>
+> Cc: Xu Yu <xuyu@linux.alibaba.com>
+> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> ---
+
+The code logic looks good to me. And [1][2]... so I think this test
+is good. But of course, wait for more review points from cc list.
+
+Reviewed-by: Zorro Lang <zlang@redhat.com>
+
+[1]
+Test passed on old kernel without this regression (xfs fails):
+
+# ./check generic/727                                                                                                                    
+FSTYP         -- ext4
+PLATFORM      -- Linux/x86_64 xx-xxxx-xx 4.18.0-xxx.el8.x86_64+debug #1 SMP Wed Jul 14 12:35:49 EDT 2021
+MKFS_OPTIONS  -- /dev/mapper/rhel-xx-xxxx-xx-xfscratch
+MOUNT_OPTIONS -- -o acl,user_xattr -o context=system_u:object_r:root_t:s0 /dev/mapper/rhel-xx-xxxx-xx-xfscratch /mnt/scratch
+
+generic/727      15s
+Ran: generic/727
+Passed all 1 tests
+
+[2]
+Reproduced on new kernel with this regression:
+
+# ./check generic/727
+FSTYP         -- ext4
+PLATFORM      -- Linux/x86_64 xxx-xxxx-xx 5.14.0-rc4-xfs #14 SMP Thu Aug 12 00:56:07 CST 2021
+MKFS_OPTIONS  -- /dev/mapper/testvg-scratchdev
+MOUNT_OPTIONS -- -o acl,user_xattr -o context=system_u:object_r:root_t:s0 /dev/mapper/testvg-scratchdev /mnt/scratch
+
+generic/727     - output mismatch (see /root/git/xfstests-dev/results//generic/727.out.bad)
+    --- tests/generic/727.out   2021-08-19 11:20:14.677794743 +0800
+    +++ /root/git/xfstests-dev/results//generic/727.out.bad     2021-08-19 11:21:46.654450307 +0800
+    @@ -1,2 +1,3 @@
+     QA output created by 727
+    +swapon added 2044 pages, expected 1020
+     Silence is golden
+    ...
+    (Run 'diff -u /root/git/xfstests-dev/tests/generic/727.out /root/git/xfstests-dev/results//generic/727.out.bad'  to see the entire diff)
+Ran: generic/727
+Failures: generic/727
+Failed 1 of 1 tests
+
+>  tests/generic/727     |   62 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/727.out |    2 ++
+>  2 files changed, 64 insertions(+)
+>  create mode 100755 tests/generic/727
+>  create mode 100644 tests/generic/727.out
 > 
-> Right. OTOH I can imagine allowing GFP_NOFS allocations in the error
-> context. At least for ext4 it would be workable (after all ext4 manages to
-> lock & modify superblock in its error handlers, GFP_NOFS allocation isn't
-> harder). But then if events are dynamically allocated there's still the
-> inconvenient question what are you going to do if you need to report fs
-> error and you hit ENOMEM. Just not sending the notification may have nasty
-> consequences and in the world of containerization and virtualization
-> tightly packed machines where ENOMEM happens aren't that unlikely. It is
-> just difficult to make assumptions about filesystems overall so we decided
-> to be better safe and preallocate the event.
+> diff --git a/tests/generic/727 b/tests/generic/727
+> new file mode 100755
+> index 00000000..a546ad51
+> --- /dev/null
+> +++ b/tests/generic/727
+> @@ -0,0 +1,62 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2021 Oracle.  All Rights Reserved.
+> +#
+> +# FS QA Test 727
+> +#
+> +# Regression test for "mm/swap: consider max pages in iomap_swapfile_add_extent"
+> +
+> +# Xu Yu found that the iomap swapfile activation code failed to constrain
+> +# itself to activating however many swap pages that the mm asked us for.  This
+> +# is an deviation in behavior from the classic swapfile code.  It also leads to
+> +# kernel memory corruption if the swapfile is cleverly constructed.
+> +#
+> +. ./common/preamble
+> +_begin_fstest auto swap
+> +
+> +# Override the default cleanup function.
+> +_cleanup()
+> +{
+> +	cd /
+> +	rm -f $tmp.*
+> +	test -n "$swapfile" && swapoff $swapfile &> /dev/null
+> +}
+> +
+> +# real QA test starts here
+> +_supported_fs generic
+> +_require_scratch_swapfile
+> +
+> +_scratch_mkfs >> $seqres.full
+> +_scratch_mount >> $seqres.full
+> +
+> +# Assuming we're not borrowing a FAT16 partition from Windows 3.1, we need an
+> +# unlikely enough name that we can grep /proc/swaps for this.
+> +swapfile=$SCRATCH_MNT/386spart.par
+> +_format_swapfile $swapfile 1m >> $seqres.full
+> +
+> +swapfile_pages() {
+> +	local swapfile="$1"
+> +
+> +	grep "$swapfile" /proc/swaps | awk '{print $3}'
+> +}
+> +
+> +_swapon_file $swapfile
+> +before_pages=$(swapfile_pages "$swapfile")
+> +swapoff $swapfile
+> +
+> +# Extend the length of the swapfile but do not rewrite the header.
+> +# The subsequent swapon should set up 1MB worth of pages, not 2MB.
+> +$XFS_IO_PROG -f -c 'pwrite 1m 1m' $swapfile >> $seqres.full
+> +
+> +_swapon_file $swapfile
+> +after_pages=$(swapfile_pages "$swapfile")
+> +swapoff $swapfile
+> +
+> +# Both swapon attempts should have found the same number of pages.
+> +test "$before_pages" -eq "$after_pages" || \
+> +	echo "swapon added $after_pages pages, expected $before_pages"
+> +
+> +# success, all done
+> +echo Silence is golden
+> +status=0
+> +exit
+> diff --git a/tests/generic/727.out b/tests/generic/727.out
+> new file mode 100644
+> index 00000000..2de2b4b2
+> --- /dev/null
+> +++ b/tests/generic/727.out
+> @@ -0,0 +1,2 @@
+> +QA output created by 727
+> +Silence is golden
 > 
-> Or, we could leave the allocation troubles for the filesystem and
-> fsnotify_sb_error() would be passed already allocated event (this way
-> attaching of fs-specific blobs to the event is handled as well) which it
-> would just queue. Plus we'd need to provide some helper to fill in generic
-> part of the event...
-> 
-> The disadvantage is that if there are filesystems / callsites needing
-> preallocated events, it would be painful for them. OTOH current two users -
-> ext4 & xfs - can handle allocation in the error path AFAIU.
-> 
-> Thinking about this some more, maybe we could have event preallocated (like
-> a "rescue event"). Normally we would dynamically allocate (or get passed
-> from fs) the event and only if the allocation fails, we would queue the
-> rescue event to indicate to listeners that something bad happened, there
-> was error but we could not fully report it.
 
-Yes.
-
-> But then, even if we'd go for dynamic event allocation by default, we need
-> to efficiently merge events since some fs failures (e.g. resulting in
-> journal abort in ext4) lead to basically all operations with the filesystem
-> to fail and that could easily swamp the notification system with useless
-> events.
-
-Hm.  Going out on a limb, I would guess that the majority of fs error
-flood events happen if the storage fails catastrophically.  Assuming
-that a catastrophic failure will quickly take the filesystem offline, I
-would say that for XFS we should probably send one last "and then we
-died" event and stop reporting after that.
-
-> Current system with preallocated event nicely handles this
-> situation, it is questionable how to extend it for online fsck usecase
-> where we need to queue more than one event (but even there probably needs
-> to be some sensible upper-bound). I'll think about it...
-
-At least for XFS, I was figuring that xfs_scrub errors wouldn't be
-reported via fsnotify since the repair tool is already running anyway.
-
-> > > Hmm.  For handling accumulated errors, can we still access the
-> > > fanotify_event_info_* object once we've handed it to fanotify?  If the
-> > > user hasn't picked up the event yet, it might be acceptable to set more
-> > > bits in the type mask and bump the error count.  In other words, every
-> > > time userspace actually reads the event, it'll get the latest error
-> > > state.  I /think/ that's where the design of this patchset is going,
-> > > right?
-> > 
-> > Sort of.
-> > fsnotify does have a concept of "merging" new event with an event
-> > already in queue.
-> > 
-> > With most fsnotify events, merge only happens if the info related
-> > to the new event (e.g. sb,inode) is the same as that off the queued
-> > event and the "merge" is only in the event mask
-> > (e.g. FS_OPEN|FS_CLOSE).
-> > 
-> > However, the current scheme for "merge" of an FS_ERROR event is only
-> > bumping err_count, even if the new reported error or inode do not
-> > match the error/inode in the queued event.
-> > 
-> > If we define error event subtypes (e.g. FS_ERROR_WRITEBACK,
-> > FS_ERROR_METADATA), then the error event could contain
-> > a field for subtype mask and user could read the subtype mask
-> > along with the accumulated error count, but this cannot be
-> > done by providing the filesystem access to modify an internal
-> > fsnotify event, so those have to be generic UAPI defined subtypes.
-> > 
-> > If you think that would be useful, then we may want to consider
-> > reserving the subtype mask field in fanotify_event_info_error in
-> > advance.
-> 
-> It depends on what exactly Darrick has in mind but I suspect we'd need a
-> fs-specific merge helper that would look at fs-specific blobs in the event
-> and decide whether events can be merged or not, possibly also handling the
-> merge by updating the blob.
-
-Yes.  If the filesystem itself were allowed to manage the lifespan of
-the fsnotify error event object then this would be trivial -- we'll own
-the object, keep it updated as needed, and fsnotify can copy the
-contents to userspace whenever convenient.
-
-(This might be a naïve view of fsnotify...)
-
-> From the POV of fsnotify that would probably
-> mean merge callback in the event itself. But I guess this needs more
-> details from Darrick and maybe we don't need to decide this at this moment
-> since nobody is close to the point of having code needing to pass fs-blobs
-> with events.
-
-<nod> We ... probably don't need to decide this now.
-
---D
-
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
