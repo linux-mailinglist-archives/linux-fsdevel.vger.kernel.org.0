@@ -2,143 +2,246 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BAAD3F20BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 21:41:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 204883F20D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 21:41:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbhHSTlr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Aug 2021 15:41:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36954 "EHLO
+        id S235093AbhHSTmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Aug 2021 15:42:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:38893 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234085AbhHSTlo (ORCPT
+        by vger.kernel.org with ESMTP id S234942AbhHSTmU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Aug 2021 15:41:44 -0400
+        Thu, 19 Aug 2021 15:42:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629402067;
+        s=mimecast20190719; t=1629402103;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=N3r+VfJqTouzOa7Rijd4hTG7Toub9ezhbqH/xKVtdmY=;
-        b=e6nbjl68n1YnBi8pTzOaFo5+7Sc4JmPYEJ71oYBiz3o6Kwvkq8FabquqcWe90PJO8xaYu+
-        LSk1tllcDTZ/hb4Ze3hX8Of0i72jjbj2gKk3WSfvUBtyUruw5a+HzsqD26csmOJA0Vz9Q8
-        zPdykeN4Y6hPaAOMynfYN88f0kFVuW8=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-241-jIVfVZydP4GFS5ntU8aNyQ-1; Thu, 19 Aug 2021 15:41:02 -0400
-X-MC-Unique: jIVfVZydP4GFS5ntU8aNyQ-1
-Received: by mail-wm1-f69.google.com with SMTP id g70-20020a1c20490000b02902e6753bf473so3894428wmg.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Aug 2021 12:41:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N3r+VfJqTouzOa7Rijd4hTG7Toub9ezhbqH/xKVtdmY=;
-        b=DlDu42wbqTS0FLyDT6wjQV2g/mLVC8AF+vN98LAQ9RPP0ZEzuq7ZSk+ldpbSHfYIB8
-         GfkvEegqusdErWE0fWkLEEWeKQY9s4TBQ9ubgfknE0cCTUEfgPA6w0QlzG0KYaKBd6HU
-         tRHwzkQIkhBtFeuBDdicqtMPgqSh054rfonDx6LT/s1paRPjyBCTNOBPu16j7kbjBeTp
-         5fq1gzVBjADmW5rMtWUzt9Omi7DAPY6d1q4i+7u8zlstHhrQWN24QRzknNKCu1vRG8Lf
-         qD6AG/4vjqa2A6bnPJzmiVELNT6/snJ3VgkjWSNeIx3ziFFFxtk50DCf1CZMaEoHUGXO
-         y24Q==
-X-Gm-Message-State: AOAM531r6WKd+RnWCSkXBDHFNcYxnrXUenDHk66ocwVTSfsezUnWVLXe
-        IYOz7pOYoAWYOVTMBcv3Qq4TAE4n3Oy6aEc1SQ1ER8clXmKdioyO9Gfdu1UEd/+3sZ2ZilZcKDN
-        R7WWrS3IC8nxuBWqqOND6hDKcVPCwYsqz6sXncVeBAw==
-X-Received: by 2002:a7b:c106:: with SMTP id w6mr296748wmi.152.1629402060758;
-        Thu, 19 Aug 2021 12:41:00 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzkJcXH65FWnZ1dP5/HoDmwcsHFn3hPhEUkK7xHddEwx16hWpY7f72bzjUNxESwyU+qX2gMS5ZSiNzWhC/qsKM=
-X-Received: by 2002:a7b:c106:: with SMTP id w6mr296733wmi.152.1629402060505;
- Thu, 19 Aug 2021 12:41:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210803191818.993968-1-agruenba@redhat.com> <CAHk-=wj+_Y7NQ-NhhE0jk52c9ZB0VJbO1AjtMJFB8wP=PO+bdw@mail.gmail.com>
- <CAHc6FU6H5q20qiQ5FX1726i0FJHyh=Y46huWkCBZTR3sk+3Dhg@mail.gmail.com> <CAHk-=whBCm3G5yibbvQsTn00fA16a688NTU_geQV158DnRy+bQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whBCm3G5yibbvQsTn00fA16a688NTU_geQV158DnRy+bQ@mail.gmail.com>
+        bh=dzlVCOn6ciocu+oY7/xltnn9HG07joJwbc5GNBbl0EY=;
+        b=eIOKnOufLwahF4VHb1ofxGY6AmotP/Ldk1gGxmcBYA4p4VAwjZBofOng6biC75skRwgchq
+        jB4Dd/7BhXv/orBOZk4TBMIRiCgCn8Qn9IRXPd/U2EuZfTusyLuPyXn6vHZ1e9G/qenQTk
+        UYfYpDadB6IxN2nU0dxkdUUhO5sDi6Q=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-290-JeccV3OtOs2Y3EsrGlYExw-1; Thu, 19 Aug 2021 15:41:38 -0400
+X-MC-Unique: JeccV3OtOs2Y3EsrGlYExw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CBD431082921;
+        Thu, 19 Aug 2021 19:41:36 +0000 (UTC)
+Received: from max.com (unknown [10.40.194.206])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 20E6F1B46B;
+        Thu, 19 Aug 2021 19:41:33 +0000 (UTC)
 From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Thu, 19 Aug 2021 21:40:49 +0200
-Message-ID: <CAHc6FU5HHFwuJBCNuU0e_N0ehaFrzbUrCuTJyaLNC4qxwfazYA@mail.gmail.com>
-Subject: Re: [PATCH v5 00/12] gfs2: Fix mmap + page fault deadlocks
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Paul Mackerras <paulus@ozlabs.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        cluster-devel@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Subject: [PATCH v6 07/19] gfs2: Clean up function may_grant
+Date:   Thu, 19 Aug 2021 21:40:50 +0200
+Message-Id: <20210819194102.1491495-8-agruenba@redhat.com>
+In-Reply-To: <20210819194102.1491495-1-agruenba@redhat.com>
+References: <20210819194102.1491495-1-agruenba@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 18, 2021 at 11:49 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> [ Sorry for the delay, I was on the road and this fell through the cracks ]
+Pass the first current glock holder into function may_grant and
+deobfuscate the logic there.
 
-No harm done, I was busy enough implementing your previous suggestions.
+We're now using function find_first_holder in do_promote, so move the
+function's definition above do_promote.
 
-> On Mon, Aug 16, 2021 at 12:14 PM Andreas Gruenbacher
-> <agruenba@redhat.com> wrote:
-> >
-> > On Tue, Aug 3, 2021 at 9:45 PM Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
-> > >
-> > > Hmm. Have you tried to figure out why that "still returns 0" happens?
-> >
-> > The call stack is:
-> >
-> > gup_pte_range
-> > gup_pmd_range
-> > gup_pud_range
-> > gup_p4d_range
-> > gup_pgd_range
-> > lockless_pages_from_mm
-> > internal_get_user_pages_fast
-> > get_user_pages_fast
-> > iov_iter_get_pages
-> > __bio_iov_iter_get_pages
-> > bio_iov_iter_get_pages
-> > iomap_dio_bio_actor
-> > iomap_dio_actor
-> > iomap_apply
-> > iomap_dio_rw
-> > gfs2_file_direct_write
-> >
-> > In gup_pte_range, pte_special(pte) is true and so we return 0.
->
-> Ok, so that is indeed something that the fast-case can't handle,
-> because some of the special code wants to have the mm_lock so that it
-> can look at the vma flags (eg "vm_normal_page()" and friends.
->
-> That said, some of these cases even the full GUP won't ever handle,
-> simply because a mapping doesn't necessarily even _have_ a 'struct
-> page' associated with it if it's a VM_IO mapping.
->
-> So it turns out that you can't just always do
-> fault_in_iov_iter_readable() and then assume that you can do
-> iov_iter_get_pages() and repeat until successful.
->
-> We could certainly make get_user_pages_fast() handle a few more cases,
-> but I get the feeling that we need to have separate error cases for
-> EFAULT - no page exists - and the "page exists, but cannot be mapped
-> as a 'struct page'" case.
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+---
+ fs/gfs2/glock.c | 120 ++++++++++++++++++++++++++++--------------------
+ 1 file changed, 70 insertions(+), 50 deletions(-)
 
-Hmm, what if GUP is made to skip VM_IO vmas without adding anything to
-the pages array? That would match fault_in_iov_iter_writeable, which
-is modeled after __mm_populate and which skips VM_IO and VM_PFNMAP
-vmas.
-
-The other strategy I've added is to scale back the page fault windows
-to a single page if faulting in multiple pages didn't help, and to
-give up if the I/O operation still fails after that. So pathological
-cases won't loop indefinitely anymore at least.
-
-> I also do still think that even regardless of that, we want to just
-> add a FOLL_NOFAULT flag that just disables calling handle_mm_fault(),
-> and then you can use the regular get_user_pages().
->
-> That at least gives us the full _normal_ page handling stuff.
-
-And it does fix the generic/208 failure.
-
-Thanks,
-Andreas
+diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+index 1f3902ecdded..545b435f55ea 100644
+--- a/fs/gfs2/glock.c
++++ b/fs/gfs2/glock.c
+@@ -301,46 +301,59 @@ void gfs2_glock_put(struct gfs2_glock *gl)
+ }
+ 
+ /**
+- * may_grant - check if its ok to grant a new lock
++ * may_grant - check if it's ok to grant a new lock
+  * @gl: The glock
++ * @current_gh: One of the current holders of @gl
+  * @gh: The lock request which we wish to grant
+  *
+- * Returns: true if its ok to grant the lock
++ * With our current compatibility rules, if a glock has one or more active
++ * holders (HIF_HOLDER flag set), any of those holders can be passed in as
++ * @current_gh; they are all the same as far as compatibility with the new @gh
++ * goes.
++ *
++ * Returns true if it's ok to grant the lock.
+  */
+ 
+-static inline int may_grant(const struct gfs2_glock *gl, const struct gfs2_holder *gh)
+-{
+-	const struct gfs2_holder *gh_head = list_first_entry(&gl->gl_holders, const struct gfs2_holder, gh_list);
++static inline bool may_grant(const struct gfs2_glock *gl,
++			     const struct gfs2_holder *current_gh,
++			     const struct gfs2_holder *gh)
++{
++	if (current_gh) {
++		BUG_ON(!test_bit(HIF_HOLDER, &current_gh->gh_iflags));
++
++		switch(current_gh->gh_state) {
++		case LM_ST_EXCLUSIVE:
++			/*
++			 * Here we make a special exception to grant holders
++			 * who agree to share the EX lock with other holders
++			 * who also have the bit set. If the original holder
++			 * has the LM_FLAG_NODE_SCOPE bit set, we grant more
++			 * holders with the bit set.
++			 */
++			return gh->gh_state == LM_ST_EXCLUSIVE &&
++			       (current_gh->gh_flags & LM_FLAG_NODE_SCOPE) &&
++			       (gh->gh_flags & LM_FLAG_NODE_SCOPE);
+ 
+-	if (gh != gh_head) {
+-		/**
+-		 * Here we make a special exception to grant holders who agree
+-		 * to share the EX lock with other holders who also have the
+-		 * bit set. If the original holder has the LM_FLAG_NODE_SCOPE bit
+-		 * is set, we grant more holders with the bit set.
+-		 */
+-		if (gh_head->gh_state == LM_ST_EXCLUSIVE &&
+-		    (gh_head->gh_flags & LM_FLAG_NODE_SCOPE) &&
+-		    gh->gh_state == LM_ST_EXCLUSIVE &&
+-		    (gh->gh_flags & LM_FLAG_NODE_SCOPE))
+-			return 1;
+-		if ((gh->gh_state == LM_ST_EXCLUSIVE ||
+-		     gh_head->gh_state == LM_ST_EXCLUSIVE))
+-			return 0;
++		case LM_ST_SHARED:
++		case LM_ST_DEFERRED:
++			return gh->gh_state == current_gh->gh_state;
++
++		default:
++			return false;
++		}
+ 	}
++
+ 	if (gl->gl_state == gh->gh_state)
+-		return 1;
++		return true;
+ 	if (gh->gh_flags & GL_EXACT)
+-		return 0;
++		return false;
+ 	if (gl->gl_state == LM_ST_EXCLUSIVE) {
+-		if (gh->gh_state == LM_ST_SHARED && gh_head->gh_state == LM_ST_SHARED)
+-			return 1;
+-		if (gh->gh_state == LM_ST_DEFERRED && gh_head->gh_state == LM_ST_DEFERRED)
+-			return 1;
++		return gh->gh_state == LM_ST_SHARED ||
++		       gh->gh_state == LM_ST_DEFERRED;
+ 	}
+-	if (gl->gl_state != LM_ST_UNLOCKED && (gh->gh_flags & LM_FLAG_ANY))
+-		return 1;
+-	return 0;
++	if (gh->gh_flags & LM_FLAG_ANY)
++		return gl->gl_state != LM_ST_UNLOCKED;
++	return false;
+ }
+ 
+ static void gfs2_holder_wake(struct gfs2_holder *gh)
+@@ -380,6 +393,24 @@ static void do_error(struct gfs2_glock *gl, const int ret)
+ 	}
+ }
+ 
++/**
++ * find_first_holder - find the first "holder" gh
++ * @gl: the glock
++ */
++
++static inline struct gfs2_holder *find_first_holder(const struct gfs2_glock *gl)
++{
++	struct gfs2_holder *gh;
++
++	if (!list_empty(&gl->gl_holders)) {
++		gh = list_first_entry(&gl->gl_holders, struct gfs2_holder,
++				      gh_list);
++		if (test_bit(HIF_HOLDER, &gh->gh_iflags))
++			return gh;
++	}
++	return NULL;
++}
++
+ /**
+  * do_promote - promote as many requests as possible on the current queue
+  * @gl: The glock
+@@ -393,14 +424,16 @@ __releases(&gl->gl_lockref.lock)
+ __acquires(&gl->gl_lockref.lock)
+ {
+ 	const struct gfs2_glock_operations *glops = gl->gl_ops;
+-	struct gfs2_holder *gh, *tmp;
++	struct gfs2_holder *gh, *tmp, *first_gh;
+ 	int ret;
+ 
++	first_gh = find_first_holder(gl);
++
+ restart:
+ 	list_for_each_entry_safe(gh, tmp, &gl->gl_holders, gh_list) {
+ 		if (test_bit(HIF_HOLDER, &gh->gh_iflags))
+ 			continue;
+-		if (may_grant(gl, gh)) {
++		if (may_grant(gl, first_gh, gh)) {
+ 			if (gh->gh_list.prev == &gl->gl_holders &&
+ 			    glops->go_lock) {
+ 				spin_unlock(&gl->gl_lockref.lock);
+@@ -722,23 +755,6 @@ __acquires(&gl->gl_lockref.lock)
+ 	spin_lock(&gl->gl_lockref.lock);
+ }
+ 
+-/**
+- * find_first_holder - find the first "holder" gh
+- * @gl: the glock
+- */
+-
+-static inline struct gfs2_holder *find_first_holder(const struct gfs2_glock *gl)
+-{
+-	struct gfs2_holder *gh;
+-
+-	if (!list_empty(&gl->gl_holders)) {
+-		gh = list_first_entry(&gl->gl_holders, struct gfs2_holder, gh_list);
+-		if (test_bit(HIF_HOLDER, &gh->gh_iflags))
+-			return gh;
+-	}
+-	return NULL;
+-}
+-
+ /**
+  * run_queue - do all outstanding tasks related to a glock
+  * @gl: The glock in question
+@@ -1354,8 +1370,12 @@ __acquires(&gl->gl_lockref.lock)
+ 		GLOCK_BUG_ON(gl, true);
+ 
+ 	if (gh->gh_flags & (LM_FLAG_TRY | LM_FLAG_TRY_1CB)) {
+-		if (test_bit(GLF_LOCK, &gl->gl_flags))
+-			try_futile = !may_grant(gl, gh);
++		if (test_bit(GLF_LOCK, &gl->gl_flags)) {
++			struct gfs2_holder *first_gh;
++
++			first_gh = find_first_holder(gl);
++			try_futile = !may_grant(gl, first_gh, gh);
++		}
+ 		if (test_bit(GLF_INVALIDATE_IN_PROGRESS, &gl->gl_flags))
+ 			goto fail;
+ 	}
+-- 
+2.26.3
 
