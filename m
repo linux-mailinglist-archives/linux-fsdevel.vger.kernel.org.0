@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C13163F20E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 21:42:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A87D3F20E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 21:42:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235273AbhHSTnK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Aug 2021 15:43:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46234 "EHLO
+        id S235408AbhHSTnO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Aug 2021 15:43:14 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:42354 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234904AbhHSTnA (ORCPT
+        by vger.kernel.org with ESMTP id S234781AbhHSTnF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Aug 2021 15:43:00 -0400
+        Thu, 19 Aug 2021 15:43:05 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629402143;
+        s=mimecast20190719; t=1629402148;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=DY2YDescUQ+uCrXiIjZoqoUQoOWwX0eabJrqxvw428w=;
-        b=UkHegmpUvnS5LBwim5QuLx3cn0w/f+t/vn0puBPInxR7jeILAi+ELU+YJMasc0clA6+vkh
-        C5UwLPkM+dz86qwJJQ3Y/RZ9tk5gRyIaO5Bcsf+aWTbY7hkZgBNAsLJglMDfxxsdOghIP1
-        m+wcbGskRX8eyRP8yjke6vY6WCMqr4I=
+        bh=mNOq9vRSTRt64SmqSypXyJu5mHDnGeZ3glMXa6U95nQ=;
+        b=it0MpUiGnaxTwQZAZNvRwiDJfkyWGZLzsJA7R9dfxoyk34iQEnVFZ29XIi9zpHDupwZMBb
+        zocOUgLhhCDW/Zppq/usrE2TlZ0vm5uFYllddyrFmXcN84g2BJgKiA3VjCsZCvK87FJZaF
+        pZrgAtauw2cNdoOESytotH/jv5FxD+k=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-389-Ur5CbD0rN7mhAV1bqaWnGg-1; Thu, 19 Aug 2021 15:42:22 -0400
-X-MC-Unique: Ur5CbD0rN7mhAV1bqaWnGg-1
+ us-mta-388-me-WdK2eObu7TrK9jOl37Q-1; Thu, 19 Aug 2021 15:42:24 -0400
+X-MC-Unique: me-WdK2eObu7TrK9jOl37Q-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9388B87D549;
-        Thu, 19 Aug 2021 19:42:20 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8C4111082920;
+        Thu, 19 Aug 2021 19:42:23 +0000 (UTC)
 Received: from max.com (unknown [10.40.194.206])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EEBF11B46B;
-        Thu, 19 Aug 2021 19:42:17 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EC12A1B46B;
+        Thu, 19 Aug 2021 19:42:20 +0000 (UTC)
 From:   Andreas Gruenbacher <agruenba@redhat.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -43,9 +43,9 @@ Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
         cluster-devel@redhat.com, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
         Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH v6 18/19] gfs2: Fix mmap + page fault deadlocks for direct I/O
-Date:   Thu, 19 Aug 2021 21:41:01 +0200
-Message-Id: <20210819194102.1491495-19-agruenba@redhat.com>
+Subject: [PATCH v6 19/19] gfs2: Eliminate ip->i_gh
+Date:   Thu, 19 Aug 2021 21:41:02 +0200
+Message-Id: <20210819194102.1491495-20-agruenba@redhat.com>
 In-Reply-To: <20210819194102.1491495-1-agruenba@redhat.com>
 References: <20210819194102.1491495-1-agruenba@redhat.com>
 MIME-Version: 1.0
@@ -55,171 +55,144 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Also disable page faults during direct I/O requests and implement the
-same kind of retry logic as in the buffered I/O case.
+Now that gfs2_file_buffered_write is the only remaining user of
+ip->i_gh, we can allocate a glock holder on the stack and use that
+instead.
 
-Direct I/O requests differ from buffered I/O requests in that they use
-bio_iov_iter_get_pages for grabbing page references and faulting in
-pages instead of triggering physical page faults.  Those manual page
-faults can be disabled with the new iocb->nofault flag.
-
-This kind of locking problem in gfs2 was originally reported by Jan
-Kara.  Linus came up with the proposal to disable page faults.  Many
-thanks to Al Viro and Matthew Wilcox for their feedback.
+This is slightly complicated by the fact that we're using ip->i_gh for
+the statfs inode in gfs2_file_buffered_write as well.  Since writing to
+the statfs inode isn't very common, allocate the statfs holder
+dynamically when needed.
 
 Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 ---
- fs/gfs2/file.c | 99 ++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 87 insertions(+), 12 deletions(-)
+ fs/gfs2/file.c   | 42 +++++++++++++++++++++++++-----------------
+ fs/gfs2/incore.h |  3 +--
+ 2 files changed, 26 insertions(+), 19 deletions(-)
 
 diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index 8ca6bdba907c..2cf3466b9dde 100644
+index 2cf3466b9dde..9729cb3483c0 100644
 --- a/fs/gfs2/file.c
 +++ b/fs/gfs2/file.c
-@@ -811,22 +811,64 @@ static ssize_t gfs2_file_direct_read(struct kiocb *iocb, struct iov_iter *to,
+@@ -1010,12 +1010,15 @@ static ssize_t gfs2_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	return written ? written : ret;
+ }
+ 
+-static ssize_t gfs2_file_buffered_write(struct kiocb *iocb, struct iov_iter *from)
++static ssize_t gfs2_file_buffered_write(struct kiocb *iocb,
++					struct iov_iter *from,
++					struct gfs2_holder *gh)
  {
  	struct file *file = iocb->ki_filp;
- 	struct gfs2_inode *ip = GFS2_I(file->f_mapping->host);
--	size_t count = iov_iter_count(to);
-+	size_t prev_count = 0, window_size = 0;
-+	size_t written = 0;
- 	ssize_t ret;
- 
--	if (!count)
-+	/*
-+	 * In this function, we disable page faults when we're holding the
-+	 * inode glock while doing I/O.  If a page fault occurs, we drop the
-+	 * inode glock, fault in the pages manually, and retry.
-+	 *
-+	 * Unlike generic_file_read_iter, for reads, iomap_dio_rw can trigger
-+	 * physical as well as manual page faults, and we need to disable both
-+	 * kinds.
-+	 *
-+	 * For direct I/O, gfs2 takes the inode glock in deferred mode.  This
-+	 * locking mode is compatible with other deferred holders, so multiple
-+	 * processes and nodes can do direct I/O to a file at the same time.
-+	 * There's no guarantee that reads or writes will be atomic.  Any
-+	 * coordination among readers and writers needs to happen externally.
-+	 */
-+
-+	if (!iov_iter_count(to))
- 		return 0; /* skip atime */
- 
- 	gfs2_holder_init(ip->i_gl, LM_ST_DEFERRED, 0, gh);
-+retry:
- 	ret = gfs2_glock_nq(gh);
- 	if (ret)
- 		goto out_uninit;
-+retry_under_glock:
-+	pagefault_disable();
-+	to->nofault = true;
-+	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL,
-+			   IOMAP_DIO_PARTIAL, written);
-+	to->nofault = false;
-+	pagefault_enable();
-+	if (ret > 0)
-+		written = ret;
-+
-+	if (unlikely(iov_iter_count(to) && (ret > 0 || ret == -EFAULT)) &&
-+	    should_fault_in_pages(to, &prev_count, &window_size)) {
-+		size_t leftover;
- 
--	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL, 0, 0);
--	gfs2_glock_dq(gh);
-+		gfs2_holder_allow_demote(gh);
-+		leftover = fault_in_iov_iter_writeable(to, window_size);
-+		gfs2_holder_disallow_demote(gh);
-+		if (leftover != window_size) {
-+			if (!gfs2_holder_queued(gh))
-+				goto retry;
-+			goto retry_under_glock;
-+		}
-+	}
-+	if (gfs2_holder_queued(gh))
-+		gfs2_glock_dq(gh);
- out_uninit:
- 	gfs2_holder_uninit(gh);
--	return ret;
-+	if (ret < 0)
-+		return ret;
-+	return written;
- }
- 
- static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
-@@ -835,10 +877,19 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = file->f_mapping->host;
+ 	struct inode *inode = file_inode(file);
  	struct gfs2_inode *ip = GFS2_I(inode);
--	size_t len = iov_iter_count(from);
--	loff_t offset = iocb->ki_pos;
-+	size_t prev_count = 0, window_size = 0;
-+	size_t read = 0;
+ 	struct gfs2_sbd *sdp = GFS2_SB(inode);
++	struct gfs2_holder *statfs_gh = NULL;
+ 	size_t prev_count = 0, window_size = 0;
+ 	size_t read = 0;
  	ssize_t ret;
- 
-+	/*
-+	 * In this function, we disable page faults when we're holding the
-+	 * inode glock while doing I/O.  If a page fault occurs, we drop the
-+	 * inode glock, fault in the pages manually, and retry.
-+	 *
-+	 * For writes, iomap_dio_rw only triggers manual page faults, so we
-+	 * don't need to disable physical ones.
-+	 */
-+
- 	/*
- 	 * Deferred lock, even if its a write, since we do no allocation on
- 	 * this path. All we need to change is the atime, and this lock mode
-@@ -848,22 +899,46 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
- 	 * VFS does.
+@@ -1026,9 +1029,15 @@ static ssize_t gfs2_file_buffered_write(struct kiocb *iocb, struct iov_iter *fro
+ 	 * inode glock, fault in the pages manually, and retry.
  	 */
- 	gfs2_holder_init(ip->i_gl, LM_ST_DEFERRED, 0, gh);
-+retry:
- 	ret = gfs2_glock_nq(gh);
+ 
+-	gfs2_holder_init(ip->i_gl, LM_ST_EXCLUSIVE, 0, &ip->i_gh);
++	if (inode == sdp->sd_rindex) {
++		statfs_gh = kmalloc(sizeof(*statfs_gh), GFP_NOFS);
++		if (!statfs_gh)
++			return -ENOMEM;
++	}
++
++	gfs2_holder_init(ip->i_gl, LM_ST_EXCLUSIVE, 0, gh);
+ retry:
+-	ret = gfs2_glock_nq(&ip->i_gh);
++	ret = gfs2_glock_nq(gh);
  	if (ret)
  		goto out_uninit;
--
-+retry_under_glock:
- 	/* Silently fall back to buffered I/O when writing beyond EOF */
--	if (offset + len > i_size_read(&ip->i_inode))
-+	if (iocb->ki_pos + iov_iter_count(from) > i_size_read(&ip->i_inode))
- 		goto out;
+ retry_under_glock:
+@@ -1036,7 +1045,7 @@ static ssize_t gfs2_file_buffered_write(struct kiocb *iocb, struct iov_iter *fro
+ 		struct gfs2_inode *m_ip = GFS2_I(sdp->sd_statfs_inode);
  
--	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL, 0, 0);
-+	from->nofault = true;
-+	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL,
-+			   IOMAP_DIO_PARTIAL, read);
-+	from->nofault = false;
-+
- 	if (ret == -ENOTBLK)
- 		ret = 0;
-+	if (ret > 0)
-+		read = ret;
-+
-+	if (unlikely(iov_iter_count(from) && (ret > 0 || ret == -EFAULT)) &&
-+	    should_fault_in_pages(from, &prev_count, &window_size)) {
-+		size_t leftover;
-+
+ 		ret = gfs2_glock_nq_init(m_ip->i_gl, LM_ST_EXCLUSIVE,
+-					 GL_NOCACHE, &m_ip->i_gh);
++					 GL_NOCACHE, statfs_gh);
+ 		if (ret)
+ 			goto out_unlock;
+ 	}
+@@ -1049,20 +1058,17 @@ static ssize_t gfs2_file_buffered_write(struct kiocb *iocb, struct iov_iter *fro
+ 	if (ret > 0)
+ 		read += ret;
+ 
+-	if (inode == sdp->sd_rindex) {
+-		struct gfs2_inode *m_ip = GFS2_I(sdp->sd_statfs_inode);
+-
+-		gfs2_glock_dq_uninit(&m_ip->i_gh);
+-	}
++	if (inode == sdp->sd_rindex)
++		gfs2_glock_dq_uninit(statfs_gh);
+ 	if (unlikely(iov_iter_count(from) && (ret > 0 || ret == -EFAULT)) &&
+ 	    should_fault_in_pages(from, &prev_count, &window_size)) {
+ 		size_t leftover;
+ 
+-		gfs2_holder_allow_demote(&ip->i_gh);
 +		gfs2_holder_allow_demote(gh);
-+		leftover = fault_in_iov_iter_readable(from, window_size);
+ 		leftover = fault_in_iov_iter_readable(from, window_size);
+-		gfs2_holder_disallow_demote(&ip->i_gh);
 +		gfs2_holder_disallow_demote(gh);
-+		if (leftover != window_size) {
-+			if (!gfs2_holder_queued(gh))
-+				goto retry;
-+			goto retry_under_glock;
-+		}
-+	}
- out:
--	gfs2_glock_dq(gh);
+ 		if (leftover != window_size) {
+-			if (!gfs2_holder_queued(&ip->i_gh)) {
++			if (!gfs2_holder_queued(gh)) {
+ 				if (read)
+ 					goto out_uninit;
+ 				goto retry;
+@@ -1071,10 +1077,12 @@ static ssize_t gfs2_file_buffered_write(struct kiocb *iocb, struct iov_iter *fro
+ 		}
+ 	}
+ out_unlock:
+-	if (gfs2_holder_queued(&ip->i_gh))
+-		gfs2_glock_dq(&ip->i_gh);
 +	if (gfs2_holder_queued(gh))
 +		gfs2_glock_dq(gh);
  out_uninit:
- 	gfs2_holder_uninit(gh);
--	return ret;
-+	if (ret < 0)
-+		return ret;
-+	return read;
+-	gfs2_holder_uninit(&ip->i_gh);
++	gfs2_holder_uninit(gh);
++	if (statfs_gh)
++		kfree(statfs_gh);
+ 	return read ? read : ret;
  }
  
- static ssize_t gfs2_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+@@ -1129,7 +1137,7 @@ static ssize_t gfs2_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 			goto out_unlock;
+ 
+ 		iocb->ki_flags |= IOCB_DSYNC;
+-		buffered = gfs2_file_buffered_write(iocb, from);
++		buffered = gfs2_file_buffered_write(iocb, from, &gh);
+ 		if (unlikely(buffered <= 0)) {
+ 			if (!ret)
+ 				ret = buffered;
+@@ -1151,7 +1159,7 @@ static ssize_t gfs2_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		if (!ret || ret2 > 0)
+ 			ret += ret2;
+ 	} else {
+-		ret = gfs2_file_buffered_write(iocb, from);
++		ret = gfs2_file_buffered_write(iocb, from, &gh);
+ 		if (likely(ret > 0)) {
+ 			iocb->ki_pos += ret;
+ 			ret = generic_write_sync(iocb, ret);
+diff --git a/fs/gfs2/incore.h b/fs/gfs2/incore.h
+index e73a81db0714..87abdcc1de0c 100644
+--- a/fs/gfs2/incore.h
++++ b/fs/gfs2/incore.h
+@@ -387,9 +387,8 @@ struct gfs2_inode {
+ 	u64 i_generation;
+ 	u64 i_eattr;
+ 	unsigned long i_flags;		/* GIF_... */
+-	struct gfs2_glock *i_gl; /* Move into i_gh? */
++	struct gfs2_glock *i_gl;
+ 	struct gfs2_holder i_iopen_gh;
+-	struct gfs2_holder i_gh; /* for prepare/commit_write only */
+ 	struct gfs2_qadata *i_qadata; /* quota allocation data */
+ 	struct gfs2_holder i_rgd_gh;
+ 	struct gfs2_blkreserv i_res; /* rgrp multi-block reservation */
 -- 
 2.26.3
 
