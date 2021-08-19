@@ -2,181 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 900633F0F78
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 02:28:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 079063F0FCE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 02:59:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235579AbhHSA2D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Aug 2021 20:28:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47604 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235514AbhHSA1y (ORCPT
+        id S235616AbhHSBAR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Aug 2021 21:00:17 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:49144 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235630AbhHSBAA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Aug 2021 20:27:54 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD86C06179A;
-        Wed, 18 Aug 2021 17:27:19 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id n7so8432095ljq.0;
-        Wed, 18 Aug 2021 17:27:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OuvPHidmzGM3xfvyJ/iRKu/nSL+2mL7ylUN+am7Bbio=;
-        b=QHLuK343vWAbHssWFJiqUq/ClvS8ybP8SFbiNvZdDGERaX8lm1TiDdscI58S6H0brn
-         Eh5mHnYJpSUloyVBFz9UdJiB/Fi91YUkuZ4mLc9zDbZ8pCn9IXzZ3+c6xcqcsLguGNvr
-         NqbQihZmTgou2SRrEUMfiHLJcNhgqEXeobum2ayxoFkbh3H9iDb9q7WjlvdbzvwSpszy
-         TS0gceKowVH5pVA/uCaJV+sfu7xgg1Ypo4ERRJw2Hxj8rLnUdJ6EnVhDef5XjeZZfwbw
-         clNSp7oPFAbO6IfZwCu8GBrkfjohEczljt/LrIEqgNY+mwAlylqefmI96dQxWLQPg3LJ
-         9gSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OuvPHidmzGM3xfvyJ/iRKu/nSL+2mL7ylUN+am7Bbio=;
-        b=jEnkjMBbX8SfZimgTjrVIdsdqORqqpxuFm1Sv4SJdQ3hbl0piQ+Robd0MXVg/1EDCH
-         1BzOJ25Q/x9HjM2BrbsWOEdlotVPXslvLF6DUQEa+Ngfuk3xJZPuUL9GdVNzFcYyI1yZ
-         dQXYOMegPRZn2kLbyVqOPKhJfdA5aEQb0fhE0bO+J7dQaoFOUwFtxhVEI7mesFBa8Txb
-         JAIwUQIT9Cmtfl1Pjf9PMAkui8U6pSt2jwd7IK9fdSqG5JGnsD6ZoZZmt1kR2zx7jv+z
-         lT1dPZqbxhSm5y8U2V3yGwKk5PAvlz55VHOesjQbH7GenVD+O2KUoL+TWkLAtnHe0Pim
-         1ijw==
-X-Gm-Message-State: AOAM5327svj7GGuN+krMx77TmI+ofa3z26Q5PvnE9UN1QektfWbDNlKw
-        Udbb2sT/ijBulODCig0aG3I=
-X-Google-Smtp-Source: ABdhPJzNY06Mdbi0olL8L1uvNM5ELIcy5kw93h80MXSXsXqRbYMBDqVIa2QxmhSxS/+xaf9EiS0iBg==
-X-Received: by 2002:a2e:a912:: with SMTP id j18mr8953804ljq.330.1629332837418;
-        Wed, 18 Aug 2021 17:27:17 -0700 (PDT)
-Received: from kari-VirtualBox.telewell.oy (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id l14sm125907lji.106.2021.08.18.17.27.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Aug 2021 17:27:17 -0700 (PDT)
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Kari Argillander <kari.argillander@gmail.com>,
-        ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v2 6/6] fs/ntfs3: Rename mount option no_acl_rules > (no)acl_rules
-Date:   Thu, 19 Aug 2021 03:26:33 +0300
-Message-Id: <20210819002633.689831-7-kari.argillander@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210819002633.689831-1-kari.argillander@gmail.com>
-References: <20210819002633.689831-1-kari.argillander@gmail.com>
+        Wed, 18 Aug 2021 21:00:00 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=xuyu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UjtBNTB_1629334762;
+Received: from 192.168.0.102(mailfrom:xuyu@linux.alibaba.com fp:SMTPD_---0UjtBNTB_1629334762)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 19 Aug 2021 08:59:23 +0800
+Subject: Re: [PATCH] mm/swap: consider max pages in iomap_swapfile_add_extent
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        hch@infradead.org, riteshh@linux.ibm.com, tytso@mit.edu,
+        gavin.dg@linux.alibaba.com
+References: <db99c25a8e2a662046e498fd13e5f0c35364164a.1629286473.git.xuyu@linux.alibaba.com>
+ <20210818170152.GG12664@magnolia>
+From:   Yu Xu <xuyu@linux.alibaba.com>
+Message-ID: <d3c211a8-2f14-0155-3f4e-948ecd2ccdc7@linux.alibaba.com>
+Date:   Thu, 19 Aug 2021 08:59:22 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210818170152.GG12664@magnolia>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Rename mount option no_acl_rules to noacl_rules. This allow us to use
-possibility to mount with options noacl_rules or acl_rules.
+On 8/19/21 1:01 AM, Darrick J. Wong wrote:
+> On Wed, Aug 18, 2021 at 07:36:51PM +0800, Xu Yu wrote:
+>> When the max pages (last_page in the swap header + 1) is smaller than
+>> the total pages (inode size) of the swapfile, iomap_swapfile_activate
+>> overwrites sis->max with total pages.
+>>
+>> However, frontswap_map is allocated using max pages, but cleared using
+>> sis->max in __frontswap_invalidate_area(). The consequence is that the
+>> neighbors of frontswap_map bitmap may be overwritten, and then slab is
+>> polluted.
+>>
+>> This fixes the issue by considering the limitation of max pages of swap
+>> info in iomap_swapfile_add_extent().
+>>
+>> To reproduce the case, compile kernel with slub RED ZONE, then run test:
+>> $ sudo stress-ng -a 1 -x softlockup,resources -t 72h --metrics --times \
+>>   --verify -v -Y /root/tmpdir/stress-ng/stress-statistic-12.yaml \
+>>   --log-file /root/tmpdir/stress-ng/stress-logfile-12.txt \
+>>   --temp-path /root/tmpdir/stress-ng/
 
-Signed-off-by: Kari Argillander <kari.argillander@gmail.com>
----
- Documentation/filesystems/ntfs3.rst |  2 +-
- fs/ntfs3/file.c                     |  2 +-
- fs/ntfs3/ntfs_fs.h                  |  2 +-
- fs/ntfs3/super.c                    | 12 ++++++------
- fs/ntfs3/xattr.c                    |  2 +-
- 5 files changed, 10 insertions(+), 10 deletions(-)
+Hi, Darrick J. Wong,
 
-diff --git a/Documentation/filesystems/ntfs3.rst b/Documentation/filesystems/ntfs3.rst
-index ded706474825..bdc9dd5a9185 100644
---- a/Documentation/filesystems/ntfs3.rst
-+++ b/Documentation/filesystems/ntfs3.rst
-@@ -73,7 +73,7 @@ prealloc		Preallocate space for files excessively when file size is
- 			increasing on writes. Decreases fragmentation in case of
- 			parallel write operations to different files.
- 
--no_acs_rules		"No access rules" mount option sets access rights for
-+noacs_rules		"No access rules" mount option sets access rights for
- 			files/folders to 777 and owner/group to root. This mount
- 			option absorbs all other permissions:
- 			- permissions change for files/folders will be reported
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index 59344985c2e8..de3c6c76ab7d 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -743,7 +743,7 @@ int ntfs3_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 	umode_t mode = inode->i_mode;
- 	int err;
- 
--	if (sbi->options.no_acs_rules) {
-+	if (sbi->options.noacs_rules) {
- 		/* "no access rules" - force any changes of time etc. */
- 		attr->ia_valid |= ATTR_FORCE;
- 		/* and disable for editing some attributes */
-diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-index 1f07dd17c6c7..bec51e6f476d 100644
---- a/fs/ntfs3/ntfs_fs.h
-+++ b/fs/ntfs3/ntfs_fs.h
-@@ -67,7 +67,7 @@ struct ntfs_mount_options {
- 		showmeta : 1, /*show meta files*/
- 		nohidden : 1, /*do not show hidden files*/
- 		force : 1, /*rw mount dirty volume*/
--		no_acs_rules : 1, /*exclude acs rules*/
-+		noacs_rules : 1, /*exclude acs rules*/
- 		prealloc : 1 /*preallocate space when file is growing*/
- 		;
- };
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index c3c07c181f15..a94a094463ad 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -242,7 +242,7 @@ enum Opt {
- 	Opt_acl,
- 	Opt_iocharset,
- 	Opt_prealloc,
--	Opt_no_acs_rules,
-+	Opt_noacs_rules,
- 	Opt_err,
- };
- 
-@@ -260,7 +260,7 @@ static const struct fs_parameter_spec ntfs_fs_parameters[] = {
- 	fsparam_flag_no("acl",			Opt_acl),
- 	fsparam_flag_no("showmeta",		Opt_showmeta),
- 	fsparam_flag_no("prealloc",		Opt_prealloc),
--	fsparam_flag("no_acs_rules",		Opt_no_acs_rules),
-+	fsparam_flag_no("acs_rules",		Opt_noacs_rules),
- 	fsparam_string("iocharset",		Opt_iocharset),
- 
- 	__fsparam(fs_param_is_string,
-@@ -343,8 +343,8 @@ static int ntfs_fs_parse_param(struct fs_context *fc,
- 	case Opt_prealloc:
- 		opts->prealloc = result.negated ? 0 : 1;
- 		break;
--	case Opt_no_acs_rules:
--		opts->no_acs_rules = 1;
-+	case Opt_noacs_rules:
-+		opts->noacs_rules = result.negated ? 1 : 0;
- 		break;
- 	default:
- 		/* Should not be here unless we forget add case. */
-@@ -536,8 +536,8 @@ static int ntfs_show_options(struct seq_file *m, struct dentry *root)
- 		seq_puts(m, ",nohidden");
- 	if (opts->force)
- 		seq_puts(m, ",force");
--	if (opts->no_acs_rules)
--		seq_puts(m, ",no_acs_rules");
-+	if (opts->noacs_rules)
-+		seq_puts(m, ",noacs_rules");
- 	if (opts->prealloc)
- 		seq_puts(m, ",prealloc");
- 	if (sb->s_flags & SB_POSIXACL)
-diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-index 98871c895e77..e20e710a065f 100644
---- a/fs/ntfs3/xattr.c
-+++ b/fs/ntfs3/xattr.c
-@@ -774,7 +774,7 @@ int ntfs_acl_chmod(struct user_namespace *mnt_userns, struct inode *inode)
- int ntfs_permission(struct user_namespace *mnt_userns, struct inode *inode,
- 		    int mask)
- {
--	if (ntfs_sb(inode->i_sb)->options.no_acs_rules) {
-+	if (ntfs_sb(inode->i_sb)->options.noacs_rules) {
- 		/* "no access rules" mode - allow all changes */
- 		return 0;
- 	}
+This is the stress-ng test script from our nightly test, I just copied
+as it is.
+
+> 
+> 72 hours?  That's not really a targeted reproducer test.
+
+Actually, the system crashes soon, in less than 5 minutes on average.
+
+> 
+> Oh, very interesting!  maxpages comes from the swap header.
+> 
+> # fallocate -l 100m /mnt/a
+> # mkswap /mnt/a
+> mkswap: /mnt/a: insecure permissions 0644, 0600 suggested.
+> Setting up swapspace version 1, size = 100 MiB (104853504 bytes)
+> no label, UUID=c6c93d94-3b91-47cc-9684-9c0edbd04759
+> # swapon /mnt/a
+> swapon: /mnt/a: insecure permissions 0644, 0600 suggested.
+> [   68.267848] Adding 102396k swap on /mnt/a.  Priority:-2 extents:1 across:102396k SS
+> 
+> 
+> Ok, ~100M of swap...
+> 
+> # swapoff /mnt/a
+> # fallocate -l 200m /mnt/a
+> # swapon /mnt/a
+> swapon: /mnt/a: insecure permissions 0644, 0600 suggested.
+> [   84.458713] Adding 204796k swap on /mnt/a.  Priority:-2 extents:1 across:204796k SS
+> 
+> Huh.  200MB of swap, even though we haven't touched the swap header:
+> 
+> # dd if=/mnt/a bs=4096 count=1 | od -tx1 -Ad -c
+> 0000000  00  00  00  00  00  00  00  00  00  00  00  00  00  00  00  00
+>           \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0
+> *
+> 0001024  01  00  00  00  ff  63  00  00  00  00  00  00  66  40  eb  42
+>          001  \0  \0  \0 377   c  \0  \0  \0  \0  \0  \0   f   @ 353   B
+> 
+> Version 1 swap header, 0x63ff pages (~102396kb), 0 bad pages...
+> 
+> 0001040  8e  81  4e  4e  92  a1  f9  98  d9  43  2f  cc  00  00  00  00
+>          216 201   N   N 222 241 371 230 331   C   / 314  \0  \0  \0  \0
+> 0001056  00  00  00  00  00  00  00  00  00  00  00  00  00  00  00  00
+>           \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0  \0
+> *
+> 0004080  00  00  00  00  00  00  53  57  41  50  53  50  41  43  45  32
+>           \0  \0  \0  \0  \0  \0   S   W   A   P   S   P   A   C   E   2
+> 0004096
+> 
+> So yes, iomap_swapfile_* is incorrect.  Even better, we have a targeted
+> way to test this now. :)
+
+Yes, this is more straightforward.  I used to focus on the slab
+corruption too much.
+
+> 
+>> We'll get the error log as below:
+>>
+>> [ 1151.015141] =============================================================================
+>> [ 1151.016489] BUG kmalloc-16 (Not tainted): Right Redzone overwritten
+>> [ 1151.017486] -----------------------------------------------------------------------------
+>> [ 1151.017486]
+>> [ 1151.018997] Disabling lock debugging due to kernel taint
+>> [ 1151.019873] INFO: 0x0000000084e43932-0x0000000098d17cae @offset=7392. First byte 0x0 instead of 0xcc
+>> [ 1151.021303] INFO: Allocated in __do_sys_swapon+0xcf6/0x1170 age=43417 cpu=9 pid=3816
+>> [ 1151.022538]  __slab_alloc+0xe/0x20
+>> [ 1151.023069]  __kmalloc_node+0xfd/0x4b0
+>> [ 1151.023704]  __do_sys_swapon+0xcf6/0x1170
+>> [ 1151.024346]  do_syscall_64+0x33/0x40
+>> [ 1151.024925]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> [ 1151.025749] INFO: Freed in put_cred_rcu+0xa1/0xc0 age=43424 cpu=3 pid=2041
+>> [ 1151.026889]  kfree+0x276/0x2b0
+>> [ 1151.027405]  put_cred_rcu+0xa1/0xc0
+>> [ 1151.027949]  rcu_do_batch+0x17d/0x410
+>> [ 1151.028566]  rcu_core+0x14e/0x2b0
+>> [ 1151.029084]  __do_softirq+0x101/0x29e
+>> [ 1151.029645]  asm_call_irq_on_stack+0x12/0x20
+>> [ 1151.030381]  do_softirq_own_stack+0x37/0x40
+>> [ 1151.031037]  do_softirq.part.15+0x2b/0x30
+>> [ 1151.031710]  __local_bh_enable_ip+0x4b/0x50
+>> [ 1151.032412]  copy_fpstate_to_sigframe+0x111/0x360
+>> [ 1151.033197]  __setup_rt_frame+0xce/0x480
+>> [ 1151.033809]  arch_do_signal+0x1a3/0x250
+>> [ 1151.034463]  exit_to_user_mode_prepare+0xcf/0x110
+>> [ 1151.035242]  syscall_exit_to_user_mode+0x27/0x190
+>> [ 1151.035970]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> [ 1151.036795] INFO: Slab 0x000000003b9de4dc objects=44 used=9 fp=0x00000000539e349e flags=0xfffffc0010201
+>> [ 1151.038323] INFO: Object 0x000000004855ba01 @offset=7376 fp=0x0000000000000000
+>> [ 1151.038323]
+>> [ 1151.039683] Redzone  000000008d0afd3d: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc  ................
+>> [ 1151.041180] Object   000000004855ba01: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>> [ 1151.042714] Redzone  0000000084e43932: 00 00 00 c0 cc cc cc cc                          ........
+>> [ 1151.044120] Padding  000000000864c042: 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a 5a  ZZZZZZZZZZZZZZZZ
+>> [ 1151.045615] CPU: 5 PID: 3816 Comm: stress-ng Tainted: G    B             5.10.50+ #7
+>> [ 1151.046846] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.org 04/01/2014
+>> [ 1151.048633] Call Trace:
+>> [ 1151.049072]  dump_stack+0x57/0x6a
+>> [ 1151.049585]  check_bytes_and_report+0xed/0x110
+>> [ 1151.050320]  check_object+0x1eb/0x290
+>> [ 1151.050924]  ? __x64_sys_swapoff+0x39a/0x540
+>> [ 1151.051646]  free_debug_processing+0x151/0x350
+>> [ 1151.052333]  __slab_free+0x21a/0x3a0
+>> [ 1151.052938]  ? _cond_resched+0x2d/0x40
+>> [ 1151.053529]  ? __vunmap+0x1de/0x220
+>> [ 1151.054139]  ? __x64_sys_swapoff+0x39a/0x540
+>> [ 1151.054796]  ? kfree+0x276/0x2b0
+>> [ 1151.055307]  kfree+0x276/0x2b0
+>> [ 1151.055832]  __x64_sys_swapoff+0x39a/0x540
+>> [ 1151.056466]  do_syscall_64+0x33/0x40
+>> [ 1151.057084]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> [ 1151.057866] RIP: 0033:0x150340b0ffb7
+>> [ 1151.058481] Code: Unable to access opcode bytes at RIP 0x150340b0ff8d.
+>> [ 1151.059537] RSP: 002b:00007fff7f4ee238 EFLAGS: 00000246 ORIG_RAX: 00000000000000a8
+>> [ 1151.060768] RAX: ffffffffffffffda RBX: 00007fff7f4ee66c RCX: 0000150340b0ffb7
+>> [ 1151.061904] RDX: 000000000000000a RSI: 0000000000018094 RDI: 00007fff7f4ee860
+>> [ 1151.063033] RBP: 00007fff7f4ef980 R08: 0000000000000000 R09: 0000150340a672bd
+>> [ 1151.064135] R10: 00007fff7f4edca0 R11: 0000000000000246 R12: 0000000000018094
+>> [ 1151.065253] R13: 0000000000000005 R14: 000000000160d930 R15: 00007fff7f4ee66c
+>> [ 1151.066413] FIX kmalloc-16: Restoring 0x0000000084e43932-0x0000000098d17cae=0xcc
+>> [ 1151.066413]
+>> [ 1151.067890] FIX kmalloc-16: Object at 0x000000004855ba01 not freed
+>>
+>> Fixes: 0e6895ba00b7 ("ext4: implement swap_activate aops using iomap")
+>> Signed-off-by: Gang Deng <gavin.dg@linux.alibaba.com>
+>> Signed-off-by: Xu Yu <xuyu@linux.alibaba.com>
+> 
+> Looks good; I'll cc you both when I send out the regression test.
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> 
+> --D
+> 
+>> ---
+>>   fs/iomap/swapfile.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
+>> index 6250ca6a1f85..4ecf4e1f68ef 100644
+>> --- a/fs/iomap/swapfile.c
+>> +++ b/fs/iomap/swapfile.c
+>> @@ -31,11 +31,16 @@ static int iomap_swapfile_add_extent(struct iomap_swapfile_info *isi)
+>>   {
+>>   	struct iomap *iomap = &isi->iomap;
+>>   	unsigned long nr_pages;
+>> +	unsigned long max_pages;
+>>   	uint64_t first_ppage;
+>>   	uint64_t first_ppage_reported;
+>>   	uint64_t next_ppage;
+>>   	int error;
+>>   
+>> +	if (unlikely(isi->nr_pages >= isi->sis->max))
+>> +		return 0;
+>> +	max_pages = isi->sis->max - isi->nr_pages;
+>> +
+>>   	/*
+>>   	 * Round the start up and the end down so that the physical
+>>   	 * extent aligns to a page boundary.
+>> @@ -48,6 +53,7 @@ static int iomap_swapfile_add_extent(struct iomap_swapfile_info *isi)
+>>   	if (first_ppage >= next_ppage)
+>>   		return 0;
+>>   	nr_pages = next_ppage - first_ppage;
+>> +	nr_pages = min(nr_pages, max_pages);
+>>   
+>>   	/*
+>>   	 * Calculate how much swap space we're adding; the first page contains
+>> -- 
+>> 2.20.1.2432.ga663e714
+>>
+
 -- 
-2.25.1
-
+Thanks,
+Yu
