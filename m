@@ -2,166 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 04DEC3F21FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 22:58:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F125A3F2239
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 23:26:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232602AbhHSU6i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Aug 2021 16:58:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49842 "EHLO
+        id S233407AbhHSV0o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Aug 2021 17:26:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230031AbhHSU6i (ORCPT
+        with ESMTP id S231951AbhHSV0l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Aug 2021 16:58:38 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F923C061575
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Aug 2021 13:58:01 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id u3so15582434ejz.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Aug 2021 13:58:01 -0700 (PDT)
+        Thu, 19 Aug 2021 17:26:41 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ABC3C061757
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Aug 2021 14:26:04 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id m26so6719580pff.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Aug 2021 14:26:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=RJyUMpRvCKY0Vh89D3w3gONjiQnSaoV/zmqyDYmDpUA=;
-        b=Y+pU8j9vQaWTxEhQ0j0tkQUmizFhaaD+mBD4UKDchtCcNJDPjhu50XdOkmR7wRhVkU
-         sO/ZAyNE37DjaIrX3Jupm5Lmzorw4l3UwqrPdvdUzj38oBpjeDPsJPwAdFT5IzBfsdoc
-         aflzICp2BeWzdnFJvaqwcQw0cXI2edPGK5Q7U=
+        bh=/+4vlEEAudVfYKUxZZmR1avsO58lGkEG6r6/9NuzjB0=;
+        b=GcootYiu+qyxArUabMdyG4IqWavV54aowLk08BBPIEnlK8+EEnyz2Bs9Qnyj904R1y
+         CDw1eNTKzCN1HRYVOZcRLRkEzYQJvTk8BVLomrVdsGdzpC/6+mu2O7s0aw9t0HSNz/Vk
+         dNCZGdNuQGrc6TFoTfjjgkoo5o3Rksm1CsPDr9M+sHd39KqY4ienvwG+7Dy0+/0y2afH
+         Ac2F+zF07AdKz98cxb6pEDDT0S8m7FnHMVdaL5pqJ6Upe/xwN5twWY1e+3bhwdKLEf5m
+         8J7hqUFL0m9NzK3HDH0h6NFjdtBiEPOB9C7CAMh0xZXBrF9hxNS4/fEF9TG/n6LeGNnT
+         N6oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=RJyUMpRvCKY0Vh89D3w3gONjiQnSaoV/zmqyDYmDpUA=;
-        b=k5NYCeD+SEbCGxKnUdP1ECAje5Sldrryp49o22Nx18qThxscXm1ZFUv/RxIh22yhv8
-         no0jRd6D32XC5YTjTvnMjFsSDZDKpGX6nvroRncozFE/xwyOFooH6RraMnJgcUtwofq/
-         MCtRFUkz5+tslImlRddT9bmgPuz77Tog9gnwvcWcuRwIxLslzd6y4qtcRkAdTK1zxSBR
-         0an2nlJTHPsPUDT0Z3Fp3t9kTcf6SjJhLawArLboUkzX8SqLJPkfcsyGfwi9Yma1wamb
-         ARN0dI+FpC0943ioE6rD3w6wd2EqN8plqq7aCebxJsef9wGOKaqNIN9PvQQSIEi117N5
-         os6Q==
-X-Gm-Message-State: AOAM5314YfW/SuBm0XZCPTx9tFAOnO6g6iZHx9qlFut1hpNImbf1TpKV
-        BGIUqOfFewf2K9i1E6Pte3owXkEb+KCMfingT30=
-X-Google-Smtp-Source: ABdhPJyZyKddq7CfTyPQqqg+gli7desvtM1fQ+gA4A5VffuZ7jD2ArxgJlK4UcSypxkE/TH14ZtvvA==
-X-Received: by 2002:a17:907:2b09:: with SMTP id gc9mr18119751ejc.49.1629406679787;
-        Thu, 19 Aug 2021 13:57:59 -0700 (PDT)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id ay20sm2362299edb.91.2021.08.19.13.57.59
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Aug 2021 13:57:59 -0700 (PDT)
-Received: by mail-ed1-f49.google.com with SMTP id by4so10836694edb.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Aug 2021 13:57:59 -0700 (PDT)
-X-Received: by 2002:a19:4f1a:: with SMTP id d26mr11559422lfb.377.1629406326706;
- Thu, 19 Aug 2021 13:52:06 -0700 (PDT)
+        bh=/+4vlEEAudVfYKUxZZmR1avsO58lGkEG6r6/9NuzjB0=;
+        b=qStKUTVhnboMwvXg9K3beG1UwWsAMVMkk/PunmdtoLaDV5gK9kE8k6f8At6iqxenUz
+         j5Tri0uhIPMex/1T0SqPaQdLRDH/u4J3zOiCGaBDIqY1yeEhq4W9LOjG6j7a7KatC4cp
+         IjyPE48TFFC8FxGWqaJdho7IYi8IZl40qZYQ5841HHlzbeMq8iAMMqmEc0f5cIRQRjZ/
+         /WWo4pfUhrImPQE3JwE49HCvPFDsS9V7dW4LpIWCDAAoZVeibIGZHei4ZI0b/Rh0Uri2
+         2bYafqLWYQmTm0wfwKVAy2Cq20N/lxQl+t7Ln3YWQGBxMhzBgASNWwGRvEtWaMYU9Vqe
+         JyzQ==
+X-Gm-Message-State: AOAM531JJqxVP8LX6+sOePj7247QH8o7MXmFEHQsw2IBjXoMIoqfex0+
+        cEL2IZ05yEqsJ+a3a91yXgqoZdu6vcr5IJiR/XbG0w==
+X-Google-Smtp-Source: ABdhPJzKZYtlwFa7VXvyk4oUfNnz7UdFBAgEuwiVTYzP34GSZ6p0NdAO9joIfVAHSnYYO/DjZcvseW3kcO9yjw3n+I0=
+X-Received: by 2002:a63:311:: with SMTP id 17mr15597460pgd.450.1629408363613;
+ Thu, 19 Aug 2021 14:26:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210816194840.42769-1-david@redhat.com> <20210816194840.42769-3-david@redhat.com>
-In-Reply-To: <20210816194840.42769-3-david@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 19 Aug 2021 13:51:50 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgsLtJ7=+NGGSEbTw9XBh7qyf4Py9-jBdajGnPTxU1hZg@mail.gmail.com>
-Message-ID: <CAHk-=wgsLtJ7=+NGGSEbTw9XBh7qyf4Py9-jBdajGnPTxU1hZg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] kernel/fork: factor out replacing the current MM exe_file
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Price <steven.price@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Marco Elver <elver@google.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        David Laight <David.Laight@aculab.com>,
-        linux-unionfs@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
+References: <20210809061244.1196573-1-hch@lst.de> <20210809061244.1196573-12-hch@lst.de>
+In-Reply-To: <20210809061244.1196573-12-hch@lst.de>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 19 Aug 2021 14:25:52 -0700
+Message-ID: <CAPcyv4hbSYnOC6Pdi1QShRxGjBAteig7nN1h-5cEvsFDX9SuAQ@mail.gmail.com>
+Subject: Re: [PATCH 11/30] iomap: add the new iomap_iter model
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>, cluster-devel@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-So I like this series.
-
-However, logically, I think this part in replace_mm_exe_file() no
-longer makes sense:
-
-On Mon, Aug 16, 2021 at 12:50 PM David Hildenbrand <david@redhat.com> wrote:
+On Sun, Aug 8, 2021 at 11:23 PM Christoph Hellwig <hch@lst.de> wrote:
 >
-> +       /* Forbid mm->exe_file change if old file still mapped. */
-> +       old_exe_file = get_mm_exe_file(mm);
-> +       if (old_exe_file) {
-> +               mmap_read_lock(mm);
-> +               for (vma = mm->mmap; vma && !ret; vma = vma->vm_next) {
-> +                       if (!vma->vm_file)
-> +                               continue;
-> +                       if (path_equal(&vma->vm_file->f_path,
-> +                                      &old_exe_file->f_path))
-> +                               ret = -EBUSY;
-> +               }
-> +               mmap_read_unlock(mm);
-> +               fput(old_exe_file);
-> +               if (ret)
-> +                       return ret;
+> The iomap_iter struct provides a convenient way to package up and
+> maintain all the arguments to the various mapping and operation
+> functions.  It is operated on using the iomap_iter() function that
+> is called in loop until the whole range has been processed.  Compared
+> to the existing iomap_apply() function this avoid an indirect call
+> for each iteration.
+>
+> For now iomap_iter() calls back into the existing ->iomap_begin and
+> ->iomap_end methods, but in the future this could be further optimized
+> to avoid indirect calls entirely.
+>
+> Based on an earlier patch from Matthew Wilcox <willy@infradead.org>.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/iomap/Makefile     |  1 +
+>  fs/iomap/core.c       | 79 +++++++++++++++++++++++++++++++++++++++++++
+>  fs/iomap/trace.h      | 37 +++++++++++++++++++-
+>  include/linux/iomap.h | 56 ++++++++++++++++++++++++++++++
+>  4 files changed, 172 insertions(+), 1 deletion(-)
+>  create mode 100644 fs/iomap/core.c
+>
+> diff --git a/fs/iomap/Makefile b/fs/iomap/Makefile
+> index eef2722d93a183..6b56b10ded347a 100644
+> --- a/fs/iomap/Makefile
+> +++ b/fs/iomap/Makefile
+> @@ -10,6 +10,7 @@ obj-$(CONFIG_FS_IOMAP)                += iomap.o
+>
+>  iomap-y                                += trace.o \
+>                                    apply.o \
+> +                                  core.o \
+>                                    buffered-io.o \
+>                                    direct-io.o \
+>                                    fiemap.o \
+> diff --git a/fs/iomap/core.c b/fs/iomap/core.c
+> new file mode 100644
+> index 00000000000000..89a87a1654e8e6
+> --- /dev/null
+> +++ b/fs/iomap/core.c
+> @@ -0,0 +1,79 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2021 Christoph Hellwig.
+> + */
+> +#include <linux/fs.h>
+> +#include <linux/iomap.h>
+> +#include "trace.h"
+> +
+> +static inline int iomap_iter_advance(struct iomap_iter *iter)
+> +{
+> +       /* handle the previous iteration (if any) */
+> +       if (iter->iomap.length) {
+> +               if (iter->processed <= 0)
+> +                       return iter->processed;
+> +               if (WARN_ON_ONCE(iter->processed > iomap_length(iter)))
+> +                       return -EIO;
+> +               iter->pos += iter->processed;
+> +               iter->len -= iter->processed;
+> +               if (!iter->len)
+> +                       return 0;
 > +       }
+> +
+> +       /* clear the state for the next iteration */
+> +       iter->processed = 0;
+> +       memset(&iter->iomap, 0, sizeof(iter->iomap));
+> +       memset(&iter->srcmap, 0, sizeof(iter->srcmap));
+> +       return 1;
+> +}
+> +
+> +static inline void iomap_iter_done(struct iomap_iter *iter)
+> +{
+> +       WARN_ON_ONCE(iter->iomap.offset > iter->pos);
+> +       WARN_ON_ONCE(iter->iomap.length == 0);
+> +       WARN_ON_ONCE(iter->iomap.offset + iter->iomap.length <= iter->pos);
+> +
+> +       trace_iomap_iter_dstmap(iter->inode, &iter->iomap);
+> +       if (iter->srcmap.type != IOMAP_HOLE)
+> +               trace_iomap_iter_srcmap(iter->inode, &iter->srcmap);
 
-and should just be removed.
+Given most of the iomap_iter users don't care about srcmap, i.e. are
+not COW cases, they are leaving srcmap zero initialized. Should the
+IOMAP types be incremented by one so that there is no IOMAP_HOLE
+confusion? In other words, fold something like this?
 
-NOTE! I think it makes sense within the context of this patch (where
-you just move code around), but that it should then be removed in the
-next patch that does that "always deny write access to current MM
-exe_file" thing.
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 479c1da3e221..b9c62d0909b0 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -21,14 +21,23 @@ struct page;
+ struct vm_area_struct;
+ struct vm_fault;
 
-I just quoted it in the context of this patch, since the next patch
-doesn't actually show this code any more.
+-/*
+- * Types of block ranges for iomap mappings:
++/**
++ * enum iomap_type - Types of block ranges for iomap mappings
++ * @IOMAP_NONE: invalid iomap
++ * @IOMAP_HOLE: no blocks allocated, need allocation
++ * @IOMAP_DELALLOC: delayed allocation blocks
++ * @IOMAP_MAPPED: blocks allocated at @addr
++ * @IOMAP_UNWRITTEN: blocks allocated at @addr in unwritten state
++ * @IOMAP_INLINE: data inline in the inode
+  */
+-#define IOMAP_HOLE     0       /* no blocks allocated, need allocation */
+-#define IOMAP_DELALLOC 1       /* delayed allocation blocks */
+-#define IOMAP_MAPPED   2       /* blocks allocated at @addr */
+-#define IOMAP_UNWRITTEN        3       /* blocks allocated at @addr
+in unwritten state */
+-#define IOMAP_INLINE   4       /* data inline in the inode */
++enum iomap_type {
++       IOMAP_NONE = 0,
++       IOMAP_HOLE,
++       IOMAP_DELALLOC
++       IOMAP_MAPPED,
++       IOMAP_UNWRITTEN,
++       IOMAP_INLINE,
++};
 
-In the *old* model - where the ETXTBUSY was about the mmap() of the
-file - the above tests make sense.
+ /*
+  * Flags reported by the file system from iomap_begin:
 
-But in the new model, walking the mappings just doesn't seem to be a
-sensible operation any more. The mappings simply aren't what ETXTBUSY
-is about in the new world order, and so doing that mapping walk seems
-nonsensical.
 
-Hmm?
+> +}
+> +
+> +/**
+> + * iomap_iter - iterate over a ranges in a file
+> + * @iter: iteration structue
 
-                 Linus
+s/structue/structure/
+
+Other than the minor stuff above, looks good to me:
+
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
