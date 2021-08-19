@@ -2,135 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62DF93F2259
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 23:40:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 004433F226C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 23:43:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235439AbhHSVks (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Aug 2021 17:40:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:21779 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233845AbhHSVkr (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Aug 2021 17:40:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629409210;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DvdcXZIwl3tPZt3OBpuE3xqKVNbMTKzJBp4rw8ENU30=;
-        b=FjwSGTPBYVlTqBtCrCdhOcvRbjtKjjXFcTekrCe/GPm+vLdSYs1Y+NQtQHVcsrfe94EPIf
-        lAWwMS3e8s+7jc3kKX25VU8Y5BDNh6YNcjecX5qOApOzvchgCOkZGk9xQvEn6UB374i+A0
-        dfIaOOJctFO8QHMAq82Ewzs+Bj+pUnw=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-519-dadOsXd6MvqxDta-Ac2OcA-1; Thu, 19 Aug 2021 17:40:09 -0400
-X-MC-Unique: dadOsXd6MvqxDta-Ac2OcA-1
-Received: by mail-wr1-f70.google.com with SMTP id n18-20020adfe792000000b00156ae576abdso2131283wrm.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Aug 2021 14:40:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DvdcXZIwl3tPZt3OBpuE3xqKVNbMTKzJBp4rw8ENU30=;
-        b=m0II1Iu+7knfoHF9TDRJ2gW56E8p211PLt4F8ZuGGSKZ/a1theelK9xDnT8wsTQYss
-         hHxrEnOjODpA0oDUQLg1d9SuxHBLC8xI9DDn9MPRZO1zQiGdWo4YY2idiDESd+bEd+ox
-         upFw5AGPmtxMTOgXMzsXfLgL1xtGQrQv1FnHL5bJMNtzAsG+7wSNO1q7hrSYOH1vY3ZJ
-         VMDettcFr6KuzioM7iHdCV2sveY/tH6rf3YyA6AIVUjXMmORzsy/9xvBXBgJPQIAJ1vZ
-         K8PDBFa+A7Al+/LpgIRHi6ZZdVH1GW9E+F7sQTVHptaJeDtwtmjtSc/291L/GI8lgdhK
-         zIIw==
-X-Gm-Message-State: AOAM532oolU7ihuVnDQ10Hj32I5kVN+UsZxKeXoqJR4Gxp4nkKrvYt3j
-        YxqI/6IksSHdbk0ifnSAnJQ+hd5uSHuV9BSurOJ3nX2nHOEtYHKjVcQ3uHv46nE2e4E92lGmrYD
-        qIgEmIC3bqeDfDLg7uMHCTXWoKSpy+4nq1IAaSwwOAA==
-X-Received: by 2002:a1c:7916:: with SMTP id l22mr623014wme.27.1629409208119;
-        Thu, 19 Aug 2021 14:40:08 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxYA97+cGFeqU43YBkPI260mv8aQOOw6JSQmOGyumgFbyOD0nefEq4MgAFBQrx6D74nVITzdNSFMePqB4OBxCo=
-X-Received: by 2002:a1c:7916:: with SMTP id l22mr622994wme.27.1629409207884;
- Thu, 19 Aug 2021 14:40:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210803191818.993968-1-agruenba@redhat.com> <CAHk-=wj+_Y7NQ-NhhE0jk52c9ZB0VJbO1AjtMJFB8wP=PO+bdw@mail.gmail.com>
- <CAHc6FU6H5q20qiQ5FX1726i0FJHyh=Y46huWkCBZTR3sk+3Dhg@mail.gmail.com>
- <CAHk-=whBCm3G5yibbvQsTn00fA16a688NTU_geQV158DnRy+bQ@mail.gmail.com>
- <CAHc6FU5HHFwuJBCNuU0e_N0ehaFrzbUrCuTJyaLNC4qxwfazYA@mail.gmail.com> <CAHk-=wgumKBhggjyR7Ff6V8VKxaJK1yA-LpWdzZFSqFyqYq0Dw@mail.gmail.com>
-In-Reply-To: <CAHk-=wgumKBhggjyR7Ff6V8VKxaJK1yA-LpWdzZFSqFyqYq0Dw@mail.gmail.com>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Thu, 19 Aug 2021 23:39:56 +0200
-Message-ID: <CAHc6FU6a8SLmHfMoS7NUDKboWpVEGBKyC46pU_brx3y8crbEXA@mail.gmail.com>
-Subject: Re: [PATCH v5 00/12] gfs2: Fix mmap + page fault deadlocks
+        id S233612AbhHSVnz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Aug 2021 17:43:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57308 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229497AbhHSVny (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Aug 2021 17:43:54 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0B86860EB5;
+        Thu, 19 Aug 2021 21:43:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629409397;
+        bh=Qis+W6zkQTZYe1xg6ZIKtAmEgvOKVtPfN5JHB97wMwQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=YTUn0yw6nUpw51PPvGczp49OOM+H1/c0m9xuwthLJuMkJqgdjYyHhxg8yOVhLoMhp
+         VQ+kOA2nK3nhlvsSZkMrnAmapLGmZO5D9b5U+9pjr0wEXPLMr89NHRfDOeTICElwOR
+         UDLw9ONtcKXd+UOZ+28FEdQmSXsWLjD6eQtInZHGtle5q5vbJScMkDjxRegKOnVTsA
+         DzTXn6ZIpdre07HZcF0GF/Cg/1+MxL9XJ4erYKgPyBE7EJV0zvxUGYBus1fbx8iV+b
+         29BaTatgVsRYZK0KFkT7pKy3feYPjYRPQBD3IfHS/hePE0iNlBCAfro/UuzVtKP44L
+         vA+TnCI/ui3iA==
+Message-ID: <639d90212662cf5cdf80c71bbfec95907c70114a.camel@kernel.org>
+Subject: Re: Removing Mandatory Locks
+From:   Jeff Layton <jlayton@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Paul Mackerras <paulus@ozlabs.org>, Jan Kara <jack@suse.cz>,
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
         Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        David Hildenbrand <david@redhat.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Michel Lespinasse <walken@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Price <steven.price@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Marco Elver <elver@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Collin Fijalkovich <cfijalkovich@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        Christian =?ISO-8859-1?Q?K=F6nig?= 
+        <ckoenig.leichtzumerken@gmail.com>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Date:   Thu, 19 Aug 2021 17:43:12 -0400
+In-Reply-To: <CAHk-=wgD-SNxB=2iCurEoP=RjrciRgLtXZ7R_DejK+mXF2etfg@mail.gmail.com>
+References: <20210812084348.6521-1-david@redhat.com>
+         <87o8a2d0wf.fsf@disp2133>
+         <60db2e61-6b00-44fa-b718-e4361fcc238c@www.fastmail.com>
+         <87lf56bllc.fsf@disp2133>
+         <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
+         <87eeay8pqx.fsf@disp2133>
+         <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
+         <87h7ft2j68.fsf@disp2133>
+         <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
+         <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
+         <YRcyqbpVqwwq3P6n@casper.infradead.org> <87k0kkxbjn.fsf_-_@disp2133>
+         <0c2af732e4e9f74c9d20b09fc4b6cbae40351085.camel@kernel.org>
+         <CAHk-=wgewmbABDC3_ZNn11C+sm4Uz0L9HZ5Kvx0Joho4vsV4DQ@mail.gmail.com>
+         <a1385746582a675c410aca4eb4947320faec4821.camel@kernel.org>
+         <CAHk-=wgD-SNxB=2iCurEoP=RjrciRgLtXZ7R_DejK+mXF2etfg@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.3 (3.40.3-1.fc34) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 19, 2021 at 10:14 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Thu, Aug 19, 2021 at 12:41 PM Andreas Gruenbacher
-> <agruenba@redhat.com> wrote:
-> >
-> > Hmm, what if GUP is made to skip VM_IO vmas without adding anything to
-> > the pages array? That would match fault_in_iov_iter_writeable, which
-> > is modeled after __mm_populate and which skips VM_IO and VM_PFNMAP
-> > vmas.
->
-> I don't understand what you mean.. GUP already skips VM_IO (and
-> VM_PFNMAP) pages. It just returns EFAULT.
->
-> We could make it return another error. We already have DAX and
-> FOLL_LONGTERM returning -EOPNOTSUPP.
->
-> Of course, I think some code ends up always just returning "number of
-> pages looked up" and might return 0 for "no pages" rather than the
-> error for the first page.
->
-> So we may end up having interfaces that then lose that explanation
-> error code, but I didn't check.
->
-> But we couldn't make it just say "skip them and try later addresses",
-> if that is what you meant. THAT makes no sense - that would just make
-> GUP look up some other address than what was asked for.
+On Thu, 2021-08-19 at 13:31 -0700, Linus Torvalds wrote:
+> On Thu, Aug 19, 2021 at 1:18 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > 
+> > Now that I think about it a little more, I actually did get one
+> > complaint a few years ago:
+> > 
+> > Someone had upgraded from an earlier distro that supported the -o mand
+> > mount option to a later one that had disabled it, and they had an (old)
+> > fstab entry that specified it.
+> 
+> Hmm. We might be able to turn the "return -EINVAL" into just a warning.
+> 
+> Yes, yes, currently if you turn off CONFIG_MANDATORY_FILE_LOCKING, we
+> already do that
+> 
+>         VFS: "mand" mount option not supported
+> 
+> warning print, but then we fail the mount.
+> 
+> If CONFIG_MANDATORY_FILE_LOCKING goes away entirely, it might make
+> sense to turn that warning into something bigger, but then let the
+> mount continue - since now that "mand" flag would be purely a legacy
+> thing.
+> 
+> And yes, if we do that, we'd want the warning to be a big ugly thing,
+> just to make people very aware of it happening. Right now it's a
+> one-liner that is easy to miss, and the "oh, the mount failed" is the
+> thing that hopefully informs people about the fact that they need to
+> enable CONFIG_MANDATORY_FILE_LOCKING.
+> 
+> The logic being that if you can no longer enable mandatory locking in
+> the kernel, the current hard failure seems overly aggressive (and
+> might cause boot failures and inability to fix/report things when it
+> possibly keeps you from using the system at all).
+> 
 
-get_user_pages has a start and a nr_pages argument, which specifies an
-address range from start to start + nr_pages * PAGE_SIZE. If pages !=
-NULL, it adds a pointer to that array for each PAGE_SIZE subpage. I
-was thinking of skipping over VM_IO vmas in that process, so when the
-range starts in a mappable vma, runs into a VM_IO vma, and ends in a
-mappable vma, the pages in the pages array would be discontiguous;
-they would only cover the mappable vmas. But that would make it
-difficult to make sense of what's in the pages array. So scratch that
-idea.
+What sort of big, ugly warning did you have in mind?
 
-> > > I also do still think that even regardless of that, we want to just
-> > > add a FOLL_NOFAULT flag that just disables calling handle_mm_fault(),
-> > > and then you can use the regular get_user_pages().
-> > >
-> > > That at least gives us the full _normal_ page handling stuff.
-> >
-> > And it does fix the generic/208 failure.
->
-> Good. So I think the approach is usable, even if we might have corner
-> cases left.
->
-> So I think the remaining issue is exactly things like VM_IO and
-> VM_PFNMAP. Do the fstests have test-cases for things like this? It
-> _is_ quite specialized, it might be a good idea to have that.
->
-> Of course, doing direct-IO from special memory regions with zerocopy
-> might be something special people actually want to do. But I think
-> we've had that VM_IO flag testing there basically forever, so I don't
-> think it has ever worked (for some definition of "ever").
-
-The v6 patch queue should handle those cases acceptably well for now,
-but I don't think we have tests covering that at all.
+I'm fine with that general approach though and will plan to roll that
+change into the patch I'm testing.
 
 Thanks,
-Andreas
+-- 
+Jeff Layton <jlayton@kernel.org>
 
