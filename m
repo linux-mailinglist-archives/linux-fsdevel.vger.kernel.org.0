@@ -2,77 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E26603F1508
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 10:19:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 120DE3F151D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 10:24:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237257AbhHSIUJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Aug 2021 04:20:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45128 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237388AbhHSITH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Aug 2021 04:19:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1DDBD61139;
-        Thu, 19 Aug 2021 08:18:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629361111;
-        bh=CEbIrDdhxLBG3UOQ0SIJDOcUYVzcUjSinMnWqdzBTqg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JroX3RhgPBClAzXd/NVpaiGqXyoepzPbCc/Dhci036xrY8b6r9GuzBjlVtmhwnSiw
-         ftTNMRWI9g/bHvtkgx+vE+P92R5N2lBFqu6s/B/NUSYRd3FjSuJgTqjevNfpZNRi1g
-         8RosFTSplDrNmMB/W9y866apgI2vBbPQ1HHdF7FlLqZMoSzBvbfqCluOVl5WLRhIpq
-         w7dyVypGEbvlpYULiOtzlErmFA21TY+FZ/w4LdjFCQbcziAPcBCREXaQBWzYbcCv2h
-         ST8AZkOW1dejhErieVml5FUEDpfhvFfUetkPZBpz3coobvTlJXq0tDni0UzSbNhZk+
-         6DWdhYL2W+mTA==
-Received: by pali.im (Postfix)
-        id CB4D47EA; Thu, 19 Aug 2021 10:18:28 +0200 (CEST)
-Date:   Thu, 19 Aug 2021 10:18:28 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Kari Argillander <kari.argillander@gmail.com>
-Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Christoph Hellwig <hch@lst.de>, ntfs3@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH v2 3/6] fs/ntfs3: Use new api for mounting
-Message-ID: <20210819081828.zdlejcujqmpzpzif@pali>
-References: <20210819002633.689831-1-kari.argillander@gmail.com>
- <20210819002633.689831-4-kari.argillander@gmail.com>
+        id S237325AbhHSIYm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Aug 2021 04:24:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42348 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237167AbhHSIYl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Aug 2021 04:24:41 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46829C061575;
+        Thu, 19 Aug 2021 01:24:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=O/9AmCHEhTz3mJ3YpncuUEt6iO
+        kel653nzgWmdKxIvSSrCDfzar+eekblcqnPWTzAqliQkouejC4fJqDmdCrlhgi3fyabZfoP1sQ06e
+        LEIUtsZ8tqasFIlJRFnIhDAKzDwQm6IGLtxyArCv5fWL4rJwNrbarDTjin+jbYygUxI9ggC+JxajT
+        g+Fyd6gfFxHzvT9BFQ0k/lyhllNb+OgK8EmgcpdfmAyln74CAY8cHYzdbMORGVSHNe9i36ZnPBOPv
+        N4lQOgAG8xKiaHKASpTBS/hf1TcAZ20h5KMoYv+ctKP62mq8yNUQRDLzELiz7De3numt48njVPeD/
+        2GLzyHNA==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mGdKB-004oaT-8c; Thu, 19 Aug 2021 08:23:13 +0000
+Date:   Thu, 19 Aug 2021 09:22:55 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Xu Yu <xuyu@linux.alibaba.com>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, hch@infradead.org, riteshh@linux.ibm.com,
+        tytso@mit.edu, gavin.dg@linux.alibaba.com,
+        fstests <fstests@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+Subject: Re: [PATCH] generic: add swapfile maxpages regression test
+Message-ID: <YR4U30PIGlBNv7P1@infradead.org>
+References: <db99c25a8e2a662046e498fd13e5f0c35364164a.1629286473.git.xuyu@linux.alibaba.com>
+ <20210819014326.GC12597@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210819002633.689831-4-kari.argillander@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20210819014326.GC12597@magnolia>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello! I have there one comment:
+Looks good,
 
-On Thursday 19 August 2021 03:26:30 Kari Argillander wrote:
-> @@ -545,10 +518,8 @@ static int ntfs_show_options(struct seq_file *m, struct dentry *root)
->  		seq_printf(m, ",fmask=%04o", ~opts->fs_fmask_inv);
->  	if (opts->dmask)
->  		seq_printf(m, ",dmask=%04o", ~opts->fs_dmask_inv);
-> -	if (opts->nls)
-> -		seq_printf(m, ",nls=%s", opts->nls->charset);
-> -	else
-> -		seq_puts(m, ",nls=utf8");
-> +	if (opts->nls_name)
-> +		seq_printf(m, ",nls=%s", opts->nls_name);
-
-Please always print correct "nls=". Obviously ntfs driver (which
-internally stores filenames in UTF-16) must always use some conversion
-to null-term bytes. And if some kernel/driver default conversion is used
-then userspace should know it, what exactly is used (e.g. to ensure that
-would use correct encoding name argument of open(), stat()... syscalls).
-
->  	if (opts->sys_immutable)
->  		seq_puts(m, ",sys_immutable");
->  	if (opts->discard)
-> @@ -619,7 +590,6 @@ static const struct super_operations ntfs_sops = {
->  	.statfs = ntfs_statfs,
->  	.show_options = ntfs_show_options,
->  	.sync_fs = ntfs_sync_fs,
-> -	.remount_fs = ntfs_remount,
->  	.write_inode = ntfs3_write_inode,
->  };
+Reviewed-by: Christoph Hellwig <hch@lst.de>
