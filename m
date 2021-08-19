@@ -2,130 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EACE3F1525
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 10:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CABD3F1540
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Aug 2021 10:34:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237086AbhHSI1h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Aug 2021 04:27:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46546 "EHLO mail.kernel.org"
+        id S237081AbhHSIfL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Aug 2021 04:35:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232653AbhHSI1g (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Aug 2021 04:27:36 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B2D7D610E5;
-        Thu, 19 Aug 2021 08:27:00 +0000 (UTC)
+        id S231494AbhHSIfK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 19 Aug 2021 04:35:10 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 896D1610FA;
+        Thu, 19 Aug 2021 08:34:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629361620;
-        bh=LSIX0GysxAO+kRaMRlB6pLhDkoUy6E0pIPVlk+M/9S0=;
+        s=k20201202; t=1629362074;
+        bh=Bd2L1bF1i5ySeLJ979rjOA+eVsO+A3AVVXhjsHT7yGQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WsWw+S/Blqzha+nJtiE2PMtf5pHipJH2t1/mmahOil5li5ktq7uyKedEy0xC9/zhk
-         GCxlF83SrzuSXNeTc94x5fGVEhyigsNCg8wmDhkCuh/qAPuAAdKUETCaF4zqrFa0ns
-         fX6NM5bmshWZ4XigdUW2hFQGTN50GvQlg4j/fp0eUFA6zuYtU1EzMbvQ5oPVCoAi2H
-         0VgNHpQu/pm1dL05VEFUyLzPI27Le3L1YLTuo/ZYyI3o3v3EUBfyDvVq64jk0LsZU9
-         K6crHPFpvx8QAHIL9zWywxEmv1rpZCPUo3uS/hNFaqBIEQ52l11qEC++G1/WJMKET9
-         06+XWlfSzj2Dg==
+        b=XbZFir7iCQmB49KMFmSrAaS5/1hj+ReN+h9w4sj8ze/4hYuraavS71ss+lp4A80iU
+         At1TEW+wYevB3cmLh/neU1KFlyLVpt2aS8RHAUOVbgb1BUCE3ua2zhTB2eT7KrRyNf
+         AoA8gCV8ywtLsOyJE/dXp+8CoMIjcLplvazqy72vzKjA1GJKv+51E/KoN40z14uy7f
+         +oO0DKJCIrDRyn5hnYfqfj/K70DJQd/jwnkek1INKgV/aA8t4Af92aNMu7iEfhNoPv
+         wc/FOH7kxBCTpa1TlmYwD7fz6aN04hx33KGrs+N8D6eKftBVNafYBb7SQ/C5H6EcvN
+         o240Z2pI38mww==
 Received: by pali.im (Postfix)
-        id 7F9297EA; Thu, 19 Aug 2021 10:26:58 +0200 (CEST)
-Date:   Thu, 19 Aug 2021 10:26:58 +0200
+        id 365367EA; Thu, 19 Aug 2021 10:34:32 +0200 (CEST)
+Date:   Thu, 19 Aug 2021 10:34:32 +0200
 From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Kari Argillander <kari.argillander@gmail.com>
-Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Christoph Hellwig <hch@lst.de>, ntfs3@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH v2 5/6] fs/ntfs3: Add iocharset= mount option as alias
- for nls=
-Message-ID: <20210819082658.4xu6zmoro5xxdk5a@pali>
-References: <20210819002633.689831-1-kari.argillander@gmail.com>
- <20210819002633.689831-6-kari.argillander@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Marek =?utf-8?B?QmVow7pu?= <marek.behun@nic.cz>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [RFC PATCH 03/20] udf: Fix iocharset=utf8 mount option
+Message-ID: <20210819083432.yy36hrbxzmbasvwd@pali>
+References: <20210808162453.1653-1-pali@kernel.org>
+ <20210808162453.1653-4-pali@kernel.org>
+ <20210812141736.GE14675@quack2.suse.cz>
+ <20210812155134.g67ncugjvruos3cy@pali>
+ <20210813134822.GF11955@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210819002633.689831-6-kari.argillander@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210813134822.GF11955@quack2.suse.cz>
 User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thursday 19 August 2021 03:26:32 Kari Argillander wrote:
-> Other fs drivers are using iocharset= mount option for specifying charset.
-> So add it also for ntfs3 and mark old nls= mount option as deprecated.
+On Friday 13 August 2021 15:48:22 Jan Kara wrote:
+> On Thu 12-08-21 17:51:34, Pali Rohár wrote:
+> > On Thursday 12 August 2021 16:17:36 Jan Kara wrote:
+> > > On Sun 08-08-21 18:24:36, Pali Rohár wrote:
+> > > > Currently iocharset=utf8 mount option is broken. To use UTF-8 as iocharset,
+> > > > it is required to use utf8 mount option.
+> > > > 
+> > > > Fix iocharset=utf8 mount option to use be equivalent to the utf8 mount
+> > > > option.
+> > > > 
+> > > > If UTF-8 as iocharset is used then s_nls_map is set to NULL. So simplify
+> > > > code around, remove UDF_FLAG_NLS_MAP and UDF_FLAG_UTF8 flags as to
+> > > > distinguish between UTF-8 and non-UTF-8 it is needed just to check if
+> > > > s_nls_map set to NULL or not.
+> > > > 
+> > > > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > > 
+> > > Thanks for the cleanup. It looks good. Feel free to add:
+> > > 
+> > > Reviewed-by: Jan Kara <jack@suse.cz>
+> > > 
+> > > Or should I take this patch through my tree?
+> > 
+> > Hello! Patches are just RFC, mostly untested and not ready for merging.
+> > I will wait for feedback and then I do more testing nad prepare new
+> > patch series.
 > 
-> Signed-off-by: Kari Argillander <kari.argillander@gmail.com>
-> ---
->  Documentation/filesystems/ntfs3.rst |  4 ++--
->  fs/ntfs3/super.c                    | 12 ++++++++----
->  2 files changed, 10 insertions(+), 6 deletions(-)
+> OK, FWIW I've also tested the UDF and isofs patches.
+
+Well, if you have already done tests, patches are correct and these fs
+driver are working fine then fell free to take it through your tree.
+
+I just wanted to warn people that patches in this RFC are mostly
+untested to prevent some issues. But if somebody else was faster than
+me, did testing + reviewing and there was no issue, I do not see any
+problem with including them. Just I cannot put my own Tested-by (yet) :-)
+
+> 								Honza
 > 
-> diff --git a/Documentation/filesystems/ntfs3.rst b/Documentation/filesystems/ntfs3.rst
-> index af7158de6fde..ded706474825 100644
-> --- a/Documentation/filesystems/ntfs3.rst
-> +++ b/Documentation/filesystems/ntfs3.rst
-> @@ -32,12 +32,12 @@ generic ones.
->  
->  ===============================================================================
->  
-> -nls=name		This option informs the driver how to interpret path
-> +iocharset=name		This option informs the driver how to interpret path
->  			strings and translate them to Unicode and back. If
->  			this option is not set, the default codepage will be
->  			used (CONFIG_NLS_DEFAULT).
->  			Examples:
-> -				'nls=utf8'
-> +				'iocharset=utf8'
->  
->  uid=
->  gid=
-> diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-> index 8e86e1956486..c3c07c181f15 100644
-> --- a/fs/ntfs3/super.c
-> +++ b/fs/ntfs3/super.c
-> @@ -240,7 +240,7 @@ enum Opt {
->  	Opt_nohidden,
->  	Opt_showmeta,
->  	Opt_acl,
-> -	Opt_nls,
-> +	Opt_iocharset,
->  	Opt_prealloc,
->  	Opt_no_acs_rules,
->  	Opt_err,
-> @@ -259,9 +259,13 @@ static const struct fs_parameter_spec ntfs_fs_parameters[] = {
->  	fsparam_flag_no("hidden",		Opt_nohidden),
->  	fsparam_flag_no("acl",			Opt_acl),
->  	fsparam_flag_no("showmeta",		Opt_showmeta),
-> -	fsparam_string("nls",			Opt_nls),
->  	fsparam_flag_no("prealloc",		Opt_prealloc),
->  	fsparam_flag("no_acs_rules",		Opt_no_acs_rules),
-> +	fsparam_string("iocharset",		Opt_iocharset),
-> +
-> +	__fsparam(fs_param_is_string,
-> +		  "nls", Opt_iocharset,
-> +		  fs_param_deprecated, NULL),
-
-Anyway, this is a new filesystem driver. Therefore, do we need to have
-for it since beginning deprecated option?
-
->  	{}
->  };
->  
-> @@ -332,7 +336,7 @@ static int ntfs_fs_parse_param(struct fs_context *fc,
->  	case Opt_showmeta:
->  		opts->showmeta = result.negated ? 0 : 1;
->  		break;
-> -	case Opt_nls:
-> +	case Opt_iocharset:
->  		opts->nls_name = param->string;
->  		param->string = NULL;
->  		break;
-> @@ -519,7 +523,7 @@ static int ntfs_show_options(struct seq_file *m, struct dentry *root)
->  	if (opts->dmask)
->  		seq_printf(m, ",dmask=%04o", ~opts->fs_dmask_inv);
->  	if (opts->nls_name)
-> -		seq_printf(m, ",nls=%s", opts->nls_name);
-> +		seq_printf(m, ",iocharset=%s", opts->nls_name);
->  	if (opts->sys_immutable)
->  		seq_puts(m, ",sys_immutable");
->  	if (opts->discard)
 > -- 
-> 2.25.1
-> 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
