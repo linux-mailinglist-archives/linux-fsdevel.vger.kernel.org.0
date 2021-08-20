@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D62D93F26E5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 08:36:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABA263F2764
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 09:15:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238427AbhHTGh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Aug 2021 02:37:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38546 "EHLO
+        id S236103AbhHTHPp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Aug 2021 03:15:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238276AbhHTGh0 (ORCPT
+        with ESMTP id S233162AbhHTHPi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Aug 2021 02:37:26 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A47FDC061575;
-        Thu, 19 Aug 2021 23:36:49 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id x5so8497876ill.3;
-        Thu, 19 Aug 2021 23:36:49 -0700 (PDT)
+        Fri, 20 Aug 2021 03:15:38 -0400
+Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC3D6C061575;
+        Fri, 20 Aug 2021 00:15:00 -0700 (PDT)
+Received: by mail-il1-x12b.google.com with SMTP id f15so8560703ilk.4;
+        Fri, 20 Aug 2021 00:15:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ZuA3Rp/DCd8wiOoviZGWe2nWNbd+d142wY7eiW3RWo4=;
-        b=X7tLesjaBdIqlT5m/SdKY5cRoTwRmozYq56mkWKscIhet8KJchYwbEX0WNHavI1byr
-         oyAI6DqVm9nuO1DJ2pOwvNG/8NBtro+C5Dv3tjpfxy/hZxunxp5vEefv4hLVXfUezNX8
-         VepeS6odkBmyIk73Rx1M2vq6ADBtN3CPKLYG9pzl+Trfu4m+2+gejWHy82gl2+7g4lej
-         ulEl7J1WY7Y8AMuMtpb1dI4YsYaKgsqKXrppwZAYfqeG+Ha5kHPX/kptrHQVqUr+3SNv
-         qkui6KuZdzRK+HzKZACmXu62sjRkSm4sQ3YnLEcU3g4WXTtcKIr13/vRxovGzp6Dmvzw
-         4y1g==
+        bh=dJq0fJObbszgHOmKbaDhSquv53eJeu/zeB0v8+OUq9o=;
+        b=qT0Qb0xZGQ6XwYq3z9BUpNaGnkeJMvlKRqDP9ce2ks5V6svoG44Hezgxiv72oJWOcY
+         EGBl5o6EiQvsj5zHpnoZVnEfgJwTVm7Kri9buvM8nHKO7adajKYFPMuJeArZhS1Y74dM
+         DZ+h5Y2PtaLpER3YkMPn/NniYvBOSesGdeORN7c8Jg5+oSTcNS2vt19nxJjndiAfNsDZ
+         4OC2e//pVo1pSjHV7pmD/pc4b8DPiVV1/kVKqrcZ5WNRPaiQLIZTgAFpjM5VtyfQd2Rj
+         fRL+ZdobvXCeHjER6lEUgBBAje8k26dTikB7cWWJemYf2zi8SiLh6k6+LV2+WtgwUuxe
+         qViw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZuA3Rp/DCd8wiOoviZGWe2nWNbd+d142wY7eiW3RWo4=;
-        b=SMYL7nb6S8ZNBsKU8KQ4/VytnYBTvaJYFwRUXakdT8xJ3RNQCV4HVeoWOfoPsoGqDH
-         0WYkhk4ZLXpgiLxjsgGxIK2vucjuWMo/denbkbc9UqMYq1pSpN/oY7YgWSOtxfnzOuCt
-         Tyi0zriuzYOmT6D+dyLEJNUBSr30ELC/PHZtBpRqTtjkvgFcaz2lBEDkoIilmHKrSzt6
-         fC/L11qT9j2WFjnC7ApOVEbcU/5aI9EKyoajv1Ep9UnpSYMohH0wDdnm9JALptXSUY4p
-         +zpnmFGxb2UHsENT/VIPjCkXE2SAC/o8f49V0FaHsqbLAokxe5GhijejnVZzMObyrXe1
-         omAw==
-X-Gm-Message-State: AOAM532rpVR0dBYDX+tSOOrAVrLgs6CFtnZIjI76ADZhsbj8Mz1FJ9Qm
-        c8wGgDmDZijm5/qlzx3emorh3eRG095zCuwdnrU=
-X-Google-Smtp-Source: ABdhPJwe6gS04rakt3t6jZWuUd7mZpuhIBkNSNL93qXCViyj6k+TLl9+pNoflAoTTC8dORjO4lHW/J55iUAG5uMBdCM=
-X-Received: by 2002:a92:cd0a:: with SMTP id z10mr12330672iln.137.1629441409010;
- Thu, 19 Aug 2021 23:36:49 -0700 (PDT)
+        bh=dJq0fJObbszgHOmKbaDhSquv53eJeu/zeB0v8+OUq9o=;
+        b=mgQaDMW+3b6rJrxJh7+xtjX02QUaeyyx3BT1gTFsQSgggfc4CDjZaNf2FeqbNxzviS
+         u5hOq9LkWk1o/x2QHhU5jfb8xKJS5NZHhMxZmynw+t1Ze7+TbUPpOFDC/+/HJ+WuiPxp
+         keqTexVTT2v8R2pN8ejWNsJ3RaEnCYrvKcwwW2TN3CrrWxjTyKNZ1P3GSVknOQFFfEG0
+         FFkOwBgK2TyDdnG3h8NmPssccQkanQUaXDYam7dyinDhU2/zOFCHTVruWRRvFudNKK/r
+         sUb/9uqiv332ZCz0HEThz5cHbeIZe/X2T2CHpJafoAZq9s4Z7tjDpUJPK7KBE8IfU7AX
+         ylxA==
+X-Gm-Message-State: AOAM531KW/OJP6l93C8BOPyXQ0IdF/2bz6ONhpPhdInw3Cn1wRwnhuEA
+        fdFb/odig8fEcnwzSgO+y0Y16kcLgYwcil98n02AX8bwof5zzA==
+X-Google-Smtp-Source: ABdhPJxN7Tyh6c2VLlNlWSuZDJoJbRC9+GMXWmAa83LxGI21bM3yGIG+cjWhl2IG2NHYkQ7J4PEOA/nn8Cqawjk9c/I=
+X-Received: by 2002:a05:6e02:10d0:: with SMTP id s16mr13051282ilj.275.1629443697607;
+ Fri, 20 Aug 2021 00:14:57 -0700 (PDT)
 MIME-Version: 1.0
 References: <20210812084348.6521-1-david@redhat.com> <87o8a2d0wf.fsf@disp2133>
  <60db2e61-6b00-44fa-b718-e4361fcc238c@www.fastmail.com> <87lf56bllc.fsf@disp2133>
@@ -53,11 +53,12 @@ References: <20210812084348.6521-1-david@redhat.com> <87o8a2d0wf.fsf@disp2133>
  <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com> <YRcyqbpVqwwq3P6n@casper.infradead.org>
  <87k0kkxbjn.fsf_-_@disp2133> <0c2af732e4e9f74c9d20b09fc4b6cbae40351085.camel@kernel.org>
  <CAHk-=wgewmbABDC3_ZNn11C+sm4Uz0L9HZ5Kvx0Joho4vsV4DQ@mail.gmail.com>
- <a1385746582a675c410aca4eb4947320faec4821.camel@kernel.org> <CAHk-=wgD-SNxB=2iCurEoP=RjrciRgLtXZ7R_DejK+mXF2etfg@mail.gmail.com>
-In-Reply-To: <CAHk-=wgD-SNxB=2iCurEoP=RjrciRgLtXZ7R_DejK+mXF2etfg@mail.gmail.com>
+ <a1385746582a675c410aca4eb4947320faec4821.camel@kernel.org>
+ <CAHk-=wgD-SNxB=2iCurEoP=RjrciRgLtXZ7R_DejK+mXF2etfg@mail.gmail.com> <CAOQ4uxhwcdH1t3WVBdmeyDmvWkQLCgOAWoVZGoCKChppXBNqNA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhwcdH1t3WVBdmeyDmvWkQLCgOAWoVZGoCKChppXBNqNA@mail.gmail.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 20 Aug 2021 09:36:38 +0300
-Message-ID: <CAOQ4uxhwcdH1t3WVBdmeyDmvWkQLCgOAWoVZGoCKChppXBNqNA@mail.gmail.com>
+Date:   Fri, 20 Aug 2021 10:14:46 +0300
+Message-ID: <CAOQ4uxiZXwaT9gJJweGx1kXR=y7y+cY5uUUV_CHyEeSJ6vJ0Cg@mail.gmail.com>
 Subject: Re: Removing Mandatory Locks
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Jeff Layton <jlayton@kernel.org>,
@@ -127,53 +128,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 19, 2021 at 11:32 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Fri, Aug 20, 2021 at 9:36 AM Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> On Thu, Aug 19, 2021 at 1:18 PM Jeff Layton <jlayton@kernel.org> wrote:
+> On Thu, Aug 19, 2021 at 11:32 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
 > >
-> > Now that I think about it a little more, I actually did get one
-> > complaint a few years ago:
+> > On Thu, Aug 19, 2021 at 1:18 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > >
+> > > Now that I think about it a little more, I actually did get one
+> > > complaint a few years ago:
+> > >
+> > > Someone had upgraded from an earlier distro that supported the -o mand
+> > > mount option to a later one that had disabled it, and they had an (old)
+> > > fstab entry that specified it.
 > >
-> > Someone had upgraded from an earlier distro that supported the -o mand
-> > mount option to a later one that had disabled it, and they had an (old)
-> > fstab entry that specified it.
+> > Hmm. We might be able to turn the "return -EINVAL" into just a warning.
+> >
+> > Yes, yes, currently if you turn off CONFIG_MANDATORY_FILE_LOCKING, we
+> > already do that
+> >
+> >         VFS: "mand" mount option not supported
+> >
+> > warning print, but then we fail the mount.
+> >
+> > If CONFIG_MANDATORY_FILE_LOCKING goes away entirely, it might make
+> > sense to turn that warning into something bigger, but then let the
+> > mount continue - since now that "mand" flag would be purely a legacy
+> > thing.
+> >
+> > And yes, if we do that, we'd want the warning to be a big ugly thing,
+> > just to make people very aware of it happening. Right now it's a
+> > one-liner that is easy to miss, and the "oh, the mount failed" is the
+> > thing that hopefully informs people about the fact that they need to
+> > enable CONFIG_MANDATORY_FILE_LOCKING.
+> >
+> > The logic being that if you can no longer enable mandatory locking in
+> > the kernel, the current hard failure seems overly aggressive (and
+> > might cause boot failures and inability to fix/report things when it
+> > possibly keeps you from using the system at all).
+> >
 >
-> Hmm. We might be able to turn the "return -EINVAL" into just a warning.
+> Allow me to play the devil's advocate here - if fstab has '-o mand' we have
+> no way of knowing if any application is relying on '-o mand' and adding
+> more !!!!! to the warning is mostly good for clearing our conscious ;-)
 >
-> Yes, yes, currently if you turn off CONFIG_MANDATORY_FILE_LOCKING, we
-> already do that
->
->         VFS: "mand" mount option not supported
->
-> warning print, but then we fail the mount.
->
-> If CONFIG_MANDATORY_FILE_LOCKING goes away entirely, it might make
-> sense to turn that warning into something bigger, but then let the
-> mount continue - since now that "mand" flag would be purely a legacy
-> thing.
->
-> And yes, if we do that, we'd want the warning to be a big ugly thing,
-> just to make people very aware of it happening. Right now it's a
-> one-liner that is easy to miss, and the "oh, the mount failed" is the
-> thing that hopefully informs people about the fact that they need to
-> enable CONFIG_MANDATORY_FILE_LOCKING.
->
-> The logic being that if you can no longer enable mandatory locking in
-> the kernel, the current hard failure seems overly aggressive (and
-> might cause boot failures and inability to fix/report things when it
-> possibly keeps you from using the system at all).
+> Not saying we cannot resort to that and not saying there is an easy
+> solution, but there is one more solution to consider - force rdonly mount.
+> Yes, it could break some systems and possibly fail boot, but then again
+> an ext4 fs can already become rdonly due to errors, so it wouldn't
+> be the first time that sysadmins/users run into this behavior.
 >
 
-Allow me to play the devil's advocate here - if fstab has '-o mand' we have
-no way of knowing if any application is relying on '-o mand' and adding
-more !!!!! to the warning is mostly good for clearing our conscious ;-)
+Adding an anecdote - this week I got a report from field support
+engineers about failure to assemble a RAID0 array, which led to this
+warning that *requires* user intervention, in the worse case for boot
+device it requires changing kernel boot params:
 
-Not saying we cannot resort to that and not saying there is an easy
-solution, but there is one more solution to consider - force rdonly mount.
-Yes, it could break some systems and possibly fail boot, but then again
-an ext4 fs can already become rdonly due to errors, so it wouldn't
-be the first time that sysadmins/users run into this behavior.
+md/raid0:%s: cannot assemble multi-zone RAID0 with default_layout setting
+md/raid0: please set raid.default_layout to 1 or 2
+
+c84a1372df92 md/raid0: avoid RAID0 data corruption due to layout confusion.
+
+There is no way I would have gotten this report from the field if a failure
+was not involved...
+
+The rdonly mount is only needed to get the attention of support people
+to look the the kernel logs and find the warning - at this point, not too
+many !!!!! are needed ;-)
+
+So we could make 'mand' an alias to 'ro' and print a warning that says:
+"'mand' mount option is deprecated, please fix your init scripts.
+For caution, your filesystem was mounted rdonly, feel free to remount
+rw and move on..."
 
 Thanks,
 Amir.
