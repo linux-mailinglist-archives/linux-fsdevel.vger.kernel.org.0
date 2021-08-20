@@ -2,137 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7127D3F2D49
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 15:41:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99B693F2D55
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 15:43:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233459AbhHTNmO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Aug 2021 09:42:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51056 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232399AbhHTNmO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Aug 2021 09:42:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629466896;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4KjTjMbm6Ax2NoBz/SV8LRb7ROzLCYCzwIW7Ojvzm8c=;
-        b=Jt9XdDQWyH03r53TGp7ek1/rLaiq8705bB71BbhphDbX6DR6exhFcD/k5CdvcK2w94qCa7
-        o3uwotybcnEUXSjzt2w6w83EmxsecZhroo51fN7S54L3lfxOiEo2x59RguoPAzix6nNF4l
-        kP7J+XrN9sGBUq47Yn1bVxDYJwPG3VA=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-535-aUp8tXjEPxaeOJifxj4ftQ-1; Fri, 20 Aug 2021 09:41:34 -0400
-X-MC-Unique: aUp8tXjEPxaeOJifxj4ftQ-1
-Received: by mail-ej1-f71.google.com with SMTP id bx10-20020a170906a1ca00b005c341820edeso792283ejb.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Aug 2021 06:41:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:organization:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=4KjTjMbm6Ax2NoBz/SV8LRb7ROzLCYCzwIW7Ojvzm8c=;
-        b=JtcTPh1/bNq0FrC1RQk2vGTIRKgxdmlOuqAktEXXW7NlIzGkxNE5zk0813YNsYXnnS
-         LAV+pYB4BxZigU09kPMQfvcJYhh0aBmtnliUuur+BjgzNEMwqbTnlJuvkIXcLqKbt9DM
-         O6BVBheCdqKZMwnN+6M+3BkGFbIsQhH7udnEQSbueFbHUjowPqsNIvYepnSQ3e+A2qy8
-         hwjCnymQSas7c8teUGe3xNQM46PrvfoihgiG+mAKV4pvppuHHVsLhZacTV8JfjAr406Y
-         +/LyvDmXH5tbKd8YK1iIr/R2ZeiCY2+NITG/nUh9xNH9558MHxk9fYDjUeCfyv38l3y1
-         PDAA==
-X-Gm-Message-State: AOAM531/sYfDU1SQW7+fgvyARoRaB8Dk4J8eVbCmSfsS0zzcJF5piIk5
-        +LFIn5pJVvmknBpEBxeHRr88P3CGE0cEHwJW/q0/zte/BhDVhs/EsLMkpnkBgXoz4MMzziM/gjs
-        yKUGAC62SkB13L8GqR+8dT4C7iA==
-X-Received: by 2002:aa7:db8b:: with SMTP id u11mr22178962edt.362.1629466893415;
-        Fri, 20 Aug 2021 06:41:33 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJx0hLwN+s7rk8F847DLOmn4dy1Ao93kGJxxgV8+oY8fbxG+6Lejz40d6vR1Ye9lqW0fsphjXg==
-X-Received: by 2002:aa7:db8b:: with SMTP id u11mr22178939edt.362.1629466893221;
-        Fri, 20 Aug 2021 06:41:33 -0700 (PDT)
-Received: from 0.7.3.c.2.b.0.0.0.3.7.8.9.5.0.2.0.0.0.0.a.d.f.f.0.b.8.0.1.0.0.2.ip6.arpa (0.7.3.c.2.b.0.0.0.3.7.8.9.5.0.2.0.0.0.0.a.d.f.f.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:ffda:0:2059:8730:b2:c370])
-        by smtp.gmail.com with ESMTPSA id g14sm3636121edr.47.2021.08.20.06.41.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Aug 2021 06:41:32 -0700 (PDT)
-Message-ID: <2508f12f0d2a5eedaad0c6b77657f53222b33e3c.camel@redhat.com>
-Subject: Re: [Cluster-devel] [PATCH v6 10/19] gfs2: Introduce flag for glock
- holder auto-demotion
-From:   Steven Whitehouse <swhiteho@redhat.com>
-To:     Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>, cluster-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, ocfs2-devel@oss.oracle.com
-Date:   Fri, 20 Aug 2021 14:41:32 +0100
-In-Reply-To: <cf284633-a9db-9f88-6b60-4377bc33e473@redhat.com>
-References: <20210819194102.1491495-1-agruenba@redhat.com>
-         <20210819194102.1491495-11-agruenba@redhat.com>
-         <5e8a20a8d45043e88013c6004636eae5dadc9be3.camel@redhat.com>
-         <cf284633-a9db-9f88-6b60-4377bc33e473@redhat.com>
-Organization: Red Hat UK Ltd
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        id S240785AbhHTNnz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Aug 2021 09:43:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229829AbhHTNnv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Aug 2021 09:43:51 -0400
+Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D120610FF;
+        Fri, 20 Aug 2021 13:43:08 +0000 (UTC)
+Date:   Fri, 20 Aug 2021 09:43:01 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        David Hildenbrand <david@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Michel Lespinasse <walken@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Price <steven.price@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Marco Elver <elver@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Collin Fijalkovich <cfijalkovich@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        Christian =?UTF-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Subject: Re: Removing Mandatory Locks
+Message-ID: <20210820094301.62421e21@oasis.local.home>
+In-Reply-To: <CAHk-=wgHbYmUZvFkthGJ6zZx+ofTiiTRxPai5mPkmbtE=6JbaQ@mail.gmail.com>
+References: <20210812084348.6521-1-david@redhat.com>
+        <87o8a2d0wf.fsf@disp2133>
+        <60db2e61-6b00-44fa-b718-e4361fcc238c@www.fastmail.com>
+        <87lf56bllc.fsf@disp2133>
+        <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
+        <87eeay8pqx.fsf@disp2133>
+        <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
+        <87h7ft2j68.fsf@disp2133>
+        <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
+        <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
+        <YRcyqbpVqwwq3P6n@casper.infradead.org>
+        <87k0kkxbjn.fsf_-_@disp2133>
+        <0c2af732e4e9f74c9d20b09fc4b6cbae40351085.camel@kernel.org>
+        <CAHk-=wgewmbABDC3_ZNn11C+sm4Uz0L9HZ5Kvx0Joho4vsV4DQ@mail.gmail.com>
+        <a1385746582a675c410aca4eb4947320faec4821.camel@kernel.org>
+        <CAHk-=wgD-SNxB=2iCurEoP=RjrciRgLtXZ7R_DejK+mXF2etfg@mail.gmail.com>
+        <639d90212662cf5cdf80c71bbfec95907c70114a.camel@kernel.org>
+        <CAHk-=wgHbYmUZvFkthGJ6zZx+ofTiiTRxPai5mPkmbtE=6JbaQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Thu, 19 Aug 2021 15:32:31 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-On Fri, 2021-08-20 at 08:11 -0500, Bob Peterson wrote:
-> On 8/20/21 4:35 AM, Steven Whitehouse wrote:
-> > Hi,
-> > 
-> > On Thu, 2021-08-19 at 21:40 +0200, Andreas Gruenbacher wrote:
-> > > From: Bob Peterson <rpeterso@redhat.com>
-> > > 
-> > > This patch introduces a new HIF_MAY_DEMOTE flag and
-> > > infrastructure
-> > > that
-> > > will allow glocks to be demoted automatically on locking
-> > > conflicts.
-> > > When a locking request comes in that isn't compatible with the
-> > > locking
-> > > state of a holder and that holder has the HIF_MAY_DEMOTE flag
-> > > set,
-> > > the
-> > > holder will be demoted automatically before the incoming locking
-> > > request
-> > > is granted.
-> > > 
-> > I'm not sure I understand what is going on here. When there are
-> > locking
-> > conflicts we generate call backs and those result in glock
-> > demotion.
-> > There is no need for a flag to indicate that I think, since it is
-> > the
-> > default behaviour anyway. Or perhaps the explanation is just a bit
-> > confusing...
+> I originally thought WARN_ON_ONCE() just to get the distro automatic
+> error handling involved, but it would probably be a big problem for
+> the people who end up having panic-on-warn or something.
 > 
-> I agree that the whole concept and explanation are confusing.
-> Andreas 
-> and I went through several heated arguments about the symantics, 
-> comments, patch descriptions, etc. We played around with many
-> different 
-> flag name ideas, etc. We did not agree on the best way to describe
-> the 
-> whole concept. He didn't like my explanation and I didn't like his.
-> So 
-> yes, it is confusing.
+> So probably just a "make it a big box" thing that stands out, kind of
+> what lockdep etc does with
 > 
-That seems to be a good reason to take a step back and look at this a
-bit closer. If we are finding this confusing, then someone else looking
-at it at a future date, who may not be steeped in GFS2 knowledge is
-likely to find it almost impossible.
+>         pr_warn("======...====\n");
+> 
+> around the messages..
+> 
+> I don't know if distros have some pattern we could use that would end
+> up being something that gets reported to the user?
 
-So at least the description needs some work here I think, to make it
-much clearer what the overall aim is. It would be good to start with a
-statement of the problem that it is trying to solve which Andreas has
-hinted at in his reply just now,
-
-Steve.
+People have started using my trace-printk notice message, that seems to
+be big enough to get noticed.
 
 
+ **********************************************************
+ **   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
+ **                                                      **
+ ** trace_printk() being used. Allocating extra memory.  **
+ **                                                      **
+ ** This means that this is a DEBUG kernel and it is     **
+ ** unsafe for production use.                           **
+ **                                                      **
+ ** If you see this message and you are not debugging    **
+ ** the kernel, report this immediately to your vendor!  **
+ **                                                      **
+ **   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
+ **********************************************************
+
+There's been some talk about making that a more "generic" warning
+message too.
+
+-- Steve
