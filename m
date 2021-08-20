@@ -2,77 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B0BA3F3157
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 18:14:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86E893F317D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 18:30:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229839AbhHTQPa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Aug 2021 12:15:30 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:54080 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229772AbhHTQPa (ORCPT
+        id S229977AbhHTQbM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Aug 2021 12:31:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35470 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229564AbhHTQbL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Aug 2021 12:15:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629476091;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=iId6LBZFVjVNhIS6gne4I0ejJ3OJjffX7KVyfwk6qZs=;
-        b=Y9vunj4cM9Dy5Ycv1Re5tVhMg0DCtX0vNbyJOBpqEJzhqeYNmQa1rcoXxL+0REkAcDyyVZ
-        aFcJkwCpDQ0R1qwnVb8Z3vTgo3bHVNU43DUdorGzG369PV3XJ62z3beDJgSj3h1/Vc+ME0
-        9n9uyb2EnwAxn3ldhITYNhsmvFin6qU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-264-5iaIlbk_N3GKl_lhH0AOFQ-1; Fri, 20 Aug 2021 12:14:49 -0400
-X-MC-Unique: 5iaIlbk_N3GKl_lhH0AOFQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ABF5E760C0;
-        Fri, 20 Aug 2021 16:14:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.86])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BB4C71002D71;
-        Fri, 20 Aug 2021 16:14:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] mm: Export PageHeadHuge()
-From:   David Howells <dhowells@redhat.com>
-To:     willy@infradead.org
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 20 Aug 2021 17:14:47 +0100
-Message-ID: <162947608701.760537.640097323184606750.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        Fri, 20 Aug 2021 12:31:11 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6314C061575
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Aug 2021 09:30:33 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id m26so9058436pff.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Aug 2021 09:30:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=hx/7x/JErQYdtBSrXWm/zLl3le+VQc9WWGW/gattMeA=;
+        b=AHhWe/b1QJudaK4piB/jpm81AVtQQUsE+FQy6FY3gPQsXxurQppN29+lwRB1w87Hk9
+         s5LnDo+Sqxo/2pCK/R5LdbAN1tgOMvgop4IKUrmYIGWWy9GZBoPvfMqYDTrPjGlW+5pa
+         Zl5yoXP7YgbsHkiiQ3CQ7BLFzXLsUcMFh1zuU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=hx/7x/JErQYdtBSrXWm/zLl3le+VQc9WWGW/gattMeA=;
+        b=ahLlcuMvVI/bg+UFPrKqKdM4v4420mnCfYvgzU1liHwDm3p/pApZ7+8obPyDACsRmP
+         twu81KVh5fX8KbrSXz2b4GSLe26kGKm1aj2UZj3jZ+yzuQK5aeSVaZPpEnEruGRlPapB
+         T8ucXEHlanhJt2ErDO8W1CHskVewQLOjPgtM21znApRbV5+CgdxoxT7mVY/pFHUlwSpk
+         PklDTVckmnepRamDEjJI4DUL96SbEWx+aXT0+aYuSZF75Mj81VHeQAINYZEfnWYXIQUN
+         ukDkzRdbz4NsIcfBYWkYxzDkheA1KxJ+NPOQzYDZkWmrkpgaZlmtcTeG8s+g2Ulcq1Cz
+         /7Hw==
+X-Gm-Message-State: AOAM532+HZF2HQd9mb+TkRTYBU+D74XEo0Po6u4LW8Jo5FpCZmH1QqUE
+        G/S+ZPNhVOmJeTOPixwetlSaCA==
+X-Google-Smtp-Source: ABdhPJwaxnuALu+UM0AoVLj6IiQMA+NoS7/1nkP1/GdVgN0I1V5xyMU8srw+/7RYQUxQMtn9M0uIlg==
+X-Received: by 2002:a65:608f:: with SMTP id t15mr19281560pgu.452.1629477033146;
+        Fri, 20 Aug 2021 09:30:33 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b7sm7023269pfl.195.2021.08.20.09.30.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Aug 2021 09:30:32 -0700 (PDT)
+Date:   Fri, 20 Aug 2021 09:30:31 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        David Hildenbrand <david@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Michel Lespinasse <walken@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Price <steven.price@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Marco Elver <elver@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Collin Fijalkovich <cfijalkovich@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        Christian =?iso-8859-1?Q?K=F6nig?= 
+        <ckoenig.leichtzumerken@gmail.com>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Subject: Re: Removing Mandatory Locks
+Message-ID: <202108200905.BE8AF7C@keescook>
+References: <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
+ <87eeay8pqx.fsf@disp2133>
+ <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
+ <87h7ft2j68.fsf@disp2133>
+ <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
+ <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
+ <YRcyqbpVqwwq3P6n@casper.infradead.org>
+ <87k0kkxbjn.fsf_-_@disp2133>
+ <0c2af732e4e9f74c9d20b09fc4b6cbae40351085.camel@kernel.org>
+ <CAHk-=wgewmbABDC3_ZNn11C+sm4Uz0L9HZ5Kvx0Joho4vsV4DQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgewmbABDC3_ZNn11C+sm4Uz0L9HZ5Kvx0Joho4vsV4DQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Export PageHeadHuge() - it's used by folio_test_hugetlb() and thence by
-folio_file_page() and folio_contains().
+On Thu, Aug 19, 2021 at 12:15:08PM -0700, Linus Torvalds wrote:
+> On Thu, Aug 19, 2021 at 11:39 AM Jeff Layton <jlayton@kernel.org> wrote:
+> >
+> > I'm all for ripping it out too. It's an insane interface anyway.
+> >
+> > I've not heard a single complaint about this being turned off in
+> > fedora/rhel or any other distro that has this disabled.
+> 
+> I'd love to remove it, we could absolutely test it. The fact that
+> several major distros have it disabled makes me think it's fine.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+FWIW, it is now disabled in Ubuntu too:
 
- mm/hugetlb.c |    1 +
- 1 file changed, 1 insertion(+)
+https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/impish/commit/?h=master-next&id=f3aac5e47789cbeb3177a14d3d2a06575249e14b
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 68eead0259cc..ad6ef6d2c0bc 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -1717,6 +1717,7 @@ int PageHeadHuge(struct page *page_head)
- 
- 	return page_head[1].compound_dtor == HUGETLB_PAGE_DTOR;
- }
-+EXPORT_SYMBOL(PageHeadHuge);
- 
- /*
-  * Find and lock address space (mapping) in write mode.
+> But as always, it would be good to check Android.
 
+It looks like it's enabled (checking the Pixel 4 kernel image), but it's
+not specifically mentioned in any of the build configs that are used to
+construct the image, so I think this is just catching the "default y". I
+expect it'd be fine to turn this off.
 
+I will ask around to see if it's actually used.
+
+-- 
+Kees Cook
