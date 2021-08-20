@@ -2,59 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CCF3F3F3713
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Aug 2021 00:57:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E02A3F371C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Aug 2021 00:59:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233904AbhHTW5p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Aug 2021 18:57:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39360 "EHLO
+        id S238308AbhHTW7y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Aug 2021 18:59:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231482AbhHTW5o (ORCPT
+        with ESMTP id S231511AbhHTW7w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Aug 2021 18:57:44 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 481C6C061575
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Aug 2021 15:57:06 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id m24-20020a17090a7f98b0290178b1a81700so8291902pjl.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Aug 2021 15:57:06 -0700 (PDT)
+        Fri, 20 Aug 2021 18:59:52 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E0D2C061756
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Aug 2021 15:59:14 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id l11so6811080plk.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Aug 2021 15:59:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=G1Z8mu8s2sgn0mbpfu7ra3LWl3tk+2BaXWQ56zeT5Qo=;
-        b=Nt2BeHwjtlSFrM6oUpAp0AEOX1AjgKzHiyuRB0Rdt/NkFHq54pda5iNS/61TJ/a9/M
-         WtZ0MUvUAuWfZAkHqP5am1wnus8fD2MJNtfRLgOK5BYxEamRAJy68cbjkG3kKLjc3e6m
-         1Ms6ALCk+o8RdYAJUX1suKOU3XJBE72luJok+nKUgFIRJIUiL3D3N2uTn1bOzfRiMLOg
-         KTpdgQvnGWwmB9bFrP9a2SK0ZENdHfLcqPa9QmnSQFNoo7bwvdnxzejlRyQ87R+YTrTU
-         B+QeZ8y+BYNCRMX0yjp8cW2G7BvJIJhPtgqnqBhSC+lI+hPbKn/JWXQ3x6bi1O+SAZol
-         L3iA==
+        bh=4J9u3EAGcrYRrFr9a28F3qghmkpi2i6oIZ8UbGMRg5Q=;
+        b=anEFs1UiP9dfKz4P/uHPE9kEqv7MkVMmOpvTAzqV08rYDche7b0ksSUnfNPfaCpgzP
+         e9o7hblx+hLz5Nl60I6+hAR3wChILzkxma984XnglnGUVjrxySBf9RHwcnCyvmHR0E3D
+         /PO4zKOIZ00vbiCJCST1mcmqExfELWV35I4c28sImt4NeEjmuyoqAo4veMcamynIXSly
+         N374deXmUfZlN3MdOJk8WH+CtiC6uTHGByFsY0+nzx9U5qO6R2wXluoewcgzM1QD9Uqk
+         vDn3TqmthLxUy2TNMDmX+v1WaZ3As1fJ46enIH2XqW2Cm8fX2W+a1rUf0UBQqimRAjvl
+         /C9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=G1Z8mu8s2sgn0mbpfu7ra3LWl3tk+2BaXWQ56zeT5Qo=;
-        b=q+3pY28ngC0OxoJ2qG83YwHHonJxCIZVO/0vpP8kySYddEDExYWbIYPhLQsL6v+Dkd
-         57Gcx4MnEbgqt7YXvdvGpYZYTSHYwcb4uBesEDHdpBzJ8DBoTIVOBzFfzxSPexlwtN6E
-         0Ovu1i+RQSpoAtH1th6KbYEWw9tsYq7+8Q07CVkgrKsEAYXn0JReni2eAahB/TgCUCDA
-         tqBhTEqSCe+g0Gf8ydTyJlaoziW68FS3lPbEqQHNcCVMW5j1bwqoiS6T9Zoihbwt13OY
-         iUraJSDHHBz7vM/VN7EclRePmmacXlICXkd+3RW1Hi5IlR+fbR2lZteZCO6PnuIw7jHE
-         iLxA==
-X-Gm-Message-State: AOAM532JnGMctFDKg/K+fJPcHcIgX6DFXg8q8AXR8YpO691nvivP4GAy
-        UrTDlaaTPzAdasjSmNCuLicPSMgh/J+bY2fbXCu7LA==
-X-Google-Smtp-Source: ABdhPJxmXpLQCDOV4p/qDFeGVDmICU8dPEjZ+Gjrsjl1tuFZXHOKRbvy6d0ZC+yE1xwMVSAlTTyashdIzkFcEanj6Qo=
-X-Received: by 2002:a17:90b:18f:: with SMTP id t15mr6777302pjs.168.1629500225798;
- Fri, 20 Aug 2021 15:57:05 -0700 (PDT)
+        bh=4J9u3EAGcrYRrFr9a28F3qghmkpi2i6oIZ8UbGMRg5Q=;
+        b=bJ9JmNKj5hGemascq2ZDz1FFrpWhYhC2ASpTb71qcuiDHkMScLL3FdELkbws0PsKSu
+         /eE7ZAWSJuJ/Ycpc3meV9OYcx4D44niCVnDcD6WiZCl916EeYgGARNzBS5arm8x81MBl
+         hpRhnGuZdqfTxKaPpzsliefNYVONttrGeKqTURhp8LaJg8nHwtxwsIyCcF00xN7TzrU4
+         EjKc5JDb6hNV/UmViQHl3H4qHSNJEx3o8MzpEyjjQpfr58MqeCdTwjeVtG/kbSm0FzaC
+         IIEYMCOWgdi79CrLBkzpJyKbxGOGtFLGgHJlF4y+hWSrj5t6EWeqXjkkume9M4U4RRt7
+         HdyQ==
+X-Gm-Message-State: AOAM531T7PjTdyNH2nZrrggN37nGF+x7T53o0IKwDLpfW60NUga80U1M
+        9pQRAlb2zn9XLFIBIqdfjZDSN9NzaZfgbiXil4RjBQ==
+X-Google-Smtp-Source: ABdhPJzmm+ahkZHadNRsrgbZ7uYrM7d7oiVybo+IGZSGhl9C+B3H/3syn4zyd/DiLhslnXQ3Gq0ivqGhKs2WDDhbCAQ=
+X-Received: by 2002:a17:90a:708c:: with SMTP id g12mr7031600pjk.13.1629500353664;
+ Fri, 20 Aug 2021 15:59:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210730100158.3117319-1-ruansy.fnst@fujitsu.com>
- <20210730100158.3117319-7-ruansy.fnst@fujitsu.com> <ec5dd047-a420-8e17-d803-729e052b2377@oracle.com>
-In-Reply-To: <ec5dd047-a420-8e17-d803-729e052b2377@oracle.com>
+References: <20210730100158.3117319-1-ruansy.fnst@fujitsu.com> <20210730100158.3117319-7-ruansy.fnst@fujitsu.com>
+In-Reply-To: <20210730100158.3117319-7-ruansy.fnst@fujitsu.com>
 From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 20 Aug 2021 15:56:54 -0700
-Message-ID: <CAPcyv4hitKKPByHkX-syRmc1rmF8B4sGRsGdUDsBAE5-yoBvXw@mail.gmail.com>
+Date:   Fri, 20 Aug 2021 15:59:02 -0700
+Message-ID: <CAPcyv4h8eUKYDz+KLzXeMTEKc03k=8juXtYjYj+XSVQ5ww=KyQ@mail.gmail.com>
 Subject: Re: [PATCH RESEND v6 6/9] xfs: Implement ->notify_failure() for XFS
-To:     Jane Chu <jane.chu@oracle.com>
-Cc:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-xfs <linux-xfs@vger.kernel.org>,
         Linux NVDIMM <nvdimm@lists.linux.dev>,
         Linux MM <linux-mm@kvack.org>,
@@ -69,25 +67,63 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 5, 2021 at 5:50 PM Jane Chu <jane.chu@oracle.com> wrote:
+On Fri, Jul 30, 2021 at 3:02 AM Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
 >
+> This function is used to handle errors which may cause data lost in
+> filesystem.  Such as memory failure in fsdax mode.
 >
-> On 7/30/2021 3:01 AM, Shiyang Ruan wrote:
-> > +     mapping = VFS_I(ip)->i_mapping;
-> > +     if (IS_ENABLED(CONFIG_MEMORY_FAILURE)) {
-> > +             for (i = 0; i < rec->rm_blockcount; i++) {
-> > +                     error = mf_dax_kill_procs(mapping, rec->rm_offset + i,
-> > +                                               *flags);
-> > +                     if (error)
-> > +                             break;
-> > +             }
-> > +     }
+> If the rmap feature of XFS enabled, we can query it to find files and
+> metadata which are associated with the corrupt data.  For now all we do
+> is kill processes with that file mapped into their address spaces, but
+> future patches could actually do something about corrupt metadata.
 >
-> If a poison is injected to a PMD dax page, after consuming the poison,
-> how many SIGBUS signals are expected to be sent to the process?
+> After that, the memory failure needs to notify the processes who are
+> using those files.
+>
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> ---
+>  drivers/dax/super.c |  12 ++++
+>  fs/xfs/xfs_fsops.c  |   5 ++
+>  fs/xfs/xfs_mount.h  |   1 +
+>  fs/xfs/xfs_super.c  | 135 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/dax.h |  13 +++++
+>  5 files changed, 166 insertions(+)
+>
+> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> index 00c32dfa5665..63f7b63d078d 100644
+> --- a/drivers/dax/super.c
+> +++ b/drivers/dax/super.c
+> @@ -65,6 +65,18 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
+>         return dax_get_by_host(bdev->bd_disk->disk_name);
+>  }
+>  EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
+> +
+> +void fs_dax_set_holder(struct dax_device *dax_dev, void *holder,
+> +               const struct dax_holder_operations *ops)
+> +{
+> +       dax_set_holder(dax_dev, holder, ops);
+> +}
+> +EXPORT_SYMBOL_GPL(fs_dax_set_holder);
 
-I think it should only get one. I.e. just like the the generic code
-does one shootdown per mapped page regardless of whether that page is
-4K, 2M, or 1G. Once the application is notified it should be able to
-query the filesystem to determine the full extent of the damage to
-files.
+Small style issue, I'd prefer a pair of functions:
+
+fs_dax_register_holder(struct dax_device *dax_dev, void *holder, const
+struct dax_holder_operations *ops)
+fs_dax_unregister_holder(struct dax_device *dax_dev)
+
+...rather than open coding unregister as a special set that passes
+NULL arguments.
+
+> +void *fs_dax_get_holder(struct dax_device *dax_dev)
+> +{
+> +       return dax_get_holder(dax_dev);
+
+Does dax_get_holder() have a lockdep_assert to check that the caller
+has at least a read_lock? Please add kernel-doc for this api to
+indicate the locking context expectations.
+
+The rest of this looks plausibly ok to me, but it would be up to xfs
+folks to comment on the details. I'm not entirely comfortable with
+these handlers assuming DAX, i.e. they should also one day be useful
+for page cache memory failure notifications, but that support can come
+later.
