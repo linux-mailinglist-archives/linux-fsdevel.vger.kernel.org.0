@@ -2,214 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EEFB63F28A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 10:46:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56A0D3F28B1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 10:51:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232354AbhHTIrb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Aug 2021 04:47:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:54598 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231757AbhHTIr2 (ORCPT
+        id S233437AbhHTIwG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Aug 2021 04:52:06 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:52322 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233272AbhHTIwF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Aug 2021 04:47:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629449210;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Fri, 20 Aug 2021 04:52:05 -0400
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id E445D1FDEA;
+        Fri, 20 Aug 2021 08:51:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1629449486; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=2HhD3HCRTFvEVqk5yap83SXC5Y82U0v5dcvw39zc4Z4=;
-        b=YLxiu0lCFQYyMP91p9KefzStodfvkg5GDrKgEpQMfpjqVf982M+l6Y7dVmmHQ3PfKe0vrU
-        hcYdpLr1tP3YKcelZZi/w4wizftrP3KiK8LRCCJhCY0jUgacFrqJIPChccDGGaPRWXmcJX
-        cRTtoocizyOEvC9lg8+JH8EdbD0IqjQ=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-138-gy70d_RaOJKOo1QYttwOSA-1; Fri, 20 Aug 2021 04:46:49 -0400
-X-MC-Unique: gy70d_RaOJKOo1QYttwOSA-1
-Received: by mail-wm1-f71.google.com with SMTP id 201-20020a1c01d2000000b002e72ba822dcso202935wmb.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Aug 2021 01:46:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:organization:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=2HhD3HCRTFvEVqk5yap83SXC5Y82U0v5dcvw39zc4Z4=;
-        b=ZGlGd9C9WphDYz58ZnvtctZDq5FbnGQePfu84vgoCm9Hl11GReNDG5Y3fmnqW39XM6
-         4D7ea/e68BOhnREaRpMjvzRDsyy+6TXoS8Rx8xtyADs9CK1LJkkT74cXc2huXZb8d+Ki
-         N+4rHukwzIdCLcSYKL8uH8U+g3b2fvd9u5f+O7GfwhGciSMqw9DdgmieuPx/3LTgcfz5
-         o5i2VSPbjUFc/yLR9dZO25VVnQR2JNf2ZihS0QgVYKF14RTxsLk7QMgaf+Ko0+CEnE5u
-         6yIr+ep1+lKpxgQjsrNGIQ78xZ1Mtk4GRcaypE2egMuhaBIX30TLDAH06NV0RQymD8ub
-         qvJw==
-X-Gm-Message-State: AOAM5322U5oRtNIzMVrCoJFqtGELlRXAKfTcSAdNbxi871XIVv0VEDsC
-        AeQ0CFjdqXINXFzV53w/fVvdW+XiUFsUYBVAWuCQj484HKFHmW4xMKvbzx4VcCZykQho1PIpqbr
-        etns72HagO4K6ip+bir3U5ShF6Q==
-X-Received: by 2002:a1c:3b09:: with SMTP id i9mr2685747wma.62.1629449208325;
-        Fri, 20 Aug 2021 01:46:48 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJytHgubr94As8EiptaA6/T3rm3zShRCHuT1SQpKBWMx/QJTseDVs/BhmrdZPds05dmrZoxc2A==
-X-Received: by 2002:a1c:3b09:: with SMTP id i9mr2685692wma.62.1629449208132;
-        Fri, 20 Aug 2021 01:46:48 -0700 (PDT)
-Received: from ?IPv6:2003:d8:2f0a:7f00:fad7:3bc9:69d:31f? (p200300d82f0a7f00fad73bc9069d031f.dip0.t-ipconnect.de. [2003:d8:2f0a:7f00:fad7:3bc9:69d:31f])
-        by smtp.gmail.com with ESMTPSA id l9sm5187699wrt.95.2021.08.20.01.46.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Aug 2021 01:46:47 -0700 (PDT)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Price <steven.price@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Marco Elver <elver@google.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        David Laight <David.Laight@aculab.com>,
-        linux-unionfs@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-References: <20210816194840.42769-1-david@redhat.com>
- <20210816194840.42769-3-david@redhat.com>
- <CAHk-=wgsLtJ7=+NGGSEbTw9XBh7qyf4Py9-jBdajGnPTxU1hZg@mail.gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH v2 2/7] kernel/fork: factor out replacing the current MM
- exe_file
-Message-ID: <d90a7dfd-11c8-c4e1-1c59-91aad5a7f08e@redhat.com>
-Date:   Fri, 20 Aug 2021 10:46:45 +0200
+        bh=GLrGYtWxDnM40dQNIw+mgGouzhWLsKGdVn3Kr41/H9o=;
+        b=jYDFWX83X51DFlqR4Wh5Oh3xTYsd0PmfhyIpHe3s9o3jpTM5NOwu/T162nCiTrA8NAbzzm
+        mJWfHxwngCfTvdZraibp262kEwuQKepwnEKsAIQjY4bDE7Wmy2Hk9+6/aZE9FitBiXYJ3G
+        4I239qrtZqUg6PNiQsmq7815p1nYmlE=
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 7F4631333E;
+        Fri, 20 Aug 2021 08:51:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap1.suse-dmz.suse.de with ESMTPSA
+        id ESGMHA5tH2ESUAAAGKfGzw
+        (envelope-from <nborisov@suse.com>); Fri, 20 Aug 2021 08:51:26 +0000
+Subject: Re: [PATCH v10 06/14] btrfs: optionally extend i_size in
+ cow_file_range_inline()
+To:     Omar Sandoval <osandov@osandov.com>, linux-btrfs@vger.kernel.org
+Cc:     kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-api@vger.kernel.org, Qu Wenruo <wqu@suse.com>
+References: <cover.1629234193.git.osandov@fb.com>
+ <a00b59623219c8a07f2c22f80ef1466d0f182d77.1629234193.git.osandov@fb.com>
+From:   Nikolay Borisov <nborisov@suse.com>
+Message-ID: <1b495420-f4c6-6988-c0b1-9aa8a7aa952d@suse.com>
+Date:   Fri, 20 Aug 2021 11:51:25 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgsLtJ7=+NGGSEbTw9XBh7qyf4Py9-jBdajGnPTxU1hZg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <a00b59623219c8a07f2c22f80ef1466d0f182d77.1629234193.git.osandov@fb.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 19.08.21 22:51, Linus Torvalds wrote:
-> So I like this series.
+
+
+On 18.08.21 г. 0:06, Omar Sandoval wrote:
+> From: Omar Sandoval <osandov@fb.com>
 > 
-> However, logically, I think this part in replace_mm_exe_file() no
-> longer makes sense:
+> Currently, an inline extent is always created after i_size is extended
+> from btrfs_dirty_pages(). However, for encoded writes, we only want to
+> update i_size after we successfully created the inline extent. Add an
+> update_i_size parameter to cow_file_range_inline() and
+> insert_inline_extent() and pass in the size of the extent rather than
+> determining it from i_size. Since the start parameter is always passed
+> as 0, get rid of it and simplify the logic in these two functions. While
+> we're here, let's document the requirements for creating an inline
+> extent.
 > 
-> On Mon, Aug 16, 2021 at 12:50 PM David Hildenbrand <david@redhat.com> wrote:
->>
->> +       /* Forbid mm->exe_file change if old file still mapped. */
->> +       old_exe_file = get_mm_exe_file(mm);
->> +       if (old_exe_file) {
->> +               mmap_read_lock(mm);
->> +               for (vma = mm->mmap; vma && !ret; vma = vma->vm_next) {
->> +                       if (!vma->vm_file)
->> +                               continue;
->> +                       if (path_equal(&vma->vm_file->f_path,
->> +                                      &old_exe_file->f_path))
->> +                               ret = -EBUSY;
->> +               }
->> +               mmap_read_unlock(mm);
->> +               fput(old_exe_file);
->> +               if (ret)
->> +                       return ret;
->> +       }
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+> Signed-off-by: Omar Sandoval <osandov@fb.com>
+> ---
+>  fs/btrfs/inode.c | 100 +++++++++++++++++++++++------------------------
+>  1 file changed, 48 insertions(+), 52 deletions(-)
 > 
-> and should just be removed.
-> 
-> NOTE! I think it makes sense within the context of this patch (where
-> you just move code around), but that it should then be removed in the
-> next patch that does that "always deny write access to current MM
-> exe_file" thing.
-> 
-> I just quoted it in the context of this patch, since the next patch
-> doesn't actually show this code any more.
-> 
-> In the *old* model - where the ETXTBUSY was about the mmap() of the
-> file - the above tests make sense.
-> 
-> But in the new model, walking the mappings just doesn't seem to be a
-> sensible operation any more. The mappings simply aren't what ETXTBUSY
-> is about in the new world order, and so doing that mapping walk seems
-> nonsensical.
-> 
-> Hmm?
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 708d8ab098bc..0b5ff14aa7fd 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -236,9 +236,10 @@ static int btrfs_init_inode_security(struct btrfs_trans_handle *trans,
+>  static int insert_inline_extent(struct btrfs_trans_handle *trans,
+>  				struct btrfs_path *path, bool extent_inserted,
+>  				struct btrfs_root *root, struct inode *inode,
+> -				u64 start, size_t size, size_t compressed_size,
+> +				size_t size, size_t compressed_size,
+>  				int compress_type,
+> -				struct page **compressed_pages)
+> +				struct page **compressed_pages,
+> +				bool update_i_size)
+>  {
+>  	struct extent_buffer *leaf;
+>  	struct page *page = NULL;
+> @@ -247,7 +248,7 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
+>  	struct btrfs_file_extent_item *ei;
+>  	int ret;
+>  	size_t cur_size = size;
+> -	unsigned long offset;
+> +	u64 i_size;
+>  
+>  	ASSERT((compressed_size > 0 && compressed_pages) ||
+>  	       (compressed_size == 0 && !compressed_pages));
+> @@ -260,7 +261,7 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
+>  		size_t datasize;
+>  
+>  		key.objectid = btrfs_ino(BTRFS_I(inode));
+> -		key.offset = start;
+> +		key.offset = 0;
+>  		key.type = BTRFS_EXTENT_DATA_KEY;
+>  
+>  		datasize = btrfs_file_extent_calc_inline_size(cur_size);
+> @@ -297,12 +298,10 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
+>  		btrfs_set_file_extent_compression(leaf, ei,
+>  						  compress_type);
+>  	} else {
+> -		page = find_get_page(inode->i_mapping,
+> -				     start >> PAGE_SHIFT);
+> +		page = find_get_page(inode->i_mapping, 0);
+>  		btrfs_set_file_extent_compression(leaf, ei, 0);
+>  		kaddr = kmap_atomic(page);
+> -		offset = offset_in_page(start);
+> -		write_extent_buffer(leaf, kaddr + offset, ptr, size);
+> +		write_extent_buffer(leaf, kaddr, ptr, size);
+>  		kunmap_atomic(kaddr);
+>  		put_page(page);
+>  	}
+> @@ -313,8 +312,8 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
+>  	 * We align size to sectorsize for inline extents just for simplicity
+>  	 * sake.
+>  	 */
+> -	size = ALIGN(size, root->fs_info->sectorsize);
+> -	ret = btrfs_inode_set_file_extent_range(BTRFS_I(inode), start, size);
+> +	ret = btrfs_inode_set_file_extent_range(BTRFS_I(inode), 0,
+> +					ALIGN(size, root->fs_info->sectorsize));
+>  	if (ret)
+>  		goto fail;
+>  
+> @@ -327,7 +326,13 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
+>  	 * before we unlock the pages.  Otherwise we
+>  	 * could end up racing with unlink.
+>  	 */
+> -	BTRFS_I(inode)->disk_i_size = inode->i_size;
+> +	i_size = i_size_read(inode);
+> +	if (update_i_size && size > i_size) {
+> +		i_size_write(inode, size);
+> +		i_size = size;
+> +	}
+> +	BTRFS_I(inode)->disk_i_size = i_size;
+> +
+>  fail:
+>  	return ret;
+>  }
+> @@ -338,35 +343,31 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
+>   * does the checks required to make sure the data is small enough
+>   * to fit as an inline extent.
+>   */
+> -static noinline int cow_file_range_inline(struct btrfs_inode *inode, u64 start,
+> -					  u64 end, size_t compressed_size,
+> +static noinline int cow_file_range_inline(struct btrfs_inode *inode, u64 size,
+> +					  size_t compressed_size,
+>  					  int compress_type,
+> -					  struct page **compressed_pages)
+> +					  struct page **compressed_pages,
+> +					  bool update_i_size)
+>  {
+>  	struct btrfs_drop_extents_args drop_args = { 0 };
+>  	struct btrfs_root *root = inode->root;
+>  	struct btrfs_fs_info *fs_info = root->fs_info;
+>  	struct btrfs_trans_handle *trans;
+> -	u64 isize = i_size_read(&inode->vfs_inode);
+> -	u64 actual_end = min(end + 1, isize);
+> -	u64 inline_len = actual_end - start;
+> -	u64 aligned_end = ALIGN(end, fs_info->sectorsize);
+> -	u64 data_len = inline_len;
+> +	u64 data_len = compressed_size ? compressed_size : size;
+>  	int ret;
+>  	struct btrfs_path *path;
+>  
+> -	if (compressed_size)
+> -		data_len = compressed_size;
+> -
+> -	if (start > 0 ||
+> -	    actual_end > fs_info->sectorsize ||
+> +	/*
+> +	 * We can create an inline extent if it ends at or beyond the current
+> +	 * i_size, is no larger than a sector (decompressed), and the (possibly
+> +	 * compressed) data fits in a leaf and the configured maximum inline
+> +	 * size.
+> +	 */
 
-I think this is somewhat another kind of "stop user space trying
-to do stupid things" thingy, not necessarily glued to ETXTBUSY:
-don't allow replacing exe_file if that very file is still mapped
-and consequently eventually still in use by the application.
+Urgh, just some days ago Qu was talking about how awkward it is to have
+mixed extents in a file. And now, AFAIU, you are making them more likely
+since now they can be created not just at the beginning of the file but
+also after i_size write. While this won't be a problem in and of itself
+it goes just the opposite way of us trying to shrink the possible cases
+when we can have mixed extents. Qu what is your take on that?
 
-I don't think it necessarily has many things to do with ETXTBUSY:
-we only check if there is a VMA mapping that file, not that it's
-a VM_DENYWRITE mapping.
-
-That code originates from
-
-commit 4229fb1dc6843c49a14bb098719f8a696cdc44f8
-Author: Konstantin Khlebnikov <khlebnikov@openvz.org>
-Date:   Wed Jul 11 14:02:11 2012 -0700
-
-     c/r: prctl: less paranoid prctl_set_mm_exe_file()
-
-     "no other files mapped" requirement from my previous patch (c/r: prctl:
-     update prctl_set_mm_exe_file() after mm->num_exe_file_vmas removal) is too
-     paranoid, it forbids operation even if there mapped one shared-anon vma.
-     
-     Let's check that current mm->exe_file already unmapped, in this case
-     exe_file symlink already outdated and its changing is reasonable.
-
-
-The statement "exe_file symlink already outdated and its
-changing is reasonable" somewhat makes sense.
-
-
-Long story short, I think this check somehow makes a bit of sense, but
-we wouldn't lose too much if we drop it -- just another sanity check.
-
-Your call :)
-
--- 
-Thanks,
-
-David / dhildenb
-
+<snip>
