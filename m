@@ -2,93 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 755423F33E4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 20:35:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E84393F34CE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 21:48:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236193AbhHTSfw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Aug 2021 14:35:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36468 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232017AbhHTSfv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Aug 2021 14:35:51 -0400
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2EB1C061575
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Aug 2021 11:35:12 -0700 (PDT)
-Received: by mail-qk1-x729.google.com with SMTP id t66so11891545qkb.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Aug 2021 11:35:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:from:to:cc:subject;
-        bh=20/a0sZ2dzFKeddKBSkNEVtv2AMo9NoJrHJmvABR31k=;
-        b=iraa4Yg2ZIyDuLWjWxoz7XhaITVgAYkL2+UmLSFrqzMB3Uvs29V23Zg5ZWoo3nSrSZ
-         b0dXIrjTqoCGqlt1bugRacT5AbM7T5760fHd5UgMw48rJMdz4pQCKgkQqu+1q6icd7Lh
-         tR4z5xVyYZXDdAyNdKWuDuKWkAVefKGJAU+UbRIwopG6QmTsWlPBx9e+xAAOzGooNbGA
-         /5NPhzg0yAMk99xz4CasbFUmtvV3ciy4mALUH8pW1BZ0fEBCJlOUuEc8VXFVTaPaSSfd
-         lX0gEIIFctA+XwIkf/dWjE4RhQP77SJUbdLGVanMyBnf0sf3Vbd62+dQ9ux2O4jgxyRK
-         V1Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject;
-        bh=20/a0sZ2dzFKeddKBSkNEVtv2AMo9NoJrHJmvABR31k=;
-        b=KP4fAepSL4BWyeaZh1G8WLrJYnVCi9DWveHZiq614rsiTUxKBEoUbKYRimXjbk2ndM
-         bKYatfgmz+NMkR76cxY4h5DPG5A8RD0mP9XjWxw/PC4B3JcJ2X4YvffjiT1eDgq2GjDg
-         8zzSuI9387YewU3I7u70Yp9qHh8ajxCqtoQI/S0Vht8iGuEzZH2lgg1+oBZEM8rw1HLd
-         y+8dFty+AP/XipqHjOhtg2uUAfSuBa99+ZXNXcbYF1tptoZluUXsJqCpCgIOv3MfXDm4
-         Zr9ORFr6MO2vEiwKMDFbLJXwe2NE6kdDg7ecGUejihTWePEI++z/IWZzqMLH8f9uk5bl
-         sXPQ==
-X-Gm-Message-State: AOAM532xODnNtrnsBgBZINDo4et7+i78VDnyPaAYAKTIzoY/5EN1U3Nx
-        jWvzJVE5Eld/V6Fi8UtgGKgFDA==
-X-Google-Smtp-Source: ABdhPJyu6VME/MSR6isTYWyYplihN92JlMd+BYrZuko4mFZdVnneppsOXB+uYbKpE5mJc8NKjPKd6A==
-X-Received: by 2002:a37:9481:: with SMTP id w123mr10382554qkd.75.1629484511800;
-        Fri, 20 Aug 2021 11:35:11 -0700 (PDT)
-Received: from localhost (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id p187sm3584045qkd.101.2021.08.20.11.35.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Aug 2021 11:35:11 -0700 (PDT)
-Message-ID: <611ff5df.1c69fb81.43234.a478@mx.google.com>
-Date:   Fri, 20 Aug 2021 14:35:09 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     lsf-pc@lists.linuxfoundation.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-nvme@lists.infradead.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [REMINDER] LSF/MM/BPF: 2021: Cancellation announcement
+        id S234721AbhHTTt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Aug 2021 15:49:28 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:55879 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229771AbhHTTt1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Aug 2021 15:49:27 -0400
+X-Greylist: delayed 1672 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Aug 2021 15:49:27 EDT
+Received: from [IPv6:::1] ([IPv6:2601:646:8600:3c71:6111:82d6:dfad:778c])
+        (authenticated bits=0)
+        by mail.zytor.com (8.16.1/8.15.2) with ESMTPSA id 17KJHuYd937846
+        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+        Fri, 20 Aug 2021 12:17:56 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 17KJHuYd937846
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2021073001; t=1629487085;
+        bh=Swjddd6h78nIFLV61ZIUR3LeMVGCy8t3nFizFuvLjOo=;
+        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+        b=KscL6G2l89RQDkEtrhzSWjkvZrFHDi+mzgdzo/IbbPwLq6hNBd/OSU8dL1PWFV2XB
+         wW+VbG4+sezrIAFCFB8T+pmg6Yfqoj7N7eBkkAi2dUC3C8vdIwop4fIXcbDs3wMfpG
+         f0B3USGu38WtkjiXeVwFomXyjKRnp5IO2zD5dCWSTRgpWS1BQ7x4EK1amPlOfx2g2R
+         39Seo/9NcBLHhjPLJQzAbvNgCgsmAdvLK7fdWXaH+KOi+8B2NwpUmMMK6zBO0r0g1q
+         3H9W2Tx23mLp1AzBXvSadlivUk+lpgzSKZM/SmBCIRGLfdCFgs6awRKUKsF4ER/6mk
+         MZM0sEf8tTcrw==
+Date:   Fri, 20 Aug 2021 12:17:49 -0700
+From:   "H. Peter Anvin" <hpa@zytor.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     Jeff Layton <jlayton@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        David Hildenbrand <david@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Michel Lespinasse <walken@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Price <steven.price@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Marco Elver <elver@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Collin Fijalkovich <cfijalkovich@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        =?ISO-8859-1?Q?Christian_K=F6nig?= 
+        <ckoenig.leichtzumerken@gmail.com>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Subject: Re: Removing Mandatory Locks
+User-Agent: K-9 Mail for Android
+In-Reply-To: <202108200905.BE8AF7C@keescook>
+References: <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com> <87eeay8pqx.fsf@disp2133> <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com> <87h7ft2j68.fsf@disp2133> <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com> <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com> <YRcyqbpVqwwq3P6n@casper.infradead.org> <87k0kkxbjn.fsf_-_@disp2133> <0c2af732e4e9f74c9d20b09fc4b6cbae40351085.camel@kernel.org> <CAHk-=wgewmbABDC3_ZNn11C+sm4Uz0L9HZ5Kvx0Joho4vsV4DQ@mail.gmail.com> <202108200905.BE8AF7C@keescook>
+Message-ID: <D2325492-F4DD-4E7A-B4F1-0E595FF2469A@zytor.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Due to the continal assessments and growing concerns around the spiking COVID-19
-infections worldwide we have made the decision to cancel the Linux Storage,
-Filesystem, Memory Management, and BPF summit this year.
+I thought the main user was Samba and/or otherwise providing file service f=
+or M$ systems?
 
-We are investigating dates for 2022 with the hopes that we can finally hold a
-safe and productive conference.  When we have finalized those plans and are
-ready to begin planning again we will send out a new call for participation.
-The current board will stay in place until we can successfully host the next
-conference.
+On August 20, 2021 9:30:31 AM PDT, Kees Cook <keescook@chromium=2Eorg> wro=
+te:
+>On Thu, Aug 19, 2021 at 12:15:08PM -0700, Linus Torvalds wrote:
+>> On Thu, Aug 19, 2021 at 11:39 AM Jeff Layton <jlayton@kernel=2Eorg> wro=
+te:
+>> >
+>> > I'm all for ripping it out too=2E It's an insane interface anyway=2E
+>> >
+>> > I've not heard a single complaint about this being turned off in
+>> > fedora/rhel or any other distro that has this disabled=2E
+>>=20
+>> I'd love to remove it, we could absolutely test it=2E The fact that
+>> several major distros have it disabled makes me think it's fine=2E
+>
+>FWIW, it is now disabled in Ubuntu too:
+>
+>https://git=2Elaunchpad=2Enet/~ubuntu-kernel/ubuntu/+source/linux/+git/im=
+pish/commit/?h=3Dmaster-next&id=3Df3aac5e47789cbeb3177a14d3d2a06575249e14b
+>
+>> But as always, it would be good to check Android=2E
+>
+>It looks like it's enabled (checking the Pixel 4 kernel image), but it's
+>not specifically mentioned in any of the build configs that are used to
+>construct the image, so I think this is just catching the "default y"=2E =
+I
+>expect it'd be fine to turn this off=2E
+>
+>I will ask around to see if it's actually used=2E
+>
 
-We thank you for your patience and understanding while we continue to work
-through this very unpredictable situation.
-
-The linux plumbers conference is being held virtually, and there are several
-micro conferences that cover the various topics that we cover at LSF.  If you
-have the desire to still talk with your fellow colleagues I encourage you to
-look into participating in linux plumbers and possibly submitting talks for the
-appropriate micro conference.
-
-Thank you again for your support.  Our sincere sympathies are with all those
-who continue to be affected by this pandemic and wish for good health and safety
-for all.
-
-Thank you on behalf of the program committe:
-
-        Josef Bacik (Filesystems)
-        Amir Goldstein (Filesystems)
-        Martin K. Petersen (Storage)
-        Omar Sandoval (Storage)
-        Michal Hocko (MM)
-        Dan Williams (MM)
-        Alexei Starovoitov (BPF)
-        Daniel Borkmann (BPF)
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
