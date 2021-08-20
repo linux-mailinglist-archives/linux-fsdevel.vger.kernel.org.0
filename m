@@ -2,149 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 99B693F2D55
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 15:43:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9FD93F2D59
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 15:44:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240785AbhHTNnz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Aug 2021 09:43:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57286 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229829AbhHTNnv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Aug 2021 09:43:51 -0400
-Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S240742AbhHTNpH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Aug 2021 09:45:07 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:53112 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232665AbhHTNpG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Aug 2021 09:45:06 -0400
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D120610FF;
-        Fri, 20 Aug 2021 13:43:08 +0000 (UTC)
-Date:   Fri, 20 Aug 2021 09:43:01 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        David Laight <David.Laight@aculab.com>,
-        David Hildenbrand <david@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
+        by smtp-out2.suse.de (Postfix) with ESMTPS id E02A61FE1C;
+        Fri, 20 Aug 2021 13:44:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1629467067; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=d5raNlKgvypG7IvfRrvozam7fNEdYbSYncKz54HTIlg=;
+        b=AXJTqRgTe7+ZMMjypRJG30qUS5KwW+B5C7xNBu7XN26GRX6JVdXzyNnkW6lLINsTMe75HH
+        1t/3zOOrFEBGy5aeWN7tKX4FcBnwtrqXTgjQYtsOEziIXEpwjQ3u6YXRxamZ5HK7rUWgPo
+        We+sOQMk74pzsWhDr/KnvCFd3LV2/fE=
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id 83A6213ADF;
+        Fri, 20 Aug 2021 13:44:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap1.suse-dmz.suse.de with ESMTPSA
+        id 457LHLuxH2HnGwAAGKfGzw
+        (envelope-from <nborisov@suse.com>); Fri, 20 Aug 2021 13:44:27 +0000
+Subject: Re: [PATCH v10 09/14] btrfs: add BTRFS_IOC_ENCODED_WRITE
+To:     Omar Sandoval <osandov@osandov.com>, linux-btrfs@vger.kernel.org
+Cc:     kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Michel Lespinasse <walken@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Price <steven.price@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Marco Elver <elver@google.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Collin Fijalkovich <cfijalkovich@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Christian =?UTF-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>,
-        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Subject: Re: Removing Mandatory Locks
-Message-ID: <20210820094301.62421e21@oasis.local.home>
-In-Reply-To: <CAHk-=wgHbYmUZvFkthGJ6zZx+ofTiiTRxPai5mPkmbtE=6JbaQ@mail.gmail.com>
-References: <20210812084348.6521-1-david@redhat.com>
-        <87o8a2d0wf.fsf@disp2133>
-        <60db2e61-6b00-44fa-b718-e4361fcc238c@www.fastmail.com>
-        <87lf56bllc.fsf@disp2133>
-        <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
-        <87eeay8pqx.fsf@disp2133>
-        <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
-        <87h7ft2j68.fsf@disp2133>
-        <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
-        <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
-        <YRcyqbpVqwwq3P6n@casper.infradead.org>
-        <87k0kkxbjn.fsf_-_@disp2133>
-        <0c2af732e4e9f74c9d20b09fc4b6cbae40351085.camel@kernel.org>
-        <CAHk-=wgewmbABDC3_ZNn11C+sm4Uz0L9HZ5Kvx0Joho4vsV4DQ@mail.gmail.com>
-        <a1385746582a675c410aca4eb4947320faec4821.camel@kernel.org>
-        <CAHk-=wgD-SNxB=2iCurEoP=RjrciRgLtXZ7R_DejK+mXF2etfg@mail.gmail.com>
-        <639d90212662cf5cdf80c71bbfec95907c70114a.camel@kernel.org>
-        <CAHk-=wgHbYmUZvFkthGJ6zZx+ofTiiTRxPai5mPkmbtE=6JbaQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-api@vger.kernel.org
+References: <cover.1629234193.git.osandov@fb.com>
+ <497af8b97838225920491f9146d9f65b6539e2d2.1629234193.git.osandov@fb.com>
+From:   Nikolay Borisov <nborisov@suse.com>
+Message-ID: <bb47ef73-0f9c-55b2-c916-5774a3fe5278@suse.com>
+Date:   Fri, 20 Aug 2021 16:44:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <497af8b97838225920491f9146d9f65b6539e2d2.1629234193.git.osandov@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 19 Aug 2021 15:32:31 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> I originally thought WARN_ON_ONCE() just to get the distro automatic
-> error handling involved, but it would probably be a big problem for
-> the people who end up having panic-on-warn or something.
+
+On 18.08.21 г. 0:06, Omar Sandoval wrote:
+> From: Omar Sandoval <osandov@fb.com>
 > 
-> So probably just a "make it a big box" thing that stands out, kind of
-> what lockdep etc does with
+> The implementation resembles direct I/O: we have to flush any ordered
+> extents, invalidate the page cache, and do the io tree/delalloc/extent
+> map/ordered extent dance. From there, we can reuse the compression code
+> with a minor modification to distinguish the write from writeback. This
+> also creates inline extents when possible.
 > 
->         pr_warn("======...====\n");
+> Signed-off-by: Omar Sandoval <osandov@fb.com>
+
+<snip>
+
+>   * Add an entry indicating a block group or device which is pinned by a
+> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+> index 7a0a9c752624..13a0a65c6a43 100644
+> --- a/fs/btrfs/ioctl.c
+> +++ b/fs/btrfs/ioctl.c
+> @@ -103,6 +103,8 @@ struct btrfs_ioctl_encoded_io_args_32 {
+>  
+>  #define BTRFS_IOC_ENCODED_READ_32 _IOR(BTRFS_IOCTL_MAGIC, 64, \
+>  				       struct btrfs_ioctl_encoded_io_args_32)
+> +#define BTRFS_IOC_ENCODED_WRITE_32 _IOW(BTRFS_IOCTL_MAGIC, 64, \
+> +					struct btrfs_ioctl_encoded_io_args_32)
+>  #endif
+>  
+>  /* Mask out flags that are inappropriate for the given type of inode. */
+> @@ -4992,6 +4994,102 @@ static int btrfs_ioctl_encoded_read(struct file *file, void __user *argp,
+>  	return ret;
+>  }
+>  
+> +static int btrfs_ioctl_encoded_write(struct file *file, void __user *argp,
+> +				     bool compat)
+> +{
+> +	struct btrfs_ioctl_encoded_io_args args;
+> +	struct iovec iovstack[UIO_FASTIOV];
+> +	struct iovec *iov = iovstack;
+> +	struct iov_iter iter;
+> +	loff_t pos;
+> +	struct kiocb kiocb;
+> +	ssize_t ret;
+> +
+> +	if (!capable(CAP_SYS_ADMIN)) {
+> +		ret = -EPERM;
+> +		goto out_acct;
+> +	}
+> +
+> +	if (!(file->f_mode & FMODE_WRITE)) {
+> +		ret = -EBADF;
+> +		goto out_acct;
+> +	}
+> +
+> +	if (compat) {
+> +#if defined(CONFIG_64BIT) && defined(CONFIG_COMPAT)
+> +		struct btrfs_ioctl_encoded_io_args_32 args32;
+> +
+> +		if (copy_from_user(&args32, argp, sizeof(args32))) {
+> +			ret = -EFAULT;
+> +			goto out_acct;
+> +		}
+> +		args.iov = compat_ptr(args32.iov);
+> +		args.iovcnt = args.iovcnt;
+> +		memcpy(&args.offset, &args32.offset,
+> +		       sizeof(args) -
+> +		       offsetof(struct btrfs_ioctl_encoded_io_args, offset));
+> +#else
+> +		return -ENOTTY;
+> +#endif
+> +	} else {
+> +		if (copy_from_user(&args, argp, sizeof(args))) {
+> +			ret = -EFAULT;
+> +			goto out_acct;
+> +		}
+> +	}
+> +
+> +	ret = -EINVAL;
+> +	if (args.flags != 0)
+> +		goto out_acct;
+> +	if (memchr_inv(args.reserved, 0, sizeof(args.reserved)))
+> +		goto out_acct;
+> +	if (args.compression == BTRFS_ENCODED_IO_COMPRESSION_NONE &&
+> +	    args.encryption == BTRFS_ENCODED_IO_ENCRYPTION_NONE)
+
+Do you intend on supporting encrypted data writeout in the future, given
+that in btrfs_do_encoded_write EINVAL is returned if the data to be
+written is encrypted? If not then this check could be moved earlier to
+fail fast.
+
+<snip>
+
+> @@ -5138,9 +5236,13 @@ long btrfs_ioctl(struct file *file, unsigned int
+>  		return fsverity_ioctl_measure(file, argp);
+>  	case BTRFS_IOC_ENCODED_READ:
+>  		return btrfs_ioctl_encoded_read(file, argp, false);
+> +	case BTRFS_IOC_ENCODED_WRITE:
+> +		return btrfs_ioctl_encoded_write(file, argp, false);
+>  #if defined(CONFIG_64BIT) && defined(CONFIG_COMPAT)
+>  	case BTRFS_IOC_ENCODED_READ_32:
+>  		return btrfs_ioctl_encoded_read(file, argp, true);
+> +	case BTRFS_IOC_ENCODED_WRITE_32:
+> +		return btrfs_ioctl_encoded_write(file, argp, true);
+>  #endif
+>  	}
+>  
+> diff --git a/fs/btrfs/ordered-data.c b/fs/btrfs/ordered-data.c
+> index 550c34fa0e6d..180f302dee93 100644
+> --- a/fs/btrfs/ordered-data.c
+> +++ b/fs/btrfs/ordered-data.c
+> @@ -521,9 +521,15 @@ void btrfs_remove_ordered_extent(struct btrfs_inode *btrfs_inode,
+>  	spin_lock(&btrfs_inode->lock);
+>  	btrfs_mod_outstanding_extents(btrfs_inode, -1);
+>  	spin_unlock(&btrfs_inode->lock);
+> -	if (root != fs_info->tree_root)
+> -		btrfs_delalloc_release_metadata(btrfs_inode, entry->num_bytes,
+> -						false);
+> +	if (root != fs_info->tree_root) {
+> +		u64 release;
+> +
+> +		if (test_bit(BTRFS_ORDERED_ENCODED, &entry->flags))
+> +			release = entry->disk_num_bytes;
+> +		else
+> +			release = entry->num_bytes;
+> +		btrfs_delalloc_release_metadata(btrfs_inode, release, false);
+> +	}
+>  
+>  	percpu_counter_add_batch(&fs_info->ordered_bytes, -entry->num_bytes,
+>  				 fs_info->delalloc_batch);
+> diff --git a/fs/btrfs/ordered-data.h b/fs/btrfs/ordered-data.h
+> index 0feb0c29839e..04588ccad34c 100644
+> --- a/fs/btrfs/ordered-data.h
+> +++ b/fs/btrfs/ordered-data.h
+> @@ -74,6 +74,8 @@ enum {
+>  	BTRFS_ORDERED_LOGGED_CSUM,
+>  	/* We wait for this extent to complete in the current transaction */
+>  	BTRFS_ORDERED_PENDING,
+> +	/* RWF_ENCODED I/O */
+
+nit: RWF_ENCODED is no longer, we simply have ioctl-based encoded io. So
+this needs to be renamed to avoid confusion for people not necessarily
+faimilar with the development history of the feature.
+
+> +	BTRFS_ORDERED_ENCODED,
+>  };
+>  
+>  /* BTRFS_ORDERED_* flags that specify the type of the extent. */
+> @@ -81,7 +83,8 @@ enum {
+>  				  (1UL << BTRFS_ORDERED_NOCOW) |	\
+>  				  (1UL << BTRFS_ORDERED_PREALLOC) |	\
+>  				  (1UL << BTRFS_ORDERED_COMPRESSED) |	\
+> -				  (1UL << BTRFS_ORDERED_DIRECT))
+> +				  (1UL << BTRFS_ORDERED_DIRECT) |	\
+> +				  (1UL << BTRFS_ORDERED_ENCODED))
+>  
+>  struct btrfs_ordered_extent {
+>  	/* logical offset in the file */
 > 
-> around the messages..
-> 
-> I don't know if distros have some pattern we could use that would end
-> up being something that gets reported to the user?
-
-People have started using my trace-printk notice message, that seems to
-be big enough to get noticed.
-
-
- **********************************************************
- **   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
- **                                                      **
- ** trace_printk() being used. Allocating extra memory.  **
- **                                                      **
- ** This means that this is a DEBUG kernel and it is     **
- ** unsafe for production use.                           **
- **                                                      **
- ** If you see this message and you are not debugging    **
- ** the kernel, report this immediately to your vendor!  **
- **                                                      **
- **   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **
- **********************************************************
-
-There's been some talk about making that a more "generic" warning
-message too.
-
--- Steve
