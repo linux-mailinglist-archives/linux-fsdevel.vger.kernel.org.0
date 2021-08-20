@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CFAD33F2865
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 10:26:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A768F3F286C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 10:30:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235365AbhHTI0h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Aug 2021 04:26:37 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.85.151]:30444 "EHLO
+        id S230490AbhHTIbW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Aug 2021 04:31:22 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.85.151]:47591 "EHLO
         eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234924AbhHTI0a (ORCPT
+        by vger.kernel.org with ESMTP id S231142AbhHTIbV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Aug 2021 04:26:30 -0400
+        Fri, 20 Aug 2021 04:31:21 -0400
 Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) (Using
  TLS) by relay.mimecast.com with ESMTP id
- uk-mta-50-1lwXgCl5MSC7hSZT66iCNQ-1; Fri, 20 Aug 2021 09:25:49 +0100
-X-MC-Unique: 1lwXgCl5MSC7hSZT66iCNQ-1
+ uk-mta-274-2Q2jLTjjOQuEz4g5fh9Tsg-1; Fri, 20 Aug 2021 09:30:42 +0100
+X-MC-Unique: 2Q2jLTjjOQuEz4g5fh9Tsg-1
 Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
  AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.23; Fri, 20 Aug 2021 09:25:47 +0100
+ Server (TLS) id 15.0.1497.23; Fri, 20 Aug 2021 09:30:39 +0100
 Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
  AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.023; Fri, 20 Aug 2021 09:25:47 +0100
+ 15.00.1497.023; Fri, 20 Aug 2021 09:30:39 +0100
 From:   David Laight <David.Laight@ACULAB.COM>
-To:     'NeilBrown' <neilb@suse.de>,
-        "J. Bruce Fields" <bfields@fieldses.org>
-CC:     Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+To:     'Linus Torvalds' <torvalds@linux-foundation.org>,
+        Jeff Layton <jlayton@kernel.org>
+CC:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
         David Hildenbrand <david@redhat.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -44,7 +44,7 @@ CC:     Andy Lutomirski <luto@kernel.org>,
         Jiri Olsa <jolsa@redhat.com>,
         "Namhyung Kim" <namhyung@kernel.org>,
         Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        "Sergey Senozhatsky" <sergey.senozhatsky@gmail.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Kees Cook <keescook@chromium.org>,
@@ -56,14 +56,14 @@ CC:     Andy Lutomirski <luto@kernel.org>,
         Chinwen Chang <chinwen.chang@mediatek.com>,
         Michel Lespinasse <walken@google.com>,
         "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Huang Ying <ying.huang@intel.com>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        "Jann Horn" <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
         Kevin Brodsky <Kevin.Brodsky@arm.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         "Shawn Anastasio" <shawn@anastas.io>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Christian Brauner" <christian.brauner@ubuntu.com>,
+        Steven Price <steven.price@arm.com>,
+        "Nicholas Piggin" <npiggin@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
         Jens Axboe <axboe@kernel.dk>,
         "Gabriel Krisman Bertazi" <krisman@collabora.com>,
         Peter Xu <peterx@redhat.com>,
@@ -71,7 +71,7 @@ CC:     Andy Lutomirski <luto@kernel.org>,
         Shakeel Butt <shakeelb@google.com>,
         "Marco Elver" <elver@google.com>,
         Daniel Jordan <daniel.m.jordan@oracle.com>,
-        "Nicolas Viennot" <Nicolas.Viennot@twosigma.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
         Thomas Cedeno <thomascedeno@google.com>,
         Collin Fijalkovich <cfijalkovich@google.com>,
         Michal Hocko <mhocko@suse.com>,
@@ -86,24 +86,27 @@ CC:     Andy Lutomirski <luto@kernel.org>,
         Linux-MM <linux-mm@kvack.org>,
         "Florian Weimer" <fweimer@redhat.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>
-Subject: RE: [PATCH v1 0/7] Remove in-tree usage of MAP_DENYWRITE
-Thread-Topic: [PATCH v1 0/7] Remove in-tree usage of MAP_DENYWRITE
-Thread-Index: AQHXj6qO2FP1eIrarUmjR9CxLZPkE6txIhrAgAqqIaSAAEsGQA==
-Date:   Fri, 20 Aug 2021 08:25:47 +0000
-Message-ID: <aacb44aad4064d4b84dca97c38d0b6a0@AcuMS.aculab.com>
-References: <20210812084348.6521-1-david@redhat.com>,
- <87o8a2d0wf.fsf@disp2133>,
- <60db2e61-6b00-44fa-b718-e4361fcc238c@www.fastmail.com>,
- <87lf56bllc.fsf@disp2133>,
- <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>,
- <87eeay8pqx.fsf@disp2133>,
- <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>,
- <87h7ft2j68.fsf@disp2133>,
- <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>,
- <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>,
- <20210818154217.GB24115@fieldses.org>
- <162943109106.9892.7426782042253067338@noble.neil.brown.name>
-In-Reply-To: <162943109106.9892.7426782042253067338@noble.neil.brown.name>
+Subject: RE: Removing Mandatory Locks
+Thread-Topic: Removing Mandatory Locks
+Thread-Index: AQHXlUolKQrpfCPkWUimXalbi9gnr6t8D3Ag
+Date:   Fri, 20 Aug 2021 08:30:39 +0000
+Message-ID: <ec075ee5764f4c7f9dd630090fb01f70@AcuMS.aculab.com>
+References: <20210812084348.6521-1-david@redhat.com> <87o8a2d0wf.fsf@disp2133>
+ <60db2e61-6b00-44fa-b718-e4361fcc238c@www.fastmail.com>
+ <87lf56bllc.fsf@disp2133>
+ <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
+ <87eeay8pqx.fsf@disp2133> <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
+ <87h7ft2j68.fsf@disp2133>
+ <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
+ <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
+ <YRcyqbpVqwwq3P6n@casper.infradead.org> <87k0kkxbjn.fsf_-_@disp2133>
+ <0c2af732e4e9f74c9d20b09fc4b6cbae40351085.camel@kernel.org>
+ <CAHk-=wgewmbABDC3_ZNn11C+sm4Uz0L9HZ5Kvx0Joho4vsV4DQ@mail.gmail.com>
+ <a1385746582a675c410aca4eb4947320faec4821.camel@kernel.org>
+ <CAHk-=wgD-SNxB=2iCurEoP=RjrciRgLtXZ7R_DejK+mXF2etfg@mail.gmail.com>
+ <639d90212662cf5cdf80c71bbfec95907c70114a.camel@kernel.org>
+ <CAHk-=wgHbYmUZvFkthGJ6zZx+ofTiiTRxPai5mPkmbtE=6JbaQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wgHbYmUZvFkthGJ6zZx+ofTiiTRxPai5mPkmbtE=6JbaQ@mail.gmail.com>
 Accept-Language: en-GB, en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
@@ -121,31 +124,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogTmVpbEJyb3duDQo+IFNlbnQ6IDIwIEF1Z3VzdCAyMDIxIDA0OjQ1DQouLi4NCj4gT19E
-RU5ZUkVBRCBpcyBhbiBpbnNhbmUgZmxhZy4gIElmIGEgcHJvY2VzcyByZWFkcyBhIGZpbGUgdGhh
-dCBzb21lIG90aGVyDQo+IHByb2Nlc3MgaXMgd29ya2luZyBvbiwgdGhlbiB0aGUgb25seSB3aGlj
-aCBjb3VsZCBiZSBodXJ0IGlzIHRoZSByZWFkZXIuDQo+IFNvIGFsbG93aW5nIGEgcHJvY2VzcyB0
-byBhc2sgZm9yIHRoZSBvcGVuIHRvIGZhaWwgaWYgc29tZW9uZSBpcyB3cml0aW5nDQo+IG1pZ2h0
-IG1ha2Ugc2Vuc2UuICBJbnNpc3RpbmcgdGhhdCBhbGwgb3BlbnMgZmFpbCBkb2VzIG5vdC4NCj4g
-QW55IGNvZGUgd2FudGluZyBPX0RFTllSRUFEICpzaG91bGQqIHVzZSBhZHZpc29yeSBsb2NraW5n
-LCBhbmQgYW55IGNvZGUNCj4gd2FudGluZyB0byBrbm93IGFib3V0IHJlYWQgZGVuaWFsIHNob3Vs
-ZCB0b28uDQoNCkl0IG1pZ2h0IG1ha2Ugc2Vuc2UgaWYgT19ERU5ZUkVBRCB8IE9fREVOWVdSSVRF
-IHwgT19SRFdSIGFyZSBhbGwgc2V0Lg0KVGhhdCB3b3VsZCBiZSB3aGF0IE9fRVhDTCBvdWdodCB0
-byBtZWFuIGZvciBhIG5vcm1hbCBmaWxlLg0KU28gd291bGQgYmUgdXNlZnVsIGZvciBhIHByb2dy
-YW0gdGhhdCB3YW50cyB0byB1cGRhdGUgYSBjb25maWcgZmlsZS4NCg0KLi4uDQo+IEl0IHdvdWxk
-IGJlIG5pY2UgdG8gYmUgYWJsZSB0byBjb21iaW5lIE9fREVOWVdSSVRFIHdpdGggT19SRFdSLiAg
-VGhpcw0KPiBjb21iaW5hdGlvbiBpcyBleGFjdGx5IHdoYXQgdGhlIGtlcm5lbCAqc2hvdWxkKiBk
-byBmb3Igc3dhcCBmaWxlcy4NCg0KSSBzdXNwZWN0IHRoYXQgaXMgYSBjb21tb24gdXNhZ2UgLSBl
-ZyBmb3IgdXBkYXRpbmcgYSBmaWxlIHRoYXQgY29udGFpbnMNCmEgbG9nIGZpbGUgc2VxdWVuY2Ug
-bnVtYmVyLg0KDQouLi4NCj4gSSdtIG5vdCBzdXJlIGFib3V0IE9fREVOWURFTEVURS4gIEl0IGlz
-IGEgbG9jayBvbiB0aGUgbmFtZS4gIFVuaXggaGFzDQo+IHRyYWRpdGlvbmFsbHkgdXNlZCBsb2Nr
-LWZpbGVzIHRvIGxvY2sgYSBuYW1lLiAgVGhlIGZ1bmN0aW9uYWxpdHkgbWFrZXMNCj4gc2Vuc2Ug
-Zm9yIHByb2Nlc3NlcyB3aXRoIHdyaXRlLWFjY2VzcyB0byB0aGUgZGlyZWN0b3J5Li4uDQoNCkkn
-bSBub3Qgc3VyZSBpdCBtYWtlcyBhbnkgc2Vuc2Ugb24gZmlsZXN5c3RlbXMgdGhhdCB1c2UgaW5v
-ZGUgbnVtYmVycy4NCldoaWNoIG5hbWUgd291bGQgeW91IHByb3RlY3QsIGFuZCBob3cgd291bGQg
-eW91IG1hbmFnZSB0byBkbyB0aGUgdGVzdC4NCk9uIHdpbmRvd3MgT19ERU5ZREVMRVRFIGlzIHBy
-ZXR0eSBtdWNoIHRoZSBkZWZhdWx0Lg0KV2hpY2ggaXMgd2h5IHNvZnR3YXJlIHVwZGF0ZXMgYXJl
-IHN1Y2ggYSBQSVRBLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRl
-LCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpS
-ZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMTkgQXVndXN0IDIwMjEgMjM6MzMNCj4gDQo+
+IE9uIFRodSwgQXVnIDE5LCAyMDIxIGF0IDI6NDMgUE0gSmVmZiBMYXl0b24gPGpsYXl0b25Aa2Vy
+bmVsLm9yZz4gd3JvdGU6DQo+ID4NCj4gPiBXaGF0IHNvcnQgb2YgYmlnLCB1Z2x5IHdhcm5pbmcg
+ZGlkIHlvdSBoYXZlIGluIG1pbmQ/DQo+IA0KPiBJIG9yaWdpbmFsbHkgdGhvdWdodCBXQVJOX09O
+X09OQ0UoKSBqdXN0IHRvIGdldCB0aGUgZGlzdHJvIGF1dG9tYXRpYw0KPiBlcnJvciBoYW5kbGlu
+ZyBpbnZvbHZlZCwgYnV0IGl0IHdvdWxkIHByb2JhYmx5IGJlIGEgYmlnIHByb2JsZW0gZm9yDQo+
+IHRoZSBwZW9wbGUgd2hvIGVuZCB1cCBoYXZpbmcgcGFuaWMtb24td2FybiBvciBzb21ldGhpbmcu
+DQoNCkV2ZW4gcGFuaWMtb24tb29wcyBpcyBhIFBJVEEuDQpUb29rIHVzIHdlZWtzIHRvIHJlYWxp
+c2UgdGhhdCBhIGN1c3RvbWVyIHN5c3RlbSB0aGF0IHdhcyByYW5kb21seQ0KcmVib290aW5nIHdh
+cyAnanVzdCcgaGF2aW5nIGEgYm9yaW5nIE5VTEwgcG9pbnRlciBhY2Nlc3MuDQogDQo+IFNvIHBy
+b2JhYmx5IGp1c3QgYSAibWFrZSBpdCBhIGJpZyBib3giIHRoaW5nIHRoYXQgc3RhbmRzIG91dCwg
+a2luZCBvZg0KPiB3aGF0IGxvY2tkZXAgZXRjIGRvZXMgd2l0aA0KPiANCj4gICAgICAgICBwcl93
+YXJuKCI9PT09PT0uLi49PT09XG4iKTsNCj4gDQo+IGFyb3VuZCB0aGUgbWVzc2FnZXMuLg0KPiAN
+Cj4gSSBkb24ndCBrbm93IGlmIGRpc3Ryb3MgaGF2ZSBzb21lIHBhdHRlcm4gd2UgY291bGQgdXNl
+IHRoYXQgd291bGQgZW5kDQo+IHVwIGJlaW5nIHNvbWV0aGluZyB0aGF0IGdldHMgcmVwb3J0ZWQg
+dG8gdGhlIHVzZXI/DQoNCldpbGwgdXNlcnMgZXZlbiBzZWUgaXQ/DQpBIGxvdCBvZiByZWNlbnQg
+ZGlzdHJvIGluc3RhbGxzIHRyeSB2ZXJ5IGhhcmQgdG8gaGlkZSBhbGwgdGhlIGtlcm5lbA0KbWVz
+c2FnZXMuDQpPVE9IIEkgZ3Vlc3MgJy1vIG1hbmQnIGlzIHVubGlrZWx5IHRvIGJlIHNldCBvbiBh
+bnkgb2YgdGhvc2Ugc3lzdGVtcy4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBM
+YWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBU
+LCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
