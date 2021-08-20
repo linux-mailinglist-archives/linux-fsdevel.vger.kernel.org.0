@@ -2,93 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A673C3F363A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Aug 2021 00:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BA9F3F3679
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Aug 2021 00:32:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231615AbhHTWCG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Aug 2021 18:02:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35854 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229760AbhHTWCF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Aug 2021 18:02:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 05D6260F39;
-        Fri, 20 Aug 2021 22:01:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629496887;
-        bh=6Tvf7F8XzySJVAbATDnQkPDRqPuOZ8gtDkb+RLf8JtE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=a+qXY05sok1kXn0ucTlvGUaXS0cVuG6RW8Rg8+OrzmUosd0h64U4VrkHM1eFmTUpy
-         dOAL54ZWwyNRPd/6Jca3QOL7sFlUk/bYFhCR/LTpU1MF8QOSC121q8pnqQ4kT4IM8N
-         bkXww1I/CT+6LSuFIpsT8/gCJC6nVGSeBxBB/dzUPUY8w35fWNu7XUfRwTbqyhA0ss
-         heOKNv873m4IDcP43HGDZ3GK9vNJA/gEGKExVTlklWmeU4d4cf0klrZQ4r86tv7JW0
-         AI5PT99NwcZYuuDGtyUDpZyG61xx1a/Wrtl51zW1LgA7GiXFbR0poVZK1WeCjfgOoG
-         ckREQ7e93K7Ow==
-Subject: Re: [PATCH] f2fs: remove broken support for allocating DIO writes
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-References: <20210728015154.171507-1-ebiggers@kernel.org>
- <YQRQRh1zUHSIzcC/@gmail.com> <YQS5eBljtztWwOFE@mit.edu>
- <YQd3Hbid/mFm0o24@sol.localdomain>
- <a3cdd7cb-50a7-1b37-fe58-dced586712a2@kernel.org>
- <YQg4Lukc2dXX3aJc@google.com>
- <b88328b4-db3e-0097-d8cc-f250ee678e5b@kernel.org>
- <YQidOD/zNB17fd9v@google.com> <YRsY6dyHyaChkQ6n@gmail.com>
- <c4e5c71d-1652-7174-fa36-674fab4e61df@kernel.org>
- <YR/wbenc0d3eMAjz@sol.localdomain>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <c2d3a733-6caa-2bd8-ebe0-d26fe5132d16@kernel.org>
-Date:   Sat, 21 Aug 2021 06:01:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        id S231274AbhHTWdK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Aug 2021 18:33:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33690 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229451AbhHTWdI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Aug 2021 18:33:08 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AE86C061575;
+        Fri, 20 Aug 2021 15:32:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Rqd7XZjlI+nNgy4uwpEVUNLUjFWyJ9EMV7pUgmSDTMM=; b=ScMaiyryPuwarKlOD4teq+Ru/Q
+        wv7TrfDsI7YN5IkHpuXdP0Wz99OxXtNoibwbOYSZbJ7N/oL+yem9/3XsoJyK2D+YWGJrCnnYQvm2h
+        qV30W6G8LNquDniLNXz/nRBs3Z1mAmvdDTgC3MNIppohKZUExmN+apIfxJLHksWCOa67p9+1GwAuh
+        f5FvMDA9G9rWZohHRQWV2w5pTT+FyUrnAdFCPsE/FSuCVG8+VoKxMjs+4JrS//xNOW5rk5cS4DPj4
+        aS2Ets2iO3kIAh6Tftnn5hacmQmzeoMaQKS211gaqDIdFYqQE6lpkb8D8CRtzCNTSla6apcYpJdV8
+        SrI9ABTQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mHD2X-0073QU-D1; Fri, 20 Aug 2021 22:31:21 +0000
+Date:   Fri, 20 Aug 2021 23:31:05 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        David Hildenbrand <david@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Michel Lespinasse <walken@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Price <steven.price@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Marco Elver <elver@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Collin Fijalkovich <cfijalkovich@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        Christian =?iso-8859-1?Q?K=F6nig?= 
+        <ckoenig.leichtzumerken@gmail.com>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Subject: Re: Removing Mandatory Locks
+Message-ID: <YSAtKesNFlSIhHar@casper.infradead.org>
+References: <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
+ <87h7ft2j68.fsf@disp2133>
+ <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
+ <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
+ <YRcyqbpVqwwq3P6n@casper.infradead.org>
+ <87k0kkxbjn.fsf_-_@disp2133>
+ <0c2af732e4e9f74c9d20b09fc4b6cbae40351085.camel@kernel.org>
+ <CAHk-=wgewmbABDC3_ZNn11C+sm4Uz0L9HZ5Kvx0Joho4vsV4DQ@mail.gmail.com>
+ <202108200905.BE8AF7C@keescook>
+ <D2325492-F4DD-4E7A-B4F1-0E595FF2469A@zytor.com>
 MIME-Version: 1.0
-In-Reply-To: <YR/wbenc0d3eMAjz@sol.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D2325492-F4DD-4E7A-B4F1-0E595FF2469A@zytor.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021/8/21 2:11, Eric Biggers wrote:
-> On Fri, Aug 20, 2021 at 05:35:21PM +0800, Chao Yu wrote:
->>>>>>
->>>>>> Hmm, I'm still trying to deal with this as a corner case where the writes
->>>>>> haven't completed due to an error. How about keeping the preallocated block
->>>>>> offsets and releasing them if we get an error? Do we need to handle EIO right?
->>>>>
->>>>> What about the case that CP + SPO following DIO preallocation? User will
->>>>> encounter uninitialized block after recovery.
->>>>
->>>> I think buffered writes as a workaround can expose the last unwritten block as
->>>> well, if SPO happens right after block allocation. We may need to compromise
->>>> at certain level?
->>>>
->>>
->>> Freeing preallocated blocks on error would be better than nothing, although note
->>> that the preallocated blocks may have filled an arbitrary sequence of holes --
->>> so simply truncating past EOF would *not* be sufficient.
->>>
->>> But really filesystems need to be designed to never expose uninitialized data,
->>> even if I/O errors or a sudden power failure occurs.  It is unfortunate that
->>> f2fs apparently wasn't designed with that goal in mind.
->>>
->>> In any case, I don't think we can proceed with any other f2fs direct I/O
->>> improvements until this data leakage bug can be solved one way or another.  If
->>> my patch to remove support for allocating writes isn't acceptable and the
->>> desired solution is going to require some more invasive f2fs surgery, are you or
->>> Chao going to work on it?  I'm not sure there's much I can do here.
->>
->> I may have time to take look into the implementation as I proposed above, maybe
->> just enabling this in FSYNC_MODE_STRICT mode if user concerns unwritten data?
->> thoughts?
->>
-> 
-> What does this have to do with fsync?
+On Fri, Aug 20, 2021 at 12:17:49PM -0700, H. Peter Anvin wrote:
+> I thought the main user was Samba and/or otherwise providing file service for M$ systems?
 
-Oops, maybe a separate option is more appropriate.
-
-> 
-> - Eric
-> 
+When I asked around about this in ~2001, the only example anyoe was able
+to come up with was some database that I no longer remember the name of.
