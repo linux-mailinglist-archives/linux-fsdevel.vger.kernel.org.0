@@ -2,475 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA2C53F2655
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 07:10:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96CCD3F26C0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 08:23:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232649AbhHTFLY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Aug 2021 01:11:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48724 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231524AbhHTFLY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Aug 2021 01:11:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5DE9960FE6;
-        Fri, 20 Aug 2021 05:10:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1629436246;
-        bh=0Hrn2QiO2y3fC7/ArXOlBw3YsePdO1HvXx68nFCkDRk=;
-        h=Date:From:To:Subject:From;
-        b=RxYEOvD+pkFO7Ba3Qljeg/gwtA24uqu0Y0zYtviol19OglrMvqMAiGhBU0s4yOyOn
-         rU7nI4QKRJGHCd4a4fy9bvVzB96krmXo27Lhb4tEf6ryuYeI1DKcENWFUhFAoMNDKT
-         hp7+FnQVDB4KF/EgN5pkCP66fnMXmTDnKbL4XWyA=
-Date:   Thu, 19 Aug 2021 22:10:45 -0700
-From:   akpm@linux-foundation.org
-To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2021-08-19-22-10 uploaded
-Message-ID: <20210820051045.l7RIfLz4C%akpm@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        id S238276AbhHTGYE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Aug 2021 02:24:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35484 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232727AbhHTGYE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Aug 2021 02:24:04 -0400
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8B78C061575;
+        Thu, 19 Aug 2021 23:23:26 -0700 (PDT)
+Received: by mail-il1-x12a.google.com with SMTP id r6so8416868ilt.13;
+        Thu, 19 Aug 2021 23:23:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XUsUhEuTLWWcP4Va4eN33ck8pi79n7CztnAZY5/2XT4=;
+        b=So1o2CV5txO1d+5JmfwRN+JY3uMBVz41DxXiV3uaHyeQKcjSAcey2d/xpWjFyNT5oV
+         OqEh1UoHmyOtUhX8wtnieoom7LJkOWA1llvbDNMa1R/1hhfL+Ya1rSOUtrMxsLv+FwhJ
+         40UA6SzgZbv79O+H4YyiAKXZlGyHC98E6tpHyh6rCnOhpFRlSJbA67dG8sFugp/2CSt1
+         V8Xo9j6XFfmNX/D91Xx/Ft2qsci01z2MB27ARP9m0nnt0pUoCbx+ESB20909HSNIRhgB
+         I159oLsnYPD9cd1SlsXhfAWZYIjwBfbVLXb6eQiw3bfkf4xWKh+9M7lkkBhX3xrA8FJA
+         obeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XUsUhEuTLWWcP4Va4eN33ck8pi79n7CztnAZY5/2XT4=;
+        b=PYsWK+Q8MWcRZgwVZwlM7ZxYPv2YBqYF6xgEjMM4KRIC2M9t6BpbGXwg+XZG2uadbx
+         G4JFQHw/ph6vK+q5vsYY0t+zImpV/rktRWSzbr0jY4t0dLbcnynhwBwom3hEn65NKFdN
+         x0lTCgjG1Ys2tjuFDAccEvVV81/fBWKALOqUCKR3nmLbVUdwsCLJK0HXdewOciz25DwJ
+         ytJi7seyx30N+amg+IWm6SzaEaez9nJtmy/f4SXGDXgUmMprkV5c6Aud7PQFY4u0JNAU
+         raJdOr1b6rET0w2Ghs75PvC6jEasMYS4F0/ec0ekb0J/13ZwmKsn3JkikyRdJGU6lbaQ
+         kf7w==
+X-Gm-Message-State: AOAM530QR2p3aeyyiLuCvClY8rkctpKh389WddQHZUXctb8r+1nCrbmL
+        PATue4pIH/CVoCLpsB09R6IkLBHDSfPkh91/vuw=
+X-Google-Smtp-Source: ABdhPJzL6uxP36Wx4hSAZcQh1YXMqQWKUIsxhtGZWtbot2TxZq02oYKXZAjGg/8gYWgLHdINOMipV3qbLRcF+t8ElEY=
+X-Received: by 2002:a92:cd0a:: with SMTP id z10mr12295877iln.137.1629440606274;
+ Thu, 19 Aug 2021 23:23:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>
+ <162881913686.1695.12479588032010502384@noble.neil.brown.name>
+ <bf49ef31-0c86-62c8-7862-719935764036@libero.it> <20210816003505.7b3e9861@natsu>
+ <162906585094.1695.15815972140753474778@noble.neil.brown.name>
+ <CAOQ4uxiry7HcRtqY3DehNi4_PTLjxN0uMrw-oYcX9TgehC6m6w@mail.gmail.com> <162942971499.9892.4386273250573040668@noble.neil.brown.name>
+In-Reply-To: <162942971499.9892.4386273250573040668@noble.neil.brown.name>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 20 Aug 2021 09:23:14 +0300
+Message-ID: <CAOQ4uxjTc7amniZtSPWQbysD5YspE5Z=+5T1fC-bFqh56Y3_qQ@mail.gmail.com>
+Subject: Re: [PATCH] VFS/BTRFS/NFSD: provide more unique inode number for
+ btrfs export
+To:     NeilBrown <neilb@suse.de>
+Cc:     Roman Mamedov <rm@romanrm.net>,
+        Goffredo Baroncelli <kreijack@libero.it>,
+        Christoph Hellwig <hch@infradead.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2021-08-19-22-10 has been uploaded to
+On Fri, Aug 20, 2021 at 6:22 AM NeilBrown <neilb@suse.de> wrote:
+>
+> On Thu, 19 Aug 2021, Amir Goldstein wrote:
+> > On Mon, Aug 16, 2021 at 1:21 AM NeilBrown <neilb@suse.de> wrote:
+> > >
+> > > There are a few ways to handle this more gracefully.
+> > >
+> > > 1/ We could get btrfs to hand out new filehandles as well as new inode
+> > > numbers, but still accept the old filehandles.  Then we could make the
+> > > inode number reported be based on the filehandle.  This would be nearly
+> > > seamless but rather clumsy to code.  I'm not *very* keen on this idea,
+> > > but it is worth keeping in mind.
+> > >
+> >
+> > So objects would change their inode number after nfs inode cache is
+> > evicted and while nfs filesystem is mounted. That does not sound ideal.
+>
+> No.  Almost all filehandle lookups happen in the context of some other
+> filehandle.  If the provided context is an old-style filehandle, we
+> provide an old-style filehandle for the lookup.  There is already code
+> in nfsd to support this (as we have in the past changed how filesystems
+> are identified).
+>
 
-   https://www.ozlabs.org/~akpm/mmotm/
-
-mmotm-readme.txt says
-
-README for mm-of-the-moment:
-
-https://www.ozlabs.org/~akpm/mmotm/
-
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
-
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-https://ozlabs.org/~akpm/mmotm/series
-
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
-
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-	https://github.com/hnaz/linux-mm
-
-The directory https://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is also available at
-
-	https://github.com/hnaz/linux-mm
+I see. This is nice!
+It almost sounds like "inode mapped mounts" :-)
 
 
+> It would only be if the mountpoint filehandle (which is fetched without
+> that context) went out of cache that inode numbers would change.  That
+> would mean that the filesystem (possibly an automount) was unmounted.
+> When it was remounted it could have a different device number anyway, so
+> having different inode numbers would be of little consequence.
+>
+> >
+> > But I am a bit confused about the problem.
+> > If the export is of the btrfs root, then nfs client cannot access any
+> > subvolumes (right?) - that was the bug report, so the value of inode
+> > numbers in non-root subvolumes is not an issue.
+>
+> Not correct.  All objects in the filesystem are fully accessible.  The
+> only problem is that some pairs of objects have the same inode number.
+> This causes some programs like 'find' and 'du' to behave differently to
+> expectations.  They will refuse to even look in a subvolume, because it
+> looks like doing so could cause an infinite loop.  The values of inode
+> numbers in non-root subvolumes is EXACTLY the issue.
+>
 
-This mmotm tree contains the following patches against 5.14-rc6:
-(patches marked "*" will be included in linux-next)
+Thanks for clarifying.
 
-  origin.patch
-* revert-mm-shmem-fix-shmem_swapin-race-with-swapoff.patch
-* revert-mm-swap-check-if-swap-backing-device-is-congested-or-not.patch
-* mm-page_alloc-dont-corrupt-pcppage_migratetype.patch
-* mmflagsh-add-missing-__gfp_zerotags-and-__gfp_skip_kasan_poison-names.patch
-* maintainers-update-clangbuiltlinux-irc-chat.patch
-* mm-memcontrol-fix-occasional-ooms-due-to-proportional-memorylow-reclaim.patch
-* mm-hwpoison-retry-with-shake_page-for-unhandlable-pages.patch
-* mm-vmscan-fix-missing-psi-annotation-for-node_reclaim.patch
-* kfence-fix-is_kfence_address-for-addresses-below-kfence_pool_size.patch
-* hugetlb-dont-pass-page-cache-pages-to-restore_reserve_on_error.patch
-* mm-remove-bogus-vm_bug_on.patch
-* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
-* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
-* procfs-prevent-unpriveleged-processes-accessing-fdinfo-dir.patch
-* ia64-fix-typo-in-a-comment.patch
-* ocfs2-remove-an-unnecessary-condition.patch
-* ocfs2-quota_local-fix-possible-uninitialized-variable-access-in-ocfs2_local_read_info.patch
-* ocfs2-reflink-deadlock-when-clone-file-to-the-same-directory-simultaneously.patch
-* ocfs2-clear-links-count-in-ocfs2_mknod-if-an-error-occurs.patch
-* ocfs2-fix-ocfs2-corrupt-when-iputting-an-inode.patch
-* lib-fix-bugoncocci-warnings.patch
-  mm.patch
-* mm-slub-dont-call-flush_all-from-slab_debug_trace_open.patch
-* mm-slub-allocate-private-object-map-for-debugfs-listings.patch
-* mm-slub-allocate-private-object-map-for-validate_slab_cache.patch
-* mm-slub-dont-disable-irq-for-debug_check_no_locks_freed.patch
-* mm-slub-remove-redundant-unfreeze_partials-from-put_cpu_partial.patch
-* mm-slub-unify-cmpxchg_double_slab-and-__cmpxchg_double_slab.patch
-* mm-slub-extract-get_partial-from-new_slab_objects.patch
-* mm-slub-dissolve-new_slab_objects-into-___slab_alloc.patch
-* mm-slub-return-slab-page-from-get_partial-and-set-c-page-afterwards.patch
-* mm-slub-restructure-new-page-checks-in-___slab_alloc.patch
-* mm-slub-simplify-kmem_cache_cpu-and-tid-setup.patch
-* mm-slub-move-disabling-enabling-irqs-to-___slab_alloc.patch
-* mm-slub-do-initial-checks-in-___slab_alloc-with-irqs-enabled.patch
-* mm-slub-do-initial-checks-in-___slab_alloc-with-irqs-enabled-fix.patch
-* mm-slub-do-initial-checks-in-___slab_alloc-with-irqs-enabled-fix-fix.patch
-* mm-slub-move-disabling-irqs-closer-to-get_partial-in-___slab_alloc.patch
-* mm-slub-restore-irqs-around-calling-new_slab.patch
-* mm-slub-validate-slab-from-partial-list-or-page-allocator-before-making-it-cpu-slab.patch
-* mm-slub-check-new-pages-with-restored-irqs.patch
-* mm-slub-stop-disabling-irqs-around-get_partial.patch
-* mm-slub-move-reset-of-c-page-and-freelist-out-of-deactivate_slab.patch
-* mm-slub-make-locking-in-deactivate_slab-irq-safe.patch
-* mm-slub-call-deactivate_slab-without-disabling-irqs.patch
-* mm-slub-move-irq-control-into-unfreeze_partials.patch
-* mm-slub-discard-slabs-in-unfreeze_partials-without-irqs-disabled.patch
-* mm-slub-detach-whole-partial-list-at-once-in-unfreeze_partials.patch
-* mm-slub-separate-detaching-of-partial-list-in-unfreeze_partials-from-unfreezing.patch
-* mm-slub-only-disable-irq-with-spin_lock-in-__unfreeze_partials.patch
-* mm-slub-dont-disable-irqs-in-slub_cpu_dead.patch
-* mm-slab-make-flush_slab-possible-to-call-with-irqs-enabled.patch
-* mm-slub-move-flush_cpu_slab-invocations-__free_slab-invocations-out-of-irq-context.patch
-* mm-slub-move-flush_cpu_slab-invocations-__free_slab-invocations-out-of-irq-context-fix.patch
-* mm-slub-move-flush_cpu_slab-invocations-__free_slab-invocations-out-of-irq-context-fix-2.patch
-* mm-slub-make-object_map_lock-a-raw_spinlock_t.patch
-* mm-slub-optionally-save-restore-irqs-in-slab_lock.patch
-* mm-slub-make-slab_lock-disable-irqs-with-preempt_rt.patch
-* mm-slub-protect-put_cpu_partial-with-disabled-irqs-instead-of-cmpxchg.patch
-* mm-slub-use-migrate_disable-on-preempt_rt.patch
-* mm-slub-convert-kmem_cpu_slab-protection-to-local_lock.patch
-* mm-slub-convert-kmem_cpu_slab-protection-to-local_lock-fix.patch
-* mm-slub-convert-kmem_cpu_slab-protection-to-local_lock-fix-2.patch
-* mm-debug_vm_pgtable-introduce-struct-pgtable_debug_args.patch
-* mm-debug_vm_pgtable-use-struct-pgtable_debug_args-in-basic-tests.patch
-* mm-debug_vm_pgtable-use-struct-pgtable_debug_args-in-leaf-and-savewrite-tests.patch
-* mm-debug_vm_pgtable-use-struct-pgtable_debug_args-in-protnone-and-devmap-tests.patch
-* mm-debug_vm_pgtable-use-struct-pgtable_debug_args-in-soft_dirty-and-swap-tests.patch
-* mm-debug_vm_pgtable-use-struct-pgtable_debug_args-in-migration-and-thp-tests.patch
-* mm-debug_vm_pgtable-use-struct-pgtable_debug_args-in-pte-modifying-tests.patch
-* mm-debug_vm_pgtable-use-struct-pgtable_debug_args-in-pmd-modifying-tests.patch
-* mm-debug_vm_pgtable-use-struct-pgtable_debug_args-in-pud-modifying-tests.patch
-* mm-debug_vm_pgtable-use-struct-pgtable_debug_args-in-pgd-and-p4d-modifying-tests.patch
-* mm-debug_vm_pgtable-remove-unused-code.patch
-* mm-debug_vm_pgtable-fix-corrupted-page-flag.patch
-* mm-report-a-more-useful-address-for-reclaim-acquisition.patch
-* mm-add-kernel_misc_reclaimable-in-show_free_areas.patch
-* mm-mark-idle-page-tracking-as-broken.patch
-* writeback-track-number-of-inodes-under-writeback.patch
-* writeback-reliably-update-bandwidth-estimation.patch
-* writeback-fix-bandwidth-estimate-for-spiky-workload.patch
-* writeback-fix-bandwidth-estimate-for-spiky-workload-fix.patch
-* writeback-rename-domain_update_bandwidth.patch
-* writeback-use-read_once-for-unlocked-reads-of-writeback-stats.patch
-* mm-remove-irqsave-restore-locking-from-contexts-with-irqs-enabled.patch
-* fs-drop_caches-fix-skipping-over-shadow-cache-inodes.patch
-* fs-inode-count-invalidated-shadow-pages-in-pginodesteal.patch
-* vfs-keep-inodes-with-page-cache-off-the-inode-shrinker-lru.patch
-* writeback-memcg-simplify-cgroup_writeback_by_id.patch
-* mm-gup-remove-set-but-unused-local-variable-major.patch
-* mm-gup-remove-unneed-local-variable-orig_refs.patch
-* mm-gup-remove-useless-bug_on-in-__get_user_pages.patch
-* mm-gup-fix-potential-pgmap-refcnt-leak-in-__gup_device_huge.patch
-* mm-gup-fix-potential-pgmap-refcnt-leak-in-__gup_device_huge-fix.patch
-* mm-gup-fix-potential-pgmap-refcnt-leak-in-__gup_device_huge-fix-fix.patch
-* mm-gup-use-helper-page_aligned-in-populate_vma_page_range.patch
-* mm-gup-documentation-corrections-for-gup-pup.patch
-* mm-gup-small-refactoring-simplify-try_grab_page.patch
-* mm-gup-remove-try_get_page-call-try_get_compound_head-directly.patch
-* fs-mm-fix-race-in-unlinking-swapfile.patch
-* mm-delete-unused-get_kernel_page.patch
-* shmem-use-raw_spinlock_t-for-stat_lock.patch
-* shmem-remove-unneeded-variable-ret.patch
-* shmem-remove-unneeded-header-file.patch
-* shmem-remove-unneeded-function-forward-declaration.patch
-* shmem-include-header-file-to-declare-swap_info.patch
-* huge-tmpfs-fix-fallocatevanilla-advance-over-huge-pages.patch
-* huge-tmpfs-fix-split_huge_page-after-falloc_fl_keep_size.patch
-* huge-tmpfs-remove-shrinklist-addition-from-shmem_setattr.patch
-* huge-tmpfs-revert-shmems-use-of-transhuge_vma_enabled.patch
-* huge-tmpfs-move-shmem_huge_enabled-upwards.patch
-* huge-tmpfs-sgp_noalloc-to-stop-collapse_file-on-race.patch
-* huge-tmpfs-shmem_is_hugevma-inode-index.patch
-* huge-tmpfs-decide-statst_blksize-by-shmem_is_huge.patch
-* shmem-shmem_writepage-split-unlikely-i915-thp.patch
-* mm-memcg-add-mem_cgroup_disabled-checks-in-vmpressure-and-swap-related-functions.patch
-* mm-memcg-inline-mem_cgroup_charge-uncharge-to-improve-disabled-memcg-config.patch
-* mm-memcg-inline-swap-related-functions-to-improve-disabled-memcg-config.patch
-* memcg-enable-accounting-for-pids-in-nested-pid-namespaces.patch
-* memcg-switch-lruvec-stats-to-rstat.patch
-* memcg-infrastructure-to-flush-memcg-stats.patch
-* memcg-infrastructure-to-flush-memcg-stats-v5.patch
-* memcg-charge-fs_context-and-legacy_fs_context.patch
-* memcg-enable-accounting-for-mnt_cache-entries.patch
-* memcg-enable-accounting-for-pollfd-and-select-bits-arrays.patch
-* memcg-enable-accounting-for-file-lock-caches.patch
-* memcg-enable-accounting-for-fasync_cache.patch
-* memcg-enable-accounting-for-new-namesapces-and-struct-nsproxy.patch
-* memcg-enable-accounting-of-ipc-resources.patch
-* memcg-enable-accounting-for-signals.patch
-* memcg-enable-accounting-for-posix_timers_cache-slab.patch
-* memcg-enable-accounting-for-ldt_struct-objects.patch
-* memcg-cleanup-racy-sum-avoidance-code.patch
-* memcg-replace-in_interrupt-by-in_task-in-active_memcg.patch
-* mm-memcontrol-set-the-correct-memcg-swappiness-restriction.patch
-* mm-memcg-remove-unused-functions.patch
-* mm-memcg-save-some-atomic-ops-when-flush-is-already-true.patch
-* memcg-fix-up-drain_local_stock-comment.patch
-* lazy-tlb-introduce-lazy-mm-refcount-helper-functions.patch
-* lazy-tlb-introduce-lazy-mm-refcount-helper-functions-fix.patch
-* lazy-tlb-allow-lazy-tlb-mm-refcounting-to-be-configurable.patch
-* lazy-tlb-allow-lazy-tlb-mm-refcounting-to-be-configurable-fix.patch
-* lazy-tlb-allow-lazy-tlb-mm-refcounting-to-be-configurable-fix-2.patch
-* lazy-tlb-shoot-lazies-a-non-refcounting-lazy-tlb-option.patch
-* lazy-tlb-shoot-lazies-a-non-refcounting-lazy-tlb-option-fix.patch
-* powerpc-64s-enable-mmu_lazy_tlb_shootdown.patch
-* mmc-jz4740-remove-the-flush_kernel_dcache_page-call-in-jz4740_mmc_read_data.patch
-* mmc-mmc_spi-replace-flush_kernel_dcache_page-with-flush_dcache_page.patch
-* scatterlist-replace-flush_kernel_dcache_page-with-flush_dcache_page.patch
-* mm-remove-flush_kernel_dcache_page.patch
-* mmdo_huge_pmd_numa_page-remove-unnecessary-tlb-flushing-code.patch
-* mm-change-fault_in_pages_-to-have-an-unsigned-size-parameter.patch
-* add-mmap_assert_locked-annotations-to-find_vma.patch
-* add-mmap_assert_locked-annotations-to-find_vma-fix.patch
-* remap_file_pages-use-vma_lookup-instead-of-find_vma.patch
-* mm-mremap-fix-memory-account-on-do_munmap-failure.patch
-* mm-mremap-dont-account-pages-in-vma_to_resize.patch
-* mm-bootmem_info-mark-__init-on-register_page_bootmem_info_section.patch
-* mm-sparse-pass-section_nr-to-section_mark_present.patch
-* mm-sparse-pass-section_nr-to-find_memory_block.patch
-* mm-sparse-remove-__section_nr-function.patch
-* mm-sparse-set-section_nid_shift-to-6.patch
-* avoid-a-warning-in-sparse-memory-support.patch
-* mm-sparse-clarify-pgdat_to_phys.patch
-* mm-vmalloc-use-batched-page-requests-in-bulk-allocator.patch
-* mm-vmalloc-remove-gfpflags_allow_blocking-check.patch
-* lib-test_vmallocc-add-a-new-nr_pages-parameter.patch
-* mm-vmalloc-fix-wrong-behavior-in-vread.patch
-* mm-kasan-move-kasanfault-to-mm-kasan-reportc.patch
-* kasan-test-rework-kmalloc_oob_right.patch
-* kasan-test-avoid-writing-invalid-memory.patch
-* kasan-test-avoid-corrupting-memory-via-memset.patch
-* kasan-test-disable-kmalloc_memmove_invalid_size-for-hw_tags.patch
-* kasan-test-only-do-kmalloc_uaf_memset-for-generic-mode.patch
-* kasan-test-clean-up-ksize_uaf.patch
-* kasan-test-avoid-corrupting-memory-in-copy_user_test.patch
-* kasan-test-avoid-corrupting-memory-in-kasan_rcu_uaf.patch
-* mm-page_alloc-always-initialize-memory-map-for-the-holes.patch
-* mm-page_alloc-always-initialize-memory-map-for-the-holes-fix.patch
-* microblaze-simplify-pte_alloc_one_kernel.patch
-* mm-introduce-memmap_alloc-to-unify-memory-map-allocation.patch
-* memblock-stop-poisoning-raw-allocations.patch
-* fix-zone_id-may-be-used-uninitialized-in-this-function-warning.patch
-* mm-page_alloc-make-alloc_node_mem_map-__init-rather-than-__ref.patch
-* mm-use-in_task-in-mm-page_allocc.patch
-* mm-hwpoison-remove-unneeded-variable-unmap_success.patch
-* mm-hwpoison-fix-potential-pte_unmap_unlock-pte-error.patch
-* mm-hwpoison-change-argument-struct-page-hpagep-to-hpage.patch
-* mm-hwpoison-fix-some-obsolete-comments.patch
-* mm-hwpoison-dont-drop-slab-caches-for-offlining-non-lru-page.patch
-* doc-hwpoison-correct-the-support-for-hugepage.patch
-* mm-hwpoison-dump-page-for-unhandlable-page.patch
-* hugetlb-simplify-prep_compound_gigantic_page-ref-count-racing-code.patch
-* hugetlb-drop-ref-count-earlier-after-page-allocation.patch
-* hugetlb-before-freeing-hugetlb-page-set-dtor-to-appropriate-value.patch
-* userfaultfd-change-mmap_changing-to-atomic.patch
-* userfaultfd-prevent-concurrent-api-initialization.patch
-* selftests-vm-userfaultfd-wake-after-copy-failure.patch
-* mm-numa-automatically-generate-node-migration-order.patch
-* mm-migrate-update-node-demotion-order-on-hotplug-events.patch
-* mm-migrate-enable-returning-precise-migrate_pages-success-count.patch
-* mm-migrate-demote-pages-during-reclaim.patch
-* mm-migrate-demote-pages-during-reclaim-v11.patch
-* mm-vmscan-add-page-demotion-counter.patch
-* mm-vmscan-add-helper-for-querying-ability-to-age-anonymous-pages.patch
-* mm-vmscan-add-helper-for-querying-ability-to-age-anonymous-pages-v11.patch
-* mm-vmscan-consider-anonymous-pages-without-swap.patch
-* mm-vmscan-consider-anonymous-pages-without-swap-v11.patch
-* mm-vmscan-never-demote-for-memcg-reclaim.patch
-* mm-migrate-add-sysfs-interface-to-enable-reclaim-migration.patch
-* mm-vmpressure-replace-vmpressure_to_css-with-vmpressure_to_memcg.patch
-* mm-vmscan-remove-the-pagedirty-check-after-madv_free-pages-are-page_ref_freezed.patch
-* mm-vmscan-remove-misleading-setting-to-sc-priority.patch
-* mm-vmscan-remove-unneeded-return-value-of-kswapd_run.patch
-* mm-vmscan-add-else-to-remove-check_pending-label.patch
-* mm-vmscan-guarantee-drop_slab_node-termination.patch
-* mm-compaction-optimize-proactive-compaction-deferrals.patch
-* mm-compaction-optimize-proactive-compaction-deferrals-fix.patch
-* mm-compaction-support-triggering-of-proactive-compaction-by-user.patch
-* mm-compaction-support-triggering-of-proactive-compaction-by-user-fix.patch
-* mm-mempolicy-convert-from-atomic_t-to-refcount_t-on-mempolicy-refcnt.patch
-* mm-mempolicy-convert-from-atomic_t-to-refcount_t-on-mempolicy-refcnt-fix.patch
-* mm-mempolicy-use-readable-numa_no_node-macro-instead-of-magic-numer.patch
-* mm-mempolicy-add-mpol_preferred_many-for-multiple-preferred-nodes.patch
-* mm-memplicy-add-page-allocation-function-for-mpol_preferred_many-policy.patch
-* mm-hugetlb-add-support-for-mempolicy-mpol_preferred_many.patch
-* mm-hugetlb-add-support-for-mempolicy-mpol_preferred_many-fix.patch
-* mm-hugetlb-add-support-for-mempolicy-mpol_preferred_many-fix-fix.patch
-* mm-mempolicy-advertise-new-mpol_preferred_many.patch
-* mm-mempolicy-unify-the-create-func-for-bind-interleave-prefer-many-policies.patch
-* mm-use-in_task-in-mempolicy_slab_node.patch
-* memblock-make-memblock_find_in_range-method-private.patch
-* mm-introduce-process_mrelease-system-call.patch
-* mm-wire-up-syscall-process_mrelease.patch
-* oom_kill-oom_score_adj-broken-for-processes-with-small-memory-usage.patch
-* mm-migrate-correct-kernel-doc-notation.patch
-* mm-thp-make-alloc_split_ptlocks-dependent-on-use_split_pte_ptlocks.patch
-* selftests-vm-add-ksm-merge-test.patch
-* selftests-vm-add-ksm-unmerge-test.patch
-* selftests-vm-add-ksm-zero-page-merging-test.patch
-* selftests-vm-add-ksm-merging-across-nodes-test.patch
-* mm-ksm-fix-data-type.patch
-* selftests-vm-add-ksm-merging-time-test.patch
-* selftests-vm-add-cow-time-test-for-ksm-pages.patch
-* mm-vmstat-correct-some-wrong-comments.patch
-* mm-vmstat-simplify-the-array-size-calculation.patch
-* mm-vmstat-remove-unneeded-return-value.patch
-* mm-vmstat-protect-per-cpu-variables-with-preempt-disable-on-rt.patch
-* mm-madvise-add-madv_willneed-to-process_madvise.patch
-* memory-hotplugrst-remove-locking-details-from-admin-guide.patch
-* memory-hotplugrst-complete-admin-guide-overhaul.patch
-* mm-remove-pfn_valid_within-and-config_holes_in_zone.patch
-* mm-memory_hotplug-cleanup-after-removal-of-pfn_valid_within.patch
-* mm-memory_hotplug-use-unsigned-long-for-pfn-in-zone_for_pfn_range.patch
-* mm-memory_hotplug-remove-nid-parameter-from-arch_remove_memory.patch
-* mm-memory_hotplug-remove-nid-parameter-from-remove_memory-and-friends.patch
-* acpi-memhotplug-memory-resources-cannot-be-enabled-yet.patch
-* mm-track-present-early-pages-per-zone.patch
-* mm-memory_hotplug-introduce-auto-movable-online-policy.patch
-* drivers-base-memory-introduce-memory-groups-to-logically-group-memory-blocks.patch
-* mm-memory_hotplug-track-present-pages-in-memory-groups.patch
-* acpi-memhotplug-use-a-single-static-memory-group-for-a-single-memory-device.patch
-* dax-kmem-use-a-single-static-memory-group-for-a-single-probed-unit.patch
-* virtio-mem-use-a-single-dynamic-memory-group-for-a-single-virtio-mem-device.patch
-* mm-memory_hotplug-memory-group-aware-auto-movable-online-policy.patch
-* mm-memory_hotplug-improved-dynamic-memory-group-aware-auto-movable-online-policy.patch
-* mm-remove-redundant-compound_head-calling.patch
-* mm-rmap-convert-from-atomic_t-to-refcount_t-on-anon_vma-refcount.patch
-* mm-zsmallocc-close-race-window-between-zs_pool_dec_isolated-and-zs_unregister_migration.patch
-* mm-zsmallocc-combine-two-atomic-ops-in-zs_pool_dec_isolated.patch
-* highmem-dont-disable-preemption-on-rt-in-kmap_atomic.patch
-* mm-highmem-remove-deprecated-kmap_atomic.patch
-* mm-in_irq-cleanup.patch
-* mm-introduce-pageflags_mask-to-replace-1ul-nr_pageflags-1.patch
-* kfence-show-cpu-and-timestamp-in-alloc-free-info.patch
-* mm-introduce-data-access-monitor-damon.patch
-* mm-damon-core-implement-region-based-sampling.patch
-* mm-damon-adaptively-adjust-regions.patch
-* mm-idle_page_tracking-make-pg_idle-reusable.patch
-* mm-idle_page_tracking-make-pg_idle-reusable-fix.patch
-* mm-idle_page_tracking-make-pg_idle-reusable-fix-fix.patch
-* mm-idle_page_tracking-make-pg_idle-reusable-fix-2.patch
-* mm-damon-implement-primitives-for-the-virtual-memory-address-spaces.patch
-* mm-damon-implement-primitives-for-the-virtual-memory-address-spaces-fix.patch
-* mm-damon-implement-primitives-for-the-virtual-memory-address-spaces-fix-2.patch
-* mm-damon-add-a-tracepoint.patch
-* mm-damon-implement-a-debugfs-based-user-space-interface.patch
-* mm-damon-implement-a-debugfs-based-user-space-interface-fix.patch
-* mm-damon-implement-a-debugfs-based-user-space-interface-fix-fix.patch
-* mm-damon-dbgfs-export-kdamond-pid-to-the-user-space.patch
-* mm-damon-dbgfs-support-multiple-contexts.patch
-* documentation-add-documents-for-damon.patch
-* mm-damon-add-kunit-tests.patch
-* mm-damon-add-user-space-selftests.patch
-* maintainers-update-for-damon.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* alpha-agp-make-empty-macros-use-do-while-0-style.patch
-* alpha-pci-sysfs-fix-all-kernel-doc-warnings.patch
-* percpu-remove-export-of-pcpu_base_addr.patch
-* fs-proc-kcorec-add-mmap-interface.patch
-* proc-stop-using-seq_get_buf-in-proc_task_name.patch
-* connector-send-event-on-write-to-proc-comm.patch
-* proc-sysctl-make-protected_-world-readable.patch
-* arch-kconfig-fix-spelling-mistake-seperate-separate.patch
-* once-fix-trivia-typo-not-note.patch
-* units-change-from-l-to-ul.patch
-* units-add-the-hz-macros.patch
-* thermal-drivers-devfreq_cooling-use-hz-macros.patch
-* devfreq-use-hz-macros.patch
-* iio-drivers-as73211-use-hz-macros.patch
-* hwmon-drivers-mr75203-use-hz-macros.patch
-* iio-drivers-hid-sensor-use-hz-macros.patch
-* i2c-drivers-ov02q10-use-hz-macros.patch
-* mtd-drivers-nand-use-hz-macros.patch
-* phy-drivers-stm32-use-hz-macros.patch
-* acct-use-dedicated-helper-to-access-rlimit-values.patch
-* math-make-rational-tristate.patch
-* math-rational_kunit_test-should-depend-on-rational-instead-of-selecting-it.patch
-* lib-string-optimized-memcpy.patch
-* lib-string-optimized-memmove.patch
-* lib-string-optimized-memset.patch
-* lib-test-convert-test_sortc-to-use-kunit.patch
-* lib-dump_stack-correct-kernel-doc-notation.patch
-* lib-iov_iterc-fix-kernel-doc-warnings.patch
-* bitops-protect-find_first_zero_bit-properly.patch
-* bitops-move-find_bit__le-functions-from-leh-to-findh.patch
-* include-move-findh-from-asm_generic-to-linux.patch
-* arch-remove-generic_find_first_bit-entirely.patch
-* lib-add-find_first_and_bit.patch
-* cpumask-use-find_first_and_bit.patch
-* all-replace-find_next_zero_bit-with-find_first_zero_bit-where-appropriate.patch
-* tools-sync-tools-bitmap-with-mother-linux.patch
-* cpumask-replace-cpumask_next_-with-cpumask_first_-where-appropriate.patch
-* include-linux-move-for_each_bit-macros-from-bitopsh-to-findh.patch
-* find-micro-optimize-for_each_setclear_bit.patch
-* replace-for_each__bit_from-with-for_each__bit-where-appropriate.patch
-* tools-rename-bitmap_alloc-to-bitmap_zalloc.patch
-* mm-percpu-micro-optimize-pcpu_is_populated.patch
-* bitmap-unify-find_bit-operations.patch
-* lib-bitmap-add-performance-test-for-bitmap_print_to_pagebuf.patch
-* vsprintf-rework-bitmap_list_string.patch
-* vsprintf-rework-bitmap_list_string-fix.patch
-* checkpatch-support-wide-strings.patch
-* checkpatch-make-email-address-check-case-insensitive.patch
-* fs-epoll-use-a-per-cpu-counter-for-users-watches-count.patch
-* fs-epoll-use-a-per-cpu-counter-for-users-watches-count-fix.patch
-* fs-epoll-use-a-per-cpu-counter-for-users-watches-count-fix-fix.patch
-* ramfs-fix-mount-source-show-for-ramfs.patch
-* init-move-usermodehelper_enable-to-populate_rootfs.patch
-* trap-cleanup-trap_init.patch
-* init-mainc-silence-some-wunused-parameter-warnings.patch
-* nilfs2-fix-memory-leak-in-nilfs_sysfs_create_device_group.patch
-* nilfs2-fix-null-pointer-in-nilfs_name_attr_release.patch
-* nilfs2-fix-memory-leak-in-nilfs_sysfs_create_name_group.patch
-* nilfs2-fix-memory-leak-in-nilfs_sysfs_delete_name_group.patch
-* nilfs2-fix-memory-leak-in-nilfs_sysfs_create_snapshot_group.patch
-* nilfs2-fix-memory-leak-in-nilfs_sysfs_delete_snapshot_group.patch
-* hfsplus-fix-out-of-bounds-warnings-in-__hfsplus_setxattr.patch
-* log-if-a-core-dump-is-aborted-due-to-changed-file-permissions.patch
-* log-if-a-core-dump-is-aborted-due-to-changed-file-permissions-fix.patch
-* coredump-fix-memleak-in-dump_vma_snapshot.patch
-* pid-cleanup-the-stale-comment-mentioning-pidmap_init.patch
-* prctl-allow-to-setup-brk-for-et_dyn-executables.patch
-* configs-remove-the-obsolete-config_input_polldev.patch
-* kconfigdebug-drop-selecting-non-existing-hardlockup_detector_arch.patch
-* selftests-memfd-remove-unused-variable.patch
-* ipc-replace-costly-bailout-check-in-sysvipc_find_ipc.patch
-  linux-next.patch
-  linux-next-rejects.patch
-* mm-workingset-correct-kernel-doc-notations.patch
-* mm-move-kvmalloc-related-functions-to-slabh.patch
-* compiler-attributes-add-__alloc_size-for-better-bounds-checking.patch
-* checkpatch-add-__alloc_size-to-known-attribute.patch
-* slab-clean-up-function-declarations.patch
-* slab-add-__alloc_size-attributes-for-better-bounds-checking.patch
-* mm-page_alloc-add-__alloc_size-attributes-for-better-bounds-checking.patch
-* percpu-add-__alloc_size-attributes-for-better-bounds-checking.patch
-* scripts-check_extable-fix-typo-in-user-error-message.patch
-* kexec-move-locking-into-do_kexec_load.patch
-* kexec-avoid-compat_alloc_user_space.patch
-* mm-simplify-compat_sys_move_pages.patch
-* mm-simplify-compat-numa-syscalls.patch
-* mm-simplify-compat-numa-syscalls-fix.patch
-* compat-remove-some-compat-entry-points.patch
-* arch-remove-compat_alloc_user_space.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
+> > If export is of non-root subvolume, then why bother changing anything
+> > at all? Is there a need to traverse into sub-sub-volumes?
+> >
+> > > 2/ We could add a btrfs mount option to control whether the uniquifier
+> > > was set or not.  This would allow the sysadmin to choose when to manage
+> > > any breakage.  I think this is my preference, but Josef has declared an
+> > > aversion to mount options.
+> > >
+> > > 3/ We could add a module parameter to nfsd to control whether the
+> > > uniquifier is merged in.  This again gives the sysadmin control, and it
+> > > can be done despite any aversion from btrfs maintainers.  But I'd need
+> > > to overcome any aversion from the nfsd maintainers, and I don't know how
+> > > strong that would be yet. (A new export option isn't really appropriate.
+> > > It is much more work to add an export option than the add a mount option).
+> > >
+> >
+> > That is too bad, because IMO from users POV, "fsid=btrfsroot" or "cross-subvol"
+> > export option would have been a nice way to describe and opt-in to this new
+> > functionality.
+> >
+> > But let's consider for a moment the consequences of enabling this functionality
+> > automatically whenever exporting a btrfs root volume without "crossmnt":
+> >
+> > 1. Objects inside a subvol that are inaccessible(?) with current
+> > nfs/nfsd without
+> >     "crossmnt" will become accessible after enabling the feature -
+> > this will match
+> >     the user experience of accessing btrfs on the host
+>
+> Not correct - as above.
+>
+> > 2. The inode numbers of the newly accessible objects would not match the inode
+> >     numbers on the host fs (no big deal?)
+>
+> Unlikely to be a problem.  Inode numbers have no meaning beyond the facts
+> that:
+>   - they are stable for the lifetime of the object
+>   - they are unique within a filesystem (except btrfs lies about
+>     filesystems)
+>   - they are not zero
+>
+> The facts only need to be equally true on the NFS server and client..
+>
+> > 3. The inode numbers of objects in a snapshot would not match the inode
+> >     numbers of the original (pre-snapshot) objects (acceptable tradeoff for
+> >     being able to access the snapshot objects without bloating /proc/mounts?)
+>
+> This also should not be a problem.  Files in different snapshots are
+> different things that happen to share storage (like reflinks).
+> Comparing inode numbers between places which report different st_dev
+> does not fit within the meaning of inode numbers.
+>
+> > 4. The inode numbers of objects in a subvol observed via this "cross-subvol"
+> >     export would not match the inode numbers of the same objects observed
+> >     via an individual subvol export
+>
+> The device number would differ too, so the relative values of the inode
+> numbers would be irrelevant.
+>
+> > 5. st_ino conflicts are possible when multiplexing subvol id and inode number.
+> >     overlayfs resolved those conflicts by allocating an inode number from a
+> >     reserved non-persistent inode range, which may cause objects to change
+> >     their inode number during the lifetime on the filesystem (sensible
+> > tradeoff?)
+> >
+> > I think that #4 is a bit hard to swallow and #3 is borderline acceptable...
+> > Both and quite hard to document and to set expectations as a non-opt-in
+> > change of behavior when exporting btrfs root.
+> >
+> > IMO, an nfsd module parameter will give some control and therefore is
+> > a must, but it won't make life easier to document and set user expectations
+> > when the semantics are not clearly stated in the exports table.
+> >
+> > You claim that "A new export option isn't really appropriate."
+> > but your only argument is that "It is much more work to add
+> > an export option than the add a mount option".
+> >
+> > With all due respect, for this particular challenge with all the
+> > constraints involved, this sounds like a pretty weak argument.
+> >
+> > Surely, adding an export option is easier than slowly changing all
+> > userspace tools to understand subvolumes? a solution that you had
+> > previously brought up.
+> >
+> > Can you elaborate some more about your aversion to a new
+> > export option.
+>
+> Export options are bits in a 32bit word - so both user-space and kernel
+> need to agree on names for them.  We are currently using 18, so there is
+> room to grow.  It is a perfectly reasonable way to implement sensible
+> features.  It is, I think, a poor way to implement hacks to work around
+> misfeatures in filesystems.
+>
+> This is the core of my dislike for adding an export option.  Using one
+> effectively admits that what btrfs is doing is a valid thing to do.  I
+> don't think it is.  I don't think we want any other filesystem developer
+> to think that they can emulate the behaviour because support is already
+> provided.
+>
+> If we add any configuration to support btrfs, I would much prefer it to
+> be implemented in fs/btrfs, and if not, then with loud warnings that it
+> works around a deficiency in btrfs.
+>   /sys/modules/nfsd/parameters/btrfs_export_workaround
+>
+
+Thanks for clarifying.
+I now understand how "hacky" the workaround in nfsd is.
+
+Naive question: could this behavior be implemented in btrfs as you
+prefer, but in a way that only serves nfsd and NEW nfs mounts for
+that matter (i.e. only NEW filehandles)?
+
+Meaning passing some hint in ->getattr() and ->iterate_shared(),
+sort of like idmapped mount does for uid/gid.
+
+Thanks,
+Amir.
