@@ -2,26 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 366163F2C3B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 14:40:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7EFA3F2C8A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 14:55:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240192AbhHTMkt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Aug 2021 08:40:49 -0400
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:36990 "EHLO 1wt.eu"
+        id S240626AbhHTMzk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Aug 2021 08:55:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233303AbhHTMks (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Aug 2021 08:40:48 -0400
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id 17KCcAgu024415;
-        Fri, 20 Aug 2021 14:38:10 +0200
-Date:   Fri, 20 Aug 2021 14:38:10 +0200
-From:   Willy Tarreau <w@1wt.eu>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
+        id S240401AbhHTMzj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Aug 2021 08:55:39 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BB3A06101A;
+        Fri, 20 Aug 2021 12:54:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629464101;
+        bh=aq47G7FYdzVG9JI5vCW3JdtF0Ql8JGW7+wEYumNG7w0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=a/FYE+XmpmUrhaskDVfwprhmXpSwMty4yUBq+SXncTVPNUlIvLIBnmvTnWwggz9iG
+         s4ammRLDPZdPLd+dw89KRsm4iB6PdovqHvDvOdqKIjmTHY99DXaSADQHXb0vFVv0NH
+         qXD0p0atBEqht2kLinJGRlJKZ/MrgRaGAJgnTlAQ/jSgEcJ/PTrnQ6GV02RwKSuSK6
+         ILPjLo6meDN5gtLC9cJgPFJgUvkYx794rjcRseD+sl8cASPtV9InoEjVyYoecgTGo2
+         Wg3NKtlbNwAEJ6Rxi9E4kJkoHo1P0utsc5wzjT5paKCoOPAXUQci/3UKhb/Ql3/VoZ
+         wXJZ5nNwc5veg==
+Message-ID: <6b9e9485846c01d57f53adc35ddd0bfe42398eca.camel@kernel.org>
+Subject: Re: [PATCH v1 0/7] Remove in-tree usage of MAP_DENYWRITE
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "J. Bruce Fields" <bfields@fieldses.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
         David Laight <David.Laight@aculab.com>,
         David Hildenbrand <david@redhat.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -51,6 +59,7 @@ Cc:     Amir Goldstein <amir73il@gmail.com>,
         Chinwen Chang <chinwen.chang@mediatek.com>,
         Michel Lespinasse <walken@google.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Huang Ying <ying.huang@intel.com>,
         Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
         Kevin Brodsky <Kevin.Brodsky@arm.com>,
@@ -72,7 +81,7 @@ Cc:     Amir Goldstein <amir73il@gmail.com>,
         Michal Hocko <mhocko@suse.com>,
         Miklos Szeredi <miklos@szeredi.hu>,
         Chengguang Xu <cgxu519@mykernel.net>,
-        Christian =?iso-8859-1?Q?K=F6nig?= 
+        Christian =?ISO-8859-1?Q?K=F6nig?= 
         <ckoenig.leichtzumerken@gmail.com>,
         "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
@@ -81,39 +90,99 @@ Cc:     Amir Goldstein <amir73il@gmail.com>,
         Linux-MM <linux-mm@kvack.org>,
         Florian Weimer <fweimer@redhat.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>
-Subject: Re: Removing Mandatory Locks
-Message-ID: <20210820123810.GE22171@1wt.eu>
-References: <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
- <YRcyqbpVqwwq3P6n@casper.infradead.org>
- <87k0kkxbjn.fsf_-_@disp2133>
- <0c2af732e4e9f74c9d20b09fc4b6cbae40351085.camel@kernel.org>
- <CAHk-=wgewmbABDC3_ZNn11C+sm4Uz0L9HZ5Kvx0Joho4vsV4DQ@mail.gmail.com>
- <a1385746582a675c410aca4eb4947320faec4821.camel@kernel.org>
- <CAHk-=wgD-SNxB=2iCurEoP=RjrciRgLtXZ7R_DejK+mXF2etfg@mail.gmail.com>
- <CAOQ4uxhwcdH1t3WVBdmeyDmvWkQLCgOAWoVZGoCKChppXBNqNA@mail.gmail.com>
- <CAOQ4uxiZXwaT9gJJweGx1kXR=y7y+cY5uUUV_CHyEeSJ6vJ0Cg@mail.gmail.com>
- <c4d6adfaae81f71341acd1c6b7b20c2e459a142f.camel@kernel.org>
+Date:   Fri, 20 Aug 2021 08:54:55 -0400
+In-Reply-To: <20210819143348.GA21090@fieldses.org>
+References: <60db2e61-6b00-44fa-b718-e4361fcc238c@www.fastmail.com>
+         <87lf56bllc.fsf@disp2133>
+         <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
+         <87eeay8pqx.fsf@disp2133>
+         <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
+         <87h7ft2j68.fsf@disp2133>
+         <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
+         <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
+         <20210818154217.GB24115@fieldses.org> <87bl5tv8pn.fsf@disp2133>
+         <20210819143348.GA21090@fieldses.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c4d6adfaae81f71341acd1c6b7b20c2e459a142f.camel@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 20, 2021 at 08:27:12AM -0400, Jeff Layton wrote:
-> I'm fine with any of these approaches if the consensus is that it's too
-> risky to just remove it. OTOH, I've yet to ever hear of any application
-> that uses this feature, even in a historical sense.
+On Thu, 2021-08-19 at 10:33 -0400, J. Bruce Fields wrote:
+> On Thu, Aug 19, 2021 at 08:56:52AM -0500, Eric W. Biederman wrote:
+> > bfields@fieldses.org (J. Bruce Fields) writes:
+> > 
+> > > On Fri, Aug 13, 2021 at 05:49:19PM -0700, Andy Lutomirski wrote:
+> > > > I’ll bite.  How about we attack this in the opposite direction: remove
+> > > > the deny write mechanism entirely.
+> > > 
+> > > For what it's worth, Windows has open flags that allow denying read or
+> > > write opens.  They also made their way into the NFSv4 protocol, but
+> > > knfsd enforces them only against other NFSv4 clients.  Last I checked,
+> > > Samba attempted to emulate them using flock (and there's a comment to
+> > > that effect on the flock syscall in fs/locks.c).  I don't know what Wine
+> > > does.
+> > > 
+> > > Pavel Shilovsky posted flags adding O_DENY* flags years ago:
+> > > 
+> > > 	https://lwn.net/Articles/581005/
+> > > 
+> > > I keep thinking I should look back at those some day but will probably
+> > > never get to it.
+> > > 
+> > > I've no idea how Windows applications use them, though I'm told it's
+> > > common.
+> > 
+> > I don't know in any detail.  I just have this memory of not being able
+> > to open or do anything with a file on windows while any application has
+> > it open.
+> > 
+> > We limit mandatory locks to filesystems that have the proper mount flag
+> > and files that are sgid but are not executable.  Reusing that limit we
+> > could probably allow such a behavior in Linux without causing chaos.
+> 
+> I'm pretty confused about how we're using the term "mandatory locking".
+> 
+> The locks you're thinking of are basically ordinary posix byte-range
+> locks which we attempt to enforce as mandatory under certain conditions
+> (e.g. in fs/read_write.c:rw_verify_area).  That means we have to check
+> them on ordinary reads and writes, which is a pain in the butt.  (And we
+> don't manage to do it correctly--the code just checks for the existence
+> of a conflicting lock before performing IO, ignoring the obvious
+> time-of-check/time-of-use race.)
+> 
 
-Honestly, I agree. Some have fun of me because I'm often using old
-stuff, but I don't even remember having used an application that
-made use of mandatory locking. I remember having enabled it myself in
-my kernels long ago after discovering its existence in the man pages,
-just to test it. It doesn't rule out the possibility that it exists
-somewhere though, but I think that the immediate removal combined
-with the big fat warning in previous branches should be largely
-enough to avoid the last minute surprise.
+Yeah, the locks we're talking about are the locks described in:
 
-Willy
+    Documentation/filesystems/mandatory-locking.rst
+
+They've always been racy. You have to mount the fs with '-o mand' and
+set a special mode on the file (setgid bit set, with group execute bit
+cleared). It's a crazypants interface.
+
+> This has nothing to do with Windows share locks which from what I
+> understand are whole-file locks that are only enforced against opens.
+> 
+
+Yep. Those are different.
+
+Confusingly, there is also LOCK_MAND|LOCK_READ|LOCK_WRITE for flock(),
+which are purported to be for emulating Windows share modes. They aren't
+really mandatory though.
+
+> --b.
+> 
+> > Without being very strict about which files can participate I can just
+> > imagine someone hiding their presence by not allowing other applications
+> > the ability to write to utmp or a log file.
+> > 
+> > In the windows world where everything evolved with those kinds of
+> > restrictions it is probably fine (although super annoying).
+> > 
+> > Eric
+
+-- 
+Jeff Layton <jlayton@kernel.org>
+
