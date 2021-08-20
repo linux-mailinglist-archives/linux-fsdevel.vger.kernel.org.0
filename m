@@ -2,153 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9EA73F3607
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Aug 2021 23:29:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A673C3F363A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Aug 2021 00:01:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240739AbhHTVaP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Aug 2021 17:30:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59602 "EHLO mail.kernel.org"
+        id S231615AbhHTWCG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Aug 2021 18:02:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231761AbhHTVaO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Aug 2021 17:30:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3DDF461102;
-        Fri, 20 Aug 2021 21:29:31 +0000 (UTC)
+        id S229760AbhHTWCF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Aug 2021 18:02:05 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 05D6260F39;
+        Fri, 20 Aug 2021 22:01:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629494976;
-        bh=CSpxkRr0njJFwn1bNyK1M/lOW65Uuk1c0JklPI8xo7w=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=paHJbV4aD+5TZGOJ6zZf6GRISmKjaaMLmZ5WgIftKEepMQlOUns10X8IPDExdOOjN
-         M/+2s9X8hIT0bzVhH2fJEWiuiA3DReUbBZJoMKhaDOClD3nTHIWlYB3Z64nnt3IhjL
-         Qhyaur14Ly1nMotZUaNZOApgaDumSL5frA7f9XxVB79HQOiVXHYr7NQQccH4YDlqrf
-         pCmUTnDPPVkixLdijZ31QqSe4oSUdYj8fOH7Z0pokJ7Kbt2XwdSi/ylF1dTttV1iS0
-         eVX16h4vU8/pa8yUqM7lcwkLKoy6p1J7oOXmydwT/haVOnxxqpZGiI5kpbF4jOXCLq
-         SEYYNJYbWsn5w==
-Message-ID: <8a6737f9fa2dd3b8b9d851064cd28ca57e489a77.camel@kernel.org>
-Subject: Re: Removing Mandatory Locks
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "H. Peter Anvin" <hpa@zytor.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        David Laight <David.Laight@aculab.com>,
-        David Hildenbrand <david@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Michel Lespinasse <walken@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Price <steven.price@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Marco Elver <elver@google.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Collin Fijalkovich <cfijalkovich@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= 
-        <ckoenig.leichtzumerken@gmail.com>,
-        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Date:   Fri, 20 Aug 2021 17:29:30 -0400
-In-Reply-To: <D2325492-F4DD-4E7A-B4F1-0E595FF2469A@zytor.com>
-References: <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
-         <87eeay8pqx.fsf@disp2133>
-         <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
-         <87h7ft2j68.fsf@disp2133>
-         <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
-         <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
-         <YRcyqbpVqwwq3P6n@casper.infradead.org> <87k0kkxbjn.fsf_-_@disp2133>
-         <0c2af732e4e9f74c9d20b09fc4b6cbae40351085.camel@kernel.org>
-         <CAHk-=wgewmbABDC3_ZNn11C+sm4Uz0L9HZ5Kvx0Joho4vsV4DQ@mail.gmail.com>
-         <202108200905.BE8AF7C@keescook>
-         <D2325492-F4DD-4E7A-B4F1-0E595FF2469A@zytor.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
+        s=k20201202; t=1629496887;
+        bh=6Tvf7F8XzySJVAbATDnQkPDRqPuOZ8gtDkb+RLf8JtE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=a+qXY05sok1kXn0ucTlvGUaXS0cVuG6RW8Rg8+OrzmUosd0h64U4VrkHM1eFmTUpy
+         dOAL54ZWwyNRPd/6Jca3QOL7sFlUk/bYFhCR/LTpU1MF8QOSC121q8pnqQ4kT4IM8N
+         bkXww1I/CT+6LSuFIpsT8/gCJC6nVGSeBxBB/dzUPUY8w35fWNu7XUfRwTbqyhA0ss
+         heOKNv873m4IDcP43HGDZ3GK9vNJA/gEGKExVTlklWmeU4d4cf0klrZQ4r86tv7JW0
+         AI5PT99NwcZYuuDGtyUDpZyG61xx1a/Wrtl51zW1LgA7GiXFbR0poVZK1WeCjfgOoG
+         ckREQ7e93K7Ow==
+Subject: Re: [PATCH] f2fs: remove broken support for allocating DIO writes
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+References: <20210728015154.171507-1-ebiggers@kernel.org>
+ <YQRQRh1zUHSIzcC/@gmail.com> <YQS5eBljtztWwOFE@mit.edu>
+ <YQd3Hbid/mFm0o24@sol.localdomain>
+ <a3cdd7cb-50a7-1b37-fe58-dced586712a2@kernel.org>
+ <YQg4Lukc2dXX3aJc@google.com>
+ <b88328b4-db3e-0097-d8cc-f250ee678e5b@kernel.org>
+ <YQidOD/zNB17fd9v@google.com> <YRsY6dyHyaChkQ6n@gmail.com>
+ <c4e5c71d-1652-7174-fa36-674fab4e61df@kernel.org>
+ <YR/wbenc0d3eMAjz@sol.localdomain>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <c2d3a733-6caa-2bd8-ebe0-d26fe5132d16@kernel.org>
+Date:   Sat, 21 Aug 2021 06:01:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
+In-Reply-To: <YR/wbenc0d3eMAjz@sol.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-No, Windows has deny-mode locking at open time, but the kernel's
-mandatory locks are enforced during read/write (which is why they are
-such a pain). Samba will not miss these at all.
-
-If we want something to provide windows-like semantics, we'd probably
-want to start with something like Pavel Shilovsky's O_DENY_* patches.
-
--- Jeff
-
-On Fri, 2021-08-20 at 12:17 -0700, H. Peter Anvin wrote:
-> I thought the main user was Samba and/or otherwise providing file service for M$ systems?
+On 2021/8/21 2:11, Eric Biggers wrote:
+> On Fri, Aug 20, 2021 at 05:35:21PM +0800, Chao Yu wrote:
+>>>>>>
+>>>>>> Hmm, I'm still trying to deal with this as a corner case where the writes
+>>>>>> haven't completed due to an error. How about keeping the preallocated block
+>>>>>> offsets and releasing them if we get an error? Do we need to handle EIO right?
+>>>>>
+>>>>> What about the case that CP + SPO following DIO preallocation? User will
+>>>>> encounter uninitialized block after recovery.
+>>>>
+>>>> I think buffered writes as a workaround can expose the last unwritten block as
+>>>> well, if SPO happens right after block allocation. We may need to compromise
+>>>> at certain level?
+>>>>
+>>>
+>>> Freeing preallocated blocks on error would be better than nothing, although note
+>>> that the preallocated blocks may have filled an arbitrary sequence of holes --
+>>> so simply truncating past EOF would *not* be sufficient.
+>>>
+>>> But really filesystems need to be designed to never expose uninitialized data,
+>>> even if I/O errors or a sudden power failure occurs.  It is unfortunate that
+>>> f2fs apparently wasn't designed with that goal in mind.
+>>>
+>>> In any case, I don't think we can proceed with any other f2fs direct I/O
+>>> improvements until this data leakage bug can be solved one way or another.  If
+>>> my patch to remove support for allocating writes isn't acceptable and the
+>>> desired solution is going to require some more invasive f2fs surgery, are you or
+>>> Chao going to work on it?  I'm not sure there's much I can do here.
+>>
+>> I may have time to take look into the implementation as I proposed above, maybe
+>> just enabling this in FSYNC_MODE_STRICT mode if user concerns unwritten data?
+>> thoughts?
+>>
 > 
-> On August 20, 2021 9:30:31 AM PDT, Kees Cook <keescook@chromium.org> wrote:
-> > On Thu, Aug 19, 2021 at 12:15:08PM -0700, Linus Torvalds wrote:
-> > > On Thu, Aug 19, 2021 at 11:39 AM Jeff Layton <jlayton@kernel.org> wrote:
-> > > > 
-> > > > I'm all for ripping it out too. It's an insane interface anyway.
-> > > > 
-> > > > I've not heard a single complaint about this being turned off in
-> > > > fedora/rhel or any other distro that has this disabled.
-> > > 
-> > > I'd love to remove it, we could absolutely test it. The fact that
-> > > several major distros have it disabled makes me think it's fine.
-> > 
-> > FWIW, it is now disabled in Ubuntu too:
-> > 
-> > https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/impish/commit/?h=master-next&id=f3aac5e47789cbeb3177a14d3d2a06575249e14b
-> > 
-> > > But as always, it would be good to check Android.
-> > 
-> > It looks like it's enabled (checking the Pixel 4 kernel image), but it's
-> > not specifically mentioned in any of the build configs that are used to
-> > construct the image, so I think this is just catching the "default y". I
-> > expect it'd be fine to turn this off.
-> > 
-> > I will ask around to see if it's actually used.
-> > 
+> What does this have to do with fsync?
+
+Oops, maybe a separate option is more appropriate.
+
 > 
-
--- 
-Jeff Layton <jlayton@kernel.org>
-
+> - Eric
+> 
