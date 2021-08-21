@@ -2,41 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7336E3F39A0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Aug 2021 10:58:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25D3A3F39A2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Aug 2021 10:59:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233266AbhHUI7F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Aug 2021 04:59:05 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:59476 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232802AbhHUI7F (ORCPT
+        id S233306AbhHUJAZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Aug 2021 05:00:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57914 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232802AbhHUJAY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Aug 2021 04:59:05 -0400
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 74B4E72C8F8;
-        Sat, 21 Aug 2021 11:58:24 +0300 (MSK)
-Received: from example.org (ip-94-112-79-42.net.upcbroadband.cz [94.112.79.42])
-        by imap.altlinux.org (Postfix) with ESMTPSA id BA67E4A46F1;
-        Sat, 21 Aug 2021 11:58:23 +0300 (MSK)
-Date:   Sat, 21 Aug 2021 10:58:22 +0200
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+        Sat, 21 Aug 2021 05:00:24 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1076C061575;
+        Sat, 21 Aug 2021 01:59:44 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id n7so21418705ljq.0;
+        Sat, 21 Aug 2021 01:59:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:message-id:mime-version:content-disposition;
+        bh=kEULimDkzu2M4h9diM+nwbfqNFbIaITyZl/LMTcXmtk=;
+        b=K0aYCO8PMpgon87D7F2CTTaqDiMRs2KGuFq2vDtMIv4Xmp8fYir7jmiAMfqNaj02MG
+         cPgbs0WnCxilBORJVvbeZrTsalx3Y4bdxr7sDDNf/7IqrPHkH4Es9lyy2g3GtyzWlkCu
+         +MYah9lR8XJ5qQOn///dfWXSOK+nkZMWyyV4OfZPtZoYqrHKbhlsol5iM3nvax+zP0p5
+         F0mTS3ViFzObmD1tvoVyeXCKKbxcKrKkuf4zbUSVlsQlcz7RvEtZ1QzQZyMrHtzSFZmK
+         swJXdXV5y9P2g9xzyidOXjejpsMjatMqbZL/pojvhJnYCxpeaR+0C/UHf9a3YAjrmmO3
+         Bzcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:message-id:mime-version
+         :content-disposition;
+        bh=kEULimDkzu2M4h9diM+nwbfqNFbIaITyZl/LMTcXmtk=;
+        b=npTEsYXGBS3Kuy+ubjPbGCmfI1Qe/PDCjZQljbgpJP52mzc1mAckbD9WXODGrCTG6/
+         mYyftpw9S8FoKrPo08fQ+J5KDXIR82iO/AS7zBHg8ffE6SRZkT/Ymsxcy17q8gS/idtL
+         PdAXrOhOfYuYPZxQwJlJ5lLWGqnPLA5CSMymdWQzpM645NCAdTs5nU/ZVvcojNIJ5LY1
+         mVSP+kpvA5vfgV4NF7K0yERCxcxuFaHKUH9naY6er7o9Iz0XkLlf5GXYfAfwxBt+Lics
+         A9hC2Buk3EGrG70loeWTX2vWETU6USipL/rXnkQT8qZsU+jERjbc5IAvJhIcWk4az5/q
+         +bQw==
+X-Gm-Message-State: AOAM530w90tFwXnJlP1PDsiGUriDNK2qUtEjcmYTrtiWRFPcCyT9qNhF
+        avceLXgLh8i1RNklqydLvMA=
+X-Google-Smtp-Source: ABdhPJyqEghdCLO/2Od3zhM7ahPm6vDvyQjeQjIhPezZzQLGIo669guVhL0rGlfbAlSd/PLIPzEG0g==
+X-Received: by 2002:a2e:88d0:: with SMTP id a16mr3420767ljk.81.1629536382735;
+        Sat, 21 Aug 2021 01:59:42 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id y6sm858662lfg.225.2021.08.21.01.59.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Aug 2021 01:59:41 -0700 (PDT)
+Date:   Sat, 21 Aug 2021 11:59:39 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
 To:     cgel.zte@gmail.com
 Cc:     viro@zeniv.linux.org.uk, christian.brauner@ubuntu.com,
-        jamorris@linux.microsoft.com, yang.yang29@zte.com.cn,
-        tj@kernel.org, paul.gortmaker@windriver.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: Re: [PATCH] proc: prevent mount proc on same mountpoint in one pid
- namespace
-Message-ID: <20210821085822.lhjtyoeboodqnyz7@example.org>
-References: <20210821083105.30336-1-yang.yang29@zte.com.cn>
+        jamorris@linux.microsoft.com, gladkov.alexey@gmail.com,
+        yang.yang29@zte.com.cn, tj@kernel.org,
+        paul.gortmaker@windriver.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Zeal Robot <zealci@zte.com.cn>
+Message-ID: <20210821085939.3sj66wdkshnadnjm@kari-VirtualBox>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210821083105.30336-1-yang.yang29@zte.com.cn>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
+
+Bcc:
+Subject: Re: [PATCH] proc: prevent mount proc on same mountpoint in one pid
+ namespace
+Reply-To:
+In-Reply-To: <20210821083105.30336-1-yang.yang29@zte.com.cn>
 
 On Sat, Aug 21, 2021 at 01:31:05AM -0700, cgel.zte@gmail.com wrote:
 > From: Yang Yang <yang.yang29@zte.com.cn>
@@ -47,24 +78,9 @@ On Sat, Aug 21, 2021 at 01:31:05AM -0700, cgel.zte@gmail.com wrote:
 > 
 > But there is a side-effects, user can mount many instances of proc on
 > the same mountpoint in one pid namespace, which is not allowed before.
-
-It is not true. Even before this patch, it was possible to mount procfs
-multiple times. The instance was the same, but the opportunity was
-_always_ there.
-
-If you forbid procfs from mounting multiple times, you get a huge
-regression.
-
 > This duplicate mount makes no sense but wastes memory and CPU, and user
 > may be confused why kernel allows it.
-
-You may need to mount procfs in one mount namespace if you are doing
-chroot and want to grant him access to not the entire pid space.
-
-$ mount -o hidpid=2 -t proc proc /path/to/chroot/proc
-$ chroot /path/to/chroot
-<switch to user>
-
+> 
 > The logic of this patch is: when try to mount proc on /mnt, check if
 > there is a proc instance mount on /mnt in the same pid namespace. If
 > answer is yes, return -EBUSY.
@@ -156,13 +172,20 @@ $ chroot /path/to/chroot
 >  	int (*get_tree)(struct fs_context *fc);
 >  	int (*reconfigure)(struct fs_context *fc);
 > +	int (*check_mntpoint)(struct fs_context *fc, struct path *path);
+
+Don't you think this should be it's own patch. It is after all internal
+api change. This also needs documentation. It would be confusing if
+someone convert to new mount api and there is one line which just
+address some proc stuff but even commit message does not address does
+every fs needs to add this. 
+
+Documentation is very good shape right now and we are in face that
+everyone is migrating to use new mount api so everyting should be well
+documented.
+
 >  };
 >  
 >  /*
 > -- 
 > 2.25.1
 > 
-
--- 
-Rgrds, legion
-
