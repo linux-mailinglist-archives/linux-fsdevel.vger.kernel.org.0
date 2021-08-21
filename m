@@ -2,98 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AAABE3F3AF9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Aug 2021 16:25:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67BCD3F3B7C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Aug 2021 18:47:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231566AbhHUOZl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Aug 2021 10:25:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44264 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230167AbhHUOZl (ORCPT
+        id S229823AbhHUQsJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Aug 2021 12:48:09 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:54514 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229550AbhHUQsI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Aug 2021 10:25:41 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C94B3C061575;
-        Sat, 21 Aug 2021 07:25:01 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id q10so18555737wro.2;
-        Sat, 21 Aug 2021 07:25:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DLjK+TCmc9BqCXwaEVOpZUxm3tmZlEUADQgsTwUiIcI=;
-        b=OJeChMwKcJlTC5d0x5snzvzdVMSpJoOK2q615NGGJ0aMH7Kd/MGw87rj5cdBGDKzp3
-         rD8gJ3cmdoOYufntUhAIhe45CoEgxaDNApEk4nusNQhGgbqPs7l/txQaiPLiPSrbBo+7
-         5lgKXbUSlaw2TeUu2E5HjoPEOxmieMJc/0OOBALoCGiJMUAAgz9vhBVWCFXUcigM4ZsT
-         WjeedD03pgZgxWD73XeIQLgZLS+vfz374a2DS/D93oZL/zzvif/xAcqkz7BevMRXbSN5
-         /u1fRoaU4VLWS2SRWIt8X2ActZ+zqtiuECDskpmVdCatIDfTky+lQhBziILXDR60VoZ+
-         whnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DLjK+TCmc9BqCXwaEVOpZUxm3tmZlEUADQgsTwUiIcI=;
-        b=UxqILvYdyZxVIlRqy/Fi4jLXYs9ZXMLwlJdwmgIX4vyI8jsw5aEmvcyOt86rNMQQf/
-         q2asaATZzhVgSDCKiTiREGONCsT3Fjyys+p3KhIzBZqq0bv/+Ro4KUzaJ2KU7yL28Hj8
-         t8O2ugdvLOdo6gwKZcwqmFgwYoRcLMzfJ/W++MB7Dr/O9RmLueqmL0J8rdTOD8ybJHIH
-         zzmbUWh+BIyXAwK0wghNDm4l77SiPMOJufKyZsja7VPKxaI0MHS537nShPfYK60xU5qg
-         +ZrIOXHQZKHhgOMP/QoX+pyUMZu8sog0Tr6SSBOzxb+i9UP+KE+zf+J28O2E/bYormK5
-         V0eQ==
-X-Gm-Message-State: AOAM530w0nCRYIIsrBIJn7GjPVqSLRPSJwt91Wmf2JYoohrPysfrNbYT
-        CO1vDsxZtE2eT3Ia9PrfJMk=
-X-Google-Smtp-Source: ABdhPJygVgV/uwI57UhxLV4Uz/WhIThhKyoYc1v8ClxzcHcR0ljxE+3ObuhgwGftO+Jpl45ySaQ6ww==
-X-Received: by 2002:adf:e5c5:: with SMTP id a5mr4143703wrn.120.1629555900469;
-        Sat, 21 Aug 2021 07:25:00 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.233.174])
-        by smtp.gmail.com with ESMTPSA id c2sm9237747wrs.60.2021.08.21.07.24.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 Aug 2021 07:25:00 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] iter revert problems
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        Sat, 21 Aug 2021 12:48:08 -0400
+Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:43192 helo=[192.168.1.179])
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1mHU9V-0006l1-GN; Sat, 21 Aug 2021 12:47:25 -0400
+Message-ID: <9dfb14c1a9ab686df0eeea553b39246bc5b51ede.camel@trillion01.com>
+Subject: Re: [PATCH] coredump: Limit what can interrupt coredumps
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Tony Battersby <tonyb@cybernetics.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        io-uring <io-uring@vger.kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     Palash Oswal <oswalpalash@gmail.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com
-References: <cover.1628780390.git.asml.silence@gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Message-ID: <3eaf5365-586d-700b-0277-e0889bfeb05d@gmail.com>
-Date:   Sat, 21 Aug 2021 15:24:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        "Pavel Begunkov>" <asml.silence@gmail.com>
+Date:   Sat, 21 Aug 2021 12:47:23 -0400
+In-Reply-To: <70526737949ab3ad2d8fc551531d286e0f3d88f4.camel@trillion01.com>
+References: <CAHk-=wjC7GmCHTkoz2_CkgSc_Cgy19qwSQgJGXz+v2f=KT3UOw@mail.gmail.com>
+         <87eeda7nqe.fsf@disp2133>
+         <b8434a8987672ab16f9fb755c1fc4d51e0f4004a.camel@trillion01.com>
+         <87pmwt6biw.fsf@disp2133> <87czst5yxh.fsf_-_@disp2133>
+         <CAHk-=wiax83WoS0p5nWvPhU_O+hcjXwv6q3DXV8Ejb62BfynhQ@mail.gmail.com>
+         <87y2bh4jg5.fsf@disp2133>
+         <CAHk-=wjPiEaXjUp6PTcLZFjT8RrYX+ExtD-RY3NjFWDN7mKLbw@mail.gmail.com>
+         <87sg1p4h0g.fsf_-_@disp2133> <20210614141032.GA13677@redhat.com>
+         <87pmwmn5m0.fsf@disp2133>
+         <4d93d0600e4a9590a48d320c5a7dd4c54d66f095.camel@trillion01.com>
+         <8af373ec-9609-35a4-f185-f9bdc63d39b7@cybernetics.com>
+         <9d194813-ecb1-2fe4-70aa-75faf4e144ad@kernel.dk>
+         <b36eb4a26b6aff564c6ef850a3508c5b40141d46.camel@trillion01.com>
+         <0bc38b13-5a7e-8620-6dce-18731f15467e@kernel.dk>
+         <24c795c6-4ec4-518e-bf9b-860207eee8c7@kernel.dk>
+         <05c0cadc-029e-78af-795d-e09cf3e80087@cybernetics.com>
+         <b5ab8ca0-cef5-c9b7-e47f-21c0d395f82e@kernel.dk>
+         <84640f18-79ee-d8e4-5204-41a2c2330ed8@kernel.dk>
+         <c4578bef-a21a-2435-e75a-d11d13d42923@kernel.dk>
+         <70526737949ab3ad2d8fc551531d286e0f3d88f4.camel@trillion01.com>
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.4 
 MIME-Version: 1.0
-In-Reply-To: <cover.1628780390.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/12/21 9:40 PM, Pavel Begunkov wrote:
-> For the bug description see 2/2. As mentioned there the current problems
-> is because of generic_write_checks(), but there was also a similar case
-> fixed in 5.12, which should have been triggerable by normal
-> write(2)/read(2) and others.
+On Sat, 2021-08-21 at 06:08 -0400, Olivier Langlois wrote:
+> On Tue, 2021-08-17 at 20:57 -0600, Jens Axboe wrote:
+> > 
+> > Olivier, I sent a 5.10 version for Nathan, any chance you can test
+> > this
+> > one for the current kernels? Basically this one should work for
+> > 5.11+,
+> > and the later 5.10 version is just for 5.10. I'm going to send it
+> > out
+> > separately for review.
+> > 
+> > I do think this is the right solution, barring a tweak maybe on
+> > testing
+> > notify == TWA_SIGNAL first before digging into the task struct. But
+> > the
+> > principle is sound, and it'll work for other users of TWA_SIGNAL as
+> > well. None right now as far as I can tell, but the live patching is
+> > switching to TIF_NOTIFY_SIGNAL as well which will also cause issues
+> > with
+> > coredumps potentially.
+> > 
+> Ok, I am going to give it a shot. This solution is probably superior
+> to
+> the previous attempt as it does not inject io_uring dependency into
+> the
+> coredump module.
 > 
-> It may be better to enforce reexpands as a long term solution, but for
-> now this patchset is quickier and easier to backport.
-
-We need to do something with this, hopefully soon.
-
-
-> v2: don't fail it has been justly fully reverted
+> The small extra change that I alluded to in my previous reply will
+> still be relevant even if we go with your patch...
 > 
-> Pavel Begunkov (2):
->   iov_iter: mark truncated iters
->   io_uring: don't retry with truncated iter
+> I'll come back soon with your patch testing result and my small extra
+> change that I keep teasing about.
 > 
->  fs/io_uring.c       | 16 ++++++++++++++++
->  include/linux/uio.h |  5 ++++-
->  2 files changed, 20 insertions(+), 1 deletion(-)
+> Greetings,
 > 
+Jens,
 
--- 
-Pavel Begunkov
+your patch doesn't compile with 5.12+. AFAIK, the reason is that
+JOBCTL_TASK_WORK is gone.
+
+Wouldn't just a call to tracehook_notify_signal from do_coredump be
+enough and backward compatible with every possible stable branches?
+
+Greetings,
+
