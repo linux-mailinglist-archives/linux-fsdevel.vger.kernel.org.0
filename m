@@ -2,121 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB9363F3765
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Aug 2021 01:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 836D93F37E3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Aug 2021 03:11:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240334AbhHTXrS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Aug 2021 19:47:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50354 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239600AbhHTXrS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Aug 2021 19:47:18 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0EAFC061757
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Aug 2021 16:46:39 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id x16so9963966pfh.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Aug 2021 16:46:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eHMEwcWn5S7G+chbvcpQTCNCdRCcbE/CWjRPjJXaV5I=;
-        b=dV1qy1mgsEI4INkTjHHUKy2f7GSIBsf4O1+fXHWSy+kAEv3jYRCYAaMAoxshjnqkyG
-         oT2A+bqzdhWPP7Nst6cJc+rRq8qjOqCAzweIkXIkoEgo8nuUUMoiRJVOkDK3YmorYY2a
-         MiYIB0B/a9xDq85QpmZl/2OTACzF1vsdUrsmu7G3BBNzopmDSm3t3cTCYxalZF+EklbQ
-         z/QBhrFGCRX/NdduCq4/gSDYTAIHTqZ63QqvdfDM9w8L08bZLCVJabVWF+5h1GcwWdBx
-         g+Yx1heQOEc1eDGWC1flE3Y5YJQ9B8bHRxJIIM5h054uHHrScv9Gt6FUJTVHrhRhnuED
-         x2EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eHMEwcWn5S7G+chbvcpQTCNCdRCcbE/CWjRPjJXaV5I=;
-        b=m5aCAbsDKIfo69quq+/MIrQpDvSrdaNv0+Vgiydt0udAiTPKmyCqhzUP+6+4FbS3Xn
-         TyidE0BHaweQOcqSg6BClb1AiKgRDDh1eX9Ixz09OvpwVxqPp2Js7RVZwf9kZu5Vwd/P
-         kagJt4i/Q62y111ykUUWQwPbM8HRC6YeKIs0aLiyl5yHMxdIWeJWds/JSBeP0kopAhzR
-         gzIO1bVQW+gFtSZu8N1EWJYnm1wUpitfRO6PY0SVvMaPSkIYC37dAkmBjGgysjNejP4Q
-         U6WPMaMwRNIrlhNEuzzHJPJQuwEEXaVCIRITqnJeAfeENTBJUYcJZgx98iH52oD5eS4b
-         hsTw==
-X-Gm-Message-State: AOAM532m3KFeVR2OJP11TQm3VUSkFZIWg0Pvdt6w9xVro/6bSGuoXZ1l
-        OKk16+sNqODMLF/6EyLnyupKKK1beHZPZpSkaKjchA==
-X-Google-Smtp-Source: ABdhPJzS5HGT6xJgqFrmEph3uz/ZG7OFdXOcKr3T36oL70Xxr6i57XBJUHqsj1rzOh9dfprsZA/boIS7GPxjc7UyUjw=
-X-Received: by 2002:a62:3342:0:b029:3b7:6395:a93 with SMTP id
- z63-20020a6233420000b02903b763950a93mr21855818pfz.71.1629503199185; Fri, 20
- Aug 2021 16:46:39 -0700 (PDT)
+        id S240933AbhHUBMW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Aug 2021 21:12:22 -0400
+Received: from mout.gmx.net ([212.227.15.19]:55623 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229783AbhHUBMW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 20 Aug 2021 21:12:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1629508297;
+        bh=rsF/9Y1W4s1enmJfcUq4mHsHRWaNu+mxRl2OdfIvAgA=;
+        h=X-UI-Sender-Class:To:Cc:References:From:Subject:Date:In-Reply-To;
+        b=g793vqVgDJaWziIvPveR3zO42yA25TL4ZoStHPtjuGCPiV/EtCjx0ylNALT8fgUUC
+         tD4nB5Q3TBJJB774AV0M758IkZUb5dLjLd7iFitlE+8eOO3OSewA/Yh3I6lvnbvbJ3
+         /tyJVXanAE1Er6advmrfEm1X7GSSqBcUPYO5AeyE=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx004
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MWics-1mWbcL1syW-00X57a; Sat, 21
+ Aug 2021 03:11:37 +0200
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     Nikolay Borisov <nborisov@suse.com>, linux-btrfs@vger.kernel.org,
+        kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-api@vger.kernel.org, Qu Wenruo <wqu@suse.com>
+References: <cover.1629234193.git.osandov@fb.com>
+ <a00b59623219c8a07f2c22f80ef1466d0f182d77.1629234193.git.osandov@fb.com>
+ <1b495420-f4c6-6988-c0b1-9aa8a7aa952d@suse.com>
+ <2eae3b11-d9aa-42b1-122e-49bd40258d9b@gmx.com>
+ <YR/wQPJcv25vPIp7@relinquished.localdomain>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+Subject: Re: [PATCH v10 06/14] btrfs: optionally extend i_size in
+ cow_file_range_inline()
+Message-ID: <d7e302f9-7230-0065-c908-86c10d77d738@gmx.com>
+Date:   Sat, 21 Aug 2021 09:11:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <20210730100158.3117319-1-ruansy.fnst@fujitsu.com> <20210730100158.3117319-8-ruansy.fnst@fujitsu.com>
-In-Reply-To: <20210730100158.3117319-8-ruansy.fnst@fujitsu.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 20 Aug 2021 16:46:27 -0700
-Message-ID: <CAPcyv4ic+LDagR8uF18tO3cCb6t=YTZNkAOK=vnsnERqY6Ze_g@mail.gmail.com>
-Subject: Re: [PATCH RESEND v6 7/9] dm: Introduce ->rmap() to find bdev offset
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        device-mapper development <dm-devel@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>, david <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <YR/wQPJcv25vPIp7@relinquished.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:tzl6/9YY2KjiUvi9znImUVGUZC+JDucaRnNpDPUYlX0PtGesSmH
+ gM1lE6SiNcGQPuCHr7cJ01lxfUMsApgYpSxwk97dXKu+hS0B/zCHPoM0Lp6ntuwtJf0M7Ix
+ C0KMwRj668judAheWL4iqoxWl347QP9ndaWGhTYdD/4iKYMitMmVmJF9rmJJ+RyAmqEl+St
+ ifvMetmP0cYGsU4EFi8NA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:idshmnk7gLU=:lriiHwSXKZR5/OrHIHhgfV
+ TQ5WnIqEkTa1NJWP3yc7pbQI4isq60A/3ZxaqJm2l4ieHIo1spF6WzNlKpIj6UNnqfoBv63GC
+ hN9TOKw/TrOo8F3+8EtVDJVf3j+OM3aUVqLMHgnZbKWEIrtpiQIPgfLfcoWjZhKPyVCHVUTN8
+ hJr54x3WxrwIJ7Q/r3BB7RiHGEuTEPV9njxUZkTDOth7Ib7RKTF39sFRn9G/4tCKL9uvaaqDY
+ lg9k981Ell1x9HHGBEcmw/f1Kxkidr5zb3s1wCyUWMdqyw3A3PBWOoqR436mOm0cFljnzewLR
+ 0RLBRxPjIpQbUNuvD1EwdXNNYJVWMdcBDER8eo+/rzbbV/DtJlzRDzsrYhwWpg0EVQAfliR+1
+ vBIl4PkfPUq82Q3JjU4WeF0R/e8U0FmdRJAoBbeGaUZ0z3pOexN8rb6nL6OrlfLxjMnyQd4Bd
+ Cs/83jNjkZ2W3rQJuL8SFWdnkDU8MNRqV/DfCuLxj9p3ZNeZvNYufRqwIWYX4UaNPTh2l4F8l
+ VFft66kDQZG9d7BNPg/+DUKW9m09ubgZwmu7MfRmVS+VSp2UUPPhhIqnyY1vENSOR1OSM90D7
+ UPKTXdZe3kGBDQM87+1kqmeXKVpko8oVx4QhchgTtoWgczXkbDxKFdMrU312gJyTnuSH0YsZC
+ iWR0vrY3a2aELbel1cplsNGKy4QYrAjNyYC35uegG7UN4jFKcU6wFcHXWpIbMsvKSyYnls8Qx
+ nxlssSQPy7yzLXKVbbDuKy5Vv875AqyQB5cjsS5AtnlUbHxI/Ww3xlblR88ntNjp3AJXOrJoI
+ PY0HZJU0Y9+A03xUE3SNoMysmhcEIRIZPlc31kNdFg8/Ds7Yal7MBC2Ca5H4LbCCWdg/gpoRb
+ a04lE6xyqJ0gE5qsABqbdW0/FAtLki1HpCdNEQtxrou8p+9d9NiHWOqQPg+moOVuoo/CgXU8N
+ hA/vKavZ8LsvMXl43+xqS5DxFCFudbCmxP5dag1v70K1Wtp0C1ZGk+wrig4pFjJ4qm50W+G22
+ 5lHOz7fwzPNJCXOvYHOB3GNzg0XEqQ3+smxA1SrKAouxA2o9FBESuOS7NRMz0su9TQeeOUtUi
+ y1DuDEq8Ct7UZGC+znvi4eNyZVolm/mNuHn4cVDtvoGamRbW55FHsNtEQ==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 30, 2021 at 3:02 AM Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
+
+
+On 2021/8/21 =E4=B8=8A=E5=8D=882:11, Omar Sandoval wrote:
+> On Fri, Aug 20, 2021 at 05:13:34PM +0800, Qu Wenruo wrote:
+>>
+>>
+>> On 2021/8/20 =E4=B8=8B=E5=8D=884:51, Nikolay Borisov wrote:
+>>>
+>>>
+>>> On 18.08.21 =D0=B3. 0:06, Omar Sandoval wrote:
+>>>> From: Omar Sandoval <osandov@fb.com>
+>>>>
+>>>> Currently, an inline extent is always created after i_size is extende=
+d
+>>>> from btrfs_dirty_pages(). However, for encoded writes, we only want t=
+o
+>>>> update i_size after we successfully created the inline extent.
+>>
+>> To me, the idea of write first then update isize is just going to cause
+>> tons of inline extent related prblems.
+>>
+>> The current example is falloc, which only update the isize after the
+>> falloc finishes.
+>>
+>> This behavior has already bothered me quite a lot, as it can easily
+>> create mixed inline and regular extents.
 >
-> Pmem device could be a target of mapped device.  In order to find out
-> the global location on a mapped device, we introduce this to translate
-> offset from target device to mapped device.
+> Do you have an example of how this would happen? I have the inode and
+> extent bits locked during an encoded write, and I see that fallocate
+> does the same.
+
+xfs_io -f -c "pwrite 0 1K" -c "sync" -c "falloc 0 4k" -c "pwrite 4k 4k"
+
+The [0, 1K) will be written as inline without doubt.
+
+Then we go to falloc, it will try to zero the range [1K, 4K), but it
+doesn't increase the isize.
+Thus the page [0, 4k) will still be written back as inline, since isize
+is still 1K.
+
+Later [4K, 8K) will be written back as regular, causing mixed extents.
+
 >
-> Currently, we implement it on linear target, which is easy to do the
-> translation.  Other targets will be supported in the future.  However,
-> some targets may not support it because of the non-linear mapping.
+>> Can't we remember the old isize (with proper locking), enlarge isize
+>> (with holes filled), do the write.
+>>
+>> If something wrong happened, we truncate the isize back to its old isiz=
+e.
+>>
+[...]
+>>>
+>>> Urgh, just some days ago Qu was talking about how awkward it is to hav=
+e
+>>> mixed extents in a file. And now, AFAIU, you are making them more like=
+ly
+>>> since now they can be created not just at the beginning of the file bu=
+t
+>>> also after i_size write. While this won't be a problem in and of itsel=
+f
+>>> it goes just the opposite way of us trying to shrink the possible case=
+s
+>>> when we can have mixed extents.
+>>
+>> Tree-checker should reject such inline extent at non-zero offset.
 >
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> ---
->  block/genhd.c                 | 56 +++++++++++++++++++++++++++++++++++
->  drivers/md/dm-linear.c        | 20 +++++++++++++
->  include/linux/device-mapper.h |  5 ++++
->  include/linux/genhd.h         |  1 +
->  4 files changed, 82 insertions(+)
+> This change does not allow creating inline extents at a non-zero offset.
+>
+>>> Qu what is your take on that?
+>>
+>> My question is, why encoded write needs to bother the inline extents at=
+ all?
+>>
+>> My intuition of such encoded write is, it should not create inline
+>> extents at all.
+>>
+>> Or is there any special use-case involved for encoded write?
+>
+> We create compressed inline extents with normal writes. We should be
+> able to send and receive them without converting them into regular
+> extents.
+>
+But my first impression for any encoded write is that, they should work
+like DIO, thus everything should be sectorsize aligned.
 
-This might be where dax-device support needs to part ways with the block layer.
+Then why could they create inline extent? As inline extent can only be
+possible when the isize is smaller than sectorsize.
 
-As Christoph has mentioned before the long term goal for dax-devices
-(direct mapped byte-addressable media) is to have filesystems mount on
-them directly and abandon block-layer entanglements. This patch goes
-the opposite direct and adds more block layer infrastructure to
-support a dax-device need. Now, I'm not opposed to this moving
-forward, but I'm not sure block and DM maintainers will be excited
-about this additional maintenance burden.
-
-At the same time a lot of effort has been poured into dax-reflink and
-I want that support to move forward. So, my proposal while we figure
-out what to do about device-mapper rmap is to have
-fs_dax_register_holder() fail on device-mapper dax-devices until we
-get wider agreement amongst all involved that this is an additional
-burden worth carrying. In the meantime XFS on PMEM will see
-fs_dax_register_holder() succeed and DAX reflink support can be gated
-on whether the dax-device allowed the notify failure handler to be
-registered.
-
-Now, there may be room to allow reflink on device-mapper-dax for
-CONFIG_MEMORY_FAILURE=n builds, but that would collide with future
-work to use notify_failure for more than memory_failure, but also
-NVDIMM_REVALIDATE_POISON, and surprise memory-device-remove events.
-
-The code in this patch looks ok to me, just not the direction the
-dax-device layer was looking to go. It might be time to revive the
-discussions around support for concatenation and striping in the pmem
-driver itself, especially as the CXL label specification is already
-adding support for physically discontiguous namespaces.
-
-At a minimum if the patch set is organized to support XFS-reflink on
-PMEM-DAX and later XFS-reflink on DM-DAX some progress can be made
-without waiting for the whole set to be accepted.
+Thanks,
+Qu
