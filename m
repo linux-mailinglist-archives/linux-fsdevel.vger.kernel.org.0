@@ -2,109 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DBE13F3C23
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Aug 2021 20:48:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DB553F3CA1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Aug 2021 00:25:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230141AbhHUStH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Aug 2021 14:49:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45420 "EHLO
+        id S230454AbhHUW0J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Aug 2021 18:26:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229744AbhHUStH (ORCPT
+        with ESMTP id S229927AbhHUW0J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Aug 2021 14:49:07 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78FABC061575;
-        Sat, 21 Aug 2021 11:48:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Y+SHGRYZ6q5sk+kjn9pjpKk095saNNvdcL2W/RGfeXU=; b=FloXxzzbcRyIpFAcyyAaxejdh7
-        p5Fv/EOhyEFdbmXN21jBgGrYM6Mb88zAXoreW12qJ4LNuHiUOAbPWk0WuRhViuMZTEi/QJA5UDsq6
-        CiF8IylI3eFPmDDU6UPH/PTvTJrG7/SM61dYhDh9cXZkGkw8I6KTTHDi5PGgiQ/zAXuvvYEB4itKD
-        cBCWgsO9WONjG3Lv71u9kRm+VMZTbyIc3a0nobaQjCXNC0ozA8Gxty2d40gOUN8NxJwezXeD5GuNs
-        9yh6b7ehDDiWgXXa002B9xEp8XcrQa9luk5KCnlgNT3uwTQuY0cormIGsEYtjfDBb+PzOYTCmpq/S
-        AelJ8XLg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mHW2L-007q6p-WD; Sat, 21 Aug 2021 18:48:19 +0000
-Date:   Sat, 21 Aug 2021 19:48:09 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v14 112/138] mm/filemap: Convert filemap_get_read_batch
- to use folios
-Message-ID: <YSFKab7Md+L0bZMg@casper.infradead.org>
-References: <20210715033704.692967-1-willy@infradead.org>
- <20210715033704.692967-113-willy@infradead.org>
+        Sat, 21 Aug 2021 18:26:09 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86B9DC061575;
+        Sat, 21 Aug 2021 15:25:29 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mHZQW-00EmiE-6B; Sat, 21 Aug 2021 22:25:20 +0000
+Date:   Sat, 21 Aug 2021 22:25:20 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Palash Oswal <oswalpalash@gmail.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2 0/2] iter revert problems
+Message-ID: <YSF9UFyLGZQeKbLt@zeniv-ca.linux.org.uk>
+References: <cover.1628780390.git.asml.silence@gmail.com>
+ <3eaf5365-586d-700b-0277-e0889bfeb05d@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210715033704.692967-113-willy@infradead.org>
+In-Reply-To: <3eaf5365-586d-700b-0277-e0889bfeb05d@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 15, 2021 at 04:36:38AM +0100, Matthew Wilcox (Oracle) wrote:
->  	rcu_read_lock();
-> -	for (head = xas_load(&xas); head; head = xas_next(&xas)) {
-> -		if (xas_retry(&xas, head))
-> +	for (folio = xas_load(&xas); folio; folio = xas_next(&xas)) {
-> +		if (xas_retry(&xas, folio))
->  			continue;
-> -		if (xas.xa_index > max || xa_is_value(head))
-> +		if (xas.xa_index > max || xa_is_value(folio))
->  			break;
-> -		if (!page_cache_get_speculative(head))
-> +		if (!folio_try_get_rcu(folio))
->  			goto retry;
->  
-> -		/* Has the page moved or been split? */
-> -		if (unlikely(head != xas_reload(&xas)))
-> +		if (unlikely(folio != xas_reload(&xas)))
->  			goto put_page;
->  
-> -		if (!pagevec_add(pvec, head))
-> +		if (!pagevec_add(pvec, &folio->page))
->  			break;
-> -		if (!PageUptodate(head))
-> +		if (!folio_test_uptodate(folio))
->  			break;
-> -		if (PageReadahead(head))
-> +		if (folio_test_readahead(folio))
->  			break;
-> -		xas.xa_index = head->index + thp_nr_pages(head) - 1;
-> +		xas.xa_index = folio->index + folio_nr_pages(folio) - 1;
->  		xas.xa_offset = (xas.xa_index >> xas.xa_shift) & XA_CHUNK_MASK;
->  		continue;
+On Sat, Aug 21, 2021 at 03:24:28PM +0100, Pavel Begunkov wrote:
+> On 8/12/21 9:40 PM, Pavel Begunkov wrote:
+> > For the bug description see 2/2. As mentioned there the current problems
+> > is because of generic_write_checks(), but there was also a similar case
+> > fixed in 5.12, which should have been triggerable by normal
+> > write(2)/read(2) and others.
+> > 
+> > It may be better to enforce reexpands as a long term solution, but for
+> > now this patchset is quickier and easier to backport.
+> 
+> We need to do something with this, hopefully soon.
 
-It's not a bug in _this_ patch, but these last two lines become a bug
-once the page cache is converted to store folios as multi-index entries
-(as opposed to now when it replicates an order-N entry 2^N times).
-I should not have used xas.xa_shift (which is the shift of the entry
-we're looking for and is always 0), but xas.xa_node->shift (which is
-the shift of the entry that we found).
+I still don't like that approach ;-/  If anything, I would rather do
+something like this, and to hell with one extra word on stack in
+several functions; at least that way the semantics is easy to describe.
 
-If you have an order-7 page, occupying (say) indices 128-255, we set
-xa_index to 255, but instead of setting xa_offset to 3, we set it to 63.
-That tricks __xas_next() into going up to the parent node, and then back
-down, which might mean that we terminate the scan early, or that we skip
-over all the other entries in the node.  What I actually noticed was a
-crash where we ended up loading an internal entry out of the XArray.
-
-It's all a bit complicated really.  That calls for a helper, and this is
-my current candidate:
-
-+static inline void xas_advance(struct xa_state *xas, unsigned long index)
-+{
-+       unsigned char shift = xas_is_node(xas) ? xas->xa_node->shift : 0;
-+
-+       xas->xa_index = index;
-+       xas->xa_offset = (index >> shift) & XA_CHUNK_MASK;
-+}
-...
--               xas.xa_index = folio->index + folio_nr_pages(folio) - 1;
--               xas.xa_offset = (xas.xa_index >> xas.xa_shift) & XA_CHUNK_MASK;
-+               xas_advance(&xas, folio->index + folio_nr_pages(folio) - 1);
-
-This is coming up on 4 hours of continuous testing using generic/559.
-Without it, it would usually crash in about 40 minutes.
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index d94fb5835a20..5501f8b3af3b 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -3420,6 +3420,7 @@ static int io_write(struct io_kiocb *req, unsigned int issue_flags)
+ 	} else {
+ copy_iov:
+ 		/* some cases will consume bytes even on error returns */
++		iov_iter_reexpand(iter, iter->count + iter->truncated);
+ 		iov_iter_revert(iter, io_size - iov_iter_count(iter));
+ 		ret = io_setup_async_rw(req, iovec, inline_vecs, iter, false);
+ 		return ret ?: -EAGAIN;
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 82c3c3e819e0..5265024e8b90 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -47,6 +47,7 @@ struct iov_iter {
+ 		};
+ 		loff_t xarray_start;
+ 	};
++	size_t truncated;
+ };
+ 
+ static inline enum iter_type iov_iter_type(const struct iov_iter *i)
+@@ -254,8 +255,10 @@ static inline void iov_iter_truncate(struct iov_iter *i, u64 count)
+ 	 * conversion in assignement is by definition greater than all
+ 	 * values of size_t, including old i->count.
+ 	 */
+-	if (i->count > count)
++	if (i->count > count) {
++		i->truncated += i->count - count;
+ 		i->count = count;
++	}
+ }
+ 
+ /*
+@@ -264,6 +267,7 @@ static inline void iov_iter_truncate(struct iov_iter *i, u64 count)
+  */
+ static inline void iov_iter_reexpand(struct iov_iter *i, size_t count)
+ {
++	i->truncated -= count - i->count;
+ 	i->count = count;
+ }
+ 
