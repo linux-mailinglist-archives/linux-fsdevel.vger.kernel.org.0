@@ -2,163 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16D1A3F3A9B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Aug 2021 14:38:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BA833F3AAE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Aug 2021 14:46:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232182AbhHUMjP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Aug 2021 08:39:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49350 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230042AbhHUMjN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Aug 2021 08:39:13 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A2D7C061575;
-        Sat, 21 Aug 2021 05:38:34 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id z2so26647979lft.1;
-        Sat, 21 Aug 2021 05:38:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CsiDXQX5CqxTRDjYxjqIP5WMHOM40KiYSXEpLVVFU1A=;
-        b=WWMwGIi/b21LZpvv/cS/fjlWSHCpJw3bHeWU/+5/AT4GwzvHKlW9cMNl7Np3tmk0h9
-         uXcKGAJ6rv/rdECycldq5oDMpnrwWB3y5l4vmbnRX43QUImMvKZGEl7p7f5TjHOsHPfY
-         pNhmKczJsLLlShgDh9wkKsTt2U0w+sKezf9S/jdTEhm4N1mNrC2bse+C4oGKS3mFryg+
-         LSHfs6o8utKohNPh6ARmlNv22bq+MEEBgjMBu5qaS99LVEnQ3kIYrIuaLNOtpq4Y8D2R
-         GC6aJ9FnqIB9uDSCWRySMymLhVEEOCHKthAxmvXG+Z42dRKUhNud9moEbdZvJZTuGAAP
-         QcCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CsiDXQX5CqxTRDjYxjqIP5WMHOM40KiYSXEpLVVFU1A=;
-        b=J9IEb21T/5n6L1vPr3A672HYSz5NNg0qT0/3yU+3UGDBqa7sVP1afiyAzgXlDFRhJt
-         crWPsxGOX7ta7e2HNJixNMtoNGv2S0mUfcLsnbdBHR0eejS8hTX0Wr1PvcE1aCUfE3kK
-         TiJw80TEHI/ssuvnujRFiRdpLaVJZz7szf0sOzZ6xh3Dep64TxI8r17LiyZ5Efx8Mjwk
-         bUmcTyyc5A3ZSdJ/YTzlbgIeY3TCImcwyeqiuMmDjmYBmq8F2WmupyrOUObB8df630WS
-         fY4YTFsanbjzy9ei0ZWC5H3TxGGbmeV1N1mFXyfmGTHVSerKEfjSILlpqIe2RX07Cbgi
-         i6vw==
-X-Gm-Message-State: AOAM530ZEYpLIRuxJcNd1X9KE+B4ifGjQstxKqXK1+U92sKru7D/+hqn
-        9m5LqBu4yhhqpaupqKH/8YjpfPe3P5KcfR/u
-X-Google-Smtp-Source: ABdhPJwfEJRPHfXO35VkKUGcyuY5s+ZbtM60QpaKjjPY1rjUCUUDGMYVNAqYSvsDxlhraOX3EFF1SQ==
-X-Received: by 2002:ac2:484a:: with SMTP id 10mr1648015lfy.21.1629549512342;
-        Sat, 21 Aug 2021 05:38:32 -0700 (PDT)
-Received: from [192.168.0.13] (broadband-46-242-116-145.ip.moscow.rt.ru. [46.242.116.145])
-        by smtp.gmail.com with ESMTPSA id w6sm908269lfk.163.2021.08.21.05.38.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 Aug 2021 05:38:31 -0700 (PDT)
-Subject: Re: [PATCH v27 00/10] NTFS read-write driver GPL implementation by
- Paragon Software
-To:     Theodore Ts'o <tytso@mit.edu>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, pali@kernel.org, dsterba@suse.cz,
-        aaptel@suse.com, willy@infradead.org, rdunlap@infradead.org,
-        joe@perches.com, mark@harmstone.com, nborisov@suse.com,
-        linux-ntfs-dev@lists.sourceforge.net, anton@tuxera.com,
-        dan.carpenter@oracle.com, hch@lst.de, ebiggers@kernel.org,
-        andy.lavr@gmail.com, kari.argillander@gmail.com,
-        oleksandr@natalenko.name
-References: <20210729134943.778917-1-almaz.alexandrovich@paragon-software.com>
- <20210729162459.GA3601405@magnolia> <YQdlJM6ngxPoeq4U@mit.edu>
-From:   Yan Pashkovsky <yanp.bugz@gmail.com>
-Message-ID: <2399771e-8222-267d-1655-c84a1401f2cd@gmail.com>
-Date:   Sat, 21 Aug 2021 15:38:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        id S231167AbhHUMqk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Aug 2021 08:46:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48706 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229722AbhHUMqj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 21 Aug 2021 08:46:39 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 26DB461222;
+        Sat, 21 Aug 2021 12:45:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629549960;
+        bh=BWRBpnQrNoRcs319+vTr8OUV7hK/02HoruNC5g/r9g8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=fa7ZeHuGl+4XP1WpEyzmi5hufYrREjDgNdRg4U3s/96SFCEqdGYDGUtBnHEuVeQqG
+         15E2/qqommNNVF93RIEDLEQP4hibseJYGAbILdAXC/LwejAZfgBOGT6SdESXBfYcDN
+         cd7+Xd17PsJ2c9mp9buI/usXYtVu6bkO7afSWz4635iAHyaAYKSzDM3WPhavCSsRv0
+         ClTsJRXKpG8hsODsdUHQ/aV4CV1rhOspJM2fWX2hRqBJCYHxYAYyp8at738ytBtNYE
+         0IToQvyCx1mwLtuRTjN4k+vGA4g035zp2YTFthSWuCdKxQhCRB0nph9IOGgywfzekG
+         j3T7MrokxJRCg==
+Message-ID: <18b073b95d692f4c7782c68de1f803681c15a467.camel@kernel.org>
+Subject: Re: Removing Mandatory Locks
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "H. Peter Anvin" <hpa@zytor.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        David Hildenbrand <david@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Michel Lespinasse <walken@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Price <steven.price@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Marco Elver <elver@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Collin Fijalkovich <cfijalkovich@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        Christian =?ISO-8859-1?Q?K=F6nig?= 
+        <ckoenig.leichtzumerken@gmail.com>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Date:   Sat, 21 Aug 2021 08:45:54 -0400
+In-Reply-To: <8a6737f9fa2dd3b8b9d851064cd28ca57e489a77.camel@kernel.org>
+References: <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
+         <87eeay8pqx.fsf@disp2133>
+         <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
+         <87h7ft2j68.fsf@disp2133>
+         <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
+         <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
+         <YRcyqbpVqwwq3P6n@casper.infradead.org> <87k0kkxbjn.fsf_-_@disp2133>
+         <0c2af732e4e9f74c9d20b09fc4b6cbae40351085.camel@kernel.org>
+         <CAHk-=wgewmbABDC3_ZNn11C+sm4Uz0L9HZ5Kvx0Joho4vsV4DQ@mail.gmail.com>
+         <202108200905.BE8AF7C@keescook>
+         <D2325492-F4DD-4E7A-B4F1-0E595FF2469A@zytor.com>
+         <8a6737f9fa2dd3b8b9d851064cd28ca57e489a77.camel@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
 MIME-Version: 1.0
-In-Reply-To: <YQdlJM6ngxPoeq4U@mit.edu>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Konstantin, I would *strongly* encourage you to try running fstests,
-> about 60 seconds into a run, we discover that generic/013 will trigger
-> locking problems that could lead to deadlocks.
+On Fri, 2021-08-20 at 17:29 -0400, Jeff Layton wrote:
+> No, Windows has deny-mode locking at open time, but the kernel's
+> mandatory locks are enforced during read/write (which is why they are
+> such a pain). Samba will not miss these at all.
+> 
+> If we want something to provide windows-like semantics, we'd probably
+> want to start with something like Pavel Shilovsky's O_DENY_* patches.
+> 
+> -- Jeff
+> 
 
-Seems like it's a real issue. I was using new HDD and ntfs3-dkms (v26) 
-in Arch and faced locking while was doing rsync:
+Doh! It completely slipped my mind about byte-range locks on windows...
 
-[ 5529.507567] INFO: task kworker/0:1:18 blocked for more than 1105 seconds.
-[ 5529.507580]       Tainted: P           OE     5.13.4-arch1-1 #1
-[ 5529.507584] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" 
-disables this message.
-[ 5529.507586] task:kworker/0:1     state:D stack:    0 pid:   18 ppid: 
-     2 flags:0x00004000
-[ 5529.507598] Workqueue: usb_hub_wq hub_event
-[ 5529.507612] Call Trace:
-[ 5529.507615]  ? out_of_line_wait_on_bit_lock+0xb0/0xb0
-[ 5529.507631]  __schedule+0x310/0x930
-[ 5529.507641]  ? out_of_line_wait_on_bit_lock+0xb0/0xb0
-[ 5529.507648]  schedule+0x5b/0xc0
-[ 5529.507654]  bit_wait+0xd/0x60
-[ 5529.507661]  __wait_on_bit+0x2a/0x90
-[ 5529.507669]  __inode_wait_for_writeback+0xb0/0xe0
-[ 5529.507680]  ? var_wake_function+0x20/0x20
-[ 5529.507689]  writeback_single_inode+0x64/0x140
-[ 5529.507699]  sync_inode_metadata+0x3d/0x60
-[ 5529.507712]  ntfs_set_state+0x126/0x1a0 [ntfs3]
-[ 5529.507738]  ni_write_inode+0x244/0xef0 [ntfs3]
-[ 5529.507764]  ? pagevec_lookup_range_tag+0x24/0x30
-[ 5529.507772]  ? __filemap_fdatawait_range+0x6f/0xf0
-[ 5529.507785]  __writeback_single_inode+0x260/0x310
-[ 5529.507795]  writeback_single_inode+0xa7/0x140
-[ 5529.507803]  sync_inode_metadata+0x3d/0x60
-[ 5529.507814]  ntfs_set_state+0x126/0x1a0 [ntfs3]
-[ 5529.507834]  ntfs_sync_fs+0xf9/0x100 [ntfs3]
-[ 5529.507857]  sync_filesystem+0x40/0x90
-[ 5529.507868]  fsync_bdev+0x21/0x60
-[ 5529.507874]  delete_partition+0x13/0x80
-[ 5529.507882]  blk_drop_partitions+0x5b/0xa0
-[ 5529.507889]  del_gendisk+0xa5/0x220
-[ 5529.507895]  sd_remove+0x3d/0x80
-[ 5529.507907]  __device_release_driver+0x17a/0x230
-[ 5529.507918]  device_release_driver+0x24/0x30
-[ 5529.507927]  bus_remove_device+0xdb/0x140
-[ 5529.507937]  device_del+0x18b/0x400
-[ 5529.507943]  ? ata_tlink_match+0x30/0x30
-[ 5529.507949]  ? attribute_container_device_trigger+0xc5/0x100
-[ 5529.507959]  __scsi_remove_device+0x118/0x150
-[ 5529.507967]  scsi_forget_host+0x54/0x60
-[ 5529.507978]  scsi_remove_host+0x72/0x110
-[ 5529.507988]  usb_stor_disconnect+0x46/0xb0 [usb_storage]
-[ 5529.508003]  usb_unbind_interface+0x8a/0x270
-[ 5529.508010]  ? kernfs_find_ns+0x35/0xd0
-[ 5529.508017]  __device_release_driver+0x17a/0x230
-[ 5529.508027]  device_release_driver+0x24/0x30
-[ 5529.508036]  bus_remove_device+0xdb/0x140
-[ 5529.508044]  device_del+0x18b/0x400
-[ 5529.508050]  ? kobject_put+0x98/0x1d0
-[ 5529.508062]  usb_disable_device+0xc6/0x1f0
-[ 5529.508073]  usb_disconnect.cold+0x7e/0x250
-[ 5529.508085]  hub_event+0xc7b/0x17f0
-[ 5529.508099]  process_one_work+0x1e3/0x3b0
-[ 5529.508109]  worker_thread+0x50/0x3b0
-[ 5529.508115]  ? process_one_work+0x3b0/0x3b0
-[ 5529.508122]  kthread+0x133/0x160
-[ 5529.508127]  ? set_kthread_struct+0x40/0x40
-[ 5529.508133]  ret_from_fork+0x22/0x30
+Those are mandatory and they do block read and write activity to the
+ranges locked. They have weird semantics vs. POSIX locks (they stack
+instead of splitting/merging, etc.).
 
-[ 8440.627659] blk_update_request: I/O error, dev sdd, sector 256017240 
-op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-[ 8440.627667] ntfs3: 165 callbacks suppressed
-[ 8440.627667] ntfs3: sdd1: failed to read volume at offset 0x1e84f6b000
-[ 8440.627673] blk_update_request: I/O error, dev sdd, sector 256017240 
-op 0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-[ 8440.627676] ntfs3: sdd1: failed to read volume at offset 0x1e84f6b000
-[ 8440.778355] blk_update_request: I/O error, dev sdd, sector 6293496 op 
-0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-[ 8440.778384] ntfs3: sdd1: failed to read volume at offset 0xbffff000
-[ 8440.778412] blk_update_request: I/O error, dev sdd, sector 6353096 op 
-0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-[ 8440.778428] ntfs3: sdd1: failed to read volume at offset 0xc1d19000
-[ 8440.778441] blk_update_request: I/O error, dev sdd, sector 6353096 op 
-0x0:(READ) flags 0x0 phys_seg 1 prio class 0
-[ 8440.778452] ntfs3: sdd1: failed to read volume at offset 0xc1d19000
-[ 8440.778459] ntfs3: sdd1: ntfs_evict_inode r=0 failed, -22.
+Samba emulates these with (advisory) POSIX locks in most cases. Using
+mandatory locks is probably possible, but I think it would add more
+potential for deadlock and security issues.
+-- 
+Jeff Layton <jlayton@kernel.org>
+
