@@ -2,193 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 632673F3FB7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Aug 2021 16:21:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87F2B3F3FC0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Aug 2021 16:31:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232898AbhHVOWH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Aug 2021 10:22:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44610 "EHLO
+        id S233167AbhHVOcU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Aug 2021 10:32:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232043AbhHVOWG (ORCPT
+        with ESMTP id S232003AbhHVOcT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Aug 2021 10:22:06 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64D85C061575
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Aug 2021 07:21:25 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id cq23so21853664edb.12
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Aug 2021 07:21:25 -0700 (PDT)
+        Sun, 22 Aug 2021 10:32:19 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 086ABC061575;
+        Sun, 22 Aug 2021 07:31:38 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id k5so32091172lfu.4;
+        Sun, 22 Aug 2021 07:31:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vanguardiasur-com-ar.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=J4ZN/SXLkaHtgaR5XMNgO5PtUr/lZWOqM0+2vN5G3FE=;
-        b=DKAzZ8Q4mXjXOBqaMdNNISaFGKc9lQXjGeecFK1OFEAGNv2u4kbda/p/vKDS42UX6h
-         KCXnwavPMs6+8oSSt9oJoXkxaP9Q5UkTSr7FiLunnGQmvE+ZnSd68uG/V5VaRYLxKilv
-         sgqkfYGdvvmKvjugUd17wtvv/GWx3EW+MjQU7pkg9mto22HFkW814EuquaKH3vCu+wZO
-         s0wasYNMAQAX6EvNlLuWjb7KZQ2WpdC1Pz0wN8qQ+3SGgtMlZRJSTD9So4RWGK/AIZ+v
-         7xm5ED3BN1nuzyFckLpNfhulcdYXepu3YnnuqDVFjagvD+9mH0T6TEdLq/6Cd8op2Ng7
-         +qmg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=43NEJMr0brhfqyLpY3hPgyhFUTczXVAcWbtRqQQyC5A=;
+        b=J9W4isTpQ7OZPErXo2Mo5+7UuchHyNqHkA9qicXQ6SUt28hTjkMSUbdxek7WJNTLH3
+         e/7zXFAS+OKy+QwoeecamSGbZrUmEADanAgWlevCplyFPEz1QFwRxBDM/DLhhKx0Fcgn
+         RR2TEfLnwuw+LWpT8UWve0nXC6fZ4vg2qwiKAICwvuirZK46rCH8yBui3UMdLIRFrCcO
+         PVcYI9gAznpTHpJNLL3DYhLMBaXdsEt8s+6A4Jsf37XVS3G2QuASGYV8FvhVOKSruBvQ
+         x60ifTGzB3okCjtsDVIAXEshTWKOEDzgRoO4N9yG2Nw2i2neINv27pxBMdzMQzdrlwQw
+         nIEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=J4ZN/SXLkaHtgaR5XMNgO5PtUr/lZWOqM0+2vN5G3FE=;
-        b=pc48LYaHjiqKmrHNK9Lclpn+nxpeCRuKb2MnKuzXrb3nlu10T+Wwg53cnRN93lhkCI
-         aXnpB7mTc2neNEY1eCLQnj+eZOCfspVfrl2w9bIneeoy2GNOzHuCvh6/rrhl10hFOktW
-         GULCzWHDEMG5NDHa01hpzmhqYB/azDucatuJqGte/rGP0Rncre0aLgIPeV4CADfUmsZa
-         WkMbU9ugnnH6irFldaf2awwTSM4xPaMF7tqsuEyYhKH1y89RMsJNq9z4mHzm7JzHNiqs
-         I/gVrCsEOp10Urv+g/6rWY1vy4GJqYvX59B0IxwN91h0e/K2dFWJn9KTY3GqOCqxSpfs
-         z4uw==
-X-Gm-Message-State: AOAM532KVXi9BOZdOH7X5urA0akTIh9KeKXaaW0dz9kLpOfhexmOior8
-        Sw2aShI81zluEazz/HU8VGWpgFi9g5BPEVH5Ln/1VQ==
-X-Google-Smtp-Source: ABdhPJyMJP+G+zDtU3cQrzH4Rz/vW+DE8h+ZLTS8Oh06SyfmGu1gILfLx/I1pNO4KYHoUUGvd0DJPnSytYxVcS+uRfA=
-X-Received: by 2002:aa7:dcd1:: with SMTP id w17mr31920855edu.322.1629642083843;
- Sun, 22 Aug 2021 07:21:23 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=43NEJMr0brhfqyLpY3hPgyhFUTczXVAcWbtRqQQyC5A=;
+        b=Lld/hEkKdgH3nvSWOAYsc7ZhSe39HDBjSxm4loMbI3xxwXHrbW2G1XFMlVyTfYymhO
+         S5mqHScd8IdsHrngbinR1NG9yVRw0siXZ8Ha3opjthXJUvBqCmv4WKp1js2ZdLNDbl6+
+         uvn56lHq/bW9U8+QEAtRQ+BljHs1MIpHnhmjbP6G41i2CIrer22NOoqLWHh9dmy19PZ3
+         iOqYhsU0v1HLDcqMdUCRyn/1Tte1VCj1nLssVKZYXUva72MD6NOsyTA2EQRIjyDgnJ5X
+         Qxy1BoZEF3u2Hr2y306nO3GyBBrbYG7JtSqhmJZsC/rX0Wdh4X/7vqBaoxpXHAN41Tdi
+         XJww==
+X-Gm-Message-State: AOAM533ziSF5ENXfRrOo8T84aqVQNWJJAIdA7YrwZHGKu/FriXc0uNn7
+        VvLIuNgmAS3Hk9Hkq9O1TuE=
+X-Google-Smtp-Source: ABdhPJyzVxUfiTwOFDSY/OKNym6ckuZ8IweoE+bquKIj4ImmrkFXBxw2dEjDxAulAE1byO3rREsV2w==
+X-Received: by 2002:a05:6512:3888:: with SMTP id n8mr22711423lft.468.1629642696113;
+        Sun, 22 Aug 2021 07:31:36 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id k23sm1121170ljg.73.2021.08.22.07.31.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Aug 2021 07:31:35 -0700 (PDT)
+Date:   Sun, 22 Aug 2021 17:31:33 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+Cc:     viro@zeniv.linux.org.uk,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dsterba@suse.cz, aaptel@suse.com, willy@infradead.org,
+        rdunlap@infradead.org, joe@perches.com, mark@harmstone.com,
+        nborisov@suse.com, linux-ntfs-dev@lists.sourceforge.net,
+        anton@tuxera.com, dan.carpenter@oracle.com, hch@lst.de,
+        ebiggers@kernel.org, andy.lavr@gmail.com, oleksandr@natalenko.name
+Subject: Re: [PATCH v27 04/10] fs/ntfs3: Add file operations and
+ implementation
+Message-ID: <20210822143133.4meiisx2tbfgrz5l@kari-VirtualBox>
+References: <20210729134943.778917-1-almaz.alexandrovich@paragon-software.com>
+ <20210729134943.778917-5-almaz.alexandrovich@paragon-software.com>
+ <20210822122003.kb56lexgvv6prf2t@pali>
 MIME-Version: 1.0
-References: <CAOuPNLjzyG_2wGDYmwgeoQuuQ7cykJ11THf8jMrOFXZ7vXheJQ@mail.gmail.com>
- <CAOuPNLh_KY4NaVWSEV2JPp8fx0iy8E1MU8GHT-w7-hMXrvSaeA@mail.gmail.com>
- <1556211076.48404.1626763215205.JavaMail.zimbra@nod.at> <CAOuPNLhti3tocN-_D7Q0QaAx5acHpb3AQyWaUKgQPNW3XWu58g@mail.gmail.com>
- <2132615832.4458.1626900868118.JavaMail.zimbra@nod.at> <CAOuPNLhCMT7QTF+QadJyGDFNshH9VjEAzWStRpe8itw7HXve=A@mail.gmail.com>
- <CAFLxGvywv29u6DJZrJxnJJmUDSQ4xpbT0u5LNKY1uGKyQom+WA@mail.gmail.com>
- <CAAEAJfCY+X-G=7Oe9NqrJ4yQZ29DBA78jOFAX44GD0g6=s7qhg@mail.gmail.com>
- <1668790824.35266.1627559144878.JavaMail.zimbra@nod.at> <CAAEAJfDDtGcUquyP7Jn0Urttt4kSfAQbJ_qPQ90ROtWLavW9EA@mail.gmail.com>
- <CAOuPNLj+DSigRY_AgHQnGKCK-Vm4ykQBR8UfnTi2UObORTcBFg@mail.gmail.com> <CAOuPNLgfJGzp-RJBjydFDL1ZAvOd7=-MgXhnsb2eb_xFSLC66w@mail.gmail.com>
-In-Reply-To: <CAOuPNLgfJGzp-RJBjydFDL1ZAvOd7=-MgXhnsb2eb_xFSLC66w@mail.gmail.com>
-From:   Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Date:   Sun, 22 Aug 2021 11:21:12 -0300
-Message-ID: <CAAEAJfBuut7VSbrrz6CxOC+Cke36eGGv8VUvfdbfLwvSBxOAAA@mail.gmail.com>
-Subject: Re: MTD: How to get actual image size from MTD partition
-To:     Pintu Agarwal <pintu.ping@gmail.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Kernelnewbies <kernelnewbies@kernelnewbies.org>,
-        Greg KH <greg@kroah.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Sean Nyekjaer <sean@geanix.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210822122003.kb56lexgvv6prf2t@pali>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Pintu,
+On Sun, Aug 22, 2021 at 02:20:03PM +0200, Pali Rohár wrote:
+> On Thursday 29 July 2021 16:49:37 Konstantin Komarov wrote:
+> > diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+> > new file mode 100644
+> > index 000000000..b4369c61a
+> > --- /dev/null
+> > +++ b/fs/ntfs3/file.c
+> > @@ -0,0 +1,1130 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + *
+> > + * Copyright (C) 2019-2021 Paragon Software GmbH, All rights reserved.
+> > + *
+> > + *  regular file handling primitives for ntfs-based filesystems
+> > + */
+> > +#include <linux/backing-dev.h>
+> > +#include <linux/buffer_head.h>
+> > +#include <linux/compat.h>
+> > +#include <linux/falloc.h>
+> > +#include <linux/fiemap.h>
+> > +#include <linux/msdos_fs.h> /* FAT_IOCTL_XXX */
+> > +#include <linux/nls.h>
+> > +
+> > +#include "debug.h"
+> > +#include "ntfs.h"
+> > +#include "ntfs_fs.h"
+> > +
+> > +static int ntfs_ioctl_fitrim(struct ntfs_sb_info *sbi, unsigned long arg)
+> > +{
+> > +	struct fstrim_range __user *user_range;
+> > +	struct fstrim_range range;
+> > +	struct request_queue *q = bdev_get_queue(sbi->sb->s_bdev);
+> > +	int err;
+> > +
+> > +	if (!capable(CAP_SYS_ADMIN))
+> > +		return -EPERM;
+> > +
+> > +	if (!blk_queue_discard(q))
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	user_range = (struct fstrim_range __user *)arg;
+> > +	if (copy_from_user(&range, user_range, sizeof(range)))
+> > +		return -EFAULT;
+> > +
+> > +	range.minlen = max_t(u32, range.minlen, q->limits.discard_granularity);
+> > +
+> > +	err = ntfs_trim_fs(sbi, &range);
+> > +	if (err < 0)
+> > +		return err;
+> > +
+> > +	if (copy_to_user(user_range, &range, sizeof(range)))
+> > +		return -EFAULT;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static long ntfs_ioctl(struct file *filp, u32 cmd, unsigned long arg)
+> > +{
+> > +	struct inode *inode = file_inode(filp);
+> > +	struct ntfs_sb_info *sbi = inode->i_sb->s_fs_info;
+> > +	u32 __user *user_attr = (u32 __user *)arg;
+> > +
+> > +	switch (cmd) {
+> > +	case FAT_IOCTL_GET_ATTRIBUTES:
+> > +		return put_user(le32_to_cpu(ntfs_i(inode)->std_fa), user_attr);
+> > +
+> > +	case FAT_IOCTL_GET_VOLUME_ID:
+> > +		return put_user(sbi->volume.ser_num, user_attr);
+> > +
+> > +	case FITRIM:
+> > +		return ntfs_ioctl_fitrim(sbi, arg);
+> > +	}
+> > +	return -ENOTTY; /* Inappropriate ioctl for device */
+> > +}
+> 
+> Hello! What with these two FAT_* ioctls in NTFS code? Should NTFS driver
+> really implements FAT ioctls? Because they looks like some legacy API
+> which is even not implemented by current ntfs.ko driver.
 
-On Fri, 20 Aug 2021 at 15:25, Pintu Agarwal <pintu.ping@gmail.com> wrote:
->
-> On Thu, 29 Jul 2021 at 22:41, Pintu Agarwal <pintu.ping@gmail.com> wrote:
-> >
-> > On Thu, 29 Jul 2021 at 17:33, Ezequiel Garcia
-> > <ezequiel@vanguardiasur.com.ar> wrote:
-> > >
-> > > On Thu, 29 Jul 2021 at 08:45, Richard Weinberger <richard@nod.at> wro=
-te:
-> > > >
-> > > > Ezequiel,
-> > > >
-> > > > ----- Urspr=C3=BCngliche Mail -----
-> > > > > [snip]
-> > > > >
-> > > > > Ouch, so surprised that after all these years someone is doing sq=
-uashfs/mtdblock
-> > > > > instead of using ubiblock :-)
-> > > > >
-> > > > > Can we patch either Kconfig or add some warn_once on mtdblock
-> > > > > usage, suggesting to use ubiblock instead?
-> > > >
-> > > > a hint in Kconfig makes IMHO sense. Do you want to send a patch?
-> > > > A warning is too much since on some tiny embedded system with NOR f=
-lash mtdblock is still
-> > > > a good choice.
-> > > > ubiblock is mostly useful for NAND flash.
-> > > >
-> > > > > I remember there was still some use case(s) for mtdblock but I ca=
-n't remember
-> > > > > now what was it, perhaps we should document the expectations?
-> > > > > (Is that for JFFS2 to mount?)
-> > > >
-> > > > a long time ago mount didn't accept character devices, so you had t=
-o pass mtdblockX to mount
-> > > > JFFS2.
-> > > > This limitation is gone.
-> > > >
->
-> Hi,
->
-> Just a further follow-up on this discussion.
-> Whether to use /dev/mtdblock or /dev/ubiblock for rootfs (squashfs)
-> mounting during boot.
->
-> As suggested here:
-> Instead of using this in kernel command line:
-> [    0.000000] Kernel command line: ... rootfstype=3Dsquashfs
-> root=3D/dev/mtdblock44 ubi.mtd=3D40,0,30 ...
->
-> I used this:
-> [    0.000000] Kernel command line: ... rootfstype=3Dsquashfs
-> ubi.mtd=3D40,0,30 ubi.block=3D0,0 root=3D/dev/ubiblock0_0 ...
->
-> The device is booting fine with ubiblock as well.
-> But, per say, I could not find any visible difference.
-> I just observed a slight improvement in boot time, but I need to
-> double-check on this, with few more reboot cycles.
->
+I was looking same thing when doing new ioctl for shutdown. These
+should be dropped completly before this gets upstream. Then we have
+more time to think what ioctl calls should used and which are
+necessarry.
 
-That's a very good thing, it means we offered you a smooth transition :-)
+> Specially, should FS driver implements ioctl for get volume id which in
+> this way? Because basically every fs have some kind of uuid / volume id
+> and they can be already retrieved by appropriate userspace tool.
 
-> Apart from this what are the other visible benefits of using ubiblock
-> which can be explained to be management or internal team ?
-> I could not find any documentation explaining the difference, except this=
- one:
-> http://www.linux-mtd.infradead.org/doc/ubi.html#L_ubiblock
->
+My first impression when looking this code was that this is just copy
+paste work from fat driver. FITRIM is exactly the same. Whoever
+copyed it must have not thinked this very closly. Good thing you
+bringing this up.
 
-I'm not a flash expert here. In any case, you are expected to do your own
-research (just like we all did), design your own setup matching
-your use-case, design tests based on your workload and access patterns, etc=
-.
+I didn't want to just yet because there is quite lot messages and
+things which are in Komarov todo list. Hopefully radio silence will
+end soon. I'm afraid next message will be "Please pull" for Linus
+and then it cannot happend because of radio silence.
 
-There are presentations on YouTube which discuss UBI, UBIFS and
-NAND-based designs on Linux, as well as white papers discussing
-NAND flashes challenges.
-
-Having said that...
-
-When you use UBI block, you are accessing the flash via the UBI layer.
-This is IMO the best way to design your system, since UBI addresses
-wear leveling and bad blocks, and offers atomic updates.
-
-In other words, IMO it's best to expose the NAND through UBI
-for both read-only and read-write access, using a single UBI device,
-and then creating UBI volumes as needed. This will allow UBI
-to spread wear leveling across the whole device, which is expected
-to increase the flash lifetime.
-
-For instance, just as some silly example, you could have something like thi=
-s:
-
-                               | RootFS SquashFS  |
-                               | UBI block        | UBIFS User R-W area
-------------------------------------------------------------------------
-Kernel A | Kernel B | RootFS A | RootFS B         | User
-------------------------------------------------------------------------
-                                 UBIX
-------------------------------------------------------------------------
-                                 /dev/mtdX
-
-This setup allows safe kernel and rootfs upgrading. The RootFS is read-only
-via SquashFS and there's a read-write user area. UBI is supporting all
-the volumes, handling bad blocks and wear leveling.
-
-> Can someone also point me to the respective driver code in case of
-> using /dev/mtdblock and /dev/ubiblock ?
-> Apart from theory I also want to check the impact at the code level..
->
-
-You can find all the UBI code in drivers/mtd/ubi of course. The differences
-between mtdblock and ubiblock are huge: one goes directly to the flash,
-and the other uses UBI.
-
-Good luck!
-Ezequiel
