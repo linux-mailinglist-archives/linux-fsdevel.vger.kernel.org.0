@@ -2,202 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E4943F3F6E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Aug 2021 15:14:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 632673F3FB7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Aug 2021 16:21:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231877AbhHVNOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Aug 2021 09:14:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58114 "EHLO
+        id S232898AbhHVOWH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Aug 2021 10:22:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230495AbhHVNOk (ORCPT
+        with ESMTP id S232043AbhHVOWG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Aug 2021 09:14:40 -0400
-Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BAD7C061575;
-        Sun, 22 Aug 2021 06:13:59 -0700 (PDT)
-Received: by mail-qt1-x834.google.com with SMTP id v6so1803870qto.3;
-        Sun, 22 Aug 2021 06:13:59 -0700 (PDT)
+        Sun, 22 Aug 2021 10:22:06 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64D85C061575
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Aug 2021 07:21:25 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id cq23so21853664edb.12
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Aug 2021 07:21:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=qf4utuU+RpA+uHG06+6D2GHWVuTKcfWTDf0QzBu5Zes=;
-        b=gtAGbuiWtMPrrPfi1v8x/SL0Q1TDquvr4m8w6oRihc3IEjW2xPTipX/nsd1+ZBDEev
-         VDNTea6dKnwCtksVRRN3Kf+FQufzQnRdqLIMDd/xf92nB55eFqsF8Ahb2Mqhsu7MlPo9
-         O8StqCcAy66y+uv9yI7r1H2LDFhZ9gEl39I5ztN24Thj7oye9XOjbNnXQ01HuGGtLkWx
-         5MtBrDJdfx8947OgkHgc3yB4PKSvW4Y/CDi0teyrAfz7iL4zKqXpBTy2Hgx/tjymPfBA
-         YL4jMnWnAF+1U1j+jMvLnNMYUHdbr/RZwGkJhw4j6WlNOKChjJO6xHncdB68Jtk5bEKp
-         kfSg==
+        d=vanguardiasur-com-ar.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=J4ZN/SXLkaHtgaR5XMNgO5PtUr/lZWOqM0+2vN5G3FE=;
+        b=DKAzZ8Q4mXjXOBqaMdNNISaFGKc9lQXjGeecFK1OFEAGNv2u4kbda/p/vKDS42UX6h
+         KCXnwavPMs6+8oSSt9oJoXkxaP9Q5UkTSr7FiLunnGQmvE+ZnSd68uG/V5VaRYLxKilv
+         sgqkfYGdvvmKvjugUd17wtvv/GWx3EW+MjQU7pkg9mto22HFkW814EuquaKH3vCu+wZO
+         s0wasYNMAQAX6EvNlLuWjb7KZQ2WpdC1Pz0wN8qQ+3SGgtMlZRJSTD9So4RWGK/AIZ+v
+         7xm5ED3BN1nuzyFckLpNfhulcdYXepu3YnnuqDVFjagvD+9mH0T6TEdLq/6Cd8op2Ng7
+         +qmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qf4utuU+RpA+uHG06+6D2GHWVuTKcfWTDf0QzBu5Zes=;
-        b=M4PF/3Lkv9WaM8o6dp5O8nTBgtVydSRJvWrl821fiBSs7kl9HQhFjbrA0l/SIiKMcF
-         kHEDtZa2y5MDSXmRgf/Ro09ObGL5MWe3nAXeE3zzHr5B6EAKIYV2RkxJLaUdBp1+gLSa
-         V639MIgGcTpD5GOupR/V840O2FANnVKfFZA7U7/tis0nBPJWxz+g+lLWLcbVrkbEGgWj
-         ZmlA2MegHAnXJpbm91m90sFzwafZpiP147GCzzY1aVRhHTqTZ4XZS4IgCxC0pNyEh224
-         K/KD4f8KJR/CeI7dB2la8aoJB+zqs/Ey7TU70EJPoIQYWcavmpuKp11RbBKngB3xl6G3
-         Z8PA==
-X-Gm-Message-State: AOAM533rKvGXEWjixRkDzNZ8snxFXZBvhyvH1TkH823PWm9v/MklcQVA
-        M30fYpsD0kxj4bRgxQOqSfg=
-X-Google-Smtp-Source: ABdhPJxvjM88e175RmZDPwVs8KQrQQSNR0owExOZJvx8pTjGNUMmeQq5f3E6N9iyEvU/8MEgDZWqyg==
-X-Received: by 2002:ac8:6bcc:: with SMTP id b12mr2127924qtt.243.1629638038155;
-        Sun, 22 Aug 2021 06:13:58 -0700 (PDT)
-Received: from localhost ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id h4sm6473250qkp.86.2021.08.22.06.13.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Aug 2021 06:13:57 -0700 (PDT)
-Date:   Sun, 22 Aug 2021 06:13:54 -0700
-From:   CGEL <cgel.zte@gmail.com>
-To:     Kari Argillander <kari.argillander@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, christian.brauner@ubuntu.com,
-        jamorris@linux.microsoft.com, gladkov.alexey@gmail.com,
-        yang.yang29@zte.com.cn, tj@kernel.org,
-        paul.gortmaker@windriver.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Zeal Robot <zealci@zte.com.cn>
-Subject: Re: your mail
-Message-ID: <20210822131354.GB39585@www>
-References: <20210821085939.3sj66wdkshnadnjm@kari-VirtualBox>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=J4ZN/SXLkaHtgaR5XMNgO5PtUr/lZWOqM0+2vN5G3FE=;
+        b=pc48LYaHjiqKmrHNK9Lclpn+nxpeCRuKb2MnKuzXrb3nlu10T+Wwg53cnRN93lhkCI
+         aXnpB7mTc2neNEY1eCLQnj+eZOCfspVfrl2w9bIneeoy2GNOzHuCvh6/rrhl10hFOktW
+         GULCzWHDEMG5NDHa01hpzmhqYB/azDucatuJqGte/rGP0Rncre0aLgIPeV4CADfUmsZa
+         WkMbU9ugnnH6irFldaf2awwTSM4xPaMF7tqsuEyYhKH1y89RMsJNq9z4mHzm7JzHNiqs
+         I/gVrCsEOp10Urv+g/6rWY1vy4GJqYvX59B0IxwN91h0e/K2dFWJn9KTY3GqOCqxSpfs
+         z4uw==
+X-Gm-Message-State: AOAM532KVXi9BOZdOH7X5urA0akTIh9KeKXaaW0dz9kLpOfhexmOior8
+        Sw2aShI81zluEazz/HU8VGWpgFi9g5BPEVH5Ln/1VQ==
+X-Google-Smtp-Source: ABdhPJyMJP+G+zDtU3cQrzH4Rz/vW+DE8h+ZLTS8Oh06SyfmGu1gILfLx/I1pNO4KYHoUUGvd0DJPnSytYxVcS+uRfA=
+X-Received: by 2002:aa7:dcd1:: with SMTP id w17mr31920855edu.322.1629642083843;
+ Sun, 22 Aug 2021 07:21:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210821085939.3sj66wdkshnadnjm@kari-VirtualBox>
+References: <CAOuPNLjzyG_2wGDYmwgeoQuuQ7cykJ11THf8jMrOFXZ7vXheJQ@mail.gmail.com>
+ <CAOuPNLh_KY4NaVWSEV2JPp8fx0iy8E1MU8GHT-w7-hMXrvSaeA@mail.gmail.com>
+ <1556211076.48404.1626763215205.JavaMail.zimbra@nod.at> <CAOuPNLhti3tocN-_D7Q0QaAx5acHpb3AQyWaUKgQPNW3XWu58g@mail.gmail.com>
+ <2132615832.4458.1626900868118.JavaMail.zimbra@nod.at> <CAOuPNLhCMT7QTF+QadJyGDFNshH9VjEAzWStRpe8itw7HXve=A@mail.gmail.com>
+ <CAFLxGvywv29u6DJZrJxnJJmUDSQ4xpbT0u5LNKY1uGKyQom+WA@mail.gmail.com>
+ <CAAEAJfCY+X-G=7Oe9NqrJ4yQZ29DBA78jOFAX44GD0g6=s7qhg@mail.gmail.com>
+ <1668790824.35266.1627559144878.JavaMail.zimbra@nod.at> <CAAEAJfDDtGcUquyP7Jn0Urttt4kSfAQbJ_qPQ90ROtWLavW9EA@mail.gmail.com>
+ <CAOuPNLj+DSigRY_AgHQnGKCK-Vm4ykQBR8UfnTi2UObORTcBFg@mail.gmail.com> <CAOuPNLgfJGzp-RJBjydFDL1ZAvOd7=-MgXhnsb2eb_xFSLC66w@mail.gmail.com>
+In-Reply-To: <CAOuPNLgfJGzp-RJBjydFDL1ZAvOd7=-MgXhnsb2eb_xFSLC66w@mail.gmail.com>
+From:   Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Date:   Sun, 22 Aug 2021 11:21:12 -0300
+Message-ID: <CAAEAJfBuut7VSbrrz6CxOC+Cke36eGGv8VUvfdbfLwvSBxOAAA@mail.gmail.com>
+Subject: Re: MTD: How to get actual image size from MTD partition
+To:     Pintu Agarwal <pintu.ping@gmail.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Kernelnewbies <kernelnewbies@kernelnewbies.org>,
+        Greg KH <greg@kroah.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Sean Nyekjaer <sean@geanix.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-O
-Sat, Aug 21, 2021 at 11:59:39AM +0300, Kari Argillander wrote:
-> Bcc:
-> Subject: Re: [PATCH] proc: prevent mount proc on same mountpoint in one pid
->  namespace
-> Reply-To:
-> In-Reply-To: <20210821083105.30336-1-yang.yang29@zte.com.cn>
-> 
-> On Sat, Aug 21, 2021 at 01:31:05AM -0700, cgel.zte@gmail.com wrote:
-> > From: Yang Yang <yang.yang29@zte.com.cn>
-> > 
-> > Patch "proc: allow to mount many instances of proc in one pid namespace"
-> > aims to mount many instances of proc on different mountpoint, see
-> > tools/testing/selftests/proc/proc-multiple-procfs.c.
-> > 
-> > But there is a side-effects, user can mount many instances of proc on
-> > the same mountpoint in one pid namespace, which is not allowed before.
-> > This duplicate mount makes no sense but wastes memory and CPU, and user
-> > may be confused why kernel allows it.
-> > 
-> > The logic of this patch is: when try to mount proc on /mnt, check if
-> > there is a proc instance mount on /mnt in the same pid namespace. If
-> > answer is yes, return -EBUSY.
-> > 
-> > Since this check can't be done in proc_get_tree(), which call
-> > get_tree_nodev() and will create new super_block unconditionally.
-> > And other nodev fs may faces the same case, so add a new hook in
-> > fs_context_operations.
-> > 
-> > Reported-by: Zeal Robot <zealci@zte.com.cn>
-> > Signed-off-by: Yang Yang <yang.yang29@zte.com.cn>
-> > ---
-> >  fs/namespace.c             |  9 +++++++++
-> >  fs/proc/root.c             | 15 +++++++++++++++
-> >  include/linux/fs_context.h |  1 +
-> >  3 files changed, 25 insertions(+)
-> > 
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index f79d9471cb76..84da649a70c5 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -2878,6 +2878,7 @@ static int do_new_mount_fc(struct fs_context *fc, struct path *mountpoint,
-> >  static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
-> >  			int mnt_flags, const char *name, void *data)
-> >  {
-> > +	int (*check_mntpoint)(struct fs_context *fc, struct path *path);
-> >  	struct file_system_type *type;
-> >  	struct fs_context *fc;
-> >  	const char *subtype = NULL;
-> > @@ -2906,6 +2907,13 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
-> >  	if (IS_ERR(fc))
-> >  		return PTR_ERR(fc);
-> >  
-> > +	/* check if there is a same super_block mount on path*/
-> > +	check_mntpoint = fc->ops->check_mntpoint;
-> > +	if (check_mntpoint)
-> > +		err = check_mntpoint(fc, path);
-> > +	if (err < 0)
-> > +		goto err_fc;
-> > +
-> >  	if (subtype)
-> >  		err = vfs_parse_fs_string(fc, "subtype",
-> >  					  subtype, strlen(subtype));
-> > @@ -2920,6 +2928,7 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
-> >  	if (!err)
-> >  		err = do_new_mount_fc(fc, path, mnt_flags);
-> >  
-> > +err_fc:
-> >  	put_fs_context(fc);
-> >  	return err;
-> >  }
-> > diff --git a/fs/proc/root.c b/fs/proc/root.c
-> > index c7e3b1350ef8..0971d6b0bec2 100644
-> > --- a/fs/proc/root.c
-> > +++ b/fs/proc/root.c
-> > @@ -237,11 +237,26 @@ static void proc_fs_context_free(struct fs_context *fc)
-> >  	kfree(ctx);
-> >  }
-> >  
-> > +static int proc_check_mntpoint(struct fs_context *fc, struct path *path)
-> > +{
-> > +	struct super_block *mnt_sb = path->mnt->mnt_sb;
-> > +	struct proc_fs_info *fs_info;
-> > +
-> > +	if (strcmp(mnt_sb->s_type->name, "proc") == 0) {
-> > +		fs_info = mnt_sb->s_fs_info;
-> > +		if (fs_info->pid_ns == task_active_pid_ns(current) &&
-> > +		    path->mnt->mnt_root == path->dentry)
-> > +			return -EBUSY;
-> > +	}
-> > +	return 0;
-> > +}
-> > +
-> >  static const struct fs_context_operations proc_fs_context_ops = {
-> >  	.free		= proc_fs_context_free,
-> >  	.parse_param	= proc_parse_param,
-> >  	.get_tree	= proc_get_tree,
-> >  	.reconfigure	= proc_reconfigure,
-> > +	.check_mntpoint	= proc_check_mntpoint,
-> >  };
-> >  
-> >  static int proc_init_fs_context(struct fs_context *fc)
-> > diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-> > index 6b54982fc5f3..090a05fb2d7d 100644
-> > --- a/include/linux/fs_context.h
-> > +++ b/include/linux/fs_context.h
-> > @@ -119,6 +119,7 @@ struct fs_context_operations {
-> >  	int (*parse_monolithic)(struct fs_context *fc, void *data);
-> >  	int (*get_tree)(struct fs_context *fc);
-> >  	int (*reconfigure)(struct fs_context *fc);
-> > +	int (*check_mntpoint)(struct fs_context *fc, struct path *path);
-> 
-> Don't you think this should be it's own patch. It is after all internal
-> api change. This also needs documentation. It would be confusing if
-> someone convert to new mount api and there is one line which just
-> address some proc stuff but even commit message does not address does
-> every fs needs to add this. 
-> 
-> Documentation is very good shape right now and we are in face that
-> everyone is migrating to use new mount api so everyting should be well
-> documented.
-> i
-Thanks for your reply!
+Hi Pintu,
 
-I will take commit message more carefully next time.
-Sinece I am not quit sure about this patch, so I didn't write
-Documentation for patch v1. AIViro had made it clear, so this 
-patch is abondoned.
-> >  };
-> >  
-> >  /*
-> > -- 
-> > 2.25.1
-> > 
+On Fri, 20 Aug 2021 at 15:25, Pintu Agarwal <pintu.ping@gmail.com> wrote:
+>
+> On Thu, 29 Jul 2021 at 22:41, Pintu Agarwal <pintu.ping@gmail.com> wrote:
+> >
+> > On Thu, 29 Jul 2021 at 17:33, Ezequiel Garcia
+> > <ezequiel@vanguardiasur.com.ar> wrote:
+> > >
+> > > On Thu, 29 Jul 2021 at 08:45, Richard Weinberger <richard@nod.at> wro=
+te:
+> > > >
+> > > > Ezequiel,
+> > > >
+> > > > ----- Urspr=C3=BCngliche Mail -----
+> > > > > [snip]
+> > > > >
+> > > > > Ouch, so surprised that after all these years someone is doing sq=
+uashfs/mtdblock
+> > > > > instead of using ubiblock :-)
+> > > > >
+> > > > > Can we patch either Kconfig or add some warn_once on mtdblock
+> > > > > usage, suggesting to use ubiblock instead?
+> > > >
+> > > > a hint in Kconfig makes IMHO sense. Do you want to send a patch?
+> > > > A warning is too much since on some tiny embedded system with NOR f=
+lash mtdblock is still
+> > > > a good choice.
+> > > > ubiblock is mostly useful for NAND flash.
+> > > >
+> > > > > I remember there was still some use case(s) for mtdblock but I ca=
+n't remember
+> > > > > now what was it, perhaps we should document the expectations?
+> > > > > (Is that for JFFS2 to mount?)
+> > > >
+> > > > a long time ago mount didn't accept character devices, so you had t=
+o pass mtdblockX to mount
+> > > > JFFS2.
+> > > > This limitation is gone.
+> > > >
+>
+> Hi,
+>
+> Just a further follow-up on this discussion.
+> Whether to use /dev/mtdblock or /dev/ubiblock for rootfs (squashfs)
+> mounting during boot.
+>
+> As suggested here:
+> Instead of using this in kernel command line:
+> [    0.000000] Kernel command line: ... rootfstype=3Dsquashfs
+> root=3D/dev/mtdblock44 ubi.mtd=3D40,0,30 ...
+>
+> I used this:
+> [    0.000000] Kernel command line: ... rootfstype=3Dsquashfs
+> ubi.mtd=3D40,0,30 ubi.block=3D0,0 root=3D/dev/ubiblock0_0 ...
+>
+> The device is booting fine with ubiblock as well.
+> But, per say, I could not find any visible difference.
+> I just observed a slight improvement in boot time, but I need to
+> double-check on this, with few more reboot cycles.
+>
+
+That's a very good thing, it means we offered you a smooth transition :-)
+
+> Apart from this what are the other visible benefits of using ubiblock
+> which can be explained to be management or internal team ?
+> I could not find any documentation explaining the difference, except this=
+ one:
+> http://www.linux-mtd.infradead.org/doc/ubi.html#L_ubiblock
+>
+
+I'm not a flash expert here. In any case, you are expected to do your own
+research (just like we all did), design your own setup matching
+your use-case, design tests based on your workload and access patterns, etc=
+.
+
+There are presentations on YouTube which discuss UBI, UBIFS and
+NAND-based designs on Linux, as well as white papers discussing
+NAND flashes challenges.
+
+Having said that...
+
+When you use UBI block, you are accessing the flash via the UBI layer.
+This is IMO the best way to design your system, since UBI addresses
+wear leveling and bad blocks, and offers atomic updates.
+
+In other words, IMO it's best to expose the NAND through UBI
+for both read-only and read-write access, using a single UBI device,
+and then creating UBI volumes as needed. This will allow UBI
+to spread wear leveling across the whole device, which is expected
+to increase the flash lifetime.
+
+For instance, just as some silly example, you could have something like thi=
+s:
+
+                               | RootFS SquashFS  |
+                               | UBI block        | UBIFS User R-W area
+------------------------------------------------------------------------
+Kernel A | Kernel B | RootFS A | RootFS B         | User
+------------------------------------------------------------------------
+                                 UBIX
+------------------------------------------------------------------------
+                                 /dev/mtdX
+
+This setup allows safe kernel and rootfs upgrading. The RootFS is read-only
+via SquashFS and there's a read-write user area. UBI is supporting all
+the volumes, handling bad blocks and wear leveling.
+
+> Can someone also point me to the respective driver code in case of
+> using /dev/mtdblock and /dev/ubiblock ?
+> Apart from theory I also want to check the impact at the code level..
+>
+
+You can find all the UBI code in drivers/mtd/ubi of course. The differences
+between mtdblock and ubiblock are huge: one goes directly to the flash,
+and the other uses UBI.
+
+Good luck!
+Ezequiel
