@@ -2,86 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E9DB3F41AA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Aug 2021 23:06:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 929BE3F42B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 02:57:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233333AbhHVVGu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Aug 2021 17:06:50 -0400
-Received: from cloud48395.mywhc.ca ([173.209.37.211]:36814 "EHLO
-        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232539AbhHVVGt (ORCPT
+        id S232261AbhHWA5p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Aug 2021 20:57:45 -0400
+Received: from out20-38.mail.aliyun.com ([115.124.20.38]:48191 "EHLO
+        out20-38.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230120AbhHWA5o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Aug 2021 17:06:49 -0400
-Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:52712 helo=localhost)
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <olivier@trillion01.com>)
-        id 1mHufP-0001tb-7O; Sun, 22 Aug 2021 17:06:07 -0400
-Date:   Sun, 22 Aug 2021 17:06:06 -0400
-Message-Id: <1625bc89782bf83d9d8c7c63e8ffcb651ccb15fa.1629655338.git.olivier@trillion01.com>
-In-Reply-To: <cover.1629655338.git.olivier@trillion01.com>
-References: <cover.1629655338.git.olivier@trillion01.com>
-From:   Olivier Langlois <olivier@trillion01.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] coredump: cancel io_uring requests before dumping core
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Sun, 22 Aug 2021 20:57:44 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1628733|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_social|0.140926-0.00254726-0.856527;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047199;MF=wangyugui@e16-tech.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.L6VWebn_1629680219;
+Received: from 192.168.2.112(mailfrom:wangyugui@e16-tech.com fp:SMTPD_---.L6VWebn_1629680219)
+          by smtp.aliyun-inc.com(10.147.40.233);
+          Mon, 23 Aug 2021 08:56:59 +0800
+Date:   Mon, 23 Aug 2021 08:57:00 +0800
+From:   Wang Yugui <wangyugui@e16-tech.com>
+To:     Zygo Blaxell <ce3g8jdj@umail.furryterror.org>
+Subject: Re: [PATCH] VFS/BTRFS/NFSD: provide more unique inode number for btrfs export
+Cc:     NeilBrown <neilb@suse.de>, Christoph Hellwig <hch@infradead.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>, Chris Mason <clm@fb.com>,
+        David Sterba <dsterba@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+In-Reply-To: <20210819021910.GB29026@hungrycats.org>
+References: <162932318266.9892.13600254282844823374@noble.neil.brown.name> <20210819021910.GB29026@hungrycats.org>
+Message-Id: <20210823085658.0ABE.409509F4@e16-tech.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Becky! ver. 2.75.04 [en]
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The previous solution of ignoring the TIF_NOTIFY_SIGNAL bit while
-dumping core is only working when the core dump is sent in a file.
+Hi,
 
-When a pipe is used, pipe_write returns -ERESTARTSYS if signal_pending
-which includes TIF_NOTIFY_SIGNAL is true.
+> rsync -H and cpio's hardlink detection can be badly confused.  They will
+> think distinct files with the same inode number are hardlinks.  This could
+> be bad if you were making backups (though if you're making backups over
+> NFS, you are probably doing something that could be done better in a
+> different way).
 
-A more robust solution is to make sure that io_uring will not set
-TIF_NOTIFY_SIGNAL while the core dump is generated by cancelling all
-the io_uring requests made by the current task before starting.
+'rysnc -x ' and 'find -mount/-xdev' will fail to work in
+snapper config?
+snapper is a very important user case.
 
-Fixes: 06af8679449d ("coredump: Limit what can interrupt coredumps")
-Signed-off-by: Olivier Langlois <olivier@trillion01.com>
----
- fs/coredump.c | 3 +++
- 1 file changed, 3 insertions(+)
+Although  yet not some option like '-mount/-xdev' for '/bin/cp',
+but maybe come soon.
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 07afb5ddb1c4..9aceb4b3b40d 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -41,6 +41,7 @@
- #include <linux/fs.h>
- #include <linux/path.h>
- #include <linux/timekeeping.h>
-+#include <linux/io_uring.h>
- 
- #include <linux/uaccess.h>
- #include <asm/mmu_context.h>
-@@ -625,6 +626,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		need_suid_safe = true;
- 	}
- 
-+	io_uring_task_cancel();
-+
- 	retval = coredump_wait(siginfo->si_signo, &core_state);
- 	if (retval < 0)
- 		goto fail_creds;
--- 
-2.32.0
+I though the first patchset( crossmnt in nfs client) is the right way,
+because in most case, subvol is a filesystem, not  a directory.
+
+Best Regards
+Wang Yugui (wangyugui@e16-tech.com)
+2021/08/23
+
+
+
 
