@@ -2,140 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 536C23F4470
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 06:48:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5A5A3F44B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 07:52:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230439AbhHWEtH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Aug 2021 00:49:07 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:10598 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229462AbhHWEtG (ORCPT
+        id S233885AbhHWFwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Aug 2021 01:52:45 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:57574 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231267AbhHWFwp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Aug 2021 00:49:06 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20210823044822epoutp030004b027aac58e12e4693ebfa484a729~d1ibwWFaH2933829338epoutp03C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Aug 2021 04:48:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20210823044822epoutp030004b027aac58e12e4693ebfa484a729~d1ibwWFaH2933829338epoutp03C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1629694102;
-        bh=pIalBUDeN+09/OgJzDqcHKMPQUX+EIeR3psru4o1if0=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=bnLaKFJ9lnIRslTjjIr54tUw+IS2JeIoMPHjqiADHB0expdK3EQG1yHqI7xk9zJrK
-         WFH8f2U/WU0kSDOkWVPO3QEYAVpdY2Wfuz9AOUgHZ14Dr1AGIBJe8SnFhrg9RG2W89
-         gzGFn+dEZl9xavhWK1GIiTg59hgPQyw7x0AyVEH4=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20210823044822epcas1p1b2fa5a951abc99e934441cc305ee3917~d1ibcwrAw1582515825epcas1p1Z;
-        Mon, 23 Aug 2021 04:48:22 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.38.242]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4GtKW730cgz4x9QN; Mon, 23 Aug
-        2021 04:48:19 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        85.1A.09765.29823216; Mon, 23 Aug 2021 13:48:18 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20210823044817epcas1p1597df777cca96327d2e6d409aaaa1a40~d1iW3gnBa1578215782epcas1p1L;
-        Mon, 23 Aug 2021 04:48:17 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20210823044817epsmtrp2054a00a1f0d3f361d6a1f8b1c771c12c~d1iW23B8P2765027650epsmtrp24;
-        Mon, 23 Aug 2021 04:48:17 +0000 (GMT)
-X-AuditID: b6c32a37-8ffff70000002625-c1-612328918cb0
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        10.FE.09091.19823216; Mon, 23 Aug 2021 13:48:17 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.89.31.77]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20210823044817epsmtip22f6e71a5d8e924835ac6241f9171f447~d1iWpr09k0075400754epsmtip2X;
-        Mon, 23 Aug 2021 04:48:17 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'David Disseldorp'" <ddiss@suse.de>
-Cc:     "'Sungjong Seo'" <sj1557.seo@samsung.com>,
-        "'Namjae Jeon'" <linkinjeon@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-In-Reply-To: <20210820151214.37742aad@suse.de>
-Subject: RE: [PATCH 0/2] exfat: allow access to paths with trailing dots
-Date:   Mon, 23 Aug 2021 13:48:17 +0900
-Message-ID: <004e01d797da$16fe0590$44fa10b0$@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQNJtgRGwkbJhwlTqXWzyf/suWf68AGvw0D+qI7D1jA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkk+LIzCtJLcpLzFFi42LZdlhTV3eShnKiwYRFzBZf/09nsZg4bSmz
-        xZ69J1kstvw7wurA4rFpVSebR9+WVYwem09Xe3zeJBfAEpVtk5GamJJapJCal5yfkpmXbqvk
-        HRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQO0UUmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCR
-        X1xiq5RakJJTYFagV5yYW1yal66Xl1piZWhgYGQKVJiQnfHqwTHWgs/sFQ9fXWZqYFzM1sXI
-        ySEhYCJxdFETUxcjF4eQwA5Gid8nr0E5nxgl/v+4ygLhfGOUePpoBlzLw6Mz2SASexklTlyZ
-        DVX1glHi4uw7TCBVbAK6Ev/+7AfrEBHQkGjZt5cdxGYWqJR4vnEbK4jNKaAncXP6VUYQW1jA
-        Q+LG+s1Agzg4WARUJZY9VAcJ8wpYSiy7f4EFwhaUODnzCQvEGHmJ7W/nMEMcpCDx8+kyVohV
-        VhL7fr5jg6gRkZjd2cYMcpuEwFd2iZl337NCNLhI3N91mBHCFpZ4dXwLO4QtJfH53V6oL8sl
-        Tpz8xQRh10hsmLePHeQ2CQFjiZ4XJSAms4CmxPpd+hAVihI7f89lhFjLJ/Huaw8rRDWvREeb
-        EESJqkTfpcNQA6Uluto/sE9gVJqF5LFZSB6bheSBWQjLFjCyrGIUSy0ozk1PLTYsMIbHdXJ+
-        7iZGcFrUMt/BOO3tB71DjEwcjIcYJTiYlUR4/zIpJwrxpiRWVqUW5ccXleakFh9iNAWG9ERm
-        KdHkfGBiziuJNzSxNDAxMzKxMLY0NlMS52V8JZMoJJCeWJKanZpakFoE08fEwSnVwMSi9s5U
-        vd1N55FxTp/vu/Clkz6szGNsyj1WoJU3bcWHtzZfRblUPnNk2V3g+jDzwauY7XcPmBpMaJJN
-        zNnSVKHNFSy3LvFmwKtMtqtPl2vy3A/ttgszjD5yZdLNoND7T39kPys27HWNb7/n0bI6cOn2
-        yBusK0t0lklqf73I+epgzfW6LelvH1qXcMz/WFi9/U7Z+UvxKudOC0ps7j34huVWwNRbs299
-        /sl5RnWzfu30hoWShvs/fHiw68iPpz1PWJrSXKTXLUh54rlitqiA2o6WuRodKUFm+z4tYT7B
-        bt1y5r/C15XR/l7HXzrmyfQp2Fv6aNu+TzpZma3BxP/sgP7qH2Lbz7IVmt0pnZRwtF+JpTgj
-        0VCLuag4EQARdjJbFAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDLMWRmVeSWpSXmKPExsWy7bCSvO5EDeVEg2dzFC2+/p/OYjFx2lJm
-        iz17T7JYbPl3hNWBxWPTqk42j74tqxg9Np+u9vi8SS6AJYrLJiU1J7MstUjfLoEr49WDY6wF
-        n9krHr66zNTAuJiti5GTQ0LAROLh0ZlANheHkMBuRon29g3MEAlpiWMnzgDZHEC2sMThw8UQ
-        Nc8YJaYsngNWwyagK/Hvz36wQSICGhIt+/ayg9jMAtUSz06eAbOFBOolvq7tZAGxOQX0JG5O
-        v8oIYgsLeEjcWL+ZBWQ+i4CqxLKH6iBhXgFLiWX3L7BA2IISJ2c+YYEYqSexfv0cRghbXmL7
-        2zlQZypI/Hy6jBXiBCuJfT/fsUHUiEjM7mxjnsAoPAvJqFlIRs1CMmoWkpYFjCyrGCVTC4pz
-        03OLDQsM81LL9YoTc4tL89L1kvNzNzGCI0RLcwfj9lUf9A4xMnEwHmKU4GBWEuH9y6ScKMSb
-        klhZlVqUH19UmpNafIhRmoNFSZz3QtfJeCGB9MSS1OzU1ILUIpgsEwenVAOTzvStSdZ7w00K
-        WOSkfvGb7Mph2uC+IczuwMbk2aZXzjsdmzCbNWD1I3P2tA/3657Yrl95qmX2saOz3ZtYDs/M
-        3cx5YOG5Jzs273k2Z1Lhx0tCXjJp8T+TTt1w4dz17OzHnJ3u9jNfbt6hvk1Wr/n8G7aZTGGp
-        e+UORHJ6/jPhmtvbfm5PmHDRnvwTsudnBUTkfezvqT6747GLplrwA9PsBreE48uetuSpsn9P
-        fRHBvm/30te2N9siXEpT59t/2rLzfOSLVAX9v368bp1v1bQ4vh9NmGFT2CvUMXWWpt7jtfMf
-        83+faaQtwC8Xtub1bR3hV3N1fu814lodk/vVVOJm9/Yldyt+syVN2poV0XNNVImlOCPRUIu5
-        qDgRAOH39RL/AgAA
-X-CMS-MailID: 20210823044817epcas1p1597df777cca96327d2e6d409aaaa1a40
-X-Msg-Generator: CA
+        Mon, 23 Aug 2021 01:52:45 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id D692521F2A;
+        Mon, 23 Aug 2021 05:52:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1629697921; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=p4iErQiaXqFxK5RhLttHlBJp3hFnIIgCgpe0bRYAxeA=;
+        b=0P+yRzaAjLZzOwjLwnO+ST7oqJZRVUIBYH/8reyeVumiChNsSSEwDYJmVXtoGCaPktoOaj
+        KR6TOU2OzmpXXTrji3GDTILJo8lUyCIw1FZKD0eqPD/6Ea8JmTtkGmv6uYibxpUsHSotC/
+        RXFz3BXqrKpKgwqDSHM93WXr1JRuIEs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1629697921;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=p4iErQiaXqFxK5RhLttHlBJp3hFnIIgCgpe0bRYAxeA=;
+        b=paBDsK2beDKmwINS44QOydx0LeA/J4VNMRURJOwOZ5bodeFivZgTi0BwkgLcBbvKcHkYgH
+        jQPaLx9/iCTkCRDg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6B8E013A23;
+        Mon, 23 Aug 2021 05:51:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id yaacCn43I2HPOgAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 23 Aug 2021 05:51:58 +0000
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210820131220epcas1p1e97adf5dfc5125571733d42d5d71110c
-References: <CGME20210820131220epcas1p1e97adf5dfc5125571733d42d5d71110c@epcas1p1.samsung.com>
-        <20210820151214.37742aad@suse.de>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Zygo Blaxell" <ce3g8jdj@umail.furryterror.org>
+Cc:     "Wang Yugui" <wangyugui@e16-tech.com>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        "Josef Bacik" <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        "Chuck Lever" <chuck.lever@oracle.com>, "Chris Mason" <clm@fb.com>,
+        "David Sterba" <dsterba@suse.com>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH] VFS/BTRFS/NFSD: provide more unique inode number for btrfs export
+In-reply-to: <20210822192917.GF29026@hungrycats.org>
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>,
+ <162881913686.1695.12479588032010502384@noble.neil.brown.name>,
+ <20210818225454.9558.409509F4@e16-tech.com>,
+ <162932318266.9892.13600254282844823374@noble.neil.brown.name>,
+ <20210819021910.GB29026@hungrycats.org>,
+ <162942805745.9892.7512463857897170009@noble.neil.brown.name>,
+ <20210822192917.GF29026@hungrycats.org>
+Date:   Mon, 23 Aug 2021 15:51:54 +1000
+Message-id: <162969791499.9892.11536866623369257320@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Date: Wed, 18 Aug 2021 13:11:21 +0200
-> From: David Disseldorp <ddiss@suse.de>
-> To: linux-fsdevel@vger.kernel.org
-> Subject: [PATCH 0/2] exfat: allow access to paths with trailing dots
-> 
-> 
-Hi David,
-> This patchset adds a new exfat "keeptail" mount option, which allows users to resolve paths carrying
-> trailing period '.' characters.
-> I'm not a huge fan of "keeptail" as an option name, but couldn't think of anything better.
-We are concerning that this mount option allow to create the filename that
-contain trailing period. It will cause the compatibility issues with windows.
-I think compatibility with windows is more important than fuse-exfat.
+On Mon, 23 Aug 2021, Zygo Blaxell wrote:
+>=20
+> Subvol IDs are not reusable.  They are embedded in shared object ownership
+> metadata, and persist for some time after subvols are deleted.
 
-Can we only allow those files to be accessed and prevented from being created?
-> 
-> Feedback appreciated.
+Hmmm...  that's interesting.  Makes some sense too.  I did wonder how
+ownership across multiple snapshots was tracked.
 
-Thanks!
-> 
-> Cheers, David
-> 
-> --
-> 
->  fs/exfat/exfat_fs.h |  3 ++-
->  fs/exfat/namei.c    | 25 ++++++++++++++-----------
->  fs/exfat/super.c    |  7 +++++++
->  3 files changed, 23 insertions(+), 12 deletions(-)
+>=20
+> > > > My preference would be for btrfs to start re-using old object-ids and
+> > > > root-ids, and to enforce a limit (set at mkfs or tunefs) so that the
+> > > > total number of bits does not exceed 64.  Unfortunately the maintaine=
+rs
+> > > > seem reluctant to even consider this.
+> > >=20
+> > > It was considered, implemented in 2011, and removed in 2020.  Rationale
+> > > is in commit b547a88ea5776a8092f7f122ddc20d6720528782 "btrfs: start
+> > > deprecation of mount option inode_cache".  It made file creation slower,
+> > > and consumed disk space, iops, and memory to run.  Nobody used it.
+> > > Newer on-disk data structure versions (free space tree, 2015) didn't
+> > > bother implementing inode_cache's storage requirement.
+> >=20
+> > Yes, I saw that.  Providing reliable functional certainly can impact
+> > performance and consume disk-space.  That isn't an excuse for not doing
+> > it.=20
+> > I suspect that carefully tuned code could result in typical creation
+> > times being unchanged, and mean creation times suffering only a tiny
+> > cost.  Using "max+1" when the creation rate is particularly high might
+> > be a reasonable part of managing costs.
+> > Storage cost need not be worse than the cost of tracking free blocks
+> > on the device.
+>=20
+> The cost of _tracking_ free object IDs is trivial compared to the cost
+> of _reusing_ an object ID on btrfs.
 
+I hadn't thought of that.
 
+>=20
+> If btrfs doesn't reuse object numbers, btrfs can append new objects
+> to the last partially filled leaf.  If there are shared metadata pages
+> (i.e. snapshots), btrfs unshares a handful of pages once, and then future
+> writes use densely packed new pages and delayed allocation without having
+> to read anything.
+>=20
+> If btrfs reuses object numbers, the filesystem has to pack new objects
+> into random previously filled metadata leaf nodes, so there are a lot
+> of read-modify-writes scattered over old metadata pages, which spreads
+> the working set around and reduces cache usage efficiency (i.e. uses
+> more RAM).  If there are snapshots, each shared page that is modified
+> for the first time after the snapshot comes with two-orders-of-magnitude
+> worst-case write multipliers.
+
+I don't really follow that .... but I'll take your word for it for now.
+
+>=20
+> The two-algorithm scheme (switching from "reuse freed inode" to "max+1"
+> under load) would be forced into the "max+1" mode half the time by a
+> daily workload of alternating git checkouts and builds.  It would save
+> only one bit of inode namespace over the lifetime of the filesystem.
+>=20
+> > "Nobody used it" is odd.  It implies it would have to be explicitly
+> > enabled, and all it would provide anyone is sane behaviour.  Who would
+> > imagine that to be an optional extra.
+>=20
+> It always had to be explicitly enabled.  It was initially a workaround
+> for 32-bit ino_t that was limiting a few users, but ino_t got better
+> and the need for inode_cache went away.
+>=20
+> NFS (particularly NFSv2) might be the use case inode_cache has been
+> waiting for.  btrfs has an i_version field for NFSv4, so it's not like
+> there's no precedent for adding features in btrfs to support NFS.
+
+NFSv2 is not worth any effort.  NFSv4 is.  NFSv3 ... some, but not a lot.
+
+>=20
+> On the other hand, the cost of ino_cache gets worse with snapshots,
+> and the benefit in practice takes years to decades to become relevant.
+> Users who are exporting snapshots over NFS are likely to be especially
+> averse to using inode_cache.
+
+That's the real killer.  Everything will work fine for years until it
+doesn't.  And once it doesn't ....  what do you do?
+
+Thanks for lot for all this background info.  I've found it to be very
+helpful for my general understanding.
+
+Thanks,
+NeilBrown
