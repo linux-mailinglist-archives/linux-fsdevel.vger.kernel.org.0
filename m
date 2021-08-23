@@ -2,353 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 136443F4621
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 09:55:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EA033F4628
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 09:56:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235463AbhHWHzt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Aug 2021 03:55:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:26388 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235262AbhHWHzs (ORCPT
+        id S235321AbhHWH4w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Aug 2021 03:56:52 -0400
+Received: from mail-vs1-f41.google.com ([209.85.217.41]:40755 "EHLO
+        mail-vs1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235263AbhHWH4v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Aug 2021 03:55:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629705306;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/hocWjKMUK0ZY0xyvvkq28cKqCTWsZd73eIRRl/mYVE=;
-        b=chOVKYlzfFb3NHZk3CoJfj2sg0hQM8WKGxuo4FEfa2lFscl26FDkPQY60G5DBB1VfNGlJZ
-        WOUHmUevSdI6ZL1xxlDivZ+B/iXA6OulNFD80tWSwnVyQkrs+S/C9VJv7I94PQcAMqKw4I
-        YhXwbWR+zj0J/GpXnnvbMnLDRhSX43s=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-511-TAkRkz8nNaymuZ4QMKlXtg-1; Mon, 23 Aug 2021 03:55:04 -0400
-X-MC-Unique: TAkRkz8nNaymuZ4QMKlXtg-1
-Received: by mail-pj1-f72.google.com with SMTP id g14-20020a17090a300e00b00186081195c2so2745850pjb.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Aug 2021 00:55:04 -0700 (PDT)
+        Mon, 23 Aug 2021 03:56:51 -0400
+Received: by mail-vs1-f41.google.com with SMTP id h29so8184113vsr.7;
+        Mon, 23 Aug 2021 00:56:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=/hocWjKMUK0ZY0xyvvkq28cKqCTWsZd73eIRRl/mYVE=;
-        b=djnFi2fWIlYUKgIItDcmoHf+JVqKBVenGFFPMS6z2uPV2tQL/LNN5jAxzr8NNgUV3e
-         6J+S0eCz4vja7TXtN9XYVldQAjjiUIEgsnYjdLZeYQ8FpCjin2pg021DELAi2d4CnQHa
-         4dMScGFRwcA8bSzfflaIEiW/6LRAAzxjRFvhyr66MvsdtnbvMEVphu4d91mGyiTlwy1d
-         1oeOEQyLAJuYXq5bIKDTXp/aB2jkSdAqWf2noggwFvE0HwOpnusOI394z80RUcz94Ic0
-         mq9eAwel9LWnw5yBcpikzjSwi0lmMyY/ECDalNyyQ5d8bHGnQnFMD+O09/oTMhQhhV3V
-         3x3A==
-X-Gm-Message-State: AOAM531ZxnVQlIgISv0PYzIV37628JlAbTN9PBSGAFzRke2JRAVWaYj+
-        K1mHQKsqVW/67fVDXoPsiWcA+gmNWotWLmeOLdRxGvlDxH1hDVn/p/WAQExTFoJq/0CQFgX/gTP
-        S9wrCXEuL+AObpnOyr4aDZ4+/eA==
-X-Received: by 2002:a63:5b01:: with SMTP id p1mr30762345pgb.250.1629705303566;
-        Mon, 23 Aug 2021 00:55:03 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJy/gdooVRaBJkpdnxcchxAVLcay4ARXGkH6bG99GZDLGfQfCwwVMA6TovyMi4F/iOGpo+25iw==
-X-Received: by 2002:a63:5b01:: with SMTP id p1mr30762322pgb.250.1629705303264;
-        Mon, 23 Aug 2021 00:55:03 -0700 (PDT)
-Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id fh2sm13229446pjb.12.2021.08.23.00.54.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Aug 2021 00:55:02 -0700 (PDT)
-Subject: Re: [PATCH v11 12/12] Documentation: Add documentation for VDUSE
-To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
-        stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
-        hch@infradead.org, christian.brauner@canonical.com,
-        rdunlap@infradead.org, willy@infradead.org,
-        viro@zeniv.linux.org.uk, axboe@kernel.dk, bcrl@kvack.org,
-        corbet@lwn.net, mika.penttila@nextfour.com,
-        dan.carpenter@oracle.com, joro@8bytes.org,
-        gregkh@linuxfoundation.org, zhe.he@windriver.com,
-        xiaodong.liu@intel.com, joe@perches.com, robin.murphy@arm.com
-Cc:     songmuchun@bytedance.com,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-References: <20210818120642.165-1-xieyongji@bytedance.com>
- <20210818120642.165-13-xieyongji@bytedance.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <d556d720-b25e-efe1-8c2b-295bade93a8d@redhat.com>
-Date:   Mon, 23 Aug 2021 15:54:50 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bO20WydNuUjicbzTyFZXQBF0DVpWSwKIJdDjl+VnxdI=;
+        b=FlqhUFLsgf820Fnm207VUxAruP6Em7I3U7iCjyNkX30DAXODEZslEYO17X9auGNjdC
+         Owoy9ZwEsHTO5rttHTyOxiVtxsBgGo6psXXpruKWe6nwWSY9tVW9FngJR3n2RQ9sScnW
+         BX3TMoHG6EY3ulm7cOCAS4I4h+AHM3ANZe2cQUDTRO9p8jsD6EqfICM6UQ5K7wwnE0c/
+         N+DRlR041Drx7DRzTPkggY3KHH1bACK5wTDyPHPDCB+sV/uTLbRo6sp0cJcnm+RO08RU
+         D9XY25TOhTIo66GuPB176tyLayWj5tdUnFO8E0d6epENTUPg6pIsIL9i11pGdfb4JJhl
+         HIqQ==
+X-Gm-Message-State: AOAM5310y4BUrX/1GL8G+gtSmKCz+eQQeI5piT288VDOPRSIC1TQkXRX
+        fE4YjnNfLVS1RUSsb+IZAY9SF4NdOl/OHboWbw8=
+X-Google-Smtp-Source: ABdhPJxMhnJoTSMt1e3XrfAQGUikNOXfRuWG7TZ644Gun+YviYlr+fG1nVKaZQa7BFgcKGc/DC0y/v+xN1ESjGAyAXg=
+X-Received: by 2002:a05:6102:3e92:: with SMTP id m18mr22891652vsv.53.1629705368522;
+ Mon, 23 Aug 2021 00:56:08 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210818120642.165-13-xieyongji@bytedance.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20210812084348.6521-1-david@redhat.com> <87o8a2d0wf.fsf@disp2133>
+ <60db2e61-6b00-44fa-b718-e4361fcc238c@www.fastmail.com> <87lf56bllc.fsf@disp2133>
+ <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
+ <87eeay8pqx.fsf@disp2133> <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
+ <87h7ft2j68.fsf@disp2133> <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
+ <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com> <YRcyqbpVqwwq3P6n@casper.infradead.org>
+ <87k0kkxbjn.fsf_-_@disp2133> <0c2af732e4e9f74c9d20b09fc4b6cbae40351085.camel@kernel.org>
+ <CAHk-=wgewmbABDC3_ZNn11C+sm4Uz0L9HZ5Kvx0Joho4vsV4DQ@mail.gmail.com>
+ <a1385746582a675c410aca4eb4947320faec4821.camel@kernel.org>
+ <CAHk-=wgD-SNxB=2iCurEoP=RjrciRgLtXZ7R_DejK+mXF2etfg@mail.gmail.com>
+ <639d90212662cf5cdf80c71bbfec95907c70114a.camel@kernel.org>
+ <CAHk-=wgHbYmUZvFkthGJ6zZx+ofTiiTRxPai5mPkmbtE=6JbaQ@mail.gmail.com> <ec075ee5764f4c7f9dd630090fb01f70@AcuMS.aculab.com>
+In-Reply-To: <ec075ee5764f4c7f9dd630090fb01f70@AcuMS.aculab.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 23 Aug 2021 09:55:57 +0200
+Message-ID: <CAMuHMdVWC9=TtFG7=SmN+KQ=phh1MqNqgLFbrWXr9XsDv-Sp5Q@mail.gmail.com>
+Subject: Re: Removing Mandatory Locks
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Michel Lespinasse <walken@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Price <steven.price@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Marco Elver <elver@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Collin Fijalkovich <cfijalkovich@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-ÔÚ 2021/8/18 ÏÂÎç8:06, Xie Yongji Ð´µÀ:
-> VDUSE (vDPA Device in Userspace) is a framework to support
-> implementing software-emulated vDPA devices in userspace. This
-> document is intended to clarify the VDUSE design and usage.
+On Fri, Aug 20, 2021 at 10:30 AM David Laight <David.Laight@aculab.com> wrote:
+> From: Linus Torvalds
+> > Sent: 19 August 2021 23:33
+> >
+> > On Thu, Aug 19, 2021 at 2:43 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > >
+> > > What sort of big, ugly warning did you have in mind?
+> >
+> > I originally thought WARN_ON_ONCE() just to get the distro automatic
+> > error handling involved, but it would probably be a big problem for
+> > the people who end up having panic-on-warn or something.
 >
-> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-
-
-Acked-by: Jason Wang <jasowang@redhat.com>
-
-
-> ---
->   Documentation/userspace-api/index.rst |   1 +
->   Documentation/userspace-api/vduse.rst | 233 ++++++++++++++++++++++++++++++++++
->   2 files changed, 234 insertions(+)
->   create mode 100644 Documentation/userspace-api/vduse.rst
+> Even panic-on-oops is a PITA.
+> Took us weeks to realise that a customer system that was randomly
+> rebooting was 'just' having a boring NULL pointer access.
 >
-> diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
-> index 0b5eefed027e..c432be070f67 100644
-> --- a/Documentation/userspace-api/index.rst
-> +++ b/Documentation/userspace-api/index.rst
-> @@ -27,6 +27,7 @@ place where this information is gathered.
->      iommu
->      media/index
->      sysfs-platform_profile
-> +   vduse
->   
->   .. only::  subproject and html
->   
-> diff --git a/Documentation/userspace-api/vduse.rst b/Documentation/userspace-api/vduse.rst
-> new file mode 100644
-> index 000000000000..42ef59ea5314
-> --- /dev/null
-> +++ b/Documentation/userspace-api/vduse.rst
-> @@ -0,0 +1,233 @@
-> +==================================
-> +VDUSE - "vDPA Device in Userspace"
-> +==================================
-> +
-> +vDPA (virtio data path acceleration) device is a device that uses a
-> +datapath which complies with the virtio specifications with vendor
-> +specific control path. vDPA devices can be both physically located on
-> +the hardware or emulated by software. VDUSE is a framework that makes it
-> +possible to implement software-emulated vDPA devices in userspace. And
-> +to make the device emulation more secure, the emulated vDPA device's
-> +control path is handled in the kernel and only the data path is
-> +implemented in the userspace.
-> +
-> +Note that only virtio block device is supported by VDUSE framework now,
-> +which can reduce security risks when the userspace process that implements
-> +the data path is run by an unprivileged user. The support for other device
-> +types can be added after the security issue of corresponding device driver
-> +is clarified or fixed in the future.
-> +
-> +Create/Destroy VDUSE devices
-> +------------------------
-> +
-> +VDUSE devices are created as follows:
-> +
-> +1. Create a new VDUSE instance with ioctl(VDUSE_CREATE_DEV) on
-> +   /dev/vduse/control.
-> +
-> +2. Setup each virtqueue with ioctl(VDUSE_VQ_SETUP) on /dev/vduse/$NAME.
-> +
-> +3. Begin processing VDUSE messages from /dev/vduse/$NAME. The first
-> +   messages will arrive while attaching the VDUSE instance to vDPA bus.
-> +
-> +4. Send the VDPA_CMD_DEV_NEW netlink message to attach the VDUSE
-> +   instance to vDPA bus.
-> +
-> +VDUSE devices are destroyed as follows:
-> +
-> +1. Send the VDPA_CMD_DEV_DEL netlink message to detach the VDUSE
-> +   instance from vDPA bus.
-> +
-> +2. Close the file descriptor referring to /dev/vduse/$NAME.
-> +
-> +3. Destroy the VDUSE instance with ioctl(VDUSE_DESTROY_DEV) on
-> +   /dev/vduse/control.
-> +
-> +The netlink messages can be sent via vdpa tool in iproute2 or use the
-> +below sample codes:
-> +
-> +.. code-block:: c
-> +
-> +	static int netlink_add_vduse(const char *name, enum vdpa_command cmd)
-> +	{
-> +		struct nl_sock *nlsock;
-> +		struct nl_msg *msg;
-> +		int famid;
-> +
-> +		nlsock = nl_socket_alloc();
-> +		if (!nlsock)
-> +			return -ENOMEM;
-> +
-> +		if (genl_connect(nlsock))
-> +			goto free_sock;
-> +
-> +		famid = genl_ctrl_resolve(nlsock, VDPA_GENL_NAME);
-> +		if (famid < 0)
-> +			goto close_sock;
-> +
-> +		msg = nlmsg_alloc();
-> +		if (!msg)
-> +			goto close_sock;
-> +
-> +		if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, famid, 0, 0, cmd, 0))
-> +			goto nla_put_failure;
-> +
-> +		NLA_PUT_STRING(msg, VDPA_ATTR_DEV_NAME, name);
-> +		if (cmd == VDPA_CMD_DEV_NEW)
-> +			NLA_PUT_STRING(msg, VDPA_ATTR_MGMTDEV_DEV_NAME, "vduse");
-> +
-> +		if (nl_send_sync(nlsock, msg))
-> +			goto close_sock;
-> +
-> +		nl_close(nlsock);
-> +		nl_socket_free(nlsock);
-> +
-> +		return 0;
-> +	nla_put_failure:
-> +		nlmsg_free(msg);
-> +	close_sock:
-> +		nl_close(nlsock);
-> +	free_sock:
-> +		nl_socket_free(nlsock);
-> +		return -1;
-> +	}
-> +
-> +How VDUSE works
-> +---------------
-> +
-> +As mentioned above, a VDUSE device is created by ioctl(VDUSE_CREATE_DEV) on
-> +/dev/vduse/control. With this ioctl, userspace can specify some basic configuration
-> +such as device name (uniquely identify a VDUSE device), virtio features, virtio
-> +configuration space, the number of virtqueues and so on for this emulated device.
-> +Then a char device interface (/dev/vduse/$NAME) is exported to userspace for device
-> +emulation. Userspace can use the VDUSE_VQ_SETUP ioctl on /dev/vduse/$NAME to
-> +add per-virtqueue configuration such as the max size of virtqueue to the device.
-> +
-> +After the initialization, the VDUSE device can be attached to vDPA bus via
-> +the VDPA_CMD_DEV_NEW netlink message. Userspace needs to read()/write() on
-> +/dev/vduse/$NAME to receive/reply some control messages from/to VDUSE kernel
-> +module as follows:
-> +
-> +.. code-block:: c
-> +
-> +	static int vduse_message_handler(int dev_fd)
-> +	{
-> +		int len;
-> +		struct vduse_dev_request req;
-> +		struct vduse_dev_response resp;
-> +
-> +		len = read(dev_fd, &req, sizeof(req));
-> +		if (len != sizeof(req))
-> +			return -1;
-> +
-> +		resp.request_id = req.request_id;
-> +
-> +		switch (req.type) {
-> +
-> +		/* handle different types of messages */
-> +
-> +		}
-> +
-> +		len = write(dev_fd, &resp, sizeof(resp));
-> +		if (len != sizeof(resp))
-> +			return -1;
-> +
-> +		return 0;
-> +	}
-> +
-> +There are now three types of messages introduced by VDUSE framework:
-> +
-> +- VDUSE_GET_VQ_STATE: Get the state for virtqueue, userspace should return
-> +  avail index for split virtqueue or the device/driver ring wrap counters and
-> +  the avail and used index for packed virtqueue.
-> +
-> +- VDUSE_SET_STATUS: Set the device status, userspace should follow
-> +  the virtio spec: https://docs.oasis-open.org/virtio/virtio/v1.1/virtio-v1.1.html
-> +  to process this message. For example, fail to set the FEATURES_OK device
-> +  status bit if the device can not accept the negotiated virtio features
-> +  get from the VDUSE_DEV_GET_FEATURES ioctl.
-> +
-> +- VDUSE_UPDATE_IOTLB: Notify userspace to update the memory mapping for specified
-> +  IOVA range, userspace should firstly remove the old mapping, then setup the new
-> +  mapping via the VDUSE_IOTLB_GET_FD ioctl.
-> +
-> +After DRIVER_OK status bit is set via the VDUSE_SET_STATUS message, userspace is
-> +able to start the dataplane processing as follows:
-> +
-> +1. Get the specified virtqueue's information with the VDUSE_VQ_GET_INFO ioctl,
-> +   including the size, the IOVAs of descriptor table, available ring and used ring,
-> +   the state and the ready status.
-> +
-> +2. Pass the above IOVAs to the VDUSE_IOTLB_GET_FD ioctl so that those IOVA regions
-> +   can be mapped into userspace. Some sample codes is shown below:
-> +
-> +.. code-block:: c
-> +
-> +	static int perm_to_prot(uint8_t perm)
-> +	{
-> +		int prot = 0;
-> +
-> +		switch (perm) {
-> +		case VDUSE_ACCESS_WO:
-> +			prot |= PROT_WRITE;
-> +			break;
-> +		case VDUSE_ACCESS_RO:
-> +			prot |= PROT_READ;
-> +			break;
-> +		case VDUSE_ACCESS_RW:
-> +			prot |= PROT_READ | PROT_WRITE;
-> +			break;
-> +		}
-> +
-> +		return prot;
-> +	}
-> +
-> +	static void *iova_to_va(int dev_fd, uint64_t iova, uint64_t *len)
-> +	{
-> +		int fd;
-> +		void *addr;
-> +		size_t size;
-> +		struct vduse_iotlb_entry entry;
-> +
-> +		entry.start = iova;
-> +		entry.last = iova;
-> +
-> +		/*
-> +		 * Find the first IOVA region that overlaps with the specified
-> +		 * range [start, last] and return the corresponding file descriptor.
-> +		 */
-> +		fd = ioctl(dev_fd, VDUSE_IOTLB_GET_FD, &entry);
-> +		if (fd < 0)
-> +			return NULL;
-> +
-> +		size = entry.last - entry.start + 1;
-> +		*len = entry.last - iova + 1;
-> +		addr = mmap(0, size, perm_to_prot(entry.perm), MAP_SHARED,
-> +			    fd, entry.offset);
-> +		close(fd);
-> +		if (addr == MAP_FAILED)
-> +			return NULL;
-> +
-> +		/*
-> +		 * Using some data structures such as linked list to store
-> +		 * the iotlb mapping. The munmap(2) should be called for the
-> +		 * cached mapping when the corresponding VDUSE_UPDATE_IOTLB
-> +		 * message is received or the device is reset.
-> +		 */
-> +
-> +		return addr + iova - entry.start;
-> +	}
-> +
-> +3. Setup the kick eventfd for the specified virtqueues with the VDUSE_VQ_SETUP_KICKFD
-> +   ioctl. The kick eventfd is used by VDUSE kernel module to notify userspace to
-> +   consume the available ring. This is optional since userspace can choose to poll the
-> +   available ring instead.
-> +
-> +4. Listen to the kick eventfd (optional) and consume the available ring. The buffer
-> +   described by the descriptors in the descriptor table should be also mapped into
-> +   userspace via the VDUSE_IOTLB_GET_FD ioctl before accessing.
-> +
-> +5. Inject an interrupt for specific virtqueue with the VDUSE_INJECT_VQ_IRQ ioctl
-> +   after the used ring is filled.
-> +
-> +For more details on the uAPI, please see include/uapi/linux/vduse.h.
+> > So probably just a "make it a big box" thing that stands out, kind of
+> > what lockdep etc does with
+> >
+> >         pr_warn("======...====\n");
+> >
+> > around the messages..
 
+Do we really need more of these?
+They take time to print (especially on serial
+consoles) and increase kernel size.
+
+What's wrong with using an appropriate KERN_*, and letting userspace
+make sure the admin/user will see the message (see below)?
+
+> >
+> > I don't know if distros have some pattern we could use that would end
+> > up being something that gets reported to the user?
+>
+> Will users even see it?
+> A lot of recent distro installs try very hard to hide all the kernel
+> messages.
+
+Exactly.  E.g. Ubuntu doesn't show any kernel output during normal
+operation.
+
+On Fri, Aug 20, 2021 at 6:12 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Fri, Aug 20, 2021 at 6:43 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> > On Thu, 19 Aug 2021 15:32:31 -0700
+> > Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> > >
+> > > I don't know if distros have some pattern we could use that would end
+> > > up being something that gets reported to the user?
+
+> So what would be more interesting is if there's some distro support
+> for showing kernel notifications..
+>
+> I see new notifications for calendar events, for devices that got
+> mounted, for a lot of things - so I'm really wondering if somebody
+> already perhaps had something for specially formatted kernel
+> messages..
+
+Isn't that what the old syslog and the new systemd are supposed to
+handle in userspace?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
