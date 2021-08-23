@@ -2,357 +2,422 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C8AB3F4402
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 05:51:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CF453F4410
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 06:06:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233791AbhHWDwh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Aug 2021 23:52:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53354 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233206AbhHWDwh (ORCPT
+        id S229970AbhHWEG4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Aug 2021 00:06:56 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:33676 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229462AbhHWEGz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Aug 2021 23:52:37 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA49EC061575;
-        Sun, 22 Aug 2021 20:51:54 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id w4so27472722ljh.13;
-        Sun, 22 Aug 2021 20:51:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=YXggvvJGU/2niaUKbO0v/QADh07U6yAQkyzAsFT18iI=;
-        b=pZP32dTVrxV6d9QTUL+O9qckLk62N9IB+Val0/rPOQR1n1iYwfJAB+oL5QQa+x7yia
-         8sudterClxPPFYXYbjKVOiYQBJODWiEdMuEsZMG/95XGDieLJnC4GjUOPwnP2CUNQvni
-         Mn3rX1lneiCluNph40bxp13w/LdlrFvtWKFORgR+V527c9LGpGI59VL7PuivrwP2wZI6
-         Yklk3W7p+MFAyFXWlOLJaD4OpiD6zm/i7aWuDvuh+gSMXAu1yTHRnDv0IRwKyNm9CZKi
-         SX9iNiLzvyRPZBFhsAcVz2VkypwASBts7PVFUB0OqezRk0mXX9a6sp8pIjfU4yNJLUFz
-         v9nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=YXggvvJGU/2niaUKbO0v/QADh07U6yAQkyzAsFT18iI=;
-        b=TioeOmnubIs32qgzF+IpBO2qWhPSNdr7zgk+UhJVSjCE1w+KRi8dTbS3qsfva7giJC
-         nTEhpjLICB1bRgVq5P+sQ48BCsy+t7rhllG0y5HIn/L8zL44fIViHie3HRCqf/vX3sYi
-         1cuLjxL9faorHTbYlMItGgaTAk2Ojp9DSlgXLfGvjgdpOMpRvo0fO3cEBkGcjO/ysRa7
-         6vc670xdc9mq633lBbZg5YbtFNMyrs5Fha8ecoeysedl0wUR1S3xp41Rm1/uX2wRphFj
-         HiHAAhsO9OcPdqkY1uQZK7fGctxrB8JYKZTnwg8xQNLwTAs+nXFuLhFgUvOqPtZZOenR
-         /f0g==
-X-Gm-Message-State: AOAM530OVK+1loqp2wMmr+WvvQG05IiUFi7UgKUSFguaDumkv5d561WS
-        hLCczc1ZWdEULIT6kSH0vt4=
-X-Google-Smtp-Source: ABdhPJxQkUy2TQf5bz8oPZZ/nk5Fv18rLXSwVovzoQWSVZCQ8h0Lla97sc/Sn/YkZYvNkwf86SIemQ==
-X-Received: by 2002:a2e:85c4:: with SMTP id h4mr26341146ljj.321.1629690713320;
-        Sun, 22 Aug 2021 20:51:53 -0700 (PDT)
-Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id n18sm1313191ljg.40.2021.08.22.20.51.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Aug 2021 20:51:52 -0700 (PDT)
-Date:   Mon, 23 Aug 2021 06:51:50 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
-        jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.cz>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Salah Triki <salah.triki@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Marek =?utf-8?B?QmVow7pu?= <marek.behun@nic.cz>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [RFC PATCH 01/20] fat: Fix iocharset=utf8 mount option
-Message-ID: <20210823035150.h3dor7hanhzua7lh@kari-VirtualBox>
-References: <20210808162453.1653-1-pali@kernel.org>
- <20210808162453.1653-2-pali@kernel.org>
+        Mon, 23 Aug 2021 00:06:55 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 8C8A01FF64;
+        Mon, 23 Aug 2021 04:06:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1629691572; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kTJSK/nOpJTwRwH5m9/+1Ty9EFKACF4xxFZSG57m9pk=;
+        b=uArUm/LwjNAoiYoEOQIi2iANU39jkKgAMYD6Eu55QbQsguETSWvGOEw4FKL9ZJFOeqn8S8
+        0hWWLwtK+ryPTYkbSESwX0HPoMHUCEtrt5Et4y1NpI2NmvpfHvK4er8/egQdlT3qef4nAN
+        x2jOyQJ1s7yf+o9Tfm2WabUreIciHxg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1629691572;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kTJSK/nOpJTwRwH5m9/+1Ty9EFKACF4xxFZSG57m9pk=;
+        b=tyfAva2kIQHJgR61qBDFokyYhj3WaRF2D1Tysn2GKcJ7+TyrnsXc0MicE/S7y1nygeGn4/
+        5mv5lFRMawc8XWAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 15BCA13A61;
+        Mon, 23 Aug 2021 04:06:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id F6O4MLAeI2F7KQAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 23 Aug 2021 04:06:08 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210808162453.1653-2-pali@kernel.org>
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Chris Mason" <clm@fb.com>, "David Sterba" <dsterba@suse.com>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        "Josef Bacik" <josef@toxicpanda.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        "Chuck Lever" <chuck.lever@oracle.com>
+Cc:     "Roman Mamedov" <rm@romanrm.net>,
+        "Goffredo Baroncelli" <kreijack@libero.it>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: [PATCH v2] BTRFS/NFSD: provide more unique inode number for btrfs export
+In-reply-to: <162906585094.1695.15815972140753474778@noble.neil.brown.name>
+References: <162742539595.32498.13687924366155737575.stgit@noble.brown>,
+ <162881913686.1695.12479588032010502384@noble.neil.brown.name>,
+ <bf49ef31-0c86-62c8-7862-719935764036@libero.it>,
+ <20210816003505.7b3e9861@natsu>,
+ <162906585094.1695.15815972140753474778@noble.neil.brown.name>
+Date:   Mon, 23 Aug 2021 14:05:54 +1000
+Message-id: <162969155423.9892.18322100025025288277@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 08, 2021 at 06:24:34PM +0200, Pali Rohár wrote:
-> Currently iocharset=utf8 mount option is broken and error is printed to
-> dmesg when it is used. To use UTF-8 as iocharset, it is required to use
-> utf8=1 mount option.
-> 
-> Fix iocharset=utf8 mount option to use be equivalent to the utf8=1 mount
-> option and remove printing error from dmesg.
-> 
-> FAT by definition is case-insensitive but current Linux implementation is
-> case-sensitive for non-ASCII characters when UTF-8 is used. This patch does
-> not change this UTF-8 behavior. Only more comments in fat_utf8_strnicmp()
-> function are added about it.
-> 
-> After this patch iocharset=utf8 starts working, so there is no need to have
-> separate config option FAT_DEFAULT_UTF8 as FAT_DEFAULT_IOCHARSET for utf8
-> also starts working. So remove redundant config option FAT_DEFAULT_UTF8.
-> 
-> Signed-off-by: Pali Rohár <pali@kernel.org>
-> ---
->  fs/fat/Kconfig      | 15 ---------------
->  fs/fat/dir.c        | 17 +++++++----------
->  fs/fat/fat.h        | 22 ++++++++++++++++++++++
->  fs/fat/inode.c      | 28 +++++++++++-----------------
->  fs/fat/namei_vfat.c | 26 +++++++++++++++++++-------
->  5 files changed, 59 insertions(+), 49 deletions(-)
-> 
-> diff --git a/fs/fat/Kconfig b/fs/fat/Kconfig
-> index 66532a71e8fd..a31594137d5e 100644
-> --- a/fs/fat/Kconfig
-> +++ b/fs/fat/Kconfig
-> @@ -100,18 +100,3 @@ config FAT_DEFAULT_IOCHARSET
->  
->  	  Enable any character sets you need in File Systems/Native Language
->  	  Support.
-> -
-> -config FAT_DEFAULT_UTF8
-> -	bool "Enable FAT UTF-8 option by default"
-> -	depends on VFAT_FS
-> -	default n
-> -	help
-> -	  Set this if you would like to have "utf8" mount option set
-> -	  by default when mounting FAT filesystems.
-> -
-> -	  Even if you say Y here can always disable UTF-8 for
-> -	  particular mount by adding "utf8=0" to mount options.
-> -
-> -	  Say Y if you use UTF-8 encoding for file names, N otherwise.
-> -
-> -	  See <file:Documentation/filesystems/vfat.rst> for more information.
-> diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-> index c4a274285858..49fe8dc6e5f0 100644
-> --- a/fs/fat/dir.c
-> +++ b/fs/fat/dir.c
-> @@ -33,11 +33,6 @@
->  #define FAT_MAX_UNI_CHARS	((MSDOS_SLOTS - 1) * 13 + 1)
->  #define FAT_MAX_UNI_SIZE	(FAT_MAX_UNI_CHARS * sizeof(wchar_t))
->  
-> -static inline unsigned char fat_tolower(unsigned char c)
-> -{
-> -	return ((c >= 'A') && (c <= 'Z')) ? c+32 : c;
-> -}
-> -
->  static inline loff_t fat_make_i_pos(struct super_block *sb,
->  				    struct buffer_head *bh,
->  				    struct msdos_dir_entry *de)
-> @@ -258,10 +253,12 @@ static inline int fat_name_match(struct msdos_sb_info *sbi,
->  	if (a_len != b_len)
->  		return 0;
->  
-> -	if (sbi->options.name_check != 's')
-> -		return !nls_strnicmp(sbi->nls_io, a, b, a_len);
-> -	else
-> +	if (sbi->options.name_check == 's')
->  		return !memcmp(a, b, a_len);
-> +	else if (sbi->options.utf8)
-> +		return !fat_utf8_strnicmp(a, b, a_len);
-> +	else
-> +		return !nls_strnicmp(sbi->nls_io, a, b, a_len);
->  }
->  
->  enum { PARSE_INVALID = 1, PARSE_NOT_LONGNAME, PARSE_EOF, };
-> @@ -384,7 +381,7 @@ static int fat_parse_short(struct super_block *sb,
->  					de->lcase & CASE_LOWER_BASE);
->  		if (chl <= 1) {
->  			if (!isvfat)
-> -				ptname[i] = nocase ? c : fat_tolower(c);
-> +				ptname[i] = nocase ? c : fat_ascii_to_lower(c);
->  			i++;
->  			if (c != ' ') {
->  				name_len = i;
-> @@ -421,7 +418,7 @@ static int fat_parse_short(struct super_block *sb,
->  		if (chl <= 1) {
->  			k++;
->  			if (!isvfat)
-> -				ptname[i] = nocase ? c : fat_tolower(c);
-> +				ptname[i] = nocase ? c : fat_ascii_to_lower(c);
->  			i++;
->  			if (c != ' ') {
->  				name_len = i;
-> diff --git a/fs/fat/fat.h b/fs/fat/fat.h
-> index 02d4d4234956..0cd15fb3b042 100644
-> --- a/fs/fat/fat.h
-> +++ b/fs/fat/fat.h
-> @@ -310,6 +310,28 @@ static inline void fatwchar_to16(__u8 *dst, const wchar_t *src, size_t len)
->  #endif
->  }
->  
-> +static inline unsigned char fat_ascii_to_lower(unsigned char c)
-> +{
-> +	return ((c >= 'A') && (c <= 'Z')) ? c+32 : c;
-> +}
-> +
-> +static inline int fat_utf8_strnicmp(const unsigned char *a,
-> +				    const unsigned char *b,
-> +				    int len)
-> +{
-> +	int i;
-> +
-> +	/*
-> +	 * FIXME: UTF-8 doesn't provide FAT semantics
-> +	 * Case-insensitive support is only for 7-bit ASCII characters
-> +	 */
-> +	for (i = 0; i < len; i++) {
-> +		if (fat_ascii_to_lower(a[i]) != fat_ascii_to_lower(b[i]))
-> +			return 1;
-> +	}
-> +	return 0;
-> +}
-> +
->  /* fat/cache.c */
->  extern void fat_cache_inval_inode(struct inode *inode);
->  extern int fat_get_cluster(struct inode *inode, int cluster,
-> diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-> index de0c9b013a85..f8c8a739f8f0 100644
-> --- a/fs/fat/inode.c
-> +++ b/fs/fat/inode.c
-> @@ -957,7 +957,9 @@ static int fat_show_options(struct seq_file *m, struct dentry *root)
->  		/* strip "cp" prefix from displayed option */
->  		seq_printf(m, ",codepage=%s", &sbi->nls_disk->charset[2]);
->  	if (isvfat) {
-> -		if (sbi->nls_io)
-> +		if (opts->utf8)
-> +			seq_printf(m, ",iocharset=utf8");
 
-checkpatch will probably warn you about this.
+BTRFS does not provide unique inode numbers across a filesystem.
+It only provide unique inode numbers within a subvolume and
+uses synthetic device numbers for different subvolumes to ensure
+uniqueness for device+inode.
 
-WARNING: Prefer seq_puts to seq_printf
+nfsd cannot use these varying synthetic device numbers.  If nfsd were to
+synthesise different stable filesystem ids to give to the client, that
+would cause subvolumes to appear in the mount table on the client, even
+though they don't appear in the mount table on the server.  Also, NFSv3
+doesn't support changing the filesystem id without a new explicit mount
+on the client (this is partially supported in practice, but violates the
+protocol specification and has problems in some edge cases).
 
-> +		else if (sbi->nls_io)
->  			seq_printf(m, ",iocharset=%s", sbi->nls_io->charset);
->  
->  		switch (opts->shortname) {
-> @@ -994,8 +996,6 @@ static int fat_show_options(struct seq_file *m, struct dentry *root)
->  		if (opts->nocase)
->  			seq_puts(m, ",nocase");
->  	} else {
-> -		if (opts->utf8)
-> -			seq_puts(m, ",utf8");
->  		if (opts->unicode_xlate)
->  			seq_puts(m, ",uni_xlate");
->  		if (!opts->numtail)
-> @@ -1157,8 +1157,6 @@ static int parse_options(struct super_block *sb, char *options, int is_vfat,
->  	opts->errors = FAT_ERRORS_RO;
->  	*debug = 0;
->  
-> -	opts->utf8 = IS_ENABLED(CONFIG_FAT_DEFAULT_UTF8) && is_vfat;
-> -
->  	if (!options)
->  		goto out;
->  
-> @@ -1319,10 +1317,14 @@ static int parse_options(struct super_block *sb, char *options, int is_vfat,
->  					| VFAT_SFN_CREATE_WIN95;
->  			break;
->  		case Opt_utf8_no:		/* 0 or no or false */
-> -			opts->utf8 = 0;
-> +			fat_reset_iocharset(opts);
->  			break;
->  		case Opt_utf8_yes:		/* empty or 1 or yes or true */
-> -			opts->utf8 = 1;
-> +			fat_reset_iocharset(opts);
-> +			iocharset = kstrdup("utf8", GFP_KERNEL);
-> +			if (!iocharset)
-> +				return -ENOMEM;
-> +			opts->iocharset = iocharset;
->  			break;
->  		case Opt_uni_xl_no:		/* 0 or no or false */
->  			opts->unicode_xlate = 0;
-> @@ -1360,18 +1362,11 @@ static int parse_options(struct super_block *sb, char *options, int is_vfat,
->  	}
->  
->  out:
-> -	/* UTF-8 doesn't provide FAT semantics */
-> -	if (!strcmp(opts->iocharset, "utf8")) {
-> -		fat_msg(sb, KERN_WARNING, "utf8 is not a recommended IO charset"
-> -		       " for FAT filesystems, filesystem will be "
-> -		       "case sensitive!");
-> -	}
-> +	opts->utf8 = !strcmp(opts->iocharset, "utf8") && is_vfat;
->  
->  	/* If user doesn't specify allow_utime, it's initialized from dmask. */
->  	if (opts->allow_utime == (unsigned short)-1)
->  		opts->allow_utime = ~opts->fs_dmask & (S_IWGRP | S_IWOTH);
-> -	if (opts->unicode_xlate)
-> -		opts->utf8 = 0;
->  	if (opts->nfs == FAT_NFS_NOSTALE_RO) {
->  		sb->s_flags |= SB_RDONLY;
->  		sb->s_export_op = &fat_export_ops_nostale;
-> @@ -1832,8 +1827,7 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
->  		goto out_fail;
->  	}
->  
-> -	/* FIXME: utf8 is using iocharset for upper/lower conversion */
-> -	if (sbi->options.isvfat) {
-> +	if (sbi->options.isvfat && !sbi->options.utf8) {
->  		sbi->nls_io = load_nls(sbi->options.iocharset);
->  		if (!sbi->nls_io) {
->  			fat_msg(sb, KERN_ERR, "IO charset %s not found",
-> diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
-> index 5369d82e0bfb..efb3cb9ea8a8 100644
-> --- a/fs/fat/namei_vfat.c
-> +++ b/fs/fat/namei_vfat.c
-> @@ -134,6 +134,7 @@ static int vfat_hash(const struct dentry *dentry, struct qstr *qstr)
->  static int vfat_hashi(const struct dentry *dentry, struct qstr *qstr)
->  {
->  	struct nls_table *t = MSDOS_SB(dentry->d_sb)->nls_io;
-> +	int utf8 = MSDOS_SB(dentry->d_sb)->options.utf8;
->  	const unsigned char *name;
->  	unsigned int len;
->  	unsigned long hash;
-> @@ -142,8 +143,17 @@ static int vfat_hashi(const struct dentry *dentry, struct qstr *qstr)
->  	len = vfat_striptail_len(qstr);
->  
->  	hash = init_name_hash(dentry);
-> -	while (len--)
-> -		hash = partial_name_hash(nls_tolower(t, *name++), hash);
-> +	if (utf8) {
-> +		/*
-> +		 * FIXME: UTF-8 doesn't provide FAT semantics
-> +		 * Case-insensitive support is only for 7-bit ASCII characters
-> +		 */
-> +		while (len--)
-> +			hash = partial_name_hash(fat_ascii_to_lower(*name++), hash);
-> +	} else {
-> +		while (len--)
-> +			hash = partial_name_hash(nls_tolower(t, *name++), hash);
-> +	}
->  	qstr->hash = end_name_hash(hash);
->  
->  	return 0;
-> @@ -156,16 +166,18 @@ static int vfat_cmpi(const struct dentry *dentry,
->  		unsigned int len, const char *str, const struct qstr *name)
->  {
->  	struct nls_table *t = MSDOS_SB(dentry->d_sb)->nls_io;
-> +	int utf8 = MSDOS_SB(dentry->d_sb)->options.utf8;
->  	unsigned int alen, blen;
->  
->  	/* A filename cannot end in '.' or we treat it like it has none */
->  	alen = vfat_striptail_len(name);
->  	blen = __vfat_striptail_len(len, str);
-> -	if (alen == blen) {
-> -		if (nls_strnicmp(t, name->name, str, alen) == 0)
-> -			return 0;
-> -	}
-> -	return 1;
-> +	if (alen != blen)
-> +		return 1;
-> +	else if (utf8)
-> +		return fat_utf8_strnicmp(name->name, str, alen);
-> +	else
-> +		return nls_strnicmp(t, name->name, str, alen);
->  }
->  
->  /*
-> -- 
-> 2.20.1
-> 
+So currently, the roots of all subvolumes report the same inode number
+in the same filesystem to NFS clients and tools like 'find' notice that
+a directory has the same identity as an ancestor, and so refuse to
+enter that directory.
+
+This patch allows btrfs (or any filesystem) to provide a 64bit number
+that can be xored with the inode number to make the number more unique.
+Rather than the client being certain to see duplicates, with this patch
+it is possible but extremely rare.
+
+The number that btrfs provides is a swab64() version of the subvolume
+identifier.  This has most entropy in the high bits (the low bits of the
+subvolume identifer), while the inode has most entropy in the low bits.
+The result will always be unique within a subvolume, and will almost
+always be unique across the filesystem.
+
+If an upgrade of the NFS server caused all inode numbers in an exportfs
+BTRFS filesystem to appear to the client to change, the client may not
+handle this well.  The Linux client will cause any open files to become
+'stale'.  If the mount point changed inode number, the whole mount would
+become inaccessible.
+
+To avoid this, an unused byte in the filehandle (fh_auth) has been
+repurposed as "fh_options".  (The use of #defines make fh_flags a
+problematic choice).  The new behaviour of uniquifying inode number is
+only activated when this bit is set.
+
+NFSD will only set this bit in filehandles it reports if the filehandle
+of the parent (provided by the client) contains the bit, or if
+ - the filehandle for the parent is not provided or is for a different
+   export and
+ - the filehandle refers to a BTRFS filesystem.
+
+Thus if you have a BTRFS filesystem originally mounted from a server
+without this patch, the flag will never be set and the current behaviour
+will continue.  Only once you re-mount the filesystem (or the filesystem
+is re-auto-mounted) will the inode numbers change.  When that happens,
+it is likely that the filesystem st_dev number seen on the client will
+change anyway.
+
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ fs/btrfs/inode.c                |  4 ++++
+ fs/nfsd/nfs3xdr.c               | 15 ++++++++++++++-
+ fs/nfsd/nfs4xdr.c               |  7 ++++---
+ fs/nfsd/nfsfh.c                 | 13 +++++++++++--
+ fs/nfsd/nfsfh.h                 | 22 ++++++++++++++++++++++
+ fs/nfsd/xdr3.h                  |  2 ++
+ include/linux/stat.h            | 18 ++++++++++++++++++
+ include/uapi/linux/nfsd/nfsfh.h | 18 ++++++++++++------
+ 8 files changed, 87 insertions(+), 12 deletions(-)
+
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 0117d867ecf8..989fdf2032d5 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -9195,6 +9195,10 @@ static int btrfs_getattr(struct user_namespace *mnt_us=
+erns,
+ 	generic_fillattr(&init_user_ns, inode, stat);
+ 	stat->dev =3D BTRFS_I(inode)->root->anon_dev;
+=20
++	if (BTRFS_I(inode)->root->root_key.objectid !=3D BTRFS_FS_TREE_OBJECTID)
++		stat->ino_uniquifier =3D
++			swab64(BTRFS_I(inode)->root->root_key.objectid);
++
+ 	spin_lock(&BTRFS_I(inode)->lock);
+ 	delalloc_bytes =3D BTRFS_I(inode)->new_delalloc_bytes;
+ 	inode_bytes =3D inode_get_bytes(inode);
+diff --git a/fs/nfsd/nfs3xdr.c b/fs/nfsd/nfs3xdr.c
+index 0a5ebc52e6a9..19d14f11f79a 100644
+--- a/fs/nfsd/nfs3xdr.c
++++ b/fs/nfsd/nfs3xdr.c
+@@ -340,6 +340,7 @@ svcxdr_encode_fattr3(struct svc_rqst *rqstp, struct xdr_s=
+tream *xdr,
+ {
+ 	struct user_namespace *userns =3D nfsd_user_namespace(rqstp);
+ 	__be32 *p;
++	u64 ino;
+ 	u64 fsid;
+=20
+ 	p =3D xdr_reserve_space(xdr, XDR_UNIT * 21);
+@@ -377,7 +378,8 @@ svcxdr_encode_fattr3(struct svc_rqst *rqstp, struct xdr_s=
+tream *xdr,
+ 	p =3D xdr_encode_hyper(p, fsid);
+=20
+ 	/* fileid */
+-	p =3D xdr_encode_hyper(p, stat->ino);
++	ino =3D nfsd_uniquify_ino(fhp, stat);
++	p =3D xdr_encode_hyper(p, ino);
+=20
+ 	p =3D encode_nfstime3(p, &stat->atime);
+ 	p =3D encode_nfstime3(p, &stat->mtime);
+@@ -1151,6 +1153,17 @@ svcxdr_encode_entry3_common(struct nfsd3_readdirres *r=
+esp, const char *name,
+ 	if (xdr_stream_encode_item_present(xdr) < 0)
+ 		return false;
+ 	/* fileid */
++	if (!resp->dir_have_uniquifier) {
++		struct kstat stat;
++		if (fh_getattr(&resp->fh, &stat) =3D=3D nfs_ok)
++			resp->dir_ino_uniquifier =3D
++				nfsd_ino_uniquifier(&resp->fh, &stat);
++		else
++			resp->dir_ino_uniquifier =3D 0;
++		resp->dir_have_uniquifier =3D true;
++	}
++	if (resp->dir_ino_uniquifier !=3D ino)
++		ino ^=3D resp->dir_ino_uniquifier;
+ 	if (xdr_stream_encode_u64(xdr, ino) < 0)
+ 		return false;
+ 	/* name */
+diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+index 7abeccb975b2..5ed894ceebb0 100644
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -3114,10 +3114,11 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct svc=
+_fh *fhp,
+ 					fhp->fh_handle.fh_size);
+ 	}
+ 	if (bmval0 & FATTR4_WORD0_FILEID) {
++		u64 ino =3D nfsd_uniquify_ino(fhp, &stat);
+ 		p =3D xdr_reserve_space(xdr, 8);
+ 		if (!p)
+ 			goto out_resource;
+-		p =3D xdr_encode_hyper(p, stat.ino);
++		p =3D xdr_encode_hyper(p, ino);
+ 	}
+ 	if (bmval0 & FATTR4_WORD0_FILES_AVAIL) {
+ 		p =3D xdr_reserve_space(xdr, 8);
+@@ -3274,7 +3275,7 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct svc_f=
+h *fhp,
+=20
+ 		p =3D xdr_reserve_space(xdr, 8);
+ 		if (!p)
+-                	goto out_resource;
++			goto out_resource;
+ 		/*
+ 		 * Get parent's attributes if not ignoring crossmount
+ 		 * and this is the root of a cross-mounted filesystem.
+@@ -3284,7 +3285,7 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct svc_f=
+h *fhp,
+ 			err =3D get_parent_attributes(exp, &parent_stat);
+ 			if (err)
+ 				goto out_nfserr;
+-			ino =3D parent_stat.ino;
++			ino =3D nfsd_uniquify_ino(fhp, &parent_stat);
+ 		}
+ 		p =3D xdr_encode_hyper(p, ino);
+ 	}
+diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+index c475d2271f9c..e97ed957a379 100644
+--- a/fs/nfsd/nfsfh.c
++++ b/fs/nfsd/nfsfh.c
+@@ -172,7 +172,7 @@ static __be32 nfsd_set_fh_dentry(struct svc_rqst *rqstp, =
+struct svc_fh *fhp)
+=20
+ 		if (--data_left < 0)
+ 			return error;
+-		if (fh->fh_auth_type !=3D 0)
++		if ((fh->fh_options & ~NFSD_FH_OPTION_ALL) !=3D 0)
+ 			return error;
+ 		len =3D key_len(fh->fh_fsid_type) / 4;
+ 		if (len =3D=3D 0)
+@@ -569,6 +569,7 @@ fh_compose(struct svc_fh *fhp, struct svc_export *exp, st=
+ruct dentry *dentry,
+=20
+ 	struct inode * inode =3D d_inode(dentry);
+ 	dev_t ex_dev =3D exp_sb(exp)->s_dev;
++	u8 options =3D 0;
+=20
+ 	dprintk("nfsd: fh_compose(exp %02x:%02x/%ld %pd2, ino=3D%ld)\n",
+ 		MAJOR(ex_dev), MINOR(ex_dev),
+@@ -585,6 +586,14 @@ fh_compose(struct svc_fh *fhp, struct svc_export *exp, s=
+truct dentry *dentry,
+ 	/* If we have a ref_fh, then copy the fh_no_wcc setting from it. */
+ 	fhp->fh_no_wcc =3D ref_fh ? ref_fh->fh_no_wcc : false;
+=20
++	if (ref_fh && ref_fh->fh_export =3D=3D exp) {
++		options =3D ref_fh->fh_handle.fh_options;
++	} else {
++		/* Set options as needed */
++		if (exp->ex_path.mnt->mnt_sb->s_magic =3D=3D BTRFS_SUPER_MAGIC)
++			options |=3D NFSD_FH_OPTION_INO_UNIQUIFY;
++	}
++
+ 	if (ref_fh =3D=3D fhp)
+ 		fh_put(ref_fh);
+=20
+@@ -615,7 +624,7 @@ fh_compose(struct svc_fh *fhp, struct svc_export *exp, st=
+ruct dentry *dentry,
+ 	} else {
+ 		fhp->fh_handle.fh_size =3D
+ 			key_len(fhp->fh_handle.fh_fsid_type) + 4;
+-		fhp->fh_handle.fh_auth_type =3D 0;
++		fhp->fh_handle.fh_options =3D options;
+=20
+ 		mk_fsid(fhp->fh_handle.fh_fsid_type,
+ 			fhp->fh_handle.fh_fsid,
+diff --git a/fs/nfsd/nfsfh.h b/fs/nfsd/nfsfh.h
+index 6106697adc04..1144a98c2951 100644
+--- a/fs/nfsd/nfsfh.h
++++ b/fs/nfsd/nfsfh.h
+@@ -84,6 +84,28 @@ enum fsid_source {
+ };
+ extern enum fsid_source fsid_source(const struct svc_fh *fhp);
+=20
++enum nfsd_fh_options {
++	NFSD_FH_OPTION_INO_UNIQUIFY =3D 1,	/* BTRFS only */
++
++	NFSD_FH_OPTION_ALL =3D 1
++};
++
++static inline u64 nfsd_ino_uniquifier(const struct svc_fh *fhp,
++				      const struct kstat *stat)
++{
++	if (fhp->fh_handle.fh_options & NFSD_FH_OPTION_INO_UNIQUIFY)
++		return stat->ino_uniquifier;
++	return 0;
++}
++
++static inline u64 nfsd_uniquify_ino(const struct svc_fh *fhp,
++				    const struct kstat *stat)
++{
++	u64 u =3D nfsd_ino_uniquifier(fhp, stat);
++	if (u !=3D stat->ino)
++		return stat->ino ^ u;
++	return stat->ino;
++}
+=20
+ /*
+  * This might look a little large to "inline" but in all calls except
+diff --git a/fs/nfsd/xdr3.h b/fs/nfsd/xdr3.h
+index 933008382bbe..d9b6c8314bbb 100644
+--- a/fs/nfsd/xdr3.h
++++ b/fs/nfsd/xdr3.h
+@@ -179,6 +179,8 @@ struct nfsd3_readdirres {
+ 	struct xdr_buf		dirlist;
+ 	struct svc_fh		scratch;
+ 	struct readdir_cd	common;
++	u64			dir_ino_uniquifier;
++	bool			dir_have_uniquifier;
+ 	unsigned int		cookie_offset;
+ 	struct svc_rqst *	rqstp;
+=20
+diff --git a/include/linux/stat.h b/include/linux/stat.h
+index fff27e603814..0f3f74d302f8 100644
+--- a/include/linux/stat.h
++++ b/include/linux/stat.h
+@@ -46,6 +46,24 @@ struct kstat {
+ 	struct timespec64 btime;			/* File creation time */
+ 	u64		blocks;
+ 	u64		mnt_id;
++	/*
++	 * BTRFS does not provide unique inode numbers within a filesystem,
++	 * depending on a synthetic 'dev' to provide uniqueness.
++	 * NFSd cannot make use of this 'dev' number so clients often see
++	 * duplicate inode numbers.
++	 * For BTRFS, 'ino' is unlikely to use the high bits until the filesystem
++	 * has created a great many inodes.
++	 * It puts another number in ino_uniquifier which:
++	 * - has most entropy in the high bits
++	 * - is different precisely when 'dev' is different
++	 * - is stable across unmount/remount
++	 * NFSd can xor this with 'ino' to get a substantially more unique
++	 * number for reporting to the client.
++	 * The ino_uniquifier for a directory can reasonably be applied
++	 * to inode numbers reported by the readdir filldir callback.
++	 * It is NOT currently exported to user-space.
++	 */
++	u64		ino_uniquifier;
+ };
+=20
+ #endif
+diff --git a/include/uapi/linux/nfsd/nfsfh.h b/include/uapi/linux/nfsd/nfsfh.h
+index 427294dd56a1..59311df4b476 100644
+--- a/include/uapi/linux/nfsd/nfsfh.h
++++ b/include/uapi/linux/nfsd/nfsfh.h
+@@ -38,11 +38,17 @@ struct nfs_fhbase_old {
+  * The file handle starts with a sequence of four-byte words.
+  * The first word contains a version number (1) and three descriptor bytes
+  * that tell how the remaining 3 variable length fields should be handled.
+- * These three bytes are auth_type, fsid_type and fileid_type.
++ * These three bytes are options, fsid_type and fileid_type.
+  *
+  * All four-byte values are in host-byte-order.
+  *
+- * The auth_type field is deprecated and must be set to 0.
++ * The options field (previously auth_type) can be used when nfsd behaviour
++ * needs to change in a non-compatible way, usually for some specific
++ * filesystem.  Options should only be set in filehandles for filesystems wh=
+ich
++ * need them.
++ * Current values:
++ *   1  -  BTRFS only.  Cause stat->ino_uniquifier to be used to improve ino=
+de
++ *         number uniqueness.
+  *
+  * The fsid_type identifies how the filesystem (or export point) is
+  *    encoded.
+@@ -67,7 +73,7 @@ struct nfs_fhbase_new {
+ 	union {
+ 		struct {
+ 			__u8		fb_version_aux;	/* =3D=3D 1, even =3D> nfs_fhbase_old */
+-			__u8		fb_auth_type_aux;
++			__u8		fb_options_aux;
+ 			__u8		fb_fsid_type_aux;
+ 			__u8		fb_fileid_type_aux;
+ 			__u32		fb_auth[1];
+@@ -76,7 +82,7 @@ struct nfs_fhbase_new {
+ 		};
+ 		struct {
+ 			__u8		fb_version;	/* =3D=3D 1, even =3D> nfs_fhbase_old */
+-			__u8		fb_auth_type;
++			__u8		fb_options;
+ 			__u8		fb_fsid_type;
+ 			__u8		fb_fileid_type;
+ 			__u32		fb_auth_flex[]; /* flexible-array member */
+@@ -106,11 +112,11 @@ struct knfsd_fh {
+=20
+ #define	fh_version		fh_base.fh_new.fb_version
+ #define	fh_fsid_type		fh_base.fh_new.fb_fsid_type
+-#define	fh_auth_type		fh_base.fh_new.fb_auth_type
++#define	fh_options		fh_base.fh_new.fb_options
+ #define	fh_fileid_type		fh_base.fh_new.fb_fileid_type
+ #define	fh_fsid			fh_base.fh_new.fb_auth_flex
+=20
+ /* Do not use, provided for userspace compatiblity. */
+-#define	fh_auth			fh_base.fh_new.fb_auth
++#define	fh_auth			fh_base.fh_new.fb_options
+=20
+ #endif /* _UAPI_LINUX_NFSD_FH_H */
+--=20
+2.32.0
+
