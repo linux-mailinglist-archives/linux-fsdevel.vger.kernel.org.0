@@ -2,93 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C6D73F4AA7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 14:28:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E8623F4ABB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 14:36:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233755AbhHWM3Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Aug 2021 08:29:16 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:41928 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236981AbhHWM3P (ORCPT
+        id S236528AbhHWMhO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Aug 2021 08:37:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60624 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235881AbhHWMhO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Aug 2021 08:29:15 -0400
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-59-E63N1zkDM0uJNVkDIPANeg-1; Mon, 23 Aug 2021 13:28:31 +0100
-X-MC-Unique: E63N1zkDM0uJNVkDIPANeg-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.23; Mon, 23 Aug 2021 13:28:30 +0100
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.023; Mon, 23 Aug 2021 13:28:30 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Jens Axboe' <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        "Pavel Begunkov" <asml.silence@gmail.com>
-CC:     "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Palash Oswal <oswalpalash@gmail.com>,
-        "Sudip Mukherjee" <sudipm.mukherjee@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com" 
-        <syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com>
-Subject: RE: [PATCH v2 0/2] iter revert problems
-Thread-Topic: [PATCH v2 0/2] iter revert problems
-Thread-Index: AQHXluI3nOSi+NKXRk6vP8lbPLAAUauBBWNA
-Date:   Mon, 23 Aug 2021 12:28:30 +0000
-Message-ID: <f1ccbea939f54b779004d1da51a70160@AcuMS.aculab.com>
-References: <cover.1628780390.git.asml.silence@gmail.com>
- <3eaf5365-586d-700b-0277-e0889bfeb05d@gmail.com>
- <YSF9UFyLGZQeKbLt@zeniv-ca.linux.org.uk>
- <120e5aac-e056-1158-505b-fda41f1c99a5@kernel.dk>
-In-Reply-To: <120e5aac-e056-1158-505b-fda41f1c99a5@kernel.dk>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 23 Aug 2021 08:37:14 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4FEBC061575;
+        Mon, 23 Aug 2021 05:36:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=sfkVfOgG74aYLnhMI+d3SuhRKy5IdFLySI4HRvR755E=; b=v+RNWWQzXpfrQxjL0zkwnUqwFY
+        LsJIrmvxJVdeDYpfG0kSJyKMJQ+xwYyHOAWdBKcWRRyw4g8WiaUOqY61UdYzorc9HoQqN6Sh7u9HD
+        Di/+ale2RACtQ+b68boj108W8ueu4lJhNolGERvfTDd1nv3ICQt/YAPfujeliAu26gdmnZ6lka3kd
+        dNT562U7MROIVArLLmqTNJuC24A3CoxxIFiUb5tdBvlS24wG4XFtMREyjE6Ib0mzODnAyLOIVd+yr
+        7fu5bqNRTfmxHN5/8CQVZyCQ2eXDcCbkA34QG8SSXcgarm6r0GZByGK2C2wAks73XryoXcO4RSD5K
+        oFSNxIew==;
+Received: from [2001:4bb8:193:fd10:c6e8:3c08:6f8b:cbf0] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mI9Aa-009izg-W5; Mon, 23 Aug 2021 12:35:27 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>
+Cc:     Mike Snitzer <snitzer@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: dax_supported() related cleanups
+Date:   Mon, 23 Aug 2021 14:35:07 +0200
+Message-Id: <20210823123516.969486-1-hch@lst.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogSmVucyBBeGJvZQ0KPiBTZW50OiAyMiBBdWd1c3QgMjAyMSAwMDoxNA0KPiANCj4gT24g
-OC8yMS8yMSA0OjI1IFBNLCBBbCBWaXJvIHdyb3RlOg0KPiA+IE9uIFNhdCwgQXVnIDIxLCAyMDIx
-IGF0IDAzOjI0OjI4UE0gKzAxMDAsIFBhdmVsIEJlZ3Vua292IHdyb3RlOg0KPiA+PiBPbiA4LzEy
-LzIxIDk6NDAgUE0sIFBhdmVsIEJlZ3Vua292IHdyb3RlOg0KPiA+Pj4gRm9yIHRoZSBidWcgZGVz
-Y3JpcHRpb24gc2VlIDIvMi4gQXMgbWVudGlvbmVkIHRoZXJlIHRoZSBjdXJyZW50IHByb2JsZW1z
-DQo+ID4+PiBpcyBiZWNhdXNlIG9mIGdlbmVyaWNfd3JpdGVfY2hlY2tzKCksIGJ1dCB0aGVyZSB3
-YXMgYWxzbyBhIHNpbWlsYXIgY2FzZQ0KPiA+Pj4gZml4ZWQgaW4gNS4xMiwgd2hpY2ggc2hvdWxk
-IGhhdmUgYmVlbiB0cmlnZ2VyYWJsZSBieSBub3JtYWwNCj4gPj4+IHdyaXRlKDIpL3JlYWQoMikg
-YW5kIG90aGVycy4NCj4gPj4+DQo+ID4+PiBJdCBtYXkgYmUgYmV0dGVyIHRvIGVuZm9yY2UgcmVl
-eHBhbmRzIGFzIGEgbG9uZyB0ZXJtIHNvbHV0aW9uLCBidXQgZm9yDQo+ID4+PiBub3cgdGhpcyBw
-YXRjaHNldCBpcyBxdWlja2llciBhbmQgZWFzaWVyIHRvIGJhY2twb3J0Lg0KPiA+Pg0KPiA+PiBX
-ZSBuZWVkIHRvIGRvIHNvbWV0aGluZyB3aXRoIHRoaXMsIGhvcGVmdWxseSBzb29uLg0KPiA+DQo+
-ID4gSSBzdGlsbCBkb24ndCBsaWtlIHRoYXQgYXBwcm9hY2ggOy0vICBJZiBhbnl0aGluZywgSSB3
-b3VsZCByYXRoZXIgZG8NCj4gPiBzb21ldGhpbmcgbGlrZSB0aGlzLCBhbmQgdG8gaGVsbCB3aXRo
-IG9uZSBleHRyYSB3b3JkIG9uIHN0YWNrIGluDQo+ID4gc2V2ZXJhbCBmdW5jdGlvbnM7IGF0IGxl
-YXN0IHRoYXQgd2F5IHRoZSBzZW1hbnRpY3MgaXMgZWFzeSB0byBkZXNjcmliZS4NCj4gDQo+IFBh
-dmVsIHN1Z2dlc3RlZCB0aGlzIHZlcnkgYXBwcm9hY2ggaW5pdGlhbGx5IGFzIHdlbGwgd2hlbiB3
-ZSBkaXNjdXNzZWQNCj4gaXQsIGFuZCBpZiB5b3UncmUgZmluZSB3aXRoIHRoZSBleHRyYSBzaXpl
-X3QsIGl0IGlzIGJ5IGZhciB0aGUgYmVzdCB3YXkNCj4gdG8gZ2V0IHRoaXMgZG9uZSBhbmQgbm90
-IGhhdmUgYSB3b25reS9mcmFnaWxlIEFQSS4NCg0KQWxsICh3ZWxsIG1heWJlIGFsbW9zdCBhbGwp
-IHRoZSB1c2VycyBvZiBpb3ZfaXRlciBoYXZlIHRoZQ0Kc2hvcnQgaW92W10gY2FjaGUgYW5kIHRo
-ZSBwb2ludGVyIHRvIHRoZSBiaWcgaW92W10gdG8ga2ZyZWUoKQ0KYWxsb2NhdGVkIHRvZ2V0aGVy
-IHdpdGggdGhlIGlvdl9pdGVyIHN0cnVjdHVyZSBpdHNlbGYuDQpUaGVzZSBhcmUgYWxtb3N0IGFs
-d2F5cyBvbiBzdGFjay4NCg0KUHV0dGluZyB0aGUgd2hvbGUgbG90IHRvZ2V0aGVyIGluIGEgc2lu
-Z2xlIHN0cnVjdHVyZSB3b3VsZA0KbWFrZSB0aGUgY2FsbCBzZXF1ZW5jZXMgYSBsb3QgbGVzcyBj
-b21wbGV4IGFuZCB3b3VsZG4ndCB1c2UNCmFueSBtb3JlIHN0YWNrL2RhdGEgaXMgYWxtb3N0IGFs
-bCB0aGUgY2FzZXMuDQoNCkl0IHdvdWxkIGFsc28gbWVhbiB0aGF0IHRoZSAnaXRlcicgY29kZSBj
-b3VsZCBhbHdheXMgaGF2ZSBhIHBvaW50ZXINCnRvIHRoZSBiYXNlIG9mIHRoZSBvcmlnaW5hbCBp
-b3ZbXSBsaXN0Lg0KVGhlIGxhY2sgb2Ygd2hpY2ggaXMgcHJvYmFibHkgbWFrZXMgdGhlICdyZXZl
-cnQnIGNvZGUgaGFyZD8NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lk
-ZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0K
-UmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+Hi all,
 
+this series first clarifies how to use fsdax in the Kconfig help a bit,
+and te untangles the code path that checks if fsdax is supported.
+
+Diffstat
+ drivers/dax/super.c   |  191 +++++++++++++++++++-------------------------------
+ drivers/md/dm-table.c |    9 --
+ drivers/md/dm.c       |    2 
+ fs/Kconfig            |   17 +++-
+ fs/ext2/super.c       |    3 
+ fs/ext4/super.c       |    3 
+ fs/xfs/xfs_super.c    |   16 +++-
+ include/linux/dax.h   |   41 +---------
+ 8 files changed, 113 insertions(+), 169 deletions(-)
