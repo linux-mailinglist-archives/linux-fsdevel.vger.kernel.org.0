@@ -2,164 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D5A5A3F44B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 07:52:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57C8A3F44E0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 08:25:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233885AbhHWFwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Aug 2021 01:52:45 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:57574 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231267AbhHWFwp (ORCPT
+        id S234862AbhHWGZm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Aug 2021 02:25:42 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:45627 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234206AbhHWGZl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Aug 2021 01:52:45 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id D692521F2A;
-        Mon, 23 Aug 2021 05:52:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1629697921; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Mon, 23 Aug 2021 02:25:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1629699898;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=p4iErQiaXqFxK5RhLttHlBJp3hFnIIgCgpe0bRYAxeA=;
-        b=0P+yRzaAjLZzOwjLwnO+ST7oqJZRVUIBYH/8reyeVumiChNsSSEwDYJmVXtoGCaPktoOaj
-        KR6TOU2OzmpXXTrji3GDTILJo8lUyCIw1FZKD0eqPD/6Ea8JmTtkGmv6uYibxpUsHSotC/
-        RXFz3BXqrKpKgwqDSHM93WXr1JRuIEs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1629697921;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=p4iErQiaXqFxK5RhLttHlBJp3hFnIIgCgpe0bRYAxeA=;
-        b=paBDsK2beDKmwINS44QOydx0LeA/J4VNMRURJOwOZ5bodeFivZgTi0BwkgLcBbvKcHkYgH
-        jQPaLx9/iCTkCRDg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6B8E013A23;
-        Mon, 23 Aug 2021 05:51:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id yaacCn43I2HPOgAAMHmgww
-        (envelope-from <neilb@suse.de>); Mon, 23 Aug 2021 05:51:58 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        bh=fTBmg72UzrJzwwgyL0XX6MmGnq4XiN30FwOUg0WyeL8=;
+        b=FP2I2eF6Vxj4C/mxETXrKldB7G93JIfxP2rg+iQuY6zkP7hxPWMnt/LYHoLJPesp5185TT
+        2M2WmoRjIDg1DTPRbPilW/A8x+plT6ZweSyMVBOdwaOXI8PutPBFnfXl31D/yohln3perb
+        4DnkMDSyWr8ktMsfO1ZigPp2uOdA4bU=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-205-1Uqc3TOXNZWcSXF7aWHl-g-1; Mon, 23 Aug 2021 02:24:56 -0400
+X-MC-Unique: 1Uqc3TOXNZWcSXF7aWHl-g-1
+Received: by mail-pg1-f200.google.com with SMTP id q22-20020a63e956000000b002524787adb1so9794520pgj.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Aug 2021 23:24:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=fTBmg72UzrJzwwgyL0XX6MmGnq4XiN30FwOUg0WyeL8=;
+        b=UHSrZ+8wNjpDSBoftKkaZUODEKQLv5sTHD3wN4eU4+0m6DxDPmiwQ03upT9hI9DMUt
+         GJpNZz3FqtxD3vNK/PFRfFL5NwglfgskWUM6EotLnhYM5fQqyi2kE7nTZJlMbAOYz/N0
+         vzJhiaZZ48tFfHNJAvV2N2/U5GmKgdHCspqB+zT2q4FeKw4L2V+u5s+v5VCdZzlRquyb
+         ywT7Vt/VeCk51GnHZO/qFsT5CsVuzv5gEf4171C6wRX7X6EcbT0U1MgBjGi5FOQVGfbH
+         s2BWib18sHaAnSqdUYXFmA6bEvZqBZNW5+b1sMtMlEOzkEf5/ClnLyeYEDEG+WsDLqCE
+         4PBw==
+X-Gm-Message-State: AOAM530f+SSPlSOJJxTB6ajvnFBsfVcWn57K8GSsPexlMn9srl3qDaF4
+        KseFyCY+jVTFP5xdqyxcitVcI/I2hmmxSQSZp63DV/K70XUKl2aQ0G+KEq+aEWxlY624TtJvwGI
+        peORMQdC2R9ulKwch1c4ftrFyKg==
+X-Received: by 2002:a17:90a:b016:: with SMTP id x22mr7315300pjq.205.1629699895443;
+        Sun, 22 Aug 2021 23:24:55 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwYnrO75usjjlrGCgZzdsLDtPE2dKORuqu4cQ6/SLHByjgTAawINCsTeerUMEDWc0TN8ooDAw==
+X-Received: by 2002:a17:90a:b016:: with SMTP id x22mr7315281pjq.205.1629699895193;
+        Sun, 22 Aug 2021 23:24:55 -0700 (PDT)
+Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id g3sm14314416pfi.197.2021.08.22.23.24.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 Aug 2021 23:24:54 -0700 (PDT)
+Subject: Re: [PATCH v11 01/12] iova: Export alloc_iova_fast() and
+ free_iova_fast()
+To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
+        stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
+        hch@infradead.org, christian.brauner@canonical.com,
+        rdunlap@infradead.org, willy@infradead.org,
+        viro@zeniv.linux.org.uk, axboe@kernel.dk, bcrl@kvack.org,
+        corbet@lwn.net, mika.penttila@nextfour.com,
+        dan.carpenter@oracle.com, joro@8bytes.org,
+        gregkh@linuxfoundation.org, zhe.he@windriver.com,
+        xiaodong.liu@intel.com, joe@perches.com, robin.murphy@arm.com
+Cc:     songmuchun@bytedance.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <20210818120642.165-1-xieyongji@bytedance.com>
+ <20210818120642.165-2-xieyongji@bytedance.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <3ff77bab-8bb7-ae5b-4cf1-a90ebcc00118@redhat.com>
+Date:   Mon, 23 Aug 2021 14:24:42 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Zygo Blaxell" <ce3g8jdj@umail.furryterror.org>
-Cc:     "Wang Yugui" <wangyugui@e16-tech.com>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        "Josef Bacik" <josef@toxicpanda.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        "Chuck Lever" <chuck.lever@oracle.com>, "Chris Mason" <clm@fb.com>,
-        "David Sterba" <dsterba@suse.com>,
-        "Alexander Viro" <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH] VFS/BTRFS/NFSD: provide more unique inode number for btrfs export
-In-reply-to: <20210822192917.GF29026@hungrycats.org>
-References: <162742539595.32498.13687924366155737575.stgit@noble.brown>,
- <162881913686.1695.12479588032010502384@noble.neil.brown.name>,
- <20210818225454.9558.409509F4@e16-tech.com>,
- <162932318266.9892.13600254282844823374@noble.neil.brown.name>,
- <20210819021910.GB29026@hungrycats.org>,
- <162942805745.9892.7512463857897170009@noble.neil.brown.name>,
- <20210822192917.GF29026@hungrycats.org>
-Date:   Mon, 23 Aug 2021 15:51:54 +1000
-Message-id: <162969791499.9892.11536866623369257320@noble.neil.brown.name>
+In-Reply-To: <20210818120642.165-2-xieyongji@bytedance.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 23 Aug 2021, Zygo Blaxell wrote:
->=20
-> Subvol IDs are not reusable.  They are embedded in shared object ownership
-> metadata, and persist for some time after subvols are deleted.
 
-Hmmm...  that's interesting.  Makes some sense too.  I did wonder how
-ownership across multiple snapshots was tracked.
+ÔÚ 2021/8/18 ÏÂÎç8:06, Xie Yongji Ð´µÀ:
+> Export alloc_iova_fast() and free_iova_fast() so that
+> some modules can make use of the per-CPU cache to get
+> rid of rbtree spinlock in alloc_iova() and free_iova()
+> during IOVA allocation.
+>
+> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
 
->=20
-> > > > My preference would be for btrfs to start re-using old object-ids and
-> > > > root-ids, and to enforce a limit (set at mkfs or tunefs) so that the
-> > > > total number of bits does not exceed 64.  Unfortunately the maintaine=
-rs
-> > > > seem reluctant to even consider this.
-> > >=20
-> > > It was considered, implemented in 2011, and removed in 2020.  Rationale
-> > > is in commit b547a88ea5776a8092f7f122ddc20d6720528782 "btrfs: start
-> > > deprecation of mount option inode_cache".  It made file creation slower,
-> > > and consumed disk space, iops, and memory to run.  Nobody used it.
-> > > Newer on-disk data structure versions (free space tree, 2015) didn't
-> > > bother implementing inode_cache's storage requirement.
-> >=20
-> > Yes, I saw that.  Providing reliable functional certainly can impact
-> > performance and consume disk-space.  That isn't an excuse for not doing
-> > it.=20
-> > I suspect that carefully tuned code could result in typical creation
-> > times being unchanged, and mean creation times suffering only a tiny
-> > cost.  Using "max+1" when the creation rate is particularly high might
-> > be a reasonable part of managing costs.
-> > Storage cost need not be worse than the cost of tracking free blocks
-> > on the device.
->=20
-> The cost of _tracking_ free object IDs is trivial compared to the cost
-> of _reusing_ an object ID on btrfs.
 
-I hadn't thought of that.
+Acked-by: Jason Wang <jasowang@redhat.com>
 
->=20
-> If btrfs doesn't reuse object numbers, btrfs can append new objects
-> to the last partially filled leaf.  If there are shared metadata pages
-> (i.e. snapshots), btrfs unshares a handful of pages once, and then future
-> writes use densely packed new pages and delayed allocation without having
-> to read anything.
->=20
-> If btrfs reuses object numbers, the filesystem has to pack new objects
-> into random previously filled metadata leaf nodes, so there are a lot
-> of read-modify-writes scattered over old metadata pages, which spreads
-> the working set around and reduces cache usage efficiency (i.e. uses
-> more RAM).  If there are snapshots, each shared page that is modified
-> for the first time after the snapshot comes with two-orders-of-magnitude
-> worst-case write multipliers.
+(If we need respin, I'd suggest to put the numbers you measured here)
 
-I don't really follow that .... but I'll take your word for it for now.
+Thanks
 
->=20
-> The two-algorithm scheme (switching from "reuse freed inode" to "max+1"
-> under load) would be forced into the "max+1" mode half the time by a
-> daily workload of alternating git checkouts and builds.  It would save
-> only one bit of inode namespace over the lifetime of the filesystem.
->=20
-> > "Nobody used it" is odd.  It implies it would have to be explicitly
-> > enabled, and all it would provide anyone is sane behaviour.  Who would
-> > imagine that to be an optional extra.
->=20
-> It always had to be explicitly enabled.  It was initially a workaround
-> for 32-bit ino_t that was limiting a few users, but ino_t got better
-> and the need for inode_cache went away.
->=20
-> NFS (particularly NFSv2) might be the use case inode_cache has been
-> waiting for.  btrfs has an i_version field for NFSv4, so it's not like
-> there's no precedent for adding features in btrfs to support NFS.
 
-NFSv2 is not worth any effort.  NFSv4 is.  NFSv3 ... some, but not a lot.
+> ---
+>   drivers/iommu/iova.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+> index b6cf5f16123b..3941ed6bb99b 100644
+> --- a/drivers/iommu/iova.c
+> +++ b/drivers/iommu/iova.c
+> @@ -521,6 +521,7 @@ alloc_iova_fast(struct iova_domain *iovad, unsigned long size,
+>   
+>   	return new_iova->pfn_lo;
+>   }
+> +EXPORT_SYMBOL_GPL(alloc_iova_fast);
+>   
+>   /**
+>    * free_iova_fast - free iova pfn range into rcache
+> @@ -538,6 +539,7 @@ free_iova_fast(struct iova_domain *iovad, unsigned long pfn, unsigned long size)
+>   
+>   	free_iova(iovad, pfn);
+>   }
+> +EXPORT_SYMBOL_GPL(free_iova_fast);
+>   
+>   #define fq_ring_for_each(i, fq) \
+>   	for ((i) = (fq)->head; (i) != (fq)->tail; (i) = ((i) + 1) % IOVA_FQ_SIZE)
 
->=20
-> On the other hand, the cost of ino_cache gets worse with snapshots,
-> and the benefit in practice takes years to decades to become relevant.
-> Users who are exporting snapshots over NFS are likely to be especially
-> averse to using inode_cache.
-
-That's the real killer.  Everything will work fine for years until it
-doesn't.  And once it doesn't ....  what do you do?
-
-Thanks for lot for all this background info.  I've found it to be very
-helpful for my general understanding.
-
-Thanks,
-NeilBrown
