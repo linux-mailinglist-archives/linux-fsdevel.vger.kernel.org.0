@@ -2,143 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D6353F52D6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 23:25:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9AAC3F532A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Aug 2021 00:06:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232819AbhHWVZq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Aug 2021 17:25:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41774 "EHLO
+        id S232898AbhHWWHL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Aug 2021 18:07:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232748AbhHWVZo (ORCPT
+        with ESMTP id S229467AbhHWWHK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Aug 2021 17:25:44 -0400
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 543C3C061575
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Aug 2021 14:25:01 -0700 (PDT)
-Received: by mail-qk1-x731.google.com with SMTP id t4so6445330qkb.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Aug 2021 14:25:01 -0700 (PDT)
+        Mon, 23 Aug 2021 18:07:10 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3323C061575
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Aug 2021 15:06:26 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id y6so34091986lje.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Aug 2021 15:06:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=rFm1OeTA67q6+Ox7ZeDoPnLQPHqm+qvBnfSJlYS48GI=;
-        b=J9H51Cd9V1SHaSBkCeV3m7v6aK33OllLPSk2HbNQpv8ykecbCEZrLGXXkbN/WJBGwI
-         ZQ/QA4GwGhOsSAruXvfUjmfr2tcYtwyHuyMJwiwdL6c8N3R6t0XdpDFvroCyfIWbSmko
-         iFu3SehppMkpteN9bAcoZOVOiVyrwMln+FH//yUlv8pscvhg4+ui8s28rs7nhiTNYFNO
-         bLg9OUyO3UDXWS6cetEn5B4eIvAaWl7hixyOWrxhix/j1A7oE6tkgLZSig0l3lAqoqax
-         OfEUBW3AyNzbtYnAFlIDq8CJp3HiGeBRP5uA8FZQSMX+U+a6vh52t2kqQDcf5SaTvAU+
-         W8xg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pNzxccHrLNvgtuARmJVk/6D6HUeCLBrBp9BAleU49Ss=;
+        b=dwy8paMHkqyjLg1te3lCxkkLE6jDyUtbeifszfiKDvo9BBrM7XLb+10zYHDlIQZ6Gp
+         s56jjZ/xv3KJAQ4Nz4+dvXUgTAQZmD21ubLfgu/r5vkDTVl0L1aNZ20sdEQO/9nYBeOg
+         2kehgthnitJpNSRy4IWcnjmoAiUzkkD/n4/q0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=rFm1OeTA67q6+Ox7ZeDoPnLQPHqm+qvBnfSJlYS48GI=;
-        b=U8qf4+n/WK+b2on1l5+ea7jhhsbyljlcOhmAFuMAnalO59fVB6n14v812dnuOyuWhy
-         kv5MT+BAsguV9vFR6rQvPfg7v8n34BGw6QSOze5UlZ6Ekr+6MgZxlhGfIo3FiyGKxpme
-         NbtxrITRh/qoCNCFk++BBoxxwpFdC8lKr8KUoX5zXGOUNzmeC3DExAwAOaohHIY/MtRH
-         vtIb8Khs1aBAMO1OcFu7cNGSbeaf3s3Y6qkeadE8jETKVxqLFWRWO3C6yqPnVLDQzayN
-         K+Q8i7TI0NZLwO5rW5Tq0xPJHgza4gH8NjI2b4JTOPpWu2oe9fSlyMmFeOrL9azOXAVD
-         liNQ==
-X-Gm-Message-State: AOAM532T5MbvhbOXhpOmy8KFAS/LWvaqpkdJE7SohAbWVkMxZLE3Nxo5
-        /nrDzFYMBk1lDd3wDXjnP03wbA==
-X-Google-Smtp-Source: ABdhPJwjpnChjk6PVNru/JPKLrrjhzM0iSABCMfGqqq0BplI/+4JE0INTEKMzLYMVZmdm/mLK09yDA==
-X-Received: by 2002:a37:9d09:: with SMTP id g9mr22917986qke.269.1629753900524;
-        Mon, 23 Aug 2021 14:25:00 -0700 (PDT)
-Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
-        by smtp.gmail.com with ESMTPSA id d129sm9382198qkf.136.2021.08.23.14.24.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Aug 2021 14:24:59 -0700 (PDT)
-Date:   Mon, 23 Aug 2021 17:26:41 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] Memory folios for v5.15
-Message-ID: <YSQSkSOWtJCE4g8p@cmpxchg.org>
-References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pNzxccHrLNvgtuARmJVk/6D6HUeCLBrBp9BAleU49Ss=;
+        b=TwA7SqlkTYeG9LsOlUCXT381KMA2jHsFhriZJ0ary79W8O9IVfAuVC2mofsIsV+YeG
+         K8XhVAjEhICxFhiXmHGSsm7v4Yk+S0mI1b1ZuzV8kK5CJC5aF49VPb1rAg5DFksGodgU
+         Z4gvuZ9A0xDjFRae2YeDsZXpXdPFjFeoOvOLfMoOsSCpfaGvPtoDdPUE69eCCSXg5vqq
+         jhjbehttsPlUT0lAohtUk5e1HOrvswv0ogZuIzVWSVIjCrAvkjj5aoIDAkAPwiDr86vN
+         j27M5M14sMgx/al6KF9M+GtiLZwxjh0TBeudSZcpiKph5gGP9ugmj17yPmd9nFIFblXk
+         Mu4g==
+X-Gm-Message-State: AOAM533PS1RvblArmOBYUBmzY0GdqyubYuPzwVw3F2WnsMI+yOh+B/vG
+        vbVAooKwRrFU2Pm4B/wmWxL8O2SYV4/mfwRb
+X-Google-Smtp-Source: ABdhPJzBczOAdJBca/6XfgVE9HKpF+tWBF6lYZVvOIaDQ1XVRqgDnOKyFwZuNPkFvV/KuXSsSL478w==
+X-Received: by 2002:a2e:9185:: with SMTP id f5mr899124ljg.197.1629756385048;
+        Mon, 23 Aug 2021 15:06:25 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id e19sm1601604ljl.47.2021.08.23.15.06.24
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Aug 2021 15:06:24 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id s12so8886475ljg.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Aug 2021 15:06:24 -0700 (PDT)
+X-Received: by 2002:a2e:7d0e:: with SMTP id y14mr29180236ljc.251.1629756384152;
+ Mon, 23 Aug 2021 15:06:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org> <YSQSkSOWtJCE4g8p@cmpxchg.org>
+In-Reply-To: <YSQSkSOWtJCE4g8p@cmpxchg.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 23 Aug 2021 15:06:08 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjD8i2zJVQ9SfF2t=_0Fkgy-i5Z=mQjCw36AHvbBTGXyg@mail.gmail.com>
+Message-ID: <CAHk-=wjD8i2zJVQ9SfF2t=_0Fkgy-i5Z=mQjCw36AHvbBTGXyg@mail.gmail.com>
+Subject: Re: [GIT PULL] Memory folios for v5.15
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 23, 2021 at 08:01:44PM +0100, Matthew Wilcox wrote:
-> Hi Linus,
-> 
-> I'm sending this pull request a few days before the merge window
-> opens so you have time to think about it.  I don't intend to make any
-> further changes to the branch, so I've created the tag and signed it.
-> It's been in Stephen's next tree for a few weeks with only minor problems
-> (now addressed).
-> 
-> The point of all this churn is to allow filesystems and the page cache
-> to manage memory in larger chunks than PAGE_SIZE.  The original plan was
-> to use compound pages like THP does, but I ran into problems with some
-> functions that take a struct page expect only a head page while others
-> expect the precise page containing a particular byte.
-> 
-> This pull request converts just parts of the core MM and the page cache.
-> For 5.16, we intend to convert various filesystems (XFS and AFS are ready;
-> other filesystems may make it) and also convert more of the MM and page
-> cache to folios.  For 5.17, multi-page folios should be ready.
-> 
-> The multi-page folios offer some improvement to some workloads.  The 80%
-> win is real, but appears to be an artificial benchmark (postgres startup,
-> which isn't a serious workload).  Real workloads (eg building the kernel,
-> running postgres in a steady state, etc) seem to benefit between 0-10%.
-> I haven't heard of any performance losses as a result of this series.
-> Nobody has done any serious performance tuning; I imagine that tweaking
-> the readahead algorithm could provide some more interesting wins.
-> There are also other places where we could choose to create large folios
-> and currently do not, such as writes that are larger than PAGE_SIZE.
-> 
-> I'd like to thank all my reviewers who've offered review/ack tags:
-> 
-> Christoph Hellwig <hch@lst.de>
-> David Howells <dhowells@redhat.com>
-> Jan Kara <jack@suse.cz>
-> Jeff Layton <jlayton@kernel.org>
-> Johannes Weiner <hannes@cmpxchg.org>
+On Mon, Aug 23, 2021 at 2:25 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
+>
+> One one hand, the ambition appears to substitute folio for everything
+> that could be a base page or a compound page even inside core MM
+> code. Since there are very few places in the MM code that expressly
+> deal with tail pages in the first place, this amounts to a conversion
+> of most MM code - including the LRU management, reclaim, rmap,
+> migrate, swap, page fault code etc. - away from "the page".
 
-Just to clarify, I'm only on this list because I acked 3 smaller,
-independent memcg cleanup patches in this series. I have repeatedly
-expressed strong reservations over folios themselves.
+Yeah, honestly, I would have preferred to see this done the exact
+reverse way: make the rule be that "struct page" is always a head
+page, and anything that isn't a head page would be called something
+else.
 
-The arguments for a better data interface between mm and filesystem in
-light of variable page sizes are plentiful and convincing. But from an
-MM point of view, it's all but clear where the delineation between the
-page and folio is, and what the endgame is supposed to look like.
+Because, as you say, head pages are the norm. And "folio" may be a
+clever term, but it's not very natural. Certainly not at all as
+intuitive or common as "page" as a name in the industry.
 
-One one hand, the ambition appears to substitute folio for everything
-that could be a base page or a compound page even inside core MM
-code. Since there are very few places in the MM code that expressly
-deal with tail pages in the first place, this amounts to a conversion
-of most MM code - including the LRU management, reclaim, rmap,
-migrate, swap, page fault code etc. - away from "the page".
+That said, I see why Willy did it the way he did - it was easier to do
+it incrementally the way he did. But I do think it ends up with an end
+result that is kind of topsy turvy where the common "this is the core
+allocation" being called that odd "folio" thing, and then the simpler
+"page" name is for things that almost nobody should even care about.
 
-However, this far exceeds the goal of a better mm-fs interface. And
-the value proposition of a full MM-internal conversion, including
-e.g. the less exposed anon page handling, is much more nebulous. It's
-been proposed to leave anon pages out, but IMO to keep that direction
-maintainable, the folio would have to be translated to a page quite
-early when entering MM code, rather than propagating it inward, in
-order to avoid huge, massively overlapping page and folio APIs.
+I'd have personally preferred to call the head page just a "page", and
+other pages "subpage" or something like that. I think that would be
+much more intuitive than "folio/page".
 
-It's also not clear to me that using the same abstraction for compound
-pages and the file cache object is future proof. It's evident from
-scalability issues in the allocator, reclaim, compaction, etc. that
-with current memory sizes and IO devices, we're hitting the limits of
-efficiently managing memory in 4k base pages per default. It's also
-clear that we'll continue to have a need for 4k cache granularity for
-quite a few workloads that work with large numbers of small files. I'm
-not sure how this could be resolved other than divorcing the idea of a
-(larger) base page from the idea of cache entries that can correspond,
-if necessary, to memory chunks smaller than a default page.
-
-A longer thread on that can be found here:
-https://lore.kernel.org/linux-fsdevel/YFja%2FLRC1NI6quL6@cmpxchg.org/
-
-As an MM stakeholder, I don't think folios are the answer for MM code.
+                  Linus
