@@ -2,49 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A6283F4B9F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 15:21:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A0BA3F4C82
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 16:36:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237333AbhHWNWT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Aug 2021 09:22:19 -0400
-Received: from verein.lst.de ([213.95.11.211]:47946 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235813AbhHWNWS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Aug 2021 09:22:18 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 46C7967357; Mon, 23 Aug 2021 15:21:32 +0200 (CEST)
-Date:   Mon, 23 Aug 2021 15:21:32 +0200
-From:   "hch@lst.de" <hch@lst.de>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     "ruansy.fnst@fujitsu.com" <ruansy.fnst@fujitsu.com>,
-        Jane Chu <jane.chu@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "hch@lst.de" <hch@lst.de>, "agk@redhat.com" <agk@redhat.com>,
-        "snitzer@redhat.com" <snitzer@redhat.com>
-Subject: Re: [PATCH RESEND v6 1/9] pagemap: Introduce ->memory_failure()
-Message-ID: <20210823132132.GA17677@lst.de>
-References: <20210730100158.3117319-1-ruansy.fnst@fujitsu.com> <20210730100158.3117319-2-ruansy.fnst@fujitsu.com> <1d286104-28f4-d442-efed-4344eb8fa5a1@oracle.com> <de19af2a-e9e6-0d43-8b14-c13b9ec38a9d@oracle.com> <beee643c-0fd9-b0f7-5330-0d64bde499d3@oracle.com> <78c22960-3f6d-8e5d-890a-72915236bedc@oracle.com> <OSBPR01MB2920AD0C7FD02E238D0C387AF4FF9@OSBPR01MB2920.jpnprd01.prod.outlook.com> <CAPcyv4gS=sYbC3gzMN0uQ5SAhDJ8CAC81tz7AtMueqLfuzGDOw@mail.gmail.com>
+        id S230395AbhHWOhR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Aug 2021 10:37:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60316 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230135AbhHWOhR (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 23 Aug 2021 10:37:17 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1D6BC061575;
+        Mon, 23 Aug 2021 07:36:34 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id D7F6F1F42234
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Tso <tytso@mit.edu>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Bobrowski <repnop@google.com>, kernel@collabora.com
+Subject: Re: [PATCH v6 04/21] fsnotify: Reserve mark flag bits for backends
+Organization: Collabora
+References: <20210812214010.3197279-1-krisman@collabora.com>
+        <20210812214010.3197279-5-krisman@collabora.com>
+        <CAOQ4uxh0WNxsuwtfv_iDCaZbmJEDB700D5_v==ffm2-WAg_V7w@mail.gmail.com>
+        <20210816131536.GB30215@quack2.suse.cz>
+Date:   Mon, 23 Aug 2021 10:36:28 -0400
+In-Reply-To: <20210816131536.GB30215@quack2.suse.cz> (Jan Kara's message of
+        "Mon, 16 Aug 2021 15:15:36 +0200")
+Message-ID: <87k0kc2poz.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4gS=sYbC3gzMN0uQ5SAhDJ8CAC81tz7AtMueqLfuzGDOw@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 18, 2021 at 10:10:51AM -0700, Dan Williams wrote:
-> > Sounds like a nice solution.  I think I can add an is_notify_supported() interface in dax_holder_ops and check it when register dax_holder.
-> 
-> Shouldn't the fs avoid registering a memory failure handler if it is
-> not prepared to take over? For example, shouldn't this case behave
-> identically to ext4 that will not even register a callback?
+Jan Kara <jack@suse.cz> writes:
 
-Yes.
+> On Fri 13-08-21 10:28:27, Amir Goldstein wrote:
+>> On Fri, Aug 13, 2021 at 12:40 AM Gabriel Krisman Bertazi
+>> <krisman@collabora.com> wrote:
+>> >
+>> > Split out the final bits of struct fsnotify_mark->flags for use by a
+>> > backend.
+>> >
+>> > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+>> >
+>> > Changes since v1:
+>> >   - turn consts into defines (jan)
+>> > ---
+>> >  include/linux/fsnotify_backend.h | 18 +++++++++++++++---
+>> >  1 file changed, 15 insertions(+), 3 deletions(-)
+>> >
+>> > diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+>> > index 1ce66748a2d2..ae1bd9f06808 100644
+>> > --- a/include/linux/fsnotify_backend.h
+>> > +++ b/include/linux/fsnotify_backend.h
+>> > @@ -363,6 +363,20 @@ struct fsnotify_mark_connector {
+>> >         struct hlist_head list;
+>> >  };
+>> >
+>> > +enum fsnotify_mark_bits {
+>> > +       FSN_MARK_FL_BIT_IGNORED_SURV_MODIFY,
+>> > +       FSN_MARK_FL_BIT_ALIVE,
+>> > +       FSN_MARK_FL_BIT_ATTACHED,
+>> > +       FSN_MARK_PRIVATE_FLAGS,
+>> > +};
+>> > +
+>> > +#define FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY \
+>> > +       (1 << FSN_MARK_FL_BIT_IGNORED_SURV_MODIFY)
+>> > +#define FSNOTIFY_MARK_FLAG_ALIVE \
+>> > +       (1 << FSN_MARK_FL_BIT_ALIVE)
+>> > +#define FSNOTIFY_MARK_FLAG_ATTACHED \
+>> > +       (1 << FSN_MARK_FL_BIT_ATTACHED)
+>> > +
+>> >  /*
+>> >   * A mark is simply an object attached to an in core inode which allows an
+>> >   * fsnotify listener to indicate they are either no longer interested in events
+>> > @@ -398,9 +412,7 @@ struct fsnotify_mark {
+>> >         struct fsnotify_mark_connector *connector;
+>> >         /* Events types to ignore [mark->lock, group->mark_mutex] */
+>> >         __u32 ignored_mask;
+>> > -#define FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY 0x01
+>> > -#define FSNOTIFY_MARK_FLAG_ALIVE               0x02
+>> > -#define FSNOTIFY_MARK_FLAG_ATTACHED            0x04
+>> > +       /* Upper bits [31:PRIVATE_FLAGS] are reserved for backend usage */
+>> 
+>> I don't understand what [31:PRIVATE_FLAGS] means
+>
+> I think it should be [FSN_MARK_PRIVATE_FLAGS:31] (identifying a range of
+> bits). I'd maybe write just "Bits starting from FSN_MARK_PRIVATE_FLAGS are
+> reserved for backend usage". With this fixed feel free to add:
+
+Thank you, I will address the comment and add your reviewed-by tags.
+
+-- 
+Gabriel Krisman Bertazi
