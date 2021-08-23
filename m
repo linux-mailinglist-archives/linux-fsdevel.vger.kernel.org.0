@@ -2,58 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57C8A3F44E0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 08:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 906653F44EB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 08:28:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234862AbhHWGZm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Aug 2021 02:25:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:45627 "EHLO
+        id S231715AbhHWG3K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Aug 2021 02:29:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57105 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234206AbhHWGZl (ORCPT
+        by vger.kernel.org with ESMTP id S231340AbhHWG3J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Aug 2021 02:25:41 -0400
+        Mon, 23 Aug 2021 02:29:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629699898;
+        s=mimecast20190719; t=1629700106;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fTBmg72UzrJzwwgyL0XX6MmGnq4XiN30FwOUg0WyeL8=;
-        b=FP2I2eF6Vxj4C/mxETXrKldB7G93JIfxP2rg+iQuY6zkP7hxPWMnt/LYHoLJPesp5185TT
-        2M2WmoRjIDg1DTPRbPilW/A8x+plT6ZweSyMVBOdwaOXI8PutPBFnfXl31D/yohln3perb
-        4DnkMDSyWr8ktMsfO1ZigPp2uOdA4bU=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-205-1Uqc3TOXNZWcSXF7aWHl-g-1; Mon, 23 Aug 2021 02:24:56 -0400
-X-MC-Unique: 1Uqc3TOXNZWcSXF7aWHl-g-1
-Received: by mail-pg1-f200.google.com with SMTP id q22-20020a63e956000000b002524787adb1so9794520pgj.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Aug 2021 23:24:56 -0700 (PDT)
+        bh=qEgW76/QbsdmzDpY6YbWFRp1GnxyCaBmFQdXxX32rA8=;
+        b=DPWThtYfmVdwZoS1f3AqYR5l6cVC3fRybMdd0qvOFzy3REJJIYNhtCAJ5+v+DVDWt9XuJM
+        AZCENilDM0Kci5iPzzW6fgj1xPIJirGYGObwpMhNAutMcwumx6eqITH0Av0bcwZpiHPMVQ
+        lVcjKSc7WCV4WDyGXBAcN8x2WHDzMG4=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-259-LKoUN4DgPaGg6SmU_2mOvQ-1; Mon, 23 Aug 2021 02:28:01 -0400
+X-MC-Unique: LKoUN4DgPaGg6SmU_2mOvQ-1
+Received: by mail-pl1-f197.google.com with SMTP id r11-20020a170902c60b00b0012d99290650so3880179plr.9
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Aug 2021 23:28:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=fTBmg72UzrJzwwgyL0XX6MmGnq4XiN30FwOUg0WyeL8=;
-        b=UHSrZ+8wNjpDSBoftKkaZUODEKQLv5sTHD3wN4eU4+0m6DxDPmiwQ03upT9hI9DMUt
-         GJpNZz3FqtxD3vNK/PFRfFL5NwglfgskWUM6EotLnhYM5fQqyi2kE7nTZJlMbAOYz/N0
-         vzJhiaZZ48tFfHNJAvV2N2/U5GmKgdHCspqB+zT2q4FeKw4L2V+u5s+v5VCdZzlRquyb
-         ywT7Vt/VeCk51GnHZO/qFsT5CsVuzv5gEf4171C6wRX7X6EcbT0U1MgBjGi5FOQVGfbH
-         s2BWib18sHaAnSqdUYXFmA6bEvZqBZNW5+b1sMtMlEOzkEf5/ClnLyeYEDEG+WsDLqCE
-         4PBw==
-X-Gm-Message-State: AOAM530f+SSPlSOJJxTB6ajvnFBsfVcWn57K8GSsPexlMn9srl3qDaF4
-        KseFyCY+jVTFP5xdqyxcitVcI/I2hmmxSQSZp63DV/K70XUKl2aQ0G+KEq+aEWxlY624TtJvwGI
-        peORMQdC2R9ulKwch1c4ftrFyKg==
-X-Received: by 2002:a17:90a:b016:: with SMTP id x22mr7315300pjq.205.1629699895443;
-        Sun, 22 Aug 2021 23:24:55 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwYnrO75usjjlrGCgZzdsLDtPE2dKORuqu4cQ6/SLHByjgTAawINCsTeerUMEDWc0TN8ooDAw==
-X-Received: by 2002:a17:90a:b016:: with SMTP id x22mr7315281pjq.205.1629699895193;
-        Sun, 22 Aug 2021 23:24:55 -0700 (PDT)
+        bh=qEgW76/QbsdmzDpY6YbWFRp1GnxyCaBmFQdXxX32rA8=;
+        b=sfCPOLQd5+1JYxv9H5j7xRb2Yqi0sflkc3O4fIiBM3xgM6IC0iutsfLb/2GBM865Dw
+         M/ueS0J9YJfqyRe7wDt0DL7MektKtHdWZEArf0ER8ROntM19j6+swQB7beISLS6CEVYu
+         4/HcRGY5O3+hur5J6XtiPoV8DsURVbOI2XM8mtxnSfz7SB/PriuubHzI11D3c7lprGAj
+         ElaT+phsqbC9BFig1f/qlEddoY75FO95THOjtk/Vbj95mGuTCPgLReC8zFY2MUezaPz4
+         DynAZtYE//yH9co88VNLMlKMuz0k1j3v595FDz1T4lFW/xM8CgkTUj3m6dXFKBODuUgN
+         tWIw==
+X-Gm-Message-State: AOAM531wCQpwi0yewICDaobPzw71mvNSxQkkYhJazbfytDGLvS8GQnen
+        Yl2BX683Saa+NXcv2tLxCBtZyJqYgOdPvX4cYWjhDHvoLmLZmTJeo3kgOGiDSussD/QUSkn+3cE
+        /x74+W8SFd6oYfet1g6yfYEesQQ==
+X-Received: by 2002:a17:902:7d90:b0:134:d977:22de with SMTP id a16-20020a1709027d9000b00134d97722demr1865280plm.30.1629700080195;
+        Sun, 22 Aug 2021 23:28:00 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw9Au0/duLZTHlJC0wzzpusIjoVy6rg0evHqzqvyikarIys4G/LFXCzlPnifIHGbSty2QhnOQ==
+X-Received: by 2002:a17:902:7d90:b0:134:d977:22de with SMTP id a16-20020a1709027d9000b00134d97722demr1865251plm.30.1629700079950;
+        Sun, 22 Aug 2021 23:27:59 -0700 (PDT)
 Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id g3sm14314416pfi.197.2021.08.22.23.24.47
+        by smtp.gmail.com with ESMTPSA id j20sm2254119pgb.2.2021.08.22.23.27.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Aug 2021 23:24:54 -0700 (PDT)
-Subject: Re: [PATCH v11 01/12] iova: Export alloc_iova_fast() and
- free_iova_fast()
+        Sun, 22 Aug 2021 23:27:59 -0700 (PDT)
+Subject: Re: [PATCH v11 03/12] vdpa: Fix some coding style issues
 To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
         stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
         hch@infradead.org, christian.brauner@canonical.com,
@@ -68,14 +67,14 @@ Cc:     songmuchun@bytedance.com,
         kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
 References: <20210818120642.165-1-xieyongji@bytedance.com>
- <20210818120642.165-2-xieyongji@bytedance.com>
+ <20210818120642.165-4-xieyongji@bytedance.com>
 From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <3ff77bab-8bb7-ae5b-4cf1-a90ebcc00118@redhat.com>
-Date:   Mon, 23 Aug 2021 14:24:42 +0800
+Message-ID: <d0ca19ee-3318-df4f-a023-c72034bbb411@redhat.com>
+Date:   Mon, 23 Aug 2021 14:27:50 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210818120642.165-2-xieyongji@bytedance.com>
+In-Reply-To: <20210818120642.165-4-xieyongji@bytedance.com>
 Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
@@ -85,43 +84,93 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 ÔÚ 2021/8/18 ÏÂÎç8:06, Xie Yongji Ð´µÀ:
-> Export alloc_iova_fast() and free_iova_fast() so that
-> some modules can make use of the per-CPU cache to get
-> rid of rbtree spinlock in alloc_iova() and free_iova()
-> during IOVA allocation.
+> Fix some code indent issues and following checkpatch warning:
+>
+> WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+> 371: FILE: include/linux/vdpa.h:371:
+> +static inline void vdpa_get_config(struct vdpa_device *vdev, unsigned offset,
 >
 > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
 
 
 Acked-by: Jason Wang <jasowang@redhat.com>
 
-(If we need respin, I'd suggest to put the numbers you measured here)
-
-Thanks
-
 
 > ---
->   drivers/iommu/iova.c | 2 ++
->   1 file changed, 2 insertions(+)
+>   include/linux/vdpa.h | 34 +++++++++++++++++-----------------
+>   1 file changed, 17 insertions(+), 17 deletions(-)
 >
-> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
-> index b6cf5f16123b..3941ed6bb99b 100644
-> --- a/drivers/iommu/iova.c
-> +++ b/drivers/iommu/iova.c
-> @@ -521,6 +521,7 @@ alloc_iova_fast(struct iova_domain *iovad, unsigned long size,
+> diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
+> index 954b340f6c2f..8a645f8f4476 100644
+> --- a/include/linux/vdpa.h
+> +++ b/include/linux/vdpa.h
+> @@ -43,17 +43,17 @@ struct vdpa_vq_state_split {
+>    * @last_used_idx: used index
+>    */
+>   struct vdpa_vq_state_packed {
+> -        u16	last_avail_counter:1;
+> -        u16	last_avail_idx:15;
+> -        u16	last_used_counter:1;
+> -        u16	last_used_idx:15;
+> +	u16	last_avail_counter:1;
+> +	u16	last_avail_idx:15;
+> +	u16	last_used_counter:1;
+> +	u16	last_used_idx:15;
+>   };
 >   
->   	return new_iova->pfn_lo;
+>   struct vdpa_vq_state {
+> -     union {
+> -          struct vdpa_vq_state_split split;
+> -          struct vdpa_vq_state_packed packed;
+> -     };
+> +	union {
+> +		struct vdpa_vq_state_split split;
+> +		struct vdpa_vq_state_packed packed;
+> +	};
+>   };
+>   
+>   struct vdpa_mgmt_dev;
+> @@ -131,7 +131,7 @@ struct vdpa_iova_range {
+>    *				@vdev: vdpa device
+>    *				@idx: virtqueue index
+>    *				@state: pointer to returned state (last_avail_idx)
+> - * @get_vq_notification: 	Get the notification area for a virtqueue
+> + * @get_vq_notification:	Get the notification area for a virtqueue
+>    *				@vdev: vdpa device
+>    *				@idx: virtqueue index
+>    *				Returns the notifcation area
+> @@ -353,25 +353,25 @@ static inline struct device *vdpa_get_dma_dev(struct vdpa_device *vdev)
+>   
+>   static inline void vdpa_reset(struct vdpa_device *vdev)
+>   {
+> -        const struct vdpa_config_ops *ops = vdev->config;
+> +	const struct vdpa_config_ops *ops = vdev->config;
+>   
+>   	vdev->features_valid = false;
+> -        ops->set_status(vdev, 0);
+> +	ops->set_status(vdev, 0);
 >   }
-> +EXPORT_SYMBOL_GPL(alloc_iova_fast);
 >   
->   /**
->    * free_iova_fast - free iova pfn range into rcache
-> @@ -538,6 +539,7 @@ free_iova_fast(struct iova_domain *iovad, unsigned long pfn, unsigned long size)
+>   static inline int vdpa_set_features(struct vdpa_device *vdev, u64 features)
+>   {
+> -        const struct vdpa_config_ops *ops = vdev->config;
+> +	const struct vdpa_config_ops *ops = vdev->config;
 >   
->   	free_iova(iovad, pfn);
+>   	vdev->features_valid = true;
+> -        return ops->set_features(vdev, features);
+> +	return ops->set_features(vdev, features);
 >   }
-> +EXPORT_SYMBOL_GPL(free_iova_fast);
 >   
->   #define fq_ring_for_each(i, fq) \
->   	for ((i) = (fq)->head; (i) != (fq)->tail; (i) = ((i) + 1) % IOVA_FQ_SIZE)
+> -
+> -static inline void vdpa_get_config(struct vdpa_device *vdev, unsigned offset,
+> -				   void *buf, unsigned int len)
+> +static inline void vdpa_get_config(struct vdpa_device *vdev,
+> +				   unsigned int offset, void *buf,
+> +				   unsigned int len)
+>   {
+> -        const struct vdpa_config_ops *ops = vdev->config;
+> +	const struct vdpa_config_ops *ops = vdev->config;
+>   
+>   	/*
+>   	 * Config accesses aren't supposed to trigger before features are set.
 
