@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57F303F44F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 08:31:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C2A43F44F8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Aug 2021 08:32:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231749AbhHWGcO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Aug 2021 02:32:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49449 "EHLO
+        id S232885AbhHWGdA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Aug 2021 02:33:00 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36629 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230294AbhHWGcL (ORCPT
+        by vger.kernel.org with ESMTP id S231749AbhHWGc7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Aug 2021 02:32:11 -0400
+        Mon, 23 Aug 2021 02:32:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629700289;
+        s=mimecast20190719; t=1629700337;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=AUHa3Avm2+6fKkcYKeAqHdN474qgV/5/pGdz9tfcqgE=;
-        b=Pr0urgQ6OLnNrE99zLSew6QXJSMfG8Is0JGyilij7CycTKtSrtiL9+b4UAgkQpvSl6pAeU
-        WJL1a2PiZqrzC5azvFX8luQKm0PEMrcTtxtKgIwmX4xYD/XIi+ONmYft45v76nniuZtpRB
-        qR5jpO2uo+jY2LnrQNUVD4pbw3T22kU=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-34-cCGuUBqzP4yxCQBivkfubA-1; Mon, 23 Aug 2021 02:31:27 -0400
-X-MC-Unique: cCGuUBqzP4yxCQBivkfubA-1
-Received: by mail-pf1-f199.google.com with SMTP id n27-20020a056a000d5b00b003e147fb595eso8177775pfv.6
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Aug 2021 23:31:27 -0700 (PDT)
+        bh=F427DPlADbCH/M2u7fz/h7ndiMrb6AVw4qTHSvYRC+w=;
+        b=DCzM5i35ExJMLNvv7UguV+GarRVqJ2FxcZh4qwMW8Eg8Sj/CeSAuoAUKWCLjq8ccDIRm9K
+        g21Aj2IPQEdGm5sk8DT4dwsVpqWp+C0tmkWJJuw5WSKnquBemqwVLcgP6TF1T+8kwNGbRa
+        u/ryfb+7i9IOS0oJyT5//OkA6p9sU2o=
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
+ [209.85.210.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-502-t-PcmFmfPASgNI7gqwGxMw-1; Mon, 23 Aug 2021 02:32:15 -0400
+X-MC-Unique: t-PcmFmfPASgNI7gqwGxMw-1
+Received: by mail-pf1-f197.google.com with SMTP id g17-20020aa781910000b0290360a5312e3eso8167982pfi.7
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Aug 2021 23:32:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=AUHa3Avm2+6fKkcYKeAqHdN474qgV/5/pGdz9tfcqgE=;
-        b=rvsrOx/uPFo20f43PngWb9S42JuYT6ZNaQfzOBWS6NmWEuCz17MPOpFOFc9XtRKqtE
-         +Kw5WoPh6VNbtH7/nBk40rhCrT7UZiFAUCNZIqCZHjN9QjCIhDDhWXzBq5WcH5/CcRL/
-         lUFgqU5M5u5leasRzn1fKRSRcXzd/wXG8A4Rw1nP1cXi3Rhi6h1TVmXWudgRH6EeVTgf
-         ZW5+cnAUA7AK99w5WJujagfRru+uXTaRjG33M7ftFewIWt102fPQGvsTA5OFvnRXiCJs
-         cA54iB4S45fW0BcpJ0b6eKME6SKv1dwewZKrmByEbMXCVh1kdlPOQWbyTjP2lJzJSO9y
-         /W0A==
-X-Gm-Message-State: AOAM5335nnvWnYhzGebOVc0dDAJ/12pbxH40LYS6ZQwQzA2RMftqPbsH
-        bAraZ5Z9M4un5Aqxg6QV7WYDlji7wV8qzry5a0fTm5Q9E8JPUgjiW8jFfA332TsBKE5yw6fy9aO
-        pqguzCjgYL2kmgUZI2dqBGjBOEg==
-X-Received: by 2002:aa7:8b0a:0:b0:3e1:2df9:d827 with SMTP id f10-20020aa78b0a000000b003e12df9d827mr31726453pfd.67.1629700286607;
-        Sun, 22 Aug 2021 23:31:26 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyz38m1FHbtQPPoBW5Z1aB8WuAIQK8sTxgnijH4Tg0S/NrYwdHny5cJXtC/iUOPx4pNk0Ak/A==
-X-Received: by 2002:aa7:8b0a:0:b0:3e1:2df9:d827 with SMTP id f10-20020aa78b0a000000b003e12df9d827mr31726432pfd.67.1629700286415;
-        Sun, 22 Aug 2021 23:31:26 -0700 (PDT)
+        bh=F427DPlADbCH/M2u7fz/h7ndiMrb6AVw4qTHSvYRC+w=;
+        b=McVQfZ2+NUMV6VsfDR/Aiea4C9oa+lghE097v0K+dPTT2e5AIGaULA/q5rQnv4mrn3
+         62NhQyBmiz971IVYnvSsftrwgcTObiHWGrZfa25IYg4L5/4DBJU46hKnTf5/9WXfnN4L
+         48sWWfkdWMlBAGH9CcY8x/tIWZNTYEoeQ2n39AOkwAlf7hFJ9eN5JdURK8JkD9D556a0
+         +y2qe/MRJwsSw00m1gmPLBU+x8P4Ua4UVHL3bKwB5RaNkgjDM7SqHCcwfdK8lq/+/g8K
+         xWKR6cWpGhTNGlo7AB8DqOkg2mY72wogCt0iBXIqkFlyuVvxE3Aup1FOboosHofAXclZ
+         njIQ==
+X-Gm-Message-State: AOAM530TfXHRC7BAnKYtijZZhhrNWymmbv0XkAJ/LSYHubt7aE3Fklja
+        YgVENMwE7b0nBcHjkAzfhgx997Gvp+os8/zmUi2bC/C57Lr+0TGEMiwdxsVfJ94umXKFAWEfbmT
+        eiYuVc3xgh/KhXcNIP8weMUosyA==
+X-Received: by 2002:a65:40c4:: with SMTP id u4mr30729299pgp.186.1629700333945;
+        Sun, 22 Aug 2021 23:32:13 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyMdGRZ8bEDFR6mhq5hnskFTgOQcLb0mODJnisTe/klfXgBImg93E0Jn9mD7e+X41rM+h1P3A==
+X-Received: by 2002:a65:40c4:: with SMTP id u4mr30729265pgp.186.1629700333764;
+        Sun, 22 Aug 2021 23:32:13 -0700 (PDT)
 Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id g85sm6392736pfb.172.2021.08.22.23.31.18
+        by smtp.gmail.com with ESMTPSA id d7sm17831032pgu.78.2021.08.22.23.32.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Aug 2021 23:31:25 -0700 (PDT)
-Subject: Re: [PATCH v11 04/12] vdpa: Add reset callback in vdpa_config_ops
+        Sun, 22 Aug 2021 23:32:13 -0700 (PDT)
+Subject: Re: [PATCH v11 05/12] vhost-vdpa: Handle the failure of vdpa_reset()
 To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
         stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
         hch@infradead.org, christian.brauner@canonical.com,
@@ -67,14 +67,14 @@ Cc:     songmuchun@bytedance.com,
         kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
 References: <20210818120642.165-1-xieyongji@bytedance.com>
- <20210818120642.165-5-xieyongji@bytedance.com>
+ <20210818120642.165-6-xieyongji@bytedance.com>
 From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <4470fdac-89fb-1216-78d7-6335c3bfeb22@redhat.com>
-Date:   Mon, 23 Aug 2021 14:31:16 +0800
+Message-ID: <a9283bf7-bf24-b092-e79d-37c5c4f9e087@redhat.com>
+Date:   Mon, 23 Aug 2021 14:32:04 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <20210818120642.165-5-xieyongji@bytedance.com>
+In-Reply-To: <20210818120642.165-6-xieyongji@bytedance.com>
 Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
@@ -84,91 +84,48 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 ÔÚ 2021/8/18 ÏÂÎç8:06, Xie Yongji Ð´µÀ:
-> This adds a new callback to support device specific reset
-> behavior. The vdpa bus driver will call the reset function
-> instead of setting status to zero during resetting if device
-> driver supports the new callback.
+> The vdpa_reset() may fail now. This adds check to its return
+> value and fail the vhost_vdpa_open().
 >
 > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+
+
+Acked-by: Jason Wang <jasowang@redhat.com>
+
+
 > ---
->   drivers/vhost/vdpa.c |  9 +++++++--
->   include/linux/vdpa.h | 11 ++++++++++-
->   2 files changed, 17 insertions(+), 3 deletions(-)
+>   drivers/vhost/vdpa.c | 9 ++++++---
+>   1 file changed, 6 insertions(+), 3 deletions(-)
 >
 > diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-> index b07aa161f7ad..b1c91b4db0ba 100644
+> index b1c91b4db0ba..d99d75ad30cc 100644
 > --- a/drivers/vhost/vdpa.c
 > +++ b/drivers/vhost/vdpa.c
-> @@ -157,7 +157,7 @@ static long vhost_vdpa_set_status(struct vhost_vdpa *v, u8 __user *statusp)
->   	struct vdpa_device *vdpa = v->vdpa;
->   	const struct vdpa_config_ops *ops = vdpa->config;
->   	u8 status, status_old;
-> -	int nvqs = v->nvqs;
-> +	int ret, nvqs = v->nvqs;
->   	u16 i;
->   
->   	if (copy_from_user(&status, statusp, sizeof(status)))
-> @@ -172,7 +172,12 @@ static long vhost_vdpa_set_status(struct vhost_vdpa *v, u8 __user *statusp)
->   	if (status != 0 && (ops->get_status(vdpa) & ~status) != 0)
->   		return -EINVAL;
->   
-> -	ops->set_status(vdpa, status);
-> +	if (status == 0 && ops->reset) {
-> +		ret = ops->reset(vdpa);
-> +		if (ret)
-> +			return ret;
-> +	} else
-> +		ops->set_status(vdpa, status);
->   
->   	if ((status & VIRTIO_CONFIG_S_DRIVER_OK) && !(status_old & VIRTIO_CONFIG_S_DRIVER_OK))
->   		for (i = 0; i < nvqs; i++)
-> diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
-> index 8a645f8f4476..af7ea5ad795f 100644
-> --- a/include/linux/vdpa.h
-> +++ b/include/linux/vdpa.h
-> @@ -196,6 +196,9 @@ struct vdpa_iova_range {
->    *				@vdev: vdpa device
->    *				Returns the iova range supported by
->    *				the device.
-> + * @reset:			Reset device (optional)
-> + *				@vdev: vdpa device
-> + *				Returns integer: success (0) or error (< 0)
-
-
-It looks to me we'd better make this mandatory. This help to reduce the 
-confusion for the parent driver.
-
-Thanks
-
-
->    * @set_map:			Set device memory mapping (optional)
->    *				Needed for device that using device
->    *				specific DMA translation (on-chip IOMMU)
-> @@ -263,6 +266,7 @@ struct vdpa_config_ops {
->   			   const void *buf, unsigned int len);
->   	u32 (*get_generation)(struct vdpa_device *vdev);
->   	struct vdpa_iova_range (*get_iova_range)(struct vdpa_device *vdev);
-> +	int (*reset)(struct vdpa_device *vdev);
->   
->   	/* DMA ops */
->   	int (*set_map)(struct vdpa_device *vdev, struct vhost_iotlb *iotlb);
-> @@ -351,12 +355,17 @@ static inline struct device *vdpa_get_dma_dev(struct vdpa_device *vdev)
->   	return vdev->dma_dev;
+> @@ -116,12 +116,13 @@ static void vhost_vdpa_unsetup_vq_irq(struct vhost_vdpa *v, u16 qid)
+>   	irq_bypass_unregister_producer(&vq->call_ctx.producer);
 >   }
 >   
-> -static inline void vdpa_reset(struct vdpa_device *vdev)
-> +static inline int vdpa_reset(struct vdpa_device *vdev)
+> -static void vhost_vdpa_reset(struct vhost_vdpa *v)
+> +static int vhost_vdpa_reset(struct vhost_vdpa *v)
 >   {
->   	const struct vdpa_config_ops *ops = vdev->config;
+>   	struct vdpa_device *vdpa = v->vdpa;
 >   
->   	vdev->features_valid = false;
-> +	if (ops->reset)
-> +		return ops->reset(vdev);
+> -	vdpa_reset(vdpa);
+>   	v->in_batch = 0;
 > +
->   	ops->set_status(vdev, 0);
-> +
-> +	return 0;
+> +	return vdpa_reset(vdpa);
 >   }
 >   
->   static inline int vdpa_set_features(struct vdpa_device *vdev, u64 features)
+>   static long vhost_vdpa_get_device_id(struct vhost_vdpa *v, u8 __user *argp)
+> @@ -868,7 +869,9 @@ static int vhost_vdpa_open(struct inode *inode, struct file *filep)
+>   		return -EBUSY;
+>   
+>   	nvqs = v->nvqs;
+> -	vhost_vdpa_reset(v);
+> +	r = vhost_vdpa_reset(v);
+> +	if (r)
+> +		goto err;
+>   
+>   	vqs = kmalloc_array(nvqs, sizeof(*vqs), GFP_KERNEL);
+>   	if (!vqs) {
 
