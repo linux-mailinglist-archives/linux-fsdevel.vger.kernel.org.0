@@ -2,142 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42F403F5344
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Aug 2021 00:15:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38BCD3F5347
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Aug 2021 00:16:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233104AbhHWWQc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Aug 2021 18:16:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53150 "EHLO
+        id S233128AbhHWWRd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Aug 2021 18:17:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233086AbhHWWQZ (ORCPT
+        with ESMTP id S232990AbhHWWRc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Aug 2021 18:16:25 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06381C061757;
-        Mon, 23 Aug 2021 15:15:42 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id E007261D7; Mon, 23 Aug 2021 18:15:40 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org E007261D7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1629756940;
-        bh=l2+VDl22MUqiJrQ7yjAxRz1AbDeU5j4i2UbWV/QLqD4=;
-        h=Date:To:Cc:Subject:References:In-Reply-To:From:From;
-        b=McGzShEW/vXjM4IRYOjJ+shVasZozVIid5BDJJ2VYRGy+EHtfNnTNgQ4h+L2TBCHp
-         zQKurWjb279b0w+wQ6w9kGYY+aXZI+AdvWjdHDmNpgibbuiYOmUeStmXMbWp0bLruC
-         pIgBMGTvurkJvdPhEuOmU9KHgkSzQs6oedCvcTyQ=
-Date:   Mon, 23 Aug 2021 18:15:40 -0400
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        David Laight <David.Laight@aculab.com>,
-        David Hildenbrand <david@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Michel Lespinasse <walken@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Price <steven.price@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Marco Elver <elver@google.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Collin Fijalkovich <cfijalkovich@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>,
-        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Subject: Re: Removing Mandatory Locks
-Message-ID: <20210823221540.GB10881@fieldses.org>
-References: <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
- <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
- <YRcyqbpVqwwq3P6n@casper.infradead.org>
- <87k0kkxbjn.fsf_-_@disp2133>
- <0c2af732e4e9f74c9d20b09fc4b6cbae40351085.camel@kernel.org>
- <CAHk-=wgewmbABDC3_ZNn11C+sm4Uz0L9HZ5Kvx0Joho4vsV4DQ@mail.gmail.com>
- <202108200905.BE8AF7C@keescook>
- <D2325492-F4DD-4E7A-B4F1-0E595FF2469A@zytor.com>
- <8a6737f9fa2dd3b8b9d851064cd28ca57e489a77.camel@kernel.org>
- <18b073b95d692f4c7782c68de1f803681c15a467.camel@kernel.org>
+        Mon, 23 Aug 2021 18:17:32 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E5C6C061575;
+        Mon, 23 Aug 2021 15:16:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=pVjiEy2fsTH4DnOyPDw2jxP691ZcqhnaXmaTSEFlHYE=; b=TxHua4Xuhg/eP92Su3OzAwUKWO
+        G8d0t5Z1o21ISerIBJFo7Cr5TGhmIOLY1kdkepo7u+AFwbkX4k4s+Jyw74nj2LoaP61aI9rM8WZpY
+        WQzsJ8yUBQcvBDdRW3pKMJBaRVHBr9euhguNbp/00chI7cca+7lRzxsrPqGbE3RrH9yTKWwc/SyOc
+        nhACC7Z7CmsPr1l1hK+LNT+YyI45ETO0pHbGgbre0QJ/cHcMKOQAxwJShdw8I6a8dhWnQeJhY/1t0
+        KjRFp2dxW/X8cmwCZV6YYY/SbG2GzmbLZ/iN8SWyl8jRcQuB/yZo6KIoSBZEJyIuO3gNWFD026Rko
+        H4783giQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mIIEO-00AFuA-Ur; Mon, 23 Aug 2021 22:15:57 +0000
+Date:   Mon, 23 Aug 2021 23:15:48 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [GIT PULL] Memory folios for v5.15
+Message-ID: <YSQeFPTMn5WpwyAa@casper.infradead.org>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YSQSkSOWtJCE4g8p@cmpxchg.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <18b073b95d692f4c7782c68de1f803681c15a467.camel@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-From:   bfields@fieldses.org (J. Bruce Fields)
+In-Reply-To: <YSQSkSOWtJCE4g8p@cmpxchg.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 21, 2021 at 08:45:54AM -0400, Jeff Layton wrote:
-> On Fri, 2021-08-20 at 17:29 -0400, Jeff Layton wrote:
-> > No, Windows has deny-mode locking at open time, but the kernel's
-> > mandatory locks are enforced during read/write (which is why they are
-> > such a pain). Samba will not miss these at all.
-> > 
-> > If we want something to provide windows-like semantics, we'd probably
-> > want to start with something like Pavel Shilovsky's O_DENY_* patches.
-> > 
-> > -- Jeff
-> > 
-> 
-> Doh! It completely slipped my mind about byte-range locks on windows...
-> 
-> Those are mandatory and they do block read and write activity to the
-> ranges locked. They have weird semantics vs. POSIX locks (they stack
-> instead of splitting/merging, etc.).
-> 
-> Samba emulates these with (advisory) POSIX locks in most cases. Using
-> mandatory locks is probably possible, but I think it would add more
-> potential for deadlock and security issues.
+On Mon, Aug 23, 2021 at 05:26:41PM -0400, Johannes Weiner wrote:
+> On Mon, Aug 23, 2021 at 08:01:44PM +0100, Matthew Wilcox wrote:
+> Just to clarify, I'm only on this list because I acked 3 smaller,
+> independent memcg cleanup patches in this series. I have repeatedly
+> expressed strong reservations over folios themselves.
 
-Right, so Windows byte-range locks are different from Windows open deny
-modes.
+I thought I'd addressed all your concerns.  I'm sorry I misunderstood
+and did not intend to misrepresent your position.
 
-But even if somebody wanted to implement them, I doubt they'd start with
-the mandatory locking code you're removing here, so I think they're
-irrelevant to this discussion.
+> The arguments for a better data interface between mm and filesystem in
+> light of variable page sizes are plentiful and convincing. But from an
+> MM point of view, it's all but clear where the delineation between the
+> page and folio is, and what the endgame is supposed to look like.
+> 
+> One one hand, the ambition appears to substitute folio for everything
+> that could be a base page or a compound page even inside core MM
+> code. Since there are very few places in the MM code that expressly
+> deal with tail pages in the first place, this amounts to a conversion
+> of most MM code - including the LRU management, reclaim, rmap,
+> migrate, swap, page fault code etc. - away from "the page".
 
---b.
+I would agree with all of those except the page fault code; I believe
+that needs to continue to work in terms of pages in order to support
+misaligned mappings.
+
+> However, this far exceeds the goal of a better mm-fs interface. And
+> the value proposition of a full MM-internal conversion, including
+> e.g. the less exposed anon page handling, is much more nebulous. It's
+> been proposed to leave anon pages out, but IMO to keep that direction
+> maintainable, the folio would have to be translated to a page quite
+> early when entering MM code, rather than propagating it inward, in
+> order to avoid huge, massively overlapping page and folio APIs.
+
+I only intend to leave anonymous memory out /for now/.  My hope is
+that somebody else decides to work on it (and indeed Google have
+volunteered someone for the task).
+
+> It's also not clear to me that using the same abstraction for compound
+> pages and the file cache object is future proof. It's evident from
+> scalability issues in the allocator, reclaim, compaction, etc. that
+> with current memory sizes and IO devices, we're hitting the limits of
+> efficiently managing memory in 4k base pages per default. It's also
+> clear that we'll continue to have a need for 4k cache granularity for
+> quite a few workloads that work with large numbers of small files. I'm
+> not sure how this could be resolved other than divorcing the idea of a
+> (larger) base page from the idea of cache entries that can correspond,
+> if necessary, to memory chunks smaller than a default page.
+
+That sounds to me exactly like folios, except for the naming.  From the
+MM point of view, it's less churn to do it your way, but from the
+point of view of the rest of the kernel, there's going to be unexpected
+consequences.  For example, btrfs didn't support page size != block size
+until just recently (and I'm not sure it's entirely fixed yet?)
+
+And there's nobody working on your idea.  At least not that have surfaced
+so far.  The folio patch is here now.
+
+Folios are also variable sized.  For files which are small, we still only
+allocate 4kB to cache them.  If the file is accessed entirely randomly,
+we only allocate 4kB chunks at a time.  We only allocate larger folios
+when we think there is an advantage to doing so.
+
+This benefit is retained if someone does come along to change PAGE_SIZE
+to 16KiB (or whatever).  Folios can still be composed of multiple pages,
+no matter what the PAGE_SIZE is.
+
+> A longer thread on that can be found here:
+> https://lore.kernel.org/linux-fsdevel/YFja%2FLRC1NI6quL6@cmpxchg.org/
+> 
+> As an MM stakeholder, I don't think folios are the answer for MM code.
