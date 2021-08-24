@@ -2,95 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A18BD3F59CA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Aug 2021 10:22:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB7263F5BC7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Aug 2021 12:15:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235304AbhHXIWq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Aug 2021 04:22:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47870 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233692AbhHXIWq (ORCPT
+        id S235952AbhHXKQT convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Aug 2021 06:16:19 -0400
+Received: from us-smtp-delivery-44.mimecast.com ([207.211.30.44]:23390 "EHLO
+        us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235367AbhHXKQR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Aug 2021 04:22:46 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13B3EC061757;
-        Tue, 24 Aug 2021 01:22:02 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id g13so43668961lfj.12;
-        Tue, 24 Aug 2021 01:22:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=zZwq+pN1VXh0KVPNvZvmvIYWYVH8kNxfn6jyHSUVlpI=;
-        b=KFHgYjhqWZ+XExPs7OkTkgRUZWc184YLB3C7EPH0IRK4t3Vf27AIWDm4S3VsFdTgaL
-         N/wbrR34Pq0GPen2jXaWbjO+1H7p6xGPNBj2dq1K4PXD/TfaqKDtA+nzxPTnVD2A369p
-         iUtnacQVqYLsggBct+Haqoobg+JshRCTt2XHvVLfJF4G9Pn28KvMXO9Mj4CJ0v2Y80m3
-         H91V8q17ghkFw7lXoujQb3//myxJ3FawLnsPjRdH9s9a1EcybLqwmVJENBty1+UJb4XU
-         wcLx8rNYBvgY4o/XkM7cCcYWFY1/QZoa5ewTOkTcIjOgJyj7xEiYecbnBC9K1fFHcZ91
-         r2ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zZwq+pN1VXh0KVPNvZvmvIYWYVH8kNxfn6jyHSUVlpI=;
-        b=lICfEwPZwflhmRQ/+tKyobZTlBe0+FqkeMQag1940SuG7v9EPUiol4cO1iHTjr+mck
-         eocXoyTMbbp6O6lXTZ6eu5wbXm++lQJoJ+dXgqn/hzGTx7noF3BdYBJR75jGrzylMNrB
-         dZYIL1dYzxiRh842QU0xzxtDwiUZAAkpQKJjX3ZqQYOU+QVYCeBiiQeadZXZquHPjWj0
-         zKghOKySKJXyUbmbZYZT0WBDdBR6YZUH+edm8VqTh9Amsj1cshzvjt/avDG45rG4Wmde
-         4hCopWfHwmoppLo8VQl14SUNDZPiz9TGKDlOavVvogn/1ZOnQtCDw2T2N/4fqV0JwtP6
-         RGWQ==
-X-Gm-Message-State: AOAM5309jyiMvvp7pMUnqeZGLiro/PmSZe4xDKMNZF/R46LLEC/7vZ7v
-        OBFQpxo+aaHJb0Xuxs4ZAjc=
-X-Google-Smtp-Source: ABdhPJyLyRhJ1eQfQW63C4umAP+Jx2W+GE/xefElm4Uk/uQgdb5S7TbW4Xbg2HhjaMyO4YIpldkMPg==
-X-Received: by 2002:a19:4958:: with SMTP id l24mr27134681lfj.48.1629793319923;
-        Tue, 24 Aug 2021 01:21:59 -0700 (PDT)
-Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id c10sm1705295ljr.134.2021.08.24.01.21.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Aug 2021 01:21:59 -0700 (PDT)
-Date:   Tue, 24 Aug 2021 11:21:57 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH v2 3/6] fs/ntfs3: Use new api for mounting
-Message-ID: <20210824082157.umppqksjl2vvyd53@kari-VirtualBox>
-References: <20210819002633.689831-1-kari.argillander@gmail.com>
- <20210819002633.689831-4-kari.argillander@gmail.com>
- <20210824080302.GC26733@lst.de>
+        Tue, 24 Aug 2021 06:16:17 -0400
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-513--UwY5AVyOrKyXJaVXm99qQ-1; Tue, 24 Aug 2021 06:15:29 -0400
+X-MC-Unique: -UwY5AVyOrKyXJaVXm99qQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DB07D8799F7;
+        Tue, 24 Aug 2021 10:15:27 +0000 (UTC)
+Received: from bahia.lan (unknown [10.39.192.231])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 94BBB60CC9;
+        Tue, 24 Aug 2021 10:15:16 +0000 (UTC)
+Date:   Tue, 24 Aug 2021 12:15:15 +0200
+From:   Greg Kurz <groug@kaod.org>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        <miklos@szeredi.hu>, <virtualization@lists.linux-foundation.org>,
+        <virtio-fs@redhat.com>, <joseph.qi@linux.alibaba.com>,
+        <stefanha@redhat.com>, <linux-fsdevel@vger.kernel.org>,
+        <vgoyal@redhat.com>
+Subject: Re: [Virtio-fs] [virtiofsd PATCH v4 4/4] virtiofsd: support
+ per-file DAX in FUSE_LOOKUP
+Message-ID: <20210824121515.5419d6a7@bahia.lan>
+In-Reply-To: <4494052b-aff1-e2e3-e704-c8743168f62e@linux.alibaba.com>
+References: <20210817022220.17574-1-jefflexu@linux.alibaba.com>
+        <20210817022347.18098-1-jefflexu@linux.alibaba.com>
+        <20210817022347.18098-5-jefflexu@linux.alibaba.com>
+        <YRwHRmL/jUSqgkIU@work-vm>
+        <29627110-e4bf-836f-2343-1faeb36ad4d3@linux.alibaba.com>
+        <YR5Xzw02IuVAN94b@work-vm>
+        <4494052b-aff1-e2e3-e704-c8743168f62e@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210824080302.GC26733@lst.de>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=groug@kaod.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: kaod.org
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 24, 2021 at 10:03:02AM +0200, Christoph Hellwig wrote:
-> > +	/*
-> > +	 * TODO: We should probably check some mount options does
-> > +	 * they all work after remount. Example can we really change
-> > +	 * nls. Remove this comment when all testing is done or
-> > +	 * even better xfstest is made for it.
-> > +	 */
+On Fri, 20 Aug 2021 13:03:23 +0800
+JeffleXu <jefflexu@linux.alibaba.com> wrote:
+
 > 
-> Instead of the TODO I would suggest a prep patch to drop changing of
-> any options in remount before this one and then only add them back
-> as needed and tested.
+> 
+> On 8/19/21 9:08 PM, Dr. David Alan Gilbert wrote:
+> > * JeffleXu (jefflexu@linux.alibaba.com) wrote:
+> >>
+> >>
+> >> On 8/18/21 3:00 AM, Dr. David Alan Gilbert wrote:
+> >>> * Jeffle Xu (jefflexu@linux.alibaba.com) wrote:
+> >>>> For passthrough, when the corresponding virtiofs in guest is mounted
+> >>>> with '-o dax=inode', advertise that the file is capable of per-file
+> >>>> DAX if the inode in the backend fs is marked with FS_DAX_FL flag.
+> >>>>
+> >>>> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> >>>> ---
+> >>>>  tools/virtiofsd/passthrough_ll.c | 43 ++++++++++++++++++++++++++++++++
+> >>>>  1 file changed, 43 insertions(+)
+> >>>>
+> >>>> diff --git a/tools/virtiofsd/passthrough_ll.c b/tools/virtiofsd/passthrough_ll.c
+> >>>> index 5b6228210f..4cbd904248 100644
+> >>>> --- a/tools/virtiofsd/passthrough_ll.c
+> >>>> +++ b/tools/virtiofsd/passthrough_ll.c
+> >>>> @@ -171,6 +171,7 @@ struct lo_data {
+> >>>>      int allow_direct_io;
+> >>>>      int announce_submounts;
+> >>>>      int perfile_dax_cap; /* capability of backend fs */
+> >>>> +    bool perfile_dax; /* enable per-file DAX or not */
+> >>>>      bool use_statx;
+> >>>>      struct lo_inode root;
+> >>>>      GHashTable *inodes; /* protected by lo->mutex */
+> >>>> @@ -716,6 +717,10 @@ static void lo_init(void *userdata, struct fuse_conn_info *conn)
+> >>>>  
+> >>>>      if (conn->capable & FUSE_CAP_PERFILE_DAX && lo->perfile_dax_cap ) {
+> >>>>          conn->want |= FUSE_CAP_PERFILE_DAX;
+> >>>> +	lo->perfile_dax = 1;
+> >>>> +    }
+> >>>> +    else {
+> >>>> +	lo->perfile_dax = 0;
+> >>>>      }
+> >>>>  }
+> >>>>  
+> >>>> @@ -983,6 +988,41 @@ static int do_statx(struct lo_data *lo, int dirfd, const char *pathname,
+> >>>>      return 0;
+> >>>>  }
+> >>>>  
+> >>>> +/*
+> >>>> + * If the file is marked with FS_DAX_FL or FS_XFLAG_DAX, then DAX should be
+> >>>> + * enabled for this file.
+> >>>> + */
+> >>>> +static bool lo_should_enable_dax(struct lo_data *lo, struct lo_inode *dir,
+> >>>> +				 const char *name)
+> >>>> +{
+> >>>> +    int res, fd;
+> >>>> +    int ret = false;;
+> >>>> +    unsigned int attr;
+> >>>> +    struct fsxattr xattr;
+> >>>> +
+> >>>> +    if (!lo->perfile_dax)
+> >>>> +	return false;
+> >>>> +
+> >>>> +    /* Open file without O_PATH, so that ioctl can be called. */
+> >>>> +    fd = openat(dir->fd, name, O_NOFOLLOW);
+> >>>> +    if (fd == -1)
+> >>>> +        return false;
+> >>>
+> >>> Doesn't that defeat the whole benefit of using O_PATH - i.e. that we
+> >>> might stumble into a /dev node or something else we're not allowed to
+> >>> open?
+> >>
+> >> As far as I know, virtiofsd will pivot_root/chroot to the source
+> >> directory, and can only access files inside the source directory
+> >> specified by "-o source=". Then where do these unexpected files come
+> >> from? Besides, fd opened without O_PATH here is temporary and used for
+> >> FS_IOC_GETFLAGS/FS_IOC_FSGETXATTR ioctl only. It's closed when the
+> >> function returns.
+> > 
+> > The guest is still allowed to mknod.
+> > See:
+> >    https://lists.gnu.org/archive/html/qemu-devel/2021-01/msg05461.html
+> > 
+> > also it's legal to expose a root filesystem for a guest; the virtiofsd
+> > should *never* open a device other than O_PATH - and it's really tricky
+> > to do a check to see if it is a device in a race-free way.
+> > 
+> 
+> Fine. Got it. However the returned fd (opened without O_PATH) is only
+> used for FS_IOC_GETFLAGS/FS_IOC_FSGETXATTR ioctl, while in most cases
+> for special device files, these two ioctls should return -ENOTTY.
+> 
 
-This could be good option. I have actually tested nls and it will be
-problem so we definitely drop that. I will wait what Konstantin has
-to say about other.
+The actual problem is that a FIFO will cause openat() to block until
+the other end of the FIFO is open for writing...
 
-> The mechanics of the conversion look good to me.
+> If it's really a security issue, then lo_inode_open() could be used to
 
-I have made quite few changes to make this series better and will
-send v3 in the near future.
+... and cause a DoS on virtiofsd. So yes, this is a security issue and
+lo_inode_open() was introduced specifically to handle this.
 
-Main change is that we won't allocate sbi when remount. We can
-allocate just options. Also won't let nls/iocharset change.
+> get a temporary fd, i.e., check if it's a special file before opening.
+> After all, FUSE_OPEN also handles in this way. Besides, I can't
+> understand what "race-free way" means.
+> 
+
+"race-free way" means a way that guarantees that file type
+cannot change between the time you check it and the time
+you open it (TOCTOU error). For example, doing a plain stat(),
+checking st_mode and proceeding to open() is wrong : nothing
+prevents the file to be unlinked and replaced by something
+else between stat() and open().
+
+We avoid that by keeping O_PATH fds around and using
+lo_inode_open() instead of openat().
+
+In your case, it seems that you should do the checking after
+you have an actual lo_inode for the target file, and pass
+that to lo_should_enable_dax() instead of the parent lo_inode
+and target name.
+
+Cheers,
+
+--
+Greg
 
