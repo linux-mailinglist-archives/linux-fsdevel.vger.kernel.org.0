@@ -2,191 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB2D73F6AB4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Aug 2021 22:57:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BE3A3F6B03
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Aug 2021 23:32:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233289AbhHXU6Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Aug 2021 16:58:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42694 "EHLO
+        id S234725AbhHXVdA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Aug 2021 17:33:00 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23527 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230213AbhHXU6Y (ORCPT
+        by vger.kernel.org with ESMTP id S230523AbhHXVc7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Aug 2021 16:58:24 -0400
+        Tue, 24 Aug 2021 17:32:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629838659;
+        s=mimecast20190719; t=1629840734;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=9kAxaE2L1gviAw5mIHXQXhEi8sQ1P9gTx2mD5RlyJ6A=;
-        b=fjUzEfgu83UaNaAsiFyhwlikwuxajoQPQN/qOUMWfjzmvS/3JP70Z9g0Jt34DtRZt2nd6Y
-        7AsAGDFWyjEhU87SKniyeNrhGiK3me5QMWDqI/OwgvZzBW+B5JQBd0vcenF2zeG1yea6Ql
-        U9+o9BQ3z7Z1mOqgt0x5TP25CY2jmE0=
+        bh=1bBKQxF9AzQlxTWDTeQSqBxRnoYnXGYVxoI8bGH2M7Q=;
+        b=MBqdOr89AEJD+meJLzM+kQzU+S6/q8tDYnZe4v5m9aBOrYnW8kU/TFgN9WV95iTgmIF6dF
+        q2cDM9eL91QMZJfD6tp0Nf0Vt6y9WRK5hxcNKpHSTrIwmfspO+0wvZAfqjoxygPhfGJqGP
+        puxxgd3QXAyjOTcuP3RWkM0q6ETCa2A=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-589-2OhWSMWIMqiPlk9s9qplIg-1; Tue, 24 Aug 2021 16:57:35 -0400
-X-MC-Unique: 2OhWSMWIMqiPlk9s9qplIg-1
+ us-mta-563-kETizTevP-u1-NfG0NVGLA-1; Tue, 24 Aug 2021 17:32:12 -0400
+X-MC-Unique: kETizTevP-u1-NfG0NVGLA-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B5DED93920;
-        Tue, 24 Aug 2021 20:57:33 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0C4355DA2D;
-        Tue, 24 Aug 2021 20:57:26 +0000 (UTC)
-Date:   Tue, 24 Aug 2021 16:57:24 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to
- io_uring
-Message-ID: <20210824205724.GB490529@madcap2.tricolour.ca>
-References: <162871480969.63873.9434591871437326374.stgit@olly>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CF71D1082922;
+        Tue, 24 Aug 2021 21:32:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.86])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0788E5D9C6;
+        Tue, 24 Aug 2021 21:32:04 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YSVQOgrPhwGcUSp4@mit.edu>
+References: <YSVQOgrPhwGcUSp4@mit.edu> <YSVH6k5plj9lrTFe@mit.edu> <CAHk-=wjD8i2zJVQ9SfF2t=_0Fkgy-i5Z=mQjCw36AHvbBTGXyg@mail.gmail.com> <YSPwmNNuuQhXNToQ@casper.infradead.org> <YSQSkSOWtJCE4g8p@cmpxchg.org> <1957060.1629820467@warthog.procyon.org.uk> <YSUy2WwO9cuokkW0@casper.infradead.org> <CAHk-=wip=366HxkJvTfABuPUxwjGsFK4YYMgXNY9VSkJNp=-XA@mail.gmail.com> <CAHk-=wgRdqtpsbHkKeqpRWUsuJwsfewCL4SZN2udXVgExFZOWw@mail.gmail.com> <1967090.1629833687@warthog.procyon.org.uk>
+To:     "Theodore Ts'o" <tytso@mit.edu>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [GIT PULL] Memory folios for v5.15
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <162871480969.63873.9434591871437326374.stgit@olly>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1974379.1629840723.1@warthog.procyon.org.uk>
+Date:   Tue, 24 Aug 2021 22:32:03 +0100
+Message-ID: <1974380.1629840723@warthog.procyon.org.uk>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021-08-11 16:48, Paul Moore wrote:
-> Draft #2 of the patchset which brings auditing and proper LSM access
-> controls to the io_uring subsystem.  The original patchset was posted
-> in late May and can be found via lore using the link below:
-> 
-> https://lore.kernel.org/linux-security-module/162163367115.8379.8459012634106035341.stgit@sifl/
-> 
-> This draft should incorporate all of the feedback from the original
-> posting as well as a few smaller things I noticed while playing
-> further with the code.  The big change is of course the selective
-> auditing in the io_uring op servicing, but that has already been
-> discussed quite a bit in the original thread so I won't go into
-> detail here; the important part is that we found a way to move
-> forward and this draft captures that.  For those of you looking to
-> play with these patches, they are based on Linus' v5.14-rc5 tag and
-> on my test system they boot and appear to function without problem;
-> they pass the selinux-testsuite and audit-testsuite and I have not
-> noticed any regressions in the normal use of the system.  If you want
-> to get a copy of these patches straight from git you can use the
-> "working-io_uring" branch in the repo below:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-> 
-> Beyond the existing test suite tests mentioned above, I've cobbled
-> together some very basic, very crude tests to exercise some of the
-> things I care about from a LSM/audit perspective.  These tests are
-> pretty awful (I'm not kidding), but they might be helpful for the
-> other LSM/audit developers who want to test things:
-> 
-> https://drop.paul-moore.com/90.kUgq
-> 
-> There are currently two tests: 'iouring.2' and 'iouring.3';
-> 'iouring.1' was lost in a misguided and overzealous 'rm' command.
-> The first test is standalone and basically tests the SQPOLL
-> functionality while the second tests sharing io_urings across process
-> boundaries and the credential/personality sharing mechanism.  The
-> console output of both tests isn't particularly useful, the more
-> interesting bits are in the audit and LSM specific logs.  The
-> 'iouring.2' command requires no special arguments to run but the
-> 'iouring.3' test is split into a "server" and "client"; the server
-> should be run without argument:
-> 
->   % ./iouring.3s
->   >>> server started, pid = 11678
->   >>> memfd created, fd = 3
->   >>> io_uring created; fd = 5, creds = 1
-> 
-> ... while the client should be run with two arguments: the first is
-> the PID of the server process, the second is the "memfd" fd number:
-> 
->   % ./iouring.3c 11678 3
->   >>> client started, server_pid = 11678 server_memfd = 3
->   >>> io_urings = 5 (server) / 5 (client)
->   >>> io_uring ops using creds = 1
->   >>> async op result: 36
->   >>> async op result: 36
->   >>> async op result: 36
->   >>> async op result: 36
->   >>> START file contents
->   What is this life if, full of care,
->   we have no time to stand and stare.
->   >>> END file contents
-> 
-> The tests were hacked together from various sources online,
-> attribution and links to additional info can be found in the test
-> sources, but I expect these tests to die a fiery death in the not
-> to distant future as I work to add some proper tests to the SELinux
-> and audit test suites.
-> 
-> As I believe these patches should spend a full -rcX cycle in
-> linux-next, my current plan is to continue to solicit feedback on
-> these patches while they undergo additional testing (next up is
-> verification of the audit filter code for io_uring).  Assuming no
-> critical issues are found on the mailing lists or during testing, I
-> will post a proper patchset later with the idea of merging it into
-> selinux/next after the upcoming merge window closes.
-> 
-> Any comments, feedback, etc. are welcome.
+Theodore Ts'o <tytso@mit.edu> wrote:
 
-Thanks for the tests.  I have a bunch of userspace patches to add to the
-last set I posted and these tests will help exercise them.  I also have
-one more kernel patch to post...  I'll dive back into that now.  I had
-wanted to post them before now but got distracted with AUDIT_TRIM
-breakage.
+> What do you think of "struct pageset"?  Not quite as short as folios,
+> but it's clearer.
 
-> ---
-> 
-> Casey Schaufler (1):
->       Smack: Brutalist io_uring support with debug
-> 
-> Paul Moore (8):
->       audit: prepare audit_context for use in calling contexts beyond
->              syscalls
->       audit,io_uring,io-wq: add some basic audit support to io_uring
->       audit: dev/test patch to force io_uring auditing
->       audit: add filtering for io_uring records
->       fs: add anon_inode_getfile_secure() similar to
->           anon_inode_getfd_secure()
->       io_uring: convert io_uring to the secure anon inode interface
->       lsm,io_uring: add LSM hooks to io_uring
->       selinux: add support for the io_uring access controls
-> 
-> 
->  fs/anon_inodes.c                    |  29 ++
->  fs/io-wq.c                          |   4 +
->  fs/io_uring.c                       |  69 +++-
->  include/linux/anon_inodes.h         |   4 +
->  include/linux/audit.h               |  26 ++
->  include/linux/lsm_hook_defs.h       |   5 +
->  include/linux/lsm_hooks.h           |  13 +
->  include/linux/security.h            |  16 +
->  include/uapi/linux/audit.h          |   4 +-
->  kernel/audit.h                      |   7 +-
->  kernel/audit_tree.c                 |   3 +-
->  kernel/audit_watch.c                |   3 +-
->  kernel/auditfilter.c                |  15 +-
->  kernel/auditsc.c                    | 483 +++++++++++++++++++-----
->  security/security.c                 |  12 +
->  security/selinux/hooks.c            |  34 ++
->  security/selinux/include/classmap.h |   2 +
->  security/smack/smack_lsm.c          |  64 ++++
->  18 files changed, 678 insertions(+), 115 deletions(-)
-> 
+Fine by me (I suggested page_set), and as Vlastimil points out, the current
+usage of the name could be renamed.
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+David
 
