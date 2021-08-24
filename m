@@ -2,81 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 505A63F6A25
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Aug 2021 21:59:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37B1B3F6A30
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Aug 2021 22:02:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234600AbhHXUAh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Aug 2021 16:00:37 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:27086 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229514AbhHXUAh (ORCPT
+        id S234927AbhHXUC4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Aug 2021 16:02:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42800 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229514AbhHXUCz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Aug 2021 16:00:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629835192;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=9VSM6gqyDWtwHQvlYNdt1S13CwVzIFODYDm3psHYFeU=;
-        b=dc6f1JuM3RNWdbh6b1tBF2p4MBBv1nDeZJ9SDJB/1Wt56uWKL0F+lfqJZgrRIs91ahbrNq
-        43Iw5y1Y0ADtKAigHzs3rtRdypCCu7ZEzVH7ohhIWTL9LIx4lNQYRmfe7pmT55DLh8fPJo
-        Sesrcq+8s9C1KJvslvrq4pvkcjZE2Bc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-258-lOJE0O4IOQi10dUnKpcJUg-1; Tue, 24 Aug 2021 15:59:51 -0400
-X-MC-Unique: lOJE0O4IOQi10dUnKpcJUg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CE466760C0;
-        Tue, 24 Aug 2021 19:59:49 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.86])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2ED2160C0F;
-        Tue, 24 Aug 2021 19:59:48 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAHk-=whd8ugrzMS-3bupkPQz9VS+dWHPpsVssrDfuFgfff+n5A@mail.gmail.com>
-References: <CAHk-=whd8ugrzMS-3bupkPQz9VS+dWHPpsVssrDfuFgfff+n5A@mail.gmail.com> <CAHk-=wjD8i2zJVQ9SfF2t=_0Fkgy-i5Z=mQjCw36AHvbBTGXyg@mail.gmail.com> <YSPwmNNuuQhXNToQ@casper.infradead.org> <YSQSkSOWtJCE4g8p@cmpxchg.org> <1957060.1629820467@warthog.procyon.org.uk> <YSUy2WwO9cuokkW0@casper.infradead.org> <CAHk-=wip=366HxkJvTfABuPUxwjGsFK4YYMgXNY9VSkJNp=-XA@mail.gmail.com> <CAHk-=wgRdqtpsbHkKeqpRWUsuJwsfewCL4SZN2udXVgExFZOWw@mail.gmail.com> <1966106.1629832273@warthog.procyon.org.uk> <CAHk-=wiZ=wwa4oAA0y=Kztafgp0n+BDTEV6ybLoH2nvLBeJBLA@mail.gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Tue, 24 Aug 2021 16:02:55 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24A6DC061757;
+        Tue, 24 Aug 2021 13:02:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=FYaDQz3WXMafrdPOH+jBu7t6CM5IN56m+9lLa8Z9mro=; b=pZqym/K4FkqCcx0j8hZ4dbgx8r
+        /wYknUVZpHFrpweFZlbVDhG7BcOWmVlTwYfFXBHWo+kfG/iOTwZIv8mgTv9knzSmtBGNlK9IiD4xc
+        u7f0XoYNuNxI7XeaxQOwuLRKdCK1tjrNXXOHgJNwWxnxle6byWvVg/48uoDuDtY3wUnmmbTquEjkg
+        caATO6kd0GLHslkSKw9qxhzyIVRLHua2R2jn+j230P6OK2M1ReC+8QMEZttY6a2C04YNp3eEf7bC/
+        ixDSOzchYz5z72uFxNgd94E2S575z/ipN3hqVD4jfUG93nU7PFaH18JK/MM1BAgTnKouCLzW3pPDQ
+        dpEDnpaA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mIcat-00BVIy-UI; Tue, 24 Aug 2021 20:00:48 +0000
+Date:   Tue, 24 Aug 2021 21:00:23 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Linux-MM <linux-mm@kvack.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: [GIT PULL] Memory folios for v5.15
+Message-ID: <YSVP14doJ0wwb11x@casper.infradead.org>
+References: <CAHk-=wjD8i2zJVQ9SfF2t=_0Fkgy-i5Z=mQjCw36AHvbBTGXyg@mail.gmail.com>
+ <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YSQSkSOWtJCE4g8p@cmpxchg.org>
+ <1957060.1629820467@warthog.procyon.org.uk>
+ <YSUy2WwO9cuokkW0@casper.infradead.org>
+ <CAHk-=wip=366HxkJvTfABuPUxwjGsFK4YYMgXNY9VSkJNp=-XA@mail.gmail.com>
+ <YSVCAJDYShQke6Sy@casper.infradead.org>
+ <CAHk-=wisF580D_g+wFt0B_uijSX+mCgz6tRRT5KADnO7Y97t-g@mail.gmail.com>
+ <YSVHI9iaamxTGmI7@casper.infradead.org>
+ <YSVMMMrzqxyFjHlw@mit.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1968459.1629835187.1@warthog.procyon.org.uk>
-Date:   Tue, 24 Aug 2021 20:59:47 +0100
-Message-ID: <1968460.1629835187@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YSVMMMrzqxyFjHlw@mit.edu>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> > Something like "page_group" or "pageset" sound reasonable to me as type
-> > names.
+On Tue, Aug 24, 2021 at 03:44:48PM -0400, Theodore Ts'o wrote:
+> On Tue, Aug 24, 2021 at 08:23:15PM +0100, Matthew Wilcox wrote:
+> > > So when you mention "slab" as a name example, that's not the argument
+> > > you think it is. That's a real honest-to-goodness operating system
+> > > convention name that doesn't exactly predate Linux, but is most
+> > > certainly not new.
+> > 
+> > Sure, but at the time Jeff Bonwick chose it, it had no meaning in
+> > computer science or operating system design.
 > 
-> "pageset" is such a great name that we already use it, so I guess that
-> doesn't work.
+> I think the big difference is that "slab" is mostly used as an
+> internal name.  In Linux it doesn't even leak out to the users, since
+> we use kmem_cache_{create,alloc,free,destroy}().  So the "slab"
+> doesn't even show up in the API.
 
-Heh.  I tried grepping for "struct page_set" and that showed nothing.  Maybe
-"pagegroup"?  Here's a bunch of possible alternatives to set/group:
+/proc/slabinfo
+/proc/sys/vm/min_slab_ratio
+/sys/kernel/slab
+include/linux/slab.h
+cpuset.memory_spread_slab
+failslab=
+slab_merge
+slab_max_order=
 
-	https://en.wiktionary.org/wiki/Thesaurus:group
+$ git grep slab fs/ext4 |wc -l
+30
+(13 of which are slab.h)
 
-Maybe consider it a sequence of pages, "struct pageseq"?  page_aggregate
-sounds like a possibility, but it's quite long.
+> The problem is whether we use struct head_page, or folio, or mempages,
+> we're going to be subsystem users' faces.  And people who are using it
+> every day will eventually get used to anything, whether it's "folio"
+> or "xmoqax", we sould give a thought to newcomers to Linux file system
+> code.  If they see things like "read_folio()", they are going to be
+> far more confused than "read_pages()" or "read_mempages()".
+> 
+> Sure, one impenetrable code word isn't that bad.  But this is a case
+> of a death by a thousand cuts.  At $WORK, one time we had welcomed an
+> intern to our group, I had to stop everyone each time that they used
+> an acronym, or a codeword, and asked them to define the term.
+> 
+> It was really illuminating what an insider takes for granted, but when
+> it's one cutsy codeword after another, with three or more such
+> codewords in a sentence, it's *really* a less-than-great initial
+> experience for a newcomer.
+> 
+> So if someone sees "kmem_cache_alloc()", they can probably make a
+> guess what it means, and it's memorable once they learn it.
+> Similarly, something like "head_page", or "mempages" is going to a bit
+> more obvious to a kernel newbie.  So if we can make a tiny gesture
+> towards comprehensibility, it would be good to do so while it's still
+> easier to change the name.
 
-Though from an fs point of view, I'd be okay hiding the fact that pages are
-involved.  It's a buffer; a chunk of memory or chunk of pagecache with
-metadata - maybe something on that theme?
+I completely agree that it's good to use something which is not jargon,
+or is at least widely-understood jargon.  And I loathe acronyms (you'll
+notice I haven't suggested a single one).  Folio/ream/quire/sheaf were
+all attempts to get across "collection of pages".  Another direction
+would be something that is associated with memory (but I don't have
+a good example).  Or a non-English word (roman?  seite?  sidor?)
 
-David
-
+We're going to end up with hpage, aren't we?
