@@ -2,93 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D5ADE3F68B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Aug 2021 20:03:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B25093F68CE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Aug 2021 20:08:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238923AbhHXSET (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Aug 2021 14:04:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43012 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239230AbhHXSEG (ORCPT
+        id S230459AbhHXSJ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Aug 2021 14:09:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49227 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229804AbhHXSJZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Aug 2021 14:04:06 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F7EC035426;
-        Tue, 24 Aug 2021 10:58:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=pTa7CJ6QaTq6UueYZg9lyVDrVwoJx5n2tyWb82cOfR0=; b=CTZxkTVCpt8lr38ykH3ksUqKTC
-        spllFLWvt5uzaa0YpRVVqpqvIzdPS1hh1NZTcwUCGU2UzW67tQXdB9n13bhxwNMOwhYPAxEB9VnOO
-        Ih/U9EsYoY6ly9jiBGwkEizMbOonx07+f+gh1aPVCyAy97C8x3bU+4j/UgrRkuoHjuO4AuN0fMFGW
-        fi7zB6U1Bw5Gxp1f4lq1WIKvRA6PBCrzXZNPWHZpj34H/Mwkw0zOjMPT9ESIAuNhsW52oto83eSAQ
-        fNMSiSGxY2TcsTQw9v2Gi7DG0otiljMNtHnaCcJqv2dLOAL3QhAWa2veX3G5k5DSA6NmUJuz8EW10
-        XuebDQcw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mIafB-00BNao-VY; Tue, 24 Aug 2021 17:56:58 +0000
-Date:   Tue, 24 Aug 2021 18:56:41 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] Memory folios for v5.15
-Message-ID: <YSUy2WwO9cuokkW0@casper.infradead.org>
-References: <CAHk-=wjD8i2zJVQ9SfF2t=_0Fkgy-i5Z=mQjCw36AHvbBTGXyg@mail.gmail.com>
- <YSPwmNNuuQhXNToQ@casper.infradead.org>
- <YSQSkSOWtJCE4g8p@cmpxchg.org>
- <1957060.1629820467@warthog.procyon.org.uk>
+        Tue, 24 Aug 2021 14:09:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1629828521;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wf/taVlZFNs0ougRCLlTYVmNw738QSiSdoCHx8OR6ig=;
+        b=OaBhncK3OkMt0iQW1wbKSWlrzuyIK4RzdLEEyCOnADDe3fZMcr0Znmr9gTeNX+qdzHGCUD
+        isQ96y/EyQfvQgIIc+2/XmjMkJbJWtKDq2aOr9nuZzoqSKk49+kZzeBnujzedBG7NszFI5
+        g8HQ9CwLSe2ibjWvIjh7UEILuTWngCM=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-430-YbOhBt6dNZaB_qPBxpwRwQ-1; Tue, 24 Aug 2021 14:08:39 -0400
+X-MC-Unique: YbOhBt6dNZaB_qPBxpwRwQ-1
+Received: by mail-wm1-f70.google.com with SMTP id y23-20020a7bcd97000000b002e6e4a2a332so4374720wmj.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Aug 2021 11:08:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wf/taVlZFNs0ougRCLlTYVmNw738QSiSdoCHx8OR6ig=;
+        b=co4L2ymWpVgTWQTHqT60GoWvXbNwGnwq/UbTZPru7WU5/Qnmc4IZyWhyUPp9v/kB2b
+         LOCQm0WIy+24+NmBFe9rikIYIQqVacuHJu0AtM1vkexEVgBnR6MBK+iogIHDI2223doK
+         E6U7FRG8a1YngopFzVRK6a2qBQxquzt+BfcRjvDrSNcBnWIcX3bFQhelLE5o1hvskkup
+         q1/3oK3KXx9hhNJsVH/+rJW6E+zzB+dp1plEzepqXFH6+rvs3p7dSI3YmTloDAYltyyj
+         2jFmlKV69fdYIOWjSoycc6ufRMHmT3SgLuyzMZzAimYtuJQyDjZ9GGJF9vqYlj11dK05
+         quJA==
+X-Gm-Message-State: AOAM5306cPsGOeSmSTaYB2eAnA5Pcc/mfGOlLbuQwxDjiZxH5Aq/asqb
+        3BLc0QTzHF4oXwu52ufelWg1qgJIcGHjoAKWCg5PGUMrK56GixN954co7hlIwtFLXFS3dw3JnyA
+        3cxmpZ2hc+OUfqTKXAgtF1dF20w==
+X-Received: by 2002:adf:f541:: with SMTP id j1mr20290128wrp.180.1629828518661;
+        Tue, 24 Aug 2021 11:08:38 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxfDkwHQb1CTI5AdZfg7DL+P9GYpcylznvSa7+7v+ifINTac25O0lU3KK9ol/wm7Mi5FZusQw==
+X-Received: by 2002:adf:f541:: with SMTP id j1mr20290112wrp.180.1629828518469;
+        Tue, 24 Aug 2021 11:08:38 -0700 (PDT)
+Received: from redhat.com ([212.116.168.114])
+        by smtp.gmail.com with ESMTPSA id l187sm327519wml.39.2021.08.24.11.08.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Aug 2021 11:08:37 -0700 (PDT)
+Date:   Tue, 24 Aug 2021 14:08:33 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Xie Yongji <xieyongji@bytedance.com>
+Cc:     jasowang@redhat.com, stefanha@redhat.com, sgarzare@redhat.com,
+        parav@nvidia.com, hch@infradead.org,
+        christian.brauner@canonical.com, rdunlap@infradead.org,
+        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        bcrl@kvack.org, corbet@lwn.net, mika.penttila@nextfour.com,
+        dan.carpenter@oracle.com, joro@8bytes.org,
+        gregkh@linuxfoundation.org, zhe.he@windriver.com,
+        xiaodong.liu@intel.com, joe@perches.com, robin.murphy@arm.com,
+        songmuchun@bytedance.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v11 01/12] iova: Export alloc_iova_fast() and
+ free_iova_fast()
+Message-ID: <20210824140758-mutt-send-email-mst@kernel.org>
+References: <20210818120642.165-1-xieyongji@bytedance.com>
+ <20210818120642.165-2-xieyongji@bytedance.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1957060.1629820467@warthog.procyon.org.uk>
+In-Reply-To: <20210818120642.165-2-xieyongji@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 24, 2021 at 04:54:27PM +0100, David Howells wrote:
-> One question does spring to mind, though: do filesystems even need to know
-> about hardware pages at all?  They need to be able to access source data or a
-> destination buffer, but that can be stitched together from disparate chunks
-> that have nothing to do with pages (eg. iov_iter); they need access to the
-> pagecache, and may need somewhere to cache pieces of information, and they
-> need to be able to pass chunks of pagecache, data or bufferage to crypto
-> (scatterlists) and I/O routines (bio, skbuff) - but can we hide "paginess"
-> from filesystems?
+On Wed, Aug 18, 2021 at 08:06:31PM +0800, Xie Yongji wrote:
+> Export alloc_iova_fast() and free_iova_fast() so that
+> some modules can make use of the per-CPU cache to get
+> rid of rbtree spinlock in alloc_iova() and free_iova()
+> during IOVA allocation.
 > 
-> The main point where this matters, at the moment, is, I think, mmap - but
-> could more of that be handled transparently by the VM?
+> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
 
-It really depends on the filesystem.  I just audited adfs, for example,
-and there is literally nothing in there that cares about struct page.
-It passes its arguments from ->readpage and ->writepage to
-block_*_full_page(); it uses cont_write_begin() for its ->write_begin;
-and it uses __set_page_dirty_buffers for its ->set_page_dirty.
 
-Then there are filesystems like UFS which use struct page extensively in
-its directory handling.  And NFS which uses struct page throughout.
-Partly there's just better infrastructure for block-based filesystems
-(which you're fixing) and partly NFS is trying to perform better than
-a filesystem which exists for compatibility with a long-dead OS.
+This needs ack from iommu maintainers. Guys?
 
-> > Because, as you say, head pages are the norm. And "folio" may be a
-> > clever term, but it's not very natural. Certainly not at all as
-> > intuitive or common as "page" as a name in the industry.
+> ---
+>  drivers/iommu/iova.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> That's mostly because no one uses the term... yet, and that it's not commonly
-> used.  I've got used to it in building on top of Willy's patches and have no
-> problem with it - apart from the fact that I would expect something more like
-> a plural or a collective noun ("sheaf" or "ream" maybe?) - but at least the
-> name is similar in length to "page".
-> 
-> And it's handy for grepping ;-)
-
-If the only thing standing between this patch and the merge is
-s/folio/ream/g, I will do that.  All three options are equally greppable
-(except for 'ream' as a substring of dream, stream, preamble, scream,
-whereami, and typos for remain).
+> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+> index b6cf5f16123b..3941ed6bb99b 100644
+> --- a/drivers/iommu/iova.c
+> +++ b/drivers/iommu/iova.c
+> @@ -521,6 +521,7 @@ alloc_iova_fast(struct iova_domain *iovad, unsigned long size,
+>  
+>  	return new_iova->pfn_lo;
+>  }
+> +EXPORT_SYMBOL_GPL(alloc_iova_fast);
+>  
+>  /**
+>   * free_iova_fast - free iova pfn range into rcache
+> @@ -538,6 +539,7 @@ free_iova_fast(struct iova_domain *iovad, unsigned long pfn, unsigned long size)
+>  
+>  	free_iova(iovad, pfn);
+>  }
+> +EXPORT_SYMBOL_GPL(free_iova_fast);
+>  
+>  #define fq_ring_for_each(i, fq) \
+>  	for ((i) = (fq)->head; (i) != (fq)->tail; (i) = ((i) + 1) % IOVA_FQ_SIZE)
+> -- 
+> 2.11.0
 
