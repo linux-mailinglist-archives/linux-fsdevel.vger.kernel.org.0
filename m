@@ -2,88 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7C4E3F5641
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Aug 2021 04:59:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B5063F57AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Aug 2021 07:44:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234700AbhHXDAT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Aug 2021 23:00:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57684 "EHLO mail.kernel.org"
+        id S234015AbhHXFou (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Aug 2021 01:44:50 -0400
+Received: from verein.lst.de ([213.95.11.211]:50191 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234634AbhHXC7s (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Aug 2021 22:59:48 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 36414613DB;
-        Tue, 24 Aug 2021 02:59:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629773944;
-        bh=akNljmYAqpUMZJ8WHvhlsM/Hp3zTlWeCIqfNRJNdbWQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Uf2xE78W2VQZtpYXM6/6OwNUsdhfGGP5+nXqhV4aFqz+FRQ2M12nmK7Xi7mV7kZs9
-         o3YSOVS8irf+i8x2k1peyB/WXxWQ/ZiIC1AAfK945XKI8tvVbFulN+Yg3osogzgTh9
-         X4hHApaAzFu+DRKXL/xgh2ydo1ziawLLBCLVSD9saq1uytx/Xi55tJQmYjEr7w8N0i
-         Ds/r7+Z+hfNIiOwXuFZHAx0fd7aTkPGs1YXaI0ad/ZY96Vw/hpLwfTw7XYNrsLGyt1
-         8KkGCkRmDcBHQXSOGUZlB1FFz+lGg6RyLN0XD7cFb+7ZDD/rKHxkDEGU/zMoDtnT9v
-         /Qo1uBuk7tbkQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, jlayton@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: FAILED: Patch "fs: warn about impending deprecation of mandatory locks" failed to apply to 4.4-stable tree
-Date:   Mon, 23 Aug 2021 22:59:02 -0400
-Message-Id: <20210824025903.660376-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
+        id S229885AbhHXFou (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 24 Aug 2021 01:44:50 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 7FCB867357; Tue, 24 Aug 2021 07:44:03 +0200 (CEST)
+Date:   Tue, 24 Aug 2021 07:44:03 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>
+Subject: Re: [PATCH 7/9] dax: stub out dax_supported for !CONFIG_FS_DAX
+Message-ID: <20210824054403.GA23025@lst.de>
+References: <20210823123516.969486-1-hch@lst.de> <20210823123516.969486-8-hch@lst.de> <CAPcyv4hezYrurYEsBZ-7obnNYr0qbdtw+k0NBviOqqgT70ZL+w@mail.gmail.com>
 MIME-Version: 1.0
-X-Patchwork-Hint: ignore
-X-stable: review
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4hezYrurYEsBZ-7obnNYr0qbdtw+k0NBviOqqgT70ZL+w@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The patch below does not apply to the 4.4-stable tree.
-If someone wants it applied there, or to any other stable or longterm
-tree, then please email the backport, including the original git commit
-id to <stable@vger.kernel.org>.
+On Mon, Aug 23, 2021 at 02:15:47PM -0700, Dan Williams wrote:
+> > +static inline bool dax_supported(struct dax_device *dax_dev,
+> > +               struct block_device *bdev, int blocksize, sector_t start,
+> > +               sector_t len)
+> > +{
+> > +       return false;
+> > +}
+> 
+> I've started clang-formatting new dax and nvdimm code:
+> 
+> static inline bool dax_supported(struct dax_device *dax_dev,
+>                                  struct block_device *bdev, int blocksize,
+>                                  sector_t start, sector_t len)
+> {
+>         return false;
+> }
+> 
+> ...but I also don't mind staying consistent with the surrounding code for now.
 
-Thanks,
-Sasha
-
------------------- original commit in Linus's tree ------------------
-
-From fdd92b64d15bc4aec973caa25899afd782402e68 Mon Sep 17 00:00:00 2001
-From: Jeff Layton <jlayton@kernel.org>
-Date: Fri, 20 Aug 2021 09:29:50 -0400
-Subject: [PATCH] fs: warn about impending deprecation of mandatory locks
-
-We've had CONFIG_MANDATORY_FILE_LOCKING since 2015 and a lot of distros
-have disabled it. Warn the stragglers that still use "-o mand" that
-we'll be dropping support for that mount option.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/namespace.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index ab4174a3c802..2279473d0d6f 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1716,8 +1716,12 @@ static inline bool may_mount(void)
- }
- 
- #ifdef	CONFIG_MANDATORY_FILE_LOCKING
--static inline bool may_mandlock(void)
-+static bool may_mandlock(void)
- {
-+	pr_warn_once("======================================================\n"
-+		     "WARNING: the mand mount option is being deprecated and\n"
-+		     "         will be removed in v5.15!\n"
-+		     "======================================================\n");
- 	return capable(CAP_SYS_ADMIN);
- }
- #else
--- 
-2.30.2
-
-
-
-
+While Linux has historically used both styles, I find this second one
+pretty horrible.  It is hard to read due to the huge amounts of wasted
+space, and needs constant realignment when the return type or symbol
+name changes.
