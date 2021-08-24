@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94F8D3F5CE8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Aug 2021 13:10:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D76D3F5CEE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 Aug 2021 13:12:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236909AbhHXLKy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 Aug 2021 07:10:54 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:41604 "EHLO
+        id S236613AbhHXLNB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 Aug 2021 07:13:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58417 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236443AbhHXLKu (ORCPT
+        by vger.kernel.org with ESMTP id S234569AbhHXLNA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 Aug 2021 07:10:50 -0400
+        Tue, 24 Aug 2021 07:13:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629803405;
+        s=mimecast20190719; t=1629803536;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=6MzIVYD6Rkcf1avefY9xlULEY3kI1KocMJ7+mbhVSUk=;
-        b=I+hW0o4gKzNZCcyLLGmPXpTUAgEfLqx8O99UanPmvllneCK2e1RKBOE/1KooEC9+TC8+qs
-        Q7dUlHp3aXkJQ9D3GAIEojcX3zuhS2qMBuSN8bfPtlD0YEJtpHSgi8+YOIk5vcT45V35+s
-        Xgpu1nqQ2zht3yqxH8ll/SPkaYaz0es=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-538-qDrL_pHnOYq8IeEs9Br5kA-1; Tue, 24 Aug 2021 07:10:02 -0400
-X-MC-Unique: qDrL_pHnOYq8IeEs9Br5kA-1
-Received: by mail-ed1-f69.google.com with SMTP id f21-20020a056402005500b003bf4e6b5b96so8561909edu.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Aug 2021 04:10:02 -0700 (PDT)
+        bh=sp6r3OzWSMu57KiEYb4z4Sr1QBf9aXwrMsxdCi+UL3c=;
+        b=LnaeJtdnvz+wt9mV7wf6yrYySFJSe+PR7Kxt0NeeHv1rz71UVGb+kQQszA1jNvyKvgFnUS
+        gNkR2qacvPoA33fDQFBMueHDjoBn4/Z5+5qA0c3yKMHNqi0sICGdhTgaYtVOmOzEi8E9P+
+        02Km4iX82Y25gwrtbMTf3DHTAJWFh6Y=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-377-Qg2P4UebP7iTAOaElGDBMQ-1; Tue, 24 Aug 2021 07:12:15 -0400
+X-MC-Unique: Qg2P4UebP7iTAOaElGDBMQ-1
+Received: by mail-ej1-f70.google.com with SMTP id m18-20020a170906849200b005c701c9b87cso1632536ejx.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 24 Aug 2021 04:12:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=6MzIVYD6Rkcf1avefY9xlULEY3kI1KocMJ7+mbhVSUk=;
-        b=AtVX9N1fpjUp0MIU7gCSPrMnqXj6hDozZT2WxQ8s4vZoSObk25xD27LJv8s6R5J4xj
-         hdiW4hors3Lcin3XbKZWI2wCeqFfBkKhRzrkqOE+38MvrOy7tO21AoOsFs+gjhSPuCHb
-         rqz7yEEtVM3ETEQRkmqToQqRrDt28YQ5Q9kpWwQBVk9K5gXkpH+dJHpgYiPN2uD8jFR4
-         Nh3xqdMteV3hwOXTrY/ymWFOAhGIgFZ/mXxj5aE4NBCtF7cDNEcPEd1+j522rVl027X/
-         397Nvya8/02ma8HmVeMSqnckpMxrpFhIiuDet4OgkMZAsZ/ZB4+kv34hknjOU6BiT+0x
-         mc+g==
-X-Gm-Message-State: AOAM530w9yX0aYT8BZqGibbCX8XGSM753cSLB8kR0vpKxIp5SYaqlTar
-        947fZyeiDf2EKQax6oxv9GVClWTgM+yoZnH1qJDF3KcAAr7RZjpdQOGG9zNavWpZtZDJjhfFD71
-        EvASQEgVjR2a1rvVtwJiKE2Xb1g==
-X-Received: by 2002:a17:906:9bdc:: with SMTP id de28mr40030299ejc.154.1629803401150;
-        Tue, 24 Aug 2021 04:10:01 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJym2zZCfOfkB6aYg6hvpM9EYCUNutnmi5ZkMGiE/H3YmE4qf/VSJ5+nHLjDGlfYfIZpl2VYMg==
-X-Received: by 2002:a17:906:9bdc:: with SMTP id de28mr40030281ejc.154.1629803400969;
-        Tue, 24 Aug 2021 04:10:00 -0700 (PDT)
+        bh=sp6r3OzWSMu57KiEYb4z4Sr1QBf9aXwrMsxdCi+UL3c=;
+        b=eWPxAkNhK//32W7so+ORYcnmfhNQMKM4qN+x6oKp91RMGS5jSOrz8HlOOAVlBu468x
+         CeoCUVL4Omjp33SbWpffx2kVdmhWsuTelkg/WYGG23VOVSXFYuR51x4wKiiXpze7e53C
+         jFz+q9zlIL/5zXPZrtGp/ZSGdlMPJ9RDzMUnr1Yksz/hE3fo4b+mwWrzm39ROpb0Aaa5
+         LYvw2KFjhYCn4RTmFKWtoLgzAUCNm3H3IeSoiVACYd3mKUrgZI5uLLMC+d0GE7nWcgZJ
+         vF19hwoS/G+9eYIlPNVSUQX0lYNoUUmJlcJF03ubGyfwl+jgr3Qa6kv8ZfSPXWuQsO4r
+         25pg==
+X-Gm-Message-State: AOAM532+XulADFahs0vwE2esMYeux5PCmiS0ebwMgz4vpyFHmd9x/R8b
+        aHParu5hv5U/0sQCLzsBge6oWCSW8TzcryUCT+zyqcDPR/WcySDzJSYfp7Z4CPSVNF4dStnqMAT
+        6tixybNNRL1Zr/H2q2FpCU1QprQ==
+X-Received: by 2002:a17:906:1701:: with SMTP id c1mr40193377eje.425.1629803534056;
+        Tue, 24 Aug 2021 04:12:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyDklZBFBy5QnXrgs3+cqOF2EU5CCgdvdd15GqRk67R8P3Nj6qlQx0g2cCYgrph1uoICqAc7Q==
+X-Received: by 2002:a17:906:1701:: with SMTP id c1mr40193358eje.425.1629803533933;
+        Tue, 24 Aug 2021 04:12:13 -0700 (PDT)
 Received: from steredhat (host-79-45-8-152.retail.telecomitalia.it. [79.45.8.152])
-        by smtp.gmail.com with ESMTPSA id u2sm9003772ejc.61.2021.08.24.04.09.58
+        by smtp.gmail.com with ESMTPSA id h21sm331619ejb.101.2021.08.24.04.12.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Aug 2021 04:10:00 -0700 (PDT)
-Date:   Tue, 24 Aug 2021 13:09:56 +0200
+        Tue, 24 Aug 2021 04:12:13 -0700 (PDT)
+Date:   Tue, 24 Aug 2021 13:12:07 +0200
 From:   Stefano Garzarella <sgarzare@redhat.com>
 To:     Xie Yongji <xieyongji@bytedance.com>
 Cc:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
@@ -65,107 +65,26 @@ Cc:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
         virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
         kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 03/12] vdpa: Fix some coding style issues
-Message-ID: <20210824110956.gtajf34s2xpm66gx@steredhat>
+Subject: Re: [PATCH v11 05/12] vhost-vdpa: Handle the failure of vdpa_reset()
+Message-ID: <20210824111207.ppvop52hyq5xyny5@steredhat>
 References: <20210818120642.165-1-xieyongji@bytedance.com>
- <20210818120642.165-4-xieyongji@bytedance.com>
+ <20210818120642.165-6-xieyongji@bytedance.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20210818120642.165-4-xieyongji@bytedance.com>
+In-Reply-To: <20210818120642.165-6-xieyongji@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 18, 2021 at 08:06:33PM +0800, Xie Yongji wrote:
->Fix some code indent issues and following checkpatch warning:
->
->WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
->371: FILE: include/linux/vdpa.h:371:
->+static inline void vdpa_get_config(struct vdpa_device *vdev, unsigned offset,
+On Wed, Aug 18, 2021 at 08:06:35PM +0800, Xie Yongji wrote:
+>The vdpa_reset() may fail now. This adds check to its return
+>value and fail the vhost_vdpa_open().
 >
 >Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
 >---
-> include/linux/vdpa.h | 34 +++++++++++++++++-----------------
-> 1 file changed, 17 insertions(+), 17 deletions(-)
+> drivers/vhost/vdpa.c | 9 ++++++---
+> 1 file changed, 6 insertions(+), 3 deletions(-)
 
 Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
-
->
->diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
->index 954b340f6c2f..8a645f8f4476 100644
->--- a/include/linux/vdpa.h
->+++ b/include/linux/vdpa.h
->@@ -43,17 +43,17 @@ struct vdpa_vq_state_split {
->  * @last_used_idx: used index
->  */
-> struct vdpa_vq_state_packed {
->-        u16	last_avail_counter:1;
->-        u16	last_avail_idx:15;
->-        u16	last_used_counter:1;
->-        u16	last_used_idx:15;
->+	u16	last_avail_counter:1;
->+	u16	last_avail_idx:15;
->+	u16	last_used_counter:1;
->+	u16	last_used_idx:15;
-> };
->
-> struct vdpa_vq_state {
->-     union {
->-          struct vdpa_vq_state_split split;
->-          struct vdpa_vq_state_packed packed;
->-     };
->+	union {
->+		struct vdpa_vq_state_split split;
->+		struct vdpa_vq_state_packed packed;
->+	};
-> };
->
-> struct vdpa_mgmt_dev;
->@@ -131,7 +131,7 @@ struct vdpa_iova_range {
->  *				@vdev: vdpa device
->  *				@idx: virtqueue index
->  *				@state: pointer to returned state (last_avail_idx)
->- * @get_vq_notification: 	Get the notification area for a virtqueue
->+ * @get_vq_notification:	Get the notification area for a virtqueue
->  *				@vdev: vdpa device
->  *				@idx: virtqueue index
->  *				Returns the notifcation area
->@@ -353,25 +353,25 @@ static inline struct device *vdpa_get_dma_dev(struct vdpa_device *vdev)
->
-> static inline void vdpa_reset(struct vdpa_device *vdev)
-> {
->-        const struct vdpa_config_ops *ops = vdev->config;
->+	const struct vdpa_config_ops *ops = vdev->config;
->
-> 	vdev->features_valid = false;
->-        ops->set_status(vdev, 0);
->+	ops->set_status(vdev, 0);
-> }
->
-> static inline int vdpa_set_features(struct vdpa_device *vdev, u64 features)
-> {
->-        const struct vdpa_config_ops *ops = vdev->config;
->+	const struct vdpa_config_ops *ops = vdev->config;
->
-> 	vdev->features_valid = true;
->-        return ops->set_features(vdev, features);
->+	return ops->set_features(vdev, features);
-> }
->
->-
->-static inline void vdpa_get_config(struct vdpa_device *vdev, unsigned offset,
->-				   void *buf, unsigned int len)
->+static inline void vdpa_get_config(struct vdpa_device *vdev,
->+				   unsigned int offset, void *buf,
->+				   unsigned int len)
-> {
->-        const struct vdpa_config_ops *ops = vdev->config;
->+	const struct vdpa_config_ops *ops = vdev->config;
->
-> 	/*
-> 	 * Config accesses aren't supposed to trigger before features are set.
->-- 
->2.11.0
->
 
