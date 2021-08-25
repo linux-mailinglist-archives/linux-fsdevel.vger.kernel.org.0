@@ -2,193 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EC4B3F70C1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Aug 2021 09:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1752C3F715C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Aug 2021 11:01:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234330AbhHYH6H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Aug 2021 03:58:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34176 "EHLO
+        id S239464AbhHYJCA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Aug 2021 05:02:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230104AbhHYH6G (ORCPT
+        with ESMTP id S237532AbhHYJBx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Aug 2021 03:58:06 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9B2AC061757
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 00:57:20 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id r19so35589428eds.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 00:57:20 -0700 (PDT)
+        Wed, 25 Aug 2021 05:01:53 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91F2BC0613C1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 02:01:07 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id k5so51404902lfu.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 02:01:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A3eDvUGO7s6rgbcqfVCZxuvxMbSRmJ1Jj8MfBoaTMPU=;
-        b=I0obnZsM9J3DhGn8Ys+njqxlL+bvBvgmQCONvmFRG3akvZreIl/ty1+M2K3Frb8Fb2
-         hSsA5AFpaI9srN6CIlMZizcgQO8A3NxT+xtcTgs9d/8FlFmBT0j8teuNajfiQhV4UrlU
-         DI4rUsLWVef+y7quOM7/ssYW5S0FO4s1op+sfCFZlto6iKWSI6BCPaEtzhirnHYYVo06
-         mikpSeFfIaI0sbYIAkO/PbG1HKRbajG9sRnjQyNlbNYpw7ddU/f5Svq12UMTS5SgkREH
-         pYTyBM0g3UtNqg9Y7/2GqaKcShwxlSMVjWTG9unOAYYzvataVgFp+/PCUmIBVtPe6b1G
-         9T/g==
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=os8aJlJMxgrA15emDY2bCaToS5/IQDjiEq+tnVstXAw=;
+        b=jEIbpHYxVhHrfdNd/nVe3NRg1kTS35Dx6pl5OkFnhiQ4clvqdytIyGhfKExQZeiVDh
+         /5COoSvH3nPClSJBeYp5ANkEqC/p0tgJz0APPKJcUXrPKTKu0FlSKN3RhoSoWjOtsxLd
+         6FVTtvLx519X9nbEQNvpjuRYd1gH+2k8gDOf0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A3eDvUGO7s6rgbcqfVCZxuvxMbSRmJ1Jj8MfBoaTMPU=;
-        b=OsndC4BRsBPxJGzgbfoFyobwf6aXP38IMa+aUaCaYq6/ca6i72OVXhpwaCc/mDBwKT
-         m3tNYRHsjeATTLCvYYojWUmg6ORn82sgcYyrhn1tE/c2cLFx/YuY1mNLSRH2U8Z0aZIK
-         Hw9tVxvDJGNePuo9rViomEFV1VpOZwdICpgwjD6WS7F05Ym0XQkD8TeZlFz9t+QGrAYU
-         NN80L+X9vt7KcCXNA+98ekwMhH8srvKi0bNoxWCPB6FemKtRtf/uBvfQ/Vtbqbo/tOji
-         zzw1sVuz3iwm9tA5jmbnLUmRSIwXBdb8qODEylF3Ak2rcy/QrfsUMw4VYfZ6F6qXIb6N
-         wbaw==
-X-Gm-Message-State: AOAM533iqkgEIHlumcOc9M5we/sdBpA25miO8MCczfhkIHaX/SAn1fxi
-        XNdPSVYMWMHyahWZfSjnKitcB5nogU0vqlD54IgS
-X-Google-Smtp-Source: ABdhPJx++s4yL0aljTFECCTgTqB0y8G0ZDiiFqmfkcPa/z8HtCB9PzVuE2+kCr4soT/hE2Bnuo8u47S4GL5NNC9DCyc=
-X-Received: by 2002:a50:eb95:: with SMTP id y21mr46534633edr.5.1629878239593;
- Wed, 25 Aug 2021 00:57:19 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=os8aJlJMxgrA15emDY2bCaToS5/IQDjiEq+tnVstXAw=;
+        b=p7C3JB4w0iEezox85Fgao+kfmsnaqr0ZnGnlqp8p+QVbrAAFUFB5nzkKzrV3Ejr50c
+         o3THpRb7UpdwMLbmBC1tpJ8a/ziyewYcsRzcpShUVvnkz4lfTDDMBe50uHQra574OAVv
+         UmdnFr4F+RLjWTJ3eETly0jM+3UWBynln7OlZHjWGgCAiVp7mZrZQMai9iTiUtxv4PTr
+         u27294k/oeEiFQeV484wunp3v2v5TEGX1bbtxNLlmGzaJ3I4YwPnFh2zXhqtZlAMBclA
+         PSUDtxPCTqbATvPxRaJ6eROXXKp/RZI46qKtVQgV1XGg2gbgw4+iL0mcL1e7heWd+VKu
+         RIfg==
+X-Gm-Message-State: AOAM530GbJj2h9J9uM4w+p6xVofjQjH9+WOQlHh2StFkb4s6lSOlpqjc
+        ZuOl2sPxma5GhgHNzt1hA7dQyg==
+X-Google-Smtp-Source: ABdhPJw+pYgFjlPmRojIMl29cAfzcGLeR7M55MokkKR8hZmfuCeq7O5tj3jMMsGnGnsJrQpbka43Pg==
+X-Received: by 2002:a05:6512:3b9e:: with SMTP id g30mr703973lfv.651.1629882065538;
+        Wed, 25 Aug 2021 02:01:05 -0700 (PDT)
+Received: from [172.16.11.1] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id k15sm1593540lfv.141.2021.08.25.02.01.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Aug 2021 02:01:05 -0700 (PDT)
+Subject: Re: [GIT PULL] Memory folios for v5.15
+To:     Christoph Hellwig <hch@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <CAHk-=wjD8i2zJVQ9SfF2t=_0Fkgy-i5Z=mQjCw36AHvbBTGXyg@mail.gmail.com>
+ <YSPwmNNuuQhXNToQ@casper.infradead.org> <YSQSkSOWtJCE4g8p@cmpxchg.org>
+ <1957060.1629820467@warthog.procyon.org.uk>
+ <YSUy2WwO9cuokkW0@casper.infradead.org>
+ <CAHk-=wip=366HxkJvTfABuPUxwjGsFK4YYMgXNY9VSkJNp=-XA@mail.gmail.com>
+ <YSVCAJDYShQke6Sy@casper.infradead.org>
+ <CAHk-=wisF580D_g+wFt0B_uijSX+mCgz6tRRT5KADnO7Y97t-g@mail.gmail.com>
+ <YSVHI9iaamxTGmI7@casper.infradead.org> <YSVMMMrzqxyFjHlw@mit.edu>
+ <YSXkDFNkgAhQGB0E@infradead.org>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <92cbfb8f-7418-15d5-c469-d7861e860589@rasmusvillemoes.dk>
+Date:   Wed, 25 Aug 2021 11:01:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-References: <CACycT3t1Dgrzsr7LbBrDhRLDa3qZ85ZOgj9H7r1fqPi-kf7r6Q@mail.gmail.com>
- <20210618084412.18257-1-zhe.he@windriver.com>
-In-Reply-To: <20210618084412.18257-1-zhe.he@windriver.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Wed, 25 Aug 2021 15:57:08 +0800
-Message-ID: <CACycT3sri2-GyaW08JhS2j1V2DRc7-Cv-tm6-T-dD7XVO=S6Vw@mail.gmail.com>
-Subject: Re: [PATCH] eventfd: Enlarge recursion limit to allow vhost to work
-To:     He Zhe <zhe.he@windriver.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        kvm <kvm@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        qiang.zhang@windriver.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <YSXkDFNkgAhQGB0E@infradead.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi guys,
+On 25/08/2021 08.32, Christoph Hellwig wrote:
+> On Tue, Aug 24, 2021 at 03:44:48PM -0400, Theodore Ts'o wrote:
+>> The problem is whether we use struct head_page, or folio, or mempages,
+>> we're going to be subsystem users' faces.  And people who are using it
+>> every day will eventually get used to anything, whether it's "folio"
+>> or "xmoqax", we sould give a thought to newcomers to Linux file system
+>> code.  If they see things like "read_folio()", they are going to be
+>> far more confused than "read_pages()" or "read_mempages()".
+> 
+> Are they?  It's not like page isn't some randomly made up term
+> as well, just one that had a lot more time to spread.
+> 
+>> So if someone sees "kmem_cache_alloc()", they can probably make a
+>> guess what it means, and it's memorable once they learn it.
+>> Similarly, something like "head_page", or "mempages" is going to a bit
+>> more obvious to a kernel newbie.  So if we can make a tiny gesture
+>> towards comprehensibility, it would be good to do so while it's still
+>> easier to change the name.
+> 
+> All this sounds really weird to me.  I doubt there is any name that
+> nicely explains "structure used to manage arbitrary power of two
+> units of memory in the kernel" very well.  So I agree with willy here,
+> let's pick something short and not clumsy.  I initially found the folio
+> name a little strange, but working with it I got used to it quickly.
+> And all the other uggestions I've seen s far are significantly worse,
+> especially all the odd compounds with page in it.
+> 
 
-Is there any comments or update for this patch?
+A comment from the peanut gallery: I find the name folio completely
+appropriate and easy to understand. Our vocabulary is already strongly
+inspired by words used in the world of printed text: the smallest unit
+of information is a char(acter) [ok, we usually call them bytes], a few
+characters make up a word, there's a number of words to each (cache)
+line, and a number of those is what makes up a page. So obviously a
+folio is something consisting of a few pages.
 
-Thanks,
-Yongji
+Are the analogies perfect? Of course not. But they are actually quite
+apt; words, lines and pages don't universally have one size, but they do
+form a natural hierarchy describing how we organize information.
 
-On Fri, Jun 18, 2021 at 4:47 PM He Zhe <zhe.he@windriver.com> wrote:
->
-> commit b5e683d5cab8 ("eventfd: track eventfd_signal() recursion depth")
-> introduces a percpu counter that tracks the percpu recursion depth and
-> warn if it greater than zero, to avoid potential deadlock and stack
-> overflow.
->
-> However sometimes different eventfds may be used in parallel. Specifically,
-> when heavy network load goes through kvm and vhost, working as below, it
-> would trigger the following call trace.
->
-> -  100.00%
->    - 66.51%
->         ret_from_fork
->         kthread
->       - vhost_worker
->          - 33.47% handle_tx_kick
->               handle_tx
->               handle_tx_copy
->               vhost_tx_batch.isra.0
->               vhost_add_used_and_signal_n
->               eventfd_signal
->          - 33.05% handle_rx_net
->               handle_rx
->               vhost_add_used_and_signal_n
->               eventfd_signal
->    - 33.49%
->         ioctl
->         entry_SYSCALL_64_after_hwframe
->         do_syscall_64
->         __x64_sys_ioctl
->         ksys_ioctl
->         do_vfs_ioctl
->         kvm_vcpu_ioctl
->         kvm_arch_vcpu_ioctl_run
->         vmx_handle_exit
->         handle_ept_misconfig
->         kvm_io_bus_write
->         __kvm_io_bus_write
->         eventfd_signal
->
-> 001: WARNING: CPU: 1 PID: 1503 at fs/eventfd.c:73 eventfd_signal+0x85/0xa0
-> ---- snip ----
-> 001: Call Trace:
-> 001:  vhost_signal+0x15e/0x1b0 [vhost]
-> 001:  vhost_add_used_and_signal_n+0x2b/0x40 [vhost]
-> 001:  handle_rx+0xb9/0x900 [vhost_net]
-> 001:  handle_rx_net+0x15/0x20 [vhost_net]
-> 001:  vhost_worker+0xbe/0x120 [vhost]
-> 001:  kthread+0x106/0x140
-> 001:  ? log_used.part.0+0x20/0x20 [vhost]
-> 001:  ? kthread_park+0x90/0x90
-> 001:  ret_from_fork+0x35/0x40
-> 001: ---[ end trace 0000000000000003 ]---
->
-> This patch enlarges the limit to 1 which is the maximum recursion depth we
-> have found so far.
->
-> The credit of modification for eventfd_signal_count goes to
-> Xie Yongji <xieyongji@bytedance.com>
->
-> Signed-off-by: He Zhe <zhe.he@windriver.com>
-> ---
->  fs/eventfd.c            | 3 ++-
->  include/linux/eventfd.h | 5 ++++-
->  2 files changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/eventfd.c b/fs/eventfd.c
-> index e265b6dd4f34..add6af91cacf 100644
-> --- a/fs/eventfd.c
-> +++ b/fs/eventfd.c
-> @@ -71,7 +71,8 @@ __u64 eventfd_signal(struct eventfd_ctx *ctx, __u64 n)
->          * it returns true, the eventfd_signal() call should be deferred to a
->          * safe context.
->          */
-> -       if (WARN_ON_ONCE(this_cpu_read(eventfd_wake_count)))
-> +       if (WARN_ON_ONCE(this_cpu_read(eventfd_wake_count) >
-> +           EFD_WAKE_COUNT_MAX))
->                 return 0;
->
->         spin_lock_irqsave(&ctx->wqh.lock, flags);
-> diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
-> index fa0a524baed0..74be152ebe87 100644
-> --- a/include/linux/eventfd.h
-> +++ b/include/linux/eventfd.h
-> @@ -29,6 +29,9 @@
->  #define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
->  #define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
->
-> +/* This is the maximum recursion depth we find so far */
-> +#define EFD_WAKE_COUNT_MAX 1
-> +
->  struct eventfd_ctx;
->  struct file;
->
-> @@ -47,7 +50,7 @@ DECLARE_PER_CPU(int, eventfd_wake_count);
->
->  static inline bool eventfd_signal_count(void)
->  {
-> -       return this_cpu_read(eventfd_wake_count);
-> +       return this_cpu_read(eventfd_wake_count) > EFD_WAKE_COUNT_MAX;
->  }
->
->  #else /* CONFIG_EVENTFD */
-> --
-> 2.17.1
->
+Splitting a word across lines can slow down the reader so should be
+avoided... [sorry, couldn't resist].
+
+Rasmus
