@@ -2,116 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE7203F7C67
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Aug 2021 20:47:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A204E3F7CCC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Aug 2021 21:41:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240355AbhHYSsB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Aug 2021 14:48:01 -0400
-Received: from mga14.intel.com ([192.55.52.115]:30027 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241704AbhHYSsA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Aug 2021 14:48:00 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10087"; a="217310518"
-X-IronPort-AV: E=Sophos;i="5.84,351,1620716400"; 
-   d="scan'208";a="217310518"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2021 11:47:14 -0700
-X-IronPort-AV: E=Sophos;i="5.84,351,1620716400"; 
-   d="scan'208";a="444286725"
-Received: from cschaef-mobl1.amr.corp.intel.com (HELO [10.212.141.45]) ([10.212.141.45])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2021 11:47:13 -0700
-Subject: Re: [PATCH v2] x86/mm: fix kern_addr_valid to cope with existing but
- not present entries
-To:     Mike Rapoport <rppt@kernel.org>, x86@kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-References: <20210819132717.19358-1-rppt@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <35f4a263-1001-5ba5-7b6c-3fcc5f93cc30@intel.com>
-Date:   Wed, 25 Aug 2021 11:47:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S234627AbhHYTmY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Aug 2021 15:42:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57434 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235248AbhHYTmX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 25 Aug 2021 15:42:23 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5CECC06179A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 12:41:36 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id u14so706933ejf.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 12:41:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QBVskMaUIVDs4HS+hyH9+QzivYsdZb5+81X6Kp6nbqA=;
+        b=wpsfR5q5tePN80NgpQqbp421hM8TDiCvCTTwB1JkcEmAvAtp6ZrK1p2rQe2/Yu79HH
+         0S+ppvqMdpB16ip556YNxs39E4gt3FPJPdzJ94g1Fl76f55k5RTGOwgZ0XR5aSgYpUCz
+         PPLFKNbOM2yJU7S1M6rBJnVDKPFg6YDnQvl8fC4eYYIjPnKwcpgeGdVAmPrL2b+yD1FU
+         gzNnKCPreHAyI7Q0PIGKGZ2O3Iit9mu8uyShULHJS1XXrBvd4wClZV6UCOP84vEKHP8i
+         BGzWieL8PoLFLRk/LfL6NDusPTM0MD7PEwfgb5goTc51LYpYwr+rxbJ8dNTaJUpGSLiR
+         iNIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QBVskMaUIVDs4HS+hyH9+QzivYsdZb5+81X6Kp6nbqA=;
+        b=m1UfBhzeVmy2HQ342vaCNGJbxcrvDBhRL1CBwr5MA0kS7zVErxxqak/oZ0fKsHOFKn
+         j7+yw/l01dPJ6wtOQKrPcgt5XTwp0hiy9AFbYdvEjNWYgl71PsNKRJSgCpUHvH0Z99j3
+         8Wm86XIgdRKWSyPPmeADEpV3Gck2aPEdt+Hm0008nbVa+wDnIN+IJiZqvVreb6iJEB7i
+         pr8r2urTS6cCkO4+H0bpmZMf+JepmlrR09k+8uIVvozm3fBAEqfaPAJrdsBzK1NLQA98
+         Gj4qLOxaJmhIqJHUtJiZCWQqoiHoS5aOppQnjD3Fr6eMIZJTw043z9Hq4ypE+W0e/N9k
+         JsWQ==
+X-Gm-Message-State: AOAM533Bk0d5lMjW0DXi3lFcBXlzFLLt39vIV2o7B+Aa/K3CfgdtJwuw
+        Xi+Hdhi0b7g65AvNCXANI4p3RJqYrq2rNFniyWBK
+X-Google-Smtp-Source: ABdhPJyvFsCKbYMAS8hVKgJcJEfi6swZHjePix9TNIzxa6quNsOL1W81ezTdFJUOAIEacZVvSAaXx84O2BGDkg2VI8c=
+X-Received: by 2002:a17:906:f8c4:: with SMTP id lh4mr295852ejb.542.1629920495168;
+ Wed, 25 Aug 2021 12:41:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210819132717.19358-1-rppt@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl> <20210602172924.GM447005@madcap2.tricolour.ca>
+ <CAHC9VhS0sy_Y8yx4uiZeJhAf_a94ipt1EbE16BOVv6tXtWkgMg@mail.gmail.com> <20210825012102.GC490529@madcap2.tricolour.ca>
+In-Reply-To: <20210825012102.GC490529@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 25 Aug 2021 15:41:24 -0400
+Message-ID: <CAHC9VhQtHDt_F_ah3EDRMYeMXkSB5dHDgcdXGEMF_tXV5idbpg@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/9] audit, io_uring, io-wq: add some basic audit
+ support to io_uring
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/19/21 6:27 AM, Mike Rapoport wrote:
-> Such PMDs are created when free_kernel_image_pages() frees regions larger
-> than 2Mb. In this case a part of the freed memory is mapped with PMDs and
-> the set_memory_np_noalias() -> ... -> __change_page_attr() sequence will
-> mark the PMD as not present rather than wipe it completely.
-> 
-> Make kern_addr_valid() to check whether higher level page table entries are
-> present before trying to dereference them to fix this issue and to avoid
-> similar issues in the future.
-> 
-> Reported-by: Jiri Olsa <jolsa@redhat.com>
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> Cc: <stable@vger.kernel.org>	# 4.4...
->  	pmd = pmd_offset(pud, addr);
-> -	if (pmd_none(*pmd))
-> +	if (!pmd_present(*pmd))
->  		return 0;
+On Tue, Aug 24, 2021 at 9:21 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+>
+> On 2021-06-02 13:46, Paul Moore wrote:
+> > On Wed, Jun 2, 2021 at 1:29 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > On 2021-05-21 17:49, Paul Moore wrote:
+> > > > WARNING - This is a work in progress and should not be merged
+> > > > anywhere important.  It is almost surely not complete, and while it
+> > > > probably compiles it likely hasn't been booted and will do terrible
+> > > > things.  You have been warned.
+> > > >
+> > > > This patch adds basic auditing to io_uring operations, regardless of
+> > > > their context.  This is accomplished by allocating audit_context
+> > > > structures for the io-wq worker and io_uring SQPOLL kernel threads
+> > > > as well as explicitly auditing the io_uring operations in
+> > > > io_issue_sqe().  The io_uring operations are audited using a new
+> > > > AUDIT_URINGOP record, an example is shown below:
+> > > >
+> > > >   % <TODO - insert AUDIT_URINGOP record example>
+> > > >
+> > > > Thanks to Richard Guy Briggs for review and feedback.
+> > > >
+> > > > Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > > > ---
+> > > >  fs/io-wq.c                 |    4 +
+> > > >  fs/io_uring.c              |   11 +++
+> > > >  include/linux/audit.h      |   17 ++++
+> > > >  include/uapi/linux/audit.h |    1
+> > > >  kernel/audit.h             |    2 +
+> > > >  kernel/auditsc.c           |  173 ++++++++++++++++++++++++++++++++++++++++++++
+> > > >  6 files changed, 208 insertions(+)
 
-Yeah, that seems like the right fix.  The one kern_addr_valid() user is
-going to touch the memory so it *better* be present.  p*d_none() was
-definitely the wrong check.
+...
 
-Acked-by: Dave Hansen <dave.hansen@intel.com>
+> > > > +     if (ctx->return_valid != AUDITSC_INVALID)
+> > > > +             audit_log_format(ab, " success=%s exit=%ld",
+> > > > +                              (ctx->return_valid == AUDITSC_SUCCESS ?
+> > > > +                               "yes" : "no"),
+> > > > +                              ctx->return_code);
+> > > > +     audit_log_format(ab,
+> > > > +                      " items=%d"
+> > > > +                      " ppid=%d pid=%d auid=%u uid=%u gid=%u"
+> > > > +                      " euid=%u suid=%u fsuid=%u"
+> > > > +                      " egid=%u sgid=%u fsgid=%u",
+> > > > +                      ctx->name_count,
+> > > > +                      task_ppid_nr(current),
+> > > > +                      task_tgid_nr(current),
+> > > > +                      from_kuid(&init_user_ns, audit_get_loginuid(current)),
+> > > > +                      from_kuid(&init_user_ns, cred->uid),
+> > > > +                      from_kgid(&init_user_ns, cred->gid),
+> > > > +                      from_kuid(&init_user_ns, cred->euid),
+> > > > +                      from_kuid(&init_user_ns, cred->suid),
+> > > > +                      from_kuid(&init_user_ns, cred->fsuid),
+> > > > +                      from_kgid(&init_user_ns, cred->egid),
+> > > > +                      from_kgid(&init_user_ns, cred->sgid),
+> > > > +                      from_kgid(&init_user_ns, cred->fsgid));
+> > >
+> > > The audit session ID is still important, relevant and qualifies auid.
+> > > In keeping with the SYSCALL record format, I think we want to keep
+> > > ses=audit_get_sessionid(current) in here.
+> >
+> > This might be another case of syscall/io_uring confusion.  An io_uring
+> > op doesn't necessarily have an audit session ID or an audit UID in the
+> > conventional sense; for example think about SQPOLL works, shared
+> > rings, etc.
+>
+> Right, but those syscalls are what instigate io_uring operations, so
+> whatever process starts that operation, or gets handed that handle
+> should be tracked with auid and sessionid (the two work together to
+> track) unless we can easily track io_uring ops to connect them to a
+> previous setup syscall.  If we see a need to keep the auid, then the
+> sessionid goes with it.
+
+As a reminder, once the io_uring is created appropriately one can
+issue io_uring operations without making a syscall.  Further, sharing
+a io_uring across process boundaries means that both the audit session
+ID and audit login UID used to create the io_uring might not be the
+same as the subject which issues operations to the io_uring.
+
+Any io_uring operations that happen synchronously as the result of a
+syscall should be associated with the SYSCALL record so the session ID
+and login UID will be part of the event.  Asynchronous operations will
+not have that information because we don't have a way to get it.
+
+-- 
+paul moore
+www.paul-moore.com
