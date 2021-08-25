@@ -2,104 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 842CF3F6FE1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Aug 2021 08:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EC4B3F70C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Aug 2021 09:57:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238536AbhHYGyh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Aug 2021 02:54:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47908 "EHLO
+        id S234330AbhHYH6H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Aug 2021 03:58:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232273AbhHYGyg (ORCPT
+        with ESMTP id S230104AbhHYH6G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Aug 2021 02:54:36 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A676C061757;
-        Tue, 24 Aug 2021 23:53:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=1enB9YVobt+Zl/ChJzBQuQLDnWStDIIhYMzFIU7dnz8=; b=lYAvNUIrtrZKwUtVm2gWzmP2Hb
-        maeX4PocszdSQERsixb6AkIB5feBGzryi8fi+qtMosZ7/X9Pv/qhDzn0Wr9O+8hRIElDADJMkRNoQ
-        8WLXNesonRkJbLWCywkVtAEKM4ccuNzcov3dVtAsA9JCrtEZHylK/1l3RuFvVp5Pgjugo2ECCvo08
-        dtcl41Zwzg9fDTfcT5x7PR0+2yEOFWS8eltqe8af6Tt//Im7Pk2LvI3gxsNK9rLhOgprLWYASDExJ
-        1tbpEamlQAdlCT5GvsUNBrSGnyrNO4nu49F7qQwXj7mOAT/2OmZE9ch5IrQihR3zYGemcH5XkYtpj
-        z7c7bW0A==;
-Received: from [2001:4bb8:193:fd10:ce54:74a1:df3f:e6a9] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mImmH-00Bzib-Tv; Wed, 25 Aug 2021 06:52:59 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Joel Becker <jlbec@evilplan.org>
-Cc:     Sishuai Gong <sishuai@purdue.edu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/4] configfs: fix a race in configfs_lookup()
-Date:   Wed, 25 Aug 2021 08:49:06 +0200
-Message-Id: <20210825064906.1694233-5-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210825064906.1694233-1-hch@lst.de>
-References: <20210825064906.1694233-1-hch@lst.de>
+        Wed, 25 Aug 2021 03:58:06 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9B2AC061757
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 00:57:20 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id r19so35589428eds.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 00:57:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=A3eDvUGO7s6rgbcqfVCZxuvxMbSRmJ1Jj8MfBoaTMPU=;
+        b=I0obnZsM9J3DhGn8Ys+njqxlL+bvBvgmQCONvmFRG3akvZreIl/ty1+M2K3Frb8Fb2
+         hSsA5AFpaI9srN6CIlMZizcgQO8A3NxT+xtcTgs9d/8FlFmBT0j8teuNajfiQhV4UrlU
+         DI4rUsLWVef+y7quOM7/ssYW5S0FO4s1op+sfCFZlto6iKWSI6BCPaEtzhirnHYYVo06
+         mikpSeFfIaI0sbYIAkO/PbG1HKRbajG9sRnjQyNlbNYpw7ddU/f5Svq12UMTS5SgkREH
+         pYTyBM0g3UtNqg9Y7/2GqaKcShwxlSMVjWTG9unOAYYzvataVgFp+/PCUmIBVtPe6b1G
+         9T/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A3eDvUGO7s6rgbcqfVCZxuvxMbSRmJ1Jj8MfBoaTMPU=;
+        b=OsndC4BRsBPxJGzgbfoFyobwf6aXP38IMa+aUaCaYq6/ca6i72OVXhpwaCc/mDBwKT
+         m3tNYRHsjeATTLCvYYojWUmg6ORn82sgcYyrhn1tE/c2cLFx/YuY1mNLSRH2U8Z0aZIK
+         Hw9tVxvDJGNePuo9rViomEFV1VpOZwdICpgwjD6WS7F05Ym0XQkD8TeZlFz9t+QGrAYU
+         NN80L+X9vt7KcCXNA+98ekwMhH8srvKi0bNoxWCPB6FemKtRtf/uBvfQ/Vtbqbo/tOji
+         zzw1sVuz3iwm9tA5jmbnLUmRSIwXBdb8qODEylF3Ak2rcy/QrfsUMw4VYfZ6F6qXIb6N
+         wbaw==
+X-Gm-Message-State: AOAM533iqkgEIHlumcOc9M5we/sdBpA25miO8MCczfhkIHaX/SAn1fxi
+        XNdPSVYMWMHyahWZfSjnKitcB5nogU0vqlD54IgS
+X-Google-Smtp-Source: ABdhPJx++s4yL0aljTFECCTgTqB0y8G0ZDiiFqmfkcPa/z8HtCB9PzVuE2+kCr4soT/hE2Bnuo8u47S4GL5NNC9DCyc=
+X-Received: by 2002:a50:eb95:: with SMTP id y21mr46534633edr.5.1629878239593;
+ Wed, 25 Aug 2021 00:57:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+References: <CACycT3t1Dgrzsr7LbBrDhRLDa3qZ85ZOgj9H7r1fqPi-kf7r6Q@mail.gmail.com>
+ <20210618084412.18257-1-zhe.he@windriver.com>
+In-Reply-To: <20210618084412.18257-1-zhe.he@windriver.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Wed, 25 Aug 2021 15:57:08 +0800
+Message-ID: <CACycT3sri2-GyaW08JhS2j1V2DRc7-Cv-tm6-T-dD7XVO=S6Vw@mail.gmail.com>
+Subject: Re: [PATCH] eventfd: Enlarge recursion limit to allow vhost to work
+To:     He Zhe <zhe.he@windriver.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Parav Pandit <parav@nvidia.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christian Brauner <christian.brauner@canonical.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>, songmuchun@bytedance.com,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        kvm <kvm@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        qiang.zhang@windriver.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Sishuai Gong <sishuai@purdue.edu>
+Hi guys,
 
-When configfs_lookup() is executing list_for_each_entry(),
-it is possible that configfs_dir_lseek() is calling list_del().
-Some unfortunate interleavings of them can cause a kernel NULL
-pointer dereference error
+Is there any comments or update for this patch?
 
-Thread 1                  Thread 2
-//configfs_dir_lseek()    //configfs_lookup()
-list_del(&cursor->s_sibling);
-                         list_for_each_entry(sd, ...)
+Thanks,
+Yongji
 
-Fix this by grabbing configfs_dirent_lock in configfs_lookup()
-while iterating ->s_children.
-
-Signed-off-by: Sishuai Gong <sishuai@purdue.edu>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/configfs/dir.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
-index fc20bd8a6337..1466b5d01cbb 100644
---- a/fs/configfs/dir.c
-+++ b/fs/configfs/dir.c
-@@ -439,13 +439,13 @@ static struct dentry * configfs_lookup(struct inode *dir,
- 	if (!configfs_dirent_is_ready(parent_sd))
- 		return ERR_PTR(-ENOENT);
- 
-+	spin_lock(&configfs_dirent_lock);
- 	list_for_each_entry(sd, &parent_sd->s_children, s_sibling) {
- 		if ((sd->s_type & CONFIGFS_NOT_PINNED) &&
- 		    !strcmp(configfs_get_name(sd), dentry->d_name.name)) {
- 			struct configfs_attribute *attr = sd->s_element;
- 			umode_t mode = (attr->ca_mode & S_IALLUGO) | S_IFREG;
- 
--			spin_lock(&configfs_dirent_lock);
- 			dentry->d_fsdata = configfs_get(sd);
- 			sd->s_dentry = dentry;
- 			spin_unlock(&configfs_dirent_lock);
-@@ -462,10 +462,11 @@ static struct dentry * configfs_lookup(struct inode *dir,
- 				inode->i_size = PAGE_SIZE;
- 				inode->i_fop = &configfs_file_operations;
- 			}
--			break;
-+			goto done;
- 		}
- 	}
--
-+	spin_unlock(&configfs_dirent_lock);
-+done:
- 	d_add(dentry, inode);
- 	return NULL;
- }
--- 
-2.30.2
-
+On Fri, Jun 18, 2021 at 4:47 PM He Zhe <zhe.he@windriver.com> wrote:
+>
+> commit b5e683d5cab8 ("eventfd: track eventfd_signal() recursion depth")
+> introduces a percpu counter that tracks the percpu recursion depth and
+> warn if it greater than zero, to avoid potential deadlock and stack
+> overflow.
+>
+> However sometimes different eventfds may be used in parallel. Specifically,
+> when heavy network load goes through kvm and vhost, working as below, it
+> would trigger the following call trace.
+>
+> -  100.00%
+>    - 66.51%
+>         ret_from_fork
+>         kthread
+>       - vhost_worker
+>          - 33.47% handle_tx_kick
+>               handle_tx
+>               handle_tx_copy
+>               vhost_tx_batch.isra.0
+>               vhost_add_used_and_signal_n
+>               eventfd_signal
+>          - 33.05% handle_rx_net
+>               handle_rx
+>               vhost_add_used_and_signal_n
+>               eventfd_signal
+>    - 33.49%
+>         ioctl
+>         entry_SYSCALL_64_after_hwframe
+>         do_syscall_64
+>         __x64_sys_ioctl
+>         ksys_ioctl
+>         do_vfs_ioctl
+>         kvm_vcpu_ioctl
+>         kvm_arch_vcpu_ioctl_run
+>         vmx_handle_exit
+>         handle_ept_misconfig
+>         kvm_io_bus_write
+>         __kvm_io_bus_write
+>         eventfd_signal
+>
+> 001: WARNING: CPU: 1 PID: 1503 at fs/eventfd.c:73 eventfd_signal+0x85/0xa0
+> ---- snip ----
+> 001: Call Trace:
+> 001:  vhost_signal+0x15e/0x1b0 [vhost]
+> 001:  vhost_add_used_and_signal_n+0x2b/0x40 [vhost]
+> 001:  handle_rx+0xb9/0x900 [vhost_net]
+> 001:  handle_rx_net+0x15/0x20 [vhost_net]
+> 001:  vhost_worker+0xbe/0x120 [vhost]
+> 001:  kthread+0x106/0x140
+> 001:  ? log_used.part.0+0x20/0x20 [vhost]
+> 001:  ? kthread_park+0x90/0x90
+> 001:  ret_from_fork+0x35/0x40
+> 001: ---[ end trace 0000000000000003 ]---
+>
+> This patch enlarges the limit to 1 which is the maximum recursion depth we
+> have found so far.
+>
+> The credit of modification for eventfd_signal_count goes to
+> Xie Yongji <xieyongji@bytedance.com>
+>
+> Signed-off-by: He Zhe <zhe.he@windriver.com>
+> ---
+>  fs/eventfd.c            | 3 ++-
+>  include/linux/eventfd.h | 5 ++++-
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/eventfd.c b/fs/eventfd.c
+> index e265b6dd4f34..add6af91cacf 100644
+> --- a/fs/eventfd.c
+> +++ b/fs/eventfd.c
+> @@ -71,7 +71,8 @@ __u64 eventfd_signal(struct eventfd_ctx *ctx, __u64 n)
+>          * it returns true, the eventfd_signal() call should be deferred to a
+>          * safe context.
+>          */
+> -       if (WARN_ON_ONCE(this_cpu_read(eventfd_wake_count)))
+> +       if (WARN_ON_ONCE(this_cpu_read(eventfd_wake_count) >
+> +           EFD_WAKE_COUNT_MAX))
+>                 return 0;
+>
+>         spin_lock_irqsave(&ctx->wqh.lock, flags);
+> diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
+> index fa0a524baed0..74be152ebe87 100644
+> --- a/include/linux/eventfd.h
+> +++ b/include/linux/eventfd.h
+> @@ -29,6 +29,9 @@
+>  #define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
+>  #define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
+>
+> +/* This is the maximum recursion depth we find so far */
+> +#define EFD_WAKE_COUNT_MAX 1
+> +
+>  struct eventfd_ctx;
+>  struct file;
+>
+> @@ -47,7 +50,7 @@ DECLARE_PER_CPU(int, eventfd_wake_count);
+>
+>  static inline bool eventfd_signal_count(void)
+>  {
+> -       return this_cpu_read(eventfd_wake_count);
+> +       return this_cpu_read(eventfd_wake_count) > EFD_WAKE_COUNT_MAX;
+>  }
+>
+>  #else /* CONFIG_EVENTFD */
+> --
+> 2.17.1
+>
