@@ -2,100 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 868EB3F7363
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Aug 2021 12:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F29E3F74BB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Aug 2021 14:03:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238400AbhHYKgR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Aug 2021 06:36:17 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3690 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234177AbhHYKgQ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Aug 2021 06:36:16 -0400
-Received: from fraeml739-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Gvj5P2sxjz67N2l;
-        Wed, 25 Aug 2021 18:34:17 +0800 (CST)
-Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
- fraeml739-chm.china.huawei.com (10.206.15.220) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.8; Wed, 25 Aug 2021 12:35:28 +0200
-Received: from [10.47.26.214] (10.47.26.214) by lhreml724-chm.china.huawei.com
- (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.8; Wed, 25 Aug
- 2021 11:35:27 +0100
-From:   John Garry <john.garry@huawei.com>
-Subject: Re: [PATCH v11 01/12] iova: Export alloc_iova_fast() and
- free_iova_fast()
-To:     Will Deacon <will@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-CC:     <kvm@vger.kernel.org>, <jasowang@redhat.com>,
-        <virtualization@lists.linux-foundation.org>,
-        <christian.brauner@canonical.com>, <corbet@lwn.net>,
-        <willy@infradead.org>, <hch@infradead.org>,
-        Xie Yongji <xieyongji@bytedance.com>,
-        <dan.carpenter@oracle.com>, <sgarzare@redhat.com>,
-        <xiaodong.liu@intel.com>, <linux-fsdevel@vger.kernel.org>,
-        <viro@zeniv.linux.org.uk>, <stefanha@redhat.com>,
-        <songmuchun@bytedance.com>, <axboe@kernel.dk>,
-        <zhe.he@windriver.com>, <gregkh@linuxfoundation.org>,
-        <rdunlap@infradead.org>, <linux-kernel@vger.kernel.org>,
-        <iommu@lists.linux-foundation.org>, <bcrl@kvack.org>,
-        <netdev@vger.kernel.org>, <joe@perches.com>,
-        <robin.murphy@arm.com>, <mika.penttila@nextfour.com>
-References: <20210818120642.165-1-xieyongji@bytedance.com>
- <20210818120642.165-2-xieyongji@bytedance.com>
- <20210824140758-mutt-send-email-mst@kernel.org>
- <20210825095540.GA24546@willie-the-truck>
-Message-ID: <5f4eadda-5500-9bac-4368-48cfca6d0a4d@huawei.com>
-Date:   Wed, 25 Aug 2021 11:39:22 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+        id S240252AbhHYMEG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Aug 2021 08:04:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232681AbhHYMEF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 25 Aug 2021 08:04:05 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6A6516112D;
+        Wed, 25 Aug 2021 12:03:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629893000;
+        bh=zBJ8+9ku38bfHUh58Fx3TVL+5MVfv6XNhkYjTSMb0cA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=NLzUGNiYNcL+ekext3l75EV5XpugcrM+fZxM7I8FLeilj3c4UswndH7llwCf+uMJ+
+         nBIfkMPb97vJrw4aeQFCOUGJx7JyRIGZ9VF+dwAkBYEC1emwoBTwhwKgAwE9P7CWpS
+         0Rq0pSoLhTHS9WgB6b+kgpd6X3u8PcgDqlnfwZgcgAjVl2Nw+B+5MDRNY4D15xLnlh
+         zcbqm1eRlzTrtXip2Fbp0v5dpgd6yEaRO3z3xiRANCqA5GyEHw2RHjJkqtL2ZISNAR
+         Vykknz1PP13CKjOseJinTl0V02kzRwJ362IqsXdfCO/GLq2xvbXQvFEXLl6GCKaeIz
+         hRIh8fdFefCAw==
+Message-ID: <cf30c0e8d1eecf08b2651c5984ff09539e2266f9.camel@kernel.org>
+Subject: Re: [GIT PULL] Memory folios for v5.15
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Wed, 25 Aug 2021 08:03:18 -0400
+In-Reply-To: <YSXkDFNkgAhQGB0E@infradead.org>
+References: <CAHk-=wjD8i2zJVQ9SfF2t=_0Fkgy-i5Z=mQjCw36AHvbBTGXyg@mail.gmail.com>
+         <YSPwmNNuuQhXNToQ@casper.infradead.org> <YSQSkSOWtJCE4g8p@cmpxchg.org>
+         <1957060.1629820467@warthog.procyon.org.uk>
+         <YSUy2WwO9cuokkW0@casper.infradead.org>
+         <CAHk-=wip=366HxkJvTfABuPUxwjGsFK4YYMgXNY9VSkJNp=-XA@mail.gmail.com>
+         <YSVCAJDYShQke6Sy@casper.infradead.org>
+         <CAHk-=wisF580D_g+wFt0B_uijSX+mCgz6tRRT5KADnO7Y97t-g@mail.gmail.com>
+         <YSVHI9iaamxTGmI7@casper.infradead.org> <YSVMMMrzqxyFjHlw@mit.edu>
+         <YSXkDFNkgAhQGB0E@infradead.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
 MIME-Version: 1.0
-In-Reply-To: <20210825095540.GA24546@willie-the-truck>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.47.26.214]
-X-ClientProxiedBy: lhreml721-chm.china.huawei.com (10.201.108.72) To
- lhreml724-chm.china.huawei.com (10.201.108.75)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 25/08/2021 10:55, Will Deacon wrote:
-> On Tue, Aug 24, 2021 at 02:08:33PM -0400, Michael S. Tsirkin wrote:
->> On Wed, Aug 18, 2021 at 08:06:31PM +0800, Xie Yongji wrote:
->>> Export alloc_iova_fast() and free_iova_fast() so that
->>> some modules can make use of the per-CPU cache to get
->>> rid of rbtree spinlock in alloc_iova() and free_iova()
->>> during IOVA allocation.
->>>
->>> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
->>
->>
->> This needs ack from iommu maintainers. Guys?
+On Wed, 2021-08-25 at 07:32 +0100, Christoph Hellwig wrote:
+> On Tue, Aug 24, 2021 at 03:44:48PM -0400, Theodore Ts'o wrote:
+> > The problem is whether we use struct head_page, or folio, or mempages,
+> > we're going to be subsystem users' faces.  And people who are using it
+> > every day will eventually get used to anything, whether it's "folio"
+> > or "xmoqax", we sould give a thought to newcomers to Linux file system
+> > code.  If they see things like "read_folio()", they are going to be
+> > far more confused than "read_pages()" or "read_mempages()".
 > 
-> Looks fine to me:
-> 
-> Acked-by: Will Deacon <will@kernel.org>
-> 
-> Will
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
-> .
+> Are they?  It's not like page isn't some randomly made up term
+> as well, just one that had a lot more time to spread.
 > 
 
-JFYI, There was a preliminary discussion to move the iova rcache code 
-(which the iova fast alloc and free functions are based on) out of the 
-iova code and maybe into dma-iommu (being the only user). There was 
-other motivation.
+Absolutely.  "folio" is no worse than "page", we've just had more time
+to get used to "page".
 
-https://lore.kernel.org/linux-iommu/83de3911-145d-77c8-17c1-981e4ff825d3@arm.com/
+> > So if someone sees "kmem_cache_alloc()", they can probably make a
+> > guess what it means, and it's memorable once they learn it.
+> > Similarly, something like "head_page", or "mempages" is going to a bit
+> > more obvious to a kernel newbie.  So if we can make a tiny gesture
+> > towards comprehensibility, it would be good to do so while it's still
+> > easier to change the name.
+> 
+> All this sounds really weird to me.  I doubt there is any name that
+> nicely explains "structure used to manage arbitrary power of two
+> units of memory in the kernel" very well.  So I agree with willy here,
+> let's pick something short and not clumsy.  I initially found the folio
+> name a little strange, but working with it I got used to it quickly.
+> And all the other uggestions I've seen s far are significantly worse,
+> especially all the odd compounds with page in it.
 
-Having more users complicates that...
+Same here. Compound words are especially bad, as newbies will
+continually have to look at whether it's "page_set" or "pageset".
 
-Thanks,
-John
+-- 
+Jeff Layton <jlayton@kernel.org>
+
