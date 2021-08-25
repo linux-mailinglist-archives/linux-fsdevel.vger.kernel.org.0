@@ -2,200 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB7043F6E1C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Aug 2021 06:09:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F42C3F6EA2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Aug 2021 06:59:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229828AbhHYEKa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Aug 2021 00:10:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40836 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229379AbhHYEK3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Aug 2021 00:10:29 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4EF976128A;
-        Wed, 25 Aug 2021 04:09:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629864584;
-        bh=q4CZczZ6yHtjNAN4pZWATkm+2V/iisboWueuQzZu/lg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WCu7njjXw6mJCEYmrE1MxjEtX/TXJBIe6OC1Ud9uT+P0VzjxsK0mPusvZ2B4dpCpd
-         QW8UzxsXDz2cTJoJbG1b357gvcFC+z5L6qdhR1ORAXn93GPRIJ87oAeOl4lxO4YDRy
-         GMDpfxLqGtDbAOLoLxMayhgOPK4FgH+0rcSFE+Slmb9hfiGLVcMoJ00C7r6Z4O94QE
-         iXoZw/URRBgg/iR8g8Onzb1ef6m186SBLYdqEX8dQfhR4DyepCaLE7t5n1mwFuo1aq
-         9JmnjoEmuMPa0vrSbEzjwNMm65VczJ0MVxJHID73KKUV+8LPjGZE5Evn2TjSuRV58p
-         MQ9oouMWhmlQA==
-Date:   Tue, 24 Aug 2021 21:09:43 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     Jan Kara <jack@suse.cz>, amir73il@gmail.com, jack@suse.com,
-        linux-api@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, khazhy@google.com,
-        dhowells@redhat.com, david@fromorbit.com, tytso@mit.edu,
-        repnop@google.com, kernel@collabora.com
-Subject: Re: [PATCH v6 18/21] fanotify: Emit generic error info type for
- error event
-Message-ID: <20210825040943.GC12586@magnolia>
-References: <20210812214010.3197279-1-krisman@collabora.com>
- <20210812214010.3197279-19-krisman@collabora.com>
- <20210816214103.GA12664@magnolia>
- <20210817090538.GA26181@quack2.suse.cz>
- <871r6i2397.fsf@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871r6i2397.fsf@collabora.com>
+        id S231536AbhHYE7o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Aug 2021 00:59:44 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:62743 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231375AbhHYE7n (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 25 Aug 2021 00:59:43 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20210825045856epoutp02df49e2345bf7f0929b128d209c1cef77~ec_OYqh3d0816708167epoutp02B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 04:58:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20210825045856epoutp02df49e2345bf7f0929b128d209c1cef77~ec_OYqh3d0816708167epoutp02B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1629867536;
+        bh=PwE5uHqawGK9+a5e4GZ7xRkvV0L8t++bGlmByelV01k=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=Anc1Kc3WrLERZaXldjLWLQqFFIi4mZ0RUmbGaOdhey/WxrdOI7Zpn23pivbnoL+Rq
+         N14CeVs3cWnGqoMMN9PqXcB5OAxgx25EiQKc/MIQ9Ot0lOzKl4opctVgKyfAlKodYJ
+         B4aOWZdnuiBYyaflfvqZXaL7J1f8FSkr/WAdgCpQ=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20210825045855epcas1p1ed1771f3f0883f20e011d50fbef613ae~ec_N08ato0955609556epcas1p16;
+        Wed, 25 Aug 2021 04:58:55 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.38.241]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4GvYfQ6Cndz4x9Pt; Wed, 25 Aug
+        2021 04:58:54 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0C.4D.09827.E0EC5216; Wed, 25 Aug 2021 13:58:54 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20210825045853epcas1p39e688eb91dcdd8913d274e499726af3b~ec_L_WYLR0829408294epcas1p3a;
+        Wed, 25 Aug 2021 04:58:53 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20210825045853epsmtrp1e299e65f9894a9484ff7c97fb9ae96f9~ec_L9q3lD2443424434epsmtrp1o;
+        Wed, 25 Aug 2021 04:58:53 +0000 (GMT)
+X-AuditID: b6c32a36-c7bff70000002663-da-6125ce0ea486
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C6.EA.08750.D0EC5216; Wed, 25 Aug 2021 13:58:53 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.89.31.111]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20210825045853epsmtip24fe65c3623d7b3f34e278ef2090b3d30~ec_Ly6HXB2473024730epsmtip2k;
+        Wed, 25 Aug 2021 04:58:53 +0000 (GMT)
+From:   Namjae Jeon <namjae.jeon@samsung.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Namjae Jeon <namjae.jeon@samsung.com>
+Subject: [PATCH] MAINTAINERS: exfat: update my email address
+Date:   Wed, 25 Aug 2021 13:48:33 +0900
+Message-Id: <20210825044833.16806-1-namjae.jeon@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMKsWRmVeSWpSXmKPExsWy7bCmgS7fOdVEg4PdBhZz1q9hs9iz9ySL
+        xeVdc9gsfkyvd2DxODHjN4tH35ZVjB6fN8kFMEdl22SkJqakFimk5iXnp2TmpdsqeQfHO8eb
+        mhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYALVNSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2Cql
+        FqTkFJgV6BUn5haX5qXr5aWWWBkaGBiZAhUmZGfceXyRsWAKa8WHb1ENjItYuhg5OSQETCSO
+        T93A2MXIxSEksINRYn3bE3YI5xOjxIZLE5kgnM+MErfm9TDDtPzu2MIGkdjFKHHlzgFWuJb7
+        i/8BZTg42AS0Jf5sEQVpEBGQlZj69zzYPmaBDInHvV9YQWxhARuJma+fMYLYLAKqEhs/HmYD
+        sXmB4n2bv7FBLJOXWL3hADPIfAmBdnaJL1PuQR3uIrH1yByoImGJV8e3sEPYUhIv+9ug7HKJ
+        Eyd/MUHYNRIb5u1jB7lNQsBYoudFCYjJLKApsX6XPkSFosTO33MZIc7kk3j3tYcVoppXoqNN
+        CKJEVaLv0mGogdISXe0foBZ5SHR9WgD2lZBArMTJNa1sExhlZyEsWMDIuIpRLLWgODc9tdiw
+        wAgeRcn5uZsYwalHy2wH46S3H/QOMTJxMB5ilOBgVhLh/cuknCjEm5JYWZValB9fVJqTWnyI
+        0RQYXBOZpUST84HJL68k3tDE0sDEzMjEwtjS2ExJnJfxlUyikEB6YklqdmpqQWoRTB8TB6dU
+        A1Nkwp9z0bOrXj336JqSYXfn5eStNo1GM84vTnV+OWf65gd+C1hZfHcWfH2S71jfm39OoWKC
+        QXfJC5WCB5/r1vey686f90jxx9lll7/MKpuUb82UJRjesVPuQ/IDkdO7N8zRn3Un3mB5Qr9c
+        w4mJadwh005URZ6YHiU052yAWN3GWSapH6dWX/7P+cNLdX/m8RenIlNT2oJTMpI1PxTyxFZF
+        T/mbuOlGnlTRadFJsdua2S4HHD5tedB587Ezu48oKyxq85r5jsFu7qdv722Vl7tz9V4RfHPX
+        ZqLD2zMyrXuMBe9Nz7v+bdvRDTMC5QOe3RV5OcPzXk+zttmGH9Xxz0TLrv/aGaM/dYPgscIs
+        +ZJ8JZbijERDLeai4kQAqPjYdcYDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIJMWRmVeSWpSXmKPExsWy7bCSvC7vOdVEg55vxhZz1q9hs9iz9ySL
+        xeVdc9gsfkyvd2DxODHjN4tH35ZVjB6fN8kFMEdx2aSk5mSWpRbp2yVwZdx5fJGxYAprxYdv
+        UQ2Mi1i6GDk5JARMJH53bGHrYuTiEBLYwShx//0EJoiEtMSxE2eYuxg5gGxhicOHiyFqPjBK
+        fHo0lwUkziagLfFniyhIuYiArMTUv+fBwswCWRKzX9mBhIUFbCRmvn7GCGKzCKhKbPx4mA3E
+        5gWK923+xgaxSV5i9YYDzBMYeRYwMqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAgO
+        BS2tHYx7Vn3QO8TIxMF4iFGCg1lJhPcvk3KiEG9KYmVValF+fFFpTmrxIUZpDhYlcd4LXSfj
+        hQTSE0tSs1NTC1KLYLJMHJxSDUwBNa9qnbdc3XFEWJfna5JedbEK84rbFi9KvHoObV5lH3vx
+        nNmdPdvl9a45zqta1iK9teV7ccGNMFOntsBrrg1TXgq+v325IDR98d7n8qfeTHS2u14lsd/8
+        wr5Kg2Uca23YdXTMmnTddW/yT9v2/yGrklw4u857WZEtj5cl+ho9y3xYlPcvPuxne8Jq4YrQ
+        9Vs0Pvz8PvvLPI4jod+2VJo9dzTnMjkt9NubIctk47/AadbbWdy3ctnel5F0OuHd/ERPOq/p
+        tdeXVZtlm5lftubwXIuJ3l2ac/zumRbJVgPufJ7WGQ1zHi+OvbbBe9Hr45VPFPb0az+Kvbpg
+        wtvK60LC3MKCOnuKv9wr5RMV26rEUpyRaKjFXFScCABnL9t9dAIAAA==
+X-CMS-MailID: 20210825045853epcas1p39e688eb91dcdd8913d274e499726af3b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20210825045853epcas1p39e688eb91dcdd8913d274e499726af3b
+References: <CGME20210825045853epcas1p39e688eb91dcdd8913d274e499726af3b@epcas1p3.samsung.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 24, 2021 at 12:53:24PM -0400, Gabriel Krisman Bertazi wrote:
-> Jan Kara <jack@suse.cz> writes:
-> 
-> > On Mon 16-08-21 14:41:03, Darrick J. Wong wrote:
-> >> On Thu, Aug 12, 2021 at 05:40:07PM -0400, Gabriel Krisman Bertazi wrote:
-> >> > The Error info type is a record sent to users on FAN_FS_ERROR events
-> >> > documenting the type of error.  It also carries an error count,
-> >> > documenting how many errors were observed since the last reporting.
-> >> > 
-> >> > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> >> > 
-> >> > ---
-> >> > Changes since v5:
-> >> >   - Move error code here
-> >> > ---
-> >> >  fs/notify/fanotify/fanotify.c      |  1 +
-> >> >  fs/notify/fanotify/fanotify.h      |  1 +
-> >> >  fs/notify/fanotify/fanotify_user.c | 36 ++++++++++++++++++++++++++++++
-> >> >  include/uapi/linux/fanotify.h      |  7 ++++++
-> >> >  4 files changed, 45 insertions(+)
-> >> 
-> >> <snip>
-> >> 
-> >> > diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-> >> > index 16402037fc7a..80040a92e9d9 100644
-> >> > --- a/include/uapi/linux/fanotify.h
-> >> > +++ b/include/uapi/linux/fanotify.h
-> >> > @@ -124,6 +124,7 @@ struct fanotify_event_metadata {
-> >> >  #define FAN_EVENT_INFO_TYPE_FID		1
-> >> >  #define FAN_EVENT_INFO_TYPE_DFID_NAME	2
-> >> >  #define FAN_EVENT_INFO_TYPE_DFID	3
-> >> > +#define FAN_EVENT_INFO_TYPE_ERROR	4
-> >> >  
-> >> >  /* Variable length info record following event metadata */
-> >> >  struct fanotify_event_info_header {
-> >> > @@ -149,6 +150,12 @@ struct fanotify_event_info_fid {
-> >> >  	unsigned char handle[0];
-> >> >  };
-> >> >  
-> >> > +struct fanotify_event_info_error {
-> >> > +	struct fanotify_event_info_header hdr;
-> >> > +	__s32 error;
-> >> > +	__u32 error_count;
-> >> > +};
-> >> 
-> >> My apologies for not having time to review this patchset since it was
-> >> redesigned to use fanotify.  Someday it would be helpful to be able to
-> >> export more detailed error reports from XFS, but as I'm not ready to
-> >> move forward and write that today, I'll try to avoid derailling this at
-> >> the last minute.
-> >
-> > I think we are not quite there and tweaking the passed structure is easy
-> > enough so no worries. Eventually, passing some filesystem-specific blob
-> > together with the event was the plan AFAIR. You're right now is a good
-> > moment to think how exactly we want that passed.
-> >
-> >> Eventually, XFS might want to be able to report errors in file data,
-> >> file metadata, allocation group metadata, and whole-filesystem metadata.
-> >> Userspace can already gather reports from XFS about corruptions reported
-> >> by the online fsck code (see xfs_health.c).
-> >
-> > Yes, although note that the current plan is that we currently have only one
-> > error event queue, others are just added to error_count until the event is
-> > fetched by userspace (on the grounds that the first error is usually the
-> > most meaningful, the others are usually just cascading problems). But I'm
-> > not sure if this scheme would be suitable for online fsck usecase since we
-> > may discard even valid independent errors this way.
-> >
-> >> I /think/ we could subclass the file error structure that you've
-> >> provided like so:
-> >> 
-> >> struct fanotify_event_info_xfs_filesystem_error {
-> >> 	struct fanotify_event_info_error	base;
-> >> 
-> >> 	__u32 magic; /* 0x58465342 to identify xfs */
-> >> 	__u32 type; /* quotas, realtime bitmap, etc. */
-> >> };
-> >> 
-> >> struct fanotify_event_info_xfs_perag_error {
-> >> 	struct fanotify_event_info_error	base;
-> >> 
-> >> 	__u32 magic; /* 0x58465342 to identify xfs */
-> >> 	__u32 type; /* agf, agi, agfl, bno btree, ino btree, etc. */
-> >> 	__u32 agno; /* allocation group number */
-> >> };
-> >> 
-> >> struct fanotify_event_info_xfs_file_error {
-> >> 	struct fanotify_event_info_error	base;
-> >> 
-> >> 	__u32 magic; /* 0x58465342 to identify xfs */
-> >> 	__u32 type; /* extent map, dir, attr, etc. */
-> >> 	__u64 offset; /* file data offset, if applicable */
-> >> 	__u64 length; /* file data length, if applicable */
-> >> };
-> >> 
-> >> (A real XFS implementation might have one structure with the type code
-> >> providing for a tagged union or something; I split it into three
-> >> separate structs here to avoid confusing things.)
-> >
-> > The structure of fanotify event as passed to userspace generally is:
-> >
-> > struct fanotify_event_metadata {
-> >         __u32 event_len;
-> >         __u8 vers;
-> >         __u8 reserved;
-> >         __u16 metadata_len;
-> >         __aligned_u64 mask;
-> >         __s32 fd;
-> >         __s32 pid;
-> > };
-> >
-> > If event_len is > sizeof(struct fanotify_event_metadata), userspace is
-> > expected to look for struct fanotify_event_info_header after struct
-> > fanotify_event_metadata. struct fanotify_event_info_header looks like:
-> >
-> > struct fanotify_event_info_header {
-> >         __u8 info_type;
-> >         __u8 pad;
-> >         __u16 len;
-> > };
-> >
-> > Again if the end of this info (defined by 'len') is smaller than
-> > 'event_len', there is next header with next payload of data. So for example
-> > error event will have:
-> >
-> > struct fanotify_event_metadata
-> > struct fanotify_event_info_error
-> > struct fanotify_event_info_fid
-> >
-> > Now either we could add fs specific blob into fanotify_event_info_error
-> > (but then it would be good to add 'magic' to fanotify_event_info_error now
-> > and define that if 'len' is larger, fs-specific blob follows after fixed
-> > data) or we can add another info type FAN_EVENT_INFO_TYPE_ERROR_FS_DATA
-> > (i.e., attach another structure into the event) which would contain the
-> > 'magic' and then blob of data. I don't have strong preference.
-> 
-> In the v1 of this patchset [1] I implemented the later option, a new
-> info type that the filesystem could provide as a blob.  It was dropped
-> by Amir's request to leave it out of the discussion at that moment.  Should I
-> ressucitate it for the next iteration?  I believe it would attend to XFS needs.
+My email address in exfat entry will be not available in a few days.
+Update it to my own kernel.org address.
 
-I don't think it's necessary at this time.  We (XFS community) would
-have a bit more work to do before we get to the point of needing those
-sorts of hooks in upstream. :)
+Signed-off-by: Namjae Jeon <namjae.jeon@samsung.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---D
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3d638f19bbfb..ac2367d1114e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7002,7 +7002,7 @@ F:	include/uapi/linux/mdio.h
+ F:	include/uapi/linux/mii.h
+ 
+ EXFAT FILE SYSTEM
+-M:	Namjae Jeon <namjae.jeon@samsung.com>
++M:	Namjae Jeon <linkinjeon@kernel.org>
+ M:	Sungjong Seo <sj1557.seo@samsung.com>
+ L:	linux-fsdevel@vger.kernel.org
+ S:	Maintained
+-- 
+2.17.1
 
-> 
-> [1] https://lwn.net/ml/linux-fsdevel/20210426184201.4177978-12-krisman@collabora.com/
-> 
-> -- 
-> Gabriel Krisman Bertazi
