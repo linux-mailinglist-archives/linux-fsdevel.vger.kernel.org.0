@@ -2,67 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDBBC3F6FB0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Aug 2021 08:40:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64BE73F6FD3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Aug 2021 08:50:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239110AbhHYGld (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Aug 2021 02:41:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44868 "EHLO
+        id S238504AbhHYGvA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Aug 2021 02:51:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238560AbhHYGla (ORCPT
+        with ESMTP id S238276AbhHYGvA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Aug 2021 02:41:30 -0400
+        Wed, 25 Aug 2021 02:51:00 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE461C061757;
-        Tue, 24 Aug 2021 23:40:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 450F2C061757;
+        Tue, 24 Aug 2021 23:50:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=wwqc+zlpZGVWv443QpD/4AYHkmaNpxQkxiVuNbJuNzY=; b=WHUZ/i1haxgYWOz/PEBlGBLX++
-        ghSazm9VoZ/t+9OplOg6sDgUbKJu5h6aKxmGAiFnJeqWpcYpgS8Yq2yvZGEzzexoZd4NQx2Si4qsZ
-        spEMZATV2k6j74ih9qBI4JpKg1fPh0fYN7EiphdjD7IKDpvP4YhCUYvFn0MYDX059LOxNcwm6REd6
-        SsFz1xZppsSvJJTHaZeCA3k8YX0TlH9SNSf1M23MoYYBnBPd8wzmQVVjSzSZmrcDnq61POMRZlWfU
-        UiJ1yq24wmlAkg0of1QvBzXo1eTXC6EAgkwww4NLJmLSSt42ScqO4Q/9W+8rj/QWIGy/p6fX0n4fp
-        CdTUsV1Q==;
-Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mImZ5-00Bz9a-22; Wed, 25 Aug 2021 06:39:25 +0000
-Date:   Wed, 25 Aug 2021 07:39:11 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] Memory folios for v5.15
-Message-ID: <YSXljxYnKg+6P1At@infradead.org>
-References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
- <YSQSkSOWtJCE4g8p@cmpxchg.org>
- <YSQeFPTMn5WpwyAa@casper.infradead.org>
- <YSU7WCYAY+ZRy+Ke@cmpxchg.org>
- <CAHk-=wgkA=RKJ-vke0EoOUK19Hv1f=47Da6pWAWQZPhjKD6WOg@mail.gmail.com>
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=+i/JYgkRJLs3S1XvjipwzCegOl0l6Le2bbTKegrGXik=; b=jQSr+KYsg9+T+pRrD9QsDesg1U
+        bH77iJSwHTRnHFp0Y+hACM4OcYKbqdbdgY4p4v1d2XZAQqK0XmdgYmPek69cwSPOrHCduckAbpL0N
+        SCMMh9KsXKfjcOOA7lU9BWvWSdJlEwFiae4eqOFfoeWuEbvSJBr5vP/8d1xTdFDqa0V0XQO1qt7dV
+        X1XBWeQR3/F1Z61uVP5mzwDGLLWiW832Kf2rYQOxMasP595MaW1ZvJSF5cLtYulgXpcdOKNa5D+Gr
+        7hf8hqW7eIP/oaMrMINf5t9ixb7msDcqMp6XxhzbQYffQdTy0SsrShOe/oEjTnIhBaVUPqa0YoItE
+        ITdNGWKQ==;
+Received: from [2001:4bb8:193:fd10:ce54:74a1:df3f:e6a9] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mImij-00BzYa-Dn; Wed, 25 Aug 2021 06:49:23 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Joel Becker <jlbec@evilplan.org>
+Cc:     Sishuai Gong <sishuai@purdue.edu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: configfs lookup race fix
+Date:   Wed, 25 Aug 2021 08:49:02 +0200
+Message-Id: <20210825064906.1694233-1-hch@lst.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgkA=RKJ-vke0EoOUK19Hv1f=47Da6pWAWQZPhjKD6WOg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 24, 2021 at 11:59:52AM -0700, Linus Torvalds wrote:
-> But it is a lot of churn. And it basically duplicates all our page
-> functions, just to have those simplified versions. And It's very core
-> code, and while I appreciate the cleverness of the "folio" name, I do
-> think it makes the end result perhaps subtler than it needs to be.
+Hi all,
 
-Maybe I'm biassed by looking at the file system and pagecache side
-mostly, but if you look at the progress willy has been making a lot
-of the relevant functionality will exist in either folio or page
-versions, not both.  A lot of the duplication is to support the
-following:
-
-> The one thing I do like about it is how it uses the type system to be
-> incremental.
+this series takes the patch from Sishuai, with the initial refactoring
+split into reviewable prep patches and the suggestion from Al taken
+into account.  It does not fix the pre-existing leak of ->s_dentry and
+->d_fsdata that Al noticed yet - that will take a little more time.
