@@ -2,121 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7806F3F7C65
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Aug 2021 20:47:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE7203F7C67
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 Aug 2021 20:47:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241865AbhHYSr5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Aug 2021 14:47:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45330 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241704AbhHYSr4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Aug 2021 14:47:56 -0400
-Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA5FAC061757
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 11:47:10 -0700 (PDT)
-Received: by mail-yb1-xb33.google.com with SMTP id a93so858386ybi.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 11:47:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=sPXVZuczp6nIm+g+ehEulGNHA1uxWEN7CnVl/RWVxEc=;
-        b=FHqJypnk9H0TkQjscT5TfIpByqpetnmR/NRbMWCxfH2fiRu9wsNgvoE+CkZ51SBBKW
-         cPVZojIjZA9Hya3re1j6RhmpuRJ8miup9PFkxPPE0uFNNjpyW+RpFIi12iXTlyU6xjDQ
-         dnvKCGIOXK+0QWQZakqT4JkSnGDn/PYTn5Np+iXwpa1vfDE4EbFO0RirM7Xb+sw+MkID
-         Wt0VWi6JmW3NaLnU8r1lAxZ4LcKJtUeQF+ytZPJOgQ9DcJZ1lMju9Ysa/AhaVvPHJVpq
-         +47jXLfASe8quNGaF/vu2WwCydfiAwsmUcuxNGusfyMbYl5pLitxJVf26r73oITYBoty
-         2CqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=sPXVZuczp6nIm+g+ehEulGNHA1uxWEN7CnVl/RWVxEc=;
-        b=p8IRW8dW3kSYRwAX8tiTRKrPaqDZBILA8sSSqfGZGXL5JaHsPL4JqKPVMJaT4oDOXO
-         BMKO5vu4+bkBguBpMvvfST5NmNhL7r6wghPfciKS5fAdnRK37LyMpG0sMcoRhdlSjd8c
-         8rsjpUFR0Q1UumVtwzALzYpAHjY21L6W1fALnLERXqJt4Vl/gAPRy/239ihc07nVnOVl
-         QWur2WqJPfUVbZgDidkO+KZ2T2hfWi/YmHWjbh/UdHbcz4uBkdG6IjGeUOB13VHQAFJ9
-         w2zxfFLB+bePU0raMv3HSdOLHK9ChSvzgo259/tDCW3mpVpAt2GtOV5erzTRPw4HYZ79
-         elWw==
-X-Gm-Message-State: AOAM530ZShm2upnmtUGWzmG1oHEdy+X4136dDL6nodRiSbP+QAv4PyrL
-        JQkDHrNlrPSs3oBBYLvhwLnYwC02fMG6DkcLAwo=
-X-Google-Smtp-Source: ABdhPJx38JSOOFH5eojuL/kTA3OPqEfg5NpEGHf4xMEDfObk82/Vm5UbfCj0yp1KCEn4tml0UZa/pFueY9RQxLJJerc=
-X-Received: by 2002:a25:81ce:: with SMTP id n14mr145606ybm.32.1629917230071;
- Wed, 25 Aug 2021 11:47:10 -0700 (PDT)
+        id S240355AbhHYSsB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Aug 2021 14:48:01 -0400
+Received: from mga14.intel.com ([192.55.52.115]:30027 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S241704AbhHYSsA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 25 Aug 2021 14:48:00 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10087"; a="217310518"
+X-IronPort-AV: E=Sophos;i="5.84,351,1620716400"; 
+   d="scan'208";a="217310518"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2021 11:47:14 -0700
+X-IronPort-AV: E=Sophos;i="5.84,351,1620716400"; 
+   d="scan'208";a="444286725"
+Received: from cschaef-mobl1.amr.corp.intel.com (HELO [10.212.141.45]) ([10.212.141.45])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Aug 2021 11:47:13 -0700
+Subject: Re: [PATCH v2] x86/mm: fix kern_addr_valid to cope with existing but
+ not present entries
+To:     Mike Rapoport <rppt@kernel.org>, x86@kernel.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+References: <20210819132717.19358-1-rppt@kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <35f4a263-1001-5ba5-7b6c-3fcc5f93cc30@intel.com>
+Date:   Wed, 25 Aug 2021 11:47:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Sender: mrsnadiaemaan5@gmail.com
-Received: by 2002:a05:7010:34c2:b0:109:f5a5:2917 with HTTP; Wed, 25 Aug 2021
- 11:47:08 -0700 (PDT)
-From:   Mrs Nadia Emaan <mrsnadiaemaan50@gmail.com>
-Date:   Wed, 25 Aug 2021 18:47:08 +0000
-X-Google-Sender-Auth: pBPDtas1NSJqsyLPAz-5UpJonSM
-Message-ID: <CAOg3cV36pGKQ0JPXM6SQWOyFK72x5oR1hhJdu6vDeneeHuZ=Bw@mail.gmail.com>
-Subject: HELLO
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210819132717.19358-1-rppt@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Gretings My Friend,
+On 8/19/21 6:27 AM, Mike Rapoport wrote:
+> Such PMDs are created when free_kernel_image_pages() frees regions larger
+> than 2Mb. In this case a part of the freed memory is mapped with PMDs and
+> the set_memory_np_noalias() -> ... -> __change_page_attr() sequence will
+> mark the PMD as not present rather than wipe it completely.
+> 
+> Make kern_addr_valid() to check whether higher level page table entries are
+> present before trying to dereference them to fix this issue and to avoid
+> similar issues in the future.
+> 
+> Reported-by: Jiri Olsa <jolsa@redhat.com>
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> Cc: <stable@vger.kernel.org>	# 4.4...
+>  	pmd = pmd_offset(pud, addr);
+> -	if (pmd_none(*pmd))
+> +	if (!pmd_present(*pmd))
+>  		return 0;
 
-I am contacting you through this means because I need your urgent
-assistance and also help me to carry a charity project in your
-country. I found your email address as a true child of God for past
-few days now that I have been praying to know if you are really the
-chosen one for this great charity project, according to God's
-direction, after all prayers I am convinced, and I have decided to
-contact you. Please, i want you use the funds for the Lord's work,
-with confidence, read and respond now.
+Yeah, that seems like the right fix.  The one kern_addr_valid() user is
+going to touch the memory so it *better* be present.  p*d_none() was
+definitely the wrong check.
 
-
-My name is Ms. Nadia Faroul, a widow, but currently based in West
-Africa since my life with my late husband, who was a businessman in
-this country before dying some years ago. We were married to many
-years without a child. He died after a brief illness that lasted only
-six days and I myself have been suffering from an ovarian cancer
-disease. At this moment I am about to finish the race in this way
-because the disease has reached a very bad stage, without any family
-member and without children. I hope you do not expose or betray this
-trust and I am sure that I am about to trust you for the mutual
-benefit of orphans and the less privileged. I have some funds that I
-inherited from my late husband, the total sum of ($ 12,500,000.00)
-deposited at a bank here in Burkina Faso. After knowing my current
-state of health, I decided to trust you with this fund, believing that
-you will use it in the way I will instruct here.
-
-
-you will use this $12.5 Million for public benefit as follows;
-
-1. Establish An Orphanage Home To Help The Orphanages Children.
-2. Build A Hospital To Help The Poor.
-3. Build A Nursing Home For Elderly People Need Care & Meal.
-
-You will named them after my late husband.Therefore, I need you to
-help me and claim this money and use it for charities, for orphanages
-and provide justice and help to the poor, needy and to promote the
-words of God and the effort to maintain the house of God, according to
-the bible in the book of. Jeremiah 22: 15-16, without minding our
-different religions.
-
-It will be a pleasure to compensate with 40% percent of the total
-money for your effort in handling the transaction, while 60% of the
-money will go to charity project.
-
-All I need from you is sincerity and ability to complete the task of
-God without any failure. It will be my pleasure to see that the bank
-has finally released and transferred the fund to your bank account in
-the country, even before I die here in the hospital, due to my current
-state of health, everything must be processed as soon as possible.
-
-I am waiting for your immediate response, if you are only interested
-in obtaining more details about the transaction and execution of this
-humanitarian project for the glory and honor of God.
-
-Sorry if you received this letter in your spam, is due to recent
-connection/network error here in the country.
-
-Please I am waiting for your urgent reply now.
-
-May God Bless you,
-Ms. Nadia Faroul.
+Acked-by: Dave Hansen <dave.hansen@intel.com>
