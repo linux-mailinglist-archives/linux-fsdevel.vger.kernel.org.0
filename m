@@ -2,187 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BCCE3F9048
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 23:47:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 510173F9056
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 23:53:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243650AbhHZVsC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Aug 2021 17:48:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:21402 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243620AbhHZVsB (ORCPT
+        id S243690AbhHZVyS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Aug 2021 17:54:18 -0400
+Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:38607 "EHLO
+        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S243662AbhHZVyP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Aug 2021 17:48:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630014433;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=K0s8bk6QfHD1VaGSzfIqDqYg0K6iJ7Ku0EqSDBa9+yo=;
-        b=apJmwZhW/m/hDBuscxMKnlE+cXDvfUXnlcaVeFhttxxHXAkUFT1esOw/UwK1O6RjUm4zq/
-        WZ0TWlp1Iy3MxG8uziMz70u8kNbQBYLk7NmDel8C4CM/42R0RE4T4yarCnhtNBbuVO+zeQ
-        51KrJEBV2ufA5JZAU+XjaR5QDxniq30=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-429-jVC2jPHNN6OTC4y69DiqKw-1; Thu, 26 Aug 2021 17:47:12 -0400
-X-MC-Unique: jVC2jPHNN6OTC4y69DiqKw-1
-Received: by mail-wr1-f69.google.com with SMTP id v6-20020adfe4c6000000b001574f9d8336so1313569wrm.15
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Aug 2021 14:47:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=K0s8bk6QfHD1VaGSzfIqDqYg0K6iJ7Ku0EqSDBa9+yo=;
-        b=fLP0mWYeay7SAKryQTZo17rt/BTcBkd3Jcy+ywHZ4l/eXgXBb77SzpXZmwddmYo0db
-         3Fqm7YMp5dHe7IUQqb3Jj396utVUUBE79lkpKlGGe9a5TwcsDteBh8YoB7EyViDoM9L+
-         TSeh3jfyraL25b8pnIlYl4IySxCtIchmKbuFvHYFFvQi9UTeY0HQf53jHf3Fh4N40Dfp
-         I9G6e3GtRYVQFXIsDcb6tsNXKoyyNaHyoE6Rq3k8+UIAmsoXiyQfFjtRq6WaoCsdH1HE
-         q8RmlwuJLKzvDY60ohd4UW7fQi7bHpSlRDo/bkhuPDfwjls6AsMvCwQbC4kPIY/mEBQS
-         oecg==
-X-Gm-Message-State: AOAM530aA5byfFfVthJqKKnEJZ1+ACr2bl9UNCZr9P/Cvs4thIxWhcLP
-        JW6JODj5Wtnfb2SRHrX/FMisgFVAbFRHGmy7GXwRMl792Hgq+QkZ/DOzsj4F6eXDKVwCPThqmsr
-        tEt28HdTlXhAQTheiw+DLPzSMZQ==
-X-Received: by 2002:a5d:690a:: with SMTP id t10mr6609898wru.304.1630014430899;
-        Thu, 26 Aug 2021 14:47:10 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyZSDS7ykz6c0cWQQRRV6c/ocWUVA2MbQuhyj4tL0c/EqpuZXrSGG6H7whtDXAvdDs+XQeksw==
-X-Received: by 2002:a5d:690a:: with SMTP id t10mr6609835wru.304.1630014430662;
-        Thu, 26 Aug 2021 14:47:10 -0700 (PDT)
-Received: from [192.168.3.132] (p4ff23dec.dip0.t-ipconnect.de. [79.242.61.236])
-        by smtp.gmail.com with ESMTPSA id q10sm3612286wmq.12.2021.08.26.14.47.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Aug 2021 14:47:10 -0700 (PDT)
-Subject: Re: [PATCH v1 0/7] Remove in-tree usage of MAP_DENYWRITE
-To:     Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        David Laight <David.Laight@aculab.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Michel Lespinasse <walken@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Price <steven.price@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Marco Elver <elver@google.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Collin Fijalkovich <cfijalkovich@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>,
-        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-References: <20210812084348.6521-1-david@redhat.com> <87o8a2d0wf.fsf@disp2133>
- <60db2e61-6b00-44fa-b718-e4361fcc238c@www.fastmail.com>
- <87lf56bllc.fsf@disp2133>
- <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
- <87eeay8pqx.fsf@disp2133> <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
- <87h7ft2j68.fsf@disp2133>
- <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
- <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
- <CAHk-=wiJ0u33h2CXAO4b271Diik=z4jRt64=Gt6YV2jV4ef27g@mail.gmail.com>
- <b60e9bd1-7232-472d-9c9c-1d6593e9e85e@www.fastmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Message-ID: <0ed69079-9e13-a0f4-776c-1f24faa9daec@redhat.com>
-Date:   Thu, 26 Aug 2021 23:47:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Thu, 26 Aug 2021 17:54:15 -0400
+Received: from dread.disaster.area (pa49-195-182-146.pa.nsw.optusnet.com.au [49.195.182.146])
+        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 7A65180C18D;
+        Fri, 27 Aug 2021 07:53:21 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1mJNJI-005K8B-D9; Fri, 27 Aug 2021 07:53:20 +1000
+Date:   Fri, 27 Aug 2021 07:53:20 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Paul Menzel <pmenzel@molgen.mpg.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, it+linux-xfs@molgen.mpg.de,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: Minimum inode cache size? (was: Slow file operations on file
+ server with 30 TB hardware RAID and 100 TB software RAID)
+Message-ID: <20210826215320.GO3657114@dread.disaster.area>
+References: <dcc07afa-08c3-d2d3-7900-75adb290a1bc@molgen.mpg.de>
+ <3e380495-5f85-3226-f0cf-4452e2b77ccb@molgen.mpg.de>
+ <58e701f4-6af1-d47a-7b3e-5cadf9e27296@molgen.mpg.de>
 MIME-Version: 1.0
-In-Reply-To: <b60e9bd1-7232-472d-9c9c-1d6593e9e85e@www.fastmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <58e701f4-6af1-d47a-7b3e-5cadf9e27296@molgen.mpg.de>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
+        a=QpfB3wCSrn/dqEBSktpwZQ==:117 a=QpfB3wCSrn/dqEBSktpwZQ==:17
+        a=IkcTkHD0fZMA:10 a=MhDmnRu9jo8A:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
+        a=LmiyH4qz7PP4_n44nj0A:9 a=QEXdDO2ut3YA:10 a=q5j3cmb3fbAA:10
+        a=2Q4jQssJKWwA:10 a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 26.08.21 19:48, Andy Lutomirski wrote:
-> On Fri, Aug 13, 2021, at 5:54 PM, Linus Torvalds wrote:
->> On Fri, Aug 13, 2021 at 2:49 PM Andy Lutomirski <luto@kernel.org> wrote:
->>>
->>> I’ll bite.  How about we attack this in the opposite direction: remove the deny write mechanism entirely.
->>
->> I think that would be ok, except I can see somebody relying on it.
->>
->> It's broken, it's stupid, but we've done that ETXTBUSY for a _loong_ time.
-> 
-> Someone off-list just pointed something out to me, and I think we should push harder to remove ETXTBSY.  Specifically, we've all been focused on open() failing with ETXTBSY, and it's easy to make fun of anyone opening a running program for write when they should be unlinking and replacing it.
-> 
-> Alas, Linux's implementation of deny_write_access() is correct^Wabsurd, and deny_write_access() *also* returns ETXTBSY if the file is open for write.  So, in a multithreaded program, one thread does:
-> 
-> fd = open("some exefile", O_RDWR | O_CREAT | O_CLOEXEC);
-> write(fd, some stuff);
-> 
-> <--- problem is here
-> 
-> close(fd);
-> execve("some exefile");
-> 
-> Another thread does:
-> 
-> fork();
-> execve("something else");
-> 
-> In between fork and execve, there's another copy of the open file description, and i_writecount is held, and the execve() fails.  Whoops.  See, for example:
-> 
-> https://github.com/golang/go/issues/22315
-> 
-> I propose we get rid of deny_write_access() completely to solve this.
-> 
-> Getting rid of i_writecount itself seems a bit harder, since a handful of filesystems use it for clever reasons.
-> 
-> (OFD locks seem like they might have the same problem.  Maybe we should have a clone() flag to unshare the file table and close close-on-exec things?)
-> 
+On Thu, Aug 26, 2021 at 12:41:25PM +0200, Paul Menzel wrote:
+> Dear Linux folks,
+> > > The current explanation is, that over night several maintenance
+> > > scripts like backup/mirroring and accounting scripts are run, which
+> > > touch all files on the devices. Additionally sometimes other users
+> > > run cluster jobs with millions of files on the software RAID. Such
+> > > things invalidate the inode cache, and “my” are thrown out. When I
+> > > use it afterward it’s slow in the beginning. There is still free
+> > > memory during these times according to `top`.
 
-It's not like this issue is new (^2017) or relevant in practice. So no 
-need to hurry IMHO. One step at a time: it might make perfect sense to 
-remove ETXTBSY, but we have to be careful to not break other user space 
-that actually cares about the current behavior in practice.
+Yup. Your inodes are not in use, so they get cycled out of memory
+for other inodes that are in active use.
 
+> >      $ free -h
+> >                    total        used        free      shared  buff/cache available
+> >      Mem:            94G        8.3G        5.3G        2.3M         80G       83G
+> >      Swap:            0B          0B          0B
+> > 
+> > > Does that sound reasonable with ten million inodes? Is that easily
+> > > verifiable?
+> > 
+> > If an inode consume 512 bytes with ten million inodes, that would be
+> > around 500 MB, which should easily fit into the cache, so it does not
+> > need to be invalidated?
+> 
+> Something is wrong with that calculation, and the cache size is much bigger.
+
+Inode size on disk != inode size in memory. Typically a clean XFS
+inode in memory takes up ~1.1kB, regardless of on-disk size. An
+inode that has been dirtied takes about 1.7kB.
+
+> Looking into `/proc/slabinfo` and XFS’ runtime/internal statistics [1], it
+> turns out that the inode cache is likely the problem.
+> 
+> XFS’ internal stats show that only one third of the inodes requests are
+> answered from cache.
+> 
+>     $ grep ^ig /sys/fs/xfs/stats/stats
+>     ig 1791207386 647353522 20111 1143854223 394 1142080045 10683174
+
+Pretty normal for a machine that has diverse worklaods, large data
+sets and fairly constant memory pressure...
+
+> During the problematic time, the SLAB size is around 4 GB and, according to
+> slabinfo, the inode cache only has around 200.000 (sometimes even as low as
+> 50.000).
+
+Yup, that indicates the workload that has been running has been
+generating either user space or page cache memory pressure, not
+inode cache memory pressure. As a result, memory reclaim has
+reclaimed the unused inode caches. This is how things are supposed
+to work - the kernel adjusts it's memory usage according what is
+consuming memory at the time there is memory demand.
+
+>     $ sudo grep inode /proc/slabinfo
+>     nfs_inode_cache       16     24   1064    3    1 : tunables   24 12    8
+> : slabdata      8      8      0
+>     rpc_inode_cache       94    138    640    6    1 : tunables   54 27    8
+> : slabdata     23     23      0
+>     mqueue_inode_cache      1      4    896    4    1 : tunables   54  27
+> 8 : slabdata      1      1      0
+>     xfs_inode         1693683 1722284    960    4    1 : tunables   54   27
+> 8 : slabdata 430571 430571      0
+>     ext2_inode_cache       0      0    768    5    1 : tunables   54 27    8
+> : slabdata      0      0      0
+>     reiser_inode_cache      0      0    760    5    1 : tunables   54  27
+> 8 : slabdata      0      0      0
+>     hugetlbfs_inode_cache      2     12    608    6    1 : tunables 54   27
+> 8 : slabdata      2      2      0
+>     sock_inode_cache     346    670    768    5    1 : tunables   54 27    8
+> : slabdata    134    134      0
+>     proc_inode_cache     121    288    656    6    1 : tunables   54 27    8
+> : slabdata     48     48      0
+>     shmem_inode_cache   2249   2827    696   11    2 : tunables   54 27    8
+> : slabdata    257    257      0
+>     inode_cache       209098 209482    584    7    1 : tunables   54 27    8
+> : slabdata  29926  29926      0
+> 
+> (What is the difference between `xfs_inode` and `inode_cache`?)
+
+"inode_cache" is the generic inode slab cache used for things like
+/proc and other VFS level psuedo filesytems. "xfs_inode_cache" is
+the inodes used by XFS.
+
+> Then going through all the files with `find -ls`, the inode cache grows to
+> four to five million and the SLAB size grows to around 8 GB. Over night it
+> shrinks back to the numbers above and the page cache grows back.
+
+Yup, that's caching all the inodes the find traverses because it is
+accessing the inodes and not just reading the directory structure.
+There's likely 4-5 million inodes in that directory structure.
+
+This is normal - the kernel is adjusting it's memory usage according
+to the workload that is currently running. However, if you don't
+access those inodes again, and the system is put under memory
+pressure, they'll get reclaimed and the memory used for whatever is
+demanding memory at that point in time.
+
+Again, this is normal behaviour for machines with mulitple discrete,
+diverse workloads with individual data sets and memory demand that,
+in aggregate, are larger than the machine has the memory to hold. At
+some point, we have to give back kernel memory so the current
+application and data set can run efficiently from RAM...
+
+> In the discussions [2], adji`vfs_cache_pressure` is recommended, but –
+> besides setting it to 0 – it only seems to delay the shrinking of the cache.
+> (As it’s an integer 1 is the lowest non-zero (positive) number, which would
+> delay it by a factor of 100.
+
+That's exactly what vfs_cache_pressure is intended to do - you can
+slow down the reclaim of inodes and dentries, but if you have enough
+memory demand for long enough, it will not prevent indoes that have
+not been accessed for hours from being reclaimed.
+
+Of course, setting it so zero is also behaving as expected - that
+prevents memory reclaim from reclaiming dentries and inodes and
+other filesystem caches. This is absolutely not recommended as it
+can result in all of memory being filled with filesystem caches and
+the system can then OOM in unrecoverable ways because the memory
+held in VFS caches cannot be reclaimed.
+
+> Is there a way to specify the minimum numbers of entries in the inode cache,
+> or a minimum SLAB size up to that the caches should not be decreased?
+
+You have a workload resource control problem, not an inode cache
+problem. This is a problem control groups are intended to solve. For
+controlling memory usage behaviour of workloads, see:
+
+https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html#memory
+
+Cheers,
+
+Dave.
 -- 
-Thanks,
-
-David / dhildenb
-
+Dave Chinner
+david@fromorbit.com
