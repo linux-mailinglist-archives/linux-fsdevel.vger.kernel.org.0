@@ -2,232 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C88873F85B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 12:41:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF2BC3F85C7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 12:45:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241559AbhHZKmT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Aug 2021 06:42:19 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:33009 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S241600AbhHZKmS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Aug 2021 06:42:18 -0400
-Received: from [192.168.0.3] (ip5f5aeb42.dynamic.kabel-deutschland.de [95.90.235.66])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 3790B61E30B9C;
-        Thu, 26 Aug 2021 12:41:26 +0200 (CEST)
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-Subject: Minimum inode cache size? (was: Slow file operations on file server
- with 30 TB hardware RAID and 100 TB software RAID)
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     it+linux-xfs@molgen.mpg.de, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-mm@kvack.org
-References: <dcc07afa-08c3-d2d3-7900-75adb290a1bc@molgen.mpg.de>
- <3e380495-5f85-3226-f0cf-4452e2b77ccb@molgen.mpg.de>
-Message-ID: <58e701f4-6af1-d47a-7b3e-5cadf9e27296@molgen.mpg.de>
-Date:   Thu, 26 Aug 2021 12:41:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        id S241494AbhHZKpu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Aug 2021 06:45:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35216 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233311AbhHZKpt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 26 Aug 2021 06:45:49 -0400
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B398C061757;
+        Thu, 26 Aug 2021 03:45:02 -0700 (PDT)
+Received: by mail-io1-xd2d.google.com with SMTP id g9so3065749ioq.11;
+        Thu, 26 Aug 2021 03:45:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dtLOFPzOghHcrNhMJ5t9QBSZRabZGwdTrUsmXVKi/aQ=;
+        b=mgZWH+/NU+blPH67GdRxV+ADZQmsbGSu8as7mWEH8b1Z0dfZscbwGMG/OjyKW5/VWF
+         eiVZdNqHhYP/PN1ShHCW72vNiRQypX7/bB2aNwx1qZwazISVMIUelsx3EEwHnixXilTg
+         gmrIpj/7qpVMz2fQuYLfV7pNDWjPm5yFoOgbFveesQbiQKKHJzctKLemBvlbUx5lcVRm
+         2wLVonQ8TRVhY/bCDSP+yNuWukgFWhak1F/fmD3mM2tp0qdZdZkWS/TlCd0CCtJG6DiJ
+         lmqnsyGtEW26WV7yZMuyapPdwos8nf3BWgMhgHlQeURR55b8qsOeBok94I/TO/XBh3T+
+         PLuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dtLOFPzOghHcrNhMJ5t9QBSZRabZGwdTrUsmXVKi/aQ=;
+        b=m6y820fRl7rUxIQsj3a3PZT/rUrq5DmMjmb8UTd2xtnSpxPlAuHZtLAUlvbqa0PZef
+         5UgE5CNa8yQqA48bNRzetXqdcjKjr0rM1a/oRh10TyKGsSYwh/5CcuOVCNFdvY1/EgNX
+         y98W1NHCACbA1FzO74t4PGE3nKQmA6V0AOUnXY3ftkR/jE5h7Wc1kqRrGh+BxTxUUIaq
+         dh8q5TrDLwxaEMLx5Vh/YK7BbuA5VJPg2o4rx5/2tR7e4SH3zEbyD9MEWoTXkXqGAQh1
+         G7Fi5azwMhBZmtem8fyZe1ABvwt0vemgleC/LsKOSG6w2N85HDMe/Ki/cDm3XAk2rpWJ
+         C1Ag==
+X-Gm-Message-State: AOAM5309YHjN5kLzFn0MGhXEYhmCwM8FDc5NTclRiYp0x4CTfnQZnBwp
+        3QoPpYwfBOnRQvDwAs0kKq51zXVsJ/z3gprDBLN/jGpDISo=
+X-Google-Smtp-Source: ABdhPJwaQtOZ2tDRmLn6gvFoHDSC5IFv7PNZLoC1Kdy7kxBHxCDPw/5FZMf0QUQ/qiwxXh85IZVLY53UjylWwVVTcE0=
+X-Received: by 2002:a6b:8b54:: with SMTP id n81mr2451815iod.5.1629974701651;
+ Thu, 26 Aug 2021 03:45:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <3e380495-5f85-3226-f0cf-4452e2b77ccb@molgen.mpg.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210812214010.3197279-1-krisman@collabora.com>
+ <20210812214010.3197279-10-krisman@collabora.com> <CAOQ4uxi7otGo6aNNMk9-fVQCx4Q0tDFe7sJaCr6jj1tNtfExTg@mail.gmail.com>
+ <87tujdz7u7.fsf@collabora.com> <CAOQ4uxhj=UuvT5ZonFD2sgufqWrF9m4XJ19koQ5390GUZ32g7g@mail.gmail.com>
+ <87mtp5yz0q.fsf@collabora.com>
+In-Reply-To: <87mtp5yz0q.fsf@collabora.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 26 Aug 2021 13:44:50 +0300
+Message-ID: <CAOQ4uxjnb0JmKVpMuEfa_NgHmLRchLz_3=9t2nepdS4QXJ=QVg@mail.gmail.com>
+Subject: Re: [PATCH v6 09/21] fsnotify: Allow events reported with an empty inode
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Jan Kara <jack@suse.com>, Linux API <linux-api@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Tso <tytso@mit.edu>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Bobrowski <repnop@google.com>, kernel@collabora.com,
+        Paul Moore <paul@paul-moore.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Linux folks,
+On Thu, Aug 26, 2021 at 12:50 AM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
+>
+> Amir Goldstein <amir73il@gmail.com> writes:
+>
+> > On Wed, Aug 25, 2021 at 9:40 PM Gabriel Krisman Bertazi
+> > <krisman@collabora.com> wrote:
+> >>
+> >> Amir Goldstein <amir73il@gmail.com> writes:
+> >>
+> >> > On Fri, Aug 13, 2021 at 12:41 AM Gabriel Krisman Bertazi
+> >> > <krisman@collabora.com> wrote:
+> >> >>
+> >> >> Some file system events (i.e. FS_ERROR) might not be associated with an
+> >> >> inode.  For these, it makes sense to associate them directly with the
+> >> >> super block of the file system they apply to.  This patch allows the
+> >> >> event to be reported with a NULL inode, by recovering the superblock
+> >> >> directly from the data field, if needed.
+> >> >>
+> >> >> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> >> >>
+> >> >> --
+> >> >> Changes since v5:
+> >> >>   - add fsnotify_data_sb handle to retrieve sb from the data field. (jan)
+> >> >> ---
+> >> >>  fs/notify/fsnotify.c | 16 +++++++++++++---
+> >> >>  1 file changed, 13 insertions(+), 3 deletions(-)
+> >> >>
+> >> >> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> >> >> index 30d422b8c0fc..536db02cb26e 100644
+> >> >> --- a/fs/notify/fsnotify.c
+> >> >> +++ b/fs/notify/fsnotify.c
+> >> >> @@ -98,6 +98,14 @@ void fsnotify_sb_delete(struct super_block *sb)
+> >> >>         fsnotify_clear_marks_by_sb(sb);
+> >> >>  }
+> >> >>
+> >> >> +static struct super_block *fsnotify_data_sb(const void *data, int data_type)
+> >> >> +{
+> >> >> +       struct inode *inode = fsnotify_data_inode(data, data_type);
+> >> >> +       struct super_block *sb = inode ? inode->i_sb : NULL;
+> >> >> +
+> >> >> +       return sb;
+> >> >> +}
+> >> >> +
+> >> >>  /*
+> >> >>   * Given an inode, first check if we care what happens to our children.  Inotify
+> >> >>   * and dnotify both tell their parents about events.  If we care about any event
+> >> >> @@ -455,8 +463,10 @@ static void fsnotify_iter_next(struct fsnotify_iter_info *iter_info)
+> >> >>   *             @file_name is relative to
+> >> >>   * @file_name: optional file name associated with event
+> >> >>   * @inode:     optional inode associated with event -
+> >> >> - *             either @dir or @inode must be non-NULL.
+> >> >> - *             if both are non-NULL event may be reported to both.
+> >> >> + *             If @dir and @inode are NULL, @data must have a type that
+> >> >> + *             allows retrieving the file system associated with this
+> >> >
+> >> > Irrelevant comment. sb must always be available from @data.
+> >> >
+> >> >> + *             event.  if both are non-NULL event may be reported to
+> >> >> + *             both.
+> >> >>   * @cookie:    inotify rename cookie
+> >> >>   */
+> >> >>  int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
+> >> >> @@ -483,7 +493,7 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
+> >> >>                  */
+> >> >>                 parent = dir;
+> >> >>         }
+> >> >> -       sb = inode->i_sb;
+> >> >> +       sb = inode ? inode->i_sb : fsnotify_data_sb(data, data_type);
+> >> >
+> >> >         const struct path *path = fsnotify_data_path(data, data_type);
+> >> > +       const struct super_block *sb = fsnotify_data_sb(data, data_type);
+> >> >
+> >> > All the games with @data @inode and @dir args are irrelevant to this.
+> >> > sb should always be available from @data and it does not matter
+> >> > if fsnotify_data_inode() is the same as @inode, @dir or neither.
+> >> > All those inodes are anyway on the same sb.
+> >>
+> >> Hi Amir,
+> >>
+> >> I think this is actually necessary.  I could identify at least one event
+> >> (FS_CREATE | FS_ISDIR) where fsnotify is invoked with a NULL data field.
+> >> In that case, fsnotify_dirent is called with a negative dentry from
+> >> vfs_mkdir().  I'm not sure why exactly the dentry is negative after the
+> >
+> > That doesn't sound right at all.
+> > Are you sure about this?
+> > Which filesystem was this mkdir called on?
+>
+> You should be able to reproduce it on top of mainline if you pick only this
+> patch and do the change you suggested:
+>
+>  -       sb = inode->i_sb;
+>  +       sb = fsnotify_data_sb(data, data_type);
+>
+> And then boot a Debian stable with systemd.  The notification happens on
+> the cgroup pseudo-filesystem (/sys/fs/cgroup), which is being monitored
+> by systemd itself.  The event that arrives with a NULL data is telling the
+> directory /sys/fs/cgroup/*/ about the creation of directory
+> `init.scope`.
+>
+> The change above triggers the following null dereference of struct
+> super_block, since data is NULL.
+>
+> I will keep looking but you might be able to answer it immediately...
 
+Yes, I see what is going on.
 
-Am 20.08.21 um 16:39 schrieb Paul Menzel:
+cgroupfs is a sort of kernfs and kernfs_iop_mkdir() does not instantiate
+the negative dentry. Instead, kernfs_dop_revalidate() always invalidates
+negative dentries to force re-lookup to find the inode.
 
-> Am 20.08.21 um 16:31 schrieb Paul Menzel:
-> 
->> Short problem statement: Sometimes changing into a directory on a file 
->> server wit 30 TB hardware RAID and 100 TB software RAID both formatted 
->> with XFS takes several seconds.
->>
->>
->> On a Dell PowerEdge T630 with two Xeon CPU E5-2603 v4 @ 1.70GHz and 96 
->> GB RAM a 30 TB hardware RAID is served by the hardware RAID controller 
->> and a 100 TB MDRAID software RAID connected to a Microchip 1100-8e 
->> both formatted using XFS. Currently, Linux 5.4.39 runs on it.
->>
->> ```
->> $ more /proc/version
->> Linux version 5.4.39.mx64.334 (root@lol.molgen.mpg.de) (gcc version 7.5.0 (GCC)) #1 SMP Thu May 7 14:27:50 CEST 2020
->> $ dmesg | grep megar
->> [   10.322823] megaraid cmm: 2.20.2.7 (Release Date: Sun Jul 16 00:01:03 EST 2006)
->> [   10.331910] megaraid: 2.20.5.1 (Release Date: Thu Nov 16 15:32:35 EST 2006)
->> [   10.345055] megaraid_sas 0000:03:00.0: BAR:0x1  BAR's base_addr(phys):0x0000000092100000  mapped virt_addr:0x0000000059ea5995
->> [   10.345057] megaraid_sas 0000:03:00.0: FW now in Ready state
->> [   10.351868] megaraid_sas 0000:03:00.0: 63 bit DMA mask and 32 bit consistent mask
->> [   10.361655] megaraid_sas 0000:03:00.0: firmware supports msix    : (96)
->> [   10.369433] megaraid_sas 0000:03:00.0: requested/available msix 13/13
->> [   10.377113] megaraid_sas 0000:03:00.0: current msix/online cpus    : (13/12)
->> [   10.385190] megaraid_sas 0000:03:00.0: RDPQ mode    : (disabled)
->> [   10.392092] megaraid_sas 0000:03:00.0: Current firmware supports maximum commands: 928     LDIO threshold: 0
->> [   10.403895] megaraid_sas 0000:03:00.0: Configured max firmware commands: 927
->> [   10.416840] megaraid_sas 0000:03:00.0: Performance mode :Latency
->> [   10.424029] megaraid_sas 0000:03:00.0: FW supports sync cache    : No
->> [   10.431417] megaraid_sas 0000:03:00.0: megasas_disable_intr_fusion is called outbound_intr_mask:0x40000009
->> [   10.486158] megaraid_sas 0000:03:00.0: FW provided supportMaxExtLDs: 1    max_lds: 64
->> [   10.495502] megaraid_sas 0000:03:00.0: controller type    : MR(2048MB)
->> [   10.502988] megaraid_sas 0000:03:00.0: Online Controller Reset(OCR)    : Enabled
->> [   10.511445] megaraid_sas 0000:03:00.0: Secure JBOD support    : No
->> [   10.518543] megaraid_sas 0000:03:00.0: NVMe passthru support    : No
->> [   10.525834] megaraid_sas 0000:03:00.0: FW provided TM TaskAbort/Reset timeout: 0 secs/0 secs
->> [   10.536251] megaraid_sas 0000:03:00.0: JBOD sequence map support    : No
->> [   10.543931] megaraid_sas 0000:03:00.0: PCI Lane Margining support    : No
->> [   10.574406] megaraid_sas 0000:03:00.0: megasas_enable_intr_fusion is called outbound_intr_mask:0x40000000
->> [   10.585995] megaraid_sas 0000:03:00.0: INIT adapter done
->> [   10.592409] megaraid_sas 0000:03:00.0: JBOD sequence map is disabled megasas_setup_jbod_map 5660
->> [   10.603273] megaraid_sas 0000:03:00.0: pci id        : (0x1000)/(0x005d)/(0x1028)/(0x1f42)
->> [   10.612815] megaraid_sas 0000:03:00.0: unevenspan support    : yes
->> [   10.619919] megaraid_sas 0000:03:00.0: firmware crash dump    : no
->> [   10.627013] megaraid_sas 0000:03:00.0: JBOD sequence map    : disabled
->> $ dmesg | grep 1100-8e
->> [   25.853170] smartpqi 0000:84:00.0: added 11:2:0:0 0000000000000000 RAID              Adaptec  1100-8e
->> [   25.867069] scsi 11:2:0:0: RAID              Adaptec  1100-8e  2.93 PQ: 0 ANSI: 5
->> $ xfs_info /dev/sdc
->> meta-data=/dev/sdc               isize=512    agcount=28, agsize=268435455 blks
->>           =                       sectsz=512   attr=2, projid32bit=1
->>           =                       crc=1        finobt=1, sparse=0, rmapbt=0
->>           =                       reflink=0
->> data     =                       bsize=4096   blocks=7323648000, imaxpct=5
->>           =                       sunit=0      swidth=0 blks
->> naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
->> log      =internal log           bsize=4096   blocks=521728, version=2
->>           =                       sectsz=512   sunit=0 blks, lazy-count=1
->> realtime =none                   extsz=4096   blocks=0, rtextents=0
->> $ xfs_info /dev/md0
->> meta-data=/dev/md0               isize=512    agcount=102, agsize=268435328 blks
->>           =                       sectsz=4096  attr=2, projid32bit=1
->>           =                       crc=1        finobt=1, sparse=0, rmapbt=0
->>           =                       reflink=0
->> data     =                       bsize=4096   blocks=27348633088, imaxpct=1
->>           =                       sunit=128    swidth=1792 blks
->> naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
->> log      =internal log           bsize=4096   blocks=521728, version=2
->>           =                       sectsz=4096  sunit=1 blks, lazy-count=1
->> realtime =none                   extsz=4096   blocks=0, rtextents=0
->> $ df -i /dev/sdc
->> Filesystem         Inodes   IUsed      IFree IUse% Mounted on
->> /dev/sdc       2929459200 4985849 2924473351    1% /home/pmenzel
->> $ df -i /dev/md0
->> Filesystem         Inodes   IUsed      IFree IUse% Mounted on
->> /dev/md0       2187890624 5331603 2182559021    1% /jbod/M8015
->> ```
->>
->> After not using a directory for a while (over 24 hours), changing into 
->> it (locally) takes over five seconds or doing some git operations. For 
->> example the Linux kernel source git tree located in my home directory. 
->> (My shell has some git integration showing the branch name in the 
->> prompt (`/usr/share/git-contrib/completion/git-prompt.sh`.) Once in 
->> that directory, everything reacts instantly again. When waiting the 
->> Linux pressure stall information (PSI) shows IO resource contention.
->>
->> Before:
->>
->>      $ grep -R . /proc/pressure/
->>      /proc/pressure/io:some avg10=0.40 avg60=0.10 avg300=0.10 total=48330841502
->>      /proc/pressure/io:full avg10=0.40 avg60=0.10 avg300=0.10 total=48067233340
->>      /proc/pressure/cpu:some avg10=0.00 avg60=0.00 avg300=0.00 total=755842910
->>      /proc/pressure/memory:some avg10=0.00 avg60=0.00 avg300=0.00 total=2530206336
->>      /proc/pressure/memory:full avg10=0.00 avg60=0.00 avg300=0.00 total=2318140732
->>
->> During `git log stable/linux-5.10.y`:
->>
->>      $ grep -R . /proc/pressure/
->>      /proc/pressure/io:some avg10=26.20 avg60=9.72 avg300=2.37 total=48337351849
->>      /proc/pressure/io:full avg10=26.20 avg60=9.72 avg300=2.37 total=48073742033
->>      /proc/pressure/cpu:some avg10=0.00 avg60=0.00 avg300=0.00 total=755843898
->>      /proc/pressure/memory:some avg10=0.00 avg60=0.00 avg300=0.00 total=2530209046
->>      /proc/pressure/memory:full avg10=0.00 avg60=0.00 avg300=0.00 total=2318143440
->>
->> The current explanation is, that over night several maintenance 
->> scripts like backup/mirroring and accounting scripts are run, which 
->> touch all files on the devices. Additionally sometimes other users run 
->> cluster jobs with millions of files on the software RAID. Such things 
->> invalidate the inode cache, and “my” are thrown out. When I use it 
->> afterward it’s slow in the beginning. There is still free memory 
->> during these times according to `top`.
-> 
->      $ free -h
->                    total        used        free      shared  buff/cache available
->      Mem:            94G        8.3G        5.3G        2.3M         80G       83G
->      Swap:            0B          0B          0B
-> 
->> Does that sound reasonable with ten million inodes? Is that easily 
->> verifiable?
-> 
-> If an inode consume 512 bytes with ten million inodes, that would be 
-> around 500 MB, which should easily fit into the cache, so it does not 
-> need to be invalidated?
+Documentation/filesystems/vfs.rst says on create() and friends:
+"...you will probably call d_instantiate() with the dentry and the
+  newly created inode..."
 
-Something is wrong with that calculation, and the cache size is much bigger.
+So this behavior seems legit.
+Meaning that we have made a wrong assumption in fsnotify_create()
+and fsnotify_mkdir().
+Please note the comment above fsnotify_link() which anticipates
+negative dentries.
 
-Looking into `/proc/slabinfo` and XFS’ runtime/internal statistics [1], 
-it turns out that the inode cache is likely the problem.
+I've audited the fsnotify backends and it seems that the
+WARN_ON(!inode) in kernel/audit_* is the only immediate implication
+of negative dentry with FS_CREATE.
+I am the one who added these WARN_ON(), so I will remove them.
+I think that missing inode in an FS_CREATE event really breaks
+audit on kernfs, but not sure if that is a valid use case (Paul?).
 
-XFS’ internal stats show that only one third of the inodes requests are 
-answered from cache.
+Anyway, regarding your patch, I still prefer the solution proposed by Jan,
+but not with a different implementation of fsnotify_data_sb().
 
-     $ grep ^ig /sys/fs/xfs/stats/stats
-     ig 1791207386 647353522 20111 1143854223 394 1142080045 10683174
+Please see branch fsnotify_data_sb[1] with the proposed fixes.
+The fixes assert the statement that "sb should always be available
+from @data", regardless of kernfs anomaly.
 
-During the problematic time, the SLAB size is around 4 GB and, according 
-to slabinfo, the inode cache only has around 200.000 (sometimes even as 
-low as 50.000).
+If this works for you, please prepend those patches to your next
+submission.
 
-     $ sudo grep inode /proc/slabinfo
-     nfs_inode_cache       16     24   1064    3    1 : tunables   24 
-12    8 : slabdata      8      8      0
-     rpc_inode_cache       94    138    640    6    1 : tunables   54 
-27    8 : slabdata     23     23      0
-     mqueue_inode_cache      1      4    896    4    1 : tunables   54 
-  27    8 : slabdata      1      1      0
-     xfs_inode         1693683 1722284    960    4    1 : tunables   54 
-   27    8 : slabdata 430571 430571      0
-     ext2_inode_cache       0      0    768    5    1 : tunables   54 
-27    8 : slabdata      0      0      0
-     reiser_inode_cache      0      0    760    5    1 : tunables   54 
-  27    8 : slabdata      0      0      0
-     hugetlbfs_inode_cache      2     12    608    6    1 : tunables 
-54   27    8 : slabdata      2      2      0
-     sock_inode_cache     346    670    768    5    1 : tunables   54 
-27    8 : slabdata    134    134      0
-     proc_inode_cache     121    288    656    6    1 : tunables   54 
-27    8 : slabdata     48     48      0
-     shmem_inode_cache   2249   2827    696   11    2 : tunables   54 
-27    8 : slabdata    257    257      0
-     inode_cache       209098 209482    584    7    1 : tunables   54 
-27    8 : slabdata  29926  29926      0
+Regarding the state of this patch set in general, I must admit that
+I wasn't able to follow if a conclusion was reached about the lifetime
+management of fsnotify_error_event and associated sb mark.
+Jan is going out on vacation and I think there is little point in spinning
+another patch set revision before this issue is settled with Jan.
 
-(What is the difference between `xfs_inode` and `inode_cache`?)
+Thanks,
+Amir.
 
-Then going through all the files with `find -ls`, the inode cache grows 
-to four to five million and the SLAB size grows to around 8 GB. Over 
-night it shrinks back to the numbers above and the page cache grows back.
-
-In the discussions [2], adji`vfs_cache_pressure` is recommended, but – 
-besides setting it to 0 – it only seems to delay the shrinking of the 
-cache. (As it’s an integer 1 is the lowest non-zero (positive) number, 
-which would delay it by a factor of 100.
-
-Is there a way to specify the minimum numbers of entries in the inode 
-cache, or a minimum SLAB size up to that the caches should not be decreased?
-
-
-Kind regards,
-
-Paul
-
-
-[1]: https://xfs.org/index.php/Runtime_Stats#ig
-[2]: 
-https://linux-xfs.oss.sgi.narkive.com/qa0AYeBS/improving-xfs-file-system-inode-performance
-      "Improving XFS file system inode performance" from 2010
+[1] https://github.com/amir73il/linux/commits/fsnotify_data_sb
