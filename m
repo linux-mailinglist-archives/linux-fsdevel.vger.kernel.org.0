@@ -2,192 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DE3AC3F89CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 16:08:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 944603F8A0F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 16:26:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242783AbhHZOJQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Aug 2021 10:09:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55366 "EHLO
+        id S242819AbhHZO1Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Aug 2021 10:27:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229832AbhHZOJO (ORCPT
+        with ESMTP id S242840AbhHZO1T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Aug 2021 10:09:14 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED2D1C061757;
-        Thu, 26 Aug 2021 07:08:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=rSq1NSY3tDLMhc9/zg8drVX4eFZRs7BxvgldfW0phO0=; b=YpTNAz439ehJKUlInhKW0g4mvC
-        JSzP6Su3qNNirE48Ni+dmxPJdQK99QIfPvnh0iq3EaW2C8V5kHaeN5CSpigXlqEtq/PU0oBZsqSdi
-        hE0RA9qjAK3QQHbnOtCU5QUV1TsuL3+lIilnwQ7gzuLko1Y3yxoIl7grcUzSQ4cILpBvI/zysalun
-        b9xRd97ZOJepqhbedJyAkiXTQisclO90qjDaqRfO0UXgsrqHFXOOIfE6RZBK38P6d+z2eCT8anoSY
-        vf69MPCZhmHsfQwqLaAB3peTDiALLlQBmt2a/noMX7/8DsvpVoly/j0H2phcPuiRCLvCgkUZDWsr7
-        OL2X5x2g==;
-Received: from [2001:4bb8:193:fd10:d9d9:6c15:481b:99c4] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mJG0F-00DMd4-RO; Thu, 26 Aug 2021 14:05:31 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>
-Cc:     Mike Snitzer <snitzer@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: [PATCH 9/9] dax: remove bdev_dax_supported
-Date:   Thu, 26 Aug 2021 15:55:10 +0200
-Message-Id: <20210826135510.6293-10-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210826135510.6293-1-hch@lst.de>
-References: <20210826135510.6293-1-hch@lst.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+        Thu, 26 Aug 2021 10:27:19 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 993EDC061757
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Aug 2021 07:26:32 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id z24-20020a17090acb1800b0018e87a24300so2520590pjt.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Aug 2021 07:26:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=d8AdWOu1C2KmNDi0WuZ+5K7PD8/DNfu2a7FRFmIcixs=;
+        b=NVHrbKNNmejnOhxqatXlgRmyVLyzSDH5ikPV2YDcC5ERc6T93fr5AlAVxrLQ8yTf6Q
+         xJJRxySnEH4Bcgv9JgCUyLYOcvUscHRbZA2RTqKYVoizW1i5WR8ThmahoFcirfc6NS5K
+         I4gNCwUqBZD769ZgVJs+IMV1mUZ01GoQopNurh1tIxTixIQx15Zd3lTdLtcstdwLNmXh
+         iOiRxx6ebIx3/S+VLlp1Vjxnc3QEkQLTOjc0EVSpN93V2hJDc5xDtfXJ6SXeGVm7IX9X
+         r412jVU9UnMwMwVQjop9gN8+Ab1PYLa6apM+3QonakdT5XK4/3gPYicsXvMDS8blbLgt
+         i4cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=d8AdWOu1C2KmNDi0WuZ+5K7PD8/DNfu2a7FRFmIcixs=;
+        b=kXQ5CQiyaYaoHyiq6p2MvLRx2YLehhoxar3NR0LTP4SedhakDPIZfSI3ttsJA+XL6e
+         cD6Ig469Gf1Nn2N8Wqmp3urZRhdyzVh3lGOSTpGQFUhLgLhF9Gt1b7ojyiBqE9NGDKjd
+         wWncOW7caIOyIBF9Q1rizEPllcUu3RJKR/f0vHgALSFmHrYg3FqVJch9Z3KbsNhAGUrn
+         9Vx55LKyWQw/+9cmy6oRD8AmkOiKTHGjnvJsdFpxMZpNl3hMDYqh49EuhlgWfSMuEGWD
+         4yZSVZ77EANtzUiZYxqoMOU9m/oNS7CPEKo8oRiKBhLVVx8xwqk3PVg94/WNrt+PwlLN
+         RHSQ==
+X-Gm-Message-State: AOAM532ufmPWTMSGWhdRvx5xEt2tIhJ+wDWDs18n579vs/BINPkNl5uD
+        RT9WJlKV4K75ZalFKozxAI8=
+X-Google-Smtp-Source: ABdhPJxYk4UWZJpVM+zx1IqJdRWXoOaQKiYanH32EiKzhBCNaSF67d8A5IUlt9LhxQ1Ph4od1Xbvlg==
+X-Received: by 2002:a17:90b:f8d:: with SMTP id ft13mr16951972pjb.228.1629987992212;
+        Thu, 26 Aug 2021 07:26:32 -0700 (PDT)
+Received: from localhost.localdomain ([162.14.23.249])
+        by smtp.gmail.com with ESMTPSA id z131sm3321330pfc.159.2021.08.26.07.26.30
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Aug 2021 07:26:31 -0700 (PDT)
+From:   tcs.kernel@gmail.com
+X-Google-Original-From: tcs_kernel@tencent.com
+To:     linkinjeon@kernel.org, sj1557.seo@samsung.com,
+        linux-fsdevel@vger.kernel.org, zhiqiangyan@tencent.com
+Cc:     Haimin Zhang <tcs_kernel@tencent.com>
+Subject: [PATCH] fs:exfat fix out of bound bug in __exfat_free_cluster
+Date:   Thu, 26 Aug 2021 22:26:19 +0800
+Message-Id: <1629987979-6301-1-git-send-email-tcs_kernel@tencent.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All callers already have a dax_device obtained from fs_dax_get_by_bdev
-at hand, so just pass that to dax_supported() insted of doing another
-lookup.
+From: Haimin Zhang <tcs_kernel@tencent.com>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+There is an out of bounds bug in the exfat_clear_bitmap function
+in fs/exfat/balloc.c. Because the index of vol_amap array isn't
+verified. The function could be called by __exfat_free_cluster
+function, and the p_chain->dir variable which could be controlled
+by user can be large, that will eventually lead to out of bounds
+read. So we should check the index before entering the function.
+
+Signed-off-by: Haimin Zhang <tcs_kernel@tencent.com>
+Signed-off-by: yanzhiqiang <zhiqiangyan@tencent.com>
 ---
- drivers/dax/super.c | 42 +-----------------------------------------
- fs/ext2/super.c     |  3 ++-
- fs/ext4/super.c     |  3 ++-
- fs/xfs/xfs_super.c  |  3 ++-
- include/linux/dax.h | 12 ------------
- 5 files changed, 7 insertions(+), 56 deletions(-)
+ fs/exfat/fatent.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index eed02729add3..fc89e91beea7 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -220,47 +220,7 @@ bool dax_supported(struct dax_device *dax_dev, struct block_device *bdev,
- }
- EXPORT_SYMBOL_GPL(dax_supported);
- #endif /* CONFIG_FS_DAX */
--
--/**
-- * __bdev_dax_supported() - Check if the device supports dax for filesystem
-- * @bdev: block device to check
-- * @blocksize: The block size of the device
-- *
-- * This is a library function for filesystems to check if the block device
-- * can be mounted with dax option.
-- *
-- * Return: true if supported, false if unsupported
-- */
--bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
--{
--	struct dax_device *dax_dev;
--	struct request_queue *q;
--	char buf[BDEVNAME_SIZE];
--	bool ret;
--
--	q = bdev_get_queue(bdev);
--	if (!q || !blk_queue_dax(q)) {
--		pr_debug("%s: error: request queue doesn't support dax\n",
--				bdevname(bdev, buf));
--		return false;
--	}
--
--	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
--	if (!dax_dev) {
--		pr_debug("%s: error: device does not support dax\n",
--				bdevname(bdev, buf));
--		return false;
--	}
--
--	ret = dax_supported(dax_dev, bdev, blocksize, 0,
--			i_size_read(bdev->bd_inode) / 512);
--
--	put_dax(dax_dev);
--
--	return ret;
--}
--EXPORT_SYMBOL_GPL(__bdev_dax_supported);
--#endif
-+#endif /* CONFIG_BLOCK */
+diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
+index e949e56..5ce524d 100644
+--- a/fs/exfat/fatent.c
++++ b/fs/exfat/fatent.c
+@@ -157,6 +157,7 @@ static int __exfat_free_cluster(struct inode *inode, struct exfat_chain *p_chain
+ 	struct super_block *sb = inode->i_sb;
+ 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+ 	int cur_cmap_i, next_cmap_i;
++	int chain_i;
+ 	unsigned int num_clusters = 0;
+ 	unsigned int clu;
  
- enum dax_device_flags {
- 	/* !alive + rcu grace period == no new operations / mappings */
-diff --git a/fs/ext2/super.c b/fs/ext2/super.c
-index 21e09fbaa46f..26e69e48d7e0 100644
---- a/fs/ext2/super.c
-+++ b/fs/ext2/super.c
-@@ -949,7 +949,8 @@ static int ext2_fill_super(struct super_block *sb, void *data, int silent)
- 	blocksize = BLOCK_SIZE << le32_to_cpu(sbi->s_es->s_log_block_size);
- 
- 	if (test_opt(sb, DAX)) {
--		if (!bdev_dax_supported(sb->s_bdev, blocksize)) {
-+		if (!dax_supported(dax_dev, sb->s_bdev, blocksize, 0,
-+				bdev_nr_sectors(sb->s_bdev))) {
- 			ext2_msg(sb, KERN_ERR,
- 				"DAX unsupported by block device. Turning off DAX.");
- 			clear_opt(sbi->s_mount_opt, DAX);
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index dfa09a277b56..a1726a8debce 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4435,7 +4435,8 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 		goto failed_mount;
+@@ -176,6 +177,13 @@ static int __exfat_free_cluster(struct inode *inode, struct exfat_chain *p_chain
+ 		return -EIO;
  	}
  
--	if (bdev_dax_supported(sb->s_bdev, blocksize))
-+	if (dax_supported(dax_dev, sb->s_bdev, blocksize, 0,
-+			bdev_nr_sectors(sb->s_bdev)))
- 		set_bit(EXT4_FLAGS_BDEV_IS_DAX, &sbi->s_ext4_flags);
++	/* check size */
++	chain_i = BITMAP_OFFSET_SECTOR_INDEX(sb,
++		CLUSTER_TO_BITMAP_ENT(p_chain->size + p_chain->dir));
++	if (chain_i > sbi->map_sectors) {
++		exfat_err(sb, "invalid start size (%u)", p_chain->size);
++		return -EIO;
++	}
++
+ 	clu = p_chain->dir;
  
- 	if (sbi->s_mount_opt & EXT4_MOUNT_DAX_ALWAYS) {
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 5a89bf601d97..f4384974e52a 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -319,7 +319,8 @@ xfs_buftarg_is_dax(
- 	struct super_block	*sb,
- 	struct xfs_buftarg	*bt)
- {
--	return bdev_dax_supported(bt->bt_bdev, sb->s_blocksize);
-+	return dax_supported(bt->bt_daxdev, bt->bt_bdev, sb->s_blocksize, 0,
-+			bdev_nr_sectors(bt->bt_bdev));
- }
- 
- STATIC int
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index 32dce5763f2c..2619d94c308d 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -109,12 +109,6 @@ static inline bool daxdev_mapping_supported(struct vm_area_struct *vma,
- struct writeback_control;
- int bdev_dax_pgoff(struct block_device *, sector_t, size_t, pgoff_t *pgoff);
- #if IS_ENABLED(CONFIG_FS_DAX)
--bool __bdev_dax_supported(struct block_device *bdev, int blocksize);
--static inline bool bdev_dax_supported(struct block_device *bdev, int blocksize)
--{
--	return __bdev_dax_supported(bdev, blocksize);
--}
--
- bool generic_fsdax_supported(struct dax_device *dax_dev,
- 		struct block_device *bdev, int blocksize, sector_t start,
- 		sector_t sectors);
-@@ -136,12 +130,6 @@ struct page *dax_layout_busy_page_range(struct address_space *mapping, loff_t st
- dax_entry_t dax_lock_page(struct page *page);
- void dax_unlock_page(struct page *page, dax_entry_t cookie);
- #else
--static inline bool bdev_dax_supported(struct block_device *bdev,
--		int blocksize)
--{
--	return false;
--}
--
- #define generic_fsdax_supported		NULL
- 
- static inline bool dax_supported(struct dax_device *dax_dev,
+ 	cur_cmap_i = next_cmap_i =
 -- 
-2.30.2
+1.8.3.1
 
