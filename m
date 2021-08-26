@@ -2,111 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06D3A3F7F91
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 02:59:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB3EE3F7FB5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 03:17:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235675AbhHZBAB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Aug 2021 21:00:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234396AbhHZBAA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Aug 2021 21:00:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 636B660F6F;
-        Thu, 26 Aug 2021 00:59:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629939554;
-        bh=EXrb+gVpKlIS/8zNJQMeoK/jfDFoPwPN7MIaRo88m5M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZalcFUQZA0ontYQPUcmHKUZnISqknge/El2n25Na0epoWdBEIgCMlcECF4n5nan5D
-         9rxjCAMiBuVX+E0WQvgvzkYNmSJjil/P515Ff1oLc0UrsnKXK6vEeIhzRCtIL4Ih0n
-         PYAHN/bnaEGbTEeR/8+zIrlkWphfB0+M8INYGZOSmE/mJfeljMn0TAB8UX8pesIp9S
-         ECB637/fIlSkPc5J/w+AG4bRJQ1CDut2VB6dQyOhOcka7jUovRM3EcPaUbmYU+p4QA
-         tN2yfOSZVveKrHPJwqhuM7aPvub1htWL7NcS+OzmSrAxfRdZjcHEBSkf+fnpzmCWCW
-         JhWIAXMDIApTw==
-Date:   Wed, 25 Aug 2021 17:59:14 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] Memory folios for v5.15
-Message-ID: <20210826005914.GG12597@magnolia>
-References: <YSQSkSOWtJCE4g8p@cmpxchg.org>
- <1957060.1629820467@warthog.procyon.org.uk>
- <YSUy2WwO9cuokkW0@casper.infradead.org>
- <CAHk-=wip=366HxkJvTfABuPUxwjGsFK4YYMgXNY9VSkJNp=-XA@mail.gmail.com>
- <YSVCAJDYShQke6Sy@casper.infradead.org>
- <CAHk-=wisF580D_g+wFt0B_uijSX+mCgz6tRRT5KADnO7Y97t-g@mail.gmail.com>
- <YSVHI9iaamxTGmI7@casper.infradead.org>
- <YSVMMMrzqxyFjHlw@mit.edu>
- <YSXkDFNkgAhQGB0E@infradead.org>
- <cf30c0e8d1eecf08b2651c5984ff09539e2266f9.camel@kernel.org>
+        id S235779AbhHZBRo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Aug 2021 21:17:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37416 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234655AbhHZBRo (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 25 Aug 2021 21:17:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1629940617;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xGZ4blQfD1SQzAW+8oNrI9+DDA2xYpM8Bz8tQolg2hE=;
+        b=V1SRF9pcN0Fj2eUZV2pgCFsMJQXQ80XoypqLs5guWEKIn5Ezzq+7Rp7VwfhJfS9CA5t9cI
+        7bAzdvP8aZclNy42UwegEGB+AHKQwx9fWjpYOZ5oJiB7yT5eyMWfxt0S20KBA/OqIoGQqY
+        TiELrYGO9TrJcRljiNNOo5OFm7wlbmQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-541-Olw_4qIKPzy6iyhZV81APw-1; Wed, 25 Aug 2021 21:16:54 -0400
+X-MC-Unique: Olw_4qIKPzy6iyhZV81APw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BB9BA8015C7;
+        Thu, 26 Aug 2021 01:16:52 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.3.128.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1B16060843;
+        Thu, 26 Aug 2021 01:16:41 +0000 (UTC)
+Date:   Wed, 25 Aug 2021 21:16:39 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to
+ io_uring
+Message-ID: <20210826011639.GE490529@madcap2.tricolour.ca>
+References: <162871480969.63873.9434591871437326374.stgit@olly>
+ <20210824205724.GB490529@madcap2.tricolour.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cf30c0e8d1eecf08b2651c5984ff09539e2266f9.camel@kernel.org>
+In-Reply-To: <20210824205724.GB490529@madcap2.tricolour.ca>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 25, 2021 at 08:03:18AM -0400, Jeff Layton wrote:
-> On Wed, 2021-08-25 at 07:32 +0100, Christoph Hellwig wrote:
-> > On Tue, Aug 24, 2021 at 03:44:48PM -0400, Theodore Ts'o wrote:
-> > > The problem is whether we use struct head_page, or folio, or mempages,
-> > > we're going to be subsystem users' faces.  And people who are using it
-> > > every day will eventually get used to anything, whether it's "folio"
-> > > or "xmoqax", we sould give a thought to newcomers to Linux file system
-> > > code.  If they see things like "read_folio()", they are going to be
-> > > far more confused than "read_pages()" or "read_mempages()".
+On 2021-08-24 16:57, Richard Guy Briggs wrote:
+> On 2021-08-11 16:48, Paul Moore wrote:
+> > Draft #2 of the patchset which brings auditing and proper LSM access
+> > controls to the io_uring subsystem.  The original patchset was posted
+> > in late May and can be found via lore using the link below:
 > > 
-> > Are they?  It's not like page isn't some randomly made up term
-> > as well, just one that had a lot more time to spread.
+> > https://lore.kernel.org/linux-security-module/162163367115.8379.8459012634106035341.stgit@sifl/
+> > 
+> > This draft should incorporate all of the feedback from the original
+> > posting as well as a few smaller things I noticed while playing
+> > further with the code.  The big change is of course the selective
+> > auditing in the io_uring op servicing, but that has already been
+> > discussed quite a bit in the original thread so I won't go into
+> > detail here; the important part is that we found a way to move
+> > forward and this draft captures that.  For those of you looking to
+> > play with these patches, they are based on Linus' v5.14-rc5 tag and
+> > on my test system they boot and appear to function without problem;
+> > they pass the selinux-testsuite and audit-testsuite and I have not
+> > noticed any regressions in the normal use of the system.  If you want
+> > to get a copy of these patches straight from git you can use the
+> > "working-io_uring" branch in the repo below:
+> > 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+> > https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+> > 
+> > Beyond the existing test suite tests mentioned above, I've cobbled
+> > together some very basic, very crude tests to exercise some of the
+> > things I care about from a LSM/audit perspective.  These tests are
+> > pretty awful (I'm not kidding), but they might be helpful for the
+> > other LSM/audit developers who want to test things:
+> > 
+> > https://drop.paul-moore.com/90.kUgq
+> > 
+> > There are currently two tests: 'iouring.2' and 'iouring.3';
+> > 'iouring.1' was lost in a misguided and overzealous 'rm' command.
+> > The first test is standalone and basically tests the SQPOLL
+> > functionality while the second tests sharing io_urings across process
+> > boundaries and the credential/personality sharing mechanism.  The
+> > console output of both tests isn't particularly useful, the more
+> > interesting bits are in the audit and LSM specific logs.  The
+> > 'iouring.2' command requires no special arguments to run but the
+> > 'iouring.3' test is split into a "server" and "client"; the server
+> > should be run without argument:
+> > 
+> >   % ./iouring.3s
+> >   >>> server started, pid = 11678
+> >   >>> memfd created, fd = 3
+> >   >>> io_uring created; fd = 5, creds = 1
+> > 
+> > ... while the client should be run with two arguments: the first is
+> > the PID of the server process, the second is the "memfd" fd number:
+> > 
+> >   % ./iouring.3c 11678 3
+> >   >>> client started, server_pid = 11678 server_memfd = 3
+> >   >>> io_urings = 5 (server) / 5 (client)
+> >   >>> io_uring ops using creds = 1
+> >   >>> async op result: 36
+> >   >>> async op result: 36
+> >   >>> async op result: 36
+> >   >>> async op result: 36
+> >   >>> START file contents
+> >   What is this life if, full of care,
+> >   we have no time to stand and stare.
+> >   >>> END file contents
+> > 
+> > The tests were hacked together from various sources online,
+> > attribution and links to additional info can be found in the test
+> > sources, but I expect these tests to die a fiery death in the not
+> > to distant future as I work to add some proper tests to the SELinux
+> > and audit test suites.
+> > 
+> > As I believe these patches should spend a full -rcX cycle in
+> > linux-next, my current plan is to continue to solicit feedback on
+> > these patches while they undergo additional testing (next up is
+> > verification of the audit filter code for io_uring).  Assuming no
+> > critical issues are found on the mailing lists or during testing, I
+> > will post a proper patchset later with the idea of merging it into
+> > selinux/next after the upcoming merge window closes.
+> > 
+> > Any comments, feedback, etc. are welcome.
+> 
+> Thanks for the tests.  I have a bunch of userspace patches to add to the
+> last set I posted and these tests will help exercise them.  I also have
+> one more kernel patch to post...  I'll dive back into that now.  I had
+> wanted to post them before now but got distracted with AUDIT_TRIM
+> breakage.
+
+Please tell me about liburing.h that is needed for these.  There is one
+in tools/io_uring/liburing.h but I don't think that one is right.
+
+The next obvious one would be include/uapi/linux/io_uring.h
+
+I must be missing something obvious here...
+
+> > ---
+> > 
+> > Casey Schaufler (1):
+> >       Smack: Brutalist io_uring support with debug
+> > 
+> > Paul Moore (8):
+> >       audit: prepare audit_context for use in calling contexts beyond
+> >              syscalls
+> >       audit,io_uring,io-wq: add some basic audit support to io_uring
+> >       audit: dev/test patch to force io_uring auditing
+> >       audit: add filtering for io_uring records
+> >       fs: add anon_inode_getfile_secure() similar to
+> >           anon_inode_getfd_secure()
+> >       io_uring: convert io_uring to the secure anon inode interface
+> >       lsm,io_uring: add LSM hooks to io_uring
+> >       selinux: add support for the io_uring access controls
+> > 
+> > 
+> >  fs/anon_inodes.c                    |  29 ++
+> >  fs/io-wq.c                          |   4 +
+> >  fs/io_uring.c                       |  69 +++-
+> >  include/linux/anon_inodes.h         |   4 +
+> >  include/linux/audit.h               |  26 ++
+> >  include/linux/lsm_hook_defs.h       |   5 +
+> >  include/linux/lsm_hooks.h           |  13 +
+> >  include/linux/security.h            |  16 +
+> >  include/uapi/linux/audit.h          |   4 +-
+> >  kernel/audit.h                      |   7 +-
+> >  kernel/audit_tree.c                 |   3 +-
+> >  kernel/audit_watch.c                |   3 +-
+> >  kernel/auditfilter.c                |  15 +-
+> >  kernel/auditsc.c                    | 483 +++++++++++++++++++-----
+> >  security/security.c                 |  12 +
+> >  security/selinux/hooks.c            |  34 ++
+> >  security/selinux/include/classmap.h |   2 +
+> >  security/smack/smack_lsm.c          |  64 ++++
+> >  18 files changed, 678 insertions(+), 115 deletions(-)
 > > 
 > 
-> Absolutely.  "folio" is no worse than "page", we've just had more time
-> to get used to "page".
-
-I /like/ the name 'folio'.  My privileged education :P informed me (when
-Matthew talked to me the very first time about this patchset) that it's
-a wonderfully flexible word that describes both a collection of various
-pages and a single large sheet of paper folded in half.  Or in the case
-of x86, folded in half nine times.
-
-That's *exactly* the usage that Matthew is proposing.
-
-English already had a word ready for us to use, so let's use it.
-
---D
-
-(Well, ok, the one thing I dislike is that my brain keeps typing out
-'fileio' instead of 'folio', but it's still better than struct xmoqax or
-remembering if we do camel_case or PotholeCase.)
-
-> > > So if someone sees "kmem_cache_alloc()", they can probably make a
-> > > guess what it means, and it's memorable once they learn it.
-> > > Similarly, something like "head_page", or "mempages" is going to a bit
-> > > more obvious to a kernel newbie.  So if we can make a tiny gesture
-> > > towards comprehensibility, it would be good to do so while it's still
-> > > easier to change the name.
-> > 
-> > All this sounds really weird to me.  I doubt there is any name that
-> > nicely explains "structure used to manage arbitrary power of two
-> > units of memory in the kernel" very well.  So I agree with willy here,
-> > let's pick something short and not clumsy.  I initially found the folio
-> > name a little strange, but working with it I got used to it quickly.
-> > And all the other uggestions I've seen s far are significantly worse,
-> > especially all the odd compounds with page in it.
+> - RGB
 > 
-> Same here. Compound words are especially bad, as newbies will
-> continually have to look at whether it's "page_set" or "pageset".
+> --
+> Richard Guy Briggs <rgb@redhat.com>
+> Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> Remote, Ottawa, Red Hat Canada
+> IRC: rgb, SunRaycer
+> Voice: +1.647.777.2635, Internal: (81) 32635
 > 
-> -- 
-> Jeff Layton <jlayton@kernel.org>
-> 
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
