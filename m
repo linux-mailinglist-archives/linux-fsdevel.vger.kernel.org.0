@@ -2,60 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54E073F876F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 14:29:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D32E3F87E8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 14:47:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240767AbhHZMaF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Aug 2021 08:30:05 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:38729 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234301AbhHZMaE (ORCPT
+        id S234420AbhHZMsg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Aug 2021 08:48:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36042 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232506AbhHZMsf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Aug 2021 08:30:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629980957;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=2oWfEHZasK8WDnq3QkCch7k26tHiNbpBfPYTJ9GVpp4=;
-        b=OqoUbia6TgX4+FLsRojrtXjFekoHqbfsDNRBTQ5npJS06OC4ACsbYg2B4ef3qVJAwqRFYC
-        vIm0dNxoudaiChIWY0eVgVGrEn+TUvWfzzsqc5dWCUGwvs65/5iPwT6cfEQGsPo3sen6fk
-        7AZWTsfAiKNfNdvenEs1ciD9t6AYTSw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-123-MDt6MFAnNNKPKnp0cyDpWQ-1; Thu, 26 Aug 2021 08:29:16 -0400
-X-MC-Unique: MDt6MFAnNNKPKnp0cyDpWQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 11A47800493;
-        Thu, 26 Aug 2021 12:29:15 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1875B60C04;
-        Thu, 26 Aug 2021 12:29:13 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20210721113057.993344-1-rbergant@redhat.com>
-References: <20210721113057.993344-1-rbergant@redhat.com>
+        Thu, 26 Aug 2021 08:48:35 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6176BC061757
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Aug 2021 05:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=cfsVs6nWykpEwKCk0uj5S7XpJ7tdNaq56WfJl8uUYrs=; b=GK9ZuNR1bgCkSw7B9UDBJMNb2u
+        CJEzeuE5emXzrX36YTPBTqfnBkJtdiUChRTqXgr2/x4x+Obq4cu72xUNwDsgqgP27LVItJz/lVkhl
+        WUFwgMfVGHDKVlrOSgImF82EiSxBO8yAN1tnLqXlicyl22J0WJP+gp7FxvbEB3QXyfTfw9PP6vZNh
+        sklyzyFZ9LoxJG0ZcOEIVfdhgiQMKeSGkPz2Ezwu3wPwiA/iHY/bvq9ENTYRBCLq34GVVoS4P0BcQ
+        12dgZgN3M/uJX7iltMaGCL0OQs8kNB7d+WGDl4JNAiCxs5AmkYsY5C6yCTMR/3lz5+jEbTxEVqrtr
+        l4bM8BgQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mJEmM-00DIcr-1D; Thu, 26 Aug 2021 12:47:01 +0000
+Date:   Thu, 26 Aug 2021 13:46:46 +0100
+From:   Matthew Wilcox <willy@infradead.org>
 To:     Roberto Bergantinos Corpas <rbergant@redhat.com>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH] vfs: parse sloppy mount option in correct order
+Message-ID: <YSeNNnNBW7ceLuh+@casper.infradead.org>
+References: <20210721113057.993344-1-rbergant@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2117191.1629980953.1@warthog.procyon.org.uk>
-Date:   Thu, 26 Aug 2021 13:29:13 +0100
-Message-ID: <2117192.1629980953@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210721113057.993344-1-rbergant@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Roberto Bergantinos Corpas <rbergant@redhat.com> wrote:
-
+On Wed, Jul 21, 2021 at 01:30:57PM +0200, Roberto Bergantinos Corpas wrote:
 > With addition of fs_context support, options string is parsed
 > sequentially, if 'sloppy' option is not leftmost one, we may
 > return ENOPARAM to userland if a non-valid option preceeds sloopy
@@ -64,15 +51,7 @@ Roberto Bergantinos Corpas <rbergant@redhat.com> wrote:
 > host# mount -o quota,sloppy 172.23.1.225:/share /mnt
 > mount.nfs: an incorrect mount option was specified
 > host# mount -o sloppy,quota 172.23.1.225:/share /mnt
-> host#
-> 
-> This patch correct that behaviour so that sloppy takes precedence
-> if specified anywhere on the string
 
-It's slightly overcorrected, but that probably doesn't matter.
-
-I wonder if we should put a "bool sloppy" in struct fs_context, put the
-handling in vfs_parse_fs_param() (ie. skip the error message).
-
-David
-
+It isn't clear to me that this is incorrect behaviour.  Perhaps the user
+actually wants the options to the left parsed strictly and the options
+to the right parsed sloppily?
