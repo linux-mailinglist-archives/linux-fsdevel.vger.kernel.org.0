@@ -2,189 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62C523F7FF2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 03:34:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E83A53F80E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 05:15:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235987AbhHZBff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 Aug 2021 21:35:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52422 "EHLO
+        id S231720AbhHZDQJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 Aug 2021 23:16:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235172AbhHZBfe (ORCPT
+        with ESMTP id S229533AbhHZDQE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 Aug 2021 21:35:34 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12EF4C061757
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 18:34:48 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id e21so2420748ejz.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 18:34:47 -0700 (PDT)
+        Wed, 25 Aug 2021 23:16:04 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53FEBC061757
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 20:15:18 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id s11so1817117pgr.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 20:15:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OdpPAw8AF8pl2PyKEL1hUSGpJT552rYtVLGch5FQNUg=;
-        b=s89enEjVtwLIczScDXvlL5in2XUoikWwI1bI+2XIGm2ig7sM5+jzPbFrXyNmfNdt2B
-         TDlubVQ+1eZq248F/C+SNj6f+K+RdXGRYLkkW5UKa6L2motdIlcnIwPZwir7Xi/cnEXH
-         XD0B8/HiUxBqhBHG2IY8riO83umDevioXM/2sMa2lTEKgVdF3YD0N9Tcz/70f50m1Coq
-         SQJ8qkY/a+ny0ogrYPNQKm7wO7kz1foyig/wKcNgz8MBzJjYWe9Z/YKJx9ausGyx+0Iw
-         aPO7Q9koxTNXa0W0ZJe7DARZulbU3i7KDNBRiWkzx777xyYYbk1YQlgkfNuV87hvcXeU
-         htBA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=/FRDpU19jEX72ioiIcPwAkcRKAZ3d8wedehja87eDdM=;
+        b=FHs51ZfySnCFDVsdi9x4YQLdIl+TeyWGHms6ZaOXVMYnz3/R1nmtdFJHK05ScbpS86
+         u9HPPkW2zZ4HWKhZrqBvVltKDQ1k3jeFEi87NI+GA47rvEqdo6pUTtHGG4ld3C3IxUQq
+         SoiTFn8FRUviZwqcx6+9nPHeCltqHS4fRNYAlZRIS5V1c6+zoXZsZUyCyJSKg96Kc6Py
+         VvwLo1OQgjiEfaQdpvtRkGRg30JWn/LJghEsNn9ayNb2SVUIBSXgh0Ud6KSYd0qFRapy
+         c8NL28JWgPsL9q6VIt1BAJwKF2ZAKHLFW8BvcYJsyzmZ2nYrGtv4/JBwlzLkPp20HaCm
+         4OXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OdpPAw8AF8pl2PyKEL1hUSGpJT552rYtVLGch5FQNUg=;
-        b=e+IlPuM5HC3mPxe9cA9oz1iGdJ8nCJVwzX2zOCaOO1ghdgtDkhRCRRT4t4dDevQnNk
-         VW7bMsv+cDGHkyTWBod4pFgZlVZMJ8ZspUrPFs7E0OPRJOE3U4EAYz9Q60vHEnlYkdOq
-         v85+t2hxG/kPKUiHi+YmD8azvExp8YX/gwMgxgdwZKtYNEJfFVUmPMQFF63Ktob70SOA
-         FRZGj2CDxRHEjdLbQCYcPXmv2iP+LbprGvT/55mKGfylwC8FJAgf6o74PeKHQp2sypEh
-         rlYI30bnjoRsLwrBpOUaWQCjMAwgnzIRT82V7KsyCCkuk2tjXbASElkDu8gbncgvKgnQ
-         xKRg==
-X-Gm-Message-State: AOAM532yWe6wUlu3LApMV/4lRAxAxqCdhqdGF0Qcrgd6DyrIccEEf13+
-        S9o+eJYm35K1uCaYHSNjj22cn4FmSXAESiqMeBbl
-X-Google-Smtp-Source: ABdhPJwkxAUzZb4BAOoTmtyvge3L60MS4GRf3O1WiYNyf8fZr3jqwYlcLQ7K6iZEQJc0kSAgJ9KIlKQXtyNl3hpd2NQ=
-X-Received: by 2002:a17:906:2cd6:: with SMTP id r22mr1559201ejr.398.1629941686387;
- Wed, 25 Aug 2021 18:34:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <162871480969.63873.9434591871437326374.stgit@olly>
- <20210824205724.GB490529@madcap2.tricolour.ca> <20210826011639.GE490529@madcap2.tricolour.ca>
-In-Reply-To: <20210826011639.GE490529@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 25 Aug 2021 21:34:35 -0400
-Message-ID: <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/FRDpU19jEX72ioiIcPwAkcRKAZ3d8wedehja87eDdM=;
+        b=AY2huSXjKTPs3AelqwYnt/qHLFFGtlWOzgf7qq5y21vLMKLglfTkN9Nh1VBAcDKeYY
+         3lezH+kwBZzhXC3kz3BHuMuaxYcUK3b2y6F+jfZ45Tf9UW4V6SgGALdX50f2hCc/4ONM
+         5zkXKLLMn5pLm16OVv6xVwOlxB1SBQpw7j6Nsqo4R/uxFFLduK3z0qsIrOJOi248FGg+
+         dl0uZK3SCgHqfP+2TuxT7LeHUKvY/ZlVUA1gWJoavOkjdPrhPoDnpaiXv0OqTFkOWJdz
+         g8z1cazSQYeeWS924U3eTI1upU7uv+GURrHTwAt3kNANWuzwxbZK1PGjuMQ/1MuHcqZM
+         DQFA==
+X-Gm-Message-State: AOAM531Qz2k4RsHfAqbvmWB6xFh3D4gWi6uueeBUJdBrfo3yYX7Re83E
+        u50RQqxe6ax34bVuBqxOKJq3mxYd3vaY8Q==
+X-Google-Smtp-Source: ABdhPJyjn7w6nZvzYmoz33Fwe4wBTn9Hu+9UP0mdgZlnhFYJ7Jy0RFjv1QFV8scBpavN89miV9AVJA==
+X-Received: by 2002:a65:41c6:: with SMTP id b6mr1396205pgq.206.1629947717477;
+        Wed, 25 Aug 2021 20:15:17 -0700 (PDT)
+Received: from AHUANG12-1LT7M0.lenovo.com (1-174-61-115.dynamic-ip.hinet.net. [1.174.61.115])
+        by smtp.gmail.com with ESMTPSA id y27sm953358pfa.29.2021.08.25.20.15.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Aug 2021 20:15:17 -0700 (PDT)
+From:   Adrian Huang <adrianhuang0701@gmail.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Adrian Huang <adrianhuang0701@gmail.com>,
+        Adrian Huang <ahuang12@lenovo.com>
+Subject: [PATCH 1/1] exec: fix typo and grammar mistake in comment
+Date:   Thu, 26 Aug 2021 11:14:51 +0800
+Message-Id: <20210826031451.611-1-adrianhuang0701@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 25, 2021 at 9:16 PM Richard Guy Briggs <rgb@redhat.com> wrote:
->
-> On 2021-08-24 16:57, Richard Guy Briggs wrote:
-> > On 2021-08-11 16:48, Paul Moore wrote:
-> > > Draft #2 of the patchset which brings auditing and proper LSM access
-> > > controls to the io_uring subsystem.  The original patchset was posted
-> > > in late May and can be found via lore using the link below:
-> > >
-> > > https://lore.kernel.org/linux-security-module/162163367115.8379.8459012634106035341.stgit@sifl/
-> > >
-> > > This draft should incorporate all of the feedback from the original
-> > > posting as well as a few smaller things I noticed while playing
-> > > further with the code.  The big change is of course the selective
-> > > auditing in the io_uring op servicing, but that has already been
-> > > discussed quite a bit in the original thread so I won't go into
-> > > detail here; the important part is that we found a way to move
-> > > forward and this draft captures that.  For those of you looking to
-> > > play with these patches, they are based on Linus' v5.14-rc5 tag and
-> > > on my test system they boot and appear to function without problem;
-> > > they pass the selinux-testsuite and audit-testsuite and I have not
-> > > noticed any regressions in the normal use of the system.  If you want
-> > > to get a copy of these patches straight from git you can use the
-> > > "working-io_uring" branch in the repo below:
-> > >
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-> > >
-> > > Beyond the existing test suite tests mentioned above, I've cobbled
-> > > together some very basic, very crude tests to exercise some of the
-> > > things I care about from a LSM/audit perspective.  These tests are
-> > > pretty awful (I'm not kidding), but they might be helpful for the
-> > > other LSM/audit developers who want to test things:
-> > >
-> > > https://drop.paul-moore.com/90.kUgq
-> > >
-> > > There are currently two tests: 'iouring.2' and 'iouring.3';
-> > > 'iouring.1' was lost in a misguided and overzealous 'rm' command.
-> > > The first test is standalone and basically tests the SQPOLL
-> > > functionality while the second tests sharing io_urings across process
-> > > boundaries and the credential/personality sharing mechanism.  The
-> > > console output of both tests isn't particularly useful, the more
-> > > interesting bits are in the audit and LSM specific logs.  The
-> > > 'iouring.2' command requires no special arguments to run but the
-> > > 'iouring.3' test is split into a "server" and "client"; the server
-> > > should be run without argument:
-> > >
-> > >   % ./iouring.3s
-> > >   >>> server started, pid = 11678
-> > >   >>> memfd created, fd = 3
-> > >   >>> io_uring created; fd = 5, creds = 1
-> > >
-> > > ... while the client should be run with two arguments: the first is
-> > > the PID of the server process, the second is the "memfd" fd number:
-> > >
-> > >   % ./iouring.3c 11678 3
-> > >   >>> client started, server_pid = 11678 server_memfd = 3
-> > >   >>> io_urings = 5 (server) / 5 (client)
-> > >   >>> io_uring ops using creds = 1
-> > >   >>> async op result: 36
-> > >   >>> async op result: 36
-> > >   >>> async op result: 36
-> > >   >>> async op result: 36
-> > >   >>> START file contents
-> > >   What is this life if, full of care,
-> > >   we have no time to stand and stare.
-> > >   >>> END file contents
-> > >
-> > > The tests were hacked together from various sources online,
-> > > attribution and links to additional info can be found in the test
-> > > sources, but I expect these tests to die a fiery death in the not
-> > > to distant future as I work to add some proper tests to the SELinux
-> > > and audit test suites.
-> > >
-> > > As I believe these patches should spend a full -rcX cycle in
-> > > linux-next, my current plan is to continue to solicit feedback on
-> > > these patches while they undergo additional testing (next up is
-> > > verification of the audit filter code for io_uring).  Assuming no
-> > > critical issues are found on the mailing lists or during testing, I
-> > > will post a proper patchset later with the idea of merging it into
-> > > selinux/next after the upcoming merge window closes.
-> > >
-> > > Any comments, feedback, etc. are welcome.
-> >
-> > Thanks for the tests.  I have a bunch of userspace patches to add to the
-> > last set I posted and these tests will help exercise them.  I also have
-> > one more kernel patch to post...  I'll dive back into that now.  I had
-> > wanted to post them before now but got distracted with AUDIT_TRIM
-> > breakage.
->
-> Please tell me about liburing.h that is needed for these.  There is one
-> in tools/io_uring/liburing.h but I don't think that one is right.
->
-> The next obvious one would be include/uapi/linux/io_uring.h
->
-> I must be missing something obvious here...
+From: Adrian Huang <ahuang12@lenovo.com>
 
-You are looking for the liburing header files, the upstream is here:
--> https://github.com/axboe/liburing
+1. backwords -> backwards
+2. Remove 'and'
 
-If you are on a RH/IBM based distro it is likely called liburing[-devel]:
+Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
+---
+ fs/exec.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-% dnf whatprovides */liburing.h
-Last metadata expiration check: 0:38:37 ago on Wed 25 Aug 2021 08:54:22 PM EDT.
-liburing-devel-2.0-2.fc35.i686 : Development files for Linux-native io_uring I/O
-                              : access library
-Repo        : rawhide
-Matched from:
-Filename    : /usr/include/liburing.h
-
-liburing-devel-2.0-2.fc35.x86_64 : Development files for Linux-native io_uring
-                                : I/O access library
-Repo        : @System
-Matched from:
-Filename    : /usr/include/liburing.h
-
-liburing-devel-2.0-2.fc35.x86_64 : Development files for Linux-native io_uring
-                                : I/O access library
-Repo        : rawhide
-Matched from:
-Filename    : /usr/include/liburing.h
-
+diff --git a/fs/exec.c b/fs/exec.c
+index 38f63451b928..7178aee0d781 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -533,7 +533,7 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
+ 		if (!valid_arg_len(bprm, len))
+ 			goto out;
+ 
+-		/* We're going to work our way backwords. */
++		/* We're going to work our way backwards. */
+ 		pos = bprm->p;
+ 		str += len;
+ 		bprm->p -= len;
+@@ -600,7 +600,7 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
+ }
+ 
+ /*
+- * Copy and argument/environment string from the kernel to the processes stack.
++ * Copy argument/environment strings from the kernel to the processe's stack.
+  */
+ int copy_string_kernel(const char *arg, struct linux_binprm *bprm)
+ {
 -- 
-paul moore
-www.paul-moore.com
+2.27.0
+
