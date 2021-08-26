@@ -2,126 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C6E503F827D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 08:32:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD8483F8352
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 09:47:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239338AbhHZGd2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Aug 2021 02:33:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34118 "EHLO
+        id S240137AbhHZHrr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Aug 2021 03:47:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238082AbhHZGd2 (ORCPT
+        with ESMTP id S240023AbhHZHrr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Aug 2021 02:33:28 -0400
-Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07A72C061757;
-        Wed, 25 Aug 2021 23:32:41 -0700 (PDT)
-Received: by mail-io1-xd2e.google.com with SMTP id a21so2372538ioq.6;
-        Wed, 25 Aug 2021 23:32:41 -0700 (PDT)
+        Thu, 26 Aug 2021 03:47:47 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA449C061757;
+        Thu, 26 Aug 2021 00:46:59 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id o10so4815798lfr.11;
+        Thu, 26 Aug 2021 00:46:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=pIwUqES0KjF4tM/DUynoGjEfY9vOS2sW1S6XuW00tG4=;
-        b=TSFlmcYGPwVV3W4+2ErCsSHNh6wlzQp4FgnmaFis1r3/gkp74EXyDetcQZ6Pisp40/
-         i5a08/rUYKh/Yzx3xUsRcdwzurUSYAbvmYxlKX2Q+L4WajEz4PfBGXv1kYo7sTAUm/m9
-         Vd6Dc4Yh/PF6AAQ+L4hAbePLuNq+AzlCg6HRj31SeUfiPbLqiCQad9IAHkbhHZ7pncfA
-         AJ0f+cJAD9Sa6JZ3/Z+GrL0ZCwWm2LX69WrjhQci46sYsDL1odW01B4pKE2wJr+YMD7i
-         YmOnG8wcJdCr7XN9urEs/rwAUvzXqSpoQVdOFZHYTB7LeIJH1UzcDD1EQQbncN334Jfz
-         GRNQ==
+        bh=WFfBSeUoIkVFq2c+wyysTynFg5YjCpP2+vF7k66ApRg=;
+        b=uyQzTrBldhPBh5nnQ72jaL9ktwnDpjD+4r8yAyDP7End8hK4tImCX0vowpGHE7hmLS
+         8izi65eqLg79JdYWSVhXIsX+BCZfavs+2RzUBWIrPpKo0Op9znWybT+xFyfGrOzNy8m/
+         e2jotR+rDmbQ7VRtpLgSYvBI27SHetTz8WHtP8fmLYjEIooMCsXjvYsfy64tH6oChXA/
+         wXochubuastNo9MazCpWht5fF4C5FhRNPgBm0M9HSKDpjkoh9vsRCZ5UPxq/aJy0NheJ
+         TK4XrpeBYwfk9KSL5aW8NGnWHFvupKUfr0mRT1s83xaNu35b+c2Ni4GeM4IJe36Ichhv
+         Clhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pIwUqES0KjF4tM/DUynoGjEfY9vOS2sW1S6XuW00tG4=;
-        b=KZqLphU7Fc9GYTVo2XO167vd4Wtta95QKf/zfxCW5woxWCnctvOQgIR+OzQLhgbRaa
-         muj07aUC+7VE/8exJV45I9MUcfIlykBcmrMn1GG4iFW7PKPtDxTH2NHbvUgeqbPnZJIJ
-         cRDOCq+isTYmzrnMI/2zcu6ak0AlcjsT+AOsRX+p0ADiYtSApcBnLOSEe7rdaGP35H+3
-         2L8cxhjjVVUkW0dMFtWRb52lZnbkBfb9Jcd9BV9jaAwR8kRovDehRPCyvJGJnE9Jjtd9
-         UHNJ8UWt74Hk5py6BiSJjvnAhFSdKwIylHggy2HEeKG7QRDCGHYZ1ZTDVMZ9lso5W30T
-         v1CQ==
-X-Gm-Message-State: AOAM532Ashbq+x0Nck9V457ZDIzPTV9HhJS5xvgvSrQhKJWgIkoVNmYj
-        PiAmVbqO1dgj6D1K9stnIwMLYx1fIC62Qg+5z9M=
-X-Google-Smtp-Source: ABdhPJxa1fbod7eShy2ojEpRZwrFd+0pNfPFx7oe6YmtF1RYOLKdfUUG+HqbHDUwOn7hZW+KxQ5wONL838ljkbGRPIk=
-X-Received: by 2002:a5d:8b03:: with SMTP id k3mr1757843ion.203.1629959560394;
- Wed, 25 Aug 2021 23:32:40 -0700 (PDT)
+        bh=WFfBSeUoIkVFq2c+wyysTynFg5YjCpP2+vF7k66ApRg=;
+        b=dUh8LO9bM3+oniQWD4dJGObmSUsC2jgy9Qfgefi6F0+LfFQZ/9BNzk2NuAToxjl+pu
+         iBjsm5GPuNTAX9876yL0tojLWjUWUzoZcDjmm7VbLFziRLHCArckiAtBG4VmMvBG03xU
+         dJZw+Uent+Wk1UG8fFTL2fPO1CEjUVLNAJs0JEDM0s2lAtcL/FGEY66w1BbIkgDs81jR
+         1qD3pz4TZuuNTwXql6yLc8YlbKeYHo3SZh8FiybxRfoROOcyaL7aRE9vjkOpl4BlSsT2
+         bwRxJBquMI3CcOgk39/2N2fXdvUKerTOAnbIb7PGLAXAo5bl992W3+lsL34rPV+b16dN
+         LZ0g==
+X-Gm-Message-State: AOAM531s+99oqnXGLoHuyMRncZzZFHFDNkifz4M1l4DtkN1oGPYaa6lK
+        JPC5h0XRQarj7ORmZQHB0aKNtJ7VTCS9dyLAa9Y=
+X-Google-Smtp-Source: ABdhPJyjbSulKVzeS1ayorUS6e0PDTdjH/3YKsApr3OabyEwjGfG27IO4vB7ZiqR7/y8lcLFPtK9qboXnc4pB3rdlck=
+X-Received: by 2002:a05:6512:1114:: with SMTP id l20mr1781869lfg.550.1629964017693;
+ Thu, 26 Aug 2021 00:46:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHk-=wjD8i2zJVQ9SfF2t=_0Fkgy-i5Z=mQjCw36AHvbBTGXyg@mail.gmail.com>
- <YSPwmNNuuQhXNToQ@casper.infradead.org> <YSQSkSOWtJCE4g8p@cmpxchg.org>
- <1957060.1629820467@warthog.procyon.org.uk> <YSUy2WwO9cuokkW0@casper.infradead.org>
- <CAHk-=wip=366HxkJvTfABuPUxwjGsFK4YYMgXNY9VSkJNp=-XA@mail.gmail.com>
- <YSVCAJDYShQke6Sy@casper.infradead.org> <CAHk-=wisF580D_g+wFt0B_uijSX+mCgz6tRRT5KADnO7Y97t-g@mail.gmail.com>
- <YSVHI9iaamxTGmI7@casper.infradead.org> <YSVMMMrzqxyFjHlw@mit.edu>
- <YSXkDFNkgAhQGB0E@infradead.org> <92cbfb8f-7418-15d5-c469-d7861e860589@rasmusvillemoes.dk>
-In-Reply-To: <92cbfb8f-7418-15d5-c469-d7861e860589@rasmusvillemoes.dk>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 26 Aug 2021 09:32:28 +0300
-Message-ID: <CAOQ4uxhOmH8sEmpR=Jaj08r84Jpy3U--59LfKdo9H2O-a7kyrQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Memory folios for v5.15
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
+References: <20210817101423.12367-1-selvakuma.s1@samsung.com>
+ <CGME20210817101758epcas5p1ec353b3838d64654e69488229256d9eb@epcas5p1.samsung.com>
+ <20210817101423.12367-4-selvakuma.s1@samsung.com> <ad3561b9-775d-dd4d-0d92-6343440b1f8f@acm.org>
+ <CA+1E3rK2ULVajQRkNTZJdwKoqBeGvkfoVYNF=WyK6Net85YkhA@mail.gmail.com> <fb9931ae-de27-820a-1333-f24e020913ff@acm.org>
+In-Reply-To: <fb9931ae-de27-820a-1333-f24e020913ff@acm.org>
+From:   Nitesh Shetty <nitheshshetty@gmail.com>
+Date:   Thu, 26 Aug 2021 13:16:46 +0530
+Message-ID: <CAOSviJ1uQo=O8trN71t5p+qYU8GRgGerSvkE9y5tDR+4pM4f1g@mail.gmail.com>
+Subject: Re: [PATCH 3/7] block: copy offload support infrastructure
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Kanchan Joshi <joshiiitr@gmail.com>,
+        SelvaKumar S <selvakuma.s1@samsung.com>,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, dm-devel@redhat.com,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>, kch@kernel.org,
+        mpatocka@redhat.com, "Darrick J. Wong" <djwong@kernel.org>,
+        agk@redhat.com, Selva Jove <selvajove@gmail.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        KANCHAN JOSHI <joshi.k@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 25, 2021 at 12:02 PM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> On 25/08/2021 08.32, Christoph Hellwig wrote:
-> > On Tue, Aug 24, 2021 at 03:44:48PM -0400, Theodore Ts'o wrote:
-> >> The problem is whether we use struct head_page, or folio, or mempages,
-> >> we're going to be subsystem users' faces.  And people who are using it
-> >> every day will eventually get used to anything, whether it's "folio"
-> >> or "xmoqax", we sould give a thought to newcomers to Linux file system
-> >> code.  If they see things like "read_folio()", they are going to be
-> >> far more confused than "read_pages()" or "read_mempages()".
-> >
-> > Are they?  It's not like page isn't some randomly made up term
-> > as well, just one that had a lot more time to spread.
-> >
-> >> So if someone sees "kmem_cache_alloc()", they can probably make a
-> >> guess what it means, and it's memorable once they learn it.
-> >> Similarly, something like "head_page", or "mempages" is going to a bit
-> >> more obvious to a kernel newbie.  So if we can make a tiny gesture
-> >> towards comprehensibility, it would be good to do so while it's still
-> >> easier to change the name.
-> >
-> > All this sounds really weird to me.  I doubt there is any name that
-> > nicely explains "structure used to manage arbitrary power of two
-> > units of memory in the kernel" very well.  So I agree with willy here,
-> > let's pick something short and not clumsy.  I initially found the folio
-> > name a little strange, but working with it I got used to it quickly.
-> > And all the other uggestions I've seen s far are significantly worse,
-> > especially all the odd compounds with page in it.
-> >
->
-> A comment from the peanut gallery: I find the name folio completely
-> appropriate and easy to understand. Our vocabulary is already strongly
-> inspired by words used in the world of printed text: the smallest unit
-> of information is a char(acter) [ok, we usually call them bytes], a few
-> characters make up a word, there's a number of words to each (cache)
-> line, and a number of those is what makes up a page. So obviously a
-> folio is something consisting of a few pages.
->
-> Are the analogies perfect? Of course not. But they are actually quite
-> apt; words, lines and pages don't universally have one size, but they do
-> form a natural hierarchy describing how we organize information.
->
-> Splitting a word across lines can slow down the reader so should be
-> avoided... [sorry, couldn't resist].
->
+Hi Bart,Mikulas,Martin,Douglas,
 
-And if we ever want to manage page cache using an arbitrary number
-of contiguous filios, we can always saw them into a scroll ;-)
+We will go through your previous work and use this thread as a medium for
+further discussion, if we come across issues to be sorted out.
 
-Thanks,
-Amir.
+Thank you,
+Nitesh Shetty
+
+On Sat, Aug 21, 2021 at 2:48 AM Bart Van Assche <bvanassche@acm.org> wrote:
+>
+> On 8/20/21 3:39 AM, Kanchan Joshi wrote:
+> > Bart, Mikulas
+> >
+> > On Tue, Aug 17, 2021 at 10:44 PM Bart Van Assche <bvanassche@acm.org> wrote:
+> >>
+> >> On 8/17/21 3:14 AM, SelvaKumar S wrote:
+> >>> Introduce REQ_OP_COPY, a no-merge copy offload operation. Create
+> >>> bio with control information as payload and submit to the device.
+> >>> Larger copy operation may be divided if necessary by looking at device
+> >>> limits. REQ_OP_COPY(19) is a write op and takes zone_write_lock when
+> >>> submitted to zoned device.
+> >>> Native copy offload is not supported for stacked devices.
+> >>
+> >> Using a single operation for copy-offloading instead of separate
+> >> operations for reading and writing is fundamentally incompatible with
+> >> the device mapper. I think we need a copy-offloading implementation that
+> >> is compatible with the device mapper.
+> >>
+> >
+> > While each read/write command is for a single contiguous range of
+> > device, with simple-copy we get to operate on multiple discontiguous
+> > ranges, with a single command.
+> > That seemed like a good opportunity to reduce control-plane traffic
+> > (compared to read/write operations) as well.
+> >
+> > With a separate read-and-write bio approach, each source-range will
+> > spawn at least one read, one write and eventually one SCC command. And
+> > it only gets worse as there could be many such discontiguous ranges (for
+> > GC use-case at least) coming from user-space in a single payload.
+> > Overall sequence will be
+> > - Receive a payload from user-space
+> > - Disassemble into many read-write pair bios at block-layer
+> > - Assemble those (somehow) in NVMe to reduce simple-copy commands
+> > - Send commands to device
+> >
+> > We thought payload could be a good way to reduce the
+> > disassembly/assembly work and traffic between block-layer to nvme.
+> > How do you see this tradeoff?  What seems necessary for device-mapper
+> > usecase, appears to be a cost when device-mapper isn't used.
+> > Especially for SCC (since copy is within single ns), device-mappers
+> > may not be too compelling anyway.
+> >
+> > Must device-mapper support be a requirement for the initial support atop SCC?
+> > Or do you think it will still be a progress if we finalize the
+> > user-space interface to cover all that is foreseeable.And for
+> > device-mapper compatible transport between block-layer and NVMe - we
+> > do it in the later stage when NVMe too comes up with better copy
+> > capabilities?
+>
+> Hi Kanchan,
+>
+> These days there might be more systems that run the device mapper on top
+> of the NVMe driver or a SCSI driver than systems that do use the device
+> mapper. It is common practice these days to use dm-crypt on personal
+> workstations and laptops. LVM (dm-linear) is popular because it is more
+> flexible than a traditional partition table. Android phones use
+> dm-verity on top of hardware encryption. In other words, not supporting
+> the device mapper means that a very large number of use cases is
+> excluded. So I think supporting the device mapper from the start is
+> important, even if that means combining individual bios at the bottom of
+> the storage stack into simple copy commands.
+>
+> Thanks,
+>
+> Bart.
+>
