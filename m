@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 73E633F8BDA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 18:21:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 114823F8BDC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 18:21:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243164AbhHZQVX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S243167AbhHZQVX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 26 Aug 2021 12:21:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44744 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:44732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243122AbhHZQVP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Aug 2021 12:21:15 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 209F56112D;
+        id S243125AbhHZQVQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 26 Aug 2021 12:21:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0ECA86113A;
         Thu, 26 Aug 2021 16:20:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1629994827;
-        bh=K/p+jHfJhlMASxAGqfZ01ICFwURYY2pCxDJTccEbJmk=;
+        s=k20201202; t=1629994828;
+        bh=lVMs581HKynyNG09W2E9A0In+52Er3vjt2kSDd8eGgg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nqA6KSRdJAE1SpT5FQcNMfJaomNYL4ZB+iWnZdPmTmxzG7OX3aumuQ/RcPwKM7KDS
-         FqpkeP1yterPb/2Sn/FpNmtFUBOgl/VU8wEa8TUDVWklJPBAmJ3AFeBigMSF7q4GWX
-         x03edEXkI4Ccul+OfPDdZ9DmPy02s949iybNQ4skRAvCKp2+csjSa6ngSBCrkMYNpV
-         y1mehj8RJ0/VK/EMYDfyCeuQctXykPH/rPMbekSM5BJ5kZFcqSOOChtcbmOwL4+j0y
-         XqS1kB91tuPnZWtIsazP5+G02ngkzfuSaOJKyAeZ6K//bcO85t3//BaYtPa09lvuhN
-         TSoujz+FgM+Lg==
+        b=ASmMF5B/nXBJ7lKpIn6SfjDr4ZZhO90yYfYSdHTBygNauhLHotZq4E073kkyiUqJA
+         OzMbfaokCOTlwW7noQU10gJs+GY53Y6vxcQ/mI848MEZbqoDv9iK2it7hqLmfcvCbO
+         6iz7VhW6YFG2oAQ5sRhnPiTr1R/YjNEEy4vI8UhGgrfk0j1bNCXd3ZTw3Of8FKmVl4
+         3FnZKvpVv2iOwCAOo7Aj5Ax22ItmfBy5LFdM20A0mBHuiRngczASMTg6rYZOEhW+u0
+         Lbr8aw9CiTVpwJdgI+s6Zdgr2kfD9CsXOlBP5N1izNfOaRDnMYGHVJ5pXlDZn/lsrm
+         k5X1U6LK6e0oQ==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
         dhowells@redhat.com, xiubli@redhat.com, lhenriques@suse.de,
         khiremat@redhat.com, ebiggers@kernel.org
-Subject: [RFC PATCH v8 12/24] ceph: decode alternate_name in lease info
-Date:   Thu, 26 Aug 2021 12:20:02 -0400
-Message-Id: <20210826162014.73464-13-jlayton@kernel.org>
+Subject: [RFC PATCH v8 13/24] ceph: make ceph_msdc_build_path use ref-walk
+Date:   Thu, 26 Aug 2021 12:20:03 -0400
+Message-Id: <20210826162014.73464-14-jlayton@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210826162014.73464-1-jlayton@kernel.org>
 References: <20210826162014.73464-1-jlayton@kernel.org>
@@ -40,152 +40,94 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ceph is a bit different from local filesystems, in that we don't want
-to store filenames as raw binary data, since we may also be dealing
-with clients that don't support fscrypt.
+Encryption potentially requires allocation, at which point we'll need to
+be in a non-atomic context. Convert ceph_msdc_build_path to take dentry
+spinlocks and references instead of using rcu_read_lock to walk the
+path.
 
-We could just base64-encode the encrypted filenames, but that could
-leave us with filenames longer than NAME_MAX. It turns out that the
-MDS doesn't care much about filename length, but the clients do.
-
-To manage this, we've added a new "alternate name" field that can be
-optionally added to any dentry that we'll use to store the binary
-crypttext of the filename if its base64-encoded value will be longer
-than NAME_MAX. When a dentry has one of these names attached, the MDS
-will send it along in the lease info, which we can then store for
-later usage.
+This is slightly less efficient, and we may want to eventually allow
+using RCU when the leaf dentry isn't encrypted.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/mds_client.c | 40 ++++++++++++++++++++++++++++++----------
- fs/ceph/mds_client.h | 11 +++++++----
- 2 files changed, 37 insertions(+), 14 deletions(-)
+ fs/ceph/mds_client.c | 35 +++++++++++++++++++----------------
+ 1 file changed, 19 insertions(+), 16 deletions(-)
 
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 449b4e78366e..058480708897 100644
+index 058480708897..518a1aee967c 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -306,27 +306,44 @@ static int parse_reply_info_dir(void **p, void *end,
- 
- static int parse_reply_info_lease(void **p, void *end,
- 				  struct ceph_mds_reply_lease **lease,
--				  u64 features)
-+				  u64 features, u32 *altname_len, u8 **altname)
+@@ -2487,7 +2487,8 @@ static inline  u64 __get_oldest_tid(struct ceph_mds_client *mdsc)
+ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
+ 			   int stop_on_nosnap)
  {
-+	u8 struct_v;
-+	u32 struct_len;
-+
- 	if (features == (u64)-1) {
--		u8 struct_v, struct_compat;
--		u32 struct_len;
-+		u8 struct_compat;
-+
- 		ceph_decode_8_safe(p, end, struct_v, bad);
- 		ceph_decode_8_safe(p, end, struct_compat, bad);
-+
- 		/* struct_v is expected to be >= 1. we only understand
- 		 * encoding whose struct_compat == 1. */
- 		if (!struct_v || struct_compat != 1)
- 			goto bad;
-+
- 		ceph_decode_32_safe(p, end, struct_len, bad);
--		ceph_decode_need(p, end, struct_len, bad);
--		end = *p + struct_len;
-+	} else {
-+		struct_len = sizeof(**lease);
-+		*altname_len = 0;
-+		*altname = NULL;
+-	struct dentry *temp;
++	struct dentry *cur;
++	struct inode *inode;
+ 	char *path;
+ 	int pos;
+ 	unsigned seq;
+@@ -2504,34 +2505,35 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
+ 	path[pos] = '\0';
+ 
+ 	seq = read_seqbegin(&rename_lock);
+-	rcu_read_lock();
+-	temp = dentry;
++	cur = dget(dentry);
+ 	for (;;) {
+-		struct inode *inode;
++		struct dentry *temp;
+ 
+-		spin_lock(&temp->d_lock);
+-		inode = d_inode(temp);
++		spin_lock(&cur->d_lock);
++		inode = d_inode(cur);
+ 		if (inode && ceph_snap(inode) == CEPH_SNAPDIR) {
+ 			dout("build_path path+%d: %p SNAPDIR\n",
+-			     pos, temp);
+-		} else if (stop_on_nosnap && inode && dentry != temp &&
++			     pos, cur);
++		} else if (stop_on_nosnap && inode && dentry != cur &&
+ 			   ceph_snap(inode) == CEPH_NOSNAP) {
+-			spin_unlock(&temp->d_lock);
++			spin_unlock(&cur->d_lock);
+ 			pos++; /* get rid of any prepended '/' */
+ 			break;
+ 		} else {
+-			pos -= temp->d_name.len;
++			pos -= cur->d_name.len;
+ 			if (pos < 0) {
+-				spin_unlock(&temp->d_lock);
++				spin_unlock(&cur->d_lock);
+ 				break;
+ 			}
+-			memcpy(path + pos, temp->d_name.name, temp->d_name.len);
++			memcpy(path + pos, cur->d_name.name, cur->d_name.len);
+ 		}
++		temp = cur;
+ 		spin_unlock(&temp->d_lock);
+-		temp = READ_ONCE(temp->d_parent);
++		cur = dget_parent(temp);
++		dput(temp);
+ 
+ 		/* Are we at the root? */
+-		if (IS_ROOT(temp))
++		if (IS_ROOT(cur))
+ 			break;
+ 
+ 		/* Are we out of buffer? */
+@@ -2540,8 +2542,9 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
+ 
+ 		path[pos] = '/';
  	}
+-	base = ceph_ino(d_inode(temp));
+-	rcu_read_unlock();
++	inode = d_inode(cur);
++	base = inode ? ceph_ino(inode) : 0;
++	dput(cur);
  
--	ceph_decode_need(p, end, sizeof(**lease), bad);
-+	ceph_decode_need(p, end, struct_len, bad);
- 	*lease = *p;
- 	*p += sizeof(**lease);
--	if (features == (u64)-1)
--		*p = end;
-+
-+	if (features == (u64)-1) {
-+		if (struct_v >= 2) {
-+			ceph_decode_32_safe(p, end, *altname_len, bad);
-+			ceph_decode_need(p, end, *altname_len, bad);
-+			*altname = *p;
-+			*p += *altname_len;
-+		} else {
-+			*altname = NULL;
-+			*altname_len = 0;
-+		}
-+	}
- 	return 0;
- bad:
- 	return -EIO;
-@@ -356,7 +373,8 @@ static int parse_reply_info_trace(void **p, void *end,
- 		info->dname = *p;
- 		*p += info->dname_len;
- 
--		err = parse_reply_info_lease(p, end, &info->dlease, features);
-+		err = parse_reply_info_lease(p, end, &info->dlease, features,
-+					     &info->altname_len, &info->altname);
- 		if (err < 0)
- 			goto out_bad;
- 	}
-@@ -423,9 +441,11 @@ static int parse_reply_info_readdir(void **p, void *end,
- 		dout("parsed dir dname '%.*s'\n", rde->name_len, rde->name);
- 
- 		/* dentry lease */
--		err = parse_reply_info_lease(p, end, &rde->lease, features);
-+		err = parse_reply_info_lease(p, end, &rde->lease, features,
-+					     &rde->altname_len, &rde->altname);
- 		if (err)
- 			goto out_bad;
-+
- 		/* inode */
- 		err = parse_reply_info_in(p, end, &rde->inode, features);
- 		if (err < 0)
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index e7d2c8a1b9c1..128901a847af 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -29,8 +29,8 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_MULTI_RECONNECT,
- 	CEPHFS_FEATURE_DELEG_INO,
- 	CEPHFS_FEATURE_METRIC_COLLECT,
--
--	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_METRIC_COLLECT,
-+	CEPHFS_FEATURE_ALTERNATE_NAME,
-+	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_ALTERNATE_NAME,
- };
- 
- /*
-@@ -45,8 +45,7 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_MULTI_RECONNECT,		\
- 	CEPHFS_FEATURE_DELEG_INO,		\
- 	CEPHFS_FEATURE_METRIC_COLLECT,		\
--						\
--	CEPHFS_FEATURE_MAX,			\
-+	CEPHFS_FEATURE_ALTERNATE_NAME,		\
- }
- #define CEPHFS_FEATURES_CLIENT_REQUIRED {}
- 
-@@ -98,7 +97,9 @@ struct ceph_mds_reply_info_in {
- 
- struct ceph_mds_reply_dir_entry {
- 	char                          *name;
-+	u8			      *altname;
- 	u32                           name_len;
-+	u32			      altname_len;
- 	struct ceph_mds_reply_lease   *lease;
- 	struct ceph_mds_reply_info_in inode;
- 	loff_t			      offset;
-@@ -117,7 +118,9 @@ struct ceph_mds_reply_info_parsed {
- 	struct ceph_mds_reply_info_in diri, targeti;
- 	struct ceph_mds_reply_dirfrag *dirfrag;
- 	char                          *dname;
-+	u8			      *altname;
- 	u32                           dname_len;
-+	u32                           altname_len;
- 	struct ceph_mds_reply_lease   *dlease;
- 
- 	/* extra */
+ 	if (read_seqretry(&rename_lock, seq))
+ 		goto retry;
 -- 
 2.31.1
 
