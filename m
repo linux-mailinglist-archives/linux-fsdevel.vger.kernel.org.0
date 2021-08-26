@@ -2,116 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D52D3F8160
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 06:02:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 684373F8205
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 07:25:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231199AbhHZEDH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Aug 2021 00:03:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57220 "EHLO
+        id S238500AbhHZF0J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Aug 2021 01:26:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230155AbhHZEDF (ORCPT
+        with ESMTP id S233575AbhHZF0J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Aug 2021 00:03:05 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5366DC061757;
-        Wed, 25 Aug 2021 21:02:18 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id a21so1603824pfh.5;
-        Wed, 25 Aug 2021 21:02:18 -0700 (PDT)
+        Thu, 26 Aug 2021 01:26:09 -0400
+Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EF81C061757
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 22:25:22 -0700 (PDT)
+Received: by mail-qv1-xf2c.google.com with SMTP id e18so1391783qvo.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 Aug 2021 22:25:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:references:in-reply-to:mime-version
-         :message-id:content-transfer-encoding;
-        bh=Oxi9GUAjjrXy9o+mfocb/qAIFBiI2+i+SCUd2qrmcNw=;
-        b=KBWp4VV/tma8GhuwcgInEq6+v0E/KDzWIAj4q6+lCzaMwhrcTIp4CAY5KfRn6FuEj6
-         rlGE9NFn1zDx/GE3uRHKnVAckcviFbUHoxjtoGIq11g0rFx4wGGvPXYt9qSh2uo1TrTE
-         BQcrWbOo6aQ2aol/fVg1Z56EyDujPB2TfTq/mwq4FTB4CYj9WboyQcbJi8fQzhyIqP4m
-         eOskRNMFTUmun3l8A3PpKQpTPrvyJUG3m9idTpVOdNvaDQvhxavq3uMLRy3SpHRyQNf6
-         BuRRDzskc/DcMZ44tS25C4LE773m60DLYZEd4BoVLZT+xMpqeCfgL5dbxCjv3qUizz12
-         EbSA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SKBrxUM2uN+IW3IWdkU6xesjnbdKzY4oE1V74/9Tmrc=;
+        b=FrxgrA4kx0uCin5xJlNpb5BNuooEjN8Gf/gA5Hrw+viPxRregGfEVcpgcCJRv1cEx8
+         7EAAuYSk8rz51YRKGQY+kmQ1L9MdFfbNtINbhS2Hy+MiT8tqBecVf4Lbqy5KoZW9ZPkH
+         bgkLL98rqDNJInfkJ2z/AlfsrcvNRf4y4QS0S0OMNbi7wYfV1Bno8Vp3D8Ma4go2t4m3
+         OxmamTA4b9RtyTav1eXIXM1YgWLROWoZH2Q+I+3TuuoHG6Bhi9t9FB+u4d77ppXIWwdS
+         eujkTblKNhqrlfUNdS9AyzgISZFalU15vgPaOfzce/6gsFwf/JVz836JMPSwjO1gCyRP
+         jz1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
-         :mime-version:message-id:content-transfer-encoding;
-        bh=Oxi9GUAjjrXy9o+mfocb/qAIFBiI2+i+SCUd2qrmcNw=;
-        b=CcfzUrpeOPw7BL4oW0tKnwZYzU1ti9BPupJ3CrMGqF4ERH1JvmBoABgbNiSAsqZp4P
-         I7Q/j0eBX7+scnkDQlQyyt92SPPc/8DKBgCNrJ52gY/O3IjrYF+wJsS8PJw0yng5wv9z
-         7Cz+OCir5Tn2HKuc8N4gIBeLygO/3PkOMYhUJrFs6gnWFMqEZAoS1AEZShxfBdosryfo
-         WVoc7IG6CIxJ0pkTdgyOxZ4jbBXz8JG2U1vX2SsBvE3AEFVgM5eeogei4unaE/XO5ZFk
-         4Dck8qkouryFsV9+rEyzOM5S2pB1sv5xwUyu8jgLJQbgejgqHIBBvdVWmCz3e2CyvIja
-         ZALQ==
-X-Gm-Message-State: AOAM530SR4Vh7sUiDnJZJDlmzLSZePetW5rCXkpSC/qku0eSilXdNWIO
-        fnslF0Mk9zcxxomcS1wl6sD5fbscecU=
-X-Google-Smtp-Source: ABdhPJydBAdee6sGWXe83G6Ns/w8FokBMmc8JUE3YPOEccITJ0OIC4vkV+1jKPQfauwz8oDFC0Rj9Q==
-X-Received: by 2002:a63:1504:: with SMTP id v4mr1529124pgl.151.1629950537851;
-        Wed, 25 Aug 2021 21:02:17 -0700 (PDT)
-Received: from localhost (193-116-119-33.tpgi.com.au. [193.116.119.33])
-        by smtp.gmail.com with ESMTPSA id x40sm1078266pfh.145.2021.08.25.21.02.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Aug 2021 21:02:17 -0700 (PDT)
-Date:   Thu, 26 Aug 2021 14:02:11 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [GIT PULL] Memory folios for v5.15
-To:     Christoph Hellwig <hch@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>
-References: <CAHk-=wjD8i2zJVQ9SfF2t=_0Fkgy-i5Z=mQjCw36AHvbBTGXyg@mail.gmail.com>
-        <YSPwmNNuuQhXNToQ@casper.infradead.org> <YSQSkSOWtJCE4g8p@cmpxchg.org>
-        <1957060.1629820467@warthog.procyon.org.uk>
-        <YSUy2WwO9cuokkW0@casper.infradead.org>
-        <CAHk-=wip=366HxkJvTfABuPUxwjGsFK4YYMgXNY9VSkJNp=-XA@mail.gmail.com>
-        <YSVCAJDYShQke6Sy@casper.infradead.org>
-        <CAHk-=wisF580D_g+wFt0B_uijSX+mCgz6tRRT5KADnO7Y97t-g@mail.gmail.com>
-        <YSVHI9iaamxTGmI7@casper.infradead.org> <YSVMMMrzqxyFjHlw@mit.edu>
-        <YSXkDFNkgAhQGB0E@infradead.org>
-In-Reply-To: <YSXkDFNkgAhQGB0E@infradead.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SKBrxUM2uN+IW3IWdkU6xesjnbdKzY4oE1V74/9Tmrc=;
+        b=JrA85IIj4mBHoCrw61zff6v2HUeOMLnJL52pwd8nZiqBmPbyGY1VzFF6IqxJGqn+Vf
+         avzbxAt6USFvWgmWnlEpqJtlXChrx7r/6ktT1iXZHlOKDWU09bISeiB9yEkbGQHGDGRL
+         YJDJE6ArgwFn+gHorWhmVnzSzKvlfMPjSgVi10RxQP3IQ8pviRPapQmQIJfUEcDx+kuk
+         A3i1ZGsf+aXin0o8TJ9sur4zygemnB3Y30IyiiH5yEH/sCGv0PsGYn/ByxWa02oOp1Ga
+         ck6HFjr699njSWASOQT2ESbbqNpJBVxLzdl0yK/mM1V9E5KmcsjN/CZZY6eVcp6JLxab
+         Rs0A==
+X-Gm-Message-State: AOAM5321iN4kKCNGGGvIbC44NkKVENj9mMZFIVmrNa+f0qtE+dUyKMQ2
+        UFMCWcNrctvxLyEE4fjlcpa+02vrCoQgEC+o4pN6jiFZoc8UkSNv
+X-Google-Smtp-Source: ABdhPJxgI91eLsC43ltFWf2RKcoGW2R8le8/fC7RJC+XLVAY/f59vTWKnjGIMIjoVP4SyDEpn2lObcHr/kV/Rj3TIcc=
+X-Received: by 2002:a05:6214:ca2:: with SMTP id s2mr2340671qvs.35.1629955521528;
+ Wed, 25 Aug 2021 22:25:21 -0700 (PDT)
 MIME-Version: 1.0
-Message-Id: <1629948817.v8xwzejw2u.astroid@bobo.none>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <20210826031451.611-1-adrianhuang0701@gmail.com> <eb28d8e8-3e7d-0120-a1a7-6e43b0bb05bb@infradead.org>
+In-Reply-To: <eb28d8e8-3e7d-0120-a1a7-6e43b0bb05bb@infradead.org>
+From:   Huang Adrian <adrianhuang0701@gmail.com>
+Date:   Thu, 26 Aug 2021 13:25:10 +0800
+Message-ID: <CAHKZfL1H2LKnOw1EfNA-xri0EPDF-hYwXa1u_39ttoMZHvSOGg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] exec: fix typo and grammar mistake in comment
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Adrian Huang <ahuang12@lenovo.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Excerpts from Christoph Hellwig's message of August 25, 2021 4:32 pm:
-> On Tue, Aug 24, 2021 at 03:44:48PM -0400, Theodore Ts'o wrote:
->> The problem is whether we use struct head_page, or folio, or mempages,
->> we're going to be subsystem users' faces.  And people who are using it
->> every day will eventually get used to anything, whether it's "folio"
->> or "xmoqax", we sould give a thought to newcomers to Linux file system
->> code.  If they see things like "read_folio()", they are going to be
->> far more confused than "read_pages()" or "read_mempages()".
->=20
-> Are they?  It's not like page isn't some randomly made up term
-> as well, just one that had a lot more time to spread.
->=20
->> So if someone sees "kmem_cache_alloc()", they can probably make a
->> guess what it means, and it's memorable once they learn it.
->> Similarly, something like "head_page", or "mempages" is going to a bit
->> more obvious to a kernel newbie.  So if we can make a tiny gesture
->> towards comprehensibility, it would be good to do so while it's still
->> easier to change the name.
->=20
-> All this sounds really weird to me.  I doubt there is any name that
-> nicely explains "structure used to manage arbitrary power of two
-> units of memory in the kernel" very well.
+On Thu, Aug 26, 2021 at 11:27 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 8/25/21 8:14 PM, Adrian Huang wrote:
+> > From: Adrian Huang <ahuang12@lenovo.com>
+> >
+> > 1. backwords -> backwards
+> > 2. Remove 'and'
+>
+>    3. correct the possessive form of "process"
+>
+> >
+> > Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
+> > ---
+> >   fs/exec.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/exec.c b/fs/exec.c
+> > index 38f63451b928..7178aee0d781 100644
+> > --- a/fs/exec.c
+> > +++ b/fs/exec.c
+> > @@ -533,7 +533,7 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
+> >               if (!valid_arg_len(bprm, len))
+> >                       goto out;
+> >
+> > -             /* We're going to work our way backwords. */
+>
+> That could just be a pun. Maybe Al knows...
 
-Cluster is easily understandable to a filesystem developer as contiguous=20
-set of one or more, probably aligned and sized to power of 2.  Swap=20
-subsystem in mm uses it (maybe because it's disk adjacent, but it does=20
-have page clusters) so mm developers would be fine with it too. Sadly
-you might have to call it page_cluster to avoid confusion with block=20
-clusters in fs then it gets a bit long.
+Another comment in line 615 has the same sentence with 'backwards'.
+(https://github.com/torvalds/linux/blob/master/fs/exec.c#L615).
 
-Superpage could be different enough from huge page that implies one page=20
-of a particular large size (even though some other OS might use it for=20
-that), but a super set of pages, which could be 1 or more.
+So, one of them should be corrected.
 
-Thanks,
-Nick
+>
+> > +             /* We're going to work our way backwards. */
+> >               pos = bprm->p;
+> >               str += len;
+> >               bprm->p -= len;
+> > @@ -600,7 +600,7 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
+> >   }
+> >
+> >   /*
+> > - * Copy and argument/environment string from the kernel to the processes stack.
+> > + * Copy argument/environment strings from the kernel to the processe's stack.
+>
+> Either process's stack or process' stack. Not what is typed there.
+> I prefer process's, just as this reference does:
+>    https://forum.wordreference.com/threads/process-or-processs.1704502/
+
+Oh, my bad. I should have deleted the letter 'e'. Thanks for this.
+
+After Al confirms 'backwords', I'll also change "processes's" to
+"process's" in v2.
+(https://github.com/torvalds/linux/blob/master/fs/exec.c#L507)
+
+> >    */
+> >   int copy_string_kernel(const char *arg, struct linux_binprm *bprm)
+> >   {
+> >
+>
+>
+> --
+> ~Randy
+>
