@@ -2,140 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 368613F9022
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 23:29:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BCCE3F9048
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 Aug 2021 23:47:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230398AbhHZVUV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Aug 2021 17:20:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46216 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230182AbhHZVUV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Aug 2021 17:20:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 718B160232;
-        Thu, 26 Aug 2021 21:19:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630012773;
-        bh=tkgFwhR90RM93LJzzErz1kkTlM3Dy4ib5MuEEStEd7c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JXglTw3KchVe159QdkKn35kWyZwawN4x87zI+Lmaodv4zkQnvbGNhY3sPlVtT+b57
-         sg6obg/E4faOTLg5+SyYDmNNC9eApXcxDPryS7UoRNSScpp8mSk0BUfma1Y8gAc7fG
-         O5mDFsDDjREI9zKyQSdNXF/niNlYAeGKVm72g5HyjUo07E1uSCbM/nHDQyEWnLcbNH
-         sW+4TTMirc2u6YG4Xd16dDytwA8oKybluyv8dQ59pHfeE3qoTOcHsrsgSxDUE8mrem
-         ZDarHOQTUgZtZ8MeOTu0yTApnVc7TpBnaAAQcG+xqQn4t/QiuEmPRznmwnXuUvyraF
-         fIQspmnopJwug==
-Date:   Thu, 26 Aug 2021 14:19:33 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Gao Xiang <hsiangkao@linux.alibaba.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Eric Biggers <ebiggers@kernel.org>, xuyu@linux.alibaba.com
-Subject: [ANNOUNCE] xfs-linux: iomap-for-next updated to 03b8df8d43ec
-Message-ID: <20210826211933.GN12640@magnolia>
-References: <20210819170034.GS12640@magnolia>
+        id S243650AbhHZVsC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Aug 2021 17:48:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:21402 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S243620AbhHZVsB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 26 Aug 2021 17:48:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630014433;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=K0s8bk6QfHD1VaGSzfIqDqYg0K6iJ7Ku0EqSDBa9+yo=;
+        b=apJmwZhW/m/hDBuscxMKnlE+cXDvfUXnlcaVeFhttxxHXAkUFT1esOw/UwK1O6RjUm4zq/
+        WZ0TWlp1Iy3MxG8uziMz70u8kNbQBYLk7NmDel8C4CM/42R0RE4T4yarCnhtNBbuVO+zeQ
+        51KrJEBV2ufA5JZAU+XjaR5QDxniq30=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-429-jVC2jPHNN6OTC4y69DiqKw-1; Thu, 26 Aug 2021 17:47:12 -0400
+X-MC-Unique: jVC2jPHNN6OTC4y69DiqKw-1
+Received: by mail-wr1-f69.google.com with SMTP id v6-20020adfe4c6000000b001574f9d8336so1313569wrm.15
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Aug 2021 14:47:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=K0s8bk6QfHD1VaGSzfIqDqYg0K6iJ7Ku0EqSDBa9+yo=;
+        b=fLP0mWYeay7SAKryQTZo17rt/BTcBkd3Jcy+ywHZ4l/eXgXBb77SzpXZmwddmYo0db
+         3Fqm7YMp5dHe7IUQqb3Jj396utVUUBE79lkpKlGGe9a5TwcsDteBh8YoB7EyViDoM9L+
+         TSeh3jfyraL25b8pnIlYl4IySxCtIchmKbuFvHYFFvQi9UTeY0HQf53jHf3Fh4N40Dfp
+         I9G6e3GtRYVQFXIsDcb6tsNXKoyyNaHyoE6Rq3k8+UIAmsoXiyQfFjtRq6WaoCsdH1HE
+         q8RmlwuJLKzvDY60ohd4UW7fQi7bHpSlRDo/bkhuPDfwjls6AsMvCwQbC4kPIY/mEBQS
+         oecg==
+X-Gm-Message-State: AOAM530aA5byfFfVthJqKKnEJZ1+ACr2bl9UNCZr9P/Cvs4thIxWhcLP
+        JW6JODj5Wtnfb2SRHrX/FMisgFVAbFRHGmy7GXwRMl792Hgq+QkZ/DOzsj4F6eXDKVwCPThqmsr
+        tEt28HdTlXhAQTheiw+DLPzSMZQ==
+X-Received: by 2002:a5d:690a:: with SMTP id t10mr6609898wru.304.1630014430899;
+        Thu, 26 Aug 2021 14:47:10 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyZSDS7ykz6c0cWQQRRV6c/ocWUVA2MbQuhyj4tL0c/EqpuZXrSGG6H7whtDXAvdDs+XQeksw==
+X-Received: by 2002:a5d:690a:: with SMTP id t10mr6609835wru.304.1630014430662;
+        Thu, 26 Aug 2021 14:47:10 -0700 (PDT)
+Received: from [192.168.3.132] (p4ff23dec.dip0.t-ipconnect.de. [79.242.61.236])
+        by smtp.gmail.com with ESMTPSA id q10sm3612286wmq.12.2021.08.26.14.47.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Aug 2021 14:47:10 -0700 (PDT)
+Subject: Re: [PATCH v1 0/7] Remove in-tree usage of MAP_DENYWRITE
+To:     Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        David Laight <David.Laight@aculab.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Michel Lespinasse <walken@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Price <steven.price@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Marco Elver <elver@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Collin Fijalkovich <cfijalkovich@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        linux-fsdevel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+References: <20210812084348.6521-1-david@redhat.com> <87o8a2d0wf.fsf@disp2133>
+ <60db2e61-6b00-44fa-b718-e4361fcc238c@www.fastmail.com>
+ <87lf56bllc.fsf@disp2133>
+ <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
+ <87eeay8pqx.fsf@disp2133> <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
+ <87h7ft2j68.fsf@disp2133>
+ <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
+ <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
+ <CAHk-=wiJ0u33h2CXAO4b271Diik=z4jRt64=Gt6YV2jV4ef27g@mail.gmail.com>
+ <b60e9bd1-7232-472d-9c9c-1d6593e9e85e@www.fastmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Message-ID: <0ed69079-9e13-a0f4-776c-1f24faa9daec@redhat.com>
+Date:   Thu, 26 Aug 2021 23:47:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210819170034.GS12640@magnolia>
+In-Reply-To: <b60e9bd1-7232-472d-9c9c-1d6593e9e85e@www.fastmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+On 26.08.21 19:48, Andy Lutomirski wrote:
+> On Fri, Aug 13, 2021, at 5:54 PM, Linus Torvalds wrote:
+>> On Fri, Aug 13, 2021 at 2:49 PM Andy Lutomirski <luto@kernel.org> wrote:
+>>>
+>>> I’ll bite.  How about we attack this in the opposite direction: remove the deny write mechanism entirely.
+>>
+>> I think that would be ok, except I can see somebody relying on it.
+>>
+>> It's broken, it's stupid, but we've done that ETXTBUSY for a _loong_ time.
+> 
+> Someone off-list just pointed something out to me, and I think we should push harder to remove ETXTBSY.  Specifically, we've all been focused on open() failing with ETXTBSY, and it's easy to make fun of anyone opening a running program for write when they should be unlinking and replacing it.
+> 
+> Alas, Linux's implementation of deny_write_access() is correct^Wabsurd, and deny_write_access() *also* returns ETXTBSY if the file is open for write.  So, in a multithreaded program, one thread does:
+> 
+> fd = open("some exefile", O_RDWR | O_CREAT | O_CLOEXEC);
+> write(fd, some stuff);
+> 
+> <--- problem is here
+> 
+> close(fd);
+> execve("some exefile");
+> 
+> Another thread does:
+> 
+> fork();
+> execve("something else");
+> 
+> In between fork and execve, there's another copy of the open file description, and i_writecount is held, and the execve() fails.  Whoops.  See, for example:
+> 
+> https://github.com/golang/go/issues/22315
+> 
+> I propose we get rid of deny_write_access() completely to solve this.
+> 
+> Getting rid of i_writecount itself seems a bit harder, since a handful of filesystems use it for clever reasons.
+> 
+> (OFD locks seem like they might have the same problem.  Maybe we should have a clone() flag to unshare the file table and close close-on-exec things?)
+> 
 
-The iomap-for-next branch of the xfs-linux repository at:
+It's not like this issue is new (^2017) or relevant in practice. So no 
+need to hurry IMHO. One step at a time: it might make perfect sense to 
+remove ETXTBSY, but we have to be careful to not break other user space 
+that actually cares about the current behavior in practice.
 
-	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+-- 
+Thanks,
 
-has just been updated.
+David / dhildenb
 
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.  This force-push fixes a bad Fixes tag in the swapfile
-bugfix and adds the patch that standardizees the tracepoint formats.
-
-The new head of the iomap-for-next branch is commit:
-
-03b8df8d43ec iomap: standardize tracepoint formatting and storage
-
-New Commits:
-
-Andreas Gruenbacher (1):
-      [f1f264b4c134] iomap: Fix some typos and bad grammar
-
-Christoph Hellwig (30):
-      [d0364f9490d7] iomap: simplify iomap_readpage_actor
-      [c1b79f11f4ec] iomap: simplify iomap_add_to_ioend
-      [d9d381f3ef5b] iomap: fix a trivial comment typo in trace.h
-      [1d25d0aecfcd] iomap: remove the iomap arguments to ->page_{prepare,done}
-      [66b8165ed4b5] iomap: mark the iomap argument to iomap_sector const
-      [4495c33e4d30] iomap: mark the iomap argument to iomap_inline_data const
-      [e3c4ffb0c221] iomap: mark the iomap argument to iomap_inline_data_valid const
-      [6d49cc8545e9] fs: mark the iomap argument to __block_write_begin_int const
-      [7e4f4b2d689d] fsdax: mark the iomap argument to dax_iomap_sector as const
-      [78c64b00f842] iomap: mark the iomap argument to iomap_read_inline_data const
-      [1acd9e9c015b] iomap: mark the iomap argument to iomap_read_page_sync const
-      [740499c78408] iomap: fix the iomap_readpage_actor return value for inline data
-      [f4b896c213f0] iomap: add the new iomap_iter model
-      [f6d480006cea] iomap: switch readahead and readpage to use iomap_iter
-      [ce83a0251c6e] iomap: switch iomap_file_buffered_write to use iomap_iter
-      [8fc274d1f4b4] iomap: switch iomap_file_unshare to use iomap_iter
-      [2aa3048e03d3] iomap: switch iomap_zero_range to use iomap_iter
-      [253564bafff3] iomap: switch iomap_page_mkwrite to use iomap_iter
-      [a6d3d49587d1] iomap: switch __iomap_dio_rw to use iomap_iter
-      [7892386d3571] iomap: switch iomap_fiemap to use iomap_iter
-      [6d8a1287a489] iomap: switch iomap_bmap to use iomap_iter
-      [40670d18e878] iomap: switch iomap_seek_hole to use iomap_iter
-      [c4740bf1edad] iomap: switch iomap_seek_data to use iomap_iter
-      [3d99a1ce3854] iomap: switch iomap_swapfile_activate to use iomap_iter
-      [ca289e0b95af] fsdax: switch dax_iomap_rw to use iomap_iter
-      [57320a01fe1f] iomap: remove iomap_apply
-      [1b5c1e36dc0e] iomap: pass an iomap_iter to various buffered I/O helpers
-      [b74b1293e6ca] iomap: rework unshare flag
-      [65dd814a6187] fsdax: switch the fault handlers to use iomap_iter
-      [fad0a1ab34f7] iomap: constify iomap_iter_srcmap
-
-Darrick J. Wong (3):
-      [b69eea82d37d] iomap: pass writeback errors to the mapping
-      [8d04fbe71fa0] iomap: move loop control code to iter.c
-      [03b8df8d43ec] iomap: standardize tracepoint formatting and storage
-
-Gao Xiang (1):
-      [69f4a26c1e0c] iomap: support reading inline data from non-zero pos
-
-Matthew Wilcox (Oracle) (3):
-      [b405435b419c] iomap: Support inline data with block size < page size
-      [ab069d5fdcd1] iomap: Use kmap_local_page instead of kmap_atomic
-      [ae44f9c286da] iomap: Add another assertion to inline data handling
-
-Shiyang Ruan (2):
-      [55f81639a715] fsdax: factor out helpers to simplify the dax fault code
-      [c2436190e492] fsdax: factor out a dax_fault_actor() helper
-
-Xu Yu (1):
-      [36ca7943ac18] mm/swap: consider max pages in iomap_swapfile_add_extent
-
-
-Code Diffstat:
-
- fs/btrfs/inode.c       |   5 +-
- fs/buffer.c            |   4 +-
- fs/dax.c               | 606 +++++++++++++++++++++++--------------------------
- fs/gfs2/bmap.c         |   5 +-
- fs/internal.h          |   4 +-
- fs/iomap/Makefile      |   2 +-
- fs/iomap/apply.c       |  99 --------
- fs/iomap/buffered-io.c | 508 ++++++++++++++++++++---------------------
- fs/iomap/direct-io.c   | 172 +++++++-------
- fs/iomap/fiemap.c      | 101 ++++-----
- fs/iomap/iter.c        |  80 +++++++
- fs/iomap/seek.c        |  98 ++++----
- fs/iomap/swapfile.c    |  44 ++--
- fs/iomap/trace.h       |  61 ++---
- include/linux/iomap.h  |  91 ++++++--
- 15 files changed, 934 insertions(+), 946 deletions(-)
- delete mode 100644 fs/iomap/apply.c
- create mode 100644 fs/iomap/iter.c
