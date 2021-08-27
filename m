@@ -2,201 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 52B933F9BD3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 17:41:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 859C93F9C0C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 17:59:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244479AbhH0PlP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Aug 2021 11:41:15 -0400
-Received: from sonic302-27.consmr.mail.ne1.yahoo.com ([66.163.186.153]:45219
-        "EHLO sonic302-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231730AbhH0PlL (ORCPT
+        id S245396AbhH0QAF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Aug 2021 12:00:05 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:52212 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235955AbhH0QAF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Aug 2021 11:41:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1630078822; bh=RLSfOoMGxQBA/Q+l0oOfjINaN69QHvng+wec1rTGsfk=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=drhmaT+Il9bkZTSb6KEMugJzFitA0vCF8YZZ8gVpoB0qgUvY8itfC9I1pnVsC54TghHyxJXfUQ52xmXnFzzv7MRXakr/Q7AHkD7j3lCewyFK6mpS7ey+VsmF2cmj8ajs3UGzRH0n0byteHLYmrA04n1ELBYEgwPA81qsMKWhe+VRanlAfl7tERN7tfiUhQ6b+OFgBRyj3OYe2kpb4+dFh0IH2CyVpyPZUBFPt2wTF3ev0y0dsHiSf2GrbMx+217ylaO67Toc/EoRp+FtekPl+uMsmC6Ofc3pBq5POnNnlfK+0Lc019JK+J//LSqK9kGxvs0Ky4pmZJEayQtKHMKxyw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1630078822; bh=D94bqPGl7AEF7XOQPgaZF/LHsD5C3S2nS21+M1kW6RT=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=nG2tv0R+UAZLHs0Tg8mEQGx0kzUHARmUbZCYygV1CnulS1gCzsMYwIFPjUw/rxEHUWwB2HZTaVLwfqg0Qb9NiKVe272xJyNJSW5DRAoPi6jS49o/t5oWoLtNRdhxF/5z2ockAJzMy9fikYGMK+yBdQ8e8hR891w04VZe4HL/gI1NVyV8f8Ik5GEHDfjSjplp++XlkOETW7f05OUVDaQjohyWhdn10VPad186SQ9LkaWbZrKR+vQsPErTuyEegrH5fGv/PL6n5E2Maws5xfOPFUzZgz9lgnzSQDtVAF22FtvOqhfiE/eATez1D5FPecAnwQjKb/UNfgqu6P0TCDspkQ==
-X-YMail-OSG: QSPKJ_wVM1kftnzMNAAElIqqshKzX.4IMhSyEuu7HoJS8SjfEcn.CvTFAHaeUT7
- wTe06FwKE5j1Dp3AGdwMy_nzuyFFpcfP1SASaYAuJ1XmmqHD.eQ.Dmmle4iJv2nra2nOwA78ZyGY
- Xk6Gg3aRrpEsFd3gu6uOyDeNgMT8DUeaRFA6nZSnav9NgDXtGkwEhx_uExPbvnvMGUbTgoFSlD.h
- 0i9N5Z1ObYAyXdGyNWsnbY7V3ZNvTLVhwMVKOnhPS.hxzps6xxLyLSdFbTTiKTbiAnHSjePyeN68
- 6VTxOyqGUgUjRpy.UsMmwQ97Ku0jjGQ6t9_.ywT79kFxIle5Q8L7WUFTsxGfxm5U.vOg4svidzjt
- 9_kUkKsbvMHulScXzmWYO4L5_fPzws4iVedwBPk5s9pHBzWHjNS0Go4Jil_I6J2UmqCK9AYyFhj7
- zaAUqFQDE3OII4SSV7lZ0k3uP2p3pd7CKum.oHFhiUYVspm3n.HAVfEVCVRIGBisYBXl36cK3g24
- uHjd2wHOM3n401Nj2Fd00RHqYL.RPRUI_RzihuCzN7V7jNdwb7N3ealoBtIHOW6zdyAJxpcH2kbB
- aDioOh9bDptXvMfvWfLECRCxdrzC_zXL5Irncwp4YXm41xqtQ1Sz57tqKtiKfERz3s5Zlz1l4nAW
- Ocpa4N3Lm88NY5n60Mo5Kg5Ip1NefHDwtXdbMgGShvZWgnN2zszBEonHNC1D8nLX3W8HptCbtEpX
- A1wRuNZeIh6O_..jA6QIQdlJV6DL0Enspcv9dCuFQyPi81ycH8aCSOXcycw4Vbstn4dG9DNbyHY3
- BxzNF5zIUwjzVM2gnnmbdWzFLOZ1loQSBEYtotbDcvCGMWISUomDtkGp5eA9gD3sp5RM3OkFPJ89
- abuDroy2OjTaNNn8nhlNrp6ovqxOoouJBji8jpuhYNh6xlhHE_NjoDXG40tNCTRgNrKUKijxu1N1
- F2CI92YacRKhZstVDLoTiw7Q3BgI9xO5o4aocVP8JmRDRzeJRCObapEYaeRYz0KwNXXOOo6t0GiZ
- 1OsVdNbEfzyONrK7QVG.vPANAS75Q.OPSCV5wYMsvUWyRIjdtGXWeeMnBdwLnBH0v3XLmUd7Me9D
- GCwmJ1ULKLAn6CEUsZhdpPWw5QoZzGN_3jmePYL0Vuw6wUCPnUYUI_9jw7.EeCs1Hm_cliBrg4Qp
- 4.FtB36Kf_rTCprB7dZ4Q2.XaXp_arR6ixohizfyC_f2Beub64p_bVnX5amBygcEKBIh6kcIZsx4
- gkT1v2jCcVQO__X_IBz3ZT_ayyns6oiiFppT2hTDmzaAM7IP0o0PavyIlojYjvDok2sKPVaqFcyw
- 9OQ4TmFFG.SrFIqIsct5YT2vUhx5FYntHWAk0b0yzyD26RkTMKcxWj2Tw61jVqoXeakYaEJnSKRC
- I5JM0DpxmgL5Yv6jSCEEsnLcQ36wRGlB4rRBUpkD41sLYJy8HwIL6c5VOkvPaBpA4b1_0oiFEN6V
- 61CK.LzqRsidoXzEkQkn_3kqj_OHMD4wR9KwzGLECsbxn5IXhnDH1UOB0tZbhygyA55IAN2W.Veu
- _PZPXhGb0JZojpF7_jQV2.ppmhPa7XAC_DeZC7ionwa0VSiaMsqwU86BwGWGgmMZ2ENK3sW6jCZ2
- AqluulGMKUtLy5DGBSkOi_aEyyaDELqNgIcmlxYpoRbekKU8bDWYbcdOCojhCbVG4kF1VuobEXsJ
- W0fTvr6FpTSA21f3ktNfFu1bhQBNe_pUQ7qbpswbG6fBYrHE.3_lFm8jbOygIeDy5RgGH6gRHiBa
- 3jwZWdsftDCcGB2aMrppGf3vQJai_.iCOOSRDTTkjyuqinvYYq4gK4NbdgqS0sDmvrsU8kEQQb_q
- 5vMB7b89YfhivsHS4KSjG9few0WeBS9gS9BxYv.yLk1v48IbJYStYsGB0HqZTBMmnsF1V5AFkYey
- _ju6DXpylilZTVywnIOoexFDv9e_VjEzdGj2Z8IuSbiOK55iiGje_akxjNOSmknU6p1sEKHi50jA
- Ew4TG4Gh4vUak6U1XIGca.qZ4PvSaqMNsHf02VDH1rhKt8bo0XunMRxKC9RHai4GjtWJN1esHPm5
- 3NI0uNJ3e5OmKsSxBuYHDEi4uQlA.1lgQN6j8k5qPn8IOlNkC7qlAd4SIzG7_L0dbo43DbLurpHf
- I4Oh_d4zLG_mAAGuaMBJWImV0AyFmM5oJzuyYUmBooKSGvQjnJpmuNDKeTR9wA2_7y0omVGhfPKR
- wGs63ltmGQ3xakUeWWUpxKHSYEdd.sS76VyJUe2zM1duu6pgEVBhRuQcvsnMHNwXzsEFlYQLsyhI
- 8efkc228AoNGtAI_WrlUi3EGHPVFwiZX9Iy8RvAYuGRzpNO9tB8AxyhcMi5BxPFk-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Fri, 27 Aug 2021 15:40:22 +0000
-Received: by kubenode550.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID c87127f64d5633da122d83ac78847bb5;
-          Fri, 27 Aug 2021 15:40:16 +0000 (UTC)
-Subject: Re: [syzbot] general protection fault in legacy_parse_param
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        selinux@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <0000000000004e5ec705c6318557@google.com>
- <CACT4Y+YysFa1UzT6zw9GGns69WSFgqrL6P_LjUju6ujcJRTaeA@mail.gmail.com>
- <d11c276d-65a0-5273-d797-1092e1e2692a@schaufler-ca.com>
- <CAHC9VhSq88YjA-VGSTKkc4hkc_KOK=mnoAYiX1us6O6U0gFzAQ@mail.gmail.com>
- <CACT4Y+bj4epytaY4hhEx5GF+Z2xcMnS4AEg=JcrTEnWvXWFuGQ@mail.gmail.com>
- <CAHC9VhQLi+1r3BmSeQre+EEtEyvhSmmT-ABLjvzk0J-J9v9URw@mail.gmail.com>
- <20210827153041.z3jundji5usj3afj@wittgenstein>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <cda5e293-869c-8b7b-5da6-892bf901afc7@schaufler-ca.com>
-Date:   Fri, 27 Aug 2021 08:40:15 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Fri, 27 Aug 2021 12:00:05 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51]:43614)
+        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1mJeG4-009BWI-Gt; Fri, 27 Aug 2021 09:59:08 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95]:57244 helo=email.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1mJeFz-001ekB-NI; Fri, 27 Aug 2021 09:59:06 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Steven Rostedt" <rostedt@goodmis.org>,
+        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        "Namhyung Kim" <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        "Sergey Senozhatsky" <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Mike Rapoport" <rppt@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Michel Lespinasse <walken@google.com>,
+        "Catalin Marinas" <catalin.marinas@arm.com>,
+        "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Shawn Anastasio" <shawn@anastas.io>,
+        Steven Price <steven.price@arm.com>,
+        "Nicholas Piggin" <npiggin@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        "Gabriel Krisman Bertazi" <krisman@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        "Suren Baghdasaryan" <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        "Marco Elver" <elver@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Collin Fijalkovich <cfijalkovich@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        Christian =?utf-8?Q?K=C3=B6nig?= 
+        <ckoenig.leichtzumerken@gmail.com>,
+        "linux-unionfs\@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "the arch\/x86 maintainers" <x86@kernel.org>,
+        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        "Florian Weimer" <fweimer@redhat.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+References: <20210812084348.6521-1-david@redhat.com> <87o8a2d0wf.fsf@disp2133>
+        <60db2e61-6b00-44fa-b718-e4361fcc238c@www.fastmail.com>
+        <87lf56bllc.fsf@disp2133>
+        <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
+        <87eeay8pqx.fsf@disp2133>
+        <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
+        <87h7ft2j68.fsf@disp2133>
+        <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
+        <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
+        <CAHk-=wiJ0u33h2CXAO4b271Diik=z4jRt64=Gt6YV2jV4ef27g@mail.gmail.com>
+        <b60e9bd1-7232-472d-9c9c-1d6593e9e85e@www.fastmail.com>
+        <0ed69079-9e13-a0f4-776c-1f24faa9daec@redhat.com>
+        <87mtp3g8gv.fsf@disp2133>
+        <04e61e79ebad4a5d872d0a2b5be4c23d@AcuMS.aculab.com>
+Date:   Fri, 27 Aug 2021 10:58:32 -0500
+In-Reply-To: <04e61e79ebad4a5d872d0a2b5be4c23d@AcuMS.aculab.com> (David
+        Laight's message of "Fri, 27 Aug 2021 08:22:07 +0000")
+Message-ID: <87fsuug9qv.fsf@disp2133>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20210827153041.z3jundji5usj3afj@wittgenstein>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.18924 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain
+X-XM-SPF: eid=1mJeFz-001ekB-NI;;;mid=<87fsuug9qv.fsf@disp2133>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18o5haSFLbKAaOyrbFGNCpTZ+ZVgKismqA=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02 autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4998]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;David Laight <David.Laight@ACULAB.COM>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 2688 ms - load_scoreonly_sql: 0.08 (0.0%),
+        signal_user_changed: 10 (0.4%), b_tie_ro: 8 (0.3%), parse: 1.69 (0.1%),
+         extract_message_metadata: 13 (0.5%), get_uri_detail_list: 1.20 (0.0%),
+         tests_pri_-1000: 28 (1.0%), tests_pri_-950: 1.31 (0.0%),
+        tests_pri_-900: 1.20 (0.0%), tests_pri_-90: 2272 (84.5%), check_bayes:
+        2268 (84.4%), b_tokenize: 22 (0.8%), b_tok_get_all: 8 (0.3%),
+        b_comp_prob: 2.7 (0.1%), b_tok_touch_all: 2230 (83.0%), b_finish: 1.23
+        (0.0%), tests_pri_0: 349 (13.0%), check_dkim_signature: 0.70 (0.0%),
+        check_dkim_adsp: 2.8 (0.1%), poll_dns_idle: 0.54 (0.0%), tests_pri_10:
+        2.3 (0.1%), tests_pri_500: 7 (0.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v1 0/7] Remove in-tree usage of MAP_DENYWRITE
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/27/2021 8:30 AM, Christian Brauner wrote:
-> On Tue, Jul 06, 2021 at 08:50:44AM -0400, Paul Moore wrote:
->> On Mon, Jul 5, 2021 at 1:52 AM Dmitry Vyukov <dvyukov@google.com> wrote:
->>> On Sun, Jul 4, 2021 at 4:14 PM Paul Moore <paul@paul-moore.com> wrote:
->>>> On Sat, Jul 3, 2021 at 6:16 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>>> On 7/2/2021 10:51 PM, Dmitry Vyukov wrote:
->>>>>> On Sat, Jul 3, 2021 at 7:41 AM syzbot
->>>>>> <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com> wrote:
->>>>>>> Hello,
->>>>>>>
->>>>>>> syzbot found the following issue on:
->>>>>>>
->>>>>>> HEAD commit:    62fb9874 Linux 5.13
->>>>>>> git tree:       upstream
->>>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=12ffa118300000
->>>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=19404adbea015a58
->>>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=d1e3b1d92d25abf97943
->>>>>>> compiler:       Debian clang version 11.0.1-2
->>>>>>>
->>>>>>> Unfortunately, I don't have any reproducer for this issue yet.
->>>>>>>
->>>>>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>>>>>> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
->>>>>> +Casey for what looks like a smackfs issue
->>>>> This is from the new mount infrastructure introduced by
->>>>> David Howells in November 2018. It makes sense that there
->>>>> may be a problem in SELinux as well, as the code was introduced
->>>>> by the same developer at the same time for the same purpose.
->>>>>
->>>>>> The crash was triggered by this test case:
->>>>>>
->>>>>> 21:55:33 executing program 1:
->>>>>> r0 = fsopen(&(0x7f0000000040)='ext3\x00', 0x1)
->>>>>> fsconfig$FSCONFIG_SET_STRING(r0, 0x1, &(0x7f00000002c0)='smackfsroot',
->>>>>> &(0x7f0000000300)='default_permissions', 0x0)
->>>>>>
->>>>>> And I think the issue is in smack_fs_context_parse_param():
->>>>>> https://elixir.bootlin.com/linux/latest/source/security/smack/smack_lsm.c#L691
->>>>>>
->>>>>> But it seems that selinux_fs_context_parse_param() contains the same issue:
->>>>>> https://elixir.bootlin.com/linux/latest/source/security/selinux/hooks.c#L2919
->>>>>> +So selinux maintainers as well.
->>>>>>
->>>>>>> general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
->>>>>>> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
->>>>>>> CPU: 0 PID: 20300 Comm: syz-executor.1 Not tainted 5.13.0-syzkaller #0
->>>>>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->>>>>>> RIP: 0010:memchr+0x2f/0x70 lib/string.c:1054
->>>>>>> Code: 41 54 53 48 89 d3 41 89 f7 45 31 f6 49 bc 00 00 00 00 00 fc ff df 0f 1f 44 00 00 48 85 db 74 3b 48 89 fd 48 89 f8 48 c1 e8 03 <42> 0f b6 04 20 84 c0 75 0f 48 ff cb 48 8d 7d 01 44 38 7d 00 75 db
->>>>>>> RSP: 0018:ffffc90001dafd00 EFLAGS: 00010246
->>>>>>> RAX: 0000000000000000 RBX: 0000000000000013 RCX: dffffc0000000000
->>>>>>> RDX: 0000000000000013 RSI: 000000000000002c RDI: 0000000000000000
->>>>>>> RBP: 0000000000000000 R08: ffffffff81e171bf R09: ffffffff81e16f95
->>>>>>> R10: 0000000000000002 R11: ffff88807e96b880 R12: dffffc0000000000
->>>>>>> R13: ffff888020894000 R14: 0000000000000000 R15: 000000000000002c
->>>>>>> FS:  00007fe01ae27700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
->>>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>> CR2: 00000000005645a8 CR3: 0000000018afc000 CR4: 00000000001506f0
->>>>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>>>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>>>>>> Call Trace:
->>>>>>>  legacy_parse_param+0x461/0x7e0 fs/fs_context.c:537
->>>>>>>  vfs_parse_fs_param+0x1e5/0x460 fs/fs_context.c:117
->>>> It's Sunday morning and perhaps my mind is not yet in a "hey, let's
->>>> look at VFS kernel code!" mindset, but I'm not convinced the problem
->>>> is the 'param->string = NULL' assignment in the LSM hooks.  In both
->>>> the case of SELinux and Smack that code ends up returning either a 0
->>>> (Smack) or a 1 (SELinux) - that's a little odd in it's own way, but I
->>>> don't believe it is relevant here - either way these return values are
->>>> not equal to -ENOPARAM so we should end up returning early from
->>>> vfs_parse_fs_param before it calls down into legacy_parse_param():
->>>>
->>>> Taken from https://elixir.bootlin.com/linux/latest/source/fs/fs_context.c#L109 :
->>>>
->>>>   ret = security_fs_context_parse_param(fc, param);
->>>>   if (ret != -ENOPARAM)
->>>>     /* Param belongs to the LSM or is disallowed by the LSM; so
->>>>      * don't pass to the FS.
->>>>      */
->>>>     return ret;
->>>>
->>>>   if (fc->ops->parse_param) {
->>>>     ret = fc->ops->parse_param(fc, param);
->>>>     if (ret != -ENOPARAM)
->>>>       return ret;
->>>>   }
->>> Hi Paul,
->>>
->>> You are right.
->>> I almost connected the dots, but not exactly.
->>> Now that I read more code around, setting "param->string = NULL" in
->>> smack_fs_context_parse_param() looks correct to me (the fs copies and
->>> takes ownership of the string).
->>>
->>> I don't see how the crash happened...
->> FWIW, I poked around a bit too and couldn't see anything obvious
->> either, but I can't pretend to know as much about the VFS layer as the
->> VFS folks.  Hopefully they might have better luck.
-> I'm not sure that's right.
-> If the smack hook runs first, it will set
->
-> param->string = NULL
->
-> now the selinux hook runs. But the selinux param hook doesn't end up in
-> selinux_add_opt() instead it will fail before
-> opt = fs_parse(fc, selinux_fs_parameters, param, &result);
-> which will return -ENOPARAM since it's not a selinux option subsequently
-> causing the crash.
->
-> Does that sound plausible?
+David Laight <David.Laight@ACULAB.COM> writes:
 
-No. You can't (currently) have both Smack and SELinux enabled at
-the same time. If you're invoking both the Smack hook and the SELinux
-hook you're doing somthing way wrong.
-
+> From: Eric W. Biederman
+>> Sent: 26 August 2021 23:14
+> ...
+>> I also ran into this issue not too long ago when I refactored the
+>> usermode_driver code.  My challenge was not being in userspace
+>> the delayed fput was not happening in my kernel thread.  Which meant
+>> that writing the file, then closing the file, then execing the file
+>> consistently reported -ETXTBSY.
+>> 
+>> The kernel code wound up doing:
+>> 	/* Flush delayed fput so exec can open the file read-only */
+>> 	flush_delayed_fput();
+>> 	task_work_run();
+>> 
+>> As I read the code the delay for userspace file descriptors is
+>> always done with task_work_add, so userspace should not hit
+>> that kind of silliness, and should be able to actually close
+>> the file descriptor before the exec.
 >
-> Christian
+> If task_work_add ends up adding it to a task that is already
+> running on a different cpu, and that cpu takes a hardware
+> interrupt that takes some time and/or schedules the softint
+> code to run immediately the hardware interrupt completes
+> then it may well be possible for userspace to have 'issues'.
+
+It it task_work_add(current).  Which punts the work to the return to
+userspace.
+
+> Any flags associated with O_DENY_WRITE would need to be cleared
+> synchronously in the close() rather then in any delayed fput().
+
+Eric
