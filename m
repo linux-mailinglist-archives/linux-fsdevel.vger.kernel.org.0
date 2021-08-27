@@ -2,119 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E38B93F96D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 11:25:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEC243F9722
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 11:37:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244649AbhH0J0E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Aug 2021 05:26:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35860 "EHLO
+        id S244813AbhH0JhY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Aug 2021 05:37:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232604AbhH0J0D (ORCPT
+        with ESMTP id S232841AbhH0JhX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Aug 2021 05:26:03 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A967EC061757
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 02:25:14 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id u14so12371161ejf.13
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 02:25:14 -0700 (PDT)
+        Fri, 27 Aug 2021 05:37:23 -0400
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBBD1C061757
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 02:36:34 -0700 (PDT)
+Received: by mail-io1-xd29.google.com with SMTP id b7so7689531iob.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 02:36:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=CQZSVnOjQTaOC4XZpSSeU/UltZMxftQtIHXd0FC9LUY=;
-        b=Eiyqj+g5ZX6aj2srxpZtcC1FQBOndljXdzjzQhW3jQfg0AKnowg66sDkXhGEBa7ROp
-         +53SIt2MmLtIoE8yXSbpYJx4I/VEj5rzSssq48dyRj2K9LTMGIxWpkX+rBd7bgLzzewm
-         H7LTLql0SrRgfWYFJmh/kVwAwOxH4PN1xEh8cDnMjmoUUMNdlPpdKQKSpqobDjvAldfC
-         cXn76T6Mu1zSuEcmMGjIeXjOf1VizyeMqiQ0WOFK5MjuDVZ5/RoACxnjGi7LF45nwgrQ
-         Nfv9gXViN5n0dobPAoA9idt9BLeLe79P5wpff7nWT0kBWd8juzoAhi6J/RJ88ud8v62V
-         8eEg==
+        bh=QyjTZIXcTKNZrNpynfNpSNcPP3/p0TIc5oH3wFyAZHI=;
+        b=mRcdy/6zEmYUfL4Py+VejVjXgWfWkonuO06KK1puC9jEbl9hcW35EFgixAn3vLUtHk
+         kuylyf7lsPR6tuIQj4NZ22hu9RmAKFlm0TyXdQGehIhvqctHECy35mKgMnSthSnI0iKP
+         ufQzS4IhMPTpBzRqHikkq129neGyUYJ9Bn7Gu/imwLRgzzFF8vZWW6IxgwF5JEW6nYvT
+         PMIC5EEKsM04Fmq18ag4mrUpMfkqnrX/vXO+E2Yf67kTuVSbT/tjfzd6EYVjXnR5X0aV
+         rUZbU6Ytuo7ZN3fBFzZPDqtC/5Ei3thYNYLaSSiaCFfcfEepShkd3Yglw8ydGDJbuIEw
+         kh+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=CQZSVnOjQTaOC4XZpSSeU/UltZMxftQtIHXd0FC9LUY=;
-        b=jzz2wyj7+Z3QEatlowCjOJQvAlKkYd3SUT3gOk6YyK/QmP5HwbmVgNwhmgPNmr+Vac
-         lwKfsrkXIboKxOOrWIkOWRojh7dLd+wdgNMlZmR5tMqsC2LHI/X8uDlQyiHmXIL04zVj
-         EtFnkxL21C6wbotSglGTRe8CDNncN9UN4sEBTDUXJmmt5w/9Ue/eRhJytpW2XMgh3LiO
-         Qo84eJIf+VT5kyhEp7FnqG0hfwgS5hWKargJKFFUnkHHSNpuxeeFDD2hOgIFBi1tI1Z7
-         c6yP4Th5E4OXA+BmdKYtgm0ou/osLQm3DYvcnCn+SUMSs2TUwQgxey2/3kJnjc237TPF
-         /SDg==
-X-Gm-Message-State: AOAM530hk3BrN1aqecvrmzIyLS0C+CiOVGAA3xRFoGxaqUczyVdtr2pM
-        AJW3mNhPuw47Yu4wr/2EGmHe3wWdMoyM3QDMpths
-X-Google-Smtp-Source: ABdhPJwgcugxvkltcJohlXGHniUZmyhYLawWLaSxMYUiHXpZPra5boRHFyGEQTo7QNVw0MBfE++H/HV9ev3Dyf8sBpg=
-X-Received: by 2002:a17:906:659:: with SMTP id t25mr8879799ejb.372.1630056313220;
- Fri, 27 Aug 2021 02:25:13 -0700 (PDT)
+        bh=QyjTZIXcTKNZrNpynfNpSNcPP3/p0TIc5oH3wFyAZHI=;
+        b=DO1yIwl+zFwVEECJQG/UJBC/20oyqEFN7pWRlB9XQba47HAC3AO7h7LGJ0VuuiL0on
+         sO9+w2q6enh1NmJ+qcHy+pTRYgyBmtXAH4zuNyaxkPrSJTBFeooF1Z5uiFHU/b5l1s5T
+         KkYoJhX7ExZC3aCQtUnw61ZdNHQkRUUiSBLR8Bl2IlT9VA/pKkRqsZMKfbvoPIXGWfGi
+         LYnRRtCLr5PQ59xi0H21lCfdamAXvCGrpy27y5hsQzKUM0yTJu4PT9/fTNuE+z1bqoeJ
+         s9IpY44d8iYrZNRjHhCgN/YLfd9xHodZJEl/Sg7JF1fUYE47LQA9HruCrPaWno2yrTAJ
+         akPw==
+X-Gm-Message-State: AOAM5303qNspv/VUMYxIeM7FSp87MX8Ty+823L3o8c7nLlkCG9J+Xg83
+        0lXj+gblltGV5NOZPj5/wXMO5+Nd8UAiJhvqU7KTlaxBZNs=
+X-Google-Smtp-Source: ABdhPJy2A7xkn17XChdugSCmtykKVIFAnETIBLBBAKeCeZQK1CSu0jKr/UJxwdWrpnMnOSxtbLiAPEM2Vb/hcQxQAmQ=
+X-Received: by 2002:a6b:8b54:: with SMTP id n81mr6686283iod.5.1630056994285;
+ Fri, 27 Aug 2021 02:36:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210818120642.165-1-xieyongji@bytedance.com> <20210818120642.165-11-xieyongji@bytedance.com>
- <2d807de3-e245-c2fb-ae5d-7cacbe35dfcb@huawei.com>
-In-Reply-To: <2d807de3-e245-c2fb-ae5d-7cacbe35dfcb@huawei.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Fri, 27 Aug 2021 17:25:02 +0800
-Message-ID: <CACycT3uRvB2K7LeVpdv+DkGJGjdORMa2uk5T_PYswtddNOjV4A@mail.gmail.com>
-Subject: Re: [PATCH v11 10/12] vduse: Implement an MMU-based software IOTLB
-To:     John Garry <john.garry@huawei.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        He Zhe <zhe.he@windriver.com>,
-        Liu Xiaodong <xiaodong.liu@intel.com>,
-        Joe Perches <joe@perches.com>,
-        Robin Murphy <robin.murphy@arm.com>, kvm <kvm@vger.kernel.org>,
-        netdev@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        iommu@lists.linux-foundation.org, songmuchun@bytedance.com,
-        linux-fsdevel@vger.kernel.org
+References: <20210812214010.3197279-1-krisman@collabora.com>
+ <20210812214010.3197279-10-krisman@collabora.com> <CAOQ4uxi7otGo6aNNMk9-fVQCx4Q0tDFe7sJaCr6jj1tNtfExTg@mail.gmail.com>
+ <87tujdz7u7.fsf@collabora.com> <CAOQ4uxhj=UuvT5ZonFD2sgufqWrF9m4XJ19koQ5390GUZ32g7g@mail.gmail.com>
+ <87mtp5yz0q.fsf@collabora.com> <CAOQ4uxjnb0JmKVpMuEfa_NgHmLRchLz_3=9t2nepdS4QXJ=QVg@mail.gmail.com>
+ <CAHC9VhT9SE6+kLYBh2d7CW5N6RCr=_ryK+ncGvqYJ51B7_egPA@mail.gmail.com>
+In-Reply-To: <CAHC9VhT9SE6+kLYBh2d7CW5N6RCr=_ryK+ncGvqYJ51B7_egPA@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 27 Aug 2021 12:36:23 +0300
+Message-ID: <CAOQ4uxgDdNsSHj4T8Ugr1_WTZgDpGcVMnNMqVVNFnVWvYcX4eQ@mail.gmail.com>
+Subject: audit watch and kernfs
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Jan Kara <jack@suse.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Matthew Bobrowski <repnop@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 27, 2021 at 4:53 PM John Garry <john.garry@huawei.com> wrote:
+[Fork new thread from:
+https://lore.kernel.org/linux-fsdevel/CAHC9VhT9SE6+kLYBh2d7CW5N6RCr=_ryK+ncGvqYJ51B7_egPA@mail.gmail.com/
+and shrink CC list]
+
+> > > >> Hi Amir,
+> > > >>
+> > > >> I think this is actually necessary.  I could identify at least one event
+> > > >> (FS_CREATE | FS_ISDIR) where fsnotify is invoked with a NULL data field.
+> > > >> In that case, fsnotify_dirent is called with a negative dentry from
+> > > >> vfs_mkdir().  I'm not sure why exactly the dentry is negative after the
+> > > >
+> > > > That doesn't sound right at all.
+> > > > Are you sure about this?
+> > > > Which filesystem was this mkdir called on?
+> > >
+> > > You should be able to reproduce it on top of mainline if you pick only this
+> > > patch and do the change you suggested:
+> > >
+> > >  -       sb = inode->i_sb;
+> > >  +       sb = fsnotify_data_sb(data, data_type);
+> > >
+> > > And then boot a Debian stable with systemd.  The notification happens on
+> > > the cgroup pseudo-filesystem (/sys/fs/cgroup), which is being monitored
+> > > by systemd itself.  The event that arrives with a NULL data is telling the
+> > > directory /sys/fs/cgroup/*/ about the creation of directory
+> > > `init.scope`.
+> > >
+> > > The change above triggers the following null dereference of struct
+> > > super_block, since data is NULL.
+> > >
+> > > I will keep looking but you might be able to answer it immediately...
+> >
+> > Yes, I see what is going on.
+> >
+> > cgroupfs is a sort of kernfs and kernfs_iop_mkdir() does not instantiate
+> > the negative dentry. Instead, kernfs_dop_revalidate() always invalidates
+> > negative dentries to force re-lookup to find the inode.
+> >
+> > Documentation/filesystems/vfs.rst says on create() and friends:
+> > "...you will probably call d_instantiate() with the dentry and the
+> >   newly created inode..."
+> >
+> > So this behavior seems legit.
+> > Meaning that we have made a wrong assumption in fsnotify_create()
+> > and fsnotify_mkdir().
+> > Please note the comment above fsnotify_link() which anticipates
+> > negative dentries.
+> >
+> > I've audited the fsnotify backends and it seems that the
+> > WARN_ON(!inode) in kernel/audit_* is the only immediate implication
+> > of negative dentry with FS_CREATE.
+> > I am the one who added these WARN_ON(), so I will remove them.
+> > I think that missing inode in an FS_CREATE event really breaks
+> > audit on kernfs, but not sure if that is a valid use case (Paul?).
 >
-> On 18/08/2021 13:06, Xie Yongji wrote:
-> > +
-> > +static dma_addr_t
-> > +vduse_domain_alloc_iova(struct iova_domain *iovad,
-> > +                     unsigned long size, unsigned long limit)
-> > +{
-> > +     unsigned long shift = iova_shift(iovad);
-> > +     unsigned long iova_len = iova_align(iovad, size) >> shift;
-> > +     unsigned long iova_pfn;
-> > +
-> > +     /*
-> > +      * Freeing non-power-of-two-sized allocations back into the IOVA caches
-> > +      * will come back to bite us badly, so we have to waste a bit of space
-> > +      * rounding up anything cacheable to make sure that can't happen. The
-> > +      * order of the unadjusted size will still match upon freeing.
-> > +      */
-> > +     if (iova_len < (1 << (IOVA_RANGE_CACHE_MAX_SIZE - 1)))
-> > +             iova_len = roundup_pow_of_two(iova_len);
+> While it is tempting to ignore kernfs from an audit filesystem watch
+> perspective, I can see admins potentially wanting to watch
+> kernfs/cgroupfs/other-config-pseudofs to detect who is potentially
+> playing with the system config.  Arguably the most important config
+> changes would already be audited if they were security relevant, but I
+> could also see an admin wanting to watch for *any* changes so it's
+> probably best not to rule out a kernfs based watch right now.
 >
-> Whether it's proper to use this "fast" API or not here, this seems to be
-> copied verbatim from dma-iommu.c, which tells me that something should
-> be factored out.
+> I'm sure I'm missing some details, but from what I gather from the
+> portion of the thread that I'm seeing, it looks like the audit issue
+> lies in audit_mark_handle_event() and audit_watch_handle_event().  In
+> both cases it looks like the functions are at least safe with a NULL
+> inode pointer, even with the WARN_ON() removed; the problem being that
+
+Correct. They are safe.
+
+> the mark and watch will not be updated with the device and inode
+> number which means the audit filters based on those marks/watches will
+> not trigger.  Is that about right or did I read the thread and code a
+> bit too quickly?
 >
 
-Agreed.
+That is also my understanding of the code although I must admit
+I did not try to test this setup.
 
-> Indeed, this rounding up seems a requirement of the rcache, so not sure
-> why this is not done there.
+> Working under the assumption that the above is close enough to
+> correct, that is a bit of a problem as it means audit can't
+> effectively watch kernfs based filesystems, although it sounds like it
+> wasn't really working properly to begin with, yes?  Before I start
+
+Correct. It seems it was always like that (I did not check history of kernfs)
+but do note that users can set audit rules on specific kernfs directories or
+files, it's only recursive rules on subtree may not work as expected
+
+> thinking too hard about this, does anyone already have a great idea to
+> fix this that they want to share?
 >
 
-Me too. I guess it is to let users know that space is wasted.
+One idea I had, it may not be a great idea, but I'll share it anyway :)
+
+Introduce an event FS_INSTANTIATE that will only be exposed to
+internal kernel fsnotify backends. It triggers when an inode is linked
+into the dentry cache as a result of lookup() or mkdir() or whatever.
+
+So for example, in case of audit watch on kernfs,
+audit_watch_handle_event() will miss the FS_CREATE event, but
+on the first user access to the new created directory, audit will get
+the FS_INSTANTIATE event with child inode and be able to setup
+the recursive watch rule.
+
+I did not check if it is possible or easy to d_instantiate() in kernfs
+mkdir() etc like other filesystems do and I do not know if it would be
+possible to enforce that as a strict vfs API rather than a recommendation.
 
 Thanks,
-Yongji
+Amir.
