@@ -2,160 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF84C3F983D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 12:49:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01FB33F985B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 13:10:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244957AbhH0KuH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Aug 2021 06:50:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27766 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244939AbhH0Kt7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Aug 2021 06:49:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630061350;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VTjQSWWlrkaygcuBNYQesIo6nKr0wj832LS/mOrVz+A=;
-        b=UkhYKk+dTPUy6iQjgSn/F7F1yo+ZNPt/A7lYrmYqw3pv83sqEov6BSiKvlJ4sG9fYaLvXE
-        QjGE5cXockid3sW+ZgEyiP7ZBI7n8p5NBPunGA3qoQjhrHp8cQR6U0e42ZEbmUdYzVs6eN
-        14XJrwbwaw5dnhQ9Az5w9kXIYDJhxgk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-579-8exCeTxaPsGbTG1FG203PA-1; Fri, 27 Aug 2021 06:49:07 -0400
-X-MC-Unique: 8exCeTxaPsGbTG1FG203PA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7187B1082922;
-        Fri, 27 Aug 2021 10:49:05 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 63CCC5D9DD;
-        Fri, 27 Aug 2021 10:49:03 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <YSi4bZ7myEMNBtlY@cmpxchg.org>
-References: <YSi4bZ7myEMNBtlY@cmpxchg.org> <YSZeKfHxOkEAri1q@cmpxchg.org> <YSPwmNNuuQhXNToQ@casper.infradead.org> <YSQSkSOWtJCE4g8p@cmpxchg.org> <YSQeFPTMn5WpwyAa@casper.infradead.org> <YSU7WCYAY+ZRy+Ke@cmpxchg.org> <YSVMAS2pQVq+xma7@casper.infradead.org> <2101397.1629968286@warthog.procyon.org.uk>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] Memory folios for v5.15
+        id S244978AbhH0LK7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Aug 2021 07:10:59 -0400
+Received: from mail-vi1eur05on2055.outbound.protection.outlook.com ([40.107.21.55]:56716
+        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S234172AbhH0LK6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 27 Aug 2021 07:10:58 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Gb+dtjyiGhiBNNNVuICsmQwkNM8ROZC/BBitEOcu7iSqOCDNOfbhUx9vYzgaImcYw6jscwdgdBnoDeLs8X3D5zcyzqPC+lKzUBHpWUCIjNf+/xeV8YL0GfURqGhEJHTRKPXZ4QM+bFbVK2rxdqRY6Pqz8wIbUIIfgElmisxikil3y1tSAYVH93yFxcRKNK7Nl52bGYMHSSk7y6ntFhTcQvKxqmbbkVp0Qau46z0t05wHWJ0FmhIv8j5ku5pjG0up80eTJkX+u9pwVkSJuKfmB1bPhUx1Gt2sENorKWbm6AYYsZyIka3ok2+/NRVcsY8A/CbdyzhSNkToODN4pxwUMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VHDY+qoCODdk0Fo7bCp+EoYwa8H8JtK0cGGPDzt2N2U=;
+ b=WhFw+MtvCTvh/ploW4VshiJwRDuV4qvAgvoa89rlvXA4qEyP8uk2YcQ4TDLLsZ2NmE0M43p3Aku+BObROlZAO8s2X+3SxymuR2Xf15H9rZmLiWtbwxE4QFdwxNisdhiw1iMwSTA8PLgqUJjmrsd3JbPGpFZQLOWmkKF/K2ut3eWrzCnSIYRBs4BobtpP7lFC2TGBt+jQAGFSoAUyp2rFYfBRnnRDqMqo9Icjx2c5FE6oUv+QKKXX1U6bFLk5n8/bJPOQji01ZqCTmFiQ9AYQxQde3iVAoEYtX4hShfsLHMXF/3g7zze2QcU28ex4N7Gs6SpwW5RiGu+ntSHPbEg13g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
+ dkim=pass header.d=siemens.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=siemens.onmicrosoft.com; s=selector1-siemens-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VHDY+qoCODdk0Fo7bCp+EoYwa8H8JtK0cGGPDzt2N2U=;
+ b=ltvhJRwC+JgQELPk5IeBQLIv3TgYJ1rc9Ly+vhQQEIPAX44wKfq+FfLTE8ZgLC5Y9qPMMRoTREyyy/DTlv4wR+YmXPFl3ng+aGEFbGsbxx1I7y66m5zp8NYVfZCu1iQbcZZuETHrnSYVUx9DnXGKMlFNgsQNwafZJNbLcKwUId8=
+Received: from AM0PR10MB3971.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:144::20)
+ by AM4PR1001MB1316.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:200:99::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.20; Fri, 27 Aug
+ 2021 11:10:02 +0000
+Received: from AM0PR10MB3971.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::48fd:2c06:ae52:7427]) by AM0PR10MB3971.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::48fd:2c06:ae52:7427%2]) with mapi id 15.20.4457.023; Fri, 27 Aug 2021
+ 11:10:02 +0000
+From:   "Valek, Andrej" <andrej.valek@siemens.com>
+To:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: oops pstore blk device
+Thread-Topic: oops pstore blk device
+Thread-Index: AQHXmzQVslKQkMuS4Eu3LY3OzINRlA==
+Date:   Fri, 27 Aug 2021 11:10:02 +0000
+Message-ID: <94adaa07f95610b1e3329985284ad0b404bf5956.camel@siemens.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.40.4 (3.40.4-1.fc34) 
+authentication-results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none
+ header.from=siemens.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 42501c38-6a82-4c2f-598c-08d9694b37ad
+x-ms-traffictypediagnostic: AM4PR1001MB1316:
+x-microsoft-antispam-prvs: <AM4PR1001MB131697FD7C1951CE6DA3E5A992C89@AM4PR1001MB1316.EURPRD10.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ek8mb0NpS9A27R3uKsED5yhHXrKGfxCEHJFEqqp2lnuLq+KairPM8jEuxaBlx34EKgDb/0KCMQQnXhODLS3XXEiuOS3uY/qNxOd/K7SKJlbjQn7bZpcZFJRu7JWp/RnPfepioIb3FAr4tlyI6gsZSVQ6o6KubOkD0VPM3YhTyS+DhINo+h+9+bxJtxyK3Eh1GxO6Pg2OMUgQzfGrHJxg+wMuAY2VTWVaYida8qi8iZXxjkNi1KcfeJGZaRCfsQoLEfqLY3Fzrnk5VW7GqfIlCQjzg+g0lAYbrV1M50AHC/pfkMrYYkeOEcw4lAa6RZpd93JiwIv+bow3iJIjgkxceXpxZu1FWiRqLkocoOQK1AYX63B2Y/GxEPzb03+l69Tu1qHD5Yp+8HOvE6ZnWYLkqgAw22rmDck63HAXeQb2tQk0ZTRuov7VYias03wSRdkbHeJStFgglvINVHS9kNi1C2qoUp/pfIrUHNJGBCeXJduzp280ec/EV8AVqdNPO9fUk5hWWH7c8gatVS+4KATawSghE4suI79Y/zfsNqFg9F+a6ua4o9FtPNqsSd/2mfezP/T8xTy3t0ojZzCi+N8HIL6D8VZvp2e4egenawpUI5OSusL7pr9SwLdpBosacIz5AMW+Re2iwooN2narwFMhHrxOa16pnUPYJvtVMMORZkDd5g6TzL6+J9eegEhfJh/eWTc8iJc/ZC29UL6KDM+Z2gTEIjHLxNzt2yPRVF1jjC1VyGmKh4598xXlfsaPm3BoxPOQOjzQvL7S7UsDgXvT7RMWMGi9aNzWVidJM0ta3Dm8Xs+UCBDNNtudwEzInJKTM/0MvJtPrXdkADmDMQSs6Q==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR10MB3971.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(4636009)(136003)(39860400002)(366004)(346002)(396003)(376002)(66946007)(8936002)(966005)(66446008)(86362001)(66556008)(64756008)(8676002)(6512007)(38100700002)(91956017)(186003)(2616005)(76116006)(478600001)(26005)(2906002)(316002)(36756003)(66476007)(6916009)(38070700005)(71200400001)(6506007)(122000001)(5660300002)(83380400001)(6486002)(3480700007);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cWUxZVU0OEcweXZ3RmY1d3VJSHFHL2RLb0hiYjF2dXZTSUt5SWNNMFNQbnZZ?=
+ =?utf-8?B?L3RUbnNQdmo5MDJkSGJkcUtzSzBmUlRGdlkySnNEb3Jzem1FTjNJVEJ2Z09M?=
+ =?utf-8?B?bWxDQXAyb2psMkVYRzlabWI2ZmtlTFhYeGJlWU03NUZjbm5vVDg2QUg5S0dj?=
+ =?utf-8?B?RjNtMzV1VFJvL3E1OTROZTF4L3dPbmJPUjd4ZU40RmNUNzNaWUY1aXJUL0x0?=
+ =?utf-8?B?Kzd5VTFrbW9BVkZPdEFwQnhxMC9PamhSMmVQemE3ZUZWM2hDaFpBV0NnTS9O?=
+ =?utf-8?B?V3R6RVdrczNUNGlHcGF6RXJyTXhTdXNncTJTdC9lQ2hHN21RS0o1RzBybGJy?=
+ =?utf-8?B?ZkFCYk9SVzB6c3BOKzZPbWI4L0RuUGdIUS8xb3BqZVplaGJkdGVUbDFoZ0Fq?=
+ =?utf-8?B?cEpkMXo3T1htWm5EdWJlZmZqY1E5M0pyWCs3QjNvMXFpTWdSOFF1b1l5dGZy?=
+ =?utf-8?B?Wm52eWZybDloZytDdlJheFhnT25GaVkrNEptNU83R2RkeTV2WlVqZlpkUlFT?=
+ =?utf-8?B?LzRSRWUxUVlrVHBFak1qeUpoblNGRGYwVGtoWGNMaU0xOEpFYjJSbnVaYWVw?=
+ =?utf-8?B?dGM1eURoaWFjTFVOaHFDYXlhTnh0Z0pzbEM3aEZUZ0I5UzlPa1lseUV5SitK?=
+ =?utf-8?B?VzRaOVdTd0VyNTJ0OFo3RlJtdEZKSnYwdm9zc2U2MlpNKzNhU05tRXF3SFBD?=
+ =?utf-8?B?VEkvbXdiUE0rZmhkbGtGVDFYS0FOY045UVd3ZndHYlN1bTFzRXB4aStyaVVy?=
+ =?utf-8?B?ODJHeFdublQxQisvenhYYmgzNXB3QTNWUU1xVUo2K2J2Q0tKTlNDSkN5eWxK?=
+ =?utf-8?B?QmZMV1NicE1YWmdRT0ljQmlhcnZPQjVucE1lZDZYR2E3R3Z6Tmp6QXlUSGtP?=
+ =?utf-8?B?VzVidityUU5NRG1aMlVobytYYzhxM0tyam5wRkFwNjQySUl4MVY1S01IUEVk?=
+ =?utf-8?B?bVN4blg2M2lpM21kU1UwN3R3NEQ4WXJxd3M1UzNqOVV2UnVmQTJiWU5oZ3d3?=
+ =?utf-8?B?SkdKaStHa3lSazVYMGRqWHVaOEluM2UvVUtFemFSQlE3QlRXakMvYnNCdGRD?=
+ =?utf-8?B?c2p0dzArMkxQbWx3dVNVYlZIOGw0MzVjanJOQXNnYWJPWVZBR21VTFVpZE5a?=
+ =?utf-8?B?U3kwaDltb2VDelNlTzYwQ2ZDaW5XVU1ObjI1a1JOMmpmMndoVHY2RitVVFZH?=
+ =?utf-8?B?MTIrWGFHQWxPbVlRaE53cG1CMXM4cnVjaEJ5S0RMN0E3V2JoSDZubkE5M0Vj?=
+ =?utf-8?B?VXpxM0FiRC9DWVpFaXE3WTRvVWh0TzBUNFBXTzB2ZytlQmlhNHVSeDByM0VP?=
+ =?utf-8?B?Y24vZ1VpUWNCY2RUS0FBMUxYbjBYS1ZtMDZPQlV1Zk5uRGNxamZXbGFJNWdD?=
+ =?utf-8?B?S1kzcnNCSlNDam9ST0FpcWI4ZEYyVWtIREJaMGZlbkV2WnlaWGtTQmtsOHJM?=
+ =?utf-8?B?YkVNeTFCb1g1dS9VZzNESk1WeW9pTDh2dkp6dnR1NUprUlNybWZKTndReS8x?=
+ =?utf-8?B?ZGZhbXRwSi8veGxSd3dQNkxJclpFS1IzQXFrcWR3THp4NG1UM3dBb0thYW5X?=
+ =?utf-8?B?TS84S3Rud3g1ZHVMRnN2S0hNZzdVcUoybFB6ZUY0OVh3ZGs5ZU03Zm5leEpt?=
+ =?utf-8?B?alVJNXpTdXluVnZncGJuQlZvNERLTWxDaUpNWkhuTHB0bjdJRE56N3E3YWN1?=
+ =?utf-8?B?ejdQdTNEcnZxNUtzNEVwcXU2WW12TC9ENVdDczZ6ME5zdU1xUzdDRmMwNmlk?=
+ =?utf-8?B?NmR6Yld6VnE3QzUxSFF0L09UejhGZ1QrdmZTRWhzcGlaVlhjNlJkQW5mWUlu?=
+ =?utf-8?B?WENCQVdoazVoamFBVS9Xdz09?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <01BCE9347ACF4B4A8A1C013DD84A4ED3@EURPRD10.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2476940.1630061342.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Fri, 27 Aug 2021 11:49:02 +0100
-Message-ID: <2476941.1630061342@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-OriginatorOrg: siemens.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR10MB3971.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42501c38-6a82-4c2f-598c-08d9694b37ad
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2021 11:10:02.5484
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: l1gsbEXBYNrdDradZ25dW9o0RLlPTIvxbGoPI9htdxvAwic46lz62lRrRcJ4HgCezJxBAnpje++ZqwXlxzuFyuOFbjHspZwO5Erug6Ibnss=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR1001MB1316
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Johannes Weiner <hannes@cmpxchg.org> wrote:
-
-> =
-
-> On Thu, Aug 26, 2021 at 09:58:06AM +0100, David Howells wrote:
-> > One thing I like about Willy's folio concept is that, as long as every=
-one uses
-> > the proper accessor functions and macros, we can mostly ignore the fac=
-t that
-> > they're 2^N sized/aligned and they're composed of exact multiples of p=
-ages.
-> > What really matters are the correspondences between folio size/alignme=
-nt and
-> > medium/IO size/alignment, so you could look on the folio as being a to=
-ol to
-> > disconnect the filesystem from the concept of pages.
-> >
-> > We could, in the future, in theory, allow the internal implementation =
-of a
-> > folio to shift from being a page array to being a kmalloc'd page list =
-or
-> > allow higher order units to be mixed in.  The main thing we have to st=
-op
-> > people from doing is directly accessing the members of the struct.
-> =
-
-> In the current state of the folio patches, I agree with you. But
-> conceptually, folios are not disconnecting from the page beyond
-> PAGE_SIZE -> PAGE_SIZE * (1 << folio_order()). This is why I asked
-> what the intended endgame is. And I wonder if there is a bit of an
-> alignment issue between FS and MM people about the exact nature and
-> identity of this data structure.
-
-Possibly.  I would guess there are a couple of reasons that on the MM side
-particularly it's dealt with as a strict array of pages: efficiency and
-mmap-related faults.
-
-It's most efficient to treat it as an array of contiguous pages as that
-removes the need for indirection.  From the pov of mmap, faults happen
-along the lines of h/w page divisions.
-
-=46rom an FS point of view, at minimum, I just need to know the state of t=
-he
-folio.  If a page fault dirties several folios, that's fine.  If I can fin=
-d
-out that a folio was partially dirtied, that's useful, but not critical.  =
-I am
-a bit concerned about higher-order folios causing huge writes - but I do
-realise that we might want to improve TLB/PT efficiency by using larger
-entries and that that comes with consequences for mmapped writes.
-
-> At the current stage of conversion, folio is a more clearly delineated
-> API of what can be safely used from the FS for the interaction with
-> the page cache and memory management. And it looks still flexible to
-> make all sorts of changes, including how it's backed by
-> memory. Compared with the page, where parts of the API are for the FS,
-> but there are tons of members, functions, constants, and restrictions
-> due to the page's role inside MM core code. Things you shouldn't be
-> using, things you shouldn't be assuming from the fs side, but it's
-> hard to tell which is which, because struct page is a lot of things.
-
-I definitely like the API cleanup that folios offer.  However, I do think
-Willy needs to better document the differences between some of the functio=
-ns,
-or at least when/where they should be used - folio_mapping() and
-folio_file_mapping() being examples of this.
-
-> However, the MM narrative for folios is that they're an abstraction
-> for regular vs compound pages. This is rather generic. Conceptually,
-> it applies very broadly and deeply to MM core code: anonymous memory
-> handling, reclaim, swapping, even the slab allocator uses them. If we
-> follow through on this concept from the MM side - and that seems to be
-> the plan - it's inevitable that the folio API will grow more
-> MM-internal members, methods, as well as restrictions again in the
-> process. Except for the tail page bits, I don't see too much in struct
-> page that would not conceptually fit into this version of the folio.
-> =
-
-> The cache_entry idea is really just to codify and retain that
-> domain-specific minimalism and clarity from the filesystem side. As
-> well as the flexibility around how backing memory is implemented,
-> which I think could come in handy soon, but isn't the sole reason.
-
-I can see while you might want the clarification.  However, at this point,=
- can
-you live with this set of folio patches?  Can you live with the name?  Cou=
-ld
-you live with it if "folio" was changed to something else?
-
-I would really like to see this patchset get in.  It's hanging over change=
-s I
-and others want to make that will conflict with Willy's changes.  If we ca=
-n
-get the basic API of folios in now, that's means I can make my changes on =
-top
-of them.
-
-Thanks,
-David
-
+SGVsbG8gRXZlcnlvbmUhDQoNCkknbSBub3Qgc3VyZSwgaWYgSSB1c2VkLCB0aGUgY29ycmVjdCBt
+YWlsaW5nIGxpc3QsIGJ1dCBJIGhvcGUgdGhhdCdzDQp0aGUgcmlnaHQgb25lLiBCZWNhdXNlIGl0
+J3MgcmVsYXRlZCB0byBmaWxlc3lzdGVtLg0KDQpJIHdvdWxkIGxpa2UgdG8gZ2V0IHJ1bm5pbmcg
+dGhlIHBzdG9yZSBmZWF0dXJlIGZvciBpTVg4IENQVSB3aXRoIGtlcm5lbA0KNS4xMC45IC4gQmFz
+aWNhbGx5IEkgZm9sbG93ZWQgdGhlIDMgdmFyaWFudHMgb2YgZG9jdW1lbnRhdGlvbi4NCiAtIHRo
+ZSBvZmZpY2lhbCBvbmU6DQpodHRwczovL3d3dy5rZXJuZWwub3JnL2RvYy9odG1sL2xhdGVzdC9h
+ZG1pbi1ndWlkZS9wc3RvcmUtYmxrLmh0bWwNCiAtIHRoZSBhbmRyb2lkIG9uZToNCmh0dHA6Ly9o
+dWFxaWFubGVlLmdpdGh1Yi5pby8yMDIwLzExLzEzL0FuZHJvaWQvcHN0b3JlLw0KIC0gdGhlIGNv
+bXBsZXggb25lOg0KaHR0cHM6Ly9naXRodWIuY29tL2dtcHkvYXJ0aWNsZXMvYmxvYi9tYXN0ZXIv
+cHN0b3JlL1Rlc3QtUHN0b3JlLUJsb2NrLm1kDQpidXQgLi4uIG5vdGhpbmcgaGF2ZSBiZWVuIHdv
+cmtpbmcgLg0KDQpJIHdpbGwgc3VtbWFyaXplIHRoZSBzdGVwcyB3aGF0IEkgZGlkOg0KIDEuIGNy
+ZWF0ZWQgYW4gZW1wdHkgZGV2aWNlIChmZGlzaykgd2l0aG91dCBhbnkgcGFydGl0aW9uIGZvcm1h
+dA0KKH4xR0IpLCBtbWNibGswcDQNCg0KIDIuIG1vZGlmaWVkIHRoZSBEVEIsIHRvIHJlc2VydmUg
+c29tZSBtZW1vcnk6DQo+ICByZXNlcnZlZC1tZW1vcnkgew0KPiAgICAjYWRkcmVzcy1jZWxscyA9
+IDwyPjsNCj4gICAgI3NpemUtY2VsbHMgPSA8Mj47DQo+ICAgIHJhbmdlczsNCj4NCj4gICAgLyog
+Z2xvYmFsIGF1dG9jb25maWd1cmVkIHJlZ2lvbiBmb3IgY29udGlndW91cyBhbGxvY2F0aW9ucyAq
+Lw0KPiAgICBsaW51eCxjbWEgew0KPiAgICAgICAgY29tcGF0aWJsZSA9ICJzaGFyZWQtZG1hLXBv
+b2wiOw0KPiAgICAgICAgcmV1c2FibGU7DQo+ICAgICAgICBzaXplID0gPDAgMHgzYzAwMDAwMD47
+DQo+ICAgICAgICBhbGxvYy1yYW5nZXMgPSA8MCAweDk2MDAwMDAwIDAgMHgzYzAwMDAwMD47DQo+
+ICAgICAgICBsaW51eCxjbWEtZGVmYXVsdDsNCj4gICAgfTsNCj4NCj4gICAgcmFtb29wczogcmFt
+b29wc0BmZmMwMDAwMCB7DQo+ICAgICAgICBjb21wYXRpYmxlID0gInJlbW92ZWQtZG1hLXBvb2wi
+LCAicmFtb29wcyI7DQo+ICAgICAgICBuby1tYXA7DQo+ICAgICAgICByZWcgPSA8MCAweGZmYzAw
+MDAwIDAgMHgwMDEwMDAwMD47DQo+ICAgICAgICByZWNvcmQtc2l6ZSA9IDwweDEwMDA+Ow0KPiAg
+ICAgICAgY29uc29sZS1zaXplID0gPDB4NDAwMDA+Ow0KPiAgICAgICAgZnRyYWNlLXNpemUgPSA8
+MHgwPjsNCj4gICAgICAgIG1zZy1zaXplID0gPDB4MjAwMDAgMHgyMDAwMD47DQo+ICAgICAgICBj
+Yy1zaXplID0gPDB4MD47DQo+ICAgIH07DQo+fTsNCg0KIDMuIGVuYWJsZWQgZmVhdHVyZSB2aWEg
+ZGVmY29uZmlnIChzZWUgLmNvbmZpZyBmZWF0dXJlKToNCj5DT05GSUdfUFNUT1JFPXkNCj4jIENP
+TkZJR19QU1RPUkVfREVGTEFURV9DT01QUkVTUyBpcyBub3Qgc2V0DQo+IyBDT05GSUdfUFNUT1JF
+X0xaT19DT01QUkVTUyBpcyBub3Qgc2V0DQo+IyBDT05GSUdfUFNUT1JFX0xaNF9DT01QUkVTUyBp
+cyBub3Qgc2V0DQo+IyBDT05GSUdfUFNUT1JFX0xaNEhDX0NPTVBSRVNTIGlzIG5vdCBzZXQNCj4j
+IENPTkZJR19QU1RPUkVfODQyX0NPTVBSRVNTIGlzIG5vdCBzZXQNCj4jIENPTkZJR19QU1RPUkVf
+WlNURF9DT01QUkVTUyBpcyBub3Qgc2V0DQo+Q09ORklHX1BTVE9SRV9DT05TT0xFPXkNCj5DT05G
+SUdfUFNUT1JFX1BNU0c9eQ0KPkNPTkZJR19QU1RPUkVfRlRSQUNFPXkNCj5DT05GSUdfUFNUT1JF
+X1JBTT15DQo+Q09ORklHX1BTVE9SRV9aT05FPW0NCj5DT05GSUdfUFNUT1JFX0JMSz1tDQo+Q09O
+RklHX1BTVE9SRV9CTEtfQkxLREVWPSIiDQo+Q09ORklHX1BTVE9SRV9CTEtfS01TR19TSVpFPTY0
+DQo+Q09ORklHX1BTVE9SRV9CTEtfTUFYX1JFQVNPTj0yDQo+Q09ORklHX1BTVE9SRV9CTEtfUE1T
+R19TSVpFPTY0DQo+Q09ORklHX1BTVE9SRV9CTEtfQ09OU09MRV9TSVpFPTY0DQo+Q09ORklHX1BT
+VE9SRV9CTEtfRlRSQUNFX1NJWkU9NjQNCj4uLi4NCj5DT05GSUdfREVCVUdfRlM9eQ0KPkNPTkZJ
+R19ERUJVR19GU19BTExPV19BTEw9eQ0KPiMgQ09ORklHX0RFQlVHX0ZTX0RJU0FMTE9XX01PVU5U
+IGlzIG5vdCBzZXQNCj4jIENPTkZJR19ERUJVR19GU19BTExPV19OT05FIGlzIG5vdCBzZXQNCj5D
+T05GSUdfSEFWRV9BUkNIX0tHREI9eQ0KPkNPTkZJR19ERUJVR19LRVJORUw9eQ0KPkNPTkZJR19E
+RUJVR19NSVNDPXkNCj4NCj4jIENPTkZJR19ERUJVR19TSElSUSBpcyBub3Qgc2V0DQo+DQo+Iw0K
+PiMgRGVidWcgT29wcywgTG9ja3VwcyBhbmQgSGFuZ3MNCj4jDQo+Q09ORklHX1BBTklDX09OX09P
+UFM9eQ0KPkNPTkZJR19QQU5JQ19PTl9PT1BTX1ZBTFVFPTENCj5DT05GSUdfUEFOSUNfVElNRU9V
+VD0yMA0KPkNPTkZJR19MT0NLVVBfREVURUNUT1I9eQ0KPkNPTkZJR19TT0ZUTE9DS1VQX0RFVEVD
+VE9SPXkNCj5DT05GSUdfQk9PVFBBUkFNX1NPRlRMT0NLVVBfUEFOSUM9eQ0KPkNPTkZJR19CT09U
+UEFSQU1fU09GVExPQ0tVUF9QQU5JQ19WQUxVRT0xDQo+Q09ORklHX0RFVEVDVF9IVU5HX1RBU0s9
+eQ0KPkNPTkZJR19ERUZBVUxUX0hVTkdfVEFTS19USU1FT1VUPTEyMA0KPkNPTkZJR19CT09UUEFS
+QU1fSFVOR19UQVNLX1BBTklDPXkNCj5DT05GSUdfQk9PVFBBUkFNX0hVTkdfVEFTS19QQU5JQ19W
+QUxVRT0xDQo+Q09ORklHX1dRX1dBVENIRE9HPXkNCj4jIENPTkZJR19URVNUX0xPQ0tVUCBpcyBu
+b3Qgc2V0DQo+IyBlbmQgb2YgRGVidWcgT29wcywgTG9ja3VwcyBhbmQgSGFuZ3MNCg0KIDQuIG1v
+ZHByb2JlIHBzdG9yZV9ibGsgYmxrZGV2PS9kZXYvbW1jYmxrMHA0DQogIC0gbHNtb2Qgc2hvd2Vk
+LCB0aGF0IHBzdG9yZV9ibGsgKyBwc3RvcmVfem9uZSBtb2R1bGVzIGhhdmUgYmVlbg0KbG9hZGVk
+DQogIC0gbm90aGluZyBoYXMgYmVlbiB3cml0dGVuIGludG8gZG1lc2dcDQoNCiA1LiBscyAvc3lz
+L2ZzL3BzdG9yZSB3YXMgZW1wdHksIGV2ZW4gaWYgaXQgd2FzIG1vdW50ZWQNCsKgDQogNi4gZWNo
+byAxID4gL3N5cy9rZXJuZWwvZGVidWcvcHN0b3JlL3JlY29yZF9mdHJhY2UNCiAgLSAvc3lzL2tl
+cm5lbC9kZWJ1Zy8gLSBtb3VudGVkDQogIC0gL3N5cy9rZXJuZWwvZGVidWcvcHN0b3JlIC0gcGF0
+aCBkb2Vzbid0IGV4aXN0ICh3aGljaCBpcyBsaXR0bGUgYml0DQpzdHJhbmdlIHRvIG1lKQ0KDQog
+Ny4gZWNobyBjID4gL3Byb2Mvc3lzcnEtdHJpZ2dlcg0KICAtIHN5c3RlbSB3YXMgcmVib290ZWQs
+IGJ1dCBub3RoaW5nIGhhcyBiZWVuIHdyaXR0ZW4gc29tZXdoZXJlDQoNCiA4LiBjaGFuZ2VkIHRv
+IGJ1aWx0LWluIG9wdGlvbiwgd2l0aG91dCBtb2R1bGUgdXNpbmcNCiAgLSBDT05GSUdfUFNUT1JF
+X0JMS19CTEtERVY9ImIzMDQiDQogICAtIHN0aWxsIHRoZSBzYW1lIHJlc3VsdHMgLi4uDQoNClNv
+IHdoYXQgSSdtIHRyeWluZyB0byBnZXQgaXMsIHdoZW4gc29tZSBjb3JlIG1vZHVsZSBjcmFzaC4u
+LiwgSSB3b3VsZA0KbGlrZSB0byBoYXZlIHRoZSBkdW1wLiBJIHRoaW5rLCB0aGF0IEkgZG9uJ3Qg
+bmVlZCB0aGUgcmFtb29wcywgaXQgd2FzDQpqdXN0IGFuIGV4YW1wbGUgdG8gZ2V0IHNvbWV0aGlu
+ZyB3b3JraW5nLg0KDQotIEhvdyB0byByZXByb2R1Y2UgdGhlIHRoaW5ncyBmcm9tIGRvY3VtZW50
+YXRpb24/DQotIElzIGl0IHBvc3NpYmxlIHRvIGdldCBpdCB3b3JraW5nIG5vdCBvbmx5IGZvciBj
+dXN0b20gbW9kdWxlcz8NCi0gV2hhdCBJJ20gZG9pbmcgd3Jvbmc/DQoNCk1hbnkgdGhhbmtzIGZv
+ciBhbnkgYWR2aWNlLA0KQW5kcmVqDQo=
