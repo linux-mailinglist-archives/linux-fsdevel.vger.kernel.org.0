@@ -2,34 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E6AE33F92F4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 05:31:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAFAF3F92F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 05:36:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244177AbhH0Daw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Aug 2021 23:30:52 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:22953 "EHLO
+        id S244004AbhH0DhO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Aug 2021 23:37:14 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:34486 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S244004AbhH0Daw (ORCPT
+        with ESMTP id S232285AbhH0DhN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Aug 2021 23:30:52 -0400
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AWKLzS6phbN9Sn/NnDITgk1MaV5oXeYIsimQD?=
- =?us-ascii?q?101hICG9E/bo8/xG+c536faaslgssQ4b8+xoVJPgfZq+z+8R3WByB8bAYOCOgg?=
- =?us-ascii?q?LBQ72KhrGSoQEIdRefysdtkY9kc4VbTOb7FEVGi6/BizWQIpINx8am/cmT6dvj?=
- =?us-ascii?q?8w=3D=3D?=
+        Thu, 26 Aug 2021 23:37:13 -0400
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3A/3r6Ka0QAwqOj5LEEHSvPAqjBI4kLtp133Aq?=
+ =?us-ascii?q?2lEZdPU1SL39qynKppkmPHDP5gr5J0tLpTntAsi9qBDnhPtICOsqTNSftWDd0Q?=
+ =?us-ascii?q?PGEGgI1/qB/9SPIU3D398Y/aJhXow7M9foEGV95PyQ3CCIV/om3/mLmZrFudvj?=
 X-IronPort-AV: E=Sophos;i="5.84,355,1620662400"; 
-   d="scan'208";a="113546863"
+   d="scan'208";a="113547097"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 27 Aug 2021 11:30:02 +0800
-Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id 0B4FE4D0D9DD;
-        Fri, 27 Aug 2021 11:30:01 +0800 (CST)
+  by heian.cn.fujitsu.com with ESMTP; 27 Aug 2021 11:36:23 +0800
+Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
+        by cn.fujitsu.com (Postfix) with ESMTP id BC6444D0D4BD;
+        Fri, 27 Aug 2021 11:36:18 +0800 (CST)
 Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
- G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Fri, 27 Aug 2021 11:29:57 +0800
+ G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Fri, 27 Aug 2021 11:36:12 +0800
 Received: from [192.168.22.65] (10.167.225.141) by
  G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Fri, 27 Aug 2021 11:29:54 +0800
-Subject: Re: [PATCH v7 7/8] fsdax: Introduce dax_iomap_ops for end of reflink
+ id 15.0.1497.23 via Frontend Transport; Fri, 27 Aug 2021 11:36:12 +0800
+Subject: Re: [PATCH v7 8/8] fs/xfs: Add dax dedupe support
 To:     Dan Williams <dan.j.williams@intel.com>
 CC:     "Darrick J. Wong" <djwong@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
@@ -42,20 +41,18 @@ CC:     "Darrick J. Wong" <djwong@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Matthew Wilcox <willy@infradead.org>
 References: <20210816060359.1442450-1-ruansy.fnst@fujitsu.com>
- <20210816060359.1442450-8-ruansy.fnst@fujitsu.com>
- <CAPcyv4jbi=p=SjFYZcHnEAu+KY821pW_k_yA5u6hya4jEfrTUg@mail.gmail.com>
- <c7e68dc8-5a43-f727-c262-58dcf244c711@fujitsu.com>
- <CAPcyv4jM86gy-T5EEZf6M2m44v4MiGqYDhxisX59M5QJii6DVg@mail.gmail.com>
+ <20210816060359.1442450-9-ruansy.fnst@fujitsu.com>
+ <CAPcyv4gsak1B3Y0xFvNn+oFBCM2DonsyHQj=ASE2_95n6yfpWQ@mail.gmail.com>
 From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Message-ID: <32fa5333-b14e-2060-d659-d77f6c75ff16@fujitsu.com>
-Date:   Fri, 27 Aug 2021 11:29:54 +0800
+Message-ID: <624617e3-3353-a63a-ff71-f034d5763650@fujitsu.com>
+Date:   Fri, 27 Aug 2021 11:36:11 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
  Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4jM86gy-T5EEZf6M2m44v4MiGqYDhxisX59M5QJii6DVg@mail.gmail.com>
+In-Reply-To: <CAPcyv4gsak1B3Y0xFvNn+oFBCM2DonsyHQj=ASE2_95n6yfpWQ@mail.gmail.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-yoursite-MailScanner-ID: 0B4FE4D0D9DD.A549F
+Content-Transfer-Encoding: 7bit
+X-yoursite-MailScanner-ID: BC6444D0D4BD.A09A5
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
 X-Spam-Status: No
@@ -65,131 +62,43 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-On 2021/8/20 23:18, Dan Williams wrote:
-> On Thu, Aug 19, 2021 at 11:13 PM ruansy.fnst <ruansy.fnst@fujitsu.com> wrote:
+On 2021/8/20 11:08, Dan Williams wrote:
+> On Sun, Aug 15, 2021 at 11:05 PM Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
 >>
+>> Introduce xfs_mmaplock_two_inodes_and_break_dax_layout() for dax files
+>> who are going to be deduped.  After that, call compare range function
+>> only when files are both DAX or not.
 >>
+>> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+>> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+>> ---
+>>   fs/xfs/xfs_file.c    |  2 +-
+>>   fs/xfs/xfs_inode.c   | 57 ++++++++++++++++++++++++++++++++++++++++++++
+>>   fs/xfs/xfs_inode.h   |  1 +
+>>   fs/xfs/xfs_reflink.c |  4 ++--
+>>   4 files changed, 61 insertions(+), 3 deletions(-)
+> [..]
+>> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
+>> index 13e461cf2055..86c737c2baeb 100644
+>> --- a/fs/xfs/xfs_reflink.c
+>> +++ b/fs/xfs/xfs_reflink.c
+>> @@ -1327,8 +1327,8 @@ xfs_reflink_remap_prep(
+>>          if (XFS_IS_REALTIME_INODE(src) || XFS_IS_REALTIME_INODE(dest))
+>>                  goto out_unlock;
 >>
->> On 2021/8/20 上午11:01, Dan Williams wrote:
->>> On Sun, Aug 15, 2021 at 11:05 PM Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
->>>>
->>>> After writing data, reflink requires end operations to remap those new
->>>> allocated extents.  The current ->iomap_end() ignores the error code
->>>> returned from ->actor(), so we introduce this dax_iomap_ops and change
->>>> the dax_iomap_*() interfaces to do this job.
->>>>
->>>> - the dax_iomap_ops contains the original struct iomap_ops and fsdax
->>>>       specific ->actor_end(), which is for the end operations of reflink
->>>> - also introduce dax specific zero_range, truncate_page
->>>> - create new dax_iomap_ops for ext2 and ext4
->>>>
->>>> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
->>>> ---
->>>>    fs/dax.c               | 68 +++++++++++++++++++++++++++++++++++++-----
->>>>    fs/ext2/ext2.h         |  3 ++
->>>>    fs/ext2/file.c         |  6 ++--
->>>>    fs/ext2/inode.c        | 11 +++++--
->>>>    fs/ext4/ext4.h         |  3 ++
->>>>    fs/ext4/file.c         |  6 ++--
->>>>    fs/ext4/inode.c        | 13 ++++++--
->>>>    fs/iomap/buffered-io.c |  3 +-
->>>>    fs/xfs/xfs_bmap_util.c |  3 +-
->>>>    fs/xfs/xfs_file.c      |  8 ++---
->>>>    fs/xfs/xfs_iomap.c     | 36 +++++++++++++++++++++-
->>>>    fs/xfs/xfs_iomap.h     | 33 ++++++++++++++++++++
->>>>    fs/xfs/xfs_iops.c      |  7 ++---
->>>>    fs/xfs/xfs_reflink.c   |  3 +-
->>>>    include/linux/dax.h    | 21 ++++++++++---
->>>>    include/linux/iomap.h  |  1 +
->>>>    16 files changed, 189 insertions(+), 36 deletions(-)
->>>>
->>>> diff --git a/fs/dax.c b/fs/dax.c
->>>> index 74dd918cff1f..0e0536765a7e 100644
->>>> --- a/fs/dax.c
->>>> +++ b/fs/dax.c
->>>> @@ -1348,11 +1348,30 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
->>>>           return done ? done : ret;
->>>>    }
->>>>
->>>> +static inline int
->>>> +__dax_iomap_iter(struct iomap_iter *iter, const struct dax_iomap_ops *ops)
->>>> +{
->>>> +       int ret;
->>>> +
->>>> +       /*
->>>> +        * Call dax_iomap_ops->actor_end() before iomap_ops->iomap_end() in
->>>> +        * each iteration.
->>>> +        */
->>>> +       if (iter->iomap.length && ops->actor_end) {
->>>> +               ret = ops->actor_end(iter->inode, iter->pos, iter->len,
->>>> +                                    iter->processed);
->>>> +               if (ret < 0)
->>>> +                       return ret;
->>>> +       }
->>>> +
->>>> +       return iomap_iter(iter, &ops->iomap_ops);
->>>
->>> This reorganization looks needlessly noisy. Why not require the
->>> iomap_end operation to perform the actor_end work. I.e. why can't
->>> xfs_dax_write_iomap_actor_end() just be the passed in iomap_end? I am
->>> not seeing where the ->iomap_end() result is ignored?
->>>
->>
->> The V6 patch[1] was did in this way.
->> [1]https://lore.kernel.org/linux-xfs/20210526005159.GF202144@locust/T/#m79a66a928da2d089e2458c1a97c0516dbfde2f7f
->>
->> But Darrick reminded me that ->iomap_end() will always take zero or
->> positive 'written' because iomap_apply() handles this argument.
->>
->> ```
->>          if (ops->iomap_end) {
->>                  ret = ops->iomap_end(inode, pos, length,
->>                                       written > 0 ? written : 0,
->>                                       flags, &iomap);
->>          }
->> ```
->>
->> So, we cannot get actual return code from CoW in ->actor(), and as a
->> result, we cannot handle the xfs end_cow correctly in ->iomap_end().
->> That's where the result of CoW was ignored.
+>> -       /* Don't share DAX file data for now. */
+>> -       if (IS_DAX(inode_in) || IS_DAX(inode_out))
+>> +       /* Don't share DAX file data with non-DAX file. */
+>> +       if (IS_DAX(inode_in) != IS_DAX(inode_out))
+>>                  goto out_unlock;
 > 
-> Ah, thank you for the explanation.
+> What if you have 2 DAX inodes sharing data and one is flipped to
+> non-DAX? Does that operation need to first go undo all sharing?
 > 
-> However, this still seems like too much code thrash just to get back
-> to the original value of iter->processed. I notice you are talking
-> about iomap_apply(), but that routine is now gone in Darrick's latest
-> iomap-for-next branch. Instead iomap_iter() does this:
-> 
->          if (iter->iomap.length && ops->iomap_end) {
->                  ret = ops->iomap_end(iter->inode, iter->pos, iomap_length(iter),
->                                  iter->processed > 0 ? iter->processed : 0,
 
-As you can see, here is the same logic as the old iomap_apply(): the 
-negative iter->processed won't be passed into ->iomap_end().
+Yes, I think it is needed to unshare the extents when the DAX flags of 
+the file is changed.  I'll look into it.
 
->                                  iter->flags, &iter->iomap);
->                  if (ret < 0 && !iter->processed)
->                          return ret;
->          }
-> 
-> 
-> I notice that the @iomap argument to ->iomap_end() is reliably coming
-> from @iter. So you could do the following in your iomap_end()
-> callback:
-> 
->          struct iomap_iter *iter = container_of(iomap, typeof(*iter), iomap);
->          struct xfs_inode *ip = XFS_I(inode);
->          ssize_t written = iter->processed;
-
-The written will be 0 or positive.  The original error code is ingnored.
-
->          bool cow = xfs_is_cow_inode(ip);
-> 
->          if (cow) {
->                  if (written <= 0)
->                          xfs_reflink_cancel_cow_range(ip, pos, length, true)
->          }
-> 
 
 --
 Thanks,
