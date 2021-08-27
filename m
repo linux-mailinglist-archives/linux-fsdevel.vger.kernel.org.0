@@ -2,92 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06FCB3FA138
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 23:41:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3873D3FA139
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 23:41:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231906AbhH0Vlx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Aug 2021 17:41:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35480 "EHLO
+        id S231985AbhH0VmN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Aug 2021 17:42:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231803AbhH0Vlw (ORCPT
+        with ESMTP id S231696AbhH0VmM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Aug 2021 17:41:52 -0400
-Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70BE3C061796
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 14:41:03 -0700 (PDT)
-Received: by mail-yb1-xb35.google.com with SMTP id o204so5148490ybg.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 14:41:03 -0700 (PDT)
+        Fri, 27 Aug 2021 17:42:12 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31F77C0613D9;
+        Fri, 27 Aug 2021 14:41:23 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id a15so10474230iot.2;
+        Fri, 27 Aug 2021 14:41:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=2ELnHnxXQ3QKSTdHlPecFhJXpaQDWJHo6ZXwtcu8mbA=;
-        b=Gakvhq/oe6wU40pIbOYYGPVeL5YgWg0l54zjb5tE81IMBOtnBqEEVvNmMDgEXYWo13
-         71KoElCe/ZiIC6qzbwxH94bercCT1Jg1oXjMo3KNJVVP2oHS5yV+fnZkUPWckJ/KB0l8
-         piME4THWlyVVM82Bivlb+Ig7+TRnsDFuY5pEUZqDUtkaiboEM+FXMdoMlyyQzXhlZ/Ad
-         bDRDHWvsmSgQhGQnqqd39pgtB+zAVrYv6kYBzBgZuDkHtRjJVc9qDnZy3FfhjOdLLBs3
-         2p/Qiesaw2WmneOZ0IomHmDanONP1LsTtw8N8rqLjk/KT35TpWeQlLzRJorcHhn21a8M
-         W1fw==
+        bh=hZLiKEdmxy2XymDIV79zNDsfKqVBV5SHf0jshhrTnSg=;
+        b=UY+h+XuCx+JsjRmG9x4MbhZKnih3FW6xx7c8U2nqe0reS52OXYNkd30F3rgFF2gc8h
+         ++hzosS6lZ3I4aJgTlFWy5hgy+agZLOYYo3NR22f0e2XrsGpEeogYxFe0OVz/1k9QrKk
+         kq4UHdbCpsSJ7qQgrP4blPM9Ix3BTTn2EleLpPkWcgB5/6io9O3fOAiVR+IVkYGJHOGW
+         TDVEy8IqoGyw8+2OAD+MWpJtHPHpHIow7MuQsh3DsM5+FJr5Ue5iim0E0Y8Dn42aw5D7
+         Rk1GDVnH9IjUAsB2RJlWlZz/KODQn/fjI46vMkCwRqkAg5G4TMW2rfkR7R0Xw7D54SBz
+         smQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2ELnHnxXQ3QKSTdHlPecFhJXpaQDWJHo6ZXwtcu8mbA=;
-        b=gSRaWPC6d+gwQF4JnPZC4Od/Tbpsub+OSyjyF1lBHnGozPRSF1OLT27aJck5kWK618
-         uVvDiz7VP1ocaurN5S/5dXfElh/HgKUGv0742asmEP6mT5w1zgNUacw5UgYEC0enAYny
-         YU1FvijhfsFKAcs9dR4RD33Jz3P3LP0RN24UYHuyjK9sXk48uQ4WBB/S5nTbPv/vHPES
-         r6UONsI6+5yPJ9h0T5/Lke/jE7Z5AksavMBmLBH1OQs2qxasbNM4RCBDmedE56brsU+N
-         Zdvussv7Tr2uVSKfXEj/7qm5YqfnkK73lDVR71qtBtiFZBCOTAdewLlDEEjn7AJrYd2c
-         IgZQ==
-X-Gm-Message-State: AOAM530/Bl3Mi+3rAcdn+GF3Lkr5HwlChGXe2HpmjHfUDqcwZb3ENUA+
-        H4eT1RcnuUHgLJE0qy7fSLWI59u54xEs70FU48z5WQ==
-X-Google-Smtp-Source: ABdhPJy5n7jbk99nqbGBpad3XSf1FlO1SZfJHp1ei/llIwEUOHBR8CcP6NEx4ig0dovWgxsj5xRd9Lts7rsQ36dLWx0=
-X-Received: by 2002:a25:e747:: with SMTP id e68mr7919019ybh.446.1630100462006;
- Fri, 27 Aug 2021 14:41:02 -0700 (PDT)
+        bh=hZLiKEdmxy2XymDIV79zNDsfKqVBV5SHf0jshhrTnSg=;
+        b=T3bK/DLYB3S14PSlY6WuGBLaNsmO2LeHGbX7jgHA3p74h1sObP1+qJiUI7iQXIcLdz
+         EqfKeKWOfmrpsQZNYm4Uxva1fYOFBha7LaejDvYQ8mAbIv6BQbHy/tRgE9kPZf0/hIom
+         dAV4tbBqNOTUk4Uck70u9H9oK63QO39R0rLaMzTZLwOcDAiIPpH+ECAYo3RLdM/GXDjq
+         /7iv2FCgsMDv7SI38IiO7KZwtFgQuqVtQsjj/iMlAXihmXh/Kcj8svR5sN9kRujmpm9+
+         RZ5kdGVuSA94qasFRhTk4YWuG8ZcrBNdBFI93pK6yC31LspYq53Ur1c6PTBbi3LAKSQ2
+         JxUA==
+X-Gm-Message-State: AOAM530fDuSZ7ud+32bzATxxzURw4o/CALUG5TkkdZUNfhk5F/jmzYgk
+        X9/IQz2QJHGxhd7eNso+RpQHyrAuTD6By/9sAoI=
+X-Google-Smtp-Source: ABdhPJyp4H1blX3LEu8j1s0mTA9EKMgRd2uYuAVN5JE6aTJmk/SpUOZAOkACDtaTD5IPGlE78hMZyI4/e2tq3PKbHQE=
+X-Received: by 2002:a6b:6319:: with SMTP id p25mr9282044iog.100.1630100482648;
+ Fri, 27 Aug 2021 14:41:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210827165438.3280779-1-joshdon@google.com>
-In-Reply-To: <20210827165438.3280779-1-joshdon@google.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Fri, 27 Aug 2021 14:40:50 -0700
-Message-ID: <CANn89iJV+VUgS5mBmtN6An83pRS4LU61efw=VLBvM1_FGYCN5A@mail.gmail.com>
-Subject: Re: [PATCH v2] fs/proc/uptime.c: fix idle time reporting in /proc/uptime
-To:     Josh Don <joshdon@google.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org> <YSQSkSOWtJCE4g8p@cmpxchg.org>
+ <YSQeFPTMn5WpwyAa@casper.infradead.org> <YSU7WCYAY+ZRy+Ke@cmpxchg.org>
+ <YSVMAS2pQVq+xma7@casper.infradead.org> <YSZeKfHxOkEAri1q@cmpxchg.org>
+ <20210826004555.GF12597@magnolia> <YSjxlNl9jeEX2Yff@cmpxchg.org> <YSkyjcX9Ih816mB9@casper.infradead.org>
+In-Reply-To: <YSkyjcX9Ih816mB9@casper.infradead.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 27 Aug 2021 14:41:11 -0700
+Message-ID: <CAA9_cmeVK9S2e8ECh3dTaNzUgQHC8uo7DBhENgnvoR3s+w-2Mg@mail.gmail.com>
+Subject: Re: [GIT PULL] Memory folios for v5.15
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Luigi Rizzo <lrizzo@google.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 27, 2021 at 9:55 AM Josh Don <joshdon@google.com> wrote:
+On Fri, Aug 27, 2021 at 11:47 AM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> /proc/uptime reports idle time by reading the CPUTIME_IDLE field from
-> the per-cpu kcpustats. However, on NO_HZ systems, idle time is not
-> continually updated on idle cpus, leading this value to appear
-> incorrectly small.
+> On Fri, Aug 27, 2021 at 10:07:16AM -0400, Johannes Weiner wrote:
+> > We have the same thoughts in MM and growing memory sizes. The DAX
+> > stuff said from the start it won't be built on linear struct page
+> > mappings anymore because we expect the memory modules to be too big to
+> > manage them with such fine-grained granularity.
 >
-> /proc/stat performs an accounting update when reading idle time; we can
-> use the same approach for uptime.
->
-> With this patch, /proc/stat and /proc/uptime now agree on idle time.
-> Additionally, the following shows idle time tick up consistently on an
-> idle machine:
-> (while true; do cat /proc/uptime; sleep 1; done) | awk '{print $2-prev; prev=$2}'
->
-> Reported-by: Luigi Rizzo <lrizzo@google.com>
-> Signed-off-by: Josh Don <joshdon@google.com>
-> ---
->
+> Well, I did.  Then I left Intel, and Dan took over.  Now we have a struct
+> page for each 4kB of PMEM.  I'm not particularly happy about this change
+> of direction.
 
-SGTM thanks !
+Page-less DAX left more problems than it solved. Meanwhile,
+ZONE_DEVICE has spawned other useful things like peer-to-peer DMA.
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+I am more encouraged by efforts to make the 'struct page' overhead
+disappear, first from Muchun Song for hugetlbfs and recently Joao
+Martins for device-dax.  If anything, I think 'struct page' for PMEM /
+DAX *strengthens* the case for folios / better mechanisms to reduce
+the overhead of tracking 4K pages.
