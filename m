@@ -2,118 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5869F3F97C1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 12:01:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 454353F9809
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 12:19:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244784AbhH0KCc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Aug 2021 06:02:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44690 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244753AbhH0KCb (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Aug 2021 06:02:31 -0400
-Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF321C0613D9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 03:01:42 -0700 (PDT)
-Received: by mail-qt1-x836.google.com with SMTP id 2so320572qtw.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 03:01:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=rQfDhKdyv4fg+r/Y8tJRlauQXOHaMeoAScvmzQy4FHs=;
-        b=RTLv6h70dh2KQII/tDH9L9yJ8miO9zpfOpvNplcUXADClA/t4d04/dUTNNJuQ3shw7
-         cizitKFTo0u79Z/fmo8Ln2MzW97bK94RB1e0dJizK4fFMqJTyT1WYhAiMn6IIshUXs3p
-         NBvDuATr9/eQf0W6A8AsuNdaLBwYcklIw9yWyR5a9Dj90sit/Oa4s2DBKB9XcaJyj3X9
-         tfzrB1/Rqbb2/O8RwETIUQVk9gSJ2brJd9NkuFvst0k7e1vSxkdoqC+jEz7KI691SSv9
-         pJqiEDWUJI5KjpFTHzOkrKEWPpUebnJ/6n6TJrckDM/JI2+cwSxa0AAmXl3iSIUoj7fm
-         PUFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=rQfDhKdyv4fg+r/Y8tJRlauQXOHaMeoAScvmzQy4FHs=;
-        b=WM9cCEKKGVcMrqM22Vt+hqD9RTqo1WzVNoZHteXUzgZHP3Yzbz7Apt/4lm76lbYLb7
-         UO+sNOvwphFj8BD67qLIlgSNh/E+7Jwva0FG6dgf8u+XT57NfgiN4s9ZF2xIMD2iMtd8
-         /1fFHkT+UACXd4uU3M1s1Xby7PmC4x0gWshewr2srudyCKzqIE+B3wDM0DE0CdYp2Lcp
-         MZRhExWc9njSI1Hh3OV9pWOBX4VHnJ4/IIdqGSisFe4VnC5nsquhas0j7uOWgx06TFgE
-         E2GlBgTOG44VILatCoZc8e0ftvp4VWU9xewD20uiw6SLx2gVi2/uzcmiLX8qWLgpU6Kg
-         k/3Q==
-X-Gm-Message-State: AOAM533c2WZjYOTyuLFUxBU7o7X5U6iVsI0NWdCbdwq+Htcu9SplD3gs
-        /eUA6I/+jMjtKWEr3w5SrW/qDg==
-X-Google-Smtp-Source: ABdhPJxruXx9GN4mVk4E4paeBiocZ9oJrlEkYPFAGDlecOWvONIdfZd+D1u3UtfMc1kCEo/fHEq7pw==
-X-Received: by 2002:a05:622a:13d3:: with SMTP id p19mr3218319qtk.61.1630058501778;
-        Fri, 27 Aug 2021 03:01:41 -0700 (PDT)
-Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
-        by smtp.gmail.com with ESMTPSA id c11sm3330069qth.29.2021.08.27.03.01.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Aug 2021 03:01:40 -0700 (PDT)
-Date:   Fri, 27 Aug 2021 06:03:25 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
+        id S244814AbhH0KUA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Aug 2021 06:20:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43168 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244708AbhH0KUA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 27 Aug 2021 06:20:00 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A6CAF60560;
+        Fri, 27 Aug 2021 10:18:56 +0000 (UTC)
+Date:   Fri, 27 Aug 2021 12:18:52 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] Memory folios for v5.15
-Message-ID: <YSi4bZ7myEMNBtlY@cmpxchg.org>
-References: <YSZeKfHxOkEAri1q@cmpxchg.org>
- <YSPwmNNuuQhXNToQ@casper.infradead.org>
- <YSQSkSOWtJCE4g8p@cmpxchg.org>
- <YSQeFPTMn5WpwyAa@casper.infradead.org>
- <YSU7WCYAY+ZRy+Ke@cmpxchg.org>
- <YSVMAS2pQVq+xma7@casper.infradead.org>
- <2101397.1629968286@warthog.procyon.org.uk>
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        David Laight <David.Laight@aculab.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Michel Lespinasse <walken@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Price <steven.price@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Marco Elver <elver@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Collin Fijalkovich <cfijalkovich@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        linux-fsdevel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Subject: Re: [PATCH v1 0/7] Remove in-tree usage of MAP_DENYWRITE
+Message-ID: <20210827101852.7vbb2pqqyixqzd3b@wittgenstein>
+References: <87lf56bllc.fsf@disp2133>
+ <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
+ <87eeay8pqx.fsf@disp2133>
+ <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
+ <87h7ft2j68.fsf@disp2133>
+ <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
+ <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
+ <CAHk-=wiJ0u33h2CXAO4b271Diik=z4jRt64=Gt6YV2jV4ef27g@mail.gmail.com>
+ <b60e9bd1-7232-472d-9c9c-1d6593e9e85e@www.fastmail.com>
+ <0ed69079-9e13-a0f4-776c-1f24faa9daec@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2101397.1629968286@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0ed69079-9e13-a0f4-776c-1f24faa9daec@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 26, 2021 at 09:58:06AM +0100, David Howells wrote:
-> One thing I like about Willy's folio concept is that, as long as everyone uses
-> the proper accessor functions and macros, we can mostly ignore the fact that
-> they're 2^N sized/aligned and they're composed of exact multiples of pages.
-> What really matters are the correspondences between folio size/alignment and
-> medium/IO size/alignment, so you could look on the folio as being a tool to
-> disconnect the filesystem from the concept of pages.
->
-> We could, in the future, in theory, allow the internal implementation of a
-> folio to shift from being a page array to being a kmalloc'd page list or
-> allow higher order units to be mixed in.  The main thing we have to stop
-> people from doing is directly accessing the members of the struct.
+On Thu, Aug 26, 2021 at 11:47:07PM +0200, David Hildenbrand wrote:
+> On 26.08.21 19:48, Andy Lutomirski wrote:
+> > On Fri, Aug 13, 2021, at 5:54 PM, Linus Torvalds wrote:
+> > > On Fri, Aug 13, 2021 at 2:49 PM Andy Lutomirski <luto@kernel.org> wrote:
+> > > > 
+> > > > I’ll bite.  How about we attack this in the opposite direction: remove the deny write mechanism entirely.
+> > > 
+> > > I think that would be ok, except I can see somebody relying on it.
+> > > 
+> > > It's broken, it's stupid, but we've done that ETXTBUSY for a _loong_ time.
+> > 
+> > Someone off-list just pointed something out to me, and I think we should push harder to remove ETXTBSY.  Specifically, we've all been focused on open() failing with ETXTBSY, and it's easy to make fun of anyone opening a running program for write when they should be unlinking and replacing it.
+> > 
+> > Alas, Linux's implementation of deny_write_access() is correct^Wabsurd, and deny_write_access() *also* returns ETXTBSY if the file is open for write.  So, in a multithreaded program, one thread does:
+> > 
+> > fd = open("some exefile", O_RDWR | O_CREAT | O_CLOEXEC);
+> > write(fd, some stuff);
+> > 
+> > <--- problem is here
+> > 
+> > close(fd);
+> > execve("some exefile");
+> > 
+> > Another thread does:
+> > 
+> > fork();
+> > execve("something else");
+> > 
+> > In between fork and execve, there's another copy of the open file description, and i_writecount is held, and the execve() fails.  Whoops.  See, for example:
+> > 
+> > https://github.com/golang/go/issues/22315
+> > 
+> > I propose we get rid of deny_write_access() completely to solve this.
+> > 
+> > Getting rid of i_writecount itself seems a bit harder, since a handful of filesystems use it for clever reasons.
+> > 
+> > (OFD locks seem like they might have the same problem.  Maybe we should have a clone() flag to unshare the file table and close close-on-exec things?)
+> > 
+> 
+> It's not like this issue is new (^2017) or relevant in practice. So no need
+> to hurry IMHO. One step at a time: it might make perfect sense to remove
+> ETXTBSY, but we have to be careful to not break other user space that
+> actually cares about the current behavior in practice.
 
-In the current state of the folio patches, I agree with you. But
-conceptually, folios are not disconnecting from the page beyond
-PAGE_SIZE -> PAGE_SIZE * (1 << folio_order()). This is why I asked
-what the intended endgame is. And I wonder if there is a bit of an
-alignment issue between FS and MM people about the exact nature and
-identity of this data structure.
+I agree. As I at least tried to show, removing write-protection can make
+some exploits easier. I'm all for trying to remove this if it simplifies
+things but for sure this shouldn't be part of this patchset and we
+should be careful about it.
 
-At the current stage of conversion, folio is a more clearly delineated
-API of what can be safely used from the FS for the interaction with
-the page cache and memory management. And it looks still flexible to
-make all sorts of changes, including how it's backed by
-memory. Compared with the page, where parts of the API are for the FS,
-but there are tons of members, functions, constants, and restrictions
-due to the page's role inside MM core code. Things you shouldn't be
-using, things you shouldn't be assuming from the fs side, but it's
-hard to tell which is which, because struct page is a lot of things.
+The removal of a (misguided or only partially functioning) protection
+mechanism doesn't introduce but removes a failure point.
+And I don't think removal and addition of a failure point usually have
+the same consequences. Introducing a new failure point will often mean
+userspace quickly detects regressions. Such regressions are pretty
+common due to security fixes we introduce. Recent examples include [1].
+Right after this was merged the regression was reported.
 
-However, the MM narrative for folios is that they're an abstraction
-for regular vs compound pages. This is rather generic. Conceptually,
-it applies very broadly and deeply to MM core code: anonymous memory
-handling, reclaim, swapping, even the slab allocator uses them. If we
-follow through on this concept from the MM side - and that seems to be
-the plan - it's inevitable that the folio API will grow more
-MM-internal members, methods, as well as restrictions again in the
-process. Except for the tail page bits, I don't see too much in struct
-page that would not conceptually fit into this version of the folio.
+But when allowing behavior that used to fail like ETXTBSY it can be
+difficult for userspace to detect such regressions. The reason for that
+is quite often that userspace applications don't tend to do something
+that they know upfront will fail. Attackers however might.
 
-The cache_entry idea is really just to codify and retain that
-domain-specific minimalism and clarity from the filesystem side. As
-well as the flexibility around how backing memory is implemented,
-which I think could come in handy soon, but isn't the sole reason.
+[1]: bfb819ea20ce ("proc: Check /proc/$pid/attr/ writes against file opener")
+
+Christian
