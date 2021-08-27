@@ -2,104 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 716E33F992D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 14:49:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC03E3F9A55
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 15:37:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231783AbhH0Mu2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Aug 2021 08:50:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51454 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231271AbhH0Mu1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Aug 2021 08:50:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EDD0B60560;
-        Fri, 27 Aug 2021 12:49:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630068578;
-        bh=7X1FUZPYHV8C/LDg1yLAoXkgfZziyq7WviwzthMoZ3o=;
-        h=Subject:From:To:Cc:Date:From;
-        b=DsssK88JcIB3FT5QVQnCZODM+PJnPwHDH/U/0e9vkxRnD8K8hBfpcnN4LpP6JXSAR
-         sCfV3sjUHG6GONVH/UrEINJIis1iROthypbM0xLh4RkEcLUwAGNVT/Cd+vNS6mYj7u
-         IME8XZ04T4pIpt29Lb+IqcFfm8JmKOmSMHoEK87uCpsLf/UuAq65OQT01Uh7IPq9Ci
-         MqvHMC44SMh5Pnj/tm2nUItpBNoQPokNqOdoNb0R3Qr/m6rrwnOzwpP0UAi049sjED
-         bYAuDJkDy57G29xkJpa9bpGdUL53CUH8vpyBj+ZnqTpu2z4WscE8nO8nJr5BfnUU+p
-         7QEAtCZfgOx/A==
-Message-ID: <03b3f42bbc92fdd1c798c29451eac66a0576adf1.camel@kernel.org>
-Subject: [GIT PULL] File locking changes for v5.15
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-        Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>,
-        Bruce Fields <bfields@fieldses.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Date:   Fri, 27 Aug 2021 08:49:36 -0400
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
+        id S245182AbhH0NhC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Aug 2021 09:37:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:52718 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232417AbhH0NhB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 27 Aug 2021 09:37:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630071372;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/NIYyavBh8XnOVQ6CtLDeu7aH39KozHfLZib7zDJx5I=;
+        b=GYFPhQc90UDnlj1auBquT3DTQk9Suc8Qz4/sVx6xeSZA/ELe8+ycrGT8w5RfBQOMhH1Le/
+        +0FCMuc+kdlzLWiiNk8KZYwY7ASdG/Zb6Q+6CvD0ugeDOJJAc4JG9fq+aeZnQXu0usTmy/
+        Vzwlljzvs7DI8FiIH4OErO9X1uATzY0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-151-kuszwh0aNLGhF1LuDxAjYg-1; Fri, 27 Aug 2021 09:36:11 -0400
+X-MC-Unique: kuszwh0aNLGhF1LuDxAjYg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E63E8190B2A3;
+        Fri, 27 Aug 2021 13:36:09 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.3.128.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 54051604CC;
+        Fri, 27 Aug 2021 13:36:02 +0000 (UTC)
+Date:   Fri, 27 Aug 2021 09:35:59 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to
+ io_uring
+Message-ID: <20210827133559.GG490529@madcap2.tricolour.ca>
+References: <162871480969.63873.9434591871437326374.stgit@olly>
+ <20210824205724.GB490529@madcap2.tricolour.ca>
+ <20210826011639.GE490529@madcap2.tricolour.ca>
+ <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
+ <20210826163230.GF490529@madcap2.tricolour.ca>
+ <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit 9ff50bf2f2ff5fab01cac26d8eed21a89308e6ef:
+On 2021-08-26 15:14, Paul Moore wrote:
+> On Thu, Aug 26, 2021 at 12:32 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > I'm getting:
+> >         # ./iouring.2
+> >         Kernel thread io_uring-sq is not running.
+> >         Unable to setup io_uring: Permission denied
+> >
+> >         # ./iouring.3s
+> >         >>> server started, pid = 2082
+> >         >>> memfd created, fd = 3
+> >         io_uring_queue_init: Permission denied
+> >
+> > I have CONFIG_IO_URING=y set, what else is needed?
+> 
+> I'm not sure how you tried to run those tests, but try running as root
+> and with SELinux in permissive mode.
 
-  Merge tag 'clk-fixes-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux (2021-08-21 11:27:16 -0700)
+Ok, they ran, including iouring.4.  iouring.2 claimed twice: "Kernel
+thread io_uring-sq is not running." and I didn't get any URING records
+with ausearch.  I don't know if any of this is expected.
 
-are available in the Git repository at:
+> paul moore
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git locks-v5.15
+- RGB
 
-for you to fetch changes up to 2949e8427af3bb74a1e26354cb68c1700663c827:
-
-  fs: clean up after mandatory file locking support removal (2021-08-24 07:52:45 -0400)
-
-----------------------------------------------------------------
-Hi Linus,
-
-Sending this along early as I don't expect it to change between now and
-when the merge window opens.
-
-This PR starts with a couple of fixes for potential deadlocks in the
-fowner/fasync handling. The next patch removes the old mandatory locking
-code from the kernel altogether. The last patch cleans up rw_verify_area
-a bit more after the mandatory locking removal.
-
-Thanks!
-----------------------------------------------------------------
-Desmond Cheong Zhi Xi (2):
-      fcntl: fix potential deadlocks for &fown_struct.lock
-      fcntl: fix potential deadlock for &fasync_struct.fa_lock
-
-Jeff Layton (1):
-      fs: remove mandatory file locking support
-
-Lukas Bulwahn (1):
-      fs: clean up after mandatory file locking support removal
-
- Documentation/filesystems/mandatory-locking.rst | 188 --------------------------------------------
- fs/9p/vfs_file.c                                |  13 ---
- fs/Kconfig                                      |  10 ---
- fs/afs/flock.c                                  |   4 -
- fs/ceph/locks.c                                 |   3 -
- fs/fcntl.c                                      |  18 +++--
- fs/gfs2/file.c                                  |   3 -
- fs/locks.c                                      | 117 +--------------------------
- fs/namei.c                                      |   4 +-
- fs/namespace.c                                  |  29 +++----
- fs/nfs/file.c                                   |   4 -
- fs/nfsd/nfs4state.c                             |  14 ----
- fs/nfsd/vfs.c                                   |  23 +-----
- fs/ocfs2/locks.c                                |   4 -
- fs/open.c                                       |   8 +-
- fs/read_write.c                                 |  17 +---
- fs/remap_range.c                                |  12 ---
- include/linux/fs.h                              |  84 --------------------
- mm/mmap.c                                       |   6 --
- mm/nommu.c                                      |   3 -
- 20 files changed, 28 insertions(+), 536 deletions(-)
- delete mode 100644 Documentation/filesystems/mandatory-locking.rst
-
--- 
-Jeff Layton <jlayton@kernel.org>
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 
