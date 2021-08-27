@@ -2,215 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 18CC73F9093
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 01:00:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E4833F9254
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 04:29:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243726AbhHZWPZ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 Aug 2021 18:15:25 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:34684 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243665AbhHZWPY (ORCPT
+        id S244015AbhH0C1C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 Aug 2021 22:27:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54008 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243007AbhH0C1B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 Aug 2021 18:15:24 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51]:43756)
-        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1mJNdh-00EQKs-GD; Thu, 26 Aug 2021 16:14:25 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95]:36634 helo=email.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1mJNdf-00HV1Y-UD; Thu, 26 Aug 2021 16:14:25 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Laight <David.Laight@aculab.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Michel Lespinasse <walken@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Matthew Wilcox \(Oracle\)" <willy@infradead.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Price <steven.price@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Marco Elver <elver@google.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Collin Fijalkovich <cfijalkovich@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Christian =?utf-8?Q?K=C3=B6nig?= 
-        <ckoenig.leichtzumerken@gmail.com>,
-        "linux-unionfs\@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-References: <20210812084348.6521-1-david@redhat.com> <87o8a2d0wf.fsf@disp2133>
-        <60db2e61-6b00-44fa-b718-e4361fcc238c@www.fastmail.com>
-        <87lf56bllc.fsf@disp2133>
-        <CAHk-=wgru1UAm3kAKSOdnbewPXQMOxYkq9PnAsRadAC6pXCCMQ@mail.gmail.com>
-        <87eeay8pqx.fsf@disp2133>
-        <5b0d7c1e73ca43ef9ce6665fec6c4d7e@AcuMS.aculab.com>
-        <87h7ft2j68.fsf@disp2133>
-        <CAHk-=whmXTiGUzVrTP=mOPQrg-XOi3R-45hC4dQOqW4JmZdFUQ@mail.gmail.com>
-        <b629cda1-becd-4725-b16c-13208ff478d3@www.fastmail.com>
-        <CAHk-=wiJ0u33h2CXAO4b271Diik=z4jRt64=Gt6YV2jV4ef27g@mail.gmail.com>
-        <b60e9bd1-7232-472d-9c9c-1d6593e9e85e@www.fastmail.com>
-        <0ed69079-9e13-a0f4-776c-1f24faa9daec@redhat.com>
-Date:   Thu, 26 Aug 2021 17:13:52 -0500
-In-Reply-To: <0ed69079-9e13-a0f4-776c-1f24faa9daec@redhat.com> (David
-        Hildenbrand's message of "Thu, 26 Aug 2021 23:47:07 +0200")
-Message-ID: <87mtp3g8gv.fsf@disp2133>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 26 Aug 2021 22:27:01 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D23C0613CF
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Aug 2021 19:26:13 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id d6so7682302edt.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 Aug 2021 19:26:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Tn7AXqoNlFEiSH5o/ASAVHYdKyToR0ttJRMjHQuhc2k=;
+        b=kShX6RE57p3tTmkrpmlSTmebMyPgiIhmX67GY4jlYN5zdRMezqjEOqyo1BepHRZudO
+         BET2EDCtfMFIb8nhAbGJxjZazPx17q3HLXlYnR1hMv1JicgUH+EgVj/BfNzSX8ME0bgg
+         qyiPTolSSKhsUPz3NcC66HuIjkCnGBak211JB7HiLtCxOnt59LZWZ7hBF+Ldr7Tc8b15
+         kIUjzOLBgJnvCTEwbil2XQbNsj1gjjyXEXkjGQJIGjIHmwe7ThZxyRrv+kvFyU1qe+2j
+         iHbEYJUAW8m0A1Sq1L1VjflDHwDc3/exe7C2oeGPKgg9Awr0pKnogtcpHsmXLjVXlwMF
+         /87A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Tn7AXqoNlFEiSH5o/ASAVHYdKyToR0ttJRMjHQuhc2k=;
+        b=DnqzpQ0hoB0am2KlglVZ27nXnM8FXckbuaZJkbrpprKvwU6C6RRwOHvHP/jUqQekG5
+         qjhi6kJqkFyCYSvFH6qoctP8L+VqfMNq2gkm8303cBWWNbcnbLrMdU0ArRidJ3TyM6UC
+         P/0gl+Enm9m0hhxglp5IlQO7VapurSzMa3DL3zJutYfpImljqinn3kb5E5LMCRIsJCXV
+         uYNCl9b8WdHGmw1bCBxbswdZHXsvnteH4fiwonbLF8YFt9xjRKTYkz5pgK6uEul05Xwd
+         3SSQQBajwunE3PM7GWpADFcvmN/OPnEPHadb29v0RdYkgxP1phfaViONEu89OVFW82du
+         9ZFg==
+X-Gm-Message-State: AOAM530+K44d11ucmoDYhGKU0RTb0UBFRCkkRGAlFQXHp+WWSiezTjjL
+        xftNU1V71R9yWOUEBcwpLbfLOm49VBpO4j03cE+P
+X-Google-Smtp-Source: ABdhPJyAX69PQ+NxLWiGAYBLmdcOx3QvYk2/H1F/1d3DZLZ/12m47WckKKaur36QJcC5AJHYtraO8I6FNeqLBKEN87Q=
+X-Received: by 2002:a05:6402:1642:: with SMTP id s2mr7461170edx.135.1630031171063;
+ Thu, 26 Aug 2021 19:26:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1mJNdf-00HV1Y-UD;;;mid=<87mtp3g8gv.fsf@disp2133>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18m5lfQvtNAYQfGYREq2VBtg2jfskLzpXA=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,XM_B_Unicode autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4992]
-        *  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;David Hildenbrand <david@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 612 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 4.3 (0.7%), b_tie_ro: 3.0 (0.5%), parse: 1.59
-        (0.3%), extract_message_metadata: 6 (0.9%), get_uri_detail_list: 3.1
-        (0.5%), tests_pri_-1000: 11 (1.9%), tests_pri_-950: 1.01 (0.2%),
-        tests_pri_-900: 0.95 (0.2%), tests_pri_-90: 101 (16.5%), check_bayes:
-        98 (16.1%), b_tokenize: 18 (2.9%), b_tok_get_all: 13 (2.1%),
-        b_comp_prob: 3.3 (0.5%), b_tok_touch_all: 61 (9.9%), b_finish: 0.81
-        (0.1%), tests_pri_0: 469 (76.6%), check_dkim_signature: 0.44 (0.1%),
-        check_dkim_adsp: 2.7 (0.4%), poll_dns_idle: 1.26 (0.2%), tests_pri_10:
-        2.4 (0.4%), tests_pri_500: 8 (1.3%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v1 0/7] Remove in-tree usage of MAP_DENYWRITE
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+References: <20210812214010.3197279-1-krisman@collabora.com>
+ <20210812214010.3197279-10-krisman@collabora.com> <CAOQ4uxi7otGo6aNNMk9-fVQCx4Q0tDFe7sJaCr6jj1tNtfExTg@mail.gmail.com>
+ <87tujdz7u7.fsf@collabora.com> <CAOQ4uxhj=UuvT5ZonFD2sgufqWrF9m4XJ19koQ5390GUZ32g7g@mail.gmail.com>
+ <87mtp5yz0q.fsf@collabora.com> <CAOQ4uxjnb0JmKVpMuEfa_NgHmLRchLz_3=9t2nepdS4QXJ=QVg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjnb0JmKVpMuEfa_NgHmLRchLz_3=9t2nepdS4QXJ=QVg@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 26 Aug 2021 22:26:00 -0400
+Message-ID: <CAHC9VhT9SE6+kLYBh2d7CW5N6RCr=_ryK+ncGvqYJ51B7_egPA@mail.gmail.com>
+Subject: Re: [PATCH v6 09/21] fsnotify: Allow events reported with an empty inode
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Jan Kara <jack@suse.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Tso <tytso@mit.edu>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Bobrowski <repnop@google.com>, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Hildenbrand <david@redhat.com> writes:
-
-> On 26.08.21 19:48, Andy Lutomirski wrote:
->> On Fri, Aug 13, 2021, at 5:54 PM, Linus Torvalds wrote:
->>> On Fri, Aug 13, 2021 at 2:49 PM Andy Lutomirski <luto@kernel.org> wrote:
->>>>
->>>> I’ll bite.  How about we attack this in the opposite direction: remove the deny write mechanism entirely.
->>>
->>> I think that would be ok, except I can see somebody relying on it.
->>>
->>> It's broken, it's stupid, but we've done that ETXTBUSY for a _loong_ time.
->>
->> Someone off-list just pointed something out to me, and I think we should push harder to remove ETXTBSY.  Specifically, we've all been focused on open() failing with ETXTBSY, and it's easy to make fun of anyone opening a running program for write when they should be unlinking and replacing it.
->>
->> Alas, Linux's implementation of deny_write_access() is correct^Wabsurd, and deny_write_access() *also* returns ETXTBSY if the file is open for write.  So, in a multithreaded program, one thread does:
->>
->> fd = open("some exefile", O_RDWR | O_CREAT | O_CLOEXEC);
->> write(fd, some stuff);
->>
->> <--- problem is here
->>
->> close(fd);
->> execve("some exefile");
->>
->> Another thread does:
->>
->> fork();
->> execve("something else");
->>
->> In between fork and execve, there's another copy of the open file description, and i_writecount is held, and the execve() fails.  Whoops.  See, for example:
->>
->> https://github.com/golang/go/issues/22315
->>
->> I propose we get rid of deny_write_access() completely to solve this.
->>
->> Getting rid of i_writecount itself seems a bit harder, since a handful of filesystems use it for clever reasons.
->>
->> (OFD locks seem like they might have the same problem.  Maybe we should have a clone() flag to unshare the file table and close close-on-exec things?)
->>
+On Thu, Aug 26, 2021 at 6:45 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> On Thu, Aug 26, 2021 at 12:50 AM Gabriel Krisman Bertazi
+> <krisman@collabora.com> wrote:
+> >
+> > Amir Goldstein <amir73il@gmail.com> writes:
+> >
+> > > On Wed, Aug 25, 2021 at 9:40 PM Gabriel Krisman Bertazi
+> > > <krisman@collabora.com> wrote:
+> > >>
+> > >> Amir Goldstein <amir73il@gmail.com> writes:
+> > >>
+> > >> > On Fri, Aug 13, 2021 at 12:41 AM Gabriel Krisman Bertazi
+> > >> > <krisman@collabora.com> wrote:
+> > >> >>
+> > >> >> Some file system events (i.e. FS_ERROR) might not be associated with an
+> > >> >> inode.  For these, it makes sense to associate them directly with the
+> > >> >> super block of the file system they apply to.  This patch allows the
+> > >> >> event to be reported with a NULL inode, by recovering the superblock
+> > >> >> directly from the data field, if needed.
+> > >> >>
+> > >> >> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> > >> >>
+> > >> >> --
+> > >> >> Changes since v5:
+> > >> >>   - add fsnotify_data_sb handle to retrieve sb from the data field. (jan)
+> > >> >> ---
+> > >> >>  fs/notify/fsnotify.c | 16 +++++++++++++---
+> > >> >>  1 file changed, 13 insertions(+), 3 deletions(-)
+> > >> >>
+> > >> >> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> > >> >> index 30d422b8c0fc..536db02cb26e 100644
+> > >> >> --- a/fs/notify/fsnotify.c
+> > >> >> +++ b/fs/notify/fsnotify.c
+> > >> >> @@ -98,6 +98,14 @@ void fsnotify_sb_delete(struct super_block *sb)
+> > >> >>         fsnotify_clear_marks_by_sb(sb);
+> > >> >>  }
+> > >> >>
+> > >> >> +static struct super_block *fsnotify_data_sb(const void *data, int data_type)
+> > >> >> +{
+> > >> >> +       struct inode *inode = fsnotify_data_inode(data, data_type);
+> > >> >> +       struct super_block *sb = inode ? inode->i_sb : NULL;
+> > >> >> +
+> > >> >> +       return sb;
+> > >> >> +}
+> > >> >> +
+> > >> >>  /*
+> > >> >>   * Given an inode, first check if we care what happens to our children.  Inotify
+> > >> >>   * and dnotify both tell their parents about events.  If we care about any event
+> > >> >> @@ -455,8 +463,10 @@ static void fsnotify_iter_next(struct fsnotify_iter_info *iter_info)
+> > >> >>   *             @file_name is relative to
+> > >> >>   * @file_name: optional file name associated with event
+> > >> >>   * @inode:     optional inode associated with event -
+> > >> >> - *             either @dir or @inode must be non-NULL.
+> > >> >> - *             if both are non-NULL event may be reported to both.
+> > >> >> + *             If @dir and @inode are NULL, @data must have a type that
+> > >> >> + *             allows retrieving the file system associated with this
+> > >> >
+> > >> > Irrelevant comment. sb must always be available from @data.
+> > >> >
+> > >> >> + *             event.  if both are non-NULL event may be reported to
+> > >> >> + *             both.
+> > >> >>   * @cookie:    inotify rename cookie
+> > >> >>   */
+> > >> >>  int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
+> > >> >> @@ -483,7 +493,7 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
+> > >> >>                  */
+> > >> >>                 parent = dir;
+> > >> >>         }
+> > >> >> -       sb = inode->i_sb;
+> > >> >> +       sb = inode ? inode->i_sb : fsnotify_data_sb(data, data_type);
+> > >> >
+> > >> >         const struct path *path = fsnotify_data_path(data, data_type);
+> > >> > +       const struct super_block *sb = fsnotify_data_sb(data, data_type);
+> > >> >
+> > >> > All the games with @data @inode and @dir args are irrelevant to this.
+> > >> > sb should always be available from @data and it does not matter
+> > >> > if fsnotify_data_inode() is the same as @inode, @dir or neither.
+> > >> > All those inodes are anyway on the same sb.
+> > >>
+> > >> Hi Amir,
+> > >>
+> > >> I think this is actually necessary.  I could identify at least one event
+> > >> (FS_CREATE | FS_ISDIR) where fsnotify is invoked with a NULL data field.
+> > >> In that case, fsnotify_dirent is called with a negative dentry from
+> > >> vfs_mkdir().  I'm not sure why exactly the dentry is negative after the
+> > >
+> > > That doesn't sound right at all.
+> > > Are you sure about this?
+> > > Which filesystem was this mkdir called on?
+> >
+> > You should be able to reproduce it on top of mainline if you pick only this
+> > patch and do the change you suggested:
+> >
+> >  -       sb = inode->i_sb;
+> >  +       sb = fsnotify_data_sb(data, data_type);
+> >
+> > And then boot a Debian stable with systemd.  The notification happens on
+> > the cgroup pseudo-filesystem (/sys/fs/cgroup), which is being monitored
+> > by systemd itself.  The event that arrives with a NULL data is telling the
+> > directory /sys/fs/cgroup/*/ about the creation of directory
+> > `init.scope`.
+> >
+> > The change above triggers the following null dereference of struct
+> > super_block, since data is NULL.
+> >
+> > I will keep looking but you might be able to answer it immediately...
 >
-> It's not like this issue is new (^2017) or relevant in practice. So no
-> need to hurry IMHO. One step at a time: it might make perfect sense to
-> remove ETXTBSY, but we have to be careful to not break other user
-> space that actually cares about the current behavior in practice.
+> Yes, I see what is going on.
+>
+> cgroupfs is a sort of kernfs and kernfs_iop_mkdir() does not instantiate
+> the negative dentry. Instead, kernfs_dop_revalidate() always invalidates
+> negative dentries to force re-lookup to find the inode.
+>
+> Documentation/filesystems/vfs.rst says on create() and friends:
+> "...you will probably call d_instantiate() with the dentry and the
+>   newly created inode..."
+>
+> So this behavior seems legit.
+> Meaning that we have made a wrong assumption in fsnotify_create()
+> and fsnotify_mkdir().
+> Please note the comment above fsnotify_link() which anticipates
+> negative dentries.
+>
+> I've audited the fsnotify backends and it seems that the
+> WARN_ON(!inode) in kernel/audit_* is the only immediate implication
+> of negative dentry with FS_CREATE.
+> I am the one who added these WARN_ON(), so I will remove them.
+> I think that missing inode in an FS_CREATE event really breaks
+> audit on kernfs, but not sure if that is a valid use case (Paul?).
 
-It is an old enough issue that I agree there is no need to hurry.
+While it is tempting to ignore kernfs from an audit filesystem watch
+perspective, I can see admins potentially wanting to watch
+kernfs/cgroupfs/other-config-pseudofs to detect who is potentially
+playing with the system config.  Arguably the most important config
+changes would already be audited if they were security relevant, but I
+could also see an admin wanting to watch for *any* changes so it's
+probably best not to rule out a kernfs based watch right now.
 
-I also ran into this issue not too long ago when I refactored the
-usermode_driver code.  My challenge was not being in userspace
-the delayed fput was not happening in my kernel thread.  Which meant
-that writing the file, then closing the file, then execing the file
-consistently reported -ETXTBSY.
+I'm sure I'm missing some details, but from what I gather from the
+portion of the thread that I'm seeing, it looks like the audit issue
+lies in audit_mark_handle_event() and audit_watch_handle_event().  In
+both cases it looks like the functions are at least safe with a NULL
+inode pointer, even with the WARN_ON() removed; the problem being that
+the mark and watch will not be updated with the device and inode
+number which means the audit filters based on those marks/watches will
+not trigger.  Is that about right or did I read the thread and code a
+bit too quickly?
 
-The kernel code wound up doing:
-	/* Flush delayed fput so exec can open the file read-only */
-	flush_delayed_fput();
-	task_work_run();
+Working under the assumption that the above is close enough to
+correct, that is a bit of a problem as it means audit can't
+effectively watch kernfs based filesystems, although it sounds like it
+wasn't really working properly to begin with, yes?  Before I start
+thinking too hard about this, does anyone already have a great idea to
+fix this that they want to share?
 
-As I read the code the delay for userspace file descriptors is
-always done with task_work_add, so userspace should not hit
-that kind of silliness, and should be able to actually close
-the file descriptor before the exec.
-
-
-On the flip side, I don't know how anything can depend upon getting an
--ETXTBSY.  So I don't think there is any real risk of breaking userspace
-if we remove it.
-
-Eric
-
+-- 
+paul moore
+www.paul-moore.com
