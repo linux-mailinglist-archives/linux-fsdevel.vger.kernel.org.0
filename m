@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F15FC3F9F57
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 20:57:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF79B3F9F97
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 21:08:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230510AbhH0S63 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Aug 2021 14:58:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54676 "EHLO
+        id S231236AbhH0TGn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Aug 2021 15:06:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230284AbhH0S62 (ORCPT
+        with ESMTP id S231136AbhH0TGm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Aug 2021 14:58:28 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E674C0613CF
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 11:57:39 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id o10so16275756lfr.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 11:57:39 -0700 (PDT)
+        Fri, 27 Aug 2021 15:06:42 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F91C061757
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 12:05:53 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id x27so16438264lfu.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 12:05:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=YxxLEk/XSr4w+re4v3pBg80KnJK57H4H8Qpi3MkYDbY=;
-        b=Jg8UhP0MumuEF16XC/BDdN6h3G2VkliI2bln+XsceyJl5CxwtTks5T4jpFevEkg9i3
-         nYPVQeA/fchkKPRtZkeWbC5DEUI0BBrFHkejQEBbuSjJWlprvPb5zJUMeUfXr9H45g6k
-         2NmKyRGKrZm3y5Du+xJe6JyQX79ON09SLUbKc=
+        bh=Xurqpx2HBsUzvPtF9beAd23C15iGKZUtGtKLy9/65Yo=;
+        b=ZCnYGG6oW+yh9/k4bIpx+5YJVuekh5B3BxAXApXeWgjP1VAyaSzCumlVz49LYpRpSt
+         E7SrDcY9aS1dWjIAtv6pOr5SC4ltNzuJ7d7SIZ4uEgXFlv0fGe4/eQXFko1gO9F/7t9W
+         74SaW+5xX2+Nhbgohi4k/EwOND3nF7mQg6AyE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=YxxLEk/XSr4w+re4v3pBg80KnJK57H4H8Qpi3MkYDbY=;
-        b=s/81PkD3PH8VczaMC/UXuKf6MpPU+0OL0baHWxs1LFsYf/YtP8Zogc2kDUgWL+2B7X
-         Q+6s7QC1MjFz9HRcwsABoqY8QmW0+8XN1g92cjMZnoECd3rj+ekAZTmQasdpm0DpfwTv
-         RK/5HHZy+VMriUibgqr4/qEXthWIVxt3BDNKtrdjDwkWaqDdOcMFnc0cVAQS0X7GahcX
-         C0eyCfNyQZ+hL2kK4ZB+Z4RzzvA6FN7H1ukQWItNap6kwsjRvkRfoShs/3HRY3tPJ/au
-         /8IkLjAX7IVSsGAEwk263bXSurQp6xOrjxWa0U4ktOXQUAe7P/QCuXjMcQEeD+oL+irD
-         gCMg==
-X-Gm-Message-State: AOAM533IZeXJzCZvKDuuuZaKiuNUkRdgtfC1rJTwDME5a429qVCrzABX
-        /Fm9uLZ6QqgR0JDqzTKhoJDgPEyQU77qsTIl
-X-Google-Smtp-Source: ABdhPJyPJwXwo958KilNSfqKGWXR7v8tKQUg8KGEd4yg4tCoT9nqIlkXngrtn5xWZqFhXbSULUGJVw==
-X-Received: by 2002:ac2:4e0c:: with SMTP id e12mr5480360lfr.561.1630090656806;
-        Fri, 27 Aug 2021 11:57:36 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id v5sm825332ljg.117.2021.08.27.11.57.35
+        bh=Xurqpx2HBsUzvPtF9beAd23C15iGKZUtGtKLy9/65Yo=;
+        b=pGUzffolzZpzjYCv9XbXSDy6YeqbB4dkVVNH+ndKQ0b9rgtFZ6IBKORBlzMUxKhTKz
+         12SfPjCQjODy2oQzQruehO7khyj8pbdeS+agvB9qk7cMxx+xCzZ3CSNkvhiETpP2pHqf
+         nhT47IO+vx1Mvn0Fqp06dNS8kHLwGmLt4RSAhE/Xme3G67tDmRKT5XfZnRVDE7KPi3pO
+         OHH21oe1ujBa360q1wV6qGIVNLZeKBC0O0Nul2eUeNbaYOik2M2E/x1Jru6JtOBIymtJ
+         fw7sanuR09aHqSvpKKLNOc9qQH1Kf6NEmDkVyrEaee6tsjVxATaYxaXqMCa/Njc0c3Wf
+         v9Aw==
+X-Gm-Message-State: AOAM531QHYkf++C7IqlGZDhj6Q4KmhtXULi8Sqfr8KKC/Sd6j2NmbQvd
+        z8vq+ajV8BWQKhGWWOCRNkJKJs0tyuI6Bo/q
+X-Google-Smtp-Source: ABdhPJxWP/CeI89XdBrZkEUxewg0mAo3vNqxGml00tIyxeadPvGkrQ7aJRz63MgGI4dUHfnCC5zY/A==
+X-Received: by 2002:a19:e218:: with SMTP id z24mr7737818lfg.35.1630091151240;
+        Fri, 27 Aug 2021 12:05:51 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id bt29sm669347lfb.4.2021.08.27.12.05.49
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Aug 2021 11:57:36 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id l18so13065994lji.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 11:57:35 -0700 (PDT)
-X-Received: by 2002:a2e:944c:: with SMTP id o12mr8723398ljh.411.1630090655578;
- Fri, 27 Aug 2021 11:57:35 -0700 (PDT)
+        Fri, 27 Aug 2021 12:05:49 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id m18so2232986lfl.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 12:05:49 -0700 (PDT)
+X-Received: by 2002:a05:6512:104b:: with SMTP id c11mr7660072lfb.201.1630091149264;
+ Fri, 27 Aug 2021 12:05:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210827164926.1726765-1-agruenba@redhat.com> <20210827164926.1726765-5-agruenba@redhat.com>
- <YSk0pAWx7xO/39A6@zeniv-ca.linux.org.uk>
-In-Reply-To: <YSk0pAWx7xO/39A6@zeniv-ca.linux.org.uk>
+References: <20210827164926.1726765-1-agruenba@redhat.com> <20210827164926.1726765-6-agruenba@redhat.com>
+ <YSkz025ncjhyRmlB@zeniv-ca.linux.org.uk>
+In-Reply-To: <YSkz025ncjhyRmlB@zeniv-ca.linux.org.uk>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 27 Aug 2021 11:57:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj8Q6PtnQqamACJU1TWpT4+nr2+YGhVwMTuU=-NJEm5Rg@mail.gmail.com>
-Message-ID: <CAHk-=wj8Q6PtnQqamACJU1TWpT4+nr2+YGhVwMTuU=-NJEm5Rg@mail.gmail.com>
-Subject: Re: [PATCH v7 04/19] iov_iter: Turn iov_iter_fault_in_readable into fault_in_iov_iter_readable
+Date:   Fri, 27 Aug 2021 12:05:32 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh5p6zpgUUoY+O7e74X9BZyODhnsqvv=xqnTaLRNj3d_Q@mail.gmail.com>
+Message-ID: <CAHk-=wh5p6zpgUUoY+O7e74X9BZyODhnsqvv=xqnTaLRNj3d_Q@mail.gmail.com>
+Subject: Re: [PATCH v7 05/19] iov_iter: Introduce fault_in_iov_iter_writeable
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
         Christoph Hellwig <hch@infradead.org>,
@@ -73,19 +73,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 27, 2021 at 11:53 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Fri, Aug 27, 2021 at 11:52 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> I really disagree with these calling conventions.  "Number not faulted in"
-> is bloody useless
+> Again, the calling conventions are wrong.  Make it success/failure or
+> 0/-EFAULT.  And it's inconsistent for iovec and non-iovec cases as it is.
 
-It's what we already have for copy_to/from_user(), so it's actually
-consistent with that.
+Al, the 0/-EFAULT thing DOES NOT WORK.
 
-And it avoids changing all the existing tests where people really
-cared only about the "everything ok" case.
+The whole "success vs failure" model is broken.
 
-Andreas' first patch did that changed version, and was ugly as hell.
+Because "success" for some people is "everything worked".
 
-But if you have a version that avoids the ugliness...
+And for other people it is "at least _part_ of it worked".
 
-             Linus
+So no, 0/-EFAULT fundamentally cannot work, because the return needs
+to be able to handle that ternary situation (ie "nothing" vs
+"something" vs "everything").
+
+This is *literally* the exact same thing that we have for
+copy_to/from_user(). And Andreas' solution (based on my suggestion) is
+the exact same one that we have had for that code since basically day
+#1.
+
+The whole "0/-EFAULT" is simpler, yes. And it's what
+"{get|put}_user()" uses, yes. And it's more common to a lot of other
+functions that return zero or an error.
+
+But see above. People *need* that ternary result, and "bytes/pages
+uncopied" is not only the traditional one we use elsewhere in similar
+situations, it's the one that has the easiest error tests for existing
+users (because zero remains "everything worked").
+
+Andreas originally had that "how many bytes/pages succeeded" return
+value instead, and yes, that's also ternary. But it means that now the
+common "complete success" test ends up being a lot uglier, and the
+semantics of the function changes completely where "0" no longer means
+success, and that messes up much more.
+
+So I really think you are barking entirely up the wrong tree.
+
+If there is any inconsistency, maybe we should make _more_ cases use
+that "how many bytes/pages not copied" logic, but in a lot of cases
+you don't actually need the ternary decision value.
+
+So the inconsistency is EXACTLY the same as the one we have always had
+for get|put_user() vs copy_to|from_user(), and it exists for the EXACT
+same reason.
+
+IOW, please explain how you'd solve the ternary problem without making
+the code a lot uglier.
+
+              Linus
