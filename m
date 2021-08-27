@@ -2,104 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C7D63FA189
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Aug 2021 00:35:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CD353FA18F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Aug 2021 00:39:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232252AbhH0WgR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Aug 2021 18:36:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47670 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232126AbhH0WgP (ORCPT
+        id S232314AbhH0WkE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Aug 2021 18:40:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:26835 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232287AbhH0WkD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Aug 2021 18:36:15 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AF98C0613D9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 15:35:25 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id c8so4807461lfi.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 15:35:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0rGLz7zH5VYaPQJm/5R2FgZ/IY8lzcUOIJsQBb/VIWM=;
-        b=JD5mh7o51KK+kOxvguNTQUf7rTVF4w9SHbDvpplojTGO4MeyrRJfBlT2B58LyfaviY
-         ahMIKvD5OTZrK3VLe5bxgp+oJ1xCnF26s9jzJ+FtmfmTaj7/yI+G8RCXONqVaiSYQS1G
-         DBec3lrLIt/IGBcPX8jc1EEIbl9Sy+LcB1dGE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0rGLz7zH5VYaPQJm/5R2FgZ/IY8lzcUOIJsQBb/VIWM=;
-        b=Q6+3milEJljVgFCASrvV03YE72W9kTZ2WoIjtHwDwGiE/+UbTBrHNnxvJyRRmNXq9d
-         pn2klkdPYh3i+NmK6bC1Ar15WqYo9VNFwa+Svcbq5R8NB7BKCNTIt5sJAqvG73uVkYVE
-         ncAWw5DkGSgLJOrsF94L+dnl/nlDYWmbXvMfOmNzLcEzTSbNOhGtEl3EC6Bjsnv/o1UC
-         8QaiQH1V6ko0y8jqJIPPnDSbmP9SnBgMh5G60GDa+NQK3Y3u4KQWFNjAhz/pjVkzfuPX
-         JdJxiAGLrmDDcAY5wL8IUy1zRyQLkjuHJtZ5gj6M2J7qt63GDC7YRZmpyLZyyXwAwNY8
-         teKg==
-X-Gm-Message-State: AOAM5329ucC9KuXtVHY98eee0ekDG+qz9vyMVMy8mOf7+0B5lkacCAxH
-        jHtTs5ee3Zx1a/BWaJsUaP3omODQFCpFSys7
-X-Google-Smtp-Source: ABdhPJxx52zvJwl02NWxWfrgL4pGePfeQ97GE83zQnPa/v66HkMkC9kKdnLp4OQW4tdN5/eZBrPVpg==
-X-Received: by 2002:a19:4303:: with SMTP id q3mr8104071lfa.596.1630103723522;
-        Fri, 27 Aug 2021 15:35:23 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id u12sm711823lfo.86.2021.08.27.15.35.22
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Aug 2021 15:35:22 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id l18so13961901lji.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 15:35:22 -0700 (PDT)
-X-Received: by 2002:a05:651c:908:: with SMTP id e8mr9500825ljq.507.1630103722494;
- Fri, 27 Aug 2021 15:35:22 -0700 (PDT)
+        Fri, 27 Aug 2021 18:40:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630103953;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=n+im3adj8DNRXnbTmQARvHJ2DdknkO8ddntY8WQyZPE=;
+        b=ghQwgYR+1fgdfrpi4qUhT/v696zhutEknjkVKIYWG8VWiHW7BIJAiBbcl7dsSFVgVzPPdw
+        0oD0KCnrI3TBloBtwBwuF2A5LbQFeidnf9kkxksKL+c7vGzHoSILpaMzrbNcgTOlVD1ZlM
+        IRpSkKVE/cJspg8iirH669J/SdmkrXY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-444-Z2tclGrCOfuonxp_jDeqVg-1; Fri, 27 Aug 2021 18:39:10 -0400
+X-MC-Unique: Z2tclGrCOfuonxp_jDeqVg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 763F8107ACF5;
+        Fri, 27 Aug 2021 22:39:09 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.36])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 404586788B;
+        Fri, 27 Aug 2021 22:39:08 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Fix missing put on afs_read objects on missing get on
+ the key therein
+From:   David Howells <dhowells@redhat.com>
+To:     marc.dionne@auristor.com
+Cc:     linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 27 Aug 2021 23:39:07 +0100
+Message-ID: <163010394740.3035676.8516846193899793357.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-References: <20210827164926.1726765-1-agruenba@redhat.com> <20210827164926.1726765-17-agruenba@redhat.com>
- <20210827183018.GJ12664@magnolia> <CAHc6FU44mGza=G4prXh08=RJZ0Wu7i6rBf53BjURj8oyX5Q8iA@mail.gmail.com>
- <20210827213239.GH12597@magnolia>
-In-Reply-To: <20210827213239.GH12597@magnolia>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 27 Aug 2021 15:35:06 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whCCyxkk+wfDZ5bQNX62MfdprBLpy_RwpSFhFziA2Oecg@mail.gmail.com>
-Message-ID: <CAHk-=whCCyxkk+wfDZ5bQNX62MfdprBLpy_RwpSFhFziA2Oecg@mail.gmail.com>
-Subject: Re: [PATCH v7 16/19] iomap: Add done_before argument to iomap_dio_rw
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, ocfs2-devel@oss.oracle.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 27, 2021 at 2:32 PM Darrick J. Wong <djwong@kernel.org> wrote:
->
-> No, because you totally ignored the second question:
->
-> If the directio operation succeeds even partially and the PARTIAL flag
-> is set, won't that push the iov iter ahead by however many bytes
-> completed?
->
-> We already finished the IO for the first page, so the second attempt
-> should pick up where it left off, i.e. the second page.
+The afs_read objects created by afs_req_issue_op() get leaked because
+afs_alloc_read() returns a ref and then afs_fetch_data() gets its own ref
+which is released when the operation completes, but the initial ref is
+never released.
 
-Darrick, I think you're missing the point.
+Fix this by discarding the initial ref at the end of afs_req_issue_op().
 
-It's the *return*value* that is the issue, not the iovec.
+This leak also covered another bug whereby a ref isn't got on the key
+attached to the read record by afs_req_issue_op().  This isn't a problem as
+long as the afs_read req never goes away...
 
-The iovec is updated as you say. But the return value from the async
-part is - without Andreas' patch - only the async part of it.
+Fix this by calling key_get() in afs_req_issue_op().
 
-With Andreas' patch, the async part will now return the full return
-value, including the part that was done synchronously.
+This was found by the generic/047 test.  It leaks ~4GiB of RAM each time it
+is run.
 
-And the return value is returned from that async part, which somehow
-thus needs to know what predated it.
+Fixes: f7605fa869cf ("afs: Fix leak of afs_read objects")
+Reported-by: Marc Dionne <marc.dionne@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: linux-afs@lists.infradead.org
+---
 
-Could that pre-existing part perhaps be saved somewhere else? Very
-possibly. That 'struct iomap_dio' addition is kind of ugly. So maybe
-what Andreas did could be done differently. But I think you guys are
-arguing past each other.
+ fs/afs/file.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-           Linus
+diff --git a/fs/afs/file.c b/fs/afs/file.c
+index db035ae2a134..6688fff14b0b 100644
+--- a/fs/afs/file.c
++++ b/fs/afs/file.c
+@@ -295,7 +295,7 @@ static void afs_req_issue_op(struct netfs_read_subrequest *subreq)
+ 	fsreq->subreq	= subreq;
+ 	fsreq->pos	= subreq->start + subreq->transferred;
+ 	fsreq->len	= subreq->len   - subreq->transferred;
+-	fsreq->key	= subreq->rreq->netfs_priv;
++	fsreq->key	= key_get(subreq->rreq->netfs_priv);
+ 	fsreq->vnode	= vnode;
+ 	fsreq->iter	= &fsreq->def_iter;
+ 
+@@ -304,6 +304,7 @@ static void afs_req_issue_op(struct netfs_read_subrequest *subreq)
+ 			fsreq->pos, fsreq->len);
+ 
+ 	afs_fetch_data(fsreq->vnode, fsreq);
++	afs_put_read(fsreq);
+ }
+ 
+ static int afs_symlink_readpage(struct page *page)
+
+
