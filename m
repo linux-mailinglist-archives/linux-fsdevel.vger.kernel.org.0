@@ -2,145 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 404B03F9EA0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 20:18:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 510DA3F9ED7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 20:31:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229717AbhH0STI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Aug 2021 14:19:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45480 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229580AbhH0STH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Aug 2021 14:19:07 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A732AC061757;
-        Fri, 27 Aug 2021 11:18:18 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 09B781F447AF
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     amir73il@gmail.com, jack@suse.com, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        khazhy@google.com, dhowells@redhat.com, david@fromorbit.com,
-        tytso@mit.edu, djwong@kernel.org, repnop@google.com,
-        kernel@collabora.com
-Subject: Re: [PATCH v6 15/21] fanotify: Preallocate per superblock mark
- error event
-Organization: Collabora
-References: <20210812214010.3197279-1-krisman@collabora.com>
-        <20210812214010.3197279-16-krisman@collabora.com>
-        <20210816155758.GF30215@quack2.suse.cz>
-Date:   Fri, 27 Aug 2021 14:18:12 -0400
-In-Reply-To: <20210816155758.GF30215@quack2.suse.cz> (Jan Kara's message of
-        "Mon, 16 Aug 2021 17:57:58 +0200")
-Message-ID: <877dg6rbtn.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        id S230110AbhH0SbI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Aug 2021 14:31:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41724 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229739AbhH0SbI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 27 Aug 2021 14:31:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E402D60F45;
+        Fri, 27 Aug 2021 18:30:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630089019;
+        bh=0PwcXFLKJ1IoM4Ihot60t1FxL2bE/0O1mOLox8uHVnk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=a/DoB3pEroms1SoLJu0Be0guxAsi2bvyt9+trXxVRAU/PcoQfdTmv5Dd+V0iVWmip
+         1FUfohpLeLqnepAWX42gmk1eEBCwuT6mjv7k7W0jPnNNE+EOx66DUujZuuh2VkiDo5
+         tqaSqGwRgtFgDAZpZaNAGbA5UVvB+NtzlPtiefLDqyP4KgAh+Ym03ttpELsMbYXXRW
+         rMENb2hqzRzmKSouilvMbkn2NHZMABSoEx5XA0DrbwvCnMN92XZttKe4VmvS3H4FFA
+         YTd7vh+nwn+BSdkVyw8bmJNz6W8YkgUbvtFaK9otwQ+Bk6cO4JZ40cGS28XrJgH5rt
+         3IBKkJTdCt9Qg==
+Date:   Fri, 27 Aug 2021 11:30:18 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>, cluster-devel@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com
+Subject: Re: [PATCH v7 16/19] iomap: Add done_before argument to iomap_dio_rw
+Message-ID: <20210827183018.GJ12664@magnolia>
+References: <20210827164926.1726765-1-agruenba@redhat.com>
+ <20210827164926.1726765-17-agruenba@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210827164926.1726765-17-agruenba@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jan Kara <jack@suse.cz> writes:
+On Fri, Aug 27, 2021 at 06:49:23PM +0200, Andreas Gruenbacher wrote:
+> Add a done_before argument to iomap_dio_rw that indicates how much of
+> the request has already been transferred.  When the request succeeds, we
+> report that done_before additional bytes were tranferred.  This is
+> useful for finishing a request asynchronously when part of the request
+> has already been completed synchronously.
+> 
+> We'll use that to allow iomap_dio_rw to be used with page faults
+> disabled: when a page fault occurs while submitting a request, we
+> synchronously complete the part of the request that has already been
+> submitted.  The caller can then take care of the page fault and call
+> iomap_dio_rw again for the rest of the request, passing in the number of
+> bytes already tranferred.
+> 
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> ---
+>  fs/btrfs/file.c       |  5 +++--
+>  fs/ext4/file.c        |  5 +++--
+>  fs/gfs2/file.c        |  4 ++--
+>  fs/iomap/direct-io.c  | 11 ++++++++---
+>  fs/xfs/xfs_file.c     |  6 +++---
+>  fs/zonefs/super.c     |  4 ++--
+>  include/linux/iomap.h |  4 ++--
+>  7 files changed, 23 insertions(+), 16 deletions(-)
+> 
 
-> On Thu 12-08-21 17:40:04, Gabriel Krisman Bertazi wrote:
->> Error reporting needs to be done in an atomic context.  This patch
->> introduces a single error slot for superblock marks that report the
->> FAN_FS_ERROR event, to be used during event submission.
->> 
->> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
->> 
->> ---
->> Changes v5:
->>   - Restore mark references. (jan)
->>   - Tie fee slot to the mark lifetime.(jan)
->>   - Don't reallocate event(jan)
->> ---
->>  fs/notify/fanotify/fanotify.c      | 12 ++++++++++++
->>  fs/notify/fanotify/fanotify.h      | 13 +++++++++++++
->>  fs/notify/fanotify/fanotify_user.c | 31 ++++++++++++++++++++++++++++--
->>  3 files changed, 54 insertions(+), 2 deletions(-)
->> 
->> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
->> index ebb6c557cea1..3bf6fd85c634 100644
->> --- a/fs/notify/fanotify/fanotify.c
->> +++ b/fs/notify/fanotify/fanotify.c
->> @@ -855,6 +855,14 @@ static void fanotify_free_name_event(struct fanotify_event *event)
->>  	kfree(FANOTIFY_NE(event));
->>  }
->>  
->> +static void fanotify_free_error_event(struct fanotify_event *event)
->> +{
->> +	/*
->> +	 * The actual event is tied to a mark, and is released on mark
->> +	 * removal
->> +	 */
->> +}
->> +
->
-> I was pondering about the lifetime rules some more. This is also related to
-> patch 16/21 but I'll comment here. When we hold mark ref from queued event,
-> we introduce a subtle race into group destruction logic. There we first
-> evict all marks, wait for them to be destroyed by worker thread after SRCU
-> period expires, and then we remove queued events. When we hold mark
-> reference from an event we break this as mark will exist until the event is
-> dequeued and then group can get freed before we actually free the mark and
-> so mark freeing can hit use-after-free issues.
->
-> So we'll have to do this a bit differently. I have two options:
->
-> 1) Instead of preallocating events explicitely like this, we could setup a
-> mempool to allocate error events from for each notification group. We would
-> resize the mempool when adding error mark so that it has as many reserved
-> events as error marks. Upside is error events will be much less special -
-> no special lifetime rules. We'd just need to setup & resize the mempool. We
-> would also have to provide proper merge function for error events (to merge
-> events from the same sb). Also there will be limitation of number of error
-> marks per group because mempools use kmalloc() for an array tracking
-> reserved events. But we could certainly manage 512, likely 1024 error marks
-> per notification group.
->
-> 2) We would keep attaching event to mark as currently. As far as I have
-> checked the event doesn't actually need a back-ref to sb_mark. It is
-> really only used for mark reference taking (and then to get to sb from
-> fanotify_handle_error_event() but we can certainly get to sb by easier
-> means there). So I would just remove that. What we still need to know in
-> fanotify_free_error_event() though is whether the sb_mark is still alive or
-> not. If it is alive, we leave the event alone, otherwise we need to free it.
-> So we need a mark_alive flag in the error event and then do in ->freeing_mark
-> callback something like:
->
-> 	if (mark->flags & FANOTIFY_MARK_FLAG_SB_MARK) {
-> 		struct fanotify_sb_mark *fa_mark = FANOTIFY_SB_MARK(mark);
->
-> ###		/* Maybe we could use mark->lock for this? */
-> 		spin_lock(&group->notification_lock);
-> 		if (fa_mark->fee_slot) {
-> 			if (list_empty(&fa_mark->fee_slot->fae.fse.list)) {
-> 				kfree(fa_mark->fee_slot);
-> 				fa_mark->fee_slot = NULL;
-> 			} else {
-> 				fa_mark->fee_slot->mark_alive = 0;
-> 			}
-> 		}
-> 		spin_unlock(&group->notification_lock);
-> 	}
->
-> And then when queueing and dequeueing event we would have to carefully
-> check what is the mark & event state under appropriate lock (because
-> ->handle_event() callbacks can see marks on the way to be destroyed as they
-> are protected just by SRCU).
+<snip to the interesting parts>
 
-Thanks for the review.  That is indeed a subtle race that I hadn't
-noticed.
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index ba88fe51b77a..dcf9a2b4381f 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -31,6 +31,7 @@ struct iomap_dio {
+>  	atomic_t		ref;
+>  	unsigned		flags;
+>  	int			error;
+> +	size_t			done_before;
+>  	bool			wait_for_completion;
+>  
+>  	union {
+> @@ -126,6 +127,9 @@ ssize_t iomap_dio_complete(struct iomap_dio *dio)
+>  	if (ret > 0 && (dio->flags & IOMAP_DIO_NEED_SYNC))
+>  		ret = generic_write_sync(iocb, ret);
+>  
+> +	if (ret > 0)
+> +		ret += dio->done_before;
 
-Option 2 is much more straightforward.  And considering the uABI won't
-be changed if we decide to change to option 1 later, I gave that a try
-and should be able to prepare a new version that leaves the error event
-with a weak association to the mark, without the back reference, and
-allowing it to be deleted by the latest between dequeue and
-->freeing_mark, as you suggested.
+Pardon my ignorance since this is the first time I've had a crack at
+this patchset, but why is it necessary to carry the "bytes copied"
+count from the /previous/ iomap_dio_rw call all the way through to dio
+completion of the current call?
 
--- 
-Gabriel Krisman Bertazi
+If the directio operation succeeds even partially and the PARTIAL flag
+is set, won't that push the iov iter ahead by however many bytes
+completed?
+
+In other words, why won't this loop work for gfs2?
+
+	size_t copied = 0;
+	while (iov_iter_count(iov) > 0) {
+		ssize_t ret = iomap_dio_rw(iocb, iov, ..., IOMAP_DIO_PARTIAL);
+		if (iov_iter_count(iov) == 0 || ret != -EFAULT)
+			break;
+
+		copied += ret;
+		/* strange gfs2 relocking I don't understand */
+		/* deal with page faults... */
+	};
+	if (ret < 0)
+		return ret;
+	return copied + ret;
+
+It feels clunky to make the caller pass the results of a previous
+operation through the current operation just so the caller can catch the
+value again afterwards.  Is there something I'm missing?
+
+--D
+
+> +
+>  	kfree(dio);
+>  
+>  	return ret;
+> @@ -450,7 +454,7 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
+>  struct iomap_dio *
+>  __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> -		unsigned int dio_flags)
+> +		unsigned int dio_flags, size_t done_before)
+>  {
+>  	struct address_space *mapping = iocb->ki_filp->f_mapping;
+>  	struct inode *inode = file_inode(iocb->ki_filp);
+> @@ -477,6 +481,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	dio->dops = dops;
+>  	dio->error = 0;
+>  	dio->flags = 0;
+> +	dio->done_before = done_before;
+>  
+>  	dio->submit.iter = iter;
+>  	dio->submit.waiter = current;
+> @@ -648,11 +653,11 @@ EXPORT_SYMBOL_GPL(__iomap_dio_rw);
+>  ssize_t
+>  iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> -		unsigned int dio_flags)
+> +		unsigned int dio_flags, size_t done_before)
+>  {
+>  	struct iomap_dio *dio;
+>  
+> -	dio = __iomap_dio_rw(iocb, iter, ops, dops, dio_flags);
+> +	dio = __iomap_dio_rw(iocb, iter, ops, dops, dio_flags, done_before);
+>  	if (IS_ERR_OR_NULL(dio))
+>  		return PTR_ERR_OR_ZERO(dio);
+>  	return iomap_dio_complete(dio);
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index cc3cfb12df53..3103d9bda466 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -259,7 +259,7 @@ xfs_file_dio_read(
+>  	ret = xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
+>  	if (ret)
+>  		return ret;
+> -	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL, 0);
+> +	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL, 0, 0);
+>  	xfs_iunlock(ip, XFS_IOLOCK_SHARED);
+>  
+>  	return ret;
+> @@ -569,7 +569,7 @@ xfs_file_dio_write_aligned(
+>  	}
+>  	trace_xfs_file_direct_write(iocb, from);
+>  	ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
+> -			   &xfs_dio_write_ops, 0);
+> +			   &xfs_dio_write_ops, 0, 0);
+>  out_unlock:
+>  	if (iolock)
+>  		xfs_iunlock(ip, iolock);
+> @@ -647,7 +647,7 @@ xfs_file_dio_write_unaligned(
+>  
+>  	trace_xfs_file_direct_write(iocb, from);
+>  	ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
+> -			   &xfs_dio_write_ops, flags);
+> +			   &xfs_dio_write_ops, flags, 0);
+>  
+>  	/*
+>  	 * Retry unaligned I/O with exclusive blocking semantics if the DIO
+> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+> index 70055d486bf7..85ca2f5fe06e 100644
+> --- a/fs/zonefs/super.c
+> +++ b/fs/zonefs/super.c
+> @@ -864,7 +864,7 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+>  		ret = zonefs_file_dio_append(iocb, from);
+>  	else
+>  		ret = iomap_dio_rw(iocb, from, &zonefs_iomap_ops,
+> -				   &zonefs_write_dio_ops, 0);
+> +				   &zonefs_write_dio_ops, 0, 0);
+>  	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ &&
+>  	    (ret > 0 || ret == -EIOCBQUEUED)) {
+>  		if (ret > 0)
+> @@ -999,7 +999,7 @@ static ssize_t zonefs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  		}
+>  		file_accessed(iocb->ki_filp);
+>  		ret = iomap_dio_rw(iocb, to, &zonefs_iomap_ops,
+> -				   &zonefs_read_dio_ops, 0);
+> +				   &zonefs_read_dio_ops, 0, 0);
+>  	} else {
+>  		ret = generic_file_read_iter(iocb, to);
+>  		if (ret == -EIO)
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index bcae4814b8e3..908bda10024c 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -276,10 +276,10 @@ struct iomap_dio_ops {
+>  
+>  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> -		unsigned int dio_flags);
+> +		unsigned int dio_flags, size_t done_before);
+>  struct iomap_dio *__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> -		unsigned int dio_flags);
+> +		unsigned int dio_flags, size_t done_before);
+>  ssize_t iomap_dio_complete(struct iomap_dio *dio);
+>  int iomap_dio_iopoll(struct kiocb *kiocb, bool spin);
+>  
+> -- 
+> 2.26.3
+> 
