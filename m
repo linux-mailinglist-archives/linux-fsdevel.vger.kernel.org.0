@@ -2,75 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6322D3FA14D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 Aug 2021 23:57:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C7D63FA189
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Aug 2021 00:35:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232023AbhH0V6J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Aug 2021 17:58:09 -0400
-Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:45154 "EHLO
-        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231906AbhH0V6J (ORCPT
+        id S232252AbhH0WgR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Aug 2021 18:36:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47670 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232126AbhH0WgP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Aug 2021 17:58:09 -0400
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mJjqY-00Gbep-Jz; Fri, 27 Aug 2021 21:57:10 +0000
-Date:   Fri, 27 Aug 2021 21:57:10 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        Fri, 27 Aug 2021 18:36:15 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AF98C0613D9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 15:35:25 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id c8so4807461lfi.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 15:35:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0rGLz7zH5VYaPQJm/5R2FgZ/IY8lzcUOIJsQBb/VIWM=;
+        b=JD5mh7o51KK+kOxvguNTQUf7rTVF4w9SHbDvpplojTGO4MeyrRJfBlT2B58LyfaviY
+         ahMIKvD5OTZrK3VLe5bxgp+oJ1xCnF26s9jzJ+FtmfmTaj7/yI+G8RCXONqVaiSYQS1G
+         DBec3lrLIt/IGBcPX8jc1EEIbl9Sy+LcB1dGE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0rGLz7zH5VYaPQJm/5R2FgZ/IY8lzcUOIJsQBb/VIWM=;
+        b=Q6+3milEJljVgFCASrvV03YE72W9kTZ2WoIjtHwDwGiE/+UbTBrHNnxvJyRRmNXq9d
+         pn2klkdPYh3i+NmK6bC1Ar15WqYo9VNFwa+Svcbq5R8NB7BKCNTIt5sJAqvG73uVkYVE
+         ncAWw5DkGSgLJOrsF94L+dnl/nlDYWmbXvMfOmNzLcEzTSbNOhGtEl3EC6Bjsnv/o1UC
+         8QaiQH1V6ko0y8jqJIPPnDSbmP9SnBgMh5G60GDa+NQK3Y3u4KQWFNjAhz/pjVkzfuPX
+         JdJxiAGLrmDDcAY5wL8IUy1zRyQLkjuHJtZ5gj6M2J7qt63GDC7YRZmpyLZyyXwAwNY8
+         teKg==
+X-Gm-Message-State: AOAM5329ucC9KuXtVHY98eee0ekDG+qz9vyMVMy8mOf7+0B5lkacCAxH
+        jHtTs5ee3Zx1a/BWaJsUaP3omODQFCpFSys7
+X-Google-Smtp-Source: ABdhPJxx52zvJwl02NWxWfrgL4pGePfeQ97GE83zQnPa/v66HkMkC9kKdnLp4OQW4tdN5/eZBrPVpg==
+X-Received: by 2002:a19:4303:: with SMTP id q3mr8104071lfa.596.1630103723522;
+        Fri, 27 Aug 2021 15:35:23 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id u12sm711823lfo.86.2021.08.27.15.35.22
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Aug 2021 15:35:22 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id l18so13961901lji.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 15:35:22 -0700 (PDT)
+X-Received: by 2002:a05:651c:908:: with SMTP id e8mr9500825ljq.507.1630103722494;
+ Fri, 27 Aug 2021 15:35:22 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210827164926.1726765-1-agruenba@redhat.com> <20210827164926.1726765-17-agruenba@redhat.com>
+ <20210827183018.GJ12664@magnolia> <CAHc6FU44mGza=G4prXh08=RJZ0Wu7i6rBf53BjURj8oyX5Q8iA@mail.gmail.com>
+ <20210827213239.GH12597@magnolia>
+In-Reply-To: <20210827213239.GH12597@magnolia>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 27 Aug 2021 15:35:06 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whCCyxkk+wfDZ5bQNX62MfdprBLpy_RwpSFhFziA2Oecg@mail.gmail.com>
+Message-ID: <CAHk-=whCCyxkk+wfDZ5bQNX62MfdprBLpy_RwpSFhFziA2Oecg@mail.gmail.com>
+Subject: Re: [PATCH v7 16/19] iomap: Add done_before argument to iomap_dio_rw
+To:     "Darrick J. Wong" <djwong@kernel.org>
 Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
         Matthew Wilcox <willy@infradead.org>,
         cluster-devel <cluster-devel@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com
-Subject: Re: [PATCH v7 05/19] iov_iter: Introduce fault_in_iov_iter_writeable
-Message-ID: <YSlftta38M4FsWUq@zeniv-ca.linux.org.uk>
-References: <20210827164926.1726765-1-agruenba@redhat.com>
- <20210827164926.1726765-6-agruenba@redhat.com>
- <YSkz025ncjhyRmlB@zeniv-ca.linux.org.uk>
- <CAHk-=wh5p6zpgUUoY+O7e74X9BZyODhnsqvv=xqnTaLRNj3d_Q@mail.gmail.com>
- <YSk7xfcHVc7CxtQO@zeniv-ca.linux.org.uk>
- <CAHk-=wjMyZLH+ta5SohAViSc10iPj-hRnHc-KPDoj1XZCmxdBg@mail.gmail.com>
- <YSk+9cTMYi2+BFW7@zeniv-ca.linux.org.uk>
- <YSldx9uhMYhT/G8X@zeniv-ca.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YSldx9uhMYhT/G8X@zeniv-ca.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+        LKML <linux-kernel@vger.kernel.org>, ocfs2-devel@oss.oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 27, 2021 at 09:48:55PM +0000, Al Viro wrote:
+On Fri, Aug 27, 2021 at 2:32 PM Darrick J. Wong <djwong@kernel.org> wrote:
+>
+> No, because you totally ignored the second question:
+>
+> If the directio operation succeeds even partially and the PARTIAL flag
+> is set, won't that push the iov iter ahead by however many bytes
+> completed?
+>
+> We already finished the IO for the first page, so the second attempt
+> should pick up where it left off, i.e. the second page.
 
-> 	[btrfs]search_ioctl()
-> Broken with memory poisoning, for either variant of semantics.  Same for
-> arm64 sub-page permission differences, I think.
+Darrick, I think you're missing the point.
 
+It's the *return*value* that is the issue, not the iovec.
 
-> So we have 3 callers where we want all-or-nothing semantics - two in
-> arch/x86/kernel/fpu/signal.c and one in btrfs.  HWPOISON will be a problem
-> for all 3, AFAICS...
-> 
-> IOW, it looks like we have two different things mixed here - one that wants
-> to try and fault stuff in, with callers caring only about having _something_
-> faulted in (most of the users) and one that wants to make sure we *can* do
-> stores or loads on each byte in the affected area.
-> 
-> Just accessing a byte in each page really won't suffice for the second kind.
-> Neither will g-u-p use, unless we teach it about HWPOISON and other fun
-> beasts...  Looks like we want that thing to be a separate primitive; for
-> btrfs I'd probably replace fault_in_pages_writeable() with clear_user()
-> as a quick fix for now...
-> 
-> Comments?
+The iovec is updated as you say. But the return value from the async
+part is - without Andreas' patch - only the async part of it.
 
-Wait a sec...  Wasn't HWPOISON a per-page thing?  arm64 definitely does have
-smaller-than-page areas with different permissions, so btrfs search_ioctl()
-has a problem there, but arch/x86/kernel/fpu/signal.c doesn't have to deal
-with that...
+With Andreas' patch, the async part will now return the full return
+value, including the part that was done synchronously.
 
-Sigh...  I really need more coffee...
+And the return value is returned from that async part, which somehow
+thus needs to know what predated it.
+
+Could that pre-existing part perhaps be saved somewhere else? Very
+possibly. That 'struct iomap_dio' addition is kind of ugly. So maybe
+what Andreas did could be done differently. But I think you guys are
+arguing past each other.
+
+           Linus
