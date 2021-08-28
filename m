@@ -2,106 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AD763FA565
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Aug 2021 13:26:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4BC03FA5B8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Aug 2021 14:56:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233954AbhH1L1Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Aug 2021 07:27:25 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:14432 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233861AbhH1L1Y (ORCPT
+        id S234272AbhH1Mtu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Aug 2021 08:49:50 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:38248 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234181AbhH1Mts (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Aug 2021 07:27:24 -0400
-Received: from dggeme766-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4GxZ1p73FnzbdN7;
-        Sat, 28 Aug 2021 19:22:38 +0800 (CST)
-Received: from [10.174.176.245] (10.174.176.245) by
- dggeme766-chm.china.huawei.com (10.3.19.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.8; Sat, 28 Aug 2021 19:26:30 +0800
-Subject: Re: Re: [PATCH v3 0/3] auth_gss: netns refcount leaks when
- use-gss-proxy==1
-To:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Wenbin Zeng <wenbin.zeng@gmail.com>
-CC:     <davem@davemloft.net>, <viro@zeniv.linux.org.uk>,
-        <jlayton@kernel.org>, <trond.myklebust@hammerspace.com>,
-        <anna.schumaker@netapp.com>, <wenbinzeng@tencent.com>,
-        <dsahern@gmail.com>, <nicolas.dichtel@6wind.com>,
-        <willy@infradead.org>, <edumazet@google.com>,
-        <jakub.kicinski@netronome.com>, <tyhicks@canonical.com>,
-        <chuck.lever@oracle.com>, <neilb@suse.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-nfs@vger.kernel.org>
-References: <1556692945-3996-1-git-send-email-wenbinzeng@tencent.com>
- <1560341370-24197-1-git-send-email-wenbinzeng@tencent.com>
- <20190801195346.GA21527@fieldses.org>
-From:   "wanghai (M)" <wanghai38@huawei.com>
-Message-ID: <9cfbd851-81ce-e272-8693-d3430c381c7a@huawei.com>
-Date:   Sat, 28 Aug 2021 19:26:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Sat, 28 Aug 2021 08:49:48 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 950851C0B80; Sat, 28 Aug 2021 14:48:52 +0200 (CEST)
+Date:   Sat, 28 Aug 2021 14:48:52 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     akpm@linux-foundation.org, ccross@google.com,
+        sumit.semwal@linaro.org, mhocko@suse.com, dave.hansen@intel.com,
+        keescook@chromium.org, willy@infradead.org,
+        kirill.shutemov@linux.intel.com, vbabka@suse.cz,
+        hannes@cmpxchg.org, corbet@lwn.net, viro@zeniv.linux.org.uk,
+        rdunlap@infradead.org, kaleshsingh@google.com, peterx@redhat.com,
+        rppt@kernel.org, peterz@infradead.org, catalin.marinas@arm.com,
+        vincenzo.frascino@arm.com, chinwen.chang@mediatek.com,
+        axelrasmussen@google.com, aarcange@redhat.com, jannh@google.com,
+        apopple@nvidia.com, jhubbard@nvidia.com, yuzhao@google.com,
+        will@kernel.org, fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        hughd@google.com, feng.tang@intel.com, jgg@ziepe.ca, guro@fb.com,
+        tglx@linutronix.de, krisman@collabora.com, chris.hyser@oracle.com,
+        pcc@google.com, ebiederm@xmission.com, axboe@kernel.dk,
+        legion@kernel.org, eb@emlix.com, songmuchun@bytedance.com,
+        viresh.kumar@linaro.org, thomascedeno@google.com,
+        sashal@kernel.org, cxfcosmos@gmail.com, linux@rasmusvillemoes.dk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        kernel-team@android.com
+Subject: Re: [PATCH v8 0/3] Anonymous VMA naming patches
+Message-ID: <20210828124852.GA12580@duo.ucw.cz>
+References: <20210827191858.2037087-1-surenb@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20190801195346.GA21527@fieldses.org>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.176.245]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggeme766-chm.china.huawei.com (10.3.19.112)
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
+Content-Disposition: inline
+In-Reply-To: <20210827191858.2037087-1-surenb@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-ÔÚ 2019/8/2 3:53, J. Bruce Fields Ð´µÀ:
-> I lost track, what happened to these patches?
->
-> --b.
->
-> On Wed, Jun 12, 2019 at 08:09:27PM +0800, Wenbin Zeng wrote:
->> This patch series fixes an auth_gss bug that results in netns refcount
->> leaks when use-gss-proxy is set to 1.
->>
->> The problem was found in privileged docker containers with gssproxy service
->> enabled and /proc/net/rpc/use-gss-proxy set to 1, the corresponding
->> struct net->count ends up at 2 after container gets killed, the consequence
->> is that the struct net cannot be freed.
->>
->> It turns out that write_gssp() called gssp_rpc_create() to create a rpc
->> client, this increases net->count by 2; rpcsec_gss_exit_net() is supposed
->> to decrease net->count but it never gets called because its call-path is:
->>          net->count==0 -> cleanup_net -> ops_exit_list -> rpcsec_gss_exit_net
->> Before rpcsec_gss_exit_net() gets called, net->count cannot reach 0, this
->> is a deadlock situation.
->>
->> To fix the problem, we must break the deadlock, rpcsec_gss_exit_net()
->> should move out of the put() path and find another chance to get called,
->> I think nsfs_evict() is a good place to go, when netns inode gets evicted
->> we call rpcsec_gss_exit_net() to free the rpc client, this requires a new
->> callback i.e. evict to be added in struct proc_ns_operations, and add
->> netns_evict() as one of netns_operations as well.
->>
->> v1->v2:
->>   * in nsfs_evict(), move ->evict() in front of ->put()
->> v2->v3:
->>   * rpcsec_gss_evict_net() directly call gss_svc_shutdown_net() regardless
->>     if gssp_clnt is null, this is exactly same to what rpcsec_gss_exit_net()
->>     previously did
->>
->> Wenbin Zeng (3):
->>    nsfs: add evict callback into struct proc_ns_operations
->>    netns: add netns_evict into netns_operations
->>    auth_gss: fix deadlock that blocks rpcsec_gss_exit_net when
->>      use-gss-proxy==1
->>
->>   fs/nsfs.c                      |  2 ++
->>   include/linux/proc_ns.h        |  1 +
->>   include/net/net_namespace.h    |  1 +
->>   net/core/net_namespace.c       | 12 ++++++++++++
->>   net/sunrpc/auth_gss/auth_gss.c |  4 ++--
->>   5 files changed, 18 insertions(+), 2 deletions(-)
->>
->> -- 
->> 1.8.3.1
-These patchsets don't seem to merge into the mainline, are there any 
-other patches that fix this bug?
+--rwEMma7ioTxnRzrJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+>  Documentation/filesystems/proc.rst |   2 +
+
+Documentation for the setting part would be welcome, too.
+
+Best regards,
+							Pavel
+--=20
+http://www.livejournal.com/~pavelmachek
+
+--rwEMma7ioTxnRzrJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYSowtAAKCRAw5/Bqldv6
+8jSvAKCxJZznmRcj1IaqbSg4leIEDn+cXgCfeS9zT/HzkA5sLB+xnKVjT1Id/A0=
+=X0pp
+-----END PGP SIGNATURE-----
+
+--rwEMma7ioTxnRzrJ--
