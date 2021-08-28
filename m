@@ -2,139 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 01BB33FA7A7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Aug 2021 23:29:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E33A43FA7AD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Aug 2021 23:47:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234653AbhH1V32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Aug 2021 17:29:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38182 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232305AbhH1V31 (ORCPT
+        id S232228AbhH1Vr4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Aug 2021 17:47:56 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44508 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230253AbhH1Vr4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Aug 2021 17:29:27 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 808CAC061756;
-        Sat, 28 Aug 2021 14:28:36 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id m4so18209113ljq.8;
-        Sat, 28 Aug 2021 14:28:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XXM23t7nGqJTGllQ0GBo3dDWWAdzVbWZALkyemvhWNo=;
-        b=YO9S1CFPlYJXAsTzQEafWFpbtOf5hUDAUwwUDT6po2a6SrE4m/UaIhw+YovOop+y/8
-         3zEPZWSEpENbiTKkvzsaIqWMkahjmgO5s+mB3dT/j+GtvX58cEEbFW2Mbk99VjPMyYZg
-         mI+W4uJjaEwa83Tue6rQc6P5Rnk/AeUI+U9z1M3+8zxE8R893EoaFLhn/w3SCrQ/xmD8
-         yd1umBxzRx8IaLfLbIcaMf9+mUpQ8v1vT+1WfHDshQgyzWRGCScShh3BJg5puQ/+dgcM
-         FnK1xYckrS5f7Hy0ZzBHagJgEL4g8S31rneCVsFGG8ccwa5CfBAlwpGE/p4AsDetysOv
-         Lojw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XXM23t7nGqJTGllQ0GBo3dDWWAdzVbWZALkyemvhWNo=;
-        b=eIjCx40h5mnmPjfihJp5q3TcHXbY+rYw/TQu+SLkHuNeYk1vQF81J/6K0Mr8c6nlrM
-         XpHLJOe2oSvZsBbyMWlSUbmouRS4a9HTWRu9IF+pKq92fBHxkVXYFiysY6jFN1W/3aH4
-         NcnbvzXWOBuYwdYJ0r0rSC3+kTBhu41PkoyqWLjI9k8fbUtDS/9wQKh/D1PzrAY+0la+
-         fcTlwyvjPoDJQBXAVYcmsMM4k092HQksAsS9U3fgkA+qdMWpnh7LUXEvrRNS0TzcfaGd
-         R8rJnVrG8vmBeOkbjg2ReE1K0DhNEA8NP85zxgxObvUxpBZwdX5yHe2aZZSVU4KBpj93
-         iFHw==
-X-Gm-Message-State: AOAM5307PN8XreOPGTWXKZOUxG9Y25x82gWbbvWUvKzFZeiGquhCA67X
-        2ghv10j9yX+5psdM7UTFtoQ=
-X-Google-Smtp-Source: ABdhPJxEQbKglQZ/sIqsMfNEKtgB/wPaaCRyWOxraQzixjbdnPWF4zSNUzJOVcUYPxwIPDYxrr9jjg==
-X-Received: by 2002:a2e:804a:: with SMTP id p10mr13718369ljg.216.1630186114923;
-        Sat, 28 Aug 2021 14:28:34 -0700 (PDT)
-Received: from grain.localdomain ([5.18.253.97])
-        by smtp.gmail.com with ESMTPSA id bp10sm1045767lfb.130.2021.08.28.14.28.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Aug 2021 14:28:33 -0700 (PDT)
-Received: by grain.localdomain (Postfix, from userid 1000)
-        id D5EE95A001E; Sun, 29 Aug 2021 00:28:32 +0300 (MSK)
-Date:   Sun, 29 Aug 2021 00:28:32 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     akpm@linux-foundation.org, ccross@google.com,
-        sumit.semwal@linaro.org, mhocko@suse.com, dave.hansen@intel.com,
-        keescook@chromium.org, willy@infradead.org,
-        kirill.shutemov@linux.intel.com, vbabka@suse.cz,
-        hannes@cmpxchg.org, corbet@lwn.net, viro@zeniv.linux.org.uk,
-        rdunlap@infradead.org, kaleshsingh@google.com, peterx@redhat.com,
-        rppt@kernel.org, peterz@infradead.org, catalin.marinas@arm.com,
-        vincenzo.frascino@arm.com, chinwen.chang@mediatek.com,
-        axelrasmussen@google.com, aarcange@redhat.com, jannh@google.com,
-        apopple@nvidia.com, jhubbard@nvidia.com, yuzhao@google.com,
-        will@kernel.org, fenghua.yu@intel.com, thunder.leizhen@huawei.com,
-        hughd@google.com, feng.tang@intel.com, jgg@ziepe.ca, guro@fb.com,
-        tglx@linutronix.de, krisman@collabora.com, chris.hyser@oracle.com,
-        pcc@google.com, ebiederm@xmission.com, axboe@kernel.dk,
-        legion@kernel.org, eb@emlix.com, songmuchun@bytedance.com,
-        viresh.kumar@linaro.org, thomascedeno@google.com,
-        sashal@kernel.org, cxfcosmos@gmail.com, linux@rasmusvillemoes.dk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        kernel-team@android.com
-Subject: Re: [PATCH v8 2/3] mm: add a field to store names for private
- anonymous memory
-Message-ID: <YSqqgJ7EC6PO9ggO@grain>
-References: <20210827191858.2037087-1-surenb@google.com>
- <20210827191858.2037087-3-surenb@google.com>
+        Sat, 28 Aug 2021 17:47:56 -0400
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1630187224;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=636wMEgWkaGHM7Xqjl4UaJQCprbJXsUtUL3hOaFl5LE=;
+        b=xo+lADGv3ssFUE3kclN6Zr/5XBSCUKKdydttui2NNRFl14bo2HZlKDXtov53ZTr/ssqfrK
+        QtvNEO0pDYaq8M2LkSXl4la7tP0IshE4PiciNRAvoSDDZ2FAANGgy8KkNn5vMNkyE7D0xm
+        B6TZ66ai54A0KJRuMKOeE0wk4x8kmSITEW3bjR6Q/IBMlc1Sbuq219yCTUqzPfpPrBGaBJ
+        Dg8HkLSwHQhSY+FewSR5EKydC2b/Z2520zuDss3kMlbboMIDHHCWYeWK/I51/0GpkXbVZF
+        w5Y2mqj3j55IcWAwBxadOqHmGHYgi/RLlhn+qgZbVvOpxauQTBsL1ExBsymNmg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1630187224;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=636wMEgWkaGHM7Xqjl4UaJQCprbJXsUtUL3hOaFl5LE=;
+        b=NAaEzdO5CAmmmO+khxg5WLkGgrwVM1AlI3iQ+B3aafBmvWpOPZ/disdLyTZ9GKLcCKkcgp
+        n2w1F3whCtuQ8HDA==
+To:     "Luck, Tony" <tony.luck@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ocfs2-devel@oss.oracle.com, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org
+Subject: Re: [PATCH v7 05/19] iov_iter: Introduce fault_in_iov_iter_writeable
+In-Reply-To: <20210827232246.GA1668365@agluck-desk2.amr.corp.intel.com>
+References: <20210827164926.1726765-1-agruenba@redhat.com>
+ <20210827164926.1726765-6-agruenba@redhat.com>
+ <YSkz025ncjhyRmlB@zeniv-ca.linux.org.uk>
+ <CAHk-=wh5p6zpgUUoY+O7e74X9BZyODhnsqvv=xqnTaLRNj3d_Q@mail.gmail.com>
+ <YSk7xfcHVc7CxtQO@zeniv-ca.linux.org.uk>
+ <CAHk-=wjMyZLH+ta5SohAViSc10iPj-hRnHc-KPDoj1XZCmxdBg@mail.gmail.com>
+ <YSk+9cTMYi2+BFW7@zeniv-ca.linux.org.uk>
+ <YSldx9uhMYhT/G8X@zeniv-ca.linux.org.uk>
+ <YSlftta38M4FsWUq@zeniv-ca.linux.org.uk>
+ <20210827232246.GA1668365@agluck-desk2.amr.corp.intel.com>
+Date:   Sat, 28 Aug 2021 23:47:03 +0200
+Message-ID: <87r1edgs2w.ffs@tglx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210827191858.2037087-3-surenb@google.com>
-User-Agent: Mutt/2.0.7 (2021-05-04)
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 27, 2021 at 12:18:57PM -0700, Suren Baghdasaryan wrote:
-> 
-> The name is stored in a pointer in the shared union in vm_area_struct
-> that points to a null terminated string. Anonymous vmas with the same
-> name (equivalent strings) and are otherwise mergeable will be merged.
-> The name pointers are not shared between vmas even if they contain the
-> same name. The name pointer is stored in a union with fields that are
-> only used on file-backed mappings, so it does not increase memory usage.
-> 
-> The patch is based on the original patch developed by Colin Cross, more
-> specifically on its latest version [1] posted upstream by Sumit Semwal.
-> It used a userspace pointer to store vma names. In that design, name
-> pointers could be shared between vmas. However during the last upstreaming
-> attempt, Kees Cook raised concerns [2] about this approach and suggested
-> to copy the name into kernel memory space, perform validity checks [3]
-> and store as a string referenced from vm_area_struct.
-> One big concern is about fork() performance which would need to strdup
-> anonymous vma names. Dave Hansen suggested experimenting with worst-case
-> scenario of forking a process with 64k vmas having longest possible names
-> [4]. I ran this experiment on an ARM64 Android device and recorded a
-> worst-case regression of almost 40% when forking such a process. This
-> regression is addressed in the followup patch which replaces the pointer
-> to a name with a refcounted structure that allows sharing the name pointer
-> between vmas of the same name. Instead of duplicating the string during
-> fork() or when splitting a vma it increments the refcount.
-> 
-> [1] https://lore.kernel.org/linux-mm/20200901161459.11772-4-sumit.semwal@linaro.org/
-> [2] https://lore.kernel.org/linux-mm/202009031031.D32EF57ED@keescook/
-> [3] https://lore.kernel.org/linux-mm/202009031022.3834F692@keescook/
-> [4] https://lore.kernel.org/linux-mm/5d0358ab-8c47-2f5f-8e43-23b89d6a8e95@intel.com/
-...
-> +
-> +/* mmap_lock should be read-locked */
-> +static inline bool is_same_vma_anon_name(struct vm_area_struct *vma,
-> +					 const char *name)
-> +{
-> +	const char *vma_name = vma_anon_name(vma);
-> +
-> +	if (likely(!vma_name))
-> +		return name == NULL;
-> +
-> +	return name && !strcmp(name, vma_name);
-> +}
+On Fri, Aug 27 2021 at 16:22, Tony Luck wrote:
+> On Fri, Aug 27, 2021 at 09:57:10PM +0000, Al Viro wrote:
+>> On Fri, Aug 27, 2021 at 09:48:55PM +0000, Al Viro wrote:
+>> 
+>> > 	[btrfs]search_ioctl()
+>> > Broken with memory poisoning, for either variant of semantics.  Same for
+>> > arm64 sub-page permission differences, I think.
+>> 
+>> 
+>> > So we have 3 callers where we want all-or-nothing semantics - two in
+>> > arch/x86/kernel/fpu/signal.c and one in btrfs.  HWPOISON will be a problem
+>> > for all 3, AFAICS...
+>> > 
+>> > IOW, it looks like we have two different things mixed here - one that wants
+>> > to try and fault stuff in, with callers caring only about having _something_
+>> > faulted in (most of the users) and one that wants to make sure we *can* do
+>> > stores or loads on each byte in the affected area.
+>> > 
+>> > Just accessing a byte in each page really won't suffice for the second kind.
+>> > Neither will g-u-p use, unless we teach it about HWPOISON and other fun
+>> > beasts...  Looks like we want that thing to be a separate primitive; for
+>> > btrfs I'd probably replace fault_in_pages_writeable() with clear_user()
+>> > as a quick fix for now...
+>> > 
+>> > Comments?
+>> 
+>> Wait a sec...  Wasn't HWPOISON a per-page thing?  arm64 definitely does have
+>> smaller-than-page areas with different permissions, so btrfs search_ioctl()
+>> has a problem there, but arch/x86/kernel/fpu/signal.c doesn't have to deal
+>> with that...
+>> 
+>> Sigh...  I really need more coffee...
+>
+> On Intel poison is tracked at the cache line granularity. Linux
+> inflates that to per-page (because it can only take a whole page away).
+> For faults triggered in ring3 this is pretty much the same thing because
+> mm/memory_failure.c unmaps the page ... so while you see a #MC on first
+> access, you get #PF when you retry. The x86 fault handler sees a magic
+> signature in the page table and sends a SIGBUS.
+>
+> But it's all different if the #MC is triggerd from ring0. The machine
+> check handler can't unmap the page. It just schedules task_work to do
+> the unmap when next returning to the user.
+>
+> But if your kernel code loops and tries again without a return to user,
+> then your get another #MC.
 
-Hi Suren! There is very important moment with this new feature: if
-we assign a name to some VMA it won't longer be mergeable even if
-near VMA matches by all other attributes such as flags, permissions
-and etc. I mean our vma_merge() start considering the vma namings
-and names mismatch potentially blocks merging which happens now
-without this new feature. Is it known behaviour or I miss something
-pretty obvious here?
+But that's not the case for restore_fpregs_from_user() when it hits #MC.
+
+restore_fpregs_from_user()
+  ...
+  ret = __restore_fpregs_from_user(buf, xrestore, fx_only)
+  
+  /* Try to handle #PF, but anything else is fatal. */
+  if (ret != -EFAULT)
+     return -EINVAL;
+
+Now let's look at __restore_fpregs_from_user()
+
+__restore_fpregs_from_user()
+   return $FPUVARIANT_rstor_from_user_sigframe()
+
+which all end up in user_insn(). user_insn() returns 0 or the negated
+trap number, which results in -EFAULT for #PF, but for #MC the negated
+trap number is -18 i.e. != -EFAULT. IOW, there is no endless loop.
+
+This used to be a problem before commit:
+
+  aee8c67a4faa ("x86/fpu: Return proper error codes from user access functions")
+
+and as the changelog says the initial reason for this was #GP going into
+the fault path, but I'm pretty sure that I also discussed the #MC angle with
+Borislav back then. Should have added some more comments there
+obviously.
+
+Thanks,
+
+        tglx
+
