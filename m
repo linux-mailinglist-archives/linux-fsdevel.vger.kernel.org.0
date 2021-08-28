@@ -2,248 +2,284 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 018833FA65D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Aug 2021 17:04:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDCBB3FA66F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Aug 2021 17:21:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234274AbhH1PFE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Aug 2021 11:05:04 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29446 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230271AbhH1PFE (ORCPT
+        id S230290AbhH1PWf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Aug 2021 11:22:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42890 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230009AbhH1PWf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Aug 2021 11:05:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630163053;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wglBM2MJS2lBJlgPHQBwj1WY2WdgpcdiWGWzu/KrEVc=;
-        b=fBycUlj4zj7GNEirrbuStbeuQAlv1valqVlTors8xFQ6HcMd5Jh/QegxQOn/R8H6bep18z
-        ZATndREgDwEWJS+dEI1hcJmxiBeiCoz9WDORIRbvDZogomjLyguMSdKMamI0DvVrSSAu1b
-        uJXZqLAh7FobIIxQYsrgtOagystGMwY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-267-lyzpeIZ6MuKCbueB33J4iQ-1; Sat, 28 Aug 2021 11:04:09 -0400
-X-MC-Unique: lyzpeIZ6MuKCbueB33J4iQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D44EF1082923;
-        Sat, 28 Aug 2021 15:04:07 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A02AE18428;
-        Sat, 28 Aug 2021 15:03:59 +0000 (UTC)
-Date:   Sat, 28 Aug 2021 11:03:56 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to
- io_uring
-Message-ID: <20210828150356.GH490529@madcap2.tricolour.ca>
-References: <162871480969.63873.9434591871437326374.stgit@olly>
- <20210824205724.GB490529@madcap2.tricolour.ca>
- <20210826011639.GE490529@madcap2.tricolour.ca>
- <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
- <20210826163230.GF490529@madcap2.tricolour.ca>
- <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
- <20210827133559.GG490529@madcap2.tricolour.ca>
- <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
+        Sat, 28 Aug 2021 11:22:35 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C29BC061756
+        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Aug 2021 08:21:44 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id t19so20595403ejr.8
+        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Aug 2021 08:21:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=b9Flv9Y2FE/C1eEICXU/BQJh4wynAJmPbsAicXerMx0=;
+        b=IY0qZegw+YgoZpCHdNTcdlYBtXzV/pY8hJPZh9Q/bzkS5pwiYZcTnpe76Q92+Rx4YA
+         FkOMxsX7gFnM07x5iclIjKVCmo0nrqiXVzmKXuMOt0QFWihMSaXLrSFO8rgxMjneH5nT
+         EEhU0OmF+9BWrSdImYfGBJPvMOUXGwHhQSy8E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=b9Flv9Y2FE/C1eEICXU/BQJh4wynAJmPbsAicXerMx0=;
+        b=djNTXajXCKz9J0SIo41RIz7M64V+capjVOGrf0TrzkpvqlUNrfZi39x1cG5eGOCtd6
+         NIv/O9orQBoAFuoc+Wa1iIiXWBjH3NCNjc1bYwtEtCtZK+DCAsA/KsjJYNxdQ660//65
+         1t2BIGIRt6TRLTITsVVVqHGiu6MJgItbUDeDUC2F7qv/Eobdhqsa29PInaSdxrtjDB5J
+         z9pcETX7z9WQ84acHFvhxigo8a0qqThL0Zwq1Hz+q35GN3/61ZKqle0URnt4ZVQEPmwY
+         JV0bLWo5lMK9uYxLe1g4oyu+X4gGr6Xx49PFt15PaOC0T0HNrB1lE8xtEV7yXbq1Qy5q
+         7eug==
+X-Gm-Message-State: AOAM530ahrNyvDEEkFVUSNo+fILqBQDoPXCS/vjO2OCFXalp+xDDKkGk
+        JX+lJ+VkF8lrcegr6cisRAwcig==
+X-Google-Smtp-Source: ABdhPJytqGya3ZSBFRoMJJzXKnq6fXTWlwnTk7fkU+UnrUKWCF/4S2koSosseFI6cPKtlxcBvlOpXA==
+X-Received: by 2002:a17:906:8468:: with SMTP id hx8mr15547005ejc.492.1630164102641;
+        Sat, 28 Aug 2021 08:21:42 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (catv-86-101-169-16.catv.broadband.hu. [86.101.169.16])
+        by smtp.gmail.com with ESMTPSA id lz19sm4351114ejb.40.2021.08.28.08.21.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Aug 2021 08:21:42 -0700 (PDT)
+Date:   Sat, 28 Aug 2021 17:21:39 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>, Greg Kurz <groug@kaod.org>,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Max Reitz <mreitz@redhat.com>, Robert Krawitz <rlk@redhat.com>
+Subject: Re: [PATCH v4 5/5] virtiofs: propagate sync() to file server
+Message-ID: <YSpUgzG8rM5LeFDy@miu.piliscsaba.redhat.com>
+References: <20210520154654.1791183-1-groug@kaod.org>
+ <20210520154654.1791183-6-groug@kaod.org>
+ <CAOQ4uxh69ii5Yk-DgFAq+TrrvJ6xCv9s8sKLfo3aBCSWjJvp9Q@mail.gmail.com>
+ <YRqEPjzHg9IlifBo@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="45Z9DzgjV8m4Oswq"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <YRqEPjzHg9IlifBo@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Aug 16, 2021 at 11:29:02AM -0400, Vivek Goyal wrote:
+> On Sun, Aug 15, 2021 at 05:14:06PM +0300, Amir Goldstein wrote:
 
---45Z9DzgjV8m4Oswq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On 2021-08-27 15:49, Paul Moore wrote:
-> On Fri, Aug 27, 2021 at 9:36 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2021-08-26 15:14, Paul Moore wrote:
-> > > On Thu, Aug 26, 2021 at 12:32 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > I'm getting:
-> > > >         # ./iouring.2
-> > > >         Kernel thread io_uring-sq is not running.
-> > > >         Unable to setup io_uring: Permission denied
-> > > >
-> > > >         # ./iouring.3s
-> > > >         >>> server started, pid = 2082
-> > > >         >>> memfd created, fd = 3
-> > > >         io_uring_queue_init: Permission denied
-> > > >
-> > > > I have CONFIG_IO_URING=y set, what else is needed?
-> > >
-> > > I'm not sure how you tried to run those tests, but try running as root
-> > > and with SELinux in permissive mode.
-> >
-> > Ok, they ran, including iouring.4.  iouring.2 claimed twice: "Kernel
-> > thread io_uring-sq is not running." and I didn't get any URING records
-> > with ausearch.  I don't know if any of this is expected.
+> > I wonder - even if the server does not support SYNCFS or if the kernel
+> > does not trust the server with SYNCFS, fuse_sync_fs() can wait
+> > until all pending requests up to this call have been completed, either
+> > before or after submitting the SYNCFS request. No?
 > 
-> Now that I've written iouring.4, I would skip the others; while
-> helpful at the time, they are pretty crap.
+> > 
+> > Does virtiofsd track all requests prior to SYNCFS request to make
+> > sure that they were executed on the host filesystem before calling
+> > syncfs() on the host filesystem?
+> 
+> Hi Amir,
+> 
+> I don't think virtiofsd has any such notion. I would think, that
+> client should make sure all pending writes have completed and
+> then send SYNCFS request.
+> 
+> Looking at the sync_filesystem(), I am assuming vfs will take care
+> of flushing out all dirty pages and then call ->sync_fs.
+> 
+> Having said that, I think fuse queues the writeback request internally
+> and signals completion of writeback to mm(end_page_writeback()). And
+> that's why fuse_fsync() has notion of waiting for all pending
+> writes to finish on an inode (fuse_sync_writes()).
+> 
+> So I think you have raised a good point. That is if there are pending
+> writes at the time of syncfs(), we don't seem to have a notion of
+> first waiting for all these writes to finish before we send
+> FUSE_SYNCFS request to server.
 
-Ok.
+So here a proposed patch for fixing this.  Works by counting write requests
+initiated up till the syncfs call.  Since more than one syncfs can be in
+progress counts are kept in "buckets" in order to wait for the correct write
+requests in each instance.
 
-> I have no idea what kernel you are running, but I'm going to assume
-> you've applied the v2 patches (if not, you obviously need to do that
-> <g>).  Beyond that you may need to set a filter for the
-> io_uring_enter() syscall to force the issue; theoretically your audit
-> userspace patches should allow a uring op specifically to be filtered
-> but I haven't had a chance to try that yet so either the kernel or
-> userspace portion could be broken.
+I tried to make this lightweight, but the cacheline bounce due to the counter is
+still there, unfortunately.  fc->num_waiting also causes cacheline bouce, so I'm
+not going to optimize this (percpu counter?) until that one is also optimizied.
 
-I'm running audit/next (on 5.14-rc1) with your v2 patches.
+Not yet tested, and I'm not sure how to test this.
 
-I did set a syscall filter for
-	-a exit,always -F arch=b64 -S io_uring_enter,io_uring_setup,io_uring_register -F key=iouringsyscall
-and that yielded some records with a couple of orphans that surprised me
-a bit.  I've attached that log.  I was a bit surprised there were no
-records for ./iouring.3*.
+Comments?
 
-I'm now testing the new "-a uring,always -U ..." to get that userspace
-code working as expected...
+Thanks,
+Miklos
 
-> At this point if you are running into problems you'll probably need to
-> spend some time debugging them, as I think you're the only person who
-> has tested your audit userspace patches at this point (and the only
-> one who has access to your latest bits).
 
-Yes, I'll do some basic debugging and then publish to avoid wasting
-people's time on silly bugs, but to get help on the more serious ones.
-
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
---45Z9DzgjV8m4Oswq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="audit.log-2021-08-27-1"
-
-----
-type=PROCTITLE msg=audit(2021-08-27 16:41:56.190:328) : proctitle=auditctl -a exit,always -F arch b64 -S io_uring_enter,io_uring_setup,io_uring_register -F key=iouringsyscall 
-type=SYSCALL msg=audit(2021-08-27 16:41:56.190:328) : arch=x86_64 syscall=sendto success=yes exit=1072 a0=0x4 a1=0x7ffff3e0dc10 a2=0x430 a3=0x0 items=0 ppid=543 pid=12433 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=auditctl exe=/usr/sbin/auditctl subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=(null) 
-type=CONFIG_CHANGE msg=audit(2021-08-27 16:41:56.190:328) : auid=root ses=1 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 op=add_rule key=iouringsyscall list=exit res=yes 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:22.032:329) : proctitle=./iouring.2 
-type=SYSCALL msg=audit(2021-08-27 16:42:22.032:329) : arch=x86_64 syscall=io_uring_setup success=yes exit=3 a0=0x8 a1=0x7fff6037b890 a2=0x7f38ee9de7a7 a3=0x3 items=0 ppid=543 pid=12437 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.2 exe=/root/rgb/testing/iouring/iouring.2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:22.034:330) : proctitle=./iouring.2 
-type=MMAP msg=audit(2021-08-27 16:42:22.034:330) : fd=3 flags=MAP_SHARED|MAP_POPULATE 
-type=SYSCALL msg=audit(2021-08-27 16:42:22.034:330) : arch=x86_64 syscall=mmap success=yes exit=139882499366912 a0=0x0 a1=0x260 a2=PROT_READ|PROT_WRITE a3=MAP_SHARED|MAP_POPULATE items=0 ppid=543 pid=12437 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.2 exe=/root/rgb/testing/iouring/iouring.2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=(null) 
-type=AVC msg=audit(2021-08-27 16:42:22.034:330) : avc:  denied  { write } for  pid=12437 comm=iouring.2 path=anon_inode:[io_uring] dev="anon_inodefs" ino=26726 scontext=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 tcontext=unconfined_u:object_r:unconfined_t:s0 tclass=anon_inode permissive=1 
-type=AVC msg=audit(2021-08-27 16:42:22.034:330) : avc:  denied  { map } for  pid=12437 comm=iouring.2 path=anon_inode:[io_uring] dev="anon_inodefs" ino=26726 scontext=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 tcontext=unconfined_u:object_r:unconfined_t:s0 tclass=anon_inode permissive=1 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:22.036:331) : proctitle=./iouring.2 
-type=SYSCALL msg=audit(2021-08-27 16:42:22.036:331) : arch=x86_64 syscall=io_uring_register success=yes exit=0 a0=0x3 a1=0x2 a2=0x7fff6037b854 a3=0x1 items=0 ppid=543 pid=12437 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.2 exe=/root/rgb/testing/iouring/iouring.2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:22.037:332) : proctitle=./iouring.2 
-type=SYSCALL msg=audit(2021-08-27 16:42:22.037:332) : arch=x86_64 syscall=io_uring_enter success=yes exit=2 a0=0x3 a1=0x2 a2=0x0 a3=0x2 items=0 ppid=543 pid=12437 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.2 exe=/root/rgb/testing/iouring/iouring.2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:22.037:333) : proctitle=./iouring.2 
-type=SYSCALL msg=audit(2021-08-27 16:42:22.037:333) : arch=x86_64 syscall=io_uring_enter success=yes exit=0 a0=0x3 a1=0x0 a2=0x1 a3=0x1 items=0 ppid=543 pid=12437 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.2 exe=/root/rgb/testing/iouring/iouring.2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:22.038:334) : proctitle=./iouring.2 
-type=SYSCALL msg=audit(2021-08-27 16:42:22.038:334) : arch=x86_64 syscall=io_uring_enter success=yes exit=0 a0=0x3 a1=0x0 a2=0x1 a3=0x1 items=0 ppid=543 pid=12437 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.2 exe=/root/rgb/testing/iouring/iouring.2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:22.084:335) : proctitle=./iouring.2 
-type=SYSCALL msg=audit(2021-08-27 16:42:22.084:335) : arch=x86_64 syscall=io_uring_enter success=yes exit=0 a0=0x3 a1=0x0 a2=0x1 a3=0x1 items=0 ppid=543 pid=12437 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.2 exe=/root/rgb/testing/iouring/iouring.2 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:30.624:336) : proctitle=./iouring.4 sqpoll 
-type=SYSCALL msg=audit(2021-08-27 16:42:30.624:336) : arch=x86_64 syscall=io_uring_setup success=yes exit=4 a0=0x8 a1=0x7fefe5ac10d8 a2=0x7fefe5ac10d8 a3=0x3 items=0 ppid=543 pid=12447 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:30.625:337) : proctitle=./iouring.4 sqpoll 
-type=SYSCALL msg=audit(2021-08-27 16:42:30.625:337) : arch=x86_64 syscall=io_uring_register success=yes exit=1 a0=0x4 a1=0x9 a2=0x0 a3=0x0 items=0 ppid=543 pid=12447 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:30.626:338) : proctitle=./iouring.4 sqpoll 
-type=SYSCALL msg=audit(2021-08-27 16:42:30.626:338) : arch=x86_64 syscall=io_uring_enter success=yes exit=1 a0=0x4 a1=0x1 a2=0x0 a3=0x2 items=0 ppid=543 pid=12447 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:30.627:341) : proctitle=./iouring.4 sqpoll 
-type=SYSCALL msg=audit(2021-08-27 16:42:30.627:341) : arch=x86_64 syscall=io_uring_enter success=yes exit=0 a0=0x4 a1=0x0 a2=0x1 a3=0x1 items=0 ppid=543 pid=12447 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=URINGOP msg=audit(2021-08-27 16:42:30.628:339) : uring_op=18 success=no exit=EAGAIN(Resource temporarily unavailable) items=0 ppid=543 pid=12447 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=(null) 
-----
-type=PATH msg=audit(2021-08-27 16:42:30.628:340) : item=1 name=/tmp/iouring.4.txt inode=33 dev=00:1f mode=file,644 ouid=root ogid=root rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=NORMAL cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 cap_frootid=0 
-type=PATH msg=audit(2021-08-27 16:42:30.628:340) : item=0 name=/tmp/ inode=1 dev=00:1f mode=dir,sticky,777 ouid=root ogid=root rdev=00:00 obj=system_u:object_r:tmp_t:s0 nametype=PARENT cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 cap_frootid=0 
-type=CWD msg=audit(2021-08-27 16:42:30.628:340) : cwd=/root/rgb/testing/iouring 
-type=URINGOP msg=audit(2021-08-27 16:42:30.628:340) : uring_op=18 success=yes exit=0 items=2 ppid=543 pid=12447 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=(null) 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:30.629:342) : proctitle=./iouring.4 sqpoll 
-type=SYSCALL msg=audit(2021-08-27 16:42:30.629:342) : arch=x86_64 syscall=io_uring_register success=yes exit=0 a0=0x4 a1=0x2 a2=0x7ffff75290a8 a3=0x1 items=0 ppid=543 pid=12447 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:30.629:343) : proctitle=./iouring.4 sqpoll 
-type=SYSCALL msg=audit(2021-08-27 16:42:30.629:343) : arch=x86_64 syscall=io_uring_enter success=yes exit=0 a0=0x4 a1=0x0 a2=0x1 a3=0x1 items=0 ppid=543 pid=12447 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:30.631:344) : proctitle=./iouring.4 sqpoll 
-type=SYSCALL msg=audit(2021-08-27 16:42:30.631:344) : arch=x86_64 syscall=io_uring_enter success=yes exit=0 a0=0x4 a1=0x0 a2=0x1 a3=0x1 items=0 ppid=543 pid=12447 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:30.632:346) : proctitle=./iouring.4 sqpoll 
-type=SYSCALL msg=audit(2021-08-27 16:42:30.632:346) : arch=x86_64 syscall=io_uring_enter success=yes exit=0 a0=0x4 a1=0x0 a2=0x1 a3=0x1 items=0 ppid=543 pid=12447 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=URINGOP msg=audit(2021-08-27 16:42:30.633:345) : uring_op=19 success=yes exit=0 items=0 ppid=543 pid=12447 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=(null) 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:30.634:347) : proctitle=./iouring.4 sqpoll 
-type=SYSCALL msg=audit(2021-08-27 16:42:30.634:347) : arch=x86_64 syscall=io_uring_register success=yes exit=0 a0=0x4 a1=0x3 a2=0x0 a3=0x0 items=0 ppid=543 pid=12447 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:36.895:348) : proctitle=./iouring.4 t1 
-type=SYSCALL msg=audit(2021-08-27 16:42:36.895:348) : arch=x86_64 syscall=io_uring_setup success=yes exit=4 a0=0x8 a1=0x7fcaf2b8a0d8 a2=0x7fcaf2b8a0d8 a3=0x3 items=0 ppid=543 pid=12451 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:36.896:349) : proctitle=./iouring.4 t1 
-type=SYSCALL msg=audit(2021-08-27 16:42:36.896:349) : arch=x86_64 syscall=io_uring_register success=yes exit=1 a0=0x4 a1=0x9 a2=0x0 a3=0x0 items=0 ppid=543 pid=12451 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:36.902:350) : proctitle=./iouring.4 t1_child 
-type=PATH msg=audit(2021-08-27 16:42:36.902:350) : item=0 name=/tmp/iouring.4.txt nametype=UNKNOWN cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 cap_frootid=0 
-type=CWD msg=audit(2021-08-27 16:42:36.902:350) : cwd=/root/rgb/testing/iouring 
-type=SYSCALL msg=audit(2021-08-27 16:42:36.902:350) : arch=x86_64 syscall=io_uring_enter success=yes exit=1 a0=0x4 a1=0x1 a2=0x0 a3=0x0 items=1 ppid=12451 pid=12452 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-type=URINGOP msg=audit(2021-08-27 16:42:36.902:350) : uring_op=18 items=1 ppid=12451 pid=12452 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PATH msg=audit(2021-08-27 16:42:36.902:351) : item=0 name=/tmp/iouring.4.txt inode=33 dev=00:1f mode=file,644 ouid=root ogid=root rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=NORMAL cap_fp=none cap_fi=none cap_fe=0 cap_fver=0 cap_frootid=0 
-type=CWD msg=audit(2021-08-27 16:42:36.902:351) : cwd=/root/rgb/testing/iouring 
-type=URINGOP msg=audit(2021-08-27 16:42:36.902:351) : uring_op=18 success=yes exit=0 items=1 ppid=12451 pid=12452 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=(null) 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:36.902:352) : proctitle=./iouring.4 t1_child 
-type=SYSCALL msg=audit(2021-08-27 16:42:36.902:352) : arch=x86_64 syscall=io_uring_enter success=yes exit=0 a0=0x4 a1=0x0 a2=0x1 a3=0x1 items=0 ppid=12451 pid=12452 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:36.902:353) : proctitle=./iouring.4 t1_child 
-type=SYSCALL msg=audit(2021-08-27 16:42:36.902:353) : arch=x86_64 syscall=io_uring_register success=yes exit=0 a0=0x4 a1=0x2 a2=0x7ffc0645bcb8 a3=0x1 items=0 ppid=12451 pid=12452 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:36.903:354) : proctitle=./iouring.4 t1_child 
-type=SYSCALL msg=audit(2021-08-27 16:42:36.903:354) : arch=x86_64 syscall=io_uring_enter success=yes exit=1 a0=0x4 a1=0x1 a2=0x0 a3=0x0 items=0 ppid=12451 pid=12452 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:36.903:355) : proctitle=./iouring.4 t1_child 
-type=SYSCALL msg=audit(2021-08-27 16:42:36.903:355) : arch=x86_64 syscall=io_uring_enter success=yes exit=0 a0=0x4 a1=0x0 a2=0x1 a3=0x1 items=0 ppid=12451 pid=12452 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:36.903:356) : proctitle=./iouring.4 t1_child 
-type=SYSCALL msg=audit(2021-08-27 16:42:36.903:356) : arch=x86_64 syscall=io_uring_enter success=yes exit=1 a0=0x4 a1=0x1 a2=0x0 a3=0x0 items=0 ppid=12451 pid=12452 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:36.903:357) : proctitle=./iouring.4 t1_child 
-type=SYSCALL msg=audit(2021-08-27 16:42:36.903:357) : arch=x86_64 syscall=io_uring_enter success=yes exit=0 a0=0x4 a1=0x0 a2=0x1 a3=0x1 items=0 ppid=12451 pid=12452 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:36.904:358) : proctitle=./iouring.4 t1_child 
-type=SYSCALL msg=audit(2021-08-27 16:42:36.904:358) : arch=x86_64 syscall=io_uring_enter success=yes exit=1 a0=0x4 a1=0x1 a2=0x0 a3=0x0 items=0 ppid=12451 pid=12452 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-type=URINGOP msg=audit(2021-08-27 16:42:36.904:358) : uring_op=19 items=0 ppid=12451 pid=12452 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-type=PROCTITLE msg=audit(2021-08-27 16:42:36.904:359) : proctitle=./iouring.4 t1_child 
-type=SYSCALL msg=audit(2021-08-27 16:42:36.904:359) : arch=x86_64 syscall=io_uring_register success=yes exit=0 a0=0x4 a1=0x3 a2=0x0 a3=0x0 items=0 ppid=12451 pid=12452 auid=root uid=root gid=root euid=root suid=root fsuid=root egid=root sgid=root fsgid=root tty=ttyS0 ses=1 comm=iouring.4 exe=/root/rgb/testing/iouring/iouring.4 subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key=iouringsyscall 
-----
-
---45Z9DzgjV8m4Oswq--
-
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 97f860cfc195..8d1d6e895534 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -389,6 +389,7 @@ struct fuse_writepage_args {
+ 	struct list_head queue_entry;
+ 	struct fuse_writepage_args *next;
+ 	struct inode *inode;
++	struct fuse_sync_bucket *bucket;
+ };
+ 
+ static struct fuse_writepage_args *fuse_find_writeback(struct fuse_inode *fi,
+@@ -1608,6 +1609,9 @@ static void fuse_writepage_free(struct fuse_writepage_args *wpa)
+ 	struct fuse_args_pages *ap = &wpa->ia.ap;
+ 	int i;
+ 
++	if (wpa->bucket && atomic_dec_and_test(&wpa->bucket->num_writepages))
++		wake_up(&wpa->bucket->waitq);
++
+ 	for (i = 0; i < ap->num_pages; i++)
+ 		__free_page(ap->pages[i]);
+ 
+@@ -1871,6 +1875,19 @@ static struct fuse_writepage_args *fuse_writepage_args_alloc(void)
+ 
+ }
+ 
++static void fuse_writepage_add_to_bucket(struct fuse_conn *fc,
++					 struct fuse_writepage_args *wpa)
++{
++	if (!fc->sync_fs)
++		return;
++
++	rcu_read_lock();
++	do {
++		wpa->bucket = rcu_dereference(fc->curr_bucket);
++	} while (unlikely(!atomic_inc_not_zero(&wpa->bucket->num_writepages)));
++	rcu_read_unlock();
++}
++
+ static int fuse_writepage_locked(struct page *page)
+ {
+ 	struct address_space *mapping = page->mapping;
+@@ -1898,6 +1915,7 @@ static int fuse_writepage_locked(struct page *page)
+ 	if (!wpa->ia.ff)
+ 		goto err_nofile;
+ 
++	fuse_writepage_add_to_bucket(fc, wpa);
+ 	fuse_write_args_fill(&wpa->ia, wpa->ia.ff, page_offset(page), 0);
+ 
+ 	copy_highpage(tmp_page, page);
+@@ -2148,6 +2166,8 @@ static int fuse_writepages_fill(struct page *page,
+ 			__free_page(tmp_page);
+ 			goto out_unlock;
+ 		}
++		fuse_writepage_add_to_bucket(fc, wpa);
++
+ 		data->max_pages = 1;
+ 
+ 		ap = &wpa->ia.ap;
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 07829ce78695..ee638e227bb3 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -515,6 +515,14 @@ struct fuse_fs_context {
+ 	void **fudptr;
+ };
+ 
++struct fuse_sync_bucket {
++	atomic_t num_writepages;
++	union {
++		wait_queue_head_t waitq;
++		struct rcu_head rcu;
++	};
++};
++
+ /**
+  * A Fuse connection.
+  *
+@@ -807,6 +815,9 @@ struct fuse_conn {
+ 
+ 	/** List of filesystems using this connection */
+ 	struct list_head mounts;
++
++	/* New writepages go into this bucket */
++	struct fuse_sync_bucket *curr_bucket;
+ };
+ 
+ /*
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index b9beb39a4a18..524b2d128985 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -506,10 +506,24 @@ static int fuse_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	return err;
+ }
+ 
++static struct fuse_sync_bucket *fuse_sync_bucket_alloc(void)
++{
++	struct fuse_sync_bucket *bucket;
++
++	bucket = kzalloc(sizeof(*bucket), GFP_KERNEL | __GFP_NOFAIL);
++	if (bucket) {
++		init_waitqueue_head(&bucket->waitq);
++		/* Initial active count */
++		atomic_set(&bucket->num_writepages, 1);
++	}
++	return bucket;
++}
++
+ static int fuse_sync_fs(struct super_block *sb, int wait)
+ {
+ 	struct fuse_mount *fm = get_fuse_mount_super(sb);
+ 	struct fuse_conn *fc = fm->fc;
++	struct fuse_sync_bucket *bucket, *new_bucket;
+ 	struct fuse_syncfs_in inarg;
+ 	FUSE_ARGS(args);
+ 	int err;
+@@ -528,6 +542,31 @@ static int fuse_sync_fs(struct super_block *sb, int wait)
+ 	if (!fc->sync_fs)
+ 		return 0;
+ 
++	new_bucket = fuse_sync_bucket_alloc();
++	spin_lock(&fc->lock);
++	bucket = fc->curr_bucket;
++	if (atomic_read(&bucket->num_writepages) != 0) {
++		/* One more for count completion of old bucket */
++		atomic_inc(&new_bucket->num_writepages);
++		rcu_assign_pointer(fc->curr_bucket, new_bucket);
++		/* Drop initially added active count */
++		atomic_dec(&bucket->num_writepages);
++		spin_unlock(&fc->lock);
++
++		wait_event(bucket->waitq, atomic_read(&bucket->num_writepages) == 0);
++		/*
++		 * Drop count on new bucket, possibly resulting in a completion
++		 * if more than one syncfs is going on
++		 */
++		if (atomic_dec_and_test(&new_bucket->num_writepages))
++			wake_up(&new_bucket->waitq);
++		kfree_rcu(bucket, rcu);
++	} else {
++		spin_unlock(&fc->lock);
++		/* Free unused */
++		kfree(new_bucket);
++	}
++
+ 	memset(&inarg, 0, sizeof(inarg));
+ 	args.in_numargs = 1;
+ 	args.in_args[0].size = sizeof(inarg);
+@@ -770,6 +809,7 @@ void fuse_conn_put(struct fuse_conn *fc)
+ 			fiq->ops->release(fiq);
+ 		put_pid_ns(fc->pid_ns);
+ 		put_user_ns(fc->user_ns);
++		kfree_rcu(fc->curr_bucket, rcu);
+ 		fc->release(fc);
+ 	}
+ }
+@@ -1418,6 +1458,7 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+ 	if (sb->s_flags & SB_MANDLOCK)
+ 		goto err;
+ 
++	fc->curr_bucket = fuse_sync_bucket_alloc();
+ 	fuse_sb_defaults(sb);
+ 
+ 	if (ctx->is_bdev) {
