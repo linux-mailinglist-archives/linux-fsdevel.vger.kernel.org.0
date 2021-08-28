@@ -2,156 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDF403FA747
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Aug 2021 21:15:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4BD73FA751
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Aug 2021 21:27:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231315AbhH1TF3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Aug 2021 15:05:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35184 "EHLO
+        id S231186AbhH1T2Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Aug 2021 15:28:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230014AbhH1TF1 (ORCPT
+        with ESMTP id S230360AbhH1T2Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Aug 2021 15:05:27 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17C8AC061756;
-        Sat, 28 Aug 2021 12:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=TuHgCRXfj8vRtIl2JCrQ2TAdDZ4HQm6n8/xX2K1UOSw=; b=XD2wEWxFFz9GVLE/bKHQCVY6ZB
-        bEqI392gY7gLHgdyf1aCDCqtlhRNRpawo6Rn20HShARD+/ZvnuBRMFEZjVfaDXvbrFD/h7LP0e6O5
-        iSs/XepkPwoQ/h3xLrxvhIdl/kQu7nKwE8yOw/lJJV2Y3Kw5iGgczWbpljRmGwKlAYrYbm2QuHmOl
-        3PLca63gFFAYJ62Hy1bOSx5GK67aQZjNDefpL+onEyuku+scKS11pxAQuLLmLhT2vx9dbxTwT+Glq
-        CKclkP/5wjkeaPDlamGm/Bm5+ZaloAZAI7yZyMfBDnMB8NByu7SxTZnQ3fBNJKtGuHTJeQTV2Yuav
-        wHzoLNPw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mK3cl-00Fm3g-4m; Sat, 28 Aug 2021 19:04:19 +0000
-Date:   Sat, 28 Aug 2021 20:04:15 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>,
+        Sat, 28 Aug 2021 15:28:24 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77448C061756
+        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Aug 2021 12:27:33 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id y23so9209440pgi.7
+        for <linux-fsdevel@vger.kernel.org>; Sat, 28 Aug 2021 12:27:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=pD4CPzXrcDO1ndsla+7M+YU0IOveDPUoeGSLQhEuSzU=;
+        b=ANdSm2CKlWlRBh5vwq6Z9GjvKj0dCxGb4of/ThI0DxB7wgYZc6pvj+dh6DntTrV9IJ
+         zlo8/sFQRrSqFEpsBsLUVG5sNfxYXXbVthFWrrTsqkmsVk547mD4MXThvOvvmklrlNkf
+         ZcTlBk9U9znL6sWQQyXgLTkthaUveW0ww3JkKR46IkCjtOeTEh6bXStX/Yf0jUblWWIK
+         ubvXqJvJWMn7UMyF30RIAxF8JZElPmR+ZMlDnKPdV2kBDfQngxO4MAIuQuV2XY/tzJ3+
+         5zjCv0LAcLUbk40e/FT9NgVrVJs5opKFAnmaEgluIiysLK7XHC+klMLjq+FdC5abIhxW
+         DdaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=pD4CPzXrcDO1ndsla+7M+YU0IOveDPUoeGSLQhEuSzU=;
+        b=ZR0JP7SzuVBW3Mg/E7uEOrotgA/cxk2XvwKKtWlGJNMoAH5hdeXEwbJiiXRzBWrd2S
+         z5i0m+PkghrMPDEtpY+lDn1lwN81DvZBUR/h8uxlLiTvEZvwfJMyDkgc9mYc0xrBhTjd
+         1gnL2I4aduf0DCHcjVmsChT1kXSS0SI/DLh8XRa6KZhpNsMxoJkntbowQWO3/YTld9hR
+         LeTjTuj/t22MFBI8lsg0gqwZ4GAaDOWfaHWjIrlKJhdi4YV0TWswXqIye/vIdyzfk0Bq
+         VV4wGcluW6YVwZEANyuvNFfRK1R06qjE3keiaJ2TKjCxWZCeZBQjeBKGl94ZD4BnR6xf
+         9BcA==
+X-Gm-Message-State: AOAM532yJ+wiAEcE1oV+Z5YS7tI78spcMR5UrJ9wpFv7KFXlc8d+1Vhs
+        BS1xAgdkooPNQN6sBOJ82iW8jQ==
+X-Google-Smtp-Source: ABdhPJyfNbe6hI0l0W/fJsQ9ouv9w9304gKlk8alUzmmjl2hHeYxYZdKxPBiMQrk7EVukWryDY9l1A==
+X-Received: by 2002:a62:aa15:0:b0:3fb:9dd6:a95f with SMTP id e21-20020a62aa15000000b003fb9dd6a95fmr2549268pff.76.1630178852956;
+        Sat, 28 Aug 2021 12:27:32 -0700 (PDT)
+Received: from cabot.adilger.int (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
+        by smtp.gmail.com with ESMTPSA id d20sm9709256pfu.36.2021.08.28.12.27.30
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 28 Aug 2021 12:27:31 -0700 (PDT)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <1FC3646C-259F-4AA4-B7E0-B13E19EDC595@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_6AEDCF03-E4CC-4258-B9ED-99A286279AC7";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: Discontiguous folios/pagesets
+Date:   Sat, 28 Aug 2021 13:27:29 -0600
+In-Reply-To: <YSqIry5dKg+kqAxJ@casper.infradead.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Discontiguous folios/pagesets
-Message-ID: <YSqIry5dKg+kqAxJ@casper.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+To:     Matthew Wilcox <willy@infradead.org>
+References: <YSqIry5dKg+kqAxJ@casper.infradead.org>
+X-Mailer: Apple Mail (2.3273)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The current folio work is focused on permitting the VM to use
-physically contiguous chunks of memory.  Both Darrick and Johannes
-have pointed out the advantages of supporting logically-contiguous,
-physically-discontiguous chunks of memory.  Johannes wants to be able to
-use order-0 allocations to allocate larger folios, getting the benefit
-of managing the memory in larger chunks without requiring the memory
-allocator to be able to find contiguous chunks.  Darrick wants to support
-non-power-of-two block sizes.
 
-Johannes' ask is more readily achievable.  It requires a bit in struct
-page to distinguish between contiguous/discontiguous folios.  The biggest
-change would probably be to folio_page(), which will need a way to find
-each subpage given the struct folio.  There are several different ways
-to accomplish this (and I don't want to get into a detailed design
-discussion here).  page_folio() actually requires no change at all;
-compound_head() can move to any struct page.  There are challenges with
-things like adding a folio to a bio_vec.  The current code assumes
-that if we can add some of the folio, we can add all of the folio,
-and that's not true for discontiguous folios (we might run out of room
-in the bio_vec and have to allocate a new one).  It's a SMOP to fix.
-There are probably other problems I haven't thought of, but I don't
-expect them to be terribly hard to fix.
+--Apple-Mail=_6AEDCF03-E4CC-4258-B9ED-99A286279AC7
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset=us-ascii
 
-Non-power-of-two folios are more awkward.  Any calls to folio_order()
-and folio_shift() have to be guarded by folio_test_contig() (which will
-be fine).  The bigger problem is the radix tree.  It really only works
-for power-of-two sized objects (and honestly, it's not even all that
-great for things which aren't a power of 64 in size).  See appendix
-for more details.
+On Aug 28, 2021, at 1:04 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> 
+> The current folio work is focused on permitting the VM to use
+> physically contiguous chunks of memory.  Both Darrick and Johannes
+> have pointed out the advantages of supporting logically-contiguous,
+> physically-discontiguous chunks of memory.  Johannes wants to be able to
+> use order-0 allocations to allocate larger folios, getting the benefit
+> of managing the memory in larger chunks without requiring the memory
+> allocator to be able to find contiguous chunks.  Darrick wants to support
+> non-power-of-two block sizes.
 
-Liam and I (mostly Liam) have been working on the maple tree data
-structure.  It naturally supports arbitrary-sized objects.  It does not
-currently support three important features:
+What is the use case for non-power-of-two block sizes?  The main question
+is whether that use case is important enough to add the complexity and
+overhead in order to support it?
 
-1. It is inefficient for objects of size 1.  The leaf node currently
-stores 15 indices and 16 pointers.  By adding a new leaf node type, that
-can be increased to 31 pointers, effectively making it twice as dense.
-
-2. It does not support search marks.  The page cache relies on being able
-to efficiently search for pages which are marked as dirty or writeback.
-Again, a new node type can fix this by sacrificing one pointer per level
-of the tree in order to mark subnodes/objects.
-
-3. It does not support the 'private_list' / xa_update_node_t, which
-is used by the workingset code to prune shadow entries under memory
-pressure.  I think the maple tree should take a different approach from
-the radix tree.  Instead of pruning nodes which contain only shadow
-entries, we should prune shadow entries from the tree which will cause
-the tree to shrink.  That calls for marking inodes as containing shadow
-entries, and removing old shadow entries, maybe on an LRU of some kind.
-I haven't thought deeply about this one, but I'm convinced that (as with
-so many things) a real tree behaves better than the radix tree.
-
-The maple tree is also better at storing "random" power of two sizes.
-In the worst case, an order-5 page will take up 32 pointers (256
-bytes; 4 cache lines) in the tree.  Even an order-2 page (the most
-common allocation) takes 4 pointers.  That kind of wasted space offers
-considerable opportunity for the maple tree to do better than the radix
-tree for real workloads.
-
-If nobody beats me to it, I expect to spend some time on the maple
-tree soon.  This is a good time to offer suggestions, as opposed to
-waiting until the pull request to tell me the entire idea is wrong.
+Cheers, Andreas
 
 
-Appendix: The fsync_range problem
 
-The radix tree works by indexing into a 64-element table 6 bits at a time.
-Assuming a 64-bit lookup index, it uses the top 4 bits to choose a node
-from the top-level array, then it uses bits 54-59 to choose the next
-node, then bits 48-53 for the next node, and so on.  This is optimised
-to start further down the tree for trees which have no entries above a
-certain index, saving memory and lookup time.
 
-When we mark a page as dirty, we set a search mark in the node that
-contains that page (and recursively all its parents, up to the root
-node), ensuring that when we walk the tree looking for dirty pages,
-we will find it.
 
-That search is done by vfs_fsync_range() (there are a number of syscalls
-which will get us there, eg sync_file_range(), msync(), IORING_OP_FSYNC)
-It calls the fs-specific ->fsync() method, which usually calls
-file_write_and_wait_range(), calls __filemap_fdatawrite_range()
-calls do_writepages() calls ->writepages() which usually calls
-write_cache_pages() calls pagevec_lookup_range_tag() calls
-find_get_pages_range_tag() calls find_get_entry().
 
-Here's the problem.  We might have a 20kB folio at index 4095-4099
-of a file.  When we dirty the page at index 4097, we mark the head
-page as dirty and so we mark index 4095 as dirty (which marks the node
-containing 4032-4095 as dirty, and its parent node 0-4095 as dirty, and
-its parent node 0-262143 as dirty).  Then we msync() the page at index
-4097, so we start a search looking for dirty pages from index 4097-4097.
-Node 0-262143 is dirty, so we step down into it, but then node 4096-8193
-is not dirty, so we don't even look in it.
+--Apple-Mail=_6AEDCF03-E4CC-4258-B9ED-99A286279AC7
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
 
-This isn't a problem for power-of-two folios.  All subpages are in
-the same node as the head page.  When the XArray does a mark search,
-it actually loads the entry, even if it's not marked.  If that entry is
-a sibling entry, it checks to see whether the canonical entry is marked
-or not.
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
 
-We can't solve this by having the filesystem "round up" its search
-to the nearest multiple of 20kB.  It would fix this particular
-example, but if we happen to have allocated a 40kB page at index 8190,
-dirtied-and-then-searched-for index 8207, we'd be looking for a start
-of 8200 and miss the dirty mark of index 8190.
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmEqjiEACgkQcqXauRfM
+H+Awog/+IxByRyRvXouBeH71ySqebdd49O3ejyn09LUizb6hAPjoVM1KRwcP4URu
+KOPb2QomhgCHOPLxnbTYDjQW1uZ4pfAK2YeWxF1SA/KpKytIi1Eot4Hb4e0brfIE
+2KkaqZ9iwfuNggrsXPZzmTkouCieamt1+mg3iYKJV79pAhI+w71juShXPFi923Ax
+R2fUnd0yxM7FChMSsgdxQe0akf0O1AXfx6Q8QBpVTUcXKqIiLk06ZLP9L3YCIR3+
+KgzEbQQ6Gy3Md65mCikmXHtWJrXtbxrhieYl101o7I+BCwqYg1blxIyVW2dh2d4S
+lrAulpVuJBbZpzbFuNXls5Z2TES0VG5hOkINEsGUoijryMS+zpo/rH5yyx1/5XAv
+KzVNBXesMopDDSKSDX7zfogptHpSo08QS/XSEy/d769T6xBAnFqodzIR3/ZsgG5Q
+VsuJf64BTotqnjz8lFRpsy6cZFbDEkXTScybZiTx0O4izfTzGNV74URoXm0tOKIq
+Sbfu0M1boO2JWFeNkWH3dA5ndc2/ThwfnH57eFKM+7VFD0cTU1/YTUuMRvEZS/Wl
+UReUOhwc9l/C1GXsSIRxpVRrdj3E2fxgw3U2tflr/bjpEwWwn2DFQXMlhDJxHWEh
+/sL4K8hTkMcALxF3NC86ek/bfZYYwe0Xr4GII8zGkk3ASRcCHQ4=
+=eN/o
+-----END PGP SIGNATURE-----
 
-We could solve this by marking every subpage as being dirty, but
-that makes marking rather inefficient (we could end up having to mark
-twice as many nodes as we currently do) and complicated.  I think it's
-better to admit we've reached the limit of what a radix tree can do for
-us and move to the maple tree.
+--Apple-Mail=_6AEDCF03-E4CC-4258-B9ED-99A286279AC7--
