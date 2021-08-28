@@ -2,94 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 834BD3FA2FD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Aug 2021 03:53:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E9263FA313
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 Aug 2021 04:11:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233019AbhH1ByH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 Aug 2021 21:54:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35224 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232953AbhH1ByH (ORCPT
+        id S233016AbhH1CMI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 Aug 2021 22:12:08 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:44729 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233053AbhH1CMI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 Aug 2021 21:54:07 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5822C0613D9;
-        Fri, 27 Aug 2021 18:53:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=IsOWHDvQ5UtBgx5GUnlq5SRzmvM9jdYHOtvAIirRgnY=; b=RnyBfCp8iYnHF+XA6o6OW2x3fz
-        Zvj5cz8BfOeyy9VVeHFPOIaqZk19bwAnHXtDG6e3xJc4xvEcik5a5A2rGPorYkuQJqTp+soj2njts
-        BuJOyCb7eZNSdWO91Dzo/7xI1fE5aOatYdV4AMusf/xo8vp74fDnLRjH2ZxTcIV8qAcFyf9AQcD1M
-        RpUkC7GG0ovTBOz7qmRUyJR+eAMrKqeHWG4UwR+3gJjhxjr3GiO03QSEr6ZZQoXHg0LuS3+Csb/hL
-        6ai6gsEe+02oQYmsvhhmIxvz/Ugg/SnYCI6GD9+L3cJgfQAO6XNVmXYVsH3HEsUOCuLMM+JO7GUpF
-        WUcD1PEw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mJnR1-00FC17-3x; Sat, 28 Aug 2021 01:47:12 +0000
-Date:   Sat, 28 Aug 2021 02:47:03 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     akpm@linux-foundation.org, ccross@google.com,
-        sumit.semwal@linaro.org, mhocko@suse.com, dave.hansen@intel.com,
-        keescook@chromium.org, kirill.shutemov@linux.intel.com,
-        vbabka@suse.cz, hannes@cmpxchg.org, corbet@lwn.net,
-        viro@zeniv.linux.org.uk, rdunlap@infradead.org,
-        kaleshsingh@google.com, peterx@redhat.com, rppt@kernel.org,
-        peterz@infradead.org, catalin.marinas@arm.com,
-        vincenzo.frascino@arm.com, chinwen.chang@mediatek.com,
-        axelrasmussen@google.com, aarcange@redhat.com, jannh@google.com,
-        apopple@nvidia.com, jhubbard@nvidia.com, yuzhao@google.com,
-        will@kernel.org, fenghua.yu@intel.com, thunder.leizhen@huawei.com,
-        hughd@google.com, feng.tang@intel.com, jgg@ziepe.ca, guro@fb.com,
-        tglx@linutronix.de, krisman@collabora.com, chris.hyser@oracle.com,
-        pcc@google.com, ebiederm@xmission.com, axboe@kernel.dk,
-        legion@kernel.org, eb@emlix.com, songmuchun@bytedance.com,
-        viresh.kumar@linaro.org, thomascedeno@google.com,
-        sashal@kernel.org, cxfcosmos@gmail.com, linux@rasmusvillemoes.dk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        kernel-team@android.com
-Subject: Re: [PATCH v8 2/3] mm: add a field to store names for private
- anonymous memory
-Message-ID: <YSmVl+DEPrU6oUR4@casper.infradead.org>
-References: <20210827191858.2037087-1-surenb@google.com>
- <20210827191858.2037087-3-surenb@google.com>
+        Fri, 27 Aug 2021 22:12:08 -0400
+Received: by mail-il1-f200.google.com with SMTP id d4-20020a923604000000b0022a2b065b0aso5300790ila.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 Aug 2021 19:11:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=76HdtwbOVuUSM0zGrd3e0OmR58hv5g+WaLxPr1hL0E4=;
+        b=HY0I84HeXO7TTwXnGenmblyqU6b3WJX+ioQWZdUS8ag6OHjTFOvts1QKUkSXI5ywj8
+         6j/GFaVZrsD7lqyb8zjwtlCAnKKQneH2lOjPmH5KLDNtmGNpR0hwwm98ZZSnhcnm3F3S
+         3/lwS11KlplVPMTAfgeihOEnHtt2lQjcbcixaYiSt9gXvvbU9RxIgVNbrH5DCJRrU0xc
+         ts38IRpN+3bzo3QG/PGx89EGYMibdKmQsXrqpP53motv11Otlu/mWaaiOXqK9Df+NhMf
+         RPulZe7eghIy3wTkeldsutiUDsqeufgmkVqlV1MfE0PvKDEL4PHFQsAXxsBTdjYijLI1
+         awkw==
+X-Gm-Message-State: AOAM533+UAN8tjsn48uWDWfxj7qiNdrgHV0migKP/0Vl7eIJ3Nqa90H6
+        QliQTPt9jpTuyLfvm0oEolLXnw4cJF+YfPzqBXzQ2lNYsgI+
+X-Google-Smtp-Source: ABdhPJwxHKu7FuMPwsV3/K93KbzrQVZacplDFFF1AqhALknBpGVJrTL9S9TggZdWzsPWSAJamrYeqbYL7FXnvQQ5smEHI6uIWlTf
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210827191858.2037087-3-surenb@google.com>
+X-Received: by 2002:a05:6e02:1d9e:: with SMTP id h30mr8559944ila.195.1630116678280;
+ Fri, 27 Aug 2021 19:11:18 -0700 (PDT)
+Date:   Fri, 27 Aug 2021 19:11:18 -0700
+In-Reply-To: <0000000000004e5ec705c6318557@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008d2a0005ca951d94@google.com>
+Subject: Re: [syzbot] general protection fault in legacy_parse_param
+From:   syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>
+To:     andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
+        casey@schaufler-ca.com, christian.brauner@ubuntu.com,
+        daniel@iogearbox.net, dhowells@redhat.com, dvyukov@google.com,
+        jmorris@namei.org, kafai@fb.com, kpsingh@google.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        paul@paul-moore.com, selinux@vger.kernel.org,
+        songliubraving@fb.com, stephen.smalley.work@gmail.com,
+        syzkaller-bugs@googlegroups.com, tonymarislogistics@yandex.com,
+        viro@zeniv.linux.org.uk, yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 27, 2021 at 12:18:57PM -0700, Suren Baghdasaryan wrote:
-> +		anon_name = vma_anon_name(vma);
-> +		if (anon_name) {
-> +			seq_pad(m, ' ');
-> +			seq_puts(m, "[anon:");
-> +			seq_write(m, anon_name, strlen(anon_name));
-> +			seq_putc(m, ']');
-> +		}
+syzbot has bisected this issue to:
 
-...
+commit 54261af473be4c5481f6196064445d2945f2bdab
+Author: KP Singh <kpsingh@google.com>
+Date:   Thu Apr 30 15:52:40 2020 +0000
 
-> +	case PR_SET_VMA_ANON_NAME:
-> +		name = strndup_user((const char __user *)arg,
-> +				    ANON_VMA_NAME_MAX_LEN);
-> +
-> +		if (IS_ERR(name))
-> +			return PTR_ERR(name);
-> +
-> +		for (pch = name; *pch != '\0'; pch++) {
-> +			if (!isprint(*pch)) {
-> +				kfree(name);
-> +				return -EINVAL;
+    security: Fix the default value of fs_context_parse_param hook
 
-I think isprint() is too weak a check.  For example, I would suggest
-forbidding the following characters: ':', ']', '[', ' '.  Perhaps
-isalnum() would be better?  (permit a-zA-Z0-9)  I wouldn't necessarily
-be opposed to some punctuation characters, but let's avoid creating
-confusion.  Do you happen to know which characters are actually in use
-today?
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=160c5d75300000
+start commit:   77dd11439b86 Merge tag 'drm-fixes-2021-08-27' of git://ano..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=150c5d75300000
+console output: https://syzkaller.appspot.com/x/log.txt?x=110c5d75300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2fd902af77ff1e56
+dashboard link: https://syzkaller.appspot.com/bug?extid=d1e3b1d92d25abf97943
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126d084d300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16216eb1300000
 
+Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+Fixes: 54261af473be ("security: Fix the default value of fs_context_parse_param hook")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
