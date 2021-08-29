@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2108A3FAC33
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Aug 2021 16:26:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26E2E3FAC37
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Aug 2021 16:26:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232441AbhH2O03 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 29 Aug 2021 10:26:29 -0400
-Received: from mail-0201.mail-europe.com ([51.77.79.158]:53563 "EHLO
-        mail-0201.mail-europe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbhH2O02 (ORCPT
+        id S235457AbhH2O0k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 29 Aug 2021 10:26:40 -0400
+Received: from mail-4322.protonmail.ch ([185.70.43.22]:64573 "EHLO
+        mail-4322.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235453AbhH2O0k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 29 Aug 2021 10:26:28 -0400
-Date:   Sun, 29 Aug 2021 14:25:29 +0000
+        Sun, 29 Aug 2021 10:26:40 -0400
+Date:   Sun, 29 Aug 2021 14:25:42 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=protonmail; t=1630247133;
-        bh=3jIk8vFnQvp8iFcc48aB3sbtDXdur4ozm8qwmJ5E3H4=;
+        s=protonmail; t=1630247146;
+        bh=APsD8X3kkExun9PFwsfB27e7AdmJUHcLP5xsAMo5oNQ=;
         h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
-        b=rn/qSL4BH0Uwir6bVkqSPSsGNnlNswznMEc9fI1wqAffH+X0N3rlWFBZCr1GIRUo2
-         ep7LaOmPlgJAwLPuPAdqHW74sAHSN4ID3kqQuO3N1GQJoV4FnFqYybK9J1Es/MiLDv
-         w78vvAUhZsZlp9sjGuBhTkushumbc6Wz5y7ew28c=
+        b=b4gM+EXYbOD4CbyZeGMC9SfQgUzesac4YAVoIrNrqI4B4TKzuq0K9w2Ly9PPaBABL
+         kGBFngYHPe1UbTy4jq0TOtQmMH6okKg9IZwkcVIkG54BZkAbq3b09J18FE4vh3OoT7
+         ajZZ4GRndYUGmDj+dsoOoBi5qbGjaTfevt4PezWA=
 To:     hirofumi@mail.parknet.co.jp
 From:   "Caleb D.S. Brzezinski" <calebdsb@protonmail.com>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         "Caleb D.S. Brzezinski" <calebdsb@protonmail.com>
 Reply-To: "Caleb D.S. Brzezinski" <calebdsb@protonmail.com>
-Subject: [PATCH 2/3] fat: add the msdos_format_name() filename cache
-Message-ID: <20210829142459.56081-3-calebdsb@protonmail.com>
+Subject: [PATCH 3/3] fat: add hash machinery to relevant filesystem operations
+Message-ID: <20210829142459.56081-4-calebdsb@protonmail.com>
 In-Reply-To: <20210829142459.56081-1-calebdsb@protonmail.com>
 References: <20210829142459.56081-1-calebdsb@protonmail.com>
 MIME-Version: 1.0
@@ -41,85 +41,82 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement the main msdos_format_name() filename cache. If used as a
-module, all memory allocated for the cache is freed when the module is
-de-registered.
+Add hash freeing functionality to the following functions which remove
+or rename files:
+
+msdos_rmdir()
+msdos_unlink()
+do_msdos_rename()
+
+Whenever these functions are called, the memory associated with the
+old, now obsolete filename is freed and dropped from the cache.
 
 Signed-off-by: Caleb D.S. Brzezinski <calebdsb@protonmail.com>
 ---
- fs/fat/namei_msdos.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ fs/fat/namei_msdos.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
-index 7561674b1..f9d4f63c3 100644
+index f9d4f63c3..40a7d6df0 100644
 --- a/fs/fat/namei_msdos.c
 +++ b/fs/fat/namei_msdos.c
-@@ -124,6 +124,16 @@ static int msdos_format_name(const unsigned char *name=
-, int len,
- =09unsigned char *walk;
- =09unsigned char c;
- =09int space;
+@@ -430,9 +430,11 @@ static int msdos_rmdir(struct inode *dir, struct dentr=
+y *dentry)
+ =09struct super_block *sb =3D dir->i_sb;
+ =09struct inode *inode =3D d_inode(dentry);
+ =09struct fat_slot_info sinfo;
 +=09u64 hash;
-+=09struct msdos_name_node *node;
-+
-+=09/* check if the name is already in the cache */
-+
-+=09hash =3D msdos_fname_hash(name);
-+=09if (find_fname_in_cache(res, hash))
-+=09=09return 0;
-+
-+=09/* The node wasn't in the cache, so format it normally */
+ =09int err;
 =20
- =09if (name[0] =3D=3D '.') {=09/* dotfile because . and .. already done */
- =09=09if (opts->dotsOK) {
-@@ -208,6 +218,18 @@ static int msdos_format_name(const unsigned char *name=
-, int len,
- =09while (walk - res < MSDOS_NAME)
- =09=09*walk++ =3D ' ';
+ =09mutex_lock(&MSDOS_SB(sb)->s_lock);
++=09hash =3D msdos_fname_hash(dentry->d_name.name);
+ =09err =3D fat_dir_empty(inode);
+ =09if (err)
+ =09=09goto out;
+@@ -448,6 +450,7 @@ static int msdos_rmdir(struct inode *dir, struct dentry=
+ *dentry)
+ =09clear_nlink(inode);
+ =09fat_truncate_time(inode, NULL, S_CTIME);
+ =09fat_detach(inode);
++=09drop_fname_from_cache(hash);
+ out:
+ =09mutex_unlock(&MSDOS_SB(sb)->s_lock);
+ =09if (!err)
+@@ -522,10 +525,12 @@ static int msdos_unlink(struct inode *dir, struct den=
+try *dentry)
+ =09struct inode *inode =3D d_inode(dentry);
+ =09struct super_block *sb =3D inode->i_sb;
+ =09struct fat_slot_info sinfo;
++=09u64 hash;
+ =09int err;
 =20
-+=09/* allocate memory now */
-+=09node =3D kmalloc(sizeof(*node), GFP_KERNEL);
-+=09if (!node)
-+=09=09return -ENOMEM;
-+
-+=09/* fill in the name cache */
-+=09node->hash =3D hash;
-+=09strscpy(node->fname, res, 9);
-+=09mutex_lock(&msdos_ncache_mutex);
-+=09hash_add(msdos_ncache, &node->h_list, node->hash);
-+=09mutex_unlock(&msdos_ncache_mutex);
-+
- =09return 0;
- }
+ =09mutex_lock(&MSDOS_SB(sb)->s_lock);
+ =09err =3D msdos_find(dir, dentry->d_name.name, dentry->d_name.len, &sinfo=
+);
++=09hash =3D msdos_fname_hash(dentry->d_name.name);
+ =09if (err)
+ =09=09goto out;
 =20
-@@ -677,6 +699,7 @@ static int do_msdos_rename(struct inode *old_dir, unsig=
+@@ -535,6 +540,8 @@ static int msdos_unlink(struct inode *dir, struct dentr=
+y *dentry)
+ =09clear_nlink(inode);
+ =09fat_truncate_time(inode, NULL, S_CTIME);
+ =09fat_detach(inode);
++=09drop_fname_from_cache(hash);
++
+ out:
+ =09mutex_unlock(&MSDOS_SB(sb)->s_lock);
+ =09if (!err)
+@@ -670,6 +677,8 @@ static int do_msdos_rename(struct inode *old_dir, unsig=
 ned char *old_name,
- =09=09 * shouldn't be serious corruption.
- =09=09 */
- =09=09int err2 =3D fat_remove_entries(new_dir, &sinfo);
+ =09=09=09drop_nlink(new_inode);
+ =09=09fat_truncate_time(new_inode, &ts, S_CTIME);
+ =09}
++=09drop_fname_from_cache(msdos_fname_hash(old_name));
 +
- =09=09if (corrupt)
- =09=09=09corrupt |=3D err2;
- =09=09sinfo.bh =3D NULL;
-@@ -774,6 +797,18 @@ static int __init init_msdos_fs(void)
-=20
- static void __exit exit_msdos_fs(void)
- {
-+=09int bkt;
-+=09struct msdos_name_node *c, *prev;
-+
-+=09prev =3D NULL;
-+=09/* do this one behind to prevent bad memory access */
-+=09hash_for_each(msdos_ncache, bkt, c, h_list) {
-+=09=09kfree(prev);
-+=09=09prev =3D c;
-+=09}
-+
-+=09kfree(prev);
-+
- =09unregister_filesystem(&msdos_fs_type);
- }
-=20
+ out:
+ =09brelse(sinfo.bh);
+ =09brelse(dotdot_bh);
 --=20
 2.32.0
 
