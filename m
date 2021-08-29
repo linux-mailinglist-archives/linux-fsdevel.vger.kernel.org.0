@@ -2,77 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 390B63FA827
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Aug 2021 03:44:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7B213FAA8B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Aug 2021 11:56:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234658AbhH2Boo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Aug 2021 21:44:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37072 "EHLO
+        id S234996AbhH2J5Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 29 Aug 2021 05:57:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229725AbhH2Bon (ORCPT
+        with ESMTP id S229990AbhH2J5Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Aug 2021 21:44:43 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99C7BC061756;
-        Sat, 28 Aug 2021 18:43:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=1D5EGfupOlC5GqXdjCeuhAggzcMXpUvnLDnEOSPMg0A=; b=CfZFhe2GiPX4PN6UO2V2uIqyF2
-        iD2aTOc8ot5LEr+95DYV24ounFidh6ICrJ73jJZaNHC7fh/pO0W4UOv+rwvHNNkEVN23atyiQ2YMj
-        xE6DHWkD+sh+/g51kNKBoMHzu9HJO+PiOxZTfUDM6pNFfJPM88G5hsktwBuu7UGlxKstcT8mf7Kq+
-        N/Pn2bA3BwRHppMZvfKDafduCD4/AHMKQn40Hun2qtnIwoJxup+1gJ5fR5Af/ngzGx3iQn9o2X8dQ
-        2sAOBSHG5iS2sSQOR0mrPLgmGdX6atdTdIHNouIFd0vktF/CHHLyCnpKoO3WDTpYrBfHwTbundNSD
-        mhwV3AGg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mK9oh-00G4HC-HA; Sun, 29 Aug 2021 01:41:13 +0000
-Date:   Sun, 29 Aug 2021 02:40:59 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Tony Luck <tony.luck@intel.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com, Borislav Petkov <bp@alien8.de>,
-        X86-ML <x86@kernel.org>
-Subject: Re: [PATCH v7 05/19] iov_iter: Introduce fault_in_iov_iter_writeable
-Message-ID: <YSrlq41Ytw7q8fCR@casper.infradead.org>
-References: <YSk7xfcHVc7CxtQO@zeniv-ca.linux.org.uk>
- <CAHk-=wjMyZLH+ta5SohAViSc10iPj-hRnHc-KPDoj1XZCmxdBg@mail.gmail.com>
- <YSk+9cTMYi2+BFW7@zeniv-ca.linux.org.uk>
- <YSldx9uhMYhT/G8X@zeniv-ca.linux.org.uk>
- <YSlftta38M4FsWUq@zeniv-ca.linux.org.uk>
- <20210827232246.GA1668365@agluck-desk2.amr.corp.intel.com>
- <87r1edgs2w.ffs@tglx>
- <YSqy+U/3lnF6K0ia@zeniv-ca.linux.org.uk>
- <YSq0mPAIBfqFC/NE@zeniv-ca.linux.org.uk>
- <CA+8MBbLLze0siip=h-2hR3XiceBFQCN7uh5BPvqYRyBXgT318g@mail.gmail.com>
+        Sun, 29 Aug 2021 05:57:24 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26357C061575;
+        Sun, 29 Aug 2021 02:56:31 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id f2so20142901ljn.1;
+        Sun, 29 Aug 2021 02:56:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7dy64JCm4INpSzM1TYkFxB4+j6CWHYLWvpVuPYin1b4=;
+        b=RtWjFJVSa5qOrZW9iG2JrOrwqnCEKjZu+fBipcNcPQFfxKmoeS/SpkUe6kz3mgChEL
+         MUxEjZ0RMYbl5aheIyjbh/GYtZoY9Yu6Y6JgZ2iWoZVB9fRaLwCIdMbD+uRtVit4oHtJ
+         zQgMdxsyG+qQqztBuLo5mcf2HCKuoTX2aUV8AqVqXGmI1lNgLRk2kkXGCxoWQufESVYf
+         1lIbkYH53XdHS3/1ZgOCWosto56zqZyf8974NL14xa27sAQr3E3gs8cTOgl/G1/u7BSi
+         ZDDRSrJZZlkwuUIF39q5kJ0C9dskPeSc6xubhfmHm3EYRge44xX6/JlYWD/Y3zlrIIjs
+         0uxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7dy64JCm4INpSzM1TYkFxB4+j6CWHYLWvpVuPYin1b4=;
+        b=nfCB0Efxhne4GLUgPLzBzrKG8idXaJVKqcRZtU04+xq9XRUVwBiCWwOwrJBOIXLAjH
+         cqk4IcpAFP8gb6mz+2jMhCxPh0UM5EMO/TxNMPxEWEnO4olyz9IJvU7Hb3/ANrY6i0IG
+         7MFpSGWKstzmAUNLfXYCpy2v2FxBo7+n4WVoS1+NKFcsS4NGBe85UDpm5r1FdqU3i2SW
+         hlLSVxUZ+wFKhB04/cobxuwyEH/bFWYQoJ+OVX0ZXwEnSm3LUrNgQJKuDXLn7Bdku8sT
+         JdKR2DUgbn+gLYxtf4nI9V3h0W2I7S0ZfSxBYjXgGGrYO6RcT5Knlm/LtG4bCXIn5rzk
+         2ruw==
+X-Gm-Message-State: AOAM5334FfZzG8eBfYoxGVBuAuyOjXWB7Tbfog6O4VxB3OyG41OCnhFN
+        w/LkNJ8UUflxcR48JzJBEWGWwatRKjMcUg==
+X-Google-Smtp-Source: ABdhPJxKmCxSQAzOdeFdxNjx4kUhgBUQ1ddvBNDA8SnKZlaTSMKkuvvbtlJ6JP7kxoaS3gMPKnqNyw==
+X-Received: by 2002:a05:651c:113b:: with SMTP id e27mr11513416ljo.6.1630230989518;
+        Sun, 29 Aug 2021 02:56:29 -0700 (PDT)
+Received: from localhost.localdomain (37-33-245-172.bb.dnainternet.fi. [37.33.245.172])
+        by smtp.gmail.com with ESMTPSA id d6sm1090521lfi.57.2021.08.29.02.56.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Aug 2021 02:56:29 -0700 (PDT)
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev
+Cc:     Kari Argillander <kari.argillander@gmail.com>,
+        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v3 0/9] fs/ntfs3: Use new mount api and change some opts
+Date:   Sun, 29 Aug 2021 12:56:05 +0300
+Message-Id: <20210829095614.50021-1-kari.argillander@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+8MBbLLze0siip=h-2hR3XiceBFQCN7uh5BPvqYRyBXgT318g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 28, 2021 at 03:20:58PM -0700, Tony Luck wrote:
-> On Sat, Aug 28, 2021 at 3:12 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > BTW, is #MC triggered on stored to a poisoned cacheline?  Existence of CLZERO
-> > would seem to argue against that...
-> 
-> No #MC on stores. Just on loads. Note that you can't clear poison
-> state with a series of small writes to the cache line. But a single
-> 64-byte store might do it (architects didn't want to guarantee that
-> it would work when I asked about avx512 stores to clear poison
-> many years ago).
+See V2 if you want:
+lore.kernel.org/ntfs3/20210819002633.689831-1-kari.argillander@gmail.com
 
-Dave Jiang thinks MOVDIR64B clears poison.
+NLS change is now blocked when remounting. Christoph also suggest that
+we block all other mount options, but I have tested a couple and they
+seem to work. I wish that we do not block any other than NLS because
+in theory they should work. Also Konstantin can comment about this.
 
-http://archive.lwn.net:8080/linux-kernel/157617505636.42350.1170110675242558018.stgit@djiang5-desk3.ch.intel.com/
+I have not include reviewed/acked to patch "Use new api for mounting"
+because it change so much. I have also included three new patch to this
+series:
+	- Convert mount options to pointer in sbi
+		So that we do not need to initiliaze whole spi in 
+		remount.
+	- Init spi more in init_fs_context than fill_super
+		This is just refactoring. (Series does not depend on this)
+	- Show uid/gid always in show_options()
+		Christian Brauner kinda ask this. (Series does not depend
+		on this)
+
+Series is ones again tested with kvm-xfstests. Every commit is build
+tested.
+
+v3:
+	- Add patch "Convert mount options to pointer in sbi"
+	- Add patch "Init spi more in init_fs_context than fill_super"
+	- Add patch "Show uid/gid always in show_options"
+	- Patch "Use new api for mounting" has make over
+	- NLS loading is not anymore possible when remounting
+	- show_options() iocharset printing is fixed
+	- Delete comment that testing should be done with other
+	  mount options.
+	- Add reviewed/acked-tags to 1,2,6,8 
+	- Rewrite this cover
+v2:
+	- Rewrite this cover leter
+	- Reorder noatime to first patch
+	- NLS loading with string
+	- Delete default_options function
+	- Remove remount flags
+	- Rename no_acl_rules mount option
+	- Making code cleaner
+	- Add comment that mount options should be tested
+
+Kari Argillander (9):
+  fs/ntfs3: Remove unnecesarry mount option noatime
+  fs/ntfs3: Remove unnecesarry remount flag handling
+  fs/ntfs3: Convert mount options to pointer in sbi
+  fs/ntfs3: Use new api for mounting
+  fs/ntfs3: Init spi more in init_fs_context than fill_super
+  fs/ntfs3: Make mount option nohidden more universal
+  fs/ntfs3: Add iocharset= mount option as alias for nls=
+  fs/ntfs3: Rename mount option no_acl_rules > (no)acl_rules
+  fs/ntfs3: Show uid/gid always in show_options()
+
+ Documentation/filesystems/ntfs3.rst |  10 +-
+ fs/ntfs3/attrib.c                   |   2 +-
+ fs/ntfs3/dir.c                      |   8 +-
+ fs/ntfs3/file.c                     |   4 +-
+ fs/ntfs3/inode.c                    |  12 +-
+ fs/ntfs3/ntfs_fs.h                  |  26 +-
+ fs/ntfs3/super.c                    | 486 +++++++++++++++-------------
+ fs/ntfs3/xattr.c                    |   2 +-
+ 8 files changed, 284 insertions(+), 266 deletions(-)
+
+-- 
+2.25.1
 
