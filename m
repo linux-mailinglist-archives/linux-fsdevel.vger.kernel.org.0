@@ -2,136 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1ADF3FA7F4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Aug 2021 00:51:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E9593FA81F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Aug 2021 03:24:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232954AbhH1WwV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 Aug 2021 18:52:21 -0400
-Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:36524 "EHLO
+        id S233244AbhH2BBa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 Aug 2021 21:01:30 -0400
+Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:38374 "EHLO
         zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231673AbhH1WwU (ORCPT
+        with ESMTP id S229725AbhH2BBa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 Aug 2021 18:52:20 -0400
+        Sat, 28 Aug 2021 21:01:30 -0400
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mK7AL-00GuHv-Of; Sat, 28 Aug 2021 22:51:09 +0000
-Date:   Sat, 28 Aug 2021 22:51:09 +0000
+        id 1mK99Q-00Gvaz-Dk; Sun, 29 Aug 2021 00:58:20 +0000
+Date:   Sun, 29 Aug 2021 00:58:20 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Luck, Tony" <tony.luck@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
         Matthew Wilcox <willy@infradead.org>,
         cluster-devel <cluster-devel@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org
+        ocfs2-devel@oss.oracle.com
 Subject: Re: [PATCH v7 05/19] iov_iter: Introduce fault_in_iov_iter_writeable
-Message-ID: <YSq93XetyaUuAsY7@zeniv-ca.linux.org.uk>
-References: <YSk7xfcHVc7CxtQO@zeniv-ca.linux.org.uk>
+Message-ID: <YSrbrAtVOjvV0e2T@zeniv-ca.linux.org.uk>
+References: <20210827164926.1726765-1-agruenba@redhat.com>
+ <20210827164926.1726765-6-agruenba@redhat.com>
+ <YSkz025ncjhyRmlB@zeniv-ca.linux.org.uk>
+ <CAHk-=wh5p6zpgUUoY+O7e74X9BZyODhnsqvv=xqnTaLRNj3d_Q@mail.gmail.com>
+ <YSk7xfcHVc7CxtQO@zeniv-ca.linux.org.uk>
  <CAHk-=wjMyZLH+ta5SohAViSc10iPj-hRnHc-KPDoj1XZCmxdBg@mail.gmail.com>
  <YSk+9cTMYi2+BFW7@zeniv-ca.linux.org.uk>
  <YSldx9uhMYhT/G8X@zeniv-ca.linux.org.uk>
- <YSlftta38M4FsWUq@zeniv-ca.linux.org.uk>
- <20210827232246.GA1668365@agluck-desk2.amr.corp.intel.com>
- <87r1edgs2w.ffs@tglx>
- <YSqy+U/3lnF6K0ia@zeniv-ca.linux.org.uk>
- <YSq0mPAIBfqFC/NE@zeniv-ca.linux.org.uk>
- <YSq2WJindB0pJPRb@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YSq2WJindB0pJPRb@zeniv-ca.linux.org.uk>
+In-Reply-To: <YSldx9uhMYhT/G8X@zeniv-ca.linux.org.uk>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 28, 2021 at 10:19:04PM +0000, Al Viro wrote:
+On Fri, Aug 27, 2021 at 09:48:55PM +0000, Al Viro wrote:
 
-> How about taking __clear_user() out of copy_fpregs_to_sigframe()
-> and replacing the call of fault_in_pages_writeable() with
-> 	if (!clear_user(buf_fx, fpu_user_xstate_size))
-> 		goto retry;
-> 	return -EFAULT;
-> in the caller?
+> So we have 3 callers where we want all-or-nothing semantics - two in
+> arch/x86/kernel/fpu/signal.c and one in btrfs.  HWPOISON will be a problem
+> for all 3, AFAICS...
+> 
+> IOW, it looks like we have two different things mixed here - one that wants
+> to try and fault stuff in, with callers caring only about having _something_
+> faulted in (most of the users) and one that wants to make sure we *can* do
+> stores or loads on each byte in the affected area.
+> 
+> Just accessing a byte in each page really won't suffice for the second kind.
+> Neither will g-u-p use, unless we teach it about HWPOISON and other fun
+> beasts...  Looks like we want that thing to be a separate primitive; for
+> btrfs I'd probably replace fault_in_pages_writeable() with clear_user()
+> as a quick fix for now...
 
-Something like this (completely untested)
+Looks like out of these 3 we have
+	* x86 restoring FPU state on sigreturn: correct, if somewhat obfuscated;
+HWPOISON is not an issue.  We want full fault-in there (1 or 2 pages)
+	* x86 saving FPU state into sigframe: not really needed; we do
+__clear_user() on any error anyway, and taking it into the caller past the
+pagefault_enable() will serve just fine instead of fault-in of the same
+for write.
+	* btrfs search_ioctl(): HWPOISON is not an issue (no #MC on stores),
+but arm64 side of the things very likely is a problem with MTE; there we
+can have successful store in some bytes in a page with faults on stores
+elsewhere in it.  With such setups that thing will loop indefinitely.
+And unlike x86 FPU handling, btrfs is arch-independent.
 
-Lift __clear_user() out of copy_fpregs_to_sigframe(), do not confuse EFAULT with
-X86_TRAP_PF, don't bother with fault_in_pages_writeable() (pointless, since now
-__clear_user() on error is not under pagefault_disable()).  And don't bother
-with retries on anything other than #PF...
-
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 5a18694a89b2..71c6621a262f 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -17,6 +17,7 @@
- #include <linux/mm.h>
- 
- #include <asm/user.h>
-+#include <asm/trapnr.h>
- #include <asm/fpu/api.h>
- #include <asm/fpu/xstate.h>
- #include <asm/fpu/xcr.h>
-@@ -345,7 +346,7 @@ static inline int xsave_to_user_sigframe(struct xregs_state __user *buf)
- 	 */
- 	err = __clear_user(&buf->header, sizeof(buf->header));
- 	if (unlikely(err))
--		return -EFAULT;
-+		return -X86_TRAP_PF;
- 
- 	stac();
- 	XSTATE_OP(XSAVE, buf, lmask, hmask, err);
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 445c57c9c539..611b9ed9c06b 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -135,18 +135,12 @@ static inline int save_xstate_epilog(void __user *buf, int ia32_frame)
- 
- static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
- {
--	int err;
--
- 	if (use_xsave())
--		err = xsave_to_user_sigframe(buf);
--	else if (use_fxsr())
--		err = fxsave_to_user_sigframe((struct fxregs_state __user *) buf);
-+		return xsave_to_user_sigframe(buf);
-+	if (use_fxsr())
-+		return fxsave_to_user_sigframe((struct fxregs_state __user *) buf);
- 	else
--		err = fnsave_to_user_sigframe((struct fregs_state __user *) buf);
--
--	if (unlikely(err) && __clear_user(buf, fpu_user_xstate_size))
--		err = -EFAULT;
--	return err;
-+		return fnsave_to_user_sigframe((struct fregs_state __user *) buf);
- }
- 
- /*
-@@ -205,9 +199,10 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
- 	fpregs_unlock();
- 
- 	if (ret) {
--		if (!fault_in_pages_writeable(buf_fx, fpu_user_xstate_size))
-+		if (!__clear_user(buf_fx, fpu_user_xstate_size) &&
-+		    ret == -X86_TRAP_PF)
- 			goto retry;
--		return -EFAULT;
-+		return -1;
- 	}
- 
- 	/* Save the fsave header for the 32-bit frames. */
-@@ -275,7 +270,7 @@ static int restore_fpregs_from_user(void __user *buf, u64 xrestore,
- 		fpregs_unlock();
- 
- 		/* Try to handle #PF, but anything else is fatal. */
--		if (ret != -EFAULT)
-+		if (ret != -X86_TRAP_PF)
- 			return -EINVAL;
- 
- 		ret = fault_in_pages_readable(buf, size);
+IOW, unless I'm misreading the situation, we have one caller where "all or
+nothing" semantics is correct and needed, several where fault-in is pointless,
+one where the current use of fault-in is actively wrong (ppc kvm, patch from
+ppc folks exists), another place where neither semantics is right (btrfs on
+arm64) and a bunch where "can we access at least the first byte?" should be
+fine...
