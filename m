@@ -2,69 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B791A3FAE9D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Aug 2021 23:06:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABA6C3FAEAF
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 29 Aug 2021 23:23:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235920AbhH2VHG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 29 Aug 2021 17:07:06 -0400
-Received: from mga02.intel.com ([134.134.136.20]:43494 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235370AbhH2VHG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 29 Aug 2021 17:07:06 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10091"; a="205393052"
-X-IronPort-AV: E=Sophos;i="5.84,362,1620716400"; 
-   d="scan'208";a="205393052"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2021 14:06:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.84,362,1620716400"; 
-   d="scan'208";a="539931308"
-Received: from lkp-server01.sh.intel.com (HELO 4fbc2b3ce5aa) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 29 Aug 2021 14:06:05 -0700
-Received: from kbuild by 4fbc2b3ce5aa with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1mKS0D-0004aG-99; Sun, 29 Aug 2021 21:06:05 +0000
-Date:   Mon, 30 Aug 2021 05:05:37 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     "Caleb D.S. Brzezinski" <calebdsb@protonmail.com>,
-        hirofumi@mail.parknet.co.jp
-Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        "Caleb D.S. Brzezinski" <calebdsb@protonmail.com>
-Subject: [RFC PATCH] fat: msdos_ncache can be static
-Message-ID: <20210829210537.GA61694@74a5018f4101>
-References: <20210829142459.56081-2-calebdsb@protonmail.com>
+        id S233212AbhH2VY0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 29 Aug 2021 17:24:26 -0400
+Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:54770 "EHLO
+        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231800AbhH2VYZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 29 Aug 2021 17:24:25 -0400
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mKSH3-00H8Og-O6; Sun, 29 Aug 2021 21:23:29 +0000
+Date:   Sun, 29 Aug 2021 21:23:29 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     "Caleb D.S. Brzezinski" <calebdsb@protonmail.com>
+Cc:     hirofumi@mail.parknet.co.jp, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/3] fat: add the msdos_format_name() filename cache
+Message-ID: <YSv60c2/PM4zfl0u@zeniv-ca.linux.org.uk>
+References: <20210829142459.56081-1-calebdsb@protonmail.com>
+ <20210829142459.56081-3-calebdsb@protonmail.com>
+ <YSujmt9vman41ecj@zeniv-ca.linux.org.uk>
+ <87o89gw4yy.fsf@protonmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210829142459.56081-2-calebdsb@protonmail.com>
-X-Patchwork-Hint: ignore
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87o89gw4yy.fsf@protonmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fs/fat/namei_msdos.c:37:1: warning: symbol 'msdos_ncache' was not declared. Should it be static?
-fs/fat/namei_msdos.c:38:1: warning: symbol 'msdos_ncache_mutex' was not declared. Should it be static?
+On Sun, Aug 29, 2021 at 05:11:56PM +0000, Caleb D.S. Brzezinski wrote:
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: kernel test robot <lkp@intel.com>
----
- namei_msdos.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> My understanding was that the maximum length of the name considered when
+> passed to msdos_format_name() was eight characters; see:
+> 
+> 		while (walk - res < 8)
+> 
+> and
+> 
+> 		for (walk = res; len && walk - res < 8; walk++) {
 
-diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
-index 7561674b16a22..f44d590a11583 100644
---- a/fs/fat/namei_msdos.c
-+++ b/fs/fat/namei_msdos.c
-@@ -34,8 +34,8 @@ struct msdos_name_node {
- 	struct hlist_node h_list;
- };
- 
--DEFINE_HASHTABLE(msdos_ncache, 6);
--DEFINE_MUTEX(msdos_ncache_mutex); /* protect the name cache */
-+static DEFINE_HASHTABLE(msdos_ncache, 6);
-+static DEFINE_MUTEX(msdos_ncache_mutex); /* protect the name cache */
- 
- /**
-  * msdos_fname_hash() - quickly "hash" an msdos filename
+Err...  You have noticed that the function does not end on that loop,
+haven't you?  Exercise: figure out what that function does.  I.e.
+what inputs are allowed and what outputs are produced.  You might
+find some description of FAT directory layout to be useful...
+
+> > 	* your find_fname_in_cache() assumes that hash collisions
+> > are impossible, which is... unlikely, considering the nature of
+> > that hash function
+> 
+> If the names are 8 character limited, then logically any name with the
+> exact same set of characters would "collide" into the same formatted
+> name.
+
+Huh?  Collision is when two *different* values of argument yield the
+same result.  What makes you assume that yours won't have any such
+pairs shorter than 8 bytes?
