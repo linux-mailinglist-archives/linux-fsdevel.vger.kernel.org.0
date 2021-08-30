@@ -2,116 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2BBF3FB8A9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 17:01:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82BA83FB92D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 17:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237478AbhH3PB2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Aug 2021 11:01:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56212 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237471AbhH3PBX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Aug 2021 11:01:23 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21F78C061760
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Aug 2021 08:00:30 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id m11so11917188ioo.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Aug 2021 08:00:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=uaK2+hT9Cr9iBiV8An6P07bSAyLYfCn6s0omnwnea1o=;
-        b=NVkiXYagNesao6pfsU1zzyuQ8XlRLlZO2YIjrn0aqu2uBvpO721KUnhMfbEfPJ7sbt
-         dr9yC/do146cPEeTEz3Xq6Lk7qFzBAdV5OAWDzigWwGnt5bdVWefQdml470WG+i+grmX
-         Kz4svxPTTyFR64/14qyiypHnFtq6wK/9NZGB5rGRDJQI3d8Cn714HmFQ8yRRv1bOmTpf
-         WtRXBK8iMfJPgm02CtFw2O+shPOHle3HPdnZjukHz8vql/2E8wB96yKSx+w0o5lfi6+s
-         TmjoUb59X0oxGYIIU49G+tjefSnj0f7r9imIyFrI5GMlAeuqNYeVK2YcRG1kkJhvTBLS
-         /jrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=uaK2+hT9Cr9iBiV8An6P07bSAyLYfCn6s0omnwnea1o=;
-        b=U09SqwAguuTVtgPA03ayskVnumlOkxGOZ7RKxsc2IQFaQVrMlAZ58IcTT+R7qnYPL+
-         VNCQsQ/jUExUVa+W3/czw6MGEwhfFpzBdZpeXQ4tWR9zrqJHLSk4Kae5ZNxMKJyAuu+z
-         SAlOQkVtAoHlqC0SIo9+la3X2Nx0i8mS6WvP/br3zi7NV5HEwhkMy+k8f4cqfDunj44+
-         KDMk+GQseX3NbjD4YSGJ51T/zXMEXiuRDw+V1iEoWdKc8JNcrqpV0fupgJhMM+j+74P+
-         k7FRLtPy1WxSlqhuacdQz7Kug42lTmnxQvO0a6ataE11+MdBiM1bmgFiTq4ECBvt5vIR
-         S4Gg==
-X-Gm-Message-State: AOAM5338KPvidQyLpP8FHuWXu5GL3U5grW/0ufY39Emzih0n9jm+Q11r
-        CtFXFRYTnpODTyvEXZXr0wSFlJznOkoTDg==
-X-Google-Smtp-Source: ABdhPJyqkzUMO3MKRMYNjICP0Qbh9LCT3pqQ6GujIiIWRk0sqZeNtawuaKK5HYTCi9dXAzd5sHnADg==
-X-Received: by 2002:a02:6a55:: with SMTP id m21mr21156804jaf.74.1630335627929;
-        Mon, 30 Aug 2021 08:00:27 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id a1sm9205960ila.40.2021.08.30.08.00.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Aug 2021 08:00:27 -0700 (PDT)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        Dmitry Kadashev <dkadashev@gmail.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring mkdirat/symlinkat/linkat support
-Message-ID: <13fee4ce-eb96-2297-8a68-ff33f76684c8@kernel.dk>
-Date:   Mon, 30 Aug 2021 09:00:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        id S237640AbhH3Pml convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Aug 2021 11:42:41 -0400
+Received: from mga12.intel.com ([192.55.52.136]:48073 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237460AbhH3Pmk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Aug 2021 11:42:40 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10092"; a="197860326"
+X-IronPort-AV: E=Sophos;i="5.84,363,1620716400"; 
+   d="scan'208";a="197860326"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2021 08:41:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.84,363,1620716400"; 
+   d="scan'208";a="427871610"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orsmga003.jf.intel.com with ESMTP; 30 Aug 2021 08:41:46 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2242.10; Mon, 30 Aug 2021 08:41:45 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2242.10; Mon, 30 Aug 2021 08:41:45 -0700
+Received: from fmsmsx610.amr.corp.intel.com ([10.18.126.90]) by
+ fmsmsx610.amr.corp.intel.com ([10.18.126.90]) with mapi id 15.01.2242.010;
+ Mon, 30 Aug 2021 08:41:45 -0700
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        Borislav Petkov <bp@alien8.de>, X86-ML <x86@kernel.org>
+Subject: RE: [PATCH v7 05/19] iov_iter: Introduce fault_in_iov_iter_writeable
+Thread-Topic: [PATCH v7 05/19] iov_iter: Introduce fault_in_iov_iter_writeable
+Thread-Index: AQHXm5pzAH4qSaa/BkWiD/swcmZu0auJ6p2AgAAE7YCAAAHvAP//xYSWgAJ7rdA=
+Date:   Mon, 30 Aug 2021 15:41:45 +0000
+Message-ID: <65cdd5f19431423dac13fbb13719ba55@intel.com>
+References: <YSk7xfcHVc7CxtQO@zeniv-ca.linux.org.uk>
+ <CAHk-=wjMyZLH+ta5SohAViSc10iPj-hRnHc-KPDoj1XZCmxdBg@mail.gmail.com>
+ <YSk+9cTMYi2+BFW7@zeniv-ca.linux.org.uk>
+ <YSldx9uhMYhT/G8X@zeniv-ca.linux.org.uk>
+ <YSlftta38M4FsWUq@zeniv-ca.linux.org.uk>
+ <20210827232246.GA1668365@agluck-desk2.amr.corp.intel.com>
+ <87r1edgs2w.ffs@tglx> <YSqy+U/3lnF6K0ia@zeniv-ca.linux.org.uk>
+ <YSq0mPAIBfqFC/NE@zeniv-ca.linux.org.uk>
+ <CA+8MBbLLze0siip=h-2hR3XiceBFQCN7uh5BPvqYRyBXgT318g@mail.gmail.com>
+ <YSrlq41Ytw7q8fCR@casper.infradead.org>
+In-Reply-To: <YSrlq41Ytw7q8fCR@casper.infradead.org>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-reaction: no-action
+dlp-version: 11.5.1.3
+x-originating-ip: [10.1.200.100]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+>> No #MC on stores. Just on loads. Note that you can't clear poison
+>> state with a series of small writes to the cache line. But a single
+>> 64-byte store might do it (architects didn't want to guarantee that
+>> it would work when I asked about avx512 stores to clear poison
+>> many years ago).
+>
+> Dave Jiang thinks MOVDIR64B clears poison.
+>
+> http://archive.lwn.net:8080/linux-kernel/157617505636.42350.1170110675242558018.stgit@djiang5-desk3.ch.intel.com/
 
-On top of the 5.15 io_uring core branch, this pull request adds io_uring
-support for mkdirat, symlinkat, and linkat.
+MOVDIR64B has some explicit guarantees (does a write-back invalidate if the target is already
+in the cache) that a 64-byte avx512 write doesn't.
 
-Please pull!
+Of course it would stop working if some future CPU were to have a longer than 64 bytes cache line.
 
-
-The following changes since commit 26578cda3db983b17cabe4e577af26306beb9987:
-
-  io_uring: add ->splice_fd_in checks (2021-08-23 13:13:00 -0600)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux-block.git tags/for-5.15/io_uring-vfs-2021-08-30
-
-for you to fetch changes up to cf30da90bc3a26911d369f199411f38b701394de:
-
-  io_uring: add support for IORING_OP_LINKAT (2021-08-23 13:48:52 -0600)
-
-----------------------------------------------------------------
-for-5.15/io_uring-vfs-2021-08-30
-
-----------------------------------------------------------------
-Dmitry Kadashev (11):
-      namei: ignore ERR/NULL names in putname()
-      namei: change filename_parentat() calling conventions
-      namei: make do_mkdirat() take struct filename
-      namei: make do_mknodat() take struct filename
-      namei: make do_symlinkat() take struct filename
-      namei: add getname_uflags()
-      namei: make do_linkat() take struct filename
-      namei: update do_*() helpers to return ints
-      io_uring: add support for IORING_OP_MKDIRAT
-      io_uring: add support for IORING_OP_SYMLINKAT
-      io_uring: add support for IORING_OP_LINKAT
-
- fs/exec.c                     |   8 +-
- fs/internal.h                 |   8 +-
- fs/io_uring.c                 | 198 ++++++++++++++++++++++++++++++++++
- fs/namei.c                    | 239 ++++++++++++++++++++++++------------------
- include/linux/fs.h            |   1 +
- include/uapi/linux/io_uring.h |   4 +
- 6 files changed, 348 insertions(+), 110 deletions(-)
-
--- 
-Jens Axboe
+-Tony
 
