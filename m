@@ -2,69 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DBF33FB4A1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 13:34:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5581D3FB5F5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 14:26:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236511AbhH3LfG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Aug 2021 07:35:06 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:52096 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236494AbhH3LfG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Aug 2021 07:35:06 -0400
-Received: by mail-io1-f69.google.com with SMTP id i11-20020a056602134b00b005be82e3028bso3172706iov.18
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Aug 2021 04:34:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=8yu2qDi/W61ruhvfPtnck6J11ryx5e7EXsUOpCFvzG4=;
-        b=Vgx4F5mkMeqPTwbnCj+Bi6LDlJraGbNL/28S6n0sxHDI7f4wXle1wJcQZcUBpjW6aV
-         ymWdroIQbco3as5a3nqcD6Mmvblsm8LCjqMy9/4jt/aAAVi62gEESeci/hkHWe5TjCYL
-         HP7yGR/76MEoBtPhH+2LogVuN8OQqxRTHQTIcLc6xwit3N8hpP9Cm+L91MkI1PWeKUkF
-         dMx7XpIQKjpZD6+djzhXrk6x4o4xAEtjyCBCI7YNGsmz1hc3y9toiXwvFThoc588hqLC
-         1Zj/uR7RMAiuCoFhgaPvBF8W8CKE7pKFM7G33y3TnBz/OpyF/YI04sddnGRYiCNED2TE
-         UUDg==
-X-Gm-Message-State: AOAM530Ay0kpRkTD245K1l5prVmbW7dQ7dGqMVs8XyY9vJmH7Gif/gMS
-        jxwwPyV3My26/GP+5F4AvsqjseXUfAd7uoY0q+Fplk8Hcg4G
-X-Google-Smtp-Source: ABdhPJw8R8S4wtILrC6Pgi4rcp0GnFmahcRcIzqC11+AgCnvk1l/mVz8zSjhYlwRKul0FOFQlHJqw0U8ywdoT7sMIsTAZe4Odi3M
+        id S236402AbhH3MYv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Aug 2021 08:24:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33414 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231165AbhH3MYu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Aug 2021 08:24:50 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2B1B5610E6;
+        Mon, 30 Aug 2021 12:23:51 +0000 (UTC)
+Date:   Mon, 30 Aug 2021 14:23:48 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>
+Cc:     andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
+        casey@schaufler-ca.com, daniel@iogearbox.net, dhowells@redhat.com,
+        dvyukov@google.com, jmorris@namei.org, kafai@fb.com,
+        kpsingh@google.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        paul@paul-moore.com, selinux@vger.kernel.org,
+        songliubraving@fb.com, stephen.smalley.work@gmail.com,
+        syzkaller-bugs@googlegroups.com, tonymarislogistics@yandex.com,
+        viro@zeniv.linux.org.uk, yhs@fb.com
+Subject: Re: [syzbot] general protection fault in legacy_parse_param
+Message-ID: <20210830122348.jffs5dmq6z25qzw5@wittgenstein>
+References: <0000000000004e5ec705c6318557@google.com>
+ <0000000000008d2a0005ca951d94@google.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:5911:: with SMTP id n17mr17250394iob.180.1630323252380;
- Mon, 30 Aug 2021 04:34:12 -0700 (PDT)
-Date:   Mon, 30 Aug 2021 04:34:12 -0700
-In-Reply-To: <00000000000022acbf05c06d9f0d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000053c98205cac53625@google.com>
-Subject: Re: [syzbot] WARNING in io_poll_double_wake
-From:   syzbot <syzbot+f2aca089e6f77e5acd46@syzkaller.appspotmail.com>
-To:     asml.silence@gmail.com, axboe@kernel.dk, haoxu@linux.alibaba.com,
-        hdanton@sina.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0000000000008d2a0005ca951d94@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+On Fri, Aug 27, 2021 at 07:11:18PM -0700, syzbot wrote:
+> syzbot has bisected this issue to:
+> 
+> commit 54261af473be4c5481f6196064445d2945f2bdab
+> Author: KP Singh <kpsingh@google.com>
+> Date:   Thu Apr 30 15:52:40 2020 +0000
+> 
+>     security: Fix the default value of fs_context_parse_param hook
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=160c5d75300000
+> start commit:   77dd11439b86 Merge tag 'drm-fixes-2021-08-27' of git://ano..
+> git tree:       upstream
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=150c5d75300000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=110c5d75300000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2fd902af77ff1e56
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d1e3b1d92d25abf97943
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126d084d300000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16216eb1300000
+> 
+> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+> Fixes: 54261af473be ("security: Fix the default value of fs_context_parse_param hook")
+> 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-commit a890d01e4ee016978776e45340e521b3bbbdf41f
-Author: Hao Xu <haoxu@linux.alibaba.com>
-Date:   Wed Jul 28 03:03:22 2021 +0000
+So ok, this seems somewhat clear now. When smack and 
+CONFIG_BPF_LSM=y
+is selected the bpf LSM will register NOP handlers including
 
-    io_uring: fix poll requests leaking second poll entries
+bpf_lsm_fs_context_fs_param()
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15d8819d300000
-start commit:   98f7fdced2e0 Merge tag 'irq-urgent-2021-07-11' of git://gi..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=139b08f9b7481d26
-dashboard link: https://syzkaller.appspot.com/bug?extid=f2aca089e6f77e5acd46
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11650180300000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1510c6b0300000
+for the
 
-If the result looks correct, please mark the issue as fixed by replying with:
+fs_context_fs_param
 
-#syz fix: io_uring: fix poll requests leaking second poll entries
+LSM hook. The bpf LSM runs last, i.e. after smack according to:
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+CONFIG_LSM="landlock,lockdown,yama,safesetid,integrity,tomoyo,smack,bpf"
+
+in the appended config. The smack hook runs and sets
+
+param->string = NULL
+
+then the bpf NOP handler runs returning -ENOPARM indicating to the vfs
+parameter parser that this is not a security module option so it should
+proceed processing the parameter subsequently causing the crash because
+param->string is not allowed to be NULL (Which the vfs parameter parser
+verifies early in fsconfig().).
+
+If you take the appended syzkaller config and additionally select
+kprobes you can observe this by registering bpf kretprobes for:
+security_fs_context_parse_param()
+smack_fs_context_parse_param()
+bpf_lsm_fs_context_parse_param()
+in different terminal windows and then running the syzkaller provided
+reproducer:
+
+root@f2-vm:~# bpftrace -e 'kretprobe:smack_fs_context_parse_param { printf("returned: %d\n", retval); }'
+Attaching 1 probe...
+returned: 0
+
+root@f2-vm:~# bpftrace -e 'kretprobe:bpf_lsm_fs_context_parse_param { printf("returned: %d\n", retval); }'
+Attaching 1 probe...
+returned: -519
+
+root@f2-vm:~# bpftrace -e 'kretprobe:security_fs_context_parse_param { printf("returned: %d\n", retval); }'
+Attaching 1 probe...
+returned: -519
+
+^^^^^
+This will ultimately tell the vfs to move on causing the crash because
+param->string is null at that point.
+
+Unless I missed something why that can't happen.
+
+Christian
