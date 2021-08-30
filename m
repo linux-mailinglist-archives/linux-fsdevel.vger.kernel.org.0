@@ -2,92 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C6F23FBC99
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 20:43:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1BDF3FBCA1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 20:45:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231309AbhH3SoW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Aug 2021 14:44:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52328 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231157AbhH3SoW (ORCPT
+        id S231862AbhH3Sqc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Aug 2021 14:46:32 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:26826 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231736AbhH3Sqa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Aug 2021 14:44:22 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1968EC061575;
-        Mon, 30 Aug 2021 11:43:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=HTdApohf3fKpGokZqXcDVUqyTvtY54Ltdsz34HGavd8=; b=EgOq2CKpqZ4hVB4ORDcVotdj4v
-        zW4VqF6Rb++MLTTFWBAxYBeNKBVU5n2MdiA5mHBNqs66FDAmW/3GPrErUtrgQVMyo5IRi1fZCF1CZ
-        FjwIWQfKdC4oIidVjoFGMcDF8SqZtRVzBA3I6xfp5wnqyhgSvG9UP/Z02RZY0S1S0Da2GbO6uA54u
-        oDaq1vxhmOMbMBmrtN0dwuKQGiorsEgZcyqgaf+MThFtd5OvK/+jOV0qb6cdU0i2P4p5lyn6KQUBj
-        5MctOwRLxlqT8XSNkGfHuEiczwYsh4HIRkdXix4Rc5BJN/xJIFywVvGVaz0+Jh5fHKALziiRfUJ7r
-        gKQh/m2g==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mKmFJ-000RIR-F2; Mon, 30 Aug 2021 18:43:07 +0000
-Date:   Mon, 30 Aug 2021 19:43:01 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Andreas Dilger <adilger@dilger.ca>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Discontiguous folios/pagesets
-Message-ID: <YS0mtYZ+PEAaM7pI@casper.infradead.org>
-References: <YSqIry5dKg+kqAxJ@casper.infradead.org>
- <1FC3646C-259F-4AA4-B7E0-B13E19EDC595@dilger.ca>
- <20210830182818.GA9892@magnolia>
+        Mon, 30 Aug 2021 14:46:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630349135;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=i7iUH7l5Sh0OpUsn92+ULA9isAZYjj/3KpoIKNS+nc0=;
+        b=Y1Bfj6zdquZRuaxwOY0yd0FwnqB6CVPSBvZ+JY3GeNb9D2nVRYjfFB7rI1f8WF1V+y4Hmo
+        3LkBx35FQTgDAqUR5lxFQxyYHHIflf7nOIDnfXQED7HhCUlW7QY7jJxtKRzYbHDJmxa0pk
+        UXx5r+xoZlI4/q4EBcRSv2hJQ505odE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-342-jnQEB5U4OBineMHHI0DrUA-1; Mon, 30 Aug 2021 14:45:33 -0400
+X-MC-Unique: jnQEB5U4OBineMHHI0DrUA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 822448799EE;
+        Mon, 30 Aug 2021 18:45:31 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.8.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3255D2AF99;
+        Mon, 30 Aug 2021 18:45:26 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 93FA72241BF; Mon, 30 Aug 2021 14:45:25 -0400 (EDT)
+Date:   Mon, 30 Aug 2021 14:45:25 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Bruce Fields <bfields@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, virtio-fs@redhat.com, dwalsh@redhat.com,
+        dgilbert@redhat.com, casey.schaufler@intel.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        tytso@mit.edu, miklos@szeredi.hu, gscrivan@redhat.com,
+        jack@suse.cz, Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 1/1] xattr: Allow user.* xattr on symlink and special
+ files
+Message-ID: <YS0nRQeuxEFppDxG@redhat.com>
+References: <20210708175738.360757-2-vgoyal@redhat.com>
+ <20210709091915.2bd4snyfjndexw2b@wittgenstein>
+ <20210709152737.GA398382@redhat.com>
+ <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
+ <20210709175947.GB398382@redhat.com>
+ <CAPL3RVGKg4G5qiiHo7KYPcsWWgeoW=qNPOSQpd3Sv329jrWrLQ@mail.gmail.com>
+ <20210712140247.GA486376@redhat.com>
+ <20210712154106.GB18679@fieldses.org>
+ <20210712174759.GA502004@redhat.com>
+ <3d55ff30-c6cf-46c4-0e32-3b578099343d@schaufler-ca.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210830182818.GA9892@magnolia>
+In-Reply-To: <3d55ff30-c6cf-46c4-0e32-3b578099343d@schaufler-ca.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 30, 2021 at 11:28:18AM -0700, Darrick J. Wong wrote:
-> On Sat, Aug 28, 2021 at 01:27:29PM -0600, Andreas Dilger wrote:
-> > On Aug 28, 2021, at 1:04 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> > > 
-> > > The current folio work is focused on permitting the VM to use
-> > > physically contiguous chunks of memory.  Both Darrick and Johannes
-> > > have pointed out the advantages of supporting logically-contiguous,
-> > > physically-discontiguous chunks of memory.  Johannes wants to be able to
-> > > use order-0 allocations to allocate larger folios, getting the benefit
-> > > of managing the memory in larger chunks without requiring the memory
-> > > allocator to be able to find contiguous chunks.  Darrick wants to support
-> > > non-power-of-two block sizes.
-> > 
-> > What is the use case for non-power-of-two block sizes?  The main question
-> > is whether that use case is important enough to add the complexity and
-> > overhead in order to support it?
+On Tue, Jul 13, 2021 at 07:17:00AM -0700, Casey Schaufler wrote:
+> On 7/12/2021 10:47 AM, Vivek Goyal wrote:
+> > On Mon, Jul 12, 2021 at 11:41:06AM -0400, J. Bruce Fields wrote:
+> >> On Mon, Jul 12, 2021 at 10:02:47AM -0400, Vivek Goyal wrote:
+> >>> On Fri, Jul 09, 2021 at 04:10:16PM -0400, Bruce Fields wrote:
+> >>>> On Fri, Jul 9, 2021 at 1:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >>>>> nfs seems to have some issues.
+> >>>> I'm not sure what the expected behavior is for nfs.  All I have for
+> >>>> now is some generic troubleshooting ideas, sorry:
+> >>>>
+> >>>>> - I can set user.foo xattr on symlink and query it back using xattr name.
+> >>>>>
+> >>>>>   getfattr -h -n user.foo foo-link.txt
+> >>>>>
+> >>>>>   But when I try to dump all xattrs on this file, user.foo is being
+> >>>>>   filtered out it looks like. Not sure why.
+> >>>> Logging into the server and seeing what's set there could help confirm
+> >>>> whether it's the client or server that's at fault.  (Or watching the
+> >>>> traffic in wireshark; there are GET/SET/LISTXATTR ops that should be
+> >>>> easy to spot.)
+> >>>>
+> >>>>> - I can't set "user.foo" xattr on a device node on nfs and I get
+> >>>>>   "Permission denied". I am assuming nfs server is returning this.
+> >>>> Wireshark should tell you whether it's the server or client doing that.
+> >>>>
+> >>>> The RFC is https://datatracker.ietf.org/doc/html/rfc8276, and I don't
+> >>>> see any explicit statement about what the server should do in the case
+> >>>> of symlinks or device nodes, but I do see "Any regular file or
+> >>>> directory may have a set of extended attributes", so that was clearly
+> >>>> the assumption.  Also, NFS4ERR_WRONG_TYPE is listed as a possible
+> >>>> error return for the xattr ops.  But on a quick skim I don't see any
+> >>>> explicit checks in the nfsd code, so I *think* it's just relying on
+> >>>> the vfs for any file type checks.
+> >>> Hi Bruce,
+> >>>
+> >>> Thanks for the response. I am just trying to do set a user.foo xattr on
+> >>> a device node on nfs.
+> >>>
+> >>> setfattr -n "user.foo" -v "bar" /mnt/nfs/test-dev
+> >>>
+> >>> and I get -EACCESS.
+> >>>
+> >>> I put some printk() statements and EACCESS is being returned from here.
+> >>>
+> >>> nfs4_xattr_set_nfs4_user() {
+> >>>         if (!nfs_access_get_cached(inode, current_cred(), &cache, true)) {
+> >>>                 if (!(cache.mask & NFS_ACCESS_XAWRITE)) {
+> >>>                         return -EACCES;
+> >>>                 }
+> >>>         }
+> >>> }
+> >>>
+> >>> Value of cache.mask=0xd at the time of error.
+> >> Looks like 0xd is what the server returns to access on a device node
+> >> with mode bits rw- for the caller.
+> >>
+> >> Commit c11d7fd1b317 "nfsd: take xattr bits into account for permission
+> >> checks" added the ACCESS_X* bits for regular files and directories but
+> >> not others.
+> >>
+> >> But you don't want to determine permission from the mode bits anyway,
+> >> you want it to depend on the owner,
+> > Thinking more about this part. Current implementation of my patch is
+> > effectively doing both the checks. It checks that you are owner or
+> > have CAP_FOWNER in xattr_permission() and then goes on to call
+> > inode_permission(). And that means file mode bits will also play a
+> > role. If caller does not have write permission on the file, it will
+> > be denied setxattr().
+> >
+> > If I don't call inode_permission(), and just return 0 right away for
+> > file owner (for symlinks and special files), then just being owner
+> > is enough to write user.* xattr. And then even security modules will
+> > not get a chance to block that operation.
 > 
-> For copy-on-write to a XFS realtime volume where the allocation extent
-> size (we support bigalloc too! :P) is not a power of two (e.g. you set
-> up a 4 disk raid5 with 64k stripes, now the extent size is 192k).
-> 
-> Granted, I don't think folios handling 192k chunks is absolutely
-> *required* for folios; the only hard requirement is that if any page in
-> a 192k extent becomes dirty, the rest have to get written out all the
-> same time, and the cow remap can only happen after the last page
-> finishes writeback.
+> That isn't going to fly. SELinux and Smack don't rely on ownership
+> as a criteria for access. Being the owner of a symlink conveys no
+> special privilege. The LSM must be consulted to determine if the
+> module's policy allows the access.
 
-I /think/ "all pages get written out at the same time" is basically the
-same thing as "support a non-power-of-two block size".
+Getting back to this thread after a while. Sorry got busy in other
+things.
 
-If we only have page A in the cache at the time it's going to be written
-back, we have to read in pages B and C in order to calculate the parity P.
-That will annoy writeback-because-we're-low-on-memory; I know we allow
-a certain amount of allocation to happen in the writeback path, but
-requiring 128kB to be allocated is a bit much.
+I noticed that if we skip calling inode_permission() for special files,
+then we will skip calling security_inode_permission() but we will
+still call security hooks for setxattr/getxattr/removexattr etc.
 
-So we have to allow page A being dirty to pin pages B and C in the cache.
-I suppose that's possible; we could make (clean) pages B and C follow
-page A on the LRU, so they're going to still be in RAM at the time that
-page A is written back.  I don't fully understand how the LRU works,
-but I assume it'd be a nightmare to ensure that A, B and C all move
-around the system in the same way.  Much easier to ensure that ABC stay
-linked together and all get written back at once.
+security_inode_setxattr()
+security_inode_getxattr()
+security_inode_removexattr()
+
+So LSMs will still get a chance whether to allow/disallow this operation
+or not.
+
+And skipping security_inode_permission() kind of makes sense that for
+special files, I am not writing to device. So taking permission from
+LSMs, will not make much sense.
+
+Thanks
+Vivek
+
