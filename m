@@ -2,114 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5581D3FB5F5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 14:26:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 674B23FB70A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 15:36:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236402AbhH3MYv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Aug 2021 08:24:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33414 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231165AbhH3MYu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Aug 2021 08:24:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2B1B5610E6;
-        Mon, 30 Aug 2021 12:23:51 +0000 (UTC)
-Date:   Mon, 30 Aug 2021 14:23:48 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>
-Cc:     andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
-        casey@schaufler-ca.com, daniel@iogearbox.net, dhowells@redhat.com,
-        dvyukov@google.com, jmorris@namei.org, kafai@fb.com,
-        kpsingh@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        paul@paul-moore.com, selinux@vger.kernel.org,
-        songliubraving@fb.com, stephen.smalley.work@gmail.com,
-        syzkaller-bugs@googlegroups.com, tonymarislogistics@yandex.com,
-        viro@zeniv.linux.org.uk, yhs@fb.com
-Subject: Re: [syzbot] general protection fault in legacy_parse_param
-Message-ID: <20210830122348.jffs5dmq6z25qzw5@wittgenstein>
-References: <0000000000004e5ec705c6318557@google.com>
- <0000000000008d2a0005ca951d94@google.com>
+        id S236749AbhH3Nh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Aug 2021 09:37:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36222 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231669AbhH3Nh0 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Aug 2021 09:37:26 -0400
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9CFBC061575
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Aug 2021 06:36:32 -0700 (PDT)
+Received: by mail-qk1-x734.google.com with SMTP id y144so15580630qkb.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Aug 2021 06:36:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=agnGQ75OL15xrB4TvdTAIImo6aucfhxvAPL7IzlpdQ0=;
+        b=UZIRkyOD/BiJm1rmhsSB1PHDSAKwe71aEYgpT20q7FRhYg4hf6yLurNR7tprhnn9D/
+         y3MlBaFG00RsLEoq/N1Ffj2oMF6fjapDoZ2j9+9X00bh/wCxEOVhOvmrHSCWEb3nQJ2l
+         Rr+8UtsxWx78Y/6773kKecpAmCZig36kLLKzNAPvhAIU0+fIXaaNA9kqdMvLEGJizEaO
+         G30Tq1kClnPTO5FQfHKi3CjO1kBRu3lfQP4bGElSWUhVXeYQl4gegkgz551odqRg8iEc
+         8dQrn07Y582rJcwHcNjcCfQyyROFoONwEXk4ncIAEnOVn3SbKkcKvkoz6AMdm79veS6G
+         P/Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=agnGQ75OL15xrB4TvdTAIImo6aucfhxvAPL7IzlpdQ0=;
+        b=BqFqLlXtWeEKSGDjAcEghPyPPa8A2w9fsjtIqhNNm3He1hsNg7l2g9jDLKV9rJeuT8
+         hYRaD5p/96urJL6Fp6XAUkhaj1qf1yIYqcQatCLB7yK9BxvrqT2tdzcYu6I66SzKovHd
+         yc/f+VpNoHht7LtOICQ2ZA7ptyBNQsXlbAjYtvDJY2T5lTuUfUGMwkm9/8+kG7yOqHS7
+         BBC0SyUS7jwycowno0ilrZcS2F0LycJiz7kN5eMelcDcHQRDYewbvQGhVj6M2jBYslwg
+         Gz7GwSax7a0PiXqTu7j+TqaSkbWFLMBgKrYNuCY4sycQPZvJJGqrg1SnV6nqPVOLJ3yx
+         2Vdw==
+X-Gm-Message-State: AOAM530NQOUv9tnIsRuX+i9ydAQQtYYF0ZF2zpHh8GksSKyBB2eb967c
+        PSfwhnq1EprNOG7ukzJB6HMMxG8Dzx2HtQ==
+X-Google-Smtp-Source: ABdhPJxDC4XrH9DGwSmSrgnTJRuk+sqyorDAkdH437mzdcRK3lyzo5+sJrv+LcH6WD0zbXddGh872A==
+X-Received: by 2002:a05:620a:cd0:: with SMTP id b16mr23006228qkj.136.1630330591427;
+        Mon, 30 Aug 2021 06:36:31 -0700 (PDT)
+Received: from localhost.localdomain (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id a15sm8491087qtp.19.2021.08.30.06.36.30
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Aug 2021 06:36:30 -0700 (PDT)
+To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>
+From:   Josef Bacik <josef@toxicpanda.com>
+Subject: [CFP] File systems MC for Plumbers
+Message-ID: <b7569879-e74a-0ae6-76fd-0564ead595ba@toxicpanda.com>
+Date:   Mon, 30 Aug 2021 09:36:30 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <0000000000008d2a0005ca951d94@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 27, 2021 at 07:11:18PM -0700, syzbot wrote:
-> syzbot has bisected this issue to:
-> 
-> commit 54261af473be4c5481f6196064445d2945f2bdab
-> Author: KP Singh <kpsingh@google.com>
-> Date:   Thu Apr 30 15:52:40 2020 +0000
-> 
->     security: Fix the default value of fs_context_parse_param hook
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=160c5d75300000
-> start commit:   77dd11439b86 Merge tag 'drm-fixes-2021-08-27' of git://ano..
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=150c5d75300000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=110c5d75300000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=2fd902af77ff1e56
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d1e3b1d92d25abf97943
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126d084d300000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16216eb1300000
-> 
-> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
-> Fixes: 54261af473be ("security: Fix the default value of fs_context_parse_param hook")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Hello,
 
-So ok, this seems somewhat clear now. When smack and 
-CONFIG_BPF_LSM=y
-is selected the bpf LSM will register NOP handlers including
+Just an FYI we are hosting a File Systems MC for plumbers in a few 
+weeks.  We have a few topics accepted but have room for a few more if 
+anybody is attending and interested in submitting proposals.  You can 
+submit a proposal here
 
-bpf_lsm_fs_context_fs_param()
+https://linuxplumbersconf.org/event/11/abstracts/
 
-for the
+Just click on the "Submit new proposal" at the bottom and make sure to 
+select the "Filesystem MC" in the track.  Thanks,
 
-fs_context_fs_param
-
-LSM hook. The bpf LSM runs last, i.e. after smack according to:
-
-CONFIG_LSM="landlock,lockdown,yama,safesetid,integrity,tomoyo,smack,bpf"
-
-in the appended config. The smack hook runs and sets
-
-param->string = NULL
-
-then the bpf NOP handler runs returning -ENOPARM indicating to the vfs
-parameter parser that this is not a security module option so it should
-proceed processing the parameter subsequently causing the crash because
-param->string is not allowed to be NULL (Which the vfs parameter parser
-verifies early in fsconfig().).
-
-If you take the appended syzkaller config and additionally select
-kprobes you can observe this by registering bpf kretprobes for:
-security_fs_context_parse_param()
-smack_fs_context_parse_param()
-bpf_lsm_fs_context_parse_param()
-in different terminal windows and then running the syzkaller provided
-reproducer:
-
-root@f2-vm:~# bpftrace -e 'kretprobe:smack_fs_context_parse_param { printf("returned: %d\n", retval); }'
-Attaching 1 probe...
-returned: 0
-
-root@f2-vm:~# bpftrace -e 'kretprobe:bpf_lsm_fs_context_parse_param { printf("returned: %d\n", retval); }'
-Attaching 1 probe...
-returned: -519
-
-root@f2-vm:~# bpftrace -e 'kretprobe:security_fs_context_parse_param { printf("returned: %d\n", retval); }'
-Attaching 1 probe...
-returned: -519
-
-^^^^^
-This will ultimately tell the vfs to move on causing the crash because
-param->string is null at that point.
-
-Unless I missed something why that can't happen.
-
-Christian
+Josef
