@@ -2,78 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F0C613FBB32
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 19:42:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E60073FBB85
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 20:10:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238044AbhH3RnW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Aug 2021 13:43:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38102 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234189AbhH3RnV (ORCPT
+        id S238459AbhH3SLq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Aug 2021 14:11:46 -0400
+Received: from smtp11.smtpout.orange.fr ([80.12.242.133]:59376 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238150AbhH3SLp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Aug 2021 13:43:21 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C775C061575
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Aug 2021 10:42:27 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id y34so32810662lfa.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Aug 2021 10:42:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Eq9gWq/jC1hHa9yf5Uils26OK8doFFXy1AXclzZU12g=;
-        b=FYKREKZbqC8UMhMxllhLg2w1tBe0Lc4CTjbaUN3KnbgKJg9RUdU76r9/FODabaTFNO
-         NllwIfj8AZUYyXB1oXSWzco2h/AxSHwivNiHoePjSMaQf0d1PxTmMy04s45YfOaj0GPD
-         F/wpfx4iEEQie8ZcC9BFYcApln+tTNmInfCEc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Eq9gWq/jC1hHa9yf5Uils26OK8doFFXy1AXclzZU12g=;
-        b=AFpojeUrlts4BY2OW0GAkFw9xC3UrTJ9dwNpca/XYt1p42kNBwHKyxGfe39VF8Fkab
-         cHn1Vgb4+kj4NwMTZOqyjee+vfmlU+RKRedgl3lXtiuvE7LdAn9qEHrQekHYX4BohVMh
-         aDoRK6VQ0jZx/3GZR54+89eMnbFN1WHX96dE3Cx9tHOFtpD1A4Z+zTv1RzGxMiGbkAai
-         qSjvMsILT5EpNRr2QLG0O9HjeOkpz11F2JCiqSDHOcLbEL5W5U57LuA24AX383a5kmoV
-         iDxf0upryBDKL5LDzzWPdT9rgWbVzB5uOIJIUhHhhIeblMArjIioQvBOtPLTNBCe1v6R
-         3gaw==
-X-Gm-Message-State: AOAM5321w4/NWecfLzjZMT2+IuTSe7SOg/kv53A/phbek0VFKvpa08Ri
-        1+0J1WEOhqulElKLbNLm0R5oQynNJ1UPzWDP
-X-Google-Smtp-Source: ABdhPJwaAhKVOsY9jE4eE2COAb+PV6H4+D5e0YoXQJbquG6UqTJtF1Bz39xS0ObHD335Xy7FdTHkqA==
-X-Received: by 2002:a05:6512:3e1b:: with SMTP id i27mr7428211lfv.273.1630345345558;
-        Mon, 30 Aug 2021 10:42:25 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id k12sm1855138ljm.65.2021.08.30.10.42.25
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Aug 2021 10:42:25 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id c8so20263555lfi.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Aug 2021 10:42:25 -0700 (PDT)
-X-Received: by 2002:a05:6512:681:: with SMTP id t1mr17677322lfe.487.1630345344811;
- Mon, 30 Aug 2021 10:42:24 -0700 (PDT)
+        Mon, 30 Aug 2021 14:11:45 -0400
+Received: from optiplex.localdomain ([90.92.89.109])
+        by mwinf5d59 with ME
+        id nuAp250092MZPaq03uAp6j; Mon, 30 Aug 2021 20:10:50 +0200
+X-ME-Helo: optiplex.localdomain
+X-ME-Auth: amVhbi1waWVycmUuYW5kcmVAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 30 Aug 2021 20:10:50 +0200
+X-ME-IP: 90.92.89.109
+From:   =?UTF-8?Q?Jean-Pierre_Andr=c3=a9?= <jean-pierre.andre@wanadoo.fr>
+Subject: Stable NTFS-3G + NTFSPROGS 2021.8.22 Released
+To:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        ntfs-3g-devel <ntfs-3g-devel@lists.sourceforge.net>,
+        ntfs-3g-news <ntfs-3g-news@lists.sourceforge.net>
+Message-ID: <d343b1d7-6587-06a5-4b60-e4c59a585498@wanadoo.fr>
+Date:   Mon, 30 Aug 2021 19:59:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20210825124920.GF14620@quack2.suse.cz> <20210825125309.GA8508@quack2.suse.cz>
-In-Reply-To: <20210825125309.GA8508@quack2.suse.cz>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 30 Aug 2021 10:42:09 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whWbj7Xh4ddcgrO6KqQ+edvAsdkmxt-gDw8gMh8VcugXA@mail.gmail.com>
-Message-ID: <CAHk-=whWbj7Xh4ddcgrO6KqQ+edvAsdkmxt-gDw8gMh8VcugXA@mail.gmail.com>
-Subject: Re: [GIT PULL] FIEMAP cleanups for 5.15-rc1
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 25, 2021 at 5:53 AM Jan Kara <jack@suse.cz> wrote:
->
-> Forgot to CC fsdevel so adding it now.
+Greetings,
 
-Well, the "Re:" in the subject line (or possibly the quoting in the
-body) then meant that pr-tracker-bot didn't react to this even after
-adding the mailing list.
+Main topics:
 
-So this is a manual version of the pr-tracker-bot "it's been merged"
-notification.
+   - New stable release
+   - Security advisory
+   - Project moved to GitHub
+   - Performance notes
 
-             Linus
+The new stable release of NTFS-3G and ntfsprogs is available which 
+includes important security fixes. The security advisory is available at
+
+https://github.com/tuxera/ntfs-3g/security/advisories/GHSA-q759-8j5v-q5jp
+
+The NTFS-3G project globally aims at providing a stable NTFS driver. The 
+project's advanced branch has specifically aimed at developing, 
+maturing, and releasing features for user feedback prior to feature 
+integration into the project's main branch.
+
+The parallel existence of both a stable and advanced variant maintained 
+across several locations has caused some confusion. In particular, the 
+Linux distributions observed different policies in selecting which 
+version they use for their packaging. That led to users questioning the 
+differences between features, and to additional challenges in providing 
+support.
+
+We've decided to merge the two projects and maintain a single repository 
+for source code and documentation on GitHub. As the projects have always 
+remained in close contact, this will cause no discontinuity in the 
+released features, while enabling smoother support. The former 
+repository on Sourceforge will be discontinued after a grace period, to 
+allow users time to adapt to the project's new state. Please use 
+GitHub's infrastructure for issue submission and release notification.
+
+There have been some reports about very slow performance. Performance is 
+a complex topic and NTFS-3G always aimed for stability, interoperability 
+and portability over performance. Having said that, we did some 
+investigation and benchmarking. What we have found are
+
+1. Some distributions use an older and slower version of NTFS-3G.
+
+2. The "big_writes" mount option is not used. This option can increase 
+ >4kB IO block size write speed by 2-8 times. File transfers typically 
+use 128kB which usually give a 3-4 times speed improvement. The option 
+is safe to use and we plan to enable it by default in the next stable 
+release.
+
+3. Incorrect interpretation of benchmark results. For example in a 
+recent public case the total runtime was completely distorted by an 
+irrelevant test case hereby a wrong conclusion was made, namely NTFS-3G 
+was thought to be over 4 times slower instead of 21% faster. More about 
+this soon on linux-fsdevel.
+
+In our file transfer benchmarks we have found NTFS-3G read and write 
+speed was 15-20% less compared to ext4. Read was 3.4 GB/s versus 2.8 
+GB/s, and write was 1.3 GB/s vs 1.1 GB/s. Nevertheless, different 
+benchmarks can give different results.
+
+The new release can be downloaded from
+
+     https://github.com/tuxera/ntfs-3g/releases/tag/2021.8.22
+
+Changelog is available at
+
+     https://github.com/tuxera/ntfs-3g/wiki/NTFS-3G-Release-History
+
+Many thanks to Rakesh Pandit, Jussi Hietanen, Erik Larsson, Szabolcs 
+Szakacsits and many Tuxerians for their contributions to this release 
+and to the migration to GitHub.
+
+We also want to add special thanks to Jeremy Galindo, Akshay Ajayan, 
+Kyle Zeng and Fish Wang, whose analyses were of great help in improving 
+the security of the code.
+
+With best regards,
+
+Jean-Pierre & Tuxera Open Source Team
