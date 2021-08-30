@@ -2,82 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EE4A3FBA55
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 18:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E56AE3FBA73
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 18:56:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237901AbhH3QsO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Aug 2021 12:48:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34392 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237882AbhH3QsN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Aug 2021 12:48:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E01B160F5B;
-        Mon, 30 Aug 2021 16:47:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630342039;
-        bh=/ZbEAxvBW5ig7WPYzIG6ftbGUGoR7j4+CJT1CyKUAgE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=pPqSREqxmcM2xCHL9kODFPILmxDGalIsKDmDe4jGEPsUozDmh+ruX/O/LmhFODtxt
-         VIYvEwC66svykfXl46dTWe79Ys9le0rVp8NZQw7+j4+oAkLtIeqaBDdNerIXmXcYy2
-         DL1OPRMOsyyZ2q+lnCE7aOMpGrtF1gToEk+RLJeAnoj92vfbhp0ATxlcesE0t4ukna
-         UCMbyhEXzp4HW4Eeddf/2PerQXND5kpqT+osxua6VBfYadx7WWHEOBZqSUV18dXwku
-         NgpMAbi14Mi2x+cqbjH7Q8Ol9FNwDAMOZ5wOFyU3Kl+CO6fH5m7N17PykROLOlsM3a
-         try7iQyJi19Lg==
-Date:   Mon, 30 Aug 2021 09:47:17 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [GIT PULL] fscrypt updates for 5.15
-Message-ID: <YS0LlXIhvZc4r5Vt@sol.localdomain>
+        id S237909AbhH3Q5B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Aug 2021 12:57:01 -0400
+Received: from mslow1.mail.gandi.net ([217.70.178.240]:37631 "EHLO
+        mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237836AbhH3Q5B (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Aug 2021 12:57:01 -0400
+Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id 3C85AC655E;
+        Mon, 30 Aug 2021 16:56:06 +0000 (UTC)
+Received: (Authenticated sender: thomas.petazzoni@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id A31E1FF809;
+        Mon, 30 Aug 2021 16:55:42 +0000 (UTC)
+Date:   Mon, 30 Aug 2021 18:55:41 +0200
+From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To:     Pintu Agarwal <pintu.ping@gmail.com>
+Cc:     Mikulas Patocka <mpatocka@redhat.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>, dm-devel@redhat.com,
+        Kernelnewbies <kernelnewbies@kernelnewbies.org>, agk@redhat.com,
+        snitzer@redhat.com, Sami Tolvanen <samitolvanen@google.com>
+Subject: Re: Kernel 4.14: Using dm-verity with squashfs rootfs - mounting
+ issue
+Message-ID: <20210830185541.715f6a39@windsurf>
+In-Reply-To: <CAOuPNLg0m-Q7Vhp4srbQrjXHsxVhOr-K2dvnNqzdR6Dr4kioqA@mail.gmail.com>
+References: <CAOuPNLhqSpaTm3u4kFsnuZ0PLDKuX8wsxuF=vUJ1TEG0EP+L1g@mail.gmail.com>
+        <alpine.LRH.2.02.2107200737510.19984@file01.intranet.prod.int.rdu2.redhat.com>
+        <CAOuPNLhh_LkLQ8mSA4eoUDLCLzHo5zHXsiQZXUB_-T_F1_v6-g@mail.gmail.com>
+        <alpine.LRH.2.02.2107211300520.10897@file01.intranet.prod.int.rdu2.redhat.com>
+        <CAOuPNLi-xz_4P+v45CHLx00ztbSwU3_maf4tuuyso5RHyeOytg@mail.gmail.com>
+        <CAOuPNLg0m-Q7Vhp4srbQrjXHsxVhOr-K2dvnNqzdR6Dr4kioqA@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit ff1176468d368232b684f75e82563369208bc371:
+Hello,
 
-  Linux 5.14-rc3 (2021-07-25 15:35:14 -0700)
+On Mon, 30 Aug 2021 21:55:19 +0530
+Pintu Agarwal <pintu.ping@gmail.com> wrote:
 
-are available in the Git repository at:
+> Sorry for coming back to this again..
+> Unfortunately, none of the options is working for us with squashfs
+> (bootloader, initramfs).
+> initramfs have different kinds of challenges because of the partition
+> size issue.
+> So, our preferred option is still the bootloader command line approach..
+> 
+> Is there a proven and working solution of dm-verity with squashfs ?
+> If yes, please share some references.
+> 
+> The current problem with squashfs is that we could not append the
+> verity-metadata to squashfs, so we store it on a separate volume and
+> access it.
 
-  https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fscrypt-for-linus
+Here, it definitely worked to append the hash tree to the squashfs
+image and store them in the same partition.
 
-for you to fetch changes up to 38ef66b05cfa3560323344a0b3e09e583f1eb974:
+> By specifying it like : /dev/mtdblock53
+> 
+> Then we get the error like this:
+> {
+> [    4.950276] device-mapper: init: attempting early device configuration.
+> [    4.957577] device-mapper: init: adding target '0 95384 verity 1
+> /dev/ubiblock0_0 /dev/mtdblock53 4096 4096 11923 8 sha256
+> 16da5e4bbc706e5d90511d2a3dae373b5d878f9aebd522cd614a4faaace6baa3
+> aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7 10
+> restart_on_corruption ignore_zero_blocks use_fec_from_device
+> /dev/mtdblock53 fec_roots 2 fec_blocks 12026 fec_start 12026'
+> [    4.975283] device-mapper: verity: sha256 using implementation
+> "sha256-generic"
+> [    4.998728] device-mapper: init: dm-0 is ready
 
-  fscrypt: document struct fscrypt_operations (2021-07-28 21:40:36 -0700)
+Could you show the full kernel command line ?
 
-----------------------------------------------------------------
+> Do you see any other problem here with dm-verity cmdline or with squashfs ?
+> 
+> Is squashfs ever proved to be working with dm-verity on higher kernel version ?
+> Currently our kernel version is 4.14.
 
-Some small fixes and cleanups for fs/crypto/:
+I confirm we used squashfs on dm-verity successfully. For sure on 4.19,
+perhaps on older kernels as well.
 
-- Fix ->getattr() for ext4, f2fs, and ubifs to report the correct
-  st_size for encrypted symlinks.
+> Or, another option is to use the new concept from 5.1 kernel that is:
+> dm-mod.create = ?
 
-- Use base64url instead of a custom Base64 variant.
+How are you doing it today without dm-mod.create ?
 
-- Document struct fscrypt_operations.
+Again, please give your complete kernel command line.
 
-----------------------------------------------------------------
-Eric Biggers (7):
-      fscrypt: add fscrypt_symlink_getattr() for computing st_size
-      ext4: report correct st_size for encrypted symlinks
-      f2fs: report correct st_size for encrypted symlinks
-      ubifs: report correct st_size for encrypted symlinks
-      fscrypt: remove mention of symlink st_size quirk from documentation
-      fscrypt: align Base64 encoding with RFC 4648 base64url
-      fscrypt: document struct fscrypt_operations
+Best regards,
 
- Documentation/filesystems/fscrypt.rst |  15 ++---
- fs/crypto/fname.c                     | 106 +++++++++++++++++++------------
- fs/crypto/hooks.c                     |  44 +++++++++++++
- fs/ext4/symlink.c                     |  12 +++-
- fs/f2fs/namei.c                       |  12 +++-
- fs/ubifs/file.c                       |  13 +++-
- include/linux/fscrypt.h               | 116 ++++++++++++++++++++++++++++++++--
- 7 files changed, 260 insertions(+), 58 deletions(-)
+Thomas
+-- 
+Thomas Petazzoni, co-owner and CEO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
