@@ -2,109 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E56AE3FBA73
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 18:56:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FA273FBA7B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 18:57:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237909AbhH3Q5B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Aug 2021 12:57:01 -0400
-Received: from mslow1.mail.gandi.net ([217.70.178.240]:37631 "EHLO
-        mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237836AbhH3Q5B (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Aug 2021 12:57:01 -0400
-Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id 3C85AC655E;
-        Mon, 30 Aug 2021 16:56:06 +0000 (UTC)
-Received: (Authenticated sender: thomas.petazzoni@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id A31E1FF809;
-        Mon, 30 Aug 2021 16:55:42 +0000 (UTC)
-Date:   Mon, 30 Aug 2021 18:55:41 +0200
-From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To:     Pintu Agarwal <pintu.ping@gmail.com>
-Cc:     Mikulas Patocka <mpatocka@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>, dm-devel@redhat.com,
-        Kernelnewbies <kernelnewbies@kernelnewbies.org>, agk@redhat.com,
-        snitzer@redhat.com, Sami Tolvanen <samitolvanen@google.com>
-Subject: Re: Kernel 4.14: Using dm-verity with squashfs rootfs - mounting
- issue
-Message-ID: <20210830185541.715f6a39@windsurf>
-In-Reply-To: <CAOuPNLg0m-Q7Vhp4srbQrjXHsxVhOr-K2dvnNqzdR6Dr4kioqA@mail.gmail.com>
-References: <CAOuPNLhqSpaTm3u4kFsnuZ0PLDKuX8wsxuF=vUJ1TEG0EP+L1g@mail.gmail.com>
-        <alpine.LRH.2.02.2107200737510.19984@file01.intranet.prod.int.rdu2.redhat.com>
-        <CAOuPNLhh_LkLQ8mSA4eoUDLCLzHo5zHXsiQZXUB_-T_F1_v6-g@mail.gmail.com>
-        <alpine.LRH.2.02.2107211300520.10897@file01.intranet.prod.int.rdu2.redhat.com>
-        <CAOuPNLi-xz_4P+v45CHLx00ztbSwU3_maf4tuuyso5RHyeOytg@mail.gmail.com>
-        <CAOuPNLg0m-Q7Vhp4srbQrjXHsxVhOr-K2dvnNqzdR6Dr4kioqA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+        id S237940AbhH3Q6e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Aug 2021 12:58:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37156 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231234AbhH3Q6e (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 30 Aug 2021 12:58:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4C7BC60E90;
+        Mon, 30 Aug 2021 16:57:36 +0000 (UTC)
+Date:   Mon, 30 Aug 2021 18:57:33 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
+        andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
+        daniel@iogearbox.net, dhowells@redhat.com, dvyukov@google.com,
+        jmorris@namei.org, kafai@fb.com, kpsingh@google.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        paul@paul-moore.com, selinux@vger.kernel.org,
+        songliubraving@fb.com, stephen.smalley.work@gmail.com,
+        syzkaller-bugs@googlegroups.com, tonymarislogistics@yandex.com,
+        viro@zeniv.linux.org.uk, yhs@fb.com
+Subject: Re: [syzbot] general protection fault in legacy_parse_param
+Message-ID: <20210830165733.emqlg3orflaqqfio@wittgenstein>
+References: <0000000000004e5ec705c6318557@google.com>
+ <0000000000008d2a0005ca951d94@google.com>
+ <20210830122348.jffs5dmq6z25qzw5@wittgenstein>
+ <61bf6b11-80f8-839e-4ae7-54c2c6021ed5@schaufler-ca.com>
+ <89d0e012-4caf-4cda-3c4e-803a2c6ebc2b@schaufler-ca.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <89d0e012-4caf-4cda-3c4e-803a2c6ebc2b@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
-
-On Mon, 30 Aug 2021 21:55:19 +0530
-Pintu Agarwal <pintu.ping@gmail.com> wrote:
-
-> Sorry for coming back to this again..
-> Unfortunately, none of the options is working for us with squashfs
-> (bootloader, initramfs).
-> initramfs have different kinds of challenges because of the partition
-> size issue.
-> So, our preferred option is still the bootloader command line approach..
+On Mon, Aug 30, 2021 at 09:40:57AM -0700, Casey Schaufler wrote:
+> On 8/30/2021 7:25 AM, Casey Schaufler wrote:
+> > On 8/30/2021 5:23 AM, Christian Brauner wrote:
+> >> On Fri, Aug 27, 2021 at 07:11:18PM -0700, syzbot wrote:
+> >>> syzbot has bisected this issue to:
+> >>>
+> >>> commit 54261af473be4c5481f6196064445d2945f2bdab
+> >>> Author: KP Singh <kpsingh@google.com>
+> >>> Date:   Thu Apr 30 15:52:40 2020 +0000
+> >>>
+> >>>     security: Fix the default value of fs_context_parse_param hook
+> >>>
+> >>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=160c5d75300000
+> >>> start commit:   77dd11439b86 Merge tag 'drm-fixes-2021-08-27' of git://ano..
+> >>> git tree:       upstream
+> >>> final oops:     https://syzkaller.appspot.com/x/report.txt?x=150c5d75300000
+> >>> console output: https://syzkaller.appspot.com/x/log.txt?x=110c5d75300000
+> >>> kernel config:  https://syzkaller.appspot.com/x/.config?x=2fd902af77ff1e56
+> >>> dashboard link: https://syzkaller.appspot.com/bug?extid=d1e3b1d92d25abf97943
+> >>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126d084d300000
+> >>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16216eb1300000
+> >>>
+> >>> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+> >>> Fixes: 54261af473be ("security: Fix the default value of fs_context_parse_param hook")
+> >>>
+> >>> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> >> So ok, this seems somewhat clear now. When smack and 
+> >> CONFIG_BPF_LSM=y
+> >> is selected the bpf LSM will register NOP handlers including
+> >>
+> >> bpf_lsm_fs_context_fs_param()
+> >>
+> >> for the
+> >>
+> >> fs_context_fs_param
+> >>
+> >> LSM hook. The bpf LSM runs last, i.e. after smack according to:
+> >>
+> >> CONFIG_LSM="landlock,lockdown,yama,safesetid,integrity,tomoyo,smack,bpf"
+> >>
+> >> in the appended config. The smack hook runs and sets
+> >>
+> >> param->string = NULL
+> >>
+> >> then the bpf NOP handler runs returning -ENOPARM indicating to the vfs
+> >> parameter parser that this is not a security module option so it should
+> >> proceed processing the parameter subsequently causing the crash because
+> >> param->string is not allowed to be NULL (Which the vfs parameter parser
+> >> verifies early in fsconfig().).
+> > The security_fs_context_parse_param() function is incorrectly
+> > implemented using the call_int_hook() macro. It should return
+> > zero if any of the modules return zero. It does not follow the
+> > usual failure model of LSM hooks. It could be argued that the
+> > code was fine before the addition of the BPF hook, but it was
+> > going to fail as soon as any two security modules provided
+> > mount options.
+> >
+> > Regardless, I will have a patch later today. Thank you for
+> > tracking this down.
 > 
-> Is there a proven and working solution of dm-verity with squashfs ?
-> If yes, please share some references.
+> Here's my proposed patch. I'll tidy it up with a proper
+> commit message if it looks alright to y'all. I've tested
+> with Smack and with and without BPF.
+
+Looks good to me.
+On question, in contrast to smack, selinux returns 1 instead of 0 on
+success. So selinux would cause an early return preventing other hooks
+from running. Just making sure that this is intentional.
+
+Iirc, this would mean that selinux causes fsconfig() to return a
+positive value to userspace which I think is a bug; likely in selinux.
+So I think selinux should either return 0 or the security hook itself
+needs to overwrite a positive value with a sensible errno that can be
+seen by userspace.
+
 > 
-> The current problem with squashfs is that we could not append the
-> verity-metadata to squashfs, so we store it on a separate volume and
-> access it.
-
-Here, it definitely worked to append the hash tree to the squashfs
-image and store them in the same partition.
-
-> By specifying it like : /dev/mtdblock53
 > 
-> Then we get the error like this:
-> {
-> [    4.950276] device-mapper: init: attempting early device configuration.
-> [    4.957577] device-mapper: init: adding target '0 95384 verity 1
-> /dev/ubiblock0_0 /dev/mtdblock53 4096 4096 11923 8 sha256
-> 16da5e4bbc706e5d90511d2a3dae373b5d878f9aebd522cd614a4faaace6baa3
-> aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7 10
-> restart_on_corruption ignore_zero_blocks use_fec_from_device
-> /dev/mtdblock53 fec_roots 2 fec_blocks 12026 fec_start 12026'
-> [    4.975283] device-mapper: verity: sha256 using implementation
-> "sha256-generic"
-> [    4.998728] device-mapper: init: dm-0 is ready
-
-Could you show the full kernel command line ?
-
-> Do you see any other problem here with dm-verity cmdline or with squashfs ?
+>  security/security.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
 > 
-> Is squashfs ever proved to be working with dm-verity on higher kernel version ?
-> Currently our kernel version is 4.14.
+> diff --git a/security/security.c b/security/security.c
+> index 09533cbb7221..3cf0faaf1c5b 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -885,7 +885,19 @@ int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
+>  
+>  int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>  {
+> -	return call_int_hook(fs_context_parse_param, -ENOPARAM, fc, param);
+> +	struct security_hook_list *hp;
+> +	int trc;
+> +	int rc = -ENOPARAM;
+> +
+> +	hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
+> +			     list) {
+> +		trc = hp->hook.fs_context_parse_param(fc, param);
+> +		if (trc == 0)
+> +			rc = 0;
+> +		else if (trc != -ENOPARAM)
+> +			return trc;
+> +	}
+> +	return rc;
+>  }
+>  
+>  int security_sb_alloc(struct super_block *sb)
 
-I confirm we used squashfs on dm-verity successfully. For sure on 4.19,
-perhaps on older kernels as well.
-
-> Or, another option is to use the new concept from 5.1 kernel that is:
-> dm-mod.create = ?
-
-How are you doing it today without dm-mod.create ?
-
-Again, please give your complete kernel command line.
-
-Best regards,
-
-Thomas
--- 
-Thomas Petazzoni, co-owner and CEO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+<snip>
