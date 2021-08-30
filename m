@@ -2,150 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B6F583FBC15
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 20:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D736B3FBC4B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 Aug 2021 20:24:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238847AbhH3SVq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 Aug 2021 14:21:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46138 "EHLO
+        id S238718AbhH3SZW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 Aug 2021 14:25:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238791AbhH3SVh (ORCPT
+        with ESMTP id S238508AbhH3SZR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 Aug 2021 14:21:37 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F8C1C0604C7;
-        Mon, 30 Aug 2021 11:18:53 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id t19so33047944ejr.8;
-        Mon, 30 Aug 2021 11:18:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4nZc2m/dOqxmB1eKzo22dnXLX+VFfEl/hwdI2/cyoEM=;
-        b=A7h8ybB2P+VfxNJI8xfu7cEEl6RfK7GygfAovranOttjBmqnUVsfl9rZwsB0/8ueiQ
-         TbLaGdtZk1fV1H0FFIh3V5oL95D0uAw6tIhs2R9LHq+P45BwQfuIFJDU0VpbrpyWfDCw
-         Irv+4eEqcirZuczPZg/tUPVRLnjcnl+E0zbbvVkSHmr5R+iDQlxAcqrYFXEyQWEOqemX
-         9m9JMczC5/QBNSVhnSfD0IK8LiQC7DYhPZN1WUGN7en8Df4mqhQAB3zux9ia3wgo+WW/
-         iTWX99ISGeytT5+wDhptZuK/r2To5cSyF35/RZUU5E4sRg/A+2FGJNzn02BNAOVo3i5K
-         uu7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4nZc2m/dOqxmB1eKzo22dnXLX+VFfEl/hwdI2/cyoEM=;
-        b=RYfwICTJPp1J+oJVXyw5/bMqg7bquycVdcTMBzUFS/Fqffmrgqv0+29bv85U9ui2sQ
-         /UK76vdb9c6xO+5w58TQ3+Mha71xKaP52CpXsCXX/PEbr5Fl90aXP/2c47T3diGX35SF
-         2eEnAgPSSasC1jQRTB65LcOVks11kfBeNiY42WRT/riL9OmUW0j+eRHU2hgTnEZWsH+r
-         4yU3GiHEXGshU6ZQ5qzAydh1MlvBGW+n4Y4bTR9qV05i4eAl4/F6+TD6WBEx9IXIzpcI
-         vkfv/V5wiqh8wvJj53ph+/NqW1eOrRUor5S4RczpmSZFfPwpQ2BLzZY09f7wzKgHQIwm
-         J+Og==
-X-Gm-Message-State: AOAM533KxCjDqFVHFSTzceIcOQztaLC0JSO2ZKemmfer30RImoL0Ovzc
-        na58kmIAdIMDhfFOSrgT+l4aq5oUnjt5S7dNI6npAfSqIpzi8PU1
-X-Google-Smtp-Source: ABdhPJyQzW3MlAgCliu3WdiEbQ0YtZ+8ycOJa910u+zPDe/bD8bYKE5SakukZYmkGdvUYCdU8uIVUyt9VaN9BvcL3l4=
-X-Received: by 2002:a17:906:8cc:: with SMTP id o12mr18643103eje.252.1630347531529;
- Mon, 30 Aug 2021 11:18:51 -0700 (PDT)
+        Mon, 30 Aug 2021 14:25:17 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F17FC0617A8;
+        Mon, 30 Aug 2021 11:24:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=qFsHsk6AyJLgCY4KMOK4CQBK1/TyhhbrC84aarSuCoM=; b=K0CGUsgB6cXBq/GMuqmkJ7OFlm
+        2eP4ou1xcM9VX8gkbGOPDinAmPcwPQhVxyA+VUovkLmzwvbt3xUe5OrRMFqtD2Coi0hlUvq2MC4PT
+        hJU5mUw20jETjrc7oNf59TetDuJCHFtqlEVwpEMLWN+PcWlC1OcqDdUOsRxjzwrWBrLkAEqa04GeE
+        xM6MdeFVLkdONh+310fVcN1QHghYq9V9PIw4Hfai4wIRyivwBjZUQNPARFeWmk8jfIgYem1LpyT7o
+        CRzIP3PybQe5yeb6SxwxXPb8t2sFAu6epo9esDaZR5cx1A3P4MoXmUvTj3zfH26u0NZWkj8l3mV/c
+        cghSiFIA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mKlvN-000Pkf-DY; Mon, 30 Aug 2021 18:22:36 +0000
+Date:   Mon, 30 Aug 2021 19:22:25 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [GIT PULL] Memory folios for v5.15
+Message-ID: <YS0h4cFhwYoW3MBI@casper.infradead.org>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YSQSkSOWtJCE4g8p@cmpxchg.org>
+ <YSQeFPTMn5WpwyAa@casper.infradead.org>
+ <YSU7WCYAY+ZRy+Ke@cmpxchg.org>
+ <YSVMAS2pQVq+xma7@casper.infradead.org>
+ <YSZeKfHxOkEAri1q@cmpxchg.org>
+ <20210826004555.GF12597@magnolia>
+ <YSjxlNl9jeEX2Yff@cmpxchg.org>
+ <YSkyjcX9Ih816mB9@casper.infradead.org>
+ <YS0WR38gCSrd6r41@cmpxchg.org>
 MIME-Version: 1.0
-References: <CAOuPNLhqSpaTm3u4kFsnuZ0PLDKuX8wsxuF=vUJ1TEG0EP+L1g@mail.gmail.com>
- <alpine.LRH.2.02.2107200737510.19984@file01.intranet.prod.int.rdu2.redhat.com>
- <CAOuPNLhh_LkLQ8mSA4eoUDLCLzHo5zHXsiQZXUB_-T_F1_v6-g@mail.gmail.com>
- <alpine.LRH.2.02.2107211300520.10897@file01.intranet.prod.int.rdu2.redhat.com>
- <CAOuPNLi-xz_4P+v45CHLx00ztbSwU3_maf4tuuyso5RHyeOytg@mail.gmail.com>
- <CAOuPNLg0m-Q7Vhp4srbQrjXHsxVhOr-K2dvnNqzdR6Dr4kioqA@mail.gmail.com> <20210830185541.715f6a39@windsurf>
-In-Reply-To: <20210830185541.715f6a39@windsurf>
-From:   Pintu Agarwal <pintu.ping@gmail.com>
-Date:   Mon, 30 Aug 2021 23:48:40 +0530
-Message-ID: <CAOuPNLhTidgLNWUbtUgdESYcKcE1C4SOdzKeQVhFGQvEoc0QEg@mail.gmail.com>
-Subject: Re: Kernel 4.14: Using dm-verity with squashfs rootfs - mounting issue
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Mikulas Patocka <mpatocka@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>, dm-devel@redhat.com,
-        Kernelnewbies <kernelnewbies@kernelnewbies.org>, agk@redhat.com,
-        snitzer@redhat.com, Sami Tolvanen <samitolvanen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YS0WR38gCSrd6r41@cmpxchg.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 30 Aug 2021 at 22:25, Thomas Petazzoni
-<thomas.petazzoni@bootlin.com> wrote:
->
-> Hello,
->
-> On Mon, 30 Aug 2021 21:55:19 +0530
-> Pintu Agarwal <pintu.ping@gmail.com> wrote:
->
-> > Sorry for coming back to this again..
-> > Unfortunately, none of the options is working for us with squashfs
-> > (bootloader, initramfs).
-> > initramfs have different kinds of challenges because of the partition
-> > size issue.
-> > So, our preferred option is still the bootloader command line approach..
-> >
-> > Is there a proven and working solution of dm-verity with squashfs ?
-> > If yes, please share some references.
-> >
-> > The current problem with squashfs is that we could not append the
-> > verity-metadata to squashfs, so we store it on a separate volume and
-> > access it.
->
-> Here, it definitely worked to append the hash tree to the squashfs
-> image and store them in the same partition.
->
-> > By specifying it like : /dev/mtdblock53
-> >
-> > Then we get the error like this:
-> > {
-> > [    4.950276] device-mapper: init: attempting early device configuration.
-> > [    4.957577] device-mapper: init: adding target '0 95384 verity 1
-> > /dev/ubiblock0_0 /dev/mtdblock53 4096 4096 11923 8 sha256
-> > 16da5e4bbc706e5d90511d2a3dae373b5d878f9aebd522cd614a4faaace6baa3
-> > aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7 10
-> > restart_on_corruption ignore_zero_blocks use_fec_from_device
-> > /dev/mtdblock53 fec_roots 2 fec_blocks 12026 fec_start 12026'
-> > [    4.975283] device-mapper: verity: sha256 using implementation
-> > "sha256-generic"
-> > [    4.998728] device-mapper: init: dm-0 is ready
->
-> Could you show the full kernel command line ?
-Shared below
+On Mon, Aug 30, 2021 at 01:32:55PM -0400, Johannes Weiner wrote:
+> A lot of DC hosts nowadays are in a direct pipeline for handling user
+> requests, which are highly parallelizable.
+> 
+> They are much smaller, and there are a lot more of them than there are
+> VMs in the world. The per-request and per-host margins are thinner,
+> and the compute-to-memory ratio is more finely calibrated than when
+> you're renting out large VMs that don't neatly divide up the machine.
+> 
+> Right now, we're averaging ~1G of RAM per CPU thread for most of our
+> hosts. You don't need a very large system - certainly not in the TB
+> ballpark - where struct page takes up the memory budget of entire CPU
+> threads. So now we have to spec memory for it, and spend additional
+> capex and watts, or we'll end up leaving those CPU threads stranded.
 
-> > Do you see any other problem here with dm-verity cmdline or with squashfs ?
-> >
-> > Is squashfs ever proved to be working with dm-verity on higher kernel version ?
-> > Currently our kernel version is 4.14.
->
-> I confirm we used squashfs on dm-verity successfully. For sure on 4.19,
-> perhaps on older kernels as well.
+So you're noticing at the level of a 64 thread machine (something like
+a dual-socket Xeon Gold 5318H, which would have 2x18x2 = 72 threads).
+Things certainly have changed, then.
 
-ohh that means we already have a working reference.
-If possible can you share the details, even 4.19 or higher will be
-also a good reference.
+> > The mistake you're making is coupling "minimum mapping granularity" with
+> > "minimum allocation granularity".  We can happily build a system which
+> > only allocates memory on 2MB boundaries and yet lets you map that memory
+> > to userspace in 4kB granules.
+> 
+> Yeah, but I want to do it without allocating 4k granule descriptors
+> statically at boot time for the entirety of available memory.
 
-> > Or, another option is to use the new concept from 5.1 kernel that is:
-> > dm-mod.create = ?
-> How are you doing it today without dm-mod.create ?
-I think in 4.14 we don't have dm-mod.create right ?
+Even that is possible when bumping the PAGE_SIZE to 16kB.  It needs a
+bit of fiddling:
 
-> Again, please give your complete kernel command line.
->
-Here is our kernel command line:
+static int insert_page_into_pte_locked(struct mm_struct *mm, pte_t *pte,
+                        unsigned long addr, struct page *page, pgprot_t prot)
+{
+        if (!pte_none(*pte))
+                return -EBUSY;
+        /* Ok, finally just insert the thing.. */
+        get_page(page);
+        inc_mm_counter_fast(mm, mm_counter_file(page));
+        page_add_file_rmap(page, false);
+        set_pte_at(mm, addr, pte, mk_pte(page, prot));
+        return 0;
+}
 
-[    0.000000] Kernel command line: ro rootwait
-console=ttyMSM0,115200,n8 ....  verity="95384 11923
-16da5e4bbc706e5d90511d2a3dae373b5d878f9aebd522cd614a4faaace6baa3 12026
-" rootfstype=squashfs ubi.mtd=40,0,30 ubi.block=0,0 root=/dev/dm-0
-.... init=/sbin/init root=/dev/dm-0 dm="rootfs none ro,0 95384 verity
-1 /dev/ubiblock0_0 /dev/mtdblock53 4096 4096 11923 8 sha256
-16da5e4bbc706e5d90511d2a3dae373b5d878f9aebd522cd614a4faaace6baa3
-aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7 10
-restart_on_corruption ignore_zero_blocks use_fec_from_device
-/dev/mtdblock53 fec_roots 2 fec_blocks 12026 fec_start 12026" ...
+mk_pte() assumes that a struct page refers to a single pte.  If we
+revamped it to take (page, offset, prot), it could construct the
+appropriate pte for the offset within that page.
 
-Do you see any issue here ?
-Can you share your command line for squashfs to compare ?
+---
 
-Thank you,
-Pintu
+Independent of _that_, the biggest problem we face (I think) in getting
+rid of memmap is that it offers the pfn_to_page() lookup.  If we move to a
+dynamically allocated descriptor for our arbitrarily-sized memory objects,
+we need a tree to store them in.  Given the trees we currently have,
+our best bet is probably the radix tree, but I dislike its glass jaws.
+I'm hoping that (again) the maple tree becomes stable soon enough for
+us to dynamically allocate memory descriptors and store them in it.
+And that we don't discover a bootstrapping problem between kmalloc()
+(for tree nodes) and memmap (to look up the page associated with a node).
+
+But that's all a future problem and if we can't even take a first step
+to decouple filesystems from struct page then working towards that would
+be wasted effort.
+
+> > > Willy says he has future ideas to make compound pages scale. But we
+> > > have years of history saying this is incredibly hard to achieve - and
+> > > it certainly wasn't for a lack of constant trying.
+> > 
+> > I genuinely don't understand.  We have five primary users of memory
+> > in Linux (once we're in a steady state after boot):
+> > 
+> >  - Anonymous memory
+> >  - File-backed memory
+> >  - Slab
+> >  - Network buffers
+> >  - Page tables
+> > 
+> > The relative importance of each one very much depends on your workload.
+> > Slab already uses medium order pages and can be made to use larger.
+> > Folios should give us large allocations of file-backed memory and
+> > eventually anonymous memory.  Network buffers seem to be headed towards
+> > larger allocations too.  Page tables will need some more thought, but
+> > once we're no longer interleaving file cache pages, anon pages and
+> > page tables, they become less of a problem to deal with.
+> > 
+> > Once everybody's allocating order-4 pages, order-4 pages become easy
+> > to allocate.  When everybody's allocating order-0 pages, order-4 pages
+> > require the right 16 pages to come available, and that's really freaking
+> > hard.
+> 
+> Well yes, once (and iff) everybody is doing that. But for the
+> foreseeable future we're expecting to stay in a world where the
+> *majority* of memory is in larger chunks, while we continue to see 4k
+> cache entries, anon pages, and corresponding ptes, yes?
+
+No.  4k page table entries are demanded by the architecture, and there's
+little we can do about that.  We can allocate them in larger chunks, but
+let's not solve that problem in this email.  I can see a world where
+anon memory is managed (by default, opportunistically) in larger
+chunks within a year.  Maybe six months if somebody really works hard
+on it.
+
+> Memory is dominated by larger allocations from the main workloads, but
+> we'll continue to have a base system that does logging, package
+> upgrades, IPC stuff, has small config files, small libraries, small
+> executables. It'll be a while until we can raise the floor on those
+> much smaller allocations - if ever.
+> 
+> So we need a system to manage them living side by side.
+> 
+> The slab allocator has proven to be an excellent solution to this
+> problem, because the mailing lists are not flooded with OOM reports
+> where smaller allocations fragmented the 4k page space. And even large
+> temporary slab explosions (inodes, dentries etc.) are usually pushed
+> back with fairly reasonable CPU overhead.
+
+You may not see the bug reports, but they exist.  Right now, we have
+a service that is echoing 2 to drop_caches every hour on systems which
+are lightly loaded, otherwise the dcache swamps the entire machine and
+takes hours or days to come back under control.
+
