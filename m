@@ -2,37 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E2F003FC241
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Aug 2021 07:53:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F3F13FC24E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Aug 2021 08:05:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238112AbhHaFx6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Aug 2021 01:53:58 -0400
-Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:52340 "EHLO
+        id S237697AbhHaFyz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Aug 2021 01:54:55 -0400
+Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:52354 "EHLO
         zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231397AbhHaFx5 (ORCPT
+        with ESMTP id S233873AbhHaFyz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Aug 2021 01:53:57 -0400
+        Tue, 31 Aug 2021 01:54:55 -0400
 Received: from jlbec by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mKwfX-00HUnl-Tb; Tue, 31 Aug 2021 05:50:48 +0000
-Date:   Tue, 31 Aug 2021 05:50:47 +0000
+        id 1mKwgU-00HUp2-OY; Tue, 31 Aug 2021 05:51:47 +0000
+Date:   Tue, 31 Aug 2021 05:51:46 +0000
 From:   Joel Becker <jlbec@evilplan.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Sishuai Gong <sishuai@purdue.edu>,
         Al Viro <viro@zeniv.linux.org.uk>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/4] configfs: return -ENAMETOOLONG earlier in
- configfs_lookup
-Message-ID: <YS3DN6fhJZEhu1Oy@zeniv-ca.linux.org.uk>
+Subject: Re: [PATCH 2/4] configfs: simplify the configfs_dirent_is_ready
+Message-ID: <YS3Dcl9gV3x+ANFH@zeniv-ca.linux.org.uk>
 Mail-Followup-To: Christoph Hellwig <hch@lst.de>,
         Sishuai Gong <sishuai@purdue.edu>,
         Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
 References: <20210825064906.1694233-1-hch@lst.de>
- <20210825064906.1694233-2-hch@lst.de>
+ <20210825064906.1694233-3-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210825064906.1694233-2-hch@lst.de>
+In-Reply-To: <20210825064906.1694233-3-hch@lst.de>
 X-Burt-Line: Trees are cool.
 X-Red-Smith: Ninety feet between bases is perhaps as close as man has ever
  come to perfection.
@@ -41,40 +40,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Reviewed-by: Joel Becker <jlbec@evilplan.org>
+Acked-by: Joel Becker <jlbec@evilplan.org>
 
-On Wed, Aug 25, 2021 at 08:49:03AM +0200, Christoph Hellwig wrote:
-> Just like most other file systems: get the simple checks out of the
-> way first.
+On Wed, Aug 25, 2021 at 08:49:04AM +0200, Christoph Hellwig wrote:
+> Return the error directly instead of using a goto.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  fs/configfs/dir.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  fs/configfs/dir.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
 > diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
-> index ac5e0c0e9181..cf08bbde55f3 100644
+> index cf08bbde55f3..5d58569f0eea 100644
 > --- a/fs/configfs/dir.c
 > +++ b/fs/configfs/dir.c
-> @@ -456,6 +456,9 @@ static struct dentry * configfs_lookup(struct inode *dir,
->  	int found = 0;
->  	int err;
+> @@ -467,9 +467,8 @@ static struct dentry * configfs_lookup(struct inode *dir,
+>  	 * not complete their initialization, since the dentries of the
+>  	 * attributes won't be instantiated.
+>  	 */
+> -	err = -ENOENT;
+>  	if (!configfs_dirent_is_ready(parent_sd))
+> -		goto out;
+> +		return ERR_PTR(-ENOENT);
 >  
-> +	if (dentry->d_name.len > NAME_MAX)
-> +		return ERR_PTR(-ENAMETOOLONG);
-> +
->  	/*
->  	 * Fake invisibility if dir belongs to a group/default groups hierarchy
->  	 * being attached
-> @@ -486,8 +489,6 @@ static struct dentry * configfs_lookup(struct inode *dir,
->  		 * If it doesn't exist and it isn't a NOT_PINNED item,
->  		 * it must be negative.
->  		 */
-> -		if (dentry->d_name.len > NAME_MAX)
-> -			return ERR_PTR(-ENAMETOOLONG);
->  		d_add(dentry, NULL);
+>  	list_for_each_entry(sd, &parent_sd->s_children, s_sibling) {
+>  		if (sd->s_type & CONFIGFS_NOT_PINNED) {
+> @@ -493,7 +492,6 @@ static struct dentry * configfs_lookup(struct inode *dir,
 >  		return NULL;
 >  	}
+>  
+> -out:
+>  	return ERR_PTR(err);
+>  }
+>  
 > -- 
 > 2.30.2
 > 
