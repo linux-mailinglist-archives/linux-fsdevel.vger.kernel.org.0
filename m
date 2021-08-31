@@ -2,88 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 75A4B3FC2B8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Aug 2021 08:37:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40BEA3FC3C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Aug 2021 10:22:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231847AbhHaGXd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Aug 2021 02:23:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39792 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231235AbhHaGXc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Aug 2021 02:23:32 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB136C061575
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Aug 2021 23:22:37 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id p38so36348519lfa.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 Aug 2021 23:22:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=RzIkdEm5aJl66a3p0t6hmEQ+Qv+8MFJLxj5JlLxnEbs=;
-        b=DuxIG8sTbtBLyaPFMzb5TkAnpLmPvjtfwBU4PAc3pKgSKLe2jhCtfJT53FgM3uTqSy
-         aIeMZ83jdMODLOrbnGbdQ7Uxv4WcA/9YiBVFnm248YaTDwa8CFhU4teeecrypNlUHOfD
-         mkPnYCD/VM6wivzvWmkbpgd6dSfRcEX8BwBVmHhGS6r0GtokwmwsYSWyvxRx6CJWVP4K
-         Nx2W03zUHZn+YGKhmLCfTrUuC91Gwrtj3Fsl8Q3u+NsiY2pHHBm+RK8wg0Lwi0rbEBrs
-         hPT3j1A4v1LhRfM7KzgS/pRXdsDvjJu+Dr7+YxT8tIrGlGcslARafdxGRpPycW5+0J7I
-         hy8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=RzIkdEm5aJl66a3p0t6hmEQ+Qv+8MFJLxj5JlLxnEbs=;
-        b=M1cw9VS3GW+vvzqLkwcyqaaUD2dF3vzRJCLemkwxN3+w2+GXPutzoUgQGZI/q/qpLo
-         Buv1eWYAAl50lJY8evwp2cmZwmK5aEnRx4tOqhx0SuWF8EUQf5tqMTyXYO2U4dvhvxwy
-         doUgxYcct8S+xocT5ZsbR0BuI59UVQKCpKp61eeIr+rOiPU0LqldWHFJlioDRRe7MVtc
-         UzZbnXnxWFXGizKrlDZwagFrpcaT9MS9sJmy7NJq0/09Lx5RTtFjpXi5N+6oAk4xDpCQ
-         mD/87gDJjJCaESG/NmroKmrKuDsij2SQRa/lEktC9uD6XG9i2cCaHCwdaGjlI6O2F+ZH
-         VIRw==
-X-Gm-Message-State: AOAM5316EIAplWNkkMQRDftOYwn3G0eMYlKabTRu2sYLZ70jZVYYIbBg
-        Itrwj72Ew5U4dR6kRI4hr1A6DnGsOPoCMiHQvyk=
-X-Google-Smtp-Source: ABdhPJywMA2/qyyyjMmmGvrLt2YdbKL3ZH1pRqivBRAHTS94cEyhTB+pRj3sq9wr86nd2Il9ixR3ImthkOV5d1Cvy9o=
-X-Received: by 2002:a05:6512:10d3:: with SMTP id k19mr20109791lfg.481.1630390956046;
- Mon, 30 Aug 2021 23:22:36 -0700 (PDT)
+        id S239881AbhHaHj0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Aug 2021 03:39:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47766 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239830AbhHaHjU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 31 Aug 2021 03:39:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E09B560ED4;
+        Tue, 31 Aug 2021 07:38:20 +0000 (UTC)
+Date:   Tue, 31 Aug 2021 09:38:18 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
+        andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
+        daniel@iogearbox.net, dvyukov@google.com, jmorris@namei.org,
+        kafai@fb.com, kpsingh@google.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        paul@paul-moore.com, selinux@vger.kernel.org,
+        songliubraving@fb.com, stephen.smalley.work@gmail.com,
+        syzkaller-bugs@googlegroups.com, tonymarislogistics@yandex.com,
+        viro@zeniv.linux.org.uk, yhs@fb.com
+Subject: Re: [syzbot] general protection fault in legacy_parse_param
+Message-ID: <20210831073818.oojyjqyiogel7hll@wittgenstein>
+References: <0000000000004e5ec705c6318557@google.com>
+ <0000000000008d2a0005ca951d94@google.com>
+ <20210830122348.jffs5dmq6z25qzw5@wittgenstein>
+ <61bf6b11-80f8-839e-4ae7-54c2c6021ed5@schaufler-ca.com>
+ <89d0e012-4caf-4cda-3c4e-803a2c6ebc2b@schaufler-ca.com>
+ <20210830165733.emqlg3orflaqqfio@wittgenstein>
+ <3354839e-5e7a-08c7-277a-9bbebfbfc0bc@schaufler-ca.com>
 MIME-Version: 1.0
-Reply-To: godwinppter@gmail.com
-Sender: anitaholdings1860@gmail.com
-Received: by 2002:a9a:7407:0:b029:c8:dbb9:6b13 with HTTP; Mon, 30 Aug 2021
- 23:22:35 -0700 (PDT)
-From:   Godwin Pete <godwinnpeter@gmail.com>
-Date:   Tue, 31 Aug 2021 08:22:35 +0200
-X-Google-Sender-Auth: cHIPnxQDQzwILo334ZylmXwsYWI
-Message-ID: <CAJ9gDneatrX0CYsrcwRtLsatv2b4jmVou2tj7Q2w4MWCXLKetw@mail.gmail.com>
-Subject: I just want to furnish you with this good news
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3354839e-5e7a-08c7-277a-9bbebfbfc0bc@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Mon, Aug 30, 2021 at 10:41:29AM -0700, Casey Schaufler wrote:
+> On 8/30/2021 9:57 AM, Christian Brauner wrote:
+> > On Mon, Aug 30, 2021 at 09:40:57AM -0700, Casey Schaufler wrote:
+> >> On 8/30/2021 7:25 AM, Casey Schaufler wrote:
+> >>> On 8/30/2021 5:23 AM, Christian Brauner wrote:
+> >>>> On Fri, Aug 27, 2021 at 07:11:18PM -0700, syzbot wrote:
+> >>>>> syzbot has bisected this issue to:
+> >>>>>
+> >>>>> commit 54261af473be4c5481f6196064445d2945f2bdab
+> >>>>> Author: KP Singh <kpsingh@google.com>
+> >>>>> Date:   Thu Apr 30 15:52:40 2020 +0000
+> >>>>>
+> >>>>>     security: Fix the default value of fs_context_parse_param hook
+> >>>>>
+> >>>>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=160c5d75300000
+> >>>>> start commit:   77dd11439b86 Merge tag 'drm-fixes-2021-08-27' of git://ano..
+> >>>>> git tree:       upstream
+> >>>>> final oops:     https://syzkaller.appspot.com/x/report.txt?x=150c5d75300000
+> >>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=110c5d75300000
+> >>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=2fd902af77ff1e56
+> >>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=d1e3b1d92d25abf97943
+> >>>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126d084d300000
+> >>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16216eb1300000
+> >>>>>
+> >>>>> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+> >>>>> Fixes: 54261af473be ("security: Fix the default value of fs_context_parse_param hook")
+> >>>>>
+> >>>>> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> >>>> So ok, this seems somewhat clear now. When smack and 
+> >>>> CONFIG_BPF_LSM=y
+> >>>> is selected the bpf LSM will register NOP handlers including
+> >>>>
+> >>>> bpf_lsm_fs_context_fs_param()
+> >>>>
+> >>>> for the
+> >>>>
+> >>>> fs_context_fs_param
+> >>>>
+> >>>> LSM hook. The bpf LSM runs last, i.e. after smack according to:
+> >>>>
+> >>>> CONFIG_LSM="landlock,lockdown,yama,safesetid,integrity,tomoyo,smack,bpf"
+> >>>>
+> >>>> in the appended config. The smack hook runs and sets
+> >>>>
+> >>>> param->string = NULL
+> >>>>
+> >>>> then the bpf NOP handler runs returning -ENOPARM indicating to the vfs
+> >>>> parameter parser that this is not a security module option so it should
+> >>>> proceed processing the parameter subsequently causing the crash because
+> >>>> param->string is not allowed to be NULL (Which the vfs parameter parser
+> >>>> verifies early in fsconfig().).
+> >>> The security_fs_context_parse_param() function is incorrectly
+> >>> implemented using the call_int_hook() macro. It should return
+> >>> zero if any of the modules return zero. It does not follow the
+> >>> usual failure model of LSM hooks. It could be argued that the
+> >>> code was fine before the addition of the BPF hook, but it was
+> >>> going to fail as soon as any two security modules provided
+> >>> mount options.
+> >>>
+> >>> Regardless, I will have a patch later today. Thank you for
+> >>> tracking this down.
+> >> Here's my proposed patch. I'll tidy it up with a proper
+> >> commit message if it looks alright to y'all. I've tested
+> >> with Smack and with and without BPF.
+> > Looks good to me.
+> > On question, in contrast to smack, selinux returns 1 instead of 0 on
+> > success. So selinux would cause an early return preventing other hooks
+> > from running. Just making sure that this is intentional.
+> >
+> > Iirc, this would mean that selinux causes fsconfig() to return a
+> > positive value to userspace which I think is a bug; likely in selinux.
+> > So I think selinux should either return 0 or the security hook itself
+> > needs to overwrite a positive value with a sensible errno that can be
+> > seen by userspace.
+> 
+> I think that I agree. The SELinux and Smack versions of the
+> hook are almost identical except for setting rc to 1 in the
+> SELinux case. And returning 1 makes no sense if you follow
+> the callers back. David Howells wrote both the SELinux and
+> Smack versions. David - why are they different? which is correct?
 
-I just want to use this little opportunity to inform you about my
-success towards the transfer. I'm currently out of the country for an
-investment with part of my share, after completing the transfer with
-an Indian business man. But i will visit your country, next year.
-After the completion of my project. Please, contact my secretary to
-send you the (ATM) card which I've already credited with the sum of
-($500,000.00). Just contact her to help you in receiving the (ATM)
-card. I've explained everything to her before my trip. This is what I
-can do for you because, you couldn't help in the transfer, but for the
-fact that you're the person whom I've contacted initially, for the
-transfer. I decided to give this ($500,000.00) as a compensation for
-being contacted initially for the transfer. I always try to make the
-difference, in dealing with people any time I come in contact with
-them. I'm also trying to show that I'm quite a different person from
-others whose may have a different purpose within them. I believe that
-you will render some help to me when I, will visit your country, for
-another investment there. So contact my secretary for the card, Her
-contact are as follows,
+The documentation for fs_context_parse_param notes:
 
-Full name: Mrs, Jovita Dumuije,
-Country: Burkina Faso
-Email: jovitadumuije@gmail.com
+ * @fs_context_parse_param:
+ *	Userspace provided a parameter to configure a superblock.  The LSM may
+ *	reject it with an error and may use it for itself, in which case it
+ *	should return 0; otherwise it should return -ENOPARAM to pass it on to
+ *	the filesystem.
+ *	@fc indicates the filesystem context.
+ *	@param The parameter
 
-Thanks, and hope for a good corporation with you in future.
-
-Godwin Peter,
+So we should simply make selinux return 0 on top of your patch when it
+has consumed the option.
