@@ -2,341 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FEEF3FC628
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Aug 2021 13:33:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D02D13FC6BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Aug 2021 14:06:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241355AbhHaKkR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Aug 2021 06:40:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39214 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241229AbhHaKi5 (ORCPT
+        id S241427AbhHaLpY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Aug 2021 07:45:24 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:13182 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234392AbhHaLpX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Aug 2021 06:38:57 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D24C8C0617AE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Aug 2021 03:37:50 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id n13-20020a17090a4e0d00b0017946980d8dso1624228pjh.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Aug 2021 03:37:50 -0700 (PDT)
+        Tue, 31 Aug 2021 07:45:23 -0400
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 17V9CJho010878;
+        Tue, 31 Aug 2021 11:44:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : mime-version; s=corp-2021-07-09;
+ bh=TdElprx1Q5W4MHP6AoIEQ8ucEY6d2i/FalgLMl8Qgt0=;
+ b=bvhcfkkITCP9v+dMLlMN8bqct3IoovEw36fhyf0MPUEb+4+gpNyhj/4QCXTc63Bi0gF0
+ 1I+ez2ByPzzkUoRMfJgJ0Ig8vqOn2wBuIBUdIikLx6bpehv/w0OrD9NB/VKx8Wp5RcaB
+ o6bcb1Y5/CCQc/cYMSxLEO+3RemdCZmmX6emhj8GRmZ1Q8hc3ZbEjXekgFPUgMmRapnZ
+ AR/Z8JsnK7D0oy+L+U087jEcUmGJyBYsJrZ6nuZPTv0LbXFCrVuP3Wop44efhv89Rw3+
+ rDWI3hThOATQoBywEr4AEdFD2KXG7dE9Om6xzE7PbDRggr3MUyrSY3A/fmSDnRx33MgV 4g== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : content-type : mime-version; s=corp-2020-01-29;
+ bh=TdElprx1Q5W4MHP6AoIEQ8ucEY6d2i/FalgLMl8Qgt0=;
+ b=hSm1446uOMmfbj/r8ZjGMLi8Py/vOpdn3q0lDoVq+NM1R1SJ0ahgVNhYFsQtjUXvxJ6n
+ 6Tx007ja0hJLYVDDTeKOunY4s4BpMycjWuXO010636nPp6ttJ5zTnsFRDw80BvUo34BZ
+ ITa5aLHsSuFdczybldF2rQyTMcOvLoTA03lWebV+/efzDrAE7Rwbjg+l+EL0adBrm6bw
+ 2IJpgDcqPqME9HdFydwZIVqH8WZ0ovCX2qa4lM/NjlfrTcddWAmOdiDKeEIFEecNZ6Wd
+ CI8kJbZPyiwXeMlW16KB40tCeFr+qiMUTscDHHEcHynVmvI5TfBtcjxXwUR2RYIQejz2 yw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3aserr0rud-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 Aug 2021 11:44:25 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 17VBdk7m165242;
+        Tue, 31 Aug 2021 11:44:24 GMT
+Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam08lp2042.outbound.protection.outlook.com [104.47.73.42])
+        by aserp3030.oracle.com with ESMTP id 3aqb6dqafq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 31 Aug 2021 11:44:24 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dRvCtS0s1xH5CFOhLwcSgyNZU7rklbU0y382rIQ1UX1TfdcQY98Fw5syfH+nmxFAD1V2twnpgfe9xgoOZOqtf20Zn9QUnwXToqRz2yL0zyMby1FXVbkOHVA3N6F1IP8L2oYzmYiB0Q1nF06ix/s4jDFF452GIzyqew7wnuDvh8jMoPrhYaxnOv8iQRuX4l3mD2iVerJL+XNfdTCGAscym4C8c4cC/S8sKsPGogxumNw42DwNGjoO4TriYeXwyFsH8rbtnRtSNtquQO/Abn+XZQcRSLmmB+GJJjPnNAXznhlhXS1GB3DIJMzgrI9XfEwF8ceHIst5HO/A81bGHN5P4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=TdElprx1Q5W4MHP6AoIEQ8ucEY6d2i/FalgLMl8Qgt0=;
+ b=Eq6t6qpe2NAajMdBJv+RmNTpf0GVoCohMbiu9qES9ln9yxAZcvXJlMeesK88gWFO0Itn8EsGucCaHXSxXnboClz8kF/70KWbbprli5SPOBZ0R2UMj36xOg1One54cg1wYg1G5Qki4uRasrEm2n0xT0CaUO7C837Gn926AZPMvDnn+1lma54hA3MZZ3b3qK/7L4rC9g7woFkoO1gHjAR7wkxgucT42JRclDzFREeieir2U4I3yPrO4XIEnc+rX34zzafz3ow4C6WVlhf8SvzCyUQVUFqkVPMXF3o8BQ0bx30KtLuITBhRjDkwTSidxdEXHy+KA2OdgtwF7YGNAacAxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nNh+cuhjJs3OFS0aHfl+SKfylhnWyvpkdBMP+CFmcGQ=;
-        b=cC9RdvfpEZr9j3c/cbFStXaCl2j3V+4M31Y7HIO0JYKKzJajSAk/kH3+/02wcQdoca
-         3gjWeLDSoeZ8eVzJciTTuHTn0W+b40Az+LtYVmikSKWrjzUs5vlYUT2AWL33c4Gvg90l
-         00lleNTK3W3GmXpkD1tigsSrL+8U9L82s5TB/9lYkKlYQQ9A09ZlwYeq7RCjxrwnUrpc
-         Mf1FKxTkF9hsNYiMUzcdN2+fOaHcZ4snE5w9UaUTRCdcZINf+Tbxsqi8j9b95V97RLyP
-         5ExLr+ljONAPe4wdkf9WVDzvyI+Ak7U/DbyiPIvD0eXUILDPtot/bxzcpZBnKqYiT3rb
-         hcDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nNh+cuhjJs3OFS0aHfl+SKfylhnWyvpkdBMP+CFmcGQ=;
-        b=guOJPzytdbqPa5AwzcuXJVmafgmKICQZeeknsrHbd2Nc7C/pBfao83heo/itpY5Yp5
-         nMY9DILsZBUyd7tmVjD4JyiueO/02jrlGsDZONdz2+C5ufvHO6ZjKYf9yeYBinuniatr
-         mwC6d8p4R6M2xnrWw5CtdWBkT+1dB49sX5RwM1q19ABfRvAAZKLseyj6jEfog5nNU8ok
-         9AtZvFs9b62/RQPFkX+GDJXDkiezzwEtIZG/Y8pw5ajcMkoEtn5OQEyNPfy4wZNIviNc
-         VZE1sYYNwjDXM2TZIjbxmwtjUuwue5Gm7QmqVbtyzYX+lgl5jMLnnjgPdSCYnlVeMQIW
-         N0vw==
-X-Gm-Message-State: AOAM533Beyo96AsUrEtW6NOiB8bj07iR3kNYalPT5JZg+T2Gu5Y4weh6
-        9wt9c8pxwlNgyh3YhFTcMvhB
-X-Google-Smtp-Source: ABdhPJz5ZdYePJ9W7SlMRURLNn+WCedwzK0lYkLxLJnz2MFrrE6yXfiNf5JXlPj6ipxMQMn4nx/s1g==
-X-Received: by 2002:a17:90a:9314:: with SMTP id p20mr4688064pjo.87.1630406270341;
-        Tue, 31 Aug 2021 03:37:50 -0700 (PDT)
-Received: from localhost ([139.177.225.253])
-        by smtp.gmail.com with ESMTPSA id i24sm6605893pfo.13.2021.08.31.03.37.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Aug 2021 03:37:49 -0700 (PDT)
-From:   Xie Yongji <xieyongji@bytedance.com>
-To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com,
-        sgarzare@redhat.com, parav@nvidia.com, hch@infradead.org,
-        christian.brauner@canonical.com, rdunlap@infradead.org,
-        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        bcrl@kvack.org, corbet@lwn.net, mika.penttila@nextfour.com,
-        dan.carpenter@oracle.com, joro@8bytes.org,
-        gregkh@linuxfoundation.org, zhe.he@windriver.com,
-        xiaodong.liu@intel.com, joe@perches.com, robin.murphy@arm.com,
-        will@kernel.org, john.garry@huawei.com
-Cc:     songmuchun@bytedance.com,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v13 13/13] Documentation: Add documentation for VDUSE
-Date:   Tue, 31 Aug 2021 18:36:34 +0800
-Message-Id: <20210831103634.33-14-xieyongji@bytedance.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210831103634.33-1-xieyongji@bytedance.com>
-References: <20210831103634.33-1-xieyongji@bytedance.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TdElprx1Q5W4MHP6AoIEQ8ucEY6d2i/FalgLMl8Qgt0=;
+ b=V19vWg/MNWB/6+WH3g6ytFSUrAuTBR45TP4b/GUPq4C4IQ16sEKW2ZYctY4BMjegxAVvdp+F+9o3SfADwOXXij38nq8HFj/4tQZJP+MrVmrrO6+PqFy+9VvcpSj1MyKiVnDLjEnVvFZjFeIju8yGPntJtNrJEQ1lHMZTg4zlDPU=
+Authentication-Results: samsung.com; dkim=none (message not signed)
+ header.d=none;samsung.com; dmarc=none action=none header.from=oracle.com;
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28) by CO1PR10MB4721.namprd10.prod.outlook.com
+ (2603:10b6:303:9b::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.17; Tue, 31 Aug
+ 2021 11:44:23 +0000
+Received: from MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5820:e42b:73d7:4268]) by MWHPR1001MB2365.namprd10.prod.outlook.com
+ ([fe80::5820:e42b:73d7:4268%7]) with mapi id 15.20.4478.019; Tue, 31 Aug 2021
+ 11:44:23 +0000
+Date:   Tue, 31 Aug 2021 14:43:59 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     namjae.jeon@samsung.com
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [bug report] cifsd: add file operations
+Message-ID: <20210831114358.GA26132@kili>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: LO4P123CA0171.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18a::14) To MWHPR1001MB2365.namprd10.prod.outlook.com
+ (2603:10b6:301:2d::28)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: from kili (2a02:6900:8208:1848::11d1) by LO4P123CA0171.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600:18a::14) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.20 via Frontend Transport; Tue, 31 Aug 2021 11:44:21 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 60e53315-b750-4557-066d-08d96c74ad64
+X-MS-TrafficTypeDiagnostic: CO1PR10MB4721:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <CO1PR10MB472188991E4A96D694CBE11F8ECC9@CO1PR10MB4721.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4502;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: HBUBcrvRuLvkW3aD/lYzpYcJld+9OqZe6jmKB+2i5IQR7dxD5hHw1XIwmfGsO/1OKVzlF3PLQFHqpxBtPXG8kKYEBLS5FsHMTAZrlemC75xRRdE3XOmatYcUPeK6Wvs5Eb77Ni0TeXGCoBMLDzMeFifBpVuWp0iDsCAoaAnKkTZ6g1XFHA70ddHguerMxKBvxFPDTP292Clbe1Mq+jMhneaZX6VPD4x9ED61Ca6H/4aez2nrTEoGZSzVHAwHcFcqp415SObMmbOul9uTtuLY1p5PrrAdUIoeV8TmOov7zmWK1xGrliFTh0mPp808C2aHvlaKdvtCW/mWJYRvMkcA7vvtIluEAaPcoVZEMk6vqBQEgarimJPqKlZYfzbN8YRG4Cq3KlMWjOMd2Wf8daIXZUoYo0FUpA213JWPg40lijOfMcQRKMwvWHFOkKEzqYdoebLKH9eZHNw6f13HG05BfswwEC/f2XoX/QyXSmVsUvM6oPwVxw0+aZm5HnGGpJHezYyAJLaLk+U02ls0AFP+U3nNetgZHwav+zZQvIeajG6r2v7KljviDi3dCwVPgUKHb0iTS8+PFHiSFX2VxYFn/7APLG/48yzoeUNp7ldtRhQx2gRFbp8PccBfL4I9JD0uVJblHxoGM/Y8O+pwpdR0xA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1001MB2365.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(366004)(396003)(346002)(136003)(39860400002)(2906002)(33716001)(186003)(83380400001)(316002)(9686003)(5660300002)(33656002)(55016002)(52116002)(478600001)(6496006)(44832011)(66476007)(66946007)(86362001)(4326008)(6666004)(9576002)(38100700002)(1076003)(8676002)(8936002)(66556008)(6916009);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Yynrgw/mE3K9kxnI4csRYN+cWQGdlMGe8vp2YrB7FVek2b5MDO0osMSjwVDZ?=
+ =?us-ascii?Q?ojwguIZ+BWEUwzDV+w9MNMnAGqgPk8qr7QzZWrKClnuIfpHhvYXXwKVBkKbg?=
+ =?us-ascii?Q?Getu7bV4xYQRDfgKBERPUNnj7WUNzxpGK5a5LMErlmuisTI4r3R9UKV+prre?=
+ =?us-ascii?Q?BzjAuo5+Jw/zt/kbjhmfOHwJr8lBcZAbNw9moGZobXPI/bQIveoch2+WH5P8?=
+ =?us-ascii?Q?NBZXAZUdI0NOcTZIYCPrQiz0ZCSVH49crj+aHwvqxEEpjd35PuDDWvBSmNlq?=
+ =?us-ascii?Q?Xj0EnmwQy7lVgs8F79V6CDAPf8C7f28bWeHkORU+C2a2Xa9Ek6lrTm081tDO?=
+ =?us-ascii?Q?5fs3LyeOyrDwh6ZCijxFrCZR6peZ1oHSMSJP56Sb9fz63eDHN/yWe80LDBDd?=
+ =?us-ascii?Q?rKJGJTnw3z8Qf5ysBE3tWTwThi2+tdvirg/Q2g5Xu5yudRlH30j8rFyBhzOR?=
+ =?us-ascii?Q?GZSO9vSqG6O2uzAZG/AYGS4FCvN9LJTnNsnqoJp1G3pzKGD8kuoy7aAK0Z5u?=
+ =?us-ascii?Q?dR8Lp1YUwJ/hyag0xKBxWZRSBab9O64jwIA+PaIZF7ZaIynsSUX6fG95sJr6?=
+ =?us-ascii?Q?u3zBSad3ZPu+pdU2g85w55Sx2wW3ixQ45FFbwvsYjq7+McxkCluHg8gI1vM6?=
+ =?us-ascii?Q?HEiDaB9RuZZ9vkxAwK3ks1birPvErDivIaH7iS74eWkPPWf1/Jw1gv++YOLj?=
+ =?us-ascii?Q?iN8JOcCCChbjvtsMVDApvfMSdP8Uhz4sWA5L6Ed6WekyXXV+l2/q9m2kbIA1?=
+ =?us-ascii?Q?W0Z1cWIosyMktKEmRDT1E7SvR2A4THx9NzOzKZfYiy6uF0+fgTNeVkbWRGYd?=
+ =?us-ascii?Q?UlWyZ+9x+St372a9n88WBvkTnMwWU8CrWsEzvdHF1cj5V+GYreO55I923w05?=
+ =?us-ascii?Q?08e3K5IB1GyexGT45qALT/8edLLVYA4ElnmZfsd0ZUUPLQXonN636iSwvK7a?=
+ =?us-ascii?Q?2N1f8gajaTQatUYgjr92Q6b3P1t6noshd0jFlxRXqGgOe8qgMb+JR+Ge5G8n?=
+ =?us-ascii?Q?DGQjYJvMQM1sVQWloi6QJ83UftUv9NvydTJYD8MZ20tAa9GIXqDwDH+CTNvB?=
+ =?us-ascii?Q?SwKfPSJGxgi1ywUfCEm9tHvri51mV02+NFqOd9jpJBdKftsLKs/qKsDZUMbo?=
+ =?us-ascii?Q?ODrCw45dwE494jYVjik89pZdK263oOyZ2PkCb0ZKqIfQT9bER1eKOBQhHcNo?=
+ =?us-ascii?Q?+6CiF7+TtVTY/DlwN5j14XRFw4NbD+2hlBC14Y1f44OB1YKM3Buqc3TtYFQd?=
+ =?us-ascii?Q?hExXfm2hl8n1kiLwH7NAyLf5A/S4r3d4Ym0FwhF9ufD7OEHho5p2OytZO5KX?=
+ =?us-ascii?Q?6ESWjWrVkkRWuoqDfd3pHNleq5tzK717F8H7+xeDmfeMUAJqVqBZ9EZWaK3L?=
+ =?us-ascii?Q?F1hTKxM=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60e53315-b750-4557-066d-08d96c74ad64
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1001MB2365.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Aug 2021 11:44:23.2104
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: s1SxwXeMQShj5O0yOVxkEpIdgmg4jbSAYrr6+9TCqV5WRwMte44aNlAR9Tu2Lv/GHa/0dzcLCcXKyZ0rzwQ9CJoOtKigxvRp7eJXtioZENM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4721
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10092 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 suspectscore=0
+ adultscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2107140000
+ definitions=main-2108310067
+X-Proofpoint-GUID: Z0s973NJdf7iwCjoLx0K2g7kumGMISPC
+X-Proofpoint-ORIG-GUID: Z0s973NJdf7iwCjoLx0K2g7kumGMISPC
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-VDUSE (vDPA Device in Userspace) is a framework to support
-implementing software-emulated vDPA devices in userspace. This
-document is intended to clarify the VDUSE design and usage.
+Hello Namjae Jeon,
 
-Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
----
- Documentation/userspace-api/index.rst |   1 +
- Documentation/userspace-api/vduse.rst | 233 ++++++++++++++++++++++++++++++++++
- 2 files changed, 234 insertions(+)
- create mode 100644 Documentation/userspace-api/vduse.rst
+The patch f44158485826: "cifsd: add file operations" from Mar 16,
+2021, leads to the following
+Smatch static checker warning:
 
-diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
-index 0b5eefed027e..c432be070f67 100644
---- a/Documentation/userspace-api/index.rst
-+++ b/Documentation/userspace-api/index.rst
-@@ -27,6 +27,7 @@ place where this information is gathered.
-    iommu
-    media/index
-    sysfs-platform_profile
-+   vduse
- 
- .. only::  subproject and html
- 
-diff --git a/Documentation/userspace-api/vduse.rst b/Documentation/userspace-api/vduse.rst
-new file mode 100644
-index 000000000000..42ef59ea5314
---- /dev/null
-+++ b/Documentation/userspace-api/vduse.rst
-@@ -0,0 +1,233 @@
-+==================================
-+VDUSE - "vDPA Device in Userspace"
-+==================================
-+
-+vDPA (virtio data path acceleration) device is a device that uses a
-+datapath which complies with the virtio specifications with vendor
-+specific control path. vDPA devices can be both physically located on
-+the hardware or emulated by software. VDUSE is a framework that makes it
-+possible to implement software-emulated vDPA devices in userspace. And
-+to make the device emulation more secure, the emulated vDPA device's
-+control path is handled in the kernel and only the data path is
-+implemented in the userspace.
-+
-+Note that only virtio block device is supported by VDUSE framework now,
-+which can reduce security risks when the userspace process that implements
-+the data path is run by an unprivileged user. The support for other device
-+types can be added after the security issue of corresponding device driver
-+is clarified or fixed in the future.
-+
-+Create/Destroy VDUSE devices
-+------------------------
-+
-+VDUSE devices are created as follows:
-+
-+1. Create a new VDUSE instance with ioctl(VDUSE_CREATE_DEV) on
-+   /dev/vduse/control.
-+
-+2. Setup each virtqueue with ioctl(VDUSE_VQ_SETUP) on /dev/vduse/$NAME.
-+
-+3. Begin processing VDUSE messages from /dev/vduse/$NAME. The first
-+   messages will arrive while attaching the VDUSE instance to vDPA bus.
-+
-+4. Send the VDPA_CMD_DEV_NEW netlink message to attach the VDUSE
-+   instance to vDPA bus.
-+
-+VDUSE devices are destroyed as follows:
-+
-+1. Send the VDPA_CMD_DEV_DEL netlink message to detach the VDUSE
-+   instance from vDPA bus.
-+
-+2. Close the file descriptor referring to /dev/vduse/$NAME.
-+
-+3. Destroy the VDUSE instance with ioctl(VDUSE_DESTROY_DEV) on
-+   /dev/vduse/control.
-+
-+The netlink messages can be sent via vdpa tool in iproute2 or use the
-+below sample codes:
-+
-+.. code-block:: c
-+
-+	static int netlink_add_vduse(const char *name, enum vdpa_command cmd)
-+	{
-+		struct nl_sock *nlsock;
-+		struct nl_msg *msg;
-+		int famid;
-+
-+		nlsock = nl_socket_alloc();
-+		if (!nlsock)
-+			return -ENOMEM;
-+
-+		if (genl_connect(nlsock))
-+			goto free_sock;
-+
-+		famid = genl_ctrl_resolve(nlsock, VDPA_GENL_NAME);
-+		if (famid < 0)
-+			goto close_sock;
-+
-+		msg = nlmsg_alloc();
-+		if (!msg)
-+			goto close_sock;
-+
-+		if (!genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, famid, 0, 0, cmd, 0))
-+			goto nla_put_failure;
-+
-+		NLA_PUT_STRING(msg, VDPA_ATTR_DEV_NAME, name);
-+		if (cmd == VDPA_CMD_DEV_NEW)
-+			NLA_PUT_STRING(msg, VDPA_ATTR_MGMTDEV_DEV_NAME, "vduse");
-+
-+		if (nl_send_sync(nlsock, msg))
-+			goto close_sock;
-+
-+		nl_close(nlsock);
-+		nl_socket_free(nlsock);
-+
-+		return 0;
-+	nla_put_failure:
-+		nlmsg_free(msg);
-+	close_sock:
-+		nl_close(nlsock);
-+	free_sock:
-+		nl_socket_free(nlsock);
-+		return -1;
-+	}
-+
-+How VDUSE works
-+---------------
-+
-+As mentioned above, a VDUSE device is created by ioctl(VDUSE_CREATE_DEV) on
-+/dev/vduse/control. With this ioctl, userspace can specify some basic configuration
-+such as device name (uniquely identify a VDUSE device), virtio features, virtio
-+configuration space, the number of virtqueues and so on for this emulated device.
-+Then a char device interface (/dev/vduse/$NAME) is exported to userspace for device
-+emulation. Userspace can use the VDUSE_VQ_SETUP ioctl on /dev/vduse/$NAME to
-+add per-virtqueue configuration such as the max size of virtqueue to the device.
-+
-+After the initialization, the VDUSE device can be attached to vDPA bus via
-+the VDPA_CMD_DEV_NEW netlink message. Userspace needs to read()/write() on
-+/dev/vduse/$NAME to receive/reply some control messages from/to VDUSE kernel
-+module as follows:
-+
-+.. code-block:: c
-+
-+	static int vduse_message_handler(int dev_fd)
-+	{
-+		int len;
-+		struct vduse_dev_request req;
-+		struct vduse_dev_response resp;
-+
-+		len = read(dev_fd, &req, sizeof(req));
-+		if (len != sizeof(req))
-+			return -1;
-+
-+		resp.request_id = req.request_id;
-+
-+		switch (req.type) {
-+
-+		/* handle different types of messages */
-+
-+		}
-+
-+		len = write(dev_fd, &resp, sizeof(resp));
-+		if (len != sizeof(resp))
-+			return -1;
-+
-+		return 0;
-+	}
-+
-+There are now three types of messages introduced by VDUSE framework:
-+
-+- VDUSE_GET_VQ_STATE: Get the state for virtqueue, userspace should return
-+  avail index for split virtqueue or the device/driver ring wrap counters and
-+  the avail and used index for packed virtqueue.
-+
-+- VDUSE_SET_STATUS: Set the device status, userspace should follow
-+  the virtio spec: https://docs.oasis-open.org/virtio/virtio/v1.1/virtio-v1.1.html
-+  to process this message. For example, fail to set the FEATURES_OK device
-+  status bit if the device can not accept the negotiated virtio features
-+  get from the VDUSE_DEV_GET_FEATURES ioctl.
-+
-+- VDUSE_UPDATE_IOTLB: Notify userspace to update the memory mapping for specified
-+  IOVA range, userspace should firstly remove the old mapping, then setup the new
-+  mapping via the VDUSE_IOTLB_GET_FD ioctl.
-+
-+After DRIVER_OK status bit is set via the VDUSE_SET_STATUS message, userspace is
-+able to start the dataplane processing as follows:
-+
-+1. Get the specified virtqueue's information with the VDUSE_VQ_GET_INFO ioctl,
-+   including the size, the IOVAs of descriptor table, available ring and used ring,
-+   the state and the ready status.
-+
-+2. Pass the above IOVAs to the VDUSE_IOTLB_GET_FD ioctl so that those IOVA regions
-+   can be mapped into userspace. Some sample codes is shown below:
-+
-+.. code-block:: c
-+
-+	static int perm_to_prot(uint8_t perm)
-+	{
-+		int prot = 0;
-+
-+		switch (perm) {
-+		case VDUSE_ACCESS_WO:
-+			prot |= PROT_WRITE;
-+			break;
-+		case VDUSE_ACCESS_RO:
-+			prot |= PROT_READ;
-+			break;
-+		case VDUSE_ACCESS_RW:
-+			prot |= PROT_READ | PROT_WRITE;
-+			break;
-+		}
-+
-+		return prot;
-+	}
-+
-+	static void *iova_to_va(int dev_fd, uint64_t iova, uint64_t *len)
-+	{
-+		int fd;
-+		void *addr;
-+		size_t size;
-+		struct vduse_iotlb_entry entry;
-+
-+		entry.start = iova;
-+		entry.last = iova;
-+
-+		/*
-+		 * Find the first IOVA region that overlaps with the specified
-+		 * range [start, last] and return the corresponding file descriptor.
-+		 */
-+		fd = ioctl(dev_fd, VDUSE_IOTLB_GET_FD, &entry);
-+		if (fd < 0)
-+			return NULL;
-+
-+		size = entry.last - entry.start + 1;
-+		*len = entry.last - iova + 1;
-+		addr = mmap(0, size, perm_to_prot(entry.perm), MAP_SHARED,
-+			    fd, entry.offset);
-+		close(fd);
-+		if (addr == MAP_FAILED)
-+			return NULL;
-+
-+		/*
-+		 * Using some data structures such as linked list to store
-+		 * the iotlb mapping. The munmap(2) should be called for the
-+		 * cached mapping when the corresponding VDUSE_UPDATE_IOTLB
-+		 * message is received or the device is reset.
-+		 */
-+
-+		return addr + iova - entry.start;
-+	}
-+
-+3. Setup the kick eventfd for the specified virtqueues with the VDUSE_VQ_SETUP_KICKFD
-+   ioctl. The kick eventfd is used by VDUSE kernel module to notify userspace to
-+   consume the available ring. This is optional since userspace can choose to poll the
-+   available ring instead.
-+
-+4. Listen to the kick eventfd (optional) and consume the available ring. The buffer
-+   described by the descriptors in the descriptor table should be also mapped into
-+   userspace via the VDUSE_IOTLB_GET_FD ioctl before accessing.
-+
-+5. Inject an interrupt for specific virtqueue with the VDUSE_INJECT_VQ_IRQ ioctl
-+   after the used ring is filled.
-+
-+For more details on the uAPI, please see include/uapi/linux/vduse.h.
--- 
-2.11.0
+	fs/xattr.c:524 vfs_removexattr()
+	warn: sleeping in atomic context
 
+fs/xattr.c
+    514 
+    515 int
+    516 vfs_removexattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+    517                 const char *name)
+    518 {
+    519         struct inode *inode = dentry->d_inode;
+    520         struct inode *delegated_inode = NULL;
+    521         int error;
+    522 
+    523 retry_deleg:
+--> 524         inode_lock(inode);
+    525         error = __vfs_removexattr_locked(mnt_userns, dentry,
+    526                                          name, &delegated_inode);
+    527         inode_unlock(inode);
+    528 
+    529         if (delegated_inode) {
+    530                 error = break_deleg_wait(&delegated_inode);
+    531                 if (!error)
+    532                         goto retry_deleg;
+    533         }
+    534 
+    535         return error;
+    536 }
+
+The call tree is (slight edited).
+
+ksmbd_file_table_flush() <- disables preempt
+-> ksmbd_vfs_fsync()
+   -> ksmbd_fd_put()
+      -> __put_fd_final()
+         -> __ksmbd_close_fd()
+            -> __ksmbd_inode_close()
+               -> ksmbd_vfs_remove_xattr()
+                  -> vfs_removexattr()
+
+fs/ksmbd/vfs_cache.c
+   669  int ksmbd_file_table_flush(struct ksmbd_work *work)
+   670  {
+   671          struct ksmbd_file       *fp = NULL;
+   672          unsigned int            id;
+   673          int                     ret;
+   674  
+   675          read_lock(&work->sess->file_table.lock);
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Disables preemption.
+
+   676          idr_for_each_entry(work->sess->file_table.idr, fp, id) {
+   677                  ret = ksmbd_vfs_fsync(work, fp->volatile_id, KSMBD_NO_FID);
+   678                  if (ret)
+   679                          break;
+   680          }
+   681          read_unlock(&work->sess->file_table.lock);
+   682          return ret;
+   683  }
+
+Hopefully this bug report is clear why Smatch is complaining.  Let me
+know if you have any questions.
+
+regards,
+dan carpenter
