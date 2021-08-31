@@ -2,138 +2,251 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40BEA3FC3C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Aug 2021 10:22:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AFF83FC4DC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Aug 2021 11:52:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239881AbhHaHj0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Aug 2021 03:39:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47766 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239830AbhHaHjU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Aug 2021 03:39:20 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E09B560ED4;
-        Tue, 31 Aug 2021 07:38:20 +0000 (UTC)
-Date:   Tue, 31 Aug 2021 09:38:18 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
-        andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
-        daniel@iogearbox.net, dvyukov@google.com, jmorris@namei.org,
-        kafai@fb.com, kpsingh@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        paul@paul-moore.com, selinux@vger.kernel.org,
-        songliubraving@fb.com, stephen.smalley.work@gmail.com,
-        syzkaller-bugs@googlegroups.com, tonymarislogistics@yandex.com,
-        viro@zeniv.linux.org.uk, yhs@fb.com
-Subject: Re: [syzbot] general protection fault in legacy_parse_param
-Message-ID: <20210831073818.oojyjqyiogel7hll@wittgenstein>
-References: <0000000000004e5ec705c6318557@google.com>
- <0000000000008d2a0005ca951d94@google.com>
- <20210830122348.jffs5dmq6z25qzw5@wittgenstein>
- <61bf6b11-80f8-839e-4ae7-54c2c6021ed5@schaufler-ca.com>
- <89d0e012-4caf-4cda-3c4e-803a2c6ebc2b@schaufler-ca.com>
- <20210830165733.emqlg3orflaqqfio@wittgenstein>
- <3354839e-5e7a-08c7-277a-9bbebfbfc0bc@schaufler-ca.com>
+        id S240563AbhHaJJ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Aug 2021 05:09:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:43825 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240591AbhHaJJU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 31 Aug 2021 05:09:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630400905;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lCeb7MSVHIA6AQvPBMrpCMcewt6C5Hp/EtiNe37zzes=;
+        b=OYfklSxIGZ2UAo16GAhdjm2CXSijTlJ9/OeQbold6WiNL+qgGF4I2UWDaYyt0buMlZkM95
+        I4Q3lMjbFppBEPF+ED0Bk64vYbs+Frfirzbp6lVpjTJsSX/N92QB3TfA+mbHefoDvo54Oz
+        n3O6C6OIRRnoNtUiyXA/4j4I3hFB9FY=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-517-FmnbCUrJPQyvhRdCr2sYxw-1; Tue, 31 Aug 2021 05:08:20 -0400
+X-MC-Unique: FmnbCUrJPQyvhRdCr2sYxw-1
+Received: by mail-yb1-f199.google.com with SMTP id n202-20020a25d6d3000000b005991fd2f912so2539414ybg.20
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Aug 2021 02:08:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lCeb7MSVHIA6AQvPBMrpCMcewt6C5Hp/EtiNe37zzes=;
+        b=gXAh29jArXcxADXuiAn/gWWS4m8ZvnaK85pwNbVIfE8/bERoEKvAhvID1oWrxdKZgE
+         b+H+2IT5RYChLbXppGoABs4jo/F7yo6+Wp9zCMziWdTLfaUqoky194xtzhfFTHn+0oHC
+         S/1r/ZjiRdhMVQD+6qmmckXOuo33gcwdgAEFSXqEC6FmG3BAfmjaZ/kgfTD15TSOZTSc
+         xQNY1/9cUHK6yWB3SnyKoLuNaR1H3PxEKdhQQ1rHPSFRmHVSteKf4zJ+Vm7gT45b8VxC
+         YLK6gq57LHv3IUSps/dgr9mV0/A87LypGI3V8f8Q+JASx0HASiew/DjyXJ0cFTNeR7K8
+         YRNw==
+X-Gm-Message-State: AOAM531I88wHpQPou4EM7p+vbAAAg4+Cn3/wk+ugA8OeZh6/DGoeRpFV
+        sSG1N90HlgMfAP8r2ZKSB5YxYALR1ogY5oGqY2E3ZHm2ooRFReRNoLxd6c5Z+KJa5DfqjFG412l
+        74MvxZ6MPguHkj3Dbym5NdRvr0LCKLP76DPS8K/NqQA==
+X-Received: by 2002:a25:c184:: with SMTP id r126mr28651653ybf.123.1630400899632;
+        Tue, 31 Aug 2021 02:08:19 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy4ZNnqHdPHd1KpwqFLFV6AFeVHb5LZ7Jb5RG2vtJXhk7vybNwPbdTc2aQhHuASLbfSbAuaEwPm90oIL61rhUM=
+X-Received: by 2002:a25:c184:: with SMTP id r126mr28651621ybf.123.1630400899378;
+ Tue, 31 Aug 2021 02:08:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3354839e-5e7a-08c7-277a-9bbebfbfc0bc@schaufler-ca.com>
+References: <20210616085118.1141101-1-omosnace@redhat.com> <CAHC9VhSr2KpeBXuyoHR3_hs+qczFUaBx0oCSMfBBA5UNYU+0KA@mail.gmail.com>
+In-Reply-To: <CAHC9VhSr2KpeBXuyoHR3_hs+qczFUaBx0oCSMfBBA5UNYU+0KA@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 31 Aug 2021 11:08:08 +0200
+Message-ID: <CAFqZXNvJtMOfLk-SLt2S2qt=+-x8fm9jS3NKxFoT0_5d2=8Ckg@mail.gmail.com>
+Subject: Re: [PATCH v3] lockdown,selinux: fix wrong subject in some SELinux
+ lockdown checks
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
+        linux-efi@vger.kernel.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-serial@vger.kernel.org, bpf <bpf@vger.kernel.org>,
+        network dev <netdev@vger.kernel.org>,
+        kexec@lists.infradead.org,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 30, 2021 at 10:41:29AM -0700, Casey Schaufler wrote:
-> On 8/30/2021 9:57 AM, Christian Brauner wrote:
-> > On Mon, Aug 30, 2021 at 09:40:57AM -0700, Casey Schaufler wrote:
-> >> On 8/30/2021 7:25 AM, Casey Schaufler wrote:
-> >>> On 8/30/2021 5:23 AM, Christian Brauner wrote:
-> >>>> On Fri, Aug 27, 2021 at 07:11:18PM -0700, syzbot wrote:
-> >>>>> syzbot has bisected this issue to:
-> >>>>>
-> >>>>> commit 54261af473be4c5481f6196064445d2945f2bdab
-> >>>>> Author: KP Singh <kpsingh@google.com>
-> >>>>> Date:   Thu Apr 30 15:52:40 2020 +0000
-> >>>>>
-> >>>>>     security: Fix the default value of fs_context_parse_param hook
-> >>>>>
-> >>>>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=160c5d75300000
-> >>>>> start commit:   77dd11439b86 Merge tag 'drm-fixes-2021-08-27' of git://ano..
-> >>>>> git tree:       upstream
-> >>>>> final oops:     https://syzkaller.appspot.com/x/report.txt?x=150c5d75300000
-> >>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=110c5d75300000
-> >>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=2fd902af77ff1e56
-> >>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=d1e3b1d92d25abf97943
-> >>>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126d084d300000
-> >>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16216eb1300000
-> >>>>>
-> >>>>> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
-> >>>>> Fixes: 54261af473be ("security: Fix the default value of fs_context_parse_param hook")
-> >>>>>
-> >>>>> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> >>>> So ok, this seems somewhat clear now. When smack and 
-> >>>> CONFIG_BPF_LSM=y
-> >>>> is selected the bpf LSM will register NOP handlers including
-> >>>>
-> >>>> bpf_lsm_fs_context_fs_param()
-> >>>>
-> >>>> for the
-> >>>>
-> >>>> fs_context_fs_param
-> >>>>
-> >>>> LSM hook. The bpf LSM runs last, i.e. after smack according to:
-> >>>>
-> >>>> CONFIG_LSM="landlock,lockdown,yama,safesetid,integrity,tomoyo,smack,bpf"
-> >>>>
-> >>>> in the appended config. The smack hook runs and sets
-> >>>>
-> >>>> param->string = NULL
-> >>>>
-> >>>> then the bpf NOP handler runs returning -ENOPARM indicating to the vfs
-> >>>> parameter parser that this is not a security module option so it should
-> >>>> proceed processing the parameter subsequently causing the crash because
-> >>>> param->string is not allowed to be NULL (Which the vfs parameter parser
-> >>>> verifies early in fsconfig().).
-> >>> The security_fs_context_parse_param() function is incorrectly
-> >>> implemented using the call_int_hook() macro. It should return
-> >>> zero if any of the modules return zero. It does not follow the
-> >>> usual failure model of LSM hooks. It could be argued that the
-> >>> code was fine before the addition of the BPF hook, but it was
-> >>> going to fail as soon as any two security modules provided
-> >>> mount options.
-> >>>
-> >>> Regardless, I will have a patch later today. Thank you for
-> >>> tracking this down.
-> >> Here's my proposed patch. I'll tidy it up with a proper
-> >> commit message if it looks alright to y'all. I've tested
-> >> with Smack and with and without BPF.
-> > Looks good to me.
-> > On question, in contrast to smack, selinux returns 1 instead of 0 on
-> > success. So selinux would cause an early return preventing other hooks
-> > from running. Just making sure that this is intentional.
+On Fri, Jun 18, 2021 at 5:40 AM Paul Moore <paul@paul-moore.com> wrote:
+> On Wed, Jun 16, 2021 at 4:51 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
 > >
-> > Iirc, this would mean that selinux causes fsconfig() to return a
-> > positive value to userspace which I think is a bug; likely in selinux.
-> > So I think selinux should either return 0 or the security hook itself
-> > needs to overwrite a positive value with a sensible errno that can be
-> > seen by userspace.
-> 
-> I think that I agree. The SELinux and Smack versions of the
-> hook are almost identical except for setting rc to 1 in the
-> SELinux case. And returning 1 makes no sense if you follow
-> the callers back. David Howells wrote both the SELinux and
-> Smack versions. David - why are they different? which is correct?
+> > Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
+> > lockdown") added an implementation of the locked_down LSM hook to
+> > SELinux, with the aim to restrict which domains are allowed to perform
+> > operations that would breach lockdown.
+> >
+> > However, in several places the security_locked_down() hook is called in
+> > situations where the current task isn't doing any action that would
+> > directly breach lockdown, leading to SELinux checks that are basically
+> > bogus.
+> >
+> > To fix this, add an explicit struct cred pointer argument to
+> > security_lockdown() and define NULL as a special value to pass instead
+> > of current_cred() in such situations. LSMs that take the subject
+> > credentials into account can then fall back to some default or ignore
+> > such calls altogether. In the SELinux lockdown hook implementation, use
+> > SECINITSID_KERNEL in case the cred argument is NULL.
+> >
+> > Most of the callers are updated to pass current_cred() as the cred
+> > pointer, thus maintaining the same behavior. The following callers are
+> > modified to pass NULL as the cred pointer instead:
+> > 1. arch/powerpc/xmon/xmon.c
+> >      Seems to be some interactive debugging facility. It appears that
+> >      the lockdown hook is called from interrupt context here, so it
+> >      should be more appropriate to request a global lockdown decision.
+> > 2. fs/tracefs/inode.c:tracefs_create_file()
+> >      Here the call is used to prevent creating new tracefs entries when
+> >      the kernel is locked down. Assumes that locking down is one-way -
+> >      i.e. if the hook returns non-zero once, it will never return zero
+> >      again, thus no point in creating these files. Also, the hook is
+> >      often called by a module's init function when it is loaded by
+> >      userspace, where it doesn't make much sense to do a check against
+> >      the current task's creds, since the task itself doesn't actually
+> >      use the tracing functionality (i.e. doesn't breach lockdown), just
+> >      indirectly makes some new tracepoints available to whoever is
+> >      authorized to use them.
+> > 3. net/xfrm/xfrm_user.c:copy_to_user_*()
+> >      Here a cryptographic secret is redacted based on the value returned
+> >      from the hook. There are two possible actions that may lead here:
+> >      a) A netlink message XFRM_MSG_GETSA with NLM_F_DUMP set - here the
+> >         task context is relevant, since the dumped data is sent back to
+> >         the current task.
+> >      b) When adding/deleting/updating an SA via XFRM_MSG_xxxSA, the
+> >         dumped SA is broadcasted to tasks subscribed to XFRM events -
+> >         here the current task context is not relevant as it doesn't
+> >         represent the tasks that could potentially see the secret.
+> >      It doesn't seem worth it to try to keep using the current task's
+> >      context in the a) case, since the eventual data leak can be
+> >      circumvented anyway via b), plus there is no way for the task to
+> >      indicate that it doesn't care about the actual key value, so the
+> >      check could generate a lot of "false alert" denials with SELinux.
+> >      Thus, let's pass NULL instead of current_cred() here faute de
+> >      mieux.
+> >
+> > Improvements-suggested-by: Casey Schaufler <casey@schaufler-ca.com>
+> > Improvements-suggested-by: Paul Moore <paul@paul-moore.com>
+> > Fixes: 59438b46471a ("security,lockdown,selinux: implement SELinux lockdown")
+> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+>
+> This seems reasonable to me, but before I merge it into the SELinux
+> tree I think it would be good to get some ACKs from the relevant
+> subsystem folks.  I don't believe we ever saw a response to the last
+> question for the PPC folks, did we?
 
-The documentation for fs_context_parse_param notes:
+Can we move this forward somehow, please?
 
- * @fs_context_parse_param:
- *	Userspace provided a parameter to configure a superblock.  The LSM may
- *	reject it with an error and may use it for itself, in which case it
- *	should return 0; otherwise it should return -ENOPARAM to pass it on to
- *	the filesystem.
- *	@fc indicates the filesystem context.
- *	@param The parameter
+Quoting the yet-unanswered question from the v2 thread for convenience:
 
-So we should simply make selinux return 0 on top of your patch when it
-has consumed the option.
+> > > The callers migrated to the new hook, passing NULL as cred:
+> > > 1. arch/powerpc/xmon/xmon.c
+[...]
+> >
+> > This definitely sounds like kernel_t based on the description above.
+>
+> Here I'm a little concerned that the hook might be called from some
+> unusual interrupt, which is not masked by spin_lock_irqsave()... We
+> ran into this with PMI (Platform Management Interrupt) before, see
+> commit 5ae5fbd21079 ("powerpc/perf: Fix handling of privilege level
+> checks in perf interrupt context"). While I can't see anything that
+> would suggest something like this happening here, the whole thing is
+> so foreign to me that I'm wary of making assumptions :)
+>
+> @Michael/PPC devs, can you confirm to us that xmon_is_locked_down() is
+> only called from normal syscall/interrupt context (as opposed to
+> something tricky like PMI)?
+
+I strongly suspect the answer will be just "Of course it is, why would
+you even ask such a silly question?", but please let's have it on
+record so we can finally get this patch merged...
+
+
+> > ---
+> >
+> > v3:
+> > - add the cred argument to security_locked_down() and adapt all callers
+> > - keep using current_cred() in BPF, as the hook calls have been shifted
+> >   to program load time (commit ff40e51043af ("bpf, lockdown, audit: Fix
+> >   buggy SELinux lockdown permission checks"))
+> > - in SELinux, don't ignore hook calls where cred == NULL, but use
+> >   SECINITSID_KERNEL as the subject instead
+> > - update explanations in the commit message
+> >
+> > v2: https://lore.kernel.org/lkml/20210517092006.803332-1-omosnace@redhat.com/
+> > - change to a single hook based on suggestions by Casey Schaufler
+> >
+> > v1: https://lore.kernel.org/lkml/20210507114048.138933-1-omosnace@redhat.com/
+> >
+> >  arch/powerpc/xmon/xmon.c             |  4 ++--
+> >  arch/x86/kernel/ioport.c             |  4 ++--
+> >  arch/x86/kernel/msr.c                |  4 ++--
+> >  arch/x86/mm/testmmiotrace.c          |  2 +-
+> >  drivers/acpi/acpi_configfs.c         |  2 +-
+> >  drivers/acpi/custom_method.c         |  2 +-
+> >  drivers/acpi/osl.c                   |  3 ++-
+> >  drivers/acpi/tables.c                |  2 +-
+> >  drivers/char/mem.c                   |  2 +-
+> >  drivers/cxl/mem.c                    |  2 +-
+> >  drivers/firmware/efi/efi.c           |  2 +-
+> >  drivers/firmware/efi/test/efi_test.c |  2 +-
+> >  drivers/pci/pci-sysfs.c              |  6 +++---
+> >  drivers/pci/proc.c                   |  6 +++---
+> >  drivers/pci/syscall.c                |  2 +-
+> >  drivers/pcmcia/cistpl.c              |  2 +-
+> >  drivers/tty/serial/serial_core.c     |  2 +-
+> >  fs/debugfs/file.c                    |  2 +-
+> >  fs/debugfs/inode.c                   |  2 +-
+> >  fs/proc/kcore.c                      |  2 +-
+> >  fs/tracefs/inode.c                   |  2 +-
+> >  include/linux/lsm_hook_defs.h        |  2 +-
+> >  include/linux/lsm_hooks.h            |  1 +
+> >  include/linux/security.h             |  4 ++--
+> >  kernel/bpf/helpers.c                 | 10 ++++++----
+> >  kernel/events/core.c                 |  2 +-
+> >  kernel/kexec.c                       |  2 +-
+> >  kernel/kexec_file.c                  |  2 +-
+> >  kernel/module.c                      |  2 +-
+> >  kernel/params.c                      |  2 +-
+> >  kernel/power/hibernate.c             |  3 ++-
+> >  kernel/trace/bpf_trace.c             | 20 ++++++++++++--------
+> >  kernel/trace/ftrace.c                |  4 ++--
+> >  kernel/trace/ring_buffer.c           |  2 +-
+> >  kernel/trace/trace.c                 | 10 +++++-----
+> >  kernel/trace/trace_events.c          |  2 +-
+> >  kernel/trace/trace_events_hist.c     |  4 ++--
+> >  kernel/trace/trace_events_synth.c    |  2 +-
+> >  kernel/trace/trace_events_trigger.c  |  2 +-
+> >  kernel/trace/trace_kprobe.c          |  6 +++---
+> >  kernel/trace/trace_printk.c          |  2 +-
+> >  kernel/trace/trace_stack.c           |  2 +-
+> >  kernel/trace/trace_stat.c            |  2 +-
+> >  kernel/trace/trace_uprobe.c          |  4 ++--
+> >  net/xfrm/xfrm_user.c                 | 11 +++++++++--
+> >  security/lockdown/lockdown.c         |  3 ++-
+> >  security/security.c                  |  4 ++--
+> >  security/selinux/hooks.c             |  7 +++++--
+> >  48 files changed, 97 insertions(+), 77 deletions(-)
+>
+> --
+> paul moore
+> www.paul-moore.com
+>
+
+--
+Ondrej Mosnacek
+Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc
+
