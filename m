@@ -2,124 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 767273FC8DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Aug 2021 15:53:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 078213FC8E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Aug 2021 15:55:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231371AbhHaNyj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Aug 2021 09:54:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57310 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236497AbhHaNyh (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Aug 2021 09:54:37 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53220C0613D9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Aug 2021 06:53:42 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id n11so26884872edv.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Aug 2021 06:53:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0KsdRco5g3Rxsur7HnzmWia1aqV1LswyiZ+q0x+vuSY=;
-        b=HQ7YjqNn+GvyrMyaEw4Ts6k7wU5aPcFPAWZ/MvIgnb/b3nJTG/bZDiK6JU5Urc0OGw
-         eYdX1ndiXPm2WmlL+IK4/u/BaFz6AbYdNIgxPmK/jtKVgAB4AXg1YnEwThk50eDSwxKa
-         5zamzfT+Mw9ZsLCNbbSg/KnigE4n5pxUzOD+A/0pPF9mh4JO0EwgAg6tp4mjPp+2ybhC
-         LKwkjJVc1hih9nB2NRvpLDKH15CvIzCDRkybcb8PHSW6J2tGC65jUPq2wh7pHwEv7mh1
-         GGntJW/v2BIHeuezNaO8q8z3cKspObfYA7MpK111176yeraZmzPIIb/SJwoe9ailV5zQ
-         GIEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0KsdRco5g3Rxsur7HnzmWia1aqV1LswyiZ+q0x+vuSY=;
-        b=BsFNG4HdZg2ZOPpw9xKYIDtLGUHqsjqBE9jPynI3FaQcNV6DAVxA7qswucLQ8Vb3g3
-         dFx8aEpKvLu+Jnm3i2EAkhdYPo6uIFl1r/e94gd+WHXOqXLtH7f6KA9DC0/uvuRCwsQi
-         fQj7q9FF4loM4OabpgREo9mzSedAgxE4KWBleP5XFWcWK9hbKuXCkaFr07hy3o8gAPXT
-         YwB/0NM0BUSCyHxOX2KQINNOI+y9iUcdDCDMs4YAF2v3bYosmsLexpAsFKQmerT034wp
-         dveAhqSPNPrgjMh4bG91rxGr00UTLIup5kQoLn8EhZTd55DC5HEZiwgFeoQQN9aYidbw
-         ibAw==
-X-Gm-Message-State: AOAM5330Y6hDpg4AUBWAeAmD/8ZXSkTejaaJkJeMtw5WrvjQTvZv7tPX
-        3xPwahygj2T/Q50JlJjipGjcFxPO2YKuOtoLYn0I
-X-Google-Smtp-Source: ABdhPJws3lszVbtjZiLZOptaWsbrL101boZlKAvA+uSpyGqWqgyhydVacfD22Otuw8Ioe1qUU+ZoAgTEh8gbHZtS+70=
-X-Received: by 2002:a05:6402:4cf:: with SMTP id n15mr30419950edw.269.1630418020725;
- Tue, 31 Aug 2021 06:53:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210616085118.1141101-1-omosnace@redhat.com> <CAPcyv4jvR8CT4rYODR5KUHNdiqMwQSwJZ+OkVf61kLT3JfjC_Q@mail.gmail.com>
- <CAFqZXNtuH0329Xvcb415Kar-=o6wwrkFuiP8BZ_2OQhHLqkkAg@mail.gmail.com>
-In-Reply-To: <CAFqZXNtuH0329Xvcb415Kar-=o6wwrkFuiP8BZ_2OQhHLqkkAg@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 31 Aug 2021 09:53:29 -0400
-Message-ID: <CAHC9VhTGECM2p+Q8n48aSdfJzY6XrpXQ5tcFurjWc4A3n8Qxjg@mail.gmail.com>
-Subject: Re: [PATCH v3] lockdown,selinux: fix wrong subject in some SELinux
- lockdown checks
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        X86 ML <x86@kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        linux-cxl@vger.kernel.org, linux-efi <linux-efi@vger.kernel.org>,
+        id S239631AbhHaNzx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Aug 2021 09:55:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45718 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237960AbhHaNzu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 31 Aug 2021 09:55:50 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6989E6056B;
+        Tue, 31 Aug 2021 13:54:53 +0000 (UTC)
+Date:   Tue, 31 Aug 2021 14:54:50 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        linux-serial@vger.kernel.org, bpf <bpf@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Kexec Mailing List <kexec@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [RFC][arm64] possible infinite loop in btrfs search_ioctl()
+Message-ID: <YS40qqmXL7CMFLGq@arm.com>
+References: <20210827164926.1726765-1-agruenba@redhat.com>
+ <20210827164926.1726765-6-agruenba@redhat.com>
+ <YSkz025ncjhyRmlB@zeniv-ca.linux.org.uk>
+ <CAHk-=wh5p6zpgUUoY+O7e74X9BZyODhnsqvv=xqnTaLRNj3d_Q@mail.gmail.com>
+ <YSk7xfcHVc7CxtQO@zeniv-ca.linux.org.uk>
+ <CAHk-=wjMyZLH+ta5SohAViSc10iPj-hRnHc-KPDoj1XZCmxdBg@mail.gmail.com>
+ <YSk+9cTMYi2+BFW7@zeniv-ca.linux.org.uk>
+ <YSldx9uhMYhT/G8X@zeniv-ca.linux.org.uk>
+ <YSqOUb7yZ7kBoKRY@zeniv-ca.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YSqOUb7yZ7kBoKRY@zeniv-ca.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 31, 2021 at 5:09 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> On Sat, Jun 19, 2021 at 12:18 AM Dan Williams <dan.j.williams@intel.com> wrote:
-> > On Wed, Jun 16, 2021 at 1:51 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+On Sat, Aug 28, 2021 at 08:28:17PM +0100, Al Viro wrote:
+> 	AFAICS, a48b73eca4ce "btrfs: fix potential deadlock in the search ioctl"
+> has introduced a bug at least on arm64.
+> 
+> Relevant bits: in search_ioctl() we have
+>         while (1) {
+>                 ret = fault_in_pages_writeable(ubuf + sk_offset,
+>                                                *buf_size - sk_offset);
+>                 if (ret)
+>                         break;
+> 
+>                 ret = btrfs_search_forward(root, &key, path, sk->min_transid);
+>                 if (ret != 0) {
+>                         if (ret > 0)
+>                                 ret = 0;
+>                         goto err;
+>                 }
+>                 ret = copy_to_sk(path, &key, sk, buf_size, ubuf,
+>                                  &sk_offset, &num_found);
+>                 btrfs_release_path(path);
+>                 if (ret)
+>                         break;
+> 
+>         }
+> and in copy_to_sk() -
+>                 sh.objectid = key->objectid;
+>                 sh.offset = key->offset;
+>                 sh.type = key->type;
+>                 sh.len = item_len;
+>                 sh.transid = found_transid;
+> 
+>                 /*
+>                  * Copy search result header. If we fault then loop again so we
+>                  * can fault in the pages and -EFAULT there if there's a
+>                  * problem. Otherwise we'll fault and then copy the buffer in
+>                  * properly this next time through
+>                  */
+>                 if (copy_to_user_nofault(ubuf + *sk_offset, &sh, sizeof(sh))) {
+>                         ret = 0;
+>                         goto out;
+>                 }
+> with sk_offset left unchanged if the very first copy_to_user_nofault() fails.
+> 
+> Now, consider a situation on arm64 where ubuf points to the beginning of page,
+> ubuf[0] can be accessed, but ubuf[16] can not (possible with MTE, AFAICS).  We do
+> fault_in_pages_writeable(), which succeeds.  When we get to copy_to_user_nofault()
+> we fail as soon as it gets past the first 16 bytes.  And we repeat everything from
+> scratch, with no progress made, since short copies are treated as "discard and
+> repeat" here.
 
-...
+So if copy_to_user_nofault() returns -EFAULT, copy_to_sk() returns 0
+(following commit a48b73eca4ce). I think you are right, search_ioctl()
+can get into an infinite loop attempting to write to user if the
+architecture can trigger faults at smaller granularity than the page
+boundary. fault_in_pages_writeable() won't fix it if ubuf[0] is
+writable and doesn't trigger an MTE tag check fault.
 
-> > > diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
-> > > index 2acc6173da36..c1747b6555c7 100644
-> > > --- a/drivers/cxl/mem.c
-> > > +++ b/drivers/cxl/mem.c
-> > > @@ -568,7 +568,7 @@ static bool cxl_mem_raw_command_allowed(u16 opcode)
-> > >         if (!IS_ENABLED(CONFIG_CXL_MEM_RAW_COMMANDS))
-> > >                 return false;
-> > >
-> > > -       if (security_locked_down(LOCKDOWN_NONE))
-> > > +       if (security_locked_down(current_cred(), LOCKDOWN_NONE))
-> >
-> > Acked-by: Dan Williams <dan.j.williams@intel.com>
-> >
-> > ...however that usage looks wrong. The expectation is that if kernel
-> > integrity protections are enabled then raw command access should be
-> > disabled. So I think that should be equivalent to LOCKDOWN_PCI_ACCESS
-> > in terms of the command capabilities to filter.
->
-> Yes, the LOCKDOWN_NONE seems wrong here... but it's a pre-existing bug
-> and I didn't want to go down yet another rabbit hole trying to fix it.
-> I'll look at this again once this patch is settled - it may indeed be
-> as simple as replacing LOCKDOWN_NONE with LOCKDOWN_PCI_ACCESS.
+An arm64-specific workaround would be for pagefault_disable() to disable
+tag checking. It's a pretty big hammer, weakening the out of bounds
+access detection of MTE. My preference would be a fix in the btrfs code.
 
-At this point you should be well aware of my distaste for merging
-patches that have known bugs in them.  Yes, this is a pre-existing
-condition, but it seems well within the scope of this work to address
-it as well.
+A btrfs option would be for copy_to_sk() to return an indication of
+where the fault occurred and get fault_in_pages_writeable() to check
+that location, even if the copying would restart from an earlier offset
+(this requires open-coding copy_to_user_nofault()). An attempt below,
+untested and does not cover read_extent_buffer_to_user_nofault():
 
-This isn't something that is going to get merged while the merge
-window is open, so at the very least you've got almost two weeks to
-sort this out - please do that.
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 0ba98e08a029..9e74ba1c955d 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -2079,6 +2079,7 @@ static noinline int copy_to_sk(struct btrfs_path *path,
+ 			       size_t *buf_size,
+ 			       char __user *ubuf,
+ 			       unsigned long *sk_offset,
++			       unsigned long *fault_offset,
+ 			       int *num_found)
+ {
+ 	u64 found_transid;
+@@ -2143,7 +2144,11 @@ static noinline int copy_to_sk(struct btrfs_path *path,
+ 		 * problem. Otherwise we'll fault and then copy the buffer in
+ 		 * properly this next time through
+ 		 */
+-		if (copy_to_user_nofault(ubuf + *sk_offset, &sh, sizeof(sh))) {
++		pagefault_disable();
++		ret = __copy_to_user_inatomic(ubuf + *sk_offset, &sh, sizeof(sh));
++		pagefault_enable();
++		*fault_offset = *sk_offset + sizeof(sh) - ret;
++		if (ret) {
+ 			ret = 0;
+ 			goto out;
+ 		}
+@@ -2218,6 +2223,7 @@ static noinline int search_ioctl(struct inode *inode,
+ 	int ret;
+ 	int num_found = 0;
+ 	unsigned long sk_offset = 0;
++	unsigned long fault_offset = 0;
+
+ 	if (*buf_size < sizeof(struct btrfs_ioctl_search_header)) {
+ 		*buf_size = sizeof(struct btrfs_ioctl_search_header);
+@@ -2244,8 +2250,8 @@ static noinline int search_ioctl(struct inode *inode,
+ 	key.offset = sk->min_offset;
+
+ 	while (1) {
+-		ret = fault_in_pages_writeable(ubuf + sk_offset,
+-					       *buf_size - sk_offset);
++		ret = fault_in_pages_writeable(ubuf + fault_offset,
++					       *buf_size - fault_offset);
+ 		if (ret)
+ 			break;
+
+@@ -2256,7 +2262,7 @@ static noinline int search_ioctl(struct inode *inode,
+ 			goto err;
+ 		}
+ 		ret = copy_to_sk(path, &key, sk, buf_size, ubuf,
+-				 &sk_offset, &num_found);
++				 &sk_offset, &fault_offset, &num_found);
+ 		btrfs_release_path(path);
+ 		if (ret)
+ 			break;
 
 -- 
-paul moore
-www.paul-moore.com
+Catalin
