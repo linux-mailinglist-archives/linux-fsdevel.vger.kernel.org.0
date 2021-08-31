@@ -2,165 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 231423FCBFC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Aug 2021 19:01:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C4593FCC3E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 Aug 2021 19:22:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240366AbhHaRCo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Aug 2021 13:02:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55910 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238215AbhHaRCn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Aug 2021 13:02:43 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 37EE060FC3;
-        Tue, 31 Aug 2021 17:01:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630429308;
-        bh=wqILHNFsZnQ1YUeuBEg5b2/CPkm/zZ3cKjXYEtPPTGE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=GYulEa18IW84f60wqT9n1+oCYVcnhUACoA9lxMi5Du8zB45gz6V5BIsRoGpy1Xv3E
-         XFBkRHG3kNPeeuQkn94rGNaPSAMv8cqFuIklFmOtLKLjJoLBpVFhbJaWav0af9Hm9M
-         AhiPNBptAYtFo6jqXtLlM7A7byxCABFsBEY2JJE1etxjl/sHO+b2Rg4BRr9nXcViho
-         mg2V3G5Yp5WYJmRfQ1VtoEwqlWXpjtdkBSfdO/JnmeepcjR6mKENajm0+d0LYH0ane
-         C+VdVbUELpudEMrToU1A2JdG2kMCZHStiH9EY05kVPGOQP+0kY4Tyj0+NdP/BzjoMt
-         Z2JM6OFbSJvtw==
-Date:   Tue, 31 Aug 2021 10:01:47 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de, hsiangkao@linux.alibaba.com
-Subject: [GIT PULL] iomap: new code for 5.15
-Message-ID: <20210831170147.GB9959@magnolia>
+        id S234359AbhHaRWr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 Aug 2021 13:22:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49580 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230257AbhHaRWq (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 31 Aug 2021 13:22:46 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22FC5C061575
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Aug 2021 10:21:51 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id a93so36643450ybi.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Aug 2021 10:21:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WrEonas+JepcSOY1s7UkcRJkLLwq2Xbze1BTfCD2A34=;
+        b=FUmATkIwZg5ZsdXIB4Beeo0WFBRLtX/xMW4hRtj8U9Wo67Z07U2YrBoqMyWD89anYc
+         jsZEr/hMAxrvTFvMC8Z8Rep0v1FYAbDiZxWZvwtcd3E3rkJu/fEI9TdMwKHr1bbDR+uG
+         HrstyAHrLttUKuChWSzh50+cnHbAvQTldLsIhAWnCQBRs8xuX9pTMDALn1e7AG1Tzrqv
+         9CTf/X/hTTE4PneuIB0GsckhUTCqGhd/28jqAa/6Z1Ghl1YlkghiTFTzQHBQ4qZadojQ
+         QpfxNyuvbhGMfLmre6jfNGm/k46DQ96BSRhwvSufQ0V0iRfZBfjkohXmi+r4VNOa0Hou
+         z5zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WrEonas+JepcSOY1s7UkcRJkLLwq2Xbze1BTfCD2A34=;
+        b=UFQDoQElziwgTzHxCXoBaxViRZcwgc6+7bBLTERbHxcJKcx+8sbAi8T1l47huKWOTc
+         WFImhkLTCGtKJudwVvfNyjZnIr037XAjyqyzLwGpn+Qe/YD8lVEDhIpjbMCDl/YmXJ8y
+         MmCGcNTplPXF+OG7ib4Z8tNrm21o2VgixD45Ona8dbWHM8vf92ha3Xt+fKJ2H/zGeFiQ
+         e9/29uv95/VKrtUoFktpn/oqarYIyphanMjOQEHHFYRzDdfhzWvESJDUXtt/xU6oy45t
+         9ggpDbb5Shy2UpfCNK+vyZz5Mlva4uy1tBmdLiRhcshaiIERIyhzfoJnPGnyog20d01d
+         ZCNQ==
+X-Gm-Message-State: AOAM533VB2nqunzx64r2mD2eliUJa2aijv59W0fX+5n2qXZO/P1hxVLI
+        TI5Umifwr3kBJmLYUsFu0gJBmBeXLvskZez7Qzcqog==
+X-Google-Smtp-Source: ABdhPJyPBOY0YfeCm+axOI1GWL+mwhLsLVw2QaKm2MUud1FTTcYJfKTafsAGvTRvAVjyZR0pFmQLoHwTabaoQHWnias=
+X-Received: by 2002:a25:9ac6:: with SMTP id t6mr32228595ybo.190.1630430510051;
+ Tue, 31 Aug 2021 10:21:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20210827191858.2037087-1-surenb@google.com> <20210827191858.2037087-3-surenb@google.com>
+ <YSmVl+DEPrU6oUR4@casper.infradead.org> <202108272228.7D36F0373@keescook>
+ <CAJuCfpEWc+eTLYp_Xf9exMJCO_cFtvBUzi39+WbcSKZBXHe3SQ@mail.gmail.com>
+ <f7117620-28ba-cfa5-b2c6-21812f15e4d6@rasmusvillemoes.dk> <CAJuCfpHXF34THa=zVcRozYiLA9QPeNyU09WvyJFKk=ZjCq0ZZw@mail.gmail.com>
+ <YS0OWFnzLHJViamF@casper.infradead.org>
+In-Reply-To: <YS0OWFnzLHJViamF@casper.infradead.org>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Tue, 31 Aug 2021 10:21:38 -0700
+Message-ID: <CAJuCfpEnZo8nji3R=6ek=2T2TSG=Ke22PJzV_WkYFeSV4R9beg@mail.gmail.com>
+Subject: Re: [PATCH v8 2/3] mm: add a field to store names for private
+ anonymous memory
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Colin Cross <ccross@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        vincenzo.frascino@arm.com,
+        =?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= 
+        <chinwen.chang@mediatek.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jann Horn <jannh@google.com>, apopple@nvidia.com,
+        John Hubbard <jhubbard@nvidia.com>,
+        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
+        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
+        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
+        chris.hyser@oracle.com, Peter Collingbourne <pcc@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
+        Rolf Eike Beer <eb@emlix.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
+        cxfcosmos@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        kernel-team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Mon, Aug 30, 2021 at 9:59 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Mon, Aug 30, 2021 at 09:16:14AM -0700, Suren Baghdasaryan wrote:
+> > On Mon, Aug 30, 2021 at 1:12 AM Rasmus Villemoes
+> > <linux@rasmusvillemoes.dk> wrote:
+> > >
+> > > On 28/08/2021 23.47, Suren Baghdasaryan wrote:
+> > > > On Fri, Aug 27, 2021 at 10:52 PM Kees Cook <keescook@chromium.org> wrote:
+> > > >>
+> > > >>>> +   case PR_SET_VMA_ANON_NAME:
+> > > >>>> +           name = strndup_user((const char __user *)arg,
+> > > >>>> +                               ANON_VMA_NAME_MAX_LEN);
+> > > >>>> +
+> > > >>>> +           if (IS_ERR(name))
+> > > >>>> +                   return PTR_ERR(name);
+> > > >>>> +
+> > > >>>> +           for (pch = name; *pch != '\0'; pch++) {
+> > > >>>> +                   if (!isprint(*pch)) {
+> > > >>>> +                           kfree(name);
+> > > >>>> +                           return -EINVAL;
+> > > >>>
+> > > >>> I think isprint() is too weak a check.  For example, I would suggest
+> > > >>> forbidding the following characters: ':', ']', '[', ' '.  Perhaps
+> > >
+> > > Indeed. There's also the issue that the kernel's ctype actually
+> > > implements some almost-but-not-quite latin1, so (some) chars above 0x7f
+> > > would also pass isprint() - while everybody today expects utf-8, so the
+> > > ability to put almost arbitrary sequences of chars with the high bit set
+> > > could certainly confuse some parsers. IOW, don't use isprint() at all,
+> > > just explicitly check for the byte values that we and up agreeing to
+> > > allow/forbid.
+> > >
+> > > >>> isalnum() would be better?  (permit a-zA-Z0-9)  I wouldn't necessarily
+> > > >>> be opposed to some punctuation characters, but let's avoid creating
+> > > >>> confusion.  Do you happen to know which characters are actually in use
+> > > >>> today?
+> > > >>
+> > > >> There's some sense in refusing [, ], and :, but removing " " seems
+> > > >> unhelpful for reasonable descriptors. As long as weird stuff is escaped,
+> > > >> I think it's fine. Any parser can just extract with m|\[anon:(.*)\]$|
+> > > >
+> > > > I see no issue in forbidding '[' and ']' but whitespace and ':' are
+> > > > currently used by Android. Would forbidding or escaping '[' and ']' be
+> > > > enough?
+> > >
+> > > how about allowing [0x20, 0x7e] except [0x5b, 0x5d], i.e. all printable
+> > > (including space) ascii characters, except [ \ ] - the brackets as
+> > > already discussed, and backslash because then there's nobody who can get
+> > > confused about whether there's some (and then which?) escaping mechanism
+> > > in play - "\n" is simply never going to appear. Simple rules, easy to
+> > > implement, easy to explain in a man page.
+> >
+> > Thanks for the suggestion, Rasmus. I'm all for keeping it simple.
+> > Kees, Matthew, would that be acceptable?
+>
+> Yes, I think so.  It permits all kinds of characters that might
+> be confusing if passed on to something else, but we can't prohibit
+> everything, and forbidding just these three should remove any confusion
+> for any parser of /proc.  Little Bobby Tables thanks you.
 
-Please pull this new iomap code for 5.15-rc1.  The most notable
-externally visible change for this cycle is the addition of support for
-reads to inline tail fragments of files, which was requested by the
-erofs developers; and a correction for a kernel memory corruption bug if
-the sysadmin tries to activate a swapfile with more pages than the
-swapfile header suggests.  We also now report writeback completion
-errors to the file mapping correctly, instead of munging all errors into
-EIO.
-
-Internally, the bulk of the changes are Christoph's patchset to reduce
-the indirect function call count by a third to a half by converting
-iomap iteration from a loop pattern to a generator/consumer pattern.
-As an added bonus, fsdax no longer open-codes iomap apply loops.
-
-The branch merges cleanly with upstream as of a few minutes ago and has
-been soaking in for-next for a couple of weeks without complaints.
-Please let me know if there are any problems.
-
---D
-
-The following changes since commit c500bee1c5b2f1d59b1081ac879d73268ab0ff17:
-
-  Linux 5.14-rc4 (2021-08-01 17:04:17 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-5.15-merge-4
-
-for you to fetch changes up to 03b8df8d43ecc3c5724e6bfb80bc0b9ea2aa2612:
-
-  iomap: standardize tracepoint formatting and storage (2021-08-26 09:18:53 -0700)
-
-----------------------------------------------------------------
-New code for 5.15:
- - Simplify the bio_end_page usage in the buffered IO code.
- - Support reading inline data at nonzero offsets for erofs.
- - Fix some typos and bad grammar.
- - Convert kmap_atomic usage in the inline data read path.
- - Add some extra inline data input checking.
- - Fix a memory corruption bug stemming from iomap_swapfile_activate
-   trying to activate more pages than mm was expecting.
- - Pass errnos through the page writeback code so that writeback errors
-   are reported correctly instead of being munged to EIO.
- - Replace iomap_apply with a open-coded iterator loops to reduce the
-   number of indirect calls by a third to a half.
- - Refactor the fsdax code to use iomap iterators instead of the
-   open-coded iomap_apply code that it had before.
- - Format file range iomap tracepoint data in hexadecimal and
-   standardize the names used in the pretty-print string.
-
-----------------------------------------------------------------
-Andreas Gruenbacher (1):
-      iomap: Fix some typos and bad grammar
-
-Christoph Hellwig (30):
-      iomap: simplify iomap_readpage_actor
-      iomap: simplify iomap_add_to_ioend
-      iomap: fix a trivial comment typo in trace.h
-      iomap: remove the iomap arguments to ->page_{prepare,done}
-      iomap: mark the iomap argument to iomap_sector const
-      iomap: mark the iomap argument to iomap_inline_data const
-      iomap: mark the iomap argument to iomap_inline_data_valid const
-      fs: mark the iomap argument to __block_write_begin_int const
-      fsdax: mark the iomap argument to dax_iomap_sector as const
-      iomap: mark the iomap argument to iomap_read_inline_data const
-      iomap: mark the iomap argument to iomap_read_page_sync const
-      iomap: fix the iomap_readpage_actor return value for inline data
-      iomap: add the new iomap_iter model
-      iomap: switch readahead and readpage to use iomap_iter
-      iomap: switch iomap_file_buffered_write to use iomap_iter
-      iomap: switch iomap_file_unshare to use iomap_iter
-      iomap: switch iomap_zero_range to use iomap_iter
-      iomap: switch iomap_page_mkwrite to use iomap_iter
-      iomap: switch __iomap_dio_rw to use iomap_iter
-      iomap: switch iomap_fiemap to use iomap_iter
-      iomap: switch iomap_bmap to use iomap_iter
-      iomap: switch iomap_seek_hole to use iomap_iter
-      iomap: switch iomap_seek_data to use iomap_iter
-      iomap: switch iomap_swapfile_activate to use iomap_iter
-      fsdax: switch dax_iomap_rw to use iomap_iter
-      iomap: remove iomap_apply
-      iomap: pass an iomap_iter to various buffered I/O helpers
-      iomap: rework unshare flag
-      fsdax: switch the fault handlers to use iomap_iter
-      iomap: constify iomap_iter_srcmap
-
-Darrick J. Wong (3):
-      iomap: pass writeback errors to the mapping
-      iomap: move loop control code to iter.c
-      iomap: standardize tracepoint formatting and storage
-
-Gao Xiang (1):
-      iomap: support reading inline data from non-zero pos
-
-Matthew Wilcox (Oracle) (3):
-      iomap: Support inline data with block size < page size
-      iomap: Use kmap_local_page instead of kmap_atomic
-      iomap: Add another assertion to inline data handling
-
-Shiyang Ruan (2):
-      fsdax: factor out helpers to simplify the dax fault code
-      fsdax: factor out a dax_fault_actor() helper
-
-Xu Yu (1):
-      mm/swap: consider max pages in iomap_swapfile_add_extent
-
- fs/btrfs/inode.c       |   5 +-
- fs/buffer.c            |   4 +-
- fs/dax.c               | 606 +++++++++++++++++++++++--------------------------
- fs/gfs2/bmap.c         |   5 +-
- fs/internal.h          |   4 +-
- fs/iomap/Makefile      |   2 +-
- fs/iomap/apply.c       |  99 --------
- fs/iomap/buffered-io.c | 508 ++++++++++++++++++++---------------------
- fs/iomap/direct-io.c   | 172 +++++++-------
- fs/iomap/fiemap.c      | 101 ++++-----
- fs/iomap/iter.c        |  80 +++++++
- fs/iomap/seek.c        |  98 ++++----
- fs/iomap/swapfile.c    |  44 ++--
- fs/iomap/trace.h       |  61 ++---
- include/linux/iomap.h  |  91 ++++++--
- 15 files changed, 934 insertions(+), 946 deletions(-)
- delete mode 100644 fs/iomap/apply.c
- create mode 100644 fs/iomap/iter.c
+Thanks for all the feedback! I think I have enough change suggestions
+to resping the next revision. Will send an update later today.
