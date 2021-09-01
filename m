@@ -2,129 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C6793FD185
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Sep 2021 04:52:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 142F13FD45B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Sep 2021 09:21:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241762AbhIACxA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 Aug 2021 22:53:00 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:41918 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231588AbhIACxA (ORCPT
+        id S242571AbhIAHWU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Sep 2021 03:22:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42130 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242500AbhIAHWT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 Aug 2021 22:53:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630464723;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=22daRUQV9U4yr6Wt0e3afK9IF5RqMvZ3yQMarWKzKaw=;
-        b=JxkWfQ7EGfdRby2Hd9j56rPsXil9S4cm2C3FAZXX5OO7cUDSxFTYinqBbb3iSpD6TdXSJT
-        6PrikPnEDTcBMAOb1V26OPOx1bsNDR+/Rg4qYR1bHBBiYO3xsUrVrBd9lpGTuUWxbipX6o
-        bPgZ3hpHWHlyTA3A+VvZuKPecQT/dm4=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-596-_LfhgiX3NBSCD2k7_6HMJw-1; Tue, 31 Aug 2021 22:52:02 -0400
-X-MC-Unique: _LfhgiX3NBSCD2k7_6HMJw-1
-Received: by mail-pg1-f198.google.com with SMTP id g6-20020a655946000000b00255ef826275so789177pgu.23
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 Aug 2021 19:52:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=22daRUQV9U4yr6Wt0e3afK9IF5RqMvZ3yQMarWKzKaw=;
-        b=JWyGDIhLjXcCc7xJWhpO14TWcuwwLI6+ZRp4St7OM6nofuVigkguGPku5Z21gYH4sN
-         W/9SG4mE4mesByeAVh2w5uaQIr/PqkQfv4s5fAmVB5iaKqpiUi76BS1Qqg/r04TitrbD
-         8m9KjP9jM1MtczAfkJRq9IC0zfXDrpH8xcL18llngQ/smZSTLnSn+wJbbym2269nGB2A
-         9YoFOvMo6lfbK2iD6aNl7ejWXJ1ZPp1fr644iRyHzwc0bkHmmxLT/Xfe1D1zEIQzRmZo
-         934bHRI+g9rky8g5nX1wNGnM4H6FG6bgSRq3vvU3zpr5DmEsQRCpYakWzEE6TBUrQ4SQ
-         DCig==
-X-Gm-Message-State: AOAM532HgNKdSjGMh4MUtt4TnSWcWqFpRPGfWC+JDKQrJH/KuQB/qAC2
-        fD80k8qbU6yQByPx6J50gB0gx7YBcIj5MJiRF2A1CJBssUDND3XL87isqAVSD1P1vZ3oYrpkZIp
-        4abrYjR+Q44GdldUPicxAnIHPqQ==
-X-Received: by 2002:a17:902:ea89:b0:134:7eb7:b4d7 with SMTP id x9-20020a170902ea8900b001347eb7b4d7mr7633957plb.43.1630464721014;
-        Tue, 31 Aug 2021 19:52:01 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwTWS6gU6vtbRqrdbv/Yqpra3725hn41k3JbwUi9Z5AqTrEe2L3d1WI2eNmIrtm6tnQdkeYWQ==
-X-Received: by 2002:a17:902:ea89:b0:134:7eb7:b4d7 with SMTP id x9-20020a170902ea8900b001347eb7b4d7mr7633932plb.43.1630464720692;
-        Tue, 31 Aug 2021 19:52:00 -0700 (PDT)
-Received: from wangxiaodeMacBook-Air.local ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id b7sm19703920pgs.64.2021.08.31.19.51.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 31 Aug 2021 19:51:59 -0700 (PDT)
-Subject: Re: [PATCH v13 02/13] eventfd: Export eventfd_wake_count to modules
-To:     Xie Yongji <xieyongji@bytedance.com>, mst@redhat.com,
-        stefanha@redhat.com, sgarzare@redhat.com, parav@nvidia.com,
-        hch@infradead.org, christian.brauner@canonical.com,
-        rdunlap@infradead.org, willy@infradead.org,
-        viro@zeniv.linux.org.uk, axboe@kernel.dk, bcrl@kvack.org,
-        corbet@lwn.net, mika.penttila@nextfour.com,
-        dan.carpenter@oracle.com, joro@8bytes.org,
-        gregkh@linuxfoundation.org, zhe.he@windriver.com,
-        xiaodong.liu@intel.com, joe@perches.com, robin.murphy@arm.com,
-        will@kernel.org, john.garry@huawei.com
-Cc:     songmuchun@bytedance.com,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-References: <20210831103634.33-1-xieyongji@bytedance.com>
- <20210831103634.33-3-xieyongji@bytedance.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <0e486c0a-0055-e698-ffd2-31c4b75dae5d@redhat.com>
-Date:   Wed, 1 Sep 2021 10:50:40 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        Wed, 1 Sep 2021 03:22:19 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B8F0C061575;
+        Wed,  1 Sep 2021 00:21:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=lc17SoGeHMPTwzG9UqBo7b/uRedgJVdZcuMDmdo1GPY=; b=pjipg5YvXPbY+yZUIhU9oHqA44
+        4MalxhjZ2SS+OKHxo2aveAICM9LTOcm4142w4c30rtCKyKG+A7owPY/VeQBvquBl/TfQ8ea9emyGn
+        7uwz/H8lJGKIP12pKgmO9th+8so2ZmcwPUUHev1N3walCATnee9iWznlRJfidW0+eva/Wbqy3SYyl
+        RBVBoWhZyji+RNzdnM4ZTlFciO7qBZXxSxEhUr1GeSLvIXWj9GD2NGFSTVuy+Ssdp8nibATafXiqC
+        EWBDphWlCKmAVQbDVx52kyq9DCmTYOMwqC5bgi3kJ2KBB11KrxT1zajcCZlIrwa1aMbQfRsf7PLDC
+        zHOfWBdw==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mLKXW-001z9l-Ul; Wed, 01 Sep 2021 07:20:18 +0000
+Date:   Wed, 1 Sep 2021 08:20:06 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-nfs@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] BTRFS/NFSD: provide more unique inode number for
+ btrfs export
+Message-ID: <YS8ppl6SYsCC0cql@infradead.org>
+References: <162995209561.7591.4202079352301963089@noble.neil.brown.name>
+ <162995778427.7591.11743795294299207756@noble.neil.brown.name>
+ <YSkQ31UTVDtBavOO@infradead.org>
+ <163010550851.7591.9342822614202739406@noble.neil.brown.name>
+ <YSnhHl0HDOgg07U5@infradead.org>
+ <163038594541.7591.11109978693705593957@noble.neil.brown.name>
 MIME-Version: 1.0
-In-Reply-To: <20210831103634.33-3-xieyongji@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <163038594541.7591.11109978693705593957@noble.neil.brown.name>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Aug 31, 2021 at 02:59:05PM +1000, NeilBrown wrote:
+> Making the change purely in btrfs is simply not possible.  There is no
+> way for btrfs to provide nfsd with a different inode number.  To move
+> the bulk of the change into btrfs code we would need - at the very least
+> - some way for nfsd to provide the filehandle when requesting stat
+> information.  We would also need to provide a reference filehandle when
+> requesting a dentry->filehandle conversion.  Cluttering the
+> export_operations like that just for btrfs doesn't seem like the right
+> balance.  I agree that cluttering kstat is not ideal, but it was a case
+> of choosing the minimum change for the maximum effect.
 
-在 2021/8/31 下午6:36, Xie Yongji 写道:
-> Export eventfd_wake_count so that some modules can use
-> the eventfd_signal_count() to check whether the
-> eventfd_signal() call should be deferred to a safe context.
->
-> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+So you're papering over a btrfs bug by piling up cludges in the nsdd
+code that has not business even knowing about this btrfs bug, while
+leaving other users of inodes numbers and file handles broken?
 
+If you only care about file handles:  this is what the export operations
+are for.  If you care about inode numbers:  well, it is up to btrfs
+to generate uniqueue inode numbers.  It currently doesn't do that, and
+no amount of papering over that in nfsd is going to fix the issue.
 
-And this matches the comment inside eventfd_signal():
-
-         /*
-          * Deadlock or stack overflow issues can happen if we recurse here
-          * through waitqueue wakeup handlers. If the caller users 
-potentially
-          * nested waitqueues with custom wakeup handlers, then it should
-          * check eventfd_signal_count() before calling this function. If
-          * it returns true, the eventfd_signal() call should be 
-deferred to a
-          * safe context.
-          */
-
-
-So:
-
-Acked-by: Jason Wang <jasowang@redhat.com>
-
-
-> ---
->   fs/eventfd.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/fs/eventfd.c b/fs/eventfd.c
-> index e265b6dd4f34..1b3130b8d6c1 100644
-> --- a/fs/eventfd.c
-> +++ b/fs/eventfd.c
-> @@ -26,6 +26,7 @@
->   #include <linux/uio.h>
->   
->   DEFINE_PER_CPU(int, eventfd_wake_count);
-> +EXPORT_PER_CPU_SYMBOL_GPL(eventfd_wake_count);
->   
->   static DEFINE_IDA(eventfd_ida);
->   
-
+If XORing a little more entropy into the inode number is a good enough
+band aid (and I strongly disagree with that), do it inside btrfs for
+every place they report the inode number.  There is nothing NFS-specific
+about that.
