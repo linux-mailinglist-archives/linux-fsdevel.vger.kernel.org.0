@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A93D3FE0AC
+	by mail.lfdr.de (Postfix) with ESMTP id DC5933FE0AD
 	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Sep 2021 19:01:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345554AbhIARCl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Sep 2021 13:02:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36962 "EHLO
+        id S1345616AbhIARCm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Sep 2021 13:02:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345584AbhIARCi (ORCPT
+        with ESMTP id S1345594AbhIARCk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Sep 2021 13:02:38 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46477C061796
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Sep 2021 10:01:41 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id d3-20020a17090ae28300b0019629c96f25so177914pjz.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Sep 2021 10:01:41 -0700 (PDT)
+        Wed, 1 Sep 2021 13:02:40 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD771C0617AE
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Sep 2021 10:01:42 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id c17so114245pgc.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Sep 2021 10:01:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rJ3grqp4nZ7wGPdZ2nxzn5A4XX3AwCCKjVM0qIJ0vyc=;
-        b=wWEOMoDfe19olklaIAMDTbIvFI05QJUtq06S9QYbG1p2oeSP+oGeqCApajuTkhtbKb
-         2VN3zSqjIzj6zLlD61dUwaNus9Ij2jxZhrarhqsrADqKKdIZDy9OkkaEMF4Z7WG0qgWp
-         G/TZyDguezh3aLmxMW/RhZjtXTYHRn/piYkJKE2FyA2g8moNX88EylhE3SwE7koErNyy
-         rSN8Q4PVvlbNtJ9e1YaK40lW5qHpDM7v9F/vw+cuNFFn3QLQj0oph+zDcXM1HREaXvoE
-         bLdRI99BSjT4WGq5uvwBRpd7x3ZtUifL5AhgsNfN6P6XDWrL9kwzmHVFkW60ziKdi4P8
-         T0GQ==
+        bh=mYxBOrA+eNNYB0JwI9mYBuy/s5j4yDG6uUHh62GOk7k=;
+        b=HA6pNqv4bkaSW0OJD4nkzkGoMnL21qZWvwZGnRQG6ca5gW/RhSxkqXYqRKmCf+u/sa
+         mfJtACPkIeaiWrmbcTzND6F+dkD/W7t/gdq/nS98DACW+5Gg17IZ6zlxlRljYnqeCd35
+         mU1s5h2mdxod4TUZFlLy/E3Nlai5eYoQOfscNe/eJsjuhek2zBLjqjNjwcpDXD2pv6Mw
+         Yu0qdjaehblP3LyAYR+0JkZMyykBzbsXNJmP51A9fyXv3cjp14L0ac9RKpvp9FvjnFcz
+         NP6j23Edaj63JSungb8Xs19wcfBwpNWYw5NPi/20oKLQkCBiYMtI+bOgvFNb7dLQW6TQ
+         5viw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rJ3grqp4nZ7wGPdZ2nxzn5A4XX3AwCCKjVM0qIJ0vyc=;
-        b=CukrYUt12Xui3uF+Zq8DpbVdk/EPTqrgqjP+ds3D2nLXtdd+gB7n7WAFrjhMfv9eYa
-         vLcZsZ6XWjyugpaNL9VtWpTJDIMcTaKU549Ecde8QfZP186j2hWHOg1LWlHOkfCyBduL
-         216MwJRGd1/DBcqPWKHAqtJ7B+l93ns68onyTgxu6zGJsAobdPuRlFdcMqc1IBsIpOeO
-         p8bhaJgmrBD+EsvW9rHpRhG8ex+y2wJ+kHFlMv5GlF+5ItX2Aun0ai/c2Pe+kaK2lZh2
-         MTbGm12brQsPw/Z5NdUKF+g+8JyzmaqhBssmqwSr29U4u0badq5kdBpKp4LM+fUDrG+g
-         S36Q==
-X-Gm-Message-State: AOAM5323lXrJD48n38YF21gUCY9X0u+0oNOoc8OFSB0A4EymMhD1Vv5h
-        MUcNNjrTB0jas70PJSyGmkUbZw==
-X-Google-Smtp-Source: ABdhPJxzyPsWEc8sihv7IRV41QqV9wSkEIA8n8Xl6Ph+QxveOHvJGw/Lr6inlZax6Wd4EcATnRE8qQ==
-X-Received: by 2002:a17:902:b193:b029:11a:a179:453a with SMTP id s19-20020a170902b193b029011aa179453amr481641plr.69.1630515700706;
-        Wed, 01 Sep 2021 10:01:40 -0700 (PDT)
+        bh=mYxBOrA+eNNYB0JwI9mYBuy/s5j4yDG6uUHh62GOk7k=;
+        b=rpqseHQrZZ68/fkFjWym6RAZqarhP9X9C0Wse40FSU41CuoL6A/j+/zkkV2ZBF0Fsf
+         cZvXQy+JRXaK9OK8u3VPKtELF0HoS6iJKKFQltUgf/VE4BgG18WtF4rrsnD7i3ZjQA02
+         ZO5MM6bjb1HOS8AHPMvw6DG11M5BVX5ALrTEYtjAh9Y1mP1nsJIhim+eG3LTLody+fIZ
+         SkQejNoG51AKULpGdk+KFsIGfj7x0CePI2/WogWLBqhP+JNGYD/Ws5fkG+8RCdeosS7Q
+         Qwv5JMILsyt3sOHIco8FF2bQvXo8CNBYSLdqUmNW933Tmgl/ElFxX8mDOJg0G6FDyVlg
+         BuWw==
+X-Gm-Message-State: AOAM5303+jRU+s+lEKkhPkr+TicI/8xR4YUVxeWaoRNFPw3dgIIK+fU+
+        L2lnJfC6GXR7LSi5yU9VZZ+yQY/MYnp9Iw==
+X-Google-Smtp-Source: ABdhPJxd8jWjFQnghqrb+5OiIzCNFgkRcYvSXSGgYslLKsqj3uTjlnoQKCim1qfUgYbXzi9Ps7GIdQ==
+X-Received: by 2002:a05:6a00:16d5:b0:3e0:f6ce:f2f7 with SMTP id l21-20020a056a0016d500b003e0f6cef2f7mr364451pfc.78.1630515702079;
+        Wed, 01 Sep 2021 10:01:42 -0700 (PDT)
 Received: from relinquished.tfbnw.net ([2620:10d:c090:400::5:a2b2])
-        by smtp.gmail.com with ESMTPSA id y7sm58642pff.206.2021.09.01.10.01.39
+        by smtp.gmail.com with ESMTPSA id y7sm58642pff.206.2021.09.01.10.01.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Sep 2021 10:01:40 -0700 (PDT)
+        Wed, 01 Sep 2021 10:01:41 -0700 (PDT)
 From:   Omar Sandoval <osandov@osandov.com>
 To:     linux-btrfs@vger.kernel.org
 Cc:     kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
         linux-api@vger.kernel.org
-Subject: [PATCH v11 10/14] btrfs: add send stream v2 definitions
-Date:   Wed,  1 Sep 2021 10:01:05 -0700
-Message-Id: <ed4dc1c414a6662831e7443335065cb37dddad91.1630514529.git.osandov@fb.com>
+Subject: [PATCH v11 11/14] btrfs: send: write larger chunks when using stream v2
+Date:   Wed,  1 Sep 2021 10:01:06 -0700
+Message-Id: <7d62209de1399ce59d84fc3b06ac37d5b336be27.1630514529.git.osandov@fb.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <cover.1630514529.git.osandov@fb.com>
 References: <cover.1630514529.git.osandov@fb.com>
@@ -66,121 +66,79 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Omar Sandoval <osandov@fb.com>
 
-This adds the definitions of the new commands for send stream version 2
-and their respective attributes: fallocate, FS_IOC_SETFLAGS (a.k.a.
-chattr), and encoded writes. It also documents two changes to the send
-stream format in v2: the receiver shouldn't assume a maximum command
-size, and the DATA attribute is encoded differently to allow for writes
-larger than 64k. These will be implemented in subsequent changes, and
-then the ioctl will accept the new flags.
+The length field of the send stream TLV header is 16 bits. This means
+that the maximum amount of data that can be sent for one write is 64k
+minus one. However, encoded writes must be able to send the maximum
+compressed extent (128k) in one command. To support this, send stream
+version 2 encodes the DATA attribute differently: it has no length
+field, and the length is implicitly up to the end of containing command
+(which has a 32-bit length field). Although this is necessary for
+encoded writes, normal writes can benefit from it, too.
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+For v2, let's bump up the send buffer to the maximum compressed extent
+size plus 16k for the other metadata (144k total). Since this will most
+likely be vmalloc'd (and always will be after the next commit), we round
+it up to the next page since we might as well use the rest of the page
+on systems with >16k pages.
+
 Signed-off-by: Omar Sandoval <osandov@fb.com>
 ---
- fs/btrfs/send.c            |  2 +-
- fs/btrfs/send.h            | 30 +++++++++++++++++++++++++++++-
- include/uapi/linux/btrfs.h | 13 +++++++++++++
- 3 files changed, 43 insertions(+), 2 deletions(-)
+ fs/btrfs/send.c | 34 ++++++++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 8 deletions(-)
 
 diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-index afdcbe7844e0..2ec07943f173 100644
+index 2ec07943f173..80736e2670eb 100644
 --- a/fs/btrfs/send.c
 +++ b/fs/btrfs/send.c
-@@ -7287,7 +7287,7 @@ long btrfs_ioctl_send(struct file *mnt_file, struct btrfs_ioctl_send_args *arg)
+@@ -4908,14 +4908,27 @@ static inline u64 max_send_read_size(const struct send_ctx *sctx)
+ 
+ static int put_data_header(struct send_ctx *sctx, u32 len)
+ {
+-	struct btrfs_tlv_header *hdr;
++	if (sctx->flags & BTRFS_SEND_FLAG_STREAM_V2) {
++		/*
++		 * In v2, the data attribute header doesn't include a length; it
++		 * is implicitly to the end of the command.
++		 */
++		if (sctx->send_max_size - sctx->send_size < 2 + len)
++			return -EOVERFLOW;
++		put_unaligned_le16(BTRFS_SEND_A_DATA,
++				   sctx->send_buf + sctx->send_size);
++		sctx->send_size += 2;
++	} else {
++		struct btrfs_tlv_header *hdr;
+ 
+-	if (sctx->send_max_size - sctx->send_size < sizeof(*hdr) + len)
+-		return -EOVERFLOW;
+-	hdr = (struct btrfs_tlv_header *)(sctx->send_buf + sctx->send_size);
+-	put_unaligned_le16(BTRFS_SEND_A_DATA, &hdr->tlv_type);
+-	put_unaligned_le16(len, &hdr->tlv_len);
+-	sctx->send_size += sizeof(*hdr);
++		if (sctx->send_max_size - sctx->send_size < sizeof(*hdr) + len)
++			return -EOVERFLOW;
++		hdr = (struct btrfs_tlv_header *)(sctx->send_buf +
++						  sctx->send_size);
++		put_unaligned_le16(BTRFS_SEND_A_DATA, &hdr->tlv_type);
++		put_unaligned_le16(len, &hdr->tlv_len);
++		sctx->send_size += sizeof(*hdr);
++	}
+ 	return 0;
+ }
+ 
+@@ -7287,7 +7300,12 @@ long btrfs_ioctl_send(struct file *mnt_file, struct btrfs_ioctl_send_args *arg)
  
  	sctx->clone_roots_cnt = arg->clone_sources_count;
  
--	sctx->send_max_size = BTRFS_SEND_BUF_SIZE;
-+	sctx->send_max_size = BTRFS_SEND_BUF_SIZE_V1;
+-	sctx->send_max_size = BTRFS_SEND_BUF_SIZE_V1;
++	if (sctx->flags & BTRFS_SEND_FLAG_STREAM_V2) {
++		sctx->send_max_size = ALIGN(SZ_16K + BTRFS_MAX_COMPRESSED,
++					    PAGE_SIZE);
++	} else {
++		sctx->send_max_size = BTRFS_SEND_BUF_SIZE_V1;
++	}
  	sctx->send_buf = kvmalloc(sctx->send_max_size, GFP_KERNEL);
  	if (!sctx->send_buf) {
  		ret = -ENOMEM;
-diff --git a/fs/btrfs/send.h b/fs/btrfs/send.h
-index de91488b7cd0..9f4f7b96b1eb 100644
---- a/fs/btrfs/send.h
-+++ b/fs/btrfs/send.h
-@@ -12,7 +12,11 @@
- #define BTRFS_SEND_STREAM_MAGIC "btrfs-stream"
- #define BTRFS_SEND_STREAM_VERSION 1
- 
--#define BTRFS_SEND_BUF_SIZE SZ_64K
-+/*
-+ * In send stream v1, no command is larger than 64k. In send stream v2, no limit
-+ * should be assumed.
-+ */
-+#define BTRFS_SEND_BUF_SIZE_V1 SZ_64K
- 
- enum btrfs_tlv_type {
- 	BTRFS_TLV_U8,
-@@ -76,6 +80,13 @@ enum btrfs_send_cmd {
- 
- 	BTRFS_SEND_C_END,
- 	BTRFS_SEND_C_UPDATE_EXTENT,
-+
-+	/* The following commands were added in send stream v2. */
-+
-+	BTRFS_SEND_C_FALLOCATE,
-+	BTRFS_SEND_C_SETFLAGS,
-+	BTRFS_SEND_C_ENCODED_WRITE,
-+
- 	__BTRFS_SEND_C_MAX,
- };
- #define BTRFS_SEND_C_MAX (__BTRFS_SEND_C_MAX - 1)
-@@ -106,6 +117,11 @@ enum {
- 	BTRFS_SEND_A_PATH_LINK,
- 
- 	BTRFS_SEND_A_FILE_OFFSET,
-+	/*
-+	 * In send stream v2, this attribute is special: it must be the last
-+	 * attribute in a command, its header contains only the type, and its
-+	 * length is implicitly the remaining length of the command.
-+	 */
- 	BTRFS_SEND_A_DATA,
- 
- 	BTRFS_SEND_A_CLONE_UUID,
-@@ -114,6 +130,18 @@ enum {
- 	BTRFS_SEND_A_CLONE_OFFSET,
- 	BTRFS_SEND_A_CLONE_LEN,
- 
-+	/* The following attributes were added in send stream v2. */
-+
-+	BTRFS_SEND_A_FALLOCATE_MODE,
-+
-+	BTRFS_SEND_A_SETFLAGS_FLAGS,
-+
-+	BTRFS_SEND_A_UNENCODED_FILE_LEN,
-+	BTRFS_SEND_A_UNENCODED_LEN,
-+	BTRFS_SEND_A_UNENCODED_OFFSET,
-+	BTRFS_SEND_A_COMPRESSION,
-+	BTRFS_SEND_A_ENCRYPTION,
-+
- 	__BTRFS_SEND_A_MAX,
- };
- #define BTRFS_SEND_A_MAX (__BTRFS_SEND_A_MAX - 1)
-diff --git a/include/uapi/linux/btrfs.h b/include/uapi/linux/btrfs.h
-index 95da52955894..4f875f355e83 100644
---- a/include/uapi/linux/btrfs.h
-+++ b/include/uapi/linux/btrfs.h
-@@ -771,6 +771,19 @@ struct btrfs_ioctl_received_subvol_args {
-  */
- #define BTRFS_SEND_FLAG_OMIT_END_CMD		0x4
- 
-+/*
-+ * Use version 2 of the send stream, which adds new commands and supports larger
-+ * writes.
-+ */
-+#define BTRFS_SEND_FLAG_STREAM_V2		0x8
-+
-+/*
-+ * Send compressed data using the ENCODED_WRITE command instead of decompressing
-+ * the data and sending it with the WRITE command. This requires
-+ * BTRFS_SEND_FLAG_STREAM_V2.
-+ */
-+#define BTRFS_SEND_FLAG_COMPRESSED		0x10
-+
- #define BTRFS_SEND_FLAG_MASK \
- 	(BTRFS_SEND_FLAG_NO_FILE_DATA | \
- 	 BTRFS_SEND_FLAG_OMIT_STREAM_HEADER | \
 -- 
 2.33.0
 
