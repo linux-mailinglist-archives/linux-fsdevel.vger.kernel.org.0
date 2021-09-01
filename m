@@ -2,108 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E7E73FDCFF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Sep 2021 15:20:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADA7A3FDDF5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Sep 2021 16:47:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236226AbhIANC5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Sep 2021 09:02:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1344530AbhIAM7k (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Sep 2021 08:59:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 53C5360F23;
-        Wed,  1 Sep 2021 12:58:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630501123;
-        bh=Fs+Ei850S/AfoXruaZpaxBAI0iXC8n1giB7EbO3rJOU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hlHStViLm82AieCjlQ46Lrn2UwKHUxLtsmClsGnjxYRfnQXXD0Cr+m1obtcWVRCHE
-         NyvGl2K0GNeWXci3i2flnId7bgYcRxv1ebOmm/UJEuqDwjVJDzDSKKKOqFbqA8ncX6
-         Ux/CtirmtcVQyrOyeYxJne4Vl1Zr3M9sK1/hVAqouPZhA48uBQFE1Vb44FiZLw3mOf
-         thlPffimqvhwVJTLbeKvlHCp+YVKzDpGPLUa0fXtnSoonHguDczvjQVeX2A8u6MAro
-         1Ur2rnheW/kJ9bYC66eJSxO2Wt4cKh9dp0qHn4S6ygN89/yTQc9p/TlZd0kncL2nJh
-         tEhBtqqOl1nqg==
-Date:   Wed, 1 Sep 2021 15:58:37 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] Memory folios for v5.15
-Message-ID: <YS94/aRcG6F9Su9R@kernel.org>
-References: <CAHk-=wjD8i2zJVQ9SfF2t=_0Fkgy-i5Z=mQjCw36AHvbBTGXyg@mail.gmail.com>
- <YSPwmNNuuQhXNToQ@casper.infradead.org>
- <YSQSkSOWtJCE4g8p@cmpxchg.org>
- <1957060.1629820467@warthog.procyon.org.uk>
- <YSUy2WwO9cuokkW0@casper.infradead.org>
- <CAHk-=wip=366HxkJvTfABuPUxwjGsFK4YYMgXNY9VSkJNp=-XA@mail.gmail.com>
- <YSVCAJDYShQke6Sy@casper.infradead.org>
- <CAHk-=wisF580D_g+wFt0B_uijSX+mCgz6tRRT5KADnO7Y97t-g@mail.gmail.com>
- <YSVHI9iaamxTGmI7@casper.infradead.org>
- <YSVMMMrzqxyFjHlw@mit.edu>
+        id S231672AbhIAOsW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Sep 2021 10:48:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33532 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229748AbhIAOsW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 Sep 2021 10:48:22 -0400
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34B36C061575;
+        Wed,  1 Sep 2021 07:47:25 -0700 (PDT)
+Received: by mail-yb1-xb33.google.com with SMTP id r4so5612233ybp.4;
+        Wed, 01 Sep 2021 07:47:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gaaeEOi0bhDqggteyHeoGNL0ZCIMTenxJIng5Ga8K5k=;
+        b=bWxnuRet33EwnEkLNmJ9b5SGs6HO5gjXRDIScxuIAcSjjUBN7EN5DJiTzj3jB3Gfnn
+         mEPVa2G+mCD6GaDC8MtJ7iHmeT4+WVcbATg5jtMMQ05A9jt2+iV0uzCLfy6S4q8I/qdi
+         cWJNUQC3+g5jQff5q4zUVxrY2gIaQlczVcRqEv80GrCdypyRKRzPi2cSzmcVkZobHNbO
+         p063C+VtU7leFUrxGOd3Xm6zXBNLfqs9EX4ehfZe1Jg4EMpbXBrMLpkp3tqCGKBEOYJ7
+         k3eLxZi9K7MM9hCawK5zQ3JHrrfBKCKrl19j8gfXwp4ZIfZvxNoKskSSPF8Zat85d5Is
+         aWzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gaaeEOi0bhDqggteyHeoGNL0ZCIMTenxJIng5Ga8K5k=;
+        b=kLmHTWrVosk4+s/sIjvO/gJo7+VSwro6AOI8LZ+2gt0p4R/V3izhsLXd0s9zuetp8v
+         9LXhlljAzi/piJtta1a+sOWNHgKNtPVqWqdThBT42dSxLFizLf6eFXluKfomFykIrd1A
+         eSOXpkuU1cU5SDobj6x8W8+HVJf2EuCMwPT5incF1+LHY7Yz1TITR1r0VF6Sq/KrbLa0
+         6UamaKPgs5VqtgReTfDKHJjhcs/WcxZCt7pXSEnBzxc4H96tjhFrxAXrMeJq4b39CvdB
+         BkCy2XPlgy1Z89bst2SQ+c/H8U4KfgbX+AiVWyHin3sr0df3cNq3Ea7eikH+5uMjhoO9
+         AmlQ==
+X-Gm-Message-State: AOAM531rckTZ0ChKKlUf4gByKoC989MF+UQ/Ie5KQzbet7IOdCVpjSK8
+        XL+mXOaDG62yCukxM8K45uef/2o4SceGSppa/do5+6g2vhrotQ==
+X-Google-Smtp-Source: ABdhPJz+53TYVHuMXXz8XS5OBaYErl91gFXzAfHbQESrAdtCqVKlMoGFNHjvd382o/DHRzKyKmF9OsNmOkrZUC+weuU=
+X-Received: by 2002:a25:c005:: with SMTP id c5mr35786298ybf.168.1630507643915;
+ Wed, 01 Sep 2021 07:47:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YSVMMMrzqxyFjHlw@mit.edu>
+References: <20210901001341.79887-1-stephen.s.brennan@oracle.com>
+ <CAOKbgA49wFL3+-QAQ+DEnNVzCjYcN0qmnVHGo1x=eXeyzNxvsw@mail.gmail.com> <YS9D4AlEsaCxLFV0@infradead.org>
+In-Reply-To: <YS9D4AlEsaCxLFV0@infradead.org>
+From:   Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Wed, 1 Sep 2021 21:47:12 +0700
+Message-ID: <CAOKbgA44BW824W_OqL8LO1FcaWdomrsYsr-kMHSj3cV1daJ4fg@mail.gmail.com>
+Subject: Re: [PATCH] namei: Fix use after free in kern_path_locked
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Stephen Brennan <stephen.s.brennan@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 24, 2021 at 03:44:48PM -0400, Theodore Ts'o wrote:
-> On Tue, Aug 24, 2021 at 08:23:15PM +0100, Matthew Wilcox wrote:
+On Wed, Sep 1, 2021 at 4:13 PM Christoph Hellwig <hch@infradead.org> wrote:
 >
-> So if someone sees "kmem_cache_alloc()", they can probably make a
-> guess what it means, and it's memorable once they learn it.
-> Similarly, something like "head_page", or "mempages" is going to a bit
-> more obvious to a kernel newbie.  So if we can make a tiny gesture
-> towards comprehensibility, it would be good to do so while it's still
-> easier to change the name.
+> On Wed, Sep 01, 2021 at 02:35:08PM +0700, Dmitry Kadashev wrote:
+> > Ouch. Thanks for taking care of this, Stephen. I guess
+> > filename_parentat() should be killed, since kern_path_locked() was the
+> > only place it's used in and it always results in danging "last",
+> > provoking bugs just like this one. I can send a patch on top of this if
+> > you prefer.
+>
+> Yes.  And then rename __filename_parentat to filename_parentat, please.
 
-Talking about being newbie friendly, how about we'll just add a piece of
-documentation along with the new type for a change?
+I see why you want it to be renamed - and I'll send the patch.  The only
+problem I have with the rename is with __filename_parentat() there is a
+nice uniformity: filename_* functions consume the passed name, and
+__filename_* do not. So maybe it's something nice to have. Maybe not.
 
-Something along those lines (I'm sure willy can add several more sentences
-for Folio description)
-
-diff --git a/Documentation/vm/memory-model.rst b/Documentation/vm/memory-model.rst
-index 30e8fbed6914..b5b39ebe67cf 100644
---- a/Documentation/vm/memory-model.rst
-+++ b/Documentation/vm/memory-model.rst
-@@ -30,6 +30,29 @@ Each memory model defines :c:func:`pfn_to_page` and :c:func:`page_to_pfn`
- helpers that allow the conversion from PFN to `struct page` and vice
- versa.
- 
-+Pages
-+-----
-+
-+Each physical page frame in the system is represented by a `struct page`.
-+This structure aggregatates several types, each corresponding to a
-+particular usage of a page frame, such as anonymous memory, SLAB caches,
-+file-backed memory etc. These types are define within unions in the struct
-+page to reduce memory footprint of the memory map.
-+
-+The actual type of the particular insance of struct page is determined by
-+values of the fields shared between the different types and can be quired
-+using page flag operatoins defined in ``include/linux/page-flags.h``
-+
-+Folios
-+------
-+
-+For many use cases, single page frame granularity is too small. In such
-+cases a contiguous range of memory can be referred by `struct folio`.
-+
-+A folio is a physically, virtually and logically contiguous range of
-+bytes. It is a power-of-two in size, and it is aligned to that same
-+power-of-two. It is at least as large as PAGE_SIZE.
-+
- FLATMEM
- =======
+Anyway, as I've mentioned, I'll send the patch and it can be either
+picked up or ignored.
 
 -- 
-Sincerely yours,
-Mike.
+Dmitry
