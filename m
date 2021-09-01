@@ -2,92 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 376663FE1DD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Sep 2021 20:11:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F2C23FE2DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Sep 2021 21:21:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346817AbhIASMU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Sep 2021 14:12:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53706 "EHLO
+        id S231273AbhIATWR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Sep 2021 15:22:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346764AbhIASMT (ORCPT
+        with ESMTP id S229962AbhIATWQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Sep 2021 14:12:19 -0400
-Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1CAFC06129D
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Sep 2021 11:11:21 -0700 (PDT)
-Received: by mail-qv1-xf35.google.com with SMTP id gf5so303242qvb.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Sep 2021 11:11:21 -0700 (PDT)
+        Wed, 1 Sep 2021 15:22:16 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 544C1C061575
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Sep 2021 12:21:19 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id x11so1592049ejv.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Sep 2021 12:21:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=2joGkq8i8C5vglZO1FYNTlWqLyr4vSiCXKQYXBVnv4Q=;
-        b=LD3mpzy1s09M3e/Eheelu/QMtbN6lrYJQ+S1BsYhmG4zP9OQuKOeD1zHV2lZaK7Hdt
-         vXoBMumPRACuZhnwd8TYAFIvdImPe0Zn4DA41GnzHGsnpDZPE0wUFWVFNzgpxF6bh6D8
-         CVxTiiIN7w8BVpPirFLytZKK2cFqqV6q9qR8cw4XmdYYgGZs+MdnDeP+neEr/SbnLI2h
-         mwT6gqJ8+HvNCQei5Zu6b3U+/YcUOepEDfVn6t0IkNG5YzxTV8mH8IqZ4zEsqBchdgxI
-         E/zGH3KCiuS7UdfEMBVKPbpzhhPyh4quLRALvE4iCHtswqSZDgWUuzksodIw8OWwGR1Z
-         0RlA==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=G7waZP141l6RVzw3QCJzeAvHVAvzV7QKI02xHaEuqMY=;
+        b=KuLxFt0pQiPUfjI95nepnibmq64Kb0FvbTBGbWaCMNyL58vHsOAYuzc6Km3AIm+UZ+
+         AxzU3+7rvZWWxefgHOnzh5MLLzuGLlyoFPPrw9Ul4/ZBWun5QKZ2MsU3bg9otMOEWks4
+         V4JD0uMu3gQ6k8vOyiFSaKhpjxrRumXbnIT5tumYhEVr4Ykwf1q9qikfWVtsJvEP7t2Q
+         LMbXzRmMp07c773FqwlcUFjMxH/7mcCWfQoXkX6TKQq2bAM8gGx+2OPtY7tCOg1rt4e9
+         gETazcYiDzIx2op8V2Tw6YtQKlhMwGHY8eB+xEkqCeGw/ZPlcRhNufWazcopeXNEsVDX
+         BRGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=2joGkq8i8C5vglZO1FYNTlWqLyr4vSiCXKQYXBVnv4Q=;
-        b=H43OxrblRD0guUmZ9932HRcC/HYb++vEXNFaVOLW3YI5TvC6PPKLOrVAWFOv0oF1vq
-         T7XzyccCuEurc3wQfcdh/Utk2tF7VR60SzY2qItXNlWrJzJZPANP8iFGO/D9pvksPv+4
-         4sKnL01t7iRmNg1qzFOXZka437CuDEQh6ybfGhYVZJG1t5vEN3zAx9Wo1c2nxBtXl92j
-         1sX2iWZmvYoObwUCsCqETQIH4Hrf1W/rdHT6/TkjhOt5PMw3/RTyfLCo6XitX2UblYxM
-         Mq3xnC/tW/aDYEwqi7J/xMh/L7Sid4wnCkti5hp3IZ8ivTGU4je7CoijeJgPRyTTpM43
-         zBTA==
-X-Gm-Message-State: AOAM532N9TQ3ErdhnySDa0+m3GSke3V8tg0ejmShXAfFMqzzTlNnDrdA
-        H6Pypr5VN1qZQmFTTPGXD1nIjnEdZ+DhvTHvFms6GSihV8COJA==
-X-Google-Smtp-Source: ABdhPJwbbBYGjUEQSS3Bb7EfYk34O3AVuG22pVIF78fkATQG8c+PQmeHgcc35+YrriS74Wl5STB8JbzOasp+8kCVBlk=
-X-Received: by 2002:a67:8c5:: with SMTP id 188mr1017695vsi.4.1630519870726;
- Wed, 01 Sep 2021 11:11:10 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G7waZP141l6RVzw3QCJzeAvHVAvzV7QKI02xHaEuqMY=;
+        b=c1n+9aGkVwGvsvbmutkNJZJzMn55i1U5voDhcJ7b5jqKIJz4WqjDNBTjm0nfNxzipS
+         GEK22dpqZeWsOwHOf1WqV5RJc1ZtI+YmcrqJ/vj8zVXnxPLlB5agqwKAWHKcUyFd3VtV
+         mM4CEGTiVFySbVZfiWErhCTjmKGf9lryaYKCyoKJhLxtbLPu+AsY5TuoubO0b9sp+l9v
+         jRxVhySqkYe93H8rP6wn6tQTZxRo8wU4PSmUA6xU5+LMLiiwy31P9FMbulNF/nGSwI7/
+         rm+fh/JMD1P0XqZXdZUH0vyvtjym5lSLsgHEBKnb00UvSWKBiRPqrF681nthMgVJPoze
+         sdMQ==
+X-Gm-Message-State: AOAM530fAn9f8F3RKHKJEkIlp3HLHz+idyt9U3lLKkpgto2HxInCHMjJ
+        Y133Iro7aeoe0X7HyygEF9GbcPxTTQ1+3x1H35wq
+X-Google-Smtp-Source: ABdhPJwMrws0ZJXM5KYsE7dIYrlyxtDTBxi6QrrhcjBLlBr8Y8LgOmFcwtA8cvyU9xh8mHyp4mp2LOKjQ+7fHgWM4ok=
+X-Received: by 2002:a17:906:b845:: with SMTP id ga5mr1224071ejb.106.1630524077778;
+ Wed, 01 Sep 2021 12:21:17 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ab0:740d:0:0:0:0:0 with HTTP; Wed, 1 Sep 2021 11:11:10 -0700 (PDT)
-From:   CorisBank International <corisbankintlbf@gmail.com>
-Date:   Wed, 1 Sep 2021 11:11:10 -0700
-Message-ID: <CA+25hwzjLgVdtDXYWeuqFBTvAbpc4oxK0dW54s7tjGNyU_m0ow@mail.gmail.com>
-Subject: CORISBANK INTERNATIONAL OFFICIAL NOTIFICATION
-To:     undisclosed-recipients:;
+References: <162871480969.63873.9434591871437326374.stgit@olly>
+ <20210824205724.GB490529@madcap2.tricolour.ca> <20210826011639.GE490529@madcap2.tricolour.ca>
+ <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
+ <20210826163230.GF490529@madcap2.tricolour.ca> <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
+ <20210827133559.GG490529@madcap2.tricolour.ca> <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
+ <20210828150356.GH490529@madcap2.tricolour.ca> <CAHC9VhRgc_Fhi4c6L__butuW7cmSFJxTMxb+BBn6P-8Yt0ck_w@mail.gmail.com>
+In-Reply-To: <CAHC9VhRgc_Fhi4c6L__butuW7cmSFJxTMxb+BBn6P-8Yt0ck_w@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 1 Sep 2021 15:21:06 -0400
+Message-ID: <CAHC9VhQD8hKekqosjGgWPxZFqS=EFy-_kQL5zAo1sg0MU=6n5A@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Att: Client
+On Sun, Aug 29, 2021 at 11:18 AM Paul Moore <paul@paul-moore.com> wrote:
+> On Sat, Aug 28, 2021 at 11:04 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > I did set a syscall filter for
+> >         -a exit,always -F arch=b64 -S io_uring_enter,io_uring_setup,io_uring_register -F key=iouringsyscall
+> > and that yielded some records with a couple of orphans that surprised me
+> > a bit.
+>
+> Without looking too closely at the log you sent, you can expect URING
+> records without an associated SYSCALL record when the uring op is
+> being processed in the io-wq or sqpoll context.  In the io-wq case the
+> processing is happening after the thread finished the syscall but
+> before the execution context returns to userspace and in the case of
+> sqpoll the processing is handled by a separate kernel thread with no
+> association to a process thread.
 
+I spent some time this morning/afternoon playing with the io_uring
+audit filtering capability and with your audit userspace
+ghau-iouring-filtering.v1.0 branch it appears to work correctly.  Yes,
+the userspace tooling isn't quite 100% yet (e.g. `auditctl -l` doesn't
+map the io_uring ops correctly), but I know you mentioned you have a
+number of fixes/improvements still as a work-in-progress there so I'm
+not too concerned.  The important part is that the kernel pieces look
+to be working correctly.
 
-CORISBANK INTERNATIONAL URGENT NOTIFICATION
+As usual, if you notice anything awry while playing with the userspace
+changes please let me know.
 
-Notification / Notification/ Notification
-
-Note, We are writing to inform you officially that Finally the Central
-Bank Financial Authority have approved to transfer your $8.2Million
-which was signed by late Mrs Rose Banneth the COVID.19 victim to
-transfer to you, Late Mrs Rose Banneth the France Lady contacted us to
-transfer her fund in our bank to you for Orphanage work before she
-died by the COVID.19
-and as it is now, you will receive your fund through our corresponding
-bank in Dubai [Emirate Investment Bank ] for security reason. Please
-you should reconfirm your details to receive the $8.2Million.
-
-Name, Country, Address, occupations, Age, Telephone number, account
-Details so that we can immediately forward to the World Bank to
-transfer the fund.
-You are advised to comply on timely manner to permit this esteem bank
-transfer your fund as scheduled.
-
-We look forward to serving you better
-Your Financial Comfort Is A Priority
-Thank you for choosing Corisbank International.
-
-Sincerely,
-
-----
-
-Mr Diakarya Ouattara
-Managing Director
-Bank Coris
-Burkina Faso
-+226 556 163 37
-financial_bf_info@accountant.com
+-- 
+paul moore
+www.paul-moore.com
