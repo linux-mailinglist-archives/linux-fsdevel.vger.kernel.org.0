@@ -2,99 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F2C23FE2DE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Sep 2021 21:21:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA8D73FE36D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Sep 2021 21:53:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231273AbhIATWR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Sep 2021 15:22:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41672 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229962AbhIATWQ (ORCPT
+        id S237714AbhIATyD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Sep 2021 15:54:03 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37210 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237526AbhIATyC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Sep 2021 15:22:16 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 544C1C061575
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Sep 2021 12:21:19 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id x11so1592049ejv.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Sep 2021 12:21:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=G7waZP141l6RVzw3QCJzeAvHVAvzV7QKI02xHaEuqMY=;
-        b=KuLxFt0pQiPUfjI95nepnibmq64Kb0FvbTBGbWaCMNyL58vHsOAYuzc6Km3AIm+UZ+
-         AxzU3+7rvZWWxefgHOnzh5MLLzuGLlyoFPPrw9Ul4/ZBWun5QKZ2MsU3bg9otMOEWks4
-         V4JD0uMu3gQ6k8vOyiFSaKhpjxrRumXbnIT5tumYhEVr4Ykwf1q9qikfWVtsJvEP7t2Q
-         LMbXzRmMp07c773FqwlcUFjMxH/7mcCWfQoXkX6TKQq2bAM8gGx+2OPtY7tCOg1rt4e9
-         gETazcYiDzIx2op8V2Tw6YtQKlhMwGHY8eB+xEkqCeGw/ZPlcRhNufWazcopeXNEsVDX
-         BRGQ==
+        Wed, 1 Sep 2021 15:54:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630525985;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bFy1F+QsYxR5COx5bC/TDu7Bi/by603yH1cn5pidm4Q=;
+        b=T+w0Bbwkdu2qAkNcWIZCANPaMoBkVMAKsmfxdWfxiiXWaD2FKroVFLeC2AfHoY6ySc2ptd
+        CTpNhCZcOdYI3tIdtahZhQqk3uzCPbiTgizKVAyRQVl9daRrkjAoCZRzQIJQ8XAjqQygE2
+        lffqTzs0/xWdQXTUo9S+4WyH6baFB5A=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-314-8nYd4N0NMpm-K_wX2vVH1Q-1; Wed, 01 Sep 2021 15:53:04 -0400
+X-MC-Unique: 8nYd4N0NMpm-K_wX2vVH1Q-1
+Received: by mail-wr1-f72.google.com with SMTP id n1-20020a5d4c41000000b00159305d19baso256088wrt.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Sep 2021 12:53:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=G7waZP141l6RVzw3QCJzeAvHVAvzV7QKI02xHaEuqMY=;
-        b=c1n+9aGkVwGvsvbmutkNJZJzMn55i1U5voDhcJ7b5jqKIJz4WqjDNBTjm0nfNxzipS
-         GEK22dpqZeWsOwHOf1WqV5RJc1ZtI+YmcrqJ/vj8zVXnxPLlB5agqwKAWHKcUyFd3VtV
-         mM4CEGTiVFySbVZfiWErhCTjmKGf9lryaYKCyoKJhLxtbLPu+AsY5TuoubO0b9sp+l9v
-         jRxVhySqkYe93H8rP6wn6tQTZxRo8wU4PSmUA6xU5+LMLiiwy31P9FMbulNF/nGSwI7/
-         rm+fh/JMD1P0XqZXdZUH0vyvtjym5lSLsgHEBKnb00UvSWKBiRPqrF681nthMgVJPoze
-         sdMQ==
-X-Gm-Message-State: AOAM530fAn9f8F3RKHKJEkIlp3HLHz+idyt9U3lLKkpgto2HxInCHMjJ
-        Y133Iro7aeoe0X7HyygEF9GbcPxTTQ1+3x1H35wq
-X-Google-Smtp-Source: ABdhPJwMrws0ZJXM5KYsE7dIYrlyxtDTBxi6QrrhcjBLlBr8Y8LgOmFcwtA8cvyU9xh8mHyp4mp2LOKjQ+7fHgWM4ok=
-X-Received: by 2002:a17:906:b845:: with SMTP id ga5mr1224071ejb.106.1630524077778;
- Wed, 01 Sep 2021 12:21:17 -0700 (PDT)
+        bh=bFy1F+QsYxR5COx5bC/TDu7Bi/by603yH1cn5pidm4Q=;
+        b=eKgyXQppxfedyJ9bQWGcZTvecEBmNknKYCNsuju79hsnwx5ZgMYHq6qirU7vS0UwF5
+         iZLYzlo3sDCHxQhWdp/dBdL3AZgTYRmXLzqrF1Z1EFdka2FF8OH0VgVbyenCzlkJVg77
+         DJ6Cotq9rsxliLfCm/3QbAWtimnZV9TPNeb4be2poav4TP3S6YJQRAy0BBZ+YPCITC85
+         shrjM9CSWwrmxCfMpxjmMOFxttMoybMowwrb1ISSO4uQHRPyZ2aRduhemanVRvRI/hdD
+         PhxFpAYIaN2YKvmM5wMwEBXU3EqAeGgB5V4JCwmYp1V3jvlCb4Nv9fD3+m7amsUOhHvP
+         HYqg==
+X-Gm-Message-State: AOAM5332YzrgiSlNf2XzUofJjhGYyTp6mAu2xPe8dFOwaMADPMhiF+QR
+        rq+lfdckpxw68f3Qx9jn+ZcZapwUyUyGfA30iCIUkpapZ1tapMXBfOsTP251zC76x0K/LCJ8KmD
+        LYYCJdjvlA/Fszsiocat3b2e80iYhrKJ/zZLmVi56xw==
+X-Received: by 2002:a5d:674b:: with SMTP id l11mr1134423wrw.357.1630525983086;
+        Wed, 01 Sep 2021 12:53:03 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy13a9+qZa6g03QLR52J8E62dIEzq7mnQQkvBXnCkrMx+s+g3F4vOoKLHB3KfUO0ib83MII2IoHGfd93bk24N8=
+X-Received: by 2002:a5d:674b:: with SMTP id l11mr1134407wrw.357.1630525982924;
+ Wed, 01 Sep 2021 12:53:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <162871480969.63873.9434591871437326374.stgit@olly>
- <20210824205724.GB490529@madcap2.tricolour.ca> <20210826011639.GE490529@madcap2.tricolour.ca>
- <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
- <20210826163230.GF490529@madcap2.tricolour.ca> <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
- <20210827133559.GG490529@madcap2.tricolour.ca> <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
- <20210828150356.GH490529@madcap2.tricolour.ca> <CAHC9VhRgc_Fhi4c6L__butuW7cmSFJxTMxb+BBn6P-8Yt0ck_w@mail.gmail.com>
-In-Reply-To: <CAHC9VhRgc_Fhi4c6L__butuW7cmSFJxTMxb+BBn6P-8Yt0ck_w@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 1 Sep 2021 15:21:06 -0400
-Message-ID: <CAHC9VhQD8hKekqosjGgWPxZFqS=EFy-_kQL5zAo1sg0MU=6n5A@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
+References: <20210827164926.1726765-1-agruenba@redhat.com> <CAHk-=wiUtyoTWuzroNJQwQDM9GHRXvq4974VL=y8T_3tUxDbkA@mail.gmail.com>
+In-Reply-To: <CAHk-=wiUtyoTWuzroNJQwQDM9GHRXvq4974VL=y8T_3tUxDbkA@mail.gmail.com>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Wed, 1 Sep 2021 21:52:51 +0200
+Message-ID: <CAHc6FU7K0Ho=nH6fCK+Amc7zEg2G31v+gE3920ric3NE4MfH=A@mail.gmail.com>
+Subject: Re: [PATCH v7 00/19] gfs2: Fix mmap + page fault deadlocks
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Paul Mackerras <paulus@ozlabs.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 29, 2021 at 11:18 AM Paul Moore <paul@paul-moore.com> wrote:
-> On Sat, Aug 28, 2021 at 11:04 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > I did set a syscall filter for
-> >         -a exit,always -F arch=b64 -S io_uring_enter,io_uring_setup,io_uring_register -F key=iouringsyscall
-> > and that yielded some records with a couple of orphans that surprised me
-> > a bit.
+On Fri, Aug 27, 2021 at 7:17 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Fri, Aug 27, 2021 at 9:49 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+> >
+> > here's another update on top of v5.14-rc7.  Changes:
+> >
+> >  * Some of the patch descriptions have been improved.
+> >
+> >  * Patch "gfs2: Eliminate ip->i_gh" has been moved further to the front.
+> >
+> > At this point, I'm not aware of anything that still needs fixing,
 >
-> Without looking too closely at the log you sent, you can expect URING
-> records without an associated SYSCALL record when the uring op is
-> being processed in the io-wq or sqpoll context.  In the io-wq case the
-> processing is happening after the thread finished the syscall but
-> before the execution context returns to userspace and in the case of
-> sqpoll the processing is handled by a separate kernel thread with no
-> association to a process thread.
+> From a quick scan, I didn't see anything that raised my hackles.
 
-I spent some time this morning/afternoon playing with the io_uring
-audit filtering capability and with your audit userspace
-ghau-iouring-filtering.v1.0 branch it appears to work correctly.  Yes,
-the userspace tooling isn't quite 100% yet (e.g. `auditctl -l` doesn't
-map the io_uring ops correctly), but I know you mentioned you have a
-number of fixes/improvements still as a work-in-progress there so I'm
-not too concerned.  The important part is that the kernel pieces look
-to be working correctly.
+So there's a minor merge conflict between Christoph's iomap_iter
+conversion and this patch queue now, and I should probably clarify the
+description of "iomap: Add done_before argument to iomap_dio_rw" that
+Darrick ran into. Then there are the user copy issues that Al has
+pointed out. Fixing those will create superficial conflicts with this
+patch queue, but probably nothing serious.
 
-As usual, if you notice anything awry while playing with the userspace
-changes please let me know.
+So how should I proceed: do you expect a v8 of this patch queue on top
+of the current mainline?
 
--- 
-paul moore
-www.paul-moore.com
+Thanks,
+Andreas
+
