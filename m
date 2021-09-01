@@ -2,228 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 390183FE14E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Sep 2021 19:41:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FD1F3FE175
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Sep 2021 19:52:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346152AbhIARmR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Sep 2021 13:42:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46292 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346141AbhIARmQ (ORCPT
+        id S234662AbhIARws (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Sep 2021 13:52:48 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:13784 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232026AbhIARwq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Sep 2021 13:42:16 -0400
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 599A3C061575
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Sep 2021 10:41:19 -0700 (PDT)
-Received: by mail-qk1-x72c.google.com with SMTP id a10so228915qka.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Sep 2021 10:41:19 -0700 (PDT)
+        Wed, 1 Sep 2021 13:52:46 -0400
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 181HORnV012672;
+        Wed, 1 Sep 2021 17:51:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : content-transfer-encoding : content-type :
+ mime-version; s=corp-2021-07-09;
+ bh=AyDFYLThb3UjJuDd/4bmYV44RUbnmngo5PrJcOiYfSU=;
+ b=lj25YgBQRb6Ue63+FPPB+qABVB4zGGIylZI+yXTKJ+ZO02BzXYdcnTUqtVyxYQ+t7Ych
+ eIDolpKqSkST84hb0RyXh2jtpt8u1uaEyKNjcnHBihEHdPZImmaRQRNOah9OjDC5QeQe
+ qdI5rzkGUClLsWeMQGfkOdjobj1DguLGQCNk+1NSfx4CbTcZ53Vbrp8pZNN3SK6wJXky
+ +xaTz/Q6JgxkAzyJJXGAcoAkITcpUGg9TB26CvMbHotbmAC1bMsvfvlleOLwWsr6h1/Y
+ GCo7Hna6+YhrtHpba/hSmRxaR+gktZ7v75cTO+fpJY11Qul13I0rhwCZDbG9k9ED+xZa 5Q== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : content-transfer-encoding : content-type :
+ mime-version; s=corp-2020-01-29;
+ bh=AyDFYLThb3UjJuDd/4bmYV44RUbnmngo5PrJcOiYfSU=;
+ b=X45EiCGyVpJaaELnovNkoqpO+/6DlU4BZGRV2TZXGrmWs+YuZgNwz7suXLqmZKbavccK
+ CDY9rB2Gr5K3JFXNQauRkyL2kPE5sdhUEYXxzCs3vQ94O3P5sxNP0l2i4NW6le3yZlKU
+ I3MmY32fRI6RYhQz15KILZ3EUcTXICgSKJIpS9DLaScmy/+7cF4TsbqTotiWZOIe60XJ
+ GossbIuqI16ldOUaJ4udCRHnJVDA7jCZxG0Rnih6BPbNasLJt4lxIvcK6ZUaxEHL/hZj
+ 5b9c/5GePCH0rbqcruyZPIgS/NuZtVMzGtSKMwgzealoLF+TKGPWodZ7Uvr7k7tlpV/l qg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3atdw182ma-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 01 Sep 2021 17:51:48 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 181HnkDh128239;
+        Wed, 1 Sep 2021 17:51:48 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2176.outbound.protection.outlook.com [104.47.58.176])
+        by aserp3030.oracle.com with ESMTP id 3atdyvrtrc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 01 Sep 2021 17:51:48 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EJJ5e+SEh73pFq+jHWp4oNN1bf1r2OEsKQxPgDM6O+pGoldU8M7Ceb19U2ceb7W1AC2uRx7N7o5f1sWzoi2VDbxBZQIqFQyn5inxs1yJ5gFSoZ29eBeKZvfTDV2VTSEbJhki24IUNfr4X3cJV+NQibmMEYLCHWZWYsf8heC7deLA2JF0W4UcSwtg3Wm3cwycB7Koe1f1shk5Zku9l/l3Yo/qlPssUIPPs2kzeAtnfNkeATOg7TPof63E6SmPN0I2y3R7TxjYFqJs/FOScQ3yaJvJVcJIoMziP/+H66n5wzhlTRqG/cuju3BaN4OwdXUem2WSWmG5C/8Td3127Z7jYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=AyDFYLThb3UjJuDd/4bmYV44RUbnmngo5PrJcOiYfSU=;
+ b=QZdLNXGGANX8AH4a/exdPnY1S454LvhAiArV+PTw+z0cCNJcu6aj1NKJ1k1hi9y1uxcUlMyOmIxdvDxgPY5ObR2M49bapDWT1LMfXDp4kA51I1su64zQFnyVjvibiMYtMu4tNKQim8XwSDCn8Wo9rR58NgTNpkdvNkljlAP3Uviu9hBfXcH39x4vEu+lrCLx9wloIos1MQx5tu6AnyPoY3bLsMZiYH0Xa1HxofWoMCsTb5hu31J2cTvhLIGuUjWxWeNfa4sDaxCuAijddJafwYPjnuBTS7oB9lHD4kCmykF3PfuDV24rrd88Rg4usM4YZITVX4KDpYuHqBmZrK2URg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=X47a3I4hEhBZ7dlV+A+sHbc97pXib7+eoy5ndeUC/TI=;
-        b=VqOKKbbrSBuhFKMRNR0Ia2mNf7T780bVKLBOQH84t92wPPPn6N0g6OT3TZtoskO4e3
-         JGlGPI66p6JPQErA6IaIqLkM9PSaiMowv5iVt69X6K2zpu2u4wxVGC/XmHbXf6yV7Ac0
-         Bhnvain85DjiZ5r6nwm48n1VGerr0s7KiwaKr0dSeG/FFUcHwP7/N+mVBNYfXo43P9Rd
-         ENIxm8aM3fmxuEx4WCeDq7dCcPDD2YUfNlq92bdaWqewTyvCbkiqgaFXdVXfNu17tfwb
-         +h/V8thxXYKgnP7+Oi9WSSGfuCiDoWVcxoY8aWchVGrmqxtj1btIJnhfXLjaMn+RndhW
-         36jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=X47a3I4hEhBZ7dlV+A+sHbc97pXib7+eoy5ndeUC/TI=;
-        b=HijAkVBUor+KW1TnBY76DFHw9+1Y/dbcJ2ruibcadXdqPyYn6wUfoG0RYd2M4S8Lt+
-         N70PqkHTmYnQcVwdXDoBosROy32CCtrizAd+5uMtcIMt4KvWo2Eygs5LwDbPyCr6ZOaW
-         nSkUbjKgSPC3DVVnIaWuo6HGoYgl7kfwHH2aiR/Rv4O/+rHOv9v1FldojOPzyauX4iV7
-         +4cKqWBeHx1qehdWSF+mqG5Zx1Y3afhOddk1LGKYJdIr6GRPndAnEv+UU0Jw5LdRfYt2
-         01/sKYjJTAeKTGlVo5WlOxxFR4QAVQvgJXfMRVD/eFWnqPsVEXWtP72jkILdzzl+DAD6
-         /n6w==
-X-Gm-Message-State: AOAM533Q0JC8un9c0eau39Gz8rij8zd+oq7Zt0fklpLQk63aooh/yN+m
-        rnBAtJrPzgHW5jO7bSFNNiLK0A==
-X-Google-Smtp-Source: ABdhPJz67u5SOCvcRFUZ/9z75OUbkd1IVLeBx70CkD5mv/yNfKQJDwzQJMI0LHgKc9PiM6OxxyDy1Q==
-X-Received: by 2002:a05:620a:1388:: with SMTP id k8mr823968qki.152.1630518078495;
-        Wed, 01 Sep 2021 10:41:18 -0700 (PDT)
-Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
-        by smtp.gmail.com with ESMTPSA id g1sm292244qti.56.2021.09.01.10.41.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Sep 2021 10:41:17 -0700 (PDT)
-Date:   Wed, 1 Sep 2021 13:43:03 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] Memory folios for v5.15
-Message-ID: <YS+7pzI7pttxtFHT@cmpxchg.org>
-References: <YSU7WCYAY+ZRy+Ke@cmpxchg.org>
- <YSVMAS2pQVq+xma7@casper.infradead.org>
- <YSZeKfHxOkEAri1q@cmpxchg.org>
- <20210826004555.GF12597@magnolia>
- <YSjxlNl9jeEX2Yff@cmpxchg.org>
- <YSkyjcX9Ih816mB9@casper.infradead.org>
- <YS0WR38gCSrd6r41@cmpxchg.org>
- <YS0h4cFhwYoW3MBI@casper.infradead.org>
- <YS0/GHBG15+2Mglk@cmpxchg.org>
- <YS1PzKLr2AWenbHF@casper.infradead.org>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AyDFYLThb3UjJuDd/4bmYV44RUbnmngo5PrJcOiYfSU=;
+ b=u/O95IN9Ihm5NygwU+Xdtj1KnA7+CFm7q5B9cNKKtyhcSG0rzx01J/GIB8nhUXQba5Idwan4mn5Gn93cNWRZ9puC7GlIKuP+BezHID9vlf8Fxr2F3oQnGFQTKwt6KX+jr990xR1KmM3Mb9azdZFs4Ep2ZSnNOFMDCwyntX46c0c=
+Authentication-Results: zeniv.linux.org.uk; dkim=none (message not signed)
+ header.d=none;zeniv.linux.org.uk; dmarc=none action=none
+ header.from=oracle.com;
+Received: from CH2PR10MB4166.namprd10.prod.outlook.com (2603:10b6:610:78::20)
+ by CH0PR10MB5323.namprd10.prod.outlook.com (2603:10b6:610:c6::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.19; Wed, 1 Sep
+ 2021 17:51:45 +0000
+Received: from CH2PR10MB4166.namprd10.prod.outlook.com
+ ([fe80::2c22:7eb8:a2f0:e027]) by CH2PR10MB4166.namprd10.prod.outlook.com
+ ([fe80::2c22:7eb8:a2f0:e027%7]) with mapi id 15.20.4457.025; Wed, 1 Sep 2021
+ 17:51:45 +0000
+From:   Stephen Brennan <stephen.s.brennan@oracle.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] namei: fix use-after-free and adjust calling conventions
+Date:   Wed,  1 Sep 2021 10:51:40 -0700
+Message-Id: <20210901175144.121048-1-stephen.s.brennan@oracle.com>
+X-Mailer: git-send-email 2.30.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0018.namprd03.prod.outlook.com
+ (2603:10b6:a03:33a::23) To CH2PR10MB4166.namprd10.prod.outlook.com
+ (2603:10b6:610:78::20)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YS1PzKLr2AWenbHF@casper.infradead.org>
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost (148.87.23.10) by SJ0PR03CA0018.namprd03.prod.outlook.com (2603:10b6:a03:33a::23) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.17 via Frontend Transport; Wed, 1 Sep 2021 17:51:45 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6b987858-22a6-48a0-ae70-08d96d7129f2
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5323:
+X-Microsoft-Antispam-PRVS: <CH0PR10MB53235637FD589FDDA38AE5F3DBCD9@CH0PR10MB5323.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?sczssF58XH9808OyNuHSHi8ZMKZlgn8Zd//GImpyKEbQ3Ydzr+Jwt8FXZuqR?=
+ =?us-ascii?Q?s5uUQBC67dECcn6VG4yDXHyBX0HFNIy7RnHC/OGyv1Wyu0MMowRpYUxR+RnB?=
+ =?us-ascii?Q?ycMyPEmTX3AuzkuiVYvu8hjCImqgTWo2bhOi7z0lVfEbyyZr3JZZfJA1DRlh?=
+ =?us-ascii?Q?Do5jP7kMtVtFt+JkQ6ZAwyTpaEVd/ThECUk6XThqDMTIEORda+UE0rM3DRWa?=
+ =?us-ascii?Q?Dr9zl0d2KofPpBrRL5TjNG1T1aOzy0s7BgQrXoJMDH0rt0dezd5/6fdve9Ap?=
+ =?us-ascii?Q?O188INNgH2oj9vvZcSu7KUFIyn/VQ/2FDTgiNgpUTUas4ko3VDAfwXwT98tv?=
+ =?us-ascii?Q?FUfd3CrCLaQMhM2ngepSmk+qwumHjPivS3PHOoi8anNXx/NDkGoSzCwLg6U1?=
+ =?us-ascii?Q?LQYnQ18Y6Rki3e4ifTN5VT3+5hfQopMUdUpumt95I8ccTXWelvvCZBkIDyud?=
+ =?us-ascii?Q?MaP2MG1TThZkMFszN1ahzRno6+8tnoDRHpEpARuh0qBWtnOFKSebU3ol+mhI?=
+ =?us-ascii?Q?EhWIXfuz4Szr4RNe3fDsfE31QvRgaE901jxatmCY+5VNJEO5bRsBbKhwdnZO?=
+ =?us-ascii?Q?RqIEzCxEY0fRPt9MdGGEeEyROfXtYEa+2llf8xpsDy3mGuB5UM7ewWsy7tdb?=
+ =?us-ascii?Q?UDJui2Ne+10IlKIFs7Qe02AEaBNey/LKuHobYN2FOF5pXSl6m7lPyAAwNfHG?=
+ =?us-ascii?Q?NXceew+11m7geJl/z5MJUNiyGzOBhotQA0TJi4DHhP6AZrVBWDZzKptRAjMl?=
+ =?us-ascii?Q?W+dAQwuC7CGyWVdAIw3ZaGcG+oTPGccZxP/U1upCPzl630Ndw4bTMnvBBlHU?=
+ =?us-ascii?Q?nomIsqTBzYxN2MjzLTQlkKr7s39FFq+HMk+bFcuSSOzv+9GYS3x3WwG6gXcx?=
+ =?us-ascii?Q?EtLDfMYZx6ZxEOdlzv7QCcw+CZJIZMkoYxVsTHEaa0LxTp+ze/fcmNPyR05m?=
+ =?us-ascii?Q?r5G0k1gaMl0NAymryeWkKuO0FvpeijcLlOklD7Awi0rOmlw0lZ0/FmQus48G?=
+ =?us-ascii?Q?Z5dc94sCKqvMAN3Njy9TDn3GIaNo69LVT4b7E552Q60qi+A=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:5;SRV:;IPV:NLI;SFV:SPM;H:CH2PR10MB4166.namprd10.prod.outlook.com;PTR:;CAT:OSPM;SFS:(136003)(39860400002)(366004)(346002)(376002)(396003)(1076003)(2616005)(956004)(38350700002)(86362001)(316002)(8936002)(186003)(36756003)(38100700002)(8676002)(52116002)(5660300002)(6486002)(2906002)(83380400001)(6496006)(6666004)(103116003)(66946007)(66556008)(66476007)(6916009)(478600001)(26005)(4326008)(23200700001);DIR:OUT;SFP:1501;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?s/3x00ScdIYdrfZ+zPx1jjeRhTAleY87zx0LXa5ea1uwjOwgK4PiyZ6tcQAz?=
+ =?us-ascii?Q?6wZaj8V7usD+Ak/JJONYZhDKkrWli4aDtL3PmhdzCVgc/Dp2QjVzqPxUDMd3?=
+ =?us-ascii?Q?vEOxISCBpnbwp9KtljCI8XbO93oaYs9F+P8C3xVJmxUJ3a6CIro+rVssJ3HL?=
+ =?us-ascii?Q?GRQsKtjvQCPbuerU6vS1CfH+5pHIxWu2TZS1pvp4d9PWvWApbAFa5Y5aU9aR?=
+ =?us-ascii?Q?lI69ReL2FDJxc0YgW42fRbIQrMsgOnOo8iGyM9LJ+PAhMCmqIcz8Mtxuq1vN?=
+ =?us-ascii?Q?RitZBT/pEPa+oNdA79TDFOJoOYn8BrGj3h/CPOBWKTin6HgH74PG8T/Gs4Fh?=
+ =?us-ascii?Q?ry0ckpVE5Pf2MvJEMn13VMJjSn5lg8sa1zkZ2F0lJo75sEeAz03lIrRZrlMI?=
+ =?us-ascii?Q?/Q+1oDQFrAWWK5XcXLTFA6bQjts2UsEWll6IXeu4rzLhqV+g/4xpIWI5CS10?=
+ =?us-ascii?Q?iV8LStu9Qs9IOD8X91xbjQRd1/Wwk60Npv3mcRYxc5Wx1H6xfn6/zCsKYPw6?=
+ =?us-ascii?Q?UQEXtssx1DurgNKET2+gfhVJMuL9587vAb2rEveV0g8NmUyDbPD5RrYPrksR?=
+ =?us-ascii?Q?7luZBMjyYAu5oKFFhwGn3mFChDI4qeYP2WiXs3lK+nUge+Ju2tfDnSjQtYSZ?=
+ =?us-ascii?Q?TI55ZSAylCUHkpmuZBVfZaeGO30ZLqbwhSFscwq4U2NbWHUFwvC0bZdlPVXb?=
+ =?us-ascii?Q?POQ5fu6kSSKs3X5Nc+R4+UiDUF3g4hREvnanFsBSQm2wpPXbM8NMzVESa3pC?=
+ =?us-ascii?Q?7KpFP6EtwvCBlQC7IIapdg6MsouhOpcaQbiKikpskQu8BMsF56Mch+G8VpZ6?=
+ =?us-ascii?Q?Y87tXU6OQ/iprEsKhnSJk8QzRTHaUYVGM0Wt+yo0p/vNhA44aQuFr0MnJRhC?=
+ =?us-ascii?Q?M9eSu1dv13RUpZY1whJfLxgypx8QHf8dpv0dCmb3vCInQ+5DleVM2iSg54hZ?=
+ =?us-ascii?Q?dz4ytbusoWHl0BvS9FeMfmBBymoxwPEoKPS+jUGRkne1h4At+Y6mIlF83XCZ?=
+ =?us-ascii?Q?16qGlLi6eGqJAjBUTLhlRacFgMhuKHjKnvUa6G26cauhjglSBqMmGCzsYFgm?=
+ =?us-ascii?Q?UW1EiDjZRSGC7n+AK3qSKV+6ft2Ym2gokaz+ScuD+P69OMrF+r6J5Js+OgzT?=
+ =?us-ascii?Q?LhPLTYJqqfNEodNT23gBU0nswYaNiQtStEPZ47zfBtcQRcdasuPYB0oIlSLI?=
+ =?us-ascii?Q?cDe5sdAHjYk4cyJfteZ+DxCVDG69+nEU87a120AxSLcLYKHTq5kEVl40T9Ty?=
+ =?us-ascii?Q?Ve9PHwSbnF0LhVjaP7gPAxRgZrkLB5x8L6wjcqpO3F2KV5syHNv1l4vQzAXP?=
+ =?us-ascii?Q?OAOxLq5opdPVzWRWcI+CesHx?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b987858-22a6-48a0-ae70-08d96d7129f2
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4166.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Sep 2021 17:51:45.4278
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tCTuQaGvo3LjzSMowt6mTYs2a8eFec9DBDuNjEOHp2UoFmx67KElqpkB+mD0nTVnXjj5vAnGNbYhIeuT52hLjEn9ybuJspT8dT9kXOnvOTw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5323
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10094 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
+ mlxlogscore=708 spamscore=0 phishscore=0 mlxscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2108310000
+ definitions=main-2109010102
+X-Proofpoint-GUID: wMi7hjVMEPlxsg7YUs2gKatEjvbGom5Q
+X-Proofpoint-ORIG-GUID: wMi7hjVMEPlxsg7YUs2gKatEjvbGom5Q
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 30, 2021 at 10:38:20PM +0100, Matthew Wilcox wrote:
-> On Mon, Aug 30, 2021 at 04:27:04PM -0400, Johannes Weiner wrote:
-> > Right, page tables only need a pfn. The struct page is for us to
-> > maintain additional state about the object.
-> > 
-> > For the objects that are subpage sized, we should be able to hold that
-> > state (shrinker lru linkage, referenced bit, dirtiness, ...) inside
-> > ad-hoc allocated descriptors.
-> > 
-> > Descriptors which could well be what struct folio {} is today, IMO. As
-> > long as it doesn't innately assume, or will assume, in the API the
-> > 1:1+ mapping to struct page that is inherent to the compound page.
-> 
-> Maybe this is where we fundamentally disagree.  I don't think there's
-> any point in *managing* memory in a different size from that in which it
-> is *allocated*.  There's no point in tracking dirtiness, LRU position,
-> locked, etc, etc in different units from allocation size.  The point of
-> tracking all these things is so we can allocate and free memory.  If
-> a 'cache descriptor' reaches the end of the LRU and should be reclaimed,
-> that's wasted effort in tracking if the rest of the 'cache descriptor'
-> is dirty and heavily in use.  So a 'cache descriptor' should always be
-> at least a 'struct page' in size (assuming you're using 'struct page'
-> to mean "the size of the smallest allocation unit from the page
-> allocator")
+Drawing from the comments on the last two patches from me and Dmitry,
+the concensus is that __filename_parentat() is inherently buggy, and
+should be removed. But there's some nice consistency to the way that
+the other functions (filename_create, filename_lookup) are named which
+would get broken.
 
-First off, we've been doing this with the slab shrinker for decades.
+I looked at the callers of filename_create and filename_lookup. All are
+small functions which are trivial to modify to include a putname(). It
+seems to me that adding a few more lines to these functions is a good
+traedoff for better clarity on lifetimes (as it's uncommon for functions
+to drop references to their parameters) and better consistency.
 
-Second, you'll still be doing this when you track 4k struct pages in a
-system that is trying to serve primarily higher-order pages. Whether
-you free N cache descriptors to free a page, or free N pages to free a
-compound page, it's the same thing. You won't avoid this problem.
+This small series combines the UAF fix from me, and the removal of
+__filename_parentat() from Dmitry as patch 1. Then I standardize
+filename_create() and filename_lookup() and their callers.
 
-> > > > Well yes, once (and iff) everybody is doing that. But for the
-> > > > foreseeable future we're expecting to stay in a world where the
-> > > > *majority* of memory is in larger chunks, while we continue to see 4k
-> > > > cache entries, anon pages, and corresponding ptes, yes?
-> > > 
-> > > No.  4k page table entries are demanded by the architecture, and there's
-> > > little we can do about that.
-> > 
-> > I wasn't claiming otherwise..?
-> 
-> You snipped the part of my paragraph that made the 'No' make sense.
-> I'm agreeing that page tables will continue to be a problem, but
-> everything else (page cache, anon, networking, slab) I expect to be
-> using higher order allocations within the next year.
+Stephen Brennan (3):
+  namei: Fix use after free in kern_path_locked
+  namei: Standardize callers of filename_lookup()
+  namei: Standardize callers of filename_create()
 
-Some, maybe, but certainly not all of them. I'd like to remind you of
-this analysis that Al did on the linux source tree with various page
-sizes:
+ fs/fs_parser.c |   1 -
+ fs/namei.c     | 126 ++++++++++++++++++++++++++-----------------------
+ 2 files changed, 66 insertions(+), 61 deletions(-)
 
-https://lore.kernel.org/linux-mm/YGVUobKUMUtEy1PS@zeniv-ca.linux.org.uk/
+-- 
+2.30.2
 
-Page size	Footprint
-4Kb		1128Mb
-8Kb		1324Mb
-16Kb		1764Mb
-32Kb		2739Mb
-64Kb		4832Mb
-128Kb		9191Mb
-256Kb		18062Mb
-512Kb		35883Mb
-1Mb		71570Mb
-2Mb		142958Mb
-
-Even just going to 32k more than doubles the cache footprint of this
-one repo. This is a no-go from a small-file scalability POV.
-
-I think my point stands: for the foreseeable future, we're going to
-continue to see demand for 4k cache entries as well as an increasing
-demand for 2M blocks in the page cache and for anonymous mappings.
-
-We're going to need an allocation model that can handle this. Luckily,
-we already do...
-
-> > > > The slab allocator has proven to be an excellent solution to this
-> > > > problem, because the mailing lists are not flooded with OOM reports
-> > > > where smaller allocations fragmented the 4k page space. And even large
-> > > > temporary slab explosions (inodes, dentries etc.) are usually pushed
-> > > > back with fairly reasonable CPU overhead.
-> > > 
-> > > You may not see the bug reports, but they exist.  Right now, we have
-> > > a service that is echoing 2 to drop_caches every hour on systems which
-> > > are lightly loaded, otherwise the dcache swamps the entire machine and
-> > > takes hours or days to come back under control.
-> > 
-> > Sure, but compare that to the number of complaints about higher-order
-> > allocations failing or taking too long (THP in the fault path e.g.)...
-> 
-> Oh, we have those bug reports too ...
-> 
-> > Typegrouping isn't infallible for fighting fragmentation, but it seems
-> > to be good enough for most cases. Unlike the buddy allocator.
-> 
-> You keep saying that the buddy allocator isn't given enough information to
-> do any better, but I think it is.  Page cache and anon memory are marked
-> with GFP_MOVABLE.  Slab, network and page tables aren't.  Is there a
-> reason that isn't enough?
-
-Anon and cache don't have the same lifetime, and anon isn't
-reclaimable without swap. Yes, movable means we don't have to reclaim
-them, but background reclaim happens anyway due to the watermarks, and
-if that doesn't produce contiguous blocks by itself already then
-compaction has to run on top of that. This is where we tend to see the
-allocation latencies that prohibit THP allocations during page faults.
-
-I would say the same is true for page tables allocated alongside
-network buffers and unreclaimable slab pages. I.e. a burst in
-short-lived network buffer allocations being interleaved with
-long-lived page table allocations. Ongoing concurrency scaling is
-going to increase the likelihood of those happening.
-
-> I think something that might actually help is if we added a pair of new
-> GFP flags, __GFP_FAST and __GFP_DENSE.  Dense allocations are those which
-> are expected to live for a long time, and so the page allocator should
-> try to group them with other dense allocations.  Slab and page tables
-> should use DENSE,
-
-You're really just recreating a crappier, less maintainable version of
-the object packing that *slab already does*.
-
-It's *slab* that is supposed to deal with internal fragmentation, not
-the page allocator.
-
-The page allocator is good at cranking out uniform, slightly big
-memory blocks. The slab allocator is good at subdividing those into
-smaller objects, neatly packed and grouped to facilitate contiguous
-reclaim, while providing detailed breakdowns of per-type memory usage
-and internal fragmentation to the user and to kernel developers.
-
-[ And introspection and easy reporting from production are *really
-  important*, because fragmentation issues develop over timelines that
-  extend the usual testing horizon of kernel developers. ]
-
-By trying to make compound pages the norm, you're making internal
-fragmentation a first-class problem of the page allocator. This
-conflates the problem space between slab and the page allocator and it
-forces you to duplicate large parts of the solution.
-
-This is not about whether it's technically achievable. It's about
-making an incomprehensible mess of the allocator layering and having
-to solve a difficult MM problem in two places. Because you're trying
-to make compound pages into something they were never meant to be.
-
-They're fine for the odd optimistic allocation that can either wait
-forever to defragment or fall back gracefully. But there is just no
-way these things are going to be the maintainable route for
-transitioning to a larger page size.
-
-As long as this is your ambition with the folio, I'm sorry but it's a
-NAK from me.
