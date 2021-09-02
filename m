@@ -2,156 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E094F3FEEFF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Sep 2021 15:52:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CBFC3FEF6A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Sep 2021 16:24:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239869AbhIBNxB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Sep 2021 09:53:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39788 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232466AbhIBNw5 (ORCPT
+        id S1345507AbhIBOZu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Sep 2021 10:25:50 -0400
+Received: from mta-202a.oxsus-vadesecure.net ([51.81.232.240]:52685 "EHLO
+        mta-202a.oxsus-vadesecure.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1345278AbhIBOZl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Sep 2021 09:52:57 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C1B6C061760
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Sep 2021 06:51:58 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id q17so3030116edv.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Sep 2021 06:51:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=sV4cn+GEhcdtXg9aDRpPOIs8C7SJiwcSKge0piQkjHM=;
-        b=EfagH3rYTV78jcOA+jKJRrfxGtJfTrD4gRkYsK39UuD/CK2U1q4NzepLyjJqvWVgzc
-         7uUGypz51kA5RvlsQK56veBhTSCTJnlntAV/znbUk8vQJTb+oBWLzEBHDLW7z7ugh0jN
-         P/YQBqGqfgsYbhuCwHEhVWhtncUZPZ+rEdzRM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=sV4cn+GEhcdtXg9aDRpPOIs8C7SJiwcSKge0piQkjHM=;
-        b=Hxc+IPJCmBg4Lot8GQXbzTqc4nsBILsb3iyJpy21roR8IuVmgjARlNx+1nomSshnK2
-         ppp1CSvUlT286O8FXRRAekAEEGy1U9FDaIUk7QpnoiAhnoob3A9D/ImnAJDdXzoi73wX
-         +1EAk8Uxppb9uaUs+42ByvXKXpJiBTGiLJkM+TVXUHBQar8SLZhDK+00OZENzI+q/KpM
-         AN8uIQ053oLl3qeEOfFSk56gSCoHeBcSyS78PciQEfW0lTexuAxCvDB+9gk4xRo5+CSu
-         8/7AXS7kcRVPWIWb+KB6xiWJJ5oAJLJoiptV0908Kdf0sxd2hTP8PhgIeXQuGbGRqXbX
-         5eog==
-X-Gm-Message-State: AOAM533jVdEK2/I6IHD/aUMf/J7JrZZENue9WEW4QvGJKpW0BT5ROXFY
-        /k+NQmVgjyb8R7xcQadrptOJzA==
-X-Google-Smtp-Source: ABdhPJxRZEJvrX7u1muEOVAnKrmtJF6P0eWg8Xv+oR/FRc2y4+mj4YRRWZW0OCrHeE6T170yTIVubg==
-X-Received: by 2002:aa7:dace:: with SMTP id x14mr3627185eds.169.1630590716605;
-        Thu, 02 Sep 2021 06:51:56 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (catv-86-101-169-16.catv.broadband.hu. [86.101.169.16])
-        by smtp.gmail.com with ESMTPSA id d22sm1202634ejj.47.2021.09.02.06.51.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Sep 2021 06:51:56 -0700 (PDT)
-Date:   Thu, 2 Sep 2021 15:51:53 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org
-Subject: [GIT PULL] overlayfs update for 5.15
-Message-ID: <YTDW+b3x+5yMYVK0@miu.piliscsaba.redhat.com>
+        Thu, 2 Sep 2021 10:25:41 -0400
+X-Greylist: delayed 390 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 Sep 2021 10:25:41 EDT
+DKIM-Signature: v=1; a=rsa-sha256; bh=0znQ0bZJnEmWup+geyVO0VNC/rch+QaShXhPsF
+ RITrw=; c=relaxed/relaxed; d=earthlink.net; h=from:reply-to:subject:
+ date:to:cc:resent-date:resent-from:resent-to:resent-cc:in-reply-to:
+ references:list-id:list-help:list-unsubscribe:list-subscribe:list-post:
+ list-owner:list-archive; q=dns/txt; s=dk12062016; t=1630592181;
+ x=1631196981; b=WLdI8UGRB+XHZiDg/kGw2Et3f6J7ygDCeJ663aqkdy13p64uflmUWCw
+ huUsS+YFW4sp6aMFUFUrKP055Xaqka04eYyMGOuU9TEcfVakjy/LexdyyJp6LMe+KDroYrb
+ fe7QNED1q85rhb6HNX2x15szteFqkiT0JQc1F+mQqfbgKkwMVa/qGkY9LORBGdQjHFpwykt
+ DOnWNBeB+9AYUKWtRgod3UaWE2CF8HcoUVXj5YLmmB9OxotZchqHK491Vka7q6/G+pRRZFf
+ EB5QqH97EzYE4crrExRl+QcnvMCqgr/3K8DG5XBILN32YkfraT++2klt2EBCH7s4e6z8RGA
+ muw==
+Received: from FRANKSTHINKPAD ([76.105.143.216])
+ by smtp.oxsus-vadesecure.net ESMTP oxsus2nmtao02p with ngmta
+ id 7b29f58e-16a106f312cff353; Thu, 02 Sep 2021 14:16:21 +0000
+From:   "Frank Filz" <ffilzlnx@mindspring.com>
+To:     "'Miklos Szeredi'" <miklos@szeredi.hu>,
+        "'Christoph Hellwig'" <hch@infradead.org>
+Cc:     "'NeilBrown'" <neilb@suse.de>,
+        "'J. Bruce Fields'" <bfields@fieldses.org>,
+        "'Chuck Lever'" <chuck.lever@oracle.com>,
+        "'Linux NFS list'" <linux-nfs@vger.kernel.org>,
+        "'Josef Bacik'" <josef@toxicpanda.com>,
+        <linux-fsdevel@vger.kernel.org>
+References: <162995209561.7591.4202079352301963089@noble.neil.brown.name> <162995778427.7591.11743795294299207756@noble.neil.brown.name> <YSkQ31UTVDtBavOO@infradead.org> <163010550851.7591.9342822614202739406@noble.neil.brown.name> <YSnhHl0HDOgg07U5@infradead.org> <163038594541.7591.11109978693705593957@noble.neil.brown.name> <YS8ppl6SYsCC0cql@infradead.org> <163055561473.24419.12486186372497472066@noble.neil.brown.name> <YTB6NacU9bIOz2vf@infradead.org> <CAJfpegu7rwoFXdtLusyRhrtFgMPxRShesxnBT2Q6iiC_iSGsfg@mail.gmail.com>
+In-Reply-To: <CAJfpegu7rwoFXdtLusyRhrtFgMPxRShesxnBT2Q6iiC_iSGsfg@mail.gmail.com>
+Subject: RE: [PATCH v2] BTRFS/NFSD: provide more unique inode number for btrfs export
+Date:   Thu, 2 Sep 2021 07:16:21 -0700
+Message-ID: <024601d7a005$1b3863c0$51a92b40$@mindspring.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain;
+        charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 15.0
+Content-Language: en-us
+Thread-Index: AQIrHUOuRItKwhPpv5iuHWFXVceYzwFdY2wGAe8fACcBhmh95QIesfONAO3IHPoCbGx/fAGLnZteAStbb/8CEbYDYapxJ5Xg
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+> On Thu, 2 Sept 2021 at 09:18, Christoph Hellwig <hch@infradead.org> =
+wrote:
+>=20
+> > >  Your attitude seems to be that this is a btrfs problem and must =
+be
+> > > fixed in btrfs.
+> >
+> > Yes.
+>=20
+> st_ino space issues affect overlayfs as well.   The two problems are
+> not the same, but do share some characteristics.  And this limitation =
+will likely
+> come up again in the future.
+>=20
+> I suspect the long term solution would involve introducing new =
+userspace API
+> (variable length inode numbers) and deprecating st_ino.
+> E.g. make stat return an error if the inode number doesn't fit into =
+st_ino and add
+> a statx extension to return the full number.  But this would be a long =
+process...
 
-Please pull from:
+But then what do we do where fileid in NFS is only 64 bits?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-update-5.15
+The solution of giving each subvol a separate fsid is the only real =
+solution to enlarging the NFS fileid space, however that has downsides =
+on the client side.
 
-- Copy up immutable/append/sync/noatime attributes (Amir Goldstein)
+Frank
 
-- Improve performance by enabling RCU lookup.
-
-- Misc fixes and improvements
-
-The reason this touches so many files is that the ->get_acl() method now
-gets a "bool rcu" argument.  The ->get_acl() API was updated based on
-comments from Al and Linus:
-
-  https://lore.kernel.org/linux-fsdevel/CAJfpeguQxpd6Wgc0Jd3ks77zcsAv_bn0q17L3VNnnmPKu11t8A@mail.gmail.com/
-
-Thanks,
-Miklos
-
----
-Amir Goldstein (5):
-      fs: add generic helper for filling statx attribute flags
-      ovl: pass ovl_fs to ovl_check_setxattr()
-      ovl: copy up sync/noatime fileattr flags
-      ovl: consistent behavior for immutable/append-only inodes
-      ovl: relax lookup error on mismatch origin ftype
-
-Chengguang Xu (2):
-      ovl: skip checking lower file's i_writecount on truncate
-      ovl: update ctime when changing fileattr
-
-Miklos Szeredi (3):
-      ovl: use kvalloc in xattr copy-up
-      vfs: add rcu argument to ->get_acl() callback
-      ovl: enable RCU'd ->get_acl()
-
-Vyacheslav Yurkov (3):
-      ovl: disable decoding null uuid with redirect_dir
-      ovl: add ovl_allow_offline_changes() helper
-      ovl: do not set overlay.opaque for new directories
-
-chenying (1):
-      ovl: fix BUG_ON() in may_delete() when called from ovl_cleanup()
-
----
- Documentation/filesystems/locking.rst   |   2 +-
- Documentation/filesystems/overlayfs.rst |   3 +
- Documentation/filesystems/vfs.rst       |   2 +-
- fs/9p/acl.c                             |   5 +-
- fs/9p/acl.h                             |   2 +-
- fs/bad_inode.c                          |   2 +-
- fs/btrfs/acl.c                          |   5 +-
- fs/btrfs/ctree.h                        |   2 +-
- fs/ceph/acl.c                           |   5 +-
- fs/ceph/super.h                         |   2 +-
- fs/erofs/xattr.c                        |   5 +-
- fs/erofs/xattr.h                        |   2 +-
- fs/ext2/acl.c                           |   5 +-
- fs/ext2/acl.h                           |   2 +-
- fs/ext4/acl.c                           |   5 +-
- fs/ext4/acl.h                           |   2 +-
- fs/f2fs/acl.c                           |   5 +-
- fs/f2fs/acl.h                           |   2 +-
- fs/fuse/acl.c                           |   5 +-
- fs/fuse/fuse_i.h                        |   2 +-
- fs/gfs2/acl.c                           |   5 +-
- fs/gfs2/acl.h                           |   2 +-
- fs/jffs2/acl.c                          |   5 +-
- fs/jffs2/acl.h                          |   2 +-
- fs/jfs/acl.c                            |   5 +-
- fs/jfs/jfs_acl.h                        |   2 +-
- fs/nfs/nfs3_fs.h                        |   2 +-
- fs/nfs/nfs3acl.c                        |   5 +-
- fs/ocfs2/acl.c                          |   5 +-
- fs/ocfs2/acl.h                          |   2 +-
- fs/orangefs/acl.c                       |   5 +-
- fs/orangefs/inode.c                     |   7 +--
- fs/orangefs/orangefs-kernel.h           |   2 +-
- fs/overlayfs/copy_up.c                  |  83 ++++++++++++++++++++-----
- fs/overlayfs/dir.c                      |  16 +++--
- fs/overlayfs/inode.c                    | 105 +++++++++++++++++++++++++-------
- fs/overlayfs/namei.c                    |   4 +-
- fs/overlayfs/overlayfs.h                |  44 +++++++++++--
- fs/overlayfs/super.c                    |   4 +-
- fs/overlayfs/util.c                     |  92 ++++++++++++++++++++++++++--
- fs/posix_acl.c                          |  15 ++++-
- fs/reiserfs/acl.h                       |   2 +-
- fs/reiserfs/xattr_acl.c                 |   5 +-
- fs/stat.c                               |  18 ++++++
- fs/xfs/xfs_acl.c                        |   5 +-
- fs/xfs/xfs_acl.h                        |   4 +-
- include/linux/fs.h                      |   8 ++-
- include/linux/posix_acl.h               |   3 +-
- include/linux/stat.h                    |   4 ++
- 49 files changed, 424 insertions(+), 102 deletions(-)
