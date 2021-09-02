@@ -2,115 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD7953FF073
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Sep 2021 17:47:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0169B3FF076
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Sep 2021 17:48:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345735AbhIBPsi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Sep 2021 11:48:38 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:47116 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1345884AbhIBPsg (ORCPT
+        id S1345871AbhIBPtC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Sep 2021 11:49:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38066 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345837AbhIBPtB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Sep 2021 11:48:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630597657;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WDx0PcjIEi7aaYT5qenMJpXUhrm6VH0waiqiPfuyEm4=;
-        b=M3IH4uuXgfc44RHpXwZO0oCk19dQrEquY1Es7GhPF1G7iMsaHOcuThBgrvVVkHqzbbtZ4v
-        9zV2aZN2oArWKv3Jjwqrr6fLVju7az+hy9fHivF3BbT6NbwDK8HkjK7OVANUEDZXWu5Yp9
-        JWsn27NfrbPEQfgf8URDhldDJvx0QuM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-300-WcbQxMzvPqGQVG_21Zq6JA-1; Thu, 02 Sep 2021 11:47:36 -0400
-X-MC-Unique: WcbQxMzvPqGQVG_21Zq6JA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F03C0189C454;
-        Thu,  2 Sep 2021 15:47:34 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.8.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A37B719C46;
-        Thu,  2 Sep 2021 15:47:31 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 38BED220257; Thu,  2 Sep 2021 11:47:31 -0400 (EDT)
-Date:   Thu, 2 Sep 2021 11:47:31 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     fstests@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, dwalsh@redhat.com, dgilbert@redhat.com,
-        christian.brauner@ubuntu.com, casey.schaufler@intel.com,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        tytso@mit.edu, miklos@szeredi.hu, gscrivan@redhat.com,
-        bfields@redhat.com, stephen.smalley.work@gmail.com,
-        agruenba@redhat.com, david@fromorbit.com, viro@zeniv.linux.org.uk
-Subject: [PATCH 3/1] xfstests: generic/062: Do not run on newer kernels
-Message-ID: <YTDyE9wVQQBxS77r@redhat.com>
-References: <20210902152228.665959-1-vgoyal@redhat.com>
+        Thu, 2 Sep 2021 11:49:01 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF9D0C061575
+        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Sep 2021 08:48:02 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id t12so5120606lfg.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Sep 2021 08:48:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5wsPeIhzYXabpZGJAWeTrSQOBVTFZSeI6/V+A/PKS+M=;
+        b=ERUiyJetgJfhv6CSzrx6t3BC3sUidOHQEL/eDPlppAa2ihMq3Wb2UVSXXDUuPuaU1A
+         4/XvqW5lS+oI+M7I2xMssmbTqkpxCPxhR1wO2lWfQBg4oc+w/Mm4258ukKLi75PZRBLY
+         Wn2b943/0K9fY7TmwJ8wE1L+ipYVBjxFcZqsQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5wsPeIhzYXabpZGJAWeTrSQOBVTFZSeI6/V+A/PKS+M=;
+        b=NS3d6SXxArLhdoZYfR0p/wiAD9Kn44GUP1Q0VJjbxvnLY6yPjhWKc8fVyNtqaqThMz
+         YgjeB8Hh4ROCFGfa4+hByOKuzS7T9KhZjJdrgnq8/oq3oOTzz/G2CJrJJQQyHAz92771
+         JnlfYm2ixhYOK+xLxIhIVN3ysQ465x0SuvncW2mabffzY5rgQuL5JHODX2mUriP73a+q
+         DLKdOW5mGZ50/ELJiv6nTTI7z5CZ42n93wDwvUDRRsjUiDipWpPdNwnPvf/4gl24IcP+
+         2bvvbpvvTYwnK9NrCrHPe+AU/NTO4NXjRN1cCZ36Fm2ym3MYvWx0pXQjN7Suzy+rMCFC
+         Y1nQ==
+X-Gm-Message-State: AOAM532aOvzMAvlFkroPXD7QL4lT/VXxX5/tQrvcdoJL5kTSSgmQB6Lg
+        tzDd4s5bg0n8svyTr9iD7aGNv5BXUF9TyDmJ
+X-Google-Smtp-Source: ABdhPJwAROq1jKJdUe5204xJUDkmvkStWfzsO2YDPSnKT5gcBbaazSZ05WrK6V3jiyaq3GTk2qos6g==
+X-Received: by 2002:ac2:4896:: with SMTP id x22mr3094099lfc.159.1630597680233;
+        Thu, 02 Sep 2021 08:48:00 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id j17sm233094lfe.55.2021.09.02.08.47.58
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Sep 2021 08:47:59 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id k13so5311965lfv.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Sep 2021 08:47:58 -0700 (PDT)
+X-Received: by 2002:a05:6512:228f:: with SMTP id f15mr3148224lfu.253.1630597678499;
+ Thu, 02 Sep 2021 08:47:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210902152228.665959-1-vgoyal@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <20210831211847.GC9959@magnolia>
+In-Reply-To: <20210831211847.GC9959@magnolia>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 2 Sep 2021 08:47:42 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whyVPgkAfARB7gMjLEyu0kSxmb6qpqfuE_r6QstAzgHcA@mail.gmail.com>
+Message-ID: <CAHk-=whyVPgkAfARB7gMjLEyu0kSxmb6qpqfuE_r6QstAzgHcA@mail.gmail.com>
+Subject: Re: [GIT PULL] xfs: new code for 5.15
+To:     "Darrick J. Wong" <djwong@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Aug 31, 2021 at 2:18 PM Darrick J. Wong <djwong@kernel.org> wrote:
+>
+> As for new features: we now batch inode inactivations in percpu
+> background threads, which sharply decreases frontend thread wait time
+> when performing file deletions and should improve overall directory tree
+> deletion times.
 
-xfstests: generic/062: Do not run on newer kernels
+So no complaints on this one, but I do have a reaction: we have a lot
+of these random CPU hotplug events, and XFS now added another one.
 
-This test has been written with assumption that setting user.* xattrs will
-fail on symlink and special files. When newer kernels support setting
-user.* xattrs on symlink and special files, this test starts failing.
+I don't see that as a problem, but just the _randomness_ of these
+callbacks makes me go "hmm". And that "enum cpuhp_state" thing isn't
+exactly a thing of beauty, and just makes me think there's something
+nasty going on.
 
-Found it hard to change test in such a way that it works on both type of
-kernels. Primary problem is 062.out file which hardcodes the output and
-output will be different on old and new kernels.
+For the new xfs usage, I really get the feeling that it's not that XFS
+actually cares about the CPU states, but that this is literally tied
+to just having percpu state allocated and active, and that maybe it
+would be sensible to have something more specific to that kind of use.
 
-So instead, do not run this test if kernel is new and is expected to
-exhibit new behavior. Next patch will create a new test and run that
-test on new kernel.
+We have other things that are very similar in nature - like the page
+allocator percpu caches etc, which for very similar reasons want cpu
+dead/online notification.
 
-IOW, on old kernels run 062 and on new kernels run new test.
+I'm only throwing this out as a reaction to this - I'm not sure
+another interface would be good or worthwhile, but that "enum
+cpuhp_state" is ugly enough that I thought I'd rope in Thomas for CPU
+hotplug, and the percpu memory allocation people for comments.
 
-This is a proposed patch. Will need to be fixed if corresponding
-kernel changes are merged upstream.
+IOW, just _maybe_ we would want to have some kind of callback model
+for "percpu_alloc()" and it being explicitly about allocations
+becoming available or going away, rather than about CPU state.
 
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- tests/generic/062 |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Comments?
 
-Index: xfstests-dev/tests/generic/062
-===================================================================
---- xfstests-dev.orig/tests/generic/062	2021-08-31 15:51:08.160307982 -0400
-+++ xfstests-dev/tests/generic/062	2021-08-31 16:27:41.678307982 -0400
-@@ -55,6 +55,26 @@ _require_attrs
- _require_symlinks
- _require_mknod
- 
-+user_xattr_allowed()
-+{
-+	local kernel_version kernel_patchlevel
-+
-+	kernel_version=`uname -r | awk -F. '{print $1}'`
-+	kernel_patchlevel=`uname -r | awk -F. '{print $2}'`
-+
-+	# Kernel version 5.14 onwards allow user xattr on symlink/special files.
-+	[ $kernel_version -lt 5 ] && return 1
-+	[ $kernel_patchlevel -lt 14 ] && return 1
-+	return 0;
-+}
-+
-+
-+# Kernel version 5.14 onwards allow user xattr on symlink/special files.
-+# Do not run this test on newer kernels. Instead run the new test
-+# which has been written with the assumption that user.* xattr
-+# will succeed on symlink and special files.
-+user_xattr_allowed && _notrun "Kernel allows user.* xattrs on symlinks and special files. Skipping this test. Run newer test instead."
-+
- rm -f $tmp.backup1 $tmp.backup2 $seqres.full
- 
- # real QA test starts here
+> Lastly, with this release, two new features have graduated to supported
+> status: inode btree counters (for faster mounts), and support for dates
+> beyond Y2038.
 
+Oh, I had thought Y2038 was already a non-issue for xfs. Silly me.
+
+              Linus
