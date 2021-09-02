@@ -2,114 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C2EA43FF6AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Sep 2021 23:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58DC73FF766
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 00:49:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347580AbhIBV45 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Sep 2021 17:56:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40008 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347567AbhIBV4n (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Sep 2021 17:56:43 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E136C0613D9
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Sep 2021 14:55:39 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id y34so7457664lfa.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Sep 2021 14:55:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1OGY0A1bmZf1fxvWkbRm6Nt7GcmJzJ4PCA9tMxUQzJU=;
-        b=L34pszxLvaK1/ThKDYqV097bwVi8n2QR0jDIHeafcSSoPQ9z8W+i4niPigybjSIJqH
-         dFiDtYwNyV56xL39aIJBQy+mTx3awcN1DVNd15K9XDNl52+jJzM/lNcR26w39F121YK1
-         e7Vu0mceRcUbTfqKirHJsqCLxbSujeusdES90=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1OGY0A1bmZf1fxvWkbRm6Nt7GcmJzJ4PCA9tMxUQzJU=;
-        b=fHdlJ6mev3MPjmmrQa0Q6ft5+nc0SZ8cs56KYnQzZPrPmfq4jS/LvfFUp9zit1rqNB
-         XTP8jXAornkigTOld9H+GIXJ/OAGKmP+KqesTUTP1Fq7IfsEJUAv5df4enMhsDjVgVK8
-         Fgxk81dXfIXu8g28DuMiKHWRQAIYGEBTkUJyvJFp4p60hv53QHRATpb/Dd8OKcngbnBG
-         FM/m+o2hO5oJZ/y02wztPL4dDtimT4HW4lXBZFWBpM4tQS1FbgkJBgPYOe9WvQuDmtMW
-         pW0fe0Bwy0uh8YoU5mytt5YX342hH510rGODIUVXp27y97THnFLXZwEkWnBiuNad7xmE
-         mrHg==
-X-Gm-Message-State: AOAM530MFRp+exGma53/qVLqCkW3Pvz7ftKMKTLViwnRrkAuLpGskuve
-        q8xpfoMLEIstlxFqR+/kF5lFwh0lT0B9INqUpMU=
-X-Google-Smtp-Source: ABdhPJykA4FcwuFcHw9zoISKMkElMX3hvcKswOcRJ+K5012lh7AAjInChqNQ1b+i4G47dwuv4YctlA==
-X-Received: by 2002:a19:f616:: with SMTP id x22mr210980lfe.239.1630619737306;
-        Thu, 02 Sep 2021 14:55:37 -0700 (PDT)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id r23sm362277ljd.86.2021.09.02.14.55.36
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Sep 2021 14:55:36 -0700 (PDT)
-Received: by mail-lf1-f46.google.com with SMTP id z2so7494863lft.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Sep 2021 14:55:36 -0700 (PDT)
-X-Received: by 2002:a05:6512:128a:: with SMTP id u10mr229751lfs.40.1630619736152;
- Thu, 02 Sep 2021 14:55:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <4e8c0640-d781-877c-e6c5-ed5cc09443f6@gmail.com>
- <20210716114635.14797-1-papadakospan@gmail.com> <CAHk-=whfeq9gyPWK3yao6cCj7LKeU3vQEDGJ3rKDdcaPNVMQzQ@mail.gmail.com>
- <afd62ae457034c3fbc4f2d38408d359d@paragon-software.com> <CAHk-=wjn4W-7ZbHrw08cWy=12DgheFUKLO5YLgG6in5TA5HxqQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wjn4W-7ZbHrw08cWy=12DgheFUKLO5YLgG6in5TA5HxqQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 2 Sep 2021 14:55:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg7GMGD1YNM7WgPAU3nwHhMAvQ8yvdwvJtuwe9J1pBgvg@mail.gmail.com>
-Message-ID: <CAHk-=wg7GMGD1YNM7WgPAU3nwHhMAvQ8yvdwvJtuwe9J1pBgvg@mail.gmail.com>
-Subject: Re: Paragon NTFSv3 (was Re: [GIT PULL] vboxsf fixes for 5.14-1)
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     "Leonidas P. Papadakos" <papadakospan@gmail.com>,
-        "zajec5@gmail.com" <zajec5@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
+        id S239384AbhIBWuj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Sep 2021 18:50:39 -0400
+Received: from mgw-01.mpynet.fi ([82.197.21.90]:50610 "EHLO mgw-01.mpynet.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232013AbhIBWui (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 Sep 2021 18:50:38 -0400
+X-Greylist: delayed 2354 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 Sep 2021 18:50:38 EDT
+Received: from pps.filterd (mgw-01.mpynet.fi [127.0.0.1])
+        by mgw-01.mpynet.fi (8.16.0.43/8.16.0.43) with SMTP id 182M9t3D000970;
+        Fri, 3 Sep 2021 01:09:55 +0300
+Received: from ex13.tuxera.com (ex13.tuxera.com [178.16.184.72])
+        by mgw-01.mpynet.fi with ESMTP id 3au6p6g0ps-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 03 Sep 2021 01:09:55 +0300
+Received: from tuxera.com (77.86.224.47) by tuxera-exch.ad.tuxera.com
+ (10.20.48.11) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Fri, 3 Sep
+ 2021 01:09:54 +0300
+Date:   Fri, 3 Sep 2021 01:09:40 +0300
+From:   Szabolcs Szakacsits <szaka@tuxera.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+CC:     Theodore Ts'o <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Leonidas P. Papadakos" <papadakospan@gmail.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        <zajec5@gmail.com>, "Darrick J. Wong" <djwong@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Hans de Goede <hdegoede@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: NTFS testing (was: [GIT PULL] vboxsf fixes for 5.14-1
+In-Reply-To: <CAHk-=wiSwzrWOSN5UCrej3YcLRPmW5tViGSA5p2m-hiyKnQiMg@mail.gmail.com>
+Message-ID: <alpine.DEB.2.20.2109030047330.23375@tuxera.com>
+References: <4e8c0640-d781-877c-e6c5-ed5cc09443f6@gmail.com> <20210716114635.14797-1-papadakospan@gmail.com> <CAHk-=whfeq9gyPWK3yao6cCj7LKeU3vQEDGJ3rKDdcaPNVMQzQ@mail.gmail.com> <YQnHxIU+EAAxIjZA@mit.edu> <YQnU5m/ur+0D5MfJ@casper.infradead.org>
+ <YQnZgq3gMKGI1Nig@mit.edu> <CAHk-=wiSwzrWOSN5UCrej3YcLRPmW5tViGSA5p2m-hiyKnQiMg@mail.gmail.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+X-ClientProxiedBy: tuxera-exch.ad.tuxera.com (10.20.48.11) To
+ tuxera-exch.ad.tuxera.com (10.20.48.11)
+X-Proofpoint-GUID: AIsDkyzYdnO5cmGg65dSmSNKEHORpGW8
+X-Proofpoint-ORIG-GUID: AIsDkyzYdnO5cmGg65dSmSNKEHORpGW8
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-09-02_04:2021-09-02,2021-09-02 signatures=0
+X-Proofpoint-Spam-Details: rule=mpy_notspam policy=mpy score=0 bulkscore=0 malwarescore=0 phishscore=0
+ spamscore=0 mlxlogscore=999 suspectscore=0 mlxscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2108310000
+ definitions=main-2109020127
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 30, 2021 at 10:23 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Well, I won't pull until the next merge window opens anyway (about a
-> month away). But it would be good to have your tree in linux-next for
-> at least a couple of weeks before that happens.
->
-> Added Stephen to the participants list as a heads-up for him - letting
-> him know where to fetch the git tree from will allow that to happen if
-> you haven't done so already.
 
-Ok, so I've merged the biggest pieces of this merge window, and I
-haven't actually seen a NTFSv3 pull request yet.
+On Tue, 3 Aug 2021, Linus Torvalds wrote:
+> On Tue, Aug 3, 2021 at 5:04 PM Theodore Ts'o <tytso@mit.edu> wrote:
+> >
+> > Whenver I've ever needed to access ntfs files, I've always used the
+> > ntfs-3g FUSE package.
+> 
+> The user-space FUSE thing does indeed work reasonably well.
+> 
+> It performs horribly badly if you care about things like that, though.
+> 
+> In fact, your own numbers kind of show that:
+> 
+>   ntfs/default: 670 tests, 55 failures, 211 skipped, 34783 seconds
+>   ntfs3/default: 664 tests, 67 failures, 206 skipped, 8106 seconds
+> 
+> and that's kind of the point of ntfs3.
 
-I wonder if you expected that being in linux-next just "automatically"
-causes the pull to happen, because that's not the case. We often have
-things "brewing" in linux-next for a while, and it's there for testing
-but not necessarily ready for prime time.
+In all fairness, the generic/405 test case completely distorted the overall 
+timing in favour of ntfs3. Neither driver was involved in that test case.
 
-So linux-next is a preparatory thing, not a "this will get merged"
+Generic/405 test is mkfs against a 1 TB thin provision device which has 1 
+MB backing size. mkfs should return an error after it hits EIO. The test 
+case configuration was not correct for mkntfs on behalf of ntfs-3g because 
+it missed the --fast format option, so mkntfs tried to fill the 1 TB device 
+with zeros, apparently on Google Cloud Platform, for almost 8 hours. This 
+had absolutely nothing to do with ntfs-3g performance, it was a pure mkfs 
+test:
 
-So to actually merge things, I will expect to get an explicit pull
-request with the usual diffstat and shortlog, to show that yes, you
-really think it's all good, and it's ready to merge.
+	https://github.com/kdave/xfstests/blob/master/tests/generic/405
 
-Don't worry about - and don't try to fix - merge conflicts with
-possible other work that has been going on. Stephen fixes it for
-linux-next and makes people aware of it, and I want to _know_ about
-them, but I will then handle and re-do the merge conflicts myself
-based on what I have actually merged up to that point.
+Meanwhile the test case ran in 1 second on behalf of ntfs3 because its mkfs 
+was not found, so the test could not be run. (And the test case got 
+incorrectly categorized as success because it interpreted the "command not 
+found" error as a success.)
 
-And of course, the other side of that is that if linux-next uncovered
-other issues, or if there are things holding things up, please _don't_
-feel obligated to send me a pull request. There is always the next
-merge window.
+If this mkntfs test case is ignored, as it should be, then ntfs-3g's 
+runtime was (34783 - 28396) = 6387 versus ntfs3's (8106 - 1) = 8105 
+seconds, i.e. the user space ntfs-3g was about 21% faster overall than the 
+kernel space ntfs3.
 
-            Linus
+Does this mean ntfs-3g is faster than ntfs3? Of course not. Fstests is not 
+a benchmark. What we know for sure is, the unknowingly configured, untuned 
+versions of the software gave different times for different workloads.
+
+File system performance is a fairly complex topic. Ntfs-3g always aimed for 
+stability, features, interoperability and portability, not for best 
+possible performance. There seems to be some misconceptions, 
+misinterpretations, inefficient configuration and mount options (e.g. 
+missing big_writes, kernel_cache, etc). Unfortunately we did our part too 
+to end up here. We will set better performance defaults in future releases.
+
+User space drivers can have major disadvantages for certain workloads 
+however how relevant are those for NTFS users? Most people use NTFS for 
+file transfers in which case ntfs-3g read and write speed is about 15-20% 
+less compared to ext4. For example in some quick tests ext4 read was 
+3.4 GB/s versus ntfs-3g 2.8 GB/s, and write was 1.3 GB/s versus 1.1 GB/s.
+
+Additionally there are still several technical solutions which could be 
+implemented to improve all kinds of user space driver performance 
+significantly.
+
+But again, we always prefer data integrity over performance. And NTFS can 
+be quite tricky with the ever changing on-disk corner cases. Does anybody 
+still remember when Windows 2000 changed the NTFS on-disk format which 
+massively started to trash users' data?
+
+Please don't get me wrong, I'm not saying this is the way to go (who would 
+be so crazy to write anything like that on the linux-kernel list?) I'm just 
+saying this is the way we chose and support. We welcome the recent interest 
+in NTFS after working on it for 20 years.
+
+------
+
+These are from Ted's logs which he shared earlier. It's much appreciated, 
+it was highly useful. Personally I also thought the very poor ntfs-3g 
+timing was due to bad configuration and/or mount options instead of an 
+irrelevant test case. (Btw, the driver configuration and mount options were 
+indeed not right, e.g. ACL, permission, etc related cases failed which 
+could have pass.)
+
+$ egrep ^generic/405 results-ntfs*/runtests.log
+results-ntfs/runtests.log:generic/405           [21:47:08] [05:40:24] 28396s
+results-ntfs3/runtests.log:generic/405          [12:12:09] [12:12:10] 1s
+
+$ cat results-ntfs/ntfs/results-default/generic/405.full
+[...]
+Cluster size has been automatically set to 4096 bytes.
+Initializing device with zeroes: 100% - Done.
+Creating NTFS volume structures.
+Failed to sync device /dev/mapper/thin-vol: Input/output error
+Syncing device. FAILED
+
+$ cat results-ntfs3/ntfs3/results-default/generic/405.full
+[...]
+mkfs: failed to execute mkfs.ntfs3: No such file or directory
+
+Best regards,
+
+	Szaka
