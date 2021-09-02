@@ -2,208 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E58E3FF49A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Sep 2021 22:06:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E8203FF598
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Sep 2021 23:24:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344999AbhIBUHR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Sep 2021 16:07:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:26702 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1344017AbhIBUHP (ORCPT
+        id S1346238AbhIBVZu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Sep 2021 17:25:50 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:59050 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245379AbhIBVZt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Sep 2021 16:07:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630613176;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=J6jCVMEJdXlOjcFYlFoca4HbcyYor/r3/VjBQhcbvsE=;
-        b=Ry2A7+ClLarUuPBWqpv8t7AApZsz2r9lv+KpKXDzXBs39176DfIMrZnqgJ0qEfbXO69F3O
-        hFnZuXAcxQ2eYy6GuLsvF+UzUCdthkanN2NYaB7S5bqQpte7KlKh59EeVtFgUba0Xhz5WM
-        zNizRrCJsqElKrV+kUCJix08DCIChWs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-436-N-my_IWqOBS9Tu2fIUX4jQ-1; Thu, 02 Sep 2021 16:06:15 -0400
-X-MC-Unique: N-my_IWqOBS9Tu2fIUX4jQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EB7C786ABA1;
-        Thu,  2 Sep 2021 20:06:08 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.8.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 63E525E7A2;
-        Thu,  2 Sep 2021 20:06:08 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id F1BF7220257; Thu,  2 Sep 2021 16:06:07 -0400 (EDT)
-Date:   Thu, 2 Sep 2021 16:06:07 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
-        dwalsh@redhat.com, dgilbert@redhat.com,
-        christian.brauner@ubuntu.com, casey.schaufler@intel.com,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        tytso@mit.edu, miklos@szeredi.hu, gscrivan@redhat.com,
-        bfields@redhat.com, stephen.smalley.work@gmail.com,
-        agruenba@redhat.com, david@fromorbit.com
-Subject: Re: [PATCH v3 0/1] Relax restrictions on user.* xattr
-Message-ID: <YTEur7h6fe4xBJRb@redhat.com>
-References: <20210902152228.665959-1-vgoyal@redhat.com>
- <79dcd300-a441-cdba-e523-324733f892ca@schaufler-ca.com>
- <YTEEPZJ3kxWkcM9x@redhat.com>
- <YTENEAv6dw9QoYcY@redhat.com>
- <3bca47d0-747d-dd49-a03f-e0fa98eaa2f7@schaufler-ca.com>
+        Thu, 2 Sep 2021 17:25:49 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id E37841F44BAB
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     amir73il@gmail.com, jack@suse.com, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        khazhy@google.com, dhowells@redhat.com, david@fromorbit.com,
+        tytso@mit.edu, djwong@kernel.org, repnop@google.com,
+        kernel@collabora.com
+Subject: Re: [PATCH v6 15/21] fanotify: Preallocate per superblock mark
+ error event
+Organization: Collabora
+References: <20210812214010.3197279-1-krisman@collabora.com>
+        <20210812214010.3197279-16-krisman@collabora.com>
+        <20210816155758.GF30215@quack2.suse.cz> <877dg6rbtn.fsf@collabora.com>
+Date:   Thu, 02 Sep 2021 17:24:44 -0400
+In-Reply-To: <877dg6rbtn.fsf@collabora.com> (Gabriel Krisman Bertazi's message
+        of "Fri, 27 Aug 2021 14:18:12 -0400")
+Message-ID: <87a6kusmar.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3bca47d0-747d-dd49-a03f-e0fa98eaa2f7@schaufler-ca.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 02, 2021 at 11:55:11AM -0700, Casey Schaufler wrote:
-> On 9/2/2021 10:42 AM, Vivek Goyal wrote:
-> > On Thu, Sep 02, 2021 at 01:05:01PM -0400, Vivek Goyal wrote:
-> >> On Thu, Sep 02, 2021 at 08:43:50AM -0700, Casey Schaufler wrote:
-> >>> On 9/2/2021 8:22 AM, Vivek Goyal wrote:
-> >>>> Hi,
-> >>>>
-> >>>> This is V3 of the patch. Previous versions were posted here.
-> >>>>
-> >>>> v2:
-> >>>> https://lore.kernel.org/linux-fsdevel/20210708175738.360757-1-vgoyal@redhat.com/
-> >>>> v1:
-> >>>> https://lore.kernel.org/linux-fsdevel/20210625191229.1752531-1-vgoyal@redhat.co
-> >>>> +m/
-> >>>>
-> >>>> Changes since v2
-> >>>> ----------------
-> >>>> - Do not call inode_permission() for special files as file mode bits
-> >>>>   on these files represent permissions to read/write from/to device
-> >>>>   and not necessarily permission to read/write xattrs. In this case
-> >>>>   now user.* extended xattrs can be read/written on special files
-> >>>>   as long as caller is owner of file or has CAP_FOWNER.
-> >>>>  
-> >>>> - Fixed "man xattr". Will post a patch in same thread little later. (J.
-> >>>>   Bruce Fields)
-> >>>>
-> >>>> - Fixed xfstest 062. Changed it to run only on older kernels where
-> >>>>   user extended xattrs are not allowed on symlinks/special files. Added
-> >>>>   a new replacement test 648 which does exactly what 062. Just that
-> >>>>   it is supposed to run on newer kernels where user extended xattrs
-> >>>>   are allowed on symlinks and special files. Will post patch in 
-> >>>>   same thread (Ted Ts'o).
-> >>>>
-> >>>> Testing
-> >>>> -------
-> >>>> - Ran xfstest "./check -g auto" with and without patches and did not
-> >>>>   notice any new failures.
-> >>>>
-> >>>> - Tested setting "user.*" xattr with ext4/xfs/btrfs/overlay/nfs
-> >>>>   filesystems and it works.
-> >>>>  
-> >>>> Description
-> >>>> ===========
-> >>>>
-> >>>> Right now we don't allow setting user.* xattrs on symlinks and special
-> >>>> files at all. Initially I thought that real reason behind this
-> >>>> restriction is quota limitations but from last conversation it seemed
-> >>>> that real reason is that permission bits on symlink and special files
-> >>>> are special and different from regular files and directories, hence
-> >>>> this restriction is in place. (I tested with xfs user quota enabled and
-> >>>> quota restrictions kicked in on symlink).
-> >>>>
-> >>>> This version of patch allows reading/writing user.* xattr on symlink and
-> >>>> special files if caller is owner or priviliged (has CAP_FOWNER) w.r.t inode.
-> >>> This part of your project makes perfect sense. There's no good
-> >>> security reason that you shouldn't set user.* xattrs on symlinks
-> >>> and/or special files.
-> >>>
-> >>> However, your virtiofs use case is unreasonable.
-> >> Ok. So we can merge this patch irrespective of the fact whether virtiofs
-> >> should make use of this mechanism or not, right?
-> 
-> I don't see a security objection. I did see that Andreas Gruenbacher
-> <agruenba@redhat.com> has objections to the behavior.
-> 
-> 
-> >>>> Who wants to set user.* xattr on symlink/special files
-> >>>> -----------------------------------------------------
-> >>>> I have primarily two users at this point of time.
-> >>>>
-> >>>> - virtiofs daemon.
-> >>>>
-> >>>> - fuse-overlay. Giuseppe, seems to set user.* xattr attrs on unpriviliged
-> >>>>   fuse-overlay as well and he ran into similar issue. So fuse-overlay
-> >>>>   should benefit from this change as well.
-> >>>>
-> >>>> Why virtiofsd wants to set user.* xattr on symlink/special files
-> >>>> ----------------------------------------------------------------
-> >>>> In virtiofs, actual file server is virtiosd daemon running on host.
-> >>>> There we have a mode where xattrs can be remapped to something else.
-> >>>> For example security.selinux can be remapped to
-> >>>> user.virtiofsd.securit.selinux on the host.
-> >>> As I have stated before, this introduces a breach in security.
-> >>> It allows an unprivileged process on the host to manipulate the
-> >>> security state of the guest. This is horribly wrong. It is not
-> >>> sufficient to claim that the breach requires misconfiguration
-> >>> to exploit. Don't do this.
-> >> So couple of things.
-> >>
-> >> - Right now whole virtiofs model is relying on the fact that host
-> >>   unpriviliged users don't have access to shared directory. Otherwise
-> >>   guest process can simply drop a setuid root binary in shared directory
-> >>   and unpriviliged process can execute it and take over host system.
-> >>
-> >>   So if virtiofs makes use of this mechanism, we are well with-in
-> >>   the existing constraints. If users don't follow the constraints,
-> >>   bad things can happen.
-> >>
-> >> - I think Smalley provided a solution for your concern in other thread
-> >>   we discussed this issue.
-> >>
-> >>   https://lore.kernel.org/selinux/CAEjxPJ4411vL3+Ab-J0yrRTmXoEf8pVR3x3CSRgPjfzwiUcDtw@mail.gmail.com/T/#mddea4cec7a68c3ee5e8826d650020361030209d6
-> >>
-> >>
-> >>   "So for example if the host policy says that only virtiofsd can set
-> >> attributes on those files, then the guest MAC labels along with all
-> >> the other attributes are protected against tampering by any other
-> >> process on the host."
-> 
-> You can't count on SELinux policy to address the issue on a
-> system running Smack.
-> Or any other user of system.* xattrs,
-> be they in the kernel or user space. You can't even count on
-> SELinux policy to be correct. virtiofs has to present a "safe"
-> situation regardless of how security.* xattrs are used and
-> regardless of which, if any, LSMs are configured. You can't
-> do that with user.* attributes.
+Gabriel Krisman Bertazi <krisman@collabora.com> writes:
 
-Lets take a step back. Your primary concern with using user.* xattrs
-by virtiofsd is that it can be modified by unprivileged users on host.
-And our solution to that problem is hide shared directory from
-unprivileged users.
+> Jan Kara <jack@suse.cz> writes:
+>
+>> On Thu 12-08-21 17:40:04, Gabriel Krisman Bertazi wrote:
+>>> Error reporting needs to be done in an atomic context.  This patch
+>>> introduces a single error slot for superblock marks that report the
+>>> FAN_FS_ERROR event, to be used during event submission.
+>>> 
+>>> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+>>> 
+>>> ---
+>>> Changes v5:
+>>>   - Restore mark references. (jan)
+>>>   - Tie fee slot to the mark lifetime.(jan)
+>>>   - Don't reallocate event(jan)
+>>> ---
+>>>  fs/notify/fanotify/fanotify.c      | 12 ++++++++++++
+>>>  fs/notify/fanotify/fanotify.h      | 13 +++++++++++++
+>>>  fs/notify/fanotify/fanotify_user.c | 31 ++++++++++++++++++++++++++++--
+>>>  3 files changed, 54 insertions(+), 2 deletions(-)
+>>> 
+>>> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+>>> index ebb6c557cea1..3bf6fd85c634 100644
+>>> --- a/fs/notify/fanotify/fanotify.c
+>>> +++ b/fs/notify/fanotify/fanotify.c
+>>> @@ -855,6 +855,14 @@ static void fanotify_free_name_event(struct fanotify_event *event)
+>>>  	kfree(FANOTIFY_NE(event));
+>>>  }
+>>>  
+>>> +static void fanotify_free_error_event(struct fanotify_event *event)
+>>> +{
+>>> +	/*
+>>> +	 * The actual event is tied to a mark, and is released on mark
+>>> +	 * removal
+>>> +	 */
+>>> +}
+>>> +
+>>
+>> I was pondering about the lifetime rules some more. This is also related to
+>> patch 16/21 but I'll comment here. When we hold mark ref from queued event,
+>> we introduce a subtle race into group destruction logic. There we first
+>> evict all marks, wait for them to be destroyed by worker thread after SRCU
+>> period expires, and then we remove queued events. When we hold mark
+>> reference from an event we break this as mark will exist until the event is
+>> dequeued and then group can get freed before we actually free the mark and
+>> so mark freeing can hit use-after-free issues.
+>>
+>> So we'll have to do this a bit differently. I have two options:
+>>
+>> 1) Instead of preallocating events explicitely like this, we could setup a
+>> mempool to allocate error events from for each notification group. We would
+>> resize the mempool when adding error mark so that it has as many reserved
+>> events as error marks. Upside is error events will be much less special -
+>> no special lifetime rules. We'd just need to setup & resize the mempool. We
+>> would also have to provide proper merge function for error events (to merge
+>> events from the same sb). Also there will be limitation of number of error
+>> marks per group because mempools use kmalloc() for an array tracking
+>> reserved events. But we could certainly manage 512, likely 1024 error marks
+>> per notification group.
+>>
+>> 2) We would keep attaching event to mark as currently. As far as I have
+>> checked the event doesn't actually need a back-ref to sb_mark. It is
+>> really only used for mark reference taking (and then to get to sb from
+>> fanotify_handle_error_event() but we can certainly get to sb by easier
+>> means there). So I would just remove that. What we still need to know in
+>> fanotify_free_error_event() though is whether the sb_mark is still alive or
+>> not. If it is alive, we leave the event alone, otherwise we need to free it.
+>> So we need a mark_alive flag in the error event and then do in ->freeing_mark
+>> callback something like:
+>>
+>> 	if (mark->flags & FANOTIFY_MARK_FLAG_SB_MARK) {
+>> 		struct fanotify_sb_mark *fa_mark = FANOTIFY_SB_MARK(mark);
+>>
+>> ###		/* Maybe we could use mark->lock for this? */
+>> 		spin_lock(&group->notification_lock);
+>> 		if (fa_mark->fee_slot) {
+>> 			if (list_empty(&fa_mark->fee_slot->fae.fse.list)) {
+>> 				kfree(fa_mark->fee_slot);
+>> 				fa_mark->fee_slot = NULL;
+>> 			} else {
+>> 				fa_mark->fee_slot->mark_alive = 0;
+>> 			}
+>> 		}
+>> 		spin_unlock(&group->notification_lock);
+>> 	}
+>>
+>> And then when queueing and dequeueing event we would have to carefully
+>> check what is the mark & event state under appropriate lock (because
+>> ->handle_event() callbacks can see marks on the way to be destroyed as they
+>> are protected just by SRCU).
+>
+> Thanks for the review.  That is indeed a subtle race that I hadn't
+> noticed.
+>
+> Option 2 is much more straightforward.  And considering the uABI won't
+> be changed if we decide to change to option 1 later, I gave that a try
+> and should be able to prepare a new version that leaves the error event
+> with a weak association to the mark, without the back reference, and
+> allowing it to be deleted by the latest between dequeue and
+> ->freeing_mark, as you suggested.
 
-In addition to that, LSMs on host can block setting "user.*" xattrs by
-virtiofsd domain only for additional protection. If LSMs are not configured,
-then hiding the directory is the solution.
+Actually, I don't think this will work for insertion unless we keep a
+bounce buffer for the file_handle, because we need to keep the
+group->notification_lock to ensure the fee doesn't go away with the mark
+(since it is not yet enqueued) but, as discussed before, we don't want
+to hold that lock when generating the FH.
 
-So why that's not a solution and only relying on CAP_SYS_ADMIN is the
-solution. I don't understand that part.
+I think the correct way is to have some sort of refcount of the error
+event slot.  We could use err_count for that and change the suggestion
+above to:
 
-Also if directory is not hidden, unprivileged users can change file
-data and other metadata. Why that's not a concern and why there is
-so much of focus only security xattr. If you were to block modification
-of file then you will have rely on LSMs. And if LSMs are not configured,
-then we will rely on shared directory not being visible.
+if (mark->flags & FANOTIFY_MARK_FLAG_SB_MARK) {
+	struct fanotify_sb_mark *fa_mark = FANOTIFY_SB_MARK(mark);
 
-Can you please help me understand why hiding shared directory from
-unprivileged users is not a solution (With both LSMs configured or
-not configured on host). That's a requirement for virtiofs anyway. 
-And if we agree on that, then I don't see why using "user.*" xattrs
-for storing guest sercurity attributes is a problem.
+	spin_lock(&group->notification_lock);
+	if (fa_mark->fee_slot) {
+		if (!fee->err_count) {
+			kfree(fa_mark->fee_slot);
+			fa_mark->fee_slot = NULL;
+		} else {
+			fa_mark->fee_slot->mark_alive = 0;
+		}
+	}
+	spin_unlock(&group->notification_lock);
+}
 
-Thanks
-Vivek
+And insertion would look like this:
 
+static int fanotify_handle_error_event(....) {
+
+	spin_lock(&group->notification_lock);
+
+	if (!mark->fee || (mark->fee->err_count++) {
+		spin_unlock(&group->notification_lock);
+		return 0;
+	}
+
+	spin_unlock(&group->notification_lock);
+
+	mark->fee->fae.type = FANOTIFY_EVENT_TYPE_FS_ERROR;
+
+	/* ... Write report data to error event ... */
+
+	fanotify_encode_fh(&fee->object_fh, fanotify_encode_fh_len(inode),
+ 			   NULL, 0);
+
+	fsnotify_add_event(group, &fee->fae.fse, NULL);
+   }
+
+Unless you think this is too hack-ish.
+
+To be fair, I think it is hack-ish.  I would add a proper refcount_t
+to the error event, and let the mark own a reference to it, which is
+dropped when the mark goes away.  Enqueue and Dequeue will acquire and
+drop references, respectively. In this case, err_count is not
+overloaded.
+
+Will it work?
+
+-- 
+Gabriel Krisman Bertazi
