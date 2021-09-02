@@ -2,88 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54C0D3FF3AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Sep 2021 20:58:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 748C33FF3EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Sep 2021 21:13:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347254AbhIBS7S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Sep 2021 14:59:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54934 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347238AbhIBS7Q (ORCPT
+        id S1347245AbhIBTOZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Sep 2021 15:14:25 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45674 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243525AbhIBTOZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Sep 2021 14:59:16 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CABDC061575
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Sep 2021 11:58:16 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id s10so6483151lfr.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Sep 2021 11:58:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=nou0znqimsrLl6OB5c1aMp82GMEqusuNoyOJ20o6LFI=;
-        b=Ibpdc46zjQloZ+vX8Jc+8cZvxyZgkNzdSsEJA3RXMKA4Uv115klG8TP44ku0D70EYN
-         2ZdHNkPCogYuUgXzzStalGmdzhm6x4HMAJyz6jwygSEzV1uGAEnpH4rb6ZQRdRgWqyQl
-         K8bZBGqrT9kuG/VjjS1yasgD0iTr8JY35ybDg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=nou0znqimsrLl6OB5c1aMp82GMEqusuNoyOJ20o6LFI=;
-        b=c+AvPLQjJwO7FZvKQwRCW3GbvURFpF9qw8mdHiJR+p6j1W76aNM3cHizUaUJNF4D7f
-         /ECXm448Vxx8ErBsI46CBkDMxJjGpN3CeFhh7wM2SmepYW7VFEuqTF2n6whHGQaHnuMX
-         Ddt3CbVbXVyAko/44WgHkfOk35S80U4Zx/oZ3Lah2OlxnARtImHIlGVkf+pwM0R8nJtY
-         A4OeZy2eLYir4xnA6i5PeUvm11Wrk0xjZ6UvveisTvorBwMlvp24s7KvonOD9h1tv5YY
-         Y4RjRj62L9NpnNIAnRX9p7iX3TnisJrn1mk0ybJHWgGaFbN9ZUceEyvg8mUEeGvymqxR
-         axhQ==
-X-Gm-Message-State: AOAM530le3O6R3dmMJenH59IfV00O7jYpDDTg8f1zkePQq9G97gTGtFT
-        PDkPOcG5INBTKKupJOWz+V53cPzbhW3L0O2/9Mk=
-X-Google-Smtp-Source: ABdhPJyUZNf6I0VanHKQOk8uyOoN0VomIbrrWURX1QcFc+EQBu3+4ddAdsDuGXJYrepURc2JaZz4OA==
-X-Received: by 2002:a05:6512:1112:: with SMTP id l18mr3526126lfg.402.1630609094718;
-        Thu, 02 Sep 2021 11:58:14 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id v14sm274945lfd.225.2021.09.02.11.58.14
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Sep 2021 11:58:14 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id h16so3659585lfk.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Sep 2021 11:58:14 -0700 (PDT)
-X-Received: by 2002:a05:6512:230b:: with SMTP id o11mr3465517lfu.377.1630609094065;
- Thu, 02 Sep 2021 11:58:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210831225935.GA26537@hsiangkao-HP-ZHAN-66-Pro-G1>
- <CAHk-=wi7gf_afYhx_PYCN-Sgghuw626dBNqxZ6aDQ-a+sg6wag@mail.gmail.com> <20210902182053.GB26537@hsiangkao-HP-ZHAN-66-Pro-G1>
-In-Reply-To: <20210902182053.GB26537@hsiangkao-HP-ZHAN-66-Pro-G1>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 2 Sep 2021 11:57:58 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgirqjdeuYX+PvL-09UUKtnBaRYTXQrRdjCYxGKirEpug@mail.gmail.com>
-Message-ID: <CAHk-=wgirqjdeuYX+PvL-09UUKtnBaRYTXQrRdjCYxGKirEpug@mail.gmail.com>
-Subject: Re: [GIT PULL] erofs updates for 5.15-rc1
+        Thu, 2 Sep 2021 15:14:25 -0400
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1630610004;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Mol3Nulm2MslnoL3rZw7KR5Sk7yIbBs38Z0NkhRj0cM=;
+        b=4xvAkIUloKpCD068KtfLLIaDhtuQGjgaNE5WXiqh0lLsrVRyJz3Kne6keyd6H8TriVKHDh
+        B0D3FMuUNO+9zbJlassAGu05fmLkm74uqoXObuDeVoYglvbokl3zIThoBWSkWF1qVTCfKJ
+        F6g2JjpOw0tRmzYZUenkdeObYUeryIaUZI6FYUM8PSujGEgfSEQWJ4O/HKp5HJByYg13Re
+        RzmO0rhjViVmMPRKZ1CEsOts8PLVTf1+kfNjA4OvaLrXJy9qTKnDNCGEvm8yV2iZ9lZg1V
+        xw7BOS00jyPkfQ1U8X1f1hcpzIsmnPWhFbkB5ErBM15s/8CDHadX9tlxeIzBAQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1630610004;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Mol3Nulm2MslnoL3rZw7KR5Sk7yIbBs38Z0NkhRj0cM=;
+        b=cQ/vMiC1Ytsbn2pZye0Y1kAUgcWIijtybi6IoNS+yHv1VW1sOJi3j/RA/tYvU3zZ+61k4T
+        PZh+9qZmZK8NgnDA==
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Huang Jianan <huangjianan@oppo.com>,
-        Yue Hu <huyue2@yulong.com>, Miao Xie <miaoxie@huawei.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Peng Tao <tao.peng@linux.alibaba.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Liu Jiang <gerry@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [GIT PULL] xfs: new code for 5.15
+In-Reply-To: <CAHk-=whyVPgkAfARB7gMjLEyu0kSxmb6qpqfuE_r6QstAzgHcA@mail.gmail.com>
+References: <20210831211847.GC9959@magnolia>
+ <CAHk-=whyVPgkAfARB7gMjLEyu0kSxmb6qpqfuE_r6QstAzgHcA@mail.gmail.com>
+Date:   Thu, 02 Sep 2021 21:13:24 +0200
+Message-ID: <87wnnybxkb.ffs@tglx>
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 2, 2021 at 11:21 AM Gao Xiang <xiang@kernel.org> wrote:
+On Thu, Sep 02 2021 at 08:47, Linus Torvalds wrote:
+> On Tue, Aug 31, 2021 at 2:18 PM Darrick J. Wong <djwong@kernel.org> wrote:
+>>
+>> As for new features: we now batch inode inactivations in percpu
+>> background threads, which sharply decreases frontend thread wait time
+>> when performing file deletions and should improve overall directory tree
+>> deletion times.
 >
-> Yeah, thanks. That was my first time to merge another tree due to hard
-> dependency like this. I've gained some experience from this and will be
-> more confident on this if such things happen in the future. :)
+> So no complaints on this one, but I do have a reaction: we have a lot
+> of these random CPU hotplug events, and XFS now added another one.
+>
+> I don't see that as a problem, but just the _randomness_ of these
+> callbacks makes me go "hmm". And that "enum cpuhp_state" thing isn't
+> exactly a thing of beauty, and just makes me think there's something
+> nasty going on.
 
-Well, being nervous about cross-tree merges is probably a good thing,
-and they *should* be fairly rare.
+It's not beautiful, but it's at least well defined in terms of ordering.
 
-So don't get over-confident and cocky ;^)
+Though if the entity which needs the callback does not care about
+ordering against other callbacks and just cares about the CPU state, in
+this case DEAD, then the explicit entry can be avoided and a dynamic
+entry can be requested:
 
-                  Linus
+     state = cpuhp_setup_state(CPUHP_BP_PREPARE_DYN, "xfs:foo", NULL, xfs_dead);
+
+We have also a dynamic range for the online part (CPUHP_AP_ONLINE_DYN)
+which runs on the incoming or outgoing CPU. That spares the explicit
+entries in the enum.
+
+I assume most of the prepare/dead states have no ordering requirement at
+all, so those could be converted to the dynamic range. But for the
+online one which run on the plugged CPU we have quite some ordering
+constraints and that's where the explicit states matter.
+
+That surely could be consolidated a bit if we pack the mutually
+exclusive ones (timers, interrupt controllers, perf), but the question
+is whether such packing (ifdeffery or arch/platform specific includes)
+would make it more beautiful. The only thing we'd spare would be some
+bytes in the actual state table in the core code. Whether that's worth
+it, I don't know.
+
+> For the new xfs usage, I really get the feeling that it's not that XFS
+> actually cares about the CPU states, but that this is literally tied
+> to just having percpu state allocated and active, and that maybe it
+> would be sensible to have something more specific to that kind of use.
+>
+> We have other things that are very similar in nature - like the page
+> allocator percpu caches etc, which for very similar reasons want cpu
+> dead/online notification.
+>
+> I'm only throwing this out as a reaction to this - I'm not sure
+> another interface would be good or worthwhile, but that "enum
+> cpuhp_state" is ugly enough that I thought I'd rope in Thomas for CPU
+> hotplug, and the percpu memory allocation people for comments.
+
+It's not only about memory. 
+
+> IOW, just _maybe_ we would want to have some kind of callback model
+> for "percpu_alloc()" and it being explicitly about allocations
+> becoming available or going away, rather than about CPU state.
+
+The per cpu storage in XFS does not go away. It contains a llist head
+and the queued work items need to be moved from the dead CPU to an alive
+CPU and exposed to a work queue for processing. Similar to what we do
+with timers, hrtimers and other stuff.
+
+If there are callbacks which are doing pretty much the same thing, then
+I'm all for a generic infrastructure for these.
+
+Thanks,
+
+        tglx
+
+
