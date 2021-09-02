@@ -2,123 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DD073FEAE6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Sep 2021 10:58:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E094F3FEEFF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Sep 2021 15:52:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244636AbhIBI7R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Sep 2021 04:59:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56730 "EHLO
+        id S239869AbhIBNxB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Sep 2021 09:53:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233507AbhIBI7R (ORCPT
+        with ESMTP id S232466AbhIBNw5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Sep 2021 04:59:17 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF192C061575
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Sep 2021 01:58:18 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id d16so2218888ljq.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Sep 2021 01:58:18 -0700 (PDT)
+        Thu, 2 Sep 2021 09:52:57 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C1B6C061760
+        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Sep 2021 06:51:58 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id q17so3030116edv.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Sep 2021 06:51:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=ynTKgypk1VDDD44vk6yO0HLlnLIx2rE/TpINeDq8d/U=;
-        b=oNUaRGDQsef93qfATq1ySQvFejDk5BZQupSNtWTF4ZiymdLFa1onfi9dJeSrgzkGPR
-         d0yVewm6WAw1Ep548mUQaqrdhikWlsqXBq2iGUhPRyc/vwy2b8Y47GCOhQq6ZUBXZTF4
-         GhwLtqdbIM7+10SJ0Hm68BU+TUjWIrpstboVGfbcjudazfJvbX3nCgPAETjBrh6JkgEg
-         EKUwg1fr0Q4eKiNSQdsCpRluY1Wziq8/SNjZaTJog6p0Z7FEolxrAlLDffqcAcUJ5QkX
-         yQSkKEnxZMLHAyLzx/cYiivG4GXeviI//C1SxST3O+RAab4Zx2u2/Ugbg9LNTvC8q/nt
-         WAlA==
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=sV4cn+GEhcdtXg9aDRpPOIs8C7SJiwcSKge0piQkjHM=;
+        b=EfagH3rYTV78jcOA+jKJRrfxGtJfTrD4gRkYsK39UuD/CK2U1q4NzepLyjJqvWVgzc
+         7uUGypz51kA5RvlsQK56veBhTSCTJnlntAV/znbUk8vQJTb+oBWLzEBHDLW7z7ugh0jN
+         P/YQBqGqfgsYbhuCwHEhVWhtncUZPZ+rEdzRM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=ynTKgypk1VDDD44vk6yO0HLlnLIx2rE/TpINeDq8d/U=;
-        b=fL1p5qELf/uAAsFtDvhuoWfMXZLPdfcQxHp1oO6MM49Xqc0BLs29vgNp4juXNTgMf3
-         QjOGJBlRzaZ8P6KIz8CZsC3Y1P/GEuq4W0hhR3sa/mCuEzJ4WeDNlLnK0ZyizVvpk9vj
-         +85+dhCQkRP3RpbRZ8PmvVM4yeWhcsp+15RVa6UKz4gwHiWO0nu3mv8a826iT/Wt/VQS
-         ga+YBbvXzpUSqXtryUZgVhB+cVBEHjGoMCe+YpkH3ALTR8feCTawjU6t6AXMH0FRziaA
-         cLc+Y5P7ReGWLuDzn9aLxOXqpQYGnKUQ+Wcl5QGPzpDqDdKT6MDXQtWBmdFFiC4LCrqr
-         yfNw==
-X-Gm-Message-State: AOAM531dcVyeIgXsPQFc6RlU0qmKzy0xMa8jml6nDcD1x4xwUnggRv9/
-        VClup7VF1RSpT8O0NOKZy3Y=
-X-Google-Smtp-Source: ABdhPJy3ew7WJCyi/bCvuSIo4ufaSxmSDgdYjwjHew1OxuaXVnxqQGb0EJb0DdQ98caX8jrj32pYbw==
-X-Received: by 2002:a2e:4949:: with SMTP id b9mr1682613ljd.159.1630573097321;
-        Thu, 02 Sep 2021 01:58:17 -0700 (PDT)
-Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id w16sm138162lfn.83.2021.09.02.01.58.16
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=sV4cn+GEhcdtXg9aDRpPOIs8C7SJiwcSKge0piQkjHM=;
+        b=Hxc+IPJCmBg4Lot8GQXbzTqc4nsBILsb3iyJpy21roR8IuVmgjARlNx+1nomSshnK2
+         ppp1CSvUlT286O8FXRRAekAEEGy1U9FDaIUk7QpnoiAhnoob3A9D/ImnAJDdXzoi73wX
+         +1EAk8Uxppb9uaUs+42ByvXKXpJiBTGiLJkM+TVXUHBQar8SLZhDK+00OZENzI+q/KpM
+         AN8uIQ053oLl3qeEOfFSk56gSCoHeBcSyS78PciQEfW0lTexuAxCvDB+9gk4xRo5+CSu
+         8/7AXS7kcRVPWIWb+KB6xiWJJ5oAJLJoiptV0908Kdf0sxd2hTP8PhgIeXQuGbGRqXbX
+         5eog==
+X-Gm-Message-State: AOAM533jVdEK2/I6IHD/aUMf/J7JrZZENue9WEW4QvGJKpW0BT5ROXFY
+        /k+NQmVgjyb8R7xcQadrptOJzA==
+X-Google-Smtp-Source: ABdhPJxRZEJvrX7u1muEOVAnKrmtJF6P0eWg8Xv+oR/FRc2y4+mj4YRRWZW0OCrHeE6T170yTIVubg==
+X-Received: by 2002:aa7:dace:: with SMTP id x14mr3627185eds.169.1630590716605;
+        Thu, 02 Sep 2021 06:51:56 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (catv-86-101-169-16.catv.broadband.hu. [86.101.169.16])
+        by smtp.gmail.com with ESMTPSA id d22sm1202634ejj.47.2021.09.02.06.51.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Sep 2021 01:58:16 -0700 (PDT)
-Date:   Thu, 2 Sep 2021 11:58:14 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jean-Pierre =?utf-8?B?QW5kcsOp?= <jean-pierre.andre@wanadoo.fr>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        ntfs-3g-devel <ntfs-3g-devel@lists.sourceforge.net>,
-        ntfs-3g-news <ntfs-3g-news@lists.sourceforge.net>
-Subject: Re: Stable NTFS-3G + NTFSPROGS 2021.8.22 Released
-Message-ID: <20210902085814.6a4ohjttgzemihe5@kari-VirtualBox>
-References: <d343b1d7-6587-06a5-4b60-e4c59a585498@wanadoo.fr>
- <YS0s8oEjE6gRN6XT@casper.infradead.org>
+        Thu, 02 Sep 2021 06:51:56 -0700 (PDT)
+Date:   Thu, 2 Sep 2021 15:51:53 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Subject: [GIT PULL] overlayfs update for 5.15
+Message-ID: <YTDW+b3x+5yMYVK0@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <YS0s8oEjE6gRN6XT@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 30, 2021 at 08:09:38PM +0100, Matthew Wilcox wrote:
-> On Mon, Aug 30, 2021 at 07:59:17PM +0200, Jean-Pierre André wrote:
-> > The NTFS-3G project globally aims at providing a stable NTFS driver. The
-> > project's advanced branch has specifically aimed at developing, maturing,
-> > and releasing features for user feedback prior to feature integration into
-> > the project's main branch.
-> 
-> So do I understand correctly ...
-> 
->  - We have an NTFS filesystem from Anton Altaparmakov in fs/ntfs which was
->    merged in 1997 and is read only.
->  - We have Paragon's NTFS3 in the process of being merged
->  - We have Tuxera's NTFS-3G hosted externally on Github that uses FUSE
-> 
-> Any other implementations of NTFS for Linux that we should know about?
-> Is there any chance that the various developers involved can agree to
-> cooperate on a single implementation?
+Hi Linus,
 
-I would also like to here about this from ntfs-3g guys. What do you even
-think about this whole ntfs3 kernel driver? My own opionion is that
-kernel really needs ntfs driver at it's own because it will greatly
-benefit growing iot device market and also maybe it will be in Android
-in same day. Also great performance boost with ntfs3 compared to
-ntfs-3g.
+Please pull from:
 
-It will be strange situation that we continue development from both
-sides.  ntfs-3g guys have only open source NTFSPROGS tools what is
-available. I like to note, that Paragon has sayd that they will open
-source their mkfs and fschk, but I will not count on that. That means
-that then there will be two tool set also. This is not good for users.
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-update-5.15
 
-After ntfs3 is merged to mainline we are three driver situation.
-Hopefully kernel ntfs driver can be dropper in year or two.
+- Copy up immutable/append/sync/noatime attributes (Amir Goldstein)
 
-One thing what we should at least share is testing. There is work that
-has been done for xfstests that ntfs3 and ntfs-3g will be supported:
-lore.kernel.org/fstests/YQoVXWRFGeY19onQ@mit.edu/
+- Improve performance by enabling RCU lookup.
 
-Xfstests will support also other fuse base drivers.
-lore.kernel.org/fstests/20210812045950.3190-1-bhumit.attarde01@gmail.com/
+- Misc fixes and improvements
 
-There is already support for ntfs3 and ntfs-3g for kvm-xfstests. This
-was done so that we know how these compare to each other. And can help
-decissions that is ntfs3 ready for mainline.
-github.com/tytso/xfstests-bld/commit/fa6410d922d38735a5f69345221f8eacb3ae1af
+The reason this touches so many files is that the ->get_acl() method now
+gets a "bool rcu" argument.  The ->get_acl() API was updated based on
+comments from Al and Linus:
 
-I do think that if ntfs3 will be solid and some remaining bugs will be
-solved it would make no sense to use ntfs-3g. So what do you think about
-all of this?
+  https://lore.kernel.org/linux-fsdevel/CAJfpeguQxpd6Wgc0Jd3ks77zcsAv_bn0q17L3VNnnmPKu11t8A@mail.gmail.com/
 
-Best regards
-Kari Argillander
+Thanks,
+Miklos
 
+---
+Amir Goldstein (5):
+      fs: add generic helper for filling statx attribute flags
+      ovl: pass ovl_fs to ovl_check_setxattr()
+      ovl: copy up sync/noatime fileattr flags
+      ovl: consistent behavior for immutable/append-only inodes
+      ovl: relax lookup error on mismatch origin ftype
+
+Chengguang Xu (2):
+      ovl: skip checking lower file's i_writecount on truncate
+      ovl: update ctime when changing fileattr
+
+Miklos Szeredi (3):
+      ovl: use kvalloc in xattr copy-up
+      vfs: add rcu argument to ->get_acl() callback
+      ovl: enable RCU'd ->get_acl()
+
+Vyacheslav Yurkov (3):
+      ovl: disable decoding null uuid with redirect_dir
+      ovl: add ovl_allow_offline_changes() helper
+      ovl: do not set overlay.opaque for new directories
+
+chenying (1):
+      ovl: fix BUG_ON() in may_delete() when called from ovl_cleanup()
+
+---
+ Documentation/filesystems/locking.rst   |   2 +-
+ Documentation/filesystems/overlayfs.rst |   3 +
+ Documentation/filesystems/vfs.rst       |   2 +-
+ fs/9p/acl.c                             |   5 +-
+ fs/9p/acl.h                             |   2 +-
+ fs/bad_inode.c                          |   2 +-
+ fs/btrfs/acl.c                          |   5 +-
+ fs/btrfs/ctree.h                        |   2 +-
+ fs/ceph/acl.c                           |   5 +-
+ fs/ceph/super.h                         |   2 +-
+ fs/erofs/xattr.c                        |   5 +-
+ fs/erofs/xattr.h                        |   2 +-
+ fs/ext2/acl.c                           |   5 +-
+ fs/ext2/acl.h                           |   2 +-
+ fs/ext4/acl.c                           |   5 +-
+ fs/ext4/acl.h                           |   2 +-
+ fs/f2fs/acl.c                           |   5 +-
+ fs/f2fs/acl.h                           |   2 +-
+ fs/fuse/acl.c                           |   5 +-
+ fs/fuse/fuse_i.h                        |   2 +-
+ fs/gfs2/acl.c                           |   5 +-
+ fs/gfs2/acl.h                           |   2 +-
+ fs/jffs2/acl.c                          |   5 +-
+ fs/jffs2/acl.h                          |   2 +-
+ fs/jfs/acl.c                            |   5 +-
+ fs/jfs/jfs_acl.h                        |   2 +-
+ fs/nfs/nfs3_fs.h                        |   2 +-
+ fs/nfs/nfs3acl.c                        |   5 +-
+ fs/ocfs2/acl.c                          |   5 +-
+ fs/ocfs2/acl.h                          |   2 +-
+ fs/orangefs/acl.c                       |   5 +-
+ fs/orangefs/inode.c                     |   7 +--
+ fs/orangefs/orangefs-kernel.h           |   2 +-
+ fs/overlayfs/copy_up.c                  |  83 ++++++++++++++++++++-----
+ fs/overlayfs/dir.c                      |  16 +++--
+ fs/overlayfs/inode.c                    | 105 +++++++++++++++++++++++++-------
+ fs/overlayfs/namei.c                    |   4 +-
+ fs/overlayfs/overlayfs.h                |  44 +++++++++++--
+ fs/overlayfs/super.c                    |   4 +-
+ fs/overlayfs/util.c                     |  92 ++++++++++++++++++++++++++--
+ fs/posix_acl.c                          |  15 ++++-
+ fs/reiserfs/acl.h                       |   2 +-
+ fs/reiserfs/xattr_acl.c                 |   5 +-
+ fs/stat.c                               |  18 ++++++
+ fs/xfs/xfs_acl.c                        |   5 +-
+ fs/xfs/xfs_acl.h                        |   4 +-
+ include/linux/fs.h                      |   8 ++-
+ include/linux/posix_acl.h               |   3 +-
+ include/linux/stat.h                    |   4 ++
+ 49 files changed, 424 insertions(+), 102 deletions(-)
