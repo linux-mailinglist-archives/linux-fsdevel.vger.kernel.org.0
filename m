@@ -2,140 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 580AB3FF00E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Sep 2021 17:22:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 989473FF043
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Sep 2021 17:33:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345778AbhIBPXq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Sep 2021 11:23:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:44731 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1345725AbhIBPXp (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Sep 2021 11:23:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630596165;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JjAGCB+wUR9bfmDDGweER9kazklYGOtSqRBC47EM9+I=;
-        b=Mv9PW4232vxdHPb97diMT5dJll1X0LmKC5lWk7CKGNwqnehgst6zTxZ9pq7HeJoBhAkKL+
-        9t3xGpr6qhzUDNCCuHHLgAlFwZLYqYe1qGoArhYlGStPREtsyhrJLem/rNkBCMr4uMskmx
-        aWvVTDktZ99olo5gqHhISQx2UzMs++w=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-246-pt0Vm-YRN3S039kDJd623Q-1; Thu, 02 Sep 2021 11:22:44 -0400
-X-MC-Unique: pt0Vm-YRN3S039kDJd623Q-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 157C8802C89;
-        Thu,  2 Sep 2021 15:22:43 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.8.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D17A60657;
-        Thu,  2 Sep 2021 15:22:39 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id C97D32281B4; Thu,  2 Sep 2021 11:22:38 -0400 (EDT)
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, dwalsh@redhat.com, dgilbert@redhat.com,
-        vgoyal@redhat.com, christian.brauner@ubuntu.com,
-        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, tytso@mit.edu, miklos@szeredi.hu,
-        gscrivan@redhat.com, bfields@redhat.com,
-        stephen.smalley.work@gmail.com, agruenba@redhat.com,
-        david@fromorbit.com
-Subject: [PATCH v3 1/1] xattr: Allow user.* xattr on symlink and special files
-Date:   Thu,  2 Sep 2021 11:22:28 -0400
-Message-Id: <20210902152228.665959-2-vgoyal@redhat.com>
-In-Reply-To: <20210902152228.665959-1-vgoyal@redhat.com>
-References: <20210902152228.665959-1-vgoyal@redhat.com>
+        id S1345849AbhIBPeK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Sep 2021 11:34:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57312 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234465AbhIBPeI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 2 Sep 2021 11:34:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 52A8E610CD;
+        Thu,  2 Sep 2021 15:33:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630596790;
+        bh=WwYdTWP6eNm+J5Il2EKANSs5L/HmsnHp5e3hmUJfBUg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=A4dHS+sw0sVgMoOs4ab8XO8E1JWv1xdOpnvBUhIGkzrIgp/Vrxy8AO6lFMvOdJ2VN
+         uqUDpGALQTD51UZivGlUovONCe/bL16WwCOMEV6oyDeX9ob3pjohfGLQIriwHVw3zC
+         astHWlG++5QQnQXWEQlUvZ+6xlZKULakXzuDEhFuOxoBdyjOPqwbbc/p6sov2ZeGmg
+         PoG/UScH30YwdA/4XhG1Ql2uG90sufLtmm1Ec58x1ugVLt5nt26uF4Aw8EnMxnPKzB
+         nmiGnXdbovq9NWIZDPZ6glaw8XaC46cjuXICGx58o/YbdKxhNkKQ3P8cfE62Z32Et1
+         VgnrIt3Y2sBjQ==
+Date:   Thu, 2 Sep 2021 08:33:09 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Shiyang Ruan <ruansy.fnst@fujitsu.com>, linux-xfs@vger.kernel.org,
+        dan.j.williams@intel.com, david@fromorbit.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nvdimm@lists.linux.dev, rgoldwyn@suse.de, viro@zeniv.linux.org.uk,
+        willy@infradead.org
+Subject: Re: [PATCH v8 6/7] xfs: support CoW in fsdax mode
+Message-ID: <20210902153309.GB9892@magnolia>
+References: <20210829122517.1648171-1-ruansy.fnst@fujitsu.com>
+ <20210829122517.1648171-7-ruansy.fnst@fujitsu.com>
+ <20210902074308.GE13867@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210902074308.GE13867@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently user.* xattr are not allowed on symlink and special files.
+On Thu, Sep 02, 2021 at 09:43:08AM +0200, Christoph Hellwig wrote:
+> On Sun, Aug 29, 2021 at 08:25:16PM +0800, Shiyang Ruan wrote:
+> > In fsdax mode, WRITE and ZERO on a shared extent need CoW performed.
+> > After that, new allocated extents needs to be remapped to the file.  Add
+> > an implementation of ->iomap_end() for dax write ops to do the remapping
+> > work.
+> 
+> Please split the new dax infrastructure from the XFS changes.
+> 
+> >  static vm_fault_t dax_iomap_pte_fault(struct vm_fault *vmf, pfn_t *pfnp,
+> > -			       int *iomap_errp, const struct iomap_ops *ops)
+> > +		int *iomap_errp, const struct iomap_ops *ops)
+> >  {
+> >  	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
+> >  	XA_STATE(xas, &mapping->i_pages, vmf->pgoff);
+> > @@ -1631,7 +1664,7 @@ static bool dax_fault_check_fallback(struct vm_fault *vmf, struct xa_state *xas,
+> >  }
+> >  
+> >  static vm_fault_t dax_iomap_pmd_fault(struct vm_fault *vmf, pfn_t *pfnp,
+> > -			       const struct iomap_ops *ops)
+> > +		const struct iomap_ops *ops)
+> 
+> These looks like unrelated whitespace changes.
+> 
+> > -static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+> > +loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+> >  {
+> >  	const struct iomap *iomap = &iter->iomap;
+> >  	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+> > @@ -918,6 +918,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+> >  
+> >  	return written;
+> >  }
+> > +EXPORT_SYMBOL_GPL(iomap_zero_iter);
+> 
+> I don't see why this would have to be exported.
+> 
+> > +	unsigned 		flags,
+> > +	struct iomap 		*iomap)
+> > +{
+> > +	int			error = 0;
+> > +	struct xfs_inode	*ip = XFS_I(inode);
+> > +	bool			cow = xfs_is_cow_inode(ip);
+> 
+> The cow variable is only used once, so I think we can drop it.
+> 
+> > +	const struct iomap_iter *iter =
+> > +				container_of(iomap, typeof(*iter), iomap);
+> 
+> Please comment this as it is a little unusual.
+> 
+> > +
+> > +	if (cow) {
+> > +		if (iter->processed <= 0)
+> > +			xfs_reflink_cancel_cow_range(ip, pos, length, true);
+> > +		else
+> > +			error = xfs_reflink_end_cow(ip, pos, iter->processed);
+> > +	}
+> > +	return error ?: iter->processed;
+> 
+> The ->iomap_end convention is to return 0 or a negative error code.
+> Also i'd much prefer to just spell this out in a normal sequential way:
+> 
+> 	if (!xfs_is_cow_inode(ip))
+> 		return 0;
+> 
+> 	if (iter->processed <= 0) {
+> 		xfs_reflink_cancel_cow_range(ip, pos, length, true);
+> 		return 0;
+> 	}
+> 
+> 	return xfs_reflink_end_cow(ip, pos, iter->processed);
 
-man xattr and recent discussion suggested that primary reason for this
-restriction is how file permissions for symlinks and special files
-are little different from regular files and directories.
+Seeing as written either contains iter->processed if it's positive, or
+zero if nothing got written or there were errors, I wonder why this
+isn't just:
 
-For symlinks, they are world readable/writable and if user xattr were
-to be permitted, it will allow unpriviliged users to dump a huge amount
-of user.* xattrs on symlinks without any control. (I think quota control
-still works with symlinks, just that quota is not typically deployed).
+	if (!xfs_is_cow_inode(ip));
+		return 0;
 
-For special files, permissions typically control capability to read/write
-from devices (and not necessarily from filesystem). So if a user can
-write to device (/dev/null), does not necessarily mean it should be allowed
-to write large number of user.* xattrs on the filesystem device node is
-residing in.
+	if (!written) {
+		xfs_reflink_cancel_cow_range(ip, pos, length, true);
+		return 0;
+	}
 
-This patch proposes to relax the restrictions a bit and allow file owner
-or privileged user (CAP_FOWNER), to be able to read/write user.* xattrs
-on symlink and special files.
+	return xfs_reflink_end_cow(ip, pos, written);
 
-Note, for special files, file mode bits represent permission to access
-device and not necessarily permission to read/write xattrs.
-Hence, inode_permission() is not called on special files and just
-being owner (or CAP_FOWNER) is enough to read/write user extended
-xattrs on special files.
+? (He says while cleaning up trying to leave for vacation, pardon me
+if this comment is totally boneheaded...)
 
-LSM will still get a chance to allow/deny this operation as xattr
-related security hooks are still called. (security_inode_setxattr(),
-security_inode_getxattr(), security_inode_removexattr(),
-security_inode_listxattr())
+--D
 
-virtiofs daemon has a need to store user.* xatrrs on all the files
-(including symlinks and special files), and currently that fails. This
-patch should help.
-
-Link: https://lore.kernel.org/linux-fsdevel/20210625191229.1752531-1-vgoyal@redhat.com/
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/xattr.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
-
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 5c8c5175b385..69be1681477f 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -120,13 +120,26 @@ xattr_permission(struct user_namespace *mnt_userns, struct inode *inode,
- 	}
- 
- 	/*
--	 * In the user.* namespace, only regular files and directories can have
--	 * extended attributes. For sticky directories, only the owner and
--	 * privileged users can write attributes.
-+	 * In the user.* namespace, for symlinks and special files, only
-+	 * the owner and priviliged users can read/write attributes.
-+	 * For sticky directories, only the owner and privileged users can
-+	 * write attributes.
- 	 */
- 	if (!strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN)) {
--		if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
--			return (mask & MAY_WRITE) ? -EPERM : -ENODATA;
-+		if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode)) {
-+			if (!inode_owner_or_capable(mnt_userns, inode)) {
-+				return (mask & MAY_WRITE) ? -EPERM : -ENODATA;
-+			}
-+			/*
-+			 * This is special file and file mode bits represent
-+			 * permission to access device and not
-+			 * necessarily permission to read/write xattrs.
-+			 * Hence do not call inode_permission() and return
-+			 * success.
-+			 */
-+			if (!S_ISLNK(inode->i_mode))
-+				return 0;
-+		}
- 		if (S_ISDIR(inode->i_mode) && (inode->i_mode & S_ISVTX) &&
- 		    (mask & MAY_WRITE) &&
- 		    !inode_owner_or_capable(mnt_userns, inode))
--- 
-2.31.1
-
+> > +static inline int
+> > +xfs_iomap_zero_range(
+> > +	struct xfs_inode	*ip,
+> > +	loff_t			pos,
+> > +	loff_t			len,
+> > +	bool			*did_zero)
+> > +{
+> > +	struct inode		*inode = VFS_I(ip);
+> > +
+> > +	return IS_DAX(inode)
+> > +			? dax_iomap_zero_range(inode, pos, len, did_zero,
+> > +					       &xfs_dax_write_iomap_ops)
+> > +			: iomap_zero_range(inode, pos, len, did_zero,
+> > +					       &xfs_buffered_write_iomap_ops);
+> > +}
+> 
+> 	if (IS_DAX(inode))
+> 		return dax_iomap_zero_range(inode, pos, len, did_zero,
+> 					    &xfs_dax_write_iomap_ops);
+> 	return iomap_zero_range(inode, pos, len, did_zero,
+> 				&xfs_buffered_write_iomap_ops);
+> 
+> > +static inline int
+> > +xfs_iomap_truncate_page(
+> > +	struct xfs_inode	*ip,
+> > +	loff_t			pos,
+> > +	bool			*did_zero)
+> > +{
+> > +	struct inode		*inode = VFS_I(ip);
+> > +
+> > +	return IS_DAX(inode)
+> > +			? dax_iomap_truncate_page(inode, pos, did_zero,
+> > +					       &xfs_dax_write_iomap_ops)
+> > +			: iomap_truncate_page(inode, pos, did_zero,
+> > +					       &xfs_buffered_write_iomap_ops);
+> > +}
+> 
+> Same here.
