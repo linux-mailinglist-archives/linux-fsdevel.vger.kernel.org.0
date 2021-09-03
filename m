@@ -2,89 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 183464002DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 18:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 102FA400367
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 18:34:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349902AbhICQFG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Sep 2021 12:05:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:25449 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1349806AbhICQFG (ORCPT
+        id S1350013AbhICQff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Sep 2021 12:35:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39492 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1349981AbhICQff (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Sep 2021 12:05:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630685045;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ElCv3KNatjZIL08Q3sItmtwzUZxx0adYt6QO0URmx6U=;
-        b=O784jtH66EpA5NkulR3nwfbfk51bkuOTbKAKJ5aEpg3W5sizQnoxgh0kWp7ZwSc6UM+80E
-        gZ4+Hdw+AiG9XeqDihAOhB0i5WY/5CpW659sq8tLC1WU3f5Iy86XF5bSD5s6j/FfXY+SG+
-        KjHlEtsNNhLjw5DpvyUJGYxU6tuehT8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-202-zuax0mlmOp2jXY4hSL0i8w-1; Fri, 03 Sep 2021 12:04:02 -0400
-X-MC-Unique: zuax0mlmOp2jXY4hSL0i8w-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3AA6A180FD93;
-        Fri,  3 Sep 2021 16:04:01 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.8.130])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 827F9100EBC1;
-        Fri,  3 Sep 2021 16:03:57 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 2158A220257; Fri,  3 Sep 2021 12:03:57 -0400 (EDT)
-Date:   Fri, 3 Sep 2021 12:03:57 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Bruce Fields <bfields@redhat.com>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        fstests <fstests@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, virtio-fs@redhat.com,
-        Daniel Walsh <dwalsh@redhat.com>,
-        David Gilbert <dgilbert@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        selinux@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        stephen.smalley.work@gmail.com, Dave Chinner <david@fromorbit.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 3/1] xfstests: generic/062: Do not run on newer kernels
-Message-ID: <YTJHbaFGJOn4TNj8@redhat.com>
-References: <20210902152228.665959-1-vgoyal@redhat.com>
- <YTDyE9wVQQBxS77r@redhat.com>
- <CAHc6FU4ytU5eo4bmJcL6MW+qJZAtYTX0=wTZnv4myhDBv-qZHQ@mail.gmail.com>
- <CAHc6FU5quZWQtZ3fRfM_ZseUsweEbJA0aAkZvQEF5u9MJhrqdQ@mail.gmail.com>
- <CAPL3RVH9MDoDAdiZ-nm3a4BgmRyZJUc_PV_MpsEWiuh6QPi+pA@mail.gmail.com>
- <YTJCjGH0V5yzMnQB@redhat.com>
- <CAPL3RVFB67-AqZrjjfxueQF1Jw=LmKWzCk3Ur94EjUotYMw0AA@mail.gmail.com>
+        Fri, 3 Sep 2021 12:35:35 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 096F8C061575
+        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Sep 2021 09:34:35 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id f18so12814020lfk.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Sep 2021 09:34:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PGwJPrU2ymA9P5fTXacx3Qx7nyhlT5Ql+hJVxARh6kE=;
+        b=K1rpsMJtFquFY0qt0aI/UI9kou+zwJyr90hh+Vza9DcECr82hORBsg2aFd3wZYBMyW
+         mxSJGjFZE1t/C6jfyYk7elauPxHWpv1yEHosEvvwTsPovx6P/GaYLx1qmSOFYXAnwgSc
+         ifABx5ircSoY9atjYL5bS6LS1nIcyTGaPGEEI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PGwJPrU2ymA9P5fTXacx3Qx7nyhlT5Ql+hJVxARh6kE=;
+        b=iYU23Vj295putqMIRg/fy++csefdXdGXFm1EdLhD7uKb1j3+yECfGli+fZEq4N2Dmg
+         t9QnLWjCs839YQEKv3K5isCOic+fpT0VHmTHHatvnAoIPJXT8s/2rdebjqNz5hfCQ64T
+         n/zQsXteVTxt5t9pc+RIyPlLTzEVIj9gzZ5eCihvT1ylTntEkOFIAfKq3xAl/UEADXez
+         Z+u0VXDozrqDb7+G8h2FilHlObypCKE8NAKBNjsLJM1Q57T55R7aiWxUxhMPinP/tReV
+         Ia3FabrOxXuk6/1CWasg0OyGLeA0o63UN7wZs3LxmlSt5UWDWFmRs25es59uC79uJ4s1
+         k9xQ==
+X-Gm-Message-State: AOAM531KgbL9R4dEp6NNp5PtdYdG19cF4nZPAMViRfy/6zY1fwua99w+
+        Aj1WiKhhHX8VD5pYzoK1S8i5xpLKOHvsqH80xYI=
+X-Google-Smtp-Source: ABdhPJxl3i0OOZrEsIz4isOsOg+Xqz+8Lz9r23onJ/3anuvZgMscIDOZd3331b2GECgMX9QUviDKnQ==
+X-Received: by 2002:a05:6512:38ae:: with SMTP id o14mr3580812lft.227.1630686873246;
+        Fri, 03 Sep 2021 09:34:33 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id x13sm596310lfa.260.2021.09.03.09.34.33
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Sep 2021 09:34:33 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id q21so10426814ljj.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Sep 2021 09:34:33 -0700 (PDT)
+X-Received: by 2002:a2e:8107:: with SMTP id d7mr3678393ljg.68.1630686392088;
+ Fri, 03 Sep 2021 09:26:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPL3RVFB67-AqZrjjfxueQF1Jw=LmKWzCk3Ur94EjUotYMw0AA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <20210816194840.42769-1-david@redhat.com> <7c57a16b-8184-36a3-fcdc-5e751184827b@redhat.com>
+In-Reply-To: <7c57a16b-8184-36a3-fcdc-5e751184827b@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 3 Sep 2021 09:26:16 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whghWSYo498cKaK9VLwBKKW0uMynwPT3zpnEG73MfKqUA@mail.gmail.com>
+Message-ID: <CAHk-=whghWSYo498cKaK9VLwBKKW0uMynwPT3zpnEG73MfKqUA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] Remove in-tree usage of MAP_DENYWRITE
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Steven Price <steven.price@arm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Peter Xu <peterx@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Marco Elver <elver@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        linux-unionfs@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 03, 2021 at 11:50:43AM -0400, Bruce Fields wrote:
-> On Fri, Sep 3, 2021 at 11:43 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > On Fri, Sep 03, 2021 at 10:42:34AM -0400, Bruce Fields wrote:
-> > > Well, we could also look at supporting trusted.* xattrs over NFS.  I
-> > > don't know much about them, but it looks like it wouldn't be a lot of
-> > > work to specify, especially now that we've already got user xattrs?
-> > > We'd just write a new internet draft that refers to the existing
-> > > user.* xattr draft for most of the details.
-> >
-> > Will be nice if we can support trusted.* xattrs on NFS.
-> 
-> Maybe I should start a separate thread for that.  Who would need to be
-> on it to be sure we get this right?
+On Fri, Sep 3, 2021 at 2:45 AM David Hildenbrand <david@redhat.com> wrote:
+>
+> So, how do we want to continue with this? Pick it up for v5.15? Have it
+> in -next for a while and eventually pick it up for v5.16?
 
-I will like to be on cc list.
+I'm ok with the series. If you have a git tree, do the normal pull
+request, and we can do it for 5.15 and see if anybody notices.
 
-Vivek
+As you say, any final removal of ETXTBSY should be a separate and
+later patch on top.
 
+            Linus
