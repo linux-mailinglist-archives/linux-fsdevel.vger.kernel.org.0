@@ -2,107 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6051B3FFA05
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 07:31:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA593FFA5D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 08:27:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233634AbhICFcA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Sep 2021 01:32:00 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:44553 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232553AbhICFb7 (ORCPT
+        id S235351AbhICG2B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Sep 2021 02:28:01 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:48570 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230128AbhICG2A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Sep 2021 01:31:59 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R881e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Un3x3K1_1630647058;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Un3x3K1_1630647058)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 03 Sep 2021 13:30:58 +0800
-Subject: Re: [PATCH v4 0/8] fuse,virtiofs: support per-file DAX
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>
-References: <20210817022220.17574-1-jefflexu@linux.alibaba.com>
- <CAJfpeguw1hMOaxpDmjmijhf=-JEW95aEjxfVo_=D_LyWx8LDgw@mail.gmail.com>
- <YRut5sioYfc2M1p7@redhat.com>
- <6043c0b8-0ff1-2e11-0dd0-e23f9ff6b952@linux.alibaba.com>
- <CAJfpegv01k5hEyJ3LPDWJoqB+vL8hwTan9dLu1pkkD0xoRuFzw@mail.gmail.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <a1d891b5-f8ef-b5fe-c20c-e3e01203b368@linux.alibaba.com>
-Date:   Fri, 3 Sep 2021 13:30:58 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        Fri, 3 Sep 2021 02:28:00 -0400
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1630650419;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Oj03gZFgBKlneXTLuFlpjosq+qsCnLlz6Tsf57RrU6U=;
+        b=UxCO301dAkvC1O6CEFSs9BDF/EHWaGq74xuu22aOSKeDxyiG15pXQ8UdzD+GMCWD7qI2fy
+        1okhBIFuVJXPh18K9KmQXoAZmndIa7mAif+MJIC0m77cZqFlZPWn0jCziqOparFdWWg8Ln
+        OTKZ0Nv0FbxBGulDLACNIMI0f4i6IYRnxCcFGnsSLdcYXxlfncPuartw/17m5N75tPNhQ3
+        vWxLcBKMUq8fVXX9LT31xa70mOlZz9Wf50c3274w7i87yNQG9bCqGZCFPeEn6k8HsBsNj5
+        9y7uRrO8AIlOopb20+7C6qICj3fvhfZWyMpqG4VZYpTx4vzk3bAzpG67V9Z+ag==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1630650419;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Oj03gZFgBKlneXTLuFlpjosq+qsCnLlz6Tsf57RrU6U=;
+        b=w5/p55F8WBEP8YihYst5Fz3ycPHwF6J50NOGKBuCgwVsb5tcD0J8VxMchQOyY3ysNKvBlx
+        dcqIrcLg4xwxFrCg==
+To:     Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [GIT PULL] xfs: new code for 5.15
+In-Reply-To: <20210902223545.GA1826899@dread.disaster.area>
+References: <20210831211847.GC9959@magnolia>
+ <CAHk-=whyVPgkAfARB7gMjLEyu0kSxmb6qpqfuE_r6QstAzgHcA@mail.gmail.com>
+ <20210902174311.GG9942@magnolia>
+ <20210902223545.GA1826899@dread.disaster.area>
+Date:   Fri, 03 Sep 2021 08:26:58 +0200
+Message-ID: <87a6kub2dp.ffs@tglx>
 MIME-Version: 1.0
-In-Reply-To: <CAJfpegv01k5hEyJ3LPDWJoqB+vL8hwTan9dLu1pkkD0xoRuFzw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Dave,
 
+On Fri, Sep 03 2021 at 08:35, Dave Chinner wrote:
+> On Thu, Sep 02, 2021 at 10:43:11AM -0700, Darrick J. Wong wrote:
+> The part I dislike most about it is that we have to modify a header
+> file that triggers full kernel rebuilds. Managing patch stacks and
+> branches where one of them modifies such a header file means quick,
+> XFS subsystem only kernel rebuilds are a rare thing...
 
-On 8/17/21 10:08 PM, Miklos Szeredi wrote:
-> On Tue, 17 Aug 2021 at 15:22, JeffleXu <jefflexu@linux.alibaba.com> wrote:
->>
->>
->>
->> On 8/17/21 8:39 PM, Vivek Goyal wrote:
->>> On Tue, Aug 17, 2021 at 10:06:53AM +0200, Miklos Szeredi wrote:
->>>> On Tue, 17 Aug 2021 at 04:22, Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
->>>>>
->>>>> This patchset adds support of per-file DAX for virtiofs, which is
->>>>> inspired by Ira Weiny's work on ext4[1] and xfs[2].
->>>>
->>>> Can you please explain the background of this change in detail?
->>>>
->>>> Why would an admin want to enable DAX for a particular virtiofs file
->>>> and not for others?
->>>
->>> Initially I thought that they needed it because they are downloading
->>> files on the fly from server. So they don't want to enable dax on the file
->>> till file is completely downloaded.
->>
->> Right, it's our initial requirement.
->>
->>
->>> But later I realized that they should
->>> be able to block in FUSE_SETUPMAPPING call and make sure associated
->>> file section has been downloaded before returning and solve the problem.
->>> So that can't be the primary reason.
->>
->> Saying we want to access 4KB of one file inside guest, if it goes
->> through FUSE request routine, then the fuse daemon only need to download
->> this 4KB from remote server. But if it goes through DAX, then the fuse
->> daemon need to download the whole DAX window (e.g., 2MB) from remote
->> server, so called amplification. Maybe we could decrease the DAX window
->> size, but it's a trade off.
-> 
-> That could be achieved with a plain fuse filesystem on the host (which
-> will get 4k READ requests for accesses to mapped area inside guest).
-> Since this can be done selectively for files which are not yet
-> downloaded, the extra layer wouldn't be a performance problem.
-> 
-> Is there a reason why that wouldn't work?
+If you don't care about ordering, you can avoid touching the global
+header completely. The dynamic state ranges in PREPARE and ONLINE
+provide exactly what you want. It's documented.
 
-I didn't realize this mechanism (working around from user space) before
-sending this patch set.
+> That said, I'm all for a better interface to the CPU hotplug
+> notifications. THe current interface is ... esoteric and to
 
-After learning the virtualization and KVM stuffs, I find that, as Vivek
-Goyal replied in [1], virtiofsd/qemu need to somehow hook the user page
-fault and then download the remained part.
+What's so esoteric about:
 
-IMHO, this mechanism (as you proposed by implementing a plain fuse
-filesystem on the host) seems a little bit sophisticated so far.
+       state = cpuhp_setup_state(CPUHP_BP_PREPARE_DYN, "xfs:prepare", func1, func2);
+       state = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "xfs:online", func3, func4);
 
+Only if you care about callback ordering vs. other subsystems, then adding
+the state in the global header is required. It's neither the end of the
+world, nor is it rocket science and requires expert knowledge to do so.
 
-[1] https://lore.kernel.org/linux-fsdevel/YR08KnP8cO8LjKY7@redhat.com/
+> understand how to use it effectively requires becoming a CPU hotplug
+> expert.
 
+  https://www.kernel.org/doc/html/latest/core-api/cpu_hotplug.html
 
--- 
+If there is something missing in that documentation which makes you
+think you need to become a CPU hotplug expert, please let me know. I'm
+happy to expand that document.
+
+> There's something to be said for the simplicity of the old
+> register_cpu_notifier() interface we used to have...
+
+There is a lot to be said about it. The simplicity of it made people do
+the most hillarious things to deal with:
+
+  - Ordering issues including build order dependencies
+  - Asymetry between bringup and teardown
+  - The inability to test state transitions
+  - ....
+
+Back then when we converted the notifier mess 35 of ~140 hotplug
+notifiers (i.e. ~25%) contained bugs of all sorts. Quite some of them
+were caused by the well understood simplicity of the hotplug notifier
+mechanics. I'm surely not missing any of that.
+
 Thanks,
-Jeffle
+
+        tglx
