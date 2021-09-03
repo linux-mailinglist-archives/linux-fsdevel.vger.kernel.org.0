@@ -2,137 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF3DB4004FF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 20:41:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 754E9400547
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 20:47:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349070AbhICSmC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Sep 2021 14:42:02 -0400
-Received: from mail-pf1-f174.google.com ([209.85.210.174]:36678 "EHLO
-        mail-pf1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235623AbhICSmB (ORCPT
+        id S1350656AbhICSsj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Sep 2021 14:48:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42200 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350802AbhICSsd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Sep 2021 14:42:01 -0400
-Received: by mail-pf1-f174.google.com with SMTP id m26so199608pff.3;
-        Fri, 03 Sep 2021 11:41:01 -0700 (PDT)
+        Fri, 3 Sep 2021 14:48:33 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C438C0613C1
+        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Sep 2021 11:47:33 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id d16so285842ljq.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Sep 2021 11:47:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DxQ+Qr7YPaLGE685i8Qhsb70C5/CP3uq+dG10rbYZ70=;
+        b=aeAOf1HhD/MVvJF7n6CgbrcTB3IqvXzZ7V9Bso2CuLxbnXtu5olMXAQM4VeDrdy8Il
+         Z8RH0YAw/8fqOzLfZTyVHjhoHWLsbs/W4ZXj9+gKfNOL7/w6NZJj3tUns7Sw1uoKMP32
+         3b3KouBf10B7N3ZLkloX1nWHTqjSNyQJPy528=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9kPuIw929oCM1hqjF6X0SykrffHZeMAV4qwiEqQpqlM=;
-        b=BgjtggZTslnnwvdyD/SXLFxsloepagk62cv0/tzYi77T3haRXMH5Yagbmy0bRDBDjK
-         MxEzKXwZOwnX7VTk4laTRXNH5uYQ7u5AWecSD6GTfON0d19Kr+EC0jka7Cy/JkK8UmRw
-         ukzhfpfXqKp9lu7gfTiH0u0ekw4/2cVXtrSPsNT984XtDsOKhifg2eiybBZVu0ftVqqR
-         XtHk5DhBcLRml5Cr7wPyw/PHLHi5GVNdbpRF2ZT3QsQOmqx9ZxjvX5Sd8C7UW1i1QQdK
-         a5gbYddxEjOoV3fbYzfcF/USVCBbk6tPyr2u9jVBhChi4hOUrJL4JV8iPmd5bo8Knfrs
-         zpAA==
-X-Gm-Message-State: AOAM5306MnVj6nvmB5xkirtWth+gZSXdCXOFXIROhFbLGYvl1YOO1b3h
-        JWj3lY/C4eaQG8Qw2wi+jaWBIE5ZoeQ=
-X-Google-Smtp-Source: ABdhPJyz1h2DoGc/xJZP3bPKJyUeJuf87D1bJQ4ZAsjg4pOPDrls990UTw78VYyy+bxgODCmcNmpCg==
-X-Received: by 2002:aa7:8d46:0:b029:3cd:c2fd:fea5 with SMTP id s6-20020aa78d460000b02903cdc2fdfea5mr218631pfe.31.1630694460564;
-        Fri, 03 Sep 2021 11:41:00 -0700 (PDT)
-Received: from fedora ([104.192.206.22])
-        by smtp.gmail.com with ESMTPSA id c26sm109821pgl.10.2021.09.03.11.40.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Sep 2021 11:40:59 -0700 (PDT)
-Date:   Fri, 3 Sep 2021 14:40:58 -0400
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [GIT PULL] xfs: new code for 5.15
-Message-ID: <YTJsOoqaI3FiTkZD@fedora>
-References: <20210831211847.GC9959@magnolia>
- <CAHk-=whyVPgkAfARB7gMjLEyu0kSxmb6qpqfuE_r6QstAzgHcA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DxQ+Qr7YPaLGE685i8Qhsb70C5/CP3uq+dG10rbYZ70=;
+        b=NptPPDhvyFWIlrcyKgz1NDXXZmORbIdSDxNfX6R0VKSh8phy1ZoKwgVeNNPCvRUeE6
+         ujNcYC4gpVKeZPE6TWsen/AtrY90S21QgB2Fw4oK+MPvhHDR8qljtHRtf8EcHS/+FQkk
+         vDeaoc+1PW2MriPTNnNo4sQd+0V48eCpoN2VafNnUxYczI7J4+WbtQTQ4O7xDsvCyb0R
+         A5AtoFIe4bkgIFvjGlHkwnyV7CnyGWGbXqDplJutFL2zIo9836LRzkHCAy5OMISiLm58
+         R3Z6BygXMX/KhCCvDE5X+ndjOQytNjf4RO+dQ+g/wWWQNElthzW3RD/1lB9B+YfPB6Fh
+         mzdQ==
+X-Gm-Message-State: AOAM533kTBkIuSxwMDdK1G5Ro7edpl5+8N2THlSTJ+ux1/3FF71JwZR9
+        PXxaGBEpMZJxju6KovhxEr8oGWqsVo22+BZMZc8=
+X-Google-Smtp-Source: ABdhPJz8JmR/8O0u3StucWXcFc9YGGsJOi1ZbJgLt+nSEIVbO8DFaym2ydBkOSEvKHooIg4FBRfDXw==
+X-Received: by 2002:a2e:b014:: with SMTP id y20mr300585ljk.311.1630694850780;
+        Fri, 03 Sep 2021 11:47:30 -0700 (PDT)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id x7sm23727lfe.61.2021.09.03.11.47.29
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Sep 2021 11:47:29 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id t12so119357lfg.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Sep 2021 11:47:29 -0700 (PDT)
+X-Received: by 2002:a05:6512:3987:: with SMTP id j7mr269355lfu.280.1630694848707;
+ Fri, 03 Sep 2021 11:47:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whyVPgkAfARB7gMjLEyu0kSxmb6qpqfuE_r6QstAzgHcA@mail.gmail.com>
+References: <20210827164926.1726765-1-agruenba@redhat.com> <CAHk-=wiUtyoTWuzroNJQwQDM9GHRXvq4974VL=y8T_3tUxDbkA@mail.gmail.com>
+ <CAHc6FU7K0Ho=nH6fCK+Amc7zEg2G31v+gE3920ric3NE4MfH=A@mail.gmail.com>
+ <CAHk-=wjUs8qy3hTEy-7QX4L=SyS85jF58eiT2Yq2YMUdTFAgvA@mail.gmail.com> <YTJoqq0fVB+xAB7w@zeniv-ca.linux.org.uk>
+In-Reply-To: <YTJoqq0fVB+xAB7w@zeniv-ca.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 3 Sep 2021 11:47:12 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whVNs=67KdMg21wxQdKuOJNg2p3d9t6dX-u3Jw+tzxjoQ@mail.gmail.com>
+Message-ID: <CAHk-=whVNs=67KdMg21wxQdKuOJNg2p3d9t6dX-u3Jw+tzxjoQ@mail.gmail.com>
+Subject: Re: [PATCH v7 00/19] gfs2: Fix mmap + page fault deadlocks
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Paul Mackerras <paulus@ozlabs.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Sep 3, 2021 at 11:28 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> FWIW, my objections regarding the calling conventions are still there.
 
-On Thu, Sep 02, 2021 at 08:47:42AM -0700, Linus Torvalds wrote:
-> On Tue, Aug 31, 2021 at 2:18 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > As for new features: we now batch inode inactivations in percpu
-> > background threads, which sharply decreases frontend thread wait time
-> > when performing file deletions and should improve overall directory tree
-> > deletion times.
-> 
-> So no complaints on this one, but I do have a reaction: we have a lot
-> of these random CPU hotplug events, and XFS now added another one.
-> 
-> I don't see that as a problem, but just the _randomness_ of these
-> callbacks makes me go "hmm". And that "enum cpuhp_state" thing isn't
-> exactly a thing of beauty, and just makes me think there's something
-> nasty going on.
-> 
-> For the new xfs usage, I really get the feeling that it's not that XFS
-> actually cares about the CPU states, but that this is literally tied
-> to just having percpu state allocated and active, and that maybe it
-> would be sensible to have something more specific to that kind of use.
-> 
-> We have other things that are very similar in nature - like the page
-> allocator percpu caches etc, which for very similar reasons want cpu
-> dead/online notification.
-> 
-> I'm only throwing this out as a reaction to this - I'm not sure
-> another interface would be good or worthwhile, but that "enum
-> cpuhp_state" is ugly enough that I thought I'd rope in Thomas for CPU
-> hotplug, and the percpu memory allocation people for comments.
-> 
-> IOW, just _maybe_ we would want to have some kind of callback model
-> for "percpu_alloc()" and it being explicitly about allocations
-> becoming available or going away, rather than about CPU state.
-> 
-> Comments?
-> 
+So I'm happy to further change the calling conventions, but by now
+_that_ part is most definitely a "not this merge window". The need for
+that ternary state is still there.
 
-I think there are 2 pieces here from percpu's side:
-A) Onlining and offlining state related to a percpu alloc.
-B) Freeing backing memory of an allocation wrt hot plug.
+It might go away in the future, but I think that's literally that: a
+future cleanup. Not really related to the problem at hand.
 
-An RFC was sent out for B) in [1] and you need A) for B).
-I can see percpu having a callback model for basic allocations that are
-independent, but for anything more complex, that subsystem would need to
-register with hotplug anyway. It appears percpu_counter already has hot
-plug support. percpu_refcount could be extended as well, but more
-complex initialization like the runqueues and slab related allocations
-would require work. In short, yes I think A) is doable/reasonable.
-
-Freeing the backing memory for A) seems trickier. We would have to
-figure out a clean way to handle onlining/offlining racing with new
-percpu allocations (adding or removing pages for the corresponding cpu's
-chunk). To support A), init and onlining/offlining can be separate
-phases, but for B) init/freeing would have to be rolled into
-onlining/offlining.
-
-Without freeing, it's not incorrect for_each_online_cpu() to read a dead
-cpu's percpu values, but with freeing it does.
-
-I guess to summarize, A) seems like it might be a good idea with
-init/destruction happening at allocation/freeing times. I'm a little
-skeptical of B) in terms of complexity. If y'all think it's a good idea
-I can look into it again.
-
-[1] https://lore.kernel.org/lkml/20210601065147.53735-1-bharata@linux.ibm.com/
-
-Thanks,
-Dennis
-
-> > Lastly, with this release, two new features have graduated to supported
-> > status: inode btree counters (for faster mounts), and support for dates
-> > beyond Y2038.
-> 
-> Oh, I had thought Y2038 was already a non-issue for xfs. Silly me.
-> 
->               Linus
+              Linus
