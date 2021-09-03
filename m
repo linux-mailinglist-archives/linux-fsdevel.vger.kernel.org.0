@@ -2,53 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F6C33FFB01
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 09:20:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 155F43FFBB9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 10:20:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347769AbhICHUn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Sep 2021 03:20:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52664 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234803AbhICHUn (ORCPT
+        id S1348150AbhICIS2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Sep 2021 04:18:28 -0400
+Received: from mail-il1-f198.google.com ([209.85.166.198]:49897 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348208AbhICIS1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Sep 2021 03:20:43 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20AE6C061575;
-        Fri,  3 Sep 2021 00:19:44 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id n18so4701044pgm.12;
-        Fri, 03 Sep 2021 00:19:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=EtHM4v5k5O3KlwBMZhh8koyco/MnfcbrVJgA5dm1qn8=;
-        b=F9PFlCkm33EtYjpX+K573ijdvJANomBO1wtE8R0RzBOXMHpLk3mRk9nbOt2hSmpNUw
-         z8PJGz5mrdVrJRYQbnSWbRqAS8nVBYCBtl24Z0/kyBVb9ecFkYSnOBlawIqMYZNJY0B+
-         QY7Wdr0Vz7W8S4fgKhtG1sSIFsNVI5c+gpJOl5uAkErHTDU87J1aL+1nc9iMtVjKPXN2
-         PywU0bFjVO45nsHK84nG5KhqiXzFg2e1gi1YSlTAq+4thmdKQfpZCf2XB62g0MmzqTiU
-         SVv74oc5oD86H5yVeWPlKvk6jNf2+PaIcA1TR1wdTQariXp3kh3GI6SmL/i5qV1KM/53
-         70Bg==
+        Fri, 3 Sep 2021 04:18:27 -0400
+Received: by mail-il1-f198.google.com with SMTP id a15-20020a92444f000000b0022473393120so3012264ilm.16
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Sep 2021 01:17:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=EtHM4v5k5O3KlwBMZhh8koyco/MnfcbrVJgA5dm1qn8=;
-        b=rAF5yMikfZ6QpVrykClu/6WqDCAq2Ymxc/xbd/+LKxdFzMP9lXtE31WJ4v+QinA1o6
-         6jVDkHM3hQNd8TEDc60dMAnLgPkWkiqARyRJbq/AgKBiJmu/zeT692xOytlG1exdqcdF
-         ZdGBSP24vkF2qwN7NEUVyZcohJz64jgSzKgoAf6thxkLz196QbDEa/NOinFgSTL0bWLA
-         4D2B72uAJ4XJhh0xK6vjJBT7bl2yE6/pLnUrd1yiw74RCZr2l69Zv1lVSsp4nBtedU28
-         M/axY7CpeZlOXYxM3sBH+vWdIomQrWc3IOCEAWYj8weWexnEMMv4az22tbBJ0VVy8JUN
-         Xk+w==
-X-Gm-Message-State: AOAM5327Hqhh8Pxj0pxVXEwQFa6CW9cwXfH8QbecAF+ht59ulpq18dhb
-        be7C3z2bOoa5hYqWV8HxE/TCY1RZFWm3hVoIOq453wMY/1x54Ok=
-X-Google-Smtp-Source: ABdhPJwBJIRPqih+MTR2z3I0l3K1rAmRz8Kk/8qR523Uc9kTLyhPedhSny3S4QoRc9jylVwZZMyoeODiABxMMyX8r1s=
-X-Received: by 2002:a63:3d4a:: with SMTP id k71mr2395401pga.276.1630653583232;
- Fri, 03 Sep 2021 00:19:43 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=tfvtLiUT4IaCn9QAU0VwLMarYZMVolpROY2rWNmu4G0=;
+        b=WH4Mv8abTHykxqH9sOr16otxfuf1QUilWXZfXTLL8GKk2Tuhaw2ag/plyQRJH8kovi
+         2o8ewJjqvO/Yvoh8MwX23mzardnRQBg53FwjzY7hUPh4F/oxxu3kdT+AP55VQgyKgcsA
+         kfcLdYOIeeWT4Bhb3uzF+ttfawLPzbLs8WJgxyq7AcGVRdoJBXrUGCzXPWQsiCcpTneD
+         PvZP5rFduc7Lq+KyXJ1X7dXYUv3wF+EV2b7/l9GPv9BkFGZedbzgN0ueF7f791skTHvb
+         JavZ6pdzPLxDuubGt/qs7Ahc8Qrco0hkY5QFFfvCmMhw0ZyUZLqRBe5i/txMKE0fXPTK
+         yI1Q==
+X-Gm-Message-State: AOAM53200EYNpF/f+dNtLVq+We/Hg4OlhKdfTcqMAHM3qf61YfZUkjRv
+        BCuMnyCZ1pX6PCaW+c8AtF/hDSbmvbvrfAVH7+qiQrFR/uGZ
+X-Google-Smtp-Source: ABdhPJzfz4gaPKUc7jyEWIObv1NCfiEng1vK8nMopIe/KDvv1fazo9sDXzFEtbVjPakjBTjUuTGWYYPaVdDDS6wFn3vVjeKgmy0Y
 MIME-Version: 1.0
-From:   Hao Sun <sunhao.th@gmail.com>
-Date:   Fri, 3 Sep 2021 15:19:32 +0800
-Message-ID: <CACkBjsZh7DCs+N+R=0+mnNqFZW8ck5cSgV4MpGM6ySbfenUJ+g@mail.gmail.com>
-Subject: kernel BUG in block_invalidatepage
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+X-Received: by 2002:a05:6e02:805:: with SMTP id u5mr1658101ilm.223.1630657047580;
+ Fri, 03 Sep 2021 01:17:27 -0700 (PDT)
+Date:   Fri, 03 Sep 2021 01:17:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001256e405cb12eed9@google.com>
+Subject: [syzbot] INFO: task can't die in mark_held_locks
+From:   syzbot <syzbot+fe9fdd59a80d52730e2a@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -56,86 +45,62 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hello,
 
-When using Healer to fuzz the latest Linux kernel, the following crash
-was triggered.
+syzbot found the following issue on:
 
-HEAD commit: 7d2a07b76933 Linux 5.14
-git tree: upstream
-console output:
-https://drive.google.com/file/d/1Z-djyuwIRtlIKNHdLxoUnr8NqDu9zd9S/view?usp=sharing
-kernel config: https://drive.google.com/file/d/1XD9WYDViQLSXN7RGwH8AGGDvP9JvOghx/view?usp=sharing
+HEAD commit:    5e63226c7228 Add linux-next specific files for 20210827
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a143a9300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9c03a8fdabc6b3ae
+dashboard link: https://syzkaller.appspot.com/bug?extid=fe9fdd59a80d52730e2a
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
 
-Sorry, I don't have a reproducer for this crash, hope the symbolized
-report can help.
-If you fix this issue, please add the following tag to the commit:
-Reported-by: Hao Sun <sunhao.th@gmail.com>
+Unfortunately, I don't have any reproducer for this issue yet.
 
-------------[ cut here ]------------
-kernel BUG at fs/buffer.c:1510!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 8695 Comm: syz-executor Not tainted 5.14.0 #25
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.13.0-1ubuntu1.1 04/01/2014
-RIP: 0010:block_invalidatepage+0x54d/0x660 fs/buffer.c:1510
-Code: ff ff e8 c6 aa 9d ff b9 02 00 00 00 be 02 00 00 00 48 89 ef 48
-c7 c2 c0 5e 20 89 e8 7d 0e 49 07 e9 29 fe ff ff e8 a3 aa 9d ff <0f> 0b
-e8 9c aa 9d ff 0f 0b e8 95 aa 9d ff 48 83 eb 01 e9 83 fb ff
-RSP: 0018:ffffc90000a376f8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88810dd8b980
-RDX: 0000000000000000 RSI: ffff88810dd8b980 RDI: 0000000000000002
-RBP: 0000000000000000 R08: ffffffff81d74ddd R09: 0000000000001000
-R10: 0000000000000005 R11: fffff940000b0000 R12: ffffea0000580000
-R13: 0000000000000000 R14: 0000000000200000 R15: 0000000000200000
-FS:  0000000000000000(0000) GS:ffff888119f00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffcb1d285b7 CR3: 0000000104f5d005 CR4: 0000000000770ee0
-PKRU: 55555554
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fe9fdd59a80d52730e2a@syzkaller.appspotmail.com
+
+INFO: task syz-executor.1:6384 can't die for more than 143 seconds.
+task:syz-executor.1  state:R  running task     stack:27752 pid: 6384 ppid:  6576 flags:0x00004006
 Call Trace:
- do_invalidatepage mm/truncate.c:157 [inline]
- truncate_cleanup_page+0x3e4/0x620 mm/truncate.c:176
- truncate_inode_pages_range+0x26c/0x1960 mm/truncate.c:325
- kill_bdev.isra.0+0x5f/0x80 fs/block_dev.c:86
- blkdev_flush_mapping+0xdf/0x2e0 fs/block_dev.c:1243
- blkdev_put_whole+0xe8/0x110 fs/block_dev.c:1277
- blkdev_put+0x268/0x720 fs/block_dev.c:1576
- blkdev_close+0x8c/0xb0 fs/block_dev.c:1586
- __fput+0x288/0x920 fs/file_table.c:280
- task_work_run+0xe0/0x1a0 kernel/task_work.c:164
- exit_task_work include/linux/task_work.h:32 [inline]
- do_exit+0xbe4/0x2e00 kernel/exit.c:825
- do_group_exit+0x125/0x340 kernel/exit.c:922
- get_signal+0x4d5/0x25a0 kernel/signal.c:2808
- arch_do_signal_or_restart+0x2ed/0x1c40 arch/x86/kernel/signal.c:865
- handle_signal_work kernel/entry/common.c:148 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
- exit_to_user_mode_prepare+0x192/0x2a0 kernel/entry/common.c:209
- __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
- syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:302
- do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x4739cd
-Code: Unable to access opcode bytes at RIP 0x4739a3.
-RSP: 002b:00007f6c0fac6218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 000000000059c0a0 RCX: 00000000004739cd
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000059c0a8
-RBP: 000000000059c0a8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000059c0ac
-R13: 00007ffcdd11bbff R14: 00007ffcdd11bda0 R15: 00007f6c0fac6300
-Modules linked in:
-Dumping ftrace buffer:
-   (ftrace buffer empty)
----[ end trace 4d1faf5c7a1da2c5 ]---
-RIP: 0010:block_invalidatepage+0x54d/0x660 fs/buffer.c:1510
-Code: ff ff e8 c6 aa 9d ff b9 02 00 00 00 be 02 00 00 00 48 89 ef 48
-c7 c2 c0 5e 20 89 e8 7d 0e 49 07 e9 29 fe ff ff e8 a3 aa 9d ff <0f> 0b
-e8 9c aa 9d ff 0f 0b e8 95 aa 9d ff 48 83 eb 01 e9 83 fb ff
-RSP: 0018:ffffc90000a376f8 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff88810dd8b980
-RDX: 0000000000000000 RSI: ffff88810dd8b980 RDI: 0000000000000002
-RBP: 0000000000000000 R08: ffffffff81d74ddd R09: 0000000000001000
-R10: 0000000000000005 R11: fffff940000b0000 R12: ffffea0000580000
-R13: 0000000000000000 R14: 0000000000200000 R15: 0000000000200000
-FS:  0000000000000000(0000) GS:ffff888119f00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6945606000 CR3: 000000010abb2004 CR4: 0000000000770ee0
-PKRU: 55555554
+ context_switch kernel/sched/core.c:4955 [inline]
+ __schedule+0x940/0x26f0 kernel/sched/core.c:6302
+ mark_held_locks+0x9f/0xe0 kernel/locking/lockdep.c:4194
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/26:
+ #0: ffffffff8b97fbe0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6446
+1 lock held by in:imklog/6244:
+ #0: ffff888024b2dc70 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:990
+3 locks held by kworker/1:5/8059:
+ #0: ffff8880b9d31a98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:474 [inline]
+ #0: ffff8880b9d31a98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1319 [inline]
+ #0: ffff8880b9d31a98 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1622 [inline]
+ #0: ffff8880b9d31a98 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x236/0x26f0 kernel/sched/core.c:6216
+ #1: ffff8880b9d1f9c8 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x39d/0x480 kernel/sched/psi.c:880
+ #2: ffffffff902c2780 (&ssp->srcu_gp_mutex){+.+.}-{3:3}, at: srcu_advance_state kernel/rcu/srcutree.c:1177 [inline]
+ #2: ffffffff902c2780 (&ssp->srcu_gp_mutex){+.+.}-{3:3}, at: process_srcu+0x31/0xec0 kernel/rcu/srcutree.c:1325
+3 locks held by systemd-udevd/10966:
+ #0: ffff8880b9d31a98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:474 [inline]
+ #0: ffff8880b9d31a98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1319 [inline]
+ #0: ffff8880b9d31a98 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1622 [inline]
+ #0: ffff8880b9d31a98 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x236/0x26f0 kernel/sched/core.c:6216
+ #1: ffff8880b9d1f9c8 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x39d/0x480 kernel/sched/psi.c:880
+ #2: ffffffff8c142c18 (tomoyo_ss){....}-{0:0}, at: tomoyo_path2_perm+0x20a/0x6b0 security/tomoyo/file.c:952
+1 lock held by systemd-udevd/10995:
+1 lock held by systemd-udevd/11008:
+ #0: ffff88807ee30460 (sb_writers#3){.+.+}-{0:0}, at: open_last_lookups fs/namei.c:3339 [inline]
+ #0: ffff88807ee30460 (sb_writers#3){.+.+}-{0:0}, at: path_openat+0x25c9/0x2740 fs/namei.c:3556
+4 locks held by kworker/u4:8/20266:
+1 lock held by syz-executor.1/6384:
+
+=============================================
+
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
