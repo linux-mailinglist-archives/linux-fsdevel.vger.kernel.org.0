@@ -2,578 +2,264 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF6DE3FF860
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 02:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EAC13FF947
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 06:16:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241615AbhICAaL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Sep 2021 20:30:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46654 "EHLO
+        id S231958AbhICERo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Sep 2021 00:17:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234366AbhICAaK (ORCPT
+        with ESMTP id S229573AbhICERo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Sep 2021 20:30:10 -0400
-Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A44C7C061575
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Sep 2021 17:29:11 -0700 (PDT)
-Received: by mail-yb1-xb31.google.com with SMTP id f15so7149906ybg.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Sep 2021 17:29:11 -0700 (PDT)
+        Fri, 3 Sep 2021 00:17:44 -0400
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D763C061575;
+        Thu,  2 Sep 2021 21:16:45 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id m11so5276471ioo.6;
+        Thu, 02 Sep 2021 21:16:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=U9SaGHSuOXCrItgAbBPYGhsYiz2vs3ute8NQFPvnaUQ=;
-        b=V6AgF1x9oVWCjF2hTKLjoxWgqPgnmoYwiACxC56iF1TZ9hdA+2iGh3TRshNQb2Qvha
-         QF66aXDqKrmni2DXQRZNAaGniJ2MBXiTn2qJ4XXB0qhtWUNqxNOEUz6phOkV6YtzMNzz
-         1VXyU64s2wAFu4FkYPt05FDGiVbGZnZ9NCjDCl3Z2Qh+6NtIckL+GqNUQI85hV9XdRYa
-         nM8GYTq8y306Cq3RX514UlqQmx37SSI9GxtkG6lRS8D/RXXICnVeeH1lMT1xsbYtqPLC
-         ayf+V28SOtV2YV06ICcOKSmZ/tbsQLOMdvOMLB1y/P0r+RpjZz5yJo5PWyZ4Fd7RgrDE
-         1bGg==
+        bh=K0guQT0U37UbQ5Iw8Wrxkb6O6gDW4AD2C77si9uBEwk=;
+        b=PrOoVR1y8p3j7eNRwUHH0Y65YIGFq52torMLiwySZcQxEqtB3fzUYbyrLgftqx3j4O
+         Nd9yz+2bjWcTydAH3593m3auC6mXcjpxCaAjZXq6yaKWO20nVk9XsDKoM9w46y5BkFfD
+         SLUSbvchj3ePE93yDZqbm5F9DJ6vylOyabtbMgfaxeENz18OooxGI7nZE+FvYpIRxtV0
+         dV7oaoTbvPoQLpBZ5hV+XcYI4ALtV7f2NCgJ9DoN9d52JBHQPwU/sr4gidYewddaErCR
+         wN4nGbtzT3y9CnzUCD7SBTHxzrv0VohpdyQ+WnhgmdnA02pCcnbI2od1EohQn5PbQXC7
+         BsHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=U9SaGHSuOXCrItgAbBPYGhsYiz2vs3ute8NQFPvnaUQ=;
-        b=e5OyFjq2qTcL/TxfvEmXIXJ4/kRyAHnqVLUhNH2gTTPlFz8DINC4LFHAaNOSazjtNL
-         IffGBfFXZji8q5+xedqadKs7mXYRTJKhY4YjwgoFGOuSo+FxXfJV1SV6NO+Oi9+50pAX
-         3+ypp0RnU7WSLfABEbvxp0UhsfB3+Tg1Vc440phdlnlIqTxkp0R6++7k7p1uq8q/PlFn
-         bw3I/DaNMa2X2dZo5l3Co+KfHmXIqml8wmh0xhwtk8kNHTdppvrQXSEzo/9dbC+JFD1r
-         OIi3KNQ61O8qpCkoiUyEYH+VOO1suM8+O5gIaQTF9O0x/D1vH0CkxB6Cums7tyv81DSJ
-         1CRA==
-X-Gm-Message-State: AOAM53023Helf+d5scEvyJpkWhrB0hsV3HoDEcgxrpXcEgn9FFCCr3Uf
-        XkI/2hyptCCN/VRrVMCa9HTvoopm3gX8is4CxlBXow==
-X-Google-Smtp-Source: ABdhPJy2m5S1Zb6iZbjNfn32rAHmkKxfVRbZ/Yj3k68ca7klTUsu6U3xir0cSBVoer5aI0SozL4U5yIX46sumyNR7kI=
-X-Received: by 2002:a25:49c2:: with SMTP id w185mr1274569yba.294.1630628950482;
- Thu, 02 Sep 2021 17:29:10 -0700 (PDT)
+        bh=K0guQT0U37UbQ5Iw8Wrxkb6O6gDW4AD2C77si9uBEwk=;
+        b=ENlBHTkUDFrkgy8nZkc3X+DazBXXCKAszgeNoth8pZbelrl7pdLpJneB2dX4NBckUB
+         CF8edQz3DtN+8E+mnURdAZ+Tw4lRB21Xv+ERVl+dcEefST4lha8p2xpWan4lhgDGJ2KP
+         RkpgGayKjQlhIhmJTsewWdc89YwtSwIL2Eduf0tPxwxV3dnnU9kQ+5x/g86NW9sSGr4j
+         6q8mAnJTK3nkSmSxzMIMGU0mbkxOROSmxznlcrWAb7khI0W4Bb0ocuEQeobycKJonkKv
+         DsCOx7HkSJtzfOPYt2uxaTeVQAPn2swcbtJL2VeADgNfON1qnhsJEOjsFctWUX0QB3nK
+         tfqQ==
+X-Gm-Message-State: AOAM532OrFzMO/mK2kX7j8RhukRRH9zDyFeC408/fXntQefnY8+AK33H
+        YAQDjIvE3gwWMmmrxHYoouApE5ayCk00dTLJ6HaCl5da
+X-Google-Smtp-Source: ABdhPJydAQTqUUywodkFdb7WUUexERBk+tz7jiLRdDZq+5G2uYF602RQYxTPC/x1nzoUArNEHHpcaV54VKIdAnAOGZI=
+X-Received: by 2002:a05:6602:200f:: with SMTP id y15mr1433093iod.64.1630642604562;
+ Thu, 02 Sep 2021 21:16:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210902231813.3597709-1-surenb@google.com>
-In-Reply-To: <20210902231813.3597709-1-surenb@google.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Thu, 2 Sep 2021 17:28:59 -0700
-Message-ID: <CAJuCfpFDBJ_W1y2tqAT4BGtPbWrjjDud_JuKO8ZbnjYfeVNvRg@mail.gmail.com>
-Subject: Re: [PATCH v9 1/3] mm: rearrange madvise code to allow for reuse
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Colin Cross <ccross@google.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        vincenzo.frascino@arm.com,
-        =?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= 
-        <chinwen.chang@mediatek.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Jann Horn <jannh@google.com>, apopple@nvidia.com,
-        John Hubbard <jhubbard@nvidia.com>,
-        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
-        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
-        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
-        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
-        chris.hyser@oracle.com, Peter Collingbourne <pcc@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
-        Rolf Eike Beer <eb@emlix.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
-        cxfcosmos@gmail.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>,
-        kernel-team <kernel-team@android.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Jan Glauber <jan.glauber@gmail.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Rob Landley <rob@landley.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        "Serge E. Hallyn" <serge.hallyn@ubuntu.com>,
-        David Rientjes <rientjes@google.com>,
-        Mel Gorman <mgorman@suse.de>, Shaohua Li <shli@fusionio.com>,
-        Minchan Kim <minchan@kernel.org>
+References: <20210812214010.3197279-1-krisman@collabora.com>
+ <20210812214010.3197279-16-krisman@collabora.com> <20210816155758.GF30215@quack2.suse.cz>
+ <877dg6rbtn.fsf@collabora.com> <87a6kusmar.fsf@collabora.com>
+In-Reply-To: <87a6kusmar.fsf@collabora.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 3 Sep 2021 07:16:33 +0300
+Message-ID: <CAOQ4uxjDtA45nn4iT9LFbbavuGa=vMPQJFp7GOJHdqrst8y+1A@mail.gmail.com>
+Subject: Re: [PATCH v6 15/21] fanotify: Preallocate per superblock mark error event
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Jan Kara <jack@suse.cz>, Jan Kara <jack@suse.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Tso <tytso@mit.edu>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Bobrowski <repnop@google.com>, kernel@collabora.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 2, 2021 at 4:18 PM Suren Baghdasaryan <surenb@google.com> wrote:
+On Fri, Sep 3, 2021 at 12:24 AM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
 >
-> From: Colin Cross <ccross@google.com>
+> Gabriel Krisman Bertazi <krisman@collabora.com> writes:
 >
-> Refactor the madvise syscall to allow for parts of it to be reused by a
-> prctl syscall that affects vmas.
->
-> Move the code that walks vmas in a virtual address range into a function
-> that takes a function pointer as a parameter.  The only caller for now is
-> sys_madvise, which uses it to call madvise_vma_behavior on each vma, but
-> the next patch will add an additional caller.
->
-> Move handling all vma behaviors inside madvise_behavior, and rename it to
-> madvise_vma_behavior.
->
-> Move the code that updates the flags on a vma, including splitting or
-> merging the vma as necessary, into a new function called
-> madvise_update_vma.  The next patch will add support for updating a new
-> anon_name field as well.
->
-> Signed-off-by: Colin Cross <ccross@google.com>
-> Cc: Pekka Enberg <penberg@kernel.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-> Cc: Jan Glauber <jan.glauber@gmail.com>
-> Cc: John Stultz <john.stultz@linaro.org>
-> Cc: Rob Landley <rob@landley.net>
-> Cc: Cyrill Gorcunov <gorcunov@openvz.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: "Serge E. Hallyn" <serge.hallyn@ubuntu.com>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Shaohua Li <shli@fusionio.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
->   [sumits: rebased over v5.9-rc3]
-> Signed-off-by: Sumit Semwal <sumit.semwal@linaro.org>
->   [surenb: rebased over v5.14-rc7]
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
-> previous version including cover letter with test results is at:
-> https://lore.kernel.org/linux-mm/20210827191858.2037087-1-surenb@google.com/
->
-> changes in v9
-> - Removed unnecessary initialization of 'error' to 0 in madvise_vma_behavior,
-> per Cyrill Gorcunov
-> - Replaced goto's with returns in madvise_vma_behavior, per Cyrill Gorcunov
-> - Recovered the comment explaining why we map ENOMEM to EAGAIN in
-> madvise_vma_behavior, per Cyrill Gorcunov
->
->  mm/madvise.c | 317 +++++++++++++++++++++++++++------------------------
->  1 file changed, 170 insertions(+), 147 deletions(-)
->
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index 56324a3dbc4e..54bf9f73f95d 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -63,76 +63,20 @@ static int madvise_need_mmap_write(int behavior)
->  }
->
->  /*
-> - * We can potentially split a vm area into separate
-> - * areas, each area with its own behavior.
-> + * Update the vm_flags on regiion of a vma, splitting it or merging it as
-> + * necessary.  Must be called with mmap_sem held for writing;
->   */
-> -static long madvise_behavior(struct vm_area_struct *vma,
-> -                    struct vm_area_struct **prev,
-> -                    unsigned long start, unsigned long end, int behavior)
-> +static int madvise_update_vma(struct vm_area_struct *vma,
-> +                             struct vm_area_struct **prev, unsigned long start,
-> +                             unsigned long end, unsigned long new_flags)
->  {
->         struct mm_struct *mm = vma->vm_mm;
-> -       int error = 0;
-> +       int error;
->         pgoff_t pgoff;
-> -       unsigned long new_flags = vma->vm_flags;
-> -
-> -       switch (behavior) {
-> -       case MADV_NORMAL:
-> -               new_flags = new_flags & ~VM_RAND_READ & ~VM_SEQ_READ;
-> -               break;
-> -       case MADV_SEQUENTIAL:
-> -               new_flags = (new_flags & ~VM_RAND_READ) | VM_SEQ_READ;
-> -               break;
-> -       case MADV_RANDOM:
-> -               new_flags = (new_flags & ~VM_SEQ_READ) | VM_RAND_READ;
-> -               break;
-> -       case MADV_DONTFORK:
-> -               new_flags |= VM_DONTCOPY;
-> -               break;
-> -       case MADV_DOFORK:
-> -               if (vma->vm_flags & VM_IO) {
-> -                       error = -EINVAL;
-> -                       goto out;
-> -               }
-> -               new_flags &= ~VM_DONTCOPY;
-> -               break;
-> -       case MADV_WIPEONFORK:
-> -               /* MADV_WIPEONFORK is only supported on anonymous memory. */
-> -               if (vma->vm_file || vma->vm_flags & VM_SHARED) {
-> -                       error = -EINVAL;
-> -                       goto out;
-> -               }
-> -               new_flags |= VM_WIPEONFORK;
-> -               break;
-> -       case MADV_KEEPONFORK:
-> -               new_flags &= ~VM_WIPEONFORK;
-> -               break;
-> -       case MADV_DONTDUMP:
-> -               new_flags |= VM_DONTDUMP;
-> -               break;
-> -       case MADV_DODUMP:
-> -               if (!is_vm_hugetlb_page(vma) && new_flags & VM_SPECIAL) {
-> -                       error = -EINVAL;
-> -                       goto out;
-> -               }
-> -               new_flags &= ~VM_DONTDUMP;
-> -               break;
-> -       case MADV_MERGEABLE:
-> -       case MADV_UNMERGEABLE:
-> -               error = ksm_madvise(vma, start, end, behavior, &new_flags);
-> -               if (error)
-> -                       goto out_convert_errno;
-> -               break;
-> -       case MADV_HUGEPAGE:
-> -       case MADV_NOHUGEPAGE:
-> -               error = hugepage_madvise(vma, &new_flags, behavior);
-> -               if (error)
-> -                       goto out_convert_errno;
-> -               break;
-> -       }
->
->         if (new_flags == vma->vm_flags) {
->                 *prev = vma;
-> -               goto out;
-> +               return 0;
->         }
->
->         pgoff = vma->vm_pgoff + ((start - vma->vm_start) >> PAGE_SHIFT);
-> @@ -149,21 +93,21 @@ static long madvise_behavior(struct vm_area_struct *vma,
->         if (start != vma->vm_start) {
->                 if (unlikely(mm->map_count >= sysctl_max_map_count)) {
->                         error = -ENOMEM;
-> -                       goto out;
-> +                       return error;
+> > Jan Kara <jack@suse.cz> writes:
+> >
+> >> On Thu 12-08-21 17:40:04, Gabriel Krisman Bertazi wrote:
+> >>> Error reporting needs to be done in an atomic context.  This patch
+> >>> introduces a single error slot for superblock marks that report the
+> >>> FAN_FS_ERROR event, to be used during event submission.
+> >>>
+> >>> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> >>>
+> >>> ---
+> >>> Changes v5:
+> >>>   - Restore mark references. (jan)
+> >>>   - Tie fee slot to the mark lifetime.(jan)
+> >>>   - Don't reallocate event(jan)
+> >>> ---
+> >>>  fs/notify/fanotify/fanotify.c      | 12 ++++++++++++
+> >>>  fs/notify/fanotify/fanotify.h      | 13 +++++++++++++
+> >>>  fs/notify/fanotify/fanotify_user.c | 31 ++++++++++++++++++++++++++++--
+> >>>  3 files changed, 54 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> >>> index ebb6c557cea1..3bf6fd85c634 100644
+> >>> --- a/fs/notify/fanotify/fanotify.c
+> >>> +++ b/fs/notify/fanotify/fanotify.c
+> >>> @@ -855,6 +855,14 @@ static void fanotify_free_name_event(struct fanotify_event *event)
+> >>>     kfree(FANOTIFY_NE(event));
+> >>>  }
+> >>>
+> >>> +static void fanotify_free_error_event(struct fanotify_event *event)
+> >>> +{
+> >>> +   /*
+> >>> +    * The actual event is tied to a mark, and is released on mark
+> >>> +    * removal
+> >>> +    */
+> >>> +}
+> >>> +
+> >>
+> >> I was pondering about the lifetime rules some more. This is also related to
+> >> patch 16/21 but I'll comment here. When we hold mark ref from queued event,
+> >> we introduce a subtle race into group destruction logic. There we first
+> >> evict all marks, wait for them to be destroyed by worker thread after SRCU
+> >> period expires, and then we remove queued events. When we hold mark
+> >> reference from an event we break this as mark will exist until the event is
+> >> dequeued and then group can get freed before we actually free the mark and
+> >> so mark freeing can hit use-after-free issues.
+> >>
+> >> So we'll have to do this a bit differently. I have two options:
+> >>
+> >> 1) Instead of preallocating events explicitely like this, we could setup a
+> >> mempool to allocate error events from for each notification group. We would
+> >> resize the mempool when adding error mark so that it has as many reserved
+> >> events as error marks. Upside is error events will be much less special -
+> >> no special lifetime rules. We'd just need to setup & resize the mempool. We
+> >> would also have to provide proper merge function for error events (to merge
+> >> events from the same sb). Also there will be limitation of number of error
+> >> marks per group because mempools use kmalloc() for an array tracking
+> >> reserved events. But we could certainly manage 512, likely 1024 error marks
+> >> per notification group.
+> >>
+> >> 2) We would keep attaching event to mark as currently. As far as I have
+> >> checked the event doesn't actually need a back-ref to sb_mark. It is
+> >> really only used for mark reference taking (and then to get to sb from
+> >> fanotify_handle_error_event() but we can certainly get to sb by easier
+> >> means there). So I would just remove that. What we still need to know in
+> >> fanotify_free_error_event() though is whether the sb_mark is still alive or
+> >> not. If it is alive, we leave the event alone, otherwise we need to free it.
+> >> So we need a mark_alive flag in the error event and then do in ->freeing_mark
+> >> callback something like:
+> >>
+> >>      if (mark->flags & FANOTIFY_MARK_FLAG_SB_MARK) {
+> >>              struct fanotify_sb_mark *fa_mark = FANOTIFY_SB_MARK(mark);
+> >>
+> >> ###          /* Maybe we could use mark->lock for this? */
+> >>              spin_lock(&group->notification_lock);
+> >>              if (fa_mark->fee_slot) {
+> >>                      if (list_empty(&fa_mark->fee_slot->fae.fse.list)) {
+> >>                              kfree(fa_mark->fee_slot);
+> >>                              fa_mark->fee_slot = NULL;
+> >>                      } else {
+> >>                              fa_mark->fee_slot->mark_alive = 0;
+> >>                      }
+> >>              }
+> >>              spin_unlock(&group->notification_lock);
+> >>      }
+> >>
+> >> And then when queueing and dequeueing event we would have to carefully
 
-Oh, I missed this one. Should be simply:
--                       error = -ENOMEM;
--                       goto out;
-+                       return -ENOMEM;
+"would have to carefully..." oh oh! there are not words that I like to
+read unless
+I have to.
+I think that fs error events are rare enough case and not performance sensitive
+at all, so we should strive to KISS design principle in this case.
 
-
+> >> check what is the mark & event state under appropriate lock (because
+> >> ->handle_event() callbacks can see marks on the way to be destroyed as they
+> >> are protected just by SRCU).
+> >
+> > Thanks for the review.  That is indeed a subtle race that I hadn't
+> > noticed.
+> >
+> > Option 2 is much more straightforward.  And considering the uABI won't
+> > be changed if we decide to change to option 1 later, I gave that a try
+> > and should be able to prepare a new version that leaves the error event
+> > with a weak association to the mark, without the back reference, and
+> > allowing it to be deleted by the latest between dequeue and
+> > ->freeing_mark, as you suggested.
+>
+> Actually, I don't think this will work for insertion unless we keep a
+> bounce buffer for the file_handle, because we need to keep the
+> group->notification_lock to ensure the fee doesn't go away with the mark
+> (since it is not yet enqueued) but, as discussed before, we don't want
+> to hold that lock when generating the FH.
+>
+> I think the correct way is to have some sort of refcount of the error
+> event slot.  We could use err_count for that and change the suggestion
+> above to:
+>
+> if (mark->flags & FANOTIFY_MARK_FLAG_SB_MARK) {
+>         struct fanotify_sb_mark *fa_mark = FANOTIFY_SB_MARK(mark);
+>
+>         spin_lock(&group->notification_lock);
+>         if (fa_mark->fee_slot) {
+>                 if (!fee->err_count) {
+>                         kfree(fa_mark->fee_slot);
+>                         fa_mark->fee_slot = NULL;
+>                 } else {
+>                         fa_mark->fee_slot->mark_alive = 0;
 >                 }
->                 error = __split_vma(mm, vma, start, 1);
->                 if (error)
-> -                       goto out_convert_errno;
-> +                       return error;
+>         }
+>         spin_unlock(&group->notification_lock);
+> }
+>
+> And insertion would look like this:
+>
+> static int fanotify_handle_error_event(....) {
+>
+>         spin_lock(&group->notification_lock);
+>
+>         if (!mark->fee || (mark->fee->err_count++) {
+>                 spin_unlock(&group->notification_lock);
+>                 return 0;
 >         }
 >
->         if (end != vma->vm_end) {
->                 if (unlikely(mm->map_count >= sysctl_max_map_count)) {
->                         error = -ENOMEM;
-> -                       goto out;
-> +                       return error;
+>         spin_unlock(&group->notification_lock);
+>
+>         mark->fee->fae.type = FANOTIFY_EVENT_TYPE_FS_ERROR;
+>
+>         /* ... Write report data to error event ... */
+>
+>         fanotify_encode_fh(&fee->object_fh, fanotify_encode_fh_len(inode),
+>                            NULL, 0);
+>
+>         fsnotify_add_event(group, &fee->fae.fse, NULL);
+>    }
+>
+> Unless you think this is too hack-ish.
+>
+> To be fair, I think it is hack-ish.
 
-same here.
+Actually, I wouldn't mind the hack-ish-ness if it would simplify things,
+but I do not see how this is the case here.
+I still cannot wrap my head around the semantics, which is a big red light.
+First of all a suggestion should start with the lifetime rules:
+- Possible states
+- State transition rules
 
->                 }
->                 error = __split_vma(mm, vma, end, 0);
->                 if (error)
-> -                       goto out_convert_errno;
-> +                       return error;
->         }
+Speaking for myself, I simply cannot review a proposal without these
+documented rules.
+
+> I would add a proper refcount_t
+> to the error event, and let the mark own a reference to it, which is
+> dropped when the mark goes away.  Enqueue and Dequeue will acquire and
+> drop references, respectively. In this case, err_count is not
+> overloaded.
 >
->  success:
-> @@ -172,15 +116,7 @@ static long madvise_behavior(struct vm_area_struct *vma,
->          */
->         vma->vm_flags = new_flags;
->
-> -out_convert_errno:
-> -       /*
-> -        * madvise() returns EAGAIN if kernel resources, such as
-> -        * slab, are temporarily unavailable.
-> -        */
-> -       if (error == -ENOMEM)
-> -               error = -EAGAIN;
-> -out:
-> -       return error;
-> +       return 0;
->  }
->
->  #ifdef CONFIG_SWAP
-> @@ -930,6 +866,94 @@ static long madvise_remove(struct vm_area_struct *vma,
->         return error;
->  }
->
-> +/*
-> + * Apply an madvise behavior to a region of a vma.  madvise_update_vma
-> + * will handle splitting a vm area into separate areas, each area with its own
-> + * behavior.
-> + */
-> +static int madvise_vma_behavior(struct vm_area_struct *vma,
-> +                               struct vm_area_struct **prev,
-> +                               unsigned long start, unsigned long end,
-> +                               unsigned long behavior)
-> +{
-> +       int error;
-> +       unsigned long new_flags = vma->vm_flags;
-> +
-> +       switch (behavior) {
-> +       case MADV_REMOVE:
-> +               return madvise_remove(vma, prev, start, end);
-> +       case MADV_WILLNEED:
-> +               return madvise_willneed(vma, prev, start, end);
-> +       case MADV_COLD:
-> +               return madvise_cold(vma, prev, start, end);
-> +       case MADV_PAGEOUT:
-> +               return madvise_pageout(vma, prev, start, end);
-> +       case MADV_FREE:
-> +       case MADV_DONTNEED:
-> +               return madvise_dontneed_free(vma, prev, start, end, behavior);
-> +       case MADV_POPULATE_READ:
-> +       case MADV_POPULATE_WRITE:
-> +               return madvise_populate(vma, prev, start, end, behavior);
-> +       case MADV_NORMAL:
-> +               new_flags = new_flags & ~VM_RAND_READ & ~VM_SEQ_READ;
-> +               break;
-> +       case MADV_SEQUENTIAL:
-> +               new_flags = (new_flags & ~VM_RAND_READ) | VM_SEQ_READ;
-> +               break;
-> +       case MADV_RANDOM:
-> +               new_flags = (new_flags & ~VM_SEQ_READ) | VM_RAND_READ;
-> +               break;
-> +       case MADV_DONTFORK:
-> +               new_flags |= VM_DONTCOPY;
-> +               break;
-> +       case MADV_DOFORK:
-> +               if (vma->vm_flags & VM_IO)
-> +                       return -EINVAL;
-> +               new_flags &= ~VM_DONTCOPY;
-> +               break;
-> +       case MADV_WIPEONFORK:
-> +               /* MADV_WIPEONFORK is only supported on anonymous memory. */
-> +               if (vma->vm_file || vma->vm_flags & VM_SHARED)
-> +                       return -EINVAL;
-> +               new_flags |= VM_WIPEONFORK;
-> +               break;
-> +       case MADV_KEEPONFORK:
-> +               new_flags &= ~VM_WIPEONFORK;
-> +               break;
-> +       case MADV_DONTDUMP:
-> +               new_flags |= VM_DONTDUMP;
-> +               break;
-> +       case MADV_DODUMP:
-> +               if (!is_vm_hugetlb_page(vma) && new_flags & VM_SPECIAL)
-> +                       return -EINVAL;
-> +               new_flags &= ~VM_DONTDUMP;
-> +               break;
-> +       case MADV_MERGEABLE:
-> +       case MADV_UNMERGEABLE:
-> +               error = ksm_madvise(vma, start, end, behavior, &new_flags);
-> +               if (error)
-> +                       goto out;
-> +               break;
-> +       case MADV_HUGEPAGE:
-> +       case MADV_NOHUGEPAGE:
-> +               error = hugepage_madvise(vma, &new_flags, behavior);
-> +               if (error)
-> +                       goto out;
-> +               break;
-> +       }
-> +
-> +       error = madvise_update_vma(vma, prev, start, end, new_flags);
-> +
-> +out:
-> +       /*
-> +        * madvise() returns EAGAIN if kernel resources, such as
-> +        * slab, are temporarily unavailable.
-> +        */
-> +       if (error == -ENOMEM)
-> +               error = -EAGAIN;
-> +       return error;
-> +}
-> +
->  #ifdef CONFIG_MEMORY_FAILURE
->  /*
->   * Error injection support for memory error handling.
-> @@ -978,30 +1002,6 @@ static int madvise_inject_error(int behavior,
->  }
->  #endif
->
-> -static long
-> -madvise_vma(struct vm_area_struct *vma, struct vm_area_struct **prev,
-> -               unsigned long start, unsigned long end, int behavior)
-> -{
-> -       switch (behavior) {
-> -       case MADV_REMOVE:
-> -               return madvise_remove(vma, prev, start, end);
-> -       case MADV_WILLNEED:
-> -               return madvise_willneed(vma, prev, start, end);
-> -       case MADV_COLD:
-> -               return madvise_cold(vma, prev, start, end);
-> -       case MADV_PAGEOUT:
-> -               return madvise_pageout(vma, prev, start, end);
-> -       case MADV_FREE:
-> -       case MADV_DONTNEED:
-> -               return madvise_dontneed_free(vma, prev, start, end, behavior);
-> -       case MADV_POPULATE_READ:
-> -       case MADV_POPULATE_WRITE:
-> -               return madvise_populate(vma, prev, start, end, behavior);
-> -       default:
-> -               return madvise_behavior(vma, prev, start, end, behavior);
-> -       }
-> -}
-> -
->  static bool
->  madvise_behavior_valid(int behavior)
->  {
-> @@ -1054,6 +1054,73 @@ process_madvise_behavior_valid(int behavior)
->         }
->  }
->
-> +/*
-> + * Walk the vmas in range [start,end), and call the visit function on each one.
-> + * The visit function will get start and end parameters that cover the overlap
-> + * between the current vma and the original range.  Any unmapped regions in the
-> + * original range will result in this function returning -ENOMEM while still
-> + * calling the visit function on all of the existing vmas in the range.
-> + * Must be called with the mmap_lock held for reading or writing.
-> + */
-> +static
-> +int madvise_walk_vmas(struct mm_struct *mm, unsigned long start,
-> +                     unsigned long end, unsigned long arg,
-> +                     int (*visit)(struct vm_area_struct *vma,
-> +                                  struct vm_area_struct **prev, unsigned long start,
-> +                                  unsigned long end, unsigned long arg))
-> +{
-> +       struct vm_area_struct *vma;
-> +       struct vm_area_struct *prev;
-> +       unsigned long tmp;
-> +       int unmapped_error = 0;
-> +
-> +       /*
-> +        * If the interval [start,end) covers some unmapped address
-> +        * ranges, just ignore them, but return -ENOMEM at the end.
-> +        * - different from the way of handling in mlock etc.
-> +        */
-> +       vma = find_vma_prev(mm, start, &prev);
-> +       if (vma && start > vma->vm_start)
-> +               prev = vma;
-> +
-> +       for (;;) {
-> +               int error;
-> +
-> +               /* Still start < end. */
-> +               if (!vma)
-> +                       return -ENOMEM;
-> +
-> +               /* Here start < (end|vma->vm_end). */
-> +               if (start < vma->vm_start) {
-> +                       unmapped_error = -ENOMEM;
-> +                       start = vma->vm_start;
-> +                       if (start >= end)
-> +                               break;
-> +               }
-> +
-> +               /* Here vma->vm_start <= start < (end|vma->vm_end) */
-> +               tmp = vma->vm_end;
-> +               if (end < tmp)
-> +                       tmp = end;
-> +
-> +               /* Here vma->vm_start <= start < tmp <= (end|vma->vm_end). */
-> +               error = visit(vma, &prev, start, tmp, arg);
-> +               if (error)
-> +                       return error;
-> +               start = tmp;
-> +               if (prev && start < prev->vm_end)
-> +                       start = prev->vm_end;
-> +               if (start >= end)
-> +                       break;
-> +               if (prev)
-> +                       vma = prev->vm_next;
-> +               else    /* madvise_remove dropped mmap_lock */
-> +                       vma = find_vma(mm, start);
-> +       }
-> +
-> +       return unmapped_error;
-> +}
-> +
->  /*
->   * The madvise(2) system call.
->   *
-> @@ -1126,9 +1193,7 @@ process_madvise_behavior_valid(int behavior)
->   */
->  int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int behavior)
->  {
-> -       unsigned long end, tmp;
-> -       struct vm_area_struct *vma, *prev;
-> -       int unmapped_error = 0;
-> +       unsigned long end;
->         int error = -EINVAL;
->         int write;
->         size_t len;
-> @@ -1168,51 +1233,9 @@ int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int beh
->                 mmap_read_lock(mm);
->         }
->
-> -       /*
-> -        * If the interval [start,end) covers some unmapped address
-> -        * ranges, just ignore them, but return -ENOMEM at the end.
-> -        * - different from the way of handling in mlock etc.
-> -        */
-> -       vma = find_vma_prev(mm, start, &prev);
-> -       if (vma && start > vma->vm_start)
-> -               prev = vma;
-> -
->         blk_start_plug(&plug);
-> -       for (;;) {
-> -               /* Still start < end. */
-> -               error = -ENOMEM;
-> -               if (!vma)
-> -                       goto out;
-> -
-> -               /* Here start < (end|vma->vm_end). */
-> -               if (start < vma->vm_start) {
-> -                       unmapped_error = -ENOMEM;
-> -                       start = vma->vm_start;
-> -                       if (start >= end)
-> -                               goto out;
-> -               }
-> -
-> -               /* Here vma->vm_start <= start < (end|vma->vm_end) */
-> -               tmp = vma->vm_end;
-> -               if (end < tmp)
-> -                       tmp = end;
-> -
-> -               /* Here vma->vm_start <= start < tmp <= (end|vma->vm_end). */
-> -               error = madvise_vma(vma, &prev, start, tmp, behavior);
-> -               if (error)
-> -                       goto out;
-> -               start = tmp;
-> -               if (prev && start < prev->vm_end)
-> -                       start = prev->vm_end;
-> -               error = unmapped_error;
-> -               if (start >= end)
-> -                       goto out;
-> -               if (prev)
-> -                       vma = prev->vm_next;
-> -               else    /* madvise_remove dropped mmap_lock */
-> -                       vma = find_vma(mm, start);
-> -       }
-> -out:
-> +       error = madvise_walk_vmas(mm, start, end, behavior,
-> +                       madvise_vma_behavior);
->         blk_finish_plug(&plug);
->         if (write)
->                 mmap_write_unlock(mm);
-> --
-> 2.33.0.153.gba50c8fa24-goog
->
+> Will it work?
+
+Maybe, I still don't see the full picture, but if this can get us to a state
+where error events handling is simpler then it's a good idea.
+Saving the space of refcount_t in error event struct is not important at all.
+
+But if Jan's option #1 (mempool) brings us to less special casing
+of enqueue/dequeue of error events, then I think that would be
+my preference.
+
+In any case, I suggest to wait for Jan's inputs before you continue.
+
+Thanks,
+Amir.
