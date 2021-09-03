@@ -2,239 +2,268 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BD1E4007C6
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Sep 2021 00:07:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 809BC4007DE
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Sep 2021 00:21:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350172AbhICWIC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Sep 2021 18:08:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59562 "EHLO
+        id S237312AbhICWWC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Sep 2021 18:22:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233367AbhICWIB (ORCPT
+        with ESMTP id S235919AbhICWWB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Sep 2021 18:08:01 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06226C061575;
-        Fri,  3 Sep 2021 15:07:01 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id s12so1019994ljg.0;
-        Fri, 03 Sep 2021 15:07:00 -0700 (PDT)
+        Fri, 3 Sep 2021 18:22:01 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B4B7C061760
+        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Sep 2021 15:21:01 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id x19so593709pfu.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Sep 2021 15:21:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=n3+SAT+wUh+y12YwwSXLSGu91HRrwMiAwD6Udu242w4=;
-        b=gnrPJAMYQJs2kE0+sucg41Ur7PZsuL+E2NG/axKrXloJKX3d7HdqkqwWcjpBPMi5IP
-         0d3DIKyoVeHfpBuWx4v0JJh8watQU+jszTZjJOQsUqoWzWlJjCc4l/rRv8z6gJdgZtvV
-         raC/VkiSW4QAaoEKlTryivsJcysBW7mqsf+cupT7ypHUuNAK52Fdkdz+FpNvcgvjOmMJ
-         q4OLzqJIUKy33DFBQh6zuo/kbf+JUbB8zJd8zF2sdA/N+v5KhmaB/tG5RyaBgMepwJ6M
-         VCSMRa2MCjGzy/+RJgOc1/p27uvH+hweLEAqfNt5FmWcIDl7lvBBkIP6EXIgzHxdWUyE
-         0QIg==
+         :content-disposition:in-reply-to;
+        bh=z6Ahe3HyFCsln3WxhiPzlBdzSMzmQy1MoB9r0kQJYjY=;
+        b=j+i4OnKQlx67qf6KsGGrXn+kDIVbopkXPqg29WuanGw7D+NxxpUfn+yNtPO3lEjAlq
+         IC+p3mgGgnWHwDwxvLzVWdG4G9j3wn6czhDnEmn2BCIcsFo5+Pljd/R4gG4PpcE5j/Lw
+         n3fNJJKD0jBLyuMESbHVez1HBAiBgQ+3l0nAc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=n3+SAT+wUh+y12YwwSXLSGu91HRrwMiAwD6Udu242w4=;
-        b=Aafa8c+3ZUs1rPkXDIlAA5hobj7n56mp9AQ57ELilTwhzj4EH8iwwQpwDQd4uJxOCR
-         ItbsATY/u7vQzh2+GLHnjTdpXKZx5urE4YBpZaDh0hX3Ki7WpHrGFwzTKPoRR+pjp++O
-         Doo4GQGMsPnqnizwhLc0eG6Xvwk+BUkpk9dHSSpmvJwABwW5Pw8JntshAqPnGF13YGKA
-         iwoyO4s7/2M6iBmbaGNR66ALVF+TflhUTEnjpZYpsLpP/5z8CROOL2WsnSw5yPVzJB4U
-         x0JZheO7dUEAWZ9OtezTFVjej8i3EMvlKfeaZMvYDwhdZBRZPw4aw46q7sRZFy2hFTLj
-         CWhA==
-X-Gm-Message-State: AOAM532AxUBT7F8cSPUYJrJ6JpZN02AsmfHU6gveYOH+dQiBFSrdx887
-        SYPvFclkFXXvAhWRoTWV+ug=
-X-Google-Smtp-Source: ABdhPJxrlnDahomjgjCeNeYPGaX5uaNHim/FoQcXEF7HvuWmzlWePT8brF8QIvetravlYRoje6IDCw==
-X-Received: by 2002:a2e:7d17:: with SMTP id y23mr806578ljc.392.1630706819322;
-        Fri, 03 Sep 2021 15:06:59 -0700 (PDT)
-Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id y23sm61666lfg.277.2021.09.03.15.06.57
+         :mime-version:content-disposition:in-reply-to;
+        bh=z6Ahe3HyFCsln3WxhiPzlBdzSMzmQy1MoB9r0kQJYjY=;
+        b=nBlyCI0GVDi0hztTBnhHzHXVMw/UEtLhvwulrsKeGkcb/1utQQIINnWI9JguC1g0lD
+         KC6UBa+bLkmysNf7t8rGmD9e/rOnvmR1f43/VxNQAIPazzPO9WmC45Fe31wKzAFc56lu
+         gFUURl66q+MW05uziruT9O89x8ZxSTIcULdJ6l+khNTcxJW3MAUK2c2GlYB+S73PpjkM
+         sP8r7uiaZRsllO4XucYKWvLMFsEHlyqW8hstJbDvlHb+oeXPvKSk5O2OTPIAx4OD4a+I
+         zKcJo3b/XOGk15g2TjX29g8KLhPqSXJB9dRYvg84uIxQCTFfk8mQlAonrrmj+bpfzJ5f
+         D+JQ==
+X-Gm-Message-State: AOAM531l8cdtvmzsu+KgxXz4qsL9lLdON19ASJvalUzHwLrwBhYTQkaF
+        11hoCYUdKB1UklGK/4VSDLs/Ew==
+X-Google-Smtp-Source: ABdhPJyWCdRDESu1+RloArQDnrUNo5Gz+AwhyFui33D17W9ipNom5uKCB8s4H5hAYBrPJBoGl295nA==
+X-Received: by 2002:a63:4610:: with SMTP id t16mr1059608pga.176.1630707660544;
+        Fri, 03 Sep 2021 15:21:00 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 11sm319586pfm.208.2021.09.03.15.20.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Sep 2021 15:06:58 -0700 (PDT)
-Date:   Sat, 4 Sep 2021 01:06:56 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
-        jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.cz>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Salah Triki <salah.triki@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Marek =?utf-8?B?QmVow7pu?= <marek.behun@nic.cz>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [RFC PATCH 00/20] fs: Remove usage of broken nls_utf8 and drop it
-Message-ID: <20210903220656.f4mmp6mdyzryui4f@kari-VirtualBox>
-References: <20210808162453.1653-1-pali@kernel.org>
- <20210903212616.xbi5tz5ier5xcpas@kari-VirtualBox>
- <20210903213703.s5y5iobmdrlmzfek@pali>
+        Fri, 03 Sep 2021 15:20:59 -0700 (PDT)
+Date:   Fri, 3 Sep 2021 15:20:58 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     akpm@linux-foundation.org, ccross@google.com,
+        sumit.semwal@linaro.org, mhocko@suse.com, dave.hansen@intel.com,
+        willy@infradead.org, kirill.shutemov@linux.intel.com,
+        vbabka@suse.cz, hannes@cmpxchg.org, corbet@lwn.net,
+        viro@zeniv.linux.org.uk, rdunlap@infradead.org,
+        kaleshsingh@google.com, peterx@redhat.com, rppt@kernel.org,
+        peterz@infradead.org, catalin.marinas@arm.com,
+        vincenzo.frascino@arm.com, chinwen.chang@mediatek.com,
+        axelrasmussen@google.com, aarcange@redhat.com, jannh@google.com,
+        apopple@nvidia.com, jhubbard@nvidia.com, yuzhao@google.com,
+        will@kernel.org, fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        hughd@google.com, feng.tang@intel.com, jgg@ziepe.ca, guro@fb.com,
+        tglx@linutronix.de, krisman@collabora.com, chris.hyser@oracle.com,
+        pcc@google.com, ebiederm@xmission.com, axboe@kernel.dk,
+        legion@kernel.org, eb@emlix.com, gorcunov@gmail.com,
+        songmuchun@bytedance.com, viresh.kumar@linaro.org,
+        thomascedeno@google.com, sashal@kernel.org, cxfcosmos@gmail.com,
+        linux@rasmusvillemoes.dk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@android.com
+Subject: Re: [PATCH v9 3/3] mm: add anonymous vma name refcounting
+Message-ID: <202109031450.CDA7090A@keescook>
+References: <20210902231813.3597709-1-surenb@google.com>
+ <20210902231813.3597709-3-surenb@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210903213703.s5y5iobmdrlmzfek@pali>
+In-Reply-To: <20210902231813.3597709-3-surenb@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 03, 2021 at 11:37:03PM +0200, Pali Rohár wrote:
-> On Saturday 04 September 2021 00:26:16 Kari Argillander wrote:
-> > On Sun, Aug 08, 2021 at 06:24:33PM +0200, Pali Rohár wrote:
-> > > Module nls_utf8 is broken in several ways. It does not support (full)
-> > > UTF-8, despite its name. It cannot handle 4-byte UTF-8 sequences and
-> > > tolower/toupper table is not implemented at all. Which means that it is
-> > > not suitable for usage in case-insensitive filesystems or UTF-16
-> > > filesystems (because of e.g. missing UTF-16 surrogate pairs processing).
-> > > 
-> > > This is RFC patch series which unify and fix iocharset=utf8 mount
-> > > option in all fs drivers and converts all remaining fs drivers to use
-> > > utf8s_to_utf16s(), utf16s_to_utf8s(), utf8_to_utf32(), utf32_to_utf8
-> > > functions for implementing UTF-8 support instead of nls_utf8.
-> > > 
-> > > So at the end it allows to completely drop this broken nls_utf8 module.
-> > 
-> > Now that every filesystem will support nls=NULL. Is it possible to just
-> > drop default_table completly? Then default has to be utf8, but is it a
-> > problem?
+On Thu, Sep 02, 2021 at 04:18:13PM -0700, Suren Baghdasaryan wrote:
+> While forking a process with high number (64K) of named anonymous vmas the
+> overhead caused by strdup() is noticeable. Experiments with ARM64 Android
+> device show up to 40% performance regression when forking a process with
+> 64k unpopulated anonymous vmas using the max name lengths vs the same
+> process with the same number of anonymous vmas having no name.
+> Introduce anon_vma_name refcounted structure to avoid the overhead of
+> copying vma names during fork() and when splitting named anonymous vmas.
+> When a vma is duplicated, instead of copying the name we increment the
+> refcount of this structure. Multiple vmas can point to the same
+> anon_vma_name as long as they increment the refcount. The name member of
+> anon_vma_name structure is assigned at structure allocation time and is
+> never changed. If vma name changes then the refcount of the original
+> structure is dropped, a new anon_vma_name structure is allocated
+> to hold the new name and the vma pointer is updated to point to the new
+> structure.
+> With this approach the fork() performance regressions is reduced 3-4x
+> times and with usecases using more reasonable number of VMAs (a few
+> thousand) the regressions is not measurable.
 > 
-> Currently (default) fallback nls table is iso8859-1. I was planning to
-> merge fallback nls table and external iso8859-1 table into one, to
-> decrease code duplication.
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> ---
+> previous version including cover letter with test results is at:
+> https://lore.kernel.org/linux-mm/20210827191858.2037087-1-surenb@google.com/
 > 
-> There is also config option for default table. I do not think it is a
-> good idea to drop config option for default table as more people are
-> using some iso8859-X as default encoding.
+> changes in v9
+> - Replaced kzalloc with kmalloc in anon_vma_name_alloc, per Rolf Eike Beer
+> 
+>  include/linux/mm_types.h |  9 ++++++++-
+>  mm/madvise.c             | 43 +++++++++++++++++++++++++++++++++-------
+>  2 files changed, 44 insertions(+), 8 deletions(-)
+> 
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 968a1d0463d8..7feb43daee6c 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -5,6 +5,7 @@
+>  #include <linux/mm_types_task.h>
+>  
+>  #include <linux/auxvec.h>
+> +#include <linux/kref.h>
+>  #include <linux/list.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/rbtree.h>
+> @@ -310,6 +311,12 @@ struct vm_userfaultfd_ctx {
+>  struct vm_userfaultfd_ctx {};
+>  #endif /* CONFIG_USERFAULTFD */
+>  
+> +struct anon_vma_name {
+> +	struct kref kref;
+> +	/* The name needs to be at the end because it is dynamically sized. */
+> +	char name[];
+> +};
+> +
+>  /*
+>   * This struct describes a virtual memory area. There is one of these
+>   * per VM-area/task. A VM area is any part of the process virtual memory
+> @@ -361,7 +368,7 @@ struct vm_area_struct {
+>  			unsigned long rb_subtree_last;
+>  		} shared;
+>  		/* Serialized by mmap_sem. */
+> -		char *anon_name;
+> +		struct anon_vma_name *anon_name;
+>  	};
+>  
+>  	/*
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index 0c6d0f64d432..adc53edd3fe7 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -63,6 +63,28 @@ static int madvise_need_mmap_write(int behavior)
+>  	}
+>  }
+>  
+> +static struct anon_vma_name *anon_vma_name_alloc(const char *name)
+> +{
+> +	struct anon_vma_name *anon_name;
+> +	size_t len = strlen(name);
+> +
+> +	/* Add 1 for NUL terminator at the end of the anon_name->name */
+> +	anon_name = kmalloc(sizeof(*anon_name) + len + 1, GFP_KERNEL);
+> +	if (anon_name) {
+> +		kref_init(&anon_name->kref);
+> +		strcpy(anon_name->name, name);
 
-I'm not suggesting that we drop default config option. I just suggest we
-make fallback default to utf8. So load_nls_default() will just return
-NULL and it will be ok because every fs can handle that situation after
-some tweaks at least. This way we can drop default_table (iso8859-1 as
-you said) from nls_base. 
+Please don't use strcpy(), even though we know it's safe here. We're
+trying to remove it globally (or at least for non-constant buffers)[1].
+We can also use the struct_size() helper, along with memcpy():
 
-> > Then I was also thinking that every nls "codepage module" can have in
-> > Kconfig
-> > 	select HAVE_NLS
-> > 
-> > HAVE_NLS will tell if we can get anything other than nls=NULL. This way
-> > fs can drop some functions if they wanted to.  It would be nice to also
-> > make nls module as small as possible because also acpi, pci and usb
-> > selects it. Also many other driver seems to depend on it and they do not
-> > even seem to select it. All other than filesystems seems to just need
-> > utf conversions. At least for quick eye.  Other option is to seperate
-> > nls and utf, but I'm not fan this idea just yet at least.
-> 
-> nls tables can be already compiled as modules. There are also
-> inefficient implementations of some nls tables (e.g. ascii or
-> iso8859-1). So there are already places for decreasing size of nls
-> code without loosing any functionality.
+	/* Add 1 for NUL terminator at the end of the anon_name->name */
+	size_t count = strlen(name) + 1;
 
-There will still be default_table in and many times we won't need it as
-we only be using utf conversion.
+	anon_name = kmalloc(struct_size(anon_name, name, count), GFP_KERNEL);
+	if (anon_name) {
+		kref_init(&anon_name->kref);
+		memcpy(anon_name->name, name, count);
+	}
 
-> 
-> > Whole point is to help little bit small Linux and embedded devices. I'm
-> > happy to do this, but all really depens on if utf8 can be default and
-> > that we sure can think before hand. 
-> 
-> I agree that on modern embedded systems there is no reason to use
-> non-utf8 encoding if you are not targeting some legacy userspace.
-> 
-> So allowing to compile filesystems also without nls code (in which case
-> they would use only utf-8) makes sense.
+[1] https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy
 
-Now I have looked code little more and it kinda makes sense to even just
-seperate nls and utf. Only filesystems will need nls and rest can do
-with just utf so kinda makes sense here. Also utf stuff probably has no
-need to be module because usually when something selects it (pci, acpi,
-usb) they cannot be modules. But I'm not expert in what the drawbacks
-are here.
-
+> +	}
+> +
+> +	return anon_name;
+> +}
+> +
+> +static void vma_anon_name_free(struct kref *kref)
+> +{
+> +	struct anon_vma_name *anon_name =
+> +			container_of(kref, struct anon_vma_name, kref);
+> +	kfree(anon_name);
+> +}
+> +
+>  static inline bool has_vma_anon_name(struct vm_area_struct *vma)
+>  {
+>  	return !vma->vm_file && vma->anon_name;
+> @@ -75,7 +97,7 @@ const char *vma_anon_name(struct vm_area_struct *vma)
+>  
+>  	mmap_assert_locked(vma->vm_mm);
+>  
+> -	return vma->anon_name;
+> +	return vma->anon_name->name;
+>  }
+>  
+>  void dup_vma_anon_name(struct vm_area_struct *orig_vma,
+> @@ -84,37 +106,44 @@ void dup_vma_anon_name(struct vm_area_struct *orig_vma,
+>  	if (!has_vma_anon_name(orig_vma))
+>  		return;
+>  
+> -	new_vma->anon_name = kstrdup(orig_vma->anon_name, GFP_KERNEL);
+> +	kref_get(&orig_vma->anon_name->kref);
+> +	new_vma->anon_name = orig_vma->anon_name;
+>  }
+>  
+>  void free_vma_anon_name(struct vm_area_struct *vma)
+>  {
+> +	struct anon_vma_name *anon_name;
+> +
+>  	if (!has_vma_anon_name(vma))
+>  		return;
+>  
+> -	kfree(vma->anon_name);
+> +	anon_name = vma->anon_name;
+>  	vma->anon_name = NULL;
+> +	kref_put(&anon_name->kref, vma_anon_name_free);
+>  }
+>  
+>  /* mmap_lock should be write-locked */
+>  static int replace_vma_anon_name(struct vm_area_struct *vma, const char *name)
+>  {
+> +	const char *anon_name;
+> +
+>  	if (!name) {
+>  		free_vma_anon_name(vma);
+>  		return 0;
+>  	}
+>  
+> -	if (vma->anon_name) {
+> +	anon_name = vma_anon_name(vma);
+> +	if (anon_name) {
+>  		/* Should never happen, to dup use dup_vma_anon_name() */
+> -		WARN_ON(vma->anon_name == name);
+> +		WARN_ON(anon_name == name);
+>  
+>  		/* Same name, nothing to do here */
+> -		if (!strcmp(name, vma->anon_name))
+> +		if (!strcmp(name, anon_name))
+>  			return 0;
+>  
+>  		free_vma_anon_name(vma);
+>  	}
+> -	vma->anon_name = kstrdup(name, GFP_KERNEL);
+> +	vma->anon_name = anon_vma_name_alloc(name);
+>  	if (!vma->anon_name)
+>  		return -ENOMEM;
+>  
+> -- 
+> 2.33.0.153.gba50c8fa24-goog
 > 
-> >   Argillander
-> > 
-> > > For more details look at email thread where was discussed fs unification:
-> > > https://lore.kernel.org/linux-fsdevel/20200102211855.gg62r7jshp742d6i@pali/t/#u
-> > > 
-> > > This patch series is mostly untested and presented as RFC. Please let me
-> > > know what do you think about it and if is the correct way how to fix
-> > > broken UTF-8 support in fs drivers. As explained in above email thread I
-> > > think it does not make sense to try fixing whole NLS framework and it is
-> > > easier to just drop this nls_utf8 module.
-> > > 
-> > > Note: this patch series does not address UTF-8 fat case-sensitivity issue:
-> > > https://lore.kernel.org/linux-fsdevel/20200119221455.bac7dc55g56q2l4r@pali/
-> > > 
-> > > Pali Rohár (20):
-> > >   fat: Fix iocharset=utf8 mount option
-> > >   hfsplus: Add iocharset= mount option as alias for nls=
-> > >   udf: Fix iocharset=utf8 mount option
-> > >   isofs: joliet: Fix iocharset=utf8 mount option
-> > >   ntfs: Undeprecate iocharset= mount option
-> > >   ntfs: Fix error processing when load_nls() fails
-> > >   befs: Fix printing iocharset= mount option
-> > >   befs: Rename enum value Opt_charset to Opt_iocharset to match mount
-> > >     option
-> > >   befs: Fix error processing when load_nls() fails
-> > >   befs: Allow to use native UTF-8 mode
-> > >   hfs: Explicitly set hsb->nls_disk when hsb->nls_io is set
-> > >   hfs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
-> > >   hfsplus: Do not use broken utf8 NLS table for iocharset=utf8 mount
-> > >     option
-> > >   jfs: Remove custom iso8859-1 implementation
-> > >   jfs: Fix buffer overflow in jfs_strfromUCS_le() function
-> > >   jfs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
-> > >   ntfs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
-> > >   cifs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
-> > >   cifs: Remove usage of load_nls_default() calls
-> > >   nls: Drop broken nls_utf8 module
-> > > 
-> > >  fs/befs/linuxvfs.c          |  22 ++++---
-> > >  fs/cifs/cifs_unicode.c      | 128 +++++++++++++++++++++++-------------
-> > >  fs/cifs/cifs_unicode.h      |   2 +-
-> > >  fs/cifs/cifsfs.c            |   2 +
-> > >  fs/cifs/cifssmb.c           |   8 +--
-> > >  fs/cifs/connect.c           |   8 ++-
-> > >  fs/cifs/dfs_cache.c         |  24 +++----
-> > >  fs/cifs/dir.c               |  28 ++++++--
-> > >  fs/cifs/smb2pdu.c           |  17 ++---
-> > >  fs/cifs/winucase.c          |  14 ++--
-> > >  fs/fat/Kconfig              |  15 -----
-> > >  fs/fat/dir.c                |  17 ++---
-> > >  fs/fat/fat.h                |  22 +++++++
-> > >  fs/fat/inode.c              |  28 ++++----
-> > >  fs/fat/namei_vfat.c         |  26 ++++++--
-> > >  fs/hfs/super.c              |  62 ++++++++++++++---
-> > >  fs/hfs/trans.c              |  62 +++++++++--------
-> > >  fs/hfsplus/dir.c            |   6 +-
-> > >  fs/hfsplus/options.c        |  39 ++++++-----
-> > >  fs/hfsplus/super.c          |   7 +-
-> > >  fs/hfsplus/unicode.c        |  31 ++++++++-
-> > >  fs/hfsplus/xattr.c          |  14 ++--
-> > >  fs/hfsplus/xattr_security.c |   3 +-
-> > >  fs/isofs/inode.c            |  27 ++++----
-> > >  fs/isofs/isofs.h            |   1 -
-> > >  fs/isofs/joliet.c           |   4 +-
-> > >  fs/jfs/jfs_dtree.c          |  13 +++-
-> > >  fs/jfs/jfs_unicode.c        |  35 +++++-----
-> > >  fs/jfs/jfs_unicode.h        |   2 +-
-> > >  fs/jfs/super.c              |  29 ++++++--
-> > >  fs/nls/Kconfig              |   9 ---
-> > >  fs/nls/Makefile             |   1 -
-> > >  fs/nls/nls_utf8.c           |  67 -------------------
-> > >  fs/ntfs/dir.c               |   6 +-
-> > >  fs/ntfs/inode.c             |   5 +-
-> > >  fs/ntfs/super.c             |  60 ++++++++---------
-> > >  fs/ntfs/unistr.c            |  28 +++++++-
-> > >  fs/udf/super.c              |  50 ++++++--------
-> > >  fs/udf/udf_sb.h             |   2 -
-> > >  fs/udf/unicode.c            |   4 +-
-> > >  40 files changed, 510 insertions(+), 418 deletions(-)
-> > >  delete mode 100644 fs/nls/nls_utf8.c
-> > > 
-> > > -- 
-> > > 2.20.1
-> > > 
+
+With the above tweak, please consider this:
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+Thanks for working on this!
+
+-- 
+Kees Cook
