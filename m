@@ -2,172 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DDB83400763
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 23:18:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A33E940076A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 23:26:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235926AbhICVTC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Sep 2021 17:19:02 -0400
-Received: from mgw-02.mpynet.fi ([82.197.21.91]:35806 "EHLO mgw-02.mpynet.fi"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233367AbhICVTB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Sep 2021 17:19:01 -0400
-Received: from pps.filterd (mgw-02.mpynet.fi [127.0.0.1])
-        by mgw-02.mpynet.fi (8.16.0.43/8.16.0.43) with SMTP id 183LEpst046545;
-        Sat, 4 Sep 2021 00:17:31 +0300
-Received: from ex13.tuxera.com (ex13.tuxera.com [178.16.184.72])
-        by mgw-02.mpynet.fi with ESMTP id 3au6qc188e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Sat, 04 Sep 2021 00:17:31 +0300
-Received: from tuxera.com (77.86.224.47) by tuxera-exch.ad.tuxera.com
- (10.20.48.11) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Sat, 4 Sep
- 2021 00:17:30 +0300
-Date:   Sat, 4 Sep 2021 00:17:20 +0300
-From:   Szabolcs Szakacsits <szaka@tuxera.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-CC:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Leonidas P. Papadakos" <papadakospan@gmail.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        <zajec5@gmail.com>, "Darrick J. Wong" <djwong@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: NTFS testing (was: [GIT PULL] vboxsf fixes for 5.14-1
-In-Reply-To: <YTJf4lBjnliqhI4D@sol.localdomain>
-Message-ID: <alpine.DEB.2.20.2109032152440.61958@tuxera.com>
-References: <4e8c0640-d781-877c-e6c5-ed5cc09443f6@gmail.com> <20210716114635.14797-1-papadakospan@gmail.com> <CAHk-=whfeq9gyPWK3yao6cCj7LKeU3vQEDGJ3rKDdcaPNVMQzQ@mail.gmail.com> <YQnHxIU+EAAxIjZA@mit.edu> <YQnU5m/ur+0D5MfJ@casper.infradead.org>
- <YQnZgq3gMKGI1Nig@mit.edu> <CAHk-=wiSwzrWOSN5UCrej3YcLRPmW5tViGSA5p2m-hiyKnQiMg@mail.gmail.com> <alpine.DEB.2.20.2109030047330.23375@tuxera.com> <YTJf4lBjnliqhI4D@sol.localdomain>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        id S236013AbhICV1X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Sep 2021 17:27:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50518 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233315AbhICV1W (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 Sep 2021 17:27:22 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2895DC061575;
+        Fri,  3 Sep 2021 14:26:22 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id k13so895758lfv.2;
+        Fri, 03 Sep 2021 14:26:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=OLsaBzFgvjm17V9pG0gkdCDmdtjBqM923spEyHQ9LIg=;
+        b=B4NTlZvxLtB/7WrZJ0PaD5G+O7Lst+0vuSjzCqcII8qdiijT+7mcNypW9u03ir3zu2
+         7qIqJRkURqfm5f70AnDhd0iiZx3/p8pkfLwst3xKIL7DNCy+mnRbz91OG7PuFgbBRwip
+         aA+f3MXi9D69Yf7U6fA49mj257Yq+GRnOddWRB8WdXvVlria0xpvcWvlIiUdoSwgD51M
+         ZVsYzpsirCv187OM5sr1XM7cbJfLUGwwsg0KmWA91c6fJBejudUfTj4HjzaB6kaA2dq9
+         +YnIB7jhEIEBuIyRG5exEkgBV6auLQWN6600FKMbqpJrgpNzCEPzSNT1Rb7R42jnhxqY
+         jO4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=OLsaBzFgvjm17V9pG0gkdCDmdtjBqM923spEyHQ9LIg=;
+        b=qQoaMj3Ue2NvTEEVkSA+UDC93ZDKlZqzr4PkYJQdT8/AOrNxnA5Wlyx/UzRh1Y1h09
+         yYBwEvEfA+gfQUzSW73ry78sEaVEuV1wIgWk/g7afdcvVnH3KntybNhG92rSyBsSIfTu
+         e4PiwDq9wydtESY2O1BDS222+i0u0qHjZb9X+xSBcP9fdm3NEUuDYtxo0WVhn+HDxGuo
+         xqRqH9DWBI9UuYCVUSMjJF93H2rLM3FrL3jJ/uwCc44rKAlgDjASwYsxiIXLj/0Ft2ro
+         BTKKa9nS1GMw0vg89WWRZ3wx6tYWymTcA0NUTfXgukeXJAn7/5uLg1rapXMVIDHqv7hh
+         BfBg==
+X-Gm-Message-State: AOAM532iE9pZctmCH9PcGbxw4jSAxes7sU1o8tyCa8FtrtZkgw0Bp3AN
+        zmfpyd+0x4+CLP0t+erI2Qo=
+X-Google-Smtp-Source: ABdhPJzhPmtnN/j2JHYBtpAA4ei9yAMop3b/Z2FXIHoC76feQ8rDQuqouxAy0GlWJz5QhQG+k16Itg==
+X-Received: by 2002:a19:c350:: with SMTP id t77mr644526lff.7.1630704379466;
+        Fri, 03 Sep 2021 14:26:19 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id m17sm33096ljp.80.2021.09.03.14.26.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Sep 2021 14:26:19 -0700 (PDT)
+Date:   Sat, 4 Sep 2021 00:26:16 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.cz>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Marek =?utf-8?B?QmVow7pu?= <marek.behun@nic.cz>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [RFC PATCH 00/20] fs: Remove usage of broken nls_utf8 and drop it
+Message-ID: <20210903212616.xbi5tz5ier5xcpas@kari-VirtualBox>
+References: <20210808162453.1653-1-pali@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-X-ClientProxiedBy: tuxera-exch.ad.tuxera.com (10.20.48.11) To
- tuxera-exch.ad.tuxera.com (10.20.48.11)
-X-Proofpoint-ORIG-GUID: -ANQCCE1K-waJxmfax5vo_OjD5LGUqls
-X-Proofpoint-GUID: -ANQCCE1K-waJxmfax5vo_OjD5LGUqls
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-09-03_07:2021-09-03,2021-09-03 signatures=0
-X-Proofpoint-Spam-Details: rule=mpy_notspam policy=mpy score=0 adultscore=0 malwarescore=0 spamscore=0
- bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2108310000
- definitions=main-2109030124
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210808162453.1653-1-pali@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On Fri, 3 Sep 2021, Eric Biggers wrote:
-> On Fri, Sep 03, 2021 at 01:09:40AM +0300, Szabolcs Szakacsits wrote:
-> > User space drivers can have major disadvantages for certain workloads 
-> > however how relevant are those for NTFS users? Most people use NTFS for 
-> > file transfers in which case ntfs-3g read and write speed is about 15-20% 
-> > less compared to ext4. For example in some quick tests ext4 read was 
-> > 3.4 GB/s versus ntfs-3g 2.8 GB/s, and write was 1.3 GB/s versus 1.1 GB/s.
+On Sun, Aug 08, 2021 at 06:24:33PM +0200, Pali Rohár wrote:
+> Module nls_utf8 is broken in several ways. It does not support (full)
+> UTF-8, despite its name. It cannot handle 4-byte UTF-8 sequences and
+> tolower/toupper table is not implemented at all. Which means that it is
+> not suitable for usage in case-insensitive filesystems or UTF-16
+> filesystems (because of e.g. missing UTF-16 surrogate pairs processing).
 > 
-> Your company's own advertising materials promoting your proprietary NTFS driver
-> (https://www.tuxera.com/products/tuxera-ntfs-embedded) claim that NTFS-3G is
-> much slower than ext4:
-
-Thank you for pointing this out. And please do so whatever else you think 
-is not right.
-
-Let's see in detail.
-
-> 	Read:
-> 		NTFS-3G: 63.4 MB/s
-> 		ext4: 113.8 MB/s
-> 		"Microsoft NTFS by Tuxera": 116 MB/s
+> This is RFC patch series which unify and fix iocharset=utf8 mount
+> option in all fs drivers and converts all remaining fs drivers to use
+> utf8s_to_utf16s(), utf16s_to_utf8s(), utf8_to_utf32(), utf32_to_utf8
+> functions for implementing UTF-8 support instead of nls_utf8.
 > 
-> 	Write:
-> 		NTFS-3G: 16.3 MB/s
-> 		ext4: 92.4 MB/s
-> 		"Microsoft NTFS by Tuxera": 113.3 MB/s
+> So at the end it allows to completely drop this broken nls_utf8 module.
 
-The page says under the benchmark:
+Now that every filesystem will support nls=NULL. Is it possible to just
+drop default_table completly? Then default has to be utf8, but is it a
+problem?
 
- "Tested on ARM Cortex-A15 Processor / 512 MB RAM / Samsung SSD 840 PRO 256 GB, 
-  USB 3.0 / Windows client and Samba over 1 GbE. Actual performance may 
-  vary based on software and hardware used."
+Then I was also thinking that every nls "codepage module" can have in
+Kconfig
+	select HAVE_NLS
 
-My quoted benchmark was done on 
+HAVE_NLS will tell if we can get anything other than nls=NULL. This way
+fs can drop some functions if they wanted to.  It would be nice to also
+make nls module as small as possible because also acpi, pci and usb
+selects it. Also many other driver seems to depend on it and they do not
+even seem to select it. All other than filesystems seems to just need
+utf conversions. At least for quick eye.  Other option is to seperate
+nls and utf, but I'm not fan this idea just yet at least.
 
- System on Chip: 11th Gen Intel(R) Core(TM) i5-11400 @2.60GHz (12 cores) 
-	in ASUSTeK COMPUTER INC. PRIME B560-PLUS motherboard
- OS: Linux 5.10.0-8-amd64 x86_64
- Storage: Samsung SSD 970 PRO 512GB 512GB NVMe
- NTFS-3G 2017.3.23AR.6 (February 1, 2021) integrated FUSE 28 
- ext4 Intree (Linux 5.10.0-8-amd64)
- 
-> I'm not sure why anything you say should have any credibility 
+Whole point is to help little bit small Linux and embedded devices. I'm
+happy to do this, but all really depens on if utf8 can be default and
+that we sure can think before hand. 
 
-Please don't believe me and do your own check. Both Ted's logs and the 
-performance results which I have shared.
+  Argillander
 
-> when it contradicts what your company says elsewhere, 
-
-The text says "Actual performance may vary based on software and hardware 
-used." I'm afraid my results don't contradict. Hardware is vastly 
-different, software is vastly different:
-
-- The PC is much more powerful. Much faster multi-core CPU, RAM, 
-interconnect, and storage compared to an apparently single core Cortex-A15.
-
-- The embedded test used user space Samba, the other one didn't. Samba and 
-ntfs-3g competed for one core which made the speed lower than it could have 
-been. ksmbd will help a lot on this, just like ntfs3 for samba. And ntfs-3g 
-could be also improved a lot, as I mentioned earlier. Isn't it great there 
-are so many options?
-
-- Today embedded often has multi-core, so the speed difference is (much) less.
-
-- Tested embedded ntfs-3g version is unknown but it seems to be a (quite) 
-old one. My test used one of the latest ones. NTFS-3G performance has 
-been improving in time.
-
-- I'm sure the embedded test didn't use the big_writes mount option. 
-Otherwise I think the speed could have been around 50 MB/s. Which is still 
-not great but at least 3 times faster. We explained and addressed this in 
-the latest release note:
-
-https://lore.kernel.org/linux-fsdevel/d343b1d7-6587-06a5-4b60-e4c59a585498@wanadoo.fr/
-
-Overall, you had a good point. That comparison is not the most up-to-date 
-one. We will work on it or just remove it.
-
-> and your company has a vested interest in not having proper NTFS support 
-> upstreamed
-
-Please explain what you mean exactly by "proper"? 
-
-Linus wrote "does indeed work reasonably well" except the horrible 
-performance which was based on misinterpreting test results ntfs-3g being 
-4 times slower when in fact it was 21% faster.
-
-If "proper" means being in the kernel then I explained in my previous email 
-why we chose FUSE.
-
-> to compete with their proprietary driver.
-
-The proprietary version enables us to pay people working on the open source 
-version. The source code is available, anybody could do it. 
-
-> (Note that Tuxera doesn't provide much support for NTFS-3G; most of their 
-> efforts are focused on their proprietary driver.)
-
-We provide both commercial and free support for NTFS-3G. We had annually at 
-least one stable open source release since 2006, full changelog:
-
-	https://github.com/tuxera/ntfs-3g/releases
-
-And all questions and issues are answered, resolved:
-
-	https://sourceforge.net/p/ntfs-3g/mailman/ntfs-3g-devel/
-
-Thank you Eric again for the very honest feedback.
-
-Best regards,
-
-	Szaka
+> For more details look at email thread where was discussed fs unification:
+> https://lore.kernel.org/linux-fsdevel/20200102211855.gg62r7jshp742d6i@pali/t/#u
+> 
+> This patch series is mostly untested and presented as RFC. Please let me
+> know what do you think about it and if is the correct way how to fix
+> broken UTF-8 support in fs drivers. As explained in above email thread I
+> think it does not make sense to try fixing whole NLS framework and it is
+> easier to just drop this nls_utf8 module.
+> 
+> Note: this patch series does not address UTF-8 fat case-sensitivity issue:
+> https://lore.kernel.org/linux-fsdevel/20200119221455.bac7dc55g56q2l4r@pali/
+> 
+> Pali Rohár (20):
+>   fat: Fix iocharset=utf8 mount option
+>   hfsplus: Add iocharset= mount option as alias for nls=
+>   udf: Fix iocharset=utf8 mount option
+>   isofs: joliet: Fix iocharset=utf8 mount option
+>   ntfs: Undeprecate iocharset= mount option
+>   ntfs: Fix error processing when load_nls() fails
+>   befs: Fix printing iocharset= mount option
+>   befs: Rename enum value Opt_charset to Opt_iocharset to match mount
+>     option
+>   befs: Fix error processing when load_nls() fails
+>   befs: Allow to use native UTF-8 mode
+>   hfs: Explicitly set hsb->nls_disk when hsb->nls_io is set
+>   hfs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
+>   hfsplus: Do not use broken utf8 NLS table for iocharset=utf8 mount
+>     option
+>   jfs: Remove custom iso8859-1 implementation
+>   jfs: Fix buffer overflow in jfs_strfromUCS_le() function
+>   jfs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
+>   ntfs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
+>   cifs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
+>   cifs: Remove usage of load_nls_default() calls
+>   nls: Drop broken nls_utf8 module
+> 
+>  fs/befs/linuxvfs.c          |  22 ++++---
+>  fs/cifs/cifs_unicode.c      | 128 +++++++++++++++++++++++-------------
+>  fs/cifs/cifs_unicode.h      |   2 +-
+>  fs/cifs/cifsfs.c            |   2 +
+>  fs/cifs/cifssmb.c           |   8 +--
+>  fs/cifs/connect.c           |   8 ++-
+>  fs/cifs/dfs_cache.c         |  24 +++----
+>  fs/cifs/dir.c               |  28 ++++++--
+>  fs/cifs/smb2pdu.c           |  17 ++---
+>  fs/cifs/winucase.c          |  14 ++--
+>  fs/fat/Kconfig              |  15 -----
+>  fs/fat/dir.c                |  17 ++---
+>  fs/fat/fat.h                |  22 +++++++
+>  fs/fat/inode.c              |  28 ++++----
+>  fs/fat/namei_vfat.c         |  26 ++++++--
+>  fs/hfs/super.c              |  62 ++++++++++++++---
+>  fs/hfs/trans.c              |  62 +++++++++--------
+>  fs/hfsplus/dir.c            |   6 +-
+>  fs/hfsplus/options.c        |  39 ++++++-----
+>  fs/hfsplus/super.c          |   7 +-
+>  fs/hfsplus/unicode.c        |  31 ++++++++-
+>  fs/hfsplus/xattr.c          |  14 ++--
+>  fs/hfsplus/xattr_security.c |   3 +-
+>  fs/isofs/inode.c            |  27 ++++----
+>  fs/isofs/isofs.h            |   1 -
+>  fs/isofs/joliet.c           |   4 +-
+>  fs/jfs/jfs_dtree.c          |  13 +++-
+>  fs/jfs/jfs_unicode.c        |  35 +++++-----
+>  fs/jfs/jfs_unicode.h        |   2 +-
+>  fs/jfs/super.c              |  29 ++++++--
+>  fs/nls/Kconfig              |   9 ---
+>  fs/nls/Makefile             |   1 -
+>  fs/nls/nls_utf8.c           |  67 -------------------
+>  fs/ntfs/dir.c               |   6 +-
+>  fs/ntfs/inode.c             |   5 +-
+>  fs/ntfs/super.c             |  60 ++++++++---------
+>  fs/ntfs/unistr.c            |  28 +++++++-
+>  fs/udf/super.c              |  50 ++++++--------
+>  fs/udf/udf_sb.h             |   2 -
+>  fs/udf/unicode.c            |   4 +-
+>  40 files changed, 510 insertions(+), 418 deletions(-)
+>  delete mode 100644 fs/nls/nls_utf8.c
+> 
+> -- 
+> 2.20.1
+> 
