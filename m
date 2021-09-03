@@ -2,109 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BA593FFA5D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 08:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 761203FFA64
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 08:31:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235351AbhICG2B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Sep 2021 02:28:01 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:48570 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230128AbhICG2A (ORCPT
+        id S1346092AbhICGcR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Sep 2021 02:32:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:59901 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1344368AbhICGcQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Sep 2021 02:28:00 -0400
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1630650419;
+        Fri, 3 Sep 2021 02:32:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630650676;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=Oj03gZFgBKlneXTLuFlpjosq+qsCnLlz6Tsf57RrU6U=;
-        b=UxCO301dAkvC1O6CEFSs9BDF/EHWaGq74xuu22aOSKeDxyiG15pXQ8UdzD+GMCWD7qI2fy
-        1okhBIFuVJXPh18K9KmQXoAZmndIa7mAif+MJIC0m77cZqFlZPWn0jCziqOparFdWWg8Ln
-        OTKZ0Nv0FbxBGulDLACNIMI0f4i6IYRnxCcFGnsSLdcYXxlfncPuartw/17m5N75tPNhQ3
-        vWxLcBKMUq8fVXX9LT31xa70mOlZz9Wf50c3274w7i87yNQG9bCqGZCFPeEn6k8HsBsNj5
-        9y7uRrO8AIlOopb20+7C6qICj3fvhfZWyMpqG4VZYpTx4vzk3bAzpG67V9Z+ag==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1630650419;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Oj03gZFgBKlneXTLuFlpjosq+qsCnLlz6Tsf57RrU6U=;
-        b=w5/p55F8WBEP8YihYst5Fz3ycPHwF6J50NOGKBuCgwVsb5tcD0J8VxMchQOyY3ysNKvBlx
-        dcqIrcLg4xwxFrCg==
-To:     Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [GIT PULL] xfs: new code for 5.15
-In-Reply-To: <20210902223545.GA1826899@dread.disaster.area>
-References: <20210831211847.GC9959@magnolia>
- <CAHk-=whyVPgkAfARB7gMjLEyu0kSxmb6qpqfuE_r6QstAzgHcA@mail.gmail.com>
- <20210902174311.GG9942@magnolia>
- <20210902223545.GA1826899@dread.disaster.area>
-Date:   Fri, 03 Sep 2021 08:26:58 +0200
-Message-ID: <87a6kub2dp.ffs@tglx>
+        bh=YC/rlauU/F6bmxF77VH11Mgk4hV/IwCNeLbfbf9xP5Q=;
+        b=TOQpwkyAxLvlzLXRWkCbVCeCE5dtwOipp3KfMhTsZZgmgHMxaieBsuxMJzqrnQfcsL6c0N
+        huctH7dsYXwGeLBp3QUFM3WJZL2yy5kmqNObe34UxLW044/QGVB8c3PH4JhLTG2UBkmogS
+        9cpVbrT35Gfo9TDhAaU5Ue5gIce+bdg=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-386-PkvSdAliMme5IXJuw2LnOg-1; Fri, 03 Sep 2021 02:31:15 -0400
+X-MC-Unique: PkvSdAliMme5IXJuw2LnOg-1
+Received: by mail-wm1-f69.google.com with SMTP id y24-20020a7bcd98000000b002eb50db2b62so1604521wmj.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Sep 2021 23:31:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YC/rlauU/F6bmxF77VH11Mgk4hV/IwCNeLbfbf9xP5Q=;
+        b=ukIbYa9gYDcCw58xSMnpgm3lU7K14MjDKnohCqeeb9C4pGOu5Zx7t0nXx4Os/Ziczw
+         UIqe54Ma0CqbJwyzdUh8Fw7/LaqIN+t8+1zNxXVfX0RXqPxVWyYgRreO887HZZHR65Kd
+         dgYpi0KdCr5t3FzsBSR3uQk1FzK+jDa1hAE5lNIEVaeELbvSE4yU5tjPH2HYt65hNS0i
+         uVx2XJuJvP4Y4ehu9u3izfOYHWC4I8QvLopHxNVuV3/EYLfd1rOKRm7+t7XIQtS22xhW
+         QAEtEx96qE6P0tG20ql6dDo0Im9M6mhreTnZbM3sHK8mM6OXUfirG9jYIkzt24HyZDli
+         vNnA==
+X-Gm-Message-State: AOAM532ALWwAdimYG84YiOTrubVSYhjxdr92G98MkSdvMhuhYvGbm1Y0
+        8/EEp1qHNxmRnrblv2J7alSblZLb3S+bGxRxQoPCNHR9dSZo7f1l++R5yWugoH69A7qKI7JmL9J
+        ncA/MjgaPKtVcggyB2ZXv79CpjZ5RrDZItuLcBIzlQg==
+X-Received: by 2002:adf:d193:: with SMTP id v19mr2009429wrc.377.1630650674699;
+        Thu, 02 Sep 2021 23:31:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwyPFJw9ZP/m1ileU46mEBJVAfh6Zf+O3xQQjDX0TV+sCc5/OMAl/XmaZX2RmznLFq2omumgxC7UK2vm0m9SxM=
+X-Received: by 2002:adf:d193:: with SMTP id v19mr2009383wrc.377.1630650674468;
+ Thu, 02 Sep 2021 23:31:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20210902152228.665959-1-vgoyal@redhat.com> <YTDyE9wVQQBxS77r@redhat.com>
+In-Reply-To: <YTDyE9wVQQBxS77r@redhat.com>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Fri, 3 Sep 2021 08:31:03 +0200
+Message-ID: <CAHc6FU4ytU5eo4bmJcL6MW+qJZAtYTX0=wTZnv4myhDBv-qZHQ@mail.gmail.com>
+Subject: Re: [PATCH 3/1] xfstests: generic/062: Do not run on newer kernels
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     fstests <fstests@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, virtio-fs@redhat.com,
+        dwalsh@redhat.com, dgilbert@redhat.com,
+        christian.brauner@ubuntu.com, casey.schaufler@intel.com,
+        LSM <linux-security-module@vger.kernel.org>,
+        selinux@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        Miklos Szeredi <miklos@szeredi.hu>, gscrivan@redhat.com,
+        "Fields, Bruce" <bfields@redhat.com>,
+        stephen.smalley.work@gmail.com, Dave Chinner <david@fromorbit.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dave,
+On Thu, Sep 2, 2021 at 5:47 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> xfstests: generic/062: Do not run on newer kernels
+>
+> This test has been written with assumption that setting user.* xattrs will
+> fail on symlink and special files. When newer kernels support setting
+> user.* xattrs on symlink and special files, this test starts failing.
 
-On Fri, Sep 03 2021 at 08:35, Dave Chinner wrote:
-> On Thu, Sep 02, 2021 at 10:43:11AM -0700, Darrick J. Wong wrote:
-> The part I dislike most about it is that we have to modify a header
-> file that triggers full kernel rebuilds. Managing patch stacks and
-> branches where one of them modifies such a header file means quick,
-> XFS subsystem only kernel rebuilds are a rare thing...
+It's actually a good thing that this test case triggers for the kernel
+change you're proposing; that change should never be merged. The
+user.* namespace is meant for data with the same access permissions as
+the file data, and it has been for many years. We may have
+applications that assume the existing behavior. In addition, this
+change would create backwards compatibility problems for things like
+backups.
 
-If you don't care about ordering, you can avoid touching the global
-header completely. The dynamic state ranges in PREPARE and ONLINE
-provide exactly what you want. It's documented.
-
-> That said, I'm all for a better interface to the CPU hotplug
-> notifications. THe current interface is ... esoteric and to
-
-What's so esoteric about:
-
-       state = cpuhp_setup_state(CPUHP_BP_PREPARE_DYN, "xfs:prepare", func1, func2);
-       state = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "xfs:online", func3, func4);
-
-Only if you care about callback ordering vs. other subsystems, then adding
-the state in the global header is required. It's neither the end of the
-world, nor is it rocket science and requires expert knowledge to do so.
-
-> understand how to use it effectively requires becoming a CPU hotplug
-> expert.
-
-  https://www.kernel.org/doc/html/latest/core-api/cpu_hotplug.html
-
-If there is something missing in that documentation which makes you
-think you need to become a CPU hotplug expert, please let me know. I'm
-happy to expand that document.
-
-> There's something to be said for the simplicity of the old
-> register_cpu_notifier() interface we used to have...
-
-There is a lot to be said about it. The simplicity of it made people do
-the most hillarious things to deal with:
-
-  - Ordering issues including build order dependencies
-  - Asymetry between bringup and teardown
-  - The inability to test state transitions
-  - ....
-
-Back then when we converted the notifier mess 35 of ~140 hotplug
-notifiers (i.e. ~25%) contained bugs of all sorts. Quite some of them
-were caused by the well understood simplicity of the hotplug notifier
-mechanics. I'm surely not missing any of that.
+I'm not convinced that what you're actually proposing (mapping
+security.selinux to a different attribute name) actually makes sense,
+but that's a question for the selinux folks to decide. Mapping it to a
+user.* attribute is definitely wrong though. The modified behavior
+would affect anybody, not only users of selinux and/or virtiofs. If
+mapping attribute names is actually the right approach, then you need
+to look at trusted.* xattrs, which exist specifically for this kind of
+purpose. You've noted that trusted.* xattrs aren't supported over nfs.
+That's unfortunate, but not an acceptable excuse for messing up user.*
+xattrs.
 
 Thanks,
+Andreas
 
-        tglx
