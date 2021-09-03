@@ -2,94 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 84034400729
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 22:55:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDB83400763
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 23:18:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349516AbhICU4c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Sep 2021 16:56:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43726 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236849AbhICU4a (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Sep 2021 16:56:30 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D880FC061757
-        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Sep 2021 13:55:29 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id j10-20020a17090a94ca00b00181f17b7ef7so354598pjw.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Sep 2021 13:55:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DJWNbah1vQRHs6Y2VZVGVoYhyj2trOxIMnnDdxrfdZw=;
-        b=wP2IGzJzEHtLk8pslL2GlBpdmdQTvmt68Jp6xUeK5Ofa+gxxYt3loubGwsLb7ZaDem
-         +uG9QHafPyZQcrGM6HUrOuoPcK70f6u+0tFJdr5uhrJFw0NeRTWqgZHqehDtO6bSnTOs
-         3067J+ZHXzj3CSe7E0+Xvt1LfzCc+yLfEZJZ0w6jJdp2SB63OsauNpVLaBIBfHIpuVYZ
-         X4FO7M8vjUQenUsB92CqRCZksqWm5Vpc7u4OL69M53vgwK22UB3wP6ozaxxBqYt9yuHH
-         TfFR/lHo7Wqa13q4D/i4Uu3AxkOCFVCP7fcpwCaFFBYor2vK4M1oDafdGtyGI7iA40ZH
-         /NCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DJWNbah1vQRHs6Y2VZVGVoYhyj2trOxIMnnDdxrfdZw=;
-        b=HNyqgrlR0hbKnYXmXSA71i7BrpnNdbE9kHMGnmCWXsgGy8RY7+9gzwtjRoKLKLBUxA
-         J+RJxIwoZPi8o0Y0tmzvjGuHv4fuPuZaGEV0phV2ZCkF3nlendy+jpGyswrrYcieWWxA
-         ErrFWeksaxBGybA9iUUpVIkGLIG2ZA0ITuH4e0QyJVgREFruL1Bb3uUq8CzBXFPWBD5R
-         8zImz+y9xK0oyIfL4/CNjTQkcwk9lpfbEHgUgzzvRFC8CF5YrQ55zZBQ6D/szSbKvU92
-         ML9Cq6xxZBzB6OrNT3vwKeY3B0VGHkvcca6gJlrmwMG5cdG1CngVz24nmAZe05gPaOD1
-         VDqw==
-X-Gm-Message-State: AOAM530ApJzs0RVw017epALw2/JE0+fxHeAmHWtG67ybWkgWcXaly+v2
-        59IFWt+1LhvMpLECeEDt1EzFJw==
-X-Google-Smtp-Source: ABdhPJxSKZZvEzoiBKtOJMsYAeeNgQzpmfzFds0q+qil8k3cdzIwypjxiJ67PupCJP3EAiFgdWnc4g==
-X-Received: by 2002:a17:90a:d596:: with SMTP id v22mr822204pju.51.1630702529188;
-        Fri, 03 Sep 2021 13:55:29 -0700 (PDT)
-Received: from ?IPv6:2600:380:7567:4da9:ea68:953f:1224:2896? ([2600:380:7567:4da9:ea68:953f:1224:2896])
-        by smtp.gmail.com with ESMTPSA id t9sm257946pfe.73.2021.09.03.13.55.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Sep 2021 13:55:28 -0700 (PDT)
-Subject: Re: [PATCH v3 0/2] iter revert problems
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     Palash Oswal <oswalpalash@gmail.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        syzbot+9671693590ef5aad8953@syzkaller.appspotmail.com
-References: <cover.1629713020.git.asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <65d27d2d-30f1-ccca-1755-fcf2add63c44@kernel.dk>
-Date:   Fri, 3 Sep 2021 14:55:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S235926AbhICVTC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Sep 2021 17:19:02 -0400
+Received: from mgw-02.mpynet.fi ([82.197.21.91]:35806 "EHLO mgw-02.mpynet.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233367AbhICVTB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 Sep 2021 17:19:01 -0400
+Received: from pps.filterd (mgw-02.mpynet.fi [127.0.0.1])
+        by mgw-02.mpynet.fi (8.16.0.43/8.16.0.43) with SMTP id 183LEpst046545;
+        Sat, 4 Sep 2021 00:17:31 +0300
+Received: from ex13.tuxera.com (ex13.tuxera.com [178.16.184.72])
+        by mgw-02.mpynet.fi with ESMTP id 3au6qc188e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Sat, 04 Sep 2021 00:17:31 +0300
+Received: from tuxera.com (77.86.224.47) by tuxera-exch.ad.tuxera.com
+ (10.20.48.11) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Sat, 4 Sep
+ 2021 00:17:30 +0300
+Date:   Sat, 4 Sep 2021 00:17:20 +0300
+From:   Szabolcs Szakacsits <szaka@tuxera.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+CC:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Leonidas P. Papadakos" <papadakospan@gmail.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        <zajec5@gmail.com>, "Darrick J. Wong" <djwong@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: NTFS testing (was: [GIT PULL] vboxsf fixes for 5.14-1
+In-Reply-To: <YTJf4lBjnliqhI4D@sol.localdomain>
+Message-ID: <alpine.DEB.2.20.2109032152440.61958@tuxera.com>
+References: <4e8c0640-d781-877c-e6c5-ed5cc09443f6@gmail.com> <20210716114635.14797-1-papadakospan@gmail.com> <CAHk-=whfeq9gyPWK3yao6cCj7LKeU3vQEDGJ3rKDdcaPNVMQzQ@mail.gmail.com> <YQnHxIU+EAAxIjZA@mit.edu> <YQnU5m/ur+0D5MfJ@casper.infradead.org>
+ <YQnZgq3gMKGI1Nig@mit.edu> <CAHk-=wiSwzrWOSN5UCrej3YcLRPmW5tViGSA5p2m-hiyKnQiMg@mail.gmail.com> <alpine.DEB.2.20.2109030047330.23375@tuxera.com> <YTJf4lBjnliqhI4D@sol.localdomain>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <cover.1629713020.git.asml.silence@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="US-ASCII"
+X-ClientProxiedBy: tuxera-exch.ad.tuxera.com (10.20.48.11) To
+ tuxera-exch.ad.tuxera.com (10.20.48.11)
+X-Proofpoint-ORIG-GUID: -ANQCCE1K-waJxmfax5vo_OjD5LGUqls
+X-Proofpoint-GUID: -ANQCCE1K-waJxmfax5vo_OjD5LGUqls
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-09-03_07:2021-09-03,2021-09-03 signatures=0
+X-Proofpoint-Spam-Details: rule=mpy_notspam policy=mpy score=0 adultscore=0 malwarescore=0 spamscore=0
+ bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2108310000
+ definitions=main-2109030124
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/23/21 4:18 AM, Pavel Begunkov wrote:
-> iov_iter_revert() doesn't go well with iov_iter_truncate() in all
-> cases, see 2/2 for the bug description. As mentioned there the current
-> problems is because of generic_write_checks(), but there was also a
-> similar case fixed in 5.12, which should have been triggerable by normal
-> write(2)/read(2) and others.
+
+On Fri, 3 Sep 2021, Eric Biggers wrote:
+> On Fri, Sep 03, 2021 at 01:09:40AM +0300, Szabolcs Szakacsits wrote:
+> > User space drivers can have major disadvantages for certain workloads 
+> > however how relevant are those for NTFS users? Most people use NTFS for 
+> > file transfers in which case ntfs-3g read and write speed is about 15-20% 
+> > less compared to ext4. For example in some quick tests ext4 read was 
+> > 3.4 GB/s versus ntfs-3g 2.8 GB/s, and write was 1.3 GB/s versus 1.1 GB/s.
 > 
-> It may be better to enforce reexpands as a long term solution, but for
-> now this patchset is quickier and easier to backport.
+> Your company's own advertising materials promoting your proprietary NTFS driver
+> (https://www.tuxera.com/products/tuxera-ntfs-embedded) claim that NTFS-3G is
+> much slower than ext4:
+
+Thank you for pointing this out. And please do so whatever else you think 
+is not right.
+
+Let's see in detail.
+
+> 	Read:
+> 		NTFS-3G: 63.4 MB/s
+> 		ext4: 113.8 MB/s
+> 		"Microsoft NTFS by Tuxera": 116 MB/s
 > 
-> v2: don't fail if it was justly fully reverted
-> v3: use truncated size + reexapand based approach
+> 	Write:
+> 		NTFS-3G: 16.3 MB/s
+> 		ext4: 92.4 MB/s
+> 		"Microsoft NTFS by Tuxera": 113.3 MB/s
 
-Al, let's get this upstream. How do you want to handle it? I can take
-it through the io_uring tree, or it can go through your tree. I really
-don't care which route it takes, but we should get this upstream as
-it solves a real problem.
+The page says under the benchmark:
 
--- 
-Jens Axboe
+ "Tested on ARM Cortex-A15 Processor / 512 MB RAM / Samsung SSD 840 PRO 256 GB, 
+  USB 3.0 / Windows client and Samba over 1 GbE. Actual performance may 
+  vary based on software and hardware used."
 
+My quoted benchmark was done on 
+
+ System on Chip: 11th Gen Intel(R) Core(TM) i5-11400 @2.60GHz (12 cores) 
+	in ASUSTeK COMPUTER INC. PRIME B560-PLUS motherboard
+ OS: Linux 5.10.0-8-amd64 x86_64
+ Storage: Samsung SSD 970 PRO 512GB 512GB NVMe
+ NTFS-3G 2017.3.23AR.6 (February 1, 2021) integrated FUSE 28 
+ ext4 Intree (Linux 5.10.0-8-amd64)
+ 
+> I'm not sure why anything you say should have any credibility 
+
+Please don't believe me and do your own check. Both Ted's logs and the 
+performance results which I have shared.
+
+> when it contradicts what your company says elsewhere, 
+
+The text says "Actual performance may vary based on software and hardware 
+used." I'm afraid my results don't contradict. Hardware is vastly 
+different, software is vastly different:
+
+- The PC is much more powerful. Much faster multi-core CPU, RAM, 
+interconnect, and storage compared to an apparently single core Cortex-A15.
+
+- The embedded test used user space Samba, the other one didn't. Samba and 
+ntfs-3g competed for one core which made the speed lower than it could have 
+been. ksmbd will help a lot on this, just like ntfs3 for samba. And ntfs-3g 
+could be also improved a lot, as I mentioned earlier. Isn't it great there 
+are so many options?
+
+- Today embedded often has multi-core, so the speed difference is (much) less.
+
+- Tested embedded ntfs-3g version is unknown but it seems to be a (quite) 
+old one. My test used one of the latest ones. NTFS-3G performance has 
+been improving in time.
+
+- I'm sure the embedded test didn't use the big_writes mount option. 
+Otherwise I think the speed could have been around 50 MB/s. Which is still 
+not great but at least 3 times faster. We explained and addressed this in 
+the latest release note:
+
+https://lore.kernel.org/linux-fsdevel/d343b1d7-6587-06a5-4b60-e4c59a585498@wanadoo.fr/
+
+Overall, you had a good point. That comparison is not the most up-to-date 
+one. We will work on it or just remove it.
+
+> and your company has a vested interest in not having proper NTFS support 
+> upstreamed
+
+Please explain what you mean exactly by "proper"? 
+
+Linus wrote "does indeed work reasonably well" except the horrible 
+performance which was based on misinterpreting test results ntfs-3g being 
+4 times slower when in fact it was 21% faster.
+
+If "proper" means being in the kernel then I explained in my previous email 
+why we chose FUSE.
+
+> to compete with their proprietary driver.
+
+The proprietary version enables us to pay people working on the open source 
+version. The source code is available, anybody could do it. 
+
+> (Note that Tuxera doesn't provide much support for NTFS-3G; most of their 
+> efforts are focused on their proprietary driver.)
+
+We provide both commercial and free support for NTFS-3G. We had annually at 
+least one stable open source release since 2006, full changelog:
+
+	https://github.com/tuxera/ntfs-3g/releases
+
+And all questions and issues are answered, resolved:
+
+	https://sourceforge.net/p/ntfs-3g/mailman/ntfs-3g-devel/
+
+Thank you Eric again for the very honest feedback.
+
+Best regards,
+
+	Szaka
