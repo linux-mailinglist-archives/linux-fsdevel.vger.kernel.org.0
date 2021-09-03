@@ -2,201 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F8974001C1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 17:08:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72EE24001E6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 17:20:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241837AbhICPJa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Sep 2021 11:09:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47222 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239566AbhICPJ2 (ORCPT
+        id S1348409AbhICPU6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Sep 2021 11:20:58 -0400
+Received: from relayfre-01.paragon-software.com ([176.12.100.13]:34864 "EHLO
+        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235515AbhICPU4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Sep 2021 11:09:28 -0400
-Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34734C061575;
-        Fri,  3 Sep 2021 08:08:28 -0700 (PDT)
-Received: by mail-qk1-x730.google.com with SMTP id b64so6127130qkg.0;
-        Fri, 03 Sep 2021 08:08:28 -0700 (PDT)
+        Fri, 3 Sep 2021 11:20:56 -0400
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 097B11CC;
+        Fri,  3 Sep 2021 18:19:51 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=dfVAyRi3egcPmrpkkX6mL213sIGpEaRWvxdiTkq+xW8=;
-        b=EWcq229FL/ntUEq82qpPUWBWKHdqlgiM75aaopWI0EXKXMdaGvWC9k5+Djmpf9cuh4
-         b8Px+qCiOFbdSlTTv3bCUWjo/NV+fV2FfDhtVBTe+11Hyzzc0GtfIzt9fM6pWJdOsQTo
-         Hw091772P+VcEN0wpXd2QJDN5P2CBMbRXMqIqUPHoTTS4oCbdr33nxJebB3k0cLE1JVx
-         35kVoZO3fqZcIp7tDFWrd/ielCIlkFmjs/qNYQvB0vIZOGZG2GKfB2JH//Zfs1FulZVX
-         gOTOWaFGN1mnjDgUBankLRTMLHBaoKykGiP6F5yFw7iKyEEFMRF86tzacUtCHWKO2oZM
-         RWbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=dfVAyRi3egcPmrpkkX6mL213sIGpEaRWvxdiTkq+xW8=;
-        b=sn4I3exGBD8q3ec6r19GyxvO/DYghe4OBEERsdUgPGoZbcQjCSnZoPH0W8ElPrWPUN
-         SwNZlBRv22SrdqangNRNmk7vvOa0LCVWYThNyStC0wCFR+DxO7UgW7iahvnuyX6s1iTw
-         2ciMdRDN59Ux7sT2RYYJXDEDY7mmUfNosKrLUczPQZTG9iz/6GdFadhZWA6ONa7SJdoY
-         jkKoG3z90NvIFV+vWkKTMBf7njkLli+9Rv5Gucy2iQx7xdCqPPLSLQcsWlZIdk0gD6SB
-         O1Vq+L4if7upBjk7PAm4P87M5r8pDovMCpy/ZEPR7NUGsqNsKVd3JjpjZigMwfTlJ/Ov
-         898A==
-X-Gm-Message-State: AOAM532cDxzb+6noWwUqtI1AwOMnLgJhio91jNhBcxSFEDqpWDJhdrAp
-        dai/eoe+hnfRZfnYqxj814bKbbpC0+eFN4dm1gM=
-X-Google-Smtp-Source: ABdhPJxOxNoEKZDrnzr5I27hdDLrYAI3fzlDltFTJm77mMKSv9gWkp9I05ZDbo+9/cQzt6JSbVvTx3kldRbLUD+SG7w=
-X-Received: by 2002:a05:620a:2844:: with SMTP id h4mr3924402qkp.388.1630681707290;
- Fri, 03 Sep 2021 08:08:27 -0700 (PDT)
+        d=paragon-software.com; s=mail; t=1630682391;
+        bh=C7LWXvYDBulnF8t609DkfrxLr/asKLyhnDepGTY/Ot0=;
+        h=To:CC:From:Subject:Date;
+        b=iDbs8OQvp2LnUzBucwMyPHCufaJUX28lcdc6o3G1r4TyTuNun8YhltwmJp3lw/+Dj
+         14EH9+6xKGghOhEGNAKNfBFDWYQLE3lBfM4HbgYKUDeXFfnND5spv/UartP+hwR6vx
+         tFdTLT9YaAB4BKuhxj13SJUUK1c84Yt0ZsjQvqog=
+Received: from [192.168.211.96] (192.168.211.96) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Fri, 3 Sep 2021 18:19:50 +0300
+To:     <torvalds@linux-foundation.org>
+CC:     <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [GIT PULL] ntfs3: new NTFS driver for 5.15
+Message-ID: <aa4aa155-b9b2-9099-b7a2-349d8d9d8fbd@paragon-software.com>
+Date:   Fri, 3 Sep 2021 18:19:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <20210827164926.1726765-1-agruenba@redhat.com>
-In-Reply-To: <20210827164926.1726765-1-agruenba@redhat.com>
-Reply-To: fdmanana@gmail.com
-From:   Filipe Manana <fdmanana@gmail.com>
-Date:   Fri, 3 Sep 2021 16:07:51 +0100
-Message-ID: <CAL3q7H709FSbHtinPRqe6XtZEvhmkSVBhFHUGMiVDW7Ngb3wrQ@mail.gmail.com>
-Subject: Re: [PATCH v7 00/19] gfs2: Fix mmap + page fault deadlocks
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Paul Mackerras <paulus@ozlabs.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>, cluster-devel@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.211.96]
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 27, 2021 at 5:51 PM Andreas Gruenbacher <agruenba@redhat.com> w=
-rote:
->
-> Hi all,
->
-> here's another update on top of v5.14-rc7.  Changes:
->
->  * Some of the patch descriptions have been improved.
->
->  * Patch "gfs2: Eliminate ip->i_gh" has been moved further to the front.
->
-> At this point, I'm not aware of anything that still needs fixing,
+Hi Linus,
 
-Hi, thanks for doing this.
+Please pull this branch containing ntfs3 code for 5.15.
 
-In btrfs we also have a deadlock (after the conversion to use iomap
-for direct IO) triggered by your recent test case for fstests,
-generic/647 [1].
-Even though we can fix it in btrfs without touching iomap, iov_iter,
-etc, it would be too complex for such a rare and exotic case (a user
-passing a buffer for a direct IO read/write that is memory mapped to
-the same file range of the operation is very uncommon at least). But
-this patchset would make the fix much simpler and cleaner.
+This is NTFS read-write driver. Current version works with 
+normal/compressed/sparse files and supports acl,
+NTFS journal replaying.
 
-One thing I noticed is that, for direct IO reads, despite setting the
-->nofault attribute of the iov_iter to true, we can still get page
-faults while in the iomap code.
-This happens when reading from holes and unwritten/prealloc extents,
-because iomap calls iov_iter_zero() and this seems to ignore the value
-of ->nofault.
-Is that intentional? I can get around it by surrounding the iomap call
-with pagefault_disable() / pagefault_enable(), but it seems odd to do
-so, given that iov_iter->nofault was set to true.
+Most of the code was in linux-next branch since Aug 13, but
+there are some patches, that were in linux-next branch only
+for a couple of days. Hopefully it is ok - no regression
+was detected in tests.
 
-[1] https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/commit/?id=3Dd3c=
-bdabffc4cb28850e97bc7bd8a7a1460db94e5
+Linus, sorry for messing up, but there was a back merge
+from Linux 5.14-rc5 to 5.14-rc7 with github web
+interface.
 
-Thanks.
+There is build failure after merge of the overlayfs tree
+in linux-next [1].
 
->
->
-> The first two patches are independent of the core of this patch queue
-> and I've asked the respective maintainers to have a look, but I've not
-> heard back from them.  The first patch should just go into Al's tree;
-> it's a relatively straight-forward fix.  The second patch really needs
-> to be looked at; it might break things:
->
->   iov_iter: Fix iov_iter_get_pages{,_alloc} page fault return value
->   powerpc/kvm: Fix kvm_use_magic_page
->
->
-> Al and Linus seem to have a disagreement about the error reporting
-> semantics that functions fault_in_{readable,writeable} and
-> fault_in_iov_iter_{readable,writeable} should have.  I've implemented
-> Linus's suggestion of returning the number of bytes not faulted in and I
-> think that being able to tell if "nothing", "something" or "everything"
-> could be faulted in does help, but I'll live with anything that allows
-> us to make progress.
->
->
-> The iomap changes should ideally be reviewed by Christoph; I've not
-> heard from him about those.
->
->
-> Thanks,
-> Andreas
->
-> Andreas Gruenbacher (16):
->   iov_iter: Fix iov_iter_get_pages{,_alloc} page fault return value
->   powerpc/kvm: Fix kvm_use_magic_page
->   gup: Turn fault_in_pages_{readable,writeable} into
->     fault_in_{readable,writeable}
->   iov_iter: Turn iov_iter_fault_in_readable into
->     fault_in_iov_iter_readable
->   iov_iter: Introduce fault_in_iov_iter_writeable
->   gfs2: Add wrapper for iomap_file_buffered_write
->   gfs2: Clean up function may_grant
->   gfs2: Move the inode glock locking to gfs2_file_buffered_write
->   gfs2: Eliminate ip->i_gh
->   gfs2: Fix mmap + page fault deadlocks for buffered I/O
->   iomap: Fix iomap_dio_rw return value for user copies
->   iomap: Support partial direct I/O on user copy failures
->   iomap: Add done_before argument to iomap_dio_rw
->   gup: Introduce FOLL_NOFAULT flag to disable page faults
->   iov_iter: Introduce nofault flag to disable page faults
->   gfs2: Fix mmap + page fault deadlocks for direct I/O
->
-> Bob Peterson (3):
->   gfs2: Eliminate vestigial HIF_FIRST
->   gfs2: Remove redundant check from gfs2_glock_dq
->   gfs2: Introduce flag for glock holder auto-demotion
->
->  arch/powerpc/kernel/kvm.c           |   3 +-
->  arch/powerpc/kernel/signal_32.c     |   4 +-
->  arch/powerpc/kernel/signal_64.c     |   2 +-
->  arch/x86/kernel/fpu/signal.c        |   7 +-
->  drivers/gpu/drm/armada/armada_gem.c |   7 +-
->  fs/btrfs/file.c                     |   7 +-
->  fs/btrfs/ioctl.c                    |   5 +-
->  fs/ext4/file.c                      |   5 +-
->  fs/f2fs/file.c                      |   2 +-
->  fs/fuse/file.c                      |   2 +-
->  fs/gfs2/bmap.c                      |  60 +----
->  fs/gfs2/file.c                      | 245 ++++++++++++++++++--
->  fs/gfs2/glock.c                     | 340 +++++++++++++++++++++-------
->  fs/gfs2/glock.h                     |  20 ++
->  fs/gfs2/incore.h                    |   5 +-
->  fs/iomap/buffered-io.c              |   2 +-
->  fs/iomap/direct-io.c                |  21 +-
->  fs/ntfs/file.c                      |   2 +-
->  fs/xfs/xfs_file.c                   |   6 +-
->  fs/zonefs/super.c                   |   4 +-
->  include/linux/iomap.h               |  11 +-
->  include/linux/mm.h                  |   3 +-
->  include/linux/pagemap.h             |  58 +----
->  include/linux/uio.h                 |   4 +-
->  lib/iov_iter.c                      | 103 +++++++--
->  mm/filemap.c                        |   4 +-
->  mm/gup.c                            | 139 +++++++++++-
->  27 files changed, 785 insertions(+), 286 deletions(-)
->
-> --
-> 2.26.3
->
+Regards,
 
+Konstantin
 
---=20
-Filipe David Manana,
+[1]: https://lore.kernel.org/linux-next/20210819093910.55f96720@canb.auug.org.au/
 
-=E2=80=9CWhether you think you can, or you think you can't =E2=80=94 you're=
- right.=E2=80=9D
+----------------------------------------------------------------
+
+The following changes since commit 36a21d51725af2ce0700c6ebcb6b9594aac658a6:
+
+  Linux 5.14-rc5 (Sun Aug 8 13:49:31 2021 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+
+for you to fetch changes up to 2e3a51b59ea26544303e168de8a0479915f09aa3:
+
+  fs/ntfs3: Change how module init/info messages are displayed (Sun Aug 29 17:42:39 2021 +0300)
+
+----------------------------------------------------------------
+Konstantin Komarov (12)
+      fs/ntfs3: Restyle comments to better align with kernel-doc
+      fs/ntfs3: Rework file operations
+      fs/ntfs3: Add MAINTAINERS
+      fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
+      fs/ntfs3: Add Kconfig, Makefile and doc
+      fs/ntfs3: Add NTFS journal
+      fs/ntfs3: Add compression
+      fs/ntfs3: Add attrib operations
+      fs/ntfs3: Add file operations and implementation
+      fs/ntfs3: Add bitmap
+      fs/ntfs3: Add initialization of super block
+      fs/ntfs3: Add headers and misc files
+
+Kari Argillander (13)
+      fs/ntfs3: Change how module init/info messages are displayed
+      fs/ntfs3: Remove GPL boilerplates from decompress lib files
+      fs/ntfs3: Remove unnecessary condition checking from ntfs_file_read_iter
+      fs/ntfs3: Fix integer overflow in ni_fiemap with fiemap_prep()
+      fs/ntfs3: Remove fat ioctl's from ntfs3 driver for now
+      fs/ntfs3: Restyle comments to better align with kernel-doc
+      fs/ntfs3: Use kcalloc/kmalloc_array over kzalloc/kmalloc
+      fs/ntfs3: Do not use driver own alloc wrappers
+      fs/ntfs3: Use kernel ALIGN macros over driver specific
+      fs/ntfs3: Restyle comment block in ni_parse_reparse()
+      fs/ntfs3: Fix one none utf8 char in source file
+      fs/ntfs3: Add ifndef + define to all header files
+      fs/ntfs3: Use linux/log2 is_power_of_2 function
+
+Dan Carpenter (5)
+      fs/ntfs3: Fix error handling in indx_insert_into_root()
+      fs/ntfs3: Potential NULL dereference in hdr_find_split()
+      fs/ntfs3: Fix error code in indx_add_allocate()
+      fs/ntfs3: fix an error code in ntfs_get_acl_ex()
+      fs/ntfs3: add checks for allocation failure
+
+Jiapeng Chong (1)
+      fs/ntfs3: Remove unused including <linux/version.h>
+
+Gustavo A. R. Silva (1)
+      fs/ntfs3: Fix fall-through warnings for Clang
+
+Nathan Chancellor (1)
+      fs/ntfs3: Remove unused variable cnt in ntfs_security_init()
+
+Colin Ian King (2)
+      fs/ntfs3: Fix integer overflow in multiplication
+      fs/ntfs3: Fix various spelling mistakes
+
+ Documentation/filesystems/index.rst |   1 +
+ Documentation/filesystems/ntfs3.rst | 106 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs3/Kconfig                    |   46 +++
+ fs/ntfs3/Makefile                   |   36 ++
+ fs/ntfs3/attrib.c                   | 2093 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs3/attrlist.c                 |  460 +++++++++++++++++++++
+ fs/ntfs3/bitfunc.c                  |  134 +++++++
+ fs/ntfs3/bitmap.c                   | 1493 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs3/debug.h                    |   52 +++
+ fs/ntfs3/dir.c                      |  599 ++++++++++++++++++++++++++++
+ fs/ntfs3/file.c                     | 1251 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs3/frecord.c                  | 3257 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs3/fslog.c                    | 5217 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs3/fsntfs.c                   | 2509 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs3/index.c                    | 2650 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs3/inode.c                    | 1957 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs3/lib/decompress_common.c    |  319 +++++++++++++++
+ fs/ntfs3/lib/decompress_common.h    |  338 ++++++++++++++++
+ fs/ntfs3/lib/lib.h                  |   26 ++
+ fs/ntfs3/lib/lzx_decompress.c       |  670 +++++++++++++++++++++++++++++++
+ fs/ntfs3/lib/xpress_decompress.c    |  142 +++++++
+ fs/ntfs3/lznt.c                     |  453 +++++++++++++++++++++
+ fs/ntfs3/namei.c                    |  411 +++++++++++++++++++
+ fs/ntfs3/ntfs.h                     | 1216 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs3/ntfs_fs.h                  | 1111 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs3/record.c                   |  605 ++++++++++++++++++++++++++++
+ fs/ntfs3/run.c                      | 1113 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs3/super.c                    | 1512 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs3/upcase.c                   |  108 +++++
+ fs/ntfs3/xattr.c                    | 1119 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 30 files changed, 31004 insertions(+)
