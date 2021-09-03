@@ -2,911 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6530F400777
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 23:35:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A757740077C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Sep 2021 23:37:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346630AbhICVgY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Sep 2021 17:36:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52486 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235264AbhICVgX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Sep 2021 17:36:23 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 431D5C061575
-        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Sep 2021 14:35:23 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id n13-20020a17090a4e0d00b0017946980d8dso394269pjh.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Sep 2021 14:35:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Rvmg0FYJO2iRxdplzRNRiU9Wm2FA/Atl02asYVPJ/2U=;
-        b=LEKEzchqAl0RoLDDjerfMY7a5yCysI5KYB+LZ4dmQRkZwcYbIXVTn+Ie96qNQ55jFI
-         odkd18eCcPVEYpAjh0ssmhJsvZhzcYrua3/K1sWGNpqREW4/rdLGcaztT97PvUNDDlhX
-         SXqf6c+OAwZ1prDdi49K8JVDdr41RpZrDY194=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Rvmg0FYJO2iRxdplzRNRiU9Wm2FA/Atl02asYVPJ/2U=;
-        b=CA/J81qxgGdMzjkeeVf/HOmh3d9GpEOLLZ8rk2xqJ4+mLXmNNGlSgMxnABWusFos5N
-         oApR7vwphC2iEiHiw32O+DbVZNJBRH1xTVyYmHPIxwU+eBVXeNa4i0we5vowA2vi8W7L
-         WkkwdOy4b2oSYZ3ebJ/OiofdxdlXYzSVLo+FBtsc5OyVEr3D4D5q7+5AbDt2MG4zaQZl
-         StNZlXtT2iN3RnDyuVjFITjeRS+qfsah3gzAvKVuDGBPniJvzO15Vr6S0yQeSPNXeFyg
-         LRmkqrskAprBJKG+umvEF1Y9AQbsXpqNRSYB+qg3eIBgstl1vIMFWDOGCCWZU8335Y+z
-         uGDA==
-X-Gm-Message-State: AOAM530nQMr8Ynq4I9LiWL0suqiPjZ2dTvOSAp0qxf+2/vBxrFv+qtNV
-        pav8Jrg0cC7qVaL823d+Vi94ew==
-X-Google-Smtp-Source: ABdhPJxHsdmBG9KL6OhzExtZlgxy6Zq/wVNNl3D6/IdBQGgCxU/9XakGIF/XLSpQVR6mPaCBBcy/8g==
-X-Received: by 2002:a17:902:c402:b0:138:d85c:36d4 with SMTP id k2-20020a170902c40200b00138d85c36d4mr588409plk.48.1630704922426;
-        Fri, 03 Sep 2021 14:35:22 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h7sm294018pfk.96.2021.09.03.14.35.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Sep 2021 14:35:21 -0700 (PDT)
-Date:   Fri, 3 Sep 2021 14:35:20 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     akpm@linux-foundation.org, ccross@google.com,
-        sumit.semwal@linaro.org, mhocko@suse.com, dave.hansen@intel.com,
-        willy@infradead.org, kirill.shutemov@linux.intel.com,
-        vbabka@suse.cz, hannes@cmpxchg.org, corbet@lwn.net,
-        viro@zeniv.linux.org.uk, rdunlap@infradead.org,
-        kaleshsingh@google.com, peterx@redhat.com, rppt@kernel.org,
-        peterz@infradead.org, catalin.marinas@arm.com,
-        vincenzo.frascino@arm.com, chinwen.chang@mediatek.com,
-        axelrasmussen@google.com, aarcange@redhat.com, jannh@google.com,
-        apopple@nvidia.com, jhubbard@nvidia.com, yuzhao@google.com,
-        will@kernel.org, fenghua.yu@intel.com, thunder.leizhen@huawei.com,
-        hughd@google.com, feng.tang@intel.com, jgg@ziepe.ca, guro@fb.com,
-        tglx@linutronix.de, krisman@collabora.com, chris.hyser@oracle.com,
-        pcc@google.com, ebiederm@xmission.com, axboe@kernel.dk,
-        legion@kernel.org, eb@emlix.com, gorcunov@gmail.com,
-        songmuchun@bytedance.com, viresh.kumar@linaro.org,
-        thomascedeno@google.com, sashal@kernel.org, cxfcosmos@gmail.com,
-        linux@rasmusvillemoes.dk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, kernel-team@android.com
-Subject: Re: [PATCH v9 2/3] mm: add a field to store names for private
- anonymous memory
-Message-ID: <202109031420.2F17A2C9@keescook>
-References: <20210902231813.3597709-1-surenb@google.com>
- <20210902231813.3597709-2-surenb@google.com>
+        id S1348249AbhICViJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Sep 2021 17:38:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37504 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235264AbhICViG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 Sep 2021 17:38:06 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 567F160F21;
+        Fri,  3 Sep 2021 21:37:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1630705025;
+        bh=ysWHeMqbDEvsn5l8zRqxKz3HmCgf/gvL2ecLQgzUgGI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aSiHeZKjhDq+ztl6o0f8wJxJmLw4zLul3iGSDB0Jqs0IMlXRUHoxhXWYzjIO0MzPC
+         1Hj//2eBpuNjxzEzmLcG+hxJy2hDEPNA2RO3akE+OcW7sL+9CcI14cpqflptRh/04n
+         GToXqM4S5SSc8/iwtbhsTk8rCGcVV2gDHv+jtOOlKiLU6C7dCK7qV5MsON8njssnSU
+         iu8dYTz8MbyrD+zryeE9eP5/TKU9JMIJc2y2wIXJ31zSquZW0laOYBVIgrPBo1R7m9
+         /OkMY4URXIIQWKvX8k//xjd3ldXNcS4KXMJuUHemCKv8+xZWXUx5hZMNvUeZSD6NER
+         34BYeYwAEYt+A==
+Received: by pali.im (Postfix)
+        id 39FF877C; Fri,  3 Sep 2021 23:37:03 +0200 (CEST)
+Date:   Fri, 3 Sep 2021 23:37:03 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Kari Argillander <kari.argillander@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.cz>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Marek =?utf-8?B?QmVow7pu?= <marek.behun@nic.cz>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [RFC PATCH 00/20] fs: Remove usage of broken nls_utf8 and drop it
+Message-ID: <20210903213703.s5y5iobmdrlmzfek@pali>
+References: <20210808162453.1653-1-pali@kernel.org>
+ <20210903212616.xbi5tz5ier5xcpas@kari-VirtualBox>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210902231813.3597709-2-surenb@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210903212616.xbi5tz5ier5xcpas@kari-VirtualBox>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 02, 2021 at 04:18:12PM -0700, Suren Baghdasaryan wrote:
-> From: Colin Cross <ccross@google.com>
+On Saturday 04 September 2021 00:26:16 Kari Argillander wrote:
+> On Sun, Aug 08, 2021 at 06:24:33PM +0200, Pali Rohár wrote:
+> > Module nls_utf8 is broken in several ways. It does not support (full)
+> > UTF-8, despite its name. It cannot handle 4-byte UTF-8 sequences and
+> > tolower/toupper table is not implemented at all. Which means that it is
+> > not suitable for usage in case-insensitive filesystems or UTF-16
+> > filesystems (because of e.g. missing UTF-16 surrogate pairs processing).
+> > 
+> > This is RFC patch series which unify and fix iocharset=utf8 mount
+> > option in all fs drivers and converts all remaining fs drivers to use
+> > utf8s_to_utf16s(), utf16s_to_utf8s(), utf8_to_utf32(), utf32_to_utf8
+> > functions for implementing UTF-8 support instead of nls_utf8.
+> > 
+> > So at the end it allows to completely drop this broken nls_utf8 module.
 > 
-> In many userspace applications, and especially in VM based applications
-> like Android uses heavily, there are multiple different allocators in use.
->  At a minimum there is libc malloc and the stack, and in many cases there
-> are libc malloc, the stack, direct syscalls to mmap anonymous memory, and
-> multiple VM heaps (one for small objects, one for big objects, etc.).
-> Each of these layers usually has its own tools to inspect its usage;
-> malloc by compiling a debug version, the VM through heap inspection tools,
-> and for direct syscalls there is usually no way to track them.
-> 
-> On Android we heavily use a set of tools that use an extended version of
-> the logic covered in Documentation/vm/pagemap.txt to walk all pages mapped
-> in userspace and slice their usage by process, shared (COW) vs.  unique
-> mappings, backing, etc.  This can account for real physical memory usage
-> even in cases like fork without exec (which Android uses heavily to share
-> as many private COW pages as possible between processes), Kernel SamePage
-> Merging, and clean zero pages.  It produces a measurement of the pages
-> that only exist in that process (USS, for unique), and a measurement of
-> the physical memory usage of that process with the cost of shared pages
-> being evenly split between processes that share them (PSS).
-> 
-> If all anonymous memory is indistinguishable then figuring out the real
-> physical memory usage (PSS) of each heap requires either a pagemap walking
-> tool that can understand the heap debugging of every layer, or for every
-> layer's heap debugging tools to implement the pagemap walking logic, in
-> which case it is hard to get a consistent view of memory across the whole
-> system.
-> 
-> Tracking the information in userspace leads to all sorts of problems.
-> It either needs to be stored inside the process, which means every
-> process has to have an API to export its current heap information upon
-> request, or it has to be stored externally in a filesystem that
-> somebody needs to clean up on crashes.  It needs to be readable while
-> the process is still running, so it has to have some sort of
-> synchronization with every layer of userspace.  Efficiently tracking
-> the ranges requires reimplementing something like the kernel vma
-> trees, and linking to it from every layer of userspace.  It requires
-> more memory, more syscalls, more runtime cost, and more complexity to
-> separately track regions that the kernel is already tracking.
-> 
-> This patch adds a field to /proc/pid/maps and /proc/pid/smaps to show a
-> userspace-provided name for anonymous vmas.  The names of named anonymous
-> vmas are shown in /proc/pid/maps and /proc/pid/smaps as [anon:<name>].
-> 
-> Userspace can set the name for a region of memory by calling
-> prctl(PR_SET_VMA, PR_SET_VMA_ANON_NAME, start, len, (unsigned long)name);
-> Setting the name to NULL clears it. The name length limit is 256 bytes
-> including NUL-terminator and is checked to contain only printable ascii
-> characters (including space), except '[','\' and ']'.
+> Now that every filesystem will support nls=NULL. Is it possible to just
+> drop default_table completly? Then default has to be utf8, but is it a
+> problem?
 
-Is the reason this isn't done via madvise() because we're forced into an
-"int" argument there? (Otherwise we could pass a pointer there.)
+Currently (default) fallback nls table is iso8859-1. I was planning to
+merge fallback nls table and external iso8859-1 table into one, to
+decrease code duplication.
 
-	int madvise(void *addr, size_t length, int advice);
+There is also config option for default table. I do not think it is a
+good idea to drop config option for default table as more people are
+using some iso8859-X as default encoding.
 
+> Then I was also thinking that every nls "codepage module" can have in
+> Kconfig
+> 	select HAVE_NLS
 > 
-> The name is stored in a pointer in the shared union in vm_area_struct
-> that points to a null terminated string. Anonymous vmas with the same
-> name (equivalent strings) and are otherwise mergeable will be merged.
-> The name pointers are not shared between vmas even if they contain the
-> same name. The name pointer is stored in a union with fields that are
-> only used on file-backed mappings, so it does not increase memory usage.
-> 
-> The patch is based on the original patch developed by Colin Cross, more
-> specifically on its latest version [1] posted upstream by Sumit Semwal.
-> It used a userspace pointer to store vma names. In that design, name
-> pointers could be shared between vmas. However during the last upstreaming
-> attempt, Kees Cook raised concerns [2] about this approach and suggested
-> to copy the name into kernel memory space, perform validity checks [3]
-> and store as a string referenced from vm_area_struct.
-> One big concern is about fork() performance which would need to strdup
-> anonymous vma names. Dave Hansen suggested experimenting with worst-case
-> scenario of forking a process with 64k vmas having longest possible names
-> [4]. I ran this experiment on an ARM64 Android device and recorded a
-> worst-case regression of almost 40% when forking such a process. This
-> regression is addressed in the followup patch which replaces the pointer
-> to a name with a refcounted structure that allows sharing the name pointer
-> between vmas of the same name. Instead of duplicating the string during
-> fork() or when splitting a vma it increments the refcount.
-> 
-> [1] https://lore.kernel.org/linux-mm/20200901161459.11772-4-sumit.semwal@linaro.org/
-> [2] https://lore.kernel.org/linux-mm/202009031031.D32EF57ED@keescook/
-> [3] https://lore.kernel.org/linux-mm/202009031022.3834F692@keescook/
-> [4] https://lore.kernel.org/linux-mm/5d0358ab-8c47-2f5f-8e43-23b89d6a8e95@intel.com/
-> 
-> Changes for prctl(2) manual page (in the options section):
-> 
-> PR_SET_VMA
-> 	Sets an attribute specified in arg2 for virtual memory areas
-> 	starting from the address specified in arg3 and spanning the
-> 	size specified	in arg4. arg5 specifies the value of the attribute
-> 	to be set. Note that assigning an attribute to a virtual memory
-> 	area might prevent it from being merged with adjacent virtual
-> 	memory areas due to the difference in that attribute's value.
-> 
-> 	Currently, arg2 must be one of:
-> 
-> 	PR_SET_VMA_ANON_NAME
-> 		Set a name for anonymous virtual memory areas. arg5 should
-> 		be a pointer to a null-terminated string containing the
-> 		name. The name length including null byte cannot exceed
-> 		256 bytes. If arg5 is NULL, the name of the appropriate
-> 		anonymous virtual memory areas will be reset.
-> 
-> Signed-off-by: Colin Cross <ccross@google.com>
-> [surenb: rebased over v5.14-rc7, replaced userpointer with a kernel copy
-> and added input sanitization. The bulk of the work here was done by Colin
-> Cross, therefore, with his permission, keeping him as the author]
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
-> previous version including cover letter with test results is at:
-> https://lore.kernel.org/linux-mm/20210827191858.2037087-1-surenb@google.com/
-> 
-> changes in v9
-> - Added documentation for prctl(2) manual page describing newly introduced
-> options, per Pavel Machek
-> - Documented the downside of naming an anonymous vma which might prevent
-> it from being merged with adjacent vmas, per Cyrill Gorcunov
-> - Replaced seq_puts+seq_write with seq_printf, per Kees Cook
-> - Changed name validation to allow only printable ascii characters, except for
-> '[', '\' and ']', per Rasmus Villemoes
-> - Added madvise_set_anon_name definition dependency on CONFIG_PROC_FS,
-> per Michal Hocko
-> - Added NULL check for the name input in prctl_set_vma to correctly handle this
-> case, per Michal Hocko
-> - Handle the possibility of kstrdup returning NULL, per Rolf Eike Beer
-> - Changed max anon vma name length from 64 to 256 (as in the original patch)
-> because I found one case of the name length being 139 bytes. If anyone is
-> curious, here it is:
-> dalvik-/data/dalvik-cache/arm64/apex@com.android.permission@priv-app@GooglePermissionController@GooglePermissionController.apk@classes.art
-> 
->  Documentation/filesystems/proc.rst |   2 +
->  fs/proc/task_mmu.c                 |  12 ++-
->  fs/userfaultfd.c                   |   7 +-
->  include/linux/mm.h                 |  13 ++-
->  include/linux/mm_types.h           |  48 ++++++++++-
->  include/uapi/linux/prctl.h         |   3 +
->  kernel/fork.c                      |   2 +
->  kernel/sys.c                       |  61 ++++++++++++++
->  mm/madvise.c                       | 131 ++++++++++++++++++++++++++---
->  mm/mempolicy.c                     |   3 +-
->  mm/mlock.c                         |   2 +-
->  mm/mmap.c                          |  38 +++++----
->  mm/mprotect.c                      |   2 +-
->  13 files changed, 283 insertions(+), 41 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 042c418f4090..a067eec54ef1 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -431,6 +431,8 @@ is not associated with a file:
->   [stack]                    the stack of the main process
->   [vdso]                     the "virtual dynamic shared object",
->                              the kernel system call handler
-> +[anon:<name>]               an anonymous mapping that has been
-> +                            named by userspace
->   =======                    ====================================
->  
->   or if empty, the mapping is anonymous.
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index eb97468dfe4c..d41edb4b4540 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -308,6 +308,8 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
->  
->  	name = arch_vma_name(vma);
->  	if (!name) {
-> +		const char *anon_name;
-> +
->  		if (!mm) {
->  			name = "[vdso]";
->  			goto done;
-> @@ -319,8 +321,16 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
->  			goto done;
->  		}
->  
-> -		if (is_stack(vma))
-> +		if (is_stack(vma)) {
->  			name = "[stack]";
-> +			goto done;
-> +		}
-> +
-> +		anon_name = vma_anon_name(vma);
-> +		if (anon_name) {
-> +			seq_pad(m, ' ');
-> +			seq_printf(m, "[anon:%s]", anon_name);
-> +		}
->  	}
->  
->  done:
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index 5c2d806e6ae5..5057843fb71a 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -876,7 +876,7 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
->  				 new_flags, vma->anon_vma,
->  				 vma->vm_file, vma->vm_pgoff,
->  				 vma_policy(vma),
-> -				 NULL_VM_UFFD_CTX);
-> +				 NULL_VM_UFFD_CTX, vma_anon_name(vma));
->  		if (prev)
->  			vma = prev;
->  		else
-> @@ -1440,7 +1440,8 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
->  		prev = vma_merge(mm, prev, start, vma_end, new_flags,
->  				 vma->anon_vma, vma->vm_file, vma->vm_pgoff,
->  				 vma_policy(vma),
-> -				 ((struct vm_userfaultfd_ctx){ ctx }));
-> +				 ((struct vm_userfaultfd_ctx){ ctx }),
-> +				 vma_anon_name(vma));
->  		if (prev) {
->  			vma = prev;
->  			goto next;
-> @@ -1617,7 +1618,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
->  		prev = vma_merge(mm, prev, start, vma_end, new_flags,
->  				 vma->anon_vma, vma->vm_file, vma->vm_pgoff,
->  				 vma_policy(vma),
-> -				 NULL_VM_UFFD_CTX);
-> +				 NULL_VM_UFFD_CTX, vma_anon_name(vma));
->  		if (prev) {
->  			vma = prev;
->  			goto next;
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index e59646a5d44d..c72226215f33 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2550,7 +2550,7 @@ static inline int vma_adjust(struct vm_area_struct *vma, unsigned long start,
->  extern struct vm_area_struct *vma_merge(struct mm_struct *,
->  	struct vm_area_struct *prev, unsigned long addr, unsigned long end,
->  	unsigned long vm_flags, struct anon_vma *, struct file *, pgoff_t,
-> -	struct mempolicy *, struct vm_userfaultfd_ctx);
-> +	struct mempolicy *, struct vm_userfaultfd_ctx, const char *);
->  extern struct anon_vma *find_mergeable_anon_vma(struct vm_area_struct *);
->  extern int __split_vma(struct mm_struct *, struct vm_area_struct *,
->  	unsigned long addr, int new_below);
-> @@ -3285,5 +3285,16 @@ static inline int seal_check_future_write(int seals, struct vm_area_struct *vma)
->  	return 0;
->  }
->  
-> +#if defined(CONFIG_ADVISE_SYSCALLS) && defined(CONFIG_PROC_FS)
-> +int madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
-> +			  unsigned long len_in, const char *name);
-> +#else
-> +static inline int
-> +madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
-> +		      unsigned long len_in, const char *name) {
-> +	return 0;
-> +}
-> +#endif
-> +
->  #endif /* __KERNEL__ */
->  #endif /* _LINUX_MM_H */
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 7f8ee09c711f..968a1d0463d8 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -350,11 +350,19 @@ struct vm_area_struct {
->  	/*
->  	 * For areas with an address space and backing store,
->  	 * linkage into the address_space->i_mmap interval tree.
-> +	 *
-> +	 * For private anonymous mappings, a pointer to a null terminated string
-> +	 * containing the name given to the vma, or NULL if unnamed.
->  	 */
-> -	struct {
-> -		struct rb_node rb;
-> -		unsigned long rb_subtree_last;
-> -	} shared;
-> +
-> +	union {
-> +		struct {
-> +			struct rb_node rb;
-> +			unsigned long rb_subtree_last;
-> +		} shared;
-> +		/* Serialized by mmap_sem. */
-> +		char *anon_name;
-> +	};
->  
->  	/*
->  	 * A file's MAP_PRIVATE vma can be in both i_mmap tree and anon_vma
-> @@ -809,4 +817,36 @@ typedef struct {
->  	unsigned long val;
->  } swp_entry_t;
->  
-> +/*
-> + * mmap_lock should be read-locked when calling vma_anon_name() and while using
-> + * the returned pointer.
-> + */
-> +extern const char *vma_anon_name(struct vm_area_struct *vma);
-> +
-> +/*
-> + * mmap_lock should be read-locked for orig_vma->vm_mm.
-> + * mmap_lock should be write-locked for new_vma->vm_mm or new_vma should be
-> + * isolated.
-> + */
-> +extern void dup_vma_anon_name(struct vm_area_struct *orig_vma,
-> +			      struct vm_area_struct *new_vma);
-> +
-> +/*
-> + * mmap_lock should be write-locked or vma should have been isolated under
-> + * write-locked mmap_lock protection.
-> + */
-> +extern void free_vma_anon_name(struct vm_area_struct *vma);
-> +
-> +/* mmap_lock should be read-locked */
-> +static inline bool is_same_vma_anon_name(struct vm_area_struct *vma,
-> +					 const char *name)
-> +{
-> +	const char *vma_name = vma_anon_name(vma);
-> +
-> +	if (likely(!vma_name))
-> +		return name == NULL;
-> +
-> +	return name && !strcmp(name, vma_name);
-> +}
-> +
->  #endif /* _LINUX_MM_TYPES_H */
-> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> index 43bd7f713c39..4c8cbf510b2d 100644
-> --- a/include/uapi/linux/prctl.h
-> +++ b/include/uapi/linux/prctl.h
-> @@ -269,4 +269,7 @@ struct prctl_mm_map {
->  # define PR_SCHED_CORE_SHARE_FROM	3 /* pull core_sched cookie to pid */
->  # define PR_SCHED_CORE_MAX		4
->  
-> +#define PR_SET_VMA		0x53564d41
-> +# define PR_SET_VMA_ANON_NAME		0
-> +
->  #endif /* _LINUX_PRCTL_H */
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 695d1343a254..cfb8c47564d8 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -366,12 +366,14 @@ struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
->  		*new = data_race(*orig);
->  		INIT_LIST_HEAD(&new->anon_vma_chain);
->  		new->vm_next = new->vm_prev = NULL;
-> +		dup_vma_anon_name(orig, new);
->  	}
->  	return new;
->  }
->  
->  void vm_area_free(struct vm_area_struct *vma)
->  {
-> +	free_vma_anon_name(vma);
->  	kmem_cache_free(vm_area_cachep, vma);
->  }
->  
-> diff --git a/kernel/sys.c b/kernel/sys.c
-> index 72c7639e3c98..25118902a376 100644
-> --- a/kernel/sys.c
-> +++ b/kernel/sys.c
-> @@ -2299,6 +2299,64 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
->  
->  #define PR_IO_FLUSHER (PF_MEMALLOC_NOIO | PF_LOCAL_THROTTLE)
->  
-> +#ifdef CONFIG_MMU
-> +
-> +#define ANON_VMA_NAME_MAX_LEN	256
-> +
-> +static inline bool is_valid_name_char(char ch)
-> +{
-> +	/* printable ascii characters, except [ \ ] */
-> +	return (ch > 0x1f && ch < 0x5b) || (ch > 0x5d && ch < 0x7f);
-> +}
-> +
-> +static int prctl_set_vma(unsigned long opt, unsigned long addr,
-> +			 unsigned long size, unsigned long arg)
-> +{
-> +	struct mm_struct *mm = current->mm;
-> +	const char __user *uname;
-> +	char *name, *pch;
-> +	int error;
-> +
-> +	switch (opt) {
-> +	case PR_SET_VMA_ANON_NAME:
-> +		uname = (const char __user *)arg;
-> +		if (!uname) {
-> +			/* Reset the name */
-> +			name = NULL;
-> +			goto set_name;
-> +		}
-> +
-> +		name = strndup_user(uname, ANON_VMA_NAME_MAX_LEN);
-> +
-> +		if (IS_ERR(name))
-> +			return PTR_ERR(name);
-> +
-> +		for (pch = name; *pch != '\0'; pch++) {
-> +			if (!is_valid_name_char(*pch)) {
-> +				kfree(name);
-> +				return -EINVAL;
-> +			}
-> +		}
-> +set_name:
-> +		mmap_write_lock(mm);
-> +		error = madvise_set_anon_name(mm, addr, size, name);
-> +		mmap_write_unlock(mm);
-> +		kfree(name);
-> +		break;
-> +	default:
-> +		error = -EINVAL;
-> +	}
-> +
-> +	return error;
-> +}
-> +#else /* CONFIG_MMU */
-> +static int prctl_set_vma(unsigned long opt, unsigned long start,
-> +			 unsigned long size, unsigned long arg)
-> +{
-> +	return -EINVAL;
-> +}
-> +#endif
-> +
->  SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
->  		unsigned long, arg4, unsigned long, arg5)
->  {
-> @@ -2568,6 +2626,9 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
->  		error = sched_core_share_pid(arg2, arg3, arg4, arg5);
->  		break;
->  #endif
-> +	case PR_SET_VMA:
-> +		error = prctl_set_vma(arg2, arg3, arg4, arg5);
-> +		break;
->  	default:
->  		error = -EINVAL;
->  		break;
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index 54bf9f73f95d..0c6d0f64d432 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -18,6 +18,7 @@
->  #include <linux/fadvise.h>
->  #include <linux/sched.h>
->  #include <linux/sched/mm.h>
-> +#include <linux/string.h>
->  #include <linux/uio.h>
->  #include <linux/ksm.h>
->  #include <linux/fs.h>
-> @@ -62,19 +63,78 @@ static int madvise_need_mmap_write(int behavior)
->  	}
->  }
->  
-> +static inline bool has_vma_anon_name(struct vm_area_struct *vma)
-> +{
-> +	return !vma->vm_file && vma->anon_name;
-> +}
-> +
-> +const char *vma_anon_name(struct vm_area_struct *vma)
-> +{
-> +	if (!has_vma_anon_name(vma))
-> +		return NULL;
-> +
-> +	mmap_assert_locked(vma->vm_mm);
-> +
-> +	return vma->anon_name;
-> +}
-> +
-> +void dup_vma_anon_name(struct vm_area_struct *orig_vma,
-> +		       struct vm_area_struct *new_vma)
-> +{
-> +	if (!has_vma_anon_name(orig_vma))
-> +		return;
-> +
-> +	new_vma->anon_name = kstrdup(orig_vma->anon_name, GFP_KERNEL);
-> +}
-> +
-> +void free_vma_anon_name(struct vm_area_struct *vma)
-> +{
-> +	if (!has_vma_anon_name(vma))
-> +		return;
-> +
-> +	kfree(vma->anon_name);
-> +	vma->anon_name = NULL;
-> +}
-> +
-> +/* mmap_lock should be write-locked */
-> +static int replace_vma_anon_name(struct vm_area_struct *vma, const char *name)
-> +{
-> +	if (!name) {
-> +		free_vma_anon_name(vma);
-> +		return 0;
-> +	}
-> +
-> +	if (vma->anon_name) {
-> +		/* Should never happen, to dup use dup_vma_anon_name() */
-> +		WARN_ON(vma->anon_name == name);
-> +
-> +		/* Same name, nothing to do here */
-> +		if (!strcmp(name, vma->anon_name))
-> +			return 0;
-> +
-> +		free_vma_anon_name(vma);
-> +	}
-> +	vma->anon_name = kstrdup(name, GFP_KERNEL);
-> +	if (!vma->anon_name)
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
-> +
->  /*
-> - * Update the vm_flags on regiion of a vma, splitting it or merging it as
-> + * Update the vm_flags on region of a vma, splitting it or merging it as
->   * necessary.  Must be called with mmap_sem held for writing;
->   */
->  static int madvise_update_vma(struct vm_area_struct *vma,
->  			      struct vm_area_struct **prev, unsigned long start,
-> -			      unsigned long end, unsigned long new_flags)
-> +			      unsigned long end, unsigned long new_flags,
-> +			      const char *name)
->  {
->  	struct mm_struct *mm = vma->vm_mm;
->  	int error;
->  	pgoff_t pgoff;
->  
-> -	if (new_flags == vma->vm_flags) {
-> +	if (new_flags == vma->vm_flags && is_same_vma_anon_name(vma, name)) {
->  		*prev = vma;
->  		return 0;
->  	}
-> @@ -82,7 +142,7 @@ static int madvise_update_vma(struct vm_area_struct *vma,
->  	pgoff = vma->vm_pgoff + ((start - vma->vm_start) >> PAGE_SHIFT);
->  	*prev = vma_merge(mm, *prev, start, end, new_flags, vma->anon_vma,
->  			  vma->vm_file, pgoff, vma_policy(vma),
-> -			  vma->vm_userfaultfd_ctx);
-> +			  vma->vm_userfaultfd_ctx, name);
->  	if (*prev) {
->  		vma = *prev;
->  		goto success;
-> @@ -91,20 +151,16 @@ static int madvise_update_vma(struct vm_area_struct *vma,
->  	*prev = vma;
->  
->  	if (start != vma->vm_start) {
-> -		if (unlikely(mm->map_count >= sysctl_max_map_count)) {
-> -			error = -ENOMEM;
-> -			return error;
-> -		}
-> +		if (unlikely(mm->map_count >= sysctl_max_map_count))
-> +			return -ENOMEM;
->  		error = __split_vma(mm, vma, start, 1);
->  		if (error)
->  			return error;
->  	}
->  
->  	if (end != vma->vm_end) {
-> -		if (unlikely(mm->map_count >= sysctl_max_map_count)) {
-> -			error = -ENOMEM;
-> -			return error;
-> -		}
-> +		if (unlikely(mm->map_count >= sysctl_max_map_count))
-> +			return -ENOMEM;
->  		error = __split_vma(mm, vma, end, 0);
->  		if (error)
->  			return error;
-> @@ -115,10 +171,33 @@ static int madvise_update_vma(struct vm_area_struct *vma,
->  	 * vm_flags is protected by the mmap_lock held in write mode.
->  	 */
->  	vma->vm_flags = new_flags;
-> +	if (!vma->vm_file) {
-> +		error = replace_vma_anon_name(vma, name);
-> +		if (error)
-> +			return error;
-> +	}
->  
->  	return 0;
->  }
->  
-> +static int madvise_vma_anon_name(struct vm_area_struct *vma,
-> +				 struct vm_area_struct **prev,
-> +				 unsigned long start, unsigned long end,
-> +				 unsigned long name)
-> +{
-> +	int error;
-> +
-> +	/* Only anonymous mappings can be named */
-> +	if (vma->vm_file)
-> +		return -EINVAL;
+> HAVE_NLS will tell if we can get anything other than nls=NULL. This way
+> fs can drop some functions if they wanted to.  It would be nice to also
+> make nls module as small as possible because also acpi, pci and usb
+> selects it. Also many other driver seems to depend on it and they do not
+> even seem to select it. All other than filesystems seems to just need
+> utf conversions. At least for quick eye.  Other option is to seperate
+> nls and utf, but I'm not fan this idea just yet at least.
 
-To distinguish from the other EINVALs, should this maybe be EBADF? (As
-in "no, you can't do that, there is already an fd associated".)
+nls tables can be already compiled as modules. There are also
+inefficient implementations of some nls tables (e.g. ascii or
+iso8859-1). So there are already places for decreasing size of nls
+code without loosing any functionality.
 
-> +
-> +	error = madvise_update_vma(vma, prev, start, end, vma->vm_flags,
-> +				   (const char *)name);
-> +	if (error == -ENOMEM)
-> +		error = -EAGAIN;
+> Whole point is to help little bit small Linux and embedded devices. I'm
+> happy to do this, but all really depens on if utf8 can be default and
+> that we sure can think before hand. 
 
-I think a comment would be useful here too. AIUI, this is done to match
-the error behavior seen under madvise_vma_behavior().
+I agree that on modern embedded systems there is no reason to use
+non-utf8 encoding if you are not targeting some legacy userspace.
 
-> +	return error;
-> +}
-> +
->  #ifdef CONFIG_SWAP
->  static int swapin_walk_pmd_entry(pmd_t *pmd, unsigned long start,
->  	unsigned long end, struct mm_walk *walk)
-> @@ -942,7 +1021,8 @@ static int madvise_vma_behavior(struct vm_area_struct *vma,
->  		break;
->  	}
->  
-> -	error = madvise_update_vma(vma, prev, start, end, new_flags);
-> +	error = madvise_update_vma(vma, prev, start, end, new_flags,
-> +				   vma_anon_name(vma));
->  
->  out:
->  	/*
-> @@ -1121,6 +1201,31 @@ int madvise_walk_vmas(struct mm_struct *mm, unsigned long start,
->  	return unmapped_error;
->  }
->  
-> +int madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
-> +			  unsigned long len_in, const char *name)
-> +{
-> +	unsigned long end;
-> +	unsigned long len;
-> +
-> +	if (start & ~PAGE_MASK)
-> +		return -EINVAL;
-> +	len = (len_in + ~PAGE_MASK) & PAGE_MASK;
-> +
-> +	/* Check to see whether len was rounded up from small -ve to zero */
-> +	if (len_in && !len)
-> +		return -EINVAL;
-> +
-> +	end = start + len;
-> +	if (end < start)
-> +		return -EINVAL;
-> +
-> +	if (end == start)
-> +		return 0;
-> +
-> +	return madvise_walk_vmas(mm, start, end, (unsigned long)name,
-> +				 madvise_vma_anon_name);
-> +}
-> +
->  /*
->   * The madvise(2) system call.
->   *
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index e32360e90274..cc21ca7e9d40 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -811,7 +811,8 @@ static int mbind_range(struct mm_struct *mm, unsigned long start,
->  			((vmstart - vma->vm_start) >> PAGE_SHIFT);
->  		prev = vma_merge(mm, prev, vmstart, vmend, vma->vm_flags,
->  				 vma->anon_vma, vma->vm_file, pgoff,
-> -				 new_pol, vma->vm_userfaultfd_ctx);
-> +				 new_pol, vma->vm_userfaultfd_ctx,
-> +				 vma_anon_name(vma));
->  		if (prev) {
->  			vma = prev;
->  			next = vma->vm_next;
-> diff --git a/mm/mlock.c b/mm/mlock.c
-> index 16d2ee160d43..c878515680af 100644
-> --- a/mm/mlock.c
-> +++ b/mm/mlock.c
-> @@ -511,7 +511,7 @@ static int mlock_fixup(struct vm_area_struct *vma, struct vm_area_struct **prev,
->  	pgoff = vma->vm_pgoff + ((start - vma->vm_start) >> PAGE_SHIFT);
->  	*prev = vma_merge(mm, *prev, start, end, newflags, vma->anon_vma,
->  			  vma->vm_file, pgoff, vma_policy(vma),
-> -			  vma->vm_userfaultfd_ctx);
-> +			  vma->vm_userfaultfd_ctx, vma_anon_name(vma));
->  	if (*prev) {
->  		vma = *prev;
->  		goto success;
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 181a113b545d..c13934d41f65 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1032,7 +1032,8 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
->   */
->  static inline int is_mergeable_vma(struct vm_area_struct *vma,
->  				struct file *file, unsigned long vm_flags,
-> -				struct vm_userfaultfd_ctx vm_userfaultfd_ctx)
-> +				struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-> +				const char *anon_name)
->  {
->  	/*
->  	 * VM_SOFTDIRTY should not prevent from VMA merging, if we
-> @@ -1050,6 +1051,8 @@ static inline int is_mergeable_vma(struct vm_area_struct *vma,
->  		return 0;
->  	if (!is_mergeable_vm_userfaultfd_ctx(vma, vm_userfaultfd_ctx))
->  		return 0;
-> +	if (!is_same_vma_anon_name(vma, anon_name))
-> +		return 0;
->  	return 1;
->  }
->  
-> @@ -1082,9 +1085,10 @@ static int
->  can_vma_merge_before(struct vm_area_struct *vma, unsigned long vm_flags,
->  		     struct anon_vma *anon_vma, struct file *file,
->  		     pgoff_t vm_pgoff,
-> -		     struct vm_userfaultfd_ctx vm_userfaultfd_ctx)
-> +		     struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-> +		     const char *anon_name)
->  {
-> -	if (is_mergeable_vma(vma, file, vm_flags, vm_userfaultfd_ctx) &&
-> +	if (is_mergeable_vma(vma, file, vm_flags, vm_userfaultfd_ctx, anon_name) &&
->  	    is_mergeable_anon_vma(anon_vma, vma->anon_vma, vma)) {
->  		if (vma->vm_pgoff == vm_pgoff)
->  			return 1;
-> @@ -1103,9 +1107,10 @@ static int
->  can_vma_merge_after(struct vm_area_struct *vma, unsigned long vm_flags,
->  		    struct anon_vma *anon_vma, struct file *file,
->  		    pgoff_t vm_pgoff,
-> -		    struct vm_userfaultfd_ctx vm_userfaultfd_ctx)
-> +		    struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-> +		     const char *anon_name)
+So allowing to compile filesystems also without nls code (in which case
+they would use only utf-8) makes sense.
 
-Nit: one too many spaces before "const".
-
->  {
-> -	if (is_mergeable_vma(vma, file, vm_flags, vm_userfaultfd_ctx) &&
-> +	if (is_mergeable_vma(vma, file, vm_flags, vm_userfaultfd_ctx, anon_name) &&
->  	    is_mergeable_anon_vma(anon_vma, vma->anon_vma, vma)) {
->  		pgoff_t vm_pglen;
->  		vm_pglen = vma_pages(vma);
-> @@ -1116,9 +1121,9 @@ can_vma_merge_after(struct vm_area_struct *vma, unsigned long vm_flags,
->  }
->  
->  /*
-> - * Given a mapping request (addr,end,vm_flags,file,pgoff), figure out
-> - * whether that can be merged with its predecessor or its successor.
-> - * Or both (it neatly fills a hole).
-> + * Given a mapping request (addr,end,vm_flags,file,pgoff,anon_name),
-> + * figure out whether that can be merged with its predecessor or its
-> + * successor.  Or both (it neatly fills a hole).
->   *
->   * In most cases - when called for mmap, brk or mremap - [addr,end) is
->   * certain not to be mapped by the time vma_merge is called; but when
-> @@ -1163,7 +1168,8 @@ struct vm_area_struct *vma_merge(struct mm_struct *mm,
->  			unsigned long end, unsigned long vm_flags,
->  			struct anon_vma *anon_vma, struct file *file,
->  			pgoff_t pgoff, struct mempolicy *policy,
-> -			struct vm_userfaultfd_ctx vm_userfaultfd_ctx)
-> +			struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-> +			const char *anon_name)
->  {
->  	pgoff_t pglen = (end - addr) >> PAGE_SHIFT;
->  	struct vm_area_struct *area, *next;
-> @@ -1193,7 +1199,7 @@ struct vm_area_struct *vma_merge(struct mm_struct *mm,
->  			mpol_equal(vma_policy(prev), policy) &&
->  			can_vma_merge_after(prev, vm_flags,
->  					    anon_vma, file, pgoff,
-> -					    vm_userfaultfd_ctx)) {
-> +					    vm_userfaultfd_ctx, anon_name)) {
->  		/*
->  		 * OK, it can.  Can we now merge in the successor as well?
->  		 */
-> @@ -1202,7 +1208,7 @@ struct vm_area_struct *vma_merge(struct mm_struct *mm,
->  				can_vma_merge_before(next, vm_flags,
->  						     anon_vma, file,
->  						     pgoff+pglen,
-> -						     vm_userfaultfd_ctx) &&
-> +						     vm_userfaultfd_ctx, anon_name) &&
->  				is_mergeable_anon_vma(prev->anon_vma,
->  						      next->anon_vma, NULL)) {
->  							/* cases 1, 6 */
-> @@ -1225,7 +1231,7 @@ struct vm_area_struct *vma_merge(struct mm_struct *mm,
->  			mpol_equal(policy, vma_policy(next)) &&
->  			can_vma_merge_before(next, vm_flags,
->  					     anon_vma, file, pgoff+pglen,
-> -					     vm_userfaultfd_ctx)) {
-> +					     vm_userfaultfd_ctx, anon_name)) {
->  		if (prev && addr < prev->vm_end)	/* case 4 */
->  			err = __vma_adjust(prev, prev->vm_start,
->  					 addr, prev->vm_pgoff, NULL, next);
-> @@ -1760,7 +1766,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->  	 * Can we just expand an old mapping?
->  	 */
->  	vma = vma_merge(mm, prev, addr, addr + len, vm_flags,
-> -			NULL, file, pgoff, NULL, NULL_VM_UFFD_CTX);
-> +			NULL, file, pgoff, NULL, NULL_VM_UFFD_CTX, NULL);
->  	if (vma)
->  		goto out;
->  
-> @@ -1819,7 +1825,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->  		 */
->  		if (unlikely(vm_flags != vma->vm_flags && prev)) {
->  			merge = vma_merge(mm, prev, vma->vm_start, vma->vm_end, vma->vm_flags,
-> -				NULL, vma->vm_file, vma->vm_pgoff, NULL, NULL_VM_UFFD_CTX);
-> +				NULL, vma->vm_file, vma->vm_pgoff, NULL, NULL_VM_UFFD_CTX, NULL);
->  			if (merge) {
->  				/* ->mmap() can change vma->vm_file and fput the original file. So
->  				 * fput the vma->vm_file here or we would add an extra fput for file
-> @@ -3081,7 +3087,7 @@ static int do_brk_flags(unsigned long addr, unsigned long len, unsigned long fla
->  
->  	/* Can we just expand an old private anonymous mapping? */
->  	vma = vma_merge(mm, prev, addr, addr + len, flags,
-> -			NULL, NULL, pgoff, NULL, NULL_VM_UFFD_CTX);
-> +			NULL, NULL, pgoff, NULL, NULL_VM_UFFD_CTX, NULL);
->  	if (vma)
->  		goto out;
->  
-> @@ -3274,7 +3280,7 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
->  		return NULL;	/* should never get here */
->  	new_vma = vma_merge(mm, prev, addr, addr + len, vma->vm_flags,
->  			    vma->anon_vma, vma->vm_file, pgoff, vma_policy(vma),
-> -			    vma->vm_userfaultfd_ctx);
-> +			    vma->vm_userfaultfd_ctx, vma_anon_name(vma));
->  	if (new_vma) {
->  		/*
->  		 * Source vma may have been merged into new_vma
-> diff --git a/mm/mprotect.c b/mm/mprotect.c
-> index 883e2cc85cad..a48ff8e79f48 100644
-> --- a/mm/mprotect.c
-> +++ b/mm/mprotect.c
-> @@ -464,7 +464,7 @@ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
->  	pgoff = vma->vm_pgoff + ((start - vma->vm_start) >> PAGE_SHIFT);
->  	*pprev = vma_merge(mm, *pprev, start, end, newflags,
->  			   vma->anon_vma, vma->vm_file, pgoff, vma_policy(vma),
-> -			   vma->vm_userfaultfd_ctx);
-> +			   vma->vm_userfaultfd_ctx, vma_anon_name(vma));
->  	if (*pprev) {
->  		vma = *pprev;
->  		VM_WARN_ON((vma->vm_flags ^ newflags) & ~VM_SOFTDIRTY);
-> -- 
-> 2.33.0.153.gba50c8fa24-goog
+>   Argillander
 > 
-
-Cool. With my notes above addressed, please consider this:
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--- 
-Kees Cook
+> > For more details look at email thread where was discussed fs unification:
+> > https://lore.kernel.org/linux-fsdevel/20200102211855.gg62r7jshp742d6i@pali/t/#u
+> > 
+> > This patch series is mostly untested and presented as RFC. Please let me
+> > know what do you think about it and if is the correct way how to fix
+> > broken UTF-8 support in fs drivers. As explained in above email thread I
+> > think it does not make sense to try fixing whole NLS framework and it is
+> > easier to just drop this nls_utf8 module.
+> > 
+> > Note: this patch series does not address UTF-8 fat case-sensitivity issue:
+> > https://lore.kernel.org/linux-fsdevel/20200119221455.bac7dc55g56q2l4r@pali/
+> > 
+> > Pali Rohár (20):
+> >   fat: Fix iocharset=utf8 mount option
+> >   hfsplus: Add iocharset= mount option as alias for nls=
+> >   udf: Fix iocharset=utf8 mount option
+> >   isofs: joliet: Fix iocharset=utf8 mount option
+> >   ntfs: Undeprecate iocharset= mount option
+> >   ntfs: Fix error processing when load_nls() fails
+> >   befs: Fix printing iocharset= mount option
+> >   befs: Rename enum value Opt_charset to Opt_iocharset to match mount
+> >     option
+> >   befs: Fix error processing when load_nls() fails
+> >   befs: Allow to use native UTF-8 mode
+> >   hfs: Explicitly set hsb->nls_disk when hsb->nls_io is set
+> >   hfs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
+> >   hfsplus: Do not use broken utf8 NLS table for iocharset=utf8 mount
+> >     option
+> >   jfs: Remove custom iso8859-1 implementation
+> >   jfs: Fix buffer overflow in jfs_strfromUCS_le() function
+> >   jfs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
+> >   ntfs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
+> >   cifs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
+> >   cifs: Remove usage of load_nls_default() calls
+> >   nls: Drop broken nls_utf8 module
+> > 
+> >  fs/befs/linuxvfs.c          |  22 ++++---
+> >  fs/cifs/cifs_unicode.c      | 128 +++++++++++++++++++++++-------------
+> >  fs/cifs/cifs_unicode.h      |   2 +-
+> >  fs/cifs/cifsfs.c            |   2 +
+> >  fs/cifs/cifssmb.c           |   8 +--
+> >  fs/cifs/connect.c           |   8 ++-
+> >  fs/cifs/dfs_cache.c         |  24 +++----
+> >  fs/cifs/dir.c               |  28 ++++++--
+> >  fs/cifs/smb2pdu.c           |  17 ++---
+> >  fs/cifs/winucase.c          |  14 ++--
+> >  fs/fat/Kconfig              |  15 -----
+> >  fs/fat/dir.c                |  17 ++---
+> >  fs/fat/fat.h                |  22 +++++++
+> >  fs/fat/inode.c              |  28 ++++----
+> >  fs/fat/namei_vfat.c         |  26 ++++++--
+> >  fs/hfs/super.c              |  62 ++++++++++++++---
+> >  fs/hfs/trans.c              |  62 +++++++++--------
+> >  fs/hfsplus/dir.c            |   6 +-
+> >  fs/hfsplus/options.c        |  39 ++++++-----
+> >  fs/hfsplus/super.c          |   7 +-
+> >  fs/hfsplus/unicode.c        |  31 ++++++++-
+> >  fs/hfsplus/xattr.c          |  14 ++--
+> >  fs/hfsplus/xattr_security.c |   3 +-
+> >  fs/isofs/inode.c            |  27 ++++----
+> >  fs/isofs/isofs.h            |   1 -
+> >  fs/isofs/joliet.c           |   4 +-
+> >  fs/jfs/jfs_dtree.c          |  13 +++-
+> >  fs/jfs/jfs_unicode.c        |  35 +++++-----
+> >  fs/jfs/jfs_unicode.h        |   2 +-
+> >  fs/jfs/super.c              |  29 ++++++--
+> >  fs/nls/Kconfig              |   9 ---
+> >  fs/nls/Makefile             |   1 -
+> >  fs/nls/nls_utf8.c           |  67 -------------------
+> >  fs/ntfs/dir.c               |   6 +-
+> >  fs/ntfs/inode.c             |   5 +-
+> >  fs/ntfs/super.c             |  60 ++++++++---------
+> >  fs/ntfs/unistr.c            |  28 +++++++-
+> >  fs/udf/super.c              |  50 ++++++--------
+> >  fs/udf/udf_sb.h             |   2 -
+> >  fs/udf/unicode.c            |   4 +-
+> >  40 files changed, 510 insertions(+), 418 deletions(-)
+> >  delete mode 100644 fs/nls/nls_utf8.c
+> > 
+> > -- 
+> > 2.20.1
+> > 
