@@ -2,80 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DD4F400FC4
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Sep 2021 15:04:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA11B401083
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Sep 2021 17:18:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231304AbhIENF3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Sep 2021 09:05:29 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:55996 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229759AbhIENF2 (ORCPT
+        id S237059AbhIEPTW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Sep 2021 11:19:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60952 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235626AbhIEPTR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Sep 2021 09:05:28 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 59FEE1C0B77; Sun,  5 Sep 2021 15:04:23 +0200 (CEST)
-Date:   Sun, 5 Sep 2021 15:04:18 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
-        ccross@google.com, sumit.semwal@linaro.org, mhocko@suse.com,
-        dave.hansen@intel.com, willy@infradead.org,
-        kirill.shutemov@linux.intel.com, vbabka@suse.cz,
-        hannes@cmpxchg.org, corbet@lwn.net, viro@zeniv.linux.org.uk,
-        rdunlap@infradead.org, kaleshsingh@google.com, peterx@redhat.com,
-        rppt@kernel.org, peterz@infradead.org, catalin.marinas@arm.com,
-        vincenzo.frascino@arm.com, chinwen.chang@mediatek.com,
-        axelrasmussen@google.com, aarcange@redhat.com, jannh@google.com,
-        apopple@nvidia.com, jhubbard@nvidia.com, yuzhao@google.com,
-        will@kernel.org, fenghua.yu@intel.com, thunder.leizhen@huawei.com,
-        hughd@google.com, feng.tang@intel.com, jgg@ziepe.ca, guro@fb.com,
-        tglx@linutronix.de, krisman@collabora.com, chris.hyser@oracle.com,
-        pcc@google.com, ebiederm@xmission.com, axboe@kernel.dk,
-        legion@kernel.org, eb@emlix.com, gorcunov@gmail.com,
-        songmuchun@bytedance.com, viresh.kumar@linaro.org,
-        thomascedeno@google.com, sashal@kernel.org, cxfcosmos@gmail.com,
-        linux@rasmusvillemoes.dk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, kernel-team@android.com
-Subject: Re: [PATCH v9 2/3] mm: add a field to store names for private
- anonymous memory
-Message-ID: <20210905130418.GA7117@localhost>
-References: <20210902231813.3597709-1-surenb@google.com>
- <20210902231813.3597709-2-surenb@google.com>
- <202109031420.2F17A2C9@keescook>
+        Sun, 5 Sep 2021 11:19:17 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77FC8C061575
+        for <linux-fsdevel@vger.kernel.org>; Sun,  5 Sep 2021 08:18:13 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:38f0:cc4f:6a1e:c4ed])
+        by laurent.telenet-ops.be with bizsmtp
+        id qFJ8250043XDlWk01FJ8ws; Sun, 05 Sep 2021 17:18:09 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mMtuJ-00271J-If; Sun, 05 Sep 2021 17:18:07 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mMoTz-001yQL-DX; Sun, 05 Sep 2021 11:30:35 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        noreply@ellerman.id.au
+Subject: [PATCH] binfmt: a.out: Fix bogus semicolon
+Date:   Sun,  5 Sep 2021 11:30:34 +0200
+Message-Id: <20210905093034.470554-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202109031420.2F17A2C9@keescook>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi!
+    fs/binfmt_aout.c: In function ‘load_aout_library’:
+    fs/binfmt_aout.c:311:27: error: expected ‘)’ before ‘;’ token
+      311 |    MAP_FIXED | MAP_PRIVATE;
+	  |                           ^
+    fs/binfmt_aout.c:309:10: error: too few arguments to function ‘vm_mmap’
+      309 |  error = vm_mmap(file, start_addr, ex.a_text + ex.a_data,
+	  |          ^~~~~~~
+    In file included from fs/binfmt_aout.c:12:
+    include/linux/mm.h:2626:35: note: declared here
+     2626 | extern unsigned long __must_check vm_mmap(struct file *, unsigned long,
+	  |                                   ^~~~~~~
 
-> > the process is still running, so it has to have some sort of
-> > synchronization with every layer of userspace.  Efficiently tracking
-> > the ranges requires reimplementing something like the kernel vma
-> > trees, and linking to it from every layer of userspace.  It requires
-> > more memory, more syscalls, more runtime cost, and more complexity to
-> > separately track regions that the kernel is already tracking.
+Fix this by reverting the accidental replacement of a comma by a
+semicolon.
 
-Ok so far.
+Fixes: 42be8b42535183f8 ("binfmt: don't use MAP_DENYWRITE when loading shared libraries via uselib()")
+Reported-by: noreply@ellerman.id.au
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ fs/binfmt_aout.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > This patch adds a field to /proc/pid/maps and /proc/pid/smaps to show a
-> > userspace-provided name for anonymous vmas.  The names of named anonymous
-> > vmas are shown in /proc/pid/maps and /proc/pid/smaps as [anon:<name>].
-> > 
-> > Userspace can set the name for a region of memory by calling
-> > prctl(PR_SET_VMA, PR_SET_VMA_ANON_NAME, start, len, (unsigned
-> > long)name);
-
-Would setting a 64-bit integer instead of name be enough? Even if
-each party would set it randomly, risk of collisions would be very
-low... and we'd not have to deal with strings in kernel.
-
-								Pavel
-
-
+diff --git a/fs/binfmt_aout.c b/fs/binfmt_aout.c
+index a47496d0f123355c..0dcfc691e7e218bc 100644
+--- a/fs/binfmt_aout.c
++++ b/fs/binfmt_aout.c
+@@ -308,7 +308,7 @@ static int load_aout_library(struct file *file)
+ 	/* Now use mmap to map the library into memory. */
+ 	error = vm_mmap(file, start_addr, ex.a_text + ex.a_data,
+ 			PROT_READ | PROT_WRITE | PROT_EXEC,
+-			MAP_FIXED | MAP_PRIVATE;
++			MAP_FIXED | MAP_PRIVATE,
+ 			N_TXTOFF(ex));
+ 	retval = error;
+ 	if (error != start_addr)
 -- 
+2.25.1
+
