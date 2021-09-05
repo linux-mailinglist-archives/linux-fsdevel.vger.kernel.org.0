@@ -2,154 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C33F401155
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Sep 2021 21:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 267D8401160
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Sep 2021 21:29:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238343AbhIETJS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Sep 2021 15:09:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44514 "EHLO
+        id S238132AbhIETaQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Sep 2021 15:30:16 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:59669 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238411AbhIETI7 (ORCPT
+        by vger.kernel.org with ESMTP id S238126AbhIETaP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Sep 2021 15:08:59 -0400
+        Sun, 5 Sep 2021 15:30:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630868874;
+        s=mimecast20190719; t=1630870151;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=GBTVYvl6r/DGTmkrkWcHeYmKn9Wnjnzo76ZSWSpnbek=;
-        b=DzfLsnZ/I0qwKmbI3/47aGIvEaUuMxwHRpADRwVVMH4IleKQbRGM0rWZ87jg7a0x/IYBGg
-        c7HXSbPxRDSnQyd8WLVQzCMq+kvWegrda9fe5wPCCyyLdhhSOu7RcQRh6d1U9g9XikWJY2
-        ZMLvq/jWtukVVitB0P4r965Q6+YwI14=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-203-QMxcIWNKMu-B3MSAfSii3g-1; Sun, 05 Sep 2021 15:07:52 -0400
-X-MC-Unique: QMxcIWNKMu-B3MSAfSii3g-1
-Received: by mail-wm1-f70.google.com with SMTP id s197-20020a1ca9ce000000b002e72ba822dcso2885940wme.6
-        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Sep 2021 12:07:52 -0700 (PDT)
+        bh=VJhftX7KdnJxCNtt1OcYAAeR/bKh9VnXaLjpPXlfeQg=;
+        b=Q62/opboh1PtOd4gBsJ7QkDXmFOJ3lgkEkK6iLlsIlvvk1HaZVzbMLh+puDcDxLB9OUuYJ
+        mYlm8XmdHNYkZiYERsINLg/yRtMmgvjgezrcCUhlCVt+q4k9iRura8x9z+Ap61xhI2UWRA
+        gNU+NwWjNPAzxO5zZvXNoFKGj5Y7UmU=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-302-EN3wMWYHNMyMB_dEn5CvCw-1; Sun, 05 Sep 2021 15:29:10 -0400
+X-MC-Unique: EN3wMWYHNMyMB_dEn5CvCw-1
+Received: by mail-wr1-f69.google.com with SMTP id h15-20020adff18f000000b001574654fbc2so653418wro.10
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Sep 2021 12:29:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=GBTVYvl6r/DGTmkrkWcHeYmKn9Wnjnzo76ZSWSpnbek=;
-        b=qqzJbLivR0uhE3lqgnffx3lEP/3zFP3R51KH5pIeBJFB/Il2SdGw+U6Osgw4m5NKWI
-         5M8FJuNW7iaYpHzRTYgyDHcoZxNF0BXBJUh/5UxG7A0Ehe12oxCOzFyaVq8MMv00ic7O
-         63v//ggDrByW944dCjA0lGxHGIQZdzgCTC0r0dqJFs6/tRyv7mdUOfRxtsTaiP/hj6F8
-         qzj682kX2AzZrYOEwLD0/MAhJSljKNK1XMBfAsJjv8OpeynyjT37gYPWHmp277EoOJ7a
-         bpSKe/nW0qyvTtBN2Ut1xidqFs2ceWbEuxTKAFVp+fC6ut5h2BDYHomu9iYBhayPWXnd
-         zDjA==
-X-Gm-Message-State: AOAM532kVtH3qwGWy/Tdh5PyFbu6YfHEmVTGk/EAGrgicWNwJQauIZqa
-        A2FSUI118ohyBCoju7BUd1uiEDMcfBRvnXefrlj43eww9xut0kxS53nxPn2FZnwKhQ966C1CsuZ
-        rmmQ2S3HGHi5LfnEyV6x3+uUkEQ==
-X-Received: by 2002:adf:916f:: with SMTP id j102mr9428572wrj.422.1630868871731;
-        Sun, 05 Sep 2021 12:07:51 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwJKpXpbX8Zx9j1c0iF75tnA3gLF7m6WMhftI7dZFfieFpkJUATagtI6L+4VC8O/dknnYxpxg==
-X-Received: by 2002:adf:916f:: with SMTP id j102mr9428550wrj.422.1630868871507;
-        Sun, 05 Sep 2021 12:07:51 -0700 (PDT)
+        bh=VJhftX7KdnJxCNtt1OcYAAeR/bKh9VnXaLjpPXlfeQg=;
+        b=ue7NfFNxN4vEPPLwbVhpS6uZEaB0CERZeDYSTjmaPkkt2TBYHW9TCFG4yCzc/VE0HL
+         dJDLFrocabpiF2XjZgjqf6DLq9TGbFL2P3gkWntEbuUih9u/vJ3/odDmSID7aiJ1MKp7
+         9bC/SjbA85y9nhv4hWmKlktdUVfsQxV7GrhbOXBBllx+8dNZ3H5DPpAn/TkpQ4raNdRn
+         ZXVu6+BM5gUIFUHtYPj73uAPw2XDDi8mo8oqR3PFtQ60eJ2Mq4Jb58De7USHb7aH3Tlo
+         JekFeGapa/j4t0KCcS3bB7X+DNTppwLhtJ2FdTYNgbmO2PzwZSiCB2AtUGjay/B50Cs4
+         shfg==
+X-Gm-Message-State: AOAM531shDv+Nv4bX8i2k6smMOHR38+vx2Q/KWkKzv0RTJIS1yGRdt4D
+        DJPYULpcf0h3WWLyfi6Mx5iysQ9qhhbdMiMTYmlhWDLYvmCDk0FeX+KCauuNYLN31X48F3FwQL/
+        TwtPfiwvC16vkzDKZ6bKZa1v2YA==
+X-Received: by 2002:a5d:438a:: with SMTP id i10mr9720554wrq.285.1630870145993;
+        Sun, 05 Sep 2021 12:29:05 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxu2FTA+hrPwFqGf7dCn9mHcjQyvE9QSkO6Avx438vyzALqkqRc4eOOXzTeN2CgcYcEllBK9w==
+X-Received: by 2002:a5d:438a:: with SMTP id i10mr9720544wrq.285.1630870145830;
+        Sun, 05 Sep 2021 12:29:05 -0700 (PDT)
 Received: from [192.168.3.132] (p5b0c6f04.dip0.t-ipconnect.de. [91.12.111.4])
-        by smtp.gmail.com with ESMTPSA id i20sm5300193wml.37.2021.09.05.12.07.48
+        by smtp.gmail.com with ESMTPSA id l7sm5166459wmj.9.2021.09.05.12.29.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Sep 2021 12:07:51 -0700 (PDT)
-Subject: Re: [PATCH v2 1/7] binfmt: don't use MAP_DENYWRITE when loading
- shared libraries via uselib()
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Price <steven.price@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Marco Elver <elver@google.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        David Laight <David.Laight@aculab.com>,
-        linux-unionfs@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-References: <20210816194840.42769-1-david@redhat.com>
- <20210816194840.42769-2-david@redhat.com>
- <20210905153229.GA3019909@roeck-us.net>
- <CAHk-=whO-dnNxz5H8yfnGsNxrDHu-TVQq-X-VwhoDyWu3Lgnyg@mail.gmail.com>
+        Sun, 05 Sep 2021 12:29:05 -0700 (PDT)
+Subject: Re: [PATCH] binfmt: a.out: Fix bogus semicolon
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        noreply@ellerman.id.au
+References: <20210905093034.470554-1-geert@linux-m68k.org>
 From:   David Hildenbrand <david@redhat.com>
 Organization: Red Hat
-Message-ID: <77b36c45-773b-3cb8-fa18-45f0914c3090@redhat.com>
-Date:   Sun, 5 Sep 2021 21:07:48 +0200
+Message-ID: <7a9e8a5e-df3d-0ecd-1396-450b50ce2937@redhat.com>
+Date:   Sun, 5 Sep 2021 21:29:04 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=whO-dnNxz5H8yfnGsNxrDHu-TVQq-X-VwhoDyWu3Lgnyg@mail.gmail.com>
+In-Reply-To: <20210905093034.470554-1-geert@linux-m68k.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 05.09.21 19:17, Linus Torvalds wrote:
-> On Sun, Sep 5, 2021 at 8:32 AM Guenter Roeck <linux@roeck-us.net> wrote:
->>
->> Guess someone didn't care compile testing their code. This is now in
->> mainline.
+On 05.09.21 11:30, Geert Uytterhoeven wrote:
+>      fs/binfmt_aout.c: In function ‘load_aout_library’:
+>      fs/binfmt_aout.c:311:27: error: expected ‘)’ before ‘;’ token
+>        311 |    MAP_FIXED | MAP_PRIVATE;
+> 	  |                           ^
+>      fs/binfmt_aout.c:309:10: error: too few arguments to function ‘vm_mmap’
+>        309 |  error = vm_mmap(file, start_addr, ex.a_text + ex.a_data,
+> 	  |          ^~~~~~~
+>      In file included from fs/binfmt_aout.c:12:
+>      include/linux/mm.h:2626:35: note: declared here
+>       2626 | extern unsigned long __must_check vm_mmap(struct file *, unsigned long,
+> 	  |                                   ^~~~~~~
 > 
-> To be fair, a.out is disabled pretty much on all relevant platforms these days.
-
-Yes, and it seems like it was disabled in all configs I used. (I did not 
-compile all-yes configs; usually my stuff goes via -mm where it will end 
-up in -next for a while ... this one was special)
-
+> Fix this by reverting the accidental replacement of a comma by a
+> semicolon.
 > 
-> Only alpha and m68k left, I think.
+> Fixes: 42be8b42535183f8 ("binfmt: don't use MAP_DENYWRITE when loading shared libraries via uselib()")
+> Reported-by: noreply@ellerman.id.au
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+>   fs/binfmt_aout.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I applied the obvious patch from Geert.
+> diff --git a/fs/binfmt_aout.c b/fs/binfmt_aout.c
+> index a47496d0f123355c..0dcfc691e7e218bc 100644
+> --- a/fs/binfmt_aout.c
+> +++ b/fs/binfmt_aout.c
+> @@ -308,7 +308,7 @@ static int load_aout_library(struct file *file)
+>   	/* Now use mmap to map the library into memory. */
+>   	error = vm_mmap(file, start_addr, ex.a_text + ex.a_data,
+>   			PROT_READ | PROT_WRITE | PROT_EXEC,
+> -			MAP_FIXED | MAP_PRIVATE;
+> +			MAP_FIXED | MAP_PRIVATE,
+>   			N_TXTOFF(ex));
+>   	retval = error;
+>   	if (error != start_addr)
+> 
 
-Thanks Linus!
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
+Thanks for reporting and fixing that quickly!
 
 -- 
 Thanks,
