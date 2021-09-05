@@ -2,183 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E06E9400E85
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Sep 2021 09:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DD4F400FC4
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Sep 2021 15:04:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235818AbhIEHKG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Sep 2021 03:10:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39672 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230076AbhIEHKF (ORCPT
+        id S231304AbhIENF3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Sep 2021 09:05:29 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:55996 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229759AbhIENF2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Sep 2021 03:10:05 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D01F9C061757;
-        Sun,  5 Sep 2021 00:09:00 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id q14so4827538wrp.3;
-        Sun, 05 Sep 2021 00:09:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2ZNdQqhoDjiadw1b2TXLuMmpgre0sPnhos24zQJglFI=;
-        b=EmltpoVbxOK+7ncHUuk6jnbjHt0RZJh/AOO5bFEXc5f4YFypA8yQULy2wKWyOeTFEF
-         hh1d/RH6UiY53Sf/asTJ4xlI3yprCO3H3ne92IpHiqmIRaXR5L8DAw9F5jJPZqI8z2dp
-         EudIBIHe8vsCx3611KQ//scVGiHLR+Os8j3VyUhNKDy2Cii4sIC+cJoAO9VlwCest7j6
-         PGfVF3wLR+3teHOKP/f+CtRru8uyobatvwuaGnqVjCw+tO+P5HthLY3NL1Oux6hn0eSR
-         RYnihHM8HXMi5Cr1E6z/Ow5jXTIULIqc0e1xyMX8UTe1Rb9gXJYneekgt/L3Ig/BRdCQ
-         sbew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2ZNdQqhoDjiadw1b2TXLuMmpgre0sPnhos24zQJglFI=;
-        b=cP7kOFr5WHu0x8aBZxUlRYr31Ms2a/3VnxJKSkAgmIAYItUKmACLtO6mwajQdr3RTP
-         20HEXu7+OHWJfP8zVNhLEKtXL068pYAoPiPBTG6TdoGQy09wh3atIzN5/AY8m2uTtJsZ
-         O7l4AjhzBj6Z8VoyKzFwQbEmONNQUbOBJE30bLqoaqDrHyKVUBMskSs8FOLfpVrnP9si
-         Izp8ufDH/twhUKuOZVcznye30GRnh/YjH/z1dc/SGgkTpJKhcWqFndJH8p0feBMH9zxY
-         MTDqzf598hv7KfTrWbRqvTFPCb5BXaspgamDN1nczjUTiXY9UNJBkWj32OqMD2DlnDsU
-         23Uw==
-X-Gm-Message-State: AOAM5338D/yMGYmPdxLDVewZUHC3BmueFgI85oU5fSmeloD74qTzvJCF
-        c338clAvMSc8+isT9y2eRS2SgMRgyEI=
-X-Google-Smtp-Source: ABdhPJxW8SwU5f5H9M7CgJC0O923ysbqiEqeMbrUGu7Q36mq8gHf24GRIxUbAiZ7v7te1B1bCdZPJg==
-X-Received: by 2002:a5d:5642:: with SMTP id j2mr7131898wrw.264.1630825739450;
-        Sun, 05 Sep 2021 00:08:59 -0700 (PDT)
-Received: from localhost.localdomain ([141.226.244.47])
-        by smtp.gmail.com with ESMTPSA id q4sm4148355wra.43.2021.09.05.00.08.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Sep 2021 00:08:58 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Nikolaus Rath <Nikolaus@rath.org>,
-        Vivek Goyal <vgoyal@redhat.com>, stable@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 5.10 2/2] fuse: fix illegal access to inode with reused nodeid
-Date:   Sun,  5 Sep 2021 10:08:33 +0300
-Message-Id: <20210905070833.201102-2-amir73il@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210905070833.201102-1-amir73il@gmail.com>
-References: <20210905070833.201102-1-amir73il@gmail.com>
+        Sun, 5 Sep 2021 09:05:28 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 59FEE1C0B77; Sun,  5 Sep 2021 15:04:23 +0200 (CEST)
+Date:   Sun, 5 Sep 2021 15:04:18 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+        ccross@google.com, sumit.semwal@linaro.org, mhocko@suse.com,
+        dave.hansen@intel.com, willy@infradead.org,
+        kirill.shutemov@linux.intel.com, vbabka@suse.cz,
+        hannes@cmpxchg.org, corbet@lwn.net, viro@zeniv.linux.org.uk,
+        rdunlap@infradead.org, kaleshsingh@google.com, peterx@redhat.com,
+        rppt@kernel.org, peterz@infradead.org, catalin.marinas@arm.com,
+        vincenzo.frascino@arm.com, chinwen.chang@mediatek.com,
+        axelrasmussen@google.com, aarcange@redhat.com, jannh@google.com,
+        apopple@nvidia.com, jhubbard@nvidia.com, yuzhao@google.com,
+        will@kernel.org, fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        hughd@google.com, feng.tang@intel.com, jgg@ziepe.ca, guro@fb.com,
+        tglx@linutronix.de, krisman@collabora.com, chris.hyser@oracle.com,
+        pcc@google.com, ebiederm@xmission.com, axboe@kernel.dk,
+        legion@kernel.org, eb@emlix.com, gorcunov@gmail.com,
+        songmuchun@bytedance.com, viresh.kumar@linaro.org,
+        thomascedeno@google.com, sashal@kernel.org, cxfcosmos@gmail.com,
+        linux@rasmusvillemoes.dk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@android.com
+Subject: Re: [PATCH v9 2/3] mm: add a field to store names for private
+ anonymous memory
+Message-ID: <20210905130418.GA7117@localhost>
+References: <20210902231813.3597709-1-surenb@google.com>
+ <20210902231813.3597709-2-surenb@google.com>
+ <202109031420.2F17A2C9@keescook>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202109031420.2F17A2C9@keescook>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[ Upstream commit 15db16837a35d8007cb8563358787412213db25e ]
+Hi!
 
-Server responds to LOOKUP and other ops (READDIRPLUS/CREATE/MKNOD/...)
-with ourarg containing nodeid and generation.
+> > the process is still running, so it has to have some sort of
+> > synchronization with every layer of userspace.  Efficiently tracking
+> > the ranges requires reimplementing something like the kernel vma
+> > trees, and linking to it from every layer of userspace.  It requires
+> > more memory, more syscalls, more runtime cost, and more complexity to
+> > separately track regions that the kernel is already tracking.
 
-If a fuse inode is found in inode cache with the same nodeid but different
-generation, the existing fuse inode should be unhashed and marked "bad" and
-a new inode with the new generation should be hashed instead.
+Ok so far.
 
-This can happen, for example, with passhrough fuse filesystem that returns
-the real filesystem ino/generation on lookup and where real inode numbers
-can get recycled due to real files being unlinked not via the fuse
-passthrough filesystem.
+> > This patch adds a field to /proc/pid/maps and /proc/pid/smaps to show a
+> > userspace-provided name for anonymous vmas.  The names of named anonymous
+> > vmas are shown in /proc/pid/maps and /proc/pid/smaps as [anon:<name>].
+> > 
+> > Userspace can set the name for a region of memory by calling
+> > prctl(PR_SET_VMA, PR_SET_VMA_ANON_NAME, start, len, (unsigned
+> > long)name);
 
-With current code, this situation will not be detected and an old fuse
-dentry that used to point to an older generation real inode, can be used to
-access a completely new inode, which should be accessed only via the new
-dentry.
+Would setting a 64-bit integer instead of name be enough? Even if
+each party would set it randomly, risk of collisions would be very
+low... and we'd not have to deal with strings in kernel.
 
-Note that because the FORGET message carries the nodeid w/o generation, the
-server should wait to get FORGET counts for the nlookup counts of the old
-and reused inodes combined, before it can free the resources associated to
-that nodeid.
+								Pavel
 
-Stable backport notes:
-* This is not a regression. The bug has been in fuse forever, but only
-  a certain class of low level fuse filesystems can trigger this bug
-* Because there is no way to check if this fix is applied in runtime,
-  libfuse test_examples.py tests this fix with hardcoded check for
-  kernel version >= 5.14
-* After backport to stable kernel(s), the libfuse test can be updated
-  to also check minimal stable kernel version(s)
-* Depends on "fuse: fix bad inode" which is already applied to stable
-  kernels v5.4.y and v5.10.y
-* Required backporting helper inode_wrong_type()
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxi8DymG=JO_sAU+wS8akFdzh+PuXwW3Ebgahd2Nwnh7zA@mail.gmail.com/
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/fuse/dir.c     | 2 +-
- fs/fuse/fuse_i.h  | 7 +++++++
- fs/fuse/inode.c   | 4 ++--
- fs/fuse/readdir.c | 7 +++++--
- 4 files changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 37d50dde845e..2e300176cb88 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -252,7 +252,7 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
- 		if (ret == -ENOMEM)
- 			goto out;
- 		if (ret || fuse_invalid_attr(&outarg.attr) ||
--		    inode_wrong_type(inode, outarg.attr.mode))
-+		    fuse_stale_inode(inode, outarg.generation, &outarg.attr))
- 			goto invalid;
- 
- 		forget_all_cached_acls(inode);
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 8150621101c6..ff94da684017 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -860,6 +860,13 @@ static inline u64 fuse_get_attr_version(struct fuse_conn *fc)
- 	return atomic64_read(&fc->attr_version);
- }
- 
-+static inline bool fuse_stale_inode(const struct inode *inode, int generation,
-+				    struct fuse_attr *attr)
-+{
-+	return inode->i_generation != generation ||
-+		inode_wrong_type(inode, attr->mode);
-+}
-+
- static inline void fuse_make_bad(struct inode *inode)
- {
- 	remove_inode_hash(inode);
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 6345c4679fb8..053c56af3b6f 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -340,8 +340,8 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
- 		inode->i_generation = generation;
- 		fuse_init_inode(inode, attr);
- 		unlock_new_inode(inode);
--	} else if (inode_wrong_type(inode, attr->mode)) {
--		/* Inode has changed type, any I/O on the old should fail */
-+	} else if (fuse_stale_inode(inode, generation, attr)) {
-+		/* nodeid was reused, any I/O on the old inode should fail */
- 		fuse_make_bad(inode);
- 		iput(inode);
- 		goto retry;
-diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
-index 277f7041d55a..bc267832310c 100644
---- a/fs/fuse/readdir.c
-+++ b/fs/fuse/readdir.c
-@@ -200,9 +200,12 @@ static int fuse_direntplus_link(struct file *file,
- 	if (!d_in_lookup(dentry)) {
- 		struct fuse_inode *fi;
- 		inode = d_inode(dentry);
-+		if (inode && get_node_id(inode) != o->nodeid)
-+			inode = NULL;
- 		if (!inode ||
--		    get_node_id(inode) != o->nodeid ||
--		    inode_wrong_type(inode, o->attr.mode)) {
-+		    fuse_stale_inode(inode, o->generation, &o->attr)) {
-+			if (inode)
-+				fuse_make_bad(inode);
- 			d_invalidate(dentry);
- 			dput(dentry);
- 			goto retry;
 -- 
-2.16.5
-
