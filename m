@@ -2,175 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 65168401094
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Sep 2021 17:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 257A94010B1
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Sep 2021 17:57:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237059AbhIEPdi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Sep 2021 11:33:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35908 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbhIEPdh (ORCPT
+        id S237541AbhIEP6f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Sep 2021 11:58:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:21727 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230387AbhIEP6e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Sep 2021 11:33:37 -0400
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 008C6C061575;
-        Sun,  5 Sep 2021 08:32:34 -0700 (PDT)
-Received: by mail-ot1-x332.google.com with SMTP id c19-20020a9d6153000000b0051829acbfc7so5454206otk.9;
-        Sun, 05 Sep 2021 08:32:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=XoAlzqJi3De8B+VzmGNnnTIvew9rejsmVUIc2D4Tpw0=;
-        b=LurNh+xXN3Seno1v6vKCeczmHg5jkp75T7+rEOTZc9poUVG66GYg/QUXCpVw/gZFaz
-         UrOiFKVGus5FSJFr25SxzrUPwkqmdBOL2RrQ9cqQnQV+zeT6US5zUeogQAglGZ9aQRpu
-         g+f4EQwqe1RumBAG3axpcqPQtpkxvocGhMlE2O7dmqkW0U/qx0C36GKaVq1rhDbNs7Aq
-         d0kmTanGwQiiXk849oEBv1wsz2C3u5LbNaV8lb9H9tcU+UWwtp/6tZUNqAZ+LW9AQmmY
-         /cbJ4ru1mUxJ8CmChZjh79C9VmP5PfoaUWgv6dfo692Lw8w0YblbPX71SpcZgzh3TgZj
-         pi8Q==
+        Sun, 5 Sep 2021 11:58:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630857451;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ALsSmxCI7zZzOlsgFfP2jF6WBrBi9RCCJjNwkZ0c/3s=;
+        b=HbmKQ/IY83JWXQ2DlBSppysfTXKSMD3e2idIk2mKFyq+Xe8xewoN+qjVIZ2C8g/DxrckGM
+        2JPUb73aS6w8VgecNi0pBytxrtnXUuZJarNKPsa3fpEAWFWaatgBt4DttWMntWyB3SYBtq
+        m59x43kKbOTo0Jd9asV5jYCvNnk/7Ro=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-281-q7D0oofzNOiRC6WHxLNhiA-1; Sun, 05 Sep 2021 11:57:30 -0400
+X-MC-Unique: q7D0oofzNOiRC6WHxLNhiA-1
+Received: by mail-wm1-f71.google.com with SMTP id r4-20020a1c4404000000b002e728beb9fbso2706837wma.9
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Sep 2021 08:57:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=XoAlzqJi3De8B+VzmGNnnTIvew9rejsmVUIc2D4Tpw0=;
-        b=RdLpgm2pEKZXzVPjHyLD4MO8Mx20ZFkjn6KH29aovOh5bnpe4vnxOvEhPNFAodRfUj
-         dWc8w8IZoHkreTKd/nUD7r3jcA3z8G1C2kq+L7hpLHVklmfROz0qSfI1RXT54MyMXlI5
-         DtEqbhWaFTAu9/fAwlGkrW5qkf66NxZd2no3yMf/m7EQcwMQ72/JaIW+kHkNg+eGf2ue
-         aAXNj1RH5aYjmSEmHvVHFzXzRh9sY8ogSXS2/J3pMsdlwSe8PfkbxAVfSpMFxU09zpis
-         W3zolk0P4G83Zzqvm01Z7/JFrrIih/W8pIKITBBHlXhiArHrXbLxAkRXGqIEULQkaJbT
-         2Jjg==
-X-Gm-Message-State: AOAM532nR+HRfvqAnD6c0Oed8K7sNP8K5idjzZw92uF0dwklSgiQP2o0
-        ds2WVENpqpfaobJvhkpbs43jH7QKL9w=
-X-Google-Smtp-Source: ABdhPJzbxr3wcNwbKxd3onpfBStc77h8RDWiIefjN+/Q69lK78BTudJW3loI0eDagfkU7WkIR01wsQ==
-X-Received: by 2002:a9d:6359:: with SMTP id y25mr7629665otk.274.1630855952160;
-        Sun, 05 Sep 2021 08:32:32 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id x12sm999383oie.56.2021.09.05.08.32.30
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ALsSmxCI7zZzOlsgFfP2jF6WBrBi9RCCJjNwkZ0c/3s=;
+        b=PNsDZMUurvcZ1t7F4WAKZ3Q1/ctQ+3v6dcDDCKkB3aB3Ui6N1VlhaGC+Z9pAuDytxG
+         peG1hRhewg5T0oFRB8ymq0D7PjG6BmBHPNlFuN5OpZVtYMqlxLBBHxlriRsB8E87eaDZ
+         lKOJvRjS3F/U+PtiCYDUUu95IuoaS0CbgGO3A3cJDWpqu41++Pj9Ojay81rUKmjoO87m
+         wDW+jAwX7ja/rEcU269q4ig2juQjvU7gWGI1I8dQ6GlN33/aaNgoUv7F9fFxB9uB9KBe
+         ZD5yroo2jWCBQgDgSEBwHPGg5qFuinkgpwpMyfEphjI3vwkOOPa1Uy1HKk5w4SIRFhGU
+         Xrww==
+X-Gm-Message-State: AOAM5303lh+KrSTVToxSS951wsE90vVHGDSHyQUuHAHHMiI9P2XJ+Elm
+        sq71sgQnxYvIKd0hz5JThtNEqMjhkDbdQuAKlP910i2gm/FNpgd3mSnoqSx+ogDBOZtJeQqamA0
+        J4JGooRYONgA3NIfVCWEziy78gw==
+X-Received: by 2002:adf:f991:: with SMTP id f17mr9015609wrr.56.1630857449028;
+        Sun, 05 Sep 2021 08:57:29 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwwnpG4c6ej4zR69bwXXhKihUsDCsR3fnY/KHrXw5h/ma0hALUo9/kK5Sd32+gteCqNYbS8Og==
+X-Received: by 2002:adf:f991:: with SMTP id f17mr9015590wrr.56.1630857448836;
+        Sun, 05 Sep 2021 08:57:28 -0700 (PDT)
+Received: from redhat.com ([2.55.131.183])
+        by smtp.gmail.com with ESMTPSA id u16sm5501569wmc.41.2021.09.05.08.57.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Sep 2021 08:32:31 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Sun, 5 Sep 2021 08:32:29 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Chinwen Chang <chinwen.chang@mediatek.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Huang Ying <ying.huang@intel.com>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Shawn Anastasio <shawn@anastas.io>,
-        Steven Price <steven.price@arm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Peter Xu <peterx@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Marco Elver <elver@google.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Christian =?iso-8859-1?Q?K=F6nig?= 
-        <ckoenig.leichtzumerken@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        David Laight <David.Laight@ACULAB.COM>,
-        linux-unionfs@vger.kernel.org, linux-api@vger.kernel.org,
-        x86@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 1/7] binfmt: don't use MAP_DENYWRITE when loading
- shared libraries via uselib()
-Message-ID: <20210905153229.GA3019909@roeck-us.net>
-References: <20210816194840.42769-1-david@redhat.com>
- <20210816194840.42769-2-david@redhat.com>
+        Sun, 05 Sep 2021 08:57:28 -0700 (PDT)
+Date:   Sun, 5 Sep 2021 11:57:22 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Xie Yongji <xieyongji@bytedance.com>
+Cc:     jasowang@redhat.com, stefanha@redhat.com, sgarzare@redhat.com,
+        parav@nvidia.com, hch@infradead.org,
+        christian.brauner@canonical.com, rdunlap@infradead.org,
+        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        bcrl@kvack.org, corbet@lwn.net, mika.penttila@nextfour.com,
+        dan.carpenter@oracle.com, joro@8bytes.org,
+        gregkh@linuxfoundation.org, zhe.he@windriver.com,
+        xiaodong.liu@intel.com, joe@perches.com, robin.murphy@arm.com,
+        will@kernel.org, john.garry@huawei.com, songmuchun@bytedance.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 03/13] file: Export receive_fd() to modules
+Message-ID: <20210905115642-mutt-send-email-mst@kernel.org>
+References: <20210831103634.33-1-xieyongji@bytedance.com>
+ <20210831103634.33-4-xieyongji@bytedance.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210816194840.42769-2-david@redhat.com>
+In-Reply-To: <20210831103634.33-4-xieyongji@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 16, 2021 at 09:48:34PM +0200, David Hildenbrand wrote:
-> uselib() is the legacy systemcall for loading shared libraries.
-> Nowadays, applications use dlopen() to load shared libraries, completely
-> implemented in user space via mmap().
+On Tue, Aug 31, 2021 at 06:36:24PM +0800, Xie Yongji wrote:
+> Export receive_fd() so that some modules can use
+> it to pass file descriptor between processes without
+> missing any security stuffs.
 > 
-> For example, glibc uses MAP_COPY to mmap shared libraries. While this
-> maps to MAP_PRIVATE | MAP_DENYWRITE on Linux, Linux ignores any
-> MAP_DENYWRITE specification from user space in mmap.
-> 
-> With this change, all remaining in-tree users of MAP_DENYWRITE use it
-> to map an executable. We will be able to open shared libraries loaded
-> via uselib() writable, just as we already can via dlopen() from user
-> space.
-> 
-> This is one step into the direction of removing MAP_DENYWRITE from the
-> kernel. This can be considered a minor user space visible change.
-> 
-> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
+> Acked-by: Jason Wang <jasowang@redhat.com>
+
+This needs some acks from fs devels.
+Viro?
+
+
 > ---
->  arch/x86/ia32/ia32_aout.c | 2 +-
->  fs/binfmt_aout.c          | 2 +-
->  fs/binfmt_elf.c           | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
+>  fs/file.c            | 6 ++++++
+>  include/linux/file.h | 7 +++----
+>  2 files changed, 9 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/x86/ia32/ia32_aout.c b/arch/x86/ia32/ia32_aout.c
-> index 5e5b9fc2747f..321d7b22ad2d 100644
-> --- a/arch/x86/ia32/ia32_aout.c
-> +++ b/arch/x86/ia32/ia32_aout.c
-> @@ -293,7 +293,7 @@ static int load_aout_library(struct file *file)
->  	/* Now use mmap to map the library into memory. */
->  	error = vm_mmap(file, start_addr, ex.a_text + ex.a_data,
->  			PROT_READ | PROT_WRITE | PROT_EXEC,
-> -			MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE | MAP_32BIT,
-> +			MAP_FIXED | MAP_PRIVATE | MAP_32BIT,
->  			N_TXTOFF(ex));
->  	retval = error;
->  	if (error != start_addr)
-> diff --git a/fs/binfmt_aout.c b/fs/binfmt_aout.c
-> index 145917f734fe..d29de971d3f3 100644
-> --- a/fs/binfmt_aout.c
-> +++ b/fs/binfmt_aout.c
-> @@ -309,7 +309,7 @@ static int load_aout_library(struct file *file)
->  	/* Now use mmap to map the library into memory. */
->  	error = vm_mmap(file, start_addr, ex.a_text + ex.a_data,
->  			PROT_READ | PROT_WRITE | PROT_EXEC,
-> -			MAP_FIXED | MAP_PRIVATE | MAP_DENYWRITE,
-> +			MAP_FIXED | MAP_PRIVATE;
->  			N_TXTOFF(ex));
+> diff --git a/fs/file.c b/fs/file.c
+> index 86dc9956af32..210e540672aa 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -1134,6 +1134,12 @@ int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags)
+>  	return new_fd;
+>  }
+>  
+> +int receive_fd(struct file *file, unsigned int o_flags)
+> +{
+> +	return __receive_fd(file, NULL, o_flags);
+> +}
+> +EXPORT_SYMBOL_GPL(receive_fd);
+> +
+>  static int ksys_dup3(unsigned int oldfd, unsigned int newfd, int flags)
+>  {
+>  	int err = -EBADF;
+> diff --git a/include/linux/file.h b/include/linux/file.h
+> index 2de2e4613d7b..51e830b4fe3a 100644
+> --- a/include/linux/file.h
+> +++ b/include/linux/file.h
+> @@ -94,6 +94,9 @@ extern void fd_install(unsigned int fd, struct file *file);
+>  
+>  extern int __receive_fd(struct file *file, int __user *ufd,
+>  			unsigned int o_flags);
+> +
+> +extern int receive_fd(struct file *file, unsigned int o_flags);
+> +
+>  static inline int receive_fd_user(struct file *file, int __user *ufd,
+>  				  unsigned int o_flags)
+>  {
+> @@ -101,10 +104,6 @@ static inline int receive_fd_user(struct file *file, int __user *ufd,
+>  		return -EFAULT;
+>  	return __receive_fd(file, ufd, o_flags);
+>  }
+> -static inline int receive_fd(struct file *file, unsigned int o_flags)
+> -{
+> -	return __receive_fd(file, NULL, o_flags);
+> -}
+>  int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags);
+>  
+>  extern void flush_delayed_fput(void);
+> -- 
+> 2.11.0
 
-Guess someone didn't care compile testing their code. This is now in
-mainline.
-
-Guenter
