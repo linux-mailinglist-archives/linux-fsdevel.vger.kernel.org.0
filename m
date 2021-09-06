@@ -2,81 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E75040186A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Sep 2021 10:59:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE7E8401889
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Sep 2021 11:02:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241150AbhIFI5a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Sep 2021 04:57:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46190 "EHLO mail.kernel.org"
+        id S239548AbhIFJCo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Sep 2021 05:02:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229494AbhIFI5U (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Sep 2021 04:57:20 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A7272608FB;
-        Mon,  6 Sep 2021 08:56:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1630918576;
-        bh=jrjn+jw7/mnR3MpUT0FQrZ/o2VRBStEospRq9n0RZew=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K1zGDVrdu2E5h5e4aJkwLS3Xe5mw7X2xZxae1DE+LG/09uTT5BB08GfJH3U5dlJhm
-         HOeduuvoCSXvbiZ1ZfzbLwGXac/2WXZYiyXcyDuKm3cxNKgqZNebZ1HxZH2LmeNNgU
-         Hk+GopGfprnZuGTuIPiF4wqewrGEdis8b21qvuWY=
-Date:   Mon, 6 Sep 2021 10:56:13 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Nikolaus Rath <Nikolaus@rath.org>,
-        Vivek Goyal <vgoyal@redhat.com>, stable@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
-Subject: Re: [PATCH 5.10 2/2] fuse: fix illegal access to inode with reused
- nodeid
-Message-ID: <YTXXres1sfX/MrOT@kroah.com>
-References: <20210905070833.201102-1-amir73il@gmail.com>
- <20210905070833.201102-2-amir73il@gmail.com>
+        id S239748AbhIFJCo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Sep 2021 05:02:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 47DAD60F3A;
+        Mon,  6 Sep 2021 09:01:32 +0000 (UTC)
+Date:   Mon, 6 Sep 2021 11:01:30 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        =?utf-8?B?5p2o55S35a2Q?= <nzyang@stu.xidian.edu.cn>,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        security@kernel.org
+Subject: Re: Report Bug to Linux File System about fs/devpts
+Message-ID: <20210906090130.qlej46cxitb2c6d6@wittgenstein>
+References: <2f73b89f.266.17bb4a7478b.Coremail.nzyang@stu.xidian.edu.cn>
+ <YTT8QQqQ2n63OVSP@kroah.com>
+ <YTVwuH4sxcGqT2BP@mit.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210905070833.201102-2-amir73il@gmail.com>
+In-Reply-To: <YTVwuH4sxcGqT2BP@mit.edu>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Sep 05, 2021 at 10:08:33AM +0300, Amir Goldstein wrote:
-> [ Upstream commit 15db16837a35d8007cb8563358787412213db25e ]
+On Sun, Sep 05, 2021 at 09:36:56PM -0400, Theodore Ts'o wrote:
+> On Sun, Sep 05, 2021 at 07:20:01PM +0200, Greg KH wrote:
+> > If you are concerned about this, please restrict the kernel.pty.max
+> > value to be much lower.
 > 
-> Server responds to LOOKUP and other ops (READDIRPLUS/CREATE/MKNOD/...)
-> with ourarg containing nodeid and generation.
-> 
-> If a fuse inode is found in inode cache with the same nodeid but different
-> generation, the existing fuse inode should be unhashed and marked "bad" and
-> a new inode with the new generation should be hashed instead.
-> 
-> This can happen, for example, with passhrough fuse filesystem that returns
-> the real filesystem ino/generation on lookup and where real inode numbers
-> can get recycled due to real files being unlinked not via the fuse
-> passthrough filesystem.
-> 
-> With current code, this situation will not be detected and an old fuse
-> dentry that used to point to an older generation real inode, can be used to
-> access a completely new inode, which should be accessed only via the new
-> dentry.
-> 
-> Note that because the FORGET message carries the nodeid w/o generation, the
-> server should wait to get FORGET counts for the nlookup counts of the old
-> and reused inodes combined, before it can free the resources associated to
-> that nodeid.
-> 
-> Stable backport notes:
-> * This is not a regression. The bug has been in fuse forever, but only
->   a certain class of low level fuse filesystems can trigger this bug
-> * Because there is no way to check if this fix is applied in runtime,
->   libfuse test_examples.py tests this fix with hardcoded check for
->   kernel version >= 5.14
-> * After backport to stable kernel(s), the libfuse test can be updated
->   to also check minimal stable kernel version(s)
-> * Depends on "fuse: fix bad inode" which is already applied to stable
->   kernels v5.4.y and v5.10.y
-> * Required backporting helper inode_wrong_type()
+> The kernel.pty.max value specifies the global maximum limit.  So I
+> believe the point solution to *this* particular container resource
+> limit is to mount separate instances of /dev/pts in each container
+> chroot with the mount option max=NUM, instead of bind-mounting the
+> top-level /dev/pts into each container chroot.
 
-All now queued up, thanks!
+Yes, this is literally the standard.
 
-greg k-h
+But also, this is a problem for which you don't need any containers. Any
+unprivileged user on the host can open as many pty devices as they want
+as /dev/ptmx is openable by unprivileged user on every distro. It gets
+worse obviously if you set max=1024 on the host obivously as you can
+quickly exceed this. But most systems mount devtps without restrictions.
+If you're sharing your host's devpts instance then that's a
+misconfiguration.
+
+Christian
