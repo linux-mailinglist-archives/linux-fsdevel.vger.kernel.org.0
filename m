@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BF6F4013BD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Sep 2021 03:28:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBEB6401431
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Sep 2021 03:38:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241209AbhIFB2P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Sep 2021 21:28:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38852 "EHLO mail.kernel.org"
+        id S241196AbhIFBcl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Sep 2021 21:32:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240085AbhIFB0O (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Sep 2021 21:26:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6CE4761179;
-        Mon,  6 Sep 2021 01:22:34 +0000 (UTC)
+        id S242509AbhIFB3U (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 5 Sep 2021 21:29:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B233E61184;
+        Mon,  6 Sep 2021 01:23:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630891355;
-        bh=0VqOQdi3MJf18k+TNyXmI1bXyp7rMFeRpUZdG+erPOc=;
+        s=k20201202; t=1630891398;
+        bh=DxFXgINlU1ZqSukQUVP+lKKsrBZxEMsIzRCn1a5R9+0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ERVJ4bgzsFO6eeZ04Lx+eL9mU2hVcehdBBZ3GjZhxzHh1NGDM4B+iRllG/e5s+9qq
-         eIeV+b6mKv2xiIYSQlreN72JS9c48QlRcQiUD1AEG7A7xwO6Iscl5WSXvcYrXNWcoO
-         KbOFd3FPM7dhxIqrsojvZrC6MiGb/tcWXTXr7ajVxEcM+AXMjlhkqk3KigmUo+FbJJ
-         N//GC/CzrsYh/60tT2pykj7UoxNDInQvurb0NMG0+VyyyFEp92Q33x5CQ5jgTpwc/I
-         +5erdmalVTeMcpihUeY7LwOFJgxGyRELDdwJ/qKLYPTLha3uQsfU1urDPwRT3kxqe9
-         daHufNnKhM+5g==
+        b=I5vZrvk4r+lrX6Qq5Ath/6KGMlVfVqBSfhEpJnBu9P1XuPdTVegmC0qt5M2OfzhL1
+         ui8ruP1w+7Fp2gvDvwtBRN68EayDdLmIv/ciQkiyqo+H5GFuGtC023JfTWyrtADEgH
+         detxwlQH6EZgz9rGE5cRITOHA0rhj5MJQxN6piHSxk1UtxIn1t+YyLzdTFsZuSFXiN
+         wH+02pKf4NxfXRQmdv8UIgEW+clFDocBlX1PZ8ipz0SICRInXqlhtJnlm1YZqQRXB7
+         sQii4byCCAwOXS4nQhlMPAhYPyOhSfNUxc4I7jU2LuLpcBczaofXAdieg19wOM5skG
+         fiKiX2KRSYr2w==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>,
         Jeff Layton <jlayton@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 33/39] fcntl: fix potential deadlock for &fasync_struct.fa_lock
-Date:   Sun,  5 Sep 2021 21:21:47 -0400
-Message-Id: <20210906012153.929962-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 27/30] fcntl: fix potential deadlock for &fasync_struct.fa_lock
+Date:   Sun,  5 Sep 2021 21:22:40 -0400
+Message-Id: <20210906012244.930338-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210906012153.929962-1-sashal@kernel.org>
-References: <20210906012153.929962-1-sashal@kernel.org>
+In-Reply-To: <20210906012244.930338-1-sashal@kernel.org>
+References: <20210906012244.930338-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -84,10 +84,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 05b36b28f2e8..71b43538fa44 100644
+index 3dc90e5293e6..fa0fdd829613 100644
 --- a/fs/fcntl.c
 +++ b/fs/fcntl.c
-@@ -995,13 +995,14 @@ static void kill_fasync_rcu(struct fasync_struct *fa, int sig, int band)
+@@ -993,13 +993,14 @@ static void kill_fasync_rcu(struct fasync_struct *fa, int sig, int band)
  {
  	while (fa) {
  		struct fown_struct *fown;
@@ -103,7 +103,7 @@ index 05b36b28f2e8..71b43538fa44 100644
  		if (fa->fa_file) {
  			fown = &fa->fa_file->f_owner;
  			/* Don't send SIGURG to processes which have not set a
-@@ -1010,7 +1011,7 @@ static void kill_fasync_rcu(struct fasync_struct *fa, int sig, int band)
+@@ -1008,7 +1009,7 @@ static void kill_fasync_rcu(struct fasync_struct *fa, int sig, int band)
  			if (!(sig == SIGURG && fown->signum == 0))
  				send_sigio(fown, fa->fa_fd, band);
  		}
