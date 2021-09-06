@@ -2,108 +2,277 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F8FC401701
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Sep 2021 09:34:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55951401740
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Sep 2021 09:45:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240113AbhIFHfb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Sep 2021 03:35:31 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:49141 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240087AbhIFHfa (ORCPT
+        id S240059AbhIFHq0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Sep 2021 03:46:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:43687 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239159AbhIFHqX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Sep 2021 03:35:30 -0400
-Received: by mail-io1-f72.google.com with SMTP id z26-20020a05660200da00b005b86e36a1f4so4545646ioe.15
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Sep 2021 00:34:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=q/HxcyVp5EucpM+deS8Qmk0RVkmU6A9Zygc+jRDfO4M=;
-        b=CGUEky5T8EbhktAPXvvkY0AcpMNWFi2CQQRH/Ws/tPluIUVTDB7YSFaPsNXxm0SkM9
-         7d2UXtTB1sMqwUMUbQKWk51zRRlap3geVS0RLxrv4eLZ9b6wHLVppimRRjt0j1HWCefj
-         XNlg97Jf8cofh3B6gZz+F5VDxOikpGfgqQp/0kEWBwcf9b6PmccHcXV2SZYZJ6XYY9qV
-         ntNRhJjOo2alkiMioASckq4XC74ho8zVZBcAilYTtTamrs0uQARFB1mHQPqiKI30dkbf
-         6wxF7ACLRYczDGb/B6e9PKptRZ+MAxE/8LuElQegmxWntiDYR6qjrJIGS5dj+ZmLfGQP
-         X4ww==
-X-Gm-Message-State: AOAM5325no68ahdTSvz+1ryXWqba6jgSaY6XRbnq55I5MpludTdt8tYr
-        F1SSka23MgW/f3tDzKR5605AbE3K9H+Edtxnkwndbqxs3ZJ2
-X-Google-Smtp-Source: ABdhPJwk0S8mNpHUplWBQgaHA7FBhX6wsQXjT+tX0Q2vrtFri6lo7KZwjURNZczVpFSLE4Zjqnbdtyley6IpslTx3rcXOkEyAKDk
+        Mon, 6 Sep 2021 03:46:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630914318;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Rz+YR3cHGAdOFamWnxSu+lMEoKqxQcmj2l/gnw8goKw=;
+        b=fDE+V3pZARTM4LOvDM8Ua/d/NIx8HmZs0PJWEDIXq1XqEyFXwqwAg4pdPYNUkNo967lQ6t
+        Dh+dZHBYY81I4CsjFrwe+ccyCToMf/0i5+O608R1EJKx+bTRvibfUBYJ0kNJwdg99/t9Ib
+        dWlplYni76vdHjJ53NAiJxOVZoOF8SU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-498-lF0kagteMDOLq2xnIz6zwQ-1; Mon, 06 Sep 2021 03:45:17 -0400
+X-MC-Unique: lF0kagteMDOLq2xnIz6zwQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 181111854E26;
+        Mon,  6 Sep 2021 07:45:15 +0000 (UTC)
+Received: from localhost (unknown [10.33.36.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0F63626E73;
+        Mon,  6 Sep 2021 07:45:04 +0000 (UTC)
+Date:   Mon, 6 Sep 2021 09:45:04 +0200
+From:   Sergio Lopez <slp@redhat.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, gscrivan@redhat.com,
+        tytso@mit.edu, agruenba@redhat.com, miklos@szeredi.hu,
+        selinux@vger.kernel.org, stephen.smalley.work@gmail.com,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        virtio-fs@redhat.com, casey.schaufler@intel.com,
+        linux-security-module@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, bfields@redhat.com,
+        christian.brauner@ubuntu.com
+Subject: Re: [Virtio-fs] [PATCH v3 0/1] Relax restrictions on user.* xattr
+Message-ID: <20210906074504.2c6ytuw42qyedals@mhamilton>
+References: <20210902152228.665959-1-vgoyal@redhat.com>
+ <79dcd300-a441-cdba-e523-324733f892ca@schaufler-ca.com>
+ <YTEEPZJ3kxWkcM9x@redhat.com>
+ <YTENEAv6dw9QoYcY@redhat.com>
+ <3bca47d0-747d-dd49-a03f-e0fa98eaa2f7@schaufler-ca.com>
+ <YTEur7h6fe4xBJRb@redhat.com>
+ <1f33e6ef-e896-09ef-43b1-6c5fac40ba5f@schaufler-ca.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:bb16:: with SMTP id y22mr9711093jan.129.1630913666256;
- Mon, 06 Sep 2021 00:34:26 -0700 (PDT)
-Date:   Mon, 06 Sep 2021 00:34:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bc92ac05cb4ead3e@google.com>
-Subject: [syzbot] linux-next test error: KASAN: null-ptr-deref Read in fuse_conn_put
-From:   syzbot <syzbot+b304e8cb713be5f9d4e1@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-next@vger.kernel.org, miklos@szeredi.hu,
-        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5kiechtdhojtrqxg"
+Content-Disposition: inline
+In-Reply-To: <1f33e6ef-e896-09ef-43b1-6c5fac40ba5f@schaufler-ca.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
 
-syzbot found the following issue on:
+--5kiechtdhojtrqxg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-HEAD commit:    14c6345e6e6c Add linux-next specific files for 20210903
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=164460ed300000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c17400330d618d71
-dashboard link: https://syzkaller.appspot.com/bug?extid=b304e8cb713be5f9d4e1
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+On Thu, Sep 02, 2021 at 03:34:17PM -0700, Casey Schaufler wrote:
+> On 9/2/2021 1:06 PM, Vivek Goyal wrote:
+> > On Thu, Sep 02, 2021 at 11:55:11AM -0700, Casey Schaufler wrote:
+> >> On 9/2/2021 10:42 AM, Vivek Goyal wrote:
+> >>> On Thu, Sep 02, 2021 at 01:05:01PM -0400, Vivek Goyal wrote:
+> >>>> On Thu, Sep 02, 2021 at 08:43:50AM -0700, Casey Schaufler wrote:
+> >>>>> On 9/2/2021 8:22 AM, Vivek Goyal wrote:
+> >>>>>> Hi,
+> >>>>>>
+> >>>>>> This is V3 of the patch. Previous versions were posted here.
+> >>>>>>
+> >>>>>> v2:
+> >>>>>> https://lore.kernel.org/linux-fsdevel/20210708175738.360757-1-vgoy=
+al@redhat.com/
+> >>>>>> v1:
+> >>>>>> https://lore.kernel.org/linux-fsdevel/20210625191229.1752531-1-vgo=
+yal@redhat.co
+> >>>>>> +m/
+> >>>>>>
+> >>>>>> Changes since v2
+> >>>>>> ----------------
+> >>>>>> - Do not call inode_permission() for special files as file mode bi=
+ts
+> >>>>>>   on these files represent permissions to read/write from/to device
+> >>>>>>   and not necessarily permission to read/write xattrs. In this case
+> >>>>>>   now user.* extended xattrs can be read/written on special files
+> >>>>>>   as long as caller is owner of file or has CAP_FOWNER.
+> >>>>>> =20
+> >>>>>> - Fixed "man xattr". Will post a patch in same thread little later=
+=2E (J.
+> >>>>>>   Bruce Fields)
+> >>>>>>
+> >>>>>> - Fixed xfstest 062. Changed it to run only on older kernels where
+> >>>>>>   user extended xattrs are not allowed on symlinks/special files. =
+Added
+> >>>>>>   a new replacement test 648 which does exactly what 062. Just that
+> >>>>>>   it is supposed to run on newer kernels where user extended xattrs
+> >>>>>>   are allowed on symlinks and special files. Will post patch in=20
+> >>>>>>   same thread (Ted Ts'o).
+> >>>>>>
+> >>>>>> Testing
+> >>>>>> -------
+> >>>>>> - Ran xfstest "./check -g auto" with and without patches and did n=
+ot
+> >>>>>>   notice any new failures.
+> >>>>>>
+> >>>>>> - Tested setting "user.*" xattr with ext4/xfs/btrfs/overlay/nfs
+> >>>>>>   filesystems and it works.
+> >>>>>> =20
+> >>>>>> Description
+> >>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>>>>>
+> >>>>>> Right now we don't allow setting user.* xattrs on symlinks and spe=
+cial
+> >>>>>> files at all. Initially I thought that real reason behind this
+> >>>>>> restriction is quota limitations but from last conversation it see=
+med
+> >>>>>> that real reason is that permission bits on symlink and special fi=
+les
+> >>>>>> are special and different from regular files and directories, hence
+> >>>>>> this restriction is in place. (I tested with xfs user quota enable=
+d and
+> >>>>>> quota restrictions kicked in on symlink).
+> >>>>>>
+> >>>>>> This version of patch allows reading/writing user.* xattr on symli=
+nk and
+> >>>>>> special files if caller is owner or priviliged (has CAP_FOWNER) w.=
+r.t inode.
+> >>>>> This part of your project makes perfect sense. There's no good
+> >>>>> security reason that you shouldn't set user.* xattrs on symlinks
+> >>>>> and/or special files.
+> >>>>>
+> >>>>> However, your virtiofs use case is unreasonable.
+> >>>> Ok. So we can merge this patch irrespective of the fact whether virt=
+iofs
+> >>>> should make use of this mechanism or not, right?
+> >> I don't see a security objection. I did see that Andreas Gruenbacher
+> >> <agruenba@redhat.com> has objections to the behavior.
+> >>
+> >>
+> >>>>>> Who wants to set user.* xattr on symlink/special files
+> >>>>>> -----------------------------------------------------
+> >>>>>> I have primarily two users at this point of time.
+> >>>>>>
+> >>>>>> - virtiofs daemon.
+> >>>>>>
+> >>>>>> - fuse-overlay. Giuseppe, seems to set user.* xattr attrs on unpri=
+viliged
+> >>>>>>   fuse-overlay as well and he ran into similar issue. So fuse-over=
+lay
+> >>>>>>   should benefit from this change as well.
+> >>>>>>
+> >>>>>> Why virtiofsd wants to set user.* xattr on symlink/special files
+> >>>>>> ----------------------------------------------------------------
+> >>>>>> In virtiofs, actual file server is virtiosd daemon running on host.
+> >>>>>> There we have a mode where xattrs can be remapped to something els=
+e.
+> >>>>>> For example security.selinux can be remapped to
+> >>>>>> user.virtiofsd.securit.selinux on the host.
+> >>>>> As I have stated before, this introduces a breach in security.
+> >>>>> It allows an unprivileged process on the host to manipulate the
+> >>>>> security state of the guest. This is horribly wrong. It is not
+> >>>>> sufficient to claim that the breach requires misconfiguration
+> >>>>> to exploit. Don't do this.
+> >>>> So couple of things.
+> >>>>
+> >>>> - Right now whole virtiofs model is relying on the fact that host
+> >>>>   unpriviliged users don't have access to shared directory. Otherwise
+> >>>>   guest process can simply drop a setuid root binary in shared direc=
+tory
+> >>>>   and unpriviliged process can execute it and take over host system.
+> >>>>
+> >>>>   So if virtiofs makes use of this mechanism, we are well with-in
+> >>>>   the existing constraints. If users don't follow the constraints,
+> >>>>   bad things can happen.
+> >>>>
+> >>>> - I think Smalley provided a solution for your concern in other thre=
+ad
+> >>>>   we discussed this issue.
+> >>>>
+> >>>>   https://lore.kernel.org/selinux/CAEjxPJ4411vL3+Ab-J0yrRTmXoEf8pVR3=
+x3CSRgPjfzwiUcDtw@mail.gmail.com/T/#mddea4cec7a68c3ee5e8826d650020361030209=
+d6
+> >>>>
+> >>>>
+> >>>>   "So for example if the host policy says that only virtiofsd can set
+> >>>> attributes on those files, then the guest MAC labels along with all
+> >>>> the other attributes are protected against tampering by any other
+> >>>> process on the host."
+> >> You can't count on SELinux policy to address the issue on a
+> >> system running Smack.
+> >> Or any other user of system.* xattrs,
+> >> be they in the kernel or user space. You can't even count on
+> >> SELinux policy to be correct. virtiofs has to present a "safe"
+> >> situation regardless of how security.* xattrs are used and
+> >> regardless of which, if any, LSMs are configured. You can't
+> >> do that with user.* attributes.
+> > Lets take a step back. Your primary concern with using user.* xattrs
+> > by virtiofsd is that it can be modified by unprivileged users on host.
+> > And our solution to that problem is hide shared directory from
+> > unprivileged users.
+>=20
+> You really don't see how fragile that is, do you? How a single
+> errant call to rename(), chmod() or chown() on the host can expose
+> the entire guest to exploitation. That's not even getting into
+> the bag of mount() tricks.
+>=20
+>=20
+> > In addition to that, LSMs on host can block setting "user.*" xattrs by
+> > virtiofsd domain only for additional protection.
+>=20
+> Try thinking outside the SELinux box briefly, if you possibly can.
+> An LSM that implements just Bell & LaPadula isn't going to have a
+> "virtiofs domain". Neither is a Smack "3 domain" system. Smack doesn't
+> distinguish writing user xattrs from writing other file attributes
+> in policy. Your argument requires a fine grained policy a'la SELinux.
+> And an application specific SELinux policy at that.
+>=20
+> >  If LSMs are not configured,
+> > then hiding the directory is the solution.
+>=20
+> It's not a solution at all. It's wishful thinking that
+> some admin is going to do absolutely everything right, will
+> never make a mistake and will never, ever, read the mount(2)
+> man page.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b304e8cb713be5f9d4e1@syzkaller.appspotmail.com
+It's not worse than hoping that every admin is going to set up the
+right permissions on a file backing the disk image of a Virtual
+Machine.
 
-==================================================================
-BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:71 [inline]
-BUG: KASAN: null-ptr-deref in atomic_read include/linux/atomic/atomic-instrumented.h:27 [inline]
-BUG: KASAN: null-ptr-deref in fuse_conn_put fs/fuse/inode.c:827 [inline]
-BUG: KASAN: null-ptr-deref in fuse_conn_put+0x1d7/0x300 fs/fuse/inode.c:814
-Read of size 4 at addr 0000000000000000 by task syz-fuzzer/6540
+And I'm no simply justifying one bad thing with another thing that's
+even worse, I'm just trying to realign our expectations with the
+current threat model of Virtualization in Linux. The host is protected
+against the guest, but the guest is *not* implicitly protected against
+the host. Everything depends on the host's admin good faith and even
+better security practices.
 
-CPU: 0 PID: 6540 Comm: syz-fuzzer Not tainted 5.14.0-next-20210903-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- __kasan_report mm/kasan/report.c:446 [inline]
- kasan_report.cold+0x66/0xdf mm/kasan/report.c:459
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0x13d/0x180 mm/kasan/generic.c:189
- instrument_atomic_read include/linux/instrumented.h:71 [inline]
- atomic_read include/linux/atomic/atomic-instrumented.h:27 [inline]
- fuse_conn_put fs/fuse/inode.c:827 [inline]
- fuse_conn_put+0x1d7/0x300 fs/fuse/inode.c:814
- fuse_dev_free+0x155/0x1f0 fs/fuse/inode.c:1324
- fuse_dev_release+0x2a8/0x3f0 fs/fuse/dev.c:2205
- __fput+0x288/0x9f0 fs/file_table.c:280
- task_work_run+0xdd/0x1a0 kernel/task_work.c:164
- tracehook_notify_resume include/linux/tracehook.h:189 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:175 [inline]
- exit_to_user_mode_prepare+0x27e/0x290 kernel/entry/common.c:209
- __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
- syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
- do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x4af19b
-Code: fb ff eb bd e8 a6 b6 fb ff e9 61 ff ff ff cc e8 9b 82 fb ff 48 8b 7c 24 10 48 8b 74 24 18 48 8b 54 24 20 48 8b 44 24 08 0f 05 <48> 3d 01 f0 ff ff 76 20 48 c7 44 24 28 ff ff ff ff 48 c7 44 24 30
-RSP: 002b:000000c0000ef430 EFLAGS: 00000206 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 000000c00001c000 RCX: 00000000004af19b
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000006
-RBP: 000000c0000ef470 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000009
-R13: 0000000000000008 R14: 0000000000000200 R15: 000000c0003fe000
-==================================================================
+This is the very reason why Virtualization-based Confidential
+Computing technologies such as AMD SEV and Intel TDX are attracting so
+much attention lately, as they aim to close the gap and also protect
+guest against the host (as a necessary step to build trust on its
+contents and behavior). But this is outside virtio-fs's scope.
 
+Sergio.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+--5kiechtdhojtrqxg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEvtX891EthoCRQuii9GknjS8MAjUFAmE1xvgACgkQ9GknjS8M
+AjVbUA/9H9sr+WNhWi7imDYQtklzsAHSxBa8w79uML7k/ClaoFmIGpyVTjuongsV
+goXou73G5l23oo4NOXqdv3tBqv5kK37FBQvT/FE8+IAuZhfMLvh1Olnl6V62GAv4
+SyhkTS9Sgj/G7+5KgYgC1cAsawkIlB8j5YpbyLVrQfbGekzJTWu4KZGOpwyHZpvY
+LJAhO59oO88K71WLzNi+PmKQZQaYDhJgsWsCQpYLTQiHZnHK1JK5pq7gzpsZ6D9X
+4YCe20Eu+GvYd3LND8dHMdZfva3QXnX7UrFpclGI0+E/mBkYwVMa8X4d0YLOZsl+
+0DDldJq73Yo9Jv6o9lK5ksOo2FyaR+G3LveitXAIcCIm+FH5wTPMa29e2jT1DWH/
+T4cBSGAVl+oHSIvAZMPU9zXo80oc24Wgad8zLC6YSzeXMCbvIoE+syr/6AzvS8uf
+uQIIrUO5jUCslLe8iuO3hMG30Fi+M237df1eKnmWfLGmfaGXzzyk6yzesgoEjl2m
+GVI9vQKGsVdgNOmpl7VIGM1SJ257IKj2UIwlSmQ5oYnnbOlx88YKLZS1AzU+Yw30
+CelIOkThUNUqIRKzWj/vOU8KNwE2imJWA9HLE3dHshHqE/kmaWoczU3lQvwaG5TQ
+6UYEosEbW8gWvaJbNATyZadkFsBsIihj6mgyjrr0q1mZQNhaDiI=
+=AxOB
+-----END PGP SIGNATURE-----
+
+--5kiechtdhojtrqxg--
+
