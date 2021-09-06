@@ -2,272 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FAF0401A13
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Sep 2021 12:44:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0820401AD2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Sep 2021 13:57:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234499AbhIFKog (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Sep 2021 06:44:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:44677 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231511AbhIFKod (ORCPT
+        id S241343AbhIFL6A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Sep 2021 07:58:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54780 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241229AbhIFL6A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Sep 2021 06:44:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630925006;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ul4qFH3gT696MqPqcmDxIOKc6JmUkzaJFABQhow9EWg=;
-        b=jS/4G4hsSU7TeVPlCE0Ti6JQdICkGYroM73RM/9qW4a7z76rpZ0wkyDL8KuKuQ3qair+4f
-        IlfyXpqlRCz0RxQQZtQGlxk1uVTIR5oun8JNUSsIF59ovWac6PsA9sdrFYvLaBtmVtvxDY
-        68nyTjuDh/EPGZY7cWwzhcO6nvqSTZ4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-406-sg88EPGtMYeBZgk1jS4H4A-1; Mon, 06 Sep 2021 06:43:25 -0400
-X-MC-Unique: sg88EPGtMYeBZgk1jS4H4A-1
-Received: by mail-wm1-f71.google.com with SMTP id x125-20020a1c3183000000b002e73f079eefso3770195wmx.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Sep 2021 03:43:25 -0700 (PDT)
+        Mon, 6 Sep 2021 07:58:00 -0400
+Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D11BCC06175F
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Sep 2021 04:56:55 -0700 (PDT)
+Received: by mail-vs1-xe2c.google.com with SMTP id a25so5362905vso.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Sep 2021 04:56:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rYVrPklOjlZ/DTkf8/i1JKXm+JEBvWARosNS8hA3YFs=;
+        b=KV0lnYFiWnxMYCucoCBbhkEgyniUMWkq/TEYXhZMxnyp+VzgevsuCdHAsBVbBFr4Dg
+         zJ/7KSc3FIXxKFuSBpE1mB5h+aQY59cKGj2pvR0GobqjR5nEy384xtqSM2JSiNpgi9ih
+         yeoKEvQPCla+Nvo+33sRmrqf2+LqpO+URR0AM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Ul4qFH3gT696MqPqcmDxIOKc6JmUkzaJFABQhow9EWg=;
-        b=RWv9QaBhM0ged5gatpEA0jUzwrFMYS/4g7tMEx5SaHuWZr0SWGI33Gv3RO6O731E/y
-         JMR5EyOtbZhoMVlWBOWuv8o0/Zv4YCPyfJdUeAFnnwzAONq0mt8Ojmye9i/xtc7l0elc
-         NAWoHx0HVNa5co7rIuitPso6Sr85vK0GwpdLrnUDXCWioeB1XB4DpCcMv4yo7o8U7url
-         RSyPwd7CIP3/CcE8qlWJWGi7+TTKzIB+ExdguIbE5dL+LcQpnZpcpb6TT6V8Ln9QAHWj
-         Mc1xzLXzup+/lD54R/FMKxJXJfkCbwGYAACj0TapajhO3J9kJ/6mbbHCuygrFHk7B/VU
-         7YQA==
-X-Gm-Message-State: AOAM530BuxQ+YPS1j5Jejw32bXpoAjUbE8kJ/d8faR61oS4jkDj+mRN6
-        ZivPUpV4ANt2UUElCf1RXfN0b4s4vQ0cvcbjDTVcX2y8KIbedn+DSz0gDuOFS5HKACHz3GWcO0k
-        Y0aTZM8wUqkORPzg7QkLS5JTj/Q==
-X-Received: by 2002:a05:600c:3543:: with SMTP id i3mr10798057wmq.2.1630925004177;
-        Mon, 06 Sep 2021 03:43:24 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzq0y7NDDKEVc4QMn/xSXfsLrateDW5EX086OFKHb0Me/zK5A7xaZmIg1gdA2WViHz/LIzfeQ==
-X-Received: by 2002:a05:600c:3543:: with SMTP id i3mr10798024wmq.2.1630925003942;
-        Mon, 06 Sep 2021 03:43:23 -0700 (PDT)
-Received: from redhat.com ([2.55.131.183])
-        by smtp.gmail.com with ESMTPSA id g5sm7424960wrq.80.2021.09.06.03.43.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Sep 2021 03:43:22 -0700 (PDT)
-Date:   Mon, 6 Sep 2021 06:43:15 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Yongji Xie <xieyongji@bytedance.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Parav Pandit <parav@nvidia.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@canonical.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, bcrl@kvack.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mika =?iso-8859-1?Q?Penttil=E4?= <mika.penttila@nextfour.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, joro@8bytes.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        He Zhe <zhe.he@windriver.com>,
-        Liu Xiaodong <xiaodong.liu@intel.com>,
-        Joe Perches <joe@perches.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will@kernel.org>,
-        John Garry <john.garry@huawei.com>, songmuchun@bytedance.com,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        netdev@vger.kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v13 05/13] vdpa: Add reset callback in vdpa_config_ops
-Message-ID: <20210906053210-mutt-send-email-mst@kernel.org>
-References: <20210831103634.33-1-xieyongji@bytedance.com>
- <20210831103634.33-6-xieyongji@bytedance.com>
- <20210906015524-mutt-send-email-mst@kernel.org>
- <CACycT3v4ZVnh7DGe_RtAOx4Vvau0km=HWyCM=KzKhD+ahYKafQ@mail.gmail.com>
- <20210906023131-mutt-send-email-mst@kernel.org>
- <CACycT3ssC1bhNzY9Pk=LPvKjMrFFavTfCKTJtR2XEiVYqDxT1Q@mail.gmail.com>
- <20210906035338-mutt-send-email-mst@kernel.org>
- <CACycT3vQHRsJ_j5f4T9RoB4MQzBoYO5ts3egVe9K6TcCVfLOFQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rYVrPklOjlZ/DTkf8/i1JKXm+JEBvWARosNS8hA3YFs=;
+        b=FVGWzSfw6x4LRACmV3fhvpASMXfJZQ4Fq5KUWwgBxVd1MaMXcup1uJGDRs4Hf3Q6Q+
+         aYMTP4LjRNaVwlxrW7US4lggz1Z+swsfrCqk1ZkLBvF49Rmdrw8mPBjEWX2aBWikEn/K
+         7BCukLEmL2Miautk9eBwLvzH0RZSf9hS2lWhVj2BZEf/X4flsxevp7DzC6NASlEa1biO
+         Euu1ZS+Uw7OLyeGnMk9W404E1OwzwFQwUecaHEeN86/MEhfSVQi3IwygIrz+z3cAL80y
+         Jn7yXLhbR4oO1kh3jvQAp99Ye24hEwUhaC0zq47SE3MFLuE+fN/w14MCnLK4UNpPBf9A
+         LWAg==
+X-Gm-Message-State: AOAM531q+hXCGHeNdzCh2fT/lgln2oGUN9IVAWcvPfP6rWhI9Uo7ZYV1
+        mvPhEJpbrWxVYelU9iltZ4VCKdY6i7X9zoU3nmu5ig==
+X-Google-Smtp-Source: ABdhPJwvk2QKh2JoBN6aeD83bZV+fzXxq9brWOaTwYzX+mqhP2FWsTcpInJYEPFl9cC3XFqfNHelv4C9evyb+waiMTA=
+X-Received: by 2002:a67:eb45:: with SMTP id x5mr5704172vso.19.1630929414371;
+ Mon, 06 Sep 2021 04:56:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACycT3vQHRsJ_j5f4T9RoB4MQzBoYO5ts3egVe9K6TcCVfLOFQ@mail.gmail.com>
+References: <000000000000bc92ac05cb4ead3e@google.com>
+In-Reply-To: <000000000000bc92ac05cb4ead3e@google.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 6 Sep 2021 13:56:43 +0200
+Message-ID: <CAJfpeguqH3ukKeC9Rg66pUp_jWArn3rSBxkZozTVPmTnCf+d6g@mail.gmail.com>
+Subject: Re: [syzbot] linux-next test error: KASAN: null-ptr-deref Read in fuse_conn_put
+To:     syzbot <syzbot+b304e8cb713be5f9d4e1@syzkaller.appspotmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 06, 2021 at 04:45:55PM +0800, Yongji Xie wrote:
-> On Mon, Sep 6, 2021 at 4:01 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Mon, Sep 06, 2021 at 03:06:44PM +0800, Yongji Xie wrote:
-> > > On Mon, Sep 6, 2021 at 2:37 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > >
-> > > > On Mon, Sep 06, 2021 at 02:09:25PM +0800, Yongji Xie wrote:
-> > > > > On Mon, Sep 6, 2021 at 1:56 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > > > >
-> > > > > > On Tue, Aug 31, 2021 at 06:36:26PM +0800, Xie Yongji wrote:
-> > > > > > > This adds a new callback to support device specific reset
-> > > > > > > behavior. The vdpa bus driver will call the reset function
-> > > > > > > instead of setting status to zero during resetting.
-> > > > > > >
-> > > > > > > Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
-> > > > > >
-> > > > > >
-> > > > > > This does gloss over a significant change though:
-> > > > > >
-> > > > > >
-> > > > > > > ---
-> > > > > > > @@ -348,12 +352,12 @@ static inline struct device *vdpa_get_dma_dev(struct vdpa_device *vdev)
-> > > > > > >       return vdev->dma_dev;
-> > > > > > >  }
-> > > > > > >
-> > > > > > > -static inline void vdpa_reset(struct vdpa_device *vdev)
-> > > > > > > +static inline int vdpa_reset(struct vdpa_device *vdev)
-> > > > > > >  {
-> > > > > > >       const struct vdpa_config_ops *ops = vdev->config;
-> > > > > > >
-> > > > > > >       vdev->features_valid = false;
-> > > > > > > -     ops->set_status(vdev, 0);
-> > > > > > > +     return ops->reset(vdev);
-> > > > > > >  }
-> > > > > > >
-> > > > > > >  static inline int vdpa_set_features(struct vdpa_device *vdev, u64 features)
-> > > > > >
-> > > > > >
-> > > > > > Unfortunately this breaks virtio_vdpa:
-> > > > > >
-> > > > > >
-> > > > > > static void virtio_vdpa_reset(struct virtio_device *vdev)
-> > > > > > {
-> > > > > >         struct vdpa_device *vdpa = vd_get_vdpa(vdev);
-> > > > > >
-> > > > > >         vdpa_reset(vdpa);
-> > > > > > }
-> > > > > >
-> > > > > >
-> > > > > > and there's no easy way to fix this, kernel can't recover
-> > > > > > from a reset failure e.g. during driver unbind.
-> > > > > >
-> > > > >
-> > > > > Yes, but it should be safe with the protection of software IOTLB even
-> > > > > if the reset() fails during driver unbind.
-> > > > >
-> > > > > Thanks,
-> > > > > Yongji
-> > > >
-> > > > Hmm. I don't see it.
-> > > > What exactly will happen? What prevents device from poking at
-> > > > memory after reset? Note that dma unmap in e.g. del_vqs happens
-> > > > too late.
-> > >
-> > > But I didn't see any problems with touching the memory for virtqueues.
-> >
-> > Drivers make the assumption that after reset returns no new
-> > buffers will be consumed. For example a bunch of drivers
-> > call virtqueue_detach_unused_buf.
-> 
-> I'm not sure if I get your point. But it looks like
-> virtqueue_detach_unused_buf() will check the driver's metadata first
-> rather than read the memory from virtqueue.
-> 
-> > I can't say whether block makes this assumption anywhere.
-> > Needs careful auditing.
-> >
-> > > The memory should not be freed after dma unmap?
-> >
-> > But unmap does not happen until after the reset.
-> >
-> 
-> I mean the memory is totally allocated and controlled by the VDUSE
-> driver. The VDUSE driver will not return them to the buddy system
-> unless userspace unmap it.
+Thanks,
 
-Right. But what stops VDUSE from poking at memory after
-reset failed?
+Force pushed fixed commit 660585b56e63 ("fuse: wait for writepages in
+syncfs") to fuse.git#for-next.
 
+This is fixed as far as I'm concerned, not sure how to tell that to syzbot.
 
+Thanks,
+Miklos
 
-> >
-> > > And the memory for the bounce buffer should also be safe to be
-> > > accessed by userspace in this case.
-> > >
-> > > > And what about e.g. interrupts?
-> > > > E.g. we have this:
-> > > >
-> > > >         /* Virtqueues are stopped, nothing can use vblk->vdev anymore. */
-> > > >         vblk->vdev = NULL;
-> > > >
-> > > > and this is no longer true at this point.
-> > > >
-> > >
-> > > You're right. But I didn't see where the interrupt handler will use
-> > > the vblk->vdev.
-> >
-> > static void virtblk_done(struct virtqueue *vq)
-> > {
-> >         struct virtio_blk *vblk = vq->vdev->priv;
-> >
-> > vq->vdev is the same as vblk->vdev.
-> >
-> 
-> We will test the vq->ready (will be set to false in del_vqs()) before
-> injecting an interrupt in the VDUSE driver. So it should be OK?
-
-Maybe not ...  It's not designed for such asynchronous access, so e.g.
-there's no locking or memory ordering around accesses.
-
-
-> >
-> > > So it seems to be not too late to fix it:
-> > >
-> > > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > > b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > > index 5c25ff6483ad..ea41a7389a26 100644
-> > > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > > @@ -665,13 +665,13 @@ static void vduse_vdpa_set_config(struct
-> > > vdpa_device *vdpa, unsigned int offset,
-> > >  static int vduse_vdpa_reset(struct vdpa_device *vdpa)
-> > >  {
-> > >         struct vduse_dev *dev = vdpa_to_vduse(vdpa);
-> > > +       int ret;
-> > >
-> > > -       if (vduse_dev_set_status(dev, 0))
-> > > -               return -EIO;
-> > > +       ret = vduse_dev_set_status(dev, 0);
-> > >
-> > >         vduse_dev_reset(dev);
-> > >
-> > > -       return 0;
-> > > +       return ret;
-> > >  }
-> > >
-> > >  static u32 vduse_vdpa_get_generation(struct vdpa_device *vdpa)
-> > >
-> > > Thanks,
-> > > Yongji
-> >
-> > Needs some comments to explain why it's done like this.
-> >
-> 
-> This is used to make sure the userspace can't not inject the interrupt
-> any more after reset. The vduse_dev_reset() will clear the interrupt
-> callback and flush the irq kworker.
-> 
-> > BTW device is generally wedged at this point right?
-> > E.g. if reset during initialization fails, userspace
-> > will still get the reset at some later point and be
-> > confused ...
-> >
-> 
-> Sorry, I don't get why userspace will get the reset at some later point?
-> 
-> Thanks,
-> Yongji
-
-I am generally a bit confused about how does reset work with vduse.
-We clearly want device to get back to its original state.
-How is that supposed to be achieved?
-
--- 
-MST
-
+On Mon, 6 Sept 2021 at 09:34, syzbot
+<syzbot+b304e8cb713be5f9d4e1@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    14c6345e6e6c Add linux-next specific files for 20210903
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=164460ed300000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c17400330d618d71
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b304e8cb713be5f9d4e1
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+b304e8cb713be5f9d4e1@syzkaller.appspotmail.com
+>
+> ==================================================================
+> BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:71 [inline]
+> BUG: KASAN: null-ptr-deref in atomic_read include/linux/atomic/atomic-instrumented.h:27 [inline]
+> BUG: KASAN: null-ptr-deref in fuse_conn_put fs/fuse/inode.c:827 [inline]
+> BUG: KASAN: null-ptr-deref in fuse_conn_put+0x1d7/0x300 fs/fuse/inode.c:814
+> Read of size 4 at addr 0000000000000000 by task syz-fuzzer/6540
+>
+> CPU: 0 PID: 6540 Comm: syz-fuzzer Not tainted 5.14.0-next-20210903-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+>  __kasan_report mm/kasan/report.c:446 [inline]
+>  kasan_report.cold+0x66/0xdf mm/kasan/report.c:459
+>  check_region_inline mm/kasan/generic.c:183 [inline]
+>  kasan_check_range+0x13d/0x180 mm/kasan/generic.c:189
+>  instrument_atomic_read include/linux/instrumented.h:71 [inline]
+>  atomic_read include/linux/atomic/atomic-instrumented.h:27 [inline]
+>  fuse_conn_put fs/fuse/inode.c:827 [inline]
+>  fuse_conn_put+0x1d7/0x300 fs/fuse/inode.c:814
+>  fuse_dev_free+0x155/0x1f0 fs/fuse/inode.c:1324
+>  fuse_dev_release+0x2a8/0x3f0 fs/fuse/dev.c:2205
+>  __fput+0x288/0x9f0 fs/file_table.c:280
+>  task_work_run+0xdd/0x1a0 kernel/task_work.c:164
+>  tracehook_notify_resume include/linux/tracehook.h:189 [inline]
+>  exit_to_user_mode_loop kernel/entry/common.c:175 [inline]
+>  exit_to_user_mode_prepare+0x27e/0x290 kernel/entry/common.c:209
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:291 [inline]
+>  syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:302
+>  do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> RIP: 0033:0x4af19b
+> Code: fb ff eb bd e8 a6 b6 fb ff e9 61 ff ff ff cc e8 9b 82 fb ff 48 8b 7c 24 10 48 8b 74 24 18 48 8b 54 24 20 48 8b 44 24 08 0f 05 <48> 3d 01 f0 ff ff 76 20 48 c7 44 24 28 ff ff ff ff 48 c7 44 24 30
+> RSP: 002b:000000c0000ef430 EFLAGS: 00000206 ORIG_RAX: 0000000000000003
+> RAX: 0000000000000000 RBX: 000000c00001c000 RCX: 00000000004af19b
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000006
+> RBP: 000000c0000ef470 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000009
+> R13: 0000000000000008 R14: 0000000000000200 R15: 000000c0003fe000
+> ==================================================================
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
