@@ -2,101 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 067CC401EDB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Sep 2021 19:01:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C762401ED8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Sep 2021 18:59:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242505AbhIFRCN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Sep 2021 13:02:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39112 "EHLO
+        id S242559AbhIFRAt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Sep 2021 13:00:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233888AbhIFRCM (ORCPT
+        with ESMTP id S231893AbhIFRAt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Sep 2021 13:02:12 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 195ABC061575;
-        Mon,  6 Sep 2021 10:01:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=MT10U4Fb2yrV/o7nel8We7nzm4JzOXr+NT/ZqDcuAPU=; b=rcFf6HHcKYcC6WYuRsQUmbf+Co
-        BLs3xJOIi/fpxkw21lrBYoykFjlkDHylFfBq4eeiLMCO6vBqvaRuUt/IN/6WInQ95mzV0o0FQ3tnL
-        /guKGayuPIuWl6r/g14pwRHusRV03hCBGVlm6FSnyRjVF6tKzounSzfllJMPea3B8trl+c33++r+9
-        fYE1Lupo7y3obORedbLu/d4eIvahDQMTYHPxLV1q+t0H5edGA4X/8USfPinDV7fO89O7fcw2/VwU6
-        MlfFiXHDTmpteG/qnfsEXiJ/AC2gka0Zz5+8zY8v6S0ziX44BcHowaWQkAQHANhoEB6NQZpJiXVh4
-        XB9H+PYw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mNHuU-007896-6m; Mon, 06 Sep 2021 16:56:05 +0000
-Date:   Mon, 6 Sep 2021 17:55:54 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     akpm@linux-foundation.org, ccross@google.com,
-        sumit.semwal@linaro.org, mhocko@suse.com, dave.hansen@intel.com,
-        keescook@chromium.org, kirill.shutemov@linux.intel.com,
-        vbabka@suse.cz, hannes@cmpxchg.org, corbet@lwn.net,
-        viro@zeniv.linux.org.uk, rdunlap@infradead.org,
-        kaleshsingh@google.com, peterx@redhat.com, rppt@kernel.org,
-        peterz@infradead.org, catalin.marinas@arm.com,
-        vincenzo.frascino@arm.com, chinwen.chang@mediatek.com,
-        axelrasmussen@google.com, aarcange@redhat.com, jannh@google.com,
-        apopple@nvidia.com, jhubbard@nvidia.com, yuzhao@google.com,
-        will@kernel.org, fenghua.yu@intel.com, thunder.leizhen@huawei.com,
-        hughd@google.com, feng.tang@intel.com, jgg@ziepe.ca, guro@fb.com,
-        tglx@linutronix.de, krisman@collabora.com, chris.hyser@oracle.com,
-        pcc@google.com, ebiederm@xmission.com, axboe@kernel.dk,
-        legion@kernel.org, eb@emlix.com, gorcunov@gmail.com,
-        songmuchun@bytedance.com, viresh.kumar@linaro.org,
-        thomascedeno@google.com, sashal@kernel.org, cxfcosmos@gmail.com,
-        linux@rasmusvillemoes.dk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, kernel-team@android.com
-Subject: Re: [PATCH v9 2/3] mm: add a field to store names for private
- anonymous memory
-Message-ID: <YTZIGhbSTghbUay+@casper.infradead.org>
-References: <20210902231813.3597709-1-surenb@google.com>
- <20210902231813.3597709-2-surenb@google.com>
+        Mon, 6 Sep 2021 13:00:49 -0400
+Received: from mail-ot1-x32b.google.com (mail-ot1-x32b.google.com [IPv6:2607:f8b0:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F1AAC061757
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Sep 2021 09:59:44 -0700 (PDT)
+Received: by mail-ot1-x32b.google.com with SMTP id l7-20020a0568302b0700b0051c0181deebso9423388otv.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Sep 2021 09:59:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qrLm5oiqWxtTolUGRrcV++cwGJOtI1kBWO0Y+h4a8lQ=;
+        b=bFjpeuCAK/idr93IKqOzbMhnC0tD4Ww48HBjomkc4V0BwLGor9/aI2NwbQGaGadJz/
+         FX/h7wWUUrm2gK6h0utkr6cvoinC3mEOk8MFxawJU7CwcLkAJeAvGc+IDed6pR/GA40y
+         5MoP6fVCNQFcOnXsxzrkexrFfLYr/3/H1zQcIHAYodGjwOTo0qFxZ7t3QcnRgDxLiykQ
+         CAonMw8KoGC0Dne/TeIBJ3msrrLguaTJGBuggaYU8T/ypbkTfA6BTRzN8JKorQNUG4vQ
+         xXP+lVsC2LfY5PQOBf+31IGzXXmFWpf0J8Bn5yAtvBfsVw12vLtxNPnZidgTKB93TzRP
+         IMaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qrLm5oiqWxtTolUGRrcV++cwGJOtI1kBWO0Y+h4a8lQ=;
+        b=RVeuL2tFCkOw58csRSWAjdNs8SWr9GKfmCLAFEqKuQP44NPwjZfxSoPWlJa+DaEsfv
+         qt43L54989SAT+n0u2yGUxGQkDC48eZwaWKis0WlaD7AaFLh5jH4WQNja/oDeyA4Lcqf
+         w6L8ydlHq4xW0sJ6gePG/dGrkKSqxNNGO+VPXo2w3aAqVVMv3QJBK66dnauo+un0/SgN
+         CGaiBTzKbNZUnbrsowTBLuflY/v1e2Ks2u/VeeX5gmaDhrwPuB9KutYAEdDFyuLhWJCt
+         PtLy9/TXBMVG2oVSqQHHUgVu0MolIvpBjRYFx0AoZ+GlN3gKHY0R5ZMTk1Dx9kl7qsZn
+         OtWg==
+X-Gm-Message-State: AOAM5328IArDJyll9dmnRqYSHw7zwKS2Y8BAE8i7yOT2js4V0UmSPZZk
+        12kIBOzev+qL2CeuOk7fF3932Fyg4/YFLDzl8oetbe+a2XzsAg==
+X-Google-Smtp-Source: ABdhPJxMvAmEjY2nhcR5beo/FeOh/yMmQMyUSuywR7WxGcYSbdKqdRxrQRHaeNsJo0DsPvxas+voZPXERwIlWR5cLq4=
+X-Received: by 2002:a05:6830:444:: with SMTP id d4mr11753774otc.108.1630947583309;
+ Mon, 06 Sep 2021 09:59:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210902231813.3597709-2-surenb@google.com>
+References: <000000000000bc92ac05cb4ead3e@google.com> <CAJfpeguqH3ukKeC9Rg66pUp_jWArn3rSBxkZozTVPmTnCf+d6g@mail.gmail.com>
+In-Reply-To: <CAJfpeguqH3ukKeC9Rg66pUp_jWArn3rSBxkZozTVPmTnCf+d6g@mail.gmail.com>
+From:   Marco Elver <elver@google.com>
+Date:   Mon, 6 Sep 2021 18:59:32 +0200
+Message-ID: <CANpmjNM4pxRk0=B+RZzpbtvViV8zSJiamQeN_7mPn-NMxnYX=g@mail.gmail.com>
+Subject: Re: [syzbot] linux-next test error: KASAN: null-ptr-deref Read in fuse_conn_put
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     syzbot <syzbot+b304e8cb713be5f9d4e1@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 02, 2021 at 04:18:12PM -0700, Suren Baghdasaryan wrote:
-> On Android we heavily use a set of tools that use an extended version of
-> the logic covered in Documentation/vm/pagemap.txt to walk all pages mapped
-> in userspace and slice their usage by process, shared (COW) vs.  unique
-> mappings, backing, etc.  This can account for real physical memory usage
-> even in cases like fork without exec (which Android uses heavily to share
-> as many private COW pages as possible between processes), Kernel SamePage
-> Merging, and clean zero pages.  It produces a measurement of the pages
-> that only exist in that process (USS, for unique), and a measurement of
-> the physical memory usage of that process with the cost of shared pages
-> being evenly split between processes that share them (PSS).
-> 
-> If all anonymous memory is indistinguishable then figuring out the real
-> physical memory usage (PSS) of each heap requires either a pagemap walking
-> tool that can understand the heap debugging of every layer, or for every
-> layer's heap debugging tools to implement the pagemap walking logic, in
-> which case it is hard to get a consistent view of memory across the whole
-> system.
-> 
-> Tracking the information in userspace leads to all sorts of problems.
-> It either needs to be stored inside the process, which means every
-> process has to have an API to export its current heap information upon
-> request, or it has to be stored externally in a filesystem that
-> somebody needs to clean up on crashes.  It needs to be readable while
-> the process is still running, so it has to have some sort of
-> synchronization with every layer of userspace.  Efficiently tracking
-> the ranges requires reimplementing something like the kernel vma
-> trees, and linking to it from every layer of userspace.  It requires
-> more memory, more syscalls, more runtime cost, and more complexity to
-> separately track regions that the kernel is already tracking.
+On Mon, 6 Sept 2021 at 13:56, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> Thanks,
+>
+> Force pushed fixed commit 660585b56e63 ("fuse: wait for writepages in
+> syncfs") to fuse.git#for-next.
+>
+> This is fixed as far as I'm concerned, not sure how to tell that to syzbot.
 
-I understand that the information is currently incoherent, but why is
-this the right way to make it coherent?  It would seem more useful to
-use something like one of the tracing mechanisms (eg ftrace, LTTng,
-whatever the current hotness is in userspace tracing) for the malloc
-library to log all the useful information, instead of injecting a subset
-of it into the kernel for userspace to read out again.
+Thanks -- we can let syzbot know:
+
+#syz fix: fuse: wait for writepages in syncfs
+
+(The syntax is just "#syz fix: <commit title>".)
