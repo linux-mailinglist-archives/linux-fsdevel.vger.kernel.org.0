@@ -2,616 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1128E4014F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Sep 2021 04:11:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88250401617
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Sep 2021 07:56:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238749AbhIFCMc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Sep 2021 22:12:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35806 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238631AbhIFCMb (ORCPT
+        id S238906AbhIFF4D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Sep 2021 01:56:03 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:45287 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229487AbhIFF4B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Sep 2021 22:12:31 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED77BC061575;
-        Sun,  5 Sep 2021 19:11:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=Ky4bG7KGTsnHipBAfRXL9mDIIk8mKlaMrLuz2v4zNa4=; b=NnXFdCqwHd0B10TYATV3ZAN7wi
-        wLVvxz7VTsA+d4xe7pvfQePB607v7KDC6draw0v93GSVF/k1BD9KRBBk0DKIT4GsHQZlu/B0DV5zC
-        6t33e/bR/5+TohsqxxPyFKdMOsi4ed4HXxPiWcFTlV92Z2wC8kQfIKob+PHuhQjWpxEDHd9kQPH/K
-        pWkEtKqkqi//RuUfGzTT1kZOrI2Rzeqi1yHo+CTLdt1Gjy37v+FWRDajGihOKJrmGk6rYU/yxvab4
-        w69zPOcEaKgkx2jYxHnj/qZ9mQHi8F9BBDKFZLp4kD0745L7HYQc14c1MH8vXImM4cuKHF70w7xyq
-        PoJ3Txuw==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mN46T-00H5Dj-5U; Mon, 06 Sep 2021 02:11:21 +0000
-Subject: Re: [GIT PULL] xfs: new code for 5.15
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Christoph Hellwig <hch@lst.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-References: <20210831211847.GC9959@magnolia>
- <CAHk-=whyVPgkAfARB7gMjLEyu0kSxmb6qpqfuE_r6QstAzgHcA@mail.gmail.com>
- <20210902174311.GG9942@magnolia>
- <20210902223545.GA1826899@dread.disaster.area> <87a6kub2dp.ffs@tglx>
- <20210905002105.GC1826899@dread.disaster.area> <87mtoqa9hb.ffs@tglx>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <7848ad2f-75fc-2416-8d9e-b0cc7c520107@infradead.org>
-Date:   Sun, 5 Sep 2021 19:11:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Mon, 6 Sep 2021 01:56:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630907696;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uXUj74/nW7Dop13kd56Tk5oKTffqICUe0M10X4WaPl4=;
+        b=GUdZ1eZQlzCOGh1NwV8LtGH2T8rzYVbjGWgYpiIJXoRpQ92bQe12hhNowOqoFXtPMxzW5u
+        aP3PYHxyAmwSjUySiwvrIceX1TPdj2cz/H7djZxQi1eHPdnARmD4QnZmPJUGR8BF2LTKWC
+        5MAZc/xWES7JWGitNVqcR86RsKXi2zg=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-245-NaQp_-otOt-BXKrF6kAU1g-1; Mon, 06 Sep 2021 01:54:55 -0400
+X-MC-Unique: NaQp_-otOt-BXKrF6kAU1g-1
+Received: by mail-wr1-f70.google.com with SMTP id t15-20020a5d42cf000000b001565f9c9ee8so853210wrr.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Sep 2021 22:54:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=uXUj74/nW7Dop13kd56Tk5oKTffqICUe0M10X4WaPl4=;
+        b=GjVEBDNC+STfRb5YmAXradD26ecsRsBh3+uxycoiSZ+zdfPKm2t3S50Z3kMgelPuHz
+         C32ECLYMlEIOqbhupea9n/q8uwTnG2Au3UUZaKJDuxhVe7cVhSdO8dObBhlxLkzfWj/k
+         QxiH63X34JjO7XooVNf5ZyNYRoMQEG6kkvIGHKEmK4Q7PqEEHRY03wZRtWpxF7ep54+u
+         ZIPDeElEUwJ3w2ZByM7If8Qb6Mj8y0PNpLHk+vjlAfciUPuYXbO0LIqAVPyHKouF2vDw
+         reXaKznQjwNFZjDaK7Gijgn3MVJZai01K1OwuY3hb+N5p2RI/lm9IFA2mRSZVByPH+pA
+         rrwQ==
+X-Gm-Message-State: AOAM5313fl7XRdqg4vJ2XJkVq8O9EcIMba50IJfqQcISrNQyUchtNPdJ
+        nImMJ+c7KHcvcUbNfATTaoSp2CuTwKzcIXqCKHGWbjA1mzNz69a8uFFDHWUdVtph0OGCeEMnF5/
+        H1bwB6ph2zEm8+dCFVo5mpjRtiQ==
+X-Received: by 2002:adf:c14c:: with SMTP id w12mr11478492wre.115.1630907694506;
+        Sun, 05 Sep 2021 22:54:54 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzR1O2bgM/VI9yvbWaSh3BRtvaI+DJ+X6rHFaklEn67szHR3xlYEE2NCPwCA7NsX4rJPFqdkg==
+X-Received: by 2002:adf:c14c:: with SMTP id w12mr11478480wre.115.1630907694360;
+        Sun, 05 Sep 2021 22:54:54 -0700 (PDT)
+Received: from redhat.com ([2.55.131.183])
+        by smtp.gmail.com with ESMTPSA id h8sm6166143wmb.35.2021.09.05.22.54.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Sep 2021 22:54:53 -0700 (PDT)
+Date:   Mon, 6 Sep 2021 01:54:46 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Xie Yongji <xieyongji@bytedance.com>
+Cc:     jasowang@redhat.com, stefanha@redhat.com, sgarzare@redhat.com,
+        parav@nvidia.com, hch@infradead.org,
+        christian.brauner@canonical.com, rdunlap@infradead.org,
+        willy@infradead.org, viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        bcrl@kvack.org, corbet@lwn.net, mika.penttila@nextfour.com,
+        dan.carpenter@oracle.com, joro@8bytes.org,
+        gregkh@linuxfoundation.org, zhe.he@windriver.com,
+        xiaodong.liu@intel.com, joe@perches.com, robin.murphy@arm.com,
+        will@kernel.org, john.garry@huawei.com, songmuchun@bytedance.com,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 05/13] vdpa: Add reset callback in vdpa_config_ops
+Message-ID: <20210906015243-mutt-send-email-mst@kernel.org>
+References: <20210830141737.181-1-xieyongji@bytedance.com>
+ <20210830141737.181-6-xieyongji@bytedance.com>
 MIME-Version: 1.0
-In-Reply-To: <87mtoqa9hb.ffs@tglx>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210830141737.181-6-xieyongji@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/5/21 4:28 PM, Thomas Gleixner wrote:
-> Dave,
+On Mon, Aug 30, 2021 at 10:17:29PM +0800, Xie Yongji wrote:
+> This adds a new callback to support device specific reset
+> behavior. The vdpa bus driver will call the reset function
+> instead of setting status to zero during resetting.
 > 
+> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
 
-[snip]
+This does gloss over a significant change though:
 
-Hi,
+> @@ -348,12 +352,12 @@ static inline struct device *vdpa_get_dma_dev(struct vdpa_device *vdev)
+>  	return vdev->dma_dev;
+>  }
+>  
+> -static inline void vdpa_reset(struct vdpa_device *vdev)
+> +static inline int vdpa_reset(struct vdpa_device *vdev)
+>  {
+>  	const struct vdpa_config_ops *ops = vdev->config;
+>  
+>  	vdev->features_valid = false;
+> -	ops->set_status(vdev, 0);
+> +	return ops->reset(vdev);
+>  }
+>  
+>  static inline int vdpa_set_features(struct vdpa_device *vdev, u64 features)
 
-Doc. comments below...
-
-
-> I'm sorry that this change which turned CPU hotplug into a reliable,
-> testable and instrumentable mechanism causes so much trouble for you. I
-> hope it's just the lack of coherent documentation which made you
-> unhappy.
-> 
-> If the updated documentation does not answer your questions, please let
-> me know and please provide a coherent explanation of the problem you are
-> trying to solve. Either I can give you an hint or I can identify further
-> issues in the documentation.
-> 
-> If it turns out that there are functional shortcomings then I'm of
-> course all ears as well.
-> 
-> If you need a conveniance API to install multiple states at once to
-> regain the "simple API" feeling, please let me know - I surely have some
-> ideas.
-> 
-> Thanks,
-> 
->          tglx
-> ---
-> --- a/Documentation/core-api/cpu_hotplug.rst
-> +++ b/Documentation/core-api/cpu_hotplug.rst
-> @@ -156,95 +156,479 @@ hotplug states will be invoked, starting
->   * Once all services are migrated, kernel calls an arch specific routine
->     ``__cpu_disable()`` to perform arch specific cleanup.
->   
-
-[snip]
-
-> +
-> +The CPU hotplug API
-> +===================
-> +
-> +CPU hotplug state machine
-> +-------------------------
-> +
-> +CPU hotplug uses a trivial state machine with a linear state space from
-> +CPUHP_OFFLINE to CPUHP_ONLINE. Each state has a startup and a teardown
-> +callback.
-> +
-> +When a CPU is onlined, the startup callbacks are invoked sequentially until
-> +the state CPUHP_ONLINE is reached. They can also be invoked when the
-> +callbacks of a state are set up or an instance is added to a multi-instance
-> +state.
-> +
-> +When a CPU is offlined the teardown callbacks are invoked in the reverse
-> +order sequenctially until the state CPUHP_OFFLINE is reached. They can also
-
-          sequentially
-
-> +be invoked when the callbacks of a state are removed or an instance is
-> +removed from a multi-instance state.
-> +
-> +If a usage site requires only a callback in one direction of the hotplug
-> +operations (CPU online or CPU offline) then the other not required callback
-
-                                                          not-required
-
-> +can be set to NULL when the state is set up.
-> +
-> +The state space is divided into three sections:
-> +
-> +* The PREPARE section
-> +
-> +  The PREPARE section covers the state space from CPUHP_OFFLINE to CPUHP_BRINGUP_CPU
-
-                                                                       CPUHP_BRINGUP_CPU.
-
-> +
-> +  The startup callbacks in this section are invoked before the CPU is
-> +  started during a CPU online operation. The teardown callbacks are invoked
-> +  after the CPU has become dysfunctional during a CPU offline operation.
-> +
-> +  The callbacks are invoked on a control CPU as they can't obviously run on
-> +  the hotplugged CPU which is either not yet started or has become
-> +  dysfunctional already.
-> +
-> +  The startup callbacks are used to setup resources which are required to
-> +  bring a CPU successfully online. The teardown callbacks are used to free
-> +  resources or to move pending work to an online CPU after the hotplugged
-> +  CPU became dysfunctional.
-> +
-> +  The startup callbacks are allowed to fail. If a callback fails, the CPU
-> +  online operation is aborted and the CPU is brought down to the previous
-> +  state (usually CPUHP_OFFLINE) again.
-> +
-> +  The teardown callbacks in this section are not allowed to fail.
-> +
-> +* The STARTING section
-> +
-> +  The STARTING section covers the state space between CPUHP_BRINGUP_CPU + 1
-> +  and CPUHP_AP_ONLINE
-
-      and CPUHP_AP_ONLINE.
-
-> +
-> +  The startup callbacks in this section are invoked on the hotplugged CPU
-> +  with interrupts disabled during a CPU online operation in the early CPU
-> +  setup code. The teardown callbacks are invoked with interrupts disabled
-> +  on the hotplugged CPU during a CPU offline operation shortly before the
-> +  CPU is completely shut down.
-> +
-> +  The callbacks in this section are not allowed to fail.
-> +
-> +  The callbacks are used for low level hardware initialization/shutdown and
-> +  for core subsystems.
-> +
-> +* The ONLINE section
-> +
-> +  The ONLINE section covers the state space between CPUHP_AP_ONLINE + 1 and
-> +  CPUHP_ONLINE.
-> +
-> +  The startup callbacks in this section are invoked on the hotplugged CPU
-> +  during a CPU online operation. The teardown callbacks are invoked on the
-> +  hotplugged CPU during a CPU offline operation.
-> +
-> +  The callbacks are invoked in the context of the per CPU hotplug thread,
-> +  which is pinned on the hotplugged CPU. The callbacks are invoked with
-> +  interrupts and preemption enabled.
-> +
-> +  The callbacks are allowed to fail. When a callback fails the hotplug
-> +  operation is aborted and the CPU is brought back to the previous state.
-> +
-> +CPU online/offline operations
-> +-----------------------------
-> +
-> +A successful online operation looks like this: ::
-> +
-> +  [CPUHP_OFFLINE]
-> +  [CPUHP_OFFLINE + 1]->startup()       -> success
-> +  [CPUHP_OFFLINE + 2]->startup()       -> success
-> +  [CPUHP_OFFLINE + 3]                  -> skipped because startup == NULL
-> +  ...
-> +  [CPUHP_BRINGUP_CPU]->startup()       -> success
-> +  === End of PREPARE section
-> +  [CPUHP_BRINGUP_CPU + 1]->startup()   -> success
-> +  ...
-> +  [CPUHP_AP_ONLINE]->startup()         -> success
-> +  === End of STARTUP section
-> +  [CPUHP_AP_ONLINE + 1]->startup()     -> success
-> +  ...
-> +  [CPUHP_ONLINE - 1]->startup()        -> success
-> +  [CPUHP_ONLINE]
-> +
-> +A successful offline operation looks like this: ::
-> +
-> +  [CPUHP_ONLINE]
-> +  [CPUHP_ONLINE - 1]->teardown()       -> success
-> +  ...
-> +  [CPUHP_AP_ONLINE + 1]->teardown()    -> success
-> +  === Start of STARTUP section
-> +  [CPUHP_AP_ONLINE]->teardown()        -> success
-> +  ...
-> +  [CPUHP_BRINGUP_ONLINE - 1]->teardown()
-> +  ...
-> +  === Start of PREPARE section
-> +  [CPUHP_BRINGUP_CPU]->teardown()
-> +  [CPUHP_OFFLINE + 3]->teardown()
-> +  [CPUHP_OFFLINE + 2]                  -> skipped because teardown == NULL
-> +  [CPUHP_OFFLINE + 1]->teardown()
-> +  [CPUHP_OFFLINE]
-> +
-> +A failed online operation looks like this: ::
-> +
-> +  [CPUHP_OFFLINE]
-> +  [CPUHP_OFFLINE + 1]->startup()       -> success
-> +  [CPUHP_OFFLINE + 2]->startup()       -> success
-> +  [CPUHP_OFFLINE + 3]                  -> skipped because startup == NULL
-> +  ...
-> +  [CPUHP_BRINGUP_CPU]->startup()       -> success
-> +  === End of PREPARE section
-> +  [CPUHP_BRINGUP_CPU + 1]->startup()   -> success
-> +  ...
-> +  [CPUHP_AP_ONLINE]->startup()         -> success
-> +  === End of STARTUP section
-> +  [CPUHP_AP_ONLINE + 1]->startup()     -> success
-> +  ---
-> +  [CPUHP_AP_ONLINE + N]->startup()     -> fail
-> +  [CPUHP_AP_ONLINE + (N - 1)]->teardown()
-> +  ...
-> +  [CPUHP_AP_ONLINE + 1]->teardown()
-> +  === Start of STARTUP section
-> +  [CPUHP_AP_ONLINE]->teardown()
-> +  ...
-> +  [CPUHP_BRINGUP_ONLINE - 1]->teardown()
-> +  ...
-> +  === Start of PREPARE section
-> +  [CPUHP_BRINGUP_CPU]->teardown()
-> +  [CPUHP_OFFLINE + 3]->teardown()
-> +  [CPUHP_OFFLINE + 2]                  -> skipped because teardown == NULL
-> +  [CPUHP_OFFLINE + 1]->teardown()
-> +  [CPUHP_OFFLINE]
-> +
-> +A failed offline operation looks like this: ::
-> +
-> +  [CPUHP_ONLINE]
-> +  [CPUHP_ONLINE - 1]->teardown()       -> success
-> +  ...
-> +  [CPUHP_ONLINE - N]->teardown()       -> fail
-> +  [CPUHP_ONLINE - (N - 1)]->startup()
-> +  ...
-> +  [CPUHP_ONLINE - 1]->startup()
-> +  [CPUHP_ONLINE]
-> +
-> +Recursive failures cannot be handled sensibly. Look at the following
-> +example of a recursive fail due to a failed offline operation: ::
-> +
-> +  [CPUHP_ONLINE]
-> +  [CPUHP_ONLINE - 1]->teardown()       -> success
-> +  ...
-> +  [CPUHP_ONLINE - N]->teardown()       -> fail
-> +  [CPUHP_ONLINE - (N - 1)]->startup()  -> success
-> +  [CPUHP_ONLINE - (N - 2)]->startup()  -> fail
-> +
-> +The CPU hotplug state machine stops right here and does not try to go back
-> +down again because that would likely result in an endless loop: ::
-> +
-> +  [CPUHP_ONLINE - (N - 1)]->teardown() -> success
-> +  [CPUHP_ONLINE - N]->teardown()       -> fail
-> +  [CPUHP_ONLINE - (N - 1)]->startup()  -> success
-> +  [CPUHP_ONLINE - (N - 2)]->startup()  -> fail
-> +  [CPUHP_ONLINE - (N - 1)]->teardown() -> success
-> +  [CPUHP_ONLINE - N]->teardown()       -> fail
-> +
-> +Lather, rinse and repeat. In this case the CPU left in state: ::
-
-                                               CPU is left
-
-> +
-> +  [CPUHP_ONLINE - (N - 1)]
-> +
-> +which at least lets the system make progress and gives the user a chance to
-> +debug or even resolve the situation.
-> +
-> +Allocating a state
-> +------------------
-> +
-> +There are two ways to allocate a CPU hotplug state:
-> +
-> +* Static allocation
-> +
-> +  Static allocation has to be used when the subsystem or driver has
-> +  ordering requirements versus other CPU hotplug states. E.g. the PERF core
-> +  startup callback has to be invoked before the PERF driver startup
-> +  callbacks during a CPU online operation. During a CPU offline operation
-> +  the driver teardown callbacks have to be invoked before the core teardown
-> +  callback. The statically allocated states are described by constants in
-> +  the cpuhp_state enum which can be found in include/linux/cpuhotplug.h.
-> +
-> +  Insert the state into the enum at the proper place so the ordering
-> +  requirements are fulfilled. The state constant has to be used for state
-> +  setup and removal.
-> +
-> +  Static allocation is also required when the state callbacks are not set
-> +  up at runtime and are part of the initializer of the CPU hotplug state
-> +  array in kernel/cpu.c.
-> +
-> +* Dynamic allocation
-> +
-> +  When there are no ordering requirements for the state callbacks then
-> +  dynamic allocation is the preferred method. The state number is allocated
-> +  by the setup function and returned to the caller on success.
-> +
-> +  Only the PREPARE and ONLINE sections provide a dynamic allocation
-> +  range. The STARTING section does not as most of the callbacks in that
-> +  section have explicit ordering requirements.
-> +
-> +Setup of a CPU hotplug state
-> +----------------------------
-> +
-> +The core code provides the following functions to setup a state:
-> +
-> +* cpuhp_setup_state(state, name, startup, teardown)
-> +* cpuhp_setup_state_nocalls(state, name, startup, teardown)
-> +* cpuhp_setup_state_cpuslocked(state, name, startup, teardown)
-> +* cpuhp_setup_state_nocalls_cpuslocked(state, name, startup, teardown)
-> +
-> +For cases where a driver or a subsystem has multiple instances and the same
-> +CPU hotplug state callbacks need to be invoked for each instance, the CPU
-> +hotplug core provides multi-instance support. The advantage over driver
-> +specific instance lists is that the instance related functions are fully
-> +serialized against CPU hotplug operations and provide the automatic
-> +invocations of the state callbacks on add and removal. To set up such a
-> +multi-instance state the following function is available:
-> +
-> +* cpuhp_setup_state_multi(state, name, startup, teardown)
-> +
-> +The @state argument is either a statically allocated state or one of the
-> +constants for dynamically allocated states - CPUHP_PREPARE_DYN,
-> +CPUHP_ONLINE_DYN - depending on the state section (PREPARE, ONLINE) for
-> +which a dynamic state should be allocated.
-> +
-> +The @name argument is used for sysfs output and for instrumentation. The
-> +naming convention is "subsys:mode" or "subsys/driver:mode",
-> +e.g. "perf:mode" or "perf/x86:mode". The common mode names:
-
-                                                         names are:
-
-> +
-> +======== =======================================================
-> +prepare  For states in the PREPAREsection
-
-                               PREPARE section
-
-> +
-> +dead     For states in the PREPARE section which do not provide
-> +         a startup callback
-> +
-> +starting For states in the STARTING section
-> +
-> +dying    For states in the STARTING section which do not provide
-> +         a startup callback
-> +
-> +online   For states in the ONLINE section
-> +
-> +offline  For states in the ONLINE section which do not provide
-> +         a startup callback
-> +======== =======================================================
-> +
-> +As the @name argument is only used for sysfs and instrumentation other mode
-> +descriptors can be used as well if they describe the nature of the state
-> +better than the common ones.
-> +
-> +Examples for @name arguments: "perf/online", "perf/x86:prepare",
-> +"RCU/tree:dying", "sched/waitempty"
-> +
-> +The @startup argument is a function pointer to the callback which should be
-> +invoked during a CPU online operation. If the usage site does not require a
-> +startup callback set the pointer to NULL.
-> +
-> +The @teardown argument is a function pointer to the callback which should
-> +be invoked during a CPU offline operation. If the usage site does not
-> +require a teardown callback set the pointer to NULL.
-> +
-> +The functions differ in the way how the installed callbacks are treated:
-> +
-> +  * cpuhp_setup_state_nocalls(), cpuhp_setup_state_nocalls_cpuslocked()
-> +    and cpuhp_setup_state_multi() only install the callbacks
-> +
-> +  * cpuhp_setup_state() and cpuhp_setup_state_cpuslocked() install the
-> +    callbacks and invoke the @startup callback (if not NULL) for all online
-> +    CPUs which have currently a state greater than the newly installed
-> +    state. Depending on the state section the callback is either invoked on
-> +    the current CPU (PREPARE section) or on each online CPU (ONLINE
-> +    section) in the context of the CPU's hotplug thread.
-> +
-> +    If a callback fails for CPU N then the teardown callback for CPU
-> +    0 .. N-1 is invoked to rollback the operation. The state setup fails,
-
-CPU 0? Does one of these fail since it's not an AP?
-
-> +    the callbacks for the state are not installed and in case of dynamic
-> +    allocation the allocated state is freed.
-> +
-> +The state setup and the callback invocations are serialized against CPU
-> +hotplug operations. If the setup function has to be called from a CPU
-> +hotplug read locked region, then the _cpuslocked() variants have to be
-> +used. These functions cannot be used from within CPU hotplug callbacks.
-> +
-> +The function return values:
-> +  ======== ===================================================================
-> +  0        Statically allocated state was successfully set up
-> +
-> +  >0       Dynamically allocated state was successfully set up.
-> +
-> +           The returned number is the state number which was allocated. If
-> +           the state callbacks have to be removed later, e.g. module
-> +           removal, then this number has to be saved by the caller and used
-> +           as @state argument for the state remove function. For
-> +           multi-instance states the dynamically allocated state number is
-> +           also required as @state argument for the instance add/remove
-> +           operations.
-> +
-> +  <0	   Operation failed
-> +  ======== ===================================================================
-> +
-> +Removal of a CPU hotplug state
-> +------------------------------
-> +
-> +To remove a previously set up state, the following functions are provided:
-> +
-> +* cpuhp_remove_state(state)
-> +* cpuhp_remove_state_nocalls(state)
-> +* cpuhp_remove_state_nocalls_cpuslocked(state)
-> +* cpuhp_remove_multi_state(state)
-> +
-> +The @state argument is either a statically allocated state or the state
-> +number which was allocated in the dynamic range by cpuhp_setup_state*(). If
-> +the state is in the dynamic range, then the state number is freed and
-> +available for dynamic allocation again.
-> +
-> +The functions differ in the way how the installed callbacks are treated:
-> +
-> +  * cpuhp_remove_state_nocalls(), cpuhp_remove_state_nocalls_cpuslocked()
-> +    and cpuhp_remove_multi_state() only remove the callbacks.
-> +
-> +  * cpuhp_remove_state() removes the callbacks and invokes the teardown
-> +    callback (if not NULL) for all online CPUs which have currently a state
-> +    greater than the removed state. Depending on the state section the
-> +    callback is either invoked on the current CPU (PREPARE section) or on
-> +    each online CPU (ONLINE section) in the context of the CPU's hotplug
-> +    thread.
-> +
-> +    In order to complete the removal, the teardown callback should not fail.
-> +
-> +The state removal and the callback invocations are serialized against CPU
-> +hotplug operations. If the remove function has to be called from a CPU
-> +hotplug read locked region, then the _cpuslocked() variants have to be
-> +used. These functions cannot be used from within CPU hotplug callbacks.
-> +
-> +If a multi-instance state is removed then the caller has to remove all
-> +instances first.
-> +
-> +Multi-Instance state instance management
-> +----------------------------------------
-> +
-> +Once the multi-instance state is set up, instances can be added to the
-> +state:
-> +
-> +  * cpuhp_state_add_instance(state, node)
-> +  * cpuhp_state_add_instance_nocalls(state, node)
-> +
-> +The @state argument is either a statically allocated state or the state
-> +number which was allocated in the dynamic range by cpuhp_setup_state_multi().
-> +
-> +The @node argument is a pointer to a hlist_node which is embedded in the
-
-               I would say:         to an hlist_node
-
-> +instance's data structure. The pointer is handed to the multi-instance
-> +state callbacks and can be used by the callback to retrieve the instance
-> +via container_of().
-> +
-> +The functions differ in the way how the installed callbacks are treated:
-> +
-> +  * cpuhp_state_add_instance_nocalls() and only adds the instance to the
-> +    multi-instance state's node list.
-> +
-> +  * cpuhp_state_add_instance() adds the instance and invokes the startup
-> +    callback (if not NULL) associated with @state for all online CPUs which
-> +    have currently a state greater than @state. The callback is only
-> +    invoked for the to be added instance. Depending on the state section
-> +    the callback is either invoked on the current CPU (PREPARE section) or
-> +    on each online CPU (ONLINE section) in the context of the CPU's hotplug
-> +    thread.
-> +
-> +    If a callback fails for CPU N then the teardown callback for CPU
-> +    0 .. N-1 is invoked to rollback the operation, the function fails and
-
-all except the Boot CPU?
-
-> +    the instance is not added to the node list of the multi-instance state.
-> +
-> +To remove an instance from the state's node list these functions are
-> +available:
-> +
-> +  * cpuhp_state_remove_instance(state, node)
-> +  * cpuhp_state_remove_instance_nocalls(state, node)
-> +
-> +The arguments are the same as for the the cpuhp_state_add_instance*()
-> +variants above.
-> +
-> +The functions differ in the way how the installed callbacks are treated:
-> +
-> +  * cpuhp_state_remove_instance_nocalls() only removes the instance from the
-> +    state's node list.
-> +
-> +  * cpuhp_state_remove_instance() removes the instance and invokes the
-> +    teardown callback (if not NULL) associated with @state for all online
-> +    CPUs which have currently a state greater than @state.  The callback is
-> +    only invoked for the to be removed instance.  Depending on the state
-> +    section the callback is either invoked on the current CPU (PREPARE
-> +    section) or on each online CPU (ONLINE section) in the context of the
-> +    CPU's hotplug thread.
-> +
-> +    In order to complete the removal, the teardown callback should not fail.
-> +
-> +The node list add/remove operations and the callback invocations are
-> +serialized against CPU hotplug operations. These functions cannot be used
-> +from within CPU hotplug callbacks and CPU hotplug read locked regions.
-> +
-> +Examples
-> +--------
-> +
-> +Setup and teardown a statically allocated state in the STARTING section for
-> +notifications on online and offline operations: ::
-> +
-> +   ret = cpuhp_setup_state(CPUHP_SUBSYS_STARTING, "subsys:starting", subsys_cpu_starting, subsys_cpu_dying);
-> +   if (ret < 0)
-> +        return ret;
-> +   ....
-> +   cpuhp_remove_state(CPUHP_SUBSYS_STARTING);
-> +
-> +Setup and teardown a dynamically allocated state in the ONLINE section
-> +for notifications on offline operations: ::
-> +
-> +   state = cpuhp_setup_state(CPUHP_ONLINE_DYN, "subsys:offline", NULL, subsys_cpu_offline);
-> +   if (state < 0)
-> +       return state;
-> +   ....
-> +   cpuhp_remove_state(state);
-> +
-> +Setup and teardown a dynamically allocated state in the ONLINE section
-> +for notifications on online operations without invoking the callbacks: ::
-> +
-> +   state = cpuhp_setup_state_nocalls(CPUHP_ONLINE_DYN, "subsys:online", subsys_cpi_online, NULL);
-
-                                                                                  _cpu_
-
-> +   if (state < 0)
-> +       return state;
-> +   ....
-> +   cpuhp_remove_state_nocalls(state);
-> +
-> +Setup, use and teardown a dynamically allocated multi-instance state in the
-> +ONLINE section for notifications on online and offline operation: ::
-> +
-> +   state = cpuhp_setup_state_multi(CPUHP_ONLINE_DYN, "subsys:online", subsys_cpu_online, subsys_cpu_offline);
-> +   if (state < 0)
-> +       return state;
-> +   ....
-> +   ret = cpuhp_state_add_instance(state, &inst1->node);
-> +   if (ret)
-> +        return ret;
-> +   ....
-> +   ret = cpuhp_state_add_instance(state, &inst2->node);
-> +   if (ret)
-> +        return ret;
-> +   ....
-> +   cpuhp_remove_instance(state, &inst1->node);
-> +   ....
-> +   cpuhp_remove_instance(state, &inst2->node);
-> +   ....
-> +   remove_multi_state(state);
-> +
->   
->   Testing of hotplug states
->   =========================
+Unfortunately this breaks virtio_vdpa:
 
 
--- 
-~Randy
+static void virtio_vdpa_reset(struct virtio_device *vdev)
+{
+        struct vdpa_device *vdpa = vd_get_vdpa(vdev);
+
+        vdpa_reset(vdpa);
+}
+
+
+and there's no easy way to fix this, kernel can't recover
+from a reset failure e.g. during driver unbind.
+
+Find a way to disable virtio_vdpa for now?
+
+> -- 
+> 2.11.0
 
