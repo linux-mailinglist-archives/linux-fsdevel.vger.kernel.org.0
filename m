@@ -2,171 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC038402FCE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Sep 2021 22:35:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7144402FE2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Sep 2021 22:48:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346458AbhIGUgb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Sep 2021 16:36:31 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:13024 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1346228AbhIGUg2 (ORCPT
+        id S1346853AbhIGUtJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Sep 2021 16:49:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46102 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346834AbhIGUtF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Sep 2021 16:36:28 -0400
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 187HjmdR022737;
-        Tue, 7 Sep 2021 20:35:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=EEJlkphaXiiyEkJ/y7k4XLhD3W6SL5K70vRY6oaA6Mg=;
- b=FychotdAOR9/4H9Bo5R4hV7ak75vYZ7lDOlnQIpqzVzo2XsbDMUf8+lfnsfKwjtSGm+i
- 8SKZyjl2VWgw1RDE45W/tzB2vNFmHiNnkAZY0KxAW5RSxSkUoM9GfHUFULEt0jNSIFeo
- 4Ze57yLsUeuYwliiV2jBodsV1pAsFkBJrCcabkC3EwueO+PpYBr34rmGEBPURFrEXI19
- MNTRce/LYCp7ZLECktum/sxqO11av6yj8iuJWG6eHLGeZAzWQGaZ7Z4Iz4dDH3+NYAEc
- b9zqFShJ7qsOqXOnS6ZEMGUD8J63E4qPjMaFj1qBqserFurEqPa7Ra+1jXcr6YLsG6wi zg== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2020-01-29;
- bh=EEJlkphaXiiyEkJ/y7k4XLhD3W6SL5K70vRY6oaA6Mg=;
- b=HhLb1RAVTbx5M4qXjEnvA5foWQjBb7jTvSj/O1FOukATjsN2jERclGh3jwHeQ5YBRWbw
- RAfQv6PbTAM72OrcR70WFhGVYDMOJfQhCxIl+SCqKRW+y04ao0CLY3Qe2ya4JkRcSXht
- 3Jjlaq24Pn5DlQwMNnbMKAg9nEQ/t/DD9usF3QJiWNP/rnemQ0NeAKyyDAbIxF7qBkoN
- oP5D8xKEGXL5mpNDkfyDqDpQH11890WvZK4s2LE13vDI7BUrx6ojF3FFI+mYugUJIJAc
- 3tnlOBNJmsgoY7v7onlh/VT8fEKAx9crjFlzOzj3Zzt8052Ax9pgyFTvW6FFptZfeJJE xQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3axcs18dtd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 07 Sep 2021 20:35:16 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 187KQDja185500;
-        Tue, 7 Sep 2021 20:35:15 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2172.outbound.protection.outlook.com [104.47.55.172])
-        by aserp3020.oracle.com with ESMTP id 3axcpk76dw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 07 Sep 2021 20:35:15 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=doJypeE6QUfJuJIy46b9/EucBEmT5OXRlOTXWAanKXIg8v8a5FS3Du/lvywunB53o2G4Spk8SDfhmlHRgzSwmQp/kK9JdwHIl8aUFQgIYZbul793BGjnp+G1X0eNGrPdLXVYmEtppaPBSaAYXkRdl0BIRQpw9zVM2j4PjqKK8iGgpS+/UhgPajMD+HMCm/b/uZMO4C801gWuEyNFVmirx+hIQtuIGPIk9kkYP7xF9TZwzyPfLhqTMr9pipZ2zQdjlozchtKrk+JgRwNzWQuQv0lahoMyqlv+tpy0tvFqLo/fctApve92hcjObVf03wv4oovMbguY+l3j8zcoe0CYZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=EEJlkphaXiiyEkJ/y7k4XLhD3W6SL5K70vRY6oaA6Mg=;
- b=V2Sm2HIhHgAuA48xk5epICVfhagbyvBGDj3aEVNtoCA3NwTLGmuWRvabRUuvXHiOoLLjPa1bSrHbWkYwUC+qwM/5JeT9E0q79Itx1a5aFbu6Ur576j+reKokhA2p+QjjGMVrxHmvQD5RV7qzI24OTYYmzutxEqXaTGhxVYptLh2Is8Q02DWJOk09V3HBX268HiKEpH5yzbKjZOkpiKQJ+B/k1XmZd66N7asIf/0+NetsBKqeXZosPai39jILcOVxPfTGVthYDPee/+z+26CgqMY1xhzbIB/lNrA4uMwqnWsj22vtOHqZaqXljX4xbuK9c5+uBOXJB/jG8FR53bKqFQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Tue, 7 Sep 2021 16:49:05 -0400
+Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4EBCC061575;
+        Tue,  7 Sep 2021 13:47:58 -0700 (PDT)
+Received: by mail-oi1-x22b.google.com with SMTP id 6so107555oiy.8;
+        Tue, 07 Sep 2021 13:47:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EEJlkphaXiiyEkJ/y7k4XLhD3W6SL5K70vRY6oaA6Mg=;
- b=SWFYCIgovoWk2CLplphiMKFUEaWK0jBl8w8wNvusLIwR4FjyF7ZT81qsNAHWpB8inTBJVDEGUnRMJqFQMAhbFDI6lXH6ZVPnQBR1DuFTn0Tgw68CO1777HY/5zqxeK5A637v3tcNZJy7IyHjsqQvAcAzJphvkdI8e3CBBjryT88=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=oracle.com;
-Received: from CH2PR10MB4166.namprd10.prod.outlook.com (2603:10b6:610:78::20)
- by CH2PR10MB3783.namprd10.prod.outlook.com (2603:10b6:610:1::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.22; Tue, 7 Sep
- 2021 20:35:14 +0000
-Received: from CH2PR10MB4166.namprd10.prod.outlook.com
- ([fe80::2c22:7eb8:a2f0:e027]) by CH2PR10MB4166.namprd10.prod.outlook.com
- ([fe80::2c22:7eb8:a2f0:e027%9]) with mapi id 15.20.4478.025; Tue, 7 Sep 2021
- 20:35:13 +0000
-Subject: Re: [PATCH 3/3] namei: Standardize callers of filename_create()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210901175144.121048-1-stephen.s.brennan@oracle.com>
- <20210901175144.121048-4-stephen.s.brennan@oracle.com>
- <YTfH6RW+3+5kVD+y@zeniv-ca.linux.org.uk>
-From:   Stephen Brennan <stephen.s.brennan@oracle.com>
-Message-ID: <7e6cfce8-7fad-a55f-c1b6-47db62da4344@oracle.com>
-Date:   Tue, 7 Sep 2021 13:35:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
-In-Reply-To: <YTfH6RW+3+5kVD+y@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR05CA0032.namprd05.prod.outlook.com
- (2603:10b6:a03:33f::7) To CH2PR10MB4166.namprd10.prod.outlook.com
- (2603:10b6:610:78::20)
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UopwoFn7rqfh5UL49/4APVM7g8LLvGNu8u3opnFNc2M=;
+        b=d9GH4MSSomWd+TKdZBGJoBuJk9sGkSDpXWx6iBm+Bz6kOHnqz1OO8gIpo+FBeJItw2
+         zrBk832kEv8OerXc0q77211wGWbsGk9W2wYVXVH5L5o2PJGl58H+dSFa2a81xtPvC/8l
+         JRMI/DUMXpN3SxfBpv0uZisT9VS2pySj3GyzG26O3avpYH3AP4EKmR7stPM8qlJoXTzp
+         N+a41OLUOsf+4wFrrFBLUJdeY9XD0TQ49FIa3SV7vLokHDUMldiGPdkZQKKRFKTAOK8F
+         2ABEywcaEKKfEIsq0fZruRbgPk0cdMZAm0DhzetPPck+o1yCTTrUPlgtsBEuc+TUvbGi
+         qBdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UopwoFn7rqfh5UL49/4APVM7g8LLvGNu8u3opnFNc2M=;
+        b=WocvnVBFPTY3i9ZfOk/KoYupPsghrxz6sz4lPx9C42qjYSPeGpl7ZTJwRz0iGs5e2Z
+         gA9Cfg85AkKfG9+SfB/2pgUOV5IyeYXQzVJ0w17CdTmk34srbgOaj7VUG77GenAgSz8C
+         vWRkpt5PKcH7Ocggl920tDEVaMxWpgIrRp/RJa9TvP2W0yXuD5zUoYsO/DEBb0Wx/kCr
+         FVPmkPfA5H3WieuoHB+3pheLnYtBAkqo90b/ymqNRvH8MbqpKs1yqQ5T2MUrYM7CU8C5
+         vBXT/TVsco7Y0qS8ISeov2I/rFskAC8Sb7FrmCTxs66xJhVCSUDKK07UuHSiNTkczAhI
+         d2Kg==
+X-Gm-Message-State: AOAM530o3oN82lCckCpTxgybhYkdm4cpNcvCgQjtiMckEmNOXndOI1+7
+        rRWGEUdwBnYMO7MBcIPoqNLwSfwfAFvEBaIbZa39JbEUSM4L7w==
+X-Google-Smtp-Source: ABdhPJwgnAxOzHlN5kUGiujwfo4/KLkFbgPPlSslacq4qvxiaXwPBsJux4afJod6S7AxtahsF30JNkQIckD99eekPM8=
+X-Received: by 2002:a05:6808:209a:: with SMTP id s26mr20818oiw.98.1631047678287;
+ Tue, 07 Sep 2021 13:47:58 -0700 (PDT)
 MIME-Version: 1.0
-Received: from stepbren-lnx.us.oracle.com (136.24.196.55) by SJ0PR05CA0032.namprd05.prod.outlook.com (2603:10b6:a03:33f::7) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4500.7 via Frontend Transport; Tue, 7 Sep 2021 20:35:13 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2c3859d0-f1fe-468b-afc1-08d9723efecf
-X-MS-TrafficTypeDiagnostic: CH2PR10MB3783:
-X-Microsoft-Antispam-PRVS: <CH2PR10MB378346111FDB320093311C1FDBD39@CH2PR10MB3783.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2331;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: yCjYz9BByjjfNu1DScBVON2c0usZ48KJtgkXq1igO1a0yZW8A83cZceyh8TJKz/XlA2ygDyMYvDrsrSYd5VCu/aKLjunvi3UD2s+VvEa9u+On9A4Nu0a1H9l7ky15m9R9bG1xAnNCfdekj1/WzNxgolu2WtRRZRmB/8BqgGQd8ubdXX6aTE/CO8u3wkg+KvTusmH32stZsudsCYfeMqLLrfGbQW8BV3bPNDfp8gs+FSDH88SbvaVBA6D+cybtnUrWI3pxSRKp4haOB/giQaHQFH12xfAg3ZcAHYIKS5jWqqQu3coVi2UiABJprBM0ry48NSnmsCpTcJYLrtKfNBW0hzZCW85vAP/hGb8o59TpJZHGpiYGPzHn0oIRax75jtMxqD7xLFuPRF7T/F2sbOxcU/5f1jplZPg6iKY2cD52a2SAV6xhiWr+H+ePFjAxf8qU/bFg5WjLdTPus/Mn4CWJe7x4YKsnDv5umphbQ8d5EM6EO2iQorvWqrUpqoYVewLBTdZ1bBWwZ8HhVFZUjxezfUFGgRiwJT5nqSXNwKM7hsJBO1Lbs1BOuJ6wm868SgwfSj3w25qelOGQWIIV8cnaeMaFJwZGscOn6FpSAkDE8QXbxuuCR8x4+ZCZhfETIJWg0gDhE0ZZR7jzzK776zGgWm6/BhONS+huGzNWz7Et0rC7/MsOIHd0Mc+rbwNbMgLCW0Elwu/0iKsnfPS84JZjJpZDlxeQ0sEP562qnJVzbM=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4166.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(366004)(136003)(346002)(39860400002)(376002)(5660300002)(31686004)(38100700002)(7696005)(86362001)(2906002)(316002)(6486002)(31696002)(4326008)(4744005)(36756003)(53546011)(186003)(956004)(2616005)(66946007)(8936002)(6916009)(66556008)(66476007)(26005)(8676002)(478600001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dzFzNHpyZkVORkgxblM4V3hJdlhpUGZxVzczS2NWT0lXV0piNXNjMzBOTm44?=
- =?utf-8?B?S0dHSWY2MlZteS9CN2pPOXlVdDNsbEl5ZEZ0SVpodUhTdEZjSGZKRTNXS0FG?=
- =?utf-8?B?YmFNdkNHRjVpTHZtSHYxQWtkd2l2eU9Bb1BBdVpiazZyZEJpa2xvZGhKNmIv?=
- =?utf-8?B?NFVUbHBMZjRnMGtQcDJlNFpQdkwvSzZYZisxL2FTRG14UWZqeVJaWEE2dVUw?=
- =?utf-8?B?RDdyQVQ2cEMzTzVDdVhjbUJvUEdUNEFvdXNsY21NbTRVNHdqQk5tVEZDL2Iw?=
- =?utf-8?B?OENGTFIzUnI0eFB4Ykc1K0ZEOHMreTdjYlp3RU9RbkJ6UG5NY3lzblAyd1hh?=
- =?utf-8?B?Y1lSS0JIZzNmcDlEQmN3MUhtOUs5emcvaWtjeThwSGpNWDZnQUErZjBGLzgy?=
- =?utf-8?B?dWZibjFWSjZxUzVsSkpTNzMwaHlwcFFpSEVHaVZpSjBrMVA0RFlpQ3AzbzFJ?=
- =?utf-8?B?RUZXQXhnaC9zQ2V4eWtWSXVLNjZiQlZlTm04ZU5ZRHgvWDJHK2RmbEkxQVVF?=
- =?utf-8?B?QTR2T3FXRjlmRDROMk50TnFNZzlTMHlTVzFFWGozK0MrMXE4MmRNaUt4R0JI?=
- =?utf-8?B?dFRWQkRaNGEvMnczQzVucWVodkt3K0RHemhHcnRlcitwNWZ3Q0s2M3ZqVmtL?=
- =?utf-8?B?aG9pQ3dxQXZzYjVYVkdUU3dFM1dzUEtvQWNnZ2NZYXJyaFRaRmFjQWl4MFFr?=
- =?utf-8?B?aVVHRDFxTDR6Z3d3UTJGeEl1by9sZU1BVkVIdmpLVk4zZlB2STVpSHJSU25h?=
- =?utf-8?B?MDFNRlZhMCt6ejUyZUYrTjdueUU4aGQ0M3c1dU40d2I1ajU5LzlZbFJ4NW9L?=
- =?utf-8?B?N2JQMS9aSDVuS1NlSDF2endWbTNFNmR4dFREekgrdklKZVdNM09QZktxS21x?=
- =?utf-8?B?bUxRbE94MkVpSjBRc1VFVEVxQjYybEVNMVozWjZKMnNRRGJaODg1aWJNeFZ6?=
- =?utf-8?B?OGlZV1AzbTQwKzNkQjNDY08rZmdPcW9CcSswNE1yOW16bTZOWms5dThQNmhL?=
- =?utf-8?B?Y2V1M1VDVFRBMklpaEFWNGY4RUYrQnZ5ZlVRR3pDV1UrYVErTDRrR2NxbUlI?=
- =?utf-8?B?SWFXaEkwZi9hY3REY3BQM082Rm5ERENkT3czWW9na1lJVHZINzN4N3M3ZGx2?=
- =?utf-8?B?SVVGV1Y1R2pCZXNOVWp4VHhrQ1U1WTk3dndTb3U2MzBXWjl3amNwa0VtZ3Mw?=
- =?utf-8?B?Q2ZqM3VnSUZVeVpleDUyaVRKSE9LeE1LcjY1SDNJWm84OTM3U2k0elh6eVJV?=
- =?utf-8?B?ampOQUFzT29kTW1CSUdZZkJWYTZZU1daWGliZWNENDltbW96TmhhMDNPdEVq?=
- =?utf-8?B?N3l0b2JyY3RZazBWU1Y1TDloa09MeGRJWWcvSWJRWEI2WDJPRS8weGQ1RzU1?=
- =?utf-8?B?d0gySGdtMkZMTkVvdUpaYnNGVlJIL3RQdHdmMUM4M1NRMWxDVSsyT0pRTTU5?=
- =?utf-8?B?VFNUSHR5YTJIYWxBdUhHWmpIdG9HckNTOVhzRzRlcC9jaS9MYVB6YmtCb1JB?=
- =?utf-8?B?Vk1MWDVzRnV3cnJ5a01iMjdDZElKZ25JbUs0TS9nN0h2WC9HOUhjUmd2WHo2?=
- =?utf-8?B?VnA0emJJQUR6ZjVON3djRENYOWRPb01Gcy9rNTQ1UGlmSXlmY0xVc2pjdVBN?=
- =?utf-8?B?b0NaOXlFY28xVEVTcnFjdzdpZVpNME0weFFmWk81RVZtWk9tMi90cUk0M0ho?=
- =?utf-8?B?SkRrQlIrWmF6RlNWaUh0dzMzVndzc0tqR1JIdFUvRjF6cHF2bnluUXR4cEoz?=
- =?utf-8?Q?C9oPhhQ4Mv9CDVRJhHD+2+UMr3Kj+tE7CMFNwQT?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c3859d0-f1fe-468b-afc1-08d9723efecf
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4166.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2021 20:35:13.9144
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vY9YycuG0ZOLlEVojfFztOUFVh8aqq7WdQZSXrH2tRxoSItfc54SXJVyojC0Nq57ZUWqNZHc53HEgVdTV4efFqeM11q94z+uXN9QaQWIQRs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB3783
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10100 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
- malwarescore=0 spamscore=0 mlxscore=0 phishscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109030001 definitions=main-2109070130
-X-Proofpoint-ORIG-GUID: RuC-r-upw0GHNEx7sPaUAjZIItOzO-Zz
-X-Proofpoint-GUID: RuC-r-upw0GHNEx7sPaUAjZIItOzO-Zz
+References: <20210829095614.50021-1-kari.argillander@gmail.com>
+ <20210907073618.bpz3fmu7jcx5mlqh@kari-VirtualBox> <69c8ab24-9443-59ad-d48d-7765b29f28f9@paragon-software.com>
+ <CAHp75Vd==Dm1s=WK9p2q3iEBSHxN-1spHmmtZ21eRNoqyJ5v=Q@mail.gmail.com>
+In-Reply-To: <CAHp75Vd==Dm1s=WK9p2q3iEBSHxN-1spHmmtZ21eRNoqyJ5v=Q@mail.gmail.com>
+From:   Kari Argillander <kari.argillander@gmail.com>
+Date:   Tue, 7 Sep 2021 23:47:47 +0300
+Message-ID: <CAC=eVgTwDsE+i3jG+iwZJhFDBXzCyPprRnGk5tjUKXP+Ltrw4w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/9] fs/ntfs3: Use new mount api and change some opts
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        "ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/7/21 1:13 PM, Al Viro wrote:
-> On Wed, Sep 01, 2021 at 10:51:43AM -0700, Stephen Brennan wrote:
->>   inline struct dentry *user_path_create(int dfd, const char __user *pathname,
->>   				struct path *path, unsigned int lookup_flags)
->>   {
->> -	return filename_create(dfd, getname(pathname), path, lookup_flags);
->> +	struct filename *filename;
->> +	struct dentry *dentry;
->> +
->> +	filename = getname(pathname);
->> +	dentry = filename_create(dfd, getname(pathname), path, lookup_flags);
->> +	putname(filename);
->> +	return dentry;
-> 
-> Leaks, obviously...
-> 
+On Tuesday, September 7, 2021, Andy Shevchenko
+(andy.shevchenko@gmail.com) wrote:
+> On Tuesday, September 7, 2021, Konstantin Komarov <almaz.alexandrovich@paragon-software.com> wrote:
+>> On 07.09.2021 10:36, Kari Argillander wrote:
+>> > On Sun, Aug 29, 2021 at 12:56:05PM +0300, Kari Argillander wrote:
+>> >> See V2 if you want:
+>> >> lore.kernel.org/ntfs3/20210819002633.689831-1-kari.argillander@gmail.com
+>> >>
+>> >> NLS change is now blocked when remounting. Christoph also suggest that
+>> >> we block all other mount options, but I have tested a couple and they
+>> >> seem to work. I wish that we do not block any other than NLS because
+>> >> in theory they should work. Also Konstantin can comment about this.
+>> >>
+>> >> I have not include reviewed/acked to patch "Use new api for mounting"
+>> >> because it change so much. I have also included three new patch to this
+>> >> series:
+>> >>      - Convert mount options to pointer in sbi
+>> >>              So that we do not need to initiliaze whole spi in
+>> >>              remount.
+>> >>      - Init spi more in init_fs_context than fill_super
+>> >>              This is just refactoring. (Series does not depend on this)
+>> >>      - Show uid/gid always in show_options()
+>> >>              Christian Brauner kinda ask this. (Series does not depend
+>> >>              on this)
+>> >>
+>> >> Series is ones again tested with kvm-xfstests. Every commit is build
+>> >> tested.
+>> >
+>> > I will send v4 within couple of days. It will address issues what Pali
+>> > says in patch 8/9. Everything else should be same at least for now. Is
+>> > everything else looking ok?
+>> >
+>>
+>> Yes, everything else seems good.
+>> We tested patches locally - no regression was
+>
+> The formal answer in such case should also contain the Tested-by tag. I would suggest you to read the Submitting Patches document (available in the Linux kernel source tree).
 
-Ouch, thanks for the catch. I'll send v2 shortly.
+He is a maintainer so he can add tags when he picks this up. This is not
+really relevant here. Yes it should be good to include that but I have already
+sended v4 which he has not tested. So I really cannot put this tag for him.
+So at the end he really should not even put it here.
+
+Also usually the maintainers will always make their own tests and usually
+they will not even bother with a tested-by tag. Or do you say to me that I
+should go read Submitting Patches document as I'm the one who submit
+this?
+
+  Argillander
+
+>> >>
+>> >> v3:
+>> >>      - Add patch "Convert mount options to pointer in sbi"
+>> >>      - Add patch "Init spi more in init_fs_context than fill_super"
+>> >>      - Add patch "Show uid/gid always in show_options"
+>> >>      - Patch "Use new api for mounting" has make over
+>> >>      - NLS loading is not anymore possible when remounting
+>> >>      - show_options() iocharset printing is fixed
+>> >>      - Delete comment that testing should be done with other
+>> >>        mount options.
+>> >>      - Add reviewed/acked-tags to 1,2,6,8
+>> >>      - Rewrite this cover
+>> >> v2:
+>> >>      - Rewrite this cover leter
+>> >>      - Reorder noatime to first patch
+>> >>      - NLS loading with string
+>> >>      - Delete default_options function
+>> >>      - Remove remount flags
+>> >>      - Rename no_acl_rules mount option
+>> >>      - Making code cleaner
+>> >>      - Add comment that mount options should be tested
+>> >>
+>> >> Kari Argillander (9):
+>> >>   fs/ntfs3: Remove unnecesarry mount option noatime
+>> >>   fs/ntfs3: Remove unnecesarry remount flag handling
+>> >>   fs/ntfs3: Convert mount options to pointer in sbi
+>> >>   fs/ntfs3: Use new api for mounting
+>> >>   fs/ntfs3: Init spi more in init_fs_context than fill_super
+>> >>   fs/ntfs3: Make mount option nohidden more universal
+>> >>   fs/ntfs3: Add iocharset= mount option as alias for nls=
+>> >>   fs/ntfs3: Rename mount option no_acl_rules > (no)acl_rules
+>> >>   fs/ntfs3: Show uid/gid always in show_options()
+>> >>
+>> >>  Documentation/filesystems/ntfs3.rst |  10 +-
+>> >>  fs/ntfs3/attrib.c                   |   2 +-
+>> >>  fs/ntfs3/dir.c                      |   8 +-
+>> >>  fs/ntfs3/file.c                     |   4 +-
+>> >>  fs/ntfs3/inode.c                    |  12 +-
+>> >>  fs/ntfs3/ntfs_fs.h                  |  26 +-
+>> >>  fs/ntfs3/super.c                    | 486 +++++++++++++++-------------
+>> >>  fs/ntfs3/xattr.c                    |   2 +-
+>> >>  8 files changed, 284 insertions(+), 266 deletions(-)
+>> >>
+>> >> --
+>> >> 2.25.1
+>> >>
+>> >>
+>
+>
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
