@@ -2,158 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DCC2402BFD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Sep 2021 17:36:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74250402CB3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Sep 2021 18:14:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345649AbhIGPhw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Sep 2021 11:37:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58736 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345515AbhIGPhh (ORCPT
+        id S245139AbhIGQPh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Sep 2021 12:15:37 -0400
+Received: from relayfre-01.paragon-software.com ([176.12.100.13]:35338 "EHLO
+        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S244135AbhIGQPh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Sep 2021 11:37:37 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73448C061757;
-        Tue,  7 Sep 2021 08:36:30 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id m28so20332960lfj.6;
-        Tue, 07 Sep 2021 08:36:30 -0700 (PDT)
+        Tue, 7 Sep 2021 12:15:37 -0400
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 96512415;
+        Tue,  7 Sep 2021 19:14:27 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ylxb5RZ+eMJvrKhxMzlFWiAiShFTuT1l3TN+viEp6UY=;
-        b=bTiYvWMbHeuqnhR0ZZ7sF/A3QNiMGYrTuIy1x4pDCfq3Hy57eWQFfLIzLCjvMbOCh9
-         y8KHuUa2g3U32Rt49yN2OuzEpXFWKEokWQYVW71+8okQuJCVFh9G+xhkmllEgvUEgZa2
-         e6bKeeb7t05489op6NF2PBSNmIXueAGSkYAJQGYlwQM27dNd7i9IeJFOWv/e+6hMHKrt
-         adZHBIT71wUuJs6drLNSGmIIZiRMjYsgtGY2m6CT3DD/maxM0ZqsdScSXVXD6JnFXust
-         Xc/qZ6AQ/VsKM/cmober/QfbUL2b+L8eEXnjHXP3iSvzrY2S21tDYZGMfmh5ZCyv0Cxs
-         r8+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ylxb5RZ+eMJvrKhxMzlFWiAiShFTuT1l3TN+viEp6UY=;
-        b=Udw1R7krJ6G1+PdPmbv0MHA3f3t6Poo2mi61di/uS9EyfuvjclQTvCJhEOvnyGH2hE
-         swkZJ/e5jCn5jta5rJa8grh/vlkUZMdhbBDfUNx1VCZviQoFhCzHtgtAPEvmA1mHyGAN
-         tic29E33oB56tBBk640BhQ71iUEveF+2IOdIJi1+H8vbMSwS6LljD9v26UzdA0AOAPVy
-         rcn+zTXR3g4X0c/s3J6/hw+BhYWpdvgn4sNvmmsev57vePBVCzhv0frRiX8VHxysqN9j
-         gAb7MERDAAMJFctE4ZZTrizbNiT4TiW19BCc0NJpfsAKqTPSsx8DGnJWOjxYoYJCKuGV
-         23CA==
-X-Gm-Message-State: AOAM530BZ6etPHDDsT6IDX/6nqIWYW9Za/65itnaZrcYplj+rO3hbqdU
-        eCdMUpZtmj0FlXMBB2z1glI=
-X-Google-Smtp-Source: ABdhPJww8obqgjqp+QMqrJ/aiJi9o7nTCoVkSIvWmlT0cZSwVG8oFr0dlhrzE6CWhirxyPi5ckXNYA==
-X-Received: by 2002:ac2:4906:: with SMTP id n6mr13046916lfi.381.1631028988446;
-        Tue, 07 Sep 2021 08:36:28 -0700 (PDT)
-Received: from kari-VirtualBox.telewell.oy ([31.132.12.44])
-        by smtp.gmail.com with ESMTPSA id p14sm1484458lji.56.2021.09.07.08.36.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Sep 2021 08:36:28 -0700 (PDT)
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        ntfs3@lists.linux.dev
-Cc:     Kari Argillander <kari.argillander@gmail.com>,
-        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v4 9/9] fs/ntfs3: Show uid/gid always in show_options()
-Date:   Tue,  7 Sep 2021 18:35:57 +0300
-Message-Id: <20210907153557.144391-10-kari.argillander@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210907153557.144391-1-kari.argillander@gmail.com>
-References: <20210907153557.144391-1-kari.argillander@gmail.com>
+        d=paragon-software.com; s=mail; t=1631031267;
+        bh=/677Cv3P5bvchgyfuP6mrlK0Dsgo2NNOnd1aDEVqAAo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=QjktKAFowwn+q8Y00od4uRHxYS8XFM7RFHPLlw9LNKN4Jx3i+SFrwalJqrRLHBrSF
+         B7RO9TQG1kDipw7g2cjd1yirJUzVIqq5vkd8P06f6mrrIqv2FcYXyUCo/N/4MhZpjA
+         FkHVw4lHqOr3TW2ZEXRTYdtQraAO059R4syB/aVI=
+Received: from [192.168.211.115] (192.168.211.115) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Tue, 7 Sep 2021 19:14:27 +0300
+Subject: Re: [PATCH v3 0/9] fs/ntfs3: Use new mount api and change some opts
+To:     Kari Argillander <kari.argillander@gmail.com>,
+        <ntfs3@lists.linux.dev>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+References: <20210829095614.50021-1-kari.argillander@gmail.com>
+ <20210907073618.bpz3fmu7jcx5mlqh@kari-VirtualBox>
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Message-ID: <69c8ab24-9443-59ad-d48d-7765b29f28f9@paragon-software.com>
+Date:   Tue, 7 Sep 2021 19:14:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210907073618.bpz3fmu7jcx5mlqh@kari-VirtualBox>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.211.115]
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Show options should show option according documentation when some value
-is not default or when ever coder wants. Uid/gid are problematic because
-it is hard to know which are defaults. In file system there is many
-different implementation for this problem.
 
-Some file systems show uid/gid when they are different than root, some
-when user has set them and some show them always. There is also problem
-that what if root uid/gid change. This code just choose to show them
-always. This way we do not need to think this any more.
 
-Signed-off-by: Kari Argillander <kari.argillander@gmail.com>
----
- fs/ntfs3/ntfs_fs.h | 23 ++++++++++-------------
- fs/ntfs3/super.c   | 12 ++++--------
- 2 files changed, 14 insertions(+), 21 deletions(-)
+On 07.09.2021 10:36, Kari Argillander wrote:
+> On Sun, Aug 29, 2021 at 12:56:05PM +0300, Kari Argillander wrote:
+>> See V2 if you want:
+>> lore.kernel.org/ntfs3/20210819002633.689831-1-kari.argillander@gmail.com
+>>
+>> NLS change is now blocked when remounting. Christoph also suggest that
+>> we block all other mount options, but I have tested a couple and they
+>> seem to work. I wish that we do not block any other than NLS because
+>> in theory they should work. Also Konstantin can comment about this.
+>>
+>> I have not include reviewed/acked to patch "Use new api for mounting"
+>> because it change so much. I have also included three new patch to this
+>> series:
+>> 	- Convert mount options to pointer in sbi
+>> 		So that we do not need to initiliaze whole spi in 
+>> 		remount.
+>> 	- Init spi more in init_fs_context than fill_super
+>> 		This is just refactoring. (Series does not depend on this)
+>> 	- Show uid/gid always in show_options()
+>> 		Christian Brauner kinda ask this. (Series does not depend
+>> 		on this)
+>>
+>> Series is ones again tested with kvm-xfstests. Every commit is build
+>> tested.
+> 
+> I will send v4 within couple of days. It will address issues what Pali
+> says in patch 8/9. Everything else should be same at least for now. Is
+> everything else looking ok?
+> 
 
-diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-index 15bab48bc1ad..372cda697dd4 100644
---- a/fs/ntfs3/ntfs_fs.h
-+++ b/fs/ntfs3/ntfs_fs.h
-@@ -60,19 +60,16 @@ struct ntfs_mount_options {
- 	u16 fs_fmask_inv;
- 	u16 fs_dmask_inv;
- 
--	unsigned uid : 1, /* uid was set. */
--		gid : 1, /* gid was set. */
--		fmask : 1, /* fmask was set. */
--		dmask : 1, /* dmask was set. */
--		sys_immutable : 1, /* Immutable system files. */
--		discard : 1, /* Issue discard requests on deletions. */
--		sparse : 1, /* Create sparse files. */
--		showmeta : 1, /* Show meta files. */
--		nohidden : 1, /* Do not show hidden files. */
--		force : 1, /* Rw mount dirty volume. */
--		noacsrules : 1, /*Exclude acs rules. */
--		prealloc : 1 /* Preallocate space when file is growing. */
--		;
-+	unsigned fmask : 1; /* fmask was set. */
-+	unsigned dmask : 1; /*dmask was set. */
-+	unsigned sys_immutable : 1; /* Immutable system files. */
-+	unsigned discard : 1; /* Issue discard requests on deletions. */
-+	unsigned sparse : 1; /* Create sparse files. */
-+	unsigned showmeta : 1; /* Show meta files. */
-+	unsigned nohidden : 1; /* Do not show hidden files. */
-+	unsigned force : 1; /* RW mount dirty volume. */
-+	unsigned noacsrules : 1; /* Exclude acs rules. */
-+	unsigned prealloc : 1; /* Preallocate space when file is growing. */
- };
- 
- /* Special value to unpack and deallocate. */
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index 0690e7e4f00d..3cba0b5e7ac7 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -294,13 +294,11 @@ static int ntfs_fs_parse_param(struct fs_context *fc,
- 		opts->fs_uid = make_kuid(current_user_ns(), result.uint_32);
- 		if (!uid_valid(opts->fs_uid))
- 			return invalf(fc, "ntfs3: Invalid value for uid.");
--		opts->uid = 1;
- 		break;
- 	case Opt_gid:
- 		opts->fs_gid = make_kgid(current_user_ns(), result.uint_32);
- 		if (!gid_valid(opts->fs_gid))
- 			return invalf(fc, "ntfs3: Invalid value for gid.");
--		opts->gid = 1;
- 		break;
- 	case Opt_umask:
- 		if (result.uint_32 & ~07777)
-@@ -521,12 +519,10 @@ static int ntfs_show_options(struct seq_file *m, struct dentry *root)
- 	struct ntfs_mount_options *opts = sbi->options;
- 	struct user_namespace *user_ns = seq_user_ns(m);
- 
--	if (opts->uid)
--		seq_printf(m, ",uid=%u",
--			   from_kuid_munged(user_ns, opts->fs_uid));
--	if (opts->gid)
--		seq_printf(m, ",gid=%u",
--			   from_kgid_munged(user_ns, opts->fs_gid));
-+	seq_printf(m, ",uid=%u",
-+		  from_kuid_munged(user_ns, opts->fs_uid));
-+	seq_printf(m, ",gid=%u",
-+		  from_kgid_munged(user_ns, opts->fs_gid));
- 	if (opts->fmask)
- 		seq_printf(m, ",fmask=%04o", ~opts->fs_fmask_inv);
- 	if (opts->dmask)
--- 
-2.25.1
+Yes, everything else seems good. 
+We tested patches locally - no regression was found.
 
+>>
+>> v3:
+>> 	- Add patch "Convert mount options to pointer in sbi"
+>> 	- Add patch "Init spi more in init_fs_context than fill_super"
+>> 	- Add patch "Show uid/gid always in show_options"
+>> 	- Patch "Use new api for mounting" has make over
+>> 	- NLS loading is not anymore possible when remounting
+>> 	- show_options() iocharset printing is fixed
+>> 	- Delete comment that testing should be done with other
+>> 	  mount options.
+>> 	- Add reviewed/acked-tags to 1,2,6,8 
+>> 	- Rewrite this cover
+>> v2:
+>> 	- Rewrite this cover leter
+>> 	- Reorder noatime to first patch
+>> 	- NLS loading with string
+>> 	- Delete default_options function
+>> 	- Remove remount flags
+>> 	- Rename no_acl_rules mount option
+>> 	- Making code cleaner
+>> 	- Add comment that mount options should be tested
+>>
+>> Kari Argillander (9):
+>>   fs/ntfs3: Remove unnecesarry mount option noatime
+>>   fs/ntfs3: Remove unnecesarry remount flag handling
+>>   fs/ntfs3: Convert mount options to pointer in sbi
+>>   fs/ntfs3: Use new api for mounting
+>>   fs/ntfs3: Init spi more in init_fs_context than fill_super
+>>   fs/ntfs3: Make mount option nohidden more universal
+>>   fs/ntfs3: Add iocharset= mount option as alias for nls=
+>>   fs/ntfs3: Rename mount option no_acl_rules > (no)acl_rules
+>>   fs/ntfs3: Show uid/gid always in show_options()
+>>
+>>  Documentation/filesystems/ntfs3.rst |  10 +-
+>>  fs/ntfs3/attrib.c                   |   2 +-
+>>  fs/ntfs3/dir.c                      |   8 +-
+>>  fs/ntfs3/file.c                     |   4 +-
+>>  fs/ntfs3/inode.c                    |  12 +-
+>>  fs/ntfs3/ntfs_fs.h                  |  26 +-
+>>  fs/ntfs3/super.c                    | 486 +++++++++++++++-------------
+>>  fs/ntfs3/xattr.c                    |   2 +-
+>>  8 files changed, 284 insertions(+), 266 deletions(-)
+>>
+>> -- 
+>> 2.25.1
+>>
+>>
