@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E37B402BEB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Sep 2021 17:36:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7CFE402BED
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Sep 2021 17:36:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345366AbhIGPhO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Sep 2021 11:37:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58650 "EHLO
+        id S1345383AbhIGPhT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Sep 2021 11:37:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244911AbhIGPhN (ORCPT
+        with ESMTP id S236561AbhIGPhQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Sep 2021 11:37:13 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27158C061575;
-        Tue,  7 Sep 2021 08:36:07 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id l18so17193695lji.12;
-        Tue, 07 Sep 2021 08:36:07 -0700 (PDT)
+        Tue, 7 Sep 2021 11:37:16 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19F24C061575;
+        Tue,  7 Sep 2021 08:36:10 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id f2so17257510ljn.1;
+        Tue, 07 Sep 2021 08:36:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lKjtChchih7HsFrFsp2Wwav0eUYrjghrLF4msDPDeS8=;
-        b=Z7UIIsxIMIa8H6JfbbY6X99kkXuF2OoWO5QHpcFh7Ug5SqK7C/S12U5tnpRP42Fv67
-         jHzdv0hU9cd1TUi4M9ndZWIwOum6YY8vs6Qxff0ky83Fq17lhSaYtsZsCFOHxIOuuz/C
-         sweWUlzy4fZnluGYih2L5NzCIRkSnTSEoFUV7MPkY0NY4BD4AYyLZjq6eLwuix/B3l6Z
-         9MS3RmNm/sIHFL8s3oh6qZB63njpW2w45UX9Cc8vKEknUUgpOoF/sPXfCruSMMSy8wZG
-         4cTLETk0QXAMEJHALQK/SVkumFqzYMCauDlunt0Kmk3p6YXY3jkmrkIFBxWthgL7AXZE
-         RODw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=oNKca7TdM6UOQ59W0PmuB6JI6yIXEnAZZ18j+cw9ZMM=;
+        b=Pz+OHzmYb7NZvewbuGmn6sZLP6XjUa+szUycP+iSikdofQIQhYsukWjEP6JHkIZglA
+         vnAHNyaPH3pfm5pOD7+89FRER5ZjOO3WHWPeDpeqIoce0Kb2jgStNhO4o9FvxhQzVm3O
+         x1TzYeODELaHJzSSBzJXLYYP/jx0bP8amHZLP/cKZ0TDFuhcmvpV95xe1tq9r/82P7rQ
+         zScseh3WBGAPX2ZGAjyrketx6Cru2F3qSz8ilU4/cj/YYqxPwG4rKXbz/hbtLwkUu7U4
+         Yph2awkIqbsqgoUVhmFSlJACxLNsFONOJ81iNSJrhZIFV3PdlRGQN9sJDSkYXS/WTKmT
+         lAaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lKjtChchih7HsFrFsp2Wwav0eUYrjghrLF4msDPDeS8=;
-        b=YPc/6fEYsqgeWnlCxTEOxX3EaiOMfcOS/H/PwNdPoumzO7eJbJR48aXF/CcHivrh2b
-         qf/DRXmv8FIhjmI9WLA2Yqj0GJiYZDupN2TsM784fFp3+NcYbHvhEux2Gz0D6BvmTs68
-         OFfxkiU4+39/1K+GonMyjDY3eBDVTK/3t53akbzE30WwZmhwBQAC816SaxT+wF1KuuTJ
-         oQIzrnyn+lnZ/n5UVRURVS1nR9fE6SQS89h90UUe2RwprkoHb1N7Pk18uQsbg6pz+m1A
-         UeGNPmbA4/bFQY6HWqVq9zkwBRzihI7ipdXsZTmmzU3Gn2kgMrHPlndIOPWjKckgSrBs
-         3I3w==
-X-Gm-Message-State: AOAM53091HRUEXchAHT6+wSMj1SPZfqAyYVlslPrmIcrNlRdnOuolE0O
-        d4kLk9jE4trI2wu6Ad/xCWQ=
-X-Google-Smtp-Source: ABdhPJzi0tr66ohoRxixztdIhOImTR4jiQLehhI/b3egXBqWdGH9cO59XCULIDxjmwHBvn10eDihYQ==
-X-Received: by 2002:a2e:9011:: with SMTP id h17mr15315258ljg.255.1631028965440;
-        Tue, 07 Sep 2021 08:36:05 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=oNKca7TdM6UOQ59W0PmuB6JI6yIXEnAZZ18j+cw9ZMM=;
+        b=bMB1/MSHYqUToyPgy/wkQ+cmCuJCfVWoApyN4pZWb1VLM9k8H1ONS36CE5F9YTnH9e
+         Q+w2gy+z2gH2gwOmOSKFQVBWrm5q6QxdqY7yj2zdrq8QnN8FeDyWDE7BJcrKPk6WRQAL
+         uwSnjUH+E2nfvZf0Lbxbk4nX5H2onz6JQD8hkOBraR7HVncuAIxjvm7OBjHxJwtk09wx
+         T2kUIjgOTJcbcm8OrFKtIeXEKJr38pdsm7jYqXslhdiuYaEhKLelBWwByD01YgaRtOAd
+         4U1Of5SnaZsA0wldJ29U+fsLFeO7thR3gfvEkA9T9ih9AXo7QQXVSSNG5IDVhAXZWnM5
+         Uuow==
+X-Gm-Message-State: AOAM533fJSMxcig5b9VssUpVo0zhYdQHD8bPysSqRTwvD2aMkdUQE5tI
+        QLKEuV6eQz7hCV830riEZ+jod+o0jTlUew==
+X-Google-Smtp-Source: ABdhPJyydmeiLotrIfztdpGIDFEPKD2CExvveV1n8c53u/SxRzM5CQhT82LVqNeMLAF3FqDyDK/DUA==
+X-Received: by 2002:a2e:b173:: with SMTP id a19mr15323585ljm.210.1631028968451;
+        Tue, 07 Sep 2021 08:36:08 -0700 (PDT)
 Received: from kari-VirtualBox.telewell.oy ([31.132.12.44])
-        by smtp.gmail.com with ESMTPSA id p14sm1484458lji.56.2021.09.07.08.36.04
+        by smtp.gmail.com with ESMTPSA id p14sm1484458lji.56.2021.09.07.08.36.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Sep 2021 08:36:04 -0700 (PDT)
+        Tue, 07 Sep 2021 08:36:08 -0700 (PDT)
 From:   Kari Argillander <kari.argillander@gmail.com>
 To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
         ntfs3@lists.linux.dev
@@ -57,73 +57,83 @@ Cc:     Kari Argillander <kari.argillander@gmail.com>,
         =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
         Matthew Wilcox <willy@infradead.org>,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v4 0/9] fs/ntfs3: Use new mount api and change some opts
-Date:   Tue,  7 Sep 2021 18:35:48 +0300
-Message-Id: <20210907153557.144391-1-kari.argillander@gmail.com>
+Subject: [PATCH v4 1/9] fs/ntfs3: Remove unnecesarry mount option noatime
+Date:   Tue,  7 Sep 2021 18:35:49 +0300
+Message-Id: <20210907153557.144391-2-kari.argillander@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210907153557.144391-1-kari.argillander@gmail.com>
+References: <20210907153557.144391-1-kari.argillander@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-v3 link:
-lore.kernel.org/ntfs3/20210829095614.50021-1-kari.argillander@gmail.com
+Remove unnecesarry mount option noatime because this will be handled
+by VFS. Our option parser will never get opt like this.
 
-This series will delete unnecessary mount options and rename some.
-Also this will convert ntfs3 to use new mount api. In my opinion we
-should get this in 5.15 because after that basically we have to have
-deprecated flag with new mount options. Let's try to avoid that if
-possible.
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Kari Argillander <kari.argillander@gmail.com>
+---
+ Documentation/filesystems/ntfs3.rst | 4 ----
+ fs/ntfs3/super.c                    | 7 -------
+ 2 files changed, 11 deletions(-)
 
-v4:
-	- Rebased top of the current ntfs3/master
-	- Rename mount option (no)acs_rules -> (no)acsrules
-	- Fix acs commit message acl -> acs (Thank Pali)
-v3:
-	- Add patch "Convert mount options to pointer in sbi"
-	- Add patch "Init spi more in init_fs_context than fill_super"
-	- Add patch "Show uid/gid always in show_options"
-	- Patch "Use new api for mounting" has make over
-	- NLS loading is not anymore possible when remounting
-	- show_options() iocharset printing is fixed
-	- Delete comment that testing should be done with other
-	  mount options.
-	- Add reviewed/acked-tags to 1,2,6,8 
-	- Rewrite this cover
-v2:
-	- Rewrite this cover leter
-	- Reorder noatime to first patch
-	- NLS loading with string
-	- Delete default_options function
-	- Remove remount flags
-	- Rename no_acl_rules mount option
-	- Making code cleaner
-	- Add comment that mount options should be tested
-
-Kari Argillander (9):
-  fs/ntfs3: Remove unnecesarry mount option noatime
-  fs/ntfs3: Remove unnecesarry remount flag handling
-  fs/ntfs3: Convert mount options to pointer in sbi
-  fs/ntfs3: Use new api for mounting
-  fs/ntfs3: Init spi more in init_fs_context than fill_super
-  fs/ntfs3: Make mount option nohidden more universal
-  fs/ntfs3: Add iocharset= mount option as alias for nls=
-  fs/ntfs3: Rename mount option no_acs_rules > (no)acsrules
-  fs/ntfs3: Show uid/gid always in show_options()
-
- Documentation/filesystems/ntfs3.rst |  10 +-
- fs/ntfs3/attrib.c                   |   2 +-
- fs/ntfs3/dir.c                      |   8 +-
- fs/ntfs3/file.c                     |   4 +-
- fs/ntfs3/inode.c                    |  12 +-
- fs/ntfs3/ntfs_fs.h                  |  26 +-
- fs/ntfs3/super.c                    | 498 +++++++++++++++-------------
- fs/ntfs3/xattr.c                    |   2 +-
- 8 files changed, 290 insertions(+), 272 deletions(-)
-
-
-base-commit: 2e3a51b59ea26544303e168de8a0479915f09aa3
+diff --git a/Documentation/filesystems/ntfs3.rst b/Documentation/filesystems/ntfs3.rst
+index ffe9ea0c1499..af7158de6fde 100644
+--- a/Documentation/filesystems/ntfs3.rst
++++ b/Documentation/filesystems/ntfs3.rst
+@@ -85,10 +85,6 @@ acl			Support POSIX ACLs (Access Control Lists). Effective if
+ 			supported by Kernel. Not to be confused with NTFS ACLs.
+ 			The option specified as acl enables support for POSIX ACLs.
+ 
+-noatime			All files and directories will not update their last access
+-			time attribute if a partition is mounted with this parameter.
+-			This option can speed up file system operation.
+-
+ ===============================================================================
+ 
+ ToDo list
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index 55bbc9200a10..a18b99a3e3b5 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -223,7 +223,6 @@ enum Opt {
+ 	Opt_nohidden,
+ 	Opt_showmeta,
+ 	Opt_acl,
+-	Opt_noatime,
+ 	Opt_nls,
+ 	Opt_prealloc,
+ 	Opt_no_acs_rules,
+@@ -242,7 +241,6 @@ static const match_table_t ntfs_tokens = {
+ 	{ Opt_sparse, "sparse" },
+ 	{ Opt_nohidden, "nohidden" },
+ 	{ Opt_acl, "acl" },
+-	{ Opt_noatime, "noatime" },
+ 	{ Opt_showmeta, "showmeta" },
+ 	{ Opt_nls, "nls=%s" },
+ 	{ Opt_prealloc, "prealloc" },
+@@ -333,9 +331,6 @@ static noinline int ntfs_parse_options(struct super_block *sb, char *options,
+ 			ntfs_err(sb, "support for ACL not compiled in!");
+ 			return -EINVAL;
+ #endif
+-		case Opt_noatime:
+-			sb->s_flags |= SB_NOATIME;
+-			break;
+ 		case Opt_showmeta:
+ 			opts->showmeta = 1;
+ 			break;
+@@ -587,8 +582,6 @@ static int ntfs_show_options(struct seq_file *m, struct dentry *root)
+ 		seq_puts(m, ",prealloc");
+ 	if (sb->s_flags & SB_POSIXACL)
+ 		seq_puts(m, ",acl");
+-	if (sb->s_flags & SB_NOATIME)
+-		seq_puts(m, ",noatime");
+ 
+ 	return 0;
+ }
 -- 
 2.25.1
 
