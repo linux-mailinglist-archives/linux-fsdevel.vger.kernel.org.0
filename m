@@ -2,185 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A67D402B08
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Sep 2021 16:49:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22442402B11
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Sep 2021 16:51:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237382AbhIGOuR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Sep 2021 10:50:17 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:15305 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232105AbhIGOuQ (ORCPT
+        id S236373AbhIGOw0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Sep 2021 10:52:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48044 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230427AbhIGOwZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Sep 2021 10:50:16 -0400
-Received: from dggeme766-chm.china.huawei.com (unknown [172.30.72.55])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4H3p6c74wQz8snd;
-        Tue,  7 Sep 2021 22:48:24 +0800 (CST)
-Received: from [10.174.176.245] (10.174.176.245) by
- dggeme766-chm.china.huawei.com (10.3.19.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2308.8; Tue, 7 Sep 2021 22:48:52 +0800
-Subject: Re: [PATCH v2 0/3] auth_gss: netns refcount leaks when
- use-gss-proxy==1
-To:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Wenbin Zeng <wenbin.zeng@gmail.com>, <viro@zeniv.linux.org.uk>,
-        <davem@davemloft.net>, <jlayton@kernel.org>,
-        <trond.myklebust@hammerspace.com>, <anna.schumaker@netapp.com>,
-        <wenbinzeng@tencent.com>, <dsahern@gmail.com>,
-        <nicolas.dichtel@6wind.com>, <willy@infradead.org>,
-        <edumazet@google.com>, <jakub.kicinski@netronome.com>,
-        <tyhicks@canonical.com>, <chuck.lever@oracle.com>,
-        <neilb@suse.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-nfs@vger.kernel.org>
-References: <1556692945-3996-1-git-send-email-wenbinzeng@tencent.com>
- <1557470163-30071-1-git-send-email-wenbinzeng@tencent.com>
- <20190515010331.GA3232@fieldses.org>
- <20190612083755.GA27776@bridge.tencent.com>
- <20190612155224.GF16331@fieldses.org>
-From:   "wanghai (M)" <wanghai38@huawei.com>
-Message-ID: <2c9e3d91-f4b3-6f6a-0dc0-21cef4fab3bb@huawei.com>
-Date:   Tue, 7 Sep 2021 22:48:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 7 Sep 2021 10:52:25 -0400
+Received: from mail-ua1-x934.google.com (mail-ua1-x934.google.com [IPv6:2607:f8b0:4864:20::934])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 510CEC061575
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Sep 2021 07:51:19 -0700 (PDT)
+Received: by mail-ua1-x934.google.com with SMTP id z3so1838646uav.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Sep 2021 07:51:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zOc8feQK3rpyOFx/qVU1OaRHVboeJHglZGHZH01zit4=;
+        b=pa6WvdVTw0CWZA3iqWodJt9w6Nzl3iAoUmZrUChVnVRDNTmiwbCP8BX1VLcx63E3Ly
+         KLTRcueFAc7JPNUi0Qq47jxf3w3terrhI/R/A9uNLHYYaynOsfaxtAPrF7BuCERCyUmf
+         acITq84sNSoZJ9eL8UN3jj6RFOlekEpTqW7/E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zOc8feQK3rpyOFx/qVU1OaRHVboeJHglZGHZH01zit4=;
+        b=ZjnvhwFz3ArCC2gGcIcsj7xfyE0n/Sx34lJp6stk3juSF9xrzVIa4Dcf5Goc4i5bva
+         aXqAy1jpOxt3lKTOdxtaJSdDFPqL+uzzBAuasr5y2Xokr1DUAnevZWni2eSs0FGeoe/z
+         Kshu7NnSa+mTen/z8ldLGSXH7AMnGUQYtYbYDn5BDES7h23ssPTAJFf+Qi4uS/W7r/fh
+         lsZDt9lrh/F42vOWACFQ99BNvqxKOeban1crvISbNEm0HZSF4TWXg9/BEL/lpso5xDFd
+         4ke4MYq26vTEN9l4JQbmH4LijqBdgqyrCy6OwgoTLklbBfjgxqRaeOAQ0H8CVmgWDlwM
+         habA==
+X-Gm-Message-State: AOAM532ICan/59iOd2xWlEVGiv7ISI4EjhAV+wOC22YJFljt0x0cdQQO
+        HL5p3YFfXmEYSW6bqQP6f9VADDM0WbLP9SRt07FzgQ==
+X-Google-Smtp-Source: ABdhPJwQi8ohxjO3fS9RrtRvPnRWBFYVSUW3nYZ6aDQSeWIdqgy4qlzGmvP3olskoNKAAiDr2SvpiMH8DsBLn4GhC9I=
+X-Received: by 2002:a05:6130:30a:: with SMTP id ay10mr9115895uab.8.1631026278466;
+ Tue, 07 Sep 2021 07:51:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190612155224.GF16331@fieldses.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.176.245]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggeme766-chm.china.huawei.com (10.3.19.112)
-X-CFilter-Loop: Reflected
+References: <20210817022220.17574-1-jefflexu@linux.alibaba.com>
+ <CAJfpeguw1hMOaxpDmjmijhf=-JEW95aEjxfVo_=D_LyWx8LDgw@mail.gmail.com>
+ <YRut5sioYfc2M1p7@redhat.com> <6043c0b8-0ff1-2e11-0dd0-e23f9ff6b952@linux.alibaba.com>
+ <CAJfpegv01k5hEyJ3LPDWJoqB+vL8hwTan9dLu1pkkD0xoRuFzw@mail.gmail.com> <a1d891b5-f8ef-b5fe-c20c-e3e01203b368@linux.alibaba.com>
+In-Reply-To: <a1d891b5-f8ef-b5fe-c20c-e3e01203b368@linux.alibaba.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 7 Sep 2021 16:51:06 +0200
+Message-ID: <CAJfpegsZpj98Duo6AsO-bsJi0BqAbCkBNhi_K=7Jv4a+Y8TCuw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] fuse,virtiofs: support per-file DAX
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-在 2019/6/12 23:52, J. Bruce Fields 写道:
-> On Wed, Jun 12, 2019 at 04:37:55PM +0800, Wenbin Zeng wrote:
->> On Tue, May 14, 2019 at 09:03:31PM -0400, J. Bruce Fields wrote:
->>> Whoops, I was slow to test these.  I'm getting failuring krb5 nfs
->>> mounts, and the following the server's logs.  Dropping the three patches
->>> for now.
->> My bad, I should have found it earlier. Thank you for testing it, Bruce.
->>
->> I figured it out, the problem that you saw is due to the following code:
->> the if-condition is incorrect here because sn->gssp_clnt==NULL doesn't mean
->> inexistence of 'use-gss-proxy':
-> Thanks, but with the new patches I see the following.  I haven't tried
-> to investigate.
-This patchset adds the nsfs_evict()->netns_evict() code for breaking 
-deadlock bugs that exist, but this may cause double free because 
-nsfs_evict()->netns_evict() may be called multiple times.
-
-for example:
-
-int main()
-{
-     int fd = open("/proc/self/ns/net", O_RDONLY);
-     close(fd);
-
-     fd = open("/proc/self/ns/net", O_RDONLY);
-     close(fd);
-}
-
-Therefore, the nsfs evict cannot be used to break the deadlock.
-
-A large number of netns leaks may cause OOM problems, currently I can't 
-find a good solution to fix it, does anyone have a good idea?
-> --b.
+On Fri, 3 Sept 2021 at 07:31, JeffleXu <jefflexu@linux.alibaba.com> wrote:
 >
-> [ 2908.134813] ------------[ cut here ]------------
-> [ 2908.135732] name 'use-gss-proxy'
-> [ 2908.136276] WARNING: CPU: 2 PID: 15032 at fs/proc/generic.c:673 remove_proc_entry+0x124/0x190
-> [ 2908.138144] Modules linked in: nfsv4 rpcsec_gss_krb5 nfsv3 nfs_acl nfs lockd grace auth_rpcgss sunrpc
-> [ 2908.140183] CPU: 2 PID: 15032 Comm: (coredump) Not tainted 5.2.0-rc2-00441-gaef575f54640 #2257
-> [ 2908.142062] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-2.fc30 04/01/2014
-> [ 2908.143756] RIP: 0010:remove_proc_entry+0x124/0x190
-> [ 2908.144519] Code: c3 48 c7 c7 60 24 8b 82 e8 29 16 a5 00 eb d5 48 c7 c7 60 24 8b 82 e8 1b 16 a5 00 4c 89 e6 48 c7 c7 ec 4c 52 82 e8 50 fd db ff <0f> 0b eb b6 48 8b 04 24 83 a8 90 00 00 00 01 e9 78 ff ff ff 4c 89
-> [ 2908.148138] RSP: 0018:ffffc900047bbdb0 EFLAGS: 00010282
-> [ 2908.148945] RAX: 0000000000000000 RBX: ffff888036060580 RCX: 0000000000000000
-> [ 2908.150139] RDX: ffff88807fd24e80 RSI: ffff88807fd165b8 RDI: 00000000ffffffff
-> [ 2908.151334] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> [ 2908.152564] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffa00adb1b
-> [ 2908.153816] R13: 00007ffc8bda5d30 R14: 0000000000000000 R15: ffff88805e2873a8
-> [ 2908.155007] FS:  00007f470bc27e40(0000) GS:ffff88807fd00000(0000) knlGS:0000000000000000
-> [ 2908.156421] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 2908.157333] CR2: 0000562b07764c58 CR3: 000000005e8ea001 CR4: 00000000001606e0
-> [ 2908.158529] Call Trace:
-> [ 2908.158796]  destroy_use_gss_proxy_proc_entry+0xb7/0x150 [auth_rpcgss]
-> [ 2908.159966]  gss_svc_shutdown_net+0x11/0x170 [auth_rpcgss]
-> [ 2908.160830]  netns_evict+0x2f/0x40
-> [ 2908.161266]  nsfs_evict+0x27/0x40
-> [ 2908.161685]  evict+0xd0/0x1a0
-> [ 2908.162035]  __dentry_kill+0xdf/0x180
-> [ 2908.162520]  dentry_kill+0x50/0x1c0
-> [ 2908.163005]  ? dput+0x1c/0x2b0
-> [ 2908.163369]  dput+0x260/0x2b0
-> [ 2908.163739]  path_put+0x12/0x20
-> [ 2908.164155]  do_faccessat+0x17c/0x240
-> [ 2908.164643]  do_syscall_64+0x50/0x1c0
-> [ 2908.165170]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> [ 2908.165959] RIP: 0033:0x7f47098e2157
-> [ 2908.166445] Code: 77 01 c3 48 8b 15 69 dd 2c 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 15 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 8b 15 39 dd 2c 00 f7 d8 64 89 02 b8
-> [ 2908.169994] RSP: 002b:00007ffc8bda5d28 EFLAGS: 00000246 ORIG_RAX: 0000000000000015
-> [ 2908.171315] RAX: ffffffffffffffda RBX: 0000562b0774d979 RCX: 00007f47098e2157
-> [ 2908.172563] RDX: 00007ffc8bda5d3e RSI: 0000000000000000 RDI: 00007ffc8bda5d30
-> [ 2908.173753] RBP: 00007ffc8bda5d70 R08: 0000000000000000 R09: 0000562b07d0b130
-> [ 2908.174943] R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc8bda5d30
-> [ 2908.176163] R13: 0000562b07b34c80 R14: 0000562b07b35120 R15: 0000000000000000
-> [ 2908.177395] irq event stamp: 4256
-> [ 2908.177835] hardirqs last  enabled at (4255): [<ffffffff811221ee>] console_unlock+0x41e/0x590
-> [ 2908.179378] hardirqs last disabled at (4256): [<ffffffff81001b2f>] trace_hardirqs_off_thunk+0x1a/0x1c
-> [ 2908.181031] softirqs last  enabled at (4252): [<ffffffff820002be>] __do_softirq+0x2be/0x4aa
-> [ 2908.182458] softirqs last disabled at (4233): [<ffffffff810bf8e0>] irq_exit+0x80/0x90
-> [ 2908.183869] ---[ end trace d88132b63efc09d8 ]---
-> [ 2908.184620] BUG: kernel NULL pointer dereference, address: 0000000000000030
-> [ 2908.185829] #PF: supervisor read access in kernel mode
-> [ 2908.186924] #PF: error_code(0x0000) - not-present page
-> [ 2908.187887] PGD 0 P4D 0
-> [ 2908.188318] Oops: 0000 [#1] PREEMPT SMP PTI
-> [ 2908.189254] CPU: 2 PID: 15032 Comm: (coredump) Tainted: G        W         5.2.0-rc2-00441-gaef575f54640 #2257
-> [ 2908.192506] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-2.fc30 04/01/2014
-> [ 2908.195137] RIP: 0010:__lock_acquire+0x3d2/0x1d90
-> [ 2908.196414] Code: db 48 8b 84 24 88 00 00 00 65 48 33 04 25 28 00 00 00 0f 85 be 10 00 00 48 8d 65 d8 44 89 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 <48> 81 3f 60 0d 01 83 41 bb 00 00 00 00 45 0f 45 d8 83 fe 01 0f 87
-> [ 2908.202720] RSP: 0018:ffffc900047bbc80 EFLAGS: 00010002
-> [ 2908.204165] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
-> [ 2908.206125] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000030
-> [ 2908.208203] RBP: ffffc900047bbd40 R08: 0000000000000001 R09: 0000000000000000
-> [ 2908.210219] R10: 0000000000000001 R11: 0000000000000001 R12: ffff88807ad91500
-> [ 2908.211386] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000282
-> [ 2908.212532] FS:  00007f470bc27e40(0000) GS:ffff88807fd00000(0000) knlGS:0000000000000000
-> [ 2908.213647] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 2908.214400] CR2: 0000000000000030 CR3: 000000005e8ea001 CR4: 00000000001606e0
-> [ 2908.215393] Call Trace:
-> [ 2908.215589]  ? __lock_acquire+0x255/0x1d90
-> [ 2908.216071]  ? clear_gssp_clnt+0x1b/0x50 [auth_rpcgss]
-> [ 2908.216720]  ? __mutex_lock+0x99/0x920
-> [ 2908.217114]  lock_acquire+0x95/0x1b0
-> [ 2908.217484]  ? cache_purge+0x1c/0x110 [sunrpc]
-> [ 2908.218000]  _raw_spin_lock+0x2f/0x40
-> [ 2908.218370]  ? cache_purge+0x1c/0x110 [sunrpc]
-> [ 2908.218882]  cache_purge+0x1c/0x110 [sunrpc]
-> [ 2908.219346]  gss_svc_shutdown_net+0xb8/0x170 [auth_rpcgss]
-> [ 2908.220104]  netns_evict+0x2f/0x40
-> [ 2908.220439]  nsfs_evict+0x27/0x40
-> [ 2908.220786]  evict+0xd0/0x1a0
-> [ 2908.221050]  __dentry_kill+0xdf/0x180
-> [ 2908.221458]  dentry_kill+0x50/0x1c0
-> [ 2908.221842]  ? dput+0x1c/0x2b0
-> [ 2908.222126]  dput+0x260/0x2b0
-> [ 2908.222384]  path_put+0x12/0x20
-> [ 2908.222753]  do_faccessat+0x17c/0x240
-> [ 2908.223125]  do_syscall_64+0x50/0x1c0
-> [ 2908.223479]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> [ 2908.224152] RIP: 0033:0x7f47098e2157
-> [ 2908.224566] Code: 77 01 c3 48 8b 15 69 dd 2c 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 15 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 8b 15 39 dd 2c 00 f7 d8 64 89 02 b8
-> [ 2908.228198] RSP: 002b:00007ffc8bda5d28 EFLAGS: 00000246 ORIG_RAX: 0000000000000015
-> [ 2908.229496] RAX: ffffffffffffffda RBX: 0000562b0774d979 RCX: 00007f47098e2157
-> [ 2908.230938] RDX: 00007ffc8bda5d3e RSI: 0000000000000000 RDI: 00007ffc8bda5d30
-> [ 2908.232182] RBP: 00007ffc8bda5d70 R08: 0000000000000000 R09: 0000562b07d0b130
-> [ 2908.233481] R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc8bda5d30
-> [ 2908.234750] R13: 0000562b07b34c80 R14: 0000562b07b35120 R15: 0000000000000000
-> [ 2908.236068] Modules linked in: nfsv4 rpcsec_gss_krb5 nfsv3 nfs_acl nfs lockd grace auth_rpcgss sunrpc
-> [ 2908.237861] CR2: 0000000000000030
-> [ 2908.238277] ---[ end trace d88132b63efc09d9 ]---
+>
+>
+> On 8/17/21 10:08 PM, Miklos Szeredi wrote:
+> > On Tue, 17 Aug 2021 at 15:22, JeffleXu <jefflexu@linux.alibaba.com> wrote:
+> >>
+> >>
+> >>
+> >> On 8/17/21 8:39 PM, Vivek Goyal wrote:
+> >>> On Tue, Aug 17, 2021 at 10:06:53AM +0200, Miklos Szeredi wrote:
+> >>>> On Tue, 17 Aug 2021 at 04:22, Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+> >>>>>
+> >>>>> This patchset adds support of per-file DAX for virtiofs, which is
+> >>>>> inspired by Ira Weiny's work on ext4[1] and xfs[2].
+> >>>>
+> >>>> Can you please explain the background of this change in detail?
+> >>>>
+> >>>> Why would an admin want to enable DAX for a particular virtiofs file
+> >>>> and not for others?
+> >>>
+> >>> Initially I thought that they needed it because they are downloading
+> >>> files on the fly from server. So they don't want to enable dax on the file
+> >>> till file is completely downloaded.
+> >>
+> >> Right, it's our initial requirement.
+> >>
+> >>
+> >>> But later I realized that they should
+> >>> be able to block in FUSE_SETUPMAPPING call and make sure associated
+> >>> file section has been downloaded before returning and solve the problem.
+> >>> So that can't be the primary reason.
+> >>
+> >> Saying we want to access 4KB of one file inside guest, if it goes
+> >> through FUSE request routine, then the fuse daemon only need to download
+> >> this 4KB from remote server. But if it goes through DAX, then the fuse
+> >> daemon need to download the whole DAX window (e.g., 2MB) from remote
+> >> server, so called amplification. Maybe we could decrease the DAX window
+> >> size, but it's a trade off.
+> >
+> > That could be achieved with a plain fuse filesystem on the host (which
+> > will get 4k READ requests for accesses to mapped area inside guest).
+> > Since this can be done selectively for files which are not yet
+> > downloaded, the extra layer wouldn't be a performance problem.
+> >
+> > Is there a reason why that wouldn't work?
+>
+> I didn't realize this mechanism (working around from user space) before
+> sending this patch set.
+>
+> After learning the virtualization and KVM stuffs, I find that, as Vivek
+> Goyal replied in [1], virtiofsd/qemu need to somehow hook the user page
+> fault and then download the remained part.
+>
+> IMHO, this mechanism (as you proposed by implementing a plain fuse
+> filesystem on the host) seems a little bit sophisticated so far.
+
+
+Agree.  Let's start with the simplest variant, which is the server
+selectively enabling dax.
+
+Thanks,
+Miklos
