@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D79C402FED
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Sep 2021 22:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF071402FEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Sep 2021 22:50:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346984AbhIGUwL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Sep 2021 16:52:11 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:47548 "EHLO
+        id S1346881AbhIGUwE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Sep 2021 16:52:04 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:39270 "EHLO
         mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1346937AbhIGUwH (ORCPT
+        by vger.kernel.org with ESMTP id S1346837AbhIGUwB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Sep 2021 16:52:07 -0400
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 187HpX6O002592;
-        Tue, 7 Sep 2021 20:51:00 GMT
+        Tue, 7 Sep 2021 16:52:01 -0400
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 187HsjPl028050;
+        Tue, 7 Sep 2021 20:50:54 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references :
  content-transfer-encoding : content-type : mime-version;
- s=corp-2021-07-09; bh=tvz8+mSx/6hAxHUxDTynb8tn5ymhX7NY1MEMEv78HNI=;
- b=ChcxgB9t4YcU5MqASR2kpG7YoeJlvOnn8c6kFuK6Sj6c6OKT04C6DcMem/HyeW7H8SoJ
- V4o+Bh0NYbIltyW/+qY7gQhNU0NTl0q7aVYhDPCnGVxuYU1sooufNmHRO19KLAjH8c76
- qRdfzvffrGiRTxU+ZXZmRMYvWJ6sH1Rrr4dqE7awyKr5v25qcgNMyAFBvWR/ESMhcUs5
- Jqv3wfRD8RI56l1Cu6664ruBWLOC/r8kSyVt1afn0uqCyYZayq0kGIG3qfwYmRj2qOW6
- cTV1deILrPsPWJDr1Yisgrz5ilF55nGvpwWInp5qkaj1Stwo2eJWRb51iOCGRvtB0/Hq 9Q== 
+ s=corp-2021-07-09; bh=4sTvAgC4wLd3w7mcFPV08K3eue6H6jOyAAAWiW9dwSA=;
+ b=sTfaF+Km+euupxyxHiP4oX4Q0u0hvzNBIa+y9vjoCKU6iXdbjjCVb6F55k5NJmUQqHm0
+ +R/P5sH7Nv/60Ohu5xbufSWRLQCiEu8Kuor7QYdKgv77fW2uSQPqVtNMN/tE7QCozUoZ
+ TG9jojbd+YPYcK4j6qqsAXRu9/nfopcqvxMa6cl/IVi7rrRgJ4keyfDsh3Ck9ngf91Lt
+ 8CADRi4s5FrXIp8X7Y5PEdKASKNICIMzgR/bB8NuwQTXG0jPw9p3jkiuFl6J1HGFQIia
+ CB6OlVgnMMNcHz8TE3sD2neEXblJr8QYx4HgXAVftKk9iq/oyoLGtudRoqDvlqTFqTyL Vw== 
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references :
  content-transfer-encoding : content-type : mime-version;
- s=corp-2020-01-29; bh=tvz8+mSx/6hAxHUxDTynb8tn5ymhX7NY1MEMEv78HNI=;
- b=S5iYy6aoPHsf8dSt0TC1Sx/mwgKrqwe9MeUOPn+fi7CFSQr/kEvT6+XwniR8CU8vwuho
- eth1oJ18D96YxQLSAH6V5M9tx3E+hZK/FA+0eKXhvSyG+XpoiBYRaLp8VQH4EyFDsVs6
- r+PzPw2zVcTKncEK9VJqUL9ATWlrmR834x2h3MlkxuoorzudZaZdT5RNXfO0UAUYbdMt
- vTVSeXogMdACNwWfTByV6vIrVtXmY+ERb7O4PVGi+AS7R6dlKCzJXEFlKcMpDgGHB1Ay
- VlApYVQtg9rFBAu2CacWetsWZPfXoYxcFnk+69+i8P97fibXZTiNJnpLj00BiWDEEpez oQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3axcuq8eg4-1
+ s=corp-2020-01-29; bh=4sTvAgC4wLd3w7mcFPV08K3eue6H6jOyAAAWiW9dwSA=;
+ b=te29K1kbP+E+7kY7OTcq98C+BV56MQjUvhv8qFfsSqxo8qwuGR80++TKj0Re89okQ6ko
+ v6mbxyp3v9rkKXWYPU4Ah6XQ1JzODxNJjvX+pahwkFXGg+ZG6y5oLm4M+bgOlytL5JkB
+ ELsgLpfk8uppUE6T/xo9ep2qdbtgfTO81IjZEoB8s0841k7Mm8SmlCk9HRcQgmoWPP+8
+ N4nbnmdt583+g4Zm3/wZfEBlMFadieiQOjKPpgirc+Di5oSE32Cg7MRq54XioP70lhmS
+ Xm6U2M6EE8/9CGKekFheSmjIyPM69yn394oVIuCX1984/KzIjm8gn2MDrzstSBUvCoPG hw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3axcw68eme-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 07 Sep 2021 20:50:59 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 187KQFRF185832;
-        Tue, 7 Sep 2021 20:50:51 GMT
-Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam08lp2044.outbound.protection.outlook.com [104.47.73.44])
-        by aserp3020.oracle.com with ESMTP id 3axcpk7tjg-1
+        Tue, 07 Sep 2021 20:50:54 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 187KolUj083023;
+        Tue, 7 Sep 2021 20:50:53 GMT
+Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam08lp2045.outbound.protection.outlook.com [104.47.73.45])
+        by userp3030.oracle.com with ESMTP id 3axcq08k3r-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 07 Sep 2021 20:50:50 +0000
+        Tue, 07 Sep 2021 20:50:53 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HsV+VQxRIJqN0oQDKedp7k4Ic0imlbB878c7iFau9juV4upgbWlzW3COCBcVXROFX+jaNbVIJtjhNiYDK6CGx2S4DjmvPTF9zVqb7b46EycJeQA0yQXLTY2IARRqDTzuXzFzNsvNI6SrnMoexc+M+1GlSHzVOIeiwgxSZtUwYCJ45AnqAul+rliOCj6h2Tdf0BEqAg0jEKaFFSxk/45Qo1J9Yf0llDRSqC1V358+eiNWrag41rxnwJytKkFGZO7ziYdWfdYYWTo72S9NRcIkRvT8338HiS1X3fR2GV2R8VzyycsVFSVpGfIsUUo4v4nkpBOWS7rn4FhnfPapzhd4JQ==
+ b=F7Hu2PoC+YulQh1xWcSkEFB9EbpjYjMSoQ5noNsQYjKVJUGmYNrpUZSBnbfYfmitKHbzrtIlHDtS3sM6uFkIaDfkUiQvlPx2ymxS5dK+AX4jLHfhrqebuXIDiYughQzs4VAmVu6qfGbCtzz4/a36TUVMAYg1S6hWrdxx59LQfETLKQekx4ulhSGCtLDKln/p2eQYDv/FoGjKTzE7150y4IhVJnrYHxsYOrPeucSDZR0JmpJ8p7YA9jiRTx1oMFqydd9xdIDBH4AkdNmAfW6uGs3UccKlimVq01uJugaKwMB/+vj71pW+hTN2gbyZ3PCVh66mvYDPXNJQGkMZ1UQ5kw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=tvz8+mSx/6hAxHUxDTynb8tn5ymhX7NY1MEMEv78HNI=;
- b=UW+rR3uUg1Bkiv4BqFm76aA8RV3MSMa/Vs0swzYNXEhL0Dg5XX1d5ygdZ17qy8ZYsqrLdOzimZ7nXD1Rpq5oP1tJd6RmVcBJh7WT1PkiCsdMUfoUc8V5W8NFnnFPkHJB652ZgvaJ8uTiuiQj713fzDxaFNXwh1qxxfmqYdfaGiqtwRQ6z06YLgZLUmcLJrOV4Nt7kB2hYicEL3A0vr4X5VsZ66a7wmDnz6HhI6YLidojgr2v5AJ7UCZP6rWBQmb3J2fbBDrF/2fkRZqtW2JiAI5xuruTb82A3jsjQXPZhjbkCwNO2VtIQJTafmbX1udetLbDo6qXgw0/zKqUBddWpQ==
+ bh=4sTvAgC4wLd3w7mcFPV08K3eue6H6jOyAAAWiW9dwSA=;
+ b=Zo1df3PLpP3rPoMDpzLNTk2f+Lbv2RbFjHdTTsKy17k7R9AofjUlSB9YE5Idxqx86Cd/8w4856EizI1tUa6AT3Qgs6tBdG7y/X6Hvpy684V/yhDyeCGaTWHh3LPKkZM4TNdNoKgqULwN+t0qM18He9AXHay09pFo2AbFgNIG2Ds3ob/1spoaFP760XHnrp1Sp/+5f1WWKzUM2sjFuoni1f6TYMsK8K3iYLZoW8r0MgNpkQCQ1C0/VhmLGCl8CC24JBYtvrCwW5XyfjIhC+6Sos7SrTFoGgiT/KlzuBf9EDYR1Al2fBmFhm/vFTfMQARXUULIjQCA273ESsAcK/kKGg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tvz8+mSx/6hAxHUxDTynb8tn5ymhX7NY1MEMEv78HNI=;
- b=FIeL767mTiUPdglCEGp0XBn9K+5/AXZABKU5/8iZ60SefXxakaRZ9ZsY+am0xXjzgsehOq6kEhH7tJ+oiNfGDbxPFlHGAlcEmqgKcGD+StdCloBLs+V86NhVBfffCuCM0RdizPRfcj2i5ORROyKXyk/CfrZSdtijeC2JtTIYrkY=
+ bh=4sTvAgC4wLd3w7mcFPV08K3eue6H6jOyAAAWiW9dwSA=;
+ b=ogWy1vE5uXtmNVZgh7Wg5gHbfHKuoV768iXM3Uqn7Ct7DfvHZj238F6D+CGCI76NduLy2bg2+WLyeVEHl2HgDrPEvaYbJXbpFxRfhbRbml+ww2KCIHR2SuGFtMTqArLzQLjOhWdiWfc5rLqmhE8dHAmo0FQbENQrHVO+opWIABY=
 Authentication-Results: zeniv.linux.org.uk; dkim=none (message not signed)
  header.d=none;zeniv.linux.org.uk; dmarc=none action=none
  header.from=oracle.com;
@@ -65,219 +65,210 @@ Received: from CH2PR10MB4166.namprd10.prod.outlook.com (2603:10b6:610:78::20)
  by CH2PR10MB4149.namprd10.prod.outlook.com (2603:10b6:610:a7::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.19; Tue, 7 Sep
- 2021 20:50:49 +0000
+ 2021 20:50:51 +0000
 Received: from CH2PR10MB4166.namprd10.prod.outlook.com
  ([fe80::2c22:7eb8:a2f0:e027]) by CH2PR10MB4166.namprd10.prod.outlook.com
  ([fe80::2c22:7eb8:a2f0:e027%9]) with mapi id 15.20.4478.025; Tue, 7 Sep 2021
- 20:50:49 +0000
+ 20:50:51 +0000
 From:   Stephen Brennan <stephen.s.brennan@oracle.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     Stephen Brennan <stephen.s.brennan@oracle.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] namei: Standardize callers of filename_lookup()
-Date:   Tue,  7 Sep 2021 13:50:42 -0700
-Message-Id: <20210907205043.16768-3-stephen.s.brennan@oracle.com>
+Subject: [PATCH v2 3/3] namei: Standardize callers of filename_create()
+Date:   Tue,  7 Sep 2021 13:50:43 -0700
+Message-Id: <20210907205043.16768-4-stephen.s.brennan@oracle.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210907205043.16768-1-stephen.s.brennan@oracle.com>
 References: <20210907205043.16768-1-stephen.s.brennan@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: BYAPR01CA0022.prod.exchangelabs.com (2603:10b6:a02:80::35)
+X-ClientProxiedBy: BYAPR01CA0029.prod.exchangelabs.com (2603:10b6:a02:80::42)
  To CH2PR10MB4166.namprd10.prod.outlook.com (2603:10b6:610:78::20)
 MIME-Version: 1.0
-Received: from localhost (136.24.196.55) by BYAPR01CA0022.prod.exchangelabs.com (2603:10b6:a02:80::35) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.21 via Frontend Transport; Tue, 7 Sep 2021 20:50:49 +0000
+Received: from localhost (136.24.196.55) by BYAPR01CA0029.prod.exchangelabs.com (2603:10b6:a02:80::42) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4500.14 via Frontend Transport; Tue, 7 Sep 2021 20:50:51 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 427e157f-5138-4fa2-69d4-08d972412c58
+X-MS-Office365-Filtering-Correlation-Id: 8ba3443c-dc9e-442d-d30e-08d972412d7f
 X-MS-TrafficTypeDiagnostic: CH2PR10MB4149:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <CH2PR10MB4149FE7CF5F6C11D9257000BDBD39@CH2PR10MB4149.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3968;
+X-Microsoft-Antispam-PRVS: <CH2PR10MB41494A8EB02831CBDA1A5551DBD39@CH2PR10MB4149.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2000;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?SjlOc8RWCd5Fc5dwgo5POUuUf1bf7WKgxUWLqNGHE4zdQ4nABdbMkmSXke8C?=
- =?us-ascii?Q?vghrKlltwGAUk55Q9Wk7JQ9baW8lwNPpE5ka1DyhGXyXUb2rar+ZBYPe0PIF?=
- =?us-ascii?Q?0y4RCcpyj04xJvoECSkPSufzPrvQq+55iRGvFaF9jKPeUIt3x1yIHoxOMPdI?=
- =?us-ascii?Q?3BJ09u4tYpwd+r0CT9LYX4mljn4XxxgJvVY5fT8KHpdQBuulbmXZvWQF+8Hi?=
- =?us-ascii?Q?oWoKZ1lMwCUb32R1RnJcgg0CXdqtDHtGss9xpixqhMMr8Yi8C4h3WHHKLCw+?=
- =?us-ascii?Q?gndH9/NPJmgMs3eVnR8ttdsGcrKx4/P3+zqhX6uV7edqr3z9VvDzhdfPiO2/?=
- =?us-ascii?Q?Hn/iL0p97Vl5YZ2108ci56YUsLzcifwHsgWjakhzbXIFot08MlxWPOvo+y+k?=
- =?us-ascii?Q?xVZ4IKiJjfK6w82H16SmK7ZHwXC8MjlpO0kHFe76XOR1sJvnu8K372G5aWcs?=
- =?us-ascii?Q?HVIxZQTgD9HBeuu0G2qb2jwpoGDLmiOlCsHNZ3dfWdeERavOOmCYT5WoDsK0?=
- =?us-ascii?Q?aNj9MxI03hquimd76cfznhHY71IkoOr9WxxbWHLbmSA0nsyPJqxn6CHFSR2s?=
- =?us-ascii?Q?Rzl4w2aUc8ObT1du4pW0ETyEW6/lDP9ig0f2AUke3OKrFbvu2qI7ky70Lr3F?=
- =?us-ascii?Q?31nUfZwQp5b+nMmkaeCsaIArgqIKYgvwMTwILaZZd8rmdQhABDzB8X6IodlI?=
- =?us-ascii?Q?gIGZAmQVS9l64wY819xGXAZ7Ok4JB4p4orBIsZUghi5fJthH4C2f5GiSj2As?=
- =?us-ascii?Q?nvWSvdb1GZFqrXep0wrCVURswv3CQR1NMs+hRuI7W04GuVj89aL6VFGFFgxN?=
- =?us-ascii?Q?ykJVZa14lSdl45K4+oQUqy+mO8ZkcpfwyJrSElVRJqdlBaHrnisPz3WZT+EI?=
- =?us-ascii?Q?Lw3jZ+R3JkrJ4YHDqrr9Dyu3a5rJcHbxIRQaIgTetnWKR9/VymM5VnTvALa0?=
- =?us-ascii?Q?LaN1gHB71usGBeGVQmA35WSu2om227J77i0LhnAC//I3fos5FxVeqFTO+OEl?=
- =?us-ascii?Q?uQDgMj3zmaN6k9kIYPtlK6b8DEvzhZNOHNi1Ace9wSiRWn2OViNVo5E0epN1?=
- =?us-ascii?Q?WsHADrZVrBJFoVQMIN0PACA/Y53TGLsDklz9TYIS4/LyseTbNEY=3D?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?n9tj/IqDPh8EcLjX2pezP9sN/eW0v+HQSkW12xErocS2+x/49TDP4LkAY+pg?=
+ =?us-ascii?Q?hKra9Bnz2qcrdbU32Ih7WGk3nOel4Y8dJDYbl5L+kQyRiJ2AERTYAMQrUlXG?=
+ =?us-ascii?Q?Ohs1gBFV+N67BYuieyYDsMAGdx836AVs9zqFertwo87xmtsYiK7X+ZGgid/l?=
+ =?us-ascii?Q?HWrphvBXtEgGlhLygt2FCwKXoDEpDd2MXA9aiWjeINcGO4+SrUKMWzsTu8aM?=
+ =?us-ascii?Q?2g6KmU1TweTrWumiGPvV5c71lo+8vis3DSiu3uge04nAjFlMpiOfAO6zw/rE?=
+ =?us-ascii?Q?Awh29Ab3LVEVPgLAK1+xWqtXVceRkofEr7TOENesPTq1CFhuEaibna67CzJV?=
+ =?us-ascii?Q?Du2NJ+ARaKGwpMJ0hzv/GuX+m5NHh7zD5/0vv+HtusEmB7D9o111M0RjI2bF?=
+ =?us-ascii?Q?W+7PqgzJsGMAAsKXnnok9tzOIsm0wUKeLQX8vpfwFClw0kU3ehqBeJ1m+AO7?=
+ =?us-ascii?Q?rS/r1kgi4A6lJY+KjcfnZI/L7UqpnLL8OKXUwK9GxQOvZwS/YScE857IKdyh?=
+ =?us-ascii?Q?nd61rdUh9XfCcLxReZ+cmGT3SQginnfgfH6ynkjD6ivMHYBOLF1SQ6i1+AvI?=
+ =?us-ascii?Q?JnGVcvFv1wO4rtnwmdCNrNpKt7iQkbOqKqbWyWSfmj3wc5MkEl3DaItpawUf?=
+ =?us-ascii?Q?Bc90E2+IA59tnVk4gyJElyH1RFbP6LkiltiYp8YwoWF98jVABf6L00XMQ5Nw?=
+ =?us-ascii?Q?EufIKKG/tOdipW3jltsWikogQJnwBLOCIsAwTJtxQekhiuSNKXCjQscgMXvw?=
+ =?us-ascii?Q?Z0IpZXKcjYpcuoKwunDKUp4aCzse+CrbR5kOC4QR+kf4kukg6K41Pn9a21DF?=
+ =?us-ascii?Q?a+l2Djwk13elNjgeByZ0P4PES7iyjEhSlYYLa8v5z2BhG32HYYzT/2XYWPQa?=
+ =?us-ascii?Q?ppKZozFAc3dpYCB7Du5C77QdDOhInDBinioilIu6j2td6f0GHcykJhahScwN?=
+ =?us-ascii?Q?WnK4lOPY9Qb7Dc69snkaPb8m1g4EDyUGzns/eDbYcPyoNJ6yohJq/mLr6WDv?=
+ =?us-ascii?Q?qbaRhZJ6OKVqWOtYgQvu2wvi1RS68iN929dk5O07uw15+2NCBQuXBpZ/D0s8?=
+ =?us-ascii?Q?5vhZUW9mZHVa9bMeWlUHb/UQk/zyumtm22+/6SJjokECWeojNyc=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:5;SRV:;IPV:NLI;SFV:SPM;H:CH2PR10MB4166.namprd10.prod.outlook.com;PTR:;CAT:OSPM;SFS:(366004)(103116003)(83380400001)(6666004)(26005)(6486002)(86362001)(186003)(956004)(1076003)(8936002)(38100700002)(2616005)(38350700002)(8676002)(36756003)(5660300002)(4326008)(66946007)(66556008)(66476007)(316002)(508600001)(966005)(6496006)(2906002)(52116002)(6916009)(23200700001);DIR:OUT;SFP:1501;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?BRkWAL6C5G5Z1KxQfCUhy7SL1LRYXQhHavInoBdu1asEczm+G1c/jgXMgq8g?=
- =?us-ascii?Q?NdFRpOGRWuzSBtK22u1JWlx5NsUiITSfb+EBCUdyQZrwPLhfOByo1IKACJhP?=
- =?us-ascii?Q?NhLy40WVR+1UukpFnNoFbSdTZnc0tXXBZUOX+XU8worgeinqMK5o+hIXiQIB?=
- =?us-ascii?Q?H3jwtFt+2e/HOi7R685ADYDV2G28zhOBr1XjRFFRdZi6EiLZrakRtNo1CF/Z?=
- =?us-ascii?Q?LnWaw9rPPpuU3wj6ToamuTYAJ90EhZrnJQ/6KuUhQYgpaqT2XwVgTRj6WqsS?=
- =?us-ascii?Q?9qx5xv8JvuItkoeeDcBeMVrZqsk9ZaTgbHub7o0Bbv9sAWX0CRE4rIA8LuS8?=
- =?us-ascii?Q?HYc3THUFw9VJ7hovapqzGa8hOyhI7lgn877lgroLfUQZ2LA9QOS4MvfUZ6Iu?=
- =?us-ascii?Q?NXcG6TBMzJ4UV7634fy1l0xCGxfOcWAa1n6+tlYhTXbsGW0f3IhaU5VhaxRy?=
- =?us-ascii?Q?zNszGlndQI0e85XuFc+Y1dDzvswQK5XPWy6Ahw7NWqyf3DVJSwpDmWcyeyCB?=
- =?us-ascii?Q?TLI2TbuglkITfx+LknFzdrSMM8bFUsHoutCGdeJnDC85nrSW196ogESgwfc8?=
- =?us-ascii?Q?beI8b7z+sm9r5R4fz2GjjudyBFVao2R5emPOG9ElT28nzT1aWv1EoknDXtLd?=
- =?us-ascii?Q?kXDJtOvPjSnmKo7ltEJCAmNJcG8Adp8G7fGkY49F23fahza3vqqhsYxz6J+5?=
- =?us-ascii?Q?6a550AhWCXXtxTYBftmxLcfxBaG4QMk5eYSmGGdJ6ujvjOeZ36jy/uM+I71z?=
- =?us-ascii?Q?azyHNbxuYJPNyo/URpIH7XnegSm/JvCnoXl/hA8LKblaytbrp1ORYminhAQL?=
- =?us-ascii?Q?Gwv+nDMh9UxSLNNhy5gYbhvqOzbGqzcYYFOn/1Vkh56CaQqBdA67/gSFjW2s?=
- =?us-ascii?Q?Zyp4lqH0VnnWQYcXtHT5nTsnsQXI+D6N+TltwNaB7MBNRFyVrTg4vN81TFX9?=
- =?us-ascii?Q?GCo4Y4nQviffRDTdBPQ3IFEn3nXX8SACBucdpCFy2HdhT0uFztxSXMvJ6loa?=
- =?us-ascii?Q?ZmL6QfDwSiKMGsHHsd6cdGn97DBZ94hSCB1+UVdh5FuE3Zq4jJBGZnhHSQGq?=
- =?us-ascii?Q?or+jYp2qKmPCOuhhZ5zWWulmrpjOpUA617cIFyfKjUCKYEUqxZUp61F4n8o7?=
- =?us-ascii?Q?8LYeu5UfFQN6IPibxdp3JwWfgEqd7IP9+x2hSsxrqUqbbpydpnQKYQuBEVEf?=
- =?us-ascii?Q?pbZ1T4Owv7mYgSea+TI2K26/AEK1ggbvzGkY122zSKWyT7odFZBglyty74J/?=
- =?us-ascii?Q?BWgpcOWPsNJwecM25uaEy/xkutsFC/mCyGliFvzIB6fSLu8DRKJmTtwbo/Ky?=
- =?us-ascii?Q?dFiKM0N/GrM36yQ7f5nBZc7C?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?amTw9SKoDpED4j+AerHHxxOMseU+hBZbgtnLt7IpQQ5/u1zjqeMSuD1eJby1?=
+ =?us-ascii?Q?e+oSR46xCbP/Snmaa3FzUfYOxiv4NvOhrfi8UqCfkY0ObGaoMxbXwnHTo2uE?=
+ =?us-ascii?Q?5nfHVN3k2GDWrp5UJKWZuDK541+HUPQ6UiFDStjcN7WA8sNyTYnvYE5POXke?=
+ =?us-ascii?Q?e6fG3ncqXUVNY5c6fhFQmhZfLK/okH5KUU7ldW5sNnv4L3MlZgQT/1NIqyr/?=
+ =?us-ascii?Q?1jG6iRX/8SLz6vFwUUG95L1ibj/C6eRSybvIJis6LOPT34ly3JCeCQiUtnBk?=
+ =?us-ascii?Q?SwTollnGAt8fS1W7j18JDsdx8fF/CbLW/i40cqZkJ3Q5Q/5HDMCct9ra+PPn?=
+ =?us-ascii?Q?eV6V3kJTXebNxd/rOMcOSJm3ItLQA+JUWNOmIY7NgnnYDw5n2h494zZZXxXm?=
+ =?us-ascii?Q?Et2UnTegmZpkhKQlljly4oN/i93tBUjqhEdXp2EGVd8Sz6jZBp4KEcbtbhWa?=
+ =?us-ascii?Q?7CnWJY7H9j67SVQkDn5OXfib441XbprTjzdtQA3Mq96n4Sb4u1+bmY/hixRC?=
+ =?us-ascii?Q?fuLuuQ6gibbJ4hqPW6mFIXlgaphf925kAeKDRpCo3w1lgj2bYVPI38apNkvN?=
+ =?us-ascii?Q?r6xeG2E/q3B4OVqqIFa4wx/3WJthzSvRj/KVInMu6YfexvtHdAq98fupL4UB?=
+ =?us-ascii?Q?Hs1MjgORQzOG13WHos8wLJto4vJ/yccOiT7bBHvOBRRQ+dFd58s04mEHNZ3R?=
+ =?us-ascii?Q?b7yz9nqzmtFIgMfEuh70qGXUaAFuH2l3pBsYvTUaUycoBumGpdnjid/ySQ34?=
+ =?us-ascii?Q?Cw8/xckTnNGePmv8UBLi+JBXehOVie1EU6JZ/8fo14E3Q56WerBGfumcdDxv?=
+ =?us-ascii?Q?XzXZ+TZ7+jBQIV10oxiAMaSUfaZ+ch421YXp5mk8nkR1SbuFGV91Ro177F6B?=
+ =?us-ascii?Q?TRZBHiBsujkvIIWEcttda/C2kgHWBUPAm0oSN77QYc0yg7LSsOMIToZXN5kB?=
+ =?us-ascii?Q?Gpr8EP9fWQlrMv9rT0uwLTS9xddL1aY4A0vWejBKXg2ukEzB6iNfKTXnH6vG?=
+ =?us-ascii?Q?hTRS6VJOQofKsAjC3cmhnScTLqVZ20zaoorOPZizL7O7Edh+dRausu5Q6fAN?=
+ =?us-ascii?Q?RQ6y0P+kPUuiwTlCaSVgFiABCcbEDqPOG5zk5uPIauOL0jLSuzbx325tHfoj?=
+ =?us-ascii?Q?e0i/ftlZXaQqK5jr4FI7T3JwWU8sThHMGTFGZ/voHVcqfdrpKV4qlSPhnQ9O?=
+ =?us-ascii?Q?nkQYaOWvP+rUpwiXqf7o7T9Ij7BetH8gok9Id0l+K0SdhuGOywtYO96ps3TJ?=
+ =?us-ascii?Q?7sinJGA6ud/L1+rIyEJk08K/sVbuqZwL1yGu3fmVlcxNR5NsF7ZtAbwLhs8v?=
+ =?us-ascii?Q?RMRjnlhLwikHkmCB1dcAkD5O?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 427e157f-5138-4fa2-69d4-08d972412c58
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ba3443c-dc9e-442d-d30e-08d972412d7f
 X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4166.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2021 20:50:49.2805
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2021 20:50:51.2707
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fXuI7uYXNEdLNg18FEtMptXw9umiDihK8Zz84qia4daxOu+d1CX80RzYSjGp3jCZMTJBylmbXhNK14G7Cj1Hbp56Z7CMOGQ3eV2UHxriPEo=
+X-MS-Exchange-CrossTenant-UserPrincipalName: rVRJFRFsrEJU5y+K3y1ycZkqe0esdN60836k5K6iifurcoKt+YvpZjnXVLd5/DkYk1JSj6yBBGI9Us9YuQ25wRrPzSU/TTbAb8z/9tjFxOM=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4149
 X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10100 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
- malwarescore=0 spamscore=0 mlxscore=0 phishscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109030001 definitions=main-2109070130
-X-Proofpoint-ORIG-GUID: a_UsUKEh1qK5YZxcKWXTdDD_5Meh9Syx
-X-Proofpoint-GUID: a_UsUKEh1qK5YZxcKWXTdDD_5Meh9Syx
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
+ malwarescore=0 mlxscore=0 spamscore=0 bulkscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2109030001 definitions=main-2109070131
+X-Proofpoint-GUID: mAO8BuZGWe5F7iDUMjg3BycVH2RO640E
+X-Proofpoint-ORIG-GUID: mAO8BuZGWe5F7iDUMjg3BycVH2RO640E
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-filename_lookup() has two variants, one which drops the caller's
-reference to filename (filename_lookup), and one which does
-not (__filename_lookup). This can be confusing as it's unusual to drop a
-caller's reference. Remove filename_lookup, rename __filename_lookup
-to filename_lookup, and convert all callers. The cost is a few slightly
-longer functions, but the clarity is greater.
+filename_create() has two variants, one which drops the caller's
+reference to filename (filename_create) and one which does
+not (__filename_create). This can be confusing as it's unusual to drop a
+caller's reference. Remove filename_create, rename __filename_create
+to filename_create, and convert all callers.
 
-Link: https://lore.kernel.org/linux-fsdevel/YS+dstZ3xfcLxhoB@zeniv-ca.linux.org.uk/
+Link: https://lore.kernel.org/linux-fsdevel/f6238254-35bd-7e97-5b27-21050c745874@oracle.com/
 Cc: Christoph Hellwig <hch@infradead.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
 ---
- fs/fs_parser.c |  1 -
- fs/namei.c     | 41 ++++++++++++++++++++++++-----------------
- 2 files changed, 24 insertions(+), 18 deletions(-)
+ fs/namei.c | 38 ++++++++++++++++++++------------------
+ 1 file changed, 20 insertions(+), 18 deletions(-)
 
-diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-index 980d44fd3a36..3df07c0e32b3 100644
---- a/fs/fs_parser.c
-+++ b/fs/fs_parser.c
-@@ -165,7 +165,6 @@ int fs_lookup_param(struct fs_context *fc,
- 		return invalf(fc, "%s: not usable as path", param->key);
- 	}
- 
--	f->refcnt++; /* filename_lookup() drops our ref. */
- 	ret = filename_lookup(param->dirfd, f, flags, _path, NULL);
- 	if (ret < 0) {
- 		errorf(fc, "%s: Lookup failure for '%s'", param->key, f->name);
 diff --git a/fs/namei.c b/fs/namei.c
-index f2af301cc79f..76871b7f127a 100644
+index 76871b7f127a..0d3ce04c55ad 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -2467,7 +2467,7 @@ static int path_lookupat(struct nameidata *nd, unsigned flags, struct path *path
- 	return err;
+@@ -3622,8 +3622,8 @@ struct file *do_file_open_root(const struct path *root,
+ 	return file;
  }
  
--static int __filename_lookup(int dfd, struct filename *name, unsigned flags,
-+int filename_lookup(int dfd, struct filename *name, unsigned flags,
- 		    struct path *path, struct path *root)
+-static struct dentry *__filename_create(int dfd, struct filename *name,
+-				struct path *path, unsigned int lookup_flags)
++static struct dentry *filename_create(int dfd, struct filename *name,
++				      struct path *path, unsigned int lookup_flags)
  {
- 	int retval;
-@@ -2488,15 +2488,6 @@ static int __filename_lookup(int dfd, struct filename *name, unsigned flags,
- 	return retval;
+ 	struct dentry *dentry = ERR_PTR(-EEXIST);
+ 	struct qstr last;
+@@ -3691,20 +3691,16 @@ static struct dentry *__filename_create(int dfd, struct filename *name,
+ 	return dentry;
  }
  
--int filename_lookup(int dfd, struct filename *name, unsigned flags,
--		    struct path *path, struct path *root)
+-static inline struct dentry *filename_create(int dfd, struct filename *name,
+-				struct path *path, unsigned int lookup_flags)
 -{
--	int retval = __filename_lookup(dfd, name, flags, path, root);
+-	struct dentry *res = __filename_create(dfd, name, path, lookup_flags);
 -
 -	putname(name);
--	return retval;
+-	return res;
 -}
 -
- /* Returns 0 and nd will be valid on success; Retuns error, otherwise. */
- static int path_parentat(struct nameidata *nd, unsigned flags,
- 				struct path *parent)
-@@ -2571,8 +2562,14 @@ struct dentry *kern_path_locked(const char *name, struct path *path)
- 
- int kern_path(const char *name, unsigned int flags, struct path *path)
+ struct dentry *kern_path_create(int dfd, const char *pathname,
+ 				struct path *path, unsigned int lookup_flags)
  {
--	return filename_lookup(AT_FDCWD, getname_kernel(name),
--			       flags, path, NULL);
+-	return filename_create(dfd, getname_kernel(pathname),
+-				path, lookup_flags);
 +	struct filename *filename;
-+	int ret;
++	struct dentry *dentry;
 +
-+	filename = getname_kernel(name);
-+	ret = filename_lookup(AT_FDCWD, filename, flags, path, NULL);
++	filename = getname_kernel(pathname);
++	dentry = filename_create(dfd, filename, path, lookup_flags);
 +	putname(filename);
-+	return ret;
-+
++	return dentry;
  }
- EXPORT_SYMBOL(kern_path);
+ EXPORT_SYMBOL(kern_path_create);
  
-@@ -2588,10 +2585,15 @@ int vfs_path_lookup(struct dentry *dentry, struct vfsmount *mnt,
- 		    const char *name, unsigned int flags,
- 		    struct path *path)
+@@ -3720,7 +3716,13 @@ EXPORT_SYMBOL(done_path_create);
+ inline struct dentry *user_path_create(int dfd, const char __user *pathname,
+ 				struct path *path, unsigned int lookup_flags)
  {
+-	return filename_create(dfd, getname(pathname), path, lookup_flags);
 +	struct filename *filename;
- 	struct path root = {.mnt = mnt, .dentry = dentry};
-+	int ret;
++	struct dentry *dentry;
 +
-+	filename = getname_kernel(name);
- 	/* the first argument of filename_lookup() is ignored with root */
--	return filename_lookup(AT_FDCWD, getname_kernel(name),
--			       flags , path, &root);
-+	ret = filename_lookup(AT_FDCWD, filename, flags, path, &root);
++	filename = getname(pathname);
++	dentry = filename_create(dfd, pathname, path, lookup_flags);
 +	putname(filename);
-+	return ret;
++	return dentry;
  }
- EXPORT_SYMBOL(vfs_path_lookup);
+ EXPORT_SYMBOL(user_path_create);
  
-@@ -2795,8 +2797,13 @@ int path_pts(struct path *path)
- int user_path_at_empty(int dfd, const char __user *name, unsigned flags,
- 		 struct path *path, int *empty)
- {
--	return filename_lookup(dfd, getname_flags(name, flags, empty),
--			       flags, path, NULL);
-+	struct filename *filename;
-+	int ret;
-+
-+	filename = getname_flags(name, flags, empty);
-+	ret = filename_lookup(dfd, filename, flags, path, NULL);
-+	putname(filename);
-+	return ret;
- }
- EXPORT_SYMBOL(user_path_at_empty);
- 
-@@ -4421,7 +4428,7 @@ int do_linkat(int olddfd, struct filename *old, int newdfd,
- 	if (flags & AT_SYMLINK_FOLLOW)
- 		how |= LOOKUP_FOLLOW;
+@@ -3801,7 +3803,7 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+ 	if (error)
+ 		goto out1;
  retry:
--	error = __filename_lookup(olddfd, old, how, &old_path, NULL);
-+	error = filename_lookup(olddfd, old, how, &old_path, NULL);
+-	dentry = __filename_create(dfd, name, &path, lookup_flags);
++	dentry = filename_create(dfd, name, &path, lookup_flags);
+ 	error = PTR_ERR(dentry);
+ 	if (IS_ERR(dentry))
+ 		goto out1;
+@@ -3901,7 +3903,7 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
+ 	unsigned int lookup_flags = LOOKUP_DIRECTORY;
+ 
+ retry:
+-	dentry = __filename_create(dfd, name, &path, lookup_flags);
++	dentry = filename_create(dfd, name, &path, lookup_flags);
+ 	error = PTR_ERR(dentry);
+ 	if (IS_ERR(dentry))
+ 		goto out_putname;
+@@ -4268,7 +4270,7 @@ int do_symlinkat(struct filename *from, int newdfd, struct filename *to)
+ 		goto out_putnames;
+ 	}
+ retry:
+-	dentry = __filename_create(newdfd, to, &path, lookup_flags);
++	dentry = filename_create(newdfd, to, &path, lookup_flags);
+ 	error = PTR_ERR(dentry);
+ 	if (IS_ERR(dentry))
+ 		goto out_putnames;
+@@ -4432,7 +4434,7 @@ int do_linkat(int olddfd, struct filename *old, int newdfd,
  	if (error)
  		goto out_putnames;
  
+-	new_dentry = __filename_create(newdfd, new, &new_path,
++	new_dentry = filename_create(newdfd, new, &new_path,
+ 					(how & LOOKUP_REVAL));
+ 	error = PTR_ERR(new_dentry);
+ 	if (IS_ERR(new_dentry))
 -- 
 2.30.2
 
