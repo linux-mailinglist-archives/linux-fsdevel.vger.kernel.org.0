@@ -2,139 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A6FA4024AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Sep 2021 09:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 964AB402530
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Sep 2021 10:37:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239569AbhIGHox (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Sep 2021 03:44:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34782 "EHLO
+        id S242697AbhIGIgB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Sep 2021 04:36:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233953AbhIGHox (ORCPT
+        with ESMTP id S242624AbhIGIgA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Sep 2021 03:44:53 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C38F9C061575;
-        Tue,  7 Sep 2021 00:43:46 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id m28so17818208lfj.6;
-        Tue, 07 Sep 2021 00:43:46 -0700 (PDT)
+        Tue, 7 Sep 2021 04:36:00 -0400
+Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12E7BC061575
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Sep 2021 01:34:55 -0700 (PDT)
+Received: by mail-ua1-x92a.google.com with SMTP id a14so5151747uao.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Sep 2021 01:34:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=iyNh42KG1X76ikOu0ztNW1R3WqqdGf238vySbKfs0uM=;
-        b=m3tVQ/imQU+9vz+sB5ZdKyRBOXFGtpV3u0Fw0zYf8Qb+cUTchLYmE2Yl27Sdsk5BTz
-         czWe7t1tlNFmXYhwbHwWuqUkG1ZrM8S96hPdxNmjgZ2y9SB0JtbiQSSC4/XkM0dOyvdo
-         2BzLI7YlzODKvsrhrIACL/rksn6vzGZPgknOG/jHBtg4e9fn1mX1s9MNLVAb47xyi99R
-         gHSsVQ4lTHIJ4lp0hHB1EV3jnlefO1IujnpXBvwh4as0dvkHkcU4D3psDEqhfcbBYIZC
-         fzyB2589yg5S2mMTNPZeOncIjgG3UtZL5FvTRdx+FfHJyPxJUtEzilEFUQsdxI9kc1BA
-         P9eg==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0q53YT3XvFhfsnGqeW9X6BJ+dZY91toW3fLTVzpHF0o=;
+        b=FsScJHrbC+3N+bhSBxfEBjdFNbD1Frd1EN89LdKobKzBcJ3Q5nlzjZuHc7/pjbKvF8
+         TLSXS+duH1CFsS0pDsGjgnRWjlBBGSP2hzteI8XT8ki+F+bmepRClnu8uRCeL1QyD1B/
+         zDMbq3L0LRqJKJ9uw6Q1sojsvYhIXOFvQDLFk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=iyNh42KG1X76ikOu0ztNW1R3WqqdGf238vySbKfs0uM=;
-        b=STH8wEJF5NU6puVn1l5fID5FIyKWFx5VZMNTfqmCv3iSxO0ucKR56k+izfS9/dRd2Z
-         GByFZT1XViw3V7p9zxwOsmKF9v0LwzEFOkslH0FaWpgBCIaDPvdVXXnaqAlphJd5eU4l
-         96NHhrmo0qtO1ClQiId3IwvkbUmAtzoQt/GzzEAbm++yKk5/Ey9SLLtnT4NrUoAXLo3i
-         7yzitL3vmqZ6l4XK2NpFd64J6rkbmQK+BZkQy+ClDsC8/Gm57HHi7+6UOhh0pfjRV6IJ
-         lRkE0lIn+QUS3+0EMr38KVdFeoTmuhPxF83RfmJ8vIYU/w7RJInQWwJ/2VRu+8BoJJel
-         bNTQ==
-X-Gm-Message-State: AOAM533tP+A80UYUqD9ibQiu+1tpGyRRZrnydfbMKI24QjcxXeHs5Lsc
-        MgC5xXMFgmXv2zv5rrn06ueF8Lo0404=
-X-Google-Smtp-Source: ABdhPJy0t63OLJh901ZHlX+eGK1Vc+jfB9Sys3Cv5A6CrM6RFvqkZ4RY1GIdn+o65wz/wy87YylPmQ==
-X-Received: by 2002:a05:6512:3d8c:: with SMTP id k12mr12244983lfv.545.1631000625004;
-        Tue, 07 Sep 2021 00:43:45 -0700 (PDT)
-Received: from kari-VirtualBox ([31.132.12.44])
-        by smtp.gmail.com with ESMTPSA id a17sm936678lfb.91.2021.09.07.00.43.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Sep 2021 00:43:44 -0700 (PDT)
-Date:   Tue, 7 Sep 2021 10:43:42 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] docs: fs: Refactor directory-locking.rst for better
- reading
-Message-ID: <20210907074342.ycsuuafn4pjsxbei@kari-VirtualBox>
-References: <20210816222639.73838-1-kari.argillander@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0q53YT3XvFhfsnGqeW9X6BJ+dZY91toW3fLTVzpHF0o=;
+        b=pm0qFQDrFciyE/SK1Ur+9NfCV/TpoVRi31hZgu+K2MNm9aCKMXL8lFxwDA3AZ9cCIL
+         if+tb3gO4rHTqLQlTQtxvN1pvetQdhhf5G0M8sArsS87FMJlTngxGhu98mzgiw52mejJ
+         /y+UfGlzGq6y+5M9B6nPf0g/jxF4sc5IsI9HJXoSkvn6HBs8SJjV2+cphkoIRIGZWvFt
+         rN5GaeB3S5NIHKj9EBBCmm5CY0GnzZqCMM1I8erIR+IwEl/fgdrc08e52r3T3VWTvY+P
+         PUcmE0KCihnDNcVR2PUql6YIq9n9ruV3ulqFxULB016SAuOLmDO7GySki0YR8aQFIrN8
+         WUFA==
+X-Gm-Message-State: AOAM533LDpM9te0v2SrrUtnuYsu0NUIeXtOwbj1O1oOgZg0jipR/Evhu
+        46CkL1v7Z3Iw13ldOMFccddVP4Vk1xfUclG/l2+j/g==
+X-Google-Smtp-Source: ABdhPJzpqX767/lmZx1qI7ToijljuiAU0OIfHCyf9Di38x3jFTnNg2qk4m7epa+ues/BqvpnlsWahTivorfxCQaIJoE=
+X-Received: by 2002:a05:6130:30a:: with SMTP id ay10mr7911194uab.8.1631003694239;
+ Tue, 07 Sep 2021 01:34:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210816222639.73838-1-kari.argillander@gmail.com>
+References: <20210812054618.26057-1-jefflexu@linux.alibaba.com> <20210812054618.26057-2-jefflexu@linux.alibaba.com>
+In-Reply-To: <20210812054618.26057-2-jefflexu@linux.alibaba.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 7 Sep 2021 10:34:43 +0200
+Message-ID: <CAJfpegs3QGVNa4CXt0Hayr=G50cQb1TWowRDuVf0pZv6FYV3kw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fuse: disable atomic_o_trunc if no_open is enabled
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 17, 2021 at 01:26:39AM +0300, Kari Argillander wrote:
-> Reorganize classes so that it is easier to read. Before number 4 was
-> written in one lenghty paragraph. It is as long as number 6 and it is
-> basically same kind of class (rename()). Also old number 5 was list and
-> it is as short as 1, 2, 3 so it can be converted non list.
-> 
-> This makes file now much readible.
+On Thu, 12 Aug 2021 at 07:46, Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+>
+> From: Liu Bo <bo.liu@linux.alibaba.com>
+>
+> When 'no_open' is used by virtiofsd, guest kernel won't send OPEN request
+> any more.  However, with atomic_o_trunc, SETATTR request is also omitted in
+> OPEN(O_TRUNC) so that the backend file is not truncated.  With a following
+> GETATTR, inode size on guest side is updated to be same with that on host
+> side, the end result is that O_TRUNC semantic is broken.
+>
+> This disables atomic_o_trunc as well if with no_open.
 
-Gently ping for this one.
+I don't quite get it why one would want to enable atomic_o_trunc with
+no_open in the first place?
 
-> 
-> Signed-off-by: Kari Argillander <kari.argillander@gmail.com>
-> ---
->  .../filesystems/directory-locking.rst         | 31 +++++++++----------
->  1 file changed, 15 insertions(+), 16 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/directory-locking.rst b/Documentation/filesystems/directory-locking.rst
-> index 504ba940c36c..33921dff7af4 100644
-> --- a/Documentation/filesystems/directory-locking.rst
-> +++ b/Documentation/filesystems/directory-locking.rst
-> @@ -11,7 +11,7 @@ When taking the i_rwsem on multiple non-directory objects, we
->  always acquire the locks in order by increasing address.  We'll call
->  that "inode pointer" order in the following.
->  
-> -For our purposes all operations fall in 5 classes:
-> +For our purposes all operations fall in 6 classes:
->  
->  1) read access.  Locking rules: caller locks directory we are accessing.
->  The lock is taken shared.
-> @@ -22,26 +22,25 @@ exclusive.
->  3) object removal.  Locking rules: caller locks parent, finds victim,
->  locks victim and calls the method.  Locks are exclusive.
->  
-> -4) rename() that is _not_ cross-directory.  Locking rules: caller locks
-> -the parent and finds source and target.  In case of exchange (with
-> -RENAME_EXCHANGE in flags argument) lock both.  In any case,
-> -if the target already exists, lock it.  If the source is a non-directory,
-> -lock it.  If we need to lock both, lock them in inode pointer order.
-> -Then call the method.  All locks are exclusive.
-> -NB: we might get away with locking the source (and target in exchange
-> -case) shared.
-> +4) link creation.  Locking rules: lock parent, check that source is not
-> +a directory, lock source and call the method.  Locks are exclusive.
->  
-> -5) link creation.  Locking rules:
-> +5) rename() that is _not_ cross-directory.
-> +Locking rules:
->  
-> -	* lock parent
-> -	* check that source is not a directory
-> -	* lock source
-> -	* call the method.
-> +	* Caller locks the parent and finds source and target.
-> +	* In case of exchange (with RENAME_EXCHANGE in flags argument)
-> +	  lock both the source and the target.
-> +	* If the target exists, lock it,  If the source is a non-directory,
-> +	  lock it. If we need to lock both, do so in inode pointer order.
-> +	* Call the method.
->  
->  All locks are exclusive.
-> +NB: we might get away with locking the source (and target in exchange
-> +case) shared.
->  
-> -6) cross-directory rename.  The trickiest in the whole bunch.  Locking
-> -rules:
-> +6) rename() that _is_ cross-directory.  The trickiest in the whole bunch.
-> +Locking rules:
->  
->  	* lock the filesystem
->  	* lock parents in "ancestors first" order.
-> -- 
-> 2.30.2
-> 
+Thanks,
+Miklos
