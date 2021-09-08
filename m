@@ -2,59 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AB94403A00
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 14:37:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EC0E403B8C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 16:29:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237871AbhIHMie (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Sep 2021 08:38:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35548 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234109AbhIHMie (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Sep 2021 08:38:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 089FD61155;
-        Wed,  8 Sep 2021 12:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1631104646;
-        bh=nMezGjgjwzg9bIdKI/lKo1CwMtPF/hzsmq+sSzvk1iM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RB7SYU+aQABbNPtw/eKMtzShODOIWXCRyxgwmRtzQu1yJ3v4YBMq86oggOT7NO72X
-         ieyEByBTieCISCNeqDdxmmYVNKXkdo46Hgwznf3J6v1cAu7dUyNEbOF+/Gwf8a4Y3E
-         FC9qRh1cgCSNQVV++u8F7zHv3VQcFUlZXJttaIPY=
-Date:   Wed, 8 Sep 2021 14:37:23 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Yi Tao <escape@linux.alibaba.com>
-Cc:     tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org,
-        mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, shanpeic@linux.alibaba.com
-Subject: Re: [RFC PATCH 0/2] support cgroup pool in v1
-Message-ID: <YTiugxO0cDge47x6@kroah.com>
-References: <cover.1631102579.git.escape@linux.alibaba.com>
+        id S1351941AbhIHOa3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Sep 2021 10:30:29 -0400
+Received: from hurricane.elijah.cs.cmu.edu ([128.2.209.191]:41498 "EHLO
+        hurricane.elijah.cs.cmu.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1351940AbhIHOa2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Sep 2021 10:30:28 -0400
+Received: from jaharkes by hurricane.elijah.cs.cmu.edu with local (Exim 4.92)
+        (envelope-from <jaharkes@hurricane.elijah.cs.cmu.edu>)
+        id 1mNyAO-0004qZ-Ie; Wed, 08 Sep 2021 10:03:08 -0400
+From:   Jan Harkes <jaharkes@cs.cmu.edu>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jan Harkes <jaharkes@cs.cmu.edu>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/9] Coda updates for -next
+Date:   Wed,  8 Sep 2021 10:02:59 -0400
+Message-Id: <20210908140308.18491-1-jaharkes@cs.cmu.edu>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1631102579.git.escape@linux.alibaba.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 08, 2021 at 08:15:11PM +0800, Yi Tao wrote:
-> In a scenario where containers are started with high concurrency, in
-> order to control the use of system resources by the container, it is
-> necessary to create a corresponding cgroup for each container and
-> attach the process. The kernel uses the cgroup_mutex global lock to
-> protect the consistency of the data, which results in a higher
-> long-tail delay for cgroup-related operations during concurrent startup.
-> For example, long-tail delay of creating cgroup under each subsystems
-> is 900ms when starting 400 containers, which becomes bottleneck of
-> performance. The delay is mainly composed of two parts, namely the
-> time of the critical section protected by cgroup_mutex and the
-> scheduling time of sleep. The scheduling time will increase with
-> the increase of the cpu overhead.
+The following patch series contains some fixes for the Coda kernel module
+I've had sitting around and were tested extensively in a development
+version of the Coda kernel module that lives outside of the main kernel.
 
-Perhaps you shouldn't be creating that many containers all at once?
-What normal workload requires this?
+I finally got around to testing these against a current kernel and they
+seem to not break things horribly so far.
 
-thanks,
 
-greg k-h
+Alex Shi (1):
+  coda: remove err which no one care
+
+Jan Harkes (6):
+  coda: Avoid NULL pointer dereference from a bad inode
+  coda: Check for async upcall request using local state
+  coda: Avoid flagging NULL inodes
+  coda: Avoid hidden code duplication in rename.
+  coda: Avoid doing bad things on inode type changes during
+    revalidation.
+  coda: Bump module version to 7.2
+
+Jing Yangyang (1):
+  coda: Use vmemdup_user to replace the open code
+
+Xiyu Yang (1):
+  coda: Convert from atomic_t to refcount_t on coda_vm_ops->refcnt
+
+ fs/coda/cnode.c      | 13 +++++++++----
+ fs/coda/coda_linux.c | 39 +++++++++++++++++++--------------------
+ fs/coda/coda_linux.h |  6 +++++-
+ fs/coda/dir.c        | 20 +++++++++++---------
+ fs/coda/file.c       | 12 ++++++------
+ fs/coda/psdev.c      | 14 +++++---------
+ fs/coda/upcall.c     |  3 ++-
+ 7 files changed, 57 insertions(+), 50 deletions(-)
+
+-- 
+2.25.1
+
