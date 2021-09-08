@@ -2,50 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CA63403D20
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 17:58:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECB89403D22
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 17:58:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352281AbhIHP7W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Sep 2021 11:59:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:41036 "EHLO
+        id S1352299AbhIHP7h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Sep 2021 11:59:37 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44589 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1352249AbhIHP7V (ORCPT
+        by vger.kernel.org with ESMTP id S1352252AbhIHP7a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Sep 2021 11:59:21 -0400
+        Wed, 8 Sep 2021 11:59:30 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631116692;
+        s=mimecast20190719; t=1631116702;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=DVVmrjwehVBypYQtKjBAOERwHcrRNV9eAHtDAthew/Y=;
-        b=b8JEliKZ4ectdYGulR788kibJhxHV2YjeKJKPl2ZoV4s0dXzhkiu/U/LxlmvA/SnVDTWGo
-        +Lx9yzO182m03sEerLCADXTN5/g7GgRi8rtlCSaf8CHG4H0/j0mzHLK9XSzLyp71T77IF+
-        y9yZUj5fN4Kf1dvqfSGVBNVo59EjVLk=
+        bh=umnOPP3wuPqJ4/IcEu6lL2yfkaooZvqD8mts8Av1pEQ=;
+        b=aPlHgm9gqQu/y141zRntiAWTmUa2m4BdnzNr0wfueShFHxeW4tY1baj7P83LgQCXDUVOdY
+        smuCHwy7718vl4h9WP7MiNabMS/rUQAYTHyndLsZmVEioR8Okh1rv4HIGBpCHJTgW3BHUG
+        mOnNhLWXvKpsRRpM0v7rYcIrhAd0tM4=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-13-n6VuYYxnN2GaGNQPPn4QNw-1; Wed, 08 Sep 2021 11:58:11 -0400
-X-MC-Unique: n6VuYYxnN2GaGNQPPn4QNw-1
+ us-mta-583-JhXDpMsAMQCXK07DN7Hr3A-1; Wed, 08 Sep 2021 11:58:19 -0400
+X-MC-Unique: JhXDpMsAMQCXK07DN7Hr3A-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 95A0A84A5EE;
-        Wed,  8 Sep 2021 15:58:10 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E9A2184A5E3;
+        Wed,  8 Sep 2021 15:58:17 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2AF955D9C6;
-        Wed,  8 Sep 2021 15:58:09 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A46DD5D9C6;
+        Wed,  8 Sep 2021 15:58:16 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 5/6] afs: Fix mmap coherency vs 3rd-party changes
+Subject: [PATCH 6/6] afs: Try to avoid taking RCU read lock when checking
+ vnode validity
 From:   David Howells <dhowells@redhat.com>
 To:     linux-afs@lists.infradead.org
 Cc:     dhowells@redhat.com, markus.suvanto@gmail.com,
         Marc Dionne <marc.dionne@auristor.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 08 Sep 2021 16:58:08 +0100
-Message-ID: <163111668833.283156.382633263709075739.stgit@warthog.procyon.org.uk>
+Date:   Wed, 08 Sep 2021 16:58:15 +0100
+Message-ID: <163111669583.283156.1397603105683094563.stgit@warthog.procyon.org.uk>
 In-Reply-To: <163111665183.283156.17200205573146438918.stgit@warthog.procyon.org.uk>
 References: <163111665183.283156.17200205573146438918.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
@@ -57,392 +58,288 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix the coherency management of mmap'd data such that 3rd-party changes
-become visible as soon as possible after the callback notification is
-delivered by the fileserver.  This is done by the following means:
+Try to avoid taking the RCU read lock when checking the validity of a
+vnode's callback state.  The only thing it's needed for is to pin the
+parent volume's server list whilst we search it to find the record of the
+server we're currently using to see if it has been reinitialised (ie. it
+sent us a CB.InitCallBackState* RPC).
 
- (1) When we break a callback on a vnode specified by the CB.CallBack call
-     from the server, we queue a work item (vnode->cb_work) to go and
-     clobber all the PTEs mapping to that inode.
+Do this by the following means:
 
-     This causes the CPU to trip through the ->map_pages() and
-     ->page_mkwrite() handlers if userspace attempts to access the page(s)
-     again.
+ (1) Keep an additional per-cell counter (fs_s_break) that's incremented
+     each time any of the fileservers in the cell reinitialises.
 
-     (Ideally, this would be done in the service handler for CB.CallBack,
-     but the server is waiting for our reply before considering, and we
-     have a list of vnodes, all of which need breaking - and the process of
-     getting the mmap_lock and stripping the PTEs on all CPUs could be
-     quite slow.)
+     Since the new counter can be accessed without RCU from the vnode, we
+     can check that first - and only if it differs, get the RCU read lock
+     and check the volume's server list.
 
- (2) Call afs_validate() from the ->map_pages() handler to check to see if
-     the file has changed and to get a new callback promise from the
-     server.
+ (2) Replace afs_get_s_break_rcu() with afs_check_server_good() which now
+     indicates whether the callback promise is still expected to be present
+     on the server.  This does the checks as described in (1).
 
-Also handle the fileserver telling us that it's dropping all callbacks,
-possibly after it's been restarted by sending us a CB.InitCallBackState*
-call by the following means:
+ (3) Restructure afs_check_validity() to take account of the change in (2).
 
- (3) Maintain a per-cell list of afs files that are currently mmap'd
-     (cell->fs_open_mmaps).
+     We can also get rid of the valid variable and just use the need_clear
+     variable with the addition of the afs_cb_break_no_promise reason.
 
- (4) Add a work item to each server that is invoked if there are any open
-     mmaps when CB.InitCallBackState happens.  This work item goes through
-     the aforementioned list and invokes the vnode->cb_work work item for
-     each one that is currently using this server.
+ (4) afs_check_validity() probably shouldn't be altering vnode->cb_v_break
+     and vnode->cb_s_break when it doesn't have cb_lock exclusively locked.
 
-     This causes the PTEs to be cleared, causing ->map_pages() or
-     ->page_mkwrite() to be called again, thereby calling afs_validate()
-     again.
+     Move the change to vnode->cb_v_break to __afs_break_callback().
 
-I've chosen to simply strip the PTEs at the point of notification reception
-rather than invalidate all the pages as well because (a) it's faster, (b)
-we may get a notification for other reasons than the data being altered (in
-which case we don't want to clobber the pagecache) and (c) we need to ask
-the server to find out - and I don't want to wait for the reply before
-holding up userspace.
+     Delegate the change to vnode->cb_s_break to afs_select_fileserver()
+     and set vnode->cb_fs_s_break there also.
 
-This was tested using the attached test program:
-
-	#include <stdbool.h>
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <unistd.h>
-	#include <fcntl.h>
-	#include <sys/mman.h>
-	int main(int argc, char *argv[])
-	{
-		size_t size = getpagesize();
-		unsigned char *p;
-		bool mod = (argc == 3);
-		int fd;
-		if (argc != 2 && argc != 3) {
-			fprintf(stderr, "Format: %s <file> [mod]\n", argv[0]);
-			exit(2);
-		}
-		fd = open(argv[1], mod ? O_RDWR : O_RDONLY);
-		if (fd < 0) {
-			perror(argv[1]);
-			exit(1);
-		}
-
-		p = mmap(NULL, size, mod ? PROT_READ|PROT_WRITE : PROT_READ,
-			 MAP_SHARED, fd, 0);
-		if (p == MAP_FAILED) {
-			perror("mmap");
-			exit(1);
-		}
-		for (;;) {
-			if (mod) {
-				p[0]++;
-				msync(p, size, MS_ASYNC);
-				fsync(fd);
-			}
-			printf("%02x", p[0]);
-			fflush(stdout);
-			sleep(1);
-		}
-	}
-
-It runs in two modes: in one mode, it mmaps a file, then sits in a loop
-reading the first byte, printing it and sleeping for a second; in the
-second mode it mmaps a file, then sits in a loop incrementing the first
-byte and flushing, then printing and sleeping.
-
-Two instances of this program can be run on different machines, one doing
-the reading and one doing the writing.  The reader should see the changes
-made by the writer, but without this patch, they aren't because validity
-checking is being done lazily - only on entry to the filesystem.
-
-Testing the InitCallBackState change is more complicated.  The server has
-to be taken offline, the saved callback state file removed and then the
-server restarted whilst the reading-mode program continues to run.  The
-client machine then has to poke the server to trigger the InitCallBackState
-call.
+ (5) afs_validate() no longer needs to get the RCU read lock around its call
+     to afs_check_validity() - and can skip the call entirely if we don't have
+     a promise.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: linux-afs@lists.infradead.org
 ---
 
- fs/afs/callback.c |   42 ++++++++++++++++++++++++++++++++-
- fs/afs/cell.c     |    2 ++
- fs/afs/file.c     |   67 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
- fs/afs/internal.h |    8 ++++++
- fs/afs/server.c   |    2 ++
- fs/afs/super.c    |    1 +
- mm/memory.c       |    1 +
- 7 files changed, 120 insertions(+), 3 deletions(-)
+ fs/afs/callback.c          |    2 +
+ fs/afs/inode.c             |   88 ++++++++++++++++++++++----------------------
+ fs/afs/internal.h          |    2 +
+ fs/afs/rotate.c            |    1 +
+ include/trace/events/afs.h |    8 +++-
+ 5 files changed, 54 insertions(+), 47 deletions(-)
 
 diff --git a/fs/afs/callback.c b/fs/afs/callback.c
-index 7d9b23d981bf..1dd7543dbf9f 100644
+index 1dd7543dbf9f..1b4d5809808d 100644
 --- a/fs/afs/callback.c
 +++ b/fs/afs/callback.c
-@@ -20,6 +20,37 @@
- #include <linux/sched.h>
- #include "internal.h"
- 
-+/*
-+ * Handle invalidation of an mmap'd file.  We invalidate all the PTEs referring
-+ * to the pages in this file's pagecache, forcing the kernel to go through
-+ * ->fault() or ->page_mkwrite() - at which point we can handle invalidation
-+ * more fully.
-+ */
-+void afs_invalidate_mmap_work(struct work_struct *work)
-+{
-+	struct afs_vnode *vnode = container_of(work, struct afs_vnode, cb_work);
-+
-+	unmap_mapping_pages(vnode->vfs_inode.i_mapping, 0, 0, false);
-+}
-+
-+void afs_server_init_callback_work(struct work_struct *work)
-+{
-+	struct afs_server *server = container_of(work, struct afs_server, initcb_work);
-+	struct afs_vnode *vnode;
-+	struct afs_cell *cell = server->cell;
-+
-+	down_read(&cell->fs_open_mmaps_lock);
-+
-+	list_for_each_entry(vnode, &cell->fs_open_mmaps, cb_mmap_link) {
-+		if (vnode->cb_server == server) {
-+			clear_bit(AFS_VNODE_CB_PROMISED, &vnode->flags);
-+			queue_work(system_unbound_wq, &vnode->cb_work);
-+		}
-+	}
-+
-+	up_read(&cell->fs_open_mmaps_lock);
-+}
-+
- /*
-  * Allow the fileserver to request callback state (re-)initialisation.
-  * Unfortunately, UUIDs are not guaranteed unique.
-@@ -29,8 +60,10 @@ void afs_init_callback_state(struct afs_server *server)
+@@ -60,6 +60,7 @@ void afs_init_callback_state(struct afs_server *server)
  	rcu_read_lock();
  	do {
  		server->cb_s_break++;
--		server = rcu_dereference(server->uuid_next);
--	} while (0);
-+		if (!list_empty(&server->cell->fs_open_mmaps))
-+			queue_work(system_unbound_wq, &server->initcb_work);
-+
-+	} while ((server = rcu_dereference(server->uuid_next)));
- 	rcu_read_unlock();
- }
++		atomic_inc(&server->cell->fs_s_break);
+ 		if (!list_empty(&server->cell->fs_open_mmaps))
+ 			queue_work(system_unbound_wq, &server->initcb_work);
  
-@@ -49,6 +82,11 @@ void __afs_break_callback(struct afs_vnode *vnode, enum afs_cb_break_reason reas
+@@ -77,6 +78,7 @@ void __afs_break_callback(struct afs_vnode *vnode, enum afs_cb_break_reason reas
+ 	clear_bit(AFS_VNODE_NEW_CONTENT, &vnode->flags);
+ 	if (test_and_clear_bit(AFS_VNODE_CB_PROMISED, &vnode->flags)) {
+ 		vnode->cb_break++;
++		vnode->cb_v_break = vnode->volume->cb_v_break;
+ 		afs_clear_permits(vnode);
+ 
  		if (vnode->lock_state == AFS_VNODE_LOCK_WAITING_FOR_CB)
- 			afs_lock_may_be_available(vnode);
- 
-+		if (reason != afs_cb_break_for_deleted &&
-+		    vnode->status.type == AFS_FTYPE_FILE &&
-+		    atomic_read(&vnode->cb_nr_mmap))
-+			queue_work(system_unbound_wq, &vnode->cb_work);
-+
- 		trace_afs_cb_break(&vnode->fid, vnode->cb_break, reason, true);
- 	} else {
- 		trace_afs_cb_break(&vnode->fid, vnode->cb_break, reason, false);
-diff --git a/fs/afs/cell.c b/fs/afs/cell.c
-index 887b673f6223..d88407fb9bc0 100644
---- a/fs/afs/cell.c
-+++ b/fs/afs/cell.c
-@@ -166,6 +166,8 @@ static struct afs_cell *afs_alloc_cell(struct afs_net *net,
- 	seqlock_init(&cell->volume_lock);
- 	cell->fs_servers = RB_ROOT;
- 	seqlock_init(&cell->fs_lock);
-+	INIT_LIST_HEAD(&cell->fs_open_mmaps);
-+	init_rwsem(&cell->fs_open_mmaps_lock);
- 	rwlock_init(&cell->vl_servers_lock);
- 	cell->flags = (1 << AFS_CELL_FL_CHECK_ALIAS);
- 
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index 4c8d786b53e0..e6c447ae91f3 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -25,6 +25,9 @@ static int afs_releasepage(struct page *page, gfp_t gfp_flags);
- 
- static void afs_readahead(struct readahead_control *ractl);
- static ssize_t afs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter);
-+static void afs_vm_open(struct vm_area_struct *area);
-+static void afs_vm_close(struct vm_area_struct *area);
-+static vm_fault_t afs_vm_map_pages(struct vm_fault *vmf, pgoff_t start_pgoff, pgoff_t end_pgoff);
- 
- const struct file_operations afs_file_operations = {
- 	.open		= afs_open,
-@@ -60,8 +63,10 @@ const struct address_space_operations afs_fs_aops = {
- };
- 
- static const struct vm_operations_struct afs_vm_ops = {
-+	.open		= afs_vm_open,
-+	.close		= afs_vm_close,
- 	.fault		= filemap_fault,
--	.map_pages	= filemap_map_pages,
-+	.map_pages	= afs_vm_map_pages,
- 	.page_mkwrite	= afs_page_mkwrite,
- };
- 
-@@ -492,19 +497,79 @@ static int afs_releasepage(struct page *page, gfp_t gfp_flags)
- 	return 1;
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 80b6c8d967d5..126daf9969db 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -587,22 +587,32 @@ static void afs_zap_data(struct afs_vnode *vnode)
  }
  
-+static void afs_add_open_mmap(struct afs_vnode *vnode)
-+{
-+	if (atomic_inc_return(&vnode->cb_nr_mmap) == 1) {
-+		down_write(&vnode->volume->cell->fs_open_mmaps_lock);
-+
-+		list_add_tail(&vnode->cb_mmap_link,
-+			      &vnode->volume->cell->fs_open_mmaps);
-+
-+		up_write(&vnode->volume->cell->fs_open_mmaps_lock);
-+	}
-+}
-+
-+static void afs_drop_open_mmap(struct afs_vnode *vnode)
-+{
-+	if (!atomic_dec_and_test(&vnode->cb_nr_mmap))
-+		return;
-+
-+	down_write(&vnode->volume->cell->fs_open_mmaps_lock);
-+
-+	if (atomic_read(&vnode->cb_nr_mmap) == 0)
-+		list_del_init(&vnode->cb_mmap_link);
-+
-+	up_write(&vnode->volume->cell->fs_open_mmaps_lock);
-+	flush_work(&vnode->cb_work);
-+}
-+
  /*
-  * Handle setting up a memory mapping on an AFS file.
+- * Get the server reinit counter for a vnode's current server.
++ * Check to see if we have a server currently serving this volume and that it
++ * hasn't been reinitialised or dropped from the list.
   */
- static int afs_file_mmap(struct file *file, struct vm_area_struct *vma)
+-static bool afs_get_s_break_rcu(struct afs_vnode *vnode, unsigned int *_s_break)
++static bool afs_check_server_good(struct afs_vnode *vnode)
  {
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
+-	struct afs_server_list *slist = rcu_dereference(vnode->volume->servers);
++	struct afs_server_list *slist;
+ 	struct afs_server *server;
++	bool good;
+ 	int i;
+ 
++	if (vnode->cb_fs_s_break == atomic_read(&vnode->volume->cell->fs_s_break))
++		return true;
++
++	rcu_read_lock();
++
++	slist = rcu_dereference(vnode->volume->servers);
+ 	for (i = 0; i < slist->nr_servers; i++) {
+ 		server = slist->servers[i].server;
+ 		if (server == vnode->cb_server) {
+-			*_s_break = READ_ONCE(server->cb_s_break);
+-			return true;
++			good = (vnode->cb_s_break == server->cb_s_break);
++			rcu_read_unlock();
++			return good;
+ 		}
+ 	}
+ 
++	rcu_read_unlock();
+ 	return false;
+ }
+ 
+@@ -611,57 +621,46 @@ static bool afs_get_s_break_rcu(struct afs_vnode *vnode, unsigned int *_s_break)
+  */
+ bool afs_check_validity(struct afs_vnode *vnode)
+ {
+-	struct afs_volume *volume = vnode->volume;
+ 	enum afs_cb_break_reason need_clear = afs_cb_break_no_break;
+ 	time64_t now = ktime_get_real_seconds();
+-	bool valid;
+-	unsigned int cb_break, cb_s_break, cb_v_break;
++	unsigned int cb_break;
+ 	int seq = 0;
+ 
+ 	do {
+ 		read_seqbegin_or_lock(&vnode->cb_lock, &seq);
+-		cb_v_break = READ_ONCE(volume->cb_v_break);
+ 		cb_break = vnode->cb_break;
+ 
+-		if (test_bit(AFS_VNODE_CB_PROMISED, &vnode->flags) &&
+-		    afs_get_s_break_rcu(vnode, &cb_s_break)) {
+-			if (vnode->cb_s_break != cb_s_break ||
+-			    vnode->cb_v_break != cb_v_break) {
+-				vnode->cb_s_break = cb_s_break;
+-				vnode->cb_v_break = cb_v_break;
+-				need_clear = afs_cb_break_for_vsbreak;
+-				valid = false;
+-			} else if (test_bit(AFS_VNODE_ZAP_DATA, &vnode->flags)) {
++		if (test_bit(AFS_VNODE_CB_PROMISED, &vnode->flags)) {
++			if (vnode->cb_v_break != vnode->volume->cb_v_break)
++				need_clear = afs_cb_break_for_v_break;
++			else if (!afs_check_server_good(vnode))
++				need_clear = afs_cb_break_for_s_reinit;
++			else if (test_bit(AFS_VNODE_ZAP_DATA, &vnode->flags))
+ 				need_clear = afs_cb_break_for_zap;
+-				valid = false;
+-			} else if (vnode->cb_expires_at - 10 <= now) {
++			else if (vnode->cb_expires_at - 10 <= now)
+ 				need_clear = afs_cb_break_for_lapsed;
+-				valid = false;
+-			} else {
+-				valid = true;
+-			}
+ 		} else if (test_bit(AFS_VNODE_DELETED, &vnode->flags)) {
+-			valid = true;
++			;
+ 		} else {
+-			vnode->cb_v_break = cb_v_break;
+-			valid = false;
++			need_clear = afs_cb_break_no_promise;
+ 		}
+ 
+ 	} while (need_seqretry(&vnode->cb_lock, seq));
+ 
+ 	done_seqretry(&vnode->cb_lock, seq);
+ 
+-	if (need_clear != afs_cb_break_no_break) {
+-		write_seqlock(&vnode->cb_lock);
+-		if (cb_break == vnode->cb_break)
+-			__afs_break_callback(vnode, need_clear);
+-		else
+-			trace_afs_cb_miss(&vnode->fid, need_clear);
+-		write_sequnlock(&vnode->cb_lock);
+-		valid = false;
+-	}
++	if (need_clear == afs_cb_break_no_break)
++		return true;
+ 
+-	return valid;
++	write_seqlock(&vnode->cb_lock);
++	if (need_clear == afs_cb_break_no_promise)
++		vnode->cb_v_break = vnode->volume->cb_v_break;
++	else if (cb_break == vnode->cb_break)
++		__afs_break_callback(vnode, need_clear);
++	else
++		trace_afs_cb_miss(&vnode->fid, need_clear);
++	write_sequnlock(&vnode->cb_lock);
++	return false;
+ }
+ 
+ /*
+@@ -675,21 +674,20 @@ bool afs_check_validity(struct afs_vnode *vnode)
+  */
+ int afs_validate(struct afs_vnode *vnode, struct key *key)
+ {
+-	bool valid;
  	int ret;
  
-+	afs_add_open_mmap(vnode);
-+
- 	ret = generic_file_mmap(file, vma);
- 	if (ret == 0)
- 		vma->vm_ops = &afs_vm_ops;
-+	else
-+		afs_drop_open_mmap(vnode);
- 	return ret;
- }
+ 	_enter("{v={%llx:%llu} fl=%lx},%x",
+ 	       vnode->fid.vid, vnode->fid.vnode, vnode->flags,
+ 	       key_serial(key));
  
-+static void afs_vm_open(struct vm_area_struct *vma)
-+{
-+	afs_add_open_mmap(AFS_FS_I(file_inode(vma->vm_file)));
-+}
-+
-+static void afs_vm_close(struct vm_area_struct *vma)
-+{
-+	afs_drop_open_mmap(AFS_FS_I(file_inode(vma->vm_file)));
-+}
-+
-+static vm_fault_t afs_vm_map_pages(struct vm_fault *vmf, pgoff_t start_pgoff, pgoff_t end_pgoff)
-+{
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(vmf->vma->vm_file));
-+	struct afs_file *af = vmf->vma->vm_file->private_data;
-+
-+	switch (afs_validate(vnode, af->key)) {
-+	case 0:
-+		return filemap_map_pages(vmf, start_pgoff, end_pgoff);
-+	case -ENOMEM:
-+		return VM_FAULT_OOM;
-+	case -EINTR:
-+	case -ERESTARTSYS:
-+		return VM_FAULT_RETRY;
-+	case -ESTALE:
-+	default:
-+		return VM_FAULT_SIGBUS;
+-	rcu_read_lock();
+-	valid = afs_check_validity(vnode);
+-	rcu_read_unlock();
+-
+-	if (test_bit(AFS_VNODE_DELETED, &vnode->flags))
+-		clear_nlink(&vnode->vfs_inode);
++	if (unlikely(test_bit(AFS_VNODE_DELETED, &vnode->flags))) {
++		if (vnode->vfs_inode.i_nlink)
++			clear_nlink(&vnode->vfs_inode);
++		goto valid;
 +	}
-+}
-+
- static ssize_t afs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- {
- 	struct afs_vnode *vnode = AFS_FS_I(file_inode(iocb->ki_filp));
+ 
+-	if (valid)
++	if (test_bit(AFS_VNODE_CB_PROMISED, &vnode->flags) &&
++	    afs_check_validity(vnode))
+ 		goto valid;
+ 
+ 	down_write(&vnode->validate_lock);
 diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 5ed416f4ff33..0deeb76c67d0 100644
+index 0deeb76c67d0..c97618855b46 100644
 --- a/fs/afs/internal.h
 +++ b/fs/afs/internal.h
-@@ -390,6 +390,8 @@ struct afs_cell {
- 	/* Active fileserver interaction state. */
- 	struct rb_root		fs_servers;	/* afs_server (by server UUID) */
+@@ -392,6 +392,7 @@ struct afs_cell {
  	seqlock_t		fs_lock;	/* For fs_servers  */
-+	struct rw_semaphore	fs_open_mmaps_lock;
-+	struct list_head	fs_open_mmaps;	/* List of vnodes that are mmapped */
+ 	struct rw_semaphore	fs_open_mmaps_lock;
+ 	struct list_head	fs_open_mmaps;	/* List of vnodes that are mmapped */
++	atomic_t		fs_s_break;	/* Counter of CB.InitCallBackState messages */
  
  	/* VL server list. */
  	rwlock_t		vl_servers_lock; /* Lock on vl_servers */
-@@ -503,6 +505,7 @@ struct afs_server {
- 	struct hlist_node	addr4_link;	/* Link in net->fs_addresses4 */
- 	struct hlist_node	addr6_link;	/* Link in net->fs_addresses6 */
- 	struct hlist_node	proc_link;	/* Link in net->fs_proc */
-+	struct work_struct	initcb_work;	/* Work for CB.InitCallBackState* */
- 	struct afs_server	*gc_next;	/* Next server in manager's list */
- 	time64_t		unuse_time;	/* Time at which last unused */
- 	unsigned long		flags;
-@@ -657,7 +660,10 @@ struct afs_vnode {
- 	afs_lock_type_t		lock_type : 8;
- 
- 	/* outstanding callback notification on this file */
-+	struct work_struct	cb_work;	/* Work for mmap'd files */
-+	struct list_head	cb_mmap_link;	/* Link in cell->fs_open_mmaps */
+@@ -664,6 +665,7 @@ struct afs_vnode {
+ 	struct list_head	cb_mmap_link;	/* Link in cell->fs_open_mmaps */
  	void			*cb_server;	/* Server with callback/filelock */
-+	atomic_t		cb_nr_mmap;	/* Number of mmaps */
+ 	atomic_t		cb_nr_mmap;	/* Number of mmaps */
++	unsigned int		cb_fs_s_break;	/* Mass server break counter (cell->fs_s_break) */
  	unsigned int		cb_s_break;	/* Mass break counter on ->server */
  	unsigned int		cb_v_break;	/* Mass break counter on ->volume */
  	unsigned int		cb_break;	/* Break counter on vnode */
-@@ -965,6 +971,8 @@ extern struct fscache_cookie_def afs_vnode_cache_index_def;
- /*
-  * callback.c
-  */
-+extern void afs_invalidate_mmap_work(struct work_struct *);
-+extern void afs_server_init_callback_work(struct work_struct *work);
- extern void afs_init_callback_state(struct afs_server *);
- extern void __afs_break_callback(struct afs_vnode *, enum afs_cb_break_reason);
- extern void afs_break_callback(struct afs_vnode *, enum afs_cb_break_reason);
-diff --git a/fs/afs/server.c b/fs/afs/server.c
-index 684a2b02b9ff..6e5b9a19b234 100644
---- a/fs/afs/server.c
-+++ b/fs/afs/server.c
-@@ -235,6 +235,7 @@ static struct afs_server *afs_alloc_server(struct afs_cell *cell,
- 	server->addr_version = alist->version;
- 	server->uuid = *uuid;
- 	rwlock_init(&server->fs_lock);
-+	INIT_WORK(&server->initcb_work, afs_server_init_callback_work);
- 	init_waitqueue_head(&server->probe_wq);
- 	INIT_LIST_HEAD(&server->probe_link);
- 	spin_lock_init(&server->probe_lock);
-@@ -467,6 +468,7 @@ static void afs_destroy_server(struct afs_net *net, struct afs_server *server)
- 	if (test_bit(AFS_SERVER_FL_MAY_HAVE_CB, &server->flags))
- 		afs_give_up_callbacks(net, server);
+diff --git a/fs/afs/rotate.c b/fs/afs/rotate.c
+index d83f13c44b92..79e1a5f6701b 100644
+--- a/fs/afs/rotate.c
++++ b/fs/afs/rotate.c
+@@ -374,6 +374,7 @@ bool afs_select_fileserver(struct afs_operation *op)
+ 	if (vnode->cb_server != server) {
+ 		vnode->cb_server = server;
+ 		vnode->cb_s_break = server->cb_s_break;
++		vnode->cb_fs_s_break = atomic_read(&server->cell->fs_s_break);
+ 		vnode->cb_v_break = vnode->volume->cb_v_break;
+ 		clear_bit(AFS_VNODE_CB_PROMISED, &vnode->flags);
+ 	}
+diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
+index 9f73ed2cf061..bca73e8c8cde 100644
+--- a/include/trace/events/afs.h
++++ b/include/trace/events/afs.h
+@@ -306,11 +306,13 @@ enum afs_flock_operation {
  
-+	flush_work(&server->initcb_work);
- 	afs_put_server(net, server, afs_server_trace_destroy);
- }
+ enum afs_cb_break_reason {
+ 	afs_cb_break_no_break,
++	afs_cb_break_no_promise,
+ 	afs_cb_break_for_callback,
+ 	afs_cb_break_for_deleted,
+ 	afs_cb_break_for_lapsed,
++	afs_cb_break_for_s_reinit,
+ 	afs_cb_break_for_unlink,
+-	afs_cb_break_for_vsbreak,
++	afs_cb_break_for_v_break,
+ 	afs_cb_break_for_volume_callback,
+ 	afs_cb_break_for_zap,
+ };
+@@ -602,11 +604,13 @@ enum afs_cb_break_reason {
  
-diff --git a/fs/afs/super.c b/fs/afs/super.c
-index e38bb1e7a4d2..d110def8aa8e 100644
---- a/fs/afs/super.c
-+++ b/fs/afs/super.c
-@@ -698,6 +698,7 @@ static struct inode *afs_alloc_inode(struct super_block *sb)
- 	vnode->lock_state	= AFS_VNODE_LOCK_NONE;
+ #define afs_cb_break_reasons						\
+ 	EM(afs_cb_break_no_break,		"no-break")		\
++	EM(afs_cb_break_no_promise,		"no-promise")		\
+ 	EM(afs_cb_break_for_callback,		"break-cb")		\
+ 	EM(afs_cb_break_for_deleted,		"break-del")		\
+ 	EM(afs_cb_break_for_lapsed,		"break-lapsed")		\
++	EM(afs_cb_break_for_s_reinit,		"s-reinit")		\
+ 	EM(afs_cb_break_for_unlink,		"break-unlink")		\
+-	EM(afs_cb_break_for_vsbreak,		"break-vs")		\
++	EM(afs_cb_break_for_v_break,		"break-v")		\
+ 	EM(afs_cb_break_for_volume_callback,	"break-v-cb")		\
+ 	E_(afs_cb_break_for_zap,		"break-zap")
  
- 	init_rwsem(&vnode->rmdir_lock);
-+	INIT_WORK(&vnode->cb_work, afs_invalidate_mmap_work);
- 
- 	_leave(" = %p", &vnode->vfs_inode);
- 	return &vnode->vfs_inode;
-diff --git a/mm/memory.c b/mm/memory.c
-index 25fc46e87214..adf9b9ef8277 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3403,6 +3403,7 @@ void unmap_mapping_pages(struct address_space *mapping, pgoff_t start,
- 		unmap_mapping_range_tree(&mapping->i_mmap, &details);
- 	i_mmap_unlock_write(mapping);
- }
-+EXPORT_SYMBOL_GPL(unmap_mapping_pages);
- 
- /**
-  * unmap_mapping_range - unmap the portion of all mmaps in the specified
 
 
