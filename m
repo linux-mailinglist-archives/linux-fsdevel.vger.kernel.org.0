@@ -2,94 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E284038BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 13:29:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57B214038D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 13:34:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351482AbhIHL3H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Sep 2021 07:29:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46466 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351478AbhIHL3G (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Sep 2021 07:29:06 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9B7EC061575;
-        Wed,  8 Sep 2021 04:27:58 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id s25so2475423edw.0;
-        Wed, 08 Sep 2021 04:27:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=T8Mklz6VAwUy6oZgIvPmDqGWckAlnrdzULeYme94/4Q=;
-        b=lkZxAaIGGHzgZlPLjUj8F2g/w4kqVFboovx1cwljnc6aG9d+053WJpn5h7J1mOG/hL
-         dtsv95/oTcFq5WD049sZPSukw1181KcSYaBAbljNxQb0icgMraGga+TTsOtvgzlY6SKB
-         OqGjH6T8o07JALS2uJBbJkrbW+ZKzfDIe5Kt2IaBwqPBoqAWuSmuoBOFEMzTmApUTnHh
-         hDkAuI+bIdj1fv7990JlGAOKAEWSN0mMF9rrEDnxPEiNnt5GNaceLh5Yy10Y7Q/oBoVZ
-         65jq4NpT9cyxvBnxLqRJfMoGjB/yuiQHP+Ei9zSrxWiLIf/dBBRNvhz3feewJTCCGxrH
-         F7QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=T8Mklz6VAwUy6oZgIvPmDqGWckAlnrdzULeYme94/4Q=;
-        b=I3r3BT5r5ZCMycP7IK9c17nUI+3f8kYFNyc7DrQtfJN91NZ5fVXSCPWUayTgDgVZdW
-         8DKGEcw5RGc7m6AZafSyaxxFlxXOnNnxxfDKSPgG4akOKNPgECOOY7qUpBLjBQBQeIUG
-         p68ojgVjleKvj5x/mmmCip1p/DPoILmZuZDFiaixRQ8sdLpOrLOVZ2BIUhx+aOcc+QI9
-         FhggFjfw+o+/l2f90UgAl4vZHB0zurEglv90JSgG7TWz/mmvAosPoLd2jlOZy/y0zzID
-         St8wQ3nN7HCHaTsE/4KlKi30NR4TDe7sPiQxS04NEwBDd9hygVQQGckfiv84WbO9aANv
-         dFlw==
-X-Gm-Message-State: AOAM531op85Tq7sK6KVx0g3+Khu2cwfxBmzRm6xpVnoWzTroIEUUyema
-        5ACUn7QN1ytHf86Ij7d2QS2Op2Jl2k9KGU72BEw=
-X-Google-Smtp-Source: ABdhPJwGfD+i+VdCkJZ7IUmEUFHZnxm9TsQnDXHp+8EbX5wzCKF44hHkvqZBfYGx8AevvBsZcCM3G11fKO55WACtnZo=
-X-Received: by 2002:a05:6402:4389:: with SMTP id o9mr3325324edc.306.1631100477257;
- Wed, 08 Sep 2021 04:27:57 -0700 (PDT)
+        id S1349123AbhIHLfe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Sep 2021 07:35:34 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:39450 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1348557AbhIHLfe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Sep 2021 07:35:34 -0400
+Received: from zn.tnic (p200300ec2f0efc002d1ac0b1b41b9169.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:fc00:2d1a:c0b1:b41b:9169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 69E191EC036B;
+        Wed,  8 Sep 2021 13:34:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1631100865;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=m/Frv4i98ljsymrvV0/yhoTmQ0S/VberekuyvlZ3qEw=;
+        b=NfKUxhqk7CQNY9baqIi2HJw9km0ov3Vhu96MRbZd7TFmRoLJn/9d8b11Xk17XDIwl6B1Wg
+        ubT9iwlULRlwmbhdS1woU5AIwJtXvDZL2VpfRLDE9rroVJfb1kI8NRVVH/gFIGNGu7QkLI
+        7I/ZsdGgnHAzL2v1JqKR3QArzp0xr0w=
+Date:   Wed, 8 Sep 2021 13:34:18 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2] x86/mm: fix kern_addr_valid to cope with existing but
+ not present entries
+Message-ID: <YTifujf+Qez2hE82@zn.tnic>
+References: <20210819132717.19358-1-rppt@kernel.org>
+ <35f4a263-1001-5ba5-7b6c-3fcc5f93cc30@intel.com>
+ <YTiR6aK6XKJ4z0wH@zn.tnic>
+ <YTiV/Sdm/T/jnsHC@zn.tnic>
+ <YTic90lqv0HbuYOI@kernel.org>
 MIME-Version: 1.0
-References: <CAOuPNLhqSpaTm3u4kFsnuZ0PLDKuX8wsxuF=vUJ1TEG0EP+L1g@mail.gmail.com>
- <alpine.LRH.2.02.2107200737510.19984@file01.intranet.prod.int.rdu2.redhat.com>
- <CAOuPNLhh_LkLQ8mSA4eoUDLCLzHo5zHXsiQZXUB_-T_F1_v6-g@mail.gmail.com>
- <alpine.LRH.2.02.2107211300520.10897@file01.intranet.prod.int.rdu2.redhat.com>
- <CAOuPNLi-xz_4P+v45CHLx00ztbSwU3_maf4tuuyso5RHyeOytg@mail.gmail.com>
- <CAOuPNLg0m-Q7Vhp4srbQrjXHsxVhOr-K2dvnNqzdR6Dr4kioqA@mail.gmail.com>
- <20210830185541.715f6a39@windsurf> <CAOuPNLhTidgLNWUbtUgdESYcKcE1C4SOdzKeQVhFGQvEoc0QEg@mail.gmail.com>
- <20210830211224.76391708@windsurf> <CAOuPNLgMd0AThhmSknbmKqp3_P8PFhBGr-jW0Mqjb6K6NchEMg@mail.gmail.com>
- <CAOuPNLiW10-E6F_Ndte7U9NPBKa9Y_UuLhgdwAYTc0eYMk5Mqg@mail.gmail.com>
-In-Reply-To: <CAOuPNLiW10-E6F_Ndte7U9NPBKa9Y_UuLhgdwAYTc0eYMk5Mqg@mail.gmail.com>
-From:   Pintu Agarwal <pintu.ping@gmail.com>
-Date:   Wed, 8 Sep 2021 16:57:45 +0530
-Message-ID: <CAOuPNLj2Xmx52Gtzx5oEKif4Qz-Tz=vaxhRvHQG-5emO7ewRhg@mail.gmail.com>
-Subject: Re: Kernel 4.14: Using dm-verity with squashfs rootfs - mounting issue
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Mikulas Patocka <mpatocka@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>, dm-devel@redhat.com,
-        Kernelnewbies <kernelnewbies@kernelnewbies.org>, agk@redhat.com,
-        snitzer@redhat.com, Sami Tolvanen <samitolvanen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YTic90lqv0HbuYOI@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Wed, Sep 08, 2021 at 02:22:31PM +0300, Mike Rapoport wrote:
+> kern_addr_valid() wrongly uses pxy_none() rather than pxy_present() because
+> according to 9a14aefc1d28 ("x86: cpa, fix lookup_address") there could be
+> cases when page table entries exist but they are not valid.
+> So a call to kern_addr_valid() for an address in the direct map would oops.
+> 
+> I've stopped digging at 9a14aefc1d28 (which is in v2.6.26) and added the
+> oldest stable we still support (4.4).
+> 
+> I agree that before 4.19 it's more of a theoretical bug, but you know,
+> things happen...
 
-On Mon, 6 Sept 2021 at 21:58, Pintu Agarwal <pintu.ping@gmail.com> wrote:
+Hmmkay, I guess I should add the gist of that to the commit message so
+that it is explained why 4.4.
 
-> On Tue, 31 Aug 2021 at 18:49, Pintu Agarwal <pintu.ping@gmail.com> wrote:
->
-> > > No, but you can backport it easily. Back at
-> > > http://lists.infradead.org/pipermail/openwrt-devel/2019-November/025967.html
-> > > I provided backports of this feature to OpenWrt, for the 4.14 and 4.19
-> > > kernels.
+I'm assuming the pxy_present() check is more strict than pxy_none() so
+that backporting to all stable kernels should not introduce any risks...
 
-Can you please let me know where to get the below patches for
-backporting to our kernel:
- create mode 100644
-target/linux/generic/backport-4.14/390-dm-add-support-to-directly-boot-to-a-mapped-device.patch
- create mode 100644
-target/linux/generic/backport-4.14/391-dm-init-fix-max-devices-targets-checks.patch
- create mode 100644
-target/linux/generic/backport-4.14/392-dm-ioctl-fix-hang-in-early-create-error-condition.patch
- create mode 100644
-target/linux/generic/backport-4.14/393-Documentation-dm-init-fix-multi-device-example.patch
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
