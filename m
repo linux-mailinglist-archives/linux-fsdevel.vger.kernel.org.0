@@ -2,91 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C90BC403DA2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 18:35:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70A97403DFB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 18:54:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349216AbhIHQgW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Sep 2021 12:36:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60652 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343833AbhIHQgV (ORCPT
+        id S1349999AbhIHQzj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Sep 2021 12:55:39 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44166 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S235666AbhIHQzi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Sep 2021 12:36:21 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80493C061575;
-        Wed,  8 Sep 2021 09:35:13 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id pi15-20020a17090b1e4f00b00197449fc059so1591888pjb.0;
-        Wed, 08 Sep 2021 09:35:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=OcymaPtn2yQq8RdWF6BFH20bMyFtxjOxZMFIB1OMhb4=;
-        b=cEO/E0Ry4JDv4NAoZWlVwP4k205lyAd9w0Jc/1E0rCsSXw3qxpjooAnEo5b0LiZ/xh
-         1cmfhhXIkymzyYy74CxqfFRkcGkxEeqgtwbcmUmMOkNEgfNyZNECXRyYhdC3TWU3C1wr
-         RYo72dsDHQjeUlpJ7ZxqIgnRC0i4WwnJja8UvQ7EAgxQKkXrN4eymCpiHcJPG6g0QGA8
-         1fdL5abIwfzLj6FxUwYFP5fiwW7rZUSkCJFGZOaOTXRaWkmRkbrJ+7uEWs7JEQ0dy4ji
-         /jGHumraXj/+ujT5+g4BougNm+Fbf7wvpHnEOR+SoWoel7IC/QoSVu1xTlgMd7VHAL2l
-         7/XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=OcymaPtn2yQq8RdWF6BFH20bMyFtxjOxZMFIB1OMhb4=;
-        b=lEId6/rcLwTgnpWKqEg+WWPDN/ctdwXKdvLofL2WZSubx8jnak5nxV5DU2yO5RQnKO
-         qpmUPT0WLxVQ1EWXbzgn2zuRvtnRQnhOqpyoc7jDreihuHmUeOsQiixAONZC4tCsdXIA
-         5r27ePBJ3T1hWxetihS6Oka+FZUHv71rSEqmBJcWJ1ARES2Ee4XleezTfM1tNbfQXUuR
-         Qj/ERb1x8FZfGHcqRILWq5LTCuFW9wdAIKgqEv7E5y07nsAK6ZpYQLOorYVUMQrurzgR
-         if9QbwVYq2j06DYISF78fr43v7UsnNXUHaky7nBjVT6Ed+GFj60gmQATp4uHZjdmnySm
-         WJdw==
-X-Gm-Message-State: AOAM533xLShQSj71FDIqSQzXtRM6pUGdr6z3maxkAtxzAdzQBVtLXfT2
-        AXGdgmAC5iel5pqDrgGCNohMVqvWAWg=
-X-Google-Smtp-Source: ABdhPJwFoJ0ZNwF7ymnYu6dtcblvKpIG0O6/JViZFf+murQhyKST6yt150dDOceRGyev6kDMMDs6UQ==
-X-Received: by 2002:a17:90a:e009:: with SMTP id u9mr5000361pjy.218.1631118912916;
-        Wed, 08 Sep 2021 09:35:12 -0700 (PDT)
-Received: from localhost (2603-800c-1a02-1bae-e24f-43ff-fee6-449f.res6.spectrum.com. [2603:800c:1a02:1bae:e24f:43ff:fee6:449f])
-        by smtp.gmail.com with ESMTPSA id q20sm3798099pgu.31.2021.09.08.09.35.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Sep 2021 09:35:12 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Wed, 8 Sep 2021 06:35:11 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Yi Tao <escape@linux.alibaba.com>
-Cc:     gregkh@linuxfoundation.org, lizefan.x@bytedance.com,
-        hannes@cmpxchg.org, mcgrof@kernel.org, keescook@chromium.org,
-        yzaikin@google.com, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        shanpeic@linux.alibaba.com
-Subject: Re: [RFC PATCH 0/2] support cgroup pool in v1
-Message-ID: <YTjmP0EGEWGYhroM@slm.duckdns.org>
-References: <cover.1631102579.git.escape@linux.alibaba.com>
+        Wed, 8 Sep 2021 12:55:38 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 188GXLCL019212;
+        Wed, 8 Sep 2021 12:54:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=UFUuMWLVoMZuIsxaszDJEv/XsW5TDiT4te8RaJ+mT0k=;
+ b=OA7N13R/reJICTV2DtIPzYzBQAWWLJIzjDTjvNo6JTPZCT3wT6QPwrcaULaHgeSL1bwi
+ +aRU4nSehRFCrUH674TBgGCHKhhUVlmIa1L+OC7CY1xH3ExYL2EPaIr+qOfQd6I1rusl
+ SngVNUdM3foNGlpW4wJlCc0rRDosfZ2OfydUHnQpbXSvketwLlhMTR1Tu9+azda1e6x8
+ 5k6poRAkd7Pq38MtBlNJHI0S9Q6vHCJc1EEBTiviNc18feoNu4cpOTBzbZ9jM2qBp/5i
+ SWvddobLN7khJZ3Q2W45GbBgTeS23212Vv0UW1VcHnN1HPVdJKjXPsXshduJADVyCSR+ +Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3axyvc289b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Sep 2021 12:54:27 -0400
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 188GYlZa023305;
+        Wed, 8 Sep 2021 12:54:27 -0400
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3axyvc288h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Sep 2021 12:54:27 -0400
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 188Gm4G7022026;
+        Wed, 8 Sep 2021 16:54:25 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma02fra.de.ibm.com with ESMTP id 3axcnk3qtj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 08 Sep 2021 16:54:24 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 188GsLVf50790674
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 8 Sep 2021 16:54:21 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 56D89A406F;
+        Wed,  8 Sep 2021 16:54:21 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D65EBA4055;
+        Wed,  8 Sep 2021 16:54:20 +0000 (GMT)
+Received: from osiris (unknown [9.145.165.20])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed,  8 Sep 2021 16:54:20 +0000 (GMT)
+Date:   Wed, 8 Sep 2021 18:54:19 +0200
+From:   Heiko Carstens <hca@linux.ibm.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        linux-s390@vger.kernel.org, linux-mm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v1] hugetlbfs: s390 is always 64bit
+Message-ID: <YTjquztIqDE0Ew3A@osiris>
+References: <20210908154506.20764-1-david@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1631102579.git.escape@linux.alibaba.com>
+In-Reply-To: <20210908154506.20764-1-david@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: zVAwf6gTfkN1fKu6s0lGD0g_iuDCoh9Q
+X-Proofpoint-GUID: loEvSY1R8qvreNBZGroeBSls14zRCJOj
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-09-08_06:2021-09-07,2021-09-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 bulkscore=0 spamscore=0 suspectscore=0 mlxlogscore=791
+ impostorscore=0 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2109030001 definitions=main-2109080103
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed, Sep 08, 2021 at 05:45:06PM +0200, David Hildenbrand wrote:
+> No need to check for 64BIT. While at it, let's just select
+> ARCH_SUPPORTS_HUGETLBFS from arch/s390x/Kconfig.
+                                    ^^^^^
+s390 :)
 
-On Wed, Sep 08, 2021 at 08:15:11PM +0800, Yi Tao wrote:
-> In order to solve this long-tail delay problem, we designed a cgroup
-> pool. The cgroup pool will create a certain number of cgroups in advance.
-> When a user creates a cgroup through the mkdir system call, a clean cgroup
-> can be quickly obtained from the pool. Cgroup pool draws on the idea of
-> cgroup rename. By creating pool and rename in advance, it reduces the
-> critical area of cgroup creation, and uses a spinlock different from
-> cgroup_mutex, which reduces scheduling overhead on the one hand, and eases
-> competition with attaching processes on the other hand.
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  arch/s390/Kconfig | 1 +
+>  fs/Kconfig        | 3 +--
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-I'm not sure this is the right way to go about it. There are more
-conventional ways to improve scalability - making locking more granular and
-hunting down specific operations which take long time. I don't think cgroup
-management operations need the level of scalability which requires front
-caching.
-
-Thanks.
-
--- 
-tejun
+I'll apply this to the s390 tree. Thanks David!
