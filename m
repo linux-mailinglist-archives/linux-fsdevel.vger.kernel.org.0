@@ -2,228 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C8F45403D1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 17:58:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66648403D1D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 17:58:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352261AbhIHP7I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Sep 2021 11:59:08 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:43608 "EHLO
+        id S1352311AbhIHP7Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Sep 2021 11:59:16 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24062 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1352235AbhIHP7I (ORCPT
+        by vger.kernel.org with ESMTP id S1352287AbhIHP7N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Sep 2021 11:59:08 -0400
+        Wed, 8 Sep 2021 11:59:13 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631116680;
+        s=mimecast20190719; t=1631116685;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=sbQzC7br2QR47nelEQ9R48gv7v+e1vkBF1lmmWQuUCs=;
-        b=DwZOfpbSD81QT6r0KV/me9UWriopTF+mzyAoescBsp1w/HiiU0NfIfaGU75LiaRsnEu6Qt
-        wnbRr5Qpr9BtfUFQEGFhM3SvuHrdHLMvVub/JgS0+NezxgbEiXsTU+sReO4fWTL3owtTmj
-        ccAP7lQcHThDnxPbQ7MiwZ8426/jRc0=
+        bh=XjM7hos/bk6GSEHMb1C4W4dz9En6EZ5b52WIsghKhKw=;
+        b=ZjJghVQKPf9os+sjEVQVaNf7MoMdxTS00mNw4Jc+1aRmv6b+I648pduB6BGz/1IEQRtNCj
+        lb0sseKN79Dy1XkkA4J1QrAUMdP/YDpdhWpQO/cST5LBLR1UZuBPF7kL185lNFy34jPN+c
+        aPOrGc+MoEpbsznXQ2cGUcKyXLRkJas=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-39-USkpU9pkNHKdNP2Ewc9i5w-1; Wed, 08 Sep 2021 11:57:57 -0400
-X-MC-Unique: USkpU9pkNHKdNP2Ewc9i5w-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+ us-mta-583-JScYIEKeOf2qXhsPbEOKRg-1; Wed, 08 Sep 2021 11:58:04 -0400
+X-MC-Unique: JScYIEKeOf2qXhsPbEOKRg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BECFA84A5E1;
-        Wed,  8 Sep 2021 15:57:55 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1B1A384A5E1;
+        Wed,  8 Sep 2021 15:58:03 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5C85A6A8E7;
-        Wed,  8 Sep 2021 15:57:54 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CC841100E107;
+        Wed,  8 Sep 2021 15:58:01 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 3/6] afs: Add missing vnode validation checks
+Subject: [PATCH 4/6] afs: Fix incorrect triggering of sillyrename on 3rd-party
+ invalidation
 From:   David Howells <dhowells@redhat.com>
 To:     linux-afs@lists.infradead.org
-Cc:     dhowells@redhat.com, markus.suvanto@gmail.com,
-        Marc Dionne <marc.dionne@auristor.com>,
+Cc:     Markus Suvanto <markus.suvanto@gmail.com>, dhowells@redhat.com,
+        markus.suvanto@gmail.com, Marc Dionne <marc.dionne@auristor.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 08 Sep 2021 16:57:53 +0100
-Message-ID: <163111667354.283156.12720698333342917516.stgit@warthog.procyon.org.uk>
+Date:   Wed, 08 Sep 2021 16:58:01 +0100
+Message-ID: <163111668100.283156.3851669884664475428.stgit@warthog.procyon.org.uk>
 In-Reply-To: <163111665183.283156.17200205573146438918.stgit@warthog.procyon.org.uk>
 References: <163111665183.283156.17200205573146438918.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-afs_d_revalidate() should only be validating the directory entry it is
-given and the directory to which that belongs; it shouldn't be validating
-the inode/vnode to which that dentry points.  Besides, validation need to
-be done even if we don't call afs_d_revalidate() - which might be the case
-if we're starting from a file descriptor.
+The AFS filesystem is currently triggering the silly-rename cleanup from
+afs_d_revalidate() when it sees that a dentry has been changed by a third
+party[1].  It should not be doing this as the cleanup includes deleting the
+silly-rename target file on iput.
 
-In order for afs_d_revalidate() to be fixed, validation points must be
-added in some other places.  Certain directory operations, such as
-afs_unlink(), already check this, but not all and not all file operations
-either.
+Fix this by removing the places in the d_revalidate handling that validate
+anything other than the directory and the dirent.  It probably should not
+be looking to validate the target inode of the dentry also.
 
-Note that the validation of a vnode not only checks to see if the
-attributes we have are correct, but also gets a promise from the server to
-notify us if that file gets changed by a third party.
+This includes removing the point in afs_d_revalidate() where the inode that
+a dentry used to point to was marked as being deleted (AFS_VNODE_DELETED).
+We don't know it got deleted.  It could have been renamed or it could have
+hard links remaining.
 
-Add the following checks:
+This was reproduced by cloning a git repo onto an afs volume on one
+machine, switching to another machine and doing "git status", then
+switching back to the first and doing "git status".  The second status
+would show weird output due to ".git/index" getting deleted by the above
+mentioned mechanism.
 
- - Check the vnode we're going to make a hard link to.
- - Check the vnode we're going to move/rename.
- - Check the vnode we're going to read from.
- - Check the vnode we're going to write to.
- - Check the vnode we're going to sync.
- - Check the vnode we're going to make a mapped page writable for.
+A simpler way to do it is to do:
 
-Some of these aren't strictly necessary as we're going to perform a server
-operation that might get the attributes anyway from which we can determine
-if something changed - though it might not get us a callback promise.
+	machine 1: touch a
+	machine 2: touch b; mv -f b a
+	machine 1: stat a
 
+on an afs volume.  The bug shows up as the stat failing with ENOENT and the
+file server log showing that machine 1 deleted "a".
+
+Fixes: 79ddbfa500b3 ("afs: Implement sillyrename for unlink and rename")
+Reported-by: Markus Suvanto <markus.suvanto@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: linux-afs@lists.infradead.org
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=214217#c4 [1]
 ---
 
- fs/afs/dir.c   |   11 +++++++++++
- fs/afs/file.c  |   16 +++++++++++++++-
- fs/afs/write.c |   17 +++++++++++++++--
- 3 files changed, 41 insertions(+), 3 deletions(-)
+ fs/afs/dir.c |   46 +++++++---------------------------------------
+ 1 file changed, 7 insertions(+), 39 deletions(-)
 
 diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index ac829e63c570..a8e3ae55f1f9 100644
+index a8e3ae55f1f9..4579bbda4634 100644
 --- a/fs/afs/dir.c
 +++ b/fs/afs/dir.c
-@@ -1792,6 +1792,10 @@ static int afs_link(struct dentry *from, struct inode *dir,
- 		goto error;
+@@ -1077,9 +1077,9 @@ static struct dentry *afs_lookup(struct inode *dir, struct dentry *dentry,
+  */
+ static int afs_d_revalidate_rcu(struct dentry *dentry)
+ {
+-	struct afs_vnode *dvnode, *vnode;
++	struct afs_vnode *dvnode;
+ 	struct dentry *parent;
+-	struct inode *dir, *inode;
++	struct inode *dir;
+ 	long dir_version, de_version;
+ 
+ 	_enter("%p", dentry);
+@@ -1109,18 +1109,6 @@ static int afs_d_revalidate_rcu(struct dentry *dentry)
+ 			return -ECHILD;
  	}
  
-+	ret = afs_validate(vnode, op->key);
-+	if (ret < 0)
-+		goto error_op;
-+
- 	afs_op_set_vnode(op, 0, dvnode);
- 	afs_op_set_vnode(op, 1, vnode);
- 	op->file[0].dv_delta = 1;
-@@ -1805,6 +1809,8 @@ static int afs_link(struct dentry *from, struct inode *dir,
- 	op->create.reason	= afs_edit_dir_for_link;
- 	return afs_do_sync_operation(op);
- 
-+error_op:
-+	afs_put_operation(op);
- error:
- 	d_drop(dentry);
- 	_leave(" = %d", ret);
-@@ -1989,6 +1995,11 @@ static int afs_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 	if (IS_ERR(op))
- 		return PTR_ERR(op);
- 
-+	ret = afs_validate(vnode, op->key);
-+	op->error = ret;
-+	if (ret < 0)
-+		goto error;
-+
- 	afs_op_set_vnode(op, 0, orig_dvnode);
- 	afs_op_set_vnode(op, 1, new_dvnode); /* May be same as orig_dvnode */
- 	op->file[0].dv_delta = 1;
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index 6688fff14b0b..4c8d786b53e0 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -24,12 +24,13 @@ static void afs_invalidatepage(struct page *page, unsigned int offset,
- static int afs_releasepage(struct page *page, gfp_t gfp_flags);
- 
- static void afs_readahead(struct readahead_control *ractl);
-+static ssize_t afs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter);
- 
- const struct file_operations afs_file_operations = {
- 	.open		= afs_open,
- 	.release	= afs_release,
- 	.llseek		= generic_file_llseek,
--	.read_iter	= generic_file_read_iter,
-+	.read_iter	= afs_file_read_iter,
- 	.write_iter	= afs_file_write,
- 	.mmap		= afs_file_mmap,
- 	.splice_read	= generic_file_splice_read,
-@@ -503,3 +504,16 @@ static int afs_file_mmap(struct file *file, struct vm_area_struct *vma)
- 		vma->vm_ops = &afs_vm_ops;
- 	return ret;
- }
-+
-+static ssize_t afs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
-+{
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(iocb->ki_filp));
-+	struct afs_file *af = iocb->ki_filp->private_data;
-+	int ret;
-+
-+	ret = afs_validate(vnode, af->key);
-+	if (ret < 0)
-+		return ret;
-+
-+	return generic_file_read_iter(iocb, iter);
-+}
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 66b235266893..32a764c24284 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -807,6 +807,7 @@ int afs_writepages(struct address_space *mapping,
- ssize_t afs_file_write(struct kiocb *iocb, struct iov_iter *from)
- {
- 	struct afs_vnode *vnode = AFS_FS_I(file_inode(iocb->ki_filp));
-+	struct afs_file *af = iocb->ki_filp->private_data;
- 	ssize_t result;
- 	size_t count = iov_iter_count(from);
- 
-@@ -822,6 +823,10 @@ ssize_t afs_file_write(struct kiocb *iocb, struct iov_iter *from)
- 	if (!count)
- 		return 0;
- 
-+	result = afs_validate(vnode, af->key);
-+	if (result < 0)
-+		return result;
-+
- 	result = generic_file_write_iter(iocb, from);
- 
- 	_leave(" = %zd", result);
-@@ -835,13 +840,18 @@ ssize_t afs_file_write(struct kiocb *iocb, struct iov_iter *from)
-  */
- int afs_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- {
--	struct inode *inode = file_inode(file);
--	struct afs_vnode *vnode = AFS_FS_I(inode);
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
-+	struct afs_file *af = file->private_data;
-+	int ret;
- 
- 	_enter("{%llx:%llu},{n=%pD},%d",
- 	       vnode->fid.vid, vnode->fid.vnode, file,
- 	       datasync);
- 
-+	ret = afs_validate(vnode, af->key);
-+	if (ret < 0)
-+		return ret;
-+
- 	return file_write_and_wait_range(file, start, end);
+-	/* Check to see if the vnode referred to by the dentry still
+-	 * has a callback.
+-	 */
+-	if (d_really_is_positive(dentry)) {
+-		inode = d_inode_rcu(dentry);
+-		if (inode) {
+-			vnode = AFS_FS_I(inode);
+-			if (!afs_check_validity(vnode))
+-				return -ECHILD;
+-		}
+-	}
+-
+ 	return 1; /* Still valid */
  }
  
-@@ -855,11 +865,14 @@ vm_fault_t afs_page_mkwrite(struct vm_fault *vmf)
- 	struct file *file = vmf->vma->vm_file;
- 	struct inode *inode = file_inode(file);
- 	struct afs_vnode *vnode = AFS_FS_I(inode);
-+	struct afs_file *af = file->private_data;
- 	unsigned long priv;
- 	vm_fault_t ret = VM_FAULT_RETRY;
+@@ -1156,17 +1144,7 @@ static int afs_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 	if (IS_ERR(key))
+ 		key = NULL;
  
- 	_enter("{{%llx:%llu}},{%lx}", vnode->fid.vid, vnode->fid.vnode, page->index);
+-	if (d_really_is_positive(dentry)) {
+-		inode = d_inode(dentry);
+-		if (inode) {
+-			vnode = AFS_FS_I(inode);
+-			afs_validate(vnode, key);
+-			if (test_bit(AFS_VNODE_DELETED, &vnode->flags))
+-				goto out_bad;
+-		}
+-	}
+-
+-	/* lock down the parent dentry so we can peer at it */
++	/* Hold the parent dentry so we can peer at it */
+ 	parent = dget_parent(dentry);
+ 	dir = AFS_FS_I(d_inode(parent));
  
-+	afs_validate(vnode, af->key);
-+
- 	sb_start_pagefault(inode->i_sb);
+@@ -1175,7 +1153,7 @@ static int afs_d_revalidate(struct dentry *dentry, unsigned int flags)
  
- 	/* Wait for the page to be written to the cache before we allow it to
+ 	if (test_bit(AFS_VNODE_DELETED, &dir->flags)) {
+ 		_debug("%pd: parent dir deleted", dentry);
+-		goto out_bad_parent;
++		goto not_found;
+ 	}
+ 
+ 	/* We only need to invalidate a dentry if the server's copy changed
+@@ -1201,12 +1179,12 @@ static int afs_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 	case 0:
+ 		/* the filename maps to something */
+ 		if (d_really_is_negative(dentry))
+-			goto out_bad_parent;
++			goto not_found;
+ 		inode = d_inode(dentry);
+ 		if (is_bad_inode(inode)) {
+ 			printk("kAFS: afs_d_revalidate: %pd2 has bad inode\n",
+ 			       dentry);
+-			goto out_bad_parent;
++			goto not_found;
+ 		}
+ 
+ 		vnode = AFS_FS_I(inode);
+@@ -1228,9 +1206,6 @@ static int afs_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 			       dentry, fid.unique,
+ 			       vnode->fid.unique,
+ 			       vnode->vfs_inode.i_generation);
+-			write_seqlock(&vnode->cb_lock);
+-			set_bit(AFS_VNODE_DELETED, &vnode->flags);
+-			write_sequnlock(&vnode->cb_lock);
+ 			goto not_found;
+ 		}
+ 		goto out_valid;
+@@ -1245,7 +1220,7 @@ static int afs_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 	default:
+ 		_debug("failed to iterate dir %pd: %d",
+ 		       parent, ret);
+-		goto out_bad_parent;
++		goto not_found;
+ 	}
+ 
+ out_valid:
+@@ -1256,16 +1231,9 @@ static int afs_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 	_leave(" = 1 [valid]");
+ 	return 1;
+ 
+-	/* the dirent, if it exists, now points to a different vnode */
+ not_found:
+-	spin_lock(&dentry->d_lock);
+-	dentry->d_flags |= DCACHE_NFSFS_RENAMED;
+-	spin_unlock(&dentry->d_lock);
+-
+-out_bad_parent:
+ 	_debug("dropping dentry %pd2", dentry);
+ 	dput(parent);
+-out_bad:
+ 	key_put(key);
+ 
+ 	_leave(" = 0 [bad]");
 
 
