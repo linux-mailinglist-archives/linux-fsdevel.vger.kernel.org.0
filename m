@@ -2,84 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 63820403980
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 14:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5E5A403991
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 14:15:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351661AbhIHMJX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Sep 2021 08:09:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50010 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234758AbhIHMJV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Sep 2021 08:09:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B86D96109F;
-        Wed,  8 Sep 2021 12:08:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1631102893;
-        bh=+2qr6IIO/UXLiJjbyRAgzuQXiygiL06LUjfWuxvrq7U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jcs7nucfDWnXMYxo5ee/D0ZZAPqmOq3Gvtv+E0miyvRG+OwrIE8sOqA4FK3hT4+wi
-         atyLzSEjCkXrJl+bnpyYiVY1FZkXaUHxOKCkF/CqzLfbFz3j2oqiUMCBU5lTdOrIFa
-         OxQTgGQ4h74+Oz78PjpHrzODtGnMgkj+tyADOD5M=
-Date:   Wed, 8 Sep 2021 14:08:10 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Pintu Agarwal <pintu.ping@gmail.com>
-Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Sami Tolvanen <samitolvanen@google.com>, snitzer@redhat.com,
-        Kernelnewbies <kernelnewbies@kernelnewbies.org>,
-        open list <linux-kernel@vger.kernel.org>, dm-devel@redhat.com,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>, agk@redhat.com
-Subject: Re: Kernel 4.14: Using dm-verity with squashfs rootfs - mounting
- issue
-Message-ID: <YTinqiH9h+Q9bYsr@kroah.com>
-References: <CAOuPNLhh_LkLQ8mSA4eoUDLCLzHo5zHXsiQZXUB_-T_F1_v6-g@mail.gmail.com>
- <alpine.LRH.2.02.2107211300520.10897@file01.intranet.prod.int.rdu2.redhat.com>
- <CAOuPNLi-xz_4P+v45CHLx00ztbSwU3_maf4tuuyso5RHyeOytg@mail.gmail.com>
- <CAOuPNLg0m-Q7Vhp4srbQrjXHsxVhOr-K2dvnNqzdR6Dr4kioqA@mail.gmail.com>
- <20210830185541.715f6a39@windsurf>
- <CAOuPNLhTidgLNWUbtUgdESYcKcE1C4SOdzKeQVhFGQvEoc0QEg@mail.gmail.com>
- <20210830211224.76391708@windsurf>
- <CAOuPNLgMd0AThhmSknbmKqp3_P8PFhBGr-jW0Mqjb6K6NchEMg@mail.gmail.com>
- <CAOuPNLiW10-E6F_Ndte7U9NPBKa9Y_UuLhgdwAYTc0eYMk5Mqg@mail.gmail.com>
- <CAOuPNLj2Xmx52Gtzx5oEKif4Qz-Tz=vaxhRvHQG-5emO7ewRhg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOuPNLj2Xmx52Gtzx5oEKif4Qz-Tz=vaxhRvHQG-5emO7ewRhg@mail.gmail.com>
+        id S1351670AbhIHMQn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Sep 2021 08:16:43 -0400
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:54381 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231372AbhIHMQn (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Sep 2021 08:16:43 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=escape@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0Ungmnr5_1631103332;
+Received: from localhost(mailfrom:escape@linux.alibaba.com fp:SMTPD_---0Ungmnr5_1631103332)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 08 Sep 2021 20:15:32 +0800
+From:   Yi Tao <escape@linux.alibaba.com>
+To:     gregkh@linuxfoundation.org, tj@kernel.org, lizefan.x@bytedance.com,
+        hannes@cmpxchg.org, mcgrof@kernel.org, keescook@chromium.org,
+        yzaikin@google.com
+Cc:     linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, shanpeic@linux.alibaba.com
+Subject: [RFC PATCH 0/2] support cgroup pool in v1
+Date:   Wed,  8 Sep 2021 20:15:11 +0800
+Message-Id: <cover.1631102579.git.escape@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 08, 2021 at 04:57:45PM +0530, Pintu Agarwal wrote:
-> Hi,
-> 
-> On Mon, 6 Sept 2021 at 21:58, Pintu Agarwal <pintu.ping@gmail.com> wrote:
-> 
-> > On Tue, 31 Aug 2021 at 18:49, Pintu Agarwal <pintu.ping@gmail.com> wrote:
-> >
-> > > > No, but you can backport it easily. Back at
-> > > > http://lists.infradead.org/pipermail/openwrt-devel/2019-November/025967.html
-> > > > I provided backports of this feature to OpenWrt, for the 4.14 and 4.19
-> > > > kernels.
-> 
-> Can you please let me know where to get the below patches for
-> backporting to our kernel:
->  create mode 100644
-> target/linux/generic/backport-4.14/390-dm-add-support-to-directly-boot-to-a-mapped-device.patch
->  create mode 100644
-> target/linux/generic/backport-4.14/391-dm-init-fix-max-devices-targets-checks.patch
->  create mode 100644
-> target/linux/generic/backport-4.14/392-dm-ioctl-fix-hang-in-early-create-error-condition.patch
->  create mode 100644
-> target/linux/generic/backport-4.14/393-Documentation-dm-init-fix-multi-device-example.patch
+In a scenario where containers are started with high concurrency, in
+order to control the use of system resources by the container, it is
+necessary to create a corresponding cgroup for each container and
+attach the process. The kernel uses the cgroup_mutex global lock to
+protect the consistency of the data, which results in a higher
+long-tail delay for cgroup-related operations during concurrent startup.
+For example, long-tail delay of creating cgroup under each subsystems
+is 900ms when starting 400 containers, which becomes bottleneck of
+performance. The delay is mainly composed of two parts, namely the
+time of the critical section protected by cgroup_mutex and the
+scheduling time of sleep. The scheduling time will increase with
+the increase of the cpu overhead.
 
-If you are stuck on an older kernel version, then you need to get
-support from the vendor that is forcing you to be on that kernel
-version, as you are already paying them for support.  Please take
-advantage of that, as no one knows what is really in "your kernel".
+In order to solve this long-tail delay problem, we designed a cgroup
+pool. The cgroup pool will create a certain number of cgroups in advance.
+When a user creates a cgroup through the mkdir system call, a clean cgroup
+can be quickly obtained from the pool. Cgroup pool draws on the idea of
+cgroup rename. By creating pool and rename in advance, it reduces the
+critical area of cgroup creation, and uses a spinlock different from
+cgroup_mutex, which reduces scheduling overhead on the one hand, and eases
+competition with attaching processes on the other hand.
 
-thanks,
+The core idea of implementing a cgroup pool is to create a hidden kernfs
+tree. Cgroup is implemented based on the kernfs file system. The user
+manipulates the cgroup through the kernfs file. Therefore, we can create
+a cgroup in advance and place it in a hidden kernfs tree, so that the user
+can not operate the cgroup. When the user needs to create one, move the
+cgroup to its original location. Because this only needs to remove a node
+from one kernfs tree and move it to another tree, it does not affect other
+data of the cgroup and related subsystems, so this operation is very
+efficient and fast, and there is no need to hold cgroup_mutex. In this
+way, we get rid of the limitation of cgroup_mutex and reduce the time
+consumption of the critical section, but the kernfs_rwsem is still
+protecting the kernfs-related data structure, and the scheduling time
+of sleep still exists.
 
-greg k-h
+In order to avoid the use of kernfs_rwsem, we introduced a pinned state for
+the kernfs node. When the pinned state of this node is true, the lock that
+protects the data of this node is changed from kernfs_rwsem to a lock that
+can be set. In the scenario of a cgroup pool, the parent cgroup will have a
+corresponding spinlock. When the pool is enabled, the kernfs nodes of all
+cgroups under the parent cgroup are set to the pinned state. Create,
+delete, and move these kernfs nodes are protected by the spinlock of the
+parent cgroup, so data consistency will not be a problem.
+
+After opening the pool, the user creates a cgroup will take the fast path
+and obtain it from the cgroup pool. Deleting cgroups still take the slow
+path. When resources in the pool are insufficient, a delayed task will be
+triggered, and the pool will be replenished after a period of time. This
+is done to avoid competition with the current creation of cgroups and thus
+affect performance. When the resources in the pool are exhausted and not
+replenished in time, the creation of a cgroup will take a slow path,
+so users need to set an appropriate pool size and supplementary delay time.
+
+What we did in the patches are:
+	1.add pinned flags for kernfs nodes, so that they can get rid of
+	kernfs_rwsem and choose to be protected by other locks.
+	2.add pool_size interface which used to open cgroup pool and
+	close cgroup pool.
+	3.add extra kernfs tree which used to hide cgroup in pool.
+	4.add spinlock to protect kernfs nodes of cgroup in pool
+
+
+Yi Tao (2):
+  add pinned flags for kernfs node
+  support cgroup pool in v1
+
+ fs/kernfs/dir.c             |  74 ++++++++++++++++-------
+ include/linux/cgroup-defs.h |  16 +++++
+ include/linux/cgroup.h      |   2 +
+ include/linux/kernfs.h      |  14 +++++
+ kernel/cgroup/cgroup-v1.c   | 139 ++++++++++++++++++++++++++++++++++++++++++++
+ kernel/cgroup/cgroup.c      | 113 ++++++++++++++++++++++++++++++++++-
+ kernel/sysctl.c             |   8 +++
+ 7 files changed, 345 insertions(+), 21 deletions(-)
+
+-- 
+1.8.3.1
+
