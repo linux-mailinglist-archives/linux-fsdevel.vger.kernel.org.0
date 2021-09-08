@@ -2,110 +2,280 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A5E5A403991
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 14:15:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C986403995
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 14:17:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351670AbhIHMQn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Sep 2021 08:16:43 -0400
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:54381 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231372AbhIHMQn (ORCPT
+        id S1351690AbhIHMQt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Sep 2021 08:16:49 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:34018 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1351687AbhIHMQs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Sep 2021 08:16:43 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=escape@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0Ungmnr5_1631103332;
-Received: from localhost(mailfrom:escape@linux.alibaba.com fp:SMTPD_---0Ungmnr5_1631103332)
+        Wed, 8 Sep 2021 08:16:48 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R781e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=escape@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0UnhKrU5_1631103338;
+Received: from localhost(mailfrom:escape@linux.alibaba.com fp:SMTPD_---0UnhKrU5_1631103338)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 08 Sep 2021 20:15:32 +0800
+          Wed, 08 Sep 2021 20:15:38 +0800
 From:   Yi Tao <escape@linux.alibaba.com>
 To:     gregkh@linuxfoundation.org, tj@kernel.org, lizefan.x@bytedance.com,
         hannes@cmpxchg.org, mcgrof@kernel.org, keescook@chromium.org,
         yzaikin@google.com
 Cc:     linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, shanpeic@linux.alibaba.com
-Subject: [RFC PATCH 0/2] support cgroup pool in v1
-Date:   Wed,  8 Sep 2021 20:15:11 +0800
-Message-Id: <cover.1631102579.git.escape@linux.alibaba.com>
+Subject: [RFC PATCH 1/2] add pinned flags for kernfs node
+Date:   Wed,  8 Sep 2021 20:15:12 +0800
+Message-Id: <e753e449240bfc43fcb7aa26dca196e2f51e0836.1631102579.git.escape@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <cover.1631102579.git.escape@linux.alibaba.com>
+References: <cover.1631102579.git.escape@linux.alibaba.com>
+In-Reply-To: <cover.1631102579.git.escape@linux.alibaba.com>
+References: <cover.1631102579.git.escape@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In a scenario where containers are started with high concurrency, in
-order to control the use of system resources by the container, it is
-necessary to create a corresponding cgroup for each container and
-attach the process. The kernel uses the cgroup_mutex global lock to
-protect the consistency of the data, which results in a higher
-long-tail delay for cgroup-related operations during concurrent startup.
-For example, long-tail delay of creating cgroup under each subsystems
-is 900ms when starting 400 containers, which becomes bottleneck of
-performance. The delay is mainly composed of two parts, namely the
-time of the critical section protected by cgroup_mutex and the
-scheduling time of sleep. The scheduling time will increase with
-the increase of the cpu overhead.
+This patch is preparing for the implementation of cgroup pool. If a
+kernfs node is set to pinned. the data of this node will no longer be
+protected by kernfs internally. When it performs the following actions,
+the area protected by kernfs_rwsem will be protected by the specific
+spinlock:
+	1.rename this node
+	2.remove this node
+	3.create child node
 
-In order to solve this long-tail delay problem, we designed a cgroup
-pool. The cgroup pool will create a certain number of cgroups in advance.
-When a user creates a cgroup through the mkdir system call, a clean cgroup
-can be quickly obtained from the pool. Cgroup pool draws on the idea of
-cgroup rename. By creating pool and rename in advance, it reduces the
-critical area of cgroup creation, and uses a spinlock different from
-cgroup_mutex, which reduces scheduling overhead on the one hand, and eases
-competition with attaching processes on the other hand.
+Suggested-by: Shanpei Chen <shanpeic@linux.alibaba.com>
+Signed-off-by: Yi Tao <escape@linux.alibaba.com>
+---
+ fs/kernfs/dir.c        | 74 ++++++++++++++++++++++++++++++++++++--------------
+ include/linux/kernfs.h | 14 ++++++++++
+ 2 files changed, 68 insertions(+), 20 deletions(-)
 
-The core idea of implementing a cgroup pool is to create a hidden kernfs
-tree. Cgroup is implemented based on the kernfs file system. The user
-manipulates the cgroup through the kernfs file. Therefore, we can create
-a cgroup in advance and place it in a hidden kernfs tree, so that the user
-can not operate the cgroup. When the user needs to create one, move the
-cgroup to its original location. Because this only needs to remove a node
-from one kernfs tree and move it to another tree, it does not affect other
-data of the cgroup and related subsystems, so this operation is very
-efficient and fast, and there is no need to hold cgroup_mutex. In this
-way, we get rid of the limitation of cgroup_mutex and reduce the time
-consumption of the critical section, but the kernfs_rwsem is still
-protecting the kernfs-related data structure, and the scheduling time
-of sleep still exists.
-
-In order to avoid the use of kernfs_rwsem, we introduced a pinned state for
-the kernfs node. When the pinned state of this node is true, the lock that
-protects the data of this node is changed from kernfs_rwsem to a lock that
-can be set. In the scenario of a cgroup pool, the parent cgroup will have a
-corresponding spinlock. When the pool is enabled, the kernfs nodes of all
-cgroups under the parent cgroup are set to the pinned state. Create,
-delete, and move these kernfs nodes are protected by the spinlock of the
-parent cgroup, so data consistency will not be a problem.
-
-After opening the pool, the user creates a cgroup will take the fast path
-and obtain it from the cgroup pool. Deleting cgroups still take the slow
-path. When resources in the pool are insufficient, a delayed task will be
-triggered, and the pool will be replenished after a period of time. This
-is done to avoid competition with the current creation of cgroups and thus
-affect performance. When the resources in the pool are exhausted and not
-replenished in time, the creation of a cgroup will take a slow path,
-so users need to set an appropriate pool size and supplementary delay time.
-
-What we did in the patches are:
-	1.add pinned flags for kernfs nodes, so that they can get rid of
-	kernfs_rwsem and choose to be protected by other locks.
-	2.add pool_size interface which used to open cgroup pool and
-	close cgroup pool.
-	3.add extra kernfs tree which used to hide cgroup in pool.
-	4.add spinlock to protect kernfs nodes of cgroup in pool
-
-
-Yi Tao (2):
-  add pinned flags for kernfs node
-  support cgroup pool in v1
-
- fs/kernfs/dir.c             |  74 ++++++++++++++++-------
- include/linux/cgroup-defs.h |  16 +++++
- include/linux/cgroup.h      |   2 +
- include/linux/kernfs.h      |  14 +++++
- kernel/cgroup/cgroup-v1.c   | 139 ++++++++++++++++++++++++++++++++++++++++++++
- kernel/cgroup/cgroup.c      | 113 ++++++++++++++++++++++++++++++++++-
- kernel/sysctl.c             |   8 +++
- 7 files changed, 345 insertions(+), 21 deletions(-)
-
+diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+index ba581429bf7b..68b05b5bc1a2 100644
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -26,7 +26,6 @@
+ 
+ static bool kernfs_active(struct kernfs_node *kn)
+ {
+-	lockdep_assert_held(&kernfs_rwsem);
+ 	return atomic_read(&kn->active) >= 0;
+ }
+ 
+@@ -461,10 +460,9 @@ static void kernfs_drain(struct kernfs_node *kn)
+ {
+ 	struct kernfs_root *root = kernfs_root(kn);
+ 
+-	lockdep_assert_held_write(&kernfs_rwsem);
+ 	WARN_ON_ONCE(kernfs_active(kn));
+ 
+-	up_write(&kernfs_rwsem);
++	kernfs_unlock(kn);
+ 
+ 	if (kernfs_lockdep(kn)) {
+ 		rwsem_acquire(&kn->dep_map, 0, 0, _RET_IP_);
+@@ -483,7 +481,7 @@ static void kernfs_drain(struct kernfs_node *kn)
+ 
+ 	kernfs_drain_open_files(kn);
+ 
+-	down_write(&kernfs_rwsem);
++	kernfs_lock(kn);
+ }
+ 
+ /**
+@@ -722,7 +720,7 @@ int kernfs_add_one(struct kernfs_node *kn)
+ 	bool has_ns;
+ 	int ret;
+ 
+-	down_write(&kernfs_rwsem);
++	kernfs_lock(parent);
+ 
+ 	ret = -EINVAL;
+ 	has_ns = kernfs_ns_enabled(parent);
+@@ -753,7 +751,7 @@ int kernfs_add_one(struct kernfs_node *kn)
+ 		ps_iattr->ia_mtime = ps_iattr->ia_ctime;
+ 	}
+ 
+-	up_write(&kernfs_rwsem);
++	kernfs_unlock(parent);
+ 
+ 	/*
+ 	 * Activate the new node unless CREATE_DEACTIVATED is requested.
+@@ -767,7 +765,7 @@ int kernfs_add_one(struct kernfs_node *kn)
+ 	return 0;
+ 
+ out_unlock:
+-	up_write(&kernfs_rwsem);
++	kernfs_unlock(parent);
+ 	return ret;
+ }
+ 
+@@ -788,8 +786,6 @@ static struct kernfs_node *kernfs_find_ns(struct kernfs_node *parent,
+ 	bool has_ns = kernfs_ns_enabled(parent);
+ 	unsigned int hash;
+ 
+-	lockdep_assert_held(&kernfs_rwsem);
+-
+ 	if (has_ns != (bool)ns) {
+ 		WARN(1, KERN_WARNING "kernfs: ns %s in '%s' for '%s'\n",
+ 		     has_ns ? "required" : "invalid", parent->name, name);
+@@ -1242,8 +1238,6 @@ static struct kernfs_node *kernfs_next_descendant_post(struct kernfs_node *pos,
+ {
+ 	struct rb_node *rbn;
+ 
+-	lockdep_assert_held_write(&kernfs_rwsem);
+-
+ 	/* if first iteration, visit leftmost descendant which may be root */
+ 	if (!pos)
+ 		return kernfs_leftmost_descendant(root);
+@@ -1299,8 +1293,6 @@ static void __kernfs_remove(struct kernfs_node *kn)
+ {
+ 	struct kernfs_node *pos;
+ 
+-	lockdep_assert_held_write(&kernfs_rwsem);
+-
+ 	/*
+ 	 * Short-circuit if non-root @kn has already finished removal.
+ 	 * This is for kernfs_remove_self() which plays with active ref
+@@ -1369,9 +1361,9 @@ static void __kernfs_remove(struct kernfs_node *kn)
+  */
+ void kernfs_remove(struct kernfs_node *kn)
+ {
+-	down_write(&kernfs_rwsem);
++	kernfs_lock(kn);
+ 	__kernfs_remove(kn);
+-	up_write(&kernfs_rwsem);
++	kernfs_unlock(kn);
+ }
+ 
+ /**
+@@ -1525,13 +1517,13 @@ int kernfs_remove_by_name_ns(struct kernfs_node *parent, const char *name,
+ 		return -ENOENT;
+ 	}
+ 
+-	down_write(&kernfs_rwsem);
++	kernfs_lock(parent);
+ 
+ 	kn = kernfs_find_ns(parent, name, ns);
+ 	if (kn)
+ 		__kernfs_remove(kn);
+ 
+-	up_write(&kernfs_rwsem);
++	kernfs_unlock(parent);
+ 
+ 	if (kn)
+ 		return 0;
+@@ -1557,7 +1549,9 @@ int kernfs_rename_ns(struct kernfs_node *kn, struct kernfs_node *new_parent,
+ 	if (!kn->parent)
+ 		return -EINVAL;
+ 
+-	down_write(&kernfs_rwsem);
++	/* if parent is pinned, parent->lock protects rename */
++	if (!kn->parent->pinned)
++		down_write(&kernfs_rwsem);
+ 
+ 	error = -ENOENT;
+ 	if (!kernfs_active(kn) || !kernfs_active(new_parent) ||
+@@ -1576,7 +1570,8 @@ int kernfs_rename_ns(struct kernfs_node *kn, struct kernfs_node *new_parent,
+ 	/* rename kernfs_node */
+ 	if (strcmp(kn->name, new_name) != 0) {
+ 		error = -ENOMEM;
+-		new_name = kstrdup_const(new_name, GFP_KERNEL);
++		/* use GFP_ATOMIC to avoid sleep */
++		new_name = kstrdup_const(new_name, GFP_ATOMIC);
+ 		if (!new_name)
+ 			goto out;
+ 	} else {
+@@ -1611,10 +1606,49 @@ int kernfs_rename_ns(struct kernfs_node *kn, struct kernfs_node *new_parent,
+ 
+ 	error = 0;
+  out:
+-	up_write(&kernfs_rwsem);
++	if (!kn->parent->pinned)
++		up_write(&kernfs_rwsem);
+ 	return error;
+ }
+ 
++/* Traverse all descendants and set pinned */
++void kernfs_set_pinned(struct kernfs_node *kn, spinlock_t *lock)
++{
++	struct kernfs_node *pos = NULL;
++
++	while ((pos = kernfs_next_descendant_post(pos, kn))) {
++		pos->pinned = true;
++		pos->lock = lock;
++	}
++}
++
++/* Traverse all descendants and clear pinned */
++void kernfs_clear_pinned(struct kernfs_node *kn)
++{
++	struct kernfs_node *pos = NULL;
++
++	while ((pos = kernfs_next_descendant_post(pos, kn))) {
++		pos->pinned = false;
++		pos->lock = NULL;
++	}
++}
++
++void kernfs_lock(struct kernfs_node *kn)
++{
++	if (!kn->pinned)
++		down_write(&kernfs_rwsem);
++	else
++		spin_lock(kn->lock);
++}
++
++void kernfs_unlock(struct kernfs_node *kn)
++{
++	if (!kn->pinned)
++		up_write(&kernfs_rwsem);
++	else
++		spin_unlock(kn->lock);
++}
++
+ /* Relationship between mode and the DT_xxx types */
+ static inline unsigned char dt_type(struct kernfs_node *kn)
+ {
+diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
+index 1093abf7c28c..a70d96308c51 100644
+--- a/include/linux/kernfs.h
++++ b/include/linux/kernfs.h
+@@ -161,6 +161,13 @@ struct kernfs_node {
+ 	unsigned short		flags;
+ 	umode_t			mode;
+ 	struct kernfs_iattrs	*iattr;
++
++	/*
++	 * If pinned is true, use lock to protect remove, rename this kernfs
++	 * node or create child kernfs node.
++	 */
++	bool			pinned;
++	spinlock_t		*lock;
+ };
+ 
+ /*
+@@ -415,6 +422,11 @@ int kernfs_xattr_set(struct kernfs_node *kn, const char *name,
+ 
+ struct kernfs_node *kernfs_find_and_get_node_by_id(struct kernfs_root *root,
+ 						   u64 id);
++
++void kernfs_set_pinned(struct kernfs_node *kn, spinlock_t *lock);
++void kernfs_clear_pinned(struct kernfs_node *kn);
++void kernfs_lock(struct kernfs_node *kn);
++void kernfs_unlock(struct kernfs_node *kn);
+ #else	/* CONFIG_KERNFS */
+ 
+ static inline enum kernfs_node_type kernfs_type(struct kernfs_node *kn)
+@@ -528,6 +540,8 @@ static inline void kernfs_kill_sb(struct super_block *sb) { }
+ 
+ static inline void kernfs_init(void) { }
+ 
++inline void kernfs_set_pinned(struct kernfs_node *kn, spinlock_t *lock) {}
++inline void kernfs_clear_pinned(struct kernfs_node *kn) {}
+ #endif	/* CONFIG_KERNFS */
+ 
+ /**
 -- 
 1.8.3.1
 
