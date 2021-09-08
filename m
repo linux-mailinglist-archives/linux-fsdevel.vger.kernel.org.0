@@ -2,141 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BA10403B65
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 16:21:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81B3A403CC1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 17:45:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348814AbhIHOWi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Sep 2021 10:22:38 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:42616 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229600AbhIHOWh (ORCPT
+        id S1352164AbhIHPqa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Sep 2021 11:46:30 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:50107 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1352139AbhIHPq1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Sep 2021 10:22:37 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51]:37094)
-        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1mNyS5-002ZZZ-SF; Wed, 08 Sep 2021 08:21:25 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95]:42036 helo=email.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1mNyS4-00BBdJ-GW; Wed, 08 Sep 2021 08:21:25 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
+        Wed, 8 Sep 2021 11:46:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1631115919;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=muFBPGCZFIWVbsihvqYd16/c7qHbhJgPf0c3eVU/dH4=;
+        b=DNBV4C5hbHMe7uBmtulzYgTKD1VfukQxXfrbm1FY9xWcdlWZayV4gr0i3eSUolRr9XiSE1
+        ZNRdbRt91MrNSoDiZPzVbSZMY5RE/GihaaP2KQdBnEUTKzci4HJgTvtV4HA7zzz+vxyIhC
+        NkQSfjgjczthCKypxe0DB275MPmw4gk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-308-vRY6YULoN0y3rGhWnlRXaQ-1; Wed, 08 Sep 2021 11:45:16 -0400
+X-MC-Unique: vRY6YULoN0y3rGhWnlRXaQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 90DCA1927800;
+        Wed,  8 Sep 2021 15:45:14 +0000 (UTC)
+Received: from t480s.redhat.com (unknown [10.39.195.121])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 93F4C1A26A;
+        Wed,  8 Sep 2021 15:45:07 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        "Fields\, Bruce" <bfields@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-References: <20210902152228.665959-1-vgoyal@redhat.com>
-        <CAHc6FU4foW+9ZwTRis3DXSJSMAvdb4jXcq7EFFArYgX7FQ1QYg@mail.gmail.com>
-        <YTYoEDT+YOtCHXW0@work-vm>
-        <CAJfpegvbkmdneMxMjYMuNM4+RmWT8S7gaTiDzaq+TCzb0UrQrw@mail.gmail.com>
-        <YTfcT1JUactPhwSA@redhat.com>
-        <CAJfpegumUMsQ1Zk4MjnSXhrcnX_RJfM5LJ2oL6W3Um_wFNPRFQ@mail.gmail.com>
-Date:   Wed, 08 Sep 2021 09:20:32 -0500
-In-Reply-To: <CAJfpegumUMsQ1Zk4MjnSXhrcnX_RJfM5LJ2oL6W3Um_wFNPRFQ@mail.gmail.com>
-        (Miklos Szeredi's message of "Wed, 8 Sep 2021 09:37:17 +0200")
-Message-ID: <87lf47tahb.fsf@disp2133>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        linux-s390@vger.kernel.org, linux-mm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v1] hugetlbfs: s390 is always 64bit
+Date:   Wed,  8 Sep 2021 17:45:06 +0200
+Message-Id: <20210908154506.20764-1-david@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1mNyS4-00BBdJ-GW;;;mid=<87lf47tahb.fsf@disp2133>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+SrgV0tKVopvxRdxK+6dEdGv6cwF2N0VI=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Miklos Szeredi <miklos@szeredi.hu>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 550 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 11 (2.0%), b_tie_ro: 9 (1.7%), parse: 1.02 (0.2%),
-         extract_message_metadata: 13 (2.3%), get_uri_detail_list: 1.62 (0.3%),
-         tests_pri_-1000: 11 (2.0%), tests_pri_-950: 1.31 (0.2%),
-        tests_pri_-900: 1.14 (0.2%), tests_pri_-90: 154 (27.9%), check_bayes:
-        151 (27.5%), b_tokenize: 9 (1.6%), b_tok_get_all: 8 (1.5%),
-        b_comp_prob: 2.9 (0.5%), b_tok_touch_all: 127 (23.1%), b_finish: 0.98
-        (0.2%), tests_pri_0: 346 (62.9%), check_dkim_signature: 0.63 (0.1%),
-        check_dkim_adsp: 2.3 (0.4%), poll_dns_idle: 0.52 (0.1%), tests_pri_10:
-        2.4 (0.4%), tests_pri_500: 7 (1.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v3 0/1] Relax restrictions on user.* xattr
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Miklos Szeredi <miklos@szeredi.hu> writes:
+No need to check for 64BIT. While at it, let's just select
+ARCH_SUPPORTS_HUGETLBFS from arch/s390x/Kconfig.
 
-> On Tue, 7 Sept 2021 at 23:40, Vivek Goyal <vgoyal@redhat.com> wrote:
->>
->> On Mon, Sep 06, 2021 at 04:56:44PM +0200, Miklos Szeredi wrote:
->> > On Mon, 6 Sept 2021 at 16:39, Dr. David Alan Gilbert
->> > <dgilbert@redhat.com> wrote:
->> >
->> > > IMHO the real problem here is that the user/trusted/system/security
->> > > 'namespaces' are arbitrary hacks rather than a proper namespacing
->> > > mechanism that allows you to create new (nested) namespaces and associate
->> > > permissions with each one.
->> >
->> > Indeed.
->> >
->> > This is what Eric Biederman suggested at some point for supporting
->> > trusted xattrs within a user namespace:
->> >
->> > | For trusted xattrs I think it makes sense in principle.   The namespace
->> > | would probably become something like "trusted<ns-root-uid>.".
->> >
->> > Theory sounds simple enough.  Anyone interested in looking at the details?
->>
->> So this namespaced trusted.* xattr domain will basically avoid the need
->> to have CAP_SYS_ADMIN in init_user_ns, IIUC.  I guess this is better
->> than giving CAP_SYS_ADMIN in init_user_ns.
->
-> That's the objective, yes.  I think the trick is getting filesystems
-> to store yet another xattr type.
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: linux-s390@vger.kernel.org
+Cc: linux-mm@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ arch/s390/Kconfig | 1 +
+ fs/Kconfig        | 3 +--
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Using the uid of the root user of a user namespace is probably the best
-idea we have so far for identifying a user namespace in persistent
-on-disk meta-data.  We ran into a little trouble using that idea
-for file capabilities.
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index a0e2130f0100..0113e8f703e5 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -110,6 +110,7 @@ config S390
+ 	select ARCH_STACKWALK
+ 	select ARCH_SUPPORTS_ATOMIC_RMW
+ 	select ARCH_SUPPORTS_DEBUG_PAGEALLOC
++	select ARCH_SUPPORTS_HUGETLBFS
+ 	select ARCH_SUPPORTS_NUMA_BALANCING
+ 	select ARCH_USE_BUILTIN_BSWAP
+ 	select ARCH_USE_CMPXCHG_LOCKREF
+diff --git a/fs/Kconfig b/fs/Kconfig
+index a7749c126b8e..44f5dba9f704 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -228,8 +228,7 @@ config ARCH_SUPPORTS_HUGETLBFS
+ 
+ config HUGETLBFS
+ 	bool "HugeTLB file system support"
+-	depends on X86 || IA64 || SPARC64 || (S390 && 64BIT) || \
+-		   ARCH_SUPPORTS_HUGETLBFS || BROKEN
++	depends on X86 || IA64 || SPARC64 || ARCH_SUPPORTS_HUGETLBFS || BROKEN
+ 	help
+ 	  hugetlbfs is a filesystem backing for HugeTLB pages, based on
+ 	  ramfs. For architectures that support it, say Y here and read
 
-The key problem was there are corner cases where some nested user
-namespaces have the same root user id as their parent namespaces.  This
-has the potential to allow privilege escalation if the creator of the
-user namespace does not have sufficient capabilities.
+base-commit: 7d2a07b769330c34b4deabeed939325c77a7ec2f
+-- 
+2.31.1
 
-The solution we adopted can be seen in db2e718a4798 ("capabilities:
-require CAP_SETFCAP to map uid 0").
-
-That solution is basically not allowing the creation of user namespaces
-that could have problems.  I think use trusted xattrs this way the code
-would need to treat CAP_SYS_ADMIN the same way it currently treats
-CAP_SETFCAP.
-
-Eric
