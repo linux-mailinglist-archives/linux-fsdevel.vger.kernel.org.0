@@ -2,80 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57B214038D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 13:34:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63820403980
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Sep 2021 14:09:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349123AbhIHLfe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Sep 2021 07:35:34 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:39450 "EHLO mail.skyhub.de"
+        id S1351661AbhIHMJX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Sep 2021 08:09:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1348557AbhIHLfe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Sep 2021 07:35:34 -0400
-Received: from zn.tnic (p200300ec2f0efc002d1ac0b1b41b9169.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:fc00:2d1a:c0b1:b41b:9169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 69E191EC036B;
-        Wed,  8 Sep 2021 13:34:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1631100865;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=m/Frv4i98ljsymrvV0/yhoTmQ0S/VberekuyvlZ3qEw=;
-        b=NfKUxhqk7CQNY9baqIi2HJw9km0ov3Vhu96MRbZd7TFmRoLJn/9d8b11Xk17XDIwl6B1Wg
-        ubT9iwlULRlwmbhdS1woU5AIwJtXvDZL2VpfRLDE9rroVJfb1kI8NRVVH/gFIGNGu7QkLI
-        7I/ZsdGgnHAzL2v1JqKR3QArzp0xr0w=
-Date:   Wed, 8 Sep 2021 13:34:18 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2] x86/mm: fix kern_addr_valid to cope with existing but
- not present entries
-Message-ID: <YTifujf+Qez2hE82@zn.tnic>
-References: <20210819132717.19358-1-rppt@kernel.org>
- <35f4a263-1001-5ba5-7b6c-3fcc5f93cc30@intel.com>
- <YTiR6aK6XKJ4z0wH@zn.tnic>
- <YTiV/Sdm/T/jnsHC@zn.tnic>
- <YTic90lqv0HbuYOI@kernel.org>
+        id S234758AbhIHMJV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Sep 2021 08:09:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B86D96109F;
+        Wed,  8 Sep 2021 12:08:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1631102893;
+        bh=+2qr6IIO/UXLiJjbyRAgzuQXiygiL06LUjfWuxvrq7U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jcs7nucfDWnXMYxo5ee/D0ZZAPqmOq3Gvtv+E0miyvRG+OwrIE8sOqA4FK3hT4+wi
+         atyLzSEjCkXrJl+bnpyYiVY1FZkXaUHxOKCkF/CqzLfbFz3j2oqiUMCBU5lTdOrIFa
+         OxQTgGQ4h74+Oz78PjpHrzODtGnMgkj+tyADOD5M=
+Date:   Wed, 8 Sep 2021 14:08:10 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Pintu Agarwal <pintu.ping@gmail.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Sami Tolvanen <samitolvanen@google.com>, snitzer@redhat.com,
+        Kernelnewbies <kernelnewbies@kernelnewbies.org>,
+        open list <linux-kernel@vger.kernel.org>, dm-devel@redhat.com,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>, agk@redhat.com
+Subject: Re: Kernel 4.14: Using dm-verity with squashfs rootfs - mounting
+ issue
+Message-ID: <YTinqiH9h+Q9bYsr@kroah.com>
+References: <CAOuPNLhh_LkLQ8mSA4eoUDLCLzHo5zHXsiQZXUB_-T_F1_v6-g@mail.gmail.com>
+ <alpine.LRH.2.02.2107211300520.10897@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAOuPNLi-xz_4P+v45CHLx00ztbSwU3_maf4tuuyso5RHyeOytg@mail.gmail.com>
+ <CAOuPNLg0m-Q7Vhp4srbQrjXHsxVhOr-K2dvnNqzdR6Dr4kioqA@mail.gmail.com>
+ <20210830185541.715f6a39@windsurf>
+ <CAOuPNLhTidgLNWUbtUgdESYcKcE1C4SOdzKeQVhFGQvEoc0QEg@mail.gmail.com>
+ <20210830211224.76391708@windsurf>
+ <CAOuPNLgMd0AThhmSknbmKqp3_P8PFhBGr-jW0Mqjb6K6NchEMg@mail.gmail.com>
+ <CAOuPNLiW10-E6F_Ndte7U9NPBKa9Y_UuLhgdwAYTc0eYMk5Mqg@mail.gmail.com>
+ <CAOuPNLj2Xmx52Gtzx5oEKif4Qz-Tz=vaxhRvHQG-5emO7ewRhg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YTic90lqv0HbuYOI@kernel.org>
+In-Reply-To: <CAOuPNLj2Xmx52Gtzx5oEKif4Qz-Tz=vaxhRvHQG-5emO7ewRhg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 08, 2021 at 02:22:31PM +0300, Mike Rapoport wrote:
-> kern_addr_valid() wrongly uses pxy_none() rather than pxy_present() because
-> according to 9a14aefc1d28 ("x86: cpa, fix lookup_address") there could be
-> cases when page table entries exist but they are not valid.
-> So a call to kern_addr_valid() for an address in the direct map would oops.
+On Wed, Sep 08, 2021 at 04:57:45PM +0530, Pintu Agarwal wrote:
+> Hi,
 > 
-> I've stopped digging at 9a14aefc1d28 (which is in v2.6.26) and added the
-> oldest stable we still support (4.4).
+> On Mon, 6 Sept 2021 at 21:58, Pintu Agarwal <pintu.ping@gmail.com> wrote:
 > 
-> I agree that before 4.19 it's more of a theoretical bug, but you know,
-> things happen...
+> > On Tue, 31 Aug 2021 at 18:49, Pintu Agarwal <pintu.ping@gmail.com> wrote:
+> >
+> > > > No, but you can backport it easily. Back at
+> > > > http://lists.infradead.org/pipermail/openwrt-devel/2019-November/025967.html
+> > > > I provided backports of this feature to OpenWrt, for the 4.14 and 4.19
+> > > > kernels.
+> 
+> Can you please let me know where to get the below patches for
+> backporting to our kernel:
+>  create mode 100644
+> target/linux/generic/backport-4.14/390-dm-add-support-to-directly-boot-to-a-mapped-device.patch
+>  create mode 100644
+> target/linux/generic/backport-4.14/391-dm-init-fix-max-devices-targets-checks.patch
+>  create mode 100644
+> target/linux/generic/backport-4.14/392-dm-ioctl-fix-hang-in-early-create-error-condition.patch
+>  create mode 100644
+> target/linux/generic/backport-4.14/393-Documentation-dm-init-fix-multi-device-example.patch
 
-Hmmkay, I guess I should add the gist of that to the commit message so
-that it is explained why 4.4.
+If you are stuck on an older kernel version, then you need to get
+support from the vendor that is forcing you to be on that kernel
+version, as you are already paying them for support.  Please take
+advantage of that, as no one knows what is really in "your kernel".
 
-I'm assuming the pxy_present() check is more strict than pxy_none() so
-that backporting to all stable kernels should not introduce any risks...
+thanks,
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+greg k-h
