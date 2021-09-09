@@ -2,143 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B39C9405F2C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 00:02:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C1B1405F58
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 00:21:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245368AbhIIWCk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Sep 2021 18:02:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35484 "EHLO
+        id S242479AbhIIWWk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Sep 2021 18:22:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244548AbhIIWCh (ORCPT
+        with ESMTP id S235233AbhIIWWj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Sep 2021 18:02:37 -0400
-Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07FF9C061574
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Sep 2021 15:01:27 -0700 (PDT)
-Received: by mail-qk1-x730.google.com with SMTP id m21so3612848qkm.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Sep 2021 15:01:26 -0700 (PDT)
+        Thu, 9 Sep 2021 18:22:39 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A637C061575
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Sep 2021 15:21:30 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id m21-20020a17090a859500b00197688449c4so63726pjn.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Sep 2021 15:21:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=QZqkF9duxuzZ+biCr/DN+cOPkA95d4hYzGir/0bZtG8=;
-        b=n4Yox4FllS4gAcO35Nu8s/ilFPO82gh8Gm/P3mDRND5oe2rctlncS/tr0y85Fs8npP
-         98l5IbSFrFXrw+cwcb0zvs+hCkjsxur9V2MMDUGHT3XXfhEce73/5iWt2xplCy/3EJhh
-         +2prmzstXNUANrptayppa1LTU1dcLX//fY9en1mSyyXXReAarLHQYYJ/9PUblzzl32wE
-         WCEvZ5kvcljGt7MED2wLGtYBCaYZcdNBK5lTYlEhrMEneFSeEYCqWAkX/McDiRbDrXNq
-         5rDknVoSQRALljSxiiu1jfnqPspcTcube+E4KtX+IPf4QLINfIOzYrHc0ANRy6ZvMxWa
-         qOTQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZYRCogdjrmnSAVx4pAQ8/+G6/DhQ9wIsSfrzKtwXjnw=;
+        b=UGFT2Mu6b8not/9wAFQwXTaYtxlHjeRVEz8Kgt52x4i9O51VzldSh0tCJ7frnQXn4v
+         NmiSBoZG0MseTNF5GJaQo76UobX66Ce/KaAjYw1zDrI54pXOZSm5KHY+GrDtpe68o2AQ
+         TPojFdd7jEZDJbUpmMmydqJnvmIcOXIn7CEsObKdRfh0P19JdJ6u6SwDbcVBoN8yUxOU
+         ZX9Xs+GPA27fn/+ri/zZpSJGXuEIwrQjxn/2ygwFSbXXqFaQkePsJNPPOhtlsUgHEV6G
+         JOiYJXGRzOD/nXh04c8fOzUWGC+yh5uQrHFtSIJzkPA1uhxF442bzHpNLclT0ooEiZfJ
+         GG4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=QZqkF9duxuzZ+biCr/DN+cOPkA95d4hYzGir/0bZtG8=;
-        b=SYri7oT4qdYj/n4ndN8zdeRzsvxxdutcqXCZnAcY21TdLBYBewwVM5klAKxVnoCCr8
-         C6pDJUgebKV0vW7NhWybcTncZpyRyogEUfPx1ig4kY330vTE4LWrJMOIDe5FHCGxuHJs
-         YDGEKKKnK+Alg0XM0p46jxRRtFOMa5PQgg1VlaKPgKFt35Gp2z/MVvc1h71pV5QprDhI
-         0iIIX7Km749B9daOlJbXCnX7frbeMJ6yjzyASlLWnycV/t82iZBwN8iRsdUCSyk6Id3i
-         8oH9dv6P81EnBW00eeiT4cWcVBOFo3zygsvCKSgZcPYBYJRGMtJbHEuN0KVTlS5v3kgT
-         HL5Q==
-X-Gm-Message-State: AOAM533urHUU4+aLLgGIiP7omKLP4SRgO57F64ptaF3FHIvgT914uz4O
-        nSswBbDFOpnzbO0x9Aw0VcImiQ==
-X-Google-Smtp-Source: ABdhPJykIZNFvzFm3FAQRsJZQ2IJ7iZMncXFjisKzYimm3AW6YNhcKNTkQC8pRrSlAuvO/m/7fW51Q==
-X-Received: by 2002:a05:620a:2914:: with SMTP id m20mr5086687qkp.497.1631224886125;
-        Thu, 09 Sep 2021 15:01:26 -0700 (PDT)
-Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
-        by smtp.gmail.com with ESMTPSA id s8sm1868997qta.48.2021.09.09.15.01.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Sep 2021 15:01:25 -0700 (PDT)
-Date:   Thu, 9 Sep 2021 18:03:17 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Christoph Hellwig <hch@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] Memory folios for v5.15
-Message-ID: <YTqEpTIbwRJmwCwL@cmpxchg.org>
-References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
- <YToBjZPEVN9Jmp38@infradead.org>
- <6b01d707-3ead-015b-eb36-7e3870248a22@suse.cz>
- <YTpPh2aaQMyHAi8m@cmpxchg.org>
- <YTpWBif8DCV5ovON@casper.infradead.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZYRCogdjrmnSAVx4pAQ8/+G6/DhQ9wIsSfrzKtwXjnw=;
+        b=im7B8OHr3P1UlEoyGUJiXnKi++93QvqrMZlHAgRFjssWqXnIJP+708LiFru/ITKpxR
+         8PIGPxdgCUtgHG+yQEF7ykHti14Y1FsVyVVeGGPFfZWKwQMz7aVCOSs942lEBxaN4GBn
+         E8s3yV7JqZpT25uUiawzmqAcE+uC9jrnlrODS2jFwiz/W6yznAqVzPT9ZwQTHTu8Nyvd
+         Y/diKOSgDFlTH2VuKTVsp0SXVWB9cXX4fjRkvyX4/KKGi8pkgohoun/77MJuRHISyDJm
+         hE3XzKpSuQax8ulLOhy0rc1U2vxEB+PDQgF2dFvyQIc+Mg3dcDcKmkCP/hHIoXA0N08c
+         RSTw==
+X-Gm-Message-State: AOAM5303GdHihZW+s1v/q3YtLPQp5aVUpTpfyRxmI2UQx+8u/D+KTBWs
+        jRf0ZRv7FoTIss85iQbsTvwmoj+CnGeKixZo
+X-Google-Smtp-Source: ABdhPJynnS2UzUsFLJWTjN9+tqX3GhiYjQZwxG4Ry0y0PzSYQM0Jl4jLqq/yL4u93BoqbB8ny7IAew==
+X-Received: by 2002:a17:90a:de0b:: with SMTP id m11mr5984420pjv.39.1631226089094;
+        Thu, 09 Sep 2021 15:21:29 -0700 (PDT)
+Received: from ?IPv6:2600:380:493f:1449:e28:511f:af71:e967? ([2600:380:493f:1449:e28:511f:af71:e967])
+        by smtp.gmail.com with ESMTPSA id q2sm3044603pjo.27.2021.09.09.15.21.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Sep 2021 15:21:28 -0700 (PDT)
+Subject: Re: [git pull] iov_iter fixes
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <YTmL/plKyujwhoaR@zeniv-ca.linux.org.uk>
+ <CAHk-=wiacKV4Gh-MYjteU0LwNBSGpWrK-Ov25HdqB1ewinrFPg@mail.gmail.com>
+ <5971af96-78b7-8304-3e25-00dc2da3c538@kernel.dk>
+ <ebc6cc5e-dd43-6370-b462-228e142beacb@kernel.dk>
+ <CAHk-=whoMLW-WP=8DikhfE4xAu_Tw9jDNkdab4RGEWWMagzW8Q@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ebb7b323-2ae9-9981-cdfd-f0f460be43b3@kernel.dk>
+Date:   Thu, 9 Sep 2021 16:21:27 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YTpWBif8DCV5ovON@casper.infradead.org>
+In-Reply-To: <CAHk-=whoMLW-WP=8DikhfE4xAu_Tw9jDNkdab4RGEWWMagzW8Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 09, 2021 at 07:44:22PM +0100, Matthew Wilcox wrote:
-> On Thu, Sep 09, 2021 at 02:16:39PM -0400, Johannes Weiner wrote:
-> > My objection is simply to one shared abstraction for both. There is
-> > ample evidence from years of hands-on production experience that
-> > compound pages aren't the way toward scalable and maintainable larger
-> > page sizes from the MM side. And it's anything but obvious or
-> > self-evident that just because struct page worked for both roles that
-> > the same is true for compound pages.
+On 9/9/21 3:56 PM, Linus Torvalds wrote:
+> On Thu, Sep 9, 2021 at 2:39 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> OK, one that I immediately found is just doing O_DIRECT to a block
+>> device or file on XFS. As pages are mapped and added, the iov_iter is
+>> advanced. If we then go and submit and get -EAGAIN, for example, then we
+>> return with what we mapped already consumed.
 > 
-> I object to this requirement.  The folio work has been going on for almost
-> a year now, and you come in AT THE END OF THE MERGE WINDOW to ask for it
-> to do something entirely different from what it's supposed to be doing.
-> If you'd asked for this six months ago -- maybe.  But now is completely
-> unreasonable.
+> Ok, that's annoying but understandable. Dave points to a commit that
+> removes one of the EAGAIN cases, but apparently not some others.
 
-I asked for exactly this exactly six months ago.
+That one just catches it upfront so we -EAGAIN immediately, which does
+make it a lot easier to handle. But yes, that's an example.
 
-On March 22nd, I wrote this re: the filesystem interfacing:
+The case I mention we basically always consume the whole iov, to the
+extent that we can map it to a bio. But there's really no way around
+that, we have to map it before we can attempt to do that IO.
 
-: So I think transitioning away from ye olde page is a great idea. I
-: wonder this: have we mapped out the near future of the VM enough to
-: say that the folio is the right abstraction?
-:
-: What does 'folio' mean when it corresponds to either a single page or
-: some slab-type object with no dedicated page?
-:
-: If we go through with all the churn now anyway, IMO it makes at least
-: sense to ditch all association and conceptual proximity to the
-: hardware page or collections thereof. Simply say it's some length of
-: memory, and keep thing-to-page translations out of the public API from
-: the start. I mean, is there a good reason to keep this baggage?
+> I do kind of wonder if you can't have the exact same case when *some*
+> of the IO succeeds, though.
+> 
+> IOW, can't we have  that
+> 
+>         ret = io_iter_do_read(req, iter);
+> 
+> return partial success - and if XFS does that "update iovec on
+> failure", I could easily see that same code - or something else -
+> having done the exact same thing.
+> 
+> Put another way: if the iovec isn't guaranteed to be coherent when an
+> actual error occurs, then why would it be guaranteed to be coherent
+> with a partial success value?
+> 
+> Because in most cases - I'd argue pretty much all - those "partial
+> success" cases are *exactly* the same as the error cases, it's just
+> that we had a loop and one or more iterations succeeded before it hit
+> the error case.
 
-It's not my fault you consistently dismissed and pushed past this
-question and then send a pull request anyway.
+Right, which is why the reset would be nice, but reexpand + revert at
+least works and accomplishes the same even if it doesn't look as pretty.
+We do return how much IO was actually done from the various
+->read/write_iter() obviously, and that cannot be incorrect. It's just
+that the iov_iter doesn't necessarily agree with that view and more (or
+all) may have been consumed regardless of the return value. The truncate
+was really the part that made it impossible to handle.
 
-> I don't think it's a good thing to try to do.  I think that your "let's
-> use slab for this" idea is bonkers and doesn't work.
+-- 
+Jens Axboe
 
-Based on what exactly?
-
-You can't think it's that bonkers when you push for replicating
-slab-like grouping in the page allocator.
-
-Anyway, it was never about how larger pages will pan out in MM. It was
-about keeping some flexibility around the backing memory for cache
-entries, given that this is still an unsolved problem. This is not a
-crazy or unreasonable request, it's the prudent thing to do given the
-amount of open-ended churn and disruptiveness of your patches.
-
-It seems you're not interested in engaging in this argument. You
-prefer to go off on tangents and speculations about how the page
-allocator will work in the future, with seemingly little production
-experience about what does and doesn't work in real life; and at the
-same time dismiss the experience of people that deal with MM problems
-hands-on on millions of machines & thousands of workloads every day.
-
-> And I really object to you getting in the way of my patchset which
-> has actual real-world performance advantages
-
-So? You've gotten in the way of patches that removed unnecessary
-compound_head() call and would have immediately provided some of these
-same advantages without hurting anybody - because the folio will
-eventually solve them all anyway.
-
-We all balance immediate payoff against what we think will be the
-right thing longer term.
-
-Anyway, if you think I'm bonkers, just ignore me. If not, maybe lay
-off the rhetorics, engage in a good-faith discussion and actually
-address my feedback?
