@@ -2,133 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A5512405FB7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 00:49:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C562405FC3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 00:55:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235679AbhIIWum (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Sep 2021 18:50:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46236 "EHLO
+        id S1347053AbhIIW4r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Sep 2021 18:56:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230367AbhIIWum (ORCPT
+        with ESMTP id S235679AbhIIW4o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Sep 2021 18:50:42 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 157AAC061574;
-        Thu,  9 Sep 2021 15:49:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=jwMx+Bdxcf4JuJYm9ph1dk1Qb2BQqM8i1EKgHVKfk0k=; b=cneqA+m0sw9ZoLdnmiIdv6GQDu
-        pSH5gwmbpIffEtYXVV/MuuL5soL09Hgjtuu89rznwMFmAs7eXCwxCT74gQ9KpzmQQgJaka5CG5RVZ
-        rfuvsocxxlGl0Znc86t9V4OUvWSnJzIN4GKcIZsPEJ0L3jYLxWG23ehVmOdF9e5Y0AjJbKCBU21t2
-        ymbEu2Csp8iG50m+VV6ZPb/t3Q9bcJ/DUubcRFOVS9cqKDg/Z6mpbxozZLZm9bBFK3Jaqpah384xB
-        eynMk9uFExGV70vbfdm/kqYhkTIeMXpLghjDg34uWUoOhUAs9sHyrfaV7IcR7omnHNYaji8rKi5li
-        vpPcaKEw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mOSqD-00ARd4-Rk; Thu, 09 Sep 2021 22:48:29 +0000
-Date:   Thu, 9 Sep 2021 23:48:21 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Christoph Hellwig <hch@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [GIT PULL] Memory folios for v5.15
-Message-ID: <YTqPNXNMms1OLSXh@casper.infradead.org>
-References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
- <YToBjZPEVN9Jmp38@infradead.org>
- <6b01d707-3ead-015b-eb36-7e3870248a22@suse.cz>
- <YTpPh2aaQMyHAi8m@cmpxchg.org>
- <YTpWBif8DCV5ovON@casper.infradead.org>
- <YTqEpTIbwRJmwCwL@cmpxchg.org>
+        Thu, 9 Sep 2021 18:56:44 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CE64C061574;
+        Thu,  9 Sep 2021 15:55:34 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id c8-20020a7bc008000000b002e6e462e95fso76897wmb.2;
+        Thu, 09 Sep 2021 15:55:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=to:cc:references:from:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8RfK6zZYm79jc1UWDGWZHStgyLyqAUG2I3xlomOJYS0=;
+        b=OMx3TsuQkmhmujRmLGVx4VtWG2G/O6XnzGNdO/X2y6uIF2z06bv1nNyoIupwtbWnF/
+         PIz2OKIHI3SyNkOzZvJ64HkRox5sqrg4Mh5+JScFg3+h5zeSolIIvFCnFcxS1ZvKP8Qs
+         AWBr2961kWZ1vM2Ls20uAFrPYXbPNed0q4SYto/O05hnDmBuvSEsPZ9SbwfzSm7gweGI
+         ApMv3rrZJrOO151XTt3tVoXoJ9GweXD3X3tAjcXoXWQXjZNEUdpByXs1GfaSa/+KYppg
+         zz+V20UVGhKCXDaklDSI3UsUSXo99NUWft6YoToNGA13j+TxW6aHz/juZhS0vVwCeEHt
+         iqUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8RfK6zZYm79jc1UWDGWZHStgyLyqAUG2I3xlomOJYS0=;
+        b=YUpb7XZOqcfRU88J6yTlE2p0M2l741WvGXrl9gnAWDUcJWQ93r4HxgCguCEq60b9wz
+         lQ7X2SCmRRPO0mLlAxYhEUHWv3EfAN3LfEysWuaS/RpktqsB1P8EZu+YE+IURgRPnFz+
+         FrP0Egd/W7Zv0xgJmS5jyeBlVn3/bwtNjR67sn/HPUuZu1XhZLfSoxvJvJ0oTZx3rUH3
+         dorL5NEIijVuW0OFOKoG1p73wIrvE8Rb4gSLs6r7llERL+t+A3Wa1TyJKXrj5hHOYvBT
+         mbUdIB6EWRrnhFW3+zxgpaQtVZKSOJa1+s7jULONGm2C1xqGu28mruVwpraLyKWcnGsF
+         wh4g==
+X-Gm-Message-State: AOAM5308X7s04YtFWQuhhWuVpTxNNwcvh77ctQTUgOraKeXkXKuz3x/U
+        guKOsEJCxDi2S0sKNhIoY4+TvDZTh2Y=
+X-Google-Smtp-Source: ABdhPJy56AbH4cxWBlK46RaxejsdsXaBiGKCMMDxz3nMM5H9yUnjQ+SD59jqJqkz3DsY3gL4Bj3s/g==
+X-Received: by 2002:a1c:7417:: with SMTP id p23mr5284139wmc.116.1631228132660;
+        Thu, 09 Sep 2021 15:55:32 -0700 (PDT)
+Received: from [192.168.8.197] ([85.255.235.167])
+        by smtp.gmail.com with ESMTPSA id h18sm2986876wrb.33.2021.09.09.15.55.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Sep 2021 15:55:32 -0700 (PDT)
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <YTmL/plKyujwhoaR@zeniv-ca.linux.org.uk>
+ <CAHk-=wiacKV4Gh-MYjteU0LwNBSGpWrK-Ov25HdqB1ewinrFPg@mail.gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [git pull] iov_iter fixes
+Message-ID: <84c85780-fe43-e95b-312d-b7671c65a7aa@gmail.com>
+Date:   Thu, 9 Sep 2021 23:54:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YTqEpTIbwRJmwCwL@cmpxchg.org>
+In-Reply-To: <CAHk-=wiacKV4Gh-MYjteU0LwNBSGpWrK-Ov25HdqB1ewinrFPg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 9/9/21 8:37 PM, Linus Torvalds wrote:
+> On Wed, Sep 8, 2021 at 9:24 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>>
+>>         Fixes for io-uring handling of iov_iter reexpands
+> 
+> Ugh.
+> 
+> I have pulled this, because I understand what it does and I agree it
+> fixes a bug, but it really feels very very hacky and wrong to me.
 
-Ugh.  I'm not dealing with this shit.  I'm supposed to be on holiday.
-I've been checking in to see what needs to happen for folios to be
-merged.  But now I'm just fucking done.  I shan't be checking my email
-until September 19th.
+Maybe was worded not too clearly, my apologies.
 
-Merge the folio branch, merge the pageset branch, or don't merge
-anything.  I don't fucking care any more.
 
-On Thu, Sep 09, 2021 at 06:03:17PM -0400, Johannes Weiner wrote:
-> On Thu, Sep 09, 2021 at 07:44:22PM +0100, Matthew Wilcox wrote:
-> > On Thu, Sep 09, 2021 at 02:16:39PM -0400, Johannes Weiner wrote:
-> > > My objection is simply to one shared abstraction for both. There is
-> > > ample evidence from years of hands-on production experience that
-> > > compound pages aren't the way toward scalable and maintainable larger
-> > > page sizes from the MM side. And it's anything but obvious or
-> > > self-evident that just because struct page worked for both roles that
-> > > the same is true for compound pages.
-> > 
-> > I object to this requirement.  The folio work has been going on for almost
-> > a year now, and you come in AT THE END OF THE MERGE WINDOW to ask for it
-> > to do something entirely different from what it's supposed to be doing.
-> > If you'd asked for this six months ago -- maybe.  But now is completely
-> > unreasonable.
+> It really smells like io-uring is doing a "iov_iter_revert()" using a
+> number that it pulls incorrectly out of its arse.
+
+It's not invented by io_uring,
+
+filemap.c : generic_file_direct_[write,read]()
+
+do the same thing. Also, the block layer was not re-expanding before
+~5.12, so it looks it was possible to trigger a similar thing without
+io_uring, but I haven't tried to reproduce. Was mentioned in the
+cover-letter.
+
+> So when io-uring does that
 > 
-> I asked for exactly this exactly six months ago.
+>                 iov_iter_revert(iter, io_size - iov_iter_count(iter));
 > 
-> On March 22nd, I wrote this re: the filesystem interfacing:
+> what it *really* wants to do is just basically "iov_iter_reset(iter)".
 > 
-> : So I think transitioning away from ye olde page is a great idea. I
-> : wonder this: have we mapped out the near future of the VM enough to
-> : say that the folio is the right abstraction?
-> :
-> : What does 'folio' mean when it corresponds to either a single page or
-> : some slab-type object with no dedicated page?
-> :
-> : If we go through with all the churn now anyway, IMO it makes at least
-> : sense to ditch all association and conceptual proximity to the
-> : hardware page or collections thereof. Simply say it's some length of
-> : memory, and keep thing-to-page translations out of the public API from
-> : the start. I mean, is there a good reason to keep this baggage?
+> And that's basically what that addition of that "iov_iter_reexpand()"
+> tries to effectively do.
 > 
-> It's not my fault you consistently dismissed and pushed past this
-> question and then send a pull request anyway.
+> Wouldn't it be better to have a function that does exactly that?
 > 
-> > I don't think it's a good thing to try to do.  I think that your "let's
-> > use slab for this" idea is bonkers and doesn't work.
+> Alternatively (and I'm cc'ing Jens) is is not possible for the
+> io-uring code to know how many bytes it *actually* used, rather than
+> saying that "ok, the iter originally had X bytes, now it has Y bytes,
+> so it must have used X-Y bytes" which was actively wrong for the case
+> where something ended up truncating the IO for some reason.
 > 
-> Based on what exactly?
+> Because I note that io-uring does that
 > 
-> You can't think it's that bonkers when you push for replicating
-> slab-like grouping in the page allocator.
+>         /* may have left rw->iter inconsistent on -EIOCBQUEUED */
+>         iov_iter_revert(&rw->iter, req->result - iov_iter_count(&rw->iter));
 > 
-> Anyway, it was never about how larger pages will pan out in MM. It was
-> about keeping some flexibility around the backing memory for cache
-> entries, given that this is still an unsolved problem. This is not a
-> crazy or unreasonable request, it's the prudent thing to do given the
-> amount of open-ended churn and disruptiveness of your patches.
+> in io_resubmit_prep() too, and that you guys missed that it's the
+> exact same issue, and needs that exact same iov_iter_reexpand().
+
+Right. It was covered by v1-v2, which were failing requests with
+additional fallback in v2 [1], but I dropped in v3 [2] because there
+is a difference. Namely io_resubmit_prep() might be called deeply down
+the stack, e.g. in the block layer.
+
+It was intended to get fixed once the first part is merged, and I do
+believe that was the right approach, because there were certain
+communication delays. The first version was posted a month ago, but
+we missed the merged window. It appeared to me that if we get anything
+more complex 
+
+ 
+
+
+
+do that at the bottom of stack.
+
+
+
+
+ how deep in the stack we do that. It was indended to
+be 
+
+
+[1] https://lkml.org/lkml/2021/8/12/620
+[2] https://lkml.org/lkml/2021/8/23/285
+
 > 
-> It seems you're not interested in engaging in this argument. You
-> prefer to go off on tangents and speculations about how the page
-> allocator will work in the future, with seemingly little production
-> experience about what does and doesn't work in real life; and at the
-> same time dismiss the experience of people that deal with MM problems
-> hands-on on millions of machines & thousands of workloads every day.
+> That "req->result" is once again the *original* length, and the above
+> code once again mis-handles the case of "oh, the iov got truncated
+> because of some IO limit".
 > 
-> > And I really object to you getting in the way of my patchset which
-> > has actual real-world performance advantages
+> So I've pulled this, but I think it is
 > 
-> So? You've gotten in the way of patches that removed unnecessary
-> compound_head() call and would have immediately provided some of these
-> same advantages without hurting anybody - because the folio will
-> eventually solve them all anyway.
+>  (a) ugly nasty
 > 
-> We all balance immediate payoff against what we think will be the
-> right thing longer term.
+>  (b) incomplete and misses a case
 > 
-> Anyway, if you think I'm bonkers, just ignore me. If not, maybe lay
-> off the rhetorics, engage in a good-faith discussion and actually
-> address my feedback?
+> and needs more thought. At the VERY least it needs that
+> iov_iter_reexpand() in io_resubmit_prep() too, I think.
+> 
+> I'd like the comments expanded too. In particular that
+> 
+>                 /* some cases will consume bytes even on error returns */
+> 
+> really should expand on the "some cases" thing, and why such an error
+> isn't fatal buye should be retried asynchronously blindly like this?
+> 
+> Because I think _that_ is part of the fundamental issue here - the
+> io_uring code tries to just blindly re-submit the whole thing, and it
+> does it very badly and actually incorrectly.
+> 
+> Or am I missing something?
+> 
+>            Linus
+> 
+
+-- 
+Pavel Begunkov
