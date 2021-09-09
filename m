@@ -2,91 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A5ED2405D4C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Sep 2021 21:25:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF475405D65
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Sep 2021 21:38:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244985AbhIIT0J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Sep 2021 15:26:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56616 "EHLO
+        id S245609AbhIITjX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Sep 2021 15:39:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233562AbhIIT0J (ORCPT
+        with ESMTP id S233984AbhIITjX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Sep 2021 15:26:09 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61ED0C061574;
-        Thu,  9 Sep 2021 12:24:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=9eYPN4SGvOoSGXLruTVuFwb68XsxZqpJHY8x5B67EyI=; b=lV2oJQVYRDMnUZkhcBngS14PQ3
-        1Mb+ZPJ+jQiKNeExH1+mA4Pg5AltvuEzB5ryIu5HVcvJI9WtPbnOmb1yn6qZco+emOlvxvimLw8+R
-        CXL/HiZEBWO2Umo4Q79bd3CufNZTN85rOBfsQGaHQNtTN8VhMlL0VbDnXiwKvoztdPkcxmCRCo9WP
-        OzikypG0d0XqWW9lT+qkOMwApJrqWujaF2YHpH0SEVCLVS4bJu3x8GhxEHLnCemfsjLf7Hq8uSaAy
-        MU/fzVHOyf+ul3Zm2LjlNd7Lot1MfgWY1Y2Y8HLJFyi6CuGTdFKbU7QVFojjqG+15132SmjujYfbq
-        Uj1sZl0A==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mOPe9-00AIXu-KF; Thu, 09 Sep 2021 19:23:49 +0000
-Date:   Thu, 9 Sep 2021 20:23:41 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Christoph Hellwig <hch@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [GIT PULL] Memory folios for v5.15
-Message-ID: <YTpfPY+jSdEGRb10@casper.infradead.org>
-References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
- <YToBjZPEVN9Jmp38@infradead.org>
- <6b01d707-3ead-015b-eb36-7e3870248a22@suse.cz>
- <969bf3e2-89be-c25b-938e-38430dc836d3@nvidia.com>
+        Thu, 9 Sep 2021 15:39:23 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EAE7C061574
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Sep 2021 12:38:13 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id s10so5830238lfr.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Sep 2021 12:38:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VCQSRehR2ZOFo/zjKqjv0LY16gqxQWCKetw3T+VgWXE=;
+        b=AliT6R74tIzwlYSKpVb0jpl+QAkq5TlMBBdZh/VSrASCQJ5jZSDBd+2VKAtFoAun9o
+         INXNuZN30cPsf7inYtabYnvsYnM+4N+LDuUwHBxHM3jEk1kzU0ACPdcHWBnoQ8KgEx2y
+         DAJ3UQGzsVpIbYzABfU4I7iyeRkKdC3yHuQzw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VCQSRehR2ZOFo/zjKqjv0LY16gqxQWCKetw3T+VgWXE=;
+        b=glMZ9Zd01NVXUkv5AIOrphlUlhEbUGOcBNTk8gg8tUBscTvQCWVAZ6j+lURbwMVe4S
+         +gUxQCfzYonMnZW0ks7xsQyif1WF8emrQl33/vrh+e8kTiu7irGbexJGf7fg5xwFDVzQ
+         MPjDP3j7Nwmpfm+mEwJ3ODqrpO9lCO7wqz8eUyaWIQZvfxxmyPRZomT/3DuTk1vCceJI
+         SyuFtwUA/JueUYtpSx2som53qGs1uvZcv0C3UHFgxcWQK5kMzmu3yqdu9Ws+jlPcX6dI
+         bnqTvCqR3NrF4l/HEoqc5uvopD9sVaC0t5chLbJ/miUJEfgGR6qmxlgjRtkMzSfuc4bp
+         xiFw==
+X-Gm-Message-State: AOAM532uM52bMM9WUvL+6eyPuQp9gGOIyYfyvVBUERMUGEoFMYj0wRms
+        QzMlrwm0kUDgzuY/siv/QDpXJjgfk86duJFO4nI=
+X-Google-Smtp-Source: ABdhPJxwHbsQV8NheFwBgTuTOzDRx3/Wc9DOizi1lguXGiWuFZyqNQF7aowSobfibgIOdSMVgVqLUA==
+X-Received: by 2002:ac2:5510:: with SMTP id j16mr1148715lfk.152.1631216290818;
+        Thu, 09 Sep 2021 12:38:10 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id q189sm295164ljb.68.2021.09.09.12.38.10
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Sep 2021 12:38:10 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id t19so5815206lfe.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Sep 2021 12:38:10 -0700 (PDT)
+X-Received: by 2002:a05:6512:34c3:: with SMTP id w3mr1059425lfr.173.1631216289838;
+ Thu, 09 Sep 2021 12:38:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <969bf3e2-89be-c25b-938e-38430dc836d3@nvidia.com>
+References: <YTmL/plKyujwhoaR@zeniv-ca.linux.org.uk>
+In-Reply-To: <YTmL/plKyujwhoaR@zeniv-ca.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 9 Sep 2021 12:37:53 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiacKV4Gh-MYjteU0LwNBSGpWrK-Ov25HdqB1ewinrFPg@mail.gmail.com>
+Message-ID: <CAHk-=wiacKV4Gh-MYjteU0LwNBSGpWrK-Ov25HdqB1ewinrFPg@mail.gmail.com>
+Subject: Re: [git pull] iov_iter fixes
+To:     Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 09, 2021 at 12:17:00PM -0700, John Hubbard wrote:
-> On 9/9/21 06:56, Vlastimil Babka wrote:
-> > On 9/9/21 14:43, Christoph Hellwig wrote:
-> > > So what is the result here?  Not having folios (with that or another
-> > > name) is really going to set back making progress on sane support for
-> > > huge pages.  Both in the pagecache but also for other places like direct
-> > > I/O.
-> > 
-> > Yeah, the silence doesn't seem actionable. If naming is the issue, I believe
-> > Matthew had also a branch where it was renamed to pageset. If it's the
-> > unclear future evolution wrt supporting subpages of large pages, should we
-> > just do nothing until somebody turns that hypothetical future into code and
-> > we see whether it works or not?
-> > 
-> 
-> When I saw Matthew's proposal to rename folio --> pageset, my reaction was,
-> "OK, this is a huge win!". Because:
-> 
-> * The new name addressed Linus' concerns about naming, which unblocks it
->   there, and
-> 
-> * The new name seems to meet all of the criteria of the "folio" name,
->   including even grep-ability, after a couple of tiny page_set and pageset
->   cases are renamed--AND it also meets Linus' criteria for self-describing
->   names.
-> 
-> So I didn't want to add noise to that thread, but now that there is still
-> some doubt about this, I'll pop up and suggest: do the huge
-> 's/folio/pageset/g', and of course the associated renaming of the conflicting
-> existing pageset and page_set cases, and then maybe it goes in.
+On Wed, Sep 8, 2021 at 9:24 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+>         Fixes for io-uring handling of iov_iter reexpands
 
-So I've done that.
+Ugh.
 
-https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/tags/pageset-5.15
+I have pulled this, because I understand what it does and I agree it
+fixes a bug, but it really feels very very hacky and wrong to me.
 
-I sent it to Linus almost two weeks ago:
-https://lore.kernel.org/linux-mm/YSmtjVTqR9%2F4W1aq@casper.infradead.org/
+It really smells like io-uring is doing a "iov_iter_revert()" using a
+number that it pulls incorrectly out of its arse.
 
-Still nothing, so I presume he's still thinking about it.
+So when io-uring does that
+
+                iov_iter_revert(iter, io_size - iov_iter_count(iter));
+
+what it *really* wants to do is just basically "iov_iter_reset(iter)".
+
+And that's basically what that addition of that "iov_iter_reexpand()"
+tries to effectively do.
+
+Wouldn't it be better to have a function that does exactly that?
+
+Alternatively (and I'm cc'ing Jens) is is not possible for the
+io-uring code to know how many bytes it *actually* used, rather than
+saying that "ok, the iter originally had X bytes, now it has Y bytes,
+so it must have used X-Y bytes" which was actively wrong for the case
+where something ended up truncating the IO for some reason.
+
+Because I note that io-uring does that
+
+        /* may have left rw->iter inconsistent on -EIOCBQUEUED */
+        iov_iter_revert(&rw->iter, req->result - iov_iter_count(&rw->iter));
+
+in io_resubmit_prep() too, and that you guys missed that it's the
+exact same issue, and needs that exact same iov_iter_reexpand().
+
+That "req->result" is once again the *original* length, and the above
+code once again mis-handles the case of "oh, the iov got truncated
+because of some IO limit".
+
+So I've pulled this, but I think it is
+
+ (a) ugly nasty
+
+ (b) incomplete and misses a case
+
+and needs more thought. At the VERY least it needs that
+iov_iter_reexpand() in io_resubmit_prep() too, I think.
+
+I'd like the comments expanded too. In particular that
+
+                /* some cases will consume bytes even on error returns */
+
+really should expand on the "some cases" thing, and why such an error
+isn't fatal buye should be retried asynchronously blindly like this?
+
+Because I think _that_ is part of the fundamental issue here - the
+io_uring code tries to just blindly re-submit the whole thing, and it
+does it very badly and actually incorrectly.
+
+Or am I missing something?
+
+           Linus
