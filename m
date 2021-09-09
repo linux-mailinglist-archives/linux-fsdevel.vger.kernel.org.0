@@ -2,108 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A715440476D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Sep 2021 10:58:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E323640487C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Sep 2021 12:31:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231892AbhIIJAD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Sep 2021 05:00:03 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:26220 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231281AbhIIJAD (ORCPT
+        id S233963AbhIIKcR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Sep 2021 06:32:17 -0400
+Received: from mail-ed1-f49.google.com ([209.85.208.49]:42960 "EHLO
+        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234057AbhIIKcQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Sep 2021 05:00:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631177933;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=B/XpMR8IW7n50hqBRiVqU8UBvztjlF9h6rtat9Sfp/0=;
-        b=Tp7SmIVJCHLXWfyIiiWR9vQW4sIpX8Ibu1hucoXz8ZgqLpcgtNt5myN7vr8LuuZjCrj28M
-        Jyr0kD4rrizVGK9C/FhVW5Zhld8Zx8CnRUId7Fmc2q++BPJVwBAsSrq0hvmbzpofHpzegC
-        0IUM2RHLKLPApC/Ms0cEIhLiPYlxHUg=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-328-RD4j77tBMz2A4kDHWxNa_w-1; Thu, 09 Sep 2021 04:58:52 -0400
-X-MC-Unique: RD4j77tBMz2A4kDHWxNa_w-1
-Received: by mail-wr1-f72.google.com with SMTP id u2-20020adfdd42000000b001579f5d6779so286594wrm.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Sep 2021 01:58:52 -0700 (PDT)
+        Thu, 9 Sep 2021 06:32:16 -0400
+Received: by mail-ed1-f49.google.com with SMTP id z19so1964088edi.9;
+        Thu, 09 Sep 2021 03:31:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=B/XpMR8IW7n50hqBRiVqU8UBvztjlF9h6rtat9Sfp/0=;
-        b=NOv7sddBrBTd3SQ3YraqzoBKO4o+xE9N3uZuNNiu8N1Km7VvIDTJSubqjJen5u63ls
-         DRHf21P1fjCjXrGREZ0irNmcuhGM2aONAhdxhf2wvKKJFcw3O+3oT5ALA2cxya++b5FC
-         T+KtLKed+XagLNQEiBa9g78B25zICLtRDbeyl3JVCXlb4xW4NL7kEFgl02gF3DH5ZmX4
-         wP3K8sFlAk3apWgqxqKVJcOJN0J8kFabrBUEDaMxi1eloWesNny6dMepHlDQHHoDkEwt
-         1aMViFXk5sbP4pzsVgsgYzOGAIcH0gijuKjSlDhRVWD2e7fmZ4UlNCLIOgAYM/LoWHO4
-         6U5w==
-X-Gm-Message-State: AOAM531k6Mfi0cSXTN7+tqiWHNjv/wyPMgzJis00sQaGoIx+cKVnjDsI
-        SM37i/4j+jNaNhFG+Lk1FVLnFBOGw/IFittZziBm1PqLw3+jW6mcScN+jc9y244nFXHZf6/CR9+
-        e0LPQZH7IVxI7eYPhRfVHZTQFKw==
-X-Received: by 2002:adf:e643:: with SMTP id b3mr2263866wrn.67.1631177931565;
-        Thu, 09 Sep 2021 01:58:51 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzHd9tbvGHuH/vI+YA9CIrNsSVEbwqy9yOD6TU2JuSw3sjsuiEtnZ1Wqc75iLPK+6kOv9kJ0Q==
-X-Received: by 2002:adf:e643:: with SMTP id b3mr2263848wrn.67.1631177931410;
-        Thu, 09 Sep 2021 01:58:51 -0700 (PDT)
-Received: from [192.168.3.132] (p4ff23fe4.dip0.t-ipconnect.de. [79.242.63.228])
-        by smtp.gmail.com with ESMTPSA id y1sm1029619wmq.43.2021.09.09.01.58.50
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+PPfPZ/vyA7kRm7LtesplHagTfP12DiHosfGgqo5nmM=;
+        b=zOXk0Kfra5W2OMCIU0Npx3j7u5w6ztPkB7e9nEQSuxE1+cp/Fc+zcq+seWSwcEc8U5
+         r8XBwVxXX4fE0JvsgzwZd58r82QOsZ4iHoS8LrsiXaL0giUc4zid1ZNDThTrWLJohHoe
+         3/U3QvgbaDQc1yNS/aQbUIkpSB+N8p7LrciNKKmRF/i/8BjV3tZ6Ys14vOSfW9AGPV/Z
+         xrhRvSmi7SnyM2MJOXAPv0EDnWVvjezPp7AwYka7ATpYJoV6fEKMPTW/tCA84pPl8q/A
+         nXvsjaPgJ2X3eLpsdLA01XlCUOT9QT22+DKRxXbFGByVhWo9IICs74BWPPmMhLGgA1NK
+         cbvg==
+X-Gm-Message-State: AOAM530a2emNXOTyYZCG+gOT3rD66ZTotR5vJEdgOQZb6KrwL9DB/33B
+        PkdYixg/MizrVTrN1YZLYYVtev2A7ZFSDQ==
+X-Google-Smtp-Source: ABdhPJyZ3S9XJPToGy6BASZaXAZ/t9vu9z8Rq/Ga5BGZs7N32f3wa/XKr1j0P6YR1uIze1YTFqFwQw==
+X-Received: by 2002:a05:6402:1913:: with SMTP id e19mr2443428edz.9.1631183466499;
+        Thu, 09 Sep 2021 03:31:06 -0700 (PDT)
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com. [209.85.221.51])
+        by smtp.gmail.com with ESMTPSA id o12sm834389edv.19.2021.09.09.03.31.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Sep 2021 01:58:50 -0700 (PDT)
-Subject: Re: [RFC PATCH] fs/exec: Add the support for ELF program's NUMA
- replication
-To:     Huang Shijie <shijie@os.amperecomputing.com>
-Cc:     viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        jlayton@kernel.org, bfields@fieldses.org,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        song.bao.hua@hisilicon.com, patches@amperecomputing.com,
-        zwang@amperecomputing.com
-References: <20210906161613.4249-1-shijie@os.amperecomputing.com>
- <2cb841ca-2a04-f088-cee2-6c020ecc9508@redhat.com> <YTnX7IyC420MNBLq@hsj>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Message-ID: <1c115101-a549-0e88-7bbb-1b0a19621504@redhat.com>
-Date:   Thu, 9 Sep 2021 10:58:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Thu, 09 Sep 2021 03:31:06 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id d6so1803105wrc.11;
+        Thu, 09 Sep 2021 03:31:06 -0700 (PDT)
+X-Received: by 2002:adf:e349:: with SMTP id n9mr2715415wrj.326.1631183466040;
+ Thu, 09 Sep 2021 03:31:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YTnX7IyC420MNBLq@hsj>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <163113612442.352844.11162345591911691150.stgit@warthog.procyon.org.uk>
+In-Reply-To: <163113612442.352844.11162345591911691150.stgit@warthog.procyon.org.uk>
+From:   Marc Dionne <marc.dionne@auristor.com>
+Date:   Thu, 9 Sep 2021 07:30:50 -0300
+X-Gmail-Original-Message-ID: <CAB9dFdvVcdfxkRZ36Z-V4_tcMws01xZ=UNTmjqTuqYvW_7-X_Q@mail.gmail.com>
+Message-ID: <CAB9dFdvVcdfxkRZ36Z-V4_tcMws01xZ=UNTmjqTuqYvW_7-X_Q@mail.gmail.com>
+Subject: Re: [PATCH] afs: Fix updating of i_blocks on file/dir extension
+To:     David Howells <dhowells@redhat.com>
+Cc:     Markus Suvanto <markus.suvanto@gmail.com>,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 09.09.21 11:46, Huang Shijie wrote:
-> On Mon, Sep 06, 2021 at 11:35:01AM +0200, David Hildenbrand wrote:
->> On 06.09.21 18:16, Huang Shijie wrote:
->>> This patch adds AT_NUMA_REPLICATION for execveat().
->>>
->>> If this flag is set, the kernel will trigger COW(copy on write)
->>> on the mmapped ELF binary. So the program will have a copied-page
->>> on its NUMA node, even if the original page in page cache is
->>> on other NUMA nodes.
->>
->> Am I missing something important or is this just absolutely not what we
->> want?
-> 
-> Please see the thread:
-> https://marc.info/?l=linux-kernel&m=163070220429222&w=2
-> 
-> Linus did not think it is a good choice to implement the "per-numa node page cache"
+On Wed, Sep 8, 2021 at 6:22 PM David Howells <dhowells@redhat.com> wrote:
+>
+> When an afs file or directory is modified locally such that the total file
+> size is extended, i_blocks needs to be recalculated too.
+>
+> Fix this by making afs_write_end() and afs_edit_dir_add() call
+> afs_set_i_size() rather than setting inode->i_size directly as that also
+> recalculates inode->i_blocks.
+>
+> This can be tested by creating and writing into directories and files and
+> then examining them with du.  Without this change, directories show a 4
+> blocks (they start out at 2048 bytes) and files show 0 blocks; with this
+> change, they should show a number of blocks proportional to the file size
+> rounded up to 1024.
+>
+> Fixes: 31143d5d515ece617ffccb7df5ff75e4d1dfa120 ("AFS: implement basic file write support")
+> Fixes: 63a4681ff39c ("afs: Locally edit directory data for mkdir/create/unlink/...")
+> Reported-by: Markus Suvanto <markus.suvanto@gmail.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: linux-afs@lists.infradead.org
+> ---
+>
+>  fs/afs/dir_edit.c |    4 ++--
+>  fs/afs/inode.c    |   10 ----------
+>  fs/afs/internal.h |   10 ++++++++++
+>  fs/afs/write.c    |    2 +-
+>  4 files changed, 13 insertions(+), 13 deletions(-)
+>
+> diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
+> index f4600c1353ad..540b9fc96824 100644
+> --- a/fs/afs/dir_edit.c
+> +++ b/fs/afs/dir_edit.c
+> @@ -263,7 +263,7 @@ void afs_edit_dir_add(struct afs_vnode *vnode,
+>                 if (b == nr_blocks) {
+>                         _debug("init %u", b);
+>                         afs_edit_init_block(meta, block, b);
+> -                       i_size_write(&vnode->vfs_inode, (b + 1) * AFS_DIR_BLOCK_SIZE);
+> +                       afs_set_i_size(vnode, (b + 1) * AFS_DIR_BLOCK_SIZE);
+>                 }
+>
+>                 /* Only lower dir pages have a counter in the header. */
+> @@ -296,7 +296,7 @@ void afs_edit_dir_add(struct afs_vnode *vnode,
+>  new_directory:
+>         afs_edit_init_block(meta, meta, 0);
+>         i_size = AFS_DIR_BLOCK_SIZE;
+> -       i_size_write(&vnode->vfs_inode, i_size);
+> +       afs_set_i_size(vnode, i_size);
+>         slot = AFS_DIR_RESV_BLOCKS0;
+>         page = page0;
+>         block = meta;
+> diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+> index 126daf9969db..8fcffea2daf5 100644
+> --- a/fs/afs/inode.c
+> +++ b/fs/afs/inode.c
+> @@ -53,16 +53,6 @@ static noinline void dump_vnode(struct afs_vnode *vnode, struct afs_vnode *paren
+>                 dump_stack();
+>  }
+>
+> -/*
+> - * Set the file size and block count.  Estimate the number of 512 bytes blocks
+> - * used, rounded up to nearest 1K for consistency with other AFS clients.
+> - */
+> -static void afs_set_i_size(struct afs_vnode *vnode, u64 size)
+> -{
+> -       i_size_write(&vnode->vfs_inode, size);
+> -       vnode->vfs_inode.i_blocks = ((size + 1023) >> 10) << 1;
+> -}
+> -
+>  /*
+>   * Initialise an inode from the vnode status.
+>   */
+> diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+> index c97618855b46..12b2bdae6d1a 100644
+> --- a/fs/afs/internal.h
+> +++ b/fs/afs/internal.h
+> @@ -1595,6 +1595,16 @@ static inline void afs_update_dentry_version(struct afs_operation *op,
+>                         (void *)(unsigned long)dir_vp->scb.status.data_version;
+>  }
+>
+> +/*
+> + * Set the file size and block count.  Estimate the number of 512 bytes blocks
+> + * used, rounded up to nearest 1K for consistency with other AFS clients.
+> + */
+> +static inline void afs_set_i_size(struct afs_vnode *vnode, u64 size)
+> +{
+> +       i_size_write(&vnode->vfs_inode, size);
+> +       vnode->vfs_inode.i_blocks = ((size + 1023) >> 10) << 1;
+> +}
+> +
+>  /*
+>   * Check for a conflicting operation on a directory that we just unlinked from.
+>   * If someone managed to sneak a link or an unlink in on the file we just
+> diff --git a/fs/afs/write.c b/fs/afs/write.c
+> index 32a764c24284..2dfe3b3a53d6 100644
+> --- a/fs/afs/write.c
+> +++ b/fs/afs/write.c
+> @@ -137,7 +137,7 @@ int afs_write_end(struct file *file, struct address_space *mapping,
+>                 write_seqlock(&vnode->cb_lock);
+>                 i_size = i_size_read(&vnode->vfs_inode);
+>                 if (maybe_i_size > i_size)
+> -                       i_size_write(&vnode->vfs_inode, maybe_i_size);
+> +                       afs_set_i_size(vnode, maybe_i_size);
+>                 write_sequnlock(&vnode->cb_lock);
+>         }
+>
+>
+>
+>
+> _______________________________________________
+> linux-afs mailing list
+> http://lists.infradead.org/mailman/listinfo/linux-afs
 
-That doesn't make this approach any better.
+Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
 
-I don't think we want this in the kernel. If user space wants to waste 
-memory, it can happily mmap() however it wants. The advisory is to not 
-do it.
-
--- 
-Thanks,
-
-David / dhildenb
-
+Marc
