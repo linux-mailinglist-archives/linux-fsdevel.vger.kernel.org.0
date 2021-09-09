@@ -2,68 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 995A3404960
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Sep 2021 13:37:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DC51404C25
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Sep 2021 13:55:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235466AbhIILi3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Sep 2021 07:38:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35124 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234507AbhIILi2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Sep 2021 07:38:28 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6464AC061575;
-        Thu,  9 Sep 2021 04:37:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=fPS8ABV3p1/Cc6qzU5y4vmmF2vrRk2q/3Li1BJ3OVOY=; b=H+oBGp3JjF8wCD9YKCIWRjD64D
-        c60kA8H4/8JfQVuMOPr92UZYsMgK52eScn3cIUBTeoQegGP9sC+esrf01Ayo532kOnaRWDsJfxX34
-        tQYy9TkblQiC3kXLfKE4W0NHrOuZU1vDOmi3lKigJ4Dk8VFULHA5N/FFYfQc4vZWozbvNcRRIybaV
-        BIW6H8sO1w4QetEH/L5auibNq8VcVVWR6NYM0x31uxGCIot9ez9zRri0dmFrj9LfGnPqsfvmONPgf
-        EqlbuknP5VNqDpcMZWYZ+hyTF8H3hBNHcpd9AlkLwkYE/8cRbPdxd5mVc1xKKMSdT9oxesP+cN5BE
-        KAB524LA==;
-Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mOILm-009lu0-R5; Thu, 09 Sep 2021 11:36:19 +0000
-Date:   Thu, 9 Sep 2021 12:36:14 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>, cluster-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com
-Subject: Re: [PATCH v7 17/19] gup: Introduce FOLL_NOFAULT flag to disable
- page faults
-Message-ID: <YTnxruxm/xA/BBmQ@infradead.org>
-References: <20210827164926.1726765-1-agruenba@redhat.com>
- <20210827164926.1726765-18-agruenba@redhat.com>
+        id S241175AbhIILz6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Sep 2021 07:55:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33230 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S241089AbhIILxj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 9 Sep 2021 07:53:39 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 570C76138D;
+        Thu,  9 Sep 2021 11:44:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631187881;
+        bh=E0Wwtt/RpBwqOEd5e7ec+rsEkQxJmd7cg46/1odlycA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CrGW+5P6XFqDSyv4lLwvo3AyHMm/LrjG747uCDOu7xjg/LRbWqK7trnpxBCRaLmFo
+         bbxZ/fHMEVOB3QtPXNEKyDBBsmMivaMJ1bgXMo4QAlxVZiOvmRCxN+67hB62eMWZcW
+         mCSCg3TudC7nfceXFl6Q3jKP8HIRZj1niW4mAh7KCQ5Tiyi7rrb2ixnXvVNnvObdS6
+         wE2/hRZNDWTkzhsCn/FA4LHebUY7946qk/UGCI/ceuYbtdr3l/zCDrETiwBbjwjipB
+         +JcJFij1Kg3ICwO69QhLgnvge6tKzeGrh9ZNE35/DVM/UYRHGCeXdqFL76rMslIe7A
+         Xrj+nEK+6BaOw==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sasha Levin <sashal@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.14 164/252] iomap: pass writeback errors to the mapping
+Date:   Thu,  9 Sep 2021 07:39:38 -0400
+Message-Id: <20210909114106.141462-164-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210909114106.141462-1-sashal@kernel.org>
+References: <20210909114106.141462-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210827164926.1726765-18-agruenba@redhat.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 27, 2021 at 06:49:24PM +0200, Andreas Gruenbacher wrote:
-> Introduce a new FOLL_NOFAULT flag that causes get_user_pages to return
-> -EFAULT when it would otherwise trigger a page fault.  This is roughly
-> similar to FOLL_FAST_ONLY but available on all architectures, and less
-> fragile.
+From: "Darrick J. Wong" <djwong@kernel.org>
 
-So, FOLL_FAST_ONLY only has one single user through
-get_user_pages_fast_only (pin_user_pages_fast_only is entirely unused,
-which makes totally sense given that give up on fault and pin are not
-exactly useful semantics).
+[ Upstream commit b69eea82d37d9ee7cfb3bf05103549dd4ed5ffc3 ]
 
-But it looks like they want to call it from atomic context, so we can't
-really share it.  Sight, I hate all these single-user FOLL flags that
-make gup.c a complete mess.
+Modern-day mapping_set_error has the ability to squash the usual
+negative error code into something appropriate for long-term storage in
+a struct address_space -- ENOSPC becomes AS_ENOSPC, and everything else
+becomes EIO.  iomap squashes /everything/ to EIO, just as XFS did before
+that, but this doesn't make sense.
 
-But otherwise this looks fine.
+Fix this by making it so that we can pass ENOSPC to userspace when
+writeback fails due to space problems.
+
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/iomap/buffered-io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 87ccb3438bec..b06138c6190b 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1016,7 +1016,7 @@ iomap_finish_page_writeback(struct inode *inode, struct page *page,
+ 
+ 	if (error) {
+ 		SetPageError(page);
+-		mapping_set_error(inode->i_mapping, -EIO);
++		mapping_set_error(inode->i_mapping, error);
+ 	}
+ 
+ 	WARN_ON_ONCE(i_blocks_per_page(inode, page) > 1 && !iop);
+-- 
+2.30.2
+
