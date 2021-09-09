@@ -2,245 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 173864048C8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Sep 2021 12:58:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 828CB4048CD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Sep 2021 13:00:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234557AbhIIK7X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Sep 2021 06:59:23 -0400
-Received: from relayfre-01.paragon-software.com ([176.12.100.13]:37600 "EHLO
-        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234628AbhIIK7U (ORCPT
+        id S234195AbhIILB0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Sep 2021 07:01:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54650 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234349AbhIILBZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Sep 2021 06:59:20 -0400
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 9D0731D78;
-        Thu,  9 Sep 2021 13:58:09 +0300 (MSK)
+        Thu, 9 Sep 2021 07:01:25 -0400
+Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8225DC061575
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Sep 2021 04:00:16 -0700 (PDT)
+Received: by mail-il1-x129.google.com with SMTP id l10so1443353ilh.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Sep 2021 04:00:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1631185089;
-        bh=Gvw8TGpTmwC4QvKKtiXTUz8bcFGI+HJPLVvq+sRhbLo=;
-        h=Date:To:CC:From:Subject;
-        b=Kv8AjDJQ20D1udCY+cKQalI8HJulDnPo001+nok8X0nHdT3FDVUH1QryuzlSl8Ms6
-         MW9k5hhWz4tNNVAfG2UOayoAdi8tMF+cZOR/etpbARBx3QN0PImB107RlyLJ13kLYl
-         TRZUnU5snnXEz/KM2+5U3K0ZzsuIbEAB+8U4uY7A=
-Received: from [192.168.211.46] (192.168.211.46) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Thu, 9 Sep 2021 13:58:09 +0300
-Message-ID: <8a99d42f-1097-9c0d-d1b2-5b971a8a4d1f@paragon-software.com>
-Date:   Thu, 9 Sep 2021 13:58:08 +0300
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6whkAs0FNhSaWkTgSco4dNsVDlvQSW3F00cJNaFNaZs=;
+        b=J+qRozR3E0qFUP+bpnk1QFM3Pny70kdJ+nLejfd8yE9eQgPJeRCH7SkjRNUetUW9EK
+         XnWlONj+lqNfmONpZiJu1eNllnbfQOBRxnwlw/8I/6lA5Sv4B1LlgfAh40F2N/oVjkRW
+         NNYZsC1FJ/Sjz69oeM37soMXEmw124YHIlehV/XfyW0PnOdryGBu/ZlPFefFE/L0RZKO
+         L7fPkGsOoz9Lb+FBUd4C1xhT/4Yhp8gYJuxvjo8FgNclUlhoIe03h0/UP2NgqjJRl67v
+         whOkrmOHPQYaiZn0hZglAgzNAssVmmFRgnKdhrxoZr2A5j+QB7nA5wNeq5Ah9k0t5+MH
+         p9cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6whkAs0FNhSaWkTgSco4dNsVDlvQSW3F00cJNaFNaZs=;
+        b=CCvnfuD05D3bYzNECVfi8Ps5zzPyK0a3qLq2xuUAPObhzzjWATXBwwlPARyb2ffn1M
+         2wDj3AjyCbn8Fm3V2vvjlCkdEj/1jo6MWS9ybgrxjqfZwPpcv+pRArwm9fPbur27c4ST
+         ApBbpreKPfJCGSgwG4Lwk/Z1Drcpk2TvrrtvYMRp4BAnVHw2wHTgfvT1GTIi1v5rFFKd
+         TJNL/frPUOrGChI+eryGFroX+rsIKu99BPl25l9QvDi++b6sVDdMoCh2Zetec9gnbseT
+         3B09ATGL1wQix1yRbTIBO6qoWCO5E8Na2f2EWOCDKFMbpXIwRFrPpEGUPFfPc+rQHTgU
+         p/0Q==
+X-Gm-Message-State: AOAM53274uIUPmVbwNHI577rEzpkXs0lUaCknUGUtFiX/bR+83oXJ/VY
+        /tZx04d+8fbC6OLBPPT1KsJptspdt+WtTkaDiYYv+5pi
+X-Google-Smtp-Source: ABdhPJzln+WVcwL7m9dCDMvvmvI92enz7M0CujstYg7cYVYgcsfB287bin16DtmzTQKKOlCpEWmtmx3Doo4vOipKOXM=
+X-Received: by 2002:a05:6e02:198d:: with SMTP id g13mr1858305ilf.319.1631185215947;
+ Thu, 09 Sep 2021 04:00:15 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.0
-Content-Language: en-US
-To:     <ntfs3@lists.linux.dev>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Subject: [PATCH 3/3] fs/ntfs3: Add sync flag to ntfs_sb_write_run and
- al_update
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.211.46]
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+References: <20210907063338.ycaw6wvhzrfsfdlp@xzhoux.usersys.redhat.com>
+In-Reply-To: <20210907063338.ycaw6wvhzrfsfdlp@xzhoux.usersys.redhat.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 9 Sep 2021 14:00:04 +0300
+Message-ID: <CAOQ4uxhnnG6g29NomN_MLvfk9Cf6gEfaOkW0RuXDCNREhmofdw@mail.gmail.com>
+Subject: Re: [regression] fsnotify fails stress test since fsnotify_for_v5.15-rc1
+ merged
+To:     Murphy Zhou <jencce.kernel@gmail.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Petr Vorel <pvorel@suse.cz>
+Content-Type: multipart/mixed; boundary="0000000000005c2c4f05cb8de783"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This allows to wait only when it's requested.
-It speeds up creation of hardlinks.
+--0000000000005c2c4f05cb8de783
+Content-Type: text/plain; charset="UTF-8"
 
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
- fs/ntfs3/attrib.c   | 2 +-
- fs/ntfs3/attrlist.c | 6 +++---
- fs/ntfs3/frecord.c  | 2 +-
- fs/ntfs3/fslog.c    | 9 +++++----
- fs/ntfs3/fsntfs.c   | 8 ++++----
- fs/ntfs3/inode.c    | 2 +-
- fs/ntfs3/ntfs_fs.h  | 4 ++--
- fs/ntfs3/xattr.c    | 2 +-
- 8 files changed, 18 insertions(+), 17 deletions(-)
+On Tue, Sep 7, 2021 at 9:33 AM Murphy Zhou <jencce.kernel@gmail.com> wrote:
+>
+> Hi,
+>
+> Since this commit:
+>
+> commit ec44610fe2b86daef70f3f53f47d2a2542d7094f
+> Author: Amir Goldstein <amir73il@gmail.com>
+> Date:   Tue Aug 10 18:12:19 2021 +0300
+>
+>     fsnotify: count all objects with attached connectors
+>
+>
+>
+>
+> Kernel fsnotify can't finish a stress testcase that used to pass quickly.
+>
+> Kernel hung at umount. Can not be killed but restarting the server.
+>
+> Reproducer text is attached.
+>
 
-diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
-index 34c4cbf7e29b..64a28fe7c124 100644
---- a/fs/ntfs3/attrib.c
-+++ b/fs/ntfs3/attrib.c
-@@ -291,7 +291,7 @@ int attr_make_nonresident(struct ntfs_inode *ni, struct ATTRIB *attr,
- 		if (!rsize) {
- 			/* Empty resident -> Non empty nonresident. */
- 		} else if (!is_data) {
--			err = ntfs_sb_write_run(sbi, run, 0, data, rsize);
-+			err = ntfs_sb_write_run(sbi, run, 0, data, rsize, 0);
- 			if (err)
- 				goto out2;
- 		} else if (!page) {
-diff --git a/fs/ntfs3/attrlist.c b/fs/ntfs3/attrlist.c
-index fa32399eb517..e41443cb3d63 100644
---- a/fs/ntfs3/attrlist.c
-+++ b/fs/ntfs3/attrlist.c
-@@ -336,7 +336,7 @@ int al_add_le(struct ntfs_inode *ni, enum ATTR_TYPE type, const __le16 *name,
- 
- 	if (attr && attr->non_res) {
- 		err = ntfs_sb_write_run(ni->mi.sbi, &al->run, 0, al->le,
--					al->size);
-+					al->size, 0);
- 		if (err)
- 			return err;
- 		al->dirty = false;
-@@ -423,7 +423,7 @@ bool al_delete_le(struct ntfs_inode *ni, enum ATTR_TYPE type, CLST vcn,
- 	return true;
- }
- 
--int al_update(struct ntfs_inode *ni)
-+int al_update(struct ntfs_inode *ni, int sync)
- {
- 	int err;
- 	struct ATTRIB *attr;
-@@ -445,7 +445,7 @@ int al_update(struct ntfs_inode *ni)
- 		memcpy(resident_data(attr), al->le, al->size);
- 	} else {
- 		err = ntfs_sb_write_run(ni->mi.sbi, &al->run, 0, al->le,
--					al->size);
-+					al->size, sync);
- 		if (err)
- 			goto out;
- 
-diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-index 5dd7b7a7c5e0..8478be3ab0e4 100644
---- a/fs/ntfs3/frecord.c
-+++ b/fs/ntfs3/frecord.c
-@@ -3209,7 +3209,7 @@ int ni_write_inode(struct inode *inode, int sync, const char *hint)
- 					goto out;
- 			}
- 
--			err = al_update(ni);
-+			err = al_update(ni, sync);
- 			if (err)
- 				goto out;
- 		}
-diff --git a/fs/ntfs3/fslog.c b/fs/ntfs3/fslog.c
-index b5853aed0e25..5c82b6218d94 100644
---- a/fs/ntfs3/fslog.c
-+++ b/fs/ntfs3/fslog.c
-@@ -2219,7 +2219,7 @@ static int last_log_lsn(struct ntfs_log *log)
- 
- 			err = ntfs_sb_write_run(log->ni->mi.sbi,
- 						&log->ni->file.run, off, page,
--						log->page_size);
-+						log->page_size, 0);
- 
- 			if (err)
- 				goto out;
-@@ -3710,7 +3710,8 @@ static int do_action(struct ntfs_log *log, struct OPEN_ATTR_ENRTY *oe,
- 
- 	if (a_dirty) {
- 		attr = oa->attr;
--		err = ntfs_sb_write_run(sbi, oa->run1, vbo, buffer_le, bytes);
-+		err = ntfs_sb_write_run(sbi, oa->run1, vbo, buffer_le, bytes,
-+					0);
- 		if (err)
- 			goto out;
- 	}
-@@ -5152,10 +5153,10 @@ int log_replay(struct ntfs_inode *ni, bool *initialized)
- 
- 	ntfs_fix_pre_write(&rh->rhdr, log->page_size);
- 
--	err = ntfs_sb_write_run(sbi, &ni->file.run, 0, rh, log->page_size);
-+	err = ntfs_sb_write_run(sbi, &ni->file.run, 0, rh, log->page_size, 0);
- 	if (!err)
- 		err = ntfs_sb_write_run(sbi, &log->ni->file.run, log->page_size,
--					rh, log->page_size);
-+					rh, log->page_size, 0);
- 
- 	kfree(rh);
- 	if (err)
-diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
-index 91e3743e1442..c89a0f5c5ad4 100644
---- a/fs/ntfs3/fsntfs.c
-+++ b/fs/ntfs3/fsntfs.c
-@@ -1080,7 +1080,7 @@ int ntfs_sb_write(struct super_block *sb, u64 lbo, size_t bytes,
- }
- 
- int ntfs_sb_write_run(struct ntfs_sb_info *sbi, const struct runs_tree *run,
--		      u64 vbo, const void *buf, size_t bytes)
-+		      u64 vbo, const void *buf, size_t bytes, int sync)
- {
- 	struct super_block *sb = sbi->sb;
- 	u8 cluster_bits = sbi->cluster_bits;
-@@ -1100,7 +1100,7 @@ int ntfs_sb_write_run(struct ntfs_sb_info *sbi, const struct runs_tree *run,
- 
- 	for (;;) {
- 		u32 op = len < bytes ? len : bytes;
--		int err = ntfs_sb_write(sb, lbo, op, buf, 0);
-+		int err = ntfs_sb_write(sb, lbo, op, buf, sync);
- 
- 		if (err)
- 			return err;
-@@ -2175,7 +2175,7 @@ int ntfs_insert_security(struct ntfs_sb_info *sbi,
- 
- 	/* Write main SDS bucket. */
- 	err = ntfs_sb_write_run(sbi, &ni->file.run, sbi->security.next_off,
--				d_security, aligned_sec_size);
-+				d_security, aligned_sec_size, 0);
- 
- 	if (err)
- 		goto out;
-@@ -2193,7 +2193,7 @@ int ntfs_insert_security(struct ntfs_sb_info *sbi,
- 
- 	/* Write copy SDS bucket. */
- 	err = ntfs_sb_write_run(sbi, &ni->file.run, mirr_off, d_security,
--				aligned_sec_size);
-+				aligned_sec_size, 0);
- 	if (err)
- 		goto out;
- 
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 187ef6adc9e1..aa519ed4453c 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -1593,7 +1593,7 @@ struct inode *ntfs_create_inode(struct user_namespace *mnt_userns,
- 
- 	/* Write non resident data. */
- 	if (nsize) {
--		err = ntfs_sb_write_run(sbi, &ni->file.run, 0, rp, nsize);
-+		err = ntfs_sb_write_run(sbi, &ni->file.run, 0, rp, nsize, 0);
- 		if (err)
- 			goto out7;
- 	}
-diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-index 97e682ebcfb9..a29578fa935b 100644
---- a/fs/ntfs3/ntfs_fs.h
-+++ b/fs/ntfs3/ntfs_fs.h
-@@ -436,7 +436,7 @@ bool al_remove_le(struct ntfs_inode *ni, struct ATTR_LIST_ENTRY *le);
- bool al_delete_le(struct ntfs_inode *ni, enum ATTR_TYPE type, CLST vcn,
- 		  const __le16 *name, size_t name_len,
- 		  const struct MFT_REF *ref);
--int al_update(struct ntfs_inode *ni);
-+int al_update(struct ntfs_inode *ni, int sync);
- static inline size_t al_aligned(size_t size)
- {
- 	return (size + 1023) & ~(size_t)1023;
-@@ -577,7 +577,7 @@ int ntfs_sb_read(struct super_block *sb, u64 lbo, size_t bytes, void *buffer);
- int ntfs_sb_write(struct super_block *sb, u64 lbo, size_t bytes,
- 		  const void *buffer, int wait);
- int ntfs_sb_write_run(struct ntfs_sb_info *sbi, const struct runs_tree *run,
--		      u64 vbo, const void *buf, size_t bytes);
-+		      u64 vbo, const void *buf, size_t bytes, int sync);
- struct buffer_head *ntfs_bread_run(struct ntfs_sb_info *sbi,
- 				   const struct runs_tree *run, u64 vbo);
- int ntfs_read_run_nb(struct ntfs_sb_info *sbi, const struct runs_tree *run,
-diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-index 83de1fd3b9c3..210a23979e71 100644
---- a/fs/ntfs3/xattr.c
-+++ b/fs/ntfs3/xattr.c
-@@ -444,7 +444,7 @@ static noinline int ntfs_set_ea(struct inode *inode, const char *name,
- 		/* Delete xattr, ATTR_EA */
- 		ni_remove_attr_le(ni, attr, mi, le);
- 	} else if (attr->non_res) {
--		err = ntfs_sb_write_run(sbi, &ea_run, 0, ea_all, size);
-+		err = ntfs_sb_write_run(sbi, &ea_run, 0, ea_all, size, 0);
- 		if (err)
- 			goto out;
- 	} else {
--- 
-2.28.0
+Hi Murphy,
+
+Thank you for the detailed report.
+I was able to reproduce the hang and the attached patch fixes it for me.
+Cloud you please verify the fix yourself as well?
+
+This is a good regression test.
+Did you consider contributing it to LTP?
+I think the LTP team could also help converting your reproducer to
+an LTP test (CC: Petr).
+
+Thanks,
+Amir.
+
+--0000000000005c2c4f05cb8de783
+Content-Type: text/x-patch; charset="US-ASCII"; name="fsnotify-fix-sb_connectors-leak.patch"
+Content-Disposition: attachment; 
+	filename="fsnotify-fix-sb_connectors-leak.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_ktcteqms0>
+X-Attachment-Id: f_ktcteqms0
+
+RnJvbSAxNGQzYzMxMzA2MmRmYmM4NmIzZDJjNGQ3ZGVlYzU2YTA5NjQzMmY3IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPgpE
+YXRlOiBUaHUsIDkgU2VwIDIwMjEgMTM6NDY6MzQgKzAzMDAKU3ViamVjdDogW1BBVENIXSBmc25v
+dGlmeTogZml4IHNiX2Nvbm5lY3RvcnMgbGVhawoKRml4IGEgbGVhayBpbiBzX2Zzbm90aWZ5X2Nv
+bm5lY3RvcnMgY291bnRlciBpbiBjYXNlIG9mIGEgcmFjZSBiZXR3ZWVuCmNvbmN1cnJlbnQgYWRk
+IG9mIG5ldyBmc25vdGlmeSBtYXJrIHRvIGFuIG9iamVjdC4KClRoZSB0YXNrIHRoYXQgbG9zdCB0
+aGUgcmFjZSBmYWlscyB0byBkcm9wIHRoZSBjb3VudGVyIGJlZm9yZSBmcmVlaW5nCnRoZSB1bnVz
+ZWQgY29ubmVjdG9yLgoKRml4ZXM6IGVjNDQ2MTBmZTJiOCAoImZzbm90aWZ5OiBjb3VudCBhbGwg
+b2JqZWN0cyB3aXRoIGF0dGFjaGVkIGNvbm5lY3RvcnMiKQpSZXBvcnRlZC1ieTogTXVycGh5IFpo
+b3UgPGplbmNjZS5rZXJuZWxAZ21haWwuY29tPgpMaW5rOiBodHRwczovL2xvcmUua2VybmVsLm9y
+Zy9saW51eC1mc2RldmVsLzIwMjEwOTA3MDYzMzM4LnljYXc2d3ZoenJmc2ZkbHBAeHpob3V4LnVz
+ZXJzeXMucmVkaGF0LmNvbS8KU2lnbmVkLW9mZi1ieTogQW1pciBHb2xkc3RlaW4gPGFtaXI3M2ls
+QGdtYWlsLmNvbT4KLS0tCiBmcy9ub3RpZnkvbWFyay5jIHwgMSArCiAxIGZpbGUgY2hhbmdlZCwg
+MSBpbnNlcnRpb24oKykKCmRpZmYgLS1naXQgYS9mcy9ub3RpZnkvbWFyay5jIGIvZnMvbm90aWZ5
+L21hcmsuYwppbmRleCA5NTAwNmQxZDI5YWIuLmZhMWQ5OTEwMWY4OSAxMDA2NDQKLS0tIGEvZnMv
+bm90aWZ5L21hcmsuYworKysgYi9mcy9ub3RpZnkvbWFyay5jCkBAIC01MzEsNiArNTMxLDcgQEAg
+c3RhdGljIGludCBmc25vdGlmeV9hdHRhY2hfY29ubmVjdG9yX3RvX29iamVjdChmc25vdGlmeV9j
+b25ucF90ICpjb25ucCwKIAkJLyogU29tZW9uZSBlbHNlIGNyZWF0ZWQgbGlzdCBzdHJ1Y3R1cmUg
+Zm9yIHVzICovCiAJCWlmIChpbm9kZSkKIAkJCWZzbm90aWZ5X3B1dF9pbm9kZV9yZWYoaW5vZGUp
+OworCQlmc25vdGlmeV9wdXRfc2JfY29ubmVjdG9ycyhjb25uKTsKIAkJa21lbV9jYWNoZV9mcmVl
+KGZzbm90aWZ5X21hcmtfY29ubmVjdG9yX2NhY2hlcCwgY29ubik7CiAJfQogCi0tIAoyLjI1LjEK
+Cg==
+--0000000000005c2c4f05cb8de783--
