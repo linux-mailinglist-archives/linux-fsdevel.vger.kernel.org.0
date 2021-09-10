@@ -2,123 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E347D406B4B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 14:19:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3972406B66
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 14:29:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233089AbhIJMUl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Sep 2021 08:20:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56156 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232876AbhIJMUj (ORCPT
+        id S233095AbhIJMae (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Sep 2021 08:30:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:55106 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232997AbhIJMad (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Sep 2021 08:20:39 -0400
-Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BDEC061574;
-        Fri, 10 Sep 2021 05:19:29 -0700 (PDT)
-Received: by mail-oi1-x231.google.com with SMTP id y128so2648823oie.4;
-        Fri, 10 Sep 2021 05:19:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m7N91pqKq8beoDgw/AQ3VlvWVBfWO9GtOToYGj0IQ50=;
-        b=IfqToNnCoZ3YN849dLmvG2gmwSx4vYcHgCOoDaef6PE96595XSw607vvL2Q6ZdEhEh
-         Ovq1ccG9+u6oCuRkvnNU/7RTWcNpBJb0+LKE1R204Uva1Seuuch9iafDI9t+btT6F32f
-         MiXsC5f6gSi32ULZGxjNYfqEht3ULsY+dEAM1ZOyfVPVF2G3KtlvpeqHpbSE47MvkeIU
-         4zM4niLWK4mY0RCEslasUbsEm0wf3kreZtpyh9gGgC+RSqzUYU0t0vuUSqhUWlR0hX0b
-         uZ03efzVqLnFZYEMXCZwnzgixAjC7vQK3fDAWB4UQFnMPibXNXBhyOFfmvm0obk/O0Uk
-         uFaQ==
+        Fri, 10 Sep 2021 08:30:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1631276962;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RJBKj0rWr14JtdShUr9I4H+LpLxyHnMkq0zZJ6FWWIU=;
+        b=hD9aYKGzyMMx6Ia+K3R85zsbx4djbQ1opuOWgPXeOwJYaoBHrTaO5j4Ctxxz6XtVOuxP2x
+        aLT+IrY8vnB97t7srGmF8SYY5tFCbEiGKhO65dHRKrBXnr4er8WUvB+02D/DsXNCa5RBiK
+        g0EDWxoBNI51d8FpkrKV7q5Sl31baZ4=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-11-iKXubVGJNW-n_GA0n2FzIA-1; Fri, 10 Sep 2021 08:29:21 -0400
+X-MC-Unique: iKXubVGJNW-n_GA0n2FzIA-1
+Received: by mail-ed1-f69.google.com with SMTP id s15-20020a056402520f00b003cad788f1f6so821893edd.22
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 05:29:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m7N91pqKq8beoDgw/AQ3VlvWVBfWO9GtOToYGj0IQ50=;
-        b=p/U6jEKo1wTAzU4A52+uPpIEVxjxdLPGygfSalBzsEyEDTs3eY7cki4rdXucnDYBoy
-         YZaOLAWg4edXBTtqYpKbHuOwpaRKSMojQCru4udtisna2AL18MkPTzSz0oGO/ViP5J2m
-         hPccHeJ72gWy0FATE0t/RWbi0Ucdykh/zJP4ImgHOQDMkscNaEEhHf8+/wlx9LhvH4Q4
-         V86DPBcBovH3WFzFSsyAOdRPvMd+qUQP6Y93W/uNlB4fGuj1TsorEsYVLhsgpESk5CAp
-         5zgJDAIKUOrjaddeZrsr7JGPq6fGol94f/YgaZ6ArG6EwskYNlBv4YdrpAWrVd6vNglN
-         RVTQ==
-X-Gm-Message-State: AOAM5331oUyc0tXxZ40lQKOpMJT09MVjICzTvVFH4KAGLLbVBeHQu0Cq
-        0vZgtED9uuW5f+Rof7h2oHKdEoEP/Xdo1IigREMp3z5q8ROtBg==
-X-Google-Smtp-Source: ABdhPJybGAvirYtlTNGtvzGtavu0JzXzwICVUsbU6PRjwVVdmxgANHwypFZZP1w7wnvqQ/WjLk0+aZtUuW7M0S/w+IQ=
-X-Received: by 2002:a05:6808:1a19:: with SMTP id bk25mr3821810oib.62.1631276368327;
- Fri, 10 Sep 2021 05:19:28 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=RJBKj0rWr14JtdShUr9I4H+LpLxyHnMkq0zZJ6FWWIU=;
+        b=O+RLeHNloBRP9OgG3QxgkLnMG3/HK9nUfTzatwI9k0F3LL7hppTWS1d9vzAvfWvrBF
+         imrtyqFLknDQrdOLMrf5+5/hH10ghMYXC1ZsHCyFfeOAdcvBG1KdGKgURt1NJ5+SlS3s
+         tFJvbgnwucbAGnEm2n2Exs5HnBb93czsCJxs0x8yTqes864FhECRW2E63wbJBsy9BEcK
+         rJMtAfLf0hbKXBnk1AWpTNWu5ab6nglxol+4S08oAgYLY3aLgCbqcKSL1uUzn/n82Ili
+         bDldXKCUfIQcfHTGw+knB23iNoESPpgtrXvX0RKRjClZAWUzunt6LkRP6zsClYew/rvt
+         +stg==
+X-Gm-Message-State: AOAM5331kOS/cxGdVCxUhjSjDjQrNsEUeC+FuI/tHzUSVzTzVnOTmjEX
+        NasRxMZLRRBMMyjsrrJuqgpYGnPOFQV0trFrlF9I9WWKNlnK+Ewt1cfmM+SKM6k6EfluuftPLsP
+        A1nPbLZinrLYXFmXJ1Zs4DKzSAA==
+X-Received: by 2002:a17:906:2346:: with SMTP id m6mr9204977eja.512.1631276959852;
+        Fri, 10 Sep 2021 05:29:19 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwPHRAGQEuGqTnJM27ZaBkgZd+zRxLi4Y3OOWpP/IwERUKJPWfX0VQ0VYYGBh1JVxBNqenvEA==
+X-Received: by 2002:a17:906:2346:: with SMTP id m6mr9204960eja.512.1631276959568;
+        Fri, 10 Sep 2021 05:29:19 -0700 (PDT)
+Received: from omega.lan (ip4-46-39-172-19.cust.nbox.cz. [46.39.172.19])
+        by smtp.gmail.com with ESMTPSA id mb14sm2384479ejb.81.2021.09.10.05.29.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Sep 2021 05:29:19 -0700 (PDT)
+Date:   Fri, 10 Sep 2021 14:29:17 +0200
+From:   Carlos Maiolino <cmaiolino@redhat.com>
+To:     =?utf-8?B?0J/QsNCy0LXQuyDQodCw0LzRgdC+0L3QvtCy?= 
+        <pvsamsonov76@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: fs/attr.c patch
+Message-ID: <20210910122917.qgk35uy6cqs4hhyy@omega.lan>
+References: <34c7bdc6-a057-e1a0-0891-757a0a493874@gmail.com>
 MIME-Version: 1.0
-References: <CAJZVDJAJa+j=hx2JswdvS35t9VU6TYF3uDZnzZ5hhtSzo9E-LA@mail.gmail.com>
-In-Reply-To: <CAJZVDJAJa+j=hx2JswdvS35t9VU6TYF3uDZnzZ5hhtSzo9E-LA@mail.gmail.com>
-From:   Kari Argillander <kari.argillander@gmail.com>
-Date:   Fri, 10 Sep 2021 15:19:16 +0300
-Message-ID: <CAC=eVgQKOdNbyDf2Qf=O9SnG=6nAGZ-nyuwOosf7YW5R3xbVLw@mail.gmail.com>
-Subject: Re: ntfs3 mount options
-To:     Marcos Mello <marcosfrm@gmail.com>, ntfs3@lists.linux.dev,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <34c7bdc6-a057-e1a0-0891-757a0a493874@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-10.09.2021 14.23 Marcos Mello (marcosfrm@gmail.com) wrote:
-> Hi, sorry email you directly, but this mailing list thing is cryptic
-> to me.
+On Fri, Sep 10, 2021 at 03:14:44PM +0300, Павел Самсонов wrote:
+> 
 
-I CC also lists to this so now everyone knows. Also CC couple
-others who might be interested to talk about this.
+Please, follow the submitting patches guide included in the documentation:
 
-> I was reading your patches cleaning up ntfs3 documentation and
-> realized some mount options diverge from NTFS-3G. This will make
-> udisks people unhappy.
+Documentation/process/submitting-patches.rst
 
-This is true. They also diverge from the current NTFS driver. We have
-talk about it a little bit and before ntfs driver can go out from kernel we
-need to support those flags or at least some. udisk currently does only
-support NTFS-3G and it does not support kernel ntfs driver. So nothing
-will change.
+Also, please be sure to describe why {are you changing/do you want to change} the argument from inode to dentry.
 
-I also agree that we should check mount options from ntfs-3g and maybe
-implement them in. Maybe we can just take some mount options with
-deprecated and print that this option is meant to use with ntfs-3g please
-note that this is kernel ntfs3 driver or something. It would still work for
-users. Ntfs-3g contains imo lot of unnecessary flags. Kernel community
-would probably not want to maintain so large list of different options.
 
-Ntfs-3g group also has acounted problems because they say that you
-should example use "big_writes", but not everyone does and that drops
-performance. Driver should work good way by default. And only if there
-is really demand there should be real mount option. But like I said, maybe
-we should add "fake" ntfs-3g options so if some user change to use ntfs3
-it will be pretty painless.
+-- 
+Carlos
 
-> NTFS-3G options:
-> https://github.com/tuxera/ntfs-3g/blob/edge/src/ntfs-3g.8.in
->
-> UDISKS default and allowed options:
-> https://github.com/storaged-project/udisks/blob/master/data/builtin_mount_options.conf
->
-> For example, windows_names is not supported in ntfs3 and
-> show_sys_files should probably be an alias to showmeta.
-
-Imo windows_names is good option. There is so many users who just
-want to use this with dual boot. That is why I think best option would
-be windows_compatible or something. Then we do everything to user
-not screw up things with disk and that when he checks disk with windows
-everything will be ok. This option has to also select ignore_case.
-
-But right now we are horry to take every mount option away what we won't
-need. We can add options later. And this is so early that we really cannot
-think so much how UDSIKS threats ntfs-3g. It should imo not be problem
-for them to also support for ntfs3 with different options.
-
-> Also, is NTFS-3G locale= equivalent to ntfs3 nls=?
-
-Pretty much. It is now called iocharset and nls will be deprecated.
-This is work towards that every Linux kernel filesystem driver which
-depends on this option will be same name. Ntfs-3g should also use
-it.
-
-> Thank you a lot for all the work put into ntfs3!
->
-> Marcos
