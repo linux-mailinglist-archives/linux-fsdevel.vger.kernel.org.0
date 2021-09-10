@@ -2,231 +2,291 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C3274068BF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 10:53:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FEC8406A66
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 12:54:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231842AbhIJIyt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Sep 2021 04:54:49 -0400
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:37489 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231731AbhIJIys (ORCPT
+        id S232514AbhIJKzy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Sep 2021 06:55:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27878 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232513AbhIJKzy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Sep 2021 04:54:48 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 2276932009F0;
-        Fri, 10 Sep 2021 04:53:37 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Fri, 10 Sep 2021 04:53:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilammy.net; h=
-        from:content-type:content-transfer-encoding:mime-version:subject
-        :message-id:date:cc:to; s=fm2; bh=iJpONL4AqPRFYodHgX8qaQC1HnvrTc
-        94YdA+uyxnPf8=; b=mQ5ldECQEBEzzCoBTinbYAjksN5nd8qSsFS/c7KJQhBX1N
-        tzmxA0Au9Bcs9870f9iUPk6Hv8j3ntGnqnufqorKB4oLeRvDAhDXIRNQyC1bvbxt
-        LG2n0I0bRea/O+Z3mRd7XQUFg7Mh7+R6YkYFIQ4wGGjIWhyyqsIxAKpywxJnaB62
-        C+i75kWws3OIe/x7vh7ETITut96bkJgXRSPv1GuLuv6cWV8C6N55nR1U1vUp6XvT
-        cnkCpRAPUFNPTuaxSIA2yXy394PunOsK1ha+ig29LEcWtlHfZoyT0sXLOoDIxwbQ
-        X3L7IDJznrNhayu7fIr2DMs53WnnjG0DCxm+cGgw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:message-id:mime-version:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=iJpONL
-        4AqPRFYodHgX8qaQC1HnvrTc94YdA+uyxnPf8=; b=ZT3xy/EXTIEe2oA3YPkwEz
-        qIlR6s2YAsHgtvcP21pArgWt8FLLpRiOd5gshyMns7ny0lr5Pro1ZoVldtwyJYjc
-        psPgoQDW1lT9/EeBxcCJN37FYRxj4K4NYFNvyFuCptOhHHfoywGcvfspCVrbZKtL
-        cgRIQGESoPGjb2TB6v8mcnfl4GONUz7NbpelbQZBmxNy/d6BakL2uHNuelsigzee
-        HN/MnCcAeytynCdms0IWGxGrMzocGpAmyqI3l1PGTXQf+dK56DWgS1l5AsNxwiBZ
-        xxgA6nQ1jD/y03UWlgqlDg6oecKIbqA+4X8oPzEE3Y/8Dv6S618aDffmLZJ88i0Q
-        ==
-X-ME-Sender: <xms:EB07YZD9OJXvlAhPc59AuamRyRfPtMC6kA8R1KXs5Qkv2i3vCqTvjQ>
-    <xme:EB07YXhyyaX1CW5RMoRd5QeYwEtpiutc3qOLY-Q0G3NZlhVVxs4qad2EaSBijoIQM
-    00oGIoM3KNW7i7KY1A>
-X-ME-Received: <xmr:EB07YUnlnSEN-e9IdFR116QG3IwTLAqmSbOUo0mPkiIGLMNTV-LMeyrvea3slZ3u9vo4iKnBM6oRIWO_MCboaHO-UiscjpFn1jbQ5qb3qQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudeguddgtdekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfgtgfgguffkfffvofesthhqmhdthhdtvdenucfhrhhomheptehlvgigvghi
-    ucfnohiiohhvshhkhicuoehmvgesihhlrghmmhihrdhnvghtqeenucggtffrrghtthgvrh
-    hnpeevieegjefhuefggfdtgeekjeeljeduvdehvdeuueegleegteevheegiedvueelfeen
-    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgvsehilhgrmhhmhidrnhgvth
-X-ME-Proxy: <xmx:EB07YTyiaR6LDt2geVNE3zZLfaWuUl9TxittDwLG2-GjeJ8GjHw9dg>
-    <xmx:EB07YeS_T648pxOvGaxBuLvNyxdpjZWlECHkuwDcy5QyuGxkK59Mhw>
-    <xmx:EB07YWYocv11-jGR3i6hxfB7TXhPdXyY-eWQwQ5vVXI4JwDWAtdRsA>
-    <xmx:EB07Ycf0NKkAk9rpMNpxO8e-Yl17HGGhcw8FgW5e6DM7JICzXzsbGw>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 10 Sep 2021 04:53:34 -0400 (EDT)
-From:   Alexei Lozovsky <me@ilammy.net>
-Content-Type: text/plain;
-        charset=us-ascii
+        Fri, 10 Sep 2021 06:55:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1631271282;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Rp5Lxa5h9ZVQAdx0fPblnQhNdn9SeHUlbTUr8Itj62s=;
+        b=XroW+o+3Ivz1YqsxeRmvlUGd0P1UOs9wnOR1dfLhTmh59KQnc0W4me+Xe6JeubXh6CZajo
+        TND0lNoxgVvbRn4jolEjlnW8KCYEwURfkB1z9aOHHalkYYxQYAamZS2uRM4BntfulvRs+b
+        yLkisO9GFcrzMW2oDHV1vTKfGV+JzkI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-549-MXUVxTCSMU-xK9Kf36QZDA-1; Fri, 10 Sep 2021 06:54:41 -0400
+X-MC-Unique: MXUVxTCSMU-xK9Kf36QZDA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 834931006AA0;
+        Fri, 10 Sep 2021 10:54:39 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2348B10016FE;
+        Fri, 10 Sep 2021 10:54:36 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+cc:     dhowells@redhat.com, torvalds@linux-foundation.org, hch@lst.de,
+        linux-fsdevel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC][PATCH] vfs, afs: Pass the file from fstat()/statx() to the fs for auth purposes
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <826634.1631271276.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.4\))
-Subject: /proc/stat interrupt counter wrap-around
-Message-Id: <06F4B1B0-E4DE-4380-A8E1-A5ACAD285163@ilammy.net>
-Date:   Fri, 10 Sep 2021 17:53:28 +0900
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Christoph Lameter <cl@linux.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-To:     Thomas Gleixner <tglx@linutronix.de>
-X-Mailer: Apple Mail (2.3608.120.23.2.4)
+Date:   Fri, 10 Sep 2021 11:54:36 +0100
+Message-ID: <826635.1631271276@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A monitoring dashboard caught my attention when it displayed weird
-spikes in computed interrupt rates. A machine with constant network
-load shows about ~250k interrupts per second, then every 4-5 hours
-there's a one-off spike to 11 billions.
+    =
 
-Turns out, if you plot the interrupt counter, you get a graph like this:
+read(), write() and ftruncate() all have the file available from which the=
+y
+can extract the information needed to perform authenticated operations to =
+a
+network filesystem server for that filesystem, but fstat() and statx() do
+not.
 
-                                     ###.                          =20
-                                  ###   | ####.              #######
-                  #####.     #####      ##    |     #########      =20
-             #####     |   ##                 ######               =20
-            #          ####                                        =20
-        ####                                                       =20
-       #                                                           =20
-    ###                                                            =20
+This could lead to the situation where a read(), say, on a file descriptor
+will work, but fstat() will fail because the calling process doesn't
+intrinsically have the right to do that.
 
-While monitoring tools are typically used to handling counter
-wrap-arounds, they may not be ready to handle dips like this.
+Change this by passing the file, if we have it, in struct kstat from which
+the filesystem can pick it up and use it, similar to the way ftruncate()
+passes the information in struct iattr.
 
+Make use of this in the afs filesystem to pass to validation in case we
+need to refetch the inode attributes from the server.
 
-What is the impact
-------------------
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Alexander Viro <viro@zeniv.linux.org.uk>
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-afs@lists.infradead.org
+---
+ fs/afs/inode.c       |   10 ++++++++-
+ fs/exportfs/expfs.c  |    2 -
+ fs/stat.c            |   56 ++++++++++++++++++++++++++++++++++++++-------=
+------
+ include/linux/fs.h   |    3 +-
+ include/linux/stat.h |    1 =
 
-Not much, actually.
+ 5 files changed, 55 insertions(+), 17 deletions(-)
 
-The counters always decrement by exactly 2^32 (which is suggestive),
-so if you mask out the high bits of the counter and consider only
-the low 32 bits, then the value sequence actually make sense,
-given an appropriate sampling rate.
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 8fcffea2daf5..7d732a38c739 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -670,6 +670,9 @@ int afs_validate(struct afs_vnode *vnode, struct key *=
+key)
+ 	       vnode->fid.vid, vnode->fid.vnode, vnode->flags,
+ 	       key_serial(key));
+ =
 
-However, if you don't mask out the value and assume it to be accurate --
-well, that assumption is incorrect. Interrupt sums might look correct
-and contain some big number, but it could be arbitrarily distant from
-the actual number of interrupts serviced since the boot time.
++	if (!vnode->volume)
++		goto valid; /* Dynroot */
++
+ 	if (unlikely(test_bit(AFS_VNODE_DELETED, &vnode->flags))) {
+ 		if (vnode->vfs_inode.i_nlink)
+ 			clear_nlink(&vnode->vfs_inode);
+@@ -728,10 +731,15 @@ int afs_getattr(struct user_namespace *mnt_userns, c=
+onst struct path *path,
+ {
+ 	struct inode *inode =3D d_inode(path->dentry);
+ 	struct afs_vnode *vnode =3D AFS_FS_I(inode);
+-	int seq =3D 0;
++	struct afs_file *af =3D stat->file ? stat->file->private_data : NULL;
++	int ret, seq =3D 0;
+ =
 
-This concerns only the total value of "intr" and "softirq" rows:
+ 	_enter("{ ino=3D%lu v=3D%u }", inode->i_ino, inode->i_generation);
+ =
 
-    intr    14390913189 32 11 0 0 238 0 0 0 0 0 0 0 88 0 [...]
-    softirq 14625063745 0 596000256 300149 272619841 0 0 [...]
-            ^^^^^^^^^^^
-            these ones
++	ret =3D afs_validate(vnode, af ? af->key : NULL);
++	if (ret < 0)
++		return ret;
++
+ 	do {
+ 		read_seqbegin_or_lock(&vnode->cb_lock, &seq);
+ 		generic_fillattr(&init_user_ns, inode, stat);
+diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+index 0106eba46d5a..d3fba1aea432 100644
+--- a/fs/exportfs/expfs.c
++++ b/fs/exportfs/expfs.c
+@@ -303,7 +303,7 @@ static int get_name(const struct path *path, char *nam=
+e, struct dentry *child)
+ 	 * actually call ->getattr, not just read i_ino:
+ 	 */
+ 	error =3D vfs_getattr_nosec(&child_path, &stat,
+-				  STATX_INO, AT_STATX_SYNC_AS_STAT);
++				  STATX_INO, AT_STATX_SYNC_AS_STAT, NULL);
+ 	if (error)
+ 		return error;
+ 	buffer.ino =3D stat.ino;
+diff --git a/fs/stat.c b/fs/stat.c
+index 1fa38bdec1a6..c3410e809b4d 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -65,6 +65,7 @@ EXPORT_SYMBOL(generic_fillattr);
+  * @stat: structure to return attributes in
+  * @request_mask: STATX_xxx flags indicating what the caller wants
+  * @query_flags: Query mode (AT_STATX_SYNC_TYPE)
++ * @file: File with credential info or NULL
+  *
+  * Get attributes without calling security_inode_getattr.
+  *
+@@ -73,12 +74,14 @@ EXPORT_SYMBOL(generic_fillattr);
+  * attributes to any user.  Any other code probably wants vfs_getattr.
+  */
+ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
+-		      u32 request_mask, unsigned int query_flags)
++		      u32 request_mask, unsigned int query_flags,
++		      struct file *file)
+ {
+ 	struct user_namespace *mnt_userns;
+ 	struct inode *inode =3D d_backing_inode(path->dentry);
+ =
 
+ 	memset(stat, 0, sizeof(*stat));
++	stat->file =3D file;
+ 	stat->result_mask |=3D STATX_BASIC_STATS;
+ 	query_flags &=3D AT_STATX_SYNC_TYPE;
+ =
 
-Why this happens
-----------------
+@@ -139,7 +142,7 @@ int vfs_getattr(const struct path *path, struct kstat =
+*stat,
+ 	retval =3D security_inode_getattr(path);
+ 	if (retval)
+ 		return retval;
+-	return vfs_getattr_nosec(path, stat, request_mask, query_flags);
++	return vfs_getattr_nosec(path, stat, request_mask, query_flags, NULL);
+ }
+ EXPORT_SYMBOL(vfs_getattr);
+ =
 
-The reason for such behaviour is that the "total" interrupt counters
-presented by /proc/stat are actually computed by adding up per-interrupt
-per-CPU counters. Most of these are "unsigned int", while some of them
-are "unsigned long", and the accumulator is "u64". What a mess...
+@@ -161,7 +164,11 @@ int vfs_fstat(int fd, struct kstat *stat)
+ 	f =3D fdget_raw(fd);
+ 	if (!f.file)
+ 		return -EBADF;
+-	error =3D vfs_getattr(&f.file->f_path, stat, STATX_BASIC_STATS, 0);
++
++	error =3D security_inode_getattr(&f.file->f_path);
++	if (!error)
++		error =3D vfs_getattr_nosec(&f.file->f_path, stat,
++					  STATX_BASIC_STATS, 0, f.file);
+ 	fdput(f);
+ 	return error;
+ }
+@@ -185,7 +192,9 @@ static int vfs_statx(int dfd, const char __user *filen=
+ame, int flags,
+ 	      struct kstat *stat, u32 request_mask)
+ {
+ 	struct path path;
++	struct fd f;
+ 	unsigned lookup_flags =3D 0;
++	bool put_fd =3D false;
+ 	int error;
+ =
 
-Individual counters are monotonically increasing (modulo wrapping),
-however if you add multiple values with different bit widths then
-the sum is *not* guaranteed to be monotonically increasing.
+ 	if (flags & ~(AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT | AT_EMPTY_PATH |
+@@ -200,17 +209,36 @@ static int vfs_statx(int dfd, const char __user *fil=
+ename, int flags,
+ 		lookup_flags |=3D LOOKUP_EMPTY;
+ =
 
+ retry:
+-	error =3D user_path_at(dfd, filename, lookup_flags, &path);
+-	if (error)
+-		goto out;
+-
+-	error =3D vfs_getattr(&path, stat, request_mask, flags);
+-	stat->mnt_id =3D real_mount(path.mnt)->mnt_id;
+-	stat->result_mask |=3D STATX_MNT_ID;
+-	if (path.mnt->mnt_root =3D=3D path.dentry)
+-		stat->attributes |=3D STATX_ATTR_MOUNT_ROOT;
+-	stat->attributes_mask |=3D STATX_ATTR_MOUNT_ROOT;
+-	path_put(&path);
++	if ((lookup_flags & LOOKUP_EMPTY) &&
++	    dfd >=3D 0 &&
++	    filename &&
++	    strnlen_user(filename, 2) =3D=3D 0) {
++		/* Should we use ESTALE retry for direct-fd? */
++		f =3D fdget_raw(dfd);
++		if (!f.file)
++			return -EBADF;
++		path =3D f.file->f_path;
++		put_fd =3D true;
++	} else {
++		f.file =3D NULL;
++		error =3D user_path_at(dfd, filename, lookup_flags, &path);
++		if (error)
++			goto out;
++	}
++
++	error =3D security_inode_getattr(&path);
++	if (!error) {
++		error =3D vfs_getattr_nosec(&path, stat, request_mask, flags, f.file);
++		stat->mnt_id =3D real_mount(path.mnt)->mnt_id;
++		stat->result_mask |=3D STATX_MNT_ID;
++		if (path.mnt->mnt_root =3D=3D path.dentry)
++			stat->attributes |=3D STATX_ATTR_MOUNT_ROOT;
++		stat->attributes_mask |=3D STATX_ATTR_MOUNT_ROOT;
++	}
++	if (put_fd)
++		fdput(f);
++	else
++		path_put(&path);
+ 	if (retry_estale(error, lookup_flags)) {
+ 		lookup_flags |=3D LOOKUP_REVAL;
+ 		goto retry;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index c58c2611a195..3f31f739f9a6 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3312,7 +3312,8 @@ extern int page_symlink(struct inode *inode, const c=
+har *symname, int len);
+ extern const struct inode_operations page_symlink_inode_operations;
+ extern void kfree_link(void *);
+ void generic_fillattr(struct user_namespace *, struct inode *, struct kst=
+at *);
+-extern int vfs_getattr_nosec(const struct path *, struct kstat *, u32, un=
+signed int);
++extern int vfs_getattr_nosec(const struct path *, struct kstat *, u32, un=
+signed int,
++			     struct file *);
+ extern int vfs_getattr(const struct path *, struct kstat *, u32, unsigned=
+ int);
+ void __inode_add_bytes(struct inode *inode, loff_t bytes);
+ void inode_add_bytes(struct inode *inode, loff_t bytes);
+diff --git a/include/linux/stat.h b/include/linux/stat.h
+index fff27e603814..b9986688cc59 100644
+--- a/include/linux/stat.h
++++ b/include/linux/stat.h
+@@ -20,6 +20,7 @@
+ #include <linux/uidgid.h>
+ =
 
-What can be done
-----------------
-
- 1. Do nothing.
-
-    Userspace can trivially compensate for this 'curious' behavior
-    by masking out the high bits, observing only the low
-    sizeof(unsigned) part, and taking care to handle wrap-arounds.
-
-    This maintains status quo, but the "issue" of interrupt sums
-    not being quite accurate remains.
-
-
- 2. Change the presentation type to the lowest denominator.
-
-    That is, unsigned int. Make the kernel mask out not-quite-accurate
-    bits from the value it reports. Keep it that way until every
-    underlying counter type is changed to something wider.
-
-    The benefit here is that users that *are* ready to handle proper
-    wrap-arounds will be able to handle them automagically without
-    undocumented hacks (see option 1).
-
-    This changes the observed value and will cause "unexpected"
-    wrap-arounds to happen earlier in some use-cases, which might
-    upset users that are not ready to handle them, or don't want
-    to poll /proc/stat more frequently.
-
-    It's debatable what's better: a lower-width value that might
-    need to be polled more often, or a wider-width value that is
-    not completely accurate.
-
-
- 3. Change the interrupt counter types to be wider.
-
-    A different take on the issue: instead of narrowing the presentation
-    from faux-u64 to unsigned it, widen the interrupt counters from
-    unsigned int to... something else:
-
-    - u64             interrupt counters are 64-bit everywhere, period
-
-    - unsigned long   interrupt counters are 64-bit if the platform
-                      thinks that "long" is longer than "int"
-
-    Whatever the type is used, it must be the same for all interrupt
-    counters across the kernel as well as the type used to compute
-    and display the sum of all these counters by /proc/stat.
-
-    The advantage here is that 64-bit counters will be probably enough
-    for *anything* to not overflow anytime soon before the heat death
-    of the universe, thus making the wrap-around problem irrelevant.
-
-    The disadvantage here is that some hardware counters are 32-bit,
-    and you can't make them wider. Some platforms also don't have
-    proper atomic support for 64-bit integers, making wider counters
-    problematic to implement efficiently.
-
-
-So what do we do?
------------------
-
-I suggest to wrap interrupt counter sum at "unsigned int", the same
-type used for (most) individual counters. That makes for the most
-predictable behavior.
-
-I have a patch set cooking that does this.
-
-Will this be of any interest? Or do you think changing the behavior
-of /proc/stat will cause more trouble than merit?
-
-
-Prior discussion
-----------------
-
-This question is by no means new, it has been discussed several times:
-
-2019 - genirq, proc: Speedup /proc/stat interrupt statistics
-
-    The issue of overflow and wrap-around has been touched upon,
-    suggesting that userspace should just deal with it. The issue of
-    using u64 for the sum has been brought up too, but it did not
-    go anywhere.
-
-=
-https://lore.kernel.org/all/20190208143255.9dec696b15f03bf00f4c60c2@linux-=
-foundation.org/
-=
-https://lore.kernel.org/all/3460540b50784dca813a57ddbbd41656@AcuMS.aculab.=
-com/
-
-
-2014 - Why do we still have 32 bit counters? Interrupt counters overflow =
-within 50 days
-
-    Discussion on whether it's appropriate to bump counter width to
-    64 bits in order to avoid the overflow issues entirely.
-
-=
-https://lore.kernel.org/lkml/alpine.DEB.2.11.1410030435260.8324@gentwo.org=
-/
+ struct kstat {
++	struct file	*file;		/* File if called from fstat() equivalent or NULL */
+ 	u32		result_mask;	/* What fields the user got */
+ 	umode_t		mode;
+ 	unsigned int	nlink;
 
