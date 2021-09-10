@@ -2,59 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0961C406631
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 05:36:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D39374066FE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 08:00:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230024AbhIJDhX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Sep 2021 23:37:23 -0400
-Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:59454 "EHLO
-        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229929AbhIJDhW (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Sep 2021 23:37:22 -0400
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mOXKk-002nGL-82; Fri, 10 Sep 2021 03:36:10 +0000
-Date:   Fri, 10 Sep 2021 03:36:10 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [git pull] iov_iter fixes
-Message-ID: <YTrSqvkaWWn61Mzi@zeniv-ca.linux.org.uk>
-References: <YTmL/plKyujwhoaR@zeniv-ca.linux.org.uk>
- <CAHk-=wiacKV4Gh-MYjteU0LwNBSGpWrK-Ov25HdqB1ewinrFPg@mail.gmail.com>
- <5971af96-78b7-8304-3e25-00dc2da3c538@kernel.dk>
- <YTrJsrXPbu1jXKDZ@zeniv-ca.linux.org.uk>
- <b8786a7e-5616-ce83-c2f2-53a4754bf5a4@kernel.dk>
- <YTrM130S32ymVhXT@zeniv-ca.linux.org.uk>
- <9ae5f07f-f4c5-69eb-bcb1-8bcbc15cbd09@kernel.dk>
- <YTrQuvqvJHd9IObe@zeniv-ca.linux.org.uk>
- <f02eae7c-f636-c057-4140-2e688393f79d@kernel.dk>
+        id S230445AbhIJGBh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Sep 2021 02:01:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52754 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230417AbhIJGBe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Sep 2021 02:01:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F13D36113E;
+        Fri, 10 Sep 2021 06:00:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1631253623;
+        bh=+oBAtMoawlHInRv8YIXOyVPI7irf8Xkg/tet/t4c8lc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZyJ6ySZWKFHN2JnLx3GxlRZMUgBx7kgGbC9a0TdGLvUn6eAzCKJNLB6FYt8RbhTIC
+         tH8uosog7Dpcb5qWhoF/PeWufLF5PH+ltZFt7ZbLniTMVzCu/jASqdCdDf2BnXcPy8
+         +hAT0lIPiWbzrj5ofnPY/DVNdlOW0VGKIuXZoflY=
+Date:   Fri, 10 Sep 2021 08:00:00 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     "taoyi.ty" <escape@linux.alibaba.com>
+Cc:     tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org,
+        mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, shanpeic@linux.alibaba.com
+Subject: Re: [RFC PATCH 1/2] add pinned flags for kernfs node
+Message-ID: <YTr0YDfLbKTkxy52@kroah.com>
+References: <cover.1631102579.git.escape@linux.alibaba.com>
+ <e753e449240bfc43fcb7aa26dca196e2f51e0836.1631102579.git.escape@linux.alibaba.com>
+ <YTiuBaiVZhe3db9O@kroah.com>
+ <3d871bd0-dab5-c9ca-61b9-6aa137fa9fdf@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f02eae7c-f636-c057-4140-2e688393f79d@kernel.dk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3d871bd0-dab5-c9ca-61b9-6aa137fa9fdf@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 09, 2021 at 09:30:03PM -0600, Jens Axboe wrote:
-
-> > Again, we should never, ever modify the iovec (or bvec, etc.) array in
-> > ->read_iter()/->write_iter()/->sendmsg()/etc. instances.  If you see
-> > such behaviour anywhere, report it immediately.  Any such is a blatant
-> > bug.
+On Fri, Sep 10, 2021 at 10:14:28AM +0800, taoyi.ty wrote:
 > 
-> Yes that was wrong, the iovec is obviously const. But that really
-> doesn't change the original point, which was that copying the iov_iter
-> itself unconditionally would be miserable.
+> On 2021/9/8 下午8:35, Greg KH wrote:
+> > Why are kernfs changes needed for this?  kernfs creation is not
+> > necessarily supposed to be "fast", what benchmark needs this type of
+> > change to require the addition of this complexity?
+> 
+> The implementation of the cgroup pool should have nothing
+> 
+> to do with kernfs, but during the development process,
+> 
+> I found that when there is a background cpu load, it takes
+> 
+> a very significant time for a process to get the mutex from
+> 
+> being awakened to starting execution.
+> 
+> To create 400 cgroups concurrently, if there is no background
+> 
+> cpu load, it takes about 80ms, but if the cpu usage rate is
+> 
+> 40%, it takes about 700ms. If you reduce
+> 
+> sched_wakeup_granularity_ns, the time consumption will also
+> 
+> be reduced. If you change mutex to spinlock, the situation
+> 
+> will be very much improved.
+> 
+> So to solve this problem, mutex should not be used. The
+> 
+> cgroup pool relies on kernfs_rename which uses
+> 
+> kernfs_mutex, so I need to bypass kernfs_mutex and
+> 
+> add a pinned flag for this.
+> 
+> Because the lock mechanism of kernfs_rename has been
+> 
+> changed, in order to maintain data consistency, the creation
+> 
+> and deletion of kernfs have also been changed accordingly
+> 
+> I admit that this is really not a very elegant design, but I don’t
+> 
+> know how to make it better, so I throw out the problem and
+> 
+> try to seek help from the community.
 
-Might very well be true, but... won't your patch hit the reimport on
-every short read?  And the cost of uaccess in there is *much* higher
-than copying of 48 bytes into local variable...
+Look at the changes to kernfs for 5.15-rc1 where a lot of the lock
+contention was removed based on benchmarks where kernfs (through sysfs)
+was accessed by lots of processes all at once.
 
-Or am I misreading your patch?  Note that short reads on reaching
-EOF are obviously normal - it's not a rare case at all.
+That should help a bit in your case, but remember, the creation of
+kernfs files is not the "normal" case, so it is not optimized at all.
+We have optimized the access case, which is by far the most common.
+
+good luck!
+
+greg k-h
