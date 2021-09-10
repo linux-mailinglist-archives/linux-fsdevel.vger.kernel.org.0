@@ -2,145 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33763405FEE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 01:15:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3760406315
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 02:45:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239558AbhIIXQa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Sep 2021 19:16:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52072 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231814AbhIIXQa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Sep 2021 19:16:30 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E57C7C061574;
-        Thu,  9 Sep 2021 16:15:19 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 196-20020a1c04cd000000b002fa489ffe1fso91611wme.4;
-        Thu, 09 Sep 2021 16:15:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2KMTbwzwcjYnRQvQNdjEYNklaNCqiGe953Wg0iDkUSI=;
-        b=EomIaYlrmL0pDDibIkOOlCkdWy7uUai/odvkN6t3YoudNHjrMsQpvdpmqLaeXG2/Ir
-         d/Xzn81T75JNS0lWekyaN3s6JquTcPXttLHb2w7JFcjY8ilTAPSFtIJXHTWvxVKEezKp
-         HmG1yNTxA5nFCX34VjsTh0ZoiR8tbrboHI+VdC0gA6YT1dAKytUljdvTrQZwoSTn4x6e
-         oCsC8X+PsU7bydXuBHJC6Kaijv7h6iabxvbKuscWIqcSIOrjsEpC/MhVgg8YDWb7+QGx
-         2nw2dhjdVeX+i7UmBe9dJ4nxOuZkmwIL5cyAJOrdSJt78Epq4un4JcMdhHQUQaRRf6do
-         J7rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2KMTbwzwcjYnRQvQNdjEYNklaNCqiGe953Wg0iDkUSI=;
-        b=ZS5/HRPfWWUCDZFnY1RZQVCCAn92J2q/1uUzxrc6VjlnL8TowntdASwCxJpOCLMiVj
-         boJjYaf75c3xsgafYB8LV7aY/Nd7Uqb8t4Zwr72QA2XD9P8w5VzYrYGv2jmmJmjE+3m3
-         Q0iiGcdTxKNEXVgGTNypFvajkqCHg8ZxRAiy6YHUby9tjLwDB448lVPjuRjEmn+qGbMt
-         +JGr/USo2rTzLO8YoU9iHXPb3OrSPllXiY+ww5AsWnEJAAE1CGU4Zc1Wdp4lkNaxVffU
-         2Mz86qI2kM/RoK9yJEuppiXF2GlBj8JTvWiveJArmHsC5NcX94UQoO62KeLKIWlNibR5
-         IoDw==
-X-Gm-Message-State: AOAM532dfBE6u0M6nXU5PVwXTwQODS4grmTbFPjIzLcRvrxpdNsk6kJR
-        gb1jsYBcUihjaCEGZNJqsC+/KnxTUlo=
-X-Google-Smtp-Source: ABdhPJwZV3I1lE+UDnBl1PUfkp0e91qV/5KmLHjf9inYP+WhELn1ZVc0bx+sAnN/HWsHOeMwA7F0DQ==
-X-Received: by 2002:a7b:cb02:: with SMTP id u2mr5448551wmj.103.1631229318378;
-        Thu, 09 Sep 2021 16:15:18 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.235.167])
-        by smtp.gmail.com with ESMTPSA id a133sm2979523wme.5.2021.09.09.16.15.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Sep 2021 16:15:18 -0700 (PDT)
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <YTmL/plKyujwhoaR@zeniv-ca.linux.org.uk>
- <CAHk-=wiacKV4Gh-MYjteU0LwNBSGpWrK-Ov25HdqB1ewinrFPg@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [git pull] iov_iter fixes
-Message-ID: <1864ae51-be13-23f9-1502-550be6624cf3@gmail.com>
-Date:   Fri, 10 Sep 2021 00:14:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        id S242327AbhIJAqv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Sep 2021 20:46:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44188 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232910AbhIJATQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 9 Sep 2021 20:19:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0D058610E9;
+        Fri, 10 Sep 2021 00:18:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631233086;
+        bh=dIhQ6D+q7+4S+hd60dZ6SVU2WEjyBy8A3v6b+a3GppY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=n96q72NmOlK1mWN/Bt3x1op4KRnC76kWTkSJ/ZuYLOpdRpGy4a18ekAONtxUQUfRI
+         XCUQniAewxsspxSifA9X9xRg0VruwxM/NCW9tU1Jqqkdx5v2KTPqBJz63SOP6eTc4H
+         6Kb8FrosC6caZxBxIP7CZhdVfkoxr40qq6JImQQZwkjtQjtjK3NTNNPwSPmWWsrmK+
+         qEIEgSJkB+2EzS4D0d+dsLf4WDlpV594jz5iehclIgRLshVbT5Nhv+t0ZpTJ71c1pT
+         nmRR846MTMEwX860+ZMJBR81J8LscG4VmxFpPTNPR60yQ66qkvgXN5lGuJRRSRwGy2
+         yiEosCBQ+PPTw==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <guro@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.14 92/99] fs: drop_caches: fix skipping over shadow cache inodes
+Date:   Thu,  9 Sep 2021 20:15:51 -0400
+Message-Id: <20210910001558.173296-92-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210910001558.173296-1-sashal@kernel.org>
+References: <20210910001558.173296-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wiacKV4Gh-MYjteU0LwNBSGpWrK-Ov25HdqB1ewinrFPg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/9/21 8:37 PM, Linus Torvalds wrote:
-> On Wed, Sep 8, 2021 at 9:24 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->>
->>         Fixes for io-uring handling of iov_iter reexpands
-> 
-> Ugh.
-> 
-> I have pulled this, because I understand what it does and I agree it
-> fixes a bug, but it really feels very very hacky and wrong to me.
-> 
-> It really smells like io-uring is doing a "iov_iter_revert()" using a
-> number that it pulls incorrectly out of its arse.
-> 
-> So when io-uring does that
-> 
->                 iov_iter_revert(iter, io_size - iov_iter_count(iter));
-> 
-> what it *really* wants to do is just basically "iov_iter_reset(iter)".
-> 
-> And that's basically what that addition of that "iov_iter_reexpand()"
-> tries to effectively do.
-> 
-> Wouldn't it be better to have a function that does exactly that?
-> 
-> Alternatively (and I'm cc'ing Jens) is is not possible for the
-> io-uring code to know how many bytes it *actually* used, rather than
-> saying that "ok, the iter originally had X bytes, now it has Y bytes,
-> so it must have used X-Y bytes" which was actively wrong for the case
-> where something ended up truncating the IO for some reason.
-> 
-> Because I note that io-uring does that
-> 
->         /* may have left rw->iter inconsistent on -EIOCBQUEUED */
->         iov_iter_revert(&rw->iter, req->result - iov_iter_count(&rw->iter));
-> 
-> in io_resubmit_prep() too, and that you guys missed that it's the
-> exact same issue, and needs that exact same iov_iter_reexpand().
-> 
-> That "req->result" is once again the *original* length, and the above
-> code once again mis-handles the case of "oh, the iov got truncated
-> because of some IO limit".
-> 
-> So I've pulled this, but I think it is
-> 
->  (a) ugly nasty
+From: Johannes Weiner <hannes@cmpxchg.org>
 
-Should have mentioned, I agree that it's ghastly, as mentioned
-in the cover-letter, but I just prefer to first fix the problem
-ASAP, and then carry on with something more fundamental and right.
+[ Upstream commit 16e2df2a05d46c983bf310b19432c5ca4684b2bc ]
 
+When drop_caches truncates the page cache in an inode it also includes any
+shadow entries for evicted pages.  However, there is a preliminary check
+on whether the inode has pages: if it has *only* shadow entries, it will
+skip running truncation on the inode and leave it behind.
 
->  (b) incomplete and misses a case
-> 
-> and needs more thought. At the VERY least it needs that
-> iov_iter_reexpand() in io_resubmit_prep() too, I think.
-> 
-> I'd like the comments expanded too. In particular that
-> 
->                 /* some cases will consume bytes even on error returns */
-> 
-> really should expand on the "some cases" thing, and why such an error
-> isn't fatal buye should be retried asynchronously blindly like this?
-> 
-> Because I think _that_ is part of the fundamental issue here - the
-> io_uring code tries to just blindly re-submit the whole thing, and it
-> does it very badly and actually incorrectly.
-> 
-> Or am I missing something?
-> 
->            Linus
-> 
+Fix the check to mapping_empty(), such that it runs truncation on any
+inode that has cache entries at all.
 
+Link: https://lkml.kernel.org/r/20210614211904.14420-2-hannes@cmpxchg.org
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+Reported-by: Roman Gushchin <guro@fb.com>
+Acked-by: Roman Gushchin <guro@fb.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/drop_caches.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+index f00fcc4a4f72..e619c31b6bd9 100644
+--- a/fs/drop_caches.c
++++ b/fs/drop_caches.c
+@@ -3,6 +3,7 @@
+  * Implement the manual drop-all-pagecache function
+  */
+ 
++#include <linux/pagemap.h>
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/fs.h>
+@@ -27,7 +28,7 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
+ 		 * we need to reschedule to avoid softlockups.
+ 		 */
+ 		if ((inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW)) ||
+-		    (inode->i_mapping->nrpages == 0 && !need_resched())) {
++		    (mapping_empty(inode->i_mapping) && !need_resched())) {
+ 			spin_unlock(&inode->i_lock);
+ 			continue;
+ 		}
 -- 
-Pavel Begunkov
+2.30.2
+
