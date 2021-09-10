@@ -2,122 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC909407090
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 19:32:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 445DE4070D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 20:12:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231861AbhIJRdn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Sep 2021 13:33:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42554 "EHLO
+        id S230362AbhIJSNo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Sep 2021 14:13:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231137AbhIJRdl (ORCPT
+        with ESMTP id S229451AbhIJSNm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Sep 2021 13:33:41 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2675C061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 10:32:30 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id h20so1884192ilj.13
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 10:32:30 -0700 (PDT)
+        Fri, 10 Sep 2021 14:13:42 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4802AC061574;
+        Fri, 10 Sep 2021 11:12:31 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id r3so4575808ljc.4;
+        Fri, 10 Sep 2021 11:12:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=f2dLcPzX7cfQUaVCs15ea8SZuZgriTIC7Sx2pMINImo=;
-        b=lxKG7dCsVsIRT3WhD1ltjaCzU3IouFtkfz322POaURYR56JVHdi3jaV+mNenJrMAoO
-         0S9cNvEUcNm54FnlTJuf4/qRgoO3zj0fuLfoO730BCXdhJQbd/GFJgQXJcrLbAt/Rywe
-         oaI30prUcl/0lgKvwBCSXaT5qFjSbWw3gH0VX3kuAaBhR+1XYA5xKyMp5FfOvKFRI1w0
-         leQCiVdEZBiG/t+MxFVb+bmyGCXrjS9/s06K1ubLpsvybARPMtDseXIvh1PEDOsoZMbD
-         wfsYPr8EZa0WIFJs1K3SJLfff8mVh4byI9ijH2URXVjMgcFKVsGp/sqYsc0lopRwHoCI
-         wlbQ==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=yAS2V26MFTPXdp5D+1VvRXcpwyS1dkM+dGnCynSdaik=;
+        b=QZCMZ92pfp0Aw7elF0GYvXcwRYYzg/cDsaEmEba4f+WIMOVwz64HZqjB1pjqWaqukb
+         BIwSvfvT4DWFNxpLG6dqJIBwAdLbGHF5xXrKnAarI5o91JevyqVgKYgwE2SaxNHrunCS
+         41lNXtxFKbJ3d1/82AzOiHGuEiHzg7/4kipXZOrwcZ87+wKE/3L7czuJk+oxX/0d73E+
+         uJKdkUoRTBaP30HwMX4u4SGP4p5MrIDNZdNwZ7xq99qXL5FvCE6QdiJ0WfJSNj1ERa8l
+         hbcqa6ILYPJB1hgBsrFvgArXvSZEZ1WXL7ylaUIYasJ2G85yWH7wzbrFjioLsLpt0W0Y
+         mfYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=f2dLcPzX7cfQUaVCs15ea8SZuZgriTIC7Sx2pMINImo=;
-        b=A0Gyt6wORj1SCSxVPXKd3mQpjCkw9SFvZBBL7pxqfEjVAIrnX4DfPb5Qc6pE0amGGq
-         y7rqf5K8PT99q9Kl/MvccYIh2PEOhPVlRZjB1wviovivTC1z/0G6l5GamjQwMFhcwY24
-         Dqm/M1gwagNBOEgZAjsULx8RPjECPqpPV24tdBbmLLg5Z6704YDPRsFIDEHutbnGhrt0
-         OUytBbOX+aFo8TQbRF2d5y3aYa4+LbPqLEniEF48BZv6+/MYcA3NJNkUk7q03Q9N2usi
-         u3M9xW4fg9ay44qZ/QsMBMnpHMKmLJyOye27igF/eQ291pUxXQnCkhk2OVWI9o4xIjFT
-         l0Uw==
-X-Gm-Message-State: AOAM531Rw/s7OiVD2U2fwki3pbSsdUliXMspJ3sDEq5M1ryexP7Lc7zd
-        hY0jYZCnZlISRoU8X23riBU/xPJZvQUbvdK/BjQ=
-X-Google-Smtp-Source: ABdhPJxFWU8gqCBBryXuxzlo/F8fVDK17G6WpdOf0SxaOP/bOrZ2G8UndlhT+g5ZEv0m1OGKDJZGtA==
-X-Received: by 2002:a05:6e02:1888:: with SMTP id o8mr7489223ilu.124.1631295145252;
-        Fri, 10 Sep 2021 10:32:25 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id n11sm2722887ilq.21.2021.09.10.10.32.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Sep 2021 10:32:24 -0700 (PDT)
-Subject: Re: [git pull] iov_iter fixes
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <YTrJsrXPbu1jXKDZ@zeniv-ca.linux.org.uk>
- <b8786a7e-5616-ce83-c2f2-53a4754bf5a4@kernel.dk>
- <YTrM130S32ymVhXT@zeniv-ca.linux.org.uk>
- <9ae5f07f-f4c5-69eb-bcb1-8bcbc15cbd09@kernel.dk>
- <YTrQuvqvJHd9IObe@zeniv-ca.linux.org.uk>
- <f02eae7c-f636-c057-4140-2e688393f79d@kernel.dk>
- <YTrSqvkaWWn61Mzi@zeniv-ca.linux.org.uk>
- <9855f69b-e67e-f7d9-88b8-8941666ab02f@kernel.dk>
- <4b26d8cd-c3fa-8536-a295-850ecf052ecd@kernel.dk>
- <1a61c333-680d-71a0-3849-5bfef555a49f@kernel.dk>
- <YTuOPAFvGpayTBpp@zeniv-ca.linux.org.uk>
- <CAHk-=wiPEZypYDnoDF7mRE=u1y6E_etmCTuOx3v2v6a_Wj=z3g@mail.gmail.com>
- <b1944570-0e72-fd64-a453-45f17e7c1e56@kernel.dk>
- <CAHk-=wjWQtXmtOK9nMdM68CKavejv=p-0B81WazbjxaD-e3JXw@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <cfe9e6d6-dd1c-a500-b3b0-a92d0b66c3c0@kernel.dk>
-Date:   Fri, 10 Sep 2021 11:32:24 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=yAS2V26MFTPXdp5D+1VvRXcpwyS1dkM+dGnCynSdaik=;
+        b=zHOU7J7QnQEUUdfXZQY4UZd5wL7GNgcw1juctFIYyh6rvDzY2uK8yqMO/rTsgpdYQX
+         JtPFno51tuf8VQ+wm+nys/cKmNpSRX+oImUur0vO8o4Ee+j4De3vxmt6MAPZ7rju0SO1
+         69xklyRzactUovh6h7mOPUjxUs+bUW7ky4QH0NVq0fOnZryvHlgBr20mZ3DzNHNqUdtv
+         +brsSLLeeQoO0mY+wcunaqR2VeSqaB9Cp3NUOCbgTeybGpTVnM44oekzQK/lHr5CrXYT
+         YQPxLN0F3SgEWHCAA2lWg70Hn7ZLYIO2UVfFNIIrvY8XYnhpGatLswEpG3BS3nyI15Mp
+         Uwhw==
+X-Gm-Message-State: AOAM533JIDq4Gb5gKcW6CrvW2t5SNislwP31UI4m+t0tSYNYjGKyielq
+        2yajt/G7aS9YPQTWi1NsE/EQ41ri65H1OA==
+X-Google-Smtp-Source: ABdhPJyv+ihp3UJkL+McKA/31v+I+WB/lbUcXTkXIuSsRWwmYlY+S/nkN2pZwedAzLWpLNtlfn1zyg==
+X-Received: by 2002:a2e:bb93:: with SMTP id y19mr5072294lje.79.1631297549627;
+        Fri, 10 Sep 2021 11:12:29 -0700 (PDT)
+Received: from kari-VirtualBox ([31.132.12.44])
+        by smtp.gmail.com with ESMTPSA id o16sm623643lfu.45.2021.09.10.11.12.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Sep 2021 11:12:28 -0700 (PDT)
+Date:   Fri, 10 Sep 2021 21:12:27 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: fs/ntfs3: Runtree implementation with rbtree or others
+Message-ID: <20210910181227.4tr3xn2aooeo2lvw@kari-VirtualBox>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wjWQtXmtOK9nMdM68CKavejv=p-0B81WazbjxaD-e3JXw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/10/21 11:31 AM, Linus Torvalds wrote:
-> On Fri, Sep 10, 2021 at 10:26 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 9/10/21 10:58 AM, Linus Torvalds wrote:
->>> On Fri, Sep 10, 2021 at 9:56 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->>>>
->>>> What's the point of all those contortions, anyway?  You only need it for
->>>> iovec case; don't mix doing that and turning it into flavour-independent
->>>> primitive.
->>>
->>> Good point, making it specific to iovec only gets rid of a lot of
->>> special cases and worries.
->>>
->>> This is fairly specialized, no need to always cater to every possible case.
->>
->> Alright, split into three patches:
->>
->> https://git.kernel.dk/cgit/linux-block/log/?h=iov_iter
-> 
-> That looks sane to me.
-> 
-> Please add some comment about how that
-> 
->         i->iov -= state->nr_segs - i->nr_segs;
-> 
-> actually is the right thing for all the three cases (iow how 'iov',
-> 'kvec' and 'bvec' all end up having a union member that acts the same
-> way).
+Hello.
 
-Good idea, I'll add that right now.
+Konstantin you have wrote in ntfs_fs.h in struct runs_tree:
 
-> But yeah, I like how the io_uring.c code looks better this way too.
+/* TODO: Use rb tree instead of array. */
+struct runs_tree {
+	struct rb_root root;
 
-Me too :-)
+	struct ntfs_run *runs;
+	size_t count; /* Currently used size a ntfs_run storage. */
+	size_t allocated; /* Currently allocated ntfs_run storage size. */
+};
 
--- 
-Jens Axboe
+
+But right now it is not array. It is just memory. Probably some early
+comment, but I check that little bit and I think rb tree may not be good
+choice. Right now we allocate more memory with kvmalloc() and then make
+space for one entry with memmove. I do not quite understand why cannot
+memory be other way around. This way we do not memmove. We can just put
+new entry to other end right?
+
+Also one thing what comes to my mind is to allocate page at the time. Is
+there any drawbacks? If we do this with rb_tree we get many small entrys
+and it also seems to problem. Ntfs-3g allocate 4kiB at the time. But
+they still reallocate which I think is avoidable.
+
+Also one nice trick with merging two run_tree togethor would be not to
+allocate new memory for it but just use pointer to other list. This way
+we can have big run_tree but it is in multi page. No need to reallocate
+with this strategy. 
+
+I just want some thoughts about this before starting implementation. If
+you think rb_tree would be right call then I can do that. It just seems
+to me that it might not be. But if search speed is big factor then it
+might be. I just do not yet understand enogh that I can fully understand
+benefits and drawbacks.
+
+  Argillander
 
