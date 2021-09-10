@@ -2,238 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76DEC40725C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 22:16:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C0F1407260
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 22:19:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233384AbhIJURy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Sep 2021 16:17:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51382 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233348AbhIJURq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Sep 2021 16:17:46 -0400
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61B68C061574;
-        Fri, 10 Sep 2021 13:16:34 -0700 (PDT)
-Received: by mail-qk1-x731.google.com with SMTP id m21so3377004qkm.13;
-        Fri, 10 Sep 2021 13:16:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=NIMZ+lVamZ4qSqmjcxEtb3AzB6s9aRg0W8SCbuO991M=;
-        b=R4MKZuTWImwx6zv6dVhudDTptSUTe6SYQVBnOiJwDDReSt8w334TUsxlB6+egksRR1
-         D51Jv5YRQEnSdgZnOcs249JR5mzxphdSquDHGe9pE13w6LD00AebT5kHcyyGhjwSz5fX
-         kg15gU2KCBtyndmUp/zYiQBz05+hxCpK94aI1VrrT0xWYrvcddgDrWlNDbywuxbGeSpW
-         kDuVpMmTOvtY2xcoXYR9DO/HZ5P5rmB9YGt7V5h+Pl1jBkkk+DGOEPMP355HjHT+ljJM
-         HzOa13bMzB+6p+ShuUz1Sjn34BVEB9u/YcKgO582YhiNCjiFbIDRDcttQmhJGZPpwNqi
-         MQpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NIMZ+lVamZ4qSqmjcxEtb3AzB6s9aRg0W8SCbuO991M=;
-        b=QlJYCk/ujpktuYXfS/BaMp0baHW+pzCLFYGm8EamAjYYA/6wSYqIDNoxmpX89fodyU
-         zLpcX7ELX9FfS+byZNi1NVfSknJZ3cPiJ/RGvu97CSTKMjCqSWk9QubnGIOrc/Tp1Z5c
-         53moZSQPDaTkh0pwJNYDaJvv9gL9CScThSw732oTOASjDl9sH05BfOOEoe2LWLknXp3b
-         TueAKy4jsPzc2y2D4qNlda6kZcE3Q7pesJeN+voTOnqTB8YKIIK4YFrR4mjo2bHt0+ok
-         XGRXNDSuW9E+cNLJVfNCDKPO1D4Q+SDBnH1gEnS2DKsjWXbtUSWbscpRnKfJw3FNoSaH
-         AVhA==
-X-Gm-Message-State: AOAM533bcnCq46Q5qcN+yRClHt629wAGQ/VLZZpDw+rPa+wI39v+NnnY
-        AF1tWP1nslQZR/yM3h3+MA==
-X-Google-Smtp-Source: ABdhPJw4d2l4D3XuTTkG0JRuxdgFCt9I5nUEczOBakoAQ5sI8WzbZQ5Il3Wlv+iiw1pK+h8OPxotSQ==
-X-Received: by 2002:a05:620a:1f1:: with SMTP id x17mr9493015qkn.227.1631304993400;
-        Fri, 10 Sep 2021 13:16:33 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id y29sm4149284qtm.4.2021.09.10.13.16.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Sep 2021 13:16:32 -0700 (PDT)
-Date:   Fri, 10 Sep 2021 16:16:28 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Folio discussion recap
-Message-ID: <YTu9HIu+wWWvZLxp@moria.home.lan>
-References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+        id S233522AbhIJUUa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Sep 2021 16:20:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48714 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233384AbhIJUU3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Sep 2021 16:20:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D53566101A;
+        Fri, 10 Sep 2021 20:19:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631305157;
+        bh=5vbmB0dZmdFG20fTrApAHJUla4KGwvWUSAg/yHG90uk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pAvbY8PCJ1x/76aGPDy1xRxrnPAiBa7J0Ln5+AVr1XOe13b6dedFhG/j5L6Jzjwap
+         tkZyuX4YlJqFZRvXNGDJ2TLJgaWf+Dh+CFsHvDPyZffbz1KYEk98ZqFoysq0l9FrN/
+         Eu6/dkRX7EVwc1KbGPK+A0i7R3stV4ckKuIul7UCyTvLKavXs2wzf09ih4iBCdaQL7
+         6hjl8sxAhbBjdlKi9Jl/pVisKtSsVFrvnBcfZZMFSaxBC9bhrAymer8YyewrDKrsRV
+         CeleuXYz6p2+db+aFauinFXrWOF0hWa7d4Xz/BLzqPezT3MRkNqti4hBvqsEyxFk3V
+         cbYIa/IQanNww==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, bfields@fieldses.org,
+        viro@zeniv.linux.org.uk, Matthew Wilcox <willy@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] locks: remove LOCK_MAND flock lock support
+Date:   Fri, 10 Sep 2021 16:19:15 -0400
+Message-Id: <20210910201915.95170-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-So I've been following the folio discussion, and it seems like the discussion
-has gone off the rails a bit partly just because struct page is such a mess and
-has been so overused, and we all want to see that cleaned up but we're not being
-clear about what that means. I was just talking with Johannes off list, and I
-thought I'd recap that discussion as well as other talks with Mathew and see if
-I can lay something out that everyone agrees with.
+As best I can tell, the logic for these has been broken for a long time
+(at least before the move to git), such that they never conflict with
+anything. Also, nothing checks for these flags and prevented opens or
+read/write behavior on the files. They don't seem to do anything.
 
-Some background:
+Given that, we can rip these symbols out of the kernel, and just make
+flock(2) return 0 when LOCK_MAND is set in order to preserve existing
+behavior.
 
-For some years now, the overhead of dealing with 4k pages in the page cache has
-gotten really, really painful. Any time we're doing buffered IO, we end up
-walking a radix tree to get to the cached page, then doing a memcpy to or from
-that page - which quite conveniently blows away the CPU cache - then walking
-the radix tree to look up the next page, often touching locks along the way that
-are no longer in cache - it's really bad.
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/locks.c                  |  3 ---
+ fs/gfs2/file.c                   |  2 --
+ fs/locks.c                       | 46 +++++++++++++++-----------------
+ fs/nfs/file.c                    |  9 -------
+ include/uapi/asm-generic/fcntl.h |  4 +++
+ 5 files changed, 25 insertions(+), 39 deletions(-)
 
-We've been hacking around this - the btrfs people have a vectorized buffered
-write path, and also this is what my generic_file_buffered_read() patches we're
-about, batching up the page cache lookups - but really these are hacks that make
-our core IO paths even more complicated, when the right answer that's been
-staring all of us filesystem people in the face for years has been that it's
-2021 and dealing with cached data in 4k chunks (when block based filesystems are
-a thing of the past!) is abject stupidity.
+Note that I do see some occurrences of LOCK_MAND in samba codebase, but
+I think it's probably best that those are removed.
 
-So we need to be moving to larger, variable sized allocations for cached data.
-We NEED this, this HAS TO HAPPEN - spend some time really digging into profiles,
-and looking actual application usage, this is the #1 thing that's killing our
-performance in the IO paths. Remember, us developers tend to be benchmarking
-things like direct IO and small random IOs because we're looking at the whole IO
-path, but most reads and writes are buffered, and they're already in cache, and
-they're mostly big and sequential.
+diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
+index bdeb271f47d9..d8c31069fbf2 100644
+--- a/fs/ceph/locks.c
++++ b/fs/ceph/locks.c
+@@ -302,9 +302,6 @@ int ceph_flock(struct file *file, int cmd, struct file_lock *fl)
+ 
+ 	if (!(fl->fl_flags & FL_FLOCK))
+ 		return -ENOLCK;
+-	/* No mandatory locks */
+-	if (fl->fl_type & LOCK_MAND)
+-		return -EOPNOTSUPP;
+ 
+ 	dout("ceph_flock, fl_file: %p\n", fl->fl_file);
+ 
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index c559827cb6f9..078ef29e31bc 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -1338,8 +1338,6 @@ static int gfs2_flock(struct file *file, int cmd, struct file_lock *fl)
+ {
+ 	if (!(fl->fl_flags & FL_FLOCK))
+ 		return -ENOLCK;
+-	if (fl->fl_type & LOCK_MAND)
+-		return -EOPNOTSUPP;
+ 
+ 	if (fl->fl_type == F_UNLCK) {
+ 		do_unflock(file, fl);
+diff --git a/fs/locks.c b/fs/locks.c
+index 3d6fb4ae847b..0e1d8a637e9c 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -461,8 +461,6 @@ static void locks_move_blocks(struct file_lock *new, struct file_lock *fl)
+ }
+ 
+ static inline int flock_translate_cmd(int cmd) {
+-	if (cmd & LOCK_MAND)
+-		return cmd & (LOCK_MAND | LOCK_RW);
+ 	switch (cmd) {
+ 	case LOCK_SH:
+ 		return F_RDLCK;
+@@ -942,8 +940,6 @@ static bool flock_locks_conflict(struct file_lock *caller_fl,
+ 	 */
+ 	if (caller_fl->fl_file == sys_fl->fl_file)
+ 		return false;
+-	if ((caller_fl->fl_type & LOCK_MAND) || (sys_fl->fl_type & LOCK_MAND))
+-		return false;
+ 
+ 	return locks_conflict(caller_fl, sys_fl);
+ }
+@@ -2116,11 +2112,9 @@ EXPORT_SYMBOL(locks_lock_inode_wait);
+  *	- %LOCK_SH -- a shared lock.
+  *	- %LOCK_EX -- an exclusive lock.
+  *	- %LOCK_UN -- remove an existing lock.
+- *	- %LOCK_MAND -- a 'mandatory' flock.
+- *	  This exists to emulate Windows Share Modes.
++ *	- %LOCK_MAND -- a 'mandatory' flock. (DEPRECATED)
+  *
+- *	%LOCK_MAND can be combined with %LOCK_READ or %LOCK_WRITE to allow other
+- *	processes read and write access respectively.
++ *	%LOCK_MAND support has been removed from the kernel.
+  */
+ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+ {
+@@ -2137,9 +2131,22 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+ 	cmd &= ~LOCK_NB;
+ 	unlock = (cmd == LOCK_UN);
+ 
+-	if (!unlock && !(cmd & LOCK_MAND) &&
+-	    !(f.file->f_mode & (FMODE_READ|FMODE_WRITE)))
++	if (!unlock && !(f.file->f_mode & (FMODE_READ|FMODE_WRITE)))
++		goto out_putf;
++
++	/*
++	 * LOCK_MAND locks were broken for a long time in that they never
++	 * conflicted with one another and didn't prevent any sort of open,
++	 * read or write activity.
++	 *
++	 * Just ignore these requests now, to preserve legacy behavior, but
++	 * throw a warning to let people know that they don't actually work.
++	 */
++	if (cmd & LOCK_MAND) {
++		pr_warn_once("Attempt to set a LOCK_MAND lock via flock(2). This support has been removed and the request ignored.\n");
++		error = 0;
+ 		goto out_putf;
++	}
+ 
+ 	lock = flock_make_lock(f.file, cmd, NULL);
+ 	if (IS_ERR(lock)) {
+@@ -2745,11 +2752,7 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+ 		seq_printf(f, " %s ",
+ 			     (inode == NULL) ? "*NOINODE*" : "ADVISORY ");
+ 	} else if (IS_FLOCK(fl)) {
+-		if (fl->fl_type & LOCK_MAND) {
+-			seq_puts(f, "FLOCK  MSNFS     ");
+-		} else {
+-			seq_puts(f, "FLOCK  ADVISORY  ");
+-		}
++		seq_puts(f, "FLOCK  ADVISORY  ");
+ 	} else if (IS_LEASE(fl)) {
+ 		if (fl->fl_flags & FL_DELEG)
+ 			seq_puts(f, "DELEG  ");
+@@ -2765,17 +2768,10 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+ 	} else {
+ 		seq_puts(f, "UNKNOWN UNKNOWN  ");
+ 	}
+-	if (fl->fl_type & LOCK_MAND) {
+-		seq_printf(f, "%s ",
+-			       (fl->fl_type & LOCK_READ)
+-			       ? (fl->fl_type & LOCK_WRITE) ? "RW   " : "READ "
+-			       : (fl->fl_type & LOCK_WRITE) ? "WRITE" : "NONE ");
+-	} else {
+-		int type = IS_LEASE(fl) ? target_leasetype(fl) : fl->fl_type;
++	int type = IS_LEASE(fl) ? target_leasetype(fl) : fl->fl_type;
+ 
+-		seq_printf(f, "%s ", (type == F_WRLCK) ? "WRITE" :
+-				     (type == F_RDLCK) ? "READ" : "UNLCK");
+-	}
++	seq_printf(f, "%s ", (type == F_WRLCK) ? "WRITE" :
++			     (type == F_RDLCK) ? "READ" : "UNLCK");
+ 	if (inode) {
+ 		/* userspace relies on this representation of dev_t */
+ 		seq_printf(f, "%d %02x:%02x:%lu ", fl_pid,
+diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+index aa353fd58240..24e7dccce355 100644
+--- a/fs/nfs/file.c
++++ b/fs/nfs/file.c
+@@ -843,15 +843,6 @@ int nfs_flock(struct file *filp, int cmd, struct file_lock *fl)
+ 	if (!(fl->fl_flags & FL_FLOCK))
+ 		return -ENOLCK;
+ 
+-	/*
+-	 * The NFSv4 protocol doesn't support LOCK_MAND, which is not part of
+-	 * any standard. In principle we might be able to support LOCK_MAND
+-	 * on NFSv2/3 since NLMv3/4 support DOS share modes, but for now the
+-	 * NFS code is not set up for it.
+-	 */
+-	if (fl->fl_type & LOCK_MAND)
+-		return -EINVAL;
+-
+ 	if (NFS_SERVER(inode)->flags & NFS_MOUNT_LOCAL_FLOCK)
+ 		is_local = 1;
+ 
+diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
+index 9dc0bf0c5a6e..ecd0f5bdfc1d 100644
+--- a/include/uapi/asm-generic/fcntl.h
++++ b/include/uapi/asm-generic/fcntl.h
+@@ -181,6 +181,10 @@ struct f_owner_ex {
+ 				   blocking */
+ #define LOCK_UN		8	/* remove lock */
+ 
++/*
++ * LOCK_MAND support has been removed from the kernel. We leave the symbols
++ * here to not break legacy builds, but these should not be used in new code.
++ */
+ #define LOCK_MAND	32	/* This is a mandatory flock ... */
+ #define LOCK_READ	64	/* which allows concurrent read operations */
+ #define LOCK_WRITE	128	/* which allows concurrent write operations */
+-- 
+2.31.1
 
-I emphasize this because a lot of us have really been waiting rather urgently
-for Willy's work to go in, and there will no doubt be a lot more downstream
-filesystem work to be done to fully take advantage of it and we're waiting on
-this stuff to get merged so we can actually start testing and profiling the
-brave new world and seeing what to work on next.
-
-As an aside, before this there have been quite a few attempts at using
-hugepages to deal with these issues, and they're all _fucking gross_, because
-they all do if (normal page) else if (hugepage), and they all cut and paste
-filemap.c code because no one (rightly) wanted to add their abortions to the
-main IO paths. But look around the kernel and see how many times you can find
-core filemap.c code duplicated elsewhere... Anyways, Willy's work is going to
-let us delete all that crap.
-
-So: this all means that filesystem code needs to start working in larger,
-variable sized units, which today means - compound pages. Hence, the folio work
-started out as a wrapper around compound pages.
-
-So, one objection to folios has been that they leak too much MM details out into
-the filesystem code. To that we must point out: all the code that's going to be
-using folios is right now using struct page - this isn't leaking out new details
-and making things worse, this is actually (potentially!) a step in the right
-direction, by moving some users of struct page to a new type that is actually
-created for a specific purpose.
-
-I think a lot of the acrimony in this discussion came precisely from this mess;
-Johannes and the other MM people would like to see this situation improved so
-that they have more freedom to reengineer and improve things on their side. One
-particularly noteworthy idea was having struct page refer to multiple hardware
-pages, and using slab/slub for larger alloctions. In my view, the primary reason
-for making this change isn't the memory overhead to struct page (though reducing
-that would be nice); it's that the slab allocator is _significantly_ faster than
-the buddy allocator (the buddy allocator isn't percpu!) and as average
-allocation sizes increase, this is hurting us more and more over time.
-
-So we should listen to the MM people.
-
-Fortunately, Matthew made a big step in the right direction by making folios a
-new type. Right now, struct folio is not separately allocated - it's just
-unionized/overlayed with struct page - but perhaps in the future they could be
-separately allocated. I don't think that is a remotely realistic goal for _this_
-patch series given the amount of code that touches struct page (thing: writeback
-code, LRU list code, page fault handlers!) - but I think that's a goal we could
-keep in mind going forward.
-
-We should also be clear on what _exactly_ folios are for, so they don't become
-the new dumping ground for everyone to stash their crap. They're to be a new
-core abstraction, and we should endeaver to keep our core data structures
-_small_, and _simple_. So: no scatter gather. A folio should just represent a
-single buffer of physically contiguous memory - vmap is slow, kmap_atomic() only
-works on single pages, we do _not_ want to make filesystem code jump through
-hoops to deal with anything else. The buffers should probably be power of two
-sized, as that's what the buddy allocator likes to give us - that doesn't
-necessarily have to be baked into the design, but I can't see us ever actually
-wanting non power of two sized allocations.
-
-Q: But what about fragmentation? Won't these allocations fail sometimes?
-
-Yes, and that's OK. The relevant filesystem code is all changing to handle
-variable sized allocations, so it's completely fine if we fail a 256k allocation
-and we have to fall back to whatever is available.
-
-But also keep in mind that switching the biggest consumer of kernel side memory
-to larger allocations is going to do more than anything else to help prevent
-memory from getting fragmented in the first place. We _want_ this.
-
-Q: Oh yeah, but what again are folios for, exactly?
-
-Folios are for cached filesystem data which (importantly) may be mapped to
-userspace.
-
-So when MM people see a new data structure come up with new references to page
-size - there's a very good reason with that, which is that we need to be
-allocating in multiples of the hardware page size if we're going to be able to
-map it to userspace and have PTEs point to it.
-
-So going forward, if the MM people want struct page to refer to muliple hardware
-pages - this shouldn't prevent that, and folios will refer to multiples of the
-_hardware_ page size, not struct page pagesize.
-
-Also - all the filesystem code that's being converted tends to talk and thing in
-units of pages. So going forward, it would be a nice cleanup to get rid of as
-many of those references as possible and just talk in terms of bytes (e.g. I
-have generally been trying to get rid of references to PAGE_SIZE in bcachefs
-wherever reasonable, for other reasons) - those cleanups are probably for
-another patch series, and in the interests of getting this patch series merged
-with the fewest introduced bugs possible we probably want the current helpers.
-
--------------
-
-That's my recap, I hope I haven't missed anything. The TL;DR is:
-
- * struct page is a mess; yes, we know. We're all living with that pain.
-
- * This isn't our ultimate end goal (nothing ever is!) - but it's probably along
-   the right path.
-
- * Going forward: maybe struct folio should be separately allocated. That will
-   entail a lot more work so it's not appropriate for this patch series, but I
-   think it's a goal that would make everyone 
-
- * We should probably think and talk more concretely about what our end goals
-   are.
-
-Getting away from struct page is something that comes up again and again - DAX
-is another notable (and acrimonious) area this has come up. Also, page->mapping
-and page->index make sharing cached data in different files (thing: reflink,
-snapshots) pretty much non starters.
-
-I'm going to publicly float one of my own ideas here: maybe entries in the page
-cache radix tree don't have to be just a single pointer/ulong. If those entries
-were bigger, perhaps some things would fit better there than in either struct
-page/folio.
-
-
-Excessive PAGE_SIZE usage:
---------------------------
-
-Another thing that keeps coming up is - indiscriminate use of PAGE_SIZE makes it
-hard, especially when we're reviewing new code, to tell what's a legitimate use
-or not. When it's tied to the hardware page size (as folios are), it's probably
-legitimate, but PAGE_SIZE is _way_ overused.
-
-Partly this was because historically slab had to be used for small allocations
-and the buddy allocator, __get_free_pages(), had to be used for larger
-allocations. This is still somewhat the case - slab can go up to something like
-128k, but there's still a hard cap on allocation size with kmalloc().
-
-Perhaps the MM people could look into lifting this restriction, so that
-kmalloc() could be used for any sized physically contiguous allocation that the
-system could satisfy?  If we had this, then it would make it more practical to
-go through and refactor existing code that uses __get_free_pages() and convert
-it to kmalloc(), without having to stare at code and figure out if it's safe.
-
-And that's my $.02
