@@ -2,88 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F5DF4070E2
+	by mail.lfdr.de (Postfix) with ESMTP id 993A84070E1
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 20:25:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231682AbhIJS0y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S231783AbhIJS0y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Fri, 10 Sep 2021 14:26:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54292 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229523AbhIJS0x (ORCPT
+        with ESMTP id S229523AbhIJS0y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Sep 2021 14:26:53 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5467DC061574
+        Fri, 10 Sep 2021 14:26:54 -0400
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1293C061574
         for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 11:25:42 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id q3so3506518iot.3
+Received: by mail-il1-x142.google.com with SMTP id b15so2527628ils.10
         for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 11:25:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8Vg/TxJx63a6Prh8d9/6qNscaebIESeGpR+mOWO6b+k=;
-        b=0ZN5l7orVRtwjzzB+pmEYI5kgoJZ7L99LqxCzkXrNqh6xI5XOuWyHvDrws/fa4awJz
-         MUqxIwfAH2INCzV6t3EAlgvJ9cyFD9bTNbtsdFwDlRgKIulI4TcansNR5Sq0YZbWdoJR
-         Bj8QoS6q9BcItcjZFkF4c5U20GNRujXXgssl457TUHotb+NXi4raxVXfqUB3ieNHEgfZ
-         6HDacflIDY2lCvGkVFOhnpLo24uJR1c7S36CsjNHly5Nzy+TaG8XPv4hMaSrJMU/+kqH
-         ih2o6M9yu71V3UP9UUqrOLUDkjbQLRZHPQSNINuItIT8+KqIo/+8NTODEG2ZrZi6nbyE
-         oUEg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=z6UwIALlp9qFlZishysLlnF/vgKBUJjar/sdwLm2E1E=;
+        b=dZNcocqASUiy5jZRVU/TLOfAW20otqYOWfpooJe7vmHZKfhSewUK6KS/7P0pXPdQkj
+         3+kOdyBWMLIcswcXQboYRShW8nOsOOELdi5HMqDZPeQyshM1j+sswMZ1KCMC5ShW7dBG
+         mTWGU7AILv7ZuSOV/NXEHeg+4R3tIxaZoSJbfHXdNottnd28sep4Kz4+a1hfF4UvZJdw
+         v9jisaknKnG5XOtcoeLmvt/CXOUlc1yxHBYRoESgUNocsM/gUevm5VxmMBU5Rz881zpG
+         8/rtFwN/Kq18uUqUEIwLGRwkbSHNbcSR3hMB1wlaiA27t2G9k61TMe151hG6CRYzbqEZ
+         NPNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8Vg/TxJx63a6Prh8d9/6qNscaebIESeGpR+mOWO6b+k=;
-        b=b9HJfmiplyZlzJsnaYw6RQ94rrEnuYFmAH92nIm0Q0J0Dp5w1/uShHP8pmlfgzSVj6
-         x0uRORJTC4GnuCw7IHiPOsc3YqJhHcBmEyFGetEQ6aCR8UoNzCgQrVc/zBrpdfMgGvY5
-         P+29DRCuir5jadM8Hj4Jw4pwXqj4/G3YMZS2t0pMyFtzXFipoXaZJkNFSUwPqvHErZn1
-         ApLN1uf3+d5ru/nu3DuYnHl+1iJZF3OuEK+Mjxk/idUJT6njC4x0QU8hceUlz1/V23bI
-         v96VXaPxWLTOpWBkPAQGXNcuaptwexpqPOUzLAfAlK2sNVBqyq0EHTHDe/YMM5In+nwH
-         9TNA==
-X-Gm-Message-State: AOAM530N/jRKflahozdQ84P1N7WW1l2oEjRVrqr4Ra1N46AdfdLx0MIq
-        xxRmcgpDCegeE23b+JMT4NW+AXP8o7SH89CnET0=
-X-Google-Smtp-Source: ABdhPJxVHW7Q5mx1xrhGM4a6BQn7Vb8+mSP0KRnQLSfr+uhoGu2/u+bFXw+qqcMqtXuheY8+PsQlLA==
-X-Received: by 2002:a6b:c3ce:: with SMTP id t197mr8107952iof.159.1631298341644;
-        Fri, 10 Sep 2021 11:25:41 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=z6UwIALlp9qFlZishysLlnF/vgKBUJjar/sdwLm2E1E=;
+        b=04gwfqcizcHhzQshE9LxntLtYYABAdKVaX0uD6ebRyZwcH29qhrpp7Sj2QgZpu1kgF
+         dC/1Y3vL+VOOjDHf9V7oN85XB5kCxu37I3ZQBytjfdMIq8wsbuSQp9njHYXt4t6Pivs5
+         9jiezqc9xtPMD/veWBc6HmqajmA78DL/HGTntf7v8ouEwt4+T3/sis28AEheAZsZ5jpG
+         Mw06xBkob409FY6PTjegkOeOAxDjqVm5k5ETuU70kMqVzGdPn8qm64uZTXkImHUkiTAI
+         VYum+gUH0bjJQBBoy5HSL2mvRcORwroNObhnyBChRlc7wsOU8tLP7mSfjt+CtW6EKIxh
+         wa5g==
+X-Gm-Message-State: AOAM531BHVxaD7G3+AF/Yvc9iwiJ/cZhpUgKBZB9SemgdCCq5apLJgXF
+        rqEsxfu+ka7hknT56kPCkvqSTA==
+X-Google-Smtp-Source: ABdhPJy2Ap63JgqGT3VbYB8Taw2Cw11n5y6v9q7+DWOw06alp0GHbt1eQtzV6CWLUNZVYmQUXvF9WA==
+X-Received: by 2002:a05:6e02:8f2:: with SMTP id n18mr7268839ilt.256.1631298342339;
+        Fri, 10 Sep 2021 11:25:42 -0700 (PDT)
 Received: from p1.localdomain ([207.135.234.126])
         by smtp.gmail.com with ESMTPSA id c20sm2575149ili.42.2021.09.10.11.25.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Sep 2021 11:25:41 -0700 (PDT)
+        Fri, 10 Sep 2021 11:25:42 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
-Subject: [PATCHSET 0/3] Add ability to save/restore iov_iter state
-Date:   Fri, 10 Sep 2021 12:25:33 -0600
-Message-Id: <20210910182536.685100-1-axboe@kernel.dk>
+Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 1/3] iov_iter: add helper to save iov_iter state
+Date:   Fri, 10 Sep 2021 12:25:34 -0600
+Message-Id: <20210910182536.685100-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20210910182536.685100-1-axboe@kernel.dk>
+References: <20210910182536.685100-1-axboe@kernel.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+In an ideal world, when someone is passed an iov_iter and returns X bytes,
+then X bytes would have been consumed/advanced from the iov_iter. But we
+have use cases that always consume the entire iterator, a few examples
+of that are iomap and bdev O_DIRECT. This means we cannot rely on the
+state of the iov_iter once we've called ->read_iter() or ->write_iter().
 
-Linus didn't particularly love the iov_iter->truncated addition and how
-it was used, and it was hard to disagree with that. Instead of relying
-on tracking ->truncated, add a few pieces of state so we can safely
-handle partial or errored read/write attempts (that we want to retry).
+This would be easier if we didn't always have to deal with truncate of
+the iov_iter, as rewinding would be trivial without that. We recently
+added a commit to track the truncate state, but that grew the iov_iter
+by 8 bytes and wasn't the best solution.
 
-Then we can get rid of the iov_iter addition, and at the same time
-handle cases that weren't handled correctly before.
+Implement a helper to save enough of the iov_iter state to sanely restore
+it after we've called the read/write iterator helpers. This currently
+only works for IOVEC/BVEC/KVEC as that's all we need, support for other
+iterator types are left as an exercise for the reader.
 
-I've run this through vectored read/write with io_uring on the commonly
-problematic cases (dm and low depth SCSI device) which trigger these
-conditions often, and it seems to pass muster.
+Link: https://lore.kernel.org/linux-fsdevel/CAHk-=wiacKV4Gh-MYjteU0LwNBSGpWrK-Ov25HdqB1ewinrFPg@mail.gmail.com/
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ include/linux/uio.h | 16 ++++++++++++++++
+ lib/iov_iter.c      | 36 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+)
 
-For a discussion on this topic, see the thread here:
-
-https://lore.kernel.org/linux-fsdevel/CAHk-=wiacKV4Gh-MYjteU0LwNBSGpWrK-Ov25HdqB1ewinrFPg@mail.gmail.com/
-
-You can find these patches here:
-
-https://git.kernel.dk/cgit/linux-block/log/?h=iov_iter
-
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 5265024e8b90..6eaedae5ea2f 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -27,6 +27,12 @@ enum iter_type {
+ 	ITER_DISCARD,
+ };
+ 
++struct iov_iter_state {
++	size_t iov_offset;
++	size_t count;
++	unsigned long nr_segs;
++};
++
+ struct iov_iter {
+ 	u8 iter_type;
+ 	bool data_source;
+@@ -55,6 +61,14 @@ static inline enum iter_type iov_iter_type(const struct iov_iter *i)
+ 	return i->iter_type;
+ }
+ 
++static inline void iov_iter_save_state(struct iov_iter *iter,
++				       struct iov_iter_state *state)
++{
++	state->iov_offset = iter->iov_offset;
++	state->count = iter->count;
++	state->nr_segs = iter->nr_segs;
++}
++
+ static inline bool iter_is_iovec(const struct iov_iter *i)
+ {
+ 	return iov_iter_type(i) == ITER_IOVEC;
+@@ -233,6 +247,8 @@ ssize_t iov_iter_get_pages(struct iov_iter *i, struct page **pages,
+ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i, struct page ***pages,
+ 			size_t maxsize, size_t *start);
+ int iov_iter_npages(const struct iov_iter *i, int maxpages);
++void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state,
++			ssize_t did_bytes);
+ 
+ const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t flags);
+ 
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index f2d50d69a6c3..280dbcc523e5 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1972,3 +1972,39 @@ int import_single_range(int rw, void __user *buf, size_t len,
+ 	return 0;
+ }
+ EXPORT_SYMBOL(import_single_range);
++
++/**
++ * iov_iter_restore() - Restore a &struct iov_iter to the same state as when
++ *     iov_iter_save_state() was called.
++ *
++ * @i: &struct iov_iter to restore
++ * @state: state to restore from
++ * @did_bytes: bytes to advance @i after restoring it
++ *
++ * Used after iov_iter_save_state() to bring restore @i, if operations may
++ * have advanced it. If @did_bytes is a positive value, then after restoring
++ * @i it is advanced accordingly. This is useful for handling short reads or
++ * writes for retry, if lower down the stack @i was advanced further than the
++ * returned value. If @did_bytes is negative (eg an error), then only the
++ * state restore is done.
++ *
++ * Note: only works on ITER_IOVEC, ITER_BVEC, and ITER_KVEC
++ */
++void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state,
++		      ssize_t did_bytes)
++{
++	if (WARN_ON_ONCE(!iov_iter_is_bvec(i) && !iter_is_iovec(i)) &&
++			 !iov_iter_is_kvec(i))
++		return;
++	i->iov_offset = state->iov_offset;
++	i->count = state->count;
++	/*
++	 * For the *vec iters, nr_segs + iov is constant - if we increment
++	 * the vec, then we also decrement the nr_segs count. Hence we don't
++	 * need to track both of these, just one is enough and we can deduct
++	 * the other from that. ITER_{BVEC,IOVEC,KVEC} all have their pointers
++	 * unionized, so we don't need to handle them individually.
++	 */
++	i->iov -= state->nr_segs - i->nr_segs;
++	i->nr_segs = state->nr_segs;
++}
 -- 
-Jens Axboe
-
+2.33.0
 
