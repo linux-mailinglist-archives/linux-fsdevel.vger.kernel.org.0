@@ -2,118 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D9ED406FE7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 18:45:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5924406FF1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 18:49:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229902AbhIJQqN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Sep 2021 12:46:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59758 "EHLO
+        id S230010AbhIJQum (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Sep 2021 12:50:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229466AbhIJQqM (ORCPT
+        with ESMTP id S229466AbhIJQuk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Sep 2021 12:46:12 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64A81C061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 09:45:01 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id s10so5251868lfr.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 09:45:01 -0700 (PDT)
+        Fri, 10 Sep 2021 12:50:40 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF9E0C061574;
+        Fri, 10 Sep 2021 09:49:29 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id w6so1522789pll.3;
+        Fri, 10 Sep 2021 09:49:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NbDem+vz4vsFCSw7QFewQOYLmpPGceE2lX9++EL1i90=;
-        b=cMoTMio4moJQpik9wWZWR2NxvpgiGXWe+ZMgp+cO9faXBY6cl3zqdZMOlk6kovQvMS
-         JK7NBi4ZMmYzR4zvSFwSPag1UnPpVOdaFCqwVoaqknabSfwAd3/bZYuZp/LGhHJdyqPq
-         ebouPDJ1usgUAH0Wij5KeTTwzsTz8iLyGlXD8=
+        d=gmail.com; s=20210112;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ycLk39mqr2VW20gmuwiS1O96iwebvsbUDKPqz1r4HLs=;
+        b=SwFAicqGFHYDPBgQbXLMJQ0UcmZY8lvUK61PawM7D0Nd1XWOmic8A7dtlSBGftYXPp
+         xi3UTO+1z1xbIjIbsiLJ8Q/9xUUKAh0J4i3hAOX/qhS/9pi0c9P6bG7g8G0gM0uAkb6P
+         K7S/4G77KHQ4gsQHrP+7672jpkYyigpoj8a+VGveTJ/c/oUqO6Gd3qDKWw+OVXuKg4IK
+         4qcpP/7Ha7F4kKM6LtlzziDVjx5YW6ESH4ILyPv5J8P1YHi9ghGRcFADXvv22+gJsMX0
+         P7S2+oxpmBjT4bpeQbiwz4FR8BkP7FZ5aViXGFWZfpnrMbegmWV4S2CLRrM0IKHIePu2
+         9anA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NbDem+vz4vsFCSw7QFewQOYLmpPGceE2lX9++EL1i90=;
-        b=Rbo1p16MOU3U4K9RCVipHpsEPDFOvpYdmjpW/QLG7imk2o5xElX8XPSeVZxaspynSM
-         wsXf6BIm0rCjVFYNuR37NwX6qBJaQ17n/AwNzrkff/LH2CYUvtjamuAqqr2A2xMSqmxt
-         HEnvqAI5K/Bkm2bjFih6PLbg4pq9XrZPZCGBocT6HEdpxHMEwWObkwFLtKalh253ky6j
-         5TZIx4OK+M2xSd+6iMYOMwhwyKwx6MqczHuiowBYweKmY76jknsBNeeemXcoI95sj6gm
-         rnT6QC+dI3/s8myEGCP4Vfiz5tZ8V2Dizg+3gNnEACmi08Wmthy1DPUjxoW6mnZ7bHfA
-         caVQ==
-X-Gm-Message-State: AOAM532JlET59QjNWPs4mYHzo/BYsgVAgvS/UpzrkSdrMZMvvCLygkbV
-        1rn9fBCW53YgzVMQ94e6MqQgs1bDawOUvzYIP7s=
-X-Google-Smtp-Source: ABdhPJxEm6K/wvWvoi/4Gt4t4KeQNh4UMtHDePeGhvEoiiMjFnTRl3jg+ubm7cu0tl5Wptag+b/SMw==
-X-Received: by 2002:a05:6512:3c8d:: with SMTP id h13mr4527226lfv.657.1631292299346;
-        Fri, 10 Sep 2021 09:44:59 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id u11sm670422ljo.126.2021.09.10.09.44.58
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Sep 2021 09:44:58 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id i25so1317786lfg.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 09:44:58 -0700 (PDT)
-X-Received: by 2002:a05:6512:3da5:: with SMTP id k37mr4638854lfv.655.1631292298401;
- Fri, 10 Sep 2021 09:44:58 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=ycLk39mqr2VW20gmuwiS1O96iwebvsbUDKPqz1r4HLs=;
+        b=z/QQBv/Djc1pBH3QleAZAYC2QUJm5p+c2mKqzm3reBffFBMSMdQN5062jITwIMtBSj
+         z/IuNYgg1rDMP6DZyqJfYFFV0Q4fzOkGcKWihhQTlfhhJ5XNoqEaSobs6sOhcHKjUpSq
+         M9b7eY6wS64DZpDHId4k/xlxkbP1JYhjrNpQPg+ej6GZ8j8y87t3so7OlH8dTIRzf4vj
+         6VJAIOBjxBXUjzHZACDUORQ2NvgZVZkRrJ8Ag0BGBJ3ckZto2MlUOmTQLNqyKcg6DUdM
+         loOGI92a2fqpgCh7L2sQywnPvnpIDd0qqlUNNmFrh4BQhKTq5X16XUpifN+6jbri2m2K
+         83HQ==
+X-Gm-Message-State: AOAM530KY1VfTUqvv40UBHY7FFier9EjVSERusCNTK2Bb1NDET78ekF7
+        Q3Cmo0vg6X6aJeW6Hk5eIh8=
+X-Google-Smtp-Source: ABdhPJx6HayHTsEYB+vEWqNfBLiFbx5o1vkHH89e13ig1jxEYIceWRXoq8Ca5ZyyZw58QBDwmVSJ6A==
+X-Received: by 2002:a17:90b:4b51:: with SMTP id mi17mr616793pjb.120.1631292569014;
+        Fri, 10 Sep 2021 09:49:29 -0700 (PDT)
+Received: from localhost (2603-800c-1a02-1bae-e24f-43ff-fee6-449f.res6.spectrum.com. [2603:800c:1a02:1bae:e24f:43ff:fee6:449f])
+        by smtp.gmail.com with ESMTPSA id l185sm5569198pfd.62.2021.09.10.09.49.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Sep 2021 09:49:28 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Fri, 10 Sep 2021 06:49:27 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     "taoyi.ty" <escape@linux.alibaba.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, lizefan.x@bytedance.com,
+        hannes@cmpxchg.org, mcgrof@kernel.org, keescook@chromium.org,
+        yzaikin@google.com, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        shanpeic@linux.alibaba.com
+Subject: Re: [RFC PATCH 0/2] support cgroup pool in v1
+Message-ID: <YTuMl+cC6FyA/Hsv@slm.duckdns.org>
+References: <cover.1631102579.git.escape@linux.alibaba.com>
+ <YTiugxO0cDge47x6@kroah.com>
+ <a0c67d71-8045-d8b6-40c2-39f2603ec7c1@linux.alibaba.com>
 MIME-Version: 1.0
-References: <YTmL/plKyujwhoaR@zeniv-ca.linux.org.uk> <CAHk-=wiacKV4Gh-MYjteU0LwNBSGpWrK-Ov25HdqB1ewinrFPg@mail.gmail.com>
- <5971af96-78b7-8304-3e25-00dc2da3c538@kernel.dk> <YTrJsrXPbu1jXKDZ@zeniv-ca.linux.org.uk>
- <b8786a7e-5616-ce83-c2f2-53a4754bf5a4@kernel.dk> <YTrM130S32ymVhXT@zeniv-ca.linux.org.uk>
- <9ae5f07f-f4c5-69eb-bcb1-8bcbc15cbd09@kernel.dk> <YTrQuvqvJHd9IObe@zeniv-ca.linux.org.uk>
- <f02eae7c-f636-c057-4140-2e688393f79d@kernel.dk> <YTrSqvkaWWn61Mzi@zeniv-ca.linux.org.uk>
- <9855f69b-e67e-f7d9-88b8-8941666ab02f@kernel.dk> <4b26d8cd-c3fa-8536-a295-850ecf052ecd@kernel.dk>
- <1a61c333-680d-71a0-3849-5bfef555a49f@kernel.dk>
-In-Reply-To: <1a61c333-680d-71a0-3849-5bfef555a49f@kernel.dk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 10 Sep 2021 09:44:42 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi9Oknen3Wd2_C+9PogvbsjTD1-knK7FVjPK7gyBRmo_Q@mail.gmail.com>
-Message-ID: <CAHk-=wi9Oknen3Wd2_C+9PogvbsjTD1-knK7FVjPK7gyBRmo_Q@mail.gmail.com>
-Subject: Re: [git pull] iov_iter fixes
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a0c67d71-8045-d8b6-40c2-39f2603ec7c1@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 10, 2021 at 9:06 AM Jens Axboe <axboe@kernel.dk> wrote:
->
-> +static void io_iter_restore(struct iov_iter *iter, struct iov_iter_state *state,
-> +                           ssize_t did_bytes)
-> +{
-> +       iov_iter_restore_state(iter, state);
-> +       if (did_bytes > 0)
-> +               iov_iter_advance(iter, did_bytes);
-> +}
+Hello,
 
-This approach looks conceptually good to me.
+On Fri, Sep 10, 2021 at 10:11:53AM +0800, taoyi.ty wrote:
+> The scenario is the function computing of the public
+> cloud. Each instance of function computing will be
+> allocated about 0.1 core cpu and 100M memory. On
+> a high-end server, for example, 104 cores and 384G,
+> it is normal to create hundreds of containers at the
+> same time if burst of requests comes.
 
-Just name it "iov_iter_restore()", and (together with the actual
-iov_iter_restore_state() - I don't think it makes much sense to inline
-something like this that is by definition for the slow path when
-something failed) move it to lib/iov_iter.c
+This type of use case isn't something cgroup is good at, at least not
+currently. The problem is that trying to scale management operations like
+creating and destroying cgroups has implications on how each controller is
+implemented - we want the hot paths which get used while cgroups are running
+actively to be as efficient and scalable as possible even if that requires a
+lot of extra preparation and lazy cleanup operations. We don't really want
+to push for cgroup creation / destruction efficiency at the cost of hot path
+overhead.
 
-If this allows us to remove the 'truncated' field from the iov_iter, I
-think it's a win overall.
+This has implications for use cases like you describe. Even if the kernel
+pre-prepare cgroups to low latency for cgroup creation, it means that the
+system would be doing a *lot* of managerial extra work creating and
+destroying cgroups constantly for not much actual work.
 
-That said, I think your actual implementation of
-iov_iter_restore_state() is buggy. It's not just those state bits you
-need to restore, you do need to do all the "back out the i->iov/bvec
-pointers" games too. All the stuff that iov_iter_revert() does.
+Usually, the right solution for this sort of situations is pooling cgroups
+from the userspace which usually has a lot better insight into which cgroups
+can be recycled and can also adjust the cgroup hierarchy to better fit the
+use case (e.g. some rapid-cycling cgroups can benefit from higher-level
+resource configurations).
 
-Which means that I think your tricks to try to share the 'struct
-iov_iter_state' with the 'struct iov_iter' using unions are just ugly
-and pointless and make for more complex code. Because you can't just
-save/restore the 'state part' of it all, you do have to do more than
-that.
+So, it'd be great to make the managerial operations more efficient from
+cgroup core side but there are inherent architectural reasons why
+rapid-cycling use cases aren't and won't be prioritized.
 
-So instead of the union, just have the state in some sane (different)
-form, and do the revert/advance thing taking different types of
-iterators into account. This is not supposed to be
-performance-critical code.
+Thanks.
 
-Alternatively, you'd need to make the state part be *both* the unions,
-and restore the pointers that don't need restoring too. You end up
-with pretty much all of iov_iter.
-
-Al, what do you think?
-
-               Linus
+-- 
+tejun
