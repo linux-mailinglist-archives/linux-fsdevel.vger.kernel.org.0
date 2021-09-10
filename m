@@ -2,105 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C47C6406E43
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 17:36:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F658406E90
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 17:57:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234494AbhIJPhT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Sep 2021 11:37:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44154 "EHLO
+        id S234588AbhIJP63 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Sep 2021 11:58:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234312AbhIJPhT (ORCPT
+        with ESMTP id S234521AbhIJP62 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Sep 2021 11:37:19 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B947C061756
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 08:36:08 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id b7so2847353iob.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 08:36:08 -0700 (PDT)
+        Fri, 10 Sep 2021 11:58:28 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8887AC061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 08:57:17 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id t19so4920961lfe.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 08:57:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gyzTKbWVdKw+duqrxX3upWkRtBAW8/OkSW9a+m+CMLc=;
-        b=gcdu5td+Rm0+7hdaU82rZ/4mqpy4DsK/VK8JXp6rJ4R8/arEGTp8iE3/wJS75uGwFx
-         1/Iz3YN1Yd4+mr6xjfsOfXrL6IKKeTJe5q0p1cnXB9vMeQh7MBA/16j2DFQUCilF+Uby
-         lhapYk6cbBMvoRvl12V0oZSf5V1zKQ6YyVnOtl+T6CICiLCfKESi71f8IkTlkXCdKdX1
-         MvIN48iC0tgFzOLJD8itI3UyteVO3VxDPZQt9Ptzm/Gs9SJvz4rqr836b55MDkHHh9OP
-         z7CAn8pSrtMgE7jscAbo5QA+dFYxwnB9aVARuG9xYjVIM62ZbjkGKP9sKzR0XLF2AAWa
-         H0Yw==
+        d=gmail.com; s=20210112;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=AJSI4FCotac4Xcu4sYqXiTgOTI2XWt52fLOSLiubfog=;
+        b=Bsn9KtErRSZu4sUpKzmYnBytW9Hb61oMqvNqwzV+hmVv3jtBrfwRahPtCOv9XwlipP
+         iDdQpQesLDOAtxkwH26/fXoqzVIflw8QRB0kYAp1Ay/YmDuCou31MNdV0aq4X8XuSQ1Y
+         MhV5pWiPvE+6FegOJSW+jMcPb7s/9Io/ely5zUo8eYZWi7FWQDHBuxxnIm8Y2tgHcTPw
+         no7z6eYhrX5Xf+zb5rTgnAEvdCV0ISBE1QyM9ZILknWdFTz0r3RaPmgwfXR3s/YXIeD6
+         hREcSKCG9+Q/MfH6tnAw5Q7KQMVwaJtGBuKfqAvBHr967m6P9pvcV8EjVddRdbadg7cO
+         UeUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gyzTKbWVdKw+duqrxX3upWkRtBAW8/OkSW9a+m+CMLc=;
-        b=LhgnnjaEP4e4KWRtXlwrVF+6ppujNSXHVZh3XX7f38QJp+O+uLrDZrRE7xclB+bCuk
-         YPl3x3r6BiDzIDEUCaqdTEdypvEYEHK+kQXC6ak2kHti3r+dY09jS6bnX8QNVbwfAJDY
-         mAT0aPJjNwb9ADD7BXnpY5+mFxITsqZohGyY1ujlIZj/TxWoBEzONVpHnohIIVbiN8oo
-         KgmlNv/JwVuHNwnAZQWk8BGmN1pA/WF8MRVl+qlEDTu4M+CuOTOQQ7sHpJAVRo3W7ApD
-         R4oeJ7nYT9nqT0jpAaL3rSanQZTR9eGMDdzlqw9z+EGCnzaTUMTVjmTwh5oxdqSYa5Hu
-         fuYQ==
-X-Gm-Message-State: AOAM531grTB8dBPW49yJt55xlWJIj8PPgcHxv8G/+jBf/6zrUApVh5hC
-        FRTfc2vawkHEXFfJviDXHH6D6h49VlLKQ8z9TeA=
-X-Google-Smtp-Source: ABdhPJz6rNfdCnQQEzMAqjS2AiGV/MUfaB3YhG2ed0Uleegau3IugJcQUoW/aWSd2BxTfzab/jrhlQ==
-X-Received: by 2002:a5e:da01:: with SMTP id x1mr7823595ioj.43.1631288167484;
-        Fri, 10 Sep 2021 08:36:07 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id t14sm2613590ilu.67.2021.09.10.08.36.06
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=AJSI4FCotac4Xcu4sYqXiTgOTI2XWt52fLOSLiubfog=;
+        b=scRCBIt7o0tJFHizLBJzDoJzoSSphTNTXMOKkcUB8sbKx4IQtTfVd7qJIMZz0NcG90
+         XaIPlFzxwDJHcO6tq/LwqA+ENWnE9YXrjoiBSVOLBWT2b7im4lzk2F9HRo3gTMi6plfA
+         KMehZdWBQTx2N3Mup8xuvVNKMZs6PVseVs/5JuRaY3WAx6l2uCLXix2GYyzGN3bYwpkt
+         NUzAz14o+cCwVs1LBRpZQX7/DzMqMfrV2ty96ZwL2a5Dtigv9VygNXeINjOvRZ+ARm9R
+         vSsFFgKls0j4bbNDRyDwzKdT73S3i5Romn1BovrxYak1LhRt7T5xPHnxtSvVe/BoxrBV
+         PboQ==
+X-Gm-Message-State: AOAM533UG5gtrbKy88enkzOmmfQngcpSmD3HzTxUeFLILio91FK8L9B2
+        x0ny3bKsxxbZQEeRKXyPDmyJG88KoI4nGg==
+X-Google-Smtp-Source: ABdhPJzr1iK7gisfx6zFTIT2JVrtIUdnb5ChDGbDgFAKlr6Coor3j31B5VO+DVhoVCWSAXR8Mw44GQ==
+X-Received: by 2002:a05:6512:90b:: with SMTP id e11mr4455260lft.593.1631289434535;
+        Fri, 10 Sep 2021 08:57:14 -0700 (PDT)
+Received: from mainpc.tinyware.ru (95-31-210-22.broadband.corbina.ru. [95.31.210.22])
+        by smtp.gmail.com with ESMTPSA id z8sm591355lfs.177.2021.09.10.08.57.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Sep 2021 08:36:06 -0700 (PDT)
-Subject: Re: [git pull] iov_iter fixes
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <YTrJsrXPbu1jXKDZ@zeniv-ca.linux.org.uk>
- <b8786a7e-5616-ce83-c2f2-53a4754bf5a4@kernel.dk>
- <YTrM130S32ymVhXT@zeniv-ca.linux.org.uk>
- <9ae5f07f-f4c5-69eb-bcb1-8bcbc15cbd09@kernel.dk>
- <YTrQuvqvJHd9IObe@zeniv-ca.linux.org.uk>
- <f02eae7c-f636-c057-4140-2e688393f79d@kernel.dk>
- <YTrSqvkaWWn61Mzi@zeniv-ca.linux.org.uk>
- <9855f69b-e67e-f7d9-88b8-8941666ab02f@kernel.dk>
- <YTtu1V1c1emiYII9@zeniv-ca.linux.org.uk>
- <75caf6d6-26d4-7146-c497-ed89b713d878@kernel.dk>
- <YTt6l9gDX+kXwtBW@zeniv-ca.linux.org.uk>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <565e8aa7-27e7-4c3c-1a84-4181194c74d8@kernel.dk>
-Date:   Fri, 10 Sep 2021 09:36:06 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 10 Sep 2021 08:57:14 -0700 (PDT)
+To:     linux-fsdevel@vger.kernel.org
+Cc:     viro@zeniv.linux.org.uk
+From:   =?UTF-8?B?0J/QsNCy0LXQuyDQodCw0LzRgdC+0L3QvtCy?= 
+        <pvsamsonov76@gmail.com>
+Subject: [PATCH] Signed-off-by: Pavel Samsonov <pvsamsonov76@gmail.com>
+Message-ID: <0189aeb1-75f1-1e8b-71a8-ea6a7641518b@gmail.com>
+Date:   Fri, 10 Sep 2021 18:57:13 +0300
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <YTt6l9gDX+kXwtBW@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/10/21 9:32 AM, Al Viro wrote:
-> On Fri, Sep 10, 2021 at 09:08:02AM -0600, Jens Axboe wrote:
-> 
->>> You actually can cut it down even more - nr_segs + iov remains constant
->>> all along, so you could get away with just 3 words here...  I would be
->>
->> Mmm, the iov pointer remains constant? Maybe I'm missing your point, but
->> the various advance functions are quite happy to increment iter->iov or
->> iter->bvec, so we need to restore them. From a quick look, looks like
->> iter->nr_segs is modified for advancing too.
->>
->> What am I missing?
-> 
-> i->iov + i->nr_segs does not change - the places incrementing the former
-> will decrement the latter by the same amount.  So it's enough to store
-> either of those - the other one can be recovered by subtracting the
-> saved value from the current i->iov + i->nr_segs.
+ From 07b6f881080fa18ac404054d43b99433275fe966 Mon Sep 17 00:00:00 2001
+From: Pavel Samsonov <pvsamsonov76@gmail.com>
+Date: Fri, 10 Sep 2021 14:53:39 +0300
+Subject: [PATCH] Signed-off-by: Pavel Samsonov <pvsamsonov76@gmail.com>
 
-Ahh, clever. Yes that should work just fine. Let me test that and send
-out a proposal. Thanks Al.
+The patch changes the argument of chown_ok(), chgrp_ok() ...
+functions from *inode to *dentry. The setattr_prepare() function
+has an argument * dentry; it is logical to work with the dentry
+structure in the condition checking functions as well.
+---
+  fs/attr.c | 45 +++++++++++++++++++++++++++++++++++++--------
+  1 file changed, 37 insertions(+), 8 deletions(-)
+
+diff --git a/fs/attr.c b/fs/attr.c
+index 473d21b3a86d..de1898c19bde 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -21,7 +21,7 @@
+  /**
+   * chown_ok - verify permissions to chown inode
+   * @mnt_userns:    user namespace of the mount @inode was found from
+- * @inode:    inode to check permissions on
++ * @dentry:    dentry to check permissions on
+   * @uid:    uid to chown @inode to
+   *
+   * If the inode has been found through an idmapped mount the user 
+namespace of
+@@ -31,9 +31,11 @@
+   * performed on the raw inode simply passs init_user_ns.
+   */
+  static bool chown_ok(struct user_namespace *mnt_userns,
+-             const struct inode *inode,
++             const struct dentry *dentry,
+               kuid_t uid)
+  {
++    struct inode *inode = d_inode(dentry);
++
+      kuid_t kuid = i_uid_into_mnt(mnt_userns, inode);
+      if (uid_eq(current_fsuid(), kuid) && uid_eq(uid, kuid))
+          return true;
+@@ -48,7 +50,7 @@ static bool chown_ok(struct user_namespace *mnt_userns,
+  /**
+   * chgrp_ok - verify permissions to chgrp inode
+   * @mnt_userns:    user namespace of the mount @inode was found from
+- * @inode:    inode to check permissions on
++ * @dentry:    dentry to check permissions on
+   * @gid:    gid to chown @inode to
+   *
+   * If the inode has been found through an idmapped mount the user 
+namespace of
+@@ -58,8 +60,10 @@ static bool chown_ok(struct user_namespace *mnt_userns,
+   * performed on the raw inode simply passs init_user_ns.
+   */
+  static bool chgrp_ok(struct user_namespace *mnt_userns,
+-             const struct inode *inode, kgid_t gid)
++             const struct dentry *dentry, kgid_t gid)
+  {
++    struct inode *inode = d_inode(dentry);
++
+      kgid_t kgid = i_gid_into_mnt(mnt_userns, inode);
+      if (uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode)) &&
+          (in_group_p(gid) || gid_eq(gid, kgid)))
+@@ -72,6 +76,27 @@ static bool chgrp_ok(struct user_namespace *mnt_userns,
+      return false;
+  }
+
++/**
++ * fowner_ok - verify permissions to chmod inode
++ * @mnt_userns:    user namespace of the mount @inode was found from
++ * @dentry:    dentry to check permissions on
++ *
++ * If the inode has been found through an idmapped mount the user 
+namespace of
++ * the vfsmount must be passed through @mnt_userns. This function will then
++ * take care to map the inode according to @mnt_userns before checking
++ * permissions. On non-idmapped mounts or if permission checking is to be
++ * performed on the raw inode simply passs init_user_ns.
++ */
++static bool fowner_ok(struct user_namespace *mnt_userns,
++            const struct dentry *dentry)
++{
++    struct inode *inode = d_inode(dentry);
++
++    if (inode_owner_or_capable(mnt_userns, inode))
++        return true;
++    return false;
++}
++
+  /**
+   * setattr_prepare - check if attribute changes to a dentry are allowed
+   * @mnt_userns:    user namespace of the mount the inode was found from
+@@ -114,27 +139,31 @@ int setattr_prepare(struct user_namespace 
+*mnt_userns, struct dentry *dentry,
+          goto kill_priv;
+
+      /* Make sure a caller can chown. */
+-    if ((ia_valid & ATTR_UID) && !chown_ok(mnt_userns, inode, 
+attr->ia_uid))
++    if ((ia_valid & ATTR_UID) && !chown_ok(mnt_userns, dentry, 
+attr->ia_uid))
+          return -EPERM;
+
+      /* Make sure caller can chgrp. */
+-    if ((ia_valid & ATTR_GID) && !chgrp_ok(mnt_userns, inode, 
+attr->ia_gid))
++    if ((ia_valid & ATTR_GID) && !chgrp_ok(mnt_userns, dentry, 
+attr->ia_gid))
+          return -EPERM;
+
+      /* Make sure a caller can chmod. */
+      if (ia_valid & ATTR_MODE) {
+-        if (!inode_owner_or_capable(mnt_userns, inode))
++        if (!fowner_ok(mnt_userns, dentry))
+              return -EPERM;
+          /* Also check the setgid bit! */
+                 if (!in_group_p((ia_valid & ATTR_GID) ? attr->ia_gid :
+                                  i_gid_into_mnt(mnt_userns, inode)) &&
+                      !capable_wrt_inode_uidgid(mnt_userns, inode, 
+CAP_FSETID))
+              attr->ia_mode &= ~S_ISGID;
++        /* Also check the setuid bit! */
++        if (!(capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID) ||
++             uid_eq(current_fsuid(), inode->i_uid)))
++            attr->ia_mode &= ~S_ISUID;
+      }
+
+      /* Check for setting the inode time. */
+      if (ia_valid & (ATTR_MTIME_SET | ATTR_ATIME_SET | ATTR_TIMES_SET)) {
+-        if (!inode_owner_or_capable(mnt_userns, inode))
++        if (!fowner_ok(mnt_userns, dentry))
+              return -EPERM;
+      }
 
 -- 
-Jens Axboe
+2.30.2
+
 
