@@ -2,308 +2,274 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6201C4072DC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 23:19:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB2A140733F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Sep 2021 00:12:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234458AbhIJVUk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Sep 2021 17:20:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:22183 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229669AbhIJVUb (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Sep 2021 17:20:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631308752;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HVue8DZkwpi3TQg63alM0ZDd2xgCyutp+tbVdRFDU8A=;
-        b=cdrECxZJxbli7bakME+pWoegDqNeyULQjopsShD7RgaSlMLeTiBo1tZ8Rra/Szidk6Omv8
-        +6Gv5v0q3VprZXiIx7/fn7qrczuO0hMg18BPFnCDPHlNeE78n+dfwCg2jJ2aylVCw/cCUu
-        IsV13ZJ5Gv6wVq/4BMjRBc3JxmiGZXY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-425-7L6MxjnyM1iZ_Vqz43xusw-1; Fri, 10 Sep 2021 17:19:11 -0400
-X-MC-Unique: 7L6MxjnyM1iZ_Vqz43xusw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EBBDF835DE0;
-        Fri, 10 Sep 2021 21:19:08 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 79CF91000320;
-        Fri, 10 Sep 2021 21:19:06 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <163111665183.283156.17200205573146438918.stgit@warthog.procyon.org.uk>
-References: <163111665183.283156.17200205573146438918.stgit@warthog.procyon.org.uk>
-To:     linux-afs@lists.infradead.org, openafs-devel@openafs.org
-Cc:     dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-        Markus Suvanto <markus.suvanto@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 7/6] afs: Fix corruption in reads at fpos 2G-4G from an OpenAFS server
+        id S234699AbhIJWNR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Sep 2021 18:13:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52036 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232896AbhIJWNQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 10 Sep 2021 18:13:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D1FF96120A;
+        Fri, 10 Sep 2021 22:12:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631311925;
+        bh=tHxGN3Byr4l/+w+nW4Hu6Su0mSnSTw9EciOu9MUBou8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=jD1XbrqgBGXE2b9e4adZ5Tu7bqWi9zIXr30MVQz4p0zupt1+btGLtGQJYZuAZ5+U6
+         tTRtZ4XeRlMA82AwHEpRqqDt20Rir4OobMvAzYpttnRZk113lw6Y/sQIqVSwaO1ycd
+         iB7Rfdk70OW7X9GeG+MXNs+UZcyuf1Kb0TiE//7Uagi69NdwxcIlGxLpVoOH2alkDv
+         m0umABqECB5TQjgWUkCYvWiDIvPNQdCdnaHn9fUuBcaqQ1MrZAnJw6Ng9+Zey6f3aO
+         8xs9OO//U7xHubyCTY47HXhst3Mzlb4JA0f4QxtijplCLWovmCdQaL6NEQjUGt6ghA
+         fDHdPTiON9Cqw==
+Message-ID: <c92d6258369b7a7dbf8fb4925fe6a27736463f64.camel@kernel.org>
+Subject: Re: [PATCH] locks: remove LOCK_MAND flock lock support
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, Matthew Wilcox <willy@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Date:   Fri, 10 Sep 2021 18:12:03 -0400
+In-Reply-To: <20210910205940.GA789@fieldses.org>
+References: <20210910201915.95170-1-jlayton@kernel.org>
+         <20210910205940.GA789@fieldses.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.4 (3.40.4-1.fc34) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <951331.1631308745.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Fri, 10 Sep 2021 22:19:05 +0100
-Message-ID: <951332.1631308745@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-    =
+On Fri, 2021-09-10 at 16:59 -0400, J. Bruce Fields wrote:
+> On Fri, Sep 10, 2021 at 04:19:15PM -0400, Jeff Layton wrote:
+> > As best I can tell, the logic for these has been broken for a long time
+> > (at least before the move to git), such that they never conflict with
+> > anything.
+> 
+> I've wondered about that!
+> 
+> But a grep of the Samba code shows it actually uses LOCK_MAND, why?
+> Looking closer now, I see that it sets LOCK_MAND in some cases but never
+> checks for LOCK_MAND, so there's absolutely no point unless the kernel
+> is doing something useful, which it isn't.  Huh.
+> 
+> Looking back at the kernel...  LOCK_MAND was introduced in Linux
+> 2.4.0-test9pre6, and it was only checked in nfsd read and write code,
+> and only only on exports that had an "msnfs" export option set.
+> 
+> So it was a mandatory lock that only worked against NFS readers and
+> writers, and only if the admin knew to set this export option.
+> 
+> And, oh, look, I'd forgotten about this, but apparently in 2011 I
+> noticed that the msnfs option was totally undocumented and ripped it
+> out, in 9ce137eee4fe "nfsd: don't support msnfs export option".
+> 
+> I've heard no complaints since, so I guess that was an OK decision.
+> 
+> But I should have noticed at the same time that this also made LOCK_MAND
+> a no-op.
+> 
+> OK, sorry for the novel, and thanks for cleaning this up!
+> 
+> (Are you sending Samba a patch too?)
+> 
+> --b.
+> 
 
-AFS-3 has two data fetch RPC variants, FS.FetchData and FS.FetchData64, an=
-d
-Linux's afs client switches between them when talking to a non-YFS server
-if the read size, the file position or the sum of the two have the upper 3=
-2
-bits set of the 64-bit value.
+Ahh, thanks for the archaeology! That makes sense. I took a look at
+Samba, but haven't cooked up a patch for it yet.
 
-This is a problem, however, since the file position and length fields of
-FS.FetchData are *signed* 32-bit values.
+After taking a look, I sort of wonder whether there might be out of tree
+filesystems (GPFS?) that do support these flags properly. OTOH, I'm not
+inclined to worry about them too much. Maybe if they want to chime in we
+can work with them to ease the transition.
 
-Fix this by capturing the capability bits obtained from the fileserver whe=
-n
-it's sent an FS.GetCapabilities RPC, rather than just discarding them, and
-then picking out the VICED_CAPABILITY_64BITFILES flag.  This can then be
-used to decide whether to use FS.FetchData or FS.FetchData64 - and also
-FS.StoreData or FS.StoreData64 - rather than using upper_32_bits() to
-switch on the parameter values.
+I'll probably do a patch for samba soon, just to kick off the discussion
+with those guys. I'll see what I can come up with.
 
-This capabilities flag could also be used to limit the maximum size of the
-file, but all servers must be checked for that.
+> > Also, nothing checks for these flags and prevented opens or
+> > read/write behavior on the files. They don't seem to do anything.
+> > 
+> > Given that, we can rip these symbols out of the kernel, and just make
+> > flock(2) return 0 when LOCK_MAND is set in order to preserve existing
+> > behavior.
+> > 
+> > Cc: Matthew Wilcox <willy@infradead.org>
+> > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/ceph/locks.c                  |  3 ---
+> >  fs/gfs2/file.c                   |  2 --
+> >  fs/locks.c                       | 46 +++++++++++++++-----------------
+> >  fs/nfs/file.c                    |  9 -------
+> >  include/uapi/asm-generic/fcntl.h |  4 +++
+> >  5 files changed, 25 insertions(+), 39 deletions(-)
+> > 
+> > Note that I do see some occurrences of LOCK_MAND in samba codebase, but
+> > I think it's probably best that those are removed.
+> > 
+> > diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
+> > index bdeb271f47d9..d8c31069fbf2 100644
+> > --- a/fs/ceph/locks.c
+> > +++ b/fs/ceph/locks.c
+> > @@ -302,9 +302,6 @@ int ceph_flock(struct file *file, int cmd, struct file_lock *fl)
+> >  
+> >  	if (!(fl->fl_flags & FL_FLOCK))
+> >  		return -ENOLCK;
+> > -	/* No mandatory locks */
+> > -	if (fl->fl_type & LOCK_MAND)
+> > -		return -EOPNOTSUPP;
+> >  
+> >  	dout("ceph_flock, fl_file: %p\n", fl->fl_file);
+> >  
+> > diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+> > index c559827cb6f9..078ef29e31bc 100644
+> > --- a/fs/gfs2/file.c
+> > +++ b/fs/gfs2/file.c
+> > @@ -1338,8 +1338,6 @@ static int gfs2_flock(struct file *file, int cmd, struct file_lock *fl)
+> >  {
+> >  	if (!(fl->fl_flags & FL_FLOCK))
+> >  		return -ENOLCK;
+> > -	if (fl->fl_type & LOCK_MAND)
+> > -		return -EOPNOTSUPP;
+> >  
+> >  	if (fl->fl_type == F_UNLCK) {
+> >  		do_unflock(file, fl);
+> > diff --git a/fs/locks.c b/fs/locks.c
+> > index 3d6fb4ae847b..0e1d8a637e9c 100644
+> > --- a/fs/locks.c
+> > +++ b/fs/locks.c
+> > @@ -461,8 +461,6 @@ static void locks_move_blocks(struct file_lock *new, struct file_lock *fl)
+> >  }
+> >  
+> >  static inline int flock_translate_cmd(int cmd) {
+> > -	if (cmd & LOCK_MAND)
+> > -		return cmd & (LOCK_MAND | LOCK_RW);
+> >  	switch (cmd) {
+> >  	case LOCK_SH:
+> >  		return F_RDLCK;
+> > @@ -942,8 +940,6 @@ static bool flock_locks_conflict(struct file_lock *caller_fl,
+> >  	 */
+> >  	if (caller_fl->fl_file == sys_fl->fl_file)
+> >  		return false;
+> > -	if ((caller_fl->fl_type & LOCK_MAND) || (sys_fl->fl_type & LOCK_MAND))
+> > -		return false;
+> >  
+> >  	return locks_conflict(caller_fl, sys_fl);
+> >  }
+> > @@ -2116,11 +2112,9 @@ EXPORT_SYMBOL(locks_lock_inode_wait);
+> >   *	- %LOCK_SH -- a shared lock.
+> >   *	- %LOCK_EX -- an exclusive lock.
+> >   *	- %LOCK_UN -- remove an existing lock.
+> > - *	- %LOCK_MAND -- a 'mandatory' flock.
+> > - *	  This exists to emulate Windows Share Modes.
+> > + *	- %LOCK_MAND -- a 'mandatory' flock. (DEPRECATED)
+> >   *
+> > - *	%LOCK_MAND can be combined with %LOCK_READ or %LOCK_WRITE to allow other
+> > - *	processes read and write access respectively.
+> > + *	%LOCK_MAND support has been removed from the kernel.
+> >   */
+> >  SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+> >  {
+> > @@ -2137,9 +2131,22 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+> >  	cmd &= ~LOCK_NB;
+> >  	unlock = (cmd == LOCK_UN);
+> >  
+> > -	if (!unlock && !(cmd & LOCK_MAND) &&
+> > -	    !(f.file->f_mode & (FMODE_READ|FMODE_WRITE)))
+> > +	if (!unlock && !(f.file->f_mode & (FMODE_READ|FMODE_WRITE)))
+> > +		goto out_putf;
+> > +
+> > +	/*
+> > +	 * LOCK_MAND locks were broken for a long time in that they never
+> > +	 * conflicted with one another and didn't prevent any sort of open,
+> > +	 * read or write activity.
+> > +	 *
+> > +	 * Just ignore these requests now, to preserve legacy behavior, but
+> > +	 * throw a warning to let people know that they don't actually work.
+> > +	 */
+> > +	if (cmd & LOCK_MAND) {
+> > +		pr_warn_once("Attempt to set a LOCK_MAND lock via flock(2). This support has been removed and the request ignored.\n");
+> > +		error = 0;
+> >  		goto out_putf;
+> > +	}
+> >  
+> >  	lock = flock_make_lock(f.file, cmd, NULL);
+> >  	if (IS_ERR(lock)) {
+> > @@ -2745,11 +2752,7 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+> >  		seq_printf(f, " %s ",
+> >  			     (inode == NULL) ? "*NOINODE*" : "ADVISORY ");
+> >  	} else if (IS_FLOCK(fl)) {
+> > -		if (fl->fl_type & LOCK_MAND) {
+> > -			seq_puts(f, "FLOCK  MSNFS     ");
+> > -		} else {
+> > -			seq_puts(f, "FLOCK  ADVISORY  ");
+> > -		}
+> > +		seq_puts(f, "FLOCK  ADVISORY  ");
+> >  	} else if (IS_LEASE(fl)) {
+> >  		if (fl->fl_flags & FL_DELEG)
+> >  			seq_puts(f, "DELEG  ");
+> > @@ -2765,17 +2768,10 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+> >  	} else {
+> >  		seq_puts(f, "UNKNOWN UNKNOWN  ");
+> >  	}
+> > -	if (fl->fl_type & LOCK_MAND) {
+> > -		seq_printf(f, "%s ",
+> > -			       (fl->fl_type & LOCK_READ)
+> > -			       ? (fl->fl_type & LOCK_WRITE) ? "RW   " : "READ "
+> > -			       : (fl->fl_type & LOCK_WRITE) ? "WRITE" : "NONE ");
+> > -	} else {
+> > -		int type = IS_LEASE(fl) ? target_leasetype(fl) : fl->fl_type;
+> > +	int type = IS_LEASE(fl) ? target_leasetype(fl) : fl->fl_type;
+> >  
+> > -		seq_printf(f, "%s ", (type == F_WRLCK) ? "WRITE" :
+> > -				     (type == F_RDLCK) ? "READ" : "UNLCK");
+> > -	}
+> > +	seq_printf(f, "%s ", (type == F_WRLCK) ? "WRITE" :
+> > +			     (type == F_RDLCK) ? "READ" : "UNLCK");
+> >  	if (inode) {
+> >  		/* userspace relies on this representation of dev_t */
+> >  		seq_printf(f, "%d %02x:%02x:%lu ", fl_pid,
+> > diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+> > index aa353fd58240..24e7dccce355 100644
+> > --- a/fs/nfs/file.c
+> > +++ b/fs/nfs/file.c
+> > @@ -843,15 +843,6 @@ int nfs_flock(struct file *filp, int cmd, struct file_lock *fl)
+> >  	if (!(fl->fl_flags & FL_FLOCK))
+> >  		return -ENOLCK;
+> >  
+> > -	/*
+> > -	 * The NFSv4 protocol doesn't support LOCK_MAND, which is not part of
+> > -	 * any standard. In principle we might be able to support LOCK_MAND
+> > -	 * on NFSv2/3 since NLMv3/4 support DOS share modes, but for now the
+> > -	 * NFS code is not set up for it.
+> > -	 */
+> > -	if (fl->fl_type & LOCK_MAND)
+> > -		return -EINVAL;
+> > -
+> >  	if (NFS_SERVER(inode)->flags & NFS_MOUNT_LOCAL_FLOCK)
+> >  		is_local = 1;
+> >  
+> > diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
+> > index 9dc0bf0c5a6e..ecd0f5bdfc1d 100644
+> > --- a/include/uapi/asm-generic/fcntl.h
+> > +++ b/include/uapi/asm-generic/fcntl.h
+> > @@ -181,6 +181,10 @@ struct f_owner_ex {
+> >  				   blocking */
+> >  #define LOCK_UN		8	/* remove lock */
+> >  
+> > +/*
+> > + * LOCK_MAND support has been removed from the kernel. We leave the symbols
+> > + * here to not break legacy builds, but these should not be used in new code.
+> > + */
+> >  #define LOCK_MAND	32	/* This is a mandatory flock ... */
+> >  #define LOCK_READ	64	/* which allows concurrent read operations */
+> >  #define LOCK_WRITE	128	/* which allows concurrent write operations */
+> > -- 
+> > 2.31.1
 
-Note that the issue does not exist with FS.StoreData - that uses *unsigned=
-*
-32-bit values.  It's also not a problem with Auristor servers as its
-YFS.FetchData64 op uses unsigned 64-bit values.
-
-This can be tested by cloning a git repo through an OpenAFS client to an
-OpenAFS server and then doing "git status" on it from a Linux afs
-client[1].  Provided the clone has a pack file that's in the 2G-4G range,
-the git status will show errors like:
-
-        error: packfile .git/objects/pack/pack-5e813c51d12b6847bbc0fcd97c2=
-bca66da50079c.pack does not match index
-        error: packfile .git/objects/pack/pack-5e813c51d12b6847bbc0fcd97c2=
-bca66da50079c.pack does not match index
-
-This can be observed in the server's FileLog with something like the
-following appearing:
-
-Sun Aug 29 19:31:39 2021 SRXAFS_FetchData, Fid =3D 2303380852.491776.32631=
-14, Host 192.168.11.201:7001, Id 1001
-Sun Aug 29 19:31:39 2021 CheckRights: len=3D0, for host=3D192.168.11.201:7=
-001
-Sun Aug 29 19:31:39 2021 FetchData_RXStyle: Pos 18446744071815340032, Len =
-3154
-Sun Aug 29 19:31:39 2021 FetchData_RXStyle: file size 2400758866
-...
-Sun Aug 29 19:31:40 2021 SRXAFS_FetchData returns 5
-
-Note the file position of 18446744071815340032.  This is the requested fil=
-e
-position sign-extended.
-
-Fixes: b9b1f8d5930a ("AFS: write support fixes")
-Reported-by: Markus Suvanto <markus.suvanto@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
-Tested-by: Markus Suvanto <markus.suvanto@gmail.com>
-cc: linux-afs@lists.infradead.org
-cc: openafs-devel@openafs.org
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D214217#c9 [1]
----
- fs/afs/fs_probe.c     |    8 +++++++-
- fs/afs/fsclient.c     |   31 ++++++++++++++++++++-----------
- fs/afs/internal.h     |    1 +
- fs/afs/protocol_afs.h |   15 +++++++++++++++
- fs/afs/protocol_yfs.h |    6 ++++++
- 5 files changed, 49 insertions(+), 12 deletions(-)
-
-diff --git a/fs/afs/fs_probe.c b/fs/afs/fs_probe.c
-index e7e98ad63a91..c0031a3ab42f 100644
---- a/fs/afs/fs_probe.c
-+++ b/fs/afs/fs_probe.c
-@@ -9,6 +9,7 @@
- #include <linux/slab.h>
- #include "afs_fs.h"
- #include "internal.h"
-+#include "protocol_afs.h"
- #include "protocol_yfs.h"
- =
-
- static unsigned int afs_fs_probe_fast_poll_interval =3D 30 * HZ;
-@@ -102,7 +103,7 @@ void afs_fileserver_probe_result(struct afs_call *call=
-)
- 	struct afs_addr_list *alist =3D call->alist;
- 	struct afs_server *server =3D call->server;
- 	unsigned int index =3D call->addr_ix;
--	unsigned int rtt_us =3D 0;
-+	unsigned int rtt_us =3D 0, cap0;
- 	int ret =3D call->error;
- =
-
- 	_enter("%pU,%u", &server->uuid, index);
-@@ -159,6 +160,11 @@ void afs_fileserver_probe_result(struct afs_call *cal=
-l)
- 			clear_bit(AFS_SERVER_FL_IS_YFS, &server->flags);
- 			alist->addrs[index].srx_service =3D call->service_id;
- 		}
-+		cap0 =3D ntohl(call->tmp);
-+		if (cap0 & AFS3_VICED_CAPABILITY_64BITFILES)
-+			set_bit(AFS_SERVER_FL_HAS_FS64, &server->flags);
-+		else
-+			clear_bit(AFS_SERVER_FL_HAS_FS64, &server->flags);
- 	}
- =
-
- 	if (rxrpc_kernel_get_srtt(call->net->socket, call->rxcall, &rtt_us) &&
-diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
-index dd3f45d906d2..4943413d9c5f 100644
---- a/fs/afs/fsclient.c
-+++ b/fs/afs/fsclient.c
-@@ -456,9 +456,7 @@ void afs_fs_fetch_data(struct afs_operation *op)
- 	struct afs_read *req =3D op->fetch.req;
- 	__be32 *bp;
- =
-
--	if (upper_32_bits(req->pos) ||
--	    upper_32_bits(req->len) ||
--	    upper_32_bits(req->pos + req->len))
-+	if (test_bit(AFS_SERVER_FL_HAS_FS64, &op->server->flags))
- 		return afs_fs_fetch_data64(op);
- =
-
- 	_enter("");
-@@ -1113,9 +1111,7 @@ void afs_fs_store_data(struct afs_operation *op)
- 	       (unsigned long long)op->store.pos,
- 	       (unsigned long long)op->store.i_size);
- =
-
--	if (upper_32_bits(op->store.pos) ||
--	    upper_32_bits(op->store.size) ||
--	    upper_32_bits(op->store.i_size))
-+	if (test_bit(AFS_SERVER_FL_HAS_FS64, &op->server->flags))
- 		return afs_fs_store_data64(op);
- =
-
- 	call =3D afs_alloc_flat_call(op->net, &afs_RXFSStoreData,
-@@ -1229,7 +1225,7 @@ static void afs_fs_setattr_size(struct afs_operation=
- *op)
- 	       key_serial(op->key), vp->fid.vid, vp->fid.vnode);
- =
-
- 	ASSERT(attr->ia_valid & ATTR_SIZE);
--	if (upper_32_bits(attr->ia_size))
-+	if (test_bit(AFS_SERVER_FL_HAS_FS64, &op->server->flags))
- 		return afs_fs_setattr_size64(op);
- =
-
- 	call =3D afs_alloc_flat_call(op->net, &afs_RXFSStoreData_as_Status,
-@@ -1657,20 +1653,33 @@ static int afs_deliver_fs_get_capabilities(struct =
-afs_call *call)
- 			return ret;
- =
-
- 		count =3D ntohl(call->tmp);
--
- 		call->count =3D count;
- 		call->count2 =3D count;
--		afs_extract_discard(call, count * sizeof(__be32));
-+		if (count =3D=3D 0) {
-+			call->unmarshall =3D 4;
-+			call->tmp =3D 0;
-+			break;
-+		}
-+
-+		/* Extract the first word of the capabilities to call->tmp */
-+		afs_extract_to_tmp(call);
- 		call->unmarshall++;
- 		fallthrough;
- =
-
--		/* Extract capabilities words */
- 	case 2:
- 		ret =3D afs_extract_data(call, false);
- 		if (ret < 0)
- 			return ret;
- =
-
--		/* TODO: Examine capabilities */
-+		afs_extract_discard(call, (count - 1) * sizeof(__be32));
-+		call->unmarshall++;
-+		fallthrough;
-+
-+		/* Extract remaining capabilities words */
-+	case 3:
-+		ret =3D afs_extract_data(call, false);
-+		if (ret < 0)
-+			return ret;
- =
-
- 		call->unmarshall++;
- 		break;
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index c97618855b46..b0fe27ae60db 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -520,6 +520,7 @@ struct afs_server {
- #define AFS_SERVER_FL_IS_YFS	16		/* Server is YFS not AFS */
- #define AFS_SERVER_FL_NO_IBULK	17		/* Fileserver doesn't support FS.Inlin=
-eBulkStatus */
- #define AFS_SERVER_FL_NO_RM2	18		/* Fileserver doesn't support YFS.Remove=
-File2 */
-+#define AFS_SERVER_FL_HAS_FS64	19		/* Fileserver supports FS.{Fetch,Store=
-}Data64 */
- 	atomic_t		ref;		/* Object refcount */
- 	atomic_t		active;		/* Active user count */
- 	u32			addr_version;	/* Address list version */
-diff --git a/fs/afs/protocol_afs.h b/fs/afs/protocol_afs.h
-new file mode 100644
-index 000000000000..0c39358c8b70
---- /dev/null
-+++ b/fs/afs/protocol_afs.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* AFS protocol bits
-+ *
-+ * Copyright (C) 2021 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ */
-+
-+
-+#define AFSCAPABILITIESMAX 196 /* Maximum number of words in a capability=
- set */
-+
-+/* AFS3 Fileserver capabilities word 0 */
-+#define AFS3_VICED_CAPABILITY_ERRORTRANS	0x0001 /* Uses UAE errors */
-+#define AFS3_VICED_CAPABILITY_64BITFILES	0x0002 /* FetchData64 & StoreDat=
-a64 supported */
-+#define AFS3_VICED_CAPABILITY_WRITELOCKACL	0x0004 /* Can lock a file even=
- without lock perm */
-+#define AFS3_VICED_CAPABILITY_SANEACLS		0x0008 /* ACLs reviewed for sanit=
-y - don't use */
-diff --git a/fs/afs/protocol_yfs.h b/fs/afs/protocol_yfs.h
-index b5bd03b1d3c7..e4cd89c44c46 100644
---- a/fs/afs/protocol_yfs.h
-+++ b/fs/afs/protocol_yfs.h
-@@ -168,3 +168,9 @@ enum yfs_lock_type {
- 	yfs_LockMandatoryWrite	=3D 0x101,
- 	yfs_LockMandatoryExtend	=3D 0x102,
- };
-+
-+/* RXYFS Viced Capability Flags */
-+#define YFS_VICED_CAPABILITY_ERRORTRANS		0x0001 /* Deprecated v0.195 */
-+#define YFS_VICED_CAPABILITY_64BITFILES		0x0002 /* Deprecated v0.195 */
-+#define YFS_VICED_CAPABILITY_WRITELOCKACL	0x0004 /* Can lock a file even =
-without lock perm */
-+#define YFS_VICED_CAPABILITY_SANEACLS		0x0008 /* Deprecated v0.195 */
+-- 
+Jeff Layton <jlayton@kernel.org>
 
