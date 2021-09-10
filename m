@@ -2,84 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A74BC407010
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 18:56:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFF9840700E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 18:56:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230440AbhIJQ6F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Sep 2021 12:58:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230097AbhIJQ6D (ORCPT
+        id S230243AbhIJQ5o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Sep 2021 12:57:44 -0400
+Received: from zeniv-ca.linux.org.uk ([142.44.231.140]:41878 "EHLO
+        zeniv-ca.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230018AbhIJQ5m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Sep 2021 12:58:03 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC007C061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 09:56:51 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id a4so5321924lfg.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 09:56:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RzyeZQUsMmMmvYBQjLaM4EY95lNntxr7uNPPktCtTzo=;
-        b=GHDXJE8fX5DD4GMb0tl0wq6/coIMVKOSg37tF97o+ah9HRjsfThGByi03ZSen4AqSr
-         zUKQ7jXGjiY0aX37XRIGfaRjciAfGMiUGF1ZnKXANSy7YleplXcjv8yvgheCDNH1nNez
-         Qh+vnVbtHHn3zTNm3+GPl1GyQD0cROI9Wn0+c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RzyeZQUsMmMmvYBQjLaM4EY95lNntxr7uNPPktCtTzo=;
-        b=rhUxF4+9nikLiWMXCGy47/zAsK15ZSCUx3Mq0EIte/FWPnb0d2Ht1xlbJQ1dd7URfx
-         3R/Qf4fvp1RJXjgTtNJ1I4SHd9omKBPrSODRnS9gM8HW3ecsWuuxmFjlOHMjmJmqRlac
-         VQIsLRchBfcrQUkQteYH6p39EROTKvTB/gsWuCl/f0iRQgFGOm4XboLtof+/5AJLiaAD
-         4zyeeWuR5aO80DpsNy8czGyNvI0osnuwkd4iUe+30QGJ0GiHfPup48wnRYwsW4eDWV8G
-         C2QS5ZYgjtqJ+3fpmFuuVoc8QBsijdTmzxcnwZBryWIbyutggyP5yce0PPIdNFq9O7xf
-         OJJg==
-X-Gm-Message-State: AOAM532ZSUEALBERSM7cLJKlCSlIMNKXejcShDVyaIMWZKGAXP3Qywo2
-        iCMOq4U/hqeDfWBP8ScIBvjeAvE01XwwQlezAGM=
-X-Google-Smtp-Source: ABdhPJx8/HqBjJISGz8VzUhF2BJH77sFWYm2Kf4ELVNdPGSPsi9x+00Ax+HzogMy3smLIe0Kor4N0w==
-X-Received: by 2002:ac2:5d27:: with SMTP id i7mr4755112lfb.488.1631293010015;
-        Fri, 10 Sep 2021 09:56:50 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id y6sm603620lfa.122.2021.09.10.09.56.43
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Sep 2021 09:56:44 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id k4so5336960lfj.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 09:56:43 -0700 (PDT)
-X-Received: by 2002:a05:6512:34c3:: with SMTP id w3mr4533173lfr.173.1631293002850;
- Fri, 10 Sep 2021 09:56:42 -0700 (PDT)
+        Fri, 10 Sep 2021 12:57:42 -0400
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mOjpE-002whY-NL; Fri, 10 Sep 2021 16:56:28 +0000
+Date:   Fri, 10 Sep 2021 16:56:28 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [git pull] iov_iter fixes
+Message-ID: <YTuOPAFvGpayTBpp@zeniv-ca.linux.org.uk>
+References: <YTrJsrXPbu1jXKDZ@zeniv-ca.linux.org.uk>
+ <b8786a7e-5616-ce83-c2f2-53a4754bf5a4@kernel.dk>
+ <YTrM130S32ymVhXT@zeniv-ca.linux.org.uk>
+ <9ae5f07f-f4c5-69eb-bcb1-8bcbc15cbd09@kernel.dk>
+ <YTrQuvqvJHd9IObe@zeniv-ca.linux.org.uk>
+ <f02eae7c-f636-c057-4140-2e688393f79d@kernel.dk>
+ <YTrSqvkaWWn61Mzi@zeniv-ca.linux.org.uk>
+ <9855f69b-e67e-f7d9-88b8-8941666ab02f@kernel.dk>
+ <4b26d8cd-c3fa-8536-a295-850ecf052ecd@kernel.dk>
+ <1a61c333-680d-71a0-3849-5bfef555a49f@kernel.dk>
 MIME-Version: 1.0
-References: <20210825124515.GE14620@quack2.suse.cz> <CAOQ4uxi4S0oMSXTfpNTCqJPoO4=at1_f1cA-3LAUmuOy4CcqKw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxi4S0oMSXTfpNTCqJPoO4=at1_f1cA-3LAUmuOy4CcqKw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 10 Sep 2021 09:56:27 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whKKxtnHikkDFBtDUKPttRoFeVNLO3L0i6cUj=qHDz83w@mail.gmail.com>
-Message-ID: <CAHk-=whKKxtnHikkDFBtDUKPttRoFeVNLO3L0i6cUj=qHDz83w@mail.gmail.com>
-Subject: Re: [GIT PULL] Fsnotify changes for v5.15-rc1
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1a61c333-680d-71a0-3849-5bfef555a49f@kernel.dk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 9, 2021 at 11:57 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> Linus,
->
-> At the risk of being too nagging, please see my patch [1] to fix a
-> regression [2] reported after this pull request was merged.
+On Fri, Sep 10, 2021 at 10:06:25AM -0600, Jens Axboe wrote:
 
-Not too nagging at all, pinging me is absolutely the right thing to do.
+> Looks something like this. Not super pretty in terms of needing a define
+> for this, and maybe I'm missing something, but ideally we'd want it as
+> an anonymous struct that's defined inside iov_iter. Anyway, gets the
+> point across. Alternatively, since we're down to just a few members now,
+> we just duplicate them in each struct...
+> 
+> Would be split into two patches, one for the iov_state addition and
+> the save/restore helpers, and then one switching io_uring to use them.
+> Figured we'd need some agreement on this first...
 
-During the merge window I end up dealing with a lot of email, and
-concentrating on pull requests, and reminding me and making sure I'm
-aware of the patch was the right thing to do.
+> +#define IOV_ITER_STATE					\
+> +	size_t iov_offset;				\
+> +	size_t count;					\
+> +	union {						\
+> +		unsigned long nr_segs;			\
+> +		struct {				\
+> +			unsigned int head;		\
+> +			unsigned int start_head;	\
+> +		};					\
+> +		loff_t xarray_start;			\
+> +	};						\
+> +
+> +struct iov_iter_state {
+> +	IOV_ITER_STATE;
+> +};
+> +
+>  struct iov_iter {
+>  	u8 iter_type;
+>  	bool data_source;
+> -	size_t iov_offset;
+> -	size_t count;
+>  	union {
+>  		const struct iovec *iov;
+>  		const struct kvec *kvec;
+> @@ -40,12 +54,10 @@ struct iov_iter {
+>  		struct pipe_inode_info *pipe;
+>  	};
+>  	union {
+> -		unsigned long nr_segs;
+> +		struct iov_iter_state state;
+>  		struct {
+> -			unsigned int head;
+> -			unsigned int start_head;
+> +			IOV_ITER_STATE;
+>  		};
+> -		loff_t xarray_start;
+>  	};
+>  	size_t truncated;
+>  };
 
-Applied in my tree now.
+No.  This is impossible to read *and* wrong for flavours other than
+iovec anyway.
 
-Thanks,
-            Linus
+Rules:
+	count is flavour-independent
+	iovec: iov, nr_segs, iov_offset.  nr_segs + iov is constant
+	kvec: kvec, nr_segs, iov_offset.  nr_segs + kvec is constant
+	bvec: bvec, nr_segs, iov_offset.  nr_segs + bvec is constant
+	xarray: xarray, xarray_start, iov_offset.  xarray and xarray_start are constant.
+	pipe: pipe, head, start_head, iov_offset.  pipe and start_head are constant,
+						   iov_offset can be derived from the rest.
+	discard: nothing.
+
+What's more, for pipe (output-only) the situation is much trickier and
+there this "reset + advance" won't work at all.  Simply not applicable.
+
+What's the point of all those contortions, anyway?  You only need it for
+iovec case; don't mix doing that and turning it into flavour-independent
+primitive.
+
+Especially since you turn around and access the fields of that sucker
+(->count, that is) directly in your code.  Keep it simple and readable,
+please.  We'll sort the sane flavour-independent API later.  And get
+rid of ->truncate, while we are at it.
