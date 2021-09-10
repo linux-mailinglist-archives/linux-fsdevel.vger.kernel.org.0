@@ -2,258 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B33A4072C5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 22:59:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15FEA4072D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 23:10:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234271AbhIJVAx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Sep 2021 17:00:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32946 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233736AbhIJVAw (ORCPT
+        id S234298AbhIJVMG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Sep 2021 17:12:06 -0400
+Received: from mail-ej1-f44.google.com ([209.85.218.44]:33770 "EHLO
+        mail-ej1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229655AbhIJVMG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Sep 2021 17:00:52 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90DA9C061574;
-        Fri, 10 Sep 2021 13:59:41 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 5FE08701D; Fri, 10 Sep 2021 16:59:40 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 5FE08701D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1631307580;
-        bh=2w98AgBV/4XZ3PqFsD8uKt2O2D7jwV6LoybQQ4T2g2M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=F/F/e4v2X692UfLrVuUQUGIe716fCo5m0nrualYO9k81Qiof8M4bcjyBeauJ0Fip5
-         G5lo3CZ24megqAYHYG1AhMLMphgCQMcSBrp/fTmFe8SEMCiG1lG2xpoSWG+L04eBi9
-         hGlvBKXFDwDWZB5pRzB34bylbznD9MQ6cg9D9QFA=
-Date:   Fri, 10 Sep 2021 16:59:40 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, Matthew Wilcox <willy@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] locks: remove LOCK_MAND flock lock support
-Message-ID: <20210910205940.GA789@fieldses.org>
-References: <20210910201915.95170-1-jlayton@kernel.org>
+        Fri, 10 Sep 2021 17:12:06 -0400
+Received: by mail-ej1-f44.google.com with SMTP id x11so6963472ejv.0;
+        Fri, 10 Sep 2021 14:10:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9UmuHpu0cKxiQt++F9TGuOrk3G7S1/A6mYH0c36xdco=;
+        b=LMGsPbnBR4xPj4P/2VKlJK91kBvwIcDypk7lTJ9QzVtaArQNaOuR2udX55GaZ10gYI
+         F9m2/0JgvR1YuU28sBnnat1X1WsXP8GcK86EY+XPFDfxJhDFFjMLQ3MxN3mLu2uXpot2
+         eFhQWp2nRmiQToyYPAfNfJEYfCosMlBktBs3qlnbtB9q0NLzX4+BTwdwcSyQ1MP+Ei/l
+         jfk+UT6WN1yaFXHDcuDr1tp9Rte9CvfnTAGrzO8DQfTCM2N4YvgNWaTbzxegpeA4iYSy
+         pKgrAxZoxxgTVmi45l4Sot4Kg5hA4zXr0i6G3JpGVlq9NPBYeRTDJsXLXFPjDe5gnERe
+         Fw/g==
+X-Gm-Message-State: AOAM530VQ76wXYXd9l+o2C1+zPQfekKo1+FhSX+aXbV3wY8DtiAKcuUM
+        4qgPL6wTiJEKHmBuMnE825+ku9s13no=
+X-Google-Smtp-Source: ABdhPJznWasfW90FIjz/BZqRStamQExSrh6n2KZMW+zQlaX3aghygulRK5Ci6yyFmhpHNynB+tx60A==
+X-Received: by 2002:a17:906:a3d9:: with SMTP id ca25mr3739305ejb.306.1631308253495;
+        Fri, 10 Sep 2021 14:10:53 -0700 (PDT)
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com. [209.85.221.47])
+        by smtp.gmail.com with ESMTPSA id i6sm2860344ejd.57.2021.09.10.14.10.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Sep 2021 14:10:53 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id w29so3685359wra.8;
+        Fri, 10 Sep 2021 14:10:53 -0700 (PDT)
+X-Received: by 2002:adf:e349:: with SMTP id n9mr12196570wrj.326.1631308253036;
+ Fri, 10 Sep 2021 14:10:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210910201915.95170-1-jlayton@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <163111665183.283156.17200205573146438918.stgit@warthog.procyon.org.uk>
+ <163111665914.283156.3038561975681836591.stgit@warthog.procyon.org.uk>
+In-Reply-To: <163111665914.283156.3038561975681836591.stgit@warthog.procyon.org.uk>
+From:   Marc Dionne <marc.dionne@auristor.com>
+Date:   Fri, 10 Sep 2021 18:10:42 -0300
+X-Gmail-Original-Message-ID: <CAB9dFduo9smK9VvPPKYPFXNdyvQu723UsnrfVDRvk8Eq+g7gFg@mail.gmail.com>
+Message-ID: <CAB9dFduo9smK9VvPPKYPFXNdyvQu723UsnrfVDRvk8Eq+g7gFg@mail.gmail.com>
+Subject: Re: [PATCH 1/6] afs: Fix missing put on afs_read objects and missing
+ get on the key therein
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-afs@lists.infradead.org,
+        Markus Suvanto <markus.suvanto@gmail.com>,
+        linux-fsdevel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 10, 2021 at 04:19:15PM -0400, Jeff Layton wrote:
-> As best I can tell, the logic for these has been broken for a long time
-> (at least before the move to git), such that they never conflict with
-> anything.
-
-I've wondered about that!
-
-But a grep of the Samba code shows it actually uses LOCK_MAND, why?
-Looking closer now, I see that it sets LOCK_MAND in some cases but never
-checks for LOCK_MAND, so there's absolutely no point unless the kernel
-is doing something useful, which it isn't.  Huh.
-
-Looking back at the kernel...  LOCK_MAND was introduced in Linux
-2.4.0-test9pre6, and it was only checked in nfsd read and write code,
-and only only on exports that had an "msnfs" export option set.
-
-So it was a mandatory lock that only worked against NFS readers and
-writers, and only if the admin knew to set this export option.
-
-And, oh, look, I'd forgotten about this, but apparently in 2011 I
-noticed that the msnfs option was totally undocumented and ripped it
-out, in 9ce137eee4fe "nfsd: don't support msnfs export option".
-
-I've heard no complaints since, so I guess that was an OK decision.
-
-But I should have noticed at the same time that this also made LOCK_MAND
-a no-op.
-
-OK, sorry for the novel, and thanks for cleaning this up!
-
-(Are you sending Samba a patch too?)
-
---b.
-
-> Also, nothing checks for these flags and prevented opens or
-> read/write behavior on the files. They don't seem to do anything.
-> 
-> Given that, we can rip these symbols out of the kernel, and just make
-> flock(2) return 0 when LOCK_MAND is set in order to preserve existing
-> behavior.
-> 
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On Wed, Sep 8, 2021 at 12:58 PM David Howells <dhowells@redhat.com> wrote:
+>
+> The afs_read objects created by afs_req_issue_op() get leaked because
+> afs_alloc_read() returns a ref and then afs_fetch_data() gets its own ref
+> which is released when the operation completes, but the initial ref is
+> never released.
+>
+> Fix this by discarding the initial ref at the end of afs_req_issue_op().
+>
+> This leak also covered another bug whereby a ref isn't got on the key
+> attached to the read record by afs_req_issue_op().  This isn't a problem as
+> long as the afs_read req never goes away...
+>
+> Fix this by calling key_get() in afs_req_issue_op().
+>
+> This was found by the generic/074 test.  It leaks a bunch of kmalloc-192
+> objects each time it is run, which can be observed by watching
+> /proc/slabinfo.
+>
+> Fixes: f7605fa869cf ("afs: Fix leak of afs_read objects")
+> Reported-by: Marc Dionne <marc.dionne@auristor.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: linux-afs@lists.infradead.org
+> Link: https://lore.kernel.org/r/163010394740.3035676.8516846193899793357.stgit@warthog.procyon.org.uk/
 > ---
->  fs/ceph/locks.c                  |  3 ---
->  fs/gfs2/file.c                   |  2 --
->  fs/locks.c                       | 46 +++++++++++++++-----------------
->  fs/nfs/file.c                    |  9 -------
->  include/uapi/asm-generic/fcntl.h |  4 +++
->  5 files changed, 25 insertions(+), 39 deletions(-)
-> 
-> Note that I do see some occurrences of LOCK_MAND in samba codebase, but
-> I think it's probably best that those are removed.
-> 
-> diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
-> index bdeb271f47d9..d8c31069fbf2 100644
-> --- a/fs/ceph/locks.c
-> +++ b/fs/ceph/locks.c
-> @@ -302,9 +302,6 @@ int ceph_flock(struct file *file, int cmd, struct file_lock *fl)
->  
->  	if (!(fl->fl_flags & FL_FLOCK))
->  		return -ENOLCK;
-> -	/* No mandatory locks */
-> -	if (fl->fl_type & LOCK_MAND)
-> -		return -EOPNOTSUPP;
->  
->  	dout("ceph_flock, fl_file: %p\n", fl->fl_file);
->  
-> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-> index c559827cb6f9..078ef29e31bc 100644
-> --- a/fs/gfs2/file.c
-> +++ b/fs/gfs2/file.c
-> @@ -1338,8 +1338,6 @@ static int gfs2_flock(struct file *file, int cmd, struct file_lock *fl)
->  {
->  	if (!(fl->fl_flags & FL_FLOCK))
->  		return -ENOLCK;
-> -	if (fl->fl_type & LOCK_MAND)
-> -		return -EOPNOTSUPP;
->  
->  	if (fl->fl_type == F_UNLCK) {
->  		do_unflock(file, fl);
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 3d6fb4ae847b..0e1d8a637e9c 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -461,8 +461,6 @@ static void locks_move_blocks(struct file_lock *new, struct file_lock *fl)
+>
+>  fs/afs/file.c |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/afs/file.c b/fs/afs/file.c
+> index db035ae2a134..6688fff14b0b 100644
+> --- a/fs/afs/file.c
+> +++ b/fs/afs/file.c
+> @@ -295,7 +295,7 @@ static void afs_req_issue_op(struct netfs_read_subrequest *subreq)
+>         fsreq->subreq   = subreq;
+>         fsreq->pos      = subreq->start + subreq->transferred;
+>         fsreq->len      = subreq->len   - subreq->transferred;
+> -       fsreq->key      = subreq->rreq->netfs_priv;
+> +       fsreq->key      = key_get(subreq->rreq->netfs_priv);
+>         fsreq->vnode    = vnode;
+>         fsreq->iter     = &fsreq->def_iter;
+>
+> @@ -304,6 +304,7 @@ static void afs_req_issue_op(struct netfs_read_subrequest *subreq)
+>                         fsreq->pos, fsreq->len);
+>
+>         afs_fetch_data(fsreq->vnode, fsreq);
+> +       afs_put_read(fsreq);
 >  }
->  
->  static inline int flock_translate_cmd(int cmd) {
-> -	if (cmd & LOCK_MAND)
-> -		return cmd & (LOCK_MAND | LOCK_RW);
->  	switch (cmd) {
->  	case LOCK_SH:
->  		return F_RDLCK;
-> @@ -942,8 +940,6 @@ static bool flock_locks_conflict(struct file_lock *caller_fl,
->  	 */
->  	if (caller_fl->fl_file == sys_fl->fl_file)
->  		return false;
-> -	if ((caller_fl->fl_type & LOCK_MAND) || (sys_fl->fl_type & LOCK_MAND))
-> -		return false;
->  
->  	return locks_conflict(caller_fl, sys_fl);
->  }
-> @@ -2116,11 +2112,9 @@ EXPORT_SYMBOL(locks_lock_inode_wait);
->   *	- %LOCK_SH -- a shared lock.
->   *	- %LOCK_EX -- an exclusive lock.
->   *	- %LOCK_UN -- remove an existing lock.
-> - *	- %LOCK_MAND -- a 'mandatory' flock.
-> - *	  This exists to emulate Windows Share Modes.
-> + *	- %LOCK_MAND -- a 'mandatory' flock. (DEPRECATED)
->   *
-> - *	%LOCK_MAND can be combined with %LOCK_READ or %LOCK_WRITE to allow other
-> - *	processes read and write access respectively.
-> + *	%LOCK_MAND support has been removed from the kernel.
->   */
->  SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
->  {
-> @@ -2137,9 +2131,22 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
->  	cmd &= ~LOCK_NB;
->  	unlock = (cmd == LOCK_UN);
->  
-> -	if (!unlock && !(cmd & LOCK_MAND) &&
-> -	    !(f.file->f_mode & (FMODE_READ|FMODE_WRITE)))
-> +	if (!unlock && !(f.file->f_mode & (FMODE_READ|FMODE_WRITE)))
-> +		goto out_putf;
-> +
-> +	/*
-> +	 * LOCK_MAND locks were broken for a long time in that they never
-> +	 * conflicted with one another and didn't prevent any sort of open,
-> +	 * read or write activity.
-> +	 *
-> +	 * Just ignore these requests now, to preserve legacy behavior, but
-> +	 * throw a warning to let people know that they don't actually work.
-> +	 */
-> +	if (cmd & LOCK_MAND) {
-> +		pr_warn_once("Attempt to set a LOCK_MAND lock via flock(2). This support has been removed and the request ignored.\n");
-> +		error = 0;
->  		goto out_putf;
-> +	}
->  
->  	lock = flock_make_lock(f.file, cmd, NULL);
->  	if (IS_ERR(lock)) {
-> @@ -2745,11 +2752,7 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
->  		seq_printf(f, " %s ",
->  			     (inode == NULL) ? "*NOINODE*" : "ADVISORY ");
->  	} else if (IS_FLOCK(fl)) {
-> -		if (fl->fl_type & LOCK_MAND) {
-> -			seq_puts(f, "FLOCK  MSNFS     ");
-> -		} else {
-> -			seq_puts(f, "FLOCK  ADVISORY  ");
-> -		}
-> +		seq_puts(f, "FLOCK  ADVISORY  ");
->  	} else if (IS_LEASE(fl)) {
->  		if (fl->fl_flags & FL_DELEG)
->  			seq_puts(f, "DELEG  ");
-> @@ -2765,17 +2768,10 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
->  	} else {
->  		seq_puts(f, "UNKNOWN UNKNOWN  ");
->  	}
-> -	if (fl->fl_type & LOCK_MAND) {
-> -		seq_printf(f, "%s ",
-> -			       (fl->fl_type & LOCK_READ)
-> -			       ? (fl->fl_type & LOCK_WRITE) ? "RW   " : "READ "
-> -			       : (fl->fl_type & LOCK_WRITE) ? "WRITE" : "NONE ");
-> -	} else {
-> -		int type = IS_LEASE(fl) ? target_leasetype(fl) : fl->fl_type;
-> +	int type = IS_LEASE(fl) ? target_leasetype(fl) : fl->fl_type;
->  
-> -		seq_printf(f, "%s ", (type == F_WRLCK) ? "WRITE" :
-> -				     (type == F_RDLCK) ? "READ" : "UNLCK");
-> -	}
-> +	seq_printf(f, "%s ", (type == F_WRLCK) ? "WRITE" :
-> +			     (type == F_RDLCK) ? "READ" : "UNLCK");
->  	if (inode) {
->  		/* userspace relies on this representation of dev_t */
->  		seq_printf(f, "%d %02x:%02x:%lu ", fl_pid,
-> diff --git a/fs/nfs/file.c b/fs/nfs/file.c
-> index aa353fd58240..24e7dccce355 100644
-> --- a/fs/nfs/file.c
-> +++ b/fs/nfs/file.c
-> @@ -843,15 +843,6 @@ int nfs_flock(struct file *filp, int cmd, struct file_lock *fl)
->  	if (!(fl->fl_flags & FL_FLOCK))
->  		return -ENOLCK;
->  
-> -	/*
-> -	 * The NFSv4 protocol doesn't support LOCK_MAND, which is not part of
-> -	 * any standard. In principle we might be able to support LOCK_MAND
-> -	 * on NFSv2/3 since NLMv3/4 support DOS share modes, but for now the
-> -	 * NFS code is not set up for it.
-> -	 */
-> -	if (fl->fl_type & LOCK_MAND)
-> -		return -EINVAL;
-> -
->  	if (NFS_SERVER(inode)->flags & NFS_MOUNT_LOCAL_FLOCK)
->  		is_local = 1;
->  
-> diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-> index 9dc0bf0c5a6e..ecd0f5bdfc1d 100644
-> --- a/include/uapi/asm-generic/fcntl.h
-> +++ b/include/uapi/asm-generic/fcntl.h
-> @@ -181,6 +181,10 @@ struct f_owner_ex {
->  				   blocking */
->  #define LOCK_UN		8	/* remove lock */
->  
-> +/*
-> + * LOCK_MAND support has been removed from the kernel. We leave the symbols
-> + * here to not break legacy builds, but these should not be used in new code.
-> + */
->  #define LOCK_MAND	32	/* This is a mandatory flock ... */
->  #define LOCK_READ	64	/* which allows concurrent read operations */
->  #define LOCK_WRITE	128	/* which allows concurrent write operations */
-> -- 
-> 2.31.1
+>
+>  static int afs_symlink_readpage(struct page *page)
+
+Tested that it prevents the leak of about 49K kmalloc-192 objects for
+a run of generic/074.
+
+Reviewed-and-tested-by: Marc Dionne <marc.dionne@auristor.com>
+
+Marc
