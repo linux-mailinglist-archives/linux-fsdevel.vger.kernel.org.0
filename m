@@ -2,208 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97D6E406B41
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 14:14:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E347D406B4B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Sep 2021 14:19:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233023AbhIJMQE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Sep 2021 08:16:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55136 "EHLO
+        id S233089AbhIJMUl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Sep 2021 08:20:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232941AbhIJMQA (ORCPT
+        with ESMTP id S232876AbhIJMUj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Sep 2021 08:16:00 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F66FC061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 05:14:49 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id g14so2868636ljk.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Sep 2021 05:14:49 -0700 (PDT)
+        Fri, 10 Sep 2021 08:20:39 -0400
+Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03BDEC061574;
+        Fri, 10 Sep 2021 05:19:29 -0700 (PDT)
+Received: by mail-oi1-x231.google.com with SMTP id y128so2648823oie.4;
+        Fri, 10 Sep 2021 05:19:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language;
-        bh=Mm4PQ/IrlfLGixj1onn3OapJC4Qag7jhAlLEFGRB1KQ=;
-        b=JGsVr8BRxJJWlH1rSR2mL/HXrF+xSCVWd2SMhHPKqCs/nn3MVIgU/rI11CttYdJnPE
-         8nCN5IyI8zz4AcIOGrglmN+uB2zti+pAoXDJPeJedSj3qqYin7Rm4l80dw8fEeu1iFl/
-         Vz8dYXaW7zcQizHUGESSNBw/FzuNPpjbM0jrCY++LWJW2qWIneqaHclRa85Rt64s0M5J
-         G0tjRv2xBysIt7dwI3Mlq4azQ9mHoikdP3+WCU+nzgzN+COg0zKW8vNTXk3kjQkUSLxe
-         B10bb6tihcasK9aTZR6SINnOyI3WswXN9LQsq+mlfi2Zpbpup2cOSpgeeqTfGKoutsl4
-         MnMQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m7N91pqKq8beoDgw/AQ3VlvWVBfWO9GtOToYGj0IQ50=;
+        b=IfqToNnCoZ3YN849dLmvG2gmwSx4vYcHgCOoDaef6PE96595XSw607vvL2Q6ZdEhEh
+         Ovq1ccG9+u6oCuRkvnNU/7RTWcNpBJb0+LKE1R204Uva1Seuuch9iafDI9t+btT6F32f
+         MiXsC5f6gSi32ULZGxjNYfqEht3ULsY+dEAM1ZOyfVPVF2G3KtlvpeqHpbSE47MvkeIU
+         4zM4niLWK4mY0RCEslasUbsEm0wf3kreZtpyh9gGgC+RSqzUYU0t0vuUSqhUWlR0hX0b
+         uZ03efzVqLnFZYEMXCZwnzgixAjC7vQK3fDAWB4UQFnMPibXNXBhyOFfmvm0obk/O0Uk
+         uFaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language;
-        bh=Mm4PQ/IrlfLGixj1onn3OapJC4Qag7jhAlLEFGRB1KQ=;
-        b=8OQEhedvcoR5YodoIy54YrlT/IePlU9ndQ3Nu7T6MrwF0SubMNNgVUusbH6ojhK/iB
-         E/5+ZqaWDz0qonmwi63rGCwB/GreIqJWNU14VW8PyyyLyoIRTgyphTIyzHRgD71D2eO5
-         kZMfpvCfZFaRTq/GeQgFYq+uxa4E4AKl2Ld6Wag8KJeXzoEzvGQw2FDYfE2WhiFcTLm6
-         RjmfQC/LtROu3L21k0NDTvY/FZOLqGgRsr7FIojvvy1kTrNc6kxZrqp9qG6qRVYrp0Gu
-         sd6G7QcmQmG3qpwXpwXkBqBTzKb+yXMK36Uj83qHW1xYsHN7HSnh/3LPpQv5YpIxPWvD
-         Z4bA==
-X-Gm-Message-State: AOAM531w25OqgRyrh3C1f/l0XWniK7FQP+HO6O5X61OlT6wmJ0KNhyJO
-        bCU0yeo6+lJooxOXWPEiMZPeqfxZtobYlA==
-X-Google-Smtp-Source: ABdhPJxsqe7gi1Tf5LG74XHOhCqwQYGJjTo1s3DH1hhnMNVslq1M+WlTp5ZpJm5ajSkHEGMGzjDHSQ==
-X-Received: by 2002:a05:651c:b09:: with SMTP id b9mr3852429ljr.307.1631276086387;
-        Fri, 10 Sep 2021 05:14:46 -0700 (PDT)
-Received: from mainpc.tinyware.ru (95-31-210-22.broadband.corbina.ru. [95.31.210.22])
-        by smtp.gmail.com with ESMTPSA id z25sm564700lfh.200.2021.09.10.05.14.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Sep 2021 05:14:45 -0700 (PDT)
-To:     linux-fsdevel@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk
-From:   =?UTF-8?B?0J/QsNCy0LXQuyDQodCw0LzRgdC+0L3QvtCy?= 
-        <pvsamsonov76@gmail.com>
-Subject: fs/attr.c patch
-Message-ID: <34c7bdc6-a057-e1a0-0891-757a0a493874@gmail.com>
-Date:   Fri, 10 Sep 2021 15:14:44 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m7N91pqKq8beoDgw/AQ3VlvWVBfWO9GtOToYGj0IQ50=;
+        b=p/U6jEKo1wTAzU4A52+uPpIEVxjxdLPGygfSalBzsEyEDTs3eY7cki4rdXucnDYBoy
+         YZaOLAWg4edXBTtqYpKbHuOwpaRKSMojQCru4udtisna2AL18MkPTzSz0oGO/ViP5J2m
+         hPccHeJ72gWy0FATE0t/RWbi0Ucdykh/zJP4ImgHOQDMkscNaEEhHf8+/wlx9LhvH4Q4
+         V86DPBcBovH3WFzFSsyAOdRPvMd+qUQP6Y93W/uNlB4fGuj1TsorEsYVLhsgpESk5CAp
+         5zgJDAIKUOrjaddeZrsr7JGPq6fGol94f/YgaZ6ArG6EwskYNlBv4YdrpAWrVd6vNglN
+         RVTQ==
+X-Gm-Message-State: AOAM5331oUyc0tXxZ40lQKOpMJT09MVjICzTvVFH4KAGLLbVBeHQu0Cq
+        0vZgtED9uuW5f+Rof7h2oHKdEoEP/Xdo1IigREMp3z5q8ROtBg==
+X-Google-Smtp-Source: ABdhPJybGAvirYtlTNGtvzGtavu0JzXzwICVUsbU6PRjwVVdmxgANHwypFZZP1w7wnvqQ/WjLk0+aZtUuW7M0S/w+IQ=
+X-Received: by 2002:a05:6808:1a19:: with SMTP id bk25mr3821810oib.62.1631276368327;
+ Fri, 10 Sep 2021 05:19:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------D99E4EE9E1655A3BD42CE7F5"
-Content-Language: en-US
+References: <CAJZVDJAJa+j=hx2JswdvS35t9VU6TYF3uDZnzZ5hhtSzo9E-LA@mail.gmail.com>
+In-Reply-To: <CAJZVDJAJa+j=hx2JswdvS35t9VU6TYF3uDZnzZ5hhtSzo9E-LA@mail.gmail.com>
+From:   Kari Argillander <kari.argillander@gmail.com>
+Date:   Fri, 10 Sep 2021 15:19:16 +0300
+Message-ID: <CAC=eVgQKOdNbyDf2Qf=O9SnG=6nAGZ-nyuwOosf7YW5R3xbVLw@mail.gmail.com>
+Subject: Re: ntfs3 mount options
+To:     Marcos Mello <marcosfrm@gmail.com>, ntfs3@lists.linux.dev,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------D99E4EE9E1655A3BD42CE7F5
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+10.09.2021 14.23 Marcos Mello (marcosfrm@gmail.com) wrote:
+> Hi, sorry email you directly, but this mailing list thing is cryptic
+> to me.
 
+I CC also lists to this so now everyone knows. Also CC couple
+others who might be interested to talk about this.
 
+> I was reading your patches cleaning up ntfs3 documentation and
+> realized some mount options diverge from NTFS-3G. This will make
+> udisks people unhappy.
 
---------------D99E4EE9E1655A3BD42CE7F5
-Content-Type: text/x-patch; charset=UTF-8;
- name="0001-Signed-off-by-Pavel-Samsonov-pvsamsonov76-gmail.com.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-Signed-off-by-Pavel-Samsonov-pvsamsonov76-gmail.com.pat";
- filename*1="ch"
+This is true. They also diverge from the current NTFS driver. We have
+talk about it a little bit and before ntfs driver can go out from kernel we
+need to support those flags or at least some. udisk currently does only
+support NTFS-3G and it does not support kernel ntfs driver. So nothing
+will change.
 
-From 07b6f881080fa18ac404054d43b99433275fe966 Mon Sep 17 00:00:00 2001
-From: Pavel Samsonov <pvsamsonov76@gmail.com>
-Date: Fri, 10 Sep 2021 14:53:39 +0300
-Subject: [PATCH] Signed-off-by: Pavel Samsonov <pvsamsonov76@gmail.com>
+I also agree that we should check mount options from ntfs-3g and maybe
+implement them in. Maybe we can just take some mount options with
+deprecated and print that this option is meant to use with ntfs-3g please
+note that this is kernel ntfs3 driver or something. It would still work for
+users. Ntfs-3g contains imo lot of unnecessary flags. Kernel community
+would probably not want to maintain so large list of different options.
 
-The patch changes the argument of chown_ok, chgrp_ok ...
-functions from inode to dentry.
----
- fs/attr.c | 45 +++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 37 insertions(+), 8 deletions(-)
+Ntfs-3g group also has acounted problems because they say that you
+should example use "big_writes", but not everyone does and that drops
+performance. Driver should work good way by default. And only if there
+is really demand there should be real mount option. But like I said, maybe
+we should add "fake" ntfs-3g options so if some user change to use ntfs3
+it will be pretty painless.
 
-diff --git a/fs/attr.c b/fs/attr.c
-index 473d21b3a86d..de1898c19bde 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -21,7 +21,7 @@
- /**
-  * chown_ok - verify permissions to chown inode
-  * @mnt_userns:	user namespace of the mount @inode was found from
-- * @inode:	inode to check permissions on
-+ * @dentry:	dentry to check permissions on
-  * @uid:	uid to chown @inode to
-  *
-  * If the inode has been found through an idmapped mount the user namespace of
-@@ -31,9 +31,11 @@
-  * performed on the raw inode simply passs init_user_ns.
-  */
- static bool chown_ok(struct user_namespace *mnt_userns,
--		     const struct inode *inode,
-+		     const struct dentry *dentry,
- 		     kuid_t uid)
- {
-+	struct inode *inode = d_inode(dentry);
-+
- 	kuid_t kuid = i_uid_into_mnt(mnt_userns, inode);
- 	if (uid_eq(current_fsuid(), kuid) && uid_eq(uid, kuid))
- 		return true;
-@@ -48,7 +50,7 @@ static bool chown_ok(struct user_namespace *mnt_userns,
- /**
-  * chgrp_ok - verify permissions to chgrp inode
-  * @mnt_userns:	user namespace of the mount @inode was found from
-- * @inode:	inode to check permissions on
-+ * @dentry:	dentry to check permissions on
-  * @gid:	gid to chown @inode to
-  *
-  * If the inode has been found through an idmapped mount the user namespace of
-@@ -58,8 +60,10 @@ static bool chown_ok(struct user_namespace *mnt_userns,
-  * performed on the raw inode simply passs init_user_ns.
-  */
- static bool chgrp_ok(struct user_namespace *mnt_userns,
--		     const struct inode *inode, kgid_t gid)
-+		     const struct dentry *dentry, kgid_t gid)
- {
-+	struct inode *inode = d_inode(dentry);
-+
- 	kgid_t kgid = i_gid_into_mnt(mnt_userns, inode);
- 	if (uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode)) &&
- 	    (in_group_p(gid) || gid_eq(gid, kgid)))
-@@ -72,6 +76,27 @@ static bool chgrp_ok(struct user_namespace *mnt_userns,
- 	return false;
- }
- 
-+/**
-+ * fowner_ok - verify permissions to chmod inode
-+ * @mnt_userns:	user namespace of the mount @inode was found from
-+ * @dentry:	dentry to check permissions on
-+ *
-+ * If the inode has been found through an idmapped mount the user namespace of
-+ * the vfsmount must be passed through @mnt_userns. This function will then
-+ * take care to map the inode according to @mnt_userns before checking
-+ * permissions. On non-idmapped mounts or if permission checking is to be
-+ * performed on the raw inode simply passs init_user_ns.
-+ */
-+static bool fowner_ok(struct user_namespace *mnt_userns,
-+			const struct dentry *dentry)
-+{
-+	struct inode *inode = d_inode(dentry);
-+
-+	if (inode_owner_or_capable(mnt_userns, inode))
-+	    return true;
-+	return false;
-+}
-+
- /**
-  * setattr_prepare - check if attribute changes to a dentry are allowed
-  * @mnt_userns:	user namespace of the mount the inode was found from
-@@ -114,27 +139,31 @@ int setattr_prepare(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		goto kill_priv;
- 
- 	/* Make sure a caller can chown. */
--	if ((ia_valid & ATTR_UID) && !chown_ok(mnt_userns, inode, attr->ia_uid))
-+	if ((ia_valid & ATTR_UID) && !chown_ok(mnt_userns, dentry, attr->ia_uid))
- 		return -EPERM;
- 
- 	/* Make sure caller can chgrp. */
--	if ((ia_valid & ATTR_GID) && !chgrp_ok(mnt_userns, inode, attr->ia_gid))
-+	if ((ia_valid & ATTR_GID) && !chgrp_ok(mnt_userns, dentry, attr->ia_gid))
- 		return -EPERM;
- 
- 	/* Make sure a caller can chmod. */
- 	if (ia_valid & ATTR_MODE) {
--		if (!inode_owner_or_capable(mnt_userns, inode))
-+		if (!fowner_ok(mnt_userns, dentry))
- 			return -EPERM;
- 		/* Also check the setgid bit! */
-                if (!in_group_p((ia_valid & ATTR_GID) ? attr->ia_gid :
-                                 i_gid_into_mnt(mnt_userns, inode)) &&
-                     !capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID))
- 			attr->ia_mode &= ~S_ISGID;
-+		/* Also check the setuid bit! */
-+		if (!(capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID) ||
-+		     uid_eq(current_fsuid(), inode->i_uid)))
-+			attr->ia_mode &= ~S_ISUID;
- 	}
- 
- 	/* Check for setting the inode time. */
- 	if (ia_valid & (ATTR_MTIME_SET | ATTR_ATIME_SET | ATTR_TIMES_SET)) {
--		if (!inode_owner_or_capable(mnt_userns, inode))
-+		if (!fowner_ok(mnt_userns, dentry))
- 			return -EPERM;
- 	}
- 
--- 
-2.30.2
+> NTFS-3G options:
+> https://github.com/tuxera/ntfs-3g/blob/edge/src/ntfs-3g.8.in
+>
+> UDISKS default and allowed options:
+> https://github.com/storaged-project/udisks/blob/master/data/builtin_mount_options.conf
+>
+> For example, windows_names is not supported in ntfs3 and
+> show_sys_files should probably be an alias to showmeta.
 
+Imo windows_names is good option. There is so many users who just
+want to use this with dual boot. That is why I think best option would
+be windows_compatible or something. Then we do everything to user
+not screw up things with disk and that when he checks disk with windows
+everything will be ok. This option has to also select ignore_case.
 
---------------D99E4EE9E1655A3BD42CE7F5--
+But right now we are horry to take every mount option away what we won't
+need. We can add options later. And this is so early that we really cannot
+think so much how UDSIKS threats ntfs-3g. It should imo not be problem
+for them to also support for ntfs3 with different options.
+
+> Also, is NTFS-3G locale= equivalent to ntfs3 nls=?
+
+Pretty much. It is now called iocharset and nls will be deprecated.
+This is work towards that every Linux kernel filesystem driver which
+depends on this option will be same name. Ntfs-3g should also use
+it.
+
+> Thank you a lot for all the work put into ntfs3!
+>
+> Marcos
