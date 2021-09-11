@@ -2,121 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D53D4407601
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Sep 2021 12:10:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C6D54076BF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Sep 2021 15:12:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235566AbhIKKLo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Sep 2021 06:11:44 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:42550 "EHLO mail.skyhub.de"
+        id S235966AbhIKNNZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Sep 2021 09:13:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235443AbhIKKLl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Sep 2021 06:11:41 -0400
-Received: from zn.tnic (p200300ec2f1e14001f3479bbc118498e.dip0.t-ipconnect.de [IPv6:2003:ec:2f1e:1400:1f34:79bb:c118:498e])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B0AD71EC0136;
-        Sat, 11 Sep 2021 12:10:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1631355022;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=HR27o8pZq+/+uFK0n68ub/mxfkE1ISiJNZUKmCms7j8=;
-        b=I197+52KgpqBBgLvuSMSrQpQNRo13IqV+FgdnGwdscix9JqjZo6kiEOakrW3iQQS6u0uVD
-        WzR3O2CXEOh8ZykdepQmAsy+NBoupC0qZ8IdrqxtxuX9zNND17uAXyBpIh83Qsid6C7Ugn
-        zY+/3Zj7u8+b/OQlEkEddX/RceOjyqA=
-Date:   Sat, 11 Sep 2021 12:10:14 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Tom Lendacky <thomas.lendacky@amd.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-graphics-maintainer@vmware.com,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Sathyanarayanan Kuppuswamy 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v3 3/8] x86/sev: Add an x86 version of cc_platform_has()
-Message-ID: <YTyAhmPf39Vqd7G9@zn.tnic>
-References: <cover.1631141919.git.thomas.lendacky@amd.com>
- <f9951644147e27772bf4512325e8ba6472e363b7.1631141919.git.thomas.lendacky@amd.com>
+        id S235829AbhIKNNJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 11 Sep 2021 09:13:09 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F2EEB6108B;
+        Sat, 11 Sep 2021 13:11:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631365916;
+        bh=hG+7UnzuY21Kf9pUuVV2XycR5F+kwOT2KtokM/cSP+U=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JCkQB2kKArW0oTJfGgDUus9vJRXeI752LvHmg/OOWcbtI1oc6rlH3WYL6oTM9/zvC
+         6zwX+JAqZiBp7hBUp+wh7Z1Xt4qq/3aos8aUKpUb6M2zQBUNXgeN62U3J9MdJkbVx6
+         Miq1AC1cKVJHvEIG/q7+KOoeykWnQITbx/UiwSvsZRGb/MBpbAZIvik9ChBbuqBvwh
+         wLKkhV2i2Ru/WKK9yAGrHf+p/VylFyscNxZO5L2hP4ItR3LJ9lXnyl3kYYJ6BO+bSX
+         15U6sDRBmfDQ5f+x9GHEnbQHNHGdvnNaZXDtpkUYs+9Xyp5QK0LZ0SSin+catvTC89
+         ZzhaoAZW4EWrg==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Miklos Szeredi <mszeredi@redhat.com>, lijiazi <lijiazi@xiaomi.com>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.14 05/32] fuse: fix use after free in fuse_read_interrupt()
+Date:   Sat, 11 Sep 2021 09:11:22 -0400
+Message-Id: <20210911131149.284397-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210911131149.284397-1-sashal@kernel.org>
+References: <20210911131149.284397-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f9951644147e27772bf4512325e8ba6472e363b7.1631141919.git.thomas.lendacky@amd.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 08, 2021 at 05:58:34PM -0500, Tom Lendacky wrote:
-> diff --git a/arch/x86/kernel/cc_platform.c b/arch/x86/kernel/cc_platform.c
-> new file mode 100644
-> index 000000000000..3c9bacd3c3f3
-> --- /dev/null
-> +++ b/arch/x86/kernel/cc_platform.c
-> @@ -0,0 +1,21 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Confidential Computing Platform Capability checks
-> + *
-> + * Copyright (C) 2021 Advanced Micro Devices, Inc.
-> + *
-> + * Author: Tom Lendacky <thomas.lendacky@amd.com>
-> + */
-> +
-> +#include <linux/export.h>
-> +#include <linux/cc_platform.h>
-> +#include <linux/mem_encrypt.h>
-> +
-> +bool cc_platform_has(enum cc_attr attr)
-> +{
-> +	if (sme_me_mask)
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-Why are you still checking the sme_me_mask here? AFAIR, we said that
-we'll do that only when the KVM folks come with a valid use case...
+[ Upstream commit e1e71c168813564be0f6ea3d6740a059ca42d177 ]
 
-> +		return amd_cc_platform_has(attr);
-> +
-> +	return false;
-> +}
-> +EXPORT_SYMBOL_GPL(cc_platform_has);
-> diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
-> index ff08dc463634..18fe19916bc3 100644
-> --- a/arch/x86/mm/mem_encrypt.c
-> +++ b/arch/x86/mm/mem_encrypt.c
-> @@ -20,6 +20,7 @@
->  #include <linux/bitops.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/virtio_config.h>
-> +#include <linux/cc_platform.h>
->  
->  #include <asm/tlbflush.h>
->  #include <asm/fixmap.h>
-> @@ -389,6 +390,26 @@ bool noinstr sev_es_active(void)
->  	return sev_status & MSR_AMD64_SEV_ES_ENABLED;
->  }
->  
-> +bool amd_cc_platform_has(enum cc_attr attr)
-> +{
-> +	switch (attr) {
-> +	case CC_ATTR_MEM_ENCRYPT:
-> +		return sme_me_mask != 0;
+There is a potential race between fuse_read_interrupt() and
+fuse_request_end().
 
-No need for the "!= 0"
+TASK1
+  in fuse_read_interrupt(): delete req->intr_entry (while holding
+  fiq->lock)
 
+TASK2
+  in fuse_request_end(): req->intr_entry is empty -> skip fiq->lock
+  wake up TASK3
+
+TASK3
+  request is freed
+
+TASK1
+  in fuse_read_interrupt(): dereference req->in.h.unique ***BAM***
+
+Fix by always grabbing fiq->lock if the request was ever interrupted
+(FR_INTERRUPTED set) thereby serializing with concurrent
+fuse_read_interrupt() calls.
+
+FR_INTERRUPTED is set before the request is queued on fiq->interrupts.
+Dequeing the request is done with list_del_init() but FR_INTERRUPTED is not
+cleared in this case.
+
+Reported-by: lijiazi <lijiazi@xiaomi.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/fuse/dev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 1c8f79b3dd06..dde341a6388a 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -288,10 +288,10 @@ void fuse_request_end(struct fuse_req *req)
+ 
+ 	/*
+ 	 * test_and_set_bit() implies smp_mb() between bit
+-	 * changing and below intr_entry check. Pairs with
++	 * changing and below FR_INTERRUPTED check. Pairs with
+ 	 * smp_mb() from queue_interrupt().
+ 	 */
+-	if (!list_empty(&req->intr_entry)) {
++	if (test_bit(FR_INTERRUPTED, &req->flags)) {
+ 		spin_lock(&fiq->lock);
+ 		list_del_init(&req->intr_entry);
+ 		spin_unlock(&fiq->lock);
 -- 
-Regards/Gruss,
-    Boris.
+2.30.2
 
-https://people.kernel.org/tglx/notes-about-netiquette
