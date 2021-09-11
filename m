@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B8D540777C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Sep 2021 15:16:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5551E4077FF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Sep 2021 15:21:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236921AbhIKNRp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Sep 2021 09:17:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38164 "EHLO mail.kernel.org"
+        id S237841AbhIKNWW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Sep 2021 09:22:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237023AbhIKNPi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Sep 2021 09:15:38 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 559B161252;
-        Sat, 11 Sep 2021 13:13:17 +0000 (UTC)
+        id S236585AbhIKNSm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 11 Sep 2021 09:18:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A9C1761351;
+        Sat, 11 Sep 2021 13:13:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631365998;
-        bh=f51RfyND1n5AOWohNmVh519ztoFsZG6geBRYA01Fg6g=;
+        s=k20201202; t=1631366031;
+        bh=t2iXuvRApkXkndxKEFV8qBh7oCRTavfhVfmUtTDE7LU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QOU2vXKcvKFWw+cwg+akJu7bNwoWirKzQWH9cHq4NskYOlSbuKvhuDD2tLqSJfXZu
-         zgFQGq2CqXBqZoMY+ik8rvp+m1I1C2UuqvnBNF6PdupAy5dT9pt+2DmQs9qLcRRFb9
-         GsCS30QVhsQXG/7BPMjteF1NF7hiM7PlILUwVF8Wkqepzo8Zi4QO0CP5kRTS6fGcj5
-         tRpimaD9pIDhyGhMKj7AhoFUXKPEswJSgQN/UoqX1xEKPNUOSHCZMbkoP3x+zEKQAc
-         WpIW/ZIBeOY7Jn3lDLRz8ngxdHUBbcQBeWuqX4SHp5BC3AzINqKIn1jHch1SYC9zmk
-         3dJ+8iPP4izKg==
+        b=pa8BFMSU/s8fh+6zOMNVfXuF9jjDwKYjHA0AbMa0oH9LtLpO1kzR5lyEWQhhvm5pS
+         bUgeKw8jBAmfNt+opvDTGX/E3eHGp7MTKKRy49AUGIk1Bm+z1/d6dIDawyrQqe8aFs
+         elYq2Wiy4VynlkMDYinNBmycAnudrEy2B2SDEklg0+UxiyNhfRmRaXNQPSK7fxiFyg
+         vT9fsh2aH+sSIvaTeYIGFHIxVFS7oXyWfz3K1MvkC0L+l8hm3ngiIBDI4MvxdmKyRZ
+         D/kcRhS41nQebN6deqo/R/Cfw4D2kZK7cZ1lOzu3OPs1Y8B9UnWLW3CUqBhoUQy2YZ
+         P2H9sajrOg5og==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Miklos Szeredi <mszeredi@redhat.com>, lijiazi <lijiazi@xiaomi.com>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 04/25] fuse: fix use after free in fuse_read_interrupt()
-Date:   Sat, 11 Sep 2021 09:12:51 -0400
-Message-Id: <20210911131312.285225-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 04/14] fuse: fix use after free in fuse_read_interrupt()
+Date:   Sat, 11 Sep 2021 09:13:35 -0400
+Message-Id: <20210911131345.285564-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210911131312.285225-1-sashal@kernel.org>
-References: <20210911131312.285225-1-sashal@kernel.org>
+In-Reply-To: <20210911131345.285564-1-sashal@kernel.org>
+References: <20210911131345.285564-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -78,10 +78,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 4140d5c3ab5a..f943eea9fe4e 100644
+index 16aa55b73ccf..7205a89fbb5f 100644
 --- a/fs/fuse/dev.c
 +++ b/fs/fuse/dev.c
-@@ -288,10 +288,10 @@ void fuse_request_end(struct fuse_req *req)
+@@ -282,10 +282,10 @@ void fuse_request_end(struct fuse_conn *fc, struct fuse_req *req)
  
  	/*
  	 * test_and_set_bit() implies smp_mb() between bit
