@@ -2,68 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ED124074E9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Sep 2021 05:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 643F94074EA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Sep 2021 05:48:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235360AbhIKDtn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Sep 2021 23:49:43 -0400
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:55707 "EHLO
+        id S235385AbhIKDtt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Sep 2021 23:49:49 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:34785 "EHLO
         out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235300AbhIKDtb (ORCPT
+        by vger.kernel.org with ESMTP id S235319AbhIKDtd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Sep 2021 23:49:31 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 982005C0191;
-        Fri, 10 Sep 2021 23:48:19 -0400 (EDT)
+        Fri, 10 Sep 2021 23:49:33 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 57CBB5C0187;
+        Fri, 10 Sep 2021 23:48:21 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Fri, 10 Sep 2021 23:48:19 -0400
+  by compute4.internal (MEProxy); Fri, 10 Sep 2021 23:48:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilammy.net; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=UtuZPwZ+Fw93V
-        aE+L4bJab8rAtlR8ivT2txo06W5xJs=; b=etBpuCx51QGe3lhLkATS6rCxxLJGB
-        DpAAlArYC2TsrahY+HQFpX+fhLug8bHMHBzvxNDag6NKQM9N1FVEJrTNxiJTs+4j
-        0dB8QHgmc9np+PWYYMkKpbNsEycFN8tpIhVNYGbof52mlwXlnWX9WpDZbWFyaoNa
-        nD0aXZ0qth27kygpl5SCwo+Xymt1dz8hB0R/tYFCyCkUnJxGYkJwoPdJDZoS7Wsy
-        rF4+qnYj1zitLHjl1JXu6igGYoEQjr72jOerpe1cOT0rEJkpvOM5bHPKL8Mdy35Z
-        k1pN3RnN6+fwXDXz0YKuy9oy8+ZQh7yYBjcIISIZyyEWMIlKs+aCsyZdg==
+        :mime-version:content-transfer-encoding; s=fm2; bh=cigNkoH13qaWh
+        wQ8t7Mm2Oj9VW7DSWQdJYMBXGB8leE=; b=QGNIsVTNHlretRUnvBEfGehe800eO
+        j2Dre7EBBnkDJI4QIqCC9e9sjjytrDQJyuNB8NUdfEDppjPRFu2visCHWUL/m3XW
+        bgBoFzsiX4PiVw9oFB7lJWqJ/EADCHEGQfRd3XAZgVrurCyGbTkjLQaBfH4lOMJN
+        IfFBolfp+nBH1eqos6A14i1qjvnULWEc456vagTXPARJX4g4368buVdhOGd6WgO+
+        xmzOO37jNyCTcwd1WBI7GkUe95qcqr9c/9eoNpQMWPbWxhbEantaNzzBA3HZlxuJ
+        bJApwY3DVEcY3/BeCOTrQskJKeemC+G7M4OltvGlGbTIikrYoKz+qq33Q==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=UtuZPwZ+Fw93VaE+L4bJab8rAtlR8ivT2txo06W5xJs=; b=bYs0jBya
-        BbM5O98vjQIlwIF7KVhVq06mBi7wRLxM/Ml35Vbp6OVTjokRjg7iX+t89VIVc6Z2
-        KXP2xD9id1TFWMIX416gBwXcnOwlvSoakRWhoFnpYMZ0x0iQboLO47F2LgWu8slu
-        NEILIckNs+vwtBlmhLfFlvEzuVCVPr4fUjiPgicy9nmyvKo/n2DrPSUk3WisyGqu
-        /WWYk3uYdv8a97YBcFDu5r4UwDWnjdsPgx71yjnhfPGbg4y2WkRU0RvkD3bTPA15
-        MOqTcH/Q25/zzban9FiwcLy3Aw8bksTFjo21bgfk3MNdmCuF5Y5ujJc+HlxQ95h7
-        Cl1027vsZ1/71Q==
-X-ME-Sender: <xms:Ayc8YcJV7_-FLE63b4LovCKdBcLmhmepHDfSczarV0Xx5P_48PycLg>
-    <xme:Ayc8YcLrwZJmxuc0fCnEI6bbzGnVFUEGltc3_w_Yz1wxJByp5L4nX8qmeMYATy3SH
-    byIfZ8ZaCaYy2n-60Y>
-X-ME-Received: <xmr:Ayc8YcsFmkB-GN9VoDve_L_BmQKL_nxrvEPBcKS2082KZDAr6s-uALR917JYDCqpsqaXqT2BA2X3oetrRmg4xwZNUoVhDzcXfkTMYdHZDPso2Zocglk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudegvddgjedvucetufdoteggodetrfdotf
+        fm3; bh=cigNkoH13qaWhwQ8t7Mm2Oj9VW7DSWQdJYMBXGB8leE=; b=EnAmDpBx
+        d6YuMMEz1FyHXJu91uGifX8aXMZwswwZ2/pO6U1M9zXrElS8yrQ7mGNPnvPPfMWT
+        eAmQlz3F1cOhFjYF8kCaw5BCQYBikiArR0ufEASkbtEozJaUSK5m9Dr82BDcnj2v
+        4LPUTqM1xGL/XzDVVwcFrN01pVcA9RBnmJQy6KnPKGRqn6y8Bf/cJd5NTZQ9QWmn
+        uB6VFEXXhF3RjI5fyy+xJxhm2xI7rHPvCyGJgeNIcuUZBj+WR2zhW/3aleY/lXtn
+        eFgDDdWf/6UWlOTGt1/cfgxI/Xg5WKcfd/YiRg2b7oDe4ZOY5hWjHHYX9Gy+4iqM
+        2xMTSOB11RMreQ==
+X-ME-Sender: <xms:BSc8Ye2NcqimQnusFBpJz6BPLeuF8W9rDOEjTQsCJcMb-SyQvE1mKQ>
+    <xme:BSc8YRF4u0jiYpRbdTuq_C4leNaBm3JMyzahUgJGDd04B490EDPWJPcBQ_Bzm6juq
+    C70L5HMUPtVIehRP5s>
+X-ME-Received: <xmr:BSc8YW69vcr0B2b84wwJxX0mj1qcxzONMt0HEWmXuQVOx9wD6r6YwRUVrfdsun3rWOQ62z1RmMdHTVa8EHQ2EX56TTmTxCtPXIcOrxU_7cVR3Kt6YKM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudegvddgjeduucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeetlhgvgigv
     ihcunfhoiihovhhskhihuceomhgvsehilhgrmhhmhidrnhgvtheqnecuggftrfgrthhtvg
     hrnhepteeujeehkeejueevieehgfeuheelleeggfehfefffeekjeduueejjeeugfetueek
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgvse
+    necuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhepmhgvse
     hilhgrmhhmhidrnhgvth
-X-ME-Proxy: <xmx:Ayc8YZZF0IjJ8v05f36IUu-eabHq8iaUb1wDcX9KlySR8emYkowOjQ>
-    <xmx:Ayc8YTYpvtVz-MnernSZdBjOMzRwirf-UcilpJTcF25nLiFVdXeN0g>
-    <xmx:Ayc8YVCsrC1FuuzibPP6P-emH0dYTwmRIDCc-xolH0crN3MFKZk1MQ>
-    <xmx:Ayc8YfFLgJ_48LapwaLhUzEjTek-Q-JckmRjGgnBON6YmWrkJlPoJA>
+X-ME-Proxy: <xmx:BSc8Yf3nRRWn9AFgvApM1SepR9PP_Lt8x7SJkVYRPn092GPpz5nKTg>
+    <xmx:BSc8YRHZsFwLaEmwMOwDD1iK1OLk3pVSI3-dNJQlA80wTDUt76Qo6w>
+    <xmx:BSc8YY9O5LSPpbTn9zFKD0iYvtdmJ-IVy2ihekQaCK4dpY9GF5iujQ>
+    <xmx:BSc8YRBXjC_8YuECOSuq8yIDVLH2taMfaO2RRDPlr7X7x9ZEXB1PpA>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 10 Sep 2021 23:48:18 -0400 (EDT)
+ 10 Sep 2021 23:48:19 -0400 (EDT)
 From:   Alexei Lozovsky <me@ilammy.net>
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         Christoph Lameter <cl@linux.com>,
         LKML <linux-kernel@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/7] x86/irq: arch_irq_stat() returns unsigned int
-Date:   Sat, 11 Sep 2021 12:48:05 +0900
-Message-Id: <20210911034808.24252-5-me@ilammy.net>
+Subject: [PATCH 5/7] proc/stat: Use unsigned int for "intr" sum
+Date:   Sat, 11 Sep 2021 12:48:06 +0900
+Message-Id: <20210911034808.24252-6-me@ilammy.net>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210911034808.24252-1-me@ilammy.net>
 References: <06F4B1B0-E4DE-4380-A8E1-A5ACAD285163@ilammy.net>
@@ -74,43 +74,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-irq_err_count is atomic_t, extending it to u64 does not make the value
-wider, it's still unsigned int and will wrap around like unsigned int.
+Now that all values that are collected into "sum" are unsigned int,
+make the sum itself unsigned int so that it overflows consistently
+with individual components and thus retains the monotonicity.
+
+Since seq_put_decimal_ull() is a function, we don't have to explicitly
+cast sum into unsigned long long. Integer promotion will take care of
+that (and the compiler will issue warnings if the types don't agree).
 
 Signed-off-by: Alexei Lozovsky <me@ilammy.net>
 ---
- arch/x86/include/asm/hardirq.h | 2 +-
- arch/x86/kernel/irq.c          | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ fs/proc/stat.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/hardirq.h b/arch/x86/include/asm/hardirq.h
-index 461536b45391..3b0d79e72871 100644
---- a/arch/x86/include/asm/hardirq.h
-+++ b/arch/x86/include/asm/hardirq.h
-@@ -57,7 +57,7 @@ extern void ack_bad_irq(unsigned int irq);
- extern unsigned int arch_irq_stat_cpu(unsigned int cpu);
- #define arch_irq_stat_cpu	arch_irq_stat_cpu
+diff --git a/fs/proc/stat.c b/fs/proc/stat.c
+index 6561a06ef905..d31b83b2a175 100644
+--- a/fs/proc/stat.c
++++ b/fs/proc/stat.c
+@@ -110,7 +110,7 @@ static int show_stat(struct seq_file *p, void *v)
+ 	int i, j;
+ 	u64 user, nice, system, idle, iowait, irq, softirq, steal;
+ 	u64 guest, guest_nice;
+-	u64 sum = 0;
++	unsigned int sum = 0;
+ 	u64 sum_softirq = 0;
+ 	unsigned int per_softirq_sums[NR_SOFTIRQS] = {0};
+ 	struct timespec64 boottime;
+@@ -192,7 +192,7 @@ static int show_stat(struct seq_file *p, void *v)
+ 		seq_put_decimal_ull(p, " ", nsec_to_clock_t(guest_nice));
+ 		seq_putc(p, '\n');
+ 	}
+-	seq_put_decimal_ull(p, "intr ", (unsigned long long)sum);
++	seq_put_decimal_ull(p, "intr ", sum);
  
--extern u64 arch_irq_stat(void);
-+extern unsigned int arch_irq_stat(void);
- #define arch_irq_stat		arch_irq_stat
- 
- 
-diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-index cefe1bc9f42c..18691ed499d1 100644
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -218,9 +218,9 @@ unsigned int arch_irq_stat_cpu(unsigned int cpu)
- 	return sum;
- }
- 
--u64 arch_irq_stat(void)
-+unsigned int arch_irq_stat(void)
- {
--	u64 sum = atomic_read(&irq_err_count);
-+	unsigned int sum = atomic_read(&irq_err_count);
- 	return sum;
- }
+ 	show_all_irqs(p);
  
 -- 
 2.25.1
