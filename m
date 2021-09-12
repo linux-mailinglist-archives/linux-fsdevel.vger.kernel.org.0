@@ -2,153 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5CD9407CBC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Sep 2021 11:50:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C604407D48
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Sep 2021 14:37:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233071AbhILJvt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Sep 2021 05:51:49 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:45005 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbhILJvj (ORCPT
+        id S235062AbhILMil (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Sep 2021 08:38:41 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:40157 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229635AbhILMik (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Sep 2021 05:51:39 -0400
-Received: by mail-io1-f72.google.com with SMTP id d15-20020a0566022befb02905b2e9040807so12067442ioy.11
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Sep 2021 02:50:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=2IHbQLMbrH/C4KpS2kFJjGjutAVirXBAfLA6HbR4HS8=;
-        b=T1Pr07f+M0Lwm0ScUqTx/oteFSy4HboWbJK+HkLmMZEjdebO/mIiLeumsaddbWRKN2
-         JqQ0I1PD/MqraPqS/gTI9NeBMTdpEEBje0mFrcKwgq5bbeDFQ0bHpHJOuKmiiRHspu0n
-         C+oQnAn48Ju95Xf+bcVp+aMj5qwNq2lsuZmAZmkrqaupuk0QSuz5irPB7wyefYssCdTr
-         LOqOoFYRFC2ihF879RtnfaVp16KHcDFqhPoodKLSl2sbtypgJ5oZe4t18JGqaQWqyL5k
-         2RJj8itdbYC0CPUvYjWXAaZTZp+QTNJUwvwKZJGcpIJSJmh5OsPJyXIKKjZ7jdX4gfmK
-         zqHg==
-X-Gm-Message-State: AOAM530WLeXiNizpH4mXbmFpZCfS9/Ek9gQZdV2fJjTq5wpgRk7J3QqS
-        4fJ7gw0iFPB/+HlaYE8pg5KPDsBlu+7UXGgAAQfvuLHzMnwV
-X-Google-Smtp-Source: ABdhPJxXVuLyl9sF5oZmU6eBAkMuoqCIy4S0wuj7Z13sJFu7dBRKaz3ZTVXGJXqzisoRTNp8iew4Oc+lxao6hcH2zgAxO8P25WPm
-MIME-Version: 1.0
-X-Received: by 2002:a5d:9e0f:: with SMTP id h15mr4455362ioh.133.1631440225140;
- Sun, 12 Sep 2021 02:50:25 -0700 (PDT)
-Date:   Sun, 12 Sep 2021 02:50:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000178a9305cbc947c4@google.com>
-Subject: [syzbot] upstream boot error: KFENCE: use-after-free in kvm_fastop_exception
-From:   syzbot <syzbot+79e3be0f27748965946b@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 12 Sep 2021 08:38:40 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.nyi.internal (Postfix) with ESMTP id 826AB5C00B9;
+        Sun, 12 Sep 2021 08:37:26 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Sun, 12 Sep 2021 08:37:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilammy.net; h=
+        content-type:mime-version:subject:from:in-reply-to:date:cc
+        :content-transfer-encoding:message-id:references:to; s=fm2; bh=X
+        wz5Vf+A/daiSKAVptpMwSmJS3Zi3DYefeKFignzdas=; b=aNvxkJvk0X4k+chHW
+        YhwaEKtCvKMNIN96mHHXrEivxpS4WkE7yTscmzNB4sAuCu14P6b7UMOLVAFx/aeF
+        nUs19uKkowsP+tvL4DRYEt+7HEu4+hcjsboGEDluSGGbgTEqLJjfGbLOgd/zIokJ
+        ngLwG+H6qzcNEYDrzeks1PZQVy37RqBnLKWlGmPpAmfR94/pD/8aESeNcZPQTywo
+        w3EqCiGvY8XCQQStocW3+FF/zvtkYEimhB5PSj6U8wuzL+aJvgZZb3gucurrhgzI
+        13DC3VDlYWIk6uc23wqn/hqnHkTjeauDqIlODswhNLLNbd4d+ML5gzwU6lIoAMJX
+        WzwAQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=Xwz5Vf+A/daiSKAVptpMwSmJS3Zi3DYefeKFignzd
+        as=; b=u1a9vhZXyNLW4mTMO3RSobx3FBrHMFQGmXhjbnCpBTcR8mKQUQuwKHzOY
+        JdCPg6quVxXtM7Xuoc54gB2CnBsDBW1/vPbIBiPqY7esvXQePVFsPXNxS5k6PC43
+        BS162eYmoX0xyXBIBG7Q0ve5dVGEqoZf4ydtmANEgHfv3dH7lCwKbks83GcltCZK
+        6yxm7rRDBYj89967YZbtG5Zo+8dzt7EEVLqZf0WysOYMX+YIy48rQaHvLe4q5yaU
+        8nn40srRnXvdh7Wl8fIRASPCC8m7IrMv71r8yOPVrBpAV9tJvDmcURC7xy0rcLwy
+        yFjdusdccK1IUmZBcDcpLd5GkBHrQ==
+X-ME-Sender: <xms:hvQ9YX6dV_NsaZHVJTEHCs98rbaIoWu7rWdHao6RdkArTJL8PPtmXQ>
+    <xme:hvQ9Yc5e6w9peXKkO4QIkvDQUFLO7yufGK9D_E8XnGIRTjMwwiN4HbBBbRhogeQNJ
+    O1TZNAe3NpqqoYoEl0>
+X-ME-Received: <xmr:hvQ9YefJrD9VYUIW2HdQt1QiqaLS9Cwia9hhSOlbG1k4gVdnYaS2mtvFj5eME5s9gTPqp1EjaLq7KAjclpWKd_3SBl5bO1KxRNyZcCrZPQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudeghedghedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurheptggguffhjgffgffkfhfvofesthejmhdthhdtvdenucfhrhhomheptehlvgig
+    vghiucfnohiiohhvshhkhicuoehmvgesihhlrghmmhihrdhnvghtqeenucggtffrrghtth
+    gvrhhnpefhteffvdelgedtleevgfeivdetieeitdevhfekgeehfeetffejveefkeeviedv
+    feenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmvg
+    esihhlrghmmhihrdhnvght
+X-ME-Proxy: <xmx:hvQ9YYLtzhGbKYlDad-8dgk9Js5f68UO0mFcjs_xvvwcfUf5q82bsg>
+    <xmx:hvQ9YbKwmWrhUT28VIQSH2XdfRNpEc0f0gTW5-tTo20iRx4Bgg_3JQ>
+    <xmx:hvQ9YRzELjnGe9ihiPYg9_BpGUONkkS2v8LAHC3v9_USL1LBLIC_1g>
+    <xmx:hvQ9YT0RiQxJrjAD7_PQztZo4XxXCZel0-s7V7-TExIV0sy_FuobeQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 12 Sep 2021 08:37:24 -0400 (EDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.4\))
+Subject: Re: [PATCH 0/7] proc/stat: Maintain monotonicity of "intr" and
+ "softirq"
+From:   Alexei Lozovsky <me@ilammy.net>
+In-Reply-To: <YT3In8SWc2eYZ/09@localhost.localdomain>
+Date:   Sun, 12 Sep 2021 21:37:20 +0900
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Lameter <cl@linux.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <44F84890-521F-4BCA-9F48-B49D2C8A9E32@ilammy.net>
+References: <06F4B1B0-E4DE-4380-A8E1-A5ACAD285163@ilammy.net>
+ <20210911034808.24252-1-me@ilammy.net>
+ <YT3In8SWc2eYZ/09@localhost.localdomain>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+X-Mailer: Apple Mail (2.3608.120.23.2.4)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Sun, Sep 12, 2021, at 18:30, Alexey Dobriyan wrote:
+> How about making everything "unsigned long" or even "u64" like NIC
+> drivers do?
 
-syzbot found the following issue on:
+I see some possible hurdles ahead:
 
-HEAD commit:    bf9f243f23e6 Merge tag '5.15-rc-ksmbd-part2' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1537eedd300000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=37df9ef5660a8387
-dashboard link: https://syzkaller.appspot.com/bug?extid=79e3be0f27748965946b
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+- Not all architectures have atomic operations for 64-bit values
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+79e3be0f27748965946b@syzkaller.appspotmail.com
+  All those "unsigned int" counters are incremented with __this_cpu_inc()
+  which tries to use atomics if possible. Though, I'm not quite sure
+  how this works for read side which does not seem to use atomic reads
+  at all. I guess, just by the virtue of properly aligned 32-bit reads
+  being atomic everywhere? If that's so, I think widening counters to
+  64 bits will come with an asterisk.
 
-==================================================================
-BUG: KFENCE: use-after-free read in kvm_fastop_exception+0xf6a/0x1058
+- We'll need to update all counters to be 64-bit.
 
-Use-after-free read at 0xffff88823bd9e020 (in kfence-#206):
- kvm_fastop_exception+0xf6a/0x1058
- d_lookup+0xd8/0x170 fs/dcache.c:2370
- lookup_dcache+0x1e/0x130 fs/namei.c:1520
- __lookup_hash+0x29/0x180 fs/namei.c:1543
- kern_path_locked+0x17e/0x320 fs/namei.c:2567
- handle_remove+0xa2/0x5fe drivers/base/devtmpfs.c:312
- handle drivers/base/devtmpfs.c:382 [inline]
- devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
- devtmpfsd+0x1b9/0x2a3 drivers/base/devtmpfs.c:437
- kthread+0x3e5/0x4d0 kernel/kthread.c:319
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+  Like, *everyone*. Every field that gets summed up needs to be 64-bit
+  (or else wrap-arounds will be incorrect). Basically every counter in
+  every irq_cpustat_t will need to become twice as wide. If that's
+  a fine price to pay for accurate, full-width counters...
 
-kfence-#206: 0xffff88823bd9e000-0xffff88823bd9efff, size=4096, cache=names_cache
+  Previously I thought that some of these counters even come from
+  hardware, but now that I'm reviewing them, that does not seem to be
+  the case. Thankfully.
 
-allocated by task 22 on cpu 1 at 51.213658s:
- getname_kernel+0x4e/0x370 fs/namei.c:226
- kern_path_locked+0x71/0x320 fs/namei.c:2558
- handle_remove+0xa2/0x5fe drivers/base/devtmpfs.c:312
- handle drivers/base/devtmpfs.c:382 [inline]
- devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
- devtmpfsd+0x1b9/0x2a3 drivers/base/devtmpfs.c:437
- kthread+0x3e5/0x4d0 kernel/kthread.c:319
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
-
-freed by task 22 on cpu 1 at 51.213995s:
- putname.part.0+0xe1/0x120 fs/namei.c:270
- putname include/linux/err.h:41 [inline]
- filename_parentat fs/namei.c:2547 [inline]
- kern_path_locked+0xc2/0x320 fs/namei.c:2558
- handle_remove+0xa2/0x5fe drivers/base/devtmpfs.c:312
- handle drivers/base/devtmpfs.c:382 [inline]
- devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
- devtmpfsd+0x1b9/0x2a3 drivers/base/devtmpfs.c:437
- kthread+0x3e5/0x4d0 kernel/kthread.c:319
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
-
-CPU: 1 PID: 22 Comm: kdevtmpfs Not tainted 5.14.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:kvm_fastop_exception+0xf6a/0x1058
-Code: d3 ed e9 bf d9 6e f8 49 8d 0e 48 83 e1 f8 4c 8b 21 41 8d 0e 83 e1 07 c1 e1 03 49 d3 ec e9 15 e7 6e f8 49 8d 4d 00 48 83 e1 f8 <4c> 8b 21 41 8d 4d 00 83 e1 07 c1 e1 03 49 d3 ec e9 05 f1 6e f8 bd
-RSP: 0018:ffffc90000dcfae8 EFLAGS: 00010282
-RAX: 0000000034736376 RBX: ffff88806f127938 RCX: ffff88823bd9e020
-RDX: ffffed100de24f2e RSI: 0000000000000004 RDI: 0000000000000007
-RBP: 0000000000000004 R08: 0000000000000000 R09: ffff88806f127968
-R10: ffffed100de24f2d R11: 0000000000000000 R12: ffff88823bd9e020
-R13: ffff88823bd9e020 R14: ffff88806f127968 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff88823bd9e020 CR3: 0000000026259000 CR4: 0000000000350ee0
-Call Trace:
- d_lookup+0xd8/0x170 fs/dcache.c:2370
- lookup_dcache+0x1e/0x130 fs/namei.c:1520
- __lookup_hash+0x29/0x180 fs/namei.c:1543
- kern_path_locked+0x17e/0x320 fs/namei.c:2567
- handle_remove+0xa2/0x5fe drivers/base/devtmpfs.c:312
- handle drivers/base/devtmpfs.c:382 [inline]
- devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
- devtmpfsd+0x1b9/0x2a3 drivers/base/devtmpfs.c:437
- kthread+0x3e5/0x4d0 kernel/kthread.c:319
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
-==================================================================
-----------------
-Code disassembly (best guess):
-   0:	d3 ed                	shr    %cl,%ebp
-   2:	e9 bf d9 6e f8       	jmpq   0xf86ed9c6
-   7:	49 8d 0e             	lea    (%r14),%rcx
-   a:	48 83 e1 f8          	and    $0xfffffffffffffff8,%rcx
-   e:	4c 8b 21             	mov    (%rcx),%r12
-  11:	41 8d 0e             	lea    (%r14),%ecx
-  14:	83 e1 07             	and    $0x7,%ecx
-  17:	c1 e1 03             	shl    $0x3,%ecx
-  1a:	49 d3 ec             	shr    %cl,%r12
-  1d:	e9 15 e7 6e f8       	jmpq   0xf86ee737
-  22:	49 8d 4d 00          	lea    0x0(%r13),%rcx
-  26:	48 83 e1 f8          	and    $0xfffffffffffffff8,%rcx
-* 2a:	4c 8b 21             	mov    (%rcx),%r12 <-- trapping instruction
-  2d:	41 8d 4d 00          	lea    0x0(%r13),%ecx
-  31:	83 e1 07             	and    $0x7,%ecx
-  34:	c1 e1 03             	shl    $0x3,%ecx
-  37:	49 d3 ec             	shr    %cl,%r12
-  3a:	e9 05 f1 6e f8       	jmpq   0xf86ef144
-  3f:	bd                   	.byte 0xbd
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+So right now I don't see why it shouldn't be doable in theory.
+I'll give it a shot, I guess, and see how it works in practice,
+at least as far as the patches go (since I can't really test on all
+architectures).
