@@ -2,114 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A92734078AE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Sep 2021 16:13:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A0C8407B75
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Sep 2021 06:13:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236050AbhIKOOZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Sep 2021 10:14:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60120 "EHLO
+        id S229542AbhILEOa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Sep 2021 00:14:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235331AbhIKOOT (ORCPT
+        with ESMTP id S229500AbhILEOa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Sep 2021 10:14:19 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD713C061574;
-        Sat, 11 Sep 2021 07:13:06 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id q3so6093615iot.3;
-        Sat, 11 Sep 2021 07:13:06 -0700 (PDT)
+        Sun, 12 Sep 2021 00:14:30 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD4F9C061574;
+        Sat, 11 Sep 2021 21:13:16 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id e16so5651079pfc.6;
+        Sat, 11 Sep 2021 21:13:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2KitDvTgcF8u5GUzxtRCOLjBDXdumB14NC4UdDO66+0=;
-        b=ftiR8acCLqtMEpLFJNcJWjtTWpPrgVx5obVuTzMCc15w/c3NXSp253sFcgApcZsdp+
-         PanwYjUmW/DNR+gtOjW+zIHekRzuJl+Vk+fzKsFs++1FNHqJcBVFeRRDY0zGgI/dMNaP
-         FpBp6UNIUbW/ICm6vWfxtBPwRyN3GnLpGIP90v0iZ+q0AI+5DTAlKhmk4wvroeFZvqSc
-         mCsuQA+EKBIE4ZHRvq43rVjjlyMa8WJuHVHtLq8/XpSZ3lxFbRifLWc6GTy7of9bWEFJ
-         DDKThCVkAa/EOIZc0L7MbeZDeel1bL4CoMdegmyxzJGMcWnvNQHA+bAziLAR4rXVoUEV
-         KRCw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1KbLREz15lk0MtSh9h887AXds7LlCcaKK7C95B4VbDY=;
+        b=kkIzx6ASRR9yKSXgI/t6spVzuhmyJczTj5fFwBLfpypozKHcPMZ0bSYMuPh7j6j/HH
+         6Z9s8CNouUOgbV5edEy/BcSpipWRqyWe7eugkg6zLDdwCshFuBOThPUfTZLKTdRLy9zD
+         7bk0uKf05USU81zTeplHEJpMfWXGTKlB+pryAmaHex4MmR0WekVv6O6OvNGfvAdd6pcv
+         qeCmYix7tmzLOiaz4vOfpSqUe6IouJF1sGLIOVdE+qFycGlpa6TvhRgZUff48Np+Qyps
+         e4gVZ28ubosF+QvPyAetomoRvio3PAackM3nJimvG8yDFgpD2WQU1u+9kb4rNPsZ+hJn
+         pTLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2KitDvTgcF8u5GUzxtRCOLjBDXdumB14NC4UdDO66+0=;
-        b=mbtbK+yOdXYXAfaTma4B1nYILw9+y3NaruaRIPUyujEOSw7Uqihj6Szegc00xKpAO+
-         apG4euiqh/XsOOVO5ptGKOgv5OYOwtBFwYR6YCsOzMzY8goll4V6K/lpESOS+CrcOTnj
-         6QMN09dmmNQ05Fz4qLjWXxK4cigLGlG/BHbX3srj1lLdoB7q8XC8uvQA0KlbIuIG2B8P
-         OC90UEUidNw9vUdYnmIHSqqlKrnIUXdM7SM5xQx+7/k4CethDVIOMFQeWq1LSSLlC3Ii
-         iUx3yLx6SMTtc+emUHcdsupW2kZqt2OhBZsH2Cu35Lj0kqmZmu3arNEn05L90vrmy98h
-         0VPg==
-X-Gm-Message-State: AOAM533WwHV7R1LCM8EZIkdPhFel8nsvIYeh0X+6UXi3e+zNVRwEPMoB
-        WUIGPKDAXEOXx8UiThNHfJQnb7nO4sWFRthwGCg=
-X-Google-Smtp-Source: ABdhPJzSRNNh9eOYNfuvbfpJ7B6UC0An+cy+d0vnELkwZrexWaJCOnNKAw/RE8heFK4mHTYTtvn+6kfADWA1cYFmOa0=
-X-Received: by 2002:a6b:610e:: with SMTP id v14mr2085382iob.70.1631369586148;
- Sat, 11 Sep 2021 07:13:06 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1KbLREz15lk0MtSh9h887AXds7LlCcaKK7C95B4VbDY=;
+        b=h7Vv+XJbfFl8IkVaA1WJpKrEkngCkE2lBQASUBzI9ZdKJY/AZZ9lvdfwVJW/MshR8S
+         TA2LGJz75Gf/JMA2v27hXdwfY3g5deCaNtHcs1qGzowF1waDZd1mgrkfWRqqsAljzs9e
+         /DyR5DvuvqlOXcZivDFELfgO4Yml9mitxKWSXyClSAZsom5s3+1aAPVG0VopJsAfSyug
+         iEywe94qu8G0mbOSxJO5J5CQV54ilhofzIypFVX+LJJfqkUyqbBbXNatTOdLtaaY17Ii
+         ZD7QehHAhIDEENYwkRw+LCnksffHvur12tP1HNZGAqmsedHdTTvbP8Yyi6+S6hrmLx/E
+         IViA==
+X-Gm-Message-State: AOAM531ImLMgSZg2obHZR/FTF9XRUzmCB38R4wjQ43DNkPulDcyc83Do
+        qPAkRBNPLItj64r+2Fd6WCU=
+X-Google-Smtp-Source: ABdhPJx9fk1GQ//vmXTQkX959b8fjaj1SY2/PIk2fPvsEYivSUg7DcbmWxevVi0k7vfW4wINZZxqDQ==
+X-Received: by 2002:a63:4563:: with SMTP id u35mr5023521pgk.275.1631419996063;
+        Sat, 11 Sep 2021 21:13:16 -0700 (PDT)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id b13sm2857685pjk.35.2021.09.11.21.13.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Sep 2021 21:13:15 -0700 (PDT)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: yang.yang29@zte.com.cn
+To:     peterz@infradead.org, yzaikin@google.com, liu.hailong6@zte.com.cn
+Cc:     mingo@redhat.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, mcgrof@kernel.org, keescook@chromium.org,
+        pjt@google.com, yang.yang29@zte.com.cn, joshdon@google.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Zeal Robot <zealci@zte.com.cm>
+Subject: [PATCH] sched: Add a new version sysctl to control child runs first
+Date:   Sun, 12 Sep 2021 04:12:23 +0000
+Message-Id: <20210912041222.59480-1-yang.yang29@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <162995209561.7591.4202079352301963089@noble.neil.brown.name>
- <162995778427.7591.11743795294299207756@noble.neil.brown.name>
- <YSkQ31UTVDtBavOO@infradead.org> <163010550851.7591.9342822614202739406@noble.neil.brown.name>
- <YSnhHl0HDOgg07U5@infradead.org> <163038594541.7591.11109978693705593957@noble.neil.brown.name>
- <YS8ppl6SYsCC0cql@infradead.org> <20210901152251.GA6533@fieldses.org>
- <163055605714.24419.381470460827658370@noble.neil.brown.name>
- <20210905160719.GA20887@fieldses.org> <163089177281.15583.1479086104083425773@noble.neil.brown.name>
-In-Reply-To: <163089177281.15583.1479086104083425773@noble.neil.brown.name>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 11 Sep 2021 17:12:54 +0300
-Message-ID: <CAOQ4uxjbjkqEEXTe7V4vaUUM1gyJwe6iSAaz=PdxJyU2M14K-w@mail.gmail.com>
-Subject: Re: [PATCH v2] BTRFS/NFSD: provide more unique inode number for btrfs export
-To:     NeilBrown <neilb@suse.de>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Maybe what we really need is for a bunch of diverse filesystem
-> developers to get together and agree on some new common interface for
-> subvolume management, including coming up with some sort of definition
-> of what a subvolume "is".
+From: Yang Yang <yang.yang29@zte.com.cn>
 
-Neil,
+The old version sysctl has some problems. First, it allows set value
+bigger than 1, which is unnecessary. Second, it didn't follow the
+rule of capabilities. Thirdly, it didn't use static key. This new
+version fixes all the problems.
 
-Seeing that LSF/MM is not expected to gather in the foreseen future, would
-you like to submit this as a topic for discussion in LPC Filesystem MC [1]?
-I know this is last minute, but we've just extended the CFP deadline
-until Sep 15 (MC is on Sep 21), so if you post a proposal, I think we will
-be able to fit this session in the final schedule.
+Signed-off-by: Yang Yang <yang.yang29@zte.com.cn>
+Reported-by: Zeal Robot <zealci@zte.com.cm>
+---
+ include/linux/sched/sysctl.h |  2 ++
+ kernel/sched/core.c          | 35 +++++++++++++++++++++++++++++++++++
+ kernel/sched/fair.c          |  3 ++-
+ kernel/sched/sched.h         |  1 +
+ kernel/sysctl.c              |  6 ++++--
+ 5 files changed, 44 insertions(+), 3 deletions(-)
 
-Granted, I don't know how many of the stakeholders plan to attend
-the LPC Filesystem MC, but at least Josef should be there ;)
+diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+index 304f431178fd..0a194d0cf692 100644
+--- a/include/linux/sched/sysctl.h
++++ b/include/linux/sched/sysctl.h
+@@ -74,6 +74,8 @@ int sysctl_numa_balancing(struct ctl_table *table, int write, void *buffer,
+ 		size_t *lenp, loff_t *ppos);
+ int sysctl_schedstats(struct ctl_table *table, int write, void *buffer,
+ 		size_t *lenp, loff_t *ppos);
++int sysctl_child_runs_first(struct ctl_table *table, int write,
++		void *buffer, size_t *lenp, loff_t *ppos);
+ 
+ #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+ extern unsigned int sysctl_sched_energy_aware;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index c4462c454ab9..bfea7ecf3b83 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4323,6 +4323,41 @@ int sysctl_schedstats(struct ctl_table *table, int write, void *buffer,
+ #endif /* CONFIG_PROC_SYSCTL */
+ #endif /* CONFIG_SCHEDSTATS */
+ 
++DEFINE_STATIC_KEY_FALSE(child_runs_first);
++
++static void set_child_runs_first(bool enabled)
++{
++	if (enabled) {
++		static_branch_enable(&child_runs_first);
++		sysctl_sched_child_runs_first = 1;
++	} else {
++		static_branch_disable(&child_runs_first);
++		sysctl_sched_child_runs_first = 0;
++	}
++}
++
++#ifdef CONFIG_PROC_SYSCTL
++int sysctl_child_runs_first(struct ctl_table *table, int write,
++		void *buffer, size_t *lenp, loff_t *ppos)
++{
++	struct ctl_table t;
++	int err;
++	int state = static_branch_likely(&child_runs_first);
++
++	if (write && !capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	t = *table;
++	t.data = &state;
++	err = proc_dointvec_minmax(&t, write, buffer, lenp, ppos);
++	if (err < 0)
++		return err;
++	if (write)
++		set_child_runs_first(state);
++	return err;
++}
++#endif /* CONFIG_PROC_SYSCTL */
++
+ /*
+  * fork()/clone()-time setup:
+  */
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index ff69f245b939..f6d4307bd654 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -11099,7 +11099,8 @@ static void task_fork_fair(struct task_struct *p)
+ 	}
+ 	place_entity(cfs_rq, se, 1);
+ 
+-	if (sysctl_sched_child_runs_first && curr && entity_before(curr, se)) {
++	if (static_branch_unlikely(&child_runs_first) &&
++	    curr && entity_before(curr, se)) {
+ 		/*
+ 		 * Upon rescheduling, sched_class::put_prev_task() will place
+ 		 * 'current' within the tree based on its new key value.
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 3d3e5793e117..89ac11e48173 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2002,6 +2002,7 @@ static const_debug __maybe_unused unsigned int sysctl_sched_features =
+ 
+ extern struct static_key_false sched_numa_balancing;
+ extern struct static_key_false sched_schedstats;
++DECLARE_STATIC_KEY_FALSE(child_runs_first);
+ 
+ static inline u64 global_rt_period(void)
+ {
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 083be6af29d7..72063cffc565 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1773,10 +1773,12 @@ int proc_do_static_key(struct ctl_table *table, int write,
+ static struct ctl_table kern_table[] = {
+ 	{
+ 		.procname	= "sched_child_runs_first",
+-		.data		= &sysctl_sched_child_runs_first,
++		.data		= NULL,
+ 		.maxlen		= sizeof(unsigned int),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
++		.proc_handler	= sysctl_child_runs_first,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
+ 	},
+ #ifdef CONFIG_SCHEDSTATS
+ 	{
+-- 
+2.25.1
 
-I do have one general question about the expected behavior -
-In his comment to the LWN article [2], Josef writes:
-
-"The st_dev thing is unfortunate, but again is the result of a lack of
-interfaces.
- Very early on we had problems with rsync wandering into snapshots and
- copying loads of stuff. Find as well would get tripped up.
- The way these tools figure out if they've wandered into another file system
- is if the st_dev is different..."
-
-If your plan goes through to export the main btrfs filesystem and
-subvolumes as a uniform st_dev namespace to the NFS client,
-what's to stop those old issues from remerging on NFS exported btrfs?
-
-IOW, the user experience you are trying to solve is inability of 'find'
-to traverse the unified btrfs namespace, but Josef's comment indicates
-that some users were explicitly unhappy from 'find' trying to traverse
-into subvolumes to begin with.
-
-So is there really a globally expected user experience?
-If not, then I really don't see how an nfs export option can be avoided.
-
-Thanks,
-Amir.
-
-[1] https://www.linuxplumbersconf.org/event/11/page/104-accepted-microconferences#cont-filesys
-[2] https://lwn.net/Articles/867509/
