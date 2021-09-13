@@ -2,107 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88A9C408A46
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Sep 2021 13:32:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F085D408A60
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Sep 2021 13:37:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239494AbhIMLdr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Sep 2021 07:33:47 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:55632 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238644AbhIMLdr (ORCPT
+        id S239761AbhIMLiu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Sep 2021 07:38:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34912 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239783AbhIMLit (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Sep 2021 07:33:47 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id BB1091FFCB;
-        Mon, 13 Sep 2021 11:32:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1631532750; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MmOXV82ZmaGCqV2USJ7r1chshtX3p4vyPS/RDmpH9Kk=;
-        b=vHJ/IqG0alI4RYXeXt2lzVpnkym3TKly6X3vzChUlIH1R77qODq709I17odCQgvkv/UxpH
-        SKwrSpddX9iSgeoKOV4V6QpnuH3hpMbTYda2XSHEp8O7Arah0suPYatmAWfRLjZFRXvzgO
-        +AxoNOvttcegmZToweCpn1IdmB1u81A=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 8C2C3A3B88;
-        Mon, 13 Sep 2021 11:32:30 +0000 (UTC)
-Date:   Mon, 13 Sep 2021 13:32:30 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Folio discussion recap
-Message-ID: <YT82zg6UE9DtQLhL@dhcp22.suse.cz>
-References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
- <YTu9HIu+wWWvZLxp@moria.home.lan>
- <20210911012324.6vb7tjbxvmpjfhxv@box.shutemov.name>
+        Mon, 13 Sep 2021 07:38:49 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E30D2C061574;
+        Mon, 13 Sep 2021 04:37:33 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id f65so8512822pfb.10;
+        Mon, 13 Sep 2021 04:37:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:from:to:cc:subject:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=QBkvZtRuthYO+WkN5dTUd+gbBpCcqBYymSu9tcHbcUg=;
+        b=JgEmhVoT07+/jpj9Hw8XTtF7PaQg78QzX6zNtz/av0Pye/os/Oop7lo99/y8wP3Jyj
+         gWe4Gh6c+AU0BSkAeBGYKfJM+on+F85RSTeMLJj2X0NgjlaNW59Y6QzIQzFBjS3+Gryj
+         XOVp82ALeta68ZHn8T6sw93BkiO5yAS7cmSTAfM/GvQPsMDPevpT21BIlMwGRwo5m9OU
+         fmbcxhXpeqWw+dgm8DWLuFHo7nDK6tosO9UUOhQYk/kyNKn3+h9emnC1da80pDOPN64k
+         7tCICxtg12M5RLo7DuHsNCaBtKzLsW0YToYtjT+t8Ci0tCMtLkQf5xM8S3XbWj8mp7Mg
+         wmCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=QBkvZtRuthYO+WkN5dTUd+gbBpCcqBYymSu9tcHbcUg=;
+        b=SWdzqW4D6lZrwEfWNmSNdi/7oYOPNOcymHRiVFnOzky3pRewNtcH1WAplBeF4D7FUT
+         SlcrzwkRXHCbcqQSEfbKhRqzYH1Sr1n4UiVJ9nAxi2fyN9nkW7nY6erbFsmIIZfvEmCj
+         d/LIbPToTurSWMHk9UTHRdMfIsYhFxShf729RMm9kAdsS/7N3kjR7fs263LQ6QQE2GMq
+         pk4YHQYiLlivo5QczT0XRO3TCzav3XRWqfsm3EcnXoI0ZPchdExiB4sfgmv50YxWlr9c
+         4OOeMYdyngExaL8D+yB5tvgfPSuQnB50QP4BFFJYJqe6e02iaa+mWaIMtFTgZaxG2kIc
+         qykw==
+X-Gm-Message-State: AOAM533I/HJOqj0EKuh2OtKhjNgNFAa1eiWYvgNv/oA4ts2yEoQEa62a
+        I9abctGiAEiGhX0fe0Sleco=
+X-Google-Smtp-Source: ABdhPJznt26Z8rp9Ii/ANoIlwxfTk4jSzPtD+DI7HGBndU3Hzz3KpSJbKm3N4/ayXkxrYx4b2GGBKg==
+X-Received: by 2002:a63:e04a:: with SMTP id n10mr10621845pgj.381.1631533053480;
+        Mon, 13 Sep 2021 04:37:33 -0700 (PDT)
+Received: from localhost ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id e15sm4055388pjl.11.2021.09.13.04.37.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Sep 2021 04:37:32 -0700 (PDT)
+Message-ID: <613f37fc.1c69fb81.9092.a4f5@mx.google.com>
+X-Google-Original-Message-ID: <20210913113731.GA83262@cgel.zte@gmail.com>
+Date:   Mon, 13 Sep 2021 11:37:31 +0000
+From:   CGEL <cgel.zte@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     yzaikin@google.com, liu.hailong6@zte.com.cn, mingo@redhat.com,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, bristot@redhat.com, mcgrof@kernel.org,
+        keescook@chromium.org, pjt@google.com, yang.yang29@zte.com.cn,
+        joshdon@google.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Zeal Robot <zealci@zte.com.cm>
+Subject: Re: [PATCH] sched: Add a new version sysctl to control child runs
+ first
+References: <20210912041222.59480-1-yang.yang29@zte.com.cn>
+ <YT8IQioxUARMus9w@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210911012324.6vb7tjbxvmpjfhxv@box.shutemov.name>
+In-Reply-To: <YT8IQioxUARMus9w@hirez.programming.kicks-ass.net>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat 11-09-21 04:23:24, Kirill A. Shutemov wrote:
-> On Fri, Sep 10, 2021 at 04:16:28PM -0400, Kent Overstreet wrote:
-> > So we should listen to the MM people.
+On Mon, Sep 13, 2021 at 10:13:54AM +0200, Peter Zijlstra wrote:
+> On Sun, Sep 12, 2021 at 04:12:23AM +0000, cgel.zte@gmail.com wrote:
+> > From: Yang Yang <yang.yang29@zte.com.cn>
+> > 
+> > The old version sysctl has some problems. First, it allows set value
+> > bigger than 1, which is unnecessary. Second, it didn't follow the
+> > rule of capabilities. Thirdly, it didn't use static key. This new
+> > version fixes all the problems.
 > 
-> Count me here.
-> 
-> I think the problem with folio is that everybody wants to read in her/his
-> hopes and dreams into it and gets disappointed when see their somewhat
-> related problem doesn't get magically fixed with folio.
-> 
-> Folio started as a way to relief pain from dealing with compound pages.
-> It provides an unified view on base pages and compound pages. That's it.
-> 
-> It is required ground work for wider adoption of compound pages in page
-> cache. But it also will be useful for anon THP and hugetlb.
-> 
-> Based on adoption rate and resulting code, the new abstraction has nice
-> downstream effects. It may be suitable for more than it was intended for
-> initially. That's great.
-> 
-> But if it doesn't solve your problem... well, sorry...
-> 
-> The patchset makes a nice step forward and cuts back on mess I created on
-> the way to huge-tmpfs.
-> 
-> I would be glad to see the patchset upstream.
+> Does any of that actually matter?
 
-I do agree here. While points that Johannes brought up are relevant
-and worth thinking about I do also see a clear advantage of folio (or
-whatever $name) is bringing. The compound page handling is just a mess
-and source of practical problems and bugs.
+For the first problem, I think the reason why sysctl_schedstats() only
+accepts 0 or 1, is suitbale for sysctl_child_runs_first(). Since
+task_fork_fair() only need sysctl_sched_child_runs_first to be
+zero or non-zero.
 
-This really requires some systematic approach to deal with it. The
-proposed type system is definitely a good way to approach it. Johannes
-is not happy about having the type still refer to page units but I
-haven't seen an example where that leads to a worse or harder to
-maintain code so far. The evolution is likely not going to stop at the
-current type system but I haven't seen any specifics to prove it would
-stand in the way. The existing code (fs or other subsystem interacting
-with MM) is going to require quite a lot of changes to move away from
-struct page notion but I do not see folios to add fundamental blocker
-there.
+For the second problem, I remember there is a rule: try to
+administration system through capilities but not depends on
+root identity. Just like sysctl_schedstats() or other
+sysctl_xx().
 
-All that being said, not only I see folios to be a step into the
-right direction to address compound pages mess it is also a code that
-already exists and gives some real advantages. I haven't heard anybody
-subscribing to a different approach and providing an implementation in a
-foreseeable future so I would rather go with this approach then dealing
-with the existing code long term.
--- 
-Michal Hocko
-SUSE Labs
+For the thirdly problem, sysctl_child_runs_first maynot changes
+often, but may accessed often, like static_key delayacct_key
+controlled by sysctl_delayacct().
+
+Thanks!
