@@ -2,152 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0261C4088B5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Sep 2021 12:04:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9EFF40895E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Sep 2021 12:49:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238731AbhIMKFe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Sep 2021 06:05:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41322 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238362AbhIMKFd (ORCPT
+        id S239152AbhIMKu5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Sep 2021 06:50:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:21688 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239098AbhIMKu5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Sep 2021 06:05:33 -0400
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7C49C061574;
-        Mon, 13 Sep 2021 03:04:17 -0700 (PDT)
-Received: by mail-il1-x12b.google.com with SMTP id l10so9410200ilh.8;
-        Mon, 13 Sep 2021 03:04:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MHsA16MmTwJ7m8LQOCBFaJxQ81vKONAL+/tGmbsbP/M=;
-        b=E1Y5AC0mIBlR3kybukkKzCWOhn6aIaU0tuU21P/lDrkFMHKuxdzbPn4E7dpGtvvE++
-         9+MPyhBzlK/IqBtF5auZUF/CfVUDIIBrdnTyzfVm8tHepA1o3ahoOusVIrjGERnvVv89
-         jF/x0ouN4WOgxJBOxfcrJWQ7DHp7L51rqgqbcLC/BRgo3LI+hYGcEtY5J9opmPY9fmIl
-         BjVStfB/R7ET91nGx+McauU/rgh3TOLgUVbHdvA4S5soo9H61ZA8ouHEdDeKhsuBl7s/
-         nQGjTkJhL6bwbjiqwGIFekoYYTIUBpCHkAq54ZbMyCvCxizRBPFCHfkhzidrpm9sUGwx
-         fXcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MHsA16MmTwJ7m8LQOCBFaJxQ81vKONAL+/tGmbsbP/M=;
-        b=mhGlDH76G0Z6BWXDvQWw3WCzWzVTmxmgsywpmW+Y6z5Y6PVFtsMmOo0yMmUnRP8FhR
-         11PY1gRJJ4WgQ1Xv1JJ5cqSDXQq+B0AFOGmZcTvYShFmLOm/EE2xic90VQ65ofhY/mTN
-         VzBIZfM85g1CKyuj+vaNVKPsIOBjlIDZ92HPD2eJGQHUQbveun7oOLdfQmfayKlHrwJE
-         wHVobn7y1BddAFB8EpeTumsTlcUnYloxqisxD6XJpv1ivRGWkUUSTfPccuvN8eZW9aF1
-         e1HR603QXFaSrUD8KGqxoy3b0LB3Eb4MkTmZZlnw7aMeefrNz+yE1/QZ3/UzhPM0nd0P
-         kLUQ==
-X-Gm-Message-State: AOAM532qrQy1vMeIZM7/s0VXQCM8UZnvFyDAmraZvWbqdZscEDAWGd4W
-        5zsQgp6rHZrWGC0qtpUz0fUjMqE/JKB1Pqj/rHOSUZO5TlQ=
-X-Google-Smtp-Source: ABdhPJzDhZnYts4gI+yufZYntrp4BiNejANLyhp1t/ab9PPH4aumC02SHCzYWJB+5WQJfEL7TzQtPKokSZbQOGMdDaw=
-X-Received: by 2002:a92:d752:: with SMTP id e18mr7725996ilq.254.1631527457350;
- Mon, 13 Sep 2021 03:04:17 -0700 (PDT)
+        Mon, 13 Sep 2021 06:50:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1631530181;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=XIkgYA/tUP+Z8mJsrZ5/GLNDfbE7/vREkH/o/B1LNvQ=;
+        b=RSjYt+RtFa7JvrFGHUgET4esm3sCpwV4x6FicyCoBK79EESW37EwVV5ZMfQmRAxCbJXBqk
+        YJYHege4ra7JwRgC4tuC7OXQpmW/xff30VFNFsF2YzgpnD/Eg8vK8plfhLujr39PO3M/gI
+        yOjrMBTHjBTC9iy5DkYXNbASuzA5qQw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-534-HO8QdsRVOeCEDTc052-LzQ-1; Mon, 13 Sep 2021 06:49:40 -0400
+X-MC-Unique: HO8QdsRVOeCEDTc052-LzQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ECE4D19253C3;
+        Mon, 13 Sep 2021 10:49:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 81B0310074EF;
+        Mon, 13 Sep 2021 10:49:37 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+        Markus Suvanto <markus.suvanto@gmail.com>,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] afs: Fixes for 3rd party-induced data corruption
 MIME-Version: 1.0
-References: <162995209561.7591.4202079352301963089@noble.neil.brown.name>
- <162995778427.7591.11743795294299207756@noble.neil.brown.name>
- <YSkQ31UTVDtBavOO@infradead.org> <163010550851.7591.9342822614202739406@noble.neil.brown.name>
- <YSnhHl0HDOgg07U5@infradead.org> <163038594541.7591.11109978693705593957@noble.neil.brown.name>
- <YS8ppl6SYsCC0cql@infradead.org> <20210901152251.GA6533@fieldses.org>
- <163055605714.24419.381470460827658370@noble.neil.brown.name>
- <20210905160719.GA20887@fieldses.org> <163089177281.15583.1479086104083425773@noble.neil.brown.name>
- <CAOQ4uxjbjkqEEXTe7V4vaUUM1gyJwe6iSAaz=PdxJyU2M14K-w@mail.gmail.com> <163149382437.8417.3479990258042844514@noble.neil.brown.name>
-In-Reply-To: <163149382437.8417.3479990258042844514@noble.neil.brown.name>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 13 Sep 2021 13:04:05 +0300
-Message-ID: <CAOQ4uxgFf5c0to7f4cT9c9JwWisYRf-kxiZS4BuyXaQV=bLbJg@mail.gmail.com>
-Subject: Re: [PATCH v2] BTRFS/NFSD: provide more unique inode number for btrfs export
-To:     NeilBrown <neilb@suse.de>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1161816.1631530077.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+From:   David Howells <dhowells@redhat.com>
+Date:   Mon, 13 Sep 2021 11:49:36 +0100
+Message-ID: <1161899.1631530176@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > I do have one general question about the expected behavior -
-> > In his comment to the LWN article [2], Josef writes:
-> >
-> > "The st_dev thing is unfortunate, but again is the result of a lack of
-> > interfaces.
-> >  Very early on we had problems with rsync wandering into snapshots and
-> >  copying loads of stuff. Find as well would get tripped up.
-> >  The way these tools figure out if they've wandered into another file system
-> >  is if the st_dev is different..."
-> >
-> > If your plan goes through to export the main btrfs filesystem and
-> > subvolumes as a uniform st_dev namespace to the NFS client,
-> > what's to stop those old issues from remerging on NFS exported btrfs?
->
-> That comment from Josef was interesting.... It doesn't align with
-> Commit 3394e1607eaf ("Btrfs: Give each subvol and snapshot their own anonymous devid")
-> when Chris Mason introduced the per-subvol device number with the
-> justification that:
->     Each subvolume has its own private inode number space, and so we need
->     to fill in different device numbers for each subvolume to avoid confusing
->     applications.
->
-> But I understand that history can be messy and maybe there were several
-> justifications of which Josef remembers one and Chris reported
-> another.
->
 
-I don't see a contradiction between the two reasons.
-Reporting two different objects with the same st_ino;st_dev is a problem
-and so is rsync wandering into subvolumes is another problem.
+Hi Linus,
 
-Separate st_dev solves the first problem and leaves the behavior
-or rsync in the hands of the user (i.e. rsync --one-file-system).
+Here are some fixes for AFS that can cause data corruption due to
+interaction with another client modifying data cached locally[1].
 
-> If rsync did, in fact, wander into subvols and didn't get put off by the
-> duplicate inode numbers (like 'find' does), then it would still do that
-> when accessing btrfs over NFS.  This has always been the case.  Chris'
-> "fix" only affected local access, it didn't change NFS access at all.
->
+ (1) When d_revalidating a dentry, don't look at the inode to which it
+     points.  Only check the directory to which the dentry belongs.  This
+     was confusing things and causing the silly-rename cleanup code to
+     remove the file now at the dentry of a file that got deleted.
 
-Right, so the right fix IMO would be to provide similar semantics
-to the NFS client, like your first patch set tried to do.
+ (2) Fix mmap data coherency.  When a callback break is received that
+     relates to a file that we have cached, the data content may have been
+     changed (there are other reasons, such as the user's rights having
+     been changed).  However, we're checking it lazily, only on entry to
+     the kernel, which doesn't happen if we have a writeable shared mapped
+     page on that file.
 
-> >
-> > IOW, the user experience you are trying to solve is inability of 'find'
-> > to traverse the unified btrfs namespace, but Josef's comment indicates
-> > that some users were explicitly unhappy from 'find' trying to traverse
-> > into subvolumes to begin with.
->
-> I believe that even 12 years ago, find would have complained if it saw a
-> directory with the same inode as an ancestor.  Chris's fix wouldn't
-> prevent find from entering in that case, because it wouldn't enter
-> anyway.
->
-> >
-> > So is there really a globally expected user experience?
->
-> No.  Everybody wants what they want.  There is some overlap, not no
-> guarantees.  That is the unavoidable consequence of ignoring standards
-> when implementing functionality.
->
-> > If not, then I really don't see how an nfs export option can be avoided.
->
-> And I really don't see how an nfs export option would help...  Different
-> people within and organisation and using the same export might have
-> different expectations.
+     We make the kernel keep track of mmapped files and clear all PTEs
+     mapping to that file as soon as the callback comes in by calling
+     unmap_mapping_pages() (we don't necessarily want to zap the
+     pagecache).  This causes the kernel to be reentered when userspace
+     tries to access the mmapped address range again - and at that point w=
+e
+     can query the server and, if we need to, zap the page cache.
 
-That's true.
-But if admin decides to export a specific btrfs mount as a non-unified
-filesystem, then NFS clients can decide whether ot not to auto-mount the
-exported subvolumes and different users on the client machine can decide
-if they want to rsync or rsync --one-file-system, just as they would with
-local btrfs.
+     Ideally, I would check each file at the point of notification, but
+     that involves poking the server[*] - which is holding an exclusive
+     lock on the vnode it is changing, waiting for all the clients it
+     notified to reply.  This could then deadlock against the server.
+     Further, invalidating the pagecache might call ->launder_page(), whic=
+h
+     would try to write to the file, which would definitely deadlock.  (AF=
+S
+     doesn't lease file access).
 
-And maybe I am wrong, but I don't see how the decision on whether to
-export a non-unified btrfs can be made a btrfs option or a nfsd global
-option, that's why I ended up with export option.
+     [*] Checking to see if the file content has changed is a matter of
+     	 comparing the current data version number, but we have to ask the
+     	 server for that.  We also need to get a new callback promise and
+     	 we need to poke the server for that too.
 
-Thanks,
-Amir.
+ (3) Add some more points at which the inode is validated, since we're
+     doing it lazily, notably in ->read_iter() and ->page_mkwrite(), but
+     also when performing some directory operations.
+
+     Ideally, checking in ->read_iter() would be done in some derivation o=
+f
+     filemap_read().  If we're going to call the server to read the file,
+     then we get the file status fetch as part of that.
+
+ (4) The above is now causing us to make a lot more calls to afs_validate(=
+)
+     to check the inode - and afs_validate() takes the RCU read lock each
+     time to make a quick check (ie. afs_check_validity()).  This is
+     entirely for the purpose of checking cb_s_break to see if the server
+     we're using reinitialised its list of callbacks - however this isn't =
+a
+     very common event, so most of the time we're taking this needlessly.
+
+     Add a new cell-wide counter to count the number of reinitialisations
+     done by any server and check that - and only if that changes, take th=
+e
+     RCU read lock and check the server list (the server list may change,
+     but the cell a file is part of won't).
+
+ (5) Don't update vnode->cb_s_break and ->cb_v_break inside the validity
+     checking loop.  The cb_lock is done with read_seqretry, so we might g=
+o
+     round the loop a second time after resetting those values - and that
+     could cause someone else checking validity to miss something (I
+     think).
+
+Also included are patches for fixes for some bugs encountered whilst
+debugging this.
+
+ (6) Fix a leak of afs_read objects and fix a leak of keys hidden by that.
+
+ (7) Fix a leak of pages that couldn't be added to extend a writeback.
+
+ (8) Fix the maintenance of i_blocks when i_size is changed by a local
+     write or a local dir edit[**].
+
+     [**] Would you prefer this patch separately to the other patches?
+
+David
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D214217 [1]
+Link: https://lore.kernel.org/r/163111665183.283156.17200205573146438918.s=
+tgit@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r/163113612442.352844.11162345591911691150.s=
+tgit@warthog.procyon.org.uk/ # i_blocks patch
+---
+
+The following changes since commit b91db6a0b52e019b6bdabea3f1dbe36d85c7e52=
+c:
+
+  Merge tag 'for-5.15/io_uring-vfs-2021-08-30' of git://git.kernel.dk/linu=
+x-block (2021-08-30 19:39:59 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
+/afs-fixes-20210913
+
+for you to fetch changes up to 9d37e1cab2a9d2cee2737973fa455e6f89eee46a:
+
+  afs: Fix updating of i_blocks on file/dir extension (2021-09-13 09:14:21=
+ +0100)
+
+----------------------------------------------------------------
+AFS fixes
+
+----------------------------------------------------------------
+David Howells (8):
+      afs: Fix missing put on afs_read objects and missing get on the key =
+therein
+      afs: Fix page leak
+      afs: Add missing vnode validation checks
+      afs: Fix incorrect triggering of sillyrename on 3rd-party invalidati=
+on
+      afs: Fix mmap coherency vs 3rd-party changes
+      afs: Try to avoid taking RCU read lock when checking vnode validity
+      afs: Fix corruption in reads at fpos 2G-4G from an OpenAFS server
+      afs: Fix updating of i_blocks on file/dir extension
+
+ fs/afs/callback.c          | 44 ++++++++++++++++++++-
+ fs/afs/cell.c              |  2 +
+ fs/afs/dir.c               | 57 +++++++++------------------
+ fs/afs/dir_edit.c          |  4 +-
+ fs/afs/file.c              | 86 ++++++++++++++++++++++++++++++++++++++--
+ fs/afs/fs_probe.c          |  8 +++-
+ fs/afs/fsclient.c          | 31 +++++++++------
+ fs/afs/inode.c             | 98 ++++++++++++++++++++---------------------=
+-----
+ fs/afs/internal.h          | 21 ++++++++++
+ fs/afs/protocol_afs.h      | 15 +++++++
+ fs/afs/protocol_yfs.h      |  6 +++
+ fs/afs/rotate.c            |  1 +
+ fs/afs/server.c            |  2 +
+ fs/afs/super.c             |  1 +
+ fs/afs/write.c             | 29 +++++++++++---
+ include/trace/events/afs.h |  8 +++-
+ mm/memory.c                |  1 +
+ 17 files changed, 294 insertions(+), 120 deletions(-)
+ create mode 100644 fs/afs/protocol_afs.h
+
