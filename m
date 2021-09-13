@@ -2,126 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BA6F4084AF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Sep 2021 08:28:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16D3C408643
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Sep 2021 10:16:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237336AbhIMG33 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Sep 2021 02:29:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44966 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230003AbhIMG32 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Sep 2021 02:29:28 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 09A0160FC0;
-        Mon, 13 Sep 2021 06:28:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1631514491;
-        bh=JV9RZ7EErzNlYAw0A/uXNJiRmBcBN/9BrP+lNa3euYY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hTqqGY90fkIrFjXckNWGz/Z5seWChRrfUY6uYIPfaJfdXUC0voqKAzW5oIFxUf4i/
-         zKXIsSbxMVGP262QM+DEo7ejYUM8TGcMx+co3nsJ7+Gw4LmBhbIOjv+kNdWg/aJF30
-         vVzTwo0fY2Z5EGd8WyZFApJcv7B6EbktCxJFBihg=
-Date:   Mon, 13 Sep 2021 08:27:50 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/13] xfs: convert xfs_sysfs attrs to use ->seq_show
-Message-ID: <YT7vZthsMCM1uKxm@kroah.com>
-References: <20210913054121.616001-1-hch@lst.de>
- <20210913054121.616001-14-hch@lst.de>
+        id S237811AbhIMISF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Sep 2021 04:18:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44678 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237754AbhIMISF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Sep 2021 04:18:05 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBFF3C061574;
+        Mon, 13 Sep 2021 01:16:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=vzoOqKPucIos1Sa6XxmINYvmyxF9IjulKwV36eq9XkU=; b=MgqJaJOYvmlMOGDQrMTf64S+/6
+        7pOb4qgrUHfLtBACgJsMep6CF2oEzV7fQuCI1CQ3RZn2aqsGBfANr0JI40xlG7knCVknIxtAX0Wlj
+        bKz9q163K3k4NtiE55i2fTzGfMjhuWMZ8DzQn0KlrTuQs7yA54YFTVrxZ0/c9R2bBAzY0E3VW1V/J
+        RXjSF/HZPnJgx05BHlmXz/1fzVV/kekc33WeUFqQHoto5crYiS7is5Aw9oaoluIYFNapO/3ueRf/v
+        ASZPMApJ0JoLDIpnLcocm22Gy+hPq1YMOWhV+XCT3YfPF62xJh9mzDC0uCy2iPAQYhivAzW2v6qIi
+        7p4SuK0Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mPh6H-00DId2-PP; Mon, 13 Sep 2021 08:14:16 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id ABD86300093;
+        Mon, 13 Sep 2021 10:13:54 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 944072BD296B8; Mon, 13 Sep 2021 10:13:54 +0200 (CEST)
+Date:   Mon, 13 Sep 2021 10:13:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     cgel.zte@gmail.com
+Cc:     yzaikin@google.com, liu.hailong6@zte.com.cn, mingo@redhat.com,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, bristot@redhat.com, mcgrof@kernel.org,
+        keescook@chromium.org, pjt@google.com, yang.yang29@zte.com.cn,
+        joshdon@google.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Zeal Robot <zealci@zte.com.cm>
+Subject: Re: [PATCH] sched: Add a new version sysctl to control child runs
+ first
+Message-ID: <YT8IQioxUARMus9w@hirez.programming.kicks-ass.net>
+References: <20210912041222.59480-1-yang.yang29@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210913054121.616001-14-hch@lst.de>
+In-Reply-To: <20210912041222.59480-1-yang.yang29@zte.com.cn>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 13, 2021 at 07:41:21AM +0200, Christoph Hellwig wrote:
-> Trivial conversion to the seq_file based sysfs attributes.
+On Sun, Sep 12, 2021 at 04:12:23AM +0000, cgel.zte@gmail.com wrote:
+> From: Yang Yang <yang.yang29@zte.com.cn>
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  fs/xfs/xfs_stats.c | 24 +++++-------
->  fs/xfs/xfs_stats.h |  2 +-
->  fs/xfs/xfs_sysfs.c | 96 +++++++++++++++++++++++-----------------------
->  3 files changed, 58 insertions(+), 64 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_stats.c b/fs/xfs/xfs_stats.c
-> index 20e0534a772c9..71e7a84ba0403 100644
-> --- a/fs/xfs/xfs_stats.c
-> +++ b/fs/xfs/xfs_stats.c
-> @@ -16,10 +16,9 @@ static int counter_val(struct xfsstats __percpu *stats, int idx)
->  	return val;
->  }
->  
-> -int xfs_stats_format(struct xfsstats __percpu *stats, char *buf)
-> +void xfs_stats_format(struct xfsstats __percpu *stats, struct seq_file *sf)
->  {
->  	int		i, j;
-> -	int		len = 0;
->  	uint64_t	xs_xstrat_bytes = 0;
->  	uint64_t	xs_write_bytes = 0;
->  	uint64_t	xs_read_bytes = 0;
-> @@ -58,13 +57,12 @@ int xfs_stats_format(struct xfsstats __percpu *stats, char *buf)
->  	/* Loop over all stats groups */
->  
->  	for (i = j = 0; i < ARRAY_SIZE(xstats); i++) {
-> -		len += scnprintf(buf + len, PATH_MAX - len, "%s",
-> -				xstats[i].desc);
-> +		seq_printf(sf, "%s", xstats[i].desc);
-> +
->  		/* inner loop does each group */
->  		for (; j < xstats[i].endpoint; j++)
-> -			len += scnprintf(buf + len, PATH_MAX - len, " %u",
-> -					counter_val(stats, j));
-> -		len += scnprintf(buf + len, PATH_MAX - len, "\n");
-> +			seq_printf(sf, " %u", counter_val(stats, j));
-> +		seq_printf(sf, "\n");
->  	}
->  	/* extra precision counters */
->  	for_each_possible_cpu(i) {
-> @@ -74,18 +72,14 @@ int xfs_stats_format(struct xfsstats __percpu *stats, char *buf)
->  		defer_relog += per_cpu_ptr(stats, i)->s.defer_relog;
->  	}
->  
-> -	len += scnprintf(buf + len, PATH_MAX-len, "xpc %Lu %Lu %Lu\n",
-> +	seq_printf(sf, "xpc %Lu %Lu %Lu\n",
->  			xs_xstrat_bytes, xs_write_bytes, xs_read_bytes);
-> -	len += scnprintf(buf + len, PATH_MAX-len, "defer_relog %llu\n",
-> -			defer_relog);
-> -	len += scnprintf(buf + len, PATH_MAX-len, "debug %u\n",
-> +	seq_printf(sf, "defer_relog %llu\n", defer_relog);
->  #if defined(DEBUG)
-> -		1);
-> +	seq_printf(sf, "debug 1\n");
->  #else
-> -		0);
-> +	seq_printf(sf, "debug 0\n");
->  #endif
-> -
-> -	return len;
->  }
+> The old version sysctl has some problems. First, it allows set value
+> bigger than 1, which is unnecessary. Second, it didn't follow the
+> rule of capabilities. Thirdly, it didn't use static key. This new
+> version fixes all the problems.
 
-That is a sysfs file?  What happened to the "one value per file" rule
-here?
-
-Ugh.
-
-Anyway, I like the idea, but as you can see here, it could lead to even
-more abuse of sysfs files.  We are just now getting people to use
-sysfs_emit() and that is showing us where people have been abusing the
-api in bad ways.
-
-Is there any way that sysfs can keep the existing show functionality and
-just do the seq_printf() for the buffer returned by the attribute file
-inside of the sysfs core?  That would allow us to keep all of the
-existing attribute file functions as-is, and still get rid of the sysfs
-core usage here?
-
-thanks,
-
-greg k-h
+Does any of that actually matter?
