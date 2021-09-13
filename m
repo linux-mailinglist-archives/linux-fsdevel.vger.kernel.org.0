@@ -2,107 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B13F409BDC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Sep 2021 20:10:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19DD4409C62
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Sep 2021 20:38:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346588AbhIMSLf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Sep 2021 14:11:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40906 "EHLO
+        id S238241AbhIMSjW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Sep 2021 14:39:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346562AbhIMSLf (ORCPT
+        with ESMTP id S241450AbhIMSjV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Sep 2021 14:11:35 -0400
-Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45886C061760
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 11:10:19 -0700 (PDT)
-Received: by mail-qt1-x834.google.com with SMTP id g11so8905622qtk.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 11:10:19 -0700 (PDT)
+        Mon, 13 Sep 2021 14:39:21 -0400
+Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB829C061760
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 11:38:05 -0700 (PDT)
+Received: by mail-pl1-x649.google.com with SMTP id w10-20020a170903310a00b0013a74038765so3581517plc.22
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 11:38:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=CrTVtOmuoVf96nTz7kdFQqbCSVSV3Q0MJ1SBqM620bA=;
-        b=rz8dgkQc9No0pdPKYoTN02+zFUzynYahwSz0IDpfNXzhpDj9cUye/fY4OMS9zG1tRi
-         5ciewBsc9nwisACmpHlIWZ3wxX2L+7AgD3ff0mYtnk9TCXin1RANN2wSDyTQgvdVMpw6
-         U+uQMLb7b+iyqAarJxk3vHZWPN3JCEaCm6CXnJoLuXLyhCS0LbWomjixD4MrxQnR3S8j
-         U3IWknP8CN0rfpAhJ0O0C8wurzEmSDBsMUEnCGCayf2Q3jDlbHIm2QB+kAghaDA9m8b4
-         Pkd7R8QiwhuoCnNuqcI1iH+DiVesej6zB7o4rrPzzYRfMf55BUxL9i6W8ECN6vy77fe2
-         Qk7g==
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=ORusbr9BmjXcPtqf7j3wkWSVtlEx7sQaXqjNFhLLsiA=;
+        b=Uxvo/AAaVm/TrsvJp2gPNfsdMAsdNAIFJblX2JLeH8VzGnDWWDFSFoA9yWUkSSpMiz
+         cGjKsie76v7gq+aIUvGk1bAoiZcDZQj8NQMlSNL6WGp60sBlfLD8FFHehC1QkZ7n/cv9
+         PT0kSVMrvv3dHZPO/o8Io+O2gZZTfKgfls4OVc22DWixMDPGZAqRdlFDNet11tfAs7e/
+         +4BNQQ2J7H5VMxHr4pQEGJ7ClSfgfoxNGYKCP4n61HRZ8AKVqUg6NB6Iw+a55vNnA1ny
+         VdH7D84V1kTI01XOVAgWHojt+9WSLUB2aiI/aliBL3hdIgK4TRKRr3uUHHeQNchu9Qal
+         MoZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CrTVtOmuoVf96nTz7kdFQqbCSVSV3Q0MJ1SBqM620bA=;
-        b=fNDMxdB65bRFjeNtDZTYaesPNw0xDZWJckJaKP0WVxyzuEA2LMuxOauInJAQNSyo+4
-         tUot2OC2YBVKw4X2ALbgD3V/cHOmB5Y2G/4RgFvqxl0GENoLa3MADwF5VCEcJ9ZOhP6n
-         dUhMClkF9nUnwpHHFrSzMo8M1QGnlCDZrvadNTjCKnbijFzdJ/fX6j7I2NfN700+xOra
-         j1TkzQMjVCSpHbnYwL5joYeNFSmaW2rTUSQ/Ntc5xVEEzL6dmcrFV+tUEqiF63XAjO2J
-         wCqw2AbEWcXPFzXa/2gpP6/+497+OSKUJY5cljrQD50iUOz8rSbt35c9HabNGnKsLNaN
-         0Uhw==
-X-Gm-Message-State: AOAM533G0bongDvMhxALeIwLxrAONsDT8e2QOdtt4j8FDL6kRHdUfUEJ
-        fDTw+zYADUYzxbovfyuuudo3E/KUAYLjGQ==
-X-Google-Smtp-Source: ABdhPJxNvWeBzeXxgZ6yLYj86fQHbWdUKXNVfIYcjfa6FiOPfjujqLW6MccyXCdfczNfqFKptn6JgA==
-X-Received: by 2002:ac8:7dc6:: with SMTP id c6mr817719qte.25.1631556618418;
-        Mon, 13 Sep 2021 11:10:18 -0700 (PDT)
-Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
-        by smtp.gmail.com with ESMTPSA id b12sm5554868qkk.3.2021.09.13.11.10.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Sep 2021 11:10:17 -0700 (PDT)
-Date:   Mon, 13 Sep 2021 14:12:12 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Folio discussion recap
-Message-ID: <YT+UfEH72o+Uabxv@cmpxchg.org>
-References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
- <YTu9HIu+wWWvZLxp@moria.home.lan>
- <20210911012324.6vb7tjbxvmpjfhxv@box.shutemov.name>
- <YT82zg6UE9DtQLhL@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YT82zg6UE9DtQLhL@dhcp22.suse.cz>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=ORusbr9BmjXcPtqf7j3wkWSVtlEx7sQaXqjNFhLLsiA=;
+        b=K06d3bmovSetsg+xdlh52rN00KN/hJjOapgbM5TUg5b7jHOryfCFn6SiY+sIxXo9Jg
+         AvWvUh4JqSBxbJTLGmunEGvupES200ziQJCl3PMJxnK75cBwfoXdhJ3pW3yx1YGP5f2l
+         9EA/gziEZP7kEaTTn07KV2Cx4do2Cuk1L1aHxUIDYU+XH1V2sjhunYVQ84WYc5HIRyDK
+         0y8VO8Fru17FkeQDNUjIxHoFvf9f49qdnUoUd/YabjvC09QhgPUCE8dKS220WE8iJA4Q
+         Q7RaVcgmklHQw8UKyAUSXokeoD1xbVxSEhObjxpofIhLaHVPybT9WAM4kiB5PZ+rDjSu
+         N6rw==
+X-Gm-Message-State: AOAM532FpP6gxZT6yzIoEecCHd/xECnFC0SfAWlE4Pucjx3ew7Q8Vz4P
+        YMolpnsRX2Zyr7ceiiG28JRar3RvhnvA+ac=
+X-Google-Smtp-Source: ABdhPJyjtH0D7FayRsBKsENe5kjIx+9tqfBFSgR2CE2IKyePXWGrlsCUJovbx0HZTl6n38vb3KkdnSnzJdwn0u0=
+X-Received: from ramjiyani.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:2edd])
+ (user=ramjiyani job=sendgmr) by 2002:a17:90a:7f04:: with SMTP id
+ k4mr1046505pjl.0.1631558284830; Mon, 13 Sep 2021 11:38:04 -0700 (PDT)
+Date:   Mon, 13 Sep 2021 18:37:52 +0000
+Message-Id: <20210913183753.563103-1-ramjiyani@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.33.0.309.g3052b89438-goog
+Subject: [PATCH] aio: Add support for the POLLFREE
+From:   Ramji Jiyani <ramjiyani@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Ramji Jiyani <ramjiyani@google.com>, kernel-team@android.com,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 13, 2021 at 01:32:30PM +0200, Michal Hocko wrote:
-> The existing code (fs or other subsystem interacting with MM) is
-> going to require quite a lot of changes to move away from struct
-> page notion but I do not see folios to add fundamental blocker
-> there.
+Commit f5cb779ba163 ("ANDROID: binder: remove waitqueue when thread
+exits.") fixed the use-after-free in eventpoll but aio still has the
+same issue because it doesn't honor the POLLFREE flag.
 
-The current folio seems to do quite a bit of that work, actually. But
-it'll be undone when the MM conversion matures the data structure into
-the full-blown new page.
+Add support for the POLLFREE flag to force complete iocb inline in
+aio_poll_wake(). A thread may use it to signal it's exit and/or request
+to cleanup while pending poll request. In this case, aio_poll_wake()
+needs to make sure it doesn't keep any reference to the queue entry
+before returning from wake to avoid possible use after free via
+poll_cancel() path.
 
-It's not about hopes and dreams, it's the simple fact that the patches
-do something now that seems very valuable, but which we'll lose again
-over time. And avoiding that is a relatively minor adjustment at this
-time compared to a much larger one later on.
+The POLLFREE flag is no more exclusive to the epoll and is being
+shared with the aio. Remove comment from poll.h to avoid confusion.
+Also enclosed the POLLFREE macro definition in parentheses to fix
+checkpatch error.
 
-So yeah, it's not really a blocker. It's just a missed opportunity to
-lastingly disentangle struct page's multiple roles when touching all
-the relevant places anyway. It's also (needlessly) betting that
-compound pages can be made into a scalable, reliable, and predictable
-allocation model, and proliferating them into fs/ based on that.
+Signed-off-by: Ramji Jiyani <ramjiyani@google.com>
+---
+ fs/aio.c                        | 45 ++++++++++++++++++---------------
+ include/uapi/asm-generic/poll.h |  2 +-
+ 2 files changed, 26 insertions(+), 21 deletions(-)
 
-These patches, and all the ones that will need to follow to finish the
-conversion, are exceptionally expensive. It would have been nice to
-get more out of this disruption than to identify the relatively few
-places that genuinely need compound_head(), and having a datatype for
-N contiguous pages. Is there merit in solving those problems? Sure. Is
-it a robust, forward-looking direction for the MM space that justifies
-the cost of these and later patches? You seem to think so, I don't.
+diff --git a/fs/aio.c b/fs/aio.c
+index 51b08ab01dff..5d539c05df42 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1674,6 +1674,7 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
+ {
+ 	struct poll_iocb *req = container_of(wait, struct poll_iocb, wait);
+ 	struct aio_kiocb *iocb = container_of(req, struct aio_kiocb, poll);
++	struct kioctx *ctx = iocb->ki_ctx;
+ 	__poll_t mask = key_to_poll(key);
+ 	unsigned long flags;
+ 
+@@ -1683,29 +1684,33 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
+ 
+ 	list_del_init(&req->wait.entry);
+ 
+-	if (mask && spin_trylock_irqsave(&iocb->ki_ctx->ctx_lock, flags)) {
+-		struct kioctx *ctx = iocb->ki_ctx;
++	/*
++	 * Use irqsave/irqrestore because not all filesystems (e.g. fuse)
++	 * call this function with IRQs disabled and because IRQs have to
++	 * be disabled before ctx_lock is obtained.
++	 */
++	if (mask & POLLFREE) {
++		/* Force complete iocb inline to remove refs to deleted entry */
++		spin_lock_irqsave(&ctx->ctx_lock, flags);
++	} else if (!(mask && spin_trylock_irqsave(&ctx->ctx_lock, flags))) {
++		/* Can't complete iocb inline; schedule for later */
++		schedule_work(&req->work);
++		return 1;
++	}
+ 
+-		/*
+-		 * Try to complete the iocb inline if we can. Use
+-		 * irqsave/irqrestore because not all filesystems (e.g. fuse)
+-		 * call this function with IRQs disabled and because IRQs
+-		 * have to be disabled before ctx_lock is obtained.
+-		 */
+-		list_del(&iocb->ki_list);
+-		iocb->ki_res.res = mangle_poll(mask);
+-		req->done = true;
+-		if (iocb->ki_eventfd && eventfd_signal_allowed()) {
+-			iocb = NULL;
+-			INIT_WORK(&req->work, aio_poll_put_work);
+-			schedule_work(&req->work);
+-		}
+-		spin_unlock_irqrestore(&ctx->ctx_lock, flags);
+-		if (iocb)
+-			iocb_put(iocb);
+-	} else {
++	/* complete iocb inline */
++	list_del(&iocb->ki_list);
++	iocb->ki_res.res = mangle_poll(mask);
++	req->done = true;
++	if (iocb->ki_eventfd && eventfd_signal_allowed()) {
++		iocb = NULL;
++		INIT_WORK(&req->work, aio_poll_put_work);
+ 		schedule_work(&req->work);
+ 	}
++	spin_unlock_irqrestore(&ctx->ctx_lock, flags);
++	if (iocb)
++		iocb_put(iocb);
++
+ 	return 1;
+ }
+ 
+diff --git a/include/uapi/asm-generic/poll.h b/include/uapi/asm-generic/poll.h
+index 41b509f410bf..35b1b69af729 100644
+--- a/include/uapi/asm-generic/poll.h
++++ b/include/uapi/asm-generic/poll.h
+@@ -29,7 +29,7 @@
+ #define POLLRDHUP       0x2000
+ #endif
+ 
+-#define POLLFREE	(__force __poll_t)0x4000	/* currently only for epoll */
++#define POLLFREE	((__force __poll_t)0x4000)
+ 
+ #define POLL_BUSY_LOOP	(__force __poll_t)0x8000
+ 
+-- 
+2.33.0.309.g3052b89438-goog
 
-It doesn't look like we'll agree on this. But I think I've made my
-points several times now, so I'll defer to Linus and Andrew.
