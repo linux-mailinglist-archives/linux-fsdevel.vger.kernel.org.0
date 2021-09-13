@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B3361409FED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 00:35:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4318A40A014
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 00:36:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348380AbhIMWf4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Sep 2021 18:35:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50722 "EHLO mail.kernel.org"
+        id S1348606AbhIMWgu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Sep 2021 18:36:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1348390AbhIMWfW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Sep 2021 18:35:22 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3406D61163;
-        Mon, 13 Sep 2021 22:34:05 +0000 (UTC)
+        id S1348618AbhIMWft (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Sep 2021 18:35:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8319D6113B;
+        Mon, 13 Sep 2021 22:34:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631572446;
-        bh=zGBAYFJpWCBJwShup3H4U2EPZYTc5BvLr0AMTxsTDmg=;
+        s=k20201202; t=1631572473;
+        bh=+1iKuTUyQl2pN5pddZaORmIg6w62UR4xUc71rEgJotc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ti97m0ccDAABfOkG8pejUjVk0U8yfFmUKGS7ZJ/Sm+dVwfR6830N7E0MBheBaB3fI
-         t1NUgcrpaBfrJXs8/uYfTG5Ew7420ZHGyyqJuA57LsuHZNm4u2sWNbIlGpqSbbvJrd
-         Zb8maQA/RWBToZxJfmLT2HFm3QNuaov1XHV9dmIKc8TfLwlWKWY0AagzWu3FViEqlL
-         v21bHxs2/T1ZrpK70ipiQGTGm2YRs2alcxe7iz+ieUYWp46ZQqh0h82/sDD01MCqo+
-         ITU/o3JK4qkjlH1WOYLBDnhePkCXFtkwM3Yh9F1MySrN9RzUg3zrgEf+wsswgEO4xg
-         QGWFhGinM6dlw==
+        b=Ot0mtBx2AwyrYwZUhJiaB9mF/zFQxuFqhq3+lL74VKCj33Nk45HCdCPy1Ss18sodv
+         QW20zSMGqsqUtMYFT2rxNsCdXA52mWmnYqXYmCxIabWDdb5mkXt511LpAknPUunkix
+         F8dYQ+IxueSiArFZbiVSsZc7eodGzo1q4VE1M04MbDW/gpdCHK77T8priub0bI3oLz
+         wDhWk/PyYY+bFtY20vhEWq6mc0ZmODsQ4YhNMWPpJIF0ssQZblKJSHFRfLKZU5UjVH
+         YuY3HjdpowSkaFvSEj3cAzZbb1jsHtiUvet8Y1smswxpIzvBTfdQYaWQiXcKe4ARZF
+         xMC4AkWer7M4g==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Ohhoon Kwon <ohoono.kwon@samsung.com>,
@@ -34,12 +34,12 @@ Cc:     Ohhoon Kwon <ohoono.kwon@samsung.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.14 19/25] connector: send event on write to /proc/[pid]/comm
-Date:   Mon, 13 Sep 2021 18:33:33 -0400
-Message-Id: <20210913223339.435347-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.13 13/19] connector: send event on write to /proc/[pid]/comm
+Date:   Mon, 13 Sep 2021 18:34:09 -0400
+Message-Id: <20210913223415.435654-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210913223339.435347-1-sashal@kernel.org>
-References: <20210913223339.435347-1-sashal@kernel.org>
+In-Reply-To: <20210913223415.435654-1-sashal@kernel.org>
+References: <20210913223415.435654-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -74,7 +74,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/fs/proc/base.c b/fs/proc/base.c
-index e5b5f7709d48..533d5836eb9a 100644
+index a0a2fc1c9da2..641389868deb 100644
 --- a/fs/proc/base.c
 +++ b/fs/proc/base.c
 @@ -95,6 +95,7 @@
