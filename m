@@ -2,36 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 179BF4096D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Sep 2021 17:14:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 048D14096DF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Sep 2021 17:15:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344259AbhIMPQJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Sep 2021 11:16:09 -0400
-Received: from relayfre-01.paragon-software.com ([176.12.100.13]:52986 "EHLO
-        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1347011AbhIMPP2 (ORCPT
+        id S1346308AbhIMPQk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Sep 2021 11:16:40 -0400
+Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:35113 "EHLO
+        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1345156AbhIMPQ0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Sep 2021 11:15:28 -0400
+        Mon, 13 Sep 2021 11:16:26 -0400
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id BA40D1D17;
-        Mon, 13 Sep 2021 18:14:06 +0300 (MSK)
+        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 2EE9382267;
+        Mon, 13 Sep 2021 18:15:09 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1631546046;
-        bh=JyO+R0eWKCW9UDCCeZfpjO7DE9L4mgM9xZntgOqdjYw=;
+        d=paragon-software.com; s=mail; t=1631546109;
+        bh=qhCjmOje5rh/9BrafeyLg4wrzMX0Zjf+J27NTAXGeJg=;
         h=Date:Subject:From:To:References:CC:In-Reply-To;
-        b=pV6BVazsNGy5DfX5JEwi5pnn7v/uAs7wXAjgI7r2lbxROziTJ1AS5BXXdTcUIEJbA
-         imYSAo3MOtdNjYvMhgjE/oatykw14poLngTTJ21kdJ2nbYjxmOeL49MLYpeUux02S1
-         z0l3gIroLA9B6nsKBSzgDdGLI4EMmMFVUh+1IXaA=
+        b=pg3+Y5ndb6yo8bJy22KFLgUePq0SKElLpazTW2uSrSLwp/NS1lAQ3j/l47RVokQ35
+         66TVZdg2/0jSBs7Bmq2LOwjK2BV8mn9O4VcNFa164w/koQdSF/p6mVZoSum1LjmOrz
+         dd+hTwmx/W1YtH1f3ZDidGp3PTkQL+4iZfe3QAJQ=
 Received: from [192.168.211.103] (192.168.211.103) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Mon, 13 Sep 2021 18:14:06 +0300
-Message-ID: <cc783784-15b8-c631-b7b3-9c0ea9f74028@paragon-software.com>
-Date:   Mon, 13 Sep 2021 18:14:05 +0300
+ 15.1.2176.2; Mon, 13 Sep 2021 18:15:08 +0300
+Message-ID: <26f40163-4197-2532-0937-074f06c1847b@paragon-software.com>
+Date:   Mon, 13 Sep 2021 18:15:08 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.1.0
-Subject: [PATCH 2/3] fs/ntfs3: Change max hardlinks limit to 4000
+Subject: [PATCH 3/3] fs/ntfs3: Add sync flag to ntfs_sb_write_run and
+ al_update
 Content-Language: en-US
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     <ntfs3@lists.linux.dev>
@@ -47,32 +48,201 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-xfstest generic/041 works with 3003, so we need to raise limit.
+This allows to wait only when it's requested.
+It speeds up creation of hardlinks.
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
- fs/ntfs3/ntfs.h | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ fs/ntfs3/attrib.c   | 2 +-
+ fs/ntfs3/attrlist.c | 6 +++---
+ fs/ntfs3/frecord.c  | 2 +-
+ fs/ntfs3/fslog.c    | 8 ++++----
+ fs/ntfs3/fsntfs.c   | 8 ++++----
+ fs/ntfs3/inode.c    | 2 +-
+ fs/ntfs3/ntfs_fs.h  | 4 ++--
+ fs/ntfs3/xattr.c    | 2 +-
+ 8 files changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/fs/ntfs3/ntfs.h b/fs/ntfs3/ntfs.h
-index 6bb3e595263b..6c604204d77b 100644
---- a/fs/ntfs3/ntfs.h
-+++ b/fs/ntfs3/ntfs.h
-@@ -20,9 +20,11 @@
+diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
+index b1055b284c60..0ae51a360899 100644
+--- a/fs/ntfs3/attrib.c
++++ b/fs/ntfs3/attrib.c
+@@ -291,7 +291,7 @@ int attr_make_nonresident(struct ntfs_inode *ni, struct ATTRIB *attr,
+ 		if (!rsize) {
+ 			/* Empty resident -> Non empty nonresident. */
+ 		} else if (!is_data) {
+-			err = ntfs_sb_write_run(sbi, run, 0, data, rsize);
++			err = ntfs_sb_write_run(sbi, run, 0, data, rsize, 0);
+ 			if (err)
+ 				goto out2;
+ 		} else if (!page) {
+diff --git a/fs/ntfs3/attrlist.c b/fs/ntfs3/attrlist.c
+index fa32399eb517..e41443cb3d63 100644
+--- a/fs/ntfs3/attrlist.c
++++ b/fs/ntfs3/attrlist.c
+@@ -336,7 +336,7 @@ int al_add_le(struct ntfs_inode *ni, enum ATTR_TYPE type, const __le16 *name,
  
- #define NTFS_NAME_LEN 255
+ 	if (attr && attr->non_res) {
+ 		err = ntfs_sb_write_run(ni->mi.sbi, &al->run, 0, al->le,
+-					al->size);
++					al->size, 0);
+ 		if (err)
+ 			return err;
+ 		al->dirty = false;
+@@ -423,7 +423,7 @@ bool al_delete_le(struct ntfs_inode *ni, enum ATTR_TYPE type, CLST vcn,
+ 	return true;
+ }
  
--/* ntfs.sys used 500 maximum links on-disk struct allows up to 0xffff. */
--#define NTFS_LINK_MAX 0x400
--//#define NTFS_LINK_MAX 0xffff
-+/*
-+ * ntfs.sys used 500 maximum links on-disk struct allows up to 0xffff.
-+ * xfstest generic/041 creates 3003 hardlinks.
-+ */
-+#define NTFS_LINK_MAX 4000
+-int al_update(struct ntfs_inode *ni)
++int al_update(struct ntfs_inode *ni, int sync)
+ {
+ 	int err;
+ 	struct ATTRIB *attr;
+@@ -445,7 +445,7 @@ int al_update(struct ntfs_inode *ni)
+ 		memcpy(resident_data(attr), al->le, al->size);
+ 	} else {
+ 		err = ntfs_sb_write_run(ni->mi.sbi, &al->run, 0, al->le,
+-					al->size);
++					al->size, sync);
+ 		if (err)
+ 			goto out;
  
- /*
-  * Activate to use 64 bit clusters instead of 32 bits in ntfs.sys.
+diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
+index 834cb361f61f..5910f6c179b8 100644
+--- a/fs/ntfs3/frecord.c
++++ b/fs/ntfs3/frecord.c
+@@ -3212,7 +3212,7 @@ int ni_write_inode(struct inode *inode, int sync, const char *hint)
+ 					goto out;
+ 			}
+ 
+-			err = al_update(ni);
++			err = al_update(ni, sync);
+ 			if (err)
+ 				goto out;
+ 		}
+diff --git a/fs/ntfs3/fslog.c b/fs/ntfs3/fslog.c
+index b5853aed0e25..88c07da08fd5 100644
+--- a/fs/ntfs3/fslog.c
++++ b/fs/ntfs3/fslog.c
+@@ -2219,7 +2219,7 @@ static int last_log_lsn(struct ntfs_log *log)
+ 
+ 			err = ntfs_sb_write_run(log->ni->mi.sbi,
+ 						&log->ni->file.run, off, page,
+-						log->page_size);
++						log->page_size, 0);
+ 
+ 			if (err)
+ 				goto out;
+@@ -3710,7 +3710,7 @@ static int do_action(struct ntfs_log *log, struct OPEN_ATTR_ENRTY *oe,
+ 
+ 	if (a_dirty) {
+ 		attr = oa->attr;
+-		err = ntfs_sb_write_run(sbi, oa->run1, vbo, buffer_le, bytes);
++		err = ntfs_sb_write_run(sbi, oa->run1, vbo, buffer_le, bytes, 0);
+ 		if (err)
+ 			goto out;
+ 	}
+@@ -5152,10 +5152,10 @@ int log_replay(struct ntfs_inode *ni, bool *initialized)
+ 
+ 	ntfs_fix_pre_write(&rh->rhdr, log->page_size);
+ 
+-	err = ntfs_sb_write_run(sbi, &ni->file.run, 0, rh, log->page_size);
++	err = ntfs_sb_write_run(sbi, &ni->file.run, 0, rh, log->page_size, 0);
+ 	if (!err)
+ 		err = ntfs_sb_write_run(sbi, &log->ni->file.run, log->page_size,
+-					rh, log->page_size);
++					rh, log->page_size, 0);
+ 
+ 	kfree(rh);
+ 	if (err)
+diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
+index 91e3743e1442..c89a0f5c5ad4 100644
+--- a/fs/ntfs3/fsntfs.c
++++ b/fs/ntfs3/fsntfs.c
+@@ -1080,7 +1080,7 @@ int ntfs_sb_write(struct super_block *sb, u64 lbo, size_t bytes,
+ }
+ 
+ int ntfs_sb_write_run(struct ntfs_sb_info *sbi, const struct runs_tree *run,
+-		      u64 vbo, const void *buf, size_t bytes)
++		      u64 vbo, const void *buf, size_t bytes, int sync)
+ {
+ 	struct super_block *sb = sbi->sb;
+ 	u8 cluster_bits = sbi->cluster_bits;
+@@ -1100,7 +1100,7 @@ int ntfs_sb_write_run(struct ntfs_sb_info *sbi, const struct runs_tree *run,
+ 
+ 	for (;;) {
+ 		u32 op = len < bytes ? len : bytes;
+-		int err = ntfs_sb_write(sb, lbo, op, buf, 0);
++		int err = ntfs_sb_write(sb, lbo, op, buf, sync);
+ 
+ 		if (err)
+ 			return err;
+@@ -2175,7 +2175,7 @@ int ntfs_insert_security(struct ntfs_sb_info *sbi,
+ 
+ 	/* Write main SDS bucket. */
+ 	err = ntfs_sb_write_run(sbi, &ni->file.run, sbi->security.next_off,
+-				d_security, aligned_sec_size);
++				d_security, aligned_sec_size, 0);
+ 
+ 	if (err)
+ 		goto out;
+@@ -2193,7 +2193,7 @@ int ntfs_insert_security(struct ntfs_sb_info *sbi,
+ 
+ 	/* Write copy SDS bucket. */
+ 	err = ntfs_sb_write_run(sbi, &ni->file.run, mirr_off, d_security,
+-				aligned_sec_size);
++				aligned_sec_size, 0);
+ 	if (err)
+ 		goto out;
+ 
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 9f740fd301b2..e719036a7cea 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -1586,7 +1586,7 @@ struct inode *ntfs_create_inode(struct user_namespace *mnt_userns,
+ 
+ 	/* Write non resident data. */
+ 	if (nsize) {
+-		err = ntfs_sb_write_run(sbi, &ni->file.run, 0, rp, nsize);
++		err = ntfs_sb_write_run(sbi, &ni->file.run, 0, rp, nsize, 0);
+ 		if (err)
+ 			goto out7;
+ 	}
+diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
+index 372cda697dd4..b030548faba2 100644
+--- a/fs/ntfs3/ntfs_fs.h
++++ b/fs/ntfs3/ntfs_fs.h
+@@ -434,7 +434,7 @@ bool al_remove_le(struct ntfs_inode *ni, struct ATTR_LIST_ENTRY *le);
+ bool al_delete_le(struct ntfs_inode *ni, enum ATTR_TYPE type, CLST vcn,
+ 		  const __le16 *name, size_t name_len,
+ 		  const struct MFT_REF *ref);
+-int al_update(struct ntfs_inode *ni);
++int al_update(struct ntfs_inode *ni, int sync);
+ static inline size_t al_aligned(size_t size)
+ {
+ 	return (size + 1023) & ~(size_t)1023;
+@@ -575,7 +575,7 @@ int ntfs_sb_read(struct super_block *sb, u64 lbo, size_t bytes, void *buffer);
+ int ntfs_sb_write(struct super_block *sb, u64 lbo, size_t bytes,
+ 		  const void *buffer, int wait);
+ int ntfs_sb_write_run(struct ntfs_sb_info *sbi, const struct runs_tree *run,
+-		      u64 vbo, const void *buf, size_t bytes);
++		      u64 vbo, const void *buf, size_t bytes, int sync);
+ struct buffer_head *ntfs_bread_run(struct ntfs_sb_info *sbi,
+ 				   const struct runs_tree *run, u64 vbo);
+ int ntfs_read_run_nb(struct ntfs_sb_info *sbi, const struct runs_tree *run,
+diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
+index 6f88cb77a17f..310743976d2c 100644
+--- a/fs/ntfs3/xattr.c
++++ b/fs/ntfs3/xattr.c
+@@ -444,7 +444,7 @@ static noinline int ntfs_set_ea(struct inode *inode, const char *name,
+ 		/* Delete xattr, ATTR_EA */
+ 		ni_remove_attr_le(ni, attr, mi, le);
+ 	} else if (attr->non_res) {
+-		err = ntfs_sb_write_run(sbi, &ea_run, 0, ea_all, size);
++		err = ntfs_sb_write_run(sbi, &ea_run, 0, ea_all, size, 0);
+ 		if (err)
+ 			goto out;
+ 	} else {
 -- 
 2.33.0
 
