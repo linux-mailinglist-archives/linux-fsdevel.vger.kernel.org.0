@@ -2,116 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49E49408FB7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Sep 2021 15:45:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 264984096C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Sep 2021 17:08:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243407AbhIMNpy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Sep 2021 09:45:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S241915AbhIMNoG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Sep 2021 09:44:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AB37C61439;
-        Mon, 13 Sep 2021 13:30:59 +0000 (UTC)
-Date:   Mon, 13 Sep 2021 15:30:57 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/13] sysfs: add ->seq_show support to sysfs_ops
-Message-ID: <20210913133057.jecjno7uswlvfdu2@wittgenstein>
-References: <20210913054121.616001-1-hch@lst.de>
- <20210913054121.616001-8-hch@lst.de>
+        id S244125AbhIMPJQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Sep 2021 11:09:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346512AbhIMPJC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Sep 2021 11:09:02 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA3D3C05BD39;
+        Mon, 13 Sep 2021 06:47:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=2o21f40djM5aANch+hnWzvwqswYsNlXu0JdbF+Uae8M=; b=mWd0MfFrYPorMZMCayG9Lpi5bE
+        rLijC/+hxixhFynqqbncqSv+QEA9/PlikAsaBRJ8mQO98jTSBPQms5OVQpg2r+5hXWC1TA4C0YCuD
+        C3s5oO6mRfl6yAfjOJVy+5pKQmUsvDvQ+7q/DrRyPEpG1ouTZ2xZ3dBDP1oTzcR+BD46BffJLZspd
+        J8iHJ0PJVJL6GqE+BsKKB6uW4xgVOsRWdzCpB01AuEkTZJKTBhSupoIt9e7jhsBkgc17jAoOPAkrq
+        ckJpxG6xVkNbtcLr643bS48LpVGZqB4G6JOrYZpZbDr/SiWYYcFcAq2kxbpMVigDWQn+EWgCwxsxV
+        +e3UiqbA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mPmES-00DXOQ-6Z; Mon, 13 Sep 2021 13:43:14 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id F13369862C3; Mon, 13 Sep 2021 15:42:45 +0200 (CEST)
+Date:   Mon, 13 Sep 2021 15:42:45 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     CGEL <cgel.zte@gmail.com>
+Cc:     yzaikin@google.com, liu.hailong6@zte.com.cn, mingo@redhat.com,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, bristot@redhat.com, mcgrof@kernel.org,
+        keescook@chromium.org, pjt@google.com, yang.yang29@zte.com.cn,
+        joshdon@google.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Zeal Robot <zealci@zte.com.cm>
+Subject: Re: [PATCH] sched: Add a new version sysctl to control child runs
+ first
+Message-ID: <20210913134245.GD4323@worktop.programming.kicks-ass.net>
+References: <20210912041222.59480-1-yang.yang29@zte.com.cn>
+ <YT8IQioxUARMus9w@hirez.programming.kicks-ass.net>
+ <613f37fc.1c69fb81.9092.a4f5@mx.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210913054121.616001-8-hch@lst.de>
+In-Reply-To: <613f37fc.1c69fb81.9092.a4f5@mx.google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 13, 2021 at 07:41:15AM +0200, Christoph Hellwig wrote:
-> Allow attributes to directly use the seq_file method instead of
-> carving out a buffer that can easily lead to buffer overflows.
+On Mon, Sep 13, 2021 at 11:37:31AM +0000, CGEL wrote:
+> On Mon, Sep 13, 2021 at 10:13:54AM +0200, Peter Zijlstra wrote:
+> > On Sun, Sep 12, 2021 at 04:12:23AM +0000, cgel.zte@gmail.com wrote:
+> > > From: Yang Yang <yang.yang29@zte.com.cn>
+> > > 
+> > > The old version sysctl has some problems. First, it allows set value
+> > > bigger than 1, which is unnecessary. Second, it didn't follow the
+> > > rule of capabilities. Thirdly, it didn't use static key. This new
+> > > version fixes all the problems.
+> > 
+> > Does any of that actually matter?
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
+> For the first problem, I think the reason why sysctl_schedstats() only
+> accepts 0 or 1, is suitbale for sysctl_child_runs_first(). Since
+> task_fork_fair() only need sysctl_sched_child_runs_first to be
+> zero or non-zero.
 
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+This could potentially break people that already write a larger value in
+it -- by accident or otherwise.
 
->  fs/sysfs/file.c       | 19 ++++++++++++++-----
->  include/linux/sysfs.h |  9 +++++++--
->  2 files changed, 21 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
-> index 42dcf96881b68..12e0bfe40a2b4 100644
-> --- a/fs/sysfs/file.c
-> +++ b/fs/sysfs/file.c
-> @@ -45,6 +45,9 @@ static int sysfs_kf_seq_show(struct seq_file *sf, void *v)
->  	ssize_t count;
->  	char *buf;
->  
-> +	if (ops->seq_show)
-> +		return ops->seq_show(kobj, of->kn->priv, sf);
-> +
->  	if (WARN_ON_ONCE(!ops->show))
->  		return -EINVAL;
->  
-> @@ -268,6 +271,10 @@ int sysfs_add_file_mode_ns(struct kernfs_node *parent,
->  		return -EINVAL;
->  
->  	if (mode & SYSFS_PREALLOC) {
-> +		if (WARN(sysfs_ops->seq_show, KERN_ERR
-> +				"seq_show not supported on prealloc file: %s\n",
-> +				kobject_name(kobj)))
-> +			return -EINVAL;
->  		if (sysfs_ops->show && sysfs_ops->store)
->  			ops = &sysfs_prealloc_kfops_rw;
->  		else if (sysfs_ops->show)
-> @@ -275,12 +282,14 @@ int sysfs_add_file_mode_ns(struct kernfs_node *parent,
->  		else if (sysfs_ops->store)
->  			ops = &sysfs_prealloc_kfops_wo;
->  	} else {
-> -		if (sysfs_ops->show && sysfs_ops->store)
-> -			ops = &sysfs_file_kfops_rw;
-> -		else if (sysfs_ops->show)
-> -			ops = &sysfs_file_kfops_ro;
-> -		else if (sysfs_ops->store)
-> +		if (sysfs_ops->seq_show || sysfs_ops->show) {
-> +			if (sysfs_ops->store)
-> +				ops = &sysfs_file_kfops_rw;
-> +			else
-> +				ops = &sysfs_file_kfops_ro;
-> +		} else if (sysfs_ops->store) {
->  			ops = &sysfs_file_kfops_wo;
-> +		}
->  	}
->  
->  	if (!ops)
-> diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
-> index e3f1e8ac1f85b..e1ab4da716730 100644
-> --- a/include/linux/sysfs.h
-> +++ b/include/linux/sysfs.h
-> @@ -236,8 +236,13 @@ struct bin_attribute bin_attr_##_name = __BIN_ATTR_WO(_name, _size)
->  struct bin_attribute bin_attr_##_name = __BIN_ATTR_RW(_name, _size)
->  
->  struct sysfs_ops {
-> -	ssize_t	(*show)(struct kobject *, struct attribute *, char *);
-> -	ssize_t	(*store)(struct kobject *, struct attribute *, const char *, size_t);
-> +	int	(*seq_show)(struct kobject *kobj, struct attribute *attr,
-> +			struct seq_file *sf);
-> +	ssize_t	(*store)(struct kobject *kobj, struct attribute *attr,
-> +			const char *buf, size_t size);
-> +
-> +	/* deprecated except for preallocated attributes: */
-> +	ssize_t	(*show)(struct kobject *kob, struct attribute *attr, char *buf);
->  };
->  
->  #ifdef CONFIG_SYSFS
-> -- 
-> 2.30.2
-> 
+> For the second problem, I remember there is a rule: try to
+> administration system through capilities but not depends on
+> root identity. Just like sysctl_schedstats() or other
+> sysctl_xx().
+
+It seems entirely daft to me; those files are already 644, if root opens
+the file and passes it along, it gets to keep the pieces.
+
+> For the thirdly problem, sysctl_child_runs_first maynot changes
+> often, but may accessed often, like static_key delayacct_key
+> controlled by sysctl_delayacct().
+
+Can you actually show it makes a performance difference in a fork
+micro-bench? Given the amount of gunk fork() already does, I don't think
+it'll matter one way or the other, and in that case, simpler is better.
