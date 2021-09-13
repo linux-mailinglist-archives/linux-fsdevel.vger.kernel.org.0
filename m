@@ -2,150 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0720A40A123
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 01:00:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DA8840A18E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 01:23:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350616AbhIMXBm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Sep 2021 19:01:42 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:44158 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344357AbhIMXBO (ORCPT
+        id S241102AbhIMXYj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Sep 2021 19:24:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56322 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230375AbhIMXYi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Sep 2021 19:01:14 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 457A2200A9;
-        Mon, 13 Sep 2021 22:59:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1631573992; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qcWfA5d+lR5YNPO7UjfSk/r4MnR7nuV2MelnKFymfFI=;
-        b=bFMb9r2E6Z1dQTvgeOsdXcvYuLV0jED1J2X8Rzpf8Ndy6dMhGEodOJ6BrFFDZmTFBLPkYt
-        vxaPKF3sPHjnKiPILhSOiBbgYnHsP0oN9w+LbIVbsnCU8afBQSfaZRaGo5DEWYbeVv0Jp/
-        pzxmWVAw1FCcDlpHSsdNz0aw42VLNuc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1631573992;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qcWfA5d+lR5YNPO7UjfSk/r4MnR7nuV2MelnKFymfFI=;
-        b=x+LS/pYZq8OvczBtDA5aXDJMh656Qb42uLSsmq8qeH15lCy3n80dFbMAzHdCvjTTbL4ozr
-        H3e2zD8dJCc4caBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A4CEE13BA9;
-        Mon, 13 Sep 2021 22:59:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id JnnfGOXXP2G7TAAAMHmgww
-        (envelope-from <neilb@suse.de>); Mon, 13 Sep 2021 22:59:49 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Mon, 13 Sep 2021 19:24:38 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D5D7C061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 16:23:22 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id g14so20178696ljk.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 16:23:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IJIDYZgKiygSSxYRNkxoNXbd0kWV7FZNitdhXxha1Po=;
+        b=Y1Aryd99OOGEmuqWogyRK+T349nSzQP6P4/UX3uS7PMAcEJFbHvBDRIf5LR1Egenh2
+         ol4VSWTmzAXA6COOrx71hc46fMhwRwKDuLow4/bqyzig2RHEELJ8juuZ9jYdMexSWcaU
+         yGMwb0q80yIvlcaZCiZIihGOMNRtw3Xa4sDAE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IJIDYZgKiygSSxYRNkxoNXbd0kWV7FZNitdhXxha1Po=;
+        b=YOwLvLuJgrrBIJJkUeAKRtL893AE1C9U1raFDdet/EwvEjLf6qHX/W7cWsxXN2nZhu
+         gzPrsMdFuSZ40If97NEg+/K/7Nt0CC615ZKrrrwuHLwTpS25h6CRbZim5nTTJCPuvBus
+         7ZRgtuTmj6vIoY6eI+Z8ETvZrpEtq2c2Yl/48kO9SJNQC/VdLDZ68xVHAgV/3rDXTQy6
+         tGW0Osg4zdr/NE7G9XmAawlwd4Quxp3Wcya4A9Zyw5i5RONk+2NYVCmdsPfE/WWGnEjE
+         KoCqvCdcNM6ntgOPRZvQ6YqrYMWtYApZJFc/jLF/F6TAGMKwjGk+NOMbGjSlAwldqJUq
+         GAoQ==
+X-Gm-Message-State: AOAM531EkwCd70Td18SuiyL6d5ldcazMqdO4CLbTnwAoubb7rlmk6nIB
+        piFS7DcXRTFmIFTrMBhu7KFASE5EejYo/F+IGd0=
+X-Google-Smtp-Source: ABdhPJwXYMDnisGqIXERyZaGUu8rKyp6KbquV7Ukgu1qof0yrG/PAqlhRPe1qTqt7DHvOkgGKDljFg==
+X-Received: by 2002:a05:651c:154b:: with SMTP id y11mr12901993ljp.480.1631575400372;
+        Mon, 13 Sep 2021 16:23:20 -0700 (PDT)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id o17sm956887lfi.203.2021.09.13.16.23.19
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Sep 2021 16:23:20 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id s12so20260315ljg.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 16:23:19 -0700 (PDT)
+X-Received: by 2002:a2e:96c7:: with SMTP id d7mr12780196ljj.191.1631575399749;
+ Mon, 13 Sep 2021 16:23:19 -0700 (PDT)
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Amir Goldstein" <amir73il@gmail.com>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        "Chuck Lever" <chuck.lever@oracle.com>,
-        "Linux NFS Mailing List" <linux-nfs@vger.kernel.org>,
-        "Josef Bacik" <josef@toxicpanda.com>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "Theodore Tso" <tytso@mit.edu>, "Jan Kara" <jack@suse.cz>
-Subject: Re: [PATCH v2] BTRFS/NFSD: provide more unique inode number for btrfs export
-In-reply-to: <CAOQ4uxgFf5c0to7f4cT9c9JwWisYRf-kxiZS4BuyXaQV=bLbJg@mail.gmail.com>
-References: <162995209561.7591.4202079352301963089@noble.neil.brown.name>,
- <162995778427.7591.11743795294299207756@noble.neil.brown.name>,
- <YSkQ31UTVDtBavOO@infradead.org>,
- <163010550851.7591.9342822614202739406@noble.neil.brown.name>,
- <YSnhHl0HDOgg07U5@infradead.org>,
- <163038594541.7591.11109978693705593957@noble.neil.brown.name>,
- <YS8ppl6SYsCC0cql@infradead.org>, <20210901152251.GA6533@fieldses.org>,
- <163055605714.24419.381470460827658370@noble.neil.brown.name>,
- <20210905160719.GA20887@fieldses.org>,
- <163089177281.15583.1479086104083425773@noble.neil.brown.name>,
- <CAOQ4uxjbjkqEEXTe7V4vaUUM1gyJwe6iSAaz=PdxJyU2M14K-w@mail.gmail.com>,
- <163149382437.8417.3479990258042844514@noble.neil.brown.name>,
- <CAOQ4uxgFf5c0to7f4cT9c9JwWisYRf-kxiZS4BuyXaQV=bLbJg@mail.gmail.com>
-Date:   Tue, 14 Sep 2021 08:59:46 +1000
-Message-id: <163157398661.3992.2107487416802405356@noble.neil.brown.name>
+References: <20210910182536.685100-1-axboe@kernel.dk> <8a278aa1-81ed-72e0-dec7-b83997e5d801@kernel.dk>
+In-Reply-To: <8a278aa1-81ed-72e0-dec7-b83997e5d801@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 13 Sep 2021 16:23:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj3Lu=mJ8L7iE0RQXGZVdoSMz6rnPmrWoVNJhTaObOqkA@mail.gmail.com>
+Message-ID: <CAHk-=wj3Lu=mJ8L7iE0RQXGZVdoSMz6rnPmrWoVNJhTaObOqkA@mail.gmail.com>
+Subject: Re: [PATCHSET 0/3] Add ability to save/restore iov_iter state
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 13 Sep 2021, Amir Goldstein wrote:
-> 
-> Right, so the right fix IMO would be to provide similar semantics
-> to the NFS client, like your first patch set tried to do.
-> 
+On Mon, Sep 13, 2021 at 3:43 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> Al, Linus, are you OK with this? I think we should get this in for 5.15.
+> I didn't resend the whole series, just a v2 of patch 1/3 to fix that bvec
+> vs iovec issue. Let me know if you want the while thing resent.
 
-Like every other approach, this sounds good and sensible ...  until
-you examine the details.
+So I'm ok with the iov_iter side, but the io_uring side seems still
+positively buggy, and very confused.
 
-For NFSv3 (RFC1813) this would be a protocol violation.
-Section 3.3.3 (LOOKUP) says:
-  A server will not allow a LOOKUP operation to cross a mountpoint to
-  the root of a different filesystem, even if the filesystem is
-  exported.
+It also messes with the state in bad ways and has internal knowledge.
+And some of it looks completely bogus.
 
-The filesystem is represented by the fsid, so this implies that the fsid
-of an object reported by LOOKUP must be the same as the fsid of the
-directory used in the LOOKUP.
+For example, I see
 
-Linux NFS does allow this restriction to be bypassed with the "crossmnt"
-export option.  Maybe if crossmnt were given it would be defensible to
-change the fsid - if crossmnt is not given, we leave the current
-behaviour.  Note that this is a hack and while it is extremely useful,
-it does not produce a seemly experience.  You can get exactly the same
-problems with "find" - just not as uniformly (mounting with "-o noac"
-makes them uniform).
+        state->count -= ret;
+        rw->bytes_done += ret;
 
-For NFSv4, we need to provide a "mounted-on" fileid for any mountpoint. 
-btrfs doesn't have a mounted-on fileid that can be used.  We can fake
-something that might work reasonably well - but it would be fake.  (but
-then ... btrfs already provided bogus information in getdents when there
-is a subvol root in the directory).
+and I go "that's BS". There's no way it's ok to start messing with the
+byte count inside the state like that. That just means that the state
+is now no longer the saved state, and it's some random garbage.
 
-But these are relatively minor.  The bigger problem is /proc/mounts.  If
-btrfs maintainers were willing to have every active subvolume appear in
-/proc/mounts, then I would be happy to fiddle the NFS fsid and allow
-every active NFS/btrfs subvolume to appear in /proc/mounts on the NFS
-client.  But they aren't.  So I am not.
+I also think that the "bytes_done += ret" is a big hint there: any
+time you restore the iovec state, you should then forward it by
+"bytes_done". But that's not what the code does.
 
-> > And I really don't see how an nfs export option would help...  Different
-> > people within and organisation and using the same export might have
-> > different expectations.
-> 
-> That's true.
-> But if admin decides to export a specific btrfs mount as a non-unified
-> filesystem, then NFS clients can decide whether ot not to auto-mount the
-> exported subvolumes and different users on the client machine can decide
-> if they want to rsync or rsync --one-file-system, just as they would with
-> local btrfs.
-> 
-> And maybe I am wrong, but I don't see how the decision on whether to
-> export a non-unified btrfs can be made a btrfs option or a nfsd global
-> option, that's why I ended up with export option.
+Instead, it will now restore the iovec styate with the *wrong* number
+of bytes remaining, but will start from the beginning of the iovec.
 
-Just because a btrfs option and global nfsd option are bad, that doesn't
-mean an export option must be good.  It needs to be presented and
-defended on its own merits.
+So I think the fs/io_uring.c use of this state buffer is completely wrong.
 
-My current opinion (and I must admit I am feeling rather jaded about the
-whole thing), is that while btrfs is a very interesting and valuable
-experiment in fs design, it contains core mistakes that cannot be
-incrementally fixed.  It should be marked as legacy with all current
-behaviour declared as intentional and not subject to change.  This would
-make way for a new "betrfs" which was designed based on all that we have
-learned.  It would use the same code base, but present a more coherent
-interface.  Exactly what that interface would be has yet to be decided,
-but we would not be bound to maintain anything just because btrfs
-supports it.
+What *may* be the right thing to do is to
 
-NeilBrown
+ (a) not mess with state->count
+
+ (b) when you restore the state you always use
+
+        iov_iter_restore(iter, state, bytes_done);
+
+to actually restore the *correct* state.
+
+Because modifying the iovec save state like that cannot be right, and
+if it's right it's still too ugly and fragile for words. That save
+state should be treated as a snapshot, not as a random buffer that you
+can make arbitrary changes to.
+
+See what I'm saying?
+
+I'd like Al to take a look at the io_uring.c usage too, since this was
+just my reaction from looking at that diff a bit more.
+
+           Linus
