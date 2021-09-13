@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDBD640840A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Sep 2021 07:49:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A741E40840E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Sep 2021 07:50:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237115AbhIMFuo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Sep 2021 01:50:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38750 "EHLO
+        id S237049AbhIMFwL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Sep 2021 01:52:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232119AbhIMFun (ORCPT
+        with ESMTP id S230390AbhIMFwD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Sep 2021 01:50:43 -0400
+        Mon, 13 Sep 2021 01:52:03 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEE79C061574;
-        Sun, 12 Sep 2021 22:49:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FC28C061574;
+        Sun, 12 Sep 2021 22:50:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=ZlNshhcRbh7TTTSVkfYJWF8qycoraf4MAz4lP9XUHsc=; b=qEssEVXa3xjHznRIrCx8lBb2XD
-        DS2hJrDQ+w2Bs6gJiCZ7Ft0fC60K+uApT2CiWS5kwhkWQKeLBCJWqv6Gpy3Nl8tyrkDDx2ID16Ib2
-        GKd50AkDLlJFnUurQiM/EbVjIz6Su/aqsCoK9gljUPQErhxUG3wDPUNLPG3ZhGe218bj8h+0YwrhN
-        uhtD+YDRtput2x1HRqiN8Wc2NRwqseWwpC0vN/htGCSXyU3jzUvPyL/HSjd9GJsNV5ZxOSdQM5xJd
-        lfjal3NT/3xqF61gehnyXbiPzsTEn75IC8aZn7aOi3L77BshpSU9duXbl1D++4lEKOy+Kd68ZbzvD
-        g/cTh6tg==;
+        bh=UXp+fCkzH2CgbRglk3bxc6R/C42uMSQO+IFVmi1XBWI=; b=vmxsq3hppe0dYahL5qFfdE0tJ/
+        2ShQjICI/kC6mB0ChKBLQCxgBaPncDLqYiqspAn8/f3LAksAHTBQN8enw54iej21JfpBYEdEGCx8K
+        gN27kY46iMty53v/i5rvgM3b7Etf6H8IeufhJa+NSlW9l+OPurYcO7QupS6LRgUF7JA+h3Mrtgpfk
+        qilZ9npxNVyQcks4Lm6ScYT0C/Q9ncJXUQNcqwB1nMLHt1FY1hvv6YuLrkBZBXyogxMnA11ws0OAW
+        MukKRHZwlaUwA2v9Aw1nnQ4yzCAC+pyiCUENgniEg0QxeJM+sisbE/1N4tcvvoshVVgSmon0NS74A
+        iEJ88Rgg==;
 Received: from 089144214237.atnat0023.highway.a1.net ([89.144.214.237] helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mPeoy-00DCpG-FY; Mon, 13 Sep 2021 05:48:06 +0000
+        id 1mPepg-00DCsG-Kh; Mon, 13 Sep 2021 05:49:07 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
@@ -35,9 +35,9 @@ To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
         linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 07/13] sysfs: add ->seq_show support to sysfs_ops
-Date:   Mon, 13 Sep 2021 07:41:15 +0200
-Message-Id: <20210913054121.616001-8-hch@lst.de>
+Subject: [PATCH 08/13] block: convert the blk_mq_hw_ctx attrs to use ->seq_show
+Date:   Mon, 13 Sep 2021 07:41:16 +0200
+Message-Id: <20210913054121.616001-9-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210913054121.616001-1-hch@lst.de>
 References: <20210913054121.616001-1-hch@lst.de>
@@ -48,80 +48,124 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Allow attributes to directly use the seq_file method instead of
-carving out a buffer that can easily lead to buffer overflows.
+Trivial conversion to the seq_file based sysfs attributes.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/sysfs/file.c       | 19 ++++++++++++++-----
- include/linux/sysfs.h |  9 +++++++--
- 2 files changed, 21 insertions(+), 7 deletions(-)
+ block/blk-mq-sysfs.c | 64 +++++++++++++++++++-------------------------
+ 1 file changed, 28 insertions(+), 36 deletions(-)
 
-diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
-index 42dcf96881b68..12e0bfe40a2b4 100644
---- a/fs/sysfs/file.c
-+++ b/fs/sysfs/file.c
-@@ -45,6 +45,9 @@ static int sysfs_kf_seq_show(struct seq_file *sf, void *v)
- 	ssize_t count;
- 	char *buf;
+diff --git a/block/blk-mq-sysfs.c b/block/blk-mq-sysfs.c
+index 253c857cba47c..cae649b83bd54 100644
+--- a/block/blk-mq-sysfs.c
++++ b/block/blk-mq-sysfs.c
+@@ -47,29 +47,27 @@ static void blk_mq_hw_sysfs_release(struct kobject *kobj)
  
-+	if (ops->seq_show)
-+		return ops->seq_show(kobj, of->kn->priv, sf);
-+
- 	if (WARN_ON_ONCE(!ops->show))
- 		return -EINVAL;
- 
-@@ -268,6 +271,10 @@ int sysfs_add_file_mode_ns(struct kernfs_node *parent,
- 		return -EINVAL;
- 
- 	if (mode & SYSFS_PREALLOC) {
-+		if (WARN(sysfs_ops->seq_show, KERN_ERR
-+				"seq_show not supported on prealloc file: %s\n",
-+				kobject_name(kobj)))
-+			return -EINVAL;
- 		if (sysfs_ops->show && sysfs_ops->store)
- 			ops = &sysfs_prealloc_kfops_rw;
- 		else if (sysfs_ops->show)
-@@ -275,12 +282,14 @@ int sysfs_add_file_mode_ns(struct kernfs_node *parent,
- 		else if (sysfs_ops->store)
- 			ops = &sysfs_prealloc_kfops_wo;
- 	} else {
--		if (sysfs_ops->show && sysfs_ops->store)
--			ops = &sysfs_file_kfops_rw;
--		else if (sysfs_ops->show)
--			ops = &sysfs_file_kfops_ro;
--		else if (sysfs_ops->store)
-+		if (sysfs_ops->seq_show || sysfs_ops->show) {
-+			if (sysfs_ops->store)
-+				ops = &sysfs_file_kfops_rw;
-+			else
-+				ops = &sysfs_file_kfops_ro;
-+		} else if (sysfs_ops->store) {
- 			ops = &sysfs_file_kfops_wo;
-+		}
- 	}
- 
- 	if (!ops)
-diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
-index e3f1e8ac1f85b..e1ab4da716730 100644
---- a/include/linux/sysfs.h
-+++ b/include/linux/sysfs.h
-@@ -236,8 +236,13 @@ struct bin_attribute bin_attr_##_name = __BIN_ATTR_WO(_name, _size)
- struct bin_attribute bin_attr_##_name = __BIN_ATTR_RW(_name, _size)
- 
- struct sysfs_ops {
--	ssize_t	(*show)(struct kobject *, struct attribute *, char *);
--	ssize_t	(*store)(struct kobject *, struct attribute *, const char *, size_t);
-+	int	(*seq_show)(struct kobject *kobj, struct attribute *attr,
-+			struct seq_file *sf);
-+	ssize_t	(*store)(struct kobject *kobj, struct attribute *attr,
-+			const char *buf, size_t size);
-+
-+	/* deprecated except for preallocated attributes: */
-+	ssize_t	(*show)(struct kobject *kob, struct attribute *attr, char *buf);
+ struct blk_mq_hw_ctx_sysfs_entry {
+ 	struct attribute attr;
+-	ssize_t (*show)(struct blk_mq_hw_ctx *, char *);
+-	ssize_t (*store)(struct blk_mq_hw_ctx *, const char *, size_t);
++	void (*show)(struct blk_mq_hw_ctx *hctx, struct seq_file *sf);
++	ssize_t (*store)(struct blk_mq_hw_ctx *hctx, const char *buf,
++			size_t size);
  };
  
- #ifdef CONFIG_SYSFS
+-static ssize_t blk_mq_hw_sysfs_show(struct kobject *kobj,
+-				    struct attribute *attr, char *page)
++static int blk_mq_hw_sysfs_seq_show(struct kobject *kobj,
++		struct attribute *attr, struct seq_file *sf)
+ {
+-	struct blk_mq_hw_ctx_sysfs_entry *entry;
+-	struct blk_mq_hw_ctx *hctx;
+-	struct request_queue *q;
+-	ssize_t res;
+-
+-	entry = container_of(attr, struct blk_mq_hw_ctx_sysfs_entry, attr);
+-	hctx = container_of(kobj, struct blk_mq_hw_ctx, kobj);
+-	q = hctx->queue;
++	struct blk_mq_hw_ctx_sysfs_entry *entry =
++		container_of(attr, struct blk_mq_hw_ctx_sysfs_entry, attr);
++	struct blk_mq_hw_ctx *hctx =
++		container_of(kobj, struct blk_mq_hw_ctx, kobj);
++	struct request_queue *q = hctx->queue;
+ 
+ 	if (!entry->show)
+ 		return -EIO;
+ 
+ 	mutex_lock(&q->sysfs_lock);
+-	res = entry->show(hctx, page);
++	entry->show(hctx, sf);
+ 	mutex_unlock(&q->sysfs_lock);
+-	return res;
++	return 0;
+ }
+ 
+ static ssize_t blk_mq_hw_sysfs_store(struct kobject *kobj,
+@@ -94,39 +92,33 @@ static ssize_t blk_mq_hw_sysfs_store(struct kobject *kobj,
+ 	return res;
+ }
+ 
+-static ssize_t blk_mq_hw_sysfs_nr_tags_show(struct blk_mq_hw_ctx *hctx,
+-					    char *page)
++static void blk_mq_hw_sysfs_nr_tags_show(struct blk_mq_hw_ctx *hctx,
++		struct seq_file *sf)
+ {
+-	return sprintf(page, "%u\n", hctx->tags->nr_tags);
++	seq_printf(sf, "%u\n", hctx->tags->nr_tags);
+ }
+ 
+-static ssize_t blk_mq_hw_sysfs_nr_reserved_tags_show(struct blk_mq_hw_ctx *hctx,
+-						     char *page)
++static void blk_mq_hw_sysfs_nr_reserved_tags_show(struct blk_mq_hw_ctx *hctx,
++		struct seq_file *sf)
+ {
+-	return sprintf(page, "%u\n", hctx->tags->nr_reserved_tags);
++	seq_printf(sf, "%u\n", hctx->tags->nr_reserved_tags);
+ }
+ 
+-static ssize_t blk_mq_hw_sysfs_cpus_show(struct blk_mq_hw_ctx *hctx, char *page)
++static void blk_mq_hw_sysfs_cpus_show(struct blk_mq_hw_ctx *hctx,
++		struct seq_file *sf)
+ {
+-	const size_t size = PAGE_SIZE - 1;
+-	unsigned int i, first = 1;
+-	int ret = 0, pos = 0;
++	bool first = true;
++	unsigned int i;
+ 
+ 	for_each_cpu(i, hctx->cpumask) {
+ 		if (first)
+-			ret = snprintf(pos + page, size - pos, "%u", i);
++			seq_printf(sf, "%u", i);
+ 		else
+-			ret = snprintf(pos + page, size - pos, ", %u", i);
+-
+-		if (ret >= size - pos)
+-			break;
+-
+-		first = 0;
+-		pos += ret;
++			seq_printf(sf, ", %u", i);
++		first = false;
+ 	}
+ 
+-	ret = snprintf(pos + page, size + 1 - pos, "\n");
+-	return pos + ret;
++	seq_printf(sf, "\n");
+ }
+ 
+ static struct blk_mq_hw_ctx_sysfs_entry blk_mq_hw_sysfs_nr_tags = {
+@@ -151,8 +143,8 @@ static struct attribute *default_hw_ctx_attrs[] = {
+ ATTRIBUTE_GROUPS(default_hw_ctx);
+ 
+ static const struct sysfs_ops blk_mq_hw_sysfs_ops = {
+-	.show	= blk_mq_hw_sysfs_show,
+-	.store	= blk_mq_hw_sysfs_store,
++	.seq_show	= blk_mq_hw_sysfs_seq_show,
++	.store		= blk_mq_hw_sysfs_store,
+ };
+ 
+ static struct kobj_type blk_mq_ktype = {
 -- 
 2.30.2
 
