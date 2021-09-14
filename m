@@ -2,119 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DA8840A18E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 01:23:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 812FD40A1E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 02:27:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241102AbhIMXYj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Sep 2021 19:24:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56322 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230375AbhIMXYi (ORCPT
+        id S238145AbhINA26 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Sep 2021 20:28:58 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:55030 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236554AbhINA26 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Sep 2021 19:24:38 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D5D7C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 16:23:22 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id g14so20178696ljk.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 16:23:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IJIDYZgKiygSSxYRNkxoNXbd0kWV7FZNitdhXxha1Po=;
-        b=Y1Aryd99OOGEmuqWogyRK+T349nSzQP6P4/UX3uS7PMAcEJFbHvBDRIf5LR1Egenh2
-         ol4VSWTmzAXA6COOrx71hc46fMhwRwKDuLow4/bqyzig2RHEELJ8juuZ9jYdMexSWcaU
-         yGMwb0q80yIvlcaZCiZIihGOMNRtw3Xa4sDAE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IJIDYZgKiygSSxYRNkxoNXbd0kWV7FZNitdhXxha1Po=;
-        b=YOwLvLuJgrrBIJJkUeAKRtL893AE1C9U1raFDdet/EwvEjLf6qHX/W7cWsxXN2nZhu
-         gzPrsMdFuSZ40If97NEg+/K/7Nt0CC615ZKrrrwuHLwTpS25h6CRbZim5nTTJCPuvBus
-         7ZRgtuTmj6vIoY6eI+Z8ETvZrpEtq2c2Yl/48kO9SJNQC/VdLDZ68xVHAgV/3rDXTQy6
-         tGW0Osg4zdr/NE7G9XmAawlwd4Quxp3Wcya4A9Zyw5i5RONk+2NYVCmdsPfE/WWGnEjE
-         KoCqvCdcNM6ntgOPRZvQ6YqrYMWtYApZJFc/jLF/F6TAGMKwjGk+NOMbGjSlAwldqJUq
-         GAoQ==
-X-Gm-Message-State: AOAM531EkwCd70Td18SuiyL6d5ldcazMqdO4CLbTnwAoubb7rlmk6nIB
-        piFS7DcXRTFmIFTrMBhu7KFASE5EejYo/F+IGd0=
-X-Google-Smtp-Source: ABdhPJwXYMDnisGqIXERyZaGUu8rKyp6KbquV7Ukgu1qof0yrG/PAqlhRPe1qTqt7DHvOkgGKDljFg==
-X-Received: by 2002:a05:651c:154b:: with SMTP id y11mr12901993ljp.480.1631575400372;
-        Mon, 13 Sep 2021 16:23:20 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id o17sm956887lfi.203.2021.09.13.16.23.19
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Sep 2021 16:23:20 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id s12so20260315ljg.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 16:23:19 -0700 (PDT)
-X-Received: by 2002:a2e:96c7:: with SMTP id d7mr12780196ljj.191.1631575399749;
- Mon, 13 Sep 2021 16:23:19 -0700 (PDT)
+        Mon, 13 Sep 2021 20:28:58 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 1FDF8200AB;
+        Tue, 14 Sep 2021 00:27:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1631579260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=PFbh9I08qiRIpx/LwQHrN9x2N5uOULjufRHblHpoK4g=;
+        b=uuSgtJ0+FRAjj4cM0Uw3gizAGdSOZ9KZJdQa8Xe47I5rWpB/k4+CBglCk9ze0+ku71h0Kj
+        DLOGlj0TJIV61exkhj/GiPT941q/fF9d5QndRC2KIKAtbsWDv1tpN5woiO3T0qT26hW9qR
+        4D8sFiwSqMqGDl+rMHe/VXOuaFh4drI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1631579260;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=PFbh9I08qiRIpx/LwQHrN9x2N5uOULjufRHblHpoK4g=;
+        b=0FOlCmgmDR5J/+kI3Q4QjdyDlONqJLexEA9naFbBESq2iYI7TMeUTBl0wf8j5qeuc63GzD
+        MaW4gs77K7fW/GDg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B074513ADE;
+        Tue, 14 Sep 2021 00:27:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 4YCuG3jsP2ECawAAMHmgww
+        (envelope-from <neilb@suse.de>); Tue, 14 Sep 2021 00:27:36 +0000
+From:   NeilBrown <neilb@suse.de>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mel Gorman <mgorman@suse.com>
+Date:   Tue, 14 Sep 2021 10:13:04 +1000
+Subject: [PATCH 0/6] congestion_wait() and GFP_NOFAIL
+Cc:     linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Message-ID: <163157808321.13293.486682642188075090.stgit@noble.brown>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-References: <20210910182536.685100-1-axboe@kernel.dk> <8a278aa1-81ed-72e0-dec7-b83997e5d801@kernel.dk>
-In-Reply-To: <8a278aa1-81ed-72e0-dec7-b83997e5d801@kernel.dk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 13 Sep 2021 16:23:03 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj3Lu=mJ8L7iE0RQXGZVdoSMz6rnPmrWoVNJhTaObOqkA@mail.gmail.com>
-Message-ID: <CAHk-=wj3Lu=mJ8L7iE0RQXGZVdoSMz6rnPmrWoVNJhTaObOqkA@mail.gmail.com>
-Subject: Re: [PATCHSET 0/3] Add ability to save/restore iov_iter state
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 13, 2021 at 3:43 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> Al, Linus, are you OK with this? I think we should get this in for 5.15.
-> I didn't resend the whole series, just a v2 of patch 1/3 to fix that bvec
-> vs iovec issue. Let me know if you want the while thing resent.
+While working on an NFS issue recently I was informed (or maybe
+"reminded") that congestion_wait() doesn't really do what we think it
+does.   It is indistinguishable from schedule_timeout_uninterruptible().
 
-So I'm ok with the iov_iter side, but the io_uring side seems still
-positively buggy, and very confused.
+Some current users for congestion_wait() would be better suited by
+__GFP_NOFAIL.   In related discussions it was pointed out that the 
+__GFP_NOFAIL documentation could usefully clarify the costs of its use.
 
-It also messes with the state in bad ways and has internal knowledge.
-And some of it looks completely bogus.
+So this set of patch addresses some of these issues.  The patches are
+all independent and can safely be applied separately in different tress
+as appropriate.
 
-For example, I see
+They:
+ - add or improve documentation relating to these issues
+ - make a tiny fix to the page_alloc_bulk_*
+ - replace those calls to congestion_wait() which are simply waiting
+   to retry a memory allocation.
 
-        state->count -= ret;
-        rw->bytes_done += ret;
+These are the easy bits.  There are 5 calls to congestion_wait() and one
+to wait_iff_congested() in mm/ which need consideration.  There are
+multiple calls to congestion_wait in fs/, particularly fs/f2fs/ which
+need to be addressed too.  I'll try to form an opinion about these in
+coming weeks.
 
-and I go "that's BS". There's no way it's ok to start messing with the
-byte count inside the state like that. That just means that the state
-is now no longer the saved state, and it's some random garbage.
+Thanks,
+NeilBrown
 
-I also think that the "bytes_done += ret" is a big hint there: any
-time you restore the iovec state, you should then forward it by
-"bytes_done". But that's not what the code does.
 
-Instead, it will now restore the iovec styate with the *wrong* number
-of bytes remaining, but will start from the beginning of the iovec.
+---
 
-So I think the fs/io_uring.c use of this state buffer is completely wrong.
+NeilBrown (6):
+      MM: improve documentation for __GFP_NOFAIL
+      MM: annotate congestion_wait() and wait_iff_congested() as ineffective.
+      EXT4: Remove ENOMEM/congestion_wait() loops.
+      EXT4: remove congestion_wait from ext4_bio_write_page, and simplify
+      XFS: remove congestion_wait() loop from kmem_alloc()
+      XFS: remove congestion_wait() loop from xfs_buf_alloc_pages()
 
-What *may* be the right thing to do is to
 
- (a) not mess with state->count
+ fs/ext4/ext4.h              |  2 +-
+ fs/ext4/ext4_jbd2.c         |  8 +++++-
+ fs/ext4/extents.c           | 49 ++++++++++++++-----------------------
+ fs/ext4/extents_status.c    | 35 ++++++++++++++------------
+ fs/ext4/extents_status.h    |  2 +-
+ fs/ext4/indirect.c          |  2 +-
+ fs/ext4/inode.c             |  6 ++---
+ fs/ext4/ioctl.c             |  4 +--
+ fs/ext4/page-io.c           | 13 ++++------
+ fs/ext4/super.c             |  2 +-
+ fs/jbd2/transaction.c       |  8 +++---
+ fs/xfs/kmem.c               | 16 +++---------
+ fs/xfs/xfs_buf.c            |  6 ++---
+ include/linux/backing-dev.h |  7 ++++++
+ mm/backing-dev.c            |  9 +++++++
+ 15 files changed, 86 insertions(+), 83 deletions(-)
 
- (b) when you restore the state you always use
+--
+Signature
 
-        iov_iter_restore(iter, state, bytes_done);
-
-to actually restore the *correct* state.
-
-Because modifying the iovec save state like that cannot be right, and
-if it's right it's still too ugly and fragile for words. That save
-state should be treated as a snapshot, not as a random buffer that you
-can make arbitrary changes to.
-
-See what I'm saying?
-
-I'd like Al to take a look at the io_uring.c usage too, since this was
-just my reaction from looking at that diff a bit more.
-
-           Linus
