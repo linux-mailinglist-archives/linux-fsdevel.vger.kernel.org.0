@@ -2,214 +2,341 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D1AB40A689
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 08:13:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9161F40A774
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 09:33:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240015AbhINGOX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 02:14:23 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:30504 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237875AbhINGOT (ORCPT
+        id S240656AbhINHeY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 03:34:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53704 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239257AbhINHeM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 02:14:19 -0400
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 18E5xeSa018222;
-        Tue, 14 Sep 2021 06:13:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=fHanRq02DdqHMbdF4WS0Fk2bIRSMeezwI8O4MNulkTM=;
- b=H5t4A6m/1/W6QR2UImETkde1H387SfOlTWl2duFChe/dg0+EsqFv242FwNst0aXehTEU
- 2mY1SSf0sn1BAalYb8lSabiXUeqH8SkYY68+UQPxAaH3jHtJTa6hXqJWVqFo9U1XOXu6
- 5vzhkRb3lwtHh0IoenNgJ/19h6kxOp5V3HMVV8nC8VZz6PIb6bcsKs4a63JKwrqW735f
- ji6H+Y1kjys8Ip1IQNUmklYoi3g1XJxu7s7gsRLA4WjkXpOgecJFmqGTwnG2UqhVY2p/
- 9hHbpHWbK/7TOtI0tB1r9wmWvokpbRk1lH21VWC8MkA/a2SAqZEKP4lPm2QVNAv0rbHM YA== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2020-01-29;
- bh=fHanRq02DdqHMbdF4WS0Fk2bIRSMeezwI8O4MNulkTM=;
- b=zeetB9G1CKO0AdDknldTmzKeXqaF2+FRaCxYipHoIqEUgVeeYqpywlLDncHXqOzvn257
- yI4NrXsrEDgIdD5f8N5UjA5nbJw4B3A3qsADaYgHJmc67VqbhtnzcllwLY0a/NsKP7yL
- WUmeTmt741RVTH5iWW+UL8G1/f001vLn51vO1oQxtrHFG9My7K7FA/dAHFcSRbFcrINf
- BcbokmVBIhJsaTGeZLKgSXA+TVhHUZcNA31Fo4liZm5513REQ36ooS+bd+iupYxgNrH0
- jxUGCpp+y9Wqe1U3NGeaq7F/ygwGTrnSG+laKJdpoMTuMg/TXIzu/uPT/F8O6i7+1j8J LQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3b2kj5rddw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Sep 2021 06:13:00 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 18E6AVsm168719;
-        Tue, 14 Sep 2021 06:12:59 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2172.outbound.protection.outlook.com [104.47.55.172])
-        by aserp3020.oracle.com with ESMTP id 3b0m95s5p9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 14 Sep 2021 06:12:59 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Q+0+X2qLLBBDNO5lVUMVPFhjlZvb5jZRUaGXWB/weu2NSuzXbA8UWlK+qsI8XC80Wa+3P/kMh7KmNmlErYwhDPptxNgdfqXr9FK2MizLXIKR/pukuKvBVIa+HUjM/cj8Sm8LuzlUQ2vpbiY+6J6wUIpB1eM2Ewl9qjonRVq7+X59S4SQUeeO3a+yC+NztVHIs3z51bgcUpdR7DH8XiRdLXswiGDUVd21v6ulsg3s/kzQ6NDBcLPC2cwphxidyQzkZy4NzxilYNkPQjbh2CeWa12x1b5L6Qcz7RbpNTWp9DGLhsZJUxtVTkLt+AH14CEFlx/EmAQWRz6kNf+HZBCo+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fHanRq02DdqHMbdF4WS0Fk2bIRSMeezwI8O4MNulkTM=;
- b=WYMqTcQiuA7Aaq4aBgl/KyZE6Pqz3qNqFPeMyVbNJapkiz8T4fgpD2YUSxOk2X2k/s2k696IvAG/czezMksVpfCLD5W6LnLw4XKA+/o1aLGBQtG2aZVtHjSXqz/BP7JOyJRV3COz4BBb/+hKExLs/KKzKrvtzbSWYZ/RPYw063A4YDB4jpQTngRNfZmxIjQ0If8pL1NYKT/40nmVEUER7YKoSu11wjr+K6G0YpmSradoPtXukXJA0XJxiaFxNUeomdvB90YoVzVIb/cf6zF5wOEM0vM7xXjMFoXtoFaQEXLQPNT71fFMgIxEvu6wvdjYG2k3eSw2aCx375uykZlwiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Tue, 14 Sep 2021 03:34:12 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D5BEC061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 00:32:55 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id j1so8228853pjv.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 00:32:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fHanRq02DdqHMbdF4WS0Fk2bIRSMeezwI8O4MNulkTM=;
- b=BJED1QpjpFd2ihhC1H81cbhKjt5iz/JbCSuVqcCeWZlLiuhyhPW4H/+BHjAPT36E7mtxlcla7gEKLDhOIdTIS3lGdEH/U9R0tJ9QO4/Aszmos2f5HEPAeOkVPAqM5CqcI5rEZpwjiEaGzNdxbgn+0Vk1irJ+FPhbmSnHLKPHloU=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=oracle.com;
-Received: from BY5PR10MB4306.namprd10.prod.outlook.com (2603:10b6:a03:211::7)
- by BYAPR10MB2440.namprd10.prod.outlook.com (2603:10b6:a02:b2::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.23; Tue, 14 Sep
- 2021 06:12:57 +0000
-Received: from BY5PR10MB4306.namprd10.prod.outlook.com
- ([fe80::b054:cb04:7f27:17fd]) by BY5PR10MB4306.namprd10.prod.outlook.com
- ([fe80::b054:cb04:7f27:17fd%6]) with mapi id 15.20.4523.014; Tue, 14 Sep 2021
- 06:12:57 +0000
-Subject: Re: [TOPIC LPC] Filesystem Shrink
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <3bffa6b2-981f-9a64-9fed-f211bfe501cd@oracle.com>
- <7F4D357F-152A-48F2-A43E-DE835BA6EAFC@dilger.ca>
-From:   Allison Henderson <allison.henderson@oracle.com>
-Message-ID: <d3cfe17c-6104-741f-7549-89c46dc691ee@oracle.com>
-Date:   Mon, 13 Sep 2021 23:12:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
-In-Reply-To: <7F4D357F-152A-48F2-A43E-DE835BA6EAFC@dilger.ca>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY5PR17CA0003.namprd17.prod.outlook.com
- (2603:10b6:a03:1b8::16) To BY5PR10MB4306.namprd10.prod.outlook.com
- (2603:10b6:a03:211::7)
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8yA1aDR6gkxqIg6y5DZ1Vw9kfOVK0Ylz9+qgfpXtyKk=;
+        b=KasYn3QFDwEkCtCg/46Y8ncnDXpl3N3dqcyFnJ67pj7o4A+hC/LQi7Q3Nj3A6I+fbc
+         gekDCoCguFalsV34OxuVA5eou3y+btiwifsdh1F0XETMHGSB32g8kACL3jX+MKNGTKk/
+         gyYZtckLlPeC02Rho92YjCn6AB0zeq3ObjfIDQjzyXDT529q9dq1uPAEvnCh8a2onBFc
+         ZBsCanKTy4a1HU8qVZ0dXhD44FaWtshNesT/MwWtw8nsEKG41v78McVsc1SHE6Hve+pw
+         RzRuWxf4NVsCHB7cKiGQEUC6pPSHAs6nkqEU+2ZS9yenfc4L9xqdOMx6j05wwTIcmNXD
+         xe2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8yA1aDR6gkxqIg6y5DZ1Vw9kfOVK0Ylz9+qgfpXtyKk=;
+        b=6uRjpK3Se7urNJK5OPm/0h861pSHiSJJDQ3w7gULiKufwd10o2cf6hwkIEhycS2pT7
+         GeNim8Y5aHLPCkUDObcGl+MqWTxJlerK4qVNPrD5hqNqRwTntRZ29i015jLxAou+5AzD
+         gPQFrQL9YLsb35dTaG9XmZ/1xbjZzCWDRtQ4BUJAHSCEH9/ZctBJAguRaAJjbi4HNHAJ
+         LMRBCQrq7s+1VgzSLlZQEWFy7CgjHs6202k0wIZUir2fHQWdgeHQG15H90o/A7yK5SYi
+         jpN2cxMEzgcBroqijIMOV/orDMwnSADOAkU9KU5NO2rcbBLehGeCtr4UVSzjqW54nz6o
+         4Udw==
+X-Gm-Message-State: AOAM532Z3osp24ioj5kc7eMSEP9XYO5KspjsowTccJbI1zFE8DZ2QB9N
+        I4qt1s9InhutuNV+y1ZpSRYqcQ==
+X-Google-Smtp-Source: ABdhPJw+tJJCZYmvWS0V/99J2vZGc3jQl5FaH3FghUH3rg11Abk7mWmtmj7qnhkifFtFA0WsvXtnNg==
+X-Received: by 2002:a17:90a:1de:: with SMTP id 30mr555002pjd.106.1631604774687;
+        Tue, 14 Sep 2021 00:32:54 -0700 (PDT)
+Received: from localhost.localdomain ([139.177.225.244])
+        by smtp.gmail.com with ESMTPSA id s3sm9377839pfd.188.2021.09.14.00.32.47
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 Sep 2021 00:32:54 -0700 (PDT)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     willy@infradead.org, akpm@linux-foundation.org, hannes@cmpxchg.org,
+        mhocko@kernel.org, vdavydov.dev@gmail.com, shakeelb@google.com,
+        guro@fb.com, shy828301@gmail.com, alexs@kernel.org,
+        richard.weiyang@gmail.com, david@fromorbit.com,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+        zhengqi.arch@bytedance.com, duanxiongchun@bytedance.com,
+        fam.zheng@bytedance.com, smuchun@gmail.com,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH v3 00/76] Optimize list lru memory consumption
+Date:   Tue, 14 Sep 2021 15:28:22 +0800
+Message-Id: <20210914072938.6440-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 MIME-Version: 1.0
-Received: from [192.168.1.167] (67.1.243.157) by BY5PR17CA0003.namprd17.prod.outlook.com (2603:10b6:a03:1b8::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4500.15 via Frontend Transport; Tue, 14 Sep 2021 06:12:56 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 05b63724-4141-4058-532f-08d97746b235
-X-MS-TrafficTypeDiagnostic: BYAPR10MB2440:
-X-Microsoft-Antispam-PRVS: <BYAPR10MB244066F56E29D4F78AEAD66D95DA9@BYAPR10MB2440.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 51UYFxRwSqMiIy9xe5XRymSeOnnQ9xHG1aH1CKPjmKtsI8dg3ywLpUuPB2RIrx1p/PCMTU6Fh1JPYZihQaW06lembnqGA09TI5Y//NnDO+BhAz1Oq9j+5xPa491xIUl/W+ZysgONIukF4LWo9ht5GCg9dRkb+83n4rmhBxVa92w73/+i7nhCq0Eh8Kn1q+Wi5z7zfnLE8DMpxQT61nwGNF/Gr/ZthG2HV5bfnOMIeKRfEFtX/0eBlsKCcw67cV5e3/A8x25jgX627F5nCqoAwXWJUtypSjVJFIHNkFy4S6bG2x6VPjCbKkN9A454diRqC4jfug7OCGK5uIuwDlGFi1fpcroVtCUYCrw+CFKuDaQ0apWr0TJA4FIDIKS9uXv3ssxAAW+3rhCJmKb5absX0zi+7NeizrVz+oSIcNoULWW0GyA1f/6+kd2/PQwODI4X2jKTUt1MkBX6JWf/qJNxozLZ5vOWd000YGggmMozXZ9zOjNe3y3leDEuWU0b1l6hX0p5t2HnHW238f38scV0zyt+UVakvKAHn2nZwmSaDLU9/LMfFntGlLaVKk8UFjeftQgNOWRIHM/qI9G22XYTjzbKLYiFmZDjBfpvOpkzKsmTjxOfLLHY6diya40VOBPTPFGUQ0gtLkxeJI2HQG7Wv1eoJ1E/gA1hm3Hd8/oVEOLUICbdJnR+yWj96b8tIBXUmeY4lDPumrOIXxEebZWDZBhcME4q5FPXmRVYLgFQ8R1TBq4TV4WMpuF25G1MNzHRMQGAYIaC6TOL89p18lUB2jhJmSqyDHebgIyP188oVf/Npmwk6RMUWNBYXNCHc+3KhsgzCEY9XqrrBQVtqWfyFg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB4306.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(136003)(376002)(366004)(39860400002)(396003)(2616005)(86362001)(31686004)(8936002)(8676002)(966005)(478600001)(36756003)(52116002)(38350700002)(956004)(53546011)(83380400001)(316002)(6916009)(16576012)(44832011)(66556008)(26005)(186003)(4326008)(6486002)(2906002)(38100700002)(31696002)(5660300002)(66476007)(66946007)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?Windows-1252?Q?ruqFcrXuZNIWolB0O3yhiOmN01B13BBPmqxmUVKiOnCtCXNjG1CARH0U?=
- =?Windows-1252?Q?oumgxQwHW8p/yPvzzlPAeBVGj8XbS+WAizhuBzOjMZNIvOHtD3U1uK1P?=
- =?Windows-1252?Q?VKzUYKoeiNFvlSAzL80km04i3ME7Yz2JzBHNY+ceDWpz/M2EwgMMtRWx?=
- =?Windows-1252?Q?vvcRBHmp4qaaBjFI72HUIRos+FJ2lulUGKyZpaM35JJyQ2Q0Zo/ifzRh?=
- =?Windows-1252?Q?b6nMRZUVuMw1h9g8YN8rnlLGzKmda0SmbAHBe2NbfG+diHlCxHj7grfo?=
- =?Windows-1252?Q?UKeNpvo0CThH+lciSVTiKg4jUooL1HjoagwqlP/auX3WV4yrQnc3dihm?=
- =?Windows-1252?Q?KOtLUgwyRMa22r2uMaJVHxHUgyvFD8/QCeZDL/QnneuHYyz4SHs3Wz95?=
- =?Windows-1252?Q?hO7GAgMCj1glTrZ8tD67dqKxbkAbLlJ/SXtzuO1Ce15zTCnKoCpeNRou?=
- =?Windows-1252?Q?F+l9I/3j2YWmqfgN31wNaSa7Ldi5obztQNUY7RninGRYqtRevZTc/qxY?=
- =?Windows-1252?Q?pOIgONcCS4e42rmhxglr0LOj1Czv+S9G+uCvATja/2G1h7YSxpi9mD0K?=
- =?Windows-1252?Q?SqGbh94md24iDT+YKPo3XszfH8+YtwG7WHXNk+0hQu2jPJo2kZjjDmL0?=
- =?Windows-1252?Q?tiN6C4l0I3irS9OgLXzYipysjaRcKdQ11pHZzKillx31s1dLgHwSCi6m?=
- =?Windows-1252?Q?bSF5RTvCAGz6tuD7jBzmtBGQh9E6NyYk6hc17BaqCht16Y4qB/++piar?=
- =?Windows-1252?Q?feHl+h5CbgfYXLLj85YOoBh9tGKDfDUQsWPJhJU1G71BLwSYJLAJ4FZl?=
- =?Windows-1252?Q?bhDD181eEKArImadbZmdRQYP3On9w0rKQ1JJrm8wkxwc9yh/jaxMMFTf?=
- =?Windows-1252?Q?+/cOq8F64h6KDPtcfFPeF/pQCy1STYOsSguZK3infVlbZSMeRHOyzGAz?=
- =?Windows-1252?Q?SQ1w7ea+rNy8MODtHWH563qdAsz2PYcS8NFT1qq7APWNeVANJ/4dir/T?=
- =?Windows-1252?Q?KWB2GZkDZRzGdsoDsQzQ+kcATOVuyRaiMR5zb1SZoCsZBYQ0LKpG2d9Z?=
- =?Windows-1252?Q?W6RdnF8sS/utL1jixZnzpfa4J8iYzvcJSar6DB83tupdnzXPhzOoCBDe?=
- =?Windows-1252?Q?j3fGIDN3qZ8D7zYewAofID5kCl4n/92K3z8aNRMhaJ6vIwNCSeFfC2ZT?=
- =?Windows-1252?Q?9IuV/7LAyToP6kd6wGrKHtLgdQvtJirsp0CtlsWFNAUpBQQ+IVgtqmQA?=
- =?Windows-1252?Q?Bh6uwB6qo8MmBdEh+TgW+Pe0+SRw855kG3Fv5N5imjFWaI0Va1mmhXbD?=
- =?Windows-1252?Q?CD07Q3hNAW8Rs991LmAX/mCIHNd9r/YXiw0cCfzuQx76dvT5LMp/YU2X?=
- =?Windows-1252?Q?o0v9SEjh9E/SBSWmTOkAxGSxBNj8EfFVbaGlHZi/OQDHfOeEm0UVQvmj?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05b63724-4141-4058-532f-08d97746b235
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR10MB4306.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2021 06:12:57.3698
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2KedN/VTc+AIqC47XbQSFIoqN2Oq+6l5xa3bRY6gTLkrbqCWt4IPiVeYOBk8zRFYHy5PN2syOztDk+uRGtGtnRiwmwXD7e4CSpLcdfCzRps=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB2440
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10106 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
- adultscore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2109030001
- definitions=main-2109140035
-X-Proofpoint-ORIG-GUID: A00jlsSoyi_hPhYItW0w2fZJZ-g07wvj
-X-Proofpoint-GUID: A00jlsSoyi_hPhYItW0w2fZJZ-g07wvj
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+We introduced alloc_inode_sb() in previous version 2, which sets up the
+inode reclaim context properly, to allocate filesystems specific inode.
+So we have to convert to new API for all filesystems, which is done in
+one patch. Some filesystems are easy to convert (just replace
+kmem_cache_alloc() to alloc_inode_sb()), while other filesystems need to
+do more work. In order to make it easy for maintainers of different
+filesystems to review their own maintained part, I split the patch into
+patches which are per-filesystem in this version. I am not sure if this
+is a good idea, because there is going to be more commits.
 
+In our server, we found a suspected memory leak problem. The kmalloc-32
+consumes more than 6GB of memory. Other kmem_caches consume less than 2GB
+memory.
 
-On 9/8/21 3:25 PM, Andreas Dilger wrote:
-> On Sep 8, 2021, at 1:27 AM, Allison Henderson <allison.henderson@oracle.com> wrote:
->>
->> Hi All,
->>
->> Earlier this month I had sent out a lpc micro conference proposal for
->> file system shrink.  It sounds like the talk is of interest, but folks
->> recommended I forward the discussion to fsdevel for more feed back.
->> Below is the abstract for the talk:
->>
->>
->> File system shrink allows a file system to be reduced in size by some specified size blocks as long as the file system has enough unallocated space to do so.  This operation is currently unsupported in xfs.  Though a file system can be backed up and recreated in smaller sizes, this is not functionally the same as an in place resize.  Implementing this feature is costly in terms of developer time and resources, so it is important to consider the motivations to implement this feature.  This talk would aim to discuss any user stories for this feature.  What are the possible cases for a user needing to shrink the file system after creation, and by how much?  Can these requirements be satisfied with a simpler mkfs option to backup an existing file system into a new but smaller filesystem?  In the cases of creating a rootfs, will a protofile suffice?  If the shrink feature is needed, we should further discuss the APIs that users would need.
->>
->> Beyond the user stories, it is also worth discussing implementation challenges.  Reflink and parent pointers can assist in facilitating shrink operations, but is it reasonable to make them requirements for shrink?  Gathering feedback and addressing these challenges will help guide future development efforts for this feature.
->>
->>
->> Comments and feedback are appreciated!
-> 
-> This is an issue that has come up occasionally in the past, and more
-> frequently these days because of virtualization. "Accidental resize"
-> kind of mistakes, or an installer formatting a huge root filesystem
-> but wanting to carve off separate filesystems for more robustness
-> (e.g. so /var/log and /var/tmp don't fill the single root filesystem
-> and cause the system to fail).
-> 
-> There was some prototype work for a "lazy" online shrink mechanism
-> for ext4, that essentially just prevented block allocations at the
-> end of the filesystem.  This required userspace to move any files
-> and inodes that were beyond the high watermark, and then some time
-> later either do the shrink offline once the end of the filesystem
-> was empty, or later enhance the online resize code to remove unused
-> block groups at the end of the filesystem.  This turns out to be not
-> as complex as one expects, if the filesystem is already mostly empty,
-> which is true in the majority of real use cases ("accidental resize",
-> or "huge root partition" cases).
-> 
-> There is an old a patch available in Patchworks and some discussion
-> about what would be needed to make it suitable for production use:
-> 
-> https://patchwork.ozlabs.org/project/linux-ext4/patch/9ba7e5de79b8b25e335026d57ec0640fc25e5ce0.1534905460.git.jaco@uls.co.za/
-> 
-> I don't think it would need a huge effort to update that patch and add
-> the minor changes that are needed to make it really usable (stop inode
-> allocations beyond the high watermark, add a group remove ioctl, etc.)
-> 
-> Cheers, Andreas
-> 
-I see, thanks for the link, I didn't know there had been effort made on 
-the ext4 side, I had been looking more at the xfs implementation.  This 
-certainly looks like it might be a good starting point for ext4, it 
-seems both solutions need to limit user allocations one way or another. 
-  And I suspect both will have to deal with similar statfs reporting 
-challenges discussed for the xfs approach too.  Virtualization issues 
-seem to be a common motivator for shrink support in both fs types, so 
-it's a good indication that is a worthwhile pursuit.  Perhaps then this 
-discussion topic will be of interest to both xfs and ext solutions.
+After our in-depth analysis, the memory consumption of kmalloc-32 slab
+cache is the cause of list_lru_one allocation.
 
-Thanks for the feedback!
-Allison
+  crash> p memcg_nr_cache_ids
+  memcg_nr_cache_ids = $2 = 24574
 
+memcg_nr_cache_ids is very large and memory consumption of each list_lru
+can be calculated with the following formula.
 
-> 
-> 
-> 
-> 
+  num_numa_node * memcg_nr_cache_ids * 32 (kmalloc-32)
+
+There are 4 numa nodes in our system, so each list_lru consumes ~3MB.
+
+  crash> list super_blocks | wc -l
+  952
+
+Every mount will register 2 list lrus, one is for inode, another is for
+dentry. There are 952 super_blocks. So the total memory is 952 * 2 * 3
+MB (~5.6GB). But now the number of memory cgroups is less than 500. So I
+guess more than 12286 memory cgroups have been created on this machine (I
+do not know why there are so many cgroups, it may be a user's bug or
+the user really want to do that). Because memcg_nr_cache_ids has not been
+reduced to a suitable value. It leads to waste a lot of memory. If we want
+to reduce memcg_nr_cache_ids, we have to *reboot* the server. This is not
+what we want.
+
+In order to reduce memcg_nr_cache_ids, I had posted a patchset [1] to do
+this. But this did not fundamentally solve the problem.
+
+We currently allocate scope for every memcg to be able to tracked on every
+superblock instantiated in the system, regardless of whether that superblock
+is even accessible to that memcg.
+
+These huge memcg counts come from container hosts where memcgs are confined
+to just a small subset of the total number of superblocks that instantiated
+at any given point in time.
+
+For these systems with huge container counts, list_lru does not need the
+capability of tracking every memcg on every superblock.
+
+What it comes down to is that the list_lru is only needed for a given memcg
+if that memcg is instatiating and freeing objects on a given list_lru.
+
+As Dave said, "Which makes me think we should be moving more towards 'add the
+memcg to the list_lru at the first insert' model rather than 'instantiate
+all at memcg init time just in case'."
+
+This patchset aims to optimize the list lru memory consumption from different
+aspects.
+
+Patch 1-6 are code simplification.
+Patch 7 converts the array from per-memcg per-node to per-memcg
+Patch 8 introduces kmem_cache_alloc_lru()
+Patch 9 introduces alloc_inode_sb()
+Patch 10-66 convert all filesystems to alloc_inode_sb() respectively.
+Patch 70 let list_lru allocation dynamically.
+Patch 72 use xarray to optimize per memcg pointer array size.
+Patch 73-76 is code simplification.
+
+I had done a easy test to show the optimization. I create 10k memory cgroups
+and mount 10k filesystems in the systems. We use free command to show how many
+memory does the systems comsumes after this operation (There are 2 numa nodes
+in the system).
+
+        +-----------------------+------------------------+
+        |      condition        |   memory consumption   |
+        +-----------------------+------------------------+
+        | without this patchset |        24464 MB        |
+        +-----------------------+------------------------+
+        |     after patch 7     |        21957 MB        | <--------+
+        +-----------------------+------------------------+          |
+        |     after patch 70    |         6895 MB        |          |
+        +-----------------------+------------------------+          |
+        |     after patch 72    |         4367 MB        |          |
+        +-----------------------+------------------------+          |
+                                                                    |
+        The more the number of nodes, the more obvious the effect---+
+
+BTW, there was a recent discussion [2] on the same issue.
+
+[1] https://lore.kernel.org/linux-fsdevel/20210428094949.43579-1-songmuchun@bytedance.com/
+[2] https://lore.kernel.org/linux-fsdevel/20210405054848.GA1077931@in.ibm.com/
+
+This series not only optimizes the memory usage of list_lru but also
+simplifies the code.
+
+Changelog in v3:
+  - Fix mixing advanced and normal XArray concepts (Thanks to Matthew).
+  - Split one patch into per-filesystem patches.
+
+Changelog in v2:
+  - Update Documentation/filesystems/porting.rst suggested by Dave.
+  - Add a comment above alloc_inode_sb() suggested by Dave.
+  - Rework some patch's commit log.
+  - Add patch 18-21.
+
+  Thanks Dave.
+
+Muchun Song (76):
+  mm: list_lru: fix the return value of list_lru_count_one()
+  mm: memcontrol: remove kmemcg_id reparenting
+  mm: memcontrol: remove the kmem states
+  mm: memcontrol: move memcg_online_kmem() to mem_cgroup_css_online()
+  mm: list_lru: remove holding lru lock
+  mm: list_lru: only add memcg-aware lrus to the global lru list
+  mm: list_lru: optimize memory consumption of arrays
+  mm: introduce kmem_cache_alloc_lru
+  fs: introduce alloc_inode_sb() to allocate filesystems specific inode
+  dax: allocate inode by using alloc_inode_sb()
+  9p: allocate inode by using alloc_inode_sb()
+  adfs: allocate inode by using alloc_inode_sb()
+  affs: allocate inode by using alloc_inode_sb()
+  afs: allocate inode by using alloc_inode_sb()
+  befs: allocate inode by using alloc_inode_sb()
+  bfs: allocate inode by using alloc_inode_sb()
+  block: allocate inode by using alloc_inode_sb()
+  btrfs: allocate inode by using alloc_inode_sb()
+  ceph: allocate inode by using alloc_inode_sb()
+  cifs: allocate inode by using alloc_inode_sb()
+  coda: allocate inode by using alloc_inode_sb()
+  ecryptfs: allocate inode by using alloc_inode_sb()
+  efs: allocate inode by using alloc_inode_sb()
+  erofs: allocate inode by using alloc_inode_sb()
+  exfat: allocate inode by using alloc_inode_sb()
+  ext2: allocate inode by using alloc_inode_sb()
+  ext4: allocate inode by using alloc_inode_sb()
+  fat: allocate inode by using alloc_inode_sb()
+  freevxfs: allocate inode by using alloc_inode_sb()
+  fuse: allocate inode by using alloc_inode_sb()
+  gfs2: allocate inode by using alloc_inode_sb()
+  hfs: allocate inode by using alloc_inode_sb()
+  hfsplus: allocate inode by using alloc_inode_sb()
+  hostfs: allocate inode by using alloc_inode_sb()
+  hpfs: allocate inode by using alloc_inode_sb()
+  hugetlbfs: allocate inode by using alloc_inode_sb()
+  isofs: allocate inode by using alloc_inode_sb()
+  jffs2: allocate inode by using alloc_inode_sb()
+  jfs: allocate inode by using alloc_inode_sb()
+  minix: allocate inode by using alloc_inode_sb()
+  nfs: allocate inode by using alloc_inode_sb()
+  nilfs2: allocate inode by using alloc_inode_sb()
+  ntfs: allocate inode by using alloc_inode_sb()
+  ocfs2: allocate inode by using alloc_inode_sb()
+  openpromfs: allocate inode by using alloc_inode_sb()
+  orangefs: allocate inode by using alloc_inode_sb()
+  overlayfs: allocate inode by using alloc_inode_sb()
+  proc: allocate inode by using alloc_inode_sb()
+  qnx4: allocate inode by using alloc_inode_sb()
+  qnx6: allocate inode by using alloc_inode_sb()
+  reiserfs: allocate inode by using alloc_inode_sb()
+  romfs: allocate inode by using alloc_inode_sb()
+  squashfs: allocate inode by using alloc_inode_sb()
+  sysv: allocate inode by using alloc_inode_sb()
+  ubifs: allocate inode by using alloc_inode_sb()
+  udf: allocate inode by using alloc_inode_sb()
+  ufs: allocate inode by using alloc_inode_sb()
+  vboxsf: allocate inode by using alloc_inode_sb()
+  xfs: allocate inode by using alloc_inode_sb()
+  zonefs: allocate inode by using alloc_inode_sb()
+  ipc: allocate inode by using alloc_inode_sb()
+  shmem: allocate inode by using alloc_inode_sb()
+  net: allocate inode by using alloc_inode_sb()
+  rpc: allocate inode by using alloc_inode_sb()
+  f2fs: allocate inode by using alloc_inode_sb()
+  nfs42: use a specific kmem_cache to allocate nfs4_xattr_entry
+  mm: dcache: use kmem_cache_alloc_lru() to allocate dentry
+  xarray: use kmem_cache_alloc_lru to allocate xa_node
+  mm: workingset: use xas_set_lru() to pass shadow_nodes
+  mm: list_lru: allocate list_lru_one only when needed
+  mm: list_lru: rename memcg_drain_all_list_lrus to
+    memcg_reparent_list_lrus
+  mm: list_lru: replace linear array with xarray
+  mm: memcontrol: reuse memory cgroup ID for kmem ID
+  mm: memcontrol: fix cannot alloc the maximum memcg ID
+  mm: list_lru: rename list_lru_per_memcg to list_lru_memcg
+  mm: memcontrol: rename memcg_cache_id to memcg_kmem_id
+
+ Documentation/filesystems/porting.rst |   5 +
+ drivers/dax/super.c                   |   2 +-
+ fs/9p/vfs_inode.c                     |   2 +-
+ fs/adfs/super.c                       |   2 +-
+ fs/affs/super.c                       |   2 +-
+ fs/afs/super.c                        |   2 +-
+ fs/befs/linuxvfs.c                    |   2 +-
+ fs/bfs/inode.c                        |   2 +-
+ fs/block_dev.c                        |   2 +-
+ fs/btrfs/inode.c                      |   2 +-
+ fs/ceph/inode.c                       |   2 +-
+ fs/cifs/cifsfs.c                      |   2 +-
+ fs/coda/inode.c                       |   2 +-
+ fs/dcache.c                           |   3 +-
+ fs/ecryptfs/super.c                   |   2 +-
+ fs/efs/super.c                        |   2 +-
+ fs/erofs/super.c                      |   2 +-
+ fs/exfat/super.c                      |   2 +-
+ fs/ext2/super.c                       |   2 +-
+ fs/ext4/super.c                       |   2 +-
+ fs/f2fs/super.c                       |   8 +-
+ fs/fat/inode.c                        |   2 +-
+ fs/freevxfs/vxfs_super.c              |   2 +-
+ fs/fuse/inode.c                       |   2 +-
+ fs/gfs2/super.c                       |   2 +-
+ fs/hfs/super.c                        |   2 +-
+ fs/hfsplus/super.c                    |   2 +-
+ fs/hostfs/hostfs_kern.c               |   2 +-
+ fs/hpfs/super.c                       |   2 +-
+ fs/hugetlbfs/inode.c                  |   2 +-
+ fs/inode.c                            |   2 +-
+ fs/isofs/inode.c                      |   2 +-
+ fs/jffs2/super.c                      |   2 +-
+ fs/jfs/super.c                        |   2 +-
+ fs/minix/inode.c                      |   2 +-
+ fs/nfs/inode.c                        |   2 +-
+ fs/nfs/nfs42xattr.c                   |  95 ++++---
+ fs/nilfs2/super.c                     |   2 +-
+ fs/ntfs/inode.c                       |   2 +-
+ fs/ocfs2/dlmfs/dlmfs.c                |   2 +-
+ fs/ocfs2/super.c                      |   2 +-
+ fs/openpromfs/inode.c                 |   2 +-
+ fs/orangefs/super.c                   |   2 +-
+ fs/overlayfs/super.c                  |   2 +-
+ fs/proc/inode.c                       |   2 +-
+ fs/qnx4/inode.c                       |   2 +-
+ fs/qnx6/inode.c                       |   2 +-
+ fs/reiserfs/super.c                   |   2 +-
+ fs/romfs/super.c                      |   2 +-
+ fs/squashfs/super.c                   |   2 +-
+ fs/sysv/inode.c                       |   2 +-
+ fs/ubifs/super.c                      |   2 +-
+ fs/udf/super.c                        |   2 +-
+ fs/ufs/super.c                        |   2 +-
+ fs/vboxsf/super.c                     |   2 +-
+ fs/xfs/xfs_icache.c                   |   2 +-
+ fs/zonefs/super.c                     |   2 +-
+ include/linux/fs.h                    |  11 +
+ include/linux/list_lru.h              |  16 +-
+ include/linux/memcontrol.h            |  49 ++--
+ include/linux/slab.h                  |   3 +
+ include/linux/swap.h                  |   5 +-
+ include/linux/xarray.h                |   9 +-
+ ipc/mqueue.c                          |   2 +-
+ lib/xarray.c                          |  10 +-
+ mm/list_lru.c                         | 472 ++++++++++++++++------------------
+ mm/memcontrol.c                       | 190 ++------------
+ mm/shmem.c                            |   2 +-
+ mm/slab.c                             |  39 ++-
+ mm/slab.h                             |  17 +-
+ mm/slob.c                             |   6 +
+ mm/slub.c                             |  42 ++-
+ mm/workingset.c                       |   2 +-
+ net/socket.c                          |   2 +-
+ net/sunrpc/rpc_pipe.c                 |   2 +-
+ 75 files changed, 498 insertions(+), 598 deletions(-)
+
+-- 
+2.11.0
+
