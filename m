@@ -2,137 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21FFE40A2DB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 03:50:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5263C40A2ED
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 03:55:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231953AbhINBvr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Sep 2021 21:51:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60540 "EHLO
+        id S231709AbhINB4P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Sep 2021 21:56:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231183AbhINBvo (ORCPT
+        with ESMTP id S230109AbhINB4O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Sep 2021 21:51:44 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE45CC061762
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 18:50:27 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id z94so11063435ede.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 18:50:27 -0700 (PDT)
+        Mon, 13 Sep 2021 21:56:14 -0400
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A748C061760
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 18:54:58 -0700 (PDT)
+Received: by mail-il1-x135.google.com with SMTP id m4so7248367ilj.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 18:54:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jPu3h9CQPcnJEoZBnk22cJi+iEEAQklCzeiD4Yt6F+4=;
-        b=ViM5QgV3bdhBUnRbzSzh9HBc/gtTqBCotJ+JMSFQthJmEDXZ9S9mjR1RKsWsWlI3D/
-         DvpQAeCLfEdvvtfSo0kxE0IL7QiAMaQeHPwLKM5DSFGsAu+o5T+hXxZy3zq0vI4ArzZu
-         cGA2HBMNSt56w0+6BO3RwBu6GVVjRsR6v6PjsTnK9pSz25FxtFWjPG4vmvhyiLFoqNcl
-         x42bOj4TXZrV2i1+MvQMWj4Dc8JJLhyVIS0GaMF1NPB++uv9dab/nVRbOvkD1Pt4jx8Y
-         JE8FZo7CE6G5j6ErdyzN5p/04LD8zrnYw2TRBSLojwarDBtqFnxHcCQoYFFadNIrVpiI
-         lZrg==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0erCkbPikwMLr62Veop0dKdOeXPGtO5lGKpDOfqeSm4=;
+        b=jzMs/winVEpIT8tzRmnXNyabIoFzL128yeGXAJc3mXV3/E5QXGYcIMEQCL7OAS6V2n
+         pmtF8kewmpoxKo/EOBStEW7wQwzMmgy70jBee9PHUd1hp2s/QZ5ekQQKAvxXGVBUWvvK
+         0fv7SS+Bugkk97DZAb6NjOwqYGqQZZR2NozVK3PGfxJvWlpkxOH1OnWLJBYe+51ChO87
+         FU3MJs1nKgvb06JahrL1dSPkZgDv28rjoORldUUMqrCAfJCjrNg/my3EoBzX+pKQrYWn
+         D8fNE6qF7d+71sJEREWcOKqpxJNkxfP/RCbVVqDtgUpeGM1YhYxtv58nEv6OerGN2d1T
+         hUhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jPu3h9CQPcnJEoZBnk22cJi+iEEAQklCzeiD4Yt6F+4=;
-        b=vPhPQPvigY45UOJef8GE94FsuuEjJt53S1avN4i1Vt4+IgJE29m1XC5nll9zt8BZQD
-         si8mXB1d9bgd3+NsiA4IpTBlN+DowxVjWVTERbsuTmbDdT/q8F0Tyq8sjKclHpRhJVq7
-         Ft9Pj6n1yd02OZJFs7vMFlGyGS8lQ6KCVEyrqQXVv80jvTCBOjcc3GnycLDG62Bfz81P
-         My/olFEqwvMRKFJOiSfPhF8d/ivfyTt7XLDn7pvCv30xgSEEncSlCynlndItPOwticTk
-         vgp1Z0hx5imnyCfclBzn9nmxuEwDrVfSJrROAujxureN72vbFVxNdrlEn9tuYi6aAtQS
-         BXVA==
-X-Gm-Message-State: AOAM533WsFu/0PA73kLdjsF59jyfxUK/ZYWqMcbXlby/FVMCLa9VJ7dz
-        apS+tb9n4xm3/0fUFd9lr4V1Yf8GW/rWaWY6NtZY
-X-Google-Smtp-Source: ABdhPJxh9C/8a1CsAbh15aNiNt0zThWTeKtkQZUPvHU1ASlce16mrq98gj9qsXKgpDoK44hWmc7N9M7URgGcpkj+mxk=
-X-Received: by 2002:a05:6402:13d0:: with SMTP id a16mr12628569edx.155.1631584226307;
- Mon, 13 Sep 2021 18:50:26 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0erCkbPikwMLr62Veop0dKdOeXPGtO5lGKpDOfqeSm4=;
+        b=cVbzHaaPT2fecJ9T6i0wv2wDTrCBD60Rn3Bv1I58Q4oihEcZ7snsyzf92BDpgPdESD
+         SzWYJW+wJQXRQcA6bfq1ArzyQzEryane7V9y7RFoLmZf2njbM3KU6rzIItXrxZ97pocX
+         BShiw2KhnEcHBzUxonwny8Ncgk8HZfFs2IJgmFc0PZzKoD4XNEWaghstKVWZeP5FSKBE
+         F9sr3cMR0wOsl1SLYu2rZ9k3zkLOnCrief95EeLRH3oTD9xQz0C/jYHL3AkbLk+36JOl
+         DfjM+n9WLwRQ7Wx5LRbg8IAhWHgC3z1p1OuWHe/b+j8KKLDczC/IT9n8bZcppkiuX/JK
+         8U7g==
+X-Gm-Message-State: AOAM533EJTsQVNoxZu4p5+Ff467GlTvxwti+6mT/4tvQy9IvwXdnRH+w
+        VJSn7xMrUsbCSRseHOWHqAW/4haV/GTV7Q==
+X-Google-Smtp-Source: ABdhPJyHsx8LbJr1XduO9auKgXhP/9RQ+NAYhME0MGMhFIh0W8h/g37XrvVVYzCmgxQh6HNI2SMq+Q==
+X-Received: by 2002:a92:730c:: with SMTP id o12mr10347019ilc.208.1631584497586;
+        Mon, 13 Sep 2021 18:54:57 -0700 (PDT)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id s5sm5914403ilq.59.2021.09.13.18.54.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Sep 2021 18:54:57 -0700 (PDT)
+Subject: Re: [PATCHSET 0/3] Add ability to save/restore iov_iter state
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <20210910182536.685100-1-axboe@kernel.dk>
+ <8a278aa1-81ed-72e0-dec7-b83997e5d801@kernel.dk>
+ <CAHk-=wj3Lu=mJ8L7iE0RQXGZVdoSMz6rnPmrWoVNJhTaObOqkA@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <fc6649ca-7700-a8ca-2e37-6f93c8aadb4d@kernel.dk>
+Date:   Mon, 13 Sep 2021 19:54:56 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20210824205724.GB490529@madcap2.tricolour.ca> <20210826011639.GE490529@madcap2.tricolour.ca>
- <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
- <20210826163230.GF490529@madcap2.tricolour.ca> <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
- <20210827133559.GG490529@madcap2.tricolour.ca> <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
- <20210828150356.GH490529@madcap2.tricolour.ca> <CAHC9VhRgc_Fhi4c6L__butuW7cmSFJxTMxb+BBn6P-8Yt0ck_w@mail.gmail.com>
- <CAHC9VhQD8hKekqosjGgWPxZFqS=EFy-_kQL5zAo1sg0MU=6n5A@mail.gmail.com>
- <20210910005858.GL490529@madcap2.tricolour.ca> <CAHC9VhSRJYW7oRq6iLCH_UYukeFfE0pEJ_wBLdr1mw2QGUPh-Q@mail.gmail.com>
-In-Reply-To: <CAHC9VhSRJYW7oRq6iLCH_UYukeFfE0pEJ_wBLdr1mw2QGUPh-Q@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 13 Sep 2021 21:50:15 -0400
-Message-ID: <CAHC9VhTrimTds_miuyRhhHjoG_Fhmk2vH7G3hKeeFWO3BdLpKw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     sgrubb@redhat.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-audit@redhat.com,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHk-=wj3Lu=mJ8L7iE0RQXGZVdoSMz6rnPmrWoVNJhTaObOqkA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 13, 2021 at 3:23 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Thu, Sep 9, 2021 at 8:59 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2021-09-01 15:21, Paul Moore wrote:
-> > > On Sun, Aug 29, 2021 at 11:18 AM Paul Moore <paul@paul-moore.com> wrote:
-> > > > On Sat, Aug 28, 2021 at 11:04 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > I did set a syscall filter for
-> > > > >         -a exit,always -F arch=b64 -S io_uring_enter,io_uring_setup,io_uring_register -F key=iouringsyscall
-> > > > > and that yielded some records with a couple of orphans that surprised me
-> > > > > a bit.
-> > > >
-> > > > Without looking too closely at the log you sent, you can expect URING
-> > > > records without an associated SYSCALL record when the uring op is
-> > > > being processed in the io-wq or sqpoll context.  In the io-wq case the
-> > > > processing is happening after the thread finished the syscall but
-> > > > before the execution context returns to userspace and in the case of
-> > > > sqpoll the processing is handled by a separate kernel thread with no
-> > > > association to a process thread.
-> > >
-> > > I spent some time this morning/afternoon playing with the io_uring
-> > > audit filtering capability and with your audit userspace
-> > > ghau-iouring-filtering.v1.0 branch it appears to work correctly.  Yes,
-> > > the userspace tooling isn't quite 100% yet (e.g. `auditctl -l` doesn't
-> > > map the io_uring ops correctly), but I know you mentioned you have a
-> > > number of fixes/improvements still as a work-in-progress there so I'm
-> > > not too concerned.  The important part is that the kernel pieces look
-> > > to be working correctly.
-> >
-> > Ok, I have squashed and pushed the audit userspace support for iouring:
-> >         https://github.com/rgbriggs/audit-userspace/commit/e8bd8d2ea8adcaa758024cb9b8fa93895ae35eea
-> >         https://github.com/linux-audit/audit-userspace/compare/master...rgbriggs:ghak-iouring-filtering.v2.1
-> > There are test rpms for f35 here:
-> >         http://people.redhat.com/~rbriggs/ghak-iouring/git-e8bd8d2-fc35/
-> >
-> > userspace v2 changelog:
-> > - check for watch before adding perm
-> > - update manpage to include filesystem filter
-> > - update support for the uring filter list: doc, -U op, op names
-> > - add support for the AUDIT_URINGOP record type
-> > - add uringop support to ausearch
-> > - add uringop support to aureport
-> > - lots of bug fixes
-> >
-> > "auditctl -a uring,always -S ..." will now throw an error and require
-> > "-U" instead.
+On 9/13/21 5:23 PM, Linus Torvalds wrote:
+> On Mon, Sep 13, 2021 at 3:43 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> Al, Linus, are you OK with this? I think we should get this in for 5.15.
+>> I didn't resend the whole series, just a v2 of patch 1/3 to fix that bvec
+>> vs iovec issue. Let me know if you want the while thing resent.
+> 
+> So I'm ok with the iov_iter side, but the io_uring side seems still
+> positively buggy, and very confused.
+> 
+> It also messes with the state in bad ways and has internal knowledge.
+> And some of it looks completely bogus.
+> 
+> For example, I see
+> 
+>         state->count -= ret;
+>         rw->bytes_done += ret;
+> 
+> and I go "that's BS". There's no way it's ok to start messing with the
+> byte count inside the state like that. That just means that the state
+> is now no longer the saved state, and it's some random garbage.
 >
-> Thanks Richard.
->
-> FYI, I rebased the io_uring/LSM/audit patchset on top of v5.15-rc1
-> today and tested both with your v1.0 and with your v2.1 branch and the
-> various combinations seemed to work just fine (of course the v2.1
-> userspace branch was more polished, less warts, etc.).  I'm going to
-> go over the patch set one more time to make sure everything is still
-> looking good, write up an updated cover letter, and post a v3 revision
-> later tonight with the hope of merging it into -next later this week.
+> I also think that the "bytes_done += ret" is a big hint there: any
+> time you restore the iovec state, you should then forward it by
+> "bytes_done". But that's not what the code does.
+> 
+> Instead, it will now restore the iovec styate with the *wrong* number
+> of bytes remaining, but will start from the beginning of the iovec.
+> 
+> So I think the fs/io_uring.c use of this state buffer is completely wrong.
+> 
+> What *may* be the right thing to do is to
+> 
+>  (a) not mess with state->count
+> 
+>  (b) when you restore the state you always use
+> 
+>         iov_iter_restore(iter, state, bytes_done);
+> 
+> to actually restore the *correct* state.
+> 
+> Because modifying the iovec save state like that cannot be right, and
+> if it's right it's still too ugly and fragile for words. That save
+> state should be treated as a snapshot, not as a random buffer that you
+> can make arbitrary changes to.
+> 
+> See what I'm saying?
 
-Best laid plans of mice and men ...
+OK, for the do while loop itself, I do think we should be more
+consistent and that would also get rid of the state->count manipulation.
+I do agree that messing with that state is not something that should be
+done, and we can do this more cleanly and consistently instead. Once we
+hit the do {} while loop, state should be &rw->state and we can
+consistently handle it that way.
 
-It turns out the LSM hook macros are full of warnings-now-errors that
-should likely be resolved before sending anything LSM related to
-Linus.  I'll post v3 once I fix this, which may not be until tomorrow.
-
-(To be clear, the warnings/errors aren't new to this patchset, I'm
-likely just the first person to notice them.)
+Let me rework that bit and run the tests, and I'll post a v2 tomorrow.
+Thanks for taking a closer look.
 
 -- 
-paul moore
-www.paul-moore.com
+Jens Axboe
+
