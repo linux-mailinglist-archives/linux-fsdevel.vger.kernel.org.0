@@ -2,113 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DE1C940A285
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 03:31:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21FFE40A2DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 03:50:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236206AbhINBcl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Sep 2021 21:32:41 -0400
-Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:47857 "EHLO
-        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232109AbhINBci (ORCPT
+        id S231953AbhINBvr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Sep 2021 21:51:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60540 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231183AbhINBvo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Sep 2021 21:32:38 -0400
-Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
-        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id D566A1093D9;
-        Tue, 14 Sep 2021 11:31:18 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1mPxI5-00CCbG-9U; Tue, 14 Sep 2021 11:31:17 +1000
-Date:   Tue, 14 Sep 2021 11:31:17 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mel Gorman <mgorman@suse.com>, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] XFS: remove congestion_wait() loop from kmem_alloc()
-Message-ID: <20210914013117.GG2361455@dread.disaster.area>
-References: <163157808321.13293.486682642188075090.stgit@noble.brown>
- <163157838439.13293.5032214643474179966.stgit@noble.brown>
+        Mon, 13 Sep 2021 21:51:44 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE45CC061762
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 18:50:27 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id z94so11063435ede.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 18:50:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jPu3h9CQPcnJEoZBnk22cJi+iEEAQklCzeiD4Yt6F+4=;
+        b=ViM5QgV3bdhBUnRbzSzh9HBc/gtTqBCotJ+JMSFQthJmEDXZ9S9mjR1RKsWsWlI3D/
+         DvpQAeCLfEdvvtfSo0kxE0IL7QiAMaQeHPwLKM5DSFGsAu+o5T+hXxZy3zq0vI4ArzZu
+         cGA2HBMNSt56w0+6BO3RwBu6GVVjRsR6v6PjsTnK9pSz25FxtFWjPG4vmvhyiLFoqNcl
+         x42bOj4TXZrV2i1+MvQMWj4Dc8JJLhyVIS0GaMF1NPB++uv9dab/nVRbOvkD1Pt4jx8Y
+         JE8FZo7CE6G5j6ErdyzN5p/04LD8zrnYw2TRBSLojwarDBtqFnxHcCQoYFFadNIrVpiI
+         lZrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jPu3h9CQPcnJEoZBnk22cJi+iEEAQklCzeiD4Yt6F+4=;
+        b=vPhPQPvigY45UOJef8GE94FsuuEjJt53S1avN4i1Vt4+IgJE29m1XC5nll9zt8BZQD
+         si8mXB1d9bgd3+NsiA4IpTBlN+DowxVjWVTERbsuTmbDdT/q8F0Tyq8sjKclHpRhJVq7
+         Ft9Pj6n1yd02OZJFs7vMFlGyGS8lQ6KCVEyrqQXVv80jvTCBOjcc3GnycLDG62Bfz81P
+         My/olFEqwvMRKFJOiSfPhF8d/ivfyTt7XLDn7pvCv30xgSEEncSlCynlndItPOwticTk
+         vgp1Z0hx5imnyCfclBzn9nmxuEwDrVfSJrROAujxureN72vbFVxNdrlEn9tuYi6aAtQS
+         BXVA==
+X-Gm-Message-State: AOAM533WsFu/0PA73kLdjsF59jyfxUK/ZYWqMcbXlby/FVMCLa9VJ7dz
+        apS+tb9n4xm3/0fUFd9lr4V1Yf8GW/rWaWY6NtZY
+X-Google-Smtp-Source: ABdhPJxh9C/8a1CsAbh15aNiNt0zThWTeKtkQZUPvHU1ASlce16mrq98gj9qsXKgpDoK44hWmc7N9M7URgGcpkj+mxk=
+X-Received: by 2002:a05:6402:13d0:: with SMTP id a16mr12628569edx.155.1631584226307;
+ Mon, 13 Sep 2021 18:50:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <163157838439.13293.5032214643474179966.stgit@noble.brown>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0
-        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
-        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=7-415B0cAAAA:8
-        a=-upqpVM4ziubeLwI_h0A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20210824205724.GB490529@madcap2.tricolour.ca> <20210826011639.GE490529@madcap2.tricolour.ca>
+ <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
+ <20210826163230.GF490529@madcap2.tricolour.ca> <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
+ <20210827133559.GG490529@madcap2.tricolour.ca> <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
+ <20210828150356.GH490529@madcap2.tricolour.ca> <CAHC9VhRgc_Fhi4c6L__butuW7cmSFJxTMxb+BBn6P-8Yt0ck_w@mail.gmail.com>
+ <CAHC9VhQD8hKekqosjGgWPxZFqS=EFy-_kQL5zAo1sg0MU=6n5A@mail.gmail.com>
+ <20210910005858.GL490529@madcap2.tricolour.ca> <CAHC9VhSRJYW7oRq6iLCH_UYukeFfE0pEJ_wBLdr1mw2QGUPh-Q@mail.gmail.com>
+In-Reply-To: <CAHC9VhSRJYW7oRq6iLCH_UYukeFfE0pEJ_wBLdr1mw2QGUPh-Q@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 13 Sep 2021 21:50:15 -0400
+Message-ID: <CAHC9VhTrimTds_miuyRhhHjoG_Fhmk2vH7G3hKeeFWO3BdLpKw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     sgrubb@redhat.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-audit@redhat.com,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 14, 2021 at 10:13:04AM +1000, NeilBrown wrote:
-> Documentation commment in gfp.h discourages indefinite retry loops on
-> ENOMEM and says of __GFP_NOFAIL that it
-> 
->     is definitely preferable to use the flag rather than opencode
->     endless loop around allocator.
-> 
-> So remove the loop, instead specifying __GFP_NOFAIL if KM_MAYFAIL was
-> not given.
-> 
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> ---
->  fs/xfs/kmem.c |   16 ++++------------
->  1 file changed, 4 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/xfs/kmem.c b/fs/xfs/kmem.c
-> index 6f49bf39183c..f545f3633f88 100644
-> --- a/fs/xfs/kmem.c
-> +++ b/fs/xfs/kmem.c
-> @@ -13,19 +13,11 @@ kmem_alloc(size_t size, xfs_km_flags_t flags)
->  {
->  	int	retries = 0;
->  	gfp_t	lflags = kmem_flags_convert(flags);
-> -	void	*ptr;
->  
->  	trace_kmem_alloc(size, flags, _RET_IP_);
->  
-> -	do {
-> -		ptr = kmalloc(size, lflags);
-> -		if (ptr || (flags & KM_MAYFAIL))
-> -			return ptr;
-> -		if (!(++retries % 100))
-> -			xfs_err(NULL,
-> -	"%s(%u) possible memory allocation deadlock size %u in %s (mode:0x%x)",
-> -				current->comm, current->pid,
-> -				(unsigned int)size, __func__, lflags);
-> -		congestion_wait(BLK_RW_ASYNC, HZ/50);
-> -	} while (1);
-> +	if (!(flags & KM_MAYFAIL))
-> +		lflags |= __GFP_NOFAIL;
-> +
-> +	return kmalloc(size, lflags);
->  }
+On Mon, Sep 13, 2021 at 3:23 PM Paul Moore <paul@paul-moore.com> wrote:
+> On Thu, Sep 9, 2021 at 8:59 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2021-09-01 15:21, Paul Moore wrote:
+> > > On Sun, Aug 29, 2021 at 11:18 AM Paul Moore <paul@paul-moore.com> wrote:
+> > > > On Sat, Aug 28, 2021 at 11:04 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > I did set a syscall filter for
+> > > > >         -a exit,always -F arch=b64 -S io_uring_enter,io_uring_setup,io_uring_register -F key=iouringsyscall
+> > > > > and that yielded some records with a couple of orphans that surprised me
+> > > > > a bit.
+> > > >
+> > > > Without looking too closely at the log you sent, you can expect URING
+> > > > records without an associated SYSCALL record when the uring op is
+> > > > being processed in the io-wq or sqpoll context.  In the io-wq case the
+> > > > processing is happening after the thread finished the syscall but
+> > > > before the execution context returns to userspace and in the case of
+> > > > sqpoll the processing is handled by a separate kernel thread with no
+> > > > association to a process thread.
+> > >
+> > > I spent some time this morning/afternoon playing with the io_uring
+> > > audit filtering capability and with your audit userspace
+> > > ghau-iouring-filtering.v1.0 branch it appears to work correctly.  Yes,
+> > > the userspace tooling isn't quite 100% yet (e.g. `auditctl -l` doesn't
+> > > map the io_uring ops correctly), but I know you mentioned you have a
+> > > number of fixes/improvements still as a work-in-progress there so I'm
+> > > not too concerned.  The important part is that the kernel pieces look
+> > > to be working correctly.
+> >
+> > Ok, I have squashed and pushed the audit userspace support for iouring:
+> >         https://github.com/rgbriggs/audit-userspace/commit/e8bd8d2ea8adcaa758024cb9b8fa93895ae35eea
+> >         https://github.com/linux-audit/audit-userspace/compare/master...rgbriggs:ghak-iouring-filtering.v2.1
+> > There are test rpms for f35 here:
+> >         http://people.redhat.com/~rbriggs/ghak-iouring/git-e8bd8d2-fc35/
+> >
+> > userspace v2 changelog:
+> > - check for watch before adding perm
+> > - update manpage to include filesystem filter
+> > - update support for the uring filter list: doc, -U op, op names
+> > - add support for the AUDIT_URINGOP record type
+> > - add uringop support to ausearch
+> > - add uringop support to aureport
+> > - lots of bug fixes
+> >
+> > "auditctl -a uring,always -S ..." will now throw an error and require
+> > "-U" instead.
+>
+> Thanks Richard.
+>
+> FYI, I rebased the io_uring/LSM/audit patchset on top of v5.15-rc1
+> today and tested both with your v1.0 and with your v2.1 branch and the
+> various combinations seemed to work just fine (of course the v2.1
+> userspace branch was more polished, less warts, etc.).  I'm going to
+> go over the patch set one more time to make sure everything is still
+> looking good, write up an updated cover letter, and post a v3 revision
+> later tonight with the hope of merging it into -next later this week.
 
-Which means we no longer get warnings about memory allocation
-failing - kmem_flags_convert() sets __GFP_NOWARN for all allocations
-in this loop. Hence we'll now get silent deadlocks through this code
-instead of getting warnings that memory allocation is failing
-repeatedly.
+Best laid plans of mice and men ...
 
-I also wonder about changing the backoff behaviour here (it's a 20ms
-wait right now because there are not early wakeups) will affect the
-behaviour, as __GFP_NOFAIL won't wait for that extra time between
-allocation attempts....
+It turns out the LSM hook macros are full of warnings-now-errors that
+should likely be resolved before sending anything LSM related to
+Linus.  I'll post v3 once I fix this, which may not be until tomorrow.
 
-And, of course, how did you test this? Sometimes we see
-unpredicted behaviours as a result of "simple" changes like this
-under low memory conditions...
+(To be clear, the warnings/errors aren't new to this patchset, I'm
+likely just the first person to notice them.)
 
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+paul moore
+www.paul-moore.com
