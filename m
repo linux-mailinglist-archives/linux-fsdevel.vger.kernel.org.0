@@ -2,149 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A086040B839
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 21:37:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B620A40B937
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 22:24:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232984AbhINTir (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 15:38:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55306 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232486AbhINTir (ORCPT
+        id S234989AbhINUZF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 16:25:05 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:35788 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S234340AbhINUYn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 15:38:47 -0400
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EBACC061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 12:37:29 -0700 (PDT)
-Received: by mail-il1-x135.google.com with SMTP id i13so292796ilm.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 12:37:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AHaD45tpXhY3cAJWkx8UAo5BfY2ep0mljpAehjK+qGI=;
-        b=SJnU0hXQxSIp4tRyqhlrSD+Vd4qc4sfB/TtW619ax2br6XynKuLnLR7VFMNr2JaOIQ
-         gR/JFVHg+G/qOrKrZ7BQldMhCs7L/zD4YkhTdkJgRmXBuxG4QN8RRqxK8zNXp7Pcrtky
-         uybtK4AwABvC991fm0S9rdEbzNIn1ed/GeyefIu/Cuhe2sy6N2ssUU6GhvSXmy24ry6r
-         jpnDOkUJ3mw5zucwcXfhRmQFzDKpU5g1F3CBGz8dtEpt3eb0462qcMkmiuRyNh+Ag5QD
-         Z5MKJ5VJZh8A1FVTdQmd8YXmWIRfxp0gDl6+6Hy5XqXlm+Ir2NBDLSP749iWMVKlvLOE
-         oFXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AHaD45tpXhY3cAJWkx8UAo5BfY2ep0mljpAehjK+qGI=;
-        b=S0PsmYHExGoVZS0DVgTSfQHDKChCjY2LB5nG/OyA/7kwCJRnACkk0bKWRhzaGnhLNs
-         feL+JVy8EpHwQmx/ZBW8Q/lnyyD+5Ad3mks6fT6qHLrhvXhySDdsoS/P3V2g09vzKWAk
-         vSGZfACZnhVkVM4SsskLcKhhje9cA91ai1xGp+DKW+LQo7jmItaufy55rjgWdukPtjyO
-         PWdbx5QqZwJKdcqOGY3u/+Ek7roksBgbdm3rV1GU7n39SPOukkCAby+3/y86mUL4Ty5m
-         RycjakfWmSnzFqBkoLlDLm8hJ+m6dZ9muSr5A102fUMPAnxiIKr6JZ4CgHNHZeKsKdmq
-         qo9Q==
-X-Gm-Message-State: AOAM530SRLZpvJAw9lp2vsd/lc2fmE/lRpvmYDKYoS4lQxnlAtJqiEnO
-        rM5X32ErShvwCnz/WTLDz5HbfKrYKpxv3RWAHZ4=
-X-Google-Smtp-Source: ABdhPJz1wdVfCbLt9JCsYqzWuwQYqKBa1mHikabT2SNfvPmOl3utJtSPCxizok4BnuWPeKtUihgyjg==
-X-Received: by 2002:a92:ce48:: with SMTP id a8mr7372875ilr.115.1631648248879;
-        Tue, 14 Sep 2021 12:37:28 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id c1sm6417140iot.44.2021.09.14.12.37.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Sep 2021 12:37:28 -0700 (PDT)
-Subject: Re: [PATCH 2/3] io_uring: use iov_iter state save/restore helpers
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20210914141750.261568-1-axboe@kernel.dk>
- <20210914141750.261568-3-axboe@kernel.dk>
- <CAHk-=wh6mGm0b7AnKNRzDO07nrdpCrvHtUQ=afTH6pZ2JiBpeQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <5659d7ba-e198-9df0-c6f8-bd6511bf44a0@kernel.dk>
-Date:   Tue, 14 Sep 2021 13:37:27 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 14 Sep 2021 16:24:43 -0400
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 18EKMujD020560
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Sep 2021 16:22:57 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 97AD815C3424; Tue, 14 Sep 2021 16:22:56 -0400 (EDT)
+Date:   Tue, 14 Sep 2021 16:22:56 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     willy@infradead.org, akpm@linux-foundation.org, hannes@cmpxchg.org,
+        mhocko@kernel.org, vdavydov.dev@gmail.com, shakeelb@google.com,
+        guro@fb.com, shy828301@gmail.com, alexs@kernel.org,
+        richard.weiyang@gmail.com, david@fromorbit.com,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+        zhengqi.arch@bytedance.com, duanxiongchun@bytedance.com,
+        fam.zheng@bytedance.com, smuchun@gmail.com
+Subject: Re: [PATCH v3 00/76] Optimize list lru memory consumption
+Message-ID: <YUEEoAUBaN7J0ch3@mit.edu>
+References: <20210914072938.6440-1-songmuchun@bytedance.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wh6mGm0b7AnKNRzDO07nrdpCrvHtUQ=afTH6pZ2JiBpeQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210914072938.6440-1-songmuchun@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/14/21 12:45 PM, Linus Torvalds wrote:
-> On Tue, Sep 14, 2021 at 7:18 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->>
->> +       iov_iter_restore(iter, state);
->> +
-> ...
->>                 rw->bytes_done += ret;
->> +               iov_iter_advance(iter, ret);
->> +               if (!iov_iter_count(iter))
->> +                       break;
->> +               iov_iter_save_state(iter, state);
-> 
-> Ok, so now you keep iovb_iter and the state always in sync by just
-> always resetting the iter back and then walking it forward explicitly
-> - and re-saving the state.
-> 
-> That seems safe, if potentially unnecessarily expensive.
+On Tue, Sep 14, 2021 at 03:28:22PM +0800, Muchun Song wrote:
+> So we have to convert to new API for all filesystems, which is done in
+> one patch. Some filesystems are easy to convert (just replace
+> kmem_cache_alloc() to alloc_inode_sb()), while other filesystems need to
+> do more work.
 
-Right, it's not ideal if it's a big range of IO, then it'll definitely
-be noticeable. But not too worried about it, at least not for now...
+From what I can tell, three are 54 file systems for which it was a
+trivial one-line change, and two (f2fs and nfs42) that were a tad bit
+more complex.
 
-> I guess re-walking lots of iovec entries is actually very unlikely in
-> practice, so maybe this "stupid brute-force" model is the right one.
+> In order to make it easy for maintainers of different
+> filesystems to review their own maintained part, I split the patch into
+> patches which are per-filesystem in this version. I am not sure if this
+> is a good idea, because there is going to be more commits.
 
-Not sure what the alternative is here. We could do something similar to
-__io_import_fixed() as we're only dealing with iter types where we can
-do that, but probably best left as a later optimization if it's deemed
-necessary.
+What I'd actually suggest is that you combine all of the trivial file
+system changes into a single commit, and keep the two more complex
+changes for f2fs and nfs42 in separate commits.
 
-> I do find the odd "use __state vs rw->state" to be very confusing,
-> though. Particularly in io_read(), where you do this:
-> 
-> +       iov_iter_restore(iter, state);
-> +
->         ret2 = io_setup_async_rw(req, iovec, inline_vecs, iter, true);
->         if (ret2)
->                 return ret2;
-> 
->         iovec = NULL;
->         rw = req->async_data;
-> -       /* now use our persistent iterator, if we aren't already */
-> -       iter = &rw->iter;
-> +       /* now use our persistent iterator and state, if we aren't already */
-> +       if (iter != &rw->iter) {
-> +               iter = &rw->iter;
-> +               state = &rw->iter_state;
-> +       }
-> 
->         do {
-> -               io_size -= ret;
->                 rw->bytes_done += ret;
-> +               iov_iter_advance(iter, ret);
-> +               if (!iov_iter_count(iter))
-> +                       break;
-> +               iov_iter_save_state(iter, state);
-> 
-> 
-> Note how it first does that iov_iter_restore() on iter/state, buit
-> then it *replaces&* the iter/state pointers, and then it does
-> iov_iter_advance() on the replacement ones.
+Acked-by: Theodore Ts'o <tytso@mit.edu>
 
-We restore the iter so it's the same as before we did the read_iter
-call, and then setup a consistent copy of the iov/iter in case we need
-to punt this request for retry. rw->iter should have the same state as
-iter at this point, and since rw->iter is the copy we'll use going
-forward, we're advancing that one in case ret > 0.
+... for the ext4 related change.
 
-The other case is that no persistent state is needed, and then iter
-remains the same.
-
-I'll take a second look at this part and see if I can make it a bit more
-straight forward, or at least comment it properly.
-
--- 
-Jens Axboe
-
+						- Ted
+						
