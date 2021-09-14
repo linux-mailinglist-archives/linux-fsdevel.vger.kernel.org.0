@@ -2,212 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DF9B40B4B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 18:33:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8B5640B4CF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 18:34:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229522AbhINQe5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 12:34:57 -0400
-Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:47688 "EHLO
-        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229448AbhINQey (ORCPT
+        id S230111AbhINQfz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 12:35:55 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:36500 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230035AbhINQfx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 12:34:54 -0400
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 9EECC824BC;
-        Tue, 14 Sep 2021 19:33:33 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1631637213;
-        bh=0EREs/Pch2eAfzrgJxooP8sPf5HUcH1pFhCFNPXsfj4=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=XLzi1V631QNh4On++MFFGJw3yjQtEnSYbDAmoT4V9oem02g6RQzFswXEKnghqfNMz
-         1+oahgubsOEX65nwiqhtrII82kv6ZEYtyx/o8OghmVDje5eknK7BIahlV9p58n9tsg
-         EE2Z586VtQjm3fAYIbQKxGTqjHhn1W8suQZE/D2I=
-Received: from [192.168.211.158] (192.168.211.158) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Tue, 14 Sep 2021 19:33:33 +0300
-Message-ID: <367b6153-c044-da71-39ed-132c0b79690f@paragon-software.com>
-Date:   Tue, 14 Sep 2021 19:33:32 +0300
+        Tue, 14 Sep 2021 12:35:53 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id EDDDE20133;
+        Tue, 14 Sep 2021 16:34:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1631637274; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=w/5E6AWO4hf1qDQZmMriostoBVgIJHLgFFxt8gqBe3c=;
+        b=GPlgASYjwPg/+6ImD5cCGGmdO4aWmWL2bdooVFmdGdap+N019pBj5XRhIhDF2WRCdi63/Y
+        vP3UTpstIdq5nN0nkJMb9XALm/VGjhh6yJPefoyEkOmWhlwyFV4CJ+/azEvG38saEmXq+E
+        0GFikVD9KiQgQUIQ+f4Km0OduuXubV0=
+Received: from suse.com (unknown [10.163.32.246])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 1EA27A3B91;
+        Tue, 14 Sep 2021 16:34:34 +0000 (UTC)
+Date:   Tue, 14 Sep 2021 17:34:32 +0100
+From:   Mel Gorman <mgorman@suse.com>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] EXT4: Remove ENOMEM/congestion_wait() loops.
+Message-ID: <20210914163432.GR3828@suse.com>
+References: <163157808321.13293.486682642188075090.stgit@noble.brown>
+ <163157838437.13293.14244628630141187199.stgit@noble.brown>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.0
-Subject: Re: ntfs3 mount options
-Content-Language: en-US
-To:     Kari Argillander <kari.argillander@gmail.com>,
-        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>
-CC:     Marcos Mello <marcosfrm@gmail.com>, <ntfs3@lists.linux.dev>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <CAJZVDJAJa+j=hx2JswdvS35t9VU6TYF3uDZnzZ5hhtSzo9E-LA@mail.gmail.com>
- <CAC=eVgQKOdNbyDf2Qf=O9SnG=6nAGZ-nyuwOosf7YW5R3xbVLw@mail.gmail.com>
- <20210912184347.zrb44vpc3lfyy3px@pali>
- <20210912194859.saoxuy3bbi2mmj5x@kari-VirtualBox>
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <20210912194859.saoxuy3bbi2mmj5x@kari-VirtualBox>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [192.168.211.158]
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <163157838437.13293.14244628630141187199.stgit@noble.brown>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Sep 14, 2021 at 10:13:04AM +1000, NeilBrown wrote:
+> Indefinite loops waiting for memory allocation are discouraged by
+> documentation in gfp.h which says the use of __GFP_NOFAIL that it
+> 
+>  is definitely preferable to use the flag rather than opencode endless
+>  loop around allocator.
+> 
+> Such loops that use congestion_wait() are particularly unwise as
+> congestion_wait() is indistinguishable from
+> schedule_timeout_uninterruptible() in practice - and should be
+> deprecated.
+> 
+> So this patch changes the two loops in ext4_ext_truncate() to use
+> __GFP_NOFAIL instead of looping.
+> 
+> As the allocation is multiple layers deeper in the call stack, this
+> requires passing the EXT4_EX_NOFAIL flag down and handling it in various
+> places.
+> 
+> Of particular interest is the ext4_journal_start family of calls which
+> can now have EXT4_EX_NOFAIL 'or'ed in to the 'type'.  This could be seen
+> as a blurring of types.  However 'type' is 8 bits, and EXT4_EX_NOFAIL is
+> a high bit, so it is safe in practice.
+> 
+> jbd2__journal_start() is enhanced so that the gfp_t flags passed are
+> used for *all* allocations.
+> 
+> Signed-off-by: NeilBrown <neilb@suse.de>
 
+I'm not a fan. GFP_NOFAIL allows access to emergency reserves increasing
+the risk of a livelock if memory is completely depleted where as some
+callers can afford to wait.
 
-On 12.09.2021 22:48, Kari Argillander wrote:
-> On Sun, Sep 12, 2021 at 08:43:47PM +0200, Pali Rohár wrote:
->> Hello!
->>
->> On Friday 10 September 2021 15:19:16 Kari Argillander wrote:
->>> 10.09.2021 14.23 Marcos Mello (marcosfrm@gmail.com) wrote:
->>>> Hi, sorry email you directly, but this mailing list thing is cryptic
->>>> to me.
->>>
->>> I CC also lists to this so now everyone knows. Also CC couple
->>> others who might be interested to talk about this.
->>>
->>>> I was reading your patches cleaning up ntfs3 documentation and
->>>> realized some mount options diverge from NTFS-3G. This will make
->>>> udisks people unhappy.
->>
->> If you still have to specify which fs driver want to use (ntfs, ntfs-3g,
->> ntfs3). So each software needs to be adjusted if want to start using
->> different fs driver even when mount options are same. So I think there
->> are no big issues that different fs driver are using different mount
->> options.
->>
->>> This is true. They also diverge from the current NTFS driver. We have
->>> talk about it a little bit and before ntfs driver can go out from kernel we
->>> need to support those flags or at least some. udisk currently does only
->>> support NTFS-3G and it does not support kernel ntfs driver. So nothing
->>> will change.
->>>
->>> I also agree that we should check mount options from ntfs-3g and maybe
->>> implement them in. Maybe we can just take some mount options with
->>> deprecated and print that this option is meant to use with ntfs-3g please
->>> note that this is kernel ntfs3 driver or something. It would still work for
->>> users. Ntfs-3g contains imo lot of unnecessary flags. Kernel community
->>> would probably not want to maintain so large list of different options.
->>
->> Mount options which makes sense could be implemented. Just somebody
->> needs to do it.
->>
->>> Ntfs-3g group also has acounted problems because they say that you
->>> should example use "big_writes", but not everyone does and that drops
->>> performance. Driver should work good way by default.
->>
->> I agree. Mount option which is just a hack because of some poor
->> implementation should not be introduced. Instead bugs should be fixed.
->> Also it applies for "performance issues" which do not change behavior of
->> fs operations (i.e. read() / write() operations do same thing on raw
->> disk).
->>
->>> And only if there
->>> is really demand there should be real mount option. But like I said, maybe
->>> we should add "fake" ntfs-3g options so if some user change to use ntfs3
->>> it will be pretty painless.
->>
->> This really should not be in kernel. You can implement userspace mount
->> helper which translates "legacy" ntfs-3g options into "correct" kernel
->> options. /bin/mount already supports these helpers / wrappers... Just
->> people do not know much about them.
-> 
-> Good to know. Thanks for this info.
-> 
->>
->>>> NTFS-3G options:
->>>> https://github.com/tuxera/ntfs-3g/blob/edge/src/ntfs-3g.8.in
->>>>
->>>> UDISKS default and allowed options:
->>>> https://github.com/storaged-project/udisks/blob/master/data/builtin_mount_options.conf
->>>>
->>>> For example, windows_names is not supported in ntfs3 and
->>>> show_sys_files should probably be an alias to showmeta.
->>>
->>> Imo windows_names is good option. There is so many users who just
->>> want to use this with dual boot. That is why I think best option would
->>> be windows_compatible or something. Then we do everything to user
->>> not screw up things with disk and that when he checks disk with windows
->>> everything will be ok. This option has to also select ignore_case.
->>>
->>> But right now we are horry to take every mount option away what we won't
->>> need. We can add options later. And this is so early that we really cannot
->>> think so much how UDSIKS threats ntfs-3g. It should imo not be problem
->>> for them to also support for ntfs3 with different options.
->>
->> This is something which needs to be handled and fixed systematically. We
->> have at least 5 filesystems in kernel (bonus question, try to guess
->> them :D) which support some kind/parts of "windows nt" functionality.
->> And it is pain if every one fs would use different option for
->> similar/same functionality.
-> 
-> Hopefully we can tackle this issue someday. But we will have lot of
-> deprecated options if we tackle this, but it is good thing and should
-> done in some point. I will answer your bonus question when we can throw
-> away one of those drivers.
-> 
->>>> Also, is NTFS-3G locale= equivalent to ntfs3 nls=?
->>>
->>> Pretty much. It is now called iocharset and nls will be deprecated.
->>> This is work towards that every Linux kernel filesystem driver which
->>> depends on this option will be same name. Ntfs-3g should also use
->>> it.
->>
->> iocharset= is what most fs supports. Just few name this option as nls=
->> and for consistency I preparing patches which adds iocharset= alias for
->> all kernel filesystems. nls= (for those few fs) stay supported as legacy
->> alias for iocharset=.
->>
->> Kari, now I'm thinking about nls= in new ntfs3 kernel driver. It is
->> currently being marked as deprecated. Does it really make sense to
->> introduce in new fs already deprecated option? Now when final linux
->> version which introduce this driver was not released yet, we can simply
->> drop (= do not introduce this option). 
-> 
-> We have discuss this earlier [1]. I think Konstantin can really decide
-> this one. I think it is he "rights" like was kinda chosen that ntfs64
-> can live in kernel because Paragon say some of they customers need it. I
-> have after that include big warning about using it. Because thing is
-> that if Paragon will not support it nobady will and someone will just
-> drop support for it.
-> 
-> Marking some option to deprecated is just 4 trivial line of code. I also
-> did not even bother to documented it. I can live with that if we won't
-> have this option but it can be little easier to some if we have that.
-> And I really do not mind if 4 extra line code inside structs. So my vote
-> is for deprecated.
-> 
-> Konstantion: Can you give us your opionion on this one?
+The key event should be reclaim making progress. The hack below is
+intended to vaguely demonstrate how blocking can be based on reclaim
+making progress instead of "congestion" but has not even been booted. A
+more complete overhaul may involve introducing
+reclaim_congestion_wait_nodemask(gfp_t gfp_mask, long timeout, nodemask_t *nodemask)
+and
+reclaim_congestion_wait_nodemask(gfp_t gfp_mask, long timeout)
+and converting congestion_wait and wait_iff_congestion to calling
+reclaim_congestion_wait_nodemask which waits on the first usable node
+and then audit every single congestion_wait() user to see which API
+they should call. Further work would be to establish whether the page allocator should
+call reclaim_congestion_wait_nodemask() if direct reclaim is not making
+progress or whether that should be in vmscan.c. Conceivably, GFP_NOFAIL
+could then soften its access to emergency reserves but I haven't given
+it much thought.
 
-Before answering I want to know: is it easy to remove deprecated option
-from code? I read different opinions in this thread.
+Yes it's significant work, but it would be a better than letting
+__GFP_NOFAIL propagate further and kicking us down the road.
 
-If removal will be easy, then I vote for deprecated option.
-Supporting familiar mount options will help in transition.
-After some time (one or two kernel releases?) this support can be dropped.
+This hack is terrible, it's not the right way to do it, it's just to
+illustrate the idea of "waiting on memory should be based on reclaim
+making progress and not the state of storage" is not impossible.
 
-If removal will be hard, then better to remove now.
-It will make things a bit harder for user, but it's better, than
-having a list of deprecated options, that do nothing and will be there forever.
-
-> 
-> [1]: https://lore.kernel.org/ntfs3/20210819095527.w4uv6gzuyaotxjpe@pali/
-> 
->> But after release, there would be no easy way to remove it. Adding a
->> new option can be done at any time later easily...
-> 
-> I think if something is has been deprecated from the start we can just
-> drop it when ever we want, but maybe we should add comment there and
-> just choose that first release in 2027 will not anymore have this
-> option. I recommend that you made this kind of thing in your patch
-> series too. XFS has commented nicely that we really drop this in x date.
-> This way decision is made before and then even janitor can come and
-> clean it when that time comes.
-> 
->   Argillander
-> 
->>>> Thank you a lot for all the work put into ntfs3!
->>>>
->>>> Marcos
->>
+--8<--
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 5c0318509f9e..5ed81c5746ec 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -832,6 +832,7 @@ typedef struct pglist_data {
+ 	unsigned long node_spanned_pages; /* total size of physical page
+ 					     range, including holes */
+ 	int node_id;
++	wait_queue_head_t reclaim_wait;
+ 	wait_queue_head_t kswapd_wait;
+ 	wait_queue_head_t pfmemalloc_wait;
+ 	struct task_struct *kswapd;	/* Protected by
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index 6122c78ce914..21a9cd693d12 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/writeback.h>
+ #include <linux/device.h>
++#include <linux/swap.h>
+ #include <trace/events/writeback.h>
+ 
+ struct backing_dev_info noop_backing_dev_info;
+@@ -1013,25 +1014,41 @@ void set_bdi_congested(struct backing_dev_info *bdi, int sync)
+ EXPORT_SYMBOL(set_bdi_congested);
+ 
+ /**
+- * congestion_wait - wait for a backing_dev to become uncongested
+- * @sync: SYNC or ASYNC IO
+- * @timeout: timeout in jiffies
++ * congestion_wait - the docs are now worthless but avoiding a rename
+  *
+- * Waits for up to @timeout jiffies for a backing_dev (any backing_dev) to exit
+- * write congestion.  If no backing_devs are congested then just wait for the
+- * next write to be completed.
++ * New thing -- wait for a timeout or reclaim to make progress
+  */
+ long congestion_wait(int sync, long timeout)
+ {
++	pg_data_t *pgdat;
+ 	long ret;
+ 	unsigned long start = jiffies;
+ 	DEFINE_WAIT(wait);
+-	wait_queue_head_t *wqh = &congestion_wqh[sync];
++	wait_queue_head_t *wqh;
+ 
+-	prepare_to_wait(wqh, &wait, TASK_UNINTERRUPTIBLE);
+-	ret = io_schedule_timeout(timeout);
++	/* Never let kswapd sleep on itself */
++	if (current_is_kswapd())
++		goto trace;
++
++	/*
++	 * Dangerous, local memory may be forbidden by cpuset or policies,
++	 * use first eligible zone in zonelists node instead
++	 */
++	preempt_disable();
++	pgdat = NODE_DATA(smp_processor_id());
++	preempt_enable();
++	wqh = &pgdat->reclaim_wait;
++
++	/*
++	 * Should probably check watermark of suitable zones here
++	 * in case this is spuriously called
++	 */
++
++	prepare_to_wait(wqh, &wait, TASK_INTERRUPTIBLE);
++	ret = schedule_timeout(timeout);
+ 	finish_wait(wqh, &wait);
+ 
++trace:
+ 	trace_writeback_congestion_wait(jiffies_to_usecs(timeout),
+ 					jiffies_to_usecs(jiffies - start));
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 5b09e71c9ce7..4b87b73d1264 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -7418,6 +7418,7 @@ static void __meminit pgdat_init_internals(struct pglist_data *pgdat)
+ 	pgdat_init_split_queue(pgdat);
+ 	pgdat_init_kcompactd(pgdat);
+ 
++	init_waitqueue_head(&pgdat->reclaim_wait);
+ 	init_waitqueue_head(&pgdat->kswapd_wait);
+ 	init_waitqueue_head(&pgdat->pfmemalloc_wait);
+ 
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 158c9c93d03c..0ac2cf6be5e3 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2888,6 +2888,8 @@ static void shrink_node_memcgs(pg_data_t *pgdat, struct scan_control *sc)
+ 	} while ((memcg = mem_cgroup_iter(target_memcg, memcg, NULL)));
+ }
+ 
++static bool pgdat_balanced(pg_data_t *pgdat, int order, int highest_zoneidx);
++
+ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+ {
+ 	struct reclaim_state *reclaim_state = current->reclaim_state;
+@@ -3070,6 +3072,18 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+ 				    sc))
+ 		goto again;
+ 
++	/*
++	 * Might be race-prone, more appropriate to do this when exiting
++	 * direct reclaim and when kswapd finds that pgdat is balanced.
++	 * May also be appropriate to update pgdat_balanced to take
++	 * a watermark level and wakeup when min watermarks are ok
++	 * instead of waiting for the high watermark
++	 */
++	if (waitqueue_active(&pgdat->reclaim_wait) &&
++	    pgdat_balanced(pgdat, 0, ZONE_MOVABLE)) {
++		wake_up_interruptible(&pgdat->reclaim_wait);
++	}
++
+ 	/*
+ 	 * Kswapd gives up on balancing particular nodes after too
+ 	 * many failures to reclaim anything from them and goes to
