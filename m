@@ -2,133 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5263C40A2ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 03:55:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C1C140A314
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 04:08:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231709AbhINB4P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Sep 2021 21:56:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33384 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230109AbhINB4O (ORCPT
+        id S236565AbhINCKA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Sep 2021 22:10:00 -0400
+Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:50947 "EHLO
+        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233111AbhINCKA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Sep 2021 21:56:14 -0400
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A748C061760
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 18:54:58 -0700 (PDT)
-Received: by mail-il1-x135.google.com with SMTP id m4so7248367ilj.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Sep 2021 18:54:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0erCkbPikwMLr62Veop0dKdOeXPGtO5lGKpDOfqeSm4=;
-        b=jzMs/winVEpIT8tzRmnXNyabIoFzL128yeGXAJc3mXV3/E5QXGYcIMEQCL7OAS6V2n
-         pmtF8kewmpoxKo/EOBStEW7wQwzMmgy70jBee9PHUd1hp2s/QZ5ekQQKAvxXGVBUWvvK
-         0fv7SS+Bugkk97DZAb6NjOwqYGqQZZR2NozVK3PGfxJvWlpkxOH1OnWLJBYe+51ChO87
-         FU3MJs1nKgvb06JahrL1dSPkZgDv28rjoORldUUMqrCAfJCjrNg/my3EoBzX+pKQrYWn
-         D8fNE6qF7d+71sJEREWcOKqpxJNkxfP/RCbVVqDtgUpeGM1YhYxtv58nEv6OerGN2d1T
-         hUhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0erCkbPikwMLr62Veop0dKdOeXPGtO5lGKpDOfqeSm4=;
-        b=cVbzHaaPT2fecJ9T6i0wv2wDTrCBD60Rn3Bv1I58Q4oihEcZ7snsyzf92BDpgPdESD
-         SzWYJW+wJQXRQcA6bfq1ArzyQzEryane7V9y7RFoLmZf2njbM3KU6rzIItXrxZ97pocX
-         BShiw2KhnEcHBzUxonwny8Ncgk8HZfFs2IJgmFc0PZzKoD4XNEWaghstKVWZeP5FSKBE
-         F9sr3cMR0wOsl1SLYu2rZ9k3zkLOnCrief95EeLRH3oTD9xQz0C/jYHL3AkbLk+36JOl
-         DfjM+n9WLwRQ7Wx5LRbg8IAhWHgC3z1p1OuWHe/b+j8KKLDczC/IT9n8bZcppkiuX/JK
-         8U7g==
-X-Gm-Message-State: AOAM533EJTsQVNoxZu4p5+Ff467GlTvxwti+6mT/4tvQy9IvwXdnRH+w
-        VJSn7xMrUsbCSRseHOWHqAW/4haV/GTV7Q==
-X-Google-Smtp-Source: ABdhPJyHsx8LbJr1XduO9auKgXhP/9RQ+NAYhME0MGMhFIh0W8h/g37XrvVVYzCmgxQh6HNI2SMq+Q==
-X-Received: by 2002:a92:730c:: with SMTP id o12mr10347019ilc.208.1631584497586;
-        Mon, 13 Sep 2021 18:54:57 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id s5sm5914403ilq.59.2021.09.13.18.54.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Sep 2021 18:54:57 -0700 (PDT)
-Subject: Re: [PATCHSET 0/3] Add ability to save/restore iov_iter state
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20210910182536.685100-1-axboe@kernel.dk>
- <8a278aa1-81ed-72e0-dec7-b83997e5d801@kernel.dk>
- <CAHk-=wj3Lu=mJ8L7iE0RQXGZVdoSMz6rnPmrWoVNJhTaObOqkA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <fc6649ca-7700-a8ca-2e37-6f93c8aadb4d@kernel.dk>
-Date:   Mon, 13 Sep 2021 19:54:56 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 13 Sep 2021 22:10:00 -0400
+Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
+        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 82C30ECDEAD;
+        Tue, 14 Sep 2021 12:08:40 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1mPxsD-00CD9j-TB; Tue, 14 Sep 2021 12:08:37 +1000
+Date:   Tue, 14 Sep 2021 12:08:37 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mel Gorman <mgorman@suse.com>, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/6] XFS: remove congestion_wait() loop from
+ xfs_buf_alloc_pages()
+Message-ID: <20210914020837.GH2361455@dread.disaster.area>
+References: <163157808321.13293.486682642188075090.stgit@noble.brown>
+ <163157838440.13293.12568710689057349786.stgit@noble.brown>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wj3Lu=mJ8L7iE0RQXGZVdoSMz6rnPmrWoVNJhTaObOqkA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <163157838440.13293.12568710689057349786.stgit@noble.brown>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0
+        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
+        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=7-415B0cAAAA:8
+        a=W8B-ML30YZIRN3gm7fgA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/13/21 5:23 PM, Linus Torvalds wrote:
-> On Mon, Sep 13, 2021 at 3:43 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> Al, Linus, are you OK with this? I think we should get this in for 5.15.
->> I didn't resend the whole series, just a v2 of patch 1/3 to fix that bvec
->> vs iovec issue. Let me know if you want the while thing resent.
+On Tue, Sep 14, 2021 at 10:13:04AM +1000, NeilBrown wrote:
+> Documentation commment in gfp.h discourages indefinite retry loops on
+> ENOMEM and says of __GFP_NOFAIL that it
 > 
-> So I'm ok with the iov_iter side, but the io_uring side seems still
-> positively buggy, and very confused.
+>     is definitely preferable to use the flag rather than opencode
+>     endless loop around allocator.
 > 
-> It also messes with the state in bad ways and has internal knowledge.
-> And some of it looks completely bogus.
+> congestion_wait() is indistinguishable from
+> schedule_timeout_uninterruptible() in practice and it is not a good way
+> to wait for memory to become available.
 > 
-> For example, I see
+> So instead of waiting, allocate a single page using __GFP_NOFAIL, then
+> loop around and try to get any more pages that might be needed with a
+> bulk allocation.  This single-page allocation will wait in the most
+> appropriate way.
 > 
->         state->count -= ret;
->         rw->bytes_done += ret;
+> Signed-off-by: NeilBrown <neilb@suse.de>
+> ---
+>  fs/xfs/xfs_buf.c |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> and I go "that's BS". There's no way it's ok to start messing with the
-> byte count inside the state like that. That just means that the state
-> is now no longer the saved state, and it's some random garbage.
->
-> I also think that the "bytes_done += ret" is a big hint there: any
-> time you restore the iovec state, you should then forward it by
-> "bytes_done". But that's not what the code does.
-> 
-> Instead, it will now restore the iovec styate with the *wrong* number
-> of bytes remaining, but will start from the beginning of the iovec.
-> 
-> So I think the fs/io_uring.c use of this state buffer is completely wrong.
-> 
-> What *may* be the right thing to do is to
-> 
->  (a) not mess with state->count
-> 
->  (b) when you restore the state you always use
-> 
->         iov_iter_restore(iter, state, bytes_done);
-> 
-> to actually restore the *correct* state.
-> 
-> Because modifying the iovec save state like that cannot be right, and
-> if it's right it's still too ugly and fragile for words. That save
-> state should be treated as a snapshot, not as a random buffer that you
-> can make arbitrary changes to.
-> 
-> See what I'm saying?
+> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> index 5fa6cd947dd4..1ae3768f6504 100644
+> --- a/fs/xfs/xfs_buf.c
+> +++ b/fs/xfs/xfs_buf.c
+> @@ -372,8 +372,8 @@ xfs_buf_alloc_pages(
+>  
+>  	/*
+>  	 * Bulk filling of pages can take multiple calls. Not filling the entire
+> -	 * array is not an allocation failure, so don't back off if we get at
+> -	 * least one extra page.
+> +	 * array is not an allocation failure, so don't fail or fall back on
+> +	 * __GFP_NOFAIL if we get at least one extra page.
+>  	 */
+>  	for (;;) {
+>  		long	last = filled;
+> @@ -394,7 +394,7 @@ xfs_buf_alloc_pages(
+>  		}
+>  
+>  		XFS_STATS_INC(bp->b_mount, xb_page_retries);
+> -		congestion_wait(BLK_RW_ASYNC, HZ / 50);
+> +		bp->b_pages[filled++] = alloc_page(gfp_mask | __GFP_NOFAIL);
 
-OK, for the do while loop itself, I do think we should be more
-consistent and that would also get rid of the state->count manipulation.
-I do agree that messing with that state is not something that should be
-done, and we can do this more cleanly and consistently instead. Once we
-hit the do {} while loop, state should be &rw->state and we can
-consistently handle it that way.
+This smells wrong - the whole point of using the bulk page allocator
+in this loop is to avoid the costly individual calls to
+alloc_page().
 
-Let me rework that bit and run the tests, and I'll post a v2 tomorrow.
-Thanks for taking a closer look.
+What we are implementing here fail-fast semantics for readahead and
+fail-never for everything else.  If the bulk allocator fails to get
+a page from the fast path free lists, it already falls back to
+__alloc_pages(gfp, 0, ...) to allocate a single page. So AFAICT
+there's no need to add another call to alloc_page() because we can
+just do this instead:
 
+	if (flags & XBF_READ_AHEAD)
+		gfp_mask |= __GFP_NORETRY;
+	else
+-		gfp_mask |= GFP_NOFS;
++		gfp_mask |= GFP_NOFS | __GFP_NOFAIL;
+
+Which should make the __alloc_pages() call in
+alloc_pages_bulk_array() do a __GFP_NOFAIL allocation and hence
+provide the necessary never-fail guarantee that is needed here.
+
+At which point, the bulk allocation loop can be simplified because
+we can only fail bulk allocation for readahead, so something like:
+
+		if (filled == bp->b_page_count) {
+			XFS_STATS_INC(bp->b_mount, xb_page_found);
+			break;
+		}
+
+-		if (filled != last)
++		if (filled == last) {
+-			continue;
+-
+-		if (flags & XBF_READ_AHEAD) {
+			ASSERT(flags & XBF_READ_AHEAD);
+			xfs_buf_free_pages(bp);
+			return -ENOMEM;
+		}
+
+		XFS_STATS_INC(bp->b_mount, xb_page_retries);
+-		congestion_wait(BLK_RW_ASYNC, HZ / 50);
+	}
+	return 0;
+}
+
+would do the right thing and still record that we are doing
+blocking allocations (via the xb_page_retries stat) in this loop.
+
+Cheers,
+
+Dave.
 -- 
-Jens Axboe
-
+Dave Chinner
+david@fromorbit.com
