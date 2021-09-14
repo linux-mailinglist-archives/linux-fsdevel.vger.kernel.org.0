@@ -2,99 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59E6A40B0AC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 16:32:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A01D940B200
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 16:49:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233776AbhINOdh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 10:33:37 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25913 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233780AbhINOdf (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 10:33:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631629937;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kfXYUmJTGW/jK+1WjU3DFfoUA/V3RTprHGsP9ym3psc=;
-        b=gpY3bJC28Gl43L09hhG7NKDLDKMA4BtxFloHXoWH4x/wSffw+sf3uJElQAN/BQWXUak/MU
-        xKqkMyjf+CgUs2RpxeciEy6Fu5qT+1EedFGJBduoPml5ZfXYTX3dVXzw6sI8JGXToegSXP
-        V6D9OaJux6uChstAWERmeZRnhQZ4+7g=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-533-EUqDmxvLNaC-bY9gFNnT9w-1; Tue, 14 Sep 2021 10:32:16 -0400
-X-MC-Unique: EUqDmxvLNaC-bY9gFNnT9w-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5D96E10144E3;
-        Tue, 14 Sep 2021 14:32:14 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.9.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B62955D6A8;
-        Tue, 14 Sep 2021 14:32:13 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 380F5220779; Tue, 14 Sep 2021 10:32:13 -0400 (EDT)
-Date:   Tue, 14 Sep 2021 10:32:13 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Bruce Fields <bfields@redhat.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, virtio-fs@redhat.com,
-        Daniel Walsh <dwalsh@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        selinux@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        stephen.smalley.work@gmail.com,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH v3 0/1] Relax restrictions on user.* xattr
-Message-ID: <YUCybaYK/0RLvY9J@redhat.com>
-References: <79dcd300-a441-cdba-e523-324733f892ca@schaufler-ca.com>
- <YTEEPZJ3kxWkcM9x@redhat.com>
- <YTENEAv6dw9QoYcY@redhat.com>
- <3bca47d0-747d-dd49-a03f-e0fa98eaa2f7@schaufler-ca.com>
- <YTEur7h6fe4xBJRb@redhat.com>
- <1f33e6ef-e896-09ef-43b1-6c5fac40ba5f@schaufler-ca.com>
- <YTYr4MgWnOgf/SWY@work-vm>
- <496e92bf-bf9e-a56b-bd73-3c1d0994a064@schaufler-ca.com>
- <YUCa6pWpr5cjCNrU@redhat.com>
- <CAPL3RVHB=E_s1AW1sQMEgrLYJ8ADCdr=qaKsDrpYjVzW-Apq8w@mail.gmail.com>
+        id S234529AbhINOui (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 10:50:38 -0400
+Received: from pegase2.c-s.fr ([93.17.235.10]:36305 "EHLO pegase2.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234274AbhINOtD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Sep 2021 10:49:03 -0400
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+        by localhost (Postfix) with ESMTP id 4H85mc3stlz9sTZ;
+        Tue, 14 Sep 2021 16:47:44 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+        by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id GO3bOpvNkxSJ; Tue, 14 Sep 2021 16:47:44 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase2.c-s.fr (Postfix) with ESMTP id 4H85mc2pnkz9sTY;
+        Tue, 14 Sep 2021 16:47:44 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 475E88B773;
+        Tue, 14 Sep 2021 16:47:44 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 6uDZRDL0dNLX; Tue, 14 Sep 2021 16:47:44 +0200 (CEST)
+Received: from PO20335.IDSI0.si.c-s.fr (unknown [192.168.204.207])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 86DA68B763;
+        Tue, 14 Sep 2021 16:47:42 +0200 (CEST)
+Subject: Re: [PATCH v3 4/8] powerpc/pseries/svm: Add a powerpc version of
+ cc_platform_has()
+To:     Borislav Petkov <bp@alien8.de>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Sathyanarayanan Kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        linux-efi@vger.kernel.org, Brijesh Singh <brijesh.singh@amd.com>,
+        kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        platform-driver-x86@vger.kernel.org,
+        Paul Mackerras <paulus@samba.org>, linux-s390@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, x86@kernel.org,
+        amd-gfx@lists.freedesktop.org,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-graphics-maintainer@vmware.com,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <cover.1631141919.git.thomas.lendacky@amd.com>
+ <9d4fc3f8ea7b325aaa1879beab1286876f45d450.1631141919.git.thomas.lendacky@amd.com>
+ <YUCOTIPPsJJpLO/d@zn.tnic>
+From:   Christophe Leroy <christophe.leroy@csgroup.eu>
+Message-ID: <41b93dae-2f10-15a3-a079-c632381bec73@csgroup.eu>
+Date:   Tue, 14 Sep 2021 16:47:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPL3RVHB=E_s1AW1sQMEgrLYJ8ADCdr=qaKsDrpYjVzW-Apq8w@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <YUCOTIPPsJJpLO/d@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr-FR
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 14, 2021 at 09:59:19AM -0400, Bruce Fields wrote:
-> On Tue, Sep 14, 2021 at 8:52 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > Same is the requirement for regular containers and that's why
-> > podman (and possibly other container managers), make top level
-> > storage directory only readable and searchable by root, so that
-> > unpriveleged entities on host can not access container root filesystem
-> > data.
+
+
+Le 14/09/2021 à 13:58, Borislav Petkov a écrit :
+> On Wed, Sep 08, 2021 at 05:58:35PM -0500, Tom Lendacky wrote:
+>> Introduce a powerpc version of the cc_platform_has() function. This will
+>> be used to replace the powerpc mem_encrypt_active() implementation, so
+>> the implementation will initially only support the CC_ATTR_MEM_ENCRYPT
+>> attribute.
+>>
+>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+>> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+>> Cc: Paul Mackerras <paulus@samba.org>
+>> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+>> ---
+>>   arch/powerpc/platforms/pseries/Kconfig       |  1 +
+>>   arch/powerpc/platforms/pseries/Makefile      |  2 ++
+>>   arch/powerpc/platforms/pseries/cc_platform.c | 26 ++++++++++++++++++++
+>>   3 files changed, 29 insertions(+)
+>>   create mode 100644 arch/powerpc/platforms/pseries/cc_platform.c
 > 
-> Note--if that directory is on NFS, making it readable and searchable
-> by root is very weak protection, since it's often possible for an
-> attacker to guess filehandles and access objects without the need for
-> directory lookups.
+> Michael,
+> 
+> can I get an ACK for the ppc bits to carry them through the tip tree
+> pls?
+> 
+> Btw, on a related note, cross-compiling this throws the following error here:
+> 
+> $ make CROSS_COMPILE=/home/share/src/crosstool/gcc-9.4.0-nolibc/powerpc64-linux/bin/powerpc64-linux- V=1 ARCH=powerpc
+> 
+> ...
+> 
+> /home/share/src/crosstool/gcc-9.4.0-nolibc/powerpc64-linux/bin/powerpc64-linux-gcc -Wp,-MD,arch/powerpc/boot/.crt0.o.d -D__ASSEMBLY__ -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -O2 -msoft-float -mno-altivec -mno-vsx -pipe -fomit-frame-pointer -fno-builtin -fPIC -nostdinc -include ./include/linux/compiler_attributes.h -I./arch/powerpc/include -I./arch/powerpc/include/generated  -I./include -I./arch/powerpc/include/uapi -I./arch/powerpc/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/compiler-version.h -include ./include/linux/kconfig.h -m32 -isystem /home/share/src/crosstool/gcc-9.4.0-nolibc/powerpc64-linux/bin/../lib/gcc/powerpc64-linux/9.4.0/include -mbig-endian -nostdinc -c -o arch/powerpc/boot/crt0.o arch/powerpc/boot/crt0.S
+> In file included from <command-line>:
+> ././include/linux/compiler_attributes.h:62:5: warning: "__has_attribute" is not defined, evaluates to 0 [-Wundef]
+>     62 | #if __has_attribute(__assume_aligned__)
+>        |     ^~~~~~~~~~~~~~~
+> ././include/linux/compiler_attributes.h:62:20: error: missing binary operator before token "("
+>     62 | #if __has_attribute(__assume_aligned__)
+>        |                    ^
+> ././include/linux/compiler_attributes.h:88:5: warning: "__has_attribute" is not defined, evaluates to 0 [-Wundef]
+>     88 | #if __has_attribute(__copy__)
+>        |     ^~~~~~~~~~~~~~~
+> ...
+> 
+> Known issue?
+> 
+> This __has_attribute() thing is supposed to be supported
+> in gcc since 5.1 and I'm using the crosstool stuff from
+> https://www.kernel.org/pub/tools/crosstool/ and gcc-9.4 above is pretty
+> new so that should not happen actually.
+> 
+> But it does...
+> 
+> Hmmm.
+> 
 
-open_by_handle_at() requires CAP_DAC_READ_SEARCH. And if you have
-CAP_DAC_READ_SEARCH, you don't need to even guess file handles. You
-should be able to read/search through all directories, IIUC.
 
-So how does one make sure that shared directory on host is not
-accessible to unprivileged entities. If making directory accessible
-to root only is weaker security, what are the options for stronger
-security.
-
-Vivek
+Yes, see 
+https://lore.kernel.org/linuxppc-dev/20210914123919.58203eef@canb.auug.org.au/T/#t
 
