@@ -2,103 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 02FCA40B04D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 16:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87AA940B062
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 16:18:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233349AbhINOMv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 10:12:51 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33752 "EHLO
-        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233654AbhINOMn (ORCPT
+        id S233753AbhINOTf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 10:19:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35480 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233300AbhINOTN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 10:12:43 -0400
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1631628681;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=gagDSUKwMCHaMEiqubvQ+CuzRTxSq9sAGecdpVTXNXo=;
-        b=wAC23Vdi+/3pgXFQ+EH2vjnxHmtInT5MgK0Qv1/cnB40ERcGms2zFiQPteZutf2tvX7JaR
-        vHH2RCHDvH6cNn0QcgBA6VlaN1wTaIlbPsxL0avm616HDUX2FLIkajg7u5buXHWEJeTdbn
-        k3xeIAvT4sBhWivZf0qpES/oJQKjAvaVNT5gXPHXx+Yo8cW94vr13ZU8sdgmgkGAHRehT2
-        mSFCQaQoNzjadKvJEpBWgLguv84/g2KE6UuWFrWABvJcq+adOvkZU8l1XcSJEFdm2OBIUE
-        ZVDiMe2YZLcIRcpTlvQs9ODHinZ2+h07XNyXahZhzdv8d77b6oHDPWe9nStBrw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1631628681;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=gagDSUKwMCHaMEiqubvQ+CuzRTxSq9sAGecdpVTXNXo=;
-        b=6p9G3UdzwjHnsfv6oqF70n2N0Khx7/ccUId7dYB0XZr9smPMx0lfMHYd6ReQs3SOXIOhRc
-        QaJnnEx/OFgN4TDQ==
-To:     Alexei Lozovsky <me@ilammy.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Christoph Lameter <cl@linux.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/7] proc/stat: Maintain monotonicity of "intr" and
- "softirq"
-In-Reply-To: <44F84890-521F-4BCA-9F48-B49D2C8A9E32@ilammy.net>
-References: <06F4B1B0-E4DE-4380-A8E1-A5ACAD285163@ilammy.net>
- <20210911034808.24252-1-me@ilammy.net>
- <YT3In8SWc2eYZ/09@localhost.localdomain>
- <44F84890-521F-4BCA-9F48-B49D2C8A9E32@ilammy.net>
-Date:   Tue, 14 Sep 2021 16:11:21 +0200
-Message-ID: <87y27zb62e.ffs@tglx>
+        Tue, 14 Sep 2021 10:19:13 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2382C061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 07:17:55 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id y18so17280982ioc.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 07:17:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=f5uF7ATgVNfFvWMsYEORJBCsWjk2FRiRSwzPjSSzcDM=;
+        b=OBpciB5HsUyjAxzRKo2BhNM4889PVjfOH9QI1LE4PDi/shB5f8PD21eya+LirYMlJi
+         wknm3h68ybZKIxnSbui+aOEwqxEdOeWKHqHdQAp+p8BLM/hge2cYRA4M+YpGJBiYGbo6
+         r8sdMHZVUDINLvSr5kqOUwhK9xcHrSBwMvlvBndQOo9YXzt5fMNpYIgJwA1m5IWlgall
+         RI97mHETZxlINtBT3ymwtjgjD6Zh8fHEOUwy4chK6i8RaS2b5jiV/7SZL8rZhkT0YcNE
+         quoPvL1zzyg7ldE3s0CA0u4MEm+oGbvVnF61L9pbYjiLyZaHoeNHp9jbMi7Nh8I3p9nV
+         EH5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=f5uF7ATgVNfFvWMsYEORJBCsWjk2FRiRSwzPjSSzcDM=;
+        b=GJPsA5sXl4tf/NWh/o8Rd9EM9BqwP9ISXBYjvyVq7fpT9PCl2pZ/GioOlonZdcYAf1
+         3U0DHnK9p4oMN1zzFNhhF6Oizfmq4ApjbbMItBhJRnOadh0/RrxRVrkvMPquiKJIkRG0
+         INM1TB4NbdjGQ6kuLqXcytnF1uCRd5n2P64dKszicCOiZTu9iBqtkHm8V7/FCjD9T9BU
+         Bc6C5uc82l7u9fnZC9uAkFJ1wqUwLCASoAFTgzmUGK9umJwFdiow5GxHBFXPdHyPzqgp
+         GeutbP+leFXKWRE+SM1QQWvgKglRjWACDJLLcsDxyUSM29VdvPG/bFvIymtDf99mVIOX
+         YFvQ==
+X-Gm-Message-State: AOAM530YfWgupZgWr3WW9QhUtPCv5x1pghpACbWeKkAaZaZLoE3TCDfi
+        s4oATyefN/ueFkR/ILefMaLcLA==
+X-Google-Smtp-Source: ABdhPJwDGerk8uV/RnTgN/Aew0/bzOWqk178UH3J6YlOvZYVu1SwSb1nNDLtMQzvmyhoRxOYQbhEgw==
+X-Received: by 2002:a05:6638:2395:: with SMTP id q21mr14939292jat.122.1631629075221;
+        Tue, 14 Sep 2021 07:17:55 -0700 (PDT)
+Received: from p1.localdomain ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id p135sm6673803iod.26.2021.09.14.07.17.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Sep 2021 07:17:54 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+Subject: [PATCHSET v2 0/3] Add ability to save/restore iov_iter state
+Date:   Tue, 14 Sep 2021 08:17:47 -0600
+Message-Id: <20210914141750.261568-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Sep 12 2021 at 21:37, Alexei Lozovsky wrote:
-> On Sun, Sep 12, 2021, at 18:30, Alexey Dobriyan wrote:
->> How about making everything "unsigned long" or even "u64" like NIC
->> drivers do?
->
-> I see some possible hurdles ahead:
->
-> - Not all architectures have atomic operations for 64-bit values
+Hi,
 
-This is not about atomics.
+Linus didn't particularly love the iov_iter->truncated addition and how
+it was used, and it was hard to disagree with that. Instead of relying
+on tracking ->truncated, add a few pieces of state so we can safely
+handle partial or errored read/write attempts (that we want to retry).
 
->   All those "unsigned int" counters are incremented with __this_cpu_inc()
->   which tries to use atomics if possible. Though, I'm not quite sure
+Then we can get rid of the iov_iter addition, and at the same time
+handle cases that weren't handled correctly before.
 
-It does not use atomics. It's a CPU local increment.
+I've run this through vectored read/write with io_uring on the commonly
+problematic cases (dm and low depth SCSI device) which trigger these
+conditions often, and it seems to pass muster.
 
->   how this works for read side which does not seem to use atomic reads
->   at all. I guess, just by the virtue of properly aligned 32-bit reads
->   being atomic everywhere? If that's so, I think widening counters to
->   64 bits will come with an asterisk.
+For a discussion on this topic, see the thread here:
 
-The stats are accumulated racy, i.e. the interrupt might be handled and
-one of the per cpu counters or irq_desc->tot_count might be incremented
-concurrently.
+https://lore.kernel.org/linux-fsdevel/CAHk-=wiacKV4Gh-MYjteU0LwNBSGpWrK-Ov25HdqB1ewinrFPg@mail.gmail.com/
 
-On 32bit systems a 32bit load (as long as the compiler does not emit
-load tearing) is always consistent even when there is a concurrent
-increment going on. It either gets the old or the new value.
+You can find these patches here:
 
-A 64bit read on a 32bit system is always two loads which means that a
-concurrent increment will make it possible to observe a half updated
-value. And no, you can't play reread tricks here without adding barriers
-on weakly ordered architectures.
+https://git.kernel.dk/cgit/linux-block/log/?h=iov_iter.2
 
-> - We'll need to update all counters to be 64-bit.
->
->   Like, *everyone*. Every field that gets summed up needs to be 64-bit
->   (or else wrap-arounds will be incorrect). Basically every counter in
->   every irq_cpustat_t will need to become twice as wide. If that's
->   a fine price to pay for accurate, full-width counters...
+Changes since v1:
+- Drop 'did_bytes' from iov_iter_restore(). Only two cases in io_uring
+  used it, and one of them had to be changed with v2. Better to just
+  make the subsequent iov_iter_advance() explicit at that point.
+- Cleanup and sanitize the io_uring side, and ensure it's sane around
+  worker retries. No more digging into iov_iter_state from io_uring, we
+  use it just for save/restore purposes.
 
-The storage size should not be a problem.
+-- 
+Jens Axboe
 
-> So right now I don't see why it shouldn't be doable in theory.
 
-So much for the theory :)
-
-Thanks,
-
-        tglx
