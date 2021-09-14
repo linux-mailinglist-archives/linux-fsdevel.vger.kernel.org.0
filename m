@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DCFAD40B5B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 19:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A96640B5B3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 19:11:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231373AbhINRMd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 13:12:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49034 "EHLO
+        id S231339AbhINRMe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 13:12:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231254AbhINRM1 (ORCPT
+        with ESMTP id S231307AbhINRMa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 13:12:27 -0400
+        Tue, 14 Sep 2021 13:12:30 -0400
 Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F5FC061764
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 10:11:10 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id b64so199485qkg.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 10:11:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00DF7C061767
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 10:11:13 -0700 (PDT)
+Received: by mail-qk1-x72b.google.com with SMTP id a10so64783qka.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 10:11:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=determinate-systems.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
         bh=pGPO8aXiMyFr9xGkKJ7nDzZ1O2MpyXvL26J5zpRPMr8=;
-        b=z1zp2X5RzqK9p0okCWs5cE4c1vkO2tKU/KmTq2i36qs9/+PZvXBLLRsVJoI+AY13+d
-         kP2vMxN9Sq9xwXISzm6P0PXDrPzjl7LM/nxNIoxX38MxTBkZc4xg+KvcgXqQRToMme40
-         6y1rHUVj7VlPsx3FKEoGJCf9Bz/coUnrY5qQBeDTfJK0YOQyCaWW0Bfwmg1ZOp+3GDdL
-         ei/zac3VgZrbtbUKhP2VrfOmaRm8X0fnKyO+jVUuUHItggpbh3b2fcK1d0W8+hfsLv9R
-         mR89ikSqCc1u0sSfZOC6vxYyXl6pMcsXYOG6zAkGg+h7k9EY1PFq3TUZp5vl38PU/Y73
-         mxTA==
+        b=hk4NtdW9eKImQGzCH/9GmXuOzx+C9Vbqh+6NpITtiQgE0rg+KuwBU6pvS7CsyvlO1n
+         rYOF0vC0gap2u2GGfxdtSI44hXnL0jEdmLj270t27YYNoiXI/pR3QOGMYXGJj38FZGsz
+         Tt77CediPQ8CZbV5iIt9qNIiHhRBkNrVSm3zviQZBmAym/DhBuxaZa6/lt+VHCzOEkFx
+         S/uGfYPWEZnbQjeNK11Og6N2tduaMP+V8BSQc9v84rjSoGOtFBl9/3AtvdJFz6RLPGrG
+         uTBn14CgJuTgc6CVTB/rC0labhlt0jykpak/U2gQfdKftYDBVcQUiJT7unBkMprJwrns
+         QIHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
         bh=pGPO8aXiMyFr9xGkKJ7nDzZ1O2MpyXvL26J5zpRPMr8=;
-        b=1a9BUjRQc+1Od7699KaTwU9DEK9d0o6VcM/2ScTp51han3L2KNu67q6b2GOixjb7SD
-         0cDxki391L0hzbTlS2Tugu32IJQ+XPIp10og2MQ6yb6zFMKwI/+uYrFawwzD97GgeF+b
-         qnsEt83dz/hyCgP9Qj8tRkWA3R3sv1RjeqJH0/uaG4sngkpefTcORKcUiU/VdaW9XAMr
-         59CcZhEUDQHuf8jian46gwqoqLRFqLQ7L3msKTYeT1sFGwSAP+mnAV6ZHp9m0Zcxm6kp
-         Fr1F7zYq+BZjC/+tbKDdwY3LAPoWCNXRX18VJ+2GtdLfD1x/zA/YBcZzuDYirQTfX3Cd
-         edLA==
-X-Gm-Message-State: AOAM531UX01WS6a7SnnhXcfg+eG+JMiCdQM9DZaeLPe7o5Af0leT0tXS
-        PyRqlogIsPZ2CNTXvbDgU3DxEg==
-X-Google-Smtp-Source: ABdhPJyX09LuIknFVVfLI/6zpiGY3O9KR+Z63SpGXMrDbqFYPBmkeqUqm2ABF1+dPeyaY28mrII7qA==
-X-Received: by 2002:a37:741:: with SMTP id 62mr6011709qkh.490.1631639469527;
-        Tue, 14 Sep 2021 10:11:09 -0700 (PDT)
+        b=QjfkwAbf7VTjX0q4kKvoM3QGHhgMzun5QxEnqrdx0YWDToT5NkCA/nFQ0u1u0tOzDe
+         fc1txyJY0a+9NouIjP2G8ucs2FdAp1dQ7zl7xlOlDjouSMSuKxN3vD2hL0XprHo50mKz
+         X+lvt06Foom2jDIAQQn14zRyvy/nbN4XF6eSflLYbYyGuz7l7JKAz474hwvuQ5vqS5v6
+         dpSxRHRqipnMF3N2xkP7xyTpCGILoJ3PiNx/j4O8UW5p3V20EpzQckY6yABqgk22Ko9U
+         OBADMhxQXcLo8ezncEZxfp7cq/fWOrX916zeHcu78P/3JlSLYVwAkDM3IBlNp5pSTUQh
+         R5Qw==
+X-Gm-Message-State: AOAM53342+OMg3ZGfGKa+kpRHp09O5oTsFveqTtmjno7ar9j+dRq543h
+        UYPtq/4bEEGwb3ymSiln5c986g==
+X-Google-Smtp-Source: ABdhPJzIYBO0rohQg/SmOuz6BclTFzizLOyXSqI20jEc28Hr64Lesz2vrjXf8V05mhhxHDrcsZEyiw==
+X-Received: by 2002:ae9:e012:: with SMTP id m18mr6032913qkk.396.1631639472174;
+        Tue, 14 Sep 2021 10:11:12 -0700 (PDT)
 Received: from localhost (cpe-67-246-1-194.nycap.res.rr.com. [67.246.1.194])
-        by smtp.gmail.com with ESMTPSA id c2sm7951595qkd.57.2021.09.14.10.11.08
+        by smtp.gmail.com with ESMTPSA id r23sm6410998qtp.60.2021.09.14.10.11.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Sep 2021 10:11:09 -0700 (PDT)
+        Tue, 14 Sep 2021 10:11:11 -0700 (PDT)
 From:   graham@determinate.systems
 To:     graham@determinate.systems, Jonathan Corbet <corbet@lwn.net>,
         Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     Ignat Korchagin <ignat@cloudflare.com>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] mnt: add support for non-rootfs initramfs
-Date:   Tue, 14 Sep 2021 13:09:33 -0400
-Message-Id: <20210914170933.1922584-2-graham@determinate.systems>
+Subject: [PATCH v3] mnt: add support for non-rootfs initramfs
+Date:   Tue, 14 Sep 2021 13:09:34 -0400
+Message-Id: <20210914170933.1922584-3-graham@determinate.systems>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20210914170933.1922584-1-graham@determinate.systems>
 References: <20210914170933.1922584-1-graham@determinate.systems>
