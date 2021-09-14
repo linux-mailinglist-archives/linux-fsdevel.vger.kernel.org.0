@@ -2,142 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CE0640B52C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 18:45:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 755F940B5AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 19:11:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbhINQq1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 12:46:27 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:38400 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbhINQq0 (ORCPT
+        id S231206AbhINRM0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 13:12:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49020 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229937AbhINRMZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 12:46:26 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 76C6520141;
-        Tue, 14 Sep 2021 16:45:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1631637907; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ozFdqBIwmwyJglrohMvn3NkJIfp+ikVZXcbLX7txgcw=;
-        b=c+tWXz3iFiMt2fBT2y8zj5/DP3kTS+clAtQNQjW/Q0M6SxwQAy6krw8G8j0cJ8C2E/b09i
-        awJaPyl97itLD9c6bLIbr1CN+kU50My+7nVpVgBukC5bx/DrxIAwFzjQQkm1Bg2V8RK7QV
-        BDTYLlCiPqBuvc5JJPd+Ai4Uy25bW3s=
-Received: from suse.com (unknown [10.163.32.246])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id B15CCA3B94;
-        Tue, 14 Sep 2021 16:45:06 +0000 (UTC)
-Date:   Tue, 14 Sep 2021 17:45:04 +0100
-From:   Mel Gorman <mgorman@suse.com>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] XFS: remove congestion_wait() loop from
- xfs_buf_alloc_pages()
-Message-ID: <20210914164504.GS3828@suse.com>
-References: <163157808321.13293.486682642188075090.stgit@noble.brown>
- <163157838440.13293.12568710689057349786.stgit@noble.brown>
- <20210914020837.GH2361455@dread.disaster.area>
- <163158695921.3992.9776900395549582360@noble.neil.brown.name>
+        Tue, 14 Sep 2021 13:12:25 -0400
+Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CA9CC061764
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 10:11:07 -0700 (PDT)
+Received: by mail-qk1-x732.google.com with SMTP id a66so149228qkc.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 10:11:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=determinate-systems.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pGPO8aXiMyFr9xGkKJ7nDzZ1O2MpyXvL26J5zpRPMr8=;
+        b=lCGE4T8flLWEYQDc4CrrY1qQ9v8gxzq3y/1cGkanjqYp1mxzTYLgocWFk8x9D2s2s5
+         3web7pbBeqP46OLc+VMpFnwANJVOwgbEJGl+Ln/nh0ezdCWSuns4uDxbwae+tVpAfiy+
+         JRoqAL1XkIV1fS3xq+hgZSUNORjzO15+OhzachuKMUrASs1G3vM8SCaPVk6kH5zgyzQn
+         PtNlhmP0UsiCetN612Q2k4LXxcTppVt9QS9c9NsprCYs4saPrH4ZHtj6Bs6YDioHInPD
+         hhPtx8hcwF+tJhAdPWDFJ0aa0I8yk9GN2Qme6SyJ0wd4eESDkrt3fftq1dIxJSCDJZsC
+         wOOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pGPO8aXiMyFr9xGkKJ7nDzZ1O2MpyXvL26J5zpRPMr8=;
+        b=vILYIebajAoCc/qffnHhxv5YMMoNEP7syEiDRxW8eB+qAnt4CXDD/6xtok0QEOYf2c
+         LT+L24BgL5lwxF+5hC2lg0ExvrxuxIMCsHnY/I84NhydIVMoM7Ois9mO9MqeTITxsNeu
+         NkHQMCvz8kW/RdFc8Q47hB6mm7Iez9d6eLX41JeFOTWws/HQKypmgbeosoADkqHQ+gwC
+         u0Kzp9hgN6C9QbwOGu9+OYcKcLhi6Ptfl3QEgDJAU7qJi2I6mwSLA6+D5LDNppf6FUQ/
+         2Q2gOugk+VE+kssznBfA4aKiKXLZt5QMtQFySYNEJ4sn58n8Qfh2eM23aa+GPqeWulM2
+         /yZA==
+X-Gm-Message-State: AOAM532n1x387u3IgLSXkoJu/Raayv+ObOynvzoNxhsi1XTlr1pTPKDQ
+        w+Fr5h37EQdrnMzN0tREhWPnxQ==
+X-Google-Smtp-Source: ABdhPJx2AuKD7ZqRgxtgoHsViiAfomxSY9YvCO+1Rr0x05T+P26R11FhWaGGssgtoZ1nvzqgbrY6Qg==
+X-Received: by 2002:a37:6447:: with SMTP id y68mr5885905qkb.296.1631639466863;
+        Tue, 14 Sep 2021 10:11:06 -0700 (PDT)
+Received: from localhost (cpe-67-246-1-194.nycap.res.rr.com. [67.246.1.194])
+        by smtp.gmail.com with ESMTPSA id h2sm8411455qkf.106.2021.09.14.10.11.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Sep 2021 10:11:06 -0700 (PDT)
+From:   graham@determinate.systems
+To:     graham@determinate.systems, Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Ignat Korchagin <ignat@cloudflare.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] mnt: add support for non-rootfs initramfs
+Date:   Tue, 14 Sep 2021 13:09:32 -0400
+Message-Id: <20210914170933.1922584-1-graham@determinate.systems>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <163158695921.3992.9776900395549582360@noble.neil.brown.name>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 14, 2021 at 12:35:59PM +1000, NeilBrown wrote:
-> On Tue, 14 Sep 2021, Dave Chinner wrote:
-> > On Tue, Sep 14, 2021 at 10:13:04AM +1000, NeilBrown wrote:
-> > > Documentation commment in gfp.h discourages indefinite retry loops on
-> > > ENOMEM and says of __GFP_NOFAIL that it
-> > > 
-> > >     is definitely preferable to use the flag rather than opencode
-> > >     endless loop around allocator.
-> > > 
-> > > congestion_wait() is indistinguishable from
-> > > schedule_timeout_uninterruptible() in practice and it is not a good way
-> > > to wait for memory to become available.
-> > > 
-> > > So instead of waiting, allocate a single page using __GFP_NOFAIL, then
-> > > loop around and try to get any more pages that might be needed with a
-> > > bulk allocation.  This single-page allocation will wait in the most
-> > > appropriate way.
-> > > 
-> > > Signed-off-by: NeilBrown <neilb@suse.de>
-> > > ---
-> > >  fs/xfs/xfs_buf.c |    6 +++---
-> > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> > > index 5fa6cd947dd4..1ae3768f6504 100644
-> > > --- a/fs/xfs/xfs_buf.c
-> > > +++ b/fs/xfs/xfs_buf.c
-> > > @@ -372,8 +372,8 @@ xfs_buf_alloc_pages(
-> > >  
-> > >  	/*
-> > >  	 * Bulk filling of pages can take multiple calls. Not filling the entire
-> > > -	 * array is not an allocation failure, so don't back off if we get at
-> > > -	 * least one extra page.
-> > > +	 * array is not an allocation failure, so don't fail or fall back on
-> > > +	 * __GFP_NOFAIL if we get at least one extra page.
-> > >  	 */
-> > >  	for (;;) {
-> > >  		long	last = filled;
-> > > @@ -394,7 +394,7 @@ xfs_buf_alloc_pages(
-> > >  		}
-> > >  
-> > >  		XFS_STATS_INC(bp->b_mount, xb_page_retries);
-> > > -		congestion_wait(BLK_RW_ASYNC, HZ / 50);
-> > > +		bp->b_pages[filled++] = alloc_page(gfp_mask | __GFP_NOFAIL);
-> > 
-> > This smells wrong - the whole point of using the bulk page allocator
-> > in this loop is to avoid the costly individual calls to
-> > alloc_page().
-> > 
-> > What we are implementing here fail-fast semantics for readahead and
-> > fail-never for everything else.  If the bulk allocator fails to get
-> > a page from the fast path free lists, it already falls back to
-> > __alloc_pages(gfp, 0, ...) to allocate a single page. So AFAICT
-> > there's no need to add another call to alloc_page() because we can
-> > just do this instead:
-> > 
-> > 	if (flags & XBF_READ_AHEAD)
-> > 		gfp_mask |= __GFP_NORETRY;
-> > 	else
-> > -		gfp_mask |= GFP_NOFS;
-> > +		gfp_mask |= GFP_NOFS | __GFP_NOFAIL;
-> > 
-> > Which should make the __alloc_pages() call in
-> > alloc_pages_bulk_array() do a __GFP_NOFAIL allocation and hence
-> > provide the necessary never-fail guarantee that is needed here.
-> 
-> That is a nice simplification.
-> Mel Gorman told me
->   https://lore.kernel.org/linux-nfs/20210907153116.GJ3828@suse.com/
-> that alloc_pages_bulk ignores GFP_NOFAIL.  I added that to the
-> documentation comment in an earlier patch.
-> 
-> I had a look at the code and cannot see how it would fail to allocate at
-> least one page.  Maybe Mel can help....
-> 
+From: Ignat Korchagin <ignat@cloudflare.com>
 
-If there are already at least one page an the array and the first attempt
-at bulk allocation fails, it'll simply return. It's an odd corner case
-that may never apply but it's possible.  That said, I'm of the opinion that
-__GFP_NOFAIL should not be expanded and instead congestion_wait should be
-deleted and replaced with something triggered by reclaim making progress.
+The main need for this is to support container runtimes on stateless Linux
+system (pivot_root system call from initramfs).
 
+Normally, the task of initramfs is to mount and switch to a "real" root
+filesystem. However, on stateless systems (booting over the network) it is
+just convenient to have your "real" filesystem as initramfs from the start.
+
+This, however, breaks different container runtimes, because they usually
+use pivot_root system call after creating their mount namespace. But
+pivot_root does not work from initramfs, because initramfs runs from
+rootfs, which is the root of the mount tree and can't be unmounted.
+
+One workaround is to do:
+
+  mount --bind / /
+
+However, that defeats one of the purposes of using pivot_root in the
+cloned containers: get rid of host root filesystem, should the code somehow
+escapes the chroot.
+
+There is a way to solve this problem from userspace, but it is much more
+cumbersome:
+  * either have to create a multilayered archive for initramfs, where the
+    outer layer creates a tmpfs filesystem and unpacks the inner layer,
+    switches root and does not forget to properly cleanup the old rootfs
+  * or we need to use keepinitrd kernel cmdline option, unpack initramfs
+    to rootfs, run a script to create our target tmpfs root, unpack the
+    same initramfs there, switch root to it and again properly cleanup
+    the old root, thus unpacking the same archive twice and also wasting
+    memory, because the kernel stores compressed initramfs image
+    indefinitely.
+
+With this change we can ask the kernel (by specifying nonroot_initramfs
+kernel cmdline option) to create a "leaf" tmpfs mount for us and switch
+root to it before the initramfs handling code, so initramfs gets unpacked
+directly into the "leaf" tmpfs with rootfs being empty and no need to
+clean up anything.
+
+This also bring the behaviour in line with the older style initrd, where
+the initrd is located on some leaf filesystem in the mount tree and rootfs
+remaining empty.
+
+Co-developed-by: Graham Christensen <graham@determinate.systems>
+Signed-off-by: Graham Christensen <graham@determinate.systems>
+Tested-by: Graham Christensen <graham@determinate.systems>
+Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
+---
+ .../admin-guide/kernel-parameters.txt         |  9 +++-
+ fs/namespace.c                                | 48 +++++++++++++++++++
+ 2 files changed, 56 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 91ba391f9b32..bfbc904ad751 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3517,11 +3517,18 @@
+ 	nomfgpt		[X86-32] Disable Multi-Function General Purpose
+ 			Timer usage (for AMD Geode machines).
+ 
++	nomodule        Disable module load
++
+ 	nonmi_ipi	[X86] Disable using NMI IPIs during panic/reboot to
+ 			shutdown the other cpus.  Instead use the REBOOT_VECTOR
+ 			irq.
+ 
+-	nomodule	Disable module load
++	nonroot_initramfs
++			[KNL] Create an additional tmpfs filesystem under rootfs
++			and unpack initramfs there instead of the rootfs itself.
++			This is useful for stateless systems, which run directly
++			from initramfs, create mount namespaces and use
++			"pivot_root" system call.
+ 
+ 	nopat		[X86] Disable PAT (page attribute table extension of
+ 			pagetables) support.
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 659a8f39c61a..c639ea9feb66 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -18,6 +18,7 @@
+ #include <linux/cred.h>
+ #include <linux/idr.h>
+ #include <linux/init.h>		/* init_rootfs */
++#include <linux/init_syscalls.h> /* init_chdir, init_chroot, init_mkdir */
+ #include <linux/fs_struct.h>	/* get_fs_root et.al. */
+ #include <linux/fsnotify.h>	/* fsnotify_vfsmount_delete */
+ #include <linux/file.h>
+@@ -4302,6 +4303,49 @@ static void __init init_mount_tree(void)
+ 	set_fs_root(current->fs, &root);
+ }
+ 
++#if IS_ENABLED(CONFIG_TMPFS)
++static int __initdata nonroot_initramfs;
++
++static int __init nonroot_initramfs_param(char *str)
++{
++	if (*str)
++		return 0;
++	nonroot_initramfs = 1;
++	return 1;
++}
++__setup("nonroot_initramfs", nonroot_initramfs_param);
++
++static void __init init_nonroot_initramfs(void)
++{
++	int err;
++
++	if (!nonroot_initramfs)
++		return;
++
++	err = init_mkdir("/root", 0700);
++	if (err < 0)
++		goto out;
++
++	err = init_mount("tmpfs", "/root", "tmpfs", 0, NULL);
++	if (err)
++		goto out;
++
++	err = init_chdir("/root");
++	if (err)
++		goto out;
++
++	err = init_mount(".", "/", NULL, MS_MOVE, NULL);
++	if (err)
++		goto out;
++
++	err = init_chroot(".");
++	if (!err)
++		return;
++out:
++	pr_warn("Failed to create a non-root filesystem for initramfs\n");
++}
++#endif /* IS_ENABLED(CONFIG_TMPFS) */
++
+ void __init mnt_init(void)
+ {
+ 	int err;
+@@ -4335,6 +4379,10 @@ void __init mnt_init(void)
+ 	shmem_init();
+ 	init_rootfs();
+ 	init_mount_tree();
++
++#if IS_ENABLED(CONFIG_TMPFS)
++	init_nonroot_initramfs();
++#endif
+ }
+ 
+ void put_mnt_ns(struct mnt_namespace *ns)
 -- 
-Mel Gorman
-SUSE Labs
+2.32.0
+
