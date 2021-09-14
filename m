@@ -2,127 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AB9640B720
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 20:45:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4785440B75A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 20:59:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229946AbhINSqj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 14:46:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42960 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229869AbhINSqi (ORCPT
+        id S232356AbhINTAh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 15:00:37 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:51612 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232272AbhINTAg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 14:46:38 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8EA5C061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 11:45:20 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id p29so397273lfa.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 11:45:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DwfWF1/sa0I9dbhN43EgUUYnc2H+27BjX60Lj9OqoKU=;
-        b=hKg/rvnaQx1/R4MfQhSq5ZhF5SC+1wsxY1GdCuLkeAIRTBF+EfsEoEN5GgxGoLpoSh
-         JdKu0h5xwl2xVh8gvYj+ok5RfiniFB5k92ryBjTeDpUoZIHtHOcuUe94JkSE6CwxqJyk
-         bpGT4E1iZRJ9G2dS0GvBnOuU4tC70y7mHtppk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DwfWF1/sa0I9dbhN43EgUUYnc2H+27BjX60Lj9OqoKU=;
-        b=NGBJbsRdPnZJTJia8TUAkCS/utPWeWQyhmPNFC0KNyW2txCvQh3U/tAoSDfK4d5nBq
-         XuNGFVXgD+APE3rspHBp41arCVmRKhhxrJCCtdcN1wiXqCGTdKPHOjIoHrxolCgxZ2bz
-         splw83EH0msvBtshmXMOajFmHMDdXy5jTNWOgqOiPF2YxH5iL72D2wr8SHGnhzs3bnCj
-         lfk/gcfy/71MJWYB19DNYwpAvm4/KsxsfeFQICgivNbckHY2oLe7e0Hek0SAUx+mL+Ey
-         C/pNHmpj+Y44yEh2PA+gR+PfFuGOeMu1RXI8nftEFV6VHRY/xSKfeYHLNXe8VArF/c9A
-         +Ekg==
-X-Gm-Message-State: AOAM530UdnQzs279jC+5X8q9Er/Xf/wtOV+nZS3q5XH5U4ynHJlZY6ng
-        3ULv9VxPvNCXR0q/LAGcEoKOkOa5rjyT0nYgUQQ=
-X-Google-Smtp-Source: ABdhPJzEOT/1QfEUdZxM0VegAcQJGw4Y8KggH6Mton8nzSGqdNvpZZbt6qJ97/kBXXoPwaW41lursw==
-X-Received: by 2002:ac2:54ad:: with SMTP id w13mr7528843lfk.397.1631645118843;
-        Tue, 14 Sep 2021 11:45:18 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id c5sm1400680lji.67.2021.09.14.11.45.18
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Sep 2021 11:45:18 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id o11so397551ljp.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 11:45:18 -0700 (PDT)
-X-Received: by 2002:a2e:1542:: with SMTP id 2mr17081124ljv.249.1631645118003;
- Tue, 14 Sep 2021 11:45:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210914141750.261568-1-axboe@kernel.dk> <20210914141750.261568-3-axboe@kernel.dk>
-In-Reply-To: <20210914141750.261568-3-axboe@kernel.dk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 14 Sep 2021 11:45:02 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh6mGm0b7AnKNRzDO07nrdpCrvHtUQ=afTH6pZ2JiBpeQ@mail.gmail.com>
-Message-ID: <CAHk-=wh6mGm0b7AnKNRzDO07nrdpCrvHtUQ=afTH6pZ2JiBpeQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] io_uring: use iov_iter state save/restore helpers
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring <io-uring@vger.kernel.org>,
+        Tue, 14 Sep 2021 15:00:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1631645957;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3OUaDnOxKNbvKbqhxE7IAvlc8abcRFpZR5Sv/ym/5Ys=;
+        b=TuoNLdAVxHonvf8be3WaeK6OOoNJg85imVPHsK+l/BBuv27VZ0zZQZ7tS6rsxxnqGj+0J/
+        bWD2MK4UQWGnlWdH9VWmTayAHsuDjLp9kvigLr/E4v8z9cYlRirEb4EHNVQLvMBpVZ4Cbf
+        Ycjz5cyJ+rkwdhJksFFxZEltkcLtS5U=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-434-DTeW0HMUPTu9bfacEsuHNg-1; Tue, 14 Sep 2021 14:59:14 -0400
+X-MC-Unique: DTeW0HMUPTu9bfacEsuHNg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DCC78100CC84;
+        Tue, 14 Sep 2021 18:59:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 26FAE7A8D2;
+        Tue, 14 Sep 2021 18:59:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wgR_unCDRZ+8iTb5gBO6bgRkuS4JYBpi25v12Yp6TzWVA@mail.gmail.com>
+References: <CAHk-=wgR_unCDRZ+8iTb5gBO6bgRkuS4JYBpi25v12Yp6TzWVA@mail.gmail.com> <163162767601.438332.9017034724960075707.stgit@warthog.procyon.org.uk> <CAHk-=wiVK+1CyEjW8u71zVPK8msea=qPpznX35gnX+s8sXnJTg@mail.gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        v9fs-developer@lists.sourceforge.net,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        linux-cachefs@redhat.com, CIFS <linux-cifs@vger.kernel.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/8] fscache: Replace and remove old I/O API
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <738325.1631645944.1@warthog.procyon.org.uk>
+Date:   Tue, 14 Sep 2021 19:59:04 +0100
+Message-ID: <738326.1631645944@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 14, 2021 at 7:18 AM Jens Axboe <axboe@kernel.dk> wrote:
->
->
-> +       iov_iter_restore(iter, state);
-> +
-...
->                 rw->bytes_done += ret;
-> +               iov_iter_advance(iter, ret);
-> +               if (!iov_iter_count(iter))
-> +                       break;
-> +               iov_iter_save_state(iter, state);
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Ok, so now you keep iovb_iter and the state always in sync by just
-always resetting the iter back and then walking it forward explicitly
-- and re-saving the state.
+> > Call it "fallback" or "simple" or something that shows the intent, but
+> > no, I'm not taking patches that introduce a _new_ interface and call
+> > it "deprecated".
 
-That seems safe, if potentially unnecessarily expensive.
+Yeah, I'll change it to "fallback" - I started talking about it like that in
+the docs anyway.
 
-I guess re-walking lots of iovec entries is actually very unlikely in
-practice, so maybe this "stupid brute-force" model is the right one.
+> Put another way: to call something "deprecated", you have to already
+> have the replacement all ready to go.
 
-I do find the odd "use __state vs rw->state" to be very confusing,
-though. Particularly in io_read(), where you do this:
+We're not far off.  There's a fair distance (in number of patches) between
+this patchset and the completion, hence why I marked them as deprecated here,
+intending to remove them at the end.  Between myself, Jeff and Dave we have
+fscache, cachefiles, afs, ceph and nfs (almost) covered.  I have patches for
+9p and I've given a partial patch for cifs to Steve and Shyam.
 
-+       iov_iter_restore(iter, state);
-+
-        ret2 = io_setup_async_rw(req, iovec, inline_vecs, iter, true);
-        if (ret2)
-                return ret2;
+David
 
-        iovec = NULL;
-        rw = req->async_data;
--       /* now use our persistent iterator, if we aren't already */
--       iter = &rw->iter;
-+       /* now use our persistent iterator and state, if we aren't already */
-+       if (iter != &rw->iter) {
-+               iter = &rw->iter;
-+               state = &rw->iter_state;
-+       }
-
-        do {
--               io_size -= ret;
-                rw->bytes_done += ret;
-+               iov_iter_advance(iter, ret);
-+               if (!iov_iter_count(iter))
-+                       break;
-+               iov_iter_save_state(iter, state);
-
-
-Note how it first does that iov_iter_restore() on iter/state, buit
-then it *replaces&* the iter/state pointers, and then it does
-iov_iter_advance() on the replacement ones.
-
-I don't see how that could be right. You're doing iov_iter_advance()
-on something else than the one you restored to the original values.
-
-And if it is right, it's sure confusing as hell.
-
-           Linus
