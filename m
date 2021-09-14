@@ -2,246 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5109B40AE42
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 14:52:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE16F40AFBA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 15:54:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232938AbhINMxU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 08:53:20 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:23255 "EHLO
+        id S233438AbhINN4N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 09:56:13 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:31709 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232476AbhINMxU (ORCPT
+        by vger.kernel.org with ESMTP id S233437AbhINN4F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 08:53:20 -0400
+        Tue, 14 Sep 2021 09:56:05 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631623922;
+        s=mimecast20190719; t=1631627687;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZChv2040w8kh2fxqWTvSsejGrn3bEO5wpgltjJDlvDk=;
-        b=Pie7SLedsVI8Z07jl54cGYGvbWcfr0GAyCvqP4tgQetIfDIn3J4M6TYXl2G80Hxa9Yul+A
-        z/w1GcCzs4uA3M9P7kBIR8TaBvbFRcezx6jbKNwNJC1moEHHBuz7qrYpbrGpAapaIiycc7
-        kU3+NmJGYQGRURD3sGo5wutW2xLIHwU=
+         content-transfer-encoding:content-transfer-encoding;
+        bh=rIzfcnXtGjc7TySfbNX1AsWwNTm/MWDBD4Ry2MXdNBs=;
+        b=XmnkoZSOd7HX3mrH5FBowUbUGhjYheBvLGPRaiype9CkgP+i8gSaa8xwRHRqDvJ+yptqlj
+        Veuf3SrXNDX+nNH02o0EMMtVAJgHiDhWoIDoji1RnugZERYeKpgiIXxXx0q1g4EN4NSSO6
+        CUHx3j/z74trKYCLdNFUCCcDQSLcp+g=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-194-wDjwVCCYP0eYlf0jikgUJQ-1; Tue, 14 Sep 2021 08:52:01 -0400
-X-MC-Unique: wDjwVCCYP0eYlf0jikgUJQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-114-dIBVNSzYOdueWmxj2p5K1Q-1; Tue, 14 Sep 2021 09:54:46 -0400
+X-MC-Unique: dIBVNSzYOdueWmxj2p5K1Q-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A309A9017C2;
-        Tue, 14 Sep 2021 12:51:59 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.9.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 202505C25A;
-        Tue, 14 Sep 2021 12:51:55 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 9E428220779; Tue, 14 Sep 2021 08:51:54 -0400 (EDT)
-Date:   Tue, 14 Sep 2021 08:51:54 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
-        dwalsh@redhat.com, christian.brauner@ubuntu.com,
-        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, tytso@mit.edu, miklos@szeredi.hu,
-        gscrivan@redhat.com, bfields@redhat.com,
-        stephen.smalley.work@gmail.com, agruenba@redhat.com,
-        david@fromorbit.com
-Subject: Re: [PATCH v3 0/1] Relax restrictions on user.* xattr
-Message-ID: <YUCa6pWpr5cjCNrU@redhat.com>
-References: <20210902152228.665959-1-vgoyal@redhat.com>
- <79dcd300-a441-cdba-e523-324733f892ca@schaufler-ca.com>
- <YTEEPZJ3kxWkcM9x@redhat.com>
- <YTENEAv6dw9QoYcY@redhat.com>
- <3bca47d0-747d-dd49-a03f-e0fa98eaa2f7@schaufler-ca.com>
- <YTEur7h6fe4xBJRb@redhat.com>
- <1f33e6ef-e896-09ef-43b1-6c5fac40ba5f@schaufler-ca.com>
- <YTYr4MgWnOgf/SWY@work-vm>
- <496e92bf-bf9e-a56b-bd73-3c1d0994a064@schaufler-ca.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 97C6F8145EE;
+        Tue, 14 Sep 2021 13:54:43 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0C68460583;
+        Tue, 14 Sep 2021 13:54:36 +0000 (UTC)
+Subject: [RFC PATCH 0/8] fscache: Replace and remove old I/O API
+From:   David Howells <dhowells@redhat.com>
+To:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>
+Cc:     linux-nfs@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
+        Shyam Prasad N <nspmangalore@gmail.com>, dhowells@redhat.com,
+        Jeff Layton <jlayton@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 14 Sep 2021 14:54:36 +0100
+Message-ID: <163162767601.438332.9017034724960075707.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <496e92bf-bf9e-a56b-bd73-3c1d0994a064@schaufler-ca.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 13, 2021 at 12:05:07PM -0700, Casey Schaufler wrote:
-> On 9/6/2021 7:55 AM, Dr. David Alan Gilbert wrote:
-> > * Casey Schaufler (casey@schaufler-ca.com) wrote:
-> >> On 9/2/2021 1:06 PM, Vivek Goyal wrote:
-> >>>  If LSMs are not configured,
-> >>> then hiding the directory is the solution.
-> >> It's not a solution at all. It's wishful thinking that
-> >> some admin is going to do absolutely everything right, will
-> >> never make a mistake and will never, ever, read the mount(2)
-> >> man page.
-> > That is why we run our virtiofsd with a sandbox setup and seccomp; and
-> > frankly anything we can or could turn on we would.
-> 
-> That doesn't address my concern at all. Being able to create an
-> environment in which a feature can be used safely does not make
-> the feature safe.
 
-That's the requirement of virtiofs shared directory. It is a shared
-directory, potentially being used by untrusted guest. So it should
-not be accessible to unprivileged entities on host.
+Here's a set of patches that removes the old fscache I/O API by the following
+means:
 
-Same is the requirement for regular containers and that's why
-podman (and possibly other container managers), make top level
-storage directory only readable and searchable by root, so that
-unpriveleged entities on host can not access container root filesystem
-data.
+ (1) A simple fallback API is added that can read or write a single page
+     synchronously.  The functions for this have "deprecated" in their names
+     as they have to be removed at some point.
 
-I think similar requirements are there for idmapped mounts. One
-will shift container images into user namespaces. And that means,
-through idmapped mounts one can write files which will actually
-show up as owned by root in original directory. And that original
-directory should not be accessible to unprivileged users otherwise
-user found an easy way to drop root owned files on system and
-exectute these.
+ (2) An implementation of this is provided in cachefiles.  It creates a kiocb
+     to use DIO to the backing file rather than calling readpage on the
+     backing filesystem page and then snooping the page wait queue.
 
-So more and more use cases are there which are relying on directory
-not being accessible to unprivileged users.
+ (3) NFS is switched to use the fallback API.
 
-I understand it is not going to be easy to get the configurations
-right all the time. But orchestration tools can be helpful. container
-managers can make sure kata container rootfs are not accessible.
-libvirt can probably warn if shared directory is accessible to
-unprivileged users. And all that will help in getting configuration
-right.
+ (4) CIFS is switched to use the fallback API also for the moment.
 
-> 
-> 
-> > So why that's not a solution and only relying on CAP_SYS_ADMIN is the
-> > solution. I don't understand that part.
-> 
-> Sure you do. If you didn't, you wouldn't be so concerned about
-> requiring CAP_SYS_ADMIN. You're trying hard to avoid taking the
-> level of responsibility that running with privilege requires.
+ (5) 9P is switched to using netfslib.
 
-Running with minimal capabilities is always desired. So we want
-to do away with CAP_SYS_ADMIN. And this reduces our risk in
-case virtiofsd gets compromised.
+ (6) The old I/O API is removed from fscache and the page snooping
+     implementation is removed from cachefiles.
 
-I thought we had similar reasons that we did not want setuid
-root binaries and wanted to give them limited set of capabilites
-depending on what they are doing.
+The reasons for doing this are:
 
-> To do that, you're introducing a massive security hole, a backdoor
-> into the file system security attributes.
+ (A) Using a kiocb to do asynchronous DIO from/to the pages of the backing
+     file is now a possibility that didn't exist when cachefiles was created.
+     This is much simpler than the snooping mechanism with a proper callback
+     path and it also requires fewer copies and less memory.
 
-Shared directory is not accessible to unprivileged entities. If
-configuration is not right, then it is user's problem and we
-need to fix that.
+ (B) We have to stop using bmap() or SEEK_DATA/SEEK_HOLE to work out what
+     blocks are present in the backing file is dangerous and can lead to data
+     corruption if the backing filesystem can insert or remove blocks of zeros
+     arbitrarily in order to optimise its extent list[1].
 
-> 
-> >> It comes back to your design, which is fundamentally flawed. You
-> >> can't store system security information in an attribute that can
-> >> be manipulated by untrusted entities. That's why we have system.*
-> >> xattrs. You want to have an attribute on the host that maps to a
-> >> security attribute on the guest. The host has to protect the attribute
-> >> on the guest with mechanisms of comparable strength as the guest's
-> >> mechanisms.
-> > Can you just explain this line to me a bit more: 
-> >> Otherwise you can't trust the guest with host data.
-> > Note we're not trying to trust the guest with the host data here;
-> > we're trying to allow the guest to store the data on the host, while
-> > trusting the host.
-> 
-> But you can't trust the host! You're allowing unprivileged processes
-> on the host to modify security state of the guest.
+     Whilst this patchset doesn't fix that yet, it does simplify the code and
+     the fix for that can be made in a subsequent patchset.
 
-No we are not. Shared directory should not be accessible to
-unpriviliged entities on host.
+ (C) In order to fix (B), the cache will need to keep track itself of what
+     data is present.  To make this easier to manage, the intention is to
+     increase the cache block granularity to, say, 256KiB - importantly, a
+     size that will span multiple pages - which means the single-page
+     interface will have to go away.  netfslib is designed to deal with
+     that on behalf of a filesystem, though a filesystem could use raw
+     cache calls instead and manage things itself.
 
-> 
-> >> It's a real shame that CAP_SYS_ADMIN is so scary. The capability
-> >> mechanism as implemented today won't scale to the hundreds of individual
-> >> capabilities it would need to break CAP_SYS_ADMIN up. Maybe someday.
-> >> I'm not convinced that there isn't a way to accomplish what you're
-> >> trying to do without privilege, but this isn't it, and I don't know
-> >> what is. Sorry.
-> >>
-> >>> Also if directory is not hidden, unprivileged users can change file
-> >>> data and other metadata.
-> >> I assumed that you've taken that into account. Are you saying that
-> >> isn't going to be done correctly either?
-> >>
-> >>>  Why that's not a concern and why there is
-> >>> so much of focus only security xattr.
-> >> As with an NFS mount, the assumption is that UID 567 (or its magically
-> >> mapped equivalent) has the same access rights on both the server/host
-> >> and client/guest. I'm not worried about the mode bits because they are
-> >> presented consistently on both machines. If, on the other hand, an
-> >> attribute used to determine access is security.esprit on the guest and
-> >> user.security.esprit on the host, the unprivileged user on the host
-> >> can defeat the privilege requirements on the guest. That's why.
-> > We're OK with that;
-> 
-> I understand that. I  am  not  OK  with  that.
+These patches can be found also on:
 
-Unprivileged entities can't modify "user.viritiofs.security.selinux"
-as shared directory is not accessible to them.
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-iter-3
 
-Sorry, I have to repeat this so many times because you are 
-completely ignoring this requirement saying users will get it
-wrong. Sure if they do get it wrong, they need to fix it.  But
-that does not mean we start giving CAP_SYS_ADMIN to daemon. 
+David
 
-If shared direcotry is accessible to unprivileged entities, game
-is already over (setuid root binaries). Being able to modify
-security attributes of a file seems like such a minor concern
-in comparison.
+Link: https://lore.kernel.org/r/YO17ZNOcq+9PajfQ@mit.edu [1]
+---
+David Howells (8):
+      fscache: Generalise the ->begin_read_operation method
+      fscache: Implement an alternate I/O interface to replace the old API
+      nfs: Move to using the alternate (deprecated) fscache I/O API
+      9p: (untested) Convert to using the netfs helper lib to do reads and caching
+      cifs: (untested) Move to using the alternate (deprecated) fscache I/O API
+      fscache: Remove the old I/O API
+      fscache: Remove stats that are no longer used
+      fscache: Update the documentation to reflect I/O API changes
 
-> 
-> >  remember that the host can do wth it likes to the
-> > guest anyway
-> 
-> We're not talking about "the host", we're talking about an
-> unprivileged user on the host.
-> 
-> >  - it can just go in and poke at the guests RAM if it wants
-> > to do something evil to the guest.
-> > We wouldn't suggest using a scheme like this once you have
-> > encrypted/protected guest RAM for example (SEV/TDX etc)
-> >
-> >>>  If you were to block modification
-> >>> of file then you will have rely on LSMs.
-> >> No. We're talking about the semantics of the xattr namespaces.
-> >> LSMs can further constrain access to xattrs, but the basic rules
-> >> of access to the user.* and security.* attributes are different
-> >> in any case. This is by design.
-> > I'm happy if you can suggest somewhere else to store the guests xattr
-> > data other than in one of the hosts xattr's - the challenge is doing
-> > that in a non-racy way, and making sure that the xattr's never get
-> > associated with the wrong file as seen by a guest.
-> 
-> I'm sorry, but I've got a bunch of other stuff on my plate.
-> I've already suggested implementing xattr namespaces a'la user
-> namespaces, but I understand that is beyond the scope of your
-> current needs, and has its own set of dragons.
-> 
-> >>>  And if LSMs are not configured,
-> >>> then we will rely on shared directory not being visible.
-> >> LSMs are not the problem. LSMs use security.* xattrs, which is why
-> >> they come up in the discussion.
-> >>
-> >>> Can you please help me understand why hiding shared directory from
-> >>> unprivileged users is not a solution
-> >> Maybe you can describe the mechanism you use to "hide" a shared directory
-> >> on the host. If the filesystem is mounted on the host it seems unlikely
-> >> that you can provide a convincing argument for sufficient protection.
-> > Why?
-> 
-> Because 99-44/100% of admins out there aren't as skilled at "hiding"
-> data as you are. Many (I almost said "most". I'm still not sure which.)
-> of them don't even know how to use mode bits correctly.
 
-We need to rely on orchestration tools to this by default.
-podman already does that for containers. We probably need to
-add something to libvirt too and warn users.
+ .../filesystems/caching/backend-api.rst       |  138 +--
+ .../filesystems/caching/netfs-api.rst         |  386 +-----
+ fs/9p/Kconfig                                 |    1 +
+ fs/9p/cache.c                                 |  137 ---
+ fs/9p/cache.h                                 |   98 +-
+ fs/9p/v9fs.h                                  |    9 +
+ fs/9p/vfs_addr.c                              |  174 ++-
+ fs/9p/vfs_file.c                              |   21 +-
+ fs/cachefiles/Makefile                        |    1 -
+ fs/cachefiles/interface.c                     |   15 -
+ fs/cachefiles/internal.h                      |   38 -
+ fs/cachefiles/io.c                            |   28 +-
+ fs/cachefiles/main.c                          |    1 -
+ fs/cachefiles/rdwr.c                          |  972 ---------------
+ fs/cifs/file.c                                |   64 +-
+ fs/cifs/fscache.c                             |  105 +-
+ fs/cifs/fscache.h                             |   74 +-
+ fs/fscache/cache.c                            |    6 -
+ fs/fscache/cookie.c                           |   10 -
+ fs/fscache/internal.h                         |   58 +-
+ fs/fscache/io.c                               |  140 ++-
+ fs/fscache/object.c                           |    2 -
+ fs/fscache/page.c                             | 1066 -----------------
+ fs/fscache/stats.c                            |   73 +-
+ fs/nfs/file.c                                 |   14 +-
+ fs/nfs/fscache-index.c                        |   26 -
+ fs/nfs/fscache.c                              |  161 +--
+ fs/nfs/fscache.h                              |   84 +-
+ fs/nfs/read.c                                 |   25 +-
+ fs/nfs/write.c                                |    7 +-
+ include/linux/fscache-cache.h                 |  131 --
+ include/linux/fscache.h                       |  418 ++-----
+ include/linux/netfs.h                         |   17 +-
+ 33 files changed, 508 insertions(+), 3992 deletions(-)
+ delete mode 100644 fs/cachefiles/rdwr.c
 
-Vivek
 
