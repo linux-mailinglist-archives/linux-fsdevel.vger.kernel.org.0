@@ -2,167 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA5A440A519
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 06:05:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C48F740A5CA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 07:13:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbhINEGp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 00:06:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35082 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232173AbhINEGn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 00:06:43 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14278C061574;
-        Mon, 13 Sep 2021 21:05:27 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id n13-20020a17090a4e0d00b0017946980d8dso1085149pjh.5;
-        Mon, 13 Sep 2021 21:05:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:from:to:cc:subject:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=PL/GS6q4SqVK2KC0THrnGifAWnULLf6Cd+wl37vjXas=;
-        b=Mgtj6O4rvWFg3ueda79BxWJnLy38s8YM67cnMbAyp7u6VBV5steUeagQ/AG5JA7Ps6
-         XX+0e4u72RYMO9xkeIbihFLqLxTJtknZu53T8971pRhWp8NDVmWjojwIdXKBbB8Ddxf9
-         iMG5PD3Zf8uwyaJQrzmsGDszFaYCzN2HAkCxcDaFOs0fzhEwHWLxy+S69nSlz8aw7cA8
-         eCPv5H87Q4YhJNTRi3X1aOOIkGqv2/R+SpcCPT/T4F0fDhR/SaQk4WktiL0F38YFLAZ8
-         RW6gY4qbcwcYmzxU2WxBob7AzXjHa362pM0mmpg3NcXMCGPUoMtYKvNvejU14gjGwpk4
-         QZsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=PL/GS6q4SqVK2KC0THrnGifAWnULLf6Cd+wl37vjXas=;
-        b=C0Gupn0hnSlPVgORqJJUVS6CJOVPVD9/XvKxZDe9DIn/uLm8GcXyda7AcbGWWNji4r
-         MwlkBZdTIgTJoUcOD1ZFK+AYHbQPFaOrZCPbvzN5MwzBZp+NbJ9tJihBVL/EncAzqQRB
-         sr5877qz3fnBaCAnwLUW41jNsoZ2wgl6mbEQO4TBCg3NiV83XBoSeT2x2W4BCD+0o1cC
-         ZIJv0jPOCXUR64EoYaAQFmerJJzIz3/4n7DECR8JzC50cGxiSHBkBJTaagdaEsccBYM8
-         aCtrd8x0ktwch/HID7iOt+0Z1MQxzjxKFi3bS/W461TQvJ1uF1iikPae7xyvivuI4sQV
-         u1pw==
-X-Gm-Message-State: AOAM533zMP/XJrFglkd6K6EYZqAdWsiGnt2UdlfiooUEi6GxpxXbQR6n
-        /hP30Vb9/3AhdtPj1HZgb30=
-X-Google-Smtp-Source: ABdhPJy8TzY+ZgZWQq0bVm31vY6F2o9k06O4GXfnIlSKoTCpLprAk2wc487NKDfTMj8RGODkbXYS4A==
-X-Received: by 2002:a17:902:d202:b0:13a:709b:dfb0 with SMTP id t2-20020a170902d20200b0013a709bdfb0mr13411695ply.34.1631592326512;
-        Mon, 13 Sep 2021 21:05:26 -0700 (PDT)
-Received: from localhost ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id b7sm8273692pfl.195.2021.09.13.21.05.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Sep 2021 21:05:25 -0700 (PDT)
-Message-ID: <61401f85.1c69fb81.76628.8a83@mx.google.com>
-X-Google-Original-Message-ID: <20210914040524.GA141438@cgel.zte@gmail.com>
-Date:   Tue, 14 Sep 2021 04:05:24 +0000
-From:   CGEL <cgel.zte@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     yzaikin@google.com, liu.hailong6@zte.com.cn, mingo@redhat.com,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, bristot@redhat.com, mcgrof@kernel.org,
-        keescook@chromium.org, pjt@google.com, yang.yang29@zte.com.cn,
-        joshdon@google.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Zeal Robot <zealci@zte.com.cm>
-Subject: Re: [PATCH] sched: Add a new version sysctl to control child runs
- first
-References: <20210912041222.59480-1-yang.yang29@zte.com.cn>
- <YT8IQioxUARMus9w@hirez.programming.kicks-ass.net>
- <613f37fc.1c69fb81.9092.a4f5@mx.google.com>
- <20210913134245.GD4323@worktop.programming.kicks-ass.net>
+        id S239478AbhINFOX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 01:14:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49992 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239500AbhINFOV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Sep 2021 01:14:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DBAB860F21;
+        Tue, 14 Sep 2021 05:13:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1631596384;
+        bh=AUC88WAiX+VR+fTnlcmenz58rltr9CQ7tv88IFx/wQQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gtm192x0anPgl38s8NNt3Wc46OwSlcp1LPVgM7PqMhdMDKdSPFD1Q4IclJL6sBYta
+         0BHtaIko7qK2PtfubiSe9GirD3MujUh3/nvebHmjtO4OdZDw1NHjwSlQiDXtJh2t9G
+         kAq4V7av/nhvVE56YXW3AU6pps/ZzeUu247yxXzM=
+Date:   Tue, 14 Sep 2021 07:12:43 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        linux-block@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/13] xfs: convert xfs_sysfs attrs to use ->seq_show
+Message-ID: <YUAvSx42abg5S2ym@kroah.com>
+References: <20210913054121.616001-1-hch@lst.de>
+ <20210913054121.616001-14-hch@lst.de>
+ <YT7vZthsMCM1uKxm@kroah.com>
+ <20210914012029.GF2361455@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210913134245.GD4323@worktop.programming.kicks-ass.net>
+In-Reply-To: <20210914012029.GF2361455@dread.disaster.area>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-esOn Mon, Sep 13, 2021 at 03:42:45PM +0200, Peter Zijlstra wrote:
-> On Mon, Sep 13, 2021 at 11:37:31AM +0000, CGEL wrote:
-> > On Mon, Sep 13, 2021 at 10:13:54AM +0200, Peter Zijlstra wrote:
-> > > On Sun, Sep 12, 2021 at 04:12:23AM +0000, cgel.zte@gmail.com wrote:
-> > > > From: Yang Yang <yang.yang29@zte.com.cn>
-> > > > 
-> > > > The old version sysctl has some problems. First, it allows set value
-> > > > bigger than 1, which is unnecessary. Second, it didn't follow the
-> > > > rule of capabilities. Thirdly, it didn't use static key. This new
-> > > > version fixes all the problems.
+On Tue, Sep 14, 2021 at 11:20:29AM +1000, Dave Chinner wrote:
+> On Mon, Sep 13, 2021 at 08:27:50AM +0200, Greg Kroah-Hartman wrote:
+> > On Mon, Sep 13, 2021 at 07:41:21AM +0200, Christoph Hellwig wrote:
+> > > Trivial conversion to the seq_file based sysfs attributes.
 > > > 
-> > > Does any of that actually matter?
+> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > > ---
+> > >  fs/xfs/xfs_stats.c | 24 +++++-------
+> > >  fs/xfs/xfs_stats.h |  2 +-
+> > >  fs/xfs/xfs_sysfs.c | 96 +++++++++++++++++++++++-----------------------
+> > >  3 files changed, 58 insertions(+), 64 deletions(-)
+> > > 
+> > > diff --git a/fs/xfs/xfs_stats.c b/fs/xfs/xfs_stats.c
+> > > index 20e0534a772c9..71e7a84ba0403 100644
+> > > --- a/fs/xfs/xfs_stats.c
+> > > +++ b/fs/xfs/xfs_stats.c
+> > > @@ -16,10 +16,9 @@ static int counter_val(struct xfsstats __percpu *stats, int idx)
+> > >  	return val;
+> > >  }
+> > >  
+> > > -int xfs_stats_format(struct xfsstats __percpu *stats, char *buf)
+> > > +void xfs_stats_format(struct xfsstats __percpu *stats, struct seq_file *sf)
+> > >  {
+> > >  	int		i, j;
+> > > -	int		len = 0;
+> > >  	uint64_t	xs_xstrat_bytes = 0;
+> > >  	uint64_t	xs_write_bytes = 0;
+> > >  	uint64_t	xs_read_bytes = 0;
+> > > @@ -58,13 +57,12 @@ int xfs_stats_format(struct xfsstats __percpu *stats, char *buf)
+> > >  	/* Loop over all stats groups */
+> > >  
+> > >  	for (i = j = 0; i < ARRAY_SIZE(xstats); i++) {
+> > > -		len += scnprintf(buf + len, PATH_MAX - len, "%s",
+> > > -				xstats[i].desc);
+> > > +		seq_printf(sf, "%s", xstats[i].desc);
+> > > +
+> > >  		/* inner loop does each group */
+> > >  		for (; j < xstats[i].endpoint; j++)
+> > > -			len += scnprintf(buf + len, PATH_MAX - len, " %u",
+> > > -					counter_val(stats, j));
+> > > -		len += scnprintf(buf + len, PATH_MAX - len, "\n");
+> > > +			seq_printf(sf, " %u", counter_val(stats, j));
+> > > +		seq_printf(sf, "\n");
+> > >  	}
+> > >  	/* extra precision counters */
+> > >  	for_each_possible_cpu(i) {
+> > > @@ -74,18 +72,14 @@ int xfs_stats_format(struct xfsstats __percpu *stats, char *buf)
+> > >  		defer_relog += per_cpu_ptr(stats, i)->s.defer_relog;
+> > >  	}
+> > >  
+> > > -	len += scnprintf(buf + len, PATH_MAX-len, "xpc %Lu %Lu %Lu\n",
+> > > +	seq_printf(sf, "xpc %Lu %Lu %Lu\n",
+> > >  			xs_xstrat_bytes, xs_write_bytes, xs_read_bytes);
+> > > -	len += scnprintf(buf + len, PATH_MAX-len, "defer_relog %llu\n",
+> > > -			defer_relog);
+> > > -	len += scnprintf(buf + len, PATH_MAX-len, "debug %u\n",
+> > > +	seq_printf(sf, "defer_relog %llu\n", defer_relog);
+> > >  #if defined(DEBUG)
+> > > -		1);
+> > > +	seq_printf(sf, "debug 1\n");
+> > >  #else
+> > > -		0);
+> > > +	seq_printf(sf, "debug 0\n");
+> > >  #endif
+> > > -
+> > > -	return len;
+> > >  }
 > > 
-> > For the first problem, I think the reason why sysctl_schedstats() only
-> > accepts 0 or 1, is suitbale for sysctl_child_runs_first(). Since
-> > task_fork_fair() only need sysctl_sched_child_runs_first to be
-> > zero or non-zero.
+> > That is a sysfs file?  What happened to the "one value per file" rule
+> > here?
 > 
-> This could potentially break people that already write a larger value in
-> it -- by accident or otherwise.
-
-Thanks for reply!
-
-You mean it's right to set sched_child_runs_first 0 or 1, but consider about
-compatibility, just leave it?
-Should stable/longterm branches keep compatibility, but linux-next fixes it?
-
-Let's take a look at negative influence about unnecessary values of sysctl.
-Some tune tools will automatic to set different values of sysctl to see
-performance impact. So invalid values may waste tune tools's time, specially
-when the range of values is big.
-
-For example A-Tune, see below:
-https://docs.openeuler.org/zh/docs/20.03_LTS/docs/A-Tune/%E8%AE%A4%E8%AF%86A-Tune.html 
-Since it's wroten in Chinese, I try to explain it in short.
-A-Tune modeling sysctls first(what values sysctls accept), then automatic to iterate
-different values to find the best combination of sysctl values for the workload.
-
 > 
-> > For the second problem, I remember there is a rule: try to
-> > administration system through capilities but not depends on
-> > root identity. Just like sysctl_schedstats() or other
-> > sysctl_xx().
+> There is no "rule" that says syfs files must contain one value per
+> file; the documentation says that one value per file is the
+> "preferred" format.  Documentation/filesystems/sysfs.rst:
 > 
-> It seems entirely daft to me; those files are already 644, if root opens
-> the file and passes it along, it gets to keep the pieces.
+> [...]
+> Attributes
+> ...
+> Attributes should be ASCII text files, preferably with only one value
+> per file. It is noted that it may not be efficient to contain only one
+> value per file, so it is socially acceptable to express an array of
+> values of the same type.
+> [...]
 > 
 
-I think it's indeed a little tricky: root may drop it's own capabilites.
-Let's see another example of netdev_store(), root can't modify netdev
-attribute without CAP_NET_ADMIN, even it pass the 644 DAC check.
+An array of values is one thing like "what is the power states for this
+device".  A list of different key/value pairs is a totally different
+thing entirely.
 
-> > For the thirdly problem, sysctl_child_runs_first maynot changes
-> > often, but may accessed often, like static_key delayacct_key
-> > controlled by sysctl_delayacct().
-> 
-> Can you actually show it makes a performance difference in a fork
-> micro-bench? Given the amount of gunk fork() already does, I don't think
-> it'll matter one way or the other, and in that case, simpler is better.
+> We are exposing a large array of integer values here, so multiple
+> values per file are explicitly considered an acceptible format.
 
-With 5.14-rc6 and gcc6.2.0, this patch will reduce test instruct in
-task_fork_fair() as Documentation/staging/static-keys.rst said.
-Since task_fork_fair() may called often, I think it's OK to use static
-key, actually there are quit a lot static keys in kernel/xx.
+Not really, that was not the goal of sysfs at all.
 
-When talk about simply, maybe keep in consistent with other sysctls like
-task_delayacct() is also a kind of simply in code style.
+> Further, as there are roughly 200 individual stats in this file and
+> calculating each stat requires per-cpu aggregation, the the cost of
+> calculating and reading each stat individually is prohibitive, not
+> just inefficient.
 
-Before this patch:
-ffff810a5c60 <task_fork_fair>:
-..
-ffffffff810a5cf3: e8 a8 b3 ff ff       callq ffffffff810a10a0 <place_entity>
-ffffffff810a5cf8: 8b 05 e2 b5 5d 01    mov 0x15db5e2(%rip),%eax # ffffffff826812e0 <sysctl_sched_child_runs_first>
-ffffffff810a5cfe: 85 c0                test %eax,%eax
-ffffffff810a5d00: 74 5b                je ffffffff810a5d5d <task_fork_fair+0xfd>
-ffffffff810a5d02: 49 8b 55 50          mov 0x50(%r13),%rdx
-ffffffff810a5d06: 49 8b 84 24 10 01 00 mov 0x110(%r12),%rax
-ffffffff810a5d0d: 00 
-ffffffff810a5d0e: 48 39 c2             cmp %rax,%rdx
-ffffffff810a5d11: 78 36                js ffffffff810a5d49 <task_fork_fair+0xe9>
-ffffffff810a5d13: 48 2b 45 28          sub    0x28(%rbp),%rax
+Have you measured it?  How often does the file get read and by what
+tools?
 
-After this patch:
-ffffffff810a5c60 <task_fork_fair>:
-..
-ffffffff810a5cf3: e8 a8 b3 ff ff       callq  ffffffff810a10a0 <place_entity>
-ffffffff810a5cf8: 66 90                xchg   %ax,%ax
-ffffffff810a5cfa: 49 8b 84 24 10 01 00 mov    0x110(%r12),%rax
-ffffffff810a5d01: 00
-ffffffff810a5d02: 48 2b 45 28          sub    0x28(%rbp),%rax
+We have learned from our past mistakes in /proc where we did this in the
+past and required keeping obsolete values and constantly tweaking
+userspace parsers.  That is why we made sysfs one-value-per-file.  If
+the file is not there, the value is not there, much easier to handle
+future changes.
 
-Thanks!
+> So, yes, we might have multiple lines in the file that you can frown
+> about, but OTOH the file format has been exposed as a kernel ABI for
+> a couple of decades via /proc/fs/xfs/stat.
+
+proc had no such rules, but we have learned :)
+
+> Hence exposing it in
+> sysfs to provide a more fine-grained breakdown of the stats (per
+> mount instead of global) is a no-brainer. We don't have to rewrite
+> the parsing engines in multiple userspace monitoring programs to
+> extract this information from the kernel - they just create a new
+> instance and read a different file and it all just works.
+
+But then you run into the max size restriction on sysfs files
+(PAGE_SIZE) and things break down.
+
+Please don't do this.
+
+> Indeed, there's precedence for such /proc file formats in more
+> fine-grained sysfs files. e.g.  /sys/bus/node/devices/node<n>/vmstat
+> and /sys/bus/node/devices/node<n>/meminfo retain the same format
+> (and hence userspace parsers) for the per-node stats as /proc/vmstat
+> and /proc/meminfo use for the global stats...
+
+And I have complained about those files in the past many times.  And
+they are running into problems in places dealing with them too.
+
+> tl;dr: the file contains arrays of values, it's inefficient to read
+> values one at a time, it's a pre-existing ABI-constrainted file
+> format, there's precedence in core kernel statistics
+> implementations and the documented guidelines allow this sort of
+> usage in these cases.
+
+I would prefer not to do this, and I will not take core sysfs changes to
+make this any easier.
+
+Which is one big reason why I don't like just making sysfs use the seq
+file api, it would allow stuff like this to propagate to other places in
+the kernel.
+
+Maybe I should cut the file size of a sysfs file down to PAGE_SIZE/4 or
+less, that might be better :)
+
+thanks,
+
+greg k-h
