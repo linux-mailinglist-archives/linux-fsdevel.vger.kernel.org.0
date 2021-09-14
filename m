@@ -2,219 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A96640B5B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 19:11:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30C4A40B6CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 20:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231339AbhINRMe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 13:12:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49050 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231307AbhINRMa (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 13:12:30 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00DF7C061767
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 10:11:13 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id a10so64783qka.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 10:11:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=determinate-systems.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pGPO8aXiMyFr9xGkKJ7nDzZ1O2MpyXvL26J5zpRPMr8=;
-        b=hk4NtdW9eKImQGzCH/9GmXuOzx+C9Vbqh+6NpITtiQgE0rg+KuwBU6pvS7CsyvlO1n
-         rYOF0vC0gap2u2GGfxdtSI44hXnL0jEdmLj270t27YYNoiXI/pR3QOGMYXGJj38FZGsz
-         Tt77CediPQ8CZbV5iIt9qNIiHhRBkNrVSm3zviQZBmAym/DhBuxaZa6/lt+VHCzOEkFx
-         S/uGfYPWEZnbQjeNK11Og6N2tduaMP+V8BSQc9v84rjSoGOtFBl9/3AtvdJFz6RLPGrG
-         uTBn14CgJuTgc6CVTB/rC0labhlt0jykpak/U2gQfdKftYDBVcQUiJT7unBkMprJwrns
-         QIHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pGPO8aXiMyFr9xGkKJ7nDzZ1O2MpyXvL26J5zpRPMr8=;
-        b=QjfkwAbf7VTjX0q4kKvoM3QGHhgMzun5QxEnqrdx0YWDToT5NkCA/nFQ0u1u0tOzDe
-         fc1txyJY0a+9NouIjP2G8ucs2FdAp1dQ7zl7xlOlDjouSMSuKxN3vD2hL0XprHo50mKz
-         X+lvt06Foom2jDIAQQn14zRyvy/nbN4XF6eSflLYbYyGuz7l7JKAz474hwvuQ5vqS5v6
-         dpSxRHRqipnMF3N2xkP7xyTpCGILoJ3PiNx/j4O8UW5p3V20EpzQckY6yABqgk22Ko9U
-         OBADMhxQXcLo8ezncEZxfp7cq/fWOrX916zeHcu78P/3JlSLYVwAkDM3IBlNp5pSTUQh
-         R5Qw==
-X-Gm-Message-State: AOAM53342+OMg3ZGfGKa+kpRHp09O5oTsFveqTtmjno7ar9j+dRq543h
-        UYPtq/4bEEGwb3ymSiln5c986g==
-X-Google-Smtp-Source: ABdhPJzIYBO0rohQg/SmOuz6BclTFzizLOyXSqI20jEc28Hr64Lesz2vrjXf8V05mhhxHDrcsZEyiw==
-X-Received: by 2002:ae9:e012:: with SMTP id m18mr6032913qkk.396.1631639472174;
-        Tue, 14 Sep 2021 10:11:12 -0700 (PDT)
-Received: from localhost (cpe-67-246-1-194.nycap.res.rr.com. [67.246.1.194])
-        by smtp.gmail.com with ESMTPSA id r23sm6410998qtp.60.2021.09.14.10.11.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Sep 2021 10:11:11 -0700 (PDT)
-From:   graham@determinate.systems
-To:     graham@determinate.systems, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Ignat Korchagin <ignat@cloudflare.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3] mnt: add support for non-rootfs initramfs
-Date:   Tue, 14 Sep 2021 13:09:34 -0400
-Message-Id: <20210914170933.1922584-3-graham@determinate.systems>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210914170933.1922584-1-graham@determinate.systems>
-References: <20210914170933.1922584-1-graham@determinate.systems>
+        id S231284AbhINS0X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 14:26:23 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:58876 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229477AbhINS0W (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Sep 2021 14:26:22 -0400
+Received: from zn.tnic (p200300ec2f1048008d634cac5b0c7131.dip0.t-ipconnect.de [IPv6:2003:ec:2f10:4800:8d63:4cac:5b0c:7131])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 763B31EC04D1;
+        Tue, 14 Sep 2021 20:24:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1631643899;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=ZiKIvLzxdvLHB/We39H7CYYWYKE3V9X7egkB0ENPsyE=;
+        b=GN7S7yA8avxg1KGLWQ5Wx4mPloiFO1PBUg1PdvgNlg1k2E8fi0qdXRRIE9kwM20ienZRVh
+        o8LBR3WQL8vRxBEN8UtVxzVQ4SPu4d1Dm2tyq3MgOH0kvt8jlqMPz4StWyaaodjjc84DcD
+        Q2fGTwl3VhF1WGvU/wGjdbzSHrnpkrw=
+Date:   Tue, 14 Sep 2021 20:24:52 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Tom Lendacky <thomas.lendacky@amd.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-graphics-maintainer@vmware.com,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Sathyanarayanan Kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v3 5/8] x86/sme: Replace occurrences of sme_active() with
+ cc_platform_has()
+Message-ID: <YUDo9CWyLVa1PeUF@zn.tnic>
+References: <cover.1631141919.git.thomas.lendacky@amd.com>
+ <367624d43d35d61d5c97a8b289d9ddae223636e9.1631141919.git.thomas.lendacky@amd.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <367624d43d35d61d5c97a8b289d9ddae223636e9.1631141919.git.thomas.lendacky@amd.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ignat Korchagin <ignat@cloudflare.com>
+On Wed, Sep 08, 2021 at 05:58:36PM -0500, Tom Lendacky wrote:
+> diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
+> index 18fe19916bc3..4b54a2377821 100644
+> --- a/arch/x86/mm/mem_encrypt.c
+> +++ b/arch/x86/mm/mem_encrypt.c
+> @@ -144,7 +144,7 @@ void __init sme_unmap_bootdata(char *real_mode_data)
+>  	struct boot_params *boot_data;
+>  	unsigned long cmdline_paddr;
+>  
+> -	if (!sme_active())
+> +	if (!cc_platform_has(CC_ATTR_HOST_MEM_ENCRYPT))
+>  		return;
+>  
+>  	/* Get the command line address before unmapping the real_mode_data */
+> @@ -164,7 +164,7 @@ void __init sme_map_bootdata(char *real_mode_data)
+>  	struct boot_params *boot_data;
+>  	unsigned long cmdline_paddr;
+>  
+> -	if (!sme_active())
+> +	if (!cc_platform_has(CC_ATTR_HOST_MEM_ENCRYPT))
+>  		return;
+>  
+>  	__sme_early_map_unmap_mem(real_mode_data, sizeof(boot_params), true);
+> @@ -377,11 +377,6 @@ bool sev_active(void)
+>  {
+>  	return sev_status & MSR_AMD64_SEV_ENABLED;
+>  }
+> -
+> -bool sme_active(void)
+> -{
+> -	return sme_me_mask && !sev_active();
+> -}
+>  EXPORT_SYMBOL_GPL(sev_active);
+>  
+>  /* Needs to be called from non-instrumentable code */
 
-The main need for this is to support container runtimes on stateless Linux
-system (pivot_root system call from initramfs).
+You forgot this hunk:
 
-Normally, the task of initramfs is to mount and switch to a "real" root
-filesystem. However, on stateless systems (booting over the network) it is
-just convenient to have your "real" filesystem as initramfs from the start.
+diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
+index 5635ca9a1fbe..a3a2396362a5 100644
+--- a/arch/x86/mm/mem_encrypt.c
++++ b/arch/x86/mm/mem_encrypt.c
+@@ -364,8 +364,9 @@ int __init early_set_memory_encrypted(unsigned long vaddr, unsigned long size)
+ /*
+  * SME and SEV are very similar but they are not the same, so there are
+  * times that the kernel will need to distinguish between SME and SEV. The
+- * sme_active() and sev_active() functions are used for this.  When a
+- * distinction isn't needed, the mem_encrypt_active() function can be used.
++ * PATTR_HOST_MEM_ENCRYPT and PATTR_GUEST_MEM_ENCRYPT flags to
++ * amd_prot_guest_has() are used for this. When a distinction isn't needed,
++ * the mem_encrypt_active() function can be used.
+  *
+  * The trampoline code is a good example for this requirement.  Before
+  * paging is activated, SME will access all memory as decrypted, but SEV
 
-This, however, breaks different container runtimes, because they usually
-use pivot_root system call after creating their mount namespace. But
-pivot_root does not work from initramfs, because initramfs runs from
-rootfs, which is the root of the mount tree and can't be unmounted.
+because there's still a sme_active() mentioned there:
 
-One workaround is to do:
+$ git grep sme_active
+arch/x86/mm/mem_encrypt.c:367: * sme_active() and sev_active() functions are used for this.  When a
 
-  mount --bind / /
-
-However, that defeats one of the purposes of using pivot_root in the
-cloned containers: get rid of host root filesystem, should the code somehow
-escapes the chroot.
-
-There is a way to solve this problem from userspace, but it is much more
-cumbersome:
-  * either have to create a multilayered archive for initramfs, where the
-    outer layer creates a tmpfs filesystem and unpacks the inner layer,
-    switches root and does not forget to properly cleanup the old rootfs
-  * or we need to use keepinitrd kernel cmdline option, unpack initramfs
-    to rootfs, run a script to create our target tmpfs root, unpack the
-    same initramfs there, switch root to it and again properly cleanup
-    the old root, thus unpacking the same archive twice and also wasting
-    memory, because the kernel stores compressed initramfs image
-    indefinitely.
-
-With this change we can ask the kernel (by specifying nonroot_initramfs
-kernel cmdline option) to create a "leaf" tmpfs mount for us and switch
-root to it before the initramfs handling code, so initramfs gets unpacked
-directly into the "leaf" tmpfs with rootfs being empty and no need to
-clean up anything.
-
-This also bring the behaviour in line with the older style initrd, where
-the initrd is located on some leaf filesystem in the mount tree and rootfs
-remaining empty.
-
-Co-developed-by: Graham Christensen <graham@determinate.systems>
-Signed-off-by: Graham Christensen <graham@determinate.systems>
-Tested-by: Graham Christensen <graham@determinate.systems>
-Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
----
- .../admin-guide/kernel-parameters.txt         |  9 +++-
- fs/namespace.c                                | 48 +++++++++++++++++++
- 2 files changed, 56 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 91ba391f9b32..bfbc904ad751 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3517,11 +3517,18 @@
- 	nomfgpt		[X86-32] Disable Multi-Function General Purpose
- 			Timer usage (for AMD Geode machines).
- 
-+	nomodule        Disable module load
-+
- 	nonmi_ipi	[X86] Disable using NMI IPIs during panic/reboot to
- 			shutdown the other cpus.  Instead use the REBOOT_VECTOR
- 			irq.
- 
--	nomodule	Disable module load
-+	nonroot_initramfs
-+			[KNL] Create an additional tmpfs filesystem under rootfs
-+			and unpack initramfs there instead of the rootfs itself.
-+			This is useful for stateless systems, which run directly
-+			from initramfs, create mount namespaces and use
-+			"pivot_root" system call.
- 
- 	nopat		[X86] Disable PAT (page attribute table extension of
- 			pagetables) support.
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 659a8f39c61a..c639ea9feb66 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -18,6 +18,7 @@
- #include <linux/cred.h>
- #include <linux/idr.h>
- #include <linux/init.h>		/* init_rootfs */
-+#include <linux/init_syscalls.h> /* init_chdir, init_chroot, init_mkdir */
- #include <linux/fs_struct.h>	/* get_fs_root et.al. */
- #include <linux/fsnotify.h>	/* fsnotify_vfsmount_delete */
- #include <linux/file.h>
-@@ -4302,6 +4303,49 @@ static void __init init_mount_tree(void)
- 	set_fs_root(current->fs, &root);
- }
- 
-+#if IS_ENABLED(CONFIG_TMPFS)
-+static int __initdata nonroot_initramfs;
-+
-+static int __init nonroot_initramfs_param(char *str)
-+{
-+	if (*str)
-+		return 0;
-+	nonroot_initramfs = 1;
-+	return 1;
-+}
-+__setup("nonroot_initramfs", nonroot_initramfs_param);
-+
-+static void __init init_nonroot_initramfs(void)
-+{
-+	int err;
-+
-+	if (!nonroot_initramfs)
-+		return;
-+
-+	err = init_mkdir("/root", 0700);
-+	if (err < 0)
-+		goto out;
-+
-+	err = init_mount("tmpfs", "/root", "tmpfs", 0, NULL);
-+	if (err)
-+		goto out;
-+
-+	err = init_chdir("/root");
-+	if (err)
-+		goto out;
-+
-+	err = init_mount(".", "/", NULL, MS_MOVE, NULL);
-+	if (err)
-+		goto out;
-+
-+	err = init_chroot(".");
-+	if (!err)
-+		return;
-+out:
-+	pr_warn("Failed to create a non-root filesystem for initramfs\n");
-+}
-+#endif /* IS_ENABLED(CONFIG_TMPFS) */
-+
- void __init mnt_init(void)
- {
- 	int err;
-@@ -4335,6 +4379,10 @@ void __init mnt_init(void)
- 	shmem_init();
- 	init_rootfs();
- 	init_mount_tree();
-+
-+#if IS_ENABLED(CONFIG_TMPFS)
-+	init_nonroot_initramfs();
-+#endif
- }
- 
- void put_mnt_ns(struct mnt_namespace *ns)
 -- 
-2.32.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
