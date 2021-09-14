@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7125140A860
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 09:45:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 456CE40A86A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 09:46:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232986AbhINHqV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 03:46:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56250 "EHLO
+        id S237359AbhINHqq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 03:46:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233105AbhINHpX (ORCPT
+        with ESMTP id S237513AbhINHqD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 03:45:23 -0400
+        Tue, 14 Sep 2021 03:46:03 -0400
 Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B0AAC06115A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 00:40:58 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id j1so8242524pjv.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 00:40:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2494C061198
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 00:41:04 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id v19so5572041pjh.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 00:41:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=y++panFifneasGq960GJtHjLst8uLUglPFxOcyVBRks=;
-        b=JhAlTvU3RWk3oRDa2aTY8JKMFt9Ez7Qvhwau43LIZwVt3n/yJ2Ir8tLfT7NZ0H6X12
-         BDxLL+Oux2/7MjK3Lk+uIMdVrHQuYow40eQBrr/gTXkfEwB7Uc1quD/ffiKvxxblMBvm
-         xEsvUkz22/wDzy0vSKKxw6k8g7pGDQtRTRrQNErOmdxF+ohBQk1K0XBFi5DnQYBH2r/W
-         IWr5m2jyR7dnpVY7TDJbByTDRTtN51tcAQmDTCpmEb3lkUzPTJT8DNyN5RjuxCE9V1RT
-         qXCa7mzgwY58hyW6b0OW7M80G8cYfjWnRViBLfe9PQZFD5CmWIplOlDoNwplM8r58hcM
-         25UA==
+        bh=O9BJLsBD6jksCciTZGdmyHq2qkXc8II2TIDnrT2cyiU=;
+        b=cxJV9i43g6uZ64FMZlPy6vGws06VDwvTYOU9J60k2oXFzhujZG9VoAPuhPBT9r/YiN
+         Ab4AAog0W/jtZekEXv66wyjDw/oUvI6mkO/SwrMoxubzvfuSs5P3/mKXw5Ff1Qv1lf5e
+         wGbXHU8HJ++y2FEg8o0rWeAje5ppyGGqA+8+Qj7gMUt8/QY/Twi8JOWRYK231oLK0Dbr
+         6UC70hV6iVuq0zR8hkLYicw2UTucdi71woBs/u4D5EMK5j2JkEiT2CIcRJNdGWq1OJgm
+         wdfAiWYT1P8R0LwJqfenct+YSLo6jk7+r2UgPIqEnNhykvt01imNPXAoq1BZ5CYBeLac
+         2otg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=y++panFifneasGq960GJtHjLst8uLUglPFxOcyVBRks=;
-        b=ml+SNG7fDI7MCZ/pMoY1FCNohttIgy+Lj5FqlBUYwZiYgxgIGxdsirqkY6A1wKCYN+
-         7mGKmVzGfUzEBnytvVFOBaCJAlN3LzNHfLGXsGnR8Z6ukxdY83XK2ISXRUqFtOKTaZ9a
-         l7AmNpBsjGj57UlQPW209LeQ4gH3PfuusTcU9O7a0XK+yABiEfmyNKuqi2Lkpz1BHEIw
-         pWAE3UxL1vkla8sN07K19FY6bIO8hP1C2yfjZqoij+YdRX8BEo24GQMk7AbHqCRBv1k/
-         mBJe5u+RePdO18veVkabhW65nYaz/3/bLa67rU1RY6DGgxJzcj9Qt82tu9xX9tpAGlMR
-         gn5g==
-X-Gm-Message-State: AOAM5339NkmvuYm8Eaqf4lzR7LRe8AVUwnABEwxD0BrfWlj59lfpS8Ug
-        cDvvaYs0LrumeXkDP9ervhCyvQ==
-X-Google-Smtp-Source: ABdhPJyAUjo4UZB4NIB2ZL+LCFQmoGF92sZYCgPBvTgn0UV2XRJw/w5a6fkyBczWBG3bB61VQWmbxw==
-X-Received: by 2002:a17:90a:9a2:: with SMTP id 31mr588698pjo.58.1631605257891;
-        Tue, 14 Sep 2021 00:40:57 -0700 (PDT)
+        bh=O9BJLsBD6jksCciTZGdmyHq2qkXc8II2TIDnrT2cyiU=;
+        b=choZXmRisSHHCBjgEwsjiZx8Tc41/wWCrxJLlNwjIfe+nMaIwHX/1A1DEExk104G+4
+         eGQEhxg2QwCBAmM4WzB4K02uYIbIKRFtTaON0yDPChokRcgB5G6+gMQmdlJeDdwKJz03
+         /D1CJbuxFgD37y63LlM9Z0mqBaAvrfyONgMPwjSiPr4MeFC4y8xjm3/IGigNKb9ZiAS0
+         LbKYUpNyIgjWTl+jnJihPADkGh5DtfKhYuIVGCMLfQSv3R04MpiLiNom97dohR6yD+Mz
+         0sfC45OAmolSe/SjTVa9oUMJHsopqloyLQ8l2J4EFufYkM44k3QC3GisKo+j1julZRbz
+         UWnQ==
+X-Gm-Message-State: AOAM532wMqZg1LNFtSRJuNcXzKQ9YO31OhH3epZVA8PcEHzCQyFcCyzp
+        amVaxmOusgTl8t7NqAbWGUor1Q==
+X-Google-Smtp-Source: ABdhPJwYxpqxp3oj2dLcwakc4I2z7loWq7/YRxBwPe8CJLXtMsP9qjDSPfIdzINHdcZRHHPu0VRRwA==
+X-Received: by 2002:a17:90b:3890:: with SMTP id mu16mr605394pjb.78.1631605264454;
+        Tue, 14 Sep 2021 00:41:04 -0700 (PDT)
 Received: from localhost.localdomain ([139.177.225.244])
-        by smtp.gmail.com with ESMTPSA id s3sm9377839pfd.188.2021.09.14.00.40.51
+        by smtp.gmail.com with ESMTPSA id s3sm9377839pfd.188.2021.09.14.00.40.58
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 Sep 2021 00:40:57 -0700 (PDT)
+        Tue, 14 Sep 2021 00:41:04 -0700 (PDT)
 From:   Muchun Song <songmuchun@bytedance.com>
 To:     willy@infradead.org, akpm@linux-foundation.org, hannes@cmpxchg.org,
         mhocko@kernel.org, vdavydov.dev@gmail.com, shakeelb@google.com,
@@ -59,9 +59,9 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         zhengqi.arch@bytedance.com, duanxiongchun@bytedance.com,
         fam.zheng@bytedance.com, smuchun@gmail.com,
         Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH v3 67/76] mm: dcache: use kmem_cache_alloc_lru() to allocate dentry
-Date:   Tue, 14 Sep 2021 15:29:29 +0800
-Message-Id: <20210914072938.6440-68-songmuchun@bytedance.com>
+Subject: [PATCH v3 68/76] xarray: use kmem_cache_alloc_lru to allocate xa_node
+Date:   Tue, 14 Sep 2021 15:29:30 +0800
+Message-Id: <20210914072938.6440-69-songmuchun@bytedance.com>
 X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 In-Reply-To: <20210914072938.6440-1-songmuchun@bytedance.com>
 References: <20210914072938.6440-1-songmuchun@bytedance.com>
@@ -71,29 +71,94 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Like inode cache, the dentry will also be added to its memcg list_lru.
-So replace kmem_cache_alloc() with kmem_cache_alloc_lru() to allocate
-dentry.
+The workingset will add the xa_node to the shadow_nodes list. So the
+allocation of xa_node should be done by kmem_cache_alloc_lru(). The
+workingset can use xas_set_lru() to pass the list_lru.
 
 Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 ---
- fs/dcache.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/xarray.h |  9 ++++++++-
+ lib/xarray.c           | 10 +++++-----
+ 2 files changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index cf871a81f4fd..36d4806d7284 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1741,7 +1741,8 @@ static struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
- 	char *dname;
- 	int err;
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index a91e3d90df8a..31f3e5ef3c7b 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -1317,6 +1317,7 @@ struct xa_state {
+ 	struct xa_node *xa_node;
+ 	struct xa_node *xa_alloc;
+ 	xa_update_node_t xa_update;
++	struct list_lru *xa_lru;
+ };
  
--	dentry = kmem_cache_alloc(dentry_cache, GFP_KERNEL);
-+	dentry = kmem_cache_alloc_lru(dentry_cache, &sb->s_dentry_lru,
-+				      GFP_KERNEL);
- 	if (!dentry)
- 		return NULL;
+ /*
+@@ -1336,7 +1337,8 @@ struct xa_state {
+ 	.xa_pad = 0,					\
+ 	.xa_node = XAS_RESTART,				\
+ 	.xa_alloc = NULL,				\
+-	.xa_update = NULL				\
++	.xa_update = NULL,				\
++	.xa_lru = NULL,					\
+ }
  
+ /**
+@@ -1613,6 +1615,11 @@ static inline void xas_set_update(struct xa_state *xas, xa_update_node_t update)
+ 	xas->xa_update = update;
+ }
+ 
++static inline void xas_set_lru(struct xa_state *xas, struct list_lru *lru)
++{
++	xas->xa_lru = lru;
++}
++
+ /**
+  * xas_next_entry() - Advance iterator to next present entry.
+  * @xas: XArray operation state.
+diff --git a/lib/xarray.c b/lib/xarray.c
+index f5d8f54907b4..e9b818abc823 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -302,7 +302,7 @@ bool xas_nomem(struct xa_state *xas, gfp_t gfp)
+ 	}
+ 	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
+ 		gfp |= __GFP_ACCOUNT;
+-	xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
++	xas->xa_alloc = kmem_cache_alloc_lru(radix_tree_node_cachep, xas->xa_lru, gfp);
+ 	if (!xas->xa_alloc)
+ 		return false;
+ 	xas->xa_alloc->parent = NULL;
+@@ -334,10 +334,10 @@ static bool __xas_nomem(struct xa_state *xas, gfp_t gfp)
+ 		gfp |= __GFP_ACCOUNT;
+ 	if (gfpflags_allow_blocking(gfp)) {
+ 		xas_unlock_type(xas, lock_type);
+-		xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
++		xas->xa_alloc = kmem_cache_alloc_lru(radix_tree_node_cachep, xas->xa_lru, gfp);
+ 		xas_lock_type(xas, lock_type);
+ 	} else {
+-		xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
++		xas->xa_alloc = kmem_cache_alloc_lru(radix_tree_node_cachep, xas->xa_lru, gfp);
+ 	}
+ 	if (!xas->xa_alloc)
+ 		return false;
+@@ -371,7 +371,7 @@ static void *xas_alloc(struct xa_state *xas, unsigned int shift)
+ 		if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
+ 			gfp |= __GFP_ACCOUNT;
+ 
+-		node = kmem_cache_alloc(radix_tree_node_cachep, gfp);
++		node = kmem_cache_alloc_lru(radix_tree_node_cachep, xas->xa_lru, gfp);
+ 		if (!node) {
+ 			xas_set_err(xas, -ENOMEM);
+ 			return NULL;
+@@ -1014,7 +1014,7 @@ void xas_split_alloc(struct xa_state *xas, void *entry, unsigned int order,
+ 		void *sibling = NULL;
+ 		struct xa_node *node;
+ 
+-		node = kmem_cache_alloc(radix_tree_node_cachep, gfp);
++		node = kmem_cache_alloc_lru(radix_tree_node_cachep, xas->xa_lru, gfp);
+ 		if (!node)
+ 			goto nomem;
+ 		node->array = xas->xa;
 -- 
 2.11.0
 
