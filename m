@@ -2,79 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42FD040B047
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 16:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02FCA40B04D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 16:11:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229502AbhINOLK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 10:11:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20634 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233572AbhINOLJ (ORCPT
+        id S233349AbhINOMv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 10:12:51 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33752 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233654AbhINOMn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 10:11:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631628591;
+        Tue, 14 Sep 2021 10:12:43 -0400
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1631628681;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=331pDuunPUAM51ZF/wTCLNLkiXbz1S2DVxlkGZaJaF0=;
-        b=cEch3tX+fvv+uivQH+GurH+GoTbQujImjENAFmao1HaCW0TujKSKjNAqUW5yGxQKU2Jp58
-        TjVeN9WOY8MRvat07cojWUnbVit2QNhU9c2u6sxNxa6p3TTJp1CLdWeMFemRR4zLWOytc7
-        cUh9y6z2XzaKsr25D5hvoO/0zmaRK2Y=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-105-_RD-HQQWOtaTK8ZI4c5bKg-1; Tue, 14 Sep 2021 10:09:48 -0400
-X-MC-Unique: _RD-HQQWOtaTK8ZI4c5bKg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9162319200CE;
-        Tue, 14 Sep 2021 14:09:46 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C12376F7EB;
-        Tue, 14 Sep 2021 14:09:40 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <6274f0922aecd9b40dd7ff1ef007442ed996aed7.camel@redhat.com>
-References: <6274f0922aecd9b40dd7ff1ef007442ed996aed7.camel@redhat.com> <163162767601.438332.9017034724960075707.stgit@warthog.procyon.org.uk> <163162772646.438332.16323773205855053535.stgit@warthog.procyon.org.uk>
-To:     Jeff Layton <jlayton@redhat.com>
-Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        v9fs-developer@lists.sourceforge.net, linux-cachefs@redhat.com,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/8] 9p: (untested) Convert to using the netfs helper lib to do reads and caching
+        bh=gagDSUKwMCHaMEiqubvQ+CuzRTxSq9sAGecdpVTXNXo=;
+        b=wAC23Vdi+/3pgXFQ+EH2vjnxHmtInT5MgK0Qv1/cnB40ERcGms2zFiQPteZutf2tvX7JaR
+        vHH2RCHDvH6cNn0QcgBA6VlaN1wTaIlbPsxL0avm616HDUX2FLIkajg7u5buXHWEJeTdbn
+        k3xeIAvT4sBhWivZf0qpES/oJQKjAvaVNT5gXPHXx+Yo8cW94vr13ZU8sdgmgkGAHRehT2
+        mSFCQaQoNzjadKvJEpBWgLguv84/g2KE6UuWFrWABvJcq+adOvkZU8l1XcSJEFdm2OBIUE
+        ZVDiMe2YZLcIRcpTlvQs9ODHinZ2+h07XNyXahZhzdv8d77b6oHDPWe9nStBrw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1631628681;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=gagDSUKwMCHaMEiqubvQ+CuzRTxSq9sAGecdpVTXNXo=;
+        b=6p9G3UdzwjHnsfv6oqF70n2N0Khx7/ccUId7dYB0XZr9smPMx0lfMHYd6ReQs3SOXIOhRc
+        QaJnnEx/OFgN4TDQ==
+To:     Alexei Lozovsky <me@ilammy.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Christoph Lameter <cl@linux.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/7] proc/stat: Maintain monotonicity of "intr" and
+ "softirq"
+In-Reply-To: <44F84890-521F-4BCA-9F48-B49D2C8A9E32@ilammy.net>
+References: <06F4B1B0-E4DE-4380-A8E1-A5ACAD285163@ilammy.net>
+ <20210911034808.24252-1-me@ilammy.net>
+ <YT3In8SWc2eYZ/09@localhost.localdomain>
+ <44F84890-521F-4BCA-9F48-B49D2C8A9E32@ilammy.net>
+Date:   Tue, 14 Sep 2021 16:11:21 +0200
+Message-ID: <87y27zb62e.ffs@tglx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <439557.1631628579.1@warthog.procyon.org.uk>
-Date:   Tue, 14 Sep 2021 15:09:39 +0100
-Message-ID: <439558.1631628579@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jeff Layton <jlayton@redhat.com> wrote:
+On Sun, Sep 12 2021 at 21:37, Alexei Lozovsky wrote:
+> On Sun, Sep 12, 2021, at 18:30, Alexey Dobriyan wrote:
+>> How about making everything "unsigned long" or even "u64" like NIC
+>> drivers do?
+>
+> I see some possible hurdles ahead:
+>
+> - Not all architectures have atomic operations for 64-bit values
 
-> 
-> Does this change require any of the earlier patches in the series? If
-> not, then it may be good to go ahead and merge this conversion
-> separately, ahead of the rest of the series.
+This is not about atomics.
 
-There's a conflict with patch 1 - you can see the same changes made to afs and
-ceph there, but apart from that, no.  However, I can't do patch 6 without it
-being applied first.  If Dominique or one of the other 9p people can get Linus
-to apply it now, that would be great, but I think that unlikely since the
-merge window has passed.
+>   All those "unsigned int" counters are incremented with __this_cpu_inc()
+>   which tries to use atomics if possible. Though, I'm not quite sure
 
-David
+It does not use atomics. It's a CPU local increment.
 
+>   how this works for read side which does not seem to use atomic reads
+>   at all. I guess, just by the virtue of properly aligned 32-bit reads
+>   being atomic everywhere? If that's so, I think widening counters to
+>   64 bits will come with an asterisk.
+
+The stats are accumulated racy, i.e. the interrupt might be handled and
+one of the per cpu counters or irq_desc->tot_count might be incremented
+concurrently.
+
+On 32bit systems a 32bit load (as long as the compiler does not emit
+load tearing) is always consistent even when there is a concurrent
+increment going on. It either gets the old or the new value.
+
+A 64bit read on a 32bit system is always two loads which means that a
+concurrent increment will make it possible to observe a half updated
+value. And no, you can't play reread tricks here without adding barriers
+on weakly ordered architectures.
+
+> - We'll need to update all counters to be 64-bit.
+>
+>   Like, *everyone*. Every field that gets summed up needs to be 64-bit
+>   (or else wrap-arounds will be incorrect). Basically every counter in
+>   every irq_cpustat_t will need to become twice as wide. If that's
+>   a fine price to pay for accurate, full-width counters...
+
+The storage size should not be a problem.
+
+> So right now I don't see why it shouldn't be doable in theory.
+
+So much for the theory :)
+
+Thanks,
+
+        tglx
