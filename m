@@ -2,110 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81DEC40B067
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 16:18:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59E6A40B0AC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Sep 2021 16:32:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233569AbhINOTk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 10:19:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35506 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233572AbhINOTR (ORCPT
+        id S233776AbhINOdh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 10:33:37 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25913 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233780AbhINOdf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 10:19:17 -0400
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B400C0613C1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 07:17:58 -0700 (PDT)
-Received: by mail-il1-x12c.google.com with SMTP id a20so14189248ilq.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 07:17:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=7aCyMA3VxhptRQuh2ttvtkXb5nYxSvlQb9n4PnL14HE=;
-        b=bwE/2/tK2n1UYEGcn7p4EO23vPC1et3DKrZqIRlb0ERou43Q2SvnNa+LgCzk3oN1Ns
-         vfSTHXNoybsZ3qJitqsVHVy4RRYNMuqHmdPn2AdjQoouunmLYKskG1aYWL0/xU1ZskVD
-         r1vZDSzz5PxlDNXczWAs1lm4eR8XESGIslPTDWIQABxKz1QrBoVm+McKh40xyz3E3weO
-         D5A6HVm41Nfno/Cewagz61s56582gqO4jhc3/kuG6WSKoKo8fH3hV0HhQfYL9hgnpUoM
-         8Yp3b9IkQJ+LWLZLc7CO+1L9hwQEDKJDXJjnkJ/qDrKNPOUkvdfocf9yZb5hKAo8dk1o
-         ccOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7aCyMA3VxhptRQuh2ttvtkXb5nYxSvlQb9n4PnL14HE=;
-        b=5oAzh7PopynBvTBAbC7Fy3nqDbkq5mNvxFcCVmlRkaiHTcZ2EEahY9RXIE2lLz8jQN
-         v68RcO5o5CYoIx3e4yARPEpsVXD4T2Sy95sRMWZfq419FtbFcaRtH3OEEajva6SbTnUn
-         jqoBJRzRkrRHWqVztiLgD/x2sVZI7fcAkbmOBx0qzpNxPNaCpOE4TKP4Bf3tlYAqyvrz
-         ISKorawNLTdIHsmmoLCOShb2xssk32g/Z8ziHagMMn5lzhLD5OSoeqOe9QOTJm+guUYm
-         j8LIwCECEA0b3vuPhAA1v4fmOzjXbVN6ULISUELrzPZBzb1bo5xGA/zKP/5mf0/rIyA7
-         vsqA==
-X-Gm-Message-State: AOAM531jwDDGCFl98yCbab89SokiUcwKRcOoJsWVvy+vB1RLAqaa0LHm
-        DPOzgi+ijr0sW1V7aYHfljzT+5kWe94tMqosRgU=
-X-Google-Smtp-Source: ABdhPJwUFL7j7IrHbZjylmb2vw1tz5jvS/34hnWnm/Nfk2WoRkDcgbycQlBs74N5ui4q0mrqU31lBA==
-X-Received: by 2002:a92:6802:: with SMTP id d2mr12086283ilc.40.1631629077503;
-        Tue, 14 Sep 2021 07:17:57 -0700 (PDT)
-Received: from p1.localdomain ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id p135sm6673803iod.26.2021.09.14.07.17.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Sep 2021 07:17:57 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/3] Revert "iov_iter: track truncated size"
-Date:   Tue, 14 Sep 2021 08:17:50 -0600
-Message-Id: <20210914141750.261568-4-axboe@kernel.dk>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20210914141750.261568-1-axboe@kernel.dk>
-References: <20210914141750.261568-1-axboe@kernel.dk>
+        Tue, 14 Sep 2021 10:33:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1631629937;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kfXYUmJTGW/jK+1WjU3DFfoUA/V3RTprHGsP9ym3psc=;
+        b=gpY3bJC28Gl43L09hhG7NKDLDKMA4BtxFloHXoWH4x/wSffw+sf3uJElQAN/BQWXUak/MU
+        xKqkMyjf+CgUs2RpxeciEy6Fu5qT+1EedFGJBduoPml5ZfXYTX3dVXzw6sI8JGXToegSXP
+        V6D9OaJux6uChstAWERmeZRnhQZ4+7g=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-533-EUqDmxvLNaC-bY9gFNnT9w-1; Tue, 14 Sep 2021 10:32:16 -0400
+X-MC-Unique: EUqDmxvLNaC-bY9gFNnT9w-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5D96E10144E3;
+        Tue, 14 Sep 2021 14:32:14 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.9.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B62955D6A8;
+        Tue, 14 Sep 2021 14:32:13 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 380F5220779; Tue, 14 Sep 2021 10:32:13 -0400 (EDT)
+Date:   Tue, 14 Sep 2021 10:32:13 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Bruce Fields <bfields@redhat.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, virtio-fs@redhat.com,
+        Daniel Walsh <dwalsh@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        selinux@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        stephen.smalley.work@gmail.com,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH v3 0/1] Relax restrictions on user.* xattr
+Message-ID: <YUCybaYK/0RLvY9J@redhat.com>
+References: <79dcd300-a441-cdba-e523-324733f892ca@schaufler-ca.com>
+ <YTEEPZJ3kxWkcM9x@redhat.com>
+ <YTENEAv6dw9QoYcY@redhat.com>
+ <3bca47d0-747d-dd49-a03f-e0fa98eaa2f7@schaufler-ca.com>
+ <YTEur7h6fe4xBJRb@redhat.com>
+ <1f33e6ef-e896-09ef-43b1-6c5fac40ba5f@schaufler-ca.com>
+ <YTYr4MgWnOgf/SWY@work-vm>
+ <496e92bf-bf9e-a56b-bd73-3c1d0994a064@schaufler-ca.com>
+ <YUCa6pWpr5cjCNrU@redhat.com>
+ <CAPL3RVHB=E_s1AW1sQMEgrLYJ8ADCdr=qaKsDrpYjVzW-Apq8w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPL3RVHB=E_s1AW1sQMEgrLYJ8ADCdr=qaKsDrpYjVzW-Apq8w@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This reverts commit 2112ff5ce0c1128fe7b4d19cfe7f2b8ce5b595fa.
+On Tue, Sep 14, 2021 at 09:59:19AM -0400, Bruce Fields wrote:
+> On Tue, Sep 14, 2021 at 8:52 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > Same is the requirement for regular containers and that's why
+> > podman (and possibly other container managers), make top level
+> > storage directory only readable and searchable by root, so that
+> > unpriveleged entities on host can not access container root filesystem
+> > data.
+> 
+> Note--if that directory is on NFS, making it readable and searchable
+> by root is very weak protection, since it's often possible for an
+> attacker to guess filehandles and access objects without the need for
+> directory lookups.
 
-We no longer need to track the truncation count, the one user that did
-need it has been converted to using iov_iter_restore() instead.
+open_by_handle_at() requires CAP_DAC_READ_SEARCH. And if you have
+CAP_DAC_READ_SEARCH, you don't need to even guess file handles. You
+should be able to read/search through all directories, IIUC.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/linux/uio.h | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+So how does one make sure that shared directory on host is not
+accessible to unprivileged entities. If making directory accessible
+to root only is weaker security, what are the options for stronger
+security.
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 984c4ab74859..207101a9c5c3 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -53,7 +53,6 @@ struct iov_iter {
- 		};
- 		loff_t xarray_start;
- 	};
--	size_t truncated;
- };
- 
- static inline enum iter_type iov_iter_type(const struct iov_iter *i)
-@@ -270,10 +269,8 @@ static inline void iov_iter_truncate(struct iov_iter *i, u64 count)
- 	 * conversion in assignement is by definition greater than all
- 	 * values of size_t, including old i->count.
- 	 */
--	if (i->count > count) {
--		i->truncated += i->count - count;
-+	if (i->count > count)
- 		i->count = count;
--	}
- }
- 
- /*
-@@ -282,7 +279,6 @@ static inline void iov_iter_truncate(struct iov_iter *i, u64 count)
-  */
- static inline void iov_iter_reexpand(struct iov_iter *i, size_t count)
- {
--	i->truncated -= count - i->count;
- 	i->count = count;
- }
- 
--- 
-2.33.0
+Vivek
 
