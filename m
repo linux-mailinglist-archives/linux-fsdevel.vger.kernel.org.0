@@ -2,247 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 47CD340BBDE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 01:02:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25A7B40BC3E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 01:33:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235205AbhINXDs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 19:03:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231559AbhINXDr (ORCPT
+        id S236019AbhINXdx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 19:33:53 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:4872 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235947AbhINXds (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 19:03:47 -0400
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FF3CC061762
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 16:02:29 -0700 (PDT)
-Received: by mail-il1-x134.google.com with SMTP id a20so839798ilq.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 16:02:29 -0700 (PDT)
+        Tue, 14 Sep 2021 19:33:48 -0400
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 18EKxO5Z017546;
+        Tue, 14 Sep 2021 23:31:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id : content-type : mime-version; s=corp-2021-07-09;
+ bh=80MAg8L66JzOnOeDAvbnTS0pCogozFh2GEI3z+1X84E=;
+ b=ydABs0LKRDLIKWdMB75Dm3RJRLyLYxd7iKbr6Fq5i7aRpOjuW7WQgwt6Q3SIQ6XYodm3
+ WcjrbauJI12kdTQY9dUIi75mw0DCt9eWuiHpIxswENpM1YZ5q+RlRhE6/pE2PxJwLG/C
+ yAsOpYQ/1H4yILzDdNFvM44kyyCx+RanGQ+JyTVlGSkfuL21lYaQ5UR8awc8LMIuy/yg
+ yb1edIWLId0TNMxomK1kMVqBod6ti1cj5K/FhtTI0x2cCCRB3r6We7tXnkcSkry71FNE
+ 7xbP18fRzt4kTIR8ZnGtfImUtaNT/O0LK4OCJuE07vpU1pPaRpFVtgBdPZkTh2CK6jMU OA== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id : content-type : mime-version; s=corp-2020-01-29;
+ bh=80MAg8L66JzOnOeDAvbnTS0pCogozFh2GEI3z+1X84E=;
+ b=dsPzYAskcFA98FjoOPvOQsSP2H1i6XlRKJ8kZ94cZqrJyc4kOP1xl8czceNiXS8ktLpl
+ tkbrwO9VrSmNmlqQQ76ozqJ15M1/rtUY1KiRd2ok7M+q0J94SEG7TWBTFvDv7n6LZmD+
+ 5vCnJCSB2Ws3jOBCQVHlSCybsqbJfm0otGyIKRFeBqCxz7L+bh+g+yuJ+sRyb13/x1/m
+ RTYsCJTq/RpGSWcDGhjNFZJcbv90Za8QguvXiDFlekXImeCVnqjd6dtb7K6u++6MDsgs
+ 46ZXC+ADDiA+WRQ0OrBOwMJWfdB6aEUz9WURzq7LvS9IrdSEOLK3NkswLpuO+5TKzb79 VQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3b2p8tb5hk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Sep 2021 23:31:55 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 18ENUh5G075975;
+        Tue, 14 Sep 2021 23:31:54 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2174.outbound.protection.outlook.com [104.47.58.174])
+        by aserp3020.oracle.com with ESMTP id 3b0m970nqr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Sep 2021 23:31:54 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QghBUs2QiEGqzYNf0bCTXrkY/mlAR1dW/6h4dJSBf9JigVJz3GKmxVZjIkPl5iaMMqLmuJB7lnv4v9DElVixu8YNz3NscPgcO1cqbwr2ZJrn+pULyjxNZBA7y2QMKVi8Gu5hWyCxhkng0ERC7/w2/gkFo4c7tHVkQj/pj8fuamrPKZipj26belL0LULtKG0CSg6DMuXoR9KXsx8dqWxhEPLjvVOuHTKiWqMtCmPhJOt+q6VxuNVKT3X8KVytz54xEgEAMJJm4Ck9BO4+Lohiy0mmRInZ2EKGUOpOqKyidn8+wZRD/1+PIH70ccPdd14sepARTbxLlY07GXzsqT8zaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=80MAg8L66JzOnOeDAvbnTS0pCogozFh2GEI3z+1X84E=;
+ b=jalqvvxAciVmC34LT7DKj4oieMhDDpuoXB7KqtO6bbkqP3Iw9zmGw/Lf8HAJMV1WH3OtNpX/VGblRFTTpfxzfEMk8kPsRQ2KT7y4Myr9q/JH9+dA2Vu5JextKWAjO5JLr3h5Ta7O1uvCNE4YkBpVkCF7ZfDaglgCUAMDzbZTD6ioaOfOmpRzS6svx3vICZpGm6avwcUZBgLD9KIgaNS1mBZO5qCqfG31H04A9BCuKqDoLGLD7ImV5iA8kCF1s84jZYQDCknpFb30aZo9vzxhtBeYCi/FiLA29bSOl0ivW5p70tNx7WiO3S3CzlULVd53LoWwWX7BlNYi3/G1f2LQDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NoVn2VRJhuj7hpJhcSDh730crnAh82+NKxOV7442xBc=;
-        b=HO/VKd6Lvn3OqPnugBW8F4vpqs+1xV3eKhJYyBgf3xQaVCfkLVkaw7z6NkaK6ZbfeW
-         Cr9it+v3U2LppOWC6j1fbgl2yduijKk3VGpR94fvKnT3f87xmDFykfU171HpmsT8tbvL
-         4QUZaEIwRuWfstcu2grJhrf5WkfPZB3qYF/Jryo/Ri7LpDYp+Jpj92/o2lXmuCKY4iBV
-         5KgL0n4gSQq6hssCTPBXYmgCHpdRxlzarJD2uhr/AGv9HOldUZBGcOymVR0lY0mmh5NS
-         IuY8lL3AxWct363aRB+m1x9bP6s1lrUsPglWPQvG5OXBagFh4rM3JBzR/bDiqBdTGQNz
-         Nmww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NoVn2VRJhuj7hpJhcSDh730crnAh82+NKxOV7442xBc=;
-        b=2OqNuhIvDASlZW1reSm2o1mYVps8t+5P9200Mv+o4o6OA3QStK7deCQ6HWHck03y4E
-         vCyrT5V+QTBHgvklJKP8nZ7bDViqjF5KROtTN4v6KccrFY+ntzJqrBsM+7pENWZkm5Us
-         Z0niOaHMFzkz7DS3ryku6sl5vWqHWEFoDS5uSXC27kF5qQpG4qY/eNJHf07LJo55myKq
-         np23BtWZIzSYFnFSbqXpiuFOTLG9cetU5C5gJ2lFTFq8L2QoQnQ8ePl/ai2XHZgLe2JE
-         sXHfUG/0fOaxifc0llKscTWyhR+HCu4GWMOcSw3UnPeyh9bcxBXYoD+VJVMGs07ABe/B
-         IutA==
-X-Gm-Message-State: AOAM531KSxi+gNO0ov5i3w5LxD6HhktGC8WGeViEsUG+NezHU/6up9q0
-        EFGRu+x2qDa1IIVgJdp6cGR80jhHxNu+IA==
-X-Google-Smtp-Source: ABdhPJyDHUrAmTioApPzLjinUFOdWExL5aAdpPfSj5AvIfpL/+FhksJj8SGmNEkfJgCJL+bCxQJM+w==
-X-Received: by 2002:a92:c145:: with SMTP id b5mr13350365ilh.203.1631660548798;
-        Tue, 14 Sep 2021 16:02:28 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id ay26sm5566674iob.9.2021.09.14.16.02.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Sep 2021 16:02:28 -0700 (PDT)
-Subject: Re: [PATCH 2/3] io_uring: use iov_iter state save/restore helpers
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20210914141750.261568-1-axboe@kernel.dk>
- <20210914141750.261568-3-axboe@kernel.dk>
- <CAHk-=wh6mGm0b7AnKNRzDO07nrdpCrvHtUQ=afTH6pZ2JiBpeQ@mail.gmail.com>
- <5659d7ba-e198-9df0-c6f8-bd6511bf44a0@kernel.dk>
-Message-ID: <5d947a6d-d132-6019-78fb-5e7b1bf88313@kernel.dk>
-Date:   Tue, 14 Sep 2021 17:02:27 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=80MAg8L66JzOnOeDAvbnTS0pCogozFh2GEI3z+1X84E=;
+ b=OZloXd/gd1WRW2GPx3uzvorjFjKjg/VFha0xzVx0w10g7bf5n2HNspmoucnuVO50rgfED0UI+ewY4Z5a94ApRFGD05BKE8MxHYS3UHU+YGxWFiUx9BWNZEgAgqBILoXXqpdsSK1wDU//J7zVoGOev2t/8Juky9AbXPoPWrX9DTo=
+Authentication-Results: intel.com; dkim=none (message not signed)
+ header.d=none;intel.com; dmarc=none action=none header.from=oracle.com;
+Received: from SJ0PR10MB4429.namprd10.prod.outlook.com (2603:10b6:a03:2d1::14)
+ by BY5PR10MB4035.namprd10.prod.outlook.com (2603:10b6:a03:1f8::33) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4523.14; Tue, 14 Sep
+ 2021 23:31:52 +0000
+Received: from SJ0PR10MB4429.namprd10.prod.outlook.com
+ ([fe80::401:1df2:3e9a:66c]) by SJ0PR10MB4429.namprd10.prod.outlook.com
+ ([fe80::401:1df2:3e9a:66c%5]) with mapi id 15.20.4500.019; Tue, 14 Sep 2021
+ 23:31:52 +0000
+From:   Jane Chu <jane.chu@oracle.com>
+To:     dan.j.williams@intel.com, vishal.l.verma@intel.com,
+        dave.jiang@intel.com, ira.weiny@intel.com, viro@zeniv.linux.org.uk,
+        willy@infradead.org, jack@suse.cz, nvdimm@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/3] dax: clear poison on the fly along pwrite
+Date:   Tue, 14 Sep 2021 17:31:28 -0600
+Message-Id: <20210914233132.3680546-1-jane.chu@oracle.com>
+X-Mailer: git-send-email 2.18.4
+Content-Type: text/plain
+X-ClientProxiedBy: SN4PR0601CA0008.namprd06.prod.outlook.com
+ (2603:10b6:803:2f::18) To SJ0PR10MB4429.namprd10.prod.outlook.com
+ (2603:10b6:a03:2d1::14)
 MIME-Version: 1.0
-In-Reply-To: <5659d7ba-e198-9df0-c6f8-bd6511bf44a0@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: from brm-x62-16.us.oracle.com (2606:b400:8004:44::1b) by SN4PR0601CA0008.namprd06.prod.outlook.com (2603:10b6:803:2f::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4500.15 via Frontend Transport; Tue, 14 Sep 2021 23:31:51 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 22ee5114-2327-409f-7051-08d977d7d506
+X-MS-TrafficTypeDiagnostic: BY5PR10MB4035:
+X-Microsoft-Antispam-PRVS: <BY5PR10MB4035737202E06004F570C06AF3DA9@BY5PR10MB4035.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: KWiNMoHTBVP0LgNerEviq6uif9Z6onHAKP4QqHllEPPm3KtpYgk6DrgORLjAphlzBndnvLuDetRFsK6knfvhe7VVcIMuee+Hlntbh+KXkzSt2ctpA8SOwNnb/Op4iIEEllzHHS6FuZX64EObQVfOA10RjjwC73EEU27wpMeIpaBXuWAtDibxhECewoPa9EjYcJirSMnLf1QnVk4znrH/6mRRHja8DHXMdmijdIf7kgUCzX09rFsrlrej3cRPwBUr92zU52GN/Wc9Y6Bif6Pq0QWku9REKF0/zNrodUVEmEPqsc08z8IMceOmfLFQSoKaxWynOm/5F+HxrHTp9UwlSOUPKGHJWv8sGUyKeZ2RWCVNkExtkWmJgQEmVjeQa6waL6eQCo2YY+7xZtbeda3gerYfyve707KThD8imTVd57mvD1en4c3Bl1O6SIFQqFq6R6P6nTcrPMXzTkezukSSrDVvTRe5eNOROgYithRZOJiPaJWapLfX8P/VZ+ETapXNJjuevHzwFPcugNIy4kkE+Ci5In7YPQa90axAF2I/sBwXpnvAJr0A3QtczzIHRzzeNazhGSkEQazNaz74x1QYmOiLLhge6+ZR5ljQAecVPUlvFhR+yc4nA+FpBDojBJl2Un2D7UnkpvgdWbkwKOj2TKFIab5n1eNQCWDEw2i+wxE9ebMOsWnBLI0WiPgZWDzk
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4429.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(396003)(366004)(136003)(39850400004)(346002)(66946007)(66476007)(921005)(1076003)(7416002)(66556008)(52116002)(7696005)(36756003)(316002)(5660300002)(186003)(8676002)(38100700002)(8936002)(2906002)(83380400001)(2616005)(6666004)(44832011)(478600001)(4744005)(86362001)(6486002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?wnlmcZJ7ZFkrYhCnNdRlUf8OcfEMhvFGPTaV0Jc6zF7K3gNFhW2Bv95+L2jO?=
+ =?us-ascii?Q?wD4WTQVO8WpL225e0ZMboPYVuHM5MJv9Iy9LZzh0iGPVdXa5DkgkpJCw0ec+?=
+ =?us-ascii?Q?zCUp56E4QrtArCT3kChUEWDFBwIYFEDHtC0t3teE3pU09dzlBxZV3oHc3VJ5?=
+ =?us-ascii?Q?l92/VugMSAXXW6KVLLRxAIQKPNLXQ824yW8ESnYIgeSBhtqYNi5Mm3SPGfMk?=
+ =?us-ascii?Q?g+pmud5CWOwSGp+3zTMmhnE2bOdUaBDdhvjnVC2rTmKJ3nJhpM4swLDDFv9m?=
+ =?us-ascii?Q?wwPaLauXt2VMu6lY2WqE5stvmqILGS2iFfmmySPDsHDOkoXdV+GWW01wzyJO?=
+ =?us-ascii?Q?mCqk5tekU6T7Sitzs5EFGYIiTaXZOBdXfLKBB0Oikf4pZvCWbhKRw/vHmB2J?=
+ =?us-ascii?Q?OeuScLjJYktR9AOB6oSxyqC49mmULMCJyYArwBLaoAXrB7tvNp3gQ5xwuPeN?=
+ =?us-ascii?Q?WqiyyQGbz2/p1WPvcRkmXoDbPRTcGnHfh2LtkKYvQ1bHExtpmD5pfk8ulM3Y?=
+ =?us-ascii?Q?GNlRzhv3IJxa8TG29wesfLBVmrjAi04dbSbeSTBRlvgc3qFnzqJHt038HFYe?=
+ =?us-ascii?Q?wQzN+v2EcKaxlz7ulF00fth4pOIkNmCt4DyRpbcTQW8oV9Q7cj1vvEK7GYdh?=
+ =?us-ascii?Q?RFd31K49ujpEuJncrrdrG2wSkikACKBqfvjHkOaSFRoQhXZi/NavFL/g/dg8?=
+ =?us-ascii?Q?f9EE1WhsWqQN3s7J7XDYGaq4tMFK8Yb5NNnff7AE7zN81jSivmlB6aWH8dBR?=
+ =?us-ascii?Q?vbyzd2Klb1J+iaMaCI89kLm8rIqhbibGPbyjd8GBXBpxaeHFTAwJv6Jya6MD?=
+ =?us-ascii?Q?FsmdHscBstY2QAP+wybHRDF6yt7p4F23rNmoEbDYdG+MUnYq3DC8d++Vk7zu?=
+ =?us-ascii?Q?ieZmWt6eJpZXKzZT3ZN7pQPoQSP2w3fc7XpMvbclO/VwvzeyrFuw2ACW8Jxx?=
+ =?us-ascii?Q?i1IMgUDJLgYxTBoHnkrV6ATFM48b2JFSe1hv1tZ5dBlqB8JTSmWcihvPapz9?=
+ =?us-ascii?Q?sDoHlDrB9cM99SSglRrIP7OyLHqq6+qiQObcM9lEGcHz1Q15cQEB5VnyG+ts?=
+ =?us-ascii?Q?Sa9CNH5jqWze6BdaC3u3OjtyK6EheSzCFaVsXeb1PjAOFT+qZfMB69czFvTI?=
+ =?us-ascii?Q?YKYrrvW+/mHo+PagfrZNhjOgSLJdgn5RQWQzDyujC/n8r9pwzHYe21HxD1vi?=
+ =?us-ascii?Q?huzOolPJfu9IsCmDvlA5qsatnnEHaPg/GIVmNP4y3T2kyR1EVAvvJu4l7EGM?=
+ =?us-ascii?Q?lV6+tYeJsS7Gxrnegk+ks4sI3QsLcMFVL5zdyaMQvyovQOGlYD/XU0CBXStM?=
+ =?us-ascii?Q?ez019J+dC/3R0oRejXahoPKBaMEXGlicRTKnKrfFS7R7+w=3D=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22ee5114-2327-409f-7051-08d977d7d506
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB4429.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2021 23:31:52.7170
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GdkX3hkbU/qlByG4/QGwp7kpFUpNt/rjmkjSw6D7Yw8ySPNSATBZ8/XfMFSWpZiOqPbslFIq0DVDWgfaqyBlBQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB4035
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10107 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
+ adultscore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2109030001
+ definitions=main-2109140134
+X-Proofpoint-GUID: YEQ1b0TxBYjfL_zVfTXUs2z9-RHv9yI4
+X-Proofpoint-ORIG-GUID: YEQ1b0TxBYjfL_zVfTXUs2z9-RHv9yI4
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/14/21 1:37 PM, Jens Axboe wrote:
-> On 9/14/21 12:45 PM, Linus Torvalds wrote:
->> On Tue, Sep 14, 2021 at 7:18 AM Jens Axboe <axboe@kernel.dk> wrote:
->>>
->>>
->>> +       iov_iter_restore(iter, state);
->>> +
->> ...
->>>                 rw->bytes_done += ret;
->>> +               iov_iter_advance(iter, ret);
->>> +               if (!iov_iter_count(iter))
->>> +                       break;
->>> +               iov_iter_save_state(iter, state);
->>
->> Ok, so now you keep iovb_iter and the state always in sync by just
->> always resetting the iter back and then walking it forward explicitly
->> - and re-saving the state.
->>
->> That seems safe, if potentially unnecessarily expensive.
-> 
-> Right, it's not ideal if it's a big range of IO, then it'll definitely
-> be noticeable. But not too worried about it, at least not for now...
-> 
->> I guess re-walking lots of iovec entries is actually very unlikely in
->> practice, so maybe this "stupid brute-force" model is the right one.
-> 
-> Not sure what the alternative is here. We could do something similar to
-> __io_import_fixed() as we're only dealing with iter types where we can
-> do that, but probably best left as a later optimization if it's deemed
-> necessary.
-> 
->> I do find the odd "use __state vs rw->state" to be very confusing,
->> though. Particularly in io_read(), where you do this:
->>
->> +       iov_iter_restore(iter, state);
->> +
->>         ret2 = io_setup_async_rw(req, iovec, inline_vecs, iter, true);
->>         if (ret2)
->>                 return ret2;
->>
->>         iovec = NULL;
->>         rw = req->async_data;
->> -       /* now use our persistent iterator, if we aren't already */
->> -       iter = &rw->iter;
->> +       /* now use our persistent iterator and state, if we aren't already */
->> +       if (iter != &rw->iter) {
->> +               iter = &rw->iter;
->> +               state = &rw->iter_state;
->> +       }
->>
->>         do {
->> -               io_size -= ret;
->>                 rw->bytes_done += ret;
->> +               iov_iter_advance(iter, ret);
->> +               if (!iov_iter_count(iter))
->> +                       break;
->> +               iov_iter_save_state(iter, state);
->>
->>
->> Note how it first does that iov_iter_restore() on iter/state, buit
->> then it *replaces&* the iter/state pointers, and then it does
->> iov_iter_advance() on the replacement ones.
-> 
-> We restore the iter so it's the same as before we did the read_iter
-> call, and then setup a consistent copy of the iov/iter in case we need
-> to punt this request for retry. rw->iter should have the same state as
-> iter at this point, and since rw->iter is the copy we'll use going
-> forward, we're advancing that one in case ret > 0.
-> 
-> The other case is that no persistent state is needed, and then iter
-> remains the same.
-> 
-> I'll take a second look at this part and see if I can make it a bit more
-> straight forward, or at least comment it properly.
+If pwrite(2) encounters poison in a pmem range, it fails with EIO.
+This is unecessary if hardware is capable of clearing the poison.
 
-I hacked up something that shortens the iter for the initial IO, so we
-could more easily test the retry path and the state. It really is a
-hack, but the idea was to issue 64K io from fio, and then the initial
-attempt would be anywhere from 4K-60K truncated. That forces retry.
-I ran this with both 16 segments and 8 segments, verifying that it
-hits both the UIO_FASTIOV and alloc path.
+Though not all dax backend hardware has the capability of clearing
+poison on the fly, but dax backed by Intel DCPMEM has such capability,
+and it's desirable to, first, speed up repairing by means of it;
+second, maintain backend continuity instead of fragmenting it in
+search for clean blocks.
 
-I did find one issue with that, see the last hunk in the hack. We
-need to increment rw->bytes_done if we don't break, or set ret to
-0 if we do. Otherwise that last ret ends up being accounted twice.
-But apart from that, it passes data verification runs.
+Jane Chu (3):
+  dax: introduce dax_operation dax_clear_poison
+  dax: introduce dax_clear_poison to dax pwrite operation
+  libnvdimm/pmem: Provide pmem_dax_clear_poison for dax operation
 
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index dc1ff47e3221..484c86252f9d 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -744,6 +744,7 @@ enum {
- 	REQ_F_NOWAIT_READ_BIT,
- 	REQ_F_NOWAIT_WRITE_BIT,
- 	REQ_F_ISREG_BIT,
-+	REQ_F_TRUNCATED_BIT,
- 
- 	/* not a real bit, just to check we're not overflowing the space */
- 	__REQ_F_LAST_BIT,
-@@ -797,6 +798,7 @@ enum {
- 	REQ_F_REFCOUNT		= BIT(REQ_F_REFCOUNT_BIT),
- 	/* there is a linked timeout that has to be armed */
- 	REQ_F_ARM_LTIMEOUT	= BIT(REQ_F_ARM_LTIMEOUT_BIT),
-+	REQ_F_TRUNCATED		= BIT(REQ_F_TRUNCATED_BIT),
- };
- 
- struct async_poll {
-@@ -3454,11 +3456,12 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
- {
- 	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
- 	struct kiocb *kiocb = &req->rw.kiocb;
--	struct iov_iter __iter, *iter = &__iter;
-+	struct iov_iter __i, __iter, *iter = &__iter;
- 	struct io_async_rw *rw = req->async_data;
- 	bool force_nonblock = issue_flags & IO_URING_F_NONBLOCK;
- 	struct iov_iter_state __state, *state;
- 	ssize_t ret, ret2;
-+	bool do_restore = false;
- 
- 	if (rw) {
- 		iter = &rw->iter;
-@@ -3492,8 +3495,25 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
- 		return ret;
- 	}
- 
-+	if (!(req->flags & REQ_F_TRUNCATED) && !(iov_iter_count(iter) & 4095)) {
-+		int nr_vecs;
-+
-+		__i = *iter;
-+		nr_vecs = 1 + (prandom_u32() % iter->nr_segs);
-+		iter->nr_segs = nr_vecs;
-+		iter->count = nr_vecs * 8192;
-+		req->flags |= REQ_F_TRUNCATED;
-+		do_restore = true;
-+	}
-+
- 	ret = io_iter_do_read(req, iter);
- 
-+	if (ret == -EAGAIN) {
-+		req->flags &= ~REQ_F_TRUNCATED;
-+		*iter = __i;
-+		do_restore = false;
-+	}
-+
- 	if (ret == -EAGAIN || (req->flags & REQ_F_REISSUE)) {
- 		req->flags &= ~REQ_F_REISSUE;
- 		/* IOPOLL retry should happen for io-wq threads */
-@@ -3513,6 +3533,9 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
- 
- 	iov_iter_restore(iter, state);
- 
-+	if (do_restore)
-+		*iter = __i;
-+
- 	ret2 = io_setup_async_rw(req, iovec, inline_vecs, iter, true);
- 	if (ret2)
- 		return ret2;
-@@ -3526,10 +3549,10 @@ static int io_read(struct io_kiocb *req, unsigned int issue_flags)
- 	}
- 
- 	do {
--		rw->bytes_done += ret;
- 		iov_iter_advance(iter, ret);
- 		if (!iov_iter_count(iter))
- 			break;
-+		rw->bytes_done += ret;
- 		iov_iter_save_state(iter, state);
- 
- 		/* if we can retry, do so with the callbacks armed */
+ drivers/dax/super.c   | 13 +++++++++++++
+ drivers/nvdimm/pmem.c | 17 +++++++++++++++++
+ fs/dax.c              |  9 +++++++++
+ include/linux/dax.h   |  6 ++++++
+ 4 files changed, 45 insertions(+)
 
 -- 
-Jens Axboe
+2.18.4
 
