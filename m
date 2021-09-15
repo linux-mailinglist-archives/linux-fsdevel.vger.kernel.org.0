@@ -2,231 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 282D040C3DC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 12:46:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A67D140C486
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 13:46:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237606AbhIOKrV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 06:47:21 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:56889 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S237533AbhIOKrS (ORCPT
+        id S237319AbhIOLrh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 07:47:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49730 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232849AbhIOLrb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 06:47:18 -0400
-IronPort-Data: =?us-ascii?q?A9a23=3AyVPGmaABNUyFIRVW/1Liw5YqxClBgxIJ4g17XOL?=
- =?us-ascii?q?fAVHr1zt302AGzDYWWGCOM/eMNGT3LtkiYYyz8x4PsZGAx9UxeLYW3SszFioV8?=
- =?us-ascii?q?6IpJjg4wn/YZnrUdouaJK5ex512huLocYZkExcwmj/3auK49SgliPnTLlbBILW?=
- =?us-ascii?q?s1h5ZFFYMpBgJ2UoLd94R2uaEsPDha++/kYqaT/73ZDdJ7wVJ3lc8sMpvnv/AU?=
- =?us-ascii?q?MPa41v0tnRmDRxCUcS3e3M9VPrzLonpR5f0rxU9IwK0ewrD5OnREmLx9BFrBM6?=
- =?us-ascii?q?nk6rgbwsBRbu60Qqm0yIQAvb9xEMZ4HFaPqUTbZLwbW9NljyPhME3xtNWqbS+V?=
- =?us-ascii?q?AUoIrbR3u8aVnG0FgknZPEboe6ffiTXXcu7iheun2HX6/lnEkA6FYMC/eNwG2t?=
- =?us-ascii?q?P6boTLzVlRg+Cg+an6LO9RPNliskqII/sJox3kn1py3fbS+knRZTCSqDRzd5ew?=
- =?us-ascii?q?Do0wMtJGJ72a8gGbjxgRBfNeRtCPhEQEp1WtOG2inj6dhVcqUmJvuwz4m7O3Ep?=
- =?us-ascii?q?93aaFGNreevSOXtkTkkvwjnjJ+GD1HQAcHMeC0jfD/n/EruvOmz7rHYwJGLCm+?=
- =?us-ascii?q?/pCnlKe3CoQBQcQWF/9puO24ma6WtRCOwkX9zAooKwa6kOmVJ/+Uge+rXrCuQQ?=
- =?us-ascii?q?TM/JUEusn+ESdxLH8/QmUHC4HQyRHZdhgs9U5LRQ010WOt8HkAz1x9rmUT2+Ns?=
- =?us-ascii?q?LCOonWvOkAowcUqDcMfZVJdpYC9/8do1VSSJuuP2ZWd1rXdcQwcCRjWxMTmu4g?=
- =?us-ascii?q?usA=3D=3D?=
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3A7P1xH6NJYFm/1cBcTqSjsMiBIKoaSvp037BL?=
- =?us-ascii?q?7SBMoHNuH/Bw+/rFoB15737JYVQqN03I8OroUMK9qBvnhP1ICOIqUYtKMjOJhF?=
- =?us-ascii?q?eV?=
-X-IronPort-AV: E=Sophos;i="5.85,295,1624291200"; 
-   d="scan'208";a="114519074"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 15 Sep 2021 18:45:58 +0800
-Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
-        by cn.fujitsu.com (Postfix) with ESMTP id 28BC94D0DC78;
-        Wed, 15 Sep 2021 18:45:55 +0800 (CST)
-Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
- G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Wed, 15 Sep 2021 18:45:54 +0800
-Received: from irides.mr.mr.mr (10.167.225.141) by
- G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Wed, 15 Sep 2021 18:45:53 +0800
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-To:     <djwong@kernel.org>, <hch@lst.de>, <linux-xfs@vger.kernel.org>
-CC:     <ruansy.fnst@fujitsu.com>, <dan.j.williams@intel.com>,
-        <david@fromorbit.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-        <rgoldwyn@suse.de>, <viro@zeniv.linux.org.uk>,
-        <willy@infradead.org>
-Subject: [PATCH v9 8/8] xfs: Add dax dedupe support
-Date:   Wed, 15 Sep 2021 18:45:01 +0800
-Message-ID: <20210915104501.4146910-9-ruansy.fnst@fujitsu.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20210915104501.4146910-1-ruansy.fnst@fujitsu.com>
-References: <20210915104501.4146910-1-ruansy.fnst@fujitsu.com>
+        Wed, 15 Sep 2021 07:47:31 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99D72C061575
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 04:46:12 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id s12so643012ljg.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 04:46:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4uYqvhZeHXv+ssAcqC18NkCUO7S23+uQI3/MrtalBV0=;
+        b=jyiV1pAooDObXMWnm3SrBe9VySDlVMgGIdz0ZOAqYFqHTDbGSqfGlclgEpgSJnLk9Q
+         DFka1G8+6sSoD3HNSqa0AppZDm2J1kkZRyV+Ekj0m8uHjXRySHiMBmH7WY9nhKnUr/VT
+         35oCwlYebNGuHog/4c3gCuRkJXVh/bIk6Tdk5zhvhNarQQSivcYCtFgJSW/Rz12DW7GL
+         jUh7hMukNOAQHN5HvXwrMx8rRg97dA6+kwG/LTGpn5AomPepMFIPfwm6cWNOVFkW6QI6
+         7bHQrFQgbUXL52514a9fKrhGs8YBnPNc3rmHQ/wM43OJGLye+GKaW5qLT1AkYcVARpnv
+         qFHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4uYqvhZeHXv+ssAcqC18NkCUO7S23+uQI3/MrtalBV0=;
+        b=xRrupWmhWL5sdYOYy+0SBbegKrp8Hhs+8ipho+HLM1ZVHKylhDohRBBDifHwdpV3SG
+         t9RAOafgTjbIVMqx5yBEqvIMXj+aDiEoHfMGjips4xvYzohD0luFeBGiXIYGBSkmyUCY
+         GwJIWCLECQI1XUy/8t3rO99s3PBohYfmyN6AMOdar5bR9dBSP+0O+i7VoZLAXlYW7KS6
+         C8Wec5y5N2xQn7La+Z88OzchwQgnQhv7/OIbFYsl7P3+NZ4mchDVrsam61Dz6HCV2Dxq
+         SN92V9Djfv+OCulx5cdDW8vLpfaAKfcWzmZ/t3tl1PZYBskd/WvUUF7bVTryKaG7/g/u
+         w7aQ==
+X-Gm-Message-State: AOAM5329DNjCIphO3SWECnLsjLTuErl0gL7qK0g1d2UyYVoiM/tNOUZb
+        Agc1ewaZxhd+0V4Fd1Ki97J+iA==
+X-Google-Smtp-Source: ABdhPJwCBpDqQI2MR/6gQuQDuaPc18SeGMEV9d5/MeeH65Opge+QdGLHvzx00+xc1e2k20cqP9RBww==
+X-Received: by 2002:a2e:a546:: with SMTP id e6mr20030432ljn.117.1631706370471;
+        Wed, 15 Sep 2021 04:46:10 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id y14sm107725lfk.237.2021.09.15.04.46.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Sep 2021 04:46:10 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 310A7102F4D; Wed, 15 Sep 2021 14:46:13 +0300 (+03)
+Date:   Wed, 15 Sep 2021 14:46:13 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     naoya.horiguchi@nec.com, hughd@google.com,
+        kirill.shutemov@linux.intel.com, willy@infradead.org,
+        osalvador@suse.de, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] mm: filemap: check if any subpage is hwpoisoned for
+ PMD page fault
+Message-ID: <20210915114613.lo26l64iqjz2qo6a@box.shutemov.name>
+References: <20210914183718.4236-1-shy828301@gmail.com>
+ <20210914183718.4236-2-shy828301@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 28BC94D0DC78.A0C25
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
-X-Spam-Status: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210914183718.4236-2-shy828301@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce xfs_mmaplock_two_inodes_and_break_dax_layout() for dax files
-who are going to be deduped.  After that, call compare range function
-only when files are both DAX or not.
+On Tue, Sep 14, 2021 at 11:37:15AM -0700, Yang Shi wrote:
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 25fc46e87214..1765bf72ed16 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -3920,8 +3920,17 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
+>  	if (unlikely(!pmd_none(*vmf->pmd)))
+>  		goto out;
+>  
+> -	for (i = 0; i < HPAGE_PMD_NR; i++)
+> +	for (i = 0; i < HPAGE_PMD_NR; i++) {
+> +		/*
+> +		 * Just backoff if any subpage of a THP is corrupted otherwise
+> +		 * the corrupted page may mapped by PMD silently to escape the
+> +		 * check.  This kind of THP just can be PTE mapped.  Access to
+> +		 * the corrupted subpage should trigger SIGBUS as expected.
+> +		 */
+> +		if (PageHWPoison(page + i))
+> +			goto out;
+>  		flush_icache_page(vma, page + i);
+> +	}
 
-Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- fs/xfs/xfs_file.c    |  2 +-
- fs/xfs/xfs_inode.c   | 80 +++++++++++++++++++++++++++++++++++++++++---
- fs/xfs/xfs_inode.h   |  1 +
- fs/xfs/xfs_reflink.c |  4 +--
- 4 files changed, 80 insertions(+), 7 deletions(-)
+This is somewhat costly.
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 2ef1930374d2..c3061723613c 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -846,7 +846,7 @@ xfs_wait_dax_page(
- 	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
- }
- 
--static int
-+int
- xfs_break_dax_layouts(
- 	struct inode		*inode,
- 	bool			*retry)
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index a4f6f034fb81..bdc084cdbf46 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -3790,6 +3790,61 @@ xfs_iolock_two_inodes_and_break_layout(
- 	return 0;
- }
- 
-+static int
-+xfs_mmaplock_two_inodes_and_break_dax_layout(
-+	struct xfs_inode	*ip1,
-+	struct xfs_inode	*ip2)
-+{
-+	int			error, attempts = 0;
-+	bool			retry;
-+	struct page		*page;
-+	struct xfs_log_item	*lp;
-+
-+	if (ip1->i_ino > ip2->i_ino)
-+		swap(ip1, ip2);
-+
-+again:
-+	retry = false;
-+	/* Lock the first inode */
-+	xfs_ilock(ip1, XFS_MMAPLOCK_EXCL);
-+	error = xfs_break_dax_layouts(VFS_I(ip1), &retry);
-+	if (error || retry) {
-+		xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
-+		if (error == 0 && retry)
-+			goto again;
-+		return error;
-+	}
-+
-+	if (ip1 == ip2)
-+		return 0;
-+
-+	/* Nested lock the second inode */
-+	lp = &ip1->i_itemp->ili_item;
-+	if (lp && test_bit(XFS_LI_IN_AIL, &lp->li_flags)) {
-+		if (!xfs_ilock_nowait(ip2,
-+		    xfs_lock_inumorder(XFS_MMAPLOCK_EXCL, 1))) {
-+			xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
-+			if ((++attempts % 5) == 0)
-+				delay(1); /* Don't just spin the CPU */
-+			goto again;
-+		}
-+	} else
-+		xfs_ilock(ip2, xfs_lock_inumorder(XFS_MMAPLOCK_EXCL, 1));
-+	/*
-+	 * We cannot use xfs_break_dax_layouts() directly here because it may
-+	 * need to unlock & lock the XFS_MMAPLOCK_EXCL which is not suitable
-+	 * for this nested lock case.
-+	 */
-+	page = dax_layout_busy_page(VFS_I(ip2)->i_mapping);
-+	if (page && page_ref_count(page) != 1) {
-+		xfs_iunlock(ip2, XFS_MMAPLOCK_EXCL);
-+		xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
-+		goto again;
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * Lock two inodes so that userspace cannot initiate I/O via file syscalls or
-  * mmap activity.
-@@ -3804,8 +3859,19 @@ xfs_ilock2_io_mmap(
- 	ret = xfs_iolock_two_inodes_and_break_layout(VFS_I(ip1), VFS_I(ip2));
- 	if (ret)
- 		return ret;
--	filemap_invalidate_lock_two(VFS_I(ip1)->i_mapping,
--				    VFS_I(ip2)->i_mapping);
-+
-+	if (IS_DAX(VFS_I(ip1)) && IS_DAX(VFS_I(ip2))) {
-+		ret = xfs_mmaplock_two_inodes_and_break_dax_layout(ip1, ip2);
-+		if (ret) {
-+			inode_unlock(VFS_I(ip2));
-+			if (ip1 != ip2)
-+				inode_unlock(VFS_I(ip1));
-+			return ret;
-+		}
-+	} else
-+		filemap_invalidate_lock_two(VFS_I(ip1)->i_mapping,
-+					    VFS_I(ip2)->i_mapping);
-+
- 	return 0;
- }
- 
-@@ -3815,8 +3881,14 @@ xfs_iunlock2_io_mmap(
- 	struct xfs_inode	*ip1,
- 	struct xfs_inode	*ip2)
- {
--	filemap_invalidate_unlock_two(VFS_I(ip1)->i_mapping,
--				      VFS_I(ip2)->i_mapping);
-+	if (IS_DAX(VFS_I(ip1)) && IS_DAX(VFS_I(ip2))) {
-+		xfs_iunlock(ip2, XFS_MMAPLOCK_EXCL);
-+		if (ip1 != ip2)
-+			xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
-+	} else
-+		filemap_invalidate_unlock_two(VFS_I(ip1)->i_mapping,
-+					      VFS_I(ip2)->i_mapping);
-+
- 	inode_unlock(VFS_I(ip2));
- 	if (ip1 != ip2)
- 		inode_unlock(VFS_I(ip1));
-diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-index b21b177832d1..f7e26fe31a26 100644
---- a/fs/xfs/xfs_inode.h
-+++ b/fs/xfs/xfs_inode.h
-@@ -472,6 +472,7 @@ enum xfs_prealloc_flags {
- 
- int	xfs_update_prealloc_flags(struct xfs_inode *ip,
- 				  enum xfs_prealloc_flags flags);
-+int	xfs_break_dax_layouts(struct inode *inode, bool *retry);
- int	xfs_break_layouts(struct inode *inode, uint *iolock,
- 		enum layout_break_reason reason);
- 
-diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
-index 9d876e268734..3b99c9dfcf0d 100644
---- a/fs/xfs/xfs_reflink.c
-+++ b/fs/xfs/xfs_reflink.c
-@@ -1327,8 +1327,8 @@ xfs_reflink_remap_prep(
- 	if (XFS_IS_REALTIME_INODE(src) || XFS_IS_REALTIME_INODE(dest))
- 		goto out_unlock;
- 
--	/* Don't share DAX file data for now. */
--	if (IS_DAX(inode_in) || IS_DAX(inode_out))
-+	/* Don't share DAX file data with non-DAX file. */
-+	if (IS_DAX(inode_in) != IS_DAX(inode_out))
- 		goto out_unlock;
- 
- 	if (!IS_DAX(inode_in))
+flush_icache_page() is empty on most archs so compiler makes the loop go
+away before the change. Also page->flags for most of the pages will not
+necessary be hot.
+
+I wounder if we should consider making PG_hwpoison to cover full compound
+page. On marking page hwpoison we try to split it and mark relevant base
+page, if split fails -- mark full compound page.
+
+As alternative we can have one more flag that indicates that the compound
+page contains at least one hwpoisoned base page. We should have enough
+space in the first tail page.
+
 -- 
-2.33.0
-
-
-
+ Kirill A. Shutemov
