@@ -2,116 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20E9740CC2D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 19:59:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E710440CC43
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 20:03:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231869AbhIOSAu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 14:00:50 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:51395 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231559AbhIOSAi (ORCPT
+        id S230228AbhIOSFJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 14:05:09 -0400
+Received: from bedivere.hansenpartnership.com ([96.44.175.130]:46050 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229479AbhIOSFI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 14:00:38 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7F1E25C019D;
-        Wed, 15 Sep 2021 13:59:18 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Wed, 15 Sep 2021 13:59:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilammy.net; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=64zNka2i99bu6
-        M6rOrxFBM4wYz2D6lob8RpvLi07K+8=; b=lHZsmmPUVc4LqK0ph5U7iNOOlJxYa
-        UfzCVpqZa3WXc5+NRC7C1QTICXhCP2lc8qJNMisEx741tK3y7bf3hH0au9l+yePN
-        V/yILd2KScKamQlzxQ16WjAP/862jhoVhu0y/wLr1mB7bG9pFRKMPWmS0X/iSdRw
-        Dae7878plfo1ZboVM7CvrYF66uFVu18+Kr20RR1ZRYXr0lntV/d7xFSXkw+uMZ7P
-        klBFcvdXSwk944Oa7mmfk58QC8aF2UwtpcxNM84em2zTN0AGZP4mcohUu4s4EiNQ
-        dJkYbXht5yzUadLWLD8I/rDDv03N42fI/ZvWkVee/FA1QPH9Vi/+HfwBg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=64zNka2i99bu6M6rOrxFBM4wYz2D6lob8RpvLi07K+8=; b=rnKOm2Si
-        yqM1UY2e1nROhrp6opivon9mMKgScm+k2suSPcsNvT29Wf5ry7TQNv9V68anZLmw
-        rKhkJwh8TZS4qnYP9ZnJ+8vLGcTX9ynJAVweu/bHG9e5qmTB/F0yUze9shRyGRj1
-        wZwRSbuEuOX/CMRdCkGtvyQX2y5CREqfhUuNdWpWcOsz2nDM00bDXd6cA823FsKq
-        EAhHrbRVt7Bwvk9QHvg4GvrNtAk2CMQvtcOrgTkaLLUUNNQIS5FH44N8qtlRHVO0
-        n4kXrQZW6t2PdrlB/Hw7IXpVd4M72gvT7lET4LXIyw0TrzneQadoJLXSHqEoFqNf
-        23i35U7W+BTwKg==
-X-ME-Sender: <xms:djRCYXrFPxX8yEA1jScbmBsWftcccYhLJbeXUc4_k13xkdxoBSDexw>
-    <xme:djRCYRrNAHjK1jNt0HVLTZDHEnfSxHwpA7HqU2Joz0ntiPoLFea8xfff8_HD-N7dm
-    -PWfjClXuDjGr6Uo8s>
-X-ME-Received: <xmr:djRCYUMI9WfKdbTLZX_Ke-P37kcrFp7tioH4aC40mFMwhADFnhdnbsMv7_0HkceX6h33owwV6iLQPFLTi4uRr2u-o3j1yd2Qy9eWGHsAoS0yswWYqrg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudehuddgudduhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomheptehlvgig
-    vghiucfnohiiohhvshhkhicuoehmvgesihhlrghmmhihrdhnvghtqeenucggtffrrghtth
-    gvrhhnpeetueejheekjeeuveeihefgueehleelgefgheefffefkeejudeujeejuefgteeu
-    keenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehmvg
-    esihhlrghmmhihrdhnvght
-X-ME-Proxy: <xmx:djRCYa4iaGUqRt8GAsIiohz6ufxdsTOcDiip5aPZ74_6MhzWvl6oMg>
-    <xmx:djRCYW7cKtWmR-76zsnmae2YiHjIzlVEXjy8GhFLbsmzA88fMW219A>
-    <xmx:djRCYShLmV_0bP04MrFG1kgWGTcPh2ldH-CYpZtvkI23CH2697y8kQ>
-    <xmx:djRCYcnt4CLrBkoOG9M9ONw5cmHhPytLeUVfRkqNmj8bmzG5D2GAjg>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Sep 2021 13:59:16 -0400 (EDT)
-From:   Alexei Lozovsky <me@ilammy.net>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Christoph Lameter <cl@linux.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 12/12] docs: proc.rst: stat: Note the interrupt counter wrap-around
-Date:   Thu, 16 Sep 2021 02:58:48 +0900
-Message-Id: <20210915175848.162260-13-me@ilammy.net>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210915175848.162260-1-me@ilammy.net>
-References: <20210911034808.24252-1-me@ilammy.net>
- <20210915175848.162260-1-me@ilammy.net>
+        Wed, 15 Sep 2021 14:05:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1631729029;
+        bh=4c/OxzXQiVl5H5d8rn9uBBYGEsojFyrpOehYLnAZ7uw=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=iBoR4GfS4vN1now4PsbnN0S2EqeVQCYWLbmBxQvySteCxB1AkH6NVX+DIjGNCXLv0
+         YIdhDhAm12Y0GM9dO/xBm8XDumnhya6m99PxOeG98fXtX4+NXyH+pT5/HI+2wkIfFA
+         c36guGH7g70bN/IFADMtKCq79xhpyTnckvbRZ8Gs=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 6E4ED128090B;
+        Wed, 15 Sep 2021 11:03:49 -0700 (PDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Zp5bTEmntpo9; Wed, 15 Sep 2021 11:03:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1631729029;
+        bh=4c/OxzXQiVl5H5d8rn9uBBYGEsojFyrpOehYLnAZ7uw=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=iBoR4GfS4vN1now4PsbnN0S2EqeVQCYWLbmBxQvySteCxB1AkH6NVX+DIjGNCXLv0
+         YIdhDhAm12Y0GM9dO/xBm8XDumnhya6m99PxOeG98fXtX4+NXyH+pT5/HI+2wkIfFA
+         c36guGH7g70bN/IFADMtKCq79xhpyTnckvbRZ8Gs=
+Received: from jarvis.lan (c-67-166-170-96.hsd1.va.comcast.net [67.166.170.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3A41412808F7;
+        Wed, 15 Sep 2021 11:03:48 -0700 (PDT)
+Message-ID: <f7b70227bac9a684320068b362d28fcade6b65b9.camel@HansenPartnership.com>
+Subject: Re: [MAINTAINER SUMMIT] Folios as a potential Kernel/Maintainers
+ Summit topic?
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Theodore Ts'o <tytso@mit.edu>, Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>, ksummit@lists.linux.dev
+Date:   Wed, 15 Sep 2021 14:03:46 -0400
+In-Reply-To: <YUIwgGzBqX6ZiGgk@mit.edu>
+References: <YUIwgGzBqX6ZiGgk@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Let's make wrap-around documented behavior so that userspace has
-no excuses for not handling it properly if they want accurate values.
+On Wed, 2021-09-15 at 13:42 -0400, Theodore Ts'o wrote:
+[...]
+> Would this be helpful?  (Or Linus could pull either the folio or
+> pageset branch, and make this proposal obsolete, which would be
+> great.  :-)
 
-On 32-bit platforms "intr" and "softirq" counters can and will
-wrap-around, given enough time since boot. This can be days or hours,
-depending on the load.
+This is a technical rather than process issue isn't it?  You don't have
+enough technical people at the Maintainer summit to help meaningfully. 
+The ideal location, of course, was LSF/MM which is now not happening.
 
-On 64-bit platforms these counters use 64-bit values and these are
-very unlikely to oveflow before the heat death of the universe,
-but it's still technically possible.
+However, we did offer the Plumbers BBB infrastructure to willy for a MM
+gathering which could be expanded to include this.
 
-Many other counters can wrap-arond too but I'm not going to enumerate
-all of them here. The interrupt counters are most likely to overflow.
+James
 
-Signed-off-by: Alexei Lozovsky <me@ilammy.net>
----
- Documentation/filesystems/proc.rst | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 042c418f4090..a33af0074838 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -1513,6 +1513,14 @@ interrupts serviced  including  unnumbered  architecture specific  interrupts;
- each  subsequent column is the  total for that particular numbered interrupt.
- Unnumbered interrupts are not shown, only summed into the total.
- 
-+.. note::
-+
-+   On 32-bit platforms interrupt counters are 32-bit, including the total
-+   count of all interrupts. Depending on the system load, these values will
-+   sooner or later wrap around. If you want accurate accounting of the rate
-+   and *actual* number of interrupts serviced, you should monitor the value
-+   closely and handle wrap-arounds.
-+
- The "ctxt" line gives the total number of context switches across all CPUs.
- 
- The "btime" line gives  the time at which the  system booted, in seconds since
--- 
-2.25.1
 
