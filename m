@@ -2,61 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FA2840C3C5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 12:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2AF840C3C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 12:45:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237236AbhIOKqq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 06:46:46 -0400
+        id S232291AbhIOKqp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 06:46:45 -0400
 Received: from mail.cn.fujitsu.com ([183.91.158.132]:34577 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232454AbhIOKqn (ORCPT
+        with ESMTP id S231940AbhIOKql (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 06:46:43 -0400
-IronPort-Data: =?us-ascii?q?A9a23=3AdNspu6/CCYdB067sQ0AWDrUD+3+TJUtcMsCJ2f8?=
- =?us-ascii?q?bfWQNrUomhTAOnGNNXm6BPa6MYmukc9p2aoux8h4F6sPVyNNjQVdlrnsFo1Bi8?=
- =?us-ascii?q?5ScXYvDRqvT04J+FuWaFQQ/qZx2huDodKjYdVeB4EfwWlTdhSMkj/jQF+OhULW?=
- =?us-ascii?q?s1h1ZHmeIdg9w0HqPpMZp2uaEsfDha++8kYuaT//3YTdJ6BYoWo4g0J9vnTs01?=
- =?us-ascii?q?BjEVJz0iXRlDRxDlAe2e3D4l/vzL4npR5fzatE88uJX24/+IL+FEmPxp3/BC/u?=
- =?us-ascii?q?ulPD1b08LXqXPewOJjxK6WYD72l4b+HN0if19aZLwam8O49mNt8pswdNWpNq+T?=
- =?us-ascii?q?xw1FqPRmuUBSAQeGCZ7VUFD0OaefSXm4JTJlyUqdFOpmZ2CFnoeMYQG++pfD3t?=
- =?us-ascii?q?J8PsCIjERKBuEgoqe37O/TvhEh8ItNsDnMYoT/HZ6wlnxAf8gB5KFXKTO4d5R2?=
- =?us-ascii?q?SwYh8ZSEPKYbM0cARJjbgvHZRJnOVoNDp862uCyiRHXdSNUqVeQja42+HTIigh?=
- =?us-ascii?q?w1qX9dtbYZLSiRc5VtkKDuiTK8gzRGB4dMNCA2Dyt6W+3i6nDkEvTXIMUCa39+?=
- =?us-ascii?q?OVmjUOewkQNBxAME1i2u/+0jgi5Qd03A0gV/Dc+6Ks/7kqmSvHjUBCi5n2JpBg?=
- =?us-ascii?q?RX5xXCeJSwAWMzLfEphaXHUAaQTNbLt8rrsk7QXotzFDht83oHztHorCTSGzb8?=
- =?us-ascii?q?raSsCP0PjIaa3IBDRLo5yNtD8LL+dl110yQCI04VvPdszE8IhmoqxjikcT0r+5?=
- =?us-ascii?q?7YRY36piG?=
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AT1LFY6vUGxgwx6ZYvnY7dTQd7skDE9V00zEX?=
- =?us-ascii?q?/kB9WHVpm62j9/xG88536faZslwssRIb+OxoWpPufZq0z/ccirX5VY3SPzUO01?=
- =?us-ascii?q?HFEGgN1+Xf/wE=3D?=
+        Wed, 15 Sep 2021 06:46:41 -0400
+IronPort-Data: =?us-ascii?q?A9a23=3A7NI8FqCODLFGzRVW/zniw5YqxClBgxIJ4g17XOL?=
+ =?us-ascii?q?fBwPs3TMr1DJRnWYZCziAOfiJamLxf9ByOoXn800GuZWAx9UxeLYW3SszFioV8?=
+ =?us-ascii?q?6IpJjg4wn/YZnrUdouaJK5ex512huLocYZkExcwmj/3auK49SgliPnTLlbBILW?=
+ =?us-ascii?q?s1h5ZFFYMpBgJ2UoLd94R2uaEsPDha++/kYqaT/73ZDdJ7wVJ3lc8sMpvnv/AU?=
+ =?us-ascii?q?MPa41v0tnRmDRxCUcS3e3M9VPrzLonpR5f0rxU9IwK0ewrD5OnREmLx9BFrBM6?=
+ =?us-ascii?q?nk6rgbwsBRbu60Qqm0yIQAvb9xEMZ4HFaPqUTbZLwbW9NljyPhME3xtNWqbS+V?=
+ =?us-ascii?q?AUoIrbR3u8aVnG0FgknZPEboe6feyHXXcu7iheun2HX6/lnEkA6FYMC/eNwG2t?=
+ =?us-ascii?q?P6boTLzVlRg+Cg+an6LO9RPNliskqII/sJox3kn1py3fbS+knRZTCSqDRzd5ew?=
+ =?us-ascii?q?Do0wMtJGJ72a8gGbjxgRBfNeRtCPhEQEp1WtP2pmnTkcz1wrFOTuLpx4mLWigd?=
+ =?us-ascii?q?21dDFNsTZe9mPbcFUhVqD4GbH+XnpRB0XKrS3yTGF2na3mqnDkEvTQo0VELGn5?=
+ =?us-ascii?q?/hCm0CIyyofBXU+UVq9vOn8hFWyVsxSL2QK9Sc066s/7kqmSp/6RRLQiHqFuAM?=
+ =?us-ascii?q?MHtldCes37CmTxafOpQWUHG4JSnhGctNOnMs3QyE6k0+HhPv3CjF19r6YU3SQ8?=
+ =?us-ascii?q?vGTtzzaETYUN2gqdyICTBVD59jlvZF1iQjACMtgeJNZJPWd9SrYmmjM9XZhwe5?=
+ =?us-ascii?q?Iy5Nj6klyxnif6xrEm3QDZlVdCt3rY1+Y?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AH1+QTK1hMWDbWFDu3o0ekQqjBNckLtp133Aq?=
+ =?us-ascii?q?2lEZdPU1SKylfq+V8cjzuSWftN9zYhAdcLK7V5VoKEm0nfVICOEqTNSftWLd1F?=
+ =?us-ascii?q?dAQrsN0bff?=
 X-IronPort-AV: E=Sophos;i="5.85,295,1624291200"; 
-   d="scan'208";a="114519020"
+   d="scan'208";a="114519021"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
   by heian.cn.fujitsu.com with ESMTP; 15 Sep 2021 18:45:21 +0800
-Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id F14DA4D0D9D2;
-        Wed, 15 Sep 2021 18:45:14 +0800 (CST)
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id 1A1E24D0DC77;
+        Wed, 15 Sep 2021 18:45:16 +0800 (CST)
 Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
- G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Wed, 15 Sep 2021 18:45:04 +0800
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Wed, 15 Sep 2021 18:45:16 +0800
 Received: from irides.mr.mr.mr (10.167.225.141) by
  G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Wed, 15 Sep 2021 18:45:03 +0800
+ id 15.0.1497.23 via Frontend Transport; Wed, 15 Sep 2021 18:45:14 +0800
 From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
 To:     <djwong@kernel.org>, <hch@lst.de>, <linux-xfs@vger.kernel.org>
 CC:     <ruansy.fnst@fujitsu.com>, <dan.j.williams@intel.com>,
         <david@fromorbit.com>, <linux-fsdevel@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <nvdimm@lists.linux.dev>,
         <rgoldwyn@suse.de>, <viro@zeniv.linux.org.uk>,
-        <willy@infradead.org>
-Subject: [PATCH v9 0/8] fsdax,xfs: Add reflink&dedupe support for fsdax
-Date:   Wed, 15 Sep 2021 18:44:53 +0800
-Message-ID: <20210915104501.4146910-1-ruansy.fnst@fujitsu.com>
+        <willy@infradead.org>, Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: [PATCH v9 1/8] fsdax: Output address in dax_iomap_pfn() and rename it
+Date:   Wed, 15 Sep 2021 18:44:54 +0800
+Message-ID: <20210915104501.4146910-2-ruansy.fnst@fujitsu.com>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20210915104501.4146910-1-ruansy.fnst@fujitsu.com>
+References: <20210915104501.4146910-1-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: F14DA4D0D9D2.A142D
+X-yoursite-MailScanner-ID: 1A1E24D0DC77.AFC8D
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
 X-Spam-Status: No
@@ -64,56 +66,70 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patchset is attempt to add CoW support for fsdax, and take XFS,
-which has both reflink and fsdax feature, as an example.
+Add address output in dax_iomap_pfn() in order to perform a memcpy() in
+CoW case.  Since this function both output address and pfn, rename it to
+dax_iomap_direct_access().
 
-Changes from V8:
- - Rebased on v5.15-rc1
- - Patch 4: Add a pre patch to convert dax_iomap_zero to iter model[1]
- - Patch 6&7: Remove EXPORT_SYMBOL
- - Patch 8: Solve the conflict caused by rebase
- - Fix code style problems, add comment
+Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+---
+ fs/dax.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-One of the key mechanism need to be implemented in fsdax is CoW.  Copy
-the data from srcmap before we actually write data to the destance
-iomap.  And we just copy range in which data won't be changed.
-
-Another mechanism is range comparison.  In page cache case, readpage()
-is used to load data on disk to page cache in order to be able to
-compare data.  In fsdax case, readpage() does not work.  So, we need
-another compare data with direct access support.
-
-With the two mechanisms implemented in fsdax, we are able to make reflink
-and fsdax work together in XFS.
-
-(Rebased on v5.15-rc1)
-==
-
-Shiyang Ruan (8):
-  fsdax: Output address in dax_iomap_pfn() and rename it
-  fsdax: Introduce dax_iomap_cow_copy()
-  fsdax: Replace mmap entry in case of CoW
-  fsdax: Convert dax_iomap_zero to iter model
-  fsdax: Add dax_iomap_cow_copy() for dax_iomap_zero
-  fsdax: Dedup file range to use a compare function
-  xfs: support CoW in fsdax mode
-  xfs: Add dax dedupe support
-
- fs/dax.c               | 284 +++++++++++++++++++++++++++++++++--------
- fs/iomap/buffered-io.c |   3 +-
- fs/remap_range.c       |  31 ++++-
- fs/xfs/xfs_bmap_util.c |   3 +-
- fs/xfs/xfs_file.c      |   8 +-
- fs/xfs/xfs_inode.c     |  80 +++++++++++-
- fs/xfs/xfs_inode.h     |   1 +
- fs/xfs/xfs_iomap.c     |  38 +++++-
- fs/xfs/xfs_iomap.h     |  30 +++++
- fs/xfs/xfs_iops.c      |   7 +-
- fs/xfs/xfs_reflink.c   |  15 ++-
- include/linux/dax.h    |  11 +-
- include/linux/fs.h     |  12 +-
- 13 files changed, 438 insertions(+), 85 deletions(-)
-
+diff --git a/fs/dax.c b/fs/dax.c
+index 4e3e5a283a91..8b482a58acae 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -1010,8 +1010,8 @@ static sector_t dax_iomap_sector(const struct iomap *iomap, loff_t pos)
+ 	return (iomap->addr + (pos & PAGE_MASK) - iomap->offset) >> 9;
+ }
+ 
+-static int dax_iomap_pfn(const struct iomap *iomap, loff_t pos, size_t size,
+-			 pfn_t *pfnp)
++static int dax_iomap_direct_access(const struct iomap *iomap, loff_t pos,
++		size_t size, void **kaddr, pfn_t *pfnp)
+ {
+ 	const sector_t sector = dax_iomap_sector(iomap, pos);
+ 	pgoff_t pgoff;
+@@ -1023,11 +1023,13 @@ static int dax_iomap_pfn(const struct iomap *iomap, loff_t pos, size_t size,
+ 		return rc;
+ 	id = dax_read_lock();
+ 	length = dax_direct_access(iomap->dax_dev, pgoff, PHYS_PFN(size),
+-				   NULL, pfnp);
++				   kaddr, pfnp);
+ 	if (length < 0) {
+ 		rc = length;
+ 		goto out;
+ 	}
++	if (!pfnp)
++		goto out_check_addr;
+ 	rc = -EINVAL;
+ 	if (PFN_PHYS(length) < size)
+ 		goto out;
+@@ -1037,6 +1039,12 @@ static int dax_iomap_pfn(const struct iomap *iomap, loff_t pos, size_t size,
+ 	if (length > 1 && !pfn_t_devmap(*pfnp))
+ 		goto out;
+ 	rc = 0;
++
++out_check_addr:
++	if (!kaddr)
++		goto out;
++	if (!*kaddr)
++		rc = -EFAULT;
+ out:
+ 	dax_read_unlock(id);
+ 	return rc;
+@@ -1401,7 +1409,7 @@ static vm_fault_t dax_fault_iter(struct vm_fault *vmf,
+ 		return pmd ? VM_FAULT_FALLBACK : VM_FAULT_SIGBUS;
+ 	}
+ 
+-	err = dax_iomap_pfn(&iter->iomap, pos, size, &pfn);
++	err = dax_iomap_direct_access(&iter->iomap, pos, size, NULL, &pfn);
+ 	if (err)
+ 		return pmd ? VM_FAULT_FALLBACK : dax_fault_return(err);
+ 
 -- 
 2.33.0
 
