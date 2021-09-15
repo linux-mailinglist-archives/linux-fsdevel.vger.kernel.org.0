@@ -2,91 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 913A540C357
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 12:08:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C72F40C3A8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 12:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237413AbhIOKJv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 06:09:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56034 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232222AbhIOKJq (ORCPT
+        id S237230AbhIOKdD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 06:33:03 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:35732 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232286AbhIOKdC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 06:09:46 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E97DC061574;
-        Wed, 15 Sep 2021 03:08:26 -0700 (PDT)
-Received: from zn.tnic (p200300ec2f0d070015682a2dbfe19a41.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:700:1568:2a2d:bfe1:9a41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5C8AF1EC0493;
-        Wed, 15 Sep 2021 12:08:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1631700500;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=84AiMC3UCE921bKjcL3MviV5+eDqG9h6JWVKVYivIsk=;
-        b=gQHDZFKPDYNc3V1KjxBVvsh4bR+MVuvX2NsJ94AUYxVbw0WYPPRaOZoLdvqoJQnogW9X+8
-        u/7mWvb/k4xW3BpHLLo/9AEwVjVY3UUhPajUzAZXgzgKnGBfWm5RVt5J0yPjSayDNAKsPC
-        qBW9c0rQVO5QzNWXYERX94I+rK+vCYU=
-Date:   Wed, 15 Sep 2021 12:08:13 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-graphics-maintainer@vmware.com,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Sathyanarayanan Kuppuswamy 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Subject: Re: [PATCH v3 4/8] powerpc/pseries/svm: Add a powerpc version of
- cc_platform_has()
-Message-ID: <YUHGDbtiGrDz5+NS@zn.tnic>
-References: <cover.1631141919.git.thomas.lendacky@amd.com>
- <9d4fc3f8ea7b325aaa1879beab1286876f45d450.1631141919.git.thomas.lendacky@amd.com>
- <YUCOTIPPsJJpLO/d@zn.tnic>
- <87lf3yk7g4.fsf@mpe.ellerman.id.au>
+        Wed, 15 Sep 2021 06:33:02 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 8A0E11FE50;
+        Wed, 15 Sep 2021 10:31:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1631701902; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=OBqVQGnFWgtPG9Q+UphQmLlXVL6BaYYUbmftNzq04iQ=;
+        b=vCIxgPTi6OMDqQ1ajFPPws6U/nEaOZXbNreE5vLj0ORZVg9SGJK5j03eyv1Pm/qcwe8Lul
+        zUSA36no50k4583wA4oRhu13+NFroEoBYuq2Ymiujc9Cj8pkGoJdk9VkNNBNFavQhvy8eK
+        jqk/KMIUfFBs0odiRg8c66j8c+i81Z8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1631701902;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=OBqVQGnFWgtPG9Q+UphQmLlXVL6BaYYUbmftNzq04iQ=;
+        b=e/WnNShqk62O0dQZnZD9WPguIsQYzduDCgskdnNv9m/4hbEBfdiHXgi+hGDxnaudXKibAb
+        jiWMOVYTfo8QVvCQ==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id 6D872A3B90;
+        Wed, 15 Sep 2021 10:31:42 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 02FF31E4318; Wed, 15 Sep 2021 12:31:40 +0200 (CEST)
+Date:   Wed, 15 Sep 2021 12:31:40 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Jan Kara <jack@suse.cz>, Jan Kara <jack@suse.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Tso <tytso@mit.edu>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Bobrowski <repnop@google.com>, kernel@collabora.com
+Subject: Re: [PATCH v6 15/21] fanotify: Preallocate per superblock mark error
+ event
+Message-ID: <20210915103140.GA6166@quack2.suse.cz>
+References: <20210812214010.3197279-1-krisman@collabora.com>
+ <20210812214010.3197279-16-krisman@collabora.com>
+ <20210816155758.GF30215@quack2.suse.cz>
+ <877dg6rbtn.fsf@collabora.com>
+ <87a6kusmar.fsf@collabora.com>
+ <CAOQ4uxjDtA45nn4iT9LFbbavuGa=vMPQJFp7GOJHdqrst8y+1A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87lf3yk7g4.fsf@mpe.ellerman.id.au>
+In-Reply-To: <CAOQ4uxjDtA45nn4iT9LFbbavuGa=vMPQJFp7GOJHdqrst8y+1A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 15, 2021 at 10:28:59AM +1000, Michael Ellerman wrote:
-> I don't love it, a new C file and an out-of-line call to then call back
-> to a static inline that for most configuration will return false ... but
-> whatever :)
+On Fri 03-09-21 07:16:33, Amir Goldstein wrote:
+> On Fri, Sep 3, 2021 at 12:24 AM Gabriel Krisman Bertazi
+> <krisman@collabora.com> wrote:
+> > Actually, I don't think this will work for insertion unless we keep a
+> > bounce buffer for the file_handle, because we need to keep the
+> > group->notification_lock to ensure the fee doesn't go away with the mark
+> > (since it is not yet enqueued) but, as discussed before, we don't want
+> > to hold that lock when generating the FH.
+> >
+> > I think the correct way is to have some sort of refcount of the error
+> > event slot.  We could use err_count for that and change the suggestion
+> > above to:
+> >
+> > if (mark->flags & FANOTIFY_MARK_FLAG_SB_MARK) {
+> >         struct fanotify_sb_mark *fa_mark = FANOTIFY_SB_MARK(mark);
+> >
+> >         spin_lock(&group->notification_lock);
+> >         if (fa_mark->fee_slot) {
+> >                 if (!fee->err_count) {
+> >                         kfree(fa_mark->fee_slot);
+> >                         fa_mark->fee_slot = NULL;
+> >                 } else {
+> >                         fa_mark->fee_slot->mark_alive = 0;
+> >                 }
+> >         }
+> >         spin_unlock(&group->notification_lock);
+> > }
+> >
+> > And insertion would look like this:
+> >
+> > static int fanotify_handle_error_event(....) {
+> >
+> >         spin_lock(&group->notification_lock);
+> >
+> >         if (!mark->fee || (mark->fee->err_count++) {
+> >                 spin_unlock(&group->notification_lock);
+> >                 return 0;
+> >         }
+> >
+> >         spin_unlock(&group->notification_lock);
+> >
+> >         mark->fee->fae.type = FANOTIFY_EVENT_TYPE_FS_ERROR;
+> >
+> >         /* ... Write report data to error event ... */
+> >
+> >         fanotify_encode_fh(&fee->object_fh, fanotify_encode_fh_len(inode),
+> >                            NULL, 0);
+> >
+> >         fsnotify_add_event(group, &fee->fae.fse, NULL);
+> >    }
+> >
+> > Unless you think this is too hack-ish.
+> >
+> > To be fair, I think it is hack-ish.
+> 
+> Actually, I wouldn't mind the hack-ish-ness if it would simplify things,
+> but I do not see how this is the case here.
+> I still cannot wrap my head around the semantics, which is a big red light.
+> First of all a suggestion should start with the lifetime rules:
+> - Possible states
+> - State transition rules
+> 
+> Speaking for myself, I simply cannot review a proposal without these
+> documented rules.
 
-Yeah, hch thinks it'll cause a big mess otherwise:
+Hum, getting back up to speed on this after vacation is tough which
+suggests maybe we've indeed overengineered this :) So let's try to simplify
+things.
 
-https://lore.kernel.org/lkml/YSScWvpXeVXw%2Fed5@infradead.org/
+> > I would add a proper refcount_t
+> > to the error event, and let the mark own a reference to it, which is
+> > dropped when the mark goes away.  Enqueue and Dequeue will acquire and
+> > drop references, respectively. In this case, err_count is not
+> > overloaded.
+> >
+> > Will it work?
+> 
+> Maybe, I still don't see the full picture, but if this can get us to a state
+> where error events handling is simpler then it's a good idea.
+> Saving the space of refcount_t in error event struct is not important at all.
+> 
+> But if Jan's option #1 (mempool) brings us to less special casing
+> of enqueue/dequeue of error events, then I think that would be
+> my preference.
 
-I guess less ifdeffery is nice too.
+Yes, I think mempools would result in a simpler code overall (the
+complexity of recycling events would be handled by mempool for us). Maybe
+we would not even need to play tricks with mempool resizing? We could just
+make sure it has couple of events reserved and if it ever happens that
+mempool_alloc() cannot give us any event, we'd report queue overflow (like
+we already do for other event types if that happens). I think we could
+require that callers generating error events are in a context where GFP_NOFS
+allocation is OK - this should be achievable target for filesystems and
+allocation failures should be rare with such mask.
 
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
-
-Thx.
-
-> Yeah, fixed in mainline today, thanks for trying to cross compile :)
-
-Always!
-
-:-)
-
+									Honza
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
