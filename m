@@ -2,110 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3125240CA1A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 18:29:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9655740CB50
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 19:00:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229730AbhIOQbH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 12:31:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59720 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229746AbhIOQbE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 12:31:04 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F04C061764
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 09:29:45 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id b200so4170869iof.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 09:29:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=7aCyMA3VxhptRQuh2ttvtkXb5nYxSvlQb9n4PnL14HE=;
-        b=TnxV6azM337V7+EQTc7tgqg4h6BabFLlrm1nMP2mWqq8fSWZedsXCiezxxZ748yuKD
-         wNULwyCPFMzWQB1vJzp+gUlivZ9dzJ0LMSn8jCMznBpWqAJN0LIjOjPZI0ETiRXij0Im
-         QWJoA6KOSX3xX/6dhfU2LFCur0alTcWJbEIbm7lEEuBBrEFVIfuf2q2Hx+4HvKSG7zPG
-         jqaoXY61iFg7gdTjWu5KKt6NjWeECajEru5Nsf3+4ny/iiJDWZSKPs/yaszkqV+e2RtX
-         rXfXCmUrR6TCMLxDgxhuRVQC6npdvqo0ADcQSvcLjJqI3h8SXQeQw1dLK77yYGk3+WNn
-         U6iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7aCyMA3VxhptRQuh2ttvtkXb5nYxSvlQb9n4PnL14HE=;
-        b=mjUCJbXmGi3c0KJLSx5t1MhPILoLdd4O7YMZ+lr9i+HkQU8oTHb+Jb6nwIqSG3RSDI
-         P/YSFL+t4zuDWVqCo6Ws9+UucWD9ovplpQtQYNZ473eVc+Tcu+l02fEc0tgAG8tnUBtK
-         YAdZAy9n+84R3gOhmq5cKKdNJqWEYf4520W2JE/YYaaDIL9OzJ1R7Jjon6mYlqJghdyy
-         Ibkr5GF51fJK8uSHaB/aPX6F22y1pkaPK1zGQGF9fz4e1jgS7C9DaBYSjoAuMtk0AcFm
-         IfgWBPSKnUYEepeAxWGxxuhrsX17/5UxRbRVm6Wi+SKsl5i7WaEHgR272TUYOtOLF6YI
-         0HMw==
-X-Gm-Message-State: AOAM532PXoDwgTlT91Hu1bdWlFvrVgX40ZkNe2kkiwW7tj49FytoPG+n
-        yl36PxLix52Y8vx8Zy/hhSjpzCsvK/JTNumh7Zs=
-X-Google-Smtp-Source: ABdhPJw0rEUbTlqPzEJ0gkbfI5nR+gnP7QBSpN/3+6wbIEL9EW781xjzD2XmKlZ/N2ckNBw8lUjbXw==
-X-Received: by 2002:a05:6638:1347:: with SMTP id u7mr754174jad.34.1631723385002;
-        Wed, 15 Sep 2021 09:29:45 -0700 (PDT)
-Received: from p1.localdomain ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id t15sm227160ioi.7.2021.09.15.09.29.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Sep 2021 09:29:44 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 3/3] Revert "iov_iter: track truncated size"
-Date:   Wed, 15 Sep 2021 10:29:37 -0600
-Message-Id: <20210915162937.777002-4-axboe@kernel.dk>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20210915162937.777002-1-axboe@kernel.dk>
-References: <20210915162937.777002-1-axboe@kernel.dk>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S229811AbhIORBR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 13:01:17 -0400
+Received: from wind.enjellic.com ([76.10.64.91]:58928 "EHLO wind.enjellic.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229690AbhIORBQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Sep 2021 13:01:16 -0400
+X-Greylist: delayed 1542 seconds by postgrey-1.27 at vger.kernel.org; Wed, 15 Sep 2021 13:01:15 EDT
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 18FGXT0I002910;
+        Wed, 15 Sep 2021 11:33:29 -0500
+Received: (from greg@localhost)
+        by wind.enjellic.com (8.15.2/8.15.2/Submit) id 18FGXRgh002909;
+        Wed, 15 Sep 2021 11:33:27 -0500
+Date:   Wed, 15 Sep 2021 11:33:27 -0500
+From:   "Dr. Greg" <greg@enjellic.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Bruce Fields <bfields@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, virtio-fs@redhat.com,
+        Daniel Walsh <dwalsh@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        selinux@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        stephen.smalley.work@gmail.com,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH v3 0/1] Relax restrictions on user.* xattr
+Message-ID: <20210915163327.GA2324@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <YTEEPZJ3kxWkcM9x@redhat.com> <YTENEAv6dw9QoYcY@redhat.com> <3bca47d0-747d-dd49-a03f-e0fa98eaa2f7@schaufler-ca.com> <YTEur7h6fe4xBJRb@redhat.com> <1f33e6ef-e896-09ef-43b1-6c5fac40ba5f@schaufler-ca.com> <YTYr4MgWnOgf/SWY@work-vm> <496e92bf-bf9e-a56b-bd73-3c1d0994a064@schaufler-ca.com> <YUCa6pWpr5cjCNrU@redhat.com> <CAPL3RVHB=E_s1AW1sQMEgrLYJ8ADCdr=qaKsDrpYjVzW-Apq8w@mail.gmail.com> <YUCybaYK/0RLvY9J@redhat.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YUCybaYK/0RLvY9J@redhat.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 15 Sep 2021 11:33:29 -0500 (CDT)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This reverts commit 2112ff5ce0c1128fe7b4d19cfe7f2b8ce5b595fa.
+On Tue, Sep 14, 2021 at 10:32:13AM -0400, Vivek Goyal wrote:
 
-We no longer need to track the truncation count, the one user that did
-need it has been converted to using iov_iter_restore() instead.
+Good morning, I hope the day is going well for everyone.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- include/linux/uio.h | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+> On Tue, Sep 14, 2021 at 09:59:19AM -0400, Bruce Fields wrote:
+> > On Tue, Sep 14, 2021 at 8:52 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > Same is the requirement for regular containers and that's why
+> > > podman (and possibly other container managers), make top level
+> > > storage directory only readable and searchable by root, so that
+> > > unpriveleged entities on host can not access container root filesystem
+> > > data.
+> > 
+> > Note--if that directory is on NFS, making it readable and searchable
+> > by root is very weak protection, since it's often possible for an
+> > attacker to guess filehandles and access objects without the need for
+> > directory lookups.
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 984c4ab74859..207101a9c5c3 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -53,7 +53,6 @@ struct iov_iter {
- 		};
- 		loff_t xarray_start;
- 	};
--	size_t truncated;
- };
- 
- static inline enum iter_type iov_iter_type(const struct iov_iter *i)
-@@ -270,10 +269,8 @@ static inline void iov_iter_truncate(struct iov_iter *i, u64 count)
- 	 * conversion in assignement is by definition greater than all
- 	 * values of size_t, including old i->count.
- 	 */
--	if (i->count > count) {
--		i->truncated += i->count - count;
-+	if (i->count > count)
- 		i->count = count;
--	}
- }
- 
- /*
-@@ -282,7 +279,6 @@ static inline void iov_iter_truncate(struct iov_iter *i, u64 count)
-  */
- static inline void iov_iter_reexpand(struct iov_iter *i, size_t count)
- {
--	i->truncated -= count - i->count;
- 	i->count = count;
- }
- 
--- 
-2.33.0
+> open_by_handle_at() requires CAP_DAC_READ_SEARCH. And if you have
+> CAP_DAC_READ_SEARCH, you don't need to even guess file handles. You
+> should be able to read/search through all directories, IIUC.
+>
+> So how does one make sure that shared directory on host is not
+> accessible to unprivileged entities. If making directory accessible
+> to root only is weaker security, what are the options for stronger
+> security.
 
+I've been watching this thread, with some interest, given what we have
+been working on with respect to providing a new security framework
+that merges IMA and LSM and external security co-processor technology.
+
+Some observations based on those experiences and this thread.
+
+Casey is an expert on MAC and capability based security systems,
+unfortunately for our industry, particularly bog standard system
+administrators, a rarefied set of skills.  It may be helpful to
+consider his concerns and position on the issues involved in the
+framework of the number of systems that have, and blog posts that
+recommend, setting 'selinux=0' on the kernel command-line.
+
+I believe the best summary of his position on this issue, is the
+notion that placing security labels, even in transitive form in user
+accessible attributes, subordinates the security of the guest system,
+regardless of the MAC policy it implements, to the DAC based policy on
+the host system.
+
+Given that, there are no legitimate security guarantees that are
+inferrable based on the guest MAC policy.
+
+A legitimate pundit, could and probably should question, in the face
+of container filesystems and virtual machine images, whether any type
+of inferrable security guarantees are possible, but that is a question
+and argument for another day.
+
+I didn't see any mention of EVM brought up in these discussions, which
+may provide some options to improve the security integrity state of
+the guest.
+
+The 800 pound gorilla in the corner in all of this, is that inferrable
+security guarantees in guests require a certifiable chain of trust
+from the creator of the object to the kernel context that is making
+the security gating decisions on the object.  A hard to implement and
+prove concept in bare metal trusted systems, let alone the myriad of
+edge cases lurking in namespaced and virtual environments.
+
+Which, in a nod to the other corner of the ring, may simply mean, with
+our current state of deployable technology, you pay your money and
+take your chances in these virtual environments.  Which would in turn
+support the notion of a minimum security, ie. DAC, based effort.
+
+> Vivek
+
+Have a good remainder of the week.
+
+Dr. Greg
+
+As always,
+Dr. Greg Wettstein, Ph.D, Worker      Autonomously self-defensive
+Enjellic Systems Development, LLC     IOT platforms and edge devices.
+4206 N. 19th Ave.
+Fargo, ND  58102
+PH: 701-281-1686                      EMAIL: dg@enjellic.com
+------------------------------------------------------------------------------
+"This place is so screwed up.  It's just like the Titanic, only
+ we don't even have a band playing.
+                                -- Terrance George Wieland
+                                   Resurrection.
