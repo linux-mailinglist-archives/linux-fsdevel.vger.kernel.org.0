@@ -2,120 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F40240BF4C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 07:25:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40A1040BF67
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 07:51:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236283AbhIOF1I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 01:27:08 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:42952 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230225AbhIOF1G (ORCPT
+        id S235806AbhIOFxE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 01:53:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53580 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230377AbhIOFxE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 01:27:06 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 0169420160;
-        Wed, 15 Sep 2021 05:25:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1631683547; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5rpIEUD5so8R8lo0Kya+cAjrjZjxenoFRV8Funr8FNM=;
-        b=HTkyFs6MSrLXg0WBmwRpij6M/0GLyo+CxIVFJ6D35QRqYTjLRHmjsKpG6s5Zzl2evdpfYr
-        68nSBxVD+NMBGCugWu5SX5T+DonUBOalYurNLVbK1LDv96kXAGvXKmO+OH10e3fusaGBBl
-        3cL/i9CpPhzR3L4AhN/PzHB28ontTC4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1631683547;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5rpIEUD5so8R8lo0Kya+cAjrjZjxenoFRV8Funr8FNM=;
-        b=p5hccMX/1F9hQZbpKyU9G4EyM6UQTSNuOyG/CFWbr3Ir97QT7dTE0v3+g1uze/1KReNTqY
-        bQHsvo598OY4T+CQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8B76013C12;
-        Wed, 15 Sep 2021 05:25:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id YA0zEteDQWHtYAAAMHmgww
-        (envelope-from <neilb@suse.de>); Wed, 15 Sep 2021 05:25:43 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 15 Sep 2021 01:53:04 -0400
+Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCF4BC061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 22:51:45 -0700 (PDT)
+Received: by mail-qv1-xf2e.google.com with SMTP id jo30so1252300qvb.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 22:51:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=Aauu7gYvMaBruI9Zt1CgTlkxSZ8evQwPBhKOMH6jf8s=;
+        b=aZiEmqkhTOtu2RGpb2lcF+uMcQFmKBegCVDK0TgKFVeTu8BaMrgW4jpujkazyFR1Z3
+         fc5rLFurVPvzfKxcv3yIms7SOqjaHdUa0bJ/rkrnT4njR+e3QxKP6cGIaBExMyruTqpR
+         pj9NWeGpUTDlJ35A/3pesX53R8QXUfdV1jctKzi2sjW6Cblqa9aKskbbZS6wFMAfFASN
+         tAV2S9ibAy0Vxeg/K9wdjYu+LcnU1ai8cOBUk1sWJgV82afm/2Qv0tIpQDicIjfNFkMX
+         NLcE5cz1f1/HKijT02VVnc0qz/p4ZD5Afc5cwYvu/KWLXJRW3CSSj9VPQz1j0jrICa8l
+         rFvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=Aauu7gYvMaBruI9Zt1CgTlkxSZ8evQwPBhKOMH6jf8s=;
+        b=67KDJu/YP09GHhG/5FRLjFLbddr198/wTYHpeJcGywi4Oo4uQdwq5F5GmlUvaXIk1J
+         6WHSbmYTdLFcoUUdVFRS7PIZFTmI823LdfpIfnbLLBu7zeLB4oQkOk83Z3hpddG5SfWw
+         Bc5Od+EPHKU8EmfVPxqSNDME9X7RKLSmUycZeJqAsy1UT9spdouk1kC1PXiOmhx9jWN7
+         cuXYo81ojHJ+qETc7cd5rAuN87xaO4/AbrKSj2AiQY9u40AKSpwd3PqzfvnGJaINgvlA
+         OIFYF0r+rUjFJuN9N4bW+y98gNHmYufOUPUwwLAVeDHyHFZUT3aAUL5P9Cda1IOr4yNX
+         gQag==
+X-Gm-Message-State: AOAM532A190q0cvdfb4RRqqbfl3kT36hWukmHpya/WE0ciML8R87Wm9D
+        MYNfksyOV71w7FqPX0COLoibENYlY335NQJIH38=
+X-Google-Smtp-Source: ABdhPJxHc9Pg2J7tBOj83PIy1g2a4Za3PeTUZURp4AynJs38tcewsv8SIIsyLwGAek2eLNTPIJMYzQlFIYmsPnmqD1I=
+X-Received: by 2002:a0c:fb4f:: with SMTP id b15mr9338028qvq.20.1631685103971;
+ Tue, 14 Sep 2021 22:51:43 -0700 (PDT)
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     "Andrew Morton" <akpm@linux-foundation.org>,
-        "Andreas Dilger" <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        "Matthew Wilcox" <willy@infradead.org>,
-        "Mel Gorman" <mgorman@suse.com>, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] EXT4: Remove ENOMEM/congestion_wait() loops.
-In-reply-to: <YUE+L19JyjqWh+Md@mit.edu>
-References: <163157808321.13293.486682642188075090.stgit@noble.brown>,
- <163157838437.13293.14244628630141187199.stgit@noble.brown>,
- <YUE+L19JyjqWh+Md@mit.edu>
-Date:   Wed, 15 Sep 2021 15:25:40 +1000
-Message-id: <163168354018.3992.580533638417199797@noble.neil.brown.name>
+Reply-To: godwinppter@gmail.com
+Sender: zedenail156@gmail.com
+Received: by 2002:ad4:58a8:0:0:0:0:0 with HTTP; Tue, 14 Sep 2021 22:51:43
+ -0700 (PDT)
+From:   Godwin Pete <godwinnpeter@gmail.com>
+Date:   Wed, 15 Sep 2021 07:51:43 +0200
+X-Google-Sender-Auth: qRw9bwb9zCPAox5XjnqCVBzh9CU
+Message-ID: <CAONS4efC3WbHwmxRSeG3bXb7HpLeamGi4muNCardEOXJQZ40Rw@mail.gmail.com>
+Subject: Reply urgently
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 15 Sep 2021, Theodore Ts'o wrote:
-> On Tue, Sep 14, 2021 at 10:13:04AM +1000, NeilBrown wrote:
-> >=20
-> > Of particular interest is the ext4_journal_start family of calls which
-> > can now have EXT4_EX_NOFAIL 'or'ed in to the 'type'.  This could be seen
-> > as a blurring of types.  However 'type' is 8 bits, and EXT4_EX_NOFAIL is
-> > a high bit, so it is safe in practice.
->=20
-> I'm really not fond of this type blurring.  What I'd suggeset doing
-> instead is adding a "gfp_t gfp_mask" parameter to the
-> __ext4_journal_start_sb().  With the exception of one call site in
-> fs/ext4/ialloc.c, most of the callers of __ext4_journal_start_sb() are
-> via #define helper macros or inline funcions.  So it would just
-> require adding a GFP_NOFS as an extra parameter to the various macros
-> and inline functions which call __ext4_journal_start_sb() in
-> ext4_jbd2.h.
->=20
-> The function ext4_journal_start_with_revoke() is called exactly once
-> so we could just bury the __GFP_NOFAIL in the definition of that
-> macros, e.g.:
->=20
-> #define ext4_journal_start_with_revoke(inode, type, blocks, revoke_creds) \
-> 	__ext4_journal_start((inode), __LINE__, (type), (blocks), 0,	\
-> 			     GFP_NOFS | __GFP_NOFAIL, (revoke_creds))
->=20
-> but it's probably better to do something like this:
->=20
-> #define ext4_journal_start_with_revoke(gfp_mask, inode, type, blocks, revok=
-e_creds) \
-> 	__ext4_journal_start((inode), __LINE__, (type), (blocks), 0,	\
-> 			     gfp_mask, (revoke_creds))
->=20
-> So it's explicit in the C function ext4_ext_remove_space() in
-> fs/ext4/extents.c that we are explicitly requesting the __GFP_NOFAIL
-> behavior.
->=20
-> Does that make sense?
+My good friend,
 
-Mostly.
-Adding gfp_mask to __ext4_journal_start_sb() make perfect sense.
-There doesn't seem much point adding one to __ext4_journal_start(),
-we can have ext4_journal_start_with_revoke() call
-__ext4_journal_start_sb() directly.
-But I cannot see what it doesn't already do that.
-i.e. why have the inline __ext4_journal_start() at all?
-Is it OK if I don't use that for ext4_journal_start_with_revoke()?
+I just want to know if you, can help me to transfer the amount of
+($6Million). After the transfer we have to share it, 50% for me, and
+50% for you. Please let me know if you can help me for more
+information in regards with the transfer. I hope you can work with me
+honestly?
 
-Thanks,
-NeilBrown
+
+Thanks.
+
+Godwin Peter,
