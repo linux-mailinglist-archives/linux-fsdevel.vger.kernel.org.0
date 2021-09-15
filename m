@@ -2,168 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C72F40C3A8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 12:31:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FA2840C3C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 12:45:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237230AbhIOKdD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 06:33:03 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:35732 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232286AbhIOKdC (ORCPT
+        id S237236AbhIOKqq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 06:46:46 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:34577 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S232454AbhIOKqn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 06:33:02 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 8A0E11FE50;
-        Wed, 15 Sep 2021 10:31:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1631701902; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OBqVQGnFWgtPG9Q+UphQmLlXVL6BaYYUbmftNzq04iQ=;
-        b=vCIxgPTi6OMDqQ1ajFPPws6U/nEaOZXbNreE5vLj0ORZVg9SGJK5j03eyv1Pm/qcwe8Lul
-        zUSA36no50k4583wA4oRhu13+NFroEoBYuq2Ymiujc9Cj8pkGoJdk9VkNNBNFavQhvy8eK
-        jqk/KMIUfFBs0odiRg8c66j8c+i81Z8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1631701902;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OBqVQGnFWgtPG9Q+UphQmLlXVL6BaYYUbmftNzq04iQ=;
-        b=e/WnNShqk62O0dQZnZD9WPguIsQYzduDCgskdnNv9m/4hbEBfdiHXgi+hGDxnaudXKibAb
-        jiWMOVYTfo8QVvCQ==
-Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id 6D872A3B90;
-        Wed, 15 Sep 2021 10:31:42 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 02FF31E4318; Wed, 15 Sep 2021 12:31:40 +0200 (CEST)
-Date:   Wed, 15 Sep 2021 12:31:40 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Jan Kara <jack@suse.cz>, Jan Kara <jack@suse.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Tso <tytso@mit.edu>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Matthew Bobrowski <repnop@google.com>, kernel@collabora.com
-Subject: Re: [PATCH v6 15/21] fanotify: Preallocate per superblock mark error
- event
-Message-ID: <20210915103140.GA6166@quack2.suse.cz>
-References: <20210812214010.3197279-1-krisman@collabora.com>
- <20210812214010.3197279-16-krisman@collabora.com>
- <20210816155758.GF30215@quack2.suse.cz>
- <877dg6rbtn.fsf@collabora.com>
- <87a6kusmar.fsf@collabora.com>
- <CAOQ4uxjDtA45nn4iT9LFbbavuGa=vMPQJFp7GOJHdqrst8y+1A@mail.gmail.com>
+        Wed, 15 Sep 2021 06:46:43 -0400
+IronPort-Data: =?us-ascii?q?A9a23=3AdNspu6/CCYdB067sQ0AWDrUD+3+TJUtcMsCJ2f8?=
+ =?us-ascii?q?bfWQNrUomhTAOnGNNXm6BPa6MYmukc9p2aoux8h4F6sPVyNNjQVdlrnsFo1Bi8?=
+ =?us-ascii?q?5ScXYvDRqvT04J+FuWaFQQ/qZx2huDodKjYdVeB4EfwWlTdhSMkj/jQF+OhULW?=
+ =?us-ascii?q?s1h1ZHmeIdg9w0HqPpMZp2uaEsfDha++8kYuaT//3YTdJ6BYoWo4g0J9vnTs01?=
+ =?us-ascii?q?BjEVJz0iXRlDRxDlAe2e3D4l/vzL4npR5fzatE88uJX24/+IL+FEmPxp3/BC/u?=
+ =?us-ascii?q?ulPD1b08LXqXPewOJjxK6WYD72l4b+HN0if19aZLwam8O49mNt8pswdNWpNq+T?=
+ =?us-ascii?q?xw1FqPRmuUBSAQeGCZ7VUFD0OaefSXm4JTJlyUqdFOpmZ2CFnoeMYQG++pfD3t?=
+ =?us-ascii?q?J8PsCIjERKBuEgoqe37O/TvhEh8ItNsDnMYoT/HZ6wlnxAf8gB5KFXKTO4d5R2?=
+ =?us-ascii?q?SwYh8ZSEPKYbM0cARJjbgvHZRJnOVoNDp862uCyiRHXdSNUqVeQja42+HTIigh?=
+ =?us-ascii?q?w1qX9dtbYZLSiRc5VtkKDuiTK8gzRGB4dMNCA2Dyt6W+3i6nDkEvTXIMUCa39+?=
+ =?us-ascii?q?OVmjUOewkQNBxAME1i2u/+0jgi5Qd03A0gV/Dc+6Ks/7kqmSvHjUBCi5n2JpBg?=
+ =?us-ascii?q?RX5xXCeJSwAWMzLfEphaXHUAaQTNbLt8rrsk7QXotzFDht83oHztHorCTSGzb8?=
+ =?us-ascii?q?raSsCP0PjIaa3IBDRLo5yNtD8LL+dl110yQCI04VvPdszE8IhmoqxjikcT0r+5?=
+ =?us-ascii?q?7YRY36piG?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AT1LFY6vUGxgwx6ZYvnY7dTQd7skDE9V00zEX?=
+ =?us-ascii?q?/kB9WHVpm62j9/xG88536faZslwssRIb+OxoWpPufZq0z/ccirX5VY3SPzUO01?=
+ =?us-ascii?q?HFEGgN1+Xf/wE=3D?=
+X-IronPort-AV: E=Sophos;i="5.85,295,1624291200"; 
+   d="scan'208";a="114519020"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 15 Sep 2021 18:45:21 +0800
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
+        by cn.fujitsu.com (Postfix) with ESMTP id F14DA4D0D9D2;
+        Wed, 15 Sep 2021 18:45:14 +0800 (CST)
+Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Wed, 15 Sep 2021 18:45:04 +0800
+Received: from irides.mr.mr.mr (10.167.225.141) by
+ G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.23 via Frontend Transport; Wed, 15 Sep 2021 18:45:03 +0800
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     <djwong@kernel.org>, <hch@lst.de>, <linux-xfs@vger.kernel.org>
+CC:     <ruansy.fnst@fujitsu.com>, <dan.j.williams@intel.com>,
+        <david@fromorbit.com>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+        <rgoldwyn@suse.de>, <viro@zeniv.linux.org.uk>,
+        <willy@infradead.org>
+Subject: [PATCH v9 0/8] fsdax,xfs: Add reflink&dedupe support for fsdax
+Date:   Wed, 15 Sep 2021 18:44:53 +0800
+Message-ID: <20210915104501.4146910-1-ruansy.fnst@fujitsu.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjDtA45nn4iT9LFbbavuGa=vMPQJFp7GOJHdqrst8y+1A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: F14DA4D0D9D2.A142D
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 03-09-21 07:16:33, Amir Goldstein wrote:
-> On Fri, Sep 3, 2021 at 12:24 AM Gabriel Krisman Bertazi
-> <krisman@collabora.com> wrote:
-> > Actually, I don't think this will work for insertion unless we keep a
-> > bounce buffer for the file_handle, because we need to keep the
-> > group->notification_lock to ensure the fee doesn't go away with the mark
-> > (since it is not yet enqueued) but, as discussed before, we don't want
-> > to hold that lock when generating the FH.
-> >
-> > I think the correct way is to have some sort of refcount of the error
-> > event slot.  We could use err_count for that and change the suggestion
-> > above to:
-> >
-> > if (mark->flags & FANOTIFY_MARK_FLAG_SB_MARK) {
-> >         struct fanotify_sb_mark *fa_mark = FANOTIFY_SB_MARK(mark);
-> >
-> >         spin_lock(&group->notification_lock);
-> >         if (fa_mark->fee_slot) {
-> >                 if (!fee->err_count) {
-> >                         kfree(fa_mark->fee_slot);
-> >                         fa_mark->fee_slot = NULL;
-> >                 } else {
-> >                         fa_mark->fee_slot->mark_alive = 0;
-> >                 }
-> >         }
-> >         spin_unlock(&group->notification_lock);
-> > }
-> >
-> > And insertion would look like this:
-> >
-> > static int fanotify_handle_error_event(....) {
-> >
-> >         spin_lock(&group->notification_lock);
-> >
-> >         if (!mark->fee || (mark->fee->err_count++) {
-> >                 spin_unlock(&group->notification_lock);
-> >                 return 0;
-> >         }
-> >
-> >         spin_unlock(&group->notification_lock);
-> >
-> >         mark->fee->fae.type = FANOTIFY_EVENT_TYPE_FS_ERROR;
-> >
-> >         /* ... Write report data to error event ... */
-> >
-> >         fanotify_encode_fh(&fee->object_fh, fanotify_encode_fh_len(inode),
-> >                            NULL, 0);
-> >
-> >         fsnotify_add_event(group, &fee->fae.fse, NULL);
-> >    }
-> >
-> > Unless you think this is too hack-ish.
-> >
-> > To be fair, I think it is hack-ish.
-> 
-> Actually, I wouldn't mind the hack-ish-ness if it would simplify things,
-> but I do not see how this is the case here.
-> I still cannot wrap my head around the semantics, which is a big red light.
-> First of all a suggestion should start with the lifetime rules:
-> - Possible states
-> - State transition rules
-> 
-> Speaking for myself, I simply cannot review a proposal without these
-> documented rules.
+This patchset is attempt to add CoW support for fsdax, and take XFS,
+which has both reflink and fsdax feature, as an example.
 
-Hum, getting back up to speed on this after vacation is tough which
-suggests maybe we've indeed overengineered this :) So let's try to simplify
-things.
+Changes from V8:
+ - Rebased on v5.15-rc1
+ - Patch 4: Add a pre patch to convert dax_iomap_zero to iter model[1]
+ - Patch 6&7: Remove EXPORT_SYMBOL
+ - Patch 8: Solve the conflict caused by rebase
+ - Fix code style problems, add comment
 
-> > I would add a proper refcount_t
-> > to the error event, and let the mark own a reference to it, which is
-> > dropped when the mark goes away.  Enqueue and Dequeue will acquire and
-> > drop references, respectively. In this case, err_count is not
-> > overloaded.
-> >
-> > Will it work?
-> 
-> Maybe, I still don't see the full picture, but if this can get us to a state
-> where error events handling is simpler then it's a good idea.
-> Saving the space of refcount_t in error event struct is not important at all.
-> 
-> But if Jan's option #1 (mempool) brings us to less special casing
-> of enqueue/dequeue of error events, then I think that would be
-> my preference.
+One of the key mechanism need to be implemented in fsdax is CoW.  Copy
+the data from srcmap before we actually write data to the destance
+iomap.  And we just copy range in which data won't be changed.
 
-Yes, I think mempools would result in a simpler code overall (the
-complexity of recycling events would be handled by mempool for us). Maybe
-we would not even need to play tricks with mempool resizing? We could just
-make sure it has couple of events reserved and if it ever happens that
-mempool_alloc() cannot give us any event, we'd report queue overflow (like
-we already do for other event types if that happens). I think we could
-require that callers generating error events are in a context where GFP_NOFS
-allocation is OK - this should be achievable target for filesystems and
-allocation failures should be rare with such mask.
+Another mechanism is range comparison.  In page cache case, readpage()
+is used to load data on disk to page cache in order to be able to
+compare data.  In fsdax case, readpage() does not work.  So, we need
+another compare data with direct access support.
 
-									Honza
+With the two mechanisms implemented in fsdax, we are able to make reflink
+and fsdax work together in XFS.
+
+(Rebased on v5.15-rc1)
+==
+
+Shiyang Ruan (8):
+  fsdax: Output address in dax_iomap_pfn() and rename it
+  fsdax: Introduce dax_iomap_cow_copy()
+  fsdax: Replace mmap entry in case of CoW
+  fsdax: Convert dax_iomap_zero to iter model
+  fsdax: Add dax_iomap_cow_copy() for dax_iomap_zero
+  fsdax: Dedup file range to use a compare function
+  xfs: support CoW in fsdax mode
+  xfs: Add dax dedupe support
+
+ fs/dax.c               | 284 +++++++++++++++++++++++++++++++++--------
+ fs/iomap/buffered-io.c |   3 +-
+ fs/remap_range.c       |  31 ++++-
+ fs/xfs/xfs_bmap_util.c |   3 +-
+ fs/xfs/xfs_file.c      |   8 +-
+ fs/xfs/xfs_inode.c     |  80 +++++++++++-
+ fs/xfs/xfs_inode.h     |   1 +
+ fs/xfs/xfs_iomap.c     |  38 +++++-
+ fs/xfs/xfs_iomap.h     |  30 +++++
+ fs/xfs/xfs_iops.c      |   7 +-
+ fs/xfs/xfs_reflink.c   |  15 ++-
+ include/linux/dax.h    |  11 +-
+ include/linux/fs.h     |  12 +-
+ 13 files changed, 438 insertions(+), 85 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.33.0
+
+
+
