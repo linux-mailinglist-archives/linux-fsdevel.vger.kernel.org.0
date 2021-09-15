@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F2D540BD3E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 03:35:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C28040BD87
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 04:10:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230236AbhIOBgf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 21:36:35 -0400
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:38209 "EHLO
+        id S233717AbhIOCLT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 22:11:19 -0400
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:59081 "EHLO
         wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229918AbhIOBge (ORCPT
+        by vger.kernel.org with ESMTP id S233061AbhIOCLT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 21:36:34 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id B67673200995;
-        Tue, 14 Sep 2021 21:35:15 -0400 (EDT)
+        Tue, 14 Sep 2021 22:11:19 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.west.internal (Postfix) with ESMTP id BB7253200988;
+        Tue, 14 Sep 2021 22:10:00 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Tue, 14 Sep 2021 21:35:16 -0400
+  by compute2.internal (MEProxy); Tue, 14 Sep 2021 22:10:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
         message-id:subject:from:to:cc:date:in-reply-to:references
         :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
-        IO1BrtAgxmv6nt4J60+AuK2jBImCIAWy6GknmaNGK4g=; b=J9nOCoeGh9K9KTa4
-        3t8VXCvunrrxupu0861fQeyfKzVijd0cP3RjZpvuKDEh67pOTrVRxLTBSqvs8i9T
-        U9m7eDfkghBB4+ezs5fTURlMFrvdFCBIxiViCkW5WN0/QfsWW4UOnPGrRqm4Dk+Q
-        OxZtxw7B8ASue+10y05ByeVuGlXtFoCCK5RFl1rJKc+3w/HZdkL2NdAGYI+Cn3fY
-        Xd/wjTuAey4CRQixUW20t71M/9g5mGKGgoAzSQx/eD5FY5eyJllAhZxm1Rvdc4W9
-        vzrtEl8+l1n52xnN+UL+55sFOmMP0Gfsdq7vrtDwPxaT96P0z2tYyove6lprCWJQ
-        JUVS1A==
+        iq6O0DScY5bQYeTCn+EPvYLzgkuGu4CZU2kYR/zNNf4=; b=mz8e00HQq/5hd5xg
+        81o+mN4AIJ6WCgkiBPtVnVGHXEgV4xGrQudWmOmyaXdgJ5nF8tiHWeQvVuB4tOSr
+        tBGZvs9tK6R/gsZpG4scUydYl6z4nf9s/EkKG1SqGPmixpXgrURYCZ1ZCm6Y2EYg
+        ovx4fCJKblC+W2eZHFk6aNPtRluFoBMkriLJk9wxZa47OI9SKjhVUbS23kcYuJJ4
+        LJdd++Itr7dBmbKmBbRjv/jBOI29H6rUG5yGIV0TOANssq5WkiHXtC2849dyQULV
+        za1w7SXSNuWl3kmVTdArrYEmia05yacZpHN6ABF22d76WdNKpCEILOYSK00PTi98
+        TcNBEw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:content-type
         :date:from:in-reply-to:message-id:mime-version:references
         :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=IO1BrtAgxmv6nt4J60+AuK2jBImCIAWy6GknmaNGK
-        4g=; b=RfOZsFWmz+nifUPH0akPnUKI7r/l0GcvONKgv+ClKVf9IdM8uypNAA+0p
-        wJF/W0ZTOclzBjltvfHCsqFpsddkGatgX2jrLeGWR+QtTrN/vlw2Shb3BhuRnjk+
-        a6R6Yx5aFGnvE+NbqKxZgaW0vBBghFzbMmyG8ajqulXiydzIXt9iaoIid3OJP4O+
-        s7UiWFa0dHhs4IWZK0TeVXPnJEr3TtIgaEJYyO1KAbXD/ByuMMYnR6naMow1OLMm
-        ssXOLt3Ba+1l6MWPieulMeUiQEJKCNqJ0ILzQV1ENsbXZTpDCb0z2LuMmlUgE9qd
-        D4iHuODV13BakUEKtXEQZLOJDyrcw==
-X-ME-Sender: <xms:0k1BYcAAZBnSa1mD7QtjnssMdUjMXxFefWlHbDa0dU-LPxhQOa1FJw>
-    <xme:0k1BYejtNiFXVEzvLZruxXGA_wvEm9pVvxyY7xn3n3h6b-HddWca6mQ-gOaY4ZSic
-    hawg5z0GzZL>
-X-ME-Received: <xmr:0k1BYfkTYvf6Xs7VeSYgd3-tKjWwIor6U_RCpvtU7yvt8M4X2clZlgQvW3yP3aUSIWtHl34>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudehtddggeekucetufdoteggodetrfdotf
+        :x-sasl-enc; s=fm3; bh=iq6O0DScY5bQYeTCn+EPvYLzgkuGu4CZU2kYR/zNN
+        f4=; b=hi1AnOmX9wzt11c15aUxsvOgp08BDW9xlYUZZrhkwhBRhv8nLw8fGsRoG
+        fX5hFd2rtHaXl7pobtQDHovLUMCoAHLllhzJBvtjEix196qMBh9zQ6ajnhbhjPhJ
+        m2GauTJA+OPpN9bCiF967yvwmIqhspFld+5MmCI3FGtkYFKbjnbqxxW2Yu+vGx5s
+        detljnjQXfQi1PUUUZ362zEOB15seGhDoY1xC66HURkwyA3p7rX6K4uXry5h7mEk
+        4BFb0BwuLhXkfqp3lfGPKwP2Qz81xAFoao+I+Ga01Z5oSW5TYhjRDyXvGPbSvcRg
+        jwy8ft9Lj1JzMUCVwQobSyNpM5mXA==
+X-ME-Sender: <xms:91VBYavLv3s_cWdv891mxOjZpmHLGiiiv70Pl1TtIk2-9O4k1Vbaqw>
+    <xme:91VBYfd1P1X5Dq5ZkASTJnpIwgWVV93Z3oe3TlVjBMHCiiXgOir7OOCZ34yMiWcxs
+    S9HpOJBfYjf>
+X-ME-Received: <xmr:91VBYVx8FTnfzbDfuGwOCyvwlwqMqWkMmPCz5hnx-otziVYRM-W4HKf_re1Aizu1j6fRs5c>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudehtddgheegucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhepkffuhffvffgjfhgtfggggfesthekredttderjeenucfhrhhomhepkfgrnhcu
@@ -50,13 +50,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudehtddggeekucetufdoteggod
     fgleelkeetheelgeehueejueduhfeufffgleehgfevtdehhffhhffhtddugfefheenucev
     lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
     hthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:0k1BYSyjIw8Q_0YsAyE0gEni76Xn67GXE_0PCmjHuDnBaKhzI4mjjw>
-    <xmx:0k1BYRTGmUfQiIc0nTS1-x1_I-oE--IbOZugjRJCauZ7BRLXSb2gfw>
-    <xmx:0k1BYdbqxRfOZ6WCVznnT4frfUl5LKC-_cYxvEo82TG7MJL4di6xeA>
-    <xmx:001BYfORerirJ0M7PDDaVS5umrKpoJz3w3Bcm5U9jg78WYJHGV_bIA>
+X-ME-Proxy: <xmx:91VBYVMHlE3q87LPbV3Kq6wv5eWdN64k5_Yti_UW7bvE62hDfbgF7g>
+    <xmx:91VBYa90Y_11DYy4ATJ3C7GPFYJ33YRVQSJ9MZKgl_yu5y2IicSY7w>
+    <xmx:91VBYdWEaBICE_8agbuRK0ilZzk975xwz0fkD9Uw7aYtqyrdY9dq6w>
+    <xmx:-FVBYeb8SY7EhpJdm9qTH3ck-JsNqI7-bxEFWQatnIZA86_z--bmLw>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 14 Sep 2021 21:35:11 -0400 (EDT)
-Message-ID: <6c8088411523e52fc89b8dd07710c3825366ce64.camel@themaw.net>
+ 14 Sep 2021 22:09:56 -0400 (EDT)
+Message-ID: <747aee3255e7a07168557f29ad962e34e9cb964b.camel@themaw.net>
 Subject: Re: [PATCH] kernfs: fix the race in the creation of negative dentry
 From:   Ian Kent <raven@themaw.net>
 To:     Hou Tao <houtao1@huawei.com>,
@@ -64,10 +64,11 @@ To:     Hou Tao <houtao1@huawei.com>,
         Tejun Heo <tj@kernel.org>, Miklos Szeredi <mszeredi@redhat.com>
 Cc:     viro@ZenIV.linux.org.uk, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Wed, 15 Sep 2021 09:35:06 +0800
-In-Reply-To: <7b92b158200567f0bba26a038191156890921f13.camel@themaw.net>
+Date:   Wed, 15 Sep 2021 10:09:54 +0800
+In-Reply-To: <6c8088411523e52fc89b8dd07710c3825366ce64.camel@themaw.net>
 References: <20210911021342.3280687-1-houtao1@huawei.com>
          <7b92b158200567f0bba26a038191156890921f13.camel@themaw.net>
+         <6c8088411523e52fc89b8dd07710c3825366ce64.camel@themaw.net>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
@@ -76,117 +77,157 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2021-09-14 at 11:05 +0800, Ian Kent wrote:
-> On Sat, 2021-09-11 at 10:13 +0800, Hou Tao wrote:
-> > When doing stress test for module insertion and removal,
-> > the following phenomenon was found:
+On Wed, 2021-09-15 at 09:35 +0800, Ian Kent wrote:
+> On Tue, 2021-09-14 at 11:05 +0800, Ian Kent wrote:
+> > On Sat, 2021-09-11 at 10:13 +0800, Hou Tao wrote:
+> > > When doing stress test for module insertion and removal,
+> > > the following phenomenon was found:
+> > 
+> > Apologies for the late reply.
+> > 
+> > > 
+> > >   $ lsmod
+> > >   Module                  Size  Used by
+> > >   libkmod: kmod_module_get_holders: could not open \
+> > >            '/sys/module/nbd/holders': No such file or directory
+> > >   nbd                       -2  -2
+> > >   $ cat /proc/modules
+> > >   nbd 110592 0 - Live 0xffffffffc0298000
+> > >   $ ls -1 /sys/module |grep nbd
+> > >   ls: cannot access 'nbd': No such file or directory
+> > >   nbd
+> > > 
+> > > It seems the kernfs node of module has been activated and is
+> > > returned
+> > > to
+> > > ls command through kernfs_fop_readdir(), but the sysfs dentry is
+> > > negative.
+> > > Further investigation found that there is race between kernfs dir
+> > > creation
+> > > and dentry lookup as shown below:
+> > > 
+> > > CPU 0                          CPU 1
+> > > 
+> > >                         kernfs_add_one
+> > > 
+> > >                         down_write(&kernfs_rwsem)
+> > >                         // insert nbd into rbtree
+> > >                         // update the parent's revision
+> > >                         kernfs_link_sibling()
+> > >                         up_write(&kernfs_rwsem)
+> > > 
+> > > kernfs_iop_lookup
+> > > 
+> > > down_read(&kernfs_rwsem)
+> > > // find nbd in rbtree, but it is deactivated
+> > > kn = kernfs_find_ns()
+> > >   // return false
+> > >   kernfs_active()
+> > >   // a negative is created
+> > >   d_splice_alias(NULL, dentry)
+> > > up_read(&kernfs_rwsem)
+> > > 
+> > >                         // activate after negative dentry is
+> > > created
+> > >                         kernfs_activate()
+> > > 
+> > > // return 0 because parent's
+> > > // revision is stable now
+> > > kernfs_dop_revalidate()
+> > > 
+> > > The race will create a negative dentry for a kernfs node which
+> > > is newly-added and activated. To fix it, there are two cases
+> > > to be handled:
+> > 
+> > Yes, I see.
+> > 
+> > This is a great analysis, thanks for the effort providing it.
+> > 
+> > > 
+> > > (1) kernfs root without KERNFS_ROOT_CREATE_DEACTIVATED
+> > > kernfs_rwsem can be always hold during kernfs_link_sibling()
+> > > and kernfs_activate() in kernfs_add_one(), so kernfs_iop_lookup()
+> > > will find an active kernfs node.
+> > > 
+> > > (2) kernfs root with KERNFS_ROOT_CREATE_DEACTIVATED
+> > > kernfs_activate() is called separatedly, and we can invalidate
+> > > the dentry subtree with kn as root by increasing the revision of
+> > > its parent. But we can invalidate in a finer granularity by
+> > > only invalidating the negative dentry of the newly-activated
+> > > kn node.
+> > 
+> > I'm pretty sure your patch will fix the problem which is great.
+> > 
+> > But I'm not sure this is the best way or more importantly the
+> > right way to do it.
+> > 
+> > The real problem here lies in the definition of a kernfs negative
+> > dentry. At one time the series to change to an rwsem used the
+> > kernfs node to determine negativeness in revalidate which is
+> > a stronger check than the dentry inode alone.
+> > 
+> > The point here is that using an incorrect definition, as I have
+> > done, could leave other unseen problems or cause the introduction
+> > of new problems in new code.
+> > 
+> > There's also the question of how a kernfs root node gets used in
+> > path walking (rather if it's negativity or activation state play
+> > any part in it at all). Worth understanding but not a problem as
+> > such.
+> > 
+> > I'm still looking at this (as time permits) and thinking about it.
+> > Please give me more time to report back.
 > 
-> Apologies for the late reply.
+> Sorry to hold things up on this.
 > 
-> > 
-> >   $ lsmod
-> >   Module                  Size  Used by
-> >   libkmod: kmod_module_get_holders: could not open \
-> >            '/sys/module/nbd/holders': No such file or directory
-> >   nbd                       -2  -2
-> >   $ cat /proc/modules
-> >   nbd 110592 0 - Live 0xffffffffc0298000
-> >   $ ls -1 /sys/module |grep nbd
-> >   ls: cannot access 'nbd': No such file or directory
-> >   nbd
-> > 
-> > It seems the kernfs node of module has been activated and is
-> > returned
-> > to
-> > ls command through kernfs_fop_readdir(), but the sysfs dentry is
-> > negative.
-> > Further investigation found that there is race between kernfs dir
-> > creation
-> > and dentry lookup as shown below:
-> > 
-> > CPU 0                          CPU 1
-> > 
-> >                         kernfs_add_one
-> > 
-> >                         down_write(&kernfs_rwsem)
-> >                         // insert nbd into rbtree
-> >                         // update the parent's revision
-> >                         kernfs_link_sibling()
-> >                         up_write(&kernfs_rwsem)
-> > 
-> > kernfs_iop_lookup
-> > 
-> > down_read(&kernfs_rwsem)
-> > // find nbd in rbtree, but it is deactivated
-> > kn = kernfs_find_ns()
-> >   // return false
-> >   kernfs_active()
-> >   // a negative is created
-> >   d_splice_alias(NULL, dentry)
-> > up_read(&kernfs_rwsem)
-> > 
-> >                         // activate after negative dentry is
-> > created
-> >                         kernfs_activate()
-> > 
-> > // return 0 because parent's
-> > // revision is stable now
-> > kernfs_dop_revalidate()
-> > 
-> > The race will create a negative dentry for a kernfs node which
-> > is newly-added and activated. To fix it, there are two cases
-> > to be handled:
+> I'm still looking at it but thought I'd report my thoughts so
+> far so you know I haven't forgotten about it.
 > 
-> Yes, I see.
+> Now, based on the original code, before the change to the rwsem,
+> no dentry would be created for an inactive but existing node,
+> they are meant to be invisible to the VFS.
 > 
-> This is a great analysis, thanks for the effort providing it.
-> 
-> > 
-> > (1) kernfs root without KERNFS_ROOT_CREATE_DEACTIVATED
-> > kernfs_rwsem can be always hold during kernfs_link_sibling()
-> > and kernfs_activate() in kernfs_add_one(), so kernfs_iop_lookup()
-> > will find an active kernfs node.
-> > 
-> > (2) kernfs root with KERNFS_ROOT_CREATE_DEACTIVATED
-> > kernfs_activate() is called separatedly, and we can invalidate
-> > the dentry subtree with kn as root by increasing the revision of
-> > its parent. But we can invalidate in a finer granularity by
-> > only invalidating the negative dentry of the newly-activated
-> > kn node.
-> 
-> I'm pretty sure your patch will fix the problem which is great.
-> 
-> But I'm not sure this is the best way or more importantly the
-> right way to do it.
-> 
-> The real problem here lies in the definition of a kernfs negative
-> dentry. At one time the series to change to an rwsem used the
-> kernfs node to determine negativeness in revalidate which is
-> a stronger check than the dentry inode alone.
-> 
-> The point here is that using an incorrect definition, as I have
-> done, could leave other unseen problems or cause the introduction
-> of new problems in new code.
-> 
-> There's also the question of how a kernfs root node gets used in
-> path walking (rather if it's negativity or activation state play
-> any part in it at all). Worth understanding but not a problem as
-> such.
-> 
-> I'm still looking at this (as time permits) and thinking about it.
-> Please give me more time to report back.
+> That's a bug that I have introduced in kernfs_iop_lookup().
+> I will need to fix that.
 
-Sorry to hold things up on this.
+I think something like this is needed (not even compile tested):
 
-I'm still looking at it but thought I'd report my thoughts so
-far so you know I haven't forgotten about it.
+kernfs: dont create a negative dentry if node exists
 
-Now, based on the original code, before the change to the rwsem,
-no dentry would be created for an inactive but existing node,
-they are meant to be invisible to the VFS.
+From: Ian Kent <raven@themaw.net>
 
-That's a bug that I have introduced in kernfs_iop_lookup().
-I will need to fix that.
+In kernfs_iop_lookup() a negative dentry is created if associated kernfs
+node is incative which makes it visible to lookups in the VFS path walk.
+
+But inactive kernfs nodes are meant to be invisible to the VFS and
+creating a negative for these can have unexpetced side effects.
+
+Signed-off-by: Ian Kent <raven@themaw.net>
+---
+ fs/kernfs/dir.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+index ba581429bf7b..a957c944cf3a 100644
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -1111,7 +1111,14 @@ static struct dentry *kernfs_iop_lookup(struct inode *dir,
+ 
+ 	kn = kernfs_find_ns(parent, dentry->d_name.name, ns);
+ 	/* attach dentry and inode */
+-	if (kn && kernfs_active(kn)) {
++	if (kn) {
++		/* Inactive nodes are invisible to the VFS so don't
++		 * create a negative.
++		 */
++		if (!kernfs_active(kn)) {
++			up_read(&kernfs_rwsem);
++			return NULL;
++		}
+ 		inode = kernfs_get_inode(dir->i_sb, kn);
+ 		if (!inode)
+ 			inode = ERR_PTR(-ENOMEM);
+
 
 Essentially, the definition a kernfs negative dentry, for the
 cases it is meant to cover, is one that has no kernfs node, so
@@ -200,7 +241,7 @@ This distinction is important because we absolutely do not want
 negative dentries created that aren't necessary. We don't want to
 leave any opportunities for negative dentries to accumulate if
 we don't have to.
-    
+    
 I am still thinking about the race you have described.
 
 Given my above comments that race might have (maybe probably)
@@ -383,5 +424,6 @@ Ian
 > >  }
 > >  
 > 
+
 
 
