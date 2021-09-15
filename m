@@ -2,142 +2,227 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C4C8B40CBEA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 19:48:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9172440CC06
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 19:55:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230264AbhIORts (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 13:49:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50114 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230097AbhIORtr (ORCPT
+        id S230399AbhIOR4Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 13:56:25 -0400
+Received: from mail-wr1-f46.google.com ([209.85.221.46]:33294 "EHLO
+        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230045AbhIOR4Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 13:49:47 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 635F9C061574;
-        Wed, 15 Sep 2021 10:48:28 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id c22so6521374edn.12;
-        Wed, 15 Sep 2021 10:48:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aUutvbwT+ImtyWQ/R4PZfCaPNu83uCoI/leGQrb46ts=;
-        b=I3I/U/NyzLP3yFWBxVWrBHFbyqaxPdxCb8peY1C7jxRnsB3zaIdcFd0G0ax8uHHLSg
-         Wh07Q+v5zhISaPdAvnMcMo8suNiSnQgsZqkdJ5YWTrluY3cZVrjxt2+/EvYq5+NLoxdC
-         Dno0yngof71yCYbPMuqIlhTGHWWUVdy7amp2Se7R6BV+5/WWoTVQ+umNQT1pOAPSlN7t
-         BsPoFoHF3FbBuhWUufXysW+vWeyxkjVRBpeDbxjFXUhG1moyLIuWnfXns/lj1OFTCKXP
-         3SFLGRhGqaGPO6q3ljF3rxki5uQWP7NHH47MXpLMBeAKQBXt6+hgPKyxqm0Y/NQl8QWm
-         ubAA==
+        Wed, 15 Sep 2021 13:56:24 -0400
+Received: by mail-wr1-f46.google.com with SMTP id t18so5280409wrb.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 10:55:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aUutvbwT+ImtyWQ/R4PZfCaPNu83uCoI/leGQrb46ts=;
-        b=7xfyqPo+FA/icBb3DliurocTTWD0sgV0l6Mp1YRVWvxANUxIfdSBCR+LaH54GlpUn+
-         3/sdN7U11YlmijUTIxsywrOadf4ppDNjwRHfl8aV3WQWahABJOL7MtLH75r2o7YPKTeT
-         lyLTUCXkhLkiPMKXuBxtEbH4htJqqFmCJxRSfKZtvxaDaW2oStiBn8dFkyBBrfEnOvB6
-         Ahm1ZjkSOxxxBbzyxt+X6V1RsZobpEOfIeSI9Jk8xJavfDkKDkzZ2iXmzXRg6BUTbAzg
-         MU3bFTvZ16DzCp1UgZvU6k0bZPNBBN0LaQANgiHt9fE7MJiErPmrMLDZ03S4xfHz/yqX
-         pJXA==
-X-Gm-Message-State: AOAM533OVXisuzu3G70XH12z13blgz8kkovmpwpqFOy/dAzpATEUI4an
-        45I0DXSnE8yDZmNUjFHUJqwZ5c0FMwtEGRa6TLc=
-X-Google-Smtp-Source: ABdhPJyy6f9Q3pSMERBs4nQGD6A6iXjhxlJuqh1C/eP3fH6JCxRs0swIVnvjOlH1UirN3P/elCitiV2PY7WPHwfdXqc=
-X-Received: by 2002:a17:906:680c:: with SMTP id k12mr1314252ejr.85.1631728107020;
- Wed, 15 Sep 2021 10:48:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210914183718.4236-1-shy828301@gmail.com> <20210914183718.4236-3-shy828301@gmail.com>
- <20210915114947.2zh7inouztenth6o@box.shutemov.name>
-In-Reply-To: <20210915114947.2zh7inouztenth6o@box.shutemov.name>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Wed, 15 Sep 2021 10:48:15 -0700
-Message-ID: <CAHbLzkpjAf+V5b40UFH2gWSRN4gVqoFmjHr9_wME2ofWC7Mfkw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] mm: khugepaged: check if file page is on LRU after
- locking page
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=EmDG0wBX8eiDSOx5X4lVDdCTChXbSWXuxhuaSYB5sX8=;
+        b=vmMMRgEML4XlJ61zEcdlI/X466455miNc8L6dV93k23Y9jC+RCGH5lKMCxRmG4LTnx
+         rT46dib5J6JF84RshDg5dBAMWuzzISansRjIc4k/7UQTARNYFB3S4jTzHTrRBtJYjMxv
+         JLDwC4VuGW6KIejRO18W9sfwk6tDDOBS7ySZUDMxIuVYQ/+eG7yNO1ZI6BvSEVGd58Bk
+         llpJCd1Wt3QOqOwNg/QoOMM1o1O9dFJaj9tYK/UMD7Rr+dBqDqboY/Hf9j2btP0CRkzg
+         iRgqYWdEUpfKy8ccqKQ0sRW7OiK+9kN9ghP2vj6zKbSWhJUcyN8ghTg1EMOXp3LV3Ncd
+         4JIw==
+X-Gm-Message-State: AOAM533I08g31Rvz9MrcPehyHKXSOCZp9mtvuwb7Pxgdhd/oL2Rj7bWa
+        7smY6pZPJkarPxq8Ozbo4aXlhA==
+X-Google-Smtp-Source: ABdhPJxEHL5qn1sYpNbENbccZFQQ7lHF7hLtIMCMwyOh/EB7aIVnB4n2WCLxfWw0Ag7/DrILCyaoXg==
+X-Received: by 2002:adf:ee49:: with SMTP id w9mr1433829wro.158.1631728504173;
+        Wed, 15 Sep 2021 10:55:04 -0700 (PDT)
+Received: from fedora.tometzki.de (p200300e68f0105009e5bc999bd8eb7e0.dip0.t-ipconnect.de. [2003:e6:8f01:500:9e5b:c999:bd8e:b7e0])
+        by smtp.gmail.com with ESMTPSA id c9sm732906wrf.77.2021.09.15.10.55.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Sep 2021 10:55:03 -0700 (PDT)
+Date:   Wed, 15 Sep 2021 19:55:01 +0200
+From:   Damian Tometzki <dtometzki@fedoraproject.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Folio discussion recap
+Message-ID: <YUIzdTyFBITDIPnj@fedora.tometzki.de>
+Reply-To: Damian Tometzki <dtometzki@fedoraproject.org>
+Mail-Followup-To: Johannes Weiner <hannes@cmpxchg.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YTu9HIu+wWWvZLxp@moria.home.lan>
+ <YUIT2/xXwvZ4IErc@cmpxchg.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YUIT2/xXwvZ4IErc@cmpxchg.org>
+User-Agent: Mutt
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 15, 2021 at 4:49 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
->
-> On Tue, Sep 14, 2021 at 11:37:16AM -0700, Yang Shi wrote:
-> > The khugepaged does check if the page is on LRU or not but it doesn't
-> > hold page lock.  And it doesn't check this again after holding page
-> > lock.  So it may race with some others, e.g. reclaimer, migration, etc.
-> > All of them isolates page from LRU then lock the page then do something.
-> >
-> > But it could pass the refcount check done by khugepaged to proceed
-> > collapse.  Typically such race is not fatal.  But if the page has been
-> > isolated from LRU before khugepaged it likely means the page may be not
-> > suitable for collapse for now.
-> >
-> > The other more fatal case is the following patch will keep the poisoned
-> > page in page cache for shmem, so khugepaged may collapse a poisoned page
-> > since the refcount check could pass.  3 refcounts come from:
-> >   - hwpoison
-> >   - page cache
-> >   - khugepaged
-> >
-> > Since it is not on LRU so no refcount is incremented from LRU isolation.
-> >
-> > This is definitely not expected.  Checking if it is on LRU or not after
-> > holding page lock could help serialize against hwpoison handler.
-> >
-> > But there is still a small race window between setting hwpoison flag and
-> > bump refcount in hwpoison handler.  It could be closed by checking
-> > hwpoison flag in khugepaged, however this race seems unlikely to happen
-> > in real life workload.  So just check LRU flag for now to avoid
-> > over-engineering.
-> >
-> > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > ---
-> >  mm/khugepaged.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> > index 045cc579f724..bdc161dc27dc 100644
-> > --- a/mm/khugepaged.c
-> > +++ b/mm/khugepaged.c
-> > @@ -1808,6 +1808,12 @@ static void collapse_file(struct mm_struct *mm,
-> >                       goto out_unlock;
-> >               }
-> >
-> > +             /* The hwpoisoned page is off LRU but in page cache */
-> > +             if (!PageLRU(page)) {
-> > +                     result = SCAN_PAGE_LRU;
-> > +                     goto out_unlock;
-> > +             }
-> > +
-> >               if (isolate_lru_page(page)) {
->
-> isolate_lru_page() should catch the case, no? TestClearPageLRU would fail
-> and we get here.
+Hello together,
 
-Hmm... you are definitely right. How could I miss this point.
+I am an outsider and  following the discussion here on the subject. 
+Can we not go upsream with the state of development ? 
+Optimizations will always be there and new kernel releases too.
 
-It might be because of I messed up the page state by some tests which
-may do hole punch then reread the same index. That could drop the
-poisoned page then collapse succeed. But I'm not sure. Anyway I didn't
-figure out how the poisoned page could be collapsed. It seems
-impossible. I will drop this patch.
+I can not assess the risk but I think a decision must be made. 
 
->
-> >                       result = SCAN_DEL_PAGE_LRU;
-> >                       goto out_unlock;
-> > --
-> > 2.26.2
-> >
-> >
->
-> --
->  Kirill A. Shutemov
+Damian
+ 
+
+On Wed, 15. Sep 11:40, Johannes Weiner wrote:
+> On Fri, Sep 10, 2021 at 04:16:28PM -0400, Kent Overstreet wrote:
+> > One particularly noteworthy idea was having struct page refer to
+> > multiple hardware pages, and using slab/slub for larger
+> > alloctions. In my view, the primary reason for making this change
+> > isn't the memory overhead to struct page (though reducing that would
+> > be nice);
+> 
+> Don't underestimate this, however.
+> 
+> Picture the near future Willy describes, where we don't bump struct
+> page size yet but serve most cache with compound huge pages.
+> 
+> On x86, it would mean that the average page cache entry has 512
+> mapping pointers, 512 index members, 512 private pointers, 1024 LRU
+> list pointers, 512 dirty flags, 512 writeback flags, 512 uptodate
+> flags, 512 memcg pointers etc. - you get the idea.
+> 
+> This is a ton of memory. I think this doesn't get more traction
+> because it's memory we've always allocated, and we're simply more
+> sensitive to regressions than long-standing pain. But nevertheless
+> this is a pretty low-hanging fruit.
+> 
+> The folio makes a great first step moving those into a separate data
+> structure, opening the door to one day realizing these savings. Even
+> when some MM folks say this was never the intent behind the patches, I
+> think this is going to matter significantly, if not more so, later on.
+> 
+> > Fortunately, Matthew made a big step in the right direction by making folios a
+> > new type. Right now, struct folio is not separately allocated - it's just
+> > unionized/overlayed with struct page - but perhaps in the future they could be
+> > separately allocated. I don't think that is a remotely realistic goal for _this_
+> > patch series given the amount of code that touches struct page (thing: writeback
+> > code, LRU list code, page fault handlers!) - but I think that's a goal we could
+> > keep in mind going forward.
+> 
+> Yeah, agreed. Not doable out of the gate, but retaining the ability to
+> allocate the "cache entry descriptor" bits - mapping, index etc. -
+> on-demand would be a huge benefit down the road for the above reason.
+> 
+> For that they would have to be in - and stay in - their own type.
+> 
+> > We should also be clear on what _exactly_ folios are for, so they don't become
+> > the new dumping ground for everyone to stash their crap. They're to be a new
+> > core abstraction, and we should endeaver to keep our core data structures
+> > _small_, and _simple_.
+> 
+> Right. struct page is a lot of things and anything but simple and
+> obvious today. struct folio in its current state does a good job
+> separating some of that stuff out.
+> 
+> However, when we think about *which* of the struct page mess the folio
+> wants to address, I think that bias toward recent pain over much
+> bigger long-standing pain strikes again.
+> 
+> The compound page proliferation is new, and we're sensitive to the
+> ambiguity it created between head and tail pages. It's added some
+> compound_head() in lower-level accessor functions that are not
+> necessary for many contexts. The folio type safety will help clean
+> that up, and this is great.
+> 
+> However, there is a much bigger, systematic type ambiguity in the MM
+> world that we've just gotten used to over the years: anon vs file vs
+> shmem vs slab vs ...
+> 
+> - Many places rely on context to say "if we get here, it must be
+>   anon/file", and then unsafely access overloaded member elements:
+>   page->mapping, PG_readahead, PG_swapcache, PG_private
+> 
+> - On the other hand, we also have low-level accessor functions that
+>   disambiguate the type and impose checks on contexts that may or may
+>   not actually need them - not unlike compound_head() in PageActive():
+> 
+>   struct address_space *folio_mapping(struct folio *folio)
+>   {
+> 	struct address_space *mapping;
+> 
+> 	/* This happens if someone calls flush_dcache_page on slab page */
+> 	if (unlikely(folio_test_slab(folio)))
+> 		return NULL;
+> 
+> 	if (unlikely(folio_test_swapcache(folio)))
+> 		return swap_address_space(folio_swap_entry(folio));
+> 
+> 	mapping = folio->mapping;
+> 	if ((unsigned long)mapping & PAGE_MAPPING_ANON)
+> 		return NULL;
+> 
+> 	return (void *)((unsigned long)mapping & ~PAGE_MAPPING_FLAGS);
+>   }
+> 
+>   Then we go identify places that say "we know it's at least not a
+>   slab page!" and convert them to page_mapping_file() which IS safe to
+>   use with anon. Or we say "we know this MUST be a file page" and just
+>   access the (unsafe) mapping pointer directly.
+> 
+> - We have a singular page lock, but what it guards depends on what
+>   type of page we're dealing with. For a cache page it protects
+>   uptodate and the mapping. For an anon page it protects swap state.
+> 
+>   A lot of us can remember the rules if we try, but the code doesn't
+>   help and it gets really tricky when dealing with multiple types of
+>   pages simultaneously. Even mature code like reclaim just serializes
+>   the operation instead of protecting data - the writeback checks and
+>   the page table reference tests don't seem to need page lock.
+> 
+>   When the cgroup folks wrote the initial memory controller, they just
+>   added their own page-scope lock to protect page->memcg even though
+>   the page lock would have covered what it needed.
+> 
+> - shrink_page_list() uses page_mapping() in the first half of the
+>   function to tell whether the page is anon or file, but halfway
+>   through we do this:
+> 
+> 	  /* Adding to swap updated mapping */
+>           mapping = page_mapping(page);
+> 
+>   and then use PageAnon() to disambiguate the page type.
+> 
+> - At activate_locked:, we check PG_swapcache directly on the page and
+>   rely on it doing the right thing for anon, file, and shmem pages.
+>   But this flag is PG_owner_priv_1 and actually used by the filesystem
+>   for something else. I guess PG_checked pages currently don't make it
+>   this far in reclaim, or we'd crash somewhere in try_to_free_swap().
+> 
+>   I suppose we're also never calling page_mapping() on PageChecked
+>   filesystem pages right now, because it would return a swap mapping
+>   before testing whether this is a file page. You know, because shmem.
+> 
+> These are just a few examples from an MM perspective. I'm sure the FS
+> folks have their own stories and examples about pitfalls in dealing
+> with struct page members.
+> 
+> We're so used to this that we don't realize how much bigger and
+> pervasive this lack of typing is than the compound page thing.
+> 
+> I'm not saying the compound page mess isn't worth fixing. It is.
+> 
+> I'm saying if we started with a file page or cache entry abstraction
+> we'd solve not only the huge page cache, but also set us up for a MUCH
+> more comprehensive cleanup in MM code and MM/FS interaction that makes
+> the tailpage cleanup pale in comparison. For the same amount of churn,
+> since folio would also touch all of these places.
+> 
