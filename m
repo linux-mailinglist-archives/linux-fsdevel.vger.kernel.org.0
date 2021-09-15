@@ -2,109 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A67D140C486
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 13:46:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B9C440C493
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 13:49:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237319AbhIOLrh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 07:47:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49730 "EHLO
+        id S232849AbhIOLvF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 07:51:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232849AbhIOLrb (ORCPT
+        with ESMTP id S232586AbhIOLvF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 07:47:31 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99D72C061575
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 04:46:12 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id s12so643012ljg.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 04:46:12 -0700 (PDT)
+        Wed, 15 Sep 2021 07:51:05 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D219C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 04:49:46 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id y28so5651004lfb.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 04:49:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=4uYqvhZeHXv+ssAcqC18NkCUO7S23+uQI3/MrtalBV0=;
-        b=jyiV1pAooDObXMWnm3SrBe9VySDlVMgGIdz0ZOAqYFqHTDbGSqfGlclgEpgSJnLk9Q
-         DFka1G8+6sSoD3HNSqa0AppZDm2J1kkZRyV+Ekj0m8uHjXRySHiMBmH7WY9nhKnUr/VT
-         35oCwlYebNGuHog/4c3gCuRkJXVh/bIk6Tdk5zhvhNarQQSivcYCtFgJSW/Rz12DW7GL
-         jUh7hMukNOAQHN5HvXwrMx8rRg97dA6+kwG/LTGpn5AomPepMFIPfwm6cWNOVFkW6QI6
-         7bHQrFQgbUXL52514a9fKrhGs8YBnPNc3rmHQ/wM43OJGLye+GKaW5qLT1AkYcVARpnv
-         qFHw==
+        bh=yo03e49CSM9e+sK2Ar3YFN6XJZsOWYWg58Boo0XuPOY=;
+        b=EjiA6mw4cOgTCrsZ4wG5YPQVw0KdpgFKDidA3coOJ1TctrxAlsxb4bTKXkWhXW3bFI
+         z93vhuPvtmANlqMzJ9Xlao4VpnQsiVIdXvVjSuweUxhvHsYiWQ/neKkNQvFBbfcsdXH4
+         VhGZgQLK/QprQylx1ftGhTBlbEXVUHOkfEkat9GxVvLsh7rVyoMjTZWUKYCE1U2MPrpg
+         tGQaqtCg1iEQZIlUAxToJATzU0vJEFvj23sAjtv/hlGTcLKw38i3InV9n3deIGUXGidG
+         DZZwFW0WmfSkLcorhH/vuI8qpcT6QRsRD21uNZzUUefSum5BEbTKUfx6YOFMorVEbzBb
+         jSxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=4uYqvhZeHXv+ssAcqC18NkCUO7S23+uQI3/MrtalBV0=;
-        b=xRrupWmhWL5sdYOYy+0SBbegKrp8Hhs+8ipho+HLM1ZVHKylhDohRBBDifHwdpV3SG
-         t9RAOafgTjbIVMqx5yBEqvIMXj+aDiEoHfMGjips4xvYzohD0luFeBGiXIYGBSkmyUCY
-         GwJIWCLECQI1XUy/8t3rO99s3PBohYfmyN6AMOdar5bR9dBSP+0O+i7VoZLAXlYW7KS6
-         C8Wec5y5N2xQn7La+Z88OzchwQgnQhv7/OIbFYsl7P3+NZ4mchDVrsam61Dz6HCV2Dxq
-         SN92V9Djfv+OCulx5cdDW8vLpfaAKfcWzmZ/t3tl1PZYBskd/WvUUF7bVTryKaG7/g/u
-         w7aQ==
-X-Gm-Message-State: AOAM5329DNjCIphO3SWECnLsjLTuErl0gL7qK0g1d2UyYVoiM/tNOUZb
-        Agc1ewaZxhd+0V4Fd1Ki97J+iA==
-X-Google-Smtp-Source: ABdhPJwCBpDqQI2MR/6gQuQDuaPc18SeGMEV9d5/MeeH65Opge+QdGLHvzx00+xc1e2k20cqP9RBww==
-X-Received: by 2002:a2e:a546:: with SMTP id e6mr20030432ljn.117.1631706370471;
-        Wed, 15 Sep 2021 04:46:10 -0700 (PDT)
+        bh=yo03e49CSM9e+sK2Ar3YFN6XJZsOWYWg58Boo0XuPOY=;
+        b=RLUMeTQhtRZ1LNse2qu617gmUkqjgy1G9JA9mBFvQCC4cX4SbrUpmiKu3cmffR6mL0
+         xsV6fn08sTWC26yJUyK7YScPL6tZhd8GbAKvmSU+yZXBiW7HYb4K8dQpkJzsxHjFId9o
+         TZUQoYk75/lLnGO3U4HlQZooLdhQcFgqb++StD5I60ueCkaTwnYNCfBc2ZovbdIvp88p
+         aAEbkx6ikybYzvcA4YugRh6dXL8WZrz9lZoWvTxY3xmIw43215f8dWB/NIeDb5apO2cH
+         s1St5zLeeazmLVS19+D6mKCvHTJcydWT999UGBvcVZqcw124HuHVF0r4hasteqq3nAFf
+         rWkw==
+X-Gm-Message-State: AOAM531Y4/XImacaY11K8hIIHTtEz9RdoOxZftJ/ybROzy61BjCVcyFo
+        wZy3HtMzvA3VdjWWimuUut6QwL9mGCVuNw==
+X-Google-Smtp-Source: ABdhPJwJEJa29YCPvHcMHB5ACnZWwPdD9bhSmcU/6aodYg9lHsPZ93xQzZ5mfv3kz6pEGsgCg/Bu5A==
+X-Received: by 2002:ac2:48bc:: with SMTP id u28mr17390054lfg.370.1631706584674;
+        Wed, 15 Sep 2021 04:49:44 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id y14sm107725lfk.237.2021.09.15.04.46.09
+        by smtp.gmail.com with ESMTPSA id z5sm1665264ljz.23.2021.09.15.04.49.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Sep 2021 04:46:10 -0700 (PDT)
+        Wed, 15 Sep 2021 04:49:44 -0700 (PDT)
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 310A7102F4D; Wed, 15 Sep 2021 14:46:13 +0300 (+03)
-Date:   Wed, 15 Sep 2021 14:46:13 +0300
+        id ADFE1102F4D; Wed, 15 Sep 2021 14:49:47 +0300 (+03)
+Date:   Wed, 15 Sep 2021 14:49:47 +0300
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 To:     Yang Shi <shy828301@gmail.com>
 Cc:     naoya.horiguchi@nec.com, hughd@google.com,
         kirill.shutemov@linux.intel.com, willy@infradead.org,
         osalvador@suse.de, akpm@linux-foundation.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] mm: filemap: check if any subpage is hwpoisoned for
- PMD page fault
-Message-ID: <20210915114613.lo26l64iqjz2qo6a@box.shutemov.name>
+Subject: Re: [PATCH 2/4] mm: khugepaged: check if file page is on LRU after
+ locking page
+Message-ID: <20210915114947.2zh7inouztenth6o@box.shutemov.name>
 References: <20210914183718.4236-1-shy828301@gmail.com>
- <20210914183718.4236-2-shy828301@gmail.com>
+ <20210914183718.4236-3-shy828301@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210914183718.4236-2-shy828301@gmail.com>
+In-Reply-To: <20210914183718.4236-3-shy828301@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 14, 2021 at 11:37:15AM -0700, Yang Shi wrote:
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 25fc46e87214..1765bf72ed16 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -3920,8 +3920,17 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
->  	if (unlikely(!pmd_none(*vmf->pmd)))
->  		goto out;
+On Tue, Sep 14, 2021 at 11:37:16AM -0700, Yang Shi wrote:
+> The khugepaged does check if the page is on LRU or not but it doesn't
+> hold page lock.  And it doesn't check this again after holding page
+> lock.  So it may race with some others, e.g. reclaimer, migration, etc.
+> All of them isolates page from LRU then lock the page then do something.
+> 
+> But it could pass the refcount check done by khugepaged to proceed
+> collapse.  Typically such race is not fatal.  But if the page has been
+> isolated from LRU before khugepaged it likely means the page may be not
+> suitable for collapse for now.
+> 
+> The other more fatal case is the following patch will keep the poisoned
+> page in page cache for shmem, so khugepaged may collapse a poisoned page
+> since the refcount check could pass.  3 refcounts come from:
+>   - hwpoison
+>   - page cache
+>   - khugepaged
+> 
+> Since it is not on LRU so no refcount is incremented from LRU isolation.
+> 
+> This is definitely not expected.  Checking if it is on LRU or not after
+> holding page lock could help serialize against hwpoison handler.
+> 
+> But there is still a small race window between setting hwpoison flag and
+> bump refcount in hwpoison handler.  It could be closed by checking
+> hwpoison flag in khugepaged, however this race seems unlikely to happen
+> in real life workload.  So just check LRU flag for now to avoid
+> over-engineering.
+> 
+> Signed-off-by: Yang Shi <shy828301@gmail.com>
+> ---
+>  mm/khugepaged.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index 045cc579f724..bdc161dc27dc 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -1808,6 +1808,12 @@ static void collapse_file(struct mm_struct *mm,
+>  			goto out_unlock;
+>  		}
 >  
-> -	for (i = 0; i < HPAGE_PMD_NR; i++)
-> +	for (i = 0; i < HPAGE_PMD_NR; i++) {
-> +		/*
-> +		 * Just backoff if any subpage of a THP is corrupted otherwise
-> +		 * the corrupted page may mapped by PMD silently to escape the
-> +		 * check.  This kind of THP just can be PTE mapped.  Access to
-> +		 * the corrupted subpage should trigger SIGBUS as expected.
-> +		 */
-> +		if (PageHWPoison(page + i))
-> +			goto out;
->  		flush_icache_page(vma, page + i);
-> +	}
+> +		/* The hwpoisoned page is off LRU but in page cache */
+> +		if (!PageLRU(page)) {
+> +			result = SCAN_PAGE_LRU;
+> +			goto out_unlock;
+> +		}
+> +
+>  		if (isolate_lru_page(page)) {
 
-This is somewhat costly.
+isolate_lru_page() should catch the case, no? TestClearPageLRU would fail
+and we get here.
 
-flush_icache_page() is empty on most archs so compiler makes the loop go
-away before the change. Also page->flags for most of the pages will not
-necessary be hot.
-
-I wounder if we should consider making PG_hwpoison to cover full compound
-page. On marking page hwpoison we try to split it and mark relevant base
-page, if split fails -- mark full compound page.
-
-As alternative we can have one more flag that indicates that the compound
-page contains at least one hwpoisoned base page. We should have enough
-space in the first tail page.
+>  			result = SCAN_DEL_PAGE_LRU;
+>  			goto out_unlock;
+> -- 
+> 2.26.2
+> 
+> 
 
 -- 
  Kirill A. Shutemov
