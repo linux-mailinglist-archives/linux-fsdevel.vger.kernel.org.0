@@ -2,157 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C6A240CB34
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 18:50:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68F3B40CB59
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 19:02:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230231AbhIOQvd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 12:51:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36674 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230442AbhIOQv3 (ORCPT
+        id S230264AbhIOREL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 13:04:11 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:57617 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230038AbhIOREK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 12:51:29 -0400
-Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6C47C061575
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 09:50:10 -0700 (PDT)
-Received: by mail-qv1-xf35.google.com with SMTP id w9so2246823qvs.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 09:50:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:date:message-id:in-reply-to:references:user-agent
-         :mime-version:content-transfer-encoding;
-        bh=znV6h22uLT4tju8GfDCyoAJth/iE5nhq2gX552Nh+J8=;
-        b=yR4M9FMq5YkZZZnLVBGoHE8n/L7LBcuRYu45AIK6rpu6q86Bt8q97V42UpmZakk9Hk
-         qy1Abyuha691Im0rYc9EK/tOxPEZ+1p++dVyuU49SBOnF3DsCPgp/ECkkaOcSk9hOYg9
-         uZwNWDENAneb/b3kwwfPpFtKTclqgTySmd7avIWwSBqFJauyZ+YBc6bH4I/Gmz4clP5w
-         UOG2/ZoGWt1ti8+ruNUFKiGZJPPEEa2XjAF0DA2xVI/cJ3BaH4r06uP8JDKIZQ63Cap9
-         ayT/rIEu7My8B35KdwQFfy0AsExXY/vMA5Y0BemiwrEF4O/6W75CvXEWvQeBY3Bhk5kO
-         rFyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:date:message-id:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=znV6h22uLT4tju8GfDCyoAJth/iE5nhq2gX552Nh+J8=;
-        b=nuBj6PIgbqsjLFyJ8o1/Q+fV33jDYMHxFscQ6OOe+3R8QaphBMvO3112iF3I5dTaad
-         pJ+NIvW1ajHlCPVBlqgtk/aO3W4Erl2EGzNhgwp91llTa5JOHj684c+UhF6YZetydsby
-         v2yyIj/zF0VokUrCErTZJRk8/iMsswEBqyWOAAFrQTtYDRM0GqulhF5v8zrMspL+x0XC
-         jvkCAo+02DOOis2AOiR1n6o5CsLmTaeoYze0Ju9Hmv77BBhSpZdOn8CdLeQ3vvSTJmoL
-         JvXmhirlyRE9MBdQT32Gbh7zGr4ceBqgPu8EnG1dbr2olpK1K8tfw86+JJLYD7rwlPKs
-         bTzQ==
-X-Gm-Message-State: AOAM5301uqORrvFyREVnEyImrxDcoTUTmghgvXJhs0tspxmzUJMG6AVO
-        meIu+g7z4aqKwKKIAvcQhFio
-X-Google-Smtp-Source: ABdhPJx75T0dQPzt4WSic6uHD74Uop3/gZqSo+/ev3KVEiS5rzNOA3M5qoWYDRrYR2z4q+uilRE4LA==
-X-Received: by 2002:a05:6214:1394:: with SMTP id g20mr812980qvz.21.1631724609746;
-        Wed, 15 Sep 2021 09:50:09 -0700 (PDT)
-Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
-        by smtp.gmail.com with ESMTPSA id w20sm377308qkj.116.2021.09.15.09.50.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Sep 2021 09:50:09 -0700 (PDT)
-Subject: [PATCH v4 8/8] Smack: Brutalist io_uring support
-From:   Paul Moore <paul@paul-moore.com>
-To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date:   Wed, 15 Sep 2021 12:50:08 -0400
-Message-ID: <163172460848.88001.15344229885190060624.stgit@olly>
-In-Reply-To: <163172413301.88001.16054830862146685573.stgit@olly>
-References: <163172413301.88001.16054830862146685573.stgit@olly>
-User-Agent: StGit/1.1
+        Wed, 15 Sep 2021 13:04:10 -0400
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 18FH2TuF020081
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Sep 2021 13:02:29 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 3862A15C3424; Wed, 15 Sep 2021 13:02:29 -0400 (EDT)
+Date:   Wed, 15 Sep 2021 13:02:29 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mel Gorman <mgorman@suse.com>, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] EXT4: Remove ENOMEM/congestion_wait() loops.
+Message-ID: <YUInJQ0wJ4Cd07dT@mit.edu>
+References: <163157808321.13293.486682642188075090.stgit@noble.brown>
+ <163157838437.13293.14244628630141187199.stgit@noble.brown>
+ <YUE+L19JyjqWh+Md@mit.edu>
+ <163168354018.3992.580533638417199797@noble.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <163168354018.3992.580533638417199797@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Casey Schaufler <casey@schaufler-ca.com>
+On Wed, Sep 15, 2021 at 03:25:40PM +1000, NeilBrown wrote:
+> Adding gfp_mask to __ext4_journal_start_sb() make perfect sense.
+> There doesn't seem much point adding one to __ext4_journal_start(),
+> we can have ext4_journal_start_with_revoke() call
+> __ext4_journal_start_sb() directly.
+> But I cannot see what it doesn't already do that.
+> i.e. why have the inline __ext4_journal_start() at all?
+> Is it OK if I don't use that for ext4_journal_start_with_revoke()?
 
-Add Smack privilege checks for io_uring. Use CAP_MAC_OVERRIDE
-for the override_creds case and CAP_MAC_ADMIN for creating a
-polling thread. These choices are based on conjecture regarding
-the intent of the surrounding code.
+Sure.  I think the only reason why we have __ext4_journal_start() as
+an inline function at all was for historical reasons.  That is, we
+modified __ext4_journal_start() so that it took a struct super, and
+instead of changing all of the macros which called
+__ext4_journal_start(), we named it to be __ext4_journal_start_sb()
+and added the inline definition of __ext4_journal_start() to avoid
+changing all of the existing users of __ext4_journal_start().
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-[PM: make the smack_uring_* funcs static, remove debug code]
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+So sure, it's fine not to use that for
+ext4_journal_start_with_revoke(), and we probably should clean up the
+use of __ext4_journal_start() at some point.  That's unrelated to your
+work, though.
 
----
-v4:
-- updated subject line
-v3:
-- removed debug code
-v2:
-- made the smack_uring_* funcs static
-v1:
-- initial draft
----
- security/smack/smack_lsm.c |   46 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+Cheers,
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index cacbe7518519..f90ab1efeb6d 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4691,6 +4691,48 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
- 	return 0;
- }
- 
-+#ifdef CONFIG_IO_URING
-+/**
-+ * smack_uring_override_creds - Is io_uring cred override allowed?
-+ * @new: the target creds
-+ *
-+ * Check to see if the current task is allowed to override it's credentials
-+ * to service an io_uring operation.
-+ */
-+static int smack_uring_override_creds(const struct cred *new)
-+{
-+	struct task_smack *tsp = smack_cred(current_cred());
-+	struct task_smack *nsp = smack_cred(new);
-+
-+	/*
-+	 * Allow the degenerate case where the new Smack value is
-+	 * the same as the current Smack value.
-+	 */
-+	if (tsp->smk_task == nsp->smk_task)
-+		return 0;
-+
-+	if (smack_privileged_cred(CAP_MAC_OVERRIDE, current_cred()))
-+		return 0;
-+
-+	return -EPERM;
-+}
-+
-+/**
-+ * smack_uring_sqpoll - check if a io_uring polling thread can be created
-+ *
-+ * Check to see if the current task is allowed to create a new io_uring
-+ * kernel polling thread.
-+ */
-+static int smack_uring_sqpoll(void)
-+{
-+	if (smack_privileged_cred(CAP_MAC_ADMIN, current_cred()))
-+		return 0;
-+
-+	return -EPERM;
-+}
-+
-+#endif /* CONFIG_IO_URING */
-+
- struct lsm_blob_sizes smack_blob_sizes __lsm_ro_after_init = {
- 	.lbs_cred = sizeof(struct task_smack),
- 	.lbs_file = sizeof(struct smack_known *),
-@@ -4843,6 +4885,10 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(inode_copy_up, smack_inode_copy_up),
- 	LSM_HOOK_INIT(inode_copy_up_xattr, smack_inode_copy_up_xattr),
- 	LSM_HOOK_INIT(dentry_create_files_as, smack_dentry_create_files_as),
-+#ifdef CONFIG_IO_URING
-+	LSM_HOOK_INIT(uring_override_creds, smack_uring_override_creds),
-+	LSM_HOOK_INIT(uring_sqpoll, smack_uring_sqpoll),
-+#endif
- };
- 
- 
-
+					- Ted
