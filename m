@@ -2,151 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAC0040C545
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 14:29:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4473640C566
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 14:39:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233011AbhIOMan (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 08:30:43 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:43179 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233051AbhIOMan (ORCPT
+        id S236741AbhIOMko (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 08:40:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33874 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234331AbhIOMkn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 08:30:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631708963;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5J+TJY2OKQSmsTLw8RNIuTywLH66g7pwySr+szl2Xlk=;
-        b=cr/zd3lhZSMQH8Iv8pKhXu7tWFgd8V3G6+U/tPKgDJUajAREk1DeIBYI/uxl8+fgl99hGR
-        rYIjqoXwrBiNklE6pDgx2FzLGdoR6vSdp89822/i79WEhx4Tj8XIluNgW+6NYPRt0R5/Uh
-        4zsSawrLOL1rRc9cVrHus+/ZFsfPgTI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-145-UU_MlMC5NhW1OlLf5NUaTw-1; Wed, 15 Sep 2021 08:29:22 -0400
-X-MC-Unique: UU_MlMC5NhW1OlLf5NUaTw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CAEBB80124F;
-        Wed, 15 Sep 2021 12:29:20 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id EA64D19736;
-        Wed, 15 Sep 2021 12:29:10 +0000 (UTC)
-Date:   Wed, 15 Sep 2021 08:29:08 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     sgrubb@redhat.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-audit@redhat.com,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to
- io_uring
-Message-ID: <20210915122907.GM490529@madcap2.tricolour.ca>
-References: <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
- <20210827133559.GG490529@madcap2.tricolour.ca>
- <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
- <20210828150356.GH490529@madcap2.tricolour.ca>
- <CAHC9VhRgc_Fhi4c6L__butuW7cmSFJxTMxb+BBn6P-8Yt0ck_w@mail.gmail.com>
- <CAHC9VhQD8hKekqosjGgWPxZFqS=EFy-_kQL5zAo1sg0MU=6n5A@mail.gmail.com>
- <20210910005858.GL490529@madcap2.tricolour.ca>
- <CAHC9VhSRJYW7oRq6iLCH_UYukeFfE0pEJ_wBLdr1mw2QGUPh-Q@mail.gmail.com>
- <CAHC9VhTrimTds_miuyRhhHjoG_Fhmk2vH7G3hKeeFWO3BdLpKw@mail.gmail.com>
- <CAHC9VhTUKsijBVV-a3eHajYyOFYLQPWTTqxJ812NnB3_Y=UMeQ@mail.gmail.com>
+        Wed, 15 Sep 2021 08:40:43 -0400
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6E5BC061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 05:39:24 -0700 (PDT)
+Received: by mail-il1-x131.google.com with SMTP id q14so2737727ils.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 05:39:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=awmZ9/aj5UdmxkDVCav7n6Y7y0c9VB2OwUb7oxmZKt4=;
+        b=ddnDf17nWdCPjtX6rjw6SpQ98JjakbHjHvQG6bvv6P94v1Cova2OJYmbq6tvI9duLF
+         ix9x8cRNlfNpOarfGwo8cYx7mwn0viQ9v8d2v0w6wqHMM+oUDpVHLHrjt63tRPT9GfkM
+         FGte6PwzksKlBo6KK2tflZIXi5nLTW6MoaPVWsfcpqT866Ks/NFx0iG9cxXExaeTvwL0
+         3/AKURgPopYqdd2Nb0QYtwE4bS5TdQnZCYK1plhmr122Cb5pWeXHwJHwja804oI15vsU
+         OSAqH/R+k4YzMRp8CLAxuoMPQ7sjzfQTIpKo4m1uJ0a8a8Qac96gcJDmsLilb92LsS2n
+         NX9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=awmZ9/aj5UdmxkDVCav7n6Y7y0c9VB2OwUb7oxmZKt4=;
+        b=U6LEHsVUPiB4MaQv4sR69ARSSIkT8zzBguED0BQCHdrU7idEoWdhDsoeeDbwOjhabR
+         EySrsoDlIgx8KklV6z1ZxU2dgqdXAaEKScVc6f/bepMlhWOjXM/HdP0WoXcr85BRQsg3
+         WyKwJvPCAb9V5YMrtK7sAjjv2VYwp/NwOmOPX2D29qmX8GlMcJJMkgyqdMyV5ZQK2xNf
+         KytDfRKTHgmtcEz/6m6kSzULlgq4mQdlrkTW6riwlq4Q0tBHyB26lo73KUAxB9Wt3+vh
+         LbARooJWEGzS/C/4HeqT2KXlaoZiO3PFC3cbS521a3ZaYS93ASAHkA21qNLf45e0f+H/
+         264Q==
+X-Gm-Message-State: AOAM533g329ywSf+5r6NBuaXDCq93mDKuQv6SgNDsnR6Lq3oN4svNTMG
+        BG+cPBX3YB8dMaxfhWc3C39KnoPj6Ww03vrg/QKOoudrQVI=
+X-Google-Smtp-Source: ABdhPJwK/6nvG8WTWB/hE/4NbUJ2fYZfd3dO9c3vu+YJRvAPxJXk2T9iWQ1e++IgKXB5/jAddJ30MIhT7P6QT+8FZzk=
+X-Received: by 2002:a92:d491:: with SMTP id p17mr6492380ilg.107.1631709564217;
+ Wed, 15 Sep 2021 05:39:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhTUKsijBVV-a3eHajYyOFYLQPWTTqxJ812NnB3_Y=UMeQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <20210202162010.305971-1-amir73il@gmail.com> <20210202162010.305971-6-amir73il@gmail.com>
+ <CAOQ4uxiqnD7Qr=__apodWYfQYQ_JOvVnaZsi4jjGQmJ9S5hMyA@mail.gmail.com> <20210301130818.GE25026@quack2.suse.cz>
+In-Reply-To: <20210301130818.GE25026@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 15 Sep 2021 15:39:13 +0300
+Message-ID: <CAOQ4uxi7MRV-6PxyVovaR83sLWX8mZpiOM9OjdUqOHvZM9h2Wg@mail.gmail.com>
+Subject: Re: [PATCH 5/7] fanotify: limit number of event merge attempts
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021-09-13 22:49, Paul Moore wrote:
-> On Mon, Sep 13, 2021 at 9:50 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Mon, Sep 13, 2021 at 3:23 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > On Thu, Sep 9, 2021 at 8:59 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > On 2021-09-01 15:21, Paul Moore wrote:
-> > > > > On Sun, Aug 29, 2021 at 11:18 AM Paul Moore <paul@paul-moore.com> wrote:
-> > > > > > On Sat, Aug 28, 2021 at 11:04 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > > > I did set a syscall filter for
-> > > > > > >         -a exit,always -F arch=b64 -S io_uring_enter,io_uring_setup,io_uring_register -F key=iouringsyscall
-> > > > > > > and that yielded some records with a couple of orphans that surprised me
-> > > > > > > a bit.
-> > > > > >
-> > > > > > Without looking too closely at the log you sent, you can expect URING
-> > > > > > records without an associated SYSCALL record when the uring op is
-> > > > > > being processed in the io-wq or sqpoll context.  In the io-wq case the
-> > > > > > processing is happening after the thread finished the syscall but
-> > > > > > before the execution context returns to userspace and in the case of
-> > > > > > sqpoll the processing is handled by a separate kernel thread with no
-> > > > > > association to a process thread.
-> > > > >
-> > > > > I spent some time this morning/afternoon playing with the io_uring
-> > > > > audit filtering capability and with your audit userspace
-> > > > > ghau-iouring-filtering.v1.0 branch it appears to work correctly.  Yes,
-> > > > > the userspace tooling isn't quite 100% yet (e.g. `auditctl -l` doesn't
-> > > > > map the io_uring ops correctly), but I know you mentioned you have a
-> > > > > number of fixes/improvements still as a work-in-progress there so I'm
-> > > > > not too concerned.  The important part is that the kernel pieces look
-> > > > > to be working correctly.
-> > > >
-> > > > Ok, I have squashed and pushed the audit userspace support for iouring:
-> > > >         https://github.com/rgbriggs/audit-userspace/commit/e8bd8d2ea8adcaa758024cb9b8fa93895ae35eea
-> > > >         https://github.com/linux-audit/audit-userspace/compare/master...rgbriggs:ghak-iouring-filtering.v2.1
-> > > > There are test rpms for f35 here:
-> > > >         http://people.redhat.com/~rbriggs/ghak-iouring/git-e8bd8d2-fc35/
-> > > >
-> > > > userspace v2 changelog:
-> > > > - check for watch before adding perm
-> > > > - update manpage to include filesystem filter
-> > > > - update support for the uring filter list: doc, -U op, op names
-> > > > - add support for the AUDIT_URINGOP record type
-> > > > - add uringop support to ausearch
-> > > > - add uringop support to aureport
-> > > > - lots of bug fixes
-> > > >
-> > > > "auditctl -a uring,always -S ..." will now throw an error and require
-> > > > "-U" instead.
+On Mon, Mar 1, 2021 at 3:08 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Sat 27-02-21 10:31:52, Amir Goldstein wrote:
+> > On Tue, Feb 2, 2021 at 6:20 PM Amir Goldstein <amir73il@gmail.com> wrote:
 > > >
-> > > Thanks Richard.
+> > > Event merges are expensive when event queue size is large.
+> > > Limit the linear search to 128 merge tests.
+> > > In combination with 128 hash lists, there is a potential to
+> > > merge with up to 16K events in the hashed queue.
 > > >
-> > > FYI, I rebased the io_uring/LSM/audit patchset on top of v5.15-rc1
-> > > today and tested both with your v1.0 and with your v2.1 branch and the
-> > > various combinations seemed to work just fine (of course the v2.1
-> > > userspace branch was more polished, less warts, etc.).  I'm going to
-> > > go over the patch set one more time to make sure everything is still
-> > > looking good, write up an updated cover letter, and post a v3 revision
-> > > later tonight with the hope of merging it into -next later this week.
+> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > ---
+> > >  fs/notify/fanotify/fanotify.c | 6 ++++++
+> > >  1 file changed, 6 insertions(+)
+> > >
+> > > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> > > index 12df6957e4d8..6d3807012851 100644
+> > > --- a/fs/notify/fanotify/fanotify.c
+> > > +++ b/fs/notify/fanotify/fanotify.c
+> > > @@ -129,11 +129,15 @@ static bool fanotify_should_merge(struct fsnotify_event *old_fsn,
+> > >         return false;
+> > >  }
+> > >
+> > > +/* Limit event merges to limit CPU overhead per event */
+> > > +#define FANOTIFY_MAX_MERGE_EVENTS 128
+> > > +
+> > >  /* and the list better be locked by something too! */
+> > >  static int fanotify_merge(struct list_head *list, struct fsnotify_event *event)
+> > >  {
+> > >         struct fsnotify_event *test_event;
+> > >         struct fanotify_event *new;
+> > > +       int i = 0;
+> > >
+> > >         pr_debug("%s: list=%p event=%p\n", __func__, list, event);
+> > >         new = FANOTIFY_E(event);
+> > > @@ -147,6 +151,8 @@ static int fanotify_merge(struct list_head *list, struct fsnotify_event *event)
+> > >                 return 0;
+> > >
+> > >         list_for_each_entry_reverse(test_event, list, list) {
+> > > +               if (++i > FANOTIFY_MAX_MERGE_EVENTS)
+> > > +                       break;
+> > >                 if (fanotify_should_merge(test_event, event)) {
+> > >                         FANOTIFY_E(test_event)->mask |= new->mask;
+> > >                         return 1;
+> > > --
+> > > 2.25.1
+> > >
 > >
-> > Best laid plans of mice and men ...
+> > Jan,
 > >
-> > It turns out the LSM hook macros are full of warnings-now-errors that
-> > should likely be resolved before sending anything LSM related to
-> > Linus.  I'll post v3 once I fix this, which may not be until tomorrow.
+> > I was thinking that this patch or a variant thereof should be applied to stable
+> > kernels, but not the entire series.
 > >
-> > (To be clear, the warnings/errors aren't new to this patchset, I'm
-> > likely just the first person to notice them.)
-> 
-> Actually, scratch that ... I'm thinking that might just be an oddity
-> of the Intel 0day test robot building for the xtensa arch.  I'll post
-> the v3 patchset tonight.
+> > OTOH, I am concerned about regressing existing workloads that depend on
+> > merging events on more than 128 inodes.
+>
+> Honestly, I don't think pushing anything to stable for this is really worth
+> it.
+>
+> 1) fanotify() is limited to CAP_SYS_ADMIN (in init namespace) so this is
+> hardly a security issue.
+>
+> 2) We have cond_resched() in the merge code now so the kernel doesn't
+> lockup anymore. So this is only about fanotify becoming slow if you have
+> lots of events.
+>
+> 3) I haven't heard any complaints since we've added the cond_resched()
+> patch so the performance issue seems to be really rare.
+>
+> If I get complaits from real users about this, we can easily reconsider, it
+> is not a big deal. But I just don't think preemptive action is warranted...
+>
 
-I was in the middle of reviewing the v2 patchset to add my acks when I
-forgot to add the comment that you still haven't convinced me that ses=
-isn't needed or relevant if we are including auid=.
+Hi Jan,
 
-> paul moore
+I know you have some catching up to do, but applying this patch to stable
+has become a priority for me.
+It was a mistake on my part not to push harder 6 months ago, so I am trying
+to rectify this mistake now as soon as possible.
 
-- RGB
+To answer your arguments against preemptive action:
+1) My application has CAP_SYS_ADMIN, it is not malicious, but it cannot
+    do its job without taking up more CPU that it needs to, because bursts of
+    events will cause the event queue to grow to thousands of events and
+    fanotify_merge() will become a high CPU consumer
+2) It's not only about fanotify becoming slow, it's about fanotify making the
+     entire system slow and as a result it takes a long time for the system
+     to recover from this condition
+3) You haven't heard any complains because nobody was using sb mark
+    We have been using sb mark in production for a few years and carry
+    this patch in our kernel, so I can say for certain that sb mark on a fs with
+    heavy workload is disturbing the entire system without this patch.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+I don't think that "regressing" the number of merged event is a big issue,
+as we never guaranteed any specific merge behavior and the behavior
+was hard enough to predict, so I don't think applications could have
+relied on it.
 
+So, are you ok with me sending this patch to stable as is?
+
+Thanks,
+Amir.
