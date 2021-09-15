@@ -2,132 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DF0040BEC8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 06:24:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1D7740BEF8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 06:44:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230014AbhIOEZg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 00:25:36 -0400
-Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:37697 "EHLO
-        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229450AbhIOEZf (ORCPT
+        id S230364AbhIOEpk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 00:45:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38666 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229450AbhIOEpj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 00:25:35 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 30FAD320046E;
-        Wed, 15 Sep 2021 00:24:17 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Wed, 15 Sep 2021 00:24:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilammy.net; h=
-        content-type:mime-version:subject:from:in-reply-to:date:cc
-        :content-transfer-encoding:message-id:references:to; s=fm2; bh=2
-        AVN+cTJbsiNWMcAjwSymE3wRt30wf/yR8jdCKIGuCU=; b=Sg1501P8p7wWLtwyo
-        UJ0KldLzFlW1unKnFrMzOhtpeOh/2FGRbV+ZioOCVVDDpuwiRCSCOliE+yuwXads
-        8sr1pBa57UY8DTXaubBmnxrazaIotYfkYFC5/9EV5GuZKcWB4WAddW5N+arzQhSY
-        wgv7hKsbort+wALZghKPkX8/0LgwNOPtb05YDy7YpKUFip5ubcyZEJE8bOJsjIrb
-        AtEm8MAn2kSDxcOFL7M1BQ+KwF1x/y9j/q5OUIMc5NqzaKJZQPjyPX6oLl/+wuB1
-        nkW79gMpDpaaO+T0r8O9h7eJc4DPYVfUF5tonHaR9DpaA2kdLHLQ/W3ljJct5QXR
-        aQR9g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=2AVN+cTJbsiNWMcAjwSymE3wRt30wf/yR8jdCKIGu
-        CU=; b=evSMNx0tf8fBTUwAuHhcpKdA75XLiPykkOJGxncrNFl0H2CMh6qLqQEg9
-        uq+gxEBiP7sSvn144wlC+SCvy1HWRzzLhLk9EWs+/XC8s1nKz/5zwjG5KNsrxCPM
-        WtVk8xXOWM6jK4CnDEOwouagmsX7TwX1Yg5NtunteHqPfNdg7UgVJsJSo+z6yu57
-        CTrrXqVBC3hcSciIIuKgiXQPH2gcEc0Xs2k5n7jyaso3ZT8VhkCaITC0S6i4RaEy
-        NYXLOfPib96nZiiQ63Lx4NAgpKWx7Y7Tyq2J13zNRViqAAG5nGvROMDOyDdYS1nj
-        tbtDhz2w8Jn4Q7HAl1/LEtfK2UW8A==
-X-ME-Sender: <xms:cHVBYTCOPDVQRKNouA4wL4HIzcqMGF1Ru5g5YOO2wJaL7wI89mJKrg>
-    <xme:cHVBYZjGvQ5Jn0Cah0EeTOqaUWjLpHCoCsAj2l_t0qEN1NCL0SUwESqVdgK5jIYk6
-    fDPgWlgVIyHMmHuJRA>
-X-ME-Received: <xmr:cHVBYel2uqIZN92-Q268WgMYpwQjQVIXbWg12MlsEBQUS1UUFFJoba_dzjUSH1tQckRvsKuuhBhS_bqeLWGY3jQgg2btuk9MILzcN8lGyw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudehtddgkedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurheptggguffhjgffgffkfhfvofesthejmhdthhdtvdenucfhrhhomheptehlvgig
-    vghiucfnohiiohhvshhkhicuoehmvgesihhlrghmmhihrdhnvghtqeenucggtffrrghtth
-    gvrhhnpefhteffvdelgedtleevgfeivdetieeitdevhfekgeehfeetffejveefkeeviedv
-    feenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmvg
-    esihhlrghmmhihrdhnvght
-X-ME-Proxy: <xmx:cHVBYVxj6cGg-_JZdcPF-vYswwMP4qUFfvIWODwkMj19LkXLpmdTIg>
-    <xmx:cHVBYYS6t9y2ol9O6xUVFtzGimKE50yoHwRwhc5npReFetzuO3Pk7Q>
-    <xmx:cHVBYYaeY_az1a3Vxww8Putu1psoJCXEW-ZaCFMb-LgyEck5aF4cwg>
-    <xmx:cHVBYecOU6sSIMPYoNGhrAvZHrFfl5pv9R2apm_DVkYVusK0HFffpg>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Sep 2021 00:24:15 -0400 (EDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.4\))
-Subject: Re: [PATCH 0/7] proc/stat: Maintain monotonicity of "intr" and
- "softirq"
-From:   Alexei Lozovsky <me@ilammy.net>
-In-Reply-To: <87y27zb62e.ffs@tglx>
-Date:   Wed, 15 Sep 2021 13:24:11 +0900
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Christoph Lameter <cl@linux.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <44D2E875-33FF-4756-9FAB-7F2E1ED56139@ilammy.net>
-References: <06F4B1B0-E4DE-4380-A8E1-A5ACAD285163@ilammy.net>
- <20210911034808.24252-1-me@ilammy.net>
- <YT3In8SWc2eYZ/09@localhost.localdomain>
- <44F84890-521F-4BCA-9F48-B49D2C8A9E32@ilammy.net> <87y27zb62e.ffs@tglx>
-To:     Thomas Gleixner <tglx@linutronix.de>
-X-Mailer: Apple Mail (2.3608.120.23.2.4)
+        Wed, 15 Sep 2021 00:45:39 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4352C061574
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 21:44:21 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id v19so1285413pjh.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Sep 2021 21:44:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3ke2SRIGg+XGVFQMj2Nt31WiTZWFxp5XafAaSq0r4/4=;
+        b=IgddcRQ7nEVsnQHD4blpqVfJkt+DwRZsn1JfhZcfU2PVTGfTd0vg73tM/KT+8U8CQe
+         4e69bwZ4MTnHmixKqECl7S9IKK7tTvMFMonN6yRO1YQYg+hWwpT4triYtph1/StYGx34
+         3bofmcgWihb/3d3zyXxlicz/EYNzLwjDzqSrrO6LtGFPJ8hBS24ssqZsBwkjHjJvIFRw
+         1LVMGNbMDi/vkbi8B0Njra7wFPNrPBo9GjErDIN+CFkpa5XmGBMjkjEsbGZYud0bxZPj
+         whnHExG6NPVNyWtCjro3XhdA0frBCxVdE62aac/hH0dUtSGi67RZez0dr3ad+kmbhlap
+         y0Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3ke2SRIGg+XGVFQMj2Nt31WiTZWFxp5XafAaSq0r4/4=;
+        b=78e/1YyfFFNwkY3DKMzVfXItbAeH37XU1mnDpwWEkHGO5C4Kqy+HrsyUsQW8QIyOFK
+         ZHyFpfmBJHl3t16mqTmNv/uNpPpZ3uf5tmY67g1hBbO5Zoas6JnAA3L/UB1YPtYqIaG2
+         UOVeaHXNH6wDIzkDo54ETCFedIJnkOOtF8SfY0QqMm7qv2Sm0pMPpobzxEfTUalRqMvX
+         8WaG7v5sZULX6bZyNEnb7IGSIV/yRObdMSJtqx27AAagGkM0Otjsmo8ruUxs47cCzJk8
+         0BFQyt1Mr5GzLKPgnxIOIsRYoGI/SqyiVJas7gdiC1RWLfph9/zBmSua4SsKmwSw3nWu
+         u2xQ==
+X-Gm-Message-State: AOAM532GZrAGpk3nRg+7vSDBpqVDwATgIUvZiGBvBg4tfcl6QjBDYcGm
+        I6XyVAZIKa+wpFWsIGsRH9D/EYaFipYzdBYu5JK7CQ==
+X-Google-Smtp-Source: ABdhPJzx4g82CIHm0nZUdlQbdJR7J9Aag191pgYrsfIq2kmSlUsJ+IEAjsXoy1QVMvB9zFyoHYJ5VLm80IwNQqJLsCc=
+X-Received: by 2002:a17:90a:d686:: with SMTP id x6mr6263231pju.8.1631681061030;
+ Tue, 14 Sep 2021 21:44:21 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210914233132.3680546-1-jane.chu@oracle.com>
+In-Reply-To: <20210914233132.3680546-1-jane.chu@oracle.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 14 Sep 2021 21:44:10 -0700
+Message-ID: <CAPcyv4h3KpOKgy_Cwi5fNBZmR=n1hB33mVzA3fqOY7c3G+GrMA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] dax: clear poison on the fly along pwrite
+To:     Jane Chu <jane.chu@oracle.com>
+Cc:     Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Weiny, Ira" <ira.weiny@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks for vetting my ideas!
+On Tue, Sep 14, 2021 at 4:32 PM Jane Chu <jane.chu@oracle.com> wrote:
+>
+> If pwrite(2) encounters poison in a pmem range, it fails with EIO.
+> This is unecessary if hardware is capable of clearing the poison.
+>
+> Though not all dax backend hardware has the capability of clearing
+> poison on the fly, but dax backed by Intel DCPMEM has such capability,
+> and it's desirable to, first, speed up repairing by means of it;
+> second, maintain backend continuity instead of fragmenting it in
+> search for clean blocks.
+>
+> Jane Chu (3):
+>   dax: introduce dax_operation dax_clear_poison
 
-On Tue, Sep 14, 2021, at 23:11, Thomas Gleixner wrote:
-> On Sun, Sep 12 2021 at 21:37, Alexei Lozovsky wrote:
->> On Sun, Sep 12, 2021, at 18:30, Alexey Dobriyan wrote:
->>> How about making everything "unsigned long" or even "u64" like NIC
->>> drivers do?
->> 
->> I see some possible hurdles ahead:
->> 
->> - Not all architectures have atomic operations for 64-bit values
-> 
-> This is not about atomics.
+The problem with new dax operations is that they need to be plumbed
+not only through fsdax and pmem, but also through device-mapper.
 
-Yeah, I got mixed up in terminology. As you said, atomic
-read-modify-write for increment is not important here, but what
-*is* important is absence of tearing when doing loads and stores.
+In this case I think we're already covered by dax_zero_page_range().
+That will ultimately trigger pmem_clear_poison() and it is routed
+through device-mapper properly.
 
-If there is no tearing we don't need any barriers to observe counters
-that make sense. They might be slightly outdated but we don't care
-as long as they are observed to be monotonically increasing and
-we don't see the low bits wrap before the high bits are updated
-because 64-bit store got split into two 32-bit ones.
+Can you clarify why the existing dax_zero_page_range() is not sufficient?
 
-That said, I believe this rules out updating counter types to u64
-because on 32-bit platforms those will tear. However, we can use
-unsigned long so that platforms with 64-bit native words get 64-bit
-counters and platforms with 32-bit words stay with 32-bit counters
-that wrap like they should.
-
-I've checked this on Godbolt for a number of archs and it seems that
-all of them will emit single loads and stores for unsigned long.
-Well, except for 16-bit platforms, but those would certainly not use
-PPC or x86 and procfs in the first place, so I think we can ignore
-them for this matter.
-
-> On 32bit systems a 32bit load (as long as the compiler does not emit
-> load tearing) is always consistent even when there is a concurrent
-> increment going on. It either gets the old or the new value.
-
-Regarding tearing, I thought about wrapping counter reads in READ_ONCE()
-to signal that they should be performed in one load. __this_cpu_inc()
-should probably do WRITE_ONCE() for the sake of pairing, but that
-should not be too important.
-
-Is it a good idea to use READ_ONCE here?
-Or just assume that compiler will not emit any weird loads?
-
-(READ_ONCE does not strictly check that reads will not tear. Right now
-it allows unsigned long long because reasons. But I guess it will enable
-some extra debugging checks.)
+>   dax: introduce dax_clear_poison to dax pwrite operation
+>   libnvdimm/pmem: Provide pmem_dax_clear_poison for dax operation
+>
+>  drivers/dax/super.c   | 13 +++++++++++++
+>  drivers/nvdimm/pmem.c | 17 +++++++++++++++++
+>  fs/dax.c              |  9 +++++++++
+>  include/linux/dax.h   |  6 ++++++
+>  4 files changed, 45 insertions(+)
+>
+> --
+> 2.18.4
+>
