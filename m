@@ -2,134 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F81740CF6E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 00:35:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6126140CF81
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 00:39:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232990AbhIOWhN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 18:37:13 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:38310 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232949AbhIOWhK (ORCPT
+        id S232715AbhIOWk1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 18:40:27 -0400
+Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:37072 "EHLO
+        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229538AbhIOWk0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 18:37:10 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 53ED322323;
-        Wed, 15 Sep 2021 22:35:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1631745347; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JgZsYMmsqoTtaIffqm+LgUI61DrT1bvGtpHuAgBAgHg=;
-        b=shB4rBHWjsQzJSjuYNvpz+qx09iQlmlzyUlYQG4mK0I8Oq0LoBQdBjz5SC8d9rCNaSEQC3
-        z4cnLF7vLZbCLfS68MgEbMX/JiWYAabou3SUCIzfEg4sL7Lz4hjdMOCz9731kDaPCwaLLA
-        FtnGEE57fq/siqOWE3m9PSg3ovkUvWE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1631745347;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JgZsYMmsqoTtaIffqm+LgUI61DrT1bvGtpHuAgBAgHg=;
-        b=s5BHawe8Yvvo9IzI+WIYfpeIDNcwBKcloNxJGfnJCVoVXQp+rZk0It2270SDw/l+t64odJ
-        tR44mjA4Vwlf7zAA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 65EF613C77;
-        Wed, 15 Sep 2021 22:35:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 0QavCT91QmFWUgAAMHmgww
-        (envelope-from <neilb@suse.de>); Wed, 15 Sep 2021 22:35:43 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Michal Hocko" <mhocko@suse.com>
-Cc:     "Mel Gorman" <mgorman@suse.de>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        "Andreas Dilger" <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <djwong@kernel.org>, "Jan Kara" <jack@suse.cz>,
-        "Matthew Wilcox" <willy@infradead.org>, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
+        Wed, 15 Sep 2021 18:40:26 -0400
+Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
+        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 4357499FB;
+        Thu, 16 Sep 2021 08:39:00 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1mQdYQ-00CvLU-9f; Thu, 16 Sep 2021 08:38:58 +1000
+Date:   Thu, 16 Sep 2021 08:38:58 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     NeilBrown <neilb@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 3/6] EXT4: Remove ENOMEM/congestion_wait() loops.
-In-reply-to: <YUHh2ddnJEDGI8YG@dhcp22.suse.cz>
-References: <163157808321.13293.486682642188075090.stgit@noble.brown>,
- <163157838437.13293.14244628630141187199.stgit@noble.brown>,
- <20210914163432.GR3828@suse.com>,
- <163165609100.3992.1570739756456048657@noble.neil.brown.name>,
- <YUHh2ddnJEDGI8YG@dhcp22.suse.cz>
-Date:   Thu, 16 Sep 2021 08:35:40 +1000
-Message-id: <163174534006.3992.15394603624652359629@noble.neil.brown.name>
+Message-ID: <20210915223858.GM2361455@dread.disaster.area>
+References: <163157808321.13293.486682642188075090.stgit@noble.brown>
+ <163157838437.13293.14244628630141187199.stgit@noble.brown>
+ <20210914163432.GR3828@suse.com>
+ <20210914235535.GL2361455@dread.disaster.area>
+ <20210915085904.GU3828@suse.com>
+ <20210915143510.GE3959@techsingularity.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210915143510.GE3959@techsingularity.net>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
+        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
+        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=7-415B0cAAAA:8
+        a=rs-OYbL5b6b9dbSePnwA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 15 Sep 2021, Michal Hocko wrote:
-> On Wed 15-09-21 07:48:11, Neil Brown wrote:
-> >=20
-> > Why does __GFP_NOFAIL access the reserves? Why not require that the
-> > relevant "Try harder" flag (__GFP_ATOMIC or __GFP_MEMALLOC) be included
-> > with __GFP_NOFAIL if that is justified?
->=20
-> Does 5020e285856c ("mm, oom: give __GFP_NOFAIL allocations access to
-> memory reserves") help?
+On Wed, Sep 15, 2021 at 03:35:10PM +0100, Mel Gorman wrote:
+> On Wed, Sep 15, 2021 at 09:59:04AM +0100, Mel Gorman wrote:
+> > > Yup, that's what we need, but I don't see why it needs to be exposed
+> > > outside the allocation code at all.
+> > > 
+> > 
+> > Probably not. At least some of it could be contained within reclaim
+> > itself to block when reclaim is not making progress as opposed to anything
+> > congestion related. That might still livelock if no progress can be made
+> > but that's not new, the OOM hammer should eventually kick in.
+> > 
+> 
+> There are two sides to the reclaim-related throttling
+> 
+> 1. throttling because zero progress is being made
+> 2. throttling because there are too many dirty pages or pages under
+>    writeback cycling through the LRU too quickly.
+> 
+> The dirty page aspects (and the removal of wait_iff_congested which is
+> almost completely broken) could be done with something like the following
+> (completly untested). The downside is that end_page_writeback() takes an
+> atomic penalty if reclaim is throttled but at that point the system is
+> struggling anyway so I doubt it matters.
 
-Yes, that helps.  A bit.
+The atomics are pretty nasty, as is directly accessing the pgdat on
+every call to end_page_writeback(). Those will be performance
+limiting factors. Indeed, we don't use atomics for dirty page
+throttling, which does dirty page accounting via
+percpu counters on the BDI and doesn't require wakeups.
 
-I'm not fond of the clause "the allocation request might have come with some
-locks held".  What if it doesn't?  Does it still have to pay the price.
+Also, we've already got per-node and per-zone counters there for
+dirty/write pending stats, so do we actually need new counters and
+wakeups here?
 
-Should we not require that the caller indicate if any locks are held?
-That way callers which don't hold locks can use __GFP_NOFAIL without
-worrying about imposing on other code.
+i.e. balance_dirty_pages() does not have an explicit wakeup - it
+bases it's sleep time on the (memcg aware) measured writeback rate
+on the BDI the page belongs to and the amount of outstanding dirty
+data on that BDI. i.e. it estimates fairly accurately what the wait
+time for this task should be given the dirty page demand and current
+writeback progress being made is and just sleeps for that length of
+time.
 
-Or is it so rare that __GFP_NOFAIL would be used without holding a lock
-that it doesn't matter?
+Ideally, that's what should be happening here - we should be able to
+calculate a page cleaning rate estimation and then base the sleep
+time on that. No wakeups needed - when we've waited for the
+estimated time, we try to reclaim again...
 
-The other commit of interest is
+In fact, why can't this "too many dirty pages" case just use the
+balance_dirty_pages() infrastructure to do the "wait for writeback"
+reclaim backoff? Why do we even need to re-invent the wheel here?
 
-Commit: 6c18ba7a1899 ("mm: help __GFP_NOFAIL allocations which do not trigger=
- OOM killer")
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index dae481293b5d..b9be9afa4308 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -1606,6 +1606,8 @@ void end_page_writeback(struct page *page)
+>  	smp_mb__after_atomic();
+>  	wake_up_page(page, PG_writeback);
+>  	put_page(page);
+> +
+> +	acct_reclaim_writeback(page);
 
-I don't find the reasoning convincing.  It is a bit like "Robbing Peter
-to pay Paul".  It takes from the reserves to allow a __GFP_NOFAIL to
-proceed, with out any reason to think this particular allocation has any
-more 'right' to the reserves than anything else.
+UAF - that would need to be before the put_page() call...
 
-While I don't like the reasoning in either of these, they do make it
-clear (to me) that the use of reserves is entirely an internal policy
-decision.  They should *not* be seen as part of the API and callers
-should not have to be concerned about it when deciding whether to use
-__GFP_NOFAIL or not.
+Cheers,
 
-The use of these reserves is, at most, a hypothetical problem.  If it
-ever looks like becoming a real practical problem, it needs to be fixed
-internally to the page allocator.  Maybe an extra water-mark which isn't
-quite as permissive as ALLOC_HIGH...
-
-I'm inclined to drop all references to reserves from the documentation
-for __GFP_NOFAIL.  I think there are enough users already that adding a
-couple more isn't going to make problems substantially more likely.  And
-more will be added anyway that the mm/ team won't have the opportunity
-or bandwidth to review.
-
-Meanwhile I'll see if I can understand the intricacies of alloc_page so
-that I can contibute to making it more predictable.
-
-Question: In those cases where an open-coded loop is appropriate, such
-as when you want to handle signals or can drop locks, how bad would it
-be to have a tight loop without any sleep?
-should_reclaim_retry() will sleep 100ms (sometimes...).  Is that enough?
-__GFP_NOFAIL doesn't add any sleep when looping.
-
-Thanks,
-NeilBrown
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
