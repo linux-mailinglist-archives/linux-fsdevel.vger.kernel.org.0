@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F91C40CC2B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 19:59:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BFEC40CC31
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 19:59:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231575AbhIOSAt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 14:00:49 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:46851 "EHLO
+        id S230142AbhIOSBC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 14:01:02 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:45421 "EHLO
         out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231126AbhIOSA2 (ORCPT
+        by vger.kernel.org with ESMTP id S231397AbhIOSA3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 14:00:28 -0400
+        Wed, 15 Sep 2021 14:00:29 -0400
 Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 01C035C0195;
-        Wed, 15 Sep 2021 13:59:08 -0400 (EDT)
+        by mailout.nyi.internal (Postfix) with ESMTP id 07B7B5C01A9;
+        Wed, 15 Sep 2021 13:59:10 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Wed, 15 Sep 2021 13:59:08 -0400
+  by compute4.internal (MEProxy); Wed, 15 Sep 2021 13:59:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilammy.net; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=9knqoN2a0SJIB
-        wSAS5DQkKkV5ouK+9JQaaJs3/U0e/Y=; b=jPyitBQSRpzcLfDKpfPyZcUppYU1W
-        aCQ5dei3FLIXys+akqanclPfmkIK59lICx56BrrEpZhMza2FkCSnrBY25ZA5CF6Q
-        oO92o7VfwG5QsQO0FrzHfWOrraLwnhN6RiNKTB//duPh23Gzl3vREpzccrD/R3uH
-        7BK7z2r1YEFHk5WdqEjDSYt5/S2A2tb7Hy19IY4sLbv7hn3wQ5H72J8ZUzXx7RI+
-        V6OLhr054KKhgjd7U+gzZ1J9AGc4g1dl51LjPo9yVmQamPMX5ozcTkx1NBgzpkZZ
-        6vCvXkBe/tLLhNlTBuHu/UXqvdVBQy+yMAbM3UoH59YvfGjW8N7FNMchA==
+        :mime-version:content-transfer-encoding; s=fm2; bh=j/pVif0xC3YoC
+        SLChBtt/dSwBkWOK8HluzLcTq6fSjw=; b=opE9LIMwmE2DJtNV0rVjJFyebCARl
+        oXsQzCmlwOP1oB1vHN4rIfRvstgDPejKpP28GXGb7PsDPgyzW1L4LIjqkPP4GoN1
+        erpvzi6W/JOA3lOw5kD9XU6G24g+9wn2aXKUvxzhCPou38v72O2PpItBaGMv28Uy
+        P9u/oJdL6fnaCWhYq8JMXe90X+Xx5jU2vj6jo9/tnrUVrZkBMxLVktAcgWyUKD7B
+        jtSwTX/Cawu5X+e/8s1o128sX9XvJwxvGsDUmAHJl6VtKP2AT4ttzQriCzdUgw1h
+        a0IQZQ5VqwzzskYQKOh63lvTCOtvxN6OK4Ens66u9oO/45H+RFa2IAFVQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=9knqoN2a0SJIBwSAS5DQkKkV5ouK+9JQaaJs3/U0e/Y=; b=DcBWycYo
-        +E6Qoe9wH/wY4nOqrT8NiZARd3bHn6eJjRJJD3gtyJKuKpUBp2IyE/br3l37av/u
-        Ae3afH5sg9SaJxihSDLxm6gi6oUwXS8N1ph/0cyBG6rUyDFsvNuncHere1pm4GhW
-        KRSpPQJHPxTvlZsUpFKAT6mfHk5/S2bkrsJk/SD5I01035COUSnThMRCQehYEf3c
-        ERBSDwU4n+2I7iMclT2Zv1FlErpLuc1iexlVRJcZ3L3YmMlF35HtU0w3NsrcN2Vm
-        T4MdpaMJr7SI4WLD5AgR1yp/SY/7+PsVd27L1FI3Pi7us/fdv8Zhu9i64CryNbM0
-        CltncQdNnlltGg==
-X-ME-Sender: <xms:azRCYe7edMxCRrIW7_F2YGzFto8mtDHET0m9N8il24XfeijoWOQuxw>
-    <xme:azRCYX7baj1bz2jU0OU7gryusG1hAWRuyJM-00BVCHvT5PtgYScnA4l7tWwrDTNns
-    xrVmYIW5H4Rk96ZvIU>
-X-ME-Received: <xmr:azRCYdcAO7s6w8tugNh5Y4S3KSFBm7ewtXxl0tNiNxs4sEXpM6rsVAzJEqEX7JenO2lJF6C7dQSFW409OyCm_4OdTWtiIlH2274e1gl-H0E4OXv_NZ4>
+        fm3; bh=j/pVif0xC3YoCSLChBtt/dSwBkWOK8HluzLcTq6fSjw=; b=chK5pLPz
+        NSnYXc61RO3grCXVzHuHpZO+wWXRWAB61w36XDJmpt7XFwepuKjOBeLKSpPqjjOk
+        I/C1Q+dN1bcJnV8rxkq8LUXBgfcyfre665YMDfFRSGbNIst47gDYY93MpwbjU3um
+        Yh7b0nr5DZO3keBOkdOxWdEAWZkWRv8S3aVAO3kkNxQoQtAFgXsMlKaBmlukDbqO
+        0CAUCS9YSjSU57NIf/N/Z6bau+tPKASozjFsMsWTy2cR8XeVXrntfm1L9KcLFosv
+        /7CZ4/4rxpiSM3I9MzfLTpnwBaqOUsdE0KHHXCqfSBF9HqaLVVnHlcJMiFqIzlJh
+        fBYOAqYnJzK5YQ==
+X-ME-Sender: <xms:bTRCYbvs72tY6IzJHjchkJ_d-JW4R5_yx_YbqQr3UXEakGIE7r2N0g>
+    <xme:bTRCYcfpMTJYcMMtnXJpziqy7wnjsM30iMmweCknSQmmSAib6Yo8yOL3Y07rWBk5s
+    rQXU2FmxQIZzm-o6XE>
+X-ME-Received: <xmr:bTRCYeyrHUQPG8eMY_H7YTYTaB2BSP7kSgbDoRYsujWc_dDiowYgZJr7l1_YfF6L1_b8ny6XSYY-NdWqzbyVV9DJd-zzgLWvQ6cw2fzM7wDCKLiBR-M>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudehuddgudduiecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
@@ -49,21 +49,21 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudehuddgudduiecutefuodetgg
     gvrhhnpeetueejheekjeeuveeihefgueehleelgefgheefffefkeejudeujeejuefgteeu
     keenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehmvg
     esihhlrghmmhihrdhnvght
-X-ME-Proxy: <xmx:azRCYbLx9zerW7ZiJI8IK5JY2Ct8WfB1Qb9Ec8ABsY3rBgDOUxaPsQ>
-    <xmx:azRCYSKZEwAplJDLqjzWaSMMNNm0R_Kv7YCzTJ2d-t5Xwi24uF7TlQ>
-    <xmx:azRCYcxbK8ynRJWhwzYdKwB_t5ONnd4PioW8J8F7HzdsPuqUm3GKlw>
-    <xmx:azRCYe3uvh3Ya3Obsl95ZOCtSxdQ-ujOYU_qHZ5dVBnqqffgA7PyNg>
+X-ME-Proxy: <xmx:bTRCYaOnixOajJqrBfViMJ4ONfPzjbSoAFltnmq-JxlEo7ZhHQ1w5w>
+    <xmx:bTRCYb-Wmute8T0ImqP6Gqb6OIE_ui3DO0yFxTfUESZBIY0IqG5VqQ>
+    <xmx:bTRCYaVlPE_3-_HFZzG8Nbqx9l6IZyASkGiaAGJaQxexSM5j_BaZvA>
+    <xmx:bjRCYeb6a8uotHBl7svnxvS_VD9-sTtv3J9_DA8R7_HKr81Dy_SDwA>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Sep 2021 13:59:06 -0400 (EDT)
+ 15 Sep 2021 13:59:08 -0400 (EDT)
 From:   Alexei Lozovsky <me@ilammy.net>
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         Christoph Lameter <cl@linux.com>,
         LKML <linux-kernel@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 07/12] x86/irq: Use unsigned long for IRQ counters
-Date:   Thu, 16 Sep 2021 02:58:43 +0900
-Message-Id: <20210915175848.162260-8-me@ilammy.net>
+Subject: [PATCH v2 08/12] x86/irq: Use unsigned long for IRQ counters more
+Date:   Thu, 16 Sep 2021 02:58:44 +0900
+Message-Id: <20210915175848.162260-9-me@ilammy.net>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210915175848.162260-1-me@ilammy.net>
 References: <20210911034808.24252-1-me@ilammy.net>
@@ -74,211 +74,119 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Similarly to PowerPC in the previous patches, bump the counters from
-irq_cpustat_t to a wider type for better wrap around handling on x86_64.
-Not all of them, just the ones reported via procfs.
+These two stand aside since they are atomic_t and all, but these
+counters are also reported by procfs and included into the total
+interrupt count. Make them unsigned long as well.
 
-Also grab mce_exception_count and mce_poll_count which are reported
-along with counters from irq_cpustat_t.
+Strictly speaking, only irq_err_count is reported in the totals,
+but I felt bad for its friend to miss out on becoming wiiiiider.
 
 Signed-off-by: Alexei Lozovsky <me@ilammy.net>
 ---
- arch/x86/include/asm/hardirq.h | 22 +++++++++++-----------
- arch/x86/include/asm/mce.h     |  4 ++--
- arch/x86/kernel/cpu/mce/core.c |  4 ++--
- arch/x86/kernel/irq.c          | 26 +++++++++++++-------------
- 4 files changed, 28 insertions(+), 28 deletions(-)
+ arch/x86/include/asm/hw_irq.h  | 4 ++--
+ arch/x86/kernel/apic/apic.c    | 2 +-
+ arch/x86/kernel/apic/io_apic.c | 4 ++--
+ arch/x86/kernel/i8259.c        | 2 +-
+ arch/x86/kernel/irq.c          | 8 ++++----
+ 5 files changed, 10 insertions(+), 10 deletions(-)
 
-So, about the "not all of them" part. What about all other counters that
-are present in irq_cpustat_t, printed out by arch_show_interrupts() for
-/proc/interrupts, but are not included in arch_irq_stat_cpu() and don't
-show up in total counter of /proc/stat?
-
-These ones:
-
-    kvm_posted_intr_ipis
-    kvm_posted_intr_wakeup_ipis
-    kvm_posted_intr_nested_ipis
-    irq_tlb_count
-    irq_deferred_error_count
-    irq_hv_callback_count
-    irq_hv_reenlightenment_count
-    hyperv_stimer0_count
-
-I have a feeling they should be included into the total interrupt
-counter sum (and be widened to unsigned long as well). Should they?
-
-diff --git a/arch/x86/include/asm/hardirq.h b/arch/x86/include/asm/hardirq.h
-index 275e7fd20310..2dc9c076f611 100644
---- a/arch/x86/include/asm/hardirq.h
-+++ b/arch/x86/include/asm/hardirq.h
-@@ -9,30 +9,30 @@ typedef struct {
- #if IS_ENABLED(CONFIG_KVM_INTEL)
- 	u8	     kvm_cpu_l1tf_flush_l1d;
- #endif
--	unsigned int __nmi_count;	/* arch dependent */
-+	unsigned long __nmi_count;		/* arch dependent */
- #ifdef CONFIG_X86_LOCAL_APIC
--	unsigned int apic_timer_irqs;	/* arch dependent */
--	unsigned int irq_spurious_count;
--	unsigned int icr_read_retry_count;
-+	unsigned long apic_timer_irqs;		/* arch dependent */
-+	unsigned long irq_spurious_count;
-+	unsigned long icr_read_retry_count;
- #endif
- #ifdef CONFIG_HAVE_KVM
- 	unsigned int kvm_posted_intr_ipis;
- 	unsigned int kvm_posted_intr_wakeup_ipis;
- 	unsigned int kvm_posted_intr_nested_ipis;
- #endif
--	unsigned int x86_platform_ipis;	/* arch dependent */
--	unsigned int apic_perf_irqs;
--	unsigned int apic_irq_work_irqs;
-+	unsigned long x86_platform_ipis;	/* arch dependent */
-+	unsigned long apic_perf_irqs;
-+	unsigned long apic_irq_work_irqs;
- #ifdef CONFIG_SMP
--	unsigned int irq_resched_count;
--	unsigned int irq_call_count;
-+	unsigned long irq_resched_count;
-+	unsigned long irq_call_count;
- #endif
- 	unsigned int irq_tlb_count;
- #ifdef CONFIG_X86_THERMAL_VECTOR
--	unsigned int irq_thermal_count;
-+	unsigned long irq_thermal_count;
- #endif
- #ifdef CONFIG_X86_MCE_THRESHOLD
--	unsigned int irq_threshold_count;
-+	unsigned long irq_threshold_count;
- #endif
- #ifdef CONFIG_X86_MCE_AMD
- 	unsigned int irq_deferred_error_count;
-diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
-index 0607ec4f5091..65776c6a8478 100644
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -255,8 +255,8 @@ bool mce_is_memory_error(struct mce *m);
- bool mce_is_correctable(struct mce *m);
- int mce_usable_address(struct mce *m);
+diff --git a/arch/x86/include/asm/hw_irq.h b/arch/x86/include/asm/hw_irq.h
+index d465ece58151..684310f723ac 100644
+--- a/arch/x86/include/asm/hw_irq.h
++++ b/arch/x86/include/asm/hw_irq.h
+@@ -111,8 +111,8 @@ static inline void unlock_vector_lock(void) {}
+ #endif	/* CONFIG_X86_LOCAL_APIC */
  
--DECLARE_PER_CPU(unsigned, mce_exception_count);
--DECLARE_PER_CPU(unsigned, mce_poll_count);
-+DECLARE_PER_CPU(unsigned long, mce_exception_count);
-+DECLARE_PER_CPU(unsigned long, mce_poll_count);
+ /* Statistics */
+-extern atomic_t irq_err_count;
+-extern atomic_t irq_mis_count;
++extern atomic_long_t irq_err_count;
++extern atomic_long_t irq_mis_count;
  
- typedef DECLARE_BITMAP(mce_banks_t, MAX_NR_BANKS);
- DECLARE_PER_CPU(mce_banks_t, mce_poll_banks);
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 22791aadc085..38d418913a8f 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -63,7 +63,7 @@ static DEFINE_MUTEX(mce_sysfs_mutex);
+ extern void elcr_set_level_irq(unsigned int irq);
  
- #define SPINUNIT		100	/* 100ns */
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index d262811ce14b..d0add3f1841b 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -2220,7 +2220,7 @@ DEFINE_IDTENTRY_SYSVEC(sysvec_error_interrupt)
+ 		apic_write(APIC_ESR, 0);
+ 	v = apic_read(APIC_ESR);
+ 	ack_APIC_irq();
+-	atomic_inc(&irq_err_count);
++	atomic_long_inc(&irq_err_count);
  
--DEFINE_PER_CPU(unsigned, mce_exception_count);
-+DEFINE_PER_CPU(unsigned long, mce_exception_count);
- 
- DEFINE_PER_CPU_READ_MOSTLY(unsigned int, mce_num_banks);
- 
-@@ -718,7 +718,7 @@ static void mce_read_aux(struct mce *m, int i)
- 	}
+ 	apic_printk(APIC_DEBUG, KERN_DEBUG "APIC error on CPU%d: %02x",
+ 		    smp_processor_id(), v);
+diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
+index 39224e035e47..038737f5fb88 100644
+--- a/arch/x86/kernel/apic/io_apic.c
++++ b/arch/x86/kernel/apic/io_apic.c
+@@ -1693,7 +1693,7 @@ static unsigned int startup_ioapic_irq(struct irq_data *data)
+ 	return was_pending;
  }
  
--DEFINE_PER_CPU(unsigned, mce_poll_count);
-+DEFINE_PER_CPU(unsigned long, mce_poll_count);
+-atomic_t irq_mis_count;
++atomic_long_t irq_mis_count;
  
- /*
-  * Poll for corrected events or events that happened before reset.
+ #ifdef CONFIG_GENERIC_PENDING_IRQ
+ static bool io_apic_level_ack_pending(struct mp_chip_data *data)
+@@ -1835,7 +1835,7 @@ static void ioapic_ack_level(struct irq_data *irq_data)
+ 	 * at the cpu.
+ 	 */
+ 	if (!(v & (1 << (i & 0x1f)))) {
+-		atomic_inc(&irq_mis_count);
++		atomic_long_inc(&irq_mis_count);
+ 		eoi_ioapic_pin(cfg->vector, irq_data->chip_data);
+ 	}
+ 
+diff --git a/arch/x86/kernel/i8259.c b/arch/x86/kernel/i8259.c
+index 282b4ee1339f..7ef2facea165 100644
+--- a/arch/x86/kernel/i8259.c
++++ b/arch/x86/kernel/i8259.c
+@@ -211,7 +211,7 @@ static void mask_and_ack_8259A(struct irq_data *data)
+ 			       "spurious 8259A interrupt: IRQ%d.\n", irq);
+ 			spurious_irq_mask |= irqmask;
+ 		}
+-		atomic_inc(&irq_err_count);
++		atomic_long_inc(&irq_err_count);
+ 		/*
+ 		 * Theoretically we do not have to handle this IRQ,
+ 		 * but in Linux this does not cause problems and is
 diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-index 4ff04ce22eb6..9e47c2dd7ef9 100644
+index 9e47c2dd7ef9..6e7c6b4cebc1 100644
 --- a/arch/x86/kernel/irq.c
 +++ b/arch/x86/kernel/irq.c
-@@ -62,45 +62,45 @@ int arch_show_interrupts(struct seq_file *p, int prec)
+@@ -29,7 +29,7 @@
+ DEFINE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat);
+ EXPORT_PER_CPU_SYMBOL(irq_stat);
  
- 	seq_printf(p, "%*s: ", prec, "NMI");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", READ_ONCE(irq_stats(j)->__nmi_count));
-+		seq_printf(p, "%10lu ", READ_ONCE(irq_stats(j)->__nmi_count));
- 	seq_puts(p, "  Non-maskable interrupts\n");
- #ifdef CONFIG_X86_LOCAL_APIC
- 	seq_printf(p, "%*s: ", prec, "LOC");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", READ_ONCE(irq_stats(j)->apic_timer_irqs));
-+		seq_printf(p, "%10lu ", READ_ONCE(irq_stats(j)->apic_timer_irqs));
- 	seq_puts(p, "  Local timer interrupts\n");
+-atomic_t irq_err_count;
++atomic_long_t irq_err_count;
  
- 	seq_printf(p, "%*s: ", prec, "SPU");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", READ_ONCE(irq_stats(j)->irq_spurious_count));
-+		seq_printf(p, "%10lu ", READ_ONCE(irq_stats(j)->irq_spurious_count));
- 	seq_puts(p, "  Spurious interrupts\n");
- 	seq_printf(p, "%*s: ", prec, "PMI");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", READ_ONCE(irq_stats(j)->apic_perf_irqs));
-+		seq_printf(p, "%10lu ", READ_ONCE(irq_stats(j)->apic_perf_irqs));
- 	seq_puts(p, "  Performance monitoring interrupts\n");
- 	seq_printf(p, "%*s: ", prec, "IWI");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", READ_ONCE(irq_stats(j)->apic_irq_work_irqs));
-+		seq_printf(p, "%10lu ", READ_ONCE(irq_stats(j)->apic_irq_work_irqs));
- 	seq_puts(p, "  IRQ work interrupts\n");
- 	seq_printf(p, "%*s: ", prec, "RTR");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", READ_ONCE(irq_stats(j)->icr_read_retry_count));
-+		seq_printf(p, "%10lu ", READ_ONCE(irq_stats(j)->icr_read_retry_count));
- 	seq_puts(p, "  APIC ICR read retries\n");
- 	if (x86_platform_ipi_callback) {
- 		seq_printf(p, "%*s: ", prec, "PLT");
- 		for_each_online_cpu(j)
--			seq_printf(p, "%10u ", READ_ONCE(irq_stats(j)->x86_platform_ipis));
-+			seq_printf(p, "%10lu ", READ_ONCE(irq_stats(j)->x86_platform_ipis));
- 		seq_puts(p, "  Platform interrupts\n");
+ /*
+  * 'what should we do if we get a hw irq event on an illegal vector'.
+@@ -160,9 +160,9 @@ int arch_show_interrupts(struct seq_file *p, int prec)
+ 		seq_puts(p, "  Hyper-V stimer0 interrupts\n");
  	}
  #endif
- #ifdef CONFIG_SMP
- 	seq_printf(p, "%*s: ", prec, "RES");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", READ_ONCE(irq_stats(j)->irq_resched_count));
-+		seq_printf(p, "%10lu ", READ_ONCE(irq_stats(j)->irq_resched_count));
- 	seq_puts(p, "  Rescheduling interrupts\n");
- 	seq_printf(p, "%*s: ", prec, "CAL");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", READ_ONCE(irq_stats(j)->irq_call_count));
-+		seq_printf(p, "%10lu ", READ_ONCE(irq_stats(j)->irq_call_count));
- 	seq_puts(p, "  Function call interrupts\n");
- 	seq_printf(p, "%*s: ", prec, "TLB");
- 	for_each_online_cpu(j)
-@@ -110,13 +110,13 @@ int arch_show_interrupts(struct seq_file *p, int prec)
- #ifdef CONFIG_X86_THERMAL_VECTOR
- 	seq_printf(p, "%*s: ", prec, "TRM");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", READ_ONCE(irq_stats(j)->irq_thermal_count));
-+		seq_printf(p, "%10lu ", READ_ONCE(irq_stats(j)->irq_thermal_count));
- 	seq_puts(p, "  Thermal event interrupts\n");
+-	seq_printf(p, "%*s: %10u\n", prec, "ERR", atomic_read(&irq_err_count));
++	seq_printf(p, "%*s: %10lu\n", prec, "ERR", atomic_long_read(&irq_err_count));
+ #if defined(CONFIG_X86_IO_APIC)
+-	seq_printf(p, "%*s: %10u\n", prec, "MIS", atomic_read(&irq_mis_count));
++	seq_printf(p, "%*s: %10lu\n", prec, "MIS", atomic_long_read(&irq_mis_count));
  #endif
- #ifdef CONFIG_X86_MCE_THRESHOLD
- 	seq_printf(p, "%*s: ", prec, "THR");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", READ_ONCE(irq_stats(j)->irq_threshold_count));
-+		seq_printf(p, "%10lu ", READ_ONCE(irq_stats(j)->irq_threshold_count));
- 	seq_puts(p, "  Threshold APIC interrupts\n");
- #endif
- #ifdef CONFIG_X86_MCE_AMD
-@@ -128,11 +128,11 @@ int arch_show_interrupts(struct seq_file *p, int prec)
- #ifdef CONFIG_X86_MCE
- 	seq_printf(p, "%*s: ", prec, "MCE");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", READ_ONCE(per_cpu(mce_exception_count, j)));
-+		seq_printf(p, "%10lu ", READ_ONCE(per_cpu(mce_exception_count, j)));
- 	seq_puts(p, "  Machine check exceptions\n");
- 	seq_printf(p, "%*s: ", prec, "MCP");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", READ_ONCE(per_cpu(mce_poll_count, j)));
-+		seq_printf(p, "%10lu ", READ_ONCE(per_cpu(mce_poll_count, j)));
- 	seq_puts(p, "  Machine check polls\n");
- #endif
- #ifdef CONFIG_X86_HV_CALLBACK_VECTOR
+ #ifdef CONFIG_HAVE_KVM
+ 	seq_printf(p, "%*s: ", prec, "PIN");
+@@ -221,7 +221,7 @@ u64 arch_irq_stat_cpu(unsigned int cpu)
+ 
+ u64 arch_irq_stat(void)
+ {
+-	u64 sum = atomic_read(&irq_err_count);
++	u64 sum = atomic_long_read(&irq_err_count);
+ 	return sum;
+ }
+ 
 -- 
 2.25.1
+
