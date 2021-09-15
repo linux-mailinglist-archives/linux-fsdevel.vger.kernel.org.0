@@ -2,142 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDCF340C9DE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 18:15:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C80240CA15
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 18:29:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229554AbhIOQQa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 12:16:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45676 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229489AbhIOQQa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 12:16:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E69EC60FED;
-        Wed, 15 Sep 2021 16:15:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631722511;
-        bh=OR95WQryOxqyDGGQxatbwcebZkxzHzVsgPwQh9NaKDE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PwstDstV7bOHvJAm+r4Q8mBJvEfj9RsXWQ8A+/5muktg/NdHD8csLidgBn+j9LTKl
-         q2VQ7Wr7Nsf02xocvqEEk+U0UblMVI3V0/J49bcpS2Agwo0UcaRFUGoT3iSf9HXnJI
-         Fygf5xc61Baf9FKAZ5yrVBJ1lxG4M7SyoU6quZDsN7CCv+8/75Slmq624AkSRnU/4T
-         ahY8/jpClUqF0IcL8MvDRYbxsX/JsYM2MsQ4asAwoR2Z9xfoRu5/kFdOOOfxeLLhdO
-         bBIRDiYjg6xoUx4Yv1n3Ucg0ZAZLq5dzF5b61VnNaCUdtNQmQ1u/WyC2iOIYWuQttb
-         2lHRL35vjK7KQ==
-Date:   Wed, 15 Sep 2021 09:15:10 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Jane Chu <jane.chu@oracle.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Weiny, Ira" <ira.weiny@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] dax: clear poison on the fly along pwrite
-Message-ID: <20210915161510.GA34830@magnolia>
-References: <20210914233132.3680546-1-jane.chu@oracle.com>
- <CAPcyv4h3KpOKgy_Cwi5fNBZmR=n1hB33mVzA3fqOY7c3G+GrMA@mail.gmail.com>
- <516ecedc-38b9-1ae3-a784-289a30e5f6df@oracle.com>
+        id S229693AbhIOQbC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 12:31:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59696 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229465AbhIOQbB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Sep 2021 12:31:01 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A435C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 09:29:42 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id w1so3590724ilv.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 09:29:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UxuAkQ4ZtEcbC+XH0J5oJ2exv4p4EDf6m4KsjfHsOSo=;
+        b=d4BsZUAHcQWlZRxgHrvDbCkMmPZAsdoZEzZwBDP59rutjmrLeTwIz9qARf8OewK3Wp
+         UxlKzMP6tmWPE0mCM9Q4F2zGQyT2i3Ev6sXkU5QOHBREW0B5VCJ4qpMo3+Q5WqNKov0L
+         CE0ELiE7emZ/v6aKI7PcDb047fIHhoXlqb/zXSmoYs5ed0735klf8/Yc2lg2/3dLtwMn
+         yUJQ3h54j8Ii13o7kAo3eI8veZkHtNpGANTM3p/MeZWdLyXRbu35e/+4GJQUC2lCqvlp
+         bL+G8ppx7fKbrlkHl+uqCiCwBv1WXNiGD0BiT88oBrDhF1dGw65qIo4qALhcdC/J3HeS
+         lAaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UxuAkQ4ZtEcbC+XH0J5oJ2exv4p4EDf6m4KsjfHsOSo=;
+        b=6ik9Wvp6UCPKghqLdPN9OdhcGdpboWsSUCYcUWgtfISghGj1Yc5HgKuvG2VOraSr9P
+         BSSX3cpPqmtRjJg4jnDVcPyeAXC/1x2gRC2cZSsI1j58RC4kTPnQ/JUTPFxIAELTStgg
+         hdgUq3KdbSxo4sl+2ssTfaLl0D3JgK04ZPqJtSRHNnCU7kw89mEBis2RJfEyYCSaj1dy
+         NxsZOlkJxfD8bdn2cLsX11D/PS2+dJrgjMmqDaKlF0gWEUa907Rzxry+ZAq+rSCwIH3D
+         y4vp3PRPr4wxG1qL7ZWQZWSX9yh4KZBU/nI8miHcuGpRhg/aA+novH3wAq7eFl09WPW7
+         tEPg==
+X-Gm-Message-State: AOAM5313uMgxuuUqr+L7Y0TsS0CTmNKVnVrZjrxntGb/nD9xxsmGp3oI
+        6aoPA/w/1Ud7F3vOJUhQIxmZOA==
+X-Google-Smtp-Source: ABdhPJzUsCoNUfzqz1dDtv0AlqnIYxxmDSmXZINr6v8l7jYvuEsMjmwaot8J1UrnGWEzrIFvxKmPsQ==
+X-Received: by 2002:a92:7114:: with SMTP id m20mr687074ilc.114.1631723381941;
+        Wed, 15 Sep 2021 09:29:41 -0700 (PDT)
+Received: from p1.localdomain ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id t15sm227160ioi.7.2021.09.15.09.29.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Sep 2021 09:29:41 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, viro@zeniv.linux.org.uk
+Subject: [PATCHSET v3 0/3] Add ability to save/restore iov_iter state
+Date:   Wed, 15 Sep 2021 10:29:34 -0600
+Message-Id: <20210915162937.777002-1-axboe@kernel.dk>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <516ecedc-38b9-1ae3-a784-289a30e5f6df@oracle.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 15, 2021 at 12:22:05AM -0700, Jane Chu wrote:
-> Hi, Dan,
-> 
-> On 9/14/2021 9:44 PM, Dan Williams wrote:
-> > On Tue, Sep 14, 2021 at 4:32 PM Jane Chu <jane.chu@oracle.com> wrote:
-> > > 
-> > > If pwrite(2) encounters poison in a pmem range, it fails with EIO.
-> > > This is unecessary if hardware is capable of clearing the poison.
-> > > 
-> > > Though not all dax backend hardware has the capability of clearing
-> > > poison on the fly, but dax backed by Intel DCPMEM has such capability,
-> > > and it's desirable to, first, speed up repairing by means of it;
-> > > second, maintain backend continuity instead of fragmenting it in
-> > > search for clean blocks.
-> > > 
-> > > Jane Chu (3):
-> > >    dax: introduce dax_operation dax_clear_poison
-> > 
-> > The problem with new dax operations is that they need to be plumbed
-> > not only through fsdax and pmem, but also through device-mapper.
-> > 
-> > In this case I think we're already covered by dax_zero_page_range().
-> > That will ultimately trigger pmem_clear_poison() and it is routed
-> > through device-mapper properly.
-> > 
-> > Can you clarify why the existing dax_zero_page_range() is not sufficient?
-> 
-> fallocate ZERO_RANGE is in itself a functionality that applied to dax
-> should lead to zero out the media range.  So one may argue it is part
-> of a block operations, and not something explicitly aimed at clearing
-> poison.
+Hi,
 
-Yeah, Christoph suggested that we make the clearing operation explicit
-in a related thread a few weeks ago:
-https://lore.kernel.org/linux-fsdevel/YRtnlPERHfMZ23Tr@infradead.org/
+Linus didn't particularly love the iov_iter->truncated addition and how
+it was used, and it was hard to disagree with that. Instead of relying
+on tracking ->truncated, add a few pieces of state so we can safely
+handle partial or errored read/write attempts (that we want to retry).
 
-I like Jane's patchset far better than the one that I sent, because it
-doesn't require a block device wrapper for the pmem, and it enables us
-to tell application writers that they can handle media errors by
-pwrite()ing the bad region, just like they do for nvme and spinners.
+Then we can get rid of the iov_iter addition, and at the same time
+handle cases that weren't handled correctly before.
 
-> I'm also thinking about the MOVEDIR64B instruction and how it
-> might be used to clear poison on the fly with a single 'store'.
-> Of course, that means we need to figure out how to narrow down the
-> error blast radius first.
+I've run this through vectored read/write with io_uring on the commonly
+problematic cases (dm and low depth SCSI device) which trigger these
+conditions often, and it seems to pass muster. I've also hacked in
+faked randomly short reads and that helped find on issue with double
+accounting. But it did validate the state handling otherwise.
 
-That was one of the advantages of Shiyang Ruan's NAKed patchset to
-enable byte-granularity media errors to pass upwards through the stack
-back to the filesystem, which could then tell applications exactly what
-they lost.
+For a discussion on this topic, see the thread here:
 
-I want to get back to that, though if Dan won't withdraw the NAK then I
-don't know how to move forward...
+https://lore.kernel.org/linux-fsdevel/CAHk-=wiacKV4Gh-MYjteU0LwNBSGpWrK-Ov25HdqB1ewinrFPg@mail.gmail.com/
 
-> With respect to plumbing through device-mapper, I thought about that,
-> and wasn't sure. I mean the clear-poison work will eventually fall on
-> the pmem driver, and thru the DM layers, how does that play out thru
-> DM?
+You can find these patches here:
 
-Each of the dm drivers has to add their own ->clear_poison operation
-that remaps the incoming (sector, len) parameters as appropriate for
-that device and then calls the lower device's ->clear_poison with the
-translated parameters.
+https://git.kernel.dk/cgit/linux-block/log/?h=iov_iter.3
 
-This (AFAICT) has already been done for dax_zero_page_range, so I sense
-that Dan is trying to save you a bunch of code plumbing work by nudging
-you towards doing s/dax_clear_poison/dax_zero_page_range/ to this series
-and then you only need patches 2-3.
+Changes since v2:
+- Add comments on io_read() on the flow
+- Fix issue with rw->bytes_done being incremented too early and hence
+  double accounting if we enter that bottom do {} while loop in io_read()
+- Restore iter at the bottom of do {} while loop in io_read()
 
-> BTW, our customer doesn't care about creating dax volume thru DM, so.
+Changes since v1:
+- Drop 'did_bytes' from iov_iter_restore(). Only two cases in io_uring
+  used it, and one of them had to be changed with v2. Better to just
+  make the subsequent iov_iter_advance() explicit at that point.
+- Cleanup and sanitize the io_uring side, and ensure it's sane around
+  worker retries. No more digging into iov_iter_state from io_uring, we
+  use it just for save/restore purposes.
 
-They might not care, but anything going upstream should work in the
-general case.
+-- 
+Jens Axboe
 
---D
 
-> thanks!
-> -jane
-> 
-> 
-> > 
-> > >    dax: introduce dax_clear_poison to dax pwrite operation
-> > >    libnvdimm/pmem: Provide pmem_dax_clear_poison for dax operation
-> > > 
-> > >   drivers/dax/super.c   | 13 +++++++++++++
-> > >   drivers/nvdimm/pmem.c | 17 +++++++++++++++++
-> > >   fs/dax.c              |  9 +++++++++
-> > >   include/linux/dax.h   |  6 ++++++
-> > >   4 files changed, 45 insertions(+)
-> > > 
-> > > --
-> > > 2.18.4
-> > > 
