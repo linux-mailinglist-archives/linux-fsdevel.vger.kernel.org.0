@@ -2,167 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 674B740CA33
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 18:33:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD5C540CAEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 18:46:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229554AbhIOQez (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 12:34:55 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:48542 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbhIOQey (ORCPT
+        id S229886AbhIOQrk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 12:47:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35630 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229515AbhIOQrg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 12:34:54 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id E985E221AF;
-        Wed, 15 Sep 2021 16:33:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1631723614; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=9CAesP9l05/qiFjD3jOUqKHzQbHjYyhw5mmZ/xisxyo=;
-        b=wxG0JaJ4HyJe01JVeJpRj5HubgVLTEYvMZNIg41cKSiP+8xM/CoEekmD484WPrLElyALM/
-        wsDghf1Va8Q45xMou/VJG+VUkRSl2HtYehmmFq05m58NYDbw16oyIBS7shZ0GK1wobEFek
-        OQkfZQsgH3gi0npptOwp69VZASQq1b4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1631723614;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=9CAesP9l05/qiFjD3jOUqKHzQbHjYyhw5mmZ/xisxyo=;
-        b=J01JZoYriYTWzdkscQrD9lUzVduqjzxlc815Ool3U63p6XnOFLt6Q1A1w9RFbodF6iI/iA
-        4ksPZlh7pEfkRKBw==
-Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id DDF53A3B91;
-        Wed, 15 Sep 2021 16:33:34 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B8E981E0BEA; Wed, 15 Sep 2021 18:33:34 +0200 (CEST)
-Date:   Wed, 15 Sep 2021 18:33:34 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 5/7] fanotify: limit number of event merge attempts
-Message-ID: <20210915163334.GD6166@quack2.suse.cz>
-References: <20210202162010.305971-1-amir73il@gmail.com>
- <20210202162010.305971-6-amir73il@gmail.com>
- <CAOQ4uxiqnD7Qr=__apodWYfQYQ_JOvVnaZsi4jjGQmJ9S5hMyA@mail.gmail.com>
- <20210301130818.GE25026@quack2.suse.cz>
- <CAOQ4uxi7MRV-6PxyVovaR83sLWX8mZpiOM9OjdUqOHvZM9h2Wg@mail.gmail.com>
+        Wed, 15 Sep 2021 12:47:36 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE6D3C061574;
+        Wed, 15 Sep 2021 09:46:17 -0700 (PDT)
+Received: from zn.tnic (p200300ec2f0d07008534a6109a52ea91.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:700:8534:a610:9a52:ea91])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 04D0A1EC051F;
+        Wed, 15 Sep 2021 18:46:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1631724372;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=ohcK2lrqZI/0Un5cQQISQvRNuEO3HIFBods4v3gznU8=;
+        b=OinwDiMHyIs6ppSqYums+HJ/wABxvhGKKUPvdDics4JXpIwsFCihfmg/tYjRwayQUS5zAl
+        /A8dCEMw7DwHpgzspvS586x6N5hMBRCXCrXZr4wBrq7mNNSRVp8ss+I1qG84M8RgMvHJvz
+        7a85Vcl/oUKHuIwbTjsfd22UCB+v5Mg=
+Date:   Wed, 15 Sep 2021 18:46:03 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Tom Lendacky <thomas.lendacky@amd.com>,
+        Sathyanarayanan Kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-graphics-maintainer@vmware.com,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dave Young <dyoung@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v3 0/8] Implement generic cc_platform_has() helper
+ function
+Message-ID: <YUIjS6lKEY5AadZx@zn.tnic>
+References: <cover.1631141919.git.thomas.lendacky@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxi7MRV-6PxyVovaR83sLWX8mZpiOM9OjdUqOHvZM9h2Wg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <cover.1631141919.git.thomas.lendacky@amd.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 15-09-21 15:39:13, Amir Goldstein wrote:
-> On Mon, Mar 1, 2021 at 3:08 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Sat 27-02-21 10:31:52, Amir Goldstein wrote:
-> > > On Tue, Feb 2, 2021 at 6:20 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > >
-> > > > Event merges are expensive when event queue size is large.
-> > > > Limit the linear search to 128 merge tests.
-> > > > In combination with 128 hash lists, there is a potential to
-> > > > merge with up to 16K events in the hashed queue.
-> > > >
-> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > ---
-> > > >  fs/notify/fanotify/fanotify.c | 6 ++++++
-> > > >  1 file changed, 6 insertions(+)
-> > > >
-> > > > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> > > > index 12df6957e4d8..6d3807012851 100644
-> > > > --- a/fs/notify/fanotify/fanotify.c
-> > > > +++ b/fs/notify/fanotify/fanotify.c
-> > > > @@ -129,11 +129,15 @@ static bool fanotify_should_merge(struct fsnotify_event *old_fsn,
-> > > >         return false;
-> > > >  }
-> > > >
-> > > > +/* Limit event merges to limit CPU overhead per event */
-> > > > +#define FANOTIFY_MAX_MERGE_EVENTS 128
-> > > > +
-> > > >  /* and the list better be locked by something too! */
-> > > >  static int fanotify_merge(struct list_head *list, struct fsnotify_event *event)
-> > > >  {
-> > > >         struct fsnotify_event *test_event;
-> > > >         struct fanotify_event *new;
-> > > > +       int i = 0;
-> > > >
-> > > >         pr_debug("%s: list=%p event=%p\n", __func__, list, event);
-> > > >         new = FANOTIFY_E(event);
-> > > > @@ -147,6 +151,8 @@ static int fanotify_merge(struct list_head *list, struct fsnotify_event *event)
-> > > >                 return 0;
-> > > >
-> > > >         list_for_each_entry_reverse(test_event, list, list) {
-> > > > +               if (++i > FANOTIFY_MAX_MERGE_EVENTS)
-> > > > +                       break;
-> > > >                 if (fanotify_should_merge(test_event, event)) {
-> > > >                         FANOTIFY_E(test_event)->mask |= new->mask;
-> > > >                         return 1;
-> > > > --
-> > > > 2.25.1
-> > > >
-> > >
-> > > Jan,
-> > >
-> > > I was thinking that this patch or a variant thereof should be applied to stable
-> > > kernels, but not the entire series.
-> > >
-> > > OTOH, I am concerned about regressing existing workloads that depend on
-> > > merging events on more than 128 inodes.
-> >
-> > Honestly, I don't think pushing anything to stable for this is really worth
-> > it.
-> >
-> > 1) fanotify() is limited to CAP_SYS_ADMIN (in init namespace) so this is
-> > hardly a security issue.
-> >
-> > 2) We have cond_resched() in the merge code now so the kernel doesn't
-> > lockup anymore. So this is only about fanotify becoming slow if you have
-> > lots of events.
-> >
-> > 3) I haven't heard any complaints since we've added the cond_resched()
-> > patch so the performance issue seems to be really rare.
-> >
-> > If I get complaits from real users about this, we can easily reconsider, it
-> > is not a big deal. But I just don't think preemptive action is warranted...
-> >
+On Wed, Sep 08, 2021 at 05:58:31PM -0500, Tom Lendacky wrote:
+> This patch series provides a generic helper function, cc_platform_has(),
+> to replace the sme_active(), sev_active(), sev_es_active() and
+> mem_encrypt_active() functions.
 > 
-> Hi Jan,
+> It is expected that as new confidential computing technologies are
+> added to the kernel, they can all be covered by a single function call
+> instead of a collection of specific function calls all called from the
+> same locations.
 > 
-> I know you have some catching up to do, but applying this patch to stable
-> has become a priority for me.
-> It was a mistake on my part not to push harder 6 months ago, so I am trying
-> to rectify this mistake now as soon as possible.
-> 
-> To answer your arguments against preemptive action:
-> 1) My application has CAP_SYS_ADMIN, it is not malicious, but it cannot
->     do its job without taking up more CPU that it needs to, because bursts of
->     events will cause the event queue to grow to thousands of events and
->     fanotify_merge() will become a high CPU consumer
-> 2) It's not only about fanotify becoming slow, it's about fanotify making the
->      entire system slow and as a result it takes a long time for the system
->      to recover from this condition
-> 3) You haven't heard any complains because nobody was using sb mark
->     We have been using sb mark in production for a few years and carry
->     this patch in our kernel, so I can say for certain that sb mark on a fs with
->     heavy workload is disturbing the entire system without this patch.
-> 
-> I don't think that "regressing" the number of merged event is a big issue,
-> as we never guaranteed any specific merge behavior and the behavior
-> was hard enough to predict, so I don't think applications could have
-> relied on it.
-> 
-> So, are you ok with me sending this patch to stable as is?
+> The powerpc and s390 patches have been compile tested only. Can the
+> folks copied on this series verify that nothing breaks for them. Also,
+> a new file, arch/powerpc/platforms/pseries/cc_platform.c, has been
+> created for powerpc to hold the out of line function.
 
-Sure, go ahead. I was not strongly against pushing this to stable, I just
-didn't see good reason to do that but your arguments make sense - you count
-as a user report I was waiting for ;).
+...
 
-								Honza
+> 
+> Tom Lendacky (8):
+>   x86/ioremap: Selectively build arch override encryption functions
+>   mm: Introduce a function to check for confidential computing features
+>   x86/sev: Add an x86 version of cc_platform_has()
+>   powerpc/pseries/svm: Add a powerpc version of cc_platform_has()
+>   x86/sme: Replace occurrences of sme_active() with cc_platform_has()
+>   x86/sev: Replace occurrences of sev_active() with cc_platform_has()
+>   x86/sev: Replace occurrences of sev_es_active() with cc_platform_has()
+>   treewide: Replace the use of mem_encrypt_active() with
+>     cc_platform_has()
+
+Ok, modulo the minor things the plan is to take this through tip after
+-rc2 releases in order to pick up the powerpc build fix and have a clean
+base (-rc2) to base stuff on, at the same time.
+
+Pls holler if something's still amiss.
+
+Sathya,
+
+if you want to prepare the Intel variant intel_cc_platform_has() ontop
+of those and send it to me, that would be good because then I can
+integrate it all in one branch which can be used to base future work
+ontop.
+
+Thx.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
