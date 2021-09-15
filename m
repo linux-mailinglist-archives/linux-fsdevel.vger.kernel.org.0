@@ -2,123 +2,462 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6126140CF81
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 00:39:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84B5A40CFB9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 00:43:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232715AbhIOWk1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 18:40:27 -0400
-Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:37072 "EHLO
-        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229538AbhIOWk0 (ORCPT
+        id S232787AbhIOWo1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 18:44:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60362 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233000AbhIOWny (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 18:40:26 -0400
-Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
-        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 4357499FB;
-        Thu, 16 Sep 2021 08:39:00 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1mQdYQ-00CvLU-9f; Thu, 16 Sep 2021 08:38:58 +1000
-Date:   Thu, 16 Sep 2021 08:38:58 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     NeilBrown <neilb@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] EXT4: Remove ENOMEM/congestion_wait() loops.
-Message-ID: <20210915223858.GM2361455@dread.disaster.area>
-References: <163157808321.13293.486682642188075090.stgit@noble.brown>
- <163157838437.13293.14244628630141187199.stgit@noble.brown>
- <20210914163432.GR3828@suse.com>
- <20210914235535.GL2361455@dread.disaster.area>
- <20210915085904.GU3828@suse.com>
- <20210915143510.GE3959@techsingularity.net>
+        Wed, 15 Sep 2021 18:43:54 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 181C0C061766
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 15:42:35 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id n24so5537426ion.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 15:42:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KEeGSA5MIkI1QwSWs+jO+mWKPSenOcunGF6JAGxHPQo=;
+        b=VY0+ZTyRHjUjkMTUIO/eCc3CNuETDPL+wAIHGXscNnJmJRFhFcJENb/GhVnu5fP8j2
+         jFkq20ceaG6jvbyXm+wEIiSSB0znrgs7bQK9Qxs3igGNlmBvIg3CZct5w678bvoQfsDa
+         O1XkLmUvpzwB9iZHQbaBur3j03lIPUheni5iBcv6RePCxPrme9ToKDdNtS2p+UmVgDfb
+         1RUvpRr/BL+B29YmiohQ11GDtMiHhdTAg8UosrbpHs9ll3ea9eQFbS1WOFMsh79yN3p6
+         sFqcvgYS1IbWK8r0TEtr0xwdFXYb/m9CrMtCdXc21t7ycDin8RMAAd2SSthEy8sK3RPH
+         cNgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KEeGSA5MIkI1QwSWs+jO+mWKPSenOcunGF6JAGxHPQo=;
+        b=1qCfwtpKKMtKhfig/6NfUHrz+cdlJ+c4STylwC6i71KC3SKKQ9pPBMa3CYtMlT7Yt+
+         rd5W1bo1CCOj4oDYRW72JJySpFoLaL1o2g5CwgLk3VtPdREh0fcHDWxA4L1RxpLITdTX
+         IDTPpFPA2WwoX2TnLGUB+HEXR9Wm7tR8hAU+8xn+YiwCuznZ+COHIZLizjSic6V0MYfJ
+         MSFOHN6AE6od0rcnIzEOIsgCAZQpaxmTdos3oeU1WrgOwqwpub+IGhr8jHGLVyvBlp6/
+         0v7WJpwg2xNfGjYqCR/YsKQRKbMODBWDfyTgjGensA/iEXhnaiNOF4LhG1A7hseqGkBj
+         OJ7A==
+X-Gm-Message-State: AOAM533gnFw/lqO3I1ER5HKLZNJTLCtqu9VlgT3vngfZ048b8MA2UrEx
+        HrTiFcRhkJ58JlohCvOI/RGONVK1Qk7wrw==
+X-Google-Smtp-Source: ABdhPJwZeCbX1LRei6RrwXz2sfgKHhNe4SBTJ9unq6FaRhJ90crOnZuJOzChFYb4Q9496muL7mBmlA==
+X-Received: by 2002:a02:90d0:: with SMTP id c16mr1987075jag.106.1631745754175;
+        Wed, 15 Sep 2021 15:42:34 -0700 (PDT)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id f5sm715796ils.3.2021.09.15.15.42.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Sep 2021 15:42:33 -0700 (PDT)
+Subject: Re: [PATCHSET v3 0/3] Add ability to save/restore iov_iter state
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <20210915162937.777002-1-axboe@kernel.dk>
+ <CAHk-=wgtROzcks4cozeEYG33UU1Q3T4RM-k3kv-GqrdLKFMoLw@mail.gmail.com>
+ <8c7c8aa0-9591-a50f-35ee-de0037df858a@kernel.dk>
+ <CAHk-=wj3dsQMK4y-EeMD1Zyod7=Sv68UqrND-GYgHXx6wNRawA@mail.gmail.com>
+ <6688d40c-b359-364b-cdff-1e0714eb6945@kernel.dk>
+Message-ID: <f6349daf-2180-241d-54aa-adbfd955c5fa@kernel.dk>
+Date:   Wed, 15 Sep 2021 16:42:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210915143510.GE3959@techsingularity.net>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
-        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
-        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=7-415B0cAAAA:8
-        a=rs-OYbL5b6b9dbSePnwA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <6688d40c-b359-364b-cdff-1e0714eb6945@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 15, 2021 at 03:35:10PM +0100, Mel Gorman wrote:
-> On Wed, Sep 15, 2021 at 09:59:04AM +0100, Mel Gorman wrote:
-> > > Yup, that's what we need, but I don't see why it needs to be exposed
-> > > outside the allocation code at all.
-> > > 
-> > 
-> > Probably not. At least some of it could be contained within reclaim
-> > itself to block when reclaim is not making progress as opposed to anything
-> > congestion related. That might still livelock if no progress can be made
-> > but that's not new, the OOM hammer should eventually kick in.
-> > 
+On 9/15/21 1:40 PM, Jens Axboe wrote:
+> On 9/15/21 1:26 PM, Linus Torvalds wrote:
+>> On Wed, Sep 15, 2021 at 11:46 AM Jens Axboe <axboe@kernel.dk> wrote:
+>>>
+>>>    The usual tests
+>>> do end up hitting the -EAGAIN path quite easily for certain device
+>>> types, but not the short read/write.
+>>
+>> No way to do something like "read in file to make sure it's cached,
+>> then invalidate caches from position X with POSIX_FADV_DONTNEED, then
+>> do a read that crosses that cached/uncached boundary"?
+>>
+>> To at least verify that "partly synchronous, but partly punted to
+>> async" case?
+>>
+>> Or were you talking about some other situation?
 > 
-> There are two sides to the reclaim-related throttling
+> No that covers some of it, and that happens naturally with buffered IO.
+> The typical case is -EAGAIN on the first try, then you get a partial
+> or all of it the next loop, and then done or continue. I tend to run
+> fio verification workloads for that, as you get all the flexibility
+> of fio with the data verification. And there are tests in there that run
+> DONTNEED in parallel with buffered IO, exactly to catch some of these
+> csaes. But they don't verify the data, generally.
 > 
-> 1. throttling because zero progress is being made
-> 2. throttling because there are too many dirty pages or pages under
->    writeback cycling through the LRU too quickly.
+> In that sense buffered is a lot easier than O_DIRECT, as it's easier to
+> provoke these cases. And that does hit all the save/restore parts and
+> looping, and if you do it with registered buffers then you get to work
+> with bvec iter as well. O_DIRECT may get you -EAGAIN for low queue depth
+> devices, but it'll never do a short read/write after that. 
 > 
-> The dirty page aspects (and the removal of wait_iff_congested which is
-> almost completely broken) could be done with something like the following
-> (completly untested). The downside is that end_page_writeback() takes an
-> atomic penalty if reclaim is throttled but at that point the system is
-> struggling anyway so I doubt it matters.
+> But that's not in the regressions tests. I'll write a test case
+> that can go with the liburing regressions for it.
 
-The atomics are pretty nasty, as is directly accessing the pgdat on
-every call to end_page_writeback(). Those will be performance
-limiting factors. Indeed, we don't use atomics for dirty page
-throttling, which does dirty page accounting via
-percpu counters on the BDI and doesn't require wakeups.
+OK I wrote one, quick'n dirty. It's written as a liburing test, which
+means it can take no arguments (in which case it creates a 128MB file),
+or it can take an argument and it'll use that argument as the file. We
+fill the first 128MB of the file with known data, basically the offset
+of the file. Then we read it back in any of the following ways:
 
-Also, we've already got per-node and per-zone counters there for
-dirty/write pending stats, so do we actually need new counters and
-wakeups here?
+1) Using non-vectored read
+2) Using vectored read, segments that fit in UIO_FASTIOV
+3) Using vectored read, segments larger than UIO_FASTIOV
 
-i.e. balance_dirty_pages() does not have an explicit wakeup - it
-bases it's sleep time on the (memcg aware) measured writeback rate
-on the BDI the page belongs to and the amount of outstanding dirty
-data on that BDI. i.e. it estimates fairly accurately what the wait
-time for this task should be given the dirty page demand and current
-writeback progress being made is and just sleeps for that length of
-time.
+This catches all the different cases for a read.
 
-Ideally, that's what should be happening here - we should be able to
-calculate a page cleaning rate estimation and then base the sleep
-time on that. No wakeups needed - when we've waited for the
-estimated time, we try to reclaim again...
+We do that with both buffered and O_DIRECT, and before each pass, we
+randomly DONTNEED either the first, middle, or end part of each segment
+in the read size.
 
-In fact, why can't this "too many dirty pages" case just use the
-balance_dirty_pages() infrastructure to do the "wait for writeback"
-reclaim backoff? Why do we even need to re-invent the wheel here?
+I ran this on my laptop, and I found this:
+axboe@p1 ~/gi/liburing (master)> test/file-verify                                0.100s
+bad read 229376, read 3
+Buffered novec test failed
+axboe@p1 ~/gi/liburing (master)> test/file-verify                                0.213s
+bad read 294912, read 0
+Buffered novec test failed
 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index dae481293b5d..b9be9afa4308 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1606,6 +1606,8 @@ void end_page_writeback(struct page *page)
->  	smp_mb__after_atomic();
->  	wake_up_page(page, PG_writeback);
->  	put_page(page);
-> +
-> +	acct_reclaim_writeback(page);
+which is because I'm running the iov_iter.2 stuff, and we're hitting
+that double accounting issue that I mentioned in the cover letter for
+this series. That's why the read return is larger than we ask for
+(128K). Running it on the current branch passes:
 
-UAF - that would need to be before the put_page() call...
+[root@archlinux liburing]# for i in $(seq 10); do test/file-verify; done
+[root@archlinux liburing]# 
 
-Cheers,
+(this is in my test vm that I run on the laptop for kernel testing,
+hence the root and different hostname).
 
-Dave.
+I will add this as a liburing regression test case. Probably needs a bit
+of cleaning up first, it was just a quick prototype as I thought your
+suggestion was a good one. Will probably change it to run at a higher
+queue depth than just the 1 it does now.
+
+
+/* SPDX-License-Identifier: MIT */
+/*
+ * Description: run various read verify tests
+ *
+ */
+#include <errno.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+#include <assert.h>
+
+#include "helpers.h"
+#include "liburing.h"
+
+#define FSIZE		128*1024*1024
+#define CHUNK_SIZE	131072
+#define PUNCH_SIZE	32768
+
+static int verify_buf(void *buf, size_t size, off_t off)
+{
+	int i, u_in_buf = size / sizeof(unsigned int);
+	unsigned int *ptr;
+
+	off /= sizeof(unsigned int);
+	ptr = buf;
+	for (i = 0; i < u_in_buf; i++) {
+		if (off != *ptr) {
+			fprintf(stderr, "Found %u, wanted %lu\n", *ptr, off);
+			return 1;
+		}
+		ptr++;
+		off++;
+	}
+
+	return 0;
+}
+
+enum {
+	PUNCH_NONE,
+	PUNCH_FRONT,
+	PUNCH_MIDDLE,
+	PUNCH_END,
+};
+
+/*
+ * For each chunk in file, DONTNEED a start, end, or middle segment of it.
+ * We enter here with the file fully cached every time, either freshly
+ * written or after other reads.
+ */
+static int do_punch(int fd)
+{
+	off_t offset = 0;
+	int punch_type;
+
+	while (offset + CHUNK_SIZE <= FSIZE) {
+		off_t punch_off;
+
+		punch_type = rand() % (PUNCH_END + 1);
+		switch (punch_type) {
+		default:
+		case PUNCH_NONE:
+			punch_off = -1; /* gcc... */
+			break;
+		case PUNCH_FRONT:
+			punch_off = offset;
+			break;
+		case PUNCH_MIDDLE:
+			punch_off = offset + PUNCH_SIZE;
+			break;
+		case PUNCH_END:
+			punch_off = offset + CHUNK_SIZE - PUNCH_SIZE;
+			break;
+		}
+
+		offset += CHUNK_SIZE;
+		if (punch_type == PUNCH_NONE)
+			continue;
+		if (posix_fadvise(fd, punch_off, PUNCH_SIZE, POSIX_FADV_DONTNEED) < 0) {
+			perror("posix_fadivse");
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+static int test(struct io_uring *ring, const char *fname, int buffered,
+		int vectored, int small_vecs)
+{
+	struct io_uring_cqe *cqe;
+	struct io_uring_sqe *sqe;
+	struct iovec *vecs;
+	int ret, fd, flags;
+	void *buf;
+	size_t left;
+	off_t off, voff;
+	int i, nr_vecs;
+
+	flags = O_RDONLY;
+	if (!buffered)
+		flags |= O_DIRECT;
+	fd = open(fname, flags);
+	if (fd < 0) {
+		perror("open");
+		return 1;
+	}
+
+	if (do_punch(fd))
+		return 1;
+
+	if (vectored) {
+		int vec_size;
+
+		if (small_vecs)
+			nr_vecs = 8;
+		else
+			nr_vecs = 16;
+		vecs = t_malloc(nr_vecs * sizeof(struct iovec));
+		vec_size = CHUNK_SIZE / nr_vecs;
+		for (i = 0; i < nr_vecs; i++) {
+			t_posix_memalign(&buf, 4096, vec_size);
+			vecs[i].iov_base = buf;
+			vecs[i].iov_len = vec_size;
+		}
+	} else {
+		t_posix_memalign(&buf, 4096, CHUNK_SIZE);
+		nr_vecs = 0;
+		vecs = NULL;
+	}
+
+	i = 0;
+	left = FSIZE;
+	off = 0;
+	while (left) {
+		size_t this = left;
+
+		if (this > CHUNK_SIZE)
+			this = CHUNK_SIZE;
+
+		sqe = io_uring_get_sqe(ring);
+		if (!sqe) {
+			fprintf(stderr, "get sqe failed\n");
+			goto err;
+		}
+
+		if (vectored)
+			io_uring_prep_readv(sqe, fd, vecs, nr_vecs, off);
+		else
+			io_uring_prep_read(sqe, fd, buf, this, off);
+		sqe->user_data = off;
+		off += this;
+
+		ret = io_uring_submit(ring);
+		if (ret <= 0) {
+			fprintf(stderr, "sqe submit failed: %d\n", ret);
+			goto err;
+		}
+
+		ret = io_uring_wait_cqe(ring, &cqe);
+		if (ret < 0) {
+			fprintf(stderr, "wait completion %d\n", ret);
+			goto err;
+		}
+		if (cqe->res != this) {
+			fprintf(stderr, "bad read %d, read %d\n", cqe->res, i);
+			goto err;
+		}
+		if (vectored) {
+			voff = cqe->user_data;
+			for (i = 0; i < nr_vecs; i++) {
+				if (verify_buf(vecs[i].iov_base, vecs[i].iov_len,
+						voff)) {
+					fprintf(stderr, "failed at off %lu\n", (unsigned long) voff);
+					goto err;
+				}
+				voff += vecs[i].iov_len;
+			}
+		} else {
+			if (verify_buf(buf, CHUNK_SIZE, cqe->user_data)) {
+				fprintf(stderr, "failed at off %lu\n", (unsigned long) cqe->user_data);
+				goto err;
+			}
+		}
+		io_uring_cqe_seen(ring, cqe);
+		i++;
+		left -= CHUNK_SIZE;
+	}
+
+	ret = 0;
+done:
+	if (vectored) {
+		for (i = 0; i < nr_vecs; i++)
+			free(vecs[i].iov_base);
+	} else {
+		free(buf);
+	}
+	close(fd);
+	return ret;
+err:
+	ret = 1;
+	goto done;
+}
+
+static int fill_pattern(const char *fname)
+{
+	size_t left = FSIZE;
+	unsigned int val, *ptr;
+	void *buf;
+	int fd, i;
+
+	fd = open(fname, O_WRONLY);
+	if (fd < 0) {
+		perror("open");
+		return 1;
+	}
+
+	val = 0;
+	buf = t_malloc(4096);
+	while (left) {
+		int u_in_buf = 4096 / sizeof(val);
+		size_t this = left;
+
+		if (this > 4096)
+			this = 4096;
+		ptr = buf;
+		for (i = 0; i < u_in_buf; i++) {
+			*ptr = val;
+			val++;
+			ptr++;
+		}
+		if (write(fd, buf, 4096) != 4096)
+			return 1;
+		left -= 4096;
+	}
+
+	fsync(fd);
+	close(fd);
+	free(buf);
+	return 0;
+}
+
+int main(int argc, char *argv[])
+{
+	struct io_uring ring;
+	const char *fname;
+	char buf[32];
+	int ret;
+
+	srand(getpid());
+
+	if (argc > 1) {
+		fname = argv[1];
+	} else {
+		sprintf(buf, ".%d", getpid());
+		fname = buf;
+		t_create_file(fname, FSIZE);
+	}
+
+	ret = io_uring_queue_init(64, &ring, 0);
+	if (ret) {
+		fprintf(stderr, "ring setup failed: %d\n", ret);
+		goto err;
+	}
+
+	if (fill_pattern(fname))
+		goto err;
+
+	ret = test(&ring, fname, 1, 0, 0);
+	if (ret) {
+		fprintf(stderr, "Buffered novec test failed\n");
+		goto err;
+	}
+	ret = test(&ring, fname, 1, 1, 0);
+	if (ret) {
+		fprintf(stderr, "Buffered vec test failed\n");
+		goto err;
+	}
+	ret = test(&ring, fname, 1, 1, 1);
+	if (ret) {
+		fprintf(stderr, "Buffered small vec test failed\n");
+		goto err;
+	}
+
+	ret = test(&ring, fname, 0, 0, 0);
+	if (ret) {
+		fprintf(stderr, "O_DIRECt novec test failed\n");
+		goto err;
+	}
+	ret = test(&ring, fname, 0, 1, 0);
+	if (ret) {
+		fprintf(stderr, "O_DIRECt vec test failed\n");
+		goto err;
+	}
+	ret = test(&ring, fname, 0, 1, 1);
+	if (ret) {
+		fprintf(stderr, "O_DIRECt small vec test failed\n");
+		goto err;
+	}
+
+	if (buf == fname)
+		unlink(fname);
+	return 0;
+err:
+	if (buf == fname)
+		unlink(fname);
+	return 1;
+}
+
 -- 
-Dave Chinner
-david@fromorbit.com
+Jens Axboe
+
