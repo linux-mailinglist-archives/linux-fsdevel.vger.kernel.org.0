@@ -2,124 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2555940C4AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 13:56:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAF1740C4ED
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 14:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237573AbhIOL57 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 07:57:59 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:45714 "EHLO
+        id S237623AbhIOMIL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 08:08:11 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:47040 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232824AbhIOL56 (ORCPT
+        with ESMTP id S232882AbhIOMIK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 07:57:58 -0400
+        Wed, 15 Sep 2021 08:08:10 -0400
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id C25912219B;
-        Wed, 15 Sep 2021 11:56:38 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTP id 828A72222D;
+        Wed, 15 Sep 2021 12:06:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1631706998; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1631707610; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=ljaWHC1T8Skn0Rf1cGPURwlxvxHk7GU37PQK7AHo5Ak=;
-        b=iVg5vqyA8HnewlU0YSSvcXOSiOTRI257ABgLY0+39SFVopH5uL8Kus61aAmyvhnfAnO2f9
-        kDJyyAOBJhNHYpLeyvousEo9JTKZFJp6PQtHk8yDj7Ni4c9lHSz7iL2lqJSm6eQ5shG8Y0
-        whOq9QkH7iAj1o7t9a7tF+X1Fz+UlGU=
+        bh=fDnJwjOe8KY66rlsqENGN+zFJLxyrN2ZFgm6GsdfZzA=;
+        b=Dwkv4upqvT7mHsbyi5uLFUTgJbi154ACEvZLwjLSRW02FkkhAkT7U7o6i7Bv4eXyp43r3C
+        aYuKnEevTaETf9LLr8C1roCbWfwg1Uq4MWQVGzHbeNMCYTyXTsfqC5FRS375fUjuQmDhQv
+        Js/pS3+2I+z38LX5uIv0HsR+F5KBGzc=
 Received: from suse.cz (unknown [10.100.201.86])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 85764A3B8F;
-        Wed, 15 Sep 2021 11:56:38 +0000 (UTC)
-Date:   Wed, 15 Sep 2021 13:56:38 +0200
+        by relay2.suse.de (Postfix) with ESMTPS id 4F79BA3B8F;
+        Wed, 15 Sep 2021 12:06:50 +0000 (UTC)
+Date:   Wed, 15 Sep 2021 14:06:49 +0200
 From:   Michal Hocko <mhocko@suse.com>
 To:     NeilBrown <neilb@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
+Cc:     Mel Gorman <mgorman@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Theodore Ts'o <tytso@mit.edu>,
         Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <djwong@kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
         Matthew Wilcox <willy@infradead.org>,
-        Mel Gorman <mgorman@suse.com>, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] MM: annotate congestion_wait() and
- wait_iff_congested() as ineffective.
-Message-ID: <YUHfdtth69qKvk8r@dhcp22.suse.cz>
+        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] EXT4: Remove ENOMEM/congestion_wait() loops.
+Message-ID: <YUHh2ddnJEDGI8YG@dhcp22.suse.cz>
 References: <163157808321.13293.486682642188075090.stgit@noble.brown>
- <163157838437.13293.15392955714346973750.stgit@noble.brown>
+ <163157838437.13293.14244628630141187199.stgit@noble.brown>
+ <20210914163432.GR3828@suse.com>
+ <163165609100.3992.1570739756456048657@noble.neil.brown.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <163157838437.13293.15392955714346973750.stgit@noble.brown>
+In-Reply-To: <163165609100.3992.1570739756456048657@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 14-09-21 10:13:04, Neil Brown wrote:
-> Only 4 subsystems call set_bdi_congested() or clear_bdi_congested():
->  block/pktcdvd, fs/ceph fs/fuse fs/nfs
+On Wed 15-09-21 07:48:11, Neil Brown wrote:
+> On Wed, 15 Sep 2021, Mel Gorman wrote:
+> > On Tue, Sep 14, 2021 at 10:13:04AM +1000, NeilBrown wrote:
+> > > Indefinite loops waiting for memory allocation are discouraged by
+> > > documentation in gfp.h which says the use of __GFP_NOFAIL that it
+> > > 
+> > >  is definitely preferable to use the flag rather than opencode endless
+> > >  loop around allocator.
+> > > 
+> > > Such loops that use congestion_wait() are particularly unwise as
+> > > congestion_wait() is indistinguishable from
+> > > schedule_timeout_uninterruptible() in practice - and should be
+> > > deprecated.
+> > > 
+> > > So this patch changes the two loops in ext4_ext_truncate() to use
+> > > __GFP_NOFAIL instead of looping.
+> > > 
+> > > As the allocation is multiple layers deeper in the call stack, this
+> > > requires passing the EXT4_EX_NOFAIL flag down and handling it in various
+> > > places.
+> > > 
+> > > Of particular interest is the ext4_journal_start family of calls which
+> > > can now have EXT4_EX_NOFAIL 'or'ed in to the 'type'.  This could be seen
+> > > as a blurring of types.  However 'type' is 8 bits, and EXT4_EX_NOFAIL is
+> > > a high bit, so it is safe in practice.
+> > > 
+> > > jbd2__journal_start() is enhanced so that the gfp_t flags passed are
+> > > used for *all* allocations.
+> > > 
+> > > Signed-off-by: NeilBrown <neilb@suse.de>
+> > 
+> > I'm not a fan. GFP_NOFAIL allows access to emergency reserves increasing
+> > the risk of a livelock if memory is completely depleted where as some
+> > callers can afford to wait.
 > 
-> It may make sense to use congestion_wait() or wait_iff_congested()
-> within these subsystems, but they have no value outside of these.
+> Maybe we should wind back and focus on the documentation patches.
+> As quoted above, mm.h says:
 > 
-> Add documentation comments to these functions to discourage further use.
+> > >  is definitely preferable to use the flag rather than opencode endless
+> > >  loop around allocator.
+> 
+> but you seem to be saying that is wrong.  I'd certainly like to get the
+> documentation right before changing any code.
+> 
+> Why does __GFP_NOFAIL access the reserves? Why not require that the
+> relevant "Try harder" flag (__GFP_ATOMIC or __GFP_MEMALLOC) be included
+> with __GFP_NOFAIL if that is justified?
 
-This is an unfortunate state. The MM layer still relies on the API.
-While adding a documentation to clarify the current status can stop more
-usage I am wondering what is a real alternative. My experience tells me
-that a lack of real alternative will lead to new creative ways of doing
-things instead.
- 
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> ---
->  include/linux/backing-dev.h |    7 +++++++
->  mm/backing-dev.c            |    9 +++++++++
->  2 files changed, 16 insertions(+)
-> 
-> diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-> index ac7f231b8825..cc9513840351 100644
-> --- a/include/linux/backing-dev.h
-> +++ b/include/linux/backing-dev.h
-> @@ -153,6 +153,13 @@ static inline int wb_congested(struct bdi_writeback *wb, int cong_bits)
->  	return wb->congested & cong_bits;
->  }
->  
-> +/* NOTE congestion_wait() and wait_iff_congested() are
-> + * largely useless except as documentation.
-> + * congestion_wait() will (almost) always wait for the given timeout.
-> + * wait_iff_congested() will (almost) never wait, but will call
-> + * cond_resched().
-> + * Were possible an alternative waiting strategy should be found.
-> + */
->  long congestion_wait(int sync, long timeout);
->  long wait_iff_congested(int sync, long timeout);
->  
-> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-> index 4a9d4e27d0d9..53472ab38796 100644
-> --- a/mm/backing-dev.c
-> +++ b/mm/backing-dev.c
-> @@ -1023,6 +1023,11 @@ EXPORT_SYMBOL(set_bdi_congested);
->   * Waits for up to @timeout jiffies for a backing_dev (any backing_dev) to exit
->   * write congestion.  If no backing_devs are congested then just wait for the
->   * next write to be completed.
-> + *
-> + * NOTE: in the current implementation, hardly any backing_devs are ever
-> + * marked as congested, and write-completion is rarely reported (see calls
-> + * to clear_bdi_congested).  So this should not be assumed to ever wake before
-> + * the timeout.
->   */
->  long congestion_wait(int sync, long timeout)
->  {
-> @@ -1054,6 +1059,10 @@ EXPORT_SYMBOL(congestion_wait);
->   * The return value is 0 if the sleep is for the full timeout. Otherwise,
->   * it is the number of jiffies that were still remaining when the function
->   * returned. return_value == timeout implies the function did not sleep.
-> + *
-> + * NOTE: in the current implementation, hardly any backing_devs are ever
-> + * marked as congested, and write-completion is rarely reported (see calls
-> + * to clear_bdi_congested).  So this should not be assumed to sleep at all.
->   */
->  long wait_iff_congested(int sync, long timeout)
->  {
-> 
+Does 5020e285856c ("mm, oom: give __GFP_NOFAIL allocations access to
+memory reserves") help?
+
+I would be worried to make the semantic even more complex than already
+is. Access to memory reserves is an implementation detail that the page
+allocator does currently. Callers shouldn't really be worried about
+that. I do not ever remember any actual NOFAIL triggered memory
+exhaustion. I have seen that to happen for unrestricted access to memory
+reserves by OOM victim though. Hence cd04ae1e2dc8 ("mm, oom: do not rely
+on TIF_MEMDIE for memory reserves access"). We can consider something
+similar if NOFAIL allocation really tend to show a similar problem. We
+do not want callers to care about OOM sitauations for this kind of
+requests.
+
+__GFP_NOFAIL | __GFP_HIGH is certainly something that is a valid usage
+but I wouldn't base OOM behavior based on that.
+
+> There are over 100 __GFP_NOFAIL allocation sites.  I don't feel like
+> reviewing them all and seeing if any really need a try-harder flag.
+> Can we rename __GFP_NOFAIL to __GFP_NEVERFAIL and then
+> #define __GFP_NOFAIL (__GFP_NEVERFAIL | __GFP_ATOMIC)
+> and encourage the use of __GFP_NEVERFAIL in future?
+
+Doesn't this add even more complexity?
+
+> When __GFP_NOFAIL loops, it calls congestion_wait() internally.  That
+> certainly needs to be fixed and the ideas you present below are
+> certainly worth considering when trying to understand how to address
+> that.  I'd rather fix it once there in page_alloc.c rather then export a
+> waiting API like congestion_wait().  That would provide more
+> flexibility.  e.g.  a newly freed page could be handed directly back to
+> the waiter.
+
+Completely agreed here. We really do not want people to open code NOFAIL
+unless they can do something really subsystem specific that would help
+to make a forward progress.
 
 -- 
 Michal Hocko
