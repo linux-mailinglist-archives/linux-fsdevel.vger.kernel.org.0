@@ -2,71 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68F3B40CB59
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 19:02:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84B4140CB86
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 19:18:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230264AbhIOREL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 13:04:11 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:57617 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230038AbhIOREK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 13:04:10 -0400
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 18FH2TuF020081
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Sep 2021 13:02:29 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 3862A15C3424; Wed, 15 Sep 2021 13:02:29 -0400 (EDT)
-Date:   Wed, 15 Sep 2021 13:02:29 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mel Gorman <mgorman@suse.com>, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] EXT4: Remove ENOMEM/congestion_wait() loops.
-Message-ID: <YUInJQ0wJ4Cd07dT@mit.edu>
-References: <163157808321.13293.486682642188075090.stgit@noble.brown>
- <163157838437.13293.14244628630141187199.stgit@noble.brown>
- <YUE+L19JyjqWh+Md@mit.edu>
- <163168354018.3992.580533638417199797@noble.neil.brown.name>
+        id S230237AbhIORT7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 13:19:59 -0400
+Received: from pegase2.c-s.fr ([93.17.235.10]:49777 "EHLO pegase2.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229566AbhIORT6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Sep 2021 13:19:58 -0400
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+        by localhost (Postfix) with ESMTP id 4H8n4F0x0Hz9sV4;
+        Wed, 15 Sep 2021 19:18:37 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+        by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id PKzNyxImFUbI; Wed, 15 Sep 2021 19:18:37 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase2.c-s.fr (Postfix) with ESMTP id 4H8n4D73HWz9sV3;
+        Wed, 15 Sep 2021 19:18:36 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D8C808B77C;
+        Wed, 15 Sep 2021 19:18:36 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id QXqNkIx7zBCr; Wed, 15 Sep 2021 19:18:36 +0200 (CEST)
+Received: from PO20335.IDSI0.si.c-s.fr (unknown [192.168.204.250])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 11BA38B763;
+        Wed, 15 Sep 2021 19:18:34 +0200 (CEST)
+Subject: Re: [PATCH v3 4/8] powerpc/pseries/svm: Add a powerpc version of
+ cc_platform_has()
+To:     Borislav Petkov <bp@alien8.de>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Sathyanarayanan Kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        linux-efi@vger.kernel.org, Brijesh Singh <brijesh.singh@amd.com>,
+        kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        platform-driver-x86@vger.kernel.org,
+        Paul Mackerras <paulus@samba.org>, linux-s390@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, x86@kernel.org,
+        amd-gfx@lists.freedesktop.org,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-graphics-maintainer@vmware.com,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <cover.1631141919.git.thomas.lendacky@amd.com>
+ <9d4fc3f8ea7b325aaa1879beab1286876f45d450.1631141919.git.thomas.lendacky@amd.com>
+ <YUCOTIPPsJJpLO/d@zn.tnic> <87lf3yk7g4.fsf@mpe.ellerman.id.au>
+ <YUHGDbtiGrDz5+NS@zn.tnic>
+From:   Christophe Leroy <christophe.leroy@csgroup.eu>
+Message-ID: <f8388f18-5e90-5d0f-d681-0b17f8307dd4@csgroup.eu>
+Date:   Wed, 15 Sep 2021 19:18:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <163168354018.3992.580533638417199797@noble.neil.brown.name>
+In-Reply-To: <YUHGDbtiGrDz5+NS@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr-FR
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 15, 2021 at 03:25:40PM +1000, NeilBrown wrote:
-> Adding gfp_mask to __ext4_journal_start_sb() make perfect sense.
-> There doesn't seem much point adding one to __ext4_journal_start(),
-> we can have ext4_journal_start_with_revoke() call
-> __ext4_journal_start_sb() directly.
-> But I cannot see what it doesn't already do that.
-> i.e. why have the inline __ext4_journal_start() at all?
-> Is it OK if I don't use that for ext4_journal_start_with_revoke()?
 
-Sure.  I think the only reason why we have __ext4_journal_start() as
-an inline function at all was for historical reasons.  That is, we
-modified __ext4_journal_start() so that it took a struct super, and
-instead of changing all of the macros which called
-__ext4_journal_start(), we named it to be __ext4_journal_start_sb()
-and added the inline definition of __ext4_journal_start() to avoid
-changing all of the existing users of __ext4_journal_start().
 
-So sure, it's fine not to use that for
-ext4_journal_start_with_revoke(), and we probably should clean up the
-use of __ext4_journal_start() at some point.  That's unrelated to your
-work, though.
+Le 15/09/2021 à 12:08, Borislav Petkov a écrit :
+> On Wed, Sep 15, 2021 at 10:28:59AM +1000, Michael Ellerman wrote:
+>> I don't love it, a new C file and an out-of-line call to then call back
+>> to a static inline that for most configuration will return false ... but
+>> whatever :)
+> 
+> Yeah, hch thinks it'll cause a big mess otherwise:
+> 
+> https://lore.kernel.org/lkml/YSScWvpXeVXw%2Fed5@infradead.org/
 
-Cheers,
+Could you please provide more explicit explanation why inlining such an 
+helper is considered as bad practice and messy ?
 
-					- Ted
+Because as demonstrated in my previous response some days ago, taking 
+that outline ends up with an unneccessary ugly generated code and we 
+don't benefit front GCC's capability to fold in and opt out unreachable 
+code.
+
+As pointed by Michael in most cases the function will just return false 
+so behind the performance concern, there is also the code size and code 
+coverage topic that is to be taken into account. And even when the 
+function doesn't return false, the only thing it does folds into a 
+single powerpc instruction so there is really no point in making a 
+dedicated out-of-line fonction for that and suffer the cost and the size 
+of a function call and to justify the addition of a dedicated C file.
+
+
+> 
+> I guess less ifdeffery is nice too.
+
+I can't see your point here. Inlining the function wouldn't add any 
+ifdeffery as far as I can see.
+
+So, would you mind reconsidering your approach and allow architectures 
+to provide inline implementation by just not enforcing a generic 
+prototype ? Or otherwise provide more details and exemple of why the 
+cons are more important versus the pros ?
+
+Thanks
+Christophe
