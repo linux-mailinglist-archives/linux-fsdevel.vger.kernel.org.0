@@ -2,121 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CCE140CD09
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 21:15:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19C3740CD29
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 21:26:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231396AbhIOTQf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 15:16:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41740 "EHLO
+        id S231486AbhIOT1z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 15:27:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230230AbhIOTQf (ORCPT
+        with ESMTP id S231414AbhIOT1y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 15:16:35 -0400
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35B93C061574;
-        Wed, 15 Sep 2021 12:15:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1631733315;
-        bh=y6RJYPdDFdyu6WcAgzIYV17iU/gN+vlkm7UajawX/lg=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=sxmtb/TUzwFCkYcw2fd90dlzdZJrYY2wkO//Ngg6bbfSdTYm7r+lQsHOEDmC0yFpL
-         lQxoONWuUiojeSdfYBsHvGZR5e9tqx3mMdaLS4wyAHAHf5knItNc4+ecLsOkOt1zYT
-         /FHXaI5U4c5/OGp4agpdRoSft2nkuNYarDC8zsFk=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id A79DE12805FF;
-        Wed, 15 Sep 2021 12:15:15 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id oEVmn9C18TMb; Wed, 15 Sep 2021 12:15:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1631733315;
-        bh=y6RJYPdDFdyu6WcAgzIYV17iU/gN+vlkm7UajawX/lg=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=sxmtb/TUzwFCkYcw2fd90dlzdZJrYY2wkO//Ngg6bbfSdTYm7r+lQsHOEDmC0yFpL
-         lQxoONWuUiojeSdfYBsHvGZR5e9tqx3mMdaLS4wyAHAHf5knItNc4+ecLsOkOt1zYT
-         /FHXaI5U4c5/OGp4agpdRoSft2nkuNYarDC8zsFk=
-Received: from jarvis.lan (c-67-166-170-96.hsd1.va.comcast.net [67.166.170.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3093612805FB;
-        Wed, 15 Sep 2021 12:15:14 -0700 (PDT)
-Message-ID: <f066615c0e2c6fe990fa5c19dd1c17d649bcb03a.camel@HansenPartnership.com>
-Subject: Re: [MAINTAINER SUMMIT] Folios as a potential Kernel/Maintainers
- Summit topic?
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Chris Mason <clm@fb.com>, Theodore Ts'o <tytso@mit.edu>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        "ksummit@lists.linux.dev" <ksummit@lists.linux.dev>
-Date:   Wed, 15 Sep 2021 15:15:13 -0400
-In-Reply-To: <17242A0C-3613-41BB-84E4-2617A182216E@fb.com>
-References: <YUIwgGzBqX6ZiGgk@mit.edu>
-         <f7b70227bac9a684320068b362d28fcade6b65b9.camel@HansenPartnership.com>
-         <YUI5bk/94yHPZIqJ@mit.edu> <17242A0C-3613-41BB-84E4-2617A182216E@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Wed, 15 Sep 2021 15:27:54 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F28C061575
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 12:26:34 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id m3so6775529lfu.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 12:26:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6P9z1QCvAbv+k1VCp+BJZaSRLDdYfJBGVDJTbeRLGGs=;
+        b=RYKWs9AXUkHcdaPvDhM9IiyTnFbvdFnNl9EWvWcjqUXDqr2f/hZEtv9pQp1KoMWL0A
+         scCYipyvVNdf7qZYFLlaqanfBGdt7EngTZ41qZmuWN9jpiOJrrXi7I+JbbNaCtBplC5S
+         jdU29T018/5bOfc5OAMr+9gI+XuB3QtFda90I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6P9z1QCvAbv+k1VCp+BJZaSRLDdYfJBGVDJTbeRLGGs=;
+        b=ZrlvSkI+HvzM28XBDhq5y7To868vRTxW/u/G/di0i0o9NW3a/2vzUnzsLvhnTbrbqR
+         dnlYsGj1S/h3GsOfOAoZVkNCmc08TLcVRdPv8WuNtj8o02ohUPfkl0pHdAjthV0WOb+2
+         1b4vgwR8RQ/ylhGRBUPCf8aZdquvWKvcSXFJTnyO4rMgZPA8p0Xe3qegtc/lEW4983IV
+         bjYBtxtqv3lmMSa9zf+OLw42qmv+KBfRAI07skM5SExRDvFk2cejNrEfzudyktNyPk3j
+         +dBgMDbdaRxsAx92P5xY7O0oNHZyM1JqvfwD2PJQZpHPQQtst0RUXbKkjNrRrQgX6kag
+         x4sg==
+X-Gm-Message-State: AOAM530+9Gz+XcNlgQtMIzU1KIvAsiHCQ+oqeH5wVEZQnrHtWS97IX32
+        rA235tYbcq1+ZOWiqE+3MHCk8DY1/kc+OCaW72c=
+X-Google-Smtp-Source: ABdhPJyG6MtOk3+2/dBX4tUxvyEdwu6RCM6xlcHf0Ff+78zkec4tIKkgJs0GD/GXj22aKeu9qh3j6A==
+X-Received: by 2002:a05:6512:1396:: with SMTP id p22mr1120773lfa.189.1631733992427;
+        Wed, 15 Sep 2021 12:26:32 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id v138sm39500lfa.120.2021.09.15.12.26.31
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Sep 2021 12:26:31 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id i4so8626809lfv.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 12:26:31 -0700 (PDT)
+X-Received: by 2002:a2e:7f1c:: with SMTP id a28mr1419825ljd.56.1631733991308;
+ Wed, 15 Sep 2021 12:26:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20210915162937.777002-1-axboe@kernel.dk> <CAHk-=wgtROzcks4cozeEYG33UU1Q3T4RM-k3kv-GqrdLKFMoLw@mail.gmail.com>
+ <8c7c8aa0-9591-a50f-35ee-de0037df858a@kernel.dk>
+In-Reply-To: <8c7c8aa0-9591-a50f-35ee-de0037df858a@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 15 Sep 2021 12:26:15 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj3dsQMK4y-EeMD1Zyod7=Sv68UqrND-GYgHXx6wNRawA@mail.gmail.com>
+Message-ID: <CAHk-=wj3dsQMK4y-EeMD1Zyod7=Sv68UqrND-GYgHXx6wNRawA@mail.gmail.com>
+Subject: Re: [PATCHSET v3 0/3] Add ability to save/restore iov_iter state
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2021-09-15 at 18:41 +0000, Chris Mason wrote:
-> > On Sep 15, 2021, at 2:20 PM, Theodore Ts'o <tytso@mit.edu> wrote:
-> > 
-> > On Wed, Sep 15, 2021 at 02:03:46PM -0400, James Bottomley wrote:
-> > > On Wed, 2021-09-15 at 13:42 -0400, Theodore Ts'o wrote:
-> > > [...]
-> > > > Would this be helpful?  (Or Linus could pull either the folio
-> > > > or pageset branch, and make this proposal obsolete, which would
-> > > > be great.  :-)
-> > > 
-> > > This is a technical rather than process issue isn't it?  You
-> > > don't have enough technical people at the Maintainer summit to
-> > > help meaningfully.  The ideal location, of course, was LSF/MM
-> > > which is now not happening.
-> > > 
-> > > However, we did offer the Plumbers BBB infrastructure to willy
-> > > for a MM gathering which could be expanded to include this.
-> > 
-> > Well, that's why I was suggesting doing this as a LPC BOF, and
-> > using an LPC BOF session on Friday --- I'm very much aware we don't
-> > have the right tehcnical people at the Maintainer Summit.
-> > 
-> > It's not clear we will have enough MM folks at the LPC, and I agree
-> > LSF/MM would be a better venue --- but as you say, it's not
-> > happening. We could also use the BBB infrastructure after the LPC
-> > as well, if we can't get everyone lined up and available on short
-> > notice.  There are a lot of different possibilities; I'm for
-> > anything where all of the stakeholders agree will work, so we can
-> > make forward progress.
-> 
-> I think the two different questions are:
-> 
-> * What work is left for merging folios?
+On Wed, Sep 15, 2021 at 11:46 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+>    The usual tests
+> do end up hitting the -EAGAIN path quite easily for certain device
+> types, but not the short read/write.
 
-My reading of the email threads is that they're iterating to an actual
-conclusion (I admit, I'm surprised) ... or at least the disagreements
-are getting less.  Since the merge window closed this is now a 5.16
-thing, so there's no huge urgency to getting it resolved next week.
+No way to do something like "read in file to make sure it's cached,
+then invalidate caches from position X with POSIX_FADV_DONTNEED, then
+do a read that crosses that cached/uncached boundary"?
 
-> * What process should we use to make the overall development of folio
-> sized changes more predictable and rewarding for everyone involved?
+To at least verify that "partly synchronous, but partly punted to async" case?
 
-Well, the current one seems to be working (admittedly eventually, so
-achieving faster resolution next time might be good) ... but I'm sure
-you could propose alternatives ... especially in the time to resolution
-department.
+Or were you talking about some other situation?
 
-James
-
-
+            Linus
