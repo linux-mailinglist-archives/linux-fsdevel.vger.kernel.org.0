@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC43240CC1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 19:58:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A94A140CC1E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 19:59:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230451AbhIOSAO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 14:00:14 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:55907 "EHLO
+        id S231213AbhIOSAS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 14:00:18 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:44231 "EHLO
         out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230203AbhIOSAN (ORCPT
+        by vger.kernel.org with ESMTP id S231126AbhIOSAP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 14:00:13 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7EB735C00F9;
-        Wed, 15 Sep 2021 13:58:53 -0400 (EDT)
+        Wed, 15 Sep 2021 14:00:15 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.nyi.internal (Postfix) with ESMTP id AC6DA5C0113;
+        Wed, 15 Sep 2021 13:58:55 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Wed, 15 Sep 2021 13:58:53 -0400
+  by compute6.internal (MEProxy); Wed, 15 Sep 2021 13:58:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilammy.net; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=7Q8HGeP+EDgnA
-        p4Z23/+CZpTxVKtu2EPqIYAvB/bUV0=; b=adKxV/ppBDEb0yF+1MkVw4ccgRViI
-        0R0v+zz3XWrWV+MCv4FO5geUlKGkShnib10uKGwCKJRIPfb6eAMi1jX6Gw3q4DMg
-        FZGT8Bf82DDMppzs3EYri2QCQbQ9UimxZDFT3Vsx8p5mHqya5LgbRF/rYz10qhfQ
-        1Q5KP5QzcQe6buf0D8tBmWCSghKx3tbe3Rrb/5MHsryQV0Bd/X9ZEIEif7m0P++8
-        Rlx+gpZBYuw8MyT3Vm/lsZGuWJ2yKScfsMtQ9Xk4Lq+Toci30oUZWkgSLrfZoERj
-        oM3++xoeRLv4UGYLTmuQuXBg9HOYmJorQhdz2C0u2utXCrlTp5M7OxByw==
+        :mime-version:content-transfer-encoding; s=fm2; bh=Vi4AemPzNUewX
+        Z2yAGjziJvBNY9NKWVEUT2EaX3WCcQ=; b=CfIfMmiuIUA9ZoAg/E+ZKsu2wf2+T
+        u34idDDPkfxisThOVWSo5jxZPa1kF1LgnPSn42pM0p93URubpepXJp7EjjVkf+WV
+        QRDzK30AIjLtE+/BFxwhIQuv9KsTZLredtCqRRd3rjVhL464a/rBigAL/1e0pjBd
+        tSpOwnA/HBEWK92ynNwYEECrQ4cMcPbPSx8YCg5mXqn4Fx1LCWxexkmIPAMcXE8c
+        gpO8uIMzffTB7nD6elHBzRuQuL3b2B3LYbhO7glSUDkT7SvpGZcO6Vijo1OEILM/
+        C7LijBdCn2WfoivflAopfTWNxLC7V/y3udkNcWVa8RV1+yfjH2fwsHjGQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=7Q8HGeP+EDgnAp4Z23/+CZpTxVKtu2EPqIYAvB/bUV0=; b=EjpYIBNE
-        zVcRZA9GhDcfNeHFbQ7kno/cpg57vQuA7QyXVUCTk7HBWW+71IizavKc9LqWKcHP
-        HpTGncUuFfpKrBmL4ko4JkKjuXyXx/sv5lUpZcpP7jLXu9vJGoiE/bRSANa9bYkZ
-        yAH2cXnzR8QIP9VeIoWoA57cg14OAgj7IME6jE7xfWEj95HxIUz7qedt/i0m0Erk
-        apDcJp018uuv1l6FaabSt/4JeC3pDoZa7tfbOAN6AUxuky13+I6SbU1KtbC2clUs
-        rtKfBwsRnVp/XfLniyThcHphpAmhF+iyAQHtD/RKL77ODcS9mKYi+GSIMdjqPUUs
-        k9y96BrMp4lZZw==
-X-ME-Sender: <xms:XTRCYb0OTFO7oE64Wg4FzG0eTYjKCTD-BDrwhKoxwt_1fKr3Dxs_hA>
-    <xme:XTRCYaEw0pCXfd49c6ce1eJHkpiiWAzXZy8ubF5QXygTOgcN9LeSLeZTbx_e3GWWQ
-    xqRqirXyJRWOebLfiU>
-X-ME-Received: <xmr:XTRCYb6y--qmOVs3GByKo602-qZkn29SRnxqoGVVWhaaZYPg089hJPwoi141JDCgVpkoqKSbXQqHvHtyN9-gKE_U-b4QFVohkJM2qyxpaUQxf5DYbOE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudehuddgudduiecutefuodetggdotefrod
+        fm3; bh=Vi4AemPzNUewXZ2yAGjziJvBNY9NKWVEUT2EaX3WCcQ=; b=sfiTasWJ
+        gTZhFtvYPa6Y/1AwTZ/KD67F8DAi39HKhVGoaSH8j9Yw0Mh/80O0/VEbfJymFIl1
+        cB45s41ktDDNKfq/jDuT16SqpaELTj/Ev2Qb4jNS5TFs7kb54b6IXc89LqXk/CUy
+        LlhyCh3CkmkTOhuUBJqTBpObbjCp6KDCcX/CaQdp+Su0h8/fdt9GnsDBAqh+p40m
+        nmQR5wg33Y2vELlKqPIjCaUmV7S7oG5sGYbTCNKs0b+Z5mEoQzhA6K2NpaKrUMgC
+        8kT4mhSiEJeowGBjR88mEwdnSmhhlQE5M9Tk0wN2L8WuSQpLW7NWbc5SlSCijj4v
+        OLRYAFJ9Bsd5gA==
+X-ME-Sender: <xms:XzRCYRSMMyZpyjT0IH8uoDL8PeMC2sNIRc_IE6Pgc0n6Xbc78a_KmQ>
+    <xme:XzRCYay4MlZvRDhjedTDa-9mn4fWVv5eElEi4uQxIGwOuGtp3oHxgcDweqikEJZwb
+    JIs6QcxumiNnxYbm24>
+X-ME-Received: <xmr:XzRCYW2Bc6PmifSFKBeCiPoHQx_9mUKMolVmE9_MaUPxSV3gWO45yuMCY8Wa1k4hxPitgKKdxw-ful7aVpCvTx1IcLiy1rP9CoRDQnH8HflyuZxsTdM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudehuddgudduhecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
     enucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomheptehlvgig
@@ -49,95 +49,71 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudehuddgudduiecutefuodetgg
     gvrhhnpeetueejheekjeeuveeihefgueehleelgefgheefffefkeejudeujeejuefgteeu
     keenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmvg
     esihhlrghmmhihrdhnvght
-X-ME-Proxy: <xmx:XTRCYQ07zf8HlGrAjsdJGjuKRnR4ZIhoKFlnfaH0ZcpiQv61iNy7aQ>
-    <xmx:XTRCYeGWrz_vT_OhWG8R93Nye2u8fbDV7kjh77gpS7c7JCsNW8Tj8Q>
-    <xmx:XTRCYR8ApJWQWPU9FQfAk5Upw_9ibSatMyiBvqUOogW-W6xMkqfEeA>
-    <xmx:XTRCYaCqWlH3J5exsrLVhFtUBpBByX78U1oR6S4ZN9hclbE6VhxI4g>
+X-ME-Proxy: <xmx:XzRCYZB11XkA03DImNGP2jt0hok9Rqk2AegxwE3WexG6nQ2_LHDDfw>
+    <xmx:XzRCYagyhiSuh4bfmcAIxx9Azk6ke6jPaFraHp9uCVoECHsuG7HJrA>
+    <xmx:XzRCYdodbQJVcWzru7egZWOtf-lRMIoL7KFD0llkFNaSfTZNKBLtgQ>
+    <xmx:XzRCYbukxbFCIX_kDee7t81rjnV9mDMbUvpzi7bLZWB65nk-hLwomw>
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Sep 2021 13:58:51 -0400 (EDT)
+ 15 Sep 2021 13:58:53 -0400 (EDT)
 From:   Alexei Lozovsky <me@ilammy.net>
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         Christoph Lameter <cl@linux.com>,
         LKML <linux-kernel@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 00/12] proc/stat: Maintain monotonicity of "intr" and "softirq"
-Date:   Thu, 16 Sep 2021 02:58:36 +0900
-Message-Id: <20210915175848.162260-1-me@ilammy.net>
+Subject: [PATCH v2 01/12] genirq: Use READ_ONCE for IRQ counter reads
+Date:   Thu, 16 Sep 2021 02:58:37 +0900
+Message-Id: <20210915175848.162260-2-me@ilammy.net>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210911034808.24252-1-me@ilammy.net>
+In-Reply-To: <20210915175848.162260-1-me@ilammy.net>
 References: <20210911034808.24252-1-me@ilammy.net>
+ <20210915175848.162260-1-me@ilammy.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Here's a patch set that makes /proc/stat report total interrupt counts
-as monotonically increasing values, just like individual counters for
-interrupt types and CPUs are.
+IRQ counters are updated by each CPU independently, access to them
+does not need to synchronized and it's okay to race: as long as the
+counter is not seen going backwards (hopefully, cache coherency
+takes care of that) and the stores and loads are not torn.
 
-The total counters are not actually maintained but computed from
-individual counters. These counters must all have the same width
-for their sum to wrap around in correct and expected manner.
+The last part is currently sorta-kinda expected to happen because
+all the counters use "unsigned int" which is expected to fit into
+machine word and not be torn.
 
-This patch set unifies all counters that are displayed by /proc/stat
-and /proc/interrupts to use "unsigned long" (instead of "unsigned int"
-values that get summed into u64, which causes problems for userspace
-monitoring tools when the individual counters wrap around).
+Make this expectation explicit by wrapping the reads in READ_ONCE.
+Note that writes are typically perfomed via this_cpu_inc() and its
+fellows which do not do matching WRITE_ONCE().
 
-v1 -> v2:
+Signed-off-by: Alexei Lozovsky <me@ilammy.net>
+---
+ include/linux/kernel_stat.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  - Added READ_ONCE to all reads of per-CPU counters
-  - Widened and unified all counters to "unsigned long"
-    instead of clamping them all to "unsigned int"
-  - Fixed typos in documentation
-
-Since the scope of changes has expanded, I think these patches will
-need to be seen and vetted by more people (get-maintainer.pl agrees)
-but for now I'll keep the same CC list as for v1.
-
-Unresolved questions:
-
-  - Does READ_ONCE addition has any merit without WRITE_ONCE?
-
-  - Some counters turned out to be unaccounted for in the total sum.
-    Should they be included there? Or are they omitted on purpose?
-
-  - I haven't tested this on PowerPC since I don't have the hardware
-
-Alexei Lozovsky (12):
-  genirq: Use READ_ONCE for IRQ counter reads
-  genirq: Use unsigned long for IRQ counters
-  powerpc/irq: Use READ_ONCE for IRQ counter reads
-  powerpc/irq: Use unsigned long for IRQ counters
-  powerpc/irq: Use unsigned long for IRQ counter sum
-  x86/irq: Use READ_ONCE for IRQ counter reads
-  x86/irq: Use unsigned long for IRQ counters
-  x86/irq: Use unsigned long for IRQ counters more
-  x86/irq: Use unsigned long for IRQ counter sum
-  proc/stat: Use unsigned long for "intr" sum
-  proc/stat: Use unsigned long for "softirq" sum
-  docs: proc.rst: stat: Note the interrupt counter wrap-around
-
- Documentation/filesystems/proc.rst |  8 +++
- arch/powerpc/include/asm/hardirq.h | 20 ++++----
- arch/powerpc/include/asm/paca.h    |  2 +-
- arch/powerpc/kernel/irq.c          | 42 +++++++--------
- arch/x86/include/asm/hardirq.h     | 26 +++++-----
- arch/x86/include/asm/hw_irq.h      |  4 +-
- arch/x86/include/asm/mce.h         |  4 +-
- arch/x86/kernel/apic/apic.c        |  2 +-
- arch/x86/kernel/apic/io_apic.c     |  4 +-
- arch/x86/kernel/cpu/mce/core.c     |  4 +-
- arch/x86/kernel/i8259.c            |  2 +-
- arch/x86/kernel/irq.c              | 82 +++++++++++++++---------------
- fs/proc/softirqs.c                 |  2 +-
- fs/proc/stat.c                     | 12 ++---
- include/linux/kernel_stat.h        | 10 ++--
- kernel/rcu/tree.h                  |  2 +-
- kernel/rcu/tree_stall.h            |  4 +-
- 17 files changed, 119 insertions(+), 111 deletions(-)
-
+diff --git a/include/linux/kernel_stat.h b/include/linux/kernel_stat.h
+index 44ae1a7eb9e3..90f2e2faf999 100644
+--- a/include/linux/kernel_stat.h
++++ b/include/linux/kernel_stat.h
+@@ -61,7 +61,7 @@ static inline void kstat_incr_softirqs_this_cpu(unsigned int irq)
+ 
+ static inline unsigned int kstat_softirqs_cpu(unsigned int irq, int cpu)
+ {
+-       return kstat_cpu(cpu).softirqs[irq];
++	return READ_ONCE(kstat_cpu(cpu).softirqs[irq]);
+ }
+ 
+ /*
+@@ -74,7 +74,7 @@ extern unsigned int kstat_irqs_usr(unsigned int irq);
+  */
+ static inline unsigned int kstat_cpu_irqs_sum(unsigned int cpu)
+ {
+-	return kstat_cpu(cpu).irqs_sum;
++	return READ_ONCE(kstat_cpu(cpu).irqs_sum);
+ }
+ 
+ #ifdef CONFIG_VIRT_CPU_ACCOUNTING_GEN
 -- 
 2.25.1
+
