@@ -2,121 +2,386 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6781740BCA6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 02:29:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F2D540BD3E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 03:35:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230399AbhIOAaY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Sep 2021 20:30:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37756 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229991AbhIOAaX (ORCPT
+        id S230236AbhIOBgf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Sep 2021 21:36:35 -0400
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:38209 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229918AbhIOBge (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Sep 2021 20:30:23 -0400
-Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53563C061574;
-        Tue, 14 Sep 2021 17:29:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-        s=201909; t=1631665743;
-        bh=HgCpSqOauKiPM+dBPwX1rVKc5DllbEYyPqTeHP+eUfA=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=nobrDH5nGZu7v+B+3sYvcmgWwQ6HXMJcFwBQJdDWX9HZxhJmSYRfeLJ5bqM1L8nAT
-         Zv7FEyFybAcOR9q2SSYXqyD/igi9xudle6V5yasFwsCuG7S0oozCaRNikxkvD596/w
-         6l43PVixwL61h3NyNDnNd5sNzqDNGCDn9FEcD1fB6an9gsKEzr5R3Isof7M+Dp+CFm
-         Flkym9C4vSI8DMWcOL/ydbmO/xhA1U449O7gqRfyeoJq9Tl/sPJDKQcCHDPv+s1Rp6
-         4loBfWLosZBa6f9xlvgT7ZD+EwPUzeNUvScHtwtaoHQpWTi57p46qNn2qlhGqy8rED
-         FWCERXkM6X8Sg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4H8LgJ0MSWz9sVq;
-        Wed, 15 Sep 2021 10:28:59 +1000 (AEST)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-graphics-maintainer@vmware.com,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Sathyanarayanan Kuppuswamy 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Subject: Re: [PATCH v3 4/8] powerpc/pseries/svm: Add a powerpc version of
- cc_platform_has()
-In-Reply-To: <YUCOTIPPsJJpLO/d@zn.tnic>
-References: <cover.1631141919.git.thomas.lendacky@amd.com>
- <9d4fc3f8ea7b325aaa1879beab1286876f45d450.1631141919.git.thomas.lendacky@amd.com>
- <YUCOTIPPsJJpLO/d@zn.tnic>
-Date:   Wed, 15 Sep 2021 10:28:59 +1000
-Message-ID: <87lf3yk7g4.fsf@mpe.ellerman.id.au>
+        Tue, 14 Sep 2021 21:36:34 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id B67673200995;
+        Tue, 14 Sep 2021 21:35:15 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Tue, 14 Sep 2021 21:35:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
+        IO1BrtAgxmv6nt4J60+AuK2jBImCIAWy6GknmaNGK4g=; b=J9nOCoeGh9K9KTa4
+        3t8VXCvunrrxupu0861fQeyfKzVijd0cP3RjZpvuKDEh67pOTrVRxLTBSqvs8i9T
+        U9m7eDfkghBB4+ezs5fTURlMFrvdFCBIxiViCkW5WN0/QfsWW4UOnPGrRqm4Dk+Q
+        OxZtxw7B8ASue+10y05ByeVuGlXtFoCCK5RFl1rJKc+3w/HZdkL2NdAGYI+Cn3fY
+        Xd/wjTuAey4CRQixUW20t71M/9g5mGKGgoAzSQx/eD5FY5eyJllAhZxm1Rvdc4W9
+        vzrtEl8+l1n52xnN+UL+55sFOmMP0Gfsdq7vrtDwPxaT96P0z2tYyove6lprCWJQ
+        JUVS1A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=IO1BrtAgxmv6nt4J60+AuK2jBImCIAWy6GknmaNGK
+        4g=; b=RfOZsFWmz+nifUPH0akPnUKI7r/l0GcvONKgv+ClKVf9IdM8uypNAA+0p
+        wJF/W0ZTOclzBjltvfHCsqFpsddkGatgX2jrLeGWR+QtTrN/vlw2Shb3BhuRnjk+
+        a6R6Yx5aFGnvE+NbqKxZgaW0vBBghFzbMmyG8ajqulXiydzIXt9iaoIid3OJP4O+
+        s7UiWFa0dHhs4IWZK0TeVXPnJEr3TtIgaEJYyO1KAbXD/ByuMMYnR6naMow1OLMm
+        ssXOLt3Ba+1l6MWPieulMeUiQEJKCNqJ0ILzQV1ENsbXZTpDCb0z2LuMmlUgE9qd
+        D4iHuODV13BakUEKtXEQZLOJDyrcw==
+X-ME-Sender: <xms:0k1BYcAAZBnSa1mD7QtjnssMdUjMXxFefWlHbDa0dU-LPxhQOa1FJw>
+    <xme:0k1BYejtNiFXVEzvLZruxXGA_wvEm9pVvxyY7xn3n3h6b-HddWca6mQ-gOaY4ZSic
+    hawg5z0GzZL>
+X-ME-Received: <xmr:0k1BYfkTYvf6Xs7VeSYgd3-tKjWwIor6U_RCpvtU7yvt8M4X2clZlgQvW3yP3aUSIWtHl34>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudehtddggeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthekredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    fgleelkeetheelgeehueejueduhfeufffgleehgfevtdehhffhhffhtddugfefheenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
+    hthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:0k1BYSyjIw8Q_0YsAyE0gEni76Xn67GXE_0PCmjHuDnBaKhzI4mjjw>
+    <xmx:0k1BYRTGmUfQiIc0nTS1-x1_I-oE--IbOZugjRJCauZ7BRLXSb2gfw>
+    <xmx:0k1BYdbqxRfOZ6WCVznnT4frfUl5LKC-_cYxvEo82TG7MJL4di6xeA>
+    <xmx:001BYfORerirJ0M7PDDaVS5umrKpoJz3w3Bcm5U9jg78WYJHGV_bIA>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 14 Sep 2021 21:35:11 -0400 (EDT)
+Message-ID: <6c8088411523e52fc89b8dd07710c3825366ce64.camel@themaw.net>
+Subject: Re: [PATCH] kernfs: fix the race in the creation of negative dentry
+From:   Ian Kent <raven@themaw.net>
+To:     Hou Tao <houtao1@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, Miklos Szeredi <mszeredi@redhat.com>
+Cc:     viro@ZenIV.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 15 Sep 2021 09:35:06 +0800
+In-Reply-To: <7b92b158200567f0bba26a038191156890921f13.camel@themaw.net>
+References: <20210911021342.3280687-1-houtao1@huawei.com>
+         <7b92b158200567f0bba26a038191156890921f13.camel@themaw.net>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Borislav Petkov <bp@alien8.de> writes:
-> On Wed, Sep 08, 2021 at 05:58:35PM -0500, Tom Lendacky wrote:
->> Introduce a powerpc version of the cc_platform_has() function. This will
->> be used to replace the powerpc mem_encrypt_active() implementation, so
->> the implementation will initially only support the CC_ATTR_MEM_ENCRYPT
->> attribute.
->> 
->> Cc: Michael Ellerman <mpe@ellerman.id.au>
->> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
->> Cc: Paul Mackerras <paulus@samba.org>
->> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
->> ---
->>  arch/powerpc/platforms/pseries/Kconfig       |  1 +
->>  arch/powerpc/platforms/pseries/Makefile      |  2 ++
->>  arch/powerpc/platforms/pseries/cc_platform.c | 26 ++++++++++++++++++++
->>  3 files changed, 29 insertions(+)
->>  create mode 100644 arch/powerpc/platforms/pseries/cc_platform.c
->
-> Michael,
->
-> can I get an ACK for the ppc bits to carry them through the tip tree
-> pls?
+On Tue, 2021-09-14 at 11:05 +0800, Ian Kent wrote:
+> On Sat, 2021-09-11 at 10:13 +0800, Hou Tao wrote:
+> > When doing stress test for module insertion and removal,
+> > the following phenomenon was found:
+> 
+> Apologies for the late reply.
+> 
+> > 
+> >   $ lsmod
+> >   Module                  Size  Used by
+> >   libkmod: kmod_module_get_holders: could not open \
+> >            '/sys/module/nbd/holders': No such file or directory
+> >   nbd                       -2  -2
+> >   $ cat /proc/modules
+> >   nbd 110592 0 - Live 0xffffffffc0298000
+> >   $ ls -1 /sys/module |grep nbd
+> >   ls: cannot access 'nbd': No such file or directory
+> >   nbd
+> > 
+> > It seems the kernfs node of module has been activated and is
+> > returned
+> > to
+> > ls command through kernfs_fop_readdir(), but the sysfs dentry is
+> > negative.
+> > Further investigation found that there is race between kernfs dir
+> > creation
+> > and dentry lookup as shown below:
+> > 
+> > CPU 0                          CPU 1
+> > 
+> >                         kernfs_add_one
+> > 
+> >                         down_write(&kernfs_rwsem)
+> >                         // insert nbd into rbtree
+> >                         // update the parent's revision
+> >                         kernfs_link_sibling()
+> >                         up_write(&kernfs_rwsem)
+> > 
+> > kernfs_iop_lookup
+> > 
+> > down_read(&kernfs_rwsem)
+> > // find nbd in rbtree, but it is deactivated
+> > kn = kernfs_find_ns()
+> >   // return false
+> >   kernfs_active()
+> >   // a negative is created
+> >   d_splice_alias(NULL, dentry)
+> > up_read(&kernfs_rwsem)
+> > 
+> >                         // activate after negative dentry is
+> > created
+> >                         kernfs_activate()
+> > 
+> > // return 0 because parent's
+> > // revision is stable now
+> > kernfs_dop_revalidate()
+> > 
+> > The race will create a negative dentry for a kernfs node which
+> > is newly-added and activated. To fix it, there are two cases
+> > to be handled:
+> 
+> Yes, I see.
+> 
+> This is a great analysis, thanks for the effort providing it.
+> 
+> > 
+> > (1) kernfs root without KERNFS_ROOT_CREATE_DEACTIVATED
+> > kernfs_rwsem can be always hold during kernfs_link_sibling()
+> > and kernfs_activate() in kernfs_add_one(), so kernfs_iop_lookup()
+> > will find an active kernfs node.
+> > 
+> > (2) kernfs root with KERNFS_ROOT_CREATE_DEACTIVATED
+> > kernfs_activate() is called separatedly, and we can invalidate
+> > the dentry subtree with kn as root by increasing the revision of
+> > its parent. But we can invalidate in a finer granularity by
+> > only invalidating the negative dentry of the newly-activated
+> > kn node.
+> 
+> I'm pretty sure your patch will fix the problem which is great.
+> 
+> But I'm not sure this is the best way or more importantly the
+> right way to do it.
+> 
+> The real problem here lies in the definition of a kernfs negative
+> dentry. At one time the series to change to an rwsem used the
+> kernfs node to determine negativeness in revalidate which is
+> a stronger check than the dentry inode alone.
+> 
+> The point here is that using an incorrect definition, as I have
+> done, could leave other unseen problems or cause the introduction
+> of new problems in new code.
+> 
+> There's also the question of how a kernfs root node gets used in
+> path walking (rather if it's negativity or activation state play
+> any part in it at all). Worth understanding but not a problem as
+> such.
+> 
+> I'm still looking at this (as time permits) and thinking about it.
+> Please give me more time to report back.
 
-Yeah.
+Sorry to hold things up on this.
 
-I don't love it, a new C file and an out-of-line call to then call back
-to a static inline that for most configuration will return false ... but
-whatever :)
+I'm still looking at it but thought I'd report my thoughts so
+far so you know I haven't forgotten about it.
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+Now, based on the original code, before the change to the rwsem,
+no dentry would be created for an inactive but existing node,
+they are meant to be invisible to the VFS.
+
+That's a bug that I have introduced in kernfs_iop_lookup().
+I will need to fix that.
+
+Essentially, the definition a kernfs negative dentry, for the
+cases it is meant to cover, is one that has no kernfs node, so
+one that does have a node should not be created as a negative.
+
+Once activated a subsequent ->lookup() will then create a
+positive dentry for the node so that no invalidation is
+necessary.
+
+This distinction is important because we absolutely do not want
+negative dentries created that aren't necessary. We don't want to
+leave any opportunities for negative dentries to accumulate if
+we don't have to.
+    
+I am still thinking about the race you have described.
+
+Given my above comments that race might have (maybe probably)
+been present in the original code before the rwsem change but
+didn't trigger because of the serial nature of the mutex.
+
+So it may be wise (perhaps necessary) to at least move the
+activation under the rwsem (as you have done) which covers most
+of the change your proposing and the remaining hunk shouldn't
+do any harm I think but again I need a little more time on that.
+
+I'm now a little concerned about the invalidation that should
+occur on deactivation so I want to have a look at that too but
+it's separate to this proposal.
+
+Greg, Tejun, Hou, any further thoughts on this would be most
+welcome.
+
+Ian
+> 
+> > 
+> > So factor out a helper kernfs_activate_locked() to activate
+> > kernfs subtree lockless and invalidate the negative dentries
+> > if requested. Creation under kernfs root with CREATED_DEACTIVATED
+> > doesn't need invalidation because kernfs_rwsem is always hold,
+> > and kernfs root w/o CREATED_DEACTIVATED needs to invalidate
+> > the maybe-created negative dentries.
+> > 
+> > kernfs_inc_rev() in kernfs_link_sibling() is kept because
+> > kernfs_rename_ns() needs it to invalidate the negative dentry
+> > of the target kernfs which is newly created by rename.
+> > 
+> > Fixes: c7e7c04274b1 ("kernfs: use VFS negative dentry caching")
+> > Signed-off-by: Hou Tao <houtao1@huawei.com>
+> > ---
+> >  fs/kernfs/dir.c | 52 +++++++++++++++++++++++++++++++++++++++------
+> > --
+> > --
+> >  1 file changed, 42 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+> > index ba581429bf7b..2f1ab8bad575 100644
+> > --- a/fs/kernfs/dir.c
+> > +++ b/fs/kernfs/dir.c
+> > @@ -17,6 +17,8 @@
+> >  
+> >  #include "kernfs-internal.h"
+> >  
+> > +static void kernfs_activate_locked(struct kernfs_node *kn, bool
+> > invalidate);
+> > +
+> >  DECLARE_RWSEM(kernfs_rwsem);
+> >  static DEFINE_SPINLOCK(kernfs_rename_lock);    /* kn->parent and -
+> > > name */
+> >  static char kernfs_pr_cont_buf[PATH_MAX];      /* protected by
+> > rename_lock */
+> > @@ -753,8 +755,6 @@ int kernfs_add_one(struct kernfs_node *kn)
+> >                 ps_iattr->ia_mtime = ps_iattr->ia_ctime;
+> >         }
+> >  
+> > -       up_write(&kernfs_rwsem);
+> > -
+> >         /*
+> >          * Activate the new node unless CREATE_DEACTIVATED is
+> > requested.
+> >          * If not activated here, the kernfs user is responsible
+> > for
+> > @@ -763,8 +763,7 @@ int kernfs_add_one(struct kernfs_node *kn)
+> >          * trigger deactivation.
+> >          */
+> >         if (!(kernfs_root(kn)->flags &
+> > KERNFS_ROOT_CREATE_DEACTIVATED))
+> > -               kernfs_activate(kn);
+> > -       return 0;
+> > +               kernfs_activate_locked(kn, false);
+> >  
+> >  out_unlock:
+> >         up_write(&kernfs_rwsem);
+> > @@ -942,8 +941,11 @@ struct kernfs_root *kernfs_create_root(struct
+> > kernfs_syscall_ops *scops,
+> >         root->kn = kn;
+> >         init_waitqueue_head(&root->deactivate_waitq);
+> >  
+> > -       if (!(root->flags & KERNFS_ROOT_CREATE_DEACTIVATED))
+> > -               kernfs_activate(kn);
+> > +       if (!(root->flags & KERNFS_ROOT_CREATE_DEACTIVATED)) {
+> > +               down_write(&kernfs_rwsem);
+> > +               kernfs_activate_locked(kn, false);
+> > +               up_write(&kernfs_rwsem);
+> > +       }
+> >  
+> >         return root;
+> >  }
+> > @@ -1262,8 +1264,11 @@ static struct kernfs_node
+> > *kernfs_next_descendant_post(struct kernfs_node *pos,
+> >  }
+> >  
+> >  /**
+> > - * kernfs_activate - activate a node which started deactivated
+> > + * kernfs_activate_locked - activate a node which started
+> > deactivated
+> >   * @kn: kernfs_node whose subtree is to be activated
+> > + * @invalidate: whether or not to increase the revision of parent
+> > node
+> > + *              for each newly-activated child node. The increase
+> > will
+> > + *              invalidate negative dentries created under the
+> > parent node.
+> >   *
+> >   * If the root has KERNFS_ROOT_CREATE_DEACTIVATED set, a newly
+> > created node
+> >   * needs to be explicitly activated.  A node which hasn't been
+> > activated
+> > @@ -1271,15 +1276,15 @@ static struct kernfs_node
+> > *kernfs_next_descendant_post(struct kernfs_node *pos,
+> >   * removal.  This is useful to construct atomic init sequences
+> > where
+> >   * creation of multiple nodes should either succeed or fail
+> > atomically.
+> >   *
+> > + * The caller must have acquired kernfs_rwsem.
+> > + *
+> >   * The caller is responsible for ensuring that this function is
+> > not
+> > called
+> >   * after kernfs_remove*() is invoked on @kn.
+> >   */
+> > -void kernfs_activate(struct kernfs_node *kn)
+> > +static void kernfs_activate_locked(struct kernfs_node *kn, bool
+> > invalidate)
+> >  {
+> >         struct kernfs_node *pos;
+> >  
+> > -       down_write(&kernfs_rwsem);
+> > -
+> >         pos = NULL;
+> >         while ((pos = kernfs_next_descendant_post(pos, kn))) {
+> >                 if (pos->flags & KERNFS_ACTIVATED)
+> > @@ -1290,8 +1295,35 @@ void kernfs_activate(struct kernfs_node *kn)
+> >  
+> >                 atomic_sub(KN_DEACTIVATED_BIAS, &pos->active);
+> >                 pos->flags |= KERNFS_ACTIVATED;
+> > +
+> > +               /*
+> > +                * Invalidate the negative dentry created after pos
+> > is
+> > +                * inserted into sibling rbtree but before it is
+> > +                * activated.
+> > +                */
+> > +               if (invalidate && pos->parent)
+> > +                       kernfs_inc_rev(pos->parent);
+> >         }
+> > +}
+> >  
+> > +/**
+> > + * kernfs_activate - activate a node which started deactivated
+> > + * @kn: kernfs_node whose subtree is to be activated
+> > + *
+> > + * Currently it is only used by kernfs root which has
+> > + * FS_ROOT_CREATE_DEACTIVATED set. Because the addition and the
+> > activation
+> > + * of children nodes are not atomic (not always hold
+> > kernfs_rwsem),
+> > + * negative dentry may be created for one child node after its
+> > addition
+> > + * but before its activation, so passing invalidate as true to
+> > + * @kernfs_activate_locked() to invalidate these negative
+> > dentries.
+> > + *
+> > + * The caller is responsible for ensuring that this function is
+> > not
+> > called
+> > + * after kernfs_remove*() is invoked on @kn.
+> > + */
+> > +void kernfs_activate(struct kernfs_node *kn)
+> > +{
+> > +       down_write(&kernfs_rwsem);
+> > +       kernfs_activate_locked(kn, true);
+> >         up_write(&kernfs_rwsem);
+> >  }
+> >  
+> 
 
 
-> Btw, on a related note, cross-compiling this throws the following error here:
->
-> $ make CROSS_COMPILE=/home/share/src/crosstool/gcc-9.4.0-nolibc/powerpc64-linux/bin/powerpc64-linux- V=1 ARCH=powerpc
->
-> ...
->
-> /home/share/src/crosstool/gcc-9.4.0-nolibc/powerpc64-linux/bin/powerpc64-linux-gcc -Wp,-MD,arch/powerpc/boot/.crt0.o.d -D__ASSEMBLY__ -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -O2 -msoft-float -mno-altivec -mno-vsx -pipe -fomit-frame-pointer -fno-builtin -fPIC -nostdinc -include ./include/linux/compiler_attributes.h -I./arch/powerpc/include -I./arch/powerpc/include/generated  -I./include -I./arch/powerpc/include/uapi -I./arch/powerpc/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/compiler-version.h -include ./include/linux/kconfig.h -m32 -isystem /home/share/src/crosstool/gcc-9.4.0-nolibc/powerpc64-linux/bin/../lib/gcc/powerpc64-linux/9.4.0/include -mbig-endian -nostdinc -c -o arch/powerpc/boot/crt0.o arch/powerpc/boot/crt0.S
-> In file included from <command-line>:
-> ././include/linux/compiler_attributes.h:62:5: warning: "__has_attribute" is not defined, evaluates to 0 [-Wundef]
->    62 | #if __has_attribute(__assume_aligned__)
->       |     ^~~~~~~~~~~~~~~
-> ././include/linux/compiler_attributes.h:62:20: error: missing binary operator before token "("
->    62 | #if __has_attribute(__assume_aligned__)
->       |                    ^
-> ././include/linux/compiler_attributes.h:88:5: warning: "__has_attribute" is not defined, evaluates to 0 [-Wundef]
->    88 | #if __has_attribute(__copy__)
->       |     ^~~~~~~~~~~~~~~
-> ...
->
-> Known issue?
-
-Yeah, fixed in mainline today, thanks for trying to cross compile :)
-
-cheers
