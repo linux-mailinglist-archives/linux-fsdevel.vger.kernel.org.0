@@ -2,75 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D2F240CC79
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 20:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC02140CC99
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 20:32:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230078AbhIOSWN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 14:22:13 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:43839 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229466AbhIOSWL (ORCPT
+        id S231145AbhIOSdu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 14:33:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60268 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230489AbhIOSdt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 14:22:11 -0400
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 18FIKUUX021510
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Sep 2021 14:20:31 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id AD6E115C3427; Wed, 15 Sep 2021 14:20:30 -0400 (EDT)
-Date:   Wed, 15 Sep 2021 14:20:30 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>, ksummit@lists.linux.dev
-Subject: Re: [MAINTAINER SUMMIT] Folios as a potential Kernel/Maintainers
- Summit topic?
-Message-ID: <YUI5bk/94yHPZIqJ@mit.edu>
-References: <YUIwgGzBqX6ZiGgk@mit.edu>
- <f7b70227bac9a684320068b362d28fcade6b65b9.camel@HansenPartnership.com>
+        Wed, 15 Sep 2021 14:33:49 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38E69C061575
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 11:32:30 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id i25so8074529lfg.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 11:32:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aWp4thBEdYZ99D5nCeA+V8YsS07M5e6rGbv4Aq7Iet8=;
+        b=HalyG+FVMw3visRGX1bmrefSnjLCZhBbehZI0kg00cDKwjuz2c8l1jrB3yTLdN6HzM
+         wLSwqjmTaCJhS/qifbhRMBvYnBUxJmE+i4EbFCIwNnSDDScCJNo2zGH4PpYHO+5VlCM7
+         FEkGaA3KDrddjkhQfGEfbtXf0UlRkAKctoNLE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aWp4thBEdYZ99D5nCeA+V8YsS07M5e6rGbv4Aq7Iet8=;
+        b=1IkGtoeonG43AZW41Hs7IGHaMQQWhBnYXJwX4Vfam8B6UdPzjSmwH6jshBeyEQulJU
+         EHvXmwXu0cXiWF4FvNCntWCxKg1cdxhF37TqZ7vx2rCzEwjhcudW3XKydu6YdSxuFpOO
+         ZNEXj+ds0SmQ8qy8XN+zVrkeKCKRhaabX8UU4UqbMpA13oOgmta1Vv4xJOU480dn5e+S
+         /Js27E3UyxTg7Oo4WcDY5b9fr8rlR12fFgiu6LlxcNSuN02rT0X62exVXpSKNC4DPpYx
+         pc7bjW1WjVAaHM0x8nKWZnBZ7W627Bu66aElksH0pYhv78ITyHWgz19IEIdp/vqnR06D
+         dTFw==
+X-Gm-Message-State: AOAM531wXSWDaLfZjUSPuXsSHjbEir5EFPyrK+DFsLxzHQkgUGxR4jfw
+        B7APfxNZlI5DBKncRBNCaoIqLIiYvue6Uh/XJb4=
+X-Google-Smtp-Source: ABdhPJwD+ArUuPhzMgZLMcrK2TFzwiQdV1GxZKdIIXjnmtR00fxHi6MrO1ELUTUWrUMn60+PqjQlUQ==
+X-Received: by 2002:ac2:5fc8:: with SMTP id q8mr997629lfg.612.1631730748045;
+        Wed, 15 Sep 2021 11:32:28 -0700 (PDT)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id k38sm48338lfv.128.2021.09.15.11.32.27
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Sep 2021 11:32:27 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id b18so6847868lfb.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 11:32:27 -0700 (PDT)
+X-Received: by 2002:a05:6512:94e:: with SMTP id u14mr981143lft.173.1631730746978;
+ Wed, 15 Sep 2021 11:32:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f7b70227bac9a684320068b362d28fcade6b65b9.camel@HansenPartnership.com>
+References: <20210915162937.777002-1-axboe@kernel.dk>
+In-Reply-To: <20210915162937.777002-1-axboe@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 15 Sep 2021 11:32:11 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgtROzcks4cozeEYG33UU1Q3T4RM-k3kv-GqrdLKFMoLw@mail.gmail.com>
+Message-ID: <CAHk-=wgtROzcks4cozeEYG33UU1Q3T4RM-k3kv-GqrdLKFMoLw@mail.gmail.com>
+Subject: Re: [PATCHSET v3 0/3] Add ability to save/restore iov_iter state
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 15, 2021 at 02:03:46PM -0400, James Bottomley wrote:
-> On Wed, 2021-09-15 at 13:42 -0400, Theodore Ts'o wrote:
-> [...]
-> > Would this be helpful?  (Or Linus could pull either the folio or
-> > pageset branch, and make this proposal obsolete, which would be
-> > great.  :-)
-> 
-> This is a technical rather than process issue isn't it?  You don't have
-> enough technical people at the Maintainer summit to help meaningfully. 
-> The ideal location, of course, was LSF/MM which is now not happening.
-> 
-> However, we did offer the Plumbers BBB infrastructure to willy for a MM
-> gathering which could be expanded to include this.
+On Wed, Sep 15, 2021 at 9:29 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> I've run this through vectored read/write with io_uring on the commonly
+> problematic cases (dm and low depth SCSI device) which trigger these
+> conditions often, and it seems to pass muster. I've also hacked in
+> faked randomly short reads and that helped find on issue with double
+> accounting. But it did validate the state handling otherwise.
 
-Well, that's why I was suggesting doing this as a LPC BOF, and using
-an LPC BOF session on Friday --- I'm very much aware we don't have the
-right tehcnical people at the Maintainer Summit.
+Ok, so I can't see anything obviously wrong with this, or anything I
+can object to. It's still fairly complicated, and I don't love how
+hard it is to follow some of it, but I do believe it's better.
 
-It's not clear we will have enough MM folks at the LPC, and I agree
-LSF/MM would be a better venue --- but as you say, it's not happening.
-We could also use the BBB infrastructure after the LPC as well, if we
-can't get everyone lined up and available on short notice.  There are
-a lot of different possibilities; I'm for anything where all of the
-stakeholders agree will work, so we can make forward progress.
+IOW, I don't have any objections. Al was saying he was looking at the
+io_uring code, so maybe he'll find something.
 
-Cheers,
+Do you have these test-cases as some kind of test-suite so that this
+all stays correct?
 
-						- Ted
+            Linus
