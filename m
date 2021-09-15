@@ -2,103 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E06D340CCBD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 20:46:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD93E40CCC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 20:47:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231327AbhIOSsF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 14:48:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35370 "EHLO
+        id S231494AbhIOStI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 14:49:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbhIOSsF (ORCPT
+        with ESMTP id S231384AbhIOStI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 14:48:05 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B8B0C061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 11:46:46 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id b200so4732437iof.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 11:46:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=99Kw1j1eVMbhrAgZXfGRgYVdqT/i+a0+MPLD8HFFIc4=;
-        b=CsgcDCnADO5ugy7onKouza4fhG+yUV0MDOzSndd/gDrPbnCVnsz2J9QFoKjJgdlIiq
-         E3LwE/FHYLp7GI8a7djMfSXSqqptBInylpqEBEd8LybqxCSj5ZNLNAHIn9HdOOD+AJc0
-         Q9siDRJqOwGoR17QoQPu54YLX21JLnRCD/tF7/QkEiyo3OVe4Sq9p+1q2M3dAY0laEc1
-         22sv42Qvez1aPio7GMgHXG2+lHRL3mZbnSvwZI1GfxnF37zzQrVePJLGMstki/ajdbij
-         ryV/0MOXzmLApbHE6D3pSJhgeUR7WVEQ+RCBpfH1hrKIguR2X+wr6dL4dFOue9ykjDiQ
-         LINw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=99Kw1j1eVMbhrAgZXfGRgYVdqT/i+a0+MPLD8HFFIc4=;
-        b=Ant4bl1MX7/A5XcZz9PU9bsYzq7vFGA28+govZeESBK488BgcX8UdrV1wm7POc2ZsU
-         9+NIHDzYAaE8PeG1USMy8SbZWzpS2c7qzjmqHXN9AhV90x80D57T3iu0isFBeWdIVKah
-         JkKiQ1bpZ8Jrpo7NmJ51Of+Ae0SNGNQ7ivhOcju4EtDcAHIAy+xxUVRR7KKiwZnOREyV
-         lIqXvQQB9FYK5BloUU7FP85s2j5dDdI+mL2ALArGpbfKgXmwX42fJ0OdS/100oW124Hu
-         kXNqxlKrZWTc4q4hvKN31FVr/V+Ps8TBV0UTjFolltOdyoB7cYEgf2RCPJgfrM5hqVyR
-         a1ZA==
-X-Gm-Message-State: AOAM5302VB7gtySdjOCqN9yqrLQkZ/Y14uusDuv8kleW6naodx8oibnm
-        N9HUBe9CFE6tqW8QGHKVL08KlO3RxDV1u23tg6Q=
-X-Google-Smtp-Source: ABdhPJyVmsyeTFwtvsHILTmGHuMTBRGYbKYqOePJZrL48z7bCy6x+55r/0kTd5bBtV7AnDU1ru+CLQ==
-X-Received: by 2002:a6b:710f:: with SMTP id q15mr1243760iog.77.1631731605376;
-        Wed, 15 Sep 2021 11:46:45 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id y26sm403955iob.37.2021.09.15.11.46.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Sep 2021 11:46:45 -0700 (PDT)
-Subject: Re: [PATCHSET v3 0/3] Add ability to save/restore iov_iter state
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20210915162937.777002-1-axboe@kernel.dk>
- <CAHk-=wgtROzcks4cozeEYG33UU1Q3T4RM-k3kv-GqrdLKFMoLw@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <8c7c8aa0-9591-a50f-35ee-de0037df858a@kernel.dk>
-Date:   Wed, 15 Sep 2021 12:46:44 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 15 Sep 2021 14:49:08 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6F9DC061574;
+        Wed, 15 Sep 2021 11:47:48 -0700 (PDT)
+Received: from zn.tnic (p200300ec2f0d0700f7a2811245428a79.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:700:f7a2:8112:4542:8a79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2DD591EC0257;
+        Wed, 15 Sep 2021 20:47:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1631731663;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=lm6vQs2/Rhr3v+Gkqez9mosqAUPoKD4IW0wHjidPrGY=;
+        b=XN5RscNfsftBTFcuRzGdY1iuAMSDX6NKtwpYReOnfaZk/QSrf/8VqAHOkAjfLPxC1UO6qn
+        9BHTplTlRlxpF7vtQWQch60eAekg1676yowhlJTxL/nJGxhj8z9rv3ulfK5vkpFuCcwh8v
+        CPa1Q28irpOcNBFG98fwkSAbgq7mLSg=
+Date:   Wed, 15 Sep 2021 20:47:37 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Sathyanarayanan Kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        linux-efi@vger.kernel.org, Brijesh Singh <brijesh.singh@amd.com>,
+        kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        platform-driver-x86@vger.kernel.org,
+        Paul Mackerras <paulus@samba.org>, linux-s390@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, x86@kernel.org,
+        amd-gfx@lists.freedesktop.org,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-graphics-maintainer@vmware.com,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v3 4/8] powerpc/pseries/svm: Add a powerpc version of
+ cc_platform_has()
+Message-ID: <YUI/yaut2f9ZoJBd@zn.tnic>
+References: <cover.1631141919.git.thomas.lendacky@amd.com>
+ <9d4fc3f8ea7b325aaa1879beab1286876f45d450.1631141919.git.thomas.lendacky@amd.com>
+ <YUCOTIPPsJJpLO/d@zn.tnic>
+ <87lf3yk7g4.fsf@mpe.ellerman.id.au>
+ <YUHGDbtiGrDz5+NS@zn.tnic>
+ <f8388f18-5e90-5d0f-d681-0b17f8307dd4@csgroup.eu>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgtROzcks4cozeEYG33UU1Q3T4RM-k3kv-GqrdLKFMoLw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <f8388f18-5e90-5d0f-d681-0b17f8307dd4@csgroup.eu>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/15/21 12:32 PM, Linus Torvalds wrote:
-> On Wed, Sep 15, 2021 at 9:29 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> I've run this through vectored read/write with io_uring on the commonly
->> problematic cases (dm and low depth SCSI device) which trigger these
->> conditions often, and it seems to pass muster. I've also hacked in
->> faked randomly short reads and that helped find on issue with double
->> accounting. But it did validate the state handling otherwise.
-> 
-> Ok, so I can't see anything obviously wrong with this, or anything I
-> can object to. It's still fairly complicated, and I don't love how
-> hard it is to follow some of it, but I do believe it's better.
+On Wed, Sep 15, 2021 at 07:18:34PM +0200, Christophe Leroy wrote:
+> Could you please provide more explicit explanation why inlining such an
+> helper is considered as bad practice and messy ?
 
-OK good
+Tom already told you to look at the previous threads. Let's read them
+together. This one, for example:
 
-> IOW, I don't have any objections. Al was saying he was looking at the
-> io_uring code, so maybe he'll find something.
-> 
-> Do you have these test-cases as some kind of test-suite so that this
-> all stays correct?
+https://lore.kernel.org/lkml/YSScWvpXeVXw%2Fed5@infradead.org/
 
-Yep liburing has a whole bunch of regressions tests that we always run
-for any change, and new cases are added as problems are found. That also
-has test cases for new features, etc. This one is particularly difficult
-to test and have confidence in, which is why I ended up hacking up that
-faked short return so I knew I had exercised all of it. The usual tests
-do end up hitting the -EAGAIN path quite easily for certain device
-types, but not the short read/write.
+| > To take it out of line, I'm leaning towards the latter, creating a new
+| > file that is built based on the ARCH_HAS_PROTECTED_GUEST setting.
+| 
+| Yes.  In general everytime architectures have to provide the prototype
+| and not just the implementation of something we end up with a giant mess
+| sooner or later.  In a few cases that is still warranted due to
+| performance concerns, but i don't think that is the case here.
+
+So I think what Christoph means here is that you want to have the
+generic prototype defined in a header and arches get to implement it
+exactly to the letter so that there's no mess.
+
+As to what mess exactly, I'd let him explain that.
+
+> Because as demonstrated in my previous response some days ago, taking that
+> outline ends up with an unneccessary ugly generated code and we don't
+> benefit front GCC's capability to fold in and opt out unreachable code.
+
+And this is real fast path where a couple of instructions matter or what?
+
+set_memory_encrypted/_decrypted doesn't look like one to me.
+
+> I can't see your point here. Inlining the function wouldn't add any
+> ifdeffery as far as I can see.
+
+If the function is touching defines etc, they all need to be visible.
+If that function needs to call other functions - which is the case on
+x86, perhaps not so much on power - then you need to either ifdef around
+them or provide stubs with ifdeffery in the headers. And you need to
+make them global functions instead of keeping them static to the same
+compilation unit, etc, etc.
+
+With a separate compilation unit, you don't need any of that and it is
+all kept in that single file.
 
 -- 
-Jens Axboe
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
