@@ -2,313 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1922740CF02
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Sep 2021 23:48:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F81740CF6E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 00:35:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232537AbhIOVt5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 17:49:57 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:22196 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232420AbhIOVtz (ORCPT
+        id S232990AbhIOWhN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 18:37:13 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:38310 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232949AbhIOWhK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 17:49:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631742516;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4JQbxGAJkeSEPdQ0jyX0sTG6pB3VM96R1fLSbgXGIXg=;
-        b=AvgdAKhN/Pza/3Od6vIqFJEp463tW/G1dz/kabTdWrUp/5b7r5Rg0WgkXJ/uESuonnKR+5
-        3v8o5c/Bl0NLt/HApobu5C7Ue8QMrSbu35tRxF60pXRbRZzrGkttr+hY0FMztSLH8YMoKH
-        PergwuzOBLrtEtwtKmnnaaRrt2OYL7c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-212-3U94tmNfNP2ezU7a4PMyWA-1; Wed, 15 Sep 2021 17:48:35 -0400
-X-MC-Unique: 3U94tmNfNP2ezU7a4PMyWA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 15 Sep 2021 18:37:10 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 858451006AA1;
-        Wed, 15 Sep 2021 21:48:33 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 85A481B46B;
-        Wed, 15 Sep 2021 21:48:23 +0000 (UTC)
-Date:   Wed, 15 Sep 2021 17:48:20 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Subject: Re: [PATCH v4 3/8] audit: add filtering for io_uring records
-Message-ID: <20210915214820.GO490529@madcap2.tricolour.ca>
-References: <163172413301.88001.16054830862146685573.stgit@olly>
- <163172457764.88001.5016839648172573823.stgit@olly>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 53ED322323;
+        Wed, 15 Sep 2021 22:35:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1631745347; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JgZsYMmsqoTtaIffqm+LgUI61DrT1bvGtpHuAgBAgHg=;
+        b=shB4rBHWjsQzJSjuYNvpz+qx09iQlmlzyUlYQG4mK0I8Oq0LoBQdBjz5SC8d9rCNaSEQC3
+        z4cnLF7vLZbCLfS68MgEbMX/JiWYAabou3SUCIzfEg4sL7Lz4hjdMOCz9731kDaPCwaLLA
+        FtnGEE57fq/siqOWE3m9PSg3ovkUvWE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1631745347;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JgZsYMmsqoTtaIffqm+LgUI61DrT1bvGtpHuAgBAgHg=;
+        b=s5BHawe8Yvvo9IzI+WIYfpeIDNcwBKcloNxJGfnJCVoVXQp+rZk0It2270SDw/l+t64odJ
+        tR44mjA4Vwlf7zAA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 65EF613C77;
+        Wed, 15 Sep 2021 22:35:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 0QavCT91QmFWUgAAMHmgww
+        (envelope-from <neilb@suse.de>); Wed, 15 Sep 2021 22:35:43 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <163172457764.88001.5016839648172573823.stgit@olly>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Michal Hocko" <mhocko@suse.com>
+Cc:     "Mel Gorman" <mgorman@suse.de>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        "Andreas Dilger" <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <djwong@kernel.org>, "Jan Kara" <jack@suse.cz>,
+        "Matthew Wilcox" <willy@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] EXT4: Remove ENOMEM/congestion_wait() loops.
+In-reply-to: <YUHh2ddnJEDGI8YG@dhcp22.suse.cz>
+References: <163157808321.13293.486682642188075090.stgit@noble.brown>,
+ <163157838437.13293.14244628630141187199.stgit@noble.brown>,
+ <20210914163432.GR3828@suse.com>,
+ <163165609100.3992.1570739756456048657@noble.neil.brown.name>,
+ <YUHh2ddnJEDGI8YG@dhcp22.suse.cz>
+Date:   Thu, 16 Sep 2021 08:35:40 +1000
+Message-id: <163174534006.3992.15394603624652359629@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2021-09-15 12:49, Paul Moore wrote:
-> This patch adds basic audit io_uring filtering, using as much of the
-> existing audit filtering infrastructure as possible.  In order to do
-> this we reuse the audit filter rule's syscall mask for the io_uring
-> operation and we create a new filter for io_uring operations as
-> AUDIT_FILTER_URING_EXIT/audit_filter_list[7].
-> 
-> Thanks to Richard Guy Briggs for his review, feedback, and work on
-> the corresponding audit userspace changes.
-> 
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+On Wed, 15 Sep 2021, Michal Hocko wrote:
+> On Wed 15-09-21 07:48:11, Neil Brown wrote:
+> >=20
+> > Why does __GFP_NOFAIL access the reserves? Why not require that the
+> > relevant "Try harder" flag (__GFP_ATOMIC or __GFP_MEMALLOC) be included
+> > with __GFP_NOFAIL if that is justified?
+>=20
+> Does 5020e285856c ("mm, oom: give __GFP_NOFAIL allocations access to
+> memory reserves") help?
 
-Looks good.
+Yes, that helps.  A bit.
 
-Acked-by: Richard Guy Briggs <rgb@redhat.com>
+I'm not fond of the clause "the allocation request might have come with some
+locks held".  What if it doesn't?  Does it still have to pay the price.
 
-> ---
-> v4:
-> - no change
-> v3:
-> - removed work-in-progress warning from the description
-> v2:
-> - incorporate feedback from Richard
-> v1:
-> - initial draft
-> ---
->  include/uapi/linux/audit.h |    3 +-
->  kernel/audit_tree.c        |    3 +-
->  kernel/audit_watch.c       |    3 +-
->  kernel/auditfilter.c       |   15 +++++++++--
->  kernel/auditsc.c           |   61 ++++++++++++++++++++++++++++++++++----------
->  5 files changed, 65 insertions(+), 20 deletions(-)
-> 
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index a1997697c8b1..ecf1edd2affa 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -167,8 +167,9 @@
->  #define AUDIT_FILTER_EXCLUDE	0x05	/* Apply rule before record creation */
->  #define AUDIT_FILTER_TYPE	AUDIT_FILTER_EXCLUDE /* obsolete misleading naming */
->  #define AUDIT_FILTER_FS		0x06	/* Apply rule at __audit_inode_child */
-> +#define AUDIT_FILTER_URING_EXIT	0x07	/* Apply rule at io_uring op exit */
->  
-> -#define AUDIT_NR_FILTERS	7
-> +#define AUDIT_NR_FILTERS	8
->  
->  #define AUDIT_FILTER_PREPEND	0x10	/* Prepend to front of list */
->  
-> diff --git a/kernel/audit_tree.c b/kernel/audit_tree.c
-> index 2cd7b5694422..338c53a961c5 100644
-> --- a/kernel/audit_tree.c
-> +++ b/kernel/audit_tree.c
-> @@ -726,7 +726,8 @@ int audit_make_tree(struct audit_krule *rule, char *pathname, u32 op)
->  {
->  
->  	if (pathname[0] != '/' ||
-> -	    rule->listnr != AUDIT_FILTER_EXIT ||
-> +	    (rule->listnr != AUDIT_FILTER_EXIT &&
-> +	     rule->listnr != AUDIT_FILTER_URING_EXIT) ||
->  	    op != Audit_equal ||
->  	    rule->inode_f || rule->watch || rule->tree)
->  		return -EINVAL;
-> diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-> index 2acf7ca49154..698b62b4a2ec 100644
-> --- a/kernel/audit_watch.c
-> +++ b/kernel/audit_watch.c
-> @@ -183,7 +183,8 @@ int audit_to_watch(struct audit_krule *krule, char *path, int len, u32 op)
->  		return -EOPNOTSUPP;
->  
->  	if (path[0] != '/' || path[len-1] == '/' ||
-> -	    krule->listnr != AUDIT_FILTER_EXIT ||
-> +	    (krule->listnr != AUDIT_FILTER_EXIT &&
-> +	     krule->listnr != AUDIT_FILTER_URING_EXIT) ||
->  	    op != Audit_equal ||
->  	    krule->inode_f || krule->watch || krule->tree)
->  		return -EINVAL;
-> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-> index db2c6b59dfc3..d75acb014ccd 100644
-> --- a/kernel/auditfilter.c
-> +++ b/kernel/auditfilter.c
-> @@ -44,7 +44,8 @@ struct list_head audit_filter_list[AUDIT_NR_FILTERS] = {
->  	LIST_HEAD_INIT(audit_filter_list[4]),
->  	LIST_HEAD_INIT(audit_filter_list[5]),
->  	LIST_HEAD_INIT(audit_filter_list[6]),
-> -#if AUDIT_NR_FILTERS != 7
-> +	LIST_HEAD_INIT(audit_filter_list[7]),
-> +#if AUDIT_NR_FILTERS != 8
->  #error Fix audit_filter_list initialiser
->  #endif
->  };
-> @@ -56,6 +57,7 @@ static struct list_head audit_rules_list[AUDIT_NR_FILTERS] = {
->  	LIST_HEAD_INIT(audit_rules_list[4]),
->  	LIST_HEAD_INIT(audit_rules_list[5]),
->  	LIST_HEAD_INIT(audit_rules_list[6]),
-> +	LIST_HEAD_INIT(audit_rules_list[7]),
->  };
->  
->  DEFINE_MUTEX(audit_filter_mutex);
-> @@ -151,7 +153,8 @@ char *audit_unpack_string(void **bufp, size_t *remain, size_t len)
->  static inline int audit_to_inode(struct audit_krule *krule,
->  				 struct audit_field *f)
->  {
-> -	if (krule->listnr != AUDIT_FILTER_EXIT ||
-> +	if ((krule->listnr != AUDIT_FILTER_EXIT &&
-> +	     krule->listnr != AUDIT_FILTER_URING_EXIT) ||
->  	    krule->inode_f || krule->watch || krule->tree ||
->  	    (f->op != Audit_equal && f->op != Audit_not_equal))
->  		return -EINVAL;
-> @@ -248,6 +251,7 @@ static inline struct audit_entry *audit_to_entry_common(struct audit_rule_data *
->  		pr_err("AUDIT_FILTER_ENTRY is deprecated\n");
->  		goto exit_err;
->  	case AUDIT_FILTER_EXIT:
-> +	case AUDIT_FILTER_URING_EXIT:
->  	case AUDIT_FILTER_TASK:
->  #endif
->  	case AUDIT_FILTER_USER:
-> @@ -332,6 +336,10 @@ static int audit_field_valid(struct audit_entry *entry, struct audit_field *f)
->  		if (entry->rule.listnr != AUDIT_FILTER_FS)
->  			return -EINVAL;
->  		break;
-> +	case AUDIT_PERM:
-> +		if (entry->rule.listnr == AUDIT_FILTER_URING_EXIT)
-> +			return -EINVAL;
-> +		break;
->  	}
->  
->  	switch (entry->rule.listnr) {
-> @@ -980,7 +988,8 @@ static inline int audit_add_rule(struct audit_entry *entry)
->  	}
->  
->  	entry->rule.prio = ~0ULL;
-> -	if (entry->rule.listnr == AUDIT_FILTER_EXIT) {
-> +	if (entry->rule.listnr == AUDIT_FILTER_EXIT ||
-> +	    entry->rule.listnr == AUDIT_FILTER_URING_EXIT) {
->  		if (entry->rule.flags & AUDIT_FILTER_PREPEND)
->  			entry->rule.prio = ++prio_high;
->  		else
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 6dda448fb826..7c66a9fea5e6 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -805,6 +805,35 @@ static int audit_in_mask(const struct audit_krule *rule, unsigned long val)
->  	return rule->mask[word] & bit;
->  }
->  
-> +/**
-> + * audit_filter_uring - apply filters to an io_uring operation
-> + * @tsk: associated task
-> + * @ctx: audit context
-> + */
-> +static void audit_filter_uring(struct task_struct *tsk,
-> +			       struct audit_context *ctx)
-> +{
-> +	struct audit_entry *e;
-> +	enum audit_state state;
-> +
-> +	if (auditd_test_task(tsk))
-> +		return;
-> +
-> +	rcu_read_lock();
-> +	list_for_each_entry_rcu(e, &audit_filter_list[AUDIT_FILTER_URING_EXIT],
-> +				list) {
-> +		if (audit_in_mask(&e->rule, ctx->uring_op) &&
-> +		    audit_filter_rules(tsk, &e->rule, ctx, NULL, &state,
-> +				       false)) {
-> +			rcu_read_unlock();
-> +			ctx->current_state = state;
-> +			return;
-> +		}
-> +	}
-> +	rcu_read_unlock();
-> +	return;
-> +}
-> +
->  /* At syscall exit time, this filter is called if the audit_state is
->   * not low enough that auditing cannot take place, but is also not
->   * high enough that we already know we have to write an audit record
-> @@ -1757,7 +1786,7 @@ static void audit_log_exit(void)
->   * __audit_free - free a per-task audit context
->   * @tsk: task whose audit context block to free
->   *
-> - * Called from copy_process and do_exit
-> + * Called from copy_process, do_exit, and the io_uring code
->   */
->  void __audit_free(struct task_struct *tsk)
->  {
-> @@ -1775,15 +1804,21 @@ void __audit_free(struct task_struct *tsk)
->  	 * random task_struct that doesn't doesn't have any meaningful data we
->  	 * need to log via audit_log_exit().
->  	 */
-> -	if (tsk == current && !context->dummy &&
-> -	    context->context == AUDIT_CTX_SYSCALL) {
-> +	if (tsk == current && !context->dummy) {
->  		context->return_valid = AUDITSC_INVALID;
->  		context->return_code = 0;
-> -
-> -		audit_filter_syscall(tsk, context);
-> -		audit_filter_inodes(tsk, context);
-> -		if (context->current_state == AUDIT_STATE_RECORD)
-> -			audit_log_exit();
-> +		if (context->context == AUDIT_CTX_SYSCALL) {
-> +			audit_filter_syscall(tsk, context);
-> +			audit_filter_inodes(tsk, context);
-> +			if (context->current_state == AUDIT_STATE_RECORD)
-> +				audit_log_exit();
-> +		} else if (context->context == AUDIT_CTX_URING) {
-> +			/* TODO: verify this case is real and valid */
-> +			audit_filter_uring(tsk, context);
-> +			audit_filter_inodes(tsk, context);
-> +			if (context->current_state == AUDIT_STATE_RECORD)
-> +				audit_log_uring(context);
-> +		}
->  	}
->  
->  	audit_set_context(tsk, NULL);
-> @@ -1867,12 +1902,6 @@ void __audit_uring_exit(int success, long code)
->  {
->  	struct audit_context *ctx = audit_context();
->  
-> -	/*
-> -	 * TODO: At some point we will likely want to filter on io_uring ops
-> -	 *       and other things similar to what we do for syscalls, but that
-> -	 *       is something for another day; just record what we can here.
-> -	 */
-> -
->  	if (ctx->context == AUDIT_CTX_SYSCALL) {
->  		/*
->  		 * NOTE: See the note in __audit_uring_entry() about the case
-> @@ -1895,6 +1924,8 @@ void __audit_uring_exit(int success, long code)
->  		 * the behavior here.
->  		 */
->  		audit_filter_syscall(current, ctx);
-> +		if (ctx->current_state != AUDIT_STATE_RECORD)
-> +			audit_filter_uring(current, ctx);
->  		audit_filter_inodes(current, ctx);
->  		if (ctx->current_state != AUDIT_STATE_RECORD)
->  			return;
-> @@ -1907,6 +1938,8 @@ void __audit_uring_exit(int success, long code)
->  	if (!list_empty(&ctx->killed_trees))
->  		audit_kill_trees(ctx);
->  
-> +	/* run through both filters to ensure we set the filterkey properly */
-> +	audit_filter_uring(current, ctx);
->  	audit_filter_inodes(current, ctx);
->  	if (ctx->current_state != AUDIT_STATE_RECORD)
->  		goto out;
-> 
+Should we not require that the caller indicate if any locks are held?
+That way callers which don't hold locks can use __GFP_NOFAIL without
+worrying about imposing on other code.
 
-- RGB
+Or is it so rare that __GFP_NOFAIL would be used without holding a lock
+that it doesn't matter?
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+The other commit of interest is
 
+Commit: 6c18ba7a1899 ("mm: help __GFP_NOFAIL allocations which do not trigger=
+ OOM killer")
+
+I don't find the reasoning convincing.  It is a bit like "Robbing Peter
+to pay Paul".  It takes from the reserves to allow a __GFP_NOFAIL to
+proceed, with out any reason to think this particular allocation has any
+more 'right' to the reserves than anything else.
+
+While I don't like the reasoning in either of these, they do make it
+clear (to me) that the use of reserves is entirely an internal policy
+decision.  They should *not* be seen as part of the API and callers
+should not have to be concerned about it when deciding whether to use
+__GFP_NOFAIL or not.
+
+The use of these reserves is, at most, a hypothetical problem.  If it
+ever looks like becoming a real practical problem, it needs to be fixed
+internally to the page allocator.  Maybe an extra water-mark which isn't
+quite as permissive as ALLOC_HIGH...
+
+I'm inclined to drop all references to reserves from the documentation
+for __GFP_NOFAIL.  I think there are enough users already that adding a
+couple more isn't going to make problems substantially more likely.  And
+more will be added anyway that the mm/ team won't have the opportunity
+or bandwidth to review.
+
+Meanwhile I'll see if I can understand the intricacies of alloc_page so
+that I can contibute to making it more predictable.
+
+Question: In those cases where an open-coded loop is appropriate, such
+as when you want to handle signals or can drop locks, how bad would it
+be to have a tight loop without any sleep?
+should_reclaim_retry() will sleep 100ms (sometimes...).  Is that enough?
+__GFP_NOFAIL doesn't add any sleep when looping.
+
+Thanks,
+NeilBrown
