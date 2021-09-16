@@ -2,70 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 15FCD40DC17
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 16:00:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2D8E40DC43
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 16:03:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237880AbhIPOCL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Sep 2021 10:02:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46500 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235843AbhIPOCK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Sep 2021 10:02:10 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 383A461244;
-        Thu, 16 Sep 2021 14:00:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1631800849;
-        bh=jwJbQIBIqNOLSAaFpgPlcQdpkvQwG+9Xs+Tn8H65bgg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EPIANSn0pRJztpDkuN3cBmNMXLZ1d8YdN09eGZ4SXf3qc8NcJJIebXx4A7HQ4IlFU
-         8vds/IGpQ2Cl6UXxFWxhvBJrvLtPJPhUy4P6i2KFKJ5s9wXQULYbcNSVFnbmEGfCGs
-         cgzt9hC4kPg85DCAH7ZFSbZa/5cvFEtNXoYVKl6M=
-Date:   Thu, 16 Sep 2021 16:00:47 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, stable@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5.10] fanotify: limit number of event merge attempts
-Message-ID: <YUNOD/z1tfYDFEQX@kroah.com>
-References: <20210915182008.1369659-1-amir73il@gmail.com>
+        id S236328AbhIPOEW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Sep 2021 10:04:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42422 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236178AbhIPOEV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Sep 2021 10:04:21 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA748C061764
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Sep 2021 07:03:00 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id g21so17237662edw.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Sep 2021 07:03:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uDQVWMVyDKOgzkZcDb3+rDqpvwcn3Jz4M4lERqwtKzQ=;
+        b=wheUGG6/fAzYjxsJXBa4L1O+wb7bTADoVB+CUwozatY1vQ/2NdMTjizRYivhfTyJkg
+         pS1x+m2nrE6B4UrUlOLxq19vsPD4nCphARChyopu2tcjbY2XWhKE+JsP84CxbioYR5KJ
+         r1n+67Iqv0+jClRBE5ZW7aL8hOOxSv1aCPb1cB/oGXUEirOrcMz/oJL0EYjVlii/VEo/
+         biQvKQpVGBddI1uiH96j/Rj97wnUbUjp7Vji5auoDqTuRmoErqTazNctcAHHUo3xVx/J
+         A31eZ+59ej72qOfLZnJ4e/7DVEaJctSU5otIpFX5bJQ1cyi4+/2arABJXjgw8dj1PWNs
+         WcdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uDQVWMVyDKOgzkZcDb3+rDqpvwcn3Jz4M4lERqwtKzQ=;
+        b=W6v7ZMZJBbk5Lfx+8lRr715FRHfsWTiJtnOzu3m6UzHgflRriL5gE+SZX+jqrW6YaG
+         +E0i63xFO5ewTnbcGBFX1kh5dz5ETDqbha9O6o8mrhFXfjRJvaPerM+wt3nRVqpphIR6
+         JBqG6yjxqMtGD/z/a4gKm2C9lh0v5/g33DsdATLBG2hE4eVlSvNR2Lkq0/XRouRLbDUO
+         3mbhv8q+wzFoyEqKUlcTk1t60yXZ690kr53t3XGfh5pmP8V0bwQNdiQZyYyPyfXt2RBZ
+         rZWoQrjoPOWjM6O02Febo4KHnmqkuFZluCKFCY5HbcBfG14BoCu9lhWlgY/M8QFkTzBW
+         vGPg==
+X-Gm-Message-State: AOAM531AmIhb8owUVA2FNZvo2W3Xx7jhNxFUnneVr6F8qI+LWKoPFJsU
+        T1oJYaEs2s8LGwiEiqqFL4D/a+N3A3FXZS8wzU6a
+X-Google-Smtp-Source: ABdhPJz0VkhT+YrcNMCjIAvY4x3PjlwoxXE0lI4t6a/A0GhzgmqNamjP2Iy2IU4ZaGKEWzMctp3cK+KCxTBks/+ryQs=
+X-Received: by 2002:a17:906:8cd:: with SMTP id o13mr6444839eje.341.1631800966410;
+ Thu, 16 Sep 2021 07:02:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210915182008.1369659-1-amir73il@gmail.com>
+References: <163172413301.88001.16054830862146685573.stgit@olly>
+ <163172457152.88001.12700049763432531651.stgit@olly> <20210916133308.GP490529@madcap2.tricolour.ca>
+In-Reply-To: <20210916133308.GP490529@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 16 Sep 2021 10:02:35 -0400
+Message-ID: <CAHC9VhSEj8b7+jH9Atkj3FH+SOdc5iwytxhS3_O1HmTahdj3dQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/8] audit,io_uring,io-wq: add some basic audit support
+ to io_uring
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 15, 2021 at 09:20:08PM +0300, Amir Goldstein wrote:
-> commit b8cd0ee8cda68a888a317991c1e918a8cba1a568 upstream.
-> 
-> Event merges are expensive when event queue size is large, so limit the
-> linear search to 128 merge tests.
-> 
-> [Stable backport notes] The following statement from upstream commit is
-> irrelevant for backport:
-> -
-> -In combination with 128 size hash table, there is a potential to merge
-> -with up to 16K events in the hashed queue.
-> -
-> [Stable backport notes] The problem is as old as fanotify and described
-> in the linked cover letter "Performance improvement for fanotify merge".
-> This backported patch fixes the performance issue at the cost of merging
-> fewer potential events.  Fixing the performance issue is more important
-> than preserving the "event merge" behavior, which was not predictable in
-> any way that applications could rely on.
-> 
-> Link: https://lore.kernel.org/r/20210304104826.3993892-6-amir73il@gmail.com
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> Cc: <stable@vger.kernel.org>
-> Link: https://lore.kernel.org/linux-fsdevel/20210202162010.305971-1-amir73il@gmail.com/
-> Link: https://lore.kernel.org/linux-fsdevel/20210915163334.GD6166@quack2.suse.cz/
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/notify/fanotify/fanotify.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+On Thu, Sep 16, 2021 at 9:33 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2021-09-15 12:49, Paul Moore wrote:
+> > This patch adds basic auditing to io_uring operations, regardless of
+> > their context.  This is accomplished by allocating audit_context
+> > structures for the io-wq worker and io_uring SQPOLL kernel threads
+> > as well as explicitly auditing the io_uring operations in
+> > io_issue_sqe().  Individual io_uring operations can bypass auditing
+> > through the "audit_skip" field in the struct io_op_def definition for
+> > the operation; although great care must be taken so that security
+> > relevant io_uring operations do not bypass auditing; please contact
+> > the audit mailing list (see the MAINTAINERS file) with any questions.
+> >
+> > The io_uring operations are audited using a new AUDIT_URINGOP record,
+> > an example is shown below:
+> >
+> >   type=UNKNOWN[1336] msg=audit(1630523381.288:260):
+> >     uring_op=19 success=yes exit=0 items=0 ppid=853 pid=1204
+> >     uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0
+> >     subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+> >     key=(null)
+> >     AUID="root" UID="root" GID="root" EUID="root" SUID="root"
+> >     FSUID="root" EGID="root" SGID="root" FSGID="root"
+> >
+> > Thanks to Richard Guy Briggs for review and feedback.
+>
+> I share Steve's concerns about the missing auid and ses.  The userspace
+> log interpreter conjured up AUID="root" from the absent auid=.
+>
+> Some of the creds are here including ppid, pid, a herd of *id and subj.
+> *Something* initiated this action and then delegated it to iouring to
+> carry out.  That should be in there somewhere.  You had a concern about
+> shared queues and mis-attribution.  All of these creds including auid
+> and ses should be kept together to get this right.
 
-Now queued up, thanks.
+Look, there are a lot of things about io_uring that frustrate me from
+a security perspective - this is one of them - but I've run out of
+ways to say it's not possible to reliably capture the audit ID or
+session ID here.  With io_uring it is possible to submit an io_uring
+operation, and capture the results, by simply reading and writing to a
+mmap'd buffer.  Yes, it would be nice to have that information, but I
+don't believe there is a practical way to capture it.  If you have any
+suggestions on how to do so, please share, but please make it
+concrete; hand wavy solutions aren't useful at this stage.
 
-greg k-h
+As for the userspace mysteriously creating an AUID out of thin air,
+that was my mistake: I simply removed the "auid=" field from the
+example and didn't remove the additional fields, e.g. AUID, that
+auditd appends to the end of the record.  I've updated the commit
+description with a freshly generated record and removed the auditd
+bonus bits as those probably shouldn't be shown in an example of a
+kernel generated audit record.  I'm not going to repost the patchset
+just for this small edit to the description, but I have force-pushed
+the update to the selinux/working-io_uring branch.
+
+-- 
+paul moore
+www.paul-moore.com
