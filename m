@@ -2,95 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1ABE40DD7C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 17:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBEAA40DDAE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 17:13:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239059AbhIPPES (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Sep 2021 11:04:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56386 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238971AbhIPPEO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Sep 2021 11:04:14 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60AE0C061574;
-        Thu, 16 Sep 2021 08:02:52 -0700 (PDT)
-Received: from zn.tnic (p200300ec2f11c600e73b4cdd38695acb.dip0.t-ipconnect.de [IPv6:2003:ec:2f11:c600:e73b:4cdd:3869:5acb])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 56F431EC0136;
-        Thu, 16 Sep 2021 17:02:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1631804566;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Ry9NO0W0dY1PlRpeMUb1ltduv1HjeDhspaE6VFY8fE0=;
-        b=dzihOSpZSIsZh7rL/9DrKrEUKj+fwC3WBoadhJkTSM7ks3hY+DLbUVbUxsNt3sZ013SNbv
-        1uoFXr/UPHLRN/IWfbqSc9ua9o0PdzpF9X5dQXtDeWZUajOJiu0Yx7FrtLENXoeeq5i90A
-        kjm7WIQn/Y72ZtAGCfVPiXsaokbbn6M=
-Date:   Thu, 16 Sep 2021 17:02:40 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Kuppuswamy, Sathyanarayanan" 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-graphics-maintainer@vmware.com,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Christoph Hellwig <hch@infradead.org>,
+        id S238715AbhIPPPD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Sep 2021 11:15:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40654 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238593AbhIPPPD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Sep 2021 11:15:03 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C9ABA60296;
+        Thu, 16 Sep 2021 15:13:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631805222;
+        bh=+lq6B1zWF0TxdP6rMUUAWORQ3vfDH10KdhrcUzKH1ls=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=S5welG3KaOYvfAHM1r8AmI87dJHTLcWvkqdE0tUnz7sr39kG6QmgCO2vsmulBZYda
+         OwhhGO39vYS0KiD/ZyNV0QbakYzcR7QbL0uaBCfLr7e/yrik/LlHETD54b3SuvIV2N
+         ccGTE7u1CxOn2EkJF1Xr8SoyH42N6miBKm8R705Ma+AzdDlRA7cLRL/1K64jLXvM35
+         Wo4jeExg5xBkGwHSdmh9dzNHt3yazFq8VRVG4xXUU/yfiQ2dv6Agkvo4xi8lf3RugJ
+         HNMT/YgqwOdFw3Dw01D7H1nRsyq43NKgOuLn8DStFsMCBpNx0BkqkkhGEKdagVbI6u
+         oNXfpYJUClOng==
+Date:   Thu, 16 Sep 2021 16:13:37 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>, Baoquan He <bhe@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Dave Young <dyoung@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v3 0/8] Implement generic cc_platform_has() helper
- function
-Message-ID: <YUNckGH0+KXdEmqu@zn.tnic>
-References: <cover.1631141919.git.thomas.lendacky@amd.com>
- <YUIjS6lKEY5AadZx@zn.tnic>
- <d48e6a17-d2b4-67da-56d1-fc9a61dfe2b8@linux.intel.com>
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [RFC PATCH] fs/compat_binfmt_elf: Introduce sysctl to disable
+ compat ELF loader
+Message-ID: <20210916151330.GA9000@willie-the-truck>
+References: <20210916131816.8841-1-will@kernel.org>
+ <CAK8P3a0jQXiYg9u=o2LzqNSdiqMC=4=6o_NttPk_Wx4C3Gx98A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d48e6a17-d2b4-67da-56d1-fc9a61dfe2b8@linux.intel.com>
+In-Reply-To: <CAK8P3a0jQXiYg9u=o2LzqNSdiqMC=4=6o_NttPk_Wx4C3Gx98A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 15, 2021 at 10:26:06AM -0700, Kuppuswamy, Sathyanarayanan wrote:
-> I have a Intel variant patch (please check following patch). But it includes
-> TDX changes as well. Shall I move TDX changes to different patch and just
-> create a separate patch for adding intel_cc_platform_has()?
+Hi Arnd,
 
-Yes, please, so that I can expedite that stuff separately and so that it
-can go in early in order for future work to be based ontop.
+On Thu, Sep 16, 2021 at 04:46:15PM +0200, Arnd Bergmann wrote:
+> On Thu, Sep 16, 2021 at 3:18 PM Will Deacon <will@kernel.org> wrote:
+> >
+> > Distributions such as Android which support a mixture of 32-bit (compat)
+> > and 64-bit (native) tasks necessarily ship with the compat ELF loader
+> > enabled in their kernels. However, as time goes by, an ever-increasing
+> > proportion of userspace consists of native applications and in some cases
+> > 32-bit capabilities are starting to be removed from the CPUs altogether.
+> >
+> > Inevitably, this means that the compat code becomes somewhat of a
+> > maintenance burden, receiving less testing coverage and exposing an
+> > additional kernel attack surface to userspace during the lengthy
+> > transitional period where some shipping devices require support for
+> > 32-bit binaries.
+> >
+> > Introduce a new sysctl 'fs.compat-binfmt-elf-enable' to allow the compat
+> > ELF loader to be disabled dynamically on devices where it is not required.
+> > On arm64, this is sufficient to prevent userspace from executing 32-bit
+> > code at all.
+> >
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Cc: Andy Lutomirski <luto@kernel.org>
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Signed-off-by: Will Deacon <will@kernel.org>
+> > ---
+> >  fs/compat_binfmt_elf.c | 24 +++++++++++++++++++++++-
+> >  1 file changed, 23 insertions(+), 1 deletion(-)
+> >
+> > I started off hacking this into the arch code, but then I realised it was
+> > just as easy doing it in the core for everybody to enjoy. Unfortunately,
+> > after talking to Peter, it sounds like it doesn't really help on x86
+> > where userspace can switch to 32-bit without involving the kernel at all.
+> >
+> > Thoughts?
+> 
+> I'm not sure I understand the logic behind the sysctl. Are you worried
+> about exposing attack surface on devices that don't support 32-bit
+> instructions at all but might be tricked into loading a 32-bit binary that
+> exploits a bug in the elf loader, or do you want to remove compat support
+> on some but not all devices running the same kernel?
 
-Thx.
+It's the latter case. With the GKI effort in Android, we want to run the
+same kernel binary across multiple devices. However, for some devices
+we may be able to determine that there is no need to support 32-bit
+applications even though the hardware may support them, and we would
+like to ensure that things like the compat syscall wrappers, compat vDSO,
+signal handling etc are not accessible to applications.
 
--- 
-Regards/Gruss,
-    Boris.
+> In the first case, having the kernel make the decision based on CPU
+> feature flags would be easier. In the second case, I would expect this
+> to be a per-process setting similar to prctl, capability or seccomp.
+> This would make it possible to do it for separately per container
+> and avoid ambiguity about what happens to already-running 32-bit
+> tasks.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+I'm not sure I follow the per-process aspect of your suggestion -- we want
+to prevent 32-bit tasks from existing at all. If it wasn't for GKI, we'd
+just disable CONFIG_COMPAT altogether, but while there is a need for 32-bit
+support on some devices then we're not able to do that.
+
+Does that make more sense now?
+
+Cheers,
+
+Will
