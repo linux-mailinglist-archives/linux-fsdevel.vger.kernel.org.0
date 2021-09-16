@@ -2,181 +2,274 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 731C240D1E1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 04:59:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C5A440D230
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 06:01:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234049AbhIPDBA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 23:01:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60780 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234095AbhIPDA5 (ORCPT
+        id S229955AbhIPECw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Sep 2021 00:02:52 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:6828 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229463AbhIPECw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 23:00:57 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C69CC0613E0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 19:59:37 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id h17so11094834edj.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 19:59:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bK17SO3X70z4YqfpudbGkJpUfQn3wXsVxii6aCrF/hI=;
-        b=EyxUWdCtuNTuayC9lkcXPgWleZ8bHcRF7PdMazQqlX+DjN9DeK/P5kGPXL3QuXc4XW
-         kCgGjVmBNRQnk+BE9t74LsnVFUsl79l/tR744ZWrHrY1q1f8UXZIfqGeNr9nIVh/Q8XZ
-         dWMhuOOQvK/PO5kIKb7pDZQmaBTkjQ3/i/zTAK5Zm+2YJjLZG5lfLuc2ORkyvnY34dye
-         Xj+oZOtcMXWk5RLjnJN9KnknPwThumRU8WZHr0gufgDmlXKMMBoCNzRhyy4O28ek49cR
-         P8hMd3liqmlSRporSijNz40h8Nv8X4Chbv8pQaKssVolCWCDl8dX0L29zoZoTm+1Zjjd
-         Qr2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bK17SO3X70z4YqfpudbGkJpUfQn3wXsVxii6aCrF/hI=;
-        b=CJ3r4m9VQcGH0QgtNuvRW4XunTTbv/robePUgi6pRxdvY16OoGQPFEETg/z1jbkX+m
-         N/3W2+Ky1fSu0mKV3bgQuTZGATX25Iidp2xLwptyPw2BAwdSd96YH0uN+UhJrU+HsWMU
-         yESDQGnjgelMHQetdik/O14E8DGxK849NEU1owIBE7mXvk7Pg7Y60Xr5d56eINcmk0Vc
-         WPkJGZC1ZE9AdGOIb6giSBHo8Q/B9sMN/syd/memjEPCvQ17e1zUbA4e9YgY7WYC+8xS
-         64NlRTfkEseMPFmbsQsCxe83l8SF5e+uWhKWRrG2pDmVnS0jAfzZB/HuGuG7mU39mvM3
-         SnDw==
-X-Gm-Message-State: AOAM530uctgc48OPrpCtgaK/0Af3JH7YWdRXfQLAo8Kq41K2b1s6sQN5
-        7zshtsP5ExkqahXZpKIwErljwED+w1IyhwT86z50
-X-Google-Smtp-Source: ABdhPJxYzI63Wh7B932JufxmCVl5MRmcZoWxKUOX5ts9dsculQ1nMB73xM3IEM0/sD5sdM0oPHDUFMQFvAvBgYyICR4=
-X-Received: by 2002:a17:907:76e7:: with SMTP id kg7mr3719013ejc.344.1631761175250;
- Wed, 15 Sep 2021 19:59:35 -0700 (PDT)
+        Thu, 16 Sep 2021 00:02:52 -0400
+IronPort-Data: =?us-ascii?q?A9a23=3A357CzKBYh08fLxVW/1Liw5YqxClBgxIJ4g17XOL?=
+ =?us-ascii?q?fBlW7gTxz1zcByjAaWj/XOf2LZDD8Kt1xbo208EIEsJOAx9UxeLYW3SszFioV8?=
+ =?us-ascii?q?6IpJjg4wn/YZnrUdouaJK5ex512huLocYZkExcwmj/3auK49Sgli/nRLlbBILW?=
+ =?us-ascii?q?s1h5ZFFYMpBgJ2UoLd94R2uaEsPDha++/kYqaT/73ZDdJ7wVJ3lc8sMpvnv/AU?=
+ =?us-ascii?q?MPa41v0tnRmDRxCUcS3e3M9VPrzLonpR5f0rxU9IwK0ewrD5OnREmLx9BFrBM6?=
+ =?us-ascii?q?nk6rgbwsBRbu60Qqm0yIQAvb9xEMZ4HFaPqUTbZLwbW9NljyPhME3xtNWqbS+V?=
+ =?us-ascii?q?AUoIrbR3u8aVnG0FgknZPEbpeSXeyfXXcu7iheun2HX6/lnEkA6FYMC/eNwG2t?=
+ =?us-ascii?q?P6boTLzVlRg+Cg+an6LO9RPNliskqII/sJox3kn1py3fbS+knRZTCSqDRzd5ew?=
+ =?us-ascii?q?Do0wMtJGJ72a8gGbjxgRBfNeRtCPhEQEp1WtOG2inj6dhVcqUmJvuwz4m7O3Ep?=
+ =?us-ascii?q?93aaFGNreevSOXtkTkkvwjnjJ+GD1HQAcHMeC0jfD/n/EruvOmz7rHYwJGLCm+?=
+ =?us-ascii?q?/pCnlKe3CoQBQcQWF/9puO24ma6WtRCOwkX9zAooKwa6kOmVJ/+Uge+rXrCuQQ?=
+ =?us-ascii?q?TM/JUEusn+ESdxLH8/QmUHC4HQyRHZdhgs9U5LRQ010WOt8HkAz1x9rmUT2+Ns?=
+ =?us-ascii?q?LCOonWvOkAowcUqDcMfZVJdpYC9/8do1VSSJuuP2ZWd1rXdcQwcCRjTxMTmu4g?=
+ =?us-ascii?q?usA=3D=3D?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AQbzQjKHfi1gB9f85pLqE1MeALOsnbusQ8zAX?=
+ =?us-ascii?q?PiFKOHhom6mj+vxG88506faKslwssR0b+OxoW5PwJE80l6QFgrX5VI3KNGbbUQ?=
+ =?us-ascii?q?CTXeNfBOXZowHIKmnX8+5x8eNaebFiNduYNzNHpPe/zA6mM9tI+rW6zJw=3D?=
+X-IronPort-AV: E=Sophos;i="5.85,297,1624291200"; 
+   d="scan'208";a="114553827"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 16 Sep 2021 12:01:30 +0800
+Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
+        by cn.fujitsu.com (Postfix) with ESMTP id B49994D0DC75;
+        Thu, 16 Sep 2021 12:01:26 +0800 (CST)
+Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
+ G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Thu, 16 Sep 2021 12:01:20 +0800
+Received: from [127.0.0.1] (10.167.225.141) by
+ G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.23 via Frontend Transport; Thu, 16 Sep 2021 12:01:20 +0800
+Subject: Re: [PATCH v9 8/8] xfs: Add dax dedupe support
+To:     "Darrick J. Wong" <djwong@kernel.org>
+CC:     <hch@lst.de>, <linux-xfs@vger.kernel.org>,
+        <dan.j.williams@intel.com>, <david@fromorbit.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <nvdimm@lists.linux.dev>, <rgoldwyn@suse.de>,
+        <viro@zeniv.linux.org.uk>, <willy@infradead.org>
+References: <20210915104501.4146910-1-ruansy.fnst@fujitsu.com>
+ <20210915104501.4146910-9-ruansy.fnst@fujitsu.com>
+ <20210916003008.GE34830@magnolia>
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Message-ID: <38eeee6f-aa11-4c13-b7c0-2e48927b85dc@fujitsu.com>
+Date:   Thu, 16 Sep 2021 12:01:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-References: <20210913140229.24797-1-omosnace@redhat.com> <CAHC9VhRw-S+zZUFz5QFFLMBATjo+YbPAiR21jX6p7cT0T+MVLA@mail.gmail.com>
-In-Reply-To: <CAHC9VhRw-S+zZUFz5QFFLMBATjo+YbPAiR21jX6p7cT0T+MVLA@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 15 Sep 2021 22:59:23 -0400
-Message-ID: <CAHC9VhQyejnmLn0NHQiWzikHs8ZdzAUdZ2WqNxgGM6xhJ4mvMQ@mail.gmail.com>
-Subject: Re: [PATCH v4] lockdown,selinux: fix wrong subject in some SELinux
- lockdown checks
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org, linux-acpi@vger.kernel.org,
-        linux-cxl@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210916003008.GE34830@magnolia>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-yoursite-MailScanner-ID: B49994D0DC75.A3825
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 13, 2021 at 5:05 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Mon, Sep 13, 2021 at 10:02 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> >
-> > Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
-> > lockdown") added an implementation of the locked_down LSM hook to
-> > SELinux, with the aim to restrict which domains are allowed to perform
-> > operations that would breach lockdown.
-> >
-> > However, in several places the security_locked_down() hook is called in
-> > situations where the current task isn't doing any action that would
-> > directly breach lockdown, leading to SELinux checks that are basically
-> > bogus.
-> >
-> > To fix this, add an explicit struct cred pointer argument to
-> > security_lockdown() and define NULL as a special value to pass instead
-> > of current_cred() in such situations. LSMs that take the subject
-> > credentials into account can then fall back to some default or ignore
-> > such calls altogether. In the SELinux lockdown hook implementation, use
-> > SECINITSID_KERNEL in case the cred argument is NULL.
-> >
-> > Most of the callers are updated to pass current_cred() as the cred
-> > pointer, thus maintaining the same behavior. The following callers are
-> > modified to pass NULL as the cred pointer instead:
-> > 1. arch/powerpc/xmon/xmon.c
-> >      Seems to be some interactive debugging facility. It appears that
-> >      the lockdown hook is called from interrupt context here, so it
-> >      should be more appropriate to request a global lockdown decision.
-> > 2. fs/tracefs/inode.c:tracefs_create_file()
-> >      Here the call is used to prevent creating new tracefs entries when
-> >      the kernel is locked down. Assumes that locking down is one-way -
-> >      i.e. if the hook returns non-zero once, it will never return zero
-> >      again, thus no point in creating these files. Also, the hook is
-> >      often called by a module's init function when it is loaded by
-> >      userspace, where it doesn't make much sense to do a check against
-> >      the current task's creds, since the task itself doesn't actually
-> >      use the tracing functionality (i.e. doesn't breach lockdown), just
-> >      indirectly makes some new tracepoints available to whoever is
-> >      authorized to use them.
-> > 3. net/xfrm/xfrm_user.c:copy_to_user_*()
-> >      Here a cryptographic secret is redacted based on the value returned
-> >      from the hook. There are two possible actions that may lead here:
-> >      a) A netlink message XFRM_MSG_GETSA with NLM_F_DUMP set - here the
-> >         task context is relevant, since the dumped data is sent back to
-> >         the current task.
-> >      b) When adding/deleting/updating an SA via XFRM_MSG_xxxSA, the
-> >         dumped SA is broadcasted to tasks subscribed to XFRM events -
-> >         here the current task context is not relevant as it doesn't
-> >         represent the tasks that could potentially see the secret.
-> >      It doesn't seem worth it to try to keep using the current task's
-> >      context in the a) case, since the eventual data leak can be
-> >      circumvented anyway via b), plus there is no way for the task to
-> >      indicate that it doesn't care about the actual key value, so the
-> >      check could generate a lot of "false alert" denials with SELinux.
-> >      Thus, let's pass NULL instead of current_cred() here faute de
-> >      mieux.
-> >
-> > Improvements-suggested-by: Casey Schaufler <casey@schaufler-ca.com>
-> > Improvements-suggested-by: Paul Moore <paul@paul-moore.com>
-> > Fixes: 59438b46471a ("security,lockdown,selinux: implement SELinux lockdown")
-> > Acked-by: Dan Williams <dan.j.williams@intel.com>         [cxl]
-> > Acked-by: Steffen Klassert <steffen.klassert@secunet.com> [xfrm]
-> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > ---
-> >
-> > v4:
-> > - rebase on top of TODO
-> > - fix rebase conflicts:
-> >   * drivers/cxl/pci.c
-> >     - trivial: the lockdown reason was corrected in mainline
-> >   * kernel/bpf/helpers.c, kernel/trace/bpf_trace.c
-> >     - trivial: LOCKDOWN_BPF_READ was renamed to LOCKDOWN_BPF_READ_KERNEL
-> >       in mainline
-> >   * kernel/power/hibernate.c
-> >     - trivial: !secretmem_active() was added to the condition in
-> >       hibernation_available()
-> > - cover new security_locked_down() call in kernel/bpf/helpers.c
-> >   (LOCKDOWN_BPF_WRITE_USER in BPF_FUNC_probe_write_user case)
-> >
-> > v3: https://lore.kernel.org/lkml/20210616085118.1141101-1-omosnace@redhat.com/
-> > - add the cred argument to security_locked_down() and adapt all callers
-> > - keep using current_cred() in BPF, as the hook calls have been shifted
-> >   to program load time (commit ff40e51043af ("bpf, lockdown, audit: Fix
-> >   buggy SELinux lockdown permission checks"))
-> > - in SELinux, don't ignore hook calls where cred == NULL, but use
-> >   SECINITSID_KERNEL as the subject instead
-> > - update explanations in the commit message
-> >
-> > v2: https://lore.kernel.org/lkml/20210517092006.803332-1-omosnace@redhat.com/
-> > - change to a single hook based on suggestions by Casey Schaufler
-> >
-> > v1: https://lore.kernel.org/lkml/20210507114048.138933-1-omosnace@redhat.com/
->
-> The changes between v3 and v4 all seem sane to me, but I'm going to
-> let this sit for a few days in hopes that we can collect a few more
-> Reviewed-bys and ACKs.  If I don't see any objections I'll merge it
-> mid-week(ish) into selinux/stable-5.15 and plan on sending it to Linus
-> after it goes through a build/test cycle.
 
-Time's up, I just merged this into selinux/stable-5.15 and I'll send
-this to Linus once it passes testing.
 
--- 
-paul moore
-www.paul-moore.com
+On 2021/9/16 8:30, Darrick J. Wong wrote:
+> On Wed, Sep 15, 2021 at 06:45:01PM +0800, Shiyang Ruan wrote:
+>> Introduce xfs_mmaplock_two_inodes_and_break_dax_layout() for dax files
+>> who are going to be deduped.  After that, call compare range function
+>> only when files are both DAX or not.
+>>
+>> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+>> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>> ---
+>>   fs/xfs/xfs_file.c    |  2 +-
+>>   fs/xfs/xfs_inode.c   | 80 +++++++++++++++++++++++++++++++++++++++++---
+>>   fs/xfs/xfs_inode.h   |  1 +
+>>   fs/xfs/xfs_reflink.c |  4 +--
+>>   4 files changed, 80 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+>> index 2ef1930374d2..c3061723613c 100644
+>> --- a/fs/xfs/xfs_file.c
+>> +++ b/fs/xfs/xfs_file.c
+>> @@ -846,7 +846,7 @@ xfs_wait_dax_page(
+>>   	xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
+>>   }
+>>   
+>> -static int
+>> +int
+>>   xfs_break_dax_layouts(
+>>   	struct inode		*inode,
+>>   	bool			*retry)
+>> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+>> index a4f6f034fb81..bdc084cdbf46 100644
+>> --- a/fs/xfs/xfs_inode.c
+>> +++ b/fs/xfs/xfs_inode.c
+>> @@ -3790,6 +3790,61 @@ xfs_iolock_two_inodes_and_break_layout(
+>>   	return 0;
+>>   }
+>>   
+>> +static int
+>> +xfs_mmaplock_two_inodes_and_break_dax_layout(
+>> +	struct xfs_inode	*ip1,
+>> +	struct xfs_inode	*ip2)
+>> +{
+>> +	int			error, attempts = 0;
+>> +	bool			retry;
+>> +	struct page		*page;
+>> +	struct xfs_log_item	*lp;
+>> +
+>> +	if (ip1->i_ino > ip2->i_ino)
+>> +		swap(ip1, ip2);
+>> +
+>> +again:
+>> +	retry = false;
+>> +	/* Lock the first inode */
+>> +	xfs_ilock(ip1, XFS_MMAPLOCK_EXCL);
+>> +	error = xfs_break_dax_layouts(VFS_I(ip1), &retry);
+>> +	if (error || retry) {
+>> +		xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
+>> +		if (error == 0 && retry)
+>> +			goto again;
+>> +		return error;
+>> +	}
+>> +
+>> +	if (ip1 == ip2)
+>> +		return 0;
+>> +
+>> +	/* Nested lock the second inode */
+>> +	lp = &ip1->i_itemp->ili_item;
+>> +	if (lp && test_bit(XFS_LI_IN_AIL, &lp->li_flags)) {
+>> +		if (!xfs_ilock_nowait(ip2,
+>> +		    xfs_lock_inumorder(XFS_MMAPLOCK_EXCL, 1))) {
+>> +			xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
+>> +			if ((++attempts % 5) == 0)
+>> +				delay(1); /* Don't just spin the CPU */
+>> +			goto again;
+>> +		}
+> 
+> I suspect we don't need this part for grabbing the MMAPLOCK^W pagecache
+> invalidatelock.  The AIL only grabs the ILOCK, never the IOLOCK or the
+> MMAPLOCK.
+
+Maybe I have misunderstood this part.
+
+What I want is to lock the two inode nestedly.  This code is copied from 
+xfs_lock_two_inodes(), which checks this AIL during locking two inode 
+with each of the three kinds of locks.
+
+But I also found the recent merged function: 
+filemap_invalidate_lock_two() just locks two inode directly without 
+checking AIL.  So, I am not if the AIL check is needed in this case.
+
+> 
+>> +	} else
+>> +		xfs_ilock(ip2, xfs_lock_inumorder(XFS_MMAPLOCK_EXCL, 1));
+>> +	/*
+>> +	 * We cannot use xfs_break_dax_layouts() directly here because it may
+>> +	 * need to unlock & lock the XFS_MMAPLOCK_EXCL which is not suitable
+>> +	 * for this nested lock case.
+>> +	 */
+>> +	page = dax_layout_busy_page(VFS_I(ip2)->i_mapping);
+>> +	if (page && page_ref_count(page) != 1) {
+> 
+> Do you think the patch "ext4/xfs: add page refcount helper" would be a
+> good cleanup to head this series?
+> 
+> https://lore.kernel.org/linux-xfs/20210913161604.31981-1-alex.sierra@amd.com/T/#m59cf7cd5c0d521ad487fa3a15d31c3865db88bdf
+
+Got it.
+
+
+--
+Thanks,
+Ruan
+
+> 
+> The rest of the logic looks ok.
+> 
+> --D
+> 
+>> +		xfs_iunlock(ip2, XFS_MMAPLOCK_EXCL);
+>> +		xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
+>> +		goto again;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   /*
+>>    * Lock two inodes so that userspace cannot initiate I/O via file syscalls or
+>>    * mmap activity.
+>> @@ -3804,8 +3859,19 @@ xfs_ilock2_io_mmap(
+>>   	ret = xfs_iolock_two_inodes_and_break_layout(VFS_I(ip1), VFS_I(ip2));
+>>   	if (ret)
+>>   		return ret;
+>> -	filemap_invalidate_lock_two(VFS_I(ip1)->i_mapping,
+>> -				    VFS_I(ip2)->i_mapping);
+>> +
+>> +	if (IS_DAX(VFS_I(ip1)) && IS_DAX(VFS_I(ip2))) {
+>> +		ret = xfs_mmaplock_two_inodes_and_break_dax_layout(ip1, ip2);
+>> +		if (ret) {
+>> +			inode_unlock(VFS_I(ip2));
+>> +			if (ip1 != ip2)
+>> +				inode_unlock(VFS_I(ip1));
+>> +			return ret;
+>> +		}
+>> +	} else
+>> +		filemap_invalidate_lock_two(VFS_I(ip1)->i_mapping,
+>> +					    VFS_I(ip2)->i_mapping);
+>> +
+>>   	return 0;
+>>   }
+>>   
+>> @@ -3815,8 +3881,14 @@ xfs_iunlock2_io_mmap(
+>>   	struct xfs_inode	*ip1,
+>>   	struct xfs_inode	*ip2)
+>>   {
+>> -	filemap_invalidate_unlock_two(VFS_I(ip1)->i_mapping,
+>> -				      VFS_I(ip2)->i_mapping);
+>> +	if (IS_DAX(VFS_I(ip1)) && IS_DAX(VFS_I(ip2))) {
+>> +		xfs_iunlock(ip2, XFS_MMAPLOCK_EXCL);
+>> +		if (ip1 != ip2)
+>> +			xfs_iunlock(ip1, XFS_MMAPLOCK_EXCL);
+>> +	} else
+>> +		filemap_invalidate_unlock_two(VFS_I(ip1)->i_mapping,
+>> +					      VFS_I(ip2)->i_mapping);
+>> +
+>>   	inode_unlock(VFS_I(ip2));
+>>   	if (ip1 != ip2)
+>>   		inode_unlock(VFS_I(ip1));
+>> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+>> index b21b177832d1..f7e26fe31a26 100644
+>> --- a/fs/xfs/xfs_inode.h
+>> +++ b/fs/xfs/xfs_inode.h
+>> @@ -472,6 +472,7 @@ enum xfs_prealloc_flags {
+>>   
+>>   int	xfs_update_prealloc_flags(struct xfs_inode *ip,
+>>   				  enum xfs_prealloc_flags flags);
+>> +int	xfs_break_dax_layouts(struct inode *inode, bool *retry);
+>>   int	xfs_break_layouts(struct inode *inode, uint *iolock,
+>>   		enum layout_break_reason reason);
+>>   
+>> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
+>> index 9d876e268734..3b99c9dfcf0d 100644
+>> --- a/fs/xfs/xfs_reflink.c
+>> +++ b/fs/xfs/xfs_reflink.c
+>> @@ -1327,8 +1327,8 @@ xfs_reflink_remap_prep(
+>>   	if (XFS_IS_REALTIME_INODE(src) || XFS_IS_REALTIME_INODE(dest))
+>>   		goto out_unlock;
+>>   
+>> -	/* Don't share DAX file data for now. */
+>> -	if (IS_DAX(inode_in) || IS_DAX(inode_out))
+>> +	/* Don't share DAX file data with non-DAX file. */
+>> +	if (IS_DAX(inode_in) != IS_DAX(inode_out))
+>>   		goto out_unlock;
+>>   
+>>   	if (!IS_DAX(inode_in))
+>> -- 
+>> 2.33.0
+>>
+>>
+>>
+
+
