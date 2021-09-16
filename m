@@ -2,207 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 707CE40EA26
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 20:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0565C40E9C2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 20:23:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243432AbhIPSpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Sep 2021 14:45:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49398 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239295AbhIPSpD (ORCPT
+        id S1352754AbhIPSYp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Sep 2021 14:24:45 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:45518 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1349804AbhIPSXm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Sep 2021 14:45:03 -0400
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 477F5C0F9C91;
-        Thu, 16 Sep 2021 10:15:19 -0700 (PDT)
-Received: by mail-qv1-xf2d.google.com with SMTP id g11so4631049qvd.2;
-        Thu, 16 Sep 2021 10:15:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=F1dJN61v4a5HavamkHN7ACFSKiKkM/zUmpKZlIwuGio=;
-        b=HdcVwodHBTqTcKj9a4KQNQ9TZ9py7/8rywZo2MLdkVpA5JTYsTHiPcov76FAibXmEV
-         rItqYaYOlklvI4WrzkJOFWUMWZVbk/ripAAflVeHPjQaiHdKWrV0vhGs6qQmpYbwcssd
-         E8GfTlwjmytE8+mgKgiAbxc8uOUDKowD6lbt7jBtxFOTm30nn8VT+9mvWWeKdGJ6hV2/
-         z0NbQOvWY8H/etz8+xSrEhmqdBhzTL8CZqftMTMpielYegSMCKCw1fzBEKDGODEfEQcf
-         HmGek3GjnTiRZQJHqMPWL6aBy5vb0tmX+xXzOH2zNmVt1Lna5U23cdrXWox9t6OzGvi0
-         hFWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=F1dJN61v4a5HavamkHN7ACFSKiKkM/zUmpKZlIwuGio=;
-        b=YP0d2rMEDYwtNjOf+zVM4mdZk53WLgnNyrOBVGNcbtpIZxkGhsN6aPO3LLzRekL3Yu
-         3/pfWg7EQITmTALv2q0yJGj06FFiq/uneLijCNRn1KMHNeHO+w8aaWCkQ8kkVpVhvnXb
-         0GAHl4XDIdz6YThgBCcJlHL1HAlfjvG8ul5CksKZYHOrVLmCnP6EprDsmVnLtDbZH4Eg
-         4JqbjEz6kEuNg77KokzjfoVH0tvR6IyEy00Qf6nL+fNWElD9dFk8VuO0bXsHE1UVEytO
-         C28CM4yl78oGiZm0dl1uWba6vDIOWv9rqkSMlT+vj31sMs7oNNmi9/PjDGpSSjMych4Q
-         FpBg==
-X-Gm-Message-State: AOAM533w4wGchsLs3uGXQMmqzyqoKd/dpATY4Zie7SkxZhqocWOqulWn
-        XgHzxY9MnVZg3PkV0Cbalg==
-X-Google-Smtp-Source: ABdhPJxPfI06sAVkGTy6viKv9UCBKipVm8L7Phjt+5w05y5+F9R58r0HFB7zZMJz+R9x59xlOaqZCw==
-X-Received: by 2002:ad4:4a21:: with SMTP id n1mr6387082qvz.22.1631812517789;
-        Thu, 16 Sep 2021 10:15:17 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id i14sm2632326qka.66.2021.09.16.10.15.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Sep 2021 10:15:16 -0700 (PDT)
-Date:   Thu, 16 Sep 2021 13:15:14 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Chris Mason <clm@fb.com>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        "ksummit@lists.linux.dev" <ksummit@lists.linux.dev>
-Subject: Re: [MAINTAINER SUMMIT] Folios as a potential Kernel/Maintainers
- Summit topic?
-Message-ID: <YUN7oiFs5JHgQNop@moria.home.lan>
-References: <YUIwgGzBqX6ZiGgk@mit.edu>
- <f7b70227bac9a684320068b362d28fcade6b65b9.camel@HansenPartnership.com>
- <YUI5bk/94yHPZIqJ@mit.edu>
- <17242A0C-3613-41BB-84E4-2617A182216E@fb.com>
- <f066615c0e2c6fe990fa5c19dd1c17d649bcb03a.camel@HansenPartnership.com>
- <E655F510-14EB-4F40-BCF8-C5266C07443F@fb.com>
+        Thu, 16 Sep 2021 14:23:42 -0400
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 18GHv6BO010806;
+        Thu, 16 Sep 2021 18:22:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2021-07-09; bh=+1BhvZuj2k+LhkeEelp7WS13FPHvfBLuLqOdQyXt6Vk=;
+ b=pQC0lNkvZ5nRCKbjV/DCmZyCnwiw6rA4n1DEbS3oJsksiJKUeJUVBxb7hAyuhoGXLo8E
+ n8UdGoies9EGXpA8NPm8GZFDBfwtLPca2WJJQ1kkhsn7QxUGlXR6EuG8xqMJhv9kUcEz
+ T2KgBvBCT5Nmd8wzfiWLtPicu3SAmOCqJiJnTnPjFt3wPzguGWyjuuBM4C09iVX+Geuw
+ zTwVKDWr9cU8UW0i1l33GJhEhUT9OBXhHIJp7uHi30sga8i4e9+prJDjlAOTrA+rDYol
+ oP7YOGbMh/V3cEgMpIrbNfT1Clne2VVAS53GmrbZMKQI6KKAs68ZfxNK2Kxg6AfzRh7l JA== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2020-01-29; bh=+1BhvZuj2k+LhkeEelp7WS13FPHvfBLuLqOdQyXt6Vk=;
+ b=Lgi/p+LYJdJJ3R9BZpjGRhq95mGY18W2Gc059Bpg5oYZWPC3EeXBX8/NAdctAFJL4lCn
+ koCF1NIfhCce2FSQ6Vk0G/m9t237muBUQvzRhJ0UM/wp7q2NIH839TYplWPG2jk4WqYY
+ jKUcv1+vuXoGe1wuaj5rybss/nmW6R0pMO7FWu3GdSLlTsKCDzzWc9wYmn8ykfukDCLV
+ ZN9lU1vSAvxeip1067RXL83yg81Loxi6AFdb/8xkBsI2dFIF5SjGVNfeTrJPBypczsmH
+ YJzQqnXX0bUyZegdVdSEbGU0f6g0NRHlu/OnAyZfD5CGfJsqBZFjlDzow4bwtxo9UA+W pA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3b3tnhuf9y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Sep 2021 18:22:20 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 18GIAWGg149794;
+        Thu, 16 Sep 2021 18:22:19 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by aserp3020.oracle.com with ESMTP id 3b0m99rpf2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 16 Sep 2021 18:22:19 +0000
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 18GIK46a182960;
+        Thu, 16 Sep 2021 18:22:18 GMT
+Received: from aserp3030.oracle.com (ksplice-shell2.us.oracle.com [10.152.118.36])
+        by aserp3020.oracle.com with ESMTP id 3b0m99rpeg-1;
+        Thu, 16 Sep 2021 18:22:18 +0000
+From:   Dai Ngo <dai.ngo@oracle.com>
+To:     bfields@fieldses.org
+Cc:     chuck.lever@oracle.com, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH RFC v3 0/2] nfsd: Initial implementation of NFSv4 Courteous Server
+Date:   Thu, 16 Sep 2021 14:22:09 -0400
+Message-Id: <20210916182212.81608-1-dai.ngo@oracle.com>
+X-Mailer: git-send-email 2.20.1.1226.g1595ea5.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <E655F510-14EB-4F40-BCF8-C5266C07443F@fb.com>
+X-Proofpoint-GUID: EyOpPCQjn4lstRCryXgPEs9phCwSgqqj
+X-Proofpoint-ORIG-GUID: EyOpPCQjn4lstRCryXgPEs9phCwSgqqj
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 16, 2021 at 04:46:25PM +0000, Chris Mason wrote:
-> It feels like these patches are moving forward, but with a pretty heavy
-> emotional cost for the people involved.  I'll definitely agree this has been
-> our process for a long time, but I'm struggling to understand why we'd call it
-> working.
-> 
-> In general, we've all come to terms with huge changes being a slog through
-> consensus building, design compromise, the actual technical work, and the
-> rebase/test/fix iteration cycle.  It's stressful, both because of technical
-> difficulty and because the whole process is filled with uncertainty.
-> 
-> With folios, we don't have general consensus on:
-> 
-> * Which problems are being solved?  Kent's writeup makes it pretty clear
-> filesystems and memory management developers have diverging opinions on this.
-> Our process in general is to put this into patch 0.  It mostly works, but
-> there's an intermediate step between patch 0 and the full lwn article that
-> would be really nice to have.
-> 
-> * Who is responsible for accepting the design, and which acks must be obtained
-> before it goes upstream?  Our process here is pretty similar to waiting for
-> answers to messages in bottles.  We consistently leave it implicit and poorly
-> defined.
-> 
-> * What work is left before it can go upstream?  Our process could be
-> effectively modeled by postit notes on one person's monitor, which they may or
-> may not share with the group.  Also, since we don't have agreement on which
-> acks are required, there's no way to have any certainty about what work is
-> left.  It leaves authors feeling derailed when discussion shifts and reviewers
-> feeling frustrated and ignored.
-> 
-> * How do we divide up the long term future direction into individual steps
-> that we can merge?  This also goes back to consensus on the design.  We can't
-> decide which parts are going to get layered in future merge windows until we
-> know if we're building a car or a banana stand.
-> 
-> * What tests will we use to validate it all?  Work this spread out is too big
-> for one developer to test alone.  We need ways for people sign up and agree on
-> which tests/benchmarks provide meaningful results.
-> 
-> The end result of all of this is that missing a merge window isn't just about
-> a time delay.  You add N months of total uncertainty, where every new email
-> could result in having to start over from scratch.  Willy's
-> do-whatever-the-fuck-you-want-I'm-going-on-vacation email is probably the
-> least surprising part of the whole thread.
-> 
-> Internally, we tend to use a simple shared document to nail all of this down.
-> A two page google doc for folios could probably have avoided a lot of pain
-> here, especially if we’re able to agree on stakeholders.
-> 
-> -chris
+Hi Bruce,
 
-Agreed on all points. We don't have a culture of talking about design changes
-before doing them, and maybe we should - the Rust RFC process is another
-alternate model.
+This series of patches implement the NFSv4 Courteous Server.
 
-That isn't always a bad thing: I have often found that my best improvements to
-my own code have come from doing a lot of exploratory refactoring, keeping what
-works and discarding what doesn't, trusting my intuiting and then then looking
-afterwards at what got better, and asking myself what that tells me about what
-the design wants to be.
+A server which does not immediately expunge the state on lease expiration
+is known as a Courteous Server.  A Courteous Server continues to recognize
+previously generated state tokens as valid until conflict arises between
+the expired state and the requests from another client, or the server
+reboots.
 
-In hindsight I feel like Willy must have been doing the same thing; I think the
-folio work is opening up _really_ interesting new avenues to explore - I was one
-of the people talking about compound pages in the page cache early on, yet I did
-not and would not have guessed where the work was actually going to lead, and I
-find myself _really_ liking it.
+The v2 patch includes the following:
 
-But more than the question of whether we write design docs up front, I frankly
-think we have a _broken_ culture with respect to supporting and enabling cross
-subsystem refactorings and improvements. Instead of collectively coming up with
-ideas for improvements, a lot of the discussions I see end up feeling like turf
-wars and bikeshedding where everyone has their pet idea they want the thing to
-be and no one is taking a step back and saying "look at this mess we created,
-how are we going to simplify and clean it up."
+. add new callback, lm_expire_lock, to lock_manager_operations to
+  allow the lock manager to take appropriate action with conflict lock.
 
-And we have created some unholy messes, especially in MM land. I've been digging
-into the rmap code and trying to figure out what the _inherent, fundamental_
-differences between file and anonymous pages are - I think folios should also
-include anonymous pages, but not yet - and I keep finding stuff that's just
-gross. Endless if (old thing) if (new thing) where literally no effort has ever
-been made to figure out if these things maybe should be the same thing.
+. handle conflicts of NFSv4 locks with NFSv3/NLM and local locks.
 
-It's like - seriously people, it's ok to create messes when we're doing new
-things and figuring them out for the first time, but we have to go back and
-clean up our messes or we end up with an unmaintainable Cthulian horror no one
-can untangle, and a lot of the MM code is just about that point.
+. expire courtesy client after 24hr if client has not reconnected.
 
-And if you look at our culture for how these kinds of deep invasive new features
-gets developed and reviewed and added, is it really any surprise? We bikeshed
-things to death, which scares people off and means they make the minimal changes
-they need to core code - which means not touching the existing paths any more
-than necessary, and people don't want to come back when they're done. Our
-process is not encouraging good work!
+. do not allow expired client to become courtesy client if there are
+  waiters for client's locks.
 
-And when Willy comes along with folios - which by introducing a new data type
-for our main subtype of pages, are a starting point to taming this insanity - he
-gets hit with the most ridiculous objections, like whether folios are a
-replacement for compound pages (answer: no, compound pages belong to the other
-side of the allocator/allocatee divide). It's like no one has ever heard of
-separation of concerns.
+. modify client_info_show to show courtesy client and seconds from
+  last renew.
 
-To everyone involved: if you want to do competent design work you have to be
-able to separate yourself from the specific problems you've been staring at and
-look at the wider picture, and ask yourself if this thing you want is a good
-idea for the wider ecosystem, or whether your specific problem _matters_ in this
-instance.
+. fix a problem with NFSv4.1 server where the it keeps returning
+  SEQ4_STATUS_CB_PATH_DOWN in the successful SEQUENCE reply, after
+  the courtesy client re-connects, causing the client to keep sending
+  BCTS requests to server.
 
-MM people: I know you care about fragmentation, and that a lot of your work days
-is spent dealing with it. But it's not a concern for folios, because we can
-always _fail the allocation and allocate a smaller one_. And I have specifically
-pushed back when filesystem people wanted fixed size folios because they thought
-it would make their lives easier: to restate my answer to that publically,
-folios are basically extents, and part of being a filesystem developer and
-dealing with extents is that you have to get used to dealing with arbitrary
-sized extents - i.e. processing them incrementally, you have to be more flexible
-in your thinking then when you were writing code that was working with fixed
-size blocks or pages. But you'll deal.
+The v3 patch includes the following:
 
-/end rant
+. modify posix_test_lock to check and resolve conflict locks
+  for handling of NLM TEST and NFSv4 LOCKT requests.
 
-I apologize in advance if anyone feels I've been unfair to them; we are all,
-after all, figuring this out as we go along. But we've got room for improvement!
+. separate out fix for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+
+. merge with 5.15-rc1
+
+
