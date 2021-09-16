@@ -2,129 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21B9140D0FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 02:38:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BF8140D11F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 03:16:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233553AbhIPAjT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 20:39:19 -0400
-Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:48919 "EHLO
-        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233856AbhIPAjS (ORCPT
+        id S233565AbhIPBRT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 21:17:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38050 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233284AbhIPBRR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 20:39:18 -0400
-Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
-        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 2CA3E87E46;
-        Thu, 16 Sep 2021 10:37:53 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1mQfPU-00CxNW-5j; Thu, 16 Sep 2021 10:37:52 +1000
-Date:   Thu, 16 Sep 2021 10:37:52 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Michal Hocko <mhocko@suse.com>, Mel Gorman <mgorman@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] EXT4: Remove ENOMEM/congestion_wait() loops.
-Message-ID: <20210916003752.GN2361455@dread.disaster.area>
-References: <163157808321.13293.486682642188075090.stgit@noble.brown>
- <163157838437.13293.14244628630141187199.stgit@noble.brown>
- <20210914163432.GR3828@suse.com>
- <163165609100.3992.1570739756456048657@noble.neil.brown.name>
- <YUHh2ddnJEDGI8YG@dhcp22.suse.cz>
- <163174534006.3992.15394603624652359629@noble.neil.brown.name>
+        Wed, 15 Sep 2021 21:17:17 -0400
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D38D4C061764
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 18:15:57 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id n128so5928398iod.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 18:15:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=M/faTXn1SjxhQ6qy0K7k7cEDFuF/xWQ+SaNiUztry3E=;
+        b=f8Bad83/dhUbPcl5woEiHQX906D4Aj+o/zHxmqsOgB41wrxlxjc0audgP6zL0p9982
+         qTLDmgygGzYYQBsT0URy1BPFHjvmr/BQa/onawExPiPX/txTCJin7SAJ8H7HNC3FopxP
+         WNPIn3CxnfJYcCX13SwSvtohe5cwbsMxBU31bXbsgVRIIFBKitd3CetkIljP07vMwO0p
+         CC7SE9THGdh+JdbD4NDCVwbUI4N/v2jlrwfYhksk2OxXNHRazExXcabXFbqzl3NiOXZ9
+         uJVwSm9cgnwPmUunqku5pwaStwHjzbJFqu+ZWeq+mJQD0M+hLtgHz0PPyoI3lBJLzNrt
+         pdyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=M/faTXn1SjxhQ6qy0K7k7cEDFuF/xWQ+SaNiUztry3E=;
+        b=civU2OLKnMfULct1SdgV6yxUOpd6GzPfR7SlPbFuF9QTJNQE3Ac2noecHCy7EJI/xv
+         jDa1v83xHgZnM1mp2fE+YEZC6vfJuutmI6Zf+r328gpNuWCSdsNXmmRMgsu/H5YuJ7vs
+         RRTHaukuZbwi4CMoecEyrDHeYrDwR21IZJeN6KOujpCNvIjzwFbRC3NXBDVyszYmPIJR
+         itHfH5NAh3Db9CXVbyFk2k0RscL+3f3D9D9F0XCsHNHbAIWrs68sPCubJhzpYGyEfgGa
+         PIKn+4uyrHQfg9AgJNJUnv+naZXqmlRpp1GmGNSKyUPhdYsd4OQkFGQHMReykGtZliFZ
+         sVHw==
+X-Gm-Message-State: AOAM5321a7iEx72GHxWAGs/Lq+yR11VPdiqz6PVyaoywvPWn1mYkQ110
+        ke2maCwIjuH/MhJKFCv3jMrjCNyaeafXQA==
+X-Google-Smtp-Source: ABdhPJyny3E+qnxtdslVv9if67lLF19B5P6BRbTH4bpCoZxEdMEnIAEBPDrtQ9+xByxHA02NUNIU6w==
+X-Received: by 2002:a6b:5c0c:: with SMTP id z12mr2337797ioh.171.1631754957054;
+        Wed, 15 Sep 2021 18:15:57 -0700 (PDT)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id e22sm815282iob.52.2021.09.15.18.15.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Sep 2021 18:15:56 -0700 (PDT)
+Subject: Re: [PATCHSET v3 0/3] Add ability to save/restore iov_iter state
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <20210915162937.777002-1-axboe@kernel.dk>
+ <CAHk-=wgtROzcks4cozeEYG33UU1Q3T4RM-k3kv-GqrdLKFMoLw@mail.gmail.com>
+ <8c7c8aa0-9591-a50f-35ee-de0037df858a@kernel.dk>
+ <CAHk-=wj3dsQMK4y-EeMD1Zyod7=Sv68UqrND-GYgHXx6wNRawA@mail.gmail.com>
+ <6688d40c-b359-364b-cdff-1e0714eb6945@kernel.dk>
+ <f6349daf-2180-241d-54aa-adbfd955c5fa@kernel.dk>
+Message-ID: <3beb1715-84da-ae33-7d99-406df463b508@kernel.dk>
+Date:   Wed, 15 Sep 2021 19:15:55 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <f6349daf-2180-241d-54aa-adbfd955c5fa@kernel.dk>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <163174534006.3992.15394603624652359629@noble.neil.brown.name>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
-        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
-        a=IkcTkHD0fZMA:10 a=7QKq2e-ADPsA:10 a=7-415B0cAAAA:8
-        a=CuGUvM-gP3KvDOsnQb0A:9 a=QEXdDO2ut3YA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 16, 2021 at 08:35:40AM +1000, NeilBrown wrote:
-> On Wed, 15 Sep 2021, Michal Hocko wrote:
-> > On Wed 15-09-21 07:48:11, Neil Brown wrote:
-> > > 
-> > > Why does __GFP_NOFAIL access the reserves? Why not require that the
-> > > relevant "Try harder" flag (__GFP_ATOMIC or __GFP_MEMALLOC) be included
-> > > with __GFP_NOFAIL if that is justified?
-> > 
-> > Does 5020e285856c ("mm, oom: give __GFP_NOFAIL allocations access to
-> > memory reserves") help?
+On 9/15/21 4:42 PM, Jens Axboe wrote:
+> On 9/15/21 1:40 PM, Jens Axboe wrote:
+>> On 9/15/21 1:26 PM, Linus Torvalds wrote:
+>>> On Wed, Sep 15, 2021 at 11:46 AM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>
+>>>>    The usual tests
+>>>> do end up hitting the -EAGAIN path quite easily for certain device
+>>>> types, but not the short read/write.
+>>>
+>>> No way to do something like "read in file to make sure it's cached,
+>>> then invalidate caches from position X with POSIX_FADV_DONTNEED, then
+>>> do a read that crosses that cached/uncached boundary"?
+>>>
+>>> To at least verify that "partly synchronous, but partly punted to
+>>> async" case?
+>>>
+>>> Or were you talking about some other situation?
+>>
+>> No that covers some of it, and that happens naturally with buffered IO.
+>> The typical case is -EAGAIN on the first try, then you get a partial
+>> or all of it the next loop, and then done or continue. I tend to run
+>> fio verification workloads for that, as you get all the flexibility
+>> of fio with the data verification. And there are tests in there that run
+>> DONTNEED in parallel with buffered IO, exactly to catch some of these
+>> csaes. But they don't verify the data, generally.
+>>
+>> In that sense buffered is a lot easier than O_DIRECT, as it's easier to
+>> provoke these cases. And that does hit all the save/restore parts and
+>> looping, and if you do it with registered buffers then you get to work
+>> with bvec iter as well. O_DIRECT may get you -EAGAIN for low queue depth
+>> devices, but it'll never do a short read/write after that. 
+>>
+>> But that's not in the regressions tests. I'll write a test case
+>> that can go with the liburing regressions for it.
 > 
-> Yes, that helps.  A bit.
+> OK I wrote one, quick'n dirty. It's written as a liburing test, which
+> means it can take no arguments (in which case it creates a 128MB file),
+> or it can take an argument and it'll use that argument as the file. We
+> fill the first 128MB of the file with known data, basically the offset
+> of the file. Then we read it back in any of the following ways:
 > 
-> I'm not fond of the clause "the allocation request might have come with some
-> locks held".  What if it doesn't?  Does it still have to pay the price.
+> 1) Using non-vectored read
+> 2) Using vectored read, segments that fit in UIO_FASTIOV
+> 3) Using vectored read, segments larger than UIO_FASTIOV
 > 
-> Should we not require that the caller indicate if any locks are held?
-> That way callers which don't hold locks can use __GFP_NOFAIL without
-> worrying about imposing on other code.
+> This catches all the different cases for a read.
 > 
-> Or is it so rare that __GFP_NOFAIL would be used without holding a lock
-> that it doesn't matter?
+> We do that with both buffered and O_DIRECT, and before each pass, we
+> randomly DONTNEED either the first, middle, or end part of each segment
+> in the read size.
 > 
-> The other commit of interest is
+> I ran this on my laptop, and I found this:
+> axboe@p1 ~/gi/liburing (master)> test/file-verify                                0.100s
+> bad read 229376, read 3
+> Buffered novec test failed
+> axboe@p1 ~/gi/liburing (master)> test/file-verify                                0.213s
+> bad read 294912, read 0
+> Buffered novec test failed
 > 
-> Commit: 6c18ba7a1899 ("mm: help __GFP_NOFAIL allocations which do not trigger OOM killer")
+> which is because I'm running the iov_iter.2 stuff, and we're hitting
+> that double accounting issue that I mentioned in the cover letter for
+> this series. That's why the read return is larger than we ask for
+> (128K). Running it on the current branch passes:
 > 
-> I don't find the reasoning convincing.  It is a bit like "Robbing Peter
-> to pay Paul".  It takes from the reserves to allow a __GFP_NOFAIL to
-> proceed, with out any reason to think this particular allocation has any
-> more 'right' to the reserves than anything else.
+> [root@archlinux liburing]# for i in $(seq 10); do test/file-verify; done
+> [root@archlinux liburing]# 
 > 
-> While I don't like the reasoning in either of these, they do make it
-> clear (to me) that the use of reserves is entirely an internal policy
-> decision.  They should *not* be seen as part of the API and callers
-> should not have to be concerned about it when deciding whether to use
-> __GFP_NOFAIL or not.
+> (this is in my test vm that I run on the laptop for kernel testing,
+> hence the root and different hostname).
+> 
+> I will add this as a liburing regression test case. Probably needs a bit
+> of cleaning up first, it was just a quick prototype as I thought your
+> suggestion was a good one. Will probably change it to run at a higher
+> queue depth than just the 1 it does now.
 
-Agree totally with this - we just want to block until allocation
-succeeds, and if the -filesystem- deadlocks because allocation never
-succeeds then that's a problem that needs to be solved in the
-filesystem with a different memory allocation strategy...
+Cleaned it up a bit, and added registered buffer support as well (which
+is another variant over non-vectored reads) and queued IO support as
+well:
 
-OTOH, setting up a single __GFP_NOFAIL call site with the ability to
-take the entire system down seems somewhat misguided.
+https://git.kernel.dk/cgit/liburing/commit/?id=6ab387dab745aff2af760d9fed56a4154669edec
 
-> The use of these reserves is, at most, a hypothetical problem.  If it
-> ever looks like becoming a real practical problem, it needs to be fixed
-> internally to the page allocator.  Maybe an extra water-mark which isn't
-> quite as permissive as ALLOC_HIGH...
-> 
-> I'm inclined to drop all references to reserves from the documentation
-> for __GFP_NOFAIL.  I think there are enough users already that adding a
-> couple more isn't going to make problems substantially more likely.  And
-> more will be added anyway that the mm/ team won't have the opportunity
-> or bandwidth to review.
+and it's now part of the regular testing. Here's my usual run:
 
-Yup, we've been replacing open coded loops like in kmem_alloc() with
-explicit __GFP_NOFAIL usage for a while now:
+Running test file-verify                                            3 sec
+Running test file-verify /dev/nvme0n1p2                             3 sec
+Running test file-verify /dev/nvme1n1p1                             3 sec
+Running test file-verify /dev/sdc2                                  Test file-verify timed out (may not be a failure)
+Running test file-verify /dev/dm-0                                  3 sec
+Running test file-verify /data/file                                 3 sec
 
-$ ▶ git grep __GFP_NOFAIL fs/xfs |wc -l
-33
-$
+Note that the sdc2 timeout isn't a failure, it's just that emulation on
+qemu is slow enough that it takes 1min20s to run and I time out tests
+after 60s in the harness to prevent something stalling forever.
 
-ANd we've got another 100 or so call sites planned for conversion to
-__GFP_NOFAIL. Hence the suggestion to remove the use of
-reserves from __GFP_NOFAIL seems like a sensible plan because it has
-never been necessary in the past for all the allocation sites we are
-converting from open coded loops to __GFP_NOFAIL...
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Jens Axboe
+
