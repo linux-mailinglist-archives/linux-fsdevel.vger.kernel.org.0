@@ -2,179 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB05140CFFE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 01:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2344040D08F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 02:05:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232773AbhIOXLw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 19:11:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38160 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231197AbhIOXLv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 19:11:51 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C5B1C061574;
-        Wed, 15 Sep 2021 16:10:32 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id c21so9632539edj.0;
-        Wed, 15 Sep 2021 16:10:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9BtEwTezY+qlQ0z6udcY1NI+sWRfBUg4i/PQVpsepp0=;
-        b=mKDdUXh3ZD6Q0nk7BTUP3zZAAgNh3CAlmZL8bCeApJLsy2E+8udpR+XxK5SomOti9c
-         wE0fKNqqEg3jngk8STojSXv7igrZNhj0Kx9W749QBu/7Id6QwxsqtSBglOSKKJOC5GDM
-         t6Gj5chRhn5m+m//diJNa25h157qVqj5ZUyYAIwx6A5oBB2Mgl1h8D7WXReI+ojaoJAk
-         QIL3zznbP8S53Iafn6ampKpLeDScxlB9nvKm4PJCkyktfNHU7TsbHoNCJdiD49EK5D17
-         eqKsot1RJMRXHlx8Z4CnhcIMMIg6mCokUdNnAsa8M2TVVSm/mSVDh2Joouf0QXlyh6j0
-         MveQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9BtEwTezY+qlQ0z6udcY1NI+sWRfBUg4i/PQVpsepp0=;
-        b=KISEM3WrO1FribNluRSYAwDzlXym6v49oiADr/ZcYJC+v5+QjYe2Ia6U8TCU3mXyeO
-         +vn+ysjDZdqC3oXU3+LcTn+pVcFPFRH9vyxqkI70FMYgBDh4ihD/g49fBLFPjZmAeaYr
-         xaD2pf/l/R9Mldfdd9SkHQQL1qgOXU+n6RDOeZZYMBKOOhxeAZkzkyXsiEPcCO8y720n
-         99c8LWYY5N5ImBIhwyzZEt7eD3HxLQMVlwC7djpw4ya7E734q/6IuquN6iwlAKFFa7yc
-         S7yhEcXKsC2hkAA/NNyz5NGY6LrhE46R/ZhLwU+TqguDoL9fp2chKz6XvDWXypWrkJRX
-         bdDQ==
-X-Gm-Message-State: AOAM532tS+3Isn0B76KulbE8nJvGeQf+jJxoqcFtx8HM2WxMOAOVykO6
-        tkS8nJeNe1MBdL+MyYHP10SLkLYoYFTZs4qMl+Q=
-X-Google-Smtp-Source: ABdhPJwUidQxI6KsoarEmVDuFeGRhn/6QSW1h4jhAdXCpwtLZDplDG7rOxUVfxwKzPWRszACj09qneVbrJeE8mHtByg=
-X-Received: by 2002:a05:6402:14c3:: with SMTP id f3mr2841214edx.312.1631747430578;
- Wed, 15 Sep 2021 16:10:30 -0700 (PDT)
+        id S233238AbhIPAHO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 20:07:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37962 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232465AbhIPAHN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Sep 2021 20:07:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E545461164;
+        Thu, 16 Sep 2021 00:05:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631750754;
+        bh=Uy0zID/jX88WBrciDPIHMPruWk4OtOhmOwUWZHhLBfQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XS0YoOnyKV12Gk3fKvZIRXhyI8o5iSx4vfwa1HgM1KZM0R4uz087LBBXeQo59K05g
+         hZdTM60bDub/QL28D5SAEBknTgSamysES46mMx1CjAmW9xfWv9Xk+3ZewKtvWVYojo
+         yV2Xj/74rK0rMHm4L2/Gq5k43PcQGAuLPQRAB+LXgf6zFmiC1srnA6VGuPALpk7a8D
+         9eIC4S9hu96ErVbiNOlac4qy6MXqkhwNVpYNtydcym/TAvxaIM7eDTAVJxUnhLgBrK
+         9u74hLT7wByTVEW3zTqvdwRR5oWWL5ACF5Chm71sFuAcMqhva0c+FI/hWoXiSa8MU/
+         QAk1pXvuK/MVA==
+Date:   Wed, 15 Sep 2021 17:05:53 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jane Chu <jane.chu@oracle.com>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Weiny, Ira" <ira.weiny@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] dax: clear poison on the fly along pwrite
+Message-ID: <20210916000553.GB34899@magnolia>
+References: <20210914233132.3680546-1-jane.chu@oracle.com>
+ <CAPcyv4h3KpOKgy_Cwi5fNBZmR=n1hB33mVzA3fqOY7c3G+GrMA@mail.gmail.com>
+ <516ecedc-38b9-1ae3-a784-289a30e5f6df@oracle.com>
+ <20210915161510.GA34830@magnolia>
+ <CAPcyv4jaCiSXU61gsQTaoN_cdDTDMvFSfMYfBz2yLKx11fdwOQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20210914183718.4236-1-shy828301@gmail.com> <20210914183718.4236-3-shy828301@gmail.com>
- <20210915114947.2zh7inouztenth6o@box.shutemov.name> <CAHbLzkpjAf+V5b40UFH2gWSRN4gVqoFmjHr9_wME2ofWC7Mfkw@mail.gmail.com>
- <CAHbLzkoyEcKMwg04SRWtWaMZCO3HLpP2BA2_kv3ASuGN6=tE2Q@mail.gmail.com>
-In-Reply-To: <CAHbLzkoyEcKMwg04SRWtWaMZCO3HLpP2BA2_kv3ASuGN6=tE2Q@mail.gmail.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Wed, 15 Sep 2021 16:10:18 -0700
-Message-ID: <CAHbLzkrpWF=WXsn20-1oeRGch1L-HPAAyNXZpojC+RXHopFYfw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] mm: khugepaged: check if file page is on LRU after
- locking page
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4jaCiSXU61gsQTaoN_cdDTDMvFSfMYfBz2yLKx11fdwOQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 15, 2021 at 4:00 PM Yang Shi <shy828301@gmail.com> wrote:
->
-> On Wed, Sep 15, 2021 at 10:48 AM Yang Shi <shy828301@gmail.com> wrote:
+On Wed, Sep 15, 2021 at 01:27:47PM -0700, Dan Williams wrote:
+> On Wed, Sep 15, 2021 at 9:15 AM Darrick J. Wong <djwong@kernel.org> wrote:
 > >
-> > On Wed, Sep 15, 2021 at 4:49 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> > On Wed, Sep 15, 2021 at 12:22:05AM -0700, Jane Chu wrote:
+> > > Hi, Dan,
 > > >
-> > > On Tue, Sep 14, 2021 at 11:37:16AM -0700, Yang Shi wrote:
-> > > > The khugepaged does check if the page is on LRU or not but it doesn't
-> > > > hold page lock.  And it doesn't check this again after holding page
-> > > > lock.  So it may race with some others, e.g. reclaimer, migration, etc.
-> > > > All of them isolates page from LRU then lock the page then do something.
+> > > On 9/14/2021 9:44 PM, Dan Williams wrote:
+> > > > On Tue, Sep 14, 2021 at 4:32 PM Jane Chu <jane.chu@oracle.com> wrote:
+> > > > >
+> > > > > If pwrite(2) encounters poison in a pmem range, it fails with EIO.
+> > > > > This is unecessary if hardware is capable of clearing the poison.
+> > > > >
+> > > > > Though not all dax backend hardware has the capability of clearing
+> > > > > poison on the fly, but dax backed by Intel DCPMEM has such capability,
+> > > > > and it's desirable to, first, speed up repairing by means of it;
+> > > > > second, maintain backend continuity instead of fragmenting it in
+> > > > > search for clean blocks.
+> > > > >
+> > > > > Jane Chu (3):
+> > > > >    dax: introduce dax_operation dax_clear_poison
 > > > >
-> > > > But it could pass the refcount check done by khugepaged to proceed
-> > > > collapse.  Typically such race is not fatal.  But if the page has been
-> > > > isolated from LRU before khugepaged it likely means the page may be not
-> > > > suitable for collapse for now.
+> > > > The problem with new dax operations is that they need to be plumbed
+> > > > not only through fsdax and pmem, but also through device-mapper.
 > > > >
-> > > > The other more fatal case is the following patch will keep the poisoned
-> > > > page in page cache for shmem, so khugepaged may collapse a poisoned page
-> > > > since the refcount check could pass.  3 refcounts come from:
-> > > >   - hwpoison
-> > > >   - page cache
-> > > >   - khugepaged
+> > > > In this case I think we're already covered by dax_zero_page_range().
+> > > > That will ultimately trigger pmem_clear_poison() and it is routed
+> > > > through device-mapper properly.
 > > > >
-> > > > Since it is not on LRU so no refcount is incremented from LRU isolation.
-> > > >
-> > > > This is definitely not expected.  Checking if it is on LRU or not after
-> > > > holding page lock could help serialize against hwpoison handler.
-> > > >
-> > > > But there is still a small race window between setting hwpoison flag and
-> > > > bump refcount in hwpoison handler.  It could be closed by checking
-> > > > hwpoison flag in khugepaged, however this race seems unlikely to happen
-> > > > in real life workload.  So just check LRU flag for now to avoid
-> > > > over-engineering.
-> > > >
-> > > > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > > > ---
-> > > >  mm/khugepaged.c | 6 ++++++
-> > > >  1 file changed, 6 insertions(+)
-> > > >
-> > > > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> > > > index 045cc579f724..bdc161dc27dc 100644
-> > > > --- a/mm/khugepaged.c
-> > > > +++ b/mm/khugepaged.c
-> > > > @@ -1808,6 +1808,12 @@ static void collapse_file(struct mm_struct *mm,
-> > > >                       goto out_unlock;
-> > > >               }
-> > > >
-> > > > +             /* The hwpoisoned page is off LRU but in page cache */
-> > > > +             if (!PageLRU(page)) {
-> > > > +                     result = SCAN_PAGE_LRU;
-> > > > +                     goto out_unlock;
-> > > > +             }
-> > > > +
-> > > >               if (isolate_lru_page(page)) {
+> > > > Can you clarify why the existing dax_zero_page_range() is not sufficient?
 > > >
-> > > isolate_lru_page() should catch the case, no? TestClearPageLRU would fail
-> > > and we get here.
+> > > fallocate ZERO_RANGE is in itself a functionality that applied to dax
+> > > should lead to zero out the media range.  So one may argue it is part
+> > > of a block operations, and not something explicitly aimed at clearing
+> > > poison.
 > >
-> > Hmm... you are definitely right. How could I miss this point.
+> > Yeah, Christoph suggested that we make the clearing operation explicit
+> > in a related thread a few weeks ago:
+> > https://lore.kernel.org/linux-fsdevel/YRtnlPERHfMZ23Tr@infradead.org/
+> 
+> That seemed to be tied to a proposal to plumb it all the way out to an
+> explicit fallocate() mode, not make it a silent side effect of
+> pwrite(). That said pwrite() does clear errors in hard drives in
+> not-DAX mode, but I like the change in direction to make it explicit
+> going forward.
+> 
+> > I like Jane's patchset far better than the one that I sent, because it
+> > doesn't require a block device wrapper for the pmem, and it enables us
+> > to tell application writers that they can handle media errors by
+> > pwrite()ing the bad region, just like they do for nvme and spinners.
+> 
+> pwrite(), hmm, so you're not onboard with the explicit clearing API
+> proposal, or...?
+
+I don't really care either way.  I was going to send a reworked version
+of that earlier patchset which would add an explicit fallocate mode and
+make it work on regular block storage too, but then Jane sent this. :)
+
+Hmm, maybe I should rework my patchset to call dax_zero_page_range
+directly...?
+
+> > > I'm also thinking about the MOVEDIR64B instruction and how it
+> > > might be used to clear poison on the fly with a single 'store'.
+> > > Of course, that means we need to figure out how to narrow down the
+> > > error blast radius first.
+> 
+> It turns out the MOVDIR64B error clearing idea runs into problem with
+> the device poison tracking. Without the explicit notification that
+> software wanted the error cleared the device may ghost report errors
+> that are not there anymore. I think we should continue explicit error
+> clearing and notification of the device that the error has been
+> cleared (by asking the device to clear it).
+
+If the poison clearing is entirely OOB (i.e. you have to call ACPI
+methods) and can't be made part of the memory controller, then I guess
+you can't use movdir64b at all, right?
+
+> > That was one of the advantages of Shiyang Ruan's NAKed patchset to
+> > enable byte-granularity media errors
+> 
+> ...the method of triggering reverse mapping had review feedback, I
+> apologize if that came across of a NAK of the whole proposal. As I
+> clarified to Eric this morning, I think the solution is iterating
+> towards upstream inclusion.
+> 
+> > to pass upwards through the stack
+> > back to the filesystem, which could then tell applications exactly what
+> > they lost.
 > >
-> > It might be because of I messed up the page state by some tests which
-> > may do hole punch then reread the same index. That could drop the
-> > poisoned page then collapse succeed. But I'm not sure. Anyway I didn't
-> > figure out how the poisoned page could be collapsed. It seems
-> > impossible. I will drop this patch.
->
-> I think I figured out the problem. This problem happened after the
-> page cache split patch and if the hwpoisoned page is not head page. It
-> is because THP split will unfreeze the refcount of tail pages to 2
-> (restore refcount from page cache) then dec refcount to 1. The
-> refcount pin from hwpoison is gone and it is still on LRU. Then
-> khugepged locked the page before hwpoison, the refcount is expected to
-> khugepaged.
->
-> The worse thing is it seems this problem is applicable to anonymous
-> page too. Once the anonymous THP is split by hwpoison the pin from
-> hwpoison is gone too the refcount is 1 (comes from PTE map). Then
-> khugepaged could collapse it to huge page again. It may incur data
-> corruption.
->
-> And the poisoned page may be freed back to buddy since the lost refcount pin.
->
-> If the poisoned page is head page, the code is fine since hwpoison
-> doesn't put the refcount for head page after split.
->
-> The fix is simple, just keep the refcount pin for hwpoisoned subpage.
+> > I want to get back to that, though if Dan won't withdraw the NAK then I
+> > don't know how to move forward...
+> 
+> No NAK in place. Let's go!
 
-Err... wait... I just realized I missed the below code block:
+Ok, thanks.  I'll start looking through Shiyang's patches tomorrow.
 
-if (subpage == page)
-        continue;
-
-It skips the subpage passed to split_huge_page() so the refcount pin
-from the caller for this subpage is kept. And hwpoison doesn't put it.
-So it seems fine.
-
->
+> 
 > >
-> > >
-> > > >                       result = SCAN_DEL_PAGE_LRU;
-> > > >                       goto out_unlock;
-> > > > --
-> > > > 2.26.2
-> > > >
-> > > >
-> > >
-> > > --
-> > >  Kirill A. Shutemov
+> > > With respect to plumbing through device-mapper, I thought about that,
+> > > and wasn't sure. I mean the clear-poison work will eventually fall on
+> > > the pmem driver, and thru the DM layers, how does that play out thru
+> > > DM?
+> >
+> > Each of the dm drivers has to add their own ->clear_poison operation
+> > that remaps the incoming (sector, len) parameters as appropriate for
+> > that device and then calls the lower device's ->clear_poison with the
+> > translated parameters.
+> >
+> > This (AFAICT) has already been done for dax_zero_page_range, so I sense
+> > that Dan is trying to save you a bunch of code plumbing work by nudging
+> > you towards doing s/dax_clear_poison/dax_zero_page_range/ to this series
+> > and then you only need patches 2-3.
+> 
+> Yes, but it sounds like Christoph was saying don't overload
+> dax_zero_page_range(). I'd be ok splitting the difference and having a
+> new fallocate clear poison mode map to dax_zero_page_range()
+> internally.
+
+Ok.
+
+--D
+
+> >
+> > > BTW, our customer doesn't care about creating dax volume thru DM, so.
+> >
+> > They might not care, but anything going upstream should work in the
+> > general case.
+> 
+> Agree.
