@@ -2,92 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CFC740DF82
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 18:10:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D30940E11D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 18:28:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235601AbhIPQKp convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Sep 2021 12:10:45 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.85.151]:55002 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235627AbhIPQJL (ORCPT
+        id S236387AbhIPQ1g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Sep 2021 12:27:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47292 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239759AbhIPQZf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Sep 2021 12:09:11 -0400
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-162-75vixzp0Of-n5TQEq5DIEg-1; Thu, 16 Sep 2021 17:07:49 +0100
-X-MC-Unique: 75vixzp0Of-n5TQEq5DIEg-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.23; Thu, 16 Sep 2021 17:07:47 +0100
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.023; Thu, 16 Sep 2021 17:07:47 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Will Deacon' <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Linux FS-devel Mailing List" <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: RE: [RFC PATCH] fs/compat_binfmt_elf: Introduce sysctl to disable
- compat ELF loader
-Thread-Topic: [RFC PATCH] fs/compat_binfmt_elf: Introduce sysctl to disable
- compat ELF loader
-Thread-Index: AQHXqw1xhvz/JjIwFE+lWY/Xr1h6SKum0nuw
-Date:   Thu, 16 Sep 2021 16:07:47 +0000
-Message-ID: <0594844caf4b4c4c815922e726f43d81@AcuMS.aculab.com>
-References: <20210916131816.8841-1-will@kernel.org>
- <CAK8P3a0jQXiYg9u=o2LzqNSdiqMC=4=6o_NttPk_Wx4C3Gx98A@mail.gmail.com>
- <20210916151330.GA9000@willie-the-truck>
-In-Reply-To: <20210916151330.GA9000@willie-the-truck>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 16 Sep 2021 12:25:35 -0400
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9349C061147
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Sep 2021 09:10:02 -0700 (PDT)
+Received: by mail-io1-xd2e.google.com with SMTP id a15so8544963iot.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Sep 2021 09:10:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LNfszvXiWgDI6EDtDbmsSQhzeS38fRUrMmntryou2XE=;
+        b=zhaMPc55gDXQzGvk0PYF61B2JgkYfZBdC/jCgVzBDGO1/NT5TG1DSOAxtFiojv59TS
+         4xy/fZVdwJqKC9xzQUHZjLytim3uZKgAFbKNK4UE/AHi9gWtHJAdDfbfv5/KPWAvmVBP
+         OvRYFvTTmfJw3DlCoMslS9aX5rPMbTflZB7HYlRtM/z2+T5gAFsEHfhQsKn5wjGomKUL
+         16WuwuX6YwNXiWc9tBozeln5UEh7mEdEtcfLcRE4JzfzlBy1q4J/uouNHaZ1H+aqL/Lf
+         jd6/50yDRu5TjkwFjXfmz+1Qqwq74FglJ6nUfYnlC57++B6vV4Q/Pm3pCRspWT7pIRHd
+         6EvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LNfszvXiWgDI6EDtDbmsSQhzeS38fRUrMmntryou2XE=;
+        b=4Surv87/BAqT1ORHqdb3cd3Es1QNl81gMprEylwbQlgnlaeROh2cDvXgZKM49l9lej
+         w3/znNlvbAGFdzhgSaGvCt6ZJsrLgcmCTMgqTFYOdHiEMeO7Jxo7ORuAOnURZFskHezP
+         SbRZATVZzOG6eUU8IkixXP92e0Fqv8yjYL/IdUyqCKhR43izHhD5RiHNlpDRlLIyWs1f
+         YTmOJTg1iVAlQSLNf5j5D2S702d6HBiXb5cwZ0NoN/3JX3Hf2+0XP4uoPilJkrcZNMdc
+         OdF5T3LaWBBcB9YBpP9CI2zv1l35WZjcHXPsv7au5uZfJrzjcnVOMBnO0L0Fdb5IMNGc
+         bA/w==
+X-Gm-Message-State: AOAM533EBszTvlH1u8ukq8PqTzAI9Dr4hYRQbYeM4ytEOpBNU2yp3B93
+        FC6bWlXD4JTuDkeO13K727bn2A==
+X-Google-Smtp-Source: ABdhPJwm3CCY3RzpdL9GLroEGIeWrGOhaKGzuyd4II6DMbREXBd3v+zzUiUPq08KT9a0zF2u9VOZHA==
+X-Received: by 2002:a5e:df47:: with SMTP id g7mr1938941ioq.92.1631808602154;
+        Thu, 16 Sep 2021 09:10:02 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id i14sm1994687iol.27.2021.09.16.09.10.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Sep 2021 09:10:01 -0700 (PDT)
+Subject: Re: [PATCHSET v3 0/3] Add ability to save/restore iov_iter state
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        torvalds@linux-foundation.org
+References: <20210915162937.777002-1-axboe@kernel.dk>
+ <YULMf13OXvU70zV+@zeniv-ca.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <e7588d27-8dc8-a5bb-c024-05b6e7c336db@kernel.dk>
+Date:   Thu, 16 Sep 2021 10:10:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+In-Reply-To: <YULMf13OXvU70zV+@zeniv-ca.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Will Deacon
-> Sent: 16 September 2021 16:14
-...
-> > I'm not sure I understand the logic behind the sysctl. Are you worried
-> > about exposing attack surface on devices that don't support 32-bit
-> > instructions at all but might be tricked into loading a 32-bit binary that
-> > exploits a bug in the elf loader, or do you want to remove compat support
-> > on some but not all devices running the same kernel?
-> 
-> It's the latter case. With the GKI effort in Android, we want to run the
-> same kernel binary across multiple devices. However, for some devices
-> we may be able to determine that there is no need to support 32-bit
-> applications even though the hardware may support them, and we would
-> like to ensure that things like the compat syscall wrappers, compat vDSO,
-> signal handling etc are not accessible to applications.
+On 9/15/21 10:47 PM, Al Viro wrote:
+> 	Jens, may I politely inquire why is struct io_rw playing
+> these games with overloading ->rw.addr, instead of simply having
+> struct io_buffer *kbuf in it?
 
-Interesting because there is the opposite requirement to run
-32bit user code under emulation on a 64bit only cpu.
-This largely requires the kernel to contain the 32bit
-compatibility code - even though it can't execute the instructions.
+Very simply to avoid growing the union command part of io_kiocb beyond a
+cacheline. We're pretty sensitive to io_kiocb size in general, and io_rw
+is already the biggest member in there.
+ 
+> 	Another question: what the hell are the rules for
+> REQ_F_BUFFER_SELECT?  The first time around io_iov_buffer_select()
+> will
+> 	* read iovec from ->rw.addr
+> 	* replace iovec.iov_base with value derived from
+> ->buf_index
+> 	* cap iovec.iov_len with value derived from ->buf_index
+> Next time around it will use the same base *AND* replace the
+> length with the value used to cap the original.
+> 	Is that deliberate?
 
-I suspect you could even embed the instruction emulator inside the
-elf interpreter.
+Probably not strictly needed, but doesn't harm anything. The buffer is
+being consumed (and hence removed) at completion anyway, it's not a
+persistent change. Selected buffers must be re-provided by the
+application as the kernel has no way of knowing when the application
+would otherwise be ready for it to get reused, and that's done by
+issuing a new provide buffers request for the buffers that can get
+recycled.
 
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+-- 
+Jens Axboe
 
