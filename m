@@ -2,144 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A97F40D374
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 08:52:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F019040D385
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 08:57:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234642AbhIPGxr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Sep 2021 02:53:47 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:48426 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232254AbhIPGxr (ORCPT
+        id S234657AbhIPG6j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Sep 2021 02:58:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:24254 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234653AbhIPG6g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Sep 2021 02:53:47 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id BD63922324;
-        Thu, 16 Sep 2021 06:52:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1631775144; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Thu, 16 Sep 2021 02:58:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1631775436;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=rgPYC/jO9gO7VeQL2HNt6VwK+j/K8XgK6Ia/iOSZmOA=;
-        b=hyumKxv6Z1+GNRpK2emC5w8B+VLGOQafgHC+qT62hFQsVpViXyiB+mwGicPS7LoAcfjwD/
-        OnsM+osaP8zGhyId8SbUcUt7jIxfG37qnmBQLJNvqD8YBhtYB1FqAqMxHRsalzcEFswLt2
-        KT6QGXECdYCpeVo67h3EGaQ5VfNThQk=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 59A0AA3B87;
-        Thu, 16 Sep 2021 06:52:24 +0000 (UTC)
-Date:   Thu, 16 Sep 2021 08:52:23 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Mel Gorman <mgorman@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] EXT4: Remove ENOMEM/congestion_wait() loops.
-Message-ID: <YULpp4gVgZSuH65/@dhcp22.suse.cz>
-References: <163157808321.13293.486682642188075090.stgit@noble.brown>
- <163157838437.13293.14244628630141187199.stgit@noble.brown>
- <20210914163432.GR3828@suse.com>
- <163165609100.3992.1570739756456048657@noble.neil.brown.name>
- <YUHh2ddnJEDGI8YG@dhcp22.suse.cz>
- <163174534006.3992.15394603624652359629@noble.neil.brown.name>
+        bh=8RB13z4WWFvpQhPAtaErfMzrxHDfvjm55tbgAkFGFds=;
+        b=ZBAJKGHeTQAAls0kn8k6LPMvXMKAHXMry7i+6tnxK7bO8TShzF/vDBg3Pro5mnPDaKfoso
+        2P/voGX3guUEqajPOHXVAaEOZpiXkPe6KJpAyuZy7iVISrGu0cKMJrIdKQA6fUsZz7PZny
+        hcW8Cyp1cns8fuUiUG7QHIfUf9e1W90=
+Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
+ [209.85.219.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-159-hsxbjJ5uOlauVhCz7MeLwQ-1; Thu, 16 Sep 2021 02:57:15 -0400
+X-MC-Unique: hsxbjJ5uOlauVhCz7MeLwQ-1
+Received: by mail-yb1-f198.google.com with SMTP id f64-20020a2538430000b0290593bfc4b046so11267544yba.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 23:57:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8RB13z4WWFvpQhPAtaErfMzrxHDfvjm55tbgAkFGFds=;
+        b=zT4cGr8h9BDvTd00PWCQ9a4cWFGCgZOEcd1rhEyD6JKbYcPJKfWzaszj9zWUZkfHPX
+         rB1qNMpNOsWZUaekipJbtGqK8cpzR+/wXT9fZz7ucKaFnks4caCC1/Expw1/p+rflYrG
+         xVknLcv5xB1+bn/4PlLpOijgq1xzB7jJGX/45CyHoyTNQWxzoOOrD6Zg4hSXGcK9x0Oo
+         GpRv9ozeGafJdOE5126sxVIRy1arADD5zLQEgva+7IsrME12CKBonJ6+siZiMnbIMPsJ
+         MCIturw66WHjnt/dkePXPyOjfH2fC8/Lp0lt3pSV5pKnmBZK7SCpXYvJAjqoR31GV0uD
+         4spQ==
+X-Gm-Message-State: AOAM5320ERdCb6BrQRAda1VZqj5fno1VG+OTq8qQtNoL2pZHneO3bPaW
+        QLAdX2ARX4fx5Qx9o7eHU6c9qP1q8Nhuwwc1SrHjYd3f+6fYW0bkpZXyQh5IGVl7LS78aNRSG3V
+        7UcIyP+IP869cRxE+5oYLB6ctiG8rWpD+QT5VQ9hFZg==
+X-Received: by 2002:a25:bb8b:: with SMTP id y11mr5374080ybg.384.1631775434454;
+        Wed, 15 Sep 2021 23:57:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwLucYeWhnPNQkeQVqS3EcyyweAYtvQL9fa++UxRdE70ZRSeCy7mhVRsSSA5lCGz3A636eqomK45lUsdY3V5KU=
+X-Received: by 2002:a25:bb8b:: with SMTP id y11mr5374044ybg.384.1631775434181;
+ Wed, 15 Sep 2021 23:57:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <163174534006.3992.15394603624652359629@noble.neil.brown.name>
+References: <20210913140229.24797-1-omosnace@redhat.com> <CAHC9VhRw-S+zZUFz5QFFLMBATjo+YbPAiR21jX6p7cT0T+MVLA@mail.gmail.com>
+ <CAHC9VhQyejnmLn0NHQiWzikHs8ZdzAUdZ2WqNxgGM6xhJ4mvMQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhQyejnmLn0NHQiWzikHs8ZdzAUdZ2WqNxgGM6xhJ4mvMQ@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Thu, 16 Sep 2021 08:57:02 +0200
+Message-ID: <CAFqZXNsLZE18YugJYDzxUwjY36Gt2iX=KYtuuu-erY_+_mmvqg@mail.gmail.com>
+Subject: Re: [PATCH v4] lockdown,selinux: fix wrong subject in some SELinux
+ lockdown checks
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        X86 ML <x86@kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        linux-cxl@vger.kernel.org, linux-efi <linux-efi@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        linux-serial@vger.kernel.org, bpf <bpf@vger.kernel.org>,
+        network dev <netdev@vger.kernel.org>,
+        Kexec Mailing List <kexec@lists.infradead.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 16-09-21 08:35:40, Neil Brown wrote:
-> On Wed, 15 Sep 2021, Michal Hocko wrote:
-> > On Wed 15-09-21 07:48:11, Neil Brown wrote:
-> > > 
-> > > Why does __GFP_NOFAIL access the reserves? Why not require that the
-> > > relevant "Try harder" flag (__GFP_ATOMIC or __GFP_MEMALLOC) be included
-> > > with __GFP_NOFAIL if that is justified?
-> > 
-> > Does 5020e285856c ("mm, oom: give __GFP_NOFAIL allocations access to
-> > memory reserves") help?
-> 
-> Yes, that helps.  A bit.
-> 
-> I'm not fond of the clause "the allocation request might have come with some
-> locks held".  What if it doesn't?  Does it still have to pay the price.
-> 
-> Should we not require that the caller indicate if any locks are held?
-
-I do not think this would help much TBH. What if the lock in question
-doesn't impose any dependency through allocation problem?
-
-> That way callers which don't hold locks can use __GFP_NOFAIL without
-> worrying about imposing on other code.
-> 
-> Or is it so rare that __GFP_NOFAIL would be used without holding a lock
-> that it doesn't matter?
-> 
-> The other commit of interest is
-> 
-> Commit: 6c18ba7a1899 ("mm: help __GFP_NOFAIL allocations which do not trigger OOM killer")
-> 
-> I don't find the reasoning convincing.  It is a bit like "Robbing Peter
-> to pay Paul".  It takes from the reserves to allow a __GFP_NOFAIL to
-> proceed, with out any reason to think this particular allocation has any
-> more 'right' to the reserves than anything else.
-
-I do agree that this is not really optimal. I do not remember exact
-details but these changes were mostly based or inspired by extreme
-memory pressure testing by Tetsuo who has managed to trigger quite some
-corner cases. Especially those where NOFS was involved were problematic.
-
-> While I don't like the reasoning in either of these, they do make it
-> clear (to me) that the use of reserves is entirely an internal policy
-> decision.  They should *not* be seen as part of the API and callers
-> should not have to be concerned about it when deciding whether to use
-> __GFP_NOFAIL or not.
-
-Yes. NOFAIL should have high enough bar to use - essentially there is no
-other way than use it - that memory reserves shouldn't be a road block.
-If we learn that existing users can seriously deplete memory reserves
-then we might need to reconsider the existing logic. So far there are no
-indications that NOFAIL would really cause any problems in that area.
-
-> The use of these reserves is, at most, a hypothetical problem.  If it
-> ever looks like becoming a real practical problem, it needs to be fixed
-> internally to the page allocator.  Maybe an extra water-mark which isn't
-> quite as permissive as ALLOC_HIGH...
-> 
-> I'm inclined to drop all references to reserves from the documentation
-> for __GFP_NOFAIL.
-
-I have found your additions to the documentation useful.
-
-> I think there are enough users already that adding a
-> couple more isn't going to make problems substantially more likely.  And
-> more will be added anyway that the mm/ team won't have the opportunity
-> or bandwidth to review.
-> 
-> Meanwhile I'll see if I can understand the intricacies of alloc_page so
-> that I can contibute to making it more predictable.
-> 
-> Question: In those cases where an open-coded loop is appropriate, such
-> as when you want to handle signals or can drop locks, how bad would it
-> be to have a tight loop without any sleep?
+On Thu, Sep 16, 2021 at 4:59 AM Paul Moore <paul@paul-moore.com> wrote:
+> On Mon, Sep 13, 2021 at 5:05 PM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > On Mon, Sep 13, 2021 at 10:02 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > >
+> > > Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
+> > > lockdown") added an implementation of the locked_down LSM hook to
+> > > SELinux, with the aim to restrict which domains are allowed to perform
+> > > operations that would breach lockdown.
+> > >
+> > > However, in several places the security_locked_down() hook is called in
+> > > situations where the current task isn't doing any action that would
+> > > directly breach lockdown, leading to SELinux checks that are basically
+> > > bogus.
+> > >
+> > > To fix this, add an explicit struct cred pointer argument to
+> > > security_lockdown() and define NULL as a special value to pass instead
+> > > of current_cred() in such situations. LSMs that take the subject
+> > > credentials into account can then fall back to some default or ignore
+> > > such calls altogether. In the SELinux lockdown hook implementation, use
+> > > SECINITSID_KERNEL in case the cred argument is NULL.
+> > >
+> > > Most of the callers are updated to pass current_cred() as the cred
+> > > pointer, thus maintaining the same behavior. The following callers are
+> > > modified to pass NULL as the cred pointer instead:
+> > > 1. arch/powerpc/xmon/xmon.c
+> > >      Seems to be some interactive debugging facility. It appears that
+> > >      the lockdown hook is called from interrupt context here, so it
+> > >      should be more appropriate to request a global lockdown decision.
+> > > 2. fs/tracefs/inode.c:tracefs_create_file()
+> > >      Here the call is used to prevent creating new tracefs entries when
+> > >      the kernel is locked down. Assumes that locking down is one-way -
+> > >      i.e. if the hook returns non-zero once, it will never return zero
+> > >      again, thus no point in creating these files. Also, the hook is
+> > >      often called by a module's init function when it is loaded by
+> > >      userspace, where it doesn't make much sense to do a check against
+> > >      the current task's creds, since the task itself doesn't actually
+> > >      use the tracing functionality (i.e. doesn't breach lockdown), just
+> > >      indirectly makes some new tracepoints available to whoever is
+> > >      authorized to use them.
+> > > 3. net/xfrm/xfrm_user.c:copy_to_user_*()
+> > >      Here a cryptographic secret is redacted based on the value returned
+> > >      from the hook. There are two possible actions that may lead here:
+> > >      a) A netlink message XFRM_MSG_GETSA with NLM_F_DUMP set - here the
+> > >         task context is relevant, since the dumped data is sent back to
+> > >         the current task.
+> > >      b) When adding/deleting/updating an SA via XFRM_MSG_xxxSA, the
+> > >         dumped SA is broadcasted to tasks subscribed to XFRM events -
+> > >         here the current task context is not relevant as it doesn't
+> > >         represent the tasks that could potentially see the secret.
+> > >      It doesn't seem worth it to try to keep using the current task's
+> > >      context in the a) case, since the eventual data leak can be
+> > >      circumvented anyway via b), plus there is no way for the task to
+> > >      indicate that it doesn't care about the actual key value, so the
+> > >      check could generate a lot of "false alert" denials with SELinux.
+> > >      Thus, let's pass NULL instead of current_cred() here faute de
+> > >      mieux.
+> > >
+> > > Improvements-suggested-by: Casey Schaufler <casey@schaufler-ca.com>
+> > > Improvements-suggested-by: Paul Moore <paul@paul-moore.com>
+> > > Fixes: 59438b46471a ("security,lockdown,selinux: implement SELinux lockdown")
+> > > Acked-by: Dan Williams <dan.j.williams@intel.com>         [cxl]
+> > > Acked-by: Steffen Klassert <steffen.klassert@secunet.com> [xfrm]
+> > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > > ---
+> > >
+> > > v4:
+> > > - rebase on top of TODO
+> > > - fix rebase conflicts:
+> > >   * drivers/cxl/pci.c
+> > >     - trivial: the lockdown reason was corrected in mainline
+> > >   * kernel/bpf/helpers.c, kernel/trace/bpf_trace.c
+> > >     - trivial: LOCKDOWN_BPF_READ was renamed to LOCKDOWN_BPF_READ_KERNEL
+> > >       in mainline
+> > >   * kernel/power/hibernate.c
+> > >     - trivial: !secretmem_active() was added to the condition in
+> > >       hibernation_available()
+> > > - cover new security_locked_down() call in kernel/bpf/helpers.c
+> > >   (LOCKDOWN_BPF_WRITE_USER in BPF_FUNC_probe_write_user case)
+> > >
+> > > v3: https://lore.kernel.org/lkml/20210616085118.1141101-1-omosnace@redhat.com/
+> > > - add the cred argument to security_locked_down() and adapt all callers
+> > > - keep using current_cred() in BPF, as the hook calls have been shifted
+> > >   to program load time (commit ff40e51043af ("bpf, lockdown, audit: Fix
+> > >   buggy SELinux lockdown permission checks"))
+> > > - in SELinux, don't ignore hook calls where cred == NULL, but use
+> > >   SECINITSID_KERNEL as the subject instead
+> > > - update explanations in the commit message
+> > >
+> > > v2: https://lore.kernel.org/lkml/20210517092006.803332-1-omosnace@redhat.com/
+> > > - change to a single hook based on suggestions by Casey Schaufler
+> > >
+> > > v1: https://lore.kernel.org/lkml/20210507114048.138933-1-omosnace@redhat.com/
+> >
+> > The changes between v3 and v4 all seem sane to me, but I'm going to
+> > let this sit for a few days in hopes that we can collect a few more
+> > Reviewed-bys and ACKs.  If I don't see any objections I'll merge it
+> > mid-week(ish) into selinux/stable-5.15 and plan on sending it to Linus
+> > after it goes through a build/test cycle.
 >
-> should_reclaim_retry() will sleep 100ms (sometimes...).  Is that enough?
-> __GFP_NOFAIL doesn't add any sleep when looping.
+> Time's up, I just merged this into selinux/stable-5.15 and I'll send
+> this to Linus once it passes testing.
 
-Yeah, NOFAIL doesn't add any explicit sleep points. In general there is
-no guarantee that a sleepable allocation will sleep. We do cond_resched
-in general but sleeping is enforced only for worker contexts because WQ
-concurrency depends on an explicit sleeping. So to answer your question,
-if you really need to sleep between retries then you should do it
-manually but cond_resched can be implied.
+Thanks!
+
 -- 
-Michal Hocko
-SUSE Labs
+Ondrej Mosnacek
+Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
+
