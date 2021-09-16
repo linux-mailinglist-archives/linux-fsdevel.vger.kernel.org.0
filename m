@@ -2,76 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBE9540D3E1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 09:37:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A55D140D465
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 10:22:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234826AbhIPHik (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Sep 2021 03:38:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37062 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234296AbhIPHij (ORCPT
+        id S235041AbhIPIXX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Sep 2021 04:23:23 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:49742 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235005AbhIPIXW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Sep 2021 03:38:39 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67D8DC061574;
-        Thu, 16 Sep 2021 00:37:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=2++NPtO3N0EKqFjod0lHOXuAnY0BGUp6aM9ZEKLL5JE=; b=fWRQGikoRH60qW6X6cnfcWri00
-        fDV87hJx5JKFIvzB1VghIwXfR96995PVo8kJThgH16NHXA2LcXb/0OUEJDBAk0Bl2qY21EgB/LD6j
-        yuWyo9QXuRb+rz8UdmseafctcU4F9oq4wcHZEeHDZVIzPeJnu/6YD92kHFeC+wADiwV5E0NuXTS9x
-        jELwwp0a1YxSUBTjc7IgjCeSLvhtV8GlZBWss3rZbkljK+45CzD5XrvvLhnYPJ9BPLbg34ibU5Ghh
-        G1NZvE9u3nz/CT9pZxRqgWh1izea0fJlYNRSpJ58AX24QI5uzGRKRidRWQ1bEE28SggGB+0Z9QdPn
-        qQ0W6UAQ==;
-Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mQlvQ-00GQBb-Sl; Thu, 16 Sep 2021 07:35:38 +0000
-Date:   Thu, 16 Sep 2021 08:35:16 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sathyanarayanan Kuppuswamy 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        linux-efi@vger.kernel.org, Brijesh Singh <brijesh.singh@amd.com>,
-        kvm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        platform-driver-x86@vger.kernel.org,
-        Paul Mackerras <paulus@samba.org>, linux-s390@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, x86@kernel.org,
-        amd-gfx@lists.freedesktop.org,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-graphics-maintainer@vmware.com,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v3 4/8] powerpc/pseries/svm: Add a powerpc version of
- cc_platform_has()
-Message-ID: <YULztMRLJ55YLVU9@infradead.org>
-References: <cover.1631141919.git.thomas.lendacky@amd.com>
- <9d4fc3f8ea7b325aaa1879beab1286876f45d450.1631141919.git.thomas.lendacky@amd.com>
- <YUCOTIPPsJJpLO/d@zn.tnic>
- <87lf3yk7g4.fsf@mpe.ellerman.id.au>
- <YUHGDbtiGrDz5+NS@zn.tnic>
- <f8388f18-5e90-5d0f-d681-0b17f8307dd4@csgroup.eu>
+        Thu, 16 Sep 2021 04:23:22 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R471e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UoZbq6m_1631780519;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UoZbq6m_1631780519)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 16 Sep 2021 16:22:00 +0800
+Subject: Re: [Virtio-fs] [PATCH v4 0/8] fuse,virtiofs: support per-file DAX
+To:     Vivek Goyal <vgoyal@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     virtualization@lists.linux-foundation.org,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        linux-fsdevel@vger.kernel.org, Liu Bo <bo.liu@linux.alibaba.com>
+References: <20210817022220.17574-1-jefflexu@linux.alibaba.com>
+ <CAJfpeguw1hMOaxpDmjmijhf=-JEW95aEjxfVo_=D_LyWx8LDgw@mail.gmail.com>
+ <YRuCHvhICtTzMK04@work-vm> <YRuuRo8jEs5dkfw9@redhat.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <299689e9-bdeb-a715-3f31-8c70369cf0ba@linux.alibaba.com>
+Date:   Thu, 16 Sep 2021 16:21:59 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8388f18-5e90-5d0f-d681-0b17f8307dd4@csgroup.eu>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <YRuuRo8jEs5dkfw9@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 15, 2021 at 07:18:34PM +0200, Christophe Leroy wrote:
-> Could you please provide more explicit explanation why inlining such an
-> helper is considered as bad practice and messy ?
+Hi, I add some performance statistics below.
 
-Because now we get architectures to all subly differ.  Look at the mess
-for ioremap and the ioremap* variant.
 
-The only good reason to allow for inlines if if they are used in a hot
-path.  Which cc_platform_has is not, especially not on powerpc.
+On 8/17/21 8:40 PM, Vivek Goyal wrote:
+> On Tue, Aug 17, 2021 at 10:32:14AM +0100, Dr. David Alan Gilbert wrote:
+>> * Miklos Szeredi (miklos@szeredi.hu) wrote:
+>>> On Tue, 17 Aug 2021 at 04:22, Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+>>>>
+>>>> This patchset adds support of per-file DAX for virtiofs, which is
+>>>> inspired by Ira Weiny's work on ext4[1] and xfs[2].
+>>>
+>>> Can you please explain the background of this change in detail?
+>>>
+>>> Why would an admin want to enable DAX for a particular virtiofs file
+>>> and not for others?
+>>
+>> Where we're contending on virtiofs dax cache size it makes a lot of
+>> sense; it's quite expensive for us to map something into the cache
+>> (especially if we push something else out), so selectively DAXing files
+>> that are expected to be hot could help reduce cache churn.
+
+Yes, the performance of dax can be limited when the DAX window is
+limited, where dax window may be contended by multiple files.
+
+I tested kernel compiling in virtiofs, emulating the scenario where a
+lot of files contending dax window and triggering dax window reclaiming.
+
+Environment setup:
+- guest vCPU: 16
+- time make vmlinux -j128
+
+type    | cache  | cache-size | time
+------- | ------ | ---------- | ----
+non-dax | always |   --       | real 2m48.119s
+dax     | always | 64M        | real 4m49.563s
+dax     | always |   1G       | real 3m14.200s
+dax     | always |   4G       | real 2m41.141s
+
+
+It can be seen that there's performance drop, comparing to the normal
+buffered IO, when dax window resource is restricted and dax window
+relcaiming is triggered. The smaller the cache size is, the worse the
+performance is. The performance drop can be alleviated and eliminated as
+cache size increases.
+
+Though we may not compile kernel in virtiofs, indeed we may access a lot
+of small files in virtiofs and suffer this performance drop.
+
+
+> In that case probaly we should just make DAX window larger. I assume
+
+Yes, as the DAX window gets larger, it is less likely that we can run
+short of dax window resource.
+
+However it doesn't come without cost. 'struct page' descriptor for dax
+window will consume guest memory at a ratio of ~1.5% (64/4096 = ~1.5%,
+page descriptor is of 64 bytes size, assuming 4K sized page). That is,
+every 1GB cache size will cost 16MB guest memory. As the cache size
+increases, the memory footprint for page descriptors also increases,
+which may offset the benefit of dax by eliminating guest page cache.
+
+In summary, per-file dax feature tries to achieve a balance between
+performance and memory overhead, by offering a finer gained control for
+dax to users.
+
+
+> that selecting which files to turn DAX on, will itself will not be
+> a trivial. Not sure what heuristics are being deployed to determine
+> that. Will like to know more about it.
+
+Currently we enable dax for hot and large blob files, while disabling
+dax for other miscellaneous small files.
+
+
+
+-- 
+Thanks,
+Jeffle
