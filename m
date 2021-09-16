@@ -2,172 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BF8140D11F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 03:16:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7700C40D145
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 03:36:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233565AbhIPBRT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 21:17:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38050 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233284AbhIPBRR (ORCPT
+        id S233367AbhIPBhx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 21:37:53 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:40492 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S232068AbhIPBhw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 21:17:17 -0400
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D38D4C061764
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 18:15:57 -0700 (PDT)
-Received: by mail-io1-xd2f.google.com with SMTP id n128so5928398iod.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Sep 2021 18:15:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=M/faTXn1SjxhQ6qy0K7k7cEDFuF/xWQ+SaNiUztry3E=;
-        b=f8Bad83/dhUbPcl5woEiHQX906D4Aj+o/zHxmqsOgB41wrxlxjc0audgP6zL0p9982
-         qTLDmgygGzYYQBsT0URy1BPFHjvmr/BQa/onawExPiPX/txTCJin7SAJ8H7HNC3FopxP
-         WNPIn3CxnfJYcCX13SwSvtohe5cwbsMxBU31bXbsgVRIIFBKitd3CetkIljP07vMwO0p
-         CC7SE9THGdh+JdbD4NDCVwbUI4N/v2jlrwfYhksk2OxXNHRazExXcabXFbqzl3NiOXZ9
-         uJVwSm9cgnwPmUunqku5pwaStwHjzbJFqu+ZWeq+mJQD0M+hLtgHz0PPyoI3lBJLzNrt
-         pdyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=M/faTXn1SjxhQ6qy0K7k7cEDFuF/xWQ+SaNiUztry3E=;
-        b=civU2OLKnMfULct1SdgV6yxUOpd6GzPfR7SlPbFuF9QTJNQE3Ac2noecHCy7EJI/xv
-         jDa1v83xHgZnM1mp2fE+YEZC6vfJuutmI6Zf+r328gpNuWCSdsNXmmRMgsu/H5YuJ7vs
-         RRTHaukuZbwi4CMoecEyrDHeYrDwR21IZJeN6KOujpCNvIjzwFbRC3NXBDVyszYmPIJR
-         itHfH5NAh3Db9CXVbyFk2k0RscL+3f3D9D9F0XCsHNHbAIWrs68sPCubJhzpYGyEfgGa
-         PIKn+4uyrHQfg9AgJNJUnv+naZXqmlRpp1GmGNSKyUPhdYsd4OQkFGQHMReykGtZliFZ
-         sVHw==
-X-Gm-Message-State: AOAM5321a7iEx72GHxWAGs/Lq+yR11VPdiqz6PVyaoywvPWn1mYkQ110
-        ke2maCwIjuH/MhJKFCv3jMrjCNyaeafXQA==
-X-Google-Smtp-Source: ABdhPJyny3E+qnxtdslVv9if67lLF19B5P6BRbTH4bpCoZxEdMEnIAEBPDrtQ9+xByxHA02NUNIU6w==
-X-Received: by 2002:a6b:5c0c:: with SMTP id z12mr2337797ioh.171.1631754957054;
-        Wed, 15 Sep 2021 18:15:57 -0700 (PDT)
-Received: from [192.168.1.116] ([66.219.217.159])
-        by smtp.gmail.com with ESMTPSA id e22sm815282iob.52.2021.09.15.18.15.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Sep 2021 18:15:56 -0700 (PDT)
-Subject: Re: [PATCHSET v3 0/3] Add ability to save/restore iov_iter state
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20210915162937.777002-1-axboe@kernel.dk>
- <CAHk-=wgtROzcks4cozeEYG33UU1Q3T4RM-k3kv-GqrdLKFMoLw@mail.gmail.com>
- <8c7c8aa0-9591-a50f-35ee-de0037df858a@kernel.dk>
- <CAHk-=wj3dsQMK4y-EeMD1Zyod7=Sv68UqrND-GYgHXx6wNRawA@mail.gmail.com>
- <6688d40c-b359-364b-cdff-1e0714eb6945@kernel.dk>
- <f6349daf-2180-241d-54aa-adbfd955c5fa@kernel.dk>
-Message-ID: <3beb1715-84da-ae33-7d99-406df463b508@kernel.dk>
-Date:   Wed, 15 Sep 2021 19:15:55 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 15 Sep 2021 21:37:52 -0400
+IronPort-Data: =?us-ascii?q?A9a23=3AQUX/BaAjjTIk4RVW/zniw5YqxClBgxIJ4g17XOL?=
+ =?us-ascii?q?fBwa802si12cBmDQdWjiAPPqKNmX3eNh1bo219UIDu56Ax9UxeLYW3SszFioV8?=
+ =?us-ascii?q?6IpJjg4wn/YZnrUdouaJK5ex512huLocYZkExcwmj/3auK49SgliPnULlbBILW?=
+ =?us-ascii?q?s1h5ZFFYMpBgJ2UoLd94R2uaEsPDha++/kYqaT/73ZDdJ7wVJ3lc8sMpvnv/AU?=
+ =?us-ascii?q?MPa41v0tnRmDRxCUcS3e3M9VPrzLonpR5f0rxU9IwK0ewrD5OnREmLx9BFrBM6?=
+ =?us-ascii?q?nk6rgbwsBRbu60Qqm0yIQAvb9xEMZ4HFaPqUTbZLwbW9NljyPhME3xtNWqbS+V?=
+ =?us-ascii?q?AUoIrbR3u8aVnG0FgknZPEbpOCacCjXXcu7iheun2HX6/lnEkA6FYMC/eNwG2t?=
+ =?us-ascii?q?P6boTLzVlRg+Cg+an6LO9RPNliskqII/sJox3kn1py3fbS+knRZTCSqDRzd5ew?=
+ =?us-ascii?q?Do0wMtJGJ72a8gGbjxgRBfNeRtCPhEQEp1WtP2pmnTkcz1wrFOTuLpx4mLWigd?=
+ =?us-ascii?q?21dDFNsTZe9mPbcFUhVqD4GbH+XnpRB0XKrS3yTGF2na3mqnDkEvTQo0VELGn5?=
+ =?us-ascii?q?/hCm0CIyyofBXU+UVq9vOn8hFWyVsxSL2QK9Sc066s/7kqmSp/6RRLQiHqFuAM?=
+ =?us-ascii?q?MHtldCes37CmTxafOpQWUHG4JSnhGctNOnMs3QyE6k0+HhPv3CjF19r6YU3SQ8?=
+ =?us-ascii?q?vGTtzzaETYUN2gqdyICTBVD59jlvZF1iQjACMtgeJNZJPWd9SrYmmjM9XZhwe5?=
+ =?us-ascii?q?Iy5Nj6klyxnif6xrEm3QDZlddCt3rY1+Y?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3A/IP3/qkyQcrg23AZVPtrV8UvnSLpDfIQ3DAb?=
+ =?us-ascii?q?v31ZSRFFG/Fw9vre+MjzsCWYtN9/Yh8dcK+7UpVoLUm8yXcX2/h1AV7BZniEhI?=
+ =?us-ascii?q?LAFugLgrcKqAeQeREWmNQ86Y5QN4B6CPDVSWNxlNvG5mCDeOoI8Z2q97+JiI7l?=
+ =?us-ascii?q?o0tQcQ=3D=3D?=
+X-IronPort-AV: E=Sophos;i="5.85,296,1624291200"; 
+   d="scan'208";a="114547598"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 16 Sep 2021 09:36:30 +0800
+Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
+        by cn.fujitsu.com (Postfix) with ESMTP id 8FD7F4D0D9CE;
+        Thu, 16 Sep 2021 09:36:28 +0800 (CST)
+Received: from G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) by
+ G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Thu, 16 Sep 2021 09:36:27 +0800
+Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
+ G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Thu, 16 Sep 2021 09:36:27 +0800
+Received: from [127.0.0.1] (10.167.225.141) by
+ G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.23 via Frontend Transport; Thu, 16 Sep 2021 09:36:26 +0800
+Subject: Re: [PATCH v9 1/8] fsdax: Output address in dax_iomap_pfn() and
+ rename it
+To:     "Darrick J. Wong" <djwong@kernel.org>
+CC:     <hch@lst.de>, <linux-xfs@vger.kernel.org>,
+        <dan.j.williams@intel.com>, <david@fromorbit.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <nvdimm@lists.linux.dev>, <rgoldwyn@suse.de>,
+        <viro@zeniv.linux.org.uk>, <willy@infradead.org>,
+        Ritesh Harjani <riteshh@linux.ibm.com>
+References: <20210915104501.4146910-1-ruansy.fnst@fujitsu.com>
+ <20210915104501.4146910-2-ruansy.fnst@fujitsu.com>
+ <20210916000914.GB34830@magnolia>
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Message-ID: <212112d3-8b4d-1539-f133-22b321934b87@fujitsu.com>
+Date:   Thu, 16 Sep 2021 09:36:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <f6349daf-2180-241d-54aa-adbfd955c5fa@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20210916000914.GB34830@magnolia>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-yoursite-MailScanner-ID: 8FD7F4D0D9CE.A6461
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/15/21 4:42 PM, Jens Axboe wrote:
-> On 9/15/21 1:40 PM, Jens Axboe wrote:
->> On 9/15/21 1:26 PM, Linus Torvalds wrote:
->>> On Wed, Sep 15, 2021 at 11:46 AM Jens Axboe <axboe@kernel.dk> wrote:
->>>>
->>>>    The usual tests
->>>> do end up hitting the -EAGAIN path quite easily for certain device
->>>> types, but not the short read/write.
->>>
->>> No way to do something like "read in file to make sure it's cached,
->>> then invalidate caches from position X with POSIX_FADV_DONTNEED, then
->>> do a read that crosses that cached/uncached boundary"?
->>>
->>> To at least verify that "partly synchronous, but partly punted to
->>> async" case?
->>>
->>> Or were you talking about some other situation?
+
+
+On 2021/9/16 8:09, Darrick J. Wong wrote:
+> On Wed, Sep 15, 2021 at 06:44:54PM +0800, Shiyang Ruan wrote:
+>> Add address output in dax_iomap_pfn() in order to perform a memcpy() in
+>> CoW case.  Since this function both output address and pfn, rename it to
+>> dax_iomap_direct_access().
 >>
->> No that covers some of it, and that happens naturally with buffered IO.
->> The typical case is -EAGAIN on the first try, then you get a partial
->> or all of it the next loop, and then done or continue. I tend to run
->> fio verification workloads for that, as you get all the flexibility
->> of fio with the data verification. And there are tests in there that run
->> DONTNEED in parallel with buffered IO, exactly to catch some of these
->> csaes. But they don't verify the data, generally.
+>> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>> Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
+>> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> 
+> Could've sworn I reviewed this a few revisions ago...
+
+Oh, sorry, Maybe I missed that.
+
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+Thanks!
+
+--
+Ruan
+
+> 
+> --D
+> 
+>> ---
+>>   fs/dax.c | 16 ++++++++++++----
+>>   1 file changed, 12 insertions(+), 4 deletions(-)
 >>
->> In that sense buffered is a lot easier than O_DIRECT, as it's easier to
->> provoke these cases. And that does hit all the save/restore parts and
->> looping, and if you do it with registered buffers then you get to work
->> with bvec iter as well. O_DIRECT may get you -EAGAIN for low queue depth
->> devices, but it'll never do a short read/write after that. 
+>> diff --git a/fs/dax.c b/fs/dax.c
+>> index 4e3e5a283a91..8b482a58acae 100644
+>> --- a/fs/dax.c
+>> +++ b/fs/dax.c
+>> @@ -1010,8 +1010,8 @@ static sector_t dax_iomap_sector(const struct iomap *iomap, loff_t pos)
+>>   	return (iomap->addr + (pos & PAGE_MASK) - iomap->offset) >> 9;
+>>   }
+>>   
+>> -static int dax_iomap_pfn(const struct iomap *iomap, loff_t pos, size_t size,
+>> -			 pfn_t *pfnp)
+>> +static int dax_iomap_direct_access(const struct iomap *iomap, loff_t pos,
+>> +		size_t size, void **kaddr, pfn_t *pfnp)
+>>   {
+>>   	const sector_t sector = dax_iomap_sector(iomap, pos);
+>>   	pgoff_t pgoff;
+>> @@ -1023,11 +1023,13 @@ static int dax_iomap_pfn(const struct iomap *iomap, loff_t pos, size_t size,
+>>   		return rc;
+>>   	id = dax_read_lock();
+>>   	length = dax_direct_access(iomap->dax_dev, pgoff, PHYS_PFN(size),
+>> -				   NULL, pfnp);
+>> +				   kaddr, pfnp);
+>>   	if (length < 0) {
+>>   		rc = length;
+>>   		goto out;
+>>   	}
+>> +	if (!pfnp)
+>> +		goto out_check_addr;
+>>   	rc = -EINVAL;
+>>   	if (PFN_PHYS(length) < size)
+>>   		goto out;
+>> @@ -1037,6 +1039,12 @@ static int dax_iomap_pfn(const struct iomap *iomap, loff_t pos, size_t size,
+>>   	if (length > 1 && !pfn_t_devmap(*pfnp))
+>>   		goto out;
+>>   	rc = 0;
+>> +
+>> +out_check_addr:
+>> +	if (!kaddr)
+>> +		goto out;
+>> +	if (!*kaddr)
+>> +		rc = -EFAULT;
+>>   out:
+>>   	dax_read_unlock(id);
+>>   	return rc;
+>> @@ -1401,7 +1409,7 @@ static vm_fault_t dax_fault_iter(struct vm_fault *vmf,
+>>   		return pmd ? VM_FAULT_FALLBACK : VM_FAULT_SIGBUS;
+>>   	}
+>>   
+>> -	err = dax_iomap_pfn(&iter->iomap, pos, size, &pfn);
+>> +	err = dax_iomap_direct_access(&iter->iomap, pos, size, NULL, &pfn);
+>>   	if (err)
+>>   		return pmd ? VM_FAULT_FALLBACK : dax_fault_return(err);
+>>   
+>> -- 
+>> 2.33.0
 >>
->> But that's not in the regressions tests. I'll write a test case
->> that can go with the liburing regressions for it.
-> 
-> OK I wrote one, quick'n dirty. It's written as a liburing test, which
-> means it can take no arguments (in which case it creates a 128MB file),
-> or it can take an argument and it'll use that argument as the file. We
-> fill the first 128MB of the file with known data, basically the offset
-> of the file. Then we read it back in any of the following ways:
-> 
-> 1) Using non-vectored read
-> 2) Using vectored read, segments that fit in UIO_FASTIOV
-> 3) Using vectored read, segments larger than UIO_FASTIOV
-> 
-> This catches all the different cases for a read.
-> 
-> We do that with both buffered and O_DIRECT, and before each pass, we
-> randomly DONTNEED either the first, middle, or end part of each segment
-> in the read size.
-> 
-> I ran this on my laptop, and I found this:
-> axboe@p1 ~/gi/liburing (master)> test/file-verify                                0.100s
-> bad read 229376, read 3
-> Buffered novec test failed
-> axboe@p1 ~/gi/liburing (master)> test/file-verify                                0.213s
-> bad read 294912, read 0
-> Buffered novec test failed
-> 
-> which is because I'm running the iov_iter.2 stuff, and we're hitting
-> that double accounting issue that I mentioned in the cover letter for
-> this series. That's why the read return is larger than we ask for
-> (128K). Running it on the current branch passes:
-> 
-> [root@archlinux liburing]# for i in $(seq 10); do test/file-verify; done
-> [root@archlinux liburing]# 
-> 
-> (this is in my test vm that I run on the laptop for kernel testing,
-> hence the root and different hostname).
-> 
-> I will add this as a liburing regression test case. Probably needs a bit
-> of cleaning up first, it was just a quick prototype as I thought your
-> suggestion was a good one. Will probably change it to run at a higher
-> queue depth than just the 1 it does now.
+>>
+>>
 
-Cleaned it up a bit, and added registered buffer support as well (which
-is another variant over non-vectored reads) and queued IO support as
-well:
-
-https://git.kernel.dk/cgit/liburing/commit/?id=6ab387dab745aff2af760d9fed56a4154669edec
-
-and it's now part of the regular testing. Here's my usual run:
-
-Running test file-verify                                            3 sec
-Running test file-verify /dev/nvme0n1p2                             3 sec
-Running test file-verify /dev/nvme1n1p1                             3 sec
-Running test file-verify /dev/sdc2                                  Test file-verify timed out (may not be a failure)
-Running test file-verify /dev/dm-0                                  3 sec
-Running test file-verify /data/file                                 3 sec
-
-Note that the sdc2 timeout isn't a failure, it's just that emulation on
-qemu is slow enough that it takes 1min20s to run and I time out tests
-after 60s in the harness to prevent something stalling forever.
-
--- 
-Jens Axboe
 
