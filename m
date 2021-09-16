@@ -2,121 +2,258 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF14240D0A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 02:11:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5206140D0C7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 02:22:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233209AbhIPANE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 20:13:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45036 "EHLO mail.kernel.org"
+        id S233390AbhIPAXs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 20:23:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233070AbhIPAND (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 20:13:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DAAF260FA0;
-        Thu, 16 Sep 2021 00:11:43 +0000 (UTC)
+        id S233367AbhIPAXr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Sep 2021 20:23:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2394261157;
+        Thu, 16 Sep 2021 00:22:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631751103;
-        bh=DrgS4qNdxQm5KxNgrDvFQ1kvve7TdWHpwz0i4Kn4wgs=;
+        s=k20201202; t=1631751748;
+        bh=4z4JcaZpiS167/VVfDR1gcapchasih3ZqhIqL2fbA58=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GQzzFyCvUbMAwYtKX/rOcqmlS9FnmfWLjqEh0Ok037HZFwO1u82Qzqc5MkeNQDlf9
-         IS5BcQ7J26sIfJa86IlrU9z3fc1Pn8JlMymPqm36R0T6XsGAh3ZNbjlxqicDpU7sSl
-         JczVkDGZl5QHltKEkKRHnjf2l73s/To4m3d5sKtE+qeqxqTBcGoYSZ5T2zngbRh4+5
-         jUhz8wsQCDabTFAtO/ha87VkLqq/2fAU8yxC4oP3L2yEWokIicfARHKhcMSGS6L47h
-         uH3tNVh+RQQbsoaCSTyUbEkEBi6MrBms4srOK3YXUSRSpZDggD5fUdydpQTZLcJjgU
-         CkzYT0pbvb6rg==
-Date:   Wed, 15 Sep 2021 17:11:43 -0700
+        b=f/cWD2JUnx8RUnXEzXI8GS68PfaVcEr/cVAKI11LHtLxqNaZyLeQINaRGlrOVkI/x
+         wiUMHaDnaTKGVRB1E/lpt/DoegPLcGi65ypd4FsN7IUL+3nWhRYBnLMSJVL0T9tJbc
+         plA3XkTFwPZDDSg91kwf2lAWUNhdxogcpdlaEQrzV79A0ZLSeZvfCkxnwLKk3jNPL2
+         EJEbrM0628giTlHXs4wlyeIkaMRrLpqW1uhdmSPiZWodoh5YG7SbZuYdNRrDHyc2kc
+         WHMzAJFgAdBE8Gtx0z731BKOxHEi28nrkqFUq/C7FepJyYidk3wsBvWhnXWcyQ391G
+         8gwd1veWttbBw==
+Date:   Wed, 15 Sep 2021 17:22:27 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
 Cc:     hch@lst.de, linux-xfs@vger.kernel.org, dan.j.williams@intel.com,
         david@fromorbit.com, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
         rgoldwyn@suse.de, viro@zeniv.linux.org.uk, willy@infradead.org
-Subject: Re: [PATCH v9 4/8] fsdax: Convert dax_iomap_zero to iter model
-Message-ID: <20210916001143.GC34830@magnolia>
+Subject: Re: [PATCH v9 7/8] xfs: support CoW in fsdax mode
+Message-ID: <20210916002227.GD34830@magnolia>
 References: <20210915104501.4146910-1-ruansy.fnst@fujitsu.com>
- <20210915104501.4146910-5-ruansy.fnst@fujitsu.com>
+ <20210915104501.4146910-8-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210915104501.4146910-5-ruansy.fnst@fujitsu.com>
+In-Reply-To: <20210915104501.4146910-8-ruansy.fnst@fujitsu.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 15, 2021 at 06:44:57PM +0800, Shiyang Ruan wrote:
-> Let dax_iomap_zero() support iter model.
+On Wed, Sep 15, 2021 at 06:45:00PM +0800, Shiyang Ruan wrote:
+> In fsdax mode, WRITE and ZERO on a shared extent need CoW performed.
+> After that, new allocated extents needs to be remapped to the file.
+> So, add a CoW identification in ->iomap_begin(), and implement
+> ->iomap_end() to do the remapping work.
 > 
 > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> ---
+>  fs/xfs/xfs_bmap_util.c |  3 +--
+>  fs/xfs/xfs_file.c      |  6 +++---
+>  fs/xfs/xfs_iomap.c     | 38 +++++++++++++++++++++++++++++++++++++-
+>  fs/xfs/xfs_iomap.h     | 30 ++++++++++++++++++++++++++++++
+>  fs/xfs/xfs_iops.c      |  7 +++----
+>  fs/xfs/xfs_reflink.c   |  3 +--
+>  6 files changed, 75 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+> index 73a36b7be3bd..0681250e0a5d 100644
+> --- a/fs/xfs/xfs_bmap_util.c
+> +++ b/fs/xfs/xfs_bmap_util.c
+> @@ -1009,8 +1009,7 @@ xfs_free_file_space(
+>  		return 0;
+>  	if (offset + len > XFS_ISIZE(ip))
+>  		len = XFS_ISIZE(ip) - offset;
+> -	error = iomap_zero_range(VFS_I(ip), offset, len, NULL,
+> -			&xfs_buffered_write_iomap_ops);
+> +	error = xfs_iomap_zero_range(ip, offset, len, NULL);
+>  	if (error)
+>  		return error;
+>  
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 7aa943edfc02..2ef1930374d2 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -704,7 +704,7 @@ xfs_file_dax_write(
+>  	pos = iocb->ki_pos;
+>  
+>  	trace_xfs_file_dax_write(iocb, from);
+> -	ret = dax_iomap_rw(iocb, from, &xfs_direct_write_iomap_ops);
+> +	ret = dax_iomap_rw(iocb, from, &xfs_dax_write_iomap_ops);
+>  	if (ret > 0 && iocb->ki_pos > i_size_read(inode)) {
+>  		i_size_write(inode, iocb->ki_pos);
+>  		error = xfs_setfilesize(ip, pos, ret);
+> @@ -1329,8 +1329,8 @@ __xfs_filemap_fault(
+>  		xfs_ilock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
+>  		ret = dax_iomap_fault(vmf, pe_size, &pfn, NULL,
+>  				(write_fault && !vmf->cow_page) ?
+> -				 &xfs_direct_write_iomap_ops :
+> -				 &xfs_read_iomap_ops);
+> +					&xfs_dax_write_iomap_ops :
+> +					&xfs_read_iomap_ops);
 
-Oops, I guess we forgot this one when we did the iter conversion last
-cycle. :(
+Hmm... I wonder if this should get hoisted to a "xfs_dax_iomap_fault"
+wrapper like you did for xfs_iomap_zero_range?
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+>  		if (ret & VM_FAULT_NEEDDSYNC)
+>  			ret = dax_finish_sync_fault(vmf, pe_size, pfn);
+>  		xfs_iunlock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
+> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> index 093758440ad5..6fa3b377cb81 100644
+> --- a/fs/xfs/xfs_iomap.c
+> +++ b/fs/xfs/xfs_iomap.c
+> @@ -761,7 +761,8 @@ xfs_direct_write_iomap_begin(
+>  
+>  		/* may drop and re-acquire the ilock */
+>  		error = xfs_reflink_allocate_cow(ip, &imap, &cmap, &shared,
+> -				&lockmode, flags & IOMAP_DIRECT);
+> +				&lockmode,
+> +				(flags & IOMAP_DIRECT) || IS_DAX(inode));
+>  		if (error)
+>  			goto out_unlock;
+>  		if (shared)
+> @@ -854,6 +855,41 @@ const struct iomap_ops xfs_direct_write_iomap_ops = {
+>  	.iomap_begin		= xfs_direct_write_iomap_begin,
+>  };
+>  
+> +static int
+> +xfs_dax_write_iomap_end(
+> +	struct inode 		*inode,
+> +	loff_t 			pos,
+> +	loff_t 			length,
+> +	ssize_t 		written,
+> +	unsigned 		flags,
+> +	struct iomap 		*iomap)
+
+Whitespace nit:     ^ space before a tab.
+
+> +{
+> +	struct xfs_inode	*ip = XFS_I(inode);
+> +	/*
+> +	 * Usually we use @written to indicate whether the operation was
+> +	 * successful.  But it is always positive or zero.  The CoW needs the
+> +	 * actual error code from actor().  So, get it from
+> +	 * iomap_iter->processed.
+
+Hm.  All six arguments are derived from the struct iomap_iter, so maybe
+it makes more sense to pass that in?  I'll poke around with this more
+tomorrow.
+
+> +	 */
+> +	const struct iomap_iter *iter =
+> +				container_of(iomap, typeof(*iter), iomap);
+> +
+> +	if (!xfs_is_cow_inode(ip))
+> +		return 0;
+> +
+> +	if (iter->processed <= 0) {
+> +		xfs_reflink_cancel_cow_range(ip, pos, length, true);
+> +		return 0;
+> +	}
+> +
+> +	return xfs_reflink_end_cow(ip, pos, iter->processed);
+> +}
+> +
+> +const struct iomap_ops xfs_dax_write_iomap_ops = {
+> +	.iomap_begin 	= xfs_direct_write_iomap_begin,
+
+Space before tab    ^
+
+> +	.iomap_end	= xfs_dax_write_iomap_end,
+> +};
+> +
+>  static int
+>  xfs_buffered_write_iomap_begin(
+
+Also, we have an related request to drop the EXPERIMENTAL tag for
+non-DAX reflink.  Whichever patch enables dax+reflink for xfs needs to
+make it clear that reflink + any possibility of DAX emits an
+EXPERIMENTAL warning.
 
 --D
 
-> ---
->  fs/dax.c               | 3 ++-
->  fs/iomap/buffered-io.c | 3 +--
->  include/linux/dax.h    | 3 ++-
->  3 files changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 41c93929f20b..4f346e25e488 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1209,8 +1209,9 @@ static vm_fault_t dax_pmd_load_hole(struct xa_state *xas, struct vm_fault *vmf,
+>  	struct inode		*inode,
+> diff --git a/fs/xfs/xfs_iomap.h b/fs/xfs/xfs_iomap.h
+> index 7d3703556d0e..92679a0c3578 100644
+> --- a/fs/xfs/xfs_iomap.h
+> +++ b/fs/xfs/xfs_iomap.h
+> @@ -45,5 +45,35 @@ extern const struct iomap_ops xfs_direct_write_iomap_ops;
+>  extern const struct iomap_ops xfs_read_iomap_ops;
+>  extern const struct iomap_ops xfs_seek_iomap_ops;
+>  extern const struct iomap_ops xfs_xattr_iomap_ops;
+> +extern const struct iomap_ops xfs_dax_write_iomap_ops;
+> +
+> +static inline int
+> +xfs_iomap_zero_range(
+> +	struct xfs_inode	*ip,
+> +	loff_t			pos,
+> +	loff_t			len,
+> +	bool			*did_zero)
+> +{
+> +	struct inode		*inode = VFS_I(ip);
+> +
+> +	return iomap_zero_range(inode, pos, len, did_zero,
+> +			IS_DAX(inode) ?
+> +				&xfs_dax_write_iomap_ops :
+> +				&xfs_buffered_write_iomap_ops);
+> +}
+> +
+> +static inline int
+> +xfs_iomap_truncate_page(
+> +	struct xfs_inode	*ip,
+> +	loff_t			pos,
+> +	bool			*did_zero)
+> +{
+> +	struct inode		*inode = VFS_I(ip);
+> +
+> +	return iomap_truncate_page(inode, pos, did_zero,
+> +			IS_DAX(inode)?
+> +				&xfs_dax_write_iomap_ops :
+> +				&xfs_buffered_write_iomap_ops);
+> +}
+>  
+>  #endif /* __XFS_IOMAP_H__*/
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index a607d6aca5c4..332e6208dffd 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -911,8 +911,8 @@ xfs_setattr_size(
+>  	 */
+>  	if (newsize > oldsize) {
+>  		trace_xfs_zero_eof(ip, oldsize, newsize - oldsize);
+> -		error = iomap_zero_range(inode, oldsize, newsize - oldsize,
+> -				&did_zeroing, &xfs_buffered_write_iomap_ops);
+> +		error = xfs_iomap_zero_range(ip, oldsize, newsize - oldsize,
+> +				&did_zeroing);
+>  	} else {
+>  		/*
+>  		 * iomap won't detect a dirty page over an unwritten block (or a
+> @@ -924,8 +924,7 @@ xfs_setattr_size(
+>  						     newsize);
+>  		if (error)
+>  			return error;
+> -		error = iomap_truncate_page(inode, newsize, &did_zeroing,
+> -				&xfs_buffered_write_iomap_ops);
+> +		error = xfs_iomap_truncate_page(ip, newsize, &did_zeroing);
+>  	}
+>  
+>  	if (error)
+> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
+> index 7ecea0311e88..9d876e268734 100644
+> --- a/fs/xfs/xfs_reflink.c
+> +++ b/fs/xfs/xfs_reflink.c
+> @@ -1269,8 +1269,7 @@ xfs_reflink_zero_posteof(
+>  		return 0;
+>  
+>  	trace_xfs_zero_eof(ip, isize, pos - isize);
+> -	return iomap_zero_range(VFS_I(ip), isize, pos - isize, NULL,
+> -			&xfs_buffered_write_iomap_ops);
+> +	return xfs_iomap_zero_range(ip, isize, pos - isize, NULL);
 >  }
->  #endif /* CONFIG_FS_DAX_PMD */
 >  
-> -s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
-> +s64 dax_iomap_zero(struct iomap_iter *iter, loff_t pos, u64 length)
->  {
-> +	const struct iomap *iomap = &iter->iomap;
->  	sector_t sector = iomap_sector(iomap, pos & PAGE_MASK);
->  	pgoff_t pgoff;
->  	long rc, id;
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 9cc5798423d1..84a861d3b3e0 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -889,7 +889,6 @@ static s64 __iomap_zero_iter(struct iomap_iter *iter, loff_t pos, u64 length)
->  
->  static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
->  {
-> -	struct iomap *iomap = &iter->iomap;
->  	const struct iomap *srcmap = iomap_iter_srcmap(iter);
->  	loff_t pos = iter->pos;
->  	loff_t length = iomap_length(iter);
-> @@ -903,7 +902,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
->  		s64 bytes;
->  
->  		if (IS_DAX(iter->inode))
-> -			bytes = dax_iomap_zero(pos, length, iomap);
-> +			bytes = dax_iomap_zero(iter, pos, length);
->  		else
->  			bytes = __iomap_zero_iter(iter, pos, length);
->  		if (bytes < 0)
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index 2619d94c308d..642de7ef1a10 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -13,6 +13,7 @@ typedef unsigned long dax_entry_t;
->  
->  struct iomap_ops;
->  struct iomap;
-> +struct iomap_iter;
->  struct dax_device;
->  struct dax_operations {
->  	/*
-> @@ -210,7 +211,7 @@ vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
->  int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index);
->  int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
->  				      pgoff_t index);
-> -s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap);
-> +s64 dax_iomap_zero(struct iomap_iter *iter, loff_t pos, u64 length);
->  static inline bool dax_mapping(struct address_space *mapping)
->  {
->  	return mapping->host && IS_DAX(mapping->host);
+>  /*
 > -- 
 > 2.33.0
 > 
