@@ -2,166 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7700C40D145
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 03:36:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9C6F40D14F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Sep 2021 03:39:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233367AbhIPBhx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Sep 2021 21:37:53 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:40492 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232068AbhIPBhw (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Sep 2021 21:37:52 -0400
-IronPort-Data: =?us-ascii?q?A9a23=3AQUX/BaAjjTIk4RVW/zniw5YqxClBgxIJ4g17XOL?=
- =?us-ascii?q?fBwa802si12cBmDQdWjiAPPqKNmX3eNh1bo219UIDu56Ax9UxeLYW3SszFioV8?=
- =?us-ascii?q?6IpJjg4wn/YZnrUdouaJK5ex512huLocYZkExcwmj/3auK49SgliPnULlbBILW?=
- =?us-ascii?q?s1h5ZFFYMpBgJ2UoLd94R2uaEsPDha++/kYqaT/73ZDdJ7wVJ3lc8sMpvnv/AU?=
- =?us-ascii?q?MPa41v0tnRmDRxCUcS3e3M9VPrzLonpR5f0rxU9IwK0ewrD5OnREmLx9BFrBM6?=
- =?us-ascii?q?nk6rgbwsBRbu60Qqm0yIQAvb9xEMZ4HFaPqUTbZLwbW9NljyPhME3xtNWqbS+V?=
- =?us-ascii?q?AUoIrbR3u8aVnG0FgknZPEbpOCacCjXXcu7iheun2HX6/lnEkA6FYMC/eNwG2t?=
- =?us-ascii?q?P6boTLzVlRg+Cg+an6LO9RPNliskqII/sJox3kn1py3fbS+knRZTCSqDRzd5ew?=
- =?us-ascii?q?Do0wMtJGJ72a8gGbjxgRBfNeRtCPhEQEp1WtP2pmnTkcz1wrFOTuLpx4mLWigd?=
- =?us-ascii?q?21dDFNsTZe9mPbcFUhVqD4GbH+XnpRB0XKrS3yTGF2na3mqnDkEvTQo0VELGn5?=
- =?us-ascii?q?/hCm0CIyyofBXU+UVq9vOn8hFWyVsxSL2QK9Sc066s/7kqmSp/6RRLQiHqFuAM?=
- =?us-ascii?q?MHtldCes37CmTxafOpQWUHG4JSnhGctNOnMs3QyE6k0+HhPv3CjF19r6YU3SQ8?=
- =?us-ascii?q?vGTtzzaETYUN2gqdyICTBVD59jlvZF1iQjACMtgeJNZJPWd9SrYmmjM9XZhwe5?=
- =?us-ascii?q?Iy5Nj6klyxnif6xrEm3QDZlddCt3rY1+Y?=
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3A/IP3/qkyQcrg23AZVPtrV8UvnSLpDfIQ3DAb?=
- =?us-ascii?q?v31ZSRFFG/Fw9vre+MjzsCWYtN9/Yh8dcK+7UpVoLUm8yXcX2/h1AV7BZniEhI?=
- =?us-ascii?q?LAFugLgrcKqAeQeREWmNQ86Y5QN4B6CPDVSWNxlNvG5mCDeOoI8Z2q97+JiI7l?=
- =?us-ascii?q?o0tQcQ=3D=3D?=
-X-IronPort-AV: E=Sophos;i="5.85,296,1624291200"; 
-   d="scan'208";a="114547598"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 16 Sep 2021 09:36:30 +0800
-Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
-        by cn.fujitsu.com (Postfix) with ESMTP id 8FD7F4D0D9CE;
-        Thu, 16 Sep 2021 09:36:28 +0800 (CST)
-Received: from G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) by
- G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Thu, 16 Sep 2021 09:36:27 +0800
-Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
- G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Thu, 16 Sep 2021 09:36:27 +0800
-Received: from [127.0.0.1] (10.167.225.141) by
- G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Thu, 16 Sep 2021 09:36:26 +0800
-Subject: Re: [PATCH v9 1/8] fsdax: Output address in dax_iomap_pfn() and
- rename it
-To:     "Darrick J. Wong" <djwong@kernel.org>
-CC:     <hch@lst.de>, <linux-xfs@vger.kernel.org>,
-        <dan.j.williams@intel.com>, <david@fromorbit.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <nvdimm@lists.linux.dev>, <rgoldwyn@suse.de>,
-        <viro@zeniv.linux.org.uk>, <willy@infradead.org>,
-        Ritesh Harjani <riteshh@linux.ibm.com>
-References: <20210915104501.4146910-1-ruansy.fnst@fujitsu.com>
- <20210915104501.4146910-2-ruansy.fnst@fujitsu.com>
- <20210916000914.GB34830@magnolia>
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Message-ID: <212112d3-8b4d-1539-f133-22b321934b87@fujitsu.com>
-Date:   Thu, 16 Sep 2021 09:36:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S233602AbhIPBkh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Sep 2021 21:40:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48606 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229816AbhIPBkg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Sep 2021 21:40:36 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 171A761185;
+        Thu, 16 Sep 2021 01:39:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631756357;
+        bh=qiapaZb67wwUv941O9e/iIpg4NcRC50TGqFQbf4qXHo=;
+        h=Date:From:To:Cc:Subject:From;
+        b=cadutgf1ZfCzX5z3WVOk4howI0AgD1RNcLPqmp8PxFR/4/y6UX1vZM1LG4j26sRe9
+         jjhZlqZxObUx+K762pxoDBQjY36GxIiRoF9J4iR4A/mKsWyAp3/fwsvhR8mCQOP/gA
+         XC47oOq2cOai7vdexXAJyGyEEy6EfG2tjIp17dHc5F0vqdr39dIaIAg8safm+CaDHn
+         slh80w93XUsVV8Lc8CPsncSDprErEfP9FD/UZ1qk9Rnamf0UqVDjq9Xco3KbEgTBea
+         jPSbOcTpQU7b8wd3oBaFMUpTgw4Ves8I0zqqNqIn6gBUYVpXQgxf2FoMbAAHiS1vxd
+         ZlFT0zm9FBsFA==
+Date:   Wed, 15 Sep 2021 18:39:16 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     xfs <linux-xfs@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Shameless plug for the FS Track at LPC next week!
+Message-ID: <20210916013916.GD34899@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <20210916000914.GB34830@magnolia>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-yoursite-MailScanner-ID: 8FD7F4D0D9CE.A6461
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
-X-Spam-Status: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi folks!
 
+The Linux Plumbers conference is next week!  The filesystems mini
+conference is next Tuesday, 21 September, starting at 14:00 UTC:
 
-On 2021/9/16 8:09, Darrick J. Wong wrote:
-> On Wed, Sep 15, 2021 at 06:44:54PM +0800, Shiyang Ruan wrote:
->> Add address output in dax_iomap_pfn() in order to perform a memcpy() in
->> CoW case.  Since this function both output address and pfn, rename it to
->> dax_iomap_direct_access().
->>
->> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
->> Reviewed-by: Christoph Hellwig <hch@lst.de>
->> Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
->> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> 
-> Could've sworn I reviewed this a few revisions ago...
+https://linuxplumbersconf.org/event/11/sessions/111/#20210921
 
-Oh, sorry, Maybe I missed that.
+(it's the light green column second from the right)
 
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+As most of you are probably aware, LSFMM has been cancelled for a second
+year in a row, which leaves LPC as the only developer focused gathering
+this year.  This year's conference is virtual, like last year.  If you'd
+like to participate, it's not too late to register ($50 USD):
 
-Thanks!
+https://linuxplumbersconf.org/event/11/page/112-attend
 
---
-Ruan
+---
 
-> 
-> --D
-> 
->> ---
->>   fs/dax.c | 16 ++++++++++++----
->>   1 file changed, 12 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/dax.c b/fs/dax.c
->> index 4e3e5a283a91..8b482a58acae 100644
->> --- a/fs/dax.c
->> +++ b/fs/dax.c
->> @@ -1010,8 +1010,8 @@ static sector_t dax_iomap_sector(const struct iomap *iomap, loff_t pos)
->>   	return (iomap->addr + (pos & PAGE_MASK) - iomap->offset) >> 9;
->>   }
->>   
->> -static int dax_iomap_pfn(const struct iomap *iomap, loff_t pos, size_t size,
->> -			 pfn_t *pfnp)
->> +static int dax_iomap_direct_access(const struct iomap *iomap, loff_t pos,
->> +		size_t size, void **kaddr, pfn_t *pfnp)
->>   {
->>   	const sector_t sector = dax_iomap_sector(iomap, pos);
->>   	pgoff_t pgoff;
->> @@ -1023,11 +1023,13 @@ static int dax_iomap_pfn(const struct iomap *iomap, loff_t pos, size_t size,
->>   		return rc;
->>   	id = dax_read_lock();
->>   	length = dax_direct_access(iomap->dax_dev, pgoff, PHYS_PFN(size),
->> -				   NULL, pfnp);
->> +				   kaddr, pfnp);
->>   	if (length < 0) {
->>   		rc = length;
->>   		goto out;
->>   	}
->> +	if (!pfnp)
->> +		goto out_check_addr;
->>   	rc = -EINVAL;
->>   	if (PFN_PHYS(length) < size)
->>   		goto out;
->> @@ -1037,6 +1039,12 @@ static int dax_iomap_pfn(const struct iomap *iomap, loff_t pos, size_t size,
->>   	if (length > 1 && !pfn_t_devmap(*pfnp))
->>   		goto out;
->>   	rc = 0;
->> +
->> +out_check_addr:
->> +	if (!kaddr)
->> +		goto out;
->> +	if (!*kaddr)
->> +		rc = -EFAULT;
->>   out:
->>   	dax_read_unlock(id);
->>   	return rc;
->> @@ -1401,7 +1409,7 @@ static vm_fault_t dax_fault_iter(struct vm_fault *vmf,
->>   		return pmd ? VM_FAULT_FALLBACK : VM_FAULT_SIGBUS;
->>   	}
->>   
->> -	err = dax_iomap_pfn(&iter->iomap, pos, size, &pfn);
->> +	err = dax_iomap_direct_access(&iter->iomap, pos, size, NULL, &pfn);
->>   	if (err)
->>   		return pmd ? VM_FAULT_FALLBACK : dax_fault_return(err);
->>   
->> -- 
->> 2.33.0
->>
->>
->>
+The first session will be run by Matthew Wilcox, who will say something
+about the ongoing folio work, assuming Linus isn't going to pull it for
+5.15.  We'll see where things are in a week.
 
+Christian Brauner will run the second session, discussing what idmapped
+filesystem mounts are for and the current status of supporting more
+filesystems.
 
+---
+
+Next up will be a session run by me about both of the atomic file write
+features that have been variously proposed and asked for by various
+enterprisey users.  The first proposal refers to direct atomic file
+writes to storage hardware.  I /think/ this mostly involves enabling the
+relevant plumbing in the block layer and then wiring up iomap/xfs to use
+it.  Possibly also a new pwritev2 flag or file mode or something.
+
+(Christoph did this in 2019: https://lwn.net/Articles/789600/ )
+
+The /other/ atomic file write feature, of course, is my longstanding RFC
+to add a VFS call that enables atomic swapping of file contents, which
+enables a program to reflink a file's contents to an O_TMPFILE file,
+write some changes to the tempfile, and then swap /all/ the changed
+blocks back to the original file.  This call would be durable even if
+the system goes down.  The feature is actually the brainchild of the
+online filesystem repair effort, but I figured it wasn't so hard to
+extend a tendril to userspace to make it more generally useful.
+
+https://lwn.net/Articles/818977/
+https://lore.kernel.org/linux-fsdevel/161723932606.3149451.12366114306150243052.stgit@magnolia/
+
+---
+
+Allison will be running the fourth session about our current progress
+towards enabling sysadmins to shrink filesystems, and what pieces we're
+going to need to clear space from the end of the filesystem and then
+reduce the size.  FWIW Dave has been working on an inode relocation
+("reno") tool, and I've been working on a free space defragmenter that
+kind of barely works.  Originally this was a XFS-focused discussion, but
+it seems that Andreas still remembers the last time someone tried to add
+it to ext4.
+
+---
+
+Session #4 discusses the proliferation of cloud storage technologies and
+the new failure modes that Ted and I have observed with these devices.
+I think Ted had a few things to say about cloud devices, and due to the
+repeated requests I think it would be worth polling the audience to find
+out if they'd like filesystems to be more resilient (when possible) in
+the face of not-totally-reliable storage.  Obviously everyone wants that
+as a broad goal, but what should we pitch?  Metadata IO retries?
+Restoring lost information from a mirror?  Online repair?
+
+---
+
+The final session will be a presentation about the XFS roadmap for 2022.
+I'll start with a recap of the new features from last year's LTS that
+have been maturing this year, and which pieces have landed for this
+year's LTS kernel.
+
+I /hope/ that this will attract a conversation between (x)fs developers
+and real application developers about what features could be coming down
+the pipeline and what features would they most be interested in.
+
+---
+
+To all the XFS developers: it has been a very long time since I've seen
+all your faces!  I would love to have a developer BOF of some kind to
+see you all again, and to introduce Catherine Hoang (our newest
+addition) to the group.
+
+If nobody else shows up to the roadmap we could do it there, but I'd
+like to have /some/ kind of venue for everyone who don't find the
+timeslots convenient (i.e. Dave and Chandan).  This doesn't have to take
+a long time -- even a 15 minute meet and greet to help everyone
+(re)associate names with faces would go a long way towards feeling
+normal(ish) again. ;)
+
+--D
