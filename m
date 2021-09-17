@@ -2,157 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D776440F85D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 14:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55AC640F86D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 14:57:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238001AbhIQMxz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Sep 2021 08:53:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:48257 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232924AbhIQMxy (ORCPT
+        id S244183AbhIQM7C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Sep 2021 08:59:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43388 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238675AbhIQM7C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Sep 2021 08:53:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631883152;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=jR5xb37JDnFFhDky//xp2bDnTHSPKVCP1Sl4yhtd0FM=;
-        b=I8Ik/VaqtnsFqsoaIETfwovgyyAq0nf8+rvjgKKmLlj+QE7b0TeTEsw6ppL62QvccZT6YU
-        TRSYfdaw9/SHwaBZdMmEO98EUoX/4d3SNNyQv1rWG3G6d098FU0nVB+FK2WigjvVuejuyr
-        dJ1hwqiS7Wtjl828nzBbxSfoudpt37I=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-542-QrMC5_JxP-uP1elKEnE5ew-1; Fri, 17 Sep 2021 08:52:31 -0400
-X-MC-Unique: QrMC5_JxP-uP1elKEnE5ew-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B9CA61084681;
-        Fri, 17 Sep 2021 12:52:29 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.32.182])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ED9BB5C1D1;
-        Fri, 17 Sep 2021 12:52:28 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 80954220C99; Fri, 17 Sep 2021 08:52:28 -0400 (EDT)
-Date:   Fri, 17 Sep 2021 08:52:28 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Jan Kara <jack@suse.cz>
+        Fri, 17 Sep 2021 08:59:02 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449B5C061574;
+        Fri, 17 Sep 2021 05:57:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Um4Uw6AWMgVorPtp96yufuS1WecBa1mqjtkAlbtYeGI=; b=md72ZrUpSFHruswBaqaFU7lRC+
+        L7wB824poyC9ApIwwu+MCAEK9/02CrbCtyYfP7wUq073ueYVu5gyJQzRUuY2TeAjEBzg2oF+MxikC
+        KUaGfH98tsTnXYxc4mVcNlnK+ysUm9vinJYCMTvnp1AVv24wqCJd1PYfK54jJ/3B6DUARhC1C50Na
+        XR6fNru+F+6dXesMNYqTQ4eZ+utlfAzDg9qbj0fcT4L4GWtQCxEkpMKOcNO1zJkKF5Ib++kPArcYa
+        TIk63kf4QaWOnJ/3O6wFdJT9zaRq962JoainVYKiVPfRPyQPwZqG6ICRASwBj8jcU4jrNLI+c/w1e
+        cP8FJzMQ==;
+Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mRDMz-000Fp6-Gq; Fri, 17 Sep 2021 12:53:56 +0000
+Date:   Fri, 17 Sep 2021 13:53:33 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
 Cc:     Christoph Hellwig <hch@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        viro@zeniv.linux.org.uk,
-        Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
-        linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        xu.xin16@zte.com.cn
-Subject: Re: [PATCH v2] init/do_mounts.c: Harden split_fs_names() against
- buffer overflow
-Message-ID: <YUSPjGnGu79Djxc7@redhat.com>
-References: <YUNn4k1FCgQmOpuw@redhat.com>
- <20210917080730.GA5284@quack2.suse.cz>
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Jane Chu <jane.chu@oracle.com>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Weiny, Ira" <ira.weiny@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] dax: clear poison on the fly along pwrite
+Message-ID: <YUSPzVG0ulHdLWn7@infradead.org>
+References: <20210914233132.3680546-1-jane.chu@oracle.com>
+ <CAPcyv4h3KpOKgy_Cwi5fNBZmR=n1hB33mVzA3fqOY7c3G+GrMA@mail.gmail.com>
+ <516ecedc-38b9-1ae3-a784-289a30e5f6df@oracle.com>
+ <20210915161510.GA34830@magnolia>
+ <CAPcyv4jaCiSXU61gsQTaoN_cdDTDMvFSfMYfBz2yLKx11fdwOQ@mail.gmail.com>
+ <YULuMO86NrQAPcpf@infradead.org>
+ <CAPcyv4g_qPBER2W+OhCf29kw-+tjs++TsTiRGWgX3trv11+28A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210917080730.GA5284@quack2.suse.cz>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <CAPcyv4g_qPBER2W+OhCf29kw-+tjs++TsTiRGWgX3trv11+28A@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 17, 2021 at 10:07:30AM +0200, Jan Kara wrote:
-> On Thu 16-09-21 11:50:58, Vivek Goyal wrote:
-> > split_fs_names() currently takes comma separate list of filesystems
-> > and converts it into individual filesystem strings. Pleaces these
-> > strings in the input buffer passed by caller and returns number of
-> > strings.
-> > 
-> > If caller manages to pass input string bigger than buffer, then we
-> > can write beyond the buffer. Or if string just fits buffer, we will
-> > still write beyond the buffer as we append a '\0' byte at the end.
-> > 
-> > Pass size of input buffer to split_fs_names() and put enough checks
-> > in place so such buffer overrun possibilities do not occur.
-> > 
-> > This patch does few things.
-> > 
-> > - Add a parameter "size" to split_fs_names(). This specifies size
-> >   of input buffer.
-> > 
-> > - Use strlcpy() (instead of strcpy()) so that we can't go beyond
-> >   buffer size. If input string "names" is larger than passed in
-> >   buffer, input string will be truncated to fit in buffer.
-> > 
-> > - Stop appending extra '\0' character at the end and avoid one
-> >   possibility of going beyond the input buffer size.
-> > 
-> > - Do not use extra loop to count number of strings.
-> > 
-> > - Previously if one passed "rootfstype=foo,,bar", split_fs_names()
-> >   will return only 1 string "foo" (and "bar" will be truncated
-> >   due to extra ,). After this patch, now split_fs_names() will
-> >   return 3 strings ("foo", zero-sized-string, and "bar").
-> > 
-> >   Callers of split_fs_names() have been modified to check for
-> >   zero sized string and skip to next one.
-> > 
-> > Reported-by: xu xin <xu.xin16@zte.com.cn>
-> > Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> > ---
-> >  init/do_mounts.c |   28 ++++++++++++++++++++--------
-> >  1 file changed, 20 insertions(+), 8 deletions(-)
+On Thu, Sep 16, 2021 at 11:40:28AM -0700, Dan Williams wrote:
+> > That was my gut feeling.  If everyone feels 100% comfortable with
+> > zeroingas the mechanism to clear poisoning I'll cave in.  The most
+> > important bit is that we do that through a dedicated DAX path instead
+> > of abusing the block layer even more.
 > 
-> Just one nit below:
-> 
-> > Index: redhat-linux/init/do_mounts.c
-> > ===================================================================
-> > --- redhat-linux.orig/init/do_mounts.c	2021-09-15 08:46:33.801689806 -0400
-> > +++ redhat-linux/init/do_mounts.c	2021-09-16 11:28:36.753625037 -0400
-> > @@ -338,19 +338,25 @@ __setup("rootflags=", root_data_setup);
-> >  __setup("rootfstype=", fs_names_setup);
-> >  __setup("rootdelay=", root_delay_setup);
-> >  
-> > -static int __init split_fs_names(char *page, char *names)
-> > +static int __init split_fs_names(char *page, size_t size, char *names)
-> >  {
-> >  	int count = 0;
-> >  	char *p = page;
-> > +	bool str_start = false;
-> >  
-> > -	strcpy(p, root_fs_names);
-> > +	strlcpy(p, root_fs_names, size);
-> >  	while (*p++) {
-> > -		if (p[-1] == ',')
-> > +		if (p[-1] == ',') {
-> >  			p[-1] = '\0';
-> > +			count++;
-> > +			str_start = false;
-> > +		} else {
-> > +			str_start = true;
-> > +		}
-> >  	}
-> > -	*p = '\0';
-> >  
-> > -	for (p = page; *p; p += strlen(p)+1)
-> > +	/* Last string which might not be comma terminated */
-> > +	if (str_start)
-> >  		count++;
-> 
-> You could avoid the whole str_start logic if you just initialize 'count' to
-> 1 - in the worst case you'll have 0-length string at the end (for case like
-> xfs,) but you deal with 0-length strings in the callers anyway. Otherwise
-> the patch looks good so feel free to add:
+> ...or just rename dax_zero_page_range() to dax_reset_page_range()?
+> Where reset == "zero + clear-poison"?
 
-Hi Jan,
+I'd say that naming is more confusing than overloading zero.
 
-This sounds good. I will get rid of str_start. V3 of the patch is on
-the way.
+> > I'm really worried about both patartitions on DAX and DM passing through
+> > DAX because they deeply bind DAX to the block layer, which is just a bad
+> > idea.  I think we also need to sort that whole story out before removing
+> > the EXPERIMENTAL tags.
+> 
+> I do think it was a mistake to allow for DAX on partitions of a pmemX
+> block-device.
+> 
+> DAX-reflink support may be the opportunity to start deprecating that
+> support. Only enable DAX-reflink for direct mounting on /dev/pmemX
+> without partitions (later add dax-device direct mounting),
 
-Vivek
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
-> 
+I think we need to fully or almost fully sort this out.
 
+Here is my bold suggestions:
+
+ 1) drop no drop the EXPERMINTAL on the current block layer overload
+    at all
+ 2) add direct mounting of the nvdimm namespaces ASAP.  Because all
+    the filesystem currently also need the /dev/pmem0 device add a way
+    to open the block device by the dax_device instead of our current
+    way of doing the reverse
+ 3) deprecate DAX support through block layer mounts with a say 2 year
+    deprecation period
+ 4) add DAX remapping devices as needed
+
+I'll volunteer to write the initial code for 2).  And I think we should
+not allow DAX+reflink on the block device shim at all.
