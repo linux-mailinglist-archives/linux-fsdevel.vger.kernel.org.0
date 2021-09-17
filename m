@@ -2,52 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 32B6B40F010
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 05:00:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E93D40F009
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 05:00:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243536AbhIQDBq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Sep 2021 23:01:46 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:56658 "EHLO
+        id S243568AbhIQDBa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Sep 2021 23:01:30 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:56608 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243237AbhIQDBi (ORCPT
+        with ESMTP id S243240AbhIQDB1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Sep 2021 23:01:38 -0400
+        Thu, 16 Sep 2021 23:01:27 -0400
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id DB335223BE;
-        Fri, 17 Sep 2021 03:00:15 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 9687D223BD;
+        Fri, 17 Sep 2021 03:00:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1631847615; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1631847604; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VOYRJb9fJ+cMO6Hj0cgeXpg6pQoK6BH8BG5fqFk6i+M=;
-        b=TRc7wKqSyLeB/iEALRI6D6YqRSG6iz+Dq+XLvWC0q61avt5RPD6l5eo+J9e2cm0RAlLndG
-        bCR/i4dYjEnf68mBhKdVP1g+5WyLBU137hqqn9pFB7hOY9jQh9U2O/3XagwE7D9w6IZHhX
-        bB+fyY7lriilGsSaYPwQeJPgnfg1Glk=
+        bh=+1u7JfJ60ADhg0u9Pcl8n+h1Bz25Z10lXHgfdltE1Jc=;
+        b=09WD61SfjEhN3tce5Wk8dsHcJSb/WzRs0PxztPkg/oLbQ8tSPZsUEzjy6uqwmhzuikCPuq
+        U/HwnCMpj/gmCuZzk7ruhT8FrXhKowH88e6xhNyS5IhdEstIJ/afToqMOTj8wFJrEPQ6Xa
+        cVP2L7nrJ3Ww7J3EnBJIz5piqvJIZY0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1631847615;
+        s=susede2_ed25519; t=1631847604;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VOYRJb9fJ+cMO6Hj0cgeXpg6pQoK6BH8BG5fqFk6i+M=;
-        b=/lq6dz70EAyTVlxTdVKlR4Bn0HQwVD6XFi1dN/9iHfYMXcFuYHWhp0rAc/wmbsX9/3XzPy
-        3BMcXfR/dH2dKDAg==
+        bh=+1u7JfJ60ADhg0u9Pcl8n+h1Bz25Z10lXHgfdltE1Jc=;
+        b=x0CJKsYi96KJP/4iSQP5YmW+cfO6FQgofzJz/NaLv+dviaJqtmgBNoT8ZnNF2BRpgwlvYN
+        cVAEWbD8Oc5hvoAg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 732FE13D0B;
-        Fri, 17 Sep 2021 03:00:11 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3870F13D0B;
+        Fri, 17 Sep 2021 02:59:59 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id X8J7DLsERGHIMwAAMHmgww
-        (envelope-from <neilb@suse.de>); Fri, 17 Sep 2021 03:00:11 +0000
-Subject: [PATCH 6/6] XFS: remove congestion_wait() loop from
- xfs_buf_alloc_pages()
+        id s9QlOq8ERGGiMwAAMHmgww
+        (envelope-from <neilb@suse.de>); Fri, 17 Sep 2021 02:59:59 +0000
+Subject: [PATCH 5/6] XFS: remove congestion_wait() loop from kmem_alloc()
 From:   NeilBrown <neilb@suse.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Theodore Ts'o <tytso@mit.edu>,
@@ -62,7 +61,7 @@ Cc:     linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         linux-doc@vger.kernel.org
 Date:   Fri, 17 Sep 2021 12:56:57 +1000
-Message-ID: <163184741782.29351.3052773526186670351.stgit@noble.brown>
+Message-ID: <163184741781.29351.4475236694432020436.stgit@noble.brown>
 In-Reply-To: <163184698512.29351.4735492251524335974.stgit@noble.brown>
 References: <163184698512.29351.4735492251524335974.stgit@noble.brown>
 User-Agent: StGit/0.23
@@ -79,62 +78,49 @@ ENOMEM and says of __GFP_NOFAIL that it
     is definitely preferable to use the flag rather than opencode
     endless loop around allocator.
 
-congestion_wait() is indistinguishable from
-schedule_timeout_uninterruptible() in practice and it is not a good way
-to wait for memory to become available.
+So remove the loop, instead specifying __GFP_NOFAIL if KM_MAYFAIL was
+not given.
 
-So add __GFP_NOFAIL to gfp if failure is not an option, and remove the
-congestion_wait().  We now only loop when failure is an option, and
-alloc_bulk_pages_array() made some progres, but not enough.
+As we no longer have the opportunity to report a warning after some
+failures, clear __GFP_NOWARN so that the default warning (rate-limited
+to 1 ever 10 seconds) will be reported instead.
 
 Signed-off-by: NeilBrown <neilb@suse.de>
 ---
- fs/xfs/xfs_buf.c |   14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ fs/xfs/kmem.c |   19 ++++++-------------
+ 1 file changed, 6 insertions(+), 13 deletions(-)
 
-diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-index 5fa6cd947dd4..b19ab52c551b 100644
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -352,7 +352,7 @@ xfs_buf_alloc_pages(
- 	if (flags & XBF_READ_AHEAD)
- 		gfp_mask |= __GFP_NORETRY;
- 	else
--		gfp_mask |= GFP_NOFS;
-+		gfp_mask |= GFP_NOFS | __GFP_NOFAIL;
+diff --git a/fs/xfs/kmem.c b/fs/xfs/kmem.c
+index 6f49bf39183c..575a58e61391 100644
+--- a/fs/xfs/kmem.c
++++ b/fs/xfs/kmem.c
+@@ -11,21 +11,14 @@
+ void *
+ kmem_alloc(size_t size, xfs_km_flags_t flags)
+ {
+-	int	retries = 0;
+ 	gfp_t	lflags = kmem_flags_convert(flags);
+-	void	*ptr;
  
- 	/* Make sure that we have a page list */
- 	bp->b_page_count = DIV_ROUND_UP(BBTOB(bp->b_length), PAGE_SIZE);
-@@ -372,8 +372,9 @@ xfs_buf_alloc_pages(
+ 	trace_kmem_alloc(size, flags, _RET_IP_);
  
- 	/*
- 	 * Bulk filling of pages can take multiple calls. Not filling the entire
--	 * array is not an allocation failure, so don't back off if we get at
--	 * least one extra page.
-+	 * array is not an allocation failure but is worth counting in
-+	 * xb_pages_retries statistics.  If we don't even get one page,
-+	 * then this must be a READ_AHEAD and we should abort.
- 	 */
- 	for (;;) {
- 		long	last = filled;
-@@ -385,16 +386,13 @@ xfs_buf_alloc_pages(
- 			break;
- 		}
- 
--		if (filled != last)
--			continue;
--
--		if (flags & XBF_READ_AHEAD) {
-+		if (filled == last) {
-+			ASSERT(flags & XBF_READ_AHEAD);
- 			xfs_buf_free_pages(bp);
- 			return -ENOMEM;
- 		}
- 
- 		XFS_STATS_INC(bp->b_mount, xb_page_retries);
--		congestion_wait(BLK_RW_ASYNC, HZ / 50);
- 	}
- 	return 0;
+-	do {
+-		ptr = kmalloc(size, lflags);
+-		if (ptr || (flags & KM_MAYFAIL))
+-			return ptr;
+-		if (!(++retries % 100))
+-			xfs_err(NULL,
+-	"%s(%u) possible memory allocation deadlock size %u in %s (mode:0x%x)",
+-				current->comm, current->pid,
+-				(unsigned int)size, __func__, lflags);
+-		congestion_wait(BLK_RW_ASYNC, HZ/50);
+-	} while (1);
++	if (!(flags & KM_MAYFAIL)) {
++		lflags |= __GFP_NOFAIL;
++		lflags &= ~__GFP_NOWARN;
++	}
++
++	return kmalloc(size, lflags);
  }
 
 
