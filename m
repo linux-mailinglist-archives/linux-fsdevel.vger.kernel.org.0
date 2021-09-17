@@ -2,96 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B32140F697
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 13:14:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76BB040F6CB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 13:39:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243377AbhIQLPg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Sep 2021 07:15:36 -0400
-Received: from bedivere.hansenpartnership.com ([96.44.175.130]:46192 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243123AbhIQLPf (ORCPT
+        id S241902AbhIQLkr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Sep 2021 07:40:47 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:47996 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233452AbhIQLkq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Sep 2021 07:15:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1631877253;
-        bh=kOSJlytOKArtchcqsw0mkjWJteCtj8u7OX0jv2Vu1lU=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=ANH3VOqgwioVEKItkM+3IR7tNfwOi4OyeVJE+KryLKowID2uuEMtpCrB5Bv40xofo
-         XUZJsvKB3tfQ/9eMUGZB9xBYTd7rwAm2J6xl26qVcGUKQCtGl6dDMOr6XzYedr720I
-         0wOGpenriHMIOAlLuLID1mkEYl8Djp2xdRoMQoLU=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id A7CC3128046C;
-        Fri, 17 Sep 2021 04:14:13 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id WxlMDOf_mUhM; Fri, 17 Sep 2021 04:14:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1631877253;
-        bh=kOSJlytOKArtchcqsw0mkjWJteCtj8u7OX0jv2Vu1lU=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=ANH3VOqgwioVEKItkM+3IR7tNfwOi4OyeVJE+KryLKowID2uuEMtpCrB5Bv40xofo
-         XUZJsvKB3tfQ/9eMUGZB9xBYTd7rwAm2J6xl26qVcGUKQCtGl6dDMOr6XzYedr720I
-         0wOGpenriHMIOAlLuLID1mkEYl8Djp2xdRoMQoLU=
-Received: from jarvis.lan (c-67-166-170-96.hsd1.va.comcast.net [67.166.170.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 4EDF11280420;
-        Fri, 17 Sep 2021 04:14:12 -0700 (PDT)
-Message-ID: <f8561816ab06cedf86138a4ad64e7ff7b33e2c07.camel@HansenPartnership.com>
-Subject: Re: [MAINTAINER SUMMIT] Folios as a potential Kernel/Maintainers
- Summit topic?
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        Chris Mason <clm@fb.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        "ksummit@lists.linux.dev" <ksummit@lists.linux.dev>
-Date:   Fri, 17 Sep 2021 07:14:11 -0400
-In-Reply-To: <20210916210046.ourwrk6uqeisi555@meerkat.local>
-References: <YUIwgGzBqX6ZiGgk@mit.edu>
-         <f7b70227bac9a684320068b362d28fcade6b65b9.camel@HansenPartnership.com>
-         <YUI5bk/94yHPZIqJ@mit.edu> <17242A0C-3613-41BB-84E4-2617A182216E@fb.com>
-         <f066615c0e2c6fe990fa5c19dd1c17d649bcb03a.camel@HansenPartnership.com>
-         <E655F510-14EB-4F40-BCF8-C5266C07443F@fb.com>
-         <33a2000f56d51284e2df0cfcd704e93977684b59.camel@HansenPartnership.com>
-         <261D65D8-7273-4884-BD01-2BF8331F4034@fb.com>
-         <20210916210046.ourwrk6uqeisi555@meerkat.local>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Fri, 17 Sep 2021 07:40:46 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 320E422412;
+        Fri, 17 Sep 2021 11:39:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1631878764; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Bni8e3fnFoOJorcwpT1UhKwgT+OvUwStsDf695sKm9w=;
+        b=fTXsxIn+00pe96AKSUprCPkRI/m43OBsBiEjt+R7vGI74+rejTijBPo1EbibuLoD4phfK4
+        1uOARXiSnegsjbmkhQ+wCQtxAIKm9deIy6/mw/q6Swak/IExaUiXEOvhOjvo72H/WNCCKH
+        ObXKooZpvdB/TvUhiIteC9zcgrKwhFA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1631878764;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Bni8e3fnFoOJorcwpT1UhKwgT+OvUwStsDf695sKm9w=;
+        b=49TBC5FCtI3PNWnjB+rlgwVnZlIfrNtEfSGwhVbPcoJHXSWxUjhqASm4TnomKHF4lJsIMN
+        1XPyd3tusVkEnzCA==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id 212D0A3B8A;
+        Fri, 17 Sep 2021 11:39:24 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 898001E0CA7; Fri, 17 Sep 2021 13:39:21 +0200 (CEST)
+Date:   Fri, 17 Sep 2021 13:39:21 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.cz>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] mm: Fully initialize invalidate_lock, amend lock class
+ later
+Message-ID: <20210917113920.GD5284@quack2.suse.cz>
+References: <20210901084403.g4fezi23cixemlhh@linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210901084403.g4fezi23cixemlhh@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2021-09-16 at 17:00 -0400, Konstantin Ryabitsev wrote:
-> On Thu, Sep 16, 2021 at 08:38:13PM +0000, Chris Mason wrote:
-> > Agree here.  Mailing lists make it really hard to figure out when
-> > these conflicts are resolved, which is why I love using google docs
-> > for that part.
+On Wed 01-09-21 10:44:03, Sebastian Andrzej Siewior wrote:
+> The function __init_rwsem() is not part of the official API, it just a helper
+> function used by init_rwsem().
+> Changing the lock's class and name should be done by using
+> lockdep_set_class_and_name() after the has been fully initialized. The overhead
+> of the additional class struct and setting it twice is negligible and it works
+> across all locks.
 > 
-> I would caution that Google docs aren't universally accessible. China
-> blocks access to many Google resources, and now Russia purportedly
-> does the same. Perhaps a similar effect can be reached with a git
-> repository with limited commit access? At least then commits can be
-> attested to individual authors.
+> Fully initialize the lock with init_rwsem() and then set the custom class and
+> name for the lock.
+> 
+> Fixes: 730633f0b7f95 ("mm: Protect operations adding pages to page cache with invalidate_lock")
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-In days of old, when knights were bold and cloud silos weren't
-invented, we had an ancient magic handed down by the old gods who spoke
-non type safe languages.  They called it wiki and etherpad ... could we
-make use of such tools today without committing heresy against our
-cloud overlords?
+Fine by me, thanks for the fix. I'll queue it to my tree and push it to
+Linus.
 
-James
+								Honza
 
-
+> ---
+>  fs/inode.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index cb41f02d8cedf..a49695f57e1ea 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -190,8 +190,10 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+>  	mapping_set_gfp_mask(mapping, GFP_HIGHUSER_MOVABLE);
+>  	mapping->private_data = NULL;
+>  	mapping->writeback_index = 0;
+> -	__init_rwsem(&mapping->invalidate_lock, "mapping.invalidate_lock",
+> -		     &sb->s_type->invalidate_lock_key);
+> +	init_rwsem(&mapping->invalidate_lock);
+> +	lockdep_set_class_and_name(&mapping->invalidate_lock,
+> +				   &sb->s_type->invalidate_lock_key,
+> +				   "mapping.invalidate_lock");
+>  	inode->i_private = NULL;
+>  	inode->i_mapping = mapping;
+>  	INIT_HLIST_HEAD(&inode->i_dentry);	/* buggered by rcu freeing */
+> -- 
+> 2.33.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
