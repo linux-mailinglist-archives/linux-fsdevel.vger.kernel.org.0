@@ -2,117 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33CE040EEFF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 03:58:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EA6740EFEE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 04:59:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242526AbhIQB7n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Sep 2021 21:59:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34992 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230135AbhIQB7m (ORCPT
+        id S243196AbhIQDAp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Sep 2021 23:00:45 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:41356 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243049AbhIQDAp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Sep 2021 21:59:42 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D82CC061574;
-        Thu, 16 Sep 2021 18:58:21 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id g21so23971015edw.4;
-        Thu, 16 Sep 2021 18:58:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=avIIapDTLmGXo38SX42D/9erFS1h/0wzUYg4aqKVx1o=;
-        b=YpW7z7rQ/DbpMDxYo9EM+A8//B+X6d8czmk4TX8kr9QX2Gp9kPfhKYteuZZA+nqz0Z
-         YCBGINvXScYO7y4ePOzhPhHDVACGX5l4rIpPHpCjRlS/cMQtYNTgttK5SUWmY5dIDEsY
-         iKPAezp9D9b/Xmb3Pk9EBfES1+i9J7rUsMTsA/XBGW0dFhP0tM6oiK9AavuE8R/WyxPB
-         PWlkzUTzTcW9NgDnn6nf+7zcaPN8Tw1PQxmxe0wvmqQfEjIYN86lCpYx+YQJLuN25QNu
-         LbWg1Czf72rPLailtg5J2dMBW62TymX4oe/8ovTc4IdCC46wBk4a1Y1KvydmKBC9Gh9H
-         arvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=avIIapDTLmGXo38SX42D/9erFS1h/0wzUYg4aqKVx1o=;
-        b=FZJh+YMk17QeKuhm9iVQXH+BG4o9gVqvtPu2rGDMTOCwBD3ted0hDetzi20kSp3tvw
-         B5p+ZBKzGg3EVgjqp3L7xzo0msCwWjBQWuFM1Fpm25rIxaGe1SNs8qxaqQiVeNLbyO6E
-         OqvqcFXdcskv5nzHRSTSfK7abM+ELb7gJTzyFqK9D9VE9kgRbDxkEPSQ/iDdCqQskDus
-         jP1xEJZlTfWYoSiQ8sJzA36e+StwPRdnJKGH8eASTBAOu+fO1E+cFgTSDSw3+t56h9Hh
-         m7J7CWZe3+MO6a9uSIhqHOuaPVCLKa5ndgWqSXw88tpOcVgrjDCmJVpU//7UPodltBrI
-         WSTg==
-X-Gm-Message-State: AOAM530BgiqksEfx82K5dYeH+9ozQDK91rt4NNFE4Ytwdv/4MvLKxbID
-        RJ42ztB39G/1R2ViIzwCQOf7+0KYZpmdAWYguTs=
-X-Google-Smtp-Source: ABdhPJwyvpnmZ76jVQtEQvqR5BMtghiLRxO1SK+QRZzDt8m4ZnzDe4uwtAQq/2IpIWcOISNyQDmbXvuZ+5MUwQMxPn0=
-X-Received: by 2002:a17:906:3983:: with SMTP id h3mr9488725eje.249.1631843899899;
- Thu, 16 Sep 2021 18:58:19 -0700 (PDT)
+        Thu, 16 Sep 2021 23:00:45 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 09F2B2007B;
+        Fri, 17 Sep 2021 02:59:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1631847562; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=8pvkjCFdBH92niZgGsbVOrH9zONIePhOsL1BwdfqgnA=;
+        b=NrP8J0vhVKv0eLroW/bpzL2ejtwWpy1oEAi7DdQ4kMU5Kv8Oq6l5iLYPu7H9EkxbF1q4/A
+        na+xtpPAcJUY68yb7FlQ9lmxSLRRQKANIKbvzZj9RSTof31Djq1vJviErXSODqyW0wqB4e
+        LQe1sAc/mk1g9ojaRCFZduOcyNryYAc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1631847562;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=8pvkjCFdBH92niZgGsbVOrH9zONIePhOsL1BwdfqgnA=;
+        b=PMuREhLfwiF/t1B800k94ChByfic8xUfzyWra9ANkKBEq5p7ic9AJetd/jrDccwucIyfGK
+        Kco4+Zd25/JWTsBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9733913D0B;
+        Fri, 17 Sep 2021 02:59:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id wyQIFYUERGFLMwAAMHmgww
+        (envelope-from <neilb@suse.de>); Fri, 17 Sep 2021 02:59:17 +0000
+Subject: [PATCH 0/6 v2] congestion_wait() and GFP_NOFAIL
+From:   NeilBrown <neilb@suse.de>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@suse.com>,
+        ". Dave Chinner" <david@fromorbit.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Date:   Fri, 17 Sep 2021 12:56:57 +1000
+Message-ID: <163184698512.29351.4735492251524335974.stgit@noble.brown>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-References: <20210605034447.92917-1-dong.menglong@zte.com.cn>
- <20210605034447.92917-3-dong.menglong@zte.com.cn> <20210605115019.umjumoasiwrclcks@wittgenstein>
- <CADxym3bs1r_+aPk9Z_5Y7QBBV_RzUbW9PUqSLB7akbss_dJi_g@mail.gmail.com>
- <20210607103147.yhniqeulw4pmvjdr@wittgenstein> <20210607121524.GB3896@www>
- <20210617035756.GA228302@www> <20210617143834.ybxk6cxhpavlf4gg@wittgenstein>
- <CADxym3aLQNJaWjdkMVAjuVk_btopv6jHrVjtP+cKwH8x6R7ojQ@mail.gmail.com> <20210727123701.zlcrrf4p2fsmeeas@wittgenstein>
-In-Reply-To: <20210727123701.zlcrrf4p2fsmeeas@wittgenstein>
-From:   Menglong Dong <menglong8.dong@gmail.com>
-Date:   Fri, 17 Sep 2021 09:58:04 +0800
-Message-ID: <CADxym3YxBAJmXr1qmJ+3ELrT6RKY-UoFmpaPH5iYmbEa1H+03Q@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] init/do_mounts.c: create second mount for initramfs
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Sami Tolvanen <samitolvanen@google.com>, johan@kernel.org,
-        ojeda@kernel.org, jeyu@kernel.org, masahiroy@kernel.org,
-        joe@perches.com, Jan Kara <jack@suse.cz>, hare@suse.de,
-        Jens Axboe <axboe@kernel.dk>, tj@kernel.org,
-        gregkh@linuxfoundation.org, song@kernel.org,
-        NeilBrown <neilb@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Barret Rhoden <brho@google.com>, f.fainelli@gmail.com,
-        palmerdabbelt@google.com, wangkefeng.wang@huawei.com,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, vbabka@suse.cz,
-        Alexander Potapenko <glider@google.com>,
-        Petr Mladek <pmladek@suse.com>, johannes.berg@intel.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>, jojing64@gmail.com,
-        terrelln@fb.com, geert@linux-m68k.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>, arnd@arndb.de,
-        Chris Down <chris@chrisdown.name>, mingo@kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Josh Triplett <josh@joshtriplett.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+This second version:
+  - add recipients for the Documentation/core-api changes
+  - add fix for __alloc_pages_bulk() to handle GFP_NOFAIL
+  - drops the annotations for congestion_wait() as being ineffective
+    as that isn't really useful until an alternative is available
+  - changes to GFP_NOFAIL documentation changes to focus on the possible
+    deadlocks rather than the use of memory reserves
+  - Improves ext4 and xfs patches based on feedback from Ted and Dave.
 
-On Tue, Jul 27, 2021 at 8:37 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
-[...]
->
-> Yep, sorry.
-> When I tested this early during the merge window it regressed booting a
-> regular system for me meaning if I compiled a kernel with this feature
-> enabled it complained about not being being able to open an initial
-> console and it dropped me right into initramfs instead of successfully
-> booting. I haven't looked into what this is caused or how to fix it for
-> lack of time.
+The patches are independent, except that the last patch depends on the
+first.
 
-Our team has fully tested this feature, and no abnormalities have been
-found yet.
-What's more, this feature has been used in the product of our company. So if
-there is any potential bug, as you mentioned above, I'd appreciate it if you can
-spend some time on looking into it.
+As mentioned last time:
 
-What's more, besides the problem that this feature solved, it has some more
-benefits: saving memory. The amount of 'mnt_cache' is up to 50k when 180 docker
-containers are created without this feature. However, only 15k 'mnt_cache' are
-used with this feature enabled. Each 'mnt_cache' eats 320 bytes, so about 11M
-memory is saved in this situation.
+  These are the easy bits.  There are 5 calls to congestion_wait() and
+  one to wait_iff_congested() in mm/ which need consideration.  There
+  are multiple calls to congestion_wait in fs/, particularly fs/f2fs/
+  which need to be addressed too.  I'll try to form an opinion about
+  these in coming weeks.
 
-Please let me know if this feature is illogical or if there is any
-better solution, thanks~
+(other interesting comment in original cover letter just duplicates
+ observations made in the commit messages of individual patches).
 
-Best Wishes!
-Menglong Dong
+NeilBrown
+
+
+---
+
+NeilBrown (6):
+      MM: Support __GFP_NOFAIL in  alloc_pages_bulk_*() and improve doco
+      MM: improve documentation for __GFP_NOFAIL
+      EXT4: Remove ENOMEM/congestion_wait() loops.
+      EXT4: remove congestion_wait from ext4_bio_write_page, and simplify
+      XFS: remove congestion_wait() loop from kmem_alloc()
+      XFS: remove congestion_wait() loop from xfs_buf_alloc_pages()
+
+
+ Documentation/core-api/memory-allocation.rst | 25 ++++++++-
+ fs/ext4/ext4.h                               |  2 +-
+ fs/ext4/ext4_jbd2.c                          |  4 +-
+ fs/ext4/ext4_jbd2.h                          | 14 +++---
+ fs/ext4/extents.c                            | 53 ++++++++------------
+ fs/ext4/extents_status.c                     | 35 +++++++------
+ fs/ext4/extents_status.h                     |  2 +-
+ fs/ext4/ialloc.c                             |  3 +-
+ fs/ext4/indirect.c                           |  2 +-
+ fs/ext4/inode.c                              |  6 +--
+ fs/ext4/ioctl.c                              |  4 +-
+ fs/ext4/page-io.c                            | 13 ++---
+ fs/ext4/super.c                              |  2 +-
+ fs/jbd2/transaction.c                        |  8 +--
+ fs/xfs/kmem.c                                | 19 +++----
+ fs/xfs/xfs_buf.c                             | 14 +++---
+ include/linux/gfp.h                          |  6 ++-
+ 17 files changed, 113 insertions(+), 99 deletions(-)
+
+--
+Signature
+
