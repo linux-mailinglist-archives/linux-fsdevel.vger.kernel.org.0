@@ -2,55 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD4CC410134
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Sep 2021 00:22:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 157DA410139
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Sep 2021 00:25:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235189AbhIQWXi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Sep 2021 18:23:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59282 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232719AbhIQWXg (ORCPT
+        id S1344293AbhIQW1O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Sep 2021 18:27:14 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:55134 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S232719AbhIQW1M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Sep 2021 18:23:36 -0400
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08702C061574;
-        Fri, 17 Sep 2021 15:22:14 -0700 (PDT)
-Received: by mail-qk1-x732.google.com with SMTP id p4so22133160qki.3;
-        Fri, 17 Sep 2021 15:22:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=/jPNdMJve/KWd/Y4SRkm6hTGIPVm3MyGY8DljibbqNI=;
-        b=QqwLP3Us4ZVFTMjMgU5AFjn7iMsGnla2SZJ+LzOe8OdaUpcAAMFwrGir9T6ArgEGB7
-         XCo2T64pSyhIwcval7f5pntFIBGxO7rHMYUYdF0clkWtKnQ+qKTKs7RVGxNLz6Jgg2WM
-         wwQjnj+cGuVIUBATRj7IuU/XRYCY/I2YxjMf96jN6IT6I48/MzyJ7pmbw9JA+nRSmTzN
-         M8GGPZceVzyHgJO4yzQPSSa2ewC8d96mTcZcOeeXqhDMDNkwSqE+g6bzT1iAKMSqNAXb
-         tds16cEaXrrcCHZM6D2SqQ8uwqLWDZ934hEcpU2MmdlTWcR1naWFA5WhyzV2TRQKMsmy
-         eWjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/jPNdMJve/KWd/Y4SRkm6hTGIPVm3MyGY8DljibbqNI=;
-        b=UMzFw2/9Y5IFo+LZBYGEX19MTyEz+yy7j7RLuswp+wZp1RsI1aQmfZxM8dVWO4MJK+
-         BM1cd2kZ/xEfu9VqCiER5vN65YfNsCRhcCfkK3FW8kSzs7nMEgG5vvJbyjK1E2WB29lv
-         0t0AwZCQZTdL44FlwoGqJAV2N9/60uwGg9uWMpCNMtTwadw85cOkl2xBEKlBnu+7Sh8z
-         fAtALS2VYAGyjFfku1/GjgT4+8rNIkj/OFKrPi7t9e31gB2jZr5N102GKdgA9ksaezqm
-         K1E484qqitgCCb3CKLjV/36LiHT9BB0ggG9L0yRO5WKK2Pav/e998r95hZHErgpKqJox
-         i3Mw==
-X-Gm-Message-State: AOAM532WVBgXAinAbv8zbmXm0470Bzp+nVRgv2UQ/EfYyQ/JmztLgl6t
-        b8wXNz7IxD0UOJfJP2p9gsCkjy80r247
-X-Google-Smtp-Source: ABdhPJyhxqWgAMwUMkp3GuqQcsFSxs2VvVCVehg+0V9IrYi7ta6rckoWQWSUGG2MuudeEO2p0knrHw==
-X-Received: by 2002:a37:aa8f:: with SMTP id t137mr12790727qke.30.1631917322001;
-        Fri, 17 Sep 2021 15:22:02 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id a24sm3520757qtp.90.2021.09.17.15.22.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Sep 2021 15:22:01 -0700 (PDT)
-Date:   Fri, 17 Sep 2021 18:21:59 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+        Fri, 17 Sep 2021 18:27:12 -0400
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 18HMPY8h005995
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Sep 2021 18:25:34 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 3CFF515C0098; Fri, 17 Sep 2021 18:25:34 -0400 (EDT)
+Date:   Fri, 17 Sep 2021 18:25:34 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
 Cc:     Johannes Weiner <hannes@cmpxchg.org>,
         Dave Chinner <david@fromorbit.com>,
         "Darrick J. Wong" <djwong@kernel.org>,
@@ -62,7 +34,7 @@ Cc:     Johannes Weiner <hannes@cmpxchg.org>,
         Christoph Hellwig <hch@infradead.org>,
         David Howells <dhowells@redhat.com>
 Subject: Re: Folio discussion recap
-Message-ID: <YUUVB4hDI+7z1Raz@moria.home.lan>
+Message-ID: <YUUV3uHhh/PCqXsK@mit.edu>
 References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
  <YTu9HIu+wWWvZLxp@moria.home.lan>
  <YUIT2/xXwvZ4IErc@cmpxchg.org>
@@ -70,26 +42,54 @@ References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
  <YUN2vokEM8wgASk8@cmpxchg.org>
  <20210917052440.GJ1756565@dread.disaster.area>
  <YUTC6O0w3j7i8iDm@cmpxchg.org>
- <20210917205735.tistsacwwzkcdklx@box.shutemov.name>
- <YUUF1WsAoWGmeAJ4@moria.home.lan>
- <20210917220209.zhac33jiqtxvdttk@box>
+ <YUUE5qB9CW9qiAcN@moria.home.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210917220209.zhac33jiqtxvdttk@box>
+In-Reply-To: <YUUE5qB9CW9qiAcN@moria.home.lan>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 18, 2021 at 01:02:09AM +0300, Kirill A. Shutemov wrote:
-> I can't answer for Matthew.
-> 
-> Anon conversion patchset doesn't exists yet (but it is in plans) so
-> there's nothing to split out. Once someone will come up with such patchset
-> he has to sell it upstream on its own merit.
+On Fri, Sep 17, 2021 at 05:13:10PM -0400, Kent Overstreet wrote:
+> Also: it's become pretty clear to me that we have crappy
+> communications between MM developers and filesystem
+> developers.
 
-Perhaps we've been operating under some incorrect assumptions then. If the
-current patch series doesn't actually touch anonymous pages - the patch series
-does touch code in e.g. mm/swap.c, but looking closer it might just be due to
-the (mis)organization of the current code - maybe there aren't any real
-objections left?
+I think one of the challenges has been the lack of an LSF/MM since
+2019.  And it may be that having *some* kind of ad hoc technical
+discussion given that LSF/MM in 2021 is not happening might be a good
+thing.  I'm sure if we asked nicely, we could use the LPC
+infrasutrcture to set up something, assuming we can find a mutually
+agreeable day or dates.
+
+> Internally both teams have solid communications - I know
+> in filesystem land we all talk to each other and are pretty good at
+> working colaboratively, and it sounds like the MM team also has good
+> internal communications. But we seem to have some problems with
+> tackling issues that cross over between FS and MM land, or awkwardly
+> sit between them.
+
+That's a bit of a over-generalization; it seems like we've uncovered
+that some of the disagreemnts are between different parts of the MM
+community over the suitability of folios for anonymous pages.
+
+And it's interesting, because I don't really consider Willy to be one
+of "the FS folks" --- and he has been quite diligent to reaching out
+to a number of folks in the FS community about our needs, and it's
+clear that this has been really, really helpful.  There's no question
+that we've had for many years some difficulties in the code paths that
+sit between FS and MM, and I'd claim that it's not just because of
+communications, but the relative lack of effort that was focused in
+that area.  The fact that Willy has spent the last 9 months working on
+FS / MM interactions has been really great, and I hope it continues.
+
+That being said, it sounds like there are issues internal to the MM
+devs that still need to be ironed out, and at the risk of throwing the
+anon-THP folks under the bus, if we can land at least some portion of
+the folio commits, it seems like that would be a step in the right
+direction.
+
+Cheers,
+
+						- Ted
