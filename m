@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9823F40FF1D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 20:22:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7080840FF25
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 20:22:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344306AbhIQSYH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Sep 2021 14:24:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34128 "EHLO
+        id S1344533AbhIQSYR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Sep 2021 14:24:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230465AbhIQSYG (ORCPT
+        with ESMTP id S1344400AbhIQSYK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Sep 2021 14:24:06 -0400
+        Fri, 17 Sep 2021 14:24:10 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2DADC061757;
-        Fri, 17 Sep 2021 11:22:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B44EC061574;
+        Fri, 17 Sep 2021 11:22:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=4bQo5XXQSgN6eO5cUMGH1bS2NQ993+cG2D9qNC4TbPk=; b=z0MZai6HkL9APtqMptXhF0Kr7z
-        WO6Ilfzz6LyaBeplCsWkG3xdbtIM/PQN0EBDybfmLvfXTqH0XIUF/95RGbV98Gj6LJiKBhC8nfEIC
-        9McoqoSG+CBcSO0YpOy92w0lOg7fPxQI4u+h/6h7j/mRrbUsvFDf9MPEtrVuOwB9TXrk75EY0lw/0
-        pXKIUq2j3zNbcUOCkonmM5hn65EOZcEQUO8I+PxNQh7220UBQn+TmoqN/9UM3liFF4bD002dCF9k6
-        a0ul9oFm23MTyAfaUqHHW/ECGaUSqHZIVvprVZgruLQ1iBc995RtLD5SKuLlBXSdv03NN4RAe7jhW
-        wlcFUOIg==;
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=TpWhHDdGVfR6RDYKOLjBIoqQ9UQe+x0mjeEQUKQ9/JM=; b=S+S6gIrumrtOg4NhyFQ271dZdr
+        Ad/Ojk1EIqWUhRyG4pEowOeFSc09IYoYOdr6Ifq/RicwitFYjRS/qnK/kz1b+GQ3Zp+2BI4ZLKYGu
+        9o4lyOYtupqQnu8zmWePvOpRjpVfOB+9AK5fU044V2DF4oLutNlxUpG0qAWMBpIpoahUztQatvLdJ
+        0crirmh6RRhAPUe63SEsrjBp2P/ROCkGnoOOmK7YT5grfHMS6RrVyWRlIRvHyUEevaGGH+2mMg142
+        VcJO1lTEYnjVJObQ9PINBQi+t676d2Kd9O0mUSooqfv5jaH8jxuGTUKJXc4O/9zh9G1vdRzSgcHkw
+        WRt1ZY9A==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mRIVH-00Ep5O-U4; Fri, 17 Sep 2021 18:22:27 +0000
+        id 1mRIVI-00Ep5Q-0I; Fri, 17 Sep 2021 18:22:28 +0000
 From:   "Luis R. Rodriguez" <mcgrof@kernel.org>
 To:     gregkh@linuxfoundation.org
 Cc:     bp@suse.de, akpm@linux-foundation.org, josh@joshtriplett.org,
@@ -43,10 +43,12 @@ Cc:     bp@suse.de, akpm@linux-foundation.org, josh@joshtriplett.org,
         yzaikin@google.com, sfr@canb.auug.org.au, rdunlap@infradead.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 00/14] firmware_loader: built-in API and make x86 use it
-Date:   Fri, 17 Sep 2021 11:22:12 -0700
-Message-Id: <20210917182226.3532898-1-mcgrof@kernel.org>
+Subject: [PATCH 01/14] firmware_loader: fix pre-allocated buf built-in firmware use
+Date:   Fri, 17 Sep 2021 11:22:13 -0700
+Message-Id: <20210917182226.3532898-2-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210917182226.3532898-1-mcgrof@kernel.org>
+References: <20210917182226.3532898-1-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Luis Chamberlain <mcgrof@infradead.org>
@@ -56,70 +58,74 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Luis Chamberlain <mcgrof@kernel.org>
 
-A while ago I noted to Boris how we could likely do away the odd
-direct use of the firmware sections on x86 and instead have it use
-the API directly. This indeed was possible but it required quite
-a bit of spring cleaning as well and on its way I spotted a small
-fix.
+The firmware_loader can be used with a pre-allocated buffer
+through the use of the API calls:
 
-This goes with a new series of tests against built-in firmware as well.
-Boris has confirmed this also does work for the x86 microcode loader.
-0day is happy with the build results. You can find these changes on my
-git tree branch 20210916-firmware-builtin-v2 [0].
+  o request_firmware_into_buf()
+  o request_partial_firmware_into_buf()
 
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux-next.git/log/?h=20210916-firmware-builtin-v2
+If the firmware was built-in and present, our current check
+for if the built-in firmware fits into the pre-allocated buffer
+does not return any errors, and we proceed to tell the caller
+that everything worked fine. It's a lie and no firmware would
+end up being copied into the pre-allocated buffer. So if the
+caller trust the result it may end up writing a bunch of 0's
+to a device!
 
-Borislav Petkov (1):
-  x86/microcode: Use the firmware_loader built-in API
+Fix this by making the function that checks for the pre-allocated
+buffer return non-void. Since the typical use case is when no
+pre-allocated buffer is provided make this return successfully
+for that case. If the built-in firmware does *not* fit into the
+pre-allocated buffer size return a failure as we should have
+been doing before.
 
-Luis Chamberlain (13):
-  firmware_loader: fix pre-allocated buf built-in firmware use
-  firmware_loader: split built-in firmware call
-  firmware_loader: add a sanity check for firmware_request_builtin()
-  firmware_loader: add built-in firmware kconfig entry
-  firmware_loader: formalize built-in firmware API
-  firmware_loader: remove old DECLARE_BUILTIN_FIRMWARE()
-  firmware_loader: move struct builtin_fw to the only place used
-  vmlinux.lds.h: wrap built-in firmware support under its kconfig symbol
-  x86/build: Tuck away built-in firmware under its kconfig symbol
-  firmware_loader: rename EXTRA_FIRMWARE and EXTRA_FIRMWARE_DIR
-  firmware_loader: move builtin build helper to shared library
-  test_firmware: move a few test knobs out to its library
-  test_firmware: add support for testing built-in firmware
+I'm not aware of users of the built-in firmware using the API
+calls with a pre-allocated buffer, as such I doubt this fixes
+any real life issue. But you never know... perhaps some oddball
+private tree might use it.
 
- .../driver-api/firmware/built-in-fw.rst       |   8 +-
- Documentation/x86/microcode.rst               |   9 +-
- arch/x86/Kconfig                              |   4 +-
- arch/x86/include/asm/microcode.h              |   3 -
- arch/x86/kernel/cpu/microcode/amd.c           |  14 ++-
- arch/x86/kernel/cpu/microcode/core.c          |  17 ---
- arch/x86/kernel/cpu/microcode/intel.c         |   9 +-
- arch/x86/tools/relocs.c                       |   2 +
- drivers/base/firmware_loader/Kconfig          |  39 ++++---
- drivers/base/firmware_loader/Makefile         |   4 +-
- drivers/base/firmware_loader/builtin/Makefile |  43 ++------
- .../base/firmware_loader/builtin/lib.Makefile |  32 ++++++
- drivers/base/firmware_loader/builtin/main.c   | 101 ++++++++++++++++++
- drivers/base/firmware_loader/firmware.h       |  17 +++
- drivers/base/firmware_loader/main.c           |  65 +----------
- .../firmware_loader/test-builtin/.gitignore   |   3 +
- .../firmware_loader/test-builtin/Makefile     |  18 ++++
- drivers/staging/media/av7110/Kconfig          |   4 +-
- include/asm-generic/vmlinux.lds.h             |  20 ++--
- include/linux/firmware.h                      |  26 ++---
- lib/Kconfig.debug                             |  34 ++++++
- lib/test_firmware.c                           |  52 ++++++++-
- .../testing/selftests/firmware/fw_builtin.sh  |  69 ++++++++++++
- .../selftests/firmware/fw_filesystem.sh       |  16 ---
- tools/testing/selftests/firmware/fw_lib.sh    |  24 +++++
- .../selftests/firmware/fw_run_tests.sh        |   2 +
- 26 files changed, 447 insertions(+), 188 deletions(-)
- create mode 100644 drivers/base/firmware_loader/builtin/lib.Makefile
- create mode 100644 drivers/base/firmware_loader/builtin/main.c
- create mode 100644 drivers/base/firmware_loader/test-builtin/.gitignore
- create mode 100644 drivers/base/firmware_loader/test-builtin/Makefile
- create mode 100755 tools/testing/selftests/firmware/fw_builtin.sh
+In so far as upstream is concerned this just fixes our code for
+correctness.
 
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ drivers/base/firmware_loader/main.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index bdbedc6660a8..ef904b8b112e 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -100,12 +100,15 @@ static struct firmware_cache fw_cache;
+ extern struct builtin_fw __start_builtin_fw[];
+ extern struct builtin_fw __end_builtin_fw[];
+ 
+-static void fw_copy_to_prealloc_buf(struct firmware *fw,
++static bool fw_copy_to_prealloc_buf(struct firmware *fw,
+ 				    void *buf, size_t size)
+ {
+-	if (!buf || size < fw->size)
+-		return;
++	if (!buf)
++		return true;
++	if (size < fw->size)
++		return false;
+ 	memcpy(buf, fw->data, fw->size);
++	return true;
+ }
+ 
+ static bool fw_get_builtin_firmware(struct firmware *fw, const char *name,
+@@ -117,9 +120,7 @@ static bool fw_get_builtin_firmware(struct firmware *fw, const char *name,
+ 		if (strcmp(name, b_fw->name) == 0) {
+ 			fw->size = b_fw->size;
+ 			fw->data = b_fw->data;
+-			fw_copy_to_prealloc_buf(fw, buf, size);
+-
+-			return true;
++			return fw_copy_to_prealloc_buf(fw, buf, size);
+ 		}
+ 	}
+ 
 -- 
 2.30.2
 
