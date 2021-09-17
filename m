@@ -2,111 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A22A40FC7D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 17:34:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 524B340FDA4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 18:12:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241670AbhIQPgL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Sep 2021 11:36:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43032 "EHLO mail.kernel.org"
+        id S243575AbhIQQNl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Sep 2021 12:13:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S242482AbhIQPe1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Sep 2021 11:34:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C941A610A7;
-        Fri, 17 Sep 2021 15:33:04 +0000 (UTC)
+        id S243366AbhIQQNj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Sep 2021 12:13:39 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A3277611C4;
+        Fri, 17 Sep 2021 16:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631892784;
-        bh=9MHIk2t5x7NEHeTxPOE1It1AGkcx0ikE4Sxn9rPtHQU=;
+        s=k20201202; t=1631895137;
+        bh=uTmfg0vv6vwj4FrYE4j5mba4CVZJQ7Gc8JrPKcVhY6w=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=X0GMxlW2/qRnn9KvjDA2e4/N8ThLppKFZdLCMZO16lyjwnRDCZ3dlTfK0bNMGaFEt
-         Ns0l2VkaNU0c5R63DCWMVeXuMxtKLB7QXHZXuU/VluNMbCD10Amr/SFtTradft6PT/
-         kIbUxdZE/NcwzoLf6oWvmxuhaA/Vg56JS5ZuGnm0yFwSNcT1IyKAW/jZ4jHltT+FFc
-         PW6fNq+b7CdfzUjyAoIJi5/Xyk98g3z6nUFpI9bc/nTwzafC1tAGdTRHv0mWZbtc07
-         ypQtB/mSa0xe+6Stoo52k7dLskqy/4Xamxj4/ut6gDseyOwj1njfwqYpmVWNVMAHqj
-         rY491xXQ9RYjQ==
-Date:   Fri, 17 Sep 2021 08:33:04 -0700
+        b=dZGw6F7XEdLNKWtHFnkGjC3Ph1hUrkzryX/AlGu21AjxOK7y6XRDuw4EtGarkW718
+         PW4QaNJbqocm43BnVSv5y3w17CVyQCBMwyi3nDSVlWyFwkcjFOcBKOzEfwOL0mVxLO
+         6fGIXqxp9lWaBjtHdQSRmuwqlVRa/gkt3fdRDUe27RRvSIjm1EVE84RWMbm0QvLj45
+         sWe0pF/CtzkDe4ATWLyVZpldl9RyD9IQuJcx4uHZKq4RTzeRpdUrvHzo+DhU5t7RpF
+         d32CbQJB0zEYyimHbuA45lgUzp3aX8m9ciQJFKhTEaMWEdRE1LeiudX80IjWAOS4Ky
+         1tP2YpEe0zD3w==
+Date:   Fri, 17 Sep 2021 09:12:17 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Shiyang Ruan <ruansy.fnst@fujitsu.com>, linux-xfs@vger.kernel.org,
-        dan.j.williams@intel.com, david@fromorbit.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nvdimm@lists.linux.dev, rgoldwyn@suse.de, viro@zeniv.linux.org.uk,
-        willy@infradead.org
-Subject: Re: [PATCH v9 7/8] xfs: support CoW in fsdax mode
-Message-ID: <20210917153304.GB10250@magnolia>
-References: <20210915104501.4146910-1-ruansy.fnst@fujitsu.com>
- <20210915104501.4146910-8-ruansy.fnst@fujitsu.com>
- <20210916002227.GD34830@magnolia>
- <20210916063251.GE13306@lst.de>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, xfs <linux-xfs@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: Re: Shameless plug for the FS Track at LPC next week!
+Message-ID: <20210917161217.GB10224@magnolia>
+References: <20210916013916.GD34899@magnolia>
+ <20210917083043.GA6547@quack2.suse.cz>
+ <20210917083608.GB6547@quack2.suse.cz>
+ <20210917093838.GC6547@quack2.suse.cz>
+ <CAOQ4uxg3FYuQ3hrhG5H87Uzd-2gYXbFfUkeTPY7ESsDdjGB5EQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210916063251.GE13306@lst.de>
+In-Reply-To: <CAOQ4uxg3FYuQ3hrhG5H87Uzd-2gYXbFfUkeTPY7ESsDdjGB5EQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 16, 2021 at 08:32:51AM +0200, Christoph Hellwig wrote:
-> On Wed, Sep 15, 2021 at 05:22:27PM -0700, Darrick J. Wong wrote:
-> > >  		xfs_ilock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
-> > >  		ret = dax_iomap_fault(vmf, pe_size, &pfn, NULL,
-> > >  				(write_fault && !vmf->cow_page) ?
-> > > -				 &xfs_direct_write_iomap_ops :
-> > > -				 &xfs_read_iomap_ops);
-> > > +					&xfs_dax_write_iomap_ops :
-> > > +					&xfs_read_iomap_ops);
-> > 
-> > Hmm... I wonder if this should get hoisted to a "xfs_dax_iomap_fault"
-> > wrapper like you did for xfs_iomap_zero_range?
+On Fri, Sep 17, 2021 at 01:23:08PM +0300, Amir Goldstein wrote:
+> On Fri, Sep 17, 2021 at 12:38 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Fri 17-09-21 10:36:08, Jan Kara wrote:
+> > > Let me also post Amir's thoughts on this from a private thread:
+> >
+> > And now I'm actually replying to Amir :-p
+> >
+> > > On Fri 17-09-21 10:30:43, Jan Kara wrote:
+> > > > We did a small update to the schedule:
+> > > >
+> > > > > Christian Brauner will run the second session, discussing what idmapped
+> > > > > filesystem mounts are for and the current status of supporting more
+> > > > > filesystems.
+> > > >
+> > > > We have extended this session as we'd like to discuss and get some feedback
+> > > > from users about project quotas and project ids:
+> > > >
+> > > > Project quotas were originally mostly a collaborative feature and later got
+> > > > used by some container runtimes to implement limitation of used space on a
+> > > > filesystem shared by multiple containers. As a result current semantics of
+> > > > project quotas are somewhat surprising and handling of project ids is not
+> > > > consistent among filesystems. The main two contending points are:
+> > > >
+> > > > 1) Currently the inode owner can set project id of the inode to any
+> > > > arbitrary number if he is in init_user_ns. It cannot change project id at
+> > > > all in other user namespaces.
+> > > >
+> > > > 2) Should project IDs be mapped in user namespaces or not? User namespace
+> > > > code does implement the mapping, VFS quota code maps project ids when using
+> > > > them. However e.g. XFS does not map project IDs in its calls setting them
+> > > > in the inode. Among other things this results in some funny errors if you
+> > > > set project ID to (unsigned)-1.
+> > > >
+> > > > In the session we'd like to get feedback how project quotas / ids get used
+> > > > / could be used so that we can define the common semantics and make the
+> > > > code consistently follow these rules.
+> > >
+> > > I think that legacy projid semantics might not be a perfect fit for
+> > > container isolation requirements. I added project quota support to docker
+> > > at the time because it was handy and it did the job of limiting and
+> > > querying disk usage of containers with an overlayfs storage driver.
+> > >
+> > > With btrfs storage driver, subvolumes are used to create that isolation.
+> > > The TREE_ID proposal [1] got me thinking that it is not so hard to
+> > > implement "tree id" as an extention or in addition to project id.
+> > >
+> > > The semantics of "tree id" would be:
+> > > 1. tree id is a quota entity accounting inodes and blocks
+> > > 2. tree id can be changed only on an empty directory
+> > > 3. tree id can be set to TID only if quota inode usage of TID is 0
+> > > 4. tree id is always inherited from parent
+> > > 5. No rename() or link() across tree id (clone should be possible)
+> > >
+> > > AFAIK btrfs subvol meets all the requirements of "tree id".
+> > >
+> > > Implementing tree id in ext4/xfs could be done by adding a new field to
+> > > inode on-disk format and a new quota entity to quota on-disk format and
+> > > quotatools.
+> > >
+> > > An alternative simpler way is to repurpose project id and project quota:
+> > > * Add filesystem feature projid-is-treeid
+> > > * The feature can be enabled on fresh mkfs or after fsck verifies "tree id"
+> > >    rules are followed for all usage of projid
+> > > * Once the feature is enabled, filesystem enforces the new semantics
+> > >   about setting projid and projid_inherit
+
+I'd probably just repurpose the project quota mechanism, which means
+that the xfs treeid is really just project quotas with somewhat
+different behavior rules that are tailored to modern adversarial usage
+models. ;)
+
+IIRC someone asked for some sort of change like this on the xfs list
+some years back.  If memory serves, they wanted to prevent non-admin
+userspace from changing project ids, even in the regular user ns?  It
+never got as far as a formal proposal though.
+
+I could definitely see a use case for letting admin processes in a
+container change project ids among only the projids that are idmapped
+into the namespace.
+
+> > >
+> > > This might be a good option if there is little intersection between
+> > > systems that need to use the old project semantics and systems
+> > > that would rather have the tree id semantics.
+> >
+> > Yes, I actually think that having both tree-id and project-id on a
+> > filesystem would be too confusing. And I'm not aware of realistic usecases.
+> > I've heard only of people wanting current semantics (although these we more
+> > of the kind: "sometime in the past people used the feature like this") and
+> > the people complaining current semantics is not useful for them. This was
+> > discussed e.g. in ext4 list [2].
+> >
+> > > I think that with the "tree id" semantics, the user_ns/idmapped
+> > > questions become easier to answer.
+> > > Allocating tree id ranges per userns to avoid exhausting the tree id
+> > > namespace is a very similar problem to allocating uids per userns.
+> >
+> > It still depends how exactly tree ids get used - if you want to use them to
+> > limit space usage of a container, you still have to forbid changing of tree
+> > ids inside the container, don't you?
+> >
 > 
-> This has just a single users, so the classic argument won't apply.  That
-> being said __xfs_filemap_fault is a complete mess to due the calling
-> conventions of the various VFS methods multiplexed into it.  So yes,
-> splitting out a xfs_dax_iomap_fault to wrap the above plus the
-> dax_finish_sync_fault call might not actually be a bad idea nevertheless.
-
-Agree.
-
-> > > +	struct xfs_inode	*ip = XFS_I(inode);
-> > > +	/*
-> > > +	 * Usually we use @written to indicate whether the operation was
-> > > +	 * successful.  But it is always positive or zero.  The CoW needs the
-> > > +	 * actual error code from actor().  So, get it from
-> > > +	 * iomap_iter->processed.
-> > 
-> > Hm.  All six arguments are derived from the struct iomap_iter, so maybe
-> > it makes more sense to pass that in?  I'll poke around with this more
-> > tomorrow.
+> Yes.
+> This is where my view of userns becomes hazy (so pulling Christain into
+> the discussion), but in general I think that this use case would be similar
+> to the concept of single uid container - the range of allowed tree ids that
+> is allocated for the container in that case is a single tree id.
 > 
-> I'd argue against just changing the calling conventions for ->iomap_end
-> now.  The original iter patches from willy allowed passing a single
-> next callback combinging iomap_begin and iomap_end in a way that with
-> a little magic we can avoid the indirect calls entirely.  I think we'll
-> need to experiment with that that a bit and see if is worth the effort
-> first.  I plan to do that but I might not get to it immediate.  If some
-> else wants to take over I'm fine with that.
-
-Ah, I forgot that.  Yay Etch-a-Sketch brain. <shake> -ENODATA ;)
-
-> > >  static int
-> > >  xfs_buffered_write_iomap_begin(
-> > 
-> > Also, we have an related request to drop the EXPERIMENTAL tag for
-> > non-DAX reflink.  Whichever patch enables dax+reflink for xfs needs to
-> > make it clear that reflink + any possibility of DAX emits an
-> > EXPERIMENTAL warning.
+> I understand that the next question would be about nesting subtree quotas
+> and I don't have a good answer to that question.
 > 
-> More importantly before we can merge this series we also need the VM
-> level support for reflink-aware reverse mapping.  So while this series
-> here is no in a good enough shape I don't see how we could merge it
-> without that other series as we'd have to disallow mmap for reflink+dax
-> files otherwise.
+> Are btrfs subvolume nested w.r.t. capacity limit? I don't think that they are.
 
-I've forgotten why we need mm level reverse mapping again?  The pmem
-poison stuff can use ->media_failure (or whatever it was called,
-memory_failure?) to find all the owners and notify them.  Was there
-some other accounting reason that fell out of my brain?
+One thing that someone on #btrfs pointed out to me -- unlike ext4 and
+xfs project quotas where the statvfs output reflects the project quota
+limits, btrfs qgroups don't do that.  Software that tries to trim its
+preallocations when "space" gets low (e.g. journald) then fails to react
+and /var/log can fill up.
 
-I'm more afraid of 'sharing pages between files needs mm support'
-sparking another multi-year folioesque fight with the mm people.
+Granted, it's btrfs quotas which they say aren't production ready still
+and I have no idea, so ... <shrug>
 
 --D
+
+> 
+> Thanks,
+> Amir.
