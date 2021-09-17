@@ -2,147 +2,900 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBC5540F3BB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 10:08:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97EB140F3F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 10:20:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245093AbhIQIJ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Sep 2021 04:09:29 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:49672 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244038AbhIQIJZ (ORCPT
+        id S237262AbhIQIWP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Sep 2021 04:22:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36506 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234571AbhIQIWP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Sep 2021 04:09:25 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 718A91FD5D;
-        Fri, 17 Sep 2021 08:07:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1631866054; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=E5XZpzgvqBnXXjYC5QF8VCuzvvIAEV9UHmd8F5JPqu0=;
-        b=aPErrLQWgqwvdKCXDVdPJxpl7NLgpyIMoSRYb5pLYIdT6YhpsTrPy181qCPfvmjjZQY5xk
-        xa4sk8iUMViYKM8hP4j37NAKP774m6L1wSZyC6wi63g4p5Zouo+Kr8LA4BM1bMxjK8m78V
-        HYfnREG8L1+iCU1ApD6dBvsskGM8g1Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1631866054;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=E5XZpzgvqBnXXjYC5QF8VCuzvvIAEV9UHmd8F5JPqu0=;
-        b=6aUop1pZyho3bhKRMQq6UN4ClxB3H0Obm2byvkqeMqP9aGWrr+iiRqc1tHkuvgqNtS7n0n
-        PDt9vFCvcaVmKPBg==
-Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id 1EB1BA3B84;
-        Fri, 17 Sep 2021 08:07:34 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 034A81E0CA7; Fri, 17 Sep 2021 10:07:30 +0200 (CEST)
-Date:   Fri, 17 Sep 2021 10:07:30 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        viro@zeniv.linux.org.uk,
-        Linux fsdevel mailing list <linux-fsdevel@vger.kernel.org>,
-        linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        xu.xin16@zte.com.cn
-Subject: Re: [PATCH v2] init/do_mounts.c: Harden split_fs_names() against
- buffer overflow
-Message-ID: <20210917080730.GA5284@quack2.suse.cz>
-References: <YUNn4k1FCgQmOpuw@redhat.com>
+        Fri, 17 Sep 2021 04:22:15 -0400
+Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04B11C061764
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Sep 2021 01:20:52 -0700 (PDT)
+Received: by mail-oi1-x229.google.com with SMTP id w206so1338823oiw.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Sep 2021 01:20:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dgkOy/GFw0B0/CgncsqDFHQxfUOXTsEnE+U8A3BFRto=;
+        b=O/gkFxkLAL/XHoootzRwbk+EZdendJXAmmK3oN6ZKwApc5AtO3o8mhNIeeqnRQ3pUo
+         e85IZgM3/ogDjaR8IEV0KL8322oWd4xTdhUSfxuuIrxxz60hMsHGNUGQ6azjYp7iTM/n
+         34gwqueE1kDaAVWBo16VFiRmwFRTX/h7AjpjQvk43bw6viII1559Vbq7KhyT0YULABLr
+         tXQaHt2yo/n4j1FnQh/zUH9QfjtbQtPycH6JG2hSkmSCUmfSZ9axjriYLXHwldMzPo+u
+         QrH1DiyLlNo3bW+h6xmMnevv0g1zDmp70hLgaD+B30uggtlVu0cPRbZipzslSFDoL7TM
+         4l5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dgkOy/GFw0B0/CgncsqDFHQxfUOXTsEnE+U8A3BFRto=;
+        b=ryJAWnGd25y9xbZVig73dpvCA0shK/3xC/COA3i/yzRFGoKgweRDoQY1kEQgRkmviI
+         tzS6L9H7wA+J+fHjIHfvRkHyhkJeeDAV041xVDaJL0VNe/n3Mi6Ero9Dkn4mswEtqM0O
+         eMqK3LNWOGxPGspEBRTgi68SmLYCjSMZ3QjdCO7FLDAp/XauAJr1ntgr1f+gRmB75fnS
+         5VSMM5pDWtbftNvhjvysARQLHhoZdyTpkpRb359Bctk2kyuhNHjVyhGrYJKYV2tZm280
+         oqKiJatMrgAhURxPbopTJHdBJ8KurIfyQX+TfmEstuO6v7a/iHjWqL1vHw7wftPs6ief
+         7cPg==
+X-Gm-Message-State: AOAM532L+Q7u9tgKUHbDiEyrgXL1x5iCC5Z3AgVUzo+t8AfZLSFZgkbQ
+        6/6tNmj33pw3ukjkX3zSByOSwe3Et9TsYQERhLNXR1yIp+ku6v8wk0mSY87By/GjgZj1NrWHxK9
+        Kuw47j/u3qE0NG2IDnBVncPbkmO6eBIwu
+X-Google-Smtp-Source: ABdhPJyK30wEchgbZ3Ofsp/bRGkfPwh3/jcKyhwWr4Cn1Pm+l56keRFGHOknRSsCqUmLg36Ao+tH9nTN30gIrkFavNE=
+X-Received: by 2002:a54:4005:: with SMTP id x5mr12190251oie.160.1631866851729;
+ Fri, 17 Sep 2021 01:20:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YUNn4k1FCgQmOpuw@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <000000000000f8d56e05cb50a541@google.com>
+In-Reply-To: <000000000000f8d56e05cb50a541@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 17 Sep 2021 10:20:40 +0200
+Message-ID: <CACT4Y+YLEUuuNQ+2TOEevwNRvPHp-wT4W+dXAdKds_kf+upQbQ@mail.gmail.com>
+Subject: Re: [syzbot] upstream test error: WARNING in __do_kernel_fault
+To:     syzbot <syzbot+e6bda7e03e329ed0b1db@syzkaller.appspotmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-ccpol: medium
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 16-09-21 11:50:58, Vivek Goyal wrote:
-> split_fs_names() currently takes comma separate list of filesystems
-> and converts it into individual filesystem strings. Pleaces these
-> strings in the input buffer passed by caller and returns number of
-> strings.
-> 
-> If caller manages to pass input string bigger than buffer, then we
-> can write beyond the buffer. Or if string just fits buffer, we will
-> still write beyond the buffer as we append a '\0' byte at the end.
-> 
-> Pass size of input buffer to split_fs_names() and put enough checks
-> in place so such buffer overrun possibilities do not occur.
-> 
-> This patch does few things.
-> 
-> - Add a parameter "size" to split_fs_names(). This specifies size
->   of input buffer.
-> 
-> - Use strlcpy() (instead of strcpy()) so that we can't go beyond
->   buffer size. If input string "names" is larger than passed in
->   buffer, input string will be truncated to fit in buffer.
-> 
-> - Stop appending extra '\0' character at the end and avoid one
->   possibility of going beyond the input buffer size.
-> 
-> - Do not use extra loop to count number of strings.
-> 
-> - Previously if one passed "rootfstype=foo,,bar", split_fs_names()
->   will return only 1 string "foo" (and "bar" will be truncated
->   due to extra ,). After this patch, now split_fs_names() will
->   return 3 strings ("foo", zero-sized-string, and "bar").
-> 
->   Callers of split_fs_names() have been modified to check for
->   zero sized string and skip to next one.
-> 
-> Reported-by: xu xin <xu.xin16@zte.com.cn>
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+On Mon, 6 Sept 2021 at 11:55, syzbot
+<syzbot+e6bda7e03e329ed0b1db@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    f1583cb1be35 Merge tag 'linux-kselftest-next-5.15-rc1' of ..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17756315300000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5fe535c85e8d7384
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e6bda7e03e329ed0b1db
+> compiler:       aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+> userspace arch: arm64
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+e6bda7e03e329ed0b1db@syzkaller.appspotmail.com
+
++Will, you added this WARNING in 42f91093b04333.
+This now crashes periodically on syzbot.
+
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Not tainted 5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 0000000000000308 x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : ffff00007fbbb9c8 x4 : 0000000000015ff5 x3 : 0000000000000001
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640ca ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 000000000000032d x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640cb ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 0000000000000352 x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640cc ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 0000000000000377 x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640cd ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 000000000000039c x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640ce ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 00000000000003c1 x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640cf ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 00000000000003e6 x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640d0 ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 000000000000040b x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640d1 ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 0000000000000430 x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640d2 ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 0000000000000455 x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640d3 ]---
+> __do_kernel_fault: 65272 callbacks suppressed
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 000000000000047b x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : ffff00007fbbb9c8 x4 : 0000000000015ff5 x3 : 0000000000000001
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640d4 ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 00000000000004a0 x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640d5 ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 00000000000004c5 x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640d6 ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 00000000000004ea x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640d7 ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 000000000000050f x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640d8 ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 0000000000000534 x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640d9 ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 0000000000000559 x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640da ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 000000000000057e x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640db ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 00000000000005a3 x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640dc ]---
+> ------------[ cut here ]------------
+> Ignoring spurious kernel translation fault at virtual address ffff00007b65e020
+> WARNING: CPU: 0 PID: 22 at arch/arm64/mm/fault.c:365 __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> Modules linked in:
+> CPU: 0 PID: 22 Comm: kdevtmpfs Tainted: G        W         5.14.0-syzkaller-09284-gf1583cb1be35 #0
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> lr : __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+> sp : ffff80001267b980
+> x29: ffff80001267b980 x28: f4ff0000029a0000 x27: 0000000000000000
+> x26: 0000000000000000 x25: fdff000002fa0d00 x24: ffff80001267bcb8
+> x23: 0000000060400009 x22: ffff00007b65e020 x21: 0000000000000025
+> x20: ffff80001267ba50 x19: 0000000097c48007 x18: 00000000fffffffd
+> x17: 6666207373657264 x16: 6461206c61757472 x15: 697620746120746c
+> x14: 756166206e6f6974 x13: 00000000000005c8 x12: ffff80001267b680
+> x11: ffff8000122cd1e0 x10: 00000000ffffe000 x9 : ffff8000122cd1e0
+> x8 : ffff80001221d1e0 x7 : ffff8000122cd1e0 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000015ff5 x3 : 0000000000000000
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : f4ff0000029a0000
+> Call trace:
+>  __do_kernel_fault+0x170/0x1bc arch/arm64/mm/fault.c:365
+>  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+>  do_translation_fault+0x58/0xc0 arch/arm64/mm/fault.c:682
+>  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+>  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+>  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+>  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+>  __entry_tramp_text_end+0xdfc/0x3000
+>  d_lookup+0x44/0x70 fs/dcache.c:2370
+>  lookup_dcache+0x24/0x84 fs/namei.c:1520
+>  __lookup_hash+0x24/0xd0 fs/namei.c:1543
+>  kern_path_locked+0x90/0x10c fs/namei.c:2567
+>  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
+>  handle drivers/base/devtmpfs.c:382 [inline]
+>  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
+>  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
+>  kthread+0x150/0x15c kernel/kthread.c:319
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
+> ---[ end trace ae975648337640dd ]---
+>
+>
 > ---
->  init/do_mounts.c |   28 ++++++++++++++++++++--------
->  1 file changed, 20 insertions(+), 8 deletions(-)
-
-Just one nit below:
-
-> Index: redhat-linux/init/do_mounts.c
-> ===================================================================
-> --- redhat-linux.orig/init/do_mounts.c	2021-09-15 08:46:33.801689806 -0400
-> +++ redhat-linux/init/do_mounts.c	2021-09-16 11:28:36.753625037 -0400
-> @@ -338,19 +338,25 @@ __setup("rootflags=", root_data_setup);
->  __setup("rootfstype=", fs_names_setup);
->  __setup("rootdelay=", root_delay_setup);
->  
-> -static int __init split_fs_names(char *page, char *names)
-> +static int __init split_fs_names(char *page, size_t size, char *names)
->  {
->  	int count = 0;
->  	char *p = page;
-> +	bool str_start = false;
->  
-> -	strcpy(p, root_fs_names);
-> +	strlcpy(p, root_fs_names, size);
->  	while (*p++) {
-> -		if (p[-1] == ',')
-> +		if (p[-1] == ',') {
->  			p[-1] = '\0';
-> +			count++;
-> +			str_start = false;
-> +		} else {
-> +			str_start = true;
-> +		}
->  	}
-> -	*p = '\0';
->  
-> -	for (p = page; *p; p += strlen(p)+1)
-> +	/* Last string which might not be comma terminated */
-> +	if (str_start)
->  		count++;
-
-You could avoid the whole str_start logic if you just initialize 'count' to
-1 - in the worst case you'll have 0-length string at the end (for case like
-xfs,) but you deal with 0-length strings in the callers anyway. Otherwise
-the patch looks good so feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000f8d56e05cb50a541%40google.com.
