@@ -2,132 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CAA440FEA5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 19:29:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9823F40FF1D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 20:22:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344100AbhIQRaX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Sep 2021 13:30:23 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:60658 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233050AbhIQRaW (ORCPT
+        id S1344306AbhIQSYH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Sep 2021 14:24:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34128 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230465AbhIQSYG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Sep 2021 13:30:22 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 3B3501FF6E;
-        Fri, 17 Sep 2021 17:28:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1631899739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rmT5s0ZIASojQz5Dpz34eZ0EtRJc756ScfCxuvg+I9w=;
-        b=nJ6FLBUA73ozuG4UevY4HKy5btbpDi/FkXCilpowyOoZrTGQqvI91XT2ZG8QtcCMLxdpFV
-        Qwq1mSfE28sIDMe78Fd9K+ztznY7QlOycZMAEGI1vu/rQyYYmlo2Ej4IyvC5Z+43TMoRgV
-        eXzrPKcWoHGqsxMj1f3ce+Wq3BJlcB8=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1F6E613C4B;
-        Fri, 17 Sep 2021 17:28:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 9xkwB1vQRGH8agAAMHmgww
-        (envelope-from <mkoutny@suse.com>); Fri, 17 Sep 2021 17:28:59 +0000
-Date:   Fri, 17 Sep 2021 19:28:57 +0200
-From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-To:     Jinmeng Zhou <jjjinmeng.zhou@gmail.com>
-Cc:     tj@kernel.org, lizefan@huawei.com, hannes@cmpxchg.org,
-        shenwenbosmile@gmail.com, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: A missing check bug in cgroup1_reconfigure()
-Message-ID: <20210917172857.GB13346@blackbody.suse.cz>
-References: <CAA-qYXjxht4+GhTjNb0xmr4dLQYDVpDbO1R_FDcWtnsrQC=VNQ@mail.gmail.com>
+        Fri, 17 Sep 2021 14:24:06 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2DADC061757;
+        Fri, 17 Sep 2021 11:22:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=4bQo5XXQSgN6eO5cUMGH1bS2NQ993+cG2D9qNC4TbPk=; b=z0MZai6HkL9APtqMptXhF0Kr7z
+        WO6Ilfzz6LyaBeplCsWkG3xdbtIM/PQN0EBDybfmLvfXTqH0XIUF/95RGbV98Gj6LJiKBhC8nfEIC
+        9McoqoSG+CBcSO0YpOy92w0lOg7fPxQI4u+h/6h7j/mRrbUsvFDf9MPEtrVuOwB9TXrk75EY0lw/0
+        pXKIUq2j3zNbcUOCkonmM5hn65EOZcEQUO8I+PxNQh7220UBQn+TmoqN/9UM3liFF4bD002dCF9k6
+        a0ul9oFm23MTyAfaUqHHW/ECGaUSqHZIVvprVZgruLQ1iBc995RtLD5SKuLlBXSdv03NN4RAe7jhW
+        wlcFUOIg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mRIVH-00Ep5O-U4; Fri, 17 Sep 2021 18:22:27 +0000
+From:   "Luis R. Rodriguez" <mcgrof@kernel.org>
+To:     gregkh@linuxfoundation.org
+Cc:     bp@suse.de, akpm@linux-foundation.org, josh@joshtriplett.org,
+        rishabhb@codeaurora.org, kubakici@wp.pl, maco@android.com,
+        david.brown@linaro.org, bjorn.andersson@linaro.org,
+        linux-wireless@vger.kernel.org, keescook@chromium.org,
+        shuah@kernel.org, mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com,
+        dhowells@redhat.com, pali.rohar@gmail.com, tiwai@suse.de,
+        arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
+        broonie@kernel.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org,
+        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
+        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
+        andresx7@gmail.com, dan.rue@linaro.org, brendanhiggins@google.com,
+        yzaikin@google.com, sfr@canb.auug.org.au, rdunlap@infradead.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: [PATCH 00/14] firmware_loader: built-in API and make x86 use it
+Date:   Fri, 17 Sep 2021 11:22:12 -0700
+Message-Id: <20210917182226.3532898-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAA-qYXjxht4+GhTjNb0xmr4dLQYDVpDbO1R_FDcWtnsrQC=VNQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 16, 2021 at 03:33:49PM +0800, Jinmeng Zhou <jjjinmeng.zhou@gmail.com> wrote:
-> Dear maintainers,
-> hi, our team has found a missing check bug on Linux kernel v5.10.7
-> using static analysis.
-> There is a checking path where cgroup1_get_tree() calls cgroup1_root_to_use()
-> to mount cgroup_root after checking capability.
-> However, another no-checking path exists, cgroup1_reconfigure() calls
-> trace_cgroup_remount()
-> to remount without checking capability.
-> We think there is a missing check bug before mounting cgroup_root in
-> cgroup1_reconfigure().
+From: Luis Chamberlain <mcgrof@kernel.org>
 
-Thanks for the report.
-AFAICS, the callers of the fs_context_operations callbacks do the checks
-themselves, therefore I _think_ even the check in cgroup1_get_tree() is
-superfluous (see also commit 23bf1b6be9c2 ("kernfs, sysfs, cgroup,
-intel_rdt: Support fs_context")).
+A while ago I noted to Boris how we could likely do away the odd
+direct use of the firmware sections on x86 and instead have it use
+the API directly. This indeed was possible but it required quite
+a bit of spring cleaning as well and on its way I spotted a small
+fix.
 
-But let me CC also VFS folks for confirmation (rest of the message
-below).
+This goes with a new series of tests against built-in firmware as well.
+Boris has confirmed this also does work for the x86 microcode loader.
+0day is happy with the build results. You can find these changes on my
+git tree branch 20210916-firmware-builtin-v2 [0].
 
-> Specifically, cgroup1_get_tree() uses ns_capable(ctx->ns->user_ns,
-> CAP_SYS_ADMIN) to check
-> the permission before calling the critical function
-> cgroup1_root_to_use() to mount.
-> 
-> 1. // check ns_capable() ////////////////////////////
-> 2. int cgroup1_get_tree(struct fs_context *fc)
-> 3. {
-> 4.  struct cgroup_fs_context *ctx = cgroup_fc2context(fc);
-> 5.  int ret;
-> 6.  /* Check if the caller has permission to mount. */
-> 7.  if (!ns_capable(ctx->ns->user_ns, CAP_SYS_ADMIN))
-> 8.    return -EPERM;
-> 9.  cgroup_lock_and_drain_offline(&cgrp_dfl_root.cgrp);
-> 10. ret = cgroup1_root_to_use(fc);
-> 11. ...
-> 12. }
-> 
-> trace_cgroup_remount() is called to remount cgroup_root in
-> cgroup1_reconfigure().
-> However, it lacks the check.
-> 1. int cgroup1_reconfigure(struct fs_context *fc)
-> 2. {
-> 3.  struct cgroup_fs_context *ctx = cgroup_fc2context(fc);
-> 4.  struct kernfs_root *kf_root = kernfs_root_from_sb(fc->root->d_sb);
-> 5.  struct cgroup_root *root = cgroup_root_from_kf(kf_root);
-> 6.  int ret = 0;
-> 7.  u16 added_mask, removed_mask;
-> 8.  ...
-> 9.  trace_cgroup_remount(root);
-> 10. ...
-> 11. }
-> 
-> We find cgroup1_reconfigure() is only used in a variable initialization.
-> Function cgroup1_get_tree() is also used in this initialization.
-> Both functions are indirectly called which is hard to trace.
-> We reasonably consider that the two functions can be equally reached
-> by the user,
-> therefore, there is a missing check bug.
-> 1. static const struct fs_context_operations cgroup1_fs_context_ops = {
-> 2. …
-> 3.  .get_tree = cgroup1_get_tree,
-> 4.  .reconfigure = cgroup1_reconfigure,
-> 5. };
-> 
-> 
-> Thanks!
-> 
-> 
-> Best regards,
-> Jinmeng Zhou
-> 
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux-next.git/log/?h=20210916-firmware-builtin-v2
+
+Borislav Petkov (1):
+  x86/microcode: Use the firmware_loader built-in API
+
+Luis Chamberlain (13):
+  firmware_loader: fix pre-allocated buf built-in firmware use
+  firmware_loader: split built-in firmware call
+  firmware_loader: add a sanity check for firmware_request_builtin()
+  firmware_loader: add built-in firmware kconfig entry
+  firmware_loader: formalize built-in firmware API
+  firmware_loader: remove old DECLARE_BUILTIN_FIRMWARE()
+  firmware_loader: move struct builtin_fw to the only place used
+  vmlinux.lds.h: wrap built-in firmware support under its kconfig symbol
+  x86/build: Tuck away built-in firmware under its kconfig symbol
+  firmware_loader: rename EXTRA_FIRMWARE and EXTRA_FIRMWARE_DIR
+  firmware_loader: move builtin build helper to shared library
+  test_firmware: move a few test knobs out to its library
+  test_firmware: add support for testing built-in firmware
+
+ .../driver-api/firmware/built-in-fw.rst       |   8 +-
+ Documentation/x86/microcode.rst               |   9 +-
+ arch/x86/Kconfig                              |   4 +-
+ arch/x86/include/asm/microcode.h              |   3 -
+ arch/x86/kernel/cpu/microcode/amd.c           |  14 ++-
+ arch/x86/kernel/cpu/microcode/core.c          |  17 ---
+ arch/x86/kernel/cpu/microcode/intel.c         |   9 +-
+ arch/x86/tools/relocs.c                       |   2 +
+ drivers/base/firmware_loader/Kconfig          |  39 ++++---
+ drivers/base/firmware_loader/Makefile         |   4 +-
+ drivers/base/firmware_loader/builtin/Makefile |  43 ++------
+ .../base/firmware_loader/builtin/lib.Makefile |  32 ++++++
+ drivers/base/firmware_loader/builtin/main.c   | 101 ++++++++++++++++++
+ drivers/base/firmware_loader/firmware.h       |  17 +++
+ drivers/base/firmware_loader/main.c           |  65 +----------
+ .../firmware_loader/test-builtin/.gitignore   |   3 +
+ .../firmware_loader/test-builtin/Makefile     |  18 ++++
+ drivers/staging/media/av7110/Kconfig          |   4 +-
+ include/asm-generic/vmlinux.lds.h             |  20 ++--
+ include/linux/firmware.h                      |  26 ++---
+ lib/Kconfig.debug                             |  34 ++++++
+ lib/test_firmware.c                           |  52 ++++++++-
+ .../testing/selftests/firmware/fw_builtin.sh  |  69 ++++++++++++
+ .../selftests/firmware/fw_filesystem.sh       |  16 ---
+ tools/testing/selftests/firmware/fw_lib.sh    |  24 +++++
+ .../selftests/firmware/fw_run_tests.sh        |   2 +
+ 26 files changed, 447 insertions(+), 188 deletions(-)
+ create mode 100644 drivers/base/firmware_loader/builtin/lib.Makefile
+ create mode 100644 drivers/base/firmware_loader/builtin/main.c
+ create mode 100644 drivers/base/firmware_loader/test-builtin/.gitignore
+ create mode 100644 drivers/base/firmware_loader/test-builtin/Makefile
+ create mode 100755 tools/testing/selftests/firmware/fw_builtin.sh
+
+-- 
+2.30.2
+
