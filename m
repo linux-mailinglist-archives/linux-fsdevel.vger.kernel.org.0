@@ -2,198 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35C8B40FB0C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 17:04:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB22740FB0E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Sep 2021 17:04:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243916AbhIQPFY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Sep 2021 11:05:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44432 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243832AbhIQPFX (ORCPT
+        id S244146AbhIQPFi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Sep 2021 11:05:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:26370 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S244216AbhIQPFg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Sep 2021 11:05:23 -0400
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E934C061764
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Sep 2021 08:04:01 -0700 (PDT)
-Received: by mail-ot1-x32a.google.com with SMTP id n2-20020a9d6f02000000b0054455dae485so7986260otq.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Sep 2021 08:04:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KvWD6tRz6SqO3YvI8jw52v5kCnXKnSUnvz5w+Nfi/zQ=;
-        b=FkjiXe5GkL5dkj/gMOunrEtFEP4TOPpK7oF3hdhKabNv8nwfb2ICOm0YZraXO0FyvE
-         wjEGImhJmAH0xaBwLJF3sySewmq0qy0KqurC6dm+0AnSYfHbapsn3AjwoOBDHVLLTifx
-         YftPj2+x8S2xOd7frOrMv7Zmqn7CA96seV9wUju+WEpGrB199mO2HXIG2/I5kcNfcWqg
-         6DMpDViwaEFmRCPLX1H04o/ujM/NTN2DEmfT2hcaVgqCP6Izh8WeWlHuGStaUac2/hV7
-         68QtQwIfIcFFdVtnIrI9hOSRMoTzQTuhc0x/4cWGghxRDIXbB27H7cQG+aXyCSHMjIs+
-         vfEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KvWD6tRz6SqO3YvI8jw52v5kCnXKnSUnvz5w+Nfi/zQ=;
-        b=8L9lm5dqgCCylOM9O+LR8VeOfE4/IEcm5SgN74sj1ho1UL5f2wgNWp9eKbCHo9Q5gZ
-         Pd6MozmbPTIEZUqfE2TPMw+s2Aa3mjIqHre9wnLqbbYcyyla9owX2Lsi0N85DjHnHxFj
-         Ve2vvOc11lyfIMjRsOQyGC0oHi1lHudhVH7goFL9OnRjdJ3D8lqT9TJkA0xplCPySwCI
-         VJmllkjvRHnEQdzEdA8TZZ5cAHGSFmj4e/TshRt98XFeoIyBrlsWIQnzP6jq6e91zPuc
-         qzyYF5iM2l752w3UiMvTXzRbQy+JY8u3z1TXDcc57H+wHzRl8cHZ23z5aMbWYhLX7Ssk
-         32Ew==
-X-Gm-Message-State: AOAM531Y0hOgN7fETNKNJfDMNY4OGuKaboGjk8/IlWNp+yphKq5/kloA
-        dfTfZWVrQyJxrg9qMtvEP586LaA43pzYlOi1XfTabsKaey0T7Q==
-X-Google-Smtp-Source: ABdhPJz/oqxxUmuZRL3ol7/kbbP9ZgVy4475wZzhnOzb49MEi8I5MPLx9tIFCN8PFUN0a/GOFganYtcnzTY0gN9qakY=
-X-Received: by 2002:a9d:7244:: with SMTP id a4mr10198759otk.137.1631891040373;
- Fri, 17 Sep 2021 08:04:00 -0700 (PDT)
+        Fri, 17 Sep 2021 11:05:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1631891054;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=hnHrnZKQhP4J2A3TyE1PL59ZXDbErzZjkrNl4K5MHQo=;
+        b=G/qkW9+LN5HyazpUlXby+dMFLVGIu7F1Z2W4ilYu/wr+9VfozoPF8UIu/3mLpyd5wVqzx4
+        lZ7nkbd3IDXz+O8/t+S2MR6tQf+BhpT5gBR7fGjEd/TnQgh0vh+kjm3X4v8cN9B6cFA9tW
+        KdJOGaa0XPtDdMlgT53gWHk63XQ/NfM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-381-2JKUrCTeP-Gl_mwb6wm8ZQ-1; Fri, 17 Sep 2021 11:04:12 -0400
+X-MC-Unique: 2JKUrCTeP-Gl_mwb6wm8ZQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 577C51006AA4;
+        Fri, 17 Sep 2021 15:04:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 08B3D60843;
+        Fri, 17 Sep 2021 15:04:05 +0000 (UTC)
+Subject: [RFC PATCH v2 0/8] fscache: Replace and remove old I/O API v2
+From:   David Howells <dhowells@redhat.com>
+To:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>
+Cc:     linux-cachefs@redhat.com,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        v9fs-developer@lists.sourceforge.net, dhowells@redhat.com,
+        Jeff Layton <jlayton@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 17 Sep 2021 16:04:05 +0100
+Message-ID: <163189104510.2509237.10805032055807259087.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-References: <000000000000a3cf8605cb2a1ec0@google.com>
-In-Reply-To: <000000000000a3cf8605cb2a1ec0@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 17 Sep 2021 17:03:48 +0200
-Message-ID: <CACT4Y+aS6w1gFuMVY1fnAG0Yp0XckQTM+=tUHkOuxHUy2mkxrg@mail.gmail.com>
-Subject: Re: [syzbot] upstream test error: KASAN: invalid-access Read in __entry_tramp_text_end
-To:     syzbot <syzbot+488ddf8087564d6de6e2@syzkaller.appspotmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 4 Sept 2021 at 13:57, syzbot
-<syzbot+488ddf8087564d6de6e2@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    f1583cb1be35 Merge tag 'linux-kselftest-next-5.15-rc1' of ..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16354043300000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5fe535c85e8d7384
-> dashboard link: https://syzkaller.appspot.com/bug?extid=488ddf8087564d6de6e2
-> compiler:       aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
-> userspace arch: arm64
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+488ddf8087564d6de6e2@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KASAN: invalid-access in __entry_tramp_text_end+0xdfc/0x3000
-> Read at addr f4ff000002a361a0 by task kdevtmpfs/22
-> Pointer tag: [f4], memory tag: [fe]
->
-> CPU: 1 PID: 22 Comm: kdevtmpfs Not tainted 5.14.0-syzkaller-09284-gf1583cb1be35 #0
-> Hardware name: linux,dummy-virt (DT)
-> Call trace:
->  dump_backtrace+0x0/0x1ac arch/arm64/kernel/stacktrace.c:76
->  show_stack+0x18/0x24 arch/arm64/kernel/stacktrace.c:215
->  __dump_stack lib/dump_stack.c:88 [inline]
->  dump_stack_lvl+0x68/0x84 lib/dump_stack.c:105
->  print_address_description+0x7c/0x2b4 mm/kasan/report.c:256
->  __kasan_report mm/kasan/report.c:442 [inline]
->  kasan_report+0x134/0x380 mm/kasan/report.c:459
->  __do_kernel_fault+0x128/0x1bc arch/arm64/mm/fault.c:317
->  do_bad_area arch/arm64/mm/fault.c:466 [inline]
->  do_tag_check_fault+0x74/0x90 arch/arm64/mm/fault.c:737
->  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
->  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
->  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
->  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
->  __entry_tramp_text_end+0xdfc/0x3000
 
-/\/\/\/\/\/\/\
+Here's a set of patches that removes the old fscache I/O API by the following
+means:
 
-This is broken unwind on arm64. d_lookup statically calls __d_lookup,
-not __entry_tramp_text_end (which is not even a function).
-See the following thread for some debugging details:
-https://lore.kernel.org/lkml/CACT4Y+ZByJ71QfYHTByWaeCqZFxYfp8W8oyrK0baNaSJMDzoUw@mail.gmail.com/
+ (1) A simple fallback API is added that can read or write a single page
+     synchronously.  The functions for this have "fallback" in their names
+     as they have to be removed at some point.
 
-But there is also the use-after-free in d_lookup.
+ (2) An implementation of this is provided in cachefiles.  It creates a kiocb
+     to use DIO to the backing file rather than calling readpage on the
+     backing filesystem page and then snooping the page wait queue.
 
->  d_lookup+0x44/0x70 fs/dcache.c:2370
->  lookup_dcache+0x24/0x84 fs/namei.c:1520
->  __lookup_hash+0x24/0xd0 fs/namei.c:1543
->  kern_path_locked+0x90/0x10c fs/namei.c:2567
->  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
->  handle drivers/base/devtmpfs.c:382 [inline]
->  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
->  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
->  kthread+0x150/0x15c kernel/kthread.c:319
->  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
->
-> Allocated by task 22:
->  kasan_save_stack+0x28/0x60 mm/kasan/common.c:38
->  kasan_set_track mm/kasan/common.c:46 [inline]
->  set_alloc_info mm/kasan/common.c:434 [inline]
->  __kasan_slab_alloc+0xb0/0x110 mm/kasan/common.c:467
->  kasan_slab_alloc include/linux/kasan.h:254 [inline]
->  slab_post_alloc_hook mm/slab.h:519 [inline]
->  slab_alloc_node mm/slub.c:2959 [inline]
->  slab_alloc mm/slub.c:2967 [inline]
->  kmem_cache_alloc+0x1cc/0x340 mm/slub.c:2972
->  getname_kernel+0x30/0x150 fs/namei.c:226
->  kern_path_locked+0x2c/0x10c fs/namei.c:2558
->  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
->  handle drivers/base/devtmpfs.c:382 [inline]
->  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
->  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
->  kthread+0x150/0x15c kernel/kthread.c:319
->  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
->
-> Freed by task 22:
->  kasan_save_stack+0x28/0x60 mm/kasan/common.c:38
->  kasan_set_track+0x28/0x3c mm/kasan/common.c:46
->  kasan_set_free_info+0x20/0x30 mm/kasan/tags.c:36
->  ____kasan_slab_free.constprop.0+0x178/0x1e0 mm/kasan/common.c:366
->  __kasan_slab_free+0x10/0x1c mm/kasan/common.c:374
->  kasan_slab_free include/linux/kasan.h:230 [inline]
->  slab_free_hook mm/slub.c:1628 [inline]
->  slab_free_freelist_hook+0xc4/0x20c mm/slub.c:1653
->  slab_free mm/slub.c:3213 [inline]
->  kmem_cache_free+0x9c/0x420 mm/slub.c:3229
->  putname.part.0+0x68/0x7c fs/namei.c:270
->  putname include/linux/err.h:41 [inline]
->  filename_parentat fs/namei.c:2547 [inline]
->  kern_path_locked+0x64/0x10c fs/namei.c:2558
->  handle_remove+0x38/0x284 drivers/base/devtmpfs.c:312
->  handle drivers/base/devtmpfs.c:382 [inline]
->  devtmpfs_work_loop drivers/base/devtmpfs.c:395 [inline]
->  devtmpfsd+0x8c/0xd0 drivers/base/devtmpfs.c:437
->  kthread+0x150/0x15c kernel/kthread.c:319
->  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:756
->
-> The buggy address belongs to the object at ffff000002a36180
->  which belongs to the cache names_cache of size 4096
-> The buggy address is located 32 bytes inside of
->  4096-byte region [ffff000002a36180, ffff000002a37180)
-> The buggy address belongs to the page:
-> page:00000000a105b3ae refcount:1 mapcount:0 mapping:0000000000000000 index:0xf3ff000002a34100 pfn:0x42a30
-> head:00000000a105b3ae order:3 compound_mapcount:0 compound_pincount:0
-> flags: 0x1ffc00000010200(slab|head|node=0|zone=0|lastcpupid=0x7ff|kasantag=0x0)
-> raw: 01ffc00000010200 0000000000000000 dead000000000122 faff000002837700
-> raw: f3ff000002a34100 0000000080070003 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffff000002a35f00: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
->  ffff000002a36000: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-> >ffff000002a36100: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
->                                                  ^
->  ffff000002a36200: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
->  ffff000002a36300: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
-> ==================================================================
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000a3cf8605cb2a1ec0%40google.com.
+ (3) NFS is switched to use the fallback API.
+
+ (4) CIFS is switched to use the fallback API also for the moment.
+
+ (5) 9P is switched to using netfslib.
+
+ (6) The old I/O API is removed from fscache and the page snooping
+     implementation is removed from cachefiles.
+
+The reasons for doing this are:
+
+ (A) Using a kiocb to do asynchronous DIO from/to the pages of the backing
+     file is now a possibility that didn't exist when cachefiles was created.
+     This is much simpler than the snooping mechanism with a proper callback
+     path and it also requires fewer copies and less memory.
+
+ (B) We have to stop using bmap() or SEEK_DATA/SEEK_HOLE to work out what
+     blocks are present in the backing file is dangerous and can lead to data
+     corruption if the backing filesystem can insert or remove blocks of zeros
+     arbitrarily in order to optimise its extent list[1].
+
+     Whilst this patchset doesn't fix that yet, it does simplify the code and
+     the fix for that can be made in a subsequent patchset.
+
+ (C) In order to fix (B), the cache will need to keep track itself of what
+     data is present.  To make this easier to manage, the intention is to
+     increase the cache block granularity to, say, 256KiB - importantly, a
+     size that will span multiple pages - which means the single-page
+     interface will have to go away.  netfslib is designed to deal with
+     that on behalf of a filesystem, though a filesystem could use raw
+     cache calls instead and manage things itself.
+
+These patches can be found also on:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-iter-3
+
+David
+
+Changes
+=======
+
+ver #2:
+  - Changed "deprecated" to "fallback" in the new function names[2].
+  - Cleaned up some kernel test robot warnings[3].
+  - Made the netfs read helpers use NETFS_READ_HOLE_* flags.
+
+
+References
+==========
+
+Link: https://lore.kernel.org/r/YO17ZNOcq+9PajfQ@mit.edu [1]
+Link: https://lore.kernel.org/r/CAHk-=wiVK+1CyEjW8u71zVPK8msea=qPpznX35gnX+s8sXnJTg@mail.gmail.com/ [2]
+Link: https://lore.kernel.org/r/202109150420.QX7dDzSE-lkp@intel.com/ [3]
+
+Older postings
+==============
+
+Link: https://lore.kernel.org/r/163162767601.438332.9017034724960075707.stgit@warthog.procyon.org.uk/ # rfc v1
+
+Note that some of this was seen in previous patchsets too:
+
+# [RFC PATCH 00/61] fscache, cachefiles: Rewrite the I/O interface in terms of kiocb/iov_iter
+Link: https://lore.kernel.org/r/158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk/
+# [PATCH 00/14] fscache: Rewrite 1: Disable and clean in preparation for rewrite
+Link: https://lore.kernel.org/r/159465766378.1376105.11619976251039287525.stgit@warthog.procyon.org.uk/
+# [RFC PATCH 00/76] fscache: Modernisation
+Link: https://lore.kernel.org/r/160588455242.3465195.3214733858273019178.stgit@warthog.procyon.org.uk/
+
+---
+David Howells (8):
+      fscache: Generalise the ->begin_read_operation method
+      fscache: Implement a fallback I/O interface to replace the old API
+      nfs: Move to using the alternate fallback fscache I/O API
+      9p: (untested) Convert to using the netfs helper lib to do reads and caching
+      cifs: (untested) Move to using the alternate fallback fscache I/O API
+      fscache: Remove the old I/O API
+      fscache: Remove stats that are no longer used
+      fscache: Update the documentation to reflect I/O API changes
+
+
+ .../filesystems/caching/backend-api.rst       |  138 +--
+ .../filesystems/caching/netfs-api.rst         |  385 +-----
+ fs/9p/Kconfig                                 |    1 +
+ fs/9p/cache.c                                 |  137 ---
+ fs/9p/cache.h                                 |   98 +-
+ fs/9p/v9fs.h                                  |    9 +
+ fs/9p/vfs_addr.c                              |  174 ++-
+ fs/9p/vfs_file.c                              |   21 +-
+ fs/cachefiles/Makefile                        |    1 -
+ fs/cachefiles/interface.c                     |   15 -
+ fs/cachefiles/internal.h                      |   38 -
+ fs/cachefiles/io.c                            |   28 +-
+ fs/cachefiles/main.c                          |    1 -
+ fs/cachefiles/rdwr.c                          |  972 ---------------
+ fs/cifs/file.c                                |   64 +-
+ fs/cifs/fscache.c                             |  105 +-
+ fs/cifs/fscache.h                             |   74 +-
+ fs/fscache/cache.c                            |    6 -
+ fs/fscache/cookie.c                           |   10 -
+ fs/fscache/internal.h                         |   58 +-
+ fs/fscache/io.c                               |  137 ++-
+ fs/fscache/object.c                           |    2 -
+ fs/fscache/page.c                             | 1066 -----------------
+ fs/fscache/stats.c                            |   73 +-
+ fs/netfs/read_helper.c                        |    8 +-
+ fs/nfs/file.c                                 |   14 +-
+ fs/nfs/fscache-index.c                        |   26 -
+ fs/nfs/fscache.c                              |  161 +--
+ fs/nfs/fscache.h                              |   84 +-
+ fs/nfs/read.c                                 |   25 +-
+ fs/nfs/write.c                                |    7 +-
+ include/linux/fscache-cache.h                 |  131 --
+ include/linux/fscache.h                       |  442 ++-----
+ include/linux/netfs.h                         |   17 +-
+ 34 files changed, 533 insertions(+), 3995 deletions(-)
+ delete mode 100644 fs/cachefiles/rdwr.c
+
+
