@@ -2,218 +2,350 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A4D63410418
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Sep 2021 07:06:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E97C410486
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Sep 2021 08:56:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243116AbhIRFIN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Sep 2021 01:08:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34238 "EHLO
+        id S239098AbhIRG5w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Sep 2021 02:57:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237812AbhIRFGe (ORCPT
+        with ESMTP id S235239AbhIRG5w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Sep 2021 01:06:34 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C690C06175F;
-        Fri, 17 Sep 2021 22:05:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=w925P6ItKF9rs87b7yDYFnpWVAY11Rt3apCJxCqDXyQ=; b=ZQ6fiW0YAVh21GrE+PLOko0KTR
-        1gUJkd/ycRpagDzFKji3CIgEgvCyiPdx2M1yYra9IgiS5/oLomOcV/nbvGxdet+xn5DTiDIxSwbBz
-        zKjH2+bILCOx/G93NGgszpi5dU0sbYngJUby+kJerJHSas0JetLWLFBRB/2IliHYOR3OAZ8r3ohzL
-        P3Sp63TAmfdfTYuwjVqjnDt6UuPv4o6p6B1iuvUH7VLmwDiamOvTj0fvd5IJdalYCxrwMmNAXX4MG
-        hmzPOHd/b3jF1SJVREXrETLHGxi8BMet6/FH8DghewTQ9ZzRRGmzkX2+FxLmpts+zTvU5aiYwIfjE
-        bpz7J1kw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mRSWf-00FP4i-FZ; Sat, 18 Sep 2021 05:04:33 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     tj@kernel.org, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, minchan@kernel.org, jeyu@kernel.org,
-        shuah@kernel.org
-Cc:     rdunlap@infradead.org, rafael@kernel.org, masahiroy@kernel.org,
-        ndesaulniers@google.com, yzaikin@google.com, nathan@kernel.org,
-        ojeda@kernel.org, penguin-kernel@I-love.SAKURA.ne.jp,
-        vitor@massaru.org, elver@google.com, jarkko@kernel.org,
-        glider@google.com, rf@opensource.cirrus.com,
-        stephen@networkplumber.org, David.Laight@ACULAB.COM,
-        bvanassche@acm.org, jolsa@kernel.org,
-        andriy.shevchenko@linux.intel.com, trishalfonso@google.com,
-        andreyknvl@gmail.com, jikos@kernel.org, mbenes@suse.com,
-        ngupta@vflare.org, sergey.senozhatsky.work@gmail.com,
-        mcgrof@kernel.org, reinette.chatre@intel.com, fenghua.yu@intel.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        lizefan.x@bytedance.com, hannes@cmpxchg.org,
-        daniel.vetter@ffwll.ch, bhelgaas@google.com, kw@linux.com,
-        dan.j.williams@intel.com, senozhatsky@chromium.org, hch@lst.de,
-        joe@perches.com, hkallweit1@gmail.com, axboe@kernel.dk,
-        jpoimboe@redhat.com, tglx@linutronix.de, keescook@chromium.org,
-        rostedt@goodmis.org, peterz@infradead.org,
-        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, copyleft-next@lists.fedorahosted.org
-Subject: [PATCH v7 12/12] zram: use ATTRIBUTE_GROUPS to fix sysfs deadlock module removal
-Date:   Fri, 17 Sep 2021 22:04:30 -0700
-Message-Id: <20210918050430.3671227-13-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210918050430.3671227-1-mcgrof@kernel.org>
-References: <20210918050430.3671227-1-mcgrof@kernel.org>
+        Sat, 18 Sep 2021 02:57:52 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB0BFC061574;
+        Fri, 17 Sep 2021 23:56:28 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id g41so9159195lfv.1;
+        Fri, 17 Sep 2021 23:56:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=TGq9sE9dP8uqZ0KtTlDXfc0qlJ4gv3+4miCEYgoKI3U=;
+        b=PaYHNnwjUEJz2L6BXjzOfab7R94e/1HTmCkn3cuUCR4ShSD8t4PuALNglL8z9yWxmH
+         /y1V3aYsGrEvNa+emHxJ0u9Bq4uVGVjGGUXTQJH8pcfpkdlpF8Qr3t2OtjjgCbRQy/sb
+         9H+Ej+fQKOau0z15R/GZqEFWowuPbV/3eKS3RZ7+XvsBCfAg6iPMy0rYEB6L5Bhb83Tp
+         M3AswFUtSCzL3stixuW4Mt5UtlBlBXGxPt7imTVG0icgKOnb2Y2lbiKYmmYwKyIvi5XJ
+         InRRR0N3EWgVaQuw6Fd31VRTD17bi5oDqMBOy+jO0BbDNyZCuefkWBlXGb2BxRsW7jo2
+         At5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=TGq9sE9dP8uqZ0KtTlDXfc0qlJ4gv3+4miCEYgoKI3U=;
+        b=7UVtAsJjbHR1wlXbpp000t0wdok6zbsgIt2lX3rey8Ue361x2N9Nvz/goDSXvP96gn
+         C7MXx7wMJHmWqufCYIZ1tWGbOzLSAMbZ3MiZ8H3e6OdJerPuIJWOqJ1iwsjtHE7ULnEp
+         14bmV1vR9GMOaA8ITbqw1V5u5omBsxmECyY/Qs5wd0DkAHYcNh/vcQmlpSzyY1qSGYxF
+         BQBECCegvu9fuRNUk3t4dA6JBvrM9D4rLKqI26YltgFN402T8ixx6Dzmqoz66QHa2yRP
+         g+UbF4M4GNFBYnIt+3A7C11zGRiziyCm/4MvAh305k3cyJCzFUN64oD7NR/7ZJXRtQCn
+         VVcw==
+X-Gm-Message-State: AOAM530S45f4v6FMUHJo3ECBCdga/XGW+bm4KygDH8mttv4F2chctW70
+        O46kKRgKN3K/dkhwync0nsexyQKF1tcH/A==
+X-Google-Smtp-Source: ABdhPJxinhtdb6ex3THZ/u1wX9OZ78n8h2ICKMe3j+I9BXMqLgIHweFuXvciLECl9k+cY5lmiVXp6A==
+X-Received: by 2002:a2e:a224:: with SMTP id i4mr12817397ljm.168.1631948187063;
+        Fri, 17 Sep 2021 23:56:27 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id a7sm702400lfs.309.2021.09.17.23.56.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Sep 2021 23:56:26 -0700 (PDT)
+Date:   Sat, 18 Sep 2021 09:56:24 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     willy@infradead.org, akpm@linux-foundation.org, hannes@cmpxchg.org,
+        mhocko@kernel.org, vdavydov.dev@gmail.com, shakeelb@google.com,
+        guro@fb.com, shy828301@gmail.com, alexs@kernel.org,
+        richard.weiyang@gmail.com, david@fromorbit.com,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+        zhengqi.arch@bytedance.com, duanxiongchun@bytedance.com,
+        fam.zheng@bytedance.com, smuchun@gmail.com
+Subject: Re: [PATCH v3 00/76] Optimize list lru memory consumption
+Message-ID: <20210918065624.dbaar4lss5olrfhu@kari-VirtualBox>
+References: <20210914072938.6440-1-songmuchun@bytedance.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210914072938.6440-1-songmuchun@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The ATTRIBUTE_GROUPS is typically used to avoid boiler plate
-code which is used in many drivers. Embracing ATTRIBUTE_GROUPS was
-long due on the zram driver, however a recent fix for sysfs allows
-users of ATTRIBUTE_GROUPS to also associate a module to the group
-attribute.
+On Tue, Sep 14, 2021 at 03:28:22PM +0800, Muchun Song wrote:
+> We introduced alloc_inode_sb() in previous version 2, which sets up the
+> inode reclaim context properly, to allocate filesystems specific inode.
+> So we have to convert to new API for all filesystems, which is done in
+> one patch. Some filesystems are easy to convert (just replace
+> kmem_cache_alloc() to alloc_inode_sb()), while other filesystems need to
+> do more work. In order to make it easy for maintainers of different
+> filesystems to review their own maintained part, I split the patch into
+> patches which are per-filesystem in this version. I am not sure if this
+> is a good idea, because there is going to be more commits.
+> 
+> In our server, we found a suspected memory leak problem. The kmalloc-32
+> consumes more than 6GB of memory. Other kmem_caches consume less than 2GB
+> memory.
+> 
+> After our in-depth analysis, the memory consumption of kmalloc-32 slab
+> cache is the cause of list_lru_one allocation.
+> 
+>   crash> p memcg_nr_cache_ids
+>   memcg_nr_cache_ids = $2 = 24574
+> 
+> memcg_nr_cache_ids is very large and memory consumption of each list_lru
+> can be calculated with the following formula.
+> 
+>   num_numa_node * memcg_nr_cache_ids * 32 (kmalloc-32)
+> 
+> There are 4 numa nodes in our system, so each list_lru consumes ~3MB.
+> 
+>   crash> list super_blocks | wc -l
+>   952
+> 
+> Every mount will register 2 list lrus, one is for inode, another is for
+> dentry. There are 952 super_blocks. So the total memory is 952 * 2 * 3
+> MB (~5.6GB). But now the number of memory cgroups is less than 500. So I
+> guess more than 12286 memory cgroups have been created on this machine (I
+> do not know why there are so many cgroups, it may be a user's bug or
+> the user really want to do that). Because memcg_nr_cache_ids has not been
+> reduced to a suitable value. It leads to waste a lot of memory. If we want
+> to reduce memcg_nr_cache_ids, we have to *reboot* the server. This is not
+> what we want.
+> 
+> In order to reduce memcg_nr_cache_ids, I had posted a patchset [1] to do
+> this. But this did not fundamentally solve the problem.
+> 
+> We currently allocate scope for every memcg to be able to tracked on every
+> superblock instantiated in the system, regardless of whether that superblock
+> is even accessible to that memcg.
+> 
+> These huge memcg counts come from container hosts where memcgs are confined
+> to just a small subset of the total number of superblocks that instantiated
+> at any given point in time.
+> 
+> For these systems with huge container counts, list_lru does not need the
+> capability of tracking every memcg on every superblock.
+> 
+> What it comes down to is that the list_lru is only needed for a given memcg
+> if that memcg is instatiating and freeing objects on a given list_lru.
+> 
+> As Dave said, "Which makes me think we should be moving more towards 'add the
+> memcg to the list_lru at the first insert' model rather than 'instantiate
+> all at memcg init time just in case'."
+> 
+> This patchset aims to optimize the list lru memory consumption from different
+> aspects.
+> 
+> Patch 1-6 are code simplification.
+> Patch 7 converts the array from per-memcg per-node to per-memcg
+> Patch 8 introduces kmem_cache_alloc_lru()
+> Patch 9 introduces alloc_inode_sb()
+> Patch 10-66 convert all filesystems to alloc_inode_sb() respectively.
 
-In zram's case this also means it allows us to fix a race which triggers
-a deadlock on the zram driver. This deadlock happens when a sysfs attribute
-use a lock also used on module removal. This happens when for instance a
-sysfs file on a driver is used, then at the same time we have module
-removal call trigger. The module removal call code holds a lock, and then
-the sysfs file entry waits for the same lock. While holding the lock the
-module removal tries to remove the sysfs entries, but these cannot be
-removed yet as one is waiting for a lock. This won't complete as the lock
-is already held. Likewise module removal cannot complete, and so we
-deadlock.
+There is now days also ntfs3. If you do not plan to convert this please
+CC me atleast so that I can do it when these lands.
 
-Sysfs fixes this when the group attributes have a module associated to
-it, sysfs will *try* to get a refcount to the module when a shared
-lock is used, prior to mucking with a sysfs attribute. If this fails we
-just give up right away.
+  Argillander
 
-This deadlock was first reported with the zram driver, a sketch of how
-this can happen follows:
-
-CPU A                              CPU B
-                                   whatever_store()
-module_unload
-  mutex_lock(foo)
-                                   mutex_lock(foo)
-   del_gendisk(zram->disk);
-     device_del()
-       device_remove_groups()
-
-In this situation whatever_store() is waiting for the mutex foo to
-become unlocked, but that won't happen until module removal is complete.
-But module removal won't complete until the sysfs file being poked
-completes which is waiting for a lock already held.
-
-This issue can be reproduced easily on the zram driver as follows:
-
-Loop 1 on one terminal:
-
-while true;
-	do modprobe zram;
-	modprobe -r zram;
-done
-
-Loop 2 on a second terminal:
-while true; do
-	echo 1024 >  /sys/block/zram0/disksize;
-	echo 1 > /sys/block/zram0/reset;
-done
-
-Without this patch we end up in a deadlock, and the following
-stack trace is produced which hints to us what the issue was:
-
-INFO: task bash:888 blocked for more than 120 seconds.
-      Tainted: G            E 5.12.0-rc1-next-20210304+ #4
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:bash            state:D stack:    0 pid:  888 ppid: 887 flags:<etc>
-Call Trace:
- __schedule+0x2e4/0x900
- schedule+0x46/0xb0
- schedule_preempt_disabled+0xa/0x10
- __mutex_lock.constprop.0+0x2c3/0x490
- ? _kstrtoull+0x35/0xd0
- reset_store+0x6c/0x160 [zram]
- kernfs_fop_write_iter+0x124/0x1b0
- new_sync_write+0x11c/0x1b0
- vfs_write+0x1c2/0x260
- ksys_write+0x5f/0xe0
- do_syscall_64+0x33/0x80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f34f2c3df33
-RSP: 002b:00007ffe751df6e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f34f2c3df33
-RDX: 0000000000000002 RSI: 0000561ccb06ec10 RDI: 0000000000000001
-RBP: 0000561ccb06ec10 R08: 000000000000000a R09: 0000000000000001
-R10: 0000561ccb157590 R11: 0000000000000246 R12: 0000000000000002
-R13: 00007f34f2d0e6a0 R14: 0000000000000002 R15: 00007f34f2d0e8a0
-INFO: task modprobe:1104 can't die for more than 120 seconds.
-task:modprobe        state:D stack:    0 pid: 1104 ppid: 916 flags:<etc>
-Call Trace:
- __schedule+0x2e4/0x900
- schedule+0x46/0xb0
- __kernfs_remove.part.0+0x228/0x2b0
- ? finish_wait+0x80/0x80
- kernfs_remove_by_name_ns+0x50/0x90
- remove_files+0x2b/0x60
- sysfs_remove_group+0x38/0x80
- sysfs_remove_groups+0x29/0x40
- device_remove_attrs+0x4a/0x80
- device_del+0x183/0x3e0
- ? mutex_lock+0xe/0x30
- del_gendisk+0x27a/0x2d0
- zram_remove+0x8a/0xb0 [zram]
- ? hot_remove_store+0xf0/0xf0 [zram]
- zram_remove_cb+0xd/0x10 [zram]
- idr_for_each+0x5e/0xd0
- destroy_devices+0x39/0x6f [zram]
- __do_sys_delete_module+0x190/0x2a0
- do_syscall_64+0x33/0x80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f32adf727d7
-RSP: 002b:00007ffc08bb38a8 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
-RAX: ffffffffffffffda RBX: 000055eea23cbb10 RCX: 00007f32adf727d7
-RDX: 0000000000000000 RSI: 0000000000000800 RDI: 000055eea23cbb78
-RBP: 000055eea23cbb10 R08: 0000000000000000 R09: 0000000000000000
-R10: 00007f32adfe5ac0 R11: 0000000000000206 R12: 000055eea23cbb78
-R13: 0000000000000000 R14: 0000000000000000 R15: 000055eea23cbc20
-
-[0] https://lkml.kernel.org/r/20210401235925.GR4332@42.do-not-panic.com
-
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- drivers/block/zram/zram_drv.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index b26abcb955cc..60a55ae8cd91 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -1902,14 +1902,7 @@ static struct attribute *zram_disk_attrs[] = {
- 	NULL,
- };
- 
--static const struct attribute_group zram_disk_attr_group = {
--	.attrs = zram_disk_attrs,
--};
--
--static const struct attribute_group *zram_disk_attr_groups[] = {
--	&zram_disk_attr_group,
--	NULL,
--};
-+ATTRIBUTE_GROUPS(zram_disk);
- 
- /*
-  * Allocate and initialize new zram device. the function returns
-@@ -1981,7 +1974,7 @@ static int zram_add(void)
- 		blk_queue_max_write_zeroes_sectors(zram->disk->queue, UINT_MAX);
- 
- 	blk_queue_flag_set(QUEUE_FLAG_STABLE_WRITES, zram->disk->queue);
--	device_add_disk(NULL, zram->disk, zram_disk_attr_groups);
-+	device_add_disk(NULL, zram->disk, zram_disk_groups);
- 
- 	strlcpy(zram->compressor, default_compressor, sizeof(zram->compressor));
- 
--- 
-2.30.2
-
+> Patch 70 let list_lru allocation dynamically.
+> Patch 72 use xarray to optimize per memcg pointer array size.
+> Patch 73-76 is code simplification.
+> 
+> I had done a easy test to show the optimization. I create 10k memory cgroups
+> and mount 10k filesystems in the systems. We use free command to show how many
+> memory does the systems comsumes after this operation (There are 2 numa nodes
+> in the system).
+> 
+>         +-----------------------+------------------------+
+>         |      condition        |   memory consumption   |
+>         +-----------------------+------------------------+
+>         | without this patchset |        24464 MB        |
+>         +-----------------------+------------------------+
+>         |     after patch 7     |        21957 MB        | <--------+
+>         +-----------------------+------------------------+          |
+>         |     after patch 70    |         6895 MB        |          |
+>         +-----------------------+------------------------+          |
+>         |     after patch 72    |         4367 MB        |          |
+>         +-----------------------+------------------------+          |
+>                                                                     |
+>         The more the number of nodes, the more obvious the effect---+
+> 
+> BTW, there was a recent discussion [2] on the same issue.
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20210428094949.43579-1-songmuchun@bytedance.com/
+> [2] https://lore.kernel.org/linux-fsdevel/20210405054848.GA1077931@in.ibm.com/
+> 
+> This series not only optimizes the memory usage of list_lru but also
+> simplifies the code.
+> 
+> Changelog in v3:
+>   - Fix mixing advanced and normal XArray concepts (Thanks to Matthew).
+>   - Split one patch into per-filesystem patches.
+> 
+> Changelog in v2:
+>   - Update Documentation/filesystems/porting.rst suggested by Dave.
+>   - Add a comment above alloc_inode_sb() suggested by Dave.
+>   - Rework some patch's commit log.
+>   - Add patch 18-21.
+> 
+>   Thanks Dave.
+> 
+> Muchun Song (76):
+>   mm: list_lru: fix the return value of list_lru_count_one()
+>   mm: memcontrol: remove kmemcg_id reparenting
+>   mm: memcontrol: remove the kmem states
+>   mm: memcontrol: move memcg_online_kmem() to mem_cgroup_css_online()
+>   mm: list_lru: remove holding lru lock
+>   mm: list_lru: only add memcg-aware lrus to the global lru list
+>   mm: list_lru: optimize memory consumption of arrays
+>   mm: introduce kmem_cache_alloc_lru
+>   fs: introduce alloc_inode_sb() to allocate filesystems specific inode
+>   dax: allocate inode by using alloc_inode_sb()
+>   9p: allocate inode by using alloc_inode_sb()
+>   adfs: allocate inode by using alloc_inode_sb()
+>   affs: allocate inode by using alloc_inode_sb()
+>   afs: allocate inode by using alloc_inode_sb()
+>   befs: allocate inode by using alloc_inode_sb()
+>   bfs: allocate inode by using alloc_inode_sb()
+>   block: allocate inode by using alloc_inode_sb()
+>   btrfs: allocate inode by using alloc_inode_sb()
+>   ceph: allocate inode by using alloc_inode_sb()
+>   cifs: allocate inode by using alloc_inode_sb()
+>   coda: allocate inode by using alloc_inode_sb()
+>   ecryptfs: allocate inode by using alloc_inode_sb()
+>   efs: allocate inode by using alloc_inode_sb()
+>   erofs: allocate inode by using alloc_inode_sb()
+>   exfat: allocate inode by using alloc_inode_sb()
+>   ext2: allocate inode by using alloc_inode_sb()
+>   ext4: allocate inode by using alloc_inode_sb()
+>   fat: allocate inode by using alloc_inode_sb()
+>   freevxfs: allocate inode by using alloc_inode_sb()
+>   fuse: allocate inode by using alloc_inode_sb()
+>   gfs2: allocate inode by using alloc_inode_sb()
+>   hfs: allocate inode by using alloc_inode_sb()
+>   hfsplus: allocate inode by using alloc_inode_sb()
+>   hostfs: allocate inode by using alloc_inode_sb()
+>   hpfs: allocate inode by using alloc_inode_sb()
+>   hugetlbfs: allocate inode by using alloc_inode_sb()
+>   isofs: allocate inode by using alloc_inode_sb()
+>   jffs2: allocate inode by using alloc_inode_sb()
+>   jfs: allocate inode by using alloc_inode_sb()
+>   minix: allocate inode by using alloc_inode_sb()
+>   nfs: allocate inode by using alloc_inode_sb()
+>   nilfs2: allocate inode by using alloc_inode_sb()
+>   ntfs: allocate inode by using alloc_inode_sb()
+>   ocfs2: allocate inode by using alloc_inode_sb()
+>   openpromfs: allocate inode by using alloc_inode_sb()
+>   orangefs: allocate inode by using alloc_inode_sb()
+>   overlayfs: allocate inode by using alloc_inode_sb()
+>   proc: allocate inode by using alloc_inode_sb()
+>   qnx4: allocate inode by using alloc_inode_sb()
+>   qnx6: allocate inode by using alloc_inode_sb()
+>   reiserfs: allocate inode by using alloc_inode_sb()
+>   romfs: allocate inode by using alloc_inode_sb()
+>   squashfs: allocate inode by using alloc_inode_sb()
+>   sysv: allocate inode by using alloc_inode_sb()
+>   ubifs: allocate inode by using alloc_inode_sb()
+>   udf: allocate inode by using alloc_inode_sb()
+>   ufs: allocate inode by using alloc_inode_sb()
+>   vboxsf: allocate inode by using alloc_inode_sb()
+>   xfs: allocate inode by using alloc_inode_sb()
+>   zonefs: allocate inode by using alloc_inode_sb()
+>   ipc: allocate inode by using alloc_inode_sb()
+>   shmem: allocate inode by using alloc_inode_sb()
+>   net: allocate inode by using alloc_inode_sb()
+>   rpc: allocate inode by using alloc_inode_sb()
+>   f2fs: allocate inode by using alloc_inode_sb()
+>   nfs42: use a specific kmem_cache to allocate nfs4_xattr_entry
+>   mm: dcache: use kmem_cache_alloc_lru() to allocate dentry
+>   xarray: use kmem_cache_alloc_lru to allocate xa_node
+>   mm: workingset: use xas_set_lru() to pass shadow_nodes
+>   mm: list_lru: allocate list_lru_one only when needed
+>   mm: list_lru: rename memcg_drain_all_list_lrus to
+>     memcg_reparent_list_lrus
+>   mm: list_lru: replace linear array with xarray
+>   mm: memcontrol: reuse memory cgroup ID for kmem ID
+>   mm: memcontrol: fix cannot alloc the maximum memcg ID
+>   mm: list_lru: rename list_lru_per_memcg to list_lru_memcg
+>   mm: memcontrol: rename memcg_cache_id to memcg_kmem_id
+> 
+>  Documentation/filesystems/porting.rst |   5 +
+>  drivers/dax/super.c                   |   2 +-
+>  fs/9p/vfs_inode.c                     |   2 +-
+>  fs/adfs/super.c                       |   2 +-
+>  fs/affs/super.c                       |   2 +-
+>  fs/afs/super.c                        |   2 +-
+>  fs/befs/linuxvfs.c                    |   2 +-
+>  fs/bfs/inode.c                        |   2 +-
+>  fs/block_dev.c                        |   2 +-
+>  fs/btrfs/inode.c                      |   2 +-
+>  fs/ceph/inode.c                       |   2 +-
+>  fs/cifs/cifsfs.c                      |   2 +-
+>  fs/coda/inode.c                       |   2 +-
+>  fs/dcache.c                           |   3 +-
+>  fs/ecryptfs/super.c                   |   2 +-
+>  fs/efs/super.c                        |   2 +-
+>  fs/erofs/super.c                      |   2 +-
+>  fs/exfat/super.c                      |   2 +-
+>  fs/ext2/super.c                       |   2 +-
+>  fs/ext4/super.c                       |   2 +-
+>  fs/f2fs/super.c                       |   8 +-
+>  fs/fat/inode.c                        |   2 +-
+>  fs/freevxfs/vxfs_super.c              |   2 +-
+>  fs/fuse/inode.c                       |   2 +-
+>  fs/gfs2/super.c                       |   2 +-
+>  fs/hfs/super.c                        |   2 +-
+>  fs/hfsplus/super.c                    |   2 +-
+>  fs/hostfs/hostfs_kern.c               |   2 +-
+>  fs/hpfs/super.c                       |   2 +-
+>  fs/hugetlbfs/inode.c                  |   2 +-
+>  fs/inode.c                            |   2 +-
+>  fs/isofs/inode.c                      |   2 +-
+>  fs/jffs2/super.c                      |   2 +-
+>  fs/jfs/super.c                        |   2 +-
+>  fs/minix/inode.c                      |   2 +-
+>  fs/nfs/inode.c                        |   2 +-
+>  fs/nfs/nfs42xattr.c                   |  95 ++++---
+>  fs/nilfs2/super.c                     |   2 +-
+>  fs/ntfs/inode.c                       |   2 +-
+>  fs/ocfs2/dlmfs/dlmfs.c                |   2 +-
+>  fs/ocfs2/super.c                      |   2 +-
+>  fs/openpromfs/inode.c                 |   2 +-
+>  fs/orangefs/super.c                   |   2 +-
+>  fs/overlayfs/super.c                  |   2 +-
+>  fs/proc/inode.c                       |   2 +-
+>  fs/qnx4/inode.c                       |   2 +-
+>  fs/qnx6/inode.c                       |   2 +-
+>  fs/reiserfs/super.c                   |   2 +-
+>  fs/romfs/super.c                      |   2 +-
+>  fs/squashfs/super.c                   |   2 +-
+>  fs/sysv/inode.c                       |   2 +-
+>  fs/ubifs/super.c                      |   2 +-
+>  fs/udf/super.c                        |   2 +-
+>  fs/ufs/super.c                        |   2 +-
+>  fs/vboxsf/super.c                     |   2 +-
+>  fs/xfs/xfs_icache.c                   |   2 +-
+>  fs/zonefs/super.c                     |   2 +-
+>  include/linux/fs.h                    |  11 +
+>  include/linux/list_lru.h              |  16 +-
+>  include/linux/memcontrol.h            |  49 ++--
+>  include/linux/slab.h                  |   3 +
+>  include/linux/swap.h                  |   5 +-
+>  include/linux/xarray.h                |   9 +-
+>  ipc/mqueue.c                          |   2 +-
+>  lib/xarray.c                          |  10 +-
+>  mm/list_lru.c                         | 472 ++++++++++++++++------------------
+>  mm/memcontrol.c                       | 190 ++------------
+>  mm/shmem.c                            |   2 +-
+>  mm/slab.c                             |  39 ++-
+>  mm/slab.h                             |  17 +-
+>  mm/slob.c                             |   6 +
+>  mm/slub.c                             |  42 ++-
+>  mm/workingset.c                       |   2 +-
+>  net/socket.c                          |   2 +-
+>  net/sunrpc/rpc_pipe.c                 |   2 +-
+>  75 files changed, 498 insertions(+), 598 deletions(-)
+> 
+> -- 
+> 2.11.0
+> 
