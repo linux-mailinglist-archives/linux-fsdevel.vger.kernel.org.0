@@ -2,99 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 41EE8410493
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Sep 2021 09:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C50A2410499
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Sep 2021 09:08:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242517AbhIRHEU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Sep 2021 03:04:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59912 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241829AbhIRHEN (ORCPT
+        id S242349AbhIRHJk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Sep 2021 03:09:40 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:9748 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242292AbhIRHJj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Sep 2021 03:04:13 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF085C061574;
-        Sat, 18 Sep 2021 00:02:49 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id c8so42280727lfi.3;
-        Sat, 18 Sep 2021 00:02:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=/Iv66vXX7J5CxDss690/EZstKTh3xBr9NHityj90xHw=;
-        b=DvA6w6f/ngKAS8/lng5G6iiaY41TCj/QH4ysOzsPjMx8I8Y5EpF8yBmvPCjwpwcwjP
-         VquTGOAOA0ivCj5hZ+HvEHevLA37n0xdD8cOauCz8Gx4kyS00Q8GxflfhiwbiCf1S6JM
-         TR+Su8r2MskO53P/Pfk7rnFHp6Tgf0p1tFSiYYsB4k/X7APh7qwETBCM0rKsy/X02mR3
-         SDT0Vyy9+yJM4lB2B9Aqul0C44scXIZOvB6Ciiq1BrfSBT52HrNQOr7JUxR3XbJ3DUtg
-         rSxv4IhUsX3Dkaj5KrRk6iuVyuILg2Gh3A+LRnPI2F7Vrqr4VerBggEUAZK1WFHI4h7F
-         i1qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/Iv66vXX7J5CxDss690/EZstKTh3xBr9NHityj90xHw=;
-        b=3fpoLkQcW9lGBkGoO7fzJ9qyUS7NpN9mYQqvaeVnIgBTr16KXI7aZwUGNUn8wyp6h0
-         xm9P6MN6M9PvwRgfU+nlZqduqdWHFb9iscZRmc0C+JseT4I6Z49JhVbJDfhIjO9EzExU
-         gawB2OOi4oxtaiA7EsTQRgGJZsstbAEaIbVFYX+S7bEPl6i/wipEDvTq1xH8AH4BA2L8
-         flvY8sXwRG95eBh0AYNsNTSFqXhg6cpd92+e4TS3cWxQY8f0GxoaVJsy31onavesfIdZ
-         lbn9rIMr3NWUXvKs39tYLrFbIIGmKq9SAcDTHGcQPKaMi87LIOYaFtMfkgadZi+ycq+k
-         6t+Q==
-X-Gm-Message-State: AOAM532/MHvhQYuQGafwvFCFqgldLhunPkhY5NnNz9TaPg7COG4mYkzd
-        OZRcBqQD/AWkKGzAXLsqneQ=
-X-Google-Smtp-Source: ABdhPJwy/99eBz7Lj43jsyz8H9Lw3h+VtRNQz+J8LMOvad5b5T8RqUdrYEi3jJibj4e1LSruUFgsQA==
-X-Received: by 2002:a2e:99d3:: with SMTP id l19mr1362376ljj.184.1631948568300;
-        Sat, 18 Sep 2021 00:02:48 -0700 (PDT)
-Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id bu8sm700713lfb.216.2021.09.18.00.02.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 Sep 2021 00:02:47 -0700 (PDT)
-Date:   Sat, 18 Sep 2021 10:02:46 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/3] fs/ntfs3: Fix insertion of attr in ni_ins_attr_ext
-Message-ID: <20210918070246.rhbbvjwnwfnd4f7u@kari-VirtualBox>
-References: <a08b0948-80e2-13b4-ea22-d722384e054b@paragon-software.com>
- <9fd8b3d5-2f1e-29c3-282a-d2276b5d0db9@paragon-software.com>
+        Sat, 18 Sep 2021 03:09:39 -0400
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.54])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4HBMML258XzWM09;
+        Sat, 18 Sep 2021 15:07:10 +0800 (CST)
+Received: from dggema766-chm.china.huawei.com (10.1.198.208) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2308.8; Sat, 18 Sep 2021 15:08:14 +0800
+Received: from [10.174.177.210] (10.174.177.210) by
+ dggema766-chm.china.huawei.com (10.1.198.208) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.8; Sat, 18 Sep 2021 15:08:13 +0800
+Message-ID: <64893b00-d606-8ea9-0fd7-c6c819e5d387@huawei.com>
+Date:   Sat, 18 Sep 2021 15:08:13 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9fd8b3d5-2f1e-29c3-282a-d2276b5d0db9@paragon-software.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.0
+Subject: Re: [PATCH] ramfs: fix mount source show for ramfs
+From:   yangerkun <yangerkun@huawei.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+CC:     <sfr@canb.auug.org.au>, <jack@suse.cz>,
+        <gregkh@linuxfoundation.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <yukuai3@huawei.com>
+References: <20210811122811.2288041-1-yangerkun@huawei.com>
+ <720f6c7a-6745-98ad-5c71-7747857a7f01@huawei.com>
+ <20210908153958.19054d439ae59ee3a7e41519@linux-foundation.org>
+ <b82b7472-be64-4681-98a2-9d16736e3edd@huawei.com>
+ <b66aa49b-8289-be25-6126-92e6ce1c50ab@huawei.com>
+In-Reply-To: <b66aa49b-8289-be25-6126-92e6ce1c50ab@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.177.210]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggema766-chm.china.huawei.com (10.1.198.208)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 13, 2021 at 06:12:58PM +0300, Konstantin Komarov wrote:
-> Do not try to insert attribute if there is no room in record.
-> 
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Ping...
 
-Reviewed-by: Kari Argillander <kari.argillander@gmail.com>
-
-> ---
->  fs/ntfs3/frecord.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-> index 938b12d56ca6..834cb361f61f 100644
-> --- a/fs/ntfs3/frecord.c
-> +++ b/fs/ntfs3/frecord.c
-> @@ -956,6 +956,13 @@ static int ni_ins_attr_ext(struct ntfs_inode *ni, struct ATTR_LIST_ENTRY *le,
->  			continue;
->  		}
->  
-> +		/*
-> +		 * Do not try to insert this attribute
-> +		 * if there is no room in record.
-> +		 */
-> +		if (le32_to_cpu(mi->mrec->used) + asize > sbi->record_size)
-> +			continue;
-> +
->  		/* Try to insert attribute into this subrecord. */
->  		attr = ni_ins_new_attr(ni, mi, le, type, name, name_len, asize,
->  				       name_off, svcn, ins_le);
-> -- 
-> 2.33.0
+在 2021/9/13 9:10, yangerkun 写道:
 > 
 > 
+> 在 2021/9/9 16:37, yangerkun 写道:
+>>
+>>
+>> 在 2021/9/9 6:39, Andrew Morton 写道:
+>>> On Wed, 8 Sep 2021 16:56:25 +0800 yangerkun <yangerkun@huawei.com> 
+>>> wrote:
+>>>
+>>>> 在 2021/8/11 20:28, yangerkun 写道:
+>>>>> ramfs_parse_param does not parse key "source", and will convert
+>>>>> -ENOPARAM to 0. This will skip vfs_parse_fs_param_source in
+>>>>> vfs_parse_fs_param, which lead always "none" mount source for 
+>>>>> ramfs. Fix
+>>>>> it by parse "source" in ramfs_parse_param.
+>>>>>
+>>>>> Signed-off-by: yangerkun <yangerkun@huawei.com>
+>>>>> ---
+>>>>>    fs/ramfs/inode.c | 4 ++++
+>>>>>    1 file changed, 4 insertions(+)
+>>>>>
+>>>>> diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
+>>>>> index 65e7e56005b8..0d7f5f655fd8 100644
+>>>>> --- a/fs/ramfs/inode.c
+>>>>> +++ b/fs/ramfs/inode.c
+>>>>> @@ -202,6 +202,10 @@ static int ramfs_parse_param(struct fs_context 
+>>>>> *fc, struct fs_parameter *param)
+>>>>>        struct ramfs_fs_info *fsi = fc->s_fs_info;
+>>>>>        int opt;
+>>>>> +    opt = vfs_parse_fs_param_source(fc, param);
+>>>>> +    if (opt != -ENOPARAM)
+>>>>> +        return opt;
+>>>>> +
+>>>>>        opt = fs_parse(fc, ramfs_fs_parameters, param, &result);
+>>>>>        if (opt < 0) {
+>>>>>            /*
+>>>>>
+>>>
+>>> (top-posting repaired)
+>>>
+>>>> Hi, this patch seems still leave in linux-next, should we pull it to
+>>>> mainline?
+>>>
+>>> I was hoping for a comment from Al?
+>>
+>> Hi, Al,
+>>
+>> Can you help to review this patch...
+> 
+> Hi, Al,
+> 
+> Sorry for the noise again, can you help to give some comments for this 
+> patch.
+> 
+>>
+>> Thanks,
+>> Kun.
+>>
+>>> .
+>>>
+>> .
+> .
