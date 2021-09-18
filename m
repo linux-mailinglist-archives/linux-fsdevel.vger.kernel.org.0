@@ -2,76 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 878734107A6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Sep 2021 18:54:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C0434107A8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Sep 2021 18:55:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237507AbhIRQz5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Sep 2021 12:55:57 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:21718 "EHLO
+        id S237556AbhIRQ5L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Sep 2021 12:57:11 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:10782 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S233364AbhIRQz5 (ORCPT
+        by vger.kernel.org with ESMTP id S237222AbhIRQ5L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Sep 2021 12:55:57 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 18IASiYX021290;
-        Sat, 18 Sep 2021 12:54:14 -0400
+        Sat, 18 Sep 2021 12:57:11 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 18IAxX8S023528;
+        Sat, 18 Sep 2021 12:55:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=pp1; bh=YW0WlFmDdgAP+YgdhIiGXxcxq+Unhv4vQBk2rQWAFr4=;
- b=djEELMw0gJKF2g+OM5WEilOnBJT16iWtwGUFztASiE7ZnBPycu+QZcd2GE9eJfFXA98z
- xji4qfmkTQFpOGmnHGLBR24l3gFh/oibcPsK67/R5eMUJ7dIPFqFxLbXZg6TcgrBYDFO
- Z6tbJs2ZHpqx4bCNNKHu/s4k/nCsJ6vAOxtIe/fhCnYKsL+iSGc9G3Xia2sclBtdUU5Q
- GBERnad9od9/+kUM35lSppN3Ik4VI5q9F9qWEuqul2CtaisJYuXh/1Um75n44749uPsV
- SupXS1T/2u3ICRd48vKobFcjVwd3QqsYyHL9SDpoqi9fMT5Ai4lm/fy2B5skYsdVbS7i 4w== 
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3b5ed5m8p4-1
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=9Vo+kxDbch8OaKN7UeClQK8G9XljrlxDk4V82CwxGB0=;
+ b=XNiHLn3qJ/PzFBkw94jEB3JANv5Z70ZyvJZglAaqIDg6olnubUloKkba8ZIrxeY704uE
+ PHeKCEL8XKe9g+SY3pfAgVi6o6QKkvCaIe+p0OiQ30h2VpboZ/UaVfEQ+SHU25Yqz2oJ
+ 562RabxBmzkHENpWNNfULTpLRKIzF/FacYhFcfKZYefzy+TVHEx6FUa8oBEPysiSGz/z
+ nM5XpPsE5wmeoTER6GShpdzoKVTSxA93RlVZ4TPR4gi9q2wk/0TRY59jyaLHSZrvxdVS
+ +bOLQCx8ueMN1XA9uVORQ96DcJvNNN4uwadU1C0GyXqbPQih2qhOFGB82cLS5f63uJ5T AA== 
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3b5eumuwpu-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 18 Sep 2021 12:54:14 -0400
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 18IGrKcE021568;
-        Sat, 18 Sep 2021 16:54:12 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma06fra.de.ibm.com with ESMTP id 3b57chu9su-1
+        Sat, 18 Sep 2021 12:55:41 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 18IGrYUV021727;
+        Sat, 18 Sep 2021 16:55:39 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03fra.de.ibm.com with ESMTP id 3b57r8k6s3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 18 Sep 2021 16:54:12 +0000
+        Sat, 18 Sep 2021 16:55:39 +0000
 Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 18IGsAMR26542504
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 18IGtaue30540242
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 18 Sep 2021 16:54:10 GMT
+        Sat, 18 Sep 2021 16:55:36 GMT
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EACB342041;
-        Sat, 18 Sep 2021 16:54:09 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 8100842047;
+        Sat, 18 Sep 2021 16:55:36 +0000 (GMT)
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 641C94203F;
-        Sat, 18 Sep 2021 16:54:09 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id EDCA942042;
+        Sat, 18 Sep 2021 16:55:35 +0000 (GMT)
 Received: from localhost (unknown [9.43.63.221])
         by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sat, 18 Sep 2021 16:54:09 +0000 (GMT)
-Date:   Sat, 18 Sep 2021 22:24:08 +0530
+        Sat, 18 Sep 2021 16:55:35 +0000 (GMT)
+Date:   Sat, 18 Sep 2021 22:25:34 +0530
 From:   riteshh <riteshh@linux.ibm.com>
 To:     "Darrick J. Wong" <djwong@kernel.org>
 Cc:     jane.chu@oracle.com, linux-xfs@vger.kernel.org, hch@infradead.org,
         dan.j.williams@intel.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/5] dax: prepare pmem for use by zero-initializing
- contents and clearing poisons
-Message-ID: <20210918165408.ivsue463wpiitzjw@riteshh-domain>
+Subject: Re: [PATCH 2/5] iomap: use accelerated zeroing on a block device to
+ zero a file range
+Message-ID: <20210918165534.zigbg5aeal4m4zw4@riteshh-domain>
 References: <163192864476.417973.143014658064006895.stgit@magnolia>
- <163192865031.417973.8372869475521627214.stgit@magnolia>
+ <163192865577.417973.11122330974455662098.stgit@magnolia>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <163192865031.417973.8372869475521627214.stgit@magnolia>
+In-Reply-To: <163192865577.417973.11122330974455662098.stgit@magnolia>
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: EWQmT9x7WJhBj_V-3LC6neoilMZHugjU
-X-Proofpoint-ORIG-GUID: EWQmT9x7WJhBj_V-3LC6neoilMZHugjU
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
-MIME-Version: 1.0
+X-Proofpoint-GUID: L6w7uREipWur-IsE1wGH5IJFAap4kKFU
+X-Proofpoint-ORIG-GUID: L6w7uREipWur-IsE1wGH5IJFAap4kKFU
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.391,FMLib:17.0.607.475
- definitions=2021-09-18_05,2021-09-17_02,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- priorityscore=1501 bulkscore=0 phishscore=0 impostorscore=0 mlxscore=0
- suspectscore=0 adultscore=0 spamscore=0 clxscore=1011 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ definitions=2021-09-18_06,2021-09-17_02,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 spamscore=0 mlxlogscore=999
+ malwarescore=0 bulkscore=0 priorityscore=1501 adultscore=0 clxscore=1015
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2109030001 definitions=main-2109180117
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -80,81 +79,43 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On 21/09/17 06:30PM, Darrick J. Wong wrote:
 > From: Darrick J. Wong <djwong@kernel.org>
 >
-> Our current "advice" to people using persistent memory and FSDAX who
-> wish to recover upon receipt of a media error (aka 'hwpoison') event
-> from ACPI is to punch-hole that part of the file and then pwrite it,
-> which will magically cause the pmem to be reinitialized and the poison
-> to be cleared.
->
-> Punching doesn't make any sense at all -- the (re)allocation on pwrite
-> does not permit the caller to specify where to find blocks, which means
-> that we might not get the same pmem back.  This pushes the user farther
-> away from the goal of reinitializing poisoned memory and leads to
-> complaints about unnecessary file fragmentation.
->
-> AFAICT, the only reason why the "punch and write" dance works at all is
-> that the XFS and ext4 currently call blkdev_issue_zeroout when
-> allocating pmem ahead of a write call.  Even a regular overwrite won't
-> clear the poison, because dax_direct_access is smart enough to bail out
-> on poisoned pmem, but not smart enough to clear it.  To be fair, that
-> function maps pages and has no idea what kinds of reads and writes the
-> caller might want to perform.
->
-> Therefore, create a dax_zeroinit_range function that filesystems can to
-> reset the pmem contents to zero and clear hardware media error flags.
-> This uses the dax page zeroing helper function, which should ensure that
-> subsequent accesses will not trip over any pre-existing media errors.
-
-Thanks Darrick for such clear explaination of the problem and your solution.
-As I see from this thread [1], it looks like we are heading in this direction,
-so I thought of why not review this RFC patch series :)
-
-[1]: https://lore.kernel.org/all/CAPcyv4iAr_Vwwgqw+4wz0RQUXhUUJGGz7_T+p+W6tC4T+k+zNw@mail.gmail.com/
-
+> Create a function that ensures that the storage backing part of a file
+> contains zeroes and will not trip over old media errors if the contents
+> are re-read.
 >
 > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 > ---
->  fs/dax.c            |   93 +++++++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/dax.h |    7 ++++
->  2 files changed, 100 insertions(+)
+>  fs/iomap/direct-io.c  |   75 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/iomap.h |    3 ++
+>  2 files changed, 78 insertions(+)
 >
 >
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 4e3e5a283a91..765b80d08605 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1714,3 +1714,96 @@ vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
->  	return dax_insert_pfn_mkwrite(vmf, pfn, order);
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 4ecd255e0511..48826a49f976 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -652,3 +652,78 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	return iomap_dio_complete(dio);
 >  }
->  EXPORT_SYMBOL_GPL(dax_finish_sync_fault);
+>  EXPORT_SYMBOL_GPL(iomap_dio_rw);
 > +
 > +static loff_t
-> +dax_zeroinit_iter(struct iomap_iter *iter)
+> +iomap_zeroinit_iter(struct iomap_iter *iter)
 > +{
 > +	struct iomap *iomap = &iter->iomap;
 > +	const struct iomap *srcmap = iomap_iter_srcmap(iter);
 > +	const u64 start = iomap->addr + iter->pos - iomap->offset;
 > +	const u64 nr_bytes = iomap_length(iter);
-> +	u64 start_page = start >> PAGE_SHIFT;
-> +	u64 nr_pages = nr_bytes >> PAGE_SHIFT;
+> +	sector_t sector = start >> SECTOR_SHIFT;
+> +	sector_t nr_sectors = nr_bytes >> SECTOR_SHIFT;
 > +	int ret;
 > +
-> +	if (!iomap->dax_dev)
+> +	if (!iomap->bdev)
 > +		return -ECANCELED;
 > +
-> +	/*
-> +	 * The physical extent must be page aligned because that's what the dax
-> +	 * function requires.
-> +	 */
-> +	if (!PAGE_ALIGNED(start | nr_bytes))
-> +		return -ECANCELED;
-> +
-> +	/*
-> +	 * The dax function, by using pgoff_t, is stuck with unsigned long, so
-> +	 * we must check for overflows.
-> +	 */
-> +	if (start_page >= ULONG_MAX || start_page + nr_pages > ULONG_MAX)
-> +		return -ECANCELED;
+> +	/* The physical extent must be sector-aligned for block layer APIs. */
+> +	if ((start | nr_bytes) & (SECTOR_SIZE - 1))
+> +		return -EINVAL;
 > +
 > +	/* Must be able to zero storage directly without fs intervention. */
 > +	if (iomap->flags & IOMAP_F_SHARED)
@@ -164,16 +125,10 @@ so I thought of why not review this RFC patch series :)
 > +
 > +	switch (iomap->type) {
 > +	case IOMAP_MAPPED:
-> +		while (nr_pages > 0) {
-> +			/* XXX function only supports one page at a time?! */
-> +			ret = dax_zero_page_range(iomap->dax_dev, start_page,
-> +					1);
-> +			if (ret)
-> +				return ret;
-> +			start_page++;
-> +			nr_pages--;
-> +		}
-> +
+> +		ret = blkdev_issue_zeroout(iomap->bdev, sector, nr_sectors,
+> +				GFP_KERNEL, 0);
+> +		if (ret)
+> +			return ret;
 > +		fallthrough;
 > +	case IOMAP_UNWRITTEN:
 > +		return nr_bytes;
@@ -182,28 +137,18 @@ so I thought of why not review this RFC patch series :)
 > +	/* Reject holes, inline data, or delalloc extents. */
 > +	return -ECANCELED;
 
-We reject holes here, but the other vfs plumbing patch [2] mentions
-"Holes and unwritten extents are left untouched.".
-Shouldn't we just return nr_bytes for IOMAP_HOLE case as well?
-
-[2]: "vfs: add a zero-initialization mode to fallocate"
-
-Although I am not an expert in this area, but the rest of the patch looks
-very well crafted to me. Thanks again for such details :)
+Same comment here as in patch-1 which implements dax_zeroinit_iter().
 
 -ritesh
 
->
 > +}
 > +
 > +/*
-> + * Initialize storage mapped to a DAX-mode file to a known value and ensure the
-> + * media are ready to accept read and write commands.  This requires the use of
-> + * the dax layer's zero page range function to write zeroes to a pmem region
-> + * and to reset any hardware media error state.
+> + * Use a storage device's accelerated zero-writing command to ensure the media
+> + * are ready to accept read and write commands.  FSDAX is not supported.
 > + *
-> + * The physical extents must be aligned to page size.  The file must be backed
-> + * by a pmem device.  The extents returned must not require copy on write (or
+> + * The range arguments must be aligned to sector size.  The file must be backed
+> + * by a block device.  The extents returned must not require copy on write (or
 > + * any other mapping interventions from the filesystem) and must be contiguous.
 > + * @done will be set to true if the reset succeeded.
 > + *
@@ -212,7 +157,7 @@ very well crafted to me. Thanks again for such details :)
 > + * not support it, or the usual negative errno.
 > + */
 > +int
-> +dax_zeroinit_range(struct inode *inode, loff_t pos, u64 len,
+> +iomap_zeroout_range(struct inode *inode, loff_t pos, u64 len,
 > +		   const struct iomap_ops *ops)
 > +{
 > +	struct iomap_iter iter = {
@@ -223,39 +168,28 @@ very well crafted to me. Thanks again for such details :)
 > +	};
 > +	int ret;
 > +
-> +	if (!IS_DAX(inode))
+> +	if (IS_DAX(inode))
 > +		return -EINVAL;
 > +	if (pos + len > i_size_read(inode))
 > +		return -EINVAL;
 > +
 > +	while ((ret = iomap_iter(&iter, ops)) > 0)
-> +		iter.processed = dax_zeroinit_iter(&iter);
+> +		iter.processed = iomap_zeroinit_iter(&iter);
 > +	return ret;
 > +}
-> +EXPORT_SYMBOL_GPL(dax_zeroinit_range);
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index 2619d94c308d..3c873f7c35ba 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -129,6 +129,8 @@ struct page *dax_layout_busy_page(struct address_space *mapping);
->  struct page *dax_layout_busy_page_range(struct address_space *mapping, loff_t start, loff_t end);
->  dax_entry_t dax_lock_page(struct page *page);
->  void dax_unlock_page(struct page *page, dax_entry_t cookie);
-> +int dax_zeroinit_range(struct inode *inode, loff_t pos, u64 len,
-> +			const struct iomap_ops *ops);
->  #else
->  #define generic_fsdax_supported		NULL
+> +EXPORT_SYMBOL_GPL(iomap_zeroout_range);
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 24f8489583ca..f4b9c6698388 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -339,6 +339,9 @@ struct iomap_dio *__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  ssize_t iomap_dio_complete(struct iomap_dio *dio);
+>  int iomap_dio_iopoll(struct kiocb *kiocb, bool spin);
 >
-> @@ -174,6 +176,11 @@ static inline dax_entry_t dax_lock_page(struct page *page)
->  static inline void dax_unlock_page(struct page *page, dax_entry_t cookie)
->  {
->  }
-> +static inline int dax_zeroinit_range(struct inode *inode, loff_t pos, u64 len,
-> +		const struct iomap_ops *ops)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
->  #endif
->
->  #if IS_ENABLED(CONFIG_DAX)
+> +int iomap_zeroout_range(struct inode *inode, loff_t pos, u64 len,
+> +		const struct iomap_ops *ops);
+> +
+>  #ifdef CONFIG_SWAP
+>  struct file;
+>  struct swap_info_struct;
 >
