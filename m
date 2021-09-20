@@ -2,104 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 888A7411268
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 11:58:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C126C411284
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 12:03:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232993AbhITJ7Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Sep 2021 05:59:25 -0400
-Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:56407 "EHLO
-        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235312AbhITJ7L (ORCPT
+        id S235044AbhITKFC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Sep 2021 06:05:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46378 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234845AbhITKFB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Sep 2021 05:59:11 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id D8CF232025CE;
-        Mon, 20 Sep 2021 05:57:44 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 20 Sep 2021 05:57:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canishe.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=gZ88mz0rW7L9h
-        2hm6YlM1b+UyvR0muQml9/fmkII5yI=; b=a0CWsQ1fs9Tfzhi2KKrT4c7TfO2Nn
-        mu0866qyaweF3e8rHiGIJ4DOJWL3UdegrdrwEjkjXePMtZGiuGUqrHCTXyi5C1um
-        Mq1NKp63aRqyC4yrVkMo6/tazKCG8OUNs/sc4CkaRSLUti0iVbU417WON2viy8Y1
-        rn3Vjwtnp2qevleQvLmNEV+Z6VdeAsuharbJzsDF5cRgFWD5a7DSWDH6fBCECcAd
-        UtzslhY/RgZJ8PJl3W7aC2eUHoNNJd7rhWpiAufdKjsRfDOWkQWlkW43MlXXNVDS
-        +AejGCBLjWX0x36K4BezBpHk1oR7vGNn5n3iJ87DMSHhQjVk+ySSk1/9w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=gZ88mz0rW7L9h2hm6YlM1b+UyvR0muQml9/fmkII5yI=; b=s6XSY8wM
-        nLFqb8CVtEpVYEpXnp7zlBhtpB9lXgmYVmCkBEM81GGHUQeyAt4NQGKnY0jB7ay6
-        0EiDIpbzC4CaG/rMaZ/N9UdZ/iXqjvDUNt2L4rQAIBJ1MbkLYEJDSJzT0Uhc7Tb4
-        nd5m+unopTE0k8bW87R7UTQmqlbrHr+Bm19mY+WP6Vsk8xJciVufV1iFDBxu0N3s
-        U/gHfUmebmIvBy5MhqLUyEW5tNICtLXpulq2uXkBpj3QKlnxYMjPdCLHPxRQM2A4
-        Nt2kUwLY2PdzsZ/gITWsHYooCgSLxLWOEP7oArcA5CDaFCGKDRg0RxbGfkXmg4yn
-        NRS7Bz9O5VVxxA==
-X-ME-Sender: <xms:GFtIYTi6caTFEQrOj_F8LxLWbFHnmg_Gd-pKjOXP1Vx5r1yynOEqPw>
-    <xme:GFtIYQC2ULXnFX6zPck6D_hkIONzsDUiwKTULB_r03pc1gd4sbSTBvGvCF9TFaJl9
-    Dd41RNHPQB-1KXw1w>
-X-ME-Received: <xmr:GFtIYTHWQXa_7a1xtk4PCV5yX2s2eiCGjtxGjIUbkjUqU6u3HTKcIFDk_SD13pukPXvUbfeaKk8U51i4mwRa5jCyyUBsHxw75A-zWrxRJiZCrbE0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudeivddgvddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefirggvlhgr
-    nhcuufhtvggvlhgvuceoghgsshestggrnhhishhhvgdrtghomheqnecuggftrfgrthhtvg
-    hrnhepuefhleeuffdulefhteehheffieekuddvleejieeliefhieeujefgudeujeehkedv
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghgssh
-    estggrnhhishhhvgdrtghomh
-X-ME-Proxy: <xmx:GFtIYQSlh7iQm9W7SrJ5dGVksKpOGoZnihKDDYhUMvkrk3-zh75eWg>
-    <xmx:GFtIYQyf9kMacgIuU5IYxjb4N1O5fBIeVZrXHRhkHt-G4MLwG2ngfg>
-    <xmx:GFtIYW4c3Qq9XHNBq4pzjuUwd2OhYCavzUONsL_UzHZ5iiprZe3D4g>
-    <xmx:GFtIYas-XItMMzo1CpAwCy1O68XOA9jFoXUOfQkUpyUIg_7mDpx1WA>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 20 Sep 2021 05:57:43 -0400 (EDT)
-From:   Gaelan Steele <gbs@canishe.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-man@vger.kernel.org,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, Gaelan Steele <gbs@canishe.com>
-Subject: [PATCH 2/2] fs: move dirent.h into uapi
-Date:   Mon, 20 Sep 2021 10:56:49 +0100
-Message-Id: <20210920095649.28600-2-gbs@canishe.com>
-X-Mailer: git-send-email 2.30.1 (Apple Git-130)
-In-Reply-To: <20210920095649.28600-1-gbs@canishe.com>
-References: <20210920095649.28600-1-gbs@canishe.com>
+        Mon, 20 Sep 2021 06:05:01 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3C5EC061762
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Sep 2021 03:03:34 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id b15so47054696lfe.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Sep 2021 03:03:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=JsflVfkQxQB4N10JR68gBY89s+ETKAkmb+oupF+vnMo=;
+        b=27IEOpveeqqFcAi832Br+8AG9JKChmAv7tTrVV950tvPtiqpC6Psrah4+xSVxUaJxd
+         OOKtThwEUavPn3JhVr2Nbj+N8aBC33lIuEyu7BINU8GGBzDYDijug74t6wde0vhp211R
+         nh8mUkfErVn8ZmBK+CwKhwa32vtsfl1O66XS3KXTuYhc7Z/bO5ah2+kW6ZGIZmrjVcuB
+         ZbTp8f7Qn6ilulvkGgc6YeIJPW/u69ubD25NrfyFd4Ob2zZuG823H6yGMXImEd+b/4dx
+         dK4EFgA73SkzK2t9nDI6500OlEpBG2oIGrQj15vChjV8Balbp1ESoqCBKzHTxKteSZ3g
+         ERTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=JsflVfkQxQB4N10JR68gBY89s+ETKAkmb+oupF+vnMo=;
+        b=hxEslOQNH66DpfZZDaPVaf/O0+fsL5C1jcwPn02xg2hS/DNmDkihyRCy5laH9bfksr
+         r+/ker4YN8PO069T9E5AF0jDiZYknRGZD7/uvaK42RJMGVbrZFB3Laat9JxmjbdPUmPN
+         CDnyXFBQP111eseU2Vzeag3N8YwSH8iKT4qggIzHDeMP5RdzKiEf1p2EmIZz1B2C6TyP
+         PUDgu/5AJjmFnmb4PEroRChyL9HKbYyTPwKq5HkJEHEpCeqSOgPprfYNJlBDsQpPcFBG
+         aaU8cGbuGkpdbMOlVRXcyCylmzPHYIUL/u8Dbh9+OTXzs8IB4r8v7qYDdntXyFuND3HX
+         kENQ==
+X-Gm-Message-State: AOAM533s5EKchJ94en17nnf9v6EgN6tSUJjhrBxWFp8TWGadaW1GtguZ
+        wkgYovgfxq1jOuhoEKWsfzxN1g==
+X-Google-Smtp-Source: ABdhPJwWeA3bEQ95y2LO86pVxC5P5j6PanypuMtnhgm81tBPbpzuBTk2e2kpj/5MX7P31r1CnCOLUQ==
+X-Received: by 2002:ac2:5d63:: with SMTP id h3mr18425134lft.278.1632132213126;
+        Mon, 20 Sep 2021 03:03:33 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id i4sm1227194lfo.13.2021.09.20.03.03.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Sep 2021 03:03:32 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 7D479103053; Mon, 20 Sep 2021 13:03:32 +0300 (+03)
+Date:   Mon, 20 Sep 2021 13:03:32 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Folio discussion recap
+Message-ID: <20210920100332.gd4a2c3aza3rufk5@box.shutemov.name>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YTu9HIu+wWWvZLxp@moria.home.lan>
+ <YUIT2/xXwvZ4IErc@cmpxchg.org>
+ <20210916025854.GE34899@magnolia>
+ <YUN2vokEM8wgASk8@cmpxchg.org>
+ <20210917052440.GJ1756565@dread.disaster.area>
+ <YUTC6O0w3j7i8iDm@cmpxchg.org>
+ <20210917205735.tistsacwwzkcdklx@box.shutemov.name>
+ <YUUhnHrWUeYebhPa@cmpxchg.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YUUhnHrWUeYebhPa@cmpxchg.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The structures defined in dirent.h are part of Linux's uAPI, but
-it was previously necessary for user code to duplicate the struct
-definitions themselves. Let's make them public.
+On Fri, Sep 17, 2021 at 07:15:40PM -0400, Johannes Weiner wrote:
+> The code I'm specifically referring to here is the conversion of some
+> code that encounters both anon and file pages - swap.c, memcontrol.c,
+> workingset.c, and a few other places. It's a small part of the folio
+> patches, but it's a big deal for the MM code conceptually.
 
-Signed-off-by: Gaelan Steele <gbs@canishe.com>
----
- include/{ => uapi}/linux/dirent.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
- rename include/{ => uapi}/linux/dirent.h (66%)
+Hard to say without actually trying, but my worry here that this may lead
+to code duplication to separate file and anon code path. I donno.
 
-diff --git a/include/linux/dirent.h b/include/uapi/linux/dirent.h
-similarity index 66%
-rename from include/linux/dirent.h
-rename to include/uapi/linux/dirent.h
-index 48e119dd3694..99293c651612 100644
---- a/include/linux/dirent.h
-+++ b/include/uapi/linux/dirent.h
-@@ -1,6 +1,6 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _LINUX_DIRENT_H
--#define _LINUX_DIRENT_H
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef _UAPI_LINUX_DIRENT_H
-+#define _UAPI_LINUX_DIRENT_H
- 
- struct linux_dirent {
- 	unsigned long	d_ino;
 -- 
-2.30.1 (Apple Git-130)
-
+ Kirill A. Shutemov
