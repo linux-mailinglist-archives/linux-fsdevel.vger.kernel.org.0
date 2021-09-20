@@ -2,132 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B43E6410EDD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 06:03:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82994410FDC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 09:09:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229881AbhITEFI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Sep 2021 00:05:08 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:39656 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229517AbhITEFI (ORCPT
+        id S234626AbhITHKt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Sep 2021 03:10:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:50322 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230151AbhITHKq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Sep 2021 00:05:08 -0400
-Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id B46AA88257E;
-        Mon, 20 Sep 2021 14:03:37 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1mSAWm-00EWYg-DZ; Mon, 20 Sep 2021 14:03:36 +1000
-Date:   Mon, 20 Sep 2021 14:03:36 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        syzbot <syzbot+d6c75f383e01426a40b4@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, Waiman Long <llong@redhat.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, hch@lst.de
-Subject: Re: [syzbot] WARNING in __init_work
-Message-ID: <20210920040336.GV2361455@dread.disaster.area>
-References: <000000000000423e0a05cc0ba2c4@google.com>
- <20210915161457.95ad5c9470efc70196d48410@linux-foundation.org>
- <163175937144.763609.2073508754264771910@swboyd.mtv.corp.google.com>
- <87sfy07n69.ffs@tglx>
+        Mon, 20 Sep 2021 03:10:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1632121759;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=f8Su88cSUt3cWFAxv1X533at/dJ+/eptY58lpzCVadk=;
+        b=S/u2VKSkTY/B2OwkmAmHpLtbh56rmDbh9n/oiCsT8CIMJJLU+3y0e7pwcbVcKrTEQImdBr
+        sFlrfJNu9sDy1iEGgJJlpYzk8n+iwNAwWiIk0SKsYbZvju4ZE1bD3FPFESHcp7sgPgzdxi
+        lNvWZOg03t+bb7UAiZ/RB3+07Y0cNiA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-182-IjhP14GGP6mmvqkXZ7XAvw-1; Mon, 20 Sep 2021 03:09:16 -0400
+X-MC-Unique: IjhP14GGP6mmvqkXZ7XAvw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F305E802C98;
+        Mon, 20 Sep 2021 07:09:14 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 813F6101E87D;
+        Mon, 20 Sep 2021 07:09:13 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+        Markus Suvanto <markus.suvanto@gmail.com>,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] afs: Fixes for 3rd party-induced data corruption
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87sfy07n69.ffs@tglx>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Tu+Yewfh c=1 sm=1 tr=0
-        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
-        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=hSkVLCK3AAAA:8 a=7-415B0cAAAA:8
-        a=TsGWvwOLv-xfsXIyvSQA:9 a=CjuIK1q_8ugA:10 a=cQPPKAXgyycSBL8etih5:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2718619.1632121752.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Mon, 20 Sep 2021 08:09:12 +0100
+Message-ID: <2718620.1632121752@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Sep 19, 2021 at 02:41:18PM +0200, Thomas Gleixner wrote:
-> Stephen,
-> 
-> On Wed, Sep 15 2021 at 19:29, Stephen Boyd wrote:
-> > Quoting Andrew Morton (2021-09-15 16:14:57)
-> >> On Wed, 15 Sep 2021 10:00:22 -0700 syzbot <syzbot+d6c75f383e01426a40b4@syzkaller.appspotmail.com> wrote:
-> >> > 
-> >> > ODEBUG: object ffffc90000fd8bc8 is NOT on stack ffffc900022a0000, but annotated.
-> >
-> > This is saying that the object was supposed to be on the stack because
-> > debug objects was told that, but it isn't on the stack per the
-> > definition of object_is_on_stack().
-> 
-> Correct.
-> 
-> >> >  <IRQ>
-> >> >  __init_work+0x2d/0x50 kernel/workqueue.c:519
-> >> >  synchronize_rcu_expedited+0x392/0x620 kernel/rcu/tree_exp.h:847
-> >
-> > This line looks like
-> >
-> >   INIT_WORK_ONSTACK(&rew.rew_work, wait_rcu_exp_gp);
-> >
-> > inside synchronize_rcu_expedited(). The rew structure is declared on the
-> > stack
-> >
-> >    struct rcu_exp_work rew;
-> 
-> Yes, but object_is_on_stack() checks for task stacks only. And the splat
-> here is entirely correct:
-> 
-> softirq()
->   ...
->   synchronize_rcu_expedited()
->      INIT_WORK_ONSTACK()
->      queue_work()
->      wait_event()
-> 
-> is obviously broken. You cannot wait in soft irq context.
-> 
-> synchronize_rcu_expedited() should really have a might_sleep() at the
-> beginning to make that more obvious.
-> 
-> The splat is clobbered btw:
-> 
-> [  416.415111][    C1] ODEBUG: object ffffc90000fd8bc8 is NOT on stack ffffc900022a0000, but annotated.
-> [  416.423424][T14850] truncated
-> [  416.431623][    C1] ------------[ cut here ]------------
-> [  416.438913][T14850] ------------[ cut here ]------------
-> [  416.440189][    C1] WARNING: CPU: 1 PID: 2971 at lib/debugobjects.c:548 __debug_object_init.cold+0x252/0x2e5
-> [  416.455797][T14850] refcount_t: addition on 0; use-after-free.
-> 
-> So there is a refcount_t violation as well.
-> 
-> Nevertheless a hint for finding the culprit is obviously here in that
-> call chain:
-> 
-> >> >  bdi_remove_from_list mm/backing-dev.c:938 [inline]
-> >> >  bdi_unregister+0x177/0x5a0 mm/backing-dev.c:946
-> >> >  release_bdi+0xa1/0xc0 mm/backing-dev.c:968
-> >> >  kref_put include/linux/kref.h:65 [inline]
-> >> >  bdi_put+0x72/0xa0 mm/backing-dev.c:976
-> >> >  bdev_free_inode+0x116/0x220 fs/block_dev.c:819
-> >> >  i_callback+0x3f/0x70 fs/inode.c:224
-> 
-> The inode code uses RCU for freeing an inode object which then ends up
-> calling bdi_put() and subsequently in synchronize_rcu_expedited().
+Hi Linus,
 
-Commit 889c05cc5834 ("block: ensure the bdi is freed after
-inode_detach_wb") might be a good place to start looking here. It
-moved the release of the bdi from ->evict context to the RCU freeing
-of the blockdev inode...
+Can you pull these fixes for AFS that can cause data corruption due to
+interaction with another client modifying data cached locally please[1]?
 
-Christoph?
+ (1) When d_revalidating a dentry, don't look at the inode to which it
+     points.  Only check the directory to which the dentry belongs.  This
+     was confusing things and causing the silly-rename cleanup code to
+     remove the file now at the dentry of a file that got deleted.
 
-Cheers,
+ (2) Fix mmap data coherency.  When a callback break is received that
+     relates to a file that we have cached, the data content may have been
+     changed (there are other reasons, such as the user's rights having
+     been changed).  However, we're checking it lazily, only on entry to
+     the kernel, which doesn't happen if we have a writeable shared mapped
+     page on that file.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+     We make the kernel keep track of mmapped files and clear all PTEs
+     mapping to that file as soon as the callback comes in by calling
+     unmap_mapping_pages() (we don't necessarily want to zap the
+     pagecache).  This causes the kernel to be reentered when userspace
+     tries to access the mmapped address range again - and at that point w=
+e
+     can query the server and, if we need to, zap the page cache.
+
+     Ideally, I would check each file at the point of notification, but
+     that involves poking the server[*] - which is holding an exclusive
+     lock on the vnode it is changing, waiting for all the clients it
+     notified to reply.  This could then deadlock against the server.
+     Further, invalidating the pagecache might call ->launder_page(), whic=
+h
+     would try to write to the file, which would definitely deadlock.  (AF=
+S
+     doesn't lease file access).
+
+     [*] Checking to see if the file content has changed is a matter of
+     	 comparing the current data version number, but we have to ask the
+     	 server for that.  We also need to get a new callback promise and
+     	 we need to poke the server for that too.
+
+ (3) Add some more points at which the inode is validated, since we're
+     doing it lazily, notably in ->read_iter() and ->page_mkwrite(), but
+     also when performing some directory operations.
+
+     Ideally, checking in ->read_iter() would be done in some derivation o=
+f
+     filemap_read().  If we're going to call the server to read the file,
+     then we get the file status fetch as part of that.
+
+ (4) The above is now causing us to make a lot more calls to afs_validate(=
+)
+     to check the inode - and afs_validate() takes the RCU read lock each
+     time to make a quick check (ie. afs_check_validity()).  This is
+     entirely for the purpose of checking cb_s_break to see if the server
+     we're using reinitialised its list of callbacks - however this isn't =
+a
+     very common event, so most of the time we're taking this needlessly.
+
+     Add a new cell-wide counter to count the number of reinitialisations
+     done by any server and check that - and only if that changes, take th=
+e
+     RCU read lock and check the server list (the server list may change,
+     but the cell a file is part of won't).
+
+ (5) Don't update vnode->cb_s_break and ->cb_v_break inside the validity
+     checking loop.  The cb_lock is done with read_seqretry, so we might g=
+o
+     round the loop a second time after resetting those values - and that
+     could cause someone else checking validity to miss something (I
+     think).
+
+Also included are patches for fixes for some bugs encountered whilst
+debugging this.
+
+ (6) Fix a leak of afs_read objects and fix a leak of keys hidden by that.
+
+ (7) Fix a leak of pages that couldn't be added to extend a writeback.
+
+ (8) Fix the maintenance of i_blocks when i_size is changed by a local
+     write or a local dir edit[**].
+
+     [**] Would you prefer this patch separately to the other patches?
+
+David
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D214217 [1]
+Link: https://lore.kernel.org/r/163111665183.283156.17200205573146438918.s=
+tgit@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r/163113612442.352844.11162345591911691150.s=
+tgit@warthog.procyon.org.uk/ # i_blocks patch
+---
+
+The following changes since commit b91db6a0b52e019b6bdabea3f1dbe36d85c7e52=
+c:
+
+  Merge tag 'for-5.15/io_uring-vfs-2021-08-30' of git://git.kernel.dk/linu=
+x-block (2021-08-30 19:39:59 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
+/afs-fixes-20210913
+
+for you to fetch changes up to 9d37e1cab2a9d2cee2737973fa455e6f89eee46a:
+
+  afs: Fix updating of i_blocks on file/dir extension (2021-09-13 09:14:21=
+ +0100)
+
+----------------------------------------------------------------
+AFS fixes
+
+----------------------------------------------------------------
+David Howells (8):
+      afs: Fix missing put on afs_read objects and missing get on the key =
+therein
+      afs: Fix page leak
+      afs: Add missing vnode validation checks
+      afs: Fix incorrect triggering of sillyrename on 3rd-party invalidati=
+on
+      afs: Fix mmap coherency vs 3rd-party changes
+      afs: Try to avoid taking RCU read lock when checking vnode validity
+      afs: Fix corruption in reads at fpos 2G-4G from an OpenAFS server
+      afs: Fix updating of i_blocks on file/dir extension
+
+ fs/afs/callback.c          | 44 ++++++++++++++++++++-
+ fs/afs/cell.c              |  2 +
+ fs/afs/dir.c               | 57 +++++++++------------------
+ fs/afs/dir_edit.c          |  4 +-
+ fs/afs/file.c              | 86 ++++++++++++++++++++++++++++++++++++++--
+ fs/afs/fs_probe.c          |  8 +++-
+ fs/afs/fsclient.c          | 31 +++++++++------
+ fs/afs/inode.c             | 98 ++++++++++++++++++++---------------------=
+-----
+ fs/afs/internal.h          | 21 ++++++++++
+ fs/afs/protocol_afs.h      | 15 +++++++
+ fs/afs/protocol_yfs.h      |  6 +++
+ fs/afs/rotate.c            |  1 +
+ fs/afs/server.c            |  2 +
+ fs/afs/super.c             |  1 +
+ fs/afs/write.c             | 29 +++++++++++---
+ include/trace/events/afs.h |  8 +++-
+ mm/memory.c                |  1 +
+ 17 files changed, 294 insertions(+), 120 deletions(-)
+ create mode 100644 fs/afs/protocol_afs.h
+
