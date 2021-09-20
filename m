@@ -2,126 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E8CB1410E77
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 04:45:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B43E6410EDD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 06:03:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232143AbhITCq3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Sep 2021 22:46:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34400 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231365AbhITCq3 (ORCPT
+        id S229881AbhITEFI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Sep 2021 00:05:08 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:39656 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229517AbhITEFI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Sep 2021 22:46:29 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29A29C061574
-        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Sep 2021 19:45:03 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id g8so55290528edt.7
-        for <linux-fsdevel@vger.kernel.org>; Sun, 19 Sep 2021 19:45:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=3Ifk3gkF4EZgOSOMd5BgLpaHigpIrEHERLHWxDsnhms=;
-        b=LVf1yeUaOvahbvnAr8QSl4J6ZtcbeULCwPTL7dt53FaJqSzp6G2JD/v8RAm+KDo8sc
-         1qAdKYmaeRzsm7I3CY1R1cnpCx+XM862SyESXguq2cv13yt5vMg1VMR4JFhGE4vfhoKk
-         w8FVR6rMzHt8XvuNyTW6Ztp7bihmi8Iypi1Iisxahzi1iAxmuj1yVBWgavP0uthDHohY
-         lvKtLRtrDQLxh5uiOZNgN/MaR4JIYdgjHT8oMYOZiABn2JTBBFrxq0vBroAsfzZG0X3A
-         o05l6ouifQ63PVw5owy9FwvYWmqGfcvrcVTtTDeJkvIMcYW7WHBeZl73sqRhvcmhAGOR
-         DzCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=3Ifk3gkF4EZgOSOMd5BgLpaHigpIrEHERLHWxDsnhms=;
-        b=ZAB0g2vfBgp4cFl7iWvqc00RpmgLhGBFiAwTNHA4QJe8LwwcO3PJmOVT6QHgHyx0u9
-         1AA6dud2cMIRFVHLaAejc7HYKXRpALz7yPy1m4Au0w3h4mnLUqTF0iMfh4NSDY4RmrmV
-         5UzFWoT00DiykBWguoTx+S+8dlCAG2ht2U+f5nqYClZzfXRBEE4WLekqk8z/sbxMt4vy
-         vGdiEl40SzSAw8JcxFVrA5C4SXmaiZjmFZNNi/jg/JFtG+vfFyYeJBNj9tSMM6sXycXx
-         uhkeZLLKP2DvlDTHZb2ZQl13YpGO4rKWZvVA7yaxArb/5Nm1P6zsrAeR+lbE6Mr+buE2
-         KIFA==
-X-Gm-Message-State: AOAM533BvMIwjSjuZ6RpXk5ZcxPG05x2+HuakVzV+bWLs2EJDMt7DzVh
-        mDLN3XT3cNT5neZnzXCfxJLpz2prkcfsRbPrF00Z
-X-Google-Smtp-Source: ABdhPJw2UlastqklS4OK5FaL+3CWPBvyDVpEb1e1t4MZvuTxLVTwSniWgJwO2vosjrYuK5Il/R6vvtG2InMyHm29HSQ=
-X-Received: by 2002:a50:cf48:: with SMTP id d8mr16576051edk.293.1632105901532;
- Sun, 19 Sep 2021 19:45:01 -0700 (PDT)
+        Mon, 20 Sep 2021 00:05:08 -0400
+Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id B46AA88257E;
+        Mon, 20 Sep 2021 14:03:37 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1mSAWm-00EWYg-DZ; Mon, 20 Sep 2021 14:03:36 +1000
+Date:   Mon, 20 Sep 2021 14:03:36 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        syzbot <syzbot+d6c75f383e01426a40b4@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, Waiman Long <llong@redhat.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, hch@lst.de
+Subject: Re: [syzbot] WARNING in __init_work
+Message-ID: <20210920040336.GV2361455@dread.disaster.area>
+References: <000000000000423e0a05cc0ba2c4@google.com>
+ <20210915161457.95ad5c9470efc70196d48410@linux-foundation.org>
+ <163175937144.763609.2073508754264771910@swboyd.mtv.corp.google.com>
+ <87sfy07n69.ffs@tglx>
 MIME-Version: 1.0
-References: <163172413301.88001.16054830862146685573.stgit@olly>
-In-Reply-To: <163172413301.88001.16054830862146685573.stgit@olly>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 19 Sep 2021 22:44:50 -0400
-Message-ID: <CAHC9VhSn3pvUgUo5_T=TfiBXw3=f6Pn6GaAUVS=jfg-Kfr_ZEw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/8] Add LSM access controls and auditing to io_uring
-To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sfy07n69.ffs@tglx>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Tu+Yewfh c=1 sm=1 tr=0
+        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
+        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=hSkVLCK3AAAA:8 a=7-415B0cAAAA:8
+        a=TsGWvwOLv-xfsXIyvSQA:9 a=CjuIK1q_8ugA:10 a=cQPPKAXgyycSBL8etih5:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 15, 2021 at 12:49 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> A quick update to the v3 patchset with a small change to the audit
-> record format (remove the audit login ID on io_uring records) and
-> a subject line fix on the Smack patch.  I also caught a few minor
-> things in the code comments and fixed those up.  All told, nothing
-> significant but I really dislike merging patches that haven't hit
-> the list so here ya go ...
->
-> As a reminder, I'm planning to merge these in the selinux/next tree
-> later this week and it would be *really* nice to get some ACKs from
-> the io_uring folks; this patchset is implementing the ideas we all
-> agreed to back in the v1 patchset so there shouldn't be anything
-> surprising in here.
->
-> For reference the v3 patchset can be found here:
-> https://lore.kernel.org/linux-security-module/163159032713.470089.11728103630366176255.stgit@olly/T/#t
->
-> Those who would prefer to fetch these patches directly from git can
-> do so using the tree/branch below:
-> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
->  (checkout branch "working-io_uring")
->
-> ---
->
-> Casey Schaufler (1):
->       Smack: Brutalist io_uring support
->
-> Paul Moore (7):
->       audit: prepare audit_context for use in calling contexts beyond syscalls
->       audit,io_uring,io-wq: add some basic audit support to io_uring
->       audit: add filtering for io_uring records
->       fs: add anon_inode_getfile_secure() similar to anon_inode_getfd_secure()
->       io_uring: convert io_uring to the secure anon inode interface
->       lsm,io_uring: add LSM hooks to io_uring
->       selinux: add support for the io_uring access controls
->
->
->  fs/anon_inodes.c                    |  29 ++
->  fs/io-wq.c                          |   4 +
->  fs/io_uring.c                       |  69 +++-
->  include/linux/anon_inodes.h         |   4 +
->  include/linux/audit.h               |  26 ++
->  include/linux/lsm_hook_defs.h       |   5 +
->  include/linux/lsm_hooks.h           |  13 +
->  include/linux/security.h            |  16 +
->  include/uapi/linux/audit.h          |   4 +-
->  kernel/audit.h                      |   7 +-
->  kernel/audit_tree.c                 |   3 +-
->  kernel/audit_watch.c                |   3 +-
->  kernel/auditfilter.c                |  15 +-
->  kernel/auditsc.c                    | 469 ++++++++++++++++++++++------
->  security/security.c                 |  12 +
->  security/selinux/hooks.c            |  34 ++
->  security/selinux/include/classmap.h |   2 +
->  security/smack/smack_lsm.c          |  46 +++
->  18 files changed, 646 insertions(+), 115 deletions(-)
+On Sun, Sep 19, 2021 at 02:41:18PM +0200, Thomas Gleixner wrote:
+> Stephen,
+> 
+> On Wed, Sep 15 2021 at 19:29, Stephen Boyd wrote:
+> > Quoting Andrew Morton (2021-09-15 16:14:57)
+> >> On Wed, 15 Sep 2021 10:00:22 -0700 syzbot <syzbot+d6c75f383e01426a40b4@syzkaller.appspotmail.com> wrote:
+> >> > 
+> >> > ODEBUG: object ffffc90000fd8bc8 is NOT on stack ffffc900022a0000, but annotated.
+> >
+> > This is saying that the object was supposed to be on the stack because
+> > debug objects was told that, but it isn't on the stack per the
+> > definition of object_is_on_stack().
+> 
+> Correct.
+> 
+> >> >  <IRQ>
+> >> >  __init_work+0x2d/0x50 kernel/workqueue.c:519
+> >> >  synchronize_rcu_expedited+0x392/0x620 kernel/rcu/tree_exp.h:847
+> >
+> > This line looks like
+> >
+> >   INIT_WORK_ONSTACK(&rew.rew_work, wait_rcu_exp_gp);
+> >
+> > inside synchronize_rcu_expedited(). The rew structure is declared on the
+> > stack
+> >
+> >    struct rcu_exp_work rew;
+> 
+> Yes, but object_is_on_stack() checks for task stacks only. And the splat
+> here is entirely correct:
+> 
+> softirq()
+>   ...
+>   synchronize_rcu_expedited()
+>      INIT_WORK_ONSTACK()
+>      queue_work()
+>      wait_event()
+> 
+> is obviously broken. You cannot wait in soft irq context.
+> 
+> synchronize_rcu_expedited() should really have a might_sleep() at the
+> beginning to make that more obvious.
+> 
+> The splat is clobbered btw:
+> 
+> [  416.415111][    C1] ODEBUG: object ffffc90000fd8bc8 is NOT on stack ffffc900022a0000, but annotated.
+> [  416.423424][T14850] truncated
+> [  416.431623][    C1] ------------[ cut here ]------------
+> [  416.438913][T14850] ------------[ cut here ]------------
+> [  416.440189][    C1] WARNING: CPU: 1 PID: 2971 at lib/debugobjects.c:548 __debug_object_init.cold+0x252/0x2e5
+> [  416.455797][T14850] refcount_t: addition on 0; use-after-free.
+> 
+> So there is a refcount_t violation as well.
+> 
+> Nevertheless a hint for finding the culprit is obviously here in that
+> call chain:
+> 
+> >> >  bdi_remove_from_list mm/backing-dev.c:938 [inline]
+> >> >  bdi_unregister+0x177/0x5a0 mm/backing-dev.c:946
+> >> >  release_bdi+0xa1/0xc0 mm/backing-dev.c:968
+> >> >  kref_put include/linux/kref.h:65 [inline]
+> >> >  bdi_put+0x72/0xa0 mm/backing-dev.c:976
+> >> >  bdev_free_inode+0x116/0x220 fs/block_dev.c:819
+> >> >  i_callback+0x3f/0x70 fs/inode.c:224
+> 
+> The inode code uses RCU for freeing an inode object which then ends up
+> calling bdi_put() and subsequently in synchronize_rcu_expedited().
 
-With no serious objections or outstanding comments, I just merged
-these patches into selinux/next.  If anyone has any follow-on patches
-please base them against selinux/next, thanks.
+Commit 889c05cc5834 ("block: ensure the bdi is freed after
+inode_detach_wb") might be a good place to start looking here. It
+moved the release of the bdi from ->evict context to the RCU freeing
+of the blockdev inode...
 
+Christoph?
+
+Cheers,
+
+Dave.
 -- 
-paul moore
-www.paul-moore.com
+Dave Chinner
+david@fromorbit.com
