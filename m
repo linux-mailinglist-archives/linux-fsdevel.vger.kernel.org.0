@@ -2,61 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26EC6411469
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 14:28:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 444214114AA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 14:39:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238122AbhITMaS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Sep 2021 08:30:18 -0400
-Received: from verein.lst.de ([213.95.11.211]:51189 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233543AbhITMaR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Sep 2021 08:30:17 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id C5A8268AFE; Mon, 20 Sep 2021 14:28:46 +0200 (CEST)
-Date:   Mon, 20 Sep 2021 14:28:46 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        syzbot <syzbot+d6c75f383e01426a40b4@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, Waiman Long <llong@redhat.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, hch@lst.de
-Subject: Re: [syzbot] WARNING in __init_work
-Message-ID: <20210920122846.GA16661@lst.de>
-References: <000000000000423e0a05cc0ba2c4@google.com> <20210915161457.95ad5c9470efc70196d48410@linux-foundation.org> <163175937144.763609.2073508754264771910@swboyd.mtv.corp.google.com> <87sfy07n69.ffs@tglx> <20210920040336.GV2361455@dread.disaster.area>
+        id S237937AbhITMk5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Sep 2021 08:40:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53944 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237679AbhITMky (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Sep 2021 08:40:54 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27ABFC061574;
+        Mon, 20 Sep 2021 05:39:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Wo+vAVxsvvL69J6kBhb2k3hYCVmdEGu6z6CieNSf45o=; b=Atewm4NOs4/l+DuGNUyY53AjHy
+        70TO3+51yjvHj0182A4vAxE9+LFDnm5Vw/mGE4zoxkJ6WR0ig7YE9ZURNu8uOV0+zY2joRoYXQm1D
+        7NyF5YMWFBsKUEMXHFTq2VB26z+A0I5DskYpuK/zRRJB+vnqEPUF0S9VtIITY8kLFVjkimCmHVcfL
+        tSb6zp1KE8n9or8xF+4hAI+G0PcKd8oRuw4JYZ05cXelw/f3YEWC2+JszJohc/QHcLCYrY2i1BZC6
+        tEdobQre2gxMelJ4E/azkUcwwoHAgk9JVNCXKkmQ2ZmKs4Lmlp9/OBGYDsYJ15Co7FV3eIcLC+Vrs
+        tksAiKmA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mSIYM-002f95-A3; Mon, 20 Sep 2021 12:37:50 +0000
+Date:   Mon, 20 Sep 2021 13:37:46 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Steve French <sfrench@samba.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        v9fs-developer@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] fscache, 9p, afs, cifs, nfs: Deal with some warnings
+ from W=1
+Message-ID: <YUiAmnMV7+fprNC1@casper.infradead.org>
+References: <163214005516.2945267.7000234432243167892.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210920040336.GV2361455@dread.disaster.area>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <163214005516.2945267.7000234432243167892.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 20, 2021 at 02:03:36PM +1000, Dave Chinner wrote:
-> > >> >  bdi_remove_from_list mm/backing-dev.c:938 [inline]
-> > >> >  bdi_unregister+0x177/0x5a0 mm/backing-dev.c:946
-> > >> >  release_bdi+0xa1/0xc0 mm/backing-dev.c:968
-> > >> >  kref_put include/linux/kref.h:65 [inline]
-> > >> >  bdi_put+0x72/0xa0 mm/backing-dev.c:976
-> > >> >  bdev_free_inode+0x116/0x220 fs/block_dev.c:819
-> > >> >  i_callback+0x3f/0x70 fs/inode.c:224
-> > 
-> > The inode code uses RCU for freeing an inode object which then ends up
-> > calling bdi_put() and subsequently in synchronize_rcu_expedited().
-> 
-> Commit 889c05cc5834 ("block: ensure the bdi is freed after
-> inode_detach_wb") might be a good place to start looking here. It
-> moved the release of the bdi from ->evict context to the RCU freeing
-> of the blockdev inode...
+On Mon, Sep 20, 2021 at 01:14:15PM +0100, David Howells wrote:
+> +++ b/fs/9p/vfs_addr.c
+> @@ -88,7 +88,7 @@ static const struct netfs_read_request_ops v9fs_req_ops = {
+>  
+>  /**
+>   * v9fs_vfs_readpage - read an entire page in from 9P
+> - * @filp: file being read
+> + * @file: file being read
+>   * @page: structure to page
+>   *
+>   */
 
-Well, the block code already does a bdi_unregister in del_gendisk.
-So if we end up freeing the whole device bdev with a registered bdi
-something is badly going wrong.  Unfortunately the log in this report
-isn't much help on how we got there.  IIRC syzbot will eventually spew
-out a reproducer, so it might be worth to wait for that.
+This is an example of a weird pattern in filesystems.  Several of
+them have kernel-doc for the implementation of various ->ops methods.
+I don't necessarily believe we should delete the comments (although is
+there any useful information in the above?), but I don't see the point
+in the comment being kernel-doc.
+
