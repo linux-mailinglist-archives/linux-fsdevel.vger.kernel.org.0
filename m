@@ -2,164 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 13095412994
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 01:50:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 830874129CA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 02:05:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239944AbhITXvt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Sep 2021 19:51:49 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:46288 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236315AbhITXts (ORCPT
+        id S233382AbhIUAGn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Sep 2021 20:06:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38124 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229967AbhIUAEi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Sep 2021 19:49:48 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id E0B25220C9;
-        Mon, 20 Sep 2021 23:48:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1632181698; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WDR8rd0yeY+WwyoUfkNID7NmGWHu0FjMPIrB2wt75VE=;
-        b=chupZgMQPOxHEij3AQE2fQ2gSjEBexoIhCfHuOMAHmdvWRbUCZ3gF+k/9vweTWz5Vta7u7
-        mQNBvpOGiocqZ8S2DLOKWCj1DnMxDgqu+pm+lZ995Bqs12YFbnoaxjNRQ+fsjkM3Y2EJf6
-        IcYOJqc0DX/D4NVZVgH8EEpAAkJy30I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1632181698;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WDR8rd0yeY+WwyoUfkNID7NmGWHu0FjMPIrB2wt75VE=;
-        b=D5EiDX5Iks4DL7NrQNDrrqwivNtaz8nkcu8GToJ6VdTOfRtsYDcTPgMQNgtEz/8W0CdMf5
-        geVHQgv+cPcW2OAg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 40BED13B3F;
-        Mon, 20 Sep 2021 23:48:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 5j12O70dSWH0bgAAMHmgww
-        (envelope-from <neilb@suse.de>); Mon, 20 Sep 2021 23:48:13 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 20 Sep 2021 20:04:38 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33E44C06121D;
+        Mon, 20 Sep 2021 10:53:19 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id e7so18168031pgk.2;
+        Mon, 20 Sep 2021 10:53:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=d+/BuCVjaN7HPzmC7myyJXzlUqKvf/I929USDd6fV7g=;
+        b=n2GX8jSPxbkZ1xvB8BkjDvmfvLRoaGx/L8DK7Yizh16ZwZutGklps3rdNQcyW2wlcE
+         WTbymYI2YYMfs6YG9PxpSVvBpY+MVK1joh8rgyZur5GDKpN1aHV4ri/DLLqGJQwU7ky8
+         vcKO8VRVYskXez8XRgLxJmVB+sOMjmKcSYO4KsRBzOxT8UOTpBV6xv6+Vh8jL7kXZkzd
+         1lErsAicH4t4aGOLX5bvIyVg7YtwDdEqb9IMj4JcrNIKKTje3aMWd8OZVPRQQrK0DBII
+         9hYF6shA6nMg2BtGSJb6eQI3/M+V81scjHP3HU2ks+AsbE1jeO5w671e8QtBmfndWqlE
+         +L2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=d+/BuCVjaN7HPzmC7myyJXzlUqKvf/I929USDd6fV7g=;
+        b=ZT4cH12w37/HHqGm8C33VDzOMI3iRwc3/NeKcyupSLh7hwthU7q4pVn6PrfHiECGVq
+         pMiyZPvkLMWLTIBvgqu5MSo1LIvBz9Zekk87N2H6L9QrRYWfsuxdWpM9CnsnMu5VP9WQ
+         Zx+VuktO7MN/rDG9dO9HFdyve7OOjsLi6KGqebPZ16G71sArgfiwQaDbMKkN9C+wrw16
+         s02PAKASFr9c9FN33O7Yqckanw5FbTMXzr3jcJ6ePwFUEa7zyU8UBHKavPSKTJQHRCp1
+         Bn6dWfw3dh37w4Y676MzqWqLiFPhbVZyCRWfuZxhrCw6Pw6P8bmcAEhIa/EgXoBBk1yc
+         9fDA==
+X-Gm-Message-State: AOAM533XhZu0V5LcK0W7Mf9swTofQE8mH982V6R+w9HSosky4y+0SUEL
+        RLxD0atDA6Z1MGC3Lqus/Vc=
+X-Google-Smtp-Source: ABdhPJwILNsmiBihNdmI+KOaMEYSRY2KlxbnrExPecCoSE4eeeBmyyC3gmr4JptmLFq8o0YFemwJXw==
+X-Received: by 2002:a62:7997:0:b0:43d:f9e1:939c with SMTP id u145-20020a627997000000b0043df9e1939cmr26229103pfc.2.1632160398453;
+        Mon, 20 Sep 2021 10:53:18 -0700 (PDT)
+Received: from localhost (2603-800c-1a02-1bae-e24f-43ff-fee6-449f.res6.spectrum.com. [2603:800c:1a02:1bae:e24f:43ff:fee6:449f])
+        by smtp.gmail.com with ESMTPSA id e14sm14357841pfv.127.2021.09.20.10.53.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Sep 2021 10:53:17 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Mon, 20 Sep 2021 07:53:16 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        minchan@kernel.org, jeyu@kernel.org, shuah@kernel.org,
+        rdunlap@infradead.org, rafael@kernel.org, masahiroy@kernel.org,
+        ndesaulniers@google.com, yzaikin@google.com, nathan@kernel.org,
+        ojeda@kernel.org, penguin-kernel@i-love.sakura.ne.jp,
+        vitor@massaru.org, elver@google.com, jarkko@kernel.org,
+        glider@google.com, rf@opensource.cirrus.com,
+        stephen@networkplumber.org, David.Laight@aculab.com,
+        bvanassche@acm.org, jolsa@kernel.org,
+        andriy.shevchenko@linux.intel.com, trishalfonso@google.com,
+        andreyknvl@gmail.com, jikos@kernel.org, mbenes@suse.com,
+        ngupta@vflare.org, sergey.senozhatsky.work@gmail.com,
+        reinette.chatre@intel.com, fenghua.yu@intel.com, bp@alien8.de,
+        x86@kernel.org, hpa@zytor.com, lizefan.x@bytedance.com,
+        hannes@cmpxchg.org, daniel.vetter@ffwll.ch, bhelgaas@google.com,
+        kw@linux.com, dan.j.williams@intel.com, senozhatsky@chromium.org,
+        hch@lst.de, joe@perches.com, hkallweit1@gmail.com, axboe@kernel.dk,
+        jpoimboe@redhat.com, tglx@linutronix.de, keescook@chromium.org,
+        rostedt@goodmis.org, peterz@infradead.org,
+        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, copyleft-next@lists.fedorahosted.org
+Subject: Re: [PATCH v7 09/12] sysfs: fix deadlock race with module removal
+Message-ID: <YUjKjLzqpcxjRyit@slm.duckdns.org>
+References: <20210918050430.3671227-1-mcgrof@kernel.org>
+ <20210918050430.3671227-10-mcgrof@kernel.org>
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Mel Gorman" <mgorman@suse.de>
-Cc:     "Andrew Morton" <akpm@linux-foundation.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        "Andreas Dilger" <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        "Matthew Wilcox" <willy@infradead.org>,
-        "Michal Hocko" <mhocko@suse.com>,
-        "Jesper Dangaard Brouer" <jbrouer@redhat.com>,
-        "Dave Chinner" <david@fromorbit.com>,
-        "Jonathan Corbet" <corbet@lwn.net>, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/6] MM: Support __GFP_NOFAIL in  alloc_pages_bulk_*() and
- improve doco
-In-reply-to: <20210917144233.GD3891@suse.de>
-References: <163184698512.29351.4735492251524335974.stgit@noble.brown>,
- <163184741776.29351.3565418361661850328.stgit@noble.brown>,
- <20210917144233.GD3891@suse.de>
-Date:   Tue, 21 Sep 2021 09:48:11 +1000
-Message-id: <163218169134.3992.18152143151159846850@noble.neil.brown.name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210918050430.3671227-10-mcgrof@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 18 Sep 2021, Mel Gorman wrote:
-> I'm top-posting to cc Jesper with full context of the patch. I don't
-> have a problem with this patch other than the Fixes: being a bit
-> marginal, I should have acked as Mel Gorman <mgorman@suse.de> and the
-> @gfp in the comment should have been @gfp_mask.
->=20
-> However, an assumption the API design made was that it should fail fast
-> if memory is not quickly available but have at least one page in the
-> array. I don't think the network use case cares about the situation where
-> the array is already populated but I'd like Jesper to have the opportunity
-> to think about it.  It's possible he would prefer it's explicit and the
-> check becomes
-> (!nr_populated || ((gfp_mask & __GFP_NOFAIL) && !nr_account)) to
-> state that __GFP_NOFAIL users are willing to take a potential latency
-> penalty if the array is already partially populated but !__GFP_NOFAIL
-> users would prefer fail-fast behaviour. I'm on the fence because while
-> I wrote the implementation, it was based on other peoples requirements.
+Hello,
 
-I can see that it could be desirable to not try too hard when we already
-have pages allocated, but maybe the best way to achieve that is for the
-called to clear __GFP_RECLAIM in that case.
+On Fri, Sep 17, 2021 at 10:04:27PM -0700, Luis Chamberlain wrote:
+> If try_module_get() fails we fail the operation on the kernfs node.
+> 
+> We use a try method as a full lock means we'd then make our sysfs
+> attributes busy us out from possible module removal, and so userspace
+> could force denying module removal, a silly form of "DOS" against module
+> removal. A try lock on the module removal ensures we give priority to
+> module removal and interacting with sysfs attributes only comes second.
+> Using a full lock could mean for instance that if you don't stop poking
+> at sysfs files you cannot remove a module.
 
-Alternately, callers that really want the __GFP_RECLAIM and __GFP_NOFAIL
-flags to be honoured could ensure that the array passed in is empty.
-That wouldn't be difficult (for current callers).
+I find this explanation odd because there's no real equivalent to locking
+the module (as opposed to try locking) because you can't wait for the
+removal to finish and then grant the lock, so any operation which increases
+the reference *has* to be a try method unless the caller already holds a
+reference to the same module and thus knows that the module is already
+pinned. The code isn't wrong, so maybe just drop the related paragraphs in
+the commit message?
 
-In either case, the documentation should make it clear which flags are
-honoured when.
+>  static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
+>  					     struct kernfs_node *parent,
+>  					     const char *name, umode_t mode,
+> +					     struct module *owner,
+>  					     kuid_t uid, kgid_t gid,
+>  					     unsigned flags)
 
-Let's see what Jesper has to say.
+Is there a particular reason why @owner is added between @mode and @uid?
+Sitting between two fs attributes seems a bit awkward. Maybe it can just be
+the last one?
 
-Thanks,
-NeilBrown
+Thanks.
 
-
->=20
-> On Fri, Sep 17, 2021 at 12:56:57PM +1000, NeilBrown wrote:
-> > When alloc_pages_bulk_array() is called on an array that is partially
-> > allocated, the level of effort to get a single page is less than when
-> > the array was completely unallocated.  This behaviour is inconsistent,
-> > but now fixed.  One effect if this is that __GFP_NOFAIL will not ensure
-> > at least one page is allocated.
-> >=20
-> > Also clarify the expected success rate.  __alloc_pages_bulk() will
-> > allocated one page according to @gfp, and may allocate more if that can
-> > be done cheaply.  It is assumed that the caller values cheap allocation
-> > where possible and may decide to use what it has got, or to call again
-> > to get more.
-> >=20
-> > Acked-by: Mel Gorman <mgorman@suse.com>
-> > Fixes: 0f87d9d30f21 ("mm/page_alloc: add an array-based interface to the =
-bulk page allocator")
-> > Signed-off-by: NeilBrown <neilb@suse.de>
-> > ---
-> >  mm/page_alloc.c |    7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index b37435c274cf..aa51016e49c5 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -5191,6 +5191,11 @@ static inline bool prepare_alloc_pages(gfp_t gfp_m=
-ask, unsigned int order,
-> >   * is the maximum number of pages that will be stored in the array.
-> >   *
-> >   * Returns the number of pages on the list or array.
-> > + *
-> > + * At least one page will be allocated if that is possible while
-> > + * remaining consistent with @gfp.  Extra pages up to the requested
-> > + * total will be allocated opportunistically when doing so is
-> > + * significantly cheaper than having the caller repeat the request.
-> >   */
-> >  unsigned long __alloc_pages_bulk(gfp_t gfp, int preferred_nid,
-> >  			nodemask_t *nodemask, int nr_pages,
-> > @@ -5292,7 +5297,7 @@ unsigned long __alloc_pages_bulk(gfp_t gfp, int pre=
-ferred_nid,
-> >  								pcp, pcp_list);
-> >  		if (unlikely(!page)) {
-> >  			/* Try and get at least one page */
-> > -			if (!nr_populated)
-> > +			if (!nr_account)
-> >  				goto failed_irq;
-> >  			break;
-> >  		}
-> >=20
-> >=20
->=20
->=20
+-- 
+tejun
