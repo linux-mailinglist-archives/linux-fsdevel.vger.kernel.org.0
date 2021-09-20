@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76CD841296B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 01:30:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B89241296F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 01:33:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232815AbhITXbc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Sep 2021 19:31:32 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:37828 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232018AbhITX3b (ORCPT
+        id S235410AbhITXfG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Sep 2021 19:35:06 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:45376 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238939AbhITXdG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Sep 2021 19:29:31 -0400
+        Mon, 20 Sep 2021 19:33:06 -0400
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 349961FE8A;
-        Mon, 20 Sep 2021 23:28:03 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id ACD2E2209E;
+        Mon, 20 Sep 2021 23:31:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1632180483; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1632180697; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=/C6da5eeUa7YP9LdZVBTb91w0ysI+DwHwEBCgSWwGeo=;
-        b=zSrUNUVFh2Z82i65SHp6/Tr/GGuMWAWfv+emDJ6RNohece0x+m4QE3BBQjaVqhMeefxG3x
-        7z3i2SsuGYmhneWI/W6pyYTZtblb8Fhmaehkr3T+aHa5QIZyUGTRzgiQOMcrQSrhgutude
-        iuwYti/nOPu2k48JIl6AIXVtwAmVX34=
+        bh=p+xWJ0YkatGIKOHgIGcojVmd5miNxn0VeGIwFFaZE0g=;
+        b=NIWYSMW7/xcDx9iujTBP2ZVH/ylAswRbkhrJNa8S6dq0m0/Hk6cwP0EwSbMYWJuwHLP4tR
+        G16gMLywCWg9GxCUeEflCtWs8uiA7TmRRJj9RrU5OVxyQ3zdc2bK2lBBRGok0RBfHPXPje
+        SbwcGzL5TN+fQks5SFlkTWZtQK+KCLU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1632180483;
+        s=susede2_ed25519; t=1632180697;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=/C6da5eeUa7YP9LdZVBTb91w0ysI+DwHwEBCgSWwGeo=;
-        b=QZHlnr+c9Ur+GAXN3V+zMCNqnBkOLw3ACTa0Mz311Jau3aKxgdTwAAtuwc68ZMKsaFOBTJ
-        ZBuAdQCWRRwIc4Bw==
+        bh=p+xWJ0YkatGIKOHgIGcojVmd5miNxn0VeGIwFFaZE0g=;
+        b=4cGiKRfw6Tdv5gQ50a591jAd2tWJ2v5dWHV/wjFpwW93rfTOpjhhaklqRASgPIhRywUWOl
+        hR4tNr8Pv290q7Bg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4795A13B38;
-        Mon, 20 Sep 2021 23:27:59 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C640613B2E;
+        Mon, 20 Sep 2021 23:31:33 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id TDWWAf8YSWFiaAAAMHmgww
-        (envelope-from <neilb@suse.de>); Mon, 20 Sep 2021 23:27:59 +0000
+        id 4IkQIdUZSWGjaQAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 20 Sep 2021 23:31:33 +0000
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
 From:   "NeilBrown" <neilb@suse.de>
 To:     "Mel Gorman" <mgorman@techsingularity.net>
@@ -64,29 +64,21 @@ Cc:     "Linux-MM" <linux-mm@kvack.org>, "Theodore Ts'o" <tytso@mit.edu>,
         "Linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
         "LKML" <linux-kernel@vger.kernel.org>,
         "Mel Gorman" <mgorman@techsingularity.net>
-Subject: Re: [PATCH 2/5] mm/vmscan: Throttle reclaim and compaction when too
- may pages are isolated
-In-reply-to: <20210920085436.20939-3-mgorman@techsingularity.net>
+Subject: Re: [PATCH 3/5] mm/vmscan: Throttle reclaim when no progress is being made
+In-reply-to: <20210920085436.20939-4-mgorman@techsingularity.net>
 References: <20210920085436.20939-1-mgorman@techsingularity.net>,
- <20210920085436.20939-3-mgorman@techsingularity.net>
-Date:   Tue, 21 Sep 2021 09:27:56 +1000
-Message-id: <163218047640.3992.16597395100064789255@noble.neil.brown.name>
+ <20210920085436.20939-4-mgorman@techsingularity.net>
+Date:   Tue, 21 Sep 2021 09:31:30 +1000
+Message-id: <163218069080.3992.14261132300912173043@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Mon, 20 Sep 2021, Mel Gorman wrote:
-> @@ -2291,8 +2302,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct=
- lruvec *lruvec,
->  			return 0;
-> =20
->  		/* wait a bit for the reclaimer. */
-> -		msleep(100);
-> -		stalled =3D true;
-> +		reclaim_throttle(pgdat, VMSCAN_THROTTLE_ISOLATED, HZ/10);
+> +
+> +		reclaim_throttle(pgdat, VMSCAN_THROTTLE_NOPROGRESS, HZ/10);
 
-Why drop the assignment to "stalled"?
-Doing that changes the character of the loop - and makes the 'stalled'
-variable always 'false'.
+We always seem to pass "HZ/10" to reclaim_throttle().  Should we just
+hard-code that in the one place inside reclaim_throttle() itself?
 
 NeilBrown
