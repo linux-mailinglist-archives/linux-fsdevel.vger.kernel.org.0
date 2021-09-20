@@ -2,69 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 67D114114CC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 14:45:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B73F4114CE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 14:46:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238631AbhITMrE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Sep 2021 08:47:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55494 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238626AbhITMrD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Sep 2021 08:47:03 -0400
-Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1191C061762
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Sep 2021 05:45:36 -0700 (PDT)
-Received: by mail-oi1-x229.google.com with SMTP id y201so9804608oie.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Sep 2021 05:45:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=imgEyPKZJXioT57QZIHImgBbmP2LjKkzFSDJsibRDbM=;
-        b=bPHNoKcuHylmj1eN3umYASkNbywKNCX44s1UM2+d/wyNorKQdesoRhyVE1CK5ntb9j
-         ZuNQVjDl8tSJk4RTdaN+9YL7q05e4uB+kZAC2CWBvHLA2sBEWPonvGx3+/bb0CZX/kkp
-         jv0eiGk0zEAW2WJMD6wqsSGQ236zElDlHVnAG3HumzJL6IHYPMgnxWF2f/uRwXAaTpOy
-         ed3740Kfexpy7Eb9DvVv6Mylr862JPTjMG9UKAP/o0N0mxGwp/PxM+T3Cxqu2+P7hOZt
-         GjFKYwX7xhBv/DlqGGnjKgVelJ0Wln47IppLqJk9wWr/1PaWBnqRCT8whng/gOruzhgb
-         Z4gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=imgEyPKZJXioT57QZIHImgBbmP2LjKkzFSDJsibRDbM=;
-        b=Ch/rMVq7+gDytYPT35uFqAP78+Qp/d+ettWF+Q00aJWtPhrjKNYvSZk0AnZNHMfdkn
-         1SrHz6je4+JFxjncVTC6XU4FrL45kZht323hSmSpUfpWl8oBxObxmr6wciocC7uSBahL
-         MjPocWCIKKGK5pEK7SnLSYvfMt4v0LxeAcdGWcyM71C5MdmftKxieYK9wqVVzYbTvGhW
-         AzRWjrx08yYo1jx1rah+JRAecXxdrS28XIEqnprL65djEl2US8wr15TJWCy5zA1xXUes
-         yyarGaRIKDTcGOfeO3qHBKTAwyA50LFT1VvaCt55XB26vl9ZJQ8Pn/mdGFbRN7qV+U1F
-         /Yfg==
-X-Gm-Message-State: AOAM530JnsKKTP98jdQO2mZZwEXUvdlkl2WU3AIfHmNGjRkVXio2dW+e
-        37vAWsxmhs8Po/e7Xd5TXS5aMoN2pTxKA5Reang=
-X-Google-Smtp-Source: ABdhPJy04GB33k3hVVUIYVIWesm9WuGBagMuuTarC6lBPbn7jzDtDlbVdwEy+Use2FfOOWTVS1qoJI7q2OLYD72LxrA=
-X-Received: by 2002:a05:6808:19aa:: with SMTP id bj42mr21618158oib.15.1632141936250;
- Mon, 20 Sep 2021 05:45:36 -0700 (PDT)
+        id S238660AbhITMr1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Sep 2021 08:47:27 -0400
+Received: from verein.lst.de ([213.95.11.211]:51282 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238612AbhITMr1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Sep 2021 08:47:27 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id A139E67373; Mon, 20 Sep 2021 14:45:57 +0200 (CEST)
+Date:   Mon, 20 Sep 2021 14:45:57 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        syzbot <syzbot+d6c75f383e01426a40b4@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, Waiman Long <llong@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [syzbot] WARNING in __init_work
+Message-ID: <20210920124557.GA18317@lst.de>
+References: <000000000000423e0a05cc0ba2c4@google.com> <20210915161457.95ad5c9470efc70196d48410@linux-foundation.org> <163175937144.763609.2073508754264771910@swboyd.mtv.corp.google.com> <87sfy07n69.ffs@tglx> <20210920040336.GV2361455@dread.disaster.area> <20210920122846.GA16661@lst.de> <20210920123859.GE880162@paulmck-ThinkPad-P17-Gen-1>
 MIME-Version: 1.0
-Sender: mrssuzaramalingwan2@gmail.com
-Received: by 2002:a8a:108d:0:0:0:0:0 with HTTP; Mon, 20 Sep 2021 05:45:35
- -0700 (PDT)
-From:   Mrs bill Sma chantal <mrsbillsamchantal01@gmail.com>
-Date:   Mon, 20 Sep 2021 05:45:35 -0700
-X-Google-Sender-Auth: 9B8vaLvIAc_YbE-gEKSX0AXeN78
-Message-ID: <CAGa6i3gfx4cGC2q_tmrVR30Zz-XURe+ic=kJ8qg8Pb=0BpBSaQ@mail.gmail.com>
-Subject: compensation
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210920123859.GE880162@paulmck-ThinkPad-P17-Gen-1>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-hello....
+On Mon, Sep 20, 2021 at 05:38:59AM -0700, Paul E. McKenney wrote:
+> > Well, the block code already does a bdi_unregister in del_gendisk.
+> > So if we end up freeing the whole device bdev with a registered bdi
+> > something is badly going wrong.  Unfortunately the log in this report
+> > isn't much help on how we got there.  IIRC syzbot will eventually spew
+> > out a reproducer, so it might be worth to wait for that.
+> 
+> If it does turn out that you need to block in an RCU callback,
+> queue_rcu_work() can be helpful.  This schedules a workqueue from the RCU
+> callback, allowing the function passed to the preceding INIT_RCU_WORK()
+> to block.
 
-You have been compensated with the sum of 6.1 million dollars in this
-united nation the payment will be issue into atm visa  card and send
-to you from the santander bank we need your address and your
-Whatsapp number
+In this case we really should not block here.  The problem is that
+we are hitting the strange bdi auto-unregister misfeature due to a bug
+elsewhere.  Which reminds that I have a patch series to remove this
+auto unregistration which I need to bring bag once this is fixed.
 
-Thanks my
-
-Mrs bill Sma chantal
+That being said queue_rcu_work would have been really useful in a few
+places I touched in that past.
