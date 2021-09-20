@@ -2,34 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 72C6C412D48
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 05:17:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97AFA412D49
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 05:17:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231717AbhIUDS6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Sep 2021 23:18:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40860 "EHLO
+        id S231901AbhIUDTA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Sep 2021 23:19:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350243AbhIUC2B (ORCPT
+        with ESMTP id S1350402AbhIUC2a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Sep 2021 22:28:01 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B2FDC1E7C70;
-        Mon, 20 Sep 2021 12:15:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Ce9uaTKd/D6QGSNbhvZvPAgEhomYs3uXfZuXWEuTyDo=; b=369USbNlI+62qdglSNQET5FERT
-        WUvD7ynkbpEFudjb0fzSZMx1jcQ0hKOHBeMIB+Pj2VdvtrEfRI3LKt0bQAnDxpHRqpv5P6niCIlsb
-        vlDnHHYc0zuAPHDcADuSeTRcnr78tG8F+7PK1OVCzWdHqzs8WbAVQXI7ZLfan7YbWZ7KDaPGTxirF
-        ZZUKGCVxE52zlioB/QkdVf6IrxxosbDb/xyQxcCB90Zl17FaLFDtLVrcFXNLdGJErM4FQk4iaUTAV
-        SaWz38ee84P1Ya6hFVMqeeHYnwzGrok3ud5aKaVEzLkEZd9ECbjJ+/ib+sgCJQAbOHqO0IwNeYwk+
-        Wfyl9zcQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mSOl8-002uHl-FF; Mon, 20 Sep 2021 19:15:22 +0000
-Date:   Mon, 20 Sep 2021 12:15:22 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Tejun Heo <tj@kernel.org>
+        Mon, 20 Sep 2021 22:28:30 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D58A0C0F3447;
+        Mon, 20 Sep 2021 12:22:38 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id n13-20020a17090a4e0d00b0017946980d8dso185553pjh.5;
+        Mon, 20 Sep 2021 12:22:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=JRnq/4c87bKbiNxvafGN4wtXqF6Tb113NW1CCy3N52o=;
+        b=dP4iFexr0a+J311K54uCPdaewF9LzVRZkY/aDH2dPD9xGtZMHeZBij8v6wTihEifkg
+         bIk6GbffogctONMlgfddQ0fGCNpmpMWipeajx9Kyn00jXWS5Lh89zABYQjixzMBZ+eaL
+         Z57MjvIXj5H4kS2oNAwGRXtw/nv8xi3stLkDBC0ZBQ8vdA44wM0qv9TgId7KYVrQFIIj
+         r9NHcIiUB87XojT59VuOwo9LjdF4v5XE5loPh5rx3Uuhui2pBXa+MAb9l6U3Wrz/18ZN
+         8IPl4GNh1/xWGwqjOGo2nh7ySRJNyY6KBJST84Cnz0eSywHu1cHrx+2hzcPKYFzGH1NN
+         eH2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=JRnq/4c87bKbiNxvafGN4wtXqF6Tb113NW1CCy3N52o=;
+        b=3khiVuJWR+X38WAjkjDZnEngn962KSBLcBfmTMMWQ8sCZYLRvEw+4wdLQEGHLsiUZ0
+         UiUC2twcSzfUk5fCviZ22BEZk+drnYitOgKnJKpKdO3RxgEE1Qw0zoeI2iIRTKscbsN3
+         ul1di0HiE16Dd4mMfRCH8Isrzul91CkBFeU1viY9DIlVX9GpWSuN+CVKhjSF5IL7FRTw
+         gUpmK2UvsgM5oeGWfYGQcytlW9PjocRezBZcyvCo4EJPERdkMnX+NSMZboQpuudo7fXZ
+         /cVYuQuwQQg3H/on74ivxj3Iu+kfdL/GqNbcc8t0CMQRJRFGMNIMq5JwEsyD1+pG3BiO
+         tpQg==
+X-Gm-Message-State: AOAM530Cn/ufB9mOgQ3jDPr0Csg7BD3yMyO/Kb/mc/bcry0GnZC2Pfvn
+        lzXIgcdIJbLKVCGqCJM2aRM=
+X-Google-Smtp-Source: ABdhPJx7yMc6cu+sDCU/f0AwOhQkBHekSPHI+esLDq4+Bgpc7/NHJVGEMkfUVFWiJyicLFaEpDz9wg==
+X-Received: by 2002:a17:902:6b8a:b029:12d:3f99:9e5e with SMTP id p10-20020a1709026b8ab029012d3f999e5emr24030103plk.66.1632165758222;
+        Mon, 20 Sep 2021 12:22:38 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:400::5:9d4d])
+        by smtp.gmail.com with ESMTPSA id c23sm16287436pgb.74.2021.09.20.12.22.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Sep 2021 12:22:37 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Mon, 20 Sep 2021 09:22:32 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
 Cc:     gregkh@linuxfoundation.org, akpm@linux-foundation.org,
         minchan@kernel.org, jeyu@kernel.org, shuah@kernel.org,
         rdunlap@infradead.org, rafael@kernel.org, masahiroy@kernel.org,
@@ -54,70 +76,46 @@ Cc:     gregkh@linuxfoundation.org, akpm@linux-foundation.org,
         linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org,
         linux-kernel@vger.kernel.org, copyleft-next@lists.fedorahosted.org
 Subject: Re: [PATCH v7 09/12] sysfs: fix deadlock race with module removal
-Message-ID: <YUjdytEDkCughtSz@bombadil.infradead.org>
+Message-ID: <YUjfeGuSVVq84iHc@mtj.duckdns.org>
 References: <20210918050430.3671227-1-mcgrof@kernel.org>
  <20210918050430.3671227-10-mcgrof@kernel.org>
  <YUjKjLzqpcxjRyit@slm.duckdns.org>
+ <YUjdytEDkCughtSz@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YUjKjLzqpcxjRyit@slm.duckdns.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <YUjdytEDkCughtSz@bombadil.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 20, 2021 at 07:53:16AM -1000, Tejun Heo wrote:
-> Hello,
+Hello,
+
+On Mon, Sep 20, 2021 at 12:15:22PM -0700, Luis Chamberlain wrote:
+> > I find this explanation odd because there's no real equivalent to locking
+> > the module (as opposed to try locking) 
 > 
-> On Fri, Sep 17, 2021 at 10:04:27PM -0700, Luis Chamberlain wrote:
-> > If try_module_get() fails we fail the operation on the kernfs node.
-> > 
-> > We use a try method as a full lock means we'd then make our sysfs
-> > attributes busy us out from possible module removal, and so userspace
-> > could force denying module removal, a silly form of "DOS" against module
-> > removal. A try lock on the module removal ensures we give priority to
-> > module removal and interacting with sysfs attributes only comes second.
-> > Using a full lock could mean for instance that if you don't stop poking
-> > at sysfs files you cannot remove a module.
-> 
-> I find this explanation odd because there's no real equivalent to locking
-> the module (as opposed to try locking) 
+> Actually there is, __module_get() but I suspect some of these users are
+> probably incorrect and should be be moved to try. The documentation
 
-Actually there is, __module_get() but I suspect some of these users are
-probably incorrect and should be be moved to try. The documentation
-about "rmmod --wait" for __module_get() is also outdated as that option
-is no longer supported. I'll send an update for that later.
+__module_get() is just getting an extra ref when the caller already
+has one (or more). It can't be used to freshly acquire a new
+reference. There is no equivalence between the relationship between
+try_module_get() and __module_get() and the one between spin_trylock()
+and spin_lock().
 
-> because you can't wait for the
-> removal to finish and then grant the lock, so any operation which increases
-> the reference *has* to be a try method unless the caller already holds a
-> reference to the same module and thus knows that the module is already
-> pinned.
+> Right, the reason I mention the alternative is that we technically don't
+> need to use try in this case since during a kernfs op it is implied the
+> module will be pinned, but we have further motivations to use a try
 
-Right, the reason I mention the alternative is that we technically don't
-need to use try in this case since during a kernfs op it is implied the
-module will be pinned, but we have further motivations to use a try
-method here: to avoid a possible DOS from module removal by userspace
-mucking with ops.
+I'm confused. If the module is already pinned, why are we getting an
+extra reference? Also, I don't understand how this has that much to do
+with preventing ddoses. I mean, it does cut down the duration of one
+operation but the eventual gating is through whoever acquiring the
+initial reference through try_module_get(), which again is the *only*
+way to acquire a fresh reference.
 
-> The code isn't wrong, so maybe just drop the related paragraphs in
-> the commit message?
+Thanks.
 
-Does it make sense to clarify the above a bit more somehow? Or do think
-its not needed?
-
-> >  static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
-> >  					     struct kernfs_node *parent,
-> >  					     const char *name, umode_t mode,
-> > +					     struct module *owner,
-> >  					     kuid_t uid, kgid_t gid,
-> >  					     unsigned flags)
-> 
-> Is there a particular reason why @owner is added between @mode and @uid?
-> Sitting between two fs attributes seems a bit awkward. Maybe it can just be
-> the last one?
-
-No, I just picked an arbitrary place. Sure I'll move it to the end.
-
-  Luis
+-- 
+tejun
