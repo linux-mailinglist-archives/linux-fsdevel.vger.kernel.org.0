@@ -2,78 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 537AB412302
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 20:19:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC62C412706
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 21:54:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351616AbhITST5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Sep 2021 14:19:57 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:54173 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1351444AbhITSRr (ORCPT
+        id S1351269AbhITTyl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Sep 2021 15:54:41 -0400
+Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:42981 "EHLO
+        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1351014AbhITTwk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Sep 2021 14:17:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1632161780;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=smgGeNTJKJdRB3jySjdLq/O6aIDEticWWn8WNZpB814=;
-        b=YuzYaMpkaJ4+hcmiSIGX+WLg+FrxfFxmsxQm/ktdsnP/BzzcfcBcpTS4DM7jtd3dhsYvv+
-        rAe1GcG5MJWgxqwQTaINACBqzJmBKfcmnOmA0KbogN1Gv4Z5hgvDmYC68lQWEBgVHcTS7l
-        kuoC+MOzcpDhniydyD7dcl8h7q+dKVA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-338-V_dpYbo3NfOmkZRcCVpp8Q-1; Mon, 20 Sep 2021 14:16:19 -0400
-X-MC-Unique: V_dpYbo3NfOmkZRcCVpp8Q-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 467EE802936;
-        Mon, 20 Sep 2021 18:16:17 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 687BB19724;
-        Mon, 20 Sep 2021 18:16:14 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAH2r5murR7TbC9BtSgWyrJVC-YG5dUba2ekZTvX75gg4ukaAZw@mail.gmail.com>
-References: <CAH2r5murR7TbC9BtSgWyrJVC-YG5dUba2ekZTvX75gg4ukaAZw@mail.gmail.com> <163214005516.2945267.7000234432243167892.stgit@warthog.procyon.org.uk>
-To:     Steve French <smfrench@gmail.com>
-Cc:     dhowells@redhat.com, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Steve French <sfrench@samba.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, CIFS <linux-cifs@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Mon, 20 Sep 2021 15:52:40 -0400
+Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
+        by outbound-smtp08.blacknight.com (Postfix) with ESMTPS id 5C9D41C5485
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Sep 2021 20:51:11 +0100 (IST)
+Received: (qmail 25265 invoked from network); 20 Sep 2021 19:51:11 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 20 Sep 2021 19:51:11 -0000
+Date:   Mon, 20 Sep 2021 20:51:09 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linux-MM <linux-mm@kvack.org>, NeilBrown <neilb@suse.de>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Rik van Riel <riel@surriel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] fscache, 9p, afs, cifs, nfs: Deal with some warnings from W=1
+Subject: Re: [RFC PATCH 0/5] Remove dependency on congestion_wait in mm/
+Message-ID: <20210920195109.GJ3959@techsingularity.net>
+References: <20210920085436.20939-1-mgorman@techsingularity.net>
+ <YUhztA8TmplTluyQ@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2976711.1632161773.1@warthog.procyon.org.uk>
-Date:   Mon, 20 Sep 2021 19:16:13 +0100
-Message-ID: <2976712.1632161773@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <YUhztA8TmplTluyQ@casper.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Steve French <smfrench@gmail.com> wrote:
+On Mon, Sep 20, 2021 at 12:42:44PM +0100, Matthew Wilcox wrote:
+> On Mon, Sep 20, 2021 at 09:54:31AM +0100, Mel Gorman wrote:
+> > This has been lightly tested only and the testing was useless as the
+> > relevant code was not executed. The workload configurations I had that
+> > used to trigger these corner cases no longer work (yey?) and I'll need
+> > to implement a new synthetic workload. If someone is aware of a realistic
+> > workload that forces reclaim activity to the point where reclaim stalls
+> > then kindly share the details.
+> 
+> The stereeotypical "stalling on I/O" problem is to plug in one of the
+> crap USB drives you were given at a trade show and simply
+> 	dd if=/dev/zero of=/dev/sdb
+> 	sync
+> 
+> You can also set up qemu to have extremely slow I/O performance:
+> https://serverfault.com/questions/675704/extremely-slow-qemu-storage-performance-with-qcow2-images
+> 
 
-> For the cifs ones in connect.c (and also ioctl.c), I had submitted a
-> patch in rc1 for these (haven't heard back on that) but did not submit
-> kerneldoc fixup for fs/cifs/misc.c.  They seem trivial and safe, do
-> you want to split those out and I can put them in?
+Ok, I managed to get something working and nothing blew up.
 
-I can, though the reason I did the patch is that the warnings are always
-popping up in what I'm doing.  I can drop the patch from mine when I'm done, I
-guess.
+The workload was similar to what I described except the dirty file data
+is related to dirty_ratio, the memory hogs no longer sleep and I disabled
+the parallel readers. There is still a configuration with the parallel
+readers but I won't have the results till tomorrow.
 
-David
+Surprising no one, vanilla kernel throttling barely works.
 
+      1 writeback_wait_iff_congested: usec_delayed=4000
+      3 writeback_congestion_wait: usec_delayed=108000
+    196 writeback_congestion_wait: usec_delayed=104000
+  16697 writeback_wait_iff_congested: usec_delayed=0
+
+too_many_isolated it not tracked at all so we don't know what that looks
+like but kswapd "blocking" on dirty pages at the tail basically never
+stalls. The few congestion_wait's that did happen stalled for the full
+duration as the bdi is not tracking congestion at all.
+
+With the series, the breakdown of reasons to stall were
+
+   5703 reason=VMSCAN_THROTTLE_WRITEBACK
+  29644 reason=VMSCAN_THROTTLE_NOPROGRESS
+1979999 reason=VMSCAN_THROTTLE_ISOLATED
+
+kswapd stalls were rare but they did happen and surprise surprise, it
+was dirty pages
+
+    914 reason=VMSCAN_THROTTLE_WRITEBACK
+
+All of them stalled for the full timeout so there might be a bug in
+patch 1 because that sounds suspicious.
+
+As "too many pages isolated" was the top reason, the frequency of each
+stall time is as follows
+
+      1 usect_delayed=164000
+      1 usect_delayed=192000
+      1 usect_delayed=200000
+      1 usect_delayed=208000
+      1 usect_delayed=220000
+      1 usect_delayed=244000
+      1 usect_delayed=308000
+      1 usect_delayed=312000
+      1 usect_delayed=316000
+      1 usect_delayed=332000
+      1 usect_delayed=588000
+      1 usect_delayed=620000
+      1 usect_delayed=836000
+      3 usect_delayed=116000
+      4 usect_delayed=124000
+      4 usect_delayed=128000
+      6 usect_delayed=120000
+      9 usect_delayed=112000
+     11 usect_delayed=100000
+     13 usect_delayed=48000
+     13 usect_delayed=96000
+     14 usect_delayed=40000
+     15 usect_delayed=88000
+     15 usect_delayed=92000
+     16 usect_delayed=80000
+     18 usect_delayed=68000
+     19 usect_delayed=76000
+     22 usect_delayed=84000
+     23 usect_delayed=108000
+     23 usect_delayed=60000
+     25 usect_delayed=44000
+     25 usect_delayed=52000
+     29 usect_delayed=36000
+     30 usect_delayed=56000
+     30 usect_delayed=64000
+     33 usect_delayed=72000
+     57 usect_delayed=32000
+     91 usect_delayed=20000
+    107 usect_delayed=24000
+    125 usect_delayed=28000
+    131 usect_delayed=16000
+    180 usect_delayed=12000
+    186 usect_delayed=8000
+   1379 usect_delayed=104000
+  16493 usect_delayed=4000
+1960837 usect_delayed=0
+
+In other words, the vast majority of stalls were for 0 time and the task
+was immediately woken again. The next most common stall time was 1 tick
+but a sizable number reach the full timeout. Everything else is somewhere
+in between so the event trigger appears to be ok.
+
+I don't know how the application itself performed as I still have to
+write the analysis script and assuming I can look at this tomorrow, I'll
+probably start with why VMSCAN_THROTTLE_WRITEBACK always stalled for the
+full timeout.
+
+-- 
+Mel Gorman
+SUSE Labs
