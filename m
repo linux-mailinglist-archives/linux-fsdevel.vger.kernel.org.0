@@ -2,62 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 075CE412972
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 01:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13095412994
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 01:50:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240562AbhITXfg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Sep 2021 19:35:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45294 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238986AbhITXdg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Sep 2021 19:33:36 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 0FA7960F56;
-        Mon, 20 Sep 2021 23:32:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632180729;
-        bh=6kAENSCIeNPtlS308QydqmtW6JFhCqP4orq7EVkOqTQ=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=M5bzd37Lor9eCpiwe4LH5tBfnU/WStsU8CTS8ow0TZpAKylr/evYua+JSMgtoUji2
-         sKPsqJDeB/dkpAs1Ls9uMlIZXGdx21FqY8gC994Hm6XYUzDOoK8WVxeGn4PybVp0q2
-         vSKUeTRrW2EQUd7Z6I1B8qyAjSsxpmQkL33jUCLiD30pnRjnezZSEPm4s5Bd10bnTV
-         eK82Uj6NcBjoH6VQj2UKn+MGID/rPoHjIRVyuuaMtI1rk53AmONJtHoIS4els7qSq3
-         DBP90FMXSDMJCalysPxHGEvKh/2Gu4NROHMwhSFuPMvZdsxKfU42uZfOZKht1b3gIZ
-         DJ7yBxCXqwU9g==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id F08CA60A37;
-        Mon, 20 Sep 2021 23:32:08 +0000 (UTC)
-Subject: Re: [GIT PULL] afs: Fixes for 3rd party-induced data corruption
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <1161899.1631530176@warthog.procyon.org.uk>
-References: <1161899.1631530176@warthog.procyon.org.uk>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1161899.1631530176@warthog.procyon.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/afs-fixes-20210913
-X-PR-Tracked-Commit-Id: 9d37e1cab2a9d2cee2737973fa455e6f89eee46a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d9fb678414c048e185eaddadd18d75f5e8832ff3
-Message-Id: <163218072892.25470.5709272357707508173.pr-tracker-bot@kernel.org>
-Date:   Mon, 20 Sep 2021 23:32:08 +0000
-To:     David Howells <dhowells@redhat.com>
-Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Markus Suvanto <markus.suvanto@gmail.com>,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        id S239944AbhITXvt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Sep 2021 19:51:49 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:46288 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236315AbhITXts (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Sep 2021 19:49:48 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id E0B25220C9;
+        Mon, 20 Sep 2021 23:48:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1632181698; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=WDR8rd0yeY+WwyoUfkNID7NmGWHu0FjMPIrB2wt75VE=;
+        b=chupZgMQPOxHEij3AQE2fQ2gSjEBexoIhCfHuOMAHmdvWRbUCZ3gF+k/9vweTWz5Vta7u7
+        mQNBvpOGiocqZ8S2DLOKWCj1DnMxDgqu+pm+lZ995Bqs12YFbnoaxjNRQ+fsjkM3Y2EJf6
+        IcYOJqc0DX/D4NVZVgH8EEpAAkJy30I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1632181698;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=WDR8rd0yeY+WwyoUfkNID7NmGWHu0FjMPIrB2wt75VE=;
+        b=D5EiDX5Iks4DL7NrQNDrrqwivNtaz8nkcu8GToJ6VdTOfRtsYDcTPgMQNgtEz/8W0CdMf5
+        geVHQgv+cPcW2OAg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 40BED13B3F;
+        Mon, 20 Sep 2021 23:48:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 5j12O70dSWH0bgAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 20 Sep 2021 23:48:13 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Mel Gorman" <mgorman@suse.de>
+Cc:     "Andrew Morton" <akpm@linux-foundation.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        "Andreas Dilger" <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        "Matthew Wilcox" <willy@infradead.org>,
+        "Michal Hocko" <mhocko@suse.com>,
+        "Jesper Dangaard Brouer" <jbrouer@redhat.com>,
+        "Dave Chinner" <david@fromorbit.com>,
+        "Jonathan Corbet" <corbet@lwn.net>, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/6] MM: Support __GFP_NOFAIL in  alloc_pages_bulk_*() and
+ improve doco
+In-reply-to: <20210917144233.GD3891@suse.de>
+References: <163184698512.29351.4735492251524335974.stgit@noble.brown>,
+ <163184741776.29351.3565418361661850328.stgit@noble.brown>,
+ <20210917144233.GD3891@suse.de>
+Date:   Tue, 21 Sep 2021 09:48:11 +1000
+Message-id: <163218169134.3992.18152143151159846850@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Mon, 13 Sep 2021 11:49:36 +0100:
+On Sat, 18 Sep 2021, Mel Gorman wrote:
+> I'm top-posting to cc Jesper with full context of the patch. I don't
+> have a problem with this patch other than the Fixes: being a bit
+> marginal, I should have acked as Mel Gorman <mgorman@suse.de> and the
+> @gfp in the comment should have been @gfp_mask.
+>=20
+> However, an assumption the API design made was that it should fail fast
+> if memory is not quickly available but have at least one page in the
+> array. I don't think the network use case cares about the situation where
+> the array is already populated but I'd like Jesper to have the opportunity
+> to think about it.  It's possible he would prefer it's explicit and the
+> check becomes
+> (!nr_populated || ((gfp_mask & __GFP_NOFAIL) && !nr_account)) to
+> state that __GFP_NOFAIL users are willing to take a potential latency
+> penalty if the array is already partially populated but !__GFP_NOFAIL
+> users would prefer fail-fast behaviour. I'm on the fence because while
+> I wrote the implementation, it was based on other peoples requirements.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/afs-fixes-20210913
+I can see that it could be desirable to not try too hard when we already
+have pages allocated, but maybe the best way to achieve that is for the
+called to clear __GFP_RECLAIM in that case.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d9fb678414c048e185eaddadd18d75f5e8832ff3
+Alternately, callers that really want the __GFP_RECLAIM and __GFP_NOFAIL
+flags to be honoured could ensure that the array passed in is empty.
+That wouldn't be difficult (for current callers).
 
-Thank you!
+In either case, the documentation should make it clear which flags are
+honoured when.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Let's see what Jesper has to say.
+
+Thanks,
+NeilBrown
+
+
+>=20
+> On Fri, Sep 17, 2021 at 12:56:57PM +1000, NeilBrown wrote:
+> > When alloc_pages_bulk_array() is called on an array that is partially
+> > allocated, the level of effort to get a single page is less than when
+> > the array was completely unallocated.  This behaviour is inconsistent,
+> > but now fixed.  One effect if this is that __GFP_NOFAIL will not ensure
+> > at least one page is allocated.
+> >=20
+> > Also clarify the expected success rate.  __alloc_pages_bulk() will
+> > allocated one page according to @gfp, and may allocate more if that can
+> > be done cheaply.  It is assumed that the caller values cheap allocation
+> > where possible and may decide to use what it has got, or to call again
+> > to get more.
+> >=20
+> > Acked-by: Mel Gorman <mgorman@suse.com>
+> > Fixes: 0f87d9d30f21 ("mm/page_alloc: add an array-based interface to the =
+bulk page allocator")
+> > Signed-off-by: NeilBrown <neilb@suse.de>
+> > ---
+> >  mm/page_alloc.c |    7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index b37435c274cf..aa51016e49c5 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -5191,6 +5191,11 @@ static inline bool prepare_alloc_pages(gfp_t gfp_m=
+ask, unsigned int order,
+> >   * is the maximum number of pages that will be stored in the array.
+> >   *
+> >   * Returns the number of pages on the list or array.
+> > + *
+> > + * At least one page will be allocated if that is possible while
+> > + * remaining consistent with @gfp.  Extra pages up to the requested
+> > + * total will be allocated opportunistically when doing so is
+> > + * significantly cheaper than having the caller repeat the request.
+> >   */
+> >  unsigned long __alloc_pages_bulk(gfp_t gfp, int preferred_nid,
+> >  			nodemask_t *nodemask, int nr_pages,
+> > @@ -5292,7 +5297,7 @@ unsigned long __alloc_pages_bulk(gfp_t gfp, int pre=
+ferred_nid,
+> >  								pcp, pcp_list);
+> >  		if (unlikely(!page)) {
+> >  			/* Try and get at least one page */
+> > -			if (!nr_populated)
+> > +			if (!nr_account)
+> >  				goto failed_irq;
+> >  			break;
+> >  		}
+> >=20
+> >=20
+>=20
+>=20
