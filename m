@@ -2,144 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 79E2B412A09
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 02:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72C6C412D48
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 05:17:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233978AbhIUAsD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Sep 2021 20:48:03 -0400
-Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:37262 "EHLO
-        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230220AbhIUAqC (ORCPT
+        id S231717AbhIUDS6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Sep 2021 23:18:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40860 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350243AbhIUC2B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Sep 2021 20:46:02 -0400
-Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
-        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 349331009BF2;
-        Tue, 21 Sep 2021 10:44:32 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1mSTtf-00Eqls-33; Tue, 21 Sep 2021 10:44:31 +1000
-Date:   Tue, 21 Sep 2021 10:44:31 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     jane.chu@oracle.com, linux-xfs@vger.kernel.org, hch@infradead.org,
-        dan.j.williams@intel.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/5] vfs: add a zero-initialization mode to fallocate
-Message-ID: <20210921004431.GO1756565@dread.disaster.area>
-References: <163192864476.417973.143014658064006895.stgit@magnolia>
- <163192866125.417973.7293598039998376121.stgit@magnolia>
+        Mon, 20 Sep 2021 22:28:01 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B2FDC1E7C70;
+        Mon, 20 Sep 2021 12:15:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Ce9uaTKd/D6QGSNbhvZvPAgEhomYs3uXfZuXWEuTyDo=; b=369USbNlI+62qdglSNQET5FERT
+        WUvD7ynkbpEFudjb0fzSZMx1jcQ0hKOHBeMIB+Pj2VdvtrEfRI3LKt0bQAnDxpHRqpv5P6niCIlsb
+        vlDnHHYc0zuAPHDcADuSeTRcnr78tG8F+7PK1OVCzWdHqzs8WbAVQXI7ZLfan7YbWZ7KDaPGTxirF
+        ZZUKGCVxE52zlioB/QkdVf6IrxxosbDb/xyQxcCB90Zl17FaLFDtLVrcFXNLdGJErM4FQk4iaUTAV
+        SaWz38ee84P1Ya6hFVMqeeHYnwzGrok3ud5aKaVEzLkEZd9ECbjJ+/ib+sgCJQAbOHqO0IwNeYwk+
+        Wfyl9zcQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mSOl8-002uHl-FF; Mon, 20 Sep 2021 19:15:22 +0000
+Date:   Mon, 20 Sep 2021 12:15:22 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        minchan@kernel.org, jeyu@kernel.org, shuah@kernel.org,
+        rdunlap@infradead.org, rafael@kernel.org, masahiroy@kernel.org,
+        ndesaulniers@google.com, yzaikin@google.com, nathan@kernel.org,
+        ojeda@kernel.org, penguin-kernel@i-love.sakura.ne.jp,
+        vitor@massaru.org, elver@google.com, jarkko@kernel.org,
+        glider@google.com, rf@opensource.cirrus.com,
+        stephen@networkplumber.org, David.Laight@aculab.com,
+        bvanassche@acm.org, jolsa@kernel.org,
+        andriy.shevchenko@linux.intel.com, trishalfonso@google.com,
+        andreyknvl@gmail.com, jikos@kernel.org, mbenes@suse.com,
+        ngupta@vflare.org, sergey.senozhatsky.work@gmail.com,
+        reinette.chatre@intel.com, fenghua.yu@intel.com, bp@alien8.de,
+        x86@kernel.org, hpa@zytor.com, lizefan.x@bytedance.com,
+        hannes@cmpxchg.org, daniel.vetter@ffwll.ch, bhelgaas@google.com,
+        kw@linux.com, dan.j.williams@intel.com, senozhatsky@chromium.org,
+        hch@lst.de, joe@perches.com, hkallweit1@gmail.com, axboe@kernel.dk,
+        jpoimboe@redhat.com, tglx@linutronix.de, keescook@chromium.org,
+        rostedt@goodmis.org, peterz@infradead.org,
+        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, copyleft-next@lists.fedorahosted.org
+Subject: Re: [PATCH v7 09/12] sysfs: fix deadlock race with module removal
+Message-ID: <YUjdytEDkCughtSz@bombadil.infradead.org>
+References: <20210918050430.3671227-1-mcgrof@kernel.org>
+ <20210918050430.3671227-10-mcgrof@kernel.org>
+ <YUjKjLzqpcxjRyit@slm.duckdns.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <163192866125.417973.7293598039998376121.stgit@magnolia>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Tu+Yewfh c=1 sm=1 tr=0
-        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
-        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
-        a=jBJWxBCxkUIqe1ibMVcA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <YUjKjLzqpcxjRyit@slm.duckdns.org>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 17, 2021 at 06:31:01PM -0700, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
+On Mon, Sep 20, 2021 at 07:53:16AM -1000, Tejun Heo wrote:
+> Hello,
 > 
-> Add a new mode to fallocate to zero-initialize all the storage backing a
-> file.
+> On Fri, Sep 17, 2021 at 10:04:27PM -0700, Luis Chamberlain wrote:
+> > If try_module_get() fails we fail the operation on the kernfs node.
+> > 
+> > We use a try method as a full lock means we'd then make our sysfs
+> > attributes busy us out from possible module removal, and so userspace
+> > could force denying module removal, a silly form of "DOS" against module
+> > removal. A try lock on the module removal ensures we give priority to
+> > module removal and interacting with sysfs attributes only comes second.
+> > Using a full lock could mean for instance that if you don't stop poking
+> > at sysfs files you cannot remove a module.
 > 
-> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> ---
->  fs/open.c                   |    5 +++++
->  include/linux/falloc.h      |    1 +
->  include/uapi/linux/falloc.h |    9 +++++++++
->  3 files changed, 15 insertions(+)
+> I find this explanation odd because there's no real equivalent to locking
+> the module (as opposed to try locking) 
+
+Actually there is, __module_get() but I suspect some of these users are
+probably incorrect and should be be moved to try. The documentation
+about "rmmod --wait" for __module_get() is also outdated as that option
+is no longer supported. I'll send an update for that later.
+
+> because you can't wait for the
+> removal to finish and then grant the lock, so any operation which increases
+> the reference *has* to be a try method unless the caller already holds a
+> reference to the same module and thus knows that the module is already
+> pinned.
+
+Right, the reason I mention the alternative is that we technically don't
+need to use try in this case since during a kernfs op it is implied the
+module will be pinned, but we have further motivations to use a try
+method here: to avoid a possible DOS from module removal by userspace
+mucking with ops.
+
+> The code isn't wrong, so maybe just drop the related paragraphs in
+> the commit message?
+
+Does it make sense to clarify the above a bit more somehow? Or do think
+its not needed?
+
+> >  static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
+> >  					     struct kernfs_node *parent,
+> >  					     const char *name, umode_t mode,
+> > +					     struct module *owner,
+> >  					     kuid_t uid, kgid_t gid,
+> >  					     unsigned flags)
 > 
-> 
-> diff --git a/fs/open.c b/fs/open.c
-> index daa324606a41..230220b8f67a 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -256,6 +256,11 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
->  	    (mode & ~FALLOC_FL_INSERT_RANGE))
->  		return -EINVAL;
->  
-> +	/* Zeroinit should only be used by itself and keep size must be set. */
-> +	if ((mode & FALLOC_FL_ZEROINIT_RANGE) &&
-> +	    (mode != (FALLOC_FL_ZEROINIT_RANGE | FALLOC_FL_KEEP_SIZE)))
-> +		return -EINVAL;
-> +
->  	/* Unshare range should only be used with allocate mode. */
->  	if ((mode & FALLOC_FL_UNSHARE_RANGE) &&
->  	    (mode & ~(FALLOC_FL_UNSHARE_RANGE | FALLOC_FL_KEEP_SIZE)))
-> diff --git a/include/linux/falloc.h b/include/linux/falloc.h
-> index f3f0b97b1675..4597b416667b 100644
-> --- a/include/linux/falloc.h
-> +++ b/include/linux/falloc.h
-> @@ -29,6 +29,7 @@ struct space_resv {
->  					 FALLOC_FL_PUNCH_HOLE |		\
->  					 FALLOC_FL_COLLAPSE_RANGE |	\
->  					 FALLOC_FL_ZERO_RANGE |		\
-> +					 FALLOC_FL_ZEROINIT_RANGE |	\
->  					 FALLOC_FL_INSERT_RANGE |	\
->  					 FALLOC_FL_UNSHARE_RANGE)
->  
-> diff --git a/include/uapi/linux/falloc.h b/include/uapi/linux/falloc.h
-> index 51398fa57f6c..8144403b6102 100644
-> --- a/include/uapi/linux/falloc.h
-> +++ b/include/uapi/linux/falloc.h
-> @@ -77,4 +77,13 @@
->   */
->  #define FALLOC_FL_UNSHARE_RANGE		0x40
->  
-> +/*
-> + * FALLOC_FL_ZEROINIT_RANGE is used to reinitialize storage backing a file by
-> + * writing zeros to it.  Subsequent read and writes should not fail due to any
-> + * previous media errors.  Blocks must be not be shared or require copy on
-> + * write.  Holes and unwritten extents are left untouched.  This mode must be
-> + * used with FALLOC_FL_KEEP_SIZE.
-> + */
-> +#define FALLOC_FL_ZEROINIT_RANGE	0x80
+> Is there a particular reason why @owner is added between @mode and @uid?
+> Sitting between two fs attributes seems a bit awkward. Maybe it can just be
+> the last one?
 
-Hmmmm.
+No, I just picked an arbitrary place. Sure I'll move it to the end.
 
-I think this wants to be a behavioural modifier for existing
-operations rather than an operation unto itself. i.e. similar to how
-KEEP_SIZE modifies ALLOC behaviour but doesn't fundamentally alter
-the guarantees ALLOC provides userspace.
-
-In this case, the change of behaviour over ZERO_RANGE is that we
-want physical zeros to be written instead of the filesystem
-optimising away the physical zeros by manipulating the layout
-of the file.
-
-There's been requests in the past for a way to make ALLOC also
-behave like this - in the case that users want fully allocated space
-to be preallocated so their applications don't take unwritten extent
-conversion penalties on first writes. Databases are an example here,
-where setup of a new WAL file isn't performance critical, but writes
-to the WAL are and the WAL files are write-once. Hence they always
-take unwritten conversion penalties and the only way around that is
-to physically zero the files before use...
-
-So it seems to me what we actually need here is a "write zeroes"
-modifier to fallocate() operations to tell the filesystem that the
-application really wants it to write zeroes over that range, not
-just guarantee space has been physically allocated....
-
-Then we have and API that looks like:
-
-	ALLOC		- allocate space efficiently
-	ALLOC | INIT	- allocate space by writing zeros to it
-	ZERO		- zero data and preallocate space efficiently
-	ZERO | INIT	- zero range by writing zeros to it
-
-Which seems to cater for all the cases I know of where physically
-writing zeros instead of allocating unwritten extents is the
-preferred behaviour of fallocate()....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+  Luis
