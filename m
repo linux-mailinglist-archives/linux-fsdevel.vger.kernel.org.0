@@ -2,110 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76ED34114E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 14:51:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA42E41150A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 14:54:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236101AbhITMw3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Sep 2021 08:52:29 -0400
-Received: from outbound-smtp56.blacknight.com ([46.22.136.240]:35813 "EHLO
-        outbound-smtp56.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234203AbhITMw2 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Sep 2021 08:52:28 -0400
-Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
-        by outbound-smtp56.blacknight.com (Postfix) with ESMTPS id 99603FAB81
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Sep 2021 13:51:00 +0100 (IST)
-Received: (qmail 24957 invoked from network); 20 Sep 2021 12:51:00 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 20 Sep 2021 12:51:00 -0000
-Date:   Mon, 20 Sep 2021 13:50:58 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linux-MM <linux-mm@kvack.org>, NeilBrown <neilb@suse.de>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Rik van Riel <riel@surriel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/5] Remove dependency on congestion_wait in mm/
-Message-ID: <20210920125058.GI3959@techsingularity.net>
-References: <20210920085436.20939-1-mgorman@techsingularity.net>
- <YUhztA8TmplTluyQ@casper.infradead.org>
+        id S238978AbhITMz6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Sep 2021 08:55:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56814 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239027AbhITMzv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Sep 2021 08:55:51 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 982B360F6B;
+        Mon, 20 Sep 2021 12:54:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632142464;
+        bh=+E3USFlAlQ9wVdWsGzy+HHEZMYE6FYf6ghB1RYfKU30=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=pnDSG/pHGMwB3kz5Insco1jTpQtb5uI2YUktumhZxYdKycl/gcUIXss6SiMfMPh3V
+         a0fZFIxIMUW6jLSRbPmN6fkBRd38LPbdeWmcB67BOG/n+q92FiLtpfqYGqsBEkIl0s
+         aoPcP9DqSPK1qP5I/P/1pAmV5gW8y9VnGcoak8bTlOdolypa2WL94JxcrqUURHJN4J
+         BvSHXP3kgIcts029UoWcyLN0X/g1u3frVClgWNW7Kf3bvm+QuJWNWuwOWFnYI13a2B
+         HDN/hAh53/ApveUuGLWQFVNODoZkqmVDbuc4FY8ZpTb+cqi65sicgPFfHiY+qVNSwn
+         YmwX2LLIf41cA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id 6304F5C07FE; Mon, 20 Sep 2021 05:54:24 -0700 (PDT)
+Date:   Mon, 20 Sep 2021 05:54:24 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        syzbot <syzbot+d6c75f383e01426a40b4@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, Waiman Long <llong@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [syzbot] WARNING in __init_work
+Message-ID: <20210920125424.GG880162@paulmck-ThinkPad-P17-Gen-1>
+Reply-To: paulmck@kernel.org
+References: <000000000000423e0a05cc0ba2c4@google.com>
+ <20210915161457.95ad5c9470efc70196d48410@linux-foundation.org>
+ <163175937144.763609.2073508754264771910@swboyd.mtv.corp.google.com>
+ <87sfy07n69.ffs@tglx>
+ <20210920040336.GV2361455@dread.disaster.area>
+ <20210920122846.GA16661@lst.de>
+ <20210920123859.GE880162@paulmck-ThinkPad-P17-Gen-1>
+ <20210920124557.GA18317@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YUhztA8TmplTluyQ@casper.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210920124557.GA18317@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 20, 2021 at 12:42:44PM +0100, Matthew Wilcox wrote:
-> On Mon, Sep 20, 2021 at 09:54:31AM +0100, Mel Gorman wrote:
-> > This has been lightly tested only and the testing was useless as the
-> > relevant code was not executed. The workload configurations I had that
-> > used to trigger these corner cases no longer work (yey?) and I'll need
-> > to implement a new synthetic workload. If someone is aware of a realistic
-> > workload that forces reclaim activity to the point where reclaim stalls
-> > then kindly share the details.
+On Mon, Sep 20, 2021 at 02:45:57PM +0200, Christoph Hellwig wrote:
+> On Mon, Sep 20, 2021 at 05:38:59AM -0700, Paul E. McKenney wrote:
+> > > Well, the block code already does a bdi_unregister in del_gendisk.
+> > > So if we end up freeing the whole device bdev with a registered bdi
+> > > something is badly going wrong.  Unfortunately the log in this report
+> > > isn't much help on how we got there.  IIRC syzbot will eventually spew
+> > > out a reproducer, so it might be worth to wait for that.
+> > 
+> > If it does turn out that you need to block in an RCU callback,
+> > queue_rcu_work() can be helpful.  This schedules a workqueue from the RCU
+> > callback, allowing the function passed to the preceding INIT_RCU_WORK()
+> > to block.
 > 
-> The stereeotypical "stalling on I/O" problem is to plug in one of the
-> crap USB drives you were given at a trade show and simply
-> 	dd if=/dev/zero of=/dev/sdb
-> 	sync
+> In this case we really should not block here.  The problem is that
+> we are hitting the strange bdi auto-unregister misfeature due to a bug
+> elsewhere.  Which reminds that I have a patch series to remove this
+> auto unregistration which I need to bring bag once this is fixed.
 > 
+> That being said queue_rcu_work would have been really useful in a few
+> places I touched in that past.
 
-The test machines are 1500KM away so plugging in a USB stick but worst
-comes to the worst, I could test it on a laptop. I considered using the
-IO controller but I'm not sure that would throttle background writeback.
-I dismissed doing this for a few reasons though -- the dirtying should
-be rate limited based on the speed of the BDI so it will not necessarily
-trigger the condition. It also misses the other interesting cases --
-throttling due to excessive isolation and throttling due to failing to
-make progress.
+Glad it helped elsewhere and apologies for the noise here!
 
-I've prototyped a synthetic case that uses 4..(NR_CPUS*4) workers. 1
-worker measures mmap/munmap latency. 1 worker under fio is randomly reading
-files. The remaining workers are split between fio doing random write IO
-on separate files and anonymous memory hogs reading large mappings every
-5 seconds. The aggregate WSS is approximately totalmem*2 split between 60%
-anon and 40% file-backed (40% to be 2xdirty_ratio). After a warmup period
-based on the writeback speed, it runs for 5 minutes per number of workers.
-
-The primary metric of "goodness" will be the mmap latency because it's
-the smallest worker that should be able to make quick progress and I
-want to see how much it is interfered with during reclaim. I'll be
-graphing the throttling times to see what processes get throttled and
-for how long.
-
-I was hoping though that there was a canonical realistic case that the
-FS people use to stress the paths where the allocator fails to return
-memory.  While my synthetic workload *might* work to trigger the cases,
-I would prefer to have something that can compare this basic approach
-with anything that is more clever.
-
-Similarly, it would be nice to have a reasonable test case that phase
-changes what memory is hot while there is heavy IO in the background to
-detect whether the hot WSS is being properly protected. I used to use
-memcached and a heavy writer to simulate this but it's weak because there
-is no phase change so it's poor at evaluating vmscan.
-
-> You can also set up qemu to have extremely slow I/O performance:
-> https://serverfault.com/questions/675704/extremely-slow-qemu-storage-performance-with-qcow2-images
-> 
-
-Similar problem to the slow USB case, it's only catching one part of the
-picture except now I have to worry about differences that are related
-to the VM configuration (e.g. pinning virtual CPUs to physical CPUs
-and replicating topology). Fine for a functional test, not so fine for
-measuring if the patch is any good performance-wise.
-
--- 
-Mel Gorman
-SUSE Labs
+							Thanx, Paul
