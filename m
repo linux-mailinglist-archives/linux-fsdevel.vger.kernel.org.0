@@ -2,72 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 444214114AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 14:39:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BF104114A6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Sep 2021 14:39:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237937AbhITMk5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Sep 2021 08:40:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53944 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237679AbhITMky (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Sep 2021 08:40:54 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27ABFC061574;
-        Mon, 20 Sep 2021 05:39:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Wo+vAVxsvvL69J6kBhb2k3hYCVmdEGu6z6CieNSf45o=; b=Atewm4NOs4/l+DuGNUyY53AjHy
-        70TO3+51yjvHj0182A4vAxE9+LFDnm5Vw/mGE4zoxkJ6WR0ig7YE9ZURNu8uOV0+zY2joRoYXQm1D
-        7NyF5YMWFBsKUEMXHFTq2VB26z+A0I5DskYpuK/zRRJB+vnqEPUF0S9VtIITY8kLFVjkimCmHVcfL
-        tSb6zp1KE8n9or8xF+4hAI+G0PcKd8oRuw4JYZ05cXelw/f3YEWC2+JszJohc/QHcLCYrY2i1BZC6
-        tEdobQre2gxMelJ4E/azkUcwwoHAgk9JVNCXKkmQ2ZmKs4Lmlp9/OBGYDsYJ15Co7FV3eIcLC+Vrs
-        tksAiKmA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mSIYM-002f95-A3; Mon, 20 Sep 2021 12:37:50 +0000
-Date:   Mon, 20 Sep 2021 13:37:46 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Steve French <sfrench@samba.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] fscache, 9p, afs, cifs, nfs: Deal with some warnings
- from W=1
-Message-ID: <YUiAmnMV7+fprNC1@casper.infradead.org>
-References: <163214005516.2945267.7000234432243167892.stgit@warthog.procyon.org.uk>
+        id S238522AbhITMk0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Sep 2021 08:40:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59978 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231849AbhITMk0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Sep 2021 08:40:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 428E76109D;
+        Mon, 20 Sep 2021 12:38:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632141539;
+        bh=nUAwaxsJu/Tne+3ivGEuqKG//tC46dmJUGIHdGNfH6A=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=HZ3UHG5HUouRVIAI3UC9PBHuEyWSxBcJ4X2yWeQl0KiUFYepijAYnrir9W1qPf51r
+         35EHmmDx9RY4sc3Qh7/NOkAlE2OXIyP4oRgtq+LAHAawEQnGKXcTR9PqlpenrmTJQn
+         1tSzr/ZI5VYX9QWJCkrBVc6KH4QVxaWqqXwhqAHDH5pgMluiHAoH/EziM9K9C9uHUf
+         NmCE5T+HT1xw+iaFoIBOKD9JV+fj4gaaSBvzrUgjCD8mY/TGBtYNmMM///XE59HrNp
+         1KOBSLxGC948xgTZafZjoMd0KGLWAJvmmskR+xO3SdfiLLoTw49sr3CeOF/F2xW1tv
+         nct3tHwT2EPiw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id 13CCE5C07FE; Mon, 20 Sep 2021 05:38:59 -0700 (PDT)
+Date:   Mon, 20 Sep 2021 05:38:59 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        syzbot <syzbot+d6c75f383e01426a40b4@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, Waiman Long <llong@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [syzbot] WARNING in __init_work
+Message-ID: <20210920123859.GE880162@paulmck-ThinkPad-P17-Gen-1>
+Reply-To: paulmck@kernel.org
+References: <000000000000423e0a05cc0ba2c4@google.com>
+ <20210915161457.95ad5c9470efc70196d48410@linux-foundation.org>
+ <163175937144.763609.2073508754264771910@swboyd.mtv.corp.google.com>
+ <87sfy07n69.ffs@tglx>
+ <20210920040336.GV2361455@dread.disaster.area>
+ <20210920122846.GA16661@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <163214005516.2945267.7000234432243167892.stgit@warthog.procyon.org.uk>
+In-Reply-To: <20210920122846.GA16661@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 20, 2021 at 01:14:15PM +0100, David Howells wrote:
-> +++ b/fs/9p/vfs_addr.c
-> @@ -88,7 +88,7 @@ static const struct netfs_read_request_ops v9fs_req_ops = {
->  
->  /**
->   * v9fs_vfs_readpage - read an entire page in from 9P
-> - * @filp: file being read
-> + * @file: file being read
->   * @page: structure to page
->   *
->   */
+On Mon, Sep 20, 2021 at 02:28:46PM +0200, Christoph Hellwig wrote:
+> On Mon, Sep 20, 2021 at 02:03:36PM +1000, Dave Chinner wrote:
+> > > >> >  bdi_remove_from_list mm/backing-dev.c:938 [inline]
+> > > >> >  bdi_unregister+0x177/0x5a0 mm/backing-dev.c:946
+> > > >> >  release_bdi+0xa1/0xc0 mm/backing-dev.c:968
+> > > >> >  kref_put include/linux/kref.h:65 [inline]
+> > > >> >  bdi_put+0x72/0xa0 mm/backing-dev.c:976
+> > > >> >  bdev_free_inode+0x116/0x220 fs/block_dev.c:819
+> > > >> >  i_callback+0x3f/0x70 fs/inode.c:224
+> > > 
+> > > The inode code uses RCU for freeing an inode object which then ends up
+> > > calling bdi_put() and subsequently in synchronize_rcu_expedited().
+> > 
+> > Commit 889c05cc5834 ("block: ensure the bdi is freed after
+> > inode_detach_wb") might be a good place to start looking here. It
+> > moved the release of the bdi from ->evict context to the RCU freeing
+> > of the blockdev inode...
+> 
+> Well, the block code already does a bdi_unregister in del_gendisk.
+> So if we end up freeing the whole device bdev with a registered bdi
+> something is badly going wrong.  Unfortunately the log in this report
+> isn't much help on how we got there.  IIRC syzbot will eventually spew
+> out a reproducer, so it might be worth to wait for that.
 
-This is an example of a weird pattern in filesystems.  Several of
-them have kernel-doc for the implementation of various ->ops methods.
-I don't necessarily believe we should delete the comments (although is
-there any useful information in the above?), but I don't see the point
-in the comment being kernel-doc.
+If it does turn out that you need to block in an RCU callback,
+queue_rcu_work() can be helpful.  This schedules a workqueue from the RCU
+callback, allowing the function passed to the preceding INIT_RCU_WORK()
+to block.
 
+							Thanx, Paul
