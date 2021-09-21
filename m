@@ -2,121 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50729413D26
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 23:58:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF3C6413D1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 23:57:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235764AbhIUWAF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 18:00:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56326 "EHLO
+        id S235737AbhIUV7G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 17:59:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234138AbhIUWAA (ORCPT
+        with ESMTP id S232304AbhIUV7D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 18:00:00 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B190C061575
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Sep 2021 14:58:31 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id u18so3147150lfd.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Sep 2021 14:58:31 -0700 (PDT)
+        Tue, 21 Sep 2021 17:59:03 -0400
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3890C061575
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Sep 2021 14:57:33 -0700 (PDT)
+Received: by mail-qt1-x82d.google.com with SMTP id e16so683926qte.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Sep 2021 14:57:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20210112.gappssmtp.com; s=20210112;
+        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=3LA4/O2mCyOef4VI1WFdoR8n1dGVVw7qzM7cBS6DVhU=;
-        b=uz74/2S9fGGuaG1ODTSPcqBPXWYPIeYWZ5doyMS2bRw5AX5Q0Ua+uMdim4ZuJxyrxA
-         jJZQO4P96OqxH5cKvegadiVeIhPzNJbdYGDNOj6HudiXM/SjkCNrO1WvHS6o1vufFzsX
-         2aSN3AaXAf4xQbbvR+FPssTEArjutFFJ66GH7RUNHyFCNozOqySWjjTExvVocPFb39xr
-         6cGXTnJkbxFWnWohqMtGSjOnjJQnu/xNRG5R8l2FsElk/Lpvl66TfQOcwUYfJ1TTZ5xS
-         XHIL9Tea6doFMlP16r8MNgBnWMAMa0JaH2OsWma5jit+qxznz4qqyPPj9R612HR9czFp
-         8TyQ==
+        bh=UVeSCGRKIiyvWycmoGx6GlZVf+OBysJsxMROIYkTp+E=;
+        b=VoYhdhCluGoYbkdSs9ZviRrXOCFdtZ5H099jEvPGW5j298L+m7OYhjvZTXrWQEpzuH
+         IqHC5TNqkf0Ig6ZGyOuZ4kHUFiv3leqg6iJTAxKfm8dnORvZKQZE/2gtybjrS2srK1Wt
+         FLF9r5VMSDiIZy+Sh4FL0V9blVUOrfIjCIoJjsPyMIsGf53hSsbu9wxQQDsCJ1q0voF2
+         zrm1tT25pHefoQTyqIFKfFXdnuEZ3cGQHC/hJOeaT7pu3YklcjJn+eB7FzXRx/JMsPZc
+         v82mao0R5OX4ZnE+11YHpJuLTpr2LjTcTC5fCet6NvV+ofdj53hv8sWr3fUwPTiRLnCU
+         on8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=3LA4/O2mCyOef4VI1WFdoR8n1dGVVw7qzM7cBS6DVhU=;
-        b=ovVferYX9DWpuoJmoCGXMuij4T9VOqSHjopYzMcNytiVVkSQvQ1X4VorJSnwHquUOT
-         Nv2jShfT47ES1fb8XCBRoVio7/yiFQQxp2USbW2198R7ce1xyPteYjtQOq9hq3dHarG6
-         eJHRW/3KMzyry5PTGL9p/ff4z5n1xZ14bM1RfeId99Tja1gvUiCJplUL5rAcjRiPV1m2
-         d1OG3pU4ZZ4OjsL0FEfJxklpOPQzR34LP9hSirE/EJTimznBd+tiHmYR8D005LU7cAHH
-         zqWa7TKUaHidI6HgKV5CcJU0m37sC01HnE/FeSJH+BW/LgansWY5alg5EThqXeOe9yx0
-         07qw==
-X-Gm-Message-State: AOAM530oxUF20PUzR4hUPbQQSnJkk5PUGRoNTWiMylX28dPuFOOx7Rn7
-        PEPrDzRY7v0QZVzRN7YiWqmX2g==
-X-Google-Smtp-Source: ABdhPJwDR/A8UmkVQG/A20LQ6G5BoWJFTrnWNencwdMb7p0WPRY497q9Nuc+l8sjchxpIRdzv87pHg==
-X-Received: by 2002:a2e:86ce:: with SMTP id n14mr11214294ljj.211.1632261509754;
-        Tue, 21 Sep 2021 14:58:29 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id q7sm16555ljg.137.2021.09.21.14.58.29
+        bh=UVeSCGRKIiyvWycmoGx6GlZVf+OBysJsxMROIYkTp+E=;
+        b=eRuifwZW0EAm0Eb00CwwHhiO2Hy1gGlThE7L0dHff2+xj29l+woWEBla+gzOi4ErbB
+         cbMJ4HNNTdF1I1PxjmpjtXDK3isIbchB5627+XdWYdRbNZRzu6y2aXajz3V65ncb7f3c
+         J7TpHqpcgVeILHCx959wgZHIGAhXKh4NIczT3PWyMl3xjAkf2zs/ZfT3YPJIrVqDSkS8
+         EWpKnwP7EfTAm4WR3ed5MDdl5H+8TJGygfxUkiMI9lmAyykCUjmfTUkK7URCsJu9Jljv
+         OlBWv/V5uF26GpVT/ScSCirmiq6/l0DZPkphY9s130wOEvyeyNeFP3wP+wZHkMYLqudD
+         3wZg==
+X-Gm-Message-State: AOAM532M0zT0ndFQMH4/JPKQnFgVf9ntLKWp9iYW8PMdtnxz91u/+0t4
+        BpkxyPu0s8VYtpmcL+Ix339vfw==
+X-Google-Smtp-Source: ABdhPJxKO5CZhPNluh8HozyZ0PrmHrVvmnYlcPVGIoDlha+Wmwkfv0kh/u+uKkiXQYXa/nyXEWp8sw==
+X-Received: by 2002:ac8:5cd0:: with SMTP id s16mr20150301qta.378.1632261452739;
+        Tue, 21 Sep 2021 14:57:32 -0700 (PDT)
+Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
+        by smtp.gmail.com with ESMTPSA id k17sm176027qtx.67.2021.09.21.14.57.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Sep 2021 14:58:29 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 5DF1710305C; Wed, 22 Sep 2021 00:58:30 +0300 (+03)
-Date:   Wed, 22 Sep 2021 00:58:30 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Tom Lendacky <thomas.lendacky@amd.com>
-Cc:     Borislav Petkov <bp@alien8.de>, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, iommu@lists.linux-foundation.org,
-        kvm@vger.kernel.org, linux-efi@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-graphics-maintainer@vmware.com,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Sathyanarayanan Kuppuswamy 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Tue, 21 Sep 2021 14:57:32 -0700 (PDT)
+Date:   Tue, 21 Sep 2021 17:59:33 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
         Christoph Hellwig <hch@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v3 5/8] x86/sme: Replace occurrences of sme_active() with
- cc_platform_has()
-Message-ID: <20210921215830.vqxd75r4eyau6cxy@box.shutemov.name>
-References: <cover.1631141919.git.thomas.lendacky@amd.com>
- <367624d43d35d61d5c97a8b289d9ddae223636e9.1631141919.git.thomas.lendacky@amd.com>
- <20210920192341.maue7db4lcbdn46x@box.shutemov.name>
- <77df37e1-0496-aed5-fd1d-302180f1edeb@amd.com>
- <YUoao0LlqQ6+uBrq@zn.tnic>
- <20210921212059.wwlytlmxoft4cdth@box.shutemov.name>
- <YUpONYwM4dQXAOJr@zn.tnic>
- <20210921213401.i2pzaotgjvn4efgg@box.shutemov.name>
- <00f52bf8-cbc6-3721-f40e-2f51744751b0@amd.com>
+        David Howells <dhowells@redhat.com>
+Subject: Re: Folio discussion recap
+Message-ID: <YUpVxZnfskGcJHbD@cmpxchg.org>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YTu9HIu+wWWvZLxp@moria.home.lan>
+ <YUfvK3h8w+MmirDF@casper.infradead.org>
+ <YUo20TzAlqz8Tceg@cmpxchg.org>
+ <YUpC3oV4II+u+lzQ@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <00f52bf8-cbc6-3721-f40e-2f51744751b0@amd.com>
+In-Reply-To: <YUpC3oV4II+u+lzQ@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 21, 2021 at 04:43:59PM -0500, Tom Lendacky wrote:
-> On 9/21/21 4:34 PM, Kirill A. Shutemov wrote:
-> > On Tue, Sep 21, 2021 at 11:27:17PM +0200, Borislav Petkov wrote:
-> > > On Wed, Sep 22, 2021 at 12:20:59AM +0300, Kirill A. Shutemov wrote:
-> > > > I still believe calling cc_platform_has() from __startup_64() is totally
-> > > > broken as it lacks proper wrapping while accessing global variables.
-> > > 
-> > > Well, one of the issues on the AMD side was using boot_cpu_data too
-> > > early and the Intel side uses it too. Can you replace those checks with
-> > > is_tdx_guest() or whatever was the helper's name which would check
-> > > whether the the kernel is running as a TDX guest, and see if that helps?
-> > 
-> > There's no need in Intel check this early. Only AMD need it. Maybe just
-> > opencode them?
+On Tue, Sep 21, 2021 at 09:38:54PM +0100, Matthew Wilcox wrote:
+> On Tue, Sep 21, 2021 at 03:47:29PM -0400, Johannes Weiner wrote:
+> > This discussion is now about whether folio are suitable for anon pages
+> > as well. I'd like to reiterate that regardless of the outcome of this
+> > discussion I think we should probably move ahead with the page cache
+> > bits, since people are specifically blocked on those and there is no
+> > dependency on the anon stuff, as the conversion is incremental.
 > 
-> Any way you can put a gzipped/bzipped copy of your vmlinux file somewhere I
-> can grab it from and take a look at it?
+> So you withdraw your NAK for the 5.15 pull request which is now four
+> weeks old and has utterly missed the merge window?
 
-You can find broken vmlinux and bzImage here:
+Once you drop the bits that convert shared anon and file
+infrastructure, yes. Because we haven't discussed yet, nor agree on,
+that folio are the way forward for anon pages.
 
-https://drive.google.com/drive/folders/1n74vUQHOGebnF70Im32qLFY8iS3wvjIs?usp=sharing
+> > and so the justification for replacing page with folio *below* those
+> > entry points to address tailpage confusion becomes nil: there is no
+> > confusion. Move the anon bits to anon_page and leave the shared bits
+> > in page. That's 912 lines of swap_state.c we could mostly leave alone.
+> 
+> Your argument seems to be based on "minimising churn". Which is certainly
+> a goal that one could have, but I think in this case is actually harmful.
+> There are hundreds, maybe thousands, of functions throughout the kernel
+> (certainly throughout filesystems) which assume that a struct page is
+> PAGE_SIZE bytes.  Yes, every single one of them is buggy to assume that,
+> but tracking them all down is a never-ending task as new ones will be
+> added as fast as they can be removed.
 
-Let me know when I can remove it.
+What does that have to do with anon pages?
 
--- 
- Kirill A. Shutemov
+> > The same is true for the LRU code in swap.c. Conceptually, already no
+> > tailpages *should* make it onto the LRU. Once the high-level page
+> > instantiation functions - add_to_page_cache_lru, do_anonymous_page -
+> > have type safety, you really do not need to worry about tail pages
+> > deep in the LRU code. 1155 more lines of swap.c.
+> 
+> It's actually impossible in practice as well as conceptually.  The list
+> LRU is in the union with compound_head, so you cannot put a tail page
+> onto the LRU.  But yet we call compound_head() on every one of them
+> multiple times because our current type system does not allow us to
+> express "this is not a tail page".
+
+No, because we haven't identified *who actually needs* these calls
+and move them up and out of the low-level helpers.
+
+It was a mistake to add them there, yes. But they were added recently
+for rather few callers. And we've had people send patches already to
+move them where they are actually needed.
+
+Of course converting *absolutely everybody else* to not-tailpage
+instead will also fix the problem... I just don't agree that this is
+an appropriate response to the issue.
+
+Asking again: who conceptually deals with tail pages in MM? LRU and
+reclaim don't. The page cache doesn't. Compaction doesn't. Migration
+doesn't. All these data structures and operations are structured
+around headpages, because that's the logical unit they operate on. The
+notable exception, of course, are the page tables because they map the
+pfns of tail pages. But is that it?  Does it come down to page table
+walkers encountering pte-mapped tailpages? And needing compound_head()
+before calling mark_page_accessed() or set_page_dirty()?
+
+We couldn't fix vm_normal_page() to handle this? And switch khugepaged
+to a new vm_raw_page() or whatever?
+
+It should be possible to answer this question as part of the case for
+converting tens of thousands of lines of code to folio.
