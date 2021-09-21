@@ -2,164 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B518412B86
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 04:18:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA77E412D4B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 05:17:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347073AbhIUCTe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Sep 2021 22:19:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34052 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237486AbhIUBy7 (ORCPT
+        id S232000AbhIUDTC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Sep 2021 23:19:02 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:38651 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1347741AbhIUC4o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Sep 2021 21:54:59 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61CCAC0313FF;
-        Mon, 20 Sep 2021 17:04:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=dFAUFg/mX5umZGWtfy03pLeHbDGj6EjlCd5lUAE3GFQ=; b=dObeiqsndcF+lNoh24bcIlQ0Z4
-        8K6tr6/HQqzHejW7tcCx2uFWkOSwSDGccUZUOO2HSbtwyHL2bzieHlxL/ZHYYKEk4p9CFnO8yXcPK
-        f/HQ2/ZQdndlnXyIUJdZ0aJXLTxz6QwLUg1BzKdC6l5F015c1tMcwzAgGVNaIhiqeaim5LUH14T5q
-        SfrB2JGYzUuVFRpexD44YBdIJt19FFXMuXQ78E+NFAQjPzOw2KYPs158O36UwjUA4HwZgR9XHQuYE
-        ogpEbh3JR5+EHuSxOJT6kAbYkYcwK3PhKk2oYu4rhbOLPFOZheHL/NsJp3sMZeprOIKrHIsh9/J3J
-        bDfWazSw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mSTFv-003Nm8-F2; Tue, 21 Sep 2021 00:03:27 +0000
-Date:   Mon, 20 Sep 2021 17:03:27 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Tejun Heo <tj@kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Minchan Kim <minchan@kernel.org>, jeyu@kernel.org,
-        shuah <shuah@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>, yzaikin@google.com,
-        Nathan Chancellor <nathan@kernel.org>, ojeda@kernel.org,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        vitor@massaru.org, elver@google.com,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        rf@opensource.cirrus.com,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        David Laight <David.Laight@aculab.com>, bvanassche@acm.org,
-        jolsa@kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        trishalfonso@google.com, andreyknvl@gmail.com,
-        Jiri Kosina <jikos@kernel.org>, mbenes@suse.com,
-        Nitin Gupta <ngupta@vflare.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Borislav Petkov <bp@alien8.de>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, lizefan.x@bytedance.com,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        senozhatsky@chromium.org, Christoph Hellwig <hch@lst.de>,
-        Joe Perches <joe@perches.com>, hkallweit1@gmail.com,
-        Jens Axboe <axboe@kernel.dk>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-spdx@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-block@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        copyleft-next@lists.fedorahosted.org
-Subject: Re: [PATCH v7 09/12] sysfs: fix deadlock race with module removal
-Message-ID: <YUkhTxhgPWRxMMJo@bombadil.infradead.org>
-References: <20210918050430.3671227-1-mcgrof@kernel.org>
- <20210918050430.3671227-10-mcgrof@kernel.org>
- <CAPcyv4i0xEwMQ5kSK-xGroV7aZr3j1YNrGMVLiLMr3U8nFCMKA@mail.gmail.com>
- <YUj6TrGbqlNI0OGC@bombadil.infradead.org>
- <CAPcyv4jFaNTfpKq6hQsFrWXTwHz-wG+5K4m-hmsPeteLX4p5AQ@mail.gmail.com>
+        Mon, 20 Sep 2021 22:56:44 -0400
+Received: by mail-io1-f70.google.com with SMTP id n8-20020a6b7708000000b005bd491bdb6aso46553766iom.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Sep 2021 19:55:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=d4R5QGLQnupcbebS30Lcro4CL6kMk66LcNL9QFcysXs=;
+        b=gTv/yUnTBCte0D+sEmxruZgBj9EoMOCQpQ95qYa5NsLhVLQDhZA881Z34n7gBUtFTO
+         9/o3uwDBQLO4eCff4PtSdclO+9l1zzayfxikyqVtNqhWkmXeZ2oeACj7lJprO2qd4B/A
+         P7Fp/EEcx/yipoR3jJ0DpWqvrswFSv+vTtxg+AT41RYn2OZTrnPFjrpFbzDY6hQdTr0T
+         NbmfrkQG3OZqymKz1LpOHwd41MqlUdmefKMX4lJGbJVdE3u2W8NQ3Wz4PgU/32fcYbR9
+         2Hee0xBpjbt2bKEq8KPAwjRpyhfSZwgDFXhB3Z2X3LsqEgcAKhQnBOCIb0u0XLO+XzrX
+         c9CQ==
+X-Gm-Message-State: AOAM533INNdkvLwNIzI40NGOmhPUifTPflF+MJhd58vLRJuEbPMk94ED
+        08sOHHr6mmgFEdawWsUyryxBrw7iHSGxVnbHv2lmxh9LOQXu
+X-Google-Smtp-Source: ABdhPJxjQX+yYzhafgAjaMFJ03bOgjxKloEmWs+8OY099wS939ETUUWYN0x0IvXskOzSD8IlBoE6IQDOZV/5Pa/LMRPwkA/m4z6v
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4jFaNTfpKq6hQsFrWXTwHz-wG+5K4m-hmsPeteLX4p5AQ@mail.gmail.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Received: by 2002:a6b:7710:: with SMTP id n16mr20889883iom.101.1632192916142;
+ Mon, 20 Sep 2021 19:55:16 -0700 (PDT)
+Date:   Mon, 20 Sep 2021 19:55:16 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f8be2b05cc788686@google.com>
+Subject: [syzbot] general protection fault in percpu_ref_put
+From:   syzbot <syzbot+533f389d4026d86a2a95@syzkaller.appspotmail.com>
+To:     andrii@kernel.org, ast@kernel.org, axboe@kernel.dk,
+        bpf@vger.kernel.org, cgroups@vger.kernel.org,
+        christian.brauner@ubuntu.com, christian@brauner.io,
+        daniel@iogearbox.net, dkadashev@gmail.com, hannes@cmpxchg.org,
+        john.fastabend@gmail.com, kafai@fb.com, kpsingh@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lizefan.x@bytedance.com, netdev@vger.kernel.org,
+        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
+        tj@kernel.org, torvalds@linux-foundation.org,
+        viro@zeniv.linux.org.uk, yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 20, 2021 at 02:55:10PM -0700, Dan Williams wrote:
-> On Mon, Sep 20, 2021 at 2:17 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >
-> > On Mon, Sep 20, 2021 at 01:52:21PM -0700, Dan Williams wrote:
-> > > On Fri, Sep 17, 2021 at 10:05 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > > > This deadlock was first reported with the zram driver, however the live
-> > > > patching folks have acknowledged they have observed this as well with
-> > > > live patching, when a live patch is removed. I was then able to
-> > > > reproduce easily by creating a dedicated selftests.
-> > > >
-> > > > A sketch of how this can happen follows:
-> > > >
-> > > > CPU A                              CPU B
-> > > >                                    whatever_store()
-> > > > module_unload
-> > > >   mutex_lock(foo)
-> > > >                                    mutex_lock(foo)
-> > > >    del_gendisk(zram->disk);
-> > > >      device_del()
-> > > >        device_remove_groups()
-> > >
-> > > This flow seems possible to trigger with:
-> > >
-> > >    echo $dev > /sys/bus/$bus/drivers/$driver/unbind
-> > >
-> > > I am missing why module pinning
-> >
-> > The aspect of try_module_get() which comes to value to prevent the
-> > deadlock is it ensures kernfs ops do not run once exit is on the way.
-> >
-> > > is part of the solution when it's the
-> > > device_del() path that is racing?
-> >
-> > But its not, the device_del() path will yield until the kernfs op
-> > completes. It is fine to wait there.
-> >
-> > The deadlock happens if a module exit routine uses a lock which is
-> > also used on a sysfs op. If the lock was first held by module exit,
-> > and module exit is waiting for the kernfs op to complete, and the
-> > kernfs op is waiting to hold the same lock then the exit will wait
-> > forever.
-> >
-> > > Module removal is just a more coarse
-> > > grained way to trigger unbind => device_del().
-> >
-> > Right, but the device_del() path is not sharing a lock with the sysfs op.
-> 
-> The deadlock in the example comes from holding a lock over
-> device_del() [...]
+Hello,
 
-No sorry, that is my mistake not making it clear that the mutex held
-in the example is on module exit. Or any lock for that matter. That is
-these locks are driver specific.
+syzbot found the following issue on:
 
-> > > Isn't the above a bug
-> > > in the driver, not missing synchronization in kernfs?
-> >
-> > We can certainly take the position as an alternative:
-> >
-> >   "thou shalt not use a lock on exit which is also used on a syfs op"
-> >
-> > However that seems counter intuitive, specially if we can resolve the
-> > issue easily with a try_module_get().
-> 
-> Again, I don't see how try_module_get() can affect the ABBA failure
-> case of holding a lock over device_del() that is also held inside
-> sysfs op.
+HEAD commit:    4357f03d6611 Merge tag 'pm-5.15-rc2' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=173e2d27300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ccfb8533b1cbe3b1
+dashboard link: https://syzkaller.appspot.com/bug?extid=533f389d4026d86a2a95
+compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1395c6f1300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11568cad300000
 
-It is not device_del(), it is on module exit. Sorry for this not being
-clear before. I'll fix the commit log to make it clearer. The subject
-at least was clear but I think the example could be clearer.
+The issue was bisected to:
 
-  Luis
+commit 020250f31c4c75ac7687a673e29c00786582a5f4
+Author: Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Thu Jul 8 06:34:43 2021 +0000
+
+    namei: make do_linkat() take struct filename
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=137e8a4b300000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10fe8a4b300000
+console output: https://syzkaller.appspot.com/x/log.txt?x=177e8a4b300000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+533f389d4026d86a2a95@syzkaller.appspotmail.com
+Fixes: 020250f31c4c ("namei: make do_linkat() take struct filename")
+
+general protection fault, probably for non-canonical address 0xdffffc0000000182: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x0000000000000c10-0x0000000000000c17]
+CPU: 1 PID: 148 Comm: kworker/u4:2 Not tainted 5.15.0-rc1-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: netns cleanup_net
+RIP: 0010:__ref_is_percpu include/linux/percpu-refcount.h:174 [inline]
+RIP: 0010:percpu_ref_put_many include/linux/percpu-refcount.h:319 [inline]
+RIP: 0010:percpu_ref_put+0x93/0x1d0 include/linux/percpu-refcount.h:338
+Code: 01 48 c7 c7 40 58 52 8a be b1 02 00 00 48 c7 c2 80 58 52 8a e8 fe 18 e9 ff 49 bd 00 00 00 00 00 fc ff df 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 9e 73 52 00 48 8b 2b 48 89 ee 48
+RSP: 0018:ffffc90000dc0b30 EFLAGS: 00010206
+RAX: 0000000000000182 RBX: 0000000000000c10 RCX: ffff888016781c80
+RDX: 0000000080000100 RSI: 0000000000000004 RDI: ffff8880b9d32508
+RBP: 000000000000003f R08: dffffc0000000000 R09: ffffed10173a64a2
+R10: ffffed10173a64a2 R11: 0000000000000000 R12: ffff88806df0a000
+R13: dffffc0000000000 R14: 0000000000000000 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f853d75b740 CR3: 00000000702e7000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ cgroup_bpf_put include/linux/cgroup.h:926 [inline]
+ cgroup_sk_free+0x3c/0xa0 kernel/cgroup/cgroup.c:6613
+ sk_prot_free net/core/sock.c:1852 [inline]
+ __sk_destruct+0x541/0x820 net/core/sock.c:1943
+ call_timer_fn+0xf6/0x210 kernel/time/timer.c:1421
+ expire_timers kernel/time/timer.c:1466 [inline]
+ __run_timers+0x71a/0x910 kernel/time/timer.c:1734
+ run_timer_softirq+0x63/0xf0 kernel/time/timer.c:1747
+ __do_softirq+0x392/0x7a3 kernel/softirq.c:558
+ __irq_exit_rcu+0xec/0x170 kernel/softirq.c:636
+ irq_exit_rcu+0x5/0x20 kernel/softirq.c:648
+ sysvec_apic_timer_interrupt+0x91/0xb0 arch/x86/kernel/apic/apic.c:1097
+ </IRQ>
+ asm_sysvec_apic_timer_interrupt+0x12/0x20
+RIP: 0010:lock_acquire+0x21f/0x4d0 kernel/locking/lockdep.c:5629
+Code: 08 4c 89 f7 e8 c2 d1 69 00 f6 84 24 81 00 00 00 02 0f 85 13 02 00 00 41 f7 c4 00 02 00 00 74 01 fb 48 c7 44 24 40 0e 36 e0 45 <4b> c7 04 2f 00 00 00 00 43 c7 44 2f 09 00 00 00 00 43 c7 44 2f 11
+RSP: 0018:ffffc9000170f8e0 EFLAGS: 00000206
+RAX: 0000000000000001 RBX: 1ffff920002e1f2c RCX: ffff888016782670
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000170fa40 R08: dffffc0000000000 R09: fffffbfff1fa2fc1
+R10: fffffbfff1fa2fc1 R11: 0000000000000000 R12: 0000000000000246
+R13: 1ffff920002e1f24 R14: ffffc9000170f960 R15: dffffc0000000000
+ rcu_lock_acquire+0x2a/0x30 include/linux/rcupdate.h:267
+ rcu_read_lock include/linux/rcupdate.h:687 [inline]
+ inet_twsk_purge+0x11b/0x890 net/ipv4/inet_timewait_sock.c:268
+ ops_exit_list net/core/net_namespace.c:171 [inline]
+ cleanup_net+0x7ec/0xc50 net/core/net_namespace.c:591
+ process_one_work+0x853/0x1140 kernel/workqueue.c:2297
+ worker_thread+0xac1/0x1320 kernel/workqueue.c:2444
+ kthread+0x453/0x480 kernel/kthread.c:319
+ ret_from_fork+0x1f/0x30
+Modules linked in:
+---[ end trace 6ae4e3b5aac552a5 ]---
+RIP: 0010:__ref_is_percpu include/linux/percpu-refcount.h:174 [inline]
+RIP: 0010:percpu_ref_put_many include/linux/percpu-refcount.h:319 [inline]
+RIP: 0010:percpu_ref_put+0x93/0x1d0 include/linux/percpu-refcount.h:338
+Code: 01 48 c7 c7 40 58 52 8a be b1 02 00 00 48 c7 c2 80 58 52 8a e8 fe 18 e9 ff 49 bd 00 00 00 00 00 fc ff df 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 9e 73 52 00 48 8b 2b 48 89 ee 48
+RSP: 0018:ffffc90000dc0b30 EFLAGS: 00010206
+RAX: 0000000000000182 RBX: 0000000000000c10 RCX: ffff888016781c80
+RDX: 0000000080000100 RSI: 0000000000000004 RDI: ffff8880b9d32508
+RBP: 000000000000003f R08: dffffc0000000000 R09: ffffed10173a64a2
+R10: ffffed10173a64a2 R11: 0000000000000000 R12: ffff88806df0a000
+R13: dffffc0000000000 R14: 0000000000000000 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f853d75b740 CR3: 000000000c68e000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	48 c7 c7 40 58 52 8a 	mov    $0xffffffff8a525840,%rdi
+   7:	be b1 02 00 00       	mov    $0x2b1,%esi
+   c:	48 c7 c2 80 58 52 8a 	mov    $0xffffffff8a525880,%rdx
+  13:	e8 fe 18 e9 ff       	callq  0xffe91916
+  18:	49 bd 00 00 00 00 00 	movabs $0xdffffc0000000000,%r13
+  1f:	fc ff df
+  22:	48 89 d8             	mov    %rbx,%rax
+  25:	48 c1 e8 03          	shr    $0x3,%rax
+* 29:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2e:	74 08                	je     0x38
+  30:	48 89 df             	mov    %rbx,%rdi
+  33:	e8 9e 73 52 00       	callq  0x5273d6
+  38:	48 8b 2b             	mov    (%rbx),%rbp
+  3b:	48 89 ee             	mov    %rbp,%rsi
+  3e:	48                   	rex.W
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
