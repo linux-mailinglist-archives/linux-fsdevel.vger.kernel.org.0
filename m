@@ -2,91 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C09E413BAF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 22:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 237A7413C12
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 23:11:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234458AbhIUUr5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 16:47:57 -0400
-Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:33520 "EHLO
-        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234465AbhIUUr5 (ORCPT
+        id S235336AbhIUVMt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 17:12:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45194 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235334AbhIUVMm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 16:47:57 -0400
-Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
-        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 9EE88FAB5D4;
-        Wed, 22 Sep 2021 06:46:22 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1mSmej-00FAQB-3k; Wed, 22 Sep 2021 06:46:21 +1000
-Date:   Wed, 22 Sep 2021 06:46:21 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Linux-MM <linux-mm@kvack.org>, NeilBrown <neilb@suse.de>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/5] Remove dependency on congestion_wait in mm/
-Message-ID: <20210921204621.GY2361455@dread.disaster.area>
-References: <20210920085436.20939-1-mgorman@techsingularity.net>
+        Tue, 21 Sep 2021 17:12:42 -0400
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57F57C061574;
+        Tue, 21 Sep 2021 14:11:13 -0700 (PDT)
+Received: by mail-qk1-x72a.google.com with SMTP id c7so2278631qka.2;
+        Tue, 21 Sep 2021 14:11:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zCsTnszozcMWakwvCPgZXXhNyKNOkSlqncLZKwtc/cs=;
+        b=Wo0ChhyKDc641UkRQXImePyH7Kca90qJ0M+wVAZehOGrSvyqhqySnh5pwDSXOk0Sid
+         099qlb+GgA+Md5pIc2x9t8aAAXPPYV8seX2/g14ugartmaCaY7UuYkfBBQU0ISzOBTeT
+         dwKLp1d9X5/q+QaLSRww/e1Q0VptwWRZjKF4D76F4dl7Myuxa5yrPy063I0Go8wsdgjg
+         75FZY2e3HkRR10Ma9X5+jUyJSe1jfC4N9Jlam2kripRtLC+/ltKOmAqvRfUekbMu4wWS
+         w+WvRBaMCqN/MVo0MNiKpmYeBv43z859ecs5sj1JGolhDF/e8XTKR5nCe9HnEVy3FFhz
+         JWeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zCsTnszozcMWakwvCPgZXXhNyKNOkSlqncLZKwtc/cs=;
+        b=nj7mqf+7MITyBP7yJ1R7cCgFp0xG2368riFcDtnU1Ic5hRS51+8L9pMsTGBrwARvEr
+         /NflbTLwQKqoL8QWZfLHGADYuk2IZn7qoxtatitintkLYD25g3ZR3XOhr2/2XYAt9Msj
+         NRYrC2BxXyQrQXQRhDOkGAuSqzawYTo8XLjHdLswBp3f+ymIqwxBHy5qfSO3NCy29XvH
+         3mHSx/VrqU3feRLcVaPX4fW6rXIk+WsL6FwWXLBZNsvcYgp2FFvWAQ6zMJsXuxSRPXrI
+         G5NNlQiUsaLVYZYRJcAnmYGrXeNs9Z2L0REFUortBbQf1CAKxjuRCHQnxHknUETAvmvg
+         Je5Q==
+X-Gm-Message-State: AOAM5302ibAzP4q+AXNQdJ8dSdjgwkFiQyETvKKM0dcV6rQueJpsT//k
+        xy6/xNbtciv3dGI6EF2KRw==
+X-Google-Smtp-Source: ABdhPJwawa4dME/5/GH0r/McBHz9A74FW3KWI/lcJzN9mewwiCovRyE/eKFXpxKF9RWNgIO1YdwFzA==
+X-Received: by 2002:ae9:efc9:: with SMTP id d192mr15818686qkg.366.1632258672543;
+        Tue, 21 Sep 2021 14:11:12 -0700 (PDT)
+Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
+        by smtp.gmail.com with ESMTPSA id m21sm131906qka.69.2021.09.21.14.11.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Sep 2021 14:11:11 -0700 (PDT)
+Date:   Tue, 21 Sep 2021 17:11:09 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Folio discussion recap
+Message-ID: <YUpKbWDYqRB6eBV+@moria.home.lan>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YTu9HIu+wWWvZLxp@moria.home.lan>
+ <YUfvK3h8w+MmirDF@casper.infradead.org>
+ <YUo20TzAlqz8Tceg@cmpxchg.org>
+ <YUpC3oV4II+u+lzQ@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210920085436.20939-1-mgorman@techsingularity.net>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=Tu+Yewfh c=1 sm=1 tr=0
-        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
-        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
-        a=Eazbco4TDQp801Hdg9MA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <YUpC3oV4II+u+lzQ@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 20, 2021 at 09:54:31AM +0100, Mel Gorman wrote:
-> Cc list similar to "congestion_wait() and GFP_NOFAIL" as they're loosely
-> related.
+On Tue, Sep 21, 2021 at 09:38:54PM +0100, Matthew Wilcox wrote:
+> On Tue, Sep 21, 2021 at 03:47:29PM -0400, Johannes Weiner wrote:
+> > and so the justification for replacing page with folio *below* those
+> > entry points to address tailpage confusion becomes nil: there is no
+> > confusion. Move the anon bits to anon_page and leave the shared bits
+> > in page. That's 912 lines of swap_state.c we could mostly leave alone.
 > 
-> This is a prototype series that removes all calls to congestion_wait
-> in mm/ and deletes wait_iff_congested. It's not a clever
-> implementation but congestion_wait has been broken for a long time
-> (https://lore.kernel.org/linux-mm/45d8b7a6-8548-65f5-cccf-9f451d4ae3d4@kernel.dk/).
-> Even if it worked, it was never a great idea. While excessive
-> dirty/writeback pages at the tail of the LRU is one possibility that
-> reclaim may be slow, there is also the problem of too many pages being
-> isolated and reclaim failing for other reasons (elevated references,
-> too many pages isolated, excessive LRU contention etc).
-> 
-> This series replaces the reclaim conditions with event driven ones
-> 
-> o If there are too many dirty/writeback pages, sleep until a timeout
->   or enough pages get cleaned
-> o If too many pages are isolated, sleep until enough isolated pages
->   are either reclaimed or put back on the LRU
-> o If no progress is being made, let direct reclaim tasks sleep until
->   another task makes progress
-> 
-> This has been lightly tested only and the testing was useless as the
-> relevant code was not executed. The workload configurations I had that
-> used to trigger these corner cases no longer work (yey?) and I'll need
-> to implement a new synthetic workload. If someone is aware of a realistic
-> workload that forces reclaim activity to the point where reclaim stalls
-> then kindly share the details.
+> Your argument seems to be based on "minimising churn".  Which is certainly
+> a goal that one could have, but I think in this case is actually harmful.
+> There are hundreds, maybe thousands, of functions throughout the kernel
+> (certainly throughout filesystems) which assume that a struct page is
+> PAGE_SIZE bytes.  Yes, every single one of them is buggy to assume that,
+> but tracking them all down is a never-ending task as new ones will be
+> added as fast as they can be removed.
 
-Got a git tree pointer so I can pull it into a test kernel so I can
-see what impact it has on behaviour before I try to make sense of
-the code?
+Yet it's only file backed pages that are actually changing in behaviour right
+now - folios don't _have_ to be the tool to fix that elsewhere, for anon, for
+network pools, for slab.
 
-Cheers,
+> > The anon_page->page relationship may look familiar too. It's a natural
+> > type hierarchy between superclass and subclasses that is common in
+> > object oriented languages: page has attributes and methods that are
+> > generic and shared; anon_page and file_page encode where their
+> > implementation differs.
+> > 
+> > A type system like that would set us up for a lot of clarification and
+> > generalization of the MM code. For example it would immediately
+> > highlight when "generic" code is trying to access type-specific stuff
+> > that maybe it shouldn't, and thus help/force us refactor - something
+> > that a shared, flat folio type would not.
+> 
+> If you want to try your hand at splitting out anon_folio from folio
+> later, be my guest.  I've just finished splitting out 'slab' from page,
+> and I'll post it later.  I don't think that splitting anon_folio from
+> folio is worth doing, but will not stand in your way.  I do think that
+> splitting tail pages from non-tail pages is worthwhile, and that's what
+> this patchset does.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Eesh, we can and should hold ourselves to a higher standard in our technical
+discussions.
+
+Let's not let past misfourtune (and yes, folios missing 5.15 _was_ unfortunate
+and shouldn't have happened) colour our perceptions and keep us from having
+productive working relationships going forward. The points Johannes is bringing
+up are valid and pertinent and deserve to be discussed.
+
+If you're still trying to sell folios as the be all, end all solution for
+anything using compound pages, I think you should be willing to make the
+argument that that really is the _right_ solution - not just that it was the one
+easiest for you to implement.
+
+Actual code might make this discussion more concrete and clearer. Could you post
+your slab conversion?
