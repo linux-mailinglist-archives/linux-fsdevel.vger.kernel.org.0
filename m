@@ -2,149 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 181F941366B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 17:44:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39E98413679
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 17:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234110AbhIUPph (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 11:45:37 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:39708 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234089AbhIUPpd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 11:45:33 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id A198220174;
-        Tue, 21 Sep 2021 15:44:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1632239042;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=g8TCxuVhcJ0aOSOQszQs+SEKF8ruKKtOdrYv4ag1Tu8=;
-        b=Ogah1pgvl8xk9ZPw7BQKtCsghSnYRj7fAWKgMNEBUbfn3klyk3xf36fVD0tlLKc+ep8H/r
-        Q6SxRHExcdk9dZdXbzuUeP9hhJDye2lHovxdp0OlVUG6l3xnjJ8kLQffzpw1RxWV+wOKen
-        rHvcVifx3pU6V5CcKm3hZeX4+KG0h60=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1632239042;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=g8TCxuVhcJ0aOSOQszQs+SEKF8ruKKtOdrYv4ag1Tu8=;
-        b=lM6PcshEOVQ3rTh1uzm0KxL1ZnkG+SChIzwxT9vGN1dzMX6Mb+bBPADb3rVgmVp0pKHov2
-        aNneKdfQrP1P1MCQ==
-Received: from g78 (unknown [10.163.24.38])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id C6D53A3B88;
-        Tue, 21 Sep 2021 15:44:01 +0000 (UTC)
-References: <20210921130127.24131-1-rpalethorpe@suse.com>
- <CAK8P3a29ycNqOC_pD-UUtK37jK=Rz=nik=022Q1XtXr6-o6tuA@mail.gmail.com>
- <87o88mkor1.fsf@suse.de>
-User-agent: mu4e 1.4.15; emacs 27.2
-From:   Richard Palethorpe <rpalethorpe@suse.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        "y2038 Mailman List" <y2038@lists.linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LTP List <ltp@lists.linux.it>
-Subject: Re: [PATCH] aio: Wire up compat_sys_io_pgetevents_time64 for x86
-Reply-To: rpalethorpe@suse.de
-In-reply-to: <87o88mkor1.fsf@suse.de>
-Date:   Tue, 21 Sep 2021 16:44:01 +0100
-Message-ID: <87lf3qkk72.fsf@suse.de>
+        id S234216AbhIUPul (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 11:50:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38636 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229804AbhIUPuk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Sep 2021 11:50:40 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2B3B061183;
+        Tue, 21 Sep 2021 15:49:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632239352;
+        bh=SYPIsUeB0QpNl9iOqz8TrUCBGO94e+noRg1ECZdTJME=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=UaaVRIqswzz+NS3S8fQEaKMO9RtdOXsyeprnTEIheXJKQGHNj08P7eyrd/PQOFBCR
+         AN5tBBs86O+nP3GdbvOj2N+vfIACcMw2gY7GyzZmcnfLHUMHWEqqTO8tVeryaAcPBC
+         wa3PUemimJFndCXNOCuGMsRHqw57UEYG+Vl8QmekwFARdVX0/7ufVsMqf8T+9g7Szp
+         diWZkbbph3gXn35UaYmr5cUyleLHlYXnKdZMqMkRG/D9zQZoy6oFBj2a59MNnxAHRK
+         YIYKWUHNZvNhOBYpWGFXq5g7hiH0GMlpMxwr02jYDVngebiKxCzBjK5YB3wvzgzdsQ
+         QI6X04sAKlF5w==
+Received: by mail-qt1-f178.google.com with SMTP id x9so6771427qtv.0;
+        Tue, 21 Sep 2021 08:49:12 -0700 (PDT)
+X-Gm-Message-State: AOAM530DTdfrLatLheUDRErjR0q716Etht84WYtht7AKXxWF0VYHTMnt
+        NVdMaemE2/1nYxdiR7t9kXytp6X1M9drt3Q8/zI=
+X-Google-Smtp-Source: ABdhPJxkbOxqy1A7fvfdyNFD5npSBw9ZclgHN9SR+lhraCwiqhyTzn8pzClLHqd6Gjl1VdDdZRtbIZxWA0QsI3m+TXk=
+X-Received: by 2002:ac8:4113:: with SMTP id q19mr29065258qtl.108.1632239341024;
+ Tue, 21 Sep 2021 08:49:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20210917194709.3562413-1-mcgrof@kernel.org> <20210917194709.3562413-10-mcgrof@kernel.org>
+ <c70dcb03e27e43c5b5311e184357df39@AcuMS.aculab.com>
+In-Reply-To: <c70dcb03e27e43c5b5311e184357df39@AcuMS.aculab.com>
+From:   Luis Chamberlain <mcgrof@kernel.org>
+Date:   Tue, 21 Sep 2021 08:48:49 -0700
+X-Gmail-Original-Message-ID: <CAB=NE6WjupsJFwsj94sC_j3gcYn2Qo0sx1=tMv=WUZ83jq_DFw@mail.gmail.com>
+Message-ID: <CAB=NE6WjupsJFwsj94sC_j3gcYn2Qo0sx1=tMv=WUZ83jq_DFw@mail.gmail.com>
+Subject: Re: [PATCH v7 09/12] sysfs: fix deadlock race with module removal
+To:     David Laight <David.Laight@aculab.com>
+Cc:     "tj@kernel.org" <tj@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "minchan@kernel.org" <minchan@kernel.org>,
+        "jeyu@kernel.org" <jeyu@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "masahiroy@kernel.org" <masahiroy@kernel.org>,
+        "ndesaulniers@google.com" <ndesaulniers@google.com>,
+        "yzaikin@google.com" <yzaikin@google.com>,
+        "nathan@kernel.org" <nathan@kernel.org>,
+        "ojeda@kernel.org" <ojeda@kernel.org>,
+        "vitor@massaru.org" <vitor@massaru.org>,
+        "elver@google.com" <elver@google.com>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "glider@google.com" <glider@google.com>,
+        "rf@opensource.cirrus.com" <rf@opensource.cirrus.com>,
+        "stephen@networkplumber.org" <stephen@networkplumber.org>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "jolsa@kernel.org" <jolsa@kernel.org>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "trishalfonso@google.com" <trishalfonso@google.com>,
+        "andreyknvl@gmail.com" <andreyknvl@gmail.com>,
+        "jikos@kernel.org" <jikos@kernel.org>,
+        "mbenes@suse.com" <mbenes@suse.com>,
+        "ngupta@vflare.org" <ngupta@vflare.org>,
+        "sergey.senozhatsky.work@gmail.com" 
+        <sergey.senozhatsky.work@gmail.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "kw@linux.com" <kw@linux.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+        "hch@lst.de" <hch@lst.de>, "joe@perches.com" <joe@perches.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "linux-spdx@vger.kernel.org" <linux-spdx@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "copyleft-next@lists.fedorahosted.org" 
+        <copyleft-next@lists.fedorahosted.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-Richard Palethorpe <rpalethorpe@suse.de> writes:
-
-> Hello Arnd,
+On Tue, Sep 21, 2021 at 1:24 AM David Laight <David.Laight@aculab.com> wrote:
 >
-> Arnd Bergmann <arnd@arndb.de> writes:
+> From: Luis Chamberlain
+> > Sent: 17 September 2021 20:47
+> >
+> > When sysfs attributes use a lock also used on module removal we can
+> > race to deadlock. This happens when for instance a sysfs file on
+> > a driver is used, then at the same time we have module removal call
+> > trigger. The module removal call code holds a lock, and then the sysfs
+> > file entry waits for the same lock. While holding the lock the module
+> > removal tries to remove the sysfs entries, but these cannot be removed
+> > yet as one is waiting for a lock. This won't complete as the lock is
+> > already held. Likewise module removal cannot complete, and so we deadlock.
 >
->> On Tue, Sep 21, 2021 at 3:01 PM Richard Palethorpe <rpalethorpe@suse.com> wrote:
->>>
->>> The LTP test io_pgetevents02 fails in 32bit compat mode because an
->>> nr_max of -1 appears to be treated as a large positive integer. This
->>> causes pgetevents_time64 to return an event. The test expects the call
->>> to fail and errno to be set to EINVAL.
->>>
->>> Using the compat syscall fixes the issue.
->>>
->>> Fixes: 7a35397f8c06 ("io_pgetevents: use __kernel_timespec")
->>> Signed-off-by: Richard Palethorpe <rpalethorpe@suse.com>
->>
->> Thanks a lot for finding this, indeed there is definitely a mistake that
->> this function is defined and not used, but I don't yet see how it would
->> get to the specific failure you report.
->>
->> Between the two implementations, I can see a difference in the
->> handling of the signal mask, but that should only affect architectures
->> with incompatible compat_sigset_t, i.e. big-endian or
->> _COMPAT_NSIG_WORDS!=_NSIG_WORDS, and the latter is
->> never true for currently supported architectures. On x86, there is
->> no difference in the sigset at all.
->>
->> The negative 'nr' and 'min_nr' arguments that you list as causing
->> the problem /should/ be converted by the magic
->> SYSCALL_DEFINE6() definition. If this is currently broken, I would
->> expect other syscalls to be affected as well.
->
-> That is what I thought, but I couldn't think of another explanation for
-> it.
->
->>
->> Have you tried reproducing this on non-x86 architectures? If I
->> misremembered how the compat conversion in SYSCALL_DEFINE6()
->> works, then all architectures that support CONFIG_COMPAT have
->> to be fixed.
->>
->>          Arnd
->
-> No, but I suppose I can try it on ARM or PowerPC. I suppose printing the
-> arguments would be a good idea too.
+> Isn't the real problem the race between a sysfs file action and the
+> removal of the sysfs node?
 
-It appears it really is failing to sign extend the s32 to s64. I added
-the following printks
+Nope, that is taken care of by kernfs.
 
-modified   fs/aio.c
-@@ -2054,6 +2054,7 @@ static long do_io_getevents(aio_context_t ctx_id,
- 	long ret = -EINVAL;
- 
- 	if (likely(ioctx)) {
-+		printk("comparing %ld <= %ld\n", min_nr, nr);
- 		if (likely(min_nr <= nr && min_nr >= 0))
- 			ret = read_events(ioctx, min_nr, nr, events, until);
- 		percpu_ref_put(&ioctx->users);
-@@ -2114,6 +2115,8 @@ SYSCALL_DEFINE6(io_pgetevents,
- 	bool interrupted;
- 	int ret;
- 
-+	printk("io_pgetevents(%lx, %ld, %ld, ...)\n", ctx_id, min_nr, nr);
-+
- 	if (timeout && unlikely(get_timespec64(&ts, timeout)))
- 		return -EFAULT;
+> This isn't really related to module unload - except that may
+> well remove some sysfs nodes.
 
-Then the output is:
+Nope, the issue is a deadlock that can happen due to a shared lock on
+module removal and a driver sysfs operation.
 
-[   11.252268] io_pgetevents(f7f19000, 4294967295, 1, ...)
-[   11.252401] comparing 4294967295 <= 1
-io_pgetevents02.c:114: TPASS: invalid min_nr: io_pgetevents() failed as expected: EINVAL (22)
-[   11.252610] io_pgetevents(f7f19000, 1, 4294967295, ...)
-[   11.252748] comparing 1 <= 4294967295
-io_pgetevents02.c:103: TFAIL: invalid max_nr: io_pgetevents() passed unexpectedly
+> This is the same problem as removing any other kind of driver callback.
+> There are three basic solutions:
+> 1) Use a global lock - not usually useful.
+> 2) Have the remove call sleep until any callbacks are complete.
+> 3) Have the remove just request removal and have a final
+>    callback (from a different context).
 
--- 
-Thank you,
-Richard.
+Kernfs already does a sort of combination of 1) and 2) but 1) is using
+atomic reference counts.
+
+> If the remove can sleep (as in 2) then there is a requirement
+> on the driver code to not hold any locks across the 'remove'
+> that can be acquired during the callbacks.
+
+And this is the part that kernfs has no control over since the removal
+and sysfs operation are implementation specific.
+
+> Now, for sysfs, you probably only want to sleep the remove code
+> while a read/write is in progress - not just because the node
+> is open.
+> That probably requires marking an open node 'invalid' and
+> deferring delete to close.
+
+This is already done by kernfs.
+
+> None of this requires a reference count on the module.
+
+You are missing the point to the other aspect of the try_module_get(),
+it lets you also check if module exit has been entered. By using
+try_module_get() you let the module exit trump proceeding with an
+operation, therefore also preventing any potential use of a shared
+lock on module exit and the driver specific sysfs operation.
+
+  Luis
