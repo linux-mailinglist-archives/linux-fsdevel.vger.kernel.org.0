@@ -2,85 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16D49412EB3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 08:40:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D1AC413003
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 10:14:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229763AbhIUGmD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 02:42:03 -0400
-Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:33446 "EHLO
-        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229624AbhIUGmD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 02:42:03 -0400
-Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
-        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 93C201009B41;
-        Tue, 21 Sep 2021 16:40:33 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1mSZSC-00EwYv-Bt; Tue, 21 Sep 2021 16:40:32 +1000
-Date:   Tue, 21 Sep 2021 16:40:32 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [5.15-rc1 regression] io_uring: fsstress hangs in do_coredump() on
- exit
-Message-ID: <20210921064032.GW2361455@dread.disaster.area>
+        id S231151AbhIUIPx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 04:15:53 -0400
+Received: from verein.lst.de ([213.95.11.211]:55455 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230488AbhIUIPp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Sep 2021 04:15:45 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 241FF67373; Tue, 21 Sep 2021 10:14:15 +0200 (CEST)
+Date:   Tue, 21 Sep 2021 10:14:14 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        linux-xfs@vger.kernel.org, dan.j.williams@intel.com,
+        david@fromorbit.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+        rgoldwyn@suse.de, viro@zeniv.linux.org.uk, willy@infradead.org
+Subject: Re: [PATCH v9 7/8] xfs: support CoW in fsdax mode
+Message-ID: <20210921081414.GA28927@lst.de>
+References: <20210915104501.4146910-1-ruansy.fnst@fujitsu.com> <20210915104501.4146910-8-ruansy.fnst@fujitsu.com> <20210916002227.GD34830@magnolia> <20210916063251.GE13306@lst.de> <20210917153304.GB10250@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
-        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
-        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=7-415B0cAAAA:8
-        a=BnQZExpEWCbP54y3Tb4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20210917153304.GB10250@magnolia>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jens,
+On Fri, Sep 17, 2021 at 08:33:04AM -0700, Darrick J. Wong wrote:
+> > More importantly before we can merge this series we also need the VM
+> > level support for reflink-aware reverse mapping.  So while this series
+> > here is no in a good enough shape I don't see how we could merge it
+> > without that other series as we'd have to disallow mmap for reflink+dax
+> > files otherwise.
+> 
+> I've forgotten why we need mm level reverse mapping again?  The pmem
+> poison stuff can use ->media_failure (or whatever it was called,
+> memory_failure?) to find all the owners and notify them.  Was there
+> some other accounting reason that fell out of my brain?
+> 
+> I'm more afraid of 'sharing pages between files needs mm support'
+> sparking another multi-year folioesque fight with the mm people.
 
-I updated all my trees from 5.14 to 5.15-rc2 this morning and
-immediately had problems running the recoveryloop fstest group on
-them. These tests have a typical pattern of "run load in the
-background, shutdown the filesystem, kill load, unmount and test
-recovery".
-
-Whent eh load includes fsstress, and it gets killed after shutdown,
-it hangs on exit like so:
-
-# echo w > /proc/sysrq-trigger 
-[  370.669482] sysrq: Show Blocked State
-[  370.671732] task:fsstress        state:D stack:11088 pid: 9619 ppid:  9615 flags:0x00000000
-[  370.675870] Call Trace:
-[  370.677067]  __schedule+0x310/0x9f0
-[  370.678564]  schedule+0x67/0xe0
-[  370.679545]  schedule_timeout+0x114/0x160
-[  370.682002]  __wait_for_common+0xc0/0x160
-[  370.684274]  wait_for_completion+0x24/0x30
-[  370.685471]  do_coredump+0x202/0x1150
-[  370.690270]  get_signal+0x4c2/0x900
-[  370.691305]  arch_do_signal_or_restart+0x106/0x7a0
-[  370.693888]  exit_to_user_mode_prepare+0xfb/0x1d0
-[  370.695241]  syscall_exit_to_user_mode+0x17/0x40
-[  370.696572]  do_syscall_64+0x42/0x80
-[  370.697620]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-It's 100% reproducable on one of my test machines, but only one of
-them. That one machine is running fstests on pmem, so it has
-synchronous storage. Every other test machine using normal async
-storage (nvme, iscsi, etc) and none of them are hanging.
-
-A quick troll of the commit history between 5.14 and 5.15-rc2
-indicates a couple of potential candidates. The 5th kernel build
-(instead of ~16 for a bisect) told me that commit 15e20db2e0ce
-("io-wq: only exit on fatal signals") is the cause of the
-regression. I've confirmed that this is the first commit where the
-problem shows up.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Because of the way page->mapping is used by DAX.  But I think this is
+mostly under control in the other series.
