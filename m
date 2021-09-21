@@ -2,136 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 534AF412A02
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 02:36:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79E2B412A09
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 02:46:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233802AbhIUAhv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Sep 2021 20:37:51 -0400
-Received: from gateway23.websitewelcome.com ([192.185.49.218]:42158 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233096AbhIUAfv (ORCPT
+        id S233978AbhIUAsD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Sep 2021 20:48:03 -0400
+Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:37262 "EHLO
+        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230220AbhIUAqC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Sep 2021 20:35:51 -0400
-X-Greylist: delayed 1233 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 Sep 2021 20:35:50 EDT
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id B82B65AB0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Sep 2021 19:13:48 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id STPwmFNriBvjySTPwmwV6N; Mon, 20 Sep 2021 19:13:48 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=rC43D1q/Fpqld09/wg6gq0zwktyAt7L1OzENn3Bvg8g=; b=Rbx+WldhwvBXH/Es+i84gO7nK4
-        xhaunjLemgYxJF41YiEYkZr5b0L2FbetCIHtYE2BoWoEkd1SpLXQerryMdzvCBKd5gR1Fk23806gt
-        SG/UWujtSucxy/Jro+J6BYpM28UjAra1tMQI3oYevYp0uY/xt1r7X/F9jh2zJXCc5L6Sb0iT4VOzq
-        zeciwVEm181eJlLV//Opy8hORo42OYOEuO9bX8ZqdTMHPqi5jDXYS+inQETnwkg1dapIobiP++PKQ
-        cGF/OGlvt5ZeBLwo7CKfy5nGbEHOxCZnVPS0m6Fr1HvSyPqbckZMPf0uHFKkHu/XrrSgiIBYsAkGN
-        q+0B8dUg==;
-Received: from 187-162-31-110.static.axtel.net ([187.162.31.110]:34200 helo=[192.168.15.9])
-        by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.94.2)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1mSTPw-000oJG-Bi; Mon, 20 Sep 2021 19:13:48 -0500
-Subject: Re: [PATCH] writeback: prefer struct_size over open coded arithmetic
-To:     Len Baker <len.baker@gmx.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210919094630.30668-1-len.baker@gmx.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <6bc45138-c3a5-9465-40cb-3db714e7706d@embeddedor.com>
-Date:   Mon, 20 Sep 2021 19:17:36 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Mon, 20 Sep 2021 20:46:02 -0400
+Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
+        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 349331009BF2;
+        Tue, 21 Sep 2021 10:44:32 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1mSTtf-00Eqls-33; Tue, 21 Sep 2021 10:44:31 +1000
+Date:   Tue, 21 Sep 2021 10:44:31 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     jane.chu@oracle.com, linux-xfs@vger.kernel.org, hch@infradead.org,
+        dan.j.williams@intel.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/5] vfs: add a zero-initialization mode to fallocate
+Message-ID: <20210921004431.GO1756565@dread.disaster.area>
+References: <163192864476.417973.143014658064006895.stgit@magnolia>
+ <163192866125.417973.7293598039998376121.stgit@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <20210919094630.30668-1-len.baker@gmx.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.31.110
-X-Source-L: No
-X-Exim-ID: 1mSTPw-000oJG-Bi
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-31-110.static.axtel.net ([192.168.15.9]) [187.162.31.110]:34200
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 32
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <163192866125.417973.7293598039998376121.stgit@magnolia>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Tu+Yewfh c=1 sm=1 tr=0
+        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
+        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
+        a=jBJWxBCxkUIqe1ibMVcA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 9/19/21 04:46, Len Baker wrote:
-> As noted in the "Deprecated Interfaces, Language Features, Attributes,
-> and Conventions" documentation [1], size calculations (especially
-> multiplication) should not be performed in memory allocator (or similar)
-> function arguments due to the risk of them overflowing. This could lead
-> to values wrapping around and a smaller allocation being made than the
-> caller was expecting. Using those allocations could lead to linear
-> overflows of heap memory and other misbehaviors.
+On Fri, Sep 17, 2021 at 06:31:01PM -0700, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
 > 
-> In this case this is not actually dynamic size: all the operands
-> involved in the calculation are constant values. However it is best to
-> refactor this anyway, just to keep the open-coded math idiom out of
-> code.
+> Add a new mode to fallocate to zero-initialize all the storage backing a
+> file.
 > 
-> So, use the struct_size() helper to do the arithmetic instead of the
-> argument "size + count * size" in the kzalloc() function.
-> 
-> [1] https://www.kernel.org/doc/html/latest/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
-> 
-> Signed-off-by: Len Baker <len.baker@gmx.com>
+> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 > ---
->  fs/fs-writeback.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  fs/open.c                   |    5 +++++
+>  include/linux/falloc.h      |    1 +
+>  include/uapi/linux/falloc.h |    9 +++++++++
+>  3 files changed, 15 insertions(+)
 > 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 81ec192ce067..f7abff31e026 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -624,8 +624,8 @@ bool cleanup_offline_cgwb(struct bdi_writeback *wb)
->  	int nr;
->  	bool restart = false;
 > 
-> -	isw = kzalloc(sizeof(*isw) + WB_MAX_INODES_PER_ISW *
-> -		      sizeof(struct inode *), GFP_KERNEL);
-> +	isw = kzalloc(struct_size(isw, inodes, WB_MAX_INODES_PER_ISW),
-> +		      GFP_KERNEL);
+> diff --git a/fs/open.c b/fs/open.c
+> index daa324606a41..230220b8f67a 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -256,6 +256,11 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+>  	    (mode & ~FALLOC_FL_INSERT_RANGE))
+>  		return -EINVAL;
+>  
+> +	/* Zeroinit should only be used by itself and keep size must be set. */
+> +	if ((mode & FALLOC_FL_ZEROINIT_RANGE) &&
+> +	    (mode != (FALLOC_FL_ZEROINIT_RANGE | FALLOC_FL_KEEP_SIZE)))
+> +		return -EINVAL;
+> +
+>  	/* Unshare range should only be used with allocate mode. */
+>  	if ((mode & FALLOC_FL_UNSHARE_RANGE) &&
+>  	    (mode & ~(FALLOC_FL_UNSHARE_RANGE | FALLOC_FL_KEEP_SIZE)))
+> diff --git a/include/linux/falloc.h b/include/linux/falloc.h
+> index f3f0b97b1675..4597b416667b 100644
+> --- a/include/linux/falloc.h
+> +++ b/include/linux/falloc.h
+> @@ -29,6 +29,7 @@ struct space_resv {
+>  					 FALLOC_FL_PUNCH_HOLE |		\
+>  					 FALLOC_FL_COLLAPSE_RANGE |	\
+>  					 FALLOC_FL_ZERO_RANGE |		\
+> +					 FALLOC_FL_ZEROINIT_RANGE |	\
+>  					 FALLOC_FL_INSERT_RANGE |	\
+>  					 FALLOC_FL_UNSHARE_RANGE)
+>  
+> diff --git a/include/uapi/linux/falloc.h b/include/uapi/linux/falloc.h
+> index 51398fa57f6c..8144403b6102 100644
+> --- a/include/uapi/linux/falloc.h
+> +++ b/include/uapi/linux/falloc.h
+> @@ -77,4 +77,13 @@
+>   */
+>  #define FALLOC_FL_UNSHARE_RANGE		0x40
+>  
+> +/*
+> + * FALLOC_FL_ZEROINIT_RANGE is used to reinitialize storage backing a file by
+> + * writing zeros to it.  Subsequent read and writes should not fail due to any
+> + * previous media errors.  Blocks must be not be shared or require copy on
+> + * write.  Holes and unwritten extents are left untouched.  This mode must be
+> + * used with FALLOC_FL_KEEP_SIZE.
+> + */
+> +#define FALLOC_FL_ZEROINIT_RANGE	0x80
 
+Hmmmm.
 
-There is another instance at:
+I think this wants to be a behavioural modifier for existing
+operations rather than an operation unto itself. i.e. similar to how
+KEEP_SIZE modifies ALLOC behaviour but doesn't fundamentally alter
+the guarantees ALLOC provides userspace.
 
- 569         isw = kzalloc(sizeof(*isw) + 2 * sizeof(struct inode *), GFP_ATOMIC);
- 570         if (!isw)
- 571                 return;
+In this case, the change of behaviour over ZERO_RANGE is that we
+want physical zeros to be written instead of the filesystem
+optimising away the physical zeros by manipulating the layout
+of the file.
 
-If you are finding these with the help of Coccinelle, please mention it
-in the changelog text. :)
+There's been requests in the past for a way to make ALLOC also
+behave like this - in the case that users want fully allocated space
+to be preallocated so their applications don't take unwritten extent
+conversion penalties on first writes. Databases are an example here,
+where setup of a new WAL file isn't performance critical, but writes
+to the WAL are and the WAL files are write-once. Hence they always
+take unwritten conversion penalties and the only way around that is
+to physically zero the files before use...
 
-Thanks
---
-Gustavo
+So it seems to me what we actually need here is a "write zeroes"
+modifier to fallocate() operations to tell the filesystem that the
+application really wants it to write zeroes over that range, not
+just guarantee space has been physically allocated....
 
->  	if (!isw)
->  		return restart;
-> 
-> --
-> 2.25.1
-> 
+Then we have and API that looks like:
+
+	ALLOC		- allocate space efficiently
+	ALLOC | INIT	- allocate space by writing zeros to it
+	ZERO		- zero data and preallocate space efficiently
+	ZERO | INIT	- zero range by writing zeros to it
+
+Which seems to cater for all the cases I know of where physically
+writing zeros instead of allocating unwritten extents is the
+preferred behaviour of fallocate()....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
