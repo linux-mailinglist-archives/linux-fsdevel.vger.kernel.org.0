@@ -2,117 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 571ED413402
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 15:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82E5941343F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 15:33:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232981AbhIUN0t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 09:26:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49404 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232968AbhIUN0t (ORCPT
+        id S233081AbhIUNel (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 09:34:41 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:54405 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232953AbhIUNek (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 09:26:49 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4824C061575
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Sep 2021 06:25:20 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id b10so26977374ioq.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Sep 2021 06:25:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Cwmswst5kJrAM2nn0VJL/xiETxBOzg10iSbgL/hoHx4=;
-        b=BCW/vHyUj3DI5Wh+s6/fHAoB58Wsd8XH53tlmUwNgVW6+5m++vca7WpI59nEG8BjAA
-         WtAyimp8JHXrV81uFFBiJLLkbrTAxt/+sqWNsCinWqjRN1T9DaFrvP2EvmgnVC53EdWa
-         KgTSMbGZ6Ui+whXuiGSnfhYDywVzKjayv4+H0xmE378TXVdBWkK3gDvr6ar7qIVpNO6k
-         VzOozL78PE10YtmcjLZeJjy9Slxgf1erkYBwVzvRB8ux0Jgett9hj81Hbnxq5DOEv/4K
-         Pc3hu9UV/5WIArwFhUAYcSADUxxUB5LbQ+3lxL6ZcjKf6cXlNM9Su18jPiwtDwkS7GIi
-         pAdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Cwmswst5kJrAM2nn0VJL/xiETxBOzg10iSbgL/hoHx4=;
-        b=dHbivYXZVXuO4pmc6lXTdYdMZhNOcvfvn0fQCjUVSlUQHoPigPpmE9ARhByfzos3xR
-         +Yul89h9OHWP+mIrT5Xgx+x6kMbNdFA8F7wGvaTC9wQRaeCCr5ak4X7x0R29Uzbmypj9
-         3YK73Q/DabjzAchbbXVH5vw8gB/7hOAm64FOg/+R5dsIN0bKKeMtx8f2lmCy4jGeNQLX
-         Y4qwu5IHOTY6nXhNjSLhGSw41M9wuHnNAUV8DApTLKm+dbFCFfTg/3RiYHMBxM+L67To
-         BJ0e9CP+QTSK9CjRt29FfFnS68Eymh6PkvByXYCmvk9xr/yDfdDifdrheXncTMnVPoly
-         vmtQ==
-X-Gm-Message-State: AOAM532adCw4j73BQM1pqY9aGFyARfUUYl721zrFb2vMTZVKL6ftcaur
-        thXgg/OgBF7zZ3Njzz2pmxz4UWomt5nTUXFK8V4=
-X-Google-Smtp-Source: ABdhPJwUpjmu74tGL/pQCBaZYX+IaiZEVY3COYFdS+OU7bz1alDHtneqxHFLl0YYQuSlOHkysY/epw==
-X-Received: by 2002:a05:6602:2243:: with SMTP id o3mr13598017ioo.10.1632230719881;
-        Tue, 21 Sep 2021 06:25:19 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id z4sm10098188ioj.45.2021.09.21.06.25.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Sep 2021 06:25:19 -0700 (PDT)
-Subject: Re: [5.15-rc1 regression] io_uring: fsstress hangs in do_coredump()
- on exit
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20210921064032.GW2361455@dread.disaster.area>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d9d2255c-fbac-3259-243a-2934b7ed0293@kernel.dk>
-Date:   Tue, 21 Sep 2021 07:25:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 21 Sep 2021 09:34:40 -0400
+Received: from mail-wr1-f42.google.com ([209.85.221.42]) by
+ mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1N5lvf-1mvLdF29Wd-017CGe; Tue, 21 Sep 2021 15:33:10 +0200
+Received: by mail-wr1-f42.google.com with SMTP id g16so39234234wrb.3;
+        Tue, 21 Sep 2021 06:33:10 -0700 (PDT)
+X-Gm-Message-State: AOAM533nIUvODTBLAsOFQ+6F+Qlg2Ihyf8/04NktttFljLN8S0c57nfl
+        n5UOSTZf/ARXQmXCjmxHxn5oLsvHGLPRgThMzf4=
+X-Google-Smtp-Source: ABdhPJxRIj5D47cQHOOP5MhzKSO5m6QcwBx7ekdGgjsOCcTSMmeomDdEql9MadmQK5oL6aEohxff777ifq2jViQ91sU=
+X-Received: by 2002:a05:600c:3209:: with SMTP id r9mr4658602wmp.35.1632231189987;
+ Tue, 21 Sep 2021 06:33:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210921064032.GW2361455@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210921130127.24131-1-rpalethorpe@suse.com>
+In-Reply-To: <20210921130127.24131-1-rpalethorpe@suse.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 21 Sep 2021 15:32:53 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a29ycNqOC_pD-UUtK37jK=Rz=nik=022Q1XtXr6-o6tuA@mail.gmail.com>
+Message-ID: <CAK8P3a29ycNqOC_pD-UUtK37jK=Rz=nik=022Q1XtXr6-o6tuA@mail.gmail.com>
+Subject: Re: [PATCH] aio: Wire up compat_sys_io_pgetevents_time64 for x86
+To:     Richard Palethorpe <rpalethorpe@suse.com>
+Cc:     Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LTP List <ltp@lists.linux.it>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:rEwtQybMOsPtIqOiGh5l9QIlVdlihtiMzP1HSKK979YWuWXlUJ+
+ Til4ZqzWnjwjxy4///KxWbY5XoiduSa3wlyyoh8/YO9jN12sTHE8l1RMlzuDk4YcQ1T+qu0
+ z36UBnIP9gZscszniqyRCCBgIDfSHH3VGvNdwtsuUCqTUR6bwm4tIgz/Ijzanv2iphiGUmd
+ XwjmaRz0GFcYhGP+2eUVA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gQI7dtakFmY=:rVEwEk6k3ETOr0m/H+ELxl
+ dDZNVLAN009nk3/5T4kI+TBegHMcX/wFUkZteEm5C5TZhxNEfWgZM+Xte32/eRgb5WQkp2OVq
+ gxUJnpDFDAhSzG24Ugoi/qVtiGE0lNdqO4xUU9zsvJzdmly8GDFUa+wRaoo/ld0D1q3Ccx8Pm
+ DXhIkHKp9urvlZoKw4sjR+NEhg+Pqid10SqY5sQQlwVoZl5zHE4Xil2uLYSa3g2S5vT3ClwBt
+ j4/GWLwTEC2+nl5WME8vPd0hHuaaVClObYkb9aQvxCM8bwPnJ9m/07/xPDeL47YC71bwO4yVD
+ 1BqEuf5iWplpw/B1MGfJAq8bEIrA26LNDbmiCvkRAY2uyKHii00MGxZzKcmxtWD4a9Leo/O2i
+ dJotBoj6y2xv0k4XgOcnQfdik4dMet078G7LpMWIy/yLCi9KmMmeOsyx8mA66JVrvVlMely3J
+ oJzKJI2TtdFX2oDFnSz4ZLq27TdTL8UFkPQEx9VhTAmV50gAEafjZPKm5OK9cTjBcxUlInP6b
+ x57otZWNSzWOIPE8LRXcuM8+erjL6CpiG2eKuXzaQ9J8MSjq5iKX59h//h/cI16s+YWd5zwxc
+ earm8VMMuAh2dkyXT6r7OwmshHqSy8O8z7LEuAF888k/YDRr9r1bUf5WT4RcpZ9POPvxEGu+D
+ nLzU1VTnD9XmHQKIYQgixOAzB4k8ZLkvCTKfolLIn+BgTTZ9uhDc3i88NkUyn0C+CHonlnHQZ
+ ADWZoL97ybP2Qs4Bk2RcE4St5P1DnNgL3OyXEL4CeA3t6SR6zqnqoOBj1H4asItU8jG2XH3z+
+ Arv/WGGkvLYjKADxHFyE6qVZ9Jpdf2ox+5MlUZxvFXPWeJNm8oZYRwHgz/PyV7KE5IXtPCVsm
+ C6LZgt0mUAjDSSsKOCow==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/21/21 12:40 AM, Dave Chinner wrote:
-> Hi Jens,
-> 
-> I updated all my trees from 5.14 to 5.15-rc2 this morning and
-> immediately had problems running the recoveryloop fstest group on
-> them. These tests have a typical pattern of "run load in the
-> background, shutdown the filesystem, kill load, unmount and test
-> recovery".
-> 
-> Whent eh load includes fsstress, and it gets killed after shutdown,
-> it hangs on exit like so:
-> 
-> # echo w > /proc/sysrq-trigger 
-> [  370.669482] sysrq: Show Blocked State
-> [  370.671732] task:fsstress        state:D stack:11088 pid: 9619 ppid:  9615 flags:0x00000000
-> [  370.675870] Call Trace:
-> [  370.677067]  __schedule+0x310/0x9f0
-> [  370.678564]  schedule+0x67/0xe0
-> [  370.679545]  schedule_timeout+0x114/0x160
-> [  370.682002]  __wait_for_common+0xc0/0x160
-> [  370.684274]  wait_for_completion+0x24/0x30
-> [  370.685471]  do_coredump+0x202/0x1150
-> [  370.690270]  get_signal+0x4c2/0x900
-> [  370.691305]  arch_do_signal_or_restart+0x106/0x7a0
-> [  370.693888]  exit_to_user_mode_prepare+0xfb/0x1d0
-> [  370.695241]  syscall_exit_to_user_mode+0x17/0x40
-> [  370.696572]  do_syscall_64+0x42/0x80
-> [  370.697620]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> 
-> It's 100% reproducable on one of my test machines, but only one of
-> them. That one machine is running fstests on pmem, so it has
-> synchronous storage. Every other test machine using normal async
-> storage (nvme, iscsi, etc) and none of them are hanging.
-> 
-> A quick troll of the commit history between 5.14 and 5.15-rc2
-> indicates a couple of potential candidates. The 5th kernel build
-> (instead of ~16 for a bisect) told me that commit 15e20db2e0ce
-> ("io-wq: only exit on fatal signals") is the cause of the
-> regression. I've confirmed that this is the first commit where the
-> problem shows up.
+On Tue, Sep 21, 2021 at 3:01 PM Richard Palethorpe <rpalethorpe@suse.com> wrote:
+>
+> The LTP test io_pgetevents02 fails in 32bit compat mode because an
+> nr_max of -1 appears to be treated as a large positive integer. This
+> causes pgetevents_time64 to return an event. The test expects the call
+> to fail and errno to be set to EINVAL.
+>
+> Using the compat syscall fixes the issue.
+>
+> Fixes: 7a35397f8c06 ("io_pgetevents: use __kernel_timespec")
+> Signed-off-by: Richard Palethorpe <rpalethorpe@suse.com>
 
-Thanks for the report Dave, I'll take a look. Can you elaborate on
-exactly what is being run? And when killed, it's a non-fatal signal?
+Thanks a lot for finding this, indeed there is definitely a mistake that
+this function is defined and not used, but I don't yet see how it would
+get to the specific failure you report.
 
--- 
-Jens Axboe
+Between the two implementations, I can see a difference in the
+handling of the signal mask, but that should only affect architectures
+with incompatible compat_sigset_t, i.e. big-endian or
+_COMPAT_NSIG_WORDS!=_NSIG_WORDS, and the latter is
+never true for currently supported architectures. On x86, there is
+no difference in the sigset at all.
 
+The negative 'nr' and 'min_nr' arguments that you list as causing
+the problem /should/ be converted by the magic
+SYSCALL_DEFINE6() definition. If this is currently broken, I would
+expect other syscalls to be affected as well.
+
+Have you tried reproducing this on non-x86 architectures? If I
+misremembered how the compat conversion in SYSCALL_DEFINE6()
+works, then all architectures that support CONFIG_COMPAT have
+to be fixed.
+
+         Arnd
