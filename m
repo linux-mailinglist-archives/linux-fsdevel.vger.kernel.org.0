@@ -2,73 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BFBB412E8E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 08:23:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16D49412EB3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 08:40:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229825AbhIUGYx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 02:24:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38054 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229614AbhIUGYx (ORCPT
+        id S229763AbhIUGmD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 02:42:03 -0400
+Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:33446 "EHLO
+        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229624AbhIUGmD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 02:24:53 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32B1FC061574;
-        Mon, 20 Sep 2021 23:23:25 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mSZBV-0064HG-Dp; Tue, 21 Sep 2021 06:23:17 +0000
-Date:   Tue, 21 Sep 2021 06:23:17 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     syzbot <syzbot+533f389d4026d86a2a95@syzkaller.appspotmail.com>
-Cc:     andrii@kernel.org, ast@kernel.org, axboe@kernel.dk,
-        bpf@vger.kernel.org, cgroups@vger.kernel.org,
-        christian.brauner@ubuntu.com, christian@brauner.io,
-        daniel@iogearbox.net, dkadashev@gmail.com, hannes@cmpxchg.org,
-        john.fastabend@gmail.com, kafai@fb.com, kpsingh@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lizefan.x@bytedance.com, netdev@vger.kernel.org,
-        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
-        tj@kernel.org, torvalds@linux-foundation.org, yhs@fb.com
-Subject: Re: [syzbot] general protection fault in percpu_ref_put
-Message-ID: <YUl6VZhPHBqAx+6g@zeniv-ca.linux.org.uk>
-References: <000000000000f8be2b05cc788686@google.com>
+        Tue, 21 Sep 2021 02:42:03 -0400
+Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
+        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 93C201009B41;
+        Tue, 21 Sep 2021 16:40:33 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1mSZSC-00EwYv-Bt; Tue, 21 Sep 2021 16:40:32 +1000
+Date:   Tue, 21 Sep 2021 16:40:32 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: [5.15-rc1 regression] io_uring: fsstress hangs in do_coredump() on
+ exit
+Message-ID: <20210921064032.GW2361455@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000f8be2b05cc788686@google.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
+        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
+        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=7-415B0cAAAA:8
+        a=BnQZExpEWCbP54y3Tb4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 20, 2021 at 07:55:16PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    4357f03d6611 Merge tag 'pm-5.15-rc2' of git://git.kernel.o..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=173e2d27300000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=ccfb8533b1cbe3b1
-> dashboard link: https://syzkaller.appspot.com/bug?extid=533f389d4026d86a2a95
-> compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1395c6f1300000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11568cad300000
-> 
-> The issue was bisected to:
-> 
-> commit 020250f31c4c75ac7687a673e29c00786582a5f4
-> Author: Dmitry Kadashev <dkadashev@gmail.com>
-> Date:   Thu Jul 8 06:34:43 2021 +0000
-> 
->     namei: make do_linkat() take struct filename
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=137e8a4b300000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=10fe8a4b300000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=177e8a4b300000
+Hi Jens,
 
-I would be very surprised if that was true.  After the first step of bisect
-you've traded one oops for another, and *that* went to do_linkat() breakage.
-Which should be fixed by fdfc346302a7.
+I updated all my trees from 5.14 to 5.15-rc2 this morning and
+immediately had problems running the recoveryloop fstest group on
+them. These tests have a typical pattern of "run load in the
+background, shutdown the filesystem, kill load, unmount and test
+recovery".
 
-Look at the oopsen - initial and final ones look very different.
+Whent eh load includes fsstress, and it gets killed after shutdown,
+it hangs on exit like so:
+
+# echo w > /proc/sysrq-trigger 
+[  370.669482] sysrq: Show Blocked State
+[  370.671732] task:fsstress        state:D stack:11088 pid: 9619 ppid:  9615 flags:0x00000000
+[  370.675870] Call Trace:
+[  370.677067]  __schedule+0x310/0x9f0
+[  370.678564]  schedule+0x67/0xe0
+[  370.679545]  schedule_timeout+0x114/0x160
+[  370.682002]  __wait_for_common+0xc0/0x160
+[  370.684274]  wait_for_completion+0x24/0x30
+[  370.685471]  do_coredump+0x202/0x1150
+[  370.690270]  get_signal+0x4c2/0x900
+[  370.691305]  arch_do_signal_or_restart+0x106/0x7a0
+[  370.693888]  exit_to_user_mode_prepare+0xfb/0x1d0
+[  370.695241]  syscall_exit_to_user_mode+0x17/0x40
+[  370.696572]  do_syscall_64+0x42/0x80
+[  370.697620]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+It's 100% reproducable on one of my test machines, but only one of
+them. That one machine is running fstests on pmem, so it has
+synchronous storage. Every other test machine using normal async
+storage (nvme, iscsi, etc) and none of them are hanging.
+
+A quick troll of the commit history between 5.14 and 5.15-rc2
+indicates a couple of potential candidates. The 5th kernel build
+(instead of ~16 for a bisect) told me that commit 15e20db2e0ce
+("io-wq: only exit on fatal signals") is the cause of the
+regression. I've confirmed that this is the first commit where the
+problem shows up.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
