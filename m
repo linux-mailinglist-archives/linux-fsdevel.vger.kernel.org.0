@@ -2,107 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B411B413B8D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 22:40:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C09E413BAF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 22:46:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233233AbhIUUlw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 16:41:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37980 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229486AbhIUUlv (ORCPT
+        id S234458AbhIUUr5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 16:47:57 -0400
+Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:33520 "EHLO
+        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234465AbhIUUr5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 16:41:51 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E859DC061574;
-        Tue, 21 Sep 2021 13:40:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=GVJlkCVZHRNXzlp5wu6spEzRD7PBCcXgh0lGOQnwm5A=; b=W1tKb5WjUS/ACQUPHSdZb1RSrc
-        NgMe8M7KBYZNkOL82B+Dc/CM1NocR8vFQ12l04IpNYY63bsZJDjqAIKR5nt5fa8dEl1F23ZbvhVLU
-        hHPxd+Z6FLOH8bGYP3gCe0Abl6n6bcLsYxa03BZNJR2KNAnBsqumj7TWl7DBhpfSQPK1INswyt6M7
-        wj8CMMFe4t8meFysy+xU3ldQcdQXGcOy74+pMzepEE23OdhgUAyEDqp1fz/eOnC9N1QyCJK8rJCkv
-        3GI/uq3qf47vctHS0CmJheWrdCUz+Y1fVF+IMnrG0ZLPIaWslGm4DpOvJm1ov8ewjG75z3J/orE7m
-        UVXkGUZQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mSmXW-0049bT-IU; Tue, 21 Sep 2021 20:39:14 +0000
-Date:   Tue, 21 Sep 2021 21:38:54 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Folio discussion recap
-Message-ID: <YUpC3oV4II+u+lzQ@casper.infradead.org>
-References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
- <YTu9HIu+wWWvZLxp@moria.home.lan>
- <YUfvK3h8w+MmirDF@casper.infradead.org>
- <YUo20TzAlqz8Tceg@cmpxchg.org>
+        Tue, 21 Sep 2021 16:47:57 -0400
+Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
+        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 9EE88FAB5D4;
+        Wed, 22 Sep 2021 06:46:22 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1mSmej-00FAQB-3k; Wed, 22 Sep 2021 06:46:21 +1000
+Date:   Wed, 22 Sep 2021 06:46:21 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     Linux-MM <linux-mm@kvack.org>, NeilBrown <neilb@suse.de>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/5] Remove dependency on congestion_wait in mm/
+Message-ID: <20210921204621.GY2361455@dread.disaster.area>
+References: <20210920085436.20939-1-mgorman@techsingularity.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YUo20TzAlqz8Tceg@cmpxchg.org>
+In-Reply-To: <20210920085436.20939-1-mgorman@techsingularity.net>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=Tu+Yewfh c=1 sm=1 tr=0
+        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
+        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
+        a=Eazbco4TDQp801Hdg9MA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 21, 2021 at 03:47:29PM -0400, Johannes Weiner wrote:
-> This discussion is now about whether folio are suitable for anon pages
-> as well. I'd like to reiterate that regardless of the outcome of this
-> discussion I think we should probably move ahead with the page cache
-> bits, since people are specifically blocked on those and there is no
-> dependency on the anon stuff, as the conversion is incremental.
-
-So you withdraw your NAK for the 5.15 pull request which is now four
-weeks old and has utterly missed the merge window?
-
-> and so the justification for replacing page with folio *below* those
-> entry points to address tailpage confusion becomes nil: there is no
-> confusion. Move the anon bits to anon_page and leave the shared bits
-> in page. That's 912 lines of swap_state.c we could mostly leave alone.
-
-Your argument seems to be based on "minimising churn".  Which is certainly
-a goal that one could have, but I think in this case is actually harmful.
-There are hundreds, maybe thousands, of functions throughout the kernel
-(certainly throughout filesystems) which assume that a struct page is
-PAGE_SIZE bytes.  Yes, every single one of them is buggy to assume that,
-but tracking them all down is a never-ending task as new ones will be
-added as fast as they can be removed.
-
-> The same is true for the LRU code in swap.c. Conceptually, already no
-> tailpages *should* make it onto the LRU. Once the high-level page
-> instantiation functions - add_to_page_cache_lru, do_anonymous_page -
-> have type safety, you really do not need to worry about tail pages
-> deep in the LRU code. 1155 more lines of swap.c.
-
-It's actually impossible in practice as well as conceptually.  The list
-LRU is in the union with compound_head, so you cannot put a tail page
-onto the LRU.  But yet we call compound_head() on every one of them
-multiple times because our current type system does not allow us to
-express "this is not a tail page".
-
-> The anon_page->page relationship may look familiar too. It's a natural
-> type hierarchy between superclass and subclasses that is common in
-> object oriented languages: page has attributes and methods that are
-> generic and shared; anon_page and file_page encode where their
-> implementation differs.
+On Mon, Sep 20, 2021 at 09:54:31AM +0100, Mel Gorman wrote:
+> Cc list similar to "congestion_wait() and GFP_NOFAIL" as they're loosely
+> related.
 > 
-> A type system like that would set us up for a lot of clarification and
-> generalization of the MM code. For example it would immediately
-> highlight when "generic" code is trying to access type-specific stuff
-> that maybe it shouldn't, and thus help/force us refactor - something
-> that a shared, flat folio type would not.
+> This is a prototype series that removes all calls to congestion_wait
+> in mm/ and deletes wait_iff_congested. It's not a clever
+> implementation but congestion_wait has been broken for a long time
+> (https://lore.kernel.org/linux-mm/45d8b7a6-8548-65f5-cccf-9f451d4ae3d4@kernel.dk/).
+> Even if it worked, it was never a great idea. While excessive
+> dirty/writeback pages at the tail of the LRU is one possibility that
+> reclaim may be slow, there is also the problem of too many pages being
+> isolated and reclaim failing for other reasons (elevated references,
+> too many pages isolated, excessive LRU contention etc).
+> 
+> This series replaces the reclaim conditions with event driven ones
+> 
+> o If there are too many dirty/writeback pages, sleep until a timeout
+>   or enough pages get cleaned
+> o If too many pages are isolated, sleep until enough isolated pages
+>   are either reclaimed or put back on the LRU
+> o If no progress is being made, let direct reclaim tasks sleep until
+>   another task makes progress
+> 
+> This has been lightly tested only and the testing was useless as the
+> relevant code was not executed. The workload configurations I had that
+> used to trigger these corner cases no longer work (yey?) and I'll need
+> to implement a new synthetic workload. If someone is aware of a realistic
+> workload that forces reclaim activity to the point where reclaim stalls
+> then kindly share the details.
 
-If you want to try your hand at splitting out anon_folio from folio
-later, be my guest.  I've just finished splitting out 'slab' from page,
-and I'll post it later.  I don't think that splitting anon_folio from
-folio is worth doing, but will not stand in your way.  I do think that
-splitting tail pages from non-tail pages is worthwhile, and that's what
-this patchset does.
+Got a git tree pointer so I can pull it into a test kernel so I can
+see what impact it has on behaviour before I try to make sense of
+the code?
 
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
