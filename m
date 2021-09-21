@@ -2,108 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 316F0413C85
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 23:34:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 709F8413C97
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 23:36:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235419AbhIUVfe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 17:35:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50574 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235404AbhIUVfb (ORCPT
+        id S235481AbhIUVh3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 17:37:29 -0400
+Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:46673 "EHLO
+        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229531AbhIUVh1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 17:35:31 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44BC2C06175F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Sep 2021 14:34:02 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id i25so3112393lfg.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Sep 2021 14:34:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=onYH57UKgRX2y9FA652B6Jil/Y6sRo6kbtM4byaxFbk=;
-        b=eBVF3W3VBl8/Kcc3edgbmiaMz5aGtiFcsghvZhSejZhbmeEyK5UQw/1PFkiQyXYHaG
-         ep1Qe79XGKoddakjbluJzSSdU6e7ItIa/VyOBVU9ai0Bymzz3iDJtyFjRD39EIPM25vz
-         4qz0qSZamNXJd68fq5IJpTDDpau43+mSfg2XWhoKoGxbOFiuRtiRYE7GfxGmSUDaHEJg
-         E7kAQREHoi4We6KjgT1K6PZUTHBzzEa/WGaKq/wElm+NwA9Dj3BI08sAZJBTPlkJn2D7
-         eFgy10WdV1zv/1WS3CBekNlpT18oJkYC++DPHzSZnogr5FAXrL71q6vwYz/oJyJkBY1z
-         HMkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=onYH57UKgRX2y9FA652B6Jil/Y6sRo6kbtM4byaxFbk=;
-        b=OnHHBpw4/8JCH378yzEMOulD0MXdunsVUsUbVEJy0HI8mzWusTl8rIEWJiBaxovj8w
-         zrywTw/VIiwHWHMTHZyuAUqsDg1tkdTYHb8iuv2B5IxhfpEoZAna+Zol+nvN2xh7jfp4
-         j1TG2OAah1w2LnskBGB0wgBvhSl3Xtz/w248JX9WPp+0unx3bv8HxnbodiC/fXI1IxiF
-         eKs6TPbQHierUnQ09MSMNFxz2MIXlICv9N7GLSR9x072bz68my9VozAHSsgHll1xN2oE
-         nbTWl+lQ5y51IsYcAmEuuWOqFZIfQrtdwlXc18cqz7WuKvO/9/Scn1t5YsM+yVy0wWMN
-         XzZw==
-X-Gm-Message-State: AOAM532ujGwM8miZNLpeP0tICitRzRB8nexdPPwJ4hzqNMlEaaD6p52D
-        e/O64qhgWfD5wGQYVJJdUCKwyA==
-X-Google-Smtp-Source: ABdhPJwdW58yGabAJZgobn6vaDrfqJrmQRLjEbi4LByZcJNYEBlALvg49HirVUieAeO4lwAN455DSA==
-X-Received: by 2002:a05:6512:3096:: with SMTP id z22mr19350411lfd.167.1632260040535;
-        Tue, 21 Sep 2021 14:34:00 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id t14sm16618lfp.15.2021.09.21.14.33.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Sep 2021 14:34:00 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 3890410305C; Wed, 22 Sep 2021 00:34:01 +0300 (+03)
-Date:   Wed, 22 Sep 2021 00:34:01 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-graphics-maintainer@vmware.com,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Sathyanarayanan Kuppuswamy 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v3 5/8] x86/sme: Replace occurrences of sme_active() with
- cc_platform_has()
-Message-ID: <20210921213401.i2pzaotgjvn4efgg@box.shutemov.name>
-References: <cover.1631141919.git.thomas.lendacky@amd.com>
- <367624d43d35d61d5c97a8b289d9ddae223636e9.1631141919.git.thomas.lendacky@amd.com>
- <20210920192341.maue7db4lcbdn46x@box.shutemov.name>
- <77df37e1-0496-aed5-fd1d-302180f1edeb@amd.com>
- <YUoao0LlqQ6+uBrq@zn.tnic>
- <20210921212059.wwlytlmxoft4cdth@box.shutemov.name>
- <YUpONYwM4dQXAOJr@zn.tnic>
+        Tue, 21 Sep 2021 17:37:27 -0400
+Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
+        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id 7D6DC1BC10F;
+        Wed, 22 Sep 2021 07:35:53 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1mSnQe-00FBH6-9q; Wed, 22 Sep 2021 07:35:52 +1000
+Date:   Wed, 22 Sep 2021 07:35:52 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [5.15-rc1 regression] io_uring: fsstress hangs in do_coredump()
+ on exit
+Message-ID: <20210921213552.GZ2361455@dread.disaster.area>
+References: <20210921064032.GW2361455@dread.disaster.area>
+ <d9d2255c-fbac-3259-243a-2934b7ed0293@kernel.dk>
+ <c97707cf-c543-52cd-5066-76b639f4f087@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YUpONYwM4dQXAOJr@zn.tnic>
+In-Reply-To: <c97707cf-c543-52cd-5066-76b639f4f087@kernel.dk>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
+        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
+        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=VwQbUJbxAAAA:8 a=Guo9nE61AAAA:8
+        a=7-415B0cAAAA:8 a=zV1LDxGQ-fZf8K7AXUgA:9 a=CjuIK1q_8ugA:10
+        a=NWVoK91CQyQA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Htop_0EVtpSIpAiKSa7Y:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 21, 2021 at 11:27:17PM +0200, Borislav Petkov wrote:
-> On Wed, Sep 22, 2021 at 12:20:59AM +0300, Kirill A. Shutemov wrote:
-> > I still believe calling cc_platform_has() from __startup_64() is totally
-> > broken as it lacks proper wrapping while accessing global variables.
+On Tue, Sep 21, 2021 at 08:19:53AM -0600, Jens Axboe wrote:
+> On 9/21/21 7:25 AM, Jens Axboe wrote:
+> > On 9/21/21 12:40 AM, Dave Chinner wrote:
+> >> Hi Jens,
+> >>
+> >> I updated all my trees from 5.14 to 5.15-rc2 this morning and
+> >> immediately had problems running the recoveryloop fstest group on
+> >> them. These tests have a typical pattern of "run load in the
+> >> background, shutdown the filesystem, kill load, unmount and test
+> >> recovery".
+> >>
+> >> Whent eh load includes fsstress, and it gets killed after shutdown,
+> >> it hangs on exit like so:
+> >>
+> >> # echo w > /proc/sysrq-trigger 
+> >> [  370.669482] sysrq: Show Blocked State
+> >> [  370.671732] task:fsstress        state:D stack:11088 pid: 9619 ppid:  9615 flags:0x00000000
+> >> [  370.675870] Call Trace:
+> >> [  370.677067]  __schedule+0x310/0x9f0
+> >> [  370.678564]  schedule+0x67/0xe0
+> >> [  370.679545]  schedule_timeout+0x114/0x160
+> >> [  370.682002]  __wait_for_common+0xc0/0x160
+> >> [  370.684274]  wait_for_completion+0x24/0x30
+> >> [  370.685471]  do_coredump+0x202/0x1150
+> >> [  370.690270]  get_signal+0x4c2/0x900
+> >> [  370.691305]  arch_do_signal_or_restart+0x106/0x7a0
+> >> [  370.693888]  exit_to_user_mode_prepare+0xfb/0x1d0
+> >> [  370.695241]  syscall_exit_to_user_mode+0x17/0x40
+> >> [  370.696572]  do_syscall_64+0x42/0x80
+> >> [  370.697620]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> >>
+> >> It's 100% reproducable on one of my test machines, but only one of
+> >> them. That one machine is running fstests on pmem, so it has
+> >> synchronous storage. Every other test machine using normal async
+> >> storage (nvme, iscsi, etc) and none of them are hanging.
+> >>
+> >> A quick troll of the commit history between 5.14 and 5.15-rc2
+> >> indicates a couple of potential candidates. The 5th kernel build
+> >> (instead of ~16 for a bisect) told me that commit 15e20db2e0ce
+> >> ("io-wq: only exit on fatal signals") is the cause of the
+> >> regression. I've confirmed that this is the first commit where the
+> >> problem shows up.
+> > 
+> > Thanks for the report Dave, I'll take a look. Can you elaborate on
+> > exactly what is being run? And when killed, it's a non-fatal signal?
+
+It's whatever kill/killall sends by default.  Typical behaviour that
+causes a hang is something like:
+
+$FSSTRESS_PROG -n10000000 -p $PROCS -d $load_dir >> $seqres.full 2>&1 &
+....
+sleep 5
+_scratch_shutdown
+$KILLALL_PROG -q $FSSTRESS_PROG
+wait
+
+_shutdown_scratch is typically just an 'xfs_io -rx -c "shutdown"
+/mnt/scratch' command that shuts down the filesystem. Other tests in
+the recoveryloop group use DM targets to fail IO that trigger a
+shutdown, others inject errors that trigger shutdowns, etc. But the
+result is that all hang waiting for fsstress processes that have
+been using io_uring to exit.
+
+Just run fstests with "./check -g recoveryloop" - there's only a
+handful of tests and it only takes about 5 minutes to run them all
+on a fake DRAM based pmem device..
+
+> Can you try with this patch?
 > 
-> Well, one of the issues on the AMD side was using boot_cpu_data too
-> early and the Intel side uses it too. Can you replace those checks with
-> is_tdx_guest() or whatever was the helper's name which would check
-> whether the the kernel is running as a TDX guest, and see if that helps?
+> diff --git a/fs/io-wq.c b/fs/io-wq.c
+> index b5fd015268d7..1e55a0a2a217 100644
+> --- a/fs/io-wq.c
+> +++ b/fs/io-wq.c
+> @@ -586,7 +586,8 @@ static int io_wqe_worker(void *data)
+>  
+>  			if (!get_signal(&ksig))
+>  				continue;
+> -			if (fatal_signal_pending(current))
+> +			if (fatal_signal_pending(current) ||
+> +			    signal_group_exit(current->signal)) {
+>  				break;
+>  			continue;
+>  		}
 
-There's no need in Intel check this early. Only AMD need it. Maybe just
-opencode them?
+Cleaned up so it compiles and the tests run properly again. But
+playing whack-a-mole with signals seems kinda fragile. I was pointed
+to this patchset by another dev on #xfs overnight who saw the same
+hangs that also fixed the hang:
 
+https://lore.kernel.org/lkml/cover.1629655338.git.olivier@trillion01.com/
+
+It was posted about a month ago and I don't see any response to it
+on the lists...
+
+Cheers,
+
+Dave,
 -- 
- Kirill A. Shutemov
+Dave Chinner
+david@fromorbit.com
