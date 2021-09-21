@@ -2,112 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F0104130F5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 11:50:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81A1E413104
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 11:59:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231474AbhIUJwO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 05:52:14 -0400
-Received: from out0.migadu.com ([94.23.1.103]:57839 "EHLO out0.migadu.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231446AbhIUJwM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 05:52:12 -0400
-Date:   Tue, 21 Sep 2021 18:50:34 +0900
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1632217840;
+        id S231508AbhIUKBY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 06:01:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:46893 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231450AbhIUKBX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Sep 2021 06:01:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1632218395;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=gPRQDB+cf55TSto6+2IaK/1yaAZ8EqxZw27am8rgyfE=;
-        b=QwK2TqI8SGnkU2Q64iH5TYfsIO7EcLgz41GXymySEHouHrYP7FGITUs7008YIDBYf/qcvO
-        WtlmUoN9aZYv5mYRQQ/bDmxF5ttB6BPISY5HJAU8S8eo3ou83lqcGgCg4/jqNnxuUcqGRK
-        bt+lEGsp2xhybzhWNyNvvRtRwnnzbpE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Naoya Horiguchi <naoya.horiguchi@linux.dev>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     naoya.horiguchi@nec.com, hughd@google.com,
-        kirill.shutemov@linux.intel.com, willy@infradead.org,
-        osalvador@suse.de, akpm@linux-foundation.org, linux-mm@kvack.org,
+         content-transfer-encoding:content-transfer-encoding;
+        bh=7wr6CVD5DKL365HEcceHQplZ6k+a+KRstCK2VbExPq4=;
+        b=V6G2wl2cIfCXcvK27WndMW0/Vnc+2ATJqi4IQjLOqRE975rOq8QuXyMk8hRC5AoQlnMdX3
+        rbQ41Tzxw9S0OATp63T29vJndGXOHwHtaMTWHV1dCs716KbWBCk/Jjl6/1G0/GFZTQAf+y
+        dv/uxCx7lOUNtHPIgTjaz7Fdz6JkFS0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-300-EKj7olJmPC6WzwA-cUnHpA-1; Tue, 21 Sep 2021 05:59:54 -0400
+X-MC-Unique: EKj7olJmPC6WzwA-cUnHpA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 11D1019057A2;
+        Tue, 21 Sep 2021 09:59:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BA67C10013D7;
+        Tue, 21 Sep 2021 09:59:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH v2] afs: Fix afs_launder_page() to set correct start file
+ position
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     Jeffrey Altman <jaltman@auristor.com>,
+        linux-afs@lists.infradead.org, dhowells@redhat.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] mm: hwpoison: handle non-anonymous THP correctly
-Message-ID: <20210921095034.GB817765@u2004>
-References: <20210914183718.4236-1-shy828301@gmail.com>
- <20210914183718.4236-5-shy828301@gmail.com>
+Date:   Tue, 21 Sep 2021 10:59:50 +0100
+Message-ID: <163221839087.3143591.14278359695763025231.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210914183718.4236-5-shy828301@gmail.com>
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: naoya.horiguchi@linux.dev
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 14, 2021 at 11:37:18AM -0700, Yang Shi wrote:
-> Currently hwpoison doesn't handle non-anonymous THP, but since v4.8 THP
-> support for tmpfs and read-only file cache has been added.  They could
-> be offlined by split THP, just like anonymous THP.
-> 
-> Signed-off-by: Yang Shi <shy828301@gmail.com>
-> ---
->  mm/memory-failure.c | 21 ++++++++++++---------
->  1 file changed, 12 insertions(+), 9 deletions(-)
-> 
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 3e06cb9d5121..6f72aab8ec4a 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1150,13 +1150,16 @@ static int __get_hwpoison_page(struct page *page)
->  
->  	if (PageTransHuge(head)) {
->  		/*
-> -		 * Non anonymous thp exists only in allocation/free time. We
-> -		 * can't handle such a case correctly, so let's give it up.
-> -		 * This should be better than triggering BUG_ON when kernel
-> -		 * tries to touch the "partially handled" page.
-> +		 * We can't handle allocating or freeing THPs, so let's give
-> +		 * it up. This should be better than triggering BUG_ON when
-> +		 * kernel tries to touch the "partially handled" page.
-> +		 *
-> +		 * page->mapping won't be initialized until the page is added
-> +		 * to rmap or page cache.  Use this as an indicator for if
-> +		 * this is an instantiated page.
->  		 */
-> -		if (!PageAnon(head)) {
-> -			pr_err("Memory failure: %#lx: non anonymous thp\n",
-> +		if (!head->mapping) {
-> +			pr_err("Memory failure: %#lx: non instantiated thp\n",
->  				page_to_pfn(page));
->  			return 0;
->  		}
+Fix afs_launder_page() to set the starting position of the StoreData RPC at
+the offset into the page at which the modified data starts instead of at
+the beginning of the page (the iov_iter is correctly offset).
 
-How about cleaning up this whole "PageTransHuge()" block?  As explained in
-commit 415c64c1453a (mm/memory-failure: split thp earlier in memory error
-handling), this check was introduced to avoid that non-anonymous thp is
-considered as hugetlb and code for hugetlb is executed (resulting in crash).
+The offset got lost during the conversion to passing an iov_iter into
+afs_store_data().
 
-With recent improvement in __get_hwpoison_page(), this confusion never
-happens (because hugetlb check is done before this check), so this check
-seems to finish its role.
+Changes:
+ver #2:
+ - Use page_offset() rather than manually calculating it[1].
 
-Thanks,
-Naoya Horiguchi
+Fixes: bd80d8a80e12 ("afs: Use ITER_XARRAY for writing")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
+cc: linux-afs@lists.infradead.org
+Link: https://lore.kernel.org/r/YST/0e92OdSH0zjg@casper.infradead.org/ [1]
+Link: https://lore.kernel.org/r/162880783179.3421678.7795105718190440134.stgit@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/162937512409.1449272.18441473411207824084.stgit@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/162981148752.1901565.3663780601682206026.stgit@warthog.procyon.org.uk/
+---
 
-> @@ -1415,12 +1418,12 @@ static int identify_page_state(unsigned long pfn, struct page *p,
->  static int try_to_split_thp_page(struct page *page, const char *msg)
->  {
->  	lock_page(page);
-> -	if (!PageAnon(page) || unlikely(split_huge_page(page))) {
-> +	if (!page->mapping || unlikely(split_huge_page(page))) {
->  		unsigned long pfn = page_to_pfn(page);
->  
->  		unlock_page(page);
-> -		if (!PageAnon(page))
-> -			pr_info("%s: %#lx: non anonymous thp\n", msg, pfn);
-> +		if (!page->mapping)
-> +			pr_info("%s: %#lx: not instantiated thp\n", msg, pfn);
->  		else
->  			pr_info("%s: %#lx: thp split failed\n", msg, pfn);
->  		put_page(page);
-> -- 
-> 2.26.2
-> 
+ fs/afs/write.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index 2dfe3b3a53d6..f24370f5c774 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -974,8 +974,7 @@ int afs_launder_page(struct page *page)
+ 		iov_iter_bvec(&iter, WRITE, bv, 1, bv[0].bv_len);
+ 
+ 		trace_afs_page_dirty(vnode, tracepoint_string("launder"), page);
+-		ret = afs_store_data(vnode, &iter, (loff_t)page->index * PAGE_SIZE,
+-				     true);
++		ret = afs_store_data(vnode, &iter, page_offset(page) + f, true);
+ 	}
+ 
+ 	trace_afs_page_dirty(vnode, tracepoint_string("laundered"), page);
+
+
