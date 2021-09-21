@@ -2,180 +2,317 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DA77E412D4B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 05:17:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5742E412DB0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 06:08:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232000AbhIUDTC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Sep 2021 23:19:02 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:38651 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347741AbhIUC4o (ORCPT
+        id S231354AbhIUEJz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 00:09:55 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55398 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229905AbhIUEJR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Sep 2021 22:56:44 -0400
-Received: by mail-io1-f70.google.com with SMTP id n8-20020a6b7708000000b005bd491bdb6aso46553766iom.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Sep 2021 19:55:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=d4R5QGLQnupcbebS30Lcro4CL6kMk66LcNL9QFcysXs=;
-        b=gTv/yUnTBCte0D+sEmxruZgBj9EoMOCQpQ95qYa5NsLhVLQDhZA881Z34n7gBUtFTO
-         9/o3uwDBQLO4eCff4PtSdclO+9l1zzayfxikyqVtNqhWkmXeZ2oeACj7lJprO2qd4B/A
-         P7Fp/EEcx/yipoR3jJ0DpWqvrswFSv+vTtxg+AT41RYn2OZTrnPFjrpFbzDY6hQdTr0T
-         NbmfrkQG3OZqymKz1LpOHwd41MqlUdmefKMX4lJGbJVdE3u2W8NQ3Wz4PgU/32fcYbR9
-         2Hee0xBpjbt2bKEq8KPAwjRpyhfSZwgDFXhB3Z2X3LsqEgcAKhQnBOCIb0u0XLO+XzrX
-         c9CQ==
-X-Gm-Message-State: AOAM533INNdkvLwNIzI40NGOmhPUifTPflF+MJhd58vLRJuEbPMk94ED
-        08sOHHr6mmgFEdawWsUyryxBrw7iHSGxVnbHv2lmxh9LOQXu
-X-Google-Smtp-Source: ABdhPJxjQX+yYzhafgAjaMFJ03bOgjxKloEmWs+8OY099wS939ETUUWYN0x0IvXskOzSD8IlBoE6IQDOZV/5Pa/LMRPwkA/m4z6v
+        Tue, 21 Sep 2021 00:09:17 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 18L40a1Z008878;
+        Tue, 21 Sep 2021 00:07:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=pp1; bh=nIFUnm0tOm3zDvFUkCv/jbbpvnqnLDzxrErAHwebuL0=;
+ b=NkoaT9FS1SxoacE6QUJZyGfhbMiaTkpEs1M2DjSeAXP8AbOyPEB0MgaXMPcxZBFadwSV
+ vciSQXh/y5+CvqkfSrv5T8riMYZbl0hdyzwGtQ4Q4r7b7UpoTaLAPUG285qt4BPlk1g9
+ tPh4bQYYfx4FHpkszwC9wqCi/xiKWhhyF6IV3BDWD3StJqp8vQcfFWQkrIQKhcZ5UfTh
+ vFa1aYLgj8QEqScq0nJgBdsnwGkYZF3IaDCcWKPDKN90hf4ieAsGR3ddZ+mxhrOTCUAy
+ AfJlhlD+os0yh3VwJpXpgoDfzncu027UBp442g27PUnlTpfXsdI1s4Gxof/UsaF6Z2VW tA== 
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3b7804r3bv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Sep 2021 00:07:15 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 18L43GDR007027;
+        Tue, 21 Sep 2021 04:07:13 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma04ams.nl.ibm.com with ESMTP id 3b57r9fab6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Sep 2021 04:07:13 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 18L47AGL2490912
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Sep 2021 04:07:10 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A48B04C046;
+        Tue, 21 Sep 2021 04:07:10 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 222834C04E;
+        Tue, 21 Sep 2021 04:07:10 +0000 (GMT)
+Received: from localhost (unknown [9.43.105.212])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 21 Sep 2021 04:07:09 +0000 (GMT)
+Date:   Tue, 21 Sep 2021 09:37:08 +0530
+From:   riteshh <riteshh@linux.ibm.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     jane.chu@oracle.com, linux-xfs@vger.kernel.org, hch@infradead.org,
+        dan.j.williams@intel.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/5] dax: prepare pmem for use by zero-initializing
+ contents and clearing poisons
+Message-ID: <20210921040708.ojbbbt6i524wgsaj@riteshh-domain>
+References: <163192864476.417973.143014658064006895.stgit@magnolia>
+ <163192865031.417973.8372869475521627214.stgit@magnolia>
+ <20210918165408.ivsue463wpiitzjw@riteshh-domain>
+ <20210920172225.GA570615@magnolia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210920172225.GA570615@magnolia>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: IN1stZH4ptWreK8AaCL6WXqC9oAZE101
+X-Proofpoint-ORIG-GUID: IN1stZH4ptWreK8AaCL6WXqC9oAZE101
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-X-Received: by 2002:a6b:7710:: with SMTP id n16mr20889883iom.101.1632192916142;
- Mon, 20 Sep 2021 19:55:16 -0700 (PDT)
-Date:   Mon, 20 Sep 2021 19:55:16 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f8be2b05cc788686@google.com>
-Subject: [syzbot] general protection fault in percpu_ref_put
-From:   syzbot <syzbot+533f389d4026d86a2a95@syzkaller.appspotmail.com>
-To:     andrii@kernel.org, ast@kernel.org, axboe@kernel.dk,
-        bpf@vger.kernel.org, cgroups@vger.kernel.org,
-        christian.brauner@ubuntu.com, christian@brauner.io,
-        daniel@iogearbox.net, dkadashev@gmail.com, hannes@cmpxchg.org,
-        john.fastabend@gmail.com, kafai@fb.com, kpsingh@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lizefan.x@bytedance.com, netdev@vger.kernel.org,
-        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
-        tj@kernel.org, torvalds@linux-foundation.org,
-        viro@zeniv.linux.org.uk, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.391,FMLib:17.0.607.475
+ definitions=2021-09-20_11,2021-09-20_01,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
+ spamscore=0 clxscore=1015 impostorscore=0 adultscore=0 phishscore=0
+ mlxlogscore=999 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2109030001 definitions=main-2109210023
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 21/09/20 10:22AM, Darrick J. Wong wrote:
+> On Sat, Sep 18, 2021 at 10:24:08PM +0530, riteshh wrote:
+> > On 21/09/17 06:30PM, Darrick J. Wong wrote:
+> > > From: Darrick J. Wong <djwong@kernel.org>
+> > >
+> > > Our current "advice" to people using persistent memory and FSDAX who
+> > > wish to recover upon receipt of a media error (aka 'hwpoison') event
+> > > from ACPI is to punch-hole that part of the file and then pwrite it,
+> > > which will magically cause the pmem to be reinitialized and the poison
+> > > to be cleared.
+> > >
+> > > Punching doesn't make any sense at all -- the (re)allocation on pwrite
+> > > does not permit the caller to specify where to find blocks, which means
+> > > that we might not get the same pmem back.  This pushes the user farther
+> > > away from the goal of reinitializing poisoned memory and leads to
+> > > complaints about unnecessary file fragmentation.
+> > >
+> > > AFAICT, the only reason why the "punch and write" dance works at all is
+> > > that the XFS and ext4 currently call blkdev_issue_zeroout when
+> > > allocating pmem ahead of a write call.  Even a regular overwrite won't
+> > > clear the poison, because dax_direct_access is smart enough to bail out
+> > > on poisoned pmem, but not smart enough to clear it.  To be fair, that
+> > > function maps pages and has no idea what kinds of reads and writes the
+> > > caller might want to perform.
+> > >
+> > > Therefore, create a dax_zeroinit_range function that filesystems can to
+> > > reset the pmem contents to zero and clear hardware media error flags.
+> > > This uses the dax page zeroing helper function, which should ensure that
+> > > subsequent accesses will not trip over any pre-existing media errors.
+> >
+> > Thanks Darrick for such clear explaination of the problem and your solution.
+> > As I see from this thread [1], it looks like we are heading in this direction,
+> > so I thought of why not review this RFC patch series :)
+> >
+> > [1]: https://lore.kernel.org/all/CAPcyv4iAr_Vwwgqw+4wz0RQUXhUUJGGz7_T+p+W6tC4T+k+zNw@mail.gmail.com/
+> >
+> > >
+> > > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> > > ---
+> > >  fs/dax.c            |   93 +++++++++++++++++++++++++++++++++++++++++++++++++++
+> > >  include/linux/dax.h |    7 ++++
+> > >  2 files changed, 100 insertions(+)
+> > >
+> > >
+> > > diff --git a/fs/dax.c b/fs/dax.c
+> > > index 4e3e5a283a91..765b80d08605 100644
+> > > --- a/fs/dax.c
+> > > +++ b/fs/dax.c
+> > > @@ -1714,3 +1714,96 @@ vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
+> > >  	return dax_insert_pfn_mkwrite(vmf, pfn, order);
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(dax_finish_sync_fault);
+> > > +
+> > > +static loff_t
+> > > +dax_zeroinit_iter(struct iomap_iter *iter)
+> > > +{
+> > > +	struct iomap *iomap = &iter->iomap;
+> > > +	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+> > > +	const u64 start = iomap->addr + iter->pos - iomap->offset;
+> > > +	const u64 nr_bytes = iomap_length(iter);
+> > > +	u64 start_page = start >> PAGE_SHIFT;
+> > > +	u64 nr_pages = nr_bytes >> PAGE_SHIFT;
+> > > +	int ret;
+> > > +
+> > > +	if (!iomap->dax_dev)
+> > > +		return -ECANCELED;
+> > > +
+> > > +	/*
+> > > +	 * The physical extent must be page aligned because that's what the dax
+> > > +	 * function requires.
+> > > +	 */
+> > > +	if (!PAGE_ALIGNED(start | nr_bytes))
+> > > +		return -ECANCELED;
+> > > +
+> > > +	/*
+> > > +	 * The dax function, by using pgoff_t, is stuck with unsigned long, so
+> > > +	 * we must check for overflows.
+> > > +	 */
+> > > +	if (start_page >= ULONG_MAX || start_page + nr_pages > ULONG_MAX)
+> > > +		return -ECANCELED;
+> > > +
+> > > +	/* Must be able to zero storage directly without fs intervention. */
+> > > +	if (iomap->flags & IOMAP_F_SHARED)
+> > > +		return -ECANCELED;
+> > > +	if (srcmap != iomap)
+> > > +		return -ECANCELED;
+> > > +
+> > > +	switch (iomap->type) {
+> > > +	case IOMAP_MAPPED:
+> > > +		while (nr_pages > 0) {
+> > > +			/* XXX function only supports one page at a time?! */
+> > > +			ret = dax_zero_page_range(iomap->dax_dev, start_page,
+> > > +					1);
+> > > +			if (ret)
+> > > +				return ret;
+> > > +			start_page++;
+> > > +			nr_pages--;
+> > > +		}
+> > > +
+> > > +		fallthrough;
+> > > +	case IOMAP_UNWRITTEN:
+> > > +		return nr_bytes;
+> > > +	}
+> > > +
+> > > +	/* Reject holes, inline data, or delalloc extents. */
+> > > +	return -ECANCELED;
+> >
+> > We reject holes here, but the other vfs plumbing patch [2] mentions
+> > "Holes and unwritten extents are left untouched.".
+> > Shouldn't we just return nr_bytes for IOMAP_HOLE case as well?
+>
+> I'm not entirely sure what we should do for holes and unwritten extents,
+> as you can tell from the gross inconsistency between the comment and the
+> code. :/
+>
+> On block devices, I think we rely on the behavior that writing to disk
+> will clear the device's error state (via LBA remapping or some other
+> strategy).  I think this means iomap_zeroinit can skip unwritten extents
+> because reads and read faults will be satisfied from the zero page and
+> writeback (or direct writes) will trigger the drive firmware.
+>
+> On FSDAX devices, reads are fulfilled by zeroing the user buffer, and
+> read faults with the (dax) zero page.  Writes and write faults won't
+> clear the poison (unlike disks).  So I guess this means that
+> dax_zeroinit *does* have to act on unwritten areas.
+>
+> Ok.  I'll make those changes.
 
-syzbot found the following issue on:
+Yes, I guess unwritten extents still have extents blocks allocated with
+generally a bit marked (to mark it as unwritten). So there could still be
+a need to clear the poison for this in case of DAX.
 
-HEAD commit:    4357f03d6611 Merge tag 'pm-5.15-rc2' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=173e2d27300000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ccfb8533b1cbe3b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=533f389d4026d86a2a95
-compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1395c6f1300000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11568cad300000
+>
+> As for holes -- on the one hand, one could argue that zero-initializing
+> a hole makes no sense and should be an error.  OTOH one could make an
+> equally compelling argument that it's merely a nop.  Thoughts?
 
-The issue was bisected to:
+So in case of holes consider this case (please correct if any of my
+understanding below is wrong/incomplete).
+If we have a large hole and if someone tries to do write to that area.
+1. Then from what I understood from the code FS will try and allocate some disk
+   blocks (could these blocks be marked with HWpoison as FS has no way of
+   knowing it?).
+2. If yes, then after allocating those blocks dax_direct_access will fail (as
+   you had mentioned above). But it won't clear the HWposion.
+3. Then the user again will have to clear using this API. But that is only for
+   a given extent which is some part of the hole which FS allocated.
+Now above could be repeated until the entire hole range is covered.
+Is that above understanding correct?
 
-commit 020250f31c4c75ac7687a673e29c00786582a5f4
-Author: Dmitry Kadashev <dkadashev@gmail.com>
-Date:   Thu Jul 8 06:34:43 2021 +0000
+If yes, then maybe it all depends on what sort of gurantee the API is providing.
+If using the API on the given range guarantees that the entire file range will
+not have any blocks with HWpoison then I guess we may have to cover the
+IOMAP_HOLE case as well?
+If not, then maybe we could explicitly mentioned this in the API documentation.
 
-    namei: make do_linkat() take struct filename
+Please help correct if any of above does not make any sense. It will help me
+understand this use case better.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=137e8a4b300000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=10fe8a4b300000
-console output: https://syzkaller.appspot.com/x/log.txt?x=177e8a4b300000
+-ritesh
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+533f389d4026d86a2a95@syzkaller.appspotmail.com
-Fixes: 020250f31c4c ("namei: make do_linkat() take struct filename")
-
-general protection fault, probably for non-canonical address 0xdffffc0000000182: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000c10-0x0000000000000c17]
-CPU: 1 PID: 148 Comm: kworker/u4:2 Not tainted 5.15.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: netns cleanup_net
-RIP: 0010:__ref_is_percpu include/linux/percpu-refcount.h:174 [inline]
-RIP: 0010:percpu_ref_put_many include/linux/percpu-refcount.h:319 [inline]
-RIP: 0010:percpu_ref_put+0x93/0x1d0 include/linux/percpu-refcount.h:338
-Code: 01 48 c7 c7 40 58 52 8a be b1 02 00 00 48 c7 c2 80 58 52 8a e8 fe 18 e9 ff 49 bd 00 00 00 00 00 fc ff df 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 9e 73 52 00 48 8b 2b 48 89 ee 48
-RSP: 0018:ffffc90000dc0b30 EFLAGS: 00010206
-RAX: 0000000000000182 RBX: 0000000000000c10 RCX: ffff888016781c80
-RDX: 0000000080000100 RSI: 0000000000000004 RDI: ffff8880b9d32508
-RBP: 000000000000003f R08: dffffc0000000000 R09: ffffed10173a64a2
-R10: ffffed10173a64a2 R11: 0000000000000000 R12: ffff88806df0a000
-R13: dffffc0000000000 R14: 0000000000000000 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f853d75b740 CR3: 00000000702e7000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- cgroup_bpf_put include/linux/cgroup.h:926 [inline]
- cgroup_sk_free+0x3c/0xa0 kernel/cgroup/cgroup.c:6613
- sk_prot_free net/core/sock.c:1852 [inline]
- __sk_destruct+0x541/0x820 net/core/sock.c:1943
- call_timer_fn+0xf6/0x210 kernel/time/timer.c:1421
- expire_timers kernel/time/timer.c:1466 [inline]
- __run_timers+0x71a/0x910 kernel/time/timer.c:1734
- run_timer_softirq+0x63/0xf0 kernel/time/timer.c:1747
- __do_softirq+0x392/0x7a3 kernel/softirq.c:558
- __irq_exit_rcu+0xec/0x170 kernel/softirq.c:636
- irq_exit_rcu+0x5/0x20 kernel/softirq.c:648
- sysvec_apic_timer_interrupt+0x91/0xb0 arch/x86/kernel/apic/apic.c:1097
- </IRQ>
- asm_sysvec_apic_timer_interrupt+0x12/0x20
-RIP: 0010:lock_acquire+0x21f/0x4d0 kernel/locking/lockdep.c:5629
-Code: 08 4c 89 f7 e8 c2 d1 69 00 f6 84 24 81 00 00 00 02 0f 85 13 02 00 00 41 f7 c4 00 02 00 00 74 01 fb 48 c7 44 24 40 0e 36 e0 45 <4b> c7 04 2f 00 00 00 00 43 c7 44 2f 09 00 00 00 00 43 c7 44 2f 11
-RSP: 0018:ffffc9000170f8e0 EFLAGS: 00000206
-RAX: 0000000000000001 RBX: 1ffff920002e1f2c RCX: ffff888016782670
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000170fa40 R08: dffffc0000000000 R09: fffffbfff1fa2fc1
-R10: fffffbfff1fa2fc1 R11: 0000000000000000 R12: 0000000000000246
-R13: 1ffff920002e1f24 R14: ffffc9000170f960 R15: dffffc0000000000
- rcu_lock_acquire+0x2a/0x30 include/linux/rcupdate.h:267
- rcu_read_lock include/linux/rcupdate.h:687 [inline]
- inet_twsk_purge+0x11b/0x890 net/ipv4/inet_timewait_sock.c:268
- ops_exit_list net/core/net_namespace.c:171 [inline]
- cleanup_net+0x7ec/0xc50 net/core/net_namespace.c:591
- process_one_work+0x853/0x1140 kernel/workqueue.c:2297
- worker_thread+0xac1/0x1320 kernel/workqueue.c:2444
- kthread+0x453/0x480 kernel/kthread.c:319
- ret_from_fork+0x1f/0x30
-Modules linked in:
----[ end trace 6ae4e3b5aac552a5 ]---
-RIP: 0010:__ref_is_percpu include/linux/percpu-refcount.h:174 [inline]
-RIP: 0010:percpu_ref_put_many include/linux/percpu-refcount.h:319 [inline]
-RIP: 0010:percpu_ref_put+0x93/0x1d0 include/linux/percpu-refcount.h:338
-Code: 01 48 c7 c7 40 58 52 8a be b1 02 00 00 48 c7 c2 80 58 52 8a e8 fe 18 e9 ff 49 bd 00 00 00 00 00 fc ff df 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 9e 73 52 00 48 8b 2b 48 89 ee 48
-RSP: 0018:ffffc90000dc0b30 EFLAGS: 00010206
-RAX: 0000000000000182 RBX: 0000000000000c10 RCX: ffff888016781c80
-RDX: 0000000080000100 RSI: 0000000000000004 RDI: ffff8880b9d32508
-RBP: 000000000000003f R08: dffffc0000000000 R09: ffffed10173a64a2
-R10: ffffed10173a64a2 R11: 0000000000000000 R12: ffff88806df0a000
-R13: dffffc0000000000 R14: 0000000000000000 R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f853d75b740 CR3: 000000000c68e000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	48 c7 c7 40 58 52 8a 	mov    $0xffffffff8a525840,%rdi
-   7:	be b1 02 00 00       	mov    $0x2b1,%esi
-   c:	48 c7 c2 80 58 52 8a 	mov    $0xffffffff8a525880,%rdx
-  13:	e8 fe 18 e9 ff       	callq  0xffe91916
-  18:	49 bd 00 00 00 00 00 	movabs $0xdffffc0000000000,%r13
-  1f:	fc ff df
-  22:	48 89 d8             	mov    %rbx,%rax
-  25:	48 c1 e8 03          	shr    $0x3,%rax
-* 29:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
-  2e:	74 08                	je     0x38
-  30:	48 89 df             	mov    %rbx,%rdi
-  33:	e8 9e 73 52 00       	callq  0x5273d6
-  38:	48 8b 2b             	mov    (%rbx),%rbp
-  3b:	48 89 ee             	mov    %rbp,%rsi
-  3e:	48                   	rex.W
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+>
+> --D
+>
+> > [2]: "vfs: add a zero-initialization mode to fallocate"
+> >
+> > Although I am not an expert in this area, but the rest of the patch looks
+> > very well crafted to me. Thanks again for such details :)
+> >
+> > -ritesh
+> >
+> > >
+> > > +}
+> > > +
+> > > +/*
+> > > + * Initialize storage mapped to a DAX-mode file to a known value and ensure the
+> > > + * media are ready to accept read and write commands.  This requires the use of
+> > > + * the dax layer's zero page range function to write zeroes to a pmem region
+> > > + * and to reset any hardware media error state.
+> > > + *
+> > > + * The physical extents must be aligned to page size.  The file must be backed
+> > > + * by a pmem device.  The extents returned must not require copy on write (or
+> > > + * any other mapping interventions from the filesystem) and must be contiguous.
+> > > + * @done will be set to true if the reset succeeded.
+> > > + *
+> > > + * Returns 0 if the zero initialization succeeded, -ECANCELED if the storage
+> > > + * mappings do not support zero initialization, -EOPNOTSUPP if the device does
+> > > + * not support it, or the usual negative errno.
+> > > + */
+> > > +int
+> > > +dax_zeroinit_range(struct inode *inode, loff_t pos, u64 len,
+> > > +		   const struct iomap_ops *ops)
+> > > +{
+> > > +	struct iomap_iter iter = {
+> > > +		.inode		= inode,
+> > > +		.pos		= pos,
+> > > +		.len		= len,
+> > > +		.flags		= IOMAP_REPORT,
+> > > +	};
+> > > +	int ret;
+> > > +
+> > > +	if (!IS_DAX(inode))
+> > > +		return -EINVAL;
+> > > +	if (pos + len > i_size_read(inode))
+> > > +		return -EINVAL;
+> > > +
+> > > +	while ((ret = iomap_iter(&iter, ops)) > 0)
+> > > +		iter.processed = dax_zeroinit_iter(&iter);
+> > > +	return ret;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(dax_zeroinit_range);
+> > > diff --git a/include/linux/dax.h b/include/linux/dax.h
+> > > index 2619d94c308d..3c873f7c35ba 100644
+> > > --- a/include/linux/dax.h
+> > > +++ b/include/linux/dax.h
+> > > @@ -129,6 +129,8 @@ struct page *dax_layout_busy_page(struct address_space *mapping);
+> > >  struct page *dax_layout_busy_page_range(struct address_space *mapping, loff_t start, loff_t end);
+> > >  dax_entry_t dax_lock_page(struct page *page);
+> > >  void dax_unlock_page(struct page *page, dax_entry_t cookie);
+> > > +int dax_zeroinit_range(struct inode *inode, loff_t pos, u64 len,
+> > > +			const struct iomap_ops *ops);
+> > >  #else
+> > >  #define generic_fsdax_supported		NULL
+> > >
+> > > @@ -174,6 +176,11 @@ static inline dax_entry_t dax_lock_page(struct page *page)
+> > >  static inline void dax_unlock_page(struct page *page, dax_entry_t cookie)
+> > >  {
+> > >  }
+> > > +static inline int dax_zeroinit_range(struct inode *inode, loff_t pos, u64 len,
+> > > +		const struct iomap_ops *ops)
+> > > +{
+> > > +	return -EOPNOTSUPP;
+> > > +}
+> > >  #endif
+> > >
+> > >  #if IS_ENABLED(CONFIG_DAX)
+> > >
