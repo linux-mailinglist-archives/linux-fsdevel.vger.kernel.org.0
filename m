@@ -2,228 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E13141324B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 13:12:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A01B413253
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 13:15:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232317AbhIULOL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 07:14:11 -0400
-Received: from outbound-smtp10.blacknight.com ([46.22.139.15]:58859 "EHLO
-        outbound-smtp10.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232268AbhIULOH (ORCPT
+        id S232345AbhIULRN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 07:17:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48060 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231956AbhIULRN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 07:14:07 -0400
-Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
-        by outbound-smtp10.blacknight.com (Postfix) with ESMTPS id E57FE1C4DEF
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Sep 2021 12:12:36 +0100 (IST)
-Received: (qmail 18735 invoked from network); 21 Sep 2021 11:12:36 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 21 Sep 2021 11:12:36 -0000
-Date:   Tue, 21 Sep 2021 12:12:34 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Linux-MM <linux-mm@kvack.org>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J . Wong" <djwong@kernel.org>,
+        Tue, 21 Sep 2021 07:17:13 -0400
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68BA4C061574;
+        Tue, 21 Sep 2021 04:15:44 -0700 (PDT)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id B3B01C020; Tue, 21 Sep 2021 13:15:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1632222942; bh=YyXbeloQrhrw5B3tSpqOK4BxPhPDbk/o6nxun6d3Bl0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=txM5knXUmgdiPvtTmpw4zO4tPHpwpgHZMKnHUXxi7T6YBuyrhRUjwj+BsqeNX0y9t
+         bxnz5dh6OTQF3uGj6dWcZ9O6MspbfiT3+Nia+wMxoOBcskqTbuPo+mlm09cePXZaIO
+         Qm9ozDUoPjS/c/dUiDULM1Bc9aOAVscCmqmfafjF4plG7GHmZymFb4JijP1GteZpn4
+         +u9r/jl5rbMBXzenZ2HboIqAwH1fqVo2iiDCh6EXyuDFN32VMVnYDoBe2FZpgfG7oM
+         6wk2/FatqZ+nDLNcf16iH0IDa2O2KzSSq1bJ7omYkqP6yDOU2/zXsSCPwWhGy//vdc
+         d46+jdfXPcBUA==
+X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on nautica.notk.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.0 required=5.0 tests=UNPARSEABLE_RELAY
+        autolearn=unavailable version=3.3.2
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 337E1C009;
+        Tue, 21 Sep 2021 13:15:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1632222941; bh=YyXbeloQrhrw5B3tSpqOK4BxPhPDbk/o6nxun6d3Bl0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T77mTADz4tV4QYfANvTTm3k3xcptdXeQ9WoFltTUHTVtiveOQgR0TNOjfApkMQOiW
+         PzoR3lc2uu9+nijFJTBlxpFfm+MtGhjw+QFajAu4oqJMuh597ho5MuYpXmXtF6jqWS
+         +0MvIdqojrxKULuD9y0ZVVh9m8kSYK/AwfZrTd99qheKVPrjKx9h8igsv7bwNPN2aD
+         0i+uPHyeyDkAEQGA2mRN1l1HHpviFwZtYe7f50vDtWmHOcSkhq0pETPizQvXorMrUl
+         1iM+0ONtA2cZ4k9F/UU/PLNEZQzr5zt1FAeiHgADd9w9v4wd/0OED+QAa811ItQyv2
+         uIu/GYrwN5z0g==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id a7c0d52c;
+        Tue, 21 Sep 2021 11:15:33 +0000 (UTC)
+Date:   Tue, 21 Sep 2021 20:15:18 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        v9fs-developer@lists.sourceforge.net, linux-cachefs@redhat.com,
+        Jeff Layton <jlayton@redhat.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Rik van Riel <riel@surriel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/5] mm/vmscan: Throttle reclaim until some writeback
- completes if congested
-Message-ID: <20210921111234.GQ3959@techsingularity.net>
-References: <20210920085436.20939-1-mgorman@techsingularity.net>
- <20210920085436.20939-2-mgorman@techsingularity.net>
- <163217994752.3992.5443677201798473600@noble.neil.brown.name>
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] 9p: (untested) Convert to using the netfs helper lib
+ to do reads and caching
+Message-ID: <YUm+xucHxED+1MJp@codewreck.org>
+References: <163162767601.438332.9017034724960075707.stgit@warthog.procyon.org.uk>
+ <163162772646.438332.16323773205855053535.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <163217994752.3992.5443677201798473600@noble.neil.brown.name>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <163162772646.438332.16323773205855053535.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 21, 2021 at 09:19:07AM +1000, NeilBrown wrote:
-> On Mon, 20 Sep 2021, Mel Gorman wrote:
-> >  
-> > +void __acct_reclaim_writeback(pg_data_t *pgdat, struct page *page);
-> > +static inline void acct_reclaim_writeback(struct page *page)
-> > +{
-> > +	pg_data_t *pgdat = page_pgdat(page);
-> > +
-> > +	if (atomic_read(&pgdat->nr_reclaim_throttled))
-> > +		__acct_reclaim_writeback(pgdat, page);
-> 
-> The first thing __acct_reclaim_writeback() does is repeat that
-> atomic_read().
-> Should we read it once and pass the value in to
-> __acct_reclaim_writeback(), or is that an unnecessary
-> micro-optimisation?
-> 
+David Howells wrote on Tue, Sep 14, 2021 at 02:55:26PM +0100:
+> 9p: (untested) Convert to using the netfs helper lib to do reads and caching
 
-I think it's a micro-optimisation but I can still do it.
+Finally tested to some extent: let's remove that (untested) tag.
 
-> 
-> > +/*
-> > + * Account for pages written if tasks are throttled waiting on dirty
-> > + * pages to clean. If enough pages have been cleaned since throttling
-> > + * started then wakeup the throttled tasks.
-> > + */
-> > +void __acct_reclaim_writeback(pg_data_t *pgdat, struct page *page)
-> > +{
-> > +	unsigned long nr_written;
-> > +	int nr_throttled = atomic_read(&pgdat->nr_reclaim_throttled);
-> > +
-> > +	__inc_node_page_state(page, NR_THROTTLED_WRITTEN);
-> > +	nr_written = node_page_state(pgdat, NR_THROTTLED_WRITTEN) -
-> > +		READ_ONCE(pgdat->nr_reclaim_start);
-> > +
-> > +	if (nr_written > SWAP_CLUSTER_MAX * nr_throttled)
-> > +		wake_up_interruptible_all(&pgdat->reclaim_wait);
-> 
-> A simple wake_up() could be used here.  "interruptible" is only needed
-> if non-interruptible waiters should be left alone.  "_all" is only needed
-> if there are some exclusive waiters.  Neither of these apply, so I think
-> the simpler interface is best.
-> 
 
-You're right.
+> Convert the 9p filesystem to use the netfs helper lib to handle readpage,
+> readahead and write_begin, converting those into a common issue_op for the
+> filesystem itself to handle.  The netfs helper lib also handles reading
+> from fscache if a cache is available, and interleaving reads from both
+> sources.
+> 
+> This change also switches from the old fscache I/O API to the new one,
+> meaning that fscache no longer keeps track of netfs pages and instead does
+> async DIO between the backing files and the 9p file pagecache.  As a part
+> of this change, the handling of PG_fscache changes.  It now just means that
+> the cache has a write I/O operation in progress on a page (PG_locked
+> is used for a read I/O op).
+> 
+> Note that this is a cut-down version of the fscache rewrite and does not
+> change any of the cookie and cache coherency handling.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Dominique Martinet <asmadeus@codewreck.org>
 
-> 
-> > +}
-> > +
-> >  /* possible outcome of pageout() */
-> >  typedef enum {
-> >  	/* failed to write page out, page is locked */
-> > @@ -1412,9 +1453,8 @@ static unsigned int shrink_page_list(struct list_head *page_list,
-> >  
-> >  		/*
-> >  		 * The number of dirty pages determines if a node is marked
-> > -		 * reclaim_congested which affects wait_iff_congested. kswapd
-> > -		 * will stall and start writing pages if the tail of the LRU
-> > -		 * is all dirty unqueued pages.
-> > +		 * reclaim_congested. kswapd will stall and start writing
-> > +		 * pages if the tail of the LRU is all dirty unqueued pages.
-> >  		 */
-> >  		page_check_dirty_writeback(page, &dirty, &writeback);
-> >  		if (dirty || writeback)
-> > @@ -3180,19 +3220,20 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
-> >  		 * If kswapd scans pages marked for immediate
-> >  		 * reclaim and under writeback (nr_immediate), it
-> >  		 * implies that pages are cycling through the LRU
-> > -		 * faster than they are written so also forcibly stall.
-> > +		 * faster than they are written so forcibly stall
-> > +		 * until some pages complete writeback.
-> >  		 */
-> >  		if (sc->nr.immediate)
-> > -			congestion_wait(BLK_RW_ASYNC, HZ/10);
-> > +			reclaim_throttle(pgdat, VMSCAN_THROTTLE_WRITEBACK, HZ/10);
-> >  	}
-> >  
-> >  	/*
-> >  	 * Tag a node/memcg as congested if all the dirty pages
-> >  	 * scanned were backed by a congested BDI and
-> 
-> "congested BDI" doesn't mean anything any more.  Is this a good time to
-> correct that comment.
-> This comment seems to refer to the test
-> 
->       sc->nr.dirty && sc->nr.dirty == sc->nr.congested)
-> 
-> a few lines down.  But nr.congested is set from nr_congested which
-> counts when inode_write_congested() is true - almost never - and when 
-> "writeback and PageReclaim()".
-> 
-> Is that last test the sign that we are cycling through the LRU to fast?
-> So the comment could become:
-> 
->    Tag a node/memcg as congested if all the dirty page were
->    already marked for writeback and immediate reclaim (counted in
->    nr.congested).
-> 
-> ??
-> 
-> Patch seems to make sense to me, but I'm not expert in this area.
-> 
+can add either my sob or a reviewed-by tag from me instead.
+I'm honestly not familiar enough with some of the changes (parts
+checking PAGE_SIZE or similar) but I didn't spot any obvious error
+except the few ifdefs I commented on below, and will keep running a few
+more tests until next merge window.
 
-Comments updated.
+> cc: v9fs-developer@lists.sourceforge.net
+> cc: linux-cachefs@redhat.com
+> ---
+> 
+>  fs/9p/Kconfig    |    1 
+>  fs/9p/cache.c    |  137 -------------------------------------------
+>  fs/9p/cache.h    |   99 +------------------------------
+>  fs/9p/v9fs.h     |    9 +++
+>  fs/9p/vfs_addr.c |  174 ++++++++++++++++++++++++------------------------------
+>  fs/9p/vfs_file.c |   21 +++++--
+>  6 files changed, 108 insertions(+), 333 deletions(-)
+> 
+> diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+> index cce9ace651a2..a7e080916826 100644
+> --- a/fs/9p/vfs_addr.c
+> +++ b/fs/9p/vfs_addr.c
+> @@ -124,7 +117,14 @@ static int v9fs_release_page(struct page *page, gfp_t gfp)
+>  {
+>  	if (PagePrivate(page))
+>  		return 0;
+> -	return v9fs_fscache_release_page(page, gfp);
+> +#ifdef CONFIG_AFS_FSCACHE
 
-Diff on top looks like
+s/AFS/9P/
 
-diff --git a/mm/internal.h b/mm/internal.h
-index e25b3686bfab..90764d646e02 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -34,13 +34,15 @@
- 
- void page_writeback_init(void);
- 
--void __acct_reclaim_writeback(pg_data_t *pgdat, struct page *page);
-+void __acct_reclaim_writeback(pg_data_t *pgdat, struct page *page,
-+						int nr_throttled);
- static inline void acct_reclaim_writeback(struct page *page)
- {
- 	pg_data_t *pgdat = page_pgdat(page);
-+	int nr_throttled = atomic_read(&pgdat->nr_reclaim_throttled);
- 
--	if (atomic_read(&pgdat->nr_reclaim_throttled))
--		__acct_reclaim_writeback(pgdat, page);
-+	if (nr_throttled)
-+		__acct_reclaim_writeback(pgdat, page, nr_throttled);
- }
- 
- vm_fault_t do_swap_page(struct vm_fault *vmf);
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index b58ea0b13286..2dc17de91d32 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1034,10 +1034,10 @@ reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
-  * pages to clean. If enough pages have been cleaned since throttling
-  * started then wakeup the throttled tasks.
-  */
--void __acct_reclaim_writeback(pg_data_t *pgdat, struct page *page)
-+void __acct_reclaim_writeback(pg_data_t *pgdat, struct page *page,
-+							int nr_throttled)
- {
- 	unsigned long nr_written;
--	int nr_throttled = atomic_read(&pgdat->nr_reclaim_throttled);
- 
- 	__inc_node_page_state(page, NR_THROTTLED_WRITTEN);
- 	nr_written = node_page_state(pgdat, NR_THROTTLED_WRITTEN) -
-@@ -3228,9 +3228,8 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 	}
- 
- 	/*
--	 * Tag a node/memcg as congested if all the dirty pages
--	 * scanned were backed by a congested BDI and
--	 * non-kswapd tasks will stall on reclaim_throttle.
-+	 * Tag a node/memcg as congested if all the dirty pages were marked
-+	 * for writeback and immediate reclaim (counted in nr.congested).
- 	 *
- 	 * Legacy memcg will stall in page writeback so avoid forcibly
- 	 * stalling in reclaim_throttle().
-@@ -3241,8 +3240,8 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 		set_bit(LRUVEC_CONGESTED, &target_lruvec->flags);
- 
- 	/*
--	 * Stall direct reclaim for IO completions if underlying BDIs
--	 * and node is congested. Allow kswapd to continue until it
-+	 * Stall direct reclaim for IO completions if the lruvec is
-+	 * node is congested. Allow kswapd to continue until it
- 	 * starts encountering unqueued dirty pages or cycling through
- 	 * the LRU too quickly.
- 	 */
-@@ -4427,7 +4426,7 @@ void wakeup_kswapd(struct zone *zone, gfp_t gfp_flags, int order,
- 
- 	trace_mm_vmscan_wakeup_kswapd(pgdat->node_id, highest_zoneidx, order,
- 				      gfp_flags);
--	wake_up_interruptible(&pgdat->kswapd_wait);
-+	wake_up_all(&pgdat->kswapd_wait);
- }
- 
- #ifdef CONFIG_HIBERNATION
+> +	if (PageFsCache(page)) {
+> +		if (!(gfp & __GFP_DIRECT_RECLAIM) || !(gfp & __GFP_FS))
+> +			return 0;
+> +		wait_on_page_fscache(page);
+> +	}
+> +#endif
+> +	return 1;
+>  }
+>  
+>  /**
+> diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+> index aab5e6538660..4b617d10cf28 100644
+> --- a/fs/9p/vfs_file.c
+> +++ b/fs/9p/vfs_file.c
+> @@ -542,14 +542,27 @@ v9fs_vm_page_mkwrite(struct vm_fault *vmf)
+>  	p9_debug(P9_DEBUG_VFS, "page %p fid %lx\n",
+>  		 page, (unsigned long)filp->private_data);
+>  
+> +	v9inode = V9FS_I(inode);
+> +
+> +	/* Wait for the page to be written to the cache before we allow it to
+> +	 * be modified.  We then assume the entire page will need writing back.
+> +	 */
+> +#ifdef CONFIG_V9FS_FSCACHE
+
+s/V9FS/9P/
+
+
+-- 
+Dominique
