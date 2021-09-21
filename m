@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D06D413AD6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 21:35:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A5D0413AEF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 21:46:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234548AbhIUTg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 15:36:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51376 "EHLO
+        id S233662AbhIUTsL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 15:48:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233441AbhIUTg1 (ORCPT
+        with ESMTP id S232971AbhIUTsK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 15:36:27 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C77B1C061574;
-        Tue, 21 Sep 2021 12:34:58 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id bx4so653802edb.4;
-        Tue, 21 Sep 2021 12:34:58 -0700 (PDT)
+        Tue, 21 Sep 2021 15:48:10 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B23BAC061574;
+        Tue, 21 Sep 2021 12:46:41 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id v22so592706edd.11;
+        Tue, 21 Sep 2021 12:46:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=UibWS27dG8CTdjCuiOWaZ3ON4LxN1iE+u65371mY3a0=;
-        b=ShnVAfrWu5IT9WTexqaZjjzqQU9EMo/+7ySpOf+s0xZCWk9Mc8wFc7xUSxhh5fjB5F
-         wYz6AQeB6KOZx/N7GdlMWoIpSLktglS0E+IYJr+sBMcb6sEPsYqN5IEdqYcV2PcUqIHc
-         UKw5fqkaZ60QeVChr7xp9oW4MwdtEHwI3RztFQ5zEl/soIKrZeKhgmSZiy3KJ4hwiIgt
-         X5UTjooyVa9FTCjH0eT6WnMHC9IGHpgyr7g/FyBo45ucAT3Fdh+Hd+tUo6gAPtL9fCeR
-         8p6VkYdfSksSKPgQVrrf79aWL40BphuEPMCTKUljg3H2pm2zVXNtoogJT8pZfrUMji7Z
-         WX4g==
+        bh=iJYskgs7jeBr4yMPVcl+ZyAVeMfifuPZi0z0sZaJTaI=;
+        b=H2Oqb28GkZUnJxi+XNxATp1ZwxbkFpy4WyVjIFkX0sLYvuKupaIJNp261NfGRwZHmx
+         8MHf+x8yc8WXIBhwlOqWrrTKmcYxdOzEm/J9A5TFjgDtDN3bOukLceGOb40pf6y5bskx
+         WtSGJN4i6MSWXvDFH9Kja4qsmtmnDcexl1no/dRXRBhBnOgGlADwazB8LQaALoHH2xcJ
+         lai+f/+gYK2PV7jrTw1gOsZJeT12TgHdnG3iWa5wZfygK3ab3LodG/WbvCgaIUedHWt1
+         PB3muu244Ka8GXz/D+I4e/EMxWBzEGuA+5EAl5N2wsrC/bUmob/YcB94fDQbi+T20B3Y
+         P8rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UibWS27dG8CTdjCuiOWaZ3ON4LxN1iE+u65371mY3a0=;
-        b=pDVp4AS3WrmIBmtYyC1rK9BbZHs2AERr0uEfQyzfg/XsxqbhP9lXOSZQ+Ta2Xu/+YS
-         5KxmNchzLYF0uZiGVAYSr8bEQk3ISisd89u7wYL/U6UmDrLXJLnJAdiq39KQYBW7mJn9
-         K7Ip/SsqCd1KoTx0kqYnRJ9nJryPqg1JJ796jAV3UlTf2M2ECXtxipng4jxYORprVpLC
-         YQthVMhZhLxARBEkvau4afWC9kctvsRJsGXpMKN/+rgj0xgqTZCy2m10qYw/xd7wXwVJ
-         uxW32TxTqdwcoGnxZ/Wi585rt2lPZHctiFPD1uah30hZqpQs1HXixVakIETT8009GNYa
-         eZBA==
-X-Gm-Message-State: AOAM532efN/8UEOg7eqTV8N3Xow8TYVeX16aHx2c5PMbVWSJgPYkOkAU
-        ZrUCvcXbMKmd94BW9tD6WGJXfXYbwxj0ZTxV9/yEEy7UGJg=
-X-Google-Smtp-Source: ABdhPJwOFmeQMvCgyBmT6psowBIEA54SUKqi+LlzYiTmkOhrdNgQSsWNofJcoRi6XBE2EFUaY1gkRxVHSF2cx8r2nbo=
-X-Received: by 2002:a50:9d49:: with SMTP id j9mr26706153edk.81.1632252897323;
- Tue, 21 Sep 2021 12:34:57 -0700 (PDT)
+        bh=iJYskgs7jeBr4yMPVcl+ZyAVeMfifuPZi0z0sZaJTaI=;
+        b=ZEUdGp4g4IVSKwYFsWOOZ8WVpu7y6ZEyk4XQWwgi7RZyke7sZFRDUY+a0lhpLL2wOt
+         fJmtCw2G8HtFVW4gAzgp80x8QYouvRGLVYa4WSSmCVz6IyPAqDTWPCjo/mlpHRaw7T/t
+         X0LfFcyXDJB6cHoHc75ut/dQtiFdQ3lfqor2jtAhvzoNaulkCvsA6kMTafirQj6VcsF6
+         TWq4LRgH1b1A4XLM8iTLPzY7Vhu9vpmeD/NhHanGGl28TD4yss2YiWnEsJGJc9q0d596
+         dlrCq5qm8z71e0KrN7JOP/uzzD+n7VrDg2AhDoyuPwZioCkDmcpJUESxUtEdHgRLnxEo
+         7+Yg==
+X-Gm-Message-State: AOAM530/8zdgRxP3WgN+385Mr9FXgOxPALpEjtLmMa22n1N0ltqKY94V
+        1/FhYy3yqXHsIBp0itxgSM6l3Jn4MEHjrQTTvHT5ub3o
+X-Google-Smtp-Source: ABdhPJyKWqGxUmOiDPAkZaf9KvuoLiP56g2D3SFkjxBeNCn1yJ3WWxzbkc9x79vLsbjYIuduZTXEuqTyfGotjuGcUuk=
+X-Received: by 2002:a50:e044:: with SMTP id g4mr6460669edl.46.1632253600314;
+ Tue, 21 Sep 2021 12:46:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210914183718.4236-1-shy828301@gmail.com> <20210914183718.4236-4-shy828301@gmail.com>
- <20210921094915.GA817765@u2004>
-In-Reply-To: <20210921094915.GA817765@u2004>
+References: <20210914183718.4236-1-shy828301@gmail.com> <20210914183718.4236-5-shy828301@gmail.com>
+ <20210921095034.GB817765@u2004>
+In-Reply-To: <20210921095034.GB817765@u2004>
 From:   Yang Shi <shy828301@gmail.com>
-Date:   Tue, 21 Sep 2021 12:34:44 -0700
-Message-ID: <CAHbLzkrxFrG9ncaFMVZhnXut0VmON0MP1bM=4DqFgwqXGRtoJg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] mm: shmem: don't truncate page if memory failure happens
+Date:   Tue, 21 Sep 2021 12:46:28 -0700
+Message-ID: <CAHbLzkrx1DgRVQ14XftgBOeJ1XSdosY__v35A2x=ciUNsDu_pg@mail.gmail.com>
+Subject: Re: [PATCH 4/4] mm: hwpoison: handle non-anonymous THP correctly
 To:     Naoya Horiguchi <naoya.horiguchi@linux.dev>
 Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
         <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
@@ -67,186 +67,81 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 21, 2021 at 2:49 AM Naoya Horiguchi
+On Tue, Sep 21, 2021 at 2:50 AM Naoya Horiguchi
 <naoya.horiguchi@linux.dev> wrote:
 >
-> On Tue, Sep 14, 2021 at 11:37:17AM -0700, Yang Shi wrote:
-> > The current behavior of memory failure is to truncate the page cache
-> > regardless of dirty or clean.  If the page is dirty the later access
-> > will get the obsolete data from disk without any notification to the
-> > users.  This may cause silent data loss.  It is even worse for shmem
-> > since shmem is in-memory filesystem, truncating page cache means
-> > discarding data blocks.  The later read would return all zero.
-> >
-> > The right approach is to keep the corrupted page in page cache, any
-> > later access would return error for syscalls or SIGBUS for page fault,
-> > until the file is truncated, hole punched or removed.  The regular
-> > storage backed filesystems would be more complicated so this patch
-> > is focused on shmem.  This also unblock the support for soft
-> > offlining shmem THP.
+> On Tue, Sep 14, 2021 at 11:37:18AM -0700, Yang Shi wrote:
+> > Currently hwpoison doesn't handle non-anonymous THP, but since v4.8 THP
+> > support for tmpfs and read-only file cache has been added.  They could
+> > be offlined by split THP, just like anonymous THP.
 > >
 > > Signed-off-by: Yang Shi <shy828301@gmail.com>
 > > ---
-> >  mm/memory-failure.c |  3 ++-
-> >  mm/shmem.c          | 25 +++++++++++++++++++++++--
-> >  2 files changed, 25 insertions(+), 3 deletions(-)
+> >  mm/memory-failure.c | 21 ++++++++++++---------
+> >  1 file changed, 12 insertions(+), 9 deletions(-)
 > >
 > > diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> > index 54879c339024..3e06cb9d5121 100644
+> > index 3e06cb9d5121..6f72aab8ec4a 100644
 > > --- a/mm/memory-failure.c
 > > +++ b/mm/memory-failure.c
-> > @@ -1101,7 +1101,8 @@ static int page_action(struct page_state *ps, struct page *p,
-> >       result = ps->action(p, pfn);
+> > @@ -1150,13 +1150,16 @@ static int __get_hwpoison_page(struct page *page)
 > >
-> >       count = page_count(p) - 1;
-> > -     if (ps->action == me_swapcache_dirty && result == MF_DELAYED)
-> > +     if ((ps->action == me_swapcache_dirty && result == MF_DELAYED) ||
-> > +         (ps->action == me_pagecache_dirty && result == MF_FAILED))
->
-> This new line seems to affect the cases of dirty page cache
-> on other filesystems, whose result is to miss "still referenced"
-> messages for some unmap failure cases (although it's not so critical).
-> So checking filesystem type (for example with shmem_mapping())
-> might be helpful?
->
-> And I think that if we might want to have some refactoring to pass
-> *ps to each ps->action() callback, then move this refcount check to
-> the needed places.
-> I don't think that we always need the refcount check, for example in
-> MF_MSG_KERNEL and MF_MSG_UNKNOWN cases (because no one knows the
-> expected values for these cases).
-
-Yeah, seems make sense to me. How's about doing the below (totally untested):
-
-static inline bool check_refcount(struct *page, bool dec)
-{
-    int count = page_count(page) - 1;
-
-    if (dec || shmem_mapping(page->mapping))
-        count -= 1;
-
-    if (count > 0) {
-         pr_err("Memory failure: %#lx: %s still referenced by %d users\n",
-                       pfn, action_page_types[ps->type], count);
-         return false;
-    }
-
-    return true;
-}
-
-Then call this in the needed me_* functions and return right value per
-the return value of it. I think me_swapcache_dirty() is the only place
-need pass in true for dec parameter.
-
->
->
-> >               count--;
-> >       if (count > 0) {
-> >               pr_err("Memory failure: %#lx: %s still referenced by %d users\n",
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index 88742953532c..ec33f4f7173d 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> > @@ -2456,6 +2456,7 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
-> >       struct inode *inode = mapping->host;
-> >       struct shmem_inode_info *info = SHMEM_I(inode);
-> >       pgoff_t index = pos >> PAGE_SHIFT;
-> > +     int ret = 0;
-> >
-> >       /* i_rwsem is held by caller */
-> >       if (unlikely(info->seals & (F_SEAL_GROW |
-> > @@ -2466,7 +2467,19 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
-> >                       return -EPERM;
-> >       }
-> >
-> > -     return shmem_getpage(inode, index, pagep, SGP_WRITE);
-> > +     ret = shmem_getpage(inode, index, pagep, SGP_WRITE);
-> > +
-> > +     if (!ret) {
->
-> Maybe this "!ret" check is not necessary because *pagep is set
-> non-NULL only when ret is 0.  It could save one indent level.
-
-Yes, sure.
-
->
-> > +             if (*pagep) {
-> > +                     if (PageHWPoison(*pagep)) {
-> > +                             unlock_page(*pagep);
-> > +                             put_page(*pagep);
-> > +                             ret = -EIO;
-> > +                     }
-> > +             }
-> > +     }
-> > +
-> > +     return ret;
-> >  }
-> >
-> >  static int
-> > @@ -2555,6 +2568,11 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
-> >                       unlock_page(page);
-> >               }
-> >
-> > +             if (page && PageHWPoison(page)) {
-> > +                     error = -EIO;
-> > +                     break;
-> > +             }
-> > +
+> >       if (PageTransHuge(head)) {
 > >               /*
-> >                * We must evaluate after, since reads (unlike writes)
-> >                * are called without i_rwsem protection against truncate
-> > @@ -3782,7 +3800,6 @@ const struct address_space_operations shmem_aops = {
-> >  #ifdef CONFIG_MIGRATION
-> >       .migratepage    = migrate_page,
-> >  #endif
-> > -     .error_remove_page = generic_error_remove_page,
+> > -              * Non anonymous thp exists only in allocation/free time. We
+> > -              * can't handle such a case correctly, so let's give it up.
+> > -              * This should be better than triggering BUG_ON when kernel
+> > -              * tries to touch the "partially handled" page.
+> > +              * We can't handle allocating or freeing THPs, so let's give
+> > +              * it up. This should be better than triggering BUG_ON when
+> > +              * kernel tries to touch the "partially handled" page.
+> > +              *
+> > +              * page->mapping won't be initialized until the page is added
+> > +              * to rmap or page cache.  Use this as an indicator for if
+> > +              * this is an instantiated page.
+> >                */
+> > -             if (!PageAnon(head)) {
+> > -                     pr_err("Memory failure: %#lx: non anonymous thp\n",
+> > +             if (!head->mapping) {
+> > +                     pr_err("Memory failure: %#lx: non instantiated thp\n",
+> >                               page_to_pfn(page));
+> >                       return 0;
+> >               }
 >
-> This change makes truncate_error_page() calls invalidate_inode_page(),
-> and in my testing it fails with "Failed to invalidate" message.
-> So as a result memory_failure() finally returns with -EBUSY. I'm not
-> sure it's expected because this patchset changes to keep error pages
-> in page cache as a proper error handling.
-> Maybe you can avoid this by defining .error_remove_page in shmem_aops
-> which simply returns 0.
-
-Yes, the "Failed to invalidate" message seems confusing. I agree a
-shmem specific callback is better.
-
+> How about cleaning up this whole "PageTransHuge()" block?  As explained in
+> commit 415c64c1453a (mm/memory-failure: split thp earlier in memory error
+> handling), this check was introduced to avoid that non-anonymous thp is
+> considered as hugetlb and code for hugetlb is executed (resulting in crash).
 >
-> >  };
-> >  EXPORT_SYMBOL(shmem_aops);
-> >
-> > @@ -4193,6 +4210,10 @@ struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
-> >               page = ERR_PTR(error);
-> >       else
-> >               unlock_page(page);
-> > +
-> > +     if (PageHWPoison(page))
-> > +             page = NULL;
-> > +
-> >       return page;
->
-> One more comment ...
->
->   - I guess that you add PageHWPoison() checks after some call sites
->     of shmem_getpage() and shmem_getpage_gfp(), but seems not cover all.
->     For example, mcontinue_atomic_pte() in mm/userfaultfd.c can properly
->     handle PageHWPoison?
+> With recent improvement in __get_hwpoison_page(), this confusion never
+> happens (because hugetlb check is done before this check), so this check
+> seems to finish its role.
 
-No, I didn't touch anything outside shmem.c. I could add this in the
-next version.
-
-BTW, I just found another problem for the change in
-shmem_read_mapping_page_gfp(), it should return ERR_PTR(-EIO) instead
-of NULL since the callers may not handle NULL. Will fix in the next
-version too.
-
->
-> I'm trying to test more detail, but in my current understanding,
-> this patch looks promising to me.  Thank you for your effort.
-
-Thank a lot for taking time do the review.
+I see. IIUC the !PageAnon check was used to prevent from mistreating
+the THP to hugetlb page. But it was actually solved by splitting THP
+earlier. If so this check definitely could go away since the worst
+case is split failure. Will fix it in the next version.
 
 >
 > Thanks,
 > Naoya Horiguchi
+>
+> > @@ -1415,12 +1418,12 @@ static int identify_page_state(unsigned long pfn, struct page *p,
+> >  static int try_to_split_thp_page(struct page *page, const char *msg)
+> >  {
+> >       lock_page(page);
+> > -     if (!PageAnon(page) || unlikely(split_huge_page(page))) {
+> > +     if (!page->mapping || unlikely(split_huge_page(page))) {
+> >               unsigned long pfn = page_to_pfn(page);
+> >
+> >               unlock_page(page);
+> > -             if (!PageAnon(page))
+> > -                     pr_info("%s: %#lx: non anonymous thp\n", msg, pfn);
+> > +             if (!page->mapping)
+> > +                     pr_info("%s: %#lx: not instantiated thp\n", msg, pfn);
+> >               else
+> >                       pr_info("%s: %#lx: thp split failed\n", msg, pfn);
+> >               put_page(page);
+> > --
+> > 2.26.2
+> >
