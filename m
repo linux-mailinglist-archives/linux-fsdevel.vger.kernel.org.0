@@ -2,58 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D04AC413036
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 10:35:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12DC54130EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 11:49:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231214AbhIUIhR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 04:37:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40092 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230488AbhIUIhQ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 04:37:16 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8EBFC061574;
-        Tue, 21 Sep 2021 01:35:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ry5JWAFApZLjeeE9aqkpHVQPnxR6bpUBw5yVBoOfe+o=; b=lkUXldocLAwB8PYYIwHIh82a38
-        ri1Armm0Jqh9JgHvfXCGoZvXmtVgZM+iqrr5x9H0eJiWM08dIn9pJQm9i8ESVOiHDtHqhigHYZb5F
-        XMgV7bKTqvgWctZJBgBW0lhfUQwuNyB/YsfJeQwSVdhZt/MpNK5FTW/BQZk4IUa6nE/53aMGVIQ1Z
-        CEKG3ifsAneuG51J8dT78NmFu7/2RVEiXDptpf8eSj4KrCD0nKFgWQYLWlmeuLHPgpKrK3QCHrHHp
-        g7v7eyohNg2Rzm55Livy1MYxh4wsQGR0YRF09fOQ/extXqpKCNGdVN63t1mwXMpEQxeDXWdaUKJ22
-        V8wC8ZbA==;
-Received: from hch by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mSbEt-003djt-Qx; Tue, 21 Sep 2021 08:35:03 +0000
-Date:   Tue, 21 Sep 2021 09:34:55 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     jane.chu@oracle.com, linux-xfs@vger.kernel.org, hch@infradead.org,
-        dan.j.williams@intel.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/5] dax: prepare pmem for use by zero-initializing
- contents and clearing poisons
-Message-ID: <YUmZL9qs0ZJ3ESBW@infradead.org>
-References: <163192864476.417973.143014658064006895.stgit@magnolia>
- <163192865031.417973.8372869475521627214.stgit@magnolia>
+        id S231450AbhIUJuy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 05:50:54 -0400
+Received: from out0.migadu.com ([94.23.1.103]:57218 "EHLO out0.migadu.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231435AbhIUJuy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Sep 2021 05:50:54 -0400
+Date:   Tue, 21 Sep 2021 18:49:15 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1632217764;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Quq+0jhOskeL/K3WU9X/OZRgaVP3m6IJiCXAdpAnFeA=;
+        b=MkwFFnRmyXHMxZ11CLpYFa99w3IOyuVE6xQBoEO8hx/6pSBEG0fUnXVpV2hk6CUTiLUZ//
+        21mf6T5dlVnQNkJEOFY70W8foUumsNIp57hsb1X8FqmfzsM+FJJJMti6+jRET/P8DQerB3
+        ZnWt5HDBfJTUGIMz5whC/XEt6pC7Mfc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Naoya Horiguchi <naoya.horiguchi@linux.dev>
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     naoya.horiguchi@nec.com, hughd@google.com,
+        kirill.shutemov@linux.intel.com, willy@infradead.org,
+        osalvador@suse.de, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] mm: shmem: don't truncate page if memory failure
+ happens
+Message-ID: <20210921094915.GA817765@u2004>
+References: <20210914183718.4236-1-shy828301@gmail.com>
+ <20210914183718.4236-4-shy828301@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <163192865031.417973.8372869475521627214.stgit@magnolia>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20210914183718.4236-4-shy828301@gmail.com>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: naoya.horiguchi@linux.dev
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 17, 2021 at 06:30:50PM -0700, Darrick J. Wong wrote:
-> +	case IOMAP_MAPPED:
-> +		while (nr_pages > 0) {
-> +			/* XXX function only supports one page at a time?! */
-> +			ret = dax_zero_page_range(iomap->dax_dev, start_page,
-> +					1);
+On Tue, Sep 14, 2021 at 11:37:17AM -0700, Yang Shi wrote:
+> The current behavior of memory failure is to truncate the page cache
+> regardless of dirty or clean.  If the page is dirty the later access
+> will get the obsolete data from disk without any notification to the
+> users.  This may cause silent data loss.  It is even worse for shmem
+> since shmem is in-memory filesystem, truncating page cache means
+> discarding data blocks.  The later read would return all zero.
+> 
+> The right approach is to keep the corrupted page in page cache, any
+> later access would return error for syscalls or SIGBUS for page fault,
+> until the file is truncated, hole punched or removed.  The regular
+> storage backed filesystems would be more complicated so this patch
+> is focused on shmem.  This also unblock the support for soft
+> offlining shmem THP.
+> 
+> Signed-off-by: Yang Shi <shy828301@gmail.com>
+> ---
+>  mm/memory-failure.c |  3 ++-
+>  mm/shmem.c          | 25 +++++++++++++++++++++++--
+>  2 files changed, 25 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 54879c339024..3e06cb9d5121 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -1101,7 +1101,8 @@ static int page_action(struct page_state *ps, struct page *p,
+>  	result = ps->action(p, pfn);
+>  
+>  	count = page_count(p) - 1;
+> -	if (ps->action == me_swapcache_dirty && result == MF_DELAYED)
+> +	if ((ps->action == me_swapcache_dirty && result == MF_DELAYED) ||
+> +	    (ps->action == me_pagecache_dirty && result == MF_FAILED))
 
-Yes.  Given that it will have to kmap every page that kinda makes sense.
-Unlike a nr_pages argument which needs to be 1, which is just silly.
-That being said it would make sense to move the trivial loop over the
-pages into the methods to reduce the indirect function call overhead
+This new line seems to affect the cases of dirty page cache
+on other filesystems, whose result is to miss "still referenced"
+messages for some unmap failure cases (although it's not so critical).
+So checking filesystem type (for example with shmem_mapping())
+might be helpful?
+
+And I think that if we might want to have some refactoring to pass
+*ps to each ps->action() callback, then move this refcount check to
+the needed places.
+I don't think that we always need the refcount check, for example in
+MF_MSG_KERNEL and MF_MSG_UNKNOWN cases (because no one knows the
+expected values for these cases).
+
+
+>  		count--;
+>  	if (count > 0) {
+>  		pr_err("Memory failure: %#lx: %s still referenced by %d users\n",
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 88742953532c..ec33f4f7173d 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2456,6 +2456,7 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
+>  	struct inode *inode = mapping->host;
+>  	struct shmem_inode_info *info = SHMEM_I(inode);
+>  	pgoff_t index = pos >> PAGE_SHIFT;
+> +	int ret = 0;
+>  
+>  	/* i_rwsem is held by caller */
+>  	if (unlikely(info->seals & (F_SEAL_GROW |
+> @@ -2466,7 +2467,19 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
+>  			return -EPERM;
+>  	}
+>  
+> -	return shmem_getpage(inode, index, pagep, SGP_WRITE);
+> +	ret = shmem_getpage(inode, index, pagep, SGP_WRITE);
+> +
+> +	if (!ret) {
+
+Maybe this "!ret" check is not necessary because *pagep is set
+non-NULL only when ret is 0.  It could save one indent level.
+
+> +		if (*pagep) {
+> +			if (PageHWPoison(*pagep)) {
+> +				unlock_page(*pagep);
+> +				put_page(*pagep);
+> +				ret = -EIO;
+> +			}
+> +		}
+> +	}
+> +
+> +	return ret;
+>  }
+>  
+>  static int
+> @@ -2555,6 +2568,11 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  			unlock_page(page);
+>  		}
+>  
+> +		if (page && PageHWPoison(page)) {
+> +			error = -EIO;
+> +			break;
+> +		}
+> +
+>  		/*
+>  		 * We must evaluate after, since reads (unlike writes)
+>  		 * are called without i_rwsem protection against truncate
+> @@ -3782,7 +3800,6 @@ const struct address_space_operations shmem_aops = {
+>  #ifdef CONFIG_MIGRATION
+>  	.migratepage	= migrate_page,
+>  #endif
+> -	.error_remove_page = generic_error_remove_page,
+
+This change makes truncate_error_page() calls invalidate_inode_page(),
+and in my testing it fails with "Failed to invalidate" message.
+So as a result memory_failure() finally returns with -EBUSY. I'm not
+sure it's expected because this patchset changes to keep error pages
+in page cache as a proper error handling.
+Maybe you can avoid this by defining .error_remove_page in shmem_aops
+which simply returns 0.
+
+>  };
+>  EXPORT_SYMBOL(shmem_aops);
+>  
+> @@ -4193,6 +4210,10 @@ struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
+>  		page = ERR_PTR(error);
+>  	else
+>  		unlock_page(page);
+> +
+> +	if (PageHWPoison(page))
+> +		page = NULL;
+> +
+>  	return page;
+
+One more comment ...
+
+  - I guess that you add PageHWPoison() checks after some call sites
+    of shmem_getpage() and shmem_getpage_gfp(), but seems not cover all.
+    For example, mcontinue_atomic_pte() in mm/userfaultfd.c can properly
+    handle PageHWPoison?
+
+I'm trying to test more detail, but in my current understanding,
+this patch looks promising to me.  Thank you for your effort.
+
+Thanks,
+Naoya Horiguchi
