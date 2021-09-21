@@ -2,168 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 63624413CBB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 23:41:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 110E0413CBD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 23:41:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235638AbhIUVm6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 17:42:58 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:47990 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235583AbhIUVmk (ORCPT
+        id S235644AbhIUVnA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 17:43:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52340 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235636AbhIUVmx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 17:42:40 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 60AD11FF24;
-        Tue, 21 Sep 2021 21:41:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1632260470; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=I0GqJYRTLtj5brv4Bac0gTMm/xYvL7+Yx0c3tiayK/k=;
-        b=vMIuuQA6sKKov3GBq6bp3HF6ImlswNZ8QL88oU7KwnEnDh4vSRf7bjMaAGoAn42aeQnLUc
-        WdeeswDTbEseAAr6RJdEbqnwfwIz/8Rr1b6J9rU7mzMznBgjowrwApazbpIswb9gwT5yDP
-        ElAFdF9oLF7WKJV3L/sl0qg5DMPeAWk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1632260470;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=I0GqJYRTLtj5brv4Bac0gTMm/xYvL7+Yx0c3tiayK/k=;
-        b=v45T6WfDNNIpJAkeEid0sdThJriTirP9PcSXknSMnBWz+DqFKWZxQgYk730mh93tmRf6FX
-        V3/uWkZDGihpibDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2C7A413BF7;
-        Tue, 21 Sep 2021 21:41:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 5PsjN3FRSmELIwAAMHmgww
-        (envelope-from <neilb@suse.de>); Tue, 21 Sep 2021 21:41:05 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 21 Sep 2021 17:42:53 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DAE2C061575
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Sep 2021 14:41:24 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id 5so350596plo.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Sep 2021 14:41:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5isRS/SJ+SHPb4tK2U4UlkgLDNu8yJEV2NUNOZKLHhE=;
+        b=aq7tkQmkdyLO9HIv/wfKStKCvKppoyrPhboWuCg2PVBqW/teCyy8mU8UND90KA4D93
+         bGLj1XluIDD0tkPj3QoDeE3cMHZNeukX0+L2teTND0YhAzrrILblWO3kXlpTcKdd+sWJ
+         RDSsi9LBPFUq5IK6NYYTJLIuMkzxX45r0gA9QIryqWdjeJpPmnJIAS4Ky/Oj8aZzZA80
+         lf+iKkg2Qy43qTk7qtSbVhyZJzuM22UAu+B9h3YMgtXU8tQ3qV/8IDI2tMSiNSFJee8L
+         8D2qPvoqaRqc/rEZNiWNKX31kdPYvXBeSyCugRei3am10rYvrl0BiXgFFOzxL64/Wrf7
+         Rarg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5isRS/SJ+SHPb4tK2U4UlkgLDNu8yJEV2NUNOZKLHhE=;
+        b=GAbXfS3JB/rfvvMzMi5jEABPRpGwK4Cz/p9lEOIM+TYGyDSthXxm9PYFVyAKSMeTZL
+         HkNuXqKvCccGFghTn75Wy0keKFebtNJRcO88TlE+MqBIrsDn9QGfviu8QlZ4GQQSUMrE
+         bETS2AYDQkkmSyk6E98SzUiR3MwoKTc1m9Xz7gqRD0F8gnAM9DzVYZpdiSkcGvZZTVDF
+         Jj9k6BLKWLdtNcmgaObex3gUPF3GxMWkyuF7pyDlQKl70SCpJAWJQl7KP/l11c8xZJl0
+         /Gq09aBIcNa8+jpM18RRPqGB/efvH0v3MOKrNfNTVD8PD68mJOj7ZTAptr0qA82R18xD
+         rFEw==
+X-Gm-Message-State: AOAM53385n2akTfI47lZYk/A0fl1J+DYvQHhPnbenapV+hQxDTLvrt81
+        WbRBnWOj3wCg9U6TB5z5AJzuEBOfsaMQCSn+
+X-Google-Smtp-Source: ABdhPJx3T06t+P60628HcFn0eD3R4C2eCTcMXrdZY+XZJqrnVqpCGWbC47gwMibP0BovklBeBKeqdA==
+X-Received: by 2002:a17:902:b205:b0:13d:b0a1:da90 with SMTP id t5-20020a170902b20500b0013db0a1da90mr11235712plr.26.1632260483527;
+        Tue, 21 Sep 2021 14:41:23 -0700 (PDT)
+Received: from ?IPv6:2600:380:7577:f451:85ed:5f4e:dcd2:ab75? ([2600:380:7577:f451:85ed:5f4e:dcd2:ab75])
+        by smtp.gmail.com with ESMTPSA id p27sm102665pfq.164.2021.09.21.14.41.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Sep 2021 14:41:22 -0700 (PDT)
+Subject: Re: [5.15-rc1 regression] io_uring: fsstress hangs in do_coredump()
+ on exit
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20210921064032.GW2361455@dread.disaster.area>
+ <d9d2255c-fbac-3259-243a-2934b7ed0293@kernel.dk>
+ <c97707cf-c543-52cd-5066-76b639f4f087@kernel.dk>
+ <20210921213552.GZ2361455@dread.disaster.area>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <6d46951b-a7b3-0feb-3af0-aaa8ec87b87a@kernel.dk>
+Date:   Tue, 21 Sep 2021 15:41:20 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Mel Gorman" <mgorman@techsingularity.net>
-Cc:     "Linux-MM" <linux-mm@kvack.org>, "Theodore Ts'o" <tytso@mit.edu>,
-        "Andreas Dilger" <adilger.kernel@dilger.ca>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        "Matthew Wilcox" <willy@infradead.org>,
-        "Michal Hocko" <mhocko@suse.com>,
-        "Dave Chinner" <david@fromorbit.com>,
-        "Rik van Riel" <riel@surriel.com>,
-        "Vlastimil Babka" <vbabka@suse.cz>,
-        "Johannes Weiner" <hannes@cmpxchg.org>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        "Linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "LKML" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/5] mm/vmscan: Throttle reclaim until some writeback
- completes if congested
-In-reply-to: <20210921105831.GO3959@techsingularity.net>
-References: <20210920085436.20939-1-mgorman@techsingularity.net>,
- <20210920085436.20939-2-mgorman@techsingularity.net>,
- <163218319798.3992.1165186037496786892@noble.neil.brown.name>,
- <20210921105831.GO3959@techsingularity.net>
-Date:   Wed, 22 Sep 2021 07:40:59 +1000
-Message-id: <163226045956.21861.7998898955979000139@noble.neil.brown.name>
+In-Reply-To: <20210921213552.GZ2361455@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 21 Sep 2021, Mel Gorman wrote:
-> On Tue, Sep 21, 2021 at 10:13:17AM +1000, NeilBrown wrote:
-> > On Mon, 20 Sep 2021, Mel Gorman wrote:
-> > > -long wait_iff_congested(int sync, long timeout)
-> > > -{
-> > > -	long ret;
-> > > -	unsigned long start =3D jiffies;
-> > > -	DEFINE_WAIT(wait);
-> > > -	wait_queue_head_t *wqh =3D &congestion_wqh[sync];
-> > > -
-> > > -	/*
-> > > -	 * If there is no congestion, yield if necessary instead
-> > > -	 * of sleeping on the congestion queue
-> > > -	 */
-> > > -	if (atomic_read(&nr_wb_congested[sync]) =3D=3D 0) {
-> > > -		cond_resched();
-> > > -
-> > > -		/* In case we scheduled, work out time remaining */
-> > > -		ret =3D timeout - (jiffies - start);
-> > > -		if (ret < 0)
-> > > -			ret =3D 0;
-> > > -
-> > > -		goto out;
-> > > -	}
-> > > -
-> > > -	/* Sleep until uncongested or a write happens */
-> > > -	prepare_to_wait(wqh, &wait, TASK_UNINTERRUPTIBLE);
-> >=20
-> > Uninterruptible wait.
-> >=20
-> > ....
-> > > +static void
-> > > +reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
-> > > +							long timeout)
-> > > +{
-> > > +	wait_queue_head_t *wqh =3D &pgdat->reclaim_wait;
-> > > +	unsigned long start =3D jiffies;
-> > > +	long ret;
-> > > +	DEFINE_WAIT(wait);
-> > > +
-> > > +	atomic_inc(&pgdat->nr_reclaim_throttled);
-> > > +	WRITE_ONCE(pgdat->nr_reclaim_start,
-> > > +		 node_page_state(pgdat, NR_THROTTLED_WRITTEN));
-> > > +
-> > > +	prepare_to_wait(wqh, &wait, TASK_INTERRUPTIBLE);
-> >=20
-> > Interruptible wait.
-> >=20
-> > Why the change?  I think these waits really need to be TASK_UNINTERRUPTIB=
-LE.
-> >=20
->=20
-> Because from mm/ context, I saw no reason why the task *should* be
-> uninterruptible. It's waiting on other tasks to complete IO and it is not
-> protecting device state, filesystem state or anything else. If it gets
-> a signal, it's safe to wake up, particularly if that signal is KILL and
-> the context is a direct reclaimer.
+On 9/21/21 3:35 PM, Dave Chinner wrote:
+> On Tue, Sep 21, 2021 at 08:19:53AM -0600, Jens Axboe wrote:
+>> On 9/21/21 7:25 AM, Jens Axboe wrote:
+>>> On 9/21/21 12:40 AM, Dave Chinner wrote:
+>>>> Hi Jens,
+>>>>
+>>>> I updated all my trees from 5.14 to 5.15-rc2 this morning and
+>>>> immediately had problems running the recoveryloop fstest group on
+>>>> them. These tests have a typical pattern of "run load in the
+>>>> background, shutdown the filesystem, kill load, unmount and test
+>>>> recovery".
+>>>>
+>>>> Whent eh load includes fsstress, and it gets killed after shutdown,
+>>>> it hangs on exit like so:
+>>>>
+>>>> # echo w > /proc/sysrq-trigger 
+>>>> [  370.669482] sysrq: Show Blocked State
+>>>> [  370.671732] task:fsstress        state:D stack:11088 pid: 9619 ppid:  9615 flags:0x00000000
+>>>> [  370.675870] Call Trace:
+>>>> [  370.677067]  __schedule+0x310/0x9f0
+>>>> [  370.678564]  schedule+0x67/0xe0
+>>>> [  370.679545]  schedule_timeout+0x114/0x160
+>>>> [  370.682002]  __wait_for_common+0xc0/0x160
+>>>> [  370.684274]  wait_for_completion+0x24/0x30
+>>>> [  370.685471]  do_coredump+0x202/0x1150
+>>>> [  370.690270]  get_signal+0x4c2/0x900
+>>>> [  370.691305]  arch_do_signal_or_restart+0x106/0x7a0
+>>>> [  370.693888]  exit_to_user_mode_prepare+0xfb/0x1d0
+>>>> [  370.695241]  syscall_exit_to_user_mode+0x17/0x40
+>>>> [  370.696572]  do_syscall_64+0x42/0x80
+>>>> [  370.697620]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+>>>>
+>>>> It's 100% reproducable on one of my test machines, but only one of
+>>>> them. That one machine is running fstests on pmem, so it has
+>>>> synchronous storage. Every other test machine using normal async
+>>>> storage (nvme, iscsi, etc) and none of them are hanging.
+>>>>
+>>>> A quick troll of the commit history between 5.14 and 5.15-rc2
+>>>> indicates a couple of potential candidates. The 5th kernel build
+>>>> (instead of ~16 for a bisect) told me that commit 15e20db2e0ce
+>>>> ("io-wq: only exit on fatal signals") is the cause of the
+>>>> regression. I've confirmed that this is the first commit where the
+>>>> problem shows up.
+>>>
+>>> Thanks for the report Dave, I'll take a look. Can you elaborate on
+>>> exactly what is being run? And when killed, it's a non-fatal signal?
+> 
+> It's whatever kill/killall sends by default.  Typical behaviour that
+> causes a hang is something like:
+> 
+> $FSSTRESS_PROG -n10000000 -p $PROCS -d $load_dir >> $seqres.full 2>&1 &
+> ....
+> sleep 5
+> _scratch_shutdown
+> $KILLALL_PROG -q $FSSTRESS_PROG
+> wait
+> 
+> _shutdown_scratch is typically just an 'xfs_io -rx -c "shutdown"
+> /mnt/scratch' command that shuts down the filesystem. Other tests in
+> the recoveryloop group use DM targets to fail IO that trigger a
+> shutdown, others inject errors that trigger shutdowns, etc. But the
+> result is that all hang waiting for fsstress processes that have
+> been using io_uring to exit.
+> 
+> Just run fstests with "./check -g recoveryloop" - there's only a
+> handful of tests and it only takes about 5 minutes to run them all
+> on a fake DRAM based pmem device..
 
-I disagree.  An Interruptible sleep only makes sense if the "was
-interrupted" status can propagate up to user-space (or to some in-kernel
-handler that will clear the signal).
-In particular, if reclaim_throttle() is called in a loop (which it is),
-and if that loop doesn't check for signal_pending (which it doesn't),
-then the next time around the loop after receiving a signal, it won't
-sleep at all.  That would be bad.
+I made a trivial reproducer just to verify.
 
-In general, if you don't return an error, then you probably shouldn't
-sleep Interruptible.
+>> Can you try with this patch?
+>>
+>> diff --git a/fs/io-wq.c b/fs/io-wq.c
+>> index b5fd015268d7..1e55a0a2a217 100644
+>> --- a/fs/io-wq.c
+>> +++ b/fs/io-wq.c
+>> @@ -586,7 +586,8 @@ static int io_wqe_worker(void *data)
+>>  
+>>  			if (!get_signal(&ksig))
+>>  				continue;
+>> -			if (fatal_signal_pending(current))
+>> +			if (fatal_signal_pending(current) ||
+>> +			    signal_group_exit(current->signal)) {
+>>  				break;
+>>  			continue;
+>>  		}
+> 
+> Cleaned up so it compiles and the tests run properly again. But
+> playing whack-a-mole with signals seems kinda fragile. I was pointed
+> to this patchset by another dev on #xfs overnight who saw the same
+> hangs that also fixed the hang:
 
-I notice that tasks sleep on kswapd_wait as TASK_INTERRUPTIBLE, but they
-don't have any signal handling.  I suspect this isn't actually a defect
-because I suspect that is it not even possible to SIGKILL kswapd.  But
-the code seems misleading.  I guess I should write a patch.
+It seems sane to me - exit if there's a fatal signal, or doing core
+dump. Don't think there should be other conditions.
 
-Unless reclaim knows to abort completely on a signal (__GFP_KILLABLE
-???) this must be an UNINTERRUPTIBLE wait.
+> https://lore.kernel.org/lkml/cover.1629655338.git.olivier@trillion01.com/
+> 
+> It was posted about a month ago and I don't see any response to it
+> on the lists...
 
-Thanks,
-NeilBrown
+That's been a long discussion, but it's a different topic really. Yes
+it's signals, but it's not this particular issue. It'll happen to work
+around this issue, as it cancels everything post core dumping.
 
->=20
-> The original TASK_UNINTERRUPTIBLE is almost certainly a copy&paste from
-> congestion_wait which may be called because a filesystem operation must
-> complete before it can return to userspace so a signal waking it up is
-> pointless.
->=20
-> --=20
-> Mel Gorman
-> SUSE Labs
->=20
->=20
+-- 
+Jens Axboe
+
