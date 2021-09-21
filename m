@@ -2,261 +2,251 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D6723413A40
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 20:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D06D413AD6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Sep 2021 21:35:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230235AbhIUSrE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 14:47:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40050 "EHLO
+        id S234548AbhIUTg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 15:36:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229486AbhIUSrD (ORCPT
+        with ESMTP id S233441AbhIUTg1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 14:47:03 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BACC1C061574;
-        Tue, 21 Sep 2021 11:45:32 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id v24so206914eda.3;
-        Tue, 21 Sep 2021 11:45:32 -0700 (PDT)
+        Tue, 21 Sep 2021 15:36:27 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C77B1C061574;
+        Tue, 21 Sep 2021 12:34:58 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id bx4so653802edb.4;
+        Tue, 21 Sep 2021 12:34:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=BRQLc5fTbxFYl8Ns1gqbKeWN8GDbRNjSvcx7QdD1QMo=;
-        b=Spbw5VKqstmS6Nj5w0pO1tra5otHKK9Nv9nhB7lQ01TUOhkMk3qWiSsncF4Wv6MlLw
-         C3k8kB8eutSSeGYmxnZ0IXJQ4X/AkmUI6URhdSF3LDOxhViEB5PzGaOYKsTUbdEnB8Yc
-         faJr437XYvU60OvVI6IjeeVHZKFi0LvZ85WIKMqgmYZhZE6VskIQl8gu4SCy3qxSag6c
-         DnUUf2wJRxLEu+SgpmDqWGysrRSNKkSXnkDh3P6uEHsJJAaWFevurGR83hhYCzqvnVn5
-         DvCQWH/a/Rg8FgiZxinpQu1usXnsqx/zOAPyi5mBC6V+72UXtEJzqKkav+4JNPIrUmlH
-         3J2Q==
+        bh=UibWS27dG8CTdjCuiOWaZ3ON4LxN1iE+u65371mY3a0=;
+        b=ShnVAfrWu5IT9WTexqaZjjzqQU9EMo/+7ySpOf+s0xZCWk9Mc8wFc7xUSxhh5fjB5F
+         wYz6AQeB6KOZx/N7GdlMWoIpSLktglS0E+IYJr+sBMcb6sEPsYqN5IEdqYcV2PcUqIHc
+         UKw5fqkaZ60QeVChr7xp9oW4MwdtEHwI3RztFQ5zEl/soIKrZeKhgmSZiy3KJ4hwiIgt
+         X5UTjooyVa9FTCjH0eT6WnMHC9IGHpgyr7g/FyBo45ucAT3Fdh+Hd+tUo6gAPtL9fCeR
+         8p6VkYdfSksSKPgQVrrf79aWL40BphuEPMCTKUljg3H2pm2zVXNtoogJT8pZfrUMji7Z
+         WX4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=BRQLc5fTbxFYl8Ns1gqbKeWN8GDbRNjSvcx7QdD1QMo=;
-        b=6rq4qods24cCTFZfwoFWdZkRbQ9OPs/KNqsxRP7Cb5xT8rthAiPzQLb+PpLmJY9SJg
-         4hcuHOAcyr+XR2YVyyN/Xj5Mo6CgG97TLPQvBL4Vc+yKZpmST3KaeEaON1ZCE0L5opxd
-         u5obi33rP5cvvnH7bOcLCr+3qTNA037kYCWn5sTPs//u7vSwhSNK4nYveBhhBs7pnw59
-         TRyQzlCVWX8sI9l94vnQ6RblhNLcI/RS53xIyHlpNGIFlNsydrzMY5Paf6vLilJEWR2e
-         AXF8OAn2JdSyQixWFvH3JPg78VP54gZvbAlopxO1vAhR7/KCyA3o5eD9naf0Mp4NOkji
-         mXAQ==
-X-Gm-Message-State: AOAM532248xt5BFv1acuQRgrSWOpteQkxthdHUxVk16ytISE+BniCR0x
-        vKkTG14xYdKIB4HAbBgXRtcdQh5V2N0g0B7xvPA=
-X-Google-Smtp-Source: ABdhPJwlVF5NL7IDHxDY470spr2TdqTHp+UBhjYPZtA4Q8NYsgMmAJwGcBrjGaBtPSNm5cqKkAgFOUAiM2AiVIUjc4s=
-X-Received: by 2002:a17:906:680c:: with SMTP id k12mr37161975ejr.85.1632249931299;
- Tue, 21 Sep 2021 11:45:31 -0700 (PDT)
+        bh=UibWS27dG8CTdjCuiOWaZ3ON4LxN1iE+u65371mY3a0=;
+        b=pDVp4AS3WrmIBmtYyC1rK9BbZHs2AERr0uEfQyzfg/XsxqbhP9lXOSZQ+Ta2Xu/+YS
+         5KxmNchzLYF0uZiGVAYSr8bEQk3ISisd89u7wYL/U6UmDrLXJLnJAdiq39KQYBW7mJn9
+         K7Ip/SsqCd1KoTx0kqYnRJ9nJryPqg1JJ796jAV3UlTf2M2ECXtxipng4jxYORprVpLC
+         YQthVMhZhLxARBEkvau4afWC9kctvsRJsGXpMKN/+rgj0xgqTZCy2m10qYw/xd7wXwVJ
+         uxW32TxTqdwcoGnxZ/Wi585rt2lPZHctiFPD1uah30hZqpQs1HXixVakIETT8009GNYa
+         eZBA==
+X-Gm-Message-State: AOAM532efN/8UEOg7eqTV8N3Xow8TYVeX16aHx2c5PMbVWSJgPYkOkAU
+        ZrUCvcXbMKmd94BW9tD6WGJXfXYbwxj0ZTxV9/yEEy7UGJg=
+X-Google-Smtp-Source: ABdhPJwOFmeQMvCgyBmT6psowBIEA54SUKqi+LlzYiTmkOhrdNgQSsWNofJcoRi6XBE2EFUaY1gkRxVHSF2cx8r2nbo=
+X-Received: by 2002:a50:9d49:: with SMTP id j9mr26706153edk.81.1632252897323;
+ Tue, 21 Sep 2021 12:34:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210920085436.20939-1-mgorman@techsingularity.net> <20210920085436.20939-3-mgorman@techsingularity.net>
-In-Reply-To: <20210920085436.20939-3-mgorman@techsingularity.net>
+References: <20210914183718.4236-1-shy828301@gmail.com> <20210914183718.4236-4-shy828301@gmail.com>
+ <20210921094915.GA817765@u2004>
+In-Reply-To: <20210921094915.GA817765@u2004>
 From:   Yang Shi <shy828301@gmail.com>
-Date:   Tue, 21 Sep 2021 11:45:19 -0700
-Message-ID: <CAHbLzkoSzvC=hEOZa5xc98oJKss4tz3Ja7qU8_iQUMLgWsEQWg@mail.gmail.com>
-Subject: Re: [PATCH 2/5] mm/vmscan: Throttle reclaim and compaction when too
- may pages are isolated
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Linux-MM <linux-mm@kvack.org>, NeilBrown <neilb@suse.de>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J . Wong" <djwong@kernel.org>,
+Date:   Tue, 21 Sep 2021 12:34:44 -0700
+Message-ID: <CAHbLzkrxFrG9ncaFMVZhnXut0VmON0MP1bM=4DqFgwqXGRtoJg@mail.gmail.com>
+Subject: Re: [PATCH 3/4] mm: shmem: don't truncate page if memory failure happens
+To:     Naoya Horiguchi <naoya.horiguchi@linux.dev>
+Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Rik van Riel <riel@surriel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 20, 2021 at 1:55 AM Mel Gorman <mgorman@techsingularity.net> wrote:
+On Tue, Sep 21, 2021 at 2:49 AM Naoya Horiguchi
+<naoya.horiguchi@linux.dev> wrote:
 >
-> Page reclaim throttles on congestion if too many parallel reclaim instances
-> have isolated too many pages. This makes no sense, excessive parallelisation
-> has nothing to do with writeback or congestion.
+> On Tue, Sep 14, 2021 at 11:37:17AM -0700, Yang Shi wrote:
+> > The current behavior of memory failure is to truncate the page cache
+> > regardless of dirty or clean.  If the page is dirty the later access
+> > will get the obsolete data from disk without any notification to the
+> > users.  This may cause silent data loss.  It is even worse for shmem
+> > since shmem is in-memory filesystem, truncating page cache means
+> > discarding data blocks.  The later read would return all zero.
+> >
+> > The right approach is to keep the corrupted page in page cache, any
+> > later access would return error for syscalls or SIGBUS for page fault,
+> > until the file is truncated, hole punched or removed.  The regular
+> > storage backed filesystems would be more complicated so this patch
+> > is focused on shmem.  This also unblock the support for soft
+> > offlining shmem THP.
+> >
+> > Signed-off-by: Yang Shi <shy828301@gmail.com>
+> > ---
+> >  mm/memory-failure.c |  3 ++-
+> >  mm/shmem.c          | 25 +++++++++++++++++++++++--
+> >  2 files changed, 25 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> > index 54879c339024..3e06cb9d5121 100644
+> > --- a/mm/memory-failure.c
+> > +++ b/mm/memory-failure.c
+> > @@ -1101,7 +1101,8 @@ static int page_action(struct page_state *ps, struct page *p,
+> >       result = ps->action(p, pfn);
+> >
+> >       count = page_count(p) - 1;
+> > -     if (ps->action == me_swapcache_dirty && result == MF_DELAYED)
+> > +     if ((ps->action == me_swapcache_dirty && result == MF_DELAYED) ||
+> > +         (ps->action == me_pagecache_dirty && result == MF_FAILED))
 >
-> This patch creates an additional workqueue to sleep on when too many
-> pages are isolated. The throttled tasks are woken when the number
-> of isolated pages is reduced or a timeout occurs. There may be
-> some false positive wakeups for GFP_NOIO/GFP_NOFS callers but
-> the tasks will throttle again if necessary.
+> This new line seems to affect the cases of dirty page cache
+> on other filesystems, whose result is to miss "still referenced"
+> messages for some unmap failure cases (although it's not so critical).
+> So checking filesystem type (for example with shmem_mapping())
+> might be helpful?
 >
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-> ---
->  include/linux/mmzone.h        |  4 +++-
->  include/trace/events/vmscan.h |  4 +++-
->  mm/compaction.c               |  2 +-
->  mm/internal.h                 |  2 ++
->  mm/page_alloc.c               |  6 +++++-
->  mm/vmscan.c                   | 22 ++++++++++++++++------
->  6 files changed, 30 insertions(+), 10 deletions(-)
->
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index ef0a63ebd21d..ca65d6a64bdd 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -275,6 +275,8 @@ enum lru_list {
->
->  enum vmscan_throttle_state {
->         VMSCAN_THROTTLE_WRITEBACK,
-> +       VMSCAN_THROTTLE_ISOLATED,
-> +       NR_VMSCAN_THROTTLE,
->  };
->
->  #define for_each_lru(lru) for (lru = 0; lru < NR_LRU_LISTS; lru++)
-> @@ -846,7 +848,7 @@ typedef struct pglist_data {
->         int node_id;
->         wait_queue_head_t kswapd_wait;
->         wait_queue_head_t pfmemalloc_wait;
-> -       wait_queue_head_t reclaim_wait; /* wq for throttling reclaim */
-> +       wait_queue_head_t reclaim_wait[NR_VMSCAN_THROTTLE];
->         atomic_t nr_reclaim_throttled;  /* nr of throtted tasks */
->         unsigned long nr_reclaim_start; /* nr pages written while throttled
->                                          * when throttling started. */
-> diff --git a/include/trace/events/vmscan.h b/include/trace/events/vmscan.h
-> index c317f9fe0d17..d4905bd9e9c4 100644
-> --- a/include/trace/events/vmscan.h
-> +++ b/include/trace/events/vmscan.h
-> @@ -28,10 +28,12 @@
->                 ) : "RECLAIM_WB_NONE"
->
->  #define _VMSCAN_THROTTLE_WRITEBACK     (1 << VMSCAN_THROTTLE_WRITEBACK)
-> +#define _VMSCAN_THROTTLE_ISOLATED      (1 << VMSCAN_THROTTLE_ISOLATED)
->
->  #define show_throttle_flags(flags)                                             \
->         (flags) ? __print_flags(flags, "|",                                     \
-> -               {_VMSCAN_THROTTLE_WRITEBACK,    "VMSCAN_THROTTLE_WRITEBACK"}    \
-> +               {_VMSCAN_THROTTLE_WRITEBACK,    "VMSCAN_THROTTLE_WRITEBACK"},   \
-> +               {_VMSCAN_THROTTLE_ISOLATED,     "VMSCAN_THROTTLE_ISOLATED"}     \
->                 ) : "VMSCAN_THROTTLE_NONE"
->
->
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index bfc93da1c2c7..221c9c10ad7e 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -822,7 +822,7 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
->                 if (cc->mode == MIGRATE_ASYNC)
->                         return -EAGAIN;
->
-> -               congestion_wait(BLK_RW_ASYNC, HZ/10);
-> +               reclaim_throttle(pgdat, VMSCAN_THROTTLE_ISOLATED, HZ/10);
+> And I think that if we might want to have some refactoring to pass
+> *ps to each ps->action() callback, then move this refcount check to
+> the needed places.
+> I don't think that we always need the refcount check, for example in
+> MF_MSG_KERNEL and MF_MSG_UNKNOWN cases (because no one knows the
+> expected values for these cases).
 
-It seems waking up tasks is missed in compaction's
-too_many_isolated(). There are two too_many_isolated(), one is for
-compaction, the other is for reclaimer. I saw the waking up code was
-added to the reclaimer's in the below. Or the compaction one is left
-out intentionally?
+Yeah, seems make sense to me. How's about doing the below (totally untested):
+
+static inline bool check_refcount(struct *page, bool dec)
+{
+    int count = page_count(page) - 1;
+
+    if (dec || shmem_mapping(page->mapping))
+        count -= 1;
+
+    if (count > 0) {
+         pr_err("Memory failure: %#lx: %s still referenced by %d users\n",
+                       pfn, action_page_types[ps->type], count);
+         return false;
+    }
+
+    return true;
+}
+
+Then call this in the needed me_* functions and return right value per
+the return value of it. I think me_swapcache_dirty() is the only place
+need pass in true for dec parameter.
 
 >
->                 if (fatal_signal_pending(current))
->                         return -EINTR;
-> diff --git a/mm/internal.h b/mm/internal.h
-> index e25b3686bfab..e6cd22fb5a43 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -118,6 +118,8 @@ extern unsigned long highest_memmap_pfn;
->   */
->  extern int isolate_lru_page(struct page *page);
->  extern void putback_lru_page(struct page *page);
-> +extern void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
-> +                                                               long timeout);
 >
->  /*
->   * in mm/rmap.c:
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index d849ddfc1e51..78e538067651 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -7389,6 +7389,8 @@ static void pgdat_init_kcompactd(struct pglist_data *pgdat) {}
+> >               count--;
+> >       if (count > 0) {
+> >               pr_err("Memory failure: %#lx: %s still referenced by %d users\n",
+> > diff --git a/mm/shmem.c b/mm/shmem.c
+> > index 88742953532c..ec33f4f7173d 100644
+> > --- a/mm/shmem.c
+> > +++ b/mm/shmem.c
+> > @@ -2456,6 +2456,7 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
+> >       struct inode *inode = mapping->host;
+> >       struct shmem_inode_info *info = SHMEM_I(inode);
+> >       pgoff_t index = pos >> PAGE_SHIFT;
+> > +     int ret = 0;
+> >
+> >       /* i_rwsem is held by caller */
+> >       if (unlikely(info->seals & (F_SEAL_GROW |
+> > @@ -2466,7 +2467,19 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
+> >                       return -EPERM;
+> >       }
+> >
+> > -     return shmem_getpage(inode, index, pagep, SGP_WRITE);
+> > +     ret = shmem_getpage(inode, index, pagep, SGP_WRITE);
+> > +
+> > +     if (!ret) {
 >
->  static void __meminit pgdat_init_internals(struct pglist_data *pgdat)
->  {
-> +       int i;
-> +
->         pgdat_resize_init(pgdat);
->
->         pgdat_init_split_queue(pgdat);
-> @@ -7396,7 +7398,9 @@ static void __meminit pgdat_init_internals(struct pglist_data *pgdat)
->
->         init_waitqueue_head(&pgdat->kswapd_wait);
->         init_waitqueue_head(&pgdat->pfmemalloc_wait);
-> -       init_waitqueue_head(&pgdat->reclaim_wait);
-> +
-> +       for (i = 0; i < NR_VMSCAN_THROTTLE; i++)
-> +               init_waitqueue_head(&pgdat->reclaim_wait[i]);
->
->         pgdat_page_ext_init(pgdat);
->         lruvec_init(&pgdat->__lruvec);
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index b58ea0b13286..eb81dcac15b2 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -1006,11 +1006,10 @@ static void handle_write_error(struct address_space *mapping,
->         unlock_page(page);
->  }
->
-> -static void
-> -reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
-> +void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
->                                                         long timeout)
->  {
-> -       wait_queue_head_t *wqh = &pgdat->reclaim_wait;
-> +       wait_queue_head_t *wqh = &pgdat->reclaim_wait[reason];
->         unsigned long start = jiffies;
->         long ret;
->         DEFINE_WAIT(wait);
-> @@ -1044,7 +1043,7 @@ void __acct_reclaim_writeback(pg_data_t *pgdat, struct page *page)
->                 READ_ONCE(pgdat->nr_reclaim_start);
->
->         if (nr_written > SWAP_CLUSTER_MAX * nr_throttled)
-> -               wake_up_interruptible_all(&pgdat->reclaim_wait);
-> +               wake_up_interruptible_all(&pgdat->reclaim_wait[VMSCAN_THROTTLE_WRITEBACK]);
->  }
->
->  /* possible outcome of pageout() */
-> @@ -2159,6 +2158,7 @@ static int too_many_isolated(struct pglist_data *pgdat, int file,
->                 struct scan_control *sc)
->  {
->         unsigned long inactive, isolated;
-> +       bool too_many;
->
->         if (current_is_kswapd())
->                 return 0;
-> @@ -2182,6 +2182,17 @@ static int too_many_isolated(struct pglist_data *pgdat, int file,
->         if ((sc->gfp_mask & (__GFP_IO | __GFP_FS)) == (__GFP_IO | __GFP_FS))
->                 inactive >>= 3;
->
-> +       too_many = isolated > inactive;
-> +
-> +       /* Wake up tasks throttled due to too_many_isolated. */
-> +       if (!too_many) {
-> +               wait_queue_head_t *wqh;
-> +
-> +               wqh = &pgdat->reclaim_wait[VMSCAN_THROTTLE_ISOLATED];
-> +               if (waitqueue_active(wqh))
-> +                       wake_up_interruptible_all(wqh);
-> +       }
-> +
->         return isolated > inactive;
+> Maybe this "!ret" check is not necessary because *pagep is set
+> non-NULL only when ret is 0.  It could save one indent level.
 
-Just return too_many?
+Yes, sure.
 
->  }
 >
-> @@ -2291,8 +2302,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
->                         return 0;
+> > +             if (*pagep) {
+> > +                     if (PageHWPoison(*pagep)) {
+> > +                             unlock_page(*pagep);
+> > +                             put_page(*pagep);
+> > +                             ret = -EIO;
+> > +                     }
+> > +             }
+> > +     }
+> > +
+> > +     return ret;
+> >  }
+> >
+> >  static int
+> > @@ -2555,6 +2568,11 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> >                       unlock_page(page);
+> >               }
+> >
+> > +             if (page && PageHWPoison(page)) {
+> > +                     error = -EIO;
+> > +                     break;
+> > +             }
+> > +
+> >               /*
+> >                * We must evaluate after, since reads (unlike writes)
+> >                * are called without i_rwsem protection against truncate
+> > @@ -3782,7 +3800,6 @@ const struct address_space_operations shmem_aops = {
+> >  #ifdef CONFIG_MIGRATION
+> >       .migratepage    = migrate_page,
+> >  #endif
+> > -     .error_remove_page = generic_error_remove_page,
 >
->                 /* wait a bit for the reclaimer. */
-> -               msleep(100);
-> -               stalled = true;
-> +               reclaim_throttle(pgdat, VMSCAN_THROTTLE_ISOLATED, HZ/10);
+> This change makes truncate_error_page() calls invalidate_inode_page(),
+> and in my testing it fails with "Failed to invalidate" message.
+> So as a result memory_failure() finally returns with -EBUSY. I'm not
+> sure it's expected because this patchset changes to keep error pages
+> in page cache as a proper error handling.
+> Maybe you can avoid this by defining .error_remove_page in shmem_aops
+> which simply returns 0.
+
+Yes, the "Failed to invalidate" message seems confusing. I agree a
+shmem specific callback is better.
+
 >
->                 /* We are about to die and free our memory. Return now. */
->                 if (fatal_signal_pending(current))
-> --
-> 2.31.1
+> >  };
+> >  EXPORT_SYMBOL(shmem_aops);
+> >
+> > @@ -4193,6 +4210,10 @@ struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
+> >               page = ERR_PTR(error);
+> >       else
+> >               unlock_page(page);
+> > +
+> > +     if (PageHWPoison(page))
+> > +             page = NULL;
+> > +
+> >       return page;
 >
+> One more comment ...
 >
+>   - I guess that you add PageHWPoison() checks after some call sites
+>     of shmem_getpage() and shmem_getpage_gfp(), but seems not cover all.
+>     For example, mcontinue_atomic_pte() in mm/userfaultfd.c can properly
+>     handle PageHWPoison?
+
+No, I didn't touch anything outside shmem.c. I could add this in the
+next version.
+
+BTW, I just found another problem for the change in
+shmem_read_mapping_page_gfp(), it should return ERR_PTR(-EIO) instead
+of NULL since the callers may not handle NULL. Will fix in the next
+version too.
+
+>
+> I'm trying to test more detail, but in my current understanding,
+> this patch looks promising to me.  Thank you for your effort.
+
+Thank a lot for taking time do the review.
+
+>
+> Thanks,
+> Naoya Horiguchi
