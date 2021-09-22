@@ -2,132 +2,249 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D3A2041454C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 11:36:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66FA4414735
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 13:04:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234468AbhIVJhm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 05:37:42 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:59657 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234321AbhIVJhk (ORCPT
+        id S235191AbhIVLFv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 07:05:51 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:46264 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234760AbhIVLFv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 05:37:40 -0400
-Received: from mail-wr1-f46.google.com ([209.85.221.46]) by
- mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MvKGv-1mke2z2qrh-00rJOX; Wed, 22 Sep 2021 11:36:08 +0200
-Received: by mail-wr1-f46.google.com with SMTP id u18so4891243wrg.5;
-        Wed, 22 Sep 2021 02:36:08 -0700 (PDT)
-X-Gm-Message-State: AOAM533cNokXKeivlFWQu63N4hKhYioHpwbRhcJag3IFKL7DtZXHcL4H
-        HZhEKZ93HH6+ZISnH+FpQbO3jJiG5WhMB04iEic=
-X-Google-Smtp-Source: ABdhPJwsfHOtthBHhMYj7RntawREErl/gNXDh2elD51lflVYSeYX0WIWYL6DcBkNwC3VMpYByIJ66yyH/mg7lRlO9Aw=
-X-Received: by 2002:a1c:23cb:: with SMTP id j194mr9469852wmj.1.1632303368159;
- Wed, 22 Sep 2021 02:36:08 -0700 (PDT)
+        Wed, 22 Sep 2021 07:05:51 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 8ED4E222BA;
+        Wed, 22 Sep 2021 11:04:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1632308660; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GodUOX+j0jIvU4f7lHfUttxNVcXiuS//0D3B+/mmKz8=;
+        b=SxCxJX6HMpu+uEke3SZZjTBpcwUM4vCegWJU2EnCXi8ro2whXtWSLDRj7EN+5t/wepP4G4
+        S0tUaUME/vf6XW2nDW8wBm/u0UJkCIN3HKoOOhNUJxN2Tmiqyomckyv6h5RqgODYZgLTcA
+        rD6+juElJV3XVzwTk6CT6HBmO1PjThU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1632308660;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GodUOX+j0jIvU4f7lHfUttxNVcXiuS//0D3B+/mmKz8=;
+        b=TSbHygrXWaQnPWKZ+u++vzSX0vG9Mo6Ovx9lJIktj7wvBPZ7Eh9WuEEE4NYimMwDmcO9d2
+        y8GQn/HUuiXkK/AA==
+Received: from quack2.suse.cz (unknown [10.163.43.118])
+        by relay2.suse.de (Postfix) with ESMTP id 806D3A3B9C;
+        Wed, 22 Sep 2021 11:04:20 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5E9A11E37A2; Wed, 22 Sep 2021 13:04:20 +0200 (CEST)
+Date:   Wed, 22 Sep 2021 13:04:20 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>, "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@lst.de>, jlayton@kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: The new invalidate_lock seems to cause a potential deadlock with
+ fscache
+Message-ID: <20210922110420.GA21576@quack2.suse.cz>
+References: <3439799.1632261329@warthog.procyon.org.uk>
 MIME-Version: 1.0
-References: <20210921130127.24131-1-rpalethorpe@suse.com> <CAK8P3a29ycNqOC_pD-UUtK37jK=Rz=nik=022Q1XtXr6-o6tuA@mail.gmail.com>
- <87o88mkor1.fsf@suse.de> <87lf3qkk72.fsf@suse.de> <87ilytkngp.fsf@suse.de>
-In-Reply-To: <87ilytkngp.fsf@suse.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 22 Sep 2021 11:35:51 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2S=a0aw8GY8fZxaU5fz7ZkdehtHgStkn2=u9gO28GVEw@mail.gmail.com>
-Message-ID: <CAK8P3a2S=a0aw8GY8fZxaU5fz7ZkdehtHgStkn2=u9gO28GVEw@mail.gmail.com>
-Subject: Re: ia32 signed long treated as x64 unsigned int by __ia32_sys*
-To:     rpalethorpe@suse.de
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LTP List <ltp@lists.linux.it>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:E43EkxaNqQt7a2EM5CvjQOmodQJGkqkdhWvhc8juHYmhiMLs4Go
- IbW2+sxjzL/v+bC1TjAJuIAJkvdkRqWtshmTuomY7ZXc4o8TmFFU0jTFc/0kcBONtdpCpKJ
- pdAnuhXJ3zkNyIbgsEOVQsBVzc/mcKL19ZBTjVFljj4yr6sGgPYcxQEbZWvB5T4YGuZIcsP
- IWPoea3HhM7oHPTuEX28Q==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:xvRax+mwGJw=:F6N9qx/RxiNv53T3WxYNF+
- ESYy2Ly22uoI5wtNsnX1caZ8vLs0xTbPQ4mt6qhqT8uKdSH8xxS/Q9cSVzXpswJ1hbGAICua7
- 4FFj9lPkMO7M4hhObm/7JgNHYj1dw/OMC4RgtVijl3JvcUOe3pCefKawuXw9urpV3QDrjMXkl
- KsZv+rZ0PvgqfGy4gTFM4WT6UO+Mghzq3vbVGsL5gqix+/G45x4hmzSAtXkJx7mu1fyV1iXb7
- A18UV43st6++EZfGsNZdCY7qMzxBedGPKLCo7E2ENR8rvqJRmoNEhUGchijYbAs8Dp+Gc2rtM
- Ww1auVOXnUjJXnbDSxZI2PMtVl0Kc0HIqo0JCGKgB5qPxbRUBfXn6o2/aGl3YNSepJ5B20xHE
- kfM65QH2A9FzeJk6a5DcGq4/nDfR/1phOQomZY3SCQFs/ksPA4a7VPg7jmDw4cb2Flkf8ZYcK
- GR6CQmMTe9F48TKuuYStvKBmcbURkrSgVz5PoDZmIOsEk/3V7cG/2XTLqOkkI5A9wuKYhe/pi
- fQTw5Jj/HMTEB0VGWIamya1XPXm/EP8TAnjSzDN31OFOjqMHVw2LWkUUCtsYjNrPAkpueAoha
- Ne6Bp/jV4Fn+G3h0WDBeK8jnxVrYcScG9uDHzVED7GjQvZLcbBcmXR6pwdwkQvtbGPIXgXWTz
- S0UcmWsf10UTl/mnHamlBgUwa8SAkldmAEbAbrWbF3o4CzORYOp1rWRbX294qbEH2wEgQNvKu
- xodc0t9pS0FRSDkEKZ86rcJaWNDqy/0W9jVlRDnJDtoag94fh77LrJiVuAgy3RoQdTvzCeSMZ
- X8yacmFqIm4pPIvUd+h2OhxXovwiUOLSjnkTxq6hBgt+oneLkcRhjTh0VoyfxALHtlUC7mx40
- 9sJUWPo7OK4y1Mi8VoSg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3439799.1632261329@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 22, 2021 at 10:46 AM Richard Palethorpe <rpalethorpe@suse.de> wrote:
-> Richard Palethorpe <rpalethorpe@suse.de> writes:
+Hi David!
 
-> >
-> > Then the output is:
-> >
-> > [   11.252268] io_pgetevents(f7f19000, 4294967295, 1, ...)
-> > [   11.252401] comparing 4294967295 <= 1
-> > io_pgetevents02.c:114: TPASS: invalid min_nr: io_pgetevents() failed as expected: EINVAL (22)
-> > [   11.252610] io_pgetevents(f7f19000, 1, 4294967295, ...)
-> > [   11.252748] comparing 1 <= 4294967295
-> > io_pgetevents02.c:103: TFAIL: invalid max_nr: io_pgetevents() passed unexpectedly
->
-> and below is the macro expansion for the automatically generated 32bit to
-> 64bit io_pgetevents. I believe it is casting u32 to s64, which appears
-> to mean there is no sign extension. I don't know if this is the expected
-> behaviour?
+On Tue 21-09-21 22:55:29, David Howells wrote:
+> It seems the new mapping invalidate_lock causes a potential deadlock with
+> fscache (see attached trace), though the system didn't actually deadlock.
+> 
+> It's quite possible that it's actually a false positive, since chain #1
+> below is holding locks in two different filesystems.
+> 
+> Note that this was with my fscache-iter-2 branch, but the I/O paths in use are
+> mostly upstream and not much affected by that.
+> 
+> This was found whilst running xfstests over afs with a cache, and I'd reached
+> generic/346 when it tripped, so it seems to happen under very specific
+> circumstances.  Rerunning generic/346 by itself does reproduce the problem.
+> 
+> I'm wondering if I'm going to need to offload netfs_rreq_do_write_to_cache(),
+> which initiates the write to the cache, to a worker thread.
 
-Thank you for digging through this, I meant to already reply once more yesterday
-but didn't get around to that.
+Indeed, the culprit for lockdep splat seems to be that netfs_readpage()
+ends up calling sb_start_write() which ranks above invalidate_lock.  I'd
+say that calling vfs_iocb_iter_write() from ->readpage() is definitely
+violating "standard" locking wisdom we have around :) After some thought
+I'd even say there are some theoretical scenarios where this could deadlock.
+Like:
 
->     __typeof(__builtin_choose_expr(
->         (__builtin_types_compatible_p(typeof((long)0), typeof(0LL)) ||
->          __builtin_types_compatible_p(typeof((long)0), typeof(0ULL))),
->         0LL, 0L)) min_nr,
->     __typeof(__builtin_choose_expr(
->         (__builtin_types_compatible_p(typeof((long)0), typeof(0LL)) ||
->          __builtin_types_compatible_p(typeof((long)0), typeof(0ULL))),
->         0LL, 0L)) nr,
+We have filesystems F1 & F2, where F1 is the network fs and F2 is the cache
+fs.
 
-The part that I remembered is in arch/s390/include/asm/syscall_wrapper.h,
-which uses this version instead:
+Thread 1	Thread 2		Thread 3	Thread 4
+		write (F2)
+		  sb_start_write() (F2)
+		  prepares write
+		  copy_from_user()
+					freeze_super (F2)
+					  - blocks waiting for Thread 2
+fault (F1)
+  grabs mmap_lock
+							munmap()
+							  grab mmap_lock exclusively
+							    - blocks on Thread 1
+  filemap_fault()
+    netfs_readpage()
+      sb_start_write() (F2)
+        - blocks waiting for Thread 3
 
-#define __SC_COMPAT_CAST(t, a)                                          \
-({                                                                      \
-        long __ReS = a;                                                 \
-                                                                        \
-        BUILD_BUG_ON((sizeof(t) > 4) && !__TYPE_IS_L(t) &&              \
-                     !__TYPE_IS_UL(t) && !__TYPE_IS_PTR(t) &&           \
-                     !__TYPE_IS_LL(t));                                 \
-        if (__TYPE_IS_L(t))                                             \
-                __ReS = (s32)a;                                         \
-        if (__TYPE_IS_UL(t))                                            \
-                __ReS = (u32)a;                                         \
-        if (__TYPE_IS_PTR(t))                                           \
-                __ReS = a & 0x7fffffff;                                 \
-        if (__TYPE_IS_LL(t))                                            \
-                return -ENOSYS;                                         \
-        (t)__ReS;                                                       \
-})
 
-This also takes care of s390-specific pointer conversion, which is the
-reason for needing an architecture-specific wrapper, but I suppose the
-handling of signed arguments as done in s390 should also be done
-everywhere else.
+		Thread 2 continues
+		    fault()
+		      grabs mmap_lock
+			- blocks waiting for Thread 4. RIP.
 
-I also noticed that only x86 and s390 even have separate entry
-points for normal syscalls when called in compat mode, while
-the others all just zero the upper halves of the registers in the
-low-level entry code and then call the native entry point.
+The core of the problem is that SB_FREEZE_WRITE protection must never be
+acquired from under mmap_lock. That's why we have the additional
+SB_FREEZE_PAGEFAULT after all.
 
-        Arnd
+And I think we could come up also other deadlocks. Simply depending on
+write(2) to be safe when already holding mmap_lock and page lock is IMHO
+very dangerous and will not fly very well.
+
+								Honza
+
+
+> WARNING: possible circular locking dependency detected
+> 5.15.0-rc1-build2+ #292 Not tainted
+> ------------------------------------------------------
+> holetest/65517 is trying to acquire lock:
+> ffff88810c81d730 (mapping.invalidate_lock#3){.+.+}-{3:3}, at: filemap_fault+0x276/0x7a5
+> 
+> but task is already holding lock:
+> ffff8881595b53e8 (&mm->mmap_lock#2){++++}-{3:3}, at: do_user_addr_fault+0x28d/0x59c
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #2 (&mm->mmap_lock#2){++++}-{3:3}:
+>        validate_chain+0x3c4/0x4a8
+>        __lock_acquire+0x89d/0x949
+>        lock_acquire+0x2dc/0x34b
+>        __might_fault+0x87/0xb1
+>        strncpy_from_user+0x25/0x18c
+>        removexattr+0x7c/0xe5
+>        __do_sys_fremovexattr+0x73/0x96
+>        do_syscall_64+0x67/0x7a
+>        entry_SYSCALL_64_after_hwframe+0x44/0xae
+> 
+> -> #1 (sb_writers#10){.+.+}-{0:0}:
+>        validate_chain+0x3c4/0x4a8
+>        __lock_acquire+0x89d/0x949
+>        lock_acquire+0x2dc/0x34b
+>        cachefiles_write+0x2b3/0x4bb
+>        netfs_rreq_do_write_to_cache+0x3b5/0x432
+>        netfs_readpage+0x2de/0x39d
+>        filemap_read_page+0x51/0x94
+>        filemap_get_pages+0x26f/0x413
+>        filemap_read+0x182/0x427
+>        new_sync_read+0xf0/0x161
+>        vfs_read+0x118/0x16e
+>        ksys_read+0xb8/0x12e
+>        do_syscall_64+0x67/0x7a
+>        entry_SYSCALL_64_after_hwframe+0x44/0xae
+> 
+> -> #0 (mapping.invalidate_lock#3){.+.+}-{3:3}:
+>        check_noncircular+0xe4/0x129
+>        check_prev_add+0x16b/0x3a4
+>        validate_chain+0x3c4/0x4a8
+>        __lock_acquire+0x89d/0x949
+>        lock_acquire+0x2dc/0x34b
+>        down_read+0x40/0x4a
+>        filemap_fault+0x276/0x7a5
+>        __do_fault+0x96/0xbf
+>        do_fault+0x262/0x35a
+>        __handle_mm_fault+0x171/0x1b5
+>        handle_mm_fault+0x12a/0x233
+>        do_user_addr_fault+0x3d2/0x59c
+>        exc_page_fault+0x85/0xa5
+>        asm_exc_page_fault+0x1e/0x30
+> 
+> other info that might help us debug this:
+> 
+> Chain exists of:
+>   mapping.invalidate_lock#3 --> sb_writers#10 --> &mm->mmap_lock#2
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&mm->mmap_lock#2);
+>                                lock(sb_writers#10);
+>                                lock(&mm->mmap_lock#2);
+>   lock(mapping.invalidate_lock#3);
+> 
+>  *** DEADLOCK ***
+> 
+> 1 lock held by holetest/65517:
+>  #0: ffff8881595b53e8 (&mm->mmap_lock#2){++++}-{3:3}, at: do_user_addr_fault+0x28d/0x59c
+> 
+> stack backtrace:
+> CPU: 0 PID: 65517 Comm: holetest Not tainted 5.15.0-rc1-build2+ #292
+> Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
+> Call Trace:
+>  dump_stack_lvl+0x45/0x59
+>  check_noncircular+0xe4/0x129
+>  ? print_circular_bug+0x207/0x207
+>  ? validate_chain+0x461/0x4a8
+>  ? add_chain_block+0x88/0xd9
+>  ? hlist_add_head_rcu+0x49/0x53
+>  check_prev_add+0x16b/0x3a4
+>  validate_chain+0x3c4/0x4a8
+>  ? check_prev_add+0x3a4/0x3a4
+>  ? mark_lock+0xa5/0x1c6
+>  __lock_acquire+0x89d/0x949
+>  lock_acquire+0x2dc/0x34b
+>  ? filemap_fault+0x276/0x7a5
+>  ? rcu_read_unlock+0x59/0x59
+>  ? add_to_page_cache_lru+0x13c/0x13c
+>  ? lock_is_held_type+0x7b/0xd3
+>  down_read+0x40/0x4a
+>  ? filemap_fault+0x276/0x7a5
+>  filemap_fault+0x276/0x7a5
+>  ? pagecache_get_page+0x2dd/0x2dd
+>  ? __lock_acquire+0x8bc/0x949
+>  ? pte_offset_kernel.isra.0+0x6d/0xc3
+>  __do_fault+0x96/0xbf
+>  ? do_fault+0x124/0x35a
+>  do_fault+0x262/0x35a
+>  ? handle_pte_fault+0x1c1/0x20d
+>  __handle_mm_fault+0x171/0x1b5
+>  ? handle_pte_fault+0x20d/0x20d
+>  ? __lock_release+0x151/0x254
+>  ? mark_held_locks+0x1f/0x78
+>  ? rcu_read_unlock+0x3a/0x59
+>  handle_mm_fault+0x12a/0x233
+>  do_user_addr_fault+0x3d2/0x59c
+>  ? pgtable_bad+0x70/0x70
+>  ? rcu_read_lock_bh_held+0xab/0xab
+>  exc_page_fault+0x85/0xa5
+>  ? asm_exc_page_fault+0x8/0x30
+>  asm_exc_page_fault+0x1e/0x30
+> RIP: 0033:0x40192f
+> Code: ff 48 89 c3 48 8b 05 50 28 00 00 48 85 ed 7e 23 31 d2 4b 8d 0c 2f eb 0a 0f 1f 00 48 8b 05 39 28 00 00 48 0f af c2 48 83 c2 01 <48> 89 1c 01 48 39 d5 7f e8 8b 0d f2 27 00 00 31 c0 85 c9 74 0e 8b
+> RSP: 002b:00007f9931867eb0 EFLAGS: 00010202
+> RAX: 0000000000000000 RBX: 00007f9931868700 RCX: 00007f993206ac00
+> RDX: 0000000000000001 RSI: 0000000000000000 RDI: 00007ffc13e06ee0
+> RBP: 0000000000000100 R08: 0000000000000000 R09: 00007f9931868700
+> R10: 00007f99318689d0 R11: 0000000000000202 R12: 00007ffc13e06ee0
+> R13: 0000000000000c00 R14: 00007ffc13e06e00 R15: 00007f993206a000
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
