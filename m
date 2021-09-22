@@ -2,72 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CC934151F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 22:55:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 083A3415259
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 23:06:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237837AbhIVU4u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 16:56:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34004 "EHLO
+        id S237846AbhIVVHa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 17:07:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237852AbhIVU4n (ORCPT
+        with ESMTP id S236476AbhIVVH3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 16:56:43 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 102DCC061788
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 13:55:07 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id u18so16608977lfd.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 13:55:07 -0700 (PDT)
+        Wed, 22 Sep 2021 17:07:29 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21A72C061757
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 14:05:59 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id i4so17293196lfv.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 14:05:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=ijKrByR1/KtEp2Ut8Wj0vMi00kBZm/A/r1gPwOEYZIg=;
-        b=fr8lNb1tzuroNDnbJJtYWeXOCGZbssrkZvaRy8HVdYCeSSxS96vSwd3R2+r1vg3M6/
-         ex66FoD7Oi9BZ+eroN2ctcLno3UxJhL89X1t6yEsFayGc2q4Pz0zZQBaUGqcHr3s/S1+
-         lgIwwHuJ4O8SDnA5oR3zC/CFwa9fWO84703n6I2aQyNKP1VzeqgyNRTdZaVTG81gy6Vx
-         t6u58+esbUQxWBZY5IFD1w784RDrV2U7d72/V+RQAoF8LyHU+KHsqwJTuZK+RI9xoYHQ
-         hU/k+XKo5P60J+yjbN5r0LQMnBzU5qvJitpMdoh7dt6f9DChJ/lZbweVN/xESakomSrI
-         Tc/A==
+        d=shutemov-name.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=/PcqjgcRCkyIpO5H00bhPWTTbPCMNXWR4nKgirdi3Io=;
+        b=xEkq7SUZRewChVZqWhm4cS96l8pPzSSEz+ScgQL56dgjn10FcSw+jLPv0OY9bYezIP
+         CYphaUGJXn/snvtDU3KSfg579Nb5Qlk3NtUo6CuASAlclCh3ui7cA33wRO6foyyQk9sK
+         Mw3x0Ft59CKVBwMroO3W4lugA/tv5mEWbElbrHB+wIwMc5ZNjOZSS8KT6h+Zon+cf4qv
+         JmEltnmffmbEBqUsebTV11v0B5U1mVwBUj3sW1gLZspQ54hm7TrP9j1QPJEblcLAhwI2
+         nEggNK9m8gYxewjcBCYSYCHLIhl9iSTZmO6vl1lqR1Tl54TSO4jEGxDT96zBALyLtnLS
+         Hi0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=ijKrByR1/KtEp2Ut8Wj0vMi00kBZm/A/r1gPwOEYZIg=;
-        b=oUWNv4FL78veQWVtxXVC19KLXhErbSFqnq+LROfO3o/lfzTrTWDVcAfPF7MM0Tokwi
-         mB02ldmBbqOvOmc/G8ZXMRBUD0s0p2IWBIh2++cxjp9cvs/QtC/UNPqPRD5xqwfiQWAl
-         jD8qP4yo+0LNgOKwQ7WXOYt6Afi29889UjZzsoEVGlbQDVUzjfmICgsxRqSWAY8WinYf
-         7rmRz0sl14jeasWRn9wSLHQrLli7DFx9IUWtAICG8cVLo6U2RQUEdY0QzGWBIcv9loMJ
-         yjGxa6WkqhPRF1+56s8zgwCAfB7B66z2iN8OjLyYcc4GoIHIAEPc5alenQUJzQdVfq3H
-         yZBg==
-X-Gm-Message-State: AOAM532OTP2r1NeqS5vsJPeeuyDgE2qt7JfZoGpA8YmFqxmcNadXZQxi
-        d/OL8+rxYoiMibDFL2uNXLR1ibPy195ex+clqK2XZfuUYns=
-X-Google-Smtp-Source: ABdhPJwYYn7ZwazUxB30/XTxKCOf4dlZaC6TfP1ljKsU4ZNb40cpLRsdAvw7sAb51nYQkeG7S6W5vU7Cgq+lC3FYxgE=
-X-Received: by 2002:a05:651c:1546:: with SMTP id y6mr1383813ljp.53.1632344095088;
- Wed, 22 Sep 2021 13:54:55 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/PcqjgcRCkyIpO5H00bhPWTTbPCMNXWR4nKgirdi3Io=;
+        b=O/Ng8zHg1divy2TLTEvRMsRosImKOIgHJoFkDn+nRWljFzg94B7V1sEewulR2c+Sut
+         R+iMUYSmnQJfFTU+2pcjSPKtPKyXIj/SajGUFByk9d0rN+TVDRzVUUOn2CQk88s6H4tG
+         MmtHKCE2I0kJxioveQF3Gmz+YtvpexFXnI1THD2vrZwls7O4l5Lt90QGUTuVegD3Gjm0
+         3bTYOHY12ps7ZNPp0/K2nhYsd5tJh7cuXFyd2QY571djRoAuVCIthUH//sefzFZRyP2G
+         R6yLNc4OpM0s9O6JOeQsuxaQMOdpNbAzBp0lbCE58/lFRNG/7Rpi2ez1697ZH9Jda+Uf
+         VWHg==
+X-Gm-Message-State: AOAM530DJCobLr0TA0roJ1AgAT/630uXXPz3mUEXLJwhh2ITtGzU5I7h
+        1S/9sCEgxav4z1jXWndUO73nTA==
+X-Google-Smtp-Source: ABdhPJxFaBhI/uy8npc3Dtax2q52q/CAXrrCmDjvazERLjrealUJSj+rQLNB+0RcTEMnHlaiKFjmmA==
+X-Received: by 2002:a05:6512:5c2:: with SMTP id o2mr917110lfo.207.1632344757440;
+        Wed, 22 Sep 2021 14:05:57 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id bi33sm370467ljb.89.2021.09.22.14.05.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Sep 2021 14:05:56 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 60F2A10304D; Thu, 23 Sep 2021 00:05:58 +0300 (+03)
+Date:   Thu, 23 Sep 2021 00:05:58 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-graphics-maintainer@vmware.com,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Sathyanarayanan Kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v3 5/8] x86/sme: Replace occurrences of sme_active() with
+ cc_platform_has()
+Message-ID: <20210922210558.itofvu3725dap5xx@box.shutemov.name>
+References: <77df37e1-0496-aed5-fd1d-302180f1edeb@amd.com>
+ <YUoao0LlqQ6+uBrq@zn.tnic>
+ <20210921212059.wwlytlmxoft4cdth@box.shutemov.name>
+ <YUpONYwM4dQXAOJr@zn.tnic>
+ <20210921213401.i2pzaotgjvn4efgg@box.shutemov.name>
+ <00f52bf8-cbc6-3721-f40e-2f51744751b0@amd.com>
+ <20210921215830.vqxd75r4eyau6cxy@box.shutemov.name>
+ <01891f59-7ec3-cf62-a8fc-79f79ca76587@amd.com>
+ <20210922143015.vvxvh6ec73lffvkf@box.shutemov.name>
+ <YUuJZ2qOgbdpfk6N@zn.tnic>
 MIME-Version: 1.0
-Sender: ratcliffijames58@gmail.com
-Received: by 2002:a05:6504:5067:0:0:0:0 with HTTP; Wed, 22 Sep 2021 13:54:54
- -0700 (PDT)
-From:   Aisha Al-Qaddafi <aisha.gdaffi24@gmail.com>
-Date:   Wed, 22 Sep 2021 21:54:54 +0100
-X-Google-Sender-Auth: B3PIuwFz7UcaHNCffYC8akvbLEk
-Message-ID: <CAKVTYWSPSMf085dB7FkhkLr9XtoZHkjbvunoMard5qsSPn4ZOg@mail.gmail.com>
-Subject: My Dear Friend
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YUuJZ2qOgbdpfk6N@zn.tnic>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Assalamu alaikum,
-I came across your e-mail contact prior to a private search while in
-need of your assistance. I am Aisha Al-Qaddafi, the only biological,
-Daughter of Former President of Libya Col. Muammar Al-Qaddafi. Am a
-single Mother and a Widow with three Children. I have investment funds
-worth Twenty Seven Million Five Hundred Thousand United State Dollar
-($27.500.000.00 ) and i need a trusted  investment Manager/Partner
-because of my current refugee status, however, I am interested in you
-for investment project assistance in your country. If you are willing
-to handle this project on my behalf kindly reply urgently to enable me
-to provide you more information about the investment
-funds.
-Best Regards
+On Wed, Sep 22, 2021 at 09:52:07PM +0200, Borislav Petkov wrote:
+> On Wed, Sep 22, 2021 at 05:30:15PM +0300, Kirill A. Shutemov wrote:
+> > Not fine, but waiting to blowup with random build environment change.
+> 
+> Why is it not fine?
+> 
+> Are you suspecting that the compiler might generate something else and
+> not a rip-relative access?
+
+Yes. We had it before for __supported_pte_mask and other users of
+fixup_pointer().
+
+See for instance 4a09f0210c8b ("x86/boot/64/clang: Use fixup_pointer() to
+access '__supported_pte_mask'")
+
+Unless we find other way to guarantee RIP-relative access, we must use
+fixup_pointer() to access any global variables.
+
+-- 
+ Kirill A. Shutemov
