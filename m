@@ -2,234 +2,246 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 65425413E28
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 01:54:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F670413E77
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 02:13:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231232AbhIUX4J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 19:56:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229824AbhIUX4I (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 19:56:08 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8500E610A1;
-        Tue, 21 Sep 2021 23:54:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1632268477;
-        bh=rcMcMVou3tsD5zDoDQ84q7losgPrnq29lRr/6GzIb5Q=;
-        h=Date:From:To:Subject:From;
-        b=QptiPt1LDZXJ1j4ddARAOHewStQ1dXoEQ2Bqg3y8qn53JaDtZPk2DorW6CK2HmJUE
-         RJ/3L1LQzkveeHr6XEQmhf0khDlWggcyOqhDvdQodtulUXt6KeEdexAAidqLxKULZ5
-         Ogm+CBX0rYgPw7nWffmz3yt9HzzCNFnwbNnYLO0c=
-Date:   Tue, 21 Sep 2021 16:54:37 -0700
-From:   akpm@linux-foundation.org
-To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2021-09-21-16-54 uploaded
-Message-ID: <20210921235437.zcAiZPmxd%akpm@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        id S231593AbhIVAO6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 20:14:58 -0400
+Received: from mail-il1-f197.google.com ([209.85.166.197]:39926 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231365AbhIVAO5 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Sep 2021 20:14:57 -0400
+Received: by mail-il1-f197.google.com with SMTP id x7-20020a920607000000b002302afca41bso908514ilg.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Sep 2021 17:13:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=xTrUY2uA7AiKnyXvK/CrMXSVvhh4URRQOLghViNT4h0=;
+        b=I8tTv8Ne8mAWHAZ2UusXk6OxAlGk/SZpAL1XUnQmSaanQpQvFo1gBtArNcmzHpE0or
+         lYrrc14oo2Mbdifgwa0Cn5gJP/cn61JICbkbq2R2WD7SDba0JpAOCRNf9JPlFYwRnE3j
+         XdoMe0SB6BW1ozSkl6pkoazCDwO4qykoh1bT0SD495IgqaKfBinSUeVzaR5Fh2PZYwhV
+         y3ZZ/r04ox5r8F8EJ9ej3NjJQEovDPZd/dp5PjLIZDKLHw0u9rngmWHnQuXzFTxwG1aB
+         7IMnDymWC+O5qLOtXeRAV0H6aO8BBb6rnrDEu7kB+7sAyGcHu2PQFXi4JCUdRf/Xv5en
+         ay3g==
+X-Gm-Message-State: AOAM530oM8/4yXe+QAKSZb6WljKVnFzbu+IkTcZzrnFs4KZ/4U9UIKvi
+        hNOQ52y0MaZdit5YFkHaffmUxw7yR3YayOzqtLH4O1ntg243
+X-Google-Smtp-Source: ABdhPJyhYVQd+eTR5J4ZGA6HbK2Oc0fZ6PYdwyP0wRslcK+1bMXY+IU6se6h42t/BLv/dbgVdhhmfgJF7RAzhu4QyGT0ceblWyRH
+MIME-Version: 1.0
+X-Received: by 2002:a02:cd17:: with SMTP id g23mr2342168jaq.29.1632269608554;
+ Tue, 21 Sep 2021 17:13:28 -0700 (PDT)
+Date:   Tue, 21 Sep 2021 17:13:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003216d705cc8a62d6@google.com>
+Subject: [syzbot] INFO: rcu detected stall in sys_recvmmsg
+From:   syzbot <syzbot+3360da629681aa0d22fe@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, christian.brauner@ubuntu.com, davem@davemloft.net,
+        dkadashev@gmail.com, kuba@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mathew.j.martineau@linux.intel.com, matthieu.baerts@tessares.net,
+        mptcp@lists.linux.dev, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2021-09-21-16-54 has been uploaded to
+Hello,
 
-   https://www.ozlabs.org/~akpm/mmotm/
+syzbot found the following issue on:
 
-mmotm-readme.txt says
+HEAD commit:    1f77990c4b79 Add linux-next specific files for 20210920
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1383891d300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ab1346371f2e6884
+dashboard link: https://syzkaller.appspot.com/bug?extid=3360da629681aa0d22fe
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1625f1ab300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17eb1b3b300000
 
-README for mm-of-the-moment:
+The issue was bisected to:
 
-https://www.ozlabs.org/~akpm/mmotm/
+commit 020250f31c4c75ac7687a673e29c00786582a5f4
+Author: Dmitry Kadashev <dkadashev@gmail.com>
+Date:   Thu Jul 8 06:34:43 2021 +0000
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+    namei: make do_linkat() take struct filename
 
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-https://ozlabs.org/~akpm/mmotm/series
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15f5ef77300000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17f5ef77300000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13f5ef77300000
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3360da629681aa0d22fe@syzkaller.appspotmail.com
+Fixes: 020250f31c4c ("namei: make do_linkat() take struct filename")
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
+rcu: INFO: rcu_preempt self-detected stall on CPU
+rcu: 	0-...!: (10499 ticks this GP) idle=0af/1/0x4000000000000000 softirq=10678/10678 fqs=1 
+	(t=10500 jiffies g=13089 q=109)
+rcu: rcu_preempt kthread starved for 10497 jiffies! g13089 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
+rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_preempt     state:R  running task     stack:28696 pid:   14 ppid:     2 flags:0x00004000
+Call Trace:
+ context_switch kernel/sched/core.c:4955 [inline]
+ __schedule+0x940/0x26f0 kernel/sched/core.c:6236
+ schedule+0xd3/0x270 kernel/sched/core.c:6315
+ schedule_timeout+0x14a/0x2a0 kernel/time/timer.c:1881
+ rcu_gp_fqs_loop+0x186/0x810 kernel/rcu/tree.c:1955
+ rcu_gp_kthread+0x1de/0x320 kernel/rcu/tree.c:2128
+ kthread+0x405/0x4f0 kernel/kthread.c:327
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
+rcu: Stack dump where RCU GP kthread last ran:
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 8510 Comm: syz-executor827 Not tainted 5.15.0-rc2-next-20210920-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:bytes_is_nonzero mm/kasan/generic.c:84 [inline]
+RIP: 0010:memory_is_nonzero mm/kasan/generic.c:102 [inline]
+RIP: 0010:memory_is_poisoned_n mm/kasan/generic.c:128 [inline]
+RIP: 0010:memory_is_poisoned mm/kasan/generic.c:159 [inline]
+RIP: 0010:check_region_inline mm/kasan/generic.c:180 [inline]
+RIP: 0010:kasan_check_range+0xc8/0x180 mm/kasan/generic.c:189
+Code: 38 00 74 ed 48 8d 50 08 eb 09 48 83 c0 01 48 39 d0 74 7a 80 38 00 74 f2 48 89 c2 b8 01 00 00 00 48 85 d2 75 56 5b 5d 41 5c c3 <48> 85 d2 74 5e 48 01 ea eb 09 48 83 c0 01 48 39 d0 74 50 80 38 00
+RSP: 0018:ffffc9000cd676c8 EFLAGS: 00000283
+RAX: ffffed100e9a110e RBX: ffffed100e9a110f RCX: ffffffff88ea062a
+RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffff888074d08870
+RBP: ffffed100e9a110e R08: 0000000000000001 R09: ffff888074d08877
+R10: ffffed100e9a110e R11: 0000000000000000 R12: ffff888074d08000
+R13: ffff888074d08000 R14: ffff888074d08088 R15: ffff888074d08000
+FS:  0000555556d8e300(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000180 CR3: 0000000068909000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ instrument_atomic_read_write include/linux/instrumented.h:101 [inline]
+ test_and_clear_bit include/asm-generic/bitops/instrumented-atomic.h:83 [inline]
+ mptcp_release_cb+0x14a/0x210 net/mptcp/protocol.c:3016
+ release_sock+0xb4/0x1b0 net/core/sock.c:3204
+ mptcp_wait_data net/mptcp/protocol.c:1770 [inline]
+ mptcp_recvmsg+0xfd1/0x27b0 net/mptcp/protocol.c:2080
+ inet6_recvmsg+0x11b/0x5e0 net/ipv6/af_inet6.c:659
+ sock_recvmsg_nosec net/socket.c:944 [inline]
+ ____sys_recvmsg+0x527/0x600 net/socket.c:2626
+ ___sys_recvmsg+0x127/0x200 net/socket.c:2670
+ do_recvmmsg+0x24d/0x6d0 net/socket.c:2764
+ __sys_recvmmsg net/socket.c:2843 [inline]
+ __do_sys_recvmmsg net/socket.c:2866 [inline]
+ __se_sys_recvmmsg net/socket.c:2859 [inline]
+ __x64_sys_recvmmsg+0x20b/0x260 net/socket.c:2859
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7fc200d2dc39
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 41 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc5758e5a8 EFLAGS: 00000246 ORIG_RAX: 000000000000012b
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fc200d2dc39
+RDX: 0000000000000002 RSI: 00000000200017c0 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000f0b5ff
+R10: 0000000000000100 R11: 0000000000000246 R12: 0000000000000003
+R13: 00007ffc5758e5d0 R14: 00007ffc5758e5c0 R15: 0000000000000003
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.444 msecs
+NMI backtrace for cpu 0
+CPU: 0 PID: 8509 Comm: syz-executor827 Not tainted 5.15.0-rc2-next-20210920-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+ nmi_cpu_backtrace.cold+0x47/0x144 lib/nmi_backtrace.c:105
+ nmi_trigger_cpumask_backtrace+0x1ae/0x220 lib/nmi_backtrace.c:62
+ trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
+ rcu_dump_cpu_stacks+0x25e/0x3f0 kernel/rcu/tree_stall.h:343
+ print_cpu_stall kernel/rcu/tree_stall.h:627 [inline]
+ check_cpu_stall kernel/rcu/tree_stall.h:711 [inline]
+ rcu_pending kernel/rcu/tree.c:3878 [inline]
+ rcu_sched_clock_irq.cold+0x9d/0x746 kernel/rcu/tree.c:2597
+ update_process_times+0x16d/0x200 kernel/time/timer.c:1785
+ tick_sched_handle+0x9b/0x180 kernel/time/tick-sched.c:226
+ tick_sched_timer+0x1b0/0x2d0 kernel/time/tick-sched.c:1428
+ __run_hrtimer kernel/time/hrtimer.c:1685 [inline]
+ __hrtimer_run_queues+0x1c0/0xe50 kernel/time/hrtimer.c:1749
+ hrtimer_interrupt+0x31c/0x790 kernel/time/hrtimer.c:1811
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1086 [inline]
+ __sysvec_apic_timer_interrupt+0x146/0x530 arch/x86/kernel/apic/apic.c:1103
+ sysvec_apic_timer_interrupt+0x8e/0xc0 arch/x86/kernel/apic/apic.c:1097
+ </IRQ>
+ asm_sysvec_apic_timer_interrupt+0x12/0x20 arch/x86/include/asm/idtentry.h:638
+RIP: 0010:lock_release+0x3f1/0x720 kernel/locking/lockdep.c:5633
+Code: 7e 83 f8 01 0f 85 8d 01 00 00 9c 58 f6 c4 02 0f 85 78 01 00 00 48 f7 04 24 00 02 00 00 74 01 fb 48 b8 00 00 00 00 00 fc ff df <48> 01 c5 48 c7 45 00 00 00 00 00 c7 45 08 00 00 00 00 48 8b 84 24
+RSP: 0018:ffffc9000cde7660 EFLAGS: 00000206
+RAX: dffffc0000000000 RBX: 70dbee1ebc366ab9 RCX: ffffc9000cde76b0
+RDX: 1ffff11003a0bc2b RSI: 0000000000000201 RDI: 0000000000000000
+RBP: 1ffff920019bcece R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000443 R12: 0000000000000001
+R13: 0000000000000002 R14: ffff88801d05e160 R15: ffff88801d05d700
+ __raw_spin_unlock_bh include/linux/spinlock_api_smp.h:174 [inline]
+ _raw_spin_unlock_bh+0x12/0x30 kernel/locking/spinlock.c:210
+ spin_unlock_bh include/linux/spinlock.h:413 [inline]
+ unlock_sock_fast include/net/sock.h:1644 [inline]
+ unlock_sock_fast include/net/sock.h:1636 [inline]
+ mptcp_subflow_cleanup_rbuf net/mptcp/protocol.c:468 [inline]
+ mptcp_cleanup_rbuf net/mptcp/protocol.c:499 [inline]
+ mptcp_recvmsg+0xb8b/0x27b0 net/mptcp/protocol.c:2027
+ inet6_recvmsg+0x11b/0x5e0 net/ipv6/af_inet6.c:659
+ sock_recvmsg_nosec net/socket.c:944 [inline]
+ ____sys_recvmsg+0x527/0x600 net/socket.c:2626
+ ___sys_recvmsg+0x127/0x200 net/socket.c:2670
+ do_recvmmsg+0x24d/0x6d0 net/socket.c:2764
+ __sys_recvmmsg net/socket.c:2843 [inline]
+ __do_sys_recvmmsg net/socket.c:2866 [inline]
+ __se_sys_recvmmsg net/socket.c:2859 [inline]
+ __x64_sys_recvmmsg+0x20b/0x260 net/socket.c:2859
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7fc200d2dc39
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 41 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc5758e5a8 EFLAGS: 00000246 ORIG_RAX: 000000000000012b
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fc200d2dc39
+RDX: 0000000000000002 RSI: 00000000200017c0 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000f0b5ff
+R10: 0000000000000100 R11: 0000000000000246 R12: 0000000000000003
+R13: 00007ffc5758e5d0 R14: 00007ffc5758e5c0 R15: 0000000000000003
+----------------
+Code disassembly (best guess):
+   0:	38 00                	cmp    %al,(%rax)
+   2:	74 ed                	je     0xfffffff1
+   4:	48 8d 50 08          	lea    0x8(%rax),%rdx
+   8:	eb 09                	jmp    0x13
+   a:	48 83 c0 01          	add    $0x1,%rax
+   e:	48 39 d0             	cmp    %rdx,%rax
+  11:	74 7a                	je     0x8d
+  13:	80 38 00             	cmpb   $0x0,(%rax)
+  16:	74 f2                	je     0xa
+  18:	48 89 c2             	mov    %rax,%rdx
+  1b:	b8 01 00 00 00       	mov    $0x1,%eax
+  20:	48 85 d2             	test   %rdx,%rdx
+  23:	75 56                	jne    0x7b
+  25:	5b                   	pop    %rbx
+  26:	5d                   	pop    %rbp
+  27:	41 5c                	pop    %r12
+  29:	c3                   	retq
+* 2a:	48 85 d2             	test   %rdx,%rdx <-- trapping instruction
+  2d:	74 5e                	je     0x8d
+  2f:	48 01 ea             	add    %rbp,%rdx
+  32:	eb 09                	jmp    0x3d
+  34:	48 83 c0 01          	add    $0x1,%rax
+  38:	48 39 d0             	cmp    %rdx,%rax
+  3b:	74 50                	je     0x8d
+  3d:	80 38 00             	cmpb   $0x0,(%rax)
 
 
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-	https://github.com/hnaz/linux-mm
-
-The directory https://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is also available at
-
-	https://github.com/hnaz/linux-mm
-
-
-
-This mmotm tree contains the following patches against 5.15-rc2:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* mm-hwpoison-add-is_free_buddy_page-in-hwpoisonhandlable.patch
-* kasan-fix-kconfig-check-of-cc_has_working_nosanitize_address.patch
-* mm-damon-dont-use-strnlen-with-known-bogus-source-length.patch
-* xtensa-increase-size-of-gcc-stack-frame-check.patch
-* fix-judgment-error-in-shmem_is_huge.patch
-* ocfs2-drop-acl-cache-for-directories-too.patch
-* scripts-sorttable-riscv-fix-undelcred-identifier-em_riscv-error.patch
-* tools-vm-page-types-remove-dependency-on-opt_file-for-idle-page-tracking.patch
-* lib-zlib_inflate-inffast-check-config-in-c-to-avoid-unused-function-warning.patch
-* mm-fs-invalidate-bh_lrus-for-only-cold-path.patch
-* mm-debug-sync-up-mr_contig_range-and-mr_longterm_pin.patch
-* mm-debug-sync-up-latest-migrate_reason-to-migrate_reason_names.patch
-* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
-* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
-* procfs-prevent-unpriveleged-processes-accessing-fdinfo-dir.patch
-* scripts-spellingtxt-add-more-spellings-to-spellingtxt.patch
-* ocfs2-fix-handle-refcount-leak-in-two-exception-handling-paths.patch
-* ocfs2-reflink-deadlock-when-clone-file-to-the-same-directory-simultaneously.patch
-* ocfs2-clear-links-count-in-ocfs2_mknod-if-an-error-occurs.patch
-* ocfs2-fix-ocfs2-corrupt-when-iputting-an-inode.patch
-  mm.patch
-* mm-move-kvmalloc-related-functions-to-slabh.patch
-* mm-slub-fix-two-bugs-in-slab_debug_trace_open.patch
-* mm-slub-fix-mismatch-between-reconstructed-freelist-depth-and-cnt.patch
-* mm-slub-fix-potential-memoryleak-in-kmem_cache_open.patch
-* mm-slub-fix-potential-use-after-free-in-slab_debugfs_fops.patch
-* mm-slub-fix-incorrect-memcg-slab-count-for-bulk-free.patch
-* mm-dont-include-linux-daxh-in-linux-mempolicyh.patch
-* compiler-attributes-add-__alloc_size-for-better-bounds-checking.patch
-* compiler-attributes-add-__alloc_size-for-better-bounds-checking-fix.patch
-* checkpatch-add-__alloc_size-to-known-attribute.patch
-* slab-clean-up-function-declarations.patch
-* slab-add-__alloc_size-attributes-for-better-bounds-checking.patch
-* mm-page_alloc-add-__alloc_size-attributes-for-better-bounds-checking.patch
-* percpu-add-__alloc_size-attributes-for-better-bounds-checking.patch
-* mm-vmalloc-add-__alloc_size-attributes-for-better-bounds-checking.patch
-* rapidio-avoid-bogus-__alloc_size-warning.patch
-* mm-smaps-fix-shmem-pte-hole-swap-calculation.patch
-* mm-smaps-use-vma-vm_pgoff-directly-when-counting-partial-swap.patch
-* mm-smaps-simplify-shmem-handling-of-pte-holes.patch
-* mm-remove-bogus-vm_bug_on.patch
-* vfs-keep-inodes-with-page-cache-off-the-inode-shrinker-lru.patch
-* mm-gup-further-simplify-__gup_device_huge.patch
-* mm-swapfile-remove-needless-request_queue-null-pointer-check.patch
-* mm-memcg-drop-swp_entry_t-in-mc_handle_file_pte.patch
-* memcg-prohibit-unconditional-exceeding-the-limit-of-dying-tasks.patch
-* mm-mmapc-fix-a-data-race-of-mm-total_vm.patch
-* mm-use-__pfn_to_section-instead-of-open-coding-it.patch
-* mm-memory-avoid-unnecessary-kernel-user-pointer-conversion.patch
-* mm-shmem-unconditionally-set-pte-dirty-in-mfill_atomic_install_pte.patch
-* mm-clear-vmf-pte-after-pte_unmap_same-returns.patch
-* mm-drop-first_index-last_index-in-zap_details.patch
-* mm-add-zap_skip_check_mapping-helper.patch
-* mm-introduce-pmd_install-helper.patch
-* mm-remove-redundant-smp_wmb.patch
-* lazy-tlb-introduce-lazy-mm-refcount-helper-functions.patch
-* lazy-tlb-allow-lazy-tlb-mm-refcounting-to-be-configurable.patch
-* lazy-tlb-shoot-lazies-a-non-refcounting-lazy-tlb-option.patch
-* powerpc-64s-enable-mmu_lazy_tlb_shootdown.patch
-* mm-mremap-dont-account-pages-in-vma_to_resize.patch
-* mm-vmalloc-repair-warn_allocs-in-__vmalloc_area_node.patch
-* mm-vmalloc-dont-allow-vm_no_guard-on-vmap.patch
-* kasan-test-add-memcpy-test-that-avoids-out-of-bounds-write.patch
-* lib-stackdepot-include-gfph.patch
-* lib-stackdepot-remove-unused-function-argument.patch
-* lib-stackdepot-introduce-__stack_depot_save.patch
-* kasan-common-provide-can_alloc-in-kasan_save_stack.patch
-* kasan-generic-introduce-kasan_record_aux_stack_noalloc.patch
-* workqueue-kasan-avoid-alloc_pages-when-recording-stack.patch
-* mm-large-system-hash-avoid-possible-null-deref-in-alloc_large_system_hash.patch
-* mm-page_allocc-remove-meaningless-vm_bug_on-in-pindex_to_order.patch
-* mm-page_allocc-simplify-the-code-by-using-macro-k.patch
-* mm-page_allocc-fix-obsolete-comment-in-free_pcppages_bulk.patch
-* mm-page_allocc-use-helper-function-zone_spans_pfn.patch
-* mm-page_allocc-avoid-allocating-highmem-pages-via-alloc_pages_exact.patch
-* mm-page_alloc-print-node-fallback-order.patch
-* mm-page_alloc-use-accumulated-load-when-building-node-fallback-list.patch
-* mm-move-node_reclaim_distance-to-fix-numa-without-smp.patch
-* mm-move-fold_vm_numa_events-to-fix-numa-without-smp.patch
-* mm-fix-data-race-in-pagepoisoned.patch
-* mm-hugetlb-drop-__unmap_hugepage_range-definition-from-hugetlbh.patch
-* userfaultfd-selftests-fix-feature-support-detection.patch
-* userfaultfd-selftests-fix-calculation-of-expected-ioctls.patch
-* userfaultfd-selftests-dont-rely-on-gnu-extensions-for-random-numbers.patch
-* mm-page_isolation-fix-potential-missing-call-to-unset_migratetype_isolate.patch
-* mm-page_isolation-guard-against-possible-putback-unisolated-page.patch
-* tools-vm-page_owner_sortc-count-and-sort-by-mem.patch
-* mm-mempolicy-convert-from-atomic_t-to-refcount_t-on-mempolicy-refcnt.patch
-* mm-mempolicy-convert-from-atomic_t-to-refcount_t-on-mempolicy-refcnt-fix.patch
-* mm-mark-the-oom-reaper-thread-as-freezable.patch
-* oom_kill-oom_score_adj-broken-for-processes-with-small-memory-usage.patch
-* mmhugetlb-remove-mlock-ulimit-for-shm_hugetlb.patch
-* mm-nommu-kill-arch_get_unmapped_area.patch
-* selftest-vm-fix-ksm-selftest-to-run-with-different-numa-topologies.patch
-* mm-vmstat-annotate-data-race-for-zone-free_areanr_free.patch
-* mm-vmstat-annotate-data-race-for-zone-free_areanr_free-fix.patch
-* mm-memory_hotplug-add-static-qualifier-for-online_policy_to_str.patch
-* mm-memory_hotplug-make-hwpoisoned-dirty-swapcache-pages-unmovable.patch
-* mm-rmap-convert-from-atomic_t-to-refcount_t-on-anon_vma-refcount.patch
-* mm-zsmallocc-close-race-window-between-zs_pool_dec_isolated-and-zs_unregister_migration.patch
-* mm-zsmallocc-combine-two-atomic-ops-in-zs_pool_dec_isolated.patch
-* mm-highmem-remove-deprecated-kmap_atomic.patch
-* zram_drv-allow-reclaim-on-bio_alloc.patch
-* zram-off-by-one-in-read_block_state.patch
-* mm-remove-hardened_usercopy_fallback.patch
-* include-linux-mmh-move-nr_free_buffer_pages-from-swaph-to-mmh.patch
-* mm-damon-grammar-s-works-work.patch
-* documentation-vm-move-user-guides-to-admin-guide-mm.patch
-* maintainers-update-seongjaes-email-address.patch
-* docs-vm-damon-remove-broken-reference.patch
-* include-linux-damonh-fix-kernel-doc-comments-for-damon_callback.patch
-* mm-damon-core-print-kdamond-start-log-in-debug-mode-only.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* proc-sysctl-make-protected_-world-readable.patch
-* lib-stackdepot-check-stackdepot-handle-before-accessing-slabs.patch
-* lib-stackdepot-add-helper-to-print-stack-entries.patch
-* lib-stackdepot-add-helper-to-print-stack-entries-into-buffer.patch
-* lib-stackdepot-add-helper-to-print-stack-entries-into-buffer-v2.patch
-* lib-stackdepot-add-helper-to-print-stack-entries-into-buffer-v3.patch
-* binfmt_elf-reintroduce-using-map_fixed_noreplace.patch
-* ramfs-fix-mount-source-show-for-ramfs.patch
-* init-mainc-silence-some-wunused-parameter-warnings.patch
-* coda-avoid-null-pointer-dereference-from-a-bad-inode.patch
-* coda-check-for-async-upcall-request-using-local-state.patch
-* coda-remove-err-which-no-one-care.patch
-* coda-avoid-flagging-null-inodes.patch
-* coda-avoid-hidden-code-duplication-in-rename.patch
-* coda-avoid-doing-bad-things-on-inode-type-changes-during-revalidation.patch
-* coda-convert-from-atomic_t-to-refcount_t-on-coda_vm_ops-refcnt.patch
-* coda-use-vmemdup_user-to-replace-the-open-code.patch
-* coda-bump-module-version-to-72.patch
-* hfsplus-fix-out-of-bounds-warnings-in-__hfsplus_setxattr.patch
-* unshare-use-swap-to-make-code-cleaner.patch
-* kernel-resource-clean-up-and-optimize-iomem_is_exclusive.patch
-* kernel-resource-disallow-access-to-exclusive-system-ram-regions.patch
-* virtio-mem-disallow-mapping-virtio-mem-memory-via-dev-mem.patch
-* ipc-check-checkpoint_restore_ns_capable-to-modify-c-r-proc-files.patch
-* ipc-check-checkpoint_restore_ns_capable-to-modify-c-r-proc-files-fix.patch
-* ipc-ipc_sysctlc-remove-fallback-for-config_proc_sysctl.patch
-  linux-next.patch
-* assoc_array-avoid-open-coded-arithmetic-in-allocator-arguments.patch
-* mm-migrate-simplify-the-file-backed-pages-validation-when-migrating-its-mapping.patch
-* mm-unexport-folio_memcg_unlock.patch
-* mm-unexport-unlock_page_memcg.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
