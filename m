@@ -2,253 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A85A4414830
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 13:52:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A28F414A90
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 15:30:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235839AbhIVLyK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 07:54:10 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:55080 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235802AbhIVLyH (ORCPT
+        id S232185AbhIVNcA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 09:32:00 -0400
+Received: from n169-114.mail.139.com ([120.232.169.114]:14867 "EHLO
+        n169-114.mail.139.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231864AbhIVNcA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 07:54:07 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 37CDD2221F;
-        Wed, 22 Sep 2021 11:52:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1632311557; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Zpk/uaLL1JETo1I6rhDsb+6geCHM6hrjO4lnTz+Lo1Y=;
-        b=BZ9Sid15cyrUE+mxZnJ0K57i0mNcqLnfYad81QAhMVuasHMzj/8fZmqxPB62D1TrVKchJA
-        FA1TFsStwogydoBBV6oA9BmHjkEN4CZ+x9LIv4mYj66GlrfvfYamfHsF0lsVp6PKnJRVSZ
-        Y1ozoRouTxR7OvQOBfVahKHVjCGdh/M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1632311557;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Zpk/uaLL1JETo1I6rhDsb+6geCHM6hrjO4lnTz+Lo1Y=;
-        b=tG09QfNmpkzmiBCXncWo+vnEWYsrnWfYmGSfZkc3p6V+RG4SVsFSX4wJvaJLT2bCbP2qCm
-        ANhN9Os1ny9JN0AA==
-Received: from echidna.suse.de (ddiss.udp.ovpn2.nue.suse.de [10.163.47.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 0C3CEA3BAE;
-        Wed, 22 Sep 2021 11:52:37 +0000 (UTC)
-From:   David Disseldorp <ddiss@suse.de>
-To:     linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk, willy@infradead.org,
-        David Disseldorp <ddiss@suse.de>
-Subject: [PATCH 5/5] initramfs: add INITRAMFS_PRESERVE_MTIME Kconfig option
-Date:   Wed, 22 Sep 2021 13:52:22 +0200
-Message-Id: <20210922115222.8987-5-ddiss@suse.de>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210922115222.8987-1-ddiss@suse.de>
-References: <20210922115222.8987-1-ddiss@suse.de>
+        Wed, 22 Sep 2021 09:32:00 -0400
+X-Greylist: delayed 575 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 Sep 2021 09:31:57 EDT
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM:                                                                                        
+X-RM-SPAM-FLAG: 00000000
+Received: from [192.168.255.10] (unknown[113.108.77.67])
+        by rmsmtp-lg-appmail-39-12053 (RichMail) with SMTP id 2f15614b2db0269-70997;
+        Wed, 22 Sep 2021 21:20:51 +0800 (CST)
+X-RM-TRANSID: 2f15614b2db0269-70997
+Message-ID: <314324e7-02d7-dc43-b270-fb8117953549@139.com>
+Date:   Wed, 22 Sep 2021 21:20:50 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.1
+From:   Chengguang Xu <cgxu519@139.com>
+Subject: Re: [PATCH v3] ovl: fix null pointer when
+ filesystemdoesn'tsupportdirect IO
+To:     Huang Jianan <huangjianan@oppo.com>, linux-unionfs@vger.kernel.org,
+        miklos@szeredi.hu, linux-erofs@lists.ozlabs.org, xiang@kernel.org,
+        chao@kernel.org
+Cc:     guoweichao@oppo.com, yh@oppo.com, zhangshiming@oppo.com,
+        guanyuwei@oppo.com, jnhuang95@gmail.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cgxu519@mykernel.net
+References: <9ef909de-1854-b4be-d272-2b4cda52329f@oppo.com>
+ <20210922072326.3538-1-huangjianan@oppo.com>
+ <e42a183f-274c-425f-2012-3ff0003e1fcb@139.com>
+ <919e929d-6af7-b729-9fd2-954cd1e52999@oppo.com>
+In-Reply-To: <919e929d-6af7-b729-9fd2-954cd1e52999@oppo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-initramfs cpio mtime preservation, as implemented via
-889d51a10712b6fd6175196626de2116858394f4, uses a linked list to defer
-directory mtime processing until after all other items in the cpio
-archive have been processed. This is done to ensure that parent
-directory mtimes aren't overwritten via subsequent child creation.
+在 2021/9/22 16:24, Huang Jianan 写道:
+>
+>
+> 在 2021/9/22 16:06, Chengguang Xu 写道:
+>> 在 2021/9/22 15:23, Huang Jianan 写道:
+>>> From: Huang Jianan <huangjianan@oppo.com>
+>>>
+>>> At present, overlayfs provides overlayfs inode to users. Overlayfs
+>>> inode provides ovl_aops with noop_direct_IO to avoid open failure
+>>> with O_DIRECT. But some compressed filesystems, such as erofs and
+>>> squashfs, don't support direct_IO.
+>>>
+>>> Users who use f_mapping->a_ops->direct_IO to check O_DIRECT support,
+>>> will read file through this way. This will cause overlayfs to access
+>>> a non-existent direct_IO function and cause panic due to null pointer:
+>>
+>> I just looked around the code more closely, in open_with_fake_path(),
+>>
+>> do_dentry_open() has already checked O_DIRECT open flag and 
+>> a_ops->direct_IO of underlying real address_space.
+>>
+>> Am I missing something?
+>>
+>>
+>
+> It seems that loop_update_dio will set lo->use_dio after open file 
+> without set O_DIRECT.
+> loop_update_dio will check f_mapping->a_ops->direct_IO but it deal 
+> with ovl_aops with
+> noop _direct_IO.
+>
+> So I think we still need a new aops?
 
-This change adds a new INITRAMFS_PRESERVE_MTIME Kconfig option, which
-can be used to disable on-by-default mtime retention and in turn
-speed up initramfs extraction, particularly for cpio archives with large
-directory counts.
 
-For a cpio archive with ~1M directories, rough 20-run local benchmarks
-demonstrated:
-				mean extraction time (s)	std dev
-INITRAMFS_PRESERVE_MTIME=y		3.789035		0.005474
-INITRAMFS_PRESERVE_MTIME unset		3.111508		0.004132
+It means we should only set ->direct_IO for overlayfs inodes whose 
+underlying fs has DIRECT IO ability.
 
-Signed-off-by: David Disseldorp <ddiss@suse.de>
----
- init/Kconfig           | 10 +++++++++
- init/Makefile          |  3 +++
- init/initramfs.c       | 42 ++----------------------------------
- init/initramfs_mtime.c | 49 ++++++++++++++++++++++++++++++++++++++++++
- init/initramfs_mtime.h | 11 ++++++++++
- 5 files changed, 75 insertions(+), 40 deletions(-)
- create mode 100644 init/initramfs_mtime.c
- create mode 100644 init/initramfs_mtime.h
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 55f9f7738ebb..a79b6ba4d76c 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1324,6 +1324,16 @@ config BOOT_CONFIG
- 
- 	  If unsure, say Y.
- 
-+config INITRAMFS_PRESERVE_MTIME
-+	bool "Preserve cpio archive mtimes in initramfs"
-+	default y
-+	help
-+	  Each entry in an initramfs cpio archive carries an mtime value. When
-+	  enabled, extracted cpio items take this mtime, with directory mtime
-+	  setting deferred until after creation of any child entries.
-+
-+	  If unsure, say Y.
-+
- choice
- 	prompt "Compiler optimization level"
- 	default CC_OPTIMIZE_FOR_PERFORMANCE
-diff --git a/init/Makefile b/init/Makefile
-index 2846113677ee..d72bf80170ce 100644
---- a/init/Makefile
-+++ b/init/Makefile
-@@ -11,6 +11,9 @@ obj-y                          += noinitramfs.o
- else
- obj-$(CONFIG_BLK_DEV_INITRD)   += initramfs.o
- endif
-+ifeq ($(CONFIG_INITRAMFS_PRESERVE_MTIME),y)
-+obj-$(CONFIG_BLK_DEV_INITRD)   += initramfs_mtime.o
-+endif
- obj-$(CONFIG_GENERIC_CALIBRATE_DELAY) += calibrate.o
- 
- obj-y                          += init_task.o
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 7f809a1c8e89..205fd62be616 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -16,6 +16,8 @@
- #include <linux/namei.h>
- #include <linux/init_syscalls.h>
- 
-+#include "initramfs_mtime.h"
-+
- static ssize_t __init xwrite(struct file *file, const char *p, size_t count,
- 		loff_t *pos)
- {
-@@ -115,46 +117,6 @@ static void __init free_hash(void)
- 	}
- }
- 
--static long __init do_utime(char *filename, time64_t mtime)
--{
--	struct timespec64 t[2];
--
--	t[0].tv_sec = mtime;
--	t[0].tv_nsec = 0;
--	t[1].tv_sec = mtime;
--	t[1].tv_nsec = 0;
--	return init_utimes(filename, t);
--}
--
--static __initdata LIST_HEAD(dir_list);
--struct dir_entry {
--	struct list_head list;
--	char *name;
--	time64_t mtime;
--};
--
--static void __init dir_add(const char *name, time64_t mtime)
--{
--	struct dir_entry *de = kmalloc(sizeof(struct dir_entry), GFP_KERNEL);
--	if (!de)
--		panic_show_mem("can't allocate dir_entry buffer");
--	INIT_LIST_HEAD(&de->list);
--	de->name = kstrdup(name, GFP_KERNEL);
--	de->mtime = mtime;
--	list_add(&de->list, &dir_list);
--}
--
--static void __init dir_utime(void)
--{
--	struct dir_entry *de, *tmp;
--	list_for_each_entry_safe(de, tmp, &dir_list, list) {
--		list_del(&de->list);
--		do_utime(de->name, de->mtime);
--		kfree(de->name);
--		kfree(de);
--	}
--}
--
- static __initdata time64_t mtime;
- 
- /* cpio header parsing */
-diff --git a/init/initramfs_mtime.c b/init/initramfs_mtime.c
-new file mode 100644
-index 000000000000..0020deb21f76
---- /dev/null
-+++ b/init/initramfs_mtime.c
-@@ -0,0 +1,49 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#include <linux/init.h>
-+#include <linux/types.h>
-+#include <linux/syscalls.h>
-+#include <linux/utime.h>
-+#include <linux/file.h>
-+#include <linux/init_syscalls.h>
-+
-+#include "initramfs_mtime.h"
-+
-+long __init do_utime(char *filename, time64_t mtime)
-+{
-+	struct timespec64 t[2];
-+
-+	t[0].tv_sec = mtime;
-+	t[0].tv_nsec = 0;
-+	t[1].tv_sec = mtime;
-+	t[1].tv_nsec = 0;
-+	return init_utimes(filename, t);
-+}
-+
-+static __initdata LIST_HEAD(dir_list);
-+struct dir_entry {
-+	struct list_head list;
-+	char *name;
-+	time64_t mtime;
-+};
-+
-+void __init dir_add(const char *name, time64_t mtime)
-+{
-+	struct dir_entry *de = kmalloc(sizeof(struct dir_entry), GFP_KERNEL);
-+	if (!de)
-+		panic("can't allocate dir_entry buffer");
-+	INIT_LIST_HEAD(&de->list);
-+	de->name = kstrdup(name, GFP_KERNEL);
-+	de->mtime = mtime;
-+	list_add(&de->list, &dir_list);
-+}
-+
-+void __init dir_utime(void)
-+{
-+	struct dir_entry *de, *tmp;
-+	list_for_each_entry_safe(de, tmp, &dir_list, list) {
-+		list_del(&de->list);
-+		do_utime(de->name, de->mtime);
-+		kfree(de->name);
-+		kfree(de);
-+	}
-+}
-diff --git a/init/initramfs_mtime.h b/init/initramfs_mtime.h
-new file mode 100644
-index 000000000000..6d15c8b1171f
---- /dev/null
-+++ b/init/initramfs_mtime.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifdef CONFIG_INITRAMFS_PRESERVE_MTIME
-+long do_utime(char *filename, time64_t mtime) __init;
-+void dir_add(const char *name, time64_t mtime) __init;
-+void dir_utime(void) __init;
-+#else
-+static long __init do_utime(char *filename, time64_t mtime) { return 0; }
-+static void __init dir_add(const char *name, time64_t mtime) {}
-+static void __init dir_utime(void) {}
-+#endif
--- 
-2.31.1
+Hi Miklos,
+
+Is it right solution for this kind of issue? What do you think?
+
+
+Thanks,
+
+Chengguang
+
+
+
+>
+> Thanks,
+> Jianan
+>
+>> Thanks,
+>>
+>> Chengguang
+>>
+>>
+>>>
+>>> Kernel panic - not syncing: CFI failure (target: 0x0)
+>>> CPU: 6 PID: 247 Comm: loop0
+>>> Call Trace:
+>>>   panic+0x188/0x45c
+>>>   __cfi_slowpath+0x0/0x254
+>>>   __cfi_slowpath+0x200/0x254
+>>>   generic_file_read_iter+0x14c/0x150
+>>>   vfs_iocb_iter_read+0xac/0x164
+>>>   ovl_read_iter+0x13c/0x2fc
+>>>   lo_rw_aio+0x2bc/0x458
+>>>   loop_queue_work+0x4a4/0xbc0
+>>>   kthread_worker_fn+0xf8/0x1d0
+>>>   loop_kthread_worker_fn+0x24/0x38
+>>>   kthread+0x29c/0x310
+>>>   ret_from_fork+0x10/0x30
+>>>
+>>> The filesystem may only support direct_IO for some file types. For
+>>> example, erofs supports direct_IO for uncompressed files. So return
+>>> -EINVAL when the file doesn't support direct_IO to fix this problem.
+>>>
+>>> Fixes: 5b910bd615ba ("ovl: fix GPF in swapfile_activate of file from 
+>>> overlayfs over xfs")
+>>> Signed-off-by: Huang Jianan <huangjianan@oppo.com>
+>>> ---
+>>> change since v2:
+>>>   - Return error in ovl_open directly. (Chengguang Xu)
+>>>
+>>> Change since v1:
+>>>   - Return error to user rather than fall back to buffered io. 
+>>> (Chengguang Xu)
+>>>
+>>>   fs/overlayfs/file.c | 4 ++++
+>>>   1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+>>> index d081faa55e83..a0c99ea35daf 100644
+>>> --- a/fs/overlayfs/file.c
+>>> +++ b/fs/overlayfs/file.c
+>>> @@ -157,6 +157,10 @@ static int ovl_open(struct inode *inode, struct 
+>>> file *file)
+>>>       if (IS_ERR(realfile))
+>>>           return PTR_ERR(realfile);
+>>>   +    if ((f->f_flags & O_DIRECT) && (!realfile->f_mapping->a_ops ||
+>>> +        !realfile->f_mapping->a_ops->direct_IO))
+>>> +        return -EINVAL;
+>>> +
+>>>       file->private_data = realfile;
+>>>         return 0;
+>>
+>
 
