@@ -2,126 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C39B2414331
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 10:03:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0056C414338
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 10:06:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233424AbhIVIFY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 04:05:24 -0400
-Received: from outbound-smtp61.blacknight.com ([46.22.136.249]:49727 "EHLO
-        outbound-smtp61.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233390AbhIVIFX (ORCPT
+        id S233485AbhIVIIE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 04:08:04 -0400
+Received: from n169-112.mail.139.com ([120.232.169.112]:32207 "EHLO
+        n169-112.mail.139.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233336AbhIVIID (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 04:05:23 -0400
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp61.blacknight.com (Postfix) with ESMTPS id 3A628FBD26
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 09:03:53 +0100 (IST)
-Received: (qmail 15258 invoked from network); 22 Sep 2021 08:03:53 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 22 Sep 2021 08:03:52 -0000
-Date:   Wed, 22 Sep 2021 09:03:51 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     NeilBrown <neilb@suse.de>, Linux-MM <linux-mm@kvack.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/5] mm/vmscan: Throttle reclaim until some writeback
- completes if congested
-Message-ID: <20210922080351.GU3959@techsingularity.net>
-References: <20210920085436.20939-1-mgorman@techsingularity.net>
- <20210920085436.20939-2-mgorman@techsingularity.net>
- <163218319798.3992.1165186037496786892@noble.neil.brown.name>
- <20210921105831.GO3959@techsingularity.net>
- <20210922060447.GA2361455@dread.disaster.area>
+        Wed, 22 Sep 2021 04:08:03 -0400
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM:                                                                                        
+X-RM-SPAM-FLAG: 00000000
+Received: from [192.168.255.10] (unknown[113.108.77.67])
+        by rmsmtp-lg-appmail-19-12022 (RichMail) with SMTP id 2ef6614ae401290-6d069;
+        Wed, 22 Sep 2021 16:06:26 +0800 (CST)
+X-RM-TRANSID: 2ef6614ae401290-6d069
+Message-ID: <e42a183f-274c-425f-2012-3ff0003e1fcb@139.com>
+Date:   Wed, 22 Sep 2021 16:06:25 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20210922060447.GA2361455@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.1
+Subject: Re: [PATCH v3] ovl: fix null pointer when filesystem doesn't support
+ direct IO
+To:     Huang Jianan <huangjianan@oppo.com>, linux-unionfs@vger.kernel.org,
+        miklos@szeredi.hu, linux-erofs@lists.ozlabs.org, xiang@kernel.org,
+        chao@kernel.org
+Cc:     guoweichao@oppo.com, yh@oppo.com, zhangshiming@oppo.com,
+        guanyuwei@oppo.com, jnhuang95@gmail.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <9ef909de-1854-b4be-d272-2b4cda52329f@oppo.com>
+ <20210922072326.3538-1-huangjianan@oppo.com>
+From:   Chengguang Xu <cgxu519@139.com>
+In-Reply-To: <20210922072326.3538-1-huangjianan@oppo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 22, 2021 at 04:04:47PM +1000, Dave Chinner wrote:
-> On Tue, Sep 21, 2021 at 11:58:31AM +0100, Mel Gorman wrote:
-> > On Tue, Sep 21, 2021 at 10:13:17AM +1000, NeilBrown wrote:
-> > > On Mon, 20 Sep 2021, Mel Gorman wrote:
-> > > > -long wait_iff_congested(int sync, long timeout)
-> > > > -{
-> > > > -	long ret;
-> > > > -	unsigned long start = jiffies;
-> > > > -	DEFINE_WAIT(wait);
-> > > > -	wait_queue_head_t *wqh = &congestion_wqh[sync];
-> > > > -
-> > > > -	/*
-> > > > -	 * If there is no congestion, yield if necessary instead
-> > > > -	 * of sleeping on the congestion queue
-> > > > -	 */
-> > > > -	if (atomic_read(&nr_wb_congested[sync]) == 0) {
-> > > > -		cond_resched();
-> > > > -
-> > > > -		/* In case we scheduled, work out time remaining */
-> > > > -		ret = timeout - (jiffies - start);
-> > > > -		if (ret < 0)
-> > > > -			ret = 0;
-> > > > -
-> > > > -		goto out;
-> > > > -	}
-> > > > -
-> > > > -	/* Sleep until uncongested or a write happens */
-> > > > -	prepare_to_wait(wqh, &wait, TASK_UNINTERRUPTIBLE);
-> > > 
-> > > Uninterruptible wait.
-> > > 
-> > > ....
-> > > > +static void
-> > > > +reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
-> > > > +							long timeout)
-> > > > +{
-> > > > +	wait_queue_head_t *wqh = &pgdat->reclaim_wait;
-> > > > +	unsigned long start = jiffies;
-> > > > +	long ret;
-> > > > +	DEFINE_WAIT(wait);
-> > > > +
-> > > > +	atomic_inc(&pgdat->nr_reclaim_throttled);
-> > > > +	WRITE_ONCE(pgdat->nr_reclaim_start,
-> > > > +		 node_page_state(pgdat, NR_THROTTLED_WRITTEN));
-> > > > +
-> > > > +	prepare_to_wait(wqh, &wait, TASK_INTERRUPTIBLE);
-> > > 
-> > > Interruptible wait.
-> > > 
-> > > Why the change?  I think these waits really need to be TASK_UNINTERRUPTIBLE.
-> > > 
-> > 
-> > Because from mm/ context, I saw no reason why the task *should* be
-> > uninterruptible. It's waiting on other tasks to complete IO and it is not
-> > protecting device state, filesystem state or anything else. If it gets
-> > a signal, it's safe to wake up, particularly if that signal is KILL and
-> > the context is a direct reclaimer.
-> 
-> I disagree. whether the sleep should be interruptable or
-> not is entirely dependent on whether the caller can handle failure
-> or not. If this is GFP_NOFAIL, allocation must not fail no matter
-> what the context is, so signals and the like are irrelevant.
-> 
-> For a context that can handle allocation failure, then it makes
-> sense to wake on events that will result in the allocation failing
-> immediately. But if all this does is make the allocation code go
-> around another retry loop sooner, then an interruptible sleep still
-> doesn't make any sense at all here...
-> 
+在 2021/9/22 15:23, Huang Jianan 写道:
+> From: Huang Jianan <huangjianan@oppo.com>
+>
+> At present, overlayfs provides overlayfs inode to users. Overlayfs
+> inode provides ovl_aops with noop_direct_IO to avoid open failure
+> with O_DIRECT. But some compressed filesystems, such as erofs and
+> squashfs, don't support direct_IO.
+>
+> Users who use f_mapping->a_ops->direct_IO to check O_DIRECT support,
+> will read file through this way. This will cause overlayfs to access
+> a non-existent direct_IO function and cause panic due to null pointer:
 
-Ok, between this and Neil's mail on the same topic, I'm convinced.
+I just looked around the code more closely, in open_with_fake_path(),
 
--- 
-Mel Gorman
-SUSE Labs
+do_dentry_open() has already checked O_DIRECT open flag and 
+a_ops->direct_IO of underlying real address_space.
+
+Am I missing something?
+
+
+Thanks,
+
+Chengguang
+
+
+>
+> Kernel panic - not syncing: CFI failure (target: 0x0)
+> CPU: 6 PID: 247 Comm: loop0
+> Call Trace:
+>   panic+0x188/0x45c
+>   __cfi_slowpath+0x0/0x254
+>   __cfi_slowpath+0x200/0x254
+>   generic_file_read_iter+0x14c/0x150
+>   vfs_iocb_iter_read+0xac/0x164
+>   ovl_read_iter+0x13c/0x2fc
+>   lo_rw_aio+0x2bc/0x458
+>   loop_queue_work+0x4a4/0xbc0
+>   kthread_worker_fn+0xf8/0x1d0
+>   loop_kthread_worker_fn+0x24/0x38
+>   kthread+0x29c/0x310
+>   ret_from_fork+0x10/0x30
+>
+> The filesystem may only support direct_IO for some file types. For
+> example, erofs supports direct_IO for uncompressed files. So return
+> -EINVAL when the file doesn't support direct_IO to fix this problem.
+>
+> Fixes: 5b910bd615ba ("ovl: fix GPF in swapfile_activate of file from overlayfs over xfs")
+> Signed-off-by: Huang Jianan <huangjianan@oppo.com>
+> ---
+> change since v2:
+>   - Return error in ovl_open directly. (Chengguang Xu)
+>
+> Change since v1:
+>   - Return error to user rather than fall back to buffered io. (Chengguang Xu)
+>
+>   fs/overlayfs/file.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+>
+> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+> index d081faa55e83..a0c99ea35daf 100644
+> --- a/fs/overlayfs/file.c
+> +++ b/fs/overlayfs/file.c
+> @@ -157,6 +157,10 @@ static int ovl_open(struct inode *inode, struct file *file)
+>   	if (IS_ERR(realfile))
+>   		return PTR_ERR(realfile);
+>   
+> +	if ((f->f_flags & O_DIRECT) && (!realfile->f_mapping->a_ops ||
+> +		!realfile->f_mapping->a_ops->direct_IO))
+> +		return -EINVAL;
+> +
+>   	file->private_data = realfile;
+>   
+>   	return 0;
+
