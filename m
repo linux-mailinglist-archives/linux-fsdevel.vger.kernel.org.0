@@ -2,204 +2,239 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF21E414400
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 10:45:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D4C24144FB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 11:22:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233719AbhIVIrV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 04:47:21 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:43422 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233754AbhIVIrU (ORCPT
+        id S234170AbhIVJXc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 05:23:32 -0400
+Received: from outbound-smtp61.blacknight.com ([46.22.136.249]:46659 "EHLO
+        outbound-smtp61.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232258AbhIVJXc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 04:47:20 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 91CE0201C5;
-        Wed, 22 Sep 2021 08:45:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1632300349;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WKr6wTvBsqBQmMHpNcWarDN56Ue3U6pggap/fVhLQ5M=;
-        b=e/LxdHfe+nkw4xzqKmN7rdYyREiEcRAiW++Gi4kxer7Z6sbF/sBT2Iflo2OKUD4bo+Pqvk
-        X+BPg4oyKqj5r2INJ/5Aw9fk/kMCyWf/bk6KTj/5NHYzg+wH9uM9dsfpR9Kpi+51JJ8bfP
-        ZToDMbIL4cFH2c9vjB6K7JXKSdHK29U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1632300349;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WKr6wTvBsqBQmMHpNcWarDN56Ue3U6pggap/fVhLQ5M=;
-        b=58xg6vsKeWxXcgYORrcAX4i6i5aoPV1AG1RNrqf1OjCVcItBcFRSlzOGYsmXrUuyHhQRR9
-        FiWij6uBNOoYVjCQ==
-Received: from g78 (unknown [10.163.24.38])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 4DB91A3B90;
-        Wed, 22 Sep 2021 08:45:48 +0000 (UTC)
-References: <20210921130127.24131-1-rpalethorpe@suse.com>
- <CAK8P3a29ycNqOC_pD-UUtK37jK=Rz=nik=022Q1XtXr6-o6tuA@mail.gmail.com>
- <87o88mkor1.fsf@suse.de> <87lf3qkk72.fsf@suse.de>
-User-agent: mu4e 1.4.15; emacs 27.2
-From:   Richard Palethorpe <rpalethorpe@suse.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        "y2038 Mailman List" <y2038@lists.linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LTP List <ltp@lists.linux.it>
-Subject: ia32 signed long treated as x64 unsigned int by __ia32_sys*
-Reply-To: rpalethorpe@suse.de
-In-reply-to: <87lf3qkk72.fsf@suse.de>
-Date:   Wed, 22 Sep 2021 09:45:42 +0100
-Message-ID: <87ilytkngp.fsf@suse.de>
+        Wed, 22 Sep 2021 05:23:32 -0400
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp61.blacknight.com (Postfix) with ESMTPS id 9458BFBDC6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 10:22:01 +0100 (IST)
+Received: (qmail 20703 invoked from network); 22 Sep 2021 09:22:01 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 22 Sep 2021 09:22:01 -0000
+Date:   Wed, 22 Sep 2021 10:21:59 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Linux-MM <linux-mm@kvack.org>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Rik van Riel <riel@surriel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/5] mm/vmscan: Throttle reclaim when no progress is
+ being made
+Message-ID: <20210922092159.GW3959@techsingularity.net>
+References: <20210920085436.20939-1-mgorman@techsingularity.net>
+ <20210920085436.20939-4-mgorman@techsingularity.net>
+ <163218069080.3992.14261132300912173043@noble.neil.brown.name>
+ <20210921111630.GR3959@techsingularity.net>
+ <163226081891.21861.1286773174123207227@noble.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <163226081891.21861.1286773174123207227@noble.neil.brown.name>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Sep 22, 2021 at 07:46:58AM +1000, NeilBrown wrote:
+> On Tue, 21 Sep 2021, Mel Gorman wrote:
+> > On Tue, Sep 21, 2021 at 09:31:30AM +1000, NeilBrown wrote:
+> > > On Mon, 20 Sep 2021, Mel Gorman wrote:
+> > > > +
+> > > > +		reclaim_throttle(pgdat, VMSCAN_THROTTLE_NOPROGRESS, HZ/10);
+> > > 
+> > > We always seem to pass "HZ/10" to reclaim_throttle().  Should we just
+> > > hard-code that in the one place inside reclaim_throttle() itself?
+> > > 
+> > 
+> > do_writepages passes in HZ/50. I'm not sure if these values even have
+> > any special meaning, I think it's more likely they were pulled out of
+> > the air based on the speed of some disk in the past and then copied.
+> > It's another reason why I want the wakeups to be based on events within
+> > the mm as much as possible.
+> 
+> Yes, I saw the HZ/50 shortly after writing that email :-)
+> I agree with your guess for the source of these numbers.  I still think
+> we should pull them all from the same piece of air.
+> Hopefully, once these changes are properly understood and the events
+> reliably come as expected, we can make it quite large (HZ?) with minimal
+> cost.
+> 
 
-Richard Palethorpe <rpalethorpe@suse.de> writes:
+I'd prefer to do it as a separate patch. At some point congestion_wait
+worked and the original timeouts may have been selected based on testing
+(I severely doubt it but I'm trying to be optimistic). However, we can
+at least centralise the decision based on "reason" with this
 
-> Richard Palethorpe <rpalethorpe@suse.de> writes:
->
->> Hello Arnd,
->>
->> Arnd Bergmann <arnd@arndb.de> writes:
->>
->>> On Tue, Sep 21, 2021 at 3:01 PM Richard Palethorpe <rpalethorpe@suse.com> wrote:
->>>>
->>>> The LTP test io_pgetevents02 fails in 32bit compat mode because an
->>>> nr_max of -1 appears to be treated as a large positive integer. This
->>>> causes pgetevents_time64 to return an event. The test expects the call
->>>> to fail and errno to be set to EINVAL.
->>>>
->>>> Using the compat syscall fixes the issue.
->>>>
->>>> Fixes: 7a35397f8c06 ("io_pgetevents: use __kernel_timespec")
->>>> Signed-off-by: Richard Palethorpe <rpalethorpe@suse.com>
->>>
->>> Thanks a lot for finding this, indeed there is definitely a mistake that
->>> this function is defined and not used, but I don't yet see how it would
->>> get to the specific failure you report.
->>>
->>> Between the two implementations, I can see a difference in the
->>> handling of the signal mask, but that should only affect architectures
->>> with incompatible compat_sigset_t, i.e. big-endian or
->>> _COMPAT_NSIG_WORDS!=_NSIG_WORDS, and the latter is
->>> never true for currently supported architectures. On x86, there is
->>> no difference in the sigset at all.
->>>
->>> The negative 'nr' and 'min_nr' arguments that you list as causing
->>> the problem /should/ be converted by the magic
->>> SYSCALL_DEFINE6() definition. If this is currently broken, I would
->>> expect other syscalls to be affected as well.
->>
->> That is what I thought, but I couldn't think of another explanation for
->> it.
->>
->>>
->>> Have you tried reproducing this on non-x86 architectures? If I
->>> misremembered how the compat conversion in SYSCALL_DEFINE6()
->>> works, then all architectures that support CONFIG_COMPAT have
->>> to be fixed.
->>>
->>>          Arnd
->>
->> No, but I suppose I can try it on ARM or PowerPC. I suppose printing the
->> arguments would be a good idea too.
->
-> It appears it really is failing to sign extend the s32 to s64. I added
-> the following printks
->
-> modified   fs/aio.c
-> @@ -2054,6 +2054,7 @@ static long do_io_getevents(aio_context_t ctx_id,
->  	long ret = -EINVAL;
->  
->  	if (likely(ioctx)) {
-> +		printk("comparing %ld <= %ld\n", min_nr, nr);
->  		if (likely(min_nr <= nr && min_nr >= 0))
->  			ret = read_events(ioctx, min_nr, nr, events, until);
->  		percpu_ref_put(&ioctx->users);
-> @@ -2114,6 +2115,8 @@ SYSCALL_DEFINE6(io_pgetevents,
->  	bool interrupted;
->  	int ret;
->  
-> +	printk("io_pgetevents(%lx, %ld, %ld, ...)\n", ctx_id, min_nr, nr);
-> +
->  	if (timeout && unlikely(get_timespec64(&ts, timeout)))
->  		return -EFAULT;
->
-> Then the output is:
->
-> [   11.252268] io_pgetevents(f7f19000, 4294967295, 1, ...)
-> [   11.252401] comparing 4294967295 <= 1
-> io_pgetevents02.c:114: TPASS: invalid min_nr: io_pgetevents() failed as expected: EINVAL (22)
-> [   11.252610] io_pgetevents(f7f19000, 1, 4294967295, ...)
-> [   11.252748] comparing 1 <= 4294967295
-> io_pgetevents02.c:103: TFAIL: invalid max_nr: io_pgetevents() passed unexpectedly
+---8<---
+From 11e5197c0c569e89145475afd511efe3ce61711c Mon Sep 17 00:00:00 2001
+From: Mel Gorman <mgorman@techsingularity.net>
+Date: Wed, 22 Sep 2021 10:16:33 +0100
+Subject: [PATCH] mm/vmscan: Centralise timeout values for reclaim_throttle
 
-and below is the macro expansion for the automatically generated 32bit to
-64bit io_pgetevents. I believe it is casting u32 to s64, which appears
-to mean there is no sign extension. I don't know if this is the expected
-behaviour?
+Neil Brown raised concerns about callers of reclaim_throttle specifying
+a timeout value. The original timeout values to congestion_wait() were
+probably pulled out of thin air or copy&pasted from somewhere else.
+This patch centralises the timeout values and selects a timeout based
+on the reason for reclaim throttling. These figures are also pulled
+out of the same thin air but better values may be derived
 
-For the manually written compat version we cast back to s32 which is
-what fixes the issue.
+Running a workload that is throttling for inappropriate periods
+and tracing mm_vmscan_throttled can be used to pick a more appropriate
+value. Excessive throttling would pick a lower timeout where as
+excessive CPU usage in reclaim context would select a larger timeout.
+Ideally a large value would always be used and the wakeups would
+occur before a timeout but that requires careful testing.
 
-long __ia32_sys_io_pgetevents(const struct pt_regs *regs) {
-  return __se_sys_io_pgetevents((unsigned int)regs->bx, (unsigned int)regs->cx,
-                                (unsigned int)regs->dx, (unsigned int)regs->si,
-                                (unsigned int)regs->di, (unsigned int)regs->bp);
-}
-static long __se_sys_io_pgetevents(
-    __typeof(__builtin_choose_expr(
-        (__builtin_types_compatible_p(typeof((aio_context_t)0), typeof(0LL)) ||
-         __builtin_types_compatible_p(typeof((aio_context_t)0), typeof(0ULL))),
-        0LL, 0L)) ctx_id,
-    __typeof(__builtin_choose_expr(
-        (__builtin_types_compatible_p(typeof((long)0), typeof(0LL)) ||
-         __builtin_types_compatible_p(typeof((long)0), typeof(0ULL))),
-        0LL, 0L)) min_nr,
-    __typeof(__builtin_choose_expr(
-        (__builtin_types_compatible_p(typeof((long)0), typeof(0LL)) ||
-         __builtin_types_compatible_p(typeof((long)0), typeof(0ULL))),
-        0LL, 0L)) nr,
-    __typeof(__builtin_choose_expr(
-        (__builtin_types_compatible_p(typeof((struct io_event *)0),
-                                      typeof(0LL)) ||
-         __builtin_types_compatible_p(typeof((struct io_event *)0),
-                                      typeof(0ULL))),
-        0LL, 0L)) events,
-    __typeof(__builtin_choose_expr(
-        (__builtin_types_compatible_p(typeof((struct __kernel_timespec *)0),
-                                      typeof(0LL)) ||
-         __builtin_types_compatible_p(typeof((struct __kernel_timespec *)0),
-                                      typeof(0ULL))),
-        0LL, 0L)) timeout,
-    __typeof(__builtin_choose_expr(
-        (__builtin_types_compatible_p(typeof((const struct __aio_sigset *)0),
-                                      typeof(0LL)) ||
-         __builtin_types_compatible_p(typeof((const struct __aio_sigset *)0),
-                                      typeof(0ULL))),
-        0LL, 0L)) usig)
-{
-  long ret = __do_sys_io_pgetevents(
-      (aio_context_t)ctx_id, (long)min_nr, (long)nr, (struct io_event *)events,
-      (struct __kernel_timespec *)timeout, (const struct __aio_sigset
-  *)usig);
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ mm/compaction.c     |  2 +-
+ mm/internal.h       |  3 +--
+ mm/page-writeback.c |  2 +-
+ mm/vmscan.c         | 39 +++++++++++++++++++++++++++++++--------
+ 4 files changed, 34 insertions(+), 12 deletions(-)
 
-  ...
-}
-
--- 
-Thank you,
-Richard.
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 7359093d8ac0..151b04c4dab3 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -828,7 +828,7 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
+ 		if (cc->mode == MIGRATE_ASYNC)
+ 			return -EAGAIN;
+ 
+-		reclaim_throttle(pgdat, VMSCAN_THROTTLE_ISOLATED, HZ/10);
++		reclaim_throttle(pgdat, VMSCAN_THROTTLE_ISOLATED);
+ 
+ 		if (fatal_signal_pending(current))
+ 			return -EINTR;
+diff --git a/mm/internal.h b/mm/internal.h
+index 06d0c376efcd..f8d203cfd4e1 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -129,8 +129,7 @@ extern unsigned long highest_memmap_pfn;
+  */
+ extern int isolate_lru_page(struct page *page);
+ extern void putback_lru_page(struct page *page);
+-extern void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
+-								long timeout);
++extern void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason);
+ 
+ /*
+  * in mm/rmap.c:
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index f34f54fcd5b4..7d08706c541a 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2374,7 +2374,7 @@ int do_writepages(struct address_space *mapping, struct writeback_control *wbc)
+ 		 * guess as any.
+ 		 */
+ 		reclaim_throttle(NODE_DATA(numa_node_id()),
+-			VMSCAN_THROTTLE_WRITEBACK, HZ/50);
++						VMSCAN_THROTTLE_WRITEBACK);
+ 	}
+ 	/*
+ 	 * Usually few pages are written by now from those we've just submitted
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index b0012f9536e1..36b21549a3a4 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1006,14 +1006,37 @@ static void handle_write_error(struct address_space *mapping,
+ 	unlock_page(page);
+ }
+ 
+-void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
+-							long timeout)
++void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason)
+ {
+ 	wait_queue_head_t *wqh = &pgdat->reclaim_wait[reason];
+ 	unsigned long start = jiffies;
+-	long ret;
++	long timeout, ret;
+ 	DEFINE_WAIT(wait);
+ 
++	/*
++	 * These figures are pulled out of thin air.
++	 * VMSCAN_THROTTLE_ISOLATED is a transient condition based on too many
++	 * parallel reclaimers which is a short-lived event so the timeout is
++	 * short. Failing to make progress or waiting on writeback are
++	 * potentially long-lived events so use a longer timeout. This is shaky
++	 * logic as a failure to make progress could be due to anything from
++	 * writeback to a slow device to excessive references pages at the tail
++	 * of the inactive LRU.
++	 */
++	switch(reason) {
++	case VMSCAN_THROTTLE_NOPROGRESS:
++	case VMSCAN_THROTTLE_WRITEBACK:
++		timeout = HZ/10;
++		break;
++	case VMSCAN_THROTTLE_ISOLATED:
++		timeout = HZ/50;
++		break;
++	default:
++		WARN_ON_ONCE(1);
++		timeout = HZ;
++		break;
++	}
++
+ 	atomic_inc(&pgdat->nr_reclaim_throttled);
+ 	WRITE_ONCE(pgdat->nr_reclaim_start,
+ 		 node_page_state(pgdat, NR_THROTTLED_WRITTEN));
+@@ -2298,7 +2321,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
+ 
+ 		/* wait a bit for the reclaimer. */
+ 		stalled = true;
+-		reclaim_throttle(pgdat, VMSCAN_THROTTLE_ISOLATED, HZ/10);
++		reclaim_throttle(pgdat, VMSCAN_THROTTLE_ISOLATED);
+ 
+ 		/* We are about to die and free our memory. Return now. */
+ 		if (fatal_signal_pending(current))
+@@ -3230,7 +3253,7 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+ 		 * until some pages complete writeback.
+ 		 */
+ 		if (sc->nr.immediate)
+-			reclaim_throttle(pgdat, VMSCAN_THROTTLE_WRITEBACK, HZ/10);
++			reclaim_throttle(pgdat, VMSCAN_THROTTLE_WRITEBACK);
+ 	}
+ 
+ 	/*
+@@ -3254,7 +3277,7 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+ 	if (!current_is_kswapd() && current_may_throttle() &&
+ 	    !sc->hibernation_mode &&
+ 	    test_bit(LRUVEC_CONGESTED, &target_lruvec->flags))
+-		reclaim_throttle(pgdat, VMSCAN_THROTTLE_WRITEBACK, HZ/10);
++		reclaim_throttle(pgdat, VMSCAN_THROTTLE_WRITEBACK);
+ 
+ 	if (should_continue_reclaim(pgdat, sc->nr_reclaimed - nr_reclaimed,
+ 				    sc))
+@@ -3326,7 +3349,7 @@ static void consider_reclaim_throttle(pg_data_t *pgdat, struct scan_control *sc)
+ 
+ 	/* Throttle if making no progress at high prioities. */
+ 	if (sc->priority < DEF_PRIORITY - 2)
+-		reclaim_throttle(pgdat, VMSCAN_THROTTLE_NOPROGRESS, HZ/10);
++		reclaim_throttle(pgdat, VMSCAN_THROTTLE_NOPROGRESS);
+ }
+ 
+ /*
+@@ -3795,7 +3818,7 @@ unsigned long try_to_free_mem_cgroup_pages(struct mem_cgroup *memcg,
+ 		z = first_zones_zonelist(zonelist, sc.reclaim_idx, sc.nodemask);
+ 		pgdat = zonelist_zone(z)->zone_pgdat;
+ 
+-		reclaim_throttle(pgdat, VMSCAN_THROTTLE_NOPROGRESS, HZ/10);
++		reclaim_throttle(pgdat, VMSCAN_THROTTLE_NOPROGRESS);
+ 	}
+ 
+ 	return nr_reclaimed;
