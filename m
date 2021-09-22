@@ -2,136 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 365AC41434D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 10:11:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 087FF414371
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 10:16:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233653AbhIVIMk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 04:12:40 -0400
-Received: from outbound-smtp09.blacknight.com ([46.22.139.14]:44991 "EHLO
-        outbound-smtp09.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233590AbhIVIMh (ORCPT
+        id S233475AbhIVIRt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 04:17:49 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:37898 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233427AbhIVIRs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 04:12:37 -0400
-Received: from mail.blacknight.com (pemlinmail02.blacknight.ie [81.17.254.11])
-        by outbound-smtp09.blacknight.com (Postfix) with ESMTPS id 5CEC21C601B
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 09:11:07 +0100 (IST)
-Received: (qmail 29350 invoked from network); 22 Sep 2021 08:11:07 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 22 Sep 2021 08:11:07 -0000
-Date:   Wed, 22 Sep 2021 09:11:04 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     Linux-MM <linux-mm@kvack.org>, NeilBrown <neilb@suse.de>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Rik van Riel <riel@surriel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/5] mm/vmscan: Throttle reclaim and compaction when too
- may pages are isolated
-Message-ID: <20210922081104.GV3959@techsingularity.net>
-References: <20210920085436.20939-1-mgorman@techsingularity.net>
- <20210920085436.20939-3-mgorman@techsingularity.net>
- <CAHbLzkoSzvC=hEOZa5xc98oJKss4tz3Ja7qU8_iQUMLgWsEQWg@mail.gmail.com>
+        Wed, 22 Sep 2021 04:17:48 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UpCviSN_1632298576;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UpCviSN_1632298576)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 22 Sep 2021 16:16:17 +0800
+Subject: Re: [Virtio-fs] [PATCH v4 0/8] fuse,virtiofs: support per-file DAX
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        virtualization@lists.linux-foundation.org,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        linux-fsdevel@vger.kernel.org, Liu Bo <bo.liu@linux.alibaba.com>
+References: <20210817022220.17574-1-jefflexu@linux.alibaba.com>
+ <CAJfpeguw1hMOaxpDmjmijhf=-JEW95aEjxfVo_=D_LyWx8LDgw@mail.gmail.com>
+ <YRuCHvhICtTzMK04@work-vm> <YRuuRo8jEs5dkfw9@redhat.com>
+ <299689e9-bdeb-a715-3f31-8c70369cf0ba@linux.alibaba.com>
+ <YUeTP1B+JE5gGudq@redhat.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <ef66622c-586c-81e0-86a6-85e01af316c2@linux.alibaba.com>
+Date:   Wed, 22 Sep 2021 16:16:16 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <CAHbLzkoSzvC=hEOZa5xc98oJKss4tz3Ja7qU8_iQUMLgWsEQWg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <YUeTP1B+JE5gGudq@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 21, 2021 at 11:45:19AM -0700, Yang Shi wrote:
-> On Mon, Sep 20, 2021 at 1:55 AM Mel Gorman <mgorman@techsingularity.net> wrote:
-> >
-> > Page reclaim throttles on congestion if too many parallel reclaim instances
-> > have isolated too many pages. This makes no sense, excessive parallelisation
-> > has nothing to do with writeback or congestion.
-> >
-> > This patch creates an additional workqueue to sleep on when too many
-> > pages are isolated. The throttled tasks are woken when the number
-> > of isolated pages is reduced or a timeout occurs. There may be
-> > some false positive wakeups for GFP_NOIO/GFP_NOFS callers but
-> > the tasks will throttle again if necessary.
-> >
-> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-> > ---
-> >  include/linux/mmzone.h        |  4 +++-
-> >  include/trace/events/vmscan.h |  4 +++-
-> >  mm/compaction.c               |  2 +-
-> >  mm/internal.h                 |  2 ++
-> >  mm/page_alloc.c               |  6 +++++-
-> >  mm/vmscan.c                   | 22 ++++++++++++++++------
-> >  6 files changed, 30 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> > index ef0a63ebd21d..ca65d6a64bdd 100644
-> > --- a/include/linux/mmzone.h
-> > +++ b/include/linux/mmzone.h
-> > @@ -275,6 +275,8 @@ enum lru_list {
-> >
-> >  enum vmscan_throttle_state {
-> >         VMSCAN_THROTTLE_WRITEBACK,
-> > +       VMSCAN_THROTTLE_ISOLATED,
-> > +       NR_VMSCAN_THROTTLE,
-> >  };
-> >
-> >  #define for_each_lru(lru) for (lru = 0; lru < NR_LRU_LISTS; lru++)
-> > @@ -846,7 +848,7 @@ typedef struct pglist_data {
-> >         int node_id;
-> >         wait_queue_head_t kswapd_wait;
-> >         wait_queue_head_t pfmemalloc_wait;
-> > -       wait_queue_head_t reclaim_wait; /* wq for throttling reclaim */
-> > +       wait_queue_head_t reclaim_wait[NR_VMSCAN_THROTTLE];
-> >         atomic_t nr_reclaim_throttled;  /* nr of throtted tasks */
-> >         unsigned long nr_reclaim_start; /* nr pages written while throttled
-> >                                          * when throttling started. */
-> > diff --git a/include/trace/events/vmscan.h b/include/trace/events/vmscan.h
-> > index c317f9fe0d17..d4905bd9e9c4 100644
-> > --- a/include/trace/events/vmscan.h
-> > +++ b/include/trace/events/vmscan.h
-> > @@ -28,10 +28,12 @@
-> >                 ) : "RECLAIM_WB_NONE"
-> >
-> >  #define _VMSCAN_THROTTLE_WRITEBACK     (1 << VMSCAN_THROTTLE_WRITEBACK)
-> > +#define _VMSCAN_THROTTLE_ISOLATED      (1 << VMSCAN_THROTTLE_ISOLATED)
-> >
-> >  #define show_throttle_flags(flags)                                             \
-> >         (flags) ? __print_flags(flags, "|",                                     \
-> > -               {_VMSCAN_THROTTLE_WRITEBACK,    "VMSCAN_THROTTLE_WRITEBACK"}    \
-> > +               {_VMSCAN_THROTTLE_WRITEBACK,    "VMSCAN_THROTTLE_WRITEBACK"},   \
-> > +               {_VMSCAN_THROTTLE_ISOLATED,     "VMSCAN_THROTTLE_ISOLATED"}     \
-> >                 ) : "VMSCAN_THROTTLE_NONE"
-> >
-> >
-> > diff --git a/mm/compaction.c b/mm/compaction.c
-> > index bfc93da1c2c7..221c9c10ad7e 100644
-> > --- a/mm/compaction.c
-> > +++ b/mm/compaction.c
-> > @@ -822,7 +822,7 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
-> >                 if (cc->mode == MIGRATE_ASYNC)
-> >                         return -EAGAIN;
-> >
-> > -               congestion_wait(BLK_RW_ASYNC, HZ/10);
-> > +               reclaim_throttle(pgdat, VMSCAN_THROTTLE_ISOLATED, HZ/10);
-> 
-> It seems waking up tasks is missed in compaction's
-> too_many_isolated(). There are two too_many_isolated(), one is for
-> compaction, the other is for reclaimer. I saw the waking up code was
-> added to the reclaimer's in the below. Or the compaction one is left
-> out intentionally?
-> 
+Thanks for the replying and suggesting. ;)
 
-Compaction one was left out accidentally, I'll fix it. Thanks.
+
+On 9/20/21 3:45 AM, Vivek Goyal wrote:
+> On Thu, Sep 16, 2021 at 04:21:59PM +0800, JeffleXu wrote:
+>> Hi, I add some performance statistics below.
+>>
+>>
+>> On 8/17/21 8:40 PM, Vivek Goyal wrote:
+>>> On Tue, Aug 17, 2021 at 10:32:14AM +0100, Dr. David Alan Gilbert wrote:
+>>>> * Miklos Szeredi (miklos@szeredi.hu) wrote:
+>>>>> On Tue, 17 Aug 2021 at 04:22, Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+>>>>>>
+>>>>>> This patchset adds support of per-file DAX for virtiofs, which is
+>>>>>> inspired by Ira Weiny's work on ext4[1] and xfs[2].
+>>>>>
+>>>>> Can you please explain the background of this change in detail?
+>>>>>
+>>>>> Why would an admin want to enable DAX for a particular virtiofs file
+>>>>> and not for others?
+>>>>
+>>>> Where we're contending on virtiofs dax cache size it makes a lot of
+>>>> sense; it's quite expensive for us to map something into the cache
+>>>> (especially if we push something else out), so selectively DAXing files
+>>>> that are expected to be hot could help reduce cache churn.
+>>
+>> Yes, the performance of dax can be limited when the DAX window is
+>> limited, where dax window may be contended by multiple files.
+>>
+>> I tested kernel compiling in virtiofs, emulating the scenario where a
+>> lot of files contending dax window and triggering dax window reclaiming.
+>>
+>> Environment setup:
+>> - guest vCPU: 16
+>> - time make vmlinux -j128
+>>
+>> type    | cache  | cache-size | time
+>> ------- | ------ | ---------- | ----
+>> non-dax | always |   --       | real 2m48.119s
+>> dax     | always | 64M        | real 4m49.563s
+>> dax     | always |   1G       | real 3m14.200s
+>> dax     | always |   4G       | real 2m41.141s
+>>
+>>
+>> It can be seen that there's performance drop, comparing to the normal
+>> buffered IO, when dax window resource is restricted and dax window
+>> relcaiming is triggered. The smaller the cache size is, the worse the
+>> performance is. The performance drop can be alleviated and eliminated as
+>> cache size increases.
+>>
+>> Though we may not compile kernel in virtiofs, indeed we may access a lot
+>> of small files in virtiofs and suffer this performance drop.
+> 
+> Hi Jeffle,
+> 
+> If you access lot of big files or a file bigger than dax window, still
+> you will face performance drop due to reclaim. IOW, if data being
+> accessed is bigger than dax window, then reclaim will trigger and
+> performance drop will be observed. So I think its not fair to assciate
+> performance drop with big for small files as such.
+
+Yes, it is. Actually what I mean is that small files (with size smaller
+than dax window chunk size) is more likely to consume more dax windows
+compared to large files, under the same total file size.
+
+
+> 
+> What makes more sense is that memomry usage argument you have used
+> later in the email. That is, we have a fixed chunk size of 2MB. And
+> that means we use 512 * 64 = 32K of memory per chunk. So if a file
+> is smaller than 32K in size, it might be better to just access it
+> without DAX and incur the cost of page cache in guest instead. Even this
+> argument also works only if dax window is being utilized fully.
+
+Yes, agreed. In this case, the meaning of per-file dax is that, admin
+could control the size of overall dax window under a limited number,
+while still sustaining a reasonable performance. But at least, users are
+capable of tuning it now.
+
+> 
+> Anyway, I think Miklos already asked you to send patches so that
+> virtiofs daemon specifies which file to use dax on. So are you
+> planning to post patches again for that. (And drop patches to
+> read dax attr from per inode from filesystem in guest).
+
+OK. I will send a new version, disabling dax based on the file size on
+the host daemon side. Besides, I'm afraid the negotiation phase is also
+not needed anymore, since currently the hint whether dax shall be
+enabled or not is completely feeded from host daemon, and the guest side
+needn't set/clear per inode dax attr now.
 
 -- 
-Mel Gorman
-SUSE Labs
+Thanks,
+Jeffle
