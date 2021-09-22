@@ -2,73 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C277413F82
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 04:36:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33EBF413F87
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 04:38:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229847AbhIVChx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Sep 2021 22:37:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55592 "EHLO mail.kernel.org"
+        id S229953AbhIVCjb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Sep 2021 22:39:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229466AbhIVChw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Sep 2021 22:37:52 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 56B8661178;
-        Wed, 22 Sep 2021 02:36:23 +0000 (UTC)
+        id S229644AbhIVCjb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Sep 2021 22:39:31 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 070E261184;
+        Wed, 22 Sep 2021 02:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632278183;
-        bh=fot5GTOfzIwkSGTvycywEcAtayVaDZk7RQjs5hY/iLM=;
+        s=k20201202; t=1632278282;
+        bh=o0xTvVAAlxGYjHg2mWOMUzL4Sh++CYYDs0N2OMgy4tY=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=khIvVq5mk15hhgiDYyVIhMn4rPlsUa37QqB7PQiomxMNZCy21dcnfr2926AVgMkjw
-         FWS6HJzEhb5QqQ0F1ALQwsOm9Y6BDQ1XCoJ5H08at1fXpBCIRa2QAKAo4BUD3azuhI
-         e9r1S4j9cQoTHBsohvHGmMKkYprM2Ttwuy18uLI3Cv3owuc/USJ4l7YxJzOTBBRBJj
-         v0XfZepdLpzZCe+FLz8vK4bQEg9w5nIoUps0awJgMF3nWJ1h9tsGMpY6jTEdz/CJxA
-         bFi5LBqpgp3AMcD0OT3FtrIjUT53CnonqunBdqCc+6XBCfQgFOYOJT80AvsfZOlH2v
-         92vZJk3V6Kf8g==
-Date:   Tue, 21 Sep 2021 19:36:22 -0700
+        b=opSjAt7DT3ngxcwKBLYz9jVBe/5KNdVAMgd4otBh142Fjx5K8LjUDfRFt6r39n6PT
+         nT4UnE5MF4ydmKIWOVTIyJbXX3bebYWVj6jz34iY1/qCa6ufuPf7Tm2VIpcYSPQwot
+         HRZWxgbKWDPR5Lisp155N0pqGU/kJ5CWUZijDF39Kw1fGsbAclpoddBCQXnfcTetgc
+         Y0QP6Kg8Ld3YqFSxlxyzyl4I9MDEuhmaHnZpImSqjzb4eSpxNTE0EKmSt4PAE/f6Fe
+         1+r8fqu8wEiyOlSXRy6IZJZQvTgB2IyeDZIC9qaQtMcGvOP+zUk4YKLg1waQsS3AC7
+         KAR3gLOzGVS5A==
+Date:   Tue, 21 Sep 2021 19:38:01 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, Eric Sandeen <sandeen@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com
-Subject: Re: [PATCH 3/3] ext2: remove dax EXPERIMENTAL warning
-Message-ID: <20210922023622.GC570615@magnolia>
-References: <1631726561-16358-1-git-send-email-sandeen@redhat.com>
- <1631726561-16358-4-git-send-email-sandeen@redhat.com>
- <20210917094707.GD6547@quack2.suse.cz>
- <YUSRHjynaozAuO+P@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jane Chu <jane.chu@oracle.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 3/5] vfs: add a zero-initialization mode to fallocate
+Message-ID: <20210922023801.GD570615@magnolia>
+References: <163192864476.417973.143014658064006895.stgit@magnolia>
+ <163192866125.417973.7293598039998376121.stgit@magnolia>
+ <20210921004431.GO1756565@dread.disaster.area>
+ <YUmYbxW70Ub2ytOc@infradead.org>
+ <CAPcyv4jF1UNW5rdXX3q2hfDcvzGLSnk=1a0C0i7_UjdivuG+pQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YUSRHjynaozAuO+P@infradead.org>
+In-Reply-To: <CAPcyv4jF1UNW5rdXX3q2hfDcvzGLSnk=1a0C0i7_UjdivuG+pQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 17, 2021 at 01:59:10PM +0100, Christoph Hellwig wrote:
-> On Fri, Sep 17, 2021 at 11:47:07AM +0200, Jan Kara wrote:
-> > On Wed 15-09-21 12:22:41, Eric Sandeen wrote:
-> > > As there seems to be no significant outstanding concern about
-> > > dax on ext2 at this point, remove the scary EXPERIMENTAL
-> > > warning when in use.
-> > > 
-> > > Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-> > 
-> > Agreed. Do you want my ack or should I just merge this patch?
+On Tue, Sep 21, 2021 at 07:16:26PM -0700, Dan Williams wrote:
+> On Tue, Sep 21, 2021 at 1:32 AM Christoph Hellwig <hch@infradead.org> wrote:
+> >
+> > On Tue, Sep 21, 2021 at 10:44:31AM +1000, Dave Chinner wrote:
+> > > I think this wants to be a behavioural modifier for existing
+> > > operations rather than an operation unto itself. i.e. similar to how
+> > > KEEP_SIZE modifies ALLOC behaviour but doesn't fundamentally alter
+> > > the guarantees ALLOC provides userspace.
+> > >
+> > > In this case, the change of behaviour over ZERO_RANGE is that we
+> > > want physical zeros to be written instead of the filesystem
+> > > optimising away the physical zeros by manipulating the layout
+> > > of the file.
+> >
+> > Yes.
+> >
+> > > Then we have and API that looks like:
+> > >
+> > >       ALLOC           - allocate space efficiently
+> > >       ALLOC | INIT    - allocate space by writing zeros to it
+> > >       ZERO            - zero data and preallocate space efficiently
+> > >       ZERO | INIT     - zero range by writing zeros to it
+> > >
+> > > Which seems to cater for all the cases I know of where physically
+> > > writing zeros instead of allocating unwritten extents is the
+> > > preferred behaviour of fallocate()....
+> >
+> > Agreed.  I'm not sure INIT is really the right name, but I can't come
+> > up with a better idea offhand.
 > 
-> Please do not merge it.  The whole DAX path is still a mess and should
-> not be elevated to non-EXPERMINTAL state in this form.
+> FUA? As in, this is a forced-unit-access zeroing all the way to media
+> bypassing any mechanisms to emulate zero-filled payloads on future
+> reads.
 
-Hi Christoph,
-
-'still a mess' isn't all that useful for figuring out what still needs
-to be done and splitting up the work.  Do you have items beyond my own
-list below?
-
- - still arguing over what exactly FALLOC_FL_ZERO_REINIT_WHATEVER_PONIES
-   should be doing
- - no reflink support, encompassing:
- - hwpoison from mmap regions really ought to tell the fs that bad stuff
-   happened
- - mm rmap can't handle more than one owner
+FALLOC_FL_ZERO_EXISTING, because you want to zero the storage that
+already exists at that file range?
 
 --D
-
