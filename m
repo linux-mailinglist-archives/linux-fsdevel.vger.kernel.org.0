@@ -2,97 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 61C04415028
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 20:51:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41617415031
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 20:53:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237115AbhIVSwz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 14:52:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33672 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233210AbhIVSwz (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 14:52:55 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 079D2C061574;
-        Wed, 22 Sep 2021 11:51:25 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id g41so15697441lfv.1;
-        Wed, 22 Sep 2021 11:51:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=TVdYbzVz6L9w50OAN8iUpXr44c199Ry+YrB4JvrmzuU=;
-        b=XhDztYIsxAa8cjARTwToxeBqNr3RFSJROe439D2C4d1++xECT6ukhhChELX3or3ymO
-         awldyLjasKf59wVaHWsThVsQmZfrlKKngJ1aM0do2U0Lkdd4o9L8k3ceYLoYnFxO76qp
-         svQIFrp5oRNKLXt0Fj6hqZJYlGOkFbC1tBe+lODs6/nRhu5ub2ZcoLhRlv7NE/9dP154
-         PDKiSZokRhXyHUiYyl5sQT7KLMC26NDzgSSJVoMOAnkHFUYJww+j8/SRlhHDCkG6cXLm
-         4vewTEIanzwHwJVG13uUdchNSp8JjAlBSW3n/fV69M/dbp580Han4QuMKabQC1nU+L13
-         pPdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=TVdYbzVz6L9w50OAN8iUpXr44c199Ry+YrB4JvrmzuU=;
-        b=dESbIs4cdGVBG83A+XlB+PbD7ZNrtNpAxmUlBoloz9csr4XdgORLbLiW93CmQRLk3n
-         uXmYWM6rII1g6vqVWudsdAfkHp1G/pQBTEYoBhEaS+52lDQjn/PYGmiDbjDjkY6AzELO
-         cDbJSTBsqN3BUCLDhrhGYtyDYUJax3nRorTBwOGQMF7ywOK9+ZLC+up/BaXMBGXgebSd
-         LLdCd4Hi6utrT7dQmrvrqIv3XHAkSCpQQ64iZFZvytyaoPqftKKqeouH8IFWbkbcBvva
-         4a2hlDK7gq5pcvD2MXomBW/Mu5xU871VHW4eONVfaz3CSgDVk73e7lNQWa2JzbsxVwSI
-         9aew==
-X-Gm-Message-State: AOAM533RAGP0Ia+yD9R8bld1oycsYE8j4sj/C0p2zRZkKpAcmTG7ts57
-        bGH5J8bXLwElUuIcppadsAJXyiNiyLo=
-X-Google-Smtp-Source: ABdhPJyXuXlABlOCKqBOspLUw2wr+pcY6KLy6RyaUp3HLUSDjtqsTkWsufvlbMKSTJZcGw+uptSFgw==
-X-Received: by 2002:ac2:5978:: with SMTP id h24mr461208lfp.426.1632336683335;
-        Wed, 22 Sep 2021 11:51:23 -0700 (PDT)
-Received: from kari-VirtualBox ([31.132.12.44])
-        by smtp.gmail.com with ESMTPSA id a16sm239618lfu.274.2021.09.22.11.51.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Sep 2021 11:51:23 -0700 (PDT)
-Date:   Wed, 22 Sep 2021 21:51:21 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Refactor locking in inode_operations
-Message-ID: <20210922185121.gke6tigiqkfwovis@kari-VirtualBox>
-References: <2771ff62-e612-a8ed-4b93-5534c26aef9e@paragon-software.com>
+        id S237140AbhIVSzY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 14:55:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59756 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229732AbhIVSzY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Sep 2021 14:55:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id EBA3C61214;
+        Wed, 22 Sep 2021 18:53:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632336834;
+        bh=YjHMExL18UDt48gcGEkddnz6sCij7zwLcxGU2WC74Ok=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=h/o7vgPcAV93kv1dVidJaSs1JcWg+oI4FktJo9EiYMmrXO9HwPlej7+sw6olTCa3u
+         mjP9iRoN4jpCjwSmrQyJj4/NcHdsuw4chPWUQtiFG/PVBKsYErCpInpYiNmvHO76lU
+         4prMsMXXQU3JZ8/4SeYO4WriWSFKd2slSN1pj5Ltjq5gAZywHHl4WCJqpDA8k7q7Mj
+         XpK2LiY5zFDNhlZLhvlF+6i8U9mrjOHKLfLppa1BZZmFYMrKyELMSX+m2a9u9vTmyQ
+         hvAUXwSFmOvMhX0D2UPIWFZWmJLyelkY4tXHNjLDHEHbqj0tqILHpr/EsXchVf62pA
+         B7Skc87Ry2ODQ==
+Date:   Wed, 22 Sep 2021 11:53:53 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     jane.chu@oracle.com, linux-xfs@vger.kernel.org,
+        dan.j.williams@intel.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/5] iomap: use accelerated zeroing on a block device to
+ zero a file range
+Message-ID: <20210922185353.GK570615@magnolia>
+References: <163192864476.417973.143014658064006895.stgit@magnolia>
+ <163192865577.417973.11122330974455662098.stgit@magnolia>
+ <YUmX5VD7zOtWtBo8@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2771ff62-e612-a8ed-4b93-5534c26aef9e@paragon-software.com>
+In-Reply-To: <YUmX5VD7zOtWtBo8@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Subject in this message needs fs/ntfs3 minor thing but try to remember
-next time.
-
-On Wed, Sep 22, 2021 at 07:15:19PM +0300, Konstantin Komarov wrote:
-> Speed up work with dir lock.
-> Theoretically in successful cases those locks aren't needed at all.
-> But proving the same for error cases is difficult.
-> So instead of removing them we just move them.
-
-Maybe add this info also to first patch. 
-
-Overall nice to see now good patch series which has very nice splits. It
-was easy to review. Like I say in same message already try to write
-little more to commit messages this will make reviewing even more easy
-and we start to get nice history which can be used to develepment and
-maintain work.
-
+On Tue, Sep 21, 2021 at 09:29:25AM +0100, Christoph Hellwig wrote:
+> On Fri, Sep 17, 2021 at 06:30:55PM -0700, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <djwong@kernel.org>
+> > 
+> > Create a function that ensures that the storage backing part of a file
+> > contains zeroes and will not trip over old media errors if the contents
+> > are re-read.
 > 
-> Konstantin Komarov (5):
->   fs/ntfs3: Move ni_lock_dir and ni_unlock into ntfs_create_inode
->   fs/ntfs3: Refactor ntfs_get_acl_ex for better readability
->   fs/ntfs3: Pass flags to ntfs_set_ea in ntfs_set_acl_ex
->   fs/ntfs3: Change posix_acl_equiv_mode to posix_acl_update_mode
->   fs/ntfs3: Refactoring lock in ntfs_init_acl
-> 
->  fs/ntfs3/inode.c | 17 ++++++++--
->  fs/ntfs3/namei.c | 20 -----------
->  fs/ntfs3/xattr.c | 88 +++++++++++++++++-------------------------------
->  3 files changed, 45 insertions(+), 80 deletions(-)
-> 
-> -- 
-> 2.33.0
+> I don't think this has anything to do with direct I/O, so I'd rather
+> not have it clutter direct-io.c.  Also do we really want to wait
+> synchronously for every bio instead of batching them up?  Especially
+> as a simple bio_chain is probably all that is needed.
+
+__blkdev_issue_zeroout looks appropriate for chaining.  I'll move the
+zeroout routine into a new lowlevel.c file, since this isn't buffered io
+either.
+
+--D
