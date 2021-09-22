@@ -2,132 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EFC1414E02
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 18:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 080C0414E1E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 18:29:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236557AbhIVQW0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 12:22:26 -0400
-Received: from relayfre-01.paragon-software.com ([176.12.100.13]:44232 "EHLO
-        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232357AbhIVQWV (ORCPT
+        id S236565AbhIVQay (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 12:30:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57326 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229671AbhIVQax (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 12:22:21 -0400
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 1DFEA1D1D;
-        Wed, 22 Sep 2021 19:20:50 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1632327650;
-        bh=nzKgLZFLmGFZYS2r/7vIgqQggi3AOg3FFmnvTlnlJhc=;
-        h=Date:Subject:From:To:References:CC:In-Reply-To;
-        b=onjZzTDyL0/JYnwFmb6j5Igko0laCFI2LEcWix9BakDuq+PKLclBFcDszct9/ToUr
-         /5zltobvGc83nC/HBaLvz7qvAK5SDU562CchPRnkWratl0eFLad/thLgf6yE6Q+aW1
-         L/6CztogpUS7qTwQ03UdOvQF7zEghz0Y0bwLnXXM=
-Received: from [192.168.211.195] (192.168.211.195) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 22 Sep 2021 19:20:49 +0300
-Message-ID: <ed6426f4-a579-86ce-a54f-ac356991a797@paragon-software.com>
-Date:   Wed, 22 Sep 2021 19:20:49 +0300
+        Wed, 22 Sep 2021 12:30:53 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF66BC061574;
+        Wed, 22 Sep 2021 09:29:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=/bg8mgxozFDsyBXWUCU4D/OveolCgwjbJqJNs7JQP/U=; b=fq8uuURZmuYEV+T6V8jh+sIKRT
+        ZPzQVWXPFcxfKLNNntZnKahM60EK4OJCJX7/OIPx+S7y6wlL+0b4O9wI+JW6X3Jr513UYtFrsn+Fy
+        R3VTvKuiy5tgk+kxvsN//YdoIv7wNdbl2PA+kny53pQWUVcgy7tNqtbWGgS6/PpZug+SsenI476B2
+        Dua80cSWa5zukDcLCwIe7rWL+KCSoDtZUSR7RtrWwkEVx8XWSDjo4r3hg6Tdx4J+ssS6uiKH+++JT
+        j79U87wYVCuKdYEVrNNE00xcHl2s1cz7cGFkmnc4fCx+B51ahjr5qElcjLn0CJ1jhfkSSM+Lw00VP
+        jOC5Y8kw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mT54h-004wPq-HM; Wed, 22 Sep 2021 16:26:52 +0000
+Date:   Wed, 22 Sep 2021 17:26:23 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
+Message-ID: <YUtZL0e2eBIQpLPE@casper.infradead.org>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YTu9HIu+wWWvZLxp@moria.home.lan>
+ <YUfvK3h8w+MmirDF@casper.infradead.org>
+ <YUo20TzAlqz8Tceg@cmpxchg.org>
+ <YUpC3oV4II+u+lzQ@casper.infradead.org>
+ <YUpKbWDYqRB6eBV+@moria.home.lan>
+ <YUpNLtlbNwdjTko0@moria.home.lan>
+ <YUtHCle/giwHvLN1@cmpxchg.org>
+ <YUtPvGm2RztJdSf1@moria.home.lan>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.1
-Subject: [PATCH 5/5] fs/ntfs3: Refactoring lock in ntfs_init_acl
-Content-Language: en-US
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To:     <ntfs3@lists.linux.dev>
-References: <2771ff62-e612-a8ed-4b93-5534c26aef9e@paragon-software.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-In-Reply-To: <2771ff62-e612-a8ed-4b93-5534c26aef9e@paragon-software.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.211.195]
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YUtPvGm2RztJdSf1@moria.home.lan>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is possible because of moving lock into ntfs_create_inode.
+On Wed, Sep 22, 2021 at 11:46:04AM -0400, Kent Overstreet wrote:
+> On Wed, Sep 22, 2021 at 11:08:58AM -0400, Johannes Weiner wrote:
+> > On Tue, Sep 21, 2021 at 05:22:54PM -0400, Kent Overstreet wrote:
+> > >  - it's become apparent that there haven't been any real objections to the code
+> > >    that was queued up for 5.15. There _are_ very real discussions and points of
+> > >    contention still to be decided and resolved for the work beyond file backed
+> > >    pages, but those discussions were what derailed the more modest, and more
+> > >    badly needed, work that affects everyone in filesystem land
+> > 
+> > Unfortunately, I think this is a result of me wanting to discuss a way
+> > forward rather than a way back.
+> > 
+> > To clarify: I do very much object to the code as currently queued up,
+> > and not just to a vague future direction.
+> > 
+> > The patches add and convert a lot of complicated code to provision for
+> > a future we do not agree on. The indirections it adds, and the hybrid
+> > state it leaves the tree in, make it directly more difficult to work
+> > with and understand the MM code base. Stuff that isn't needed for
+> > exposing folios to the filesystems.
+> > 
+> > As Willy has repeatedly expressed a take-it-or-leave-it attitude in
+> > response to my feedback, I'm not excited about merging this now and
+> > potentially leaving quite a bit of cleanup work to others if the
+> > downstream discussion don't go to his liking.
 
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
- fs/ntfs3/xattr.c | 55 ++++++++++++------------------------------------
- 1 file changed, 14 insertions(+), 41 deletions(-)
+We're at a take-it-or-leave-it point for this pull request.  The time
+for discussion was *MONTHS* ago.
 
-diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-index 59ec5e61a239..83bbee277e12 100644
---- a/fs/ntfs3/xattr.c
-+++ b/fs/ntfs3/xattr.c
-@@ -693,54 +693,27 @@ int ntfs_init_acl(struct user_namespace *mnt_userns, struct inode *inode,
- 	struct posix_acl *default_acl, *acl;
- 	int err;
- 
--	/*
--	 * TODO: Refactoring lock.
--	 * ni_lock(dir) ... -> posix_acl_create(dir,...) -> ntfs_get_acl -> ni_lock(dir)
--	 */
--	inode->i_default_acl = NULL;
--
--	default_acl = ntfs_get_acl_ex(mnt_userns, dir, ACL_TYPE_DEFAULT, 1);
--
--	if (!default_acl || default_acl == ERR_PTR(-EOPNOTSUPP)) {
--		inode->i_mode &= ~current_umask();
--		err = 0;
--		goto out;
--	}
--
--	if (IS_ERR(default_acl)) {
--		err = PTR_ERR(default_acl);
--		goto out;
--	}
--
--	acl = default_acl;
--	err = __posix_acl_create(&acl, GFP_NOFS, &inode->i_mode);
--	if (err < 0)
--		goto out1;
--	if (!err) {
--		posix_acl_release(acl);
--		acl = NULL;
--	}
--
--	if (!S_ISDIR(inode->i_mode)) {
--		posix_acl_release(default_acl);
--		default_acl = NULL;
--	}
-+	err = posix_acl_create(dir, &inode->i_mode, &default_acl, &acl);
-+	if (err)
-+		return err;
- 
--	if (default_acl)
-+	if (default_acl) {
- 		err = ntfs_set_acl_ex(mnt_userns, inode, default_acl,
- 				      ACL_TYPE_DEFAULT, 1);
-+		posix_acl_release(default_acl);
-+	} else {
-+		inode->i_default_acl = NULL;
-+	}
- 
- 	if (!acl)
- 		inode->i_acl = NULL;
--	else if (!err)
--		err = ntfs_set_acl_ex(mnt_userns, inode, acl, ACL_TYPE_ACCESS,
--				      1);
--
--	posix_acl_release(acl);
--out1:
--	posix_acl_release(default_acl);
-+	else {
-+		if (!err)
-+			err = ntfs_set_acl_ex(mnt_userns, inode, acl,
-+					      ACL_TYPE_ACCESS, 1);
-+		posix_acl_release(acl);
-+	}
- 
--out:
- 	return err;
- }
- #endif
--- 
-2.33.0
+> > Here is the roughly annotated pull request:
+> 
+> Thanks for breaking this out, Johannes.
+> 
+> So: mm/filemap.c and mm/page-writeback.c - I disagree about folios not really
+> being needed there. Those files really belong more in fs/ than mm/, and the code
+> in those files needs folios the most - especially filemap.c, a lot of those
+> algorithms have to change from block based to extent based, making the analogy
+> with filesystems.
+> 
+> I think it makes sense to drop the mm/lru stuff, as well as the mm/memcg,
+> mm/migrate and mm/workingset and mm/swap stuff that you object to - that is, the
+> code paths that are for both file + anonymous pages, unless Matthew has
+> technical reasons why that would break the rest of the patch set.
 
+Conceptually, it breaks the patch set.  Anywhere that we convert back
+from a folio to a page, the guarantee of folios is weakened (and
+possibly violated).  I don't think it makes sense from a practical point
+of view either; it's re-adding compound_head() calls that just don't
+need to be there.
 
+> That discussion can still happen... and there's still the potential to get a lot
+> more done if we're breaking open struct page and coming up with new types. I got
+> Matthew on board with what you wanted, re: using the slab allocator for larger
+> allocations
+
+Wait, no, you didn't.  I think it's a terrible idea.  It's just completely
+orthogonal to this patch set, so I don't want to talk about it.
