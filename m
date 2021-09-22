@@ -2,123 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33031414056
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 06:13:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDC7E41412E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 07:19:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231193AbhIVEPY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 00:15:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229495AbhIVEPY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 00:15:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E144C61131;
-        Wed, 22 Sep 2021 04:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632284035;
-        bh=8D1IagfIKZeKbgZvrNFVsValHcrqDaHRd1Ma/26N9ac=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EtPhBWn41/0ih90TiHFm4j+Xd743V8njMjzEngPPd3WAdmt305OyTGs4VJRQTe9hG
-         b8rkay02SczcNowdnMj/lBr7JtzNO1RewwMPMFcR9pyCWU80s0zniAsyXfxbkfnrbF
-         0O+gyIO3aBlG5JiT0ET9JmkIgbfKw+c9M4brc9jsy7L65V+BeOC2fXqR7Cyxa+vr56
-         H4/tDCkEE2eqhGw7cPIiRUsVBb1YN6HkQz7koY1nsBalzlyCe5pGZAaDm9t4NJHQt9
-         9HcNKjEeVngs0MQHZN9oRx/h+guvmibU9rMsEwWnRIH/FWu+OpkcVEzMp7c69j7BkN
-         1igj5DGbzNqoQ==
-Date:   Tue, 21 Sep 2021 21:13:54 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jane Chu <jane.chu@oracle.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 3/5] vfs: add a zero-initialization mode to fallocate
-Message-ID: <20210922041354.GE570615@magnolia>
-References: <163192864476.417973.143014658064006895.stgit@magnolia>
- <163192866125.417973.7293598039998376121.stgit@magnolia>
- <20210921004431.GO1756565@dread.disaster.area>
- <YUmYbxW70Ub2ytOc@infradead.org>
- <CAPcyv4jF1UNW5rdXX3q2hfDcvzGLSnk=1a0C0i7_UjdivuG+pQ@mail.gmail.com>
- <20210922023801.GD570615@magnolia>
- <20210922035907.GR1756565@dread.disaster.area>
+        id S232051AbhIVFUp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 01:20:45 -0400
+Received: from n169-112.mail.139.com ([120.232.169.112]:36398 "EHLO
+        n169-112.mail.139.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231896AbhIVFUp (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Sep 2021 01:20:45 -0400
+X-Greylist: delayed 569 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 Sep 2021 01:20:44 EDT
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM:                                                                                        
+X-RM-SPAM-FLAG: 00000000
+Received: from [192.168.255.10] (unknown[113.108.77.67])
+        by rmsmtp-lg-appmail-25-12028 (RichMail) with SMTP id 2efc614aba962a2-69a39;
+        Wed, 22 Sep 2021 13:09:44 +0800 (CST)
+X-RM-TRANSID: 2efc614aba962a2-69a39
+Message-ID: <4ccc5c89-eb13-5e91-9283-c94f755a9c17@139.com>
+Date:   Wed, 22 Sep 2021 13:09:43 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210922035907.GR1756565@dread.disaster.area>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.1
+Subject: Re: [PATCH v2] ovl: fix null pointer when filesystem doesn't support
+ direct IO
+To:     Huang Jianan <huangjianan@oppo.com>, linux-unionfs@vger.kernel.org,
+        miklos@szeredi.hu, linux-erofs@lists.ozlabs.org, xiang@kernel.org,
+        chao@kernel.org
+Cc:     guoweichao@oppo.com, yh@oppo.com, zhangshiming@oppo.com,
+        guanyuwei@oppo.com, jnhuang95@gmail.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cgxu519@mykernel.net
+References: <20210918121346.12084-1-huangjianan@oppo.com>
+ <20210922034700.15666-1-huangjianan@oppo.com>
+From:   Chengguang Xu <cgxu519@139.com>
+In-Reply-To: <20210922034700.15666-1-huangjianan@oppo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 22, 2021 at 01:59:07PM +1000, Dave Chinner wrote:
-> On Tue, Sep 21, 2021 at 07:38:01PM -0700, Darrick J. Wong wrote:
-> > On Tue, Sep 21, 2021 at 07:16:26PM -0700, Dan Williams wrote:
-> > > On Tue, Sep 21, 2021 at 1:32 AM Christoph Hellwig <hch@infradead.org> wrote:
-> > > >
-> > > > On Tue, Sep 21, 2021 at 10:44:31AM +1000, Dave Chinner wrote:
-> > > > > I think this wants to be a behavioural modifier for existing
-> > > > > operations rather than an operation unto itself. i.e. similar to how
-> > > > > KEEP_SIZE modifies ALLOC behaviour but doesn't fundamentally alter
-> > > > > the guarantees ALLOC provides userspace.
-> > > > >
-> > > > > In this case, the change of behaviour over ZERO_RANGE is that we
-> > > > > want physical zeros to be written instead of the filesystem
-> > > > > optimising away the physical zeros by manipulating the layout
-> > > > > of the file.
-> > > >
-> > > > Yes.
-> > > >
-> > > > > Then we have and API that looks like:
-> > > > >
-> > > > >       ALLOC           - allocate space efficiently
-> > > > >       ALLOC | INIT    - allocate space by writing zeros to it
-> > > > >       ZERO            - zero data and preallocate space efficiently
-> > > > >       ZERO | INIT     - zero range by writing zeros to it
-> > > > >
-> > > > > Which seems to cater for all the cases I know of where physically
-> > > > > writing zeros instead of allocating unwritten extents is the
-> > > > > preferred behaviour of fallocate()....
-> > > >
-> > > > Agreed.  I'm not sure INIT is really the right name, but I can't come
-> > > > up with a better idea offhand.
-> > > 
-> > > FUA? As in, this is a forced-unit-access zeroing all the way to media
-> > > bypassing any mechanisms to emulate zero-filled payloads on future
-> > > reads.
-> 
-> Yes, that's the semantic we want, but FUA already defines specific
-> data integrity behaviour in the storage stack w.r.t. volatile
-> caches.
-> 
-> Also, FUA is associated with devices - it's low level storage jargon
-> and so is not really appropriate to call a user interface operation
-> FUA where users have no idea what a "unit" or "access" actually
-> means.
-> 
-> Hence we should not overload this name with some other operation
-> that does not have (and should not have) explicit data integrity
-> requirements. That will just cause confusion for everyone.
-> 
-> > FALLOC_FL_ZERO_EXISTING, because you want to zero the storage that
-> > already exists at that file range?
-> 
-> IMO that doesn't work as a behavioural modifier for ALLOC because
-> the ALLOC semantics are explicitly "don't touch existing user
-> data"...
+在 2021/9/22 11:47, Huang Jianan 写道:
+> At present, overlayfs provides overlayfs inode to users. Overlayfs
+> inode provides ovl_aops with noop_direct_IO to avoid open failure
+> with O_DIRECT. But some compressed filesystems, such as erofs and
+> squashfs, don't support direct_IO.
+>
+> Users who use f_mapping->a_ops->direct_IO to check O_DIRECT support,
+> will read file through this way. This will cause overlayfs to access
+> a non-existent direct_IO function and cause panic due to null pointer:
+>
+> Kernel panic - not syncing: CFI failure (target: 0x0)
+> CPU: 6 PID: 247 Comm: loop0
+> Call Trace:
+>   panic+0x188/0x45c
+>   __cfi_slowpath+0x0/0x254
+>   __cfi_slowpath+0x200/0x254
+>   generic_file_read_iter+0x14c/0x150
+>   vfs_iocb_iter_read+0xac/0x164
+>   ovl_read_iter+0x13c/0x2fc
+>   lo_rw_aio+0x2bc/0x458
+>   loop_queue_work+0x4a4/0xbc0
+>   kthread_worker_fn+0xf8/0x1d0
+>   loop_kthread_worker_fn+0x24/0x38
+>   kthread+0x29c/0x310
+>   ret_from_fork+0x10/0x30
+>
+> The filesystem may only support direct_IO for some file types. For
+> example, erofs supports direct_IO for uncompressed files. So reset
+> f_mapping->a_ops to NULL when the file doesn't support direct_IO to
+> fix this problem.
+>
+> Fixes: 5b910bd615ba ("ovl: fix GPF in swapfile_activate of file from overlayfs over xfs")
+> Signed-off-by: Huang Jianan <huangjianan@oppo.com>
+> ---
+> Change since v1:
+>   - Return error to user rather than fall back to buffered io. (Chengguang Xu)
+>
+>   fs/overlayfs/file.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+>
+> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+> index d081faa55e83..38118d3b46f8 100644
+> --- a/fs/overlayfs/file.c
+> +++ b/fs/overlayfs/file.c
+> @@ -157,6 +157,10 @@ static int ovl_open(struct inode *inode, struct file *file)
+>   	if (IS_ERR(realfile))
+>   		return PTR_ERR(realfile);
+>   
+> +	if ((f->f_flags & O_DIRECT) && (!realfile->f_mapping->a_ops ||
+> +		!realfile->f_mapping->a_ops->direct_IO))
+> +		file->f_mapping->a_ops = NULL;
 
-Well since you can't preallocate /and/ zerorange at the same time...
 
-/* For FALLOC_FL_ZERO_RANGE, write zeroes to pre-existing mapped storage. */
-#define FALLOC_FL_ZERO_EXISTING		(0x80)
+There are many other functions in a_ops and also address_space struct 
+will be shared
 
-/* For preallocation, allocate written extents and set the contents to
- * zeroes. */
-#define FALLOC_FL_ALLOC_WRITE_ZEROES	(0x80)
+between files which belong to same inode. Although overlayfs currently 
+only defines
 
---D
+->direct_IO in a_ops, it will be extended in the future. (like 
+containerized sycnfs [1])
 
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+
+It seems the simplest solution is directly return error to upper layer.
+
+
+Thanks,
+
+Chengguang
+
+
+[1] https://www.spinics.net/lists/linux-unionfs/msg08569.html
+
+
+
+> +
+>   	file->private_data = realfile;
+>   
+>   	return 0;
+
