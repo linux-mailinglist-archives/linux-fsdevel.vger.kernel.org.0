@@ -2,142 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB032414157
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 07:49:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F7C841417F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 08:04:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232161AbhIVFvE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 01:51:04 -0400
-Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:41586 "EHLO
+        id S232597AbhIVGGZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 02:06:25 -0400
+Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:36692 "EHLO
         mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231908AbhIVFvD (ORCPT
+        by vger.kernel.org with ESMTP id S232490AbhIVGGY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 01:51:03 -0400
+        Wed, 22 Sep 2021 02:06:24 -0400
 Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
-        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id 4F81E1BC29C;
-        Wed, 22 Sep 2021 15:49:32 +1000 (AEST)
+        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id 218341BC362;
+        Wed, 22 Sep 2021 16:04:48 +1000 (AEST)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1mSv8N-00FJCC-2M; Wed, 22 Sep 2021 15:49:31 +1000
-Date:   Wed, 22 Sep 2021 15:49:31 +1000
+        id 1mSvN9-00FJVY-TE; Wed, 22 Sep 2021 16:04:47 +1000
+Date:   Wed, 22 Sep 2021 16:04:47 +1000
 From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jane Chu <jane.chu@oracle.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 3/5] vfs: add a zero-initialization mode to fallocate
-Message-ID: <20210922054931.GT1756565@dread.disaster.area>
-References: <163192864476.417973.143014658064006895.stgit@magnolia>
- <163192866125.417973.7293598039998376121.stgit@magnolia>
- <20210921004431.GO1756565@dread.disaster.area>
- <YUmYbxW70Ub2ytOc@infradead.org>
- <CAPcyv4jF1UNW5rdXX3q2hfDcvzGLSnk=1a0C0i7_UjdivuG+pQ@mail.gmail.com>
- <20210922023801.GD570615@magnolia>
- <20210922035907.GR1756565@dread.disaster.area>
- <20210922041354.GE570615@magnolia>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     NeilBrown <neilb@suse.de>, Linux-MM <linux-mm@kvack.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/5] mm/vmscan: Throttle reclaim until some writeback
+ completes if congested
+Message-ID: <20210922060447.GA2361455@dread.disaster.area>
+References: <20210920085436.20939-1-mgorman@techsingularity.net>
+ <20210920085436.20939-2-mgorman@techsingularity.net>
+ <163218319798.3992.1165186037496786892@noble.neil.brown.name>
+ <20210921105831.GO3959@techsingularity.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210922041354.GE570615@magnolia>
+In-Reply-To: <20210921105831.GO3959@techsingularity.net>
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=YKPhNiOx c=1 sm=1 tr=0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0
         a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
-        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8
-        a=b8f9l1T5BU-1wnK3SisA:9 a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=7-415B0cAAAA:8
+        a=XCLsOYAi7itVMiQYH0cA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 21, 2021 at 09:13:54PM -0700, Darrick J. Wong wrote:
-> On Wed, Sep 22, 2021 at 01:59:07PM +1000, Dave Chinner wrote:
-> > On Tue, Sep 21, 2021 at 07:38:01PM -0700, Darrick J. Wong wrote:
-> > > On Tue, Sep 21, 2021 at 07:16:26PM -0700, Dan Williams wrote:
-> > > > On Tue, Sep 21, 2021 at 1:32 AM Christoph Hellwig <hch@infradead.org> wrote:
-> > > > >
-> > > > > On Tue, Sep 21, 2021 at 10:44:31AM +1000, Dave Chinner wrote:
-> > > > > > I think this wants to be a behavioural modifier for existing
-> > > > > > operations rather than an operation unto itself. i.e. similar to how
-> > > > > > KEEP_SIZE modifies ALLOC behaviour but doesn't fundamentally alter
-> > > > > > the guarantees ALLOC provides userspace.
-> > > > > >
-> > > > > > In this case, the change of behaviour over ZERO_RANGE is that we
-> > > > > > want physical zeros to be written instead of the filesystem
-> > > > > > optimising away the physical zeros by manipulating the layout
-> > > > > > of the file.
-> > > > >
-> > > > > Yes.
-> > > > >
-> > > > > > Then we have and API that looks like:
-> > > > > >
-> > > > > >       ALLOC           - allocate space efficiently
-> > > > > >       ALLOC | INIT    - allocate space by writing zeros to it
-> > > > > >       ZERO            - zero data and preallocate space efficiently
-> > > > > >       ZERO | INIT     - zero range by writing zeros to it
-> > > > > >
-> > > > > > Which seems to cater for all the cases I know of where physically
-> > > > > > writing zeros instead of allocating unwritten extents is the
-> > > > > > preferred behaviour of fallocate()....
-> > > > >
-> > > > > Agreed.  I'm not sure INIT is really the right name, but I can't come
-> > > > > up with a better idea offhand.
-> > > > 
-> > > > FUA? As in, this is a forced-unit-access zeroing all the way to media
-> > > > bypassing any mechanisms to emulate zero-filled payloads on future
-> > > > reads.
+On Tue, Sep 21, 2021 at 11:58:31AM +0100, Mel Gorman wrote:
+> On Tue, Sep 21, 2021 at 10:13:17AM +1000, NeilBrown wrote:
+> > On Mon, 20 Sep 2021, Mel Gorman wrote:
+> > > -long wait_iff_congested(int sync, long timeout)
+> > > -{
+> > > -	long ret;
+> > > -	unsigned long start = jiffies;
+> > > -	DEFINE_WAIT(wait);
+> > > -	wait_queue_head_t *wqh = &congestion_wqh[sync];
+> > > -
+> > > -	/*
+> > > -	 * If there is no congestion, yield if necessary instead
+> > > -	 * of sleeping on the congestion queue
+> > > -	 */
+> > > -	if (atomic_read(&nr_wb_congested[sync]) == 0) {
+> > > -		cond_resched();
+> > > -
+> > > -		/* In case we scheduled, work out time remaining */
+> > > -		ret = timeout - (jiffies - start);
+> > > -		if (ret < 0)
+> > > -			ret = 0;
+> > > -
+> > > -		goto out;
+> > > -	}
+> > > -
+> > > -	/* Sleep until uncongested or a write happens */
+> > > -	prepare_to_wait(wqh, &wait, TASK_UNINTERRUPTIBLE);
 > > 
-> > Yes, that's the semantic we want, but FUA already defines specific
-> > data integrity behaviour in the storage stack w.r.t. volatile
-> > caches.
+> > Uninterruptible wait.
 > > 
-> > Also, FUA is associated with devices - it's low level storage jargon
-> > and so is not really appropriate to call a user interface operation
-> > FUA where users have no idea what a "unit" or "access" actually
-> > means.
+> > ....
+> > > +static void
+> > > +reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
+> > > +							long timeout)
+> > > +{
+> > > +	wait_queue_head_t *wqh = &pgdat->reclaim_wait;
+> > > +	unsigned long start = jiffies;
+> > > +	long ret;
+> > > +	DEFINE_WAIT(wait);
+> > > +
+> > > +	atomic_inc(&pgdat->nr_reclaim_throttled);
+> > > +	WRITE_ONCE(pgdat->nr_reclaim_start,
+> > > +		 node_page_state(pgdat, NR_THROTTLED_WRITTEN));
+> > > +
+> > > +	prepare_to_wait(wqh, &wait, TASK_INTERRUPTIBLE);
 > > 
-> > Hence we should not overload this name with some other operation
-> > that does not have (and should not have) explicit data integrity
-> > requirements. That will just cause confusion for everyone.
+> > Interruptible wait.
 > > 
-> > > FALLOC_FL_ZERO_EXISTING, because you want to zero the storage that
-> > > already exists at that file range?
+> > Why the change?  I think these waits really need to be TASK_UNINTERRUPTIBLE.
 > > 
-> > IMO that doesn't work as a behavioural modifier for ALLOC because
-> > the ALLOC semantics are explicitly "don't touch existing user
-> > data"...
 > 
-> Well since you can't preallocate /and/ zerorange at the same time...
-> 
-> /* For FALLOC_FL_ZERO_RANGE, write zeroes to pre-existing mapped storage. */
-> #define FALLOC_FL_ZERO_EXISTING		(0x80)
+> Because from mm/ context, I saw no reason why the task *should* be
+> uninterruptible. It's waiting on other tasks to complete IO and it is not
+> protecting device state, filesystem state or anything else. If it gets
+> a signal, it's safe to wake up, particularly if that signal is KILL and
+> the context is a direct reclaimer.
 
-Except we also want the newly allocated regions (i.e. where holes
-were) in that range being zeroed to have zeroes written to them as
-well, yes? Otherwise we end up with a combination of unwritten
-extents and physical zeroes, and you can't use
-ZERORANGE|EXISTING as a replacement for PUNCH + ALLOC|INIT
+I disagree. whether the sleep should be interruptable or
+not is entirely dependent on whether the caller can handle failure
+or not. If this is GFP_NOFAIL, allocation must not fail no matter
+what the context is, so signals and the like are irrelevant.
 
-/*
- * For preallocation and zeroing operations, force the filesystem to
- * write zeroes rather than use unwritten extents to indicate the
- * range contains zeroes.
- *
- * For filesystems that support unwritten extents, this trades off
- * slow fallocate performance for faster first write performance as
- * unwritten extent conversion on the first write to each block in
- * the range is not needed.
- *
- * Care is required when using FALLOC_FL_ALLOC_INIT_DATA as it will
- * be much slower overall for large ranges and/or slow storage
- * compared to using unwritten extents.
- */
-#define FALLOC_FL_ALLOC_INIT_DATA	(1 << 7)
+For a context that can handle allocation failure, then it makes
+sense to wake on events that will result in the allocation failing
+immediately. But if all this does is make the allocation code go
+around another retry loop sooner, then an interruptible sleep still
+doesn't make any sense at all here...
 
-Cheers,
+> The original TASK_UNINTERRUPTIBLE is almost certainly a copy&paste from
+> congestion_wait which may be called because a filesystem operation must
+> complete before it can return to userspace so a signal waking it up is
+> pointless.
+
+Yup, but that AFAICT that same logic still applies. Only now it's
+the allocation context that determines whether signal waking is
+pointless or not...
+
+Cheer,
 
 Dave.
-
 -- 
 Dave Chinner
 david@fromorbit.com
