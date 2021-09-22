@@ -2,81 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05D7E414F54
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 19:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06F71414F5D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 19:48:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236911AbhIVRm4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 13:42:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45946 "EHLO
+        id S236919AbhIVRta (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 13:49:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236815AbhIVRmz (ORCPT
+        with ESMTP id S233552AbhIVRta (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 13:42:55 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A01D9C061574;
-        Wed, 22 Sep 2021 10:41:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=P+wjbvfBuWtk4jFuBJ3sMrPTDi2tE+fy+MjarlqPFEo=; b=PRTLrJ8GeVU08BcQhuqfpDn4ss
-        rYH1WcFN/58h3Zl2rpjfOXvUBjxpHTa/AKrLeo5x/P7UMoel4SmsBgqLGPjoi6mngTPMjKCi8FbAk
-        QptNsKd1mQmSdLKsMB1YmrPbIGrkff9CIJl9B+5wEXfwj0He8D9G0/+tV5N9ZlPoy+YeGFNhLRwXC
-        6Gthxro7CPpER+XH28Cu+Mrwe8jCV2zlhlEsZSG+GuQmJI1qdg5AQ8GMazFbkHoi7gE9lKEkldrrT
-        YCg2L1sY8IGlWW43JHcJ/WhL/zJEYDLjajT7Nat5YvFOVNK1SBxPQ9mwGUMCuG6MxURTeVJ6zpG/c
-        Q8Bgeh1w==;
-Received: from [2001:4bb8:184:72db:3a8e:1992:6715:6960] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mT6CZ-004zmi-KD; Wed, 22 Sep 2021 17:39:08 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>
-Cc:     Mike Snitzer <snitzer@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Ira Weiny <ira.weiny@intel.com>
-Subject: [PATCH 3/3] block: warn if ->groups is set when calling add_disk
-Date:   Wed, 22 Sep 2021 19:34:31 +0200
-Message-Id: <20210922173431.2454024-4-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210922173431.2454024-1-hch@lst.de>
-References: <20210922173431.2454024-1-hch@lst.de>
+        Wed, 22 Sep 2021 13:49:30 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1532EC061574;
+        Wed, 22 Sep 2021 10:48:00 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id g41so14942046lfv.1;
+        Wed, 22 Sep 2021 10:47:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=G9y8WEbtY6QF6b57YEwGzQEUKD9V6Jk3RH25jdHrWA8=;
+        b=ggWl8gcJTzUpXp3eY8NqlJVCF7ShGCpHCNZbGbp85TgSMwj/mnxhcTzu6neTRUCK3P
+         1Iuem+0ehT4+ne3pUWaabQZ2f+E6Q+yiTvZc2kUnyh8NkygS/6HTuN3RGb1SxmIHl+XO
+         NSP67FnHAsAI8/gXIWbWvLd5SkR37lBIBssMzz1LgsQId2VKDarFcKuug5Q36l96se1j
+         KTErk6wFZi1hYXBL2bKUxRPqXHvH8kI9lvlaH9rfpODd5Nl3NLyD6nqSt58yIzCYyow3
+         l1fHia7Z3jRtX7nAERN/PzKjKSc/jMP31n7ZHNAnOYalvPl3eQSQ6v2QGZdK5btz7uIo
+         ohhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=G9y8WEbtY6QF6b57YEwGzQEUKD9V6Jk3RH25jdHrWA8=;
+        b=51OcQLckbgLqVAXXfeIYIvUOL6xuXetOLkVStqvhI9SDgMq+z9iFV9vHHDrSI6vUU5
+         rdh5zcF+jqQOzz/BCve2+gEXzI6s3cLCqz5weJ8OicmWug2UyyKf/xRCCo9UX/TEckdX
+         KE14q9dYVk+AboaVgt5sP1VNFLS1rsmQ6JvryYW+LVvB1n9Zr3NMTnUOyd0RminIFsyn
+         dGbrMJcM5NEwkUdVjCL+iChBm8yLMK0pOh0+JR0F2RKpSnSnuvlUfw+Cg8yFbzC4NWPW
+         qUndkGaflsQOGigG32BUWUT7hDOHL6WBGnVgp9FZ1RHns8OltbiJIspDpHwuo01f/x1O
+         OIcA==
+X-Gm-Message-State: AOAM530ORIHUBYQ04DMqtPTihvaBooTKbyanXTPj8gUzm90qC1hEoBOx
+        L8ZTIQ2EK7g+17jNK+vpMEGTUKmMLSk33w==
+X-Google-Smtp-Source: ABdhPJxLK1CR/TgTp0A+dm819in8n44WpkccKCLelGAjOyHWB4aQIjh70pJqKUZawLll4Y+6l8PcRQ==
+X-Received: by 2002:ac2:4e04:: with SMTP id e4mr249999lfr.262.1632332878397;
+        Wed, 22 Sep 2021 10:47:58 -0700 (PDT)
+Received: from kari-VirtualBox ([31.132.12.44])
+        by smtp.gmail.com with ESMTPSA id v11sm229171lfi.56.2021.09.22.10.47.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Sep 2021 10:47:57 -0700 (PDT)
+Date:   Wed, 22 Sep 2021 20:47:56 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/5] fs/ntfs3: Refactor ntfs_get_acl_ex for better
+ readability
+Message-ID: <20210922174756.cgj66om2qro4ms3j@kari-VirtualBox>
+References: <2771ff62-e612-a8ed-4b93-5534c26aef9e@paragon-software.com>
+ <994cb658-d2f8-a797-e947-35ac0a203ea2@paragon-software.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <994cb658-d2f8-a797-e947-35ac0a203ea2@paragon-software.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The proper API is to pass the groups to device_add_disk, but the code
-used to also allow groups being set before calling *add_disk.  Warn
-about that but keep the group pointer intact for now so that it can
-be removed again after a grace period.
+On Wed, Sep 22, 2021 at 07:18:18PM +0300, Konstantin Komarov wrote:
 
-Fixes: 52b85909f85d ("block: fold register_disk into device_add_disk")
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
----
- block/genhd.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+There should almoust always still be commit message. Even "small"
+change. You have now see that people send you patch which change
+just one line, but it can still contain many lines commit message.
 
-diff --git a/block/genhd.c b/block/genhd.c
-index 7b6e5e1cf9564..409cf608cc5bd 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -439,7 +439,8 @@ int device_add_disk(struct device *parent, struct gendisk *disk,
- 	dev_set_uevent_suppress(ddev, 1);
- 
- 	ddev->parent = parent;
--	ddev->groups = groups;
-+	if (!WARN_ON_ONCE(ddev->groups))
-+		ddev->groups = groups;
- 	dev_set_name(ddev, "%s", disk->disk_name);
- 	if (!(disk->flags & GENHD_FL_HIDDEN))
- 		ddev->devt = MKDEV(disk->major, disk->first_minor);
--- 
-2.30.2
+> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> ---
+>  fs/ntfs3/xattr.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
+> index 5c7c5c7a5ec1..3795943efc8e 100644
+> --- a/fs/ntfs3/xattr.c
+> +++ b/fs/ntfs3/xattr.c
+> @@ -518,12 +518,15 @@ static struct posix_acl *ntfs_get_acl_ex(struct user_namespace *mnt_userns,
+>  	/* Translate extended attribute to acl. */
+>  	if (err >= 0) {
 
+If err was ENODATA ...
+
+>  		acl = posix_acl_from_xattr(mnt_userns, buf, err);
+> -		if (!IS_ERR(acl))
+> -			set_cached_acl(inode, type, acl);
+> +	} else if (err == -ENODATA) {
+> +		acl = NULL;
+>  	} else {
+> -		acl = err == -ENODATA ? NULL : ERR_PTR(err);
+
+Before we get this and we did not call set_cached_acl().
+
+> +		acl = ERR_PTR(err);
+>  	}
+>  
+> +	if (!IS_ERR(acl))
+
+But now we call it with new logic. If this is correct then you change
+behavier little bit. I let you talk before I look more into this.
+
+> +		set_cached_acl(inode, type, acl);
+> +
+>  	__putname(buf);
+>  
+>  	return acl;
+> -- 
+> 2.33.0
+> 
+> 
