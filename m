@@ -2,144 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7E03414F6F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 19:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 308BB414F73
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 19:55:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236961AbhIVRyS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 13:54:18 -0400
-Received: from outbound-smtp07.blacknight.com ([46.22.139.12]:45165 "EHLO
-        outbound-smtp07.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236815AbhIVRyR (ORCPT
+        id S236949AbhIVR4n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 13:56:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49036 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236932AbhIVR4m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 13:54:17 -0400
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp07.blacknight.com (Postfix) with ESMTPS id A025E1C4E2A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 18:52:46 +0100 (IST)
-Received: (qmail 19097 invoked from network); 22 Sep 2021 17:52:46 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 22 Sep 2021 17:52:46 -0000
-Date:   Wed, 22 Sep 2021 18:52:44 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Linux-MM <linux-mm@kvack.org>, NeilBrown <neilb@suse.de>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/5] Remove dependency on congestion_wait in mm/
-Message-ID: <20210922175244.GC3959@techsingularity.net>
-References: <20210920085436.20939-1-mgorman@techsingularity.net>
- <20210921204621.GY2361455@dread.disaster.area>
+        Wed, 22 Sep 2021 13:56:42 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19C66C061757
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 10:55:12 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id r7so2068364pjo.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 10:55:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=N8+jps3A14GynJSmzw6LICUadjrSD3zVUsUJsLV0rZk=;
+        b=WEcDd3eyNLlpTBr5G2w6/U3ACRbzvqkURm/T54pVZ+ceKtWFyz/x6J/QBF0iuPstI0
+         1j3TF0GlIoCp7/8Gtpg5SUC2Z8lXRey+3ZSd0qP+bgpH4hvRdZ1eOTYTnDA2kLhJV2cm
+         GRk3lliL6TVYocTBnXxg+aM88nDKCNWeLAk17R3QoD1Ex6ff43CPVBz9J/umHz4iRr4t
+         ujejwc7J+kLTEOfVRs4pdFl7ZL08fpR1kKMcT8dcabFhV/KeLTqixR4pnnJYCkPilrWu
+         wqd+UZ0QdBW29D/8b95V/HVgg8egLQHf//AegMC/8d1bHR0TitPJsMVNEegYPonB3lP1
+         +6AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N8+jps3A14GynJSmzw6LICUadjrSD3zVUsUJsLV0rZk=;
+        b=ZN78GEfOXFfdWncRf/Ft/g5NfVMGQA5jD4VWcx7pXHY9USc5icxrm//P+LrfnDY8U0
+         h4fpqbN90rtjqqYyZ2S5Ye4Srufee6YmBN64a6pBmqeril2CJwWEZkUUC0vaozOAWxtX
+         9n9uS+oq66fuqWb6NO99tgI6/g8KbRdB7/qCyQu/fp32Jk7m+aR4WI2dXxp9tgcErzzI
+         lOAO+trcGv/X5Nr8rgCOkuP/JvK92RGqhkndmRgnunZ6OUChlJ2tSCK+X60MCOET25CL
+         eXdTNr5yz1CuMFN2puONoDnzHChivtTUSMUdvVm/rMsksEp90acQIYGB9t3qZsbUDpiW
+         CBMg==
+X-Gm-Message-State: AOAM532mjX9D8eiPYOlLllzJKLdaaFrUSQDgzzPFnGkPFzHW5SY2Pqwy
+        1ZtTT1cTyRXYzZmyg88RgZzXdLq/9ACCFbvhdd8BjQ==
+X-Google-Smtp-Source: ABdhPJxDpETDisB1tJJJ3uVbr3cMcT+3v7yQjIsumtaYD7TRgjGOZKPn8Hi8Ai2wCoWFgFR5Pq9dPHOWjA1n+IRsAWM=
+X-Received: by 2002:a17:90a:f18f:: with SMTP id bv15mr307453pjb.93.1632333311632;
+ Wed, 22 Sep 2021 10:55:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20210921204621.GY2361455@dread.disaster.area>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210922173431.2454024-1-hch@lst.de>
+In-Reply-To: <20210922173431.2454024-1-hch@lst.de>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 22 Sep 2021 10:55:01 -0700
+Message-ID: <CAPcyv4jpTyzofDyUPi7ADbGcV+cJHSohctwxu5yDNTF34KWeOg@mail.gmail.com>
+Subject: Re: dax_supported() related cleanups v2
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 22, 2021 at 06:46:21AM +1000, Dave Chinner wrote:
-> On Mon, Sep 20, 2021 at 09:54:31AM +0100, Mel Gorman wrote:
-> > Cc list similar to "congestion_wait() and GFP_NOFAIL" as they're loosely
-> > related.
-> > 
-> > This is a prototype series that removes all calls to congestion_wait
-> > in mm/ and deletes wait_iff_congested. It's not a clever
-> > implementation but congestion_wait has been broken for a long time
-> > (https://lore.kernel.org/linux-mm/45d8b7a6-8548-65f5-cccf-9f451d4ae3d4@kernel.dk/).
-> > Even if it worked, it was never a great idea. While excessive
-> > dirty/writeback pages at the tail of the LRU is one possibility that
-> > reclaim may be slow, there is also the problem of too many pages being
-> > isolated and reclaim failing for other reasons (elevated references,
-> > too many pages isolated, excessive LRU contention etc).
-> > 
-> > This series replaces the reclaim conditions with event driven ones
-> > 
-> > o If there are too many dirty/writeback pages, sleep until a timeout
-> >   or enough pages get cleaned
-> > o If too many pages are isolated, sleep until enough isolated pages
-> >   are either reclaimed or put back on the LRU
-> > o If no progress is being made, let direct reclaim tasks sleep until
-> >   another task makes progress
-> > 
-> > This has been lightly tested only and the testing was useless as the
-> > relevant code was not executed. The workload configurations I had that
-> > used to trigger these corner cases no longer work (yey?) and I'll need
-> > to implement a new synthetic workload. If someone is aware of a realistic
-> > workload that forces reclaim activity to the point where reclaim stalls
-> > then kindly share the details.
-> 
-> Got a git tree pointer so I can pull it into a test kernel so I can
-> see what impact it has on behaviour before I try to make sense of
-> the code?
-> 
+On Wed, Sep 22, 2021 at 10:37 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Hi all,
+>
+> this series first clarifies how to use fsdax in the Kconfig help a bit,
+> and then untangles the code path that checks if fsdax is supported.
+>
+> Changes since v1:
+>  - improve the FS_DAX Kconfig help text further
+>  - write a proper commit log for a patch missing it
+>
 
-The current version I'm testing is at
+This looks like your send script picked up the wrong cover letter?
 
-git://git.kernel.org/pub/scm/linux/kernel/git/mel/linux.git mm-reclaimcongest-v2r5
-
-Only one test has completed and I won't be able to analyse the results
-in detail for a few days but it's doing *something* for the workload that
-is hammering reclaim
-
-                  5.15.0-rc1  5.15.0-rc1
-                     vanillamm-reclaimcongest-v2r5
-Duration User       10891.30     9945.59
-Duration System      5673.78     2649.43
-Duration Elapsed     2402.85     2407.96
-
-System CPU usage dropped by a lot. Workload completes runs for a fixed
-duration so a difference in elapsed is not interesting
-
-Ops Direct pages scanned           518791317.00   219956338.00
-Ops Kswapd pages scanned           128555233.00   165439373.00
-Ops Kswapd pages reclaimed          87830801.00    72216420.00
-Ops Direct pages reclaimed          16114049.00    10408389.00
-Ops Kswapd efficiency %                   68.32          43.65
-Ops Kswapd velocity                    53501.15       68705.20
-Ops Direct efficiency %                    3.11           4.73
-Ops Direct velocity                   215906.66       91345.5
-Ops Percentage direct scans               80.14          57.07
-Ops Page writes by reclaim           4225921.00     2032865.00
-
-Large reductions in direct pages scanned. The rate kswapd scans is roughly
-the same (velocity) where as direct velocity is down (presumably because
-it's getting throttled). Pages written from reclaim context are about
-halved. Kswapd scan rates are increased slightly but probably because
-direct reclaimers throttled. Reclaim efficiency is low but that's expected
-given the workload is basically trying to make it as hard as possible
-for reclaim to make progress.
-
-Kswapd is only getting throttled on writeback and is being woken before
-the timeout of 100000
-
-      1 usect_delayed=84000 reason=VMSCAN_THROTTLE_WRITEBACK
-      2 usect_delayed=20000 reason=VMSCAN_THROTTLE_WRITEBACK
-      6 usect_delayed=16000 reason=VMSCAN_THROTTLE_WRITEBACK
-     12 usect_delayed=12000 reason=VMSCAN_THROTTLE_WRITEBACK
-     17 usect_delayed=8000 reason=VMSCAN_THROTTLE_WRITEBACK
-    129 usect_delayed=4000 reason=VMSCAN_THROTTLE_WRITEBACK
-    205 usect_delayed=0 reason=VMSCAN_THROTTLE_WRITEBACK
-
-The number of throttle events for direct reclaimers were
-
-  16909 reason=VMSCAN_THROTTLE_ISOLATED
-  77844 reason=VMSCAN_THROTTLE_NOPROGRESS
- 113415 reason=VMSCAN_THROTTLE_WRITEBACK
-
-For the throttle events, 33% of them were NOPROGRESS hitting the full
-timeout and 33% were WRITEBACK hitting the full timeout. If anything,
-that would suggest increasing the max timeout as presumably they woke up
-uselessly like Neil had suggested.
-
--- 
-Mel Gorman
-SUSE Labs
+> Diffstat
+>  drivers/dax/super.c   |  191 +++++++++++++++++++-------------------------------
+>  drivers/md/dm-table.c |    9 --
+>  drivers/md/dm.c       |    2
+>  fs/Kconfig            |   21 ++++-
+>  fs/ext2/super.c       |    3
+>  fs/ext4/super.c       |    3
+>  fs/xfs/xfs_super.c    |   16 +++-
+>  include/linux/dax.h   |   41 +---------
+>  8 files changed, 117 insertions(+), 169 deletions(-)
