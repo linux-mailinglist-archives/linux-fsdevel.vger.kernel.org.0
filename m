@@ -2,118 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C7ACF414CCD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 17:15:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B987414D51
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 17:46:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236360AbhIVPRT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 11:17:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40456 "EHLO
+        id S236340AbhIVPrl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 11:47:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236319AbhIVPRS (ORCPT
+        with ESMTP id S232318AbhIVPrk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 11:17:18 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88D9CC061756
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 08:15:48 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id m11so3832680ioo.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 08:15:48 -0700 (PDT)
+        Wed, 22 Sep 2021 11:47:40 -0400
+Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D547CC061574;
+        Wed, 22 Sep 2021 08:46:10 -0700 (PDT)
+Received: by mail-qt1-x82b.google.com with SMTP id u21so3069441qtw.8;
+        Wed, 22 Sep 2021 08:46:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=SUFlIgkF97LliXUlJb/5UYv8rypWABdjmrEwhMUl3f0=;
-        b=uX2F8zHrzXKQl6pQhFIFZIDJz1njgUJghfXzdm/WO4M+wRGvJEa/6vga8wDPzXm6YM
-         nxFbW6eD9w0uensRtXFDY6a+EMujRuGrs/MIEi1VqQRm+xF7NpkR3wItQ4jn/jTJU+8P
-         91qT+UkOs83TWgJdnxr12rKFtsQKH1RXeYGdzGjuHI3yelzTEtnAYgf5JuhyR57k7QjH
-         03RRqXMqVdFYds4wK5ISU8pWziZ4r95//7xHwsrn2ki/0tH9RUeqCvNMYgUpnoU4bkcT
-         6spoMet5tlJzYAz3rWekUp0Rfo0dNUh8NS8bzjFuxJMLs+6BGyhiofIVlYF0+yHblNk0
-         GN0w==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=wVGktONlyuLsWAH2exvLKeS5CnFnKlgLM/sI96OfsNs=;
+        b=RsvJWdyEk4lgnjYlT+5aTgeWpdCg9TY9iCo4rvHUm3ntJ8Yxss8iPsFarkKFVBWQXP
+         kzDE/SSKgkRL9uvrxYdZERgjUWlIFZuUAlX/xuuR9+fYNVfo1cSpAT+3QCwx/UdAO9sD
+         mnJRJ2KMDRbiDhzpKCajxToxgkICsGf6UNdrmuif94uwD2f2zFu11TojoW9+R5wG0ZR1
+         xeT+ZpweVDQyYMNeJZzqf3xyE8qDkpaw7Mth6VyPxo0O96lQ0GC+kaPbmlZECWHtfBvl
+         ZupaI/Pa56VXmGl+p61hLnk6bpbPr5mZMGdAu9+13IwdlY/pJzAf0lnln6MgQEHV2Zuw
+         kJkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SUFlIgkF97LliXUlJb/5UYv8rypWABdjmrEwhMUl3f0=;
-        b=UM5mVijhMBgI+PPSY527hb1fx9GMcCXTDCZyDB8Vi6m/StsGCmaJ0VGtHS8lcFsN++
-         N7bDTX0K6N3VlEioLj9hRFtTIsMcyrIK41TqiK4lkZbQ5Ib6P7xhS9mPLx5vA2JWIvuP
-         Mj4AGM/y6YwX5eH+urVatQvBACx16O7itp8aa8l5ByW1DwrxOBrQw+CpgqM8n8+CZhNK
-         ipF/BtQkR5MJJ7Xmjk4uhjEs+abdJA9gvfRdpqSMuFteGak4tE2ux3DMrA+EwTmWoSoS
-         2LvKWXv2ZpAjU8jS71aDgAaZbnX6neXzviV33WzN4g4UX+vPlqcjKiQueu1yzYumT2H0
-         Q/3g==
-X-Gm-Message-State: AOAM531zkMn8hkRd7CHAvWTB8/CCJaDPPKB45pLoPQkCjNKqOkG3XeJo
-        AAsXNfF1ASAnElPjaXtgn+qUIB8JPNhfXr2zzAM=
-X-Google-Smtp-Source: ABdhPJxPX7caP6ZoDNZKXdHXDn97sVpv2Jh7Xuz7w6ET4m37RfPtwclpL1tJnUZj6ns0sm4V3IBCPQ==
-X-Received: by 2002:a6b:6b08:: with SMTP id g8mr92580ioc.199.1632323747923;
-        Wed, 22 Sep 2021 08:15:47 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id b12sm1142541ilv.46.2021.09.22.08.15.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Sep 2021 08:15:47 -0700 (PDT)
-Subject: Re: [syzbot] INFO: rcu detected stall in sys_recvmmsg
-To:     Paolo Abeni <pabeni@redhat.com>,
-        syzbot <syzbot+3360da629681aa0d22fe@syzkaller.appspotmail.com>,
-        christian.brauner@ubuntu.com, davem@davemloft.net,
-        dkadashev@gmail.com, kuba@kernel.org,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wVGktONlyuLsWAH2exvLKeS5CnFnKlgLM/sI96OfsNs=;
+        b=hVwrkW1qDBDLeYf7atX2WtSOJDchdkSfmtEcC5G4auW3xWwLkgE9hGuE/DQFegj/eQ
+         /AK6cBpZ97rHffCHoRuefgEsrOJx6OkTxUZ4v6SCmOKXvqr5gnO3bHlH7PfbH8GWq6Sq
+         3GJ0d1pix4FImprozsUbHxdWIe2Ne6nZccPbVP4Trznl3zOU052oRxd29x0lym/ZA3xW
+         CoW3awuXzmMuJmxdqn+xfORXsvLUoLUrXo6zA4Zgwxyax6v9taKD/KxKUU81pfuumYJ0
+         YTrkbROqqlgu6rkYHkzKRC9IAZH94MEuRu746tIn4OdSP84fIG+S0tQTrXqiOJwUx5Zf
+         UVAw==
+X-Gm-Message-State: AOAM5335cokmOZpoj0aAG2s9UFZF07/YvoJqvrHY5XxbzlllvAsK4PW4
+        Eviy4weed3Hc8ny3ij2tYw==
+X-Google-Smtp-Source: ABdhPJztTNAUbBMNBlNnPXcMDhxgBdw9YffnsLygCsPZLbtbKSwLXYYq+eWEbgddnxnskOXGS63pPg==
+X-Received: by 2002:ac8:6683:: with SMTP id d3mr141145qtp.291.1632325570011;
+        Wed, 22 Sep 2021 08:46:10 -0700 (PDT)
+Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
+        by smtp.gmail.com with ESMTPSA id a3sm552437qkh.67.2021.09.22.08.46.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Sep 2021 08:46:09 -0700 (PDT)
+Date:   Wed, 22 Sep 2021 11:46:04 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mathew.j.martineau@linux.intel.com, matthieu.baerts@tessares.net,
-        mptcp@lists.linux.dev, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org,
-        viro@zeniv.linux.org.uk
-References: <0000000000003216d705cc8a62d6@google.com>
- <89d72aca4e30335a03322612cf164420be11d8eb.camel@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <16c414f0-8399-e945-825e-fe8ac1be4e08@kernel.dk>
-Date:   Wed, 22 Sep 2021 09:15:46 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
+Message-ID: <YUtPvGm2RztJdSf1@moria.home.lan>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YTu9HIu+wWWvZLxp@moria.home.lan>
+ <YUfvK3h8w+MmirDF@casper.infradead.org>
+ <YUo20TzAlqz8Tceg@cmpxchg.org>
+ <YUpC3oV4II+u+lzQ@casper.infradead.org>
+ <YUpKbWDYqRB6eBV+@moria.home.lan>
+ <YUpNLtlbNwdjTko0@moria.home.lan>
+ <YUtHCle/giwHvLN1@cmpxchg.org>
 MIME-Version: 1.0
-In-Reply-To: <89d72aca4e30335a03322612cf164420be11d8eb.camel@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YUtHCle/giwHvLN1@cmpxchg.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/22/21 9:13 AM, Paolo Abeni wrote:
-> On Tue, 2021-09-21 at 17:13 -0700, syzbot wrote:
->> Hello,
->>
->> syzbot found the following issue on:
->>
->> HEAD commit:    1f77990c4b79 Add linux-next specific files for 20210920
->> git tree:       linux-next
->> console output: https://syzkaller.appspot.com/x/log.txt?x=1383891d300000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=ab1346371f2e6884
->> dashboard link: https://syzkaller.appspot.com/bug?extid=3360da629681aa0d22fe
->> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1625f1ab300000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17eb1b3b300000
->>
->> The issue was bisected to:
->>
->> commit 020250f31c4c75ac7687a673e29c00786582a5f4
->> Author: Dmitry Kadashev <dkadashev@gmail.com>
->> Date:   Thu Jul 8 06:34:43 2021 +0000
->>
->>     namei: make do_linkat() take struct filename
->>
->> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15f5ef77300000
->> final oops:     https://syzkaller.appspot.com/x/report.txt?x=17f5ef77300000
->> console output: https://syzkaller.appspot.com/x/log.txt?x=13f5ef77300000
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+3360da629681aa0d22fe@syzkaller.appspotmail.com
->> Fixes: 020250f31c4c ("namei: make do_linkat() take struct filename")
+On Wed, Sep 22, 2021 at 11:08:58AM -0400, Johannes Weiner wrote:
+> On Tue, Sep 21, 2021 at 05:22:54PM -0400, Kent Overstreet wrote:
+> >  - it's become apparent that there haven't been any real objections to the code
+> >    that was queued up for 5.15. There _are_ very real discussions and points of
+> >    contention still to be decided and resolved for the work beyond file backed
+> >    pages, but those discussions were what derailed the more modest, and more
+> >    badly needed, work that affects everyone in filesystem land
 > 
-> I'm unsure why the bisection points to this commit. This looks like an
-> MPTCP specific issue, due to bad handling of MSG_WAITALL recvmsg()
-> flag.
+> Unfortunately, I think this is a result of me wanting to discuss a way
+> forward rather than a way back.
+> 
+> To clarify: I do very much object to the code as currently queued up,
+> and not just to a vague future direction.
+> 
+> The patches add and convert a lot of complicated code to provision for
+> a future we do not agree on. The indirections it adds, and the hybrid
+> state it leaves the tree in, make it directly more difficult to work
+> with and understand the MM code base. Stuff that isn't needed for
+> exposing folios to the filesystems.
+> 
+> As Willy has repeatedly expressed a take-it-or-leave-it attitude in
+> response to my feedback, I'm not excited about merging this now and
+> potentially leaving quite a bit of cleanup work to others if the
+> downstream discussion don't go to his liking.
+> 
+> Here is the roughly annotated pull request:
 
-This seems to happen quite often, and I'm guessing it's mostly likely
-due to the test being run not always triggering the issue. Hence you end
-up with git bisection results that go off into the weeds.
+Thanks for breaking this out, Johannes.
 
--- 
-Jens Axboe
+So: mm/filemap.c and mm/page-writeback.c - I disagree about folios not really
+being needed there. Those files really belong more in fs/ than mm/, and the code
+in those files needs folios the most - especially filemap.c, a lot of those
+algorithms have to change from block based to extent based, making the analogy
+with filesystems.
 
+I think it makes sense to drop the mm/lru stuff, as well as the mm/memcg,
+mm/migrate and mm/workingset and mm/swap stuff that you object to - that is, the
+code paths that are for both file + anonymous pages, unless Matthew has
+technical reasons why that would break the rest of the patch set.
+
+And then, we really should have a pow wow and figure out what our options are
+going forward. I think we have some agreement now that not everything is going
+to be a folio going forwards (Matthew already split out his slab conversion to a
+new type) - so if anonymous pages aren't becoming folios, we should prototype
+some stuff and see where that helps and hurts us.
+
+> As per the other email I still think it would have been good to have a
+> high-level discussion about the *legitimate* entry points and data
+> structures that will continue to deal with tail pages down the
+> line. To scope the actual problem that is being addressed by this
+> inverted/whitelist approach - so we don't annotate the entire world
+> just to box in a handful of page table walkers...
+
+That discussion can still happen... and there's still the potential to get a lot
+more done if we're breaking open struct page and coming up with new types. I got
+Matthew on board with what you wanted, re: using the slab allocator for larger
+allocations
