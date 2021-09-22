@@ -2,210 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C6E804143B6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 10:25:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF21E414400
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Sep 2021 10:45:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233881AbhIVI0e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 04:26:34 -0400
-Received: from mail-eopbgr1320050.outbound.protection.outlook.com ([40.107.132.50]:47059
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S233437AbhIVI0d (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 04:26:33 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lRVvGNa41tVS4psgkTp1YWEgDLXPvb5a5uvJXvwIXhnuag4YhEbk1UJSmdMBz83xdhPPa1anaFG0nsF6ubFCv29P+JIz1HnHo+PQ1BiS72dHV0Yse0T6GrwXe2NTgDMxigg+yqi+GfsJBDFRU4sGKeKioIZHPySsvd4e9YHV8ZSf4BurgHo2IAude5QrUmEeClX3cuvpELLZeUGd8outU5iniPAh18Hi3dOHuHnw8YSgL8rZ6g/+1cdtjcO196xbnMm6y63BvlUh2+XtkcTPo9ghRPIJYsn+Cq6WtjYUcpd5wvz6A28D10iFBfWYlCe7IO4IGcRJdvKmJaKh8RXLfQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=XegCBAvKZeVOdJmSb5XWJjNBpVp+aktUVrqviryLbH8=;
- b=P8PBSRvS/xaNMzLHQyl36vH0pWUqzPmZO8I4XgJyVjeXYvmsFrQRBdyR79RDAc90DM46QXNpTKLTK2oqLLFd7ygBBI7cTNVEVNMizYS4z2fQhsOpcnqgjpzTSBoZvpvNA4Xe734yPOm3oKbaZ5Iw8SwLFq7IZC3NMKNzINKb4slC/bVLMjI96Bwsk5iY6dcFyNBBQtDYJZJPHQ1rQy3WR3kklotJTagoD7IDx3dLR+GQRXwYYc54h31YHsfWpKUiHbBrwUab5016LLUQPEN5B9hXV/RfP4sYbXHBbVW6uy3UIsOwtYn/nnDlC0SviSJPkoI7y4ixvZ0MgO5/i0ED4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oppo.com; dmarc=pass action=none header.from=oppo.com;
- dkim=pass header.d=oppo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XegCBAvKZeVOdJmSb5XWJjNBpVp+aktUVrqviryLbH8=;
- b=l1GBWJOBVMH9IiQSUeUJsmSh3Iz7g4HqXRfhSGe9cuTeyOi3fs3V8KSOaOC12j06YcaWAWMf/KZt9fH90xb4TziedR26zSKMJtZIjkyFlSZgbqUM3KexMcSpQgMwDT+VcYTMWZKnGzqaTA790lDzwKgNM69NDDrZOn1qBBzWbUE=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=oppo.com;
-Received: from SG2PR02MB4108.apcprd02.prod.outlook.com (2603:1096:4:96::19) by
- SG2PR02MB2860.apcprd02.prod.outlook.com (2603:1096:4:61::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.4523.18; Wed, 22 Sep 2021 08:25:00 +0000
-Received: from SG2PR02MB4108.apcprd02.prod.outlook.com
- ([fe80::5919:768f:2950:9504]) by SG2PR02MB4108.apcprd02.prod.outlook.com
- ([fe80::5919:768f:2950:9504%4]) with mapi id 15.20.4523.018; Wed, 22 Sep 2021
- 08:25:00 +0000
-Subject: Re: [PATCH v3] ovl: fix null pointer when filesystem doesn't support
- direct IO
-To:     Chengguang Xu <cgxu519@139.com>, linux-unionfs@vger.kernel.org,
-        miklos@szeredi.hu, linux-erofs@lists.ozlabs.org, xiang@kernel.org,
-        chao@kernel.org
-Cc:     guoweichao@oppo.com, yh@oppo.com, zhangshiming@oppo.com,
-        guanyuwei@oppo.com, jnhuang95@gmail.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <9ef909de-1854-b4be-d272-2b4cda52329f@oppo.com>
- <20210922072326.3538-1-huangjianan@oppo.com>
- <e42a183f-274c-425f-2012-3ff0003e1fcb@139.com>
-From:   Huang Jianan <huangjianan@oppo.com>
-Message-ID: <919e929d-6af7-b729-9fd2-954cd1e52999@oppo.com>
-Date:   Wed, 22 Sep 2021 16:24:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
-In-Reply-To: <e42a183f-274c-425f-2012-3ff0003e1fcb@139.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: HK2PR04CA0080.apcprd04.prod.outlook.com
- (2603:1096:202:15::24) To SG2PR02MB4108.apcprd02.prod.outlook.com
- (2603:1096:4:96::19)
+        id S233719AbhIVIrV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 04:47:21 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:43422 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233754AbhIVIrU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Sep 2021 04:47:20 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 91CE0201C5;
+        Wed, 22 Sep 2021 08:45:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1632300349;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WKr6wTvBsqBQmMHpNcWarDN56Ue3U6pggap/fVhLQ5M=;
+        b=e/LxdHfe+nkw4xzqKmN7rdYyREiEcRAiW++Gi4kxer7Z6sbF/sBT2Iflo2OKUD4bo+Pqvk
+        X+BPg4oyKqj5r2INJ/5Aw9fk/kMCyWf/bk6KTj/5NHYzg+wH9uM9dsfpR9Kpi+51JJ8bfP
+        ZToDMbIL4cFH2c9vjB6K7JXKSdHK29U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1632300349;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WKr6wTvBsqBQmMHpNcWarDN56Ue3U6pggap/fVhLQ5M=;
+        b=58xg6vsKeWxXcgYORrcAX4i6i5aoPV1AG1RNrqf1OjCVcItBcFRSlzOGYsmXrUuyHhQRR9
+        FiWij6uBNOoYVjCQ==
+Received: from g78 (unknown [10.163.24.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 4DB91A3B90;
+        Wed, 22 Sep 2021 08:45:48 +0000 (UTC)
+References: <20210921130127.24131-1-rpalethorpe@suse.com>
+ <CAK8P3a29ycNqOC_pD-UUtK37jK=Rz=nik=022Q1XtXr6-o6tuA@mail.gmail.com>
+ <87o88mkor1.fsf@suse.de> <87lf3qkk72.fsf@suse.de>
+User-agent: mu4e 1.4.15; emacs 27.2
+From:   Richard Palethorpe <rpalethorpe@suse.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        "y2038 Mailman List" <y2038@lists.linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LTP List <ltp@lists.linux.it>
+Subject: ia32 signed long treated as x64 unsigned int by __ia32_sys*
+Reply-To: rpalethorpe@suse.de
+In-reply-to: <87lf3qkk72.fsf@suse.de>
+Date:   Wed, 22 Sep 2021 09:45:42 +0100
+Message-ID: <87ilytkngp.fsf@suse.de>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [10.118.7.229] (58.255.79.105) by HK2PR04CA0080.apcprd04.prod.outlook.com (2603:1096:202:15::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.13 via Frontend Transport; Wed, 22 Sep 2021 08:24:57 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2697be2a-a0b2-46ed-5004-08d97da27785
-X-MS-TrafficTypeDiagnostic: SG2PR02MB2860:
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <SG2PR02MB2860AA76976323B349DC7DA3C3A29@SG2PR02MB2860.apcprd02.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 8hYBokXKndR8gXNntjlaKJeUZ95C4mKxdXFf9419jNqOcOx4b8M8Kg+cnPuluuD3L+j+oCR3pjhPU/5GWhEl/uQXn2b0EmaHL5xLz3QceZKRx4jN9nmwfsdyVyN9jqJKpcr5duNlaS5lHF+r6a0L2nwC/TejEsVA9QoYOcNHbi6rdwGo5qcrtYIZh2QYB9dgdEI0trW0nu6hXMtO57Q9VWSLUiXEMZdCzGuo4exzEwRoBgUaqW1w7BJrnXwxM/ghtEXCoPb40G9HcaAUPFgSypth1wZ1Bkgbr18Ed48+jE2+DKE9g/8Zo4qxiB49d7r80KMWOGSByIBLgnc9FWSHIvC2VEeMYnVuB4A9FpU2OWbJbGqXsZodLgJhEHyCSvGTPDQQeM7gL9r8ISFVWseD/1i4ERDXWOlyIt/kglD0uHqlShrht2vm+RC6ZEjfbVFMMOd6NadOAAUEElXaoUu5igFXbHmYvOs4ju6LOTI6ZJFVNbErvuX0jIs/r81YISUrOpAG9bubknyUbH72L1ME+iLh4NO1Pxqo9WXNHHsRw3ppPLi3pmqd3qEKKdTajZmFbfoBeKkt88meDr3HI82trzIaW9fzxa7nvRNbQAPbn7q5RkExUw2vG7ejHl3J+RDy70/WOh44sWtx/yEyTTefq8wQbgBqZeq60lU3EDZP1QUO2o8OdhKzLU9qwqLvpP2QCZzTcHVvSzSm1kfdZpe4WlfFMi4mEd2GIwvJIgFcwxWrxUXuVbKjpgy6uA+QbsJMZQtVVA+N3gtWix5O5QCOtVaMrDkN1yDUuohIbU4ekmg=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SG2PR02MB4108.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(16576012)(2906002)(38350700002)(316002)(5660300002)(66556008)(86362001)(66476007)(8676002)(66946007)(186003)(36756003)(38100700002)(8936002)(31686004)(83380400001)(2616005)(956004)(31696002)(4326008)(52116002)(26005)(6486002)(508600001)(11606007)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dHRISVZLK3VDYWEwOUk3clpUem0xYzJ2bjJCeTNZMWVyeU5wZFBwUWdGdHBm?=
- =?utf-8?B?ekV4MGVhdFNxWnYvM2VHMXNLOERZZ05NSFNsdjBHTDk2MVYrejV6dmwyc2hP?=
- =?utf-8?B?eHpWREdteHlhWjQ3WVVOdWZxbXNYQjBscGZiUS9ISlNuc3o4U1ZMLzRLU1Fz?=
- =?utf-8?B?ZkYwdW9hL1R5N2pXZ2cxbVNyTzVkTFlaUDMzM0Z3andRTWhnSTU0Y3paY25Y?=
- =?utf-8?B?RHlOR21XZ09QS2JSczN5Wk9yM1NvYkFRc2FKM2pQdUE1dmoxR2VsdjFuNEM1?=
- =?utf-8?B?VDhMT1c4RlpEK01hSjI1SVpUWVRDc2QwMWFUdVdxQk9LSDZuZWptd002d2Ft?=
- =?utf-8?B?VldMWmEyTTVnK21BU0VnOEFlMytWbGpxaXFRRTlEc0h0ZE9rYVNxZ1F5cFlh?=
- =?utf-8?B?MmZpRUhXZllMMUNydFRoNngzckoxMzgvTFg0VEpQcjYvQzAycVd5OW5iMjBN?=
- =?utf-8?B?Y21vU3BPOEhaQzhoK0dHRVZpSGtiTExDRDRBMzZHa3hIUHRKTmxBZ1VJWGQy?=
- =?utf-8?B?UlhqZDVNbVJoSnVLTEZsMWhiMFB4U1kvRTJHOStoL084NzNtc3hUT05ReFEx?=
- =?utf-8?B?WkFaWG1iK0RYL1FDUEIrSGo1N2xxaUlLajk0OVBVTlJCVEV3K0kzdjBZTWtY?=
- =?utf-8?B?Mjk3MVg0cTVGRFhYZnhaTnF6Z2RTaCt3SEVpT0tJM3ZqSUNsZWp2SVBhaVl0?=
- =?utf-8?B?bGNxTXRQZitNK2JLZklYOWl0U0xYRDR5bHVSN29KOWFVemMxUDJWOC9sSjV0?=
- =?utf-8?B?NGpvT2FtSTczTzFtRWo3RjNJV2xpSTl0RllPbXFjRXlSMlNXL0pzYnptQUdB?=
- =?utf-8?B?bjVCNHoyeExRZFl0OUhvNHc0WHNveldVQTFtTDZDNzB2WlJaZXdZdDhpTnNL?=
- =?utf-8?B?dmxWWDE5VHZIeGorYm0ybWFRT09YYWN4UzdBUFNYaFpmSlBqdkdodzQ4TCsz?=
- =?utf-8?B?R0t0TEhtQVpEWk00KzhoVkcyVENaWWlyVWtZVmt2NFRzTnROWkdZMFBiZzlN?=
- =?utf-8?B?SHNxVXQzVVIyU3pITXoxRWYvSStVRTYyckczdUl0bkFya2xFUDZjVHo1cnZu?=
- =?utf-8?B?bllmYW9FcHNkbDVUaVdwSmN6OEFGSENQWWxNR2ZrMTNxL21KZGFhemJKd29W?=
- =?utf-8?B?Q3RkM00zR2xiTnZ3M1lWR3oxb1JKU1U1bHVrR0cxT01DbGUxcVRwa2xHZWxE?=
- =?utf-8?B?RHBRSHZka0xBWWthZnNRWkt5RjdSRXYwZGRyU1pmVEU0M2JpUUxCaHQzMWQy?=
- =?utf-8?B?MEk5c1F3VnRjY0NFVXRIY0h6T0NRVGhZbGF0L3NVTWpGaUdzRzdmb1RDeW0r?=
- =?utf-8?B?Qy9xcFpwWXgrQjZ3aHZpNlVmOXE0cmVVK3dqTmY0R29RS3I3UDVMM2J4QTJI?=
- =?utf-8?B?QWg5K08rM3J3b0Z4QzN4bUkvWUwzYlpPcFRObUg3ZzlmOExnc0pEM1JDOU55?=
- =?utf-8?B?bDBMN2NSaVFOMHVIVmwyWGJKckl3eG1sMTg2ekI2Y24vV25Vc0RrWUlpMVVJ?=
- =?utf-8?B?aDU1MXlrOXFLdzJzY3p0VEZNODlLTGxnM1RvdW9pZkR6ZmZwUnJ5WTFjTGlK?=
- =?utf-8?B?Zy9EbkZIME5KYUZtQkw2NXBIVWJyTVBvdjRETFdTS0o1NjNpNzF0MCtMSkI4?=
- =?utf-8?B?a0xpOEdYTHkrR1VoQmlFNVgyK0NnZkJQaWlVTFpVeWp6dkJBRmkySFdLOTdL?=
- =?utf-8?B?a1E3OFdsZHBJOHBNVCt4UFBmQytjdS9zNmQrbmI0aHluR0hobm82ZldEa25R?=
- =?utf-8?Q?h8c2zJ0ho+SD7f7vHQ1IKHDKD72ds5M2cA9cfzf?=
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2697be2a-a0b2-46ed-5004-08d97da27785
-X-MS-Exchange-CrossTenant-AuthSource: SG2PR02MB4108.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2021 08:25:00.1200
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WYrDVhGtI8/7dKatXCEwacqVNp3fdxkvn/GBkJONVoeAol3qfYDKGoogYkGNQjBctSKV3pHIgwzDs6w+4zkOHQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR02MB2860
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+Richard Palethorpe <rpalethorpe@suse.de> writes:
 
-在 2021/9/22 16:06, Chengguang Xu 写道:
-> 在 2021/9/22 15:23, Huang Jianan 写道:
->> From: Huang Jianan <huangjianan@oppo.com>
+> Richard Palethorpe <rpalethorpe@suse.de> writes:
+>
+>> Hello Arnd,
 >>
->> At present, overlayfs provides overlayfs inode to users. Overlayfs
->> inode provides ovl_aops with noop_direct_IO to avoid open failure
->> with O_DIRECT. But some compressed filesystems, such as erofs and
->> squashfs, don't support direct_IO.
+>> Arnd Bergmann <arnd@arndb.de> writes:
 >>
->> Users who use f_mapping->a_ops->direct_IO to check O_DIRECT support,
->> will read file through this way. This will cause overlayfs to access
->> a non-existent direct_IO function and cause panic due to null pointer:
+>>> On Tue, Sep 21, 2021 at 3:01 PM Richard Palethorpe <rpalethorpe@suse.com> wrote:
+>>>>
+>>>> The LTP test io_pgetevents02 fails in 32bit compat mode because an
+>>>> nr_max of -1 appears to be treated as a large positive integer. This
+>>>> causes pgetevents_time64 to return an event. The test expects the call
+>>>> to fail and errno to be set to EINVAL.
+>>>>
+>>>> Using the compat syscall fixes the issue.
+>>>>
+>>>> Fixes: 7a35397f8c06 ("io_pgetevents: use __kernel_timespec")
+>>>> Signed-off-by: Richard Palethorpe <rpalethorpe@suse.com>
+>>>
+>>> Thanks a lot for finding this, indeed there is definitely a mistake that
+>>> this function is defined and not used, but I don't yet see how it would
+>>> get to the specific failure you report.
+>>>
+>>> Between the two implementations, I can see a difference in the
+>>> handling of the signal mask, but that should only affect architectures
+>>> with incompatible compat_sigset_t, i.e. big-endian or
+>>> _COMPAT_NSIG_WORDS!=_NSIG_WORDS, and the latter is
+>>> never true for currently supported architectures. On x86, there is
+>>> no difference in the sigset at all.
+>>>
+>>> The negative 'nr' and 'min_nr' arguments that you list as causing
+>>> the problem /should/ be converted by the magic
+>>> SYSCALL_DEFINE6() definition. If this is currently broken, I would
+>>> expect other syscalls to be affected as well.
+>>
+>> That is what I thought, but I couldn't think of another explanation for
+>> it.
+>>
+>>>
+>>> Have you tried reproducing this on non-x86 architectures? If I
+>>> misremembered how the compat conversion in SYSCALL_DEFINE6()
+>>> works, then all architectures that support CONFIG_COMPAT have
+>>> to be fixed.
+>>>
+>>>          Arnd
+>>
+>> No, but I suppose I can try it on ARM or PowerPC. I suppose printing the
+>> arguments would be a good idea too.
 >
-> I just looked around the code more closely, in open_with_fake_path(),
+> It appears it really is failing to sign extend the s32 to s64. I added
+> the following printks
 >
-> do_dentry_open() has already checked O_DIRECT open flag and 
-> a_ops->direct_IO of underlying real address_space.
+> modified   fs/aio.c
+> @@ -2054,6 +2054,7 @@ static long do_io_getevents(aio_context_t ctx_id,
+>  	long ret = -EINVAL;
+>  
+>  	if (likely(ioctx)) {
+> +		printk("comparing %ld <= %ld\n", min_nr, nr);
+>  		if (likely(min_nr <= nr && min_nr >= 0))
+>  			ret = read_events(ioctx, min_nr, nr, events, until);
+>  		percpu_ref_put(&ioctx->users);
+> @@ -2114,6 +2115,8 @@ SYSCALL_DEFINE6(io_pgetevents,
+>  	bool interrupted;
+>  	int ret;
+>  
+> +	printk("io_pgetevents(%lx, %ld, %ld, ...)\n", ctx_id, min_nr, nr);
+> +
+>  	if (timeout && unlikely(get_timespec64(&ts, timeout)))
+>  		return -EFAULT;
 >
-> Am I missing something?
+> Then the output is:
 >
->
+> [   11.252268] io_pgetevents(f7f19000, 4294967295, 1, ...)
+> [   11.252401] comparing 4294967295 <= 1
+> io_pgetevents02.c:114: TPASS: invalid min_nr: io_pgetevents() failed as expected: EINVAL (22)
+> [   11.252610] io_pgetevents(f7f19000, 1, 4294967295, ...)
+> [   11.252748] comparing 1 <= 4294967295
+> io_pgetevents02.c:103: TFAIL: invalid max_nr: io_pgetevents() passed unexpectedly
 
-It seems that loop_update_dio will set lo->use_dio after open file 
-without set O_DIRECT.
-loop_update_dio will check f_mapping->a_ops->direct_IO but it deal with 
-ovl_aops with
-noop _direct_IO.
+and below is the macro expansion for the automatically generated 32bit to
+64bit io_pgetevents. I believe it is casting u32 to s64, which appears
+to mean there is no sign extension. I don't know if this is the expected
+behaviour?
 
-So I think we still need a new aops?
+For the manually written compat version we cast back to s32 which is
+what fixes the issue.
 
-Thanks,
-Jianan
+long __ia32_sys_io_pgetevents(const struct pt_regs *regs) {
+  return __se_sys_io_pgetevents((unsigned int)regs->bx, (unsigned int)regs->cx,
+                                (unsigned int)regs->dx, (unsigned int)regs->si,
+                                (unsigned int)regs->di, (unsigned int)regs->bp);
+}
+static long __se_sys_io_pgetevents(
+    __typeof(__builtin_choose_expr(
+        (__builtin_types_compatible_p(typeof((aio_context_t)0), typeof(0LL)) ||
+         __builtin_types_compatible_p(typeof((aio_context_t)0), typeof(0ULL))),
+        0LL, 0L)) ctx_id,
+    __typeof(__builtin_choose_expr(
+        (__builtin_types_compatible_p(typeof((long)0), typeof(0LL)) ||
+         __builtin_types_compatible_p(typeof((long)0), typeof(0ULL))),
+        0LL, 0L)) min_nr,
+    __typeof(__builtin_choose_expr(
+        (__builtin_types_compatible_p(typeof((long)0), typeof(0LL)) ||
+         __builtin_types_compatible_p(typeof((long)0), typeof(0ULL))),
+        0LL, 0L)) nr,
+    __typeof(__builtin_choose_expr(
+        (__builtin_types_compatible_p(typeof((struct io_event *)0),
+                                      typeof(0LL)) ||
+         __builtin_types_compatible_p(typeof((struct io_event *)0),
+                                      typeof(0ULL))),
+        0LL, 0L)) events,
+    __typeof(__builtin_choose_expr(
+        (__builtin_types_compatible_p(typeof((struct __kernel_timespec *)0),
+                                      typeof(0LL)) ||
+         __builtin_types_compatible_p(typeof((struct __kernel_timespec *)0),
+                                      typeof(0ULL))),
+        0LL, 0L)) timeout,
+    __typeof(__builtin_choose_expr(
+        (__builtin_types_compatible_p(typeof((const struct __aio_sigset *)0),
+                                      typeof(0LL)) ||
+         __builtin_types_compatible_p(typeof((const struct __aio_sigset *)0),
+                                      typeof(0ULL))),
+        0LL, 0L)) usig)
+{
+  long ret = __do_sys_io_pgetevents(
+      (aio_context_t)ctx_id, (long)min_nr, (long)nr, (struct io_event *)events,
+      (struct __kernel_timespec *)timeout, (const struct __aio_sigset
+  *)usig);
 
-> Thanks,
->
-> Chengguang
->
->
->>
->> Kernel panic - not syncing: CFI failure (target: 0x0)
->> CPU: 6 PID: 247 Comm: loop0
->> Call Trace:
->>   panic+0x188/0x45c
->>   __cfi_slowpath+0x0/0x254
->>   __cfi_slowpath+0x200/0x254
->>   generic_file_read_iter+0x14c/0x150
->>   vfs_iocb_iter_read+0xac/0x164
->>   ovl_read_iter+0x13c/0x2fc
->>   lo_rw_aio+0x2bc/0x458
->>   loop_queue_work+0x4a4/0xbc0
->>   kthread_worker_fn+0xf8/0x1d0
->>   loop_kthread_worker_fn+0x24/0x38
->>   kthread+0x29c/0x310
->>   ret_from_fork+0x10/0x30
->>
->> The filesystem may only support direct_IO for some file types. For
->> example, erofs supports direct_IO for uncompressed files. So return
->> -EINVAL when the file doesn't support direct_IO to fix this problem.
->>
->> Fixes: 5b910bd615ba ("ovl: fix GPF in swapfile_activate of file from 
->> overlayfs over xfs")
->> Signed-off-by: Huang Jianan <huangjianan@oppo.com>
->> ---
->> change since v2:
->>   - Return error in ovl_open directly. (Chengguang Xu)
->>
->> Change since v1:
->>   - Return error to user rather than fall back to buffered io. 
->> (Chengguang Xu)
->>
->>   fs/overlayfs/file.c | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
->> index d081faa55e83..a0c99ea35daf 100644
->> --- a/fs/overlayfs/file.c
->> +++ b/fs/overlayfs/file.c
->> @@ -157,6 +157,10 @@ static int ovl_open(struct inode *inode, struct 
->> file *file)
->>       if (IS_ERR(realfile))
->>           return PTR_ERR(realfile);
->>   +    if ((f->f_flags & O_DIRECT) && (!realfile->f_mapping->a_ops ||
->> +        !realfile->f_mapping->a_ops->direct_IO))
->> +        return -EINVAL;
->> +
->>       file->private_data = realfile;
->>         return 0;
->
+  ...
+}
 
+-- 
+Thank you,
+Richard.
