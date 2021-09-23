@@ -2,71 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 55F44415810
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 08:03:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FFB8415815
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 08:07:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239281AbhIWGEq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 02:04:46 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:51057 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239239AbhIWGEq (ORCPT
+        id S229890AbhIWGIp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 02:08:45 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:9910 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239226AbhIWGIo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 02:04:46 -0400
-Received: by mail-io1-f71.google.com with SMTP id p71-20020a6b8d4a000000b005d323186f7cso4699850iod.17
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 23:03:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=JXvRrW1iqPMwIYRHYBPAsiAM0PkHzg5GtfxmrglxQzQ=;
-        b=qb3wcaQ4/02qyosSmSKPc6PmFUhRB1qkpTy8VvCK70xknIRzeAEDcnUu56QwSbQy0d
-         pv75IQi7HAsvHRNsRAWIfUU4uPmJY9UPZhJT9rco1p9XguE4uLpyR+zU8TWIDy6Z4qTV
-         rYWcQnKno9LWRpPMi9oIxp8fVRqXt3wxcxUzaPpGK+CX4DLfRSdYMqWyWt0BEE8rmlx7
-         xINHoXNQU8OpZZ2zYnpn8Naku1YElqM3HvC70ydqWYSt/IQT8nf9ooeC/gYVZ6jDXqDv
-         DwQVTMZGiHiJDRBpeXFhnBp9giN0U4L0RS3hg+fiLyMvPBjsv7i6mjxtdRhpgy7B4Qll
-         J2Iw==
-X-Gm-Message-State: AOAM531oA8Q7Y3tfJzR+H2dNaS3bv2bmwPAxvZ07Z63wdgUy1zRhGDem
-        XlhA1HvjrRjqOlzKDRqyWHzqARLEkcuZBnFp3+stxLeDHqeO
-X-Google-Smtp-Source: ABdhPJwT9OjdtEE+jw3AVImKDXCzwGMdqVOLT4j2uiwu093ZOHPBREg1Xj/g9V66d630WZBAzcZXMF3cUBsYko/IRsjfaVrFtJsz
+        Thu, 23 Sep 2021 02:08:44 -0400
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4HFPhY23Y7z8ykH;
+        Thu, 23 Sep 2021 14:02:37 +0800 (CST)
+Received: from dggema766-chm.china.huawei.com (10.1.198.208) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2308.8; Thu, 23 Sep 2021 14:07:07 +0800
+Received: from [10.174.177.210] (10.174.177.210) by
+ dggema766-chm.china.huawei.com (10.1.198.208) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.8; Thu, 23 Sep 2021 14:07:06 +0800
+Message-ID: <84fc0f56-c15d-1561-f138-e5060ce5a461@huawei.com>
+Date:   Thu, 23 Sep 2021 14:07:06 +0800
 MIME-Version: 1.0
-X-Received: by 2002:a6b:6a13:: with SMTP id x19mr2455017iog.111.1632376994998;
- Wed, 22 Sep 2021 23:03:14 -0700 (PDT)
-Date:   Wed, 22 Sep 2021 23:03:14 -0700
-In-Reply-To: <000000000000bf710a05b05ae3f6@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ed2e6705cca36282@google.com>
-Subject: Re: [syzbot] possible deadlock in f_getown
-From:   syzbot <syzbot+8073030e235a5a84dd31@syzkaller.appspotmail.com>
-To:     asm@florahospitality.com, bfields@fieldses.org,
-        boqun.feng@gmail.com, desmondcheongzx@gmail.com,
-        jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.0
+Subject: Re: [PATCH] ramfs: fix mount source show for ramfs
+From:   yangerkun <yangerkun@huawei.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+CC:     <sfr@canb.auug.org.au>, <jack@suse.cz>,
+        <gregkh@linuxfoundation.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <yukuai3@huawei.com>
+References: <20210811122811.2288041-1-yangerkun@huawei.com>
+ <720f6c7a-6745-98ad-5c71-7747857a7f01@huawei.com>
+ <20210908153958.19054d439ae59ee3a7e41519@linux-foundation.org>
+ <b82b7472-be64-4681-98a2-9d16736e3edd@huawei.com>
+ <b66aa49b-8289-be25-6126-92e6ce1c50ab@huawei.com>
+ <64893b00-d606-8ea9-0fd7-c6c819e5d387@huawei.com>
+In-Reply-To: <64893b00-d606-8ea9-0fd7-c6c819e5d387@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.177.210]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggema766-chm.china.huawei.com (10.1.198.208)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+Ping again...
 
-commit f671a691e299f58835d4660d642582bf0e8f6fda
-Author: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
-Date:   Fri Jul 2 09:18:30 2021 +0000
-
-    fcntl: fix potential deadlocks for &fown_struct.lock
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15fa8017300000
-start commit:   293837b9ac8d Revert "i915: fix remap_io_sg to verify the p..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=18fade5827eb74f7
-dashboard link: https://syzkaller.appspot.com/bug?extid=8073030e235a5a84dd31
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=171390add00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10050553d00000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fcntl: fix potential deadlocks for &fown_struct.lock
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+在 2021/9/18 15:08, yangerkun 写道:
+> Ping...
+> 
+> 在 2021/9/13 9:10, yangerkun 写道:
+>>
+>>
+>> 在 2021/9/9 16:37, yangerkun 写道:
+>>>
+>>>
+>>> 在 2021/9/9 6:39, Andrew Morton 写道:
+>>>> On Wed, 8 Sep 2021 16:56:25 +0800 yangerkun <yangerkun@huawei.com> 
+>>>> wrote:
+>>>>
+>>>>> 在 2021/8/11 20:28, yangerkun 写道:
+>>>>>> ramfs_parse_param does not parse key "source", and will convert
+>>>>>> -ENOPARAM to 0. This will skip vfs_parse_fs_param_source in
+>>>>>> vfs_parse_fs_param, which lead always "none" mount source for 
+>>>>>> ramfs. Fix
+>>>>>> it by parse "source" in ramfs_parse_param.
+>>>>>>
+>>>>>> Signed-off-by: yangerkun <yangerkun@huawei.com>
+>>>>>> ---
+>>>>>>    fs/ramfs/inode.c | 4 ++++
+>>>>>>    1 file changed, 4 insertions(+)
+>>>>>>
+>>>>>> diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
+>>>>>> index 65e7e56005b8..0d7f5f655fd8 100644
+>>>>>> --- a/fs/ramfs/inode.c
+>>>>>> +++ b/fs/ramfs/inode.c
+>>>>>> @@ -202,6 +202,10 @@ static int ramfs_parse_param(struct 
+>>>>>> fs_context *fc, struct fs_parameter *param)
+>>>>>>        struct ramfs_fs_info *fsi = fc->s_fs_info;
+>>>>>>        int opt;
+>>>>>> +    opt = vfs_parse_fs_param_source(fc, param);
+>>>>>> +    if (opt != -ENOPARAM)
+>>>>>> +        return opt;
+>>>>>> +
+>>>>>>        opt = fs_parse(fc, ramfs_fs_parameters, param, &result);
+>>>>>>        if (opt < 0) {
+>>>>>>            /*
+>>>>>>
+>>>>
+>>>> (top-posting repaired)
+>>>>
+>>>>> Hi, this patch seems still leave in linux-next, should we pull it to
+>>>>> mainline?
+>>>>
+>>>> I was hoping for a comment from Al?
+>>>
+>>> Hi, Al,
+>>>
+>>> Can you help to review this patch...
+>>
+>> Hi, Al,
+>>
+>> Sorry for the noise again, can you help to give some comments for this 
+>> patch.
+>>
+>>>
+>>> Thanks,
+>>> Kun.
+>>>
+>>>> .
+>>>>
+>>> .
+>> .
+> .
