@@ -2,100 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E90C5415FA8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 15:24:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B48B416086
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 16:06:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241404AbhIWNZw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 09:25:52 -0400
-Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17226 "EHLO
-        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241338AbhIWNZo (ORCPT
+        id S241612AbhIWOH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 10:07:29 -0400
+Received: from cloud48395.mywhc.ca ([173.209.37.211]:50538 "EHLO
+        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241554AbhIWOH1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 09:25:44 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1632402523; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=f2h811w2svJQ4VmTGeEPdH8ik/s9xSbE+Y2NhLHm4skAElJ4FYA4xm5dEZGFMAi1TGnQJewLXfnkxfoHMNJGI3jNPYuLd4vA0vip+HcqcY+zwSgNfsMa1ORU7ggfUWGi3pDN72aPTjEogAu7+kShz6Zh98ewPabDJhBOXBqL4xc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1632402523; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=oG9u6AuZGZnG2KRRqhJabX8iiojey6H8VgFRc9r8zZI=; 
-        b=VkcPKRSjcPvbDFAsHX4SaX3tRDA349fSUPEhiU7yZblCVudkVNhNPAh8EjSEhhquivpvlX/Y2+ep4mRONhMq5NdadZqjKW0IrEbQ9WE1ncQejOM9iLp0VN/EcTaYok3dknMfKuY1V952v6eneT6XYeQERXol7ZFqmkrrvyDNUhQ=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=mykernel.net;
-        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
-        dmarc=pass header.from=<cgxu519@mykernel.net>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1632402523;
-        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
-        h=From:To:Cc:Message-ID:Subject:Date:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type;
-        bh=oG9u6AuZGZnG2KRRqhJabX8iiojey6H8VgFRc9r8zZI=;
-        b=XJQM+4b0CJp8iL2K71cfogKzVBIQgvz8ktaI3l4hTq+Fyn3vaxMs2Vo46b6Ap2Di
-        78la47q64qXuBX4hgyzGubgPeER3oS7CfGs3fPVN3BhSN+j/VOtQeUBJaqdqXFZLaJS
-        Tft2OQcHcIoZ55Cvjh/9z2MNFtN00A1UW+hZ7vXA=
-Received: from localhost.localdomain (81.71.33.115 [81.71.33.115]) by mx.zoho.com.cn
-        with SMTPS id 1632402522914922.0766031758626; Thu, 23 Sep 2021 21:08:42 +0800 (CST)
-From:   Chengguang Xu <cgxu519@mykernel.net>
-To:     miklos@szeredi.hu, jack@suse.cz, amir73il@gmail.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chengguang Xu <cgxu519@mykernel.net>
-Message-ID: <20210923130814.140814-11-cgxu519@mykernel.net>
-Subject: [RFC PATCH v5 10/10] ovl: implement containerized syncfs for overlayfs
-Date:   Thu, 23 Sep 2021 21:08:14 +0800
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210923130814.140814-1-cgxu519@mykernel.net>
-References: <20210923130814.140814-1-cgxu519@mykernel.net>
+        Thu, 23 Sep 2021 10:07:27 -0400
+Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:53332 helo=[192.168.1.179])
+        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <olivier@trillion01.com>)
+        id 1mTPMG-0000Sp-Gb; Thu, 23 Sep 2021 10:05:52 -0400
+Message-ID: <a9f88c7d9b7ac119431a343bda10da251ef7f57e.camel@trillion01.com>
+Subject: Re: [5.15-rc1 regression] io_uring: fsstress hangs in do_coredump()
+ on exit
+From:   Olivier Langlois <olivier@trillion01.com>
+To:     Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Thu, 23 Sep 2021 10:05:51 -0400
+In-Reply-To: <6d46951b-a7b3-0feb-3af0-aaa8ec87b87a@kernel.dk>
+References: <20210921064032.GW2361455@dread.disaster.area>
+         <d9d2255c-fbac-3259-243a-2934b7ed0293@kernel.dk>
+         <c97707cf-c543-52cd-5066-76b639f4f087@kernel.dk>
+         <20210921213552.GZ2361455@dread.disaster.area>
+         <6d46951b-a7b3-0feb-3af0-aaa8ec87b87a@kernel.dk>
+Organization: Trillion01 Inc
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.40.4 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-ZohoCNMailClient: External
-Content-Type: text/plain; charset=utf8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - trillion01.com
+X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
+X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now overlayfs can sync proper dirty inodes during syncfs,
-so remove unnecessary sync_filesystem() on upper file
-system.
+On Tue, 2021-09-21 at 15:41 -0600, Jens Axboe wrote:
+> > 
+> > Cleaned up so it compiles and the tests run properly again. But
+> > playing whack-a-mole with signals seems kinda fragile. I was
+> > pointed
+> > to this patchset by another dev on #xfs overnight who saw the same
+> > hangs that also fixed the hang:
+> 
+> It seems sane to me - exit if there's a fatal signal, or doing core
+> dump. Don't think there should be other conditions.
+> 
+> > https://lore.kernel.org/lkml/cover.1629655338.git.olivier@trillion0
+> > 1.com/
+> > 
+> > It was posted about a month ago and I don't see any response to it
+> > on the lists...
+> 
+> That's been a long discussion, but it's a different topic really. Yes
+> it's signals, but it's not this particular issue. It'll happen to
+> work
+> around this issue, as it cancels everything post core dumping.
+> 
+I am glad to see that my patch is still on your radar.
 
-Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
----
- fs/overlayfs/super.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+I was starting to wonder if it did somehow slip in a floor crack or if
+I did omit to do something justifying that noone is reviewing it.
 
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index bf4000eb9be8..ef998ada6cb9 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -15,6 +15,7 @@
- #include <linux/seq_file.h>
- #include <linux/posix_acl_xattr.h>
- #include <linux/exportfs.h>
-+#include <linux/writeback.h>
- #include "overlayfs.h"
-=20
- MODULE_AUTHOR("Miklos Szeredi <miklos@szeredi.hu>");
-@@ -281,18 +282,15 @@ static int ovl_sync_fs(struct super_block *sb, int wa=
-it)
- =09/*
- =09 * Not called for sync(2) call or an emergency sync (SB_I_SKIP_SYNC).
- =09 * All the super blocks will be iterated, including upper_sb.
--=09 *
--=09 * If this is a syncfs(2) call, then we do need to call
--=09 * sync_filesystem() on upper_sb, but enough if we do it when being
--=09 * called with wait =3D=3D 1.
- =09 */
--=09if (!wait)
--=09=09return 0;
-=20
- =09upper_sb =3D ovl_upper_mnt(ofs)->mnt_sb;
-=20
- =09down_read(&upper_sb->s_umount);
--=09ret =3D sync_filesystem(upper_sb);
-+=09if (wait)
-+=09=09wait_sb_inodes(upper_sb);
-+
-+=09ret =3D sync_fs_and_blockdev(upper_sb, wait);
- =09up_read(&upper_sb->s_umount);
-=20
- =09return ret;
---=20
-2.27.0
+I guess that everyone has been crazy busy like mad men in the last few
+weeks...
 
 
