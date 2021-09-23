@@ -2,215 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC3B8416889
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 01:38:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52939416897
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 01:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243587AbhIWXkB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 19:40:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33764 "EHLO
+        id S243381AbhIWXug (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 19:50:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240661AbhIWXkA (ORCPT
+        with ESMTP id S240701AbhIWXue (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 19:40:00 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E15B7C061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 16:38:28 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id r7so4970677pjo.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 16:38:28 -0700 (PDT)
+        Thu, 23 Sep 2021 19:50:34 -0400
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15867C061574
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 16:49:01 -0700 (PDT)
+Received: by mail-qt1-x835.google.com with SMTP id e16so5307438qts.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 16:49:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=5/WAgNALfvsB4KP6m0qi12xIQRzUGya+l2VNZgSQQFs=;
-        b=UUrHZBh8vYnktVCpv8EX35Ama1oym9Nh8GVSqcMGyZtB/zI51bp8GnrNlnumoMvDLP
-         pL7TtKl+bSA9hnB6pHh067v8/9z4C6BV6aiHOfxHoDTsSJffSTxgttXCfcoVAH35RuHK
-         vFuKm1/WezYhGxxQhvrW2Fc7WpGP4+ohknJ3Q=
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :mime-version;
+        bh=HAmJkHQDJJuagQxHQwV8veFd6rRsJ19PYDz/eTz1rB4=;
+        b=K14UTK5w94Mq7Y7d0WepqQG3vE1pbUyxcPERyofOaaiyIVHxbYyK8CI3+1lVRKwB0g
+         UGxogD+nvTWvrZQxq/FLDZ6pHz3qeBwZrqjFVAaElpacm1PBmVp4mepBXiWOr0KLSr0F
+         7JnWgQzbHfZJLJ6PjzcnIPJBq3MvzmnViyCCEKTVeT6dKhEXNkeosQ+TQYcWcrs+YvcJ
+         9vT+vOuW8zPALzddhzo4Ap+JWxJf42oQOtPTZSz1tqd4GHEfzK2J1n9TD2I/fu+4Ja8D
+         9FOg9+FIrgexLSYC7Hj+LAlJ74Zbhod48eyXJrVO5YIftatm4yzHbPA2//17GLe94VsH
+         UOEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=5/WAgNALfvsB4KP6m0qi12xIQRzUGya+l2VNZgSQQFs=;
-        b=0od/t7+ubYj7QbAH+nT3+mAZTXpNQdWIcI3KYda9oJmwEkO6yMyAEht5lUA13by3Xu
-         6c01Pt7lWgpeRkqaghTmY9rblW8cWsC/JbDIGDG+yq2lqQtJ5t4WJrIRxDiNnSvx2SwW
-         6mCjvtuGx4eJ9lNrZVZJ43pfkahElDh1Q3Nq9ChUbVf8Dt7Uj5x9Xgm6yxhHx3Io7n6Q
-         5S4GugUXKOt8SNnw6XMv7X2W8JDErX99Qwi/KLRTkl6YyhluFoHA0tKLtLRL+1zYcalx
-         VsHL+wARdah5QJds/6Yda57Lo0uN/xnSfHNJyiDrHvE5DscZ5QqhGfKG2p4GPPq7+UY2
-         nEbA==
-X-Gm-Message-State: AOAM532V9IMpmZ76NH22hYQ0BEumSdhcMVIHtwOuRkD3G2kPLHyxKLbl
-        1+76q1gn8c8GnPI90fMBarXGzg==
-X-Google-Smtp-Source: ABdhPJyyrM0zRw6DFdwMAtzDrtQKF3bniLC06zxmI/Y0shk9SiOdcyTKWxmv58K52tHT0wioCtI5pg==
-X-Received: by 2002:a17:90a:aa14:: with SMTP id k20mr20461715pjq.88.1632440308367;
-        Thu, 23 Sep 2021 16:38:28 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h16sm6423013pjt.30.2021.09.23.16.38.27
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:mime-version;
+        bh=HAmJkHQDJJuagQxHQwV8veFd6rRsJ19PYDz/eTz1rB4=;
+        b=w5+KUFh/pfuHC3IJ+NwtBV5GRCRSYWwhZkmGenmeWcMSDz2YD3HwhZVL+p2354nvLx
+         FWT2Wb/4FtIE5xkg/xT9/99BK5D5yYw6YOYB/ewpCNXfEh+ZseK5H8uTQDojnswI+sTg
+         ZU303dqV4ASAyuwARpJ7anl3eDo8MPILeGpQZYCMeUZmbxRaYlzoyXuSqvr9nabjBdMw
+         eWdD7KHzcQrV/TxhbibLgGl74by7PW0pRiEAcD+GwOSGoUKSrPvSJt/bP6eO5gxFL+QM
+         qUfFaibyVMa23Sagki1qF/mbcjYFuZ7I7c0I3Eo95ynvxOlpdszTvqeogcGDPgc4Uma4
+         n5AQ==
+X-Gm-Message-State: AOAM533Pd+PJj7bk1Ud7pcgAX5CtH+oje/fGKJvdJkCZ+640ysTY51cL
+        1rVzc6ffX3HQWGVysp3oxUn8BQ==
+X-Google-Smtp-Source: ABdhPJyx4r0Ikvv2wOuAIuqSR2EMgA05qTmirNIFyEVLKHf+GXDLUUM3y7l0TeXUlNB2314011zgvQ==
+X-Received: by 2002:a05:622a:1792:: with SMTP id s18mr1465593qtk.136.1632440940819;
+        Thu, 23 Sep 2021 16:49:00 -0700 (PDT)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id q14sm5171666qkl.44.2021.09.23.16.48.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Sep 2021 16:38:27 -0700 (PDT)
-Date:   Thu, 23 Sep 2021 16:38:26 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Qi Zheng <zhengqi.arch@bytedance.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Vito Caputo <vcaputo@pengaru.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stefan Metzmacher <metze@samba.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Lai Jiangshan <laijs@linux.alibaba.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
+        Thu, 23 Sep 2021 16:48:58 -0700 (PDT)
+Date:   Thu, 23 Sep 2021 16:48:41 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.anvils
+To:     Zi Yan <ziy@nvidia.com>
+cc:     Yang Shi <shy828301@gmail.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Hugh Dickins <hughd@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        "Kenta.Tada@sony.com" <Kenta.Tada@sony.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Michael =?iso-8859-1?Q?Wei=DF?= 
-        <michael.weiss@aisec.fraunhofer.de>,
-        Anand K Mistry <amistry@google.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Michal Hocko <mhocko@suse.com>, Helge Deller <deller@gmx.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrea Righi <andrea.righi@canonical.com>,
-        Ohhoon Kwon <ohoono.kwon@samsung.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        YiFei Zhu <yifeifz2@illinois.edu>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] proc: Disable /proc/$pid/wchan
-Message-ID: <202109231636.C233D6D82@keescook>
-References: <20210923233105.4045080-1-keescook@chromium.org>
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: Re: Mapcount of subpages
+In-Reply-To: <2A311B26-8B33-458E-B2C1-8BA2CF3484AA@nvidia.com>
+Message-ID: <77b59314-5593-1a2e-293c-b66e8235ad@google.com>
+References: <YUvWm6G16+ib+Wnb@moria.home.lan> <YUvzINep9m7G0ust@casper.infradead.org> <YUwNZFPGDj4Pkspx@moria.home.lan> <YUxnnq7uFBAtJ3rT@casper.infradead.org> <20210923124502.nxfdaoiov4sysed4@box.shutemov.name> <72cc2691-5ebe-8b56-1fe8-eeb4eb4a4c74@google.com>
+ <CAHbLzkrELUKR2saOkA9_EeAyZwdboSq0HN6rhmCg2qxwSjdzbg@mail.gmail.com> <2A311B26-8B33-458E-B2C1-8BA2CF3484AA@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210923233105.4045080-1-keescook@chromium.org>
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 23, 2021 at 04:31:05PM -0700, Kees Cook wrote:
-> The /proc/$pid/wchan file has been broken by default on x86_64 for 4
-> years now[1]. As this remains a potential leak of either kernel
-> addresses (when symbolization fails) or limited observation of kernel
-> function progress, just remove the contents for good.
+On Thu, 23 Sep 2021, Zi Yan wrote:
+> On 23 Sep 2021, at 17:54, Yang Shi wrote:
+> > On Thu, Sep 23, 2021 at 2:10 PM Hugh Dickins <hughd@google.com> wrote:
+> >>
+> >> NR_FILE_MAPPED being used for /proc/meminfo's "Mapped:" and a couple
+> >> of other such stats files, and for a reclaim heuristic in mm/vmscan.c.
+> >>
+> >> Allow ourselves more slack in NR_FILE_MAPPED accounting (either count
+> >> each pte as if it mapped the whole THP, or don't count a THP's ptes
+> >> at all - you opted for the latter in the "Mlocked:" accounting),
+> >> and I suspect subpage _mapcount could be abandoned.
+> >
+> > AFAIK, partial THP unmap may need the _mapcount information of every
+> > subpage otherwise the deferred split can't know what subpages could be
+> > freed.
+
+I believe Yang Shi is right insofar as the decision on whether it's worth
+queuing for deferred split is being done based on those subpage _mapcounts.
+That is a use I had not considered, and I've given no thought to how
+important or not it is.
+
 > 
-> Unconditionally set the contents to "0" and also mark the wchan
-> field in /proc/$pid/stat with 0.
+> Could we just scan page tables of a THP during deferred split process
+> instead? Deferred split is a slow path already, so maybe it can afford
+> the extra work.
 
-I forgot to CC Qi Zheng on this patch. Now corrected. :)
+But unless I misunderstand, actually carrying out the deferred split
+already unmaps, uses migration entries, and remaps the remaining ptes:
+needing no help from subpage _mapcounts to do those, and free the rest.
 
-> This leaves kernel/sched/fair.c as the only user of get_wchan(). But
-> again, since this was broken for 4 years, was this profiling logic
-> actually doing anything useful?
-
-If the fair scheduler would actually benefit from still using get_wchan,
-I think this patch:
-https://lore.kernel.org/all/20210831083625.59554-1-zhengqi.arch@bytedance.com/
-should still be applied too.
-
-If not, we can rip get_wchan() out completely (across all
-architectures).
-
--Kees
-
-> [1] https://lore.kernel.org/lkml/20210922001537.4ktg3r2ky3b3r6yp@treble/
-> 
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Vito Caputo <vcaputo@pengaru.com>
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  arch/x86/kernel/process.c |  2 +-
->  fs/proc/array.c           | 16 +++++-----------
->  fs/proc/base.c            | 16 +---------------
->  3 files changed, 7 insertions(+), 27 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-> index 1d9463e3096b..84a4f9f3f0c2 100644
-> --- a/arch/x86/kernel/process.c
-> +++ b/arch/x86/kernel/process.c
-> @@ -937,7 +937,7 @@ unsigned long arch_randomize_brk(struct mm_struct *mm)
->  }
->  
->  /*
-> - * Called from fs/proc with a reference on @p to find the function
-> + * Called from scheduler with a reference on @p to find the function
->   * which called into schedule(). This needs to be done carefully
->   * because the task might wake up and we might look at a stack
->   * changing under us.
-> diff --git a/fs/proc/array.c b/fs/proc/array.c
-> index 49be8c8ef555..8a4ecfd901b8 100644
-> --- a/fs/proc/array.c
-> +++ b/fs/proc/array.c
-> @@ -452,7 +452,7 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
->  static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
->  			struct pid *pid, struct task_struct *task, int whole)
->  {
-> -	unsigned long vsize, eip, esp, wchan = 0;
-> +	unsigned long vsize, eip, esp;
->  	int priority, nice;
->  	int tty_pgrp = -1, tty_nr = 0;
->  	sigset_t sigign, sigcatch;
-> @@ -540,8 +540,6 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
->  		unlock_task_sighand(task, &flags);
->  	}
->  
-> -	if (permitted && (!whole || num_threads < 2))
-> -		wchan = get_wchan(task);
->  	if (!whole) {
->  		min_flt = task->min_flt;
->  		maj_flt = task->maj_flt;
-> @@ -600,16 +598,12 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
->  	seq_put_decimal_ull(m, " ", sigcatch.sig[0] & 0x7fffffffUL);
->  
->  	/*
-> -	 * We used to output the absolute kernel address, but that's an
-> -	 * information leak - so instead we show a 0/1 flag here, to signal
-> -	 * to user-space whether there's a wchan field in /proc/PID/wchan.
-> -	 *
-> +	 * We used to output the absolute kernel address, and then just
-> +	 * a symbol. But both are information leaks, so just report 0
-> +	 * to indicate there is no wchan field in /proc/$PID/wchan.
->  	 * This works with older implementations of procps as well.
->  	 */
-> -	if (wchan)
-> -		seq_puts(m, " 1");
-> -	else
-> -		seq_puts(m, " 0");
-> +	seq_puts(m, " 0");
->  
->  	seq_put_decimal_ull(m, " ", 0);
->  	seq_put_decimal_ull(m, " ", 0);
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 533d5836eb9a..52484cd77f99 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -378,24 +378,10 @@ static const struct file_operations proc_pid_cmdline_ops = {
->  };
->  
->  #ifdef CONFIG_KALLSYMS
-> -/*
-> - * Provides a wchan file via kallsyms in a proper one-value-per-file format.
-> - * Returns the resolved symbol.  If that fails, simply return the address.
-> - */
->  static int proc_pid_wchan(struct seq_file *m, struct pid_namespace *ns,
->  			  struct pid *pid, struct task_struct *task)
->  {
-> -	unsigned long wchan;
-> -
-> -	if (ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
-> -		wchan = get_wchan(task);
-> -	else
-> -		wchan = 0;
-> -
-> -	if (wchan)
-> -		seq_printf(m, "%ps", (void *) wchan);
-> -	else
-> -		seq_putc(m, '0');
-> +	seq_putc(m, '0');
->  
->  	return 0;
->  }
-> -- 
-> 2.30.2
-> 
-
--- 
-Kees Cook
+Hugh
