@@ -2,82 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B48B416086
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 16:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAE0D4160D4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 16:13:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241612AbhIWOH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 10:07:29 -0400
-Received: from cloud48395.mywhc.ca ([173.209.37.211]:50538 "EHLO
-        cloud48395.mywhc.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241554AbhIWOH1 (ORCPT
+        id S241440AbhIWOOu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 10:14:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49069 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241304AbhIWOOs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 10:07:27 -0400
-Received: from modemcable064.203-130-66.mc.videotron.ca ([66.130.203.64]:53332 helo=[192.168.1.179])
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <olivier@trillion01.com>)
-        id 1mTPMG-0000Sp-Gb; Thu, 23 Sep 2021 10:05:52 -0400
-Message-ID: <a9f88c7d9b7ac119431a343bda10da251ef7f57e.camel@trillion01.com>
-Subject: Re: [5.15-rc1 regression] io_uring: fsstress hangs in do_coredump()
- on exit
-From:   Olivier Langlois <olivier@trillion01.com>
-To:     Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date:   Thu, 23 Sep 2021 10:05:51 -0400
-In-Reply-To: <6d46951b-a7b3-0feb-3af0-aaa8ec87b87a@kernel.dk>
-References: <20210921064032.GW2361455@dread.disaster.area>
-         <d9d2255c-fbac-3259-243a-2934b7ed0293@kernel.dk>
-         <c97707cf-c543-52cd-5066-76b639f4f087@kernel.dk>
-         <20210921213552.GZ2361455@dread.disaster.area>
-         <6d46951b-a7b3-0feb-3af0-aaa8ec87b87a@kernel.dk>
-Organization: Trillion01 Inc
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4 
+        Thu, 23 Sep 2021 10:14:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1632406396;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HgIdrh9IMw3T6yu/iriHzVRHYPl5P8FCimYDVN32Xkw=;
+        b=gOXxA7rMFN0fU7J5rTA5jOlKPaqIFEbyIgSsieio3JaUiVGj2KKGJ02syOerTLMPGvMvOr
+        OOywXtJIg3UQ8OJginzTxY7DaTMU0E1Y93cD7pD6RChaJkrpjGCTSIs9VvhnbcyAhLHYtS
+        FfB1YlfjPs5j8SPhtUng7wYlbsSG6i4=
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
+ [209.85.166.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-464-Hkn8T7BIMhGmHMUZszsIow-1; Thu, 23 Sep 2021 10:13:15 -0400
+X-MC-Unique: Hkn8T7BIMhGmHMUZszsIow-1
+Received: by mail-il1-f199.google.com with SMTP id b18-20020a92dcd2000000b00234edde2da9so5524235ilr.21
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 07:13:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HgIdrh9IMw3T6yu/iriHzVRHYPl5P8FCimYDVN32Xkw=;
+        b=KIn0dYUJEiRg+XuM4HNNOUHr/wgwuKDKr9rQ2yBn3AhyMduS1N6khmqW8dXDQ/W+3j
+         n6hLXECZ9vZ716V6mb2oEUlpUqKEDGuum7U52sSGENSKheXuYkDNj5N04krH/7X9K/Wt
+         BlscZ1hCJl+V4URH9EeX+Z3vpLkGx4da/xPMmsfnLARM2u+ib2OVVwrdU04mikCj2PyD
+         x0wHI07NoiLJjAUfoZ8m/Oks7bhVVFLem4CpRrv3z1XGsGxsm0v53NJA+iHre/s+S3OS
+         CYs8CD3taERpDkosQZIrX9Srfg5RKQm9NURSCM8OC+NrXDtnKJA7yV2gTe8APPWQdw55
+         Z2ew==
+X-Gm-Message-State: AOAM533oGzb6ZFl6pp9acCCIilWujmWcGypAMEy3jNxEkFMY2XfpfhDR
+        kgbaEkDNOThpEkDlheMOaD7CvsdODTvLOvnDx+GLSyYCz/RouGqXmRjTEs1el7l1YyqbMR/z8ZK
+        1Eohl6tI3lGYv9MWN5JWKnOIoT4ykVnA2qeTd+WVziQ==
+X-Received: by 2002:a6b:5d0b:: with SMTP id r11mr4127906iob.92.1632406394556;
+        Thu, 23 Sep 2021 07:13:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzwiQDPf0cTFJ+26nFlrAJ/SIJT1pK7r2TkmdY9wUBXQSZVP/rMUDfLFdvY7yohcxljIef+KUJKtxPEL77QIBA=
+X-Received: by 2002:a6b:5d0b:: with SMTP id r11mr4127884iob.92.1632406394332;
+ Thu, 23 Sep 2021 07:13:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - trillion01.com
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@trillion01.com
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@trillion01.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20210721113057.993344-1-rbergant@redhat.com> <YSeNNnNBW7ceLuh+@casper.infradead.org>
+ <a5873099-a803-3cfa-118f-0615e7a65130@sandeen.net> <CACWnjLxtQOcpLGES1bX1cN8E4PYSx-EVk0=akMUss1pXuk1Q7A@mail.gmail.com>
+ <CALF+zOmuj2VJn=g-HwB8mbEPLtKcUC29LxLx4Vh2a_cjYw5A6A@mail.gmail.com>
+In-Reply-To: <CALF+zOmuj2VJn=g-HwB8mbEPLtKcUC29LxLx4Vh2a_cjYw5A6A@mail.gmail.com>
+From:   Roberto Bergantinos Corpas <rbergant@redhat.com>
+Date:   Thu, 23 Sep 2021 16:13:03 +0200
+Message-ID: <CACWnjLy6xfzPtxHWLrLZXguVYXMNS7mXjHZVs648yKeZsY_0nA@mail.gmail.com>
+Subject: Re: [PATCH] vfs: parse sloppy mount option in correct order
+To:     David Wysochanski <dwysocha@redhat.com>
+Cc:     Eric Sandeen <sandeen@sandeen.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2021-09-21 at 15:41 -0600, Jens Axboe wrote:
-> > 
-> > Cleaned up so it compiles and the tests run properly again. But
-> > playing whack-a-mole with signals seems kinda fragile. I was
-> > pointed
-> > to this patchset by another dev on #xfs overnight who saw the same
-> > hangs that also fixed the hang:
-> 
-> It seems sane to me - exit if there's a fatal signal, or doing core
-> dump. Don't think there should be other conditions.
-> 
-> > https://lore.kernel.org/lkml/cover.1629655338.git.olivier@trillion0
-> > 1.com/
-> > 
-> > It was posted about a month ago and I don't see any response to it
-> > on the lists...
-> 
-> That's been a long discussion, but it's a different topic really. Yes
-> it's signals, but it's not this particular issue. It'll happen to
-> work
-> around this issue, as it cancels everything post core dumping.
-> 
-I am glad to see that my patch is still on your radar.
+> Roberto, it sounded like David H was suggesting maybe an alternative
+> approach.  Did you look into that?
 
-I was starting to wonder if it did somehow slip in a floor crack or if
-I did omit to do something justifying that noone is reviewing it.
-
-I guess that everyone has been crazy busy like mad men in the last few
-weeks...
-
+No, sorry about that, it is in my todo list. i'll take a look at it
 
