@@ -2,143 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D6BE416724
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 23:10:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FCC241679D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 23:42:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243253AbhIWVMC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 17:12:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56450 "EHLO
+        id S243363AbhIWVnz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 17:43:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243231AbhIWVMB (ORCPT
+        with ESMTP id S243343AbhIWVny (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 17:12:01 -0400
-Received: from mail-ot1-x335.google.com (mail-ot1-x335.google.com [IPv6:2607:f8b0:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A2D0C061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 14:10:28 -0700 (PDT)
-Received: by mail-ot1-x335.google.com with SMTP id h9-20020a9d2f09000000b005453f95356cso10330683otb.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 14:10:28 -0700 (PDT)
+        Thu, 23 Sep 2021 17:43:54 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B11DC061756
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 14:42:22 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id 81so4155072pgb.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 14:42:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :mime-version;
-        bh=U8C7kTM2i0LULyId4CRBDB3WhhpE9MXA+bUV/5nqDCo=;
-        b=sVjEV9NF9eKm1hMfgtvsNUa3rZxxZ/Lezl4IcpqFtOVWR+5zaDUqxg/2hiXVYGCr7I
-         CQtjidNr9hwZ6tjsTvhRtQwqA2WGW79xEb5uZfAaH/b5TWCqeOnNStNWOKO+Vpo/wP6H
-         U9Ea713fUSGaeqS5WU6p2qphlKV57l9LG5ug8VBf9p8g0U62zTHdouMLa114GRaWESjO
-         blOcE5BxLA772si2ZZeJgIfj0tz2uwzgyy9dRxSeT2SsqNtdXwQ1kZom67fSsff1R26n
-         30uQDOqWJ1QpTpn1LVOshgY+6SJ/JiBChWBGGblWKwbRCCnlQ2II+jotRQ1v1p7zEydL
-         L7Lw==
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eyYDxmDuTKY2lFXVhVB2ELOLfNUN9k8MQqqdBbe1fsU=;
+        b=KCn+RIus6IoAP1X8IGB5+QqORKUYHiZhLK/h15vdz7nwgfVVFdnDeTUS6x5EfXNqEL
+         vHkl1lsNcWgI2Al+3tUFeWxzv41dExhFvYTSHffU7w2mJqYg/X4iTVmV0gzEv6VATSbN
+         GyrOI1pXzxSYSJQ2Su61Cky0Czb2vOefxnUSphokfU44py09/SjUTaxnIYLh7Be5ditG
+         13BEmHxxYJ41ceEGMeAmeMf8/NrNBgazCyMlEf22xgNKPlhHw9XSI4GKbwvwi0qv0ovI
+         KwZVg7eF6TaIoezX825StnyoRzKkWaAdbc7zT1oe51mmpWNq0/cltBhb4i62RbDpm+SV
+         N0pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:mime-version;
-        bh=U8C7kTM2i0LULyId4CRBDB3WhhpE9MXA+bUV/5nqDCo=;
-        b=tXJImJ8D7iktRcX+jzLuydXZd73FwN1aGCyo8+u9nGb2rLy6b25h75I8bUgdrT1Zhg
-         daEf+ydewN/uoy5wko/nFFG+QwMc1fAz2aP5zoxM25F0N+Cw3vdXrDGpZX3BHaGS7SUS
-         +KvBr2zWl2LN7q3YJ+DjmE2l1YZJTLaTa3yqYMwC6AvUu1Cg2mdCOrBbPfDbdq9Hk9JR
-         pP06OcAKwo1ILO6yAA0ROXgNCEvOJ5bUd7Gmw6EHfL/AeO6OhvnlilQSrmuaVNseYJ0a
-         r9YagNS7Uv/zFMfyx4yMuD6WiELtF366x+HTe98Zci9nXcYRkoGrAJnp56UkJxF89nx7
-         Wi1A==
-X-Gm-Message-State: AOAM530yoCR031URV5xs+oseqbGQN4ib/AfvQQpNjJBJ/ywePE9x9XS0
-        1q6xXMoOcXmVmLf8WkfxrqHwmg==
-X-Google-Smtp-Source: ABdhPJzwY4l4nfzUx7XxLiPKY1zK2O5YluTcKjvD7YeJim2WLDvwlsxLKjkqIRbKCKLks7jJnRSJCA==
-X-Received: by 2002:a9d:60c2:: with SMTP id b2mr707393otk.27.1632431427084;
-        Thu, 23 Sep 2021 14:10:27 -0700 (PDT)
-Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id h25sm524386otl.1.2021.09.23.14.10.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Sep 2021 14:10:26 -0700 (PDT)
-Date:   Thu, 23 Sep 2021 14:10:13 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@ripple.anvils
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-cc:     Matthew Wilcox <willy@infradead.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: Mapcount of subpages
-In-Reply-To: <20210923124502.nxfdaoiov4sysed4@box.shutemov.name>
-Message-ID: <72cc2691-5ebe-8b56-1fe8-eeb4eb4a4c74@google.com>
-References: <YUvWm6G16+ib+Wnb@moria.home.lan> <YUvzINep9m7G0ust@casper.infradead.org> <YUwNZFPGDj4Pkspx@moria.home.lan> <YUxnnq7uFBAtJ3rT@casper.infradead.org> <20210923124502.nxfdaoiov4sysed4@box.shutemov.name>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eyYDxmDuTKY2lFXVhVB2ELOLfNUN9k8MQqqdBbe1fsU=;
+        b=If58JaZfOu7VMDnI0zyqpPDgzgurZ/blKEiDCj5CFWbPmXeEIGmGNGxIZkx3G33Lex
+         tQUaFIfqYPJqTRJdxocuga81IaxD66RlhL+gulw+7dA3hq+rvED3wd8J3t+T13h7Nn0X
+         xeJZ3doMzQ5IJvAe6NozyTuuSNMtN1ulWKvdshw6XUiSyYUWX+oIPTQBSrXA1G4Oi2vi
+         cHQkecbSSvvb193szeU373FX5uh1Qe4SIP+rlz9BmVgqsw0zfTGkq5QJsoCe6x/H2Frq
+         zTPzDglEUCMdroq9bDXFzyBT1XO2P3D2LPFwkIYnPf9q78wLuNER2WQPUhh+bc62NjGx
+         KCDg==
+X-Gm-Message-State: AOAM531K4JlI7dCbtmnIW6C0CnTzSAuM49HX2uTDOQhxKdybWPm5HE50
+        /EkZpZwxBxIRfax1ThBU+uenkxCJSuVzw1fc0ciVuw==
+X-Google-Smtp-Source: ABdhPJxkWk0rZvWEVajRy7qi3gMohR9kiAbp/zbww61b9hU8jzVgph1himNBBtHY9AvwIfwrqHDuZ1oo/UvxAInWtm8=
+X-Received: by 2002:a62:7f87:0:b0:444:b077:51ef with SMTP id
+ a129-20020a627f87000000b00444b07751efmr6537475pfd.61.1632433342168; Thu, 23
+ Sep 2021 14:42:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20210914233132.3680546-1-jane.chu@oracle.com> <CAPcyv4h3KpOKgy_Cwi5fNBZmR=n1hB33mVzA3fqOY7c3G+GrMA@mail.gmail.com>
+ <516ecedc-38b9-1ae3-a784-289a30e5f6df@oracle.com> <20210915161510.GA34830@magnolia>
+ <324444b0-6121-d14c-a59f-7689bb206f58@oracle.com>
+In-Reply-To: <324444b0-6121-d14c-a59f-7689bb206f58@oracle.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 23 Sep 2021 14:42:10 -0700
+Message-ID: <CAPcyv4j8ro5rQKwbwknH+KTcc_8pGDsL8QwmJyi8fDUZE+G8JA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] dax: clear poison on the fly along pwrite
+To:     Jane Chu <jane.chu@oracle.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Weiny, Ira" <ira.weiny@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 23 Sep 2021, Kirill A. Shutemov wrote:
-> On Thu, Sep 23, 2021 at 12:40:14PM +0100, Matthew Wilcox wrote:
-> > On Thu, Sep 23, 2021 at 01:15:16AM -0400, Kent Overstreet wrote:
-> > > On Thu, Sep 23, 2021 at 04:23:12AM +0100, Matthew Wilcox wrote:
-> > > > (compiling that list reminds me that we'll need to sort out mapcount
-> > > > on subpages when it comes time to do this.  ask me if you don't know
-> > > > what i'm talking about here.)
-> > > 
-> > > I am curious why we would ever need a mapcount for just part of a page, tell me
-> > > more.
-> > 
-> > I would say Kirill is the expert here.  My understanding:
-> > 
-> > We have three different approaches to allocating 2MB pages today;
-> > anon THP, shmem THP and hugetlbfs.  Hugetlbfs can only be mapped on a
-> > 2MB boundary, so it has no special handling of mapcount [1].  Anon THP
-> > always starts out as being mapped exclusively on a 2MB boundary, but
-> > then it can be split by, eg, munmap().  If it is, then the mapcount in
-> > the head page is distributed to the subpages.
-> 
-> One more complication for anon THP is that it can be shared across fork()
-> and one process may split it while other have it mapped with PMD.
-> 
-> > Shmem THP is the tricky one.  You might have a 2MB page in the page cache,
-> > but then have processes which only ever map part of it.  Or you might
-> > have some processes mapping it with a 2MB entry and others mapping part
-> > or all of it with 4kB entries.  And then someone truncates the file to
-> > midway through this page; we split it, and now we need to figure out what
-> > the mapcount should be on each of the subpages.  We handle this by using
-> > ->mapcount on each subpage to record how many non-2MB mappings there are
-> > of that specific page and using ->compound_mapcount to record how many 2MB
-> > mappings there are of the entire 2MB page.  Then, when we split, we just
-> > need to distribute the compound_mapcount to each page to make it correct.
-> > We also have the PageDoubleMap flag to tell us whether anybody has this
-> > 2MB page mapped with 4kB entries, so we can skip all the summing of 4kB
-> > mapcounts if nobody has done that.
-> 
-> Possible future complication comes from 1G THP effort. With 1G THP we
-> would have whole hierarchy of mapcounts: 1 PUD mapcount, 512 PMD
-> mapcounts and 262144 PTE mapcounts. (That's one of the reasons I don't
-> think 1G THP is viable.)
-> 
-> Note that there are places where exact mapcount accounting is critical:
-> try_to_unmap() may finish prematurely if we underestimate mapcount and
-> overestimating mapcount may lead to superfluous CoW that breaks GUP.
+On Thu, Sep 23, 2021 at 1:56 PM Jane Chu <jane.chu@oracle.com> wrote:
+[..]
+> > This (AFAICT) has already been done for dax_zero_page_range, so I sense
+> > that Dan is trying to save you a bunch of code plumbing work by nudging
+> > you towards doing s/dax_clear_poison/dax_zero_page_range/ to this series
+> > and then you only need patches 2-3.
+>
+> Thanks Darrick for the explanation!
+> I don't mind to add DM layer support, it sounds straight forward.
+> I also like your latest patch and am wondering if the clear_poison API
+> is still of value.
 
-It is critical to know for sure when a page has been completely unmapped:
-but that does not need ptes of subpages to be accounted in the _mapcount
-field of subpages - they just need to be counted in the compound page's
-total_mapcount.
-
-I may be wrong, I never had time to prove it one way or the other: but
-I have a growing suspicion that the *only* reason for maintaining tail
-_mapcounts separately, is to maintain the NR_FILE_MAPPED count exactly
-(in the face of pmd mappings overlapping pte mappings).
-
-NR_FILE_MAPPED being used for /proc/meminfo's "Mapped:" and a couple
-of other such stats files, and for a reclaim heuristic in mm/vmscan.c.
-
-Allow ourselves more slack in NR_FILE_MAPPED accounting (either count
-each pte as if it mapped the whole THP, or don't count a THP's ptes
-at all - you opted for the latter in the "Mlocked:" accounting),
-and I suspect subpage _mapcount could be abandoned.
-
-But you have a different point in mind when you refer to superfluous
-CoW and GUP: I don't know the score there (and I think we are still in
-that halfway zone, since pte CoW was changed to depend on page_count,
-but THP CoW still depending on mapcount).
-
-Hugh
+No, the discussion about fallocate(...ZEROINIT...) has lead to a
+better solution. Instead of making error clearing a silent /
+opportunistic side-effect of writes, or trying to define new fallocate
+mode, just add a new RWF_CLEAR_HWERROR flag to pwritev2(). This allows
+for dax_direct_access() to map the page regardless of poison and
+trigger pmem_copy_from_iter() to precisely handle sub-page poison.
