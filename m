@@ -2,187 +2,258 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AB754165A2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 21:07:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D02174165F9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 21:33:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242831AbhIWTJ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 15:09:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56594 "EHLO
+        id S242929AbhIWTes (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 15:34:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242833AbhIWTJ0 (ORCPT
+        with ESMTP id S242931AbhIWTer (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 15:09:26 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FD5AC06175F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 12:07:54 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id c21so26251072edj.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 12:07:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wPA6Pkqk/8ab9RW5HZw193jEL/3tz5PDXJBPjTVJtdU=;
-        b=t1rPCUcoa8HEEbAcar5GeFzOJfqI7UfROKcFgIGMv00KZqB4bGNj1yz/Io6IQtZ9+Z
-         NusuDSgjdkYMBVPbv2Vf3ap3Dbmry0u8fptJLN2cjl3LD0YJiwSIuBvYwnbH0rpaioQF
-         s88qN4rAhn2A6bjocX70mp+3vXylM59wSuZYYWLOfUKeLAaAxF3Zwk8fzDO06/nV0A9+
-         HsVgP4O9uIzFx80rDBeCkIGHcNp1EPBKoNORwSEOCOnT2lOJA5lLnJNU7gfbyJ+41Gti
-         zD8XRqIUaiJOWJBUAoo8PMoRjsXYVqkGOPgNVTuehmVHE3E5VSK+CrreHU4ugQScViDj
-         7cjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wPA6Pkqk/8ab9RW5HZw193jEL/3tz5PDXJBPjTVJtdU=;
-        b=V16n3sCTF1AOq83ELfiXLV5ZKinWw3IMM0apv65bDE6yHlKEXQ/gR36cDBBwzef4bW
-         EhbqVV+886K4NpWQ1veeJsQ1e4CWH4HVUFBetGH7nSJnE9IZoLuZXGTlMYV5zAootf5f
-         xCoHyTOvjp84wfRMx4XMXbYEFzvHF5RipuwfLky28gHwrHdk9XbV5I2UaDkjcK791TZN
-         ZtRcML8A4lHXEA/NMTXDt24C3+3JtTDarnhJvSdKBui5GyZrnUSWs1g2Y2QUDgSkTNbq
-         1ndaNDhJC4T3fxKSNqdolqB9oFLoiE1TpjLgyLSH9Er8ePBR+34UFKKuHChkvVQWcotw
-         Acfg==
-X-Gm-Message-State: AOAM531bLx0+XDThX6gC/bH/4JLaQsO4oBb+L9PliOBIkHAJ8kaRy1ap
-        OZh6Zajel+PfaQ3GnClL5Yk6dXT2sEDA2Vr+WmT/
-X-Google-Smtp-Source: ABdhPJyHqn4EAltoJO7dd9O2Dz9oZ7VSNs98CCkrk2Tu48ZH4l2ycuGj+3CiT1FgWeVjeG1GWQpOD1Ti5aR3sTkLnrk=
-X-Received: by 2002:a50:cf48:: with SMTP id d8mr377146edk.293.1632424072663;
- Thu, 23 Sep 2021 12:07:52 -0700 (PDT)
+        Thu, 23 Sep 2021 15:34:47 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F483C061757;
+        Thu, 23 Sep 2021 12:33:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=s2m42Pnh/OCa97K3LyDzI/qGU+7pTD/Al5MsXgv5gjs=; b=KfkeN1svBuK0TE/SyNKHVijDdC
+        cD9lPeno103ShVnu4p24zTNZMWW3wSNYntjzSQLy2ITyRaebAYcaLgJLSH4qY89DQeGVuv/630b1h
+        yM6owWZfWiJ+JJ49ManwEvZdMKASGoSUoi9UZp9H6e/sYrQWcioAz0QNXbbSJi3A3A7VRBAhcLwUo
+        wuOye8coOuJ8fE02OwaiDlNXixegXZweQzkayStoqnbhbN2kenE2oGLBjUtvA6jSaVcqs/Ms/ZEg8
+        LrrjAHobeM5tv38jl8uepcx/456RNWRn0ZqVWS6AsWfK3uC/pSASAFTG527fVsbVLqxkiKgzsA/kj
+        x2CnOhuw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mTURR-006Cg7-F4; Thu, 23 Sep 2021 19:31:44 +0000
+Date:   Thu, 23 Sep 2021 20:31:33 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
+Message-ID: <YUzWFboMEpEDqK1Z@casper.infradead.org>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YTu9HIu+wWWvZLxp@moria.home.lan>
+ <YUfvK3h8w+MmirDF@casper.infradead.org>
+ <YUo20TzAlqz8Tceg@cmpxchg.org>
+ <YUpC3oV4II+u+lzQ@casper.infradead.org>
+ <YUpKbWDYqRB6eBV+@moria.home.lan>
+ <YUpNLtlbNwdjTko0@moria.home.lan>
+ <YUtHCle/giwHvLN1@cmpxchg.org>
+ <YUwTuaZlzx2WLXcG@moria.home.lan>
+ <YUzAzl5iCdfUBJqe@cmpxchg.org>
 MIME-Version: 1.0
-References: <20210913140229.24797-1-omosnace@redhat.com> <CAHC9VhRw-S+zZUFz5QFFLMBATjo+YbPAiR21jX6p7cT0T+MVLA@mail.gmail.com>
- <CAHC9VhQyejnmLn0NHQiWzikHs8ZdzAUdZ2WqNxgGM6xhJ4mvMQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhQyejnmLn0NHQiWzikHs8ZdzAUdZ2WqNxgGM6xhJ4mvMQ@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 23 Sep 2021 15:07:41 -0400
-Message-ID: <CAHC9VhSzh90kFR8wzkmwR-YZNtHGAvYyATc2R1UDaBzZ944OFg@mail.gmail.com>
-Subject: Re: [PATCH v4] lockdown,selinux: fix wrong subject in some SELinux
- lockdown checks
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org, linux-acpi@vger.kernel.org,
-        linux-cxl@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YUzAzl5iCdfUBJqe@cmpxchg.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 15, 2021 at 10:59 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Mon, Sep 13, 2021 at 5:05 PM Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > On Mon, Sep 13, 2021 at 10:02 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > >
-> > > Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
-> > > lockdown") added an implementation of the locked_down LSM hook to
-> > > SELinux, with the aim to restrict which domains are allowed to perform
-> > > operations that would breach lockdown.
-> > >
-> > > However, in several places the security_locked_down() hook is called in
-> > > situations where the current task isn't doing any action that would
-> > > directly breach lockdown, leading to SELinux checks that are basically
-> > > bogus.
-> > >
-> > > To fix this, add an explicit struct cred pointer argument to
-> > > security_lockdown() and define NULL as a special value to pass instead
-> > > of current_cred() in such situations. LSMs that take the subject
-> > > credentials into account can then fall back to some default or ignore
-> > > such calls altogether. In the SELinux lockdown hook implementation, use
-> > > SECINITSID_KERNEL in case the cred argument is NULL.
-> > >
-> > > Most of the callers are updated to pass current_cred() as the cred
-> > > pointer, thus maintaining the same behavior. The following callers are
-> > > modified to pass NULL as the cred pointer instead:
-> > > 1. arch/powerpc/xmon/xmon.c
-> > >      Seems to be some interactive debugging facility. It appears that
-> > >      the lockdown hook is called from interrupt context here, so it
-> > >      should be more appropriate to request a global lockdown decision.
-> > > 2. fs/tracefs/inode.c:tracefs_create_file()
-> > >      Here the call is used to prevent creating new tracefs entries when
-> > >      the kernel is locked down. Assumes that locking down is one-way -
-> > >      i.e. if the hook returns non-zero once, it will never return zero
-> > >      again, thus no point in creating these files. Also, the hook is
-> > >      often called by a module's init function when it is loaded by
-> > >      userspace, where it doesn't make much sense to do a check against
-> > >      the current task's creds, since the task itself doesn't actually
-> > >      use the tracing functionality (i.e. doesn't breach lockdown), just
-> > >      indirectly makes some new tracepoints available to whoever is
-> > >      authorized to use them.
-> > > 3. net/xfrm/xfrm_user.c:copy_to_user_*()
-> > >      Here a cryptographic secret is redacted based on the value returned
-> > >      from the hook. There are two possible actions that may lead here:
-> > >      a) A netlink message XFRM_MSG_GETSA with NLM_F_DUMP set - here the
-> > >         task context is relevant, since the dumped data is sent back to
-> > >         the current task.
-> > >      b) When adding/deleting/updating an SA via XFRM_MSG_xxxSA, the
-> > >         dumped SA is broadcasted to tasks subscribed to XFRM events -
-> > >         here the current task context is not relevant as it doesn't
-> > >         represent the tasks that could potentially see the secret.
-> > >      It doesn't seem worth it to try to keep using the current task's
-> > >      context in the a) case, since the eventual data leak can be
-> > >      circumvented anyway via b), plus there is no way for the task to
-> > >      indicate that it doesn't care about the actual key value, so the
-> > >      check could generate a lot of "false alert" denials with SELinux.
-> > >      Thus, let's pass NULL instead of current_cred() here faute de
-> > >      mieux.
-> > >
-> > > Improvements-suggested-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > Improvements-suggested-by: Paul Moore <paul@paul-moore.com>
-> > > Fixes: 59438b46471a ("security,lockdown,selinux: implement SELinux lockdown")
-> > > Acked-by: Dan Williams <dan.j.williams@intel.com>         [cxl]
-> > > Acked-by: Steffen Klassert <steffen.klassert@secunet.com> [xfrm]
-> > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > > ---
-> > >
-> > > v4:
-> > > - rebase on top of TODO
-> > > - fix rebase conflicts:
-> > >   * drivers/cxl/pci.c
-> > >     - trivial: the lockdown reason was corrected in mainline
-> > >   * kernel/bpf/helpers.c, kernel/trace/bpf_trace.c
-> > >     - trivial: LOCKDOWN_BPF_READ was renamed to LOCKDOWN_BPF_READ_KERNEL
-> > >       in mainline
-> > >   * kernel/power/hibernate.c
-> > >     - trivial: !secretmem_active() was added to the condition in
-> > >       hibernation_available()
-> > > - cover new security_locked_down() call in kernel/bpf/helpers.c
-> > >   (LOCKDOWN_BPF_WRITE_USER in BPF_FUNC_probe_write_user case)
-> > >
-> > > v3: https://lore.kernel.org/lkml/20210616085118.1141101-1-omosnace@redhat.com/
-> > > - add the cred argument to security_locked_down() and adapt all callers
-> > > - keep using current_cred() in BPF, as the hook calls have been shifted
-> > >   to program load time (commit ff40e51043af ("bpf, lockdown, audit: Fix
-> > >   buggy SELinux lockdown permission checks"))
-> > > - in SELinux, don't ignore hook calls where cred == NULL, but use
-> > >   SECINITSID_KERNEL as the subject instead
-> > > - update explanations in the commit message
-> > >
-> > > v2: https://lore.kernel.org/lkml/20210517092006.803332-1-omosnace@redhat.com/
-> > > - change to a single hook based on suggestions by Casey Schaufler
-> > >
-> > > v1: https://lore.kernel.org/lkml/20210507114048.138933-1-omosnace@redhat.com/
-> >
-> > The changes between v3 and v4 all seem sane to me, but I'm going to
-> > let this sit for a few days in hopes that we can collect a few more
-> > Reviewed-bys and ACKs.  If I don't see any objections I'll merge it
-> > mid-week(ish) into selinux/stable-5.15 and plan on sending it to Linus
-> > after it goes through a build/test cycle.
->
-> Time's up, I just merged this into selinux/stable-5.15 and I'll send
-> this to Linus once it passes testing.
+On Thu, Sep 23, 2021 at 02:00:46PM -0400, Johannes Weiner wrote:
+> On Thu, Sep 23, 2021 at 01:42:17AM -0400, Kent Overstreet wrote:
+> > I think something we need is an alternate view - anon_folio, perhaps - and an
+> > idea of what that would look like. Because you've been saying you don't think
+> > file pages and anymous pages are similar enough to be the same time - so if
+> > they're not, how's the code that works on both types of pages going to change to
+> > accomadate that?
+> > 
+> > Do we have if (file_folio) else if (anon_folio) both doing the same thing, but
+> > operating on different types? Some sort of subclassing going on?
+> 
+> Yeah, with subclassing and a generic type for shared code. I outlined
+> that earlier in the thread:
+> 
+> https://lore.kernel.org/all/YUo20TzAlqz8Tceg@cmpxchg.org/
+> 
+> So you have anon_page and file_page being subclasses of page - similar
+> to how filesystems have subclasses that inherit from struct inode - to
+> help refactor what is generic, what isn't, and highlight what should be.
 
-... and it's back out of selinux/stable-5.15 in spectacular fashion.
-I'll be following up with another SELinux patch today or tomorrow.
+I'm with you there.  I don't understand anon pages well enough to know
+whether splitting them out from file pages is good or bad.  I had assumed
+that if it were worth doing, they would have gained their own named
+members in the page union, but perhaps that didn't happen in order to
+keep the complexity of the union down?
 
--- 
-paul moore
-www.paul-moore.com
+> Whether we do anon_page and file_page inheriting from struct page, or
+> anon_folio and file_folio inheriting from struct folio - either would
+> work of course. Again I think it comes down to the value proposition
+> of folio as a means to clean up compound pages inside the MM code.
+> It's pretty uncontroversial that we want PAGE_SIZE assumptions gone
+> from the filesystems, networking, drivers and other random code. The
+> argument for MM code is a different one. We seem to be discussing the
+> folio abstraction as a binary thing for the Linux kernel, rather than
+> a selectively applied tool, and I think it prevents us from doing
+> proper one-by-one cost/benefit analyses on the areas of application.
+
+I wasn't originally planning on doing nearly as much as Kent has
+opened me up to.  Slab seems like a clear win to split out.  Page
+tables seem like they will be too.  I'd like to get to these structs:
+
+struct page {
+    unsigned long flags;
+    unsigned long compound_head;
+    union {
+        struct { /* First tail page only */
+            unsigned char compound_dtor;
+            unsigned char compound_order;
+            atomic_t compound_mapcount;
+            unsigned int compound_nr;
+        };
+        struct { /* Second tail page only */
+            atomic_t hpage_pinned_refcount;
+            struct list_head deferred_list;
+        };
+        unsigned long padding1[5];
+    };
+    unsigned int padding2[2];
+#ifdef CONFIG_MEMCG
+    unsigned long padding3;
+#endif
+#ifdef WANT_PAGE_VIRTUAL
+    void *virtual;
+#endif
+#ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
+    int _last_cpupid;
+#endif
+};
+
+struct slab {
+... slab specific stuff here ...
+};
+
+struct page_table {
+... pgtable stuff here ...
+};
+
+struct folio {
+    unsigned long flags;
+    union {
+        struct {
+            struct list_head lru;
+            struct address_space *mapping;
+            pgoff_t index;
+            void *private;
+        };
+        struct {
+... net pool here ...
+        };
+        struct {
+... zone device here ...
+        };
+    };
+    atomic_t _mapcount;
+    atomic_t _refcount;
+#ifdef CONFIG_MEMCG
+    unsigned long memcg_data;
+#endif
+};
+
+ie a 'struct page' contains no information on its own.  You have to
+go to the compound_head page (cast to the appropriate type) to find
+the information.  What Kent is proposing is exciting, but I think
+further off.
+
+> > I was agreeing with you that slab/network pools etc. shouldn't be folios - that
+> > folios shouldn't be a replacement for compound pages. But I think we're going to
+> > need a serious alternative proposal for anonymous pages if you're still against
+> > them becoming folios, especially because according to Kirill they're already
+> > working on that (and you have to admit transhuge pages did introduce a mess that
+> > they will help with...)
+> 
+> I think we need a better analysis of that mess and a concept where
+> tailpages are and should be, if that is the justification for the MM
+> conversion.
+> 
+> The motivation is that we have a ton of compound_head() calls in
+> places we don't need them. No argument there, I think.
+> 
+> But the explanation for going with whitelisting - the most invasive
+> approach possible (and which leaves more than one person "unenthused"
+> about that part of the patches) - is that it's difficult and error
+> prone to identify which ones are necessary and which ones are not. And
+> maybe that we'll continue to have a widespread hybrid existence of
+> head and tail pages that will continue to require clarification.
+> 
+> But that seems to be an article of faith. It's implied by the
+> approach, but this may or may not be the case.
+> 
+> I certainly think it used to be messier in the past. But strides have
+> been made already to narrow the channels through which tail pages can
+> actually enter the code. Certainly we can rule out entire MM
+> subsystems and simply declare their compound_head() usage unnecessary
+> with little risk or ambiguity.
+> 
+> Then the question becomes which ones are legit. Whether anybody
+> outside the page allocator ever needs to *see* a tailpage struct page
+> to begin with. (Arguably that bit in __split_huge_page_tail() could be
+> a page allocator function; the pte handling is pfn-based except for
+> the mapcount management which could be encapsulated; the collapse code
+> uses vm_normal_page() but follows it quickly by compound_head() - and
+> arguably a tailpage generally isn't a "normal" vm page, so a new
+> pfn_to_normal_page() could encapsulate the compound_head()). Because
+> if not, seeing struct page in MM code isn't nearly as ambiguous as is
+> being implied. You would never have to worry about it - unless you are
+> in fact the page allocator.
+> 
+> So if this problem could be solved by making tail pages an
+> encapsulated page_alloc thing, and chasing down the rest of
+> find_subpage() callers (which needs to happen anyway), I don't think a
+> wholesale folio conversion of this subsystem would be justified.
+> 
+> A more in-depth analyses of where and how we need to deal with
+> tailpages - laying out the data structures that hold them and code
+> entry points for them - would go a long way for making the case for
+> folios. And might convince reluctant people to get behind the effort.
+
+OK.  So filesystems still need to deal with pages in some places.  One
+place is at the bottom of the filesystem where memory gets packaged into
+BIOs or SKBs to eventually participate in DMA:
+
+struct bio_vec {
+        struct page     *bv_page;
+        unsigned int    bv_len;
+        unsigned int    bv_offset;
+};
+
+That could become a folio (or Christoph's preferred option, a
+phys_addr_t), but this is really an entirely different role for struct
+page; it's just carrying the address of some memory for I/O to happen to.
+Nobody looks at the contents of the struct page until it goes back to
+the filesystem, at which point it clears the writeback bit or marks
+it uptodate.
+
+The other place that definitely still needs to be a struct page is
+
+struct vm_fault {
+...
+        struct page *page;              /* ->fault handlers should return a
+                                         * page here, unless VM_FAULT_NOPAGE
+                                         * is set (which is also implied by
+                                         * VM_FAULT_ERROR).
+                                         */
+...
+};
+
+Most filesystems use filemap_fault(), which handles this, but this affects
+device drivers too.  We can't return a folio here because we need to
+know which page corresponds to the address that took the fault.  We can
+deduce it for filesystems, because we know how folios are allocated for
+the page cache, but device drivers can map memory absolutely arbitrarily,
+so there's no way to reconstruct that information.
+
+Again, this could be a physical address (or a pfn), but we have it as a
+page because it's locked and we're going to unlock it after mapping it.
+So this is actually a place where we'll need to get a page from the
+filesystem, convert to a folio and call folio operations on it.  This
+is one of the reasons that lock_page() / unlock_page() contain the
+embedded compound_head() today.
