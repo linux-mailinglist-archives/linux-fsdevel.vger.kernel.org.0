@@ -2,248 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A8AD1416597
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 21:03:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AB754165A2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 21:07:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240287AbhIWTEe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 15:04:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36353 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237009AbhIWTEd (ORCPT
+        id S242831AbhIWTJ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 15:09:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56594 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242833AbhIWTJ0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 15:04:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1632423781;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lUP5OAVV1nL0nFic4jaofUG3hyAnY/yiu5K5BrRGBvY=;
-        b=FcIR2BNs8rhDJHHX5pLq/RuTKAhKaR1LlsOe0i85+VPROH/Y12DwV020JXnI9NDT9jDCUL
-        ZuA8uVdrZRfBb1PCYILFY1MxNAWUNW5Uc5GtfpazHJ0/VDncvj2zg9oAftgq+merYo2W0K
-        MUHAcidkFhUDl4dGuV+w4A3K8HoKZwI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-70-OkP6lZzMOdSxYPJvjiN37w-1; Thu, 23 Sep 2021 15:02:59 -0400
-X-MC-Unique: OkP6lZzMOdSxYPJvjiN37w-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AA3F610B744C;
-        Thu, 23 Sep 2021 19:02:58 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.17.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0059119C59;
-        Thu, 23 Sep 2021 19:02:41 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 42C93222E4F; Thu, 23 Sep 2021 15:02:41 -0400 (EDT)
-Date:   Thu, 23 Sep 2021 15:02:41 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Jeffle Xu <jefflexu@linux.alibaba.com>
-Cc:     stefanha@redhat.com, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
-Subject: Re: [PATCH v5 2/5] fuse: make DAX mount option a tri-state
-Message-ID: <YUzPUYU8R5LL4mzU@redhat.com>
-References: <20210923092526.72341-1-jefflexu@linux.alibaba.com>
- <20210923092526.72341-3-jefflexu@linux.alibaba.com>
+        Thu, 23 Sep 2021 15:09:26 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FD5AC06175F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 12:07:54 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id c21so26251072edj.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 12:07:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wPA6Pkqk/8ab9RW5HZw193jEL/3tz5PDXJBPjTVJtdU=;
+        b=t1rPCUcoa8HEEbAcar5GeFzOJfqI7UfROKcFgIGMv00KZqB4bGNj1yz/Io6IQtZ9+Z
+         NusuDSgjdkYMBVPbv2Vf3ap3Dbmry0u8fptJLN2cjl3LD0YJiwSIuBvYwnbH0rpaioQF
+         s88qN4rAhn2A6bjocX70mp+3vXylM59wSuZYYWLOfUKeLAaAxF3Zwk8fzDO06/nV0A9+
+         HsVgP4O9uIzFx80rDBeCkIGHcNp1EPBKoNORwSEOCOnT2lOJA5lLnJNU7gfbyJ+41Gti
+         zD8XRqIUaiJOWJBUAoo8PMoRjsXYVqkGOPgNVTuehmVHE3E5VSK+CrreHU4ugQScViDj
+         7cjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wPA6Pkqk/8ab9RW5HZw193jEL/3tz5PDXJBPjTVJtdU=;
+        b=V16n3sCTF1AOq83ELfiXLV5ZKinWw3IMM0apv65bDE6yHlKEXQ/gR36cDBBwzef4bW
+         EhbqVV+886K4NpWQ1veeJsQ1e4CWH4HVUFBetGH7nSJnE9IZoLuZXGTlMYV5zAootf5f
+         xCoHyTOvjp84wfRMx4XMXbYEFzvHF5RipuwfLky28gHwrHdk9XbV5I2UaDkjcK791TZN
+         ZtRcML8A4lHXEA/NMTXDt24C3+3JtTDarnhJvSdKBui5GyZrnUSWs1g2Y2QUDgSkTNbq
+         1ndaNDhJC4T3fxKSNqdolqB9oFLoiE1TpjLgyLSH9Er8ePBR+34UFKKuHChkvVQWcotw
+         Acfg==
+X-Gm-Message-State: AOAM531bLx0+XDThX6gC/bH/4JLaQsO4oBb+L9PliOBIkHAJ8kaRy1ap
+        OZh6Zajel+PfaQ3GnClL5Yk6dXT2sEDA2Vr+WmT/
+X-Google-Smtp-Source: ABdhPJyHqn4EAltoJO7dd9O2Dz9oZ7VSNs98CCkrk2Tu48ZH4l2ycuGj+3CiT1FgWeVjeG1GWQpOD1Ti5aR3sTkLnrk=
+X-Received: by 2002:a50:cf48:: with SMTP id d8mr377146edk.293.1632424072663;
+ Thu, 23 Sep 2021 12:07:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210923092526.72341-3-jefflexu@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <20210913140229.24797-1-omosnace@redhat.com> <CAHC9VhRw-S+zZUFz5QFFLMBATjo+YbPAiR21jX6p7cT0T+MVLA@mail.gmail.com>
+ <CAHC9VhQyejnmLn0NHQiWzikHs8ZdzAUdZ2WqNxgGM6xhJ4mvMQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhQyejnmLn0NHQiWzikHs8ZdzAUdZ2WqNxgGM6xhJ4mvMQ@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 23 Sep 2021 15:07:41 -0400
+Message-ID: <CAHC9VhSzh90kFR8wzkmwR-YZNtHGAvYyATc2R1UDaBzZ944OFg@mail.gmail.com>
+Subject: Re: [PATCH v4] lockdown,selinux: fix wrong subject in some SELinux
+ lockdown checks
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org, linux-acpi@vger.kernel.org,
+        linux-cxl@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        bpf@vger.kernel.org, netdev@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 23, 2021 at 05:25:23PM +0800, Jeffle Xu wrote:
-> We add 'always', 'never', and 'inode' (default). '-o dax' continues to
-> operate the same which is equivalent to 'always'. To be consistemt with
-> ext4/xfs's tri-state mount option, when neither '-o dax' nor '-o dax='
-> option is specified, the default behaviour is equal to 'inode'.
-
-So will "-o dax=inode" be used for per file DAX where dax mode comes
-from server?
-
-I think we discussed this. It will be better to leave "-o dax=inode"
-alone. It should be used when we are reading dax status from file
-attr (like ext4 and xfs). 
-
-And probably create separate option say "-o dax=server" where server
-specifies which inode should use dax.
-
-Otherwise it will be very confusing. People familiar with "-o dax=inode"
-on ext4/xfs will expect file attr to work and that's not what we
-are implementing, IIUC.
-
-Vivek
-
+On Wed, Sep 15, 2021 at 10:59 PM Paul Moore <paul@paul-moore.com> wrote:
 >
+> On Mon, Sep 13, 2021 at 5:05 PM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > On Mon, Sep 13, 2021 at 10:02 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > >
+> > > Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
+> > > lockdown") added an implementation of the locked_down LSM hook to
+> > > SELinux, with the aim to restrict which domains are allowed to perform
+> > > operations that would breach lockdown.
+> > >
+> > > However, in several places the security_locked_down() hook is called in
+> > > situations where the current task isn't doing any action that would
+> > > directly breach lockdown, leading to SELinux checks that are basically
+> > > bogus.
+> > >
+> > > To fix this, add an explicit struct cred pointer argument to
+> > > security_lockdown() and define NULL as a special value to pass instead
+> > > of current_cred() in such situations. LSMs that take the subject
+> > > credentials into account can then fall back to some default or ignore
+> > > such calls altogether. In the SELinux lockdown hook implementation, use
+> > > SECINITSID_KERNEL in case the cred argument is NULL.
+> > >
+> > > Most of the callers are updated to pass current_cred() as the cred
+> > > pointer, thus maintaining the same behavior. The following callers are
+> > > modified to pass NULL as the cred pointer instead:
+> > > 1. arch/powerpc/xmon/xmon.c
+> > >      Seems to be some interactive debugging facility. It appears that
+> > >      the lockdown hook is called from interrupt context here, so it
+> > >      should be more appropriate to request a global lockdown decision.
+> > > 2. fs/tracefs/inode.c:tracefs_create_file()
+> > >      Here the call is used to prevent creating new tracefs entries when
+> > >      the kernel is locked down. Assumes that locking down is one-way -
+> > >      i.e. if the hook returns non-zero once, it will never return zero
+> > >      again, thus no point in creating these files. Also, the hook is
+> > >      often called by a module's init function when it is loaded by
+> > >      userspace, where it doesn't make much sense to do a check against
+> > >      the current task's creds, since the task itself doesn't actually
+> > >      use the tracing functionality (i.e. doesn't breach lockdown), just
+> > >      indirectly makes some new tracepoints available to whoever is
+> > >      authorized to use them.
+> > > 3. net/xfrm/xfrm_user.c:copy_to_user_*()
+> > >      Here a cryptographic secret is redacted based on the value returned
+> > >      from the hook. There are two possible actions that may lead here:
+> > >      a) A netlink message XFRM_MSG_GETSA with NLM_F_DUMP set - here the
+> > >         task context is relevant, since the dumped data is sent back to
+> > >         the current task.
+> > >      b) When adding/deleting/updating an SA via XFRM_MSG_xxxSA, the
+> > >         dumped SA is broadcasted to tasks subscribed to XFRM events -
+> > >         here the current task context is not relevant as it doesn't
+> > >         represent the tasks that could potentially see the secret.
+> > >      It doesn't seem worth it to try to keep using the current task's
+> > >      context in the a) case, since the eventual data leak can be
+> > >      circumvented anyway via b), plus there is no way for the task to
+> > >      indicate that it doesn't care about the actual key value, so the
+> > >      check could generate a lot of "false alert" denials with SELinux.
+> > >      Thus, let's pass NULL instead of current_cred() here faute de
+> > >      mieux.
+> > >
+> > > Improvements-suggested-by: Casey Schaufler <casey@schaufler-ca.com>
+> > > Improvements-suggested-by: Paul Moore <paul@paul-moore.com>
+> > > Fixes: 59438b46471a ("security,lockdown,selinux: implement SELinux lockdown")
+> > > Acked-by: Dan Williams <dan.j.williams@intel.com>         [cxl]
+> > > Acked-by: Steffen Klassert <steffen.klassert@secunet.com> [xfrm]
+> > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > > ---
+> > >
+> > > v4:
+> > > - rebase on top of TODO
+> > > - fix rebase conflicts:
+> > >   * drivers/cxl/pci.c
+> > >     - trivial: the lockdown reason was corrected in mainline
+> > >   * kernel/bpf/helpers.c, kernel/trace/bpf_trace.c
+> > >     - trivial: LOCKDOWN_BPF_READ was renamed to LOCKDOWN_BPF_READ_KERNEL
+> > >       in mainline
+> > >   * kernel/power/hibernate.c
+> > >     - trivial: !secretmem_active() was added to the condition in
+> > >       hibernation_available()
+> > > - cover new security_locked_down() call in kernel/bpf/helpers.c
+> > >   (LOCKDOWN_BPF_WRITE_USER in BPF_FUNC_probe_write_user case)
+> > >
+> > > v3: https://lore.kernel.org/lkml/20210616085118.1141101-1-omosnace@redhat.com/
+> > > - add the cred argument to security_locked_down() and adapt all callers
+> > > - keep using current_cred() in BPF, as the hook calls have been shifted
+> > >   to program load time (commit ff40e51043af ("bpf, lockdown, audit: Fix
+> > >   buggy SELinux lockdown permission checks"))
+> > > - in SELinux, don't ignore hook calls where cred == NULL, but use
+> > >   SECINITSID_KERNEL as the subject instead
+> > > - update explanations in the commit message
+> > >
+> > > v2: https://lore.kernel.org/lkml/20210517092006.803332-1-omosnace@redhat.com/
+> > > - change to a single hook based on suggestions by Casey Schaufler
+> > >
+> > > v1: https://lore.kernel.org/lkml/20210507114048.138933-1-omosnace@redhat.com/
+> >
+> > The changes between v3 and v4 all seem sane to me, but I'm going to
+> > let this sit for a few days in hopes that we can collect a few more
+> > Reviewed-bys and ACKs.  If I don't see any objections I'll merge it
+> > mid-week(ish) into selinux/stable-5.15 and plan on sending it to Linus
+> > after it goes through a build/test cycle.
+>
+> Time's up, I just merged this into selinux/stable-5.15 and I'll send
+> this to Linus once it passes testing.
 
-> By the time this patch is applied, 'inode' mode is actually equal to
-> 'always' mode, before the per-file DAX flag is introduced in the
-> following patch.
-> 
-> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-> ---
->  fs/fuse/dax.c       |  9 +++++++--
->  fs/fuse/fuse_i.h    | 14 ++++++++++++--
->  fs/fuse/inode.c     | 10 +++++++---
->  fs/fuse/virtio_fs.c | 16 ++++++++++++++--
->  4 files changed, 40 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
-> index 28db96ea23e2..e87ddded38c7 100644
-> --- a/fs/fuse/dax.c
-> +++ b/fs/fuse/dax.c
-> @@ -1282,11 +1282,14 @@ static int fuse_dax_mem_range_init(struct fuse_conn_dax *fcd)
->  	return ret;
->  }
->  
-> -int fuse_dax_conn_alloc(struct fuse_conn *fc, struct dax_device *dax_dev)
-> +int fuse_dax_conn_alloc(struct fuse_conn *fc, enum fuse_dax_mode dax_mode,
-> +			struct dax_device *dax_dev)
->  {
->  	struct fuse_conn_dax *fcd;
->  	int err;
->  
-> +	fc->dax_mode = dax_mode;
-> +
->  	if (!dax_dev)
->  		return 0;
->  
-> @@ -1333,8 +1336,10 @@ static const struct address_space_operations fuse_dax_file_aops  = {
->  static bool fuse_should_enable_dax(struct inode *inode)
->  {
->  	struct fuse_conn *fc = get_fuse_conn(inode);
-> +	unsigned int dax_mode = fc->dax_mode;
->  
-> -	if (!fc->dax)
-> +	/* If 'dax=always/inode', fc->dax couldn't be NULL */
-> +	if (dax_mode == FUSE_DAX_NEVER)
->  		return false;
->  
->  	return true;
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 319596df5dc6..5abf9749923f 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -480,6 +480,12 @@ struct fuse_dev {
->  	struct list_head entry;
->  };
->  
-> +enum fuse_dax_mode {
-> +	FUSE_DAX_INODE,
-> +	FUSE_DAX_ALWAYS,
-> +	FUSE_DAX_NEVER,
-> +};
-> +
->  struct fuse_fs_context {
->  	int fd;
->  	struct file *file;
-> @@ -497,7 +503,7 @@ struct fuse_fs_context {
->  	bool no_control:1;
->  	bool no_force_umount:1;
->  	bool legacy_opts_show:1;
-> -	bool dax:1;
-> +	enum fuse_dax_mode dax_mode;
->  	unsigned int max_read;
->  	unsigned int blksize;
->  	const char *subtype;
-> @@ -802,6 +808,9 @@ struct fuse_conn {
->  	struct list_head devices;
->  
->  #ifdef CONFIG_FUSE_DAX
-> +	/* dax mode: FUSE_DAX_* (always, never or per-file) */
-> +	enum fuse_dax_mode dax_mode;
-> +
->  	/* Dax specific conn data, non-NULL if DAX is enabled */
->  	struct fuse_conn_dax *dax;
->  #endif
-> @@ -1255,7 +1264,8 @@ ssize_t fuse_dax_read_iter(struct kiocb *iocb, struct iov_iter *to);
->  ssize_t fuse_dax_write_iter(struct kiocb *iocb, struct iov_iter *from);
->  int fuse_dax_mmap(struct file *file, struct vm_area_struct *vma);
->  int fuse_dax_break_layouts(struct inode *inode, u64 dmap_start, u64 dmap_end);
-> -int fuse_dax_conn_alloc(struct fuse_conn *fc, struct dax_device *dax_dev);
-> +int fuse_dax_conn_alloc(struct fuse_conn *fc, enum fuse_dax_mode mode,
-> +			struct dax_device *dax_dev);
->  void fuse_dax_conn_free(struct fuse_conn *fc);
->  bool fuse_dax_inode_alloc(struct super_block *sb, struct fuse_inode *fi);
->  void fuse_dax_inode_init(struct inode *inode);
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 36cd03114b6d..b4b41683e97e 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -742,8 +742,12 @@ static int fuse_show_options(struct seq_file *m, struct dentry *root)
->  			seq_printf(m, ",blksize=%lu", sb->s_blocksize);
->  	}
->  #ifdef CONFIG_FUSE_DAX
-> -	if (fc->dax)
-> -		seq_puts(m, ",dax");
-> +	if (fc->dax_mode == FUSE_DAX_ALWAYS)
-> +		seq_puts(m, ",dax=always");
-> +	else if (fc->dax_mode == FUSE_DAX_NEVER)
-> +		seq_puts(m, ",dax=never");
-> +	else if (fc->dax_mode == FUSE_DAX_INODE)
-> +		seq_puts(m, ",dax=inode");
->  #endif
->  
->  	return 0;
-> @@ -1493,7 +1497,7 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
->  	sb->s_subtype = ctx->subtype;
->  	ctx->subtype = NULL;
->  	if (IS_ENABLED(CONFIG_FUSE_DAX)) {
-> -		err = fuse_dax_conn_alloc(fc, ctx->dax_dev);
-> +		err = fuse_dax_conn_alloc(fc, ctx->dax_mode, ctx->dax_dev);
->  		if (err)
->  			goto err;
->  	}
-> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> index 0ad89c6629d7..58cfbaeb4a7d 100644
-> --- a/fs/fuse/virtio_fs.c
-> +++ b/fs/fuse/virtio_fs.c
-> @@ -88,12 +88,21 @@ struct virtio_fs_req_work {
->  static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
->  				 struct fuse_req *req, bool in_flight);
->  
-> +static const struct constant_table dax_param_enums[] = {
-> +	{"inode",	FUSE_DAX_INODE },
-> +	{"always",	FUSE_DAX_ALWAYS },
-> +	{"never",	FUSE_DAX_NEVER },
-> +	{}
-> +};
-> +
->  enum {
->  	OPT_DAX,
-> +	OPT_DAX_ENUM,
->  };
->  
->  static const struct fs_parameter_spec virtio_fs_parameters[] = {
->  	fsparam_flag("dax", OPT_DAX),
-> +	fsparam_enum("dax", OPT_DAX_ENUM, dax_param_enums),
->  	{}
->  };
->  
-> @@ -110,7 +119,10 @@ static int virtio_fs_parse_param(struct fs_context *fsc,
->  
->  	switch (opt) {
->  	case OPT_DAX:
-> -		ctx->dax = 1;
-> +		ctx->dax_mode = FUSE_DAX_ALWAYS;
-> +		break;
-> +	case OPT_DAX_ENUM:
-> +		ctx->dax_mode = result.uint_32;
->  		break;
->  	default:
->  		return -EINVAL;
-> @@ -1326,7 +1338,7 @@ static int virtio_fs_fill_super(struct super_block *sb, struct fs_context *fsc)
->  
->  	/* virtiofs allocates and installs its own fuse devices */
->  	ctx->fudptr = NULL;
-> -	if (ctx->dax) {
-> +	if (ctx->dax_mode != FUSE_DAX_NEVER) {
->  		if (!fs->dax_dev) {
->  			err = -EINVAL;
->  			pr_err("virtio-fs: dax can't be enabled as filesystem"
-> -- 
-> 2.27.0
-> 
+... and it's back out of selinux/stable-5.15 in spectacular fashion.
+I'll be following up with another SELinux patch today or tomorrow.
 
+-- 
+paul moore
+www.paul-moore.com
