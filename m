@@ -2,174 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D0D61416437
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 19:16:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3507A416440
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 19:20:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242279AbhIWRRf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 13:17:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59210 "EHLO
+        id S242206AbhIWRVf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 13:21:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242474AbhIWRRb (ORCPT
+        with ESMTP id S235318AbhIWRVe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 13:17:31 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32A7EC061574;
-        Thu, 23 Sep 2021 10:15:59 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id v10so21026711edj.10;
-        Thu, 23 Sep 2021 10:15:59 -0700 (PDT)
+        Thu, 23 Sep 2021 13:21:34 -0400
+Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 934C6C061574;
+        Thu, 23 Sep 2021 10:20:02 -0700 (PDT)
+Received: by mail-qt1-x82c.google.com with SMTP id x9so6969621qtv.0;
+        Thu, 23 Sep 2021 10:20:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UHYH6Vrz0laBG66JYJnRRiuzY/WhU/BobO0byYWnoRw=;
-        b=XNQffNsPyyD+iqO4CgNLqqilvEBuxRZ4ZByo+ePQFgaw8IItw6RCN02BUMs4QJ1oca
-         GeUY2dFljtG+qZM3ZV6QW+DGUo41vM544PU4TcDUz+4a2FhsT6GUvzzqbsmo0YgRbg0T
-         JVLg20IFfpZX1CLCmMRWAnPBddvzUhFtlwank65jKj/ZS6h+hCIbR+WouCANhfRwwPJp
-         HaXfG/J+1GijdoSu4R9XX3+tabSjdBAYWQi1Ongr8Yp4p1rAWZvspxCUEG5nn67SOklN
-         QN3LnCSGbZ6d+fu/PdAaGFGb1M6JF2hKoiDni30WqBqBLz+3K4Q3dKAzqjDZenpDEitQ
-         WcIw==
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=i/FJO8tUDM+bCLrLuDiTK4JNa8RKTqG1P9QwB4CtvdA=;
+        b=dfKjYMKOJsbt58dIzAohG+sX87IerrWtNuCK6+ugwnPYaW3aHnS5AaqPGXiCRM1cCl
+         jeo8pSxroC9vh4s5owFyAI432kcqbjB8Zvz1ZQceEf86HZelXxU+bqcBYiL0xFCWBJY4
+         T8KGR5M+rW2II6OSgz1WE5U/8hsMjIiBC4o4AFpKKjM4/TihmPyag8oZ0PUo1PqtzA4a
+         ISoTwSGXVc5LBNWizAsOF0mjuwTkaJeo2ZcFel4q+hKXkbZmf4Aq/sdBgTRZ8YsppGM6
+         BBlL7o+Qu335cIKmY5gVD7GnfS3cT04rCAJu2Q16KDA/Ef/WXVr4yxioX2q2/qOYV1Sr
+         o0oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UHYH6Vrz0laBG66JYJnRRiuzY/WhU/BobO0byYWnoRw=;
-        b=KaSEe6LR08Wc6VB7oqz8NIcU7SaaG5CDpMqHrUkFT27xuBEb/b7OjGFFANYHTNCrkv
-         Mdy5NxnvKugKqAxu/1I/PS4I3kyXUj9jIUCKxvVFT8HSl/wAtuVlKxbgknJF1YlaP0qx
-         Z7jnPFz0pGya38wzHSk84REpuqhHgMZoRAUYXuBtLhCN20wEq7uimhksUMQ3GKrX1dAJ
-         v04BLvbn/yQkpQqlsk0gS2KzU+JNKn+kkAl7J22BNM0ucaAHg/9AZVaqpSWfwSP3cwCI
-         P7R0aGz15R6dG+yeSUWeDRSlAFIlqM15xjqvAzib8gz08narANHt3MTV2lj5ir1wMm6d
-         CIMw==
-X-Gm-Message-State: AOAM532Cc2mtWW1big4/rQqF9gcgvWn42Nuvto8beJ/XoC5Og3kHtWqp
-        BhrKYsuwKQwZgi1ucODSwYWJkQErK3R4pZGPJ6Y=
-X-Google-Smtp-Source: ABdhPJxSv7vP1ns4r2NSsMM2sG4AnMbhdMd2u2JGPaOtI9CbdhwHffXf6dgVUZYIL+N/lkjxHxnDfuoEWBS/zZzrLiw=
-X-Received: by 2002:a05:6402:16c8:: with SMTP id r8mr6836144edx.101.1632417357693;
- Thu, 23 Sep 2021 10:15:57 -0700 (PDT)
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=i/FJO8tUDM+bCLrLuDiTK4JNa8RKTqG1P9QwB4CtvdA=;
+        b=ra0mt/MhPgeHkT2OsP/YuB6i9OFpMY+HSwlMRvw/eTuB7GvggZhBytxtaHbsXm3V7i
+         HH3LKb4y8Kcrlxl7xYGGPVmPExjTD2YLuNB+UNUSVreMBVPba8oKkYMZGuOFEs266slB
+         3vExELNtlpYj0BH2Odg0Uv26CY0ebCvKnnG3eGWx6I8GjHBfHy6Rx4mWLAajAgSMD+TG
+         4Ciq+lg6XiUMWM9vF7LVyvKgKA2ktLSrK+K2X1nwMr3eCFK2FMtE7T6nMZYyKBjhLxOk
+         FN6F8ldtdlXDU60EUl9N6IYpDC8F8EUhm/MurynHvLOcYg6OJk4rI/FhHFLCQHv695hD
+         8sCg==
+X-Gm-Message-State: AOAM530ZHS2vfUzc3hG7clz/UhYhMATKR6VD9geiHABmRY75Rs9KyClH
+        el3qYPnbTfO0YDTChetKEz0=
+X-Google-Smtp-Source: ABdhPJw4mVXU2bbawRdtEGuee0DWU8pg3BEgYy+b6z7UmtdWviI1vIOsHBJBzH31JqZlW1OyF2AT3w==
+X-Received: by 2002:ac8:5c4c:: with SMTP id j12mr6068396qtj.127.1632417601737;
+        Thu, 23 Sep 2021 10:20:01 -0700 (PDT)
+Received: from ?IPv6:2620:6e:6000:3100:99db:7190:fb26:bcb0? ([2620:6e:6000:3100:99db:7190:fb26:bcb0])
+        by smtp.gmail.com with ESMTPSA id 188sm4574046qkm.21.2021.09.23.10.20.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Sep 2021 10:20:01 -0700 (PDT)
+Subject: Re: [syzbot] possible deadlock in f_getown
+To:     syzbot <syzbot+8073030e235a5a84dd31@syzkaller.appspotmail.com>,
+        asm@florahospitality.com, bfields@fieldses.org,
+        boqun.feng@gmail.com, jlayton@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        will@kernel.org
+References: <000000000000ed2e6705cca36282@google.com>
+From:   Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
+Message-ID: <ff026440-590e-6268-6ced-326f4da27be2@gmail.com>
+Date:   Thu, 23 Sep 2021 13:20:00 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <20210923032830.314328-1-shy828301@gmail.com> <20210923032830.314328-2-shy828301@gmail.com>
- <20210923143901.mdc6rejuh7hmr5vh@box.shutemov.name>
-In-Reply-To: <20210923143901.mdc6rejuh7hmr5vh@box.shutemov.name>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Thu, 23 Sep 2021 10:15:45 -0700
-Message-ID: <CAHbLzkqb-6a7c=C8WF0G0X2yCey=t7OoL-oW2Y0CpM0MpgJbBg@mail.gmail.com>
-Subject: Re: [v2 PATCH 1/5] mm: filemap: check if THP has hwpoisoned subpage
- for PMD page fault
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Peter Xu <peterx@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <000000000000ed2e6705cca36282@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 23, 2021 at 7:39 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
->
-> On Wed, Sep 22, 2021 at 08:28:26PM -0700, Yang Shi wrote:
-> > When handling shmem page fault the THP with corrupted subpage could be PMD
-> > mapped if certain conditions are satisfied.  But kernel is supposed to
-> > send SIGBUS when trying to map hwpoisoned page.
-> >
-> > There are two paths which may do PMD map: fault around and regular fault.
-> >
-> > Before commit f9ce0be71d1f ("mm: Cleanup faultaround and finish_fault() codepaths")
-> > the thing was even worse in fault around path.  The THP could be PMD mapped as
-> > long as the VMA fits regardless what subpage is accessed and corrupted.  After
-> > this commit as long as head page is not corrupted the THP could be PMD mapped.
-> >
-> > In the regulat fault path the THP could be PMD mapped as long as the corrupted
->
-> s/regulat/regular/
->
-> > page is not accessed and the VMA fits.
-> >
-> > This loophole could be fixed by iterating every subpage to check if any
-> > of them is hwpoisoned or not, but it is somewhat costly in page fault path.
-> >
-> > So introduce a new page flag called HasHWPoisoned on the first tail page.  It
-> > indicates the THP has hwpoisoned subpage(s).  It is set if any subpage of THP
-> > is found hwpoisoned by memory failure and cleared when the THP is freed or
-> > split.
-> >
-> > Cc: <stable@vger.kernel.org>
-> > Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > ---
->
-> ...
->
-> > diff --git a/mm/filemap.c b/mm/filemap.c
-> > index dae481293b5d..740b7afe159a 100644
-> > --- a/mm/filemap.c
-> > +++ b/mm/filemap.c
-> > @@ -3195,12 +3195,14 @@ static bool filemap_map_pmd(struct vm_fault *vmf, struct page *page)
-> >       }
-> >
-> >       if (pmd_none(*vmf->pmd) && PageTransHuge(page)) {
-> > -         vm_fault_t ret = do_set_pmd(vmf, page);
-> > -         if (!ret) {
-> > -                 /* The page is mapped successfully, reference consumed. */
-> > -                 unlock_page(page);
-> > -                 return true;
-> > -         }
-> > +             vm_fault_t ret = do_set_pmd(vmf, page);
-> > +             if (ret == VM_FAULT_FALLBACK)
-> > +                     goto out;
->
-> Hm.. What? I don't get it. Who will establish page table in the pmd then?
+On 23/9/21 2:03 am, syzbot wrote:
+> syzbot suspects this issue was fixed by commit:
+> 
+> commit f671a691e299f58835d4660d642582bf0e8f6fda
+> Author: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>
+> Date:   Fri Jul 2 09:18:30 2021 +0000
+> 
+>      fcntl: fix potential deadlocks for &fown_struct.lock
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15fa8017300000
+> start commit:   293837b9ac8d Revert "i915: fix remap_io_sg to verify the p..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=18fade5827eb74f7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8073030e235a5a84dd31
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=171390add00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10050553d00000
+> 
+> If the result looks correct, please mark the issue as fixed by replying with:
+> 
+> #syz fix: fcntl: fix potential deadlocks for &fown_struct.lock
+> 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
 
-Aha, yeah. It should jump to the below PMD populate section. Will fix
-it in the next version.
+#syz fix: fcntl: fix potential deadlocks for &fown_struct.lock
 
->
-> > +             if (!ret) {
-> > +                     /* The page is mapped successfully, reference consumed. */
-> > +                     unlock_page(page);
-> > +                     return true;
-> > +             }
-> >       }
-> >
-> >       if (pmd_none(*vmf->pmd)) {
-> > @@ -3220,6 +3222,7 @@ static bool filemap_map_pmd(struct vm_fault *vmf, struct page *page)
-> >               return true;
-> >       }
-> >
-> > +out:
-> >       return false;
-> >  }
-> >
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 5e9ef0fc261e..0574b1613714 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -2426,6 +2426,8 @@ static void __split_huge_page(struct page *page, struct list_head *list,
-> >       /* lock lru list/PageCompound, ref frozen by page_ref_freeze */
-> >       lruvec = lock_page_lruvec(head);
-> >
-> > +     ClearPageHasHWPoisoned(head);
-> > +
->
-> Do we serialize the new flag with lock_page() or what? I mean what
-> prevents the flag being set again after this point, but before
-> ClearPageCompound()?
+Think I got jumbled a bit when marking the dups. This bug shares the 
+same root cause as [1], and is fixed by the same patch. Nice that Syzbot 
+noticed.
 
-No, not in this patch. But I think we could use refcount. THP split
-would freeze refcount and the split is guaranteed to succeed after
-that point, so refcount can be checked in memory failure. The
-SetPageHasHWPoisoned() call could be moved to __get_hwpoison_page()
-when get_unless_page_zero() bumps the refcount successfully. If the
-refcount is zero it means the THP is under split or being freed, we
-don't care about these two cases.
-
-The THP might be mapped before this flag is set, but the process will
-be killed later, so it seems fine.
-
->
-> --
->  Kirill A. Shutemov
+Link: https://syzkaller.appspot.com/bug?extid=e6d5398a02c516ce5e70 [1]
