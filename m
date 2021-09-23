@@ -2,59 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1002A415F16
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 15:01:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C364415F97
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 15:24:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235776AbhIWNCb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 09:02:31 -0400
-Received: from h2.fbrelay.privateemail.com ([131.153.2.43]:55519 "EHLO
-        h2.fbrelay.privateemail.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241167AbhIWNCY (ORCPT
+        id S241284AbhIWNZh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 09:25:37 -0400
+Received: from sender2-op-o12.zoho.com.cn ([163.53.93.243]:17270 "EHLO
+        sender2-op-o12.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241269AbhIWNZg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 09:02:24 -0400
-Received: from MTA-15-3.privateemail.com (MTA-15-1.privateemail.com [198.54.118.208])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by h1.fbrelay.privateemail.com (Postfix) with ESMTPS id D567B8064F;
-        Thu, 23 Sep 2021 09:00:51 -0400 (EDT)
-Received: from mta-15.privateemail.com (localhost [127.0.0.1])
-        by mta-15.privateemail.com (Postfix) with ESMTP id 8254A18000AD;
-        Thu, 23 Sep 2021 09:00:50 -0400 (EDT)
-Received: from [192.168.0.46] (unknown [10.20.151.205])
-        by mta-15.privateemail.com (Postfix) with ESMTPA id 5791818000A3;
-        Thu, 23 Sep 2021 09:00:49 -0400 (EDT)
-Date:   Thu, 23 Sep 2021 09:00:43 -0400
-From:   Hamza Mahfooz <someguy@effective-light.com>
-Subject: Re: [PATCH v2] aio: convert active_reqs into a hashtable
-To:     Benjamin LaHaise <bcrl@kvack.org>
-Cc:     linux-kernel@vger.kernel.org,
-        kernel test robot <yujie.liu@intel.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org
-Message-Id: <7H1WZQ.H8D3XK8HUSNQ3@effective-light.com>
-In-Reply-To: <20210919145645.GE16005@kvack.org>
-References: <20210919144146.19531-1-someguy@effective-light.com>
-        <20210919145645.GE16005@kvack.org>
-X-Mailer: geary/40.0
+        Thu, 23 Sep 2021 09:25:36 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1632402517; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=QEEITetxp1KdUF3UTM/ee3rbezGxhy9H2yMiiG3wK54nC60d0c9BUiC5KeVkHlVWwxtj3AosbPHN04aysB/ACB2fF3fdYBzdwPOjGWaoaOvcUAhgh3tAmXjwOpm5Ih4huR9vtY6bfY76H+EXIzH9641O7wy6a31YI1KHS1X4+zM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1632402517; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=nzuO9db+SWL+uI8mD5Cj6/bYdT9zgt12KRFdhPHa4C8=; 
+        b=fuEBgFrQ/O1i6S5zx7Vpo5/spDqL0YNjTQLwFIl4EtDeR65qrdZX0rMEu1mhkhSR0acB47AGtXo3K3vYZeHnZYC4I6k2aourj1Q4pAFl4X4OyV0+TJImSAnRuADCLGagolh39tv7fE1xgYPKQaQriZRDXk34MRboXTDyrwED6ZI=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=mykernel.net;
+        spf=pass  smtp.mailfrom=cgxu519@mykernel.net;
+        dmarc=pass header.from=<cgxu519@mykernel.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1632402517;
+        s=zohomail; d=mykernel.net; i=cgxu519@mykernel.net;
+        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
+        bh=nzuO9db+SWL+uI8mD5Cj6/bYdT9zgt12KRFdhPHa4C8=;
+        b=ff3PytOohXhRoq0TJHWw4MwlnjUEnXgRzlEkTajzyeMkAHXEEgX1+znnORMSeJf3
+        VF9ukkfBaE0uCqC2pGAJmRFsKDSkl7uEwRf/2qxfDFL1W+ju2x00gDgtUB4rh2Mv3ij
+        XrQcC1yEcON62voe5GqDXdb2qgqG/EYE7ygJ+a20=
+Received: from localhost.localdomain (81.71.33.115 [81.71.33.115]) by mx.zoho.com.cn
+        with SMTPS id 163240251605690.26904563646679; Thu, 23 Sep 2021 21:08:36 +0800 (CST)
+From:   Chengguang Xu <cgxu519@mykernel.net>
+To:     miklos@szeredi.hu, jack@suse.cz, amir73il@gmail.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chengguang Xu <cgxu519@mykernel.net>
+Message-ID: <20210923130814.140814-1-cgxu519@mykernel.net>
+Subject: [RFC PATCH v5 00/10] implement containerized syncfs for overlayfs
+Date:   Thu, 23 Sep 2021 21:08:04 +0800
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Transfer-Encoding: quoted-printable
+X-ZohoCNMailClient: External
+Content-Type: text/plain; charset=utf8
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Current syncfs(2) syscall on overlayfs just calls sync_filesystem()
+on upper_sb to synchronize whole dirty inodes in upper filesystem
+regardless of the overlay ownership of the inode. In the use case of
+container, when multiple containers using the same underlying upper
+filesystem, it has some shortcomings as below.
 
+(1) Performance
+Synchronization is probably heavy because it actually syncs unnecessary
+inodes for target overlayfs.
 
-On Sun, Sep 19 2021 at 10:56:45 AM -0400, Benjamin LaHaise 
-<bcrl@kvack.org> wrote:
-> You're doing this wrong.  If you want faster cancellations, stash an 
-> index
-> into iocb->aio_key to index into an array with all requests rather 
-> than
-> using a hash table.
+(2) Interference
+Unplanned synchronization will probably impact IO performance of
+unrelated container processes on the other overlayfs.
 
-Would that not mean that, we would have to keep track of the indices of 
-the
-array that are not being held by an `aio_kiocb`?
+This series try to implement containerized syncfs for overlayfs so that
+only sync target dirty upper inodes which are belong to specific overlayfs
+instance. By doing this, it is able to reduce cost of synchronization and
+will not seriously impact IO performance of unrelated processes.
+
+v1->v2:
+- Mark overlayfs' inode dirty itself instead of adding notification
+  mechanism to vfs inode.
+
+v2->v3:
+- Introduce overlayfs' extra syncfs wait list to wait target upper inodes
+in ->sync_fs.
+
+v3->v4:
+- Using wait_sb_inodes() to wait syncing upper inodes.
+- Mark overlay inode dirty only when having upper inode and  VM_SHARED
+flag in ovl_mmap().
+- Check upper i_state after checking upper mmap state
+in ovl_write_inode.
+
+v4->v5:
+- Add underlying inode dirtiness check after mnt_drop_write().
+- Handle both wait/no-wait mode of syncfs(2) in overlayfs' ->sync_fs().
+
+Chengguang Xu (10):
+  ovl: setup overlayfs' private bdi
+  ovl: implement ->writepages operation
+  ovl: implement overlayfs' ->evict_inode operation
+  ovl: mark overlayfs' inode dirty on modification
+  ovl: mark overlayfs' inode dirty on shared mmap
+  ovl: implement overlayfs' ->write_inode operation
+  ovl: cache dirty overlayfs' inode
+  fs: export wait_sb_inodes()
+  fs: introduce new helper sync_fs_and_blockdev()
+  ovl: implement containerized syncfs for overlayfs
+
+ fs/fs-writeback.c         |  3 +-
+ fs/overlayfs/file.c       |  6 ++++
+ fs/overlayfs/inode.c      | 14 ++++++++
+ fs/overlayfs/overlayfs.h  |  4 +++
+ fs/overlayfs/super.c      | 69 ++++++++++++++++++++++++++++++++++-----
+ fs/overlayfs/util.c       | 21 ++++++++++++
+ fs/sync.c                 | 14 +++++---
+ include/linux/fs.h        |  1 +
+ include/linux/writeback.h |  1 +
+ 9 files changed, 120 insertions(+), 13 deletions(-)
+
+--=20
+2.27.0
 
 
