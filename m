@@ -2,191 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21F2C4165FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 21:37:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CAF3416690
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 22:20:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242845AbhIWTjR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 15:39:17 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:3458 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242796AbhIWTjQ (ORCPT
+        id S243148AbhIWUWP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 16:22:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45064 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243083AbhIWUWP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 15:39:16 -0400
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 18NIwKWI012795;
-        Thu, 23 Sep 2021 19:37:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- cc : references : message-id : date : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=HrMfOFnQRDN0kHwHBd+nS46Ey5ZzzsqC2hg9VexqUzg=;
- b=vc9AD1ydqwXUJNYgN3vGxV5POtPbbm2A1l2m4fXcEBFgiW0jM8ouDbEwprhay7U2mIkY
- IZJaXLS4oSeQRmpSItMIfo5Lw3llQI3y16s9zJ7X6/nNdegOJNuxo11UPlFq+qmnyjid
- igOMuZkqnd+/LxXGEAbVjnpbEj0lkmswuFOfCA+AVXWSNj8ekBdXYY0e1RFM2qBFsKv9
- 6vBFkblmG6iXmVXK4FiRxgpKWFdol5b+OzIL0TR5pswnZxq03H7o6GU94P5uhsdAsD2h
- X6ZTwXcfa/GeippYdTm5mhe+AxnyCYw0YddAeyQYCkjURC01CBZCsqmSUD3GdIOqpe6a tQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3b8qkrbnjf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 23 Sep 2021 19:37:43 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 18NJUtbX036424;
-        Thu, 23 Sep 2021 19:37:42 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2102.outbound.protection.outlook.com [104.47.58.102])
-        by aserp3020.oracle.com with ESMTP id 3b7q5crgpd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 23 Sep 2021 19:37:42 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LCfT9yxVhOmBcbI94cNw67lx3OICyW85xrALe6aFvX7znm8E3TX56cK7zVAoRh1rGRWNfEM0KEJbSl3EcwkzJe+LCrHYhvHu48LFpiAjKaafuHMigl53j89rM2uI5wXXYESrIDDOnwS1uTRLFpiwy3PEapLOtVMC2bvfXehV3hhzK2sKkWWEh7RENjSE4YbgCAaKm9SwBz+AhQaWhRZYLVLzKvx/Ck8q/TrsURrJr7+SienoCkX0lJoOsYAoh3c1zK6pj62nQOfVuE6o0DzxL1wfHRAi1hwGlpL83h/0khxCGA2WQyU5n3CheUdJZXz48o1ELpXkH7bKu2B/Lu2E+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=HrMfOFnQRDN0kHwHBd+nS46Ey5ZzzsqC2hg9VexqUzg=;
- b=U+HrwV3142eZ6rVljXa11DEwUDYNthjQGeNq4sJyX8dWEsvuNohdMXO/UQpm2W7Pc/bZ/AZCRgqNHrGdrVbf3xfU6LxPPtwnPRDMt5Mb7vWrU4/REeqZ8IaeeLIY5q3rwM3uyD6mIsmG2CtRo3OFn1bpt9FnPKMleg2Nbdi9WKU2pshmUWs2CCu1wPXf1B62CeLIg3HA2C82SgzwFOsbtgY/AwTCoVL3gBH1fVfBB3bD0OCLptt2MJVcAe9+WJViT5bLnWyvW9FmTOZUOaIKgJIjV9ySh9EKtDHsOLcKA6miEOj27j/g8LiBouaQgY5KStO/PTvs2+VDkF6PgY8Y7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Thu, 23 Sep 2021 16:22:15 -0400
+Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41E92C061574;
+        Thu, 23 Sep 2021 13:20:43 -0700 (PDT)
+Received: by mail-qv1-xf2f.google.com with SMTP id z12so4964399qvx.5;
+        Thu, 23 Sep 2021 13:20:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HrMfOFnQRDN0kHwHBd+nS46Ey5ZzzsqC2hg9VexqUzg=;
- b=pUcl9WlmfK1qIx2u+Oc178rrdRJrWdemZgiNmvvdTQ5XBi8edP7+v/+wh81TB2hJxX+Fhn/4jhA7Cg9FL5qhU6UnSrZ/szOM45aZMg5k+4BvJfxXEpAR3p+GvbYmV7AJHAOwdHOTiU6/oNlTodh/ibi5oQkUQS/kQdhBBbpzwfM=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=oracle.com;
-Received: from BY5PR10MB4257.namprd10.prod.outlook.com (2603:10b6:a03:211::21)
- by BYAPR10MB3608.namprd10.prod.outlook.com (2603:10b6:a03:120::29) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.13; Thu, 23 Sep
- 2021 19:37:39 +0000
-Received: from BY5PR10MB4257.namprd10.prod.outlook.com
- ([fe80::1c92:fda3:604:a90d]) by BY5PR10MB4257.namprd10.prod.outlook.com
- ([fe80::1c92:fda3:604:a90d%7]) with mapi id 15.20.4544.015; Thu, 23 Sep 2021
- 19:37:39 +0000
-Subject: Re: [PATCH RFC v3 0/2] nfsd: Initial implementation of NFSv4
- Courteous Server
-From:   dai.ngo@oracle.com
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     chuck.lever@oracle.com, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20210916182212.81608-1-dai.ngo@oracle.com>
- <20210923014733.GF22937@fieldses.org>
- <96ea034b-ca95-3934-4c31-14c292007ca7@oracle.com>
-Message-ID: <028375b3-fa08-1dac-7d81-5eaede3c77b5@oracle.com>
-Date:   Thu, 23 Sep 2021 12:37:36 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
-In-Reply-To: <96ea034b-ca95-3934-4c31-14c292007ca7@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-ClientProxiedBy: SA9PR03CA0012.namprd03.prod.outlook.com
- (2603:10b6:806:20::17) To BY5PR10MB4257.namprd10.prod.outlook.com
- (2603:10b6:a03:211::21)
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=askzCAM6l+1NBUX7qVCLMpd/n/UPTDcVezPFkcxeG10=;
+        b=eLsPCDr7NBTobzPXdG0PmPN/PLb9kFyXb+wQpPc8z+UkQMR6EBIk0bXw/EzKtkuG1h
+         C1G+XwwU7AdWSSux9n6xNLKUORS9Vxec1r+5KRkAJM38uMEFM9PCFpLYOtlldixcOE+l
+         CKO7Wsa5hB6nGAloEHUM7YJsDB57o12vTAX1hiNp2uDXTyNmLWaBUdAPQZztbfIYfcZb
+         JoLvZkn7wxS/958q/ULTPcZ5QMjnxgie037ZqFAb+yipJ9DULYrDz301A6DhOZ16r0an
+         Zt8L7LRTVUBBO44rwVTiOYvmy70rO2JEN/0Nkq0Azt/inAZhZyFkE51u1paKCq+6lkaY
+         nraw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=askzCAM6l+1NBUX7qVCLMpd/n/UPTDcVezPFkcxeG10=;
+        b=t7fmR7JOFz1ncUVHFsL5sw6A7P53ad7OVgX7H97B6//VgAb8DLwBKusjyD/GwsGMz9
+         1GTgG1UGjKKKethecKhXjBaKte4Nl41EetWemnyOnZEZCvJG2+/KgWjIJFo3mcVcCMqn
+         E3Q5onoVTVJiB9n9eY6Ptq+5Qthq7qy0JkR3pcPmqlY4m2pIGm+mPoUHmNuFGJkuQMhH
+         Nh88GEcaAMYYF5xIk3A+giVXRmgxtV+TxeO8kEjLqrDzR8tJ1saVrvz1zA8dxH68mjJp
+         3knJT5o/Bf7pdQv5xPl/clraBiCFtEY3OJtXDmGUWYiVYA9lLN/NOEoIUTnHVvsArYuw
+         by2A==
+X-Gm-Message-State: AOAM530pS/FZeXh+fgfdb4rENKXYmTcyh7m/OzWMagdx/HNW0U/Pu6W/
+        obaMnQsrS1zllcDCIKHOovOwjai2SC+K
+X-Google-Smtp-Source: ABdhPJxw26ptNjjfnYiS442+734imrvDyEStZq7vZE7zC3t9JAkTgbYwcpxpuDjIbEVTAOpWieERjQ==
+X-Received: by 2002:ad4:496d:: with SMTP id p13mr6210710qvy.52.1632428442306;
+        Thu, 23 Sep 2021 13:20:42 -0700 (PDT)
+Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
+        by smtp.gmail.com with ESMTPSA id w11sm4937213qkp.49.2021.09.23.13.20.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Sep 2021 13:20:41 -0700 (PDT)
+Date:   Thu, 23 Sep 2021 16:20:39 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
+Message-ID: <YUzhlwqdCXP6+w4s@moria.home.lan>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YTu9HIu+wWWvZLxp@moria.home.lan>
+ <YUfvK3h8w+MmirDF@casper.infradead.org>
+ <YUo20TzAlqz8Tceg@cmpxchg.org>
+ <YUpC3oV4II+u+lzQ@casper.infradead.org>
+ <YUpKbWDYqRB6eBV+@moria.home.lan>
+ <YUpNLtlbNwdjTko0@moria.home.lan>
+ <YUtHCle/giwHvLN1@cmpxchg.org>
+ <YUwTuaZlzx2WLXcG@moria.home.lan>
+ <YUzAzl5iCdfUBJqe@cmpxchg.org>
 MIME-Version: 1.0
-Received: from dhcp-10-159-135-151.vpn.oracle.com (138.3.200.23) by SA9PR03CA0012.namprd03.prod.outlook.com (2603:10b6:806:20::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.14 via Frontend Transport; Thu, 23 Sep 2021 19:37:38 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1f1d0ac7-9e32-4d84-a5c1-08d97ec99a45
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3608:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <BYAPR10MB36085C67A554A0542CF0795387A39@BYAPR10MB3608.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ymxbNYvgcpKN20yAiUQdlttum5SH9DEdH3vF2gokEHNtYerXAMkDC902NP4czdE5k7cXTUWdAVluRcdAYkyIlwgZDElVADJyO3QcOSVNKFfNbdP8AmyvA4rnQhrzF5KQwjpKKtzaHb5xjmNDGoL67DVpyAI9J674TuhiaQgewHOe0R54bMoBukhew7H3rwMAQWzwfA6hRnzHyE63rN0L6WvKAUvR5BxwwED17X3ZkPfKOs+uEFQQG6MbFMV0sR21EKGGs2Q2yUT4Vx3X8W8IlYbBzJJZIObGiV/7CgxZtjMCoOkgJk2v4moHs8BjXODG9wYb6dx4XQ7S0pZbDH4zA+7mRlnUvozFxQYUmvSZMA1xZ27dqSTtvbiGcKUeamxMvJAdlybk8Axogbr02Ow+uDq5qTXMjvhx1NSiyVGvkazXjACw9kDmDyojfZBnhQFNIt1TYv2BQB7kT71xCv7Zdd5Y63Ymco4n3npD/5dpAGisTfw4Q6vdEyYvwj9slMstHPk75thxzQXkgNHyYlsX4jewSAM4z1t4Ry1GgsnA6z3DBq3h87X9IHkygRRRaNf6n6myiRI57VwQQNc7mf+6z9pu1x3nXNacXisVICuPVXMKUO6qgPvb+ZRJK6+0DaX2004r8gf3k/s9+UdQW513GzUg1hz0UMp49Ck4suBp9h06iqxsR9xFRGo0MubXKOWFa5ZU38OnZ92Df15rryPVfQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB4257.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(2616005)(83380400001)(956004)(31696002)(9686003)(2906002)(26005)(4326008)(8936002)(38100700002)(86362001)(66476007)(186003)(53546011)(7696005)(508600001)(316002)(8676002)(31686004)(6916009)(66946007)(6486002)(5660300002)(66556008)(36756003)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?emdHZEs4M3BDSTdkQlVLRHFpOFdxVzBRZXFBWkU1cHdSc0txZUdtUVlFYlFm?=
- =?utf-8?B?UXpDTjNkeURrb0lnYUswWWlyQUc3eUlHNXhoOG85YmppajdNejQ4d3VsbHB6?=
- =?utf-8?B?dlFYRmRDd1dDU2pKQnZldUlOdG1BOEdHSUZHblJYeU1SMllLR2tuc291THRl?=
- =?utf-8?B?M0VhQ002dFVvYUI2YWF1bEJjL09qcVRPKzFvU2E2NHN0KzVJVUNXMEcxc2xj?=
- =?utf-8?B?VndqL2NjN1MwMkh6bFJma2VGbjFoYiswKzQrVEViRXpYY1JrNDdvWkVkVWQ4?=
- =?utf-8?B?a0g5VENQaDZHbFA3eFRIdzZQYXBZZGxoZ3JLczYrTjM5ZkpreThITXlBbFBL?=
- =?utf-8?B?ckFDTytJeFFrZlpZN3ExK2tubHpRNklyMm9ZMFU3ejMxNUFqMXNTYmZKY0sx?=
- =?utf-8?B?NWx4OWllQjJ3blpzdml6WW1QOElXVTRteGl6YXRGYW5KOHBLVWhmbHNJS0lK?=
- =?utf-8?B?T0JrUDlkOHkrTGY0Q2VxYWlnVGh0RVdlcFo0UlBBU1h4UFZsdHIwcjhyVkJp?=
- =?utf-8?B?cnpPM1dOM1VpMWdvcHdaVXA4cnNXL3QxQ2hNUHhMcmY4T3ppUUkxQkVXcWs0?=
- =?utf-8?B?SkM5MDBHcXV2QnZsK2F1ZDY4OWtEdmxIeEwyckpaQlZQNzJXUHlFTmxUZXBk?=
- =?utf-8?B?RTRFWVEyNFVqQ3dWWGZyWWpxeG5Cc1l6RVpYK256Rjgxb2ZZVU9aYkNxcW9N?=
- =?utf-8?B?RVFndndzVGdBZVgxbFR1cUpHREtHU2lnRnA0bVJlQ1ExRlVkaGR3eS9Lak9E?=
- =?utf-8?B?TVBBaGFCOU10SlViWHhKZWxnZG5QRGJxUFZrcGozb0xRdlZydlBNbmJQb2pu?=
- =?utf-8?B?aXhzR2FJS0xGdTdoYXhMeURWU2c3OVBpRmd5SEJKWDFaZTZuS0Y0ZFVES2JD?=
- =?utf-8?B?V3dVaHdDUGhBdHE1dGlEUHNFWmVrR21sYng4WlpMNGlXeXVpSFc2enVwcnox?=
- =?utf-8?B?VXNCdnpwRTFnWk5DM2t1alBQajhvb0NiS0J6TjMzSmR3dmdQamxocGw2UHNr?=
- =?utf-8?B?U24ybDJUZjdycS9YcUMwT1BHRlpwa29BREFGdXN3Si9RWno0UHBOYzR0RVdn?=
- =?utf-8?B?Y2NuRWlEanJOakgxaFhNL3VaTXVvM3JHT3g0ekVmdkNSWTdEMHZ0QUFpVjBs?=
- =?utf-8?B?U0ZMU1A0L2h5bFZNbnloV0MzZ2ZNYllwR25reDc4NHVNY1Iram1lRVhBN2c5?=
- =?utf-8?B?L2x5NlFuazdaM3duTjI0TTZNNEpJV1k1TzAyYzNPTlhqYUpOQXMrY2Zkc2cz?=
- =?utf-8?B?a0VBcVZSenRsRkc5TjNweXkvNmNBeU8vUDRFMWhWSTkwWURjVGVGTmxINnJx?=
- =?utf-8?B?dkdZNmJaa1dENDBqTWZRQytxNWtWWTlPY1lKdHlUSHJhYVp4c0ZiSTU5M05p?=
- =?utf-8?B?QUNEclhXb0tWczFCUWpDWEJZUjlLalJrTWxHbXRVUEdzcU9ENGRtU2RtY0Qy?=
- =?utf-8?B?bXRvOElncUhvQ3V6OFloY3MrV0F3YUJyK3hYbDRuL0pwd1A2eWk1aHNFMlZi?=
- =?utf-8?B?RlBaanY1NzNqcGpkY1dFbE5tck1TaWN5RHYwNHFaNjA3WWxFM2I0NjVBQ1JI?=
- =?utf-8?B?S2prYkVXVmdGRXE0RG1naGNpZitJaW5VeFJNTjMwaGdrZ1J3VFU4L29mSkpE?=
- =?utf-8?B?bm1wSDQrZi9jOEdlQUVxN2tVMTRqVTNoY2RkMU1jUHpHZjdxekxmV1JvRmxl?=
- =?utf-8?B?aFlGYVpHdVJYK21RZTBVdnNvUS9Cd1dkTlFvbFhVd3dVNDF2dUlSYk9BTHla?=
- =?utf-8?Q?l1TXlUsGo0WqtT6Gc5Dgu4zDpFHkaKVRERQ5/3O?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f1d0ac7-9e32-4d84-a5c1-08d97ec99a45
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR10MB4257.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2021 19:37:39.2134
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +x05HrTA7+x41SlpAHS0tcwVqeJgMlMbWl2cSu6kH37i3nwLy3+ImNTWQ+xiy15o5xug71JIbUHPVgWdgirr+A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB3608
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10116 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0
- suspectscore=0 phishscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109200000 definitions=main-2109230115
-X-Proofpoint-ORIG-GUID: zFWqJftQH1NED4SCqSFqfT3hAMX-lppe
-X-Proofpoint-GUID: zFWqJftQH1NED4SCqSFqfT3hAMX-lppe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YUzAzl5iCdfUBJqe@cmpxchg.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Sep 23, 2021 at 02:00:46PM -0400, Johannes Weiner wrote:
+> Yeah, with subclassing and a generic type for shared code. I outlined
+> that earlier in the thread:
+> 
+> https://lore.kernel.org/all/YUo20TzAlqz8Tceg@cmpxchg.org/
+> 
+> So you have anon_page and file_page being subclasses of page - similar
+> to how filesystems have subclasses that inherit from struct inode - to
+> help refactor what is generic, what isn't, and highlight what should be.
+> 
+> Whether we do anon_page and file_page inheriting from struct page, or
+> anon_folio and file_folio inheriting from struct folio - either would
+> work of course.
 
-On 9/23/21 10:15 AM, dai.ngo@oracle.com wrote:
->
-> On 9/22/21 6:47 PM, J. Bruce Fields wrote:
->> I haven't tried to figure out why, but I notice after these patches that
->> pynfs tests RENEW3
->
-> The failure is related to share reservation, will be fixed when we
-> have code that handles share reservation with courtesy client. However,
-> with courtesy client support, the test will need to be modified since
-> the expected result will be NFS4_OK instead of NFS4ERR_EXPIRE.
+If we go that route, my preference would be for completely separate anon_folio
+and file_folio types - separately allocated when we get their, both their
+completely own thing. I think even in languages that have it data inheritence is
+kind of evil and I prefer to avoid it - even if that means having code that does
+if (anon_folio) else if (file_folio) where both branches do the exact same
+thing.
 
-correction, with the patch for handling share reservation conflict,
-this test now passes with NFS4ERR_EXPIRE as expected since the courtesy
-client was destroyed.
+For the LRU lists we might be able to create a new type wrapping a list head,
+and embed that in both file_folio and anon_folio, and pass that type to the LRU
+code. I'm just spitballing ideas though, you know that code better than I do.
 
--Dai
+> Again I think it comes down to the value proposition
+> of folio as a means to clean up compound pages inside the MM code.
+> It's pretty uncontroversial that we want PAGE_SIZE assumptions gone
+> from the filesystems, networking, drivers and other random code. The
+> argument for MM code is a different one. We seem to be discussing the
+> folio abstraction as a binary thing for the Linux kernel, rather than
+> a selectively applied tool, and I think it prevents us from doing
+> proper one-by-one cost/benefit analyses on the areas of application.
+> 
+> I suggested the anon/file split as an RFC to sidestep the cost/benefit
+> question of doing the massive folio change in MM just to cleanup the
+> compound pages; takeing the idea of redoing the page typing, just in a
+> way that would maybe benefit MM code more broadly and obviously.
 
->
->> , LKU10, CLOSE9, and CLOSE8 are failing with
->> unexpected share denied errors.
->
-> I suspected these tests are also related to share reservation. However,
-> I had problems running these tests, they are skipped. For example:
->
-> [root@nfsvmf25 nfs4.0]# ./testserver.py $server  -v CLOSE9
-> **************************************************
-> **************************************************
-> Command line asked for 1 of 673 tests
-> Of those: 1 Skipped, 0 Failed, 0 Warned, 0 Passed
-> [root@nfsvmf25 nfs4.0]#
->
-> Do I need to do any special setup to run these tests?
+It's not just compound pages though - THPs introduced a lot of if (normal page)
+else if (hugepage) stuff that needs to be cleaned up.
 
-still trying to figure out why these tests are skipped on my setup.
+Also, by enabling arbitrary size compound pages for anonymous memory, this is
+going to help with memory fragmentation - right now, the situation for anonymous
+pages is all or nothing, normal page or hugepage, and since most of the time it
+ends up being normal pages we end up fragmenting memory unnecessarily. I don't
+think it'll have anywhere near the performance impact for anonymous pages as it
+will for file pages, but we should still see some performance gains too.
 
--Dai
+That's all true though whether or not anonymous pages end up using the same type
+as folios though, so it's not an argument either way.
 
->
-> Thanks,
-> -Dai
->
->>
->> --b.
+> I think we need a better analysis of that mess and a concept where
+> tailpages are and should be, if that is the justification for the MM
+> conversion.
+> 
+> The motivation is that we have a ton of compound_head() calls in
+> places we don't need them. No argument there, I think.
+
+I don't think that's the main motivation at this point, though. See the struct
+page proposal document I wrote last night - several of the ideas in there are
+yours. The compound vs. tail page confusion is just one of many birds we can
+kill with this stone. 
+
+I'd really love to hear your thoughts on that document btw - I want to know if
+we're on the same page and if I accurately captured your ideas and if you've got
+more to add.
+
+> But the explanation for going with whitelisting - the most invasive
+> approach possible (and which leaves more than one person "unenthused"
+> about that part of the patches) - is that it's difficult and error
+> prone to identify which ones are necessary and which ones are not. And
+> maybe that we'll continue to have a widespread hybrid existence of
+> head and tail pages that will continue to require clarification.
+> 
+> But that seems to be an article of faith. It's implied by the
+> approach, but this may or may not be the case.
+> 
+> I certainly think it used to be messier in the past. But strides have
+> been made already to narrow the channels through which tail pages can
+> actually enter the code. Certainly we can rule out entire MM
+> subsystems and simply declare their compound_head() usage unnecessary
+> with little risk or ambiguity.
+
+This sounds like we're not using assertions nearly enough. The primary use of
+assertions isn't to catch where we've fucked and don't have a way to recover -
+the right way to think of assertions is that they're for documenting invariants
+in a way that can't go out of date, like comments can. They're almost as good as
+doing it with the type system.
+
+> Then the question becomes which ones are legit. Whether anybody
+> outside the page allocator ever needs to *see* a tailpage struct page
+> to begin with. (Arguably that bit in __split_huge_page_tail() could be
+> a page allocator function; the pte handling is pfn-based except for
+> the mapcount management which could be encapsulated; the collapse code
+> uses vm_normal_page() but follows it quickly by compound_head() - and
+> arguably a tailpage generally isn't a "normal" vm page, so a new
+> pfn_to_normal_page() could encapsulate the compound_head()). Because
+> if not, seeing struct page in MM code isn't nearly as ambiguous as is
+> being implied. You would never have to worry about it - unless you are
+> in fact the page allocator.
+> 
+> So if this problem could be solved by making tail pages an
+> encapsulated page_alloc thing, and chasing down the rest of
+> find_subpage() callers (which needs to happen anyway), I don't think a
+> wholesale folio conversion of this subsystem would be justified.
+> 
+> A more in-depth analyses of where and how we need to deal with
+> tailpages - laying out the data structures that hold them and code
+> entry points for them - would go a long way for making the case for
+> folios. And might convince reluctant people to get behind the effort.
+
+Alternately - imagine we get to the struct page proposal I laid out. What code
+is still going to deal with struct page, and which code is going to change to
+working with some subtype of page?
