@@ -2,95 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2632415B79
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 11:52:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67E2F415BA2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 12:01:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240276AbhIWJyP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 05:54:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37083 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240268AbhIWJyP (ORCPT
+        id S240253AbhIWKCs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 06:02:48 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:40026 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240186AbhIWKCp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 05:54:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1632390763;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=+F5e/QJCQvTQyfdm+mXX5RdrWpejQYPMUGSZ/zRGUYg=;
-        b=aVQdiEbRRZTGM+Lwmb1QNbc4/3NWKQ3dim4EZ5WZjfN4lMFs+ds7bgwvjHjW9/mSNU/PcT
-        jqCZUiIiI0RsIedRfwy1Ev7wD2b1q2eXS8VUZ5tt9WzZyity00OV/OBnrUBLi7Q8t9BJeS
-        A6e3MmEMlX/y2OuBnIcnOkWuDsMSBHs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-602-b8s7zVOqPcGr_oqMNXA4HQ-1; Thu, 23 Sep 2021 05:52:40 -0400
-X-MC-Unique: b8s7zVOqPcGr_oqMNXA4HQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 23 Sep 2021 06:02:45 -0400
+Received: from relay1.suse.de (relay1.suse.de [149.44.160.133])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 9655622308;
+        Thu, 23 Sep 2021 10:01:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1632391273;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=UzJP1NacuRrgyoFRt4Ocp3ynHeVYoUlVZdZtaHi2uBE=;
+        b=iKFB2v0lDs03sugqu0Q8wHXo3HNjI9ogoEkYBh7xRrfRqEAtOfWbd2+4O8e+1PXbOlQh6j
+        X9kBnJ+m9TluSiKGzk/1iXGV11ptPNYTLtku1zq+CQTxYL95l+ND8ulHSPuEj+3ZzBV2Mn
+        pikn9ttaONfoVNQJyeSPSEapY90g+RA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1632391273;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=UzJP1NacuRrgyoFRt4Ocp3ynHeVYoUlVZdZtaHi2uBE=;
+        b=As0XRGUSDMSN0X6e0YkkmOOs1WrEAm2X429Mo3aBaWRx8duMlnAXU3N22wHQFkMVACE5L2
+        3m5uyfsRfzuh4MAw==
+Received: from g78 (rpalethorpe.udp.ovpn1.nue.suse.de [10.163.24.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9E603835DE1;
-        Thu, 23 Sep 2021 09:52:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DDEE560C82;
-        Thu, 23 Sep 2021 09:52:26 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] netfs: Fix READ/WRITE confusion when calling
- iov_iter_xarray()
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     Jeff Layton <jlayton@kernel.org>, linux-cachefs@redhat.com,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        dhowells@redhat.com, linux-kernel@vger.kernel.org
-Date:   Thu, 23 Sep 2021 10:52:26 +0100
-Message-ID: <163239074602.1243337.14154704004485867017.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        by relay1.suse.de (Postfix) with ESMTPS id 8DCA525D3C;
+        Thu, 23 Sep 2021 10:01:12 +0000 (UTC)
+References: <20210921130127.24131-1-rpalethorpe@suse.com>
+ <CAK8P3a29ycNqOC_pD-UUtK37jK=Rz=nik=022Q1XtXr6-o6tuA@mail.gmail.com>
+ <87o88mkor1.fsf@suse.de> <87lf3qkk72.fsf@suse.de> <87ilytkngp.fsf@suse.de>
+ <CAK8P3a2S=a0aw8GY8fZxaU5fz7ZkdehtHgStkn2=u9gO28GVEw@mail.gmail.com>
+User-agent: mu4e 1.4.15; emacs 27.2
+From:   Richard Palethorpe <rpalethorpe@suse.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LTP List <ltp@lists.linux.it>
+Subject: Re: ia32 signed long treated as x64 unsigned int by __ia32_sys*
+Reply-To: rpalethorpe@suse.de
+In-reply-to: <CAK8P3a2S=a0aw8GY8fZxaU5fz7ZkdehtHgStkn2=u9gO28GVEw@mail.gmail.com>
+Date:   Thu, 23 Sep 2021 11:01:09 +0100
+Message-ID: <87fstvlifu.fsf@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix netfs_clear_unread() to pass READ to iov_iter_xarray() instead of WRITE
-(the flag is about the operation accessing the buffer, not what sort of
-access it is doing to the buffer).
+Hello Arnd,
 
-Fixes: 3d3c95046742 ("netfs: Provide readahead and readpage netfs helpers")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-cc: linux-cachefs@redhat.com
-cc: linux-afs@lists.infradead.org
-cc: ceph-devel@vger.kernel.org
-cc: linux-cifs@vger.kernel.org
-cc: linux-nfs@vger.kernel.org
-cc: v9fs-developer@lists.sourceforge.net
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-mm@kvack.org
-Link: https://lore.kernel.org/r/162729351325.813557.9242842205308443901.stgit@warthog.procyon.org.uk/
----
+Arnd Bergmann <arnd@arndb.de> writes:
 
- fs/netfs/read_helper.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Wed, Sep 22, 2021 at 10:46 AM Richard Palethorpe <rpalethorpe@suse.de> wrote:
+>> Richard Palethorpe <rpalethorpe@suse.de> writes:
+>
+>> >
+>> > Then the output is:
+>> >
+>> > [   11.252268] io_pgetevents(f7f19000, 4294967295, 1, ...)
+>> > [   11.252401] comparing 4294967295 <= 1
+>> > io_pgetevents02.c:114: TPASS: invalid min_nr: io_pgetevents() failed as expected: EINVAL (22)
+>> > [   11.252610] io_pgetevents(f7f19000, 1, 4294967295, ...)
+>> > [   11.252748] comparing 1 <= 4294967295
+>> > io_pgetevents02.c:103: TFAIL: invalid max_nr: io_pgetevents() passed unexpectedly
+>>
+>> and below is the macro expansion for the automatically generated 32bit to
+>> 64bit io_pgetevents. I believe it is casting u32 to s64, which appears
+>> to mean there is no sign extension. I don't know if this is the expected
+>> behaviour?
+>
+> Thank you for digging through this, I meant to already reply once more yesterday
+> but didn't get around to that.
 
-diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
-index 2ad91f9e2a45..9320a42dfaf9 100644
---- a/fs/netfs/read_helper.c
-+++ b/fs/netfs/read_helper.c
-@@ -150,7 +150,7 @@ static void netfs_clear_unread(struct netfs_read_subrequest *subreq)
- {
- 	struct iov_iter iter;
- 
--	iov_iter_xarray(&iter, WRITE, &subreq->rreq->mapping->i_pages,
-+	iov_iter_xarray(&iter, READ, &subreq->rreq->mapping->i_pages,
- 			subreq->start + subreq->transferred,
- 			subreq->len   - subreq->transferred);
- 	iov_iter_zero(iov_iter_count(&iter), &iter);
+Thanks, no problem. I suppose this will effect other systemcalls as
+well. Which if nothing else is a pain for testing.
 
+>
+>>     __typeof(__builtin_choose_expr(
+>>         (__builtin_types_compatible_p(typeof((long)0), typeof(0LL)) ||
+>>          __builtin_types_compatible_p(typeof((long)0), typeof(0ULL))),
+>>         0LL, 0L)) min_nr,
+>>     __typeof(__builtin_choose_expr(
+>>         (__builtin_types_compatible_p(typeof((long)0), typeof(0LL)) ||
+>>          __builtin_types_compatible_p(typeof((long)0), typeof(0ULL))),
+>>         0LL, 0L)) nr,
+>
+> The part that I remembered is in arch/s390/include/asm/syscall_wrapper.h,
+> which uses this version instead:
+>
+> #define __SC_COMPAT_CAST(t, a)                                          \
+> ({                                                                      \
+>         long __ReS = a;                                                 \
+>                                                                         \
+>         BUILD_BUG_ON((sizeof(t) > 4) && !__TYPE_IS_L(t) &&              \
+>                      !__TYPE_IS_UL(t) && !__TYPE_IS_PTR(t) &&           \
+>                      !__TYPE_IS_LL(t));                                 \
+>         if (__TYPE_IS_L(t))                                             \
+>                 __ReS = (s32)a;                                         \
+>         if (__TYPE_IS_UL(t))                                            \
+>                 __ReS = (u32)a;                                         \
+>         if (__TYPE_IS_PTR(t))                                           \
+>                 __ReS = a & 0x7fffffff;                                 \
+>         if (__TYPE_IS_LL(t))                                            \
+>                 return -ENOSYS;                                         \
+>         (t)__ReS;                                                       \
+> })
+>
+> This also takes care of s390-specific pointer conversion, which is the
+> reason for needing an architecture-specific wrapper, but I suppose the
+> handling of signed arguments as done in s390 should also be done
+> everywhere else.
+>
+> I also noticed that only x86 and s390 even have separate entry
+> points for normal syscalls when called in compat mode, while
+> the others all just zero the upper halves of the registers in the
+> low-level entry code and then call the native entry point.
+>
+>         Arnd
 
+It looks to me like aarch64 also has something similar? At any rate, I
+can try to fix it for x86 and investigate what else might be effected.
+
+-- 
+Thank you,
+Richard.
