@@ -2,225 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A7444155E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 05:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D30444155FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 05:28:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238984AbhIWDZs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 23:25:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37078 "EHLO
+        id S239049AbhIWDaW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 23:30:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238190AbhIWDZr (ORCPT
+        with ESMTP id S238999AbhIWDaS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 23:25:47 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E342C061574;
-        Wed, 22 Sep 2021 20:24:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=cdwGbJhCdZfPvbE5YQ9fHyZz3Nnu8LjufzhZ9sT+PUY=; b=dXqGLXI/tXcTdVyBCjx9XA641I
-        uZK5/7s8XVsJwM3BneZXKjC3CddUAprDRfts74WJK/uVTUez/DfYXyyOg12bDBie6w15LiH8V8YkI
-        1pt1Jj4rfrxiSRgGbmFH3RNG52LI8TXHn/hAwHOVEqwKU91JSmeN1VtPTsMtCn0z7mSJjrb2LixPP
-        /xtTLjYjqfvVwCi/tl4RyPLVAOdSfno3e3I20pPUri3IeUfxvfyfUxwIZfUSe4G/o1OGT3u1Bglx1
-        5DtGV8i98RZZo424RutJiNpXk1+eMuMX6Gt3Cj9xAKznYN1AUFsSxf9nzdf+kBxEoPPc2yORy+4eZ
-        eHfezsfQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mTFKK-005TjG-3A; Thu, 23 Sep 2021 03:23:17 +0000
-Date:   Thu, 23 Sep 2021 04:23:12 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Struct page proposal
-Message-ID: <YUvzINep9m7G0ust@casper.infradead.org>
-References: <YUvWm6G16+ib+Wnb@moria.home.lan>
+        Wed, 22 Sep 2021 23:30:18 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CC48C061574;
+        Wed, 22 Sep 2021 20:28:47 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id t4so3165599plo.0;
+        Wed, 22 Sep 2021 20:28:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/ki6pkYMnfOAScz3q1SGd96OuCB2AYCYHs3PdlWGy2M=;
+        b=efR/57wxxOzBQ+rSB4cPkVOlyrX8uZig3qLozrZRNonIybdqpcjAEN4KFFcDPipJiC
+         wxASo3FRXk1ekHoBikPE+cbSSo2Y2f7TR8cdHlACSsnyAqhCciGHfYV7jgJxUer4l6D0
+         cHtj0MmVH3WPv5HLUo+EGCXHMIVbgDJonnoLldp3VycSAqOX+PLsFg/X4Lj1M1PomU2R
+         do+kwEIlu1A9ZvZXrAwrD9xE9IL8I6hvkQX+FdLcXTIF5fcE1Z9GCkcwhT26zMvQIBL1
+         GRubOtubSAPHJa7NsjF2PZKRljYgOuab9lBv0Wxj6VXmxKfDp5A7fyKPPDae7xbGnnBg
+         tUNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/ki6pkYMnfOAScz3q1SGd96OuCB2AYCYHs3PdlWGy2M=;
+        b=I8+QPTlkBTCZsx7JSN2A3TkZ/mjbxpCz0a35WR6HA+AkIFjlJIdHkITD+hbfPfRvyE
+         CA5wsVWuFFFBAx46+tJY7UePMpip6+usFLlCpIytwcQWJkFJFnmJnWyeos+voHfz03Rv
+         MEucRwUawhQSN+8jknX5M7PPfusp/QmxZU70BalY3zBwm6oR8Qpshb3toEwdo3fU+UOE
+         1cCvcedcdmClPtKvMVyxmtpFQh0nTu36QYvIXPW5LNYbb2aXQgbl/ymHHabk5kFqC+nf
+         pDMxGuAUuqpnZDgb51Ut+efQtnBHVI15g9I+Qzi/cpLqTYYEFnpj91UFKh9G++/e33F7
+         +GLg==
+X-Gm-Message-State: AOAM533LRHq61efhAYY10eXfA65a8H5QumI0WiJiJ2u3unEnuB7wXF+u
+        zx61XlnwKJf0lqNWBeq7yyc=
+X-Google-Smtp-Source: ABdhPJy1rUDMwQ5o/PbV3Mjy4wZ2nZOlypgylHA3NsHqudKF/jXoHx26oW+maHH8y0pW0LN6TFdhPw==
+X-Received: by 2002:a17:902:bb94:b0:13c:9113:5652 with SMTP id m20-20020a170902bb9400b0013c91135652mr2003926pls.70.1632367726840;
+        Wed, 22 Sep 2021 20:28:46 -0700 (PDT)
+Received: from localhost.localdomain (c-73-93-239-127.hsd1.ca.comcast.net. [73.93.239.127])
+        by smtp.gmail.com with ESMTPSA id x8sm3699696pfq.131.2021.09.22.20.28.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Sep 2021 20:28:45 -0700 (PDT)
+From:   Yang Shi <shy828301@gmail.com>
+To:     naoya.horiguchi@nec.com, hughd@google.com,
+        kirill.shutemov@linux.intel.com, willy@infradead.org,
+        peterx@redhat.com, osalvador@suse.de, akpm@linux-foundation.org
+Cc:     shy828301@gmail.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC v2 PATCH 0/5] Solve silent data loss caused by poisoned page cache (shmem/tmpfs)
+Date:   Wed, 22 Sep 2021 20:28:25 -0700
+Message-Id: <20210923032830.314328-1-shy828301@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YUvWm6G16+ib+Wnb@moria.home.lan>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 22, 2021 at 09:21:31PM -0400, Kent Overstreet wrote:
-> The fundamental reason for struct page is that we need memory to be self
-> describing, without any context - we need to be able to go from a generic
-> untyped struct page and figure out what it contains: handling physical memory
-> failure is the most prominent example, but migration and compaction are more
-> common. We need to be able to ask the thing that owns a page of memory "hey,
-> stop using this and move your stuff here".
 
-Yup, and another thing we need is to take any page mapped to userspace
-and mark it as dirty (whatever that means for the owner of the page).
+When discussing the patch that splits page cache THP in order to offline the
+poisoned page, Noaya mentioned there is a bigger problem [1] that prevents this
+from working since the page cache page will be truncated if uncorrectable
+errors happen.  By looking this deeper it turns out this approach (truncating
+poisoned page) may incur silent data loss for all non-readonly filesystems if
+the page is dirty.  It may be worse for in-memory filesystem, e.g. shmem/tmpfs
+since the data blocks are actually gone.
 
-> Matthew's helpfully been coming up with a list of page types:
-> https://kernelnewbies.org/MemoryTypes
-> 
-> But struct page could be a lot smaller than it is now. I think we can get it
-> down to two pointers, which means it'll take up 0.4% of system memory. Both
-> Matthew and Johannes have ideas for getting it down even further - the main
-> thing to note is that virt_to_page() _should_ be an uncommon operation (most of
-> the places we're currently using it are completely unnecessary, look at all the
-> places we're using it on the zero page). Johannes is thinking two layer radix
-> tree, Matthew was thinking about using maple trees - personally, I think that
-> 0.4% of system memory is plenty good enough.
+To solve this problem we could keep the poisoned dirty page in page cache then
+notify the users on any later access, e.g. page fault, read/write, etc.  The
+clean page could be truncated as is since they can be reread from disk later on.
 
-As with a lot of these future plans, I think the details can vary
-slightly.  What I propose on the above wiki page is to take it
-down to one pointer per page, but yes, I have a dream that eventually we
-can take it down to one pointer + size per allocation (so 16 bytes)
-rather than 16 bytes per page.
+The consequence is the filesystems may find poisoned page and manipulate it as
+healthy page since all the filesystems actually don't check if the page is
+poisoned or not in all the relevant paths except page fault.  In general, we
+need make the filesystems be aware of poisoned page before we could keep the
+poisoned page in page cache in order to solve the data loss problem.
 
-> Ok, but what do we do with the stuff currently in struct page?
-> -------------------------------------------------------------
-> 
-> The main thing to note is that since in normal operation most folios are going
-> to be describing many pages, not just one - and we'll be using _less_ memory
-> overall if we allocate them separately. That's cool.
-> 
-> Of course, for this to make sense, we'll have to get all the other stuff in
-> struct page moved into their own types, but file & anon pages are the big one,
-> and that's already being tackled.
+To make filesystems be aware of poisoned page we should consider:
+- The page should be not written back: clearing dirty flag could prevent from
+  writeback.
+- The page should not be dropped (it shows as a clean page) by drop caches or
+  other callers: the refcount pin from hwpoison could prevent from invalidating
+  (called by cache drop, inode cache shrinking, etc), but it doesn't avoid
+  invalidation in DIO path.
+- The page should be able to get truncated/hole punched/unlinked: it works as it
+  is.
+- Notify users when the page is accessed, e.g. read/write, page fault and other
+  paths (compression, encryption, etc).
 
-We can also allocate a far larger structure.  eg, we might decide that
-a file page looks like this:
+The scope of the last one is huge since almost all filesystems need do it once
+a page is returned from page cache lookup.  There are a couple of options to
+do it:
 
-struct folio {
-    unsigned long flags;
-    unsigned long pfn;
-    struct list_head lru;
-    struct address_space *mapping;
-    pgoff_t index;
-    void *private;
-    atomic_t _mapcount;
-    atomic_t _refcount;
-#ifdef CONFIG_MEMCG
-    unsigned long memcg_data;
-#endif
-    unsigned char dtor;
-    unsigned char order;
-    atomic_t hmapcount;
-    unsigned int nr_pages;
-    atomic_t hpinned_count;
-    struct list_head deferred_list;
-};
+1. Check hwpoison flag for every path, the most straightforward way.
+2. Return NULL for poisoned page from page cache lookup, the most callsites
+   check if NULL is returned, this should have least work I think.  But the
+   error handling in filesystems just return -ENOMEM, the error code will incur
+   confusion to the users obviously.
+3. To improve #2, we could return error pointer, e.g. ERR_PTR(-EIO), but this
+   will involve significant amount of code change as well since all the paths
+   need check if the pointer is ERR or not just like option #1.
 
-(compiling that list reminds me that we'll need to sort out mapcount
-on subpages when it comes time to do this.  ask me if you don't know
-what i'm talking about here.)
+I did prototype for both #1 and #3, but it seems #3 may require more changes
+than #1.  For #3 ERR_PTR will be returned so all the callers need to check the
+return value otherwise invalid pointer may be dereferenced, but not all callers
+really care about the content of the page, for example, partial truncate which
+just sets the truncated range in one page to 0.  So for such paths it needs
+additional modification if ERR_PTR is returned.  And if the callers have their
+own way to handle the problematic pages we need to add a new FGP flag to tell
+FGP functions to return the pointer to the page.
 
-> Why two ulongs/pointers, instead of just one?
-> ---------------------------------------------
-> 
-> Because one of the things we really want and don't have now is a clean division
-> between allocator and allocatee state. Allocator meaning either the buddy
-> allocator or slab, allocatee state would be the folio or the network pool state
-> or whatever actually called kmalloc() or alloc_pages().
-> 
-> Right now slab state sits in the same place in struct page where allocatee state
-> does, and the reason this is bad is that slab/slub are a hell of a lot faster
-> than the buddy allocator, and Johannes wants to move the boundary between slab
-> allocations and buddy allocator allocations up to like 64k. If we fix where slab
-> state lives, this will become completely trivial to do.
-> 
-> So if we have this:
-> 
-> struct page {
-> 	unsigned long	allocator;
-> 	unsigned long	allocatee;
-> };
-> 
-> The allocator field would be used for either a pointer to slab/slub's state, if
-> it's a slab page, or if it's a buddy allocator page it'd encode the order of the
-> allocation - like compound order today, and probably whether or not the
-> (compound group of) pages is free.
-> 
-> The allocatee field would be used for a type tagged (using the low bits of the
-> pointer) to one of:
->  - struct folio
->  - struct anon_folio, if that becomes a thing
->  - struct network_pool_page
->  - struct pte_page
->  - struct zone_device_page
+It may happen very rarely, but once it happens the consequence (data corruption)
+could be very bad and it is very hard to debug.  It seems this problem had been
+slightly discussed before, but seems no action was taken at that time. [2]
 
-I think we /can/ do all this.  I don't know that it's the right thing to
-do.  And I really mean that.  I genuinely don't know that "allocate
-file pages from slab" will solve any problems at all.  And I kind of
-don't want to investigate that until later.
+As the aforementioned investigation, it needs huge amount of work to solve
+the potential data loss for all filesystems.  But it is much easier for
+in-memory filesystems and such filesystems actually suffer more than others
+since even the data blocks are gone due to truncating.  So this patchset starts
+from shmem/tmpfs by taking option #1.
 
-By the way, another way we could do this is to put the 'allocator'
-field into the allocatee's data structure.  eg the first word
-in struct folio could point to the struct slab that contains it.
+Patch #1: fix bugs in page fault and khugepaged.
+Patch #2 and #3: refactor, cleanup and preparation.
+Patch #4: keep the poisoned page in page cache and handle such case for all
+          the paths.
+Patch #5: the previous patches unblock page cache THP split, so this patch
+          add page cache THP split support.
 
-> Other notes & potential issues:
->  - page->compound_dtor needs to die
+Changelog v1 --> v2:
+  * Incorporated the suggestion from Kirill to use a new page flag to
+    indicate there is hwpoisoned subpage(s) in a THP. (patch #1)
+  * Dropped patch #2 of v1.
+  * Refctored the page refcount check logic of hwpoison per Naoya. (patch #2)
+  * Removed unnecessary THP check per Naoya. (patch #3)
+  * Incorporated the other comments for shmem from Naoya. (patch #4)
 
-The reason we have it right now is that the last person to call
-put_page() may not be the one who allocated it.  _maybe_ we can do
-all-of-the-dtor-stuff when the person who allocates it frees it, and
-have put_page() only free the memory.  TBD.
 
->  - page->rcu_head moves into the types that actually need it, no issues there
+Yang Shi (5):
+      mm: filemap: check if THP has hwpoisoned subpage for PMD page fault
+      mm: hwpoison: refactor refcount check handling
+      mm: hwpoison: remove the unnecessary THP check
+      mm: shmem: don't truncate page if memory failure happens
+      mm: hwpoison: handle non-anonymous THP correctly
 
-Hope so!
+ include/linux/page-flags.h |  19 ++++++++++
+ mm/filemap.c               |  15 ++++----
+ mm/huge_memory.c           |   2 ++
+ mm/memory-failure.c        | 130 ++++++++++++++++++++++++++++++++++++++++++---------------------------
+ mm/memory.c                |   9 +++++
+ mm/page_alloc.c            |   4 ++-
+ mm/shmem.c                 |  31 +++++++++++++++--
+ mm/userfaultfd.c           |   5 +++
+ 8 files changed, 156 insertions(+), 59 deletions(-)
 
->  - page->refcount has question marks around it. I think we can also just move it
->    into the types that need it; with RCU derefing the pointer to the folio or
->    whatever and grabing a ref on folio->refcount can happen under a RCU read
->    lock - there's no real question about whether it's technically possible to
->    get it out of struct page, and I think it would be cleaner overall that way.
-> 
->    However, depending on how it's used from code paths that go from generic
->    untyped pages, I could see it turning into more of a hassle than it's worth.
->    More investigation is needed.
 
-I think this depends how far we go splitting everything apart.
+[1] https://lore.kernel.org/linux-mm/CAHbLzkqNPBh_sK09qfr4yu4WTFOzRy+MKj+PA7iG-adzi9zGsg@mail.gmail.com/T/#m0e959283380156f1d064456af01ae51fdff91265
+[2] https://lore.kernel.org/lkml/20210318183350.GT3420@casper.infradead.org/
 
->  - page->memcg_data - I don't know whether that one more properly belongs in
->    struct page or in the page subtypes - I'd love it if Johannes could talk
->    about that one.
-
-Johannes certainly knows more about this than I do.  I think it's needed
-for anon folios, file folios and slab, but maybe it's needed for page
-tables too?
-
->  - page->flags - dealing with this is going to be a huge hassle but also where
->    we'll find some of the biggest gains in overall sanity and readability of the
->    code. Right now, PG_locked is super special and ad hoc and I have run into
->    situations multiple times (and Johannes was in vehement agreement on this
->    one) where I simply could not figure the behaviour of the current code re:
->    who is responsible for locking pages without instrumenting the code with
->    assertions.
-> 
->    Meaning anything we do to create and enforce module boundaries between
->    different chunks of code is going to suck, but the end result should be
->    really worthwhile.
-> 
-> Matthew Wilcox and David Howells have been having conversations on IRC about
-> what to do about other page bits. It appears we should be able to kill a lot of
-> filesystem usage of both PG_private and PG_private_2 - filesystems in general
-> hang state off of page->private, soon to be folio->private, and PG_private in
-> current use just indicates whether page->private is nonzero - meaning it's
-> completely redundant.
-
-Also I want to kill PG_error.  PG_slab and PG_hwpoison become page
-types (in the "allocatee" field in your parlance).  PG_head goes away
-naturally.
-
-Something we don't have to talk about right now is that there's no reason
-several non-contiguous pages can't have the same 'allocatee' value.
-I'm thinking that every page allocated to a given vmalloc allocation
-would point to the same vm_struct.  So I'm thinking that the way all of
-the above would work is we'd allocate a "struct folio" from slab, then
-pass the (tagged) pointer to alloc_pages().  alloc_pages() would fill
-in the 'allocatee' pointer for each of the struct pages with whatever
-pointer it is given.
-
-There's probably a bunch of holes in the above handwaving, but I'm
-pretty confident we can fill them.
