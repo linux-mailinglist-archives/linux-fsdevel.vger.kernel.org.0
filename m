@@ -2,159 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B32CA4157C6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 07:15:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 927A04157E9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 07:42:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231288AbhIWFQw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 01:16:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33240 "EHLO
+        id S239209AbhIWFn5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 01:43:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbhIWFQv (ORCPT
+        with ESMTP id S229902AbhIWFnz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 01:16:51 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3C46C061574;
-        Wed, 22 Sep 2021 22:15:20 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id 194so17803795qkj.11;
-        Wed, 22 Sep 2021 22:15:20 -0700 (PDT)
+        Thu, 23 Sep 2021 01:43:55 -0400
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F4206C061756
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 22:42:24 -0700 (PDT)
+Received: by mail-pg1-x533.google.com with SMTP id f129so5232854pgc.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 22:42:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=TUxG+8asl1LF162nI/DmuTVqX3GA2culfN0NPUVwaHA=;
-        b=nSAm+4wX3yNrL3K00/p5t4TICNSzDnFSKHWeyZbVuyO5jNmzaXpRmdETzPJQ05ywiT
-         V2HU7sve6Muqfd8tU2jxcBjKxWU6X1zdsDtW6Y2qNdnI9Sa9KkyMrBEYO2s2gBlRUBci
-         nDRcynM0OBtPQQ81C5ZXL4vTAuCFWp1iDcJAVZ85Mmb7r/PvnAe7sQZ7BGmJUiMcssGy
-         li9bQX9L9XhB2z7out3SfCaKJKhp2gs9NHoXdTWIJPTL0fnfqBrPOtSAZbLF/EXpcVGh
-         nbZMHZFWY7RhDSTNA9uPtES95L9mtNjPH3jrDr4v8QOH9aJEjI1BGcSCpUGZgBbFLC4b
-         Wz9w==
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GIeswu2kPZeMqIRSa83Ms0km/4F7Tf+r++V3y3fcOFU=;
+        b=jsLYrvv0vM8Vx25YhzrFK8nZMFePboSHvbJoHCUZ19pahlhDV37JwulIOJIUBjsOoY
+         IwxouG8cTRfy6bqzI2MyOmlwJQU5iH6tZn9a/kUd8bEuTIugm3BISsT7DmR7DQQVN0d2
+         Hp8noekCagVPbEmOl+agCcQFzy41Eu4Vp+M+APf6DZCWgYpxwTDTUgVFiSSblFbOrOD5
+         7RsKAN13lcl8S0a83epRtQPgSBawOQorSdxyyZ39K6M8bMb/Owd0yeEKMKrdEVhWZqei
+         IfJi/AyLjEumWr9i6eEhRiVkY3aNzdXBpvDkHpmCjte5KL1pjbMrVPaFSpn33KMDrxgH
+         MmtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=TUxG+8asl1LF162nI/DmuTVqX3GA2culfN0NPUVwaHA=;
-        b=tNqyZEd0SiKtKgCntol24fTl4fFcTAbp3Qaq2/TSYjkK2leDRN8ChlRNG8dhxDYmI8
-         1etqvJYhVmo29On2GHnRE4W3TfvAaICFniQb1sWxbyFGJ+qdvJy0YiKRz4p5Otuy2c3z
-         egX1k0rkyCTpIVYlPuFANfjvJuM2vDCd1qBGALjpolCXiZonykDPLRqqyeeAoqW6SsO6
-         ODqeFZGKR0hlPoJ9ztsdZKPirw5D3cSg84WxFnQAOiP23IqORaAKSjqUN5X/zfLsWQUI
-         UI+Sa2NLBUpnh2xmB3OnSV6Boe2z/qr8nZzk7USNzd1QU/jrebP9MGt0xH0RmCCEDU12
-         VQkw==
-X-Gm-Message-State: AOAM531QtVYIimEiogV8wT6cXN7dkCdlY9wpRss5xgGn7Furj1+KKXsn
-        SbyUFgbT/wcWT3XOa+X3HgRpDOFmHqF6
-X-Google-Smtp-Source: ABdhPJxHllBoLtERI9n4b7VpnLh1zzHM1qYX2ydaHqiUXOEkmOq6sUfGkAAYHxXWp7mMtkowGMTrfg==
-X-Received: by 2002:a37:397:: with SMTP id 145mr3062824qkd.332.1632374119898;
-        Wed, 22 Sep 2021 22:15:19 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id s12sm3359314qkm.116.2021.09.22.22.15.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Sep 2021 22:15:18 -0700 (PDT)
-Date:   Thu, 23 Sep 2021 01:15:16 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Struct page proposal
-Message-ID: <YUwNZFPGDj4Pkspx@moria.home.lan>
-References: <YUvWm6G16+ib+Wnb@moria.home.lan>
- <YUvzINep9m7G0ust@casper.infradead.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GIeswu2kPZeMqIRSa83Ms0km/4F7Tf+r++V3y3fcOFU=;
+        b=10Ma7PMOOflEkIZDWOFCXQ1stEXLBFGYC9hiik1CKwcae5Cr52jaG+aBGwkifab+YU
+         bRzu++xwxt65Qd/Bo4K/qdxMLVs3xu1b6s8bIp+uNU+MAiOtGS0YLe7McQWLiNJ17seF
+         gJr6OFEKd2AArj4nlDrFOMffDE9DGmdh/wI/zkzzpVhEffwmTCnlXlwsLpY+5oEwFl+B
+         3T9N0uZPvWhQu7ewkMoTgkO9VX6w/biyVSpsNKbyt0BcksTusXFZ5oqqMrxStyeOJWuy
+         fi9idUrfMkqlcReTbgBHqqyacDtoCOeEfdxJGso38K/r+SpxZlWK4bvS+daeufRVnkoR
+         T4Aw==
+X-Gm-Message-State: AOAM531mRKxId9YmXQPTTFGABAEXNK7RIh3vQeKQC/bfTHPHWqbnZhgq
+        sNzoLnD5De73FfCLVsaZoTqJfjdc0hKKzI+FKz1pxQ==
+X-Google-Smtp-Source: ABdhPJwYgyp6Mh9HCnuRK/sKHAPHJlmd78V8lsW+htD76tFuXvFRyisy4kC6BMOY/ncY7vO4Ehu8wlbqufVEXgR0Xsc=
+X-Received: by 2002:a62:7f87:0:b0:444:b077:51ef with SMTP id
+ a129-20020a627f87000000b00444b07751efmr2693613pfd.61.1632375744469; Wed, 22
+ Sep 2021 22:42:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YUvzINep9m7G0ust@casper.infradead.org>
+References: <163192866125.417973.7293598039998376121.stgit@magnolia>
+ <20210921004431.GO1756565@dread.disaster.area> <YUmYbxW70Ub2ytOc@infradead.org>
+ <CAPcyv4jF1UNW5rdXX3q2hfDcvzGLSnk=1a0C0i7_UjdivuG+pQ@mail.gmail.com>
+ <20210922023801.GD570615@magnolia> <20210922035907.GR1756565@dread.disaster.area>
+ <20210922041354.GE570615@magnolia> <20210922054931.GT1756565@dread.disaster.area>
+ <20210922212725.GN570615@magnolia> <20210923000255.GO570615@magnolia>
+ <20210923014209.GW1756565@dread.disaster.area> <CAPcyv4j77cWASW1Qp=J8poVRi8+kDQbBsLZb0HY+dzeNa=ozNg@mail.gmail.com>
+In-Reply-To: <CAPcyv4j77cWASW1Qp=J8poVRi8+kDQbBsLZb0HY+dzeNa=ozNg@mail.gmail.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 22 Sep 2021 22:42:11 -0700
+Message-ID: <CAPcyv4in7WRw1_e5iiQOnoZ9QjQWhjj+J7HoDf3ObweUvADasg@mail.gmail.com>
+Subject: Re: [PATCH 3/5] vfs: add a zero-initialization mode to fallocate
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jane Chu <jane.chu@oracle.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 23, 2021 at 04:23:12AM +0100, Matthew Wilcox wrote:
-> On Wed, Sep 22, 2021 at 09:21:31PM -0400, Kent Overstreet wrote:
-> > The fundamental reason for struct page is that we need memory to be self
-> > describing, without any context - we need to be able to go from a generic
-> > untyped struct page and figure out what it contains: handling physical memory
-> > failure is the most prominent example, but migration and compaction are more
-> > common. We need to be able to ask the thing that owns a page of memory "hey,
-> > stop using this and move your stuff here".
-> 
-> Yup, and another thing we need is to take any page mapped to userspace
-> and mark it as dirty (whatever that means for the owner of the page).
+On Wed, Sep 22, 2021 at 7:43 PM Dan Williams <dan.j.williams@intel.com> wrote:
+>
+> On Wed, Sep 22, 2021 at 6:42 PM Dave Chinner <david@fromorbit.com> wrote:
+> [..]
+> > Hence this discussion leads me to conclude that fallocate() simply
+> > isn't the right interface to clear storage hardware poison state and
+> > it's much simpler for everyone - kernel and userspace - to provide a
+> > pwritev2(RWF_CLEAR_HWERROR) flag to directly instruct the IO path to
+> > clear hardware error state before issuing this user write to the
+> > hardware.
+>
+> That flag would slot in nicely in dax_iomap_iter() as the gate for
+> whether dax_direct_access() should allow mapping over error ranges,
+> and then as a flag to dax_copy_from_iter() to indicate that it should
+> compare the incoming write to known poison and clear it before
+> proceeding.
+>
+> I like the distinction, because there's a chance the application did
+> not know that the page had experienced data loss and might want the
+> error behavior. The other service the driver could offer with this
+> flag is to do a precise check of the incoming write to make sure it
+> overlaps known poison and then repair the entire page. Repairing whole
+> pages makes for a cleaner implementation of the code that tries to
+> keep poison out of the CPU speculation path, {set,clear}_mce_nospec().
 
-Yeah so that leads into another discussion, which is that pages have a public
-interface that can be called by outside code - via page->mapping->a_ops - but
-it's not particularly clear or documented anywhere that I've seen what that
-interface is. We have stuff in a_ops that is definitely _not_ part of the public
-interface and is really more for internal filesystem use - write_begin,
-write_end, .readpage - like half of a_ops, really. It would be nice if as part
-of these cleanups we could separate out the actual public interface and nail it
-down and document it better.
-
-Most if not all the stuff in a_ops that's for internal fs use really doesn't
-need to be in an ops struct, they could be passed to the filemap.c functions
-that use them - this would be a style improvement, it makes it clearer when you
-pass a function pointer directly to the function that's going to use it (e.g.
-passing write_begin and write _end to generic_file_buffered_read).
-
-> We can also allocate a far larger structure.  eg, we might decide that
-> a file page looks like this:
-
-Yes! At the same time we should be trying to come up with cleanups that just
-completele delete some of these things, but just having the freedom to not have
-to care about shaving every single byte and laying things out in a sane way so
-we can see at a glance what there is is going to make those cleanups that much
-easier.
-
-> (compiling that list reminds me that we'll need to sort out mapcount
-> on subpages when it comes time to do this.  ask me if you don't know
-> what i'm talking about here.)
-
-I am curious why we would ever need a mapcount for just part of a page, tell me
-more.
-
-> I think we /can/ do all this.  I don't know that it's the right thing to
-> do.  And I really mean that.  I genuinely don't know that "allocate
-> file pages from slab" will solve any problems at all.  And I kind of
-> don't want to investigate that until later.
-
-The idea isn't "allocate file pages from slab", it's "do all allocations < 64k
-(or whatever we decide) from slab" - because if you look at enough profiles
-there are plenty of workloads where this really is a real world issue, and if we
-can regigger things so that code outside mm/ literally does not care whether it
-uses slab or alloc_pages(), why not do it? It's the cleanest approach.
-
-> By the way, another way we could do this is to put the 'allocator'
-> field into the allocatee's data structure.  eg the first word
-> in struct folio could point to the struct slab that contains it.
-> 
-> > Other notes & potential issues:
-> >  - page->compound_dtor needs to die
-> 
-> The reason we have it right now is that the last person to call
-> put_page() may not be the one who allocated it.  _maybe_ we can do
-> all-of-the-dtor-stuff when the person who allocates it frees it, and
-> have put_page() only free the memory.  TBD.
-
-We have it because hugepages and transhuge pages are "special" and special in
-different ways. They should probably just be bits in the internal allocator
-state, and hopefully compound_page_dtor and transhuge_dtor can just be deleted
-(the hugepage dtor actually does do real things involving the hugepage reserve).
-
-> Something we don't have to talk about right now is that there's no reason
-> several non-contiguous pages can't have the same 'allocatee' value.
-> I'm thinking that every page allocated to a given vmalloc allocation
-> would point to the same vm_struct.  So I'm thinking that the way all of
-> the above would work is we'd allocate a "struct folio" from slab, then
-> pass the (tagged) pointer to alloc_pages().  alloc_pages() would fill
-> in the 'allocatee' pointer for each of the struct pages with whatever
-> pointer it is given.
-
-There's also vmap to think about. What restrictions, if any, are there on what
-kinds of pages can be passed to vmap()? I see it used in a lot of driver code,
-and I wonder if I even dare ask what for.
-
-> There's probably a bunch of holes in the above handwaving, but I'm
-> pretty confident we can fill them.
-
-Fun times!
+This flag could also be useful for preadv2() as there is currently no
+way to read the good data in a PMEM page with poison via DAX. So the
+flag would tell dax_direct_access() to again proceed in the face of
+errors, but then the driver's dax_copy_to_iter() operation could
+either read up to the precise byte offset of the error in the page, or
+autoreplace error data with zero's to try to maximize data recovery.
