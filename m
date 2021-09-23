@@ -2,90 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54B8C41543D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 01:51:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64B5F415460
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 02:02:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238580AbhIVXwy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 19:52:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46234 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238526AbhIVXwx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 19:52:53 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4D3AC061574;
-        Wed, 22 Sep 2021 16:51:22 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id w11so2808570plz.13;
-        Wed, 22 Sep 2021 16:51:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=XgsEeLYbI0UodBnr5lEX+ShnspAuT3D7cmzwnoUdmpI=;
-        b=K9gSs3wE0vKD30XeVAtdrlMuNXXyCgj+Bw2AwXWygL82Cb7ahh5TjRL/6p2m42yhqI
-         8pCejBWe6CpxxEVq6OIe7k6Mv4HWjkJCtsE+buNTRbzRIFD7SsJVgoXFa55acGaEmshy
-         RUmzJNBjFFtIvfw1hSqFrWzknRwugpxzgD4zMaxcE6gkBCOA+uEeAMiL3lVRVw1GpEYk
-         jiKClW13no5FIRrQIgTVVXB5HFhPGJXz3oA0JoQhcc1yATxDEHx95Ni+IKdCrj2Dgdmn
-         Zd2vK9R+23a1L+mDTdP9TooNJR9wWG8kg5QJqL/c1ysTfKF68IG6JqGxsRQPpmLitqaA
-         mv8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=XgsEeLYbI0UodBnr5lEX+ShnspAuT3D7cmzwnoUdmpI=;
-        b=sJhTxnTyP0UpXa5vns7KhXFl0pMW91e+xEvDpDuC4RaUTM2ynP4lCcwUT1OiBQ0Zmz
-         a1VhkoIqUWk64ZtQ7a4VFFUtYmtRwFi3kOrwSj/eLkTBhX9Y3eq04Ip1RAsHUqSQ2bOh
-         tND/EN889Bik7EXwz2Rurdz89WBAKnFakc7T5VqxuOwClTgdFTYlOymeARdLHzXmSwgy
-         6TIboAJ2kDr3gwI8rrmvCPsYFC8jfK4TUnbnd8d/92pcouY177WbWaFnLvG7KVy++uGu
-         s5OviPhlMnu38FimtGX580y4nx/h2c1uvt3SE7K/jA1GcQfFiua3DZqGPuIdFaEdNfIN
-         a7dA==
-X-Gm-Message-State: AOAM533WKvD8IOvj/OtVfh4HfPh7GF3+vtti/sqRhZe2t8eP+m9aY5o2
-        pXaA5tya1cd8UT7OhCHHKX4=
-X-Google-Smtp-Source: ABdhPJxSECMetH5CJrAF4QRktI/abljPiV+7Jg0aPgE6MLXfH/WZ9kGeVNzMdiVATS/aFMygi0foVQ==
-X-Received: by 2002:a17:902:e785:b0:13d:a0a6:4bd with SMTP id cp5-20020a170902e78500b0013da0a604bdmr1589806plb.30.1632354682421;
-        Wed, 22 Sep 2021 16:51:22 -0700 (PDT)
-Received: from ?IPV6:2600:8802:380b:9e00:5524:2ae2:3f26:1cbf? ([2600:8802:380b:9e00:5524:2ae2:3f26:1cbf])
-        by smtp.gmail.com with ESMTPSA id g14sm3375410pjk.20.2021.09.22.16.51.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Sep 2021 16:51:22 -0700 (PDT)
-Message-ID: <cf0af95b-4937-0d98-a048-a2e1a90172e6@gmail.com>
-Date:   Wed, 22 Sep 2021 16:51:21 -0700
+        id S238590AbhIWAE0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 20:04:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230414AbhIWAE0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Sep 2021 20:04:26 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9F52161040;
+        Thu, 23 Sep 2021 00:02:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632355375;
+        bh=Q5q55uzYbOYX5edySLxCvRz2fFYYJx6Y5Pae3Gu8YB8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rNxJ4w/1zVSMcwwR3VITjv9z0pWLYmhJkHG0Ou5Mj+cHthYkdwQ6B9bg0AitV/2Wm
+         kdYG/GmSyERoEd3id1QffMcHb3uvK4FaYLBdettu3Wdi9Wk5iZNu+qX1lBcNQP/8zI
+         HX/UrSkwHQw1FUBZWhsFAkr6+RfiNedxuFomOHwjN++T0YbDS/6miWTz1o6wlXaghs
+         r4SNb2rqLovB8bnFg2q7EpONjHvOKaBhzGjjPFlZxUnjj5YEaUN+PleqCKTIqHQp9U
+         bYCr+EK95rBzPJDnBkoYfP7O0OCI3sPEHWqFY2J6oOZwJvScKfIfTCbPh7CMkASeOm
+         +dgFyZpQGOKbQ==
+Date:   Wed, 22 Sep 2021 17:02:55 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jane Chu <jane.chu@oracle.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 3/5] vfs: add a zero-initialization mode to fallocate
+Message-ID: <20210923000255.GO570615@magnolia>
+References: <163192864476.417973.143014658064006895.stgit@magnolia>
+ <163192866125.417973.7293598039998376121.stgit@magnolia>
+ <20210921004431.GO1756565@dread.disaster.area>
+ <YUmYbxW70Ub2ytOc@infradead.org>
+ <CAPcyv4jF1UNW5rdXX3q2hfDcvzGLSnk=1a0C0i7_UjdivuG+pQ@mail.gmail.com>
+ <20210922023801.GD570615@magnolia>
+ <20210922035907.GR1756565@dread.disaster.area>
+ <20210922041354.GE570615@magnolia>
+ <20210922054931.GT1756565@dread.disaster.area>
+ <20210922212725.GN570615@magnolia>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.1
-Subject: Re: [PATCH 1/5] initramfs: move unnecessary memcmp from hot path
-Content-Language: en-US
-To:     Al Viro <viro@zeniv.linux.org.uk>, David Disseldorp <ddiss@suse.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        willy@infradead.org
-References: <20210922115222.8987-1-ddiss@suse.de>
- <YUu91kH8kOcVHxyb@zeniv-ca.linux.org.uk>
-From:   Chaitanya Kulkarni <ckulkarnilinux@gmail.com>
-In-Reply-To: <YUu91kH8kOcVHxyb@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210922212725.GN570615@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Sep 22, 2021 at 02:27:25PM -0700, Darrick J. Wong wrote:
+> On Wed, Sep 22, 2021 at 03:49:31PM +1000, Dave Chinner wrote:
+> > On Tue, Sep 21, 2021 at 09:13:54PM -0700, Darrick J. Wong wrote:
+> > > On Wed, Sep 22, 2021 at 01:59:07PM +1000, Dave Chinner wrote:
+> > > > On Tue, Sep 21, 2021 at 07:38:01PM -0700, Darrick J. Wong wrote:
+> > > > > On Tue, Sep 21, 2021 at 07:16:26PM -0700, Dan Williams wrote:
+> > > > > > On Tue, Sep 21, 2021 at 1:32 AM Christoph Hellwig <hch@infradead.org> wrote:
+> > > > > > >
+> > > > > > > On Tue, Sep 21, 2021 at 10:44:31AM +1000, Dave Chinner wrote:
+> > > > > > > > I think this wants to be a behavioural modifier for existing
+> > > > > > > > operations rather than an operation unto itself. i.e. similar to how
+> > > > > > > > KEEP_SIZE modifies ALLOC behaviour but doesn't fundamentally alter
+> > > > > > > > the guarantees ALLOC provides userspace.
+> > > > > > > >
+> > > > > > > > In this case, the change of behaviour over ZERO_RANGE is that we
+> > > > > > > > want physical zeros to be written instead of the filesystem
+> > > > > > > > optimising away the physical zeros by manipulating the layout
+> > > > > > > > of the file.
+> > > > > > >
+> > > > > > > Yes.
+> > > > > > >
+> > > > > > > > Then we have and API that looks like:
+> > > > > > > >
+> > > > > > > >       ALLOC           - allocate space efficiently
+> > > > > > > >       ALLOC | INIT    - allocate space by writing zeros to it
+> > > > > > > >       ZERO            - zero data and preallocate space efficiently
+> > > > > > > >       ZERO | INIT     - zero range by writing zeros to it
+> > > > > > > >
+> > > > > > > > Which seems to cater for all the cases I know of where physically
+> > > > > > > > writing zeros instead of allocating unwritten extents is the
+> > > > > > > > preferred behaviour of fallocate()....
+> > > > > > >
+> > > > > > > Agreed.  I'm not sure INIT is really the right name, but I can't come
+> > > > > > > up with a better idea offhand.
+> > > > > > 
+> > > > > > FUA? As in, this is a forced-unit-access zeroing all the way to media
+> > > > > > bypassing any mechanisms to emulate zero-filled payloads on future
+> > > > > > reads.
+> > > > 
+> > > > Yes, that's the semantic we want, but FUA already defines specific
+> > > > data integrity behaviour in the storage stack w.r.t. volatile
+> > > > caches.
+> > > > 
+> > > > Also, FUA is associated with devices - it's low level storage jargon
+> > > > and so is not really appropriate to call a user interface operation
+> > > > FUA where users have no idea what a "unit" or "access" actually
+> > > > means.
+> > > > 
+> > > > Hence we should not overload this name with some other operation
+> > > > that does not have (and should not have) explicit data integrity
+> > > > requirements. That will just cause confusion for everyone.
+> > > > 
+> > > > > FALLOC_FL_ZERO_EXISTING, because you want to zero the storage that
+> > > > > already exists at that file range?
+> > > > 
+> > > > IMO that doesn't work as a behavioural modifier for ALLOC because
+> > > > the ALLOC semantics are explicitly "don't touch existing user
+> > > > data"...
+> > > 
+> > > Well since you can't preallocate /and/ zerorange at the same time...
+> > > 
+> > > /* For FALLOC_FL_ZERO_RANGE, write zeroes to pre-existing mapped storage. */
+> > > #define FALLOC_FL_ZERO_EXISTING		(0x80)
+> > 
+> > Except we also want the newly allocated regions (i.e. where holes
+> > were) in that range being zeroed to have zeroes written to them as
+> > well, yes? Otherwise we end up with a combination of unwritten
+> > extents and physical zeroes, and you can't use
+> > ZERORANGE|EXISTING as a replacement for PUNCH + ALLOC|INIT
 
+Ooookay.  This is drifting further from the original problem of wanting
+to write a buffer of zeroes to an already-mapped extent.
 
-On 9/22/2021 4:35 PM, Al Viro wrote:
-> On Wed, Sep 22, 2021 at 01:52:18PM +0200, David Disseldorp wrote:
->> do_header() is called for each cpio entry and first checks for "newc"
->> magic before parsing further. The magic check includes a special case
->> error message if POSIX.1 ASCII (cpio -H odc) magic is detected. This
->> special case POSIX.1 check needn't be done in the hot path, so move it
->> under the non-newc-magic error path.
-> You keep refering to hot paths; do you have any data to support that
-> assertion?
+What if part of the region is shared?  If the goal is to make a read
+return zeroes, then the shared extent must be punched, right?  Should
+the new region be preallocated?
+
+What if part of the region is unwritten?  Should zeroing convert that to
+written at the same time?  This isn't required to solve the problem, but
+"force the filesystem to write zeroes" implies that's required.  Should
+preallocation start converting unwritten extents too?
+
+What if part of the region is sparse?  Preallocation should allocate a
+written extent, but that wasn't the problem I was focusing on.  Should
+zeroing preallocate a written extent?  This also isn't required to solve
+my problem, but this extension of the API definition implies this too.
+
+What if part of the region is delalloc?  Should preallocation allocate a
+written extent here too?  Should zeroing?
+
+For ALLOC|INITDATA, I think it suffices to map new written extents into
+holes with BMAPI_ZERO and do no more work than that.
+
+For ZERO|INITDATA, I /think/ I can solve all of the above by writing
+zeroes to the page cache and then switching to regular preallocation to
+fill the holes.
+
+--D
+
+> > 
+> > /*
+> >  * For preallocation and zeroing operations, force the filesystem to
+> >  * write zeroes rather than use unwritten extents to indicate the
+> >  * range contains zeroes.
+> >  *
+> >  * For filesystems that support unwritten extents, this trades off
+> >  * slow fallocate performance for faster first write performance as
+> >  * unwritten extent conversion on the first write to each block in
+> >  * the range is not needed.
+> >  *
+> >  * Care is required when using FALLOC_FL_ALLOC_INIT_DATA as it will
+> >  * be much slower overall for large ranges and/or slow storage
+> >  * compared to using unwritten extents.
+> >  */
+> > #define FALLOC_FL_ALLOC_INIT_DATA	(1 << 7)
 > 
-> How much does that series buy you on average, and what kind of dispersion
-> do you get before and after it?
+> I prefer FALLOC_FL_ZEROINIT_DATA here, because in the ZERO|INIT case
+> we're not allocating any new space, merely rewriting existing storage.
+> I also want to expand the description slightly:
 > 
-> I'm not saying I hate the patches themselves, but those references in commit
-> messages ping my BS detectors every time I see them ;-/
-
-And this exactly why cover-letter with a quantitative date for such
-series is important based on my experience...
+> /*
+>  * For preallocation, force the filesystem to write zeroes rather than
+>  * use unwritten extents to indicate the range contains zeroes.  For
+>  * zeroing operations, force the filesystem to write zeroes to existing
+>  * written extents.
+> 
+> --D
+> 
+> > 
+> > Cheers,
+> > 
+> > Dave.
+> > 
+> > -- 
+> > Dave Chinner
+> > david@fromorbit.com
