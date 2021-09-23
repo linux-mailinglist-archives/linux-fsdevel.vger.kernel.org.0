@@ -2,186 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4667F4166CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 22:40:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 191FC4166EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 22:49:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235775AbhIWUlj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 16:41:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229609AbhIWUlj (ORCPT
+        id S242967AbhIWUvJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 16:51:09 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:58650 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229609AbhIWUvI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 16:41:39 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01B6CC061574;
-        Thu, 23 Sep 2021 13:40:06 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id c22so27269723edn.12;
-        Thu, 23 Sep 2021 13:40:06 -0700 (PDT)
+        Thu, 23 Sep 2021 16:51:08 -0400
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 18NK0RiO000311;
+        Thu, 23 Sep 2021 20:49:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2021-07-09;
+ bh=xcv/nwufqS9z8/UAKKOOZrKAoOVrDm7WAnwaW0Za8uc=;
+ b=tmErpvanYDf5e0OxdxKqEPouJuA9r91h+kxyxJ2r6dd45mubW9aiTw3k7wmdDN+xd7B3
+ kRnPAdznpxdkA01j9V0T5syYtAOTTyCAmPxNpVDKI6cd6pkiHxjm/yqVLDowpC4kX0Qz
+ FkiBIYworghejLMfNBJqizKMwE8ZHJuXgiQBuTxWtO0E/biC4WazETHZYL+c9nyQktiR
+ UvQ3N5NJ+2VkZhQSR6GEEfrri2WmC+BSo5b1VqGaMF6NvbRjidvTkzR6mSXk829/gzaT
+ Jix1XL4ZbeXQHOa7gbxaqOsG/mXI7w4UU947/6HCebxhmfwi87wlJXuBbA5OR2JQGZ/z 1g== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3b8neb5chh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Sep 2021 20:49:01 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 18NKjhGZ092111;
+        Thu, 23 Sep 2021 20:49:00 GMT
+Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam08lp2048.outbound.protection.outlook.com [104.47.74.48])
+        by userp3030.oracle.com with ESMTP id 3b7q5q5j53-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 Sep 2021 20:48:59 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LwyL9GXHYIqGxgx+N45f/LUvsVb1JLp1uqGav1EPAK4Sa/es4iFV7CuAmavJoedLUE9milwBlvZ80L9iSRPVcJrZwRS7StOsAws58LGmG5deAMC8UMFKgCNnmulrR2AeMO/SO8WtluMCAMKwfMbE5g6N9892m9sM8Nkd7Sqdv+fKh6py8f9JM04fyTWz4gf9u6G9yRnNWHlYvfltdAgdB97EDPibpjF+CvrQ1FoEz9MSr5kSHfgNbrxVjZCH9DMY6zgfrCbMnxgrYqV//iqtm9t764yBbPR6jSkRwz9MGC6EXXsJQbsNvUbcb+ZCDguTFQDYcPtOt+/+8oGteyQDlA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
+ bh=xcv/nwufqS9z8/UAKKOOZrKAoOVrDm7WAnwaW0Za8uc=;
+ b=nfWzxabr9B4m1P9d45pZiUHdWLMhY9/aMdaCzazK2rWP0d2edWSemI3Umg8wMDpUCpz0PNengYD4sm3X3+0WQD0taYsBo4YbDFvWOdhGg0hvAucrcV+iQjjS1g8dQBwYP70feyUxCLILyCSoB4al+5fNIxrYJEXflkqgAv14ugJrZGfiWO/p9fwfEvlNeW7nTuy0GzgC7C2AkhpAcNlHrcXJmKiwOapP06iiFT99/CXelW8dZ8FTWnGwu8VE6AcoMBlHmWnd6rcFPEml//xf4x4gVmDqE/QbavOBypVbX+rncBtZLmbKYqxVt+EKM5LgRz3W5S4n++YPjTX3pALV8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rROM2SQJGIjf7YaskdxJKjD00Nttcaop2C06zG+GQdk=;
-        b=Get8jwpdrg7VgSWQme5Kpcu2NOvv0BNPWb2i8qGQynkG9g0Y0+SRut2kBzgMcwmGmp
-         SYs8QZtCnGb9nyPJzQuzU+O+BDNU41IQwaV2kg1ZIQDSZFnRrRz6im63AHLVXpaYyqlk
-         aRguPB5ImCSsXos+TufuMYLlUao6WAxVvWEqjepdt46geTF16Tvu5MbK3P2AdaynDH/n
-         BwzCAm0tyzjHCYdaRkAg2llpPR8HLrpuIFaYLpA/jUv4DZJBE8u3Kddyb4Pbx2EWbbU9
-         xmcgLx4E900vievL4iImM1V6wmoXHXXSNOdBdJ0wRQFK5SqUUeyvEvCatjwMsQgKOtRZ
-         JPFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rROM2SQJGIjf7YaskdxJKjD00Nttcaop2C06zG+GQdk=;
-        b=CiJ6lNCtdIqA/VsTURy6yiWIbJHVqX2Vg/bcCdiDIfY4NVJ+HplG/CsWKk2sxCC9fU
-         ori9KTRleuHahCtJCn1cmQv8RNj7aOZl8ISax2t8JVOeHm5H1atSO/zBezFqVpBpFSwc
-         IpLGNc+ayk/Kq4xm0auoShjo9w9+Kccq6odAJ9CGrkXZPg5obp86g0myE3Sc56xX5gnI
-         W0FJ2DpH7RHdceaiaQ89/Zh6c7j8WRXSKVVw8j1ScVau00WL0xMFw/PujMfCqaBfu+WO
-         WegOLCfVbzc0R9/MCuFZ1q7el2I90EE+H5PLeTDRophccVMZZZDmzrb0Tq/cnABB8X1Z
-         A78w==
-X-Gm-Message-State: AOAM5305d2CvbGbykayYHVmkZRoilTgrg5sANRe4ZijO/PlTsou82/3V
-        Vun7dU6lZ9Wt1h5GTff2OkItu3PC+dDNBiMRYtw=
-X-Google-Smtp-Source: ABdhPJzEDnlbZpJuZ8uiE4FoKnNlFLHoMIEU5vEGgonHRoioJOqUedUclccqKpHYY0HT6iK/rt9jJh71w3BmVaDRICY=
-X-Received: by 2002:a50:e0c8:: with SMTP id j8mr903525edl.283.1632429602265;
- Thu, 23 Sep 2021 13:40:02 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xcv/nwufqS9z8/UAKKOOZrKAoOVrDm7WAnwaW0Za8uc=;
+ b=GbwNauvqP+llh6FgugtBwDTtajPrGSIl0GT9V/PaSeK9VQVhT6QUGn8Pay8rrWfmdV9iJiPnyIJGL/kakJH1hXqb0YA8CLg/kjHHHq6wd+69q4Pi9IxZsBg+Y7Op+n7qGKo8Pn1raSFgpM+++wAVzvlOQEztXseYHE4XHQKZsLQ=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=oracle.com;
+Received: from SJ0PR10MB4429.namprd10.prod.outlook.com (2603:10b6:a03:2d1::14)
+ by SJ0PR10MB5646.namprd10.prod.outlook.com (2603:10b6:a03:3d0::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4523.14; Thu, 23 Sep
+ 2021 20:48:58 +0000
+Received: from SJ0PR10MB4429.namprd10.prod.outlook.com
+ ([fe80::401:1df2:3e9a:66c]) by SJ0PR10MB4429.namprd10.prod.outlook.com
+ ([fe80::401:1df2:3e9a:66c%6]) with mapi id 15.20.4523.020; Thu, 23 Sep 2021
+ 20:48:57 +0000
+Subject: Re: [PATCH 0/3] dax: clear poison on the fly along pwrite
+To:     Dan Williams <dan.j.williams@intel.com>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Weiny, Ira" <ira.weiny@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20210914233132.3680546-1-jane.chu@oracle.com>
+ <CAPcyv4h3KpOKgy_Cwi5fNBZmR=n1hB33mVzA3fqOY7c3G+GrMA@mail.gmail.com>
+ <516ecedc-38b9-1ae3-a784-289a30e5f6df@oracle.com>
+ <20210915161510.GA34830@magnolia>
+ <CAPcyv4jaCiSXU61gsQTaoN_cdDTDMvFSfMYfBz2yLKx11fdwOQ@mail.gmail.com>
+From:   Jane Chu <jane.chu@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <90031bc1-9bd2-635e-8513-1948204ffcd7@oracle.com>
+Date:   Thu, 23 Sep 2021 13:48:52 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+In-Reply-To: <CAPcyv4jaCiSXU61gsQTaoN_cdDTDMvFSfMYfBz2yLKx11fdwOQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR11CA0022.namprd11.prod.outlook.com
+ (2603:10b6:806:6e::27) To SJ0PR10MB4429.namprd10.prod.outlook.com
+ (2603:10b6:a03:2d1::14)
 MIME-Version: 1.0
-References: <20210923032830.314328-1-shy828301@gmail.com> <20210923032830.314328-2-shy828301@gmail.com>
- <20210923143901.mdc6rejuh7hmr5vh@box.shutemov.name> <CAHbLzkqb-6a7c=C8WF0G0X2yCey=t7OoL-oW2Y0CpM0MpgJbBg@mail.gmail.com>
-In-Reply-To: <CAHbLzkqb-6a7c=C8WF0G0X2yCey=t7OoL-oW2Y0CpM0MpgJbBg@mail.gmail.com>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Thu, 23 Sep 2021 13:39:49 -0700
-Message-ID: <CAHbLzkr5YkpuFpnZguDb46naLc3MXw0DmjkttbGU4Nmm=yX8gg@mail.gmail.com>
-Subject: Re: [v2 PATCH 1/5] mm: filemap: check if THP has hwpoisoned subpage
- for PMD page fault
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Peter Xu <peterx@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Received: from [10.159.139.16] (138.3.200.16) by SA9PR11CA0022.namprd11.prod.outlook.com (2603:10b6:806:6e::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.13 via Frontend Transport; Thu, 23 Sep 2021 20:48:56 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 623fea63-aac0-46bf-3835-08d97ed39077
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5646:
+X-Microsoft-Antispam-PRVS: <SJ0PR10MB5646D4CD81EB37377CA67E4FF3A39@SJ0PR10MB5646.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: YmbhGs0B5OFDigCWNOxBLb4ufpw854O3OxqVFAky1/pSJT8y/kL+X2m3VMUawnJ78Bk5KZyzZXHZh426yu2jMAsKzIbTBg+1oxBe6eaoHaFolJ8N2m6NoxzfFPpVKniy6E/KTarG1DMa2VJx41YLXHdFDb44Nn0ahWytwPml5ODAMMFt5I4CedFsbPeO76SD+NF99tPfJzQ2TPB/r/rbG37VV8Ecy3MQcb2xck/kwh9w45JY1t7YTZliOXJCZ5HltoCB2acGM5qMIxsKFHIDQVYhISaOOtERViLmTHU8nMWv2nh5BlJE2txsEgntF6Hn6FoOexhBYbv0AlCWEem1TxlcaxscjejkyeAOnHQPFXz3pM+qWy4Ta+SoZBUAfEGng9hfTJD814T9tsAdpKFcTjaGr6CliXZvWHGQ3X0hYlMeR2w6pXTxn0VQjNFJHGI74VmpFHFZpgmNbMr7a4RDU6gV0g2cPb0NKJci7HGkw3vnS8NdnqRdsqRnurxqEQIGsXiP4u0QN4hcpm0wJIPa09cuLiFbV3Fy21aWNdJ/3g9fM/j8CkB1Wt6XXjm4g4L7gPd3VzQ7mFQsNudh4UE54Z99FXpcY1cjMP61L/HPOfKOQA48k4ww3TSylm3uIRfD1Pl+BtJrCVvFX6kHdmLUWi/agB05pkaIagyeDKdEfnJHBK49FtERbS1N1HRxWH6lY+cbMGzKpnAHa8+74aVty2D95o+UU2+7Y54W+wT6K1w=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4429.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(83380400001)(7416002)(66946007)(26005)(31696002)(54906003)(2906002)(4326008)(36916002)(36756003)(53546011)(316002)(6486002)(5660300002)(8676002)(6666004)(956004)(110136005)(8936002)(16576012)(86362001)(2616005)(31686004)(44832011)(508600001)(66476007)(66556008)(38100700002)(186003)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Vm1xRTlkRjV6VVdFNzhDOXZvUlhIcm1La1M0TzBubmVha3VnNlFFUFFtSGRh?=
+ =?utf-8?B?eDRsQVYrUkZXZXhHS2V4WVp5RVo3YVhmTVhjN1JFU1JHcmhpcjdKRHhVcS8w?=
+ =?utf-8?B?aUVRSkpZZWFCYkhDYW9tVCtLRkE1ektPbkhPV0pTR0kxdWZrQ0NYa080Mmcz?=
+ =?utf-8?B?LzRXM2E0VjRoek9oUW41dUQ4RWdpOE4vVEZxUlZuVXlGSG5UVmkvV3d6NDcv?=
+ =?utf-8?B?cmhSR1g0dmo0MmZUbGE3UUpHWFpqZlQrSzg1ZkFKUnJ2czB5Mjh4QTZPZ0Na?=
+ =?utf-8?B?b1RpMXZHdzNHZ1pCRVQ5S2tQejRzblQ5RDlKOFFoN3huT2svNkVpSGdZcnI3?=
+ =?utf-8?B?M0t2QWtIL29JZGNoVUsyaGFNNVdGSlJjdG5YY0svdTZ5OFRYeXFtV0luR2xU?=
+ =?utf-8?B?cTZvaEZCY29kZHRYQzEvVkJzNmZOcDNVbTFma2Q1Rk9wZlhyMG0vNWxIckFs?=
+ =?utf-8?B?RkJ2aEZ1RFJuUk1OSEYzVzBmQUZ5c1Q2aHUzSnRRazlLVit6NWlSbU4rQStT?=
+ =?utf-8?B?VkE5cFRDUFI1RVhQYWIwWW8wMjUxVjY4cmdMOEFEeGVwbTZIRTFrcHE4UlFN?=
+ =?utf-8?B?NHpiNS95ZGpwOXJVKzZYUXpNdVpleGJHZVVOYlF2LzBRN2Yvb2VtSjdDQlZj?=
+ =?utf-8?B?Q2NyZGRwVmhFRXJ0NzZHVXpwU3FDcWtPS1VMQ3gyUXp4amEwQ1ZIMEpSZVNC?=
+ =?utf-8?B?dDhXblNuQnhOdGF1Q0EycXBRT25FVTE1Q25wWjRpSmtSdmswSHRwTVQ5Mk1w?=
+ =?utf-8?B?NFNsTUxyc0hlNWhKTGRTS05xRU1raGdqWDBPekF1alZDYWVtdVRPL1hDcFB1?=
+ =?utf-8?B?cCt2bTZJM09NcVJxdmJoUXMxUmNqeHp2OHZWTlBPQUZVYmluUWNCMDlJRkgr?=
+ =?utf-8?B?K3lRNjhOWkU1c2NJTW9kTFdBWVZXTDUxSmd1R0gzS2dnQ2lCSVJ6U0J5QU9r?=
+ =?utf-8?B?MEt5SHd4NDRUVk1LSGZzZ25pa0RjOEsxSzZZRmVPTXgxZUlHOFRZbjhpTnR3?=
+ =?utf-8?B?RVhlMEprN0ZPUGJnOEFueEthRnlVUVF4MlFsWXNQZVBMcUJ1cXRkbUUvU2Qx?=
+ =?utf-8?B?Z0RvSWdjRmd1MERsTml2OER1eU92MUVzYXJGQjlneEd6dXF2TnQvNjdjUDhI?=
+ =?utf-8?B?anRNUHZpWjRESXF0amFWekR4aXZBZ0NabGo1S1N5S2ZFRGkzZG00QnNtRkpk?=
+ =?utf-8?B?YWtKV2g2T3g5UXVzK1ZyTy9LTHBzOVdKOVBSMm5DWmgraEMxSHpucmhCZjdV?=
+ =?utf-8?B?MU94emZhOXp2NVkwM1RnN3VvNG1NdEwwdnZCWUFHRGErVGlWa3c5NnFkellX?=
+ =?utf-8?B?YjErRzB0L0ZUSHpWSSttUWJ0Z21vK3dSaDloU1ZITDZjSjdnVlNuUWQrbmI2?=
+ =?utf-8?B?Mkx0NFc5ZUk0WC9BSGl2YWJHRFN1NkhLRm5OYlk3Zk9YWXZGSUhPMWxGeGJ1?=
+ =?utf-8?B?bVpKSDQ4R2JvS3lVTHhVNUo4NzVDQ1Uxb1FCZW9ZTVhNM3dVdTBXUW1nZjA2?=
+ =?utf-8?B?N3V5eno1c0tjWHRkL3FBZnE5cVBabGt0bmtJNk5BcVN2NVpWUU9tSlJ6T2Zt?=
+ =?utf-8?B?YzNabTJpZHRhMWUxbC9kZnlZSFRVanIxTi9XWWV4QzR4OEU2SzBWYUF3NFh1?=
+ =?utf-8?B?WWQrdWExdlhURldJbWZYcWlqaXY5eW9DdzgwVThVMFJNMTlxWVBheE9UcWVp?=
+ =?utf-8?B?RjdieEIxYkhYQWJvZ244RFMvZ1BsS3YzTTRpSnFWcW93V1NzM3ZlTHk3THVw?=
+ =?utf-8?Q?blJ1UczNLdXp9awWhvszFHWjS7bs6ToxlCbhRZC?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 623fea63-aac0-46bf-3835-08d97ed39077
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB4429.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2021 20:48:57.8976
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SP2FCG6hwpll2CMCPLlYQjXiMaw5gDE86UMCww5NdskaVZ4YWcOgMRqu22yJYV8OX0vdfTghBG2POga7khiSoQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5646
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10116 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=999
+ spamscore=0 malwarescore=0 adultscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2109200000 definitions=main-2109230119
+X-Proofpoint-GUID: faXaK82v7QnHTKo-_8pjWCUEoVWTQcEF
+X-Proofpoint-ORIG-GUID: faXaK82v7QnHTKo-_8pjWCUEoVWTQcEF
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 23, 2021 at 10:15 AM Yang Shi <shy828301@gmail.com> wrote:
->
-> On Thu, Sep 23, 2021 at 7:39 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> >
-> > On Wed, Sep 22, 2021 at 08:28:26PM -0700, Yang Shi wrote:
-> > > When handling shmem page fault the THP with corrupted subpage could be PMD
-> > > mapped if certain conditions are satisfied.  But kernel is supposed to
-> > > send SIGBUS when trying to map hwpoisoned page.
-> > >
-> > > There are two paths which may do PMD map: fault around and regular fault.
-> > >
-> > > Before commit f9ce0be71d1f ("mm: Cleanup faultaround and finish_fault() codepaths")
-> > > the thing was even worse in fault around path.  The THP could be PMD mapped as
-> > > long as the VMA fits regardless what subpage is accessed and corrupted.  After
-> > > this commit as long as head page is not corrupted the THP could be PMD mapped.
-> > >
-> > > In the regulat fault path the THP could be PMD mapped as long as the corrupted
-> >
-> > s/regulat/regular/
-> >
-> > > page is not accessed and the VMA fits.
-> > >
-> > > This loophole could be fixed by iterating every subpage to check if any
-> > > of them is hwpoisoned or not, but it is somewhat costly in page fault path.
-> > >
-> > > So introduce a new page flag called HasHWPoisoned on the first tail page.  It
-> > > indicates the THP has hwpoisoned subpage(s).  It is set if any subpage of THP
-> > > is found hwpoisoned by memory failure and cleared when the THP is freed or
-> > > split.
-> > >
-> > > Cc: <stable@vger.kernel.org>
-> > > Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > > ---
-> >
-> > ...
-> >
-> > > diff --git a/mm/filemap.c b/mm/filemap.c
-> > > index dae481293b5d..740b7afe159a 100644
-> > > --- a/mm/filemap.c
-> > > +++ b/mm/filemap.c
-> > > @@ -3195,12 +3195,14 @@ static bool filemap_map_pmd(struct vm_fault *vmf, struct page *page)
-> > >       }
-> > >
-> > >       if (pmd_none(*vmf->pmd) && PageTransHuge(page)) {
-> > > -         vm_fault_t ret = do_set_pmd(vmf, page);
-> > > -         if (!ret) {
-> > > -                 /* The page is mapped successfully, reference consumed. */
-> > > -                 unlock_page(page);
-> > > -                 return true;
-> > > -         }
-> > > +             vm_fault_t ret = do_set_pmd(vmf, page);
-> > > +             if (ret == VM_FAULT_FALLBACK)
-> > > +                     goto out;
-> >
-> > Hm.. What? I don't get it. Who will establish page table in the pmd then?
->
-> Aha, yeah. It should jump to the below PMD populate section. Will fix
-> it in the next version.
->
-> >
-> > > +             if (!ret) {
-> > > +                     /* The page is mapped successfully, reference consumed. */
-> > > +                     unlock_page(page);
-> > > +                     return true;
-> > > +             }
-> > >       }
-> > >
-> > >       if (pmd_none(*vmf->pmd)) {
-> > > @@ -3220,6 +3222,7 @@ static bool filemap_map_pmd(struct vm_fault *vmf, struct page *page)
-> > >               return true;
-> > >       }
-> > >
-> > > +out:
-> > >       return false;
-> > >  }
-> > >
-> > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > > index 5e9ef0fc261e..0574b1613714 100644
-> > > --- a/mm/huge_memory.c
-> > > +++ b/mm/huge_memory.c
-> > > @@ -2426,6 +2426,8 @@ static void __split_huge_page(struct page *page, struct list_head *list,
-> > >       /* lock lru list/PageCompound, ref frozen by page_ref_freeze */
-> > >       lruvec = lock_page_lruvec(head);
-> > >
-> > > +     ClearPageHasHWPoisoned(head);
-> > > +
-> >
-> > Do we serialize the new flag with lock_page() or what? I mean what
-> > prevents the flag being set again after this point, but before
-> > ClearPageCompound()?
->
-> No, not in this patch. But I think we could use refcount. THP split
-> would freeze refcount and the split is guaranteed to succeed after
-> that point, so refcount can be checked in memory failure. The
-> SetPageHasHWPoisoned() call could be moved to __get_hwpoison_page()
-> when get_unless_page_zero() bumps the refcount successfully. If the
-> refcount is zero it means the THP is under split or being freed, we
-> don't care about these two cases.
+On 9/15/2021 1:27 PM, Dan Williams wrote:
+>>> I'm also thinking about the MOVEDIR64B instruction and how it
+>>> might be used to clear poison on the fly with a single 'store'.
+>>> Of course, that means we need to figure out how to narrow down the
+>>> error blast radius first.
+> It turns out the MOVDIR64B error clearing idea runs into problem with
+> the device poison tracking. Without the explicit notification that
+> software wanted the error cleared the device may ghost report errors
+> that are not there anymore. I think we should continue explicit error
+> clearing and notification of the device that the error has been
+> cleared (by asking the device to clear it).
+> 
 
-Setting the flag in __get_hwpoison_page() would make this patch depend
-on patch #3. However, this patch probably will be backported to older
-versions. To ease the backport, I'd like to have the refcount check in
-the same place where THP is checked. So, something like "if
-(PageTransHuge(hpage) && page_count(hpage) != 0)".
+Sorry for the late response, I was out for several days.
 
-Then the call to set the flag could be moved to __get_hwpoison_page()
-in the following patch (after patch #3). Does this sound good to you?
+Your concern is understood.  I wasn't thinking of an out-of-band
+MOVDIR64B to clear poison, I was thinking about adding a case to
+pmem_clear_poison(), such that if CPUID feature shows that
+MOVDIR64B is supported, instead of calling the BIOS interface
+to clear poison, MOVDIR64B could be called. The advantage is
+a. a lot faster; b. smaller radius.  And the driver has a chance
+to update its ->bb record.
 
->
-> The THP might be mapped before this flag is set, but the process will
-> be killed later, so it seems fine.
->
-> >
-> > --
-> >  Kirill A. Shutemov
+thanks,
+-jane
+
