@@ -2,101 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 927A04157E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 07:42:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A27FB4157E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 07:42:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239209AbhIWFn5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S239192AbhIWFn5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 23 Sep 2021 01:43:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39100 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229902AbhIWFnz (ORCPT
+        with ESMTP id S229890AbhIWFnx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 01:43:55 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F4206C061756
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 22:42:24 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id f129so5232854pgc.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Sep 2021 22:42:24 -0700 (PDT)
+        Thu, 23 Sep 2021 01:43:53 -0400
+Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B9C3C061574;
+        Wed, 22 Sep 2021 22:42:22 -0700 (PDT)
+Received: by mail-qv1-xf30.google.com with SMTP id jo30so3507566qvb.3;
+        Wed, 22 Sep 2021 22:42:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GIeswu2kPZeMqIRSa83Ms0km/4F7Tf+r++V3y3fcOFU=;
-        b=jsLYrvv0vM8Vx25YhzrFK8nZMFePboSHvbJoHCUZ19pahlhDV37JwulIOJIUBjsOoY
-         IwxouG8cTRfy6bqzI2MyOmlwJQU5iH6tZn9a/kUd8bEuTIugm3BISsT7DmR7DQQVN0d2
-         Hp8noekCagVPbEmOl+agCcQFzy41Eu4Vp+M+APf6DZCWgYpxwTDTUgVFiSSblFbOrOD5
-         7RsKAN13lcl8S0a83epRtQPgSBawOQorSdxyyZ39K6M8bMb/Owd0yeEKMKrdEVhWZqei
-         IfJi/AyLjEumWr9i6eEhRiVkY3aNzdXBpvDkHpmCjte5KL1pjbMrVPaFSpn33KMDrxgH
-         MmtQ==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=nEUOfhmP78FxEf3QB0fKvSBV6gdVWnze8dsxjHleBkA=;
+        b=F5aqSnSqaP1WJKXUpsns0B0iUJxeyFokn3QoLPiGMN7QDqR0Cd/HD3141M/SFBej8k
+         89P0smQ9LUYWd+XCl5pk9lDLFQwChFSK5JvgabIo3i+amA443hGFtTfuNVX9xApurM1z
+         MbXOnmistIT46B9YB4ehvLe33JXPcMejYsHJyeU4h4/6sB5z0Y7JChzdvTAygzenYwci
+         Vy+6kdJP/gRAn6vndL4rxNbl3YNL7ZRW1WGbF7ayrKREmByGFYsj5JMiC3okoxpGr5Cw
+         lR3lvF3mpH+BlzdFflB+V+OSzsCCvWywEVTVeSgcmnihoIboqEyJvfJ7pWYjR0PXBua+
+         j2lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GIeswu2kPZeMqIRSa83Ms0km/4F7Tf+r++V3y3fcOFU=;
-        b=10Ma7PMOOflEkIZDWOFCXQ1stEXLBFGYC9hiik1CKwcae5Cr52jaG+aBGwkifab+YU
-         bRzu++xwxt65Qd/Bo4K/qdxMLVs3xu1b6s8bIp+uNU+MAiOtGS0YLe7McQWLiNJ17seF
-         gJr6OFEKd2AArj4nlDrFOMffDE9DGmdh/wI/zkzzpVhEffwmTCnlXlwsLpY+5oEwFl+B
-         3T9N0uZPvWhQu7ewkMoTgkO9VX6w/biyVSpsNKbyt0BcksTusXFZ5oqqMrxStyeOJWuy
-         fi9idUrfMkqlcReTbgBHqqyacDtoCOeEfdxJGso38K/r+SpxZlWK4bvS+daeufRVnkoR
-         T4Aw==
-X-Gm-Message-State: AOAM531mRKxId9YmXQPTTFGABAEXNK7RIh3vQeKQC/bfTHPHWqbnZhgq
-        sNzoLnD5De73FfCLVsaZoTqJfjdc0hKKzI+FKz1pxQ==
-X-Google-Smtp-Source: ABdhPJwYgyp6Mh9HCnuRK/sKHAPHJlmd78V8lsW+htD76tFuXvFRyisy4kC6BMOY/ncY7vO4Ehu8wlbqufVEXgR0Xsc=
-X-Received: by 2002:a62:7f87:0:b0:444:b077:51ef with SMTP id
- a129-20020a627f87000000b00444b07751efmr2693613pfd.61.1632375744469; Wed, 22
- Sep 2021 22:42:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <163192866125.417973.7293598039998376121.stgit@magnolia>
- <20210921004431.GO1756565@dread.disaster.area> <YUmYbxW70Ub2ytOc@infradead.org>
- <CAPcyv4jF1UNW5rdXX3q2hfDcvzGLSnk=1a0C0i7_UjdivuG+pQ@mail.gmail.com>
- <20210922023801.GD570615@magnolia> <20210922035907.GR1756565@dread.disaster.area>
- <20210922041354.GE570615@magnolia> <20210922054931.GT1756565@dread.disaster.area>
- <20210922212725.GN570615@magnolia> <20210923000255.GO570615@magnolia>
- <20210923014209.GW1756565@dread.disaster.area> <CAPcyv4j77cWASW1Qp=J8poVRi8+kDQbBsLZb0HY+dzeNa=ozNg@mail.gmail.com>
-In-Reply-To: <CAPcyv4j77cWASW1Qp=J8poVRi8+kDQbBsLZb0HY+dzeNa=ozNg@mail.gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 22 Sep 2021 22:42:11 -0700
-Message-ID: <CAPcyv4in7WRw1_e5iiQOnoZ9QjQWhjj+J7HoDf3ObweUvADasg@mail.gmail.com>
-Subject: Re: [PATCH 3/5] vfs: add a zero-initialization mode to fallocate
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=nEUOfhmP78FxEf3QB0fKvSBV6gdVWnze8dsxjHleBkA=;
+        b=U81BV5VmL7ZnYyNLmiI4vS99ZPHZwGTjLBgrldgoBMnvJsPLnyvE0vWnET8fnXgeK2
+         nljzofKEJAtBR9nfmrnqo0pprR1386fomE+MWjT3yTpdugpKxFnwwHfIwdUtLzXrc0n5
+         90404t4Xct0jmfnB/DqtTa929su4JfVO01AnSL5mZPmbvMRRFa/6uSKfSJTFUVwya0R+
+         JhSuRj6AYeWkPFc+KF6mL+65x4fb2hN0BN3foqkEMeTrLExr0B/qHjx3jJyH+veB18SS
+         dir24u8cPYKZ62UokWhcXyK+MzmM6hfFOoNWx+UlKfxkAnPJ0ENkAKXCL/wn2fom7OV/
+         M82g==
+X-Gm-Message-State: AOAM531jFSv0yDKCJx7zZSXgf69cu7YQlZggjE04TpyMucPduStp9QhH
+        uyAg2i3MizUxAp2SlIy7BA==
+X-Google-Smtp-Source: ABdhPJwplcKSjSAbLbFDmQyYDOWb+8zCtPwiNCj+u/3MsjUpJfoRG3EP+jk64bAELpXz5Q/Xpt89Ag==
+X-Received: by 2002:ad4:4893:: with SMTP id bv19mr2886275qvb.6.1632375740233;
+        Wed, 22 Sep 2021 22:42:20 -0700 (PDT)
+Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
+        by smtp.gmail.com with ESMTPSA id r17sm2870821qtx.17.2021.09.22.22.42.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Sep 2021 22:42:19 -0700 (PDT)
+Date:   Thu, 23 Sep 2021 01:42:17 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
         Christoph Hellwig <hch@infradead.org>,
-        Jane Chu <jane.chu@oracle.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        David Howells <dhowells@redhat.com>
+Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
+Message-ID: <YUwTuaZlzx2WLXcG@moria.home.lan>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YTu9HIu+wWWvZLxp@moria.home.lan>
+ <YUfvK3h8w+MmirDF@casper.infradead.org>
+ <YUo20TzAlqz8Tceg@cmpxchg.org>
+ <YUpC3oV4II+u+lzQ@casper.infradead.org>
+ <YUpKbWDYqRB6eBV+@moria.home.lan>
+ <YUpNLtlbNwdjTko0@moria.home.lan>
+ <YUtHCle/giwHvLN1@cmpxchg.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YUtHCle/giwHvLN1@cmpxchg.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 22, 2021 at 7:43 PM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> On Wed, Sep 22, 2021 at 6:42 PM Dave Chinner <david@fromorbit.com> wrote:
-> [..]
-> > Hence this discussion leads me to conclude that fallocate() simply
-> > isn't the right interface to clear storage hardware poison state and
-> > it's much simpler for everyone - kernel and userspace - to provide a
-> > pwritev2(RWF_CLEAR_HWERROR) flag to directly instruct the IO path to
-> > clear hardware error state before issuing this user write to the
-> > hardware.
->
-> That flag would slot in nicely in dax_iomap_iter() as the gate for
-> whether dax_direct_access() should allow mapping over error ranges,
-> and then as a flag to dax_copy_from_iter() to indicate that it should
-> compare the incoming write to known poison and clear it before
-> proceeding.
->
-> I like the distinction, because there's a chance the application did
-> not know that the page had experienced data loss and might want the
-> error behavior. The other service the driver could offer with this
-> flag is to do a precise check of the incoming write to make sure it
-> overlaps known poison and then repair the entire page. Repairing whole
-> pages makes for a cleaner implementation of the code that tries to
-> keep poison out of the CPU speculation path, {set,clear}_mce_nospec().
+On Wed, Sep 22, 2021 at 11:08:58AM -0400, Johannes Weiner wrote:
+> On Tue, Sep 21, 2021 at 05:22:54PM -0400, Kent Overstreet wrote:
+> >  - it's become apparent that there haven't been any real objections to the code
+> >    that was queued up for 5.15. There _are_ very real discussions and points of
+> >    contention still to be decided and resolved for the work beyond file backed
+> >    pages, but those discussions were what derailed the more modest, and more
+> >    badly needed, work that affects everyone in filesystem land
+> 
+> Unfortunately, I think this is a result of me wanting to discuss a way
+> forward rather than a way back.
+> 
+> To clarify: I do very much object to the code as currently queued up,
+> and not just to a vague future direction.
+> 
+> The patches add and convert a lot of complicated code to provision for
+> a future we do not agree on. The indirections it adds, and the hybrid
+> state it leaves the tree in, make it directly more difficult to work
+> with and understand the MM code base. Stuff that isn't needed for
+> exposing folios to the filesystems.
 
-This flag could also be useful for preadv2() as there is currently no
-way to read the good data in a PMEM page with poison via DAX. So the
-flag would tell dax_direct_access() to again proceed in the face of
-errors, but then the driver's dax_copy_to_iter() operation could
-either read up to the precise byte offset of the error in the page, or
-autoreplace error data with zero's to try to maximize data recovery.
+I think something we need is an alternate view - anon_folio, perhaps - and an
+idea of what that would look like. Because you've been saying you don't think
+file pages and anymous pages are similar enough to be the same time - so if
+they're not, how's the code that works on both types of pages going to change to
+accomadate that?
+
+Do we have if (file_folio) else if (anon_folio) both doing the same thing, but
+operating on different types? Some sort of subclassing going on?
+
+I was agreeing with you that slab/network pools etc. shouldn't be folios - that
+folios shouldn't be a replacement for compound pages. But I think we're going to
+need a serious alternative proposal for anonymous pages if you're still against
+them becoming folios, especially because according to Kirill they're already
+working on that (and you have to admit transhuge pages did introduce a mess that
+they will help with...)
