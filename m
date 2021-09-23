@@ -2,100 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB00A415607
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 05:29:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CB9D415735
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 05:50:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239152AbhIWDah (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Sep 2021 23:30:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38190 "EHLO
+        id S239081AbhIWDvh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Sep 2021 23:51:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239114AbhIWDa3 (ORCPT
+        with ESMTP id S239155AbhIWDvd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Sep 2021 23:30:29 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BBBBC061764;
-        Wed, 22 Sep 2021 20:28:57 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id v19so3504129pjh.2;
-        Wed, 22 Sep 2021 20:28:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mufzV1rPs7RSEi7IGGVM9toNzAQChP8eST1zCDl+0j0=;
-        b=a3H/PjnC3mHIrU/Dz1HjgLY8ZABe/dn5M0rM4dKdgaq8xHbRoQbRVN4Y+/prn4VQ6G
-         bziLsmnaZCxzFY//q7wpnL6BHO4KtLQ/DO26CDOfbGir8Ujr9jy31E+1xBesSpGk9f/U
-         Hy8K5PF5FuAPn4RHdvQY35SZexZ7NBWMhNtb+N+5QAckXNd8/a0QIewQ5SObeTSqOEH7
-         zC41oz2uvZRBDKZSbaRLuu/ygh+DcjXqpWP2bq9UeYdR1UDctpUeoIn945q+jOMDN9+3
-         +ObIc+P7IAslbSVK4+dFUXY/GcdoA+JOLNDwIhVj3PxBh6fmk4Tt1vNT0hqA4j0Ckc7v
-         F7VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mufzV1rPs7RSEi7IGGVM9toNzAQChP8eST1zCDl+0j0=;
-        b=0h4H8oxbzohnU9Y0GUQywgxa23DdoSe07UGbRXNA4YNK4i5vFwCCimixSmE47rwuJa
-         tgwXRen9k2ytZYt1OkpxEzD3UU9OYg9/2XC1zxWOsntwczp79+bGhTkKr2kjlUYjBycp
-         DYGL8TIkETIh0UnzGiY6LGkWMFLtyqUwXWCbiOvt+kLHNZaCz/qlFSJuj5hsmvRc/nOy
-         p6MB8QL4vzYtD2+YH2lwUq8MWLETWdpAisTyNmIVwvIYI3Q/vvYLYE5a1T9ain/W/zRL
-         +wwKKGWacFwiekTD9K9wjM9ROA+qXJVQ7Gf+lvz27MPr1mOqXPoqjrama6IJCE5fcZbZ
-         i3Ow==
-X-Gm-Message-State: AOAM53199EmiEaCyBvnyo2nmfX2TklNoFm6XNI5Px716YnXutVS+5SSu
-        mCoN7s4nUT7u8f9Zv7IxlPf88a+GXnJApQ==
-X-Google-Smtp-Source: ABdhPJxE/7FYG7IJ37yN6cBJHRQo7cXfobkaQIfJsJ6JoHQKPSdWaAqhKADJ29U4rK2ujWoua3VnuA==
-X-Received: by 2002:a17:90a:ac05:: with SMTP id o5mr15334262pjq.205.1632367737057;
-        Wed, 22 Sep 2021 20:28:57 -0700 (PDT)
-Received: from localhost.localdomain (c-73-93-239-127.hsd1.ca.comcast.net. [73.93.239.127])
-        by smtp.gmail.com with ESMTPSA id x8sm3699696pfq.131.2021.09.22.20.28.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Sep 2021 20:28:56 -0700 (PDT)
-From:   Yang Shi <shy828301@gmail.com>
-To:     naoya.horiguchi@nec.com, hughd@google.com,
-        kirill.shutemov@linux.intel.com, willy@infradead.org,
-        peterx@redhat.com, osalvador@suse.de, akpm@linux-foundation.org
-Cc:     shy828301@gmail.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [v2 PATCH 5/5] mm: hwpoison: handle non-anonymous THP correctly
-Date:   Wed, 22 Sep 2021 20:28:30 -0700
-Message-Id: <20210923032830.314328-6-shy828301@gmail.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210923032830.314328-1-shy828301@gmail.com>
-References: <20210923032830.314328-1-shy828301@gmail.com>
+        Wed, 22 Sep 2021 23:51:33 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2022C0613A8;
+        Wed, 22 Sep 2021 20:45:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=uMQ0LJdHQ7c4mM7EvTfGeqm/dVXZIGiACxHLT/lLI6Q=; b=ZGZo+ugLQ00vO0vKoAz2R2/AME
+        S2UZfjgIGzzR0DXMWh0A/CidIkYS9+Tf4dXHDIwKxQ8MRqDQ5OxYKyWK95649aU6pWGQ4OmL3iVMz
+        DoE/m/hZabJ1hKOtNq3yhOP6JER0+oEXFoW8DnxzDmvGaJPt7YChrBriNPh3BT9fl5O2bpUFKFlYt
+        0XgHT1lNsIacNqqchiGtK7gftdB/3qeAUS388tft8r9uKSKcFhilp3kxgTBMsLhvt+FLPP2lp3KKX
+        tKzdkNUahrdF1FCd7t8ZMHMM/A2nZGM7AyZvHXbf0pqCVFs86oa+srwEDCD+5CRWqQ/yWvFKo8uU8
+        njGbmxWw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mTFbc-005UTs-SG; Thu, 23 Sep 2021 03:41:24 +0000
+Date:   Thu, 23 Sep 2021 04:41:04 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Folio discussion recap
+Message-ID: <YUv3UEE9JZgD+A/D@casper.infradead.org>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YTu9HIu+wWWvZLxp@moria.home.lan>
+ <YUfvK3h8w+MmirDF@casper.infradead.org>
+ <YUo20TzAlqz8Tceg@cmpxchg.org>
+ <YUpC3oV4II+u+lzQ@casper.infradead.org>
+ <YUpKbWDYqRB6eBV+@moria.home.lan>
+ <YUpaTBJ/Jhz15S6a@casper.infradead.org>
+ <20210923004515.GD3053272@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210923004515.GD3053272@iweiny-DESK2.sc.intel.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently hwpoison doesn't handle non-anonymous THP, but since v4.8 THP
-support for tmpfs and read-only file cache has been added.  They could
-be offlined by split THP, just like anonymous THP.
+On Wed, Sep 22, 2021 at 05:45:15PM -0700, Ira Weiny wrote:
+> On Tue, Sep 21, 2021 at 11:18:52PM +0100, Matthew Wilcox wrote:
+> > +/**
+> > + * page_slab - Converts from page to slab.
+> > + * @p: The page.
+> > + *
+> > + * This function cannot be called on a NULL pointer.  It can be called
+> > + * on a non-slab page; the caller should check is_slab() to be sure
+> > + * that the slab really is a slab.
+> > + *
+> > + * Return: The slab which contains this page.
+> > + */
+> > +#define page_slab(p)		(_Generic((p),				\
+> > +	const struct page *:	(const struct slab *)_compound_head(p), \
+> > +	struct page *:		(struct slab *)_compound_head(p)))
+> > +
+> > +static inline bool is_slab(struct slab *slab)
+> > +{
+> > +	return test_bit(PG_slab, &slab->flags);
+> > +}
+> > +
+> 
+> I'm sorry, I don't have a dog in this fight and conceptually I think folios are
+> a good idea...
+> 
+> But for this work, having a call which returns if a 'struct slab' really is a
+> 'struct slab' seems odd and well, IMHO, wrong.  Why can't page_slab() return
+> NULL if there is no slab containing that page?
 
-Signed-off-by: Yang Shi <shy828301@gmail.com>
----
- mm/memory-failure.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+No, this is a good question.
 
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 3824bc708e55..e60224b3a315 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1443,14 +1443,11 @@ static int identify_page_state(unsigned long pfn, struct page *p,
- static int try_to_split_thp_page(struct page *page, const char *msg)
- {
- 	lock_page(page);
--	if (!PageAnon(page) || unlikely(split_huge_page(page))) {
-+	if (unlikely(split_huge_page(page))) {
- 		unsigned long pfn = page_to_pfn(page);
- 
- 		unlock_page(page);
--		if (!PageAnon(page))
--			pr_info("%s: %#lx: non anonymous thp\n", msg, pfn);
--		else
--			pr_info("%s: %#lx: thp split failed\n", msg, pfn);
-+		pr_info("%s: %#lx: thp split failed\n", msg, pfn);
- 		put_page(page);
- 		return -EBUSY;
- 	}
--- 
-2.26.2
+The way slub works right now is that if you ask for a "large" allocation,
+it does:
 
+        flags |= __GFP_COMP;
+        page = alloc_pages_node(node, flags, order);
+
+and returns page_address(page) (eventually; the code is more complex)
+So when you call kfree(), it uses the PageSlab flag to determine if the
+allocation was "large" or not:
+
+        page = virt_to_head_page(x);
+        if (unlikely(!PageSlab(page))) {
+                free_nonslab_page(page, object);
+                return;
+        }
+        slab_free(page->slab_cache, page, object, NULL, 1, _RET_IP_);
+
+Now, you could say that this is a bad way to handle things, and every
+allocation from slab should have PageSlab set, and it should use one of
+the many other bits in page->flags to indicate whether it's a large
+allocation or not.  I may have feelings in that direction myself.
+But I don't think I should be changing that in this patch.
+
+Maybe calling this function is_slab() is the confusing thing.
+Perhaps it should be called SlabIsLargeAllocation().  Not sure.
