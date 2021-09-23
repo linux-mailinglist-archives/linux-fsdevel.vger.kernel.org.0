@@ -2,190 +2,250 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E3434164BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 19:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20457416523
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 20:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242646AbhIWSAS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 14:00:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40912 "EHLO
+        id S242729AbhIWSWm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 14:22:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242198AbhIWSAR (ORCPT
+        with ESMTP id S242679AbhIWSWl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 14:00:17 -0400
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E205C061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 10:58:45 -0700 (PDT)
-Received: by mail-qk1-x731.google.com with SMTP id t4so24710871qkb.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 10:58:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=7hr09IOKvubmm29o++rFk+/rcGzXjuS4I9xs9JPMjPM=;
-        b=xVrtaAV+AsQi2BtDts7Ynr0kR8zUdzyqR/5bsUUkNlbXDC3iRZUM9xhBAOmIhROQ26
-         9chb8pmqfl3zsYrh9S56a0JKFfDoFmnpqAiopTSoH9QmLR1iB7T4QdR8XBUh5yAemX3B
-         vuIbRXQx5n7OfNqMHJnXjLDG5ERJeqI/LCv5YtFmPQJiw/Ff2CB4XYeSlmQk49oxSg/z
-         75M7XyC3NdvdzqYrUCBxRCEK4V1hrbFOfyKijDabbV+JstZPQYgmBFzoEgcb+0aJimr3
-         EFxmibhDN2G4nTE7BI0jHL4QcrzcFSN+1Tf8AkVhqAjMC0R5nTZlnI3Fhv3xOJFNN7Qk
-         57zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=7hr09IOKvubmm29o++rFk+/rcGzXjuS4I9xs9JPMjPM=;
-        b=dJE0LxH21/tSVENOs0rIVk6mdN9EyeN/e7VewqEHiU3l4boNhta63RDGqY1rBFV7I8
-         oYB9SOCbiYp3Z4C11XQEMebr6c98U444PVlNvK7eyVYSkuO/LOcHgyBiAEOHieF1GWhz
-         1htMiG0bFuxuJWBufWOBD1m4roIQ8Sj9pbfwNFz7HUOLsx9WP99I9DhapISSn/MEs0Mv
-         yOe9CimlhtS2Y8HSbBb/wdmPr1hGEsQC9+K6Hxd+Sn95SMZci10yuH+ZL8Ajv/F7Hhwo
-         awiFxSd12ie3EYbBuUjz306mvmfoXYddsWkkFfSDohS1D69naGWld+D9MkKCnrH6Nea2
-         b3UQ==
-X-Gm-Message-State: AOAM532K8Jg8PzxuDy3i8p8lV2KRSMdQV60pVHJnYi4DxRFTsbbhWt/W
-        9Cj0hbgYrCAE/Wcf8r7h9MazEA==
-X-Google-Smtp-Source: ABdhPJwXOWvF8OXeFLlBmZ7m3kp313BUPkFU7C1MgqkzrCm19j1rIEy8cN/gIVXkLtERTDASGuR+Pw==
-X-Received: by 2002:a37:9d96:: with SMTP id g144mr6019157qke.23.1632419924651;
-        Thu, 23 Sep 2021 10:58:44 -0700 (PDT)
-Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
-        by smtp.gmail.com with ESMTPSA id t194sm4994003qka.72.2021.09.23.10.58.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Sep 2021 10:58:43 -0700 (PDT)
-Date:   Thu, 23 Sep 2021 14:00:46 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
+        Thu, 23 Sep 2021 14:22:41 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4DF3C061574;
+        Thu, 23 Sep 2021 11:21:09 -0700 (PDT)
+Received: from zn.tnic (p200300ec2f0d6800010999bf90259edb.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:6800:109:99bf:9025:9edb])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 31D311EC056D;
+        Thu, 23 Sep 2021 20:21:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1632421264;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=sRYoha6VNo1mirZ2tDsvl5M4pw+Lp6nZ+ru63TzNfNk=;
+        b=QKT9j+FcdVSYJR6XqJj56f1VwmVttXbYqJzEh1SRFX0BCeMFEzKjMYiIWUA0PUQHi/v6u7
+        4en/x3BlyGxbdkIoskyOLkXgWWnAMIwJ3773mYKBf/drdpiGwxNPJqJ1cm4p23LLLRJNSO
+        HKy8yqvOqt2DJB2fdgaAhYC7Oaw9OY0=
+Date:   Thu, 23 Sep 2021 20:21:03 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-graphics-maintainer@vmware.com,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Sathyanarayanan Kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
         Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
-Message-ID: <YUzAzl5iCdfUBJqe@cmpxchg.org>
-References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
- <YTu9HIu+wWWvZLxp@moria.home.lan>
- <YUfvK3h8w+MmirDF@casper.infradead.org>
- <YUo20TzAlqz8Tceg@cmpxchg.org>
- <YUpC3oV4II+u+lzQ@casper.infradead.org>
- <YUpKbWDYqRB6eBV+@moria.home.lan>
- <YUpNLtlbNwdjTko0@moria.home.lan>
- <YUtHCle/giwHvLN1@cmpxchg.org>
- <YUwTuaZlzx2WLXcG@moria.home.lan>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v3 5/8] x86/sme: Replace occurrences of sme_active() with
+ cc_platform_has()
+Message-ID: <YUzFj+yH79XRc3F3@zn.tnic>
+References: <YUoao0LlqQ6+uBrq@zn.tnic>
+ <20210921212059.wwlytlmxoft4cdth@box.shutemov.name>
+ <YUpONYwM4dQXAOJr@zn.tnic>
+ <20210921213401.i2pzaotgjvn4efgg@box.shutemov.name>
+ <00f52bf8-cbc6-3721-f40e-2f51744751b0@amd.com>
+ <20210921215830.vqxd75r4eyau6cxy@box.shutemov.name>
+ <01891f59-7ec3-cf62-a8fc-79f79ca76587@amd.com>
+ <20210922143015.vvxvh6ec73lffvkf@box.shutemov.name>
+ <YUuJZ2qOgbdpfk6N@zn.tnic>
+ <20210922210558.itofvu3725dap5xx@box.shutemov.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <YUwTuaZlzx2WLXcG@moria.home.lan>
+In-Reply-To: <20210922210558.itofvu3725dap5xx@box.shutemov.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 23, 2021 at 01:42:17AM -0400, Kent Overstreet wrote:
-> On Wed, Sep 22, 2021 at 11:08:58AM -0400, Johannes Weiner wrote:
-> > On Tue, Sep 21, 2021 at 05:22:54PM -0400, Kent Overstreet wrote:
-> > >  - it's become apparent that there haven't been any real objections to the code
-> > >    that was queued up for 5.15. There _are_ very real discussions and points of
-> > >    contention still to be decided and resolved for the work beyond file backed
-> > >    pages, but those discussions were what derailed the more modest, and more
-> > >    badly needed, work that affects everyone in filesystem land
-> > 
-> > Unfortunately, I think this is a result of me wanting to discuss a way
-> > forward rather than a way back.
-> > 
-> > To clarify: I do very much object to the code as currently queued up,
-> > and not just to a vague future direction.
-> > 
-> > The patches add and convert a lot of complicated code to provision for
-> > a future we do not agree on. The indirections it adds, and the hybrid
-> > state it leaves the tree in, make it directly more difficult to work
-> > with and understand the MM code base. Stuff that isn't needed for
-> > exposing folios to the filesystems.
-> 
-> I think something we need is an alternate view - anon_folio, perhaps - and an
-> idea of what that would look like. Because you've been saying you don't think
-> file pages and anymous pages are similar enough to be the same time - so if
-> they're not, how's the code that works on both types of pages going to change to
-> accomadate that?
-> 
-> Do we have if (file_folio) else if (anon_folio) both doing the same thing, but
-> operating on different types? Some sort of subclassing going on?
+On Thu, Sep 23, 2021 at 12:05:58AM +0300, Kirill A. Shutemov wrote:
+> Unless we find other way to guarantee RIP-relative access, we must use
+> fixup_pointer() to access any global variables.
 
-Yeah, with subclassing and a generic type for shared code. I outlined
-that earlier in the thread:
+Yah, I've asked compiler folks about any guarantees we have wrt
+rip-relative addresses but it doesn't look good. Worst case, we'd have
+to do the fixup_pointer() thing.
 
-https://lore.kernel.org/all/YUo20TzAlqz8Tceg@cmpxchg.org/
+In the meantime, Tom and I did some more poking at this and here's a
+diff ontop.
 
-So you have anon_page and file_page being subclasses of page - similar
-to how filesystems have subclasses that inherit from struct inode - to
-help refactor what is generic, what isn't, and highlight what should be.
+The direction being that we'll stick both the AMD and Intel
+*cc_platform_has() call into cc_platform.c for which instrumentation
+will be disabled so no issues with that.
 
-Whether we do anon_page and file_page inheriting from struct page, or
-anon_folio and file_folio inheriting from struct folio - either would
-work of course. Again I think it comes down to the value proposition
-of folio as a means to clean up compound pages inside the MM code.
-It's pretty uncontroversial that we want PAGE_SIZE assumptions gone
-from the filesystems, networking, drivers and other random code. The
-argument for MM code is a different one. We seem to be discussing the
-folio abstraction as a binary thing for the Linux kernel, rather than
-a selectively applied tool, and I think it prevents us from doing
-proper one-by-one cost/benefit analyses on the areas of application.
+And that will keep all that querying all together in a single file.
 
-I suggested the anon/file split as an RFC to sidestep the cost/benefit
-question of doing the massive folio change in MM just to cleanup the
-compound pages; takeing the idea of redoing the page typing, just in a
-way that would maybe benefit MM code more broadly and obviously.
+---
+diff --git a/arch/x86/include/asm/mem_encrypt.h b/arch/x86/include/asm/mem_encrypt.h
+index a73712b6ee0e..2d4f5c17d79c 100644
+--- a/arch/x86/include/asm/mem_encrypt.h
++++ b/arch/x86/include/asm/mem_encrypt.h
+@@ -51,7 +51,6 @@ void __init mem_encrypt_free_decrypted_mem(void);
+ void __init mem_encrypt_init(void);
+ 
+ void __init sev_es_init_vc_handling(void);
+-bool amd_cc_platform_has(enum cc_attr attr);
+ 
+ #define __bss_decrypted __section(".bss..decrypted")
+ 
+@@ -74,7 +73,6 @@ static inline void __init sme_encrypt_kernel(struct boot_params *bp) { }
+ static inline void __init sme_enable(struct boot_params *bp) { }
+ 
+ static inline void sev_es_init_vc_handling(void) { }
+-static inline bool amd_cc_platform_has(enum cc_attr attr) { return false; }
+ 
+ static inline int __init
+ early_set_memory_decrypted(unsigned long vaddr, unsigned long size) { return 0; }
+@@ -103,12 +101,6 @@ static inline u64 sme_get_me_mask(void)
+ 	return sme_me_mask;
+ }
+ 
+-#if defined(CONFIG_CPU_SUP_INTEL) && defined(CONFIG_ARCH_HAS_CC_PLATFORM)
+-bool intel_cc_platform_has(enum cc_attr attr);
+-#else
+-static inline bool intel_cc_platform_has(enum cc_attr attr) { return false; }
+-#endif
+-
+ #endif	/* __ASSEMBLY__ */
+ 
+ #endif	/* __X86_MEM_ENCRYPT_H__ */
+diff --git a/arch/x86/kernel/cc_platform.c b/arch/x86/kernel/cc_platform.c
+index da54a1805211..97ede7052f77 100644
+--- a/arch/x86/kernel/cc_platform.c
++++ b/arch/x86/kernel/cc_platform.c
+@@ -13,6 +13,52 @@
+ 
+ #include <asm/processor.h>
+ 
++static bool intel_cc_platform_has(enum cc_attr attr)
++{
++#ifdef CONFIG_INTEL_TDX_GUEST
++	return false;
++#else
++	return false;
++#endif
++}
++
++/*
++ * SME and SEV are very similar but they are not the same, so there are
++ * times that the kernel will need to distinguish between SME and SEV. The
++ * cc_platform_has() function is used for this.  When a distinction isn't
++ * needed, the CC_ATTR_MEM_ENCRYPT attribute can be used.
++ *
++ * The trampoline code is a good example for this requirement.  Before
++ * paging is activated, SME will access all memory as decrypted, but SEV
++ * will access all memory as encrypted.  So, when APs are being brought
++ * up under SME the trampoline area cannot be encrypted, whereas under SEV
++ * the trampoline area must be encrypted.
++ */
++static bool amd_cc_platform_has(enum cc_attr attr)
++{
++#ifdef CONFIG_AMD_MEM_ENCRYPT
++	switch (attr) {
++	case CC_ATTR_MEM_ENCRYPT:
++		return sme_me_mask;
++
++	case CC_ATTR_HOST_MEM_ENCRYPT:
++		return sme_me_mask && !(sev_status & MSR_AMD64_SEV_ENABLED);
++
++	case CC_ATTR_GUEST_MEM_ENCRYPT:
++		return sev_status & MSR_AMD64_SEV_ENABLED;
++
++	case CC_ATTR_GUEST_STATE_ENCRYPT:
++		return sev_status & MSR_AMD64_SEV_ES_ENABLED;
++
++	default:
++		return false;
++	}
++#else
++	return false;
++#endif
++}
++
++
+ bool cc_platform_has(enum cc_attr attr)
+ {
+ 	if (sme_me_mask)
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 53756ff12295..8321c43554a1 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -60,13 +60,6 @@ static u64 msr_test_ctrl_cache __ro_after_init;
+  */
+ static bool cpu_model_supports_sld __ro_after_init;
+ 
+-#ifdef CONFIG_ARCH_HAS_CC_PLATFORM
+-bool intel_cc_platform_has(enum cc_attr attr)
+-{
+-	return false;
+-}
+-#endif
+-
+ /*
+  * Processors which have self-snooping capability can handle conflicting
+  * memory type across CPUs by snooping its own cache. However, there exists
+diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
+index 9417d404ea92..23d54b810f08 100644
+--- a/arch/x86/mm/mem_encrypt.c
++++ b/arch/x86/mm/mem_encrypt.c
+@@ -361,38 +361,6 @@ int __init early_set_memory_encrypted(unsigned long vaddr, unsigned long size)
+ 	return early_set_memory_enc_dec(vaddr, size, true);
+ }
+ 
+-/*
+- * SME and SEV are very similar but they are not the same, so there are
+- * times that the kernel will need to distinguish between SME and SEV. The
+- * cc_platform_has() function is used for this.  When a distinction isn't
+- * needed, the CC_ATTR_MEM_ENCRYPT attribute can be used.
+- *
+- * The trampoline code is a good example for this requirement.  Before
+- * paging is activated, SME will access all memory as decrypted, but SEV
+- * will access all memory as encrypted.  So, when APs are being brought
+- * up under SME the trampoline area cannot be encrypted, whereas under SEV
+- * the trampoline area must be encrypted.
+- */
+-bool amd_cc_platform_has(enum cc_attr attr)
+-{
+-	switch (attr) {
+-	case CC_ATTR_MEM_ENCRYPT:
+-		return sme_me_mask;
+-
+-	case CC_ATTR_HOST_MEM_ENCRYPT:
+-		return sme_me_mask && !(sev_status & MSR_AMD64_SEV_ENABLED);
+-
+-	case CC_ATTR_GUEST_MEM_ENCRYPT:
+-		return sev_status & MSR_AMD64_SEV_ENABLED;
+-
+-	case CC_ATTR_GUEST_STATE_ENCRYPT:
+-		return sev_status & MSR_AMD64_SEV_ES_ENABLED;
+-
+-	default:
+-		return false;
+-	}
+-}
+-
+ /* Override for DMA direct allocation check - ARCH_HAS_FORCE_DMA_UNENCRYPTED */
+ bool force_dma_unencrypted(struct device *dev)
+ {
 
-> I was agreeing with you that slab/network pools etc. shouldn't be folios - that
-> folios shouldn't be a replacement for compound pages. But I think we're going to
-> need a serious alternative proposal for anonymous pages if you're still against
-> them becoming folios, especially because according to Kirill they're already
-> working on that (and you have to admit transhuge pages did introduce a mess that
-> they will help with...)
+-- 
+Regards/Gruss,
+    Boris.
 
-I think we need a better analysis of that mess and a concept where
-tailpages are and should be, if that is the justification for the MM
-conversion.
-
-The motivation is that we have a ton of compound_head() calls in
-places we don't need them. No argument there, I think.
-
-But the explanation for going with whitelisting - the most invasive
-approach possible (and which leaves more than one person "unenthused"
-about that part of the patches) - is that it's difficult and error
-prone to identify which ones are necessary and which ones are not. And
-maybe that we'll continue to have a widespread hybrid existence of
-head and tail pages that will continue to require clarification.
-
-But that seems to be an article of faith. It's implied by the
-approach, but this may or may not be the case.
-
-I certainly think it used to be messier in the past. But strides have
-been made already to narrow the channels through which tail pages can
-actually enter the code. Certainly we can rule out entire MM
-subsystems and simply declare their compound_head() usage unnecessary
-with little risk or ambiguity.
-
-Then the question becomes which ones are legit. Whether anybody
-outside the page allocator ever needs to *see* a tailpage struct page
-to begin with. (Arguably that bit in __split_huge_page_tail() could be
-a page allocator function; the pte handling is pfn-based except for
-the mapcount management which could be encapsulated; the collapse code
-uses vm_normal_page() but follows it quickly by compound_head() - and
-arguably a tailpage generally isn't a "normal" vm page, so a new
-pfn_to_normal_page() could encapsulate the compound_head()). Because
-if not, seeing struct page in MM code isn't nearly as ambiguous as is
-being implied. You would never have to worry about it - unless you are
-in fact the page allocator.
-
-So if this problem could be solved by making tail pages an
-encapsulated page_alloc thing, and chasing down the rest of
-find_subpage() callers (which needs to happen anyway), I don't think a
-wholesale folio conversion of this subsystem would be justified.
-
-A more in-depth analyses of where and how we need to deal with
-tailpages - laying out the data structures that hold them and code
-entry points for them - would go a long way for making the case for
-folios. And might convince reluctant people to get behind the effort.
-
-Or show that we don't need it. Either way, it seems like a win-win.
-
-But I do think the onus for explaining why the particular approach was
-chosen against much less invasive options is on the person pushing the
-changes. And it should be more detailed than "we all know it sucks".
+https://people.kernel.org/tglx/notes-about-netiquette
