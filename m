@@ -2,124 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97EC4416839
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 00:54:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1CAD416880
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 01:31:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243477AbhIWW4J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 18:56:09 -0400
-Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:53621 "EHLO
-        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236363AbhIWW4J (ORCPT
+        id S240715AbhIWXcl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 19:32:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60400 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240661AbhIWXck (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 18:56:09 -0400
-Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
-        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 2E6A489820;
-        Fri, 24 Sep 2021 08:54:34 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1mTXbt-00FxXx-CB; Fri, 24 Sep 2021 08:54:33 +1000
-Date:   Fri, 24 Sep 2021 08:54:33 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jane Chu <jane.chu@oracle.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 3/5] vfs: add a zero-initialization mode to fallocate
-Message-ID: <20210923225433.GX1756565@dread.disaster.area>
-References: <CAPcyv4jF1UNW5rdXX3q2hfDcvzGLSnk=1a0C0i7_UjdivuG+pQ@mail.gmail.com>
- <20210922023801.GD570615@magnolia>
- <20210922035907.GR1756565@dread.disaster.area>
- <20210922041354.GE570615@magnolia>
- <20210922054931.GT1756565@dread.disaster.area>
- <20210922212725.GN570615@magnolia>
- <20210923000255.GO570615@magnolia>
- <20210923014209.GW1756565@dread.disaster.area>
- <CAPcyv4j77cWASW1Qp=J8poVRi8+kDQbBsLZb0HY+dzeNa=ozNg@mail.gmail.com>
- <CAPcyv4in7WRw1_e5iiQOnoZ9QjQWhjj+J7HoDf3ObweUvADasg@mail.gmail.com>
+        Thu, 23 Sep 2021 19:32:40 -0400
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2BE7C061756
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 16:31:08 -0700 (PDT)
+Received: by mail-pg1-x533.google.com with SMTP id h3so7959264pgb.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 16:31:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K4JmpLMfEZBQDMzNklJ8FfcrVNZ01v7mucqNK5/dyZM=;
+        b=gkAVQneMwXP7Huc8zYfsd3+1f1zM7FLbbtgibwzhZyhgU55BgV5tzOdFE2ZrWDtWUf
+         22jHQ23C2B5DLppVf2q47Bd9BXZqXZbQmnCrUcB8gFHbJLpluqB/XOUCpBrsHQKnL+dT
+         s104HCmPGY6HjNHsGhc1d+aSlUPg7supgiI/0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K4JmpLMfEZBQDMzNklJ8FfcrVNZ01v7mucqNK5/dyZM=;
+        b=iIH7sCFTlNk0Oi2vZq/hdRvtRDWpjjh/sb3jy1ECvTCxSyuwTaDQBkSCb8HfnpDpAS
+         7v/Gt1ZVCa6xNqfcG/pmjVCpENs9Yk1K+JdbR+w1zT68hqdX7OzfIZDWbHMhAzBQJ+iS
+         sDMgT/MKtqSZ9CEhZCjf898qlvgvBIOehaeZf+ySnxj0lF1H4k1/X9fiB7qclS4vz0Cg
+         0PHfZIcO4R2idNjd66SKGwGQtbyknfTlIBkugzdO+otJhOX47FGf57nOP7vHy1gnI9ee
+         SlOvy4AuSTm/yNFBIBU6aj/htGx/limBDFrIuH0Y8djaavtTbU22C1x9ZtL8TXL3X7LX
+         +fnw==
+X-Gm-Message-State: AOAM531L4Xpnk6LBL1EgPhcKYSDusqd5ZXAKwthPk1PTTr1PJCdFvgiF
+        YX11IKGlQk9OYnlf+48p9BMEyg==
+X-Google-Smtp-Source: ABdhPJyUMS9+dkTAn8bulQI1PwKGSJAiEU2TFwDmmGMul0cs12yHNWHgE4jLhjMiCypNQPSZXhdB6w==
+X-Received: by 2002:a63:595f:: with SMTP id j31mr1147183pgm.109.1632439868090;
+        Thu, 23 Sep 2021 16:31:08 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id g15sm6628254pfu.155.2021.09.23.16.31.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Sep 2021 16:31:07 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stefan Metzmacher <metze@samba.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Lai Jiangshan <laijs@linux.alibaba.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kenta.Tada@sony.com" <Kenta.Tada@sony.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        =?UTF-8?q?Michael=20Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>,
+        Anand K Mistry <amistry@google.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Michal Hocko <mhocko@suse.com>, Helge Deller <deller@gmx.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrea Righi <andrea.righi@canonical.com>,
+        Ohhoon Kwon <ohoono.kwon@samsung.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        YiFei Zhu <yifeifz2@illinois.edu>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: [PATCH] proc: Disable /proc/$pid/wchan
+Date:   Thu, 23 Sep 2021 16:31:05 -0700
+Message-Id: <20210923233105.4045080-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4in7WRw1_e5iiQOnoZ9QjQWhjj+J7HoDf3ObweUvADasg@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0
-        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
-        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8
-        a=suq7dG2qvrYvm2gpiewA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3943; h=from:subject; bh=U7oablg1sEKMje5UnBxNq5+kJW+PeEznOm0x7d0aYaI=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBhTQ448wi0wTXGV8xEtY6E/CSU09UrdLNeiRXpCrh6 PoRw46mJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYU0OOAAKCRCJcvTf3G3AJiL3D/ 431c8P+vVpq52hw+H+OcLEs36FHusT1bdXUKccVVKLCHKpzUoI+dv/3CNx8vVD0c91XAVZ5gS5LOw8 Gc6QB0slsnBq6QeOXcmDSbO804cI3t62G0hyfBR3nzzQcx5EIlHOaSprFC6bv5WsbciVfNyarKZszP 8h1XiwaIOpzAluyGupS82TzsPEIK4qK/kf84J3c5SnxBaYDBaF8VwlapazTz0ioYt19SvV+2LwQuMu ViEGXi0++E+6zGLibw0QFNByU5pUQ87QaXoNYkk3G9OqQWQomVtC7r9hecBqylypGB81zHpR71Kp4f 1rAFHLjhRBIHMccBpMaR6Ctvn9cXdHbpdoHOgxTrAvq6dstt9mAutFMmcm5DenSceLRih93BpxcEbJ g+lICZwWoM66jLpQrS4Z4fxl6zvr4JwcK7BFgs7uX8oVbHf2/1qfawJ03f0fjt0t5wjuGry3SlwXtj PvEW87KK3u4N8eN+bMCjTcgCebhYL+i/a0H8rMyYT7gnEdhBTBnQBxPoiu0mlZLhvs7HxeO6fK+By2 87ViZG2+v+LimtPlO43Vstw4A0UE50JNHwjPI+JiZqwyo+jLTGUpduK1sp8BXTeLLUi7A491jg+BSV lnU0IozaYhGmrkDOZQRN95E7I5mZR4u3SSbOx1SquO5EFCG8l9+agPOxonSw==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 22, 2021 at 10:42:11PM -0700, Dan Williams wrote:
-> On Wed, Sep 22, 2021 at 7:43 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> >
-> > On Wed, Sep 22, 2021 at 6:42 PM Dave Chinner <david@fromorbit.com> wrote:
-> > [..]
-> > > Hence this discussion leads me to conclude that fallocate() simply
-> > > isn't the right interface to clear storage hardware poison state and
-> > > it's much simpler for everyone - kernel and userspace - to provide a
-> > > pwritev2(RWF_CLEAR_HWERROR) flag to directly instruct the IO path to
-> > > clear hardware error state before issuing this user write to the
-> > > hardware.
-> >
-> > That flag would slot in nicely in dax_iomap_iter() as the gate for
-> > whether dax_direct_access() should allow mapping over error ranges,
-> > and then as a flag to dax_copy_from_iter() to indicate that it should
-> > compare the incoming write to known poison and clear it before
-> > proceeding.
-> >
-> > I like the distinction, because there's a chance the application did
-> > not know that the page had experienced data loss and might want the
-> > error behavior. The other service the driver could offer with this
-> > flag is to do a precise check of the incoming write to make sure it
-> > overlaps known poison and then repair the entire page. Repairing whole
-> > pages makes for a cleaner implementation of the code that tries to
-> > keep poison out of the CPU speculation path, {set,clear}_mce_nospec().
-> 
-> This flag could also be useful for preadv2() as there is currently no
-> way to read the good data in a PMEM page with poison via DAX. So the
-> flag would tell dax_direct_access() to again proceed in the face of
-> errors, but then the driver's dax_copy_to_iter() operation could
-> either read up to the precise byte offset of the error in the page, or
-> autoreplace error data with zero's to try to maximize data recovery.
+The /proc/$pid/wchan file has been broken by default on x86_64 for 4
+years now[1]. As this remains a potential leak of either kernel
+addresses (when symbolization fails) or limited observation of kernel
+function progress, just remove the contents for good.
 
-Yes, it could. I like the idea - say RWF_IGNORE_HWERROR - to read
-everything that can be read from the bad range because it's the
-other half of the problem RWF_RESET_HWERROR is trying to address.
-That is, the operation we want to perform on a range with an error
-state is -data recovery-, not "reinitialisation". Data recovery
-requires two steps:
+Unconditionally set the contents to "0" and also mark the wchan
+field in /proc/$pid/stat with 0.
 
-- "try to recover the data from the bad storage"; and
-- "reinitialise the data and clear the error state"
+This leaves kernel/sched/fair.c as the only user of get_wchan(). But
+again, since this was broken for 4 years, was this profiling logic
+actually doing anything useful?
 
-These naturally map to read() and write() operations, not
-fallocate(). With RWF flags they become explicit data recovery
-operations, unlike fallocate() which needs to imply that "writing
-zeroes" == "reset hardware error state". While that reset method
-may be true for a specific pmem hardware implementation it is not a
-requirement for all storage hardware. It's most definitely not a
-requirement for future storage hardware, either.
+[1] https://lore.kernel.org/lkml/20210922001537.4ktg3r2ky3b3r6yp@treble/
 
-It also means that applications have no choice in what data they can
-use to reinitialise the damaged range with because fallocate() only
-supports writing zeroes. If we've recovered data via a read() as you
-suggest we could, then we can rebuild the data from other redundant
-information and immediately write that back to the storage, hence
-repairing the fault.
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Vito Caputo <vcaputo@pengaru.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ arch/x86/kernel/process.c |  2 +-
+ fs/proc/array.c           | 16 +++++-----------
+ fs/proc/base.c            | 16 +---------------
+ 3 files changed, 7 insertions(+), 27 deletions(-)
 
-That, in turn, allows the filesystem to turn the RWF_RESET_HWERROR
-write into an exclusive operation and hence allow the
-reinitialisation with the recovered/repaired state to run atomically
-w.r.t. all other filesystem operations.  i.e. the reset write
-completes the recovery operation instead of requiring separate
-"reset" and "write recovered data into zeroed range" steps that
-cannot be executed atomically by userspace...
-
-Cheers,
-
-Dave.
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 1d9463e3096b..84a4f9f3f0c2 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -937,7 +937,7 @@ unsigned long arch_randomize_brk(struct mm_struct *mm)
+ }
+ 
+ /*
+- * Called from fs/proc with a reference on @p to find the function
++ * Called from scheduler with a reference on @p to find the function
+  * which called into schedule(). This needs to be done carefully
+  * because the task might wake up and we might look at a stack
+  * changing under us.
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index 49be8c8ef555..8a4ecfd901b8 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -452,7 +452,7 @@ int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
+ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
+ 			struct pid *pid, struct task_struct *task, int whole)
+ {
+-	unsigned long vsize, eip, esp, wchan = 0;
++	unsigned long vsize, eip, esp;
+ 	int priority, nice;
+ 	int tty_pgrp = -1, tty_nr = 0;
+ 	sigset_t sigign, sigcatch;
+@@ -540,8 +540,6 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
+ 		unlock_task_sighand(task, &flags);
+ 	}
+ 
+-	if (permitted && (!whole || num_threads < 2))
+-		wchan = get_wchan(task);
+ 	if (!whole) {
+ 		min_flt = task->min_flt;
+ 		maj_flt = task->maj_flt;
+@@ -600,16 +598,12 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
+ 	seq_put_decimal_ull(m, " ", sigcatch.sig[0] & 0x7fffffffUL);
+ 
+ 	/*
+-	 * We used to output the absolute kernel address, but that's an
+-	 * information leak - so instead we show a 0/1 flag here, to signal
+-	 * to user-space whether there's a wchan field in /proc/PID/wchan.
+-	 *
++	 * We used to output the absolute kernel address, and then just
++	 * a symbol. But both are information leaks, so just report 0
++	 * to indicate there is no wchan field in /proc/$PID/wchan.
+ 	 * This works with older implementations of procps as well.
+ 	 */
+-	if (wchan)
+-		seq_puts(m, " 1");
+-	else
+-		seq_puts(m, " 0");
++	seq_puts(m, " 0");
+ 
+ 	seq_put_decimal_ull(m, " ", 0);
+ 	seq_put_decimal_ull(m, " ", 0);
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 533d5836eb9a..52484cd77f99 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -378,24 +378,10 @@ static const struct file_operations proc_pid_cmdline_ops = {
+ };
+ 
+ #ifdef CONFIG_KALLSYMS
+-/*
+- * Provides a wchan file via kallsyms in a proper one-value-per-file format.
+- * Returns the resolved symbol.  If that fails, simply return the address.
+- */
+ static int proc_pid_wchan(struct seq_file *m, struct pid_namespace *ns,
+ 			  struct pid *pid, struct task_struct *task)
+ {
+-	unsigned long wchan;
+-
+-	if (ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
+-		wchan = get_wchan(task);
+-	else
+-		wchan = 0;
+-
+-	if (wchan)
+-		seq_printf(m, "%ps", (void *) wchan);
+-	else
+-		seq_putc(m, '0');
++	seq_putc(m, '0');
+ 
+ 	return 0;
+ }
 -- 
-Dave Chinner
-david@fromorbit.com
+2.30.2
+
