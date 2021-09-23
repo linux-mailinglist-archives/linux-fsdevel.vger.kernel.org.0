@@ -2,91 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4082D415BEB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 12:25:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CA45415CF6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Sep 2021 13:42:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240380AbhIWK06 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 06:26:58 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:53853 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231530AbhIWK06 (ORCPT
+        id S240647AbhIWLng (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 07:43:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35960 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238930AbhIWLng (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 06:26:58 -0400
-Received: from mail-wr1-f42.google.com ([209.85.221.42]) by
- mrelayeu.kundenserver.de (mreue108 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MBDrM-1mZRGd30Lm-00CkVZ; Thu, 23 Sep 2021 12:25:25 +0200
-Received: by mail-wr1-f42.google.com with SMTP id t7so15596748wrw.13;
-        Thu, 23 Sep 2021 03:25:24 -0700 (PDT)
-X-Gm-Message-State: AOAM533U++mQHBaaYO5RMxpMyepzUCbUHL4CJwEw4wDgCsGB0CAZkrVC
-        JDOdxhP7WxoaowhEjwi12zJ5u2xoJwgGwODFipw=
-X-Google-Smtp-Source: ABdhPJzC5Pos1T3UiHJSSsCIdXJofBl7ZfARwRkYsLQOoX39pi6HQSPjzuB5Y3XPLHj7prwJBhe6ePUG76CgqIgVldI=
-X-Received: by 2002:a05:6000:1561:: with SMTP id 1mr4003238wrz.369.1632392724385;
- Thu, 23 Sep 2021 03:25:24 -0700 (PDT)
+        Thu, 23 Sep 2021 07:43:36 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 009F3C061574;
+        Thu, 23 Sep 2021 04:42:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=n8Mi5cs+FlsaY04tVh3IDSphRi78FWp+NqQJpSgK8j4=; b=CZdYXdf8h6Q+xsZWV/2sdWoW23
+        fGrqUFqTTcmxJHkqSHaACMPLKoW6klLmT+0Vd0eR8NNVfQ6MkZtodbas0yHL/0hQ3XZyet00Zkr+Q
+        wsp86MneIZ/eB0wK+av1BY8Y+PGOp4RH8iIYKQsIagw4eiEfZ5QqxRldiph1zS8G9Mt0Pj11YLWGz
+        cZdd/4rP+DEcQ6jT1Kxc6iKei3g/Y4SYb+ca/K0zU5vty45q+D5sPi31AAdBotDxpJV++y8p5yLU2
+        iD0PrxXQ4KRffFzXD5zsGfrTHrB8MrZxc/8HcTxOT8+5h5IpvBDyRW4xcPB8oIhXxgPpFkQYJaaW6
+        Imo1ADlg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mTN5K-005pNi-Gx; Thu, 23 Sep 2021 11:40:31 +0000
+Date:   Thu, 23 Sep 2021 12:40:14 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: Mapcount of subpages
+Message-ID: <YUxnnq7uFBAtJ3rT@casper.infradead.org>
+References: <YUvWm6G16+ib+Wnb@moria.home.lan>
+ <YUvzINep9m7G0ust@casper.infradead.org>
+ <YUwNZFPGDj4Pkspx@moria.home.lan>
 MIME-Version: 1.0
-References: <20210921130127.24131-1-rpalethorpe@suse.com> <CAK8P3a29ycNqOC_pD-UUtK37jK=Rz=nik=022Q1XtXr6-o6tuA@mail.gmail.com>
- <87o88mkor1.fsf@suse.de> <87lf3qkk72.fsf@suse.de> <87ilytkngp.fsf@suse.de>
- <CAK8P3a2S=a0aw8GY8fZxaU5fz7ZkdehtHgStkn2=u9gO28GVEw@mail.gmail.com> <87fstvlifu.fsf@suse.de>
-In-Reply-To: <87fstvlifu.fsf@suse.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 23 Sep 2021 12:25:07 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a3H3ZikSfqoeh0=PQQuFw6PTg2KgP+p=4G26ayuzgwQeQ@mail.gmail.com>
-Message-ID: <CAK8P3a3H3ZikSfqoeh0=PQQuFw6PTg2KgP+p=4G26ayuzgwQeQ@mail.gmail.com>
-Subject: Re: ia32 signed long treated as x64 unsigned int by __ia32_sys*
-To:     rpalethorpe@suse.de
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LTP List <ltp@lists.linux.it>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:VsT0RG+x5xNNl9O9ELm6YaPkZKL9FOCyhaL/glhemx1qSo9Pqdt
- F5hd8W0T2BT/1gpRjV1jHZAaCEezqjigrdCSpB9ebAMrWdYzngCXs3SoUA64jEXZWhr/1mO
- 8tzEqLBWv44kAnMD/A9f345A3oMFlAOE5+Yn/05RP58yb5eLvg1UHZoXlPl6pjSdAvwYb6O
- TrYUwgYgq3LZIkS6cYIWw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:6eHKhAuQYxY=:s1HAIRIX+ogJcWuq5K/LVb
- ilhxyUya05Qxs8DX/KuEKg+8XsbNHSxfYxTOODXIs6q4C2LgElpNUIvB5fLjmvHfe3wAvaTtL
- LbKfvt6ck1irp1WfkZBjU8Z7OlJPZMZm7wPzBcMfeKWuKQyzKqSgfqWYs7d2/AVm3Td4U1++Q
- 9g4g3vj1aZ92WD8cYnjStOWMYdBZnnE8cR8g4YylnAg2IvTl0NLqVZq53fevtqdQ0yEYzSWSP
- fjBtKlpuk2iyoY6Xmj0L/pPvCs3dSc5mEWUgicLtXkpLMYBZgJGqGNlNA2bcwWE01u7jrjjnf
- 1JwtbmhV6mEZ2Xz0Tc30vHYPbhi1ysrtqLpm4Px9iR71dwnYV3xyQPzssCCb7TvKZVCGkqwBf
- uEUHz+vR8zNrpP6GjxN+20avT4FgT+xcPjS/kRjDuTdEi6Eh9unw1J4gKnlOhL3U7bE+yogiW
- OtF1zTZN/1BOOfqorn4sFnBrP4PcqzwdDjeyTiOv3u27rjTQ1aSW9NpjJmfmkPXJ6IcD8Pq6J
- ZwJPYhAZUoLEIMraP+8qStuPKX3LRA7JwEuO5RkWjEOxgEI34bkRphfiwbe134qN0Q89h81ft
- BWUPp0YXA16up+yosjj2c9UL1ENNaNAf2APSqhMs+Gop5Aiwrelc0GyS3222xbLnCg1eM38eL
- bma52stjJtehEdbWaiDVmBLHe3qr8d/uXUvjIZYVle4Gg7qBnAHJKw5VYtWSr2yQU5Kt5Y3wG
- 6o3q6ZKLaNyxzF/EaKgwQOxFOH04oLdbWBump3BFr2uEm0tDDEVBvXCsmYRsy5Jb/j5z7Il+T
- IzM2i0e9jFiPubqSWpIldkra3WICBCCOnaXYnVAeFOX8Yjq1UXzdbj8yKQ8nZZPJtZzPHL0EE
- Gv8mMjywzG/a1GZHI4OA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YUwNZFPGDj4Pkspx@moria.home.lan>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 23, 2021 at 12:01 PM Richard Palethorpe <rpalethorpe@suse.de> wrote:
-> Arnd Bergmann <arnd@arndb.de> writes:
-> > On Wed, Sep 22, 2021 at 10:46 AM Richard Palethorpe <rpalethorpe@suse.de> wrote:
-> >> Richard Palethorpe <rpalethorpe@suse.de> writes:
-> >
-> > I also noticed that only x86 and s390 even have separate entry
-> > points for normal syscalls when called in compat mode, while
-> > the others all just zero the upper halves of the registers in the
-> > low-level entry code and then call the native entry point.
->
-> It looks to me like aarch64 also has something similar? At any rate, I
-> can try to fix it for x86 and investigate what else might be effected.
+On Thu, Sep 23, 2021 at 01:15:16AM -0400, Kent Overstreet wrote:
+> On Thu, Sep 23, 2021 at 04:23:12AM +0100, Matthew Wilcox wrote:
+> > (compiling that list reminds me that we'll need to sort out mapcount
+> > on subpages when it comes time to do this.  ask me if you don't know
+> > what i'm talking about here.)
+> 
+> I am curious why we would ever need a mapcount for just part of a page, tell me
+> more.
 
-arm64 also has a custom asm/syscall_wrapper.h, but it only does
-this for accessing pt_regs (as x86 does), not for doing any
-argument conversion. x86 does the 32-to-64 widening in the
-wrapper, arm64 relies on the pt_regs already having the upper
-halves zeroed.
+I would say Kirill is the expert here.  My understanding:
 
-        Arnd
+We have three different approaches to allocating 2MB pages today;
+anon THP, shmem THP and hugetlbfs.  Hugetlbfs can only be mapped on a
+2MB boundary, so it has no special handling of mapcount [1].  Anon THP
+always starts out as being mapped exclusively on a 2MB boundary, but
+then it can be split by, eg, munmap().  If it is, then the mapcount in
+the head page is distributed to the subpages.
+
+Shmem THP is the tricky one.  You might have a 2MB page in the page cache,
+but then have processes which only ever map part of it.  Or you might
+have some processes mapping it with a 2MB entry and others mapping part
+or all of it with 4kB entries.  And then someone truncates the file to
+midway through this page; we split it, and now we need to figure out what
+the mapcount should be on each of the subpages.  We handle this by using
+->mapcount on each subpage to record how many non-2MB mappings there are
+of that specific page and using ->compound_mapcount to record how many 2MB
+mappings there are of the entire 2MB page.  Then, when we split, we just
+need to distribute the compound_mapcount to each page to make it correct.
+We also have the PageDoubleMap flag to tell us whether anybody has this
+2MB page mapped with 4kB entries, so we can skip all the summing of 4kB
+mapcounts if nobody has done that.
+
+[1] Mike is looking to change this, but I'm not sure where he is with it.
