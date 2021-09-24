@@ -2,124 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D12A6416B66
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 08:04:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A92D416B7D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 08:21:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244151AbhIXGFr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Sep 2021 02:05:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34498 "EHLO
+        id S244177AbhIXGXA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Sep 2021 02:23:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244116AbhIXGFq (ORCPT
+        with ESMTP id S244221AbhIXGW4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Sep 2021 02:05:46 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F373DC061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 23:04:13 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id l6so5731112plh.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 23:04:13 -0700 (PDT)
+        Fri, 24 Sep 2021 02:22:56 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10DBCC061764
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 23:20:18 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id k23so6296276pji.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 23:20:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=URcHuUR3KotXWwoDq/T1fdJ+3yW74lFiMCYEJPpK4uY=;
-        b=kkL7so1ZIJloVpLtCNdL0ilz3NYV+bsAJuKzXwcT7agbHZTVwHPoOIWXSsZwuczcyv
-         ayHqCRfDVveUm8N8NzR4Z91wlWa5e6IukAXGZF0mIkYQ7cexCZ7uCVGBYLQVpbiNyxog
-         HVIjOw9Gn1Lh1ZsHG0ILF1oKPyv/TUwq1g7rg=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9E61IiyqgiZPaQ5JJt6jJisXsJdnb9CqQdu3yqoxd4A=;
+        b=AWIHemkSpytiKoDQuMt0bk70vLDCuuEJLfSgudJrCpJhtrJXdrDr+ZwSgl744x4Hg3
+         dHIlEF0ZNA7uNCssBkg8L3aitThERp2uGivOCFH1hnnQEGyo18gMAWZdeQwr0tLnV+oz
+         PzOb1AGm7eax7V3o9lPUw/l/Odd+emKx092gw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=URcHuUR3KotXWwoDq/T1fdJ+3yW74lFiMCYEJPpK4uY=;
-        b=iVH68OcO2l3CO10pLjtVeA7NmAwqTLaZLUqwAtIj0W88AC1tP0TQ+diSQz+oBUo8dD
-         I/6kjvK67s5d5QVYr0MnwQu5sQiSFXhKxxdW+4sjUp1p10TxWMXchdlFRI6cBMXnjC0B
-         Hne1GTHA605DADt/s8E9A7EHOHLGc6eEO0/EN7rvoYho7nQhR2jA0vzCddSYpgmtWKjJ
-         b73Wtfcd9qdQEJmhyUl6omnmJQvIUYSq/R+yNQDPGJoZon6WwRaPuecC8l10RLpk06aq
-         DtaidgO33pEd70dgokR/buc3NWaJ2PWkoCicfgZK8QFf7cSNsw07taOwYBWt22QlsMv8
-         Hvog==
-X-Gm-Message-State: AOAM532ScIdNWUbP1EB/cy1arpGSpm/vfmThrdBBzoZI2p1fmflBNf19
-        K1+Rk9MDQNEGQI+WEy/Ija7w1n4G16L3rQ==
-X-Google-Smtp-Source: ABdhPJz2/Qhw9FfLRxSu9FPaPcVlPbYTb1X6R8zc2JpWn8SlRXobSJ7cE8adw+wfpLXpp8/I/dCj4w==
-X-Received: by 2002:a17:90b:3901:: with SMTP id ob1mr201990pjb.136.1632463453532;
-        Thu, 23 Sep 2021 23:04:13 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9E61IiyqgiZPaQ5JJt6jJisXsJdnb9CqQdu3yqoxd4A=;
+        b=s/TqUVKxuhxxD74oRIPzkfJ1GHvlhLRRBs83lyIvWSXmDw5PdrGlnCBmYp0W6KAWjQ
+         73kUrZwAY/xnU8JQa/icw+dbLl9fpa+vqxuXMRWTnTOyQzSHat8y7rZ736JymQYHb9yv
+         lXQolNI2VfHZqvJ1B/7DRjk9xeZ7+TKllWyGOduj3E2p7TUfgTIUH3BdRVR86GlFRiNx
+         IqtPvsYs6uJWuJ1HDw/jdSVmywpI+duBUiZNxDz3hJPSZjzyd3GIATgALVFnMS9qMtKH
+         oycpaiD3Ur5MJY+mauyJT8JjVEDg6rSztcxAvYp1sSQ+kb8pZx9WrcFFIJq9PLezx5Gl
+         nuGQ==
+X-Gm-Message-State: AOAM530pfb75eIG+Lw+5HMTRDypMHcx9lzD7QTQqgtwRSXsm6BbJk9mf
+        IAMpeJKhG3dnM2q78t6Cqlj3Tg==
+X-Google-Smtp-Source: ABdhPJxdjM/pdKrwDeH1cRvSEy6UIRuGKTcUaReJTf/KTS7/Xa1s9swqpPinqm53J5IBEjEq19dMIQ==
+X-Received: by 2002:a17:90a:307:: with SMTP id 7mr264729pje.176.1632464417534;
+        Thu, 23 Sep 2021 23:20:17 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t22sm680585pgb.77.2021.09.23.23.04.12
+        by smtp.gmail.com with ESMTPSA id h15sm7514075pjg.34.2021.09.23.23.20.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Sep 2021 23:04:12 -0700 (PDT)
-Date:   Thu, 23 Sep 2021 23:04:11 -0700
+        Thu, 23 Sep 2021 23:20:16 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+Cc:     Kees Cook <keescook@chromium.org>, Helge Deller <deller@gmx.de>,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
         Vito Caputo <vcaputo@pengaru.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jann Horn <jannh@google.com>, "Tobin C. Harding" <me@tobin.cc>,
+        Tycho Andersen <tycho@tycho.pizza>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Mark Rutland <mark.rutland@arm.com>,
+        Jens Axboe <axboe@kernel.dk>,
         Peter Zijlstra <peterz@infradead.org>,
-        Stefan Metzmacher <metze@samba.org>,
         Andy Lutomirski <luto@kernel.org>,
         Lai Jiangshan <laijs@linux.alibaba.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        "Kenta.Tada@sony.com" <Kenta.Tada@sony.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Michael =?iso-8859-1?Q?Wei=DF?= 
-        <michael.weiss@aisec.fraunhofer.de>,
-        Anand K Mistry <amistry@google.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Michal Hocko <mhocko@suse.com>, Helge Deller <deller@gmx.de>,
+        Stefan Metzmacher <metze@samba.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrea Righi <andrea.righi@canonical.com>,
-        Ohhoon Kwon <ohoono.kwon@samsung.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        YiFei Zhu <yifeifz2@illinois.edu>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Michal Hocko <mhocko@suse.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] proc: Disable /proc/$pid/wchan
-Message-ID: <202109232301.B0B9753D@keescook>
-References: <20210923233105.4045080-1-keescook@chromium.org>
- <20210923191306.664d39866761778a4a6ea56c@linux-foundation.org>
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ohhoon Kwon <ohoono.kwon@samsung.com>,
+        YiFei Zhu <yifeifz2@illinois.edu>,
+        kernel test robot <oliver.sang@intel.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        linux-hardening@vger.kernel.org, x86@kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/3] wchan: Fix ORC support and leaky fallback
+Date:   Thu, 23 Sep 2021 23:20:03 -0700
+Message-Id: <20210924062006.231699-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210923191306.664d39866761778a4a6ea56c@linux-foundation.org>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1249; h=from:subject; bh=EkIFdSXrni/R95qUfVOdnHiIj8PFLD2xTnJNuxRh/Xk=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBhTW4VRi6us9GloPeIwWDEwIiriKVsZmkkQ3LYCiBc Zy1t2qKJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYU1uFQAKCRCJcvTf3G3AJjfqD/ 4z/hR0oCM68S4lK8ulzNT+IQlp1PUKQ00cMJmcNdGtfuA16BW8To+1IwE0oqoNkVYBWQiWbAZitW1R NNdU55kkvliyD93/yATgTDkOKDB+tPvc5wpJhualWs5rxO5TGGmE1qFM36Iy+2c/0xGJV7PnjZl8zy 4ZVjnFc0yi6/o4jqg9umcPV0H3xDKew0oGRai5hB8Q7Mlax8xbgmwfiDL28j3WAQs/RbZ5DBt8QVsh P6vHhJ1vaFKMMXXUGU8qea+ZFDLKjOWlhBv8xQZRWPYXGtnb6N1md/od0YqBgBPw8so1usRoQsqAzU kj1LRm65I010NWTpfLQtxiorWhmobP1YD+Tzm9HFslUqX1rrqRBi8eKTcfcV8k8h0kmfDRaTXqXUX6 JG6O+Z8s25n0ehhMHCik/d9TRwSTl9TxmjSd0hzYaQ8OREIOKEzBXyDtV8cr0glmsJql+aSRtYWHX/ C2x9ukf2UN3rEo+8x4RjBP1DAwAQbsNmK/uvA2a23pqrMdF+H6gtPy3aZk5fUgMpZPc2maHGI4/pnJ w0zWy7N12EgZjKr79lBkXFJNNyVGHgrIyQpjoJqsvkXZwBcpspOAZ5PJMF4Q4W1gPh04GibcGV/Ire BtzOQ6CmnASETFbbGlMFWRvll6XMQ2atsGfLUwpXZ+82tLedWplcQ5oMv/DQ==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 23, 2021 at 07:13:06PM -0700, Andrew Morton wrote:
-> On Thu, 23 Sep 2021 16:31:05 -0700 Kees Cook <keescook@chromium.org> wrote:
-> 
-> > The /proc/$pid/wchan file has been broken by default on x86_64 for 4
-> > years now[1].
-> 
-> [1] is hard to decrypt.  I think it would be better if this changelog
-> were to describe the problem directly, completely and succinctly?
-> 
-> > As this remains a potential leak of either kernel
-> > addresses (when symbolization fails) or limited observation of kernel
-> > function progress, just remove the contents for good.
-> > 
-> > Unconditionally set the contents to "0" and also mark the wchan
-> > field in /proc/$pid/stat with 0.
-> > 
-> > This leaves kernel/sched/fair.c as the only user of get_wchan(). But
-> > again, since this was broken for 4 years, was this profiling logic
-> > actually doing anything useful?
-> 
-> Agree that returning a hard-wired "0\n" is the way to go.
+Hi,
 
-I must NAK my own patch. ;) It looks like this would be a breaking
-userspace-visible change[1].
+This attempts to solve the issues from the discussion
+here[1]. Specifically:
 
-We need to fix the two bugs though:
+1) wchan has been broken under ORC, seen as a failure to stack walk
+   resulting in _usually_ a 0 value, since ee9f8fce9964 (v4.14).
 
-1) wchan broken under ORC (patch exists in the thread at [1])
+2) wchan leaking raw addresses since 152c432b128c (v5.12).
 
-2) wchan leaking raw addresses (152c432b128c needs reverting from v5.12 and later)
+Based on what I can see in the stack walking code, the fix should be
+safe. Jann may have more thoughts, but from what I can see, the walker
+pins the stack, decodes only a single step, etc.
+
+I'd like Josh's review of Qi Zheng's patch, though. :)
+
+It's also not clear to me what impact this had on kernel/sched/fair.c:
+it would have also been seeing 0s, so this may be fixing a bug there too.
+
+Thanks!
 
 -Kees
 
-[1] https://lore.kernel.org/lkml/20210924054647.v6x6risoa4jhuu6s@shells.gnugeneration.com
+[1] https://lore.kernel.org/lkml/20210924054647.v6x6risoa4jhuu6s@shells.gnugeneration.com/
+
+Kees Cook (2):
+  Revert "proc/wchan: use printk format instead of lookup_symbol_name()"
+  leaking_addresses: Always print a trailing newline
+
+Qi Zheng (1):
+  x86: Fix get_wchan() to support the ORC unwinder
+
+ arch/x86/kernel/process.c    | 51 +++---------------------------------
+ fs/proc/base.c               | 19 ++++++++------
+ scripts/leaking_addresses.pl |  3 ++-
+ 3 files changed, 16 insertions(+), 57 deletions(-)
 
 -- 
-Kees Cook
+2.30.2
+
