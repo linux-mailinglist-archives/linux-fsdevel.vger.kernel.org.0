@@ -2,255 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BBC5416A4E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 05:06:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D766B416A68
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 05:26:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243930AbhIXDHn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 23:07:43 -0400
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:49594 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230123AbhIXDHm (ORCPT
+        id S244007AbhIXD2J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 23:28:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56430 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235369AbhIXD2I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 23:07:42 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R801e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UpOLADR_1632452767;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UpOLADR_1632452767)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 24 Sep 2021 11:06:07 +0800
-Subject: Re: [PATCH v5 2/5] fuse: make DAX mount option a tri-state
-To:     Vivek Goyal <vgoyal@redhat.com>, Dave Chinner <david@fromorbit.com>
-Cc:     stefanha@redhat.com, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
-References: <20210923092526.72341-1-jefflexu@linux.alibaba.com>
- <20210923092526.72341-3-jefflexu@linux.alibaba.com>
- <YUzPUYU8R5LL4mzU@redhat.com> <20210923222618.GB2361455@dread.disaster.area>
- <YU0jovIYv+xeinQd@redhat.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <0cc7241e-3fc1-00b9-22c6-4d7ef4776579@linux.alibaba.com>
-Date:   Fri, 24 Sep 2021 11:06:07 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
+        Thu, 23 Sep 2021 23:28:08 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB85CC061574;
+        Thu, 23 Sep 2021 20:26:35 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id x7so16142025edd.6;
+        Thu, 23 Sep 2021 20:26:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=18+5whvcDDqdfxVcWTrxiz/OMweHZu0w3dsMvDPd2x0=;
+        b=QeO0RCPobSsavCWYY1RbFVToa8iXjat5Qhm4VBQxlUm8I2uKeCUnUZqnUXZPWvTP3I
+         3DkSgeXKY1Vt64niNrSkNlCd4fBfPVoA/UGBmSCZMmAoVvWUWiLpk4QXMB0w7kjeR4DZ
+         0+BsnPbGwScxAb5hvUFXNw5mAyFEP6imQdbAYvmmKMqsd7QuiLKIlkXZ0dm+Ls9Pe30H
+         Ac1b3UVSbo2CZwTPGiDFVSTZaomfC6ERWSf88p5yWuIuC2R9FQyBOI3Vgw31py0Tun6e
+         3Cz2Zr0Umq4IAQIn1kMpdQPKZBuQKoeDNs12wOujkEONRU9qJoAuxbXO9D78tqXS4kCr
+         cajA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=18+5whvcDDqdfxVcWTrxiz/OMweHZu0w3dsMvDPd2x0=;
+        b=6XP3S/OwN79O+aSQAMsGo3RLapv25g56YARkgjZprtX62ETPI9kSe+cAkpZ+vKihtO
+         tbqjg412RP7iCGoHD6e/TKQE+9T2ISsadJPbH+Xzql6jxs04jMZlHH65gEPpt0Ri7QXj
+         LUFno5T4IkfzogYmRzgR6kjQeEn7HsSeqwazRlgKDumhP5iEo6jd00SNzqPyunJJ3quh
+         66v0r23II2rXhtAhN0oKXeqVwayGZVBD5SxupP/rBmPjv07JaofWCVBCw9Qh/g1TLa28
+         RbFFC9QTrGYZx6J3WQF5h7tm8/5DITVOk+LX9ciCncDZmxMGKkUXS8X67RdTl30ChRbg
+         eDZQ==
+X-Gm-Message-State: AOAM530wKJQiKWbRHI6M1LQ61CwY1gak5THlX2FUy0bbjUm8swX4Kkjv
+        vvYtb98+FqCXEF8a7SB0roFzFcro5SNqc4dpv0Y=
+X-Google-Smtp-Source: ABdhPJyTRNRz76PPApx+1focabGvQlQuAjrXjZcFxgXozpU4UGlOYiDD19uR1USNsAf/p6R92BCFoG9sqmBxkPq4bJ4=
+X-Received: by 2002:a17:906:3f83:: with SMTP id b3mr2452641ejj.233.1632453994521;
+ Thu, 23 Sep 2021 20:26:34 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YU0jovIYv+xeinQd@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <YUvWm6G16+ib+Wnb@moria.home.lan> <YUvzINep9m7G0ust@casper.infradead.org>
+ <YUwNZFPGDj4Pkspx@moria.home.lan> <YUxnnq7uFBAtJ3rT@casper.infradead.org>
+ <20210923124502.nxfdaoiov4sysed4@box.shutemov.name> <72cc2691-5ebe-8b56-1fe8-eeb4eb4a4c74@google.com>
+ <CAHbLzkrELUKR2saOkA9_EeAyZwdboSq0HN6rhmCg2qxwSjdzbg@mail.gmail.com>
+ <2A311B26-8B33-458E-B2C1-8BA2CF3484AA@nvidia.com> <77b59314-5593-1a2e-293c-b66e8235ad@google.com>
+ <CAHbLzkp__irFweEZMEM-CMF_-XQpJcW1dNDFo=RnqaSTGtdJkg@mail.gmail.com> <YU0qdpbjK5Hdfk2p@casper.infradead.org>
+In-Reply-To: <YU0qdpbjK5Hdfk2p@casper.infradead.org>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Thu, 23 Sep 2021 20:26:22 -0700
+Message-ID: <CAHbLzkpTXxzR7=5mYAOFfu0M2jN5cnvbQMHu3bTba8PSdRDSXg@mail.gmail.com>
+Subject: Re: Mapcount of subpages
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Hugh Dickins <hughd@google.com>, Zi Yan <ziy@nvidia.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Sep 23, 2021 at 6:32 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Thu, Sep 23, 2021 at 06:11:19PM -0700, Yang Shi wrote:
+> > On Thu, Sep 23, 2021 at 4:49 PM Hugh Dickins <hughd@google.com> wrote:
+> > > I believe Yang Shi is right insofar as the decision on whether it's worth
+> > > queuing for deferred split is being done based on those subpage _mapcounts.
+> > > That is a use I had not considered, and I've given no thought to how
+> > > important or not it is.
+> >
+> > Anyway deferred split is anon THP specific. We don't have to worry
+> > about this for file THP. So your suggestion about just counting total
+> > mapcount seems feasible to me for file THP at least.
+>
+> But I think we probably *should* do deferred split for file THP.
+> At the moment, when we truncate to the middle of a shmem THP, we try
+> a few times to split it and then just give up.  We should probably try
+> once and then queue it for deferred split.
 
-
-On 9/24/21 9:02 AM, Vivek Goyal wrote:
-> On Fri, Sep 24, 2021 at 08:26:18AM +1000, Dave Chinner wrote:
->> On Thu, Sep 23, 2021 at 03:02:41PM -0400, Vivek Goyal wrote:
->>> On Thu, Sep 23, 2021 at 05:25:23PM +0800, Jeffle Xu wrote:
->>>> We add 'always', 'never', and 'inode' (default). '-o dax' continues to
->>>> operate the same which is equivalent to 'always'. To be consistemt with
->>>> ext4/xfs's tri-state mount option, when neither '-o dax' nor '-o dax='
->>>> option is specified, the default behaviour is equal to 'inode'.
->>>
->>> So will "-o dax=inode" be used for per file DAX where dax mode comes
->>> from server?
->>>
->>> I think we discussed this. It will be better to leave "-o dax=inode"
->>> alone. It should be used when we are reading dax status from file
->>> attr (like ext4 and xfs). 
->>>
->>> And probably create separate option say "-o dax=server" where server
->>> specifies which inode should use dax.
->>
->> That seems like a poor idea to me.
->>
->> The server side already controls what the client side does by
->> controlling the inode attributes that the client side sees.  That
->> is, if the server is going to specify whether the client side data
->> access is going to use dax, then the server presents the client with
->> an inode that has the DAX attribute flag set on it.
-> 
-> Hi Dave,
-> 
-> Currently in fuse/virtiofs, DAX is compltely controlled by client. Server
-> has no say in it. If client is mounted with "-o dax", dax is enabled on
-> all files otherwise dax is disabled on all files. One could think of
-> implementing an option on server so that server could deny mmap()
-> requests that come from client, but so far nobody asked for such
-> an option on server side.
-> 
-> When you say "inode that has DAX attribute flag set on it", are you
-> referring to "S_DAX (in inode->i_flags)" or persistent attr
-> "FS_XFLAG_DAX"?
-> 
-> As of now S_DAX on client side inode is set by fuse client whenever
-> client mounted filesystem with "-o dax". And I think you are assuming
-> that DAX attribute of inode is already coming from server. That's not
-> the case. In fact that seems to be the proposal. Provide capability
-> so that server can specify which inode should be using DAX and which
-> inode should not be.
-> 
->>
->> In that case, turning off dax on the guest side should be
->> communicated to the fuse server so the server turns off the DAX flag
->> on the server side iff server side policy allows it.
-> 
-> Not sure what do you mean by server turns of DAX flag based on client
-> turning off DAX. Server does not have to do anything. If client decides
-> to not use DAX (in guest), it will not send FUSE_SETUPMAPPING requests
-> to server and that's it.
-> 
->> When the guest
->> then purges it's local inode and reloads it from the server then it
->> will get an inode with the DAX flag set according to server side
->> policy.
-> 
-> So right now we don't have a mechanism for server to specify DAX flag.
-> And that's what this patch series is trying to do.
-> 
->>
->> Hence if the server side is configured with "dax=always" or
->> dax="never" semantics it means the client side inode flag state
->> cannot control DAX mode. That means, regardless of the client side
->> mount options, DAX is operating under always or never policy,
-> 
-> Hmm..., When you say "server side is configured with "dax=always", 
-> do you mean shared directory on host is mounted with "-o dax=always",
-> or you mean some virtiofs server specific option which enables
-> dax on all inodes from server side.
-> 
-> In general, DAX on host and DAX inside guest are completely independent.
-> Host filesystem could very well be mounted with dax or without dax and
-> that has no affect on guests's capability to be able to enable DAX or
-> not. 
-
-Hi Dave, I think you are referring to "shared directory on host is
-mounted with "-o dax=always"" when you are saying "server side is
-configured with "dax=always". And just as Vivek said, there's no
-necessary relationship between the DAX mode in host and that in guest,
-technically.
-
-
-> 
->> enforced by the server side by direct control of the client inode
->> DAX attribute flag. If dax=inode is in use on both sides, the the
->> server honours the requests of the client to set/clear the inode
->> flags and presents the inode flag according to the state the client
->> side has requested.
->>
->> This policy state probably should be communicated to
->> the fuse client from the server at mount time so policy conflicts
->> can be be resolved at mount time (e.g. reject mount if policy
->> conflict occurs, default to guest overrides server or vice versa,
->> etc). This then means that that the client side mount policies will
->> default to server side policy when they set "dax=inode" but also
->> provide a local override for always or never local behaviour.
->>
->> Hence, AFAICT, there is no need for a 'dax=server' option - this
->> seems to be exactly what 'dax=inode' behaviour means on the client
->> side - it behaves according to how the server side propagates the
->> DAX attribute to the client for each inode.
-> 
-> Ok. So "-o dax=inode" in fuse will have a different meaning as opposed
-> to ext4/xfs. This will mean that server will pass DAX state of inode
-> when inode is instantiated and client should honor that. 
-> 
-> But what about FS_XFLAG_DAX flag then. Say host file system
-> does support this att and fuse/virtiofs allows querying and
-> setting this attribute (I don't think it is allowed now). So
-> will we not create a future conflict where in case of fuse/virtiofs
-> "-o dax=inode" means something different and it does look at
-> FS_XFLAG_DAX file attr.
-> 
->>
->>> Otherwise it will be very confusing. People familiar with "-o dax=inode"
->>> on ext4/xfs will expect file attr to work and that's not what we
->>> are implementing, IIUC.
->>
->> The dax mount option behaviour is already confusing enough without
->> adding yet another weird, poorly documented, easily misunderstood
->> mode that behaves subtly different to existing modes.
->>
->> Please try to make the virtiofs behaviour compatible with existing
->> modes - it's not that hard to make the client dax=inode behaviour be
->> controlled by the server side without any special client side mount
->> modes.
-> 
-> Given I want to keep the option of similar behavior for "dax=inode"
-> across ext4/xfs and virtiofs, I suggested "dax=server". Because I 
-> assumed that "dax=inode" means that dax is per inode property AND
-> this per inode property is specified by persistent file attr 
-> FS_XFLAG_DAX.
-> 
-> But fuse/virtiofs will not be specifying dax property of inode using
-> FS_XFLAG_DAX (atleast as of now). And server will set DAX property
-> using some bit in protocol. 
-> 
-> So these seem little different. If we use "dax=inode" for server
-> specifying DAX property of inode, then in future if client can
-> query/set FS_XFLAG_DAX on inode, it will be a problem. There will
-> be a conflict.
-> 
-> Use case I was imagining was, say on host, user might set FS_XFLAG_DAX
-> attr on relevant files and then mount virtiofs in guest with 
-> "-o dax=inode". ...
-
-Yes this will be a real using case, where users could specify which
-files should be DAX enabled by setting FS_XFLAG_DAX attr **on host**. In
-this case, the FS_XFLAG_DAX attr could still be conveyed by
-FUSE_ATTR_DAX (introduced in this patch set) in FUSE_LOOKUP reply. Then
-extra option may be added to fuse daemon, e.g., '-o policy=server' for
-getting DAX attr according to fuse daemon's own policy, and '-o
-policy=flag' for querying persistent FS_XFLAG_DAX attr of the host inode.
-
-And thus 'dax=server' mount option inside guest could be omitted and
-replaced by 'policy=server' option on the fuse daemon side. In this
-case, the fuse kernel module could be as simple as possible, while all
-other strategies could be implemented on the fuse daemon side.
-
-
-> ... Guest will query state of FS_XFLAG_DAX on inode
-> and enable DAX accordingly. (And server is not necessarily playing
-> an active role in determining which files should use DAX).
-
-It will be less efficient for guest to initiate another FUSE_IOCTL
-request to query if FS_XFLAG_DAX attr is on the inode. I think
-FUSE_ATTR_DAX flag in FUSE_LOOKUP reply shall be adequate for conveying
-DAX related attr.
-
-
-However it is indeed an issue when it comes to the consistency of
-FS_XFLAG_DAX flag with ext4/xfs. There are following two semantics when
-using per-file DAX for ext4/xfs:
-
-1. user sets FS_XFLAG_DAX attribute on inode, for which per-file DAX
-shall be enabled, and the attribute will be stored persistently on the
-inode;
-2. user can query the FS_XFLAG_DAX attribute to see if DAX is enabled
-for specific file, when it's in 'dax=inode' mode.
-
-
-For semantic 1), I'm quite doubted if there's necessity and possibility
-of this using case for fuse so far, given admin could already specify
-which files should be DAX enabled on the host side. If this semantic
-indeed shall be implemented later, then I'm afraid 'policy=server'
-option shall always be specified with fuse daemon, that is, fuse daemon
-shall always query the FS_XFLAG_DAX attr of the inode on the host.
-
-For semantic 2), could we return a fake FS_XFLAG_DAX once the server
-shows that this file should be DAX enabled?
-
-> 
-> In summary, there seem to be two use cases.
-> 
-> A. virtiofsd/fuse-server wants do be able to come up with its own policy
->    to decide which inodes should use guest.
-> 
-> B. guest client decides which inode use DAX based on FS_XFLAG_DAX attr
->    on inode (and server does not play a role).
-> 
-> To be able to different between these two cases, I was suggesting using
-> "-o dax=inode" for B and "-o dax=server" for A.
-
-
--- 
-Thanks,
-Jeffle
+Yes, probably. Anyway this doesn't need _mapcount of subpages.
