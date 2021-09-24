@@ -2,56 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A92D416B7D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 08:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4250416B8B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 08:23:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244177AbhIXGXA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Sep 2021 02:23:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38292 "EHLO
+        id S244241AbhIXGYx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Sep 2021 02:24:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244221AbhIXGW4 (ORCPT
+        with ESMTP id S244231AbhIXGW5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Sep 2021 02:22:56 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10DBCC061764
+        Fri, 24 Sep 2021 02:22:57 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36AD0C061768
         for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 23:20:18 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id k23so6296276pji.0
+Received: by mail-pl1-x631.google.com with SMTP id j15so4349088plh.7
         for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 23:20:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9E61IiyqgiZPaQ5JJt6jJisXsJdnb9CqQdu3yqoxd4A=;
-        b=AWIHemkSpytiKoDQuMt0bk70vLDCuuEJLfSgudJrCpJhtrJXdrDr+ZwSgl744x4Hg3
-         dHIlEF0ZNA7uNCssBkg8L3aitThERp2uGivOCFH1hnnQEGyo18gMAWZdeQwr0tLnV+oz
-         PzOb1AGm7eax7V3o9lPUw/l/Odd+emKx092gw=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=5WCcuqE5ATqYYHgSY5EFkOCbHMpsSpyspHQpjUNcv5Y=;
+        b=USHlnTajiNdM3P0VqSbAStEFaTYJqzSg2nm8ztUGra2sh16n3N01QtIiwG20m1d8E6
+         gGXkwSZDUKgQ0zX/AiF0MDejr+diNlb9FGN0Zhf6/ppRfEeSRs3ijG839x/k4a+/DPb9
+         JAS5vCtmD2lzaA67KHZaDPUzKqWnavkhSuSRA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9E61IiyqgiZPaQ5JJt6jJisXsJdnb9CqQdu3yqoxd4A=;
-        b=s/TqUVKxuhxxD74oRIPzkfJ1GHvlhLRRBs83lyIvWSXmDw5PdrGlnCBmYp0W6KAWjQ
-         73kUrZwAY/xnU8JQa/icw+dbLl9fpa+vqxuXMRWTnTOyQzSHat8y7rZ736JymQYHb9yv
-         lXQolNI2VfHZqvJ1B/7DRjk9xeZ7+TKllWyGOduj3E2p7TUfgTIUH3BdRVR86GlFRiNx
-         IqtPvsYs6uJWuJ1HDw/jdSVmywpI+duBUiZNxDz3hJPSZjzyd3GIATgALVFnMS9qMtKH
-         oycpaiD3Ur5MJY+mauyJT8JjVEDg6rSztcxAvYp1sSQ+kb8pZx9WrcFFIJq9PLezx5Gl
-         nuGQ==
-X-Gm-Message-State: AOAM530pfb75eIG+Lw+5HMTRDypMHcx9lzD7QTQqgtwRSXsm6BbJk9mf
-        IAMpeJKhG3dnM2q78t6Cqlj3Tg==
-X-Google-Smtp-Source: ABdhPJxdjM/pdKrwDeH1cRvSEy6UIRuGKTcUaReJTf/KTS7/Xa1s9swqpPinqm53J5IBEjEq19dMIQ==
-X-Received: by 2002:a17:90a:307:: with SMTP id 7mr264729pje.176.1632464417534;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=5WCcuqE5ATqYYHgSY5EFkOCbHMpsSpyspHQpjUNcv5Y=;
+        b=nArXxadOLrE50wj6or2j2ueB7LNa3AifATC02+Gwd8j4U39YIjCNXOX+EG8PLShySX
+         l8F6eaGUalIGJ4N8hENfeEw3kK82Bu2z0WDTeoZjEyuksl2f8tTNYW6Ers/udb+pNW6k
+         2w7jaoow1noZeoOUWH7Hv4vviPiQd0Sa/zWEYiQvCgg5VOa8wSgiS47S9alEqNsSFON1
+         XmCSBb11UiUG2p5awQ7XZdxmE9LhsR9oTvjzLsA07hPOjZ5TV1smTezCySdx7e1EZAES
+         5G+IjQMGXf1DT7E5x/TmFxHXhQRsKyoAKIFNET7tfe1YsmFUppJ4mAd/C32qudXJx/+r
+         ZYug==
+X-Gm-Message-State: AOAM530N6oWzIU8JiyqY6gdBEYAirwQBn8ciWMCYtMKARs8fiq3icfCZ
+        pgIlkO7GRk3OWaDsnAMg9SmS1w==
+X-Google-Smtp-Source: ABdhPJzfo1VcZJOORPchCfryh29i7+7kZ0+4SqFHpt+xI9bVgeTLDt8+VLo9QSQzSiBPaVyH03zneg==
+X-Received: by 2002:a17:90a:460a:: with SMTP id w10mr270337pjg.132.1632464417651;
         Thu, 23 Sep 2021 23:20:17 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h15sm7514075pjg.34.2021.09.23.23.20.16
+        by smtp.gmail.com with ESMTPSA id e2sm7733726pfn.141.2021.09.23.23.20.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 23 Sep 2021 23:20:16 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>, Helge Deller <deller@gmx.de>,
-        Qi Zheng <zhengqi.arch@bytedance.com>,
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel test robot <oliver.sang@intel.com>,
         Vito Caputo <vcaputo@pengaru.com>,
+        Jann Horn <jannh@google.com>, stable@vger.kernel.org,
+        Helge Deller <deller@gmx.de>,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jann Horn <jannh@google.com>, "Tobin C. Harding" <me@tobin.cc>,
+        "Tobin C. Harding" <me@tobin.cc>,
         Tycho Andersen <tycho@tycho.pizza>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
@@ -69,59 +72,80 @@ Cc:     Kees Cook <keescook@chromium.org>, Helge Deller <deller@gmx.de>,
         Randy Dunlap <rdunlap@infradead.org>,
         Ohhoon Kwon <ohoono.kwon@samsung.com>,
         YiFei Zhu <yifeifz2@illinois.edu>,
-        kernel test robot <oliver.sang@intel.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        linux-hardening@vger.kernel.org, x86@kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 0/3] wchan: Fix ORC support and leaky fallback
-Date:   Thu, 23 Sep 2021 23:20:03 -0700
-Message-Id: <20210924062006.231699-1-keescook@chromium.org>
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        x86@kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH 1/3] Revert "proc/wchan: use printk format instead of lookup_symbol_name()"
+Date:   Thu, 23 Sep 2021 23:20:04 -0700
+Message-Id: <20210924062006.231699-2-keescook@chromium.org>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210924062006.231699-1-keescook@chromium.org>
+References: <20210924062006.231699-1-keescook@chromium.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1249; h=from:subject; bh=EkIFdSXrni/R95qUfVOdnHiIj8PFLD2xTnJNuxRh/Xk=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBhTW4VRi6us9GloPeIwWDEwIiriKVsZmkkQ3LYCiBc Zy1t2qKJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYU1uFQAKCRCJcvTf3G3AJjfqD/ 4z/hR0oCM68S4lK8ulzNT+IQlp1PUKQ00cMJmcNdGtfuA16BW8To+1IwE0oqoNkVYBWQiWbAZitW1R NNdU55kkvliyD93/yATgTDkOKDB+tPvc5wpJhualWs5rxO5TGGmE1qFM36Iy+2c/0xGJV7PnjZl8zy 4ZVjnFc0yi6/o4jqg9umcPV0H3xDKew0oGRai5hB8Q7Mlax8xbgmwfiDL28j3WAQs/RbZ5DBt8QVsh P6vHhJ1vaFKMMXXUGU8qea+ZFDLKjOWlhBv8xQZRWPYXGtnb6N1md/od0YqBgBPw8so1usRoQsqAzU kj1LRm65I010NWTpfLQtxiorWhmobP1YD+Tzm9HFslUqX1rrqRBi8eKTcfcV8k8h0kmfDRaTXqXUX6 JG6O+Z8s25n0ehhMHCik/d9TRwSTl9TxmjSd0hzYaQ8OREIOKEzBXyDtV8cr0glmsJql+aSRtYWHX/ C2x9ukf2UN3rEo+8x4RjBP1DAwAQbsNmK/uvA2a23pqrMdF+H6gtPy3aZk5fUgMpZPc2maHGI4/pnJ w0zWy7N12EgZjKr79lBkXFJNNyVGHgrIyQpjoJqsvkXZwBcpspOAZ5PJMF4Q4W1gPh04GibcGV/Ire BtzOQ6CmnASETFbbGlMFWRvll6XMQ2atsGfLUwpXZ+82tLedWplcQ5oMv/DQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1921; h=from:subject; bh=48rNinxgYhX0MMt+z9ytmuG8GHuOw2IZ5/XYplBnCcc=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBhTW4V3aAmkY3cNkeh8mx6qR4Wd4ABLM9VfEd7+ihZ Bx7vHSCJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYU1uFQAKCRCJcvTf3G3AJnoXD/ 9+ie60XyWvsYauLjXuepEjG45dMmVfHo8TJw7OCNXZ2lTIe5ZGlf6Rx4OVEwn44n4dTUH8avAsCeKU tw8F1HJKdyRsL3NojF9a7XLqhrfqcnRaDkh/0BQejpIToUmgWFrtjFdKlKi0AfADEqEiMAqi7JHSZj lE1dM2Vxe1Paqq79EITBohvHgYebZ3WrG4OuDaw1Vxpy8DoeElQfU+5pcvDokYbIls5rQAnAH4AtUp TVlgob8YzJvqYTYCDyIb9yxXKG7NAaY16IKLIhgnxcu75kkVFJ9CDRNIj1YHu7bbosm4rYpS7zACEM 0X2UGQ5R4jMA2jP2jP5CeNr3hotGrlZ8rtZ/SkhcWdcgu6Br7T4YnrAo6o99k7unwja/t4wugVSbcc sm7ZrehQY2OqsB/m7q4ClgVslqFfVcJRTvXlrAQJoQuCp419WQ90WLqdWheX1fZmu+kILVE2c3Zz28 fSCWDwW2Tc/g4VxVVqtjtiZkSZxBkcfyzt0e9R/Aciv2Y+Z95MtshjPERDwO6BaarMumHYWcwmMG+Z uBdVf6svZlcVnsn3J4HEnNZlk47ez87SpbihS9Vud0VBydXWwYsXBTLtFi9yT/EzMIG1INYJ62cs1B w/bp15u2DxJQTfDAKRvzhLl7s/oYbFUbxJ+vogxQzPbKDzPi2NQ4UKbDo4wQ==
 X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+This reverts commit 152c432b128cb043fc107e8f211195fe94b2159c.
 
-This attempts to solve the issues from the discussion
-here[1]. Specifically:
+When a kernel address couldn't be symbolized for /proc/$pid/wchan, it
+would leak the raw value, a potential information exposure. This is a
+regression compared to the safer pre-v5.12 behavior.
 
-1) wchan has been broken under ORC, seen as a failure to stack walk
-   resulting in _usually_ a 0 value, since ee9f8fce9964 (v4.14).
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Link: https://lore.kernel.org/all/20210103142726.GC30643@xsang-OptiPlex-9020/
+Reported-by: Vito Caputo <vcaputo@pengaru.com>
+Link: https://lore.kernel.org/lkml/20210921193249.el476vlhg5k6lfcq@shells.gnugeneration.com/
+Reported-by: Jann Horn <jannh@google.com>
+Link: https://lore.kernel.org/lkml/CAG48ez2zC=+PuNgezH53HBPZ8CXU5H=vkWx7nJs60G8RXt3w0Q@mail.gmail.com/
+Cc: stable@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ fs/proc/base.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
-2) wchan leaking raw addresses since 152c432b128c (v5.12).
-
-Based on what I can see in the stack walking code, the fix should be
-safe. Jann may have more thoughts, but from what I can see, the walker
-pins the stack, decodes only a single step, etc.
-
-I'd like Josh's review of Qi Zheng's patch, though. :)
-
-It's also not clear to me what impact this had on kernel/sched/fair.c:
-it would have also been seeing 0s, so this may be fixing a bug there too.
-
-Thanks!
-
--Kees
-
-[1] https://lore.kernel.org/lkml/20210924054647.v6x6risoa4jhuu6s@shells.gnugeneration.com/
-
-Kees Cook (2):
-  Revert "proc/wchan: use printk format instead of lookup_symbol_name()"
-  leaking_addresses: Always print a trailing newline
-
-Qi Zheng (1):
-  x86: Fix get_wchan() to support the ORC unwinder
-
- arch/x86/kernel/process.c    | 51 +++---------------------------------
- fs/proc/base.c               | 19 ++++++++------
- scripts/leaking_addresses.pl |  3 ++-
- 3 files changed, 16 insertions(+), 57 deletions(-)
-
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 533d5836eb9a..1f394095eb88 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -67,6 +67,7 @@
+ #include <linux/mm.h>
+ #include <linux/swap.h>
+ #include <linux/rcupdate.h>
++#include <linux/kallsyms.h>
+ #include <linux/stacktrace.h>
+ #include <linux/resource.h>
+ #include <linux/module.h>
+@@ -386,17 +387,19 @@ static int proc_pid_wchan(struct seq_file *m, struct pid_namespace *ns,
+ 			  struct pid *pid, struct task_struct *task)
+ {
+ 	unsigned long wchan;
++	char symname[KSYM_NAME_LEN];
+ 
+-	if (ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
+-		wchan = get_wchan(task);
+-	else
+-		wchan = 0;
++	if (!ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS))
++		goto print0;
+ 
+-	if (wchan)
+-		seq_printf(m, "%ps", (void *) wchan);
+-	else
+-		seq_putc(m, '0');
++	wchan = get_wchan(task);
++	if (wchan && !lookup_symbol_name(wchan, symname)) {
++		seq_puts(m, symname);
++		return 0;
++	}
+ 
++print0:
++	seq_putc(m, '0');
+ 	return 0;
+ }
+ #endif /* CONFIG_KALLSYMS */
 -- 
 2.30.2
 
