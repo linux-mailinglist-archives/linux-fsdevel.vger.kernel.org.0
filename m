@@ -2,140 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40B9941697F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 03:35:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39C3A41698C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 03:42:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243769AbhIXBgu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 21:36:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57934 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240863AbhIXBgt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 21:36:49 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1A7F061211;
-        Fri, 24 Sep 2021 01:35:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632447317;
-        bh=yzSlcJlodQPFhlSMh5PwiSmOV+Bw1IPnLYmM3uz+kms=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lmin/oBNLAuiT83PwkxTaD8dzsimeP/ZBO1u2se8UtcmNPl0oDW4Gio/bn9gkBA9p
-         yvHf4gBx3TLCrpYjGiMY+7Ow0IYUZqgvo4+Z1fQtAcXJy1O+HPNvfTwzheSdQP1jQX
-         cETTjSkEDk5BQ6pQ8DU0dWgshrA7EYPXceqLufzyUDkrl03FUxe9o3knNClVpYtGY/
-         PDWdaqsajxIK/s3gFQ3o2k+W1VgLDUPoqHvh5vhRc/4HczsFpg2v651SNeytZbdmzX
-         MaZUq3Pfa/93qTPZt2cToEeiDffv/XucIxxK8qyqxxNVt7Jt8b/MsaUQqj/qghOuEQ
-         2kswN5xneMD+A==
-Date:   Thu, 23 Sep 2021 18:35:16 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Jane Chu <jane.chu@oracle.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>
-Subject: Re: [PATCH 3/5] vfs: add a zero-initialization mode to fallocate
-Message-ID: <20210924013516.GB570577@magnolia>
-References: <20210922041354.GE570615@magnolia>
- <20210922054931.GT1756565@dread.disaster.area>
- <20210922212725.GN570615@magnolia>
- <20210923000255.GO570615@magnolia>
- <20210923014209.GW1756565@dread.disaster.area>
- <CAPcyv4j77cWASW1Qp=J8poVRi8+kDQbBsLZb0HY+dzeNa=ozNg@mail.gmail.com>
- <CAPcyv4in7WRw1_e5iiQOnoZ9QjQWhjj+J7HoDf3ObweUvADasg@mail.gmail.com>
- <20210923225433.GX1756565@dread.disaster.area>
- <CAPcyv4jsU1ZBY0MNKf9CCCFaR4qcwUCRmZHstPpF02pefKnDtg@mail.gmail.com>
- <09ed3c3c-391b-bf91-2456-d7f7ca5ab2fb@oracle.com>
+        id S243773AbhIXBnj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 21:43:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32934 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243687AbhIXBnj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Sep 2021 21:43:39 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0FB0C061756
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 18:42:06 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id x191so1351084pgd.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 18:42:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=3ORLoDwYkLfIrLpsZJ93a9BMaEAtpfd6ZNV/QACoSGM=;
+        b=kGn+VnYOFLKDNYQeIdVs1vsyuMRKxXM32mjCOAMwPXQ6CSr1cDCpnJ2/cvTVFo64el
+         xKogHaE4lyyLC5ohZ8i4RZg/DXDkVmfJqSQW2tVU0guYN/jus4j9Iffq2r1XVBm9O2kR
+         TjWxFQxoruek/4j1purIlGktRuFRW6CB1M5zw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=3ORLoDwYkLfIrLpsZJ93a9BMaEAtpfd6ZNV/QACoSGM=;
+        b=Awp2FdbtkgTs5PvF+qEQOKMImTCiar5ypWcM03A3HJfj6iND3KOQCTFLPbkHMRNwsY
+         Nj7hmZrhTKzvXc2HvMw6brxT/bNwWGs98byUVfACOVyot7RzXQREC658pjM6OHf6GVB8
+         JHuswn0poVZRjIO5ubgmYOSnnW/vgJGzlPVr6UuB+lMcDzwbcGurYfHklvNX3Eg9PwZr
+         jVNyAOBNOnJdhfKCJ2cVHCX5uwS+GSIaduVNddubfS3/Ne6lD9FpoYOlvg8OGwyMd0aJ
+         qUK5Hu1GAy/1Jlf5KSXa/XncxKaY+elk6EoCY9nTHmJhKi91oS5er1r1OXt6PzFZ1Zpj
+         l3Eg==
+X-Gm-Message-State: AOAM53127Zv0RBp01ll4a2BQnIpVbC9W5IRn/pWdRXv5qEKyw3kYrwUj
+        +Riz8aBmRgQlLc8Ex9OROLOfHg==
+X-Google-Smtp-Source: ABdhPJw1YIgvBZx0VZcCKhFUeMoCnW/1b5IFR30q00vXp1qtIjJqmzAs4GJ46rjwV6eKs/sQMcOiOw==
+X-Received: by 2002:a63:7807:: with SMTP id t7mr1604036pgc.474.1632447726198;
+        Thu, 23 Sep 2021 18:42:06 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id n41sm7023117pfv.108.2021.09.23.18.42.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Sep 2021 18:42:05 -0700 (PDT)
+Date:   Thu, 23 Sep 2021 18:42:04 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Vito Caputo <vcaputo@pengaru.com>
+Cc:     Jann Horn <jannh@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stefan Metzmacher <metze@samba.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Lai Jiangshan <laijs@linux.alibaba.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kenta.Tada@sony.com" <Kenta.Tada@sony.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Michael =?iso-8859-1?Q?Wei=DF?= 
+        <michael.weiss@aisec.fraunhofer.de>,
+        Anand K Mistry <amistry@google.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Michal Hocko <mhocko@suse.com>, Helge Deller <deller@gmx.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrea Righi <andrea.righi@canonical.com>,
+        Ohhoon Kwon <ohoono.kwon@samsung.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        YiFei Zhu <yifeifz2@illinois.edu>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] proc: Disable /proc/$pid/wchan
+Message-ID: <202109231839.33EF45C785@keescook>
+References: <20210923233105.4045080-1-keescook@chromium.org>
+ <20210923234917.pqrxwoq7yqnvfpwu@shells.gnugeneration.com>
+ <CAG48ez0Rtv5kqHWw368Ym3GkKodPA+JETOAN+=c2KPa3opENSA@mail.gmail.com>
+ <20210924002230.sijoedia65hf5bj7@shells.gnugeneration.com>
+ <202109231814.FD09DBAD3@keescook>
+ <20210924013408.mqw42x4lhqeq5ios@shells.gnugeneration.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <09ed3c3c-391b-bf91-2456-d7f7ca5ab2fb@oracle.com>
+In-Reply-To: <20210924013408.mqw42x4lhqeq5ios@shells.gnugeneration.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 23, 2021 at 06:21:19PM -0700, Jane Chu wrote:
-> 
-> On 9/23/2021 6:18 PM, Dan Williams wrote:
-> > On Thu, Sep 23, 2021 at 3:54 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > 
-> > > On Wed, Sep 22, 2021 at 10:42:11PM -0700, Dan Williams wrote:
-> > > > On Wed, Sep 22, 2021 at 7:43 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> > > > > 
-> > > > > On Wed, Sep 22, 2021 at 6:42 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > > > [..]
-> > > > > > Hence this discussion leads me to conclude that fallocate() simply
-> > > > > > isn't the right interface to clear storage hardware poison state and
-> > > > > > it's much simpler for everyone - kernel and userspace - to provide a
-> > > > > > pwritev2(RWF_CLEAR_HWERROR) flag to directly instruct the IO path to
-> > > > > > clear hardware error state before issuing this user write to the
-> > > > > > hardware.
-> > > > > 
-> > > > > That flag would slot in nicely in dax_iomap_iter() as the gate for
-> > > > > whether dax_direct_access() should allow mapping over error ranges,
-> > > > > and then as a flag to dax_copy_from_iter() to indicate that it should
-> > > > > compare the incoming write to known poison and clear it before
-> > > > > proceeding.
-> > > > > 
-> > > > > I like the distinction, because there's a chance the application did
-> > > > > not know that the page had experienced data loss and might want the
-> > > > > error behavior. The other service the driver could offer with this
-> > > > > flag is to do a precise check of the incoming write to make sure it
-> > > > > overlaps known poison and then repair the entire page. Repairing whole
-> > > > > pages makes for a cleaner implementation of the code that tries to
-> > > > > keep poison out of the CPU speculation path, {set,clear}_mce_nospec().
-> > > > 
-> > > > This flag could also be useful for preadv2() as there is currently no
-> > > > way to read the good data in a PMEM page with poison via DAX. So the
-> > > > flag would tell dax_direct_access() to again proceed in the face of
-> > > > errors, but then the driver's dax_copy_to_iter() operation could
-> > > > either read up to the precise byte offset of the error in the page, or
-> > > > autoreplace error data with zero's to try to maximize data recovery.
-> > > 
-> > > Yes, it could. I like the idea - say RWF_IGNORE_HWERROR - to read
-> > > everything that can be read from the bad range because it's the
-> > > other half of the problem RWF_RESET_HWERROR is trying to address.
-> > > That is, the operation we want to perform on a range with an error
-> > > state is -data recovery-, not "reinitialisation". Data recovery
-> > > requires two steps:
-> > > 
-> > > - "try to recover the data from the bad storage"; and
-> > > - "reinitialise the data and clear the error state"
-> > > 
-> > > These naturally map to read() and write() operations, not
-> > > fallocate(). With RWF flags they become explicit data recovery
-> > > operations, unlike fallocate() which needs to imply that "writing
-> > > zeroes" == "reset hardware error state". While that reset method
-> > > may be true for a specific pmem hardware implementation it is not a
-> > > requirement for all storage hardware. It's most definitely not a
-> > > requirement for future storage hardware, either.
-> > > 
-> > > It also means that applications have no choice in what data they can
-> > > use to reinitialise the damaged range with because fallocate() only
-> > > supports writing zeroes. If we've recovered data via a read() as you
-> > > suggest we could, then we can rebuild the data from other redundant
-> > > information and immediately write that back to the storage, hence
-> > > repairing the fault.
-> > > 
-> > > That, in turn, allows the filesystem to turn the RWF_RESET_HWERROR
-> > > write into an exclusive operation and hence allow the
-> > > reinitialisation with the recovered/repaired state to run atomically
-> > > w.r.t. all other filesystem operations.  i.e. the reset write
-> > > completes the recovery operation instead of requiring separate
-> > > "reset" and "write recovered data into zeroed range" steps that
-> > > cannot be executed atomically by userspace...
+On Thu, Sep 23, 2021 at 06:34:08PM -0700, Vito Caputo wrote:
+> On Thu, Sep 23, 2021 at 06:16:16PM -0700, Kees Cook wrote:
+> > On Thu, Sep 23, 2021 at 05:22:30PM -0700, Vito Caputo wrote:
+> > > Instead of unwinding stacks maybe the kernel should be sticking an
+> > > entrypoint address in the current task struct for get_wchan() to
+> > > access, whenever userspace enters the kernel?
 > > 
-> > /me nods
-> > 
-> > Jane, want to take a run at patches for this ^^^?
+> > wchan is supposed to show where the kernel is at the instant the
+> > get_wchan() happens. (i.e. recording it at syscall entry would just
+> > always show syscall entry.)
 > > 
 > 
-> Sure, I'll give it a try.
+> And you have the syscall # onhand when performing the syscall entry,
+> no?
 > 
-> Thank you all for the discussions!
+> The point is, if the alternative is to always get 0 from
+> /proc/PID/wchan when a process is sitting in ioctl(), I'd be perfectly
+> happy to get back sys_ioctl.  I'm under the impression there's quite a
+> bit of vendor-specific flexibility here in terms of how precise WCHAN
+> is.
 
-Cool, thank you!
+Oh, yeah, if you're happy with syscall-level granularity, that'd be
+totally fine by me too.
 
---D
+> If it's possible to preserve the old WCHAN precision I'm all for it.
+> But if we've become so paranoid about leaking anything about the
+> kernel to userspace that this is untenable, even if it just spits out
+> the syscall being performed that has value.
 
-> 
-> -jane
-> 
-> 
+I'd like to find a middle ground -- wchan has always seemed like a info
+leak, even with only symbols. And it doesn't help that walking the stack
+from outside the current task is difficult. :)
+
+-Kees
+
+-- 
+Kees Cook
