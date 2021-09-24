@@ -2,63 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0A81417558
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 15:20:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFBCB417556
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 15:19:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346265AbhIXNV0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Sep 2021 09:21:26 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:44756 "EHLO
+        id S1346224AbhIXNVY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Sep 2021 09:21:24 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:11875 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1345419AbhIXNU4 (ORCPT
+        with ESMTP id S1344889AbhIXNUz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Sep 2021 09:20:56 -0400
-IronPort-Data: =?us-ascii?q?A9a23=3A7W/Faqg08r0JTBaZYbZj4irLX161CxEKZh0ujC4?=
- =?us-ascii?q?5NGQNrF6WrkUHzmIZDG3QPf/eajGmKo9/YIzl9k0HvcXQz4U3TQNorXw8FHgiR?=
- =?us-ascii?q?ejtX4rAdhiqV8+xwmwvdGo+toNGLICowPkcFhcwnT/wdOi8xZVA/fvQHOOkWbS?=
- =?us-ascii?q?YYnkZqTJME0/NtzoywobVvaY42bBVMyvV0T/Di5W31G2NglaYAUpIg063ky6Di?=
- =?us-ascii?q?dyp0N8uUvPSUtgQ1LPWvyF94JvyvshdJVOgKmVfNrbSq+ouUNiEEm3lExcFUrt?=
- =?us-ascii?q?Jk57wdAsEX7zTIROTzHFRXsBOgDAb/mprjPl9b6FaNC+7iB3Q9zx14M9QvJqrW?=
- =?us-ascii?q?EEnOLbQsOoAURhECDw4NqpDkFPCCSHm7Z3KkBGaKBMAxN0rVinaJ7Yw9u9pAG1?=
- =?us-ascii?q?m++YfLTcXZBGfwemxxdqTSuJsrsUlItPiMI4Wtjdn1z6xJfovR9bBBbrL4dtZ1?=
- =?us-ascii?q?TIrrsFIAfvaIcEebFJHYBbfZBtAElQaEpQzmKGvnHaXWzlZrk+F4K8yy2vNxQd?=
- =?us-ascii?q?ylr/3P7L9fMKGRMBQtkKZvX7duWD4BAwKctCS11Kt8Huqi6nEnT7TX5gbH7m1s?=
- =?us-ascii?q?PVthTW7wm0VFQ1TW0C3rOe0jmagVN9FbU8Z4Cwjqe417kPDZt38WQCo5X2JpBg?=
- =?us-ascii?q?RX/JOHOAgrgKA0KzZ50CeHGdsZjpAbsE28d84XhQ02VKT2dDkHzpitPuSU331y?=
- =?us-ascii?q?1s+hVteIgBMdSlbO3BCFlBDvrHeTEgIpkqnZr5e/GSd07UZwQ3N/g0=3D?=
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AZepfbqwU4Hl03Sflu7/qKrPwyL1zdoMgy1kn?=
- =?us-ascii?q?xilNoRw8SKKlfqeV7ZImPH7P+U8ssR4b+exoVJPtfZqYz+8R3WBzB8bEYOCFgh?=
- =?us-ascii?q?rKEGgK1+KLqFeMJ8S9zJ846U4KSclD4bPLYmSS9fyKgjVQDexQveWvweS5g/vE?=
- =?us-ascii?q?1XdxQUVPY6Fk1Q1wDQGWCSRNNXJ7LKt8BJyB/dBGujblXXwWa/6wDn4DU/OGiM?=
- =?us-ascii?q?bMkPvdEGQ7Li9i+A+Tlimp9bK/NxCZ2y0VWzRJzaxn0UWtqX2A2pme?=
+        Fri, 24 Sep 2021 09:20:55 -0400
+IronPort-Data: =?us-ascii?q?A9a23=3At4K4OaCzfpwJ0BVW/0Liw5YqxClBgxIJ4g17XOL?=
+ =?us-ascii?q?fAQi5hTwq1GQDzjZKC2vSO/6JajHxc49wPdvnph5UuJ+Ax9UxeLYW3SszFioV8?=
+ =?us-ascii?q?6IpJjg4wn/YZnrUdouaJK5ex512huLocYZkExcwmj/3auK49SgmifnRLlbBILW?=
+ =?us-ascii?q?s1h5ZFFYMpBgJ2UoLd94R2uaEsPDha++/kYqaT/73ZDdJ7wVJ3lc8sMpvnv/AU?=
+ =?us-ascii?q?MPa41v0tnRmDRxCUcS3e3M9VPrzLonpR5f0rxU9IwK0ewrD5OnREmLx9BFrBM6?=
+ =?us-ascii?q?nk6rgbwsBRbu60Qqm0yIQAvb9xEMZ4HFaPqUTbZLwbW9NljyPhME3xtNWqbS+V?=
+ =?us-ascii?q?AUoIrbR3u8aVnG0FgknZPEXoeCbfSTXXcu7iheun2HX6/lnEkA6FYMC/eNwG2t?=
+ =?us-ascii?q?P6boTLzVlRhCIh8q3xryhQ+Vhj8hlK9PkVKsTs3cmz3fGDPIiQJnGWI3L48NV2?=
+ =?us-ascii?q?HE7gcUmNfrceM0fZhJsYQ7GbhkJPU0YYLo6neG1ljz6dhVbtluepuww+We75Ap?=
+ =?us-ascii?q?v3LnoNfLRe8eWXoNRn0CFtiTK8nqRKhMTMtHZwjqY2nW2j+TLkGXwX4d6PLm58?=
+ =?us-ascii?q?ON6xVOIymENBRk+S1S2u7+6h1S4VtYZLFYbkgIqrK4v5AmoQ8P7UhmQvnGJpFg?=
+ =?us-ascii?q?fVsBWHul87xuCooLQ4gCEFi0UQCVpdtMrrok1SCYs21vPmMnmbQGDGpX9pWm1r?=
+ =?us-ascii?q?+/S9G3tf3NOazJqWMPNdiNdi/GLnW35pk+nog5fLZOI?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3A66DEF6+Sutq5zy5PPnJuk+DkI+orL9Y04lQ7?=
+ =?us-ascii?q?vn2ZKCYlFvBw8vrCoB1173HJYUkqMk3I9ergBEDiewK4yXcW2/hzAV7KZmCP11?=
+ =?us-ascii?q?dAR7sSj7cKrQeBJwTOssZZ1YpFN5N1EcDMCzFB5vrS0U2VFMkBzbC8nJyVuQ?=
+ =?us-ascii?q?=3D=3D?=
 X-IronPort-AV: E=Sophos;i="5.85,319,1624291200"; 
-   d="scan'208";a="114917443"
+   d="scan'208";a="114917444"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
   by heian.cn.fujitsu.com with ESMTP; 24 Sep 2021 21:10:18 +0800
-Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
-        by cn.fujitsu.com (Postfix) with ESMTP id 9E49E4D0DC79;
-        Fri, 24 Sep 2021 21:10:13 +0800 (CST)
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
+        by cn.fujitsu.com (Postfix) with ESMTP id A4D654D0DC7A;
+        Fri, 24 Sep 2021 21:10:14 +0800 (CST)
 Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
- G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Fri, 24 Sep 2021 21:10:03 +0800
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Fri, 24 Sep 2021 21:10:16 +0800
 Received: from irides.mr.mr.mr (10.167.225.141) by
  G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Fri, 24 Sep 2021 21:10:01 +0800
+ id 15.0.1497.23 via Frontend Transport; Fri, 24 Sep 2021 21:10:13 +0800
 From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
         <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
         <linux-fsdevel@vger.kernel.org>
 CC:     <djwong@kernel.org>, <dan.j.williams@intel.com>,
         <david@fromorbit.com>, <hch@infradead.org>, <jane.chu@oracle.com>
-Subject: [PATCH v7 1/8] dax: Use rwsem for dax_{read,write}_lock()
-Date:   Fri, 24 Sep 2021 21:09:52 +0800
-Message-ID: <20210924130959.2695749-2-ruansy.fnst@fujitsu.com>
+Subject: [PATCH v7 2/8] dax: Introduce holder for dax_device
+Date:   Fri, 24 Sep 2021 21:09:53 +0800
+Message-ID: <20210924130959.2695749-3-ruansy.fnst@fujitsu.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20210924130959.2695749-1-ruansy.fnst@fujitsu.com>
 References: <20210924130959.2695749-1-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 9E49E4D0DC79.A3DFD
+X-yoursite-MailScanner-ID: A4D654D0DC7A.A1C90
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
 X-Spam-Status: No
@@ -66,395 +65,176 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In order to introduce dax holder registration, we need a write lock for
-dax.  Because of the rarity of notification failures and the infrequency
-of registration events, it would be better to be a global lock rather
-than per-device.  So, change the current lock to rwsem and introduce a
-write lock for registration.
+To easily track filesystem from a pmem device, we introduce a holder for
+dax_device structure, and also its operation.  This holder is used to
+remember who is using this dax_device:
+ - When it is the backend of a filesystem, the holder will be the
+   superblock of this filesystem.
+ - When this pmem device is one of the targets in a mapped device, the
+   holder will be this mapped device.  In this case, the mapped device
+   has its own dax_device and it will follow the first rule.  So that we
+   can finally track to the filesystem we needed.
+
+The holder and holder_ops will be set when filesystem is being mounted,
+or an target device is being activated.
 
 Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
 ---
- drivers/dax/device.c       | 11 +++++-----
- drivers/dax/super.c        | 43 ++++++++++++++++++++++----------------
- drivers/md/dm-writecache.c |  7 +++----
- fs/dax.c                   | 26 +++++++++++------------
- include/linux/dax.h        |  9 ++++----
- 5 files changed, 49 insertions(+), 47 deletions(-)
+ drivers/dax/super.c | 59 +++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/dax.h | 29 ++++++++++++++++++++++
+ 2 files changed, 88 insertions(+)
 
-diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-index dd8222a42808..cc7b835509f9 100644
---- a/drivers/dax/device.c
-+++ b/drivers/dax/device.c
-@@ -198,7 +198,6 @@ static vm_fault_t dev_dax_huge_fault(struct vm_fault *vmf,
- 	struct file *filp = vmf->vma->vm_file;
- 	unsigned long fault_size;
- 	vm_fault_t rc = VM_FAULT_SIGBUS;
--	int id;
- 	pfn_t pfn;
- 	struct dev_dax *dev_dax = filp->private_data;
- 
-@@ -206,7 +205,7 @@ static vm_fault_t dev_dax_huge_fault(struct vm_fault *vmf,
- 			(vmf->flags & FAULT_FLAG_WRITE) ? "write" : "read",
- 			vmf->vma->vm_start, vmf->vma->vm_end, pe_size);
- 
--	id = dax_read_lock();
-+	dax_read_lock();
- 	switch (pe_size) {
- 	case PE_SIZE_PTE:
- 		fault_size = PAGE_SIZE;
-@@ -246,7 +245,7 @@ static vm_fault_t dev_dax_huge_fault(struct vm_fault *vmf,
- 			page->index = pgoff + i;
- 		}
- 	}
--	dax_read_unlock(id);
-+	dax_read_unlock();
- 
- 	return rc;
- }
-@@ -284,7 +283,7 @@ static const struct vm_operations_struct dax_vm_ops = {
- static int dax_mmap(struct file *filp, struct vm_area_struct *vma)
- {
- 	struct dev_dax *dev_dax = filp->private_data;
--	int rc, id;
-+	int rc;
- 
- 	dev_dbg(&dev_dax->dev, "trace\n");
- 
-@@ -292,9 +291,9 @@ static int dax_mmap(struct file *filp, struct vm_area_struct *vma)
- 	 * We lock to check dax_dev liveness and will re-check at
- 	 * fault time.
- 	 */
--	id = dax_read_lock();
-+	dax_read_lock();
- 	rc = check_vma(dev_dax, vma, __func__);
--	dax_read_unlock(id);
-+	dax_read_unlock();
- 	if (rc)
- 		return rc;
- 
 diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index fc89e91beea7..48ce86501d93 100644
+index 48ce86501d93..7d4a11dcba90 100644
 --- a/drivers/dax/super.c
 +++ b/drivers/dax/super.c
-@@ -36,7 +36,7 @@ struct dax_device {
+@@ -23,7 +23,10 @@
+  * @cdev: optional character interface for "device dax"
+  * @host: optional name for lookups where the device path is not available
+  * @private: dax driver private data
++ * @holder_data: holder of a dax_device: could be filesystem or mapped device
+  * @flags: state and boolean properties
++ * @ops: operations for dax_device
++ * @holder_ops: operations for the inner holder
+  */
+ struct dax_device {
+ 	struct hlist_node list;
+@@ -31,8 +34,10 @@ struct dax_device {
+ 	struct cdev cdev;
+ 	const char *host;
+ 	void *private;
++	void *holder_data;
+ 	unsigned long flags;
+ 	const struct dax_operations *ops;
++	const struct dax_holder_operations *holder_ops;
  };
  
  static dev_t dax_devt;
--DEFINE_STATIC_SRCU(dax_srcu);
-+static DECLARE_RWSEM(dax_rwsem);
- static struct vfsmount *dax_mnt;
- static DEFINE_IDA(dax_minor_ida);
- static struct kmem_cache *dax_cache __read_mostly;
-@@ -46,18 +46,28 @@ static struct super_block *dax_superblock __read_mostly;
- static struct hlist_head dax_host_list[DAX_HASH_SIZE];
- static DEFINE_SPINLOCK(dax_host_lock);
- 
--int dax_read_lock(void)
-+void dax_read_lock(void)
- {
--	return srcu_read_lock(&dax_srcu);
-+	down_read(&dax_rwsem);
+@@ -374,6 +379,29 @@ int dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
  }
- EXPORT_SYMBOL_GPL(dax_read_lock);
+ EXPORT_SYMBOL_GPL(dax_zero_page_range);
  
--void dax_read_unlock(int id)
-+void dax_read_unlock(void)
- {
--	srcu_read_unlock(&dax_srcu, id);
-+	up_read(&dax_rwsem);
- }
- EXPORT_SYMBOL_GPL(dax_read_unlock);
- 
-+void dax_write_lock(void)
++int dax_holder_notify_failure(struct dax_device *dax_dev, loff_t offset,
++			      size_t size, int flags)
 +{
-+	down_write(&dax_rwsem);
-+}
-+
-+void dax_write_unlock(void)
-+{
-+	up_write(&dax_rwsem);
-+}
-+
- static int dax_host_hash(const char *host)
- {
- 	return hashlen_hash(hashlen_string("DAX", host)) % DAX_HASH_SIZE;
-@@ -70,14 +80,14 @@ static int dax_host_hash(const char *host)
- static struct dax_device *dax_get_by_host(const char *host)
- {
- 	struct dax_device *dax_dev, *found = NULL;
--	int hash, id;
-+	int hash;
- 
- 	if (!host)
- 		return NULL;
- 
- 	hash = dax_host_hash(host);
- 
--	id = dax_read_lock();
-+	dax_read_lock();
- 	spin_lock(&dax_host_lock);
- 	hlist_for_each_entry(dax_dev, &dax_host_list[hash], list) {
- 		if (!dax_alive(dax_dev)
-@@ -89,7 +99,7 @@ static struct dax_device *dax_get_by_host(const char *host)
- 		break;
- 	}
- 	spin_unlock(&dax_host_lock);
--	dax_read_unlock(id);
-+	dax_read_unlock();
- 
- 	return found;
- }
-@@ -130,7 +140,7 @@ bool generic_fsdax_supported(struct dax_device *dax_dev,
- 	pfn_t pfn, end_pfn;
- 	sector_t last_page;
- 	long len, len2;
--	int err, id;
-+	int err;
- 
- 	if (blocksize != PAGE_SIZE) {
- 		pr_info("%pg: error: unsupported blocksize for dax\n", bdev);
-@@ -155,14 +165,14 @@ bool generic_fsdax_supported(struct dax_device *dax_dev,
- 		return false;
- 	}
- 
--	id = dax_read_lock();
-+	dax_read_lock();
- 	len = dax_direct_access(dax_dev, pgoff, 1, &kaddr, &pfn);
- 	len2 = dax_direct_access(dax_dev, pgoff_end, 1, &end_kaddr, &end_pfn);
- 
- 	if (len < 1 || len2 < 1) {
- 		pr_info("%pg: error: dax access failed (%ld)\n",
- 				bdev, len < 1 ? len : len2);
--		dax_read_unlock(id);
-+		dax_read_unlock();
- 		return false;
- 	}
- 
-@@ -192,7 +202,7 @@ bool generic_fsdax_supported(struct dax_device *dax_dev,
- 		put_dev_pagemap(end_pgmap);
- 
- 	}
--	dax_read_unlock(id);
-+	dax_read_unlock();
- 
- 	if (!dax_enabled) {
- 		pr_info("%pg: error: dax support not enabled\n", bdev);
-@@ -206,16 +216,15 @@ bool dax_supported(struct dax_device *dax_dev, struct block_device *bdev,
- 		int blocksize, sector_t start, sector_t len)
- {
- 	bool ret = false;
--	int id;
- 
- 	if (!dax_dev)
- 		return false;
- 
--	id = dax_read_lock();
-+	dax_read_lock();
- 	if (dax_alive(dax_dev) && dax_dev->ops->dax_supported)
- 		ret = dax_dev->ops->dax_supported(dax_dev, bdev, blocksize,
- 						  start, len);
--	dax_read_unlock(id);
-+	dax_read_unlock();
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(dax_supported);
-@@ -410,7 +419,7 @@ EXPORT_SYMBOL_GPL(__set_dax_synchronous);
- 
- bool dax_alive(struct dax_device *dax_dev)
- {
--	lockdep_assert_held(&dax_srcu);
-+	lockdep_assert_held(&dax_rwsem);
- 	return test_bit(DAXDEV_ALIVE, &dax_dev->flags);
- }
- EXPORT_SYMBOL_GPL(dax_alive);
-@@ -428,8 +437,6 @@ void kill_dax(struct dax_device *dax_dev)
- 
- 	clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
- 
--	synchronize_srcu(&dax_srcu);
--
- 	spin_lock(&dax_host_lock);
- 	hlist_del_init(&dax_dev->list);
- 	spin_unlock(&dax_host_lock);
-diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
-index 18320444fb0a..1067b3e98220 100644
---- a/drivers/md/dm-writecache.c
-+++ b/drivers/md/dm-writecache.c
-@@ -260,7 +260,6 @@ static int persistent_memory_claim(struct dm_writecache *wc)
- 	loff_t s;
- 	long p, da;
- 	pfn_t pfn;
--	int id;
- 	struct page **pages;
- 	sector_t offset;
- 
-@@ -284,7 +283,7 @@ static int persistent_memory_claim(struct dm_writecache *wc)
- 	}
- 	offset >>= PAGE_SHIFT - 9;
- 
--	id = dax_read_lock();
-+	dax_read_lock();
- 
- 	da = dax_direct_access(wc->ssd_dev->dax_dev, offset, p, &wc->memory_map, &pfn);
- 	if (da < 0) {
-@@ -334,7 +333,7 @@ static int persistent_memory_claim(struct dm_writecache *wc)
- 		wc->memory_vmapped = true;
- 	}
- 
--	dax_read_unlock(id);
-+	dax_read_unlock();
- 
- 	wc->memory_map += (size_t)wc->start_sector << SECTOR_SHIFT;
- 	wc->memory_map_size -= (size_t)wc->start_sector << SECTOR_SHIFT;
-@@ -343,7 +342,7 @@ static int persistent_memory_claim(struct dm_writecache *wc)
- err3:
- 	kvfree(pages);
- err2:
--	dax_read_unlock(id);
-+	dax_read_unlock();
- err1:
- 	return r;
- }
-diff --git a/fs/dax.c b/fs/dax.c
-index 4e3e5a283a91..798c43f09eee 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -715,22 +715,21 @@ static int copy_cow_page_dax(struct block_device *bdev, struct dax_device *dax_d
- 	void *vto, *kaddr;
- 	pgoff_t pgoff;
- 	long rc;
--	int id;
- 
- 	rc = bdev_dax_pgoff(bdev, sector, PAGE_SIZE, &pgoff);
- 	if (rc)
- 		return rc;
- 
--	id = dax_read_lock();
-+	dax_read_lock();
- 	rc = dax_direct_access(dax_dev, pgoff, 1, &kaddr, NULL);
- 	if (rc < 0) {
--		dax_read_unlock(id);
-+		dax_read_unlock();
- 		return rc;
- 	}
- 	vto = kmap_atomic(to);
- 	copy_user_page(vto, (void __force *)kaddr, vaddr, to);
- 	kunmap_atomic(vto);
--	dax_read_unlock(id);
-+	dax_read_unlock();
- 	return 0;
- }
- 
-@@ -1015,13 +1014,13 @@ static int dax_iomap_pfn(const struct iomap *iomap, loff_t pos, size_t size,
- {
- 	const sector_t sector = dax_iomap_sector(iomap, pos);
- 	pgoff_t pgoff;
--	int id, rc;
 +	int rc;
- 	long length;
- 
- 	rc = bdev_dax_pgoff(iomap->bdev, sector, size, &pgoff);
- 	if (rc)
- 		return rc;
--	id = dax_read_lock();
++
 +	dax_read_lock();
- 	length = dax_direct_access(iomap->dax_dev, pgoff, PHYS_PFN(size),
- 				   NULL, pfnp);
- 	if (length < 0) {
-@@ -1038,7 +1037,7 @@ static int dax_iomap_pfn(const struct iomap *iomap, loff_t pos, size_t size,
- 		goto out;
- 	rc = 0;
- out:
--	dax_read_unlock(id);
++	if (!dax_alive(dax_dev)) {
++		rc = -ENXIO;
++		goto out;
++	}
++
++	if (!dax_dev->holder_data) {
++		rc = -EOPNOTSUPP;
++		goto out;
++	}
++
++	rc = dax_dev->holder_ops->notify_failure(dax_dev, offset, size, flags);
++out:
 +	dax_read_unlock();
- 	return rc;
++	return rc;
++}
++EXPORT_SYMBOL_GPL(dax_holder_notify_failure);
++
+ #ifdef CONFIG_ARCH_HAS_PMEM_API
+ void arch_wb_cache_pmem(void *addr, size_t size);
+ void dax_flush(struct dax_device *dax_dev, void *addr, size_t size)
+@@ -618,6 +646,37 @@ void put_dax(struct dax_device *dax_dev)
  }
+ EXPORT_SYMBOL_GPL(put_dax);
  
-@@ -1130,7 +1129,7 @@ s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
- {
- 	sector_t sector = iomap_sector(iomap, pos & PAGE_MASK);
- 	pgoff_t pgoff;
--	long rc, id;
-+	long rc;
- 	void *kaddr;
- 	bool page_aligned = false;
- 	unsigned offset = offset_in_page(pos);
-@@ -1144,14 +1143,14 @@ s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
- 	if (rc)
- 		return rc;
- 
--	id = dax_read_lock();
++void dax_set_holder(struct dax_device *dax_dev, void *holder,
++		const struct dax_holder_operations *ops)
++{
++	dax_write_lock();
++	if (!dax_alive(dax_dev)) {
++		dax_write_unlock();
++		return;
++	}
++
++	dax_dev->holder_data = holder;
++	dax_dev->holder_ops = ops;
++	dax_write_unlock();
++}
++EXPORT_SYMBOL_GPL(dax_set_holder);
++
++void *dax_get_holder(struct dax_device *dax_dev)
++{
++	void *holder;
++
 +	dax_read_lock();
- 
- 	if (page_aligned)
- 		rc = dax_zero_page_range(iomap->dax_dev, pgoff, 1);
- 	else
- 		rc = dax_direct_access(iomap->dax_dev, pgoff, 1, &kaddr, NULL);
- 	if (rc < 0) {
--		dax_read_unlock(id);
++	if (!dax_alive(dax_dev)) {
 +		dax_read_unlock();
- 		return rc;
- 	}
- 
-@@ -1159,7 +1158,7 @@ s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
- 		memset(kaddr + offset, 0, size);
- 		dax_flush(iomap->dax_dev, kaddr + offset, size);
- 	}
--	dax_read_unlock(id);
++		return NULL;
++	}
++
++	holder = dax_dev->holder_data;
 +	dax_read_unlock();
- 	return size;
- }
- 
-@@ -1174,7 +1173,6 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
- 	loff_t end = pos + length, done = 0;
- 	ssize_t ret = 0;
- 	size_t xfer;
--	int id;
- 
- 	if (iov_iter_rw(iter) == READ) {
- 		end = min(end, i_size_read(iomi->inode));
-@@ -1199,7 +1197,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
- 					      (end - 1) >> PAGE_SHIFT);
- 	}
- 
--	id = dax_read_lock();
-+	dax_read_lock();
- 	while (pos < end) {
- 		unsigned offset = pos & (PAGE_SIZE - 1);
- 		const size_t size = ALIGN(length + offset, PAGE_SIZE);
-@@ -1251,7 +1249,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
- 		if (xfer < map_len)
- 			break;
- 	}
--	dax_read_unlock(id);
-+	dax_read_unlock();
- 
- 	return done ? done : ret;
- }
++	return holder;
++}
++EXPORT_SYMBOL_GPL(dax_get_holder);
++
+ /**
+  * inode_dax: convert a public inode into its dax_dev
+  * @inode: An inode with i_cdev pointing to a dax_dev
 diff --git a/include/linux/dax.h b/include/linux/dax.h
-index 2619d94c308d..097b3304f9b9 100644
+index 097b3304f9b9..d273d59723cd 100644
 --- a/include/linux/dax.h
 +++ b/include/linux/dax.h
-@@ -177,15 +177,14 @@ static inline void dax_unlock_page(struct page *page, dax_entry_t cookie)
- #endif
+@@ -38,9 +38,24 @@ struct dax_operations {
+ 	int (*zero_page_range)(struct dax_device *, pgoff_t, size_t);
+ };
+ 
++struct dax_holder_operations {
++	/*
++	 * notify_failure - notify memory failure into inner holder device
++	 * @dax_dev: the dax device which contains the holder
++	 * @offset: offset on this dax device where memory failure occurs
++	 * @size: length of this memory failure event
++	 * @flags: action flags for memory failure handler
++	 */
++	int (*notify_failure)(struct dax_device *dax_dev, loff_t offset,
++			size_t size, int flags);
++};
++
+ extern struct attribute_group dax_attribute_group;
  
  #if IS_ENABLED(CONFIG_DAX)
--int dax_read_lock(void);
--void dax_read_unlock(int id);
-+void dax_read_lock(void);
-+void dax_read_unlock(void);
++void dax_set_holder(struct dax_device *dax_dev, void *holder,
++		const struct dax_holder_operations *ops);
++void *dax_get_holder(struct dax_device *dax_dev);
+ struct dax_device *alloc_dax(void *private, const char *host,
+ 		const struct dax_operations *ops, unsigned long flags);
+ void put_dax(struct dax_device *dax_dev);
+@@ -70,6 +85,18 @@ static inline bool daxdev_mapping_supported(struct vm_area_struct *vma,
+ 	return dax_synchronous(dax_dev);
+ }
  #else
--static inline int dax_read_lock(void)
-+static inline void dax_read_lock(void)
++static inline struct dax_device *dax_get_by_host(const char *host)
++{
++	return NULL;
++}
++static inline void dax_set_holder(struct dax_device *dax_dev, void *holder,
++		const struct dax_holder_operations *ops)
++{
++}
++static inline void *dax_get_holder(struct dax_device *dax_dev)
++{
++	return NULL;
++}
+ static inline struct dax_device *alloc_dax(void *private, const char *host,
+ 		const struct dax_operations *ops, unsigned long flags)
  {
--	return 0;
- }
+@@ -198,6 +225,8 @@ size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+ 		size_t bytes, struct iov_iter *i);
+ int dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
+ 			size_t nr_pages);
++int dax_holder_notify_failure(struct dax_device *dax_dev, loff_t offset,
++		size_t size, int flags);
+ void dax_flush(struct dax_device *dax_dev, void *addr, size_t size);
  
--static inline void dax_read_unlock(int id)
-+static inline void dax_read_unlock(void)
- {
- }
- #endif /* CONFIG_DAX */
+ ssize_t dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
 -- 
 2.33.0
 
