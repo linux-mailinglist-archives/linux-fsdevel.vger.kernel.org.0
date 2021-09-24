@@ -2,183 +2,461 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62BFA417C92
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 22:53:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 722B9417CA2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 22:54:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345693AbhIXUy5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Sep 2021 16:54:57 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:3364 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232123AbhIXUy4 (ORCPT
+        id S1346428AbhIXUz6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Sep 2021 16:55:58 -0400
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com ([66.163.184.153]:39234
+        "EHLO sonic309-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1346038AbhIXUz5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Sep 2021 16:54:56 -0400
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 18OKf2r9030103;
-        Fri, 24 Sep 2021 20:53:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=5cM1okoj7X//8V7q4Cke4siIP5nVCTbD0HUT8rAcBQQ=;
- b=EBAvJb+5P+46Rn4R9po2yytplffCwBRwLbjPzRNRdpViepH4R9/Bqwgsxjdnw0LHyQ5c
- 0msm4uj6gOIRATW6a94uoBqk/QoeP6ozYobp1b4oVKnsdiHS0sS27qVJVlQGQVDbwmPJ
- vbbF4hFyTvViLvQOVgbCCwRPF6Fgp6sxY1N9RH+KPN4poGQNQhSOZsoebe2n7VAoJqeQ
- HFxHIJWlp8PUMhudBo5MTH7WViGnpBo36NQijV3F4zdPNlvEPlKpN6oXX+YaoJdsqxbi
- /JEpJ3AwynyV4pTnBoz9Aum/RaDYWlVVDGhqM+/UE2S/mmmex3yTyREkKiFXV09/cQ+y Mg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3b93eq5q5h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 24 Sep 2021 20:53:20 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 18OKowWS158400;
-        Fri, 24 Sep 2021 20:53:19 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2105.outbound.protection.outlook.com [104.47.58.105])
-        by aserp3020.oracle.com with ESMTP id 3b93fr894v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 24 Sep 2021 20:53:19 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=T53dAOSq1eqW2Ty4xiLDRyIzL0n/6VTIPtxDtPNd+woyI/1oNas67PmlsPZQ1+QQqTsXUSW7g7G2kcj3pbd5j3IXNFDo5QI8BINP0+zyyKr7bASKqF1rq65HFNMc+rIphuhpPszqVAutMAKmsidp17dpiLhTD3FcAgS7yEoLlcrlXFV3FfM86oRXX65b+R6AZd59h7RNVXxOLGZqexoKONk+Lw9DaWo1X4K7nK4Wrtw2falrKy7xUEfA71QjGGnP/cHo4/Wh1XcW+A1sk7tpcV9hTplgjjgjQwtA+YrNksK2e70m1mHqo/7rBUOmL/y7/tOxr/hpzMTYxBX2PKb17A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version;
- bh=5cM1okoj7X//8V7q4Cke4siIP5nVCTbD0HUT8rAcBQQ=;
- b=VLOdd4egp4I/VPJkAV3k4R0EYVKonsjs1Aly4w/f9Tw1DWVt3r3YyTh1jMaoLMHzSjvj0BvC+ngIw5q9O+s8TNqfDa/XMpD5BDoA87z65nq45au7yHxh6gdiaQYpktce9UQBpo3ebiuxxy8g1+5ygJ64VIB1epq48r2ckUhnDxuBtC2Q35ksEG8HEDjhWHCJzncO5l4CuLzo9UQqG+0ZFHTIAKTaVnzDVepZbrcUTqTtTRF8WHYH5EFlKDl3bArAIjQTrJGV2Ty0yICdxLPMHYE9/3bubHemc7XHoi4dKPLQM3Qbqg5EiivSHGZupGI91aWsjwBrCyX6NqyYtgcOxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5cM1okoj7X//8V7q4Cke4siIP5nVCTbD0HUT8rAcBQQ=;
- b=mjPVdLNmhFqYCLf+2n3o8vkIXrgLKZYGKKP+q2IakcpzKL0fODGwnzabtOPpZjKIScjcXPoQaSHi3jW4fGSk6LvwC9y925h0dcOfVvnYpdl9nHDrdkBV/MVTJRYmzSqLNnFQ2/2sSNPieEn+vavmvqUovSKPDg1f7bCrs3b6khY=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=oracle.com;
-Received: from BY5PR10MB4257.namprd10.prod.outlook.com (2603:10b6:a03:211::21)
- by SJ0PR10MB5488.namprd10.prod.outlook.com (2603:10b6:a03:37e::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4544.18; Fri, 24 Sep
- 2021 20:53:17 +0000
-Received: from BY5PR10MB4257.namprd10.prod.outlook.com
- ([fe80::1c92:fda3:604:a90d]) by BY5PR10MB4257.namprd10.prod.outlook.com
- ([fe80::1c92:fda3:604:a90d%7]) with mapi id 15.20.4544.018; Fri, 24 Sep 2021
- 20:53:17 +0000
-Subject: Re: [PATCH v3 2/3] nfsd: Initial implementation of NFSv4 Courteous
- Server
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     chuck.lever@oracle.com, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20210916182212.81608-1-dai.ngo@oracle.com>
- <20210916182212.81608-3-dai.ngo@oracle.com>
- <20210923013458.GE22937@fieldses.org>
- <9e33d9b7-5947-488d-343f-80c86a27fd84@oracle.com>
- <20210923193239.GD18334@fieldses.org>
-From:   dai.ngo@oracle.com
-Message-ID: <d0029c41-a686-3491-3249-1780d5586494@oracle.com>
-Date:   Fri, 24 Sep 2021 13:53:13 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
-In-Reply-To: <20210923193239.GD18334@fieldses.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-ClientProxiedBy: SA9PR13CA0051.namprd13.prod.outlook.com
- (2603:10b6:806:22::26) To BY5PR10MB4257.namprd10.prod.outlook.com
- (2603:10b6:a03:211::21)
+        Fri, 24 Sep 2021 16:55:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1632516863; bh=2woFotEMHv71j98qenWpmkaWqy+/WTwbJyQZJQVd9Rs=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=RivMJnhQjrMDiW51z2FlNpwoTd9pfCexAmkldGpJ8l9CVXSdfQ2hKZQVxpRFgI1V87tFEQpGswY+BgN+BAactx4zZ7wE+E6Fh34oW45Xjb0wrryRtfIeLHFlegvZqTfqEFHfUf/BsVy7jDW8NFqbHzf6E8FsCueY6MzEeZzkK99sGCQQy75T2FoktwhRp9j6P2rKs/EEHCaCMwCi6/mRm+glCdj5wwCSw1xD8BptdWrzYpLj5cN8bD5H2L9hX7RHCCy5Ik5qhOaB7bTDC7YbMLewLt9Z0Mh7xL0c7JNLGM4umGt3JDPkWCPPgpjIfeygmsAnb3W9luNrkXMKPElTPA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1632516863; bh=htATPwz4iqAl6aZsKPMhpkTeidUw25ZbQOLIB6bGZPJ=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=YK0J7J51OZ1smv3cKgU1aXFS9i8S8Y2uaq2850Jyzl9qbod6lkzWaGm0ccrjmfclfr3fB14/rkgwcr2F2B55SGrzfFJ5v2T+KasiX0T1DlCG3GOUdpcU+kVbNMcnEPL/dMy9y1g6QyB8IhXQcbIkKgMN6tkoBb2Ugihw2XhMpULZCvqmKb8HwZjxUzpVCnvNOE2i6fHhGhhmawJBW24QiD+q90K1Jxv/fLpD89FR3GJQ8VvTL9u60JmYy982fGpjVdXhjUgpRQsl9/uSnBCSyrFbudcT7xiqiXXaEzAuv6Qy6Nh6ZyZkaE65Sh5VXeQwYKz0M+z6nps0prWlmIQAJA==
+X-YMail-OSG: IrnTbdwVM1niljGgCCU0tT5ZZSUo6Wv38RfSyfDra4R_2_CDMcbCn4rv0VvxOpU
+ 7WYYQFA7y8UGhWVJkCaOcQajLruHPdS378BzBy6HL0vN8CJ1hHtxKPk121qbWu1.m69WOvMjBUqi
+ LYovPQ16vFdp60gQDkeDGIyL.YMyOe2PDXIngxNp3DalbKcsfLuEWuBrJ19kXa2IRQBOSIXiq1kT
+ F4jvAMvm0dmMgB0zhwS.CIhJsWr1PBTP0u_CQkjUnWO4WsvJcFfR.9_E9GnIiO1WmoK3HqGCizNe
+ _oeHEbHJD2sJH7UwDfluVx4iMUwO3Cta6XmhEmJ4fY9fqo_t.ngJ45OhWPtSpbbRaI_S.rvr8eK0
+ CzNDDqdWknUKutwjtHx2JOHWDLRLbvHs8YGpnQevjIlREkyHxdXe7r0E6pjYfSIBTMadW0sVxWb1
+ tLaH.hRB5kV6fOSejLqHOqJgN.SG2R.gXmA5XCKjsdzgutahgtOjQhMi72lBT5A4P2dSGkUSTX16
+ B2ivNMCtj3LjqexAB5ESMQ9yVf3pbCOATChYfpGfuwTWMHC.w9txohTKKyU_n6JfiyhCt.w663.5
+ OF62NPFO38YjzBgS0nb_Dbo_gfSVPYMQsFZBPeBkq9DrUaNKHC7N2Mc.mbMkM5avCDHD8DJHl2YS
+ E3ZGWA4SnT9IWlqtYG5yWWk3xlKVZ6_uj6uzhcE3ONWXhal3_9KcnftcaIBLVzJ7NM0NPrgdrpiT
+ aL34.IafF9eu.Ry4shAu1MHCoe9Osbd5iqbC1rQwpuNAq7CulJ9iezNMJLk.UAxC0uXMCpxZ24Rf
+ 3Ek153hQjPYW3TH2tuzELTHCEh5XAP0UsHPI4b9svx6dMH24gn60rKVVJEdwoZrbpN89baiSPdp6
+ 3F9fW8F6ni2R9CKVI3XguenIti3CEAdu5BQh1nzTdKf8AWlkf_FmY3usuBMtU.I87U60Ulp8IXjK
+ HqsqwAwDkhOXlOMzvkNCLayT61sReDgSZeq9A.10XBbTKKbBEStdoqcp2wz4fFinjQsowWvDWomn
+ Oj7TUGbTQ1AXCc6c.6ZFTWHQD.neFv6OOb8m8HgzwTwxQrdHSJGzFG68fXO7VIOi1S.CGvorEe1T
+ Nn789vPWr4beQRxD8kcH0bOssKDDcbno_faA7c8vEL_bpO4L6G2MQpjBO9zmHZcOx9MIXcjVK8T8
+ If3cHwyuuXt90HbRpCM4nZ9oYQmP0CDe2Yw6NL4ZLGtmFjW7PPpPLyaowIPcpmyqeVCkXsWTs5Dg
+ wFpxqD0NMUi2_tLW_TXXR3yBFcaQ0QzWEYJS5LbQPLcbRvhGyQ._Iw36OAa6h_XAIG8O18KBxHJP
+ KRX.7_qXvcb.RjWz8D2rf9o8inAexI2bf1NkSVlno.elmMA4Pt6.lqLa7zxiec91.jpbsmr4OTh3
+ 6Vw3GPv8X6hbmz.qIyCOhIemwac.C6l5a0sru3woaZdg5NxiYcAvEJGR14dfAYsOVdfAWiBE0VHU
+ .1H6UUf1RTU8eAgvhX8hlHU0ehUoEzdQMp2I7t7KVQWlT5Bk12SUxW7OItA1chJ.R5srbC47gCow
+ CStVZyWEFC4Jvy89y6aTDv8zfDO3G9BL6PTX6K3Cwqd7mhnm1vsjk2kwsuy56F_Z48Y_CICrIXBF
+ 5_YPfpasjEH_tONwBZcv0Zwr.CsaTsYkdHEtLOR.Td3DvUaqVqxoWnpsXhtwbOLkKqsxE6PVoyyw
+ 1SxAXRIeC30XKcf.EQMCFrzv_Qowv1TglIayo2XNSbD5eWchuTKqsbojhmGCu1anFBK_AnsuwmGO
+ r57hIbDfZ1nad50udu1sTcGZBQXckEcSP8SRfpf4ym3gLXqNFdHUReYr_kJffwK2dP9exi83qJ.A
+ W_IsSw.Z0avrnQs1DCitAVX5AGXhOp2Yr0FEU8vI8fcDUHzdMfCOTk3RqIpsIl7WiD2Ui9dOTAAR
+ kc4k_nBVyI4yPAkZC5la3n6nKC.6ScnySNO4Nv4tIeQgY9gnnhu_gPub_4LIsxglkqvlPFTQtNQM
+ neU8F8KfkusiSx6kr_hU4XCMGzsq5vnjuScca3g7SQRaISbIDZw..5in7SuOPuplTIYIIZuulm2C
+ 7F6JZVQm0rVIUbn4.0ZuVlnOLcqCXDFiFkriLK.jMlrYRJxX6SaaFfVS0qBINBtpebTud7fnu4_C
+ AJVTatloakvrOUUIvEmV63gjmzbPwa72ikYkvjIOYKcsWFTZNqEUQkYchvks.CnB9utz6x2yHCWy
+ obsIaLx4frLQPKiBqYVFZypjHyJeli.EhsY7nmk_3OBpvr.fcmU8QdlvQtdZ5d6Pny0wfvXUbLq2
+ nZv1gHjkCavM1Caz1jlJbIcIo4ozFSpWSqhrvj7avb8scKJ4kn_Pa4mMI9zhUSyw-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Fri, 24 Sep 2021 20:54:23 +0000
+Received: by kubenode526.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 45c482c63dbc580e8c694645c4296290;
+          Fri, 24 Sep 2021 20:54:21 +0000 (UTC)
+Subject: Re: [PATCH 2/2] fuse: Send security context of inode on file creation
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        chirantan@chromium.org, miklos@szeredi.hu,
+        stephen.smalley.work@gmail.com, dwalsh@redhat.com,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20210924192442.916927-1-vgoyal@redhat.com>
+ <20210924192442.916927-3-vgoyal@redhat.com>
+ <a843a6d9-2e7a-768c-b742-fc190880b439@schaufler-ca.com>
+ <YU4ypwtADWRn/A0p@redhat.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <f92a082e-c329-f079-6765-ac8b44e45ee4@schaufler-ca.com>
+Date:   Fri, 24 Sep 2021 13:54:20 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Received: from dhcp-10-159-137-27.vpn.oracle.com (138.3.200.27) by SA9PR13CA0051.namprd13.prod.outlook.com (2603:10b6:806:22::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.9 via Frontend Transport; Fri, 24 Sep 2021 20:53:16 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6844e205-4cdc-4247-c4fb-08d97f9d5588
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5488:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <SJ0PR10MB54882F242A7C46C725DACFBF87A49@SJ0PR10MB5488.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2150;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: YhSlBQ3hU9fq4q5rWqGtC38LdEIWPRaMhYhrYl0qZIZCAtZFeCXLj8wDbolWdhElNUAba6r9oRb3u5CXtgT+1xdKiqBQmhDOPQEdUhiDS8mM7cH4p9nKx7X6+y2jm4ezw5gU7OAnakkZlZuhGqPS0Eml3hWxLa8uHvpCbcaHRjSDPp8LKleH//D/CUrZa8mbZPC+BYKxaqqavlFWvv7tIC0r/eNqRBBB5E/VrU4Qu7xElnaoA2P16ToeiXFvsxVFYQ9+0fm8tboRLKqxawrGKQrQdJ94OWEa15NFgM+GJYdeeMZ3E316+u7+7MSe9IZ2Jwlr0AW1bJu9z/6kFj8JXseI+XnoEDbxA3jCVyaAyp/6SoTG07Hj1jFfJVIya7dyUqzYA59qCgabfbM/ysQbynkRZTlGVkuZ3sxSNav5ZljEMi6NrNRK2ea5cGhyybGrHKEXNfPZV83yYtN3pUMuSHIXREe0mDH7wKdxi5O2mXUlHlYJRV99KwrovzTqmPfCwjQhZTNyvOiDLSHv1ZzhXq43vleY7P61uNTkrF/7KMzcaOMCFgkqH8QFEwHIC6rLFEVi++Ah9HQ5SvbUKbwk5Whta7TeybzxmdTNNAFKc0a92lWQxYLLW4KDWGj5jd7kzJ28bi3kKi+iwvdaWPK3MPe1bsbqNBCW1zzHtXHSk93tjg++PQuhiiytiQk8CZtIoFFbFV5gEKJ94O9PEHuhNw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB4257.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(6666004)(4326008)(38100700002)(9686003)(2906002)(83380400001)(53546011)(6486002)(31696002)(66946007)(7696005)(186003)(8676002)(66476007)(86362001)(26005)(66556008)(31686004)(36756003)(6916009)(508600001)(956004)(2616005)(8936002)(5660300002)(316002)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aE9vdExmcDc5bUNJZE4ybnBjeDJzclc1NEVZQms1SVkrUlQzekpGSDJKTEtz?=
- =?utf-8?B?bXV5UjQrVUtnRyttSDR5NXpDcVVFdENMR2ZaQnVVdnc5aFB1UFpjSUdwMHM2?=
- =?utf-8?B?ZzBGVytmZmRrc0V3WG9aTHhJMjhHaGgxOVRIZlNPeDFOTG5xZ0E3aTRUSVVs?=
- =?utf-8?B?Z0REVUxwZEs3V1lKOHpnODRkdkIrZk9VcUdrNmZEN0RJSDZ5OGk5ak9LNzBx?=
- =?utf-8?B?ajRqRkxXeVhWU0FSYzY0eTVUYWc3dis4dEFpdEZ2cG5pbTRhV2phU0VUUWlx?=
- =?utf-8?B?NDR4TGt6THNTOTVDUURiYnJHWEoxbVI4SVV0ZXpEMEliVnF1OEFvNFk4ZFBn?=
- =?utf-8?B?SGdDdFdtT0J1V0lScWhsY3dkRzhIQzhTVWkxMStsbHhPTitwZ2xiZytGbVJX?=
- =?utf-8?B?SVRtSlpWQ2RhZWI0NW16c1lNL2I4WW5xWTdWZEl0Q0h6dWJ6QzA2ei84RXY2?=
- =?utf-8?B?Y0o1UXljcEFsSWdOaHAwUFBhKzhlbm1CR2twM3VpNzRKZmxGZldsMnIxYUp1?=
- =?utf-8?B?UDdTQWdBTUQvVHFHK0ZYbGd3cmxHMlZaQkt1cEhzdzk4emNORjZMUEJ3ZkJZ?=
- =?utf-8?B?WWxCY29PUGIwak8yT3l5WWl6YktoaHdSSncwTmFkMEUrWEE2TVE2UFNyTUJB?=
- =?utf-8?B?V1hxMlc1RTRHcHlDWmhOWm9GR1AwRVNMRDJsNnQxVVhqNEl4RS9yTk1WNkhW?=
- =?utf-8?B?NFdVaWtNcmYzdzdZNGVjSFVMT3prZTVnZitteVVodUQ3TXRMT1BTWVd5RDJs?=
- =?utf-8?B?ZHM5V0JKQ2dTT3pGakE0NDl2dHJHRGZCc1FuVDVuS2JJUEpWclc5djhGZFRS?=
- =?utf-8?B?K0hjSzlKV01WVUQ0eWZKR2JwL1RTOUJMRGZRNEZZV3AwZUNRbDhjbDArVUVp?=
- =?utf-8?B?UGhBbnlMMGJxWTNHVGpVZ3NRcjJkN3dmZWhTWTkyOStZMjB0Mll6eEU1NnJB?=
- =?utf-8?B?MmZ5MC9UVVZ3NEZGUG5JQzNtSEhYbTIya1VWZ3ZJZDErdW50Q1NYS0xicHp3?=
- =?utf-8?B?bElQWEYwMHF0andXdXFLMUI5eS85NTBMNWNrY3V4M3VLVDMzZWZYdXNIbEhq?=
- =?utf-8?B?d2tBREFEeXpOa05tM29yd2VYbUlwRzVnMUFkU3haTlNpM3dPQ3ZxeUNJK2xR?=
- =?utf-8?B?WHZWdFo2UHJXaitoMURHdG5XNmRCM1h0Wkd3akNWRkd0NWl5c2RVMkUzTjh3?=
- =?utf-8?B?L0xaTHM5LzRwdUVXVjhtRFpZTWdDYS9DNDZaSklyQTEzRXZWUFBQSWordHkw?=
- =?utf-8?B?U2R6dXlxOVNUdlBrWGtFUjZFWW16b3p6a2MwRWJsRU9rdll1TWZ0cVphaWs3?=
- =?utf-8?B?WnBMTkZGSDJ0OE92M1hXTGRNcXM5UWVlSDdKTUY3NEloS1NiQ2ZKNEZPYVdr?=
- =?utf-8?B?VkFrU04zcHAzUXlIUzFuanRaemU2WGV0WWJtV2p3R2NINUR4U1hrL2dsa2k5?=
- =?utf-8?B?MU4zR2xwanprMVVId3Q0bll2TllEbXVNNmVZc3o1T3c0OVA2bG8zOGpQaWJ1?=
- =?utf-8?B?OXJvNGs0SkNQY3kzdzdtVTNxS2k4RHk0aHJPczVob01PTVlLb29QWTR3MkVq?=
- =?utf-8?B?UWM2TGVXMkdlalhwNnRjT0padU5xUUFyV2NsQkpOYml3VEVYMnIva3U3N0dV?=
- =?utf-8?B?dTFoUDV5NkQ5WHNCbXdHYzFUMUhKcXlVZW5tUmRySDlud3N2Q3dmWGhxQisv?=
- =?utf-8?B?MFJBcCtYWUhyRllKUEFpNFF3VnlzNVl5TXVSNE9wNW4wS3JXSjhhdlAxZHRw?=
- =?utf-8?Q?30Fjnynz9u4oLRnVIfI2LZRo3JxCRJrx8GOO287?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6844e205-4cdc-4247-c4fb-08d97f9d5588
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR10MB4257.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2021 20:53:17.2330
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: D9zqsgiagseGzHclcA6JLLH+Ii0GLyrrFq05/91xCHBRAEbHb3QUbphFgB0W89Nz9Qtl+dOLyQfTh6tAH1N2Lw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5488
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10117 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
- phishscore=0 bulkscore=0 mlxscore=0 mlxlogscore=999 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109230001 definitions=main-2109240125
-X-Proofpoint-GUID: H6nLZnKSEtaJy9hIbUHxxBiPwc3UosbP
-X-Proofpoint-ORIG-GUID: H6nLZnKSEtaJy9hIbUHxxBiPwc3UosbP
+In-Reply-To: <YU4ypwtADWRn/A0p@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.19043 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 9/24/2021 1:18 PM, Vivek Goyal wrote:
+> On Fri, Sep 24, 2021 at 12:58:28PM -0700, Casey Schaufler wrote:
+>> On 9/24/2021 12:24 PM, Vivek Goyal wrote:
+>>> When a new inode is created, send its security context to server alon=
+g
+>>> with creation request (FUSE_CREAT, FUSE_MKNOD, FUSE_MKDIR and FUSE_SY=
+MLINK).
+>>> This gives server an opportunity to create new file and set security
+>>> context (possibly atomically). In all the configurations it might not=
 
-On 9/23/21 12:32 PM, J. Bruce Fields wrote:
-> On Thu, Sep 23, 2021 at 10:09:35AM -0700, dai.ngo@oracle.com wrote:
->> On 9/22/21 6:34 PM, J. Bruce Fields wrote:
->>> On Thu, Sep 16, 2021 at 02:22:11PM -0400, Dai Ngo wrote:
->>>> +/*
->>>> + * If the conflict happens due to a NFSv4 request then check for
->>>> + * courtesy client and set rq_conflict_client so that upper layer
->>>> + * can destroy the conflict client and retry the call.
->>>> + */
->>> I think we need a different approach.
->> I think nfsd_check_courtesy_client is used to handle conflict with
->> delegation. So instead of using rq_conflict_client to let the caller
->> knows and destroy the courtesy client as the current patch does, we
->> can ask the laundromat thread to do the destroy.
-> I can't see right now why that wouldn't work.
+>>> be possible to set context atomically.
+>>>
+>>> Like nfs and ceph, use security_dentry_init_security() to dermine sec=
+urity
+>>> context of inode and send it with create, mkdir, mknod, and symlink r=
+equests.
+>>>
+>>> Following is the information sent to server.
+>>>
+>>> - struct fuse_secctx.
+>>>   This contains total size of security context which follows this str=
+ucture.
+>>>
+>>> - xattr name string.
+>>>   This string represents name of xattr which should be used while set=
+ting
+>>>   security context. As of now it is hardcoded to "security.selinux".
+>> Why? It's not like "security.SMACK64' is a secret.
+> Sorry, I don't understand what's the concern. Can you elaborate a bit
+> more.
+
+Sure. Interfaces that are designed as special case solutions for
+SELinux tend to make my life miserable as the Smack maintainer and
+for the efforts to complete LSM stacking. You make the change for
+SELinux and leave the generalization as an exercise for some poor
+sod like me to deal with later.
+
+> I am hardcoding name to "security.selinux" because as of now only
+> SELinux implements this hook.
+
+Yes. A Smack hook implementation is on the todo list. If you hard code
+this in fuse you're adding another thing that has to be done for
+Smack support.
+
+>  And there is no way to know the name
+> of xattr, so I have had to hardcode it. But tomorrow if interface
+> changes so that name of xattr is also returned, we can easily get
+> rid of hardcoding.
+
+So why not make the interface do that now?
+
+> If another LSM decides to implement this hook, then we can send
+> that name as well. Say "security.SMACK64".
+
+Again, why not make it work that way now, and avoid having
+to change the protocol later? Changing protocols and interfaces
+is much harder than doing them generally in the first place.
+
+>>> - security context.
+>>>   This is the actual security context whose size is specified in fuse=
+_secctx
+>>>   struct.
+>> The possibility of multiple security contexts on a file is real
+>> in the not too distant future. Also, a file can have multiple relevant=
+
+>> security attributes at creation. Smack, for example, may assign a
+>> security.SMACK64 and a security.SMACK64TRANSMUTE attribute. Your
+>> interface cannot support either of these cases.
+> Right. As of now it does not support capability to support multiple
+> security context. But we should be easily able to extend the protocol
+> whenever that supports lands in kernel.
+
+No. Extending single data item protocols to support multiple
+data items *hurts* most of the time. If it wasn't so much more
+complicated you'd be doing it up front without fussing about it.
+
+>  Say a new option
+> FUSE_SECURITY_CTX_EXT which will allow sending multiple security
+> context labels (along with associated xattr names).
 >
->> In that case,
->> nfs4_get_vfs_file in nfsd4_process_open2 will either return no error
->> since the the laufromat destroyed the courtesy client or it gets
->> get nfserr_jukebox which causes the NFS client to retry. By the time
->> the retry comes the courtesy client should already be destroyed.
-> Make sure this works for local (non-NFS) lease breakers as well.  I
-> think that mainly means making sure the !O_NONBLOCK case of
-> __break_lease works.
+> As of now there is no need to increase the complexity of current
+> implementation both in fuse as well as virtiofsd when kernel
+> does not even support multiple lables using security_dentry_init_securi=
+ty()
+> hook.
 
-Yes, local lease breakers use (!O_NONBLOCK). In this case __break_lease
-will call lm_break then wait for all lease conflicts to be resolved
-before returning to caller.
-
--Dai
+You're 100% correct. For your purpose today there's no reason to
+do anything else. It would be really handy if I didn't have yet
+another thing that I don't have the time to rewrite.
 
 >
-> --b.
+> Thanks
+> Vivek
+>
+>>> This patch is modified version of patch from
+>>> Chirantan Ekbote <chirantan@chromium.org>
+>>>
+>>> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+>>> ---
+>>>  fs/fuse/dir.c             | 114 ++++++++++++++++++++++++++++++++++++=
+--
+>>>  fs/fuse/fuse_i.h          |   3 +
+>>>  fs/fuse/inode.c           |   4 +-
+>>>  include/uapi/linux/fuse.h |  11 ++++
+>>>  4 files changed, 126 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+>>> index d9b977c0f38d..439bde1ea329 100644
+>>> --- a/fs/fuse/dir.c
+>>> +++ b/fs/fuse/dir.c
+>>> @@ -17,6 +17,9 @@
+>>>  #include <linux/xattr.h>
+>>>  #include <linux/iversion.h>
+>>>  #include <linux/posix_acl.h>
+>>> +#include <linux/security.h>
+>>> +#include <linux/types.h>
+>>> +#include <linux/kernel.h>
+>>> =20
+>>>  static void fuse_advise_use_readdirplus(struct inode *dir)
+>>>  {
+>>> @@ -456,6 +459,65 @@ static struct dentry *fuse_lookup(struct inode *=
+dir, struct dentry *entry,
+>>>  	return ERR_PTR(err);
+>>>  }
+>>> =20
+>>> +static int get_security_context(struct dentry *entry, umode_t mode,
+>>> +				void **security_ctx, u32 *security_ctxlen)
+>>> +{
+>>> +	struct fuse_secctx *fsecctx;
+>>> +	void *ctx, *full_ctx;
+>>> +	u32 ctxlen, full_ctxlen;
+>>> +	int err =3D 0;
+>>> +
+>>> +	err =3D security_dentry_init_security(entry, mode, &entry->d_name, =
+&ctx,
+>>> +					    &ctxlen);
+>>> +	if (err) {
+>>> +		if (err !=3D -EOPNOTSUPP)
+>>> +			goto out_err;
+>>> +		/* No LSM is supporting this security hook. Ignore error */
+>>> +		err =3D 0;
+>>> +		ctxlen =3D 0;
+>>> +	}
+>>> +
+>>> +	if (ctxlen > 0) {
+>>> +		/*
+>>> +		 * security_dentry_init_security() does not return the name
+>>> +		 * of lsm or xattr to which label belongs. As of now only
+>>> +		 * selinux implements this. Hence, hardcoding the name to
+>>> +		 * security.selinux.
+>>> +		 */
+>>> +		char *name =3D "security.selinux";
+>>> +		void *ptr;
+>>> +
+>>> +		full_ctxlen =3D sizeof(*fsecctx) + strlen(name) + ctxlen + 1;
+>>> +		full_ctx =3D kzalloc(full_ctxlen, GFP_KERNEL);
+>>> +		if (!full_ctx) {
+>>> +			err =3D -ENOMEM;
+>>> +			kfree(ctx);
+>>> +			goto out_err;
+>>> +		}
+>>> +
+>>> +		ptr =3D full_ctx;
+>>> +		fsecctx =3D (struct fuse_secctx*) ptr;
+>>> +		fsecctx->size =3D ctxlen;
+>>> +		ptr +=3D sizeof(*fsecctx);
+>>> +		strcpy(ptr, name);
+>>> +		ptr +=3D strlen(name) + 1;
+>>> +		memcpy(ptr, ctx, ctxlen);
+>>> +		kfree(ctx);
+>>> +	} else {
+>>> +		full_ctxlen =3D sizeof(*fsecctx);
+>>> +		full_ctx =3D kzalloc(full_ctxlen, GFP_KERNEL);
+>>> +		if (!full_ctx) {
+>>> +			err =3D -ENOMEM;
+>>> +			goto out_err;
+>>> +		}
+>>> +	}
+>>> +
+>>> +	*security_ctxlen =3D full_ctxlen;
+>>> +	*security_ctx =3D full_ctx;
+>>> +out_err:
+>>> +	return err;
+>>> +}
+>>> +
+>>>  /*
+>>>   * Atomic create+open operation
+>>>   *
+>>> @@ -476,6 +538,8 @@ static int fuse_create_open(struct inode *dir, st=
+ruct dentry *entry,
+>>>  	struct fuse_entry_out outentry;
+>>>  	struct fuse_inode *fi;
+>>>  	struct fuse_file *ff;
+>>> +	void *security_ctx =3D NULL;
+>>> +	u32 security_ctxlen;
+>>> =20
+>>>  	/* Userspace expects S_IFREG in create mode */
+>>>  	BUG_ON((mode & S_IFMT) !=3D S_IFREG);
+>>> @@ -517,6 +581,18 @@ static int fuse_create_open(struct inode *dir, s=
+truct dentry *entry,
+>>>  	args.out_args[0].value =3D &outentry;
+>>>  	args.out_args[1].size =3D sizeof(outopen);
+>>>  	args.out_args[1].value =3D &outopen;
+>>> +
+>>> +	if (fm->fc->init_security) {
+>>> +		err =3D get_security_context(entry, mode, &security_ctx,
+>>> +					   &security_ctxlen);
+>>> +		if (err)
+>>> +			goto out_put_forget_req;
+>>> +
+>>> +		args.in_numargs =3D 3;
+>>> +		args.in_args[2].size =3D security_ctxlen;
+>>> +		args.in_args[2].value =3D security_ctx;
+>>> +	}
+>>> +
+>>>  	err =3D fuse_simple_request(fm, &args);
+>>>  	if (err)
+>>>  		goto out_free_ff;
+>>> @@ -554,6 +630,7 @@ static int fuse_create_open(struct inode *dir, st=
+ruct dentry *entry,
+>>> =20
+>>>  out_free_ff:
+>>>  	fuse_file_free(ff);
+>>> +	kfree(security_ctx);
+>>>  out_put_forget_req:
+>>>  	kfree(forget);
+>>>  out_err:
+>>> @@ -613,13 +690,15 @@ static int fuse_atomic_open(struct inode *dir, =
+struct dentry *entry,
+>>>   */
+>>>  static int create_new_entry(struct fuse_mount *fm, struct fuse_args =
+*args,
+>>>  			    struct inode *dir, struct dentry *entry,
+>>> -			    umode_t mode)
+>>> +			    umode_t mode, bool init_security)
+>>>  {
+>>>  	struct fuse_entry_out outarg;
+>>>  	struct inode *inode;
+>>>  	struct dentry *d;
+>>>  	int err;
+>>>  	struct fuse_forget_link *forget;
+>>> +	void *security_ctx =3D NULL;
+>>> +	u32 security_ctxlen =3D 0;
+>>> =20
+>>>  	if (fuse_is_bad(dir))
+>>>  		return -EIO;
+>>> @@ -633,7 +712,29 @@ static int create_new_entry(struct fuse_mount *f=
+m, struct fuse_args *args,
+>>>  	args->out_numargs =3D 1;
+>>>  	args->out_args[0].size =3D sizeof(outarg);
+>>>  	args->out_args[0].value =3D &outarg;
+>>> +
+>>> +	if (init_security) {
+>>> +		unsigned short idx =3D args->in_numargs;
+>>> +
+>>> +		if ((size_t)idx >=3D ARRAY_SIZE(args->in_args)) {
+>>> +			err =3D -ENOMEM;
+>>> +			goto out_put_forget_req;
+>>> +		}
+>>> +
+>>> +		err =3D get_security_context(entry, mode, &security_ctx,
+>>> +					   &security_ctxlen);
+>>> +		if (err)
+>>> +			goto out_put_forget_req;
+>>> +
+>>> +		if (security_ctxlen > 0) {
+>>> +			args->in_args[idx].size =3D security_ctxlen;
+>>> +			args->in_args[idx].value =3D security_ctx;
+>>> +			args->in_numargs++;
+>>> +		}
+>>> +	}
+>>> +
+>>>  	err =3D fuse_simple_request(fm, args);
+>>> +	kfree(security_ctx);
+>>>  	if (err)
+>>>  		goto out_put_forget_req;
+>>> =20
+>>> @@ -691,7 +792,7 @@ static int fuse_mknod(struct user_namespace *mnt_=
+userns, struct inode *dir,
+>>>  	args.in_args[0].value =3D &inarg;
+>>>  	args.in_args[1].size =3D entry->d_name.len + 1;
+>>>  	args.in_args[1].value =3D entry->d_name.name;
+>>> -	return create_new_entry(fm, &args, dir, entry, mode);
+>>> +	return create_new_entry(fm, &args, dir, entry, mode, fm->fc->init_s=
+ecurity);
+>>>  }
+>>> =20
+>>>  static int fuse_create(struct user_namespace *mnt_userns, struct ino=
+de *dir,
+>>> @@ -719,7 +820,8 @@ static int fuse_mkdir(struct user_namespace *mnt_=
+userns, struct inode *dir,
+>>>  	args.in_args[0].value =3D &inarg;
+>>>  	args.in_args[1].size =3D entry->d_name.len + 1;
+>>>  	args.in_args[1].value =3D entry->d_name.name;
+>>> -	return create_new_entry(fm, &args, dir, entry, S_IFDIR);
+>>> +	return create_new_entry(fm, &args, dir, entry, S_IFDIR,
+>>> +				fm->fc->init_security);
+>>>  }
+>>> =20
+>>>  static int fuse_symlink(struct user_namespace *mnt_userns, struct in=
+ode *dir,
+>>> @@ -735,7 +837,8 @@ static int fuse_symlink(struct user_namespace *mn=
+t_userns, struct inode *dir,
+>>>  	args.in_args[0].value =3D entry->d_name.name;
+>>>  	args.in_args[1].size =3D len;
+>>>  	args.in_args[1].value =3D link;
+>>> -	return create_new_entry(fm, &args, dir, entry, S_IFLNK);
+>>> +	return create_new_entry(fm, &args, dir, entry, S_IFLNK,
+>>> +				fm->fc->init_security);
+>>>  }
+>>> =20
+>>>  void fuse_update_ctime(struct inode *inode)
+>>> @@ -915,7 +1018,8 @@ static int fuse_link(struct dentry *entry, struc=
+t inode *newdir,
+>>>  	args.in_args[0].value =3D &inarg;
+>>>  	args.in_args[1].size =3D newent->d_name.len + 1;
+>>>  	args.in_args[1].value =3D newent->d_name.name;
+>>> -	err =3D create_new_entry(fm, &args, newdir, newent, inode->i_mode);=
+
+>>> +	err =3D create_new_entry(fm, &args, newdir, newent, inode->i_mode,
+>>> +			       false);
+>>>  	/* Contrary to "normal" filesystems it can happen that link
+>>>  	   makes two "logical" inodes point to the same "physical"
+>>>  	   inode.  We invalidate the attributes of the old one, so it
+>>> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+>>> index 319596df5dc6..885f34f9967f 100644
+>>> --- a/fs/fuse/fuse_i.h
+>>> +++ b/fs/fuse/fuse_i.h
+>>> @@ -765,6 +765,9 @@ struct fuse_conn {
+>>>  	/* Propagate syncfs() to server */
+>>>  	unsigned int sync_fs:1;
+>>> =20
+>>> +	/* Initialize security xattrs when creating a new inode */
+>>> +	unsigned int init_security:1;
+>>> +
+>>>  	/** The number of requests waiting for completion */
+>>>  	atomic_t num_waiting;
+>>> =20
+>>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+>>> index 36cd03114b6d..343bc9cfbd92 100644
+>>> --- a/fs/fuse/inode.c
+>>> +++ b/fs/fuse/inode.c
+>>> @@ -1152,6 +1152,8 @@ static void process_init_reply(struct fuse_moun=
+t *fm, struct fuse_args *args,
+>>>  			}
+>>>  			if (arg->flags & FUSE_SETXATTR_EXT)
+>>>  				fc->setxattr_ext =3D 1;
+>>> +			if (arg->flags & FUSE_SECURITY_CTX)
+>>> +				fc->init_security =3D 1;
+>>>  		} else {
+>>>  			ra_pages =3D fc->max_read / PAGE_SIZE;
+>>>  			fc->no_lock =3D 1;
+>>> @@ -1195,7 +1197,7 @@ void fuse_send_init(struct fuse_mount *fm)
+>>>  		FUSE_PARALLEL_DIROPS | FUSE_HANDLE_KILLPRIV | FUSE_POSIX_ACL |
+>>>  		FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
+>>>  		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
+>>> -		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT;
+>>> +		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_SECURITY_CTX;
+>>>  #ifdef CONFIG_FUSE_DAX
+>>>  	if (fm->fc->dax)
+>>>  		ia->in.flags |=3D FUSE_MAP_ALIGNMENT;
+>>> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+>>> index 2fe54c80051a..777c773e143e 100644
+>>> --- a/include/uapi/linux/fuse.h
+>>> +++ b/include/uapi/linux/fuse.h
+>>> @@ -986,4 +986,15 @@ struct fuse_syncfs_in {
+>>>  	uint64_t	padding;
+>>>  };
+>>> =20
+>>> +/*
+>>> + * For each security context, send fuse_secctx with size of security=
+ context
+>>> + * fuse_secctx will be followed by security context name and this in=
+ turn
+>>> + * will be followed by actual context label.
+>>> + * fuse_secctx, name, context
+>>> + * */
+>>> +struct fuse_secctx {
+>>> +	uint32_t	size;
+>>> +	uint32_t	padding;
+>>> +};
+>>> +
+>>>  #endif /* _LINUX_FUSE_H */
+
