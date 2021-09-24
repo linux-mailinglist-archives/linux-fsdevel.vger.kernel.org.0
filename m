@@ -2,135 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CBAE41691D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 02:57:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABAE2416930
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 03:01:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243697AbhIXA67 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 20:58:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51202 "EHLO
+        id S243736AbhIXBD0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 21:03:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240863AbhIXA66 (ORCPT
+        with ESMTP id S243729AbhIXBD0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 20:58:58 -0400
-Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B6E8C061574
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 17:57:26 -0700 (PDT)
-Received: by mail-qt1-x832.google.com with SMTP id a13so8013115qtw.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 17:57:26 -0700 (PDT)
+        Thu, 23 Sep 2021 21:03:26 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2917C06175F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 18:01:53 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id n18so8120885pgm.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Sep 2021 18:01:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :mime-version;
-        bh=yOg+nzwKS/Xe9boE1XYCVEvuo4RAHMroRl1PMQiLGaE=;
-        b=UdSi8cTqG77oru82hEmJklps5D805r9qSr9pTi5SYcSwhasEbm9rWVspjcCQSnRf8Q
-         oX8CtlqZO7VNdTkw/JeNVrL4ZAJDGwNEL54yb43mYHbxLf94ZzRljWHYkVJj6/LZUIw4
-         6ZAG6NTAVbHoPcQCdj2m5GcMHAt1TNFWi3i7J0CDS9W39XJDpK3YH7T2NXD7OvWggs8T
-         ofMDlCmiLCJT7MWrlO0+jgNkRRgpFqZC5t5cbYoiHrx38fpoY25TgBNELp+8xoLOUpYU
-         DzRGKPLbppIUwv3bQZGzMtW+dY4LJxp/H4wNNf7gQFX4cHFxnEH4RP/74F4affCg0oyy
-         rEUA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=R0TVEFcTo2DWYNC/Ty6kIV1DRidb4aV2ukSxlWruSY0=;
+        b=Cc6bMFq/ABedDQ1YzC/XdDZv/spMWPp/hh2aQu0AWPUtdFU+pDQ2RfUJcArNTuc3L9
+         YpvOF13QFoVaXT/zT7J7wQkyQYbwvtRMnut5ixcpE36ZNymppWEwd2zsKT3GYU3t8vL7
+         NY+q/rhK2I15ufekXaQLQpuxl65puFdTvPnwA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:mime-version;
-        bh=yOg+nzwKS/Xe9boE1XYCVEvuo4RAHMroRl1PMQiLGaE=;
-        b=yLaxEGqKGp/51QyO7mAf514lueaOuYt8wgi9kX8NI51UDqV03sThLiRCfMsfpP+gDg
-         1VsjNJ2wxwvGYyc6MmmvuRD4nHshvziVWCQIzNtlUuQDmwWWGEgwh1OBrr9ZJGTszoEN
-         liJhdLDJ02s+dMoBjZt9j0LnLFoOC6/FsQ78QbH9SF0k2dqp7YzB30mOo2aa7/s/HVl+
-         /qBXcTCgesETVAZxTVxM/sCFOaJzoxS7SHjhltrgh/lUGzqikEa87wWMdUnPWG/dgzMK
-         R+W4dPWfImfp8HFhPxWBpQ5T1dTU88OcL6TNh75AqAc6j9qZnLLCYYV6gbgE2XGIDj0M
-         6PeA==
-X-Gm-Message-State: AOAM532LB7r9iDZNJyU43bu31YwksAZ62khMBEI8PV1z8G+bi7oocL6m
-        JoCH/hfpmnlQFNW7xLlbif6OZA==
-X-Google-Smtp-Source: ABdhPJxKZbP06lKD6aeiNcFdgQv2031ZYnZqb+thvCaZxx9HD9ZRTfzF1jKNdAdawTbHh2lJoH/5Hw==
-X-Received: by 2002:ac8:4755:: with SMTP id k21mr1730713qtp.150.1632445045392;
-        Thu, 23 Sep 2021 17:57:25 -0700 (PDT)
-Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id g22sm5530005qkk.87.2021.09.23.17.57.23
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=R0TVEFcTo2DWYNC/Ty6kIV1DRidb4aV2ukSxlWruSY0=;
+        b=6KBeD8mxY8Mz/5iKvtptxU4Tu7/ecl67Hl6TYIhvMRnrAzwduDFp40Kpy66/aK34lw
+         UXIx/FcKbSpO5SDLRolP8UCh3AxDqWmvNBkBrlIvicIqnmr6H8tidZ6QRipI4/FNjMMc
+         canxiJMHPZtowBIlQOO9UAfWfeBzfAnJ5285Va0Zxm+bEr2pPVREz0nHUhjqPYejKzkg
+         lC//n58r699Agd1XGDHzhPVVlPrwocVc4iWVRZx41jlPyI/UtlUvlGren0WFJbTgzQ2k
+         e7XB/Jyu6d50D9yjJ3T4g8bKDAcLhHfaEmJNye7MkQyIqKAg3dL5bZPcgPtEoGaLFNMo
+         kYMg==
+X-Gm-Message-State: AOAM533oo50Be4AIvX2M9tcm9chPjAJ+AO5Epzmk6wDfMU5wf30JNVmb
+        wY/7VNWU7FNCcggxqqwYItFjWQ==
+X-Google-Smtp-Source: ABdhPJwMFns0SIvz1MLq43HUOigRve27DNoneF2kjwjje+necuiiSQxwV3fefmt7ZBxJihxs7+TLEQ==
+X-Received: by 2002:a62:4dc5:0:b0:438:8133:fcef with SMTP id a188-20020a624dc5000000b004388133fcefmr7089386pfb.44.1632445313339;
+        Thu, 23 Sep 2021 18:01:53 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id g12sm10204673pja.28.2021.09.23.18.01.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Sep 2021 17:57:24 -0700 (PDT)
-Date:   Thu, 23 Sep 2021 17:57:11 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@ripple.anvils
-To:     Zi Yan <ziy@nvidia.com>
-cc:     Hugh Dickins <hughd@google.com>, Yang Shi <shy828301@gmail.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thu, 23 Sep 2021 18:01:52 -0700 (PDT)
+Date:   Thu, 23 Sep 2021 18:01:51 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Helge Deller <deller@gmx.de>
+Cc:     kernel test robot <oliver.sang@intel.com>,
+        0day robot <lkp@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@lists.01.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: Mapcount of subpages
-In-Reply-To: <24B432CB-5CBB-4309-A9D0-6E1C4395A013@nvidia.com>
-Message-ID: <63e1cfcc-b7dd-ca55-39b2-7a9d2f6ff7eb@google.com>
-References: <YUvWm6G16+ib+Wnb@moria.home.lan> <YUvzINep9m7G0ust@casper.infradead.org> <YUwNZFPGDj4Pkspx@moria.home.lan> <YUxnnq7uFBAtJ3rT@casper.infradead.org> <20210923124502.nxfdaoiov4sysed4@box.shutemov.name> <72cc2691-5ebe-8b56-1fe8-eeb4eb4a4c74@google.com>
- <CAHbLzkrELUKR2saOkA9_EeAyZwdboSq0HN6rhmCg2qxwSjdzbg@mail.gmail.com> <2A311B26-8B33-458E-B2C1-8BA2CF3484AA@nvidia.com> <77b59314-5593-1a2e-293c-b66e8235ad@google.com> <24B432CB-5CBB-4309-A9D0-6E1C4395A013@nvidia.com>
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        Jann Horn <jannh@google.com>,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, stable@vger.kernel.org
+Subject: /proc/$pid/chan kernel address exposures (was Re: [proc/wchan]
+ 30a3a19273:
+ leaking-addresses.proc.wchan./proc/bus/input/devices:B:KEY=1000000000007ff980000000007fffebeffdfffeffffffffffffffffffffe)
+Message-ID: <202109231746.7B4C306CEC@keescook>
+References: <20210103142726.GC30643@xsang-OptiPlex-9020>
+ <d15378c8-8702-47ba-65b7-450f728793ed@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d15378c8-8702-47ba-65b7-450f728793ed@gmx.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 23 Sep 2021, Zi Yan wrote:
-> On 23 Sep 2021, at 19:48, Hugh Dickins wrote:
-> > On Thu, 23 Sep 2021, Zi Yan wrote:
-> >> On 23 Sep 2021, at 17:54, Yang Shi wrote:
-> >>> On Thu, Sep 23, 2021 at 2:10 PM Hugh Dickins <hughd@google.com> wrote:
-> >>>>
-> >>>> NR_FILE_MAPPED being used for /proc/meminfo's "Mapped:" and a couple
-> >>>> of other such stats files, and for a reclaim heuristic in mm/vmscan.c.
-> >>>>
-> >>>> Allow ourselves more slack in NR_FILE_MAPPED accounting (either count
-> >>>> each pte as if it mapped the whole THP, or don't count a THP's ptes
-> >>>> at all - you opted for the latter in the "Mlocked:" accounting),
-> >>>> and I suspect subpage _mapcount could be abandoned.
-> >>>
-> >>> AFAIK, partial THP unmap may need the _mapcount information of every
-> >>> subpage otherwise the deferred split can't know what subpages could be
-> >>> freed.
+On Sun, Jan 03, 2021 at 07:25:36PM +0100, Helge Deller wrote:
+> On 1/3/21 3:27 PM, kernel test robot wrote:
+> > FYI, we noticed the following commit (built with gcc-9):
 > >
-> > I believe Yang Shi is right insofar as the decision on whether it's worth
-> > queuing for deferred split is being done based on those subpage _mapcounts.
-> > That is a use I had not considered, and I've given no thought to how
-> > important or not it is.
+> > commit: 30a3a192730a997bc4afff5765254175b6fb64f3 ("[PATCH] proc/wchan: Use printk format instead of lookup_symbol_name()")
+> > url: https://github.com/0day-ci/linux/commits/Helge-Deller/proc-wchan-Use-printk-format-instead-of-lookup_symbol_name/20201218-010048
+> > base: https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git 09162bc32c880a791c6c0668ce0745cf7958f576
 > >
-> >>
-> >> Could we just scan page tables of a THP during deferred split process
-> >> instead? Deferred split is a slow path already, so maybe it can afford
-> >> the extra work.
-> >
-> > But unless I misunderstand, actually carrying out the deferred split
-> > already unmaps, uses migration entries, and remaps the remaining ptes:
-> > needing no help from subpage _mapcounts to do those, and free the rest.
+> > in testcase: leaking-addresses
+> > version: leaking-addresses-x86_64-4f19048-1_20201111
+> > [...]
+> > caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
 > 
-> You are right. unmap_page() during THP split is scanning the page tables
-> already.
+> I don't see anything wrong with the wchan patch (30a3a192730a997bc4afff5765254175b6fb64f3),
+> or that it could have leaked anything.
 > 
-> For deciding whether to queue a THP for deferred split, we probably can
-> keep PageDoubleMap bit to indicate if any subpage is PTE mapped.
+> Maybe the kernel test robot picked up the wchan patch by mistake ?
+>
+> > [...]
+> > [2 wchan] 0xffffc9000000003c
+       ^^^^^
 
-Maybe, maybe not.
+As the root cause of a kernel address exposure, Jann pointed out[2]
+commit 152c432b128c, which I've tracked to here, only to discover this
+regression was, indeed, reported. :(
 
-> 
-> But without subpage _mapcount, detecting extra pins to a THP before split
-> might be not as easy as with it. This means every THP split will need to
-> perform unmap_page(), then check the remaining page_count to see if
-> THP split is possible. That would also introduce extra system-wide overheads
-> from unmapping pages. Am I missing anything?
+So, we have a few things:
 
-I did not explain clearly enough: a subpage's ptes must still be counted
-in total_mapcount(); but I'm suggesting that perhaps they can be counted
-all together (either in the head page's _mapcount, or in a separate field
-if that works better), instead of being distributed amongst the separate
-subpages' _mapcounts.
+1) wchan has been reporting "0" in the default x86 config (ORC unwinder)
+   for 4 years now.
 
-And this would lower the system-wide overheads inside total_mapcount()
-and page_mapped() (and maybe others).
+2) non-x86 or non-ORC, wchan has been leaking raw kernel addresses since
+   commit 152c432b128c (v5.12).
 
-Hugh
+3) the output of scripts/leaking_addresses.pl is hard to read. :)
+
+We can fix 1 and 2 with:
+   https://lore.kernel.org/lkml/20210923233105.4045080-1-keescook@chromium.org/
+(though that will need a Cc: stable now...)
+
+If we don't do that, we still need to revert 152c432b128c in v5.12 and
+later.
+
+We should likely make leaking_addresses.pl a little more readable while
+we're at it.
+
+-Kees
+
+[1] https://lore.kernel.org/lkml/20210921193249.el476vlhg5k6lfcq@shells.gnugeneration.com/
+[2] https://lore.kernel.org/lkml/CAG48ez2zC=+PuNgezH53HBPZ8CXU5H=vkWx7nJs60G8RXt3w0Q@mail.gmail.com/
+
+-- 
+Kees Cook
