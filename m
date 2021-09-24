@@ -2,121 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58F364176C7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 16:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DD46417800
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 17:46:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345834AbhIXO16 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Sep 2021 10:27:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37516 "EHLO
+        id S234694AbhIXPsa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Sep 2021 11:48:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233700AbhIXO16 (ORCPT
+        with ESMTP id S233379AbhIXPs0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Sep 2021 10:27:58 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F26A7C06161E
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Sep 2021 07:26:24 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id 5so6596260plo.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Sep 2021 07:26:24 -0700 (PDT)
+        Fri, 24 Sep 2021 11:48:26 -0400
+Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D07B3C061571
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Sep 2021 08:46:46 -0700 (PDT)
+Received: by mail-qt1-x833.google.com with SMTP id t13so3924181qtc.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Sep 2021 08:46:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=oGzzGbeOeLEORaxwOD7BLDmEH+a0amSJ/nYoDh8OWO0=;
-        b=FGOqdb8Wc6HM1sjK/2fbXMNHDvLwKPUuowC529hVtm8I6s3/4QxQ1YBVBPiENwD5cf
-         MLK8nggL/D+kCwp/GZZaFYbBbBGuqWUwxJeHpm+2nwMZzck6aP11onhvZEBmpcVEVK8c
-         YOS4HwQtsAu3rZGTzfjU2+fJz4DuOZxiWFrE0=
+        d=google.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=xyb9Fo0Z1UnV7+NXWV2U9pvWT/Hzng851n0k8kXhl+E=;
+        b=rA5bI48uXssga616Sx+1DlmCoR4CjfgOycswGvD6x6tYuItqzPgqj1/UOP1ZXFvlP2
+         Sh9U0AignKLqAEr3h0zuS5RnGE0SC2HiJFMlz9RGTqjaRbd5mXP4CDvWCkC/pumclHu4
+         Qh/lEmqIbTERCv2qY8mjrcM6nJJc8yi5tIh94zgvvCmwxh3tW4Ans2YsUumCPoJD+Oia
+         qRXmeRAyT1UMu4scSBvva1GdpD0usRFXOycfkZ47NxpJfaGE5bXQMMOhcnzYqk2esfs6
+         Yv6zrA3Q0Gj7U5+GwX44g1vB0vA/WRPrzyE8Hat2601g/HrHfeTEW46y484oQnJX8Vun
+         EEyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=oGzzGbeOeLEORaxwOD7BLDmEH+a0amSJ/nYoDh8OWO0=;
-        b=xz0WilNIpLNE5cmr+0UHwfcktwKX2J5aNPBrg9IP/B5YJx/hs0bHRswzyi/iLELldX
-         4j29eATwGHADLbBgqG5QzThb7UUPvnchoaAGtwnkbpuyEYjOCUzKGbkhpqrTSiRcWyL8
-         KKhRam7SyVtGkEL255Acfpf/Jl8YSdBR3eOEhhlVaopFlBdCcB4AhRwBFAFMuj3wMOzM
-         hD6E2Y1Ks0oDU2OaUW9jFp1ewiuS2DMrefDqQy0I1PVzytJCB2rRapufKQvch1F/JMUy
-         LgqXr/yeHbytuMCpGHWrNHpP3IdfBScWxXy4NDn072DC2lsZ1BUCWVHA7xNcul1RM8f7
-         tivg==
-X-Gm-Message-State: AOAM532Fs1DtslZ1z6zpHjuuzdIEqCuBS37/xNEo/KAt61DYGbzXlejH
-        ugZbecWteU21+MFgWRgi+yzi+Q==
-X-Google-Smtp-Source: ABdhPJz07BWVVjhirIskBAi83rmTvlhUeoG7P547BlYgytzb5ayVQrWhQOHZumT2qg1rFa/0cZwbEw==
-X-Received: by 2002:a17:902:c948:b0:13a:345c:917c with SMTP id i8-20020a170902c94800b0013a345c917cmr9245252pla.61.1632493584372;
-        Fri, 24 Sep 2021 07:26:24 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id k15sm8893038pfh.213.2021.09.24.07.26.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Sep 2021 07:26:23 -0700 (PDT)
-Date:   Fri, 24 Sep 2021 07:26:22 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Vito Caputo <vcaputo@pengaru.com>, Jann Horn <jannh@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stefan Metzmacher <metze@samba.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Lai Jiangshan <laijs@linux.alibaba.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kenta.Tada@sony.com" <Kenta.Tada@sony.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Michael =?iso-8859-1?Q?Wei=DF?= 
-        <michael.weiss@aisec.fraunhofer.de>,
-        Anand K Mistry <amistry@google.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Michal Hocko <mhocko@suse.com>, Helge Deller <deller@gmx.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrea Righi <andrea.righi@canonical.com>,
-        Ohhoon Kwon <ohoono.kwon@samsung.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        YiFei Zhu <yifeifz2@illinois.edu>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] proc: Disable /proc/$pid/wchan
-Message-ID: <202109240716.A0792BE46@keescook>
-References: <20210923233105.4045080-1-keescook@chromium.org>
- <20210923234917.pqrxwoq7yqnvfpwu@shells.gnugeneration.com>
- <CAG48ez0Rtv5kqHWw368Ym3GkKodPA+JETOAN+=c2KPa3opENSA@mail.gmail.com>
- <20210924002230.sijoedia65hf5bj7@shells.gnugeneration.com>
- <202109231814.FD09DBAD3@keescook>
- <20210924135424.GA33573@C02TD0UTHF1T.local>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=xyb9Fo0Z1UnV7+NXWV2U9pvWT/Hzng851n0k8kXhl+E=;
+        b=BrBnRDBcp6VHvXrrEbprtnI+hybZWHSTRlGzBlUiMAy1wO8hZe0rPluV5zwg99Z69c
+         dKP5WuNPt303vKjWzO7qFSydLozptuvE4l/m91dpqe+e+WUaLI3tDI/ykKbJVxmL3wyf
+         IgSHtaYKTXTtwVfJxKEVDEVRS6EKVq96Mt3+D0EzTtW72vTh78uUWSM+bQXcLpoBNpfc
+         oA9Jh03u8tuHprsnA4j+2AVCFTQlkqDpQ1dLHyESwXPA2Lo86EsmhN/PulVB5QRnPqqx
+         t6F9t5H7Pi/wf4CVJgIVgN+okZVAYW9CMqXsP+NxofXa9yCwMADpPZtSNxGXEKAvUrMZ
+         Mkhg==
+X-Gm-Message-State: AOAM531320oFK5pItkbOobEJhKwtHLxTqD5ix0VgHGz9HNB4KWU2dFjO
+        2Q6/BPLwhP2PjIzEryPcgajJG8N0xt5R1p+kfcWEsw0q5z7OSQ==
+X-Google-Smtp-Source: ABdhPJxFs0TLE7nKPvn9HLAXkz6nzSdotaUl5FHIYQml4rKs5Zxps8s2iBVyZYkX4kAPMcAOqI5Q4wc+EKLZoMhiFxw=
+X-Received: by 2002:ac8:56eb:: with SMTP id 11mr3222290qtu.246.1632498405583;
+ Fri, 24 Sep 2021 08:46:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210924135424.GA33573@C02TD0UTHF1T.local>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Fri, 24 Sep 2021 17:46:09 +0200
+Message-ID: <CAG_fn=VPO65xw7NGp0k+J8tpCdzd2P5Fauant25RWJNZb3WCmQ@mail.gmail.com>
+Subject: Use of uninitialized dentry->d_time in kernfs_dop_revalidate()
+To:     raven@themaw.net, mszeredi@redhat.com
+Cc:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 24, 2021 at 02:54:24PM +0100, Mark Rutland wrote:
-> On Thu, Sep 23, 2021 at 06:16:16PM -0700, Kees Cook wrote:
-> > On Thu, Sep 23, 2021 at 05:22:30PM -0700, Vito Caputo wrote:
-> > > Instead of unwinding stacks maybe the kernel should be sticking an
-> > > entrypoint address in the current task struct for get_wchan() to
-> > > access, whenever userspace enters the kernel?
-> > 
-> > wchan is supposed to show where the kernel is at the instant the
-> > get_wchan() happens. (i.e. recording it at syscall entry would just
-> > always show syscall entry.)
-> 
-> It's supposed to show where a blocked task is blocked; the "wait
-> channel".
-> 
-> I'd wanted to remove get_wchan since it requires cross-task stack
-> walking, which is generally painful.
+Hi Ian, Miklos,
 
-Right -- this is the "fragile" part I'm worried about.
+I've just rebased KMSAN to v5.15-rc2 and am seeing the following
+reports at kernel boot-time:
 
-> We could instead have the scheduler entrypoints snapshot their caller
-> into a field in task_struct. If there are sufficiently few callers, that
-> could be an inline wrapper that passes a __func__ string. Otherwise, we
-> still need to symbolize.
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+BUG: KMSAN: uninit-value in kernfs_dop_revalidate+0x61f/0x840
+fs/kernfs/dir.c:1053
+ kernfs_dop_revalidate+0x61f/0x840 fs/kernfs/dir.c:1053
+ d_revalidate fs/namei.c:854
+ lookup_dcache fs/namei.c:1522
+ __lookup_hash+0x3a6/0x590 fs/namei.c:1543
+ filename_create+0x312/0x7c0 fs/namei.c:3657
+ do_mkdirat+0x103/0x930 fs/namei.c:3900
+ __do_sys_mkdir fs/namei.c:3931
+ __se_sys_mkdir fs/namei.c:3929
+ __x64_sys_mkdir+0xda/0x120 fs/namei.c:3929
+ do_syscall_x64 arch/x86/entry/common.c:51
 
-Hmm. Does PREEMPT break this?
+Uninit was created at:
+ slab_alloc_node mm/slub.c:3221
+ slab_alloc mm/slub.c:3230
+ kmem_cache_alloc+0x71f/0x1010 mm/slub.c:3235
+ __d_alloc+0x85/0xc60 fs/dcache.c:1744
+ d_alloc fs/dcache.c:1823
+ d_alloc_parallel+0x12b/0x2210 fs/dcache.c:2575
+ __lookup_slow+0x1a8/0x7e0 fs/namei.c:1642
+ lookup_slow+0xe0/0x140 fs/namei.c:1674
+ walk_component fs/namei.c:1970
+ link_path_walk+0x1252/0x18a0 fs/namei.c:2297
+ path_openat+0x395/0x5d30 fs/namei.c:3557
+ do_filp_open+0x29b/0x6a0 fs/namei.c:3588
+ do_sys_openat2+0x261/0x8f0 fs/open.c:1200
+ do_sys_open fs/open.c:1216
+ __do_sys_open fs/open.c:1224
+ __se_sys_open fs/open.c:1220
+ __x64_sys_open+0x308/0x370 fs/open.c:1220
+ do_syscall_x64 arch/x86/entry/common.c:51
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
 
-Can we actually use __builtin_return_address(0) in __schedule?
+Looks like some code forgets to initialize dentry->d_time before
+comparing it to parent->dir.rev in kernfs_dir_changed(). When I change
+__d_alloc() to allocate dentry with __GFP_ZERO, the problem goes away.
 
--- 
-Kees Cook
+Could you please take a look?
+
+Thanks,
+Alex
+--=20
+Alexander Potapenko
+Software Engineer
+
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
+
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
