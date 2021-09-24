@@ -2,266 +2,224 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C52E4179C4
+	by mail.lfdr.de (Postfix) with ESMTP id D3F824179C6
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 19:20:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344813AbhIXRV4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Sep 2021 13:21:56 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:39632 "EHLO
+        id S1347871AbhIXRV5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Sep 2021 13:21:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:44798 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1347773AbhIXRUo (ORCPT
+        by vger.kernel.org with ESMTP id S1347854AbhIXRU6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Sep 2021 13:20:44 -0400
+        Fri, 24 Sep 2021 13:20:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1632503950;
+        s=mimecast20190719; t=1632503964;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Q8VagtUlhT5Uy1W6HF6FVflMAOHtehIQM8x4I7fA4ic=;
-        b=IJ5f3lsPulje4zUj3tiVMOB0dkci36DO7vJv7Q57HxQKDgRx2D0ujpNkHuzVyG6OfA52to
-        kQLMj2IJZMOvDypq/wBMU47JmqjEFUk3/W9qKtotvTP1QBECwwwd4Pu6whbEhRfO2vPflQ
-        8+oem9opidFrYk14QG+Wq0tYqjfG3ns=
+        bh=x7BpkThd4W7Otj77d326ZQ439zIBR66OsnpLRS8EUC4=;
+        b=T1l07n8bWH7pYgykqlnFUvKGGYhO7Wiw4/7ewh4fVQ3Y0I8wzAafhgt+mPu8659E5mrj9b
+        kkXuXKQDWhk4iekFf1MTD5xdXOGaDkihxkjB79TCSmg3ERQRZnhlHlLo39lmeM7T6ofzMl
+        83vUVS1dvPAKW5G6vIyp10BEC5Yxzn8=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-577-9HXdbiU9P266rFCe3CjhAw-1; Fri, 24 Sep 2021 13:19:08 -0400
-X-MC-Unique: 9HXdbiU9P266rFCe3CjhAw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+ us-mta-384-FXe5ABoKNvWZ-0xXSP1U8g-1; Fri, 24 Sep 2021 13:19:21 -0400
+X-MC-Unique: FXe5ABoKNvWZ-0xXSP1U8g-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AAE951006AA2;
-        Fri, 24 Sep 2021 17:19:06 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4F5DC802B9F;
+        Fri, 24 Sep 2021 17:19:18 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 288C26A908;
-        Fri, 24 Sep 2021 17:19:04 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D7B3D5F707;
+        Fri, 24 Sep 2021 17:19:12 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v3 7/9] nfs: Fix write to swapfile failure due to
- generic_write_checks()
+Subject: [PATCH v3 8/9] block, btrfs, ext4, xfs: Implement swap_rw
 From:   David Howells <dhowells@redhat.com>
 To:     willy@infradead.org, hch@lst.de, trond.myklebust@primarydata.com
-Cc:     Anna Schumaker <anna.schumaker@netapp.com>,
-        NeilBrown <neilb@suse.de>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
+Cc:     Jens Axboe <axboe@kernel.dk>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, dhowells@redhat.com, dhowells@redhat.com,
+        darrick.wong@oracle.com, viro@zeniv.linux.org.uk,
+        jlayton@kernel.org, torvalds@linux-foundation.org,
         linux-nfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
-        dhowells@redhat.com, darrick.wong@oracle.com,
-        viro@zeniv.linux.org.uk, jlayton@kernel.org,
-        torvalds@linux-foundation.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 24 Sep 2021 18:19:03 +0100
-Message-ID: <163250394337.2330363.10000329002686277942.stgit@warthog.procyon.org.uk>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 24 Sep 2021 18:19:11 +0100
+Message-ID: <163250395192.2330363.9101664122191208351.stgit@warthog.procyon.org.uk>
 In-Reply-To: <163250387273.2330363.13240781819520072222.stgit@warthog.procyon.org.uk>
 References: <163250387273.2330363.13240781819520072222.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Trying to use a swapfile on NFS results in every DIO write failing with
-ETXTBSY because generic_write_checks(), as called by nfs_direct_write()
-from nfs_direct_IO(), forbids writes to swapfiles.
+Implement swap_rw for block devices, btrfs, ext4 and xfs.  This allows the
+the page swapping code to use direct-IO rather than direct bio submission,
+whilst skipping the checks going via read/write_iter would entail.
 
-Fix this implementing the ->swap_rw() method for NFS, and using that to
-bypass the checks in generic_write_checks().  [I'm not sure if we still
-need to do some of the checks]
-
-Without this patch, the following is seen:
-
-	Write error on dio swapfile (3800334336)
-
-Altering __swap_writepage() to show the error shows:
-
-	Write error (-26) on dio swapfile (3800334336)
-
-Tested by swapping off all swap partitions and then swapping on a prepared
-NFS file (CONFIG_NFS_SWAP=y is also needed).  Enough copies of the
-following program then need to be run to force swapping to occur (at least
-one per gigabyte of RAM):
-
-	#include <stdbool.h>
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <unistd.h>
-	#include <sys/mman.h>
-	int main()
-	{
-		unsigned int pid = getpid(), iterations = 0;
-		size_t i, j, size = 1024 * 1024 * 1024;
-		char *p;
-		bool mismatch;
-		p = malloc(size);
-		if (!p) {
-			perror("malloc");
-			exit(1);
-		}
-		srand(pid);
-		for (i = 0; i < size; i += 4)
-			*(unsigned int *)(p + i) = rand();
-		do {
-			for (j = 0; j < 16; j++) {
-				for (i = 0; i < size; i += 4096)
-					*(unsigned int *)(p + i) += 1;
-				iterations++;
-			}
-			mismatch = false;
-			srand(pid);
-			for (i = 0; i < size; i += 4) {
-				unsigned int r = rand();
-				unsigned int v = *(unsigned int *)(p + i);
-				if (i % 4096 == 0)
-					v -= iterations;
-				if (v != r) {
-					fprintf(stderr, "mismatch %zx: %x != %x (diff %x)\n",
-						i, v, r, v - r);
-					mismatch = true;
-				}
-			}
-		} while (!mismatch);
-		exit(1);
-	}
-
-
-Fixes: dc617f29dbe5 ("vfs: don't allow writes to swap files")
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Trond Myklebust <trond.myklebust@primarydata.com>
-cc: Anna Schumaker <anna.schumaker@netapp.com>
-cc: "NeilBrown" <neilb@suse.de>
 cc: Matthew Wilcox <willy@infradead.org>
-cc: Darrick J. Wong <darrick.wong@oracle.com>
 cc: Christoph Hellwig <hch@lst.de>
-cc: linux-nfs@vger.kernel.org
-cc: linux-mm@kvack.org
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Chris Mason <clm@fb.com>
+cc: Josef Bacik <josef@toxicpanda.com>
+cc: David Sterba <dsterba@suse.com>
+cc: "Theodore Ts'o" <tytso@mit.edu>
+cc: Andreas Dilger <adilger.kernel@dilger.ca>
+cc: Darrick J. Wong <djwong@kernel.org>
+cc: linux-block@vger.kernel.org
+cc: linux-btrfs@vger.kernel.org
+cc: linux-ext4@vger.kernel.org
+cc: linux-xfs@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
 ---
 
- fs/nfs/direct.c        |   28 +++++++---------------------
- fs/nfs/file.c          |   14 ++++++--------
- include/linux/nfs_fs.h |    2 +-
- 3 files changed, 14 insertions(+), 30 deletions(-)
+ block/fops.c      |    1 +
+ fs/btrfs/inode.c  |   12 +++++-------
+ fs/ext4/inode.c   |    9 +++++++++
+ fs/xfs/xfs_aops.c |    9 +++++++++
+ 4 files changed, 24 insertions(+), 7 deletions(-)
 
-diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
-index 2e894fec036b..71da8054df7e 100644
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@ -152,28 +152,18 @@ nfs_direct_count_bytes(struct nfs_direct_req *dreq,
+diff --git a/block/fops.c b/block/fops.c
+index 84c64d814d0d..7ba37dfafae2 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -382,6 +382,7 @@ const struct address_space_operations def_blk_aops = {
+ 	.write_end	= blkdev_write_end,
+ 	.writepages	= blkdev_writepages,
+ 	.direct_IO	= blkdev_direct_IO,
++	.swap_rw	= blkdev_direct_IO,
+ 	.migratepage	= buffer_migrate_page_norefs,
+ 	.is_dirty_writeback = buffer_check_dirty_writeback,
+ 	.supports	= AS_SUPPORTS_DIRECT_IO,
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index b479c97e42fc..9ffcefecb3bb 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -10852,15 +10852,10 @@ static int btrfs_swap_activate(struct swap_info_struct *sis, struct file *file,
+ 	sis->highest_bit = bsi.nr_pages - 1;
+ 	return bsi.nr_extents;
  }
+-#else
+-static void btrfs_swap_deactivate(struct file *file)
+-{
+-}
  
- /**
-- * nfs_direct_IO - NFS address space operation for direct I/O
-+ * nfs_swap_rw - Do direct I/O to a swapfile on NFS
-  * @iocb: target I/O control block
-  * @iter: I/O buffer
-  *
-  * The presence of this routine in the address space ops vector means
-- * the NFS client supports direct I/O. However, for most direct IO, we
-- * shunt off direct read and write requests before the VFS gets them,
-- * so this method is only ever called for swap.
-+ * the NFS client supports direct I/O for swap.
-  */
--ssize_t nfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
-+ssize_t nfs_swap_rw(struct kiocb *iocb, struct iov_iter *iter)
+-static int btrfs_swap_activate(struct swap_info_struct *sis, struct file *file,
+-			       sector_t *span)
++static ssize_t btrfs_swap_rw(struct kiocb *iocb, struct iov_iter *iter)
  {
--	struct inode *inode = iocb->ki_filp->f_mapping->host;
--
--	/* we only support swap file calling nfs_direct_IO */
--	if (!IS_SWAPFILE(inode))
--		return 0;
--
--	VM_BUG_ON(iov_iter_count(iter) != PAGE_SIZE);
--
--	if (iov_iter_rw(iter) == READ)
--		return nfs_file_direct_read(iocb, iter);
--	return nfs_file_direct_write(iocb, iter);
-+	if (iocb->ki_flags & IOCB_WRITE)
-+		return nfs_file_direct_write(iocb, iter);
-+	return nfs_file_direct_read(iocb, iter);
+-	return -EOPNOTSUPP;
++	return iomap_dio_rw(iocb, iter, &btrfs_dio_iomap_ops, NULL, 0);
  }
- 
- static void nfs_direct_release_pages(struct page **pages, unsigned int npages)
-@@ -894,7 +884,7 @@ static ssize_t nfs_direct_write_schedule_iovec(struct nfs_direct_req *dreq,
- ssize_t nfs_file_direct_write(struct kiocb *iocb, struct iov_iter *iter)
- {
- 	ssize_t result, requested;
--	size_t count;
-+	size_t count = iov_iter_count(iter);
- 	struct file *file = iocb->ki_filp;
- 	struct address_space *mapping = file->f_mapping;
- 	struct inode *inode = mapping->host;
-@@ -905,10 +895,6 @@ ssize_t nfs_file_direct_write(struct kiocb *iocb, struct iov_iter *iter)
- 	dfprintk(FILE, "NFS: direct write(%pD2, %zd@%Ld)\n",
- 		file, iov_iter_count(iter), (long long) iocb->ki_pos);
- 
--	result = generic_write_checks(iocb, iter);
--	if (result <= 0)
--		return result;
--	count = result;
- 	nfs_add_stats(mapping->host, NFSIOS_DIRECTWRITTENBYTES, count);
- 
- 	pos = iocb->ki_pos;
-diff --git a/fs/nfs/file.c b/fs/nfs/file.c
-index 7403ec6317cb..70dd49994751 100644
---- a/fs/nfs/file.c
-+++ b/fs/nfs/file.c
-@@ -523,7 +523,7 @@ const struct address_space_operations nfs_file_aops = {
- 	.write_end = nfs_write_end,
- 	.invalidatepage = nfs_invalidate_page,
- 	.releasepage = nfs_release_page,
--	.direct_IO = nfs_direct_IO,
-+	.swap_rw = nfs_swap_rw,
- #ifdef CONFIG_MIGRATION
- 	.migratepage = nfs_migrate_page,
  #endif
-@@ -616,14 +616,16 @@ ssize_t nfs_file_write(struct kiocb *iocb, struct iov_iter *from)
- 	if (result)
- 		return result;
  
--	if (iocb->ki_flags & IOCB_DIRECT)
-+	if (iocb->ki_flags & IOCB_DIRECT) {
-+		result = generic_write_checks(iocb, from);
-+		if (result <= 0)
-+			return result;
- 		return nfs_file_direct_write(iocb, from);
-+	}
+@@ -10944,8 +10939,11 @@ static const struct address_space_operations btrfs_aops = {
+ #endif
+ 	.set_page_dirty	= btrfs_set_page_dirty,
+ 	.error_remove_page = generic_error_remove_page,
++#ifdef CONFIG_SWAP
+ 	.swap_activate	= btrfs_swap_activate,
+ 	.swap_deactivate = btrfs_swap_deactivate,
++	.swap_rw	= btrfs_swap_rw,
++#endif
+ 	.supports	= AS_SUPPORTS_DIRECT_IO,
+ };
  
- 	dprintk("NFS: write(%pD2, %zu@%Ld)\n",
- 		file, iov_iter_count(from), (long long) iocb->ki_pos);
- 
--	if (IS_SWAPFILE(inode))
--		goto out_swapfile;
- 	/*
- 	 * O_APPEND implies that we must revalidate the file length.
- 	 */
-@@ -678,10 +680,6 @@ ssize_t nfs_file_write(struct kiocb *iocb, struct iov_iter *from)
- 	nfs_add_stats(inode, NFSIOS_NORMALWRITTENBYTES, written);
- out:
- 	return result;
--
--out_swapfile:
--	printk(KERN_INFO "NFS: attempt to write to active swap file!\n");
--	return -ETXTBSY;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 08d3541d8daa..3c14724d58a8 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3651,6 +3651,11 @@ static int ext4_iomap_swap_activate(struct swap_info_struct *sis,
+ 				       &ext4_iomap_report_ops);
  }
- EXPORT_SYMBOL_GPL(nfs_file_write);
  
-diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
-index b9a8b925db43..4a8bd9e48237 100644
---- a/include/linux/nfs_fs.h
-+++ b/include/linux/nfs_fs.h
-@@ -493,7 +493,7 @@ static inline const struct cred *nfs_file_cred(struct file *file)
- /*
-  * linux/fs/nfs/direct.c
-  */
--extern ssize_t nfs_direct_IO(struct kiocb *, struct iov_iter *);
-+extern ssize_t nfs_swap_rw(struct kiocb *, struct iov_iter *);
- extern ssize_t nfs_file_direct_read(struct kiocb *iocb,
- 			struct iov_iter *iter);
- extern ssize_t nfs_file_direct_write(struct kiocb *iocb,
++static ssize_t ext4_swap_rw(struct kiocb *iocb, struct iov_iter *iter)
++{
++	return iomap_dio_rw(iocb, iter, &ext4_iomap_ops, NULL, 0);
++}
++
+ static const struct address_space_operations ext4_aops = {
+ 	.readpage		= ext4_readpage,
+ 	.readahead		= ext4_readahead,
+@@ -3666,6 +3671,7 @@ static const struct address_space_operations ext4_aops = {
+ 	.is_partially_uptodate  = block_is_partially_uptodate,
+ 	.error_remove_page	= generic_error_remove_page,
+ 	.swap_activate		= ext4_iomap_swap_activate,
++	.swap_rw		= ext4_swap_rw,
+ 	.supports		= AS_SUPPORTS_DIRECT_IO,
+ };
+ 
+@@ -3683,6 +3689,7 @@ static const struct address_space_operations ext4_journalled_aops = {
+ 	.is_partially_uptodate  = block_is_partially_uptodate,
+ 	.error_remove_page	= generic_error_remove_page,
+ 	.swap_activate		= ext4_iomap_swap_activate,
++	.swap_rw		= ext4_swap_rw,
+ 	.supports		= AS_SUPPORTS_DIRECT_IO,
+ };
+ 
+@@ -3701,6 +3708,7 @@ static const struct address_space_operations ext4_da_aops = {
+ 	.is_partially_uptodate  = block_is_partially_uptodate,
+ 	.error_remove_page	= generic_error_remove_page,
+ 	.swap_activate		= ext4_iomap_swap_activate,
++	.swap_rw		= ext4_swap_rw,
+ 	.supports		= AS_SUPPORTS_DIRECT_IO,
+ };
+ 
+@@ -3710,6 +3718,7 @@ static const struct address_space_operations ext4_dax_aops = {
+ 	.bmap			= ext4_bmap,
+ 	.invalidatepage		= noop_invalidatepage,
+ 	.swap_activate		= ext4_iomap_swap_activate,
++	.swap_rw		= ext4_swap_rw,
+ 	.supports		= AS_SUPPORTS_DIRECT_IO,
+ };
+ 
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 2a4570516591..23ade2cc8241 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -540,6 +540,13 @@ xfs_iomap_swapfile_activate(
+ 			&xfs_read_iomap_ops);
+ }
+ 
++static ssize_t xfs_swap_rw(struct kiocb *iocb, struct iov_iter *iter)
++{
++	if (iocb->ki_flags & IOCB_WRITE)
++		return iomap_dio_rw(iocb, iter, &xfs_direct_write_iomap_ops, NULL, 0);
++	return iomap_dio_rw(iocb, iter, &xfs_read_iomap_ops, NULL, 0);
++}
++
+ const struct address_space_operations xfs_address_space_operations = {
+ 	.readpage		= xfs_vm_readpage,
+ 	.readahead		= xfs_vm_readahead,
+@@ -552,6 +559,7 @@ const struct address_space_operations xfs_address_space_operations = {
+ 	.is_partially_uptodate  = iomap_is_partially_uptodate,
+ 	.error_remove_page	= generic_error_remove_page,
+ 	.swap_activate		= xfs_iomap_swapfile_activate,
++	.swap_rw		= xfs_swap_rw,
+ 	.supports		= AS_SUPPORTS_DIRECT_IO,
+ };
+ 
+@@ -560,5 +568,6 @@ const struct address_space_operations xfs_dax_aops = {
+ 	.set_page_dirty		= __set_page_dirty_no_writeback,
+ 	.invalidatepage		= noop_invalidatepage,
+ 	.swap_activate		= xfs_iomap_swapfile_activate,
++	.swap_rw		= xfs_swap_rw,
+ 	.supports		= AS_SUPPORTS_DIRECT_IO,
+ };
 
 
