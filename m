@@ -2,195 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AF0F1416ED8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 11:26:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F70F416F37
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 11:41:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245031AbhIXJ1z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Sep 2021 05:27:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52868 "EHLO
+        id S245302AbhIXJnH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Sep 2021 05:43:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245027AbhIXJ1y (ORCPT
+        with ESMTP id S245277AbhIXJnF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Sep 2021 05:27:54 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40DC3C061756
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Sep 2021 02:26:21 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id z24so38397503lfu.13
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Sep 2021 02:26:21 -0700 (PDT)
+        Fri, 24 Sep 2021 05:43:05 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27B41C061760
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Sep 2021 02:41:32 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id b20so38179939lfv.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Sep 2021 02:41:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20210112.gappssmtp.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=eQHMLuz9imzYljMNKyIhF91ZYs0BCNyD8xwIGKNkN7U=;
-        b=K6VGYySSbJ8LF7c4NCbJWG3xW2uOQkA+fi1nij+7WCJZ5DXce/cWIiKDSobNVPOlpv
-         GXaKdf250/IfcZU9AO+GqCzOsAWxjYlzdCvP8vJA3tLMEQmgMscb7Mu4B6okvRBa3Iyf
-         UQm4D9/fDmcylpB/VmQSBhH4njbHN06MllBoK1jYapKkG4fUvcedsirkaO8jn2m9x261
-         8ZNJ9wSe2tlCIslyOt2EGYVkmGazplzCTpc2B9Ltkou0A9gtPIiVqfz2Lb/fg/atwJ3B
-         dK8Byy4CyjyxEN3IKjsKtDobAy1B0J/BQ279v4POxX55PQPxK6qMPMoLyu0xGuwPjint
-         dmdA==
+        bh=7QWYmDDdQ14wxTTMWtNorG+4hnmrm04qfz4ZOujDnZs=;
+        b=a94RXEUJuMmQvxSDKok9kJbMV98Mo28f1Csi4Z4iwvW7+MkRyX5SrQhnYAAaonglNs
+         TqzSbC141ptsWvvzM0S2r5099PgvSLUTd+llMs5cQH1O/KYv2VKwA3rHbEQ17XEUoJiN
+         b88sf+8/Kq6CN5gKqNMDbt0WofHePWjCWhJfrHH/URopiQYKQJViZtb5wMUubTQfdu6m
+         e490qkHKD0Pb0R4D5rMx+0JuhhDDbQUkFWETXBCjCVPYNSZnkKFRM+sk+iiLVm+sara7
+         E1aPac0dVliF4TZMk0iL6yousngzwZf3UFxxtnempLUEnPswt9hwLB+6ECQ/gPgJLFvg
+         u+ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=eQHMLuz9imzYljMNKyIhF91ZYs0BCNyD8xwIGKNkN7U=;
-        b=uARg3sbxcKl+YxbJEdmBonr8R7uwOV5pSIOUiuvW0y/yXGDo6eWPOc0+DMqX2XwZRH
-         df4vKAWVuYw9TOoDPsHw7sbw+V9xBf1aR0hcM7+SdxG6qy1S0AdveA7C/CS8STu56Hxb
-         pdyGhxhzUQxTIlGHffhQMg1MTCOmGdLe5b+26c1D3nFzLUhI85v3rYPNNBwa/sWW6YpQ
-         55jOouiFN2nrFfLw/GdIEXvvuIssjs1Qlf3eHLWGYw4MK05OGekO/G3+oEAhHOA+gKQv
-         UojtWVze4O6tBbqHvxeMI6hQM1oZp3cvutnJyifSpXM5VhwS7HuTULppzfPJP2L3xiae
-         h9Qg==
-X-Gm-Message-State: AOAM530MVp5uyK8HOu101Gcg1mDGyFzMe7UUgX6F7ob9iTdaqu3PcUMb
-        o5NsNLymqXLMDRTi/yCo0NnCbw==
-X-Google-Smtp-Source: ABdhPJz/C8Dz5zH1BzBPiet4Qs8ElsusgdiOSm2BdOw4HF+3vvM7N/tNKcDNnWnGMSNC0txZK6w6Qw==
-X-Received: by 2002:a05:651c:2109:: with SMTP id a9mr2287794ljq.166.1632475579601;
-        Fri, 24 Sep 2021 02:26:19 -0700 (PDT)
+        bh=7QWYmDDdQ14wxTTMWtNorG+4hnmrm04qfz4ZOujDnZs=;
+        b=rsGoUUae0WTGRld0K50cEQnnlOEjYAtctQSLEmfI8iSHYcTOElOqphe/XH3WrVc/bf
+         vpt8EnI4neBRYyu7Pe2is1Aylcl6Ml2S6J4QoVni5TjBrMHkY4Zzb6q+G5NSGylh+hl/
+         MvwF7yt9AnzKrpV2PJg48bLvd+tuyCMvKV21xH4lMkJjcV69Jn2bLGYFXEm2DGr3tL+3
+         mUR83EmIghKvqkcw1cThPTbrZWSRRK1+DWlA+y5xBx7wHje+T8P8rtcaC8mTJNCpUDrI
+         QPJPl2BYr2LKM7JOhCSyBU9gm1YySFmr6yFIxwIKF9t0o8Qwd0lvf4z90L8mwYqFfqKD
+         93tw==
+X-Gm-Message-State: AOAM530h1rEimvqnxBJ19BJ5j6R/38YAqWuW9HSeDvzNd1pnjhIChi18
+        OsVlJANxnaHF/7stFDLD0a28Zg==
+X-Google-Smtp-Source: ABdhPJz+tcQG7FGy3FlEBQPrN+mpMikLwlc4Lo7J+ey+pIvMNuRrMxCLd7yfmXFIncsb4Qxt6AJb6g==
+X-Received: by 2002:a2e:804c:: with SMTP id p12mr10420673ljg.344.1632476490492;
+        Fri, 24 Sep 2021 02:41:30 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id s10sm696114lfc.28.2021.09.24.02.26.18
+        by smtp.gmail.com with ESMTPSA id k21sm952544lji.81.2021.09.24.02.41.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Sep 2021 02:26:18 -0700 (PDT)
+        Fri, 24 Sep 2021 02:41:29 -0700 (PDT)
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 7C221103068; Fri, 24 Sep 2021 12:26:21 +0300 (+03)
-Date:   Fri, 24 Sep 2021 12:26:21 +0300
+        id 84289103068; Fri, 24 Sep 2021 12:41:32 +0300 (+03)
+Date:   Fri, 24 Sep 2021 12:41:32 +0300
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Peter Xu <peterx@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [v2 PATCH 1/5] mm: filemap: check if THP has hwpoisoned subpage
- for PMD page fault
-Message-ID: <20210924092621.kbg4byfidfzgjk3g@box>
-References: <20210923032830.314328-1-shy828301@gmail.com>
- <20210923032830.314328-2-shy828301@gmail.com>
- <20210923143901.mdc6rejuh7hmr5vh@box.shutemov.name>
- <CAHbLzkqb-6a7c=C8WF0G0X2yCey=t7OoL-oW2Y0CpM0MpgJbBg@mail.gmail.com>
- <CAHbLzkr5YkpuFpnZguDb46naLc3MXw0DmjkttbGU4Nmm=yX8gg@mail.gmail.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-graphics-maintainer@vmware.com,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Sathyanarayanan Kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v3 5/8] x86/sme: Replace occurrences of sme_active() with
+ cc_platform_has()
+Message-ID: <20210924094132.gxyqp4z3qdk5w4j6@box.shutemov.name>
+References: <20210921212059.wwlytlmxoft4cdth@box.shutemov.name>
+ <YUpONYwM4dQXAOJr@zn.tnic>
+ <20210921213401.i2pzaotgjvn4efgg@box.shutemov.name>
+ <00f52bf8-cbc6-3721-f40e-2f51744751b0@amd.com>
+ <20210921215830.vqxd75r4eyau6cxy@box.shutemov.name>
+ <01891f59-7ec3-cf62-a8fc-79f79ca76587@amd.com>
+ <20210922143015.vvxvh6ec73lffvkf@box.shutemov.name>
+ <YUuJZ2qOgbdpfk6N@zn.tnic>
+ <20210922210558.itofvu3725dap5xx@box.shutemov.name>
+ <YUzFj+yH79XRc3F3@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHbLzkr5YkpuFpnZguDb46naLc3MXw0DmjkttbGU4Nmm=yX8gg@mail.gmail.com>
+In-Reply-To: <YUzFj+yH79XRc3F3@zn.tnic>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 23, 2021 at 01:39:49PM -0700, Yang Shi wrote:
-> On Thu, Sep 23, 2021 at 10:15 AM Yang Shi <shy828301@gmail.com> wrote:
-> >
-> > On Thu, Sep 23, 2021 at 7:39 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> > >
-> > > On Wed, Sep 22, 2021 at 08:28:26PM -0700, Yang Shi wrote:
-> > > > When handling shmem page fault the THP with corrupted subpage could be PMD
-> > > > mapped if certain conditions are satisfied.  But kernel is supposed to
-> > > > send SIGBUS when trying to map hwpoisoned page.
-> > > >
-> > > > There are two paths which may do PMD map: fault around and regular fault.
-> > > >
-> > > > Before commit f9ce0be71d1f ("mm: Cleanup faultaround and finish_fault() codepaths")
-> > > > the thing was even worse in fault around path.  The THP could be PMD mapped as
-> > > > long as the VMA fits regardless what subpage is accessed and corrupted.  After
-> > > > this commit as long as head page is not corrupted the THP could be PMD mapped.
-> > > >
-> > > > In the regulat fault path the THP could be PMD mapped as long as the corrupted
-> > >
-> > > s/regulat/regular/
-> > >
-> > > > page is not accessed and the VMA fits.
-> > > >
-> > > > This loophole could be fixed by iterating every subpage to check if any
-> > > > of them is hwpoisoned or not, but it is somewhat costly in page fault path.
-> > > >
-> > > > So introduce a new page flag called HasHWPoisoned on the first tail page.  It
-> > > > indicates the THP has hwpoisoned subpage(s).  It is set if any subpage of THP
-> > > > is found hwpoisoned by memory failure and cleared when the THP is freed or
-> > > > split.
-> > > >
-> > > > Cc: <stable@vger.kernel.org>
-> > > > Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > > > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > > > ---
-> > >
-> > > ...
-> > >
-> > > > diff --git a/mm/filemap.c b/mm/filemap.c
-> > > > index dae481293b5d..740b7afe159a 100644
-> > > > --- a/mm/filemap.c
-> > > > +++ b/mm/filemap.c
-> > > > @@ -3195,12 +3195,14 @@ static bool filemap_map_pmd(struct vm_fault *vmf, struct page *page)
-> > > >       }
-> > > >
-> > > >       if (pmd_none(*vmf->pmd) && PageTransHuge(page)) {
-> > > > -         vm_fault_t ret = do_set_pmd(vmf, page);
-> > > > -         if (!ret) {
-> > > > -                 /* The page is mapped successfully, reference consumed. */
-> > > > -                 unlock_page(page);
-> > > > -                 return true;
-> > > > -         }
-> > > > +             vm_fault_t ret = do_set_pmd(vmf, page);
-> > > > +             if (ret == VM_FAULT_FALLBACK)
-> > > > +                     goto out;
-> > >
-> > > Hm.. What? I don't get it. Who will establish page table in the pmd then?
-> >
-> > Aha, yeah. It should jump to the below PMD populate section. Will fix
-> > it in the next version.
-> >
-> > >
-> > > > +             if (!ret) {
-> > > > +                     /* The page is mapped successfully, reference consumed. */
-> > > > +                     unlock_page(page);
-> > > > +                     return true;
-> > > > +             }
-> > > >       }
-> > > >
-> > > >       if (pmd_none(*vmf->pmd)) {
-> > > > @@ -3220,6 +3222,7 @@ static bool filemap_map_pmd(struct vm_fault *vmf, struct page *page)
-> > > >               return true;
-> > > >       }
-> > > >
-> > > > +out:
-> > > >       return false;
-> > > >  }
-> > > >
-> > > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > > > index 5e9ef0fc261e..0574b1613714 100644
-> > > > --- a/mm/huge_memory.c
-> > > > +++ b/mm/huge_memory.c
-> > > > @@ -2426,6 +2426,8 @@ static void __split_huge_page(struct page *page, struct list_head *list,
-> > > >       /* lock lru list/PageCompound, ref frozen by page_ref_freeze */
-> > > >       lruvec = lock_page_lruvec(head);
-> > > >
-> > > > +     ClearPageHasHWPoisoned(head);
-> > > > +
-> > >
-> > > Do we serialize the new flag with lock_page() or what? I mean what
-> > > prevents the flag being set again after this point, but before
-> > > ClearPageCompound()?
-> >
-> > No, not in this patch. But I think we could use refcount. THP split
-> > would freeze refcount and the split is guaranteed to succeed after
-> > that point, so refcount can be checked in memory failure. The
-> > SetPageHasHWPoisoned() call could be moved to __get_hwpoison_page()
-> > when get_unless_page_zero() bumps the refcount successfully. If the
-> > refcount is zero it means the THP is under split or being freed, we
-> > don't care about these two cases.
+On Thu, Sep 23, 2021 at 08:21:03PM +0200, Borislav Petkov wrote:
+> On Thu, Sep 23, 2021 at 12:05:58AM +0300, Kirill A. Shutemov wrote:
+> > Unless we find other way to guarantee RIP-relative access, we must use
+> > fixup_pointer() to access any global variables.
 > 
-> Setting the flag in __get_hwpoison_page() would make this patch depend
-> on patch #3. However, this patch probably will be backported to older
-> versions. To ease the backport, I'd like to have the refcount check in
-> the same place where THP is checked. So, something like "if
-> (PageTransHuge(hpage) && page_count(hpage) != 0)".
+> Yah, I've asked compiler folks about any guarantees we have wrt
+> rip-relative addresses but it doesn't look good. Worst case, we'd have
+> to do the fixup_pointer() thing.
 > 
-> Then the call to set the flag could be moved to __get_hwpoison_page()
-> in the following patch (after patch #3). Does this sound good to you?
+> In the meantime, Tom and I did some more poking at this and here's a
+> diff ontop.
+> 
+> The direction being that we'll stick both the AMD and Intel
+> *cc_platform_has() call into cc_platform.c for which instrumentation
+> will be disabled so no issues with that.
+> 
+> And that will keep all that querying all together in a single file.
 
-Could you show the code I'm not sure I follow. page_count(hpage) check
-looks racy to me. What if split happens just after the check?
+And still do cc_platform_has() calls in __startup_64() codepath?
+
+It's broken.
+
+Intel detection in cc_platform_has() relies on boot_cpu_data.x86_vendor
+which is not initialized until early_cpu_init() in setup_arch(). Given
+that X86_VENDOR_INTEL is 0 it leads to false-positive.
+
+I think opencode these two calls is the way forward. Maybe also move the
+check from sme_encrypt_kernel() to __startup_64().
 
 -- 
  Kirill A. Shutemov
