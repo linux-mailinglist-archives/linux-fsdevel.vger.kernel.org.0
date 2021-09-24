@@ -2,95 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D766B416A68
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 05:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17B85416AA2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Sep 2021 05:52:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244007AbhIXD2J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Sep 2021 23:28:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56430 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235369AbhIXD2I (ORCPT
+        id S244026AbhIXDyN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Sep 2021 23:54:13 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:56794 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S244018AbhIXDyM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Sep 2021 23:28:08 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB85CC061574;
-        Thu, 23 Sep 2021 20:26:35 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id x7so16142025edd.6;
-        Thu, 23 Sep 2021 20:26:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=18+5whvcDDqdfxVcWTrxiz/OMweHZu0w3dsMvDPd2x0=;
-        b=QeO0RCPobSsavCWYY1RbFVToa8iXjat5Qhm4VBQxlUm8I2uKeCUnUZqnUXZPWvTP3I
-         3DkSgeXKY1Vt64niNrSkNlCd4fBfPVoA/UGBmSCZMmAoVvWUWiLpk4QXMB0w7kjeR4DZ
-         0+BsnPbGwScxAb5hvUFXNw5mAyFEP6imQdbAYvmmKMqsd7QuiLKIlkXZ0dm+Ls9Pe30H
-         Ac1b3UVSbo2CZwTPGiDFVSTZaomfC6ERWSf88p5yWuIuC2R9FQyBOI3Vgw31py0Tun6e
-         3Cz2Zr0Umq4IAQIn1kMpdQPKZBuQKoeDNs12wOujkEONRU9qJoAuxbXO9D78tqXS4kCr
-         cajA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=18+5whvcDDqdfxVcWTrxiz/OMweHZu0w3dsMvDPd2x0=;
-        b=6XP3S/OwN79O+aSQAMsGo3RLapv25g56YARkgjZprtX62ETPI9kSe+cAkpZ+vKihtO
-         tbqjg412RP7iCGoHD6e/TKQE+9T2ISsadJPbH+Xzql6jxs04jMZlHH65gEPpt0Ri7QXj
-         LUFno5T4IkfzogYmRzgR6kjQeEn7HsSeqwazRlgKDumhP5iEo6jd00SNzqPyunJJ3quh
-         66v0r23II2rXhtAhN0oKXeqVwayGZVBD5SxupP/rBmPjv07JaofWCVBCw9Qh/g1TLa28
-         RbFFC9QTrGYZx6J3WQF5h7tm8/5DITVOk+LX9ciCncDZmxMGKkUXS8X67RdTl30ChRbg
-         eDZQ==
-X-Gm-Message-State: AOAM530wKJQiKWbRHI6M1LQ61CwY1gak5THlX2FUy0bbjUm8swX4Kkjv
-        vvYtb98+FqCXEF8a7SB0roFzFcro5SNqc4dpv0Y=
-X-Google-Smtp-Source: ABdhPJyTRNRz76PPApx+1focabGvQlQuAjrXjZcFxgXozpU4UGlOYiDD19uR1USNsAf/p6R92BCFoG9sqmBxkPq4bJ4=
-X-Received: by 2002:a17:906:3f83:: with SMTP id b3mr2452641ejj.233.1632453994521;
- Thu, 23 Sep 2021 20:26:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <YUvWm6G16+ib+Wnb@moria.home.lan> <YUvzINep9m7G0ust@casper.infradead.org>
- <YUwNZFPGDj4Pkspx@moria.home.lan> <YUxnnq7uFBAtJ3rT@casper.infradead.org>
- <20210923124502.nxfdaoiov4sysed4@box.shutemov.name> <72cc2691-5ebe-8b56-1fe8-eeb4eb4a4c74@google.com>
- <CAHbLzkrELUKR2saOkA9_EeAyZwdboSq0HN6rhmCg2qxwSjdzbg@mail.gmail.com>
- <2A311B26-8B33-458E-B2C1-8BA2CF3484AA@nvidia.com> <77b59314-5593-1a2e-293c-b66e8235ad@google.com>
- <CAHbLzkp__irFweEZMEM-CMF_-XQpJcW1dNDFo=RnqaSTGtdJkg@mail.gmail.com> <YU0qdpbjK5Hdfk2p@casper.infradead.org>
-In-Reply-To: <YU0qdpbjK5Hdfk2p@casper.infradead.org>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Thu, 23 Sep 2021 20:26:22 -0700
-Message-ID: <CAHbLzkpTXxzR7=5mYAOFfu0M2jN5cnvbQMHu3bTba8PSdRDSXg@mail.gmail.com>
-Subject: Re: Mapcount of subpages
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Hugh Dickins <hughd@google.com>, Zi Yan <ziy@nvidia.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>
+        Thu, 23 Sep 2021 23:54:12 -0400
+X-UUID: 4a8690e3f2044dd78a95883ff4827230-20210924
+X-UUID: 4a8690e3f2044dd78a95883ff4827230-20210924
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <ed.tsai@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1719271118; Fri, 24 Sep 2021 11:52:38 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Fri, 24 Sep 2021 11:52:36 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 24 Sep 2021 11:52:36 +0800
+Message-ID: <07c5f2f1e10671bc462f88717f84aae9ee1e4d2b.camel@mediatek.com>
+Subject: Re: [PATCH] [fuse] alloc_page nofs avoid deadlock
+From:   Ed Tsai <ed.tsai@mediatek.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        chenguanyou <chenguanyou@xiaomi.com>,
+        chenguanyou <chenguanyou9338@gmail.com>,
+        "Stanley Chu =?UTF-8?Q?=28=E6=9C=B1=E5=8E=9F=E9=99=9E=29?=" 
+        <stanley.chu@mediatek.com>
+Date:   Fri, 24 Sep 2021 11:52:36 +0800
+In-Reply-To: <CAJfpegsOSWZpKHqDNE_B489dGCzLr-RVAhimVOsFkxJwMYmj9A@mail.gmail.com>
+References: <20210603125242.31699-1-chenguanyou@xiaomi.com>
+         <CAJfpegsEkRnU26Vvo4BTQUmx89Hahp6=RTuyEcPm=rqz8icwUQ@mail.gmail.com>
+         <1fabb91167a86990f4723e9036a0e006293518f4.camel@mediatek.com>
+         <CAJfpegsOSWZpKHqDNE_B489dGCzLr-RVAhimVOsFkxJwMYmj9A@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 23, 2021 at 6:32 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Thu, Sep 23, 2021 at 06:11:19PM -0700, Yang Shi wrote:
-> > On Thu, Sep 23, 2021 at 4:49 PM Hugh Dickins <hughd@google.com> wrote:
-> > > I believe Yang Shi is right insofar as the decision on whether it's worth
-> > > queuing for deferred split is being done based on those subpage _mapcounts.
-> > > That is a use I had not considered, and I've given no thought to how
-> > > important or not it is.
-> >
-> > Anyway deferred split is anon THP specific. We don't have to worry
-> > about this for file THP. So your suggestion about just counting total
-> > mapcount seems feasible to me for file THP at least.
->
-> But I think we probably *should* do deferred split for file THP.
-> At the moment, when we truncate to the middle of a shmem THP, we try
-> a few times to split it and then just give up.  We should probably try
-> once and then queue it for deferred split.
+On Wed, 2021-08-18 at 17:24 +0800, Miklos Szeredi wrote:
+> On Tue, 13 Jul 2021 at 04:42, Ed Tsai <ed.tsai@mediatek.com> wrote:
+> > 
+> > On Tue, 2021-06-08 at 17:30 +0200, Miklos Szeredi wrote:
+> > > On Thu, 3 Jun 2021 at 14:52, chenguanyou <
+> > > chenguanyou9338@gmail.com>
+> > > wrote:
+> > > > 
+> > > > ABA deadlock
+> > > > 
+> > > > PID: 17172 TASK: ffffffc0c162c000 CPU: 6 COMMAND: "Thread-21"
+> > > > 0 [ffffff802d16b400] __switch_to at ffffff8008086a4c
+> > > > 1 [ffffff802d16b470] __schedule at ffffff80091ffe58
+> > > > 2 [ffffff802d16b4d0] schedule at ffffff8009200348
+> > > > 3 [ffffff802d16b4f0] bit_wait at ffffff8009201098
+> > > > 4 [ffffff802d16b510] __wait_on_bit at ffffff8009200a34
+> > > > 5 [ffffff802d16b5b0] inode_wait_for_writeback at
+> > > > ffffff800830e1e8
+> > > > 6 [ffffff802d16b5e0] evict at ffffff80082fb15c
+> > > > 7 [ffffff802d16b620] iput at ffffff80082f9270
+> > > > 8 [ffffff802d16b680] dentry_unlink_inode at ffffff80082f4c90
+> > > > 9 [ffffff802d16b6a0] __dentry_kill at ffffff80082f1710
+> > > > 10 [ffffff802d16b6d0] shrink_dentry_list at ffffff80082f1c34
+> > > > 11 [ffffff802d16b750] prune_dcache_sb at ffffff80082f18a8
+> > > > 12 [ffffff802d16b770] super_cache_scan at ffffff80082d55ac
+> > > > 13 [ffffff802d16b860] shrink_slab at ffffff8008266170
+> > > > 14 [ffffff802d16b900] shrink_node at ffffff800826b420
+> > > > 15 [ffffff802d16b980] do_try_to_free_pages at ffffff8008268460
+> > > > 16 [ffffff802d16ba60] try_to_free_pages at ffffff80082680d0
+> > > > 17 [ffffff802d16bbe0] __alloc_pages_nodemask at
+> > > > ffffff8008256514
+> > > > 18 [ffffff802d16bc60] fuse_copy_fill at ffffff8008438268
+> > > > 19 [ffffff802d16bd00] fuse_dev_do_read at ffffff8008437654
+> > > > 20 [ffffff802d16bdc0] fuse_dev_splice_read at ffffff8008436f40
+> > > > 21 [ffffff802d16be60] sys_splice at ffffff8008315d18
+> > > > 22 [ffffff802d16bff0] __sys_trace at ffffff8008084014
+> > > > 
+> > > > PID: 9652 TASK: ffffffc0c9ce0000 CPU: 4 COMMAND:
+> > > > "kworker/u16:8"
+> > > > 0 [ffffff802e793650] __switch_to at ffffff8008086a4c
+> > > > 1 [ffffff802e7936c0] __schedule at ffffff80091ffe58
+> > > > 2 [ffffff802e793720] schedule at ffffff8009200348
+> > > > 3 [ffffff802e793770] __fuse_request_send at ffffff8008435760
+> > > > 4 [ffffff802e7937b0] fuse_simple_request at ffffff8008435b14
+> > > > 5 [ffffff802e793930] fuse_flush_times at ffffff800843a7a0
+> > > > 6 [ffffff802e793950] fuse_write_inode at ffffff800843e4dc
+> > > > 7 [ffffff802e793980] __writeback_single_inode at
+> > > > ffffff8008312740
+> > > > 8 [ffffff802e793aa0] writeback_sb_inodes at ffffff80083117e4
+> > > > 9 [ffffff802e793b00] __writeback_inodes_wb at ffffff8008311d98
+> > > > 10 [ffffff802e793c00] wb_writeback at ffffff8008310cfc
+> > > > 11 [ffffff802e793d00] wb_workfn at ffffff800830e4a8
+> > > > 12 [ffffff802e793d90] process_one_work at ffffff80080e4fac
+> > > > 13 [ffffff802e793e00] worker_thread at ffffff80080e5670
+> > > > 14 [ffffff802e793e60] kthread at ffffff80080eb650
+> > > 
+> > > The issue is real.
+> > > 
+> > > The fix, however, is not the right one.  The fundamental problem
+> > > is
+> > > that fuse_write_inode() blocks on a request to userspace.
+> > > 
+> > > This is the same issue that fuse_writepage/fuse_writepages
+> > > face.  In
+> > > that case the solution was to copy the page contents to a
+> > > temporary
+> > > buffer and return immediately as if the writeback already
+> > > completed.
+> > > 
+> > > Something similar needs to be done here: send the FUSE_SETATTR
+> > > request
+> > > asynchronously and return immediately from
+> > > fuse_write_inode().  The
+> > > tricky part is to make sure that multiple time updates for the
+> > > same
+> > > inode aren't mixed up...
+> > > 
+> > > Thanks,
+> > > Miklos
+> > 
+> > Dear Szeredi,
+> > 
+> > Writeback thread calls fuse_write_inode() and wait for user Daemon
+> > to
+> > complete this write inode request. The user daemon will
+> > alloc_page()
+> > after taking this request, and a deadlock could happen when we try
+> > to
+> > shrink dentry list under memory pressure.
+> > 
+> > We (Mediatek) glad to work on this issue for mainline and also LTS.
+> > So
+> > another problem is that we should not change the protocol or
+> > feature
+> > for stable kernel.
+> > 
+> > Use GFP_NOFS | __GFP_HIGHMEM can really avoid this by skip the
+> > dentry
+> > shirnker. It works but degrade the alloc_page success rate. In a
+> > more
+> > fundamental way, we could cache the contents and return
+> > immediately.
+> > But how to ensure the request will be done successfully, e.g.,
+> > always
+> > retry if it fails from daemon.
+> 
+> Key is where the the dirty metadata is flushed.  To prevent deadlock
+> it must not be flushed from memory reclaim, so must make sure that it
+> is flushed on close(2) and munmap(2) and not dirtied after that.
+> 
+> I'm working on this currently and hope to get it ready for the next
+> merge window.
+> 
+> Thanks,
+> Miklos
 
-Yes, probably. Anyway this doesn't need _mapcount of subpages.
+Hi Miklos,
+
+I'm not sure whether it has already been resolved in mainline.
+If it still WIP, please cc me on future emails.
+
+Best regards,
+Ed Tsai
+
