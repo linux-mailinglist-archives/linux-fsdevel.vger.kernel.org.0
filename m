@@ -2,122 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A44B4181B4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Sep 2021 13:43:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BF7A4182F7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Sep 2021 16:57:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244550AbhIYLpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Sep 2021 07:45:09 -0400
-Received: from mout.gmx.net ([212.227.17.21]:59933 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232363AbhIYLpJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Sep 2021 07:45:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1632570210;
-        bh=/zVNgQmryVA4k3e45CiCaw6IxcHSDeffj98fMqgaE6A=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=bAWI5mFiHaXY8FMRckvJtbeD/t4hKQBNsSI0ng2+mv5DITKHzOGobD1F10x5iEoj6
-         J5fuBM8VQbaNOX9ftNwPKBQFXt7IJ0DcfaGSjKb/XxVttiY2nS1614Lk8L+JXL8lHt
-         xpQ/uaUWmGqxBzzP2fhMXRx5Bqi4k90Rvj4FUm9g=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from localhost.localdomain ([79.150.72.99]) by mail.gmx.net
- (mrgmx105 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 1N79yG-1mvqiD3jQK-017SQE; Sat, 25 Sep 2021 13:43:30 +0200
-From:   Len Baker <len.baker@gmx.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Len Baker <len.baker@gmx.com>, Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        id S1343834AbhIYO7I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Sep 2021 10:59:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52544 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234173AbhIYO7H (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 25 Sep 2021 10:59:07 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4659C061570;
+        Sat, 25 Sep 2021 07:57:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=PyFYuyGZybL7cSTK0f665wfGUh8dtwTELe7jzY8FD1U=; b=G8TN7WiaFixroDwBeMBD/BPUaJ
+        qThH/nviuNwMQjvjmzk5nEYoPB0Tesoef21VSwULA6cbYUS760umGbUtQR33MtNHktReSp38Q1Zx3
+        q0g/iUSA0juTjCeCPzefvXHQnY1ZdIXXNZdZg0wemCk7jWS91mlmeCYEq8TkNE69ERMgNaiXZk4tX
+        fIV6QgFBgBxJ67EPz7q4tZdsism+N4M3GXQ2IZc4GhftzXgGiAcG2UxjcVE2XvIk7Fwx/g29V7zkW
+        DtIP+qQjmjVbihZ1+8eMs3KcT9fHmT0W2NkOX6DusUpkqjc1xp5U7AYcs5P85A6CPk7OENlX1tcgY
+        QXREXmGA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mU96b-008BsC-Hu; Sat, 25 Sep 2021 14:56:54 +0000
+Date:   Sat, 25 Sep 2021 15:56:45 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     hch@lst.de, trond.myklebust@primarydata.com,
+        Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, darrick.wong@oracle.com,
+        viro@zeniv.linux.org.uk, jlayton@kernel.org,
+        torvalds@linux-foundation.org, linux-nfs@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2] writeback: prefer struct_size over open coded arithmetic
-Date:   Sat, 25 Sep 2021 13:43:08 +0200
-Message-Id: <20210925114308.11455-1-len.baker@gmx.com>
-X-Mailer: git-send-email 2.25.1
+Subject: Re: [PATCH v3 9/9] mm: Remove swap BIO paths and only use DIO paths
+Message-ID: <YU84rYOyyXDP3wjp@casper.infradead.org>
+References: <163250387273.2330363.13240781819520072222.stgit@warthog.procyon.org.uk>
+ <163250396319.2330363.10564506508011638258.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UgePny2MsPa0UaX6WMhndso+fvJ4dp1sHEVaBNCXxtmvCRKpZMJ
- /8NJZk16YV7cFI3tVYkMOyGRBLF5Se1TCudVnP6WHW/j3LyMxDY3mUFdGNEa1YemeUTfsg5
- JfIauXX6YbI2A3xKkIx68RV5IUvvs5YtFet0jQEoNzLmNNlf1lzg69qBu18WQWJ3Xz4YOBS
- ITalQTrRowDwolyNuBn3A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:yBHF46CKjB8=:bVIKrlHJ3G7BlOYhcfFjqq
- pKEP1pkMHiXCUjYqgc2UTGighUmZfJ31xCho1Ntft6+7Xm03Ktbj4tjmWj2YqaBvJNQbERgHm
- Fw++sfk9D5CzTsChvDj5lmOo0EptkYQSKNU6FYnosetszltdgWWb//aBmph1FxfHuYn8VkgFf
- XBE9M5y6VO8+Z+5ulQl5J01NjIbjPEMYzr72e7Bk0g6mlOJB970qSdq0r3i7rIKjSRQu1gtdK
- sgdqcIzf5b2HWH098x++F2y9tABS9KUl8998vNrs6PVe9lMuxT5B6k1DGVCKc3nFU9xDYi8XE
- fKgocq32w0nSwieeAU9RWdNJNLoXQyLGXgb1346lNO5ZCJMXzkkHeMxAvvR765aGBnutgDInp
- 36OoiPTACd5kFw5IqUmixJwnrxUkaoclYLpHqo7s2vyw3PMF5x3rUi7rf9AhGSTjif73ja3Bk
- sTH/kCBA3u/fz6pEsi3Mcy3TZZQPj2vr9Vxt6FGGyyxngi+ikef2i5lkrID+54WZWodhVUVr+
- xYLRqR/2KCscSSF8vxP/3FgDP+fV+Aof5DRzJiI+FiPL/ei3QKjjJNyrQnmUHDaVZbMCHRra4
- /VGMX5lFm17+NUuSD7K2zai3ZllP2hKunw4Kh13QtmxQZp/3WLuJQ36boyMF7ycTArw0PQljI
- SZpUr4q3W//fSrj17UmLT695BXcpWMscQGzGu9iWem86rmLIxx+7z+wpro751cQyLfn50ZmVF
- 1FNlePLmdkBCAqO3+xVZClTt4v5Y+t5Rr995obXKMw6uHd0KeOBOVBFki1cTgEjlnmvff5x/6
- X6RAN8k7dTczYaMwwGVV9+Fsa2NX/EHo5hRl5tAxg4I8YtJdZAWnDz9VWrl/l1meZlXdCGnOH
- n2JbT3vnGiaP4syVY1mB76TzXWCOu2gPhj0ubranoYidvBCe34h0yoN58UVOnvG2GpRGrG+rg
- 0snraO+ILTkG8b7sOAxVoLgHHwaHu49ih1ULoYwiTiZVoXOBRXRRfXvQfv8Z6l8OKR/f4TBxd
- 5j2VojiPHUAa8ANEXk3PBFlA6Q8SccA6M+X8+XooH8skVSD8mRD8w3BxOpJzgKIpuIibxD4io
- 3MjIRILnmlCfOA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <163250396319.2330363.10564506508011638258.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As noted in the "Deprecated Interfaces, Language Features, Attributes,
-and Conventions" documentation [1], size calculations (especially
-multiplication) should not be performed in memory allocator (or similar)
-function arguments due to the risk of them overflowing. This could lead
-to values wrapping around and a smaller allocation being made than the
-caller was expecting. Using those allocations could lead to linear
-overflows of heap memory and other misbehaviors.
+On Fri, Sep 24, 2021 at 06:19:23PM +0100, David Howells wrote:
+> Delete the BIO-generating swap read/write paths and always use ->swap_rw().
+> This puts the mapping layer in the filesystem.
 
-In this case these are not actually dynamic sizes: all the operands
-involved in the calculation are constant values. However it is better to
-refactor them anyway, just to keep the open-coded math idiom out of
-code.
+Is SWP_FS_OPS now unused after this patch?
 
-So, use the struct_size() helper to do the arithmetic instead of the
-argument "size + count * size" in the kzalloc() functions.
-
-This code was detected with the help of Coccinelle and audited and fixed
-manually.
-
-[1] https://www.kernel.org/doc/html/latest/process/deprecated.html#open-co=
-ded-arithmetic-in-allocator-arguments
-
-Signed-off-by: Len Baker <len.baker@gmx.com>
-=2D--
-Changelog v1 -> v2
-- Rebase against v5.15-rc2
-- Refactor another instance in the same file (Gustavo A. R. Silva).
-- Update the commit changelog to inform that this code was detected
-  using a Coccinelle script (Gustavo A. R. Silva).
-
- fs/fs-writeback.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 81ec192ce067..5eb0ada7468c 100644
-=2D-- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -566,7 +566,7 @@ static void inode_switch_wbs(struct inode *inode, int =
-new_wb_id)
- 	if (atomic_read(&isw_nr_in_flight) > WB_FRN_MAX_IN_FLIGHT)
- 		return;
-
--	isw =3D kzalloc(sizeof(*isw) + 2 * sizeof(struct inode *), GFP_ATOMIC);
-+	isw =3D kzalloc(struct_size(isw, inodes, 2), GFP_ATOMIC);
- 	if (!isw)
- 		return;
-
-@@ -624,8 +624,8 @@ bool cleanup_offline_cgwb(struct bdi_writeback *wb)
- 	int nr;
- 	bool restart =3D false;
-
--	isw =3D kzalloc(sizeof(*isw) + WB_MAX_INODES_PER_ISW *
--		      sizeof(struct inode *), GFP_KERNEL);
-+	isw =3D kzalloc(struct_size(isw, inodes, WB_MAX_INODES_PER_ISW),
-+		      GFP_KERNEL);
- 	if (!isw)
- 		return restart;
-
-=2D-
-2.25.1
-
+Also, do we still need ->swap_activate and ->swap_deactivate?
