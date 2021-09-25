@@ -2,102 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 96CF141837A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Sep 2021 19:10:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFBD3418380
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Sep 2021 19:15:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229547AbhIYRMY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 25 Sep 2021 13:12:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53166 "EHLO
+        id S229524AbhIYRRN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Sep 2021 13:17:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbhIYRMY (ORCPT
+        with ESMTP id S229511AbhIYRRM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 25 Sep 2021 13:12:24 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3E7DC061570;
-        Sat, 25 Sep 2021 10:10:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=6GW8m99cwWwrKJpThjZDb6GAcdSzWmr59+OAVUULh/4=; b=wIJ/z5Pf4qc/NRbdHahqEcKlFh
-        xi7rk3SB+eFCQsAivXx/SZlAI3nZ1B+Gexsbziymg38NFlt+qNOeNhfDFGS7WNpoy9P6lPKzYF3lM
-        QIIMcZWj6sSt6VCo3rctoO1eExcMHzmgXDygsJmbQlPKeaKyb2UzmvXKCjpcWtRhEFCg8pxiaiV5c
-        g3cm7c8o/yMJ2MKP+jYoEaHx/i5AP2faYXraXpMpk9DxZ+VDQj7kYDpdzFLJ41tZdkDFSed6UuGez
-        zxyg/1q8QZPXx5qrAPb5K6iborPgrk3HHDUXxBVim2uGXeZ/jq7QixuVz65AY2QlRgJRB5l0aNark
-        jbWVBjwA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mUBBK-008GPg-Vk; Sat, 25 Sep 2021 17:09:55 +0000
-Date:   Sat, 25 Sep 2021 18:09:46 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     hch@lst.de, trond.myklebust@primarydata.com,
-        Jens Axboe <axboe@kernel.dk>,
-        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, darrick.wong@oracle.com,
-        viro@zeniv.linux.org.uk, jlayton@kernel.org,
-        torvalds@linux-foundation.org, linux-nfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 9/9] mm: Remove swap BIO paths and only use DIO paths
-Message-ID: <YU9X2o74+aZP4iWV@casper.infradead.org>
-References: <YU84rYOyyXDP3wjp@casper.infradead.org>
- <163250387273.2330363.13240781819520072222.stgit@warthog.procyon.org.uk>
- <163250396319.2330363.10564506508011638258.stgit@warthog.procyon.org.uk>
- <2396106.1632584202@warthog.procyon.org.uk>
+        Sat, 25 Sep 2021 13:17:12 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B5A1C061570;
+        Sat, 25 Sep 2021 10:15:38 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id 145so11687757pfz.11;
+        Sat, 25 Sep 2021 10:15:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/ndZDpgXoGYSrMIqwsoxI/qJvS1PzxSuaEBYmEb4KVo=;
+        b=KKN8Jc0M40Pzm1dDZFmxGXXuCzenuh3pOcv4QB/RUYl7m/gbTNFqHQ3FERVdwdTHMt
+         2Gd/IMJX7NJXNlWjmUbnVnPR90BkgJCMwR/tF7QvNdKLndFokY1j/UJcqey1DkcGWOpF
+         MkROw1lsUdpazQ20cIYYk0aCSHPbmxmU2blcLMqN9j/70ZjXVbH/WEZSZUDD8gf1vMHe
+         Y6GADEIXTqgWgAr9tQkjm78/nGqN2fZ7E6Ch1GomkMzYx2QYlPYPovONniVFuonvpTaI
+         ICJz9tsCQGGCPrCCncy0uR/O0g9VmcqU/k6xM3vp181MWi3DC3tt3kycCWe1o17Z3Dmg
+         nWAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/ndZDpgXoGYSrMIqwsoxI/qJvS1PzxSuaEBYmEb4KVo=;
+        b=5GbUNE2uV7iqCXwhU85bweEN1lq5uxY/704nXrse4G2x12OxPlDgfca7u28uPfauTU
+         bTdznbK/Ng2Wxf7v5AkI3jcYy+XkL9/wYD1e51WHgYxwmvHy3sPRYT44oWzu7BhHNps0
+         9bY+Bx4TZz/27quIiwueCVwsUSQ5CR1speeV33kBH8oR4bLm/AXnrLTi70PdVd8G9SMp
+         1DkPy4nOVCgT0d4m94Jpu1eEsa+tbQxz2m2J2QV3jx/y5kpbrfUbafQydx2cKcX4DcFp
+         EtGXGWwBu3LX4IFuEVqnDyFLlLlwSOaffWTY4B7q2OlA4p++zPBhQGQ2r30ozoyanWmh
+         eYoA==
+X-Gm-Message-State: AOAM530Wh8LW4OCiAPSgdUwHcfLwmFTq+C8b8FloMHndj1vqSdsV8iWU
+        pSvhSJzuDLt8QVJpzCKIeGg=
+X-Google-Smtp-Source: ABdhPJw7dhLBbS1XFa4U5Nd+vFm5UT4EmDcklnYQv+NTzqULnCPEFZlhkayID6fB/LismB7Wnr9TFA==
+X-Received: by 2002:aa7:980a:0:b0:43e:670:8505 with SMTP id e10-20020aa7980a000000b0043e06708505mr15292333pfl.74.1632590137517;
+        Sat, 25 Sep 2021 10:15:37 -0700 (PDT)
+Received: from nuc10.aws.cis.local (d50-92-229-34.bchsia.telus.net. [50.92.229.34])
+        by smtp.gmail.com with ESMTPSA id s90sm14901299pjd.12.2021.09.25.10.15.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Sep 2021 10:15:37 -0700 (PDT)
+From:   Rustam Kovhaev <rkovhaev@gmail.com>
+To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, binutils@sourceware.org,
+        gdb-patches@sourceware.org, Rustam Kovhaev <rkovhaev@gmail.com>
+Subject: [RFC][PATCH] coredump: save timestamp in ELF core
+Date:   Sat, 25 Sep 2021 10:15:07 -0700
+Message-Id: <20210925171507.1081788-1-rkovhaev@gmail.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2396106.1632584202@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 25, 2021 at 04:36:42PM +0100, David Howells wrote:
-> Matthew Wilcox <willy@infradead.org> wrote:
-> 
-> > On Fri, Sep 24, 2021 at 06:19:23PM +0100, David Howells wrote:
-> > > Delete the BIO-generating swap read/write paths and always use ->swap_rw().
-> > > This puts the mapping layer in the filesystem.
-> > 
-> > Is SWP_FS_OPS now unused after this patch?
-> 
-> Ummm.  Interesting question - it's only used in swap_set_page_dirty():
-> 
-> int swap_set_page_dirty(struct page *page)
-> {
-> 	struct swap_info_struct *sis = page_swap_info(page);
-> 
-> 	if (data_race(sis->flags & SWP_FS_OPS)) {
-> 		struct address_space *mapping = sis->swap_file->f_mapping;
-> 
-> 		VM_BUG_ON_PAGE(!PageSwapCache(page), page);
-> 		return mapping->a_ops->set_page_dirty(page);
-> 	} else {
-> 		return __set_page_dirty_no_writeback(page);
-> 	}
-> }
+Hello Alexander and linux-fsdevel@,
 
-I suspect that's no longer necessary.  NFS was the only filesystem
-using SWP_FS_OPS and ...
+I would like to propose saving a new note with timestamp in core file.
+I do not know whether this is a good idea or not, and I would appreciate
+your feedback.
 
-fs/nfs/file.c:  .set_page_dirty = __set_page_dirty_nobuffers,
+Sometimes (unfortunately) I have to review windows user-space cores in
+windbg, and there is one feature I would like to have in gdb.
+In windbg there is a .time command that prints timestamp when core was
+taken.
 
-so it's not like NFS does anything special to reserve memory to write
-back swap pages.
+This might sound like a fixed problem, kernel's core_pattern can have
+%t, and there are user-space daemons that write timestamp in the
+report/journal file (apport/systemd-coredump), and sometimes it is
+possible to correctly guess timestamp from btime/mtime file attribute,
+and all of the above does indeed solve the problem most of the time.
 
-> > Also, do we still need ->swap_activate and ->swap_deactivate?
-> 
-> f2fs does quite a lot of work in its ->swap_activate(), as does btrfs.  I'm
-> not sure how necessary it is.  cifs looks like it intends to use it, but it's
-> not fully implemented yet.  zonefs and nfs do some checking, including hole
-> checking in nfs's case.  nfs also does some setting up for the sunrpc
-> transport.
-> 
-> btrfs, cifs, f2fs and nfs all supply ->swap_deactivate() to undo the effects
-> of the activation.
+But quite often, especially while researching hangs and not crashes,
+when dump is written by gdb/gcore, I get only core.PID file and some
+application log for research and there is no way to figure out when
+exactly the core was taken.
 
-Right ... so my question really is, now that we're doing I/O through
-aops->direct_IO (or ->swap_rw), do those magic things need to be done?
-After all, open(O_DIRECT) doesn't do these same magic things.  They're
-really there to allow the direct-to-BIO path to work, and you're removing
-that here.
+I have posted a RFC patch to gdb-patches too [1] and I am copying
+gdb-patches@ and binutils@ on this RFC.
+Thank you!
+
+[1] https://sourceware.org/pipermail/gdb-patches/2021-July/181163.html
+
+Signed-off-by: Rustam Kovhaev <rkovhaev@gmail.com>
+---
+ fs/binfmt_elf.c          | 30 ++++++++++++++++++++++++++++++
+ include/uapi/linux/elf.h |  1 +
+ 2 files changed, 31 insertions(+)
+
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 69d900a8473d..f54ada303959 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1594,6 +1594,18 @@ static void fill_siginfo_note(struct memelfnote *note, user_siginfo_t *csigdata,
+ 	fill_note(note, "CORE", NT_SIGINFO, sizeof(*csigdata), csigdata);
+ }
+ 
++static int fill_time_note(struct memelfnote *note)
++{
++	time64_t *time;
++
++	time = kvmalloc(sizeof(*time), GFP_KERNEL);
++	if (ZERO_OR_NULL_PTR(time))
++		return -ENOMEM;
++	*time = ktime_get_real_seconds();
++	fill_note(note, "CORE", NT_TIME, sizeof(*time), time);
++	return 0;
++}
++
+ #define MAX_FILE_NOTE_SIZE (4*1024*1024)
+ /*
+  * Format of NT_FILE note:
+@@ -1704,6 +1716,7 @@ struct elf_note_info {
+ 	struct memelfnote signote;
+ 	struct memelfnote auxv;
+ 	struct memelfnote files;
++	struct memelfnote time;
+ 	user_siginfo_t csigdata;
+ 	size_t size;
+ 	int thread_notes;
+@@ -1877,6 +1890,9 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
+ 	if (fill_files_note(&info->files) == 0)
+ 		info->size += notesize(&info->files);
+ 
++	if (fill_time_note(&info->time) == 0)
++		info->size += notesize(&info->time);
++
+ 	return 1;
+ }
+ 
+@@ -1910,6 +1926,9 @@ static int write_note_info(struct elf_note_info *info,
+ 		if (first && info->files.data &&
+ 				!writenote(&info->files, cprm))
+ 			return 0;
++		if (first && info->time.data &&
++				!writenote(&info->time, cprm))
++			return 0;
+ 
+ 		for (i = 1; i < info->thread_notes; ++i)
+ 			if (t->notes[i].data &&
+@@ -1937,6 +1956,7 @@ static void free_note_info(struct elf_note_info *info)
+ 	}
+ 	kfree(info->psinfo.data);
+ 	kvfree(info->files.data);
++	kvfree(info->time.data);
+ }
+ 
+ #else
+@@ -1984,6 +2004,7 @@ static int elf_dump_thread_status(long signr, struct elf_thread_status *t)
+ struct elf_note_info {
+ 	struct memelfnote *notes;
+ 	struct memelfnote *notes_files;
++	struct memelfnote *note_time;
+ 	struct elf_prstatus *prstatus;	/* NT_PRSTATUS */
+ 	struct elf_prpsinfo *psinfo;	/* NT_PRPSINFO */
+ 	struct list_head thread_list;
+@@ -2074,6 +2095,12 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
+ 	if (info->prstatus->pr_fpvalid)
+ 		fill_note(info->notes + info->numnote++,
+ 			  "CORE", NT_PRFPREG, sizeof(*info->fpu), info->fpu);
++
++	if (fill_time_note(info->notes + info->numnote) == 0) {
++		info->note_time = info->notes + info->numnote;
++		info->numnote++;
++	}
++
+ 	return 1;
+ }
+ 
+@@ -2122,6 +2149,9 @@ static void free_note_info(struct elf_note_info *info)
+ 	if (info->notes_files)
+ 		kvfree(info->notes_files->data);
+ 
++	if (info->note_time)
++		kvfree(info->note_time->data);
++
+ 	kfree(info->prstatus);
+ 	kfree(info->psinfo);
+ 	kfree(info->notes);
+diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
+index 61bf4774b8f2..e9256b8b8da9 100644
+--- a/include/uapi/linux/elf.h
++++ b/include/uapi/linux/elf.h
+@@ -375,6 +375,7 @@ typedef struct elf64_shdr {
+ #define NT_PRPSINFO	3
+ #define NT_TASKSTRUCT	4
+ #define NT_AUXV		6
++#define NT_TIME		9
+ /*
+  * Note to userspace developers: size of NT_SIGINFO note may increase
+  * in the future to accomodate more fields, don't assume it is fixed!
+-- 
+2.30.2
+
