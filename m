@@ -2,122 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7231F417E4E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Sep 2021 01:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37517418089
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Sep 2021 10:49:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344487AbhIXXeb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Sep 2021 19:34:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:48328 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237813AbhIXXea (ORCPT
+        id S235763AbhIYIun (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 25 Sep 2021 04:50:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56642 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235235AbhIYIum (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Sep 2021 19:34:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1632526377;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lAURutp2HKBpGkWfffuX1cN49bIs6B414rgIINtepRc=;
-        b=jQW3mDJ7XVk7Misqq/hbvwtUy33B1ZDs+qvXtkXtaJp4sSDT8VsDy6P8yHJP/5GggcdwQE
-        nugY6Bv9fY15g0JN2W0xD785rn5K/JSZLkX+bgarZDWiK2rkGVfzfV4AtZuM1Y6mwOnOPm
-        G9itu4sPPlrW2+fvTJCIddYrVFSijBg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-244-kA2Me3tZMLOdiIjy9dnA6g-1; Fri, 24 Sep 2021 19:32:53 -0400
-X-MC-Unique: kA2Me3tZMLOdiIjy9dnA6g-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 15D7E8145E5;
-        Fri, 24 Sep 2021 23:32:52 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.32.185])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BB98660BF4;
-        Fri, 24 Sep 2021 23:32:39 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 444E8222E4F; Fri, 24 Sep 2021 19:32:39 -0400 (EDT)
-Date:   Fri, 24 Sep 2021 19:32:39 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Colin Walters <walters@verbum.org>
-Cc:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        selinux@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        chirantan@chromium.org, Miklos Szeredi <miklos@szeredi.hu>,
-        stephen.smalley.work@gmail.com, Daniel J Walsh <dwalsh@redhat.com>
-Subject: Re: [PATCH 2/2] fuse: Send security context of inode on file creation
-Message-ID: <YU5gF9xDhj4g+0Oe@redhat.com>
-References: <20210924192442.916927-1-vgoyal@redhat.com>
- <20210924192442.916927-3-vgoyal@redhat.com>
- <a02d3e08-3abc-448a-be32-2640d8a991e0@www.fastmail.com>
+        Sat, 25 Sep 2021 04:50:42 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 377FBC061604;
+        Sat, 25 Sep 2021 01:49:05 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id e15so50995184lfr.10;
+        Sat, 25 Sep 2021 01:49:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=TS6fqehlF97KcAM6ofsV4QD3c4hOu/ggNMphoM7ZdNg=;
+        b=KsLSKrdJHPXuZMqnEqD4XsEOTVhAzZU7qRqQgEBBpu48XeVfY/sxUI1MocpKbLU7KM
+         aWbYUD/Cg9tFFQmJXrFzr3he13GtmUOqTBgZ69ePZHxWqKX6Qx+5zi6UwOXf7L28QGjN
+         i/4t/JfQ3EGejVF8QvbxZAKSW6yyUOxNJv6sWGOiqIwqXUn66Op/tzPkJfN+agOJVVSp
+         Dvtzro2pwKdXdCgPbh2+/a9WGkuT+rfTwDCyMODQHku6kJNcoE0NuC2Aoj/ZWpQWr+iV
+         XvmiSmT6dbPk3dlBPQ8VHhRxniLgRIeOSU8kPB5sVC53mlYPwV1JQtJ9jn+Ezz/6FHEz
+         cY4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=TS6fqehlF97KcAM6ofsV4QD3c4hOu/ggNMphoM7ZdNg=;
+        b=L7yReJD7ua5Uqn5t7TxejUMD6Qqs/qHSNarQSOuvOtX3hAsqES9bIVb6MuJPPdx3O8
+         3I51j7YTDFwmUdF1eUTS1JwuxIaPNmMTQUqixNXz1xc/GT3XDdsNk1fSDv+9hmdlDamA
+         y7GLtRjZ79zBpxPSP8H0Uje+xsBGppu5gsx7T3KrbQPnahFSNnZbYCfld9juR5z4vELB
+         YrjlgO5OUJTZGWlzhG3mrPrdtQzSNJ98kvmB3rsfMOk56qVjaFzx/HHXY8BRs+xMmRmH
+         8jfTi0h59Bhz2HCO4bpCqYhqjEqOMuLfRzFhZUhzi4IkGd9SPeSZ9dsrWyVCYHQ+jMx0
+         AGjw==
+X-Gm-Message-State: AOAM532qIGrdhIqpKCDCYzN/MQbvhBj6qyEtfSI7dfVyLjFNCMr/+fMo
+        +54/Jv5Tqo1Ib/POT2jA9v1G92YmWV4=
+X-Google-Smtp-Source: ABdhPJzwK9GOjjEC4tsw7Pn3L2pPQAmOCGiaRnnAUPAVmLaIzXfz25AEwz0jGK0StIVXNdFQbS5csQ==
+X-Received: by 2002:a05:651c:4d2:: with SMTP id e18mr15919949lji.432.1632559743565;
+        Sat, 25 Sep 2021 01:49:03 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id s4sm784146lfd.103.2021.09.25.01.49.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 25 Sep 2021 01:49:03 -0700 (PDT)
+Date:   Sat, 25 Sep 2021 11:49:01 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/3] fs/ntfs3: Remove locked argument in ntfs_set_ea
+Message-ID: <20210925084901.mvlxt442jvy2et7u@kari-VirtualBox>
+References: <eb131ee0-3e89-da58-650c-5b84dd792a49@paragon-software.com>
+ <b988b38f-ccca-df01-d90d-10f83dd3ad2e@paragon-software.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a02d3e08-3abc-448a-be32-2640d8a991e0@www.fastmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <b988b38f-ccca-df01-d90d-10f83dd3ad2e@paragon-software.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 24, 2021 at 06:00:10PM -0400, Colin Walters wrote:
+On Fri, Sep 24, 2021 at 07:15:50PM +0300, Konstantin Komarov wrote:
+> We always need to lock now, because locks became smaller
+> (see "Move ni_lock_dir and ni_unlock into ntfs_create_inode").
+
+So basically this actually fixes that commit?
+
+Fixes: d562e901f25d ("fs/ntfs3: Move ni_lock_dir and ni_unlock into ntfs_create_inode")
+
+Or if you do not use fixes atleast use
+
+d562e901f25d ("fs/ntfs3: Move ni_lock_dir and ni_unlock into ntfs_create_inode")
+
+You can add these to your gitconfig
+
+	[core]
+		abbrev = 12
+	[pretty]
+	        fixes = Fixes: %h (\"%s\")
+		fixed = Fixes: %h (\"%s\")
+
+And get this annotation with
+	git show --pretty=fixes <sha>
+
+Have some comments below also.
+
+> 
+> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> ---
+>  fs/ntfs3/xattr.c | 28 +++++++++++++---------------
+>  1 file changed, 13 insertions(+), 15 deletions(-)
+> 
+> diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
+> index 253a07d9aa7b..1ab109723b10 100644
+> --- a/fs/ntfs3/xattr.c
+> +++ b/fs/ntfs3/xattr.c
+> @@ -257,7 +257,7 @@ static int ntfs_get_ea(struct inode *inode, const char *name, size_t name_len,
+>  
+>  static noinline int ntfs_set_ea(struct inode *inode, const char *name,
+>  				size_t name_len, const void *value,
+> -				size_t val_size, int flags, int locked)
+> +				size_t val_size, int flags)
+>  {
+>  	struct ntfs_inode *ni = ntfs_i(inode);
+>  	struct ntfs_sb_info *sbi = ni->mi.sbi;
+> @@ -276,8 +276,7 @@ static noinline int ntfs_set_ea(struct inode *inode, const char *name,
+>  	u64 new_sz;
+>  	void *p;
+>  
+> -	if (!locked)
+> -		ni_lock(ni);
+> +	ni_lock(ni);
+>  
+>  	run_init(&ea_run);
+>  
+> @@ -465,8 +464,7 @@ static noinline int ntfs_set_ea(struct inode *inode, const char *name,
+>  	mark_inode_dirty(&ni->vfs_inode);
+>  
+>  out:
+> -	if (!locked)
+> -		ni_unlock(ni);
+> +	ni_unlock(ni);
+>  
+>  	run_close(&ea_run);
+>  	kfree(ea_all);
+> @@ -537,7 +535,7 @@ struct posix_acl *ntfs_get_acl(struct inode *inode, int type)
+>  
+>  static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
+>  				    struct inode *inode, struct posix_acl *acl,
+> -				    int type, int locked)
+> +				    int type)
+>  {
+>  	const char *name;
+>  	size_t size, name_len;
+> @@ -594,7 +592,7 @@ static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
+>  		flags = 0;
+>  	}
+>  
+> -	err = ntfs_set_ea(inode, name, name_len, value, size, flags, locked);
+> +	err = ntfs_set_ea(inode, name, name_len, value, size, flags);
+>  	if (err == -ENODATA && !size)
+>  		err = 0; /* Removing non existed xattr. */
+>  	if (!err)
+> @@ -612,7 +610,7 @@ static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
+>  int ntfs_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
+>  		 struct posix_acl *acl, int type)
+>  {
+> -	return ntfs_set_acl_ex(mnt_userns, inode, acl, type, 0);
+> +	return ntfs_set_acl_ex(mnt_userns, inode, acl, type);
+>  }
+>  
+>  static int ntfs_xattr_get_acl(struct user_namespace *mnt_userns,
+> @@ -693,7 +691,7 @@ int ntfs_init_acl(struct user_namespace *mnt_userns, struct inode *inode,
+>  
+>  	if (default_acl) {
+>  		err = ntfs_set_acl_ex(mnt_userns, inode, default_acl,
+> -				      ACL_TYPE_DEFAULT, 1);
+> +				      ACL_TYPE_DEFAULT);
+>  		posix_acl_release(default_acl);
+>  	} else {
+>  		inode->i_default_acl = NULL;
+> @@ -704,7 +702,7 @@ int ntfs_init_acl(struct user_namespace *mnt_userns, struct inode *inode,
+>  	else {
+>  		if (!err)
+>  			err = ntfs_set_acl_ex(mnt_userns, inode, acl,
+> -					      ACL_TYPE_ACCESS, 1);
+> +					      ACL_TYPE_ACCESS);
+>  		posix_acl_release(acl);
+>  	}
+>  
+> @@ -988,7 +986,7 @@ static noinline int ntfs_setxattr(const struct xattr_handler *handler,
+>  	}
+>  #endif
+>  	/* Deal with NTFS extended attribute. */
+> -	err = ntfs_set_ea(inode, name, name_len, value, size, flags, 0);
+> +	err = ntfs_set_ea(inode, name, name_len, value, size, flags);
+>  
+>  out:
+>  	return err;
+> @@ -1006,26 +1004,26 @@ int ntfs_save_wsl_perm(struct inode *inode)
+>  
+>  	value = cpu_to_le32(i_uid_read(inode));
+>  	err = ntfs_set_ea(inode, "$LXUID", sizeof("$LXUID") - 1, &value,
+> -			  sizeof(value), 0, 0);
+> +			  sizeof(value), 0);
+>  	if (err)
+>  		goto out;
+>  
+>  	value = cpu_to_le32(i_gid_read(inode));
+>  	err = ntfs_set_ea(inode, "$LXGID", sizeof("$LXGID") - 1, &value,
+> -			  sizeof(value), 0, 0);
+> +			  sizeof(value), 0);
+>  	if (err)
+>  		goto out;
+>  
+>  	value = cpu_to_le32(inode->i_mode);
+>  	err = ntfs_set_ea(inode, "$LXMOD", sizeof("$LXMOD") - 1, &value,
+> -			  sizeof(value), 0, 0);
+> +			  sizeof(value), 0);
+>  	if (err)
+>  		goto out;
+>  
+>  	if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode)) {
+>  		value = cpu_to_le32(inode->i_rdev);
+>  		err = ntfs_set_ea(inode, "$LXDEV", sizeof("$LXDEV") - 1, &value,
+> -				  sizeof(value), 0, 0);
+> +				  sizeof(value), 0);
+
+Is this really that we can lock/unlock same lock 4 times in a row in a
+ntfs_set_ea? This does not feel correct. 
+
+  Argillander
+
+>  		if (err)
+>  			goto out;
+>  	}
+> -- 
+> 2.33.0
 > 
 > 
-> On Fri, Sep 24, 2021, at 3:24 PM, Vivek Goyal wrote:
-> > When a new inode is created, send its security context to server along
-> > with creation request (FUSE_CREAT, FUSE_MKNOD, FUSE_MKDIR and FUSE_SYMLINK).
-> > This gives server an opportunity to create new file and set security
-> > context (possibly atomically). In all the configurations it might not
-> > be possible to set context atomically.
-> >
-> > Like nfs and ceph, use security_dentry_init_security() to dermine security
-> > context of inode and send it with create, mkdir, mknod, and symlink requests.
-> >
-> > Following is the information sent to server.
-> >
-> > - struct fuse_secctx.
-> >   This contains total size of security context which follows this structure.
-> >
-> > - xattr name string.
-> >   This string represents name of xattr which should be used while setting
-> >   security context. As of now it is hardcoded to "security.selinux".
-> 
-> Any reason not to just send all `security.*` xattrs found on the inode? 
-> 
-> (I'm not super familiar with this code, it looks like we're going from the LSM-cached version attached to the inode, but presumably since we're sending bytes we can just ask the filesytem for the raw data instead)
-
-So this inode is about to be created. There are no xattrs yet. And
-filesystem is asking LSMs, what security labels should be set on this
-inode before it is published. 
-
-For local filesystems it is somewhat easy. They are the one creating
-inode and can set all xattrs/labels before inode is added to inode
-cache.
-
-But for remote like filesystems, it is more tricky. Actual inode
-creation first will happen on server and then client will instantiate
-an inode based on information returned by server (Atleast that's
-what fuse does).
-
-So security_dentry_init_security() was created (I think by NFS folks)
-so that they can query the label and send it along with create
-request and server can take care of setting label (along with file
-creation).
-
-One limitation of security_dentry_init_security() is that it practically
-supports only one label. And only SELinux has implemented. So for
-all practical purposes this is a hook to obtain selinux label. NFS
-and ceph already use it in that way.
-
-Now there is a desire to be able to return more than one security
-labels and support smack and possibly other LSMs. Sure, that great.
-But I think for that we will have to implement a new hook which
-can return multiple labels and filesystems like nfs, ceph and fuse
-will have to be modified to cope with this new hook to support
-multiple lables. 
-
-And I am arguing that we can modify fuse when that hook has been
-implemented. There is no point in adding that complexity in fuse
-code as well all fuse-server implementations when there is nobody
-generating multiple labels. We can't even test it.
-
-Thanks
-Vivek
-
