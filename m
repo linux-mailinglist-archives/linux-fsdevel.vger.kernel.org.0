@@ -2,65 +2,341 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B95D418D90
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 03:51:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0CD1418DA7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 04:28:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232392AbhI0BxA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Sep 2021 21:53:00 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:21346 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232360AbhI0BxA (ORCPT
+        id S232400AbhI0CaO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Sep 2021 22:30:14 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:50216 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229752AbhI0CaO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Sep 2021 21:53:00 -0400
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.57])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4HHlqt0NBZzRZJ4;
-        Mon, 27 Sep 2021 09:47:06 +0800 (CST)
-Received: from dggpeml500025.china.huawei.com (7.185.36.35) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.8; Mon, 27 Sep 2021 09:51:21 +0800
-Received: from [10.174.176.117] (10.174.176.117) by
- dggpeml500025.china.huawei.com (7.185.36.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.8; Mon, 27 Sep 2021 09:51:21 +0800
-Subject: Re: [PATCH] kernfs: fix the race in the creation of negative dentry
-To:     Ian Kent <raven@themaw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, Miklos Szeredi <mszeredi@redhat.com>
-CC:     <viro@ZenIV.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20210911021342.3280687-1-houtao1@huawei.com>
- <7b92b158200567f0bba26a038191156890921f13.camel@themaw.net>
- <6c8088411523e52fc89b8dd07710c3825366ce64.camel@themaw.net>
- <747aee3255e7a07168557f29ad962e34e9cb964b.camel@themaw.net>
- <e3d22860-f2f0-70c1-35ef-35da0c0a44d2@huawei.com>
- <077362887b4ceeb01c27fbf36fa35adae02967c9.camel@themaw.net>
-From:   Hou Tao <houtao1@huawei.com>
-Message-ID: <13592fb7-5bc1-41cf-f19d-150b1e634fb2@huawei.com>
-Date:   Mon, 27 Sep 2021 09:51:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        Sun, 26 Sep 2021 22:30:14 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R331e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UpfzioQ_1632709714;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UpfzioQ_1632709714)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 27 Sep 2021 10:28:34 +0800
+Subject: Re: [PATCH v5 2/5] fuse: make DAX mount option a tri-state
+To:     Dave Chinner <david@fromorbit.com>, Vivek Goyal <vgoyal@redhat.com>
+Cc:     stefanha@redhat.com, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
+References: <20210923092526.72341-1-jefflexu@linux.alibaba.com>
+ <20210923092526.72341-3-jefflexu@linux.alibaba.com>
+ <YUzPUYU8R5LL4mzU@redhat.com> <20210923222618.GB2361455@dread.disaster.area>
+ <YU0jovIYv+xeinQd@redhat.com> <20210927002148.GH2361455@dread.disaster.area>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <a8224842-7e05-c3fd-7413-5f425e099251@linux.alibaba.com>
+Date:   Mon, 27 Sep 2021 10:28:34 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.14.0
 MIME-Version: 1.0
-In-Reply-To: <077362887b4ceeb01c27fbf36fa35adae02967c9.camel@themaw.net>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20210927002148.GH2361455@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Originating-IP: [10.174.176.117]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500025.china.huawei.com (7.185.36.35)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
 
-On 9/23/2021 10:50 AM, Ian Kent wrote:
-> Great, although I was hoping you would check it worked as expected.
-> Did you check?
-> If not could you please do that check?
-It fixes the race. I rerun the stress test of module addition and removal,
-and the problem doesn't occur after 12 hours.
 
-Regards,
-Tao
+On 9/27/21 8:21 AM, Dave Chinner wrote:
+> On Thu, Sep 23, 2021 at 09:02:26PM -0400, Vivek Goyal wrote:
+>> On Fri, Sep 24, 2021 at 08:26:18AM +1000, Dave Chinner wrote:
+>>> On Thu, Sep 23, 2021 at 03:02:41PM -0400, Vivek Goyal wrote:
+>>>> On Thu, Sep 23, 2021 at 05:25:23PM +0800, Jeffle Xu wrote:
+>>>>> We add 'always', 'never', and 'inode' (default). '-o dax' continues to
+>>>>> operate the same which is equivalent to 'always'. To be consistemt with
+>>>>> ext4/xfs's tri-state mount option, when neither '-o dax' nor '-o dax='
+>>>>> option is specified, the default behaviour is equal to 'inode'.
+>>>>
+>>>> So will "-o dax=inode" be used for per file DAX where dax mode comes
+>>>> from server?
+>>>>
+>>>> I think we discussed this. It will be better to leave "-o dax=inode"
+>>>> alone. It should be used when we are reading dax status from file
+>>>> attr (like ext4 and xfs). 
+>>>>
+>>>> And probably create separate option say "-o dax=server" where server
+>>>> specifies which inode should use dax.
+>>>
+>>> That seems like a poor idea to me.
+>>>
+>>> The server side already controls what the client side does by
+>>> controlling the inode attributes that the client side sees.  That
+>>> is, if the server is going to specify whether the client side data
+>>> access is going to use dax, then the server presents the client with
+>>> an inode that has the DAX attribute flag set on it.
+>>
+>> Hi Dave,
+>>
+>> Currently in fuse/virtiofs, DAX is compltely controlled by client. Server
+>> has no say in it. If client is mounted with "-o dax", dax is enabled on
+>> all files otherwise dax is disabled on all files. One could think of
+>> implementing an option on server so that server could deny mmap()
+>> requests that come from client, but so far nobody asked for such
+>> an option on server side.
+> 
+> Can you please refer to the new options "always|never|inode" in
+> disucssions, because the "-o dax" option is deprecated and we really
+> need to center discussions around the new options, not the
+> deprecated one.
+
+Consistent with ext4/xfs, "-o dax" is equal to "-o dax=always", and DAX
+is always enabled/disabled with "-o dax=always|never" regardless the per
+inode dax flag.
+
+With "-o dax=inode", the client gets the per inode dax flag from FUSE
+protocol (during aops->lookup()) fed by server, deciding if DAX shall be
+enabled or not for this specific file.
+
+> 
+>> When you say "inode that has DAX attribute flag set on it", are you
+>> referring to "S_DAX (in inode->i_flags)" or persistent attr
+>> "FS_XFLAG_DAX"?
+> 
+> Neither. The S_DAX flags is the VFS struct inode state that tells
+> the kernel what to do with that inode. The FS_XFLAG_DAX is the
+> userspace API status/control flag that represents the current state
+> of the persistent per-inode DAX control attribute.
+> 
+> What I'm talking about the persistent attribute that is present
+> on stable storage. e.g. in the XFS on-disk inode the flag is
+> XFS_DIFLAG2_DAX which is never seen outside low level XFS code. In
+> the case of FUSE, this is the persistent server-side DAX attribute
+> state. The client gets this information from the server via an
+> inode attribute defined in the FUSE protocol. The client translates
+> that network protocol attribute to S_DAX status on FS inode
+> instantiation, and to/from FS_XFLAG_DAX for user control under
+> dax=inode.
+
+Got it.
+
+> 
+> In the case that the user changes FS_XFLAG_DAX, the FUSE client
+> needs to communicate that attribute change to the server, where the
+> server then changes the persistent state of the on-disk inode so
+> that the next time the client requests that inode, it gets the state
+> it previously set. Unless, of course, there are server side policy
+> overrides (never/always).
+
+One thing I'm concerned with is that, is the following behavior
+consistent with the semantics of per-file DAX in ext4/xfs?
+
+Client changes FS_XFLAG_DAX, this change is communicated to server and
+then server also returns **success**. Then client finds that this file
+is not DAX enabled, since server doesn't honor the previously set state.
+
+IOWs, shall server always honor the persistent per-inode attribute of
+host file (if the change of FS_XFLAG_DAX inside guest is stored as
+persistent per-inode attribute on host file)?
+
+> 
+> IOWs, dax=inode on the client side is essentially "follow server
+> side policy" because the server maintains the persistent DAX flag
+> state in the server side inode...
+> 
+>> As of now S_DAX on client side inode is set by fuse client whenever
+>> client mounted filesystem with "-o dax". And I think you are assuming
+> 
+> Of course. Similarly, if the client uses dax=never, the S_DAX is
+> never set on the VFS inode. But if dax=inode is set, where does the
+> DAX attribute state that determines S_DAX comes from .....?
+> 
+>> that DAX attribute of inode is already coming from server. That's not
+>> the case. In fact that seems to be the proposal. Provide capability
+>> so that server can specify which inode should be using DAX and which
+>> inode should not be.
+> 
+> Yup, that's exactly what I'm talking about - this is "dax=inode"
+> behaviour, because the client follows what the server tells it
+> in the inode attributes that arrive over the wire.
+> 
+>>> In that case, turning off dax on the guest side should be
+>>> communicated to the fuse server so the server turns off the DAX flag
+>>> on the server side iff server side policy allows it.
+>>
+>> Not sure what do you mean by server turns of DAX flag based on client
+>> turning off DAX. Server does not have to do anything. If client decides
+>> to not use DAX (in guest), it will not send FUSE_SETUPMAPPING requests
+>> to server and that's it.
+> 
+> Where does the client get it's per-inode DAX policy from if
+> dax=inode is, like other DAX filesystems, the default behaviour?
+> 
+> Where is the persistent storage of that per-inode attribute kept?
+
+In the latest patch set, it is not supported yet to change FS_XFLAG_DAX
+(and thus setting/clearing persistent per-inode attribute) inside guest,
+since this scenario is not urgently needed as the real using case.
+Currently the per-inode dax attribute is completely fed from server
+thourgh FUSE protocol, e.g. server could set/clear the per-inode dax
+attribute depending on the file size.
+
+The previous path set indeed had ever supported changing FS_XFLAG_DAX
+and accordingly setting/clearing persistent per-inode attribute inside
+guest. For "passthrough" type virtiofsd, the persistent per-inode
+attribute is stored as XFS_DIFLAG2_DAX/EXT4_DAX_FL on host file
+directly, since this is what "passthrough" means.
+
+> 
+>>> When the guest
+>>> then purges it's local inode and reloads it from the server then it
+>>> will get an inode with the DAX flag set according to server side
+>>> policy.
+>>
+>> So right now we don't have a mechanism for server to specify DAX flag.
+>> And that's what this patch series is trying to do.
+>>
+>>>
+>>> Hence if the server side is configured with "dax=always" or
+>>> dax="never" semantics it means the client side inode flag state
+>>> cannot control DAX mode. That means, regardless of the client side
+>>> mount options, DAX is operating under always or never policy,
+>>
+>> Hmm..., When you say "server side is configured with "dax=always", 
+>> do you mean shared directory on host is mounted with "-o dax=always",
+>> or you mean some virtiofs server specific option which enables
+>> dax on all inodes from server side.
+> 
+> I don't care. That's a server side implementation detail. You can
+> keep it in a private xattr for all I care.
+> 
+>> In general, DAX on host and DAX inside guest are completely independent.
+>> Host filesystem could very well be mounted with dax or without dax and
+>> that has no affect on guests's capability to be able to enable DAX or
+>> not. 
+> 
+> If you have both the host and guest accessing the same files with
+> different modes, then you have a data coherency problem that is
+> guaranteed to corrupt data.
+> 
+>>> seems to be exactly what 'dax=inode' behaviour means on the client
+>>> side - it behaves according to how the server side propagates the
+>>> DAX attribute to the client for each inode.
+>>
+>> Ok. So "-o dax=inode" in fuse will have a different meaning as opposed
+>> to ext4/xfs. This will mean that server will pass DAX state of inode
+>> when inode is instantiated and client should honor that. 
+> 
+> No, that's exactly what dax=inode means: DAX behaviour is
+> per-inode state that users must probe via statx() to determine if
+> dax is active or not.
+> 
+>> But what about FS_XFLAG_DAX flag then. Say host file system
+>> does support this att and fuse/virtiofs allows querying and
+>> setting this attribute (I don't think it is allowed now).
+> 
+> FS_XFLAG_DAX is the ioctl-based control API for the client side.
+> It's not a persistent flag.
+> 
+>> So will we not create a future conflict where in case of
+>> fuse/virtiofs "-o dax=inode" means something different and it does
+>> look at FS_XFLAG_DAX file attr.
+> 
+> Like many, I suspect you might be mis-understanding the DAX API.
+> 
+> There are 4 parts to it:
+> 
+> - persistent filesystem inode state flag
+> - ioctls to manipulate persistent inode state flag (FS_XFLAG_DAX)
+> - mount options to override persistent inode state flag
+> - VFS inode state indicating DAX is active (S_DAX, STATX_ATTR_DAX)
+> 
+> You seem to be conflating the user API FS_XFLAG_DAX flag with
+> whatever the filesystem uses to physically storage that state. They
+> are not the same thing. FS_XFLAG_DAX also has no correlation with
+> the mount options - we can change the on-disk flag state regardless
+> of the mount option in use. We can even change the on-disk state
+> flag on *kernels that don't support DAX*.  Changing the on-disk
+> attribute *does not change S_DAX*.
+> 
+> That's because the on-disk persistent state is a property of the
+> filesystem's on-disk format, not a property of the kernel that is
+> running on that machine. The persistent state flag is managed as a
+> completely independent filesystem inode attribute, but it only
+> affects behaviour when the dax=inode mode has been selected.
+> 
+> Control of the behaviour by this persistent inode flag is what
+> dax=inode means. It does not define how that attribute flag is
+> managed, it just defines the policy that an the inode's behaviour
+> will be determined by it's dax attribute state.
+> 
+> OTOH, S_DAX is used by the kernel to enable DAX access. It is the
+> _mechanism_, not the policy. We control S_DAX by mount option and/or
+> the filesystems persistent inode state flag, and behaviour is
+> determined by these policies at VFS inode instantiation time. Change
+> the policy, turf the inode out of cache and re-instantiate it, and
+> S_DAX for that inode is recalculated from the new policy.
+> 
+> For FUSE, the server provides the persistent storage and nothing
+> else. The ioctls to manipulate dax state are client side ioctls, as
+> are the mount options and the S_DAX vfs inode state. Hence for
+> server side management of the per-inode S_DAX state, the FUSE
+> protocol needs to be able to pass the per-inode persistent DAX
+> attribute state to the client and the client needs to honor
+> that attribute from the server.
+> 
+> How the FUSE server stores this persistent attribute is up to the
+> server implementation. If the server wants FUSE access to be
+> independent of host access, it can't use the persistent inode flags
+> in the host filesystem - it will need to use it's own xattrs. If the
+> server wants host access to be coherent with the guest, then it will
+> need to implement that in a different way.
+> 
+> But the FUSE client doesn't care about any of this server side
+> policy mumbo-jumbo - it just needs to do what the server sends
+> to it in the DAX inode attribute. And that's exactly what dax=inode
+> means...
+> 
+>> In summary, there seem to be two use cases.
+>>
+>> A. virtiofsd/fuse-server wants do be able to come up with its own
+>> policy to decide which inodes should use guest.
+>>
+>> B. guest client decides which inode use DAX based on FS_XFLAG_DAX
+>> attr on inode (and server does not play a role).
+>>
+>> To be able to different between these two cases, I was suggesting
+>> using "-o dax=inode" for B and "-o dax=server" for A.
+> 
+> dax=inode covrees both these cases.  All the server side needs to do
+> is set the inode attribute according to policy, and all the client
+> needs to do is obey the server side per-inode attribute. IOWs,
+> client side using "dax=inode" means the server side controls the DAX
+> behaviour via the FUSE DAX attribute. 
+> 
+> If the server wants the client to always use DAX, then it always
+> sets the FUSE inode attribute. If the server says "never use DAX",
+> then it never sets the FUSE inode attribute.  If the server doesn't
+> want the client to control policy, then it just rejects attempts to
+> change the per-inode persistent DAX flag via client side
+> ioctl(FS_XFLAG_DAX) calls. Hence we have use case A completely
+> covered.
+> 
+> For case B, which is true dax=inode behaviour at the client, then
+> the server side honours the client side requests to change the
+> persistent FUSE DAX inode attribute via client side FS_XFLAG_DAX
+> ioctls.
+> 
+> See? At the client side, there is absolutely no difference between
+> server side policy control and true dax=inode support. The client is
+> completely unaware of server side policies and that's how the client
+> side should be implemented. The applications have to be prepared for
+> policy to change dynamically with either dax=server or dax=inode, so
+> there's no difference to applications running in the guest either.
+> 
+> Hence I just don't see the justification for a special DAX mode from
+> an architectural POV. It's no more work to implement per-inode DAX
+> properly form the start and we don't end up with a special, subtly
+> different mode.
+> 
+> Cheers,
+> 
+> Dave.
+> 
+
+-- 
+Thanks,
+Jeffle
