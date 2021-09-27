@@ -2,158 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 525F141A12A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 23:07:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA1EE41A14E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 23:22:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237111AbhI0VJd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Sep 2021 17:09:33 -0400
-Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:41697 "EHLO
-        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236743AbhI0VJb (ORCPT
+        id S237195AbhI0VYd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Sep 2021 17:24:33 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:43520
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237028AbhI0VYd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Sep 2021 17:09:31 -0400
-Received: from dread.disaster.area (pa49-195-238-16.pa.nsw.optusnet.com.au [49.195.238.16])
-        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id 86368106BC8;
-        Tue, 28 Sep 2021 07:07:51 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1mUxqo-00HRym-VE; Tue, 28 Sep 2021 07:07:50 +1000
-Date:   Tue, 28 Sep 2021 07:07:50 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Jane Chu <jane.chu@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 3/5] vfs: add a zero-initialization mode to fallocate
-Message-ID: <20210927210750.GH1756565@dread.disaster.area>
-References: <20210922054931.GT1756565@dread.disaster.area>
- <20210922212725.GN570615@magnolia>
- <20210923000255.GO570615@magnolia>
- <20210923014209.GW1756565@dread.disaster.area>
- <CAPcyv4j77cWASW1Qp=J8poVRi8+kDQbBsLZb0HY+dzeNa=ozNg@mail.gmail.com>
- <CAPcyv4in7WRw1_e5iiQOnoZ9QjQWhjj+J7HoDf3ObweUvADasg@mail.gmail.com>
- <20210923225433.GX1756565@dread.disaster.area>
- <CAPcyv4jsU1ZBY0MNKf9CCCFaR4qcwUCRmZHstPpF02pefKnDtg@mail.gmail.com>
- <09ed3c3c-391b-bf91-2456-d7f7ca5ab2fb@oracle.com>
- <20210924013516.GB570577@magnolia>
+        Mon, 27 Sep 2021 17:24:33 -0400
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 0AD7341975
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 21:22:54 +0000 (UTC)
+Received: by mail-io1-f54.google.com with SMTP id b78so19329754iof.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 14:22:53 -0700 (PDT)
+X-Gm-Message-State: AOAM531O0WkI88jqRwjzWjchxdQDmAQEazM7GDPkYhJN3wsCPzxCmE6A
+        /aldPfnNM8oJrE51Hjb0u/bChuQKuHhlwfalyWzbUA==
+X-Google-Smtp-Source: ABdhPJzC69WYcmKBfot6ZxiY9ys4a/1tFjAIU/TBMsBB4KO2mtdypTRm5irX0ZmVzbgq2bwLBRxgG2KtUqZxvyfM/bM=
+X-Received: by 2002:a05:6638:3289:: with SMTP id f9mr1654129jav.115.1632777770621;
+ Mon, 27 Sep 2021 14:22:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210924013516.GB570577@magnolia>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=epq8cqlX c=1 sm=1 tr=0 ts=615232a8
-        a=DzKKRZjfViQTE5W6EVc0VA==:117 a=DzKKRZjfViQTE5W6EVc0VA==:17
-        a=kj9zAlcOel0A:10 a=7QKq2e-ADPsA:10 a=7-415B0cAAAA:8 a=QyXUC8HyAAAA:8
-        a=ZdkKxCtHSC7M8R2DOccA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+Date:   Mon, 27 Sep 2021 23:21:00 +0200
+X-Gmail-Original-Message-ID: <CAHrFyr4AYi_gad7LQ-cJ9Peg=Gt73Sded8k_ZHeRZz=faGzpQA@mail.gmail.com>
+Message-ID: <CAHrFyr4AYi_gad7LQ-cJ9Peg=Gt73Sded8k_ZHeRZz=faGzpQA@mail.gmail.com>
+Subject: Re: [lpc-contact] Linux Plumbers Conference Last Day
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        contact@linuxplumbersconf.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 23, 2021 at 06:35:16PM -0700, Darrick J. Wong wrote:
-> On Thu, Sep 23, 2021 at 06:21:19PM -0700, Jane Chu wrote:
-> > 
-> > On 9/23/2021 6:18 PM, Dan Williams wrote:
-> > > On Thu, Sep 23, 2021 at 3:54 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > > 
-> > > > On Wed, Sep 22, 2021 at 10:42:11PM -0700, Dan Williams wrote:
-> > > > > On Wed, Sep 22, 2021 at 7:43 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> > > > > > 
-> > > > > > On Wed, Sep 22, 2021 at 6:42 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > > > > [..]
-> > > > > > > Hence this discussion leads me to conclude that fallocate() simply
-> > > > > > > isn't the right interface to clear storage hardware poison state and
-> > > > > > > it's much simpler for everyone - kernel and userspace - to provide a
-> > > > > > > pwritev2(RWF_CLEAR_HWERROR) flag to directly instruct the IO path to
-> > > > > > > clear hardware error state before issuing this user write to the
-> > > > > > > hardware.
-> > > > > > 
-> > > > > > That flag would slot in nicely in dax_iomap_iter() as the gate for
-> > > > > > whether dax_direct_access() should allow mapping over error ranges,
-> > > > > > and then as a flag to dax_copy_from_iter() to indicate that it should
-> > > > > > compare the incoming write to known poison and clear it before
-> > > > > > proceeding.
-> > > > > > 
-> > > > > > I like the distinction, because there's a chance the application did
-> > > > > > not know that the page had experienced data loss and might want the
-> > > > > > error behavior. The other service the driver could offer with this
-> > > > > > flag is to do a precise check of the incoming write to make sure it
-> > > > > > overlaps known poison and then repair the entire page. Repairing whole
-> > > > > > pages makes for a cleaner implementation of the code that tries to
-> > > > > > keep poison out of the CPU speculation path, {set,clear}_mce_nospec().
-> > > > > 
-> > > > > This flag could also be useful for preadv2() as there is currently no
-> > > > > way to read the good data in a PMEM page with poison via DAX. So the
-> > > > > flag would tell dax_direct_access() to again proceed in the face of
-> > > > > errors, but then the driver's dax_copy_to_iter() operation could
-> > > > > either read up to the precise byte offset of the error in the page, or
-> > > > > autoreplace error data with zero's to try to maximize data recovery.
-> > > > 
-> > > > Yes, it could. I like the idea - say RWF_IGNORE_HWERROR - to read
-> > > > everything that can be read from the bad range because it's the
-> > > > other half of the problem RWF_RESET_HWERROR is trying to address.
-> > > > That is, the operation we want to perform on a range with an error
-> > > > state is -data recovery-, not "reinitialisation". Data recovery
-> > > > requires two steps:
-> > > > 
-> > > > - "try to recover the data from the bad storage"; and
-> > > > - "reinitialise the data and clear the error state"
-> > > > 
-> > > > These naturally map to read() and write() operations, not
-> > > > fallocate(). With RWF flags they become explicit data recovery
-> > > > operations, unlike fallocate() which needs to imply that "writing
-> > > > zeroes" == "reset hardware error state". While that reset method
-> > > > may be true for a specific pmem hardware implementation it is not a
-> > > > requirement for all storage hardware. It's most definitely not a
-> > > > requirement for future storage hardware, either.
-> > > > 
-> > > > It also means that applications have no choice in what data they can
-> > > > use to reinitialise the damaged range with because fallocate() only
-> > > > supports writing zeroes. If we've recovered data via a read() as you
-> > > > suggest we could, then we can rebuild the data from other redundant
-> > > > information and immediately write that back to the storage, hence
-> > > > repairing the fault.
-> > > > 
-> > > > That, in turn, allows the filesystem to turn the RWF_RESET_HWERROR
-> > > > write into an exclusive operation and hence allow the
-> > > > reinitialisation with the recovered/repaired state to run atomically
-> > > > w.r.t. all other filesystem operations.  i.e. the reset write
-> > > > completes the recovery operation instead of requiring separate
-> > > > "reset" and "write recovered data into zeroed range" steps that
-> > > > cannot be executed atomically by userspace...
-> > > 
-> > > /me nods
-> > > 
-> > > Jane, want to take a run at patches for this ^^^?
-> > > 
-> > 
-> > Sure, I'll give it a try.
-> > 
-> > Thank you all for the discussions!
-> 
-> Cool, thank you!
+On Fri, Sep 24, 2021 at 11:29:12AM -0500, Eric W. Biederman wrote:
+> James Bottomley <James.Bottomley@HansenPartnership.com> writes:
+>
+> > Dear Eric,
+> >
+> > Thank you again for coming to Linux Plumbers Conference, we're hoping
+> > to make it one of the best technical conferences of the year, with
+> > your help.  The conference should start up in about 15 minutes at
+> > 07:00PDT/14:00UTC.  However, some Microconferences do start early, so
+> > check out the timetable:
+> >
+> > https://linuxplumbersconf.org/event/11/timetable/#20210924
+> >
+> > And on that note: we'll be running an hour longer today (finishing at
+> > 19:00 UTC) to accommodate the closing keynote which will include a
+> > beer BoF, the traditional show your pets Gala and a discussion of the
+> > results of the 30 years of linux survey.  A reminder to those
+> > procrastinators among you: please fill out the looking forwards to the
+> > next thirty years survey here:
+>
+> I regret to write to tell you that I will not be attending the closing
+> bof.
+>
+> I need to get into the same room and talk things out with Christian
+> Brauner.  Currently he has been refusing fixing security bugs in
+> idmapped mounts for several releases, and I just haven't had the
+> time/energy to deal with it.  Thankfully not much is using idmapped
+> mounts yet, and the issues don't affect the code unless you are have
+> enabled idmapped mounts.
+>
+> Last year was a disaster in failed communications and agreements on what
+> we should do.  This year the microconference was very much toned down,
+> and we did not manage to resolve anything.
+>
+> So my apologies but unfortunately for me the not-in-person setting
+> really has really made LPC not worth attending this year.
+>
 
-I'd like to propose a slight modification to the API: a single RWF
-flag called RWF_RECOVER_DATA. On read, this means the storage tries
-to read all the data it can from the range, and for the parts it
-can't read data from (cachelines, sectors, whatever) it returns as
-zeroes.
+I'm expanding the Cc on this since this has crossed a clear line now.
 
-On write, this means the errors over the range get cleared and the
-user data provided gets written over the top of whatever was there.
-Filesystems should perform this as an exclusive operation to that
-range of the file.
+You have claimed on two occasions on the PR itself (cf. [1]) and in a
+completely unrelated thread on fsdevel (cf. [2]) that there exist bugs in the
+current implementation.
+On both occasions (cf. [3], [4]) we have responded and asked you to please
+disclose those bugs and provide reproducers. You have not responded on both
+occasions.
 
-That way we only need one IOCB_RECOVERY flag, and for communicating
-with lower storage layers (e.g. dm/md raid and/or hardware) only one
-REQ_RECOVERY flag is needed in the bio.
+I ask you to stop spreading demonstrably false information such as that we are
+refusing to fix bugs. The links clearly disprove your claims.
+We are more than happy to fix any bugs that exist. But we can't if we don't
+know what they are.
 
-Thoughts?
+If it is true that there are bugs that you have known about for over a year
+that you haven't disclosed then this is extremely irresponsible.
 
-Cheers,
+This outlandish approach towards technical conflict resolution that you have
+chosen for the last year has turned any potential future bug in the
+implementation of a complicated patchset into a hugely political thing.
+I refuse to let that happen. If there are bugs we fix them just like we always
+do. We don't use bugs as political pawns to score points or attack our peers.
+We come together as a community to fix them and then we move on.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Last week during LPC you were in the same room with me and others for 4 hours
+straight on Monday. You were also present in the talk I gave on this in the
+filesystem MC with opportunity for discussion after the talk.
+Your contribution to this discussion was a single line in the chat:
+"Please fix the implementation bugs before you relax the permissions."
+
+You could have handed in a session to any of those two MCs, you could've asked
+for a hackroom meeting, you could've approached us in the chat. None of that
+happened. What happened was yet another very unpleasant passive-aggressive
+attack.
+
+I've been asking a lot of people for advice on how to deal with this since this
+isn't the first time you resort to this strategy. The new mount API is another
+example where you kept claiming serious bugs exist but never provided proof.
+
+I was fine with ascribing a good chunk of this behavior to a lack in some basic
+developer and maintainer etiquette but this mail has crossed a line for me.
+Other developers literally come up to me and ask me what's going on there. To
+which I have no real answer.
+But this recent mail has a crossed a line for me because you're now even coming
+after me by going through third parties spreading demonstrably false
+information at a public event that I'm helping organize. This needs to stop!
+
+Frankly, all of this has eroded any trust I have in you as a maintainer. None
+of this has bee good faith for a while now.
+Please, provide the details and reproducers on the bugs so we can discuss them
+or send patches with tests. I will happily pick them up and send them to Linus.
+
+Christian
+
+[1]: https://lore.kernel.org/lkml/20210213130042.828076-1-christian.brauner@ubuntu.com/T/#m3a9df31aa183e8797c70bc193040adfd601399ad
+[2]: https://lore.kernel.org/lkml/m1r1ifzf8x.fsf@fess.ebiederm.org
+[3]: https://lore.kernel.org/lkml/20210213130042.828076-1-christian.brauner@ubuntu.com/T/#m59cdad9630d5a279aeecd0c1f117115144bc15eb
+[4]: https://lore.kernel.org/lkml/20210510125147.tkgeurcindldiwxg@wittgenstein
