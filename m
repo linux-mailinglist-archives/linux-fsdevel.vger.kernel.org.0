@@ -2,72 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8771D4194FB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 15:22:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADFD44195ED
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 16:06:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234342AbhI0NXr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Sep 2021 09:23:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56286 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234158AbhI0NXo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Sep 2021 09:23:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 76C5D6109F;
-        Mon, 27 Sep 2021 13:22:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632748926;
-        bh=Das70DqAnDl+vU2D9E9K2Sm7+IL1whzT5AdV7Cv64RI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=OOFnIZyHjl73BWpGX+Odm656Lyv/9q2gXQ5Nzg06FS72+jSBjAT3ye3rcK6JThKXn
-         ogfnUKFoKLZanzkbm/eyK8AX5kJqeDCFCRdDTauFJQU/n3K+RYlD4dksXT6dbd6PXy
-         eCfZivWVyPXsL9sUsyfpTVD5+9jxIC+chV2ckEWXiOquv9WPcj8YTutekB71mT2f32
-         SCPn96NDRZCYC/GDdYXQ0c2excIFUXZK4s3EjL8v0VgM5SztqdrVgMO3VED5lN79nH
-         ItpHfQLkAM2rm+RlVi/jpV/zvNo6b9x/Si1W647vCGpGji1+JviZxWTT79PrUfP9T7
-         IHQkyKOCYQVJw==
-Received: by mail-wr1-f41.google.com with SMTP id x20so7258258wrg.10;
-        Mon, 27 Sep 2021 06:22:06 -0700 (PDT)
-X-Gm-Message-State: AOAM531lU+jpoVCRr0nmhF2srpF92s0jtH/8jIS6aFm85r90EZ8TmcFb
-        LmF57NITeiGMe+r+cZICb5o8simtwy0Ala01g7M=
-X-Google-Smtp-Source: ABdhPJwd+GjhtNJa0Ksv9WnIRk55xwwRShFQt0ktXM1OP+lbfAd9C7QYDfCYsXPfvRbsZgn+i5G1Bmd2QLm1EhnryJs=
-X-Received: by 2002:a5d:4b50:: with SMTP id w16mr27916738wrs.71.1632748925101;
- Mon, 27 Sep 2021 06:22:05 -0700 (PDT)
+        id S234461AbhI0OH6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Sep 2021 10:07:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:59567 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234691AbhI0OH4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Sep 2021 10:07:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1632751578;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Njho4Z4V5IX6IqXLiubSzD1xQsvCLZJLI7bOJydcHoY=;
+        b=D5rvBJWR+WiQAbJYjL45iXu6ZrV3xBv871tF2QA3kwFYzgGPnd8cfJV996YvlGMDN1VRIW
+        daKQ9aum0v3jVVzs9CWWFTNYalxSAn1gTHQLsoCnB9XsYzzZIEh5HQ3DDejmwPlHoDY70B
+        u6FDtsU8NBY6OVq7uXkeknW0UDnVKwQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-503-gV7HNcYQMLCDryw8qDYK9g-1; Mon, 27 Sep 2021 10:06:16 -0400
+X-MC-Unique: gV7HNcYQMLCDryw8qDYK9g-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id F0E913626F;
+        Mon, 27 Sep 2021 14:06:14 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.16.225])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C5F586A900;
+        Mon, 27 Sep 2021 14:05:57 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 342E3222E4F; Mon, 27 Sep 2021 10:05:57 -0400 (EDT)
+Date:   Mon, 27 Sep 2021 10:05:57 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Colin Walters <walters@verbum.org>, linux-fsdevel@vger.kernel.org,
+        virtio-fs@redhat.com, selinux@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        chirantan@chromium.org, Miklos Szeredi <miklos@szeredi.hu>,
+        stephen.smalley.work@gmail.com, Daniel J Walsh <dwalsh@redhat.com>
+Subject: Re: [PATCH 2/2] fuse: Send security context of inode on file creation
+Message-ID: <YVHPxYRnZvs/dH7N@redhat.com>
+References: <20210924192442.916927-1-vgoyal@redhat.com>
+ <20210924192442.916927-3-vgoyal@redhat.com>
+ <a02d3e08-3abc-448a-be32-2640d8a991e0@www.fastmail.com>
+ <YU5gF9xDhj4g+0Oe@redhat.com>
+ <8a46efbf-354c-db20-c24a-ee73d9bbe9d6@schaufler-ca.com>
 MIME-Version: 1.0
-References: <20210927094123.576521-1-arnd@kernel.org> <40217483-1b8d-28ec-bbfc-8f979773b166@redhat.com>
- <20210927130253.GH2083@kadam>
-In-Reply-To: <20210927130253.GH2083@kadam>
-From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Mon, 27 Sep 2021 15:21:49 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a3YFh4QTC6dk6onsaKcqCM3Nmb2JhMXK5QdZpHtffjyLg@mail.gmail.com>
-Message-ID: <CAK8P3a3YFh4QTC6dk6onsaKcqCM3Nmb2JhMXK5QdZpHtffjyLg@mail.gmail.com>
-Subject: Re: [PATCH] vboxsf: fix old signature detection
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        linux-sparse@vger.kernel.org,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8a46efbf-354c-db20-c24a-ee73d9bbe9d6@schaufler-ca.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 27, 2021 at 3:02 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> GCC handles it the same way as Clang.  '\377' is -1 but in Sparse it's
-> 255.  I've added the Sparse mailing list to the CC.
+On Sun, Sep 26, 2021 at 05:53:11PM -0700, Casey Schaufler wrote:
+> On 9/24/2021 4:32 PM, Vivek Goyal wrote:
+> > On Fri, Sep 24, 2021 at 06:00:10PM -0400, Colin Walters wrote:
+> >>
+> >> On Fri, Sep 24, 2021, at 3:24 PM, Vivek Goyal wrote:
+> >>> When a new inode is created, send its security context to server along
+> >>> with creation request (FUSE_CREAT, FUSE_MKNOD, FUSE_MKDIR and FUSE_SYMLINK).
+> >>> This gives server an opportunity to create new file and set security
+> >>> context (possibly atomically). In all the configurations it might not
+> >>> be possible to set context atomically.
+> >>>
+> >>> Like nfs and ceph, use security_dentry_init_security() to dermine security
+> >>> context of inode and send it with create, mkdir, mknod, and symlink requests.
+> >>>
+> >>> Following is the information sent to server.
+> >>>
+> >>> - struct fuse_secctx.
+> >>>   This contains total size of security context which follows this structure.
+> >>>
+> >>> - xattr name string.
+> >>>   This string represents name of xattr which should be used while setting
+> >>>   security context. As of now it is hardcoded to "security.selinux".
+> >> Any reason not to just send all `security.*` xattrs found on the inode? 
+> >>
+> >> (I'm not super familiar with this code, it looks like we're going from the LSM-cached version attached to the inode, but presumably since we're sending bytes we can just ask the filesytem for the raw data instead)
+> > So this inode is about to be created. There are no xattrs yet. And
+> > filesystem is asking LSMs, what security labels should be set on this
+> > inode before it is published. 
+> 
+> No. That's imprecise. It's what SELinux does. An LSM can add any
+> number of attributes on inode creation, or none. These attributes
+> may or may not be "security labels". Assuming that they are is the
+> kind of thinking that leads people like Linus to conclude that the
+> LSM community is clueless.
+> 
+> 
+> >
+> > For local filesystems it is somewhat easy. They are the one creating
+> > inode and can set all xattrs/labels before inode is added to inode
+> > cache.
+> >
+> > But for remote like filesystems, it is more tricky. Actual inode
+> > creation first will happen on server and then client will instantiate
+> > an inode based on information returned by server (Atleast that's
+> > what fuse does).
+> >
+> > So security_dentry_init_security() was created (I think by NFS folks)
+> > so that they can query the label and send it along with create
+> > request and server can take care of setting label (along with file
+> > creation).
+> >
+> > One limitation of security_dentry_init_security() is that it practically
+> > supports only one label. And only SELinux has implemented. So for
+> > all practical purposes this is a hook to obtain selinux label. NFS
+> > and ceph already use it in that way.
+> >
+> > Now there is a desire to be able to return more than one security
+> > labels and support smack and possibly other LSMs. Sure, that great.
+> > But I think for that we will have to implement a new hook which
+> > can return multiple labels and filesystems like nfs, ceph and fuse
+> > will have to be modified to cope with this new hook to support
+> > multiple lables. 
+> >
+> > And I am arguing that we can modify fuse when that hook has been
+> > implemented. There is no point in adding that complexity in fuse
+> > code as well all fuse-server implementations when there is nobody
+> > generating multiple labels. We can't even test it.
+> 
+> There's a little bit of chicken-and-egg going on here.
+> There's no point in accommodating multiple labels in
+> this code because you can't have multiple labels. There's
+> no point in trying to support multiple labels because
+> you can't use them in virtiofs and a bunch of other
+> places.
 
-More specifically, ' think '\377' may be either -1 or 255 depending on
-the architecture.
-On most architectures, 'char' is implicitly signed, but on some others
-it is not.
+Once security subsystem provides a hook to support multiple lables, then
+atleast one filesystem will have to be converted to make use of this new
+hook at the same time and rest of the filesystems can catch up later.
 
-The original code before 9d682ea6bcc7 should have worked either way because
-both sides of the comparison were the same 'char' type, marking one of them
-as explicitly 'unsigned char' seems to have broken all architectures on which
-the type is implicitly 'signed'.
+Vivek
 
-       Arnd
