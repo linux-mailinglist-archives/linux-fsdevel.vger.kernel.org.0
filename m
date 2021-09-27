@@ -2,85 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 483F7419E5F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 20:35:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00023419E6E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 20:40:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236130AbhI0Sgx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Sep 2021 14:36:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59478 "EHLO
+        id S236270AbhI0SmJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Sep 2021 14:42:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236117AbhI0Sgx (ORCPT
+        with ESMTP id S236238AbhI0SmI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Sep 2021 14:36:53 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB653C061575
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 11:35:14 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id y26so42111377lfa.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 11:35:14 -0700 (PDT)
+        Mon, 27 Sep 2021 14:42:08 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99D03C061604;
+        Mon, 27 Sep 2021 11:40:29 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id g41so81316005lfv.1;
+        Mon, 27 Sep 2021 11:40:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+jIsaeZxB9iIHx2Xlr4ffwG7DDOBE7KZeGUWD2K48eI=;
-        b=DGnGiVsWgNqibsS1Ab5nKqt7YSbGTS5Tcr0kHz7SyALq+hN2DJXB66SHS6HvDYU2RC
-         wX6Jz58IJLYRva+k9kqC0ZdmYbOQu/f6gkWyrVI5GZXHj+f/rVDt+ctTpvanz5gi9wji
-         /kiqtD3eiPtfH8Ab50k3VlieyRneSVxG+cw9U=
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=pdr5O+ncPIf9G/2QSda1ETX+uwxMJUuxX92fOEy4vzw=;
+        b=DFqRWuh/WI82L2FmoCvszLqKef36S6o7+A8JQPZ2WMKppSliKsG/GH/qgXZX50DdyZ
+         8bui0C2oTOAdOQw6CnvLCbY8gWXSHGyLyl49unOe7bm2aLsLwKW3th2rtT9JkdbWQCsT
+         kqDq1IwX7Gp6bcEu3f5TIcTTTBn937KTGfeU8gJANo02MqFi37lLGS/lX4PbMyeBNqLq
+         RpiojMnHsp6Dk+1O9J1kft7w02rGDeRFfSLRY9k9f5tQ1ZjJtpHXA/IcX8TNYwrm7NKM
+         xXgKn1uJkSj1hR727iFIHLf7IFyO9t09lTeL/X5Awxhzyh059KtRyzwndsyOoW/ArFHc
+         3c0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+jIsaeZxB9iIHx2Xlr4ffwG7DDOBE7KZeGUWD2K48eI=;
-        b=fSmPZcqv3GCr66Duo6k/24Zeda95DUY3SdQkhRP2yy7KqXF2G4+isGoV8rxvAQRwTI
-         5VgeM4weePeJhD5WWsoBak/BdVQIUj/SqgvNNo6zXBQdwbvVyWdRxOdxyy8uVu5F3LaE
-         D9qLWbJGk4ijQBkEXJUgjTd4WXSgN4CQCuC+AsNwNqDRRy55uLwpF2KwFNnVr9VmOcB7
-         vu1kgHSB+KCLLTVLDQO/RAd3/detE418f2jN8uMPDnTsMIpN02kUc0rb4hdiUN2nCJwG
-         zf+4wAoqCJzz6WScGAPr9Ih4wmO5il6cdtlzqb4Yt7wuBPvPfkjeuLTB/7WpXCqiPBVN
-         Rl9Q==
-X-Gm-Message-State: AOAM531/zgYk31kPVdLjywZS1USgvv0JFX65EbXSO9sjLsBzimFzYdn8
-        YTnTJoVmdyJF+fHSssGhEpsJccYoyeF71iBbIhE=
-X-Google-Smtp-Source: ABdhPJxRjyMR9MpDUHiT0KUygLJd/yiEA9I2WfuHsW8FRaKFdYpRlV2PP0NFcIVof/V3nB/wYltLNA==
-X-Received: by 2002:a05:6512:360e:: with SMTP id f14mr1231207lfs.646.1632767712895;
-        Mon, 27 Sep 2021 11:35:12 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id n19sm2078413ljc.11.2021.09.27.11.35.11
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Sep 2021 11:35:11 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id e15so81656872lfr.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 11:35:11 -0700 (PDT)
-X-Received: by 2002:a2e:bc1e:: with SMTP id b30mr1347010ljf.191.1632767710543;
- Mon, 27 Sep 2021 11:35:10 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=pdr5O+ncPIf9G/2QSda1ETX+uwxMJUuxX92fOEy4vzw=;
+        b=7xXOfMoD4LELehQJN+iKIOyE//xGYaHpFlDkzkc7sXLXaPpp2i+tGfEhHX6XFVmi0d
+         w8Bga6/vePxl+E3qsvl09ctuhZyCCVqDVSjh58RTq9qcV9eg7/IYyhBb0RFuFLqH9+2p
+         hfl4F9BGbaCMXAh/+QgJTlw7/exxJk2qVG9ZBPJJCLup/821EYu31tkQ/uXdTVdhsgBs
+         epkBGgre1Cxgo+WxZIm5iqD45lsNxHi3SY16QmbE9y2u+9KjXaqeCxK3izYklvxdwkor
+         qNfSyqqZtgCKegR13UObfMsQ3iduhH/qBTlC46PT10TVTysTTNiN4XAn8VZFvmbH2qdU
+         i/1A==
+X-Gm-Message-State: AOAM531eC12S1kz446LXqmjXgO/mnZVuqvIUKue26Oa/0hb0tcYLcNQv
+        s4xtVS0kiFBxnX5l3yyxwpQ=
+X-Google-Smtp-Source: ABdhPJzYFkq1H+2xH0kzZSyFuHyPhJ+vpWU9lbI/8TpLYsEf+HVRRRl1hUVv9fQqNQlHC8/DaywkfA==
+X-Received: by 2002:a2e:8041:: with SMTP id p1mr1440263ljg.158.1632768027968;
+        Mon, 27 Sep 2021 11:40:27 -0700 (PDT)
+Received: from kari-VirtualBox ([31.132.12.44])
+        by smtp.gmail.com with ESMTPSA id b2sm942155lff.289.2021.09.27.11.40.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Sep 2021 11:40:27 -0700 (PDT)
+Date:   Mon, 27 Sep 2021 21:40:24 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/3] fs/ntfs3: Fix memory leak if fill_super failed
+Message-ID: <20210927184024.m6jarhnrdrhlwnop@kari-VirtualBox>
+References: <16cbff75-f705-37cb-ad3f-43d433352f6b@paragon-software.com>
+ <f34b8f25-96c7-16d6-1e1c-6bb6c5342edd@paragon-software.com>
 MIME-Version: 1.0
-References: <YUvWm6G16+ib+Wnb@moria.home.lan> <bc22b4d0-ba63-4559-88d9-a510da233cad@suse.cz>
- <YVIFNf/xZwlrWstK@moria.home.lan>
-In-Reply-To: <YVIFNf/xZwlrWstK@moria.home.lan>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 27 Sep 2021 11:34:54 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjaL3xcv6LL=1+WdaicaDngvNOTCYU5c9UF_MTsibWBSw@mail.gmail.com>
-Message-ID: <CAHk-=wjaL3xcv6LL=1+WdaicaDngvNOTCYU5c9UF_MTsibWBSw@mail.gmail.com>
-Subject: Re: Struct page proposal
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f34b8f25-96c7-16d6-1e1c-6bb6c5342edd@paragon-software.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 27, 2021 at 10:54 AM Kent Overstreet
-<kent.overstreet@gmail.com> wrote:
->
-> That list_head is the problematic one. Why do we need to be able to take a page
-> from the middle of a freelist?
+On Mon, Sep 27, 2021 at 06:47:14PM +0300, Konstantin Komarov wrote:
+> Restore fc->s_fs_info to free memory allocated in ntfs_init_fs_context.
+> 
+> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> ---
+>  fs/ntfs3/super.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+> index 800897777eb0..7099d9b1f3aa 100644
+> --- a/fs/ntfs3/super.c
+> +++ b/fs/ntfs3/super.c
+> @@ -1308,6 +1308,9 @@ int ntfs_discard(struct ntfs_sb_info *sbi, CLST lcn, CLST len)
+>  	if (err == -EOPNOTSUPP)
+>  		sbi->flags |= NTFS_FLAGS_NODISCARD;
+>  
+> +	/* Restore fc->s_fs_info to free memory allocated in ntfs_init_fs_context. */
+> +	fc->s_fs_info = sbi;
 
-At least for the merging with the buddy page case.
+Won't build and I do not understand what this does in ntfs_discard.
 
-          Linus
+> +
+>  	return err;
+>  }
+>  
+> -- 
+> 2.33.0
+> 
+> 
