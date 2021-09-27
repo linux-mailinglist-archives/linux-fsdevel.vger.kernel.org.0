@@ -2,177 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F062841984D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 17:57:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5657419888
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 18:08:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235265AbhI0P6u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Sep 2021 11:58:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:49082 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235228AbhI0P6t (ORCPT
+        id S235371AbhI0QJg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Sep 2021 12:09:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52700 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235363AbhI0QJf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Sep 2021 11:58:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1632758231;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AlRCPh37Loit+Vru7do+VP8cV/ayro5qgSbPjFWAWOg=;
-        b=NmCN810v0SLkJnpv8lDfjHKrhZFlmxhHovBRsFh1CGSORD3cneNqF2lTYZmBeTNViXeXFz
-        SbRlhP2l7c7yTHtOPXKkSyTRoQGYidzcSjyG5Olx8xROysBZViHAK3VQK00CEUEaC/mg+z
-        zgrULo8tkBBbUfjD8vrPheK5e+Bn5Zc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-56-KsPMmEumOBW5VSB8Z46SLw-1; Mon, 27 Sep 2021 11:57:08 -0400
-X-MC-Unique: KsPMmEumOBW5VSB8Z46SLw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5B9871922962;
-        Mon, 27 Sep 2021 15:57:06 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.16.225])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0A4241972E;
-        Mon, 27 Sep 2021 15:56:55 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 8CD17222E4F; Mon, 27 Sep 2021 11:56:54 -0400 (EDT)
-Date:   Mon, 27 Sep 2021 11:56:54 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Colin Walters <walters@verbum.org>, linux-fsdevel@vger.kernel.org,
-        virtio-fs@redhat.com, selinux@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        chirantan@chromium.org, Miklos Szeredi <miklos@szeredi.hu>,
-        stephen.smalley.work@gmail.com, Daniel J Walsh <dwalsh@redhat.com>
-Subject: Re: [PATCH 2/2] fuse: Send security context of inode on file creation
-Message-ID: <YVHpxiguEsjIHTjJ@redhat.com>
-References: <20210924192442.916927-1-vgoyal@redhat.com>
- <20210924192442.916927-3-vgoyal@redhat.com>
- <a02d3e08-3abc-448a-be32-2640d8a991e0@www.fastmail.com>
- <YU5gF9xDhj4g+0Oe@redhat.com>
- <8a46efbf-354c-db20-c24a-ee73d9bbe9d6@schaufler-ca.com>
- <YVHPxYRnZvs/dH7N@redhat.com>
- <753b1417-3a9c-3129-1225-ca68583acc32@schaufler-ca.com>
+        Mon, 27 Sep 2021 12:09:35 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40239C061575
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 09:07:57 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id v19so12794623pjh.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 09:07:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=CBaIVDF4UN9VVYwJROukTIUHRk1VcAmSIyvI/1GuY6U=;
+        b=T7xGNAbIwgWoQjmHAfjCyFlxZGmZwVgJp13QAcq9bF1OoppgBW2WkXPGLJksJenBai
+         D+5aHtV9bQMmEjbzueuvY4vPf9AE74CBuT3P05dfHp/OCyyMhpnV5CdRPt+he8hrO6mo
+         LnsFPrM4csxIeGPyIxIU0mJ9LzFhT1kne6pBl5she3hl6nVOklpcV1dfO4zW2Th7GRN/
+         G35PhgJyr3oGGDXkWUgty3HI6mfowgvts5bhUZ0kq+Rxfb+59MpjGhHFODaON7iy0iiM
+         JR5ocMzOQwI/6O/Kqxcof7KhSwGZC3LUFOAW0X3wSiL51FHBFdUd7Azy48rMLavEFeux
+         ORbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=CBaIVDF4UN9VVYwJROukTIUHRk1VcAmSIyvI/1GuY6U=;
+        b=5fuLgb6cap/84TIfNQwKafM1YYTT2OVwSSKe1RYWvzGxzbcYHG0sCKAMGbGI9vi4dX
+         glPnv9BQdq2t6+z79ALIhmcR5YMxcd0wDaRqU+3geoOZ0l/PzZn5dZBaBNBZ0HjB8M9U
+         XxPFjYDx0jU5tXqgdJ4N0m3BxGD8/g5uyG7MJ+jbknzMfVKtaWPAUnbhAuDmYUyB5GQ6
+         o4VYdt2CFhNxESgrnpdJcoHyiL4djf7EcB94gngGHhl4FxsWlGnPDcYDA8ghpGAEfTYM
+         A6bxiqGyiTyKe1JssbweJyG4StL3X8Ge5ZZt9ToRcD/DWToFi6Wz1dk+4fqpsbEVpSc1
+         0I8Q==
+X-Gm-Message-State: AOAM532wjMek1vHqDSNDYnFC2mZwOVNEL1u5YatYzADezqdBfrTAo4FP
+        jVKBiEkKFGn1NjNUyxB0Xn9gAw==
+X-Google-Smtp-Source: ABdhPJwDaKS2HT0eEsDrjIENTUe9qQL4tA5WiU/rZM9D+/g6ip8neC4z6hkG15pQ2d/r2fMoMdD1jA==
+X-Received: by 2002:a17:90a:ca96:: with SMTP id y22mr9642043pjt.115.1632758876549;
+        Mon, 27 Sep 2021 09:07:56 -0700 (PDT)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id i2sm16110859pfa.34.2021.09.27.09.07.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Sep 2021 09:07:55 -0700 (PDT)
+Date:   Mon, 27 Sep 2021 16:07:51 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Marco Elver <elver@google.com>,
+        syzbot <syzbot+d08efd12a2905a344291@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [syzbot] upstream test error: KFENCE: use-after-free in
+ kvm_fastop_exception
+Message-ID: <YVHsV+o7Ez/+arUp@google.com>
+References: <000000000000d6b66705cb2fffd4@google.com>
+ <CACT4Y+ZByJ71QfYHTByWaeCqZFxYfp8W8oyrK0baNaSJMDzoUw@mail.gmail.com>
+ <CANpmjNMq=2zjDYJgGvHcsjnPNOpR=nj-gQ43hk2mJga0ES+wzQ@mail.gmail.com>
+ <CACT4Y+Y1c-kRk83M-qiFY40its+bP3=oOJwsbSrip5AB4vBnYA@mail.gmail.com>
+ <YUpr8Vu8xqCDwkE8@google.com>
+ <CACT4Y+YuX3sVQ5eHYzDJOtenHhYQqRsQZWJ9nR0sgq3s64R=DA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <753b1417-3a9c-3129-1225-ca68583acc32@schaufler-ca.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <CACT4Y+YuX3sVQ5eHYzDJOtenHhYQqRsQZWJ9nR0sgq3s64R=DA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 27, 2021 at 08:22:48AM -0700, Casey Schaufler wrote:
-> On 9/27/2021 7:05 AM, Vivek Goyal wrote:
-> > On Sun, Sep 26, 2021 at 05:53:11PM -0700, Casey Schaufler wrote:
-> >> On 9/24/2021 4:32 PM, Vivek Goyal wrote:
-> >>> On Fri, Sep 24, 2021 at 06:00:10PM -0400, Colin Walters wrote:
-> >>>> On Fri, Sep 24, 2021, at 3:24 PM, Vivek Goyal wrote:
-> >>>>> When a new inode is created, send its security context to server along
-> >>>>> with creation request (FUSE_CREAT, FUSE_MKNOD, FUSE_MKDIR and FUSE_SYMLINK).
-> >>>>> This gives server an opportunity to create new file and set security
-> >>>>> context (possibly atomically). In all the configurations it might not
-> >>>>> be possible to set context atomically.
-> >>>>>
-> >>>>> Like nfs and ceph, use security_dentry_init_security() to dermine security
-> >>>>> context of inode and send it with create, mkdir, mknod, and symlink requests.
-> >>>>>
-> >>>>> Following is the information sent to server.
-> >>>>>
-> >>>>> - struct fuse_secctx.
-> >>>>>   This contains total size of security context which follows this structure.
-> >>>>>
-> >>>>> - xattr name string.
-> >>>>>   This string represents name of xattr which should be used while setting
-> >>>>>   security context. As of now it is hardcoded to "security.selinux".
-> >>>> Any reason not to just send all `security.*` xattrs found on the inode? 
-> >>>>
-> >>>> (I'm not super familiar with this code, it looks like we're going from the LSM-cached version attached to the inode, but presumably since we're sending bytes we can just ask the filesytem for the raw data instead)
-> >>> So this inode is about to be created. There are no xattrs yet. And
-> >>> filesystem is asking LSMs, what security labels should be set on this
-> >>> inode before it is published. 
-> >> No. That's imprecise. It's what SELinux does. An LSM can add any
-> >> number of attributes on inode creation, or none. These attributes
-> >> may or may not be "security labels". Assuming that they are is the
-> >> kind of thinking that leads people like Linus to conclude that the
-> >> LSM community is clueless.
-> >>
-> >>
-> >>> For local filesystems it is somewhat easy. They are the one creating
-> >>> inode and can set all xattrs/labels before inode is added to inode
-> >>> cache.
-> >>>
-> >>> But for remote like filesystems, it is more tricky. Actual inode
-> >>> creation first will happen on server and then client will instantiate
-> >>> an inode based on information returned by server (Atleast that's
-> >>> what fuse does).
-> >>>
-> >>> So security_dentry_init_security() was created (I think by NFS folks)
-> >>> so that they can query the label and send it along with create
-> >>> request and server can take care of setting label (along with file
-> >>> creation).
-> >>>
-> >>> One limitation of security_dentry_init_security() is that it practically
-> >>> supports only one label. And only SELinux has implemented. So for
-> >>> all practical purposes this is a hook to obtain selinux label. NFS
-> >>> and ceph already use it in that way.
-> >>>
-> >>> Now there is a desire to be able to return more than one security
-> >>> labels and support smack and possibly other LSMs. Sure, that great.
-> >>> But I think for that we will have to implement a new hook which
-> >>> can return multiple labels and filesystems like nfs, ceph and fuse
-> >>> will have to be modified to cope with this new hook to support
-> >>> multiple lables. 
-> >>>
-> >>> And I am arguing that we can modify fuse when that hook has been
-> >>> implemented. There is no point in adding that complexity in fuse
-> >>> code as well all fuse-server implementations when there is nobody
-> >>> generating multiple labels. We can't even test it.
-> >> There's a little bit of chicken-and-egg going on here.
-> >> There's no point in accommodating multiple labels in
-> >> this code because you can't have multiple labels. There's
-> >> no point in trying to support multiple labels because
-> >> you can't use them in virtiofs and a bunch of other
-> >> places.
-> > Once security subsystem provides a hook to support multiple lables, then
-> > atleast one filesystem will have to be converted to make use of this new
-> > hook at the same time and rest of the filesystems can catch up later.
-> 
-> Clearly you haven't been following the work I've been doing on
-> module stacking. That's completely understandable. There aren't
-> new hooks being added, or at least haven't been yet. Some of the
-> existing hooks are getting changed to provide the data required
-> for multiple security modules (e.g. secids become a set of secids).
-> Filesystems that support xattrs properly are unaffected because,
-> for all it's shortcomings, the LSM layer hides the details of
-> the security modules sufficiently. 
-> 
-> Which filesystem are you saying will have to "be converted"?
++Josh and PeterZ
 
-When I grep for "security_dentry_init_security()" in current code,
-I see two users, ceph and nfs.
-
-fs/ceph/xattr.c
-ceph_security_init_secctx()
-
-fs/nfs/nfs4proc.c
-nfs4_label_init_security()
-
-So looks like these two file systems will have to be converted
-(along with fuse).
-
-Vivek
-
-> NFS is going to require some work, but that's because it was
-> done as a special case for "MAC labels". The NFS support for
-> security.* xattrs came much later. This is one of the reasons
-> why I'm concerned about the virtiofs implementation you're
-> proposing. We were never able to get the NFS "MAC label"
-> implementation to work properly with Smack, even though there is
-> no obvious reason it wouldn't.
-> 
-> 
+On Mon, Sep 27, 2021, Dmitry Vyukov wrote:
+> On Wed, 22 Sept 2021 at 01:34, 'Sean Christopherson' via
+> syzkaller-bugs <syzkaller-bugs@googlegroups.com> wrote:
 > >
-> > Vivek
+> > On Fri, Sep 17, 2021, Dmitry Vyukov wrote:
+> > > On Fri, 17 Sept 2021 at 13:04, Marco Elver <elver@google.com> wrote:
+> > > > > So it looks like in both cases the top fault frame is just wrong. But
+> > > > > I would assume it's extracted by arch-dependent code, so it's
+> > > > > suspicious that it affects both x86 and arm64...
+> > > > >
+> > > > > Any ideas what's happening?
+> > > >
+> > > > My suspicion for the x86 case is that kvm_fastop_exception is related
+> > > > to instruction emulation and the fault occurs in an emulated
+> > > > instruction?
+> > >
+> > > Why would the kernel emulate a plain MOV?
+> > > 2a:   4c 8b 21                mov    (%rcx),%r12
+> > >
+> > > And it would also mean a broken unwind because the emulated
+> > > instruction is in __d_lookup, so it should be in the stack trace.
 > >
+> > kvm_fastop_exception is a red herring.  It's indeed related to emulation, and
+> > while MOV emulation is common in KVM, that emulation is for KVM guests not for
+> > the host kernel where this splat occurs (ignoring the fact that the "host" is
+> > itself a guest).
+> >
+> > kvm_fastop_exception is out-of-line fixup, and certainly shouldn't be reachable
+> > via d_lookup.  It's also two instruction, XOR+RET, neither of which are in the
+> > code stream.
+> >
+> > IIRC, the unwinder gets confused when given an IP that's in out-of-line code,
+> > e.g. exception fixup like this.  If you really want to find out what code blew
+> > up, you might be able to objdump -D the kernel and search for unique, matching
+> > disassembly, e.g. find "jmpq   0xf86d288c" and go from there.
 > 
+> Hi Sean,
+> 
+> Thanks for the info.
+> 
+> I don't want to find out what code blew (it's __d_lookup).
+> I am interested in getting the unwinder fixed to output truthful and
+> useful frames.
 
+I was asking about the exact location to confirm that the explosion is indeed
+from exception fixup, which is the "unwinder scenario get confused" I was thinking
+of.  Based on the disassembly from syzbot, that does indeed appear to be the case
+here, i.e. this
+
+  2a:   4c 8b 21                mov    (%rcx),%r12
+
+is from exception fixup from somewhere in __d_lookup (can't tell exactly what
+it's from, maybe KASAN?).
+
+> Is there more info on this "the unwinder gets confused"? Bug filed
+> somewhere or an email thread? Is it on anybody's radar?
+
+I don't know if there's a bug report or if this is on anyone's radar.  The issue
+I've encountered in the past, and what I'm pretty sure is being hit here, is that
+the ORC unwinder doesn't play nice with out-of-line fixup code, presumably because
+there are no tables for the fixup.  I believe kvm_fastop_exception() gets blamed
+because it's the first label that's found when searching back through the tables.
