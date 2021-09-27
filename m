@@ -2,81 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E449419231
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 12:24:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 866F04192F9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 13:19:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233806AbhI0KZx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Sep 2021 06:25:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233759AbhI0KZw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Sep 2021 06:25:52 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1214D60F6D;
-        Mon, 27 Sep 2021 10:24:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632738254;
-        bh=0aOydrFoj9rdoYW/inrYYjH1DD0dFF+hrVGxPuisMZI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=NNsKuk+f6pb0KyeXpv3p3KNdXyRUGsI0281odPObdSjzr18HUywXxk7QA84bEKFdC
-         1tEDbCfJ6CyRKBcnKzdnlpraoLIPvjfOUNFcLb4kHFcmHyLWqQAt6/cqt41hWu0Z5F
-         076B12c9FolL+wED9Al40dBI8+36QrnNmBg8Io2+oD9q7UqGziHxmrAWdKVESH/sgk
-         e0nllaWVyQ+Ak3JIzGzUrElbIbTSYeinjkZZmdXapT9UIk/euuIYoiHfGij40suCtm
-         dnI5URJI/y0ku7BtBFVziOec8QOsyscUf3ZuFez5J7iCN2d/Oj1HxwO8M00YuV51vL
-         pcA5zObmQZbTw==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [RESEND] [v2] posix-acl: avoid -Wempty-body warning
-Date:   Mon, 27 Sep 2021 12:23:56 +0200
-Message-Id: <20210927102410.1863853-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
+        id S233987AbhI0LVa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Sep 2021 07:21:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41166 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233897AbhI0LV2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Sep 2021 07:21:28 -0400
+Received: from gofer.mess.org (gofer.mess.org [IPv6:2a02:8011:d000:212::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EAD2C061575;
+        Mon, 27 Sep 2021 04:19:51 -0700 (PDT)
+Received: by gofer.mess.org (Postfix, from userid 1000)
+        id 57708C6378; Mon, 27 Sep 2021 12:19:48 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mess.org; s=2020;
+        t=1632741588; bh=L1IgKxhZY5SXX5K6KMNMmMoAQ5ow0lZMPAx3ekvRkS4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=K24bmRsrMc9DRtxys+PZDeNn6dCTA/bxCITgmLdSYim6GnmkoewHh0phtlM5LwL1N
+         JrH3JhI5Zi05esVR1Syu3vNLxAAmiB+eQmaIzwhGrFIm4m611++BPM38+WA12+p5vm
+         VD+KnYotzA0Rt7zX/hjOQ/1WlEhTufV9Q/SDwNQS8wM8KWb7K2T3ZCuEOWd6DnTFFn
+         nXRIqRX68xUEDrn/Sn+BaKvFlN9vzwGDuNaC16anag2sQ7xlX/dEw1XjaBLPvupAA4
+         GJUnHap/XTOQLGSFXmw8SkBdbJs+p/4/2IW90TB1oRgLVO6KHhILGaFS1i957+MgnK
+         fDxdgSVTSxFpQ==
+Date:   Mon, 27 Sep 2021 12:19:48 +0100
+From:   Sean Young <sean@mess.org>
+To:     Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Incorrect handling of . and .. files
+Message-ID: <20210927111948.GA16257@gofer.mess.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi,
 
-The fallthrough comment for an ignored cmpxchg() return value
-produces a harmless warning with 'make W=1':
+Windows allows files and directories called "." and ".." to be created
+using UNC paths, i.e. "\\?\D:\..". Now this is totally insane behaviour,
+but when an exfat filesytem with such a file is mounted on Linux, those
+files show up as another directory and its contents is inaccessible.
 
-fs/posix_acl.c: In function 'get_acl':
-fs/posix_acl.c:127:36: error: suggest braces around empty body in an 'if' statement [-Werror=empty-body]
-  127 |                 /* fall through */ ;
-      |                                    ^
+I can replicate this using exfat filesystems, but not ntfs.
 
-Simplify it as a step towards a clean W=1 build.  As all architectures
-define cmpxchg() as a statement expression these days, it is no longer
-necessary to evaluate its return code, and the if() can just be droped.
+This is what I did on Windows using rust:
 
-Reviewed-by: Christian Brauner <christian.brauner@ubuntu.com>
-Link: https://lore.kernel.org/all/20210322132103.qiun2rjilnlgztxe@wittgenstein/
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/posix_acl.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+	use std::fs::File;
+	use std::io::Write;
 
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index f5c25f580dd9..9323a854a60a 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -134,8 +134,7 @@ struct posix_acl *get_acl(struct inode *inode, int type)
- 	 * to just call ->get_acl to fetch the ACL ourself.  (This is going to
- 	 * be an unlikely race.)
- 	 */
--	if (cmpxchg(p, ACL_NOT_CACHED, sentinel) != ACL_NOT_CACHED)
--		/* fall through */ ;
-+	cmpxchg(p, ACL_NOT_CACHED, sentinel);
- 
- 	/*
- 	 * Normally, the ACL returned by ->get_acl will be cached.
--- 
-2.29.2
+	fn main() {
+	    let mut file =
+		File::create(r"\\?\D:\..").expect("create dot file");
+	    file.write_all(b"Hello, world!").expect("write dot file");
+	}
 
+Now on Linux (I also created a file called ".").
+
+[root@xywoleh tmp]# mount -t exfat /dev/loop0p1 /mnt
+[root@xywoleh tmp]# cd /mnt
+[root@xywoleh mnt]# ls -la
+total 20
+drwxr-xr-x. 5 root root 4096 Sep 27 11:47  .
+drwxr-xr-x. 5 root root 4096 Sep 27 11:47  .
+dr-xr-xr-x. 1 root root  176 Sep 21 11:05  ..
+dr-xr-xr-x. 1 root root  176 Sep 21 11:05  ..
+drwxr-xr-x. 2 root root 4096 Sep 27  2021 '$RECYCLE.BIN'
+drwxr-xr-x. 2 root root 4096 Sep 27  2021 'System Volume Information'
+
+Microsoft says this:
+
+https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#win32-file-namespaces
+
+	Because it turns off automatic expansion of the path string, the
+	"\\?\" prefix also allows the use of ".." and "." in the path names,
+	which can be useful if you are attempting to perform operations on a
+	file with these otherwise reserved relative path specifiers as part of
+	the fully qualified path.
+
+So, in Linux cannot read "." or ".." (i.e., I can't see "Hello, World!"). I
+don't know what the correct handling should be, but having two "." and two
+".." files does not seem right at all.
+
+Thanks,
+Sean
