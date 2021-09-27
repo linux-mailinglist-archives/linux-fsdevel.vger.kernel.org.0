@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 74076419923
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 18:38:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C5B241993E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 18:38:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235611AbhI0QkE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Sep 2021 12:40:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59766 "EHLO
+        id S235587AbhI0QkY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Sep 2021 12:40:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235556AbhI0Qju (ORCPT
+        with ESMTP id S235543AbhI0Qjv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Sep 2021 12:39:50 -0400
+        Mon, 27 Sep 2021 12:39:51 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A0D1C06176E;
-        Mon, 27 Sep 2021 09:38:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 709FDC061740;
+        Mon, 27 Sep 2021 09:38:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=ViIgC+NY70ewIWdw46wp+bLefSO1P1qcAe6/9HqsArM=; b=0zNOY4OK5w6fw13/HSl2FaUOOV
-        /GBsA/9oQDXBXR0PMDXB06j4at+EAsLkOOfoxlSfO8FZA5Oz0EB/2qvPNeEzqsttvV61CQr+qIWy2
-        og2lDnGaE/QNGPi45aw8Dl2Gb96VDc8HtYTuxX/p6S+4Y0hO+f/cTK30FPePfghhfkd1crWIkGRB3
-        eCzFpNHn+Y5nQBpLlBQ+rledw0r2siByUEemjyT3UYx3O7t5O7S9Q7cVevMjrvhh/EMY/CxlXb/1a
-        kdx7NgEmvZJiigx+vGjvE3/5a9rYjyGFzee694Xekpinl69m7INpG2ek0Ho1Wprcdb/ErovfjetLj
-        bnPy0VcQ==;
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=Z9fpf5M0U5jTveKWcwBUGzCZsVjpRJIF7aylaLlST7c=; b=CZ5Qau7hpz3VUfKrXkmM9AwvEp
+        OuJEe3mDSynNQ1LBo/Y3rtk8Pz7ecl4VdIq7ec9I+c2amqbk3yFYXkA2VP+UlXoPJXQ2p8VO77hgh
+        EyHKpwfPP1Z3pBVlnR4JmSb7gC86/s5rtEe2LnjFcbg1KQOGcnNTvSYm+yYDnpHjl8ZRxpm+hFT/M
+        o0CHsrQIYxqxeV3Fa52txpDuXKEe7FXKbrGCZ/Az/AQszJ8fGlWThJdb14J4J40s+W4z04SoxlsRc
+        sWm6NwsBIfp8sSOtxHDYqe+x8ey9fyND98aJByOoMd/25OplGmrRmg4nEgv/UdNVbEdH6Jg38PdYL
+        nTYenckQ==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mUtdm-003ORt-BA; Mon, 27 Sep 2021 16:38:06 +0000
+        id 1mUtdm-003ORv-D8; Mon, 27 Sep 2021 16:38:06 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     tj@kernel.org, gregkh@linuxfoundation.org,
         akpm@linux-foundation.org, minchan@kernel.org, jeyu@kernel.org,
@@ -36,11 +36,22 @@ Cc:     bvanassche@acm.org, dan.j.williams@intel.com, joe@perches.com,
         rostedt@goodmis.org, linux-spdx@vger.kernel.org,
         linux-doc@vger.kernel.org, linux-block@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v8 00/12] syfs: generic deadlock fix with module removal
-Date:   Mon, 27 Sep 2021 09:37:53 -0700
-Message-Id: <20210927163805.808907-1-mcgrof@kernel.org>
+        linux-kernel@vger.kernel.org,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Kuno Woudt <kuno@frob.nl>,
+        Richard Fontana <fontana@sharpeleven.org>,
+        copyleft-next@lists.fedorahosted.org,
+        Ciaran Farrell <Ciaran.Farrell@suse.com>,
+        Christopher De Nicolo <Christopher.DeNicolo@suse.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thorsten Leemhuis <linux@leemhuis.info>
+Subject: [PATCH v8 01/12] LICENSES: Add the copyleft-next-0.3.1 license
+Date:   Mon, 27 Sep 2021 09:37:54 -0700
+Message-Id: <20210927163805.808907-2-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210927163805.808907-1-mcgrof@kernel.org>
+References: <20210927163805.808907-1-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Luis Chamberlain <mcgrof@infradead.org>
@@ -48,143 +59,348 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a follow up to my v7 series of fixes for the zram driver [0]
-which ended up uncovering a generic deadlock issue with sysfs and module
-removal. I've reported this issue and proposed a few patches first since
-March 2021 [1]. At the end of this email you will find an itemized list
-of changes since that v1 series, you can also find these changes on my
-branch 20210927-sysfs-generic-deadlock-fix [4] which is based on
-linux-next tag next-20210927.
+Add the full text of the copyleft-next-0.3.1 license to the kernel
+tree as well as the required tags for reference and tooling.
+The license text was copied directly from the copyleft-next project's
+git tree [0].
 
-Just a heads up, I'm goin on vacation in two days, won't be back until
-Monday October 11th.
+Discussion of using copyleft-next-0.3.1 on Linux started since June,
+2016 [1]. In the end Linus' preference was to have drivers use
+MODULE_LICENSE("GPL") to make it clear that the GPL applies when it
+comes to Linux [2]. Additionally, even though copyleft-next-0.3.1 has
+been found to be to be GPLv2 compatible by three attorneys at SUSE and
+Redhat [3], to err on the side of caution we simply recommend to
+always use the "OR" language for this license [4].
 
-On this v8 I incorporate feedback from the v7 series, namely:
+Even though it has been a goal of the project to be GPL-v2 compatible
+to be certain in 2016 I asked for a clarification about what makes
+copyleft-next GPLv2 compatible and also asked for a summary of
+benefits. This prompted some small minor changes to make compatibility
+even further clear and as of copyleft 0.3.1 compatibility should
+be crystal clear [5].
 
- - Tejun requested I move the struct module to the last attribute when
-   extending functions
- - As per discussion with Tejun, trimmed and clarified the commit log
-   and documentation on the generic fix on patch 7
- - As requested by Bart Van Assche, I simplied the setting of the
-   struct test_config *config into one line instead of two on many
-   places on patch 3 which adds the new sysfs selftest
- - Dan Williams had some questions about patch 7, and so clarified these
-   questions using a more elaborate example on the commit log to show
-   where the lock call was happening.
- - Trimmed the Cc list considerably as it was way too long before
- - Rebased onto linux-next tag next-20210927
+The summary of why copyleft-next 0.3.1 is compatible with GPLv2
+is explained as follows:
 
-Below a list of changes of this patch set since its inception:
+  Like GPLv2, copyleft-next requires distribution of derivative works
+  ("Derived Works" in copyleft-next 0.3.x) to be under the same license.
+  Ordinarily this would make the two licenses incompatible. However,
+  copyleft-next 0.3.1 says: "If the Derived Work includes material
+  licensed under the GPL, You may instead license the Derived Work under
+  the GPL." "GPL" is defined to include GPLv2.
 
-On v1:
-  - Open coded the sysfs deadlock race to only be localized by the zram
-    driver
-Changes on v2:
-  - used bdgrab() as well for another race which was speculated by
-    Minchan
-  - improved documentation of fixes
-Changes on v3:
-  - used a localized zram macros for the sysfs attributes instead of
-    open coding on each routine
-  - replaced bdget() stuff for a generic get_device() and bus_get() on
-    dev_attr_show() / dev_attr_store() for the issue speculated by
-    Michan
-Changes on v4:
-  - Cosmetic fixes on the zram fixes as requested by Greg
-  - Split out the driver core fix as requested by Greg for the
-    issue speculated by Michan. This fix ended up getting up to its 4th
-    patch iteration [2] and eventually hit linux-next. We got a 0day
-    0day suspend stres fail for this patch [3]
-Changes on v5:
-  - I ended up writing a test_sysfs driver and with it I ended up
-    proving that the issue speculated by Michen was not possible and
-    so I asked Greg to drop the patch from his queue titled
-    "sysfs: fix kobject refcount to address races with kobject removal"
-  - checkpatch fixes for the zram changes
-Changes on v6:
-  - I submitted my test_sysfs driver for inclusion upstream which easily
-    abstracted the deadlock issue in a driver generically [4]
-  - I rebased the zram fixes and added also a new patch for zram to use
-    ATTRIBUTE_GROUPS As per Minchen I sent the patches to be merged
-    through Andrew Morton.
-  - Greg ended up NACK'ing the patchset because he was not sure the fix
-    was correct still
-Changes on v7:
-  - Formalizes the original proposed generic sysfs fix intead of using
-    macro helpers to work around the issue
-  - I decided it is best to merge all the effort together into
-    one patch set because communication was being lost when I split the
-    patches up. This was not helping in any way to either fix the zram
-    issues or come to consensus on a generic solution. The patches are
-    also merged now because they are all related now.
-  - Running checkpatch exposed that S_IRWXUGO and S_IRWXU|S_IRUGO|S_IXUGO
-    should be replaced, so I did that in this series in two new patches
-  - Adds a try_module_get() documentation extension with tribal
-    knowledge and new information I don't think some folks still believe
-    in. The new test_sysfs selftest however proves this information to
-    be correct, the same selftest can be used to try to prove that
-    documentation incorrect
-  - Because the fix is now generic zram's deadlock can easily be fixed
-    now by just making it use ATTRIBUTE_GROUPS().
+In practice this means copyleft-next code in Linux may be licensed
+under the GPL2, however there are additional obvious gains for
+bringing contributions from Linux outbound where copyleft-next is
+preferred. A summary of benefits why projects outside of Linux might
+prefer to use copyleft-next >= 0.3.1 over GPLv2:
 
-[0] https://lkml.kernel.org/r/YUjLAbnEB5qPfnL8@slm.duckdns.org
-[1] https://lkml.kernel.org/r/20210306022035.11266-1-mcgrof@kernel.org
-[2] https://lkml.kernel.org/r/20210623215007.862787-1-mcgrof@kernel.org                                                                                                      
-[3] https://lkml.kernel.org/r/20210701022737.GC21279@xsang-OptiPlex-9020                                                                                                     
-[4] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux-next.git/log/?h=20210927-sysfs-generic-deadlock-fix
+o It is much shorter and simpler
+o It has an explicit patent license grant, unlike GPLv2
+o Its notice preservation conditions are clearer
+o More free software/open source licenses are compatible
+  with it (via section 4)
+o The source code requirement triggered by binary distribution
+  is much simpler in a procedural sense
+o Recipients potentially have a contract claim against distributors
+  who are noncompliant with the source code requirement
+o There is a built-in inbound=outbound policy for upstream
+  contributions (cf. Apache License 2.0 section 5)
+o There are disincentives to engage in the controversial practice
+  of copyleft/ proprietary dual-licensing
+o In 15 years copyleft expires, which can be advantageous
+  for legacy code
+o There are explicit disincentives to bringing patent infringement
+  claims accusing the licensed work of infringement (see 10b)
+o There is a cure period for licensees who are not compliant
+  with the license (there is no cure opportunity in GPLv2)
+o copyleft-next has a 'built-in or-later' provision
 
-Luis Chamberlain (12):
-  LICENSES: Add the copyleft-next-0.3.1 license
-  testing: use the copyleft-next-0.3.1 SPDX tag
-  selftests: add tests_sysfs module
-  kernfs: add initial failure injection support
-  test_sysfs: add support to use kernfs failure injection
-  kernel/module: add documentation for try_module_get()
-  fs/kernfs/symlink.c: replace S_IRWXUGO with 0777 on
-    kernfs_create_link()
-  fs/sysfs/dir.c: replace S_IRWXU|S_IRUGO|S_IXUGO with 0755
-    sysfs_create_dir_ns()
-  sysfs: fix deadlock race with module removal
-  test_sysfs: enable deadlock tests by default
-  zram: fix crashes with cpu hotplug multistate
-  zram: use ATTRIBUTE_GROUPS to fix sysfs deadlock module removal
+The first driver submission to Linux under this dual strategy was
+lib/test_sysctl.c through commit 9308f2f9e7f05 ("test_sysctl: add
+dedicated proc sysctl test driver") merged in July 2017. Shortly after
+that I also added test_kmod through commit d9c6a72d6fa29 ("kmod: add
+test driver to stress test the module loader") in the same month. These
+two drivers went in just a few months before the SPDX license practice
+kicked in. In 2018 Kuno Woudt went through the process to get SPDX
+identifiers for copyleft-next [6] [7]. Although there are SPDX tags
+for copyleft-next-0.3.0, we only document use in Linux starting from
+copyleft-next-0.3.1 which makes GPLv2 compatibility crystal clear.
 
- .../fault-injection/fault-injection.rst       |   22 +
- LICENSES/dual/copyleft-next-0.3.1             |  237 +++
- MAINTAINERS                                   |    9 +-
- arch/x86/kernel/cpu/resctrl/rdtgroup.c        |    4 +-
- drivers/block/zram/zram_drv.c                 |   74 +-
- fs/kernfs/Makefile                            |    1 +
- fs/kernfs/dir.c                               |   44 +-
- fs/kernfs/failure-injection.c                 |   91 ++
- fs/kernfs/file.c                              |   19 +-
- fs/kernfs/kernfs-internal.h                   |   75 +-
- fs/kernfs/symlink.c                           |    4 +-
- fs/sysfs/dir.c                                |    5 +-
- fs/sysfs/file.c                               |    6 +-
- fs/sysfs/group.c                              |    3 +-
- include/linux/kernfs.h                        |   19 +-
- include/linux/module.h                        |   34 +-
- include/linux/sysfs.h                         |   52 +-
- kernel/cgroup/cgroup.c                        |    2 +-
- lib/Kconfig.debug                             |   25 +
- lib/Makefile                                  |    1 +
- lib/test_kmod.c                               |   12 +-
- lib/test_sysctl.c                             |   12 +-
- lib/test_sysfs.c                              |  952 ++++++++++++
- tools/testing/selftests/kmod/kmod.sh          |   13 +-
- tools/testing/selftests/sysctl/sysctl.sh      |   12 +-
- tools/testing/selftests/sysfs/Makefile        |   12 +
- tools/testing/selftests/sysfs/config          |    5 +
- tools/testing/selftests/sysfs/sysfs.sh        | 1383 +++++++++++++++++
- 28 files changed, 3026 insertions(+), 102 deletions(-)
+This patch will let us update the two Linux selftest drivers in
+subsequent patches with their respective SPDX license identifiers and
+let us remove repetitive license boiler plate.
+
+[0] https://github.com/copyleft-next/copyleft-next/blob/master/Releases/copyleft-next-0.3.1
+[1] https://lore.kernel.org/lkml/1465929311-13509-1-git-send-email-mcgrof@kernel.org/
+[2] https://lore.kernel.org/lkml/CA+55aFyhxcvD+q7tp+-yrSFDKfR0mOHgyEAe=f_94aKLsOu0Og@mail.gmail.com/
+[3] https://lore.kernel.org/lkml/20170516232702.GL17314@wotan.suse.de/
+[4] https://lkml.kernel.org/r/1495234558.7848.122.camel@linux.intel.com
+[5] https://lists.fedorahosted.org/archives/list/copyleft-next@lists.fedorahosted.org/thread/JTGV56DDADWGKU7ZKTZA4DLXTGTLNJ57/#SQMDIKBRAVDOCT4UVNOOCRGBN2UJIKHZ
+[6] https://spdx.org/licenses/copyleft-next-0.3.0.html
+[7] https://spdx.org/licenses/copyleft-next-0.3.1.html
+
+Cc: Goldwyn Rodrigues <rgoldwyn@suse.com>
+Cc: Kuno Woudt <kuno@frob.nl>
+Cc: Richard Fontana <fontana@sharpeleven.org>
+Cc: copyleft-next@lists.fedorahosted.org
+Cc: Ciaran Farrell <Ciaran.Farrell@suse.com>
+Cc: Christopher De Nicolo <Christopher.DeNicolo@suse.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ LICENSES/dual/copyleft-next-0.3.1 | 237 ++++++++++++++++++++++++++++++
+ 1 file changed, 237 insertions(+)
  create mode 100644 LICENSES/dual/copyleft-next-0.3.1
- create mode 100644 fs/kernfs/failure-injection.c
- create mode 100644 lib/test_sysfs.c
- create mode 100644 tools/testing/selftests/sysfs/Makefile
- create mode 100644 tools/testing/selftests/sysfs/config
- create mode 100755 tools/testing/selftests/sysfs/sysfs.sh
 
+diff --git a/LICENSES/dual/copyleft-next-0.3.1 b/LICENSES/dual/copyleft-next-0.3.1
+new file mode 100644
+index 000000000000..086bcb74b478
+--- /dev/null
++++ b/LICENSES/dual/copyleft-next-0.3.1
+@@ -0,0 +1,237 @@
++Valid-License-Identifier: copyleft-next-0.3.1
++SPDX-URL: https://spdx.org/licenses/copyleft-next-0.3.1
++Usage-Guide:
++  This license can be used in code, it has been found to be GPLv2 compatible
++  by attorneys at Redhat and SUSE, however to air on the side of caution,
++  it's best to only use it together with a GPL2 compatible license using "OR".
++  To use the copyleft-next-0.3.1 license put the following SPDX tag/value
++  pair into a comment according to the placement guidelines in the
++  licensing rules documentation:
++    SPDX-License-Identifier: GPL-2.0 OR copyleft-next-0.3.1
++    SPDX-License-Identifier: GPL-2.0-only OR copyleft-next 0.3.1
++    SPDX-License-Identifier: GPL-2.0+ OR copyleft-next-0.3.1
++    SPDX-License-Identifier: GPL-2.0-or-later OR copyleft-next-0.3.1
++License-Text:
++
++=======================================================================
++
++                      copyleft-next 0.3.1 ("this License")
++                            Release date: 2016-04-29
++
++1. License Grants; No Trademark License
++
++   Subject to the terms of this License, I grant You:
++
++   a) A non-exclusive, worldwide, perpetual, royalty-free, irrevocable
++      copyright license, to reproduce, Distribute, prepare derivative works
++      of, publicly perform and publicly display My Work.
++
++   b) A non-exclusive, worldwide, perpetual, royalty-free, irrevocable
++      patent license under Licensed Patents to make, have made, use, sell,
++      offer for sale, and import Covered Works.
++
++   This License does not grant any rights in My name, trademarks, service
++   marks, or logos.
++
++2. Distribution: General Conditions
++
++   You may Distribute Covered Works, provided that You (i) inform
++   recipients how they can obtain a copy of this License; (ii) satisfy the
++   applicable conditions of sections 3 through 6; and (iii) preserve all
++   Legal Notices contained in My Work (to the extent they remain
++   pertinent). "Legal Notices" means copyright notices, license notices,
++   license texts, and author attributions, but does not include logos,
++   other graphical images, trademarks or trademark legends.
++
++3. Conditions for Distributing Derived Works; Outbound GPL Compatibility
++
++   If You Distribute a Derived Work, You must license the entire Derived
++   Work as a whole under this License, with prominent notice of such
++   licensing. This condition may not be avoided through such means as
++   separate Distribution of portions of the Derived Work.
++
++   If the Derived Work includes material licensed under the GPL, You may
++   instead license the Derived Work under the GPL.
++   
++4. Condition Against Further Restrictions; Inbound License Compatibility
++
++   When Distributing a Covered Work, You may not impose further
++   restrictions on the exercise of rights in the Covered Work granted under
++   this License. This condition is not excused merely because such
++   restrictions result from Your compliance with conditions or obligations
++   extrinsic to this License (such as a court order or an agreement with a
++   third party).
++
++   However, You may Distribute a Covered Work incorporating material
++   governed by a license that is both OSI-Approved and FSF-Free as of the
++   release date of this License, provided that compliance with such
++   other license would not conflict with any conditions stated in other
++   sections of this License.
++
++5. Conditions for Distributing Object Code
++
++   You may Distribute an Object Code form of a Covered Work, provided that
++   you accompany the Object Code with a URL through which the Corresponding
++   Source is made available, at no charge, by some standard or customary
++   means of providing network access to source code.
++
++   If you Distribute the Object Code in a physical product or tangible
++   storage medium ("Product"), the Corresponding Source must be available
++   through such URL for two years from the date of Your most recent
++   Distribution of the Object Code in the Product. However, if the Product
++   itself contains or is accompanied by the Corresponding Source (made
++   available in a customarily accessible manner), You need not also comply
++   with the first paragraph of this section.
++
++   Each direct and indirect recipient of the Covered Work from You is an
++   intended third-party beneficiary of this License solely as to this
++   section 5, with the right to enforce its terms.
++
++6. Symmetrical Licensing Condition for Upstream Contributions
++
++   If You Distribute a work to Me specifically for inclusion in or
++   modification of a Covered Work (a "Patch"), and no explicit licensing
++   terms apply to the Patch, You license the Patch under this License, to
++   the extent of Your copyright in the Patch. This condition does not
++   negate the other conditions of this License, if applicable to the Patch.
++
++7. Nullification of Copyleft/Proprietary Dual Licensing
++
++   If I offer to license, for a fee, a Covered Work under terms other than
++   a license that is OSI-Approved or FSF-Free as of the release date of this
++   License or a numbered version of copyleft-next released by the
++   Copyleft-Next Project, then the license I grant You under section 1 is no
++   longer subject to the conditions in sections 3 through 5.
++
++8. Copyleft Sunset
++
++   The conditions in sections 3 through 5 no longer apply once fifteen
++   years have elapsed from the date of My first Distribution of My Work
++   under this License.
++
++9. Pass-Through
++
++   When You Distribute a Covered Work, the recipient automatically receives
++   a license to My Work from Me, subject to the terms of this License.
++
++10. Termination
++
++    Your license grants under section 1 are automatically terminated if You
++
++    a) fail to comply with the conditions of this License, unless You cure
++       such noncompliance within thirty days after becoming aware of it, or
++
++    b) initiate a patent infringement litigation claim (excluding
++       declaratory judgment actions, counterclaims, and cross-claims)
++       alleging that any part of My Work directly or indirectly infringes
++       any patent.
++
++    Termination of Your license grants extends to all copies of Covered
++    Works You subsequently obtain. Termination does not terminate the
++    rights of those who have received copies or rights from You subject to
++    this License.
++
++    To the extent permission to make copies of a Covered Work is necessary
++    merely for running it, such permission is not terminable.
++
++11. Later License Versions
++
++    The Copyleft-Next Project may release new versions of copyleft-next,
++    designated by a distinguishing version number ("Later Versions").
++    Unless I explicitly remove the option of Distributing Covered Works
++    under Later Versions, You may Distribute Covered Works under any Later
++    Version.
++
++** 12. No Warranty                                                       **
++**                                                                       **
++**     My Work is provided "as-is", without warranty. You bear the risk  **
++**     of using it. To the extent permitted by applicable law, each      **
++**     Distributor of My Work excludes the implied warranties of title,  **
++**     merchantability, fitness for a particular purpose and             **
++**     non-infringement.                                                 **
++
++** 13. Limitation of Liability                                           **
++**                                                                       **
++**     To the extent permitted by applicable law, in no event will any   **
++**     Distributor of My Work be liable to You for any damages           **
++**     whatsoever, whether direct, indirect, special, incidental, or     **
++**     consequential damages, whether arising under contract, tort       **
++**     (including negligence), or otherwise, even where the Distributor  **
++**     knew or should have known about the possibility of such damages.  **
++
++14. Severability
++
++    The invalidity or unenforceability of any provision of this License
++    does not affect the validity or enforceability of the remainder of
++    this License. Such provision is to be reformed to the minimum extent
++    necessary to make it valid and enforceable.
++
++15. Definitions
++
++    "Copyleft-Next Project" means the project that maintains the source
++    code repository at <https://github.com/copyleft-next/copyleft-next.git/>
++    as of the release date of this License.
++
++    "Corresponding Source" of a Covered Work in Object Code form means (i)
++    the Source Code form of the Covered Work; (ii) all scripts,
++    instructions and similar information that are reasonably necessary for
++    a skilled developer to generate such Object Code from the Source Code
++    provided under (i); and (iii) a list clearly identifying all Separate
++    Works (other than those provided in compliance with (ii)) that were
++    specifically used in building and (if applicable) installing the
++    Covered Work (for example, a specified proprietary compiler including
++    its version number). Corresponding Source must be machine-readable.
++
++    "Covered Work" means My Work or a Derived Work.
++
++    "Derived Work" means a work of authorship that copies from, modifies,
++    adapts, is based on, is a derivative work of, transforms, translates or
++    contains all or part of My Work, such that copyright permission is
++    required. The following are not Derived Works: (i) Mere Aggregation;
++    (ii) a mere reproduction of My Work; and (iii) if My Work fails to
++    explicitly state an expectation otherwise, a work that merely makes
++    reference to My Work.
++
++    "Distribute" means to distribute, transfer or make a copy available to
++    someone else, such that copyright permission is required.
++
++    "Distributor" means Me and anyone else who Distributes a Covered Work.
++
++    "FSF-Free" means classified as 'free' by the Free Software Foundation.
++
++    "GPL" means a version of the GNU General Public License or the GNU
++    Affero General Public License.
++
++    "I"/"Me"/"My" refers to the individual or legal entity that places My
++    Work under this License. "You"/"Your" refers to the individual or legal
++    entity exercising rights in My Work under this License. A legal entity
++    includes each entity that controls, is controlled by, or is under
++    common control with such legal entity. "Control" means (a) the power to
++    direct the actions of such legal entity, whether by contract or
++    otherwise, or (b) ownership of more than fifty percent of the
++    outstanding shares or beneficial ownership of such legal entity.
++
++    "Licensed Patents" means all patent claims licensable royalty-free by
++    Me, now or in the future, that are necessarily infringed by making,
++    using, or selling My Work, and excludes claims that would be infringed
++    only as a consequence of further modification of My Work.
++
++    "Mere Aggregation" means an aggregation of a Covered Work with a
++    Separate Work.
++
++    "My Work" means the particular work of authorship I license to You
++    under this License.
++
++    "Object Code" means any form of a work that is not Source Code.
++
++    "OSI-Approved" means approved as 'Open Source' by the Open Source
++    Initiative.
++
++    "Separate Work" means a work that is separate from and independent of a
++    particular Covered Work and is not by its nature an extension or
++    enhancement of the Covered Work, and/or a runtime library, standard
++    library or similar component that is used to generate an Object Code
++    form of a Covered Work.
++
++    "Source Code" means the preferred form of a work for making
++    modifications to it.
 -- 
 2.30.2
 
