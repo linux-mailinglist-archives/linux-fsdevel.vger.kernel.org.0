@@ -2,98 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CAC5D418D8E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 03:49:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B95D418D90
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 03:51:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232385AbhI0Buu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Sep 2021 21:50:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55644 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232289AbhI0But (ORCPT
+        id S232392AbhI0BxA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Sep 2021 21:53:00 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:21346 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232360AbhI0BxA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Sep 2021 21:50:49 -0400
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EB1EC061570;
-        Sun, 26 Sep 2021 18:49:12 -0700 (PDT)
-Received: by mail-qv1-xf29.google.com with SMTP id cv2so4163404qvb.5;
-        Sun, 26 Sep 2021 18:49:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:subject:message-id:mime-version:content-disposition;
-        bh=ygEFtDYZxT9vrjkErAYv8Q0mwvXb7MdrTep5bixORxg=;
-        b=FT2jkQ4UFhn/ygqm6BeHtVvO06xiH/nGq++DBQBpVJLPfYmmPG5A3BnV7mBCced2Ih
-         +6+YSt6k0WHPQJWKq8FKaQE5JaLI+G72JHZOZPnVOyKrnrINuP2pFeoYsuau5y7wSY62
-         4GZ8aX1DWpd8f6K3X3iuhFmpyPXi0foAcE52ygBlyDgz356syItUMOY4wO8/fM2y/xfz
-         aZQc3uCVHYhPeKmw9iQKD0YBTodycG1SNJgi///6il7dDE9z69dZB2Ee48bW6iketLpZ
-         +ELy8vkrpaWqJPScWfqx4HrBAz102Xkob8f0Y34RKwe/v5wUTVPURNiZ8O91g13g816W
-         kang==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition;
-        bh=ygEFtDYZxT9vrjkErAYv8Q0mwvXb7MdrTep5bixORxg=;
-        b=KFpRLNPg3bGRI9hbv8YfbA3YyuM5slotEMJMvMXu7C3fg1hCvpv9DkrVwtCjgQNojZ
-         TCar9d7VC7pieO38ZDdwbvxX8OqSwtBuMy7p9+PmRenZCblo7pMYhHFwkGS5s+VZ6kVu
-         eBIvM18OXSv1+XWi2pqdBw3c4+m60zQURCGY7h0sgKe8crc77iwV+2UH3mavZLHiFmBM
-         XxliZpEsUxmfBCRg1GcHSzn+tx2xmEBr9xXcpC+nZj1Tg7Mry69AHVWWRoH3mTTtiE46
-         IY0QD+N9FhMa/+urQ6UwILDz96twi9OYAsSiqlXUR6adFulMFE81nJRHF6ztWzxR6y6a
-         ixfA==
-X-Gm-Message-State: AOAM533dycWQysxOivAwlmPk1/UNb2lNiD/WlAVT/M8rJy8th7Df7kF/
-        xzSiDRsAlOESaT3vxgIrrrOBVBVrSw==
-X-Google-Smtp-Source: ABdhPJyI9oRizxJsb5pUccZaHs6QrGxS7CXzT9l767IlIawi0c8tQkHVicOyK0OVkTP2PLXpwl6hMQ==
-X-Received: by 2002:a0c:f3c6:: with SMTP id f6mr21341819qvm.33.1632707350122;
-        Sun, 26 Sep 2021 18:49:10 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id n20sm11522054qkk.135.2021.09.26.18.49.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Sep 2021 18:49:09 -0700 (PDT)
-Date:   Sun, 26 Sep 2021 21:49:07 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: bcachefs - snapshots
-Message-ID: <YVEjEwCiqje7yDyV@moria.home.lan>
+        Sun, 26 Sep 2021 21:53:00 -0400
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4HHlqt0NBZzRZJ4;
+        Mon, 27 Sep 2021 09:47:06 +0800 (CST)
+Received: from dggpeml500025.china.huawei.com (7.185.36.35) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.8; Mon, 27 Sep 2021 09:51:21 +0800
+Received: from [10.174.176.117] (10.174.176.117) by
+ dggpeml500025.china.huawei.com (7.185.36.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.8; Mon, 27 Sep 2021 09:51:21 +0800
+Subject: Re: [PATCH] kernfs: fix the race in the creation of negative dentry
+To:     Ian Kent <raven@themaw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, Miklos Szeredi <mszeredi@redhat.com>
+CC:     <viro@ZenIV.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20210911021342.3280687-1-houtao1@huawei.com>
+ <7b92b158200567f0bba26a038191156890921f13.camel@themaw.net>
+ <6c8088411523e52fc89b8dd07710c3825366ce64.camel@themaw.net>
+ <747aee3255e7a07168557f29ad962e34e9cb964b.camel@themaw.net>
+ <e3d22860-f2f0-70c1-35ef-35da0c0a44d2@huawei.com>
+ <077362887b4ceeb01c27fbf36fa35adae02967c9.camel@themaw.net>
+From:   Hou Tao <houtao1@huawei.com>
+Message-ID: <13592fb7-5bc1-41cf-f19d-150b1e634fb2@huawei.com>
+Date:   Mon, 27 Sep 2021 09:51:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <077362887b4ceeb01c27fbf36fa35adae02967c9.camel@themaw.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.174.176.117]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500025.china.huawei.com (7.185.36.35)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Snapshots have been merged! 9 months of work and 3k lines of new code, finally
-released. Some highlights:
+Hi,
 
- - btrfs style subvolumes & snapshots interface
- - snapshots are writeable
- - highly scalable: number of snapshots is limited only by your disk space
- - highly space efficient: no internal fragmentation issues
+On 9/23/2021 10:50 AM, Ian Kent wrote:
+> Great, although I was hoping you would check it worked as expected.
+> Did you check?
+> If not could you please do that check?
+It fixes the race. I rerun the stress test of module addition and removal,
+and the problem doesn't occur after 12 hours.
 
-Design doc here: https://bcachefs.org/Snapshots/
-
-The core functionality is complete - snapshot creation and deletion works, fsck
-changes are done (most of the complexity was in making fsck work without
-O(number of snapshots) performance - tricky). Everything else is a todo item:
-
- - still need to export different st_dev for files in different subvolumes
-   (we'll never allocate a new inode with an inode number that collides with an
-   inode inother subvolume - but snapshots will naturally result in colliding
-   inode numbers)
-
- - need to hide dirents that point to snapshots when inside snapshots...
-
- - snapshot creation is not atomic w.r.t. page cache, we do sync_fs() but don't
-   block buffered writes
-
- - other niggling page cache stuff - need to walk page cache and mark blocks as
-   no longer reserved on snapshot creation
-
- - we no longer have quota support, since old style quotas interact badly with
-   snapshots
-
- - we need per subvolume disk space accounting before i can implement btrfs
-   style subvolume quotas
-
- - all the things I neglected to think of yet, and all the bugs I haven't found
-   yet
-
-Go wild, please try and break it.
+Regards,
+Tao
