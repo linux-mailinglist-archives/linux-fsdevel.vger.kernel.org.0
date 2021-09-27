@@ -2,143 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33ABD419E5B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 20:33:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99851419E5D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 20:33:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236252AbhI0SfC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Sep 2021 14:35:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59038 "EHLO
+        id S236206AbhI0Sfd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Sep 2021 14:35:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236174AbhI0SfB (ORCPT
+        with ESMTP id S236169AbhI0Sfc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Sep 2021 14:35:01 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F9EC061604
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 11:33:21 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id z24so82387320lfu.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 11:33:21 -0700 (PDT)
+        Mon, 27 Sep 2021 14:35:32 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64D96C061575
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 11:33:53 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id b15so80251172lfe.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 11:33:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zBKO83J1C1DNn2R4raJlP58CTJ+u3r/ACscvA3njVnA=;
-        b=YbDQ5OpSuV6v9NSHnBKcDUKW4oeDmXF0NHBGuo3vHIF2Mp24W0VXIFsXRLwyniRIzR
-         aDTXrs5dla+qbA47Mgcez8/uDJZ7dJZZiKprKSFRNEPDPSMmKJT6hPFTaxWvgqSBizR+
-         VAPbppHwvThw+fFO74IZ68YspiGMMjy+yalYc=
+        d=shutemov-name.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=OkJDRTajjBYXZ9Lg7Znrw7BKNW4OCn6XI+sAVpYq6QI=;
+        b=qdXZo0VKKvGxILef7JmwcenBcQKasiE54pz+WtZ2c1nuNKo0FWwkU4SAgC8IVJn75f
+         mjCpRzf2uF1ul1E1lLRt6og0U0UE8lupicpoy8MsJhx87RW7ZRF2/IiAQk3X1EUkad/H
+         SVS+td1Hcckzl3bVIQ07SGPH73T8NApdeMk8LCcoF2OmE1LvJCngQws8nZxjbVLviqFi
+         MxSH0Z+tnuLGIuvHGzZCKU2j4H7he35g2cRq+JBRytRejIalREMLXhS8wizSW8YBtCx5
+         yBzTEMlPIXVM4MsxAAcqg2DzUqMznWk6dIwbo5IJOFQPk0OMFQy66/jsTIEPNfLt13Kq
+         kzEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zBKO83J1C1DNn2R4raJlP58CTJ+u3r/ACscvA3njVnA=;
-        b=IdUCyW7rC9+fLYmcLEQEc7KYdZ39dCmSJlBIiblXLtqaX70dBaRSJ3XAS6rbe3+HqY
-         EdoT2HQqjp6DgaSeVfg+QROjMhooAhNTp39Lota1rc3Du0zi6kokZcVGd/G6/LJUkPik
-         /mjchoue3bcI2WwhspL7h3+eMzGu6NhXwD2mMjPp2gS0Gx7Q6JMm5lCVyApHLaeMBZnB
-         3hOh23M5Axa+iYHseNTQfYtrMcQVRQ/4V1DaGnW/9wiNWs9Q0AiGE4tAo/oZQMxjeU8n
-         JqLNVT9XgvXShu0UOd8drWQbjwkoOTGP/YBJpdq/zTT9eO7PILpCaIiCMOvyKijPVMea
-         5eFg==
-X-Gm-Message-State: AOAM532BIO0giTlFX6Biky8vL71eeDIMocrvgir3+va/Fm803FNOkiDU
-        p2peEU/BK23nG/3u0GsfZwUO2BS09uTNCFFJnjc=
-X-Google-Smtp-Source: ABdhPJz7m33lzdeWkm4XFrYeLTLS6NNg6Nh7m3zI/KZuUSTcaFphu0Dacb6dFOQamuA/PTEyC5t2dw==
-X-Received: by 2002:a05:651c:50a:: with SMTP id o10mr1325723ljp.441.1632767599544;
-        Mon, 27 Sep 2021 11:33:19 -0700 (PDT)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id l13sm1460390lfk.211.2021.09.27.11.33.16
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Sep 2021 11:33:17 -0700 (PDT)
-Received: by mail-lf1-f47.google.com with SMTP id b20so81766441lfv.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 11:33:16 -0700 (PDT)
-X-Received: by 2002:a2e:a7d0:: with SMTP id x16mr1309663ljp.494.1632767596702;
- Mon, 27 Sep 2021 11:33:16 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=OkJDRTajjBYXZ9Lg7Znrw7BKNW4OCn6XI+sAVpYq6QI=;
+        b=z9Y0BYFRwwGgplahfr7ZcgOIsvRQwr3oNQ9HTOjoKCD8JMF1hu7ZYYA+vVfiEipie4
+         HKhcJ9P5oDSVYj82eUH/+ZFiu8EUEf/6PuQJSV00GU1Oc2SGsvrCMv8LLogAhB7M9Cnf
+         Veg0zsJi3W+2Q8l+FvX0JFx2NxiBAo1BDSrXVAGtfhYOcaazW+lw+2y8LYYOlwjHDC3f
+         gBCv6NTmqswpeWraYcHD0HQLrthhk3sdsbjzTYkiSnsk5IbzebHZ6okH7u43pKmlqjlg
+         tMNl5R8P3dBE9QSbxmlQGQDPO06bl4eJc7q51eWpK2kBaG5VEdoBaAsifLTnOD8SRvLA
+         U5VQ==
+X-Gm-Message-State: AOAM531uqQ+W90MyXksf2GyekinicMTsssN9tl/ShAMhObLW7WLPJhmZ
+        l83S5nHKl1C5AD7ysQhUbRJ3Zw==
+X-Google-Smtp-Source: ABdhPJzWZh6daO8VsDoVks7ChKfKV/MwaTxKX73LmO60ysmNU0X0sNpEippMfCo/ilGu6AoJUJdENA==
+X-Received: by 2002:ac2:561c:: with SMTP id v28mr1153727lfd.457.1632767631753;
+        Mon, 27 Sep 2021 11:33:51 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id n9sm1672309lfu.88.2021.09.27.11.33.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Sep 2021 11:33:51 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id E89C5102FE0; Mon, 27 Sep 2021 21:33:50 +0300 (+03)
+Date:   Mon, 27 Sep 2021 21:33:50 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Struct page proposal
+Message-ID: <20210927183350.obd756wnsctukf63@box.shutemov.name>
+References: <YUvWm6G16+ib+Wnb@moria.home.lan>
+ <bc22b4d0-ba63-4559-88d9-a510da233cad@suse.cz>
+ <YVIH5j5xkPafvNds@casper.infradead.org>
 MIME-Version: 1.0
-References: <20210927094123.576521-1-arnd@kernel.org> <40217483-1b8d-28ec-bbfc-8f979773b166@redhat.com>
- <20210927130253.GH2083@kadam> <CAK8P3a3YFh4QTC6dk6onsaKcqCM3Nmb2JhMXK5QdZpHtffjyLg@mail.gmail.com>
-In-Reply-To: <CAK8P3a3YFh4QTC6dk6onsaKcqCM3Nmb2JhMXK5QdZpHtffjyLg@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 27 Sep 2021 11:33:00 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wheEHQxdSJgTkt7y4yFjzhWxMxE-p7dKLtQSBs4ceHLmw@mail.gmail.com>
-Message-ID: <CAHk-=wheEHQxdSJgTkt7y4yFjzhWxMxE-p7dKLtQSBs4ceHLmw@mail.gmail.com>
-Subject: Re: [PATCH] vboxsf: fix old signature detection
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Sparse Mailing-list <linux-sparse@vger.kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        llvm@lists.linux.dev
-Content-Type: multipart/mixed; boundary="0000000000009a84d405ccfe541b"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YVIH5j5xkPafvNds@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---0000000000009a84d405ccfe541b
-Content-Type: text/plain; charset="UTF-8"
+On Mon, Sep 27, 2021 at 07:05:26PM +0100, Matthew Wilcox wrote:
+> On Mon, Sep 27, 2021 at 07:48:15PM +0200, Vlastimil Babka wrote:
+> > On 9/23/21 03:21, Kent Overstreet wrote:
+> > > So if we have this:
+> > > 
+> > > struct page {
+> > > 	unsigned long	allocator;
+> > > 	unsigned long	allocatee;
+> > > };
+> > > 
+> > > The allocator field would be used for either a pointer to slab/slub's state, if
+> > > it's a slab page, or if it's a buddy allocator page it'd encode the order of the
+> > > allocation - like compound order today, and probably whether or not the
+> > > (compound group of) pages is free.
+> > 
+> > The "free page in buddy allocator" case will be interesting to implement.
+> > What the buddy allocator uses today is:
+> > 
+> > - PageBuddy - determine if page is free; a page_type (part of mapcount
+> > field) today, could be a bit in "allocator" field that would have to be 0 in
+> > all other "page is allocated" contexts.
+> > - nid/zid - to prevent merging accross node/zone boundaries, now part of
+> > page flags
+> > - buddy order
+> > - a list_head (reusing the "lru") to hold the struct page on the appropriate
+> > free list, which has to be double-linked so page can be taken from the
+> > middle of the list instantly
+> > 
+> > Won't be easy to cram all that into two unsigned long's, or even a single
+> > one. We should avoid storing anything in the free page itself. Allocating
+> > some external structures to track free pages is going to have funny
+> > bootstrap problems. Probably a major redesign would be needed...
+> 
+> Wait, why do we want to avoid using the memory that we're allocating?
 
-On Mon, Sep 27, 2021 at 6:22 AM Arnd Bergmann <arnd@kernel.org> wrote:
->
-> More specifically, ' think '\377' may be either -1 or 255 depending on
-> the architecture.
-> On most architectures, 'char' is implicitly signed, but on some others
-> it is not.
+Intel TDX and AMD-SEV have concept of unaccpeted memory. You cannot use
+the memory until it got "accepted". The acceptance is costly and I made a
+patchset[1] to pospone the accaptance until the first allocation. So pages
+are on free list, but page type indicate that it has to go though
+additional step on allocation.
 
-Yeah. That code is just broken.
+[1] https://lore.kernel.org/all/20210810062626.1012-1-kirill.shutemov@linux.intel.com/
 
-And Arnd, your patch may be "conceptually minimal", in that it keeps
-thed broken code and makes it work. But it just dials up the oddity to
-11.
-
-The proper patch is just this appended thing that stops playing silly
-games, and just uses "memcmp()".
-
-I've verified that with sane build configurations, it just generates
-
-        testq   %rsi, %rsi
-        je      .L25
-        cmpl    $-33620224, (%rsi)
-        je      .L31
-
-for that
-
-        if (data && !memcmp(data, VBSF_MOUNT_SIGNATURE, 4)) {
-
-test. With a lot of crazy debug options you'll actually see the
-"memcmp()", but the bad code generation is the least of your options
-in that case.
-
-               Linus
-
---0000000000009a84d405ccfe541b
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_ku2z8brl0>
-X-Attachment-Id: f_ku2z8brl0
-
-IGZzL3Zib3hzZi9zdXBlci5jIHwgMTIgKystLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMiBp
-bnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9mcy92Ym94c2Yvc3Vw
-ZXIuYyBiL2ZzL3Zib3hzZi9zdXBlci5jCmluZGV4IDRmNWU1OWYwNjI4NC4uMzdkZDNmZTViMWU5
-IDEwMDY0NAotLS0gYS9mcy92Ym94c2Yvc3VwZXIuYworKysgYi9mcy92Ym94c2Yvc3VwZXIuYwpA
-QCAtMjEsMTAgKzIxLDcgQEAKIAogI2RlZmluZSBWQk9YU0ZfU1VQRVJfTUFHSUMgMHg3ODZmNDI1
-NiAvKiAnVkJveCcgbGl0dGxlIGVuZGlhbiAqLwogCi0jZGVmaW5lIFZCU0ZfTU9VTlRfU0lHTkFU
-VVJFX0JZVEVfMCAoJ1wwMDAnKQotI2RlZmluZSBWQlNGX01PVU5UX1NJR05BVFVSRV9CWVRFXzEg
-KCdcMzc3JykKLSNkZWZpbmUgVkJTRl9NT1VOVF9TSUdOQVRVUkVfQllURV8yICgnXDM3NicpCi0j
-ZGVmaW5lIFZCU0ZfTU9VTlRfU0lHTkFUVVJFX0JZVEVfMyAoJ1wzNzUnKQorc3RhdGljIGNvbnN0
-IHVuc2lnbmVkIGNoYXIgVkJTRl9NT1VOVF9TSUdOQVRVUkVbNF0gPSAiXDAwMFwzNzdcMzc2XDM3
-NSI7CiAKIHN0YXRpYyBpbnQgZm9sbG93X3N5bWxpbmtzOwogbW9kdWxlX3BhcmFtKGZvbGxvd19z
-eW1saW5rcywgaW50LCAwNDQ0KTsKQEAgLTM4NiwxMiArMzgzLDcgQEAgc3RhdGljIGludCB2Ym94
-c2Zfc2V0dXAodm9pZCkKIAogc3RhdGljIGludCB2Ym94c2ZfcGFyc2VfbW9ub2xpdGhpYyhzdHJ1
-Y3QgZnNfY29udGV4dCAqZmMsIHZvaWQgKmRhdGEpCiB7Ci0JdW5zaWduZWQgY2hhciAqb3B0aW9u
-cyA9IGRhdGE7Ci0KLQlpZiAob3B0aW9ucyAmJiBvcHRpb25zWzBdID09IFZCU0ZfTU9VTlRfU0lH
-TkFUVVJFX0JZVEVfMCAmJgotCQkgICAgICAgb3B0aW9uc1sxXSA9PSBWQlNGX01PVU5UX1NJR05B
-VFVSRV9CWVRFXzEgJiYKLQkJICAgICAgIG9wdGlvbnNbMl0gPT0gVkJTRl9NT1VOVF9TSUdOQVRV
-UkVfQllURV8yICYmCi0JCSAgICAgICBvcHRpb25zWzNdID09IFZCU0ZfTU9VTlRfU0lHTkFUVVJF
-X0JZVEVfMykgeworCWlmIChkYXRhICYmICFtZW1jbXAoZGF0YSwgVkJTRl9NT1VOVF9TSUdOQVRV
-UkUsIDQpKSB7CiAJCXZiZ19lcnIoInZib3hzZjogT2xkIGJpbmFyeSBtb3VudCBkYXRhIG5vdCBz
-dXBwb3J0ZWQsIHJlbW92ZSBvYnNvbGV0ZSBtb3VudC52Ym94c2YgYW5kL29yIHVwZGF0ZSB5b3Vy
-IFZCb3hTZXJ2aWNlLlxuIik7CiAJCXJldHVybiAtRUlOVkFMOwogCX0K
---0000000000009a84d405ccfe541b--
+-- 
+ Kirill A. Shutemov
