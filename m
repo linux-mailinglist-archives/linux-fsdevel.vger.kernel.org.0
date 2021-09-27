@@ -2,95 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 47D84419ED0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 21:02:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 122C8419ED9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Sep 2021 21:05:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235853AbhI0TDo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Sep 2021 15:03:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37572 "EHLO
+        id S235888AbhI0TG4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Sep 2021 15:06:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235203AbhI0TDo (ORCPT
+        with ESMTP id S235880AbhI0TGz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Sep 2021 15:03:44 -0400
+        Mon, 27 Sep 2021 15:06:55 -0400
 Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDB40C061575;
-        Mon, 27 Sep 2021 12:02:05 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id i4so81570259lfv.4;
-        Mon, 27 Sep 2021 12:02:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51EDBC061575
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 12:05:17 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id t10so81705315lfd.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 12:05:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=fBTq8I3NOShXYZBIuCwUw+73ao/llMiq2AxwPqrbQhY=;
-        b=pjpp5vcDsDI298raVY03G6GDYJBncvUCFByP86SuHvrYdg9eH2B63WI1ZX1R/f2Y5C
-         NUaMUsL6X6qZk0SP5X/D/JtssWBHOsyDfVmfkDRcI2yBhSSuNcW7qZ1a+2cYS+nvQnlq
-         qHeDtjDmoaaScQ/FxkB4bqi3Da/ZB9eXYWNQg8drPHTkN9CMAoXeZ0IL8Bw/aSVPM5M5
-         GD25a8RfvMn6+40l6anpjonJrdxpnrm92lR7dG2qolq+GRGO/i+8eQwGbeQHiRPYZTqC
-         bSjJXxYnxRNqPTNESGGqd2Vk/+tueRssR0u5BG4RrNlTNxQ0uhELcu6tgO9sPlkPgEsy
-         8PPw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=njYGm4bP8jNmCvAFiZ06l8r+GHPtzvHRo47ySu3ATw4=;
+        b=WpoF5VpG9djMUN3T0RVGAnKMGpUra/IoZu0YoYu2B7CPTwwNjgNcKC8FXNWXh0DJZH
+         acFfw8Hzzhmqsm38B6oYPJzRykCp1dhW8V1tHhoR5FzMH5Sq3dPFJWChUqzPzWjhbDN5
+         bWCPIHRDbbzEqw0lQhknGBKzayIfJ3+riydfU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fBTq8I3NOShXYZBIuCwUw+73ao/llMiq2AxwPqrbQhY=;
-        b=LySSl5vgzlZaPSz0DC4TiZeUH1XjGvhWTJUXnQXwQI93oGJ88A+L+zpjpQPUsk9N+N
-         kJSyAYwsX52m8nF/UFD71UbC0cLjO7p5rEFh6YNXFJFhQxfDTx2HJqQnAjPSnrTIsmI5
-         5B/UioBNaGYQtPN0kYYt3lY0x33I3njRVGSahXhQibaMDEMkC3RKuvvN9/UrUOgkUoJS
-         IxDlfg69bBNX6s+EZt08mEOrvmzWctfHpLHcFGxkz0Hsk0QZpL+agijgs5izX2bx/VsP
-         /XEcnOOc9to4x9unnrjFGmJAwaw+1nhN7SK8lH5GXVdHUqnfGNAc+1xe5qP1A2V2WUGt
-         cCLA==
-X-Gm-Message-State: AOAM533D1RoguNtBuy4E7YOaqg7bN98aO70YUwq2QPjd3i1Uo/EKbJbi
-        Au1QJB1x6ZEC5e0wo/BF6TXSFXeT9uU=
-X-Google-Smtp-Source: ABdhPJy+08o2NUFQfzYv39MmXVMfw1zN44e4CFgofkaIxMfN94bv0N/Oez8mqNT+cmuFqYnW0DG6aQ==
-X-Received: by 2002:a05:6512:3989:: with SMTP id j9mr1307909lfu.213.1632769323684;
-        Mon, 27 Sep 2021 12:02:03 -0700 (PDT)
-Received: from kari-VirtualBox ([31.132.12.44])
-        by smtp.gmail.com with ESMTPSA id v8sm1593466lfe.6.2021.09.27.12.02.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Sep 2021 12:02:03 -0700 (PDT)
-Date:   Mon, 27 Sep 2021 22:02:01 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] fs/ntfs3: Refactoring of xattr.c
-Message-ID: <20210927190201.yhlipxcitremds3e@kari-VirtualBox>
-References: <a1204ce8-80e6-bf44-e7d1-f1674ff28dcd@paragon-software.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=njYGm4bP8jNmCvAFiZ06l8r+GHPtzvHRo47ySu3ATw4=;
+        b=cNS5y/2Qg57iNM3mzySPi0JDIsxM8doaQpIWMlE5Xv37I7R4Pi4DEBrohO7SPl5wx9
+         Hx5AUdldeRaty9kHe/4+J+vdRji0O2E/7+9rRvzf+iX2TDWHnmDPgPwCOk0MiiVsK7xi
+         hMRmkAJGWNJeUqFkE6BnvSyVNznuBZmgowWDFKZu22cqONBB4HMSYQe4+dBs4e/zI5iQ
+         ++w7WQF2qQ1vtxeA9CDDwjEnqO0IXgPPmMRUypHwGGXK//C6j0GnQW+Ef9r4v2HCa7y5
+         tv+HYzV0gGc8Fn8HA3YQW+FeDn8mw2wqyKRRDaTiAxroREIIhEYC0/fM8vp//Ld5LgVc
+         q7eA==
+X-Gm-Message-State: AOAM532R+D0yn+s+tPEpjSnVmY/0HQyuGuoTNuc89u7xXR6bfagOCRuM
+        +M94dq2VemO9encDGHlVJd2H1cWwkbhVLpkZxlk=
+X-Google-Smtp-Source: ABdhPJyvN+Ml9zGJG5xAJ4Cx60jZ4T+Oti3YzKWVWyg8B6JHZcVW6Wny0zyaCVvP/7uouRB3IRcQBw==
+X-Received: by 2002:a05:6512:2302:: with SMTP id o2mr1342140lfu.297.1632769515384;
+        Mon, 27 Sep 2021 12:05:15 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id h21sm1683858lfe.12.2021.09.27.12.05.13
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Sep 2021 12:05:14 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id x27so81950488lfu.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 12:05:13 -0700 (PDT)
+X-Received: by 2002:a05:651c:1250:: with SMTP id h16mr1576330ljh.68.1632769513513;
+ Mon, 27 Sep 2021 12:05:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a1204ce8-80e6-bf44-e7d1-f1674ff28dcd@paragon-software.com>
+References: <YUvWm6G16+ib+Wnb@moria.home.lan> <bc22b4d0-ba63-4559-88d9-a510da233cad@suse.cz>
+ <YVIH5j5xkPafvNds@casper.infradead.org> <YVII7eM7P42riwoI@moria.home.lan>
+ <YVIJg+kNqqbrBZFW@casper.infradead.org> <b57911a4-3963-aa65-1f8e-46578b3c0623@redhat.com>
+ <df6ad8ab-b3a9-6264-e699-28422a74f995@suse.cz>
+In-Reply-To: <df6ad8ab-b3a9-6264-e699-28422a74f995@suse.cz>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 27 Sep 2021 12:04:57 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whQE3eZdFgtoeRmXVsO93c-nSbdheTvtUJcztJaE_KKEw@mail.gmail.com>
+Message-ID: <CAHk-=whQE3eZdFgtoeRmXVsO93c-nSbdheTvtUJcztJaE_KKEw@mail.gmail.com>
+Subject: Re: Struct page proposal
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 27, 2021 at 06:26:26PM +0300, Konstantin Komarov wrote:
-> Removed function, that already have been in kernel.
-> Changed locking policy to fix some potential bugs.
-> Changed code for readability.
-> 
-> V2:
->   fixed typo.
+On Mon, Sep 27, 2021 at 11:53 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+>
+> I was thinking of debug_pagealloc (unmaps free pages from direct map) but yeah,
+> the list is longer.
 
-In the future please tell more closly. Now reviewr has to check
-everything again. It is also good thing to write if someone suggest it.
-Then that person can see right away that you change what he/she
-suggested.
+In fact, the _original_ free page list was in the page itself, not in
+'struct page'.
 
-Also usually when someone comment something to previes series version
-then you take all commenters to cc list. Usually reviewer will might
-wanna give reviewed-by tag after you change what suggested.
+The original reason to move it into 'struct page' ended up being
+performance, iirc.
 
-> 
-> Konstantin Komarov (3):
->   fs/ntfs3: Use available posix_acl_release instead of
->     ntfs_posix_acl_release
->   fs/ntfs3: Remove locked argument in ntfs_set_ea
->   fs/ntfs3: Refactoring of ntfs_set_ea
-> 
->  fs/ntfs3/xattr.c | 69 ++++++++++++++++++++++--------------------------
->  1 file changed, 32 insertions(+), 37 deletions(-)
-> 
-> -- 
-> 2.33.0
-> 
+Because of how now the free page list was always in the same cache
+line set, the page allocator caused horrendous cache patterns on
+direct-mapped caches.
+
+Direct-mapped caches may thankfully be gone, and we have a lot of
+other things that end up having that property of "same offset within a
+page" just because of allocation patterns (task struct allocations
+being but one example), but it might still be something to try to
+avoid.
+
+               Linus
