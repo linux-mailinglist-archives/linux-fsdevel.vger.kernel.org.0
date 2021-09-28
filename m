@@ -2,138 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B31E41A3E2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 01:45:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7573641A40C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 02:08:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238212AbhI0Xr2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Sep 2021 19:47:28 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:38034 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237972AbhI0Xr1 (ORCPT
+        id S238239AbhI1AJu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Sep 2021 20:09:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51604 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231674AbhI1AJu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Sep 2021 19:47:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1632786348;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nsnSPMX2S/Qat0JZTZ1IQ/fql2yzNENw+yYwIO5gmA8=;
-        b=EleK6qrBrs4A+zqxEH65X56uM85OJ10FVUvpe6FndAGAPwJxf3fP+kq3HySM7YDv9uu6zI
-        k0D/TJp8bSoh8IH2djagrCVkdNX88f1GYp5cK9aCUPrBsazb/NlcQTU99ADJVioX3XOMjE
-        ejeQFmWvLL7H7zn65KqNe6YOAgn1tkw=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-13-06LLtUR7OlGF3NpucwUSGw-1; Mon, 27 Sep 2021 19:45:47 -0400
-X-MC-Unique: 06LLtUR7OlGF3NpucwUSGw-1
-Received: by mail-oi1-f200.google.com with SMTP id j200-20020acaebd1000000b0027357b3466aso16948161oih.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 16:45:47 -0700 (PDT)
+        Mon, 27 Sep 2021 20:09:50 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFAC1C061604
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 17:08:11 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id kn18so707455pjb.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Sep 2021 17:08:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SFyVj9jMzZDynp8Zc5/t3tU9a3H9qvbPvV/wKg5WCVY=;
+        b=jxw2QqijIXj2//Xrh9C53cPwdU7qHg50jF+9D3ItOjN1r0pHHUV6OLBO0FzDbkMh8B
+         26kQhZYS/V/783GB5Pmh6bOMjwuaAL0KGHp2KmDbXyjCm+InKYJbosHduHcSLwaC/HEL
+         KyNGpXqRTzEodLiOd8kMHxyF04ER9vwq0x7YFF5iTSAbzENtYF5wyJ1g83dDI6SEPrqI
+         85bZoSM0Jyg8DBGKsdIVj5/T7AZPYzvHovrLDVUAyu4cuIyZkBdpHWCm+vVjZZPIVXbx
+         XC8VaIjNVGmL0iNoAwdWuxqYzXCisLzivXTD+yoCb5tBWdSEk8Mz8p1lSSlBHqEZXMCO
+         87kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nsnSPMX2S/Qat0JZTZ1IQ/fql2yzNENw+yYwIO5gmA8=;
-        b=mfjXkltqZ1kkwQNnfI1fEt5km9Pe1Vn8bj0tr8o2cY0qXtjfjtC1MCPir+4R/t8V+t
-         Z7YYRfwf0WeaI/EEvs6HGNpa+XvhI7gNR+ahMnIZgEo2FCBcAAXi8Xng68cjFL/TjN3Z
-         F81TdVGgs0Fe53bhvqOaRc0Sk1XZgOEecAsiK1kQHhK0jINkDYJi61WUBUIXHVo0EsL7
-         j/hBP8M8XtPbYcAqaxM2xhlcBVBpGm7VY3RY2z/M9M0EKrHa4oN36D4JzTH/HUEk/d9i
-         BsQbQMIhkq5PtKyyi3FmQGsfXmkP9ixIVOQHcOp0HIg/0nASD8Q4QwL2uUT9u5+IewOc
-         pOKA==
-X-Gm-Message-State: AOAM5338hTrOJ0OXjD3uFK8HMzZyYGgZXHzgb9ku5pI4b/4MCBbQr8Mo
-        +S9QKoXOyEUbcyB4ErRL0ZS9Q+QRLGuXQa7vwwEBO4E19OQD9+txS8rmjCjkGwiIUrIH/V5LhMJ
-        S8BpSH0vOdtzzVnHiMZZxjXD2FQ==
-X-Received: by 2002:a05:6830:246f:: with SMTP id x47mr2385797otr.287.1632786346784;
-        Mon, 27 Sep 2021 16:45:46 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzEwgyyipAso5Lnpv6vJwXUFrYJKO6zGLcI7AhX5ImXTFSCGu/useHx1lO4JT1d7wgEAIOV2g==
-X-Received: by 2002:a05:6830:246f:: with SMTP id x47mr2385776otr.287.1632786346571;
-        Mon, 27 Sep 2021 16:45:46 -0700 (PDT)
-Received: from treble ([2600:1700:6e32:6c00::15])
-        by smtp.gmail.com with ESMTPSA id o62sm434028ota.14.2021.09.27.16.45.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Sep 2021 16:45:46 -0700 (PDT)
-Date:   Mon, 27 Sep 2021 16:45:43 -0700
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>, Marco Elver <elver@google.com>,
-        syzbot <syzbot+d08efd12a2905a344291@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [syzbot] upstream test error: KFENCE: use-after-free in
- kvm_fastop_exception
-Message-ID: <20210927234543.6waods7rraxseind@treble>
-References: <000000000000d6b66705cb2fffd4@google.com>
- <CACT4Y+ZByJ71QfYHTByWaeCqZFxYfp8W8oyrK0baNaSJMDzoUw@mail.gmail.com>
- <CANpmjNMq=2zjDYJgGvHcsjnPNOpR=nj-gQ43hk2mJga0ES+wzQ@mail.gmail.com>
- <CACT4Y+Y1c-kRk83M-qiFY40its+bP3=oOJwsbSrip5AB4vBnYA@mail.gmail.com>
- <YUpr8Vu8xqCDwkE8@google.com>
- <CACT4Y+YuX3sVQ5eHYzDJOtenHhYQqRsQZWJ9nR0sgq3s64R=DA@mail.gmail.com>
- <YVHsV+o7Ez/+arUp@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SFyVj9jMzZDynp8Zc5/t3tU9a3H9qvbPvV/wKg5WCVY=;
+        b=FDEqVKSR5Oj/QN9sAf61bB1Wya1MGvSdxcma6mMV+OPhyGrXxSLrRoKs8IHSxn2VAx
+         IOeg25OZXhTrXCyUCS41T0k+1CBGrDSJt0vURR6apZNFvXllORMVAlGMrDRYYMtt9Qiu
+         JXe2bKCbG7/SyoGO4Na9RvxaCEVxXwVUY2uCjFio1R1KAFL0v0NF/dQqevr+Vb4xqCDQ
+         4bLCuDw6Qjrmf6gkAQm4S1uPABdni1hHzJGt3tP5IrKIoiGC48WDSSQ79jm74aS3O3io
+         eDbc+4EG+hdjnR1Ixpfy6wya6YXTzOqOeGFQ/D1CjRQOjPAQaXSGRIdXuKNPq2YP4E7D
+         OsAA==
+X-Gm-Message-State: AOAM530AgdeHoldWdDqqAZQ+Q5vsFP2eMA6s3t+odvOyhy4N5nu5HThN
+        YytHisy49jEiqA38ah8o48JyVhgKa+QLEOX88KSnvg==
+X-Google-Smtp-Source: ABdhPJwTJ6A2k1UeeqGfydjJ5IF+bOjyXKqkae/MK8Zyhai2HFNW0OwsicxXR42kX7SWIOLmyvlSNTfNStJ7G95eh9s=
+X-Received: by 2002:a17:902:e80f:b0:13b:721d:f750 with SMTP id
+ u15-20020a170902e80f00b0013b721df750mr2333618plg.18.1632787691398; Mon, 27
+ Sep 2021 17:08:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YVHsV+o7Ez/+arUp@google.com>
+References: <20210922054931.GT1756565@dread.disaster.area> <20210922212725.GN570615@magnolia>
+ <20210923000255.GO570615@magnolia> <20210923014209.GW1756565@dread.disaster.area>
+ <CAPcyv4j77cWASW1Qp=J8poVRi8+kDQbBsLZb0HY+dzeNa=ozNg@mail.gmail.com>
+ <CAPcyv4in7WRw1_e5iiQOnoZ9QjQWhjj+J7HoDf3ObweUvADasg@mail.gmail.com>
+ <20210923225433.GX1756565@dread.disaster.area> <CAPcyv4jsU1ZBY0MNKf9CCCFaR4qcwUCRmZHstPpF02pefKnDtg@mail.gmail.com>
+ <09ed3c3c-391b-bf91-2456-d7f7ca5ab2fb@oracle.com> <20210924013516.GB570577@magnolia>
+ <20210927210750.GH1756565@dread.disaster.area> <b0861cd0-f5c3-6a56-29f9-cd4421c221c4@oracle.com>
+In-Reply-To: <b0861cd0-f5c3-6a56-29f9-cd4421c221c4@oracle.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 27 Sep 2021 17:08:03 -0700
+Message-ID: <CAPcyv4gys1F6G1cgXk2UOcr27GNBAfc+ZBoh7MAwFVu5cqfXDg@mail.gmail.com>
+Subject: Re: [PATCH 3/5] vfs: add a zero-initialization mode to fallocate
+To:     Jane Chu <jane.chu@oracle.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 27, 2021 at 04:07:51PM +0000, Sean Christopherson wrote:
-> I was asking about the exact location to confirm that the explosion is indeed
-> from exception fixup, which is the "unwinder scenario get confused" I was thinking
-> of.  Based on the disassembly from syzbot, that does indeed appear to be the case
-> here, i.e. this
-> 
->   2a:   4c 8b 21                mov    (%rcx),%r12
-> 
-> is from exception fixup from somewhere in __d_lookup (can't tell exactly what
-> it's from, maybe KASAN?).
-> 
-> > Is there more info on this "the unwinder gets confused"? Bug filed
-> > somewhere or an email thread? Is it on anybody's radar?
-> 
-> I don't know if there's a bug report or if this is on anyone's radar.  The issue
-> I've encountered in the past, and what I'm pretty sure is being hit here, is that
-> the ORC unwinder doesn't play nice with out-of-line fixup code, presumably because
-> there are no tables for the fixup.  I believe kvm_fastop_exception() gets blamed
-> because it's the first label that's found when searching back through the tables.
+On Mon, Sep 27, 2021 at 2:58 PM Jane Chu <jane.chu@oracle.com> wrote:
+>
+> On 9/27/2021 2:07 PM, Dave Chinner wrote:
+> > On Thu, Sep 23, 2021 at 06:35:16PM -0700, Darrick J. Wong wrote:
+> >> On Thu, Sep 23, 2021 at 06:21:19PM -0700, Jane Chu wrote:
+> >>>
+> >>> On 9/23/2021 6:18 PM, Dan Williams wrote:
+> >>>> On Thu, Sep 23, 2021 at 3:54 PM Dave Chinner <david@fromorbit.com> wrote:
+> >>>>>
+> >>>>> On Wed, Sep 22, 2021 at 10:42:11PM -0700, Dan Williams wrote:
+> >>>>>> On Wed, Sep 22, 2021 at 7:43 PM Dan Williams <dan.j.williams@intel.com> wrote:
+> >>>>>>>
+> >>>>>>> On Wed, Sep 22, 2021 at 6:42 PM Dave Chinner <david@fromorbit.com> wrote:
+> >>>>>>> [..]
+> >>>>>>>> Hence this discussion leads me to conclude that fallocate() simply
+> >>>>>>>> isn't the right interface to clear storage hardware poison state and
+> >>>>>>>> it's much simpler for everyone - kernel and userspace - to provide a
+> >>>>>>>> pwritev2(RWF_CLEAR_HWERROR) flag to directly instruct the IO path to
+> >>>>>>>> clear hardware error state before issuing this user write to the
+> >>>>>>>> hardware.
+> >>>>>>>
+> >>>>>>> That flag would slot in nicely in dax_iomap_iter() as the gate for
+> >>>>>>> whether dax_direct_access() should allow mapping over error ranges,
+> >>>>>>> and then as a flag to dax_copy_from_iter() to indicate that it should
+> >>>>>>> compare the incoming write to known poison and clear it before
+> >>>>>>> proceeding.
+> >>>>>>>
+> >>>>>>> I like the distinction, because there's a chance the application did
+> >>>>>>> not know that the page had experienced data loss and might want the
+> >>>>>>> error behavior. The other service the driver could offer with this
+> >>>>>>> flag is to do a precise check of the incoming write to make sure it
+> >>>>>>> overlaps known poison and then repair the entire page. Repairing whole
+> >>>>>>> pages makes for a cleaner implementation of the code that tries to
+> >>>>>>> keep poison out of the CPU speculation path, {set,clear}_mce_nospec().
+> >>>>>>
+> >>>>>> This flag could also be useful for preadv2() as there is currently no
+> >>>>>> way to read the good data in a PMEM page with poison via DAX. So the
+> >>>>>> flag would tell dax_direct_access() to again proceed in the face of
+> >>>>>> errors, but then the driver's dax_copy_to_iter() operation could
+> >>>>>> either read up to the precise byte offset of the error in the page, or
+> >>>>>> autoreplace error data with zero's to try to maximize data recovery.
+> >>>>>
+> >>>>> Yes, it could. I like the idea - say RWF_IGNORE_HWERROR - to read
+> >>>>> everything that can be read from the bad range because it's the
+> >>>>> other half of the problem RWF_RESET_HWERROR is trying to address.
+> >>>>> That is, the operation we want to perform on a range with an error
+> >>>>> state is -data recovery-, not "reinitialisation". Data recovery
+> >>>>> requires two steps:
+> >>>>>
+> >>>>> - "try to recover the data from the bad storage"; and
+> >>>>> - "reinitialise the data and clear the error state"
+> >>>>>
+> >>>>> These naturally map to read() and write() operations, not
+> >>>>> fallocate(). With RWF flags they become explicit data recovery
+> >>>>> operations, unlike fallocate() which needs to imply that "writing
+> >>>>> zeroes" == "reset hardware error state". While that reset method
+> >>>>> may be true for a specific pmem hardware implementation it is not a
+> >>>>> requirement for all storage hardware. It's most definitely not a
+> >>>>> requirement for future storage hardware, either.
+> >>>>>
+> >>>>> It also means that applications have no choice in what data they can
+> >>>>> use to reinitialise the damaged range with because fallocate() only
+> >>>>> supports writing zeroes. If we've recovered data via a read() as you
+> >>>>> suggest we could, then we can rebuild the data from other redundant
+> >>>>> information and immediately write that back to the storage, hence
+> >>>>> repairing the fault.
+> >>>>>
+> >>>>> That, in turn, allows the filesystem to turn the RWF_RESET_HWERROR
+> >>>>> write into an exclusive operation and hence allow the
+> >>>>> reinitialisation with the recovered/repaired state to run atomically
+> >>>>> w.r.t. all other filesystem operations.  i.e. the reset write
+> >>>>> completes the recovery operation instead of requiring separate
+> >>>>> "reset" and "write recovered data into zeroed range" steps that
+> >>>>> cannot be executed atomically by userspace...
+> >>>>
+> >>>> /me nods
+> >>>>
+> >>>> Jane, want to take a run at patches for this ^^^?
+> >>>>
+> >>>
+> >>> Sure, I'll give it a try.
+> >>>
+> >>> Thank you all for the discussions!
+> >>
+> >> Cool, thank you!
+> >
+> > I'd like to propose a slight modification to the API: a single RWF
+> > flag called RWF_RECOVER_DATA. On read, this means the storage tries
+> > to read all the data it can from the range, and for the parts it
+> > can't read data from (cachelines, sectors, whatever) it returns as
+> > zeroes.
+> >
+> > On write, this means the errors over the range get cleared and the
+> > user data provided gets written over the top of whatever was there.
+> > Filesystems should perform this as an exclusive operation to that
+> > range of the file.
+> >
+> > That way we only need one IOCB_RECOVERY flag, and for communicating
+> > with lower storage layers (e.g. dm/md raid and/or hardware) only one
+> > REQ_RECOVERY flag is needed in the bio.
+> >
+> > Thoughts?
+>
+> Sounds cleaner.  Dan, your thoughts?
 
-The ORC unwinder actually knows about .fixup, and unwinding through the
-.fixup code worked here, as evidenced by the entire stacktrace getting
-printed.  Otherwise there would have been a bunch of question marks in
-the stack trace.
-
-The problem reported here -- falsely printing kvm_fastop_exception -- is
-actually in the arch-independent printing of symbol names, done by
-__sprint_symbol().  Most .fixup code fragments are anonymous, in the
-sense that they don't have symbols associated with them.  For x86, here
-are the only defined symbols in .fixup:
-
-  ffffffff81e02408 T kvm_fastop_exception
-  ffffffff81e02728 t .E_read_words
-  ffffffff81e0272b t .E_leading_bytes
-  ffffffff81e0272d t .E_trailing_bytes
-  ffffffff81e02734 t .E_write_words
-  ffffffff81e02740 t .E_copy
-
-There's a lot of anonymous .fixup code which happens to be placed in the
-gap between "kvm_fastop_exception" and ".E_read_words".  The kernel
-symbol printing code will go backwards from the given address and will
-print the first symbol it finds.  So any anonymous code in that gap will
-falsely be reported as kvm_fastop_exception().
-
-I'm thinking the ideal way to fix this would be getting rid of the
-.fixup section altogether, and instead place a function's corresponding
-fixup code in a cold part of the original function, with the help of
-asm_goto and cold label attributes.
-
-That way, the original faulting function would be printed instead of an
-obscure reference to an anonymous .fixup code fragment.  It would have
-other benefits as well.  For example, not breaking livepatch...
-
-I'll try to play around with it.
-
--- 
-Josh
-
+I like it. I was struggling with a way to unify the flag names, and
+"recovery" is a good term for not surprising the caller with zeros.
+I.e. don't use this flow to avoid errors, use this flow to maximize
+data recovery.
