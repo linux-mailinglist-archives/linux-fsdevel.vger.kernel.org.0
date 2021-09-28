@@ -2,93 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B42A741AC75
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 11:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C3DD41ACAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 12:11:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240074AbhI1J5z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Sep 2021 05:57:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43864 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240026AbhI1J5y (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Sep 2021 05:57:54 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F29BC061604
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 02:56:15 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id b15so88995308lfe.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 02:56:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sU/LhEZ8q3BeQ6P/PiHIYla/ZdlSW3YiCmnYV8PIXuI=;
-        b=VZb+3cpQfdzvddM3ZSwyo95tO1IwqURM2VUyschymPHl9RVL+g8ruFk5g23boV7dhD
-         nI0uXn9W2EmbAY9wgbbOZoGKTUdapoQYzHW5BdSyxvA7ygd+xNKNK5TilO2yE8708XAo
-         7IWDjKg5fWb3I6i4p631kDaURnh4cIsZuiaHE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sU/LhEZ8q3BeQ6P/PiHIYla/ZdlSW3YiCmnYV8PIXuI=;
-        b=Ky3krlV3iXUMBf/Z9cqZzFhIAesmu2BD2DYUe4vH+DmGtXq6dAI8S5HfbX6L2zMdY4
-         f9wqbHbxfJ3T8dz8/b6B4QZsvW76a9F/DW1EHeg8LogTn3Un13n4cORIlgOsKSC+uHj9
-         zZywIIbJd11HI5Ww66ux6+PoVHQpC40PAXGStOIY3DZXgGKi5wNXdKJGy6N+VH6qMuQk
-         KGYW6s60HPOVyaVLYmKc40BTwhsPQrDVnP1yYLWee1QJLJNWf30Rd0pz7iJ0k8sGDvQS
-         LUkDbwBmttDjVOrjsNVBs9bq3M7hlJbRTmCw0J4l7qEbYZ6Xvy6nS1V2S8r95qGhCsEv
-         4o9w==
-X-Gm-Message-State: AOAM532j3zupr5WvWXNCwkVCfDt99PHxc935DnSoB+/hITf49ZI8fTcs
-        V22io5RslLb3pJ9/s33M5JyMEA==
-X-Google-Smtp-Source: ABdhPJxjuKx366aHmjXKCPqMcpTQrMD3DfYUL7mY6FrOib4BAVfQ6jz5zRT6TMz0E0yCtzNZ314LdA==
-X-Received: by 2002:a2e:974b:: with SMTP id f11mr4842574ljj.385.1632822973596;
-        Tue, 28 Sep 2021 02:56:13 -0700 (PDT)
-Received: from [172.16.11.1] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id y20sm2304960ljn.88.2021.09.28.02.56.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Sep 2021 02:56:13 -0700 (PDT)
+        id S240140AbhI1KNg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Sep 2021 06:13:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38712 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240139AbhI1KNe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Sep 2021 06:13:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A2580611CE;
+        Tue, 28 Sep 2021 10:11:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1632823915;
+        bh=Y7wSC7xrhvCDGxkQBLr8UtzzFVjfJNotICIdTFFi8Ok=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=QPA9Ru63h3uBzj/aj83aKCrlH2Ho8nnjT4vdhNQFbKk6Co+Hn3FZjekL20EX1KpLI
+         FL50GDzBdXWbriiurg+DrVuvmonDBe+jhJPB9bTyL/d4bY6OWoPPP5YRIMnBp6zzTw
+         4n6A0yz8bTyAoop4B6nU7eiw7K8JyZLtCey1qr+Zb8wm4DVWjA55dTV6XKU1d3hS5V
+         ir2Y3SKmHjwXJxijmKqLnENDPWKtHFTMKYpsYZTuFbx5KaEp4r5gYEtI1TbD5/tjPI
+         owKYzZULoX5Q1ynW2wOZjGKXLrR2XIotIoIGmlVJriTxfHr33WKSUXvpwrW4d4sGeP
+         Xh83CeYtUYlgw==
+Received: by mail-wr1-f46.google.com with SMTP id d6so56891135wrc.11;
+        Tue, 28 Sep 2021 03:11:55 -0700 (PDT)
+X-Gm-Message-State: AOAM532IOQtmih9UULB6XIIlS/KdGQV8bf+USQ1BdIa0YGxWt0UDBou7
+        davltlxNc2rvtBA0w+pkg4rhsoIKK6ZuU/Z6TBA=
+X-Google-Smtp-Source: ABdhPJzl6fwe7LMgMXeAMdLDt7NX7OTZg0SUJ6tJy/beE2gt+W2VZjPnxuFCXVxpHsdh8A8pu2A/KyaXdaX8tg+YXgM=
+X-Received: by 2002:adf:f481:: with SMTP id l1mr5373570wro.411.1632823914100;
+ Tue, 28 Sep 2021 03:11:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210927094123.576521-1-arnd@kernel.org> <40217483-1b8d-28ec-bbfc-8f979773b166@redhat.com>
+ <20210927130253.GH2083@kadam> <CAK8P3a3YFh4QTC6dk6onsaKcqCM3Nmb2JhMXK5QdZpHtffjyLg@mail.gmail.com>
+ <CAHk-=wheEHQxdSJgTkt7y4yFjzhWxMxE-p7dKLtQSBs4ceHLmw@mail.gmail.com> <70a77e44-c43a-f5ce-58d5-297ca2cfe5d9@redhat.com>
+In-Reply-To: <70a77e44-c43a-f5ce-58d5-297ca2cfe5d9@redhat.com>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Tue, 28 Sep 2021 12:11:38 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3sEy7NAhMHcV7XPpZxo5tHnQz1oCP43YTe_ZQuzOHgPA@mail.gmail.com>
+Message-ID: <CAK8P3a3sEy7NAhMHcV7XPpZxo5tHnQz1oCP43YTe_ZQuzOHgPA@mail.gmail.com>
 Subject: Re: [PATCH] vboxsf: fix old signature detection
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Hans de Goede <hdegoede@redhat.com>,
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
         Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        linux-sparse@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@kernel.org>,
+        Sparse Mailing-list <linux-sparse@vger.kernel.org>,
         Nathan Chancellor <nathan@kernel.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <20210927094123.576521-1-arnd@kernel.org>
- <40217483-1b8d-28ec-bbfc-8f979773b166@redhat.com>
- <20210927130253.GH2083@kadam>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <78f6d6cc-2be5-c69b-bd17-7da135448438@rasmusvillemoes.dk>
-Date:   Tue, 28 Sep 2021 11:56:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
-MIME-Version: 1.0
-In-Reply-To: <20210927130253.GH2083@kadam>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 27/09/2021 15.02, Dan Carpenter wrote:
-> GCC handles it the same way as Clang.  '\377' is -1 but in Sparse it's
-> 255.  I've added the Sparse mailing list to the CC.
+On Tue, Sep 28, 2021 at 11:40 AM Hans de Goede <hdegoede@redhat.com> wrote:
+> On 9/27/21 8:33 PM, Linus Torvalds wrote:
+> > On Mon, Sep 27, 2021 at 6:22 AM Arnd Bergmann <arnd@kernel.org> wrote:
+> >>
+> >> More specifically, ' think '\377' may be either -1 or 255 depending on
+> >> the architecture.
+> >> On most architectures, 'char' is implicitly signed, but on some others
+> >> it is not.
+> >
+> > Yeah. That code is just broken.
+> >
+> > And Arnd, your patch may be "conceptually minimal", in that it keeps
+> > thed broken code and makes it work. But it just dials up the oddity to
+> > 11.
 
-FTR, while examples are not normative, this:
+Thank you for addressing it. I usually try to avoid overthinking changes
+to "unusual" code like this, but your solution is clearly an improvement.
 
-EXAMPLE 2 Consider implementations that use two's complement
-representation for integers and eight bits for objects that have type
-char. In an implementation in which type char has the same range of
-values as signed char, the integer character constant '\xFF' has the
-value -1; if type char has the same range of values as unsigned char,
-the character constant '\xFF' has the value +255.
+What really threw me off this time is that my first attempt to address
+the warning was an exact revert of 9d682ea6bcc7 ("vboxsf: Fix the
+check for the old binary mount-arguments struct"), which in turn
+came from a tool that is usually correct and and that both Dan
+and Al thought the original patch was correct when it looked like
+it turned a working (though unusual) implementation  into a broken
+one.
 
-doesn't leave any ambiguity or (implementation|un)-definednes, and
-sparse interpreting '\377' as 255 independent of its
-target->unsigned_char is a plain bug in sparse.
+> I agree that your suggestion is to be the best solution,
+> so how do we move forward with this, do I turn this into a
+> proper patch with you as the author and Arnd as Reported-by and
+> if yes may I add your Signed-off-by to the patch ?
 
-Rasmus
+It's already upstream, see d5f6545934c4 ("qnx4: work around gcc
+false positive warning bug").
+
+      Arnd
