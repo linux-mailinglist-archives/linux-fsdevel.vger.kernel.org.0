@@ -2,63 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BE00F41A8D1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 08:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E137B41A8D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 08:23:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239034AbhI1GZ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Sep 2021 02:25:29 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:6259 "EHLO
+        id S239075AbhI1GZh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Sep 2021 02:25:37 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:6283 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S239030AbhI1GZZ (ORCPT
+        with ESMTP id S239053AbhI1GZc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Sep 2021 02:25:25 -0400
-IronPort-Data: =?us-ascii?q?A9a23=3AFCzbTqm+M5KPVD6GhCmDkxHo5gz6J0RdPkR7XQ2?=
- =?us-ascii?q?eYbTBsI5bpzJUzTAaDWGCPvnYY2D9KNoiPdni9ENXvZCAxtdrTFM4+CA2RRqmi?=
- =?us-ascii?q?+KfW43BcR2Y0wB+jyH7ZBs+qZ1YM7EsFehsJpPnjkrrYuWJQUVUj/nSH+KtUr6?=
- =?us-ascii?q?cY0ideCc/IMsfoUM68wIGqt4w6TSJK1vlVeLa+6UzCnf8s9JHGj58B5a4lf9al?=
- =?us-ascii?q?K+aVAX0EbAJTasjUFf2zxH5BX+ETE27ByOQroJ8RoZWSwtfpYxV8F81/z91Yj+?=
- =?us-ascii?q?kur39NEMXQL/OJhXIgX1TM0SgqkEa4HVsjeBgb7xBAatUo2zhc9RZ0shEs4ehD?=
- =?us-ascii?q?wkvJbHklvkfUgVDDmd1OqguFLrveCHi6Z3Nnh2bG5fr67A0ZK0sBqUU8/h2DUl?=
- =?us-ascii?q?A7/sdLyoHbwzFjOWzqJqkS+1ol+wiKsfxNY8Ss30myivWZd4qSJaFQePV5Ntc3?=
- =?us-ascii?q?T41nehPG+rTY4wSbj8HRBjCfBpJNX8UBYg4kePugWPwGxVetl6UoK8f52nI0Bc?=
- =?us-ascii?q?31LnrLcqTdtGULe1VlUawonnauWj0ajkAO9ubxSWU9Fq3m/TC2y/2MKoWFbul5?=
- =?us-ascii?q?rtkm1Ge2GEXIAMZWEH9ovSjjEO6HdVFJCQ8/isosLh390GxSNT5dwO3rWTCvRM?=
- =?us-ascii?q?GXddUVeog52mlzqvS/hbcFmYfZiBOZcZgt8IsQzEukFiTkLvBGz11t5WHRHSc6?=
- =?us-ascii?q?PGQrDWvKW4SN2BEeCxscOevy7EPu6lq1lSWEIklS/Xz07XI9fjL62jihEADa38?=
- =?us-ascii?q?71qbnD5mGwG0=3D?=
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AfjO2la6PIcLhzZZ/4gPXwPTXdLJyesId70hD?=
- =?us-ascii?q?6qkRc20wTiX8ra2TdZsguyMc9wx6ZJhNo7G90cq7MBbhHPxOkOos1N6ZNWGIhI?=
- =?us-ascii?q?LCFvAB0WKN+V3dMhy73utc+IMlSKJmFeD3ZGIQse/KpCW+DPYsqePqzJyV?=
+        Tue, 28 Sep 2021 02:25:32 -0400
+IronPort-Data: =?us-ascii?q?A9a23=3AzxInbKIOS5sSqRVzFE+RwZQlxSXFcZb7ZxGrkP8?=
+ =?us-ascii?q?bfHC60zkl1GFVyDEbWjuFa6mOajTwKo8nPo6/pkIHuJPQxoNqS1BcGVNFFSwT8?=
+ =?us-ascii?q?ZWfbTi6wuYcBwvLd4ubChsPA/w2MrEsF+hpCC+BzvuRGuK59yAkhPvYHuOU5NP?=
+ =?us-ascii?q?sYUideyc1EU/Ntjozw4bVsqYw6TSIK1vlVeHa+qUzC3f5s9JACV/43orYwP9ZU?=
+ =?us-ascii?q?FsejxtD1rA2TagjUFYzDBD5BrpHTU26ByOQroW5goeHq+j/ILGRpgs1/j8mDJW?=
+ =?us-ascii?q?rj7T6blYXBLXVOGBiiFIPA+773EcE/Xd0j87XN9JFAatToy+UltZq2ZNDs4esY?=
+ =?us-ascii?q?Qk0PKzQg/lbWB5de817FfQfpeeWfynu6qR/yGWDKRMA2c5GAEgoPIEw9PxwBGZ?=
+ =?us-ascii?q?U//0EbjsKa3irmOOyxKOTS+9inM0vIcDneoQFtRlIwTjfS/RgXpHHR6TD4MRw3?=
+ =?us-ascii?q?TEsi8QIFvHbD+IVayVoahvoYBBVPFoTTpUkk4+AnHjjfiZYqHqRpKwq8y7Sxgk?=
+ =?us-ascii?q?327/oWPLTZNCLQMB9mkeDunmA+2X/HwFcONGBoRKF+XKEgvTT2y/2MKoIG7q8+?=
+ =?us-ascii?q?uF7hnWI23ceThEbPXO/oP+kmguwQN5SNUEQ0jQhoLJ090GxSNT5GRqirxasuh8?=
+ =?us-ascii?q?aRsoVEOAg7gyJ4rTb7hzfBWUeSDNFLts8u6ceQT0sy0/Mj93yLSJgvafTSn+H8?=
+ =?us-ascii?q?LqQ6zSoNkA9M24YYgcWQA0E/Z/noYcunlTIVNklDa3dszFfMVkc2BjT9G5n2ep?=
+ =?us-ascii?q?V1pVNis2GEZn8q2rEjvD0osQdu207hl6Y0z4=3D?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AunpnqKNbIuqYKcBcTv2jsMiBIKoaSvp037BL?=
+ =?us-ascii?q?7TEUdfUxSKGlfq+V8sjzqiWftN98YhAdcLO7Scy9qBHnhP1ICOAqVN/MYOCMgh?=
+ =?us-ascii?q?rLEGgN1+vf6gylMyj/28oY7q14bpV5YeeaMXFKyer8/ym0euxN/OW6?=
 X-IronPort-AV: E=Sophos;i="5.85,328,1624291200"; 
-   d="scan'208";a="115096985"
+   d="scan'208";a="115096993"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 28 Sep 2021 14:23:45 +0800
+  by heian.cn.fujitsu.com with ESMTP; 28 Sep 2021 14:23:51 +0800
 Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
-        by cn.fujitsu.com (Postfix) with ESMTP id 83B3D4D0DC7F;
-        Tue, 28 Sep 2021 14:23:43 +0800 (CST)
-Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
+        by cn.fujitsu.com (Postfix) with ESMTP id 8836C4D0DC83;
+        Tue, 28 Sep 2021 14:23:50 +0800 (CST)
+Received: from G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) by
  G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Tue, 28 Sep 2021 14:23:37 +0800
+ (TLS) id 15.0.1497.23; Tue, 28 Sep 2021 14:23:44 +0800
+Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
+ G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Tue, 28 Sep 2021 14:23:43 +0800
 Received: from irides.mr.mr.mr (10.167.225.141) by
  G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Tue, 28 Sep 2021 14:23:36 +0800
+ id 15.0.1497.23 via Frontend Transport; Tue, 28 Sep 2021 14:23:42 +0800
 From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
 To:     <dan.j.williams@intel.com>, <djwong@kernel.org>, <hch@lst.de>,
         <linux-xfs@vger.kernel.org>
 CC:     <ruansy.fnst@fujitsu.com>, <david@fromorbit.com>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <nvdimm@lists.linux.dev>, <rgoldwyn@suse.de>,
-        <viro@zeniv.linux.org.uk>, <willy@infradead.org>
-Subject: [PATCH v10 4/8] fsdax: Convert dax_iomap_zero to iter model
-Date:   Tue, 28 Sep 2021 14:23:07 +0800
-Message-ID: <20210928062311.4012070-5-ruansy.fnst@fujitsu.com>
+        <viro@zeniv.linux.org.uk>, <willy@infradead.org>,
+        Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: [PATCH v10 5/8] fsdax: Add dax_iomap_cow_copy() for dax_iomap_zero
+Date:   Tue, 28 Sep 2021 14:23:08 +0800
+Message-ID: <20210928062311.4012070-6-ruansy.fnst@fujitsu.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20210928062311.4012070-1-ruansy.fnst@fujitsu.com>
 References: <20210928062311.4012070-1-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 83B3D4D0DC7F.A110A
+X-yoursite-MailScanner-ID: 8836C4D0DC83.AED86
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
 X-Spam-Status: No
@@ -66,74 +70,68 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Let dax_iomap_zero() support iter model.
+Punch hole on a reflinked file needs dax_iomap_cow_copy() too.
+Otherwise, data in not aligned area will be not correct.  So, add the
+CoW operation for not aligned case in dax_iomap_zero().
 
 Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/dax.c               | 3 ++-
- fs/iomap/buffered-io.c | 3 +--
- include/linux/dax.h    | 3 ++-
- 3 files changed, 5 insertions(+), 4 deletions(-)
+ fs/dax.c | 27 +++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
 diff --git a/fs/dax.c b/fs/dax.c
-index b437badfe0dd..debe459680f2 100644
+index debe459680f2..5379de8ad0c7 100644
 --- a/fs/dax.c
 +++ b/fs/dax.c
-@@ -1209,8 +1209,9 @@ static vm_fault_t dax_pmd_load_hole(struct xa_state *xas, struct vm_fault *vmf,
- }
- #endif /* CONFIG_FS_DAX_PMD */
- 
--s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
-+s64 dax_iomap_zero(const struct iomap_iter *iter, loff_t pos, u64 length)
+@@ -1212,6 +1212,7 @@ static vm_fault_t dax_pmd_load_hole(struct xa_state *xas, struct vm_fault *vmf,
+ s64 dax_iomap_zero(const struct iomap_iter *iter, loff_t pos, u64 length)
  {
-+	const struct iomap *iomap = &iter->iomap;
+ 	const struct iomap *iomap = &iter->iomap;
++	const struct iomap *srcmap = &iter->srcmap;
  	sector_t sector = iomap_sector(iomap, pos & PAGE_MASK);
  	pgoff_t pgoff;
  	long rc, id;
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 9cc5798423d1..84a861d3b3e0 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -889,7 +889,6 @@ static s64 __iomap_zero_iter(struct iomap_iter *iter, loff_t pos, u64 length)
+@@ -1230,21 +1231,27 @@ s64 dax_iomap_zero(const struct iomap_iter *iter, loff_t pos, u64 length)
  
- static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- {
--	struct iomap *iomap = &iter->iomap;
- 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
- 	loff_t pos = iter->pos;
- 	loff_t length = iomap_length(iter);
-@@ -903,7 +902,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 		s64 bytes;
+ 	id = dax_read_lock();
  
- 		if (IS_DAX(iter->inode))
--			bytes = dax_iomap_zero(pos, length, iomap);
-+			bytes = dax_iomap_zero(iter, pos, length);
- 		else
- 			bytes = __iomap_zero_iter(iter, pos, length);
- 		if (bytes < 0)
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index 2619d94c308d..b6f5d0d30065 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -13,6 +13,7 @@ typedef unsigned long dax_entry_t;
+-	if (page_aligned)
++	if (page_aligned) {
+ 		rc = dax_zero_page_range(iomap->dax_dev, pgoff, 1);
+-	else
+-		rc = dax_direct_access(iomap->dax_dev, pgoff, 1, &kaddr, NULL);
+-	if (rc < 0) {
+-		dax_read_unlock(id);
+-		return rc;
++		goto out;
+ 	}
  
- struct iomap_ops;
- struct iomap;
-+struct iomap_iter;
- struct dax_device;
- struct dax_operations {
- 	/*
-@@ -210,7 +211,7 @@ vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
- int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index);
- int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
- 				      pgoff_t index);
--s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap);
-+s64 dax_iomap_zero(const struct iomap_iter *iter, loff_t pos, u64 length);
- static inline bool dax_mapping(struct address_space *mapping)
- {
- 	return mapping->host && IS_DAX(mapping->host);
+-	if (!page_aligned) {
+-		memset(kaddr + offset, 0, size);
++	rc = dax_direct_access(iomap->dax_dev, pgoff, 1, &kaddr, NULL);
++	if (rc < 0)
++		goto out;
++	memset(kaddr + offset, 0, size);
++	if (srcmap->addr != IOMAP_HOLE && srcmap->addr != iomap->addr) {
++		rc = dax_iomap_cow_copy(pos, size, PAGE_SIZE, srcmap,
++					kaddr);
++		if (rc < 0)
++			goto out;
++		dax_flush(iomap->dax_dev, kaddr, PAGE_SIZE);
++	} else
+ 		dax_flush(iomap->dax_dev, kaddr + offset, size);
+-	}
++
++out:
+ 	dax_read_unlock(id);
+-	return size;
++	return rc < 0 ? rc : size;
+ }
+ 
+ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
 -- 
 2.33.0
 
