@@ -2,130 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2722C41ACBF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 12:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5558A41ACCA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 12:19:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240118AbhI1KSd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Sep 2021 06:18:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48648 "EHLO
+        id S240179AbhI1KVP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Sep 2021 06:21:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239952AbhI1KSc (ORCPT
+        with ESMTP id S240055AbhI1KVO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Sep 2021 06:18:32 -0400
-Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46C69C061604
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 03:16:53 -0700 (PDT)
-Received: by mail-oi1-x229.google.com with SMTP id y201so29400264oie.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 03:16:53 -0700 (PDT)
+        Tue, 28 Sep 2021 06:21:14 -0400
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88272C061604
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 03:19:35 -0700 (PDT)
+Received: by mail-oi1-x232.google.com with SMTP id y201so29407238oie.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 03:19:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=O+Hd389s4zwlrEfU0RxVwCS/ivAyltT+4eJme/lzcYg=;
-        b=h8iVziDK5Y0iZjNZU21rA1jfXk8ZyVhrg2BxwrB5EQ+rfU3UBQ0VSrnlgN657y1eC2
-         5cy91fTmnghKaGNFrQRT88sNoLzO08tkF3pZQfoS6dYfkmE3Frr9tOhJvZyn1MX3kXwk
-         Rr2k28aP6ZGBmxfpd+wFjjIKR2NyA5bUuGl5C3F4rYx/1TaxwWtPlXOoQQ1a8cG1pEJQ
-         KOe2DkCsrhcWFL0OxM7kdV1/o9g2bNf09SmvoiqgvmVoZc06IYtTeGYMB1mYKwXD+TmJ
-         oLsVSrPRnNhWV8rmFWhTltSC2nz4C4GJQLF1uGg2yMnscsC//xYkuFsd2IZGeI65mOMl
-         Akhg==
+        bh=lQYmG+9YKKKj9P4d3wBdSI2QiZ1BGCsr9C8njInJAsU=;
+        b=fmJdXPyROy7IKTGkvi2HKpgJWQQen5SJLWT+BYnUxU5BpSVPGnxrbMr6pAW54LGD7F
+         RJzMjeo1ovygMBQ6GIKVK3T3zSCr5eoEQEFsux2ZuoZOXETQRh9bBhS0ihSUo7XIeAV2
+         9ZbyUetAwOySDkv2COviwP/TQ56AwK+pdJiqsH2sP38D+MNfy3zRmDgx5DlWKJVmE7oy
+         zvjZZRR0ZV9DMeG6BRjQbzWX6cjDDkX0gmz6GmaK5ZeiubbEIzDI78O57gvHqZxjWT31
+         jvEjKZJdeOpOjfBy7F/15nvANIf8kn3ovdUr9xX0mIodQvFi+CvxQI+g/8TCEo0yKEWn
+         VDeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=O+Hd389s4zwlrEfU0RxVwCS/ivAyltT+4eJme/lzcYg=;
-        b=SjqIki2CIzjoPMpU+QWKAHStVwK97eJB5dtrg6zovTbAYCjgwDMzewKtZyxHsXnn4a
-         QaTcvr8e3K1/hcfldgcTnWDxetGe8eESUQTPYdvaQhjL4fSB1Ntbs2kfKjzjnNmkyzAW
-         OuNTaiHoGHtiyPJdEd+w2DDciUoOFQZ1vQUzya/TcAI2iSMp6XVp1u/oCq5FogeYJTE+
-         imTwqwxg5mXbP3lCvWNpowjoj4jHkIGKBlSfWcSfFsnq086xBbzv5war2WqMvQ4BIjJD
-         9VG3WKBZHWUm2mFBIMiW20RIuSHdBjqDooWLqJZBHmFLFXXrwmKjpFd/vnEbYTadwjRb
-         VymQ==
-X-Gm-Message-State: AOAM5303rPHFc9fSEWSRdkZ76y7gDFwZfcFJ9gRTDzn5rVVXdXdGbGWI
-        kV8BJomimsH4e5d7XdbEmxWrIWDi8qZR6uCQXgaKww==
-X-Google-Smtp-Source: ABdhPJyu/CGI5VgCk70sPwQBfKmIuNTUZxtWzIdQClj3dSFa0I6f4kM3g/8YHuYxRaUGVYpZrqyl4HWNuT4300RGk+E=
-X-Received: by 2002:aca:f189:: with SMTP id p131mr3052297oih.128.1632824212352;
- Tue, 28 Sep 2021 03:16:52 -0700 (PDT)
+        bh=lQYmG+9YKKKj9P4d3wBdSI2QiZ1BGCsr9C8njInJAsU=;
+        b=IWv0M8H5P7YCfqTu7iaya0D2z/JQXzd6U6KAhSNu/d2amL1kKYOSTWx7NAaTN+zSLi
+         inxalGXuJenJGKgSjVWHuiB9COsUpeFBGioDLdoI8Akkejz//qqGB0pMmEBStTuUrx0Q
+         0RgPe1s1uO+v1ZRAN5Tp+w19SwdlkMfxXyjSgQtQ3+SDO6os/Si00annio0OHwJfyN5E
+         XutUmbvsMTobApluxNcENgE5rEHe18ZNavSCWnHNZdqJNJRpbYkkpzC1Vr1EPMCiCibq
+         FlJXV9x7jHjR9HxSHwpVYdbYaa8Enlg+QYIxJ2AhMxw7ILsQ7IFPJ3QuFvsNDdFmCFeP
+         7GnQ==
+X-Gm-Message-State: AOAM531JnYdptbGv4EDGEMN6uQw6ju16zex8mc8+da7OELrCSJAC7cfc
+        n98QQ2iyCNaha4hTs3cJElZrRX24ArgmijrbOrg4HQ==
+X-Google-Smtp-Source: ABdhPJxUMCEo9TXFOvEkTTYx+nfljBiWd5dHFF6SRgPyPESZctdGBH5PLQpzKEUdfq4UyEXaDaZuR0+RydRwlMOYr7Q=
+X-Received: by 2002:a05:6808:1991:: with SMTP id bj17mr2974526oib.160.1632824374569;
+ Tue, 28 Sep 2021 03:19:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <000000000000d6b66705cb2fffd4@google.com> <CACT4Y+ZByJ71QfYHTByWaeCqZFxYfp8W8oyrK0baNaSJMDzoUw@mail.gmail.com>
- <CANpmjNMq=2zjDYJgGvHcsjnPNOpR=nj-gQ43hk2mJga0ES+wzQ@mail.gmail.com>
- <CACT4Y+Y1c-kRk83M-qiFY40its+bP3=oOJwsbSrip5AB4vBnYA@mail.gmail.com>
- <YUpr8Vu8xqCDwkE8@google.com> <CACT4Y+YuX3sVQ5eHYzDJOtenHhYQqRsQZWJ9nR0sgq3s64R=DA@mail.gmail.com>
- <YVHsV+o7Ez/+arUp@google.com> <20210927234543.6waods7rraxseind@treble>
-In-Reply-To: <20210927234543.6waods7rraxseind@treble>
+References: <000000000000a3cf8605cb2a1ec0@google.com> <CACT4Y+aS6w1gFuMVY1fnAG0Yp0XckQTM+=tUHkOuxHUy2mkxrg@mail.gmail.com>
+ <20210921165134.GE35846@C02TD0UTHF1T.local> <CACT4Y+ZjRgb57EV6mvC-bVK0uT0aPXUjtZJabuWasYcshKNcgw@mail.gmail.com>
+ <20210927170122.GA9201@C02TD0UTHF1T.local> <20210927171812.GB9201@C02TD0UTHF1T.local>
+In-Reply-To: <20210927171812.GB9201@C02TD0UTHF1T.local>
 From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 28 Sep 2021 12:16:41 +0200
-Message-ID: <CACT4Y+aqBKqJFa-6TuXWHSh0DEYYM9kbyZZohO3Gi_EujafmVA@mail.gmail.com>
-Subject: Re: [syzbot] upstream test error: KFENCE: use-after-free in kvm_fastop_exception
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        Marco Elver <elver@google.com>,
-        syzbot <syzbot+d08efd12a2905a344291@syzkaller.appspotmail.com>,
+Date:   Tue, 28 Sep 2021 12:19:23 +0200
+Message-ID: <CACT4Y+actfuftwMMOGXmEsLYbnCnqcZ2gJGeoMLsFCUNE-AxcQ@mail.gmail.com>
+Subject: Re: [syzbot] upstream test error: KASAN: invalid-access Read in __entry_tramp_text_end
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     syzbot <syzbot+488ddf8087564d6de6e2@syzkaller.appspotmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Peter Zijlstra <peterz@infradead.org>
+        will@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 28 Sept 2021 at 01:45, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+ On Mon, 27 Sept 2021 at 19:18, Mark Rutland <mark.rutland@arm.com> wrote:
 >
-> On Mon, Sep 27, 2021 at 04:07:51PM +0000, Sean Christopherson wrote:
-> > I was asking about the exact location to confirm that the explosion is indeed
-> > from exception fixup, which is the "unwinder scenario get confused" I was thinking
-> > of.  Based on the disassembly from syzbot, that does indeed appear to be the case
-> > here, i.e. this
+> On Mon, Sep 27, 2021 at 06:01:22PM +0100, Mark Rutland wrote:
+> > On Mon, Sep 27, 2021 at 04:27:30PM +0200, Dmitry Vyukov wrote:
+> > > On Tue, 21 Sept 2021 at 18:51, Mark Rutland <mark.rutland@arm.com> wrote:
+> > > >
+> > > > Hi Dmitry,
+> > > >
+> > > > The good news is that the bad unwind is a known issue, the bad news is
+> > > > that we don't currently have a way to fix it (and I'm planning to talk
+> > > > about this at the LPC "objtool on arm64" talk this Friday).
+> > > >
+> > > > More info below: the gist is we can produce spurious entries at an
+> > > > exception boundary, but shouldn't miss a legitimate value, and there's a
+> > > > plan to make it easier to spot when entries are not legitimate.
+> > > >
+> > > > On Fri, Sep 17, 2021 at 05:03:48PM +0200, Dmitry Vyukov wrote:
+> > > > > > Call trace:
+> > > > > >  dump_backtrace+0x0/0x1ac arch/arm64/kernel/stacktrace.c:76
+> > > > > >  show_stack+0x18/0x24 arch/arm64/kernel/stacktrace.c:215
+> > > > > >  __dump_stack lib/dump_stack.c:88 [inline]
+> > > > > >  dump_stack_lvl+0x68/0x84 lib/dump_stack.c:105
+> > > > > >  print_address_description+0x7c/0x2b4 mm/kasan/report.c:256
+> > > > > >  __kasan_report mm/kasan/report.c:442 [inline]
+> > > > > >  kasan_report+0x134/0x380 mm/kasan/report.c:459
+> > > > > >  __do_kernel_fault+0x128/0x1bc arch/arm64/mm/fault.c:317
+> > > > > >  do_bad_area arch/arm64/mm/fault.c:466 [inline]
+> > > > > >  do_tag_check_fault+0x74/0x90 arch/arm64/mm/fault.c:737
+> > > > > >  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
+> > > > > >  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
+> > > > > >  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
+> > > > > >  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
+> > > > > >  __entry_tramp_text_end+0xdfc/0x3000
+> > > > >
+> > > > > /\/\/\/\/\/\/\
+> > > > >
+> > > > > This is broken unwind on arm64. d_lookup statically calls __d_lookup,
+> > > > > not __entry_tramp_text_end (which is not even a function).
+> > > > > See the following thread for some debugging details:
+> > > > > https://lore.kernel.org/lkml/CACT4Y+ZByJ71QfYHTByWaeCqZFxYfp8W8oyrK0baNaSJMDzoUw@mail.gmail.com/
 > >
-> >   2a:   4c 8b 21                mov    (%rcx),%r12
-> >
-> > is from exception fixup from somewhere in __d_lookup (can't tell exactly what
-> > it's from, maybe KASAN?).
-> >
-> > > Is there more info on this "the unwinder gets confused"? Bug filed
-> > > somewhere or an email thread? Is it on anybody's radar?
-> >
-> > I don't know if there's a bug report or if this is on anyone's radar.  The issue
-> > I've encountered in the past, and what I'm pretty sure is being hit here, is that
-> > the ORC unwinder doesn't play nice with out-of-line fixup code, presumably because
-> > there are no tables for the fixup.  I believe kvm_fastop_exception() gets blamed
-> > because it's the first label that's found when searching back through the tables.
+> > Looking at this again (and as you point out below), my initial analysis
+> > was wrong, and this isn't to do with the LR -- this value should be the
+> > PC at the time the exception boundary.
 >
-> The ORC unwinder actually knows about .fixup, and unwinding through the
-> .fixup code worked here, as evidenced by the entire stacktrace getting
-> printed.  Otherwise there would have been a bunch of question marks in
-> the stack trace.
+> Whoops, I accidentally nuked the more complete/accurate analysis I just
+> wrote and sent the earlier version. Today is not a good day for me and
+> computers. :(
 >
-> The problem reported here -- falsely printing kvm_fastop_exception -- is
-> actually in the arch-independent printing of symbol names, done by
-> __sprint_symbol().  Most .fixup code fragments are anonymous, in the
-> sense that they don't have symbols associated with them.  For x86, here
-> are the only defined symbols in .fixup:
+> What's happened here is that __d_lookup() (via a few layers of inlining) called
+> load_unaligned_zeropad(). The `LDR` at the start of the asm faulted (I suspect
+> due to a tag check fault), and so the exception handler replaced the PC with
+> the (anonymous) fixup function. This is akin to a tail or sibling call, and so
+> the fixup function entirely replaces __d_lookup() in the trace.
 >
->   ffffffff81e02408 T kvm_fastop_exception
->   ffffffff81e02728 t .E_read_words
->   ffffffff81e0272b t .E_leading_bytes
->   ffffffff81e0272d t .E_trailing_bytes
->   ffffffff81e02734 t .E_write_words
->   ffffffff81e02740 t .E_copy
+> The fixup function itself has an `LDR` which faulted (because it's
+> designed to fixup page alignment problems, not tag check faults), and
+> that is what's reported here.
 >
-> There's a lot of anonymous .fixup code which happens to be placed in the
-> gap between "kvm_fastop_exception" and ".E_read_words".  The kernel
-> symbol printing code will go backwards from the given address and will
-> print the first symbol it finds.  So any anonymous code in that gap will
-> falsely be reported as kvm_fastop_exception().
+> As the fixup function is anonymous, and the nearest prior symbol in .text is
+> __entry_tramp_text_end, it gets symbolized as an offset from that.
 >
-> I'm thinking the ideal way to fix this would be getting rid of the
-> .fixup section altogether, and instead place a function's corresponding
-> fixup code in a cold part of the original function, with the help of
-> asm_goto and cold label attributes.
+> We can make the unwinds a bit nicer by adding some markers (e.g. patch
+> below), but actually fixing this case will require some more thought.
 >
-> That way, the original faulting function would be printed instead of an
-> obscure reference to an anonymous .fixup code fragment.  It would have
-> other benefits as well.  For example, not breaking livepatch...
+> Thanks,
+> Mark.
 >
-> I'll try to play around with it.
+> ---->8----
+> diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+> index 709d2c433c5e..127096a0faea 100644
+> --- a/arch/arm64/kernel/vmlinux.lds.S
+> +++ b/arch/arm64/kernel/vmlinux.lds.S
+> @@ -111,6 +111,11 @@ jiffies = jiffies_64;
+>  #define TRAMP_TEXT
+>  #endif
+>
+> +#define FIXUP_TEXT                                     \
+> +       __fixup_text_start = .;                         \
+> +       *(.fixup);                                      \
+> +       __fixup_text_end = .;
+> +
+>  /*
+>   * The size of the PE/COFF section that covers the kernel image, which
+>   * runs from _stext to _edata, must be a round multiple of the PE/COFF
+> @@ -161,7 +166,7 @@ SECTIONS
+>                         IDMAP_TEXT
+>                         HIBERNATE_TEXT
+>                         TRAMP_TEXT
+> -                       *(.fixup)
+> +                       FIXUP_TEXT
+>                         *(.gnu.warning)
+>                 . = ALIGN(16);
+>                 *(.got)                 /* Global offset table          */
 
-Thanks for debugging this, Josh.
-I think your solution can also help arm64 as it has the same issue.
+
+Oh, good it's very local to the .fixup thing rather than a common
+issue that affects all unwinds.
+In the other x86 thread Josh Poimboeuf suggested to use asm goto to a
+cold part of the function instead of .fixup:
+https://lore.kernel.org/lkml/20210927234543.6waods7rraxseind@treble/
+This sounds like a more reliable solution that will cause less
+maintenance burden. Would it work for arm64 as well?
