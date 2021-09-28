@@ -2,97 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C194441A5E7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 05:11:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6917441A602
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 05:20:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238821AbhI1DNZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Sep 2021 23:13:25 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:35268 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238748AbhI1DNX (ORCPT
+        id S238832AbhI1DWA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Sep 2021 23:22:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38392 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238825AbhI1DV6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Sep 2021 23:13:23 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 95E6C222DF;
-        Tue, 28 Sep 2021 03:11:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1632798701; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=k1irZcE6GgE63UfMaZ69q7wFQxdxy8PkJV1UDRuOwDA=;
-        b=Af8PPYiGG/KoV03reINXBzNVPccmiyHVMrwNt2UIFxlU1jhXBp5nI2Gka9opvfla6EYXOa
-        u9dubE+5BF4AwBJlVzPfA+nwLlAQkhckDkag+FkKT+kBsnwd6qmqqlWA/pOjn0C1Ffe5V9
-        HYSxfFfncwL3S6Y8kijKplmMugjgsEE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1632798701;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=k1irZcE6GgE63UfMaZ69q7wFQxdxy8PkJV1UDRuOwDA=;
-        b=rvEM/v30W6HdMnLZksiPaBfoRjZ8iPYI6P23HeASJG7DpSxpqPRoywlWfOvhpMFCEARX9U
-        W3t0wcFCENMdaDDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C1463132D4;
-        Tue, 28 Sep 2021 03:11:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id HD3CH+SHUmHafwAAMHmgww
-        (envelope-from <neilb@suse.de>); Tue, 28 Sep 2021 03:11:32 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "David Howells" <dhowells@redhat.com>
-Cc:     willy@infradead.org, hch@lst.de, trond.myklebust@primarydata.com,
-        "Theodore Ts'o" <tytso@mit.edu>, linux-block@vger.kernel.org,
-        ceph-devel@vger.kernel.org,
-        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        "Jeff Layton" <jlayton@kernel.org>,
-        "Andreas Dilger" <adilger.kernel@dilger.ca>,
-        "Anna Schumaker" <anna.schumaker@netapp.com>, linux-mm@kvack.org,
-        "Bob Liu" <bob.liu@oracle.com>,
+        Mon, 27 Sep 2021 23:21:58 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07A44C061575;
+        Mon, 27 Sep 2021 20:20:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=sBFbi/If9ujFQsh6+OOsbzjxSKlHFm7peAgHiM3zc7w=; b=kaVUFoCmBwAtZgeh69BoiqQo3O
+        PCwSDMDW8d3nJRX6Obf3ZQWznzLKHuHuC3yMQMQb2AnmPfhHuIONoS3ELCJWHYd8PiFVg3Q3xqh6e
+        ew3mdA9lp3PqkT/mXOAlZmV4H7mYdcLU8POaRiBXZ2dViZRGJTCtUkwDk1dcS4QrapzgMopn8m6nd
+        49lMpilWetA4XJDSy5XwZpXm7by457RLwurUAZBp2kPlzVJgQ0t4Geq9Kt3hf106/oHLV4EujDquv
+        pKUtpPLdJ+1FVP3634WN/btfQIYRxmBw/DWsVNVKN7FaCSRmmG7SUDGMz1DtGvibAGfJPvpXL64UP
+        StZf9C6g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mV3eH-00ARfz-Fb; Tue, 28 Sep 2021 03:19:26 +0000
+Date:   Tue, 28 Sep 2021 04:19:17 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         "Darrick J. Wong" <djwong@kernel.org>,
-        "Josef Bacik" <josef@toxicpanda.com>,
-        "Seth Jennings" <sjenning@linux.vnet.ibm.com>,
-        "Jens Axboe" <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-cifs@vger.kernel.org, "Chris Mason" <clm@fb.com>,
-        "David Sterba" <dsterba@suse.com>,
-        "Minchan Kim" <minchan@kernel.org>,
-        "Steve French" <sfrench@samba.org>,
-        "Dan Magenheimer" <dan.magenheimer@oracle.com>,
-        linux-nfs@vger.kernel.org, "Ilya Dryomov" <idryomov@gmail.com>,
-        linux-btrfs@vger.kernel.org, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH v3 0/9] mm: Use DIO for swap and fix NFS swapfiles
-In-reply-to: <163250387273.2330363.13240781819520072222.stgit@warthog.procyon.org.uk>
-References: <163250387273.2330363.13240781819520072222.stgit@warthog.procyon.org.uk>
-Date:   Tue, 28 Sep 2021 13:11:29 +1000
-Message-id: <163279868982.18792.10448745714922373194@noble.neil.brown.name>
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Struct page proposal
+Message-ID: <YVKJtQZFql8yTiyy@casper.infradead.org>
+References: <YUvWm6G16+ib+Wnb@moria.home.lan>
+ <bc22b4d0-ba63-4559-88d9-a510da233cad@suse.cz>
+ <YVIH5j5xkPafvNds@casper.infradead.org>
+ <YVII7eM7P42riwoI@moria.home.lan>
+ <YVIJg+kNqqbrBZFW@casper.infradead.org>
+ <YVIKlcgvN19BSZsu@moria.home.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YVIKlcgvN19BSZsu@moria.home.lan>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 25 Sep 2021, David Howells wrote:
-> Whilst trying to make this work, I found that NFS's support for swapfiles
-> seems to have been non-functional since Aug 2019 (I think), so the first
-> patch fixes that.  Question is: do we actually *want* to keep this
-> functionality, given that it seems that no one's tested it with an upstream
-> kernel in the last couple of years?
+On Mon, Sep 27, 2021 at 02:16:53PM -0400, Kent Overstreet wrote:
+> On Mon, Sep 27, 2021 at 07:12:19PM +0100, Matthew Wilcox wrote:
+> > On Mon, Sep 27, 2021 at 02:09:49PM -0400, Kent Overstreet wrote:
+> > > On Mon, Sep 27, 2021 at 07:05:26PM +0100, Matthew Wilcox wrote:
+> > > > On Mon, Sep 27, 2021 at 07:48:15PM +0200, Vlastimil Babka wrote:
+> > > > > On 9/23/21 03:21, Kent Overstreet wrote:
+> > > > > > So if we have this:
+> > > > > > 
+> > > > > > struct page {
+> > > > > > 	unsigned long	allocator;
+> > > > > > 	unsigned long	allocatee;
+> > > > > > };
+> > > > > > 
+> > > > > > The allocator field would be used for either a pointer to slab/slub's state, if
+> > > > > > it's a slab page, or if it's a buddy allocator page it'd encode the order of the
+> > > > > > allocation - like compound order today, and probably whether or not the
+> > > > > > (compound group of) pages is free.
+> > > > > 
+> > > > > The "free page in buddy allocator" case will be interesting to implement.
+> > > > > What the buddy allocator uses today is:
+> > > > > 
+> > > > > - PageBuddy - determine if page is free; a page_type (part of mapcount
+> > > > > field) today, could be a bit in "allocator" field that would have to be 0 in
+> > > > > all other "page is allocated" contexts.
+> > > > > - nid/zid - to prevent merging accross node/zone boundaries, now part of
+> > > > > page flags
+> > > > > - buddy order
+> > > > > - a list_head (reusing the "lru") to hold the struct page on the appropriate
+> > > > > free list, which has to be double-linked so page can be taken from the
+> > > > > middle of the list instantly
+> > > > > 
+> > > > > Won't be easy to cram all that into two unsigned long's, or even a single
+> > > > > one. We should avoid storing anything in the free page itself. Allocating
+> > > > > some external structures to track free pages is going to have funny
+> > > > > bootstrap problems. Probably a major redesign would be needed...
+> > > > 
+> > > > Wait, why do we want to avoid using the memory that we're allocating?
+> > > 
+> > > The issue is where to stick the state for free pages. If that doesn't fit in two
+> > > ulongs, then we'd need a separate allocation, which means slab needs to be up
+> > > and running before free pages are initialized.
+> > 
+> > But the thing we're allocating is at least PAGE_SIZE bytes in size.
+> > Why is "We should avoid storing anything in the free page itself" true?
+> 
+> Good point!
+> 
+> Highmem and dax do complicate things though - would they make it too much of a
+> hassle? You want to get rid of struct page for dax (what's the right term for
+> that kind of memory?), but we're not there yet, right?
 
-SUSE definitely want to keep this functionality.  We have customers
-using it.
-I agree it would be good if it was being tested somewhere....
+DAX is used for persistent memory, often abbreviated to pmem.
 
-Thanks,
-NeilBrown
+"Getting there" involves rooting out struct page from all kinds of data
+structures.  sg lists are the obvious place to start so that we can do
+I/O to memory that's not backed by a struct page.  Get that working and
+the rent-a-VM companies will love you.  Right now, we either pay the 1.6%
+tax twice (once for the struct pages in the host, and once in the guest),
+or we have horrendous hacks to create struct pages on the fly so the
+host can do I/O to the guest's memory.
