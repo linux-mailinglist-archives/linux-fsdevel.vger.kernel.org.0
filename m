@@ -2,93 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C3DD41ACAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 12:11:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2722C41ACBF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 12:16:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240140AbhI1KNg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Sep 2021 06:13:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38712 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240139AbhI1KNe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Sep 2021 06:13:34 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A2580611CE;
-        Tue, 28 Sep 2021 10:11:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632823915;
-        bh=Y7wSC7xrhvCDGxkQBLr8UtzzFVjfJNotICIdTFFi8Ok=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=QPA9Ru63h3uBzj/aj83aKCrlH2Ho8nnjT4vdhNQFbKk6Co+Hn3FZjekL20EX1KpLI
-         FL50GDzBdXWbriiurg+DrVuvmonDBe+jhJPB9bTyL/d4bY6OWoPPP5YRIMnBp6zzTw
-         4n6A0yz8bTyAoop4B6nU7eiw7K8JyZLtCey1qr+Zb8wm4DVWjA55dTV6XKU1d3hS5V
-         ir2Y3SKmHjwXJxijmKqLnENDPWKtHFTMKYpsYZTuFbx5KaEp4r5gYEtI1TbD5/tjPI
-         owKYzZULoX5Q1ynW2wOZjGKXLrR2XIotIoIGmlVJriTxfHr33WKSUXvpwrW4d4sGeP
-         Xh83CeYtUYlgw==
-Received: by mail-wr1-f46.google.com with SMTP id d6so56891135wrc.11;
-        Tue, 28 Sep 2021 03:11:55 -0700 (PDT)
-X-Gm-Message-State: AOAM532IOQtmih9UULB6XIIlS/KdGQV8bf+USQ1BdIa0YGxWt0UDBou7
-        davltlxNc2rvtBA0w+pkg4rhsoIKK6ZuU/Z6TBA=
-X-Google-Smtp-Source: ABdhPJzl6fwe7LMgMXeAMdLDt7NX7OTZg0SUJ6tJy/beE2gt+W2VZjPnxuFCXVxpHsdh8A8pu2A/KyaXdaX8tg+YXgM=
-X-Received: by 2002:adf:f481:: with SMTP id l1mr5373570wro.411.1632823914100;
- Tue, 28 Sep 2021 03:11:54 -0700 (PDT)
+        id S240118AbhI1KSd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Sep 2021 06:18:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48648 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239952AbhI1KSc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Sep 2021 06:18:32 -0400
+Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46C69C061604
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 03:16:53 -0700 (PDT)
+Received: by mail-oi1-x229.google.com with SMTP id y201so29400264oie.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 03:16:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O+Hd389s4zwlrEfU0RxVwCS/ivAyltT+4eJme/lzcYg=;
+        b=h8iVziDK5Y0iZjNZU21rA1jfXk8ZyVhrg2BxwrB5EQ+rfU3UBQ0VSrnlgN657y1eC2
+         5cy91fTmnghKaGNFrQRT88sNoLzO08tkF3pZQfoS6dYfkmE3Frr9tOhJvZyn1MX3kXwk
+         Rr2k28aP6ZGBmxfpd+wFjjIKR2NyA5bUuGl5C3F4rYx/1TaxwWtPlXOoQQ1a8cG1pEJQ
+         KOe2DkCsrhcWFL0OxM7kdV1/o9g2bNf09SmvoiqgvmVoZc06IYtTeGYMB1mYKwXD+TmJ
+         oLsVSrPRnNhWV8rmFWhTltSC2nz4C4GJQLF1uGg2yMnscsC//xYkuFsd2IZGeI65mOMl
+         Akhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=O+Hd389s4zwlrEfU0RxVwCS/ivAyltT+4eJme/lzcYg=;
+        b=SjqIki2CIzjoPMpU+QWKAHStVwK97eJB5dtrg6zovTbAYCjgwDMzewKtZyxHsXnn4a
+         QaTcvr8e3K1/hcfldgcTnWDxetGe8eESUQTPYdvaQhjL4fSB1Ntbs2kfKjzjnNmkyzAW
+         OuNTaiHoGHtiyPJdEd+w2DDciUoOFQZ1vQUzya/TcAI2iSMp6XVp1u/oCq5FogeYJTE+
+         imTwqwxg5mXbP3lCvWNpowjoj4jHkIGKBlSfWcSfFsnq086xBbzv5war2WqMvQ4BIjJD
+         9VG3WKBZHWUm2mFBIMiW20RIuSHdBjqDooWLqJZBHmFLFXXrwmKjpFd/vnEbYTadwjRb
+         VymQ==
+X-Gm-Message-State: AOAM5303rPHFc9fSEWSRdkZ76y7gDFwZfcFJ9gRTDzn5rVVXdXdGbGWI
+        kV8BJomimsH4e5d7XdbEmxWrIWDi8qZR6uCQXgaKww==
+X-Google-Smtp-Source: ABdhPJyu/CGI5VgCk70sPwQBfKmIuNTUZxtWzIdQClj3dSFa0I6f4kM3g/8YHuYxRaUGVYpZrqyl4HWNuT4300RGk+E=
+X-Received: by 2002:aca:f189:: with SMTP id p131mr3052297oih.128.1632824212352;
+ Tue, 28 Sep 2021 03:16:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210927094123.576521-1-arnd@kernel.org> <40217483-1b8d-28ec-bbfc-8f979773b166@redhat.com>
- <20210927130253.GH2083@kadam> <CAK8P3a3YFh4QTC6dk6onsaKcqCM3Nmb2JhMXK5QdZpHtffjyLg@mail.gmail.com>
- <CAHk-=wheEHQxdSJgTkt7y4yFjzhWxMxE-p7dKLtQSBs4ceHLmw@mail.gmail.com> <70a77e44-c43a-f5ce-58d5-297ca2cfe5d9@redhat.com>
-In-Reply-To: <70a77e44-c43a-f5ce-58d5-297ca2cfe5d9@redhat.com>
-From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Tue, 28 Sep 2021 12:11:38 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a3sEy7NAhMHcV7XPpZxo5tHnQz1oCP43YTe_ZQuzOHgPA@mail.gmail.com>
-Message-ID: <CAK8P3a3sEy7NAhMHcV7XPpZxo5tHnQz1oCP43YTe_ZQuzOHgPA@mail.gmail.com>
-Subject: Re: [PATCH] vboxsf: fix old signature detection
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Sparse Mailing-list <linux-sparse@vger.kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        llvm@lists.linux.dev
+References: <000000000000d6b66705cb2fffd4@google.com> <CACT4Y+ZByJ71QfYHTByWaeCqZFxYfp8W8oyrK0baNaSJMDzoUw@mail.gmail.com>
+ <CANpmjNMq=2zjDYJgGvHcsjnPNOpR=nj-gQ43hk2mJga0ES+wzQ@mail.gmail.com>
+ <CACT4Y+Y1c-kRk83M-qiFY40its+bP3=oOJwsbSrip5AB4vBnYA@mail.gmail.com>
+ <YUpr8Vu8xqCDwkE8@google.com> <CACT4Y+YuX3sVQ5eHYzDJOtenHhYQqRsQZWJ9nR0sgq3s64R=DA@mail.gmail.com>
+ <YVHsV+o7Ez/+arUp@google.com> <20210927234543.6waods7rraxseind@treble>
+In-Reply-To: <20210927234543.6waods7rraxseind@treble>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 28 Sep 2021 12:16:41 +0200
+Message-ID: <CACT4Y+aqBKqJFa-6TuXWHSh0DEYYM9kbyZZohO3Gi_EujafmVA@mail.gmail.com>
+Subject: Re: [syzbot] upstream test error: KFENCE: use-after-free in kvm_fastop_exception
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        Marco Elver <elver@google.com>,
+        syzbot <syzbot+d08efd12a2905a344291@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Peter Zijlstra <peterz@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 28, 2021 at 11:40 AM Hans de Goede <hdegoede@redhat.com> wrote:
-> On 9/27/21 8:33 PM, Linus Torvalds wrote:
-> > On Mon, Sep 27, 2021 at 6:22 AM Arnd Bergmann <arnd@kernel.org> wrote:
-> >>
-> >> More specifically, ' think '\377' may be either -1 or 255 depending on
-> >> the architecture.
-> >> On most architectures, 'char' is implicitly signed, but on some others
-> >> it is not.
+On Tue, 28 Sept 2021 at 01:45, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>
+> On Mon, Sep 27, 2021 at 04:07:51PM +0000, Sean Christopherson wrote:
+> > I was asking about the exact location to confirm that the explosion is indeed
+> > from exception fixup, which is the "unwinder scenario get confused" I was thinking
+> > of.  Based on the disassembly from syzbot, that does indeed appear to be the case
+> > here, i.e. this
 > >
-> > Yeah. That code is just broken.
+> >   2a:   4c 8b 21                mov    (%rcx),%r12
 > >
-> > And Arnd, your patch may be "conceptually minimal", in that it keeps
-> > thed broken code and makes it work. But it just dials up the oddity to
-> > 11.
+> > is from exception fixup from somewhere in __d_lookup (can't tell exactly what
+> > it's from, maybe KASAN?).
+> >
+> > > Is there more info on this "the unwinder gets confused"? Bug filed
+> > > somewhere or an email thread? Is it on anybody's radar?
+> >
+> > I don't know if there's a bug report or if this is on anyone's radar.  The issue
+> > I've encountered in the past, and what I'm pretty sure is being hit here, is that
+> > the ORC unwinder doesn't play nice with out-of-line fixup code, presumably because
+> > there are no tables for the fixup.  I believe kvm_fastop_exception() gets blamed
+> > because it's the first label that's found when searching back through the tables.
+>
+> The ORC unwinder actually knows about .fixup, and unwinding through the
+> .fixup code worked here, as evidenced by the entire stacktrace getting
+> printed.  Otherwise there would have been a bunch of question marks in
+> the stack trace.
+>
+> The problem reported here -- falsely printing kvm_fastop_exception -- is
+> actually in the arch-independent printing of symbol names, done by
+> __sprint_symbol().  Most .fixup code fragments are anonymous, in the
+> sense that they don't have symbols associated with them.  For x86, here
+> are the only defined symbols in .fixup:
+>
+>   ffffffff81e02408 T kvm_fastop_exception
+>   ffffffff81e02728 t .E_read_words
+>   ffffffff81e0272b t .E_leading_bytes
+>   ffffffff81e0272d t .E_trailing_bytes
+>   ffffffff81e02734 t .E_write_words
+>   ffffffff81e02740 t .E_copy
+>
+> There's a lot of anonymous .fixup code which happens to be placed in the
+> gap between "kvm_fastop_exception" and ".E_read_words".  The kernel
+> symbol printing code will go backwards from the given address and will
+> print the first symbol it finds.  So any anonymous code in that gap will
+> falsely be reported as kvm_fastop_exception().
+>
+> I'm thinking the ideal way to fix this would be getting rid of the
+> .fixup section altogether, and instead place a function's corresponding
+> fixup code in a cold part of the original function, with the help of
+> asm_goto and cold label attributes.
+>
+> That way, the original faulting function would be printed instead of an
+> obscure reference to an anonymous .fixup code fragment.  It would have
+> other benefits as well.  For example, not breaking livepatch...
+>
+> I'll try to play around with it.
 
-Thank you for addressing it. I usually try to avoid overthinking changes
-to "unusual" code like this, but your solution is clearly an improvement.
-
-What really threw me off this time is that my first attempt to address
-the warning was an exact revert of 9d682ea6bcc7 ("vboxsf: Fix the
-check for the old binary mount-arguments struct"), which in turn
-came from a tool that is usually correct and and that both Dan
-and Al thought the original patch was correct when it looked like
-it turned a working (though unusual) implementation  into a broken
-one.
-
-> I agree that your suggestion is to be the best solution,
-> so how do we move forward with this, do I turn this into a
-> proper patch with you as the author and Arnd as Reported-by and
-> if yes may I add your Signed-off-by to the patch ?
-
-It's already upstream, see d5f6545934c4 ("qnx4: work around gcc
-false positive warning bug").
-
-      Arnd
+Thanks for debugging this, Josh.
+I think your solution can also help arm64 as it has the same issue.
