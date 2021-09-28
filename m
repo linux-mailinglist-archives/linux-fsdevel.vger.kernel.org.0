@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CACC941A6FF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 07:20:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5B1A41A8BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 08:22:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234109AbhI1FVt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Sep 2021 01:21:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35178 "EHLO mail.kernel.org"
+        id S238939AbhI1GXt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Sep 2021 02:23:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233290AbhI1FVs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Sep 2021 01:21:48 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9C7AC611BD;
-        Tue, 28 Sep 2021 05:20:09 +0000 (UTC)
+        id S234207AbhI1GXt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Sep 2021 02:23:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C24336113E;
+        Tue, 28 Sep 2021 06:22:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1632806409;
-        bh=2uKzvK51puF8Oln5IF2YPCjjVN+UTh5PJAVkJSe8xHg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ELgHhzP4h2m0fkP2fCsWa3kOw0bayp3BJ51OLRc7Ka+XnfLRtSLByu+zlYI4sGBnc
-         m8NOUrhz4MCc+NmtT7INetbPW2fTRKuRQWcK0vUusW7NJVVmja96SefhVhtKQ39idJ
-         oro8vrVxzJFgBV3TE6yc88q5URpXCuy6ULAl00u3qnKFTTJhXHJ1X3GQdsfJnv+m8R
-         fOOI9xUb/qIY4kGUSPtehW5ImAzDYEr9R3XYYvTLAHvCdgPtRZiXyeeajAQPD0wnjz
-         2l+oOSjraoG96LPkWE4ciDWEET/7iv5NqBkTVdTvMdyXXoj+7wtAHnCFZktSuHE9Mb
-         6YHWQ+QGGvtdA==
-Date:   Mon, 27 Sep 2021 22:20:09 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Murphy Zhou <jencce.kernel@gmail.com>, nvdimm@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [regression] fs dax xfstests panic
-Message-ID: <20210928052009.GB2706839@magnolia>
-References: <20210927061747.rijhtovxafsot32z@xzhoux.usersys.redhat.com>
- <20210927115116.GB23909@lst.de>
- <20210927230259.GA2706839@magnolia>
- <20210928043426.GA28185@lst.de>
- <20210928051610.GI570642@magnolia>
- <20210928051700.GA28820@lst.de>
+        s=k20201202; t=1632810128;
+        bh=AMLm/4tUn9CETUOijozi+fIMLnd5VIlwNyrW/zmpnZU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=sJ5D8lYOcyR8XkQ3XWE75T2CMzxcrtyyKrFxVSHB9GDgchWMKvVoagXfCKMR77t4T
+         tNZaP15z3PZPZmZFq+3GJ5B666w32wSS4amzH8FmWHk9wed/YMpW84aGIjKqihHAQm
+         qen+u0Elu7nMuyyb7132HMqy8nDL9Llziia5MIrLyfJWPYSi6jjYL4KRfHpJksfZhd
+         oqLiZoy0uqOf+JKoCIm8XANT2vigPSv9BBi0fhHUKHHNm1wbys35ca6XTdVwPl3IkR
+         4DzOtMZC6MyAUJ5GF3iueMgyBeVvaD/p7MF4X9Y2//IxGZnaroaeE/J0FiPIb6A1TI
+         GXBH8lOUK2bCA==
+Date:   Mon, 27 Sep 2021 23:22:07 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Boris Burkov <boris@bur.io>
+Subject: [GIT PULL] fsverity fix for 5.15-rc4
+Message-ID: <YVK0jzJ/lt97xowQ@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210928051700.GA28820@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 28, 2021 at 07:17:00AM +0200, Christoph Hellwig wrote:
-> On Mon, Sep 27, 2021 at 10:16:10PM -0700, Darrick J. Wong wrote:
-> > > > My test machinse all hit this when writeback throttling is enabled, so
-> > > > 
-> > > > Tested-by: Darrick J. Wong <djwong@kernel.org>
-> > > 
-> > > Do you mean the series fixed it for you?
-> > 
-> > Yes.
-> 
-> Thanks!  I was just a little confused this came in in this thread.
+The following changes since commit e4e737bb5c170df6135a127739a9e6148ee3da82:
 
-Yeah, I was too incoherent after arguing on #xfs to be able to form
-complete sentences, sorry about that.
+  Linux 5.15-rc2 (2021-09-19 17:28:22 -0700)
 
-Also thank you for fixing this problem. :)
+are available in the Git repository at:
 
---D
+  https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fsverity-for-linus
+
+for you to fetch changes up to 80f6e3080bfcf865062a926817b3ca6c4a137a57:
+
+  fs-verity: fix signed integer overflow with i_size near S64_MAX (2021-09-22 10:56:34 -0700)
+
+----------------------------------------------------------------
+
+Fix an integer overflow when computing the Merkle tree layout of
+extremely large files, exposed by btrfs adding support for fs-verity.
+
+----------------------------------------------------------------
+Eric Biggers (1):
+      fs-verity: fix signed integer overflow with i_size near S64_MAX
+
+ fs/verity/enable.c | 2 +-
+ fs/verity/open.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
