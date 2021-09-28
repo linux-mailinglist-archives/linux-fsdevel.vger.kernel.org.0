@@ -2,156 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B6E2E41A46D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 02:57:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C194441A5E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 05:11:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238477AbhI1A7B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Sep 2021 20:59:01 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:54075 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238379AbhI1A7A (ORCPT
+        id S238821AbhI1DNZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Sep 2021 23:13:25 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:35268 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238748AbhI1DNX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Sep 2021 20:59:00 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 5A767580410;
-        Mon, 27 Sep 2021 20:57:21 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 27 Sep 2021 20:57:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=aMTOwy
-        1kRDglv9bWeV4pQeESYMtX8UBlRbYC0yXYRgQ=; b=ZOuzWiffGLc+sX04l19gVI
-        YY7DB3F4UXso43esbO2BFAmGjtbUBmJrMhgHl4Fd4/lP1389NVGKiry/eU8DymQu
-        1YWx0FyxfMdNGl2+hMg3S1+BYOoPXz0iuv+o/CabL6FncacKte1kSmv/QFcq2FHn
-        1xi7LMekdnXTfgame6h/F8oo74ECuK5k1aubF5xuZ+D21osluDhHLH8s4hp7uJb5
-        PhhKkWS703MBMpMsGFLvfMibC9pyeZZVFcs75aEy8IAzwOw2I44j+Ud3S+iIaSrp
-        GjrX7GClyfWkWUEWAciNfw1iX0TwKthVfI2IoF/0ITpk+1cbfK2eeCRtmXkLhQbA
-        ==
-X-ME-Sender: <xms:cGhSYWo8LSaDS5CBcz8z2agNcO9RsgY4NFePO2R6WjZn1FbcQs4TIQ>
-    <xme:cGhSYUoROMuzQmTz7R1XF9w1PeOqNrp9XJZ58SY61SJsFZUD2uxtmBRit9tE-aWCw
-    IvO5nYnLuIP-qgsOIs>
-X-ME-Received: <xmr:cGhSYbMwAPqrJDPdUwn1qe4zIVqBIbetrlYFfo8K-g__-eSsleWq3aqc3QuUGIC_qzXJN52XBHe-0bdCf5JVbjfxta15FGTKnK4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudejledgfeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvufgjkfhfgggtsehttdertd
-    dttddvnecuhfhrohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidq
-    mheikehkrdhorhhgqeenucggtffrrghtthgvrhhnpeffudfhgeefvdeitedugfelueeghe
-    ekkeefveffhfeiveetledvhfdtveffteeuudenucevlhhushhtvghrufhiiigvpedtnecu
-    rfgrrhgrmhepmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdhorh
-    hg
-X-ME-Proxy: <xmx:cGhSYV76vAE2s40-9N8gMALgTFevL4U99REmSJRJxxbuEhKrlwsr1g>
-    <xmx:cGhSYV7SUhVurhNb-_7AcydzfVg_o7Bj9UjG2nu_TcYCTsjbDgAmww>
-    <xmx:cGhSYVii0nBY_c8x90Xd2494z3rjIGeXZe4VJSWC2kwwcePJlerKiA>
-    <xmx:cWhSYcqI3kg4T2UcS-3xqpq_X1J9yeXvC8nWLZyY-XMIZB_gDdhJ5w>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 27 Sep 2021 20:57:18 -0400 (EDT)
-Date:   Tue, 28 Sep 2021 10:57:18 +1000 (AEST)
-From:   Finn Thain <fthain@linux-m68k.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-cc:     axboe@kernel.dk, hch@lst.de, efremov@linux.com, song@kernel.org,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        viro@zeniv.linux.org.uk, hare@suse.de, jack@suse.cz,
-        ming.lei@redhat.com, tj@kernel.org, linux-raid@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Subject: Re: [PATCH v2 1/2] block: make __register_blkdev() return an error
-In-Reply-To: <20210927220332.1074647-2-mcgrof@kernel.org>
-Message-ID: <2ac2e05f-327a-b66f-aaa0-276db2e46730@linux-m68k.org>
-References: <20210927220332.1074647-1-mcgrof@kernel.org> <20210927220332.1074647-2-mcgrof@kernel.org>
+        Mon, 27 Sep 2021 23:13:23 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 95E6C222DF;
+        Tue, 28 Sep 2021 03:11:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1632798701; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=k1irZcE6GgE63UfMaZ69q7wFQxdxy8PkJV1UDRuOwDA=;
+        b=Af8PPYiGG/KoV03reINXBzNVPccmiyHVMrwNt2UIFxlU1jhXBp5nI2Gka9opvfla6EYXOa
+        u9dubE+5BF4AwBJlVzPfA+nwLlAQkhckDkag+FkKT+kBsnwd6qmqqlWA/pOjn0C1Ffe5V9
+        HYSxfFfncwL3S6Y8kijKplmMugjgsEE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1632798701;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=k1irZcE6GgE63UfMaZ69q7wFQxdxy8PkJV1UDRuOwDA=;
+        b=rvEM/v30W6HdMnLZksiPaBfoRjZ8iPYI6P23HeASJG7DpSxpqPRoywlWfOvhpMFCEARX9U
+        W3t0wcFCENMdaDDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C1463132D4;
+        Tue, 28 Sep 2021 03:11:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id HD3CH+SHUmHafwAAMHmgww
+        (envelope-from <neilb@suse.de>); Tue, 28 Sep 2021 03:11:32 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From:   "NeilBrown" <neilb@suse.de>
+To:     "David Howells" <dhowells@redhat.com>
+Cc:     willy@infradead.org, hch@lst.de, trond.myklebust@primarydata.com,
+        "Theodore Ts'o" <tytso@mit.edu>, linux-block@vger.kernel.org,
+        ceph-devel@vger.kernel.org,
+        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "Jeff Layton" <jlayton@kernel.org>,
+        "Andreas Dilger" <adilger.kernel@dilger.ca>,
+        "Anna Schumaker" <anna.schumaker@netapp.com>, linux-mm@kvack.org,
+        "Bob Liu" <bob.liu@oracle.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        "Josef Bacik" <josef@toxicpanda.com>,
+        "Seth Jennings" <sjenning@linux.vnet.ibm.com>,
+        "Jens Axboe" <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-cifs@vger.kernel.org, "Chris Mason" <clm@fb.com>,
+        "David Sterba" <dsterba@suse.com>,
+        "Minchan Kim" <minchan@kernel.org>,
+        "Steve French" <sfrench@samba.org>,
+        "Dan Magenheimer" <dan.magenheimer@oracle.com>,
+        linux-nfs@vger.kernel.org, "Ilya Dryomov" <idryomov@gmail.com>,
+        linux-btrfs@vger.kernel.org, dhowells@redhat.com,
+        viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH v3 0/9] mm: Use DIO for swap and fix NFS swapfiles
+In-reply-to: <163250387273.2330363.13240781819520072222.stgit@warthog.procyon.org.uk>
+References: <163250387273.2330363.13240781819520072222.stgit@warthog.procyon.org.uk>
+Date:   Tue, 28 Sep 2021 13:11:29 +1000
+Message-id: <163279868982.18792.10448745714922373194@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 27 Sep 2021, Luis Chamberlain wrote:
+On Sat, 25 Sep 2021, David Howells wrote:
+> Whilst trying to make this work, I found that NFS's support for swapfiles
+> seems to have been non-functional since Aug 2019 (I think), so the first
+> patch fixes that.  Question is: do we actually *want* to keep this
+> functionality, given that it seems that no one's tested it with an upstream
+> kernel in the last couple of years?
 
-> diff --git a/drivers/block/ataflop.c b/drivers/block/ataflop.c
-> index 5dc9b3d32415..be0627345b21 100644
-> --- a/drivers/block/ataflop.c
-> +++ b/drivers/block/ataflop.c
-> @@ -1989,24 +1989,34 @@ static int ataflop_alloc_disk(unsigned int drive, unsigned int type)
->  
->  static DEFINE_MUTEX(ataflop_probe_lock);
->  
-> -static void ataflop_probe(dev_t dev)
-> +static int ataflop_probe(dev_t dev)
->  {
->  	int drive = MINOR(dev) & 3;
->  	int type  = MINOR(dev) >> 2;
-> +	int err = 0;
->  
->  	if (type)
->  		type--;
->  
-> -	if (drive >= FD_MAX_UNITS || type >= NUM_DISK_MINORS)
-> -		return;
-> +	if (drive >= FD_MAX_UNITS || type >= NUM_DISK_MINORS) {
-> +		err = -EINVAL;
-> +		goto out;
-> +	}
-> +
->  	mutex_lock(&ataflop_probe_lock);
->  	if (!unit[drive].disk[type]) {
-> -		if (ataflop_alloc_disk(drive, type) == 0) {
-> -			add_disk(unit[drive].disk[type]);
-> +		err = ataflop_alloc_disk(drive, type);
-> +		if (err == 0) {
-> +			err = add_disk(unit[drive].disk[type]);
-> +			if (err)
-> +				blk_cleanup_disk(unit[drive].disk[type]);
->  			unit[drive].registered[type] = true;
->  		}
->  	}
->  	mutex_unlock(&ataflop_probe_lock);
-> +
-> +out:
-> +	return err;
->  }
->  
->  static void atari_cleanup_floppy_disk(struct atari_floppy_struct *fs)
+SUSE definitely want to keep this functionality.  We have customers
+using it.
+I agree it would be good if it was being tested somewhere....
 
-I think the change to ataflop_probe() would be more clear without adding 
-an 'out' label, like your change to floppy.c:
-
-> diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-> index 0434f28742e7..95a1c8ef62f7 100644
-> --- a/drivers/block/floppy.c
-> +++ b/drivers/block/floppy.c
-> @@ -4517,21 +4517,27 @@ static int floppy_alloc_disk(unsigned int drive, unsigned int type)
->  
->  static DEFINE_MUTEX(floppy_probe_lock);
->  
-> -static void floppy_probe(dev_t dev)
-> +static int floppy_probe(dev_t dev)
->  {
->  	unsigned int drive = (MINOR(dev) & 3) | ((MINOR(dev) & 0x80) >> 5);
->  	unsigned int type = (MINOR(dev) >> 2) & 0x1f;
-> +	int err = 0;
->  
->  	if (drive >= N_DRIVE || !floppy_available(drive) ||
->  	    type >= ARRAY_SIZE(floppy_type))
-> -		return;
-> +		return -EINVAL;
->  
->  	mutex_lock(&floppy_probe_lock);
->  	if (!disks[drive][type]) {
-> -		if (floppy_alloc_disk(drive, type) == 0)
-> -			add_disk(disks[drive][type]);
-> +		if (floppy_alloc_disk(drive, type) == 0) {
-> +			err = add_disk(disks[drive][type]);
-> +			if (err)
-> +				blk_cleanup_disk(disks[drive][type]);
-> +		}
->  	}
->  	mutex_unlock(&floppy_probe_lock);
-> +
-> +	return err;
->  }
->  
->  static int __init do_floppy_init(void)
-
-In floppy_probe(), I think you should return the potential error result 
-from floppy_alloc_disk(), like you did in ataflop.c.
+Thanks,
+NeilBrown
