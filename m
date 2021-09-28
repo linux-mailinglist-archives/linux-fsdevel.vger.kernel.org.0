@@ -2,215 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 843C341B22C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 16:34:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EF3841B27A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 17:00:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241239AbhI1Ogd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Sep 2021 10:36:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:49796 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241220AbhI1Ogc (ORCPT
+        id S241440AbhI1PBj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Sep 2021 11:01:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59620 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241437AbhI1PBi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Sep 2021 10:36:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1632839693;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=VMchkmm3f+fDDi3gbHe2/O//b39BC4huxTWsOVKzbkM=;
-        b=L79Hsl/cdJqqY4/GOhj9ZJleTxQgUSabC44njCVoeh3kd4RFUUl4FODPngsZSTliyzINbm
-        yI1xgmLBUBZigOAIP0iY9/4r8CRlhdaCAyJCvNrBKukmFILM3HeWDk8lScJEQanMjAbpCV
-        PSfnA9EyWj9HfrZKEJ7uURXbkcwprdI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-295-u96VOVF8MP67wJ2TnMZx6A-1; Tue, 28 Sep 2021 10:34:49 -0400
-X-MC-Unique: u96VOVF8MP67wJ2TnMZx6A-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 87B578E4AA8;
-        Tue, 28 Sep 2021 14:34:48 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.17.104])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7CDE360871;
-        Tue, 28 Sep 2021 14:34:28 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 14830220B02; Tue, 28 Sep 2021 10:34:28 -0400 (EDT)
-Date:   Tue, 28 Sep 2021 10:34:28 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     JeffleXu <jefflexu@linux.alibaba.com>
-Cc:     Dave Chinner <david@fromorbit.com>, stefanha@redhat.com,
-        miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        virtio-fs@redhat.com, bo.liu@linux.alibaba.com,
-        joseph.qi@linux.alibaba.com
-Subject: Re: [PATCH v5 2/5] fuse: make DAX mount option a tri-state
-Message-ID: <YVMn9Ki2DjCZy2Vm@redhat.com>
-References: <20210923092526.72341-1-jefflexu@linux.alibaba.com>
- <20210923092526.72341-3-jefflexu@linux.alibaba.com>
- <YUzPUYU8R5LL4mzU@redhat.com>
- <20210923222618.GB2361455@dread.disaster.area>
- <YU0jovIYv+xeinQd@redhat.com>
- <20210927002148.GH2361455@dread.disaster.area>
- <a8224842-7e05-c3fd-7413-5f425e099251@linux.alibaba.com>
- <20210928034453.GJ2361455@dread.disaster.area>
- <93d817b2-01a4-6e83-cb0b-ca84f67f3d95@linux.alibaba.com>
+        Tue, 28 Sep 2021 11:01:38 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 561F7C06161C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 07:59:58 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id m3so93869225lfu.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 07:59:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9fInY95no8O0JEStBsdbpcymzt287B66Fcqaxhkug+c=;
+        b=FfNByYfUegGHsII+I3f5TVFbSZkKQ34sMp4OH9feQ01FDoaO1JVJtg1jZ8hbAyyE3h
+         +o/QtI4Gycrr4pn0Wb6Q9HuBgnVKu37zPHCYNw6PKfpAmVP4trKhCICqVexk61OjymcM
+         ajE+rrWyYiEaYRePBmCieqMzw5ekh1Vxny2gQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9fInY95no8O0JEStBsdbpcymzt287B66Fcqaxhkug+c=;
+        b=mqXsggjPF6n/X/p22nzK9PAVieoY/ONXDYifRO1U2DtUSdXW0TV7Ag0baEoQeZFbcn
+         R4cj5RN/qty0Cnea0ER7gIT26Ihb4TRLU60uFhuyx8uK1q66G/uMOopkhP+seL1bHxzW
+         4L/ovboC3hdlLM3m5njf+g9un5VFmCGH56hcWh8OaKaHgiuCtx1vF5OYn8uQyPweQs8L
+         53GFv6TOZALq/x/eDzRqzzpensLBcYF9zDef2mPUTMHB6y8dCHVWRKG760MGhBKllOal
+         CrwgdxX/1+Pm8vfPMtrOdNVZGyVx/hDYhcancqbO9RJZqxbSfovM71bIX94Q9gIOwaCR
+         KBUQ==
+X-Gm-Message-State: AOAM533SuuEg8hBC+cLwXuTExu8dvaM8KHlK1VIbzJTfIeJBNK5KPOId
+        ruRFm7RfN6szwlmHaIloApI+XZ+xNsXfzYYA
+X-Google-Smtp-Source: ABdhPJxmd7jsILlKKr++CAO3Ic2wVFXufhGzA8B/LRjNF/EZhAKEMsIwirhTzyuwZzMi6i9Ous9EgQ==
+X-Received: by 2002:a05:6512:acb:: with SMTP id n11mr5739144lfu.523.1632841190104;
+        Tue, 28 Sep 2021 07:59:50 -0700 (PDT)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id y9sm2139561lfl.240.2021.09.28.07.59.49
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Sep 2021 07:59:49 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id y26so54582845lfa.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 07:59:49 -0700 (PDT)
+X-Received: by 2002:a2e:3309:: with SMTP id d9mr387530ljc.249.1632841188299;
+ Tue, 28 Sep 2021 07:59:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <93d817b2-01a4-6e83-cb0b-ca84f67f3d95@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <YVK0jzJ/lt97xowQ@sol.localdomain>
+In-Reply-To: <YVK0jzJ/lt97xowQ@sol.localdomain>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 28 Sep 2021 07:59:32 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wibMN-Bixbu8zttUoV1ixoVRNk+jyAPEmsVdBe1GFoB5Q@mail.gmail.com>
+Message-ID: <CAHk-=wibMN-Bixbu8zttUoV1ixoVRNk+jyAPEmsVdBe1GFoB5Q@mail.gmail.com>
+Subject: Re: [GIT PULL] fsverity fix for 5.15-rc4
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Boris Burkov <boris@bur.io>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 28, 2021 at 01:17:27PM +0800, JeffleXu wrote:
-> 
-> 
-> On 9/28/21 11:44 AM, Dave Chinner wrote:
-> > On Mon, Sep 27, 2021 at 10:28:34AM +0800, JeffleXu wrote:
-> >> On 9/27/21 8:21 AM, Dave Chinner wrote:
-> >>> On Thu, Sep 23, 2021 at 09:02:26PM -0400, Vivek Goyal wrote:
-> >>>> On Fri, Sep 24, 2021 at 08:26:18AM +1000, Dave Chinner wrote:
-> >>>>> On Thu, Sep 23, 2021 at 03:02:41PM -0400, Vivek Goyal wrote:
-> >>> In the case that the user changes FS_XFLAG_DAX, the FUSE client
-> >>> needs to communicate that attribute change to the server, where the
-> >>> server then changes the persistent state of the on-disk inode so
-> >>> that the next time the client requests that inode, it gets the state
-> >>> it previously set. Unless, of course, there are server side policy
-> >>> overrides (never/always).
-> >>
-> >> One thing I'm concerned with is that, is the following behavior
-> >> consistent with the semantics of per-file DAX in ext4/xfs?
-> >>
-> >> Client changes FS_XFLAG_DAX, this change is communicated to server and
-> >> then server also returns **success**. Then client finds that this file
-> >> is not DAX enabled, since server doesn't honor the previously set state.
-> > 
-> > FS_XFLAG_DAX is advisory in nature - it does not have to be honored
-> > at inode instantiation.
-> 
-> Fine.
-> 
-> > 
-> >> IOWs, shall server always honor the persistent per-inode attribute of
-> >> host file (if the change of FS_XFLAG_DAX inside guest is stored as
-> >> persistent per-inode attribute on host file)?
-> > 
-> > If the user set the flag, then queries it, the server should be
-> > returning the state that the user set, regardless of whether it is
-> > being honored at inode instantiation time.
-> > 
-> > Remember, FS_XFLAG_DAX does not imply S_DAX and vice versa
-> Got it.
-> 
-> > 
-> >>>> Not sure what do you mean by server turns of DAX flag based on client
-> >>>> turning off DAX. Server does not have to do anything. If client decides
-> >>>> to not use DAX (in guest), it will not send FUSE_SETUPMAPPING requests
-> >>>> to server and that's it.
-> >>>
-> >>> Where does the client get it's per-inode DAX policy from if
-> >>> dax=inode is, like other DAX filesystems, the default behaviour?
-> >>>
-> >>> Where is the persistent storage of that per-inode attribute kept?
-> >>
-> >> In the latest patch set, it is not supported yet to change FS_XFLAG_DAX
-> >> (and thus setting/clearing persistent per-inode attribute) inside guest,
-> >> since this scenario is not urgently needed as the real using case.
-> > 
-> > AFAICT the FS_IOC_FS{GS}ETXATTR ioctl is already supported by the
-> > fuse client and it sends the ioctl to the server. Hence the client
-> > should already support persistent FS_XFLAG_DAX manipulations
-> > regardless of where/how the attribute is stored by the server. Did
-> > you actually add code to the client in this patchset to stop
-> > FS_XFLAG_DAX from being propagated to the server?
-> 
-> Yes fuse client supports FS_IOC_FS{GS}ETXATTR ioctl already, but AFAIK
-> "passthrough" type virtiofsd doesn't support FUSE_IOCTL yet. My previous
-> patch had ever added support for FUSE_IOCTL to virtiofsd.
-> 
-> > 
-> >> Currently the per-inode dax attribute is completely fed from server
-> >> thourgh FUSE protocol, e.g. server could set/clear the per-inode dax
-> >> attribute depending on the file size.
-> > 
-> > Yup, that's a policy dax=inode on the client side would allow.
-> > Indeed, this same policy could also be implemented as a client side
-> > policy, allowing user control instead of admin control of such
-> > conditional DAX behaviour... :)
-> > 
-> >> The previous path set indeed had ever supported changing FS_XFLAG_DAX
-> >> and accordingly setting/clearing persistent per-inode attribute inside
-> >> guest. For "passthrough" type virtiofsd, the persistent per-inode
-> >> attribute is stored as XFS_DIFLAG2_DAX/EXT4_DAX_FL on host file
-> >> directly, since this is what "passthrough" means.
-> > 
-> > Right, but that's server side storage implementation details, not a
-> > protocol or client side detail. What I can't find in the current
-> > client is where this per-inode flag is actually used in the FUSE dax
-> > inode init path - it just checks whether the connection has DAX
-> > state set up. Hence I don't see how FS_XFLAG_DAX control from the
-> > client currently has any influence on the client side DAX usage.
-> 
-> Fuse client fetches the per-inode DAX attribute from
-> fuse_entry_out.attr.flags of FUSE_LOOKUP reply. It's implemented in
-> patch 4 of this patch set.
-> 
-> The background info is that, fuse client will send a FUSE_LOOKUP request
-> to server during inode instantiation, while FS_XFLAG_DAX flag is not
-> included in the FUSE_LOOKUP reply, and thus fuse client need to send
-> another FUSE_IOCTL if it wants to query the persistent inode flags. To
-> remove this extra fuse request during inode instantiation, this flag is
-> merged into FUSE_LOOKUP reply (fuse_entry_out.attr.flags) as
-> FUSE_ATTR_DAX. Then if FUSE_ATTR_DAX flag is set in
-> fuse_entry_out.attr.flags, then fuse client knows that this file shall
-> be DAX enabled.
-> 
-> IOWs, under this mechanism it relies on fuse server to check persistent
-> inode flags on host, and then set FUSE_ATTR_DAX flag accordingly.
-> 
-> > 
-> > Seems somewhat crazy to me explicitly want to remove that client
-> > side control of per-inode behaviour whilst adding the missing client
-> > side bits that allow for the per-inode policy control from server
-> > side.  Can we please just start with the common, compatible
-> > dax=inode behaviour on the client side, then layer the server side
-> > policy control options over the top of that?
-> 
-> 
-> Hi Vivek,
-> 
-> It seems that we shall also support setting/clearing FS_XFLAG_DAX inside
-> guest? If that's the case, then how to design virtiofsd behavior? I
-> mean, is it mandatory or optional for virtiofsd to query FS_XFLAG_DAX of
-> host files when guest is mounted with "dax=inode"? If it's optional,
-> then the performance may be better since it doesn't need to do one extra
-> FS_IOC_FSGETXATTR ioctl when handling FUSE_LOOKUP, but admin needs to
-> specify "-o policy=flag" to virtiofsd explicitly if it's really needed.
+On Mon, Sep 27, 2021 at 11:22 PM Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> Fix an integer overflow when computing the Merkle tree layout of
+> extremely large files, exposed by btrfs adding support for fs-verity.
 
-Hi Jeffle,
+I wonder if 'i_size' should be u64. I'm not convinced people think
+about 'loff_t' being signed - but while that's required for negative
+lseek() offsets, I'm not sure it makes tons of sense for an inode
+size.
 
-How about first doing a patch series to just enable ioctl in virtiofsd.
-I know David Gilbert and others had security concenrs w.r.t. These
-are coming from untrusted guest and they had concerns that we should
-only allow selective operations as needed (opted-in by admin). So may
-be a daemon option which specifies which operations to allow.
+Same goes for f_pos, for that matter.
 
-Once that's done, we probably will have to do a patch series, to
-make sure FS_XFLAG_DAX inherit behavior is working properly. Especially
-that behavior about inheriting FS_XFLAG_DAX flag when a new file
-is created and parent dir has FS_XFLAG_DAX set. May be we can just
-rely on host filesystem doing it? Limitation will be that it will
-only work if host fs is ext4/xfs.
+But who knows what games people have played with magic numbers (ie
+"-1") internally, or where they _want_ signed compares. So it's
+certainly not some obvious trivial fix.
 
-w.r.t virtiofsd, I think we can provide an option say "-o
-dax_policy=<option>", which controls what policy is in effect. So if
-a daemon specific policy is in effect, we can skip checking FS_XFLAG_DAX
-state. In fact, checking FS_XFLAG_DAX state also should probably be
-a policy option and not enabled by default.
+Pulled.
 
-Say, "-o dax_policy=FS_XFLAG_DAX" will enable cheking FS_XFLAG_DAX on
-inode during FUSE_LOOKUP time. Otherwise daemon can fallback to
-its own policy and set DAX flag in lookup reply accordingly.
-
-Vivek
-
+            Linus
