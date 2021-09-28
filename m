@@ -2,168 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5558A41ACCA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 12:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FF7B41ACFA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 12:31:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240179AbhI1KVP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Sep 2021 06:21:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49268 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240055AbhI1KVO (ORCPT
+        id S240214AbhI1Kcs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Sep 2021 06:32:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:49916 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240125AbhI1Kcr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Sep 2021 06:21:14 -0400
-Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88272C061604
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 03:19:35 -0700 (PDT)
-Received: by mail-oi1-x232.google.com with SMTP id y201so29407238oie.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 03:19:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lQYmG+9YKKKj9P4d3wBdSI2QiZ1BGCsr9C8njInJAsU=;
-        b=fmJdXPyROy7IKTGkvi2HKpgJWQQen5SJLWT+BYnUxU5BpSVPGnxrbMr6pAW54LGD7F
-         RJzMjeo1ovygMBQ6GIKVK3T3zSCr5eoEQEFsux2ZuoZOXETQRh9bBhS0ihSUo7XIeAV2
-         9ZbyUetAwOySDkv2COviwP/TQ56AwK+pdJiqsH2sP38D+MNfy3zRmDgx5DlWKJVmE7oy
-         zvjZZRR0ZV9DMeG6BRjQbzWX6cjDDkX0gmz6GmaK5ZeiubbEIzDI78O57gvHqZxjWT31
-         jvEjKZJdeOpOjfBy7F/15nvANIf8kn3ovdUr9xX0mIodQvFi+CvxQI+g/8TCEo0yKEWn
-         VDeQ==
+        Tue, 28 Sep 2021 06:32:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1632825067;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=VmdbTi66suJMLWatzWuhWowSC1T11IvXHNAMlcFutSw=;
+        b=dc/gfy54IGuYEu+tgExPRgiJrSvFGhp+0pRxLFJ0t2kmv6aqgXA4QpHpXLBKm0bHRwuV25
+        chT4GWO2zOvFydDVYezSDVRhQF8s+o+ECHttS9XagxYeWHaXrQU8olSKtR+qQoXiu0ta3E
+        8CggWS55xgWnTgUaP3wVEqMf4qPkQFE=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-309-x42O0RfwNnq0OwTBpuI8BQ-1; Tue, 28 Sep 2021 06:31:06 -0400
+X-MC-Unique: x42O0RfwNnq0OwTBpuI8BQ-1
+Received: by mail-ed1-f69.google.com with SMTP id e7-20020a50d4c7000000b003d871ecccd8so21223635edj.18
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 03:31:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lQYmG+9YKKKj9P4d3wBdSI2QiZ1BGCsr9C8njInJAsU=;
-        b=IWv0M8H5P7YCfqTu7iaya0D2z/JQXzd6U6KAhSNu/d2amL1kKYOSTWx7NAaTN+zSLi
-         inxalGXuJenJGKgSjVWHuiB9COsUpeFBGioDLdoI8Akkejz//qqGB0pMmEBStTuUrx0Q
-         0RgPe1s1uO+v1ZRAN5Tp+w19SwdlkMfxXyjSgQtQ3+SDO6os/Si00annio0OHwJfyN5E
-         XutUmbvsMTobApluxNcENgE5rEHe18ZNavSCWnHNZdqJNJRpbYkkpzC1Vr1EPMCiCibq
-         FlJXV9x7jHjR9HxSHwpVYdbYaa8Enlg+QYIxJ2AhMxw7ILsQ7IFPJ3QuFvsNDdFmCFeP
-         7GnQ==
-X-Gm-Message-State: AOAM531JnYdptbGv4EDGEMN6uQw6ju16zex8mc8+da7OELrCSJAC7cfc
-        n98QQ2iyCNaha4hTs3cJElZrRX24ArgmijrbOrg4HQ==
-X-Google-Smtp-Source: ABdhPJxUMCEo9TXFOvEkTTYx+nfljBiWd5dHFF6SRgPyPESZctdGBH5PLQpzKEUdfq4UyEXaDaZuR0+RydRwlMOYr7Q=
-X-Received: by 2002:a05:6808:1991:: with SMTP id bj17mr2974526oib.160.1632824374569;
- Tue, 28 Sep 2021 03:19:34 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VmdbTi66suJMLWatzWuhWowSC1T11IvXHNAMlcFutSw=;
+        b=dyH0Y9qy7wqe3luXhXDwjw26gj+W63Qt/VzUGR1YNVHajoyeKXdN4wEac1NOCDVtbP
+         2P1Qo7VvJ0hcTt54C2crLx6D+fXlf4Pb6JaR3+INkAkg7QJ7SrW9vSPD994lA1hm6zFE
+         7HK27PDzg7oPVqiiqvDHyUrVMRTYsYchDRAbvTZnoi4SKqeKEPpIW/BNbuAGnoevAYZc
+         rYgxzgxDcyCuw+k/eOWIbcPXE4szc+7JmGmnIPMX8osa6KfpHzRQRp7NbCdpM8jzrYAQ
+         PQkNO0WIVQlkVcZNXYyszIuWI371LRRdDAhXzrI/dvSgjI4shG1DSBw3To7EAR8PcI6H
+         rPsw==
+X-Gm-Message-State: AOAM532dIQprjB0dTDv3WcPc6b4Oi3DTkgTF4c0eyzp9OT0okM0v4Yfh
+        PMnh78kcECmeQhOHb8rXwNxkOjHulEyurjCGRjRnymwTlna5ihYzqli/PfjI0j233eQ/f5GEwbN
+        +HqzrPg311P8OhzLaDN+a6B9COQ==
+X-Received: by 2002:a17:906:1d41:: with SMTP id o1mr5788840ejh.232.1632825064863;
+        Tue, 28 Sep 2021 03:31:04 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzFbG/uqUP3opMXejTEgElNd9fqDUiWpFMm1vibd9SHt3bxBXAIljzCQp6BZdb8AYE7rc/C0A==
+X-Received: by 2002:a17:906:1d41:: with SMTP id o1mr5788808ejh.232.1632825064627;
+        Tue, 28 Sep 2021 03:31:04 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
+        by smtp.gmail.com with ESMTPSA id a23sm5346073edx.69.2021.09.28.03.31.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Sep 2021 03:31:04 -0700 (PDT)
+Subject: Re: [PATCH] vboxsf: fix old signature detection
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Sparse Mailing-list <linux-sparse@vger.kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        llvm@lists.linux.dev
+References: <20210927094123.576521-1-arnd@kernel.org>
+ <40217483-1b8d-28ec-bbfc-8f979773b166@redhat.com>
+ <20210927130253.GH2083@kadam>
+ <CAK8P3a3YFh4QTC6dk6onsaKcqCM3Nmb2JhMXK5QdZpHtffjyLg@mail.gmail.com>
+ <CAHk-=wheEHQxdSJgTkt7y4yFjzhWxMxE-p7dKLtQSBs4ceHLmw@mail.gmail.com>
+ <70a77e44-c43a-f5ce-58d5-297ca2cfe5d9@redhat.com>
+ <CAK8P3a3sEy7NAhMHcV7XPpZxo5tHnQz1oCP43YTe_ZQuzOHgPA@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <42797736-a64b-e244-136a-d4526b732a50@redhat.com>
+Date:   Tue, 28 Sep 2021 12:31:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-References: <000000000000a3cf8605cb2a1ec0@google.com> <CACT4Y+aS6w1gFuMVY1fnAG0Yp0XckQTM+=tUHkOuxHUy2mkxrg@mail.gmail.com>
- <20210921165134.GE35846@C02TD0UTHF1T.local> <CACT4Y+ZjRgb57EV6mvC-bVK0uT0aPXUjtZJabuWasYcshKNcgw@mail.gmail.com>
- <20210927170122.GA9201@C02TD0UTHF1T.local> <20210927171812.GB9201@C02TD0UTHF1T.local>
-In-Reply-To: <20210927171812.GB9201@C02TD0UTHF1T.local>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 28 Sep 2021 12:19:23 +0200
-Message-ID: <CACT4Y+actfuftwMMOGXmEsLYbnCnqcZ2gJGeoMLsFCUNE-AxcQ@mail.gmail.com>
-Subject: Re: [syzbot] upstream test error: KASAN: invalid-access Read in __entry_tramp_text_end
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     syzbot <syzbot+488ddf8087564d6de6e2@syzkaller.appspotmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAK8P3a3sEy7NAhMHcV7XPpZxo5tHnQz1oCP43YTe_ZQuzOHgPA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- On Mon, 27 Sept 2021 at 19:18, Mark Rutland <mark.rutland@arm.com> wrote:
->
-> On Mon, Sep 27, 2021 at 06:01:22PM +0100, Mark Rutland wrote:
-> > On Mon, Sep 27, 2021 at 04:27:30PM +0200, Dmitry Vyukov wrote:
-> > > On Tue, 21 Sept 2021 at 18:51, Mark Rutland <mark.rutland@arm.com> wrote:
-> > > >
-> > > > Hi Dmitry,
-> > > >
-> > > > The good news is that the bad unwind is a known issue, the bad news is
-> > > > that we don't currently have a way to fix it (and I'm planning to talk
-> > > > about this at the LPC "objtool on arm64" talk this Friday).
-> > > >
-> > > > More info below: the gist is we can produce spurious entries at an
-> > > > exception boundary, but shouldn't miss a legitimate value, and there's a
-> > > > plan to make it easier to spot when entries are not legitimate.
-> > > >
-> > > > On Fri, Sep 17, 2021 at 05:03:48PM +0200, Dmitry Vyukov wrote:
-> > > > > > Call trace:
-> > > > > >  dump_backtrace+0x0/0x1ac arch/arm64/kernel/stacktrace.c:76
-> > > > > >  show_stack+0x18/0x24 arch/arm64/kernel/stacktrace.c:215
-> > > > > >  __dump_stack lib/dump_stack.c:88 [inline]
-> > > > > >  dump_stack_lvl+0x68/0x84 lib/dump_stack.c:105
-> > > > > >  print_address_description+0x7c/0x2b4 mm/kasan/report.c:256
-> > > > > >  __kasan_report mm/kasan/report.c:442 [inline]
-> > > > > >  kasan_report+0x134/0x380 mm/kasan/report.c:459
-> > > > > >  __do_kernel_fault+0x128/0x1bc arch/arm64/mm/fault.c:317
-> > > > > >  do_bad_area arch/arm64/mm/fault.c:466 [inline]
-> > > > > >  do_tag_check_fault+0x74/0x90 arch/arm64/mm/fault.c:737
-> > > > > >  do_mem_abort+0x44/0xb4 arch/arm64/mm/fault.c:813
-> > > > > >  el1_abort+0x40/0x60 arch/arm64/kernel/entry-common.c:357
-> > > > > >  el1h_64_sync_handler+0xb0/0xd0 arch/arm64/kernel/entry-common.c:408
-> > > > > >  el1h_64_sync+0x78/0x7c arch/arm64/kernel/entry.S:567
-> > > > > >  __entry_tramp_text_end+0xdfc/0x3000
-> > > > >
-> > > > > /\/\/\/\/\/\/\
-> > > > >
-> > > > > This is broken unwind on arm64. d_lookup statically calls __d_lookup,
-> > > > > not __entry_tramp_text_end (which is not even a function).
-> > > > > See the following thread for some debugging details:
-> > > > > https://lore.kernel.org/lkml/CACT4Y+ZByJ71QfYHTByWaeCqZFxYfp8W8oyrK0baNaSJMDzoUw@mail.gmail.com/
-> >
-> > Looking at this again (and as you point out below), my initial analysis
-> > was wrong, and this isn't to do with the LR -- this value should be the
-> > PC at the time the exception boundary.
->
-> Whoops, I accidentally nuked the more complete/accurate analysis I just
-> wrote and sent the earlier version. Today is not a good day for me and
-> computers. :(
->
-> What's happened here is that __d_lookup() (via a few layers of inlining) called
-> load_unaligned_zeropad(). The `LDR` at the start of the asm faulted (I suspect
-> due to a tag check fault), and so the exception handler replaced the PC with
-> the (anonymous) fixup function. This is akin to a tail or sibling call, and so
-> the fixup function entirely replaces __d_lookup() in the trace.
->
-> The fixup function itself has an `LDR` which faulted (because it's
-> designed to fixup page alignment problems, not tag check faults), and
-> that is what's reported here.
->
-> As the fixup function is anonymous, and the nearest prior symbol in .text is
-> __entry_tramp_text_end, it gets symbolized as an offset from that.
->
-> We can make the unwinds a bit nicer by adding some markers (e.g. patch
-> below), but actually fixing this case will require some more thought.
->
-> Thanks,
-> Mark.
->
-> ---->8----
-> diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
-> index 709d2c433c5e..127096a0faea 100644
-> --- a/arch/arm64/kernel/vmlinux.lds.S
-> +++ b/arch/arm64/kernel/vmlinux.lds.S
-> @@ -111,6 +111,11 @@ jiffies = jiffies_64;
->  #define TRAMP_TEXT
->  #endif
->
-> +#define FIXUP_TEXT                                     \
-> +       __fixup_text_start = .;                         \
-> +       *(.fixup);                                      \
-> +       __fixup_text_end = .;
-> +
->  /*
->   * The size of the PE/COFF section that covers the kernel image, which
->   * runs from _stext to _edata, must be a round multiple of the PE/COFF
-> @@ -161,7 +166,7 @@ SECTIONS
->                         IDMAP_TEXT
->                         HIBERNATE_TEXT
->                         TRAMP_TEXT
-> -                       *(.fixup)
-> +                       FIXUP_TEXT
->                         *(.gnu.warning)
->                 . = ALIGN(16);
->                 *(.got)                 /* Global offset table          */
+Hi,
 
+On 9/28/21 12:11 PM, Arnd Bergmann wrote:
+> On Tue, Sep 28, 2021 at 11:40 AM Hans de Goede <hdegoede@redhat.com> wrote:
+>> On 9/27/21 8:33 PM, Linus Torvalds wrote:
+>>> On Mon, Sep 27, 2021 at 6:22 AM Arnd Bergmann <arnd@kernel.org> wrote:
+>>>>
+>>>> More specifically, ' think '\377' may be either -1 or 255 depending on
+>>>> the architecture.
+>>>> On most architectures, 'char' is implicitly signed, but on some others
+>>>> it is not.
+>>>
+>>> Yeah. That code is just broken.
+>>>
+>>> And Arnd, your patch may be "conceptually minimal", in that it keeps
+>>> thed broken code and makes it work. But it just dials up the oddity to
+>>> 11.
+> 
+> Thank you for addressing it. I usually try to avoid overthinking changes
+> to "unusual" code like this, but your solution is clearly an improvement.
+> 
+> What really threw me off this time is that my first attempt to address
+> the warning was an exact revert of 9d682ea6bcc7 ("vboxsf: Fix the
+> check for the old binary mount-arguments struct"), which in turn
+> came from a tool that is usually correct and and that both Dan
+> and Al thought the original patch was correct when it looked like
+> it turned a working (though unusual) implementation  into a broken
+> one.
+> 
+>> I agree that your suggestion is to be the best solution,
+>> so how do we move forward with this, do I turn this into a
+>> proper patch with you as the author and Arnd as Reported-by and
+>> if yes may I add your Signed-off-by to the patch ?
+> 
+> It's already upstream, see d5f6545934c4 ("qnx4: work around gcc
+> false positive warning bug").
 
-Oh, good it's very local to the .fixup thing rather than a common
-issue that affects all unwinds.
-In the other x86 thread Josh Poimboeuf suggested to use asm goto to a
-cold part of the function instead of .fixup:
-https://lore.kernel.org/lkml/20210927234543.6waods7rraxseind@treble/
-This sounds like a more reliable solution that will cause less
-maintenance burden. Would it work for arm64 as well?
+Ah, actually you mean: 9b3b353ef330 ("vboxfs: fix broken legacy mount
+signature checking"), but other then that yes you're right it
+is already upstream.
+
+Thank you Arnd and thank you Linus.
+
+Regards,
+
+Hans
+
