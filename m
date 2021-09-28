@@ -2,130 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6439B41B887
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 22:41:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0845641BA25
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 00:21:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242806AbhI1Ung (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Sep 2021 16:43:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57556 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242761AbhI1Unf (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Sep 2021 16:43:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1632861715;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3jBAm38dwxejV13EKa37YtYOLD3eWnXj6fegh8i3dws=;
-        b=TCmNhzhJIDp+RWK9J8D/uuY8feQCBW1SvyGxCHTs4rMZfSGqu9x+aH0Sbp6CdeUWKSxa0W
-        UZABLG6CF72QbbtPrvwQfyrgYBtcNYe/ul0OtzSf7ZLcz1k0w7VjNCEXk6NE3ycfFu7AX0
-        unU1PKimeWN1hGyoiypXABXtOPIMVY4=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-455-K0jF_v5oPTeLO_aegFDgAA-1; Tue, 28 Sep 2021 16:41:54 -0400
-X-MC-Unique: K0jF_v5oPTeLO_aegFDgAA-1
-Received: by mail-wr1-f69.google.com with SMTP id w2-20020a5d5442000000b0016061c95fb7so99792wrv.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 13:41:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3jBAm38dwxejV13EKa37YtYOLD3eWnXj6fegh8i3dws=;
-        b=ArE7Zw+1UVUQb6chbwdx5X5LGH2fVuNoqGWAbG66LxOw0VoQ9gwbIi2KhtmO0GqoKM
-         78dD4iaZVmDLXP2x4X85nuOMsa3FW9xG+0r3V2KloAR/FMNWNpMD1L7od/gxU1u3FlqP
-         PH5nSj1wvLjLwZQZF3WRDaOrZ/iKzYk8HL11qB43J0BE0vvEW3Pc4p5EWMcsRnXli/+s
-         c/Y3DLhHoAja9c4poAeb7EOjCvvgmiGhIuZcVWgNxLG5WQehDXypsQZbCtDT5l3elboY
-         ZtP/joeU0GHgixLCX5xkTRh+vn+Zi037Kd0K1uZVUhCAn5jd7+Uw3snr0GP2H51C8XXz
-         YxJQ==
-X-Gm-Message-State: AOAM531MSZxhOMpcqB42hkJsKntxW8hqnv33cq8VDfzFVQ2cyeluUnVB
-        FZbsfYizxGkJ301GiOZBb3CebqYzd/i3GcAc34lAfFitjya0CddSVoWiINg217jOQ7FzSBh85dn
-        5ECrl0zVTvUPFsfAigb0iMaLrWe8KbsfffbuBTMSCjg==
-X-Received: by 2002:adf:fe11:: with SMTP id n17mr2531992wrr.134.1632861712995;
-        Tue, 28 Sep 2021 13:41:52 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzJ3DYdqCR9Z5PcqKHy1xm32GHNEUBLV2gDJNFBOzxHyUdTS2vH5aXkMEboVTXvHTdpTp6sggiL9+bBSwcUm1A=
-X-Received: by 2002:adf:fe11:: with SMTP id n17mr2531978wrr.134.1632861712811;
- Tue, 28 Sep 2021 13:41:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210827164926.1726765-1-agruenba@redhat.com> <20210827164926.1726765-4-agruenba@redhat.com>
- <CAL3q7H7PdBTuK28tN=3fGUyTP9wJU8Ydrq35YtNsfA_3xRQhzQ@mail.gmail.com>
- <CAHc6FU7rbdJxeuvoz0jov5y_GH_B4AtjkDnbNyOxeeNc1Zw5+A@mail.gmail.com> <YVNE4HGKPb7bw+En@casper.infradead.org>
-In-Reply-To: <YVNE4HGKPb7bw+En@casper.infradead.org>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Tue, 28 Sep 2021 22:41:41 +0200
-Message-ID: <CAHc6FU47kX=P2VhjAxk-7hqiKoEHUMMzbC-8vRYfWXUVs9zAtQ@mail.gmail.com>
-Subject: Re: [PATCH v7 03/19] gup: Turn fault_in_pages_{readable,writeable}
- into fault_in_{readable,writeable}
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     fdmanana@gmail.com, Linus Torvalds <torvalds@linux-foundation.org>,
+        id S243074AbhI1WW7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Sep 2021 18:22:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52668 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S243073AbhI1WW5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Sep 2021 18:22:57 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2F9D6613A5;
+        Tue, 28 Sep 2021 22:21:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1632867677;
+        bh=GbLld7FAg2taHDUAb/Jj//RLLzXibDSgRos/aDK5sSo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hnF/r2lvT4sNBb1FyCrA91j9fnOSo+GbWwFkuf7hholPz37lXws2Psk3Oi2pqKWEk
+         XZ7k9PJ2fBL/qj30nMPbGt+Q5XNthvv4n+lvq+O/HfXoBuk0XqAVW1mZLj5C5yBpAc
+         zRpoY3T+t+D2n4rqvoGtqkUrkdvKffX2L932jIgA=
+Date:   Tue, 28 Sep 2021 15:21:16 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Chen Jingwen <chenjingwen6@huawei.com>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com
-Content-Type: text/plain; charset="UTF-8"
+        Michal Hocko <mhocko@suse.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] elf: don't use MAP_FIXED_NOREPLACE for elf interpreter
+ mappings
+Message-Id: <20210928152116.347d5f0020e3cbb0192ebbff@linux-foundation.org>
+In-Reply-To: <20210928125657.153293-1-chenjingwen6@huawei.com>
+References: <20210928125657.153293-1-chenjingwen6@huawei.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Willy,
+(cc Linus)
 
-On Tue, Sep 28, 2021 at 6:40 PM Matthew Wilcox <willy@infradead.org> wrote:
-> On Tue, Sep 28, 2021 at 05:02:43PM +0200, Andreas Gruenbacher wrote:
-> > On Fri, Sep 3, 2021 at 4:57 PM Filipe Manana <fdmanana@gmail.com> wrote:
-> > > On Fri, Aug 27, 2021 at 5:52 PM Andreas Gruenbacher <agruenba@redhat.com> wrote:
-> > > > +size_t fault_in_writeable(char __user *uaddr, size_t size)
-> > > > +{
-> > > > +       char __user *start = uaddr, *end;
-> > > > +
-> > > > +       if (unlikely(size == 0))
-> > > > +               return 0;
-> > > > +       if (!PAGE_ALIGNED(uaddr)) {
-> > > > +               if (unlikely(__put_user(0, uaddr) != 0))
-> > > > +                       return size;
-> > > > +               uaddr = (char __user *)PAGE_ALIGN((unsigned long)uaddr);
-> > > > +       }
-> > > > +       end = (char __user *)PAGE_ALIGN((unsigned long)start + size);
-> > > > +       if (unlikely(end < start))
-> > > > +               end = NULL;
-> > > > +       while (uaddr != end) {
-> > > > +               if (unlikely(__put_user(0, uaddr) != 0))
-> > > > +                       goto out;
-> > > > +               uaddr += PAGE_SIZE;
-> > >
-> > > Won't we loop endlessly or corrupt some unwanted page when 'end' was
-> > > set to NULL?
-> >
-> > What do you mean? We set 'end' to NULL when start + size < start
-> > exactly so that the loop will stop when uaddr wraps around.
->
-> But think about x86-64.  The virtual address space (unless you have 5
-> level PTs) looks like:
->
-> [0, 2^47)               userspace
-> [2^47, 2^64 - 2^47)     hole
-> [2^64 - 2^47, 2^64)     kernel space
->
-> If we try to copy from the hole we'll get some kind of fault (I forget
-> the details).  We have to stop at the top of userspace.
+On Tue, 28 Sep 2021 20:56:57 +0800 Chen Jingwen <chenjingwen6@huawei.com> wrote:
 
-If you look at the before and after state of this patch,
-fault_in_pages_readable and fault_in_pages_writeable did fail an
-attempt to fault in a range that wraps with -EFAULT. That's sensible
-for a function that returns an all-or-nothing result. We now want to
-return how much of the range was (or wasn't) faulted in. We could do
-that and still reject ranges that wrap outright. Or we could try to
-fault in however much we reasonably can even if the range wraps. The
-patch tries the latter, which is where the stopping at NULL is coming
-from: when the range wraps, we *definitely* don't want to go any
-further.
-
-If the range extends into the hole, we'll get a failure from
-__get_user or __put_user where that happens. That's entirely the
-expected result, isn't it?
-
-Thanks,
-Andreas
-
+> In commit b212921b13bd ("elf: don't use MAP_FIXED_NOREPLACE for elf executable mappings")
+> we still leave MAP_FIXED_NOREPLACE in place for load_elf_interp.
+> Unfortunately, this will cause kernel to fail to start with
+> 
+> [    2.384321] 1 (init): Uhuuh, elf segment at 00003ffff7ffd000 requested but the memory is mapped already
+> [    2.386240] Failed to execute /init (error -17)
+> 
+> The reason is that the elf interpreter (ld.so) has overlapping segments.
+> 
+> readelf -l ld-2.31.so
+> Program Headers:
+>   Type           Offset             VirtAddr           PhysAddr
+>                  FileSiz            MemSiz              Flags  Align
+>   LOAD           0x0000000000000000 0x0000000000000000 0x0000000000000000
+>                  0x000000000002c94c 0x000000000002c94c  R E    0x10000
+>   LOAD           0x000000000002dae0 0x000000000003dae0 0x000000000003dae0
+>                  0x00000000000021e8 0x0000000000002320  RW     0x10000
+>   LOAD           0x000000000002fe00 0x000000000003fe00 0x000000000003fe00
+>                  0x00000000000011ac 0x0000000000001328  RW     0x10000
+> 
+> The reason for this problem is the same as described in
+> commit ad55eac74f20 ("elf: enforce MAP_FIXED on overlaying elf segments").
+> Not only executable binaries, elf interpreters (e.g. ld.so) can have
+> overlapping elf segments, so we better drop MAP_FIXED_NOREPLACE and go
+> back to MAP_FIXED in load_elf_interp.
+> 
+> Fixes: 4ed28639519c ("fs, elf: drop MAP_FIXED usage from elf_map")
+> Cc: <stable@vger.kernel.org> # v4.19
+> Signed-off-by: Chen Jingwen <chenjingwen6@huawei.com>
+> ---
+>  fs/binfmt_elf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 69d900a8473d..a813b70f594e 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -630,7 +630,7 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
+>  
+>  			vaddr = eppnt->p_vaddr;
+>  			if (interp_elf_ex->e_type == ET_EXEC || load_addr_set)
+> -				elf_type |= MAP_FIXED_NOREPLACE;
+> +				elf_type |= MAP_FIXED;
+>  			else if (no_base && interp_elf_ex->e_type == ET_DYN)
+>  				load_addr = -vaddr;
+>  
+> -- 
+> 2.12.3
