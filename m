@@ -2,165 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C5B141B7BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 21:45:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6439B41B887
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Sep 2021 22:41:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242557AbhI1Tqz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Sep 2021 15:46:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41572 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242534AbhI1Tqy (ORCPT
+        id S242806AbhI1Ung (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Sep 2021 16:43:36 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57556 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S242761AbhI1Unf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Sep 2021 15:46:54 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB261C06161C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 12:45:14 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id z130-20020a256588000000b005b6b4594129so44939ybb.15
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 12:45:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=0asOvLyaIQidtaf+APJitxjeC5t6EzgqSyv0pg+UdAU=;
-        b=oo+4dH0tmRYRu3ihXVqY8P4fx0PEAUQCYZqvytcW0mJnDZZhOsxWgnftB4Qm0yiQfO
-         K3cu53AfTC8BvblOGKuoRWtb2RKVyJCF4YiAK8cePqBFJapNCYrsthov4irYC6OuejP5
-         9hM+YxA5AaueYCMD4zeWjjNlXOBfZnVYQ2uWmvf1f+NDxMV6qvrwCf+KcpRCMQMa8ZCE
-         m1TfsVcFiEMp0aBSFUEuWgLJyK/Y0foEPCAXtTzIV40Q0JAG2XYDsQV65pq2g7PAOQyk
-         dhyBIz0iQRzG/AkqJ/SZD3LOixm9lVN9lzNRDSji+Xk3Sr1nNFGX7XUzQeZq1JD6igVJ
-         ln9A==
+        Tue, 28 Sep 2021 16:43:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1632861715;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3jBAm38dwxejV13EKa37YtYOLD3eWnXj6fegh8i3dws=;
+        b=TCmNhzhJIDp+RWK9J8D/uuY8feQCBW1SvyGxCHTs4rMZfSGqu9x+aH0Sbp6CdeUWKSxa0W
+        UZABLG6CF72QbbtPrvwQfyrgYBtcNYe/ul0OtzSf7ZLcz1k0w7VjNCEXk6NE3ycfFu7AX0
+        unU1PKimeWN1hGyoiypXABXtOPIMVY4=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-455-K0jF_v5oPTeLO_aegFDgAA-1; Tue, 28 Sep 2021 16:41:54 -0400
+X-MC-Unique: K0jF_v5oPTeLO_aegFDgAA-1
+Received: by mail-wr1-f69.google.com with SMTP id w2-20020a5d5442000000b0016061c95fb7so99792wrv.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Sep 2021 13:41:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=0asOvLyaIQidtaf+APJitxjeC5t6EzgqSyv0pg+UdAU=;
-        b=hC658cq1TTPFeYIFsVYj+DjSE5BZyMKfuqmbqaiXvVEAg9/YzDAQpvKnMcWrDjBrFE
-         I08FkgBBCzKEEc1ACHmDvWERbiw2pzHm8QU1qjxOoGKLDDo+CJw+HoV8tXGUcdwH869b
-         eN2xrm3vuq6d0x9wIVi+goKvvqE7rC4RN7wfdLaJacogSY/7Vq7YpqLa+tUIweG+vba2
-         D4ZIz0ikiNXuQM2SZZtGpxueiAHiAM7T+VeGf8OSrDzdsi+2nthMiQosNj7gse9XWqKB
-         jD4WhgvbeLnww29mlNS+R5oTBTvxOYmYmy0+XxFvaxnpMidh4WkREDVWhlBd7VV8trZG
-         AtVQ==
-X-Gm-Message-State: AOAM531Dtu18ff2emunBliSAvz2Y+CJ5U/FAmApL6/zqh5meSObQ2f+Y
-        XtIjkj6A6b9QgXnHot7V8m4Sv1CwBejve8g=
-X-Google-Smtp-Source: ABdhPJzyvV1I7IuAvJ14k/hSlbEmdhT+ANufpfkpujJTOMmzp36i4I++jCbNBHsDaNuXpEOWS8uMtCp298nZWho=
-X-Received: from ramjiyani.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:2edd])
- (user=ramjiyani job=sendgmr) by 2002:a25:acd1:: with SMTP id
- x17mr8429840ybd.51.1632858313987; Tue, 28 Sep 2021 12:45:13 -0700 (PDT)
-Date:   Tue, 28 Sep 2021 19:45:08 +0000
-Message-Id: <20210928194509.4133465-1-ramjiyani@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.33.0.685.g46640cef36-goog
-Subject: [RESEND PATCH] aio: Add support for the POLLFREE
-From:   Ramji Jiyani <ramjiyani@google.com>
-To:     Benjamin LaHaise <bcrl@kvack.org>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3jBAm38dwxejV13EKa37YtYOLD3eWnXj6fegh8i3dws=;
+        b=ArE7Zw+1UVUQb6chbwdx5X5LGH2fVuNoqGWAbG66LxOw0VoQ9gwbIi2KhtmO0GqoKM
+         78dD4iaZVmDLXP2x4X85nuOMsa3FW9xG+0r3V2KloAR/FMNWNpMD1L7od/gxU1u3FlqP
+         PH5nSj1wvLjLwZQZF3WRDaOrZ/iKzYk8HL11qB43J0BE0vvEW3Pc4p5EWMcsRnXli/+s
+         c/Y3DLhHoAja9c4poAeb7EOjCvvgmiGhIuZcVWgNxLG5WQehDXypsQZbCtDT5l3elboY
+         ZtP/joeU0GHgixLCX5xkTRh+vn+Zi037Kd0K1uZVUhCAn5jd7+Uw3snr0GP2H51C8XXz
+         YxJQ==
+X-Gm-Message-State: AOAM531MSZxhOMpcqB42hkJsKntxW8hqnv33cq8VDfzFVQ2cyeluUnVB
+        FZbsfYizxGkJ301GiOZBb3CebqYzd/i3GcAc34lAfFitjya0CddSVoWiINg217jOQ7FzSBh85dn
+        5ECrl0zVTvUPFsfAigb0iMaLrWe8KbsfffbuBTMSCjg==
+X-Received: by 2002:adf:fe11:: with SMTP id n17mr2531992wrr.134.1632861712995;
+        Tue, 28 Sep 2021 13:41:52 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzJ3DYdqCR9Z5PcqKHy1xm32GHNEUBLV2gDJNFBOzxHyUdTS2vH5aXkMEboVTXvHTdpTp6sggiL9+bBSwcUm1A=
+X-Received: by 2002:adf:fe11:: with SMTP id n17mr2531978wrr.134.1632861712811;
+ Tue, 28 Sep 2021 13:41:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210827164926.1726765-1-agruenba@redhat.com> <20210827164926.1726765-4-agruenba@redhat.com>
+ <CAL3q7H7PdBTuK28tN=3fGUyTP9wJU8Ydrq35YtNsfA_3xRQhzQ@mail.gmail.com>
+ <CAHc6FU7rbdJxeuvoz0jov5y_GH_B4AtjkDnbNyOxeeNc1Zw5+A@mail.gmail.com> <YVNE4HGKPb7bw+En@casper.infradead.org>
+In-Reply-To: <YVNE4HGKPb7bw+En@casper.infradead.org>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Tue, 28 Sep 2021 22:41:41 +0200
+Message-ID: <CAHc6FU47kX=P2VhjAxk-7hqiKoEHUMMzbC-8vRYfWXUVs9zAtQ@mail.gmail.com>
+Subject: Re: [PATCH v7 03/19] gup: Turn fault_in_pages_{readable,writeable}
+ into fault_in_{readable,writeable}
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     fdmanana@gmail.com, Linus Torvalds <torvalds@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Ramji Jiyani <ramjiyani@google.com>, kernel-team@android.com,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ocfs2-devel@oss.oracle.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit f5cb779ba163 ("ANDROID: binder: remove waitqueue when thread
-exits.") fixed the use-after-free in eventpoll but aio still has the
-same issue because it doesn't honor the POLLFREE flag.
+Hi Willy,
 
-Add support for the POLLFREE flag to force complete iocb inline in
-aio_poll_wake(). A thread may use it to signal it's exit and/or request
-to cleanup while pending poll request. In this case, aio_poll_wake()
-needs to make sure it doesn't keep any reference to the queue entry
-before returning from wake to avoid possible use after free via
-poll_cancel() path.
+On Tue, Sep 28, 2021 at 6:40 PM Matthew Wilcox <willy@infradead.org> wrote:
+> On Tue, Sep 28, 2021 at 05:02:43PM +0200, Andreas Gruenbacher wrote:
+> > On Fri, Sep 3, 2021 at 4:57 PM Filipe Manana <fdmanana@gmail.com> wrote:
+> > > On Fri, Aug 27, 2021 at 5:52 PM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+> > > > +size_t fault_in_writeable(char __user *uaddr, size_t size)
+> > > > +{
+> > > > +       char __user *start = uaddr, *end;
+> > > > +
+> > > > +       if (unlikely(size == 0))
+> > > > +               return 0;
+> > > > +       if (!PAGE_ALIGNED(uaddr)) {
+> > > > +               if (unlikely(__put_user(0, uaddr) != 0))
+> > > > +                       return size;
+> > > > +               uaddr = (char __user *)PAGE_ALIGN((unsigned long)uaddr);
+> > > > +       }
+> > > > +       end = (char __user *)PAGE_ALIGN((unsigned long)start + size);
+> > > > +       if (unlikely(end < start))
+> > > > +               end = NULL;
+> > > > +       while (uaddr != end) {
+> > > > +               if (unlikely(__put_user(0, uaddr) != 0))
+> > > > +                       goto out;
+> > > > +               uaddr += PAGE_SIZE;
+> > >
+> > > Won't we loop endlessly or corrupt some unwanted page when 'end' was
+> > > set to NULL?
+> >
+> > What do you mean? We set 'end' to NULL when start + size < start
+> > exactly so that the loop will stop when uaddr wraps around.
+>
+> But think about x86-64.  The virtual address space (unless you have 5
+> level PTs) looks like:
+>
+> [0, 2^47)               userspace
+> [2^47, 2^64 - 2^47)     hole
+> [2^64 - 2^47, 2^64)     kernel space
+>
+> If we try to copy from the hole we'll get some kind of fault (I forget
+> the details).  We have to stop at the top of userspace.
 
-The POLLFREE flag is no more exclusive to the epoll and is being
-shared with the aio. Remove comment from poll.h to avoid confusion.
-Also enclosed the POLLFREE macro definition in parentheses to fix
-checkpatch error.
+If you look at the before and after state of this patch,
+fault_in_pages_readable and fault_in_pages_writeable did fail an
+attempt to fault in a range that wraps with -EFAULT. That's sensible
+for a function that returns an all-or-nothing result. We now want to
+return how much of the range was (or wasn't) faulted in. We could do
+that and still reject ranges that wrap outright. Or we could try to
+fault in however much we reasonably can even if the range wraps. The
+patch tries the latter, which is where the stopping at NULL is coming
+from: when the range wraps, we *definitely* don't want to go any
+further.
 
-Signed-off-by: Ramji Jiyani <ramjiyani@google.com>
----
- fs/aio.c                        | 45 ++++++++++++++++++---------------
- include/uapi/asm-generic/poll.h |  2 +-
- 2 files changed, 26 insertions(+), 21 deletions(-)
+If the range extends into the hole, we'll get a failure from
+__get_user or __put_user where that happens. That's entirely the
+expected result, isn't it?
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 51b08ab01dff..5d539c05df42 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -1674,6 +1674,7 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
- {
- 	struct poll_iocb *req = container_of(wait, struct poll_iocb, wait);
- 	struct aio_kiocb *iocb = container_of(req, struct aio_kiocb, poll);
-+	struct kioctx *ctx = iocb->ki_ctx;
- 	__poll_t mask = key_to_poll(key);
- 	unsigned long flags;
- 
-@@ -1683,29 +1684,33 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
- 
- 	list_del_init(&req->wait.entry);
- 
--	if (mask && spin_trylock_irqsave(&iocb->ki_ctx->ctx_lock, flags)) {
--		struct kioctx *ctx = iocb->ki_ctx;
-+	/*
-+	 * Use irqsave/irqrestore because not all filesystems (e.g. fuse)
-+	 * call this function with IRQs disabled and because IRQs have to
-+	 * be disabled before ctx_lock is obtained.
-+	 */
-+	if (mask & POLLFREE) {
-+		/* Force complete iocb inline to remove refs to deleted entry */
-+		spin_lock_irqsave(&ctx->ctx_lock, flags);
-+	} else if (!(mask && spin_trylock_irqsave(&ctx->ctx_lock, flags))) {
-+		/* Can't complete iocb inline; schedule for later */
-+		schedule_work(&req->work);
-+		return 1;
-+	}
- 
--		/*
--		 * Try to complete the iocb inline if we can. Use
--		 * irqsave/irqrestore because not all filesystems (e.g. fuse)
--		 * call this function with IRQs disabled and because IRQs
--		 * have to be disabled before ctx_lock is obtained.
--		 */
--		list_del(&iocb->ki_list);
--		iocb->ki_res.res = mangle_poll(mask);
--		req->done = true;
--		if (iocb->ki_eventfd && eventfd_signal_allowed()) {
--			iocb = NULL;
--			INIT_WORK(&req->work, aio_poll_put_work);
--			schedule_work(&req->work);
--		}
--		spin_unlock_irqrestore(&ctx->ctx_lock, flags);
--		if (iocb)
--			iocb_put(iocb);
--	} else {
-+	/* complete iocb inline */
-+	list_del(&iocb->ki_list);
-+	iocb->ki_res.res = mangle_poll(mask);
-+	req->done = true;
-+	if (iocb->ki_eventfd && eventfd_signal_allowed()) {
-+		iocb = NULL;
-+		INIT_WORK(&req->work, aio_poll_put_work);
- 		schedule_work(&req->work);
- 	}
-+	spin_unlock_irqrestore(&ctx->ctx_lock, flags);
-+	if (iocb)
-+		iocb_put(iocb);
-+
- 	return 1;
- }
- 
-diff --git a/include/uapi/asm-generic/poll.h b/include/uapi/asm-generic/poll.h
-index 41b509f410bf..35b1b69af729 100644
---- a/include/uapi/asm-generic/poll.h
-+++ b/include/uapi/asm-generic/poll.h
-@@ -29,7 +29,7 @@
- #define POLLRDHUP       0x2000
- #endif
- 
--#define POLLFREE	(__force __poll_t)0x4000	/* currently only for epoll */
-+#define POLLFREE	((__force __poll_t)0x4000)
- 
- #define POLL_BUSY_LOOP	(__force __poll_t)0x8000
- 
--- 
-2.33.0.685.g46640cef36-goog
+Thanks,
+Andreas
 
