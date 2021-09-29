@@ -2,134 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B802D41CEAF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Sep 2021 00:03:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B6A941CF3B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Sep 2021 00:28:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347050AbhI2WEw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Sep 2021 18:04:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35504 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346964AbhI2WEG (ORCPT
+        id S1346630AbhI2WaA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Sep 2021 18:30:00 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:58563 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233018AbhI2W37 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Sep 2021 18:04:06 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6284FC06176C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 15:02:25 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id bb10so2529453plb.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 15:02:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1QzeUoqKUKdU45cYdDidDgQLqIck3N8SW7XLzzdbDWQ=;
-        b=BOsK5j3gBTuXIo4JAyKTKnh5Y6FqjY5O6nb39X3/BEMzlOW69S8VBg9/Cyx402X0uC
-         VX/hFTT8z3UwyDNLpYNgGyCtbxbAIco+EprvI+J0pXmbFfnxT/d78RlmJLnQ11mBalcR
-         O80GyLP+BQjIy+cE6RbaI87yF/Et808MUydXU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1QzeUoqKUKdU45cYdDidDgQLqIck3N8SW7XLzzdbDWQ=;
-        b=aMnJow/ejUORKvzDXHdRGddRee0e65zG6bLwVkQwtERifUpgcbT8h2+Sa1Wd62E++f
-         139JRFXYoCEREdODnTYkXG0ifPkVcbIgAebzQJ6TVAJTqNlO2Ri3mF5W9D+SVxFt2wjl
-         NLf9qTt5kLyY9IX6ex4IkDp5JBrHXB9d+xV6JCaAcZv2+WqDYbi782r6WJyU6UfSVkVs
-         LrXgECcjFowAEJyBioAqCVrzkBhUpR6Z9zqorz7Ma6DPAip4buihTMFWmlDeEenPg19E
-         x2ECLBwi9uFFoXmd6VuqLYwCvkrDPCKXCZc5E6jwimLNaclVxkEKev0Kd04vDF1b3R6c
-         oKhA==
-X-Gm-Message-State: AOAM532MBxxnejUJFmWebmuNmQXBGNI1sXGPXzhEKH7XKhGQUJmiMryR
-        MbgS0GeG2rTmDFo3wm6BRd2D4Q==
-X-Google-Smtp-Source: ABdhPJyYAgg64aWsOOg387OZcNjUHpe2vAG1a6SQuAqSkmq2/IZophCGC6DN2YrUFepeRzTUc2Qvrw==
-X-Received: by 2002:a17:902:d202:b0:13a:709b:dfb0 with SMTP id t2-20020a170902d20200b0013a709bdfb0mr2069664ply.34.1632952944925;
-        Wed, 29 Sep 2021 15:02:24 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id p2sm576691pgd.84.2021.09.29.15.02.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Sep 2021 15:02:23 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        "Tobin C. Harding" <me@tobin.cc>,
-        Tycho Andersen <tycho@tycho.pizza>,
-        linux-hardening@vger.kernel.org,
-        kernel test robot <oliver.sang@intel.com>,
-        Vito Caputo <vcaputo@pengaru.com>,
-        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Anand K Mistry <amistry@google.com>,
-        "Kenta.Tada@sony.com" <Kenta.Tada@sony.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        =?UTF-8?q?Michael=20Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>,
-        Michal Hocko <mhocko@suse.com>, Helge Deller <deller@gmx.de>,
-        Qi Zheng <zhengqi.arch@bytedance.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Stefan Metzmacher <metze@samba.org>,
-        Lai Jiangshan <laijs@linux.alibaba.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Ohhoon Kwon <ohoono.kwon@samsung.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        YiFei Zhu <yifeifz2@illinois.edu>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        x86@kernel.org
-Subject: [PATCH v2 6/6] leaking_addresses: Always print a trailing newline
-Date:   Wed, 29 Sep 2021 15:02:18 -0700
-Message-Id: <20210929220218.691419-7-keescook@chromium.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210929220218.691419-1-keescook@chromium.org>
-References: <20210929220218.691419-1-keescook@chromium.org>
+        Wed, 29 Sep 2021 18:29:59 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 214FB5C00E9;
+        Wed, 29 Sep 2021 18:28:17 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Wed, 29 Sep 2021 18:28:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
+        RbGSPlaIqE0tLsEJBLRO6taLWZBMOszsIYdAAt8k7wU=; b=aNRDdpAiuUudGwPF
+        hJ6KGND/HIU0vfe4677Y0dhl/XTuHawULRt5xHsxajJhRY0GrlzfHoZku9CyUhdS
+        rtQRdqAGx3FX0jDzXxoDOi2iZ/o418kS6YuUrnREYBGjlrRVEAnJS5oOGgx3oVhd
+        NWEZQYsrRmWKaqW3ucCj2w3YHY4Ob6BD3+OMWtIxLvAxfZTUPV3aC8r6xt3po2IT
+        VKk7SbMdeJPLcy6vcYnNBkgLLYmiIKFc/8S5G1HDaXA5Cjt6dcPYCQbgzl+4VVGR
+        LtkRiOKtk846AS+MLYx21RWGrjb+mEilgae16yqFNRNWwuaUytS8pmdpjFlWpQlM
+        CpzqnA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=RbGSPlaIqE0tLsEJBLRO6taLWZBMOszsIYdAAt8k7
+        wU=; b=FBoFQ3vHs/BeHpb1aZj4/5L3FoWUGuhmmTqIqha71qQR3jzZqIZoSg2OQ
+        9mowR5tePMDfR6CRXvfKXtwncAD9dVvVGuwRkzkUimyUyayfpaC+Gda4Fo+Ju0zA
+        HGXIBhopllgQ9Z2XqUDnizId70wTJoUKJ6n+dFwXhL697wpsqmxMNtrxHWRX5iiQ
+        AMTh1Zcmqg5pCNnp9T9adq3QwIbyPTYHZOmopZsAhrL8DcqxO9EdFbZr3ticXC0g
+        btJ+c7hfrsISlBs/v9xngfJCpvW41dBsIMlmG7LnWp1MdrtMDdoqLM70Vk9fVxwF
+        tuF5+//prsjsL/m+lUsXSxnHg8mGQ==
+X-ME-Sender: <xms:f-hUYbrmdr62FTnPYdsXlbl0Wj8WkP9C34xw8QE5EF1_T79FLcINqw>
+    <xme:f-hUYVp1WTNOW7ti2qfWiCEYpcuuHs6P_5f8jIG1HcoXSulOe9y0NSaelPR8IyRhe
+    2qT3wgxnSRK>
+X-ME-Received: <xmr:f-hUYYMr3m5eqCuOda0kKnzxdcaEK__XgnbDRpYrAvqpSys-W4eRd0BWkjrXR1Svb2NWLvE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudekfedgtdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkffuhffvffgjfhgtfggggfesthekredttderjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    fgleelkeetheelgeehueejueduhfeufffgleehgfevtdehhffhhffhtddugfefheenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnse
+    hthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:f-hUYe6kV8uIzVd0ryQCsr-fNb6pxqQm04GUEByx-pVRWQxgYeg41w>
+    <xmx:f-hUYa7RKv7Gd9arLtlRv5CsPQ1iDuHtpyOpdtZUKNA5EiLnhrMOPQ>
+    <xmx:f-hUYWg37GH0kkD5pvxhjQLJPdM6Fm9l1nYYWFnIgo7M4UCTYjwPjQ>
+    <xmx:gehUYRYK05tsOrO0fcCpwP5rkp-TealgkQDH6NNiCJAYrpZI5A9GIQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 29 Sep 2021 18:28:12 -0400 (EDT)
+Message-ID: <d54d122a7267eddbdcdeb4cb4fad6630e9e0ffe3.camel@themaw.net>
+Subject: Re: [PATCH] kernfs: don't create a negative dentry if inactive node
+ exists
+From:   Ian Kent <raven@themaw.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Tejun Heo <tj@kernel.org>, Hou Tao <houtao1@huawei.com>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Thu, 30 Sep 2021 06:28:08 +0800
+In-Reply-To: <YVQCE3vhK8z33Na2@kroah.com>
+References: <163288467430.30015.16308604689059471602.stgit@mickey.themaw.net>
+         <YVQCE3vhK8z33Na2@kroah.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1034; h=from:subject; bh=gRG/Q2MrocgVaHNX+D6+wn0nA1KaXO0grvA92z8kHco=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBhVOJpJCOqg+W5SWXrgp1mr8bnFhnfCdWico8ZwiP5 /UURmdWJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYVTiaQAKCRCJcvTf3G3AJh9EEA CGh7l0IuvGKvTlNBIftnvwHCcGybMPaL+NoLj8Q2pXBA286EzXeLUQMmzKYZ8Nd9Nz2b9zwZkYGFRn PD8E1mcA5i6fvu1E0EnKJhbDAdHu2HrYMl6sQbDO7ktRye0z9jfjZ5VfiXQkY+EqKyoz7DCwn04XDr nMHuX2tbkdllWdOu8RKgWHg5WiCl1pp8gfuvx3HD0cAx/Wmbml34p/9tSmWXZnxgLKdkrpyme7jiwY lQxgNRV3i85T6cdRJIa9oIrU8GC5UGWW+mb43gH0xJC8rCj7WTZ7TtsfR18cQDwqyxRanWyV3v88sX 3VHTBz5vZe/nZ/e42QZmevNF/CtrpFcN4lYBc2oCEcdMcP2/mTy9ZZpGD6fGzjauMPq3et29rhgaai ulI53iwA+nb45Ws2ySpyuTPH0+I2YRBOhTr3lpxIoYq1NN8UqvWUYdhu1JoV4DGiVxqv6qrOBNyIiV vjtDjdVlLIXK/PlarcJ6tWCNYQmJmhS7d+BALx2PAmCOx67kEdCxKwTIJs9VJ6ETDPUORKDTR1bnod qMHp3dMi2rSDxypc+un39fnjpynqpAO4GHycrr55/PQkJJ1MO/Ttp8264Njz8ekWOv4EBIsRCLKdEu ibXp6FkICQ7j4zsLYQN9LiqRuG9CTkBP2B83gbSNTQSmQ+gu+KfS3wGGABrg==
-X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-For files that lack trailing newlines and match a leaking address (e.g.
-wchan[1]), the leaking_addresses.pl report would run together with the
-next line, making things look corrupted.
+On Wed, 2021-09-29 at 08:05 +0200, Greg Kroah-Hartman wrote:
+> On Wed, Sep 29, 2021 at 11:04:34AM +0800, Ian Kent wrote:
+> > In kernfs_iop_lookup() a negative dentry is created if there's no
+> > kernfs
+> > node associated with the dentry or the node is inactive.
+> > 
+> > But inactive kernfs nodes are meant to be invisible to the VFS and
+> > creating a negative dentry for these can have unexpected side
+> > effects
+> > when the node transitions to an active state.
+> > 
+> > The point of creating negative dentries is to avoid the expensive
+> > alloc/free cycle that occurs if there are frequent lookups for
+> > kernfs
+> > attributes that don't exist. So kernfs nodes that are not yet
+> > active
+> > should not result in a negative dentry being created so when they
+> > transition to an active state VFS lookups can create an associated
+> > dentry is a natural way.
+> > 
+> > Signed-off-by: Ian Kent <raven@themaw.net>
+> > ---
+> >  fs/kernfs/dir.c |    9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> Does this fix a specific commit and need a "Fixes:" tag?
 
-Unconditionally remove the newline on input, and write it back out on
-output.
+Oh, of course yes, apologies, my bad.
+I re-post it.
 
-[1] https://lore.kernel.org/all/20210103142726.GC30643@xsang-OptiPlex-9020/
 
-Cc: "Tobin C. Harding" <me@tobin.cc>
-Cc: Tycho Andersen <tycho@tycho.pizza>
-Cc: linux-hardening@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- scripts/leaking_addresses.pl | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/leaking_addresses.pl b/scripts/leaking_addresses.pl
-index b2d8b8aa2d99..8f636a23bc3f 100755
---- a/scripts/leaking_addresses.pl
-+++ b/scripts/leaking_addresses.pl
-@@ -455,8 +455,9 @@ sub parse_file
- 
- 	open my $fh, "<", $file or return;
- 	while ( <$fh> ) {
-+		chomp;
- 		if (may_leak_address($_)) {
--			print $file . ': ' . $_;
-+			printf("$file: $_\n");
- 		}
- 	}
- 	close $fh;
--- 
-2.30.2
+Ian
 
