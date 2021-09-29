@@ -2,96 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0845641BA25
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 00:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED06F41BBF4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 02:56:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243074AbhI1WW7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Sep 2021 18:22:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243073AbhI1WW5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Sep 2021 18:22:57 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2F9D6613A5;
-        Tue, 28 Sep 2021 22:21:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1632867677;
-        bh=GbLld7FAg2taHDUAb/Jj//RLLzXibDSgRos/aDK5sSo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hnF/r2lvT4sNBb1FyCrA91j9fnOSo+GbWwFkuf7hholPz37lXws2Psk3Oi2pqKWEk
-         XZ7k9PJ2fBL/qj30nMPbGt+Q5XNthvv4n+lvq+O/HfXoBuk0XqAVW1mZLj5C5yBpAc
-         zRpoY3T+t+D2n4rqvoGtqkUrkdvKffX2L932jIgA=
-Date:   Tue, 28 Sep 2021 15:21:16 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Chen Jingwen <chenjingwen6@huawei.com>
-Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] elf: don't use MAP_FIXED_NOREPLACE for elf interpreter
- mappings
-Message-Id: <20210928152116.347d5f0020e3cbb0192ebbff@linux-foundation.org>
-In-Reply-To: <20210928125657.153293-1-chenjingwen6@huawei.com>
-References: <20210928125657.153293-1-chenjingwen6@huawei.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S243562AbhI2A62 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Sep 2021 20:58:28 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:41800 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S243534AbhI2A62 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Sep 2021 20:58:28 -0400
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 18T0pros027720;
+        Wed, 29 Sep 2021 00:56:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2021-07-09; bh=eZyACg3VHJcyuF9mNtb0Z1ng/pWO3eXGqlVeXrGKqmk=;
+ b=eIn6WIh5gEcucuEuaGDWSK2eooxPTZx3e6+RJPKUyEc5eYUF8WiFswcMo52LEi3o/4p+
+ e9f8c9i+lP03eCVSaWezGe33m9Dh7CbjUtCHn+Of9JFkMYr+wM1YyTW0q/NrVSZ6VhK2
+ 3JVRsEs0Ytz1y0Z09zTTE4n/W9BGWGlQPIJa5Btmd/FzG5zk7Qxzma/9XHh2bF2A/aHl
+ fReRrZ3N8h7D4yfVSDh2qa2ncqTpM4z+tfIoG/Ywr9hW6NLZf7SzRrk7OqQ0Q2AtorWK
+ SU/7pXA/Hs3gfDzHMJegz9gNjGLHfSDBARbWHjQvAn5Pva/taHP1XkCVW3KZXYQ+4YI2 /A== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3bbj90t611-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Sep 2021 00:56:47 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 18T0uQH8052462;
+        Wed, 29 Sep 2021 00:56:45 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3030.oracle.com with ESMTP id 3bc3bj5mbb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Sep 2021 00:56:45 +0000
+Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 18T0ujKT053426;
+        Wed, 29 Sep 2021 00:56:45 GMT
+Received: from userp3020.oracle.com (ksplice-shell2.us.oracle.com [10.152.118.36])
+        by userp3030.oracle.com with ESMTP id 3bc3bj5mau-1;
+        Wed, 29 Sep 2021 00:56:45 +0000
+From:   Dai Ngo <dai.ngo@oracle.com>
+To:     bfields@fieldses.org
+Cc:     chuck.lever@oracle.com, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH RFC v5 0/2] nfsd: Initial implementation of NFSv4 Courteous Server
+Date:   Tue, 28 Sep 2021 20:56:39 -0400
+Message-Id: <20210929005641.60861-1-dai.ngo@oracle.com>
+X-Mailer: git-send-email 2.20.1.1226.g1595ea5.dirty
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: HlBOcDbteyLklao1zXXMMmrOCxb0-f8j
+X-Proofpoint-ORIG-GUID: HlBOcDbteyLklao1zXXMMmrOCxb0-f8j
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-(cc Linus)
 
-On Tue, 28 Sep 2021 20:56:57 +0800 Chen Jingwen <chenjingwen6@huawei.com> wrote:
+Hi Bruce,
 
-> In commit b212921b13bd ("elf: don't use MAP_FIXED_NOREPLACE for elf executable mappings")
-> we still leave MAP_FIXED_NOREPLACE in place for load_elf_interp.
-> Unfortunately, this will cause kernel to fail to start with
-> 
-> [    2.384321] 1 (init): Uhuuh, elf segment at 00003ffff7ffd000 requested but the memory is mapped already
-> [    2.386240] Failed to execute /init (error -17)
-> 
-> The reason is that the elf interpreter (ld.so) has overlapping segments.
-> 
-> readelf -l ld-2.31.so
-> Program Headers:
->   Type           Offset             VirtAddr           PhysAddr
->                  FileSiz            MemSiz              Flags  Align
->   LOAD           0x0000000000000000 0x0000000000000000 0x0000000000000000
->                  0x000000000002c94c 0x000000000002c94c  R E    0x10000
->   LOAD           0x000000000002dae0 0x000000000003dae0 0x000000000003dae0
->                  0x00000000000021e8 0x0000000000002320  RW     0x10000
->   LOAD           0x000000000002fe00 0x000000000003fe00 0x000000000003fe00
->                  0x00000000000011ac 0x0000000000001328  RW     0x10000
-> 
-> The reason for this problem is the same as described in
-> commit ad55eac74f20 ("elf: enforce MAP_FIXED on overlaying elf segments").
-> Not only executable binaries, elf interpreters (e.g. ld.so) can have
-> overlapping elf segments, so we better drop MAP_FIXED_NOREPLACE and go
-> back to MAP_FIXED in load_elf_interp.
-> 
-> Fixes: 4ed28639519c ("fs, elf: drop MAP_FIXED usage from elf_map")
-> Cc: <stable@vger.kernel.org> # v4.19
-> Signed-off-by: Chen Jingwen <chenjingwen6@huawei.com>
-> ---
->  fs/binfmt_elf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 69d900a8473d..a813b70f594e 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -630,7 +630,7 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
->  
->  			vaddr = eppnt->p_vaddr;
->  			if (interp_elf_ex->e_type == ET_EXEC || load_addr_set)
-> -				elf_type |= MAP_FIXED_NOREPLACE;
-> +				elf_type |= MAP_FIXED;
->  			else if (no_base && interp_elf_ex->e_type == ET_DYN)
->  				load_addr = -vaddr;
->  
-> -- 
-> 2.12.3
+This series of patches implement the NFSv4 Courteous Server.
+
+A server which does not immediately expunge the state on lease expiration
+is known as a Courteous Server.  A Courteous Server continues to recognize
+previously generated state tokens as valid until conflict arises between
+the expired state and the requests from another client, or the server
+reboots.
+
+The v2 patch includes the following:
+
+. add new callback, lm_expire_lock, to lock_manager_operations to
+  allow the lock manager to take appropriate action with conflict lock.
+
+. handle conflicts of NFSv4 locks with NFSv3/NLM and local locks.
+
+. expire courtesy client after 24hr if client has not reconnected.
+
+. do not allow expired client to become courtesy client if there are
+  waiters for client's locks.
+
+. modify client_info_show to show courtesy client and seconds from
+  last renew.
+
+. fix a problem with NFSv4.1 server where the it keeps returning
+  SEQ4_STATUS_CB_PATH_DOWN in the successful SEQUENCE reply, after
+  the courtesy client re-connects, causing the client to keep sending
+  BCTS requests to server.
+
+The v3 patch includes the following:
+
+. modified posix_test_lock to check and resolve conflict locks
+  to handle NLM TEST and NFSv4 LOCKT requests.
+
+. separate out fix for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+
+The v4 patch includes:
+
+. rework nfsd_check_courtesy to avoid dead lock of fl_lock and client_lock
+  by asking the laudromat thread to destroy the courtesy client.
+
+. handle NFSv4 share reservation conflicts with courtesy client. This
+  includes conflicts between access mode and deny mode and vice versa.
+
+. drop the patch for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+
+The v5 patch includes:
+
+. fix recursive locking of file_rwsem from posix_lock_file. 
+
+. retest with LOCKDEP enabled.
+
+NOTE: I will submit pynfs tests for courteous server including tests
+for share reservation conflicts in a separate patch.
+
+
