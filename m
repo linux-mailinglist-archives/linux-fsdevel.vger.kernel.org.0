@@ -2,96 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0445841CB28
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 19:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAE3241CBAC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 20:18:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343776AbhI2Rq1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Sep 2021 13:46:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32782 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244930AbhI2Rq1 (ORCPT
+        id S1345055AbhI2SUD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Sep 2021 14:20:03 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44569 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1344234AbhI2SUC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Sep 2021 13:46:27 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B65C5C06161C;
-        Wed, 29 Sep 2021 10:44:45 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id i19so11121796lfu.0;
-        Wed, 29 Sep 2021 10:44:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=k40QSKaIzA7xI71zhIsTqgkNgsI1dltQ3koc7EdeH7M=;
-        b=l97ZYlbzmvKAyfwAYe+jsP1QjlEw1GC0NWjKIkPDeJjvSQSOa5AprQqUy1bkTebqtd
-         X7NL/LesrR2p4CX6R6yulPo0rE4QC2cqNkaxgv1uXfqEw4wP3qMM5OnAgTiakJKQLI1K
-         FeonMIeflrgodwHKapVpYs/yicDdfZve6nlwzqK3Fxp36qBnC4HeJid/cmYiOIfeBVuH
-         wD3WI16J0MGv0yAi3ZE66ny3DPdcY3A9f3hAd88+zf859KpKnNKqA4WO8tHXlCOTYao1
-         RbnJ3keA2C/hFDgIYvDIPiDvrW2DIk6DTlciyHX10pXZp8o8B71YiGtSHAYda9YPRWcc
-         B/RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=k40QSKaIzA7xI71zhIsTqgkNgsI1dltQ3koc7EdeH7M=;
-        b=12lm986V30V3m0GrYHpvXB19NiIy4f2T+UPIOTEnu0GH3GUIxAtHncnPOtyX0815Yv
-         ZYGwA0FYxyi55b4DiAuIu92hnVe72aWhvYDKdOyRMTIRhKro8B/AhLe/D8aB2hW15alA
-         fDJVEYRiP1sVR1EhRJhfhJA/55AIC5ul6m2V/dChztJDFJqW3rdomRPbMqTwP9Rk/sGg
-         SGanF3WfHMQRvW6PzD5C5ZxWezbZGI3ub+8G5ipc/aOV+egeg/C7ETaybtwoQH+3T5Le
-         HlcyhBC7DdcsMRZ0Gg2S5xv6I+NpFX0DKnirrflVXrWQof+cF5w7QQEhaNd3dEQWg1Hz
-         Rgeg==
-X-Gm-Message-State: AOAM530dS1a/k8ROiNlMrqjfvXer+cPVkLps+Kzxxyo/3iRyYbKfxshS
-        LQNO6fGz5bfrboudBKp6pe8v1c/KYKw=
-X-Google-Smtp-Source: ABdhPJxHVdMVdhhT8Xf7U20OOMF9gil0ngthBcjWbnD2wFVZAWBvqYqKz27ekusaLjTlyu00XpFG2w==
-X-Received: by 2002:a19:ae14:: with SMTP id f20mr989424lfc.488.1632937483901;
-        Wed, 29 Sep 2021 10:44:43 -0700 (PDT)
-Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id br40sm61892lfb.64.2021.09.29.10.44.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Sep 2021 10:44:43 -0700 (PDT)
-Date:   Wed, 29 Sep 2021 20:44:41 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/ntfs3: Check for NULL if ATTR_EA_INFO is incorrect
-Message-ID: <20210929174441.qshpp5ukuszb7cf5@kari-VirtualBox>
-References: <227c13e3-5a22-0cba-41eb-fcaf41940711@paragon-software.com>
+        Wed, 29 Sep 2021 14:20:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1632939500;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=nnJZ7DpiogLpstvFiZH+ZlbBG07Zi0HLaCj48WwsBY8=;
+        b=VoeqJSbg2PQ9UDy5sx45KMOyAJCoo6so3Q1EMvopmsviFHsTRIujC1Canf2dZdMn6904XW
+        iGAyDpNCjyfKhhtrx1UluRFogjG443ERuNZlHKBD+wlbIeH0fuyT40FhfwpQD9KYP53ZMJ
+        gau2cJye3JkRFO2dt7Uy12kUEH/SvyQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-311-wd7hD-DWPf2CUXLQtgs_rA-1; Wed, 29 Sep 2021 14:18:18 -0400
+X-MC-Unique: wd7hD-DWPf2CUXLQtgs_rA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 23556189CD1F;
+        Wed, 29 Sep 2021 18:18:17 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2115819C59;
+        Wed, 29 Sep 2021 18:18:16 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Ramji Jiyani <ramjiyani@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        Arnd Bergmann <arnd@arndb.de>, kernel-team@android.com,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        oleg@redhat.com, hch@lst.de
+Subject: Re: [PATCH] aio: Add support for the POLLFREE
+References: <20210913183753.563103-1-ramjiyani@google.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Wed, 29 Sep 2021 14:20:08 -0400
+In-Reply-To: <20210913183753.563103-1-ramjiyani@google.com> (Ramji Jiyani's
+        message of "Mon, 13 Sep 2021 18:37:52 +0000")
+Message-ID: <x494ka39rc7.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <227c13e3-5a22-0cba-41eb-fcaf41940711@paragon-software.com>
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 29, 2021 at 07:35:43PM +0300, Konstantin Komarov wrote:
-> This can be reason for reported panic.
+Adding Oleg and Christoph.
 
-Is this public panic? If it is then put link here. If you have report
-from panic you can put it here also. Patch itself looks correct.
+Ramji Jiyani <ramjiyani@google.com> writes:
 
-> Fixes: 4342306f0f0d ("fs/ntfs3: Add file operations and implementation")
-> 
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> Commit f5cb779ba163 ("ANDROID: binder: remove waitqueue when thread
+> exits.") fixed the use-after-free in eventpoll but aio still has the
+> same issue because it doesn't honor the POLLFREE flag.
+>
+> Add support for the POLLFREE flag to force complete iocb inline in
+> aio_poll_wake(). A thread may use it to signal it's exit and/or request
+> to cleanup while pending poll request. In this case, aio_poll_wake()
+> needs to make sure it doesn't keep any reference to the queue entry
+> before returning from wake to avoid possible use after free via
+> poll_cancel() path.
+
+Is this an in-kernel user?  Can you explain more about how or when this
+happens?  Do you have a stack trace that shows the problem?  I'm not
+sure this use of POLLFREE exactly follows with the initial intention of
+the flag, but hopefully Oleg can comment on that.
+
+Thanks,
+Jeff
+
+> The POLLFREE flag is no more exclusive to the epoll and is being
+> shared with the aio. Remove comment from poll.h to avoid confusion.
+> Also enclosed the POLLFREE macro definition in parentheses to fix
+> checkpatch error.
+>
+> Signed-off-by: Ramji Jiyani <ramjiyani@google.com>
 > ---
->  fs/ntfs3/frecord.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-> index 9a53f809576d..007602badd90 100644
-> --- a/fs/ntfs3/frecord.c
-> +++ b/fs/ntfs3/frecord.c
-> @@ -3080,7 +3080,9 @@ static bool ni_update_parent(struct ntfs_inode *ni, struct NTFS_DUP_INFO *dup,
->                         const struct EA_INFO *info;
+>  fs/aio.c                        | 45 ++++++++++++++++++---------------
+>  include/uapi/asm-generic/poll.h |  2 +-
+>  2 files changed, 26 insertions(+), 21 deletions(-)
+>
+> diff --git a/fs/aio.c b/fs/aio.c
+> index 51b08ab01dff..5d539c05df42 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -1674,6 +1674,7 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
+>  {
+>  	struct poll_iocb *req = container_of(wait, struct poll_iocb, wait);
+>  	struct aio_kiocb *iocb = container_of(req, struct aio_kiocb, poll);
+> +	struct kioctx *ctx = iocb->ki_ctx;
+>  	__poll_t mask = key_to_poll(key);
+>  	unsigned long flags;
 >  
->                         info = resident_data_ex(attr, sizeof(struct EA_INFO));
-> -                       dup->ea_size = info->size_pack;
-> +                       /* If ATTR_EA_INFO exists 'info' can't be NULL. */
-> +                       if (info)
-> +                               dup->ea_size = info->size_pack;
->                 }
->         }
+> @@ -1683,29 +1684,33 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
 >  
-> -- 
-> 2.33.0
-> 
+>  	list_del_init(&req->wait.entry);
+>  
+> -	if (mask && spin_trylock_irqsave(&iocb->ki_ctx->ctx_lock, flags)) {
+> -		struct kioctx *ctx = iocb->ki_ctx;
+> +	/*
+> +	 * Use irqsave/irqrestore because not all filesystems (e.g. fuse)
+> +	 * call this function with IRQs disabled and because IRQs have to
+> +	 * be disabled before ctx_lock is obtained.
+> +	 */
+> +	if (mask & POLLFREE) {
+> +		/* Force complete iocb inline to remove refs to deleted entry */
+> +		spin_lock_irqsave(&ctx->ctx_lock, flags);
+> +	} else if (!(mask && spin_trylock_irqsave(&ctx->ctx_lock, flags))) {
+> +		/* Can't complete iocb inline; schedule for later */
+> +		schedule_work(&req->work);
+> +		return 1;
+> +	}
+>  
+> -		/*
+> -		 * Try to complete the iocb inline if we can. Use
+> -		 * irqsave/irqrestore because not all filesystems (e.g. fuse)
+> -		 * call this function with IRQs disabled and because IRQs
+> -		 * have to be disabled before ctx_lock is obtained.
+> -		 */
+> -		list_del(&iocb->ki_list);
+> -		iocb->ki_res.res = mangle_poll(mask);
+> -		req->done = true;
+> -		if (iocb->ki_eventfd && eventfd_signal_allowed()) {
+> -			iocb = NULL;
+> -			INIT_WORK(&req->work, aio_poll_put_work);
+> -			schedule_work(&req->work);
+> -		}
+> -		spin_unlock_irqrestore(&ctx->ctx_lock, flags);
+> -		if (iocb)
+> -			iocb_put(iocb);
+> -	} else {
+> +	/* complete iocb inline */
+> +	list_del(&iocb->ki_list);
+> +	iocb->ki_res.res = mangle_poll(mask);
+> +	req->done = true;
+> +	if (iocb->ki_eventfd && eventfd_signal_allowed()) {
+> +		iocb = NULL;
+> +		INIT_WORK(&req->work, aio_poll_put_work);
+>  		schedule_work(&req->work);
+>  	}
+> +	spin_unlock_irqrestore(&ctx->ctx_lock, flags);
+> +	if (iocb)
+> +		iocb_put(iocb);
+> +
+>  	return 1;
+>  }
+>  
+> diff --git a/include/uapi/asm-generic/poll.h b/include/uapi/asm-generic/poll.h
+> index 41b509f410bf..35b1b69af729 100644
+> --- a/include/uapi/asm-generic/poll.h
+> +++ b/include/uapi/asm-generic/poll.h
+> @@ -29,7 +29,7 @@
+>  #define POLLRDHUP       0x2000
+>  #endif
+>  
+> -#define POLLFREE	(__force __poll_t)0x4000	/* currently only for epoll */
+> +#define POLLFREE	((__force __poll_t)0x4000)
+>  
+>  #define POLL_BUSY_LOOP	(__force __poll_t)0x8000
+
