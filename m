@@ -2,148 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4620641C13B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 11:03:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E0B041C230
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 12:02:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244969AbhI2JEz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Sep 2021 05:04:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48613 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244764AbhI2JEy (ORCPT
+        id S245235AbhI2KDq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Sep 2021 06:03:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37876 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243962AbhI2KDp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Sep 2021 05:04:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1632906193;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7W9Fc0fF86WyXYecPV/lI8dmSptGKk8vSEWO1VbX84s=;
-        b=VgUT5Wkwz6V88ZQWns3PibHMln4HGhgp//Lqv9xtWWLTUU31B+jaqn1HXLjgQC/QydaJh8
-        NDkadZGDpMr/7/xCagBYELPHCNxaXtcFe2exkJT+esc+RwifmAL59hZ6W7hNVbT8JgYUIs
-        S8u2Og2LtVssz/7JezgZKEYnn+I6IDY=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-475-fT32CuseNjG3oF3Ds-oBZg-1; Wed, 29 Sep 2021 05:03:12 -0400
-X-MC-Unique: fT32CuseNjG3oF3Ds-oBZg-1
-Received: by mail-wr1-f72.google.com with SMTP id h25-20020adfa4d9000000b001607d12a0b0so170664wrb.21
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 02:03:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=7W9Fc0fF86WyXYecPV/lI8dmSptGKk8vSEWO1VbX84s=;
-        b=Afc4rbwDn+05Jy2MT8z3EXMA6YRh2spqRyYJxPG+Drb8zmbdOm8h/9uI8aQ4wyH+Zh
-         ciQ8DSf46Smf1fNsHGLFAhZEyUL8v/6e3Z8zblXgPTPAyoJIbKpaLD2c6T3tVbqCRjH2
-         014MQGQeMLhDW4LtUFIRXZKtc5nYtlkZvap0DuXRXJS9hR3o5zjvZ+83YjI8um7cnW2R
-         T8SQygFY0UYNHF9PFEDH36JkqBTnHluR1oUBDF8BcRh25LB64R4MDPI0tXbzEspooCH3
-         KXDPCZuXCCwltEOkWbmgTscllFOl9KmwUBzA4/rIvJYaVOe3+DDVQWAdFiWga+dL5/zY
-         Dx9g==
-X-Gm-Message-State: AOAM532+LXORamWNNkBPBBs3YQCE7IY/FLAeeqAUQAi3m3RKjBOwPb6g
-        gYkc3Sy/jvGY/aspzY5k0opbJFaKR9x6puyw8KbKO1P4eHBw+vsYerKCiX5FVy4GH8poi+syTaO
-        IEZR/XWcmHmVMSCfqpeam0rdcWQ==
-X-Received: by 2002:a7b:c219:: with SMTP id x25mr9238889wmi.125.1632906190952;
-        Wed, 29 Sep 2021 02:03:10 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyAVvczz8jUTCdMNZ0BC5qvezoqKUBOcf5OajF0CWmKLmPAPf0K3OR8WEfpMUG5vsV5dclhgg==
-X-Received: by 2002:a7b:c219:: with SMTP id x25mr9238872wmi.125.1632906190770;
-        Wed, 29 Sep 2021 02:03:10 -0700 (PDT)
-Received: from [192.168.3.132] (p4ff23c3b.dip0.t-ipconnect.de. [79.242.60.59])
-        by smtp.gmail.com with ESMTPSA id t11sm1548498wrz.65.2021.09.29.02.03.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Sep 2021 02:03:10 -0700 (PDT)
-Subject: Re: [PATCH v1 2/8] x86/xen: simplify xen_oldmem_pfn_is_ram()
-From:   David Hildenbrand <david@redhat.com>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Mike Rapoport <rppt@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org,
-        virtualization@lists.linux-foundation.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20210928182258.12451-1-david@redhat.com>
- <20210928182258.12451-3-david@redhat.com>
- <4ab2f8c2-c3d5-30b3-a670-a8b38e218b6e@oracle.com>
- <bfe72f46-9a0d-1a87-64bd-4b03999edd1e@redhat.com>
-Organization: Red Hat
-Message-ID: <e9a230f9-85cb-d4c1-8027-508b7c344d94@redhat.com>
-Date:   Wed, 29 Sep 2021 11:03:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Wed, 29 Sep 2021 06:03:45 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29F91C06161C;
+        Wed, 29 Sep 2021 03:02:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=y/myciqa/Ii7kvQkDckQ0UnF342MIwILYQStokAXlmk=; b=Ap1iixLQB+oxVlqgXgINkzdr20
+        SaXiRwb42MeC84kvZqqpWg8wVxSk+JRxrUx4dZCyMO92h+r/76LCYH7ksq4/DDTojdIBPJgQJIfM2
+        no+6xg5HiSXno/JHm5PZQJbpDWxa4XRRQC7rqWqZK5KzRA6yadi1KuZQMSJRKnGosMmA47J4qEnuG
+        RvL/2V0eDkwdN7K2DXfp/q4GTCNVKPiMizvxyeu+wQvVmeelUom7G5aS3u+YZAQ2VbtSYkwFduwDL
+        lrxgn55TgBQjtQK3UrchFF1wiqBQf2CHz/h7BPHP3zeuy3gNPTF4KAbpAFChYDpCiwKrIYQ5DW+aA
+        hej3ItRg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mVWNU-00Bi8j-H6; Wed, 29 Sep 2021 10:00:00 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 12908300056;
+        Wed, 29 Sep 2021 11:59:51 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C1B5D2DC92D0B; Wed, 29 Sep 2021 11:59:51 +0200 (CEST)
+Date:   Wed, 29 Sep 2021 11:59:51 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+488ddf8087564d6de6e2@syzkaller.appspotmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        will@kernel.org, x86@kernel.org
+Subject: Re: [syzbot] upstream test error: KASAN: invalid-access Read in
+ __entry_tramp_text_end
+Message-ID: <YVQ5F9aT7oSEKenh@hirez.programming.kicks-ass.net>
+References: <CACT4Y+aS6w1gFuMVY1fnAG0Yp0XckQTM+=tUHkOuxHUy2mkxrg@mail.gmail.com>
+ <20210921165134.GE35846@C02TD0UTHF1T.local>
+ <CACT4Y+ZjRgb57EV6mvC-bVK0uT0aPXUjtZJabuWasYcshKNcgw@mail.gmail.com>
+ <20210927170122.GA9201@C02TD0UTHF1T.local>
+ <20210927171812.GB9201@C02TD0UTHF1T.local>
+ <CACT4Y+actfuftwMMOGXmEsLYbnCnqcZ2gJGeoMLsFCUNE-AxcQ@mail.gmail.com>
+ <20210928103543.GF1924@C02TD0UTHF1T.local>
+ <20210929013637.bcarm56e4mqo3ndt@treble>
+ <YVQYQzP/vqNWm/hO@hirez.programming.kicks-ass.net>
+ <20210929085035.GA33284@C02TD0UTHF1T.local>
 MIME-Version: 1.0
-In-Reply-To: <bfe72f46-9a0d-1a87-64bd-4b03999edd1e@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210929085035.GA33284@C02TD0UTHF1T.local>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 29.09.21 10:45, David Hildenbrand wrote:
->>
->> How about
->>
->>       return a.mem_type != HVMMEM_mmio_dm;
->>
-> 
-> Ha, how could I have missed that :)
-> 
->>
->> Result should be promoted to int and this has added benefit of not requiring changes in patch 4.
->>
-> 
-> Can we go one step further and do
-> 
-> 
-> @@ -20,24 +20,11 @@ static int xen_oldmem_pfn_is_ram(unsigned long pfn)
->           struct xen_hvm_get_mem_type a = {
->                   .domid = DOMID_SELF,
->                   .pfn = pfn,
-> +               .mem_type = HVMMEM_ram_rw,
->           };
-> -       int ram;
->    
-> -       if (HYPERVISOR_hvm_op(HVMOP_get_mem_type, &a))
-> -               return -ENXIO;
-> -
-> -       switch (a.mem_type) {
-> -       case HVMMEM_mmio_dm:
-> -               ram = 0;
-> -               break;
-> -       case HVMMEM_ram_rw:
-> -       case HVMMEM_ram_ro:
-> -       default:
-> -               ram = 1;
-> -               break;
-> -       }
-> -
-> -       return ram;
-> +       HYPERVISOR_hvm_op(HVMOP_get_mem_type, &a);
-> +       return a.mem_type != HVMMEM_mmio_dm;
->    }
->    #endif
-> 
-> 
-> Assuming that if HYPERVISOR_hvm_op() fails that
-> .mem_type is not set to HVMMEM_mmio_dm.
-> 
+On Wed, Sep 29, 2021 at 09:50:45AM +0100, Mark Rutland wrote:
+> On Wed, Sep 29, 2021 at 09:39:47AM +0200, Peter Zijlstra wrote:
+> > On Tue, Sep 28, 2021 at 06:36:37PM -0700, Josh Poimboeuf wrote:
 
-Okay we can't, due to "__must_check" ...
+> > > +	asm volatile("417: rdmsr\n"
+> > > +		     : EAX_EDX_RET(val, low, high)
+> > > +		     : "c" (msr));
+> > > +	asm_volatile_goto(_ASM_EXTABLE(417b, %l[Efault]) :::: Efault);
+> > 
+> > That's terrible :-) Could probably do with a comment, but might just
+> > work..
+> 
+> The compiler is well within its rights to spill/restore/copy/shuffle
+> registers or modify memory between the two asm blocks (which it's liable
+> to do that when optimizing this after a few layers of inlining), and
+> skipping that would cause all sorts of undefined behaviour.
 
--- 
-Thanks,
+Ah, but in this case it'll work irrespective of that (which is why we
+needs a comment!).
 
-David / dhildenb
+This is because _ASM_EXTABLE only generates data for another section.
+There doesn't need to be code continuity between these two asm
+statements.
 
+As I said, this is terrible :-)
