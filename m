@@ -2,171 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CAE3241CBAC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 20:18:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0597541CC23
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 20:55:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345055AbhI2SUD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Sep 2021 14:20:03 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44569 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1344234AbhI2SUC (ORCPT
+        id S1346362AbhI2S4j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Sep 2021 14:56:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49056 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1346253AbhI2S4i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Sep 2021 14:20:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1632939500;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=nnJZ7DpiogLpstvFiZH+ZlbBG07Zi0HLaCj48WwsBY8=;
-        b=VoeqJSbg2PQ9UDy5sx45KMOyAJCoo6so3Q1EMvopmsviFHsTRIujC1Canf2dZdMn6904XW
-        iGAyDpNCjyfKhhtrx1UluRFogjG443ERuNZlHKBD+wlbIeH0fuyT40FhfwpQD9KYP53ZMJ
-        gau2cJye3JkRFO2dt7Uy12kUEH/SvyQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-311-wd7hD-DWPf2CUXLQtgs_rA-1; Wed, 29 Sep 2021 14:18:18 -0400
-X-MC-Unique: wd7hD-DWPf2CUXLQtgs_rA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 23556189CD1F;
-        Wed, 29 Sep 2021 18:18:17 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2115819C59;
-        Wed, 29 Sep 2021 18:18:16 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Ramji Jiyani <ramjiyani@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        Arnd Bergmann <arnd@arndb.de>, kernel-team@android.com,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        oleg@redhat.com, hch@lst.de
-Subject: Re: [PATCH] aio: Add support for the POLLFREE
-References: <20210913183753.563103-1-ramjiyani@google.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Wed, 29 Sep 2021 14:20:08 -0400
-In-Reply-To: <20210913183753.563103-1-ramjiyani@google.com> (Ramji Jiyani's
-        message of "Mon, 13 Sep 2021 18:37:52 +0000")
-Message-ID: <x494ka39rc7.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 29 Sep 2021 14:56:38 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9693BC061764
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 11:54:57 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id j15so2181301plh.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 11:54:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=8+uJcBBc/PF7ems2z5fw4m588jWE79HAklefzm/UZpA=;
+        b=jUKnSXoA0hVODkS6t3osdG2XYk+v1gSULRVbnIZ9NcZh4ZpOliivKVPuRpp/UlzKhh
+         AbAGzhdYgAFxFcXd7rtQC4jDpvDc26ThZ27hDgqIxJg/E3s6vOblrrvcj45Gi0/6cPpw
+         q2WLquH9eoGvFWwMXjEu5YoLIYzPRTV+vvS4w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=8+uJcBBc/PF7ems2z5fw4m588jWE79HAklefzm/UZpA=;
+        b=qR3urM6Rz7zwNcOhqX9T4B27DbPCfnL6/HoIEN4jLAl9tuqidCT5HWBD3dnvesiXuo
+         ZkuRU+eRcWNkgt9yKBj06gNv5ydWWQV2Wo6edWikRIQKz9CZqr6Baf7FsJPKH8TsrsV2
+         zN3Tbvm0wBlE1yDPoFWjlezaShUIlpazuHe3EBHchdXxRSC/8e4ZllfnJ76XkHrGY5/f
+         tnxRmaLtca4jCq3HPzzH6LZctwpHbrIEGDtHk2pQGlE4IOA1JXGxRGOlWziYBgHiH3gM
+         oYAFeQZEuzBfEZIk695hvnhXlHD56cwt8ZFiU1yHCRtipA+JBLsz5lylxhF24W2Os2QA
+         HZGg==
+X-Gm-Message-State: AOAM532LEpYFOZiU8H2VfTP2L/dAbE1j3pVBvWCq9Q9P+4IZWTf2yngY
+        k6m3ENIaLUfSpUSB4UJ2mzpTyg==
+X-Google-Smtp-Source: ABdhPJzMCh/F5SF+Yhv5xgUAe1RpRTKX6R9v+nOxJt1NfhIE0v6dfSR2DW4sq15+zE5QfL0u0Kpdvg==
+X-Received: by 2002:a17:90a:304:: with SMTP id 4mr8095556pje.124.1632941697076;
+        Wed, 29 Sep 2021 11:54:57 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id c206sm480031pfc.220.2021.09.29.11.54.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Sep 2021 11:54:56 -0700 (PDT)
+Date:   Wed, 29 Sep 2021 11:54:55 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Jann Horn <jannh@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stefan Metzmacher <metze@samba.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Lai Jiangshan <laijs@linux.alibaba.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kenta.Tada@sony.com" <Kenta.Tada@sony.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Michael =?iso-8859-1?Q?Wei=DF?= 
+        <michael.weiss@aisec.fraunhofer.de>,
+        Anand K Mistry <amistry@google.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Michal Hocko <mhocko@suse.com>, Helge Deller <deller@gmx.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrea Righi <andrea.righi@canonical.com>,
+        Ohhoon Kwon <ohoono.kwon@samsung.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        YiFei Zhu <yifeifz2@illinois.edu>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Qi Zheng <zhengqi.arch@bytedance.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] proc: Disable /proc/$pid/wchan
+Message-ID: <202109291152.681444A135@keescook>
+References: <20210923233105.4045080-1-keescook@chromium.org>
+ <20210923234917.pqrxwoq7yqnvfpwu@shells.gnugeneration.com>
+ <CAG48ez0Rtv5kqHWw368Ym3GkKodPA+JETOAN+=c2KPa3opENSA@mail.gmail.com>
+ <20210924002230.sijoedia65hf5bj7@shells.gnugeneration.com>
+ <202109231814.FD09DBAD3@keescook>
+ <20210924135424.GA33573@C02TD0UTHF1T.local>
+ <202109240716.A0792BE46@keescook>
+ <20210927090337.GB1131@C02TD0UTHF1T.local>
+ <202109271103.4E15FC0@keescook>
+ <20210927205056.jjdlkof5w6fs5wzw@treble>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210927205056.jjdlkof5w6fs5wzw@treble>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Adding Oleg and Christoph.
+On Mon, Sep 27, 2021 at 01:50:56PM -0700, Josh Poimboeuf wrote:
+> On Mon, Sep 27, 2021 at 11:07:27AM -0700, Kees Cook wrote:
+> > On Mon, Sep 27, 2021 at 10:03:51AM +0100, Mark Rutland wrote:
+> > > On Fri, Sep 24, 2021 at 07:26:22AM -0700, Kees Cook wrote:
+> > > > On Fri, Sep 24, 2021 at 02:54:24PM +0100, Mark Rutland wrote:
+> > > > > On Thu, Sep 23, 2021 at 06:16:16PM -0700, Kees Cook wrote:
+> > > > > > On Thu, Sep 23, 2021 at 05:22:30PM -0700, Vito Caputo wrote:
+> > > > > > > Instead of unwinding stacks maybe the kernel should be sticking an
+> > > > > > > entrypoint address in the current task struct for get_wchan() to
+> > > > > > > access, whenever userspace enters the kernel?
+> > > > > > 
+> > > > > > wchan is supposed to show where the kernel is at the instant the
+> > > > > > get_wchan() happens. (i.e. recording it at syscall entry would just
+> > > > > > always show syscall entry.)
+> > > > > 
+> > > > > It's supposed to show where a blocked task is blocked; the "wait
+> > > > > channel".
+> > > > > 
+> > > > > I'd wanted to remove get_wchan since it requires cross-task stack
+> > > > > walking, which is generally painful.
+> > > > 
+> > > > Right -- this is the "fragile" part I'm worried about.
+> > 
+> > I'd like to clarify this concern first -- is the proposed fix actually
+> > fragile? Because I think we'd be better off just restoring behavior than
+> > trying to invent new behavior...
+> > 
+> > i.e. Josh, Jann, do you see any issues with Qi Zheng's fix here:
+> > https://lore.kernel.org/all/20210924062006.231699-4-keescook@chromium.org/
+> 
+> Even with that patch, it doesn't lock the task's runqueue before reading
+> the stack, so there's still the possibility of the task running on
+> another CPU and the unwinder going off the rails a bit, which might be
+> used by an attacker in creative ways similar to the /proc/<pid>/stack
+> vulnerability Jann mentioned earlier.
 
-Ramji Jiyani <ramjiyani@google.com> writes:
+Since I think we're considering get_wchan() to be slow-path, can we just
+lock the runqueue and use arch_stack_walk_reliable()?
 
-> Commit f5cb779ba163 ("ANDROID: binder: remove waitqueue when thread
-> exits.") fixed the use-after-free in eventpoll but aio still has the
-> same issue because it doesn't honor the POLLFREE flag.
->
-> Add support for the POLLFREE flag to force complete iocb inline in
-> aio_poll_wake(). A thread may use it to signal it's exit and/or request
-> to cleanup while pending poll request. In this case, aio_poll_wake()
-> needs to make sure it doesn't keep any reference to the queue entry
-> before returning from wake to avoid possible use after free via
-> poll_cancel() path.
-
-Is this an in-kernel user?  Can you explain more about how or when this
-happens?  Do you have a stack trace that shows the problem?  I'm not
-sure this use of POLLFREE exactly follows with the initial intention of
-the flag, but hopefully Oleg can comment on that.
-
-Thanks,
-Jeff
-
-> The POLLFREE flag is no more exclusive to the epoll and is being
-> shared with the aio. Remove comment from poll.h to avoid confusion.
-> Also enclosed the POLLFREE macro definition in parentheses to fix
-> checkpatch error.
->
-> Signed-off-by: Ramji Jiyani <ramjiyani@google.com>
-> ---
->  fs/aio.c                        | 45 ++++++++++++++++++---------------
->  include/uapi/asm-generic/poll.h |  2 +-
->  2 files changed, 26 insertions(+), 21 deletions(-)
->
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 51b08ab01dff..5d539c05df42 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -1674,6 +1674,7 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
->  {
->  	struct poll_iocb *req = container_of(wait, struct poll_iocb, wait);
->  	struct aio_kiocb *iocb = container_of(req, struct aio_kiocb, poll);
-> +	struct kioctx *ctx = iocb->ki_ctx;
->  	__poll_t mask = key_to_poll(key);
->  	unsigned long flags;
->  
-> @@ -1683,29 +1684,33 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
->  
->  	list_del_init(&req->wait.entry);
->  
-> -	if (mask && spin_trylock_irqsave(&iocb->ki_ctx->ctx_lock, flags)) {
-> -		struct kioctx *ctx = iocb->ki_ctx;
-> +	/*
-> +	 * Use irqsave/irqrestore because not all filesystems (e.g. fuse)
-> +	 * call this function with IRQs disabled and because IRQs have to
-> +	 * be disabled before ctx_lock is obtained.
-> +	 */
-> +	if (mask & POLLFREE) {
-> +		/* Force complete iocb inline to remove refs to deleted entry */
-> +		spin_lock_irqsave(&ctx->ctx_lock, flags);
-> +	} else if (!(mask && spin_trylock_irqsave(&ctx->ctx_lock, flags))) {
-> +		/* Can't complete iocb inline; schedule for later */
-> +		schedule_work(&req->work);
-> +		return 1;
-> +	}
->  
-> -		/*
-> -		 * Try to complete the iocb inline if we can. Use
-> -		 * irqsave/irqrestore because not all filesystems (e.g. fuse)
-> -		 * call this function with IRQs disabled and because IRQs
-> -		 * have to be disabled before ctx_lock is obtained.
-> -		 */
-> -		list_del(&iocb->ki_list);
-> -		iocb->ki_res.res = mangle_poll(mask);
-> -		req->done = true;
-> -		if (iocb->ki_eventfd && eventfd_signal_allowed()) {
-> -			iocb = NULL;
-> -			INIT_WORK(&req->work, aio_poll_put_work);
-> -			schedule_work(&req->work);
-> -		}
-> -		spin_unlock_irqrestore(&ctx->ctx_lock, flags);
-> -		if (iocb)
-> -			iocb_put(iocb);
-> -	} else {
-> +	/* complete iocb inline */
-> +	list_del(&iocb->ki_list);
-> +	iocb->ki_res.res = mangle_poll(mask);
-> +	req->done = true;
-> +	if (iocb->ki_eventfd && eventfd_signal_allowed()) {
-> +		iocb = NULL;
-> +		INIT_WORK(&req->work, aio_poll_put_work);
->  		schedule_work(&req->work);
->  	}
-> +	spin_unlock_irqrestore(&ctx->ctx_lock, flags);
-> +	if (iocb)
-> +		iocb_put(iocb);
-> +
->  	return 1;
->  }
->  
-> diff --git a/include/uapi/asm-generic/poll.h b/include/uapi/asm-generic/poll.h
-> index 41b509f410bf..35b1b69af729 100644
-> --- a/include/uapi/asm-generic/poll.h
-> +++ b/include/uapi/asm-generic/poll.h
-> @@ -29,7 +29,7 @@
->  #define POLLRDHUP       0x2000
->  #endif
->  
-> -#define POLLFREE	(__force __poll_t)0x4000	/* currently only for epoll */
-> +#define POLLFREE	((__force __poll_t)0x4000)
->  
->  #define POLL_BUSY_LOOP	(__force __poll_t)0x8000
-
+-- 
+Kees Cook
