@@ -2,69 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B08F41BEEF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 08:05:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F202941C00A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 09:40:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244324AbhI2GGw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Sep 2021 02:06:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59726 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243377AbhI2GGv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Sep 2021 02:06:51 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6AB87613A7;
-        Wed, 29 Sep 2021 06:05:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1632895511;
-        bh=FND3wJXVv27Y/fHE3N5rucqPfHmjLIp1dM+zsmoLBz8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=naJVuz7CN/ctGc6J0IajQZP01oeKqqDs8qhyrqU++/Py5Bh25arwf/VTz1sXEgWMA
-         HQienZaeqnbNwwIpHE+20+sWxOiHhVSo0vFQtKDtr4+yUny2rvTg3ptRrhTs6yGTyN
-         9UC5JdA+XtE8f6NtiL4CBIJpdx1gqTykU61trG/4=
-Date:   Wed, 29 Sep 2021 08:05:07 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Tejun Heo <tj@kernel.org>, Hou Tao <houtao1@huawei.com>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] kernfs: don't create a negative dentry if inactive node
- exists
-Message-ID: <YVQCE3vhK8z33Na2@kroah.com>
-References: <163288467430.30015.16308604689059471602.stgit@mickey.themaw.net>
+        id S244671AbhI2Hlk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Sep 2021 03:41:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33808 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244657AbhI2Hlj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 Sep 2021 03:41:39 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEC1EC06161C;
+        Wed, 29 Sep 2021 00:39:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=VkS0cByfycR7IUntKmzAdGZYgQquvhdpPBQ2pD9v+cM=; b=mKSPGDpxkeRqEwh5TlZm4fZA2O
+        0ABC1F6qO7GglhEWW5N+wBKyl9AAPlkDYsHfEGLSk9vQ2TBuC8x1vnTJaTzT81NSLd7JupEAs5+k5
+        QSeZuXJ5I/3ePl7muEEi+tpiPmCMIrrisFx1Vr270buugAIkfBEhBTyase4hpvyVmqAil4ZRpAnB7
+        lghBHps1rpNJzWuOaZ/Ii+dmvLTf1p3vJRi8R6IIaQ+faluqeA1biQra4y/eoI/bPNwhU6yS0ug7/
+        uZ/slWJCpqeTyEStYf8zDAqYzw3cLkuaa+RnbfQc6chDsWfraJ92fCNe/eFAj7eiHJFrH7fpQCf4e
+        AnBmu8vQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mVUBw-006fNy-C1; Wed, 29 Sep 2021 07:39:48 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8ACE930029A;
+        Wed, 29 Sep 2021 09:39:47 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 404E52BBF9839; Wed, 29 Sep 2021 09:39:47 +0200 (CEST)
+Date:   Wed, 29 Sep 2021 09:39:47 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+488ddf8087564d6de6e2@syzkaller.appspotmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        will@kernel.org, x86@kernel.org
+Subject: Re: [syzbot] upstream test error: KASAN: invalid-access Read in
+ __entry_tramp_text_end
+Message-ID: <YVQYQzP/vqNWm/hO@hirez.programming.kicks-ass.net>
+References: <000000000000a3cf8605cb2a1ec0@google.com>
+ <CACT4Y+aS6w1gFuMVY1fnAG0Yp0XckQTM+=tUHkOuxHUy2mkxrg@mail.gmail.com>
+ <20210921165134.GE35846@C02TD0UTHF1T.local>
+ <CACT4Y+ZjRgb57EV6mvC-bVK0uT0aPXUjtZJabuWasYcshKNcgw@mail.gmail.com>
+ <20210927170122.GA9201@C02TD0UTHF1T.local>
+ <20210927171812.GB9201@C02TD0UTHF1T.local>
+ <CACT4Y+actfuftwMMOGXmEsLYbnCnqcZ2gJGeoMLsFCUNE-AxcQ@mail.gmail.com>
+ <20210928103543.GF1924@C02TD0UTHF1T.local>
+ <20210929013637.bcarm56e4mqo3ndt@treble>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <163288467430.30015.16308604689059471602.stgit@mickey.themaw.net>
+In-Reply-To: <20210929013637.bcarm56e4mqo3ndt@treble>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 29, 2021 at 11:04:34AM +0800, Ian Kent wrote:
-> In kernfs_iop_lookup() a negative dentry is created if there's no kernfs
-> node associated with the dentry or the node is inactive.
-> 
-> But inactive kernfs nodes are meant to be invisible to the VFS and
-> creating a negative dentry for these can have unexpected side effects
-> when the node transitions to an active state.
-> 
-> The point of creating negative dentries is to avoid the expensive
-> alloc/free cycle that occurs if there are frequent lookups for kernfs
-> attributes that don't exist. So kernfs nodes that are not yet active
-> should not result in a negative dentry being created so when they
-> transition to an active state VFS lookups can create an associated
-> dentry is a natural way.
-> 
-> Signed-off-by: Ian Kent <raven@themaw.net>
-> ---
->  fs/kernfs/dir.c |    9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
+On Tue, Sep 28, 2021 at 06:36:37PM -0700, Josh Poimboeuf wrote:
+> On Tue, Sep 28, 2021 at 11:35:43AM +0100, Mark Rutland wrote:
+> > > In the other x86 thread Josh Poimboeuf suggested to use asm goto to a
+> > > cold part of the function instead of .fixup:
+> > > https://lore.kernel.org/lkml/20210927234543.6waods7rraxseind@treble/
+> > > This sounds like a more reliable solution that will cause less
+> > > maintenance burden. Would it work for arm64 as well?
+> > 
+> > Maybe we can use that when CC_HAS_ASM_GOTO_OUTPUT is avaiable, but in
+> > general we can't rely on asm goto supporting output arguments (and IIRC
+> > GCC doesn't support that at all), so we'd still have to support the
+> > current fixup scheme.
 
-Does this fix a specific commit and need a "Fixes:" tag?
+gcc-11 has it
 
-thanks,
+> Even without CC_HAS_ASM_GOTO_OUTPUT it should still be possible to hack
+> something together if you split the original insn asm and the extable
+> asm into separate statements, like:
+> 
+> diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
+> index 6b52182e178a..8f62469f2027 100644
+> --- a/arch/x86/include/asm/msr.h
+> +++ b/arch/x86/include/asm/msr.h
+> @@ -137,20 +139,21 @@ static inline unsigned long long native_read_msr_safe(unsigned int msr,
+>  {
+>  	DECLARE_ARGS(val, low, high);
+>  
+> +	*err = 0;
+> +	asm volatile("417: rdmsr\n"
+> +		     : EAX_EDX_RET(val, low, high)
+> +		     : "c" (msr));
+> +	asm_volatile_goto(_ASM_EXTABLE(417b, %l[Efault]) :::: Efault);
 
-greg k-h
+That's terrible :-) Could probably do with a comment, but might just
+work..
+
+> +
+> +done:
+>  	if (tracepoint_enabled(read_msr))
+>  		do_trace_read_msr(msr, EAX_EDX_VAL(val, low, high), *err);
+>  	return EAX_EDX_VAL(val, low, high);
+> +
+> +Efault:
+> +	*err = -EIO;
+> +	ZERO_ARGS(val, low, high);
+> +	goto done;
+>  }
+>  
+>  /* Can be uninlined because referenced by paravirt */
+> 
