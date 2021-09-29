@@ -2,68 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D851C41CEB5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Sep 2021 00:04:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41CE441CEAE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Sep 2021 00:03:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347048AbhI2WF6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Sep 2021 18:05:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35512 "EHLO
+        id S1346955AbhI2WEG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Sep 2021 18:04:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346882AbhI2WEF (ORCPT
+        with ESMTP id S1346846AbhI2WEE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Sep 2021 18:04:05 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0D9CC061768
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 15:02:23 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id g2so3148526pfc.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 15:02:23 -0700 (PDT)
+        Wed, 29 Sep 2021 18:04:04 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E09EC06176F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 15:02:22 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id 133so4159984pgb.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 15:02:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uRhBWrgFlaAm1vNONWn7eBn+C1gWiV8BF1SotpY7wF4=;
-        b=XKTJ3egRbn88mEWHt3e+NT5KCfMY5twURwT5zz5ZEAy4HBp8LSwa/+FnrXK3LRRKkT
-         z6g2BRe8HPSATIQEdZO9kSxRUJH9iUGNXS5qMILUhHDhj8MwNkfpgrdoFzdwmxBE3ALy
-         dACyf1uiHL0kU9LpK6/Jwb0rEZezv2HsKTPx4=
+        bh=FXiCuxEPMvqVSi+g+P0evOsDZPlbh8jjQbS0s6wZm8k=;
+        b=SRrGW9zo/d6XA0WfD3zwDEcbIo+Z1I96cCKPaPYXClI+Qfg8s9OJNo/xb7TEDE5aYr
+         Ho17NV6HPaJkzNytOQUl6mp8zKXpU0ULv+wkVZg+EBUY+CEH/WHSNssW9o9ZppK3PwaO
+         fhhITLjFDcaVBGI2nxkxo8lrt6URHO+miQv6Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uRhBWrgFlaAm1vNONWn7eBn+C1gWiV8BF1SotpY7wF4=;
-        b=sha1Fm9THSaGYN/eL/mrwj1uM5ITAGhGHEyyqMmsg2v0I0kY5un9KGgZ0NOjkgpQbk
-         DYhDZ/8WqTsZ4SNEl3QwHaB4FPJRI8ZkEaXqsCRb/IStT/GTi2Hd5A7rjGi/ioSUEZ2d
-         FA55eoUjP52mwzDNYiZHAv7cdNSqFCyGiyO16E3VKDF/glPzqkl3ojiPrueM1lfBP8dd
-         vnQouTNh25a7WTEAaNL+cQXVY9317BF0768Hy7I+CdscUvA5socSxtx5Av69mIZnDH7n
-         voxUHKIGxvAcyL3UDEsYrPOsgkJkxvLq7XPIzKPiCq5OKyH0mfVnMDjIKKGT2ASa4sL2
-         Dbug==
-X-Gm-Message-State: AOAM531iq98SDMpptHBf1WgZA2iJLeo4simXQZjEM6Ed1kbFBoyiDJTN
-        2KxoOS1OYHcpwOSAg8lExEJG1w==
-X-Google-Smtp-Source: ABdhPJxC17A4z/lSx47PDiLiFULUOvXwmBTm++Bv6j1g8B33SA4QeFQDMuP4z5hdB2v8p/omo/yiPg==
-X-Received: by 2002:a62:51c6:0:b0:43d:e849:c69d with SMTP id f189-20020a6251c6000000b0043de849c69dmr843514pfb.31.1632952943316;
-        Wed, 29 Sep 2021 15:02:23 -0700 (PDT)
+        bh=FXiCuxEPMvqVSi+g+P0evOsDZPlbh8jjQbS0s6wZm8k=;
+        b=z0CKJXMEb4flreYJRXU9QQbiHodIL8no/AY3yp9v1l4bDx4kD265EMEDGEF6iuLKK2
+         J47hWildB/LRKduBRaF0PoQptItpkVdqV0ihvr9/gbQafepPFLwwMSljWLGY1jjd8SbS
+         tZDEBTKNa0n1S6p0L9/5j95UsoGD3QYliasFquH76zMPcts+UeeaHq4jUYdyI6XU+/2N
+         P13lZZaIh57lFY7kYsIJ+NbtUXQRnarBDNqf+9fmThOKCN63P/v8FSMNgtPogfb9euUc
+         TBRjY0rRxQjrvTDQ1oV1cmMFakw9cJrSxscOdNdWqRZ9+BztKsjoSDXz0qnQBDVOyBoW
+         GxlQ==
+X-Gm-Message-State: AOAM532LkFxDr0r8sKFJ2HEqdrNEnFpOH1u38/Ene3k2omT149gqzuOe
+        3RvSfu8cYblRMOKeHtsfT3eXXQ==
+X-Google-Smtp-Source: ABdhPJzliJ0RYWBweCHHWJ+P3Zmj4CAL9EDfVBAf9D4cTfaBNZUREv4N4JrivSvzlyTgfNZ7/6QD/Q==
+X-Received: by 2002:a63:1e60:: with SMTP id p32mr1903923pgm.234.1632952941938;
+        Wed, 29 Sep 2021 15:02:21 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id u6sm582368pgr.3.2021.09.29.15.02.20
+        by smtp.gmail.com with ESMTPSA id o16sm561897pgv.29.2021.09.29.15.02.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 29 Sep 2021 15:02:20 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Kees Cook <keescook@chromium.org>, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        kernel test robot <oliver.sang@intel.com>,
-        Vito Caputo <vcaputo@pengaru.com>,
-        Jann Horn <jannh@google.com>,
+Cc:     Kees Cook <keescook@chromium.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Anand K Mistry <amistry@google.com>,
         "Kenta.Tada@sony.com" <Kenta.Tada@sony.com>,
         Alexey Gladkov <legion@kernel.org>,
         =?UTF-8?q?Michael=20Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>,
-        Michal Hocko <mhocko@suse.com>, Helge Deller <deller@gmx.de>,
+        Jann Horn <jannh@google.com>, Michal Hocko <mhocko@suse.com>,
+        Helge Deller <deller@gmx.de>, linux-fsdevel@vger.kernel.org,
+        kernel test robot <oliver.sang@intel.com>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
         Qi Zheng <zhengqi.arch@bytedance.com>,
         "Tobin C. Harding" <me@tobin.cc>,
         Tycho Andersen <tycho@tycho.pizza>,
@@ -81,79 +82,70 @@ Cc:     Kees Cook <keescook@chromium.org>, Ingo Molnar <mingo@redhat.com>,
         Kalesh Singh <kaleshsingh@google.com>,
         YiFei Zhu <yifeifz2@illinois.edu>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, x86@kernel.org
-Subject: [PATCH v2 2/6] sched: Add wrapper for get_wchan() to keep task blocked
-Date:   Wed, 29 Sep 2021 15:02:14 -0700
-Message-Id: <20210929220218.691419-3-keescook@chromium.org>
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        x86@kernel.org
+Subject: [PATCH v2 3/6] proc: Use task_is_running() for wchan in /proc/$pid/stat
+Date:   Wed, 29 Sep 2021 15:02:15 -0700
+Message-Id: <20210929220218.691419-4-keescook@chromium.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210929220218.691419-1-keescook@chromium.org>
 References: <20210929220218.691419-1-keescook@chromium.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2019; h=from:subject; bh=hDSVcS+yS4zZDdIDUOZIhgW3NO0PbtwfKyydbAUGaMU=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBhVOJoXE4lnUJcVhzfp3ihdwxyB+SepKuT2zcL6CCW aOKOM4iJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYVTiaAAKCRCJcvTf3G3AJtD4EA CKIae2l/Y4dicmSYuz6SdCtnqA0Rd5XecPN40jZIiItJs97tI0zHJfZJ0grAuBL62iw0oTrDAep0rJ hbKWV0M7J6ZcSqjI/alre0T7Jp1q8rOp/PnsXrdt23dO2vZXQh/6qvDemzNIvxOpQ4xk1cEann4FyQ mb1o02iC6K5JJaKT7HJXFfQo3fi++ezzGECuBqyyZYFcIMx5RuTUS+ZpWNgraW+WZpPgzl6ZXGP4bn xB+1NZDZqY5Q9oZ8vuDm1SC/+QwmZJCrgyeQTS213hV7Kuv0qIo/GTM+v/+/jTbqfXPZUWNKUbB28I TxAnDGXvT77m6f1R0ihCffDBj36GLZF6X+u1Mb8BeSeg7UGxXLf9EdwMsZIGs9PhUL6titRBgNwAc0 R7vAin9+bCS4p/0Tl9HfHtJoIRUWleimK8KDxGOz6LuA8ZozXBRcwUuCoTwT+9nF4T06Nou/8fcvfF BSG0SkCgkr0ug2ebMP2txQ8gxIXcWKntvutRuw0xuKNeHWIGtg8JMccsidYwQ6l2D0q6FMDcE+K1QJ YU4/m+ZEpM1mrWDvBfI0i2fkC85s++MH3kuyyx15f8J6ZosClV6STeF5l8QBbZC5wWgoxEdV50MX+A QOOb4MBGs24mNWLO/oiPqGS21M141Fn88kp6/GifGhov5UAVvVKoaTEUseeA==
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1702; h=from:subject; bh=vEcA8vhX2LIYTyny+lSt9vtrmOxzTbXuNEQhn5SMUqg=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBhVOJo4pEo1xkbc20ffT7DBLQ7oi+h8cwMpfxIYeBP 9Dwzkr+JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYVTiaAAKCRCJcvTf3G3AJoEdD/ 9KIWtXlguBEKgRhhajeWO7Pq+iFfZvVJRNJmrg0tcqcStHiicYq1RMWEekffyqtSOir3ypL+ZJQjSF 6GDHvBFJh7991cXxetyQeqCTAKuTRoa5QBNJCbVfjQjoehkd1NR4BodXDO8xKDStibOXos+qMk7CBm Cz+QSk9v7a6MmB3IuTuNYKf5moDvV53v0OFtDA4714WSd5ShHTdMGUTZXLzHTprDTrIsdgUJDWcgwU NoE2htw5yghyl0k2oadQlfuXAL44IaBAvchMl13m3h7zgyIzy7KLWQExSSB1XshnESbPLqMU0N3xue 9Lfw/GNXEm+nJgzx85rt8cpn2deSM2SUnYiGPwwZDItrgLHxkd7MX8MygS+wIteE1AGdSus2UaIhlt 7t1hMuRkDzT7WkChhvwrSXHsyJhI01x+Igb6+RJ9j4EDiKXCkPd0v1p+0kzEJjAllijhODUtrKZ3Z2 atfnQ3RiRcuYjhlsadJ29M4C7rlbDE3TB2bKss8qHqUxOaTbQg7iDZ8XPr3Aqp4Gx4H6rxo7FyWtfO UgeXQf+UH1M+SV0t/DDebEW4zwUheVNQC7i6+QxMbEmHf5G6DWKoKCytjqMoemLz3MWCpuI7CrTAnw LE7THqJDnJuZVjESgcd7V8f6lxhoVL2AI2WJSi4sKEScJQLVH9CxLpOzqWkQ==
 X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Having a stable wchan means the process must be blocked and for it to
-stay that way while performing stack unwinding.
+The implementations of get_wchan() can be expensive. The only information
+imparted here is whether or not a process is currently blocked in the
+scheduler (and even this doesn't need to be exact). Avoid doing the
+heavy lifting of stack walking and just report that information by using
+task_is_running().
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: Anand K Mistry <amistry@google.com>
+Cc: "Kenta.Tada@sony.com" <Kenta.Tada@sony.com>
+Cc: Alexey Gladkov <legion@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Michael Weiß" <michael.weiss@aisec.fraunhofer.de>
+Cc: Jann Horn <jannh@google.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Helge Deller <deller@gmx.de>
+Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/sched.h |  1 +
- kernel/sched/core.c   | 16 ++++++++++++++++
- 2 files changed, 17 insertions(+)
+ fs/proc/array.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 39039ce8ac4c..0c8185089e20 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -2137,6 +2137,7 @@ static inline void set_task_cpu(struct task_struct *p, unsigned int cpu)
- #endif /* CONFIG_SMP */
+diff --git a/fs/proc/array.c b/fs/proc/array.c
+index 49be8c8ef555..77cf4187adec 100644
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@ -541,7 +541,7 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
+ 	}
  
- extern bool sched_task_on_rq(struct task_struct *p);
-+extern unsigned long sched_task_get_wchan(struct task_struct *p);
+ 	if (permitted && (!whole || num_threads < 2))
+-		wchan = get_wchan(task);
++		wchan = !task_is_running(task);
+ 	if (!whole) {
+ 		min_flt = task->min_flt;
+ 		maj_flt = task->maj_flt;
+@@ -606,10 +606,7 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
+ 	 *
+ 	 * This works with older implementations of procps as well.
+ 	 */
+-	if (wchan)
+-		seq_puts(m, " 1");
+-	else
+-		seq_puts(m, " 0");
++	seq_put_decimal_ull(m, " ", wchan);
  
- /*
-  * In order to reduce various lock holder preemption latencies provide an
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 1bba4128a3e6..4a30455e1ff5 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1962,6 +1962,22 @@ bool sched_task_on_rq(struct task_struct *p)
- 	return task_on_rq_queued(p);
- }
- 
-+unsigned long sched_task_get_wchan(struct task_struct *p)
-+{
-+	unsigned int state;
-+	unsigned long ip = 0;
-+
-+	/* Only get wchan if task is blocked and we can keep it that way. */
-+	raw_spin_lock_irq(&p->pi_lock);
-+	state = READ_ONCE(p->__state);
-+	smp_rmb(); /* see try_to_wake_up() */
-+	if (state != TASK_RUNNING && state != TASK_WAKING && !p->on_rq)
-+		ip = get_wchan(p);
-+	raw_spin_unlock_irq(&p->pi_lock);
-+
-+	return ip;
-+}
-+
- static inline void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
- {
- 	if (!(flags & ENQUEUE_NOCLOCK))
+ 	seq_put_decimal_ull(m, " ", 0);
+ 	seq_put_decimal_ull(m, " ", 0);
 -- 
 2.30.2
 
