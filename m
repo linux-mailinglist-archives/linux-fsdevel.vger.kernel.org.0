@@ -2,61 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9918C41C8F8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 17:58:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D353D41CA36
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 18:35:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345741AbhI2QA2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Sep 2021 12:00:28 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:41260 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1345524AbhI2P7w (ORCPT
+        id S1345791AbhI2Qh2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Sep 2021 12:37:28 -0400
+Received: from relayfre-01.paragon-software.com ([176.12.100.13]:54750 "EHLO
+        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1345687AbhI2Qh1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Sep 2021 11:59:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1632931090;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=I9QQVC3ObAKQWGkVakHBATBn/ed3/zk0MSyQjfvAbQY=;
-        b=RmGk876D+FZSftJwmowNgF5HLvzNLGJ9n428ip0WBPShZ0LVenHSs5FwP96lommb+7Je5p
-        Icjqm75UB8r3RfYUqym4GzD9gaF6quIBvjTwb2JOVo3fIGSOlu7mYj6QPXsDEMk/q7m+Co
-        bj3BaTWhWpI/WYIVqPvPC5xfXTSJ+Gc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-375-zSJ6v7QbN42_3vJ6y17AMg-1; Wed, 29 Sep 2021 11:58:09 -0400
-X-MC-Unique: zSJ6v7QbN42_3vJ6y17AMg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1E742362A7;
-        Wed, 29 Sep 2021 15:58:08 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C82E45C25D;
-        Wed, 29 Sep 2021 15:58:06 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <163292979744.4004896.11826056491597096493.stgit@warthog.procyon.org.uk>
-References: <163292979744.4004896.11826056491597096493.stgit@warthog.procyon.org.uk>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Jeffrey Altman <jaltman@auristor.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] afs: Fix data corruptor in page laundering
+        Wed, 29 Sep 2021 12:37:27 -0400
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 23B81439;
+        Wed, 29 Sep 2021 19:35:44 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1632933344;
+        bh=y6nA3GWCbrV+AJ5phsLcgeh14RzUjW20Sad0AwORUTc=;
+        h=Date:To:CC:From:Subject;
+        b=AhpB6B8J+eGE7340jiIeikVoLgAhUZHszkpgntE5jvth6TstCAoV49vo/JF6Us/IT
+         XHmxgFNEk2Ax83dJUYKbieev6CZfa+PRsNLYLihWMdgJjwFcgrA2fWZ/bWTPEiSfNd
+         uqv7RQZHWB8zs5yc4U9gYa7rpn912PhpBktrqzAA=
+Received: from [192.168.211.131] (192.168.211.131) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Wed, 29 Sep 2021 19:35:43 +0300
+Message-ID: <227c13e3-5a22-0cba-41eb-fcaf41940711@paragon-software.com>
+Date:   Wed, 29 Sep 2021 19:35:43 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4006399.1632931085.1@warthog.procyon.org.uk>
-Date:   Wed, 29 Sep 2021 16:58:05 +0100
-Message-ID: <4006400.1632931085@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.1
+Content-Language: en-US
+To:     <ntfs3@lists.linux.dev>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH] fs/ntfs3: Check for NULL if ATTR_EA_INFO is incorrect
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.211.131]
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hmmm... for some reason stgit didn't use patch numbering.
+This can be reason for reported panic.
+Fixes: 4342306f0f0d ("fs/ntfs3: Add file operations and implementation")
 
-David
+Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+---
+ fs/ntfs3/frecord.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
+index 9a53f809576d..007602badd90 100644
+--- a/fs/ntfs3/frecord.c
++++ b/fs/ntfs3/frecord.c
+@@ -3080,7 +3080,9 @@ static bool ni_update_parent(struct ntfs_inode *ni, struct NTFS_DUP_INFO *dup,
+                        const struct EA_INFO *info;
+ 
+                        info = resident_data_ex(attr, sizeof(struct EA_INFO));
+-                       dup->ea_size = info->size_pack;
++                       /* If ATTR_EA_INFO exists 'info' can't be NULL. */
++                       if (info)
++                               dup->ea_size = info->size_pack;
+                }
+        }
+ 
+-- 
+2.33.0
 
