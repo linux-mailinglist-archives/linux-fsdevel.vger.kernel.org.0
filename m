@@ -2,34 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E011D41C307
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 12:54:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3520641C30D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 12:55:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245597AbhI2K4M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Sep 2021 06:56:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49952 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245590AbhI2K4L (ORCPT
+        id S245592AbhI2K4S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Sep 2021 06:56:18 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47820 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245599AbhI2K4N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Sep 2021 06:56:11 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C196FC06161C;
-        Wed, 29 Sep 2021 03:54:30 -0700 (PDT)
+        Wed, 29 Sep 2021 06:56:13 -0400
 Received: from localhost.localdomain (unknown [IPv6:2401:4900:1c20:3124:6d32:b2f4:daed:4666])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: shreeya)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id DD8A41F43F97;
-        Wed, 29 Sep 2021 11:54:24 +0100 (BST)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 126401F43FB5;
+        Wed, 29 Sep 2021 11:54:29 +0100 (BST)
 From:   Shreeya Patel <shreeya.patel@collabora.com>
 To:     tytso@mit.edu, viro@zeniv.linux.org.uk, adilger.kernel@dilger.ca,
         krisman@collabora.com
 Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, kernel@collabora.com,
         Shreeya Patel <shreeya.patel@collabora.com>
-Subject: [PATCH 1/2] fs: dcache: Handle case-exact lookup in d_alloc_parallel
-Date:   Wed, 29 Sep 2021 16:23:38 +0530
-Message-Id: <0b8fd2677b797663bfcb97f6aa108193fedf9767.1632909358.git.shreeya.patel@collabora.com>
+Subject: [PATCH 2/2] fs: ext4: Fix the inconsistent name exposed by /proc/self/cwd
+Date:   Wed, 29 Sep 2021 16:23:39 +0530
+Message-Id: <8402d1c99877a4fcb152de71005fa9cfb25d86a8.1632909358.git.shreeya.patel@collabora.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <cover.1632909358.git.shreeya.patel@collabora.com>
 References: <cover.1632909358.git.shreeya.patel@collabora.com>
@@ -39,66 +36,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is a soft hang caused by a deadlock in d_alloc_parallel which
-waits up on lookups to finish for the dentries in the parent directory's
-hash_table.
-In case when d_add_ci is called from the fs layer's lookup functions,
-the dentry being looked up is already in the hash table (created before
-the fs lookup function gets called). We should not be processing the
-same dentry that is being looked up, hence, in case of case-insensitive
-filesystems we are making it a case-exact match to prevent this from
-happening.
+/proc/self/cwd is a symlink created by the kernel that uses whatever
+name the dentry has in the dcache. Since the dcache is populated only
+on the first lookup, with the string used in that lookup, cwd will
+have an unexpected case, depending on how the data was first looked-up
+in a case-insesitive filesystem.
+
+Steps to reproduce :-
+
+root@test-box:/src# mkdir insensitive/foo
+root@test-box:/src# cd insensitive/FOO
+root@test-box:/src/insensitive/FOO# ls -l /proc/self/cwd
+lrwxrwxrwx 1 root root /proc/self/cwd -> /src/insensitive/FOO
+
+root@test-box:/src/insensitive/FOO# cd ../fOo
+root@test-box:/src/insensitive/fOo# ls -l /proc/self/cwd
+lrwxrwxrwx 1 root root /proc/self/cwd -> /src/insensitive/FOO
+
+Above example shows that 'FOO' was the name used on first lookup here and
+it is stored in dcache instead of the original name 'foo'. This results
+in inconsistent name exposed by /proc/self/cwd since it uses the name
+stored in dcache.
+
+To avoid the above inconsistent name issue, handle the inexact-match string
+( a string which is not a byte to byte match, but is an equivalent
+unicode string ) case in ext4_lookup which would store the original name
+in dcache using d_add_ci instead of the inexact-match string name.
 
 Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
 ---
- fs/dcache.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ fs/ext4/namei.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index cf871a81f4fd..2a28ab64a165 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -2565,6 +2565,15 @@ static void d_wait_lookup(struct dentry *dentry)
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index da7698341d7d..3598f0e47067 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1801,6 +1801,19 @@ static struct dentry *ext4_lookup(struct inode *dir, struct dentry *dentry, unsi
  	}
- }
  
-+static inline bool d_same_exact_name(const struct dentry *dentry,
-+				     const struct dentry *parent,
-+				     const struct qstr *name)
-+{
-+	if (dentry->d_name.len != name->len)
-+		return false;
-+	return dentry_cmp(dentry, name->name, name->len) == 0;
-+}
+ #ifdef CONFIG_UNICODE
++	if (inode && IS_CASEFOLDED(dir))
++		if (dentry && strcmp(dentry->d_name.name, de->name)) {
++			struct dentry *new;
++			struct qstr ciname;
 +
- struct dentry *d_alloc_parallel(struct dentry *parent,
- 				const struct qstr *name,
- 				wait_queue_head_t *wq)
-@@ -2575,6 +2584,7 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
- 	struct dentry *new = d_alloc(parent, name);
- 	struct dentry *dentry;
- 	unsigned seq, r_seq, d_seq;
-+	int ci_dir = IS_CASEFOLDED(parent->d_inode);
- 
- 	if (unlikely(!new))
- 		return ERR_PTR(-ENOMEM);
-@@ -2626,8 +2636,14 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
- 			continue;
- 		if (dentry->d_parent != parent)
- 			continue;
--		if (!d_same_name(dentry, parent, name))
--			continue;
-+		if (ci_dir) {
-+			if (!d_same_exact_name(dentry, parent, name))
-+				continue;
-+		} else {
-+			if (!d_same_name(dentry, parent, name))
-+				continue;
-+		}
-+
- 		hlist_bl_unlock(b);
- 		/* now we can try to grab a reference */
- 		if (!lockref_get_not_dead(&dentry->d_lockref)) {
++			ciname.len = de->name_len;
++			ciname.name = kstrndup(de->name, ciname.len, GFP_NOFS);
++			if (!ciname.name)
++				return ERR_PTR(-ENOMEM);
++			new = d_add_ci(dentry, inode, &ciname);
++			kfree(ciname.name);
++			return new;
++	}
+ 	if (!inode && IS_CASEFOLDED(dir)) {
+ 		/* Eventually we want to call d_add_ci(dentry, NULL)
+ 		 * for negative dentries in the encoding case as
 -- 
 2.30.2
 
