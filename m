@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC54B41C249
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 12:09:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2979541C24B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 12:09:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245311AbhI2KLL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Sep 2021 06:11:11 -0400
-Received: from outbound-smtp46.blacknight.com ([46.22.136.58]:53541 "EHLO
-        outbound-smtp46.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245226AbhI2KLK (ORCPT
+        id S245321AbhI2KLV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Sep 2021 06:11:21 -0400
+Received: from outbound-smtp31.blacknight.com ([81.17.249.62]:55106 "EHLO
+        outbound-smtp31.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S245226AbhI2KLV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Sep 2021 06:11:10 -0400
+        Wed, 29 Sep 2021 06:11:21 -0400
 Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
-        by outbound-smtp46.blacknight.com (Postfix) with ESMTPS id 69C03FB4AB
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 11:09:26 +0100 (IST)
-Received: (qmail 18912 invoked from network); 29 Sep 2021 10:09:26 -0000
+        by outbound-smtp31.blacknight.com (Postfix) with ESMTPS id 3196E134001
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 11:09:37 +0100 (IST)
+Received: (qmail 19500 invoked from network); 29 Sep 2021 10:09:36 -0000
 Received: from unknown (HELO stampy.112glenside.lan) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPA; 29 Sep 2021 10:09:25 -0000
+  by 81.17.254.9 with ESMTPA; 29 Sep 2021 10:09:36 -0000
 From:   Mel Gorman <mgorman@techsingularity.net>
 To:     Linux-MM <linux-mm@kvack.org>
 Cc:     NeilBrown <neilb@suse.de>, Theodore Ts'o <tytso@mit.edu>,
@@ -33,332 +33,381 @@ Cc:     NeilBrown <neilb@suse.de>, Theodore Ts'o <tytso@mit.edu>,
         Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 0/5] Remove dependency on congestion_wait in mm/ v2
-Date:   Wed, 29 Sep 2021 11:09:09 +0100
-Message-Id: <20210929100914.14704-1-mgorman@techsingularity.net>
+Subject: [PATCH 1/5] mm/vmscan: Throttle reclaim until some writeback completes if congested
+Date:   Wed, 29 Sep 2021 11:09:10 +0100
+Message-Id: <20210929100914.14704-2-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210929100914.14704-1-mgorman@techsingularity.net>
+References: <20210929100914.14704-1-mgorman@techsingularity.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a series that removes all calls to congestion_wait
-in mm/ and deletes wait_iff_congested. It's not a clever
-implementation but congestion_wait has been broken for a long time
-(https://lore.kernel.org/linux-mm/45d8b7a6-8548-65f5-cccf-9f451d4ae3d4@kernel.dk/).
-Even if it worked, it was never a great idea. While excessive
-dirty/writeback pages at the tail of the LRU is one possibility that
-reclaim may be slow, there is also the problem of too many pages being
-isolated and reclaim failing for other reasons (elevated references,
-too many pages isolated, excessive LRU contention etc).
+Page reclaim throttles on wait_iff_congested under the following conditions
 
-This series replaces the reclaim conditions with event driven ones
+o kswapd is encountering pages under writeback and marked for immediate
+  reclaim implying that pages are cycling through the LRU faster than
+  pages can be cleaned.
 
-o If there are too many dirty/writeback pages, sleep until a timeout
-  or enough pages get cleaned
-o If too many pages are isolated, sleep until enough isolated pages
-  are either reclaimed or put back on the LRU
-o If no progress is being made, let direct reclaim tasks sleep until
-  another task makes progress
+o Direct reclaim will stall if all dirty pages are backed by congested
+  inodes.
 
-This was initially tested with a mix of workloads that used to trigger
-corner cases that no longer work. A new test case was created called
-"stutterp" (pagereclaim-stutterp-noreaders in mmtests) using a freshly
-created XFS filesystem.
+wait_iff_congested is almost completely broken with few exceptions. This
+patch adds a new node-based workqueue and tracks the number of throttled
+tasks and pages written back since throttling started. If enough pages
+belonging to the node are written back then the throttled tasks will wake
+early. If not, the throttled tasks sleeps until the timeout expires.
 
-stutterp varies the number of "worker" processes from 4 up to NR_CPUS*4
-to check the impact as the number of direct reclaimers increase. It has
-three components
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ include/linux/backing-dev.h      |  1 -
+ include/linux/mmzone.h           |  9 +++++
+ include/trace/events/vmscan.h    | 34 +++++++++++++++++++
+ include/trace/events/writeback.h |  7 ----
+ mm/backing-dev.c                 | 48 --------------------------
+ mm/filemap.c                     |  1 +
+ mm/internal.h                    |  9 +++++
+ mm/page_alloc.c                  |  1 +
+ mm/vmscan.c                      | 58 +++++++++++++++++++++++++++-----
+ mm/vmstat.c                      |  1 +
+ 10 files changed, 105 insertions(+), 64 deletions(-)
 
-o One "anon latency" worker creates small mappings with mmap() and times
-  how long it takes to fault the mapping reading it 4K at a time
-o X file writers which is fio randomly writing iX files where the total
-  size of the files add up to the allowed dirty_ratio. fio is allowed
-  to run for a warmup period to allow some file-backed pages to
-  accumulate. The duration of the warmup is based on the best-case
-  linear write speed of the storage.
-o Y anon memory hogs which continually map (100-dirty_ratio)% of
-  memory
-o Total estimated WSS = (100+dirty_ration) percentage of memory
-
-X+Y+1 == NR_WORKERS varying from 4 up to NR_CPUS*4
-
-The intent is to maximise the total WSS to force a lot of file and
-anon memory where some anonymous memory must be swapped and there
-is a high likelihood of dirty/writeback pages reaching the end of
-the LRU.
-
-The test can be configured to have background readers but it stresses
-reclaim less.
-
-Now the results -- short summary is that the series works and stalls
-until some event occurs but the timeouts may need adjustment.
-
-The test results are not broken down by patch as the series should be
-treated as one block that replaces a broken throttling mechanism with a
-working one.
-
-First the results of the "anon latency" latency
-
-stutterp
-                              5.15.0-rc1             5.15.0-rc1
-                                 vanilla mm-reclaimcongest-v2r5
-Amean     mmap-4      30.4535 (   0.00%)     35.8324 ( -17.66%)
-Amean     mmap-7      36.2699 (   0.00%)     45.2236 ( -24.69%)
-Amean     mmap-12     50.9131 (   0.00%)     82.3022 ( -61.65%)
-Amean     mmap-21   2237.9029 (   0.00%)    248.5605 (  88.89%)
-Amean     mmap-30  13015.0189 (   0.00%)    285.9522 (  97.80%)
-Amean     mmap-48    554.7624 (   0.00%)    573.8247 (  -3.44%)
-Amean     mmap-64    308.4377 (   0.00%)    349.8743 ( -13.43%)
-Stddev    mmap-4      35.4820 (   0.00%)    488.2629 (-1276.08%)
-Stddev    mmap-7      78.7472 (   0.00%)    489.7342 (-521.91%)
-Stddev    mmap-12    133.3145 (   0.00%)   1468.1633 (-1001.28%)
-Stddev    mmap-21  21210.2154 (   0.00%)   4416.6959 (  79.18%)
-Stddev    mmap-30 102917.0729 (   0.00%)   3816.3041 (  96.29%)
-Stddev    mmap-48   3839.4931 (   0.00%)   3830.6352 (   0.23%)
-Stddev    mmap-64     84.7670 (   0.00%)   1264.4255 (-1391.65%)
-Max-99    mmap-4      32.0370 (   0.00%)     33.3524 (  -4.11%)
-Max-99    mmap-7      44.9212 (   0.00%)     43.0797 (   4.10%)
-Max-99    mmap-12     65.0430 (   0.00%)     90.2671 ( -38.78%)
-Max-99    mmap-21    424.5115 (   0.00%)    188.7360 (  55.54%)
-Max-99    mmap-30    408.4132 (   0.00%)    286.8658 (  29.76%)
-Max-99    mmap-48    521.7660 (   0.00%)   1183.9219 (-126.91%)
-Max-99    mmap-64    422.4280 (   0.00%)    421.6158 (   0.19%)
-Max       mmap-4    1908.9517 (   0.00%)  42286.3987 (-2115.16%)
-Max       mmap-7    5514.1997 (   0.00%)  37353.5532 (-577.41%)
-Max       mmap-12   5385.8229 (   0.00%)  86358.3761 (-1503.44%)
-Max       mmap-21 226560.1452 (   0.00%) 152778.0127 (  32.57%)
-Max       mmap-30 816927.5043 (   0.00%) 122999.4260 (  84.94%)
-Max       mmap-48  88771.0063 (   0.00%)  87701.5264 (   1.20%)
-Max       mmap-64   2489.0185 (   0.00%)  37293.3631 (-1398.32%
-
-For low thread counts, the time to mmap() is lower and improves for
-some higher thread counts. The variance is all over the map although
-the vanilla kernel has much worse variances at low thread counts. In all
-cases, the differences are not statistically significant due to very large
-maximum outliers. Max-99 is the maximum latency at the 99% percentile
-with massive latencies in the remaining 1%. This is partially due to
-the test design, reclaim is difficult so allocations stall and there are
-variances depending on whether THPs can be allocated or not. The warmup
-period calculation is not ideal as it's based on linear writes where as
-fio is randomly writing multiple files from multiple tasks so the start
-state of the test is variable.
-
-The overall system CPU usage and elapsed time is as follows
-
-                  5.15.0-rc1  5.15.0-rc1
-                     vanillamm-reclaimcongest-v2r5
-Duration User        9775.48    11210.47
-Duration System     12434.96     2356.96
-Duration Elapsed     3019.60     2432.12
-
-The patches significantly reduce system CPU usage as the vanilla kernel
-is not stalling and instead hammering the LRU lists uselessly.
-
-The high-level /proc/vmstats show
-
-                                     5.15.0-rc1     5.15.0-rc1
-                                        vanillamm-reclaimcongest-v2r5
-Ops Direct pages scanned          1985928832.00   114592698.00
-Ops Kswapd pages scanned           129232402.00   173143704.00
-Ops Kswapd pages reclaimed          71154883.00    78204376.00
-Ops Direct pages reclaimed          10082328.00    11225695.00
-Ops Kswapd efficiency %                   55.06          45.17
-Ops Kswapd velocity                    42797.85       71190.44
-Ops Direct efficiency %                    0.51           9.80
-Ops Direct velocity                   657679.44       47116.38
-
-Kswapd scans more pages as a result of the patch and at a
-higher velocity. This is because direct reclaim is scanning
-fewer pages at much lower velocity as it gets stalled.
-From a detailed graph, what is clear is that direct reclaim
-is not occuring uniformly during the duration of the test.
-Instead, there are massive spikes in reclaim activity (both
-direct and kswapd) but crucially, the number of pages reclaimed
-is relatively consistent. In other words, with this workload,
-reclaim rate remains relatively constant but there are massive
-variations in scan activity representing useless sacnning.
-
-Ops Percentage direct scans               93.89          39.83
-
-For the overall scans, vanilla scanned 94.89% of pages where
-as with the patches, 39.83% were direct reclaim
-
-Ops Page writes by reclaim           2228237.00     2310272.00
-
-Page writes from reclaim context remain consistent.
-
-Ops Page writes anon                 2719172.00     2594781.00
-
-Swap activity remain consistent.
-
-Ops Page reclaim immediate        1904282975.00    78707724.00
-
-The number of pages encountered at the tail of the LRU tagged for immediate
-reclaim but still dirty/writeback is reduced by 95%
-
-Ops Slabs scanned                     178981.00      155082.00
-
-Slab scan activity is similar
-
-Ops Direct inode steals              3111707.00        2909.00
-Ops Kswapd inode steals               148176.00      149325.00
-
-But the number of inodes reclaimed from direct reclaim context
-is massively reduced.
-
-ftrace was used to gather stall activity
-
-Vanilla
--------
-      1 writeback_wait_iff_congested: usec_delayed=32000
-      2 writeback_wait_iff_congested: usec_delayed=24000
-      2 writeback_wait_iff_congested: usec_delayed=28000
-     16 writeback_wait_iff_congested: usec_delayed=20000
-     29 writeback_wait_iff_congested: usec_delayed=16000
-     82 writeback_wait_iff_congested: usec_delayed=12000
-    142 writeback_wait_iff_congested: usec_delayed=8000
-    235 writeback_wait_iff_congested: usec_delayed=4000
- 128103 writeback_wait_iff_congested: usec_delayed=0
-
-The fast majority of wait_iff_congested calls do not stall at all.
-What is likely happening is that cond_resched() reschedules the task for
-a short period when the BDI is not registering congestion (which it never
-will in this test setup).
-
-      1 writeback_congestion_wait: usec_delayed=124000
-      1 writeback_congestion_wait: usec_delayed=136000
-      2 writeback_congestion_wait: usec_delayed=112000
-      2 writeback_congestion_wait: usec_delayed=116000
-    229 writeback_congestion_wait: usec_delayed=108000
-    446 writeback_congestion_wait: usec_delayed=104000
-
-congestion_wait if called always exceeds the timeout as there is no
-trigger to wake it up.
-
-Bottom line: Vanilla will throttle but it's not effective
-
-Patch series
-------------
-
-Kswapd throttle activity was always due to scanning pages tagged
-for immediate reclaim but still dirty/writeback at the tail
-of the LRU
-
-      1 usect_delayed=84000 reason=VMSCAN_THROTTLE_WRITEBACK
-      2 usect_delayed=20000 reason=VMSCAN_THROTTLE_WRITEBACK
-      6 usect_delayed=16000 reason=VMSCAN_THROTTLE_WRITEBACK
-     12 usect_delayed=12000 reason=VMSCAN_THROTTLE_WRITEBACK
-     17 usect_delayed=8000 reason=VMSCAN_THROTTLE_WRITEBACK
-    129 usect_delayed=4000 reason=VMSCAN_THROTTLE_WRITEBACK
-    205 usect_delayed=0 reason=VMSCAN_THROTTLE_WRITEBACK
-
-Some were woken immediately, others stalled for short periods
-until enough IO was completed but did not hit the timeout.
-
-For direct reclaim, the number of times stalled for each
-reason were
-
-  16909 reason=VMSCAN_THROTTLE_ISOLATED
-  77844 reason=VMSCAN_THROTTLE_NOPROGRESS
- 113415 reason=VMSCAN_THROTTLE_WRITEBACK
-
-Like kswapd, the most common reason was pages tagged for
-immediate reclaim. A very large number of stalls were
-due to failing to make progress. A relatively small
-number were due to too many pages isolated from the
-LRU by parallel threads
-
-For VMSCAN_THROTTLE_ISOLATED, the breakdown of delays was
-
-      1 usect_delayed=36000 reason=VMSCAN_THROTTLE_ISOLATED
-      3 usect_delayed=24000 reason=VMSCAN_THROTTLE_ISOLATED
-      7 usect_delayed=20000 reason=VMSCAN_THROTTLE_ISOLATED
-     49 usect_delayed=16000 reason=VMSCAN_THROTTLE_ISOLATED
-     94 usect_delayed=12000 reason=VMSCAN_THROTTLE_ISOLATED
-    105 usect_delayed=8000 reason=VMSCAN_THROTTLE_ISOLATED
-    417 usect_delayed=4000 reason=VMSCAN_THROTTLE_ISOLATED
-  16233 usect_delayed=0 reason=VMSCAN_THROTTLE_ISOLATED
-
-The vast majority do not stall at all, others stall for
-short periods by never hit the timeout
-
-For VMSCAN_THROTTLE_NOPROGRESS, the breakdown of stalls
-was
-
-      1 usect_delayed=124000 reason=VMSCAN_THROTTLE_NOPROGRESS
-      1 usect_delayed=128000 reason=VMSCAN_THROTTLE_NOPROGRESS
-      1 usect_delayed=176000 reason=VMSCAN_THROTTLE_NOPROGRESS
-      1 usect_delayed=536000 reason=VMSCAN_THROTTLE_NOPROGRESS
-      1 usect_delayed=544000 reason=VMSCAN_THROTTLE_NOPROGRESS
-      1 usect_delayed=556000 reason=VMSCAN_THROTTLE_NOPROGRESS
-      1 usect_delayed=624000 reason=VMSCAN_THROTTLE_NOPROGRESS
-      1 usect_delayed=716000 reason=VMSCAN_THROTTLE_NOPROGRESS
-      1 usect_delayed=772000 reason=VMSCAN_THROTTLE_NOPROGRESS
-      2 usect_delayed=512000 reason=VMSCAN_THROTTLE_NOPROGRESS
-     16 usect_delayed=120000 reason=VMSCAN_THROTTLE_NOPROGRESS
-     53 usect_delayed=116000 reason=VMSCAN_THROTTLE_NOPROGRESS
-    116 usect_delayed=112000 reason=VMSCAN_THROTTLE_NOPROGRESS
-   5907 usect_delayed=108000 reason=VMSCAN_THROTTLE_NOPROGRESS
-  71741 usect_delayed=104000 reason=VMSCAN_THROTTLE_NOPROGRESS
-
-This is showing that the timeout was always hit and often
-overrun by a large margin. If anything, this indicates that
-stalling on NOPROGRESS should have a timeout larger than
-HZ/10
-
-For VMSCAN_THROTTLE_WRITEBACK, the delays were all over the
-map
-
-      1 usect_delayed=136000 reason=VMSCAN_THROTTLE_WRITEBACK
-      1 usect_delayed=500000 reason=VMSCAN_THROTTLE_WRITEBACK
-      1 usect_delayed=512000 reason=VMSCAN_THROTTLE_WRITEBACK
-      1 usect_delayed=528000 reason=VMSCAN_THROTTLE_WRITEBACK
-      2 usect_delayed=128000 reason=VMSCAN_THROTTLE_WRITEBACK
-      3 usect_delayed=124000 reason=VMSCAN_THROTTLE_WRITEBACK
-      4 usect_delayed=60000 reason=VMSCAN_THROTTLE_WRITEBACK
-      5 usect_delayed=56000 reason=VMSCAN_THROTTLE_WRITEBACK
-      6 usect_delayed=68000 reason=VMSCAN_THROTTLE_WRITEBACK
-      7 usect_delayed=40000 reason=VMSCAN_THROTTLE_WRITEBACK
-      7 usect_delayed=88000 reason=VMSCAN_THROTTLE_WRITEBACK
-     11 usect_delayed=64000 reason=VMSCAN_THROTTLE_WRITEBACK
-     12 usect_delayed=92000 reason=VMSCAN_THROTTLE_WRITEBACK
-     14 usect_delayed=44000 reason=VMSCAN_THROTTLE_WRITEBACK
-     18 usect_delayed=48000 reason=VMSCAN_THROTTLE_WRITEBACK
-     19 usect_delayed=36000 reason=VMSCAN_THROTTLE_WRITEBACK
-     19 usect_delayed=72000 reason=VMSCAN_THROTTLE_WRITEBACK
-     21 usect_delayed=76000 reason=VMSCAN_THROTTLE_WRITEBACK
-     22 usect_delayed=84000 reason=VMSCAN_THROTTLE_WRITEBACK
-     22 usect_delayed=96000 reason=VMSCAN_THROTTLE_WRITEBACK
-     23 usect_delayed=120000 reason=VMSCAN_THROTTLE_WRITEBACK
-     23 usect_delayed=80000 reason=VMSCAN_THROTTLE_WRITEBACK
-     33 usect_delayed=52000 reason=VMSCAN_THROTTLE_WRITEBACK
-     37 usect_delayed=100000 reason=VMSCAN_THROTTLE_WRITEBACK
-     45 usect_delayed=28000 reason=VMSCAN_THROTTLE_WRITEBACK
-     50 usect_delayed=116000 reason=VMSCAN_THROTTLE_WRITEBACK
-     73 usect_delayed=32000 reason=VMSCAN_THROTTLE_WRITEBACK
-     82 usect_delayed=24000 reason=VMSCAN_THROTTLE_WRITEBACK
-     95 usect_delayed=20000 reason=VMSCAN_THROTTLE_WRITEBACK
-    117 usect_delayed=112000 reason=VMSCAN_THROTTLE_WRITEBACK
-    254 usect_delayed=16000 reason=VMSCAN_THROTTLE_WRITEBACK
-    367 usect_delayed=12000 reason=VMSCAN_THROTTLE_WRITEBACK
-    893 usect_delayed=8000 reason=VMSCAN_THROTTLE_WRITEBACK
-   3914 usect_delayed=108000 reason=VMSCAN_THROTTLE_WRITEBACK
-   8526 usect_delayed=4000 reason=VMSCAN_THROTTLE_WRITEBACK
-  32907 usect_delayed=0 reason=VMSCAN_THROTTLE_WRITEBACK
-  65780 usect_delayed=104000 reason=VMSCAN_THROTTLE_WRITEBACK
-
-The majority hit the timeout in direct reclaim context which
-is not the same as what happened for kswapd. One one hand,
-this might imply that direct and kswapd should have different
-timeouts but that would be very clumsy. It would make more
-sense to increase the timeout for NOPROGRESS and see does
-that alleviate the pressure.
-
-Bottom line, the new throttling mechanism works but the timeouts
-may need adjutment.
-
+diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
+index ac7f231b8825..9fb1f0ae273c 100644
+--- a/include/linux/backing-dev.h
++++ b/include/linux/backing-dev.h
+@@ -154,7 +154,6 @@ static inline int wb_congested(struct bdi_writeback *wb, int cong_bits)
+ }
+ 
+ long congestion_wait(int sync, long timeout);
+-long wait_iff_congested(int sync, long timeout);
+ 
+ static inline bool mapping_can_writeback(struct address_space *mapping)
+ {
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 6a1d79d84675..ef0a63ebd21d 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -199,6 +199,7 @@ enum node_stat_item {
+ 	NR_VMSCAN_IMMEDIATE,	/* Prioritise for reclaim when writeback ends */
+ 	NR_DIRTIED,		/* page dirtyings since bootup */
+ 	NR_WRITTEN,		/* page writings since bootup */
++	NR_THROTTLED_WRITTEN,	/* NR_WRITTEN while reclaim throttled */
+ 	NR_KERNEL_MISC_RECLAIMABLE,	/* reclaimable non-slab kernel pages */
+ 	NR_FOLL_PIN_ACQUIRED,	/* via: pin_user_page(), gup flag: FOLL_PIN */
+ 	NR_FOLL_PIN_RELEASED,	/* pages returned via unpin_user_page() */
+@@ -272,6 +273,10 @@ enum lru_list {
+ 	NR_LRU_LISTS
+ };
+ 
++enum vmscan_throttle_state {
++	VMSCAN_THROTTLE_WRITEBACK,
++};
++
+ #define for_each_lru(lru) for (lru = 0; lru < NR_LRU_LISTS; lru++)
+ 
+ #define for_each_evictable_lru(lru) for (lru = 0; lru <= LRU_ACTIVE_FILE; lru++)
+@@ -841,6 +846,10 @@ typedef struct pglist_data {
+ 	int node_id;
+ 	wait_queue_head_t kswapd_wait;
+ 	wait_queue_head_t pfmemalloc_wait;
++	wait_queue_head_t reclaim_wait;	/* wq for throttling reclaim */
++	atomic_t nr_reclaim_throttled;	/* nr of throtted tasks */
++	unsigned long nr_reclaim_start;	/* nr pages written while throttled
++					 * when throttling started. */
+ 	struct task_struct *kswapd;	/* Protected by
+ 					   mem_hotplug_begin/end() */
+ 	int kswapd_order;
+diff --git a/include/trace/events/vmscan.h b/include/trace/events/vmscan.h
+index 88faf2400ec2..c317f9fe0d17 100644
+--- a/include/trace/events/vmscan.h
++++ b/include/trace/events/vmscan.h
+@@ -27,6 +27,14 @@
+ 		{RECLAIM_WB_ASYNC,	"RECLAIM_WB_ASYNC"}	\
+ 		) : "RECLAIM_WB_NONE"
+ 
++#define _VMSCAN_THROTTLE_WRITEBACK	(1 << VMSCAN_THROTTLE_WRITEBACK)
++
++#define show_throttle_flags(flags)						\
++	(flags) ? __print_flags(flags, "|",					\
++		{_VMSCAN_THROTTLE_WRITEBACK,	"VMSCAN_THROTTLE_WRITEBACK"}	\
++		) : "VMSCAN_THROTTLE_NONE"
++
++
+ #define trace_reclaim_flags(file) ( \
+ 	(file ? RECLAIM_WB_FILE : RECLAIM_WB_ANON) | \
+ 	(RECLAIM_WB_ASYNC) \
+@@ -454,6 +462,32 @@ DEFINE_EVENT(mm_vmscan_direct_reclaim_end_template, mm_vmscan_node_reclaim_end,
+ 	TP_ARGS(nr_reclaimed)
+ );
+ 
++TRACE_EVENT(mm_vmscan_throttled,
++
++	TP_PROTO(int nid, int usec_timeout, int usec_delayed, int reason),
++
++	TP_ARGS(nid, usec_timeout, usec_delayed, reason),
++
++	TP_STRUCT__entry(
++		__field(int, nid)
++		__field(int, usec_timeout)
++		__field(int, usec_delayed)
++		__field(int, reason)
++	),
++
++	TP_fast_assign(
++		__entry->nid = nid;
++		__entry->usec_timeout = usec_timeout;
++		__entry->usec_delayed = usec_delayed;
++		__entry->reason = 1U << reason;
++	),
++
++	TP_printk("nid=%d usec_timeout=%d usect_delayed=%d reason=%s",
++		__entry->nid,
++		__entry->usec_timeout,
++		__entry->usec_delayed,
++		show_throttle_flags(__entry->reason))
++);
+ #endif /* _TRACE_VMSCAN_H */
+ 
+ /* This part must be outside protection */
+diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
+index 840d1ba84cf5..3bc759b81897 100644
+--- a/include/trace/events/writeback.h
++++ b/include/trace/events/writeback.h
+@@ -763,13 +763,6 @@ DEFINE_EVENT(writeback_congest_waited_template, writeback_congestion_wait,
+ 	TP_ARGS(usec_timeout, usec_delayed)
+ );
+ 
+-DEFINE_EVENT(writeback_congest_waited_template, writeback_wait_iff_congested,
+-
+-	TP_PROTO(unsigned int usec_timeout, unsigned int usec_delayed),
+-
+-	TP_ARGS(usec_timeout, usec_delayed)
+-);
+-
+ DECLARE_EVENT_CLASS(writeback_single_inode_template,
+ 
+ 	TP_PROTO(struct inode *inode,
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index 4a9d4e27d0d9..0ea1a105eae5 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -1041,51 +1041,3 @@ long congestion_wait(int sync, long timeout)
+ 	return ret;
+ }
+ EXPORT_SYMBOL(congestion_wait);
+-
+-/**
+- * wait_iff_congested - Conditionally wait for a backing_dev to become uncongested or a pgdat to complete writes
+- * @sync: SYNC or ASYNC IO
+- * @timeout: timeout in jiffies
+- *
+- * In the event of a congested backing_dev (any backing_dev) this waits
+- * for up to @timeout jiffies for either a BDI to exit congestion of the
+- * given @sync queue or a write to complete.
+- *
+- * The return value is 0 if the sleep is for the full timeout. Otherwise,
+- * it is the number of jiffies that were still remaining when the function
+- * returned. return_value == timeout implies the function did not sleep.
+- */
+-long wait_iff_congested(int sync, long timeout)
+-{
+-	long ret;
+-	unsigned long start = jiffies;
+-	DEFINE_WAIT(wait);
+-	wait_queue_head_t *wqh = &congestion_wqh[sync];
+-
+-	/*
+-	 * If there is no congestion, yield if necessary instead
+-	 * of sleeping on the congestion queue
+-	 */
+-	if (atomic_read(&nr_wb_congested[sync]) == 0) {
+-		cond_resched();
+-
+-		/* In case we scheduled, work out time remaining */
+-		ret = timeout - (jiffies - start);
+-		if (ret < 0)
+-			ret = 0;
+-
+-		goto out;
+-	}
+-
+-	/* Sleep until uncongested or a write happens */
+-	prepare_to_wait(wqh, &wait, TASK_UNINTERRUPTIBLE);
+-	ret = io_schedule_timeout(timeout);
+-	finish_wait(wqh, &wait);
+-
+-out:
+-	trace_writeback_wait_iff_congested(jiffies_to_usecs(timeout),
+-					jiffies_to_usecs(jiffies - start));
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL(wait_iff_congested);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index dae481293b5d..59187787fbfc 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1605,6 +1605,7 @@ void end_page_writeback(struct page *page)
+ 
+ 	smp_mb__after_atomic();
+ 	wake_up_page(page, PG_writeback);
++	acct_reclaim_writeback(page);
+ 	put_page(page);
+ }
+ EXPORT_SYMBOL(end_page_writeback);
+diff --git a/mm/internal.h b/mm/internal.h
+index cf3cb933eba3..e25b3686bfab 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -34,6 +34,15 @@
+ 
+ void page_writeback_init(void);
+ 
++void __acct_reclaim_writeback(pg_data_t *pgdat, struct page *page);
++static inline void acct_reclaim_writeback(struct page *page)
++{
++	pg_data_t *pgdat = page_pgdat(page);
++
++	if (atomic_read(&pgdat->nr_reclaim_throttled))
++		__acct_reclaim_writeback(pgdat, page);
++}
++
+ vm_fault_t do_swap_page(struct vm_fault *vmf);
+ 
+ void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index b37435c274cf..d849ddfc1e51 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -7396,6 +7396,7 @@ static void __meminit pgdat_init_internals(struct pglist_data *pgdat)
+ 
+ 	init_waitqueue_head(&pgdat->kswapd_wait);
+ 	init_waitqueue_head(&pgdat->pfmemalloc_wait);
++	init_waitqueue_head(&pgdat->reclaim_wait);
+ 
+ 	pgdat_page_ext_init(pgdat);
+ 	lruvec_init(&pgdat->__lruvec);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 74296c2d1fed..b58ea0b13286 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1006,6 +1006,47 @@ static void handle_write_error(struct address_space *mapping,
+ 	unlock_page(page);
+ }
+ 
++static void
++reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
++							long timeout)
++{
++	wait_queue_head_t *wqh = &pgdat->reclaim_wait;
++	unsigned long start = jiffies;
++	long ret;
++	DEFINE_WAIT(wait);
++
++	atomic_inc(&pgdat->nr_reclaim_throttled);
++	WRITE_ONCE(pgdat->nr_reclaim_start,
++		 node_page_state(pgdat, NR_THROTTLED_WRITTEN));
++
++	prepare_to_wait(wqh, &wait, TASK_INTERRUPTIBLE);
++	ret = schedule_timeout(timeout);
++	finish_wait(wqh, &wait);
++	atomic_dec(&pgdat->nr_reclaim_throttled);
++
++	trace_mm_vmscan_throttled(pgdat->node_id, jiffies_to_usecs(timeout),
++				jiffies_to_usecs(jiffies - start),
++				reason);
++}
++
++/*
++ * Account for pages written if tasks are throttled waiting on dirty
++ * pages to clean. If enough pages have been cleaned since throttling
++ * started then wakeup the throttled tasks.
++ */
++void __acct_reclaim_writeback(pg_data_t *pgdat, struct page *page)
++{
++	unsigned long nr_written;
++	int nr_throttled = atomic_read(&pgdat->nr_reclaim_throttled);
++
++	__inc_node_page_state(page, NR_THROTTLED_WRITTEN);
++	nr_written = node_page_state(pgdat, NR_THROTTLED_WRITTEN) -
++		READ_ONCE(pgdat->nr_reclaim_start);
++
++	if (nr_written > SWAP_CLUSTER_MAX * nr_throttled)
++		wake_up_interruptible_all(&pgdat->reclaim_wait);
++}
++
+ /* possible outcome of pageout() */
+ typedef enum {
+ 	/* failed to write page out, page is locked */
+@@ -1412,9 +1453,8 @@ static unsigned int shrink_page_list(struct list_head *page_list,
+ 
+ 		/*
+ 		 * The number of dirty pages determines if a node is marked
+-		 * reclaim_congested which affects wait_iff_congested. kswapd
+-		 * will stall and start writing pages if the tail of the LRU
+-		 * is all dirty unqueued pages.
++		 * reclaim_congested. kswapd will stall and start writing
++		 * pages if the tail of the LRU is all dirty unqueued pages.
+ 		 */
+ 		page_check_dirty_writeback(page, &dirty, &writeback);
+ 		if (dirty || writeback)
+@@ -3180,19 +3220,20 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+ 		 * If kswapd scans pages marked for immediate
+ 		 * reclaim and under writeback (nr_immediate), it
+ 		 * implies that pages are cycling through the LRU
+-		 * faster than they are written so also forcibly stall.
++		 * faster than they are written so forcibly stall
++		 * until some pages complete writeback.
+ 		 */
+ 		if (sc->nr.immediate)
+-			congestion_wait(BLK_RW_ASYNC, HZ/10);
++			reclaim_throttle(pgdat, VMSCAN_THROTTLE_WRITEBACK, HZ/10);
+ 	}
+ 
+ 	/*
+ 	 * Tag a node/memcg as congested if all the dirty pages
+ 	 * scanned were backed by a congested BDI and
+-	 * wait_iff_congested will stall.
++	 * non-kswapd tasks will stall on reclaim_throttle.
+ 	 *
+ 	 * Legacy memcg will stall in page writeback so avoid forcibly
+-	 * stalling in wait_iff_congested().
++	 * stalling in reclaim_throttle().
+ 	 */
+ 	if ((current_is_kswapd() ||
+ 	     (cgroup_reclaim(sc) && writeback_throttling_sane(sc))) &&
+@@ -3208,7 +3249,7 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+ 	if (!current_is_kswapd() && current_may_throttle() &&
+ 	    !sc->hibernation_mode &&
+ 	    test_bit(LRUVEC_CONGESTED, &target_lruvec->flags))
+-		wait_iff_congested(BLK_RW_ASYNC, HZ/10);
++		reclaim_throttle(pgdat, VMSCAN_THROTTLE_WRITEBACK, HZ/10);
+ 
+ 	if (should_continue_reclaim(pgdat, sc->nr_reclaimed - nr_reclaimed,
+ 				    sc))
+@@ -4286,6 +4327,7 @@ static int kswapd(void *p)
+ 
+ 	WRITE_ONCE(pgdat->kswapd_order, 0);
+ 	WRITE_ONCE(pgdat->kswapd_highest_zoneidx, MAX_NR_ZONES);
++	atomic_set(&pgdat->nr_reclaim_throttled, 0);
+ 	for ( ; ; ) {
+ 		bool ret;
+ 
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index 8ce2620344b2..9b2bc9d61d4b 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1225,6 +1225,7 @@ const char * const vmstat_text[] = {
+ 	"nr_vmscan_immediate_reclaim",
+ 	"nr_dirtied",
+ 	"nr_written",
++	"nr_throttled_written",
+ 	"nr_kernel_misc_reclaimable",
+ 	"nr_foll_pin_acquired",
+ 	"nr_foll_pin_released",
 -- 
 2.31.1
 
