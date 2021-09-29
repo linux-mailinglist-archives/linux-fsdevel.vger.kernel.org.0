@@ -2,112 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0403741C838
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 17:21:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 815E841C854
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 17:27:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345105AbhI2PWz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Sep 2021 11:22:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55940 "EHLO
+        id S1345222AbhI2P2q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Sep 2021 11:28:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345086AbhI2PWz (ORCPT
+        with ESMTP id S1345175AbhI2P2p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Sep 2021 11:22:55 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E5C8C061760
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 08:21:14 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id n18so3036575pgm.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 08:21:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=hVd1gH+kQJeE39pFKVVrRFFFNBYhMYhDCh6W6dICdvg=;
-        b=jxJaXVqLKmWeXRITZqbu/yFnOyoHEMy0nb1Vv4kwcyJCbrHuyudWxfXkDcUdLeeV5u
-         oVJq9/Ap6P6u68TkD+22snpv2Dw6k2Pjt3AUc3NdvII749AokEMB1NkzkHOVHcjJdAyY
-         Hlf7AAZpgx2hLOXn7sH6XpO6BvsT6zEyoY3PTDff32Rpi39Yww2IL04sus5DIfbQF7I1
-         QHxsmXgWCGtO+a1hlr5p4wQTPYFTc6JpE+rd5AP3BhZNmKQDaDY61PoPjf0GStMwn0Eo
-         FWus/VQmH38ncDI6zC/7cG3mvQisORwuUozeCsJRYttLzbLVndb9ruzP3JYu3VDpuy1V
-         qYaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=hVd1gH+kQJeE39pFKVVrRFFFNBYhMYhDCh6W6dICdvg=;
-        b=lIx4eXFp7zL6QMaT+e6hkJ1AesKGVGbUrbvjZpyvfAaCurL2kqCcLXv/Ze2p/Bu/zn
-         uhdpGLhfrTRAgrDdQOLjh16DmqvS0kTS/KZulFKz+9Q/EszQCbfrEHC4fHE4WWKeCIKU
-         zrJzSJ/20NU9G5vjZEhLJSe+KHAHdTQxkvqg/NMH3DIjOz8iTB2PT0Fv/EtItJctoZxa
-         vHhUBYkK74YQBX+UaDm/LPfIIJx+Zq4oGgl1bwumqmzTFKQwCAimEEcSOZ/I2lpwDyGt
-         B+J7HoV8cLTXu4K0MOgEkDJK4DOIh8rHtb/1XRR22JoHGB67Q5Sjq1QTZuiW310rgiHe
-         0N4A==
-X-Gm-Message-State: AOAM533C7VOxFSUbu23Ur3hsxHZI2MnpEFrW8AD92nQxGkL9pAV+e5xS
-        WKIni5R5KZyH5+kz0kR6TEFSrWxhQ0zwUw==
-X-Google-Smtp-Source: ABdhPJwknkO3jUb/3aE2bLJWkGe1nnBdpCwNHtCzopo/FM06iJLWiO7fnWcQuoA+N1ZtZtsABeFIjw==
-X-Received: by 2002:a63:790b:: with SMTP id u11mr454949pgc.71.1632928873659;
-        Wed, 29 Sep 2021 08:21:13 -0700 (PDT)
-Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
-        by smtp.gmail.com with ESMTPSA id p17sm197322pfo.9.2021.09.29.08.21.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Sep 2021 08:21:13 -0700 (PDT)
-Date:   Wed, 29 Sep 2021 15:21:09 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Stephen <stephenackerman16@gmail.com>
-Cc:     djwong@kernel.org, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: kvm crash in 5.14.1?
-Message-ID: <YVSEZTCbFZ+HD/f0@google.com>
-References: <2b5ca6d3-fa7b-5e2f-c353-f07dcff993c1@gmail.com>
- <16c7a433-6e58-4213-bc00-5f6196fe22f5@gmail.com>
+        Wed, 29 Sep 2021 11:28:45 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD622C06161C;
+        Wed, 29 Sep 2021 08:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=/HT/mG+FA+pI9TQTgmsOZU/RKX7YzZZpwunc3gLz0oU=; b=UIsWQEN8qUvNd0ZtpytLaAb7qU
+        JXACadCVmiOzTEg1qDV31k654zAx2rlHewxRfWNISei80ZDdWVG6wFND7If1xQgCrkwUXoDdk7G6E
+        gMsV1M/fHjAHkdATbGzKkhEL6O8eixg+gYdN+QYSp6go6it9A09bjU93afpUdOqT4qhKMppil0rQE
+        ivpfmtIaTc7n5vag6owKrjgm5TTrC4OCgZPQJQ/IH0YWSHcTxpJ9n2PS7pfnonS9ObwOVX9WbDbEw
+        zjtVNcQLqj581CoqF9TSIUrthlm511e7UWyXeCn3Lz/KDC+wMRG8XhWtb53rQsTFEjzKvfEscPaeR
+        zzBj6TIA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mVbS3-00BxYi-AM; Wed, 29 Sep 2021 15:25:04 +0000
+Date:   Wed, 29 Sep 2021 16:24:55 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Folio discussion recap
+Message-ID: <YVSFRx0SVW3YeA3C@casper.infradead.org>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YTu9HIu+wWWvZLxp@moria.home.lan>
+ <YUfvK3h8w+MmirDF@casper.infradead.org>
+ <YUo20TzAlqz8Tceg@cmpxchg.org>
+ <YUpC3oV4II+u+lzQ@casper.infradead.org>
+ <YUpKbWDYqRB6eBV+@moria.home.lan>
+ <YUpaTBJ/Jhz15S6a@casper.infradead.org>
+ <20210923004515.GD3053272@iweiny-DESK2.sc.intel.com>
+ <YUv3UEE9JZgD+A/D@casper.infradead.org>
+ <20210923221241.GG3053272@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <16c7a433-6e58-4213-bc00-5f6196fe22f5@gmail.com>
+In-Reply-To: <20210923221241.GG3053272@iweiny-DESK2.sc.intel.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 28, 2021, Stephen wrote:
-> Hello,
+On Thu, Sep 23, 2021 at 03:12:41PM -0700, Ira Weiny wrote:
+> On Thu, Sep 23, 2021 at 04:41:04AM +0100, Matthew Wilcox wrote:
+> > On Wed, Sep 22, 2021 at 05:45:15PM -0700, Ira Weiny wrote:
+> > > On Tue, Sep 21, 2021 at 11:18:52PM +0100, Matthew Wilcox wrote:
+> > > > +/**
+> > > > + * page_slab - Converts from page to slab.
+> > > > + * @p: The page.
+> > > > + *
+> > > > + * This function cannot be called on a NULL pointer.  It can be called
+> > > > + * on a non-slab page; the caller should check is_slab() to be sure
+> > > > + * that the slab really is a slab.
+> > > > + *
+> > > > + * Return: The slab which contains this page.
+> > > > + */
+> > > > +#define page_slab(p)		(_Generic((p),				\
+> > > > +	const struct page *:	(const struct slab *)_compound_head(p), \
+> > > > +	struct page *:		(struct slab *)_compound_head(p)))
+> > > > +
+> > > > +static inline bool is_slab(struct slab *slab)
+> > > > +{
+> > > > +	return test_bit(PG_slab, &slab->flags);
+> > > > +}
+> > > > +
+> > > 
+> > > I'm sorry, I don't have a dog in this fight and conceptually I think folios are
+> > > a good idea...
+> > > 
+> > > But for this work, having a call which returns if a 'struct slab' really is a
+> > > 'struct slab' seems odd and well, IMHO, wrong.  Why can't page_slab() return
+> > > NULL if there is no slab containing that page?
+> > 
+> > No, this is a good question.
+> > 
+> > The way slub works right now is that if you ask for a "large" allocation,
+> > it does:
+> > 
+> >         flags |= __GFP_COMP;
+> >         page = alloc_pages_node(node, flags, order);
+> > 
+> > and returns page_address(page) (eventually; the code is more complex)
+> > So when you call kfree(), it uses the PageSlab flag to determine if the
+> > allocation was "large" or not:
+> > 
+> >         page = virt_to_head_page(x);
+> >         if (unlikely(!PageSlab(page))) {
+> >                 free_nonslab_page(page, object);
+> >                 return;
+> >         }
+> >         slab_free(page->slab_cache, page, object, NULL, 1, _RET_IP_);
+> > 
+> > Now, you could say that this is a bad way to handle things, and every
+> > allocation from slab should have PageSlab set,
 > 
-> I got this crash again on 5.14.7 in the early morning of the 27th.
-> Things hung up shortly after I'd gone to bed. Uptime was 1 day 9 hours 9
-> minutes.
+> Yea basically.
+> 
+> So what makes 'struct slab' different from 'struct page' in an order 0
+> allocation?  Am I correct in deducing that PG_slab is not set in that case?
 
-...
+You might mean a couple of different things by that question, so let
+me say some things which are true (on x86) but might not answer your
+question:
 
-> BUG: kernel NULL pointer dereference, address: 0000000000000068
-> #PF: supervisor read access in kernel mode
-> #PF: error_code(0x0000) - not-present page
-> PGD 0 P4D 0
-> Oops: 0000 [#1] SMP NOPTI
-> CPU: 21 PID: 8494 Comm: CPU 7/KVM Tainted: G            E     5.14.7 #32
-> Hardware name: Gigabyte Technology Co., Ltd. X570 AORUS ELITE WIFI/X570
-> AORUS ELITE WIFI, BIOS F35 07/08/2021
-> RIP: 0010:internal_get_user_pages_fast+0x738/0xda0
-> Code: 84 24 a0 00 00 00 65 48 2b 04 25 28 00 00 00 0f 85 54 06 00 00 48
-> 81 c4 a8 00 00 00 44 89 e0 5b 5d 41 5c 41 5d 41 5e 41 5f c3 <48> 81 78
-> 68 a0 a3 >
+If you kmalloc(4095) bytes, it comes from a slab.  That slab would usually
+be an order-3 allocation.  If that order-3 allocation fails, slab might
+go as low as an order-0 allocation, but PageSlab will always be set on
+that head/base page because the allocation is smaller than two pages.
 
-I haven't reproduced the crash, but the code signature (CMP against an absolute
-address) is quite distinct, and is consistent across all three crashes.  I'm pretty
-sure the issue is that page_is_secretmem() doesn't check for a null page->mapping,
-e.g. if the page is truncated, which IIUC can happen in parallel since gup() doesn't
-hold the lock.
+If you kmalloc(8193) bytes, slub throws up its hands and does an
+allocation from the page allocator.  So it allocates an order-2 page,
+does not set PG_slab on it, but PG_head is set on the head page and
+PG_tail is set on all three tail pages.
 
-I think this should fix the problems?
+> > and it should use one of
+> > the many other bits in page->flags to indicate whether it's a large
+> > allocation or not.
+> 
+> Isn't the fact that it is a compound page enough to know that?
 
-diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
-index 21c3771e6a56..988528b5da43 100644
---- a/include/linux/secretmem.h
-+++ b/include/linux/secretmem.h
-@@ -23,7 +23,7 @@ static inline bool page_is_secretmem(struct page *page)
-        mapping = (struct address_space *)
-                ((unsigned long)page->mapping & ~PAGE_MAPPING_FLAGS);
+No -- regular slab allocations have PG_head set.  But it could use,
+eg, slab->slab_cache == NULL to distinguish page allocations
+from slab allocations.
 
--       if (mapping != page->mapping)
-+       if (!mapping || mapping != page->mapping)
-                return false;
+> > I may have feelings in that direction myself.
+> > But I don't think I should be changing that in this patch.
+> > 
+> > Maybe calling this function is_slab() is the confusing thing.
+> > Perhaps it should be called SlabIsLargeAllocation().  Not sure.
+> 
+> Well that makes a lot more sense to me from an API standpoint but checking
+> PG_slab is still likely to raise some eyebrows.
 
-        return mapping->a_ops == &secretmem_aops;
+Yeah.  Here's what I have right now:
+
++static inline bool SlabMultiPage(const struct slab *slab)
++{
++       return test_bit(PG_head, &slab->flags);
++}
++
++/* Did this allocation come from the page allocator instead of slab? */
++static inline bool SlabPageAllocation(const struct slab *slab)
++{
++       return !test_bit(PG_slab, &slab->flags);
++}
+
+> Regardless I like the fact that the community is at least attempting to fix
+> stuff like this.  Because adding types like this make it easier for people like
+> me to understand what is going on.
+
+Yes, I dislike that 'struct page' is so hard to understand, and so easy
+to misuse.  It's a very weak type.
