@@ -2,117 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 717B241C0F7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 10:51:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4620641C13B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 11:03:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244868AbhI2Iwk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Sep 2021 04:52:40 -0400
-Received: from foss.arm.com ([217.140.110.172]:51244 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244640AbhI2Iwi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Sep 2021 04:52:38 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B8B60101E;
-        Wed, 29 Sep 2021 01:50:57 -0700 (PDT)
-Received: from C02TD0UTHF1T.local (unknown [10.57.21.27])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 639C83F793;
-        Wed, 29 Sep 2021 01:50:55 -0700 (PDT)
-Date:   Wed, 29 Sep 2021 09:50:45 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+488ddf8087564d6de6e2@syzkaller.appspotmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        will@kernel.org, x86@kernel.org
-Subject: Re: [syzbot] upstream test error: KASAN: invalid-access Read in
- __entry_tramp_text_end
-Message-ID: <20210929085035.GA33284@C02TD0UTHF1T.local>
-References: <000000000000a3cf8605cb2a1ec0@google.com>
- <CACT4Y+aS6w1gFuMVY1fnAG0Yp0XckQTM+=tUHkOuxHUy2mkxrg@mail.gmail.com>
- <20210921165134.GE35846@C02TD0UTHF1T.local>
- <CACT4Y+ZjRgb57EV6mvC-bVK0uT0aPXUjtZJabuWasYcshKNcgw@mail.gmail.com>
- <20210927170122.GA9201@C02TD0UTHF1T.local>
- <20210927171812.GB9201@C02TD0UTHF1T.local>
- <CACT4Y+actfuftwMMOGXmEsLYbnCnqcZ2gJGeoMLsFCUNE-AxcQ@mail.gmail.com>
- <20210928103543.GF1924@C02TD0UTHF1T.local>
- <20210929013637.bcarm56e4mqo3ndt@treble>
- <YVQYQzP/vqNWm/hO@hirez.programming.kicks-ass.net>
+        id S244969AbhI2JEz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Sep 2021 05:04:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48613 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S244764AbhI2JEy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 Sep 2021 05:04:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1632906193;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7W9Fc0fF86WyXYecPV/lI8dmSptGKk8vSEWO1VbX84s=;
+        b=VgUT5Wkwz6V88ZQWns3PibHMln4HGhgp//Lqv9xtWWLTUU31B+jaqn1HXLjgQC/QydaJh8
+        NDkadZGDpMr/7/xCagBYELPHCNxaXtcFe2exkJT+esc+RwifmAL59hZ6W7hNVbT8JgYUIs
+        S8u2Og2LtVssz/7JezgZKEYnn+I6IDY=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-475-fT32CuseNjG3oF3Ds-oBZg-1; Wed, 29 Sep 2021 05:03:12 -0400
+X-MC-Unique: fT32CuseNjG3oF3Ds-oBZg-1
+Received: by mail-wr1-f72.google.com with SMTP id h25-20020adfa4d9000000b001607d12a0b0so170664wrb.21
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 02:03:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:from:to:cc:references:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=7W9Fc0fF86WyXYecPV/lI8dmSptGKk8vSEWO1VbX84s=;
+        b=Afc4rbwDn+05Jy2MT8z3EXMA6YRh2spqRyYJxPG+Drb8zmbdOm8h/9uI8aQ4wyH+Zh
+         ciQ8DSf46Smf1fNsHGLFAhZEyUL8v/6e3Z8zblXgPTPAyoJIbKpaLD2c6T3tVbqCRjH2
+         014MQGQeMLhDW4LtUFIRXZKtc5nYtlkZvap0DuXRXJS9hR3o5zjvZ+83YjI8um7cnW2R
+         T8SQygFY0UYNHF9PFEDH36JkqBTnHluR1oUBDF8BcRh25LB64R4MDPI0tXbzEspooCH3
+         KXDPCZuXCCwltEOkWbmgTscllFOl9KmwUBzA4/rIvJYaVOe3+DDVQWAdFiWga+dL5/zY
+         Dx9g==
+X-Gm-Message-State: AOAM532+LXORamWNNkBPBBs3YQCE7IY/FLAeeqAUQAi3m3RKjBOwPb6g
+        gYkc3Sy/jvGY/aspzY5k0opbJFaKR9x6puyw8KbKO1P4eHBw+vsYerKCiX5FVy4GH8poi+syTaO
+        IEZR/XWcmHmVMSCfqpeam0rdcWQ==
+X-Received: by 2002:a7b:c219:: with SMTP id x25mr9238889wmi.125.1632906190952;
+        Wed, 29 Sep 2021 02:03:10 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyAVvczz8jUTCdMNZ0BC5qvezoqKUBOcf5OajF0CWmKLmPAPf0K3OR8WEfpMUG5vsV5dclhgg==
+X-Received: by 2002:a7b:c219:: with SMTP id x25mr9238872wmi.125.1632906190770;
+        Wed, 29 Sep 2021 02:03:10 -0700 (PDT)
+Received: from [192.168.3.132] (p4ff23c3b.dip0.t-ipconnect.de. [79.242.60.59])
+        by smtp.gmail.com with ESMTPSA id t11sm1548498wrz.65.2021.09.29.02.03.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Sep 2021 02:03:10 -0700 (PDT)
+Subject: Re: [PATCH v1 2/8] x86/xen: simplify xen_oldmem_pfn_is_ram()
+From:   David Hildenbrand <david@redhat.com>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Mike Rapoport <rppt@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, x86@kernel.org,
+        xen-devel@lists.xenproject.org,
+        virtualization@lists.linux-foundation.org,
+        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20210928182258.12451-1-david@redhat.com>
+ <20210928182258.12451-3-david@redhat.com>
+ <4ab2f8c2-c3d5-30b3-a670-a8b38e218b6e@oracle.com>
+ <bfe72f46-9a0d-1a87-64bd-4b03999edd1e@redhat.com>
+Organization: Red Hat
+Message-ID: <e9a230f9-85cb-d4c1-8027-508b7c344d94@redhat.com>
+Date:   Wed, 29 Sep 2021 11:03:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YVQYQzP/vqNWm/hO@hirez.programming.kicks-ass.net>
+In-Reply-To: <bfe72f46-9a0d-1a87-64bd-4b03999edd1e@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 29, 2021 at 09:39:47AM +0200, Peter Zijlstra wrote:
-> On Tue, Sep 28, 2021 at 06:36:37PM -0700, Josh Poimboeuf wrote:
-> > On Tue, Sep 28, 2021 at 11:35:43AM +0100, Mark Rutland wrote:
-> > > > In the other x86 thread Josh Poimboeuf suggested to use asm goto to a
-> > > > cold part of the function instead of .fixup:
-> > > > https://lore.kernel.org/lkml/20210927234543.6waods7rraxseind@treble/
-> > > > This sounds like a more reliable solution that will cause less
-> > > > maintenance burden. Would it work for arm64 as well?
-> > > 
-> > > Maybe we can use that when CC_HAS_ASM_GOTO_OUTPUT is avaiable, but in
-> > > general we can't rely on asm goto supporting output arguments (and IIRC
-> > > GCC doesn't support that at all), so we'd still have to support the
-> > > current fixup scheme.
+On 29.09.21 10:45, David Hildenbrand wrote:
+>>
+>> How about
+>>
+>>       return a.mem_type != HVMMEM_mmio_dm;
+>>
 > 
-> gcc-11 has it
-
-Neat. Worth looking at for future, then.
-
-> > Even without CC_HAS_ASM_GOTO_OUTPUT it should still be possible to hack
-> > something together if you split the original insn asm and the extable
-> > asm into separate statements, like:
-> > 
-> > diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
-> > index 6b52182e178a..8f62469f2027 100644
-> > --- a/arch/x86/include/asm/msr.h
-> > +++ b/arch/x86/include/asm/msr.h
-> > @@ -137,20 +139,21 @@ static inline unsigned long long native_read_msr_safe(unsigned int msr,
-> >  {
-> >  	DECLARE_ARGS(val, low, high);
-> >  
-> > +	*err = 0;
-> > +	asm volatile("417: rdmsr\n"
-> > +		     : EAX_EDX_RET(val, low, high)
-> > +		     : "c" (msr));
-> > +	asm_volatile_goto(_ASM_EXTABLE(417b, %l[Efault]) :::: Efault);
+> Ha, how could I have missed that :)
 > 
-> That's terrible :-) Could probably do with a comment, but might just
-> work..
+>>
+>> Result should be promoted to int and this has added benefit of not requiring changes in patch 4.
+>>
+> 
+> Can we go one step further and do
+> 
+> 
+> @@ -20,24 +20,11 @@ static int xen_oldmem_pfn_is_ram(unsigned long pfn)
+>           struct xen_hvm_get_mem_type a = {
+>                   .domid = DOMID_SELF,
+>                   .pfn = pfn,
+> +               .mem_type = HVMMEM_ram_rw,
+>           };
+> -       int ram;
+>    
+> -       if (HYPERVISOR_hvm_op(HVMOP_get_mem_type, &a))
+> -               return -ENXIO;
+> -
+> -       switch (a.mem_type) {
+> -       case HVMMEM_mmio_dm:
+> -               ram = 0;
+> -               break;
+> -       case HVMMEM_ram_rw:
+> -       case HVMMEM_ram_ro:
+> -       default:
+> -               ram = 1;
+> -               break;
+> -       }
+> -
+> -       return ram;
+> +       HYPERVISOR_hvm_op(HVMOP_get_mem_type, &a);
+> +       return a.mem_type != HVMMEM_mmio_dm;
+>    }
+>    #endif
+> 
+> 
+> Assuming that if HYPERVISOR_hvm_op() fails that
+> .mem_type is not set to HVMMEM_mmio_dm.
+> 
 
-The compiler is well within its rights to spill/restore/copy/shuffle
-registers or modify memory between the two asm blocks (which it's liable
-to do that when optimizing this after a few layers of inlining), and
-skipping that would cause all sorts of undefined behaviour.
+Okay we can't, due to "__must_check" ...
 
-It's akin to trying to do an asm goto without the compiler supporting
-asm goto.
-
-This would probably happen to work in the common case, but it'd cause
-nightmarish bugs in others...
-
+-- 
 Thanks,
-Mark.
 
+David / dhildenb
 
-> > +
-> > +done:
-> >  	if (tracepoint_enabled(read_msr))
-> >  		do_trace_read_msr(msr, EAX_EDX_VAL(val, low, high), *err);
-> >  	return EAX_EDX_VAL(val, low, high);
-> > +
-> > +Efault:
-> > +	*err = -EIO;
-> > +	ZERO_ARGS(val, low, high);
-> > +	goto done;
-> >  }
-> >  
-> >  /* Can be uninlined because referenced by paravirt */
-> > 
