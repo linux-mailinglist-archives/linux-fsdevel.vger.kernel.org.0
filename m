@@ -2,138 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B46F541C7D7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 17:07:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0403741C838
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 17:21:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344941AbhI2PI7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Sep 2021 11:08:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:35914 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1345023AbhI2PI5 (ORCPT
+        id S1345105AbhI2PWz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Sep 2021 11:22:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55940 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1345086AbhI2PWz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Sep 2021 11:08:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1632928036;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gapF6Q7MxbKj+/Jpg0HNCHa+0ngI63VYNLFNHFDInM4=;
-        b=KM8YB6ciT9CY51YYfZdK61z7iUAtHYXNHB1ZJ8fpmZyP0UrhOHXBGnTimY0jE0uxLJ+SXR
-        yZZNjyqnG+w1t7LH71OrlenCXfMGSpg1RlNDY54gu1a3oo3DN4FaHbcVN0WHEAOaxM5wyJ
-        rTLtvokMYRooahm2NYzm6Af+dcD4fxg=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-222-9z9FpVOrNx-MUmeL-J_1gg-1; Wed, 29 Sep 2021 11:07:14 -0400
-X-MC-Unique: 9z9FpVOrNx-MUmeL-J_1gg-1
-Received: by mail-wr1-f70.google.com with SMTP id k16-20020a5d6290000000b00160753b430fso712527wru.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 08:07:13 -0700 (PDT)
+        Wed, 29 Sep 2021 11:22:55 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E5C8C061760
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 08:21:14 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id n18so3036575pgm.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 29 Sep 2021 08:21:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=hVd1gH+kQJeE39pFKVVrRFFFNBYhMYhDCh6W6dICdvg=;
+        b=jxJaXVqLKmWeXRITZqbu/yFnOyoHEMy0nb1Vv4kwcyJCbrHuyudWxfXkDcUdLeeV5u
+         oVJq9/Ap6P6u68TkD+22snpv2Dw6k2Pjt3AUc3NdvII749AokEMB1NkzkHOVHcjJdAyY
+         Hlf7AAZpgx2hLOXn7sH6XpO6BvsT6zEyoY3PTDff32Rpi39Yww2IL04sus5DIfbQF7I1
+         QHxsmXgWCGtO+a1hlr5p4wQTPYFTc6JpE+rd5AP3BhZNmKQDaDY61PoPjf0GStMwn0Eo
+         FWus/VQmH38ncDI6zC/7cG3mvQisORwuUozeCsJRYttLzbLVndb9ruzP3JYu3VDpuy1V
+         qYaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=gapF6Q7MxbKj+/Jpg0HNCHa+0ngI63VYNLFNHFDInM4=;
-        b=7BS+w1tbSnpLBOKakXMAIlIQiN7GciOxpeGuLmwIIUjx9igHdQ0uvgdbYr2wvhq6yl
-         jMg0XmXBWaHFb0NbrqhfEAFy7iKJVnKZ/8gJ9KPs8CmF629K8DQ0sf+5wTGXrzB6awix
-         FCW03N6U32pfrwQQDRV2DmiofPNX6wO1nW4rFm0+VjAC4MG3VTg7QUF6HB1JcsOE3Y6u
-         e6/+nNIRrglfODmEgdQg5t6WVBeoB64up3Bpmvsco+CTpjhSiWzYatWW5ULpxmjCToD5
-         +lqhFpScOUiiyrKKsQihAP1MKwBQLu5T9D0LGIqBktdF4aQNE+UUWr+sLe49Zanuo9Gc
-         089g==
-X-Gm-Message-State: AOAM532WbYGNSEy5UJP++YDGtChYBnPdwTUjolwq8TZjK1p0azbBoX3v
-        cfSjZw8BDsIRoj3zxF6Kz+QfmLNDhF1V6jqYE7GwD1byq+K5ByQWXYNLqbBdJWbtG53L1e+0iYH
-        2qZjwP0DP6e1/viZMN0gn9ZZPuw==
-X-Received: by 2002:a5d:4e4e:: with SMTP id r14mr378675wrt.147.1632928032837;
-        Wed, 29 Sep 2021 08:07:12 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxo/OiD1pi8Vj8uvbtvhFWxk5A000qCxnhsR/1CMHH5asTCVBPsn8x+8H3lxRFK4haIMhJq1A==
-X-Received: by 2002:a5d:4e4e:: with SMTP id r14mr378630wrt.147.1632928032598;
-        Wed, 29 Sep 2021 08:07:12 -0700 (PDT)
-Received: from [192.168.3.132] (p4ff23c3b.dip0.t-ipconnect.de. [79.242.60.59])
-        by smtp.gmail.com with ESMTPSA id f8sm177044wrx.15.2021.09.29.08.07.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Sep 2021 08:07:12 -0700 (PDT)
-Subject: Re: [PATCH v1 2/8] x86/xen: simplify xen_oldmem_pfn_is_ram()
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Mike Rapoport <rppt@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org,
-        virtualization@lists.linux-foundation.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=hVd1gH+kQJeE39pFKVVrRFFFNBYhMYhDCh6W6dICdvg=;
+        b=lIx4eXFp7zL6QMaT+e6hkJ1AesKGVGbUrbvjZpyvfAaCurL2kqCcLXv/Ze2p/Bu/zn
+         uhdpGLhfrTRAgrDdQOLjh16DmqvS0kTS/KZulFKz+9Q/EszQCbfrEHC4fHE4WWKeCIKU
+         zrJzSJ/20NU9G5vjZEhLJSe+KHAHdTQxkvqg/NMH3DIjOz8iTB2PT0Fv/EtItJctoZxa
+         vHhUBYkK74YQBX+UaDm/LPfIIJx+Zq4oGgl1bwumqmzTFKQwCAimEEcSOZ/I2lpwDyGt
+         B+J7HoV8cLTXu4K0MOgEkDJK4DOIh8rHtb/1XRR22JoHGB67Q5Sjq1QTZuiW310rgiHe
+         0N4A==
+X-Gm-Message-State: AOAM533C7VOxFSUbu23Ur3hsxHZI2MnpEFrW8AD92nQxGkL9pAV+e5xS
+        WKIni5R5KZyH5+kz0kR6TEFSrWxhQ0zwUw==
+X-Google-Smtp-Source: ABdhPJwknkO3jUb/3aE2bLJWkGe1nnBdpCwNHtCzopo/FM06iJLWiO7fnWcQuoA+N1ZtZtsABeFIjw==
+X-Received: by 2002:a63:790b:: with SMTP id u11mr454949pgc.71.1632928873659;
+        Wed, 29 Sep 2021 08:21:13 -0700 (PDT)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id p17sm197322pfo.9.2021.09.29.08.21.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Sep 2021 08:21:13 -0700 (PDT)
+Date:   Wed, 29 Sep 2021 15:21:09 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Stephen <stephenackerman16@gmail.com>
+Cc:     djwong@kernel.org, kvm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org
-References: <20210928182258.12451-1-david@redhat.com>
- <20210928182258.12451-3-david@redhat.com>
- <4ab2f8c2-c3d5-30b3-a670-a8b38e218b6e@oracle.com>
- <bfe72f46-9a0d-1a87-64bd-4b03999edd1e@redhat.com>
- <e9a230f9-85cb-d4c1-8027-508b7c344d94@redhat.com>
- <3b935aa0-6d85-0bcd-100e-15098add3c4c@oracle.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Message-ID: <e6ace8c8-8a2d-9bf7-e65b-91d0037c4d08@redhat.com>
-Date:   Wed, 29 Sep 2021 17:07:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+Subject: Re: kvm crash in 5.14.1?
+Message-ID: <YVSEZTCbFZ+HD/f0@google.com>
+References: <2b5ca6d3-fa7b-5e2f-c353-f07dcff993c1@gmail.com>
+ <16c7a433-6e58-4213-bc00-5f6196fe22f5@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <3b935aa0-6d85-0bcd-100e-15098add3c4c@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <16c7a433-6e58-4213-bc00-5f6196fe22f5@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 29.09.21 16:22, Boris Ostrovsky wrote:
+On Tue, Sep 28, 2021, Stephen wrote:
+> Hello,
 > 
-> On 9/29/21 5:03 AM, David Hildenbrand wrote:
->> On 29.09.21 10:45, David Hildenbrand wrote:
->>>>
->>> Can we go one step further and do
->>>
->>>
->>> @@ -20,24 +20,11 @@ static int xen_oldmem_pfn_is_ram(unsigned long pfn)
->>>            struct xen_hvm_get_mem_type a = {
->>>                    .domid = DOMID_SELF,
->>>                    .pfn = pfn,
->>> +               .mem_type = HVMMEM_ram_rw,
->>>            };
->>> -       int ram;
->>>     -       if (HYPERVISOR_hvm_op(HVMOP_get_mem_type, &a))
->>> -               return -ENXIO;
->>> -
->>> -       switch (a.mem_type) {
->>> -       case HVMMEM_mmio_dm:
->>> -               ram = 0;
->>> -               break;
->>> -       case HVMMEM_ram_rw:
->>> -       case HVMMEM_ram_ro:
->>> -       default:
->>> -               ram = 1;
->>> -               break;
->>> -       }
->>> -
->>> -       return ram;
->>> +       HYPERVISOR_hvm_op(HVMOP_get_mem_type, &a);
->>> +       return a.mem_type != HVMMEM_mmio_dm;
-> 
-> 
-> I was actually thinking of asking you to add another patch with pr_warn_once() here (and print error code as well). This call failing is indication of something going quite wrong and it would be good to know about this.
+> I got this crash again on 5.14.7 in the early morning of the 27th.
+> Things hung up shortly after I'd gone to bed. Uptime was 1 day 9 hours 9
+> minutes.
 
-Will include a patch in v2, thanks!
+...
 
+> BUG: kernel NULL pointer dereference, address: 0000000000000068
+> #PF: supervisor read access in kernel mode
+> #PF: error_code(0x0000) - not-present page
+> PGD 0 P4D 0
+> Oops: 0000 [#1] SMP NOPTI
+> CPU: 21 PID: 8494 Comm: CPU 7/KVM Tainted: G����������� E���� 5.14.7 #32
+> Hardware name: Gigabyte Technology Co., Ltd. X570 AORUS ELITE WIFI/X570
+> AORUS ELITE WIFI, BIOS F35 07/08/2021
+> RIP: 0010:internal_get_user_pages_fast+0x738/0xda0
+> Code: 84 24 a0 00 00 00 65 48 2b 04 25 28 00 00 00 0f 85 54 06 00 00 48
+> 81 c4 a8 00 00 00 44 89 e0 5b 5d 41 5c 41 5d 41 5e 41 5f c3 <48> 81 78
+> 68 a0 a3 >
 
--- 
-Thanks,
+I haven't reproduced the crash, but the code signature (CMP against an absolute
+address) is quite distinct, and is consistent across all three crashes.  I'm pretty
+sure the issue is that page_is_secretmem() doesn't check for a null page->mapping,
+e.g. if the page is truncated, which IIUC can happen in parallel since gup() doesn't
+hold the lock.
 
-David / dhildenb
+I think this should fix the problems?
 
+diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
+index 21c3771e6a56..988528b5da43 100644
+--- a/include/linux/secretmem.h
++++ b/include/linux/secretmem.h
+@@ -23,7 +23,7 @@ static inline bool page_is_secretmem(struct page *page)
+        mapping = (struct address_space *)
+                ((unsigned long)page->mapping & ~PAGE_MAPPING_FLAGS);
+
+-       if (mapping != page->mapping)
++       if (!mapping || mapping != page->mapping)
+                return false;
+
+        return mapping->a_ops == &secretmem_aops;
