@@ -2,94 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AE4241C0F9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 10:51:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 717B241C0F7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Sep 2021 10:51:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244880AbhI2IxY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Sep 2021 04:53:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49962 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244928AbhI2IxW (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Sep 2021 04:53:22 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D261DC06161C;
-        Wed, 29 Sep 2021 01:51:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=4h+WjU1N5cfE4q4zvv/AkfkoROJ4yuJcSxv2qDwXp8A=; b=kjkV9U7jjvkuZx1HNd22gm1vKE
-        WJuWv/Cm7z0my16pQVbeeJ3tdwmYXoiSKRBGaGsnu598GyDjltR5gy+uhDOcRr9h4VEU0tKZfYi3Y
-        z13Vgs0pTjPvMDVPpP7QU0zP96mG1ALAauLu/0Mn0hTJYsO8yFTJsCMhwPC0TA7NsgPEVOP3BhskQ
-        6JOaDnAd1vPdGokansJgZ4bfuF6M6xgSLbeBzReCnp4+xp3KzWMCgT1W6UMK98XjLukDYECtfVRio
-        DBMO8eMtj+LsUQlmD9+H8fCgqhoZS4Da2KCuQm3s0IEh8XlNjE0TC6F7HESXdXgsx020mlebk38zD
-        pjPm9fVQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mVVGq-00Bf4M-DZ; Wed, 29 Sep 2021 08:49:04 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E67F230023F;
-        Wed, 29 Sep 2021 10:48:53 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C22632DC92D07; Wed, 29 Sep 2021 10:48:53 +0200 (CEST)
-Date:   Wed, 29 Sep 2021 10:48:53 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Vito Caputo <vcaputo@pengaru.com>,
-        Jann Horn <jannh@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jens Axboe <axboe@kernel.dk>,
-        Stefan Metzmacher <metze@samba.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Lai Jiangshan <laijs@linux.alibaba.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kenta.Tada@sony.com" <Kenta.Tada@sony.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Michael =?iso-8859-1?Q?Wei=DF?= 
-        <michael.weiss@aisec.fraunhofer.de>,
-        Anand K Mistry <amistry@google.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Michal Hocko <mhocko@suse.com>, Helge Deller <deller@gmx.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrea Righi <andrea.righi@canonical.com>,
-        Ohhoon Kwon <ohoono.kwon@samsung.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        YiFei Zhu <yifeifz2@illinois.edu>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] proc: Disable /proc/$pid/wchan
-Message-ID: <YVQodT191JGCCY/F@hirez.programming.kicks-ass.net>
-References: <20210923233105.4045080-1-keescook@chromium.org>
- <20210923234917.pqrxwoq7yqnvfpwu@shells.gnugeneration.com>
- <CAG48ez0Rtv5kqHWw368Ym3GkKodPA+JETOAN+=c2KPa3opENSA@mail.gmail.com>
- <20210924002230.sijoedia65hf5bj7@shells.gnugeneration.com>
- <202109231814.FD09DBAD3@keescook>
- <20210924135424.GA33573@C02TD0UTHF1T.local>
+        id S244868AbhI2Iwk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Sep 2021 04:52:40 -0400
+Received: from foss.arm.com ([217.140.110.172]:51244 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244640AbhI2Iwi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 Sep 2021 04:52:38 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B8B60101E;
+        Wed, 29 Sep 2021 01:50:57 -0700 (PDT)
+Received: from C02TD0UTHF1T.local (unknown [10.57.21.27])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 639C83F793;
+        Wed, 29 Sep 2021 01:50:55 -0700 (PDT)
+Date:   Wed, 29 Sep 2021 09:50:45 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+488ddf8087564d6de6e2@syzkaller.appspotmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        will@kernel.org, x86@kernel.org
+Subject: Re: [syzbot] upstream test error: KASAN: invalid-access Read in
+ __entry_tramp_text_end
+Message-ID: <20210929085035.GA33284@C02TD0UTHF1T.local>
+References: <000000000000a3cf8605cb2a1ec0@google.com>
+ <CACT4Y+aS6w1gFuMVY1fnAG0Yp0XckQTM+=tUHkOuxHUy2mkxrg@mail.gmail.com>
+ <20210921165134.GE35846@C02TD0UTHF1T.local>
+ <CACT4Y+ZjRgb57EV6mvC-bVK0uT0aPXUjtZJabuWasYcshKNcgw@mail.gmail.com>
+ <20210927170122.GA9201@C02TD0UTHF1T.local>
+ <20210927171812.GB9201@C02TD0UTHF1T.local>
+ <CACT4Y+actfuftwMMOGXmEsLYbnCnqcZ2gJGeoMLsFCUNE-AxcQ@mail.gmail.com>
+ <20210928103543.GF1924@C02TD0UTHF1T.local>
+ <20210929013637.bcarm56e4mqo3ndt@treble>
+ <YVQYQzP/vqNWm/hO@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210924135424.GA33573@C02TD0UTHF1T.local>
+In-Reply-To: <YVQYQzP/vqNWm/hO@hirez.programming.kicks-ass.net>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 24, 2021 at 02:54:24PM +0100, Mark Rutland wrote:
-> We could instead have the scheduler entrypoints snapshot their caller
-> into a field in task_struct. If there are sufficiently few callers, that
-> could be an inline wrapper that passes a __func__ string. Otherwise, we
-> still need to symbolize.
+On Wed, Sep 29, 2021 at 09:39:47AM +0200, Peter Zijlstra wrote:
+> On Tue, Sep 28, 2021 at 06:36:37PM -0700, Josh Poimboeuf wrote:
+> > On Tue, Sep 28, 2021 at 11:35:43AM +0100, Mark Rutland wrote:
+> > > > In the other x86 thread Josh Poimboeuf suggested to use asm goto to a
+> > > > cold part of the function instead of .fixup:
+> > > > https://lore.kernel.org/lkml/20210927234543.6waods7rraxseind@treble/
+> > > > This sounds like a more reliable solution that will cause less
+> > > > maintenance burden. Would it work for arm64 as well?
+> > > 
+> > > Maybe we can use that when CC_HAS_ASM_GOTO_OUTPUT is avaiable, but in
+> > > general we can't rely on asm goto supporting output arguments (and IIRC
+> > > GCC doesn't support that at all), so we'd still have to support the
+> > > current fixup scheme.
+> 
+> gcc-11 has it
 
-I strongly dislike that option, we'd make the scheduler slower for
-something that's typically unused.
+Neat. Worth looking at for future, then.
 
-The 3 people actually using wchan should pay the cost of obtaining the
-data, not everybody all the time.
+> > Even without CC_HAS_ASM_GOTO_OUTPUT it should still be possible to hack
+> > something together if you split the original insn asm and the extable
+> > asm into separate statements, like:
+> > 
+> > diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
+> > index 6b52182e178a..8f62469f2027 100644
+> > --- a/arch/x86/include/asm/msr.h
+> > +++ b/arch/x86/include/asm/msr.h
+> > @@ -137,20 +139,21 @@ static inline unsigned long long native_read_msr_safe(unsigned int msr,
+> >  {
+> >  	DECLARE_ARGS(val, low, high);
+> >  
+> > +	*err = 0;
+> > +	asm volatile("417: rdmsr\n"
+> > +		     : EAX_EDX_RET(val, low, high)
+> > +		     : "c" (msr));
+> > +	asm_volatile_goto(_ASM_EXTABLE(417b, %l[Efault]) :::: Efault);
+> 
+> That's terrible :-) Could probably do with a comment, but might just
+> work..
+
+The compiler is well within its rights to spill/restore/copy/shuffle
+registers or modify memory between the two asm blocks (which it's liable
+to do that when optimizing this after a few layers of inlining), and
+skipping that would cause all sorts of undefined behaviour.
+
+It's akin to trying to do an asm goto without the compiler supporting
+asm goto.
+
+This would probably happen to work in the common case, but it'd cause
+nightmarish bugs in others...
+
+Thanks,
+Mark.
+
+
+> > +
+> > +done:
+> >  	if (tracepoint_enabled(read_msr))
+> >  		do_trace_read_msr(msr, EAX_EDX_VAL(val, low, high), *err);
+> >  	return EAX_EDX_VAL(val, low, high);
+> > +
+> > +Efault:
+> > +	*err = -EIO;
+> > +	ZERO_ARGS(val, low, high);
+> > +	goto done;
+> >  }
+> >  
+> >  /* Can be uninlined because referenced by paravirt */
+> > 
