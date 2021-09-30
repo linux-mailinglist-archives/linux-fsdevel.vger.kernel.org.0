@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 782D441E385
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Sep 2021 23:53:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A31FD41E386
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Sep 2021 23:53:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343914AbhI3VzH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Sep 2021 17:55:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54178 "EHLO
+        id S1344670AbhI3VzM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Sep 2021 17:55:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344670AbhI3VzF (ORCPT
+        with ESMTP id S1346103AbhI3VzI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Sep 2021 17:55:05 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6122C06176A;
-        Thu, 30 Sep 2021 14:53:22 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id k24so7567116pgh.8;
-        Thu, 30 Sep 2021 14:53:22 -0700 (PDT)
+        Thu, 30 Sep 2021 17:55:08 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAB05C06176D;
+        Thu, 30 Sep 2021 14:53:24 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id x4so4978845pln.5;
+        Thu, 30 Sep 2021 14:53:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=EXCBEmsIB/auz3tN4e5eo6JtWLopC6/weoEfTAHMsIc=;
-        b=jDGC0J2eHVHx1JluXNWBbo+5rrEB1cF5gou3XlsEpkt4JCr2YyH4Bvhmm+zxUXmXW2
-         C/lgXQJdLc0OiDcHwdj+HqXbsRiBqopXiO09KvpLBFBQpYhZyXM9gNKCfvfT8VdW8oou
-         /sItrQmlyQS91bQ+iZaw223BbB/qQqA719j0b9xZlIi/iclClMKxDt6/bs94byaJM6L8
-         ZNWPgmJX/5QekdlVdCF9Ub6xxuSrIrTtOXYvOSe87lWDvRDzDENO6o8EgCOPHANANeh9
-         C3m5cq1CH+012LI6qHleF9EhfLKDY/gicPAjiojOdCpkbtvPGg/jwMqU9azBE0XWf7PN
-         WtpA==
+        bh=h+26h9Sv4vHl46H8SxokcbKyYQ9NxeiIl/SfRJf9HZw=;
+        b=Djy5drgdl22dEGglF63rH52PgcXQfNUhldeQ/QMjK3qtlY3T3LP8KFviIAyUTa7lIF
+         VEt3AVn6B+Y6pQXf05pOz0Pk5lO3P9ci2211v0ZL1MbGqx7KYy+atFaNVOMoeYjF1rX7
+         Wv/UDjijd/gUekQXIZFlG1aBcZsPwVrfBf2CR1NyT8Ffb1y0gaebBTgkXyyci0Zpl0qw
+         7LmYoCC6768fKFYG3j7c3vOWUXobYSzp4jsTjWk8wLZ8Z1bQxJ0CSUiOJrDFHAfdInBp
+         NcQ7FAnpmTmEw6sCeWCVx4Tx+BOVWhyfDvtqiKvTUwlkc/nBDfySTuLEfakDVcQ4hmfB
+         bWtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EXCBEmsIB/auz3tN4e5eo6JtWLopC6/weoEfTAHMsIc=;
-        b=ywaS9CgIvH31uzg8kh4qDxZZEXWZZFtwP75wfXHPvP4aY9hJgn+UmdW0/Zz88iM4n3
-         WqhWuUdv4Wy0UQlFwsyWn5rzKrRJaihSu1moyKjQRdFVeTRyBxLGWeMnvBKiqpiEfGsF
-         N3+5X8dq88WhKXMW76ZrZml8FXqhU+yQrx2PX84XeRbrx/9iqGjWDTNNclZg5Uh/WDUO
-         U3qRIjt2FAck0W15/2ZcET8tkvjMLbaZOshfKanfdl39iFKeiQLlTQ2hjg/oqW78xCew
-         FJw9ZvwTxE2M/xgbkh8NZfniE4SmdgBoPor3ah9wp3mXRPlGwXsRlJqYB7NSJL3FwdHX
-         pZSg==
-X-Gm-Message-State: AOAM533mXxMj+vovAYL3BGuFvlq7qkZS2mTiIIB0UHSrDp+yzhtQiNoI
-        ZqXRua/lqgV+upRUsCNDKZg=
-X-Google-Smtp-Source: ABdhPJxdTlIxFMCPUXMZpu8U5cpexygYEibvfa+dl59ZIRm7rFFCQLqy2BGlfvHE+CDD7su2juniXw==
-X-Received: by 2002:a63:f94c:: with SMTP id q12mr6649824pgk.171.1633038802201;
-        Thu, 30 Sep 2021 14:53:22 -0700 (PDT)
+        bh=h+26h9Sv4vHl46H8SxokcbKyYQ9NxeiIl/SfRJf9HZw=;
+        b=qZ9Y+kMpRy3cbwkZ/ThwBe5bkVwijaH/rh0IdFDvlSDhwDSLUhUTzJxqjWD1V8ppn4
+         JsrrmLJznNHzOaRuRnMYai9tbIP3UVERLxYoHMb8FBhsJt5GkEkykCH3P3UhU3UE8XeJ
+         /sn2lfs3DNbYh4ggwFYxZzpE1V6WdwYSVoGeJJdpIk9TqBfxx9qJsdZHC2kaHqa3rR6q
+         LU1nUN3sY3f3OwfM9KLlJveczY7MtFLCcEcvlonqMPXPBkDX+6XHu9SnTOXrRZyMp5P3
+         AR0QYqr0arXDAt066RB7mr5ey7CjLvkjKsh+7i2u+y8V+/icVEjzSrNqpSWjUoyij/am
+         5nGA==
+X-Gm-Message-State: AOAM533y+SzVWfqnGcgG2eBrPnWZUWTdKQAhzLIot2ECzvyqa9x8g6Hi
+        hovUSkhoTrexqPPVkMr1gFE=
+X-Google-Smtp-Source: ABdhPJxmGL0nQKDZ15pCq04wQt05mZnD3pmd18L/LfPhVGMA+5VddqOZo4soEdXmWx6MUCZuuPL9iQ==
+X-Received: by 2002:a17:902:8495:b0:13e:6a01:f5fb with SMTP id c21-20020a170902849500b0013e6a01f5fbmr5810851plo.61.1633038804435;
+        Thu, 30 Sep 2021 14:53:24 -0700 (PDT)
 Received: from localhost.localdomain (c-73-93-239-127.hsd1.ca.comcast.net. [73.93.239.127])
-        by smtp.gmail.com with ESMTPSA id p17sm5647535pjg.54.2021.09.30.14.53.20
+        by smtp.gmail.com with ESMTPSA id p17sm5647535pjg.54.2021.09.30.14.53.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Sep 2021 14:53:21 -0700 (PDT)
+        Thu, 30 Sep 2021 14:53:23 -0700 (PDT)
 From:   Yang Shi <shy828301@gmail.com>
 To:     naoya.horiguchi@nec.com, hughd@google.com,
         kirill.shutemov@linux.intel.com, willy@infradead.org,
         peterx@redhat.com, osalvador@suse.de, akpm@linux-foundation.org
 Cc:     shy828301@gmail.com, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [v3 PATCH 3/5] mm: hwpoison: refactor refcount check handling
-Date:   Thu, 30 Sep 2021 14:53:09 -0700
-Message-Id: <20210930215311.240774-4-shy828301@gmail.com>
+Subject: [v3 PATCH 4/5] mm: shmem: don't truncate page if memory failure happens
+Date:   Thu, 30 Sep 2021 14:53:10 -0700
+Message-Id: <20210930215311.240774-5-shy828301@gmail.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210930215311.240774-1-shy828301@gmail.com>
 References: <20210930215311.240774-1-shy828301@gmail.com>
@@ -66,230 +66,162 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Memory failure will report failure if the page still has extra pinned
-refcount other than from hwpoison after the handler is done.  Actually
-the check is not necessary for all handlers, so move the check into
-specific handlers.  This would make the following keeping shmem page in
-page cache patch easier.
+The current behavior of memory failure is to truncate the page cache
+regardless of dirty or clean.  If the page is dirty the later access
+will get the obsolete data from disk without any notification to the
+users.  This may cause silent data loss.  It is even worse for shmem
+since shmem is in-memory filesystem, truncating page cache means
+discarding data blocks.  The later read would return all zero.
 
-Suggested-by: Naoya Horiguchi <naoya.horiguchi@nec.com>
-Signed-off-by: Naoya Horiguchi <naoya.horiguchi@nec.com>
+The right approach is to keep the corrupted page in page cache, any
+later access would return error for syscalls or SIGBUS for page fault,
+until the file is truncated, hole punched or removed.  The regular
+storage backed filesystems would be more complicated so this patch
+is focused on shmem.  This also unblock the support for soft
+offlining shmem THP.
+
 Signed-off-by: Yang Shi <shy828301@gmail.com>
 ---
- mm/memory-failure.c | 93 +++++++++++++++++++++++++++++++--------------
- 1 file changed, 64 insertions(+), 29 deletions(-)
+ mm/memory-failure.c | 10 +++++++++-
+ mm/shmem.c          | 31 +++++++++++++++++++++++++++++--
+ mm/userfaultfd.c    |  5 +++++
+ 3 files changed, 43 insertions(+), 3 deletions(-)
 
 diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index a79a38374a14..562bcf335bd2 100644
+index 562bcf335bd2..176883cd080f 100644
 --- a/mm/memory-failure.c
 +++ b/mm/memory-failure.c
-@@ -806,12 +806,44 @@ static int truncate_error_page(struct page *p, unsigned long pfn,
- 	return ret;
- }
+@@ -57,6 +57,7 @@
+ #include <linux/ratelimit.h>
+ #include <linux/page-isolation.h>
+ #include <linux/pagewalk.h>
++#include <linux/shmem_fs.h>
+ #include "internal.h"
+ #include "ras/ras_event.h"
  
-+struct page_state {
-+	unsigned long mask;
-+	unsigned long res;
-+	enum mf_action_page_type type;
-+
-+	/* Callback ->action() has to unlock the relevant page inside it. */
-+	int (*action)(struct page_state *ps, struct page *p);
-+};
-+
-+/*
-+ * Return true if page is still referenced by others, otherwise return
-+ * false.
-+ *
-+ * The dec is true when one extra refcount is expected.
-+ */
-+static bool has_extra_refcount(struct page_state *ps, struct page *p,
-+			       bool dec)
-+{
-+	int count = page_count(p) - 1;
-+
-+	if (dec)
-+		count -= 1;
-+
-+	if (count > 0) {
-+		pr_err("Memory failure: %#lx: %s still referenced by %d users\n",
-+		       page_to_pfn(p), action_page_types[ps->type], count);
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
- /*
-  * Error hit kernel page.
-  * Do nothing, try to be lucky and not touch this instead. For a few cases we
-  * could be more sophisticated.
-  */
--static int me_kernel(struct page *p, unsigned long pfn)
-+static int me_kernel(struct page_state *ps, struct page *p)
- {
- 	unlock_page(p);
- 	return MF_IGNORED;
-@@ -820,9 +852,9 @@ static int me_kernel(struct page *p, unsigned long pfn)
- /*
-  * Page in unknown state. Do nothing.
-  */
--static int me_unknown(struct page *p, unsigned long pfn)
-+static int me_unknown(struct page_state *ps, struct page *p)
- {
--	pr_err("Memory failure: %#lx: Unknown page state\n", pfn);
-+	pr_err("Memory failure: %#lx: Unknown page state\n", page_to_pfn(p));
- 	unlock_page(p);
- 	return MF_FAILED;
- }
-@@ -830,7 +862,7 @@ static int me_unknown(struct page *p, unsigned long pfn)
- /*
-  * Clean (or cleaned) page cache page.
-  */
--static int me_pagecache_clean(struct page *p, unsigned long pfn)
-+static int me_pagecache_clean(struct page_state *ps, struct page *p)
+@@ -866,6 +867,7 @@ static int me_pagecache_clean(struct page_state *ps, struct page *p)
  {
  	int ret;
  	struct address_space *mapping;
-@@ -867,9 +899,13 @@ static int me_pagecache_clean(struct page *p, unsigned long pfn)
++	bool dec;
+ 
+ 	delete_from_lru_cache(p);
+ 
+@@ -894,6 +896,12 @@ static int me_pagecache_clean(struct page_state *ps, struct page *p)
+ 		goto out;
+ 	}
+ 
++	/*
++	 * The shmem page is kept in page cache instead of truncating
++	 * so need decrement the refcount from page cache.
++	 */
++	dec = shmem_mapping(mapping);
++
+ 	/*
+ 	 * Truncation is a bit tricky. Enable it per file system for now.
  	 *
- 	 * Open: to take i_rwsem or not for this? Right now we don't.
- 	 */
--	ret = truncate_error_page(p, pfn, mapping);
-+	ret = truncate_error_page(p, page_to_pfn(p), mapping);
+@@ -903,7 +911,7 @@ static int me_pagecache_clean(struct page_state *ps, struct page *p)
  out:
  	unlock_page(p);
-+
-+	if (has_extra_refcount(ps, p, false))
-+		ret = MF_FAILED;
-+
- 	return ret;
- }
  
-@@ -878,7 +914,7 @@ static int me_pagecache_clean(struct page *p, unsigned long pfn)
-  * Issues: when the error hit a hole page the error is not properly
-  * propagated.
-  */
--static int me_pagecache_dirty(struct page *p, unsigned long pfn)
-+static int me_pagecache_dirty(struct page_state *ps, struct page *p)
- {
- 	struct address_space *mapping = page_mapping(p);
- 
-@@ -922,7 +958,7 @@ static int me_pagecache_dirty(struct page *p, unsigned long pfn)
- 		mapping_set_error(mapping, -EIO);
- 	}
- 
--	return me_pagecache_clean(p, pfn);
-+	return me_pagecache_clean(ps, p);
- }
- 
- /*
-@@ -944,9 +980,10 @@ static int me_pagecache_dirty(struct page *p, unsigned long pfn)
-  * Clean swap cache pages can be directly isolated. A later page fault will
-  * bring in the known good data from disk.
-  */
--static int me_swapcache_dirty(struct page *p, unsigned long pfn)
-+static int me_swapcache_dirty(struct page_state *ps, struct page *p)
- {
- 	int ret;
-+	bool dec = false;
- 
- 	ClearPageDirty(p);
- 	/* Trigger EIO in shmem: */
-@@ -954,10 +991,17 @@ static int me_swapcache_dirty(struct page *p, unsigned long pfn)
- 
- 	ret = delete_from_lru_cache(p) ? MF_FAILED : MF_DELAYED;
- 	unlock_page(p);
-+
-+	if (ret == MF_DELAYED)
-+		dec = true;
-+
+-	if (has_extra_refcount(ps, p, false))
 +	if (has_extra_refcount(ps, p, dec))
-+		ret = MF_FAILED;
-+
+ 		ret = MF_FAILED;
+ 
  	return ret;
- }
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 88742953532c..75c36b6a405a 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2456,6 +2456,7 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
+ 	struct inode *inode = mapping->host;
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+ 	pgoff_t index = pos >> PAGE_SHIFT;
++	int ret = 0;
  
--static int me_swapcache_clean(struct page *p, unsigned long pfn)
-+static int me_swapcache_clean(struct page_state *ps, struct page *p)
- {
- 	int ret;
- 
-@@ -965,6 +1009,10 @@ static int me_swapcache_clean(struct page *p, unsigned long pfn)
- 
- 	ret = delete_from_lru_cache(p) ? MF_FAILED : MF_RECOVERED;
- 	unlock_page(p);
-+
-+	if (has_extra_refcount(ps, p, false))
-+		ret = MF_FAILED;
-+
- 	return ret;
- }
- 
-@@ -974,7 +1022,7 @@ static int me_swapcache_clean(struct page *p, unsigned long pfn)
-  * - Error on hugepage is contained in hugepage unit (not in raw page unit.)
-  *   To narrow down kill region to one page, we need to break up pmd.
-  */
--static int me_huge_page(struct page *p, unsigned long pfn)
-+static int me_huge_page(struct page_state *ps, struct page *p)
- {
- 	int res;
- 	struct page *hpage = compound_head(p);
-@@ -985,7 +1033,7 @@ static int me_huge_page(struct page *p, unsigned long pfn)
- 
- 	mapping = page_mapping(hpage);
- 	if (mapping) {
--		res = truncate_error_page(hpage, pfn, mapping);
-+		res = truncate_error_page(hpage, page_to_pfn(p), mapping);
- 		unlock_page(hpage);
- 	} else {
- 		res = MF_FAILED;
-@@ -1003,6 +1051,9 @@ static int me_huge_page(struct page *p, unsigned long pfn)
- 		}
+ 	/* i_rwsem is held by caller */
+ 	if (unlikely(info->seals & (F_SEAL_GROW |
+@@ -2466,7 +2467,17 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
+ 			return -EPERM;
  	}
  
-+	if (has_extra_refcount(ps, p, false))
-+		res = MF_FAILED;
+-	return shmem_getpage(inode, index, pagep, SGP_WRITE);
++	ret = shmem_getpage(inode, index, pagep, SGP_WRITE);
 +
- 	return res;
++	if (*pagep) {
++		if (PageHWPoison(*pagep)) {
++			unlock_page(*pagep);
++			put_page(*pagep);
++			ret = -EIO;
++		}
++	}
++
++	return ret;
  }
  
-@@ -1028,14 +1079,7 @@ static int me_huge_page(struct page *p, unsigned long pfn)
- #define slab		(1UL << PG_slab)
- #define reserved	(1UL << PG_reserved)
+ static int
+@@ -2555,6 +2566,11 @@ static ssize_t shmem_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 			unlock_page(page);
+ 		}
  
--static struct page_state {
--	unsigned long mask;
--	unsigned long res;
--	enum mf_action_page_type type;
--
--	/* Callback ->action() has to unlock the relevant page inside it. */
--	int (*action)(struct page *p, unsigned long pfn);
--} error_states[] = {
-+static struct page_state error_states[] = {
- 	{ reserved,	reserved,	MF_MSG_KERNEL,	me_kernel },
++		if (page && PageHWPoison(page)) {
++			error = -EIO;
++			break;
++		}
++
+ 		/*
+ 		 * We must evaluate after, since reads (unlike writes)
+ 		 * are called without i_rwsem protection against truncate
+@@ -3772,6 +3788,13 @@ static void shmem_destroy_inodecache(void)
+ 	kmem_cache_destroy(shmem_inode_cachep);
+ }
+ 
++/* Keep the page in page cache instead of truncating it */
++static int shmem_error_remove_page(struct address_space *mapping,
++				   struct page *page)
++{
++	return 0;
++}
++
+ const struct address_space_operations shmem_aops = {
+ 	.writepage	= shmem_writepage,
+ 	.set_page_dirty	= __set_page_dirty_no_writeback,
+@@ -3782,7 +3805,7 @@ const struct address_space_operations shmem_aops = {
+ #ifdef CONFIG_MIGRATION
+ 	.migratepage	= migrate_page,
+ #endif
+-	.error_remove_page = generic_error_remove_page,
++	.error_remove_page = shmem_error_remove_page,
+ };
+ EXPORT_SYMBOL(shmem_aops);
+ 
+@@ -4193,6 +4216,10 @@ struct page *shmem_read_mapping_page_gfp(struct address_space *mapping,
+ 		page = ERR_PTR(error);
+ 	else
+ 		unlock_page(page);
++
++	if (PageHWPoison(page))
++		page = ERR_PTR(-EIO);
++
+ 	return page;
+ #else
  	/*
- 	 * free pages are specially detected outside this table:
-@@ -1095,19 +1139,10 @@ static int page_action(struct page_state *ps, struct page *p,
- 			unsigned long pfn)
- {
- 	int result;
--	int count;
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 7a9008415534..b688d5327177 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -233,6 +233,11 @@ static int mcontinue_atomic_pte(struct mm_struct *dst_mm,
+ 		goto out;
+ 	}
  
- 	/* page p should be unlocked after returning from ps->action().  */
--	result = ps->action(p, pfn);
-+	result = ps->action(ps, p);
- 
--	count = page_count(p) - 1;
--	if (ps->action == me_swapcache_dirty && result == MF_DELAYED)
--		count--;
--	if (count > 0) {
--		pr_err("Memory failure: %#lx: %s still referenced by %d users\n",
--		       pfn, action_page_types[ps->type], count);
--		result = MF_FAILED;
--	}
- 	action_result(pfn, ps->type, result);
- 
- 	/* Could do more checks here if page looks ok */
++	if (PageHWPoison(page)) {
++		ret = -EIO;
++		goto out_release;
++	}
++
+ 	ret = mfill_atomic_install_pte(dst_mm, dst_pmd, dst_vma, dst_addr,
+ 				       page, false, wp_copy);
+ 	if (ret)
 -- 
 2.26.2
 
