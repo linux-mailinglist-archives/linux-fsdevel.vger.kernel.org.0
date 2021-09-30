@@ -2,52 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 473EA41D568
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Sep 2021 10:30:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 041AF41D5A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Sep 2021 10:46:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348312AbhI3Iby (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Sep 2021 04:31:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35712 "EHLO
+        id S1348348AbhI3Irw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Sep 2021 04:47:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236162AbhI3Iby (ORCPT
+        with ESMTP id S1348126AbhI3Irv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Sep 2021 04:31:54 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4C5FC06161C;
-        Thu, 30 Sep 2021 01:30:11 -0700 (PDT)
+        Thu, 30 Sep 2021 04:47:51 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 817E8C06176A;
+        Thu, 30 Sep 2021 01:46:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=e4x0QLBhxqxpYlsmnC9/Rhwg35CPPY/9OtJK2QmAvpg=; b=ECSjIDDintEsPUe7JUuZXjPMv2
-        Er7l3JB23WZu4UwacGDBwyDNyor/3lesBhR9Wz7G+pS4SiCfzelP7rfVVjm5+J0yPIEZRkVWi8Yuh
-        tJ9P0rb9380Wc/8SW6BqjsUIHnjZD4mg0smjs2njNzO64gxPjh/N3EBHPDW+4JFrOc5rIAjwL0cuE
-        CgFf1Is8lvZ5vYsRbFPKuVghaaMl0CfWgHYUqHyBkup/t9jdPyF8AcUjTmE5t22thyZahN203plGh
-        EyMs0rDHG9jkdJ4xwXLJyypy7HBRwkHcR/9lrmFwFw87O6jJbrPJqgTcaEn9NIXxbKP1IIAugGytf
-        SePvdtbA==;
+        bh=8d/h8nbryP0oox/DlztyppXYQ0VJiTBHMbHxYT4g2MA=; b=BsQNPW9QuCs+taahSJyEvp3Rn5
+        Xb1xz8lAshcXFfFgb1EIrAvRKPwLrP7U/84MCzl60R9Rbi9wWd0eAefJiXxbDGve0K4XPGkRTzoHY
+        2v0iJ1ZAGnkLb7uhiqDsOfE5jl4YVXWGMmMKRXSPR1iluINri5uET20DdA+KydQq01euzTjmuJord
+        IAkDUm/o6MN+82D5XPfqz6mWcdZb/iXx8tf5scl1SY68IcCFzzMZjZYWwk3XxG/zbmacZmVF1oBNG
+        T/lwVlLQoF4oAJR10a03+B3+Vb8VFeYA6KGMJPaYC/rHO7huAdkuJ+sEqg5QjhG21S62pE62A1MCZ
+        phMzpMXw==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mVrRd-006uoH-H1; Thu, 30 Sep 2021 08:29:33 +0000
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mVrby-00CeuG-9b; Thu, 30 Sep 2021 08:40:22 +0000
 Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 27783300252;
-        Thu, 30 Sep 2021 10:29:33 +0200 (CEST)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 15836300252;
+        Thu, 30 Sep 2021 10:40:12 +0200 (CEST)
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 146C8266411AD; Thu, 30 Sep 2021 10:29:33 +0200 (CEST)
-Date:   Thu, 30 Sep 2021 10:29:33 +0200
+        id E0C6620831B8A; Thu, 30 Sep 2021 10:40:11 +0200 (CEST)
+Date:   Thu, 30 Sep 2021 10:40:11 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Dietmar Eggemann <dietmar.eggemann@arm.com>,
         Steven Rostedt <rostedt@goodmis.org>,
         Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
         Daniel Bristot de Oliveira <bristot@redhat.com>,
-        kernel test robot <oliver.sang@intel.com>,
-        Vito Caputo <vcaputo@pengaru.com>,
-        Jann Horn <jannh@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Anand K Mistry <amistry@google.com>,
@@ -72,153 +73,32 @@ Cc:     Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
         Ohhoon Kwon <ohoono.kwon@samsung.com>,
         Kalesh Singh <kaleshsingh@google.com>,
         YiFei Zhu <yifeifz2@illinois.edu>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-hardening@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v2 2/6] sched: Add wrapper for get_wchan() to keep task
- blocked
-Message-ID: <YVV1bR9TTUVjXI7G@hirez.programming.kicks-ass.net>
+Subject: Re: [PATCH v2 0/6] wchan: Fix ORC support and leaky fallback
+Message-ID: <YVV36z4UZaL/vOBI@hirez.programming.kicks-ass.net>
 References: <20210929220218.691419-1-keescook@chromium.org>
- <20210929220218.691419-3-keescook@chromium.org>
- <YVV027mFdUe9prGW@hirez.programming.kicks-ass.net>
- <YVV1NZ68kLRYBo10@hirez.programming.kicks-ass.net>
+ <20210930010157.mtn7pjyxkxokzmyh@treble>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YVV1NZ68kLRYBo10@hirez.programming.kicks-ass.net>
+In-Reply-To: <20210930010157.mtn7pjyxkxokzmyh@treble>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 30, 2021 at 10:28:37AM +0200, Peter Zijlstra wrote:
-> On Thu, Sep 30, 2021 at 10:27:07AM +0200, Peter Zijlstra wrote:
-> > On Wed, Sep 29, 2021 at 03:02:14PM -0700, Kees Cook wrote:
-> > > Having a stable wchan means the process must be blocked and for it to
-> > > stay that way while performing stack unwinding.
-> > 
-> > How's this instead?
-> > 
-> On top of which we can do..
+On Wed, Sep 29, 2021 at 06:01:57PM -0700, Josh Poimboeuf wrote:
 
-But that then leads to..
+> - Should we use a similar sched wrapper for /proc/$pid/stack to make its
+>   raciness go away?
 
----
-Subject: arch: Fix STACKTRACE_SUPPORT
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Thu Sep 30 10:21:15 CEST 2021
+Alternatively, can we make /stack go away? AFAICT the semantics of that
+are far worse in that it wants the actual kernel stack of a task,
+blocked or not, which is a total pain in the arse (not to mention a
+giant infoleak and side-channel).
 
-A few archs got save_stack_trace_tsk() vs in_sched_functions() wrong.
+> - At the risk of triggering a much larger patch set, I suspect
+>   get_wchan() can be made generic ;-)  It's just a glorified wrapper
+>   around stack_trace_save_tsk().
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/csky/kernel/stacktrace.c  |    7 ++++++-
- arch/mips/kernel/stacktrace.c  |   27 ++++++++++++++++-----------
- arch/nds32/kernel/stacktrace.c |   20 +++++++++++---------
- 3 files changed, 33 insertions(+), 21 deletions(-)
-
---- a/arch/csky/kernel/stacktrace.c
-+++ b/arch/csky/kernel/stacktrace.c
-@@ -132,12 +132,17 @@ static bool save_trace(unsigned long pc,
- 	return __save_trace(pc, arg, false);
- }
- 
-+static bool save_trace_nosched(unsigned long pc, void *arg)
-+{
-+	return __save_trace(pc, arg, true);
-+}
-+
- /*
-  * Save stack-backtrace addresses into a stack_trace buffer.
-  */
- void save_stack_trace_tsk(struct task_struct *tsk, struct stack_trace *trace)
- {
--	walk_stackframe(tsk, NULL, save_trace, trace);
-+	walk_stackframe(tsk, NULL, save_trace_nosched, trace);
- }
- EXPORT_SYMBOL_GPL(save_stack_trace_tsk);
- 
---- a/arch/mips/kernel/stacktrace.c
-+++ b/arch/mips/kernel/stacktrace.c
-@@ -66,16 +66,7 @@ static void save_context_stack(struct st
- #endif
- }
- 
--/*
-- * Save stack-backtrace addresses into a stack_trace buffer.
-- */
--void save_stack_trace(struct stack_trace *trace)
--{
--	save_stack_trace_tsk(current, trace);
--}
--EXPORT_SYMBOL_GPL(save_stack_trace);
--
--void save_stack_trace_tsk(struct task_struct *tsk, struct stack_trace *trace)
-+void __save_stack_trace_tsk(struct task_struct *tsk, struct stack_trace *trace, bool savesched)
- {
- 	struct pt_regs dummyregs;
- 	struct pt_regs *regs = &dummyregs;
-@@ -88,6 +79,20 @@ void save_stack_trace_tsk(struct task_st
- 		regs->cp0_epc = tsk->thread.reg31;
- 	} else
- 		prepare_frametrace(regs);
--	save_context_stack(trace, tsk, regs, tsk == current);
-+	save_context_stack(trace, tsk, regs, savesched);
-+}
-+
-+/*
-+ * Save stack-backtrace addresses into a stack_trace buffer.
-+ */
-+void save_stack_trace(struct stack_trace *trace)
-+{
-+	__save_stack_trace_tsk(current, trace, true);
-+}
-+EXPORT_SYMBOL_GPL(save_stack_trace);
-+
-+void save_stack_trace_tsk(struct task_struct *tsk, struct stack_trace *trace)
-+{
-+	__save_stack_trace_tsk(tsk, trace, false);
- }
- EXPORT_SYMBOL_GPL(save_stack_trace_tsk);
---- a/arch/nds32/kernel/stacktrace.c
-+++ b/arch/nds32/kernel/stacktrace.c
-@@ -6,13 +6,7 @@
- #include <linux/stacktrace.h>
- #include <linux/ftrace.h>
- 
--void save_stack_trace(struct stack_trace *trace)
--{
--	save_stack_trace_tsk(current, trace);
--}
--EXPORT_SYMBOL_GPL(save_stack_trace);
--
--void save_stack_trace_tsk(struct task_struct *tsk, struct stack_trace *trace)
-+static void __save_stack_trace_tsk(struct task_struct *tsk, struct stack_trace *trace, bool savesched)
- {
- 	unsigned long *fpn;
- 	int skip = trace->skip;
-@@ -21,10 +15,8 @@ void save_stack_trace_tsk(struct task_st
- 
- 	if (tsk == current) {
- 		__asm__ __volatile__("\tori\t%0, $fp, #0\n":"=r"(fpn));
--		savesched = 1;
- 	} else {
- 		fpn = (unsigned long *)thread_saved_fp(tsk);
--		savesched = 0;
- 	}
- 
- 	while (!kstack_end(fpn) && !((unsigned long)fpn & 0x3)
-@@ -50,4 +42,14 @@ void save_stack_trace_tsk(struct task_st
- 		fpn = (unsigned long *)fpp;
- 	}
- }
-+void save_stack_trace(struct stack_trace *trace)
-+{
-+	__save_stack_trace_tsk(current, trace, true);
-+}
-+EXPORT_SYMBOL_GPL(save_stack_trace);
-+
-+void save_stack_trace_tsk(struct task_struct *tsk, struct stack_trace *trace)
-+{
-+	__save_stack_trace_tsk(tsk, trace, false);
-+}
- EXPORT_SYMBOL_GPL(save_stack_trace_tsk);
+Done that for you :-)
