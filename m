@@ -2,149 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05EA241DC6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Sep 2021 16:38:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DD7B41DC74
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Sep 2021 16:39:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350669AbhI3OkA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Sep 2021 10:40:00 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:53643 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1348440AbhI3OjS (ORCPT
+        id S1350898AbhI3Okx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Sep 2021 10:40:53 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:60056 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1350863AbhI3Okw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Sep 2021 10:39:18 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 5A9F8580F9A;
-        Thu, 30 Sep 2021 10:37:23 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Thu, 30 Sep 2021 10:37:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=mx+31OMai8gbaIunBA/PcL9q6BG
-        p95XY+PT2AgPSDuI=; b=JYAPl8xuiMqjPKgj4D5TmY/fbL5ORVlyC8IMByPJoSf
-        rFfBL+JSOjLRSdKL5CxCCD28WWHdKcS8bZLdyvoJhjwKWH6QZC36Q9HENw8S3H77
-        6B5Rgt4ZU4WTAV64E2nivZ67w8+8v4Paz5nXCYViB/AyUQKWk4LL3uXMIzKTYdxa
-        7+9k0AB3UFf+ffa9LLX4bZO4LAm4UavnOc4TA8kjhJZGsXXAqRvOghy6oouQsE4u
-        6RLOrZF/jczhlgtVmGDzW9s6KZTvc3joQP+GcZA7Ym5h3ZbzOBB0I6R1V7+l8o16
-        oJ9pRD4b7y1v2wQoKeQAplg3SA7qJgd2iAj7rglptkA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=mx+31O
-        Mai8gbaIunBA/PcL9q6BGp95XY+PT2AgPSDuI=; b=Hkeiyi6U0uImqNh8Q55Fxq
-        5Nry+jvvYAqpMOLpeP4TG0HnSix9czmk62R+t3LeuI5Bv6MySvwi4cf+RYZneYjc
-        qrefVFoLOHlnXPM2AB4rdk9IyYKJn68YAtyH1/ZMUWmw/bpx3WBKXoA7cius8Mm4
-        FfQMp9tWPexnRflXcF4Sb7yqvNiHssoatzJMX7EEiNfWyAb7v9pRgYy30eZQjLfA
-        eWjBtrGfFqqsPHwl9qKRKxe3T9mNOGVIYX036yJ8sOT7DQbBoQ+8I4EZf5WCc1vB
-        PwRJLl9toGEyM3Ki6HXQV2BPclPvLwYsIfgLQlGWvIeGvxrmefEn75pjb8H8B7Dg
-        ==
-X-ME-Sender: <xms:n8tVYZ6NoqwsyUVPSsciMz5l00besVr288mFzIw4Srergzc8szvlbw>
-    <xme:n8tVYW5cEGblGsepamYCmpWYkiXDlSqm_gvfFcF2RmyVrNHXSPc9Ui9Xay_NW04-J
-    dXZWP9bfdOaqx1vwOU>
-X-ME-Received: <xmr:n8tVYQeHyrhpcAwjgmyOlsB5RLUtaS9DThMravEcO9FesdfSmUis3En0IPz9HwofSeARJ_lJvY_wTLTaEwON8omp>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrudekgedgjeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    gfrhhlucfvnfffucdluddtmdenucfjughrpeffhffvuffkfhggtggujgesthdtredttddt
-    vdenucfhrhhomhepvfihtghhohcutehnuggvrhhsvghnuceothihtghhohesthihtghhoh
-    drphhiiiiirgeqnecuggftrfgrthhtvghrnhepffeukeekudejfefhjeevgeejgffhkefh
-    ffetleduvddufeekteelkeekhfefudejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrgh
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthigt
-    hhhosehthigthhhordhpihiiiigr
-X-ME-Proxy: <xmx:n8tVYSI043SLp-mQJrY7ZeLX0WxKyvFtInlS5134PNnWyRc107HnTg>
-    <xmx:n8tVYdKCL61aT7mZ7jTwLvL67HqH_TN4mvqlcLO31N8jT34r0mujKw>
-    <xmx:n8tVYbz7QaM8utHAVyjZo0hpkJ93z2FHR3PHtpcbieOEAyclOBiLdw>
-    <xmx:o8tVYXaDZEfAVQibC0xnGAOZQCbAZFQs3K32yigrzQPaHYTn2EKdKw>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 Sep 2021 10:37:17 -0400 (EDT)
-Date:   Thu, 30 Sep 2021 08:37:15 -0600
-From:   Tycho Andersen <tycho@tycho.pizza>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Tobin C. Harding" <me@tobin.cc>, linux-hardening@vger.kernel.org,
-        kernel test robot <oliver.sang@intel.com>,
-        Vito Caputo <vcaputo@pengaru.com>,
-        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Anand K Mistry <amistry@google.com>,
-        "Kenta.Tada@sony.com" <Kenta.Tada@sony.com>,
-        Alexey Gladkov <legion@kernel.org>,
-        Michael =?iso-8859-1?Q?Wei=DF?= 
-        <michael.weiss@aisec.fraunhofer.de>,
-        Michal Hocko <mhocko@suse.com>, Helge Deller <deller@gmx.de>,
-        Qi Zheng <zhengqi.arch@bytedance.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Stefan Metzmacher <metze@samba.org>,
-        Lai Jiangshan <laijs@linux.alibaba.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Ohhoon Kwon <ohoono.kwon@samsung.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        YiFei Zhu <yifeifz2@illinois.edu>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        x86@kernel.org
-Subject: Re: [PATCH v2 6/6] leaking_addresses: Always print a trailing newline
-Message-ID: <YVXLm5dC3nRKZpF3@cisco>
-References: <20210929220218.691419-1-keescook@chromium.org>
- <20210929220218.691419-7-keescook@chromium.org>
+        Thu, 30 Sep 2021 10:40:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1633012749;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=2ly9W6CaHyQP3qe9RdMzB2/4zDGpIqL2pyl1uodDkAQ=;
+        b=DdAdtpbIbBKbMMxsqFbOg2IxWLFRYsGUEpTzXuElvyPCZOEpThvHf7txQPNWBd65MH77l6
+        V7aJmC5ZzHj+MQouDzaVBoiE9QqFib7mNa8iCaVqaeVtFzBfxzIu1eDGTWFOkkCdKnmyUH
+        TAdKrgVd13fXt/pD52rxGsHEWYJ1r+s=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-62-ioWxPXreOueJpjzdU2WR1g-1; Thu, 30 Sep 2021 10:39:08 -0400
+X-MC-Unique: ioWxPXreOueJpjzdU2WR1g-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8126B835E04;
+        Thu, 30 Sep 2021 14:39:07 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.16.146])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2A1255D6D5;
+        Thu, 30 Sep 2021 14:39:07 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id B97FC220B02; Thu, 30 Sep 2021 10:39:06 -0400 (EDT)
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        miklos@szeredi.hu, stefanha@redhat.com
+Cc:     vgoyal@redhat.com, iangelak@redhat.com, jaggel@bu.edu,
+        dgilbert@redhat.com
+Subject: [PATCH 0/8] virtiofs: Notification queue and blocking posix locks 
+Date:   Thu, 30 Sep 2021 10:38:42 -0400
+Message-Id: <20210930143850.1188628-1-vgoyal@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210929220218.691419-7-keescook@chromium.org>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 29, 2021 at 03:02:18PM -0700, Kees Cook wrote:
-> For files that lack trailing newlines and match a leaking address (e.g.
-> wchan[1]), the leaking_addresses.pl report would run together with the
-> next line, making things look corrupted.
-> 
-> Unconditionally remove the newline on input, and write it back out on
-> output.
-> 
-> [1] https://lore.kernel.org/all/20210103142726.GC30643@xsang-OptiPlex-9020/
-> 
-> Cc: "Tobin C. Harding" <me@tobin.cc>
-> Cc: Tycho Andersen <tycho@tycho.pizza>
+Hi,
 
-Acked-by: Tycho Andersen <tycho@tycho.pizza>
+As of now we do not support blocking remote posix locks with virtiofs.
+Well fuse client does not care but server returns -EOPNOTSUPP.
 
-Thanks!
+There are couple of reasons to not support it yet.
 
-> Cc: linux-hardening@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  scripts/leaking_addresses.pl | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/scripts/leaking_addresses.pl b/scripts/leaking_addresses.pl
-> index b2d8b8aa2d99..8f636a23bc3f 100755
-> --- a/scripts/leaking_addresses.pl
-> +++ b/scripts/leaking_addresses.pl
-> @@ -455,8 +455,9 @@ sub parse_file
->  
->  	open my $fh, "<", $file or return;
->  	while ( <$fh> ) {
-> +		chomp;
->  		if (may_leak_address($_)) {
-> -			print $file . ': ' . $_;
-> +			printf("$file: $_\n");
->  		}
->  	}
->  	close $fh;
-> -- 
-> 2.30.2
-> 
+- If virtiofsd is single threaded or does not have a thread pool just
+  to handle requests which can block for a long time, virtiofsd will
+  stop processing new requests and virtiofs will come to a halt.
+  To the extent that further unlock request will not make progress
+  and deadlock will result. This can be taken care of by creating
+  a custom thread pool in virtiofsd just to hanlde lock requests.
+
+- If client sends a blocking lock request and blocks, then it will
+  consume descriptors in vring. If enough processes block, it is
+  possible that vring does not have capacity to send more requests
+  till some response comes back and descriptors are free. This can
+  also lead to deadlock where an unlock request can't be sent to
+  virtiofsd now. Also this will stop virtiofs operation as well as
+  new filesystem requests can't be sent.
+
+To avoid this issue, idea was suggested thatn when a blocking
+lock request is sent by client, do not block it. Immediately
+send a reply saying client process should wait for a notification
+which will let it know once lock is available. This will make
+sure descriptors in virtqueue are not kept busy while we are
+waiting for lock and future unlock and other file system requests
+can continue to make progress.
+
+This first requires a notion of notification queue and virtiosfd
+being able to send notifications to client. This patch series
+implements that as well.
+
+As of now only one notification type has been implemented but now
+infrastructure is in place and other use cases should be easily
+add more type of notifications as need be.
+
+We don't yet have the capability to interrupt the process which
+is waiting for the posix lock. And reason for that is that virtiofs
+does not support capability to interrupt yet. That's a TODO item
+for later.
+
+Please have a look.
+
+Thanks
+Vivek
+
+Vivek Goyal (8):
+  virtiofs: Disable interrupt requests properly
+  virtiofs: Fix a comment about fuse_dev allocation
+  virtiofs: Add an index to keep track of first request queue
+  virtiofs: Decouple queue index and queue type
+  virtiofs: Add a virtqueue for notifications
+  virtiofs: Add a helper to end request and decrement inflight number
+  virtiofs: Add new notification type FUSE_NOTIFY_LOCK
+  virtiofs: Handle reordering of reply and notification event
+
+ fs/fuse/virtio_fs.c            | 438 ++++++++++++++++++++++++++++++---
+ include/uapi/linux/fuse.h      |  11 +-
+ include/uapi/linux/virtio_fs.h |   5 +
+ 3 files changed, 412 insertions(+), 42 deletions(-)
+
+-- 
+2.31.1
+
