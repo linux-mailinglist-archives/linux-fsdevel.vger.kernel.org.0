@@ -2,114 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CDEBF41EFAC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Oct 2021 16:37:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E797841EFBA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Oct 2021 16:40:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354575AbhJAOj2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Oct 2021 10:39:28 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:39555 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1354574AbhJAOj1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Oct 2021 10:39:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1633099062;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=/KKRYJFhv/QJA9FN2XncZtvBI8w9ECIMj6A6MWC7kv8=;
-        b=UsuyIvJm5j4wzh46PY7Qa6seoGHEUoH9umhVXBLQUG7QNGcmzD+wo2vp19JEI6ZIkrN4Uq
-        uM+GMRCEcrvMyx6LWyfM7v43cNJejdg19BZaQvAf+O5SoUM354OcwP/yEJKu8QFHYh3ls9
-        A1sUH2AJD28bPUINoQOWIHQbSNgf1A8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-268-_YyqmfaxPX2LTkbQkc9YAQ-1; Fri, 01 Oct 2021 10:37:39 -0400
-X-MC-Unique: _YyqmfaxPX2LTkbQkc9YAQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 67F6F835DE0;
-        Fri,  1 Oct 2021 14:37:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0C23A652A4;
-        Fri,  1 Oct 2021 14:37:31 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] cachefiles: Fix oops in trace_cachefiles_mark_buried due to
- NULL object
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     Dave Wysochanski <dwysocha@redhat.com>, linux-cachefs@redhat.com,
-        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 01 Oct 2021 15:37:31 +0100
-Message-ID: <163309905120.80461.1932497502647013780.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        id S1354523AbhJAOl6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Oct 2021 10:41:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35260 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238636AbhJAOl5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 1 Oct 2021 10:41:57 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3BC8861507;
+        Fri,  1 Oct 2021 14:40:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633099213;
+        bh=ZahyhpPtQqhVvBHMnz421DpVrE2pzsHhdju9V2J7Gfg=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=Wik6Tep3WZyMeTAg1k3nvnl75EwOHoqRADJahFNGtIEk/MgpBvQ9XuTOawYEzOQuQ
+         9nJD2lxyiInmS1O49YzItToLKakabr76QOgbln5LEoGAaeyKZTmZ2mRn5Q7Pm4h5FB
+         bNaG+JvddFrNrHL1n1KgLPazLYS2tsIPOR8RH4IM8OaTrDkEpm4q3gsOntt3+buhln
+         jb+raArklpFltKNK4glSw/cXP4nfXYp2vGq4K7aiLHtvM2/nVbERjXi+9OLOy/tMPe
+         23VCAPzxvmy/g38Oy6i2VYVdoLJ9jfk9hLelMqt/gG/igMt9QEVPVoLPGPvADy969B
+         GsLuVfdZIP6QQ==
+Received: by mail-ot1-f50.google.com with SMTP id c26-20020a056830349a00b0054d96d25c1eso11734101otu.9;
+        Fri, 01 Oct 2021 07:40:13 -0700 (PDT)
+X-Gm-Message-State: AOAM533+Zk0vu8p808MNIslVm1xN02FGH1Wi1/kbw0siyZ7LBP3YNbrH
+        nV3by2xnbuyP9dC7ldjK+6aZqoSAyhvUAahIAkg=
+X-Google-Smtp-Source: ABdhPJy5/eaiRuG7rldYq3SgOdinICCXjY5DrIyS+YU7L88apLItGe1pLS9Gm2fTrYP5pb2+Y1e0rrcQF7pXPa2o8Uc=
+X-Received: by 2002:a9d:4705:: with SMTP id a5mr10542184otf.237.1633099212608;
+ Fri, 01 Oct 2021 07:40:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Received: by 2002:a8a:1342:0:0:0:0:0 with HTTP; Fri, 1 Oct 2021 07:40:12 -0700 (PDT)
+In-Reply-To: <997a01d7b6c6$ea0c3f50$be24bdf0$@samsung.com>
+References: <20210909065543.164329-1-cccheng@synology.com> <CGME20210910010035epcas1p496dd515369b9f2481ccd1c0de5904bbd@epcas1p4.samsung.com>
+ <CAKYAXd_1ys-xQ9HusgqSr5GHaP6R2pK4JswfZzoqZ=wTnwSiOw@mail.gmail.com> <997a01d7b6c6$ea0c3f50$be24bdf0$@samsung.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Fri, 1 Oct 2021 23:40:12 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9COEWU_QF3p0mnEnH4nHMrHQ5ujwBZ6rt4ZBjEFBnB=w@mail.gmail.com>
+Message-ID: <CAKYAXd9COEWU_QF3p0mnEnH4nHMrHQ5ujwBZ6rt4ZBjEFBnB=w@mail.gmail.com>
+Subject: Re: [PATCH] exfat: use local UTC offset when EXFAT_TZ_VALID isn't set
+To:     Sungjong Seo <sj1557.seo@samsung.com>
+Cc:     Chung-Chiang Cheng <cccheng@synology.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shepjeng@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Dave Wysochanski <dwysocha@redhat.com>
+2021-10-01 22:19 GMT+09:00, Sungjong Seo <sj1557.seo@samsung.com>:
+> Hello, Namjae,
+Hi Sungjong,
+>
+> I found an important difference between the code we first wrote and the code
+> that has changed since our initial patch review. This difference seems to
+> cause compatibility issues when reading saved timestamps without timezone.
+> (In our initial patch review, there were concerns about possible
+> compatibility issues.)
+> I think the code that reads timestamps without timezone should go back to
+> the concept we wrote in the first place like reported patch.
+Are you talking about using sys_tz?
 
-In cachefiles_mark_object_buried, the dentry in question may
-not have an owner, and thus our cachefiles_object pointer
-may be NULL when calling the tracepoint, in which case we
-will also not have a valid debug_id to print in the tracepoint.
-Check for NULL object in the tracepoint and if so, just set
-debug_id to MAX_UINT as was done in 2908f5e101e3.
+> It could be an answer of another timestamp issue.
+What is another timestamp issue ?
 
-This fixes the following oops:
-
-    FS-Cache: Cache "mycache" added (type cachefiles)
-    CacheFiles: File cache on vdc registered
-    ...
-    Workqueue: fscache_object fscache_object_work_func [fscache]
-    RIP: 0010:trace_event_raw_event_cachefiles_mark_buried+0x4e/0xa0 [cachefiles]
-    ....
-    Call Trace:
-     cachefiles_mark_object_buried+0xa5/0xb0 [cachefiles]
-     cachefiles_bury_object+0x270/0x430 [cachefiles]
-     ? kfree+0xaa/0x3a0
-     ? vfs_getxattr+0x15a/0x180
-     cachefiles_walk_to_object+0x195/0x9c0 [cachefiles]
-     ? trace_event_buffer_commit+0x61/0x220
-     cachefiles_lookup_object+0x5a/0xc0 [cachefiles]
-     fscache_look_up_object+0xd7/0x160 [fscache]
-     fscache_object_work_func+0xb2/0x340 [fscache]
-     process_one_work+0x1f1/0x390
-     worker_thread+0x53/0x3e0
-     ? process_one_work+0x390/0x390
-     kthread+0x127/0x150
-     ? set_kthread_struct+0x40/0x40
-     ret_from_fork+0x22/0x30
-
-Fixes: 2908f5e101e3 ("fscache: Add a cookie debug ID and use that in traces")
-Signed-off-by: Dave Wysochanski <dwysocha@redhat.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-cachefs@redhat.com
----
-
- include/trace/events/cachefiles.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/trace/events/cachefiles.h b/include/trace/events/cachefiles.h
-index 9a448fe9355d..695bfdbfdcad 100644
---- a/include/trace/events/cachefiles.h
-+++ b/include/trace/events/cachefiles.h
-@@ -305,7 +305,7 @@ TRACE_EVENT(cachefiles_mark_buried,
- 			     ),
- 
- 	    TP_fast_assign(
--		    __entry->obj	= obj->fscache.debug_id;
-+		    __entry->obj	= obj ? obj->fscache.debug_id : UINT_MAX;
- 		    __entry->de		= de;
- 		    __entry->why	= why;
- 			   ),
-
-
+>
+> Could you please let me know what you think?
+>
+> Thanks.
+>> -----Original Message-----
+>> From: Namjae Jeon [mailto:linkinjeon@kernel.org]
+>> Sent: Friday, September 10, 2021 10:01 AM
+>> To: Chung-Chiang Cheng <cccheng@synology.com>
+>> Cc: sj1557.seo@samsung.com; linux-fsdevel@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; shepjeng@gmail.com
+>> Subject: Re: [PATCH] exfat: use local UTC offset when EXFAT_TZ_VALID
+>> isn't
+>> set
+>>
+>> 2021-09-09 15:55 GMT+09:00, Chung-Chiang Cheng <cccheng@synology.com>:
+>> > EXFAT_TZ_VALID is corresponding to OffsetValid field in exfat
+>> > specification [1]. If this bit isn't set, timestamps should be treated
+>> > as having the same UTC offset as the current local time.
+>> >
+>> > This patch uses the existing mount option 'time_offset' as fat does.
+>> > If time_offset isn't set, local UTC offset in sys_tz will be used as
+>> > the default value.
+>> >
+>> > Link: [1]
+>> > https://protect2.fireeye.com/v1/url?k=cba4edf5-943fd4c8-cba566ba-0cc47
+>> > a31309a-e70aa065be678729&q=1&e=225feff2-841f-404c-9a2e-c12064b232d0&u=
+>> > https%3A%2F%2Fdocs.microsoft.com%2Fen-us%2Fwindows%2Fwin32%2Ffileio%2F
+>> > exfat-specification%2374102-offsetvalid-field
+>> > Signed-off-by: Chung-Chiang Cheng <cccheng@synology.com>
+>> Please read this discussion:
+>>  https://patchwork.kernel.org/project/linux-
+>> fsdevel/patch/20200115082447.19520-10-namjae.jeon@samsung.com/
+>>
+>> Thanks!
+>
+>
