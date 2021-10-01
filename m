@@ -2,119 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 78B2A41F723
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Oct 2021 23:54:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ACEE41F801
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Oct 2021 01:03:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355654AbhJAV4O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Oct 2021 17:56:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44474 "EHLO
+        id S231518AbhJAXFS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Oct 2021 19:05:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232171AbhJAV4M (ORCPT
+        with ESMTP id S230442AbhJAXFP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Oct 2021 17:56:12 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6779C061775
-        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Oct 2021 14:54:27 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id x4so7148012pln.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Oct 2021 14:54:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=Y2F9tIAyLMuMdvZ+xZbB5A4lCV2UGNUjjsvsd+NvfA8=;
-        b=WreVklBggxei96NbU8ryj3miFwVUGz33146Bjjpotu/SgaGDVHfMAxd66UfUwDGeK2
-         s6ztopBoSJDInYcU7oXlxkZz1BcBoxmPBBI1xPO/uMs79M0MRKCX5sFKdGExo9ssjWpK
-         aE6MRoCvHIwz9DG8dka2mJRnqAp924032T3GXpgYmHp1CPj6C+K6WIQzTfBJBnKweNmM
-         ZLVFWfxC0mwGtw/UcxJJEDh0joqnJ+0ktuCjCzKpjizgcKssBE/CDRid6aYllv7PeywG
-         xO0osNLhBVxCzmiJ9NI6dqYf1f2X1hN0ikVutmLEFwaZLmsm5kFgNsOhgEjwEAXdxrvx
-         KwkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to:content-transfer-encoding;
-        bh=Y2F9tIAyLMuMdvZ+xZbB5A4lCV2UGNUjjsvsd+NvfA8=;
-        b=l/RoO7cVO91SZLhvRSXqgYj1aJ46KyZih0UTRuzK7pmyLQeRGDt/v5tJsebcIebE+k
-         LOa386CiXhubuDOXL9QzbSrqMrdYOUgDlupOctDmX9LS63utUPRcDaJPcmpqeo7vwXGc
-         jSjpRn0lWvmqqkOVNmuESGznlMZeujPqgsTdgGNp+2U3hvRaW2yvZ5a0L361Y/Pp3EIu
-         wVFSLqoXgpTVK+BDQoxKFtHg8xWwKBl8lbHSnlJ0vc5d+Ridc4gcdilvsLOOs3yl2DfV
-         quRzpnOioY89OxlVIr0IBOF96j+ifU1r+xAZ+QkPAnQPJ39ETfRdJ1m/5EVye0UeZ86H
-         7g4w==
-X-Gm-Message-State: AOAM530yiJfJomuHMFqcSFVsXULGp7XM6LJxDXhwS/Z6eVtNPtNad8tG
-        mwRyzePCyUdw7XEjn/9S1zs+F/bgGLZCFWCYi4w=
-X-Google-Smtp-Source: ABdhPJy7yOHZBox9/6AbjfqaThtyOQ9uxtmnaGDA9onO8iCyLkeznb0D80Fd8fLfFfJbcoq9QlAEVLVXicBeicZvrLo=
-X-Received: by 2002:a17:902:d2c6:b0:13e:9bc9:1ae3 with SMTP id
- n6-20020a170902d2c600b0013e9bc91ae3mr11077plc.87.1633125267243; Fri, 01 Oct
- 2021 14:54:27 -0700 (PDT)
+        Fri, 1 Oct 2021 19:05:15 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF2AC061775;
+        Fri,  1 Oct 2021 16:03:30 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 7C73535BB; Fri,  1 Oct 2021 19:03:28 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 7C73535BB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1633129408;
+        bh=V1GHE3uavOurkDlrDPf9POqwiUwDJv9YiCuuJRnPZqE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eREhfBio/MhCmt0d7I8kIWKdS85JKtdeQJOOCDkGdWIStRptWqP51z/1y6CRYhO4r
+         I+pzXjKuUTmfrSs/UZd8a03x2PDwCE4RWGdZrZtuV5sNe6gX9ffX+EGAV/b5Lj8979
+         vDhJXGVPSclNJAZ0oa9r1t50gbPaHQePu2tugyfQ=
+Date:   Fri, 1 Oct 2021 19:03:28 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     dai.ngo@oracle.com
+Cc:     chuck.lever@oracle.com, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v5 0/2] nfsd: Initial implementation of NFSv4
+ Courteous Server
+Message-ID: <20211001230328.GA13268@fieldses.org>
+References: <20210929005641.60861-1-dai.ngo@oracle.com>
+ <20211001205327.GN959@fieldses.org>
+ <a6c9ba13-43d7-4ea9-e05d-f454c2c9f4c2@oracle.com>
 MIME-Version: 1.0
-Sender: manuellawarlordibrahim7@gmail.com
-Received: by 2002:a05:6a10:1d8f:0:0:0:0 with HTTP; Fri, 1 Oct 2021 14:54:26
- -0700 (PDT)
-From:   manuella warlord ibrahim <manuellawarlordibrahim@gmail.com>
-Date:   Fri, 1 Oct 2021 14:54:26 -0700
-X-Google-Sender-Auth: Bnsb_7B77iLKsgevwNMHaB_tfrY
-Message-ID: <CA+ZVOZjFXqv694uoVdda_6jNtYOz1W2w1ZHX0SHcxDKtPJbTyg@mail.gmail.com>
-Subject: =?UTF-8?Q?aspetter=C3=B2_di_leggerti=21=21=21?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6c9ba13-43d7-4ea9-e05d-f454c2c9f4c2@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Carissimo,
+On Fri, Oct 01, 2021 at 02:41:55PM -0700, dai.ngo@oracle.com wrote:
+> 
+> On 10/1/21 1:53 PM, J. Bruce Fields wrote:
+> >On Tue, Sep 28, 2021 at 08:56:39PM -0400, Dai Ngo wrote:
+> >>Hi Bruce,
+> >>
+> >>This series of patches implement the NFSv4 Courteous Server.
+> >Apologies, I keep meaning to get back to this and haven't yet.
+> >
+> >I do notice I'm seeing a timeout on pynfs 4.0 test OPEN18.
+> 
+> It's weird, this test passes on my system:
+> 
+> 
+> [root@nfsvmf25 nfs4.0]# ./testserver.py $server --rundeps -v OPEN18
+> INIT     st_setclientid.testValid                                 : RUNNING
+> INIT     st_setclientid.testValid                                 : PASS
+> MKFILE   st_open.testOpen                                         : RUNNING
+> MKFILE   st_open.testOpen                                         : PASS
+> OPEN18   st_open.testShareConflict1                               : RUNNING
+> OPEN18   st_open.testShareConflict1                               : PASS
+> **************************************************
+> INIT     st_setclientid.testValid                                 : PASS
+> OPEN18   st_open.testShareConflict1                               : PASS
+> MKFILE   st_open.testOpen                                         : PASS
+> **************************************************
+> Command line asked for 3 of 673 tests
+> Of those: 0 Skipped, 0 Failed, 0 Warned, 3 Passed
+> [root@nfsvmf25 nfs4.0]#
+> 
+> Do you have a network trace?
 
-So che questa e-mail ti sorprender=C3=A0 poich=C3=A9 non ci siamo conosciut=
-i o
-incontrati prima di considerare il fatto che ho trovato il tuo
-contatto e-mail tramite Internet alla ricerca di una persona di
-fiducia che possa aiutarmi.
+Yeah, weirdly, I think it's failing only when I run it with all the
+other pynfs tests, not when I run it alone.  I'll check again and see if
+I can get a trace, probably next week.
 
-Sono la signorina Manuella Warlord Ibrahim Coulibaly, una donna di 24
-anni della Repubblica della Costa d'Avorio, Africa occidentale, figlia
-del defunto capo Sgt. Warlord Ibrahim Coulibaly (alias Generale IB).
-Il mio defunto padre era un noto capo della milizia della Costa
-d'Avorio. =C3=88 morto gioved=C3=AC 28 aprile 2011 a seguito di uno scontro=
- con
-le forze repubblicane della Costa d'Avorio (FRCI). Sono costretto a
-contattarvi a causa dei maltrattamenti che sto ricevendo dalla mia
-matrigna.
-
-Aveva in programma di portarmi via tutti i tesori e le propriet=C3=A0 del
-mio defunto padre dopo la morte inaspettata del mio amato padre. Nel
-frattempo volevo viaggiare in Europa, ma lei nasconde il mio
-passaporto internazionale e altri documenti preziosi. Per fortuna non
-ha scoperto dove tenevo il fascicolo di mio padre che conteneva
-documenti importanti. Ora mi trovo attualmente nella Missione in
-Ghana.
-
-Sto cercando relazioni a lungo termine e assistenza agli investimenti.
-Mio padre di beata memoria ha depositato la somma di 27,5 milioni di
-dollari in una banca ad Accra in Ghana con il mio nome come parente
-pi=C3=B9 prossimo. Avevo contattato la Banca per liquidare la caparra ma il
-Direttore di Filiale mi ha detto che essendo rifugiato, il mio status
-secondo la legge locale non mi autorizza ad effettuare l'operazione.
-Tuttavia, mi ha consigliato di fornire un fiduciario che star=C3=A0 a mio
-nome. Avrei voluto informare la mia matrigna di questo deposito ma
-temo che non mi offrir=C3=A0 nulla dopo lo svincolo del denaro.
-
-Pertanto, decido di cercare il tuo aiuto per trasferire i soldi sul
-tuo conto bancario mentre mi trasferir=C3=B2 nel tuo paese e mi sistemer=C3=
-=B2
-con te. Poich=C3=A9 hai indicato il tuo interesse ad aiutarmi, ti dar=C3=B2=
- il
-numero di conto e il contatto della banca dove il mio amato padre
-defunto ha depositato i soldi con il mio nome come parente pi=C3=B9
-prossimo. =C3=88 mia intenzione risarcirti con il 40% del denaro totale per
-la tua assistenza e il saldo sar=C3=A0 il mio investimento in qualsiasi
-impresa redditizia che mi consiglierai poich=C3=A9 non hai alcuna idea
-sugli investimenti esteri. Per favore, tutte le comunicazioni devono
-avvenire tramite questo indirizzo e-mail per scopi riservati
-(manuellawarlordibrahimw@gmail.com).
-
-La ringrazio molto in attesa di una sua rapida risposta. Ti dar=C3=B2 i
-dettagli nella mia prossima mail dopo aver ricevuto la tua mail di
-accettazione per aiutarmi,
-
-Cordiali saluti
-Miss manuella signore della guerra Ibrahim Coulibaly
-(manuellawarlordibrahimw@gmail.com)
+--b.
