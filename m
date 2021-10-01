@@ -2,253 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CD29641EECF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Oct 2021 15:43:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDEBF41EFAC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Oct 2021 16:37:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353939AbhJANox (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Oct 2021 09:44:53 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:47920 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353834AbhJANov (ORCPT
+        id S1354575AbhJAOj2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Oct 2021 10:39:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:39555 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1354574AbhJAOj1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Oct 2021 09:44:51 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 29AFC20459;
-        Fri,  1 Oct 2021 13:43:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1633095786; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wBSel4M0Z2Kwh7Vv/gxroZDfsM3cs68ntlBYsm1A2cQ=;
-        b=EQQpHGMbiWYw6UUB9Q9k1ekidSlQzJVBR295sxF9W5sj0XsCEQIllJknx2d4bRBAsk7C0D
-        kD1yCgPxYhJKjNKbfs+62YwSVb7j96yaxYY8EZNhrws4nOkRu9ZhHzW+12BkxsyhTsdZzG
-        cSOPKp0teAyJq6VFdEKXHRsLTjg2dbQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1633095786;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wBSel4M0Z2Kwh7Vv/gxroZDfsM3cs68ntlBYsm1A2cQ=;
-        b=PJ1pCuzEZBLO9WQlZTO4uC7j07L4RUMR8g3VfTPWUO1CMjCiKxlZIEZkmoGd91iwzPL7F3
-        3gRkIFpWaJG3MoAg==
-Received: from echidna.suse.de (unknown [10.163.47.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 1 Oct 2021 10:39:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1633099062;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=/KKRYJFhv/QJA9FN2XncZtvBI8w9ECIMj6A6MWC7kv8=;
+        b=UsuyIvJm5j4wzh46PY7Qa6seoGHEUoH9umhVXBLQUG7QNGcmzD+wo2vp19JEI6ZIkrN4Uq
+        uM+GMRCEcrvMyx6LWyfM7v43cNJejdg19BZaQvAf+O5SoUM354OcwP/yEJKu8QFHYh3ls9
+        A1sUH2AJD28bPUINoQOWIHQbSNgf1A8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-268-_YyqmfaxPX2LTkbQkc9YAQ-1; Fri, 01 Oct 2021 10:37:39 -0400
+X-MC-Unique: _YyqmfaxPX2LTkbQkc9YAQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 0000CA3B81;
-        Fri,  1 Oct 2021 13:43:05 +0000 (UTC)
-From:   David Disseldorp <ddiss@suse.de>
-To:     linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk, willy@infradead.org,
-        David Disseldorp <ddiss@suse.de>
-Subject: [PATCH v3 5/5] initramfs: add INITRAMFS_PRESERVE_MTIME Kconfig option
-Date:   Fri,  1 Oct 2021 15:42:56 +0200
-Message-Id: <20211001134256.5581-6-ddiss@suse.de>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211001134256.5581-1-ddiss@suse.de>
-References: <20211001134256.5581-1-ddiss@suse.de>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 67F6F835DE0;
+        Fri,  1 Oct 2021 14:37:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0C23A652A4;
+        Fri,  1 Oct 2021 14:37:31 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] cachefiles: Fix oops in trace_cachefiles_mark_buried due to
+ NULL object
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     Dave Wysochanski <dwysocha@redhat.com>, linux-cachefs@redhat.com,
+        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 01 Oct 2021 15:37:31 +0100
+Message-ID: <163309905120.80461.1932497502647013780.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-initramfs cpio mtime preservation, as implemented via
-889d51a10712b6fd6175196626de2116858394f4, uses a linked list to defer
-directory mtime processing until after all other items in the cpio
-archive have been processed. This is done to ensure that parent
-directory mtimes aren't overwritten via subsequent child creation.
+From: Dave Wysochanski <dwysocha@redhat.com>
 
-This change adds a new INITRAMFS_PRESERVE_MTIME Kconfig option, which
-can be used to disable on-by-default mtime retention and in turn
-speed up initramfs extraction, particularly for cpio archives with large
-directory counts.
+In cachefiles_mark_object_buried, the dentry in question may
+not have an owner, and thus our cachefiles_object pointer
+may be NULL when calling the tracepoint, in which case we
+will also not have a valid debug_id to print in the tracepoint.
+Check for NULL object in the tracepoint and if so, just set
+debug_id to MAX_UINT as was done in 2908f5e101e3.
 
-For a cpio archive with ~1M directories, rough 20-run local benchmarks
-demonstrated:
-				mean extraction time (s)	std dev
-INITRAMFS_PRESERVE_MTIME=y		3.789035		0.005474
-INITRAMFS_PRESERVE_MTIME unset		3.111508		0.004132
+This fixes the following oops:
 
-Signed-off-by: David Disseldorp <ddiss@suse.de>
+    FS-Cache: Cache "mycache" added (type cachefiles)
+    CacheFiles: File cache on vdc registered
+    ...
+    Workqueue: fscache_object fscache_object_work_func [fscache]
+    RIP: 0010:trace_event_raw_event_cachefiles_mark_buried+0x4e/0xa0 [cachefiles]
+    ....
+    Call Trace:
+     cachefiles_mark_object_buried+0xa5/0xb0 [cachefiles]
+     cachefiles_bury_object+0x270/0x430 [cachefiles]
+     ? kfree+0xaa/0x3a0
+     ? vfs_getxattr+0x15a/0x180
+     cachefiles_walk_to_object+0x195/0x9c0 [cachefiles]
+     ? trace_event_buffer_commit+0x61/0x220
+     cachefiles_lookup_object+0x5a/0xc0 [cachefiles]
+     fscache_look_up_object+0xd7/0x160 [fscache]
+     fscache_object_work_func+0xb2/0x340 [fscache]
+     process_one_work+0x1f1/0x390
+     worker_thread+0x53/0x3e0
+     ? process_one_work+0x390/0x390
+     kthread+0x127/0x150
+     ? set_kthread_struct+0x40/0x40
+     ret_from_fork+0x22/0x30
+
+Fixes: 2908f5e101e3 ("fscache: Add a cookie debug ID and use that in traces")
+Signed-off-by: Dave Wysochanski <dwysocha@redhat.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: linux-cachefs@redhat.com
 ---
- init/Kconfig           | 10 +++++++++
- init/Makefile          |  3 +++
- init/initramfs.c       | 42 ++----------------------------------
- init/initramfs_mtime.c | 49 ++++++++++++++++++++++++++++++++++++++++++
- init/initramfs_mtime.h | 11 ++++++++++
- 5 files changed, 75 insertions(+), 40 deletions(-)
- create mode 100644 init/initramfs_mtime.c
- create mode 100644 init/initramfs_mtime.h
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 11f8a845f259..dc734d72a3c6 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1352,6 +1352,16 @@ config BOOT_CONFIG
+ include/trace/events/cachefiles.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/trace/events/cachefiles.h b/include/trace/events/cachefiles.h
+index 9a448fe9355d..695bfdbfdcad 100644
+--- a/include/trace/events/cachefiles.h
++++ b/include/trace/events/cachefiles.h
+@@ -305,7 +305,7 @@ TRACE_EVENT(cachefiles_mark_buried,
+ 			     ),
  
- 	  If unsure, say Y.
- 
-+config INITRAMFS_PRESERVE_MTIME
-+	bool "Preserve cpio archive mtimes in initramfs"
-+	default y
-+	help
-+	  Each entry in an initramfs cpio archive carries an mtime value. When
-+	  enabled, extracted cpio items take this mtime, with directory mtime
-+	  setting deferred until after creation of any child entries.
-+
-+	  If unsure, say Y.
-+
- choice
- 	prompt "Compiler optimization level"
- 	default CC_OPTIMIZE_FOR_PERFORMANCE
-diff --git a/init/Makefile b/init/Makefile
-index 2846113677ee..d72bf80170ce 100644
---- a/init/Makefile
-+++ b/init/Makefile
-@@ -11,6 +11,9 @@ obj-y                          += noinitramfs.o
- else
- obj-$(CONFIG_BLK_DEV_INITRD)   += initramfs.o
- endif
-+ifeq ($(CONFIG_INITRAMFS_PRESERVE_MTIME),y)
-+obj-$(CONFIG_BLK_DEV_INITRD)   += initramfs_mtime.o
-+endif
- obj-$(CONFIG_GENERIC_CALIBRATE_DELAY) += calibrate.o
- 
- obj-y                          += init_task.o
-diff --git a/init/initramfs.c b/init/initramfs.c
-index c64f819ed120..aa0f63d9f570 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -17,6 +17,8 @@
- #include <linux/init_syscalls.h>
- #include <linux/umh.h>
- 
-+#include "initramfs_mtime.h"
-+
- static ssize_t __init xwrite(struct file *file, const char *p, size_t count,
- 		loff_t *pos)
- {
-@@ -116,46 +118,6 @@ static void __init free_hash(void)
- 	}
- }
- 
--static long __init do_utime(char *filename, time64_t mtime)
--{
--	struct timespec64 t[2];
--
--	t[0].tv_sec = mtime;
--	t[0].tv_nsec = 0;
--	t[1].tv_sec = mtime;
--	t[1].tv_nsec = 0;
--	return init_utimes(filename, t);
--}
--
--static __initdata LIST_HEAD(dir_list);
--struct dir_entry {
--	struct list_head list;
--	char *name;
--	time64_t mtime;
--};
--
--static void __init dir_add(const char *name, time64_t mtime)
--{
--	struct dir_entry *de = kmalloc(sizeof(struct dir_entry), GFP_KERNEL);
--	if (!de)
--		panic_show_mem("can't allocate dir_entry buffer");
--	INIT_LIST_HEAD(&de->list);
--	de->name = kstrdup(name, GFP_KERNEL);
--	de->mtime = mtime;
--	list_add(&de->list, &dir_list);
--}
--
--static void __init dir_utime(void)
--{
--	struct dir_entry *de, *tmp;
--	list_for_each_entry_safe(de, tmp, &dir_list, list) {
--		list_del(&de->list);
--		do_utime(de->name, de->mtime);
--		kfree(de->name);
--		kfree(de);
--	}
--}
--
- static __initdata time64_t mtime;
- 
- /* cpio header parsing */
-diff --git a/init/initramfs_mtime.c b/init/initramfs_mtime.c
-new file mode 100644
-index 000000000000..0020deb21f76
---- /dev/null
-+++ b/init/initramfs_mtime.c
-@@ -0,0 +1,49 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#include <linux/init.h>
-+#include <linux/types.h>
-+#include <linux/syscalls.h>
-+#include <linux/utime.h>
-+#include <linux/file.h>
-+#include <linux/init_syscalls.h>
-+
-+#include "initramfs_mtime.h"
-+
-+long __init do_utime(char *filename, time64_t mtime)
-+{
-+	struct timespec64 t[2];
-+
-+	t[0].tv_sec = mtime;
-+	t[0].tv_nsec = 0;
-+	t[1].tv_sec = mtime;
-+	t[1].tv_nsec = 0;
-+	return init_utimes(filename, t);
-+}
-+
-+static __initdata LIST_HEAD(dir_list);
-+struct dir_entry {
-+	struct list_head list;
-+	char *name;
-+	time64_t mtime;
-+};
-+
-+void __init dir_add(const char *name, time64_t mtime)
-+{
-+	struct dir_entry *de = kmalloc(sizeof(struct dir_entry), GFP_KERNEL);
-+	if (!de)
-+		panic("can't allocate dir_entry buffer");
-+	INIT_LIST_HEAD(&de->list);
-+	de->name = kstrdup(name, GFP_KERNEL);
-+	de->mtime = mtime;
-+	list_add(&de->list, &dir_list);
-+}
-+
-+void __init dir_utime(void)
-+{
-+	struct dir_entry *de, *tmp;
-+	list_for_each_entry_safe(de, tmp, &dir_list, list) {
-+		list_del(&de->list);
-+		do_utime(de->name, de->mtime);
-+		kfree(de->name);
-+		kfree(de);
-+	}
-+}
-diff --git a/init/initramfs_mtime.h b/init/initramfs_mtime.h
-new file mode 100644
-index 000000000000..6d15c8b1171f
---- /dev/null
-+++ b/init/initramfs_mtime.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifdef CONFIG_INITRAMFS_PRESERVE_MTIME
-+long do_utime(char *filename, time64_t mtime) __init;
-+void dir_add(const char *name, time64_t mtime) __init;
-+void dir_utime(void) __init;
-+#else
-+static long __init do_utime(char *filename, time64_t mtime) { return 0; }
-+static void __init dir_add(const char *name, time64_t mtime) {}
-+static void __init dir_utime(void) {}
-+#endif
--- 
-2.31.1
+ 	    TP_fast_assign(
+-		    __entry->obj	= obj->fscache.debug_id;
++		    __entry->obj	= obj ? obj->fscache.debug_id : UINT_MAX;
+ 		    __entry->de		= de;
+ 		    __entry->why	= why;
+ 			   ),
+
 
