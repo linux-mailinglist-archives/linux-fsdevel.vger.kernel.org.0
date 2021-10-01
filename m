@@ -2,96 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7171F41F58B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Oct 2021 21:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75A8A41F681
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Oct 2021 22:53:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356035AbhJATNT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Oct 2021 15:13:19 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48924 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356015AbhJATNT (ORCPT
+        id S230043AbhJAUz0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Oct 2021 16:55:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58970 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1355450AbhJAUzZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Oct 2021 15:13:19 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 4056A1F4594F
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     Shreeya Patel <shreeya.patel@collabora.com>,
-        viro@zeniv.linux.org.uk, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH 2/2] fs: ext4: Fix the inconsistent name exposed by
- /proc/self/cwd
-Organization: Collabora
-References: <cover.1632909358.git.shreeya.patel@collabora.com>
-        <8402d1c99877a4fcb152de71005fa9cfb25d86a8.1632909358.git.shreeya.patel@collabora.com>
-        <YVdWW0uyRqYWSgVP@mit.edu>
-Date:   Fri, 01 Oct 2021 15:11:30 -0400
-In-Reply-To: <YVdWW0uyRqYWSgVP@mit.edu> (Theodore Ts'o's message of "Fri, 1
-        Oct 2021 14:41:31 -0400")
-Message-ID: <8735pk5zml.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Fri, 1 Oct 2021 16:55:25 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80751C061775;
+        Fri,  1 Oct 2021 13:53:28 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id C38A32839; Fri,  1 Oct 2021 16:53:27 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org C38A32839
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1633121607;
+        bh=V4FoBQA3JU469tT/UTIuI1kHhKaQhNKWB11Q7A/TjLk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sNu31CzYRnflJp0sUgY12SLmNBPaJbn5Ww97L4j+GSky2TF37LZrwnsOOc5wdeBpM
+         vD9DQrUZOCi/JWm+hTHwtUT7zevxjPEFtckRIANraMW9DVPyrZtDW6Nr9ECvq0DBgT
+         eskqqG1KL798BiYEQgfr0lDvLYwf4VCi3xcT9frA=
+Date:   Fri, 1 Oct 2021 16:53:27 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Dai Ngo <dai.ngo@oracle.com>
+Cc:     chuck.lever@oracle.com, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v5 0/2] nfsd: Initial implementation of NFSv4
+ Courteous Server
+Message-ID: <20211001205327.GN959@fieldses.org>
+References: <20210929005641.60861-1-dai.ngo@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210929005641.60861-1-dai.ngo@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-"Theodore Ts'o" <tytso@mit.edu> writes:
+On Tue, Sep 28, 2021 at 08:56:39PM -0400, Dai Ngo wrote:
+> 
+> Hi Bruce,
+> 
+> This series of patches implement the NFSv4 Courteous Server.
 
-> On Wed, Sep 29, 2021 at 04:23:39PM +0530, Shreeya Patel wrote:
->> /proc/self/cwd is a symlink created by the kernel that uses whatever
->> name the dentry has in the dcache. Since the dcache is populated only
->> on the first lookup, with the string used in that lookup, cwd will
->> have an unexpected case, depending on how the data was first looked-up
->> in a case-insesitive filesystem.
->> 
->> Steps to reproduce :-
->> 
->> root@test-box:/src# mkdir insensitive/foo
->> root@test-box:/src# cd insensitive/FOO
->> root@test-box:/src/insensitive/FOO# ls -l /proc/self/cwd
->> lrwxrwxrwx 1 root root /proc/self/cwd -> /src/insensitive/FOO
->> 
->> root@test-box:/src/insensitive/FOO# cd ../fOo
->> root@test-box:/src/insensitive/fOo# ls -l /proc/self/cwd
->> lrwxrwxrwx 1 root root /proc/self/cwd -> /src/insensitive/FOO
->> 
->> Above example shows that 'FOO' was the name used on first lookup here and
->> it is stored in dcache instead of the original name 'foo'. This results
->> in inconsistent name exposed by /proc/self/cwd since it uses the name
->> stored in dcache.
->> 
->> To avoid the above inconsistent name issue, handle the inexact-match string
->> ( a string which is not a byte to byte match, but is an equivalent
->> unicode string ) case in ext4_lookup which would store the original name
->> in dcache using d_add_ci instead of the inexact-match string name.
->
-> I'm not sure this is a problem.  /proc/<pid>/cwd just needs to point
-> at the current working directory for the process.  Why do we care
-> whether it matches the case that was stored on disk?  Whether we use
-> /src/insensitive/FOO, or /src/insensitive/Foo, or
-> /src/insensitive/foo, all of these will reach the cwd for that
-> process.
+Apologies, I keep meaning to get back to this and haven't yet.
 
-Hi Ted,
+I do notice I'm seeing a timeout on pynfs 4.0 test OPEN18.
 
-The dcache name is exposed in more places, like /proc/mounts.  We have a
-bug reported against flatpak where its initialization code bind mounts a
-directory that was previously touched with a different case combination,
-and then checks /proc/mounts in a case-sensitive way to see if the mount
-succeeded.  This code now regresses on CI directories because the name
-it asked to bind mount is not found in /proc/mounts.
+--b.
 
-Sure, we could figure out the dcache name and pass the current case
-spelling of the directory to flatpak, but that could go away at any
-time.  We could also make flatpak CI aware, but that problem will just
-appear elsewhere.
-
-I think the more reasonable approach is to save the disk exact name on
-the dcache, because that is the only version that doesn't change based
-on who won the race for the first lookup.
-
--- 
-Gabriel Krisman Bertazi
+> 
+> A server which does not immediately expunge the state on lease expiration
+> is known as a Courteous Server.  A Courteous Server continues to recognize
+> previously generated state tokens as valid until conflict arises between
+> the expired state and the requests from another client, or the server
+> reboots.
+> 
+> The v2 patch includes the following:
+> 
+> . add new callback, lm_expire_lock, to lock_manager_operations to
+>   allow the lock manager to take appropriate action with conflict lock.
+> 
+> . handle conflicts of NFSv4 locks with NFSv3/NLM and local locks.
+> 
+> . expire courtesy client after 24hr if client has not reconnected.
+> 
+> . do not allow expired client to become courtesy client if there are
+>   waiters for client's locks.
+> 
+> . modify client_info_show to show courtesy client and seconds from
+>   last renew.
+> 
+> . fix a problem with NFSv4.1 server where the it keeps returning
+>   SEQ4_STATUS_CB_PATH_DOWN in the successful SEQUENCE reply, after
+>   the courtesy client re-connects, causing the client to keep sending
+>   BCTS requests to server.
+> 
+> The v3 patch includes the following:
+> 
+> . modified posix_test_lock to check and resolve conflict locks
+>   to handle NLM TEST and NFSv4 LOCKT requests.
+> 
+> . separate out fix for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+> 
+> The v4 patch includes:
+> 
+> . rework nfsd_check_courtesy to avoid dead lock of fl_lock and client_lock
+>   by asking the laudromat thread to destroy the courtesy client.
+> 
+> . handle NFSv4 share reservation conflicts with courtesy client. This
+>   includes conflicts between access mode and deny mode and vice versa.
+> 
+> . drop the patch for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+> 
+> The v5 patch includes:
+> 
+> . fix recursive locking of file_rwsem from posix_lock_file. 
+> 
+> . retest with LOCKDEP enabled.
+> 
+> NOTE: I will submit pynfs tests for courteous server including tests
+> for share reservation conflicts in a separate patch.
+> 
