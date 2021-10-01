@@ -2,121 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A53941F50A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Oct 2021 20:35:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2B5F41F51D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Oct 2021 20:42:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355895AbhJAShY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Oct 2021 14:37:24 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48722 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355832AbhJAShW (ORCPT
+        id S1354452AbhJASnq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Oct 2021 14:43:46 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:35368 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S231826AbhJASn2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Oct 2021 14:37:22 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 63FE01F459BE
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+        Fri, 1 Oct 2021 14:43:28 -0400
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 191IfVMf008675
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 1 Oct 2021 14:41:32 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id ABED215C34AA; Fri,  1 Oct 2021 14:41:31 -0400 (EDT)
+Date:   Fri, 1 Oct 2021 14:41:31 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
 To:     Shreeya Patel <shreeya.patel@collabora.com>
-Cc:     tytso@mit.edu, viro@zeniv.linux.org.uk, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH 1/2] fs: dcache: Handle case-exact lookup in
- d_alloc_parallel
-Organization: Collabora
+Cc:     viro@zeniv.linux.org.uk, adilger.kernel@dilger.ca,
+        krisman@collabora.com, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH 2/2] fs: ext4: Fix the inconsistent name exposed by
+ /proc/self/cwd
+Message-ID: <YVdWW0uyRqYWSgVP@mit.edu>
 References: <cover.1632909358.git.shreeya.patel@collabora.com>
-        <0b8fd2677b797663bfcb97f6aa108193fedf9767.1632909358.git.shreeya.patel@collabora.com>
-Date:   Fri, 01 Oct 2021 14:35:32 -0400
-In-Reply-To: <0b8fd2677b797663bfcb97f6aa108193fedf9767.1632909358.git.shreeya.patel@collabora.com>
-        (Shreeya Patel's message of "Wed, 29 Sep 2021 16:23:38 +0530")
-Message-ID: <87a6js61aj.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+ <8402d1c99877a4fcb152de71005fa9cfb25d86a8.1632909358.git.shreeya.patel@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8402d1c99877a4fcb152de71005fa9cfb25d86a8.1632909358.git.shreeya.patel@collabora.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Shreeya Patel <shreeya.patel@collabora.com> writes:
+On Wed, Sep 29, 2021 at 04:23:39PM +0530, Shreeya Patel wrote:
+> /proc/self/cwd is a symlink created by the kernel that uses whatever
+> name the dentry has in the dcache. Since the dcache is populated only
+> on the first lookup, with the string used in that lookup, cwd will
+> have an unexpected case, depending on how the data was first looked-up
+> in a case-insesitive filesystem.
+> 
+> Steps to reproduce :-
+> 
+> root@test-box:/src# mkdir insensitive/foo
+> root@test-box:/src# cd insensitive/FOO
+> root@test-box:/src/insensitive/FOO# ls -l /proc/self/cwd
+> lrwxrwxrwx 1 root root /proc/self/cwd -> /src/insensitive/FOO
+> 
+> root@test-box:/src/insensitive/FOO# cd ../fOo
+> root@test-box:/src/insensitive/fOo# ls -l /proc/self/cwd
+> lrwxrwxrwx 1 root root /proc/self/cwd -> /src/insensitive/FOO
+> 
+> Above example shows that 'FOO' was the name used on first lookup here and
+> it is stored in dcache instead of the original name 'foo'. This results
+> in inconsistent name exposed by /proc/self/cwd since it uses the name
+> stored in dcache.
+> 
+> To avoid the above inconsistent name issue, handle the inexact-match string
+> ( a string which is not a byte to byte match, but is an equivalent
+> unicode string ) case in ext4_lookup which would store the original name
+> in dcache using d_add_ci instead of the inexact-match string name.
 
-> There is a soft hang caused by a deadlock in d_alloc_parallel which
-> waits up on lookups to finish for the dentries in the parent directory's
-> hash_table.
-> In case when d_add_ci is called from the fs layer's lookup functions,
-> the dentry being looked up is already in the hash table (created before
-> the fs lookup function gets called). We should not be processing the
-> same dentry that is being looked up, hence, in case of case-insensitive
-> filesystems we are making it a case-exact match to prevent this from
-> happening.
->
-> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
-> ---
->  fs/dcache.c | 20 ++++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index cf871a81f4fd..2a28ab64a165 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -2565,6 +2565,15 @@ static void d_wait_lookup(struct dentry *dentry)
->  	}
->  }
->  
-> +static inline bool d_same_exact_name(const struct dentry *dentry,
-> +				     const struct dentry *parent,
-> +				     const struct qstr *name)
-> +{
-> +	if (dentry->d_name.len != name->len)
-> +		return false;
-> +	return dentry_cmp(dentry, name->name, name->len) == 0;
-> +}
+I'm not sure this is a problem.  /proc/<pid>/cwd just needs to point
+at the current working directory for the process.  Why do we care
+whether it matches the case that was stored on disk?  Whether we use
+/src/insensitive/FOO, or /src/insensitive/Foo, or
+/src/insensitive/foo, all of these will reach the cwd for that
+process.
 
-I don't like the idea of having a flavor of a dentry comparison function
-that doesn't invoke d_compare.  In particular because d_compare might be
-used for all sorts of things, and this fix is really specific to the
-case-insensitive case.
-
-Would it be possible to fold this change into generic_ci_d_compare?  If
-we could flag the dentry as part of a parallel lookup under the relevant
-condition, generic_ci_d_compare could simply return immediately in
-such case.
-
-> +
->  struct dentry *d_alloc_parallel(struct dentry *parent,
->  				const struct qstr *name,
->  				wait_queue_head_t *wq)
-> @@ -2575,6 +2584,7 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
->  	struct dentry *new = d_alloc(parent, name);
->  	struct dentry *dentry;
->  	unsigned seq, r_seq, d_seq;
-> +	int ci_dir = IS_CASEFOLDED(parent->d_inode);
->  
->  	if (unlikely(!new))
->  		return ERR_PTR(-ENOMEM);
-> @@ -2626,8 +2636,14 @@ struct dentry *d_alloc_parallel(struct dentry *parent,
->  			continue;
->  		if (dentry->d_parent != parent)
->  			continue;
-> -		if (!d_same_name(dentry, parent, name))
-> -			continue;
-> +		if (ci_dir) {
-> +			if (!d_same_exact_name(dentry, parent, name))
-> +				continue;
-> +		} else {
-
-
-As is, this is problematic because d_alloc_parallel is also part of the
-lookup path (see lookup_open, lookup_slow).  In those cases, you want to
-do the CI comparison, to prevent racing two tasks creating a dentry
-differing only by case.
-
-
-> +			if (!d_same_name(dentry, parent, name))
-> +				continue;
-> +		}
-> +
->  		hlist_bl_unlock(b);
->  		/* now we can try to grab a reference */
->  		if (!lockref_get_not_dead(&dentry->d_lockref)) {
-
--- 
-Gabriel Krisman Bertazi
+					- Ted
