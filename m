@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EEA1941F1B3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Oct 2021 18:02:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3E2741F1B6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Oct 2021 18:02:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355170AbhJAQD7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Oct 2021 12:03:59 -0400
-Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:60201 "EHLO
-        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1354611AbhJAQD7 (ORCPT
+        id S1355192AbhJAQEi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Oct 2021 12:04:38 -0400
+Received: from relayfre-01.paragon-software.com ([176.12.100.13]:34426 "EHLO
+        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1355184AbhJAQEh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Oct 2021 12:03:59 -0400
+        Fri, 1 Oct 2021 12:04:37 -0400
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 446A782280;
-        Fri,  1 Oct 2021 19:02:13 +0300 (MSK)
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id BEA9ED4;
+        Fri,  1 Oct 2021 19:02:51 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1633104133;
-        bh=aEdd+7SJXNGYXsfP8rxmvKaY2CfuJOEXmN9SILRmG5M=;
+        d=paragon-software.com; s=mail; t=1633104171;
+        bh=3UJJxzDx9Q74zdwKz0wK73cjUkXg6LJ1o+BeyMURVzo=;
         h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=RJLB2QdJTgvJbuvIO9/Es50YfzbyoyyzkjjqrhdGPTyShvz0rrdw1vAPOnqP8A8Bz
-         K/HbcUcZAkyyEBjwGTgGdWMv2xpmGi781FWJ1OlZdlg4WNgMGkczDiK3hZw3NLSSBF
-         GV6mtYIU8Ys20B2fbZyI2h21/C8A3UpO0VNtrKTA=
+        b=cl1Y/+kgYNJlFm1MnY4synOR1k+ggyomol0JmgcHRJV1AjOdCBXiiQVvB8aCRG02/
+         8bPi003fatCpkO8dNgF/N3NAHPEi32G/TDzulFqNWaJ2JTmIejSp64Fn1F6ULvnpSG
+         U8FnnD5XTKLzXxYa8HdGWXQJIh+D4Aio14Ppvths=
 Received: from [192.168.211.98] (192.168.211.98) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Fri, 1 Oct 2021 19:02:12 +0300
-Message-ID: <2ce78ab6-453d-d7bf-9969-eb47b7347098@paragon-software.com>
-Date:   Fri, 1 Oct 2021 19:02:12 +0300
+ 15.1.2176.2; Fri, 1 Oct 2021 19:02:51 +0300
+Message-ID: <43e50860-3708-2887-86f7-e201782a2001@paragon-software.com>
+Date:   Fri, 1 Oct 2021 19:02:51 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.1.2
-Subject: [PATCH 1/2] fs/ntfs3: Remove unnecessary functions
+Subject: [PATCH 2/2] fs/ntfs3: Remove unnecessary includes
 Content-Language: en-US
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     <ntfs3@lists.linux.dev>
@@ -47,133 +47,245 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We don't need ntfs_xattr_get_acl and ntfs_xattr_set_acl.
-There are ntfs_get_acl_ex and ntfs_set_acl_ex.
+All removed includes already included from other headers.
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
- fs/ntfs3/xattr.c | 94 ------------------------------------------------
- 1 file changed, 94 deletions(-)
+ fs/ntfs3/attrib.c   | 2 --
+ fs/ntfs3/attrlist.c | 2 --
+ fs/ntfs3/dir.c      | 2 --
+ fs/ntfs3/file.c     | 2 --
+ fs/ntfs3/frecord.c  | 2 --
+ fs/ntfs3/fslog.c    | 2 --
+ fs/ntfs3/fsntfs.c   | 2 --
+ fs/ntfs3/index.c    | 3 ---
+ fs/ntfs3/inode.c    | 2 --
+ fs/ntfs3/lznt.c     | 1 -
+ fs/ntfs3/namei.c    | 2 --
+ fs/ntfs3/ntfs_fs.h  | 1 -
+ fs/ntfs3/record.c   | 2 --
+ fs/ntfs3/run.c      | 2 --
+ fs/ntfs3/super.c    | 4 +---
+ fs/ntfs3/xattr.c    | 2 --
+ 16 files changed, 1 insertion(+), 32 deletions(-)
 
+diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
+index 8a00fa978f5f..dd4f1613081d 100644
+--- a/fs/ntfs3/attrib.c
++++ b/fs/ntfs3/attrib.c
+@@ -10,8 +10,6 @@
+ #include <linux/slab.h>
+ #include <linux/kernel.h>
+ 
+-#include "debug.h"
+-#include "ntfs.h"
+ #include "ntfs_fs.h"
+ 
+ /*
+diff --git a/fs/ntfs3/attrlist.c b/fs/ntfs3/attrlist.c
+index bad6d8a849a2..c3934a2a28a9 100644
+--- a/fs/ntfs3/attrlist.c
++++ b/fs/ntfs3/attrlist.c
+@@ -7,8 +7,6 @@
+ 
+ #include <linux/fs.h>
+ 
+-#include "debug.h"
+-#include "ntfs.h"
+ #include "ntfs_fs.h"
+ 
+ /*
+diff --git a/fs/ntfs3/dir.c b/fs/ntfs3/dir.c
+index 785e72d4392e..293303f00b66 100644
+--- a/fs/ntfs3/dir.c
++++ b/fs/ntfs3/dir.c
+@@ -10,8 +10,6 @@
+ #include <linux/fs.h>
+ #include <linux/nls.h>
+ 
+-#include "debug.h"
+-#include "ntfs.h"
+ #include "ntfs_fs.h"
+ 
+ /* Convert little endian UTF-16 to NLS string. */
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index 5fb3508e5422..13789543a0fb 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -13,8 +13,6 @@
+ #include <linux/falloc.h>
+ #include <linux/fiemap.h>
+ 
+-#include "debug.h"
+-#include "ntfs.h"
+ #include "ntfs_fs.h"
+ 
+ static int ntfs_ioctl_fitrim(struct ntfs_sb_info *sbi, unsigned long arg)
+diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
+index 007602badd90..b27f3ca2704b 100644
+--- a/fs/ntfs3/frecord.c
++++ b/fs/ntfs3/frecord.c
+@@ -9,8 +9,6 @@
+ #include <linux/fs.h>
+ #include <linux/vmalloc.h>
+ 
+-#include "debug.h"
+-#include "ntfs.h"
+ #include "ntfs_fs.h"
+ #ifdef CONFIG_NTFS3_LZX_XPRESS
+ #include "lib/lib.h"
+diff --git a/fs/ntfs3/fslog.c b/fs/ntfs3/fslog.c
+index 06492f088d60..4bf340babb32 100644
+--- a/fs/ntfs3/fslog.c
++++ b/fs/ntfs3/fslog.c
+@@ -10,8 +10,6 @@
+ #include <linux/random.h>
+ #include <linux/slab.h>
+ 
+-#include "debug.h"
+-#include "ntfs.h"
+ #include "ntfs_fs.h"
+ 
+ /*
+diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
+index 4de9acb16968..85cbbb8f41ea 100644
+--- a/fs/ntfs3/fsntfs.c
++++ b/fs/ntfs3/fsntfs.c
+@@ -10,8 +10,6 @@
+ #include <linux/fs.h>
+ #include <linux/kernel.h>
+ 
+-#include "debug.h"
+-#include "ntfs.h"
+ #include "ntfs_fs.h"
+ 
+ // clang-format off
+diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
+index 6f81e3a49abf..a25f04dcb85b 100644
+--- a/fs/ntfs3/index.c
++++ b/fs/ntfs3/index.c
+@@ -8,10 +8,7 @@
+ #include <linux/blkdev.h>
+ #include <linux/buffer_head.h>
+ #include <linux/fs.h>
+-#include <linux/kernel.h>
+ 
+-#include "debug.h"
+-#include "ntfs.h"
+ #include "ntfs_fs.h"
+ 
+ static const struct INDEX_NAMES {
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 7dd162f6a7e2..06113610c529 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -13,8 +13,6 @@
+ #include <linux/uio.h>
+ #include <linux/writeback.h>
+ 
+-#include "debug.h"
+-#include "ntfs.h"
+ #include "ntfs_fs.h"
+ 
+ /*
+diff --git a/fs/ntfs3/lznt.c b/fs/ntfs3/lznt.c
+index 28f654561f27..d9614b8e1b4e 100644
+--- a/fs/ntfs3/lznt.c
++++ b/fs/ntfs3/lznt.c
+@@ -11,7 +11,6 @@
+ #include <linux/string.h>
+ #include <linux/types.h>
+ 
+-#include "debug.h"
+ #include "ntfs_fs.h"
+ 
+ // clang-format off
+diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
+index bc741213ad84..ed29cd3e98f4 100644
+--- a/fs/ntfs3/namei.c
++++ b/fs/ntfs3/namei.c
+@@ -8,8 +8,6 @@
+ #include <linux/fs.h>
+ #include <linux/nls.h>
+ 
+-#include "debug.h"
+-#include "ntfs.h"
+ #include "ntfs_fs.h"
+ 
+ /*
+diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
+index 38b7c1a9dc52..e6f37f9993a0 100644
+--- a/fs/ntfs3/ntfs_fs.h
++++ b/fs/ntfs3/ntfs_fs.h
+@@ -29,7 +29,6 @@
+ #include <asm/div64.h>
+ #include <asm/page.h>
+ 
+-#include "debug.h"
+ #include "ntfs.h"
+ 
+ struct dentry;
+diff --git a/fs/ntfs3/record.c b/fs/ntfs3/record.c
+index 861e35791506..3dd7b960ac8d 100644
+--- a/fs/ntfs3/record.c
++++ b/fs/ntfs3/record.c
+@@ -7,8 +7,6 @@
+ 
+ #include <linux/fs.h>
+ 
+-#include "debug.h"
+-#include "ntfs.h"
+ #include "ntfs_fs.h"
+ 
+ static inline int compare_attr(const struct ATTRIB *left, enum ATTR_TYPE type,
+diff --git a/fs/ntfs3/run.c b/fs/ntfs3/run.c
+index a8fec651f973..f5a5ce7aa206 100644
+--- a/fs/ntfs3/run.c
++++ b/fs/ntfs3/run.c
+@@ -10,8 +10,6 @@
+ #include <linux/fs.h>
+ #include <linux/log2.h>
+ 
+-#include "debug.h"
+-#include "ntfs.h"
+ #include "ntfs_fs.h"
+ 
+ /* runs_tree is a continues memory. Try to avoid big size. */
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index 705d8b4f4894..bd8d39992b35 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -35,8 +35,6 @@
+ #include <linux/seq_file.h>
+ #include <linux/statfs.h>
+ 
+-#include "debug.h"
+-#include "ntfs.h"
+ #include "ntfs_fs.h"
+ #ifdef CONFIG_NTFS3_LZX_XPRESS
+ #include "lib/lib.h"
+@@ -772,7 +770,7 @@ static int ntfs_init_from_boot(struct super_block *sb, u32 sector_size,
+ 		/* No way to use ntfs_get_block in this case. */
+ 		ntfs_err(
+ 			sb,
+-			"Failed to mount 'cause NTFS's cluster size (%u) is less than media sector size (%u)",
++			"Failed to mount 'cause NTFS's cluster size (%u) is less than media's sector size (%u)",
+ 			sbi->cluster_size, sector_size);
+ 		goto out;
+ 	}
 diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-index 83bbee277e12..111355692163 100644
+index 111355692163..0673ba5e8c43 100644
 --- a/fs/ntfs3/xattr.c
 +++ b/fs/ntfs3/xattr.c
-@@ -621,67 +621,6 @@ int ntfs_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
- 	return ntfs_set_acl_ex(mnt_userns, inode, acl, type, 0);
- }
+@@ -10,8 +10,6 @@
+ #include <linux/posix_acl_xattr.h>
+ #include <linux/xattr.h>
  
--static int ntfs_xattr_get_acl(struct user_namespace *mnt_userns,
--			      struct inode *inode, int type, void *buffer,
--			      size_t size)
--{
--	struct posix_acl *acl;
--	int err;
--
--	if (!(inode->i_sb->s_flags & SB_POSIXACL)) {
--		ntfs_inode_warn(inode, "add mount option \"acl\" to use acl");
--		return -EOPNOTSUPP;
--	}
--
--	acl = ntfs_get_acl(inode, type);
--	if (IS_ERR(acl))
--		return PTR_ERR(acl);
--
--	if (!acl)
--		return -ENODATA;
--
--	err = posix_acl_to_xattr(mnt_userns, acl, buffer, size);
--	ntfs_posix_acl_release(acl);
--
--	return err;
--}
--
--static int ntfs_xattr_set_acl(struct user_namespace *mnt_userns,
--			      struct inode *inode, int type, const void *value,
--			      size_t size)
--{
--	struct posix_acl *acl;
--	int err;
--
--	if (!(inode->i_sb->s_flags & SB_POSIXACL)) {
--		ntfs_inode_warn(inode, "add mount option \"acl\" to use acl");
--		return -EOPNOTSUPP;
--	}
--
--	if (!inode_owner_or_capable(mnt_userns, inode))
--		return -EPERM;
--
--	if (!value) {
--		acl = NULL;
--	} else {
--		acl = posix_acl_from_xattr(mnt_userns, value, size);
--		if (IS_ERR(acl))
--			return PTR_ERR(acl);
--
--		if (acl) {
--			err = posix_acl_valid(mnt_userns, acl);
--			if (err)
--				goto release_and_out;
--		}
--	}
--
--	err = ntfs_set_acl(mnt_userns, inode, acl, type);
--
--release_and_out:
--	ntfs_posix_acl_release(acl);
--	return err;
--}
--
- /*
-  * ntfs_init_acl - Initialize the ACLs of a new inode.
-  *
-@@ -848,23 +787,6 @@ static int ntfs_getxattr(const struct xattr_handler *handler, struct dentry *de,
- 		goto out;
- 	}
+-#include "debug.h"
+-#include "ntfs.h"
+ #include "ntfs_fs.h"
  
--#ifdef CONFIG_NTFS3_FS_POSIX_ACL
--	if ((name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 &&
--	     !memcmp(name, XATTR_NAME_POSIX_ACL_ACCESS,
--		     sizeof(XATTR_NAME_POSIX_ACL_ACCESS))) ||
--	    (name_len == sizeof(XATTR_NAME_POSIX_ACL_DEFAULT) - 1 &&
--	     !memcmp(name, XATTR_NAME_POSIX_ACL_DEFAULT,
--		     sizeof(XATTR_NAME_POSIX_ACL_DEFAULT)))) {
--		/* TODO: init_user_ns? */
--		err = ntfs_xattr_get_acl(
--			&init_user_ns, inode,
--			name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1
--				? ACL_TYPE_ACCESS
--				: ACL_TYPE_DEFAULT,
--			buffer, size);
--		goto out;
--	}
--#endif
- 	/* Deal with NTFS extended attribute. */
- 	err = ntfs_get_ea(inode, name, name_len, buffer, size, NULL);
- 
-@@ -977,22 +899,6 @@ static noinline int ntfs_setxattr(const struct xattr_handler *handler,
- 		goto out;
- 	}
- 
--#ifdef CONFIG_NTFS3_FS_POSIX_ACL
--	if ((name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 &&
--	     !memcmp(name, XATTR_NAME_POSIX_ACL_ACCESS,
--		     sizeof(XATTR_NAME_POSIX_ACL_ACCESS))) ||
--	    (name_len == sizeof(XATTR_NAME_POSIX_ACL_DEFAULT) - 1 &&
--	     !memcmp(name, XATTR_NAME_POSIX_ACL_DEFAULT,
--		     sizeof(XATTR_NAME_POSIX_ACL_DEFAULT)))) {
--		err = ntfs_xattr_set_acl(
--			mnt_userns, inode,
--			name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1
--				? ACL_TYPE_ACCESS
--				: ACL_TYPE_DEFAULT,
--			value, size);
--		goto out;
--	}
--#endif
- 	/* Deal with NTFS extended attribute. */
- 	err = ntfs_set_ea(inode, name, name_len, value, size, flags, 0);
- 
+ // clang-format off
 -- 
 2.33.0
 
