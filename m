@@ -2,87 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C2BCE41E847
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Oct 2021 09:23:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBC8541E941
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Oct 2021 10:55:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231300AbhJAHYx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Oct 2021 03:24:53 -0400
-Received: from out2.migadu.com ([188.165.223.204]:29995 "EHLO out2.migadu.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1352464AbhJAHYw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Oct 2021 03:24:52 -0400
-Date:   Fri, 1 Oct 2021 16:23:00 +0900
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1633072987;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ymfgiYvTlJ3AQGX94b1sSvkk9jsxxsuG2lLJcwnPHCo=;
-        b=rqf1nYtN4SSLByWt0acEMV39Uq8aX7PCQTdJEG0XpnxSKHWodaJOaMJTMmm2ooZnAdd0O7
-        NtF8R/UrBhknWFSHuDXNfOxzmwsN4GZESadxdACEuAjYeedQmotJ8FpD1XDj8BxKFatkHr
-        EKSkJuMS7qGRFa/w9j/L1qpi7deXeFY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Naoya Horiguchi <naoya.horiguchi@linux.dev>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     naoya.horiguchi@nec.com, hughd@google.com,
-        kirill.shutemov@linux.intel.com, willy@infradead.org,
-        peterx@redhat.com, osalvador@suse.de, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
- for PMD page fault
-Message-ID: <20211001072300.GC1364952@u2004>
-References: <20210930215311.240774-1-shy828301@gmail.com>
- <20210930215311.240774-3-shy828301@gmail.com>
+        id S1352860AbhJAI4w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Oct 2021 04:56:52 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:34395 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1352728AbhJAI4v (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 1 Oct 2021 04:56:51 -0400
+Received: by mail-io1-f72.google.com with SMTP id k20-20020a5d97d4000000b005da6f3b7dc7so8263349ios.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Oct 2021 01:55:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=mYVNj7GUYQ3ONE/lwuTfVtZPuGTc99UdHlU4HzP4RMU=;
+        b=H0sRSoON/Mijbeq3H5GZ7tl/RRaz+XT4wRKWAsj6ZuPNXHwyaLoTjhmPNTdp0SDGlV
+         AZVrsB1GEq/xuB0Rem+Hf/q1mWJdo8JN46NcBmgzrEzK1uiDX339g186aimDU26ECMiT
+         3JhPghMYZ/hMU3OoC2VmPMFzEXlV+Q+Q4iNp1/lYlRR0HDLGpBS/cPj+w0yyNKZZKVsW
+         oxyHBMFJZG+LSI7pjDW9etErSFS1NkKp4OS0xnec7JsPka4I1DGYWFnGdW9/RZ/dzwWh
+         /5wdq/93IfTAV9UMUnWgIG7621qClB6GyjcDjkWl889HxjuDvn+hz+Qe3wkjjcUC5KO5
+         hEoQ==
+X-Gm-Message-State: AOAM533B/qI1n/BxqiafGiFeuD9NQEWuvF6H8WbQ0afJdGDw06UX0hhp
+        0tXYl2lixlajzulY0caDv59Uw0VEWyFyIhd5yzGi3eNk9jUv
+X-Google-Smtp-Source: ABdhPJwHjqhjMTIzJ+KD7re2/BvRja309HrPWUEceEN/YAnuUvrfDViaJV3ThPI7N/1fki4yZUmQcFv8x/XyxaaJ2RGEnxfueAgd
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210930215311.240774-3-shy828301@gmail.com>
-X-Migadu-Flow: FLOW_OUT
-X-Migadu-Auth-User: naoya.horiguchi@linux.dev
+X-Received: by 2002:a05:6638:3713:: with SMTP id k19mr8744051jav.44.1633078507394;
+ Fri, 01 Oct 2021 01:55:07 -0700 (PDT)
+Date:   Fri, 01 Oct 2021 01:55:07 -0700
+In-Reply-To: <000000000000d068cf05c716264c@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000052dbbf05cd46b81e@google.com>
+Subject: Re: [syzbot] KASAN: use-after-free Read in em28xx_close_extension
+From:   syzbot <syzbot+005037419ebdf14e1d87@syzkaller.appspotmail.com>
+To:     dan.carpenter@oracle.com, hdanton@sina.com,
+        hverkuil-cisco@xs4all.nl, igormtorrente@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, mchehab@kernel.org,
+        mudongliangabcd@gmail.com, stephen.s.brennan@oracle.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 30, 2021 at 02:53:08PM -0700, Yang Shi wrote:
-> When handling shmem page fault the THP with corrupted subpage could be PMD
-> mapped if certain conditions are satisfied.  But kernel is supposed to
-> send SIGBUS when trying to map hwpoisoned page.
-> 
-> There are two paths which may do PMD map: fault around and regular fault.
-> 
-> Before commit f9ce0be71d1f ("mm: Cleanup faultaround and finish_fault() codepaths")
-> the thing was even worse in fault around path.  The THP could be PMD mapped as
-> long as the VMA fits regardless what subpage is accessed and corrupted.  After
-> this commit as long as head page is not corrupted the THP could be PMD mapped.
-> 
-> In the regular fault path the THP could be PMD mapped as long as the corrupted
-> page is not accessed and the VMA fits.
-> 
-> This loophole could be fixed by iterating every subpage to check if any
-> of them is hwpoisoned or not, but it is somewhat costly in page fault path.
-> 
-> So introduce a new page flag called HasHWPoisoned on the first tail page.  It
-> indicates the THP has hwpoisoned subpage(s).  It is set if any subpage of THP
-> is found hwpoisoned by memory failure and cleared when the THP is freed or
-> split.
-> 
-> Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
-> Cc: <stable@vger.kernel.org>
-> Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: Yang Shi <shy828301@gmail.com>
-...
-> @@ -668,6 +673,20 @@ PAGEFLAG_FALSE(DoubleMap)
->  	TESTSCFLAG_FALSE(DoubleMap)
->  #endif
->  
-> +#if defined(CONFIG_MEMORY_FAILURE) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
-> +/*
-> + * PageHasPoisoned indicates that at least on subpage is hwpoisoned in the
+syzbot suspects this issue was fixed by commit:
 
-Maybe you meant as follow?
+commit 0766ec82e5fb26fc5dc6d592bc61865608bdc651
+Author: Stephen Brennan <stephen.s.brennan@oracle.com>
+Date:   Wed Sep 1 17:51:41 2021 +0000
 
-+ * PageHasHWPoisoned indicates that at least one subpage is hwpoisoned in the
+    namei: Fix use after free in kern_path_locked
 
-Thanks,
-Naoya Horiguchi
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17bf2a03300000
+start commit:   fa54d366a6e4 Merge tag 'acpi-5.14-rc7' of git://git.kernel..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=96f0602203250753
+dashboard link: https://syzkaller.appspot.com/bug?extid=005037419ebdf14e1d87
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14c086c5300000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12950bee300000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: namei: Fix use after free in kern_path_locked
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
