@@ -2,86 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DDE541FD57
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Oct 2021 19:15:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B82F41FD7B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Oct 2021 19:41:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233614AbhJBRQz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 2 Oct 2021 13:16:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44730 "EHLO
+        id S233748AbhJBRnO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 Oct 2021 13:43:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233618AbhJBRQy (ORCPT
+        with ESMTP id S233821AbhJBRlo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 2 Oct 2021 13:16:54 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8AFEC0613EC
-        for <linux-fsdevel@vger.kernel.org>; Sat,  2 Oct 2021 10:15:08 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id ba1so46887576edb.4
-        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Oct 2021 10:15:08 -0700 (PDT)
+        Sat, 2 Oct 2021 13:41:44 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8409C0613EC;
+        Sat,  2 Oct 2021 10:39:57 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id d26so21034319wrb.6;
+        Sat, 02 Oct 2021 10:39:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=2BMZhUbe/xBRGXRcWq9F8f7z46XdWDlUhMFMilqFGQk=;
-        b=GxODt0eNCnG7xc2XlXER0tyuqkeUaSmjibFdzv76OfofyDoEI1Lv714O4lrh59rfwx
-         jb3SlVo+jRzIFsGECF7vsLFMkbGva+OwcA3hGy6xhyztUZ5ZtOE9iG6Rj59M2gnxn/PW
-         8qc1eTrG/1YHBhkYraDx3KHW5NXNXZtwXfOGU8OrTk04ZlBRUACZlzZRfWJVaPalkkFl
-         evrvFdaVyiYbVavj99BUvJUl4hXcQdMl6t92G8KR19JBa2BcUBgMqjsHX5srI4wauLvr
-         /HOBY90akJ9TygBxY9kS4YCctsFarM5C63bE8i0U0uX+ZBh5y6hq4mL0IBh0H67rcRZN
-         lpfA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PLvlEg/xtfBKsFwbRc8N23nwQpdQ2n6wElEzvyFdDJE=;
+        b=FR33PUHHB5jWqQp2ersM4IZykeSE+TVTDI4sEmljdj0V5Op5FWTJ5ouW2iHTg7aMiF
+         aFuvlvxHyIykRVVb47eMYpR/B9vt2GEnQdIGyMYLYP7P1TEisT8Edpq27t/trfJM8Eld
+         FkH3CU/vbg0FMUguXS7G20/XuJJRlmf9Fn5UpHJsenAr3BNnbVK7NzWk/DHpusqHtf4k
+         n2v/v+y6xkxLhq1DPP5aGc/BpEShhLc9eTKm7NHG2QNeLAyDIuAXSR0dCSphv3rqaaX6
+         BT7cquGuYtyWFM1zs/XkKtmudsZxRu91XBnNQxWvMV4cTj20H94KTNTZWUzGda91iD88
+         3Jww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=2BMZhUbe/xBRGXRcWq9F8f7z46XdWDlUhMFMilqFGQk=;
-        b=CrdwWzHt1ZaWoxGGZ3E3g44Kq24F0RPPauhlF3+18I3/U+GVA8rHB9nHowhPELt3BU
-         7USDHeo2j2TTU3nlq2ZY4AwnmYeHTuQBkmgGrYAD6m14RfVaMFN1lIaRDuFkRrYJyycF
-         GSKzs4PeovjscLcuLsLSIUBjPgN5SwjlCggR0HWSXWYCqDpO5Kw9a+9CfsnD7I2sS/f/
-         nUzYLiOT6fw9OcMeNWBQMyHvXOCd9RRQg/4S/DpJprE2VMgNUxvYCpMczQaBopQqmANP
-         1Sf4RyXy0OqGaUoVzg4Eg93hS48sn/aAOxiSqNDqDLs1mDJIJYZZbwH/NuB6laYXGZsU
-         U2qg==
-X-Gm-Message-State: AOAM5311MqY3RYMwc7gSvwBjlirnjxve0doxZtaD2Xmil3YEKi+pV02N
-        VBjmTb8eWBWBMuv8nOlBbmyjwtYFCDrYpmTIP8I=
-X-Google-Smtp-Source: ABdhPJzWApakfUagkB55d1N3J/iX6yyJ6DuDz9dOAlrzq2xCoT+XgDtii/N+Xx1Q09IoOZ7HcuzZLmJGjnR8fxSWumU=
-X-Received: by 2002:a50:cf86:: with SMTP id h6mr5242758edk.104.1633194906913;
- Sat, 02 Oct 2021 10:15:06 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PLvlEg/xtfBKsFwbRc8N23nwQpdQ2n6wElEzvyFdDJE=;
+        b=kThg0GW2Hn4p7AHQSJic7qkvchQvZJ8FFbzF96LnNgBE8m8sLf5HY7ZzjG39nKjNah
+         6bajRJ9akJqN3kTcZMDtw/VorzD80SNmGrgdsAGZlH/GR7egiGe6QhWhN22VX9RCJQB+
+         Q599s36cXpNuBmPqMF4+9YWosIxn8xl8zCmmpd3LnF16BN4FUcc59yrZ4VLOy73MQuRT
+         ghiJPWMpBBCY9SrEHXDIcsMpJwB8/ikqRhSR2KsTBs5WtGzfKnm7qbjvD7nilD1IGBtS
+         IHXILaH6KXeqZ5Jy4mIvAmpDKbmTpshjDS8//RonUqPVsFO51B0Cbo9YTSmOSzr/8qJZ
+         8OLg==
+X-Gm-Message-State: AOAM533+ckALD/SO7FMYR4Ts4RsJPlfYVqTRH0hH+T+SjY0P3PB9ilcP
+        ssyYNML3BeHSU/2KXuhN6mjylxZnyjo=
+X-Google-Smtp-Source: ABdhPJxZkKz8U6ZDP/F8/K8gIkDwCTyowWyjG6AvNi8m/BcGSzSfBgcfTfEmq/0f/4DDwMU3cFho9A==
+X-Received: by 2002:adf:bb88:: with SMTP id q8mr4311262wrg.390.1633196396262;
+        Sat, 02 Oct 2021 10:39:56 -0700 (PDT)
+Received: from [10.8.0.30] ([195.53.121.100])
+        by smtp.gmail.com with ESMTPSA id b15sm10995233wru.9.2021.10.02.10.39.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Oct 2021 10:39:55 -0700 (PDT)
+Subject: Re: [PATCH] mount.2: note that mandatory locking is now fully
+ deprecated
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     mtk.manpages@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        linux-man@vger.kernel.org
+References: <20211001115724.16392-1-jlayton@kernel.org>
+From:   "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
+Message-ID: <70df73be-1f6a-2317-fe60-79c9d0575d5e@gmail.com>
+Date:   Sat, 2 Oct 2021 19:39:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Sender: alimahazem02@gmail.com
-Received: by 2002:a54:3f4c:0:0:0:0:0 with HTTP; Sat, 2 Oct 2021 10:15:06 -0700 (PDT)
-From:   Anderson Thereza <anderson.thereza24@gmail.com>
-Date:   Sat, 2 Oct 2021 10:15:06 -0700
-X-Google-Sender-Auth: PzsHzxzcP0FeJAHUzFobkHo723s
-Message-ID: <CABBDEbid99MWNgTuwUnqYUZAb+UhbUa5DY-YMzoqsf9nbonuLQ@mail.gmail.com>
-Subject: Re: Greetings My Dear,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20211001115724.16392-1-jlayton@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Greetings,
+Hello Jeff,
 
-I sent this mail praying it will find you in a good condition, since I
-myself am in a very critical health condition in which I sleep every
-night without knowing if I may be alive to see the next day. I am Mrs.
-theresa anderson, a widow suffering from a long time illness. I have
-some funds I inherited from my late husband, the sum of
-($11,000,000.00, Eleven Million Dollars) my Doctor told me recently
-that I have serious sickness which is a cancer problem. What disturbs
-me most is my stroke sickness. Having known my condition, I decided to
-donate this fund to a good person that will utilize it the way I am
-going to instruct herein. I need a very honest God.
+On 10/1/21 1:57 PM, Jeff Layton wrote:
+> This support has been fully removed from the kernel as of v5.15.
+> 
+> Cc: Jan Kara <jack@suse.cz>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>   man2/mount.2 | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/man2/mount.2 b/man2/mount.2
+> index bedd39e68a68..a7ae65fb0142 100644
+> --- a/man2/mount.2
+> +++ b/man2/mount.2
+> @@ -195,7 +195,8 @@ this mount option requires the
+>   .B CAP_SYS_ADMIN
+>   capability and a kernel configured with the
+>   .B CONFIG_MANDATORY_FILE_LOCKING
+> -option.
+> +option. Mandatory locking has been fully deprecated in v5.15 kernels, so
+> +this flag should be considered deprecated.
 
-fearing a person who can claim this money and use it for Charity
-works, for orphanages, widows and also build schools for less
-privileges that will be named after my late husband if possible and to
-promote the word of God and the effort that the house of God is
-maintained. I do not want a situation where this money will be used in
-an ungodly manner. That's why I' making this decision. I'm not afraid
-of death so I know where I'm going. I accept this decision because I
-do not have any child who will inherit this money after I die. Please
-I want your sincere and urgent answer to know if you will be able to
-execute this project, and I will give you more information on how the
-fund will be transferred to your bank account. I am waiting for your
-reply.
+Please use semantic newlines, as man-pages(7) notes.  It is especially 
+important here, as otherwise you're hardcoding the number of spaces 
+after the '.' (which if you don't, will typically be 2).
 
-May God Bless you,
-Mrs. theresa anderson.
+See man-pages(7):
+
+    Use semantic newlines
+        In the source of a manual page,  new  sentences  should  be
+        started  on  new  lines, and long sentences should be split
+        into lines at clause breaks  (commas,  semicolons,  colons,
+        and  so on).  This convention, sometimes known as "semantic
+        newlines", makes it easier to see the  effect  of  patches,
+        which often operate at the level of individual sentences or
+        sentence clauses.
+
+
+Cheers,
+
+Alex
+
+>   .TP
+>   .B MS_NOATIME
+>   Do not update access times for (all types of) files on this filesystem.
+> 
+
+
+-- 
+Alejandro Colomar
+Linux man-pages comaintainer; https://www.kernel.org/doc/man-pages/
+http://www.alejandro-colomar.es/
