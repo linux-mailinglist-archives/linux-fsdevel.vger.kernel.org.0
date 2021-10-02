@@ -2,84 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CEDDE41FB79
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Oct 2021 14:03:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DDE541FD57
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Oct 2021 19:15:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232987AbhJBMFl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 2 Oct 2021 08:05:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60954 "EHLO
+        id S233614AbhJBRQz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 Oct 2021 13:16:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232991AbhJBMFk (ORCPT
+        with ESMTP id S233618AbhJBRQy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 2 Oct 2021 08:05:40 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F16BDC0613EF
-        for <linux-fsdevel@vger.kernel.org>; Sat,  2 Oct 2021 05:03:54 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id r75so14715025iod.7
-        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Oct 2021 05:03:54 -0700 (PDT)
+        Sat, 2 Oct 2021 13:16:54 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8AFEC0613EC
+        for <linux-fsdevel@vger.kernel.org>; Sat,  2 Oct 2021 10:15:08 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id ba1so46887576edb.4
+        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Oct 2021 10:15:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=nsZbpm1YBoHMpWTnzHLuE/zYZ0yg4jBiKD5Q7oCTPBE=;
-        b=idRfWwWRQcrPHyjwdf3kM/roBVLtNJzTTHvbOcy9uQHlJQ9zwcG3Fbykno0UxqDOln
-         OrKGgbsKZcVclL5reOWz/9XC9sFjfKNSuRmYDnIUv7HtuEBB7B58+UyxhFA1Q7a/w47L
-         DtZVpozM2Yq5l5YTGkpLRrL7yjqUJfJPuKvg73OqoK0VyjcjX58Pp6ygc3z5YaVA3ePN
-         S56JNN+ab72eDveTTtKj0V/g8gN8h69sise9pk8wqpd6ktdWmmChcbmN7/0GT46bQaKM
-         v293PbxKBUw/eF6NUmeh/yBw0MnmmUmWsuHRS3dS+RSGKQHB5ltN0+I2fzQW0QuGyzRH
-         xeUw==
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=2BMZhUbe/xBRGXRcWq9F8f7z46XdWDlUhMFMilqFGQk=;
+        b=GxODt0eNCnG7xc2XlXER0tyuqkeUaSmjibFdzv76OfofyDoEI1Lv714O4lrh59rfwx
+         jb3SlVo+jRzIFsGECF7vsLFMkbGva+OwcA3hGy6xhyztUZ5ZtOE9iG6Rj59M2gnxn/PW
+         8qc1eTrG/1YHBhkYraDx3KHW5NXNXZtwXfOGU8OrTk04ZlBRUACZlzZRfWJVaPalkkFl
+         evrvFdaVyiYbVavj99BUvJUl4hXcQdMl6t92G8KR19JBa2BcUBgMqjsHX5srI4wauLvr
+         /HOBY90akJ9TygBxY9kS4YCctsFarM5C63bE8i0U0uX+ZBh5y6hq4mL0IBh0H67rcRZN
+         lpfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=nsZbpm1YBoHMpWTnzHLuE/zYZ0yg4jBiKD5Q7oCTPBE=;
-        b=VgiI+wNa3N4jmGCscb0MF/7oVBN1T0u3Z7oyauUHcZ0+tWCEMPDAMAfx4IqI7hhvLx
-         c1/cPxEsVOib/I1WOLFU4HzJ/okb0eo4D/rSeVXzTs+ihtyUyaNUWTTboKDed5JZDU0x
-         UdzeajBY5vToYq/5NXdyyQAXGRZYTWRtiVBrjC2BTuHJS2RZpdyz4fuVeDGh7FWSLp8X
-         EtATgcpuHKzuhSyzUMRFtP6KcoDcs/IOC/C+pwbdpTl7a0QXOmXi3vgJEVc0KHIgoou5
-         gMMJcgMpGwY+VVwKYJ6gVtU68UgkHmAcX/oLz/eZumCb8WbKU/thoJCz+KV1R4F2vex0
-         0o/Q==
-X-Gm-Message-State: AOAM532mq+jZ+2/OTiq4mvGadTeATPx1tvhDSFrH2kDyXczuYxcki/ps
-        kZo2PdcaBO8nEek7U/2SQN5idmMyRNqxjiYSQso=
-X-Google-Smtp-Source: ABdhPJyMCgWBu0+znYWYWW0Lze6+Dvy0DD7TBuuDEn4uwLgYup8eR86IAL4td60wQDZlgK0AAFAQ88N7sBeQbsS0hF8=
-X-Received: by 2002:a05:6638:24c4:: with SMTP id y4mr2549466jat.31.1633176234334;
- Sat, 02 Oct 2021 05:03:54 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=2BMZhUbe/xBRGXRcWq9F8f7z46XdWDlUhMFMilqFGQk=;
+        b=CrdwWzHt1ZaWoxGGZ3E3g44Kq24F0RPPauhlF3+18I3/U+GVA8rHB9nHowhPELt3BU
+         7USDHeo2j2TTU3nlq2ZY4AwnmYeHTuQBkmgGrYAD6m14RfVaMFN1lIaRDuFkRrYJyycF
+         GSKzs4PeovjscLcuLsLSIUBjPgN5SwjlCggR0HWSXWYCqDpO5Kw9a+9CfsnD7I2sS/f/
+         nUzYLiOT6fw9OcMeNWBQMyHvXOCd9RRQg/4S/DpJprE2VMgNUxvYCpMczQaBopQqmANP
+         1Sf4RyXy0OqGaUoVzg4Eg93hS48sn/aAOxiSqNDqDLs1mDJIJYZZbwH/NuB6laYXGZsU
+         U2qg==
+X-Gm-Message-State: AOAM5311MqY3RYMwc7gSvwBjlirnjxve0doxZtaD2Xmil3YEKi+pV02N
+        VBjmTb8eWBWBMuv8nOlBbmyjwtYFCDrYpmTIP8I=
+X-Google-Smtp-Source: ABdhPJzWApakfUagkB55d1N3J/iX6yyJ6DuDz9dOAlrzq2xCoT+XgDtii/N+Xx1Q09IoOZ7HcuzZLmJGjnR8fxSWumU=
+X-Received: by 2002:a50:cf86:: with SMTP id h6mr5242758edk.104.1633194906913;
+ Sat, 02 Oct 2021 10:15:06 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a4f:f90d:0:0:0:0:0 with HTTP; Sat, 2 Oct 2021 05:03:54 -0700 (PDT)
-Reply-To: unitednnation0@gmail.com
-From:   "U.n" <wadebaye33@gmail.com>
-Date:   Sat, 2 Oct 2021 00:03:54 -1200
-Message-ID: <CACE0T5XCdA8Hen=oQ4eLy8J=yfx7+mKzcArcxg6fkhg2AS+cew@mail.gmail.com>
-Subject: Attention
-To:     unitednnation0@gmail.com
+Sender: alimahazem02@gmail.com
+Received: by 2002:a54:3f4c:0:0:0:0:0 with HTTP; Sat, 2 Oct 2021 10:15:06 -0700 (PDT)
+From:   Anderson Thereza <anderson.thereza24@gmail.com>
+Date:   Sat, 2 Oct 2021 10:15:06 -0700
+X-Google-Sender-Auth: PzsHzxzcP0FeJAHUzFobkHo723s
+Message-ID: <CABBDEbid99MWNgTuwUnqYUZAb+UhbUa5DY-YMzoqsf9nbonuLQ@mail.gmail.com>
+Subject: Re: Greetings My Dear,
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=20
+Greetings,
 
+I sent this mail praying it will find you in a good condition, since I
+myself am in a very critical health condition in which I sleep every
+night without knowing if I may be alive to see the next day. I am Mrs.
+theresa anderson, a widow suffering from a long time illness. I have
+some funds I inherited from my late husband, the sum of
+($11,000,000.00, Eleven Million Dollars) my Doctor told me recently
+that I have serious sickness which is a cancer problem. What disturbs
+me most is my stroke sickness. Having known my condition, I decided to
+donate this fund to a good person that will utilize it the way I am
+going to instruct herein. I need a very honest God.
 
-Attention Sir/Madam
-This is the United Nation (UN). We the United Nations (UN) Globally
-has approved (US$2.500,000)( two Million Five hundred thousand
-dollars) compensation as part of our responsibilities for humanitarian
-Aid for fighting against CoronaVirus and you are among the lucky ones.
+fearing a person who can claim this money and use it for Charity
+works, for orphanages, widows and also build schools for less
+privileges that will be named after my late husband if possible and to
+promote the word of God and the effort that the house of God is
+maintained. I do not want a situation where this money will be used in
+an ungodly manner. That's why I' making this decision. I'm not afraid
+of death so I know where I'm going. I accept this decision because I
+do not have any child who will inherit this money after I die. Please
+I want your sincere and urgent answer to know if you will be able to
+execute this project, and I will give you more information on how the
+fund will be transferred to your bank account. I am waiting for your
+reply.
 
-
-This compensation is for the most affected countries, communities and
-families across the global. Your funds were deposited with Bank in USA
-to transfer your funds to you via Internet Banking. You have to send
-your full details as state below:with this email Address
-  ( unitednnation0@gmail.com )
-Your full names:
-Address:
-Telephone:
-Occupation:
-
-
-
-Yours Sincerely
-Mr. Ant=C3=B3nio Guterres
-United Nations (UN).
+May God Bless you,
+Mrs. theresa anderson.
