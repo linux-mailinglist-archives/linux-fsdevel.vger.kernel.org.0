@@ -2,94 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC13542003E
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Oct 2021 07:47:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C80F4420044
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  3 Oct 2021 07:54:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229749AbhJCFtl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Oct 2021 01:49:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39032 "EHLO
+        id S229738AbhJCF4D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Oct 2021 01:56:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbhJCFti (ORCPT
+        with ESMTP id S229450AbhJCF4C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Oct 2021 01:49:38 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9535AC0613EC;
-        Sat,  2 Oct 2021 22:47:51 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id b22so8964728pls.1;
-        Sat, 02 Oct 2021 22:47:51 -0700 (PDT)
+        Sun, 3 Oct 2021 01:56:02 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80DB0C0613EC
+        for <linux-fsdevel@vger.kernel.org>; Sat,  2 Oct 2021 22:54:15 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id b20so57043718lfv.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 02 Oct 2021 22:54:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=to:cc:references:subject:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=savTH8tOINZ2J99oLslSAWNZa5Ho6D9RgvdIZJ7bFnA=;
-        b=Y7uNNINBrkq5cxVztJ3SYWUhJ4cqOz8cuJbfN83wQn95FC/D2R99w+R2PGb9+omyw9
-         oUMBBOL7Q2qXknqyn+ueCjhRRkGnQvpvwzbs+lH1kJcT7mhA/Sv5L5QSKRg4csmSP3i7
-         KQf0X+t+NalR3wLVAXSHYb4TC8CIkajx690fgi5nQq7/ONabkjke8DE4NrtX3mbsKCov
-         6GKUAjmQjbUU46Au+jp8B3bHxUi4dgI9/hNH0sygbvUe0nxcWAjC9QFLyx8xMU0L23zo
-         3MbZYv6rWeB3f/d/ixsniSvPVzZlDq3h4NGCPXkQIMFaUYbnnngJuLp7T857lqiStDFe
-         WmlQ==
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=xRc3IHUizmviQEjT/aA/BX2eK4NRIQ6MOKbVgrtXYgk=;
+        b=fdEJqFcb+QVnVAQ6DRvH0+0m6BiZhxtj+NCloXE4EU2wnL44Pply6WxHmAiQNBJdKc
+         zAFzGoQMBj9SFQe1GWj6Rt6EqlFSQSPUrfAXRdvh8EOaQOiZcLDV+3HYuZnqHMNP18op
+         BFBn+l7om6b8pqpxaSlaoe1b2dcydmYxOHurGZnRb9uhhf31n2pXVRQa+2dD/QQ3Lk10
+         l25MwZHZQ5yr5YJUyvglKs9Z4pxHXpkEq4LcDf1heiXcXF8YYjwYr0HXEQ5v/7dAMFkH
+         ZGR1gEWeSeMeGuVf/1MOhaQilL1vWJ6HoTffOtV2s1lAWPzC8G0oUc4BHVnNZOvWTkSk
+         Phnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:cc:references:subject:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=savTH8tOINZ2J99oLslSAWNZa5Ho6D9RgvdIZJ7bFnA=;
-        b=LAT2rnWjzWef3CqOnK7hceQReCldU++G4ZUr7UgKe22BYQXR2MnvQbBS4HwlYhBZBG
-         mF9UOuTMkqsu+Ge2AQGZ84shRRGpiWtV7IGo19/5l8L7KlDWX8bKxlvNc4w4l1rjyoo2
-         xfB1qpBVTQUvxEkE4M5BRq2lbM2Prd5LQkuj5vvXph60p+JrQ/Mju3uWFdsmX7qEPPkI
-         4uibaMx66HRyryxGcmIo6Uz91fuKP2hqHlvqFdrMbYolaA7fWx8Qc/KUb022/YPRtRRp
-         X4nTTJlZ1Ac4tUrEk7OPboTNtJ3cYjDilymVzARRTjXDUB6Pyx/ux3cX8LMm6Vfqrnd+
-         pqYA==
-X-Gm-Message-State: AOAM5309FcmgNiS5BQgodW/YqAn/8xYdQU9EIZjSsX8GHFHLJgoNvfbn
-        7ttJdj8RezkTtyfxE3quv+Y=
-X-Google-Smtp-Source: ABdhPJy5HRxA5o6Rs+cSxf9+J2Z0L3aQbAXv7HdqnVMMAbnAdw/SICL9EIXJilE004Mcf5mNUIhaVQ==
-X-Received: by 2002:a17:902:d2c6:b0:13e:9bc9:1ae3 with SMTP id n6-20020a170902d2c600b0013e9bc91ae3mr5601433plc.87.1633240070503;
-        Sat, 02 Oct 2021 22:47:50 -0700 (PDT)
-Received: from [10.12.152.158] ([154.21.212.155])
-        by smtp.gmail.com with ESMTPSA id y7sm10286631pfr.33.2021.10.02.22.47.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Oct 2021 22:47:50 -0700 (PDT)
-To:     seanjc@google.com
-Cc:     djwong@kernel.org, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, stephenackerman16@gmail.com
-References: <YVSEZTCbFZ+HD/f0@google.com>
-Subject: Re: kvm crash in 5.14.1?
-From:   Stephen <stephenackerman16@gmail.com>
-Message-ID: <85e40141-3c17-1dff-1ed0-b016c5d778b6@gmail.com>
-Date:   Sat, 2 Oct 2021 22:47:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=xRc3IHUizmviQEjT/aA/BX2eK4NRIQ6MOKbVgrtXYgk=;
+        b=ynDoP1vrZG7DEBTa3xi2w0JWucOCpQTBv+xWnPfZ3Fk+XyIhago2K/02pV4MGMbOTt
+         ZidBLs341S29x3ls3cvAk6gRlZSBfzrN6/5JzFInZBscsXaWSvxaquq98fTcVpAZYvUv
+         L6JvSjw4iQ4/aVnIkBsk3Zn6Ms0y6HvihFtWmy3OM80fBjM7vxPoInTTZ5iqn6YtVJ69
+         pf28mH+2YppslG4BZ/74TyV56k0qDihRxRVBQ4Zlei01Ebs3V1WoFxVU9anbGAg2chns
+         xBnuGy/3U6pcfXwJ+A7qUqlh1RxXXBnviCAhkjEkmBe2I6kXwq/8aTPawSjmXtmwbql6
+         l6kQ==
+X-Gm-Message-State: AOAM532T/jftbOYzOC/TDpDOEBvSaJJwHWddGhbYo/hm51dASZ6qRCB6
+        9uRmdw2hgRfeiuiBUVXzrgATngchaHz6KM+rvIQ=
+X-Google-Smtp-Source: ABdhPJx7qH4rQGMpfhhwlOzuYJRA8Sc+iVd7RFmSDxeGnA1N6EZB3MmTRyK6dFIJWTxOHUbIEriGZzkdjaKP6LQfDhs=
+X-Received: by 2002:a2e:8852:: with SMTP id z18mr8019966ljj.412.1633240453773;
+ Sat, 02 Oct 2021 22:54:13 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YVSEZTCbFZ+HD/f0@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Reply-To: godwinppter@gmail.com
+Sender: info.bfinfo3@gmail.com
+Received: by 2002:a05:6520:47c4:b0:139:1b10:ad9d with HTTP; Sat, 2 Oct 2021
+ 22:54:13 -0700 (PDT)
+From:   Godwin Pete <godwinnpeter@gmail.com>
+Date:   Sun, 3 Oct 2021 07:54:13 +0200
+X-Google-Sender-Auth: 4-6foZPC63deeomGMWgzGxuEg8k
+Message-ID: <CABCrZeP=8FEhu2MZOfS2eYMUTymh1du_w-rOKgMzqMyDXrgoPg@mail.gmail.com>
+Subject: This is to inform you
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> I think this should fix the problems?
->
-> diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
-> index 21c3771e6a56..988528b5da43 100644
-> --- a/include/linux/secretmem.h
-> +++ b/include/linux/secretmem.h
-> @@ -23,7 +23,7 @@ static inline bool page_is_secretmem(struct page *page)
->         mapping = (struct address_space *)
->                 ((unsigned long)page->mapping & ~PAGE_MAPPING_FLAGS);
->
-> -       if (mapping != page->mapping)
-> +       if (!mapping || mapping != page->mapping)
->                 return false;
->
->         return mapping->a_ops == &secretmem_aops;
+Hi,
 
-I have validated that my system was stable after several days on
-v5.13.19. I'm now booted into a v5.14.8 kernel with this patch, and I'll
-try to report back if I see a crash; or in roughly a week if the system
-seems to have stabilized.
+How are you doing? I am very happy to inform you about my success. I'm
+currently out of the country for an investment with part of my share,
+after completing the transfer with an Indian business man. But i will
+visit your country, next year, after the completion of my project.
+Please, contact my secretary to send you the (ATM) card which I've
+already credited with the sum of ($500,000.00). Just contact her to
+help you in receiving the (ATM) card. I've explained everything to her
+before my trip. This is what I can do for you because, you couldn't
+help in the transfer, but for the fact that you're the person whom
+I've contacted initially, for the transfer. I decided to give this
+($500,000.00) as a compensation for being contacted initially for the
+transfer. I always try to make the difference, in dealing with people
+any time I come in contact with them. I'm also trying to show that I'm
+quite a different person from others whose may have a different
+purpose within them. I believe that you will render some help to me
+when I, will visit your country, for another investment there. So
+contact my secretary for the card, Her contact are as follows,
 
-Thanks,
-    Stephen
+Full name: Mrs, Jovita Dumuije,
+Country: Burkina Faso
+Email: jovitadumuije@gmail.com
 
+Thanks, and hope for a good corporation with you in future.
+
+Godwin Peter,
