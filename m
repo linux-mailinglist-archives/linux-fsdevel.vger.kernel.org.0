@@ -2,96 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 99C534210DC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Oct 2021 15:57:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BC0A4210EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Oct 2021 16:06:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238672AbhJDN7G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Oct 2021 09:59:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:26976 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238593AbhJDN7D (ORCPT
+        id S233327AbhJDOIg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Oct 2021 10:08:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43316 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233293AbhJDOIf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Oct 2021 09:59:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1633355834;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/iyWzaXPA7uZntCBGk8rDAII8rV1j7qwLPsi35Cy0yI=;
-        b=cuSnkf/yv1EKQehFFjltfMtC2UOB7DLvhb4uuWU8GgVAbhVOyx7x0tqKo67V4SskSJaQ7m
-        4i+Olyc6NeQOd+yFXmyuKGQfPunWHl4OAPSsecwB1nkQpBOzUDjTY46+vuTKTR/zZ7TEY+
-        ET6bmQMBRLHDiBeLf0gnjmK/ClI/yB4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-337-4dTg2-56MCCYRBfQHq4Qig-1; Mon, 04 Oct 2021 09:57:10 -0400
-X-MC-Unique: 4dTg2-56MCCYRBfQHq4Qig-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 45AAF9F92A;
-        Mon,  4 Oct 2021 13:57:08 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.17.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C17D560C17;
-        Mon,  4 Oct 2021 13:57:00 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 0C074220BDB; Mon,  4 Oct 2021 09:57:00 -0400 (EDT)
-Date:   Mon, 4 Oct 2021 09:56:59 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        casey@schaufler-ca.com, Miklos Szeredi <miklos@szeredi.hu>,
-        Daniel J Walsh <dwalsh@redhat.com>, jlayton@kernel.org,
-        idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, bfields@fieldses.org,
-        chuck.lever@oracle.com, stephen.smalley.work@gmail.com
-Subject: Re: [PATCH] security: Return xattr name from
- security_dentry_init_security()
-Message-ID: <YVsIK/I1/Wm7sela@redhat.com>
-References: <YVYI/p1ipDFiQ5OR@redhat.com>
- <YVigrS1Bc8J8bO1Y@zeniv-ca.linux.org.uk>
+        Mon, 4 Oct 2021 10:08:35 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7208C061745
+        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Oct 2021 07:06:43 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id g41so71878604lfv.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Oct 2021 07:06:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=I5iiIUW34DuiTSF34m8K0qNYgofVcVIOCi6xjuMFs7U=;
+        b=3kKfkFlAkxuo4h6f/0sKIcUascSJ1EjVtDaSc8mCz0mj2hiSUImHVOKBixi4ZXJ1Zh
+         nf3oKrJdV0S6Pjxbj5UOnRW+JUK37P29cFNoWpwkY+ELXLvLY3QOPFyCiQplYH+7NyR/
+         7KDIsN0v0grmhqRZG0V+albGTp7C+A6aWp7F/Q7Nmv1l3SbrOr/YadY2efvoa0d7RoN3
+         l9YCobpIhuudY2yGYUZgUxKeH4qrJ5IZ66fthZ2U1uASotK3VM9ZQqVGVkAymap7Vt0v
+         se3xf6LlY331tb9U4q7FskeOEe46Hq3Gc6YXaTeoHVyURSV5iY32K76etywNbvy/qCIv
+         mQUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=I5iiIUW34DuiTSF34m8K0qNYgofVcVIOCi6xjuMFs7U=;
+        b=5n9mlQvxv8ZzKkMr3EpXq5bq2E+pDFNHHH0xrkEvFfmnBr+6nw1gCMBnAEpz5+yJWr
+         3N/WMPcNgONio+bZSLkQ9boyvG1OgCcjvBoqvjOTYBuq2VlDGzx/lJTbb63Zfd3e9m7M
+         MLGZAKzrB4Pq0BzjL6IfIHYmzxK4W53sOVJLQgsKssiPrAleKpwnceIhE95smReIFa1X
+         3us1d7x6vxeyTBvKXYb7J3rZ4U9EcQnM3gdq/ZC4G8LWczajbGfhYG7m//c4V/ma+BPq
+         wWvHDPaxMWeYXeUEVszayZjF+iavb5vvIrWnMUDgt0iEeaxj/vTdn9hHXjIB4lr88HEm
+         IYpg==
+X-Gm-Message-State: AOAM532vcK6XWk/zUZ1dmx6JUAO8kLhYfk7rnykdkM3DGNKNJd8q5Iv+
+        m/36s/1QbO60kEzGxLUCwuK+uEyPZOhmuw==
+X-Google-Smtp-Source: ABdhPJykedCpqepvR4UG4/lr+U/Wj7wVzLKNTIYtri7nFzzWco7d85ytJzGv0IGm0ILetCdz5mkUEQ==
+X-Received: by 2002:a19:dc5b:: with SMTP id f27mr15017676lfj.145.1633356399534;
+        Mon, 04 Oct 2021 07:06:39 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id v27sm1770788lfp.0.2021.10.04.07.06.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Oct 2021 07:06:38 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id C563710306D; Mon,  4 Oct 2021 17:06:37 +0300 (+03)
+Date:   Mon, 4 Oct 2021 17:06:37 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     naoya.horiguchi@nec.com, hughd@google.com,
+        kirill.shutemov@linux.intel.com, willy@infradead.org,
+        peterx@redhat.com, osalvador@suse.de, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
+ for PMD page fault
+Message-ID: <20211004140637.qejvenbkmrulqdno@box.shutemov.name>
+References: <20210930215311.240774-1-shy828301@gmail.com>
+ <20210930215311.240774-3-shy828301@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YVigrS1Bc8J8bO1Y@zeniv-ca.linux.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+In-Reply-To: <20210930215311.240774-3-shy828301@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 02, 2021 at 06:10:53PM +0000, Al Viro wrote:
-> On Thu, Sep 30, 2021 at 02:59:10PM -0400, Vivek Goyal wrote:
-> > Right now security_dentry_init_security() only supports single security
-> > label and is used by SELinux only. There are two users of of this hook,
-> > namely ceph and nfs.
-> > 
-> > NFS does not care about xattr name. Ceph hardcodes the xattr name to
-> > security.selinux (XATTR_NAME_SELINUX).
-> > 
-> > I am making changes to fuse/virtiofs to send security label to virtiofsd
-> > and I need to send xattr name as well. I also hardcoded the name of
-> > xattr to security.selinux.
-> > 
-> > Stephen Smalley suggested that it probably is a good idea to modify
-> > security_dentry_init_security() to also return name of xattr so that
-> > we can avoid this hardcoding in the callers.
-> > 
-> > This patch adds a new parameter "const char **xattr_name" to
-> > security_dentry_init_security() and LSM puts the name of xattr
-> > too if caller asked for it (xattr_name != NULL).
-> 
-> Umm...  Why not return the damn thing on success and ERR_PTR(-E...)
-> on failure, instead of breeding extra arguments?
+On Thu, Sep 30, 2021 at 02:53:08PM -0700, Yang Shi wrote:
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index dae481293b5d..2acc2b977f66 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -3195,12 +3195,12 @@ static bool filemap_map_pmd(struct vm_fault *vmf, struct page *page)
+>  	}
+>  
+>  	if (pmd_none(*vmf->pmd) && PageTransHuge(page)) {
+> -	    vm_fault_t ret = do_set_pmd(vmf, page);
+> -	    if (!ret) {
+> -		    /* The page is mapped successfully, reference consumed. */
+> -		    unlock_page(page);
+> -		    return true;
+> -	    }
+> +		vm_fault_t ret = do_set_pmd(vmf, page);
+> +		if (!ret) {
+> +			/* The page is mapped successfully, reference consumed. */
+> +			unlock_page(page);
+> +			return true;
+> +		}
+>  	}
+>  
+>  	if (pmd_none(*vmf->pmd)) {
 
-Because of the way generic security hook infrastructure is written. There
-seem to be only two kind of hooks. Either they return "int" or "void".
-And this assumption is built into other helper functions. For example
-call_int_hook() and call_void_hook().
+Hm. Is it unrelated whitespace fix?
 
-So I think it much easier to just add additional parameter and stick
-to existing convention of returning an "int", instead of trying to
-return a "const char *".
-
-Thanks
-Vivek
-
+-- 
+ Kirill A. Shutemov
