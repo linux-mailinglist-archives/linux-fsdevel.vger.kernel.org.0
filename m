@@ -2,134 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BCCC7421811
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Oct 2021 22:00:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE10642183B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Oct 2021 22:13:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235436AbhJDUB6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Oct 2021 16:01:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
+        id S235836AbhJDUPK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Oct 2021 16:15:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235358AbhJDUB6 (ORCPT
+        with ESMTP id S229945AbhJDUPJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Oct 2021 16:01:58 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C256FC061745
-        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Oct 2021 13:00:08 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id m21so17569065pgu.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Oct 2021 13:00:08 -0700 (PDT)
+        Mon, 4 Oct 2021 16:15:09 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59429C061745;
+        Mon,  4 Oct 2021 13:13:20 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id dj4so70041046edb.5;
+        Mon, 04 Oct 2021 13:13:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=d6Gq2wxjvSc42T6HpCo3o9gtXEpVvUYCVOoy839gL24=;
-        b=Q29MVoEbK058uA4FsGGNoPe+IOo7qmxdWzqpwz6WQd9MZ9CL78KY7ipweYpC5KArK4
-         NbKLZGcLMUfO6LkqrmVXaVxPnMZIAjsmQ/AXuNQusOC9b3ycPTZAEnhLKqcrBDb2QcBR
-         6bgRBMdrZfDvxMDI0/0ObsuJjy6KM8sDJtXsY=
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9q0PfcjN4ZcxtERnpGgFCs55vRjNc3NnENgrVFHH7xs=;
+        b=ZMMgpWZHQ0vHntjuBhO97brNLUon0w94MU7wkJLo89LWplC8RTnsjCZTGqxLYVFcVx
+         WyHzRnWOSnqQjfgJx8aFEqhpnIABplxdnaAf1yuuUWpuuviirPR5Ds3GzDKW+taK5PsG
+         kR7QeQV1M8PBDTFXKIOil9RO4xHcVNgVMujLkprdkn+Ey95cNp/93RAGiJTxUe4BDCo0
+         qZ+FOba7wwfZyi8ooguFvEazfDrzN9GnP+87yDjugEBWHOcC/UJzl4K3utiLs0jr2EFt
+         lc9WSuF0Yt4Z9CjRq7P3CDwewMxYDEW3Nm/f6w4xdZBjmBNCK1fumwPZsxrt6UWDM6NR
+         SAtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=d6Gq2wxjvSc42T6HpCo3o9gtXEpVvUYCVOoy839gL24=;
-        b=VhyIL6rQlmzkkPcc7TsjXTX8wpEz7e1i19bnVy5RNDLaA9Cs4MkmBA1LDEDyVrUwwa
-         XsZXhmgZpv5KmmWfFHCu4yscW50TtcvEulrzr7Xg6OhJT9Is+b/jmsAKkQ8X9wk09v3Y
-         blf0YZDJyLqZThLavr7HgXt6oXVv1upPcsHwchO/DnnIk8wzKiNOit77DoLLVeUGPb73
-         EHcX6vDwMNIMZpLjzEQpnx2f8K1hLWjnY+jxZJAhm+F+Vfs00Z0AzhaMwnMYOCQkFzI1
-         UrV2kPYa+8ohkpG0B+e5gR9ZeF0naLVzkgu2TNkOrir/V5H8UUiJTKfYPS9n41ODhA5t
-         cC3w==
-X-Gm-Message-State: AOAM532Hq+trWK25EK9J1P1As+etnQxtA29jg7SrwIs2cs0Ge6nXZbgD
-        RTWiMLlsgf5ClANZjRqBHDsU6A==
-X-Google-Smtp-Source: ABdhPJxM4cKpWgXOu7MUF6+yRe0HLC6gFmI/QTriTlRkZkD1E2+wved5jQO1AOrFrxegYpcStRBbpQ==
-X-Received: by 2002:a05:6a00:2d0:b0:446:d18c:9aac with SMTP id b16-20020a056a0002d000b00446d18c9aacmr26961304pft.16.1633377608295;
-        Mon, 04 Oct 2021 13:00:08 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t6sm15398944pfh.63.2021.10.04.13.00.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Oct 2021 13:00:07 -0700 (PDT)
-Date:   Mon, 4 Oct 2021 13:00:07 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Chen Jingwen <chenjingwen6@huawei.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrei Vagin <avagin@openvz.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] elf: don't use MAP_FIXED_NOREPLACE for elf interpreter
- mappings
-Message-ID: <202110041255.83A6616D9@keescook>
-References: <20210928125657.153293-1-chenjingwen6@huawei.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9q0PfcjN4ZcxtERnpGgFCs55vRjNc3NnENgrVFHH7xs=;
+        b=DEYUZTGQr9lH9Q4bjT8SuSc4TsLD8Mwb9V4vpUVeCpsPOKhXiR5enG8rj7p+nMAFXk
+         4NcITMpttwiAzoTwAQUXNjCyUbwRiT+F9PKVoeOUpwZx2tTcTL5XuQQ2k933jkQSmH74
+         sEHHoIK2KcQ25+x/nP7q47CKwdfYeij44r7ad2GSytp9KA9H03wLBzrPYYT+VY62FR+D
+         zBoWRP70tvCM6T09R1nq0wZW6RUN3qcegOnXXCMZbLaAKfRhv5iuSMGEY86TMiUApLnS
+         FtgpRBfXmVdWwgxtcDWanqVMpP2+IZOpo4f/GX1ZzyWlHW5H47fa8kY2z/xZBoVKGl5S
+         /Z6A==
+X-Gm-Message-State: AOAM532KSwRJiHL6jemAHDq3Nptfi/G0lmROj/Gd85GiM/nAItAa9Odh
+        fpa+KlH44FqSfT+rg4XYXaPUkDSpQw44u0Ij8B0=
+X-Google-Smtp-Source: ABdhPJwfnU85LXVfxLQzchmKGmou6ZhKaAOxYoJNmvfOc6u6tutvah//4ik6xntkhMkxLUgJakl9GQMsDtCaGGJys/A=
+X-Received: by 2002:a17:906:3854:: with SMTP id w20mr18574634ejc.537.1633378398991;
+ Mon, 04 Oct 2021 13:13:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210928125657.153293-1-chenjingwen6@huawei.com>
+References: <20210930215311.240774-1-shy828301@gmail.com> <20210930215311.240774-3-shy828301@gmail.com>
+ <20211004140637.qejvenbkmrulqdno@box.shutemov.name> <CAHbLzkp5d_j97MizSFCgfnHQj_tUQuHJqxWtrvRo_0kZMKCgtA@mail.gmail.com>
+ <20211004194130.6hdzanjl2e2np4we@box.shutemov.name>
+In-Reply-To: <20211004194130.6hdzanjl2e2np4we@box.shutemov.name>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Mon, 4 Oct 2021 13:13:07 -0700
+Message-ID: <CAHbLzkqcrGCksMXbW5p75ZK2ODv4bLcdQWs7Jz0NG4-=5N20zw@mail.gmail.com>
+Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
+ for PMD page fault
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Peter Xu <peterx@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 28, 2021 at 08:56:57PM +0800, Chen Jingwen wrote:
-> In commit b212921b13bd ("elf: don't use MAP_FIXED_NOREPLACE for elf executable mappings")
-> we still leave MAP_FIXED_NOREPLACE in place for load_elf_interp.
-> Unfortunately, this will cause kernel to fail to start with
-> 
-> [    2.384321] 1 (init): Uhuuh, elf segment at 00003ffff7ffd000 requested but the memory is mapped already
-> [    2.386240] Failed to execute /init (error -17)
-> 
+On Mon, Oct 4, 2021 at 12:41 PM Kirill A. Shutemov <kirill@shutemov.name> wrote:
+>
+> On Mon, Oct 04, 2021 at 11:17:29AM -0700, Yang Shi wrote:
+> > On Mon, Oct 4, 2021 at 7:06 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> > >
+> > > On Thu, Sep 30, 2021 at 02:53:08PM -0700, Yang Shi wrote:
+> > > > diff --git a/mm/filemap.c b/mm/filemap.c
+> > > > index dae481293b5d..2acc2b977f66 100644
+> > > > --- a/mm/filemap.c
+> > > > +++ b/mm/filemap.c
+> > > > @@ -3195,12 +3195,12 @@ static bool filemap_map_pmd(struct vm_fault *vmf, struct page *page)
+> > > >       }
+> > > >
+> > > >       if (pmd_none(*vmf->pmd) && PageTransHuge(page)) {
+> > > > -         vm_fault_t ret = do_set_pmd(vmf, page);
+> > > > -         if (!ret) {
+> > > > -                 /* The page is mapped successfully, reference consumed. */
+> > > > -                 unlock_page(page);
+> > > > -                 return true;
+> > > > -         }
+> > > > +             vm_fault_t ret = do_set_pmd(vmf, page);
+> > > > +             if (!ret) {
+> > > > +                     /* The page is mapped successfully, reference consumed. */
+> > > > +                     unlock_page(page);
+> > > > +                     return true;
+> > > > +             }
+> > > >       }
+> > > >
+> > > >       if (pmd_none(*vmf->pmd)) {
+> > >
+> > > Hm. Is it unrelated whitespace fix?
+> >
+> > It is a coding style clean up. I thought it may be overkilling to have
+> > a separate patch. Do you prefer separate one?
+>
+> Maybe. I tried to find what changed here. It's confusing.
 
-I guess you mean "init" fails to start (but yes, same result).
+Yeah, maybe. Anyway I will separate the real big fix and the cleanup
+into two patches. This may be helpful for backporting too.
 
-> The reason is that the elf interpreter (ld.so) has overlapping segments.
-
-Ewww. What toolchain generated this (and what caused it to just start
-happening)? (This was added in v4.17; it's been 3 years.)
-
-> 
-> readelf -l ld-2.31.so
-> Program Headers:
->   Type           Offset             VirtAddr           PhysAddr
->                  FileSiz            MemSiz              Flags  Align
->   LOAD           0x0000000000000000 0x0000000000000000 0x0000000000000000
->                  0x000000000002c94c 0x000000000002c94c  R E    0x10000
->   LOAD           0x000000000002dae0 0x000000000003dae0 0x000000000003dae0
->                  0x00000000000021e8 0x0000000000002320  RW     0x10000
->   LOAD           0x000000000002fe00 0x000000000003fe00 0x000000000003fe00
->                  0x00000000000011ac 0x0000000000001328  RW     0x10000
-> 
-> The reason for this problem is the same as described in
-> commit ad55eac74f20 ("elf: enforce MAP_FIXED on overlaying elf segments").
-> Not only executable binaries, elf interpreters (e.g. ld.so) can have
-> overlapping elf segments, so we better drop MAP_FIXED_NOREPLACE and go
-> back to MAP_FIXED in load_elf_interp.
-
-We could also just expand the logic that fixed[1] this for ELF, yes?
-
-Andrew, are you able to pick up [1], BTW? It seems to have fallen
-through the cracks.
-
-[1] https://lore.kernel.org/all/20210916215947.3993776-1-keescook@chromium.org/T/#u
-
-> 
-> Fixes: 4ed28639519c ("fs, elf: drop MAP_FIXED usage from elf_map")
-> Cc: <stable@vger.kernel.org> # v4.19
-> Signed-off-by: Chen Jingwen <chenjingwen6@huawei.com>
-> ---
->  fs/binfmt_elf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 69d900a8473d..a813b70f594e 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -630,7 +630,7 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
->  
->  			vaddr = eppnt->p_vaddr;
->  			if (interp_elf_ex->e_type == ET_EXEC || load_addr_set)
-> -				elf_type |= MAP_FIXED_NOREPLACE;
-> +				elf_type |= MAP_FIXED;
->  			else if (no_base && interp_elf_ex->e_type == ET_DYN)
->  				load_addr = -vaddr;
-
-
--- 
-Kees Cook
+>
+> --
+>  Kirill A. Shutemov
