@@ -2,43 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 604DA4214ED
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Oct 2021 19:13:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 284FD42153D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Oct 2021 19:36:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237321AbhJDRPf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Oct 2021 13:15:35 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:33981 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234496AbhJDRPd (ORCPT
+        id S235024AbhJDRiI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Oct 2021 13:38:08 -0400
+Received: from sonic315-26.consmr.mail.ne1.yahoo.com ([66.163.190.152]:44216
+        "EHLO sonic315-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234987AbhJDRiH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Oct 2021 13:15:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1633367624;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lvFPEWKQLdL/TB0ie3ARaxI0Pk5CaQKVenSaTpL8BPo=;
-        b=cdAO6s4/E7OSVrbl17WKSVP1ib03eIbM2+d6nmzHAFfddyIem08qc8UQpsylpcQhVnkzUm
-        Fxw9fIzQVCiJxNTsWwO/FamabFfBFn5p5t8VP4F8B/hQUXal0ftJF4Ron48TkI+OcoUeVB
-        s80T65CnyYeKtmauVivVXAlqmKvIIQI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-43-M9Lre7UHMSid9o7eKpIzPA-1; Mon, 04 Oct 2021 13:13:41 -0400
-X-MC-Unique: M9Lre7UHMSid9o7eKpIzPA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3512518414AB;
-        Mon,  4 Oct 2021 17:13:39 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.17.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6C42660843;
-        Mon,  4 Oct 2021 17:13:36 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id CF6CC220BDB; Mon,  4 Oct 2021 13:13:35 -0400 (EDT)
-Date:   Mon, 4 Oct 2021 13:13:35 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
+        Mon, 4 Oct 2021 13:38:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1633368978; bh=niPxADPRikeK5rxApUPmsD8xoirqtAp+hVaMB3iQuNM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=t7sbeDKtiDnLJJjTe4nQLwaWm3ggQOUp3uIKp8fsXn8yyJjSj58zfHOf1MN12cwJclIZGyHVRsJajnSUU9HCiYoo1iVZ6ddxmKb2QisX+IdZtbeMiaqW7Ts3WK5l0sXSECb2LNLwY0nOT9sMPR2NTBbF17mhv3STqz+F9s6RggKY1dtpwuHvp/Qt42bIvqQmSmLsTLa8fxxEMkGbVV8pgTFtDf2IkrdvIrmbtBKxnrbbSDikSF4n3GeagqD/Kf7Gefq/1dQR74wJsSu1GqDe1cEzPw2f6dC2WufYb5el3WzqD6E1yQkC+OuT6Bb6V1xE6yjShb7z3lAepbvvfLuzZA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1633368978; bh=VYkbrYaicX/o6VKu8GSIUlhWHraO5M7ljAlGpNm1xOk=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=lvuxACvfElZodFoMrszmd/YA5AQvc015ij4KpXDSDG9kyashj3Pv5yKVCU76N4yesgUE/YO0nbZnDsLZ2/qq+gTrSMEBAris96sFxQCOFEWAsjFWfkZU6Auu6FKromrQ+T9vnls+QR2kpY6SrgTRymd0mkQC6h3SXtYBA0sfxhyj8O87kSpXVSefc4zfKdD0ShxAr/zqUPItWEL6G1QrzsqR4/LkkQBH+vVp6Ay857HM0r5bYRThCYU0NMqiHAHTq4/S4zSYawpZmHLMXzD52eK7N/WcWvK5FhbY4l6UgRIOcOa2l9uHJPRuowbiaxQ7Hx95N4tz18Oxg4xdk91eWQ==
+X-YMail-OSG: FBBy3kEVM1m3_xWgArH6NLjKO4dkOBALVJKPUSVae269z6fdfW4OsLp_eUEnYCe
+ ykvMYdYPQwNi2.2LxM.JuZYMQbR8zV4AKPcIAlCe6I5xnssp80tLDzHso2TfuiboOAvyXMxNQxle
+ 1cFMDsLYd1vTS7080YnH8t5I200shhfIVFMKrUpyqEJg_StiNHy2AHVL_1zo6t39KnbseSxFEpuB
+ kg6p6ABccg0SBIbNXSweITh2f5wkJ_ld6OWHqE.w1Tt.X6ZfZJHdl_SNstmm23h00ZCvj2X7BplX
+ 2ZV.JuY_bgwIUPoPWh7uTljit4djjcgUXFa9qu30vlUyPUnytVKEhRY3qRLCH29lFBc14x8QDJpL
+ kZAAQmA0SAoVyewP7o_meJwr1BecdLC1ScF1WAUOpa6XE2iNa6vUbtZqzTW2jaj3c6mOG5Ev.3wJ
+ NMje7TTy24lpktCZET1FxNHWVjhKL6O4YFcYmv20xtbdA_bhc4oroIGnPyTDL8lBn7B6cnSOvRvS
+ 7TrT8I8eRQdzhAZUhxMPRQkBahTPWvief83PLoItcCYRBaEdoHeL_SHe.AdakpmI1uuvaWwpQZP0
+ 5C0vP0Qd69pX6BpqxRnJ9lI22Mr8K2dgIUUCs1XhtxnkYfv3ph8RuneznuCPcHojht8Y_sS2_LIP
+ Yt6vVOy4gMnQIknqT2Bc5GoAAQv9gxDP8cJ77cYW0pEYEoj4qthbBgpFUY8kCWXtypx3DXNGA6lU
+ 8Uc.oRYI3f7BEnQrxKd23ooIbK2o_MqAetWdyZ1IV9YQqODJwMYE764VvxhM39MbCflJD033znNW
+ KC1d4g9aZTFTYfGprz7PYSwG01alodevTUGfBXW6h3IXFezO.hW7TY0zRu9ZrjNCOsMcGx_wY3.V
+ DrmgUf5yYLdlwUB35IiCvfiMsbGzoc9yZVd4SoIDfu3tSF_vAV1.vRxq298VONG5zvsu6V2Ail5p
+ iUZhoxSuHlplCcf1gP5CIjnqu35RviR_EHl647Zu8L7s.E8yZ3U0c3jzO4bzMv0Lf2A0SXyj77_p
+ tMHSwQh8JtTPutTCezbwnvtePkWdpBWKv2fTYHBHBDTejoJkXjWkkA5AxSO44GldaCryPqD9dZMb
+ HJwV33YBRLN.hvbZhDHsrYZY4RBAa3xMQlAQv5wuw5k__Z7KmpDkYf6a8zYjJUicCURGgq08NSDT
+ z5ZHD_ZXc.DijqMKQTQxXXivF1lSwswAevUshGQ3KANGpj9BEyMroAxCNhO4yBdHKe.nvVR0R9yW
+ IPudL4e4aqJGNXVDPgNd1s4TfsoO3frEUjdRw6rNFkdCmBJqnDkoQb9bfeYfjXAlZfeHBNmhekCm
+ Dyio5etsSu.DnZXhk3VA.t9OhQ6IXCHhX__bFJa3XcV6DMD5k97kLr7x7YZTAzC9KRUazndHezsd
+ wI7Za6AJlOqAVpmCqENtJ0FIRe_wY6PSVgT9HQ1jb2ljU0HbWAvzbRf_UBW26SFguMTfCqkSCZPc
+ rF5t7UQBpnjFn..CPqI0Ocx89SXB.I.6.iz8kNrhwsBneCKX_aGYbPLkkKJidxtsJoszdJGI6R33
+ bOmOnwIjMwvDoyoMio0llA.HDZXVY5mf3MfTwWMdheEFEXTDOV0K0_DNgpymaB17zrmeTyagrxhS
+ VO02qe6nR7pDxVJ1lTDpjuSyLnOmcFMOJUc8cVKwYGfGf1f01HvwpWGWpnIvh0pyVbAaRPDUEgs9
+ un.4XcXuFZZZjWD3EMcSZKk6QLQPKAdpwiHwilOpL3CiwCVVKwdRUEREXpedzB6hl8SHwA3NzfRR
+ VCwFSsUWIrBeuClUFbIf2G_zb1ERsErl4M0ggrkLmVnDLFvR_L.I9CidzEJc3zJM2MWAaalvyLKw
+ UGu.2p1K0KHP.Dd12vXDbxT099b5q9BVsgK4HbculM8mCEXuy6nO5WCsugST5YcevnfvLM9z5tU4
+ zwFuLlCzFTAHrI_JSyNRKOokxe8SvTNEhPAD5JP1jbJH2tEOZV1nTUWDdZ9C2Ef_Wp7U0LP86jT1
+ alGEvQu9OZI4ndLxkTAjFUXBSm0D_4vX4_4qt8E9SACMB0fIcpR.2D16ymb.7qby7mPTtnhSqL2a
+ _6.3vCT2ONe0IH0tdigi8x5ymd5izv57pVAxPqGnr6C55uY7OLk6yaWbLMk29q4OiChOoWc4hwGi
+ Ixksv5dJ24qit_J4p.YXKTlispSLlgYrYy7YYd1vSnTEgbqw1lNA4o48edi8aPDlLeVybhjI5ObX
+ EkrM_OaNDfysBO1QyMEr8M88avfKTlK9xGQ3o02JnBnyaT2P1FIQjeJ2Jzbax85jQ6iOxmZKrlBn
+ YM741tUxyUhHkasnS1R9tvO.CKBejO3BU1AR90uhFrHuoXFOnVMttExIIpBhQQzEQbq1zQ2CPCAv
+ ySGJXbgmUiPdmOEzon_NlLfWXAQY2BipQOqR81.djy5MJvglkT9MtYtlyrO2dmnv1xdk.wTDhxdA
+ -
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Mon, 4 Oct 2021 17:36:18 +0000
+Received: by kubenode522.mail-prod1.omega.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID edd0b5e117b8446c7a6b7ebc3a80ae46;
+          Mon, 04 Oct 2021 17:36:16 +0000 (UTC)
+Subject: Re: [PATCH] security: Return xattr name from
+ security_dentry_init_security()
+To:     Vivek Goyal <vgoyal@redhat.com>
 Cc:     Jeff Layton <jlayton@kernel.org>,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
@@ -46,253 +62,163 @@ Cc:     Jeff Layton <jlayton@kernel.org>,
         Daniel J Walsh <dwalsh@redhat.com>, idryomov@gmail.com,
         ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
         bfields@fieldses.org, chuck.lever@oracle.com,
-        stephen.smalley.work@gmail.com
-Subject: Re: [PATCH] security: Return xattr name from
- security_dentry_init_security()
-Message-ID: <YVs2P1AcWkQ0Q0wq@redhat.com>
+        stephen.smalley.work@gmail.com,
+        Casey Schaufler <casey@schaufler-ca.com>
 References: <YVYI/p1ipDFiQ5OR@redhat.com>
  <1583ffb057e8442fa7af40dabcb38960982211ba.camel@kernel.org>
  <06a82de9-1c3e-1102-7738-f40905ea9ee4@schaufler-ca.com>
  <7404892c92592507506038ef9bdcfc1780311000.camel@kernel.org>
  <a7ab4daf-e577-abcc-f4a0-09d7eb9c4cb7@schaufler-ca.com>
+ <YVs2P1AcWkQ0Q0wq@redhat.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <ae32818f-95b1-6dce-1738-aac6f184c1c6@schaufler-ca.com>
+Date:   Mon, 4 Oct 2021 10:36:15 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a7ab4daf-e577-abcc-f4a0-09d7eb9c4cb7@schaufler-ca.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <YVs2P1AcWkQ0Q0wq@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.19076 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 04, 2021 at 09:39:44AM -0700, Casey Schaufler wrote:
-> On 10/4/2021 9:01 AM, Jeff Layton wrote:
-> > On Mon, 2021-10-04 at 08:54 -0700, Casey Schaufler wrote:
-> >> On 10/4/2021 8:20 AM, Jeff Layton wrote:
-> >>> On Thu, 2021-09-30 at 14:59 -0400, Vivek Goyal wrote:
-> >>>> Right now security_dentry_init_security() only supports single security
-> >>>> label and is used by SELinux only. There are two users of of this hook,
-> >>>> namely ceph and nfs.
-> >>>>
-> >>>> NFS does not care about xattr name. Ceph hardcodes the xattr name to
-> >>>> security.selinux (XATTR_NAME_SELINUX).
-> >>>>
-> >>>> I am making changes to fuse/virtiofs to send security label to virtiofsd
-> >>>> and I need to send xattr name as well. I also hardcoded the name of
-> >>>> xattr to security.selinux.
-> >>>>
-> >>>> Stephen Smalley suggested that it probably is a good idea to modify
-> >>>> security_dentry_init_security() to also return name of xattr so that
-> >>>> we can avoid this hardcoding in the callers.
-> >>>>
-> >>>> This patch adds a new parameter "const char **xattr_name" to
-> >>>> security_dentry_init_security() and LSM puts the name of xattr
-> >>>> too if caller asked for it (xattr_name != NULL).
-> >>>>
-> >>>> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> >>>> ---
-> >>>>
-> >>>> I have compile tested this patch. Don't know how to setup ceph and
-> >>>> test it. Its a very simple change. Hopefully ceph developers can
-> >>>> have a quick look at it.
-> >>>>
-> >>>> A similar attempt was made three years back.
-> >>>>
-> >>>> https://lore.kernel.org/linux-security-module/20180626080429.27304-1-zyan@redhat.com/T/
-> >>>> ---
-> >>>>  fs/ceph/xattr.c               |    3 +--
-> >>>>  fs/nfs/nfs4proc.c             |    3 ++-
-> >>>>  include/linux/lsm_hook_defs.h |    3 ++-
-> >>>>  include/linux/lsm_hooks.h     |    1 +
-> >>>>  include/linux/security.h      |    6 ++++--
-> >>>>  security/security.c           |    7 ++++---
-> >>>>  security/selinux/hooks.c      |    6 +++++-
-> >>>>  7 files changed, 19 insertions(+), 10 deletions(-)
-> >>>>
-> >>>> Index: redhat-linux/security/selinux/hooks.c
-> >>>> ===================================================================
-> >>>> --- redhat-linux.orig/security/selinux/hooks.c	2021-09-28 11:36:03.559785943 -0400
-> >>>> +++ redhat-linux/security/selinux/hooks.c	2021-09-30 14:01:05.869195347 -0400
-> >>>> @@ -2948,7 +2948,8 @@ static void selinux_inode_free_security(
-> >>>>  }
-> >>>>  
-> >>> I agree with Al that it would be cleaner to just return the string, but
-> >>> the call_*_hook stuff makes that a bit more tricky. I suppose this is a
-> >>> reasonable compromise.
-> >> call_int_hook() and call_void_hook() were introduced to reduce the monotonous
-> >> repetition in the source. They are cosmetic and add no real value. They shouldn't
-> >> be a consideration in the discussion.
-> >>
-> >> There is a problem with Al's suggestion. The interface as used today has two real
-> >> problems. It returns an attribute value without identifying the attribute. Al's
-> >> interface would address this issue. The other problem is that the interface can't
-> >> provide multiple attribute+value pairs. The interface is going to need changed to
-> >> support that for full module stacking. I don't see a rational way to extend the
-> >> interface if it returns a string when there are multiple attributes to choose from.
-> >>
-> > Is that also a problem for the ctx parameter? In the case of full module
-> > stacking do you get back multiple contexts as well?
-> 
-> That's a bigger discussion than is probably appropriate on this thread.
-> In the module stacking case the caller needs to identify which security
-> module's context it wants. If the caller is capable of dealing with
-> multiple attributes (none currently are, but they all assume that you're
-> using SELinux and only support what SELinux needs) it will need to
-> do something different. We have chickens and eggs involved. The LSM
-> infrastructure doesn't need to handle it because none of its callers
-> are capable of dealing with it. None of the callers try, in part because
-> they have no way to get the information they would need, and in part
-> because they don't care about anything beyond SELinux. Ceph, for example,
-> is hard coded to expect "security.selinux".
-> 
-> On further reflection, Al's suggestion could be made to work if the
-> caller identified which attribute its looking for.
+On 10/4/2021 10:13 AM, Vivek Goyal wrote:
+> On Mon, Oct 04, 2021 at 09:39:44AM -0700, Casey Schaufler wrote:
+>> On 10/4/2021 9:01 AM, Jeff Layton wrote:
+>>> On Mon, 2021-10-04 at 08:54 -0700, Casey Schaufler wrote:
+>>>> On 10/4/2021 8:20 AM, Jeff Layton wrote:
+>>>>> On Thu, 2021-09-30 at 14:59 -0400, Vivek Goyal wrote:
+>>>>>> Right now security_dentry_init_security() only supports single sec=
+urity
+>>>>>> label and is used by SELinux only. There are two users of of this =
+hook,
+>>>>>> namely ceph and nfs.
+>>>>>>
+>>>>>> NFS does not care about xattr name. Ceph hardcodes the xattr name =
+to
+>>>>>> security.selinux (XATTR_NAME_SELINUX).
+>>>>>>
+>>>>>> I am making changes to fuse/virtiofs to send security label to vir=
+tiofsd
+>>>>>> and I need to send xattr name as well. I also hardcoded the name o=
+f
+>>>>>> xattr to security.selinux.
+>>>>>>
+>>>>>> Stephen Smalley suggested that it probably is a good idea to modif=
+y
+>>>>>> security_dentry_init_security() to also return name of xattr so th=
+at
+>>>>>> we can avoid this hardcoding in the callers.
+>>>>>>
+>>>>>> This patch adds a new parameter "const char **xattr_name" to
+>>>>>> security_dentry_init_security() and LSM puts the name of xattr
+>>>>>> too if caller asked for it (xattr_name !=3D NULL).
+>>>>>>
+>>>>>> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+>>>>>> ---
+>>>>>>
+>>>>>> I have compile tested this patch. Don't know how to setup ceph and=
 
-Or I could just add a parameter "const char *xattr_name" which identifies
-which xattr caller is looking for.  (So no returning the name of xattr).
-And this will simply return "int".
+>>>>>> test it. Its a very simple change. Hopefully ceph developers can
+>>>>>> have a quick look at it.
+>>>>>>
+>>>>>> A similar attempt was made three years back.
+>>>>>>
+>>>>>> https://lore.kernel.org/linux-security-module/20180626080429.27304=
+-1-zyan@redhat.com/T/
+>>>>>> ---
+>>>>>>  fs/ceph/xattr.c               |    3 +--
+>>>>>>  fs/nfs/nfs4proc.c             |    3 ++-
+>>>>>>  include/linux/lsm_hook_defs.h |    3 ++-
+>>>>>>  include/linux/lsm_hooks.h     |    1 +
+>>>>>>  include/linux/security.h      |    6 ++++--
+>>>>>>  security/security.c           |    7 ++++---
+>>>>>>  security/selinux/hooks.c      |    6 +++++-
+>>>>>>  7 files changed, 19 insertions(+), 10 deletions(-)
+>>>>>>
+>>>>>> Index: redhat-linux/security/selinux/hooks.c
+>>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>>>>> --- redhat-linux.orig/security/selinux/hooks.c	2021-09-28 11:36:03=
+=2E559785943 -0400
+>>>>>> +++ redhat-linux/security/selinux/hooks.c	2021-09-30 14:01:05.8691=
+95347 -0400
+>>>>>> @@ -2948,7 +2948,8 @@ static void selinux_inode_free_security(
+>>>>>>  }
+>>>>>> =20
+>>>>> I agree with Al that it would be cleaner to just return the string,=
+ but
+>>>>> the call_*_hook stuff makes that a bit more tricky. I suppose this =
+is a
+>>>>> reasonable compromise.
+>>>> call_int_hook() and call_void_hook() were introduced to reduce the m=
+onotonous
+>>>> repetition in the source. They are cosmetic and add no real value. T=
+hey shouldn't
+>>>> be a consideration in the discussion.
+>>>>
+>>>> There is a problem with Al's suggestion. The interface as used today=
+ has two real
+>>>> problems. It returns an attribute value without identifying the attr=
+ibute. Al's
+>>>> interface would address this issue. The other problem is that the in=
+terface can't
+>>>> provide multiple attribute+value pairs. The interface is going to ne=
+ed changed to
+>>>> support that for full module stacking. I don't see a rational way to=
+ extend the
+>>>> interface if it returns a string when there are multiple attributes =
+to choose from.
+>>>>
+>>> Is that also a problem for the ctx parameter? In the case of full mod=
+ule
+>>> stacking do you get back multiple contexts as well?
+>> That's a bigger discussion than is probably appropriate on this thread=
+=2E
+>> In the module stacking case the caller needs to identify which securit=
+y
+>> module's context it wants. If the caller is capable of dealing with
+>> multiple attributes (none currently are, but they all assume that you'=
+re
+>> using SELinux and only support what SELinux needs) it will need to
+>> do something different. We have chickens and eggs involved. The LSM
+>> infrastructure doesn't need to handle it because none of its callers
+>> are capable of dealing with it. None of the callers try, in part becau=
+se
+>> they have no way to get the information they would need, and in part
+>> because they don't care about anything beyond SELinux. Ceph, for examp=
+le,
+>> is hard coded to expect "security.selinux".
+>>
+>> On further reflection, Al's suggestion could be made to work if the
+>> caller identified which attribute its looking for.
+> Or I could just add a parameter "const char *xattr_name" which identifi=
+es
+> which xattr caller is looking for.  (So no returning the name of xattr)=
+=2E
+> And this will simply return "int".
+>
+> Anyway, all the callers right now only expect "security.selinux". Those=
 
-Anyway, all the callers right now only expect "security.selinux". Those
-who can deal with other xattrs, can pass it explicitly.
+> who can deal with other xattrs, can pass it explicitly.
 
-I feel current patch is better because caller can check anyway, what
-xattr name it got in return and reject it if it does not want to deal
-with it. No hardcoding of xattr names required.
+Labeled NFS was supposed to support Smack as well as SELinux.
+To the best of my knowledge no one ever actually got that working.
+But is was promised, and there's no obvious reason it shouldn't work.
 
-Vivek
+> I feel current patch is better because caller can check anyway, what
+> xattr name it got in return and reject it if it does not want to deal
+> with it. No hardcoding of xattr names required.
 
->  
-> 
-> >>>>  static int selinux_dentry_init_security(struct dentry *dentry, int mode,
-> >>>> -					const struct qstr *name, void **ctx,
-> >>>> +					const struct qstr *name,
-> >>>> +					const char **xattr_name, void **ctx,
-> >>>>  					u32 *ctxlen)
-> >>>>  {
-> >>>>  	u32 newsid;
-> >>>> @@ -2961,6 +2962,9 @@ static int selinux_dentry_init_security(
-> >>>>  	if (rc)
-> >>>>  		return rc;
-> >>>>  
-> >>>> +	if (xattr_name)
-> >>>> +		*xattr_name = XATTR_NAME_SELINUX;
-> >>>> +
-> >>>>  	return security_sid_to_context(&selinux_state, newsid, (char **)ctx,
-> >>>>  				       ctxlen);
-> >>>>  }
-> >>>> Index: redhat-linux/security/security.c
-> >>>> ===================================================================
-> >>>> --- redhat-linux.orig/security/security.c	2021-08-16 10:39:28.518988836 -0400
-> >>>> +++ redhat-linux/security/security.c	2021-09-30 13:54:36.367195347 -0400
-> >>>> @@ -1052,11 +1052,12 @@ void security_inode_free(struct inode *i
-> >>>>  }
-> >>>>  
-> >>>>  int security_dentry_init_security(struct dentry *dentry, int mode,
-> >>>> -					const struct qstr *name, void **ctx,
-> >>>> -					u32 *ctxlen)
-> >>>> +				  const struct qstr *name,
-> >>>> +				  const char **xattr_name, void **ctx,
-> >>>> +				  u32 *ctxlen)
-> >>>>  {
-> >>>>  	return call_int_hook(dentry_init_security, -EOPNOTSUPP, dentry, mode,
-> >>>> -				name, ctx, ctxlen);
-> >>>> +				name, xattr_name, ctx, ctxlen);
-> >>>>  }
-> >>>>  EXPORT_SYMBOL(security_dentry_init_security);
-> >>>>  
-> >>>> Index: redhat-linux/include/linux/lsm_hooks.h
-> >>>> ===================================================================
-> >>>> --- redhat-linux.orig/include/linux/lsm_hooks.h	2021-06-02 10:20:27.717485143 -0400
-> >>>> +++ redhat-linux/include/linux/lsm_hooks.h	2021-09-30 13:56:48.440195347 -0400
-> >>>> @@ -196,6 +196,7 @@
-> >>>>   *	@dentry dentry to use in calculating the context.
-> >>>>   *	@mode mode used to determine resource type.
-> >>>>   *	@name name of the last path component used to create file
-> >>>> + *	@xattr_name pointer to place the pointer to security xattr name
-> >>> It might be a good idea to also document the lifetime for xattr_name
-> >>> here. In particular you're returning a pointer to a static string, and
-> >>> it would be good to note that the caller needn't free it or anything.
-> >>>
-> >>>>   *	@ctx pointer to place the pointer to the resulting context in.
-> >>>>   *	@ctxlen point to place the length of the resulting context.
-> >>>>   * @dentry_create_files_as:
-> >>>> Index: redhat-linux/include/linux/security.h
-> >>>> ===================================================================
-> >>>> --- redhat-linux.orig/include/linux/security.h	2021-08-16 10:39:28.484988836 -0400
-> >>>> +++ redhat-linux/include/linux/security.h	2021-09-30 13:59:00.288195347 -0400
-> >>>> @@ -317,8 +317,9 @@ int security_add_mnt_opt(const char *opt
-> >>>>  				int len, void **mnt_opts);
-> >>>>  int security_move_mount(const struct path *from_path, const struct path *to_path);
-> >>>>  int security_dentry_init_security(struct dentry *dentry, int mode,
-> >>>> -					const struct qstr *name, void **ctx,
-> >>>> -					u32 *ctxlen);
-> >>>> +				  const struct qstr *name,
-> >>>> +				  const char **xattr_name, void **ctx,
-> >>>> +				  u32 *ctxlen);
-> >>>>  int security_dentry_create_files_as(struct dentry *dentry, int mode,
-> >>>>  					struct qstr *name,
-> >>>>  					const struct cred *old,
-> >>>> @@ -739,6 +740,7 @@ static inline void security_inode_free(s
-> >>>>  static inline int security_dentry_init_security(struct dentry *dentry,
-> >>>>  						 int mode,
-> >>>>  						 const struct qstr *name,
-> >>>> +						 const char **xattr_name,
-> >>>>  						 void **ctx,
-> >>>>  						 u32 *ctxlen)
-> >>>>  {
-> >>>> Index: redhat-linux/include/linux/lsm_hook_defs.h
-> >>>> ===================================================================
-> >>>> --- redhat-linux.orig/include/linux/lsm_hook_defs.h	2021-07-07 11:54:59.673549151 -0400
-> >>>> +++ redhat-linux/include/linux/lsm_hook_defs.h	2021-09-30 14:02:13.114195347 -0400
-> >>>> @@ -83,7 +83,8 @@ LSM_HOOK(int, 0, sb_add_mnt_opt, const c
-> >>>>  LSM_HOOK(int, 0, move_mount, const struct path *from_path,
-> >>>>  	 const struct path *to_path)
-> >>>>  LSM_HOOK(int, 0, dentry_init_security, struct dentry *dentry,
-> >>>> -	 int mode, const struct qstr *name, void **ctx, u32 *ctxlen)
-> >>>> +	 int mode, const struct qstr *name, const char **xattr_name,
-> >>>> +	 void **ctx, u32 *ctxlen)
-> >>>>  LSM_HOOK(int, 0, dentry_create_files_as, struct dentry *dentry, int mode,
-> >>>>  	 struct qstr *name, const struct cred *old, struct cred *new)
-> >>>>  
-> >>>> Index: redhat-linux/fs/nfs/nfs4proc.c
-> >>>> ===================================================================
-> >>>> --- redhat-linux.orig/fs/nfs/nfs4proc.c	2021-07-14 14:47:42.732842926 -0400
-> >>>> +++ redhat-linux/fs/nfs/nfs4proc.c	2021-09-30 14:06:02.249195347 -0400
-> >>>> @@ -127,7 +127,8 @@ nfs4_label_init_security(struct inode *d
-> >>>>  		return NULL;
-> >>>>  
-> >>>>  	err = security_dentry_init_security(dentry, sattr->ia_mode,
-> >>>> -				&dentry->d_name, (void **)&label->label, &label->len);
-> >>>> +				&dentry->d_name, NULL,
-> >>>> +				(void **)&label->label, &label->len);
-> >>>>  	if (err == 0)
-> >>>>  		return label;
-> >>>>  
-> >>>> Index: redhat-linux/fs/ceph/xattr.c
-> >>>> ===================================================================
-> >>>> --- redhat-linux.orig/fs/ceph/xattr.c	2021-09-09 13:05:21.800611264 -0400
-> >>>> +++ redhat-linux/fs/ceph/xattr.c	2021-09-30 14:14:59.892195347 -0400
-> >>>> @@ -1311,7 +1311,7 @@ int ceph_security_init_secctx(struct den
-> >>>>  	int err;
-> >>>>  
-> >>>>  	err = security_dentry_init_security(dentry, mode, &dentry->d_name,
-> >>>> -					    &as_ctx->sec_ctx,
-> >>>> +					    &name, &as_ctx->sec_ctx,
-> >>>>  					    &as_ctx->sec_ctxlen);
-> >>>>  	if (err < 0) {
-> >>>>  		WARN_ON_ONCE(err != -EOPNOTSUPP);
-> >>>> @@ -1335,7 +1335,6 @@ int ceph_security_init_secctx(struct den
-> >>>>  	 * It only supports single security module and only selinux has
-> >>>>  	 * dentry_init_security hook.
-> >>>>  	 */
-> >>>> -	name = XATTR_NAME_SELINUX;
-> >>>>  	name_len = strlen(name);
-> >>>>  	err = ceph_pagelist_reserve(pagelist,
-> >>>>  				    4 * 2 + name_len + as_ctx->sec_ctxlen);
-> >>>>
-> >>> Looks reasonable overall.
-> >>>
-> >>> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> >>>
-> 
+There are a bunch of LSM hooks that I'd love to rip out and replace
+with more rational interfaces. This is one. I doubt I'll have the
+opportunity to do that in this lifetime. Any change that works is
+OK with me. There's probably some amount of change that will be
+necessary in the future, and neither of the proposals on the table
+are unworkable.
+
 
