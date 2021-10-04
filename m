@@ -2,114 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EE10642183B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Oct 2021 22:13:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 506C4421884
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Oct 2021 22:39:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235836AbhJDUPK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Oct 2021 16:15:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47214 "EHLO
+        id S235955AbhJDUlk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Oct 2021 16:41:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229945AbhJDUPJ (ORCPT
+        with ESMTP id S234781AbhJDUlk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Oct 2021 16:15:09 -0400
+        Mon, 4 Oct 2021 16:41:40 -0400
 Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59429C061745;
-        Mon,  4 Oct 2021 13:13:20 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id dj4so70041046edb.5;
-        Mon, 04 Oct 2021 13:13:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC093C061745;
+        Mon,  4 Oct 2021 13:39:50 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id r18so69645557edv.12;
+        Mon, 04 Oct 2021 13:39:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9q0PfcjN4ZcxtERnpGgFCs55vRjNc3NnENgrVFHH7xs=;
-        b=ZMMgpWZHQ0vHntjuBhO97brNLUon0w94MU7wkJLo89LWplC8RTnsjCZTGqxLYVFcVx
-         WyHzRnWOSnqQjfgJx8aFEqhpnIABplxdnaAf1yuuUWpuuviirPR5Ds3GzDKW+taK5PsG
-         kR7QeQV1M8PBDTFXKIOil9RO4xHcVNgVMujLkprdkn+Ey95cNp/93RAGiJTxUe4BDCo0
-         qZ+FOba7wwfZyi8ooguFvEazfDrzN9GnP+87yDjugEBWHOcC/UJzl4K3utiLs0jr2EFt
-         lc9WSuF0Yt4Z9CjRq7P3CDwewMxYDEW3Nm/f6w4xdZBjmBNCK1fumwPZsxrt6UWDM6NR
-         SAtg==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=ZN0FZqiP/tSKJWvjzWYzmirjI6tOAf0Xm/PBKsW4sfw=;
+        b=h2cfSXzFHnOs2RG1zFw4/Hbm0AsiK7htA4HPaBZzTiqOkkC3SsuOxhfpfYgJdjbeZZ
+         0Rx/ZMcFwwk02BW2clsVJqhOz0cOddt9jLQ+/H1AU9jww3pndDE9YCmK84V9/ovlU2VV
+         NNb5TIYvTmQkmMTX3nHQaNC6jXKk66GtEEOLoPxrOYnlMwWgT8slfN7L+zzUlqDhaTxq
+         VO6TfJTfIAfpEI9ZccJnv4D9hAJspWOuPcD3ry7gmxB6GOzNigj2JhEemV8o3bnHeH6n
+         70mVCV1ABHlu+RK/LKv39BFz0GYBZltup8FMu4Lj01acOYR/kH8/7bsmW5KbJntRmUp/
+         /HEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9q0PfcjN4ZcxtERnpGgFCs55vRjNc3NnENgrVFHH7xs=;
-        b=DEYUZTGQr9lH9Q4bjT8SuSc4TsLD8Mwb9V4vpUVeCpsPOKhXiR5enG8rj7p+nMAFXk
-         4NcITMpttwiAzoTwAQUXNjCyUbwRiT+F9PKVoeOUpwZx2tTcTL5XuQQ2k933jkQSmH74
-         sEHHoIK2KcQ25+x/nP7q47CKwdfYeij44r7ad2GSytp9KA9H03wLBzrPYYT+VY62FR+D
-         zBoWRP70tvCM6T09R1nq0wZW6RUN3qcegOnXXCMZbLaAKfRhv5iuSMGEY86TMiUApLnS
-         FtgpRBfXmVdWwgxtcDWanqVMpP2+IZOpo4f/GX1ZzyWlHW5H47fa8kY2z/xZBoVKGl5S
-         /Z6A==
-X-Gm-Message-State: AOAM532KSwRJiHL6jemAHDq3Nptfi/G0lmROj/Gd85GiM/nAItAa9Odh
-        fpa+KlH44FqSfT+rg4XYXaPUkDSpQw44u0Ij8B0=
-X-Google-Smtp-Source: ABdhPJwfnU85LXVfxLQzchmKGmou6ZhKaAOxYoJNmvfOc6u6tutvah//4ik6xntkhMkxLUgJakl9GQMsDtCaGGJys/A=
-X-Received: by 2002:a17:906:3854:: with SMTP id w20mr18574634ejc.537.1633378398991;
- Mon, 04 Oct 2021 13:13:18 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ZN0FZqiP/tSKJWvjzWYzmirjI6tOAf0Xm/PBKsW4sfw=;
+        b=FPVTlKtYr0tX+B5rliKFiXIrq/Wru6xOq4+ObCrBFYRssGOn09kDvb7eWzHL2mWaKz
+         qQPWDbhSncVwqkLobNBsWmfo15v1ygvfGwJjxMONN36S9QzOAITvzP8qCUG7mS9SshCG
+         P4ne1OEIUHU0VhCu0SvTFvqr9Kkr0ocP4S3qbL0xZF0ffk9TJxa1RyQzzx8n91keyrPR
+         gZj88C2QzG+GWwNcmp93WyY31M7GfL76+tVBQHkIO4TsuBHfaroT/+fmX66SnLjS1KVw
+         ruqFW4Yxd0jRODry6KRX+I8Sw6pLiEDDmbIm33jx/FOZwNzZrcXhLegwbpXMzNhQBa3U
+         3YNg==
+X-Gm-Message-State: AOAM532+kigPDnxb3LgHfuo5/3yY4VRLgMbwROYbxN3UUUKfgrQOG/ox
+        66VbsmooSDGu512r4aZvd4k=
+X-Google-Smtp-Source: ABdhPJwZYA4EE+PMu0+hSaaxzWRZvxH2qJ1DMJkDue1lDN5kb4rMvrSJsvb4b5GwxG9ohUGTYwoOMg==
+X-Received: by 2002:a17:906:7ce:: with SMTP id m14mr19702350ejc.192.1633379988142;
+        Mon, 04 Oct 2021 13:39:48 -0700 (PDT)
+Received: from [192.168.0.163] ([37.239.218.18])
+        by smtp.gmail.com with ESMTPSA id dn10sm7559243edb.84.2021.10.04.13.39.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Oct 2021 13:39:47 -0700 (PDT)
+Message-ID: <c892016c-3e50-739b-38d2-010f02d52019@gmail.com>
+Date:   Mon, 4 Oct 2021 23:39:44 +0300
 MIME-Version: 1.0
-References: <20210930215311.240774-1-shy828301@gmail.com> <20210930215311.240774-3-shy828301@gmail.com>
- <20211004140637.qejvenbkmrulqdno@box.shutemov.name> <CAHbLzkp5d_j97MizSFCgfnHQj_tUQuHJqxWtrvRo_0kZMKCgtA@mail.gmail.com>
- <20211004194130.6hdzanjl2e2np4we@box.shutemov.name>
-In-Reply-To: <20211004194130.6hdzanjl2e2np4we@box.shutemov.name>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Mon, 4 Oct 2021 13:13:07 -0700
-Message-ID: <CAHbLzkqcrGCksMXbW5p75ZK2ODv4bLcdQWs7Jz0NG4-=5N20zw@mail.gmail.com>
-Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
- for PMD page fault
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Peter Xu <peterx@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.1
+Subject: Re: [PATCH] fs/ntfs3: Check for NULL if ATTR_EA_INFO is incorrect
+Content-Language: en-US
+To:     Kari Argillander <kari.argillander@gmail.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <227c13e3-5a22-0cba-41eb-fcaf41940711@paragon-software.com>
+ <20211003175036.ly4m3lw2bjoippsh@kari-VirtualBox>
+From:   Mohammad Rasim <mohammad.rasim96@gmail.com>
+In-Reply-To: <20211003175036.ly4m3lw2bjoippsh@kari-VirtualBox>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 4, 2021 at 12:41 PM Kirill A. Shutemov <kirill@shutemov.name> wrote:
->
-> On Mon, Oct 04, 2021 at 11:17:29AM -0700, Yang Shi wrote:
-> > On Mon, Oct 4, 2021 at 7:06 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
-> > >
-> > > On Thu, Sep 30, 2021 at 02:53:08PM -0700, Yang Shi wrote:
-> > > > diff --git a/mm/filemap.c b/mm/filemap.c
-> > > > index dae481293b5d..2acc2b977f66 100644
-> > > > --- a/mm/filemap.c
-> > > > +++ b/mm/filemap.c
-> > > > @@ -3195,12 +3195,12 @@ static bool filemap_map_pmd(struct vm_fault *vmf, struct page *page)
-> > > >       }
-> > > >
-> > > >       if (pmd_none(*vmf->pmd) && PageTransHuge(page)) {
-> > > > -         vm_fault_t ret = do_set_pmd(vmf, page);
-> > > > -         if (!ret) {
-> > > > -                 /* The page is mapped successfully, reference consumed. */
-> > > > -                 unlock_page(page);
-> > > > -                 return true;
-> > > > -         }
-> > > > +             vm_fault_t ret = do_set_pmd(vmf, page);
-> > > > +             if (!ret) {
-> > > > +                     /* The page is mapped successfully, reference consumed. */
-> > > > +                     unlock_page(page);
-> > > > +                     return true;
-> > > > +             }
-> > > >       }
-> > > >
-> > > >       if (pmd_none(*vmf->pmd)) {
-> > >
-> > > Hm. Is it unrelated whitespace fix?
-> >
-> > It is a coding style clean up. I thought it may be overkilling to have
-> > a separate patch. Do you prefer separate one?
->
-> Maybe. I tried to find what changed here. It's confusing.
 
-Yeah, maybe. Anyway I will separate the real big fix and the cleanup
-into two patches. This may be helpful for backporting too.
-
+On 10/3/21 20:50, Kari Argillander wrote:
+> On Wed, Sep 29, 2021 at 07:35:43PM +0300, Konstantin Komarov wrote:
+>> This can be reason for reported panic.
+>> Fixes: 4342306f0f0d ("fs/ntfs3: Add file operations and implementation")
+> I see that you have include this to devel branch but you did not send V2
+> [1]. I also included Mohammad Rasim to this thread. Maybe they can test
+> this patch. Rasim can you test [2] if your problem will be fixed with
+> this tree. Or just test this patch if you prefer that way.
 >
-> --
->  Kirill A. Shutemov
+> [1]: github.com/Paragon-Software-Group/linux-ntfs3/commit/35afb70dcfe4eb445060dd955e5b67d962869ce5
+> [2]: github.com/Paragon-Software-Group/linux-ntfs3/tree/devel
+
+Yeah unfortunately the problem still exist, moving the buildroot git 
+tree from my nvme ext4 partition to my wd ntfs partition still causes 
+the panic.
+
+Note that i used the master branch if that matters but it contains the 
+same commit
+
+
+Regards
+
+>> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+>> ---
+>>   fs/ntfs3/frecord.c | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
+>> index 9a53f809576d..007602badd90 100644
+>> --- a/fs/ntfs3/frecord.c
+>> +++ b/fs/ntfs3/frecord.c
+>> @@ -3080,7 +3080,9 @@ static bool ni_update_parent(struct ntfs_inode *ni, struct NTFS_DUP_INFO *dup,
+>>                          const struct EA_INFO *info;
+>>   
+>>                          info = resident_data_ex(attr, sizeof(struct EA_INFO));
+>> -                       dup->ea_size = info->size_pack;
+>> +                       /* If ATTR_EA_INFO exists 'info' can't be NULL. */
+>> +                       if (info)
+>> +                               dup->ea_size = info->size_pack;
+>>                  }
+>>          }
+>>   
+>> -- 
+>> 2.33.0
+>>
