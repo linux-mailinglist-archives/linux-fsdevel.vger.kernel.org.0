@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ED824214C9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Oct 2021 19:06:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 604DA4214ED
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Oct 2021 19:13:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238131AbhJDRIB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Oct 2021 13:08:01 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:43947 "EHLO
+        id S237321AbhJDRPf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Oct 2021 13:15:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:33981 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238119AbhJDRIB (ORCPT
+        by vger.kernel.org with ESMTP id S234496AbhJDRPd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Oct 2021 13:08:01 -0400
+        Mon, 4 Oct 2021 13:15:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1633367171;
+        s=mimecast20190719; t=1633367624;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Ba1aEL1no5V/ZtICl+yyqfwxDXolMrIXmYLwyPUR9os=;
-        b=JEuaheIdPLb77s4wEAEsXfiJ/kkZQDNl5pSZkBPdYNzodcFcmqmophJjo86ueX26rkMLKn
-        PuFr4XHV32pxuFLXUluvWDbcSG3FQauVZi4OLevsROSEL6TJLR1yhnwqlRM3bacsWsGAM9
-        dgaqj6SnG+Vod/abuo2TDmTsOKNwJ0Y=
+        bh=lvFPEWKQLdL/TB0ie3ARaxI0Pk5CaQKVenSaTpL8BPo=;
+        b=cdAO6s4/E7OSVrbl17WKSVP1ib03eIbM2+d6nmzHAFfddyIem08qc8UQpsylpcQhVnkzUm
+        Fxw9fIzQVCiJxNTsWwO/FamabFfBFn5p5t8VP4F8B/hQUXal0ftJF4Ron48TkI+OcoUeVB
+        s80T65CnyYeKtmauVivVXAlqmKvIIQI=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-564-BBHFktDPM4iPg6h1s4D-Gg-1; Mon, 04 Oct 2021 13:06:08 -0400
-X-MC-Unique: BBHFktDPM4iPg6h1s4D-Gg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-43-M9Lre7UHMSid9o7eKpIzPA-1; Mon, 04 Oct 2021 13:13:41 -0400
+X-MC-Unique: M9Lre7UHMSid9o7eKpIzPA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 03264101F002;
-        Mon,  4 Oct 2021 17:06:07 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3512518414AB;
+        Mon,  4 Oct 2021 17:13:39 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.22.17.70])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2F36660C05;
-        Mon,  4 Oct 2021 17:05:51 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6C42660843;
+        Mon,  4 Oct 2021 17:13:36 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 37641220BDB; Mon,  4 Oct 2021 13:05:51 -0400 (EDT)
-Date:   Mon, 4 Oct 2021 13:05:51 -0400
+        id CF6CC220BDB; Mon,  4 Oct 2021 13:13:35 -0400 (EDT)
+Date:   Mon, 4 Oct 2021 13:13:35 -0400
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     Casey Schaufler <casey@schaufler-ca.com>
 Cc:     Jeff Layton <jlayton@kernel.org>,
@@ -49,7 +49,7 @@ Cc:     Jeff Layton <jlayton@kernel.org>,
         stephen.smalley.work@gmail.com
 Subject: Re: [PATCH] security: Return xattr name from
  security_dentry_init_security()
-Message-ID: <YVs0b2Fu0JnNy6GG@redhat.com>
+Message-ID: <YVs2P1AcWkQ0Q0wq@redhat.com>
 References: <YVYI/p1ipDFiQ5OR@redhat.com>
  <1583ffb057e8442fa7af40dabcb38960982211ba.camel@kernel.org>
  <06a82de9-1c3e-1102-7738-f40905ea9ee4@schaufler-ca.com>
@@ -60,7 +60,7 @@ Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 In-Reply-To: <a7ab4daf-e577-abcc-f4a0-09d7eb9c4cb7@schaufler-ca.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -148,19 +148,16 @@ On Mon, Oct 04, 2021 at 09:39:44AM -0700, Casey Schaufler wrote:
 > On further reflection, Al's suggestion could be made to work if the
 > caller identified which attribute its looking for.
 
-IMHO, for multiple security contexts we need to write a new hook and
-provide capability to deal with lsm stacking. And that new interface
-could provide something like taking the name of "xattr" as input and
-return corresponding security context (if needed).This existing hook
-security_dentry_init_security() can simply be removed once all callers
-have migrated to new hook.
+Or I could just add a parameter "const char *xattr_name" which identifies
+which xattr caller is looking for.  (So no returning the name of xattr).
+And this will simply return "int".
 
-So to me real question is, is it worth to work through all generic
-LSM stuff and modify it (as needed) so that we can return a 
-"const char *" instead of "int". I feel complexity of that change
-is much more thank simply adding a function parameter. So if were
-to compare two options, it feels much simpler to simply add a function
-parameter.
+Anyway, all the callers right now only expect "security.selinux". Those
+who can deal with other xattrs, can pass it explicitly.
+
+I feel current patch is better because caller can check anyway, what
+xattr name it got in return and reject it if it does not want to deal
+with it. No hardcoding of xattr names required.
 
 Vivek
 
