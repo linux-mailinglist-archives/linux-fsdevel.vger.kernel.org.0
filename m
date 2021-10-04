@@ -2,95 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4432542078F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Oct 2021 10:47:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B3FC420925
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Oct 2021 12:13:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229995AbhJDItT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Oct 2021 04:49:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54492 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229652AbhJDItT (ORCPT
+        id S232176AbhJDKPH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Oct 2021 06:15:07 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:40757 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229760AbhJDKPC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Oct 2021 04:49:19 -0400
-Received: from mail-yb1-xb41.google.com (mail-yb1-xb41.google.com [IPv6:2607:f8b0:4864:20::b41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70E17C061746
-        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Oct 2021 01:47:30 -0700 (PDT)
-Received: by mail-yb1-xb41.google.com with SMTP id w10so13346306ybt.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Oct 2021 01:47:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=/jfyDf2uGQ0G4PkhWSUViq4lngXtqzf19oHYgswwn6Y=;
-        b=ZhNjpXps1iaEVkmEi+Dwi9/nQUeNUCX+Mvij14snth8JJVp1c24CCuMAoXGHgF9An/
-         5Lt2Y5QZX8NRykdSdrOwh4Q2wPfDU3vhYYHbyaXX6UHszpUDG4P2O/rxiUFlkgNcRCn0
-         bYoLe1/MiRNM+gS5LeAVLy7BzhreG5VwilMzctgAAm3v3fsomdHEKWiLthFXtPyM8hUk
-         +cvtoFmFvfyQBWTl43dNiokFk1fuxssufn6+m/N+34kzK3dqPrgjt6lyN6CWbeqkn0Lt
-         8CAwTAcVIkfPke/cn+w7daNml1CGOo1QQQ6Ckt6MkatRtkF8nblxNnD8ZKpl+8TjcoAy
-         3GVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=/jfyDf2uGQ0G4PkhWSUViq4lngXtqzf19oHYgswwn6Y=;
-        b=7q0hzLCXPsDOZutmX+8ZRq3KYIoFHerv5zF1o9KlQOVAZxhZwcdg5+Iups/BiZILvc
-         TSJNerbPRxeR0VRJiaF25ZbwrQf2EF3BOqhGhW4ncznxAZJO75M8xdw/hlhb8LwpUpPy
-         /LZXqfdscoEEfZxPlpMSWC47kMcMZTbQ0XYotVrTXUDWn4HzX/aHebbWcxvdAVa83/2C
-         bi4DnS3TOtjKyPsPzVOiNIojmAwDNFPf1+PVMKvJq9qs8GFW0xRO3ddLRv7efWKvhuWW
-         Zf+PGL0Uh0yvxiIky5t1FeribP5D4amvs7wGo6INvOztAP4V6lX9I4qT6BuPoSsPFUaq
-         zQ/A==
-X-Gm-Message-State: AOAM532XLcY92m5Keitxh1IqxmjsiFySeLTJHHi6zYCqaxv/wpwtIlfE
-        zetpe2thP/lFdZRBVfBbRvrH2TEWUOz4jC0a+iM=
-X-Google-Smtp-Source: ABdhPJwJHk5FMtxIpEOscXs+sKwqKgA5Hsl9GA0U7h/1xxdxA9kj+6EYaO70RafRkvPhAQwpTR0Vs5jtiI3mlk13kiI=
-X-Received: by 2002:a25:ed0d:: with SMTP id k13mr13497050ybh.191.1633337249273;
- Mon, 04 Oct 2021 01:47:29 -0700 (PDT)
+        Mon, 4 Oct 2021 06:15:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1633342393;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=uCf9+2XTU54Gj/OtnQlqxxYbAga8gRYYuCZmIxMpfzQ=;
+        b=TU2G2PxL3WP84wwxT9n2nRmoygrlBiwsQS7Q4oYpgH7sRwxDsiOt6n03aYkav4ZkCpmcR5
+        ZRO2MfdgJeytX3l8W6z54e1zDPVljQ3vG5SI4cLUdgU2mRqDcg6LVX7armjkM0LH8MWG8L
+        Ca1qg0aqRNm9z8GvkM88170T63oddhA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-100-jdCcP78sMda25iVAq9LBIg-1; Mon, 04 Oct 2021 06:13:12 -0400
+X-MC-Unique: jdCcP78sMda25iVAq9LBIg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 90A531006AA3;
+        Mon,  4 Oct 2021 10:13:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2FC5E5C1BB;
+        Mon,  4 Oct 2021 10:13:07 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        v9fs-developer@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        dhowells@redhat.com, linux-kernel@vger.kernel.org
+Subject: Do you want warning quashing patches at this point in the cycle?
 MIME-Version: 1.0
-Received: by 2002:a05:7108:3370:0:0:0:0 with HTTP; Mon, 4 Oct 2021 01:47:28
- -0700 (PDT)
-Reply-To: shawnhayden424@gmail.com
-From:   Shawn Hayden <shawnhayden424@gmail.com>
-Date:   Mon, 4 Oct 2021 09:47:28 +0100
-Message-ID: <CAFrwAPLY=FEzorq=AXXgO_yH6gmfA=ogBKC0CS56PJ2P70uj2g@mail.gmail.com>
-Subject: LOANS AND INVESTMENT
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <270323.1633342386.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Mon, 04 Oct 2021 11:13:06 +0100
+Message-ID: <270324.1633342386@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Sir,
+Hi Linus,
 
-Aseel Islamic finance PJSC is private joint stock company that was
-established in 2006 and has built a leading market position for itself
-in the UAE's Islamic finance market which specializes in loan finance
-and investment activities in real estate, hospitality, industrial &
-sustainable technologies, strategic financial investments, specialized
-education, healthcare services, agriculture, manufacturing,
-mining,energy and additional environmentally sustainable projects.
+Do you want patches that quash warnings from W=3D1 (mostly kerneldoc warni=
+ngs in
+comments in this case[1]) at this point in the cycle, or would you rather =
+they
+waited till the next merge window?
 
-My name is Mr. Ibn Ahmad Mustafa . Do you have projects that require
-funding? We have finance available for your projects with over 2
-trillion private and corporate investment portfolios.  Aseel Islamic
-finance PJSC is looking for equity partners, entrepreneur, fund
-raisers and portfolio managers who will pay up to 4.5% interest and/or
-part equity position with a 5 to 10 year hold. In 2030, we plan on
-acquiring up to 2 trillion in high-quality, low risk assets and
-investments to capitalize on the current market cycle.
+David
 
-Aseel Islamic finance PJSC is acting as a lender and the fund will be
-disbursed on a clear interest rate of 3.5% annually to the equity
-partners and entrepreneurs for their investment projects. We also give
-a 2% commission to brokers, who bring project owners for finance or
-other opportunities.
+[1] https://lore.kernel.org/r/163281899704.2790286.9177774252843775348.stg=
+it@warthog.procyon.org.uk/
 
-For further details, kindly send us your business plans or project summary.
-
-Regards,
-
-
-Mr. Ibn Ahmad Mustafa
-International Business Coordinator
-Aseel Islamic Finance PJSC
-Al Mankhool, Dubai C2 Tower,
-Ground floor,P.O 94669 Dubai, UAE
-Abu Dhabi - United Arab Emirates
-Email : ahmadmustafa.7800@gmail.com
