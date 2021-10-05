@@ -2,105 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48C27423131
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 21:59:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2254423140
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 22:04:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235961AbhJEUBV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Oct 2021 16:01:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38234 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235735AbhJEUBU (ORCPT
+        id S235630AbhJEUGF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Oct 2021 16:06:05 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:50782 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231266AbhJEUGE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Oct 2021 16:01:20 -0400
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45293C061760
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Oct 2021 12:59:29 -0700 (PDT)
-Received: by mail-pg1-x536.google.com with SMTP id r2so345005pgl.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Oct 2021 12:59:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=BLskmJGo49ZaTs/IEwf4eelOY6LUBobTHpbH6xAX+XU=;
-        b=C4oz6O22VwbnCqeRwIEzTyWG4IJlAggJctWXP59hSluxvHEkhwFYAAPxg1l2UNqpxF
-         38kkSkTr5PDSeErTWpzs5MbF9PswqncYXBaid/dxnMcz+kzIN6EBQlKGfI2DlXNk1tMe
-         Cb6VqRU8XlsDiW2tphrLc4oKWMb2XjuQRjPdw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=BLskmJGo49ZaTs/IEwf4eelOY6LUBobTHpbH6xAX+XU=;
-        b=VU9k2O1P5mhlmN8mulKzXuV5PKibFok3cWphHEXyA2MnAdZ/WFSY+eYIjB7S/2yk29
-         RYjK0UocIIKirgOObRcroBJfMcmgHZ2sixympmG0KaRS9D7NZhGf0XsTBBpNaUdxs5JT
-         4uetsyDvJlsTuQ3AhNvbl/mH02Y2z8tN+FG/i2bEHmur2HKpEXwLZVbeYOElMm0UNt7D
-         dqrQJelIDCYqyqHIgKXJwp+HQznyyeTO1e0wneRaEHxNOZgssjZff1jQ9WaJfhayIJRk
-         mvs3eC3L8v+HFLLduGO+NmGhaB1nMl4bF1tuYzRwgROYyBsn5lNEN1U9JU/XAX4cJHNt
-         G/Og==
-X-Gm-Message-State: AOAM530PPfhXCDt8xqr1WXcf0O1MQAr2DQXqQiEUEdogZyvvlEI5cqAK
-        2l4MM5r4v8P3tKVX4LKqP/P6pg==
-X-Google-Smtp-Source: ABdhPJwdgsDyx3NnPDfhmE8VO584mG7R66yp0PUsB2CyUiSP+UhWnJZHpKQTQjAnxYVzb5C9o3n37w==
-X-Received: by 2002:a62:5297:0:b0:3f4:263a:b078 with SMTP id g145-20020a625297000000b003f4263ab078mr32448286pfb.20.1633463968778;
-        Tue, 05 Oct 2021 12:59:28 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id k13sm8757894pfc.197.2021.10.05.12.59.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Oct 2021 12:59:28 -0700 (PDT)
-Date:   Tue, 5 Oct 2021 12:59:27 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     tj@kernel.org, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, minchan@kernel.org, jeyu@kernel.org,
-        shuah@kernel.org, bvanassche@acm.org, dan.j.williams@intel.com,
-        joe@perches.com, tglx@linutronix.de, rostedt@goodmis.org,
-        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 07/12] fs/kernfs/symlink.c: replace S_IRWXUGO with
- 0777 on kernfs_create_link()
-Message-ID: <202110051259.8DE82F3@keescook>
-References: <20210927163805.808907-1-mcgrof@kernel.org>
- <20210927163805.808907-8-mcgrof@kernel.org>
+        Tue, 5 Oct 2021 16:06:04 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 10CBD1C0B80; Tue,  5 Oct 2021 22:04:12 +0200 (CEST)
+Date:   Tue, 5 Oct 2021 22:04:11 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Colin Cross <ccross@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        vincenzo.frascino@arm.com,
+        Chinwen Chang =?utf-8?B?KOW8temMpuaWhyk=?= 
+        <chinwen.chang@mediatek.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jann Horn <jannh@google.com>, apopple@nvidia.com,
+        John Hubbard <jhubbard@nvidia.com>,
+        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
+        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
+        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
+        chris.hyser@oracle.com, Peter Collingbourne <pcc@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
+        Rolf Eike Beer <eb@emlix.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
+        cxfcosmos@gmail.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        kernel-team <kernel-team@android.com>
+Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
+Message-ID: <20211005200411.GB19804@duo.ucw.cz>
+References: <20211001205657.815551-1-surenb@google.com>
+ <20211001205657.815551-3-surenb@google.com>
+ <20211005184211.GA19804@duo.ucw.cz>
+ <CAJuCfpE5JEThTMhwKPUREfSE1GYcTx4YSLoVhAH97fJH_qR0Zg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="E39vaYmALEf/7YXx"
 Content-Disposition: inline
-In-Reply-To: <20210927163805.808907-8-mcgrof@kernel.org>
+In-Reply-To: <CAJuCfpE5JEThTMhwKPUREfSE1GYcTx4YSLoVhAH97fJH_qR0Zg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 27, 2021 at 09:38:00AM -0700, Luis Chamberlain wrote:
-> If one ends up extending this line checkpatch will complain about the
-> use of S_IRWXUGO suggesting it is not preferred and that 0777
-> should be used instead. Take the tip from checkpatch and do that
-> change before we do our subsequent changes.
-> 
-> This makes no functional changes.
-> 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+--E39vaYmALEf/7YXx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
->  fs/kernfs/symlink.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/kernfs/symlink.c b/fs/kernfs/symlink.c
-> index c8f8e41b8411..19a6c71c6ff5 100644
-> --- a/fs/kernfs/symlink.c
-> +++ b/fs/kernfs/symlink.c
-> @@ -36,8 +36,7 @@ struct kernfs_node *kernfs_create_link(struct kernfs_node *parent,
->  		gid = target->iattr->ia_gid;
->  	}
->  
-> -	kn = kernfs_new_node(parent, name, S_IFLNK|S_IRWXUGO, uid, gid,
-> -			     KERNFS_LINK);
-> +	kn = kernfs_new_node(parent, name, S_IFLNK|0777, uid, gid, KERNFS_LINK);
->  	if (!kn)
->  		return ERR_PTR(-ENOMEM);
->  
-> -- 
-> 2.30.2
-> 
+Hi!
 
--- 
-Kees Cook
+> > On Fri 2021-10-01 13:56:57, Suren Baghdasaryan wrote:
+> > > While forking a process with high number (64K) of named anonymous vma=
+s the
+> > > overhead caused by strdup() is noticeable. Experiments with ARM64
+> > Android
+> >
+> > I still believe you should simply use numbers and do the
+> > numbers->strings mapping in userspace. We should not need to optimize
+> > strdups in kernel...
+>=20
+> Here are complications with mapping numbers to strings in the userspace:
+> Approach 1: hardcode number->string in some header file and let all
+> tools use that mapping. The issue is that whenever that mapping
+> changes all the tools that are using it (including 3rd party ones)
+> have to be rebuilt. This is not really maintainable since we don't
+> control 3rd party tools and even for the ones we control, it will be a
+> maintenance issue figuring out which version of the tool used which
+> header file.
+
+1a) Just put it into a file in /etc... Similar to header file but
+easier...
+
+> Approach 2: have a centralized facility (a process or a DB)
+> maintaining number->string mapping. This would require an additional
+> request to this facility whenever we want to make a number->string
+> conversion. Moreover, when we want to name a VMA, we would have to
+
+I see it complicates userspace. But that's better than complicating
+kernel, and I don't know what limits on strings you plan, but
+considering you'll be outputing the strings in /proc... someone is
+going to get confused with parsing.
+
+								Pavel
+--=20
+http://www.livejournal.com/~pavelmachek
+
+--E39vaYmALEf/7YXx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYVyvuwAKCRAw5/Bqldv6
+8lGrAJ0V28fWGvxGtBp2Sl4G3ljoIC0PJwCffbxs6/Xqs9vpl5ve9tLrqDxFsX4=
+=H8Zl
+-----END PGP SIGNATURE-----
+
+--E39vaYmALEf/7YXx--
