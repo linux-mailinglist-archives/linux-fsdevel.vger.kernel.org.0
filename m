@@ -2,66 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 83C56423297
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 23:02:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA8DF4232DC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 23:31:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235949AbhJEVED (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Oct 2021 17:04:03 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:22760 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232250AbhJEVEC (ORCPT
+        id S236281AbhJEVcw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Oct 2021 17:32:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59982 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236093AbhJEVcv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Oct 2021 17:04:02 -0400
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 195KtN4F029448;
-        Tue, 5 Oct 2021 21:00:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=Iu8l/kjfpN/J1tVMYPWBmN12VadVdC8oGYTJqghB95Y=;
- b=Jk70e7OAskticiFb+UFfF5V9HAJhCIOM6/XS9aeENXIbhzrFLArRV8/9HE4aGQCRPd+W
- vvNzZOK4IR2rC+NMTrIIi90A33ubfjNMorRtE4Snr4VNWEX7R+BQS5E96LNMlQwAACJZ
- 7oYKQ2P66Yf9qyvq6TcdrPYOiFWTUYiAxjK7+sguwRYFevC1c9inwLIkAZHQ41HSJgFG
- QVowqnz1ty+1sXo4lM6/4rg8rCI9y+jJikqAYEnobpKng2snQuDfV5+kSSyxfLILQNkz
- jiu1N8PYaOwsIGNCb93KxyCtMrfCGKWVjr75vdSvs4RyLiCbdwEB4xEZb/gHXTwsb1Yx dA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3bg42ku56e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 05 Oct 2021 21:00:30 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 195KoxHk165293;
-        Tue, 5 Oct 2021 21:00:29 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2170.outbound.protection.outlook.com [104.47.57.170])
-        by userp3030.oracle.com with ESMTP id 3bf0s76d2s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 05 Oct 2021 21:00:28 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hdklJ//PU5DcBico6xoescveFGZqfFz+Lg/1oqRLu6Vld840NvUrIotODfXh4SosrGLwjJgeQ4aPxL09SwPtq7otF9fckjgOm0+vUF56pXa5HYmqWxGwDuJ/SZJC+tiyOVyt5BdL0EIH2jiipanaLWyf4HXiQ1WMOioXsappny9EZ4Pf/iMBvVfaJWau3lGp3GTPTp9EUQR62FbIqDNqyIkTGxnBxtvSH0wYGQVCzLNp1fDHHEiZc0yxePg05kYjIypjnrVVIZB9WjNV4tmzcITbdXkAFs5ITXfjeF3ETQScB0P2CvWvO/7SBsKVSNQbXyDoEZXRkE/91pykhUenFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Iu8l/kjfpN/J1tVMYPWBmN12VadVdC8oGYTJqghB95Y=;
- b=TAhBshchSCN83s3b1JDq3IKArHiLVNsMX08sY397GcKZD+S3PLQ0UZyfb2gOlM+E4x0A6XSYo97WWc9P6a7/UP98DmyJmr7KePp0iNllkNT0LIkZCiMSZLX77A6PuQeHLpXVpUlU0Mu5p3TaU/jLobuKFf23WdQ4Gpf5tvg55diM+HHuOLmX/qtwncWPDrg89IBD0r0bK28xiG7PlbuyD6xCEA0BFTzsAC8TtSGAAWMiy/t45HuklJUrkIV0Uw3yPUPLQCjyP5E6XzZqV4jr4UkdQYOoMc0zQszhr1IJHkYmnMTy734oL9Eq3TYWly4C2LeJEjPJJdPoqpO9qgwMlA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Tue, 5 Oct 2021 17:32:51 -0400
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F03BCC061749
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Oct 2021 14:31:00 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id u32so762776ybd.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Oct 2021 14:31:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Iu8l/kjfpN/J1tVMYPWBmN12VadVdC8oGYTJqghB95Y=;
- b=L1kCoFWgcrZWdutYs5eyEiw8AH6CdOAT98lmM8YWlyXiNUakF9xz7j2d81wmbiWVrP43FC7Y+PGB96OO6WXSWZHttct9s4FIS+Ev9SuO+R05xTMzzMdQC8p8xoQ7VkU4DD91ZGKQKbw2V/xeVXo1peuoy1xdCkeKSunxFFmv5rk=
-Received: from BL0PR10MB3011.namprd10.prod.outlook.com (2603:10b6:208:7e::29)
- by BLAPR10MB5218.namprd10.prod.outlook.com (2603:10b6:208:306::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.15; Tue, 5 Oct
- 2021 21:00:24 +0000
-Received: from BL0PR10MB3011.namprd10.prod.outlook.com
- ([fe80::6d61:54c2:40f0:93a]) by BL0PR10MB3011.namprd10.prod.outlook.com
- ([fe80::6d61:54c2:40f0:93a%5]) with mapi id 15.20.4566.017; Tue, 5 Oct 2021
- 21:00:24 +0000
-From:   Liam Howlett <liam.howlett@oracle.com>
-To:     Suren Baghdasaryan <surenb@google.com>
-CC:     Rolf Eike Beer <eb@emlix.com>,
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zFd2aEpAbN0UaxYqSieP1eT57btxJ5r4/ig5AwZ56hU=;
+        b=A6cMmH6kIYNw3BTgbMB7RjNRiWzfr4Rx+YvMM2U6bgd5BP75qsOkQ6RxR6rUGfz+vB
+         rfjOyFzG3JmZ01R24GvvhBKUBeF8C9WDST11Re/o14/bDrTbnLwSx3TU8/IfuS0OJVCx
+         JhkIvBFZUFQdKcFvScBgAjAjd1//rDxbW0JYsEyatBB36ofJDPAwd1syR0+pPemucCzv
+         dA3hDlf0O2JOHdYfJ0fccJlwurmUscamj4c6tlh87z41jjaba51DOA7GXPYJKHXrTXdM
+         +UOty4XjTFa3eyRZg8LEgrxJb2GOqgQw/UedY2Bnb+zW7nu3QBeUWf/h2tvMUUEuY6OI
+         pQxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zFd2aEpAbN0UaxYqSieP1eT57btxJ5r4/ig5AwZ56hU=;
+        b=qOKHfa42iHHGrHWD2BjL5HdYxciPZHh3tNH0E0OSyc/kTifpb7SyTFNtYLAARrA2jz
+         TbSs83tjptBrugBUOiIxKlxnPy7msqLaYyhQvYNr01V1O3RUtfME2h4Bc8hJtnJwAVqO
+         Kb97hDcdUCYIuSYiNmRLJJ7wy7LDN2J2cQFosmUUL0YGbfT6giwl2u1GYca9YWhJx9be
+         37HDgkpjxQfertac0eJN/UC//6Y4X3q1hsJQ8wXbIN/qkj7yvBoFFuOoer7kHDbBYWdG
+         BTmsqnK56CAk4hy0vWsWq4bSangOc7I4iajkTF/PNTnrUFxG6zpPtIF+SpeFyTchVCye
+         ATmQ==
+X-Gm-Message-State: AOAM5301cPgU2NtTsWLV6dEma8IXmSHVCp/T1q26fzkPoL0roQfmb20w
+        MqicwH99B7AQv8bb2uAlVyNqdel5cfx0zrENwHyMLQ==
+X-Google-Smtp-Source: ABdhPJxIZnTZN87HdH/jKt8pzHjywbGdk+rQNE5ijTKlFRuji90ahdhfsDtTCVCgO9/p/VxoanNZP2pPH0+zMb7LRGQ=
+X-Received: by 2002:a25:3:: with SMTP id 3mr24887463yba.418.1633469459834;
+ Tue, 05 Oct 2021 14:30:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <20211001205657.815551-1-surenb@google.com> <5358242.RVGM2oBbkg@devpool47>
+ <CAJuCfpF57Wppc_Si98wEo5cASBgEdS7J=Lt9Ont9+TsVr=KM_w@mail.gmail.com> <20211005210003.v3zgqhefn5j65gig@revolver>
+In-Reply-To: <20211005210003.v3zgqhefn5j65gig@revolver>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Tue, 5 Oct 2021 14:30:48 -0700
+Message-ID: <CAJuCfpGaxhpePj8KN3S=Q7jMUjaeWZfoBTAHqjodhoH5MV-9yQ@mail.gmail.com>
+Subject: Re: [PATCH v10 1/3] mm: rearrange madvise code to allow for reuse
+To:     Liam Howlett <liam.howlett@oracle.com>
+Cc:     Rolf Eike Beer <eb@emlix.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Colin Cross <ccross@google.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
@@ -81,7 +73,7 @@ CC:     Rolf Eike Beer <eb@emlix.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         "vincenzo.frascino@arm.com" <vincenzo.frascino@arm.com>,
-        =?utf-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= 
+        =?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= 
         <chinwen.chang@mediatek.com>,
         Axel Rasmussen <axelrasmussen@google.com>,
         Andrea Arcangeli <aarcange@redhat.com>,
@@ -125,110 +117,73 @@ CC:     Rolf Eike Beer <eb@emlix.com>,
         Mel Gorman <mgorman@suse.de>, Shaohua Li <shli@fusionio.com>,
         Minchan Kim <minchan@kernel.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH v10 1/3] mm: rearrange madvise code to allow for reuse
-Thread-Topic: [PATCH v10 1/3] mm: rearrange madvise code to allow for reuse
-Thread-Index: AQHXtwbqRHUtflHT6EeCVViEJ7Fas6vCbdyAgACa+ACAAeENgA==
-Date:   Tue, 5 Oct 2021 21:00:23 +0000
-Message-ID: <20211005210003.v3zgqhefn5j65gig@revolver>
-References: <20211001205657.815551-1-surenb@google.com>
- <5358242.RVGM2oBbkg@devpool47>
- <CAJuCfpF57Wppc_Si98wEo5cASBgEdS7J=Lt9Ont9+TsVr=KM_w@mail.gmail.com>
-In-Reply-To: <CAJuCfpF57Wppc_Si98wEo5cASBgEdS7J=Lt9Ont9+TsVr=KM_w@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: google.com; dkim=none (message not signed)
- header.d=none;google.com; dmarc=none action=none header.from=oracle.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 85538125-ee0a-4b44-b1eb-08d9884326c1
-x-ms-traffictypediagnostic: BLAPR10MB5218:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BLAPR10MB5218E8C90A93DE54C9162992FDAF9@BLAPR10MB5218.namprd10.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Zs/el4Nnyve9oNfgj+CMbTmfYD4N06tS9n+Jaw7vYTp4XWmfqaR6XmREdaO+06mVYtmSwi5DEfyEKhwVR/i6nLi+GaWxpDsLkU2pBHn6jvL4igxM/Ntz1QuoYW8PSbdHtakzW6BTExtQZFbCqH2xMwgV617n8DIxtK4dYe5KQqNo//ICwdC7lSbgvIu/XMm31wVy5JOvFIhckZGvmyANzfrfmZnMgmfcNsarzpkxFPX2zklDeLnnCFE9u6GXpwpbHYsohj8DV75hr1M6eVvkMgXF0Ab5pBU2TF7wO8JlXeNph6+rUiTbYJP/KbxRQ+2g9H3ztpCxOwNK2eFOMjuCORRpIjIonAeNbKzkbSNxUF9sE7jENOwSJWTzCjGXiTbZQ35svFzVMUA9AO2pSE0aQcY2pLcy7FYsxn+ckrAirRiZ2aXVLhj2Hmn6p71WCmCvUWqJQN4V3lraCworUuJSWiLCPscucL/m7eQovTOt+Jzypvb0veDrqLLTOKDbfNTb2dGi9HxokY4nDmEGSTiIInKCnDzBxguue28e0cJbhm/jzLR1FF7c0G6keXlv+i+q3+13Q/Xvo4j6yMDaoMWScgdmmmBB5I4Ket45bvyGc47YEUx6z5qp/P+3vY+RxSQngT9TQMVhNdYC19LBpaKuDTPner5nPQ4HQHfl8794/GviJ5aOR1wFrviCPhNseJFaGkKJyYpdaqsLkM6YN5/tr7bWFNdrMNICzvqap0FhTsqytXbxDs4frmmlND9VMWQtxVQ/aU643UHfvP2FLgNU0yB3UcA/LLbyv5XkzI8rrL4=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR10MB3011.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(7916004)(366004)(9686003)(8936002)(5660300002)(71200400001)(26005)(6486002)(6512007)(1076003)(6506007)(86362001)(186003)(38100700002)(508600001)(33716001)(122000001)(53546011)(8676002)(966005)(6916009)(38070700005)(76116006)(91956017)(66946007)(7366002)(44832011)(7416002)(66574015)(54906003)(7406005)(4326008)(2906002)(316002)(64756008)(83380400001)(66476007)(66556008)(66446008);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cklZbEhKbzl1cHdvTC9zM0x2aEo3cDJyMGNINTJPMkFHTUZacDB3ZDRrZzYv?=
- =?utf-8?B?QWpIZGF5UEkxMi96aWZmaEszUGhBMmtjekpkc3JXaFpKNVhKeFNQRlRxeStJ?=
- =?utf-8?B?ZUZNTHlJTHZBREgyK2YyY1RoLzk5bnppbnlFLzlBcW5CR0toWU1PNHV4d1Uz?=
- =?utf-8?B?TUJNQUxCR0VuemorYWNzMjVmeGxrWXY0KzhlY0U4OEdLcW13ZytrL1c5SkI3?=
- =?utf-8?B?UGxVSmQ1anRxT2lDd3ZOSDlBSzkrWWt1WEdBQXh6TW5YNlVRd0lIcTF6QlEy?=
- =?utf-8?B?cmN2djRhWWZpckI0V2U2aUdkbHNER2JHd3BkYTFXS0JBQXpCK2RFaVpiTS9r?=
- =?utf-8?B?amdIeUh0NFpRUE1ZRjZUMkg2eStkNWpOYko0bmxEelhYVzlHWndDaDdZVjk5?=
- =?utf-8?B?bituallkc0xlLzcxT0NVM25ITW9MQ2dzZzJBNUxkbFRwajNRcUZNam1PSUpH?=
- =?utf-8?B?ZWllM2FCQ0pPaGZGbHhEUC9ReEVhWFg1WUVrSkY2ZUJ3MVJDVHZUMmJNREo3?=
- =?utf-8?B?dm9wN255UE83aEo1bGFVdmgyRWlsbHVzdTUySGtDcUFvU081UW9zUE5RSmkx?=
- =?utf-8?B?WHZLS01ZRXBSWUhhZlBXcHBYTlhZS0orcXU3WGF6MGNqU1puQklaWEJ0aFJX?=
- =?utf-8?B?Q1JPYUt3b095b0xKTU5OTDRyUExicWZuOGZhUFlxYUZSZFo5emE5VWdxWkNh?=
- =?utf-8?B?WXZ1QzNnSVh0TmtxYngzNnp3TDFLQnlueDg1OVFSMXJIUHNGTFkxUy9DbVF2?=
- =?utf-8?B?S2NkdmtERndpZUt4a1QvR3h4TlM0MURWWXppcGZ4akZ5Y3JBSmM2YW9JZGlX?=
- =?utf-8?B?YnJ6aURha0psc0N5Y0VCenJ6dnpvR21aYzN3SE9Ib3NkOERPcjcwdk5Dejc4?=
- =?utf-8?B?YmRoU0hpaTVFRE4xdFMvajdyYVNHekxEZ0U3MDVRTStEMFk2d0JuUjZEZmw3?=
- =?utf-8?B?b3NDYVJtS2h2ZWhmY0tOMXVsOG50UytXZzBMT2dFSmZ3WWF2eE15Nmo1UDV3?=
- =?utf-8?B?OEVRVzVBL29UVjc1UzlhWjFVRFVQSG95bmZrd0pEeVYvZEUzd0ZnRkluRVV1?=
- =?utf-8?B?YXZmNHJTejRnSzlIU0hDWlZ1VHhRNWJTeG4yS2pCYkRrKzRPYnZJcCt1dHdh?=
- =?utf-8?B?RzVSWm5kWkVDRGJCODZMT2ZYYkRoVFZBT2pMYURRREdmOGkvSkNqNGZoY3l0?=
- =?utf-8?B?cHhDSEhCSDZiSm5uWStNSTdJOVFhMldTVzI1SkNIdzIvOGdBdEtUK3JobHFC?=
- =?utf-8?B?dEtaYzBqT2pKcjBHREcyN2dBMW9uNTE3QzZmWUtpTExHUnVKS2JYbFlXY3NN?=
- =?utf-8?B?V3dlY2YxMk1Kb0pOL3hmYVQ3ZWtHcGcyMFgzNFloU0xqdnBVRmZNeXpDVVZ6?=
- =?utf-8?B?eHZ5eEZsYkRsVjBXbFZPTWJtemcyMHdZSTljY1VyL1NRRTRMMi9CMzRPMFYy?=
- =?utf-8?B?QXZEdEN0dllsMTNCVVlKalJVVGQvUDg4R3VGakErcDh6NjA0Qm5uYThYVE4y?=
- =?utf-8?B?VXYzcmF2Y2xaME04TFQ5Rk5iZGlZN2IwRWc1Vnc2WFRNZXlNZ0w3ZWl4Qkty?=
- =?utf-8?B?UlplK0pSTENBQlM4LzhBc3VqZW14WGFGK0RQNk1aVitWL09KajJZUDJWS3pn?=
- =?utf-8?B?K3gwL0Z2dFdUSG14V0JPcHF1dDkxQ3lHZjl6U01lTzJMOENKd1hIdDZ5aHdN?=
- =?utf-8?B?ZG0yNG15Ukx1bVoySGh6WHdmYnRndU1DTkY0Rm5DaXMrckxmK1dFcHo4bi9M?=
- =?utf-8?Q?uGVyx9/nFfC9RWz1Uz0izQjjJpYDfoARzQD5Ylt?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9E057B3F6C9F7547A915D818CD18DB7E@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR10MB3011.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85538125-ee0a-4b44-b1eb-08d9884326c1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2021 21:00:24.2361
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Tse71g+30PL9hESCs0AEnr+yGAo2Mw9vhHKPArJwu+MWoLCZHU+4g6VgXVFI0x7AWNf91MZ7E2sQ792H7ikGVQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB5218
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10128 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 adultscore=0
- mlxscore=0 phishscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2109230001
- definitions=main-2110050122
-X-Proofpoint-GUID: o0OpNIfd2lW_GoarindG2Rvk1fzfJtHa
-X-Proofpoint-ORIG-GUID: o0OpNIfd2lW_GoarindG2Rvk1fzfJtHa
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-KiBTdXJlbiBCYWdoZGFzYXJ5YW4gPHN1cmVuYkBnb29nbGUuY29tPiBbMjExMDA0IDEyOjE4XToN
-Cj4gT24gTW9uLCBPY3QgNCwgMjAyMSBhdCAxMjowMyBBTSBSb2xmIEVpa2UgQmVlciA8ZWJAZW1s
-aXguY29tPiB3cm90ZToNCj4gPg0KPiA+ID4gLS0tIGEvbW0vbWFkdmlzZS5jDQo+ID4gPiArKysg
-Yi9tbS9tYWR2aXNlLmMNCj4gPiA+IEBAIC02Myw3NiArNjMsMjAgQEAgc3RhdGljIGludCBtYWR2
-aXNlX25lZWRfbW1hcF93cml0ZShpbnQgYmVoYXZpb3IpDQo+ID4gPiAgfQ0KPiA+ID4NCj4gPiA+
-ICAvKg0KPiA+ID4gLSAqIFdlIGNhbiBwb3RlbnRpYWxseSBzcGxpdCBhIHZtIGFyZWEgaW50byBz
-ZXBhcmF0ZQ0KPiA+ID4gLSAqIGFyZWFzLCBlYWNoIGFyZWEgd2l0aCBpdHMgb3duIGJlaGF2aW9y
-Lg0KPiA+ID4gKyAqIFVwZGF0ZSB0aGUgdm1fZmxhZ3Mgb24gcmVnaWlvbiBvZiBhIHZtYSwgc3Bs
-aXR0aW5nIGl0IG9yIG1lcmdpbmcgaXQgYXMNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIF5eDQo+IA0KPiBUaGFua3MhIFdpbGwgZml4IGluIHRoZSBuZXh0IHZlcnNpb24uDQoN
-ClNpbmNlIHlvdSdsbCBiZSByZXNwaW5uaW5nIGZvciB0aGlzIGNvbW1lbnQsIGNhbiB5b3UgcGxl
-YXNlIHBvaW50IG91dA0KdGhhdCB0aGUgc3BsaXQgd2lsbCBrZWVwIHRoZSBWTUEgYXMgW3ZtYS0+
-dm1fc3RhcnQsIG5ld19lbmQpPyAgVGhhdCBpcywNCl9fc3BsaXRfdm1hKCkgaXMgcGFzc2VkIDAg
-Zm9yIG5ld19iZWxvdy4gIEl0IG1pZ2h0IHByb3ZlIHVzZWZ1bCBzaW5jZQ0KdGhlIGNvZGUgaXMg
-YmVpbmcgcmV1c2VkLg0KDQpUaGFua3MsDQpMaWFtDQoNCj4gDQo+ID4NCj4gPiBFaWtlDQo+ID4g
-LS0NCj4gPiBSb2xmIEVpa2UgQmVlciwgZW1saXggR21iSCwgaHR0cDovL3d3dy5lbWxpeC5jb20N
-Cj4gPiBGb24gKzQ5IDU1MSAzMDY2NC0wLCBGYXggKzQ5IDU1MSAzMDY2NC0xMQ0KPiA+IEdvdGhh
-ZXIgUGxhdHogMywgMzcwODMgR8O2dHRpbmdlbiwgR2VybWFueQ0KPiA+IFNpdHogZGVyIEdlc2Vs
-bHNjaGFmdDogR8O2dHRpbmdlbiwgQW10c2dlcmljaHQgR8O2dHRpbmdlbiBIUiBCIDMxNjANCj4g
-PiBHZXNjaMOkZnRzZsO8aHJ1bmc6IEhlaWtlIEpvcmRhbiwgRHIuIFV3ZSBLcmFja2Ug4oCTIFVz
-dC1JZE5yLjogREUgMjA1IDE5OCAwNTUNCj4gPg0KPiA+IGVtbGl4IC0gc21hcnQgZW1iZWRkZWQg
-b3BlbiBzb3VyY2UNCj4gPg0KPiA+IC0tDQo+ID4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGdy
-b3VwIGFuZCBzdG9wIHJlY2VpdmluZyBlbWFpbHMgZnJvbSBpdCwgc2VuZCBhbiBlbWFpbCB0byBr
-ZXJuZWwtdGVhbSt1bnN1YnNjcmliZUBhbmRyb2lkLmNvbS4NCj4g
+On Tue, Oct 5, 2021 at 2:00 PM Liam Howlett <liam.howlett@oracle.com> wrote=
+:
+>
+> * Suren Baghdasaryan <surenb@google.com> [211004 12:18]:
+> > On Mon, Oct 4, 2021 at 12:03 AM Rolf Eike Beer <eb@emlix.com> wrote:
+> > >
+> > > > --- a/mm/madvise.c
+> > > > +++ b/mm/madvise.c
+> > > > @@ -63,76 +63,20 @@ static int madvise_need_mmap_write(int behavior=
+)
+> > > >  }
+> > > >
+> > > >  /*
+> > > > - * We can potentially split a vm area into separate
+> > > > - * areas, each area with its own behavior.
+> > > > + * Update the vm_flags on regiion of a vma, splitting it or mergin=
+g it as
+> > >                                 ^^
+> >
+> > Thanks! Will fix in the next version.
+>
+> Since you'll be respinning for this comment, can you please point out
+> that the split will keep the VMA as [vma->vm_start, new_end)?  That is,
+> __split_vma() is passed 0 for new_below.  It might prove useful since
+> the code is being reused.
+
+Hmm. There are two cases here:
+
+        if (start !=3D vma->vm_start) {
+                ...
+                error =3D __split_vma(mm, vma, start, 1);
+        }
+
+and
+
+        if (end !=3D vma->vm_end) {
+                ...
+                error =3D __split_vma(mm, vma, end, 0);
+        }
+
+so, I don't think such a comment would be completely correct, no?
+
+>
+> Thanks,
+> Liam
+>
+> >
+> > >
+> > > Eike
+> > > --
+> > > Rolf Eike Beer, emlix GmbH, http://www.emlix.com
+> > > Fon +49 551 30664-0, Fax +49 551 30664-11
+> > > Gothaer Platz 3, 37083 G=C3=B6ttingen, Germany
+> > > Sitz der Gesellschaft: G=C3=B6ttingen, Amtsgericht G=C3=B6ttingen HR =
+B 3160
+> > > Gesch=C3=A4ftsf=C3=BChrung: Heike Jordan, Dr. Uwe Kracke =E2=80=93 Us=
+t-IdNr.: DE 205 198 055
+> > >
+> > > emlix - smart embedded open source
+> > >
+> > > --
+> > > To unsubscribe from this group and stop receiving emails from it, sen=
+d an email to kernel-team+unsubscribe@android.com.
+> >
