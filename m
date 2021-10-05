@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 13CE7422E4B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 18:47:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E921422E50
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 18:47:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236649AbhJEQtU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Oct 2021 12:49:20 -0400
-Received: from relayfre-01.paragon-software.com ([176.12.100.13]:34228 "EHLO
-        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233928AbhJEQtT (ORCPT
+        id S236574AbhJEQtp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Oct 2021 12:49:45 -0400
+Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:49202 "EHLO
+        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236402AbhJEQto (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Oct 2021 12:49:19 -0400
+        Tue, 5 Oct 2021 12:49:44 -0400
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id A702B1D3B;
-        Tue,  5 Oct 2021 19:47:26 +0300 (MSK)
+        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id B382D81FEE;
+        Tue,  5 Oct 2021 19:47:52 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1633452446;
-        bh=1hkXWZg0gGYLqaDEraBod4BgLqQtDThhgkdcvLmR/YQ=;
+        d=paragon-software.com; s=mail; t=1633452472;
+        bh=quBU1mR1RrqkwyVnquG48EtBwZjzQ1thh2lG+82YiH0=;
         h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=KinEtfOpMiRqg7VRQkSR2UOf7mzlJnTbpdAvePEKxfKGERzxeZo8g7UVGYSNZGjMX
-         VkJNVn4LTlyCp6B/lQWjlEqkTAaSdDr82URbcO5H2XE2N+9+PYtQiWEoBO45K0Nmk5
-         Cm1oRHE2tyrTIxSFGi8T/OlOvQpuvqzVeroWXkFo=
+        b=XpJ7aZ2WLz9rvu4Ut+a7ng6nhJ26TDt2nosis2qux4cZJh5BN0JKC94JrVNsbe1th
+         ypJRC0qH9CTqLqlYBDUc5l1YoQ8ylR8LWGOJ/QslkddNs45ZD6y0hN2/II2pFX0mhl
+         DZLRsoiiwcbCCJBm52PDbRYIi9GF2bvRaL30ZGlg=
 Received: from [192.168.211.181] (192.168.211.181) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Tue, 5 Oct 2021 19:47:26 +0300
-Message-ID: <b4fc8185-83a8-7626-5ebe-eb6c5cedc078@paragon-software.com>
-Date:   Tue, 5 Oct 2021 19:47:25 +0300
+ 15.1.2176.2; Tue, 5 Oct 2021 19:47:52 +0300
+Message-ID: <2dc232a1-effd-0c06-6b6a-7e4019bb9ace@paragon-software.com>
+Date:   Tue, 5 Oct 2021 19:47:51 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.1.2
-Subject: [PATCH 2/5] fs/ntfs3: Refactor ntfs_readlink_hlp
+Subject: [PATCH 3/5] fs/ntfs3: Refactor ntfs_create_inode
 Content-Language: en-US
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     <ntfs3@lists.linux.dev>
@@ -47,176 +47,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Rename some variables.
-Returned err by default is EINVAL.
+Set size for symlink, so we don't need to calculate it on the fly.
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
- fs/ntfs3/inode.c | 91 +++++++++++++++++++++++-------------------------
- 1 file changed, 43 insertions(+), 48 deletions(-)
+ fs/ntfs3/inode.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 7dd162f6a7e2..d618b0573533 100644
+index d618b0573533..bdebbbd53e76 100644
 --- a/fs/ntfs3/inode.c
 +++ b/fs/ntfs3/inode.c
-@@ -1763,15 +1763,15 @@ void ntfs_evict_inode(struct inode *inode)
- static noinline int ntfs_readlink_hlp(struct inode *inode, char *buffer,
- 				      int buflen)
- {
--	int i, err = 0;
-+	int i, err = -EINVAL;
- 	struct ntfs_inode *ni = ntfs_i(inode);
- 	struct super_block *sb = inode->i_sb;
- 	struct ntfs_sb_info *sbi = sb->s_fs_info;
--	u64 i_size = inode->i_size;
--	u16 nlen = 0;
-+	u64 size;
-+	u16 ulen = 0;
- 	void *to_free = NULL;
- 	struct REPARSE_DATA_BUFFER *rp;
--	struct le_str *uni;
-+	const __le16 *uname;
- 	struct ATTRIB *attr;
+@@ -1488,7 +1488,10 @@ struct inode *ntfs_create_inode(struct user_namespace *mnt_userns,
+ 		asize = ALIGN(SIZEOF_RESIDENT + nsize, 8);
+ 		t16 = PtrOffset(rec, attr);
  
- 	/* Reparse data present. Try to parse it. */
-@@ -1780,68 +1780,64 @@ static noinline int ntfs_readlink_hlp(struct inode *inode, char *buffer,
+-		/* 0x78 - the size of EA + EAINFO to store WSL */
++		/*
++		 * Below function 'ntfs_save_wsl_perm' requires 0x78 bytes.
++		 * It is good idea to keep extened attributes resident.
++		 */
+ 		if (asize + t16 + 0x78 + 8 > sbi->record_size) {
+ 			CLST alen;
+ 			CLST clst = bytes_to_cluster(sbi, nsize);
+@@ -1523,14 +1526,14 @@ struct inode *ntfs_create_inode(struct user_namespace *mnt_userns,
+ 			}
  
- 	*buffer = 0;
- 
--	/* Read into temporal buffer. */
--	if (i_size > sbi->reparse.max_size || i_size <= sizeof(u32)) {
--		err = -EINVAL;
--		goto out;
--	}
--
- 	attr = ni_find_attr(ni, NULL, NULL, ATTR_REPARSE, NULL, 0, NULL, NULL);
--	if (!attr) {
--		err = -EINVAL;
-+	if (!attr)
- 		goto out;
--	}
- 
- 	if (!attr->non_res) {
--		rp = resident_data_ex(attr, i_size);
--		if (!rp) {
--			err = -EINVAL;
-+		rp = resident_data_ex(attr, sizeof(struct REPARSE_DATA_BUFFER));
-+		if (!rp)
- 			goto out;
--		}
-+		size = le32_to_cpu(attr->res.data_size);
- 	} else {
--		rp = kmalloc(i_size, GFP_NOFS);
-+		size = le64_to_cpu(attr->nres.data_size);
-+		rp = NULL;
-+	}
-+
-+	if (size > sbi->reparse.max_size || size <= sizeof(u32))
-+		goto out;
-+
-+	if (!rp) {
-+		rp = kmalloc(size, GFP_NOFS);
- 		if (!rp) {
- 			err = -ENOMEM;
- 			goto out;
+ 			asize = SIZEOF_NONRESIDENT + ALIGN(err, 8);
+-			inode->i_size = nsize;
+ 		} else {
+ 			attr->res.data_off = SIZEOF_RESIDENT_LE;
+ 			attr->res.data_size = cpu_to_le32(nsize);
+ 			memcpy(Add2Ptr(attr, SIZEOF_RESIDENT), rp, nsize);
+-			inode->i_size = nsize;
+ 			nsize = 0;
  		}
- 		to_free = rp;
--		err = ntfs_read_run_nb(sbi, &ni->file.run, 0, rp, i_size, NULL);
-+		/* Read into temporal buffer. */
-+		err = ntfs_read_run_nb(sbi, &ni->file.run, 0, rp, size, NULL);
- 		if (err)
- 			goto out;
- 	}
++		/* Size of symlink equals the length of input string. */
++		inode->i_size = size;
  
--	err = -EINVAL;
--
- 	/* Microsoft Tag. */
- 	switch (rp->ReparseTag) {
- 	case IO_REPARSE_TAG_MOUNT_POINT:
- 		/* Mount points and junctions. */
- 		/* Can we use 'Rp->MountPointReparseBuffer.PrintNameLength'? */
--		if (i_size <= offsetof(struct REPARSE_DATA_BUFFER,
--				       MountPointReparseBuffer.PathBuffer))
-+		if (size <= offsetof(struct REPARSE_DATA_BUFFER,
-+				     MountPointReparseBuffer.PathBuffer))
- 			goto out;
--		uni = Add2Ptr(rp,
--			      offsetof(struct REPARSE_DATA_BUFFER,
--				       MountPointReparseBuffer.PathBuffer) +
--				      le16_to_cpu(rp->MountPointReparseBuffer
--							  .PrintNameOffset) -
--				      2);
--		nlen = le16_to_cpu(rp->MountPointReparseBuffer.PrintNameLength);
-+		uname = Add2Ptr(rp,
-+				offsetof(struct REPARSE_DATA_BUFFER,
-+					 MountPointReparseBuffer.PathBuffer) +
-+					le16_to_cpu(rp->MountPointReparseBuffer
-+							    .PrintNameOffset));
-+		ulen = le16_to_cpu(rp->MountPointReparseBuffer.PrintNameLength);
- 		break;
+ 		attr->size = cpu_to_le32(asize);
  
- 	case IO_REPARSE_TAG_SYMLINK:
- 		/* FolderSymbolicLink */
- 		/* Can we use 'Rp->SymbolicLinkReparseBuffer.PrintNameLength'? */
--		if (i_size <= offsetof(struct REPARSE_DATA_BUFFER,
--				       SymbolicLinkReparseBuffer.PathBuffer))
-+		if (size <= offsetof(struct REPARSE_DATA_BUFFER,
-+				     SymbolicLinkReparseBuffer.PathBuffer))
- 			goto out;
--		uni = Add2Ptr(rp,
--			      offsetof(struct REPARSE_DATA_BUFFER,
--				       SymbolicLinkReparseBuffer.PathBuffer) +
--				      le16_to_cpu(rp->SymbolicLinkReparseBuffer
--							  .PrintNameOffset) -
--				      2);
--		nlen = le16_to_cpu(
-+		uname = Add2Ptr(
-+			rp, offsetof(struct REPARSE_DATA_BUFFER,
-+				     SymbolicLinkReparseBuffer.PathBuffer) +
-+				    le16_to_cpu(rp->SymbolicLinkReparseBuffer
-+							.PrintNameOffset));
-+		ulen = le16_to_cpu(
- 			rp->SymbolicLinkReparseBuffer.PrintNameLength);
- 		break;
- 
-@@ -1873,29 +1869,28 @@ static noinline int ntfs_readlink_hlp(struct inode *inode, char *buffer,
- 			goto out;
- 		}
- 		if (!IsReparseTagNameSurrogate(rp->ReparseTag) ||
--		    i_size <= sizeof(struct REPARSE_POINT)) {
-+		    size <= sizeof(struct REPARSE_POINT)) {
- 			goto out;
- 		}
- 
- 		/* Users tag. */
--		uni = Add2Ptr(rp, sizeof(struct REPARSE_POINT) - 2);
--		nlen = le16_to_cpu(rp->ReparseDataLength) -
-+		uname = Add2Ptr(rp, sizeof(struct REPARSE_POINT));
-+		ulen = le16_to_cpu(rp->ReparseDataLength) -
- 		       sizeof(struct REPARSE_POINT);
- 	}
- 
- 	/* Convert nlen from bytes to UNICODE chars. */
--	nlen >>= 1;
-+	ulen >>= 1;
- 
- 	/* Check that name is available. */
--	if (!nlen || &uni->name[nlen] > (__le16 *)Add2Ptr(rp, i_size))
-+	if (!ulen || uname + ulen > (__le16 *)Add2Ptr(rp, size))
- 		goto out;
- 
- 	/* If name is already zero terminated then truncate it now. */
--	if (!uni->name[nlen - 1])
--		nlen -= 1;
--	uni->len = nlen;
-+	if (!uname[ulen - 1])
-+		ulen -= 1;
- 
--	err = ntfs_utf16_to_nls(sbi, uni, buffer, buflen);
-+	err = ntfs_utf16_to_nls(sbi, uname, ulen, buffer, buflen);
- 
- 	if (err < 0)
- 		goto out;
+@@ -1567,6 +1570,8 @@ struct inode *ntfs_create_inode(struct user_namespace *mnt_userns,
+ 		inode->i_op = &ntfs_link_inode_operations;
+ 		inode->i_fop = NULL;
+ 		inode->i_mapping->a_ops = &ntfs_aops;
++		inode->i_size = size;
++		inode_nohighmem(inode);
+ 	} else if (S_ISREG(mode)) {
+ 		inode->i_op = &ntfs_file_inode_operations;
+ 		inode->i_fop = &ntfs_file_operations;
 -- 
 2.33.0
 
