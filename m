@@ -2,128 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FF0F421D6F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 06:30:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACD72422125
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 10:49:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229800AbhJEEcP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Oct 2021 00:32:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35846 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229659AbhJEEcP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Oct 2021 00:32:15 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3368D611C5;
-        Tue,  5 Oct 2021 04:30:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1633408225;
-        bh=mwtLlNGveq30btzEOHDXQtBFRIVY1CXFp5WcbtYwSiA=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=Iguk8LBgCPt73EUPiPAtU5RnMaIgAdPFTSloae6afkaFqQNHxJ2TyvSj3r/AiLUPA
-         OlM8p2S/NG+Xa3KBL2Tyvk07LB1TlVuEQqzrzsUF9ZTGHG58ebjW9OQBka6H6Y8zSv
-         J4dKdTAvAy5Fc6vVoEsfgqdmYlxT8B60WQcX2xzfmcKeOh8mZk66bLI0xqI6ZfICEs
-         eKJmlItq1fFrq8H1sTLfiEp8s0tRrNFYEyD7NoNYves6iIAwsdoU2OFp/rPCnnZaZA
-         JwnOMwesCayRzoJLYLuVuRb6GoK+X2KsnqVcqlWhACg1D4YMUIXRVKnkHXvBMxP2i3
-         5kWVkUeheILaQ==
-Received: by mail-ot1-f51.google.com with SMTP id c6-20020a9d2786000000b005471981d559so24310449otb.5;
-        Mon, 04 Oct 2021 21:30:25 -0700 (PDT)
-X-Gm-Message-State: AOAM5329LqoQE6/R+DVa3VPT0i1dJHyha4pY+xzKLucW2bERgCA10em7
-        brOMl/nWmD7OBiOQFE/T6ZI9V8Ep6vpbflOzEcw=
-X-Google-Smtp-Source: ABdhPJwc17nyFy1jKaSEyhnnRbq1wlsup111LLUDb+pD6/MI+un5hpI0gLDhCKb+MYffFLg2ic1evHZsc+7xAmtzqsU=
-X-Received: by 2002:a05:6830:1147:: with SMTP id x7mr12574781otq.18.1633408224429;
- Mon, 04 Oct 2021 21:30:24 -0700 (PDT)
+        id S233358AbhJEIvb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Oct 2021 04:51:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:34851 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233325AbhJEIv3 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 5 Oct 2021 04:51:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1633423779;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=yWuvkskdEI9r2ThEQjUFBlxKCU4JS4TIq1nVqm3oeN8=;
+        b=ZoJuzOt78h0hbMpmuG3Nk7HDne1S5zbwrEZGYgkqTYt01QTkns1xbLKlV/c2d0RY4fANPS
+        GeGZNvnajv0ZICINpGESdL3qXn8liedFe0SkKIKf2a4hFhrjL3XV66vhRCsOVWLqtIz26k
+        S9LJLQw1qJM52JfT9S4NZ+99cVsa15M=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-318-ZXH9L7g7PKSPz5-zvYCjiw-1; Tue, 05 Oct 2021 04:49:38 -0400
+X-MC-Unique: ZXH9L7g7PKSPz5-zvYCjiw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5F1E819057A0;
+        Tue,  5 Oct 2021 08:49:36 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4A15360657;
+        Tue,  5 Oct 2021 08:49:24 +0000 (UTC)
+Subject: [PATCH v3 0/5] fscache, afs, 9p, nfs: Warning fixes
+From:   David Howells <dhowells@redhat.com>
+To:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
+        linux-nfs@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        v9fs-developer@lists.sourceforge.net,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-afs@lists.infradead.org, dhowells@redhat.com,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        torvalds@linux-foundation.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 05 Oct 2021 09:49:23 +0100
+Message-ID: <163342376338.876192.10313278824682848704.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Received: by 2002:ac9:31e7:0:0:0:0:0 with HTTP; Mon, 4 Oct 2021 21:30:23 -0700 (PDT)
-In-Reply-To: <c28301d7b99e$37fb5af0$a7f210d0$@samsung.com>
-References: <20210909065543.164329-1-cccheng@synology.com> <CGME20210910010035epcas1p496dd515369b9f2481ccd1c0de5904bbd@epcas1p4.samsung.com>
- <CAKYAXd_1ys-xQ9HusgqSr5GHaP6R2pK4JswfZzoqZ=wTnwSiOw@mail.gmail.com>
- <997a01d7b6c6$ea0c3f50$be24bdf0$@samsung.com> <CAKYAXd9COEWU_QF3p0mnEnH4nHMrHQ5ujwBZ6rt4ZBjEFBnB=w@mail.gmail.com>
- <c28301d7b99e$37fb5af0$a7f210d0$@samsung.com>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Tue, 5 Oct 2021 13:30:23 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_vFjVcHJxn5xau5hFNHBXc2K7o1wFHbkhz9TcCteG2Rw@mail.gmail.com>
-Message-ID: <CAKYAXd_vFjVcHJxn5xau5hFNHBXc2K7o1wFHbkhz9TcCteG2Rw@mail.gmail.com>
-Subject: Re: [PATCH] exfat: use local UTC offset when EXFAT_TZ_VALID isn't set
-To:     Sungjong Seo <sj1557.seo@samsung.com>
-Cc:     Chung-Chiang Cheng <cccheng@synology.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shepjeng@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2021-10-05 13:05 GMT+09:00, Sungjong Seo <sj1557.seo@samsung.com>:
->> 2021-10-01 22:19 GMT+09:00, Sungjong Seo <sj1557.seo@samsung.com>:
->> > Hello, Namjae,
->> Hi Sungjong,
->> >
->> > I found an important difference between the code we first wrote and
->> > the code that has changed since our initial patch review. This
->> > difference seems to cause compatibility issues when reading saved
->> timestamps without timezone.
->> > (In our initial patch review, there were concerns about possible
->> > compatibility issues.) I think the code that reads timestamps without
->> > timezone should go back to the concept we wrote in the first place
->> > like reported patch.
->> Are you talking about using sys_tz?
-> Yes, exactly, a part like below.
-Have you read discussion about this before ?
-Let me know what I am missing something.
 
->
-> +static inline int exfat_tz_offset(struct exfat_sb_info *sbi) {
-> +	return (sbi->options.tz_set ? -sbi->options.time_offset :
-> +			sys_tz.tz_minuteswest) * SECS_PER_MIN; }
-> +
->
->>
->> > It could be an answer of another timestamp issue.
->> What is another timestamp issue ?
->
-> What I'm saying is "timestamp incompatibilities in exfat-fs" from Reiner
-> <reinerstallknecht@gmail.com>
-> I think it might be the same issue with this.
-Have you checked fuse-exfat patch he shared ? It was exfat timezone support.
-I am not sure how it is related to sys_tz...
+Here's a set of warning fixes for fscache, afs, 9p and nfs. It's mostly
+kerneldoc fixes plus one unused static variable removal.  I've split the
+old patch up into per-subsys chunks and put the variable removal in its own
+patch at the end.
 
-Thanks!
->
->>
->> >
->> > Could you please let me know what you think?
->> >
->> > Thanks.
->> >> -----Original Message-----
->> >> From: Namjae Jeon [mailto:linkinjeon@kernel.org]
->> >> Sent: Friday, September 10, 2021 10:01 AM
->> >> To: Chung-Chiang Cheng <cccheng@synology.com>
->> >> Cc: sj1557.seo@samsung.com; linux-fsdevel@vger.kernel.org; linux-
->> >> kernel@vger.kernel.org; shepjeng@gmail.com
->> >> Subject: Re: [PATCH] exfat: use local UTC offset when EXFAT_TZ_VALID
->> >> isn't set
->> >>
->> >> 2021-09-09 15:55 GMT+09:00, Chung-Chiang Cheng <cccheng@synology.com>:
->> >> > EXFAT_TZ_VALID is corresponding to OffsetValid field in exfat
->> >> > specification [1]. If this bit isn't set, timestamps should be
->> >> > treated as having the same UTC offset as the current local time.
->> >> >
->> >> > This patch uses the existing mount option 'time_offset' as fat does.
->> >> > If time_offset isn't set, local UTC offset in sys_tz will be used
->> >> > as the default value.
->> >> >
->> >> > Link: [1]
->> >> > https://protect2.fireeye.com/v1/url?k=cba4edf5-943fd4c8-cba566ba-0c
->> >> > c47
->> >> > a31309a-e70aa065be678729&q=1&e=225feff2-841f-404c-9a2e-c12064b232d0
->> >> > &u=
->> >> > https%3A%2F%2Fdocs.microsoft.com%2Fen-us%2Fwindows%2Fwin32%2Ffileio
->> >> > %2F exfat-specification%2374102-offsetvalid-field
->> >> > Signed-off-by: Chung-Chiang Cheng <cccheng@synology.com>
->> >> Please read this discussion:
->> >>  https://patchwork.kernel.org/project/linux-
->> >> fsdevel/patch/20200115082447.19520-10-namjae.jeon@samsung.com/
->> >>
->> >> Thanks!
->> >
->> >
->
->
+The patches are on a branch here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-fixes
+
+Thanks,
+David
+
+Changes
+=======
+ver #3:
+ - Dealt with the kerneldoc warnings in fs/9p/cache.c.
+ - Split the single patch up.
+
+ver #2:
+ - Dropped already upstreamed cifs changes.
+ - Fixed more 9p kerneldoc bits.
+
+Link: https://lore.kernel.org/r/163214005516.2945267.7000234432243167892.stgit@warthog.procyon.org.uk/ # rfc v1
+Link: https://lore.kernel.org/r/163281899704.2790286.9177774252843775348.stgit@warthog.procyon.org.uk/ # rfc v2
+---
+David Howells (5):
+      nfs: Fix kerneldoc warning shown up by W=1
+      afs: Fix kerneldoc warning shown up by W=1
+      9p: Fix a bunch of kerneldoc warnings shown up by W=1
+      fscache: Fix some kerneldoc warnings shown up by W=1
+      fscache: Remove an unused static variable
+
+
+ fs/9p/cache.c          |  8 ++++----
+ fs/9p/fid.c            | 14 +++++++-------
+ fs/9p/v9fs.c           |  8 +++-----
+ fs/9p/vfs_addr.c       | 14 +++++++++-----
+ fs/9p/vfs_file.c       | 33 ++++++++++++---------------------
+ fs/9p/vfs_inode.c      | 24 ++++++++++++++++--------
+ fs/9p/vfs_inode_dotl.c | 11 +++++++++--
+ fs/afs/dir_silly.c     |  4 ++--
+ fs/fscache/object.c    |  2 +-
+ fs/fscache/operation.c |  3 +++
+ 10 files changed, 66 insertions(+), 55 deletions(-)
+
+
