@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4D34422618
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 14:15:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE6DD42261C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 14:16:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234496AbhJEMRk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Oct 2021 08:17:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23056 "EHLO
+        id S234674AbhJEMSJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Oct 2021 08:18:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:56564 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230500AbhJEMRj (ORCPT
+        by vger.kernel.org with ESMTP id S234667AbhJEMSJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Oct 2021 08:17:39 -0400
+        Tue, 5 Oct 2021 08:18:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1633436148;
+        s=mimecast20190719; t=1633436178;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=uBxtf9cAE1Ob9GyuKdaY249ysRz4C6IB01yDqx20w58=;
-        b=AUopRkNq5+IXC7fw+AdpgcQLyCUcZhgGjo7OFm2sLBDdbl/daI6Hlh4i6c0e+hUFLBLWtT
-        vlqgjIRInbPrrb+N7rArABzRElIFLcp1Xg/mno5wi3aQL2A1CsNbyllcyamCpKXRFmzJXK
-        gihrLAbMN5gMTg1cn4hLi7WMqMV2Xz0=
+        bh=m/50e74I6mK0ds4X9rX72a/33EthQOH3jN2qPda+wXk=;
+        b=RoCV8S3Ggx2gMNRTsPL5xo58uAS/R14/xmOIeGvKyYKo0jRtPh3A7MGZYcy3gZx8Y1j/Ql
+        igte5e5yTzqaf5G0WloWQmScZ0A3yvIUjBGRtlqspkZDeQwkLTR6QKe/uUiv4nF618gIjm
+        vJLIPUBZLLTJb1MHm1nHHu6sSOCguBM=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-97-3iNft1SuOOCFeMn2zDAogw-1; Tue, 05 Oct 2021 08:15:47 -0400
-X-MC-Unique: 3iNft1SuOOCFeMn2zDAogw-1
+ us-mta-265-B14qeA0YO_ehUZiZU6OrOQ-1; Tue, 05 Oct 2021 08:16:15 -0400
+X-MC-Unique: B14qeA0YO_ehUZiZU6OrOQ-1
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 898E81922036;
-        Tue,  5 Oct 2021 12:15:44 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BC5411006AA2;
+        Tue,  5 Oct 2021 12:16:12 +0000 (UTC)
 Received: from t480s.redhat.com (unknown [10.39.193.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B3DBAE73F;
-        Tue,  5 Oct 2021 12:15:08 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E602A1F6;
+        Tue,  5 Oct 2021 12:15:44 +0000 (UTC)
 From:   David Hildenbrand <david@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     David Hildenbrand <david@redhat.com>,
@@ -55,10 +55,10 @@ Cc:     David Hildenbrand <david@redhat.com>,
         xen-devel@lists.xenproject.org,
         virtualization@lists.linux-foundation.org,
         kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Boris Ostrovsky <boris.ostrvsky@oracle.com>
-Subject: [PATCH v2 1/9] x86/xen: update xen_oldmem_pfn_is_ram() documentation
-Date:   Tue,  5 Oct 2021 14:14:22 +0200
-Message-Id: <20211005121430.30136-2-david@redhat.com>
+        linux-mm@kvack.org
+Subject: [PATCH v2 2/9] x86/xen: simplify xen_oldmem_pfn_is_ram()
+Date:   Tue,  5 Oct 2021 14:14:23 +0200
+Message-Id: <20211005121430.30136-3-david@redhat.com>
 In-Reply-To: <20211005121430.30136-1-david@redhat.com>
 References: <20211005121430.30136-1-david@redhat.com>
 MIME-Version: 1.0
@@ -68,34 +68,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The callback is only used for the vmcore nowadays.
+Let's simplify return handling.
 
-Reviewed-by: Boris Ostrovsky <boris.ostrvsky@oracle.com>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- arch/x86/xen/mmu_hvm.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ arch/x86/xen/mmu_hvm.c | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
 
 diff --git a/arch/x86/xen/mmu_hvm.c b/arch/x86/xen/mmu_hvm.c
-index 57409373750f..b242d1f4b426 100644
+index b242d1f4b426..d1b38c77352b 100644
 --- a/arch/x86/xen/mmu_hvm.c
 +++ b/arch/x86/xen/mmu_hvm.c
-@@ -9,12 +9,9 @@
+@@ -21,23 +21,10 @@ static int xen_oldmem_pfn_is_ram(unsigned long pfn)
+ 		.domid = DOMID_SELF,
+ 		.pfn = pfn,
+ 	};
+-	int ram;
  
- #ifdef CONFIG_PROC_VMCORE
- /*
-- * This function is used in two contexts:
-- * - the kdump kernel has to check whether a pfn of the crashed kernel
-- *   was a ballooned page. vmcore is using this function to decide
-- *   whether to access a pfn of the crashed kernel.
-- * - the kexec kernel has to check whether a pfn was ballooned by the
-- *   previous kernel. If the pfn is ballooned, handle it properly.
-+ * The kdump kernel has to check whether a pfn of the crashed kernel
-+ * was a ballooned page. vmcore is using this function to decide
-+ * whether to access a pfn of the crashed kernel.
-  * Returns 0 if the pfn is not backed by a RAM page, the caller may
-  * handle the pfn special in this case.
-  */
+ 	if (HYPERVISOR_hvm_op(HVMOP_get_mem_type, &a))
+ 		return -ENXIO;
+-
+-	switch (a.mem_type) {
+-	case HVMMEM_mmio_dm:
+-		ram = 0;
+-		break;
+-	case HVMMEM_ram_rw:
+-	case HVMMEM_ram_ro:
+-	default:
+-		ram = 1;
+-		break;
+-	}
+-
+-	return ram;
++	return a.mem_type != HVMMEM_mmio_dm;
+ }
+ #endif
+ 
 -- 
 2.31.1
 
