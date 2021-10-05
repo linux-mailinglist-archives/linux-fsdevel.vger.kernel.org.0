@@ -2,93 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C20FB422D17
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 17:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 164F4422D58
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 18:05:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235090AbhJEP5j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Oct 2021 11:57:39 -0400
-Received: from relayfre-01.paragon-software.com ([176.12.100.13]:33702 "EHLO
-        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233913AbhJEP5i (ORCPT
+        id S236288AbhJEQHg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Oct 2021 12:07:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236204AbhJEQHf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Oct 2021 11:57:38 -0400
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 2CFE31D39;
-        Tue,  5 Oct 2021 18:55:45 +0300 (MSK)
+        Tue, 5 Oct 2021 12:07:35 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 118C3C061762
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Oct 2021 09:05:45 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id 66so19800245pgc.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Oct 2021 09:05:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1633449345;
-        bh=/gfbbuiOSNq4drucxDzOCK9oky1obIbH1XZM3jxuHik=;
-        h=Date:To:CC:From:Subject;
-        b=HBH7eNdTjDZv8pLrprVHBehsFzRcgCAIq2knQDb9nYWFPAvAgLDibbWj/nkpT1Xpe
-         sHaUwTK+kKe8fYgIZd2xpr1Q0Mtq/oJrV2ZmZwYUIjOYRTkjQuePuGLJO0r5lHoTYC
-         TAiXAagdd2F8GTv3fSjXZO3uCW4qyYvaemvHFjj0=
-Received: from [192.168.211.181] (192.168.211.181) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Tue, 5 Oct 2021 18:55:44 +0300
-Message-ID: <bb2782a2-d6af-ef7e-2e35-3b1d87a11ff7@paragon-software.com>
-Date:   Tue, 5 Oct 2021 18:55:44 +0300
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=0RdVfqFSq5wXHZuicTJy3YcQDgpH/n78CpgNWIuQCUc=;
+        b=mJNlyIULPcE0SuzMKt+dkqTfWXZOGHpZWYpFTFy5pGmoUE+qlxo5F0Ae3Ff5J/YZ6a
+         lUNoUlSB4buIfF8NjPxdaVzhlqcu/i6hG+DyU33CZS0qEFb7d+EaBKoPOlScDCFucuAb
+         cWL7Z0kzpYtXR15MzhoIuQLpsVvo9C5/adTwc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=0RdVfqFSq5wXHZuicTJy3YcQDgpH/n78CpgNWIuQCUc=;
+        b=rp3e12Ruzn8E+dEWwsdPQmycXUdkBHXi0eMQJ0irTJQH2X4x1obYwBMfR1A2cl8jKN
+         n5PZZXd55VebS0yzJTxBQ2mHadG/i+kYlppBmHjKtqoSOWP1J70k3CXoCABq/9sTRUd5
+         AfnCcUiVAYenekYNQZQh4r0Sm81SLWeI92DOrLwM2sH2db4d4pdN3vZAFcxb0B696zi9
+         JSft3tw8DA6l91VyJthAcwHX/dTqDENvb7zbcdra6kMca/th3zUqf0nsUMTLjPKtURfh
+         g9qd7BwShc5ChBzLc3JGQ3/RRyHoaQ8B0vRPqkajEVkVcFBrm6zzZaI3OOeGUz8OJUV1
+         YLRA==
+X-Gm-Message-State: AOAM530AJpybqkKAT2wOPGMstNCGAzek/6oXAmtrR+YwlnvrRaGXrtSz
+        NkaGoUzYAAc3mDVqgC5swH/eKg==
+X-Google-Smtp-Source: ABdhPJwElO40SyVAefyn8InNKMvbBcvu4Lgc1+V1oePKOe7yj8Cwg2fuZ9uRihllZJfsf6twgQeR2w==
+X-Received: by 2002:a63:f346:: with SMTP id t6mr16272636pgj.345.1633449942855;
+        Tue, 05 Oct 2021 09:05:42 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id d7sm18205368pfq.43.2021.10.05.09.05.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Oct 2021 09:05:42 -0700 (PDT)
+Date:   Tue, 5 Oct 2021 09:05:41 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     tj@kernel.org, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org, minchan@kernel.org, jeyu@kernel.org,
+        shuah@kernel.org, bvanassche@acm.org, dan.j.williams@intel.com,
+        joe@perches.com, tglx@linutronix.de, rostedt@goodmis.org,
+        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 08/12] fs/sysfs/dir.c: replace S_IRWXU|S_IRUGO|S_IXUGO
+ with 0755 sysfs_create_dir_ns()
+Message-ID: <202110050903.2BD0F9B@keescook>
+References: <20210927163805.808907-1-mcgrof@kernel.org>
+ <20210927163805.808907-9-mcgrof@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.2
-Content-Language: en-US
-To:     <ntfs3@lists.linux.dev>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <kari.argillander@gmail.com>
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Subject: [PATCH v2] fs/ntfs3: Keep prealloc for all types of files
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.211.181]
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210927163805.808907-9-mcgrof@kernel.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Before we haven't kept prealloc for sparse files because we thought that
-it will speed up create / write operations.
-It lead to situation, when user reserved some space for sparse file,
-filled volume, and wasn't able to write in reserved file.
-With this commit we keep prealloc.
-Now xfstest generic/274 pass.
-Fixes: be71b5cba2e6 ("fs/ntfs3: Add attrib operations")
+On Mon, Sep 27, 2021 at 09:38:01AM -0700, Luis Chamberlain wrote:
+> If one ends up expanding on this line checkpatch will complain that the
+> combination S_IRWXU|S_IRUGO|S_IXUGO should just be replaced with the
+> octal 0755. Do that.
+> 
+> This makes no functional changes.
+> 
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
-v2:
-  Expanded commit message.
+It could be helpful to add a link too:
+https://www.kernel.org/doc/html/latest/dev-tools/checkpatch.html?highlight=non_octal#permissions
 
- fs/ntfs3/attrib.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
-index 8a00fa978f5f..e8c00dda42ad 100644
---- a/fs/ntfs3/attrib.c
-+++ b/fs/ntfs3/attrib.c
-@@ -447,11 +447,8 @@ int attr_set_size(struct ntfs_inode *ni, enum ATTR_TYPE type,
- again_1:
- 	align = sbi->cluster_size;
- 
--	if (is_ext) {
-+	if (is_ext)
- 		align <<= attr_b->nres.c_unit;
--		if (is_attr_sparsed(attr_b))
--			keep_prealloc = false;
--	}
- 
- 	old_valid = le64_to_cpu(attr_b->nres.valid_size);
- 	old_size = le64_to_cpu(attr_b->nres.data_size);
-@@ -461,9 +458,6 @@ int attr_set_size(struct ntfs_inode *ni, enum ATTR_TYPE type,
- 	new_alloc = (new_size + align - 1) & ~(u64)(align - 1);
- 	new_alen = new_alloc >> cluster_bits;
- 
--	if (keep_prealloc && is_ext)
--		keep_prealloc = false;
--
- 	if (keep_prealloc && new_size < old_size) {
- 		attr_b->nres.data_size = cpu_to_le64(new_size);
- 		mi_b->dirty = true;
+> ---
+>  fs/sysfs/dir.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/fs/sysfs/dir.c b/fs/sysfs/dir.c
+> index 59dffd5ca517..b6b6796e1616 100644
+> --- a/fs/sysfs/dir.c
+> +++ b/fs/sysfs/dir.c
+> @@ -56,8 +56,7 @@ int sysfs_create_dir_ns(struct kobject *kobj, const void *ns)
+>  
+>  	kobject_get_ownership(kobj, &uid, &gid);
+>  
+> -	kn = kernfs_create_dir_ns(parent, kobject_name(kobj),
+> -				  S_IRWXU | S_IRUGO | S_IXUGO, uid, gid,
+> +	kn = kernfs_create_dir_ns(parent, kobject_name(kobj), 0755, uid, gid,
+>  				  kobj, ns);
+>  	if (IS_ERR(kn)) {
+>  		if (PTR_ERR(kn) == -EEXIST)
+> -- 
+> 2.30.2
+> 
+
 -- 
-2.33.0
-
+Kees Cook
