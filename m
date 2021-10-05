@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC3EE422E49
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 18:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13CE7422E4B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 18:47:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236647AbhJEQs5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Oct 2021 12:48:57 -0400
-Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:49014 "EHLO
-        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236586AbhJEQs4 (ORCPT
+        id S236649AbhJEQtU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Oct 2021 12:49:20 -0400
+Received: from relayfre-01.paragon-software.com ([176.12.100.13]:34228 "EHLO
+        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233928AbhJEQtT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Oct 2021 12:48:56 -0400
+        Tue, 5 Oct 2021 12:49:19 -0400
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id C1B2F81FEE;
-        Tue,  5 Oct 2021 19:47:04 +0300 (MSK)
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id A702B1D3B;
+        Tue,  5 Oct 2021 19:47:26 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1633452424;
-        bh=r+W8aHPlNsC5aB07S5h4ESeUSjvbGYbb4u2h6x+QVOY=;
+        d=paragon-software.com; s=mail; t=1633452446;
+        bh=1hkXWZg0gGYLqaDEraBod4BgLqQtDThhgkdcvLmR/YQ=;
         h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=Gcd9HqSzF50LSg6AJ3v11TyIHFhWEt9pfjJPJvMQDmeXY6byTRv82hOS4pXrvcVhm
-         vUF0oi0PNfG1oJRga49MW1mcnb1cKsCx1FdYgQYgqxu2WcGlWy4sN++FXLY+QVnjhZ
-         K8v7m6Fo9+fvb8ro+3jzcByTJfiQudx4EOdDPMyA=
+        b=KinEtfOpMiRqg7VRQkSR2UOf7mzlJnTbpdAvePEKxfKGERzxeZo8g7UVGYSNZGjMX
+         VkJNVn4LTlyCp6B/lQWjlEqkTAaSdDr82URbcO5H2XE2N+9+PYtQiWEoBO45K0Nmk5
+         Cm1oRHE2tyrTIxSFGi8T/OlOvQpuvqzVeroWXkFo=
 Received: from [192.168.211.181] (192.168.211.181) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Tue, 5 Oct 2021 19:47:04 +0300
-Message-ID: <5f5a0b13-90bd-b97c-aa50-c646bb243bde@paragon-software.com>
-Date:   Tue, 5 Oct 2021 19:47:03 +0300
+ 15.1.2176.2; Tue, 5 Oct 2021 19:47:26 +0300
+Message-ID: <b4fc8185-83a8-7626-5ebe-eb6c5cedc078@paragon-software.com>
+Date:   Tue, 5 Oct 2021 19:47:25 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.1.2
-Subject: [PATCH 1/5] fs/ntfs3: Rework ntfs_utf16_to_nls
+Subject: [PATCH 2/5] fs/ntfs3: Refactor ntfs_readlink_hlp
 Content-Language: en-US
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     <ntfs3@lists.linux.dev>
@@ -47,90 +47,176 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now ntfs_utf16_to_nls takes length as one of arguments.
-If length of symlink > 255, then we tried to convert
-length of symlink +- some random number.
-Now 255 symbols limit was removed.
+Rename some variables.
+Returned err by default is EINVAL.
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
- fs/ntfs3/dir.c     | 19 ++++++++-----------
- fs/ntfs3/ntfs_fs.h |  2 +-
- 2 files changed, 9 insertions(+), 12 deletions(-)
+ fs/ntfs3/inode.c | 91 +++++++++++++++++++++++-------------------------
+ 1 file changed, 43 insertions(+), 48 deletions(-)
 
-diff --git a/fs/ntfs3/dir.c b/fs/ntfs3/dir.c
-index 785e72d4392e..fb438d604040 100644
---- a/fs/ntfs3/dir.c
-+++ b/fs/ntfs3/dir.c
-@@ -15,11 +15,10 @@
- #include "ntfs_fs.h"
- 
- /* Convert little endian UTF-16 to NLS string. */
--int ntfs_utf16_to_nls(struct ntfs_sb_info *sbi, const struct le_str *uni,
-+int ntfs_utf16_to_nls(struct ntfs_sb_info *sbi, const __le16 *name, u32 len,
- 		      u8 *buf, int buf_len)
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 7dd162f6a7e2..d618b0573533 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -1763,15 +1763,15 @@ void ntfs_evict_inode(struct inode *inode)
+ static noinline int ntfs_readlink_hlp(struct inode *inode, char *buffer,
+ 				      int buflen)
  {
--	int ret, uni_len, warn;
--	const __le16 *ip;
-+	int ret, warn;
- 	u8 *op;
- 	struct nls_table *nls = sbi->options->nls;
+-	int i, err = 0;
++	int i, err = -EINVAL;
+ 	struct ntfs_inode *ni = ntfs_i(inode);
+ 	struct super_block *sb = inode->i_sb;
+ 	struct ntfs_sb_info *sbi = sb->s_fs_info;
+-	u64 i_size = inode->i_size;
+-	u16 nlen = 0;
++	u64 size;
++	u16 ulen = 0;
+ 	void *to_free = NULL;
+ 	struct REPARSE_DATA_BUFFER *rp;
+-	struct le_str *uni;
++	const __le16 *uname;
+ 	struct ATTRIB *attr;
  
-@@ -27,18 +26,16 @@ int ntfs_utf16_to_nls(struct ntfs_sb_info *sbi, const struct le_str *uni,
+ 	/* Reparse data present. Try to parse it. */
+@@ -1780,68 +1780,64 @@ static noinline int ntfs_readlink_hlp(struct inode *inode, char *buffer,
  
- 	if (!nls) {
- 		/* UTF-16 -> UTF-8 */
--		ret = utf16s_to_utf8s((wchar_t *)uni->name, uni->len,
--				      UTF16_LITTLE_ENDIAN, buf, buf_len);
-+		ret = utf16s_to_utf8s(name, len, UTF16_LITTLE_ENDIAN, buf,
-+				      buf_len);
- 		buf[ret] = '\0';
- 		return ret;
+ 	*buffer = 0;
+ 
+-	/* Read into temporal buffer. */
+-	if (i_size > sbi->reparse.max_size || i_size <= sizeof(u32)) {
+-		err = -EINVAL;
+-		goto out;
+-	}
+-
+ 	attr = ni_find_attr(ni, NULL, NULL, ATTR_REPARSE, NULL, 0, NULL, NULL);
+-	if (!attr) {
+-		err = -EINVAL;
++	if (!attr)
+ 		goto out;
+-	}
+ 
+ 	if (!attr->non_res) {
+-		rp = resident_data_ex(attr, i_size);
+-		if (!rp) {
+-			err = -EINVAL;
++		rp = resident_data_ex(attr, sizeof(struct REPARSE_DATA_BUFFER));
++		if (!rp)
+ 			goto out;
+-		}
++		size = le32_to_cpu(attr->res.data_size);
+ 	} else {
+-		rp = kmalloc(i_size, GFP_NOFS);
++		size = le64_to_cpu(attr->nres.data_size);
++		rp = NULL;
++	}
++
++	if (size > sbi->reparse.max_size || size <= sizeof(u32))
++		goto out;
++
++	if (!rp) {
++		rp = kmalloc(size, GFP_NOFS);
+ 		if (!rp) {
+ 			err = -ENOMEM;
+ 			goto out;
+ 		}
+ 		to_free = rp;
+-		err = ntfs_read_run_nb(sbi, &ni->file.run, 0, rp, i_size, NULL);
++		/* Read into temporal buffer. */
++		err = ntfs_read_run_nb(sbi, &ni->file.run, 0, rp, size, NULL);
+ 		if (err)
+ 			goto out;
  	}
  
--	ip = uni->name;
- 	op = buf;
--	uni_len = uni->len;
- 	warn = 0;
+-	err = -EINVAL;
+-
+ 	/* Microsoft Tag. */
+ 	switch (rp->ReparseTag) {
+ 	case IO_REPARSE_TAG_MOUNT_POINT:
+ 		/* Mount points and junctions. */
+ 		/* Can we use 'Rp->MountPointReparseBuffer.PrintNameLength'? */
+-		if (i_size <= offsetof(struct REPARSE_DATA_BUFFER,
+-				       MountPointReparseBuffer.PathBuffer))
++		if (size <= offsetof(struct REPARSE_DATA_BUFFER,
++				     MountPointReparseBuffer.PathBuffer))
+ 			goto out;
+-		uni = Add2Ptr(rp,
+-			      offsetof(struct REPARSE_DATA_BUFFER,
+-				       MountPointReparseBuffer.PathBuffer) +
+-				      le16_to_cpu(rp->MountPointReparseBuffer
+-							  .PrintNameOffset) -
+-				      2);
+-		nlen = le16_to_cpu(rp->MountPointReparseBuffer.PrintNameLength);
++		uname = Add2Ptr(rp,
++				offsetof(struct REPARSE_DATA_BUFFER,
++					 MountPointReparseBuffer.PathBuffer) +
++					le16_to_cpu(rp->MountPointReparseBuffer
++							    .PrintNameOffset));
++		ulen = le16_to_cpu(rp->MountPointReparseBuffer.PrintNameLength);
+ 		break;
  
--	while (uni_len--) {
-+	while (len--) {
- 		u16 ec;
- 		int charlen;
- 		char dump[5];
-@@ -49,7 +46,7 @@ int ntfs_utf16_to_nls(struct ntfs_sb_info *sbi, const struct le_str *uni,
- 			break;
+ 	case IO_REPARSE_TAG_SYMLINK:
+ 		/* FolderSymbolicLink */
+ 		/* Can we use 'Rp->SymbolicLinkReparseBuffer.PrintNameLength'? */
+-		if (i_size <= offsetof(struct REPARSE_DATA_BUFFER,
+-				       SymbolicLinkReparseBuffer.PathBuffer))
++		if (size <= offsetof(struct REPARSE_DATA_BUFFER,
++				     SymbolicLinkReparseBuffer.PathBuffer))
+ 			goto out;
+-		uni = Add2Ptr(rp,
+-			      offsetof(struct REPARSE_DATA_BUFFER,
+-				       SymbolicLinkReparseBuffer.PathBuffer) +
+-				      le16_to_cpu(rp->SymbolicLinkReparseBuffer
+-							  .PrintNameOffset) -
+-				      2);
+-		nlen = le16_to_cpu(
++		uname = Add2Ptr(
++			rp, offsetof(struct REPARSE_DATA_BUFFER,
++				     SymbolicLinkReparseBuffer.PathBuffer) +
++				    le16_to_cpu(rp->SymbolicLinkReparseBuffer
++							.PrintNameOffset));
++		ulen = le16_to_cpu(
+ 			rp->SymbolicLinkReparseBuffer.PrintNameLength);
+ 		break;
+ 
+@@ -1873,29 +1869,28 @@ static noinline int ntfs_readlink_hlp(struct inode *inode, char *buffer,
+ 			goto out;
+ 		}
+ 		if (!IsReparseTagNameSurrogate(rp->ReparseTag) ||
+-		    i_size <= sizeof(struct REPARSE_POINT)) {
++		    size <= sizeof(struct REPARSE_POINT)) {
+ 			goto out;
  		}
  
--		ec = le16_to_cpu(*ip++);
-+		ec = le16_to_cpu(*name++);
- 		charlen = nls->uni2char(ec, op, buf_len);
+ 		/* Users tag. */
+-		uni = Add2Ptr(rp, sizeof(struct REPARSE_POINT) - 2);
+-		nlen = le16_to_cpu(rp->ReparseDataLength) -
++		uname = Add2Ptr(rp, sizeof(struct REPARSE_POINT));
++		ulen = le16_to_cpu(rp->ReparseDataLength) -
+ 		       sizeof(struct REPARSE_POINT);
+ 	}
  
- 		if (charlen > 0) {
-@@ -304,8 +301,8 @@ static inline int ntfs_filldir(struct ntfs_sb_info *sbi, struct ntfs_inode *ni,
- 	if (sbi->options->nohidden && (fname->dup.fa & FILE_ATTRIBUTE_HIDDEN))
- 		return 0;
+ 	/* Convert nlen from bytes to UNICODE chars. */
+-	nlen >>= 1;
++	ulen >>= 1;
  
--	name_len = ntfs_utf16_to_nls(sbi, (struct le_str *)&fname->name_len,
--				     name, PATH_MAX);
-+	name_len = ntfs_utf16_to_nls(sbi, fname->name, fname->name_len, name,
-+				     PATH_MAX);
- 	if (name_len <= 0) {
- 		ntfs_warn(sbi->sb, "failed to convert name for inode %lx.",
- 			  ino);
-diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-index 38b7c1a9dc52..9277b552f257 100644
---- a/fs/ntfs3/ntfs_fs.h
-+++ b/fs/ntfs3/ntfs_fs.h
-@@ -475,7 +475,7 @@ bool are_bits_set(const ulong *map, size_t bit, size_t nbits);
- size_t get_set_bits_ex(const ulong *map, size_t bit, size_t nbits);
+ 	/* Check that name is available. */
+-	if (!nlen || &uni->name[nlen] > (__le16 *)Add2Ptr(rp, i_size))
++	if (!ulen || uname + ulen > (__le16 *)Add2Ptr(rp, size))
+ 		goto out;
  
- /* Globals from dir.c */
--int ntfs_utf16_to_nls(struct ntfs_sb_info *sbi, const struct le_str *uni,
-+int ntfs_utf16_to_nls(struct ntfs_sb_info *sbi, const __le16 *name, u32 len,
- 		      u8 *buf, int buf_len);
- int ntfs_nls_to_utf16(struct ntfs_sb_info *sbi, const u8 *name, u32 name_len,
- 		      struct cpu_str *uni, u32 max_ulen,
+ 	/* If name is already zero terminated then truncate it now. */
+-	if (!uni->name[nlen - 1])
+-		nlen -= 1;
+-	uni->len = nlen;
++	if (!uname[ulen - 1])
++		ulen -= 1;
+ 
+-	err = ntfs_utf16_to_nls(sbi, uni, buffer, buflen);
++	err = ntfs_utf16_to_nls(sbi, uname, ulen, buffer, buflen);
+ 
+ 	if (err < 0)
+ 		goto out;
 -- 
 2.33.0
 
