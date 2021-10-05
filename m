@@ -2,125 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 754B44227FC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 15:34:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E0274228E0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 15:53:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235091AbhJENgl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Oct 2021 09:36:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:20600 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235081AbhJENgl (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Oct 2021 09:36:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1633440890;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=KbQMyQ3OBXFxJwor2dj+AzBaJlpfPumA3y+3T9hS3ck=;
-        b=QHPCPnKOvr64ktw012kT9Ifp7S93uK0JXRy9gKNyTAmogmT2jIqreQf6/jPS/pwQdshLb3
-        TbhEqfIGtoCHKPxSl0S0ofdVNcU6ogqji7J/s7ioKZkwFoPVIs9lGdzqpn1A2Z4vUTibe3
-        3bJ4PPDHutYUAQE3+hrCX8Vm4b5aXz8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-405-p9vWSj-wP-G3pUDdrQWKnw-1; Tue, 05 Oct 2021 09:34:47 -0400
-X-MC-Unique: p9vWSj-wP-G3pUDdrQWKnw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 50907802921;
-        Tue,  5 Oct 2021 13:34:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7085B2619A;
-        Tue,  5 Oct 2021 13:34:40 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] fscache, 9p, afs, nfs: Fix kerneldoc warnings and one unused variable
+        id S235835AbhJENyo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Oct 2021 09:54:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32832 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235680AbhJENxI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 5 Oct 2021 09:53:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3D7C2617E3;
+        Tue,  5 Oct 2021 13:51:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633441878;
+        bh=eQyrhUBqAGxOp4OQ8SRKA+qeUo7Jb3TpkpwhaY0OqBY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NGcZ5oGZfXUCQjK/0b7aKMyGc0sAMDFizgFX3U780Vpan5yIEE/Qazjsy91++qT/x
+         av6mNFIjXk+mf+F1G0Blc1rfjo8olSBZYYHEd9foEMpvDaHZDOrWJg7HL48cG/0LSr
+         j3hY23MiV+kSD+rCsE4vYxA6sq0qKGg0cTr6tHlmhoVsfvSvoUOhpNo60u/NIOZXB9
+         bhXIDoyWLrpjA2gkR8jHxiz1V6P6nyAUclJvkWs2pd9CyY6AaZlnB2KaTjDueJftUj
+         2nq/DTMgPMoTorOsif+hTdhtv897KeDw1o/T+z9U36ncrI8GXVUyTvJ7EOiqqkuXrh
+         jrT3+lLNee80A==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.14 30/40] vboxfs: fix broken legacy mount signature checking
+Date:   Tue,  5 Oct 2021 09:50:09 -0400
+Message-Id: <20211005135020.214291-30-sashal@kernel.org>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20211005135020.214291-1-sashal@kernel.org>
+References: <20211005135020.214291-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1082804.1633440879.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 05 Oct 2021 14:34:39 +0100
-Message-ID: <1082805.1633440879@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-Could you consider pulling these changes please?
+[ Upstream commit 9b3b353ef330e20bc2d99bf3165cc044cff26a09 ]
 
-The first four patches fix kerneldoc warnings in fscache, afs, 9p and nfs =
--
-they're mostly just comment changes, though there's one place in 9p where =
-a
-comment got detached from the function it was attached to (v9fs_fid_add)
-and has to switch places with a function that got inserted between
-(__add_fid).
+Commit 9d682ea6bcc7 ("vboxsf: Fix the check for the old binary
+mount-arguments struct") was meant to fix a build error due to sign
+mismatch in 'char' and the use of character constants, but it just moved
+the error elsewhere, in that on some architectures characters and signed
+and on others they are unsigned, and that's just how the C standard
+works.
 
-The patch on the end removes an unused symbol in fscache - I moved it last
-so you can discard it if you'd rather not pull that one just now.
+The proper fix is a simple "don't do that then".  The code was just
+being silly and odd, and it should never have cared about signed vs
+unsigned characters in the first place, since what it is testing is not
+four "characters", but four bytes.
 
-David
+And the way to compare four bytes is by using "memcmp()".
 
-Link: https://lore.kernel.org/r/163214005516.2945267.7000234432243167892.s=
-tgit@warthog.procyon.org.uk/ # rfc v1
-Link: https://lore.kernel.org/r/163281899704.2790286.9177774252843775348.s=
-tgit@warthog.procyon.org.uk/ # rfc v2
-Link: https://lore.kernel.org/r/163342376338.876192.10313278824682848704.s=
-tgit@warthog.procyon.org.uk/ # split up
+Which compilers will know to just turn into a single 32-bit compare with
+a constant, as long as you don't have crazy debug options enabled.
 
+Link: https://lore.kernel.org/lkml/20210927094123.576521-1-arnd@kernel.org/
+Cc: Arnd Bergmann <arnd@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-The following changes since commit 9e1ff307c779ce1f0f810c7ecce3d95bbae4089=
-6:
+ fs/vboxsf/super.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-  Linux 5.15-rc4 (2021-10-03 14:08:47 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/warning-fixes-20211005
-
-for you to fetch changes up to ef31499a87cf842bdf6719f44473d93e99d09fe2:
-
-  fscache: Remove an unused static variable (2021-10-04 22:13:12 +0100)
-
-----------------------------------------------------------------
-Warning fixes
-
-----------------------------------------------------------------
-David Howells (5):
-      nfs: Fix kerneldoc warning shown up by W=3D1
-      afs: Fix kerneldoc warning shown up by W=3D1
-      9p: Fix a bunch of kerneldoc warnings shown up by W=3D1
-      fscache: Fix some kerneldoc warnings shown up by W=3D1
-      fscache: Remove an unused static variable
-
- fs/9p/cache.c          |  8 ++++----
- fs/9p/fid.c            | 14 +++++++-------
- fs/9p/v9fs.c           |  8 +++-----
- fs/9p/vfs_addr.c       | 14 +++++++++-----
- fs/9p/vfs_file.c       | 33 ++++++++++++---------------------
- fs/9p/vfs_inode.c      | 24 ++++++++++++++++--------
- fs/9p/vfs_inode_dotl.c | 11 +++++++++--
- fs/afs/dir_silly.c     |  4 ++--
- fs/fscache/object.c    |  2 +-
- fs/fscache/operation.c |  3 +++
- fs/nfs_common/grace.c  |  1 -
- 11 files changed, 66 insertions(+), 56 deletions(-)
+diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
+index 4f5e59f06284..37dd3fe5b1e9 100644
+--- a/fs/vboxsf/super.c
++++ b/fs/vboxsf/super.c
+@@ -21,10 +21,7 @@
+ 
+ #define VBOXSF_SUPER_MAGIC 0x786f4256 /* 'VBox' little endian */
+ 
+-#define VBSF_MOUNT_SIGNATURE_BYTE_0 ('\000')
+-#define VBSF_MOUNT_SIGNATURE_BYTE_1 ('\377')
+-#define VBSF_MOUNT_SIGNATURE_BYTE_2 ('\376')
+-#define VBSF_MOUNT_SIGNATURE_BYTE_3 ('\375')
++static const unsigned char VBSF_MOUNT_SIGNATURE[4] = "\000\377\376\375";
+ 
+ static int follow_symlinks;
+ module_param(follow_symlinks, int, 0444);
+@@ -386,12 +383,7 @@ static int vboxsf_setup(void)
+ 
+ static int vboxsf_parse_monolithic(struct fs_context *fc, void *data)
+ {
+-	unsigned char *options = data;
+-
+-	if (options && options[0] == VBSF_MOUNT_SIGNATURE_BYTE_0 &&
+-		       options[1] == VBSF_MOUNT_SIGNATURE_BYTE_1 &&
+-		       options[2] == VBSF_MOUNT_SIGNATURE_BYTE_2 &&
+-		       options[3] == VBSF_MOUNT_SIGNATURE_BYTE_3) {
++	if (data && !memcmp(data, VBSF_MOUNT_SIGNATURE, 4)) {
+ 		vbg_err("vboxsf: Old binary mount data not supported, remove obsolete mount.vboxsf and/or update your VBoxService.\n");
+ 		return -EINVAL;
+ 	}
+-- 
+2.33.0
 
