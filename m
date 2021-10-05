@@ -2,228 +2,356 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A37F422B87
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 16:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CC99422C7A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 17:26:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231391AbhJEOzz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Oct 2021 10:55:55 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:61147 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbhJEOzy (ORCPT
+        id S235704AbhJEP2s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Oct 2021 11:28:48 -0400
+Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:58477 "EHLO
+        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230059AbhJEP2r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Oct 2021 10:55:54 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20211005145402epoutp040cc1d3d7ca234e406b4d563ab7c889ab~rKihWPgwu1716717167epoutp04G
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Oct 2021 14:54:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20211005145402epoutp040cc1d3d7ca234e406b4d563ab7c889ab~rKihWPgwu1716717167epoutp04G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1633445642;
-        bh=owNFM42vrkk5mvEoZ58WzfGeNc+ZJu5wxnvZyxZipAs=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=nuxujnPcTTwk5kwPhH2DA1ceRUS0lYsJIz9/7c17lcKAqknoWC7IbcPIpKsGz3Ns6
-         1RaMU5cUVSh3AQXzrhnAS/Cpe7joo952uebp8UoXdb6kACHzZX47Wl/8UE8/ShIq2E
-         C4cGVsJn87GF48QX1YwUtaMSXhwOEDJcBdR+yOzI=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20211005145402epcas1p3baddf512744067eb796ad28f804bcc1a~rKig6DQ170387503875epcas1p3L;
-        Tue,  5 Oct 2021 14:54:02 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.38.250]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4HP0w820tyz4x9Pr; Tue,  5 Oct
-        2021 14:54:00 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A5.78.62504.8076C516; Tue,  5 Oct 2021 23:54:00 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20211005145359epcas1p34f605fae95833457c3c5bbde8427d463~rKieO1TE-0610506105epcas1p3p;
-        Tue,  5 Oct 2021 14:53:59 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20211005145359epsmtrp213d6346e170c72f49e2ba9b48a2e59eb~rKieOG_o50698306983epsmtrp2H;
-        Tue,  5 Oct 2021 14:53:59 +0000 (GMT)
-X-AuditID: b6c32a38-79bff7000002f428-e3-615c6708fd99
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        07.92.09091.7076C516; Tue,  5 Oct 2021 23:53:59 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20211005145359epsmtip182df3aeb55ae35b4743c4d0d5b6a7a71~rKieCX9xk0828308283epsmtip1H;
-        Tue,  5 Oct 2021 14:53:59 +0000 (GMT)
-From:   "Sungjong Seo" <sj1557.seo@samsung.com>
-To:     "'Namjae Jeon'" <linkinjeon@kernel.org>
-Cc:     "'Chung-Chiang Cheng'" <cccheng@synology.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <shepjeng@gmail.com>, <sj1557.seo@samsung.com>
-In-Reply-To: <CAKYAXd_vFjVcHJxn5xau5hFNHBXc2K7o1wFHbkhz9TcCteG2Rw@mail.gmail.com>
-Subject: RE: [PATCH] exfat: use local UTC offset when EXFAT_TZ_VALID isn't
- set
-Date:   Tue, 5 Oct 2021 23:53:58 +0900
-Message-ID: <d43501d7b9f8$d3f33b80$7bd9b280$@samsung.com>
+        Tue, 5 Oct 2021 11:28:47 -0400
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 5B29082246;
+        Tue,  5 Oct 2021 18:26:54 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1633447614;
+        bh=+ZnTe0+e6pt46xkHcMh2XLrpyQ1A7TZkhNsacRXaPuw=;
+        h=Date:To:CC:From:Subject;
+        b=Tc6h/L+r9Tpf6rKMF+KD13z5M8fvcGKpozzdlF519OTHlLXrdDHzMW1tOakJlmXgV
+         V5talOh8SfyD1vA/ug/Vn8UMY2UZDv/FjX92a5w0FNrtucCpZUm/hFfq0uEuox5EPM
+         fRH+cKE4FH1qO7qPD5gnD0behUs9bapHGmcecxz0=
+Received: from [192.168.211.181] (192.168.211.181) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Tue, 5 Oct 2021 18:26:53 +0300
+Message-ID: <79791816-db23-f3b4-3ea8-139add705c45@paragon-software.com>
+Date:   Tue, 5 Oct 2021 18:26:53 +0300
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.2
+Content-Language: en-US
+To:     <ntfs3@lists.linux.dev>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <kari.argillander@gmail.com>
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH v2] fs/ntfs3: Fix memory leak if fill_super failed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQGbLD2CCutv2trCrUWvFxdYN9vjigGoD6NLAWfhRkYBJWz3gQLEsXbMAWOpcn8CEie+dqvp5/CA
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnk+LIzCtJLcpLzFFi42LZdljTQJcjPSbR4MY3Loutz46zWkyctpTZ
-        Ys/ekywWl3fNYbNonS1pseXfEVYHNo+ds+6ye2xa1cnm0bdlFaPHjA/7WT0+b5ILYI3KtslI
-        TUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBOkBJoSwxpxQo
-        FJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BWoFecmFtcmpeul5daYmVoYGBkClSYkJ3xdsYM
-        1oKlShVNi9QaGB9IdzFyckgImEg0z/nOCGILCexglGhoUe5i5AKyPzFKXOzoZodwvjFKHLvb
-        ygTTcenlPiaIxF5GiWmP7kNVvWSUeHrkNytIFZuArsSTGz+Zuxg5OEQEtCXuv0gHqWEWWMYo
-        sat5OiNInFMgUOLVSkmQcmGBAInemRfAWlkEVCRWTLzAAmLzClhKPL+xhw3CFpQ4OfMJWJxZ
-        QF5i+9s5zBAHKUjs/nQUrFdEIErizZcXbBA1IhKzO9uYQfZKCHRySPTe/cIG0eAicfvtTKhm
-        YYlXx7ewQ9hSEp/f7YWqqZf4P38tO0RzC6PEw0/bmECOlhCwl3h/yQLEZBbQlFi/Sx+iXFFi
-        5++5jBB7+STefe1hhajmlehoE4IoUZH4/mEnC8ymKz+uMk1gVJqF5LNZSD6bheSDWQjLFjCy
-        rGIUSy0ozk1PLTYsMIFHdXJ+7iZGcMrUstjBOPftB71DjEwcjIcYJTiYlUR4r3pFJgrxpiRW
-        VqUW5ccXleakFh9iNAWG9URmKdHkfGDSziuJNzSxNDAxMzKxMLY0NlMS5z322jJRSCA9sSQ1
-        OzW1ILUIpo+Jg1OqgUlWprbncf056WfnTeM2P9/3XHrfvq9t3szfpry70Bdh1c/i9L1xo9Wx
-        VMGl7YJ2Lt+26U1tWvVNV8vdoKxw8snHyczCV7ODxSPmFbrsZwvh9PwVc2+TxGS/B5tXK7V/
-        D8nokp4Zq+Q3c+6ep0VuRx2q7u38rbhZ/uuejcVTnv6cVnT9Bpv95ZPf5n9UNd4hWK7h9uJn
-        3uIzd45vmvz7xNZ7ya/PTlasbZ7e5Ofz1//79S8fty+/sP0yy+fPEwTVnzAtt55vJPl17i97
-        y2l93eX37ebKMB/heN4Wptd2z8m1s678w+dTBu4/KlYKv1x/xmTiFM28F+WMSqub7jMmFLX/
-        ZrP6diaeu/zs4cJNlcVvlFiKMxINtZiLihMBxegnzyIEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGLMWRmVeSWpSXmKPExsWy7bCSnC57ekyiwYeb7BZbnx1ntZg4bSmz
-        xZ69J1ksLu+aw2bROlvSYsu/I6wObB47Z91l99i0qpPNo2/LKkaPGR/2s3p83iQXwBrFZZOS
-        mpNZllqkb5fAlfF2xgzWgqVKFU2L1BoYH0h3MXJySAiYSFx6uY8JxBYS2M0osbGdq4uRAygu
-        JXFwnyaEKSxx+HAxRMVzRok7+4RAbDYBXYknN34yg5SICGhL3H+RDhJmFljFKLH0eXUXIxdQ
-        +XZmiQeHP7KA1HAKBEq8WikJYgoL+EnM32kPUs4ioCKxYuIFFhCbV8BS4vmNPWwQtqDEyZlP
-        WCBGakv0PmxlhLDlJba/ncMMcbuCxO5PR1lBbBGBKIk3X16wQdSISMzubGOewCg8C8moWUhG
-        zUIyahaSlgWMLKsYJVMLinPTc4sNCwzzUsv1ihNzi0vz0vWS83M3MYKjRktzB+P2VR/0DjEy
-        cTAeYpTgYFYS4b3qFZkoxJuSWFmVWpQfX1Sak1p8iFGag0VJnPdC18l4IYH0xJLU7NTUgtQi
-        mCwTB6dUA5NNKMO6lLUbGZp/GKetsNqt4ByoZO0Su0D4ae7JXTlcOoznde5JxlXWptx4IavN
-        4Xn8a/vP6nlfr+sy7NO5ySXLOfttudoHfWXG1kUuNss/WCyMvjQhUVFwdeGVSw6MvFveKfNO
-        DWudYam86tt1tzty1wWmHS/7pJZcP2mrkmfgzAadBFn9TOOYCUGvG3YfeeLb7hlzurM+a+s6
-        y5NzNtyavcs68uQbrpOpBrYMFWzp1iwRB81ear3z11xkmVxr/MP+Q1mC54aj+he5HrpH871v
-        ZQ6J7BBVs/mZJSi7d+FDmYcCh2M1VUwXc84znKax6/e7Ldfq/8+drcn/JG0dy2xey/L2DCbJ
-        TLFALXYtJZbijERDLeai4kQAZ7ysYQkDAAA=
-X-CMS-MailID: 20211005145359epcas1p34f605fae95833457c3c5bbde8427d463
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20210910010035epcas1p496dd515369b9f2481ccd1c0de5904bbd
-References: <20210909065543.164329-1-cccheng@synology.com>
-        <CGME20210910010035epcas1p496dd515369b9f2481ccd1c0de5904bbd@epcas1p4.samsung.com>
-        <CAKYAXd_1ys-xQ9HusgqSr5GHaP6R2pK4JswfZzoqZ=wTnwSiOw@mail.gmail.com>
-        <997a01d7b6c6$ea0c3f50$be24bdf0$@samsung.com>
-        <CAKYAXd9COEWU_QF3p0mnEnH4nHMrHQ5ujwBZ6rt4ZBjEFBnB=w@mail.gmail.com>
-        <c28301d7b99e$37fb5af0$a7f210d0$@samsung.com>
-        <CAKYAXd_vFjVcHJxn5xau5hFNHBXc2K7o1wFHbkhz9TcCteG2Rw@mail.gmail.com>
+X-Originating-IP: [192.168.211.181]
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> 2021-10-05 13:05 GMT+09:00, Sungjong Seo <sj1557.seo@samsung.com>:
-> >> 2021-10-01 22:19 GMT+09:00, Sungjong Seo <sj1557.seo@samsung.com>:
-> >> > Hello, Namjae,
-> >> Hi Sungjong,
-> >> >
-> >> > I found an important difference between the code we first wrote and
-> >> > the code that has changed since our initial patch review. This
-> >> > difference seems to cause compatibility issues when reading saved
-> >> timestamps without timezone.
-> >> > (In our initial patch review, there were concerns about possible
-> >> > compatibility issues.) I think the code that reads timestamps
-> >> > without timezone should go back to the concept we wrote in the
-> >> > first place like reported patch.
-> >> Are you talking about using sys_tz?
-> > Yes, exactly, a part like below.
-> Have you read discussion about this before ?
+In ntfs_init_fs_context we allocate memory in fc->s_fs_info.
+In case of failed mount we must free it in ntfs_fill_super.
+We can't do it in ntfs_fs_free, because ntfs_fs_free called
+with fc->s_fs_info == NULL.
+fc->s_fs_info became NULL in sget_fc.
 
-Of course. That's why I wrote the expression "go back".
-As you know, there was the discussion of local time conversion method for
-reading timestamps that have no OffsetValid bit.
-that is, whether to use sys_tz or not was the main topic.
+Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+---
+v2:
+  Changed fix - now we free memory instead of restoring pointer to memory.
+  Added context how we allocate and free memory.
+  Many commits affected, so no fixes tag.
 
-And I understand that the current exFAT implementation doesn't use sys_tz
-and depends entirely on time_offset.(UTC if time_offset is not set)
+ fs/ntfs3/super.c | 90 ++++++++++++++++++++++++++++++------------------
+ 1 file changed, 56 insertions(+), 34 deletions(-)
 
-> Let me know what I am missing something.
-
-No, there is nothing you are missing.
-I thought compatibility issues regarding sys_tz could be serious
-because I misunderstood that other compatibility issues were reported. :(
-
-I am just concerned that most system daemons mount exfat-fs without
-time_offset option, which could be reported as a compatibility issue.
-
-However, to discuss this more, it would be nice to see the trend of how
-many issues regarding sys_tz will be reported.
-
-> 
-> >
-> > +static inline int exfat_tz_offset(struct exfat_sb_info *sbi) {
-> > +	return (sbi->options.tz_set ? -sbi->options.time_offset :
-> > +			sys_tz.tz_minuteswest) * SECS_PER_MIN; }
-> > +
-> >
-> >>
-> >> > It could be an answer of another timestamp issue.
-> >> What is another timestamp issue ?
-> >
-> > What I'm saying is "timestamp incompatibilities in exfat-fs" from
-> > Reiner <reinerstallknecht@gmail.com> I think it might be the same
-> > issue with this.
-> Have you checked fuse-exfat patch he shared ? It was exfat timezone
-> support.
-> I am not sure how it is related to sys_tz...
-
-As I mentioned above, I misunderstood. :)
-I mistakenly thought that the code that handles timestamp without
-OffsetValid bit was added as well.
-
-Thanks!
-
-> 
-> Thanks!
-> >
-> >>
-> >> >
-> >> > Could you please let me know what you think?
-> >> >
-> >> > Thanks.
-> >> >> -----Original Message-----
-> >> >> From: Namjae Jeon [mailto:linkinjeon@kernel.org]
-> >> >> Sent: Friday, September 10, 2021 10:01 AM
-> >> >> To: Chung-Chiang Cheng <cccheng@synology.com>
-> >> >> Cc: sj1557.seo@samsung.com; linux-fsdevel@vger.kernel.org; linux-
-> >> >> kernel@vger.kernel.org; shepjeng@gmail.com
-> >> >> Subject: Re: [PATCH] exfat: use local UTC offset when
-> >> >> EXFAT_TZ_VALID isn't set
-> >> >>
-> >> >> 2021-09-09 15:55 GMT+09:00, Chung-Chiang Cheng
-> <cccheng@synology.com>:
-> >> >> > EXFAT_TZ_VALID is corresponding to OffsetValid field in exfat
-> >> >> > specification [1]. If this bit isn't set, timestamps should be
-> >> >> > treated as having the same UTC offset as the current local time.
-> >> >> >
-> >> >> > This patch uses the existing mount option 'time_offset' as fat
-> does.
-> >> >> > If time_offset isn't set, local UTC offset in sys_tz will be
-> >> >> > used as the default value.
-> >> >> >
-> >> >> > Link: [1]
-> >> >> > https://protect2.fireeye.com/v1/url?k=cba4edf5-943fd4c8-cba566ba
-> >> >> > -0c
-> >> >> > c47
-> >> >> > a31309a-e70aa065be678729&q=1&e=225feff2-841f-404c-9a2e-c12064b23
-> >> >> > 2d0
-> >> >> > &u=
-> >> >> > https%3A%2F%2Fdocs.microsoft.com%2Fen-us%2Fwindows%2Fwin32%2Ffil
-> >> >> > eio %2F exfat-specification%2374102-offsetvalid-field
-> >> >> > Signed-off-by: Chung-Chiang Cheng <cccheng@synology.com>
-> >> >> Please read this discussion:
-> >> >>
-> >> >> https://protect2.fireeye.com/v1/url?k=9bbcab7c-c4279381-9bbd2033-0
-> >> >> 00babff317b-88ee581b44536876&q=1&e=b0d8a44b-4821-44a8-860a-4d3116c
-> >> >> b634d&u=https%3A%2F%2Fpatchwork.kernel.org%2Fproject%2Flinux-
-> >> >> fsdevel/patch/20200115082447.19520-10-namjae.jeon@samsung.com/
-> >> >>
-> >> >> Thanks!
-> >> >
-> >> >
-> >
-> >
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index 705d8b4f4894..d41d76979e12 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -908,7 +908,8 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	if (IS_ERR(sbi->options->nls)) {
+ 		sbi->options->nls = NULL;
+ 		errorf(fc, "Cannot load nls %s", sbi->options->nls_name);
+-		return -EINVAL;
++		err = -EINVAL;
++		goto out;
+ 	}
+ 
+ 	rq = bdev_get_queue(bdev);
+@@ -922,7 +923,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	err = ntfs_init_from_boot(sb, rq ? queue_logical_block_size(rq) : 512,
+ 				  bdev->bd_inode->i_size);
+ 	if (err)
+-		return err;
++		goto out;
+ 
+ 	/*
+ 	 * Load $Volume. This should be done before $LogFile
+@@ -933,7 +934,8 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	inode = ntfs_iget5(sb, &ref, &NAME_VOLUME);
+ 	if (IS_ERR(inode)) {
+ 		ntfs_err(sb, "Failed to load $Volume.");
+-		return PTR_ERR(inode);
++		err = PTR_ERR(inode);
++		goto out;
+ 	}
+ 
+ 	ni = ntfs_i(inode);
+@@ -954,19 +956,19 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	} else {
+ 		/* Should we break mounting here? */
+ 		//err = -EINVAL;
+-		//goto out;
++		//goto put_inode_out;
+ 	}
+ 
+ 	attr = ni_find_attr(ni, attr, NULL, ATTR_VOL_INFO, NULL, 0, NULL, NULL);
+ 	if (!attr || is_attr_ext(attr)) {
+ 		err = -EINVAL;
+-		goto out;
++		goto put_inode_out;
+ 	}
+ 
+ 	info = resident_data_ex(attr, SIZEOF_ATTRIBUTE_VOLUME_INFO);
+ 	if (!info) {
+ 		err = -EINVAL;
+-		goto out;
++		goto put_inode_out;
+ 	}
+ 
+ 	sbi->volume.major_ver = info->major_ver;
+@@ -980,7 +982,8 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	inode = ntfs_iget5(sb, &ref, &NAME_MIRROR);
+ 	if (IS_ERR(inode)) {
+ 		ntfs_err(sb, "Failed to load $MFTMirr.");
+-		return PTR_ERR(inode);
++		err = PTR_ERR(inode);
++		goto out;
+ 	}
+ 
+ 	sbi->mft.recs_mirr =
+@@ -994,14 +997,15 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	inode = ntfs_iget5(sb, &ref, &NAME_LOGFILE);
+ 	if (IS_ERR(inode)) {
+ 		ntfs_err(sb, "Failed to load \x24LogFile.");
+-		return PTR_ERR(inode);
++		err = PTR_ERR(inode);
++		goto out;
+ 	}
+ 
+ 	ni = ntfs_i(inode);
+ 
+ 	err = ntfs_loadlog_and_replay(ni, sbi);
+ 	if (err)
+-		goto out;
++		goto put_inode_out;
+ 
+ 	iput(inode);
+ 
+@@ -1009,14 +1013,16 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 		if (!sb_rdonly(sb)) {
+ 			ntfs_warn(sb,
+ 				  "failed to replay log file. Can't mount rw!");
+-			return -EINVAL;
++			err = -EINVAL;
++			goto out;
+ 		}
+ 	} else if (sbi->volume.flags & VOLUME_FLAG_DIRTY) {
+ 		if (!sb_rdonly(sb) && !sbi->options->force) {
+ 			ntfs_warn(
+ 				sb,
+ 				"volume is dirty and \"force\" flag is not set!");
+-			return -EINVAL;
++			err = -EINVAL;
++			goto out;
+ 		}
+ 	}
+ 
+@@ -1027,7 +1033,8 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	inode = ntfs_iget5(sb, &ref, &NAME_MFT);
+ 	if (IS_ERR(inode)) {
+ 		ntfs_err(sb, "Failed to load $MFT.");
+-		return PTR_ERR(inode);
++		err = PTR_ERR(inode);
++		goto out;
+ 	}
+ 
+ 	ni = ntfs_i(inode);
+@@ -1038,11 +1045,11 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 
+ 	err = wnd_init(&sbi->mft.bitmap, sb, tt);
+ 	if (err)
+-		goto out;
++		goto put_inode_out;
+ 
+ 	err = ni_load_all_mi(ni);
+ 	if (err)
+-		goto out;
++		goto put_inode_out;
+ 
+ 	sbi->mft.ni = ni;
+ 
+@@ -1052,7 +1059,8 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	inode = ntfs_iget5(sb, &ref, &NAME_BADCLUS);
+ 	if (IS_ERR(inode)) {
+ 		ntfs_err(sb, "Failed to load $BadClus.");
+-		return PTR_ERR(inode);
++		err = PTR_ERR(inode);
++		goto out;
+ 	}
+ 
+ 	ni = ntfs_i(inode);
+@@ -1075,13 +1083,14 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	inode = ntfs_iget5(sb, &ref, &NAME_BITMAP);
+ 	if (IS_ERR(inode)) {
+ 		ntfs_err(sb, "Failed to load $Bitmap.");
+-		return PTR_ERR(inode);
++		err = PTR_ERR(inode);
++		goto out;
+ 	}
+ 
+ #ifndef CONFIG_NTFS3_64BIT_CLUSTER
+ 	if (inode->i_size >> 32) {
+ 		err = -EINVAL;
+-		goto out;
++		goto put_inode_out;
+ 	}
+ #endif
+ 
+@@ -1089,21 +1098,21 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	tt = sbi->used.bitmap.nbits;
+ 	if (inode->i_size < bitmap_size(tt)) {
+ 		err = -EINVAL;
+-		goto out;
++		goto put_inode_out;
+ 	}
+ 
+ 	/* Not necessary. */
+ 	sbi->used.bitmap.set_tail = true;
+ 	err = wnd_init(&sbi->used.bitmap, sb, tt);
+ 	if (err)
+-		goto out;
++		goto put_inode_out;
+ 
+ 	iput(inode);
+ 
+ 	/* Compute the MFT zone. */
+ 	err = ntfs_refresh_zone(sbi);
+ 	if (err)
+-		return err;
++		goto out;
+ 
+ 	/* Load $AttrDef. */
+ 	ref.low = cpu_to_le32(MFT_REC_ATTR);
+@@ -1111,18 +1120,19 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	inode = ntfs_iget5(sb, &ref, &NAME_ATTRDEF);
+ 	if (IS_ERR(inode)) {
+ 		ntfs_err(sb, "Failed to load $AttrDef -> %d", err);
+-		return PTR_ERR(inode);
++		err = PTR_ERR(inode);
++		goto out;
+ 	}
+ 
+ 	if (inode->i_size < sizeof(struct ATTR_DEF_ENTRY)) {
+ 		err = -EINVAL;
+-		goto out;
++		goto put_inode_out;
+ 	}
+ 	bytes = inode->i_size;
+ 	sbi->def_table = t = kmalloc(bytes, GFP_NOFS);
+ 	if (!t) {
+ 		err = -ENOMEM;
+-		goto out;
++		goto put_inode_out;
+ 	}
+ 
+ 	for (done = idx = 0; done < bytes; done += PAGE_SIZE, idx++) {
+@@ -1131,7 +1141,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 
+ 		if (IS_ERR(page)) {
+ 			err = PTR_ERR(page);
+-			goto out;
++			goto put_inode_out;
+ 		}
+ 		memcpy(Add2Ptr(t, done), page_address(page),
+ 		       min(PAGE_SIZE, tail));
+@@ -1139,7 +1149,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 
+ 		if (!idx && ATTR_STD != t->type) {
+ 			err = -EINVAL;
+-			goto out;
++			goto put_inode_out;
+ 		}
+ 	}
+ 
+@@ -1173,12 +1183,13 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	inode = ntfs_iget5(sb, &ref, &NAME_UPCASE);
+ 	if (IS_ERR(inode)) {
+ 		ntfs_err(sb, "Failed to load $UpCase.");
+-		return PTR_ERR(inode);
++		err = PTR_ERR(inode);
++		goto out;
+ 	}
+ 
+ 	if (inode->i_size != 0x10000 * sizeof(short)) {
+ 		err = -EINVAL;
+-		goto out;
++		goto put_inode_out;
+ 	}
+ 
+ 	for (idx = 0; idx < (0x10000 * sizeof(short) >> PAGE_SHIFT); idx++) {
+@@ -1188,7 +1199,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 
+ 		if (IS_ERR(page)) {
+ 			err = PTR_ERR(page);
+-			goto out;
++			goto put_inode_out;
+ 		}
+ 
+ 		src = page_address(page);
+@@ -1214,7 +1225,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 		/* Load $Secure. */
+ 		err = ntfs_security_init(sbi);
+ 		if (err)
+-			return err;
++			goto out;
+ 
+ 		/* Load $Extend. */
+ 		err = ntfs_extend_init(sbi);
+@@ -1239,19 +1250,30 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	inode = ntfs_iget5(sb, &ref, &NAME_ROOT);
+ 	if (IS_ERR(inode)) {
+ 		ntfs_err(sb, "Failed to load root.");
+-		return PTR_ERR(inode);
++		err = PTR_ERR(inode);
++		goto out;
+ 	}
+ 
+ 	sb->s_root = d_make_root(inode);
+-	if (!sb->s_root)
+-		return -ENOMEM;
++	if (!sb->s_root) {
++		err = -ENOMEM;
++		goto put_inode_out;
++	}
+ 
+ 	fc->fs_private = NULL;
+-	fc->s_fs_info = NULL;
+ 
+ 	return 0;
+-out:
++
++put_inode_out:
+ 	iput(inode);
++out:
++	/*
++	 * Free resources here.
++	 * ntfs_fs_free will be called with fc->s_fs_info = NULL
++	 */
++	put_ntfs(sbi);
++	sb->s_fs_info = NULL;
++
+ 	return err;
+ }
+ 
+-- 
+2.33.0
 
