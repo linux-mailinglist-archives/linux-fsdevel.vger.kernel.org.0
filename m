@@ -2,231 +2,233 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ACA1642327C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 22:57:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83C56423297
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 23:02:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236447AbhJEU6x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Oct 2021 16:58:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52186 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231159AbhJEU6w (ORCPT
+        id S235949AbhJEVED (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Oct 2021 17:04:03 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:22760 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232250AbhJEVEC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Oct 2021 16:58:52 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E172EC061749
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Oct 2021 13:57:01 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id v19so561592pjh.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Oct 2021 13:57:01 -0700 (PDT)
+        Tue, 5 Oct 2021 17:04:02 -0400
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 195KtN4F029448;
+        Tue, 5 Oct 2021 21:00:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
+ bh=Iu8l/kjfpN/J1tVMYPWBmN12VadVdC8oGYTJqghB95Y=;
+ b=Jk70e7OAskticiFb+UFfF5V9HAJhCIOM6/XS9aeENXIbhzrFLArRV8/9HE4aGQCRPd+W
+ vvNzZOK4IR2rC+NMTrIIi90A33ubfjNMorRtE4Snr4VNWEX7R+BQS5E96LNMlQwAACJZ
+ 7oYKQ2P66Yf9qyvq6TcdrPYOiFWTUYiAxjK7+sguwRYFevC1c9inwLIkAZHQ41HSJgFG
+ QVowqnz1ty+1sXo4lM6/4rg8rCI9y+jJikqAYEnobpKng2snQuDfV5+kSSyxfLILQNkz
+ jiu1N8PYaOwsIGNCb93KxyCtMrfCGKWVjr75vdSvs4RyLiCbdwEB4xEZb/gHXTwsb1Yx dA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3bg42ku56e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 05 Oct 2021 21:00:30 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 195KoxHk165293;
+        Tue, 5 Oct 2021 21:00:29 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2170.outbound.protection.outlook.com [104.47.57.170])
+        by userp3030.oracle.com with ESMTP id 3bf0s76d2s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 05 Oct 2021 21:00:28 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hdklJ//PU5DcBico6xoescveFGZqfFz+Lg/1oqRLu6Vld840NvUrIotODfXh4SosrGLwjJgeQ4aPxL09SwPtq7otF9fckjgOm0+vUF56pXa5HYmqWxGwDuJ/SZJC+tiyOVyt5BdL0EIH2jiipanaLWyf4HXiQ1WMOioXsappny9EZ4Pf/iMBvVfaJWau3lGp3GTPTp9EUQR62FbIqDNqyIkTGxnBxtvSH0wYGQVCzLNp1fDHHEiZc0yxePg05kYjIypjnrVVIZB9WjNV4tmzcITbdXkAFs5ITXfjeF3ETQScB0P2CvWvO/7SBsKVSNQbXyDoEZXRkE/91pykhUenFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Iu8l/kjfpN/J1tVMYPWBmN12VadVdC8oGYTJqghB95Y=;
+ b=TAhBshchSCN83s3b1JDq3IKArHiLVNsMX08sY397GcKZD+S3PLQ0UZyfb2gOlM+E4x0A6XSYo97WWc9P6a7/UP98DmyJmr7KePp0iNllkNT0LIkZCiMSZLX77A6PuQeHLpXVpUlU0Mu5p3TaU/jLobuKFf23WdQ4Gpf5tvg55diM+HHuOLmX/qtwncWPDrg89IBD0r0bK28xiG7PlbuyD6xCEA0BFTzsAC8TtSGAAWMiy/t45HuklJUrkIV0Uw3yPUPLQCjyP5E6XzZqV4jr4UkdQYOoMc0zQszhr1IJHkYmnMTy734oL9Eq3TYWly4C2LeJEjPJJdPoqpO9qgwMlA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=T+sMQPLCyYA4dgDA1po3mBpk0YoEDbPhmdJtIoH1yHg=;
-        b=kVgnrWPqt/8TfKL7BNZmPQgr0QNgPXvvZytDS2h5kaHcpxqTbADjBCJ/Abt2MRD2ho
-         AQE6rA2089pPBRBYTGNYGFKtDpFFZRx90vfQSkxbm4IaXQ3Pq8Gm9EV0WQBnS6muswp+
-         oqVLs9ZzfyMttc3apez4GOzOBxGUI3GFG9IZA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=T+sMQPLCyYA4dgDA1po3mBpk0YoEDbPhmdJtIoH1yHg=;
-        b=bLrRs80gdbvc2XuV/LbfCPbDkDpH+caHKcyzQL/Fnkxk8P9lgwvQxE7rIcMpKI3z+r
-         T1wtOXXDn32/1h8usk9AQYmWq0oTCJ8PLmZyYXR7oBmsdx+K5nqa21+kD7O0TkdgXKLY
-         ha6S5jRg6/SZiM5V4qBOC8wc6jSt7i8mSGGJSP7WIjO1VeVhwOgS6RGDZLC4Qm5Qnu/6
-         76eSbNOX7E+TSOqxv1/lIWj8qx7qsBYetie2/tisWBl6ANdho0Ua6zDLCHrsQ92aeVTL
-         ZbCDseoDIFG3y8XokJQytAsHOVBpsD8pRaP22Wcl2JOUzAZyx3lpa43RgsASAG+oOZOn
-         MTkQ==
-X-Gm-Message-State: AOAM530+Eo4WwzHvi16m09fHP82O3uMfwnwuCxHB4XdBzrfNvBtJ+ysj
-        WJDiQGpwYYQ4QkYjviw3p7s25w==
-X-Google-Smtp-Source: ABdhPJy7Oi6ah2YEoAsHtUO4Oj62iQ0k+3Z363yUYvVg6uJCzv8mP6M8mdrm/8nMPcYAbOMuxZNFfA==
-X-Received: by 2002:a17:90a:1984:: with SMTP id 4mr6348154pji.87.1633467421458;
-        Tue, 05 Oct 2021 13:57:01 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id u12sm3312455pjr.2.2021.10.05.13.57.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Oct 2021 13:57:01 -0700 (PDT)
-Date:   Tue, 5 Oct 2021 13:57:00 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     tj@kernel.org, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, minchan@kernel.org, jeyu@kernel.org,
-        shuah@kernel.org, bvanassche@acm.org, dan.j.williams@intel.com,
-        joe@perches.com, tglx@linutronix.de, rostedt@goodmis.org,
-        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 12/12] zram: use ATTRIBUTE_GROUPS to fix sysfs
- deadlock module removal
-Message-ID: <202110051356.D8B18C4@keescook>
-References: <20210927163805.808907-1-mcgrof@kernel.org>
- <20210927163805.808907-13-mcgrof@kernel.org>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Iu8l/kjfpN/J1tVMYPWBmN12VadVdC8oGYTJqghB95Y=;
+ b=L1kCoFWgcrZWdutYs5eyEiw8AH6CdOAT98lmM8YWlyXiNUakF9xz7j2d81wmbiWVrP43FC7Y+PGB96OO6WXSWZHttct9s4FIS+Ev9SuO+R05xTMzzMdQC8p8xoQ7VkU4DD91ZGKQKbw2V/xeVXo1peuoy1xdCkeKSunxFFmv5rk=
+Received: from BL0PR10MB3011.namprd10.prod.outlook.com (2603:10b6:208:7e::29)
+ by BLAPR10MB5218.namprd10.prod.outlook.com (2603:10b6:208:306::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4566.15; Tue, 5 Oct
+ 2021 21:00:24 +0000
+Received: from BL0PR10MB3011.namprd10.prod.outlook.com
+ ([fe80::6d61:54c2:40f0:93a]) by BL0PR10MB3011.namprd10.prod.outlook.com
+ ([fe80::6d61:54c2:40f0:93a%5]) with mapi id 15.20.4566.017; Tue, 5 Oct 2021
+ 21:00:24 +0000
+From:   Liam Howlett <liam.howlett@oracle.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+CC:     Rolf Eike Beer <eb@emlix.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Colin Cross <ccross@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Peter Xu <peterx@redhat.com>,
+        "rppt@kernel.org" <rppt@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "vincenzo.frascino@arm.com" <vincenzo.frascino@arm.com>,
+        =?utf-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= 
+        <chinwen.chang@mediatek.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jann Horn <jannh@google.com>,
+        "apopple@nvidia.com" <apopple@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "thunder.leizhen@huawei.com" <thunder.leizhen@huawei.com>,
+        Hugh Dickins <hughd@google.com>,
+        "feng.tang@intel.com" <feng.tang@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "krisman@collabora.com" <krisman@collabora.com>,
+        Chris Hyser <chris.hyser@oracle.com>,
+        Peter Collingbourne <pcc@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        "legion@kernel.org" <legion@kernel.org>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "cxfcosmos@gmail.com" <cxfcosmos@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        kernel-team <kernel-team@android.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jan Glauber <jan.glauber@gmail.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Rob Landley <rob@landley.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Serge E. Hallyn" <serge.hallyn@ubuntu.com>,
+        David Rientjes <rientjes@google.com>,
+        Mel Gorman <mgorman@suse.de>, Shaohua Li <shli@fusionio.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v10 1/3] mm: rearrange madvise code to allow for reuse
+Thread-Topic: [PATCH v10 1/3] mm: rearrange madvise code to allow for reuse
+Thread-Index: AQHXtwbqRHUtflHT6EeCVViEJ7Fas6vCbdyAgACa+ACAAeENgA==
+Date:   Tue, 5 Oct 2021 21:00:23 +0000
+Message-ID: <20211005210003.v3zgqhefn5j65gig@revolver>
+References: <20211001205657.815551-1-surenb@google.com>
+ <5358242.RVGM2oBbkg@devpool47>
+ <CAJuCfpF57Wppc_Si98wEo5cASBgEdS7J=Lt9Ont9+TsVr=KM_w@mail.gmail.com>
+In-Reply-To: <CAJuCfpF57Wppc_Si98wEo5cASBgEdS7J=Lt9Ont9+TsVr=KM_w@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: google.com; dkim=none (message not signed)
+ header.d=none;google.com; dmarc=none action=none header.from=oracle.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 85538125-ee0a-4b44-b1eb-08d9884326c1
+x-ms-traffictypediagnostic: BLAPR10MB5218:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BLAPR10MB5218E8C90A93DE54C9162992FDAF9@BLAPR10MB5218.namprd10.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Zs/el4Nnyve9oNfgj+CMbTmfYD4N06tS9n+Jaw7vYTp4XWmfqaR6XmREdaO+06mVYtmSwi5DEfyEKhwVR/i6nLi+GaWxpDsLkU2pBHn6jvL4igxM/Ntz1QuoYW8PSbdHtakzW6BTExtQZFbCqH2xMwgV617n8DIxtK4dYe5KQqNo//ICwdC7lSbgvIu/XMm31wVy5JOvFIhckZGvmyANzfrfmZnMgmfcNsarzpkxFPX2zklDeLnnCFE9u6GXpwpbHYsohj8DV75hr1M6eVvkMgXF0Ab5pBU2TF7wO8JlXeNph6+rUiTbYJP/KbxRQ+2g9H3ztpCxOwNK2eFOMjuCORRpIjIonAeNbKzkbSNxUF9sE7jENOwSJWTzCjGXiTbZQ35svFzVMUA9AO2pSE0aQcY2pLcy7FYsxn+ckrAirRiZ2aXVLhj2Hmn6p71WCmCvUWqJQN4V3lraCworUuJSWiLCPscucL/m7eQovTOt+Jzypvb0veDrqLLTOKDbfNTb2dGi9HxokY4nDmEGSTiIInKCnDzBxguue28e0cJbhm/jzLR1FF7c0G6keXlv+i+q3+13Q/Xvo4j6yMDaoMWScgdmmmBB5I4Ket45bvyGc47YEUx6z5qp/P+3vY+RxSQngT9TQMVhNdYC19LBpaKuDTPner5nPQ4HQHfl8794/GviJ5aOR1wFrviCPhNseJFaGkKJyYpdaqsLkM6YN5/tr7bWFNdrMNICzvqap0FhTsqytXbxDs4frmmlND9VMWQtxVQ/aU643UHfvP2FLgNU0yB3UcA/LLbyv5XkzI8rrL4=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR10MB3011.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(7916004)(366004)(9686003)(8936002)(5660300002)(71200400001)(26005)(6486002)(6512007)(1076003)(6506007)(86362001)(186003)(38100700002)(508600001)(33716001)(122000001)(53546011)(8676002)(966005)(6916009)(38070700005)(76116006)(91956017)(66946007)(7366002)(44832011)(7416002)(66574015)(54906003)(7406005)(4326008)(2906002)(316002)(64756008)(83380400001)(66476007)(66556008)(66446008);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cklZbEhKbzl1cHdvTC9zM0x2aEo3cDJyMGNINTJPMkFHTUZacDB3ZDRrZzYv?=
+ =?utf-8?B?QWpIZGF5UEkxMi96aWZmaEszUGhBMmtjekpkc3JXaFpKNVhKeFNQRlRxeStJ?=
+ =?utf-8?B?ZUZNTHlJTHZBREgyK2YyY1RoLzk5bnppbnlFLzlBcW5CR0toWU1PNHV4d1Uz?=
+ =?utf-8?B?TUJNQUxCR0VuemorYWNzMjVmeGxrWXY0KzhlY0U4OEdLcW13ZytrL1c5SkI3?=
+ =?utf-8?B?UGxVSmQ1anRxT2lDd3ZOSDlBSzkrWWt1WEdBQXh6TW5YNlVRd0lIcTF6QlEy?=
+ =?utf-8?B?cmN2djRhWWZpckI0V2U2aUdkbHNER2JHd3BkYTFXS0JBQXpCK2RFaVpiTS9r?=
+ =?utf-8?B?amdIeUh0NFpRUE1ZRjZUMkg2eStkNWpOYko0bmxEelhYVzlHWndDaDdZVjk5?=
+ =?utf-8?B?bituallkc0xlLzcxT0NVM25ITW9MQ2dzZzJBNUxkbFRwajNRcUZNam1PSUpH?=
+ =?utf-8?B?ZWllM2FCQ0pPaGZGbHhEUC9ReEVhWFg1WUVrSkY2ZUJ3MVJDVHZUMmJNREo3?=
+ =?utf-8?B?dm9wN255UE83aEo1bGFVdmgyRWlsbHVzdTUySGtDcUFvU081UW9zUE5RSmkx?=
+ =?utf-8?B?WHZLS01ZRXBSWUhhZlBXcHBYTlhZS0orcXU3WGF6MGNqU1puQklaWEJ0aFJX?=
+ =?utf-8?B?Q1JPYUt3b095b0xKTU5OTDRyUExicWZuOGZhUFlxYUZSZFo5emE5VWdxWkNh?=
+ =?utf-8?B?WXZ1QzNnSVh0TmtxYngzNnp3TDFLQnlueDg1OVFSMXJIUHNGTFkxUy9DbVF2?=
+ =?utf-8?B?S2NkdmtERndpZUt4a1QvR3h4TlM0MURWWXppcGZ4akZ5Y3JBSmM2YW9JZGlX?=
+ =?utf-8?B?YnJ6aURha0psc0N5Y0VCenJ6dnpvR21aYzN3SE9Ib3NkOERPcjcwdk5Dejc4?=
+ =?utf-8?B?YmRoU0hpaTVFRE4xdFMvajdyYVNHekxEZ0U3MDVRTStEMFk2d0JuUjZEZmw3?=
+ =?utf-8?B?b3NDYVJtS2h2ZWhmY0tOMXVsOG50UytXZzBMT2dFSmZ3WWF2eE15Nmo1UDV3?=
+ =?utf-8?B?OEVRVzVBL29UVjc1UzlhWjFVRFVQSG95bmZrd0pEeVYvZEUzd0ZnRkluRVV1?=
+ =?utf-8?B?YXZmNHJTejRnSzlIU0hDWlZ1VHhRNWJTeG4yS2pCYkRrKzRPYnZJcCt1dHdh?=
+ =?utf-8?B?RzVSWm5kWkVDRGJCODZMT2ZYYkRoVFZBT2pMYURRREdmOGkvSkNqNGZoY3l0?=
+ =?utf-8?B?cHhDSEhCSDZiSm5uWStNSTdJOVFhMldTVzI1SkNIdzIvOGdBdEtUK3JobHFC?=
+ =?utf-8?B?dEtaYzBqT2pKcjBHREcyN2dBMW9uNTE3QzZmWUtpTExHUnVKS2JYbFlXY3NN?=
+ =?utf-8?B?V3dlY2YxMk1Kb0pOL3hmYVQ3ZWtHcGcyMFgzNFloU0xqdnBVRmZNeXpDVVZ6?=
+ =?utf-8?B?eHZ5eEZsYkRsVjBXbFZPTWJtemcyMHdZSTljY1VyL1NRRTRMMi9CMzRPMFYy?=
+ =?utf-8?B?QXZEdEN0dllsMTNCVVlKalJVVGQvUDg4R3VGakErcDh6NjA0Qm5uYThYVE4y?=
+ =?utf-8?B?VXYzcmF2Y2xaME04TFQ5Rk5iZGlZN2IwRWc1Vnc2WFRNZXlNZ0w3ZWl4Qkty?=
+ =?utf-8?B?UlplK0pSTENBQlM4LzhBc3VqZW14WGFGK0RQNk1aVitWL09KajJZUDJWS3pn?=
+ =?utf-8?B?K3gwL0Z2dFdUSG14V0JPcHF1dDkxQ3lHZjl6U01lTzJMOENKd1hIdDZ5aHdN?=
+ =?utf-8?B?ZG0yNG15Ukx1bVoySGh6WHdmYnRndU1DTkY0Rm5DaXMrckxmK1dFcHo4bi9M?=
+ =?utf-8?Q?uGVyx9/nFfC9RWz1Uz0izQjjJpYDfoARzQD5Ylt?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9E057B3F6C9F7547A915D818CD18DB7E@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210927163805.808907-13-mcgrof@kernel.org>
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR10MB3011.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 85538125-ee0a-4b44-b1eb-08d9884326c1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Oct 2021 21:00:24.2361
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Tse71g+30PL9hESCs0AEnr+yGAo2Mw9vhHKPArJwu+MWoLCZHU+4g6VgXVFI0x7AWNf91MZ7E2sQ792H7ikGVQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB5218
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10128 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 adultscore=0
+ mlxscore=0 phishscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2109230001
+ definitions=main-2110050122
+X-Proofpoint-GUID: o0OpNIfd2lW_GoarindG2Rvk1fzfJtHa
+X-Proofpoint-ORIG-GUID: o0OpNIfd2lW_GoarindG2Rvk1fzfJtHa
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 27, 2021 at 09:38:05AM -0700, Luis Chamberlain wrote:
-> The ATTRIBUTE_GROUPS is typically used to avoid boiler plate
-> code which is used in many drivers. Embracing ATTRIBUTE_GROUPS was
-> long due on the zram driver, however a recent fix for sysfs allows
-> users of ATTRIBUTE_GROUPS to also associate a module to the group
-> attribute.
-
-Does this mean that other modules using sysfs but _not_
-ATTRIBUTE_GROUPS() are still vulnerable to potential use-after-free of
-the kernfs fops?
-
--Kees
-
-> 
-> In zram's case this also means it allows us to fix a race which triggers
-> a deadlock on the zram driver. This deadlock happens when a sysfs attribute
-> use a lock also used on module removal. This happens when for instance a
-> sysfs file on a driver is used, then at the same time we have module
-> removal call trigger. The module removal call code holds a lock, and then
-> the sysfs file entry waits for the same lock. While holding the lock the
-> module removal tries to remove the sysfs entries, but these cannot be
-> removed yet as one is waiting for a lock. This won't complete as the lock
-> is already held. Likewise module removal cannot complete, and so we
-> deadlock.
-> 
-> Sysfs fixes this when the group attributes have a module associated to
-> it, sysfs will *try* to get a refcount to the module when a shared
-> lock is used, prior to mucking with a sysfs attribute. If this fails we
-> just give up right away.
-> 
-> This deadlock was first reported with the zram driver, a sketch of how
-> this can happen follows:
-> 
-> CPU A                              CPU B
->                                    whatever_store()
-> module_unload
->   mutex_lock(foo)
->                                    mutex_lock(foo)
->    del_gendisk(zram->disk);
->      device_del()
->        device_remove_groups()
-> 
-> In this situation whatever_store() is waiting for the mutex foo to
-> become unlocked, but that won't happen until module removal is complete.
-> But module removal won't complete until the sysfs file being poked
-> completes which is waiting for a lock already held.
-> 
-> This issue can be reproduced easily on the zram driver as follows:
-> 
-> Loop 1 on one terminal:
-> 
-> while true;
-> 	do modprobe zram;
-> 	modprobe -r zram;
-> done
-> 
-> Loop 2 on a second terminal:
-> while true; do
-> 	echo 1024 >  /sys/block/zram0/disksize;
-> 	echo 1 > /sys/block/zram0/reset;
-> done
-> 
-> Without this patch we end up in a deadlock, and the following
-> stack trace is produced which hints to us what the issue was:
-> 
-> INFO: task bash:888 blocked for more than 120 seconds.
->       Tainted: G            E 5.12.0-rc1-next-20210304+ #4
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:bash            state:D stack:    0 pid:  888 ppid: 887 flags:<etc>
-> Call Trace:
->  __schedule+0x2e4/0x900
->  schedule+0x46/0xb0
->  schedule_preempt_disabled+0xa/0x10
->  __mutex_lock.constprop.0+0x2c3/0x490
->  ? _kstrtoull+0x35/0xd0
->  reset_store+0x6c/0x160 [zram]
->  kernfs_fop_write_iter+0x124/0x1b0
->  new_sync_write+0x11c/0x1b0
->  vfs_write+0x1c2/0x260
->  ksys_write+0x5f/0xe0
->  do_syscall_64+0x33/0x80
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> RIP: 0033:0x7f34f2c3df33
-> RSP: 002b:00007ffe751df6e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f34f2c3df33
-> RDX: 0000000000000002 RSI: 0000561ccb06ec10 RDI: 0000000000000001
-> RBP: 0000561ccb06ec10 R08: 000000000000000a R09: 0000000000000001
-> R10: 0000561ccb157590 R11: 0000000000000246 R12: 0000000000000002
-> R13: 00007f34f2d0e6a0 R14: 0000000000000002 R15: 00007f34f2d0e8a0
-> INFO: task modprobe:1104 can't die for more than 120 seconds.
-> task:modprobe        state:D stack:    0 pid: 1104 ppid: 916 flags:<etc>
-> Call Trace:
->  __schedule+0x2e4/0x900
->  schedule+0x46/0xb0
->  __kernfs_remove.part.0+0x228/0x2b0
->  ? finish_wait+0x80/0x80
->  kernfs_remove_by_name_ns+0x50/0x90
->  remove_files+0x2b/0x60
->  sysfs_remove_group+0x38/0x80
->  sysfs_remove_groups+0x29/0x40
->  device_remove_attrs+0x4a/0x80
->  device_del+0x183/0x3e0
->  ? mutex_lock+0xe/0x30
->  del_gendisk+0x27a/0x2d0
->  zram_remove+0x8a/0xb0 [zram]
->  ? hot_remove_store+0xf0/0xf0 [zram]
->  zram_remove_cb+0xd/0x10 [zram]
->  idr_for_each+0x5e/0xd0
->  destroy_devices+0x39/0x6f [zram]
->  __do_sys_delete_module+0x190/0x2a0
->  do_syscall_64+0x33/0x80
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> RIP: 0033:0x7f32adf727d7
-> RSP: 002b:00007ffc08bb38a8 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
-> RAX: ffffffffffffffda RBX: 000055eea23cbb10 RCX: 00007f32adf727d7
-> RDX: 0000000000000000 RSI: 0000000000000800 RDI: 000055eea23cbb78
-> RBP: 000055eea23cbb10 R08: 0000000000000000 R09: 0000000000000000
-> R10: 00007f32adfe5ac0 R11: 0000000000000206 R12: 000055eea23cbb78
-> R13: 0000000000000000 R14: 0000000000000000 R15: 000055eea23cbc20
-> 
-> [0] https://lkml.kernel.org/r/20210401235925.GR4332@42.do-not-panic.com
-> 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  drivers/block/zram/zram_drv.c | 11 ++---------
->  1 file changed, 2 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-> index b26abcb955cc..60a55ae8cd91 100644
-> --- a/drivers/block/zram/zram_drv.c
-> +++ b/drivers/block/zram/zram_drv.c
-> @@ -1902,14 +1902,7 @@ static struct attribute *zram_disk_attrs[] = {
->  	NULL,
->  };
->  
-> -static const struct attribute_group zram_disk_attr_group = {
-> -	.attrs = zram_disk_attrs,
-> -};
-> -
-> -static const struct attribute_group *zram_disk_attr_groups[] = {
-> -	&zram_disk_attr_group,
-> -	NULL,
-> -};
-> +ATTRIBUTE_GROUPS(zram_disk);
->  
->  /*
->   * Allocate and initialize new zram device. the function returns
-> @@ -1981,7 +1974,7 @@ static int zram_add(void)
->  		blk_queue_max_write_zeroes_sectors(zram->disk->queue, UINT_MAX);
->  
->  	blk_queue_flag_set(QUEUE_FLAG_STABLE_WRITES, zram->disk->queue);
-> -	device_add_disk(NULL, zram->disk, zram_disk_attr_groups);
-> +	device_add_disk(NULL, zram->disk, zram_disk_groups);
->  
->  	strlcpy(zram->compressor, default_compressor, sizeof(zram->compressor));
->  
-> -- 
-> 2.30.2
-> 
-
--- 
-Kees Cook
+KiBTdXJlbiBCYWdoZGFzYXJ5YW4gPHN1cmVuYkBnb29nbGUuY29tPiBbMjExMDA0IDEyOjE4XToN
+Cj4gT24gTW9uLCBPY3QgNCwgMjAyMSBhdCAxMjowMyBBTSBSb2xmIEVpa2UgQmVlciA8ZWJAZW1s
+aXguY29tPiB3cm90ZToNCj4gPg0KPiA+ID4gLS0tIGEvbW0vbWFkdmlzZS5jDQo+ID4gPiArKysg
+Yi9tbS9tYWR2aXNlLmMNCj4gPiA+IEBAIC02Myw3NiArNjMsMjAgQEAgc3RhdGljIGludCBtYWR2
+aXNlX25lZWRfbW1hcF93cml0ZShpbnQgYmVoYXZpb3IpDQo+ID4gPiAgfQ0KPiA+ID4NCj4gPiA+
+ICAvKg0KPiA+ID4gLSAqIFdlIGNhbiBwb3RlbnRpYWxseSBzcGxpdCBhIHZtIGFyZWEgaW50byBz
+ZXBhcmF0ZQ0KPiA+ID4gLSAqIGFyZWFzLCBlYWNoIGFyZWEgd2l0aCBpdHMgb3duIGJlaGF2aW9y
+Lg0KPiA+ID4gKyAqIFVwZGF0ZSB0aGUgdm1fZmxhZ3Mgb24gcmVnaWlvbiBvZiBhIHZtYSwgc3Bs
+aXR0aW5nIGl0IG9yIG1lcmdpbmcgaXQgYXMNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIF5eDQo+IA0KPiBUaGFua3MhIFdpbGwgZml4IGluIHRoZSBuZXh0IHZlcnNpb24uDQoN
+ClNpbmNlIHlvdSdsbCBiZSByZXNwaW5uaW5nIGZvciB0aGlzIGNvbW1lbnQsIGNhbiB5b3UgcGxl
+YXNlIHBvaW50IG91dA0KdGhhdCB0aGUgc3BsaXQgd2lsbCBrZWVwIHRoZSBWTUEgYXMgW3ZtYS0+
+dm1fc3RhcnQsIG5ld19lbmQpPyAgVGhhdCBpcywNCl9fc3BsaXRfdm1hKCkgaXMgcGFzc2VkIDAg
+Zm9yIG5ld19iZWxvdy4gIEl0IG1pZ2h0IHByb3ZlIHVzZWZ1bCBzaW5jZQ0KdGhlIGNvZGUgaXMg
+YmVpbmcgcmV1c2VkLg0KDQpUaGFua3MsDQpMaWFtDQoNCj4gDQo+ID4NCj4gPiBFaWtlDQo+ID4g
+LS0NCj4gPiBSb2xmIEVpa2UgQmVlciwgZW1saXggR21iSCwgaHR0cDovL3d3dy5lbWxpeC5jb20N
+Cj4gPiBGb24gKzQ5IDU1MSAzMDY2NC0wLCBGYXggKzQ5IDU1MSAzMDY2NC0xMQ0KPiA+IEdvdGhh
+ZXIgUGxhdHogMywgMzcwODMgR8O2dHRpbmdlbiwgR2VybWFueQ0KPiA+IFNpdHogZGVyIEdlc2Vs
+bHNjaGFmdDogR8O2dHRpbmdlbiwgQW10c2dlcmljaHQgR8O2dHRpbmdlbiBIUiBCIDMxNjANCj4g
+PiBHZXNjaMOkZnRzZsO8aHJ1bmc6IEhlaWtlIEpvcmRhbiwgRHIuIFV3ZSBLcmFja2Ug4oCTIFVz
+dC1JZE5yLjogREUgMjA1IDE5OCAwNTUNCj4gPg0KPiA+IGVtbGl4IC0gc21hcnQgZW1iZWRkZWQg
+b3BlbiBzb3VyY2UNCj4gPg0KPiA+IC0tDQo+ID4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGdy
+b3VwIGFuZCBzdG9wIHJlY2VpdmluZyBlbWFpbHMgZnJvbSBpdCwgc2VuZCBhbiBlbWFpbCB0byBr
+ZXJuZWwtdGVhbSt1bnN1YnNjcmliZUBhbmRyb2lkLmNvbS4NCj4g
