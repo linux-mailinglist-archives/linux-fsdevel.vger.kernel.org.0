@@ -2,119 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EE72422681
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 14:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C3D1422767
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Oct 2021 15:10:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234889AbhJEM3j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Oct 2021 08:29:39 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:52934 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234401AbhJEM3i (ORCPT
+        id S234832AbhJENL4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Oct 2021 09:11:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54296 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233365AbhJENLz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Oct 2021 08:29:38 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Tue, 5 Oct 2021 09:11:55 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73265C061749;
+        Tue,  5 Oct 2021 06:10:05 -0700 (PDT)
+Received: from [IPv6:2401:4900:1c20:6ff1:a04:f397:fd5d:ecb8] (unknown [IPv6:2401:4900:1c20:6ff1:a04:f397:fd5d:ecb8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 054E220020;
-        Tue,  5 Oct 2021 12:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1633436866; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JjGOU28aseIxzbgxmKKGBf+lfKA8napnrkp1mk29VtE=;
-        b=Bzpre7weOsXJ/u0YLszAyXJT5NP2OpWOG4HD0n3NXs9HPxWb/XUtF8fVLg5+g0fPQL7LIJ
-        J+ePJ6f5kRNWYMjcrWW79ogSqTmH18OMCLxa5kV7b9ZPYN+22E9C2nckip1BhlQLaiO4EX
-        QPHzankMnoMtHNaLmhKTwWqqdxyCKDk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1633436866;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JjGOU28aseIxzbgxmKKGBf+lfKA8napnrkp1mk29VtE=;
-        b=JcXixsvED2f4ufImevKRnrpIhO7jiSyFefYaC+44w0N5Nf8Va0GlAZnYmtiF0is3Ufq1tf
-        FDf4ReDNhB2Fa1AQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B2EE113C50;
-        Tue,  5 Oct 2021 12:27:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id aGXfKsFEXGHXawAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Tue, 05 Oct 2021 12:27:45 +0000
-Message-ID: <eba04a07-99da-771a-ab6b-36de41f9f120@suse.cz>
-Date:   Tue, 5 Oct 2021 14:27:45 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.2
-Subject: Re: [PATCH 2/6] MM: improve documentation for __GFP_NOFAIL
-Content-Language: en-US
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     NeilBrown <neilb@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mel Gorman <mgorman@suse.de>,
-        ". Dave Chinner" <david@fromorbit.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-xfs@vger.kernel.org,
+        (Authenticated sender: shreeya)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 1FE401F43751;
+        Tue,  5 Oct 2021 14:10:03 +0100 (BST)
+Subject: Re: [PATCH 1/2] fs: dcache: Handle case-exact lookup in
+ d_alloc_parallel
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, krisman@collabora.com,
         linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <163184698512.29351.4735492251524335974.stgit@noble.brown>
- <163184741778.29351.16920832234899124642.stgit@noble.brown>
- <b680fb87-439b-0ba4-cf9f-33d729f27941@suse.cz>
- <YVwyhDnE/HEnoLAi@dhcp22.suse.cz>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <YVwyhDnE/HEnoLAi@dhcp22.suse.cz>
-Content-Type: text/plain; charset=UTF-8
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+References: <cover.1632909358.git.shreeya.patel@collabora.com>
+ <0b8fd2677b797663bfcb97f6aa108193fedf9767.1632909358.git.shreeya.patel@collabora.com>
+ <YVmyYP25kgGq9uEy@zeniv-ca.linux.org.uk>
+From:   Shreeya Patel <shreeya.patel@collabora.com>
+Message-ID: <589db4cf-5cab-2d1f-10ce-3a5009685948@collabora.com>
+Date:   Tue, 5 Oct 2021 18:39:59 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <YVmyYP25kgGq9uEy@zeniv-ca.linux.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/5/21 13:09, Michal Hocko wrote:
-> On Tue 05-10-21 11:20:51, Vlastimil Babka wrote:
-> [...]
->> > --- a/include/linux/gfp.h
->> > +++ b/include/linux/gfp.h
->> > @@ -209,7 +209,11 @@ struct vm_area_struct;
->> >   * used only when there is no reasonable failure policy) but it is
->> >   * definitely preferable to use the flag rather than opencode endless
->> >   * loop around allocator.
->> > - * Using this flag for costly allocations is _highly_ discouraged.
->> > + * Use of this flag may lead to deadlocks if locks are held which would
->> > + * be needed for memory reclaim, write-back, or the timely exit of a
->> > + * process killed by the OOM-killer.  Dropping any locks not absolutely
->> > + * needed is advisable before requesting a %__GFP_NOFAIL allocate.
->> > + * Using this flag for costly allocations (order>1) is _highly_ discouraged.
->> 
->> We define costly as 3, not 1. But sure it's best to avoid even order>0 for
->> __GFP_NOFAIL. Advising order>1 seems arbitrary though?
-> 
-> This is not completely arbitrary. We have a warning for any higher order
-> allocation.
-> rmqueue:
-> 	WARN_ON_ONCE((gfp_flags & __GFP_NOFAIL) && (order > 1));
 
-Oh, I missed that.
+On 03/10/21 7:08 pm, Al Viro wrote:
+> On Wed, Sep 29, 2021 at 04:23:38PM +0530, Shreeya Patel wrote:
+>> There is a soft hang caused by a deadlock in d_alloc_parallel which
+>> waits up on lookups to finish for the dentries in the parent directory's
+>> hash_table.
+>> In case when d_add_ci is called from the fs layer's lookup functions,
+>> the dentry being looked up is already in the hash table (created before
+>> the fs lookup function gets called). We should not be processing the
+>> same dentry that is being looked up, hence, in case of case-insensitive
+>> filesystems we are making it a case-exact match to prevent this from
+>> happening.
+> NAK.  What you are doing would lead to parallel calls of ->lookup() in the
+> same directory for names that would compare as equal.  Which violates
+> all kinds of assumptions in the analysis of dentry tree locking.
+>
+> d_add_ci() is used to force the "exact" spelling of the name on lookup -
+> that's the whole point of that thing.  What are you trying to achieve,
+> and what's the point of mixing that with non-trivial ->d_compare()?
+>
+Sending again as plain text...
 
-> I do agree that "Using this flag for higher order allocations is
-> _highly_ discouraged.
+Hi Al Viro,
 
-Well, with the warning in place this is effectively forbidden, not just
-discouraged.
+This patch was added to resolve some of the issues faced in patch 02/02 
+of the series.
 
->> >   */
->> >  #define __GFP_IO	((__force gfp_t)___GFP_IO)
->> >  #define __GFP_FS	((__force gfp_t)___GFP_FS)
->> > 
->> > 
->> > 
-> 
+Originally, the 'native', per-directory case-insensitive implementation
+merged in ext4/f2fs stores the case of the first lookup on the dcache,
+regardless of the disk exact file name case. This gets reflected in symlink
+returned by /proc/self/cwd.
 
+To solve this we are calling d_add_ci from the fs lookup function to 
+store the
+disk exact name in the dcache even if an inexact-match string is used on 
+the FIRST lookup.
+But this caused a soft hang since there was a deadlock in d_wait_lookup 
+called from d_alloc_parallel.
+
+The reason for the hang is that d_same_name uses d_compare which does a
+case-insensitive match and is able to find the dentry name in the 
+secondary hash table
+leading it to d_wait_lookup which would wait for the lookup to finish on 
+that dentry
+causing a deadlock.
+
+To avoid the hang, we are doing a case-sensitive match using dentry_cmp 
+here.
+
+
+Thanks
+
+> If it's "force to exact spelling on lookup, avoid calling ->lookup() on
+> aliases", d_add_ci() is simply not a good match.
