@@ -2,128 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5780F42490F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Oct 2021 23:38:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB726424962
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 00:02:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239688AbhJFVkl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Oct 2021 17:40:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53564 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbhJFVkd (ORCPT
+        id S239770AbhJFWDy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Oct 2021 18:03:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:30024 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230213AbhJFWDy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Oct 2021 17:40:33 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7127CC061746;
-        Wed,  6 Oct 2021 14:38:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=tg4X4L3elpkm4nMQLNG1D3VF06qVZxJG1TCyclH2NOk=; b=2jaMrD+/+75vd+kikRHG/lPo9x
-        BrwIi/WPCWC7/y41ffxfp4dFhq8MrSDv1nBtgl6xbufI48jUQjxM6jF4cI5oTvpoKpLlrF2m8hfW+
-        V5jFZ+HG+BaO8bIkTahPJ67/LeGZcl/DkaGgZv+dEmbHSxjPIVp6j+3ltrky3jpNxVrepxcMjMTiL
-        cTLopmD/lfqKeVXqyi96sKeDXI7+OsD9mpSV3ScwZ12V+o0QdPbkuycORRsKfY6H4p2HDdwdNAR/E
-        EEx4vOTFF9PBCGAkKCfxczs/w5SHLQnqpyz7wjDd73xQLl1oNTMKdEph6YT9FCVte184GlZl55MeO
-        ws9digkA==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mYEcS-00FcJk-MV; Wed, 06 Oct 2021 21:38:33 +0000
-Subject: Re: [PATCH v7 1/5] d_path: fix Kernel doc validator complaints
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jia He <justin.he@arm.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Eric Biggers <ebiggers@google.com>,
-        "Ahmed S. Darwish" <a.darwish@linutronix.de>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>, nd@arm.com,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20210715011407.7449-1-justin.he@arm.com>
- <20210715011407.7449-2-justin.he@arm.com>
- <YPAPIsGkom68R1WR@smile.fi.intel.com>
- <92c8b22e-613e-7e8d-8cf9-b995494cf3f3@infradead.org>
-Message-ID: <9bb23730-3c1e-4144-2955-99dccacf010f@infradead.org>
-Date:   Wed, 6 Oct 2021 14:38:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Wed, 6 Oct 2021 18:03:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1633557721;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KwYOi5FBnZz/GGBHEzCJubt9MvgZTdgF9/2Py157wwg=;
+        b=gTevRTiAb6CA/rjwNIw6TjVuxy1w4I7xdaWCNFMiJl9VkKxv7juND/TvMSSdSBhKFZx7GE
+        IJ9t6WJi+6AiibS3wvbVJrwWiNdMWDCBeBhtDEH6D709mvvHgdRjmD/hJaUQM3/4ViN18F
+        VTEo1Vm6AMe9dl6fBk4seuGJv9Sdy0U=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-238-C157u8G1PLKs22zfTEJFOg-1; Wed, 06 Oct 2021 18:02:00 -0400
+X-MC-Unique: C157u8G1PLKs22zfTEJFOg-1
+Received: by mail-qt1-f197.google.com with SMTP id e5-20020ac84905000000b002a69dc43859so3331406qtq.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Oct 2021 15:01:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=KwYOi5FBnZz/GGBHEzCJubt9MvgZTdgF9/2Py157wwg=;
+        b=D5m2WKpurb5H2kV4LBcKZZiHkuIbU2KkXb5DVj34ccdTI+FtcU2jfBx5zujqCRLoTr
+         D23D7+L93LyS3ISHRKr5/Ht4Si12ZO5W48Y8NaTPSasks3sGjot7Ydbofr6Eudh52bBM
+         wRvw97vnxFZmXdTEJ43jKiKOtLU/Oav8VClnVEGPCWH/wAj9OWw0VaBJc18EJNg2Y0U0
+         xOwSxeUYEWpbh/SGkFPlL2iGPIvy/kF7YWnb0kP2IImhOeI1tB4qeA9orP8ZTAIVG9qI
+         aMsVGam8mzqkdAKLvQ610twTtJaZLsObmoYRDQZVpJh26IqHp6DDmiVZPw40AG5X1/hi
+         CiDg==
+X-Gm-Message-State: AOAM532jy5IEnYxo/HjiQfPEGIsxXGC/VDHL4Ad7YYFDFattvgY/TVuZ
+        Q4/S5zYwiQYSsdQJXwm4KGc6zXXRbyBIXFOmtiqfobzfCm1xNaOBThA0GLhhltwwG1DAEC/G1bp
+        3FSNUWL/ABngBGTuzhiVNZ4oucg==
+X-Received: by 2002:ac8:72d3:: with SMTP id o19mr799988qtp.19.1633557719536;
+        Wed, 06 Oct 2021 15:01:59 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwUY14CsRfg/wBWv/+kqo9Sz/TvI8iid6C/lEFVyVZtsk5eS9VSjdeR6pwre/6nqu4PMIIBHA==
+X-Received: by 2002:ac8:72d3:: with SMTP id o19mr799947qtp.19.1633557719251;
+        Wed, 06 Oct 2021 15:01:59 -0700 (PDT)
+Received: from t490s ([2607:fea8:56a2:9100::bed8])
+        by smtp.gmail.com with ESMTPSA id o23sm14084849qtl.74.2021.10.06.15.01.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Oct 2021 15:01:58 -0700 (PDT)
+Date:   Wed, 6 Oct 2021 18:01:57 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     naoya.horiguchi@nec.com, hughd@google.com,
+        kirill.shutemov@linux.intel.com, willy@infradead.org,
+        osalvador@suse.de, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [v3 PATCH 3/5] mm: hwpoison: refactor refcount check handling
+Message-ID: <YV4c1dOfctEMnH2s@t490s>
+References: <20210930215311.240774-1-shy828301@gmail.com>
+ <20210930215311.240774-4-shy828301@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <92c8b22e-613e-7e8d-8cf9-b995494cf3f3@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210930215311.240774-4-shy828301@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/26/21 3:57 PM, Randy Dunlap wrote:
-> On 7/15/21 3:34 AM, Andy Shevchenko wrote:
->> On Thu, Jul 15, 2021 at 09:14:03AM +0800, Jia He wrote:
->>> Kernel doc validator complains:
->>>    Function parameter or member 'p' not described in 'prepend_name'
->>>    Excess function parameter 'buffer' description in 'prepend_name'
->>
->> Yup!
->> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->>
-> 
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Can we get someone to merge this, please?
+On Thu, Sep 30, 2021 at 02:53:09PM -0700, Yang Shi wrote:
+> +/*
+> + * Return true if page is still referenced by others, otherwise return
+> + * false.
+> + *
+> + * The dec is true when one extra refcount is expected.
+> + */
+> +static bool has_extra_refcount(struct page_state *ps, struct page *p,
+> +			       bool dec)
 
-Ho hum.  Justin, please resubmit your patch with Andy's Reviewed-by:
-and my Acked-by:.  Send it to Andrew Morton and ask him to merge it.
+Nit: would it be nicer to keep using things like "extra_pins", so we pass in 1
+for swapcache dirty case and 0 for the rest?  Then it'll also match with most
+of the similar cases in e.g. huge_memory.c (please try grep "extra_pins" there).
 
-Thanks.
+> +{
+> +	int count = page_count(p) - 1;
+> +
+> +	if (dec)
+> +		count -= 1;
+> +
+> +	if (count > 0) {
+> +		pr_err("Memory failure: %#lx: %s still referenced by %d users\n",
+> +		       page_to_pfn(p), action_page_types[ps->type], count);
+> +		return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+>  /*
+>   * Error hit kernel page.
+>   * Do nothing, try to be lucky and not touch this instead. For a few cases we
+>   * could be more sophisticated.
+>   */
+> -static int me_kernel(struct page *p, unsigned long pfn)
+> +static int me_kernel(struct page_state *ps, struct page *p)
 
+Not sure whether it's intended, but some of the action() hooks do not call the
+refcount check now while in the past they'll all do.  Just to double check
+they're expected, like this one and me_unknown().
 
-(cf. https://lore.kernel.org/all/20210628014613.11296-1-rdunlap@infradead.org/
-from 2021-06-27)
+>  {
+>  	unlock_page(p);
+>  	return MF_IGNORED;
+> @@ -820,9 +852,9 @@ static int me_kernel(struct page *p, unsigned long pfn)
+>  /*
+>   * Page in unknown state. Do nothing.
+>   */
+> -static int me_unknown(struct page *p, unsigned long pfn)
+> +static int me_unknown(struct page_state *ps, struct page *p)
+>  {
+> -	pr_err("Memory failure: %#lx: Unknown page state\n", pfn);
+> +	pr_err("Memory failure: %#lx: Unknown page state\n", page_to_pfn(p));
+>  	unlock_page(p);
+>  	return MF_FAILED;
+>  }
 
->>> Fixes: ad08ae586586 ("d_path: introduce struct prepend_buffer")
->>> Cc: Al Viro <viro@zeniv.linux.org.uk>
->>> Signed-off-by: Jia He <justin.he@arm.com>
->>> ---
->>>   fs/d_path.c | 8 +++-----
->>>   1 file changed, 3 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/fs/d_path.c b/fs/d_path.c
->>> index 23a53f7b5c71..4eb31f86ca88 100644
->>> --- a/fs/d_path.c
->>> +++ b/fs/d_path.c
->>> @@ -33,9 +33,8 @@ static void prepend(struct prepend_buffer *p, const char *str, int namelen)
->>>   /**
->>>    * prepend_name - prepend a pathname in front of current buffer pointer
->>> - * @buffer: buffer pointer
->>> - * @buflen: allocated length of the buffer
->>> - * @name:   name string and length qstr structure
->>> + * @p: prepend buffer which contains buffer pointer and allocated length
->>> + * @name: name string and length qstr structure
->>>    *
->>>    * With RCU path tracing, it may race with d_move(). Use READ_ONCE() to
->>>    * make sure that either the old or the new name pointer and length are
->>> @@ -108,8 +107,7 @@ static int __prepend_path(const struct dentry *dentry, const struct mount *mnt,
->>>    * prepend_path - Prepend path string to a buffer
->>>    * @path: the dentry/vfsmount to report
->>>    * @root: root vfsmnt/dentry
->>> - * @buffer: pointer to the end of the buffer
->>> - * @buflen: pointer to buffer length
->>> + * @p: prepend buffer which contains buffer pointer and allocated length
->>>    *
->>>    * The function will first try to write out the pathname without taking any
->>>    * lock other than the RCU read lock to make sure that dentries won't go away.
->>> -- 
-> 
-> 
-
+Thanks,
 
 -- 
-~Randy
+Peter Xu
+
