@@ -2,88 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0377B424165
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Oct 2021 17:33:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5DBC424179
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Oct 2021 17:40:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231967AbhJFPfN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Oct 2021 11:35:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52804 "EHLO
+        id S231916AbhJFPmJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Oct 2021 11:42:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230014AbhJFPfM (ORCPT
+        with ESMTP id S230014AbhJFPmJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Oct 2021 11:35:12 -0400
-Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 513A5C061746
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Oct 2021 08:33:20 -0700 (PDT)
-Received: by mail-vs1-xe32.google.com with SMTP id p18so3256855vsu.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Oct 2021 08:33:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OXGlnNe1yWBSvNniecAJQ/P9MoZJY33TkoAKPrbYOnw=;
-        b=hA1vk31Bhomcl0BX+2n4o1WOeiN/pLWbs/c79v0uZf04LtAu686+SXWgXbe/RDCfJo
-         kfC8USdT7zxYZS2Jo9c0t57CZzmdZQt8Ydtax4fNW4v3ehrYS23mMWo/TbevMVGvt00q
-         x6WbVkjN6p1MKRQ4u7UHz9vDf0OIYuEGqbt9w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OXGlnNe1yWBSvNniecAJQ/P9MoZJY33TkoAKPrbYOnw=;
-        b=aD0iGkvrtt4F4oFd19xE19fOVGbgaoAHA/6qnkVE6xclHgMpzRAwHFtciBatqv8zq1
-         s8i9S6ohAbUZLcptHrtDATqaG+Egs8wJMt9VyBO4JC0E8XFSlO0omL+00WlpYB/pA+89
-         bG+mUz/tJswzQmqA5zIBTg6HXjQuWsnkn8DFD33oQSt0CayinrMGBa8x5rna0DKlLuWq
-         Mp5FXJ/Yw7kzuGwopltpIkbUjogJKsneFWNWyXpzoCMwlvN8fCAO5wh7R3UsTom9tUos
-         jMm9dqzvRT7nMFT8XU8I87DVcCrrFR8JCULBOOFyO8gbjOkcdMipQODkTXP03vzBgztx
-         Os2Q==
-X-Gm-Message-State: AOAM533qzoXj2EjwJ5f7ezD3OAPKv+rj8fEntYw59ry50hSjua8IbC5Y
-        V/Fjrx8AV1uI/JLRS2GSGymBjw1JxrwD3fLDGe29HFLJ6V29tg==
-X-Google-Smtp-Source: ABdhPJwiOjGX+elH6RoLYAfpIz6u9FQCAwQ90zgFM4YeOO/PwbB6PfGge44MGahOyC2VIBg+9pkmElcw9HXzY6DUn7A=
-X-Received: by 2002:a67:c284:: with SMTP id k4mr6631340vsj.24.1633534399452;
- Wed, 06 Oct 2021 08:33:19 -0700 (PDT)
+        Wed, 6 Oct 2021 11:42:09 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 148D0C061746
+        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Oct 2021 08:40:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=NQwTO7FkpLZVbuuUmZZA3meW3NcqE6QyvtCNvwRhmWg=; b=bPwGJgk0NDgedUrWcPFTvyEPex
+        jzW2MI4zNKtYBvW8xc+NK5o+O0jBbt3sdJgmZrpYTjAr4JQvTj72H33DR4ws2ySzu4hq/bhgxJXBB
+        Qj65gm7+Sd6+Rq6w3WbzLF967Mbr9TMFl6gEIj8zEGkHmgE3SvN2yYhUfYcjo2CA3QVLo54YJxIyh
+        oiUySk4nkcMKiRAUifhVoHHCcUi7QGmOp+IaKfUetrpIFSMmWLRnri9uJQjE6dyXHCluqCy+VyITM
+        18DZatCjSJBEQtV7Tz8WnvsoPIkzreLfgET2oPeISy9W62jA9b+XlVVrucEdMSNkFYjF6gjvvb+9d
+        Qh0TJ2nA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mY90L-00120B-1I; Wed, 06 Oct 2021 15:39:03 +0000
+Date:   Wed, 6 Oct 2021 16:38:49 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC] pgflags_t
+Message-ID: <YV3DCX92lvOA4fni@casper.infradead.org>
+References: <YV25hsgfJ2qAYiRJ@casper.infradead.org>
+ <YV2/NZjsmSK6/vlB@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-References: <20210923130814.140814-1-cgxu519@mykernel.net> <20210923130814.140814-4-cgxu519@mykernel.net>
-In-Reply-To: <20210923130814.140814-4-cgxu519@mykernel.net>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 6 Oct 2021 17:33:08 +0200
-Message-ID: <CAJfpegvh9if1tZOdnzn87JmDBZC0XBzf63NoOydkCGyX4ssaag@mail.gmail.com>
-Subject: Re: [RFC PATCH v5 03/10] ovl: implement overlayfs' ->evict_inode operation
-To:     Chengguang Xu <cgxu519@mykernel.net>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YV2/NZjsmSK6/vlB@zeniv-ca.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 23 Sept 2021 at 15:08, Chengguang Xu <cgxu519@mykernel.net> wrote:
->
-> Implement overlayfs' ->evict_inode operation,
-> so that we can clear dirty flags of overlayfs inode.
->
-> Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
-> ---
->  fs/overlayfs/super.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 51886ba6130a..2ab77adf7256 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -406,11 +406,18 @@ static int ovl_remount(struct super_block *sb, int *flags, char *data)
->         return ret;
->  }
->
-> +static void ovl_evict_inode(struct inode *inode)
-> +{
-> +       inode->i_state &= ~I_DIRTY_ALL;
-> +       clear_inode(inode);
+On Wed, Oct 06, 2021 at 03:22:29PM +0000, Al Viro wrote:
+> On Wed, Oct 06, 2021 at 03:58:14PM +0100, Matthew Wilcox wrote:
+> > David expressed some unease about the lack of typesafety in patches
+> > 1 & 2 of the page->slab conversion [1], and I'll admit to not being
+> > particularly a fan of passing around an unsigned long.  That crystallised
+> > in a discussion with Kent [2] about how to lock a page when you don't know
+> > its type (solution: every memory descriptor type starts with a
+> > pgflags_t)
+> 
+> Why bother making it a struct?  What's wrong with __bitwise and letting
+> sparse catch conversions?
 
-clear_inode() should already clear the dirty flags; the default
-eviction should work fine without having to define an ->evict_inode.
-What am I missing?
+People don't run sparse.  I happen to have a built allmodconfig tree
+here and running make C=2 fs/ gives 1147 lines of warnings.  Why would
+adding more warnings help?
 
-Thanks,
-Miklos
