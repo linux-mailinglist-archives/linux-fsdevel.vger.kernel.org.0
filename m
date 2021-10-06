@@ -2,140 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76711424577
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Oct 2021 19:58:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 621C84245A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Oct 2021 20:05:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231697AbhJFSAQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Oct 2021 14:00:16 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:51146 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbhJFSAQ (ORCPT
+        id S239338AbhJFSHn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Oct 2021 14:07:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60990 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239342AbhJFSHk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Oct 2021 14:00:16 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 213951C0B87; Wed,  6 Oct 2021 19:58:22 +0200 (CEST)
-Date:   Wed, 6 Oct 2021 19:58:21 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Colin Cross <ccross@google.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        vincenzo.frascino@arm.com,
-        Chinwen Chang =?utf-8?B?KOW8temMpuaWhyk=?= 
-        <chinwen.chang@mediatek.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Jann Horn <jannh@google.com>, apopple@nvidia.com,
-        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
-        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
-        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
-        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
-        chris.hyser@oracle.com, Peter Collingbourne <pcc@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
-        Rolf Eike Beer <eb@emlix.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
-        cxfcosmos@gmail.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>,
-        kernel-team <kernel-team@android.com>
-Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
-Message-ID: <20211006175821.GA1941@duo.ucw.cz>
-References: <20211001205657.815551-1-surenb@google.com>
- <20211001205657.815551-3-surenb@google.com>
- <20211005184211.GA19804@duo.ucw.cz>
- <CAJuCfpE5JEThTMhwKPUREfSE1GYcTx4YSLoVhAH97fJH_qR0Zg@mail.gmail.com>
- <20211005200411.GB19804@duo.ucw.cz>
- <CAJuCfpFZkz2c0ZWeqzOAx8KFqk1ge3K-SiCMeu3dmi6B7bK-9w@mail.gmail.com>
- <efdffa68-d790-72e4-e6a3-80f2e194d811@nvidia.com>
- <YV1eCu0eZ+gQADNx@dhcp22.suse.cz>
- <6b15c682-72eb-724d-bc43-36ae6b79b91a@redhat.com>
- <CAJuCfpEPBM6ehQXgzp=g4SqtY6iaC8wuZ-CRE81oR1VOq7m4CA@mail.gmail.com>
+        Wed, 6 Oct 2021 14:07:40 -0400
+Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10FBCC061766;
+        Wed,  6 Oct 2021 11:05:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=UXOqw6LYYO+wVibxP4e/orAi9rkc97L/HWtRElWnpJY=; b=462AX6p5/pblPwzDuTNTIoQdTm
+        55fDtkidx88LFDHJd7iCL4sfa4X9pd49aIkLbRrrkT/4J+lPF2CIVkSNPC2uiWVCkmX0nrzfkrvP/
+        hItmXQl9oeHxbtulFkxUSI/W0+fpAp++iKDSXmK0+gQRKj8fkCEQaMA36uBHA+DB6OykHj4mSmjk+
+        dz1y7uErtG4BPtMRBq6TV3zWJJYGZEstq7GU3u7NYnYLpwifW4etczK1+qIIiU8EvXM/FaCATw7SE
+        PBawL4Gskhv9VpWxkS4KW4rahq55RR5E3I0GyQOqQizeMF78ZUfKF7+LTMZml0Kdz5cXFy9UGOXLJ
+        +3MlZq2Q==;
+Received: from [2601:1c0:6280:3f0::aa0b]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mYBIV-00FILd-UO; Wed, 06 Oct 2021 18:05:44 +0000
+Subject: Re: mmotm 2021-10-05-19-53 uploaded
+ (drivers/gpu/drm/msm/hdmi/hdmi_phy.o)
+To:     =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
+        Sean Paul <sean@poorly.run>, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
+References: <20211006025350.a5PczFZP4%akpm@linux-foundation.org>
+ <58fbf2ff-b367-2137-aa77-fcde6c46bbb7@infradead.org>
+ <20211006182052.6ecc17cf@canb.auug.org.au>
+ <f877a1c9-1898-23f3-bba3-3442dc1f3979@amd.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <34c2f6ab-3982-a031-1af6-5ed482b5c344@infradead.org>
+Date:   Wed, 6 Oct 2021 11:05:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
-Content-Disposition: inline
-In-Reply-To: <CAJuCfpEPBM6ehQXgzp=g4SqtY6iaC8wuZ-CRE81oR1VOq7m4CA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <f877a1c9-1898-23f3-bba3-3442dc1f3979@amd.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 10/6/21 12:24 AM, Christian König wrote:
+> 
+> 
+> Am 06.10.21 um 09:20 schrieb Stephen Rothwell:
+>> Hi Randy,
+>>
+>> On Tue, 5 Oct 2021 22:48:03 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+>>> on i386:
+>>>
+>>> ld: drivers/gpu/drm/msm/hdmi/hdmi_phy.o:(.rodata+0x3f0): undefined reference to `msm_hdmi_phy_8996_cfg'
+>>>
+>>>
+>>> Full randconfig fle is attached.
+>> This would be because CONFIG_DRM_MSM is set but CONFIG_COMMON_CLOCK is
+>> not and has been exposed by commit
+>>
+>>    b3ed524f84f5 ("drm/msm: allow compile_test on !ARM")
+>>
+>> from the drm-misc tree.
+> 
+> Good point, how about this change:
+> 
+> diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
+> index 5879f67bc88c..d9879b011fb0 100644
+> --- a/drivers/gpu/drm/msm/Kconfig
+> +++ b/drivers/gpu/drm/msm/Kconfig
+> @@ -5,7 +5,7 @@ config DRM_MSM
+>          depends on DRM
+>          depends on ARCH_QCOM || SOC_IMX5 || COMPILE_TEST
+>          depends on IOMMU_SUPPORT
+> -       depends on (OF && COMMON_CLK) || COMPILE_TEST
+> +       depends on (OF || COMPILE_TEST) && COMMON_CLK
+>          depends on QCOM_OCMEM || QCOM_OCMEM=n
+>          depends on QCOM_LLCC || QCOM_LLCC=n
+>          depends on QCOM_COMMAND_DB || QCOM_COMMAND_DB=n
 
---45Z9DzgjV8m4Oswq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+WorksForMe. Thanks.
+(other than the whitespace damage)
 
-Hi!
-
-> > I can understand that having a string can be quite beneficial e.g., when
-> > dumping mmaps. If only user space knows the id <-> string mapping, that
-> > can be quite tricky.
-> >
-> > However, I also do wonder if there would be a way to standardize/reserve
-> > ids, such that a given id always corresponds to a specific user. If we
-> > use an uint64_t for an id, there would be plenty room to reserve ids ...
-> >
-> > I'd really prefer if we can avoid using strings and instead using ids.
->=20
-> I wish it was that simple and for some names like [anon:.bss] or
-> [anon:dalvik-zygote space] reserving a unique id would work, however
-> some names like [anon:dalvik-/system/framework/boot-core-icu4j.art]
-> are generated dynamically at runtime and include package name.
-
-I'd be careful; if you allow special characters like that, you will
-confuse some kind of parser.
-
-> Packages are constantly evolving, new ones are developed, names can
-> change, etc. So assigning a unique id for these names is not really
-> feasible.
-> That leaves us with the central facility option, which as I described
-> in my previous email would be prohibitive from performance POV (IPC
-> every time we have a new name or want to convert id to name).
-
-That "central facility" option can be as simple as "mkdir
-/somewhere/sanitized_id", using inode numbers for example. You don't
-really need IPC.
-
-Plus, I don't really believe the IPC cost would be prohibitive.
-
-Or you could simply hash the string and use the hash as id...
-
-Best regards,
-								Pavel
---=20
-http://www.livejournal.com/~pavelmachek
-
---45Z9DzgjV8m4Oswq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYV3jvQAKCRAw5/Bqldv6
-8lyUAKCwEv6bdJTV+wggIi1c2UYNr58JwwCfey84lnBPdV/qEtwDzRe+bL2Ytrw=
-=5AmT
------END PGP SIGNATURE-----
-
---45Z9DzgjV8m4Oswq--
+-- 
+~Randy
