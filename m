@@ -2,84 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BFB884247D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Oct 2021 22:18:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E36294248AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Oct 2021 23:16:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230148AbhJFUUp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Oct 2021 16:20:45 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:39087 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229677AbhJFUUo (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Oct 2021 16:20:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1633551531;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ndoPsgxw3pXa2WkzFUSKjNPOdhdtHbMEsZXh2h30JEc=;
-        b=NPckKvoR1CHgo6deH3aBUg6HgcGywgu0mjDhueYLuXpwxY9PUKRPPzS5+FvI3+L8SccRwD
-        pl2o6B692iKPuQkQokJdeH0HG8OODHjakNDGLaegNaY9iPlpn0L/xXTZIw4CBBrJ5X5TWL
-        ZRy52nGZQEhxKJiUGGBTn+5lkRyGVZs=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-308-Vi9Y8e1zNOqFJc11PkzQbg-1; Wed, 06 Oct 2021 16:18:50 -0400
-X-MC-Unique: Vi9Y8e1zNOqFJc11PkzQbg-1
-Received: by mail-qv1-f71.google.com with SMTP id p9-20020a05621421e900b003830bb235fbso3620681qvj.14
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Oct 2021 13:18:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ndoPsgxw3pXa2WkzFUSKjNPOdhdtHbMEsZXh2h30JEc=;
-        b=iU+NMirl+LFPpa5zKitTjt2xKRsqcDvpKZIkm0PKh48Ce8wnR8FjYz6r8MjYwtAOW5
-         w8l7QFNcXEK9lZYAgQxuvlO9vnYentVRBduwQaogzEBqBE4OVaDxQ0n+29YQ2yP6M4yd
-         LaI5DLOqTSJr+yK2qKIJeRo9ZwnGj6hPVo7fsCLqimw8RYGjy0x3oLeElMzT3x/S3XBR
-         6nL70rpQ0hYVNSKtphI95BuZ5A76ZQ2my4YCWhZhpAMlHyewhez7GGgUDDG+DlR+p+Lg
-         A70A0vsb6ny0C1oUJC2zOWopmF+N1r1n2yrgYdSjZWeEitXRUtD2i1hhSEKcUzpRirZi
-         Xjqg==
-X-Gm-Message-State: AOAM530eF9UsZQG69D2bKnQ+7k2mr7FT+kSS99yNYAgT4j2L6rU/lUYn
-        aM0OCzedJC4T0VVU64tacnL+WkKyzxi1iSf35YIvXF0aaDhHpRbx2ZanLl/841o9/+6rxXwrJ3w
-        ODRwwrLsQMTqCNu6X0rS6dcRyeg==
-X-Received: by 2002:ac8:40da:: with SMTP id f26mr279401qtm.114.1633551530172;
-        Wed, 06 Oct 2021 13:18:50 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxKZ1/nqV2JLDLruE0ZKjTUxqTpHKJD6s6mBT9Z4jMzAijU04nZ79wKZ6V6d9P6rkNvidggIQ==
-X-Received: by 2002:ac8:40da:: with SMTP id f26mr279377qtm.114.1633551529986;
-        Wed, 06 Oct 2021 13:18:49 -0700 (PDT)
-Received: from t490s ([2607:fea8:56a2:9100::bed8])
-        by smtp.gmail.com with ESMTPSA id q8sm13891462qtl.80.2021.10.06.13.18.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Oct 2021 13:18:49 -0700 (PDT)
-Date:   Wed, 6 Oct 2021 16:18:48 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     naoya.horiguchi@nec.com, hughd@google.com,
-        kirill.shutemov@linux.intel.com, willy@infradead.org,
-        osalvador@suse.de, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
- for PMD page fault
-Message-ID: <YV4EqOpI580SKjnR@t490s>
-References: <20210930215311.240774-1-shy828301@gmail.com>
- <20210930215311.240774-3-shy828301@gmail.com>
+        id S239624AbhJFVRz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Oct 2021 17:17:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33820 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239547AbhJFVRy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 6 Oct 2021 17:17:54 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7806C61177;
+        Wed,  6 Oct 2021 21:16:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633554961;
+        bh=d1ydGKbgRYte60NsablLkoqw6nuD33vqUg6Hkbz6qPs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=f6JKHo3UfDf6EZN08ID/hzvMfVpdeMhuAATIxAjhNlUqzum3FYaguWM8rxAtSJxBz
+         crakWpnqKAxcAZgSutghrkrgXMIwLm1WRkYINRF5O+fT4mNlkyKLALKJph2DxnUzKx
+         B4wgXypWer67HUFEnjJOvpz/vTMjrHDLsWVg9l/j3PkHrMzcc9ReVlT33wfrx64LCm
+         bnnxPi18Fm+/T5U+32bBl3o/TRaiAqnYhZ/Sv2pLW07RS5LcSdcAZ601xaunFOoXWy
+         pAal9ieo1d+IjeBwATlscnHfcndsZk9U96A54wjGnowldvGRHNv4U/sUseyeh2T9LR
+         CCBkaBrOXAhhg==
+Date:   Wed, 6 Oct 2021 14:16:00 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Ramji Jiyani <ramjiyani@google.com>
+Cc:     arnd@arndb.de, viro@zeniv.linux.org.uk, bcrl@kvack.org, hch@lst.de,
+        kernel-team@android.com, linux-aio@kvack.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        oleg@redhat.com, Jeff Moyer <jmoyer@redhat.com>
+Subject: Re: [PATCH v2] aio: Add support for the POLLFREE
+Message-ID: <YV4SELcjE7EfBiLI@gmail.com>
+References: <20211006195029.532034-1-ramjiyani@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210930215311.240774-3-shy828301@gmail.com>
+In-Reply-To: <20211006195029.532034-1-ramjiyani@google.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 30, 2021 at 02:53:08PM -0700, Yang Shi wrote:
-> +#ifdef CONFIG_MEMORY_FAILURE
-> +	/* Compound pages. Stored in first tail page's flags */
-> +	PG_has_hwpoisoned = PG_mappedtodisk,
-> +#endif
+On Wed, Oct 06, 2021 at 07:50:29PM +0000, Ramji Jiyani wrote:
+> Commit f5cb779ba163 ("ANDROID: binder: remove waitqueue when thread
+> exits.") fixed the use-after-free in eventpoll but aio still has the
+> same issue because it doesn't honor the POLLFREE flag.
+> 
+> Add support for the POLLFREE flag to force complete iocb inline in
+> aio_poll_wake(). A thread may use it to signal it's exit and/or request
+> to cleanup while pending poll request. In this case, aio_poll_wake()
+> needs to make sure it doesn't keep any reference to the queue entry
+> before returning from wake to avoid possible use after free via
+> poll_cancel() path.
+> 
+> The POLLFREE flag is no more exclusive to the epoll and is being
+> shared with the aio. Remove comment from poll.h to avoid confusion.
+> 
+> This fixes a use after free issue between binder thread and aio
+> interactions in certain sequence of events [1].
+> 
+> [1] https://lore.kernel.org/all/CAKUd0B_TCXRY4h1hTztfwWbNSFQqsudDLn2S_28csgWZmZAG3Q@mail.gmail.com/
+> 
+> Signed-off-by: Ramji Jiyani <ramjiyani@google.com>
+> Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
 
-Sorry one more comment I missed: would PG_hwpoisoned_subpage better?  It's just
-that "has_hwpoison" can be directly read as "this page has been hwpoisoned",
-which sounds too close to PG_hwpoisoned.  No strong opinion either.  Thanks,
+Can you add Fixes and Cc stable tags to ensure that this fix gets backported?
+Please refer to Documentation/process/submitting-patches.rst.
 
--- 
-Peter Xu
-
+- Eric
