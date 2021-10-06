@@ -2,116 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6984A42424E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Oct 2021 18:13:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F29AC4242C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Oct 2021 18:34:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232016AbhJFQPD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Oct 2021 12:15:03 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:45983 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231768AbhJFQPA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Oct 2021 12:15:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1633536788;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3Hr32Rxp6Zbw+fFtmt7vxzLwUTdA6hQILiEN5RHx0Z4=;
-        b=Vk+raucX8A9u7Jn7JEQUPlUBrUFzYH6SXIXsm5VjwYns4SAGGLPsarkV4eGhwFLbtCeHhU
-        tNc2qhZmjjy3YzNCXRQngZkNIR5ZL5gIKAmI7UhPYZQmZi7Cb8PnaiVW/5qfqGfxRAJ5Wl
-        fpJfKN7Snux/BM5AUE5f+dlmtQIAwv0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-59-Lu5yf6gHMgq08A2f5OtLrg-1; Wed, 06 Oct 2021 12:13:07 -0400
-X-MC-Unique: Lu5yf6gHMgq08A2f5OtLrg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EA6F6802C88;
-        Wed,  6 Oct 2021 16:13:05 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.17.87])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0898B1002391;
-        Wed,  6 Oct 2021 16:12:53 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 9225A220BDB; Wed,  6 Oct 2021 12:12:52 -0400 (EDT)
-Date:   Wed, 6 Oct 2021 12:12:52 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Ioannis Angelakopoulos <iangelak@redhat.com>, jaggel@bu.edu,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH 7/8] virtiofs: Add new notification type FUSE_NOTIFY_LOCK
-Message-ID: <YV3LBNM3jnGBBzwS@redhat.com>
-References: <20210930143850.1188628-1-vgoyal@redhat.com>
- <20210930143850.1188628-8-vgoyal@redhat.com>
- <CAJfpegtdftj7jQFu+4LBjysiAJ-hhLHkBC_KhowfJtepvZqaoQ@mail.gmail.com>
+        id S232462AbhJFQgQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Oct 2021 12:36:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46448 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229719AbhJFQgP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 6 Oct 2021 12:36:15 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 622A9610E5;
+        Wed,  6 Oct 2021 16:34:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1633538063;
+        bh=ctlyh/MM/ZO1vAziMpXnSjbXLCBHhorGWU3Y4W6Lq/Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RkNXjzbdX5MCmCfXVkHWaWb2gGEEnzx2z8pkKs/2PZ4y3s2bPvSbF2h8KpdKmLJ4W
+         UUNUavhpVkKqZT7phW5nnNaBJ/vCNyikpZ9oY1Aiuooj/j23c4JLXYP5MtmiUTpY+i
+         jFHtPAJmCZUsJoT4wdzEIaRrXpmKG+4Sp1U8AWT8W8FdiRMPZo9SE2JVqMgFVmX7De
+         AfwzYccfPCXKRQUprMR1UZYU1qJzR4PlF/HKHzD5IFD8hmArQdGd7tefjG9WoC+RJt
+         Zqx+CUv9YYa8Hhy9FjPpwEZ2uOXrivJ7VzlyV17aEWTir3IxFq8GTkJ9Z6y+QdyAAf
+         C1jMib4pXElyw==
+Date:   Wed, 6 Oct 2021 09:34:23 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Stephen <stephenackerman16@gmail.com>, kvm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: kvm crash in 5.14.1?
+Message-ID: <20211006163423.GB24266@magnolia>
+References: <2b5ca6d3-fa7b-5e2f-c353-f07dcff993c1@gmail.com>
+ <16c7a433-6e58-4213-bc00-5f6196fe22f5@gmail.com>
+ <YVSEZTCbFZ+HD/f0@google.com>
+ <20210930175957.GA10573@magnolia>
+ <20211004165432.GA24266@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAJfpegtdftj7jQFu+4LBjysiAJ-hhLHkBC_KhowfJtepvZqaoQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211004165432.GA24266@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 06, 2021 at 03:02:36PM +0200, Miklos Szeredi wrote:
-> On Thu, 30 Sept 2021 at 16:39, Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > Add a new notification type FUSE_NOTIFY_LOCK. This notification can be
-> > sent by file server to signifiy that a previous locking request has
-> > completed and actual caller should be woken up.
+On Mon, Oct 04, 2021 at 09:54:32AM -0700, Darrick J. Wong wrote:
+> On Thu, Sep 30, 2021 at 10:59:57AM -0700, Darrick J. Wong wrote:
+> > On Wed, Sep 29, 2021 at 03:21:09PM +0000, Sean Christopherson wrote:
+> > > On Tue, Sep 28, 2021, Stephen wrote:
+> > > > Hello,
+> > > > 
+> > > > I got this crash again on 5.14.7 in the early morning of the 27th.
+> > > > Things hung up shortly after I'd gone to bed. Uptime was 1 day 9 hours 9
+> > > > minutes.
+> > > 
+> > > ...
+> > > 
+> > > > BUG: kernel NULL pointer dereference, address: 0000000000000068
+> > > > #PF: supervisor read access in kernel mode
+> > > > #PF: error_code(0x0000) - not-present page
+> > > > PGD 0 P4D 0
+> > > > Oops: 0000 [#1] SMP NOPTI
+> > > > CPU: 21 PID: 8494 Comm: CPU 7/KVM Tainted: G            E     5.14.7 #32
+> > > > Hardware name: Gigabyte Technology Co., Ltd. X570 AORUS ELITE WIFI/X570
+> > > > AORUS ELITE WIFI, BIOS F35 07/08/2021
+> > > > RIP: 0010:internal_get_user_pages_fast+0x738/0xda0
+> > > > Code: 84 24 a0 00 00 00 65 48 2b 04 25 28 00 00 00 0f 85 54 06 00 00 48
+> > > > 81 c4 a8 00 00 00 44 89 e0 5b 5d 41 5c 41 5d 41 5e 41 5f c3 <48> 81 78
+> > > > 68 a0 a3 >
+> > > 
+> > > I haven't reproduced the crash, but the code signature (CMP against an absolute
+> > > address) is quite distinct, and is consistent across all three crashes.  I'm pretty
+> > > sure the issue is that page_is_secretmem() doesn't check for a null page->mapping,
+> > > e.g. if the page is truncated, which IIUC can happen in parallel since gup() doesn't
+> > > hold the lock.
+> > > 
+> > > I think this should fix the problems?
+> > > 
+> > > diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
+> > > index 21c3771e6a56..988528b5da43 100644
+> > > --- a/include/linux/secretmem.h
+> > > +++ b/include/linux/secretmem.h
+> > > @@ -23,7 +23,7 @@ static inline bool page_is_secretmem(struct page *page)
+> > >         mapping = (struct address_space *)
+> > >                 ((unsigned long)page->mapping & ~PAGE_MAPPING_FLAGS);
+> > > 
+> > > -       if (mapping != page->mapping)
+> > > +       if (!mapping || mapping != page->mapping)
+> > 
+> > I'll roll this out on my vm host and try to re-run the mass fuzztest
+> > overnight, though IT claims they're going to kill power to the whole
+> > datacenter until Monday(!)...
 > 
-> Shouldn't this also be generic instead of lock specific?
+> ...which they did, 30 minutes after I sent this email. :(
 > 
-> I.e. generic header  + original outarg.
+> I'll hopefully be able to report back to the list in a day or two.
 
-Hi Miklos,
+Looks like everything went smoothly with the mass fuzz fstesting.
+I'll let you know if I see any further failures, but for now:
 
-I am not sure I understand the idea. Can you please elaborate a bit more.
+Tested-by: Darrick J. Wong <djwong@kernel.org>
 
-IIUC, "fuse_out_header + original outarg"  is format for responding
-to regular fuse requests. If we use that it will become like responding
-to same request twice. First time we responded with ->error=1 so that
-caller can wait and second time we respond with actual outarg (if
-there is one depending on the type of request).
+--D
 
-IOW, this will become more like implementing blocking of request in
-client in a more generic manner.
-
-But outarg, depends on type of request (In case of locking there is
-none). And outarg memory is allocated by driver and filled by server.
-In case of notifications, driver is allocating the memory but it
-does not know what will come in notification and how much memory
-to allocate. So it relies on device telling it how much memory
-to allocate in general so that bunch of pre-defined notification
-types can fit in (fs->notify_buf_size).
-
-I modeled this on the same lines as other fuse notifications where
-server sends notifications with following format.
-
-fuse_out_header + <structure based on notification type>
-
-out_header->unique is 0 for notifications to differentiate notifications
-from request reply.
-
-out_header->error contains the code of actual notification being sent.
-ex. FUSE_NOTIFY_INVAL_INODE or FUSE_NOTIFY_LOCK or FUSE_NOTIFY_DELETE. 
-Right now virtiofs supports only one notification type. But in future
-we can introduce more types (to support inotify stuff etc).
-
-In short, I modeled this on existing notion of fuse notifications
-(and not fuse reply). And given notifications are asynchronous,
-we don't know what were original outarg. In fact they might
-be generated not necessarily in response to a request. And that's
-why this notion of defining a type of notification (FUSE_NOTIFY_LOCK)
-and then let driver decide how to handle this notification.
-
-I might have completely misunderstood your suggestion. Please help
-me understand.
-
-Thanks
-Vivek
-
+> --D
+> 
+> > 
+> > --D
+> > 
+> > >                 return false;
+> > > 
+> > >         return mapping->a_ops == &secretmem_aops;
