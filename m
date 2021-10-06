@@ -2,82 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 32C14424AC0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 01:55:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8880D424ACD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 01:57:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231586AbhJFX5G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Oct 2021 19:57:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56152 "EHLO
+        id S239893AbhJFX7p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Oct 2021 19:59:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239841AbhJFX5B (ORCPT
+        with ESMTP id S232006AbhJFX7o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Oct 2021 19:57:01 -0400
-Received: from mail-ua1-x929.google.com (mail-ua1-x929.google.com [IPv6:2607:f8b0:4864:20::929])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80456C061760
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Oct 2021 16:55:08 -0700 (PDT)
-Received: by mail-ua1-x929.google.com with SMTP id j13so3045227uaq.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Oct 2021 16:55:08 -0700 (PDT)
+        Wed, 6 Oct 2021 19:59:44 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B06FDC061746;
+        Wed,  6 Oct 2021 16:57:51 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id d8so16041968edx.9;
+        Wed, 06 Oct 2021 16:57:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=B4ajeKSZ6zrl/IB0WedwC0S+wNiZoyctPpDLShCHEUM=;
-        b=pIkhDmGWJeYEN9fozHPXeTyvKCn9+mj6A8+OKhxD40jL7FUgp+QxIQ0LU2F+yaI90z
-         6fbnqUSm/2gq38m9Z4M25MdzgOq4dm82QZddyXCbBeaR+zYgT0C+GHNvPqAcyiQnsPe0
-         Omvtdyfqq08gQNMOY/uNV2o275Bj5B/jKTcMBRRoN3M7BpIN7zwCs5FakFet9DyaA5GI
-         5hokhIbDCDmBQgnd4HnY2p8NuRvEp6xN5VtAg44SmHpx/wVvFAk3a9w/8uL8kA5CfQ8U
-         BYIjblUJYfAkr1LHx+7MT6v5UNeyH4vzcdbBcNfL01MZn2CZDZHyyCS4IkViriSGLU/D
-         xEow==
+        bh=H3kwNDEY68OIwU8Je8RDowqnTfHPIHgvZzXHiiUTic4=;
+        b=d/kT/ON2cmX4+vA2KqMxHsfjLTtYnJwPqvnfOukGEPxSSZ/GvLYKK8ZqBbxX6/uNRN
+         gX4mSv7tqBcRrv4xthfBorbjKb1F7KThxFM55jvVHjfCIzhbkTY73sAjSXhWNB/qUgxP
+         drtgusD6XAFCdTj0bBWvcER1gw0Q4r+8UBz23u0kYEZtZPSpTGET8E5O1llXAKk5DBxh
+         MT+1EECqLY+IbKScKWrL+bF3HqmiXcamInnjYdDpu7GR0Y4Q5feYToEN5fHIFyG6Hlej
+         MIYR9IMn1pjUbR5iUMnHeZZAjFGTc0wuVsVmRVhhIfyJbyIe0QRmx1+n6pc/XsJvmj9+
+         aCHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=B4ajeKSZ6zrl/IB0WedwC0S+wNiZoyctPpDLShCHEUM=;
-        b=nzPnEi+5qJAh8wfCNz8eC5G/qgqK19vksw5wahpL3VrcUT/Ktt0CgG0+2rFvdn+eDN
-         CX7ZaxfjZnvlEdJsrjq5R+7xuphaMwociMGUvG4d3CJSSnYNxgjNKb9dwPQ/gNEsZeWr
-         UbKCpDaWHsL2fwrMdvOFcfkvQnp0WrEMI3755KSkx1/x3keSBDKdvAkXUUlMC2fw5T5b
-         z14r4yHs8X3VpIXgGiubCN7U7MI5QHftCW4h5eAwQ0dN8/4pzCUFbbwtskfG3rIMKyPx
-         RvTIOiT8Tlyd4YA66/hguAAspHKqDHD0IFYpkfakdAqKowqY/tocK5usQuTvZeTOkMS+
-         /Iuw==
-X-Gm-Message-State: AOAM5307JUy2YalSNF13/2JnmhrvsK/v4xF5nLuDIB7z0mMlwB0plohj
-        dsAnJ5+7Vh61B8xmIfQdLJKZuK3Uy/v6yw57uY0lCg==
-X-Google-Smtp-Source: ABdhPJw+X6oiB/9ybWUt6uVNGwcJLEY3tJcxy/XsK7WUZQomWvE5wc821nETpGDf4vcZdPvCt7q2BiwTgv5maa+DMGo=
-X-Received: by 2002:ab0:540e:: with SMTP id n14mr1569319uaa.73.1633564507507;
- Wed, 06 Oct 2021 16:55:07 -0700 (PDT)
+        bh=H3kwNDEY68OIwU8Je8RDowqnTfHPIHgvZzXHiiUTic4=;
+        b=4f+rCY/hzfKKplHBmSZb5cTEd7aQeOvG4XhuKH70Gpa0nRrTCYAf8BsGFVl2sFBDgo
+         B4bT43DJYIswdCowkPqsNtQNDvqYiE/TmpSfspOVT04f3Dvfq9I+rVQWuHQTmPLVBsvK
+         rkmNrBnWnwQ4CTZNixt2l+EC0Q/UvKCWNuQG7IDrVnzH+DO+JIi7Q+UuLZY1Q+DNTMvh
+         S52XMfYoNyMOKaSZYIRO6friooJ6tK0vz1IIcE1QqxFnFzP4EAhwoDKdabXKhyS5q4lb
+         mM/1aj5G6ixazLgoMK8zW2QF6Kx6RaEkE09Ycr11wkJPYrEkavan845s9be2qPQXcso+
+         nvAg==
+X-Gm-Message-State: AOAM530yuFhn2X24sVC8bRz5O71azaqdJwDh/AXtsjAgyxpe4b4nvrE+
+        FpmDGb2jYoHV4BdwnKWSAkmIC1mqREq1QZ6VOgw=
+X-Google-Smtp-Source: ABdhPJwVIbepnjWWz19zXaJafbtP/dZf6+Rn+UlMzvQw55V7S7jLI+XUI3omHo4rLNzH0BN5KP/IIYvljuQdhR1vZjI=
+X-Received: by 2002:a17:906:c7d0:: with SMTP id dc16mr1495026ejb.555.1633564670339;
+ Wed, 06 Oct 2021 16:57:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211006224311.26662-1-ramjiyani@google.com> <YV4nnko8rmWAWj2+@gmail.com>
- <CAKUd0B-9ifaMBAxhaUZjppks8PCy4oCy=erRNnPBjrRxOGKUxQ@mail.gmail.com> <YV4yevOZqSJJVuVJ@gmail.com>
-In-Reply-To: <YV4yevOZqSJJVuVJ@gmail.com>
-From:   Ramji Jiyani <ramjiyani@google.com>
-Date:   Wed, 6 Oct 2021 16:54:56 -0700
-Message-ID: <CAKUd0B8ycmPuV31VoULyENuK74W8ZE-hC08LTbwv+Az9R4c2mA@mail.gmail.com>
-Subject: Re: [PATCH v3] aio: Add support for the POLLFREE
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     arnd@arndb.de, viro@zeniv.linux.org.uk, bcrl@kvack.org, hch@lst.de,
-        kernel-team@android.com, linux-aio@kvack.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, oleg@redhat.com,
-        Jeff Moyer <jmoyer@redhat.com>, stable@vger.kernel.org
+References: <20210930215311.240774-1-shy828301@gmail.com> <20210930215311.240774-3-shy828301@gmail.com>
+ <YV4Dz3y4NXhtqd6V@t490s>
+In-Reply-To: <YV4Dz3y4NXhtqd6V@t490s>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Wed, 6 Oct 2021 16:57:38 -0700
+Message-ID: <CAHbLzkp8oO9qvDN66_ALOqNrUDrzHH7RZc3G5GQ1pxz8qXJjqw@mail.gmail.com>
+Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
+ for PMD page fault
+To:     Peter Xu <peterx@redhat.com>
+Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 6, 2021 at 4:34 PM Eric Biggers <ebiggers@kernel.org> wrote:
+On Wed, Oct 6, 2021 at 1:15 PM Peter Xu <peterx@redhat.com> wrote:
 >
-> On Wed, Oct 06, 2021 at 04:28:23PM -0700, Ramji Jiyani wrote:
-> > Should the Fixes tag refer to Commit bfe4037e722e ("aio: implement
-> > IOCB_CMD_POLL") [2] in this case?
+> On Thu, Sep 30, 2021 at 02:53:08PM -0700, Yang Shi wrote:
+> > @@ -1148,8 +1148,12 @@ static int __get_hwpoison_page(struct page *page)
+> >               return -EBUSY;
 > >
-> > [1] https://lore.kernel.org/lkml/20180110155853.32348-32-hch@lst.de/
-> > [2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/fs/aio.c?h=v4.19.209&id=bfe4037e722ec672c9dafd5730d9132afeeb76e9
+> >       if (get_page_unless_zero(head)) {
+> > -             if (head == compound_head(page))
+> > +             if (head == compound_head(page)) {
+> > +                     if (PageTransHuge(head))
+> > +                             SetPageHasHWPoisoned(head);
+> > +
+> >                       return 1;
+> > +             }
+> >
+> >               pr_info("Memory failure: %#lx cannot catch tail\n",
+> >                       page_to_pfn(page));
 >
-> That's the commit that introduced this bug, right?  The binder change was
-> earlier.  So it seems the answer is yes.
+> Sorry for the late comments.
 >
-> - Eric
+> I'm wondering whether it's ideal to set this bit here, as get_hwpoison_page()
+> sounds like a pure helper to get a refcount out of a sane hwpoisoned page.  I'm
+> afraid there can be side effect that we set this without being noticed, so I'm
+> also wondering we should keep it in memory_failure().
+>
+> Quotting comments for get_hwpoison_page():
+>
+>  * get_hwpoison_page() takes a page refcount of an error page to handle memory
+>  * error on it, after checking that the error page is in a well-defined state
+>  * (defined as a page-type we can successfully handle the memor error on it,
+>  * such as LRU page and hugetlb page).
+>
+> For example, I see that both unpoison_memory() and soft_offline_page() will
+> call it too, does it mean that we'll also set the bits e.g. even when we want
+> to inject an unpoison event too?
 
-Thanks Eric. I'll send the v4 with exact commit where the issue start
-manifesting in aio with updated description and Fixes tag.
+unpoison_memory() should be not a problem since it will just bail out
+once THP is met as the comment says:
 
-~ Ramji
+/*
+* unpoison_memory() can encounter thp only when the thp is being
+* worked by memory_failure() and the page lock is not held yet.
+* In such case, we yield to memory_failure() and make unpoison fail.
+*/
+
+
+And I think we should set the flag for soft offline too, right? The
+soft offline does set the hwpoison flag for the corrupted sub page and
+doesn't split file THP, so it should be captured by page fault as
+well. And yes for poison injection.
+
+But your comment reminds me that get_hwpoison_page() is just called
+when !MF_COUNT_INCREASED, so it means MADV_HWPOISON still could
+escape. This needs to be covered too.
+
+BTW, I did the test with MADV_HWPOISON, but I didn't test this change
+(moving flag set after get_page_unless_zero()) since I thought it was
+just a trivial change and did overlook this case.
+
+>
+> Thanks,
+>
+> --
+> Peter Xu
+>
