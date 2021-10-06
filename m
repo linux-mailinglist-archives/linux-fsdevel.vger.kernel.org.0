@@ -2,109 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4294A424163
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Oct 2021 17:32:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0377B424165
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Oct 2021 17:33:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230417AbhJFPeo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Oct 2021 11:34:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:58519 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230014AbhJFPen (ORCPT
+        id S231967AbhJFPfN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Oct 2021 11:35:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52804 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230014AbhJFPfM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Oct 2021 11:34:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1633534370;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=cvEph9NgYeijJljCcohhAoNZxQThplIO11/fqs6syHU=;
-        b=Hy38fZpPTHJ6gF8LqAD5LqVjMoFf4cHFNPAByONAnZH0HZu+LQVWYUvNVyR2YtReizkFbp
-        0NEm4eAVIAy8+0ejFI92iApBUwmQCbcK3yLHP671HDA16hkGaCO827piKElxzWQIJYm3m9
-        unYRxcT75w/ybEfbCflm9+tkVdkmDS0=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-400-n2VTeHtLNO64Rkf33efNXQ-1; Wed, 06 Oct 2021 11:32:49 -0400
-X-MC-Unique: n2VTeHtLNO64Rkf33efNXQ-1
-Received: by mail-wr1-f70.google.com with SMTP id x14-20020a5d60ce000000b00160b27b5fd1so2367589wrt.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Oct 2021 08:32:49 -0700 (PDT)
+        Wed, 6 Oct 2021 11:35:12 -0400
+Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 513A5C061746
+        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Oct 2021 08:33:20 -0700 (PDT)
+Received: by mail-vs1-xe32.google.com with SMTP id p18so3256855vsu.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Oct 2021 08:33:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OXGlnNe1yWBSvNniecAJQ/P9MoZJY33TkoAKPrbYOnw=;
+        b=hA1vk31Bhomcl0BX+2n4o1WOeiN/pLWbs/c79v0uZf04LtAu686+SXWgXbe/RDCfJo
+         kfC8USdT7zxYZS2Jo9c0t57CZzmdZQt8Ydtax4fNW4v3ehrYS23mMWo/TbevMVGvt00q
+         x6WbVkjN6p1MKRQ4u7UHz9vDf0OIYuEGqbt9w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=cvEph9NgYeijJljCcohhAoNZxQThplIO11/fqs6syHU=;
-        b=2aXt6+87PRfqT7o8HF9pWGmnznYDbtAQQa1XfXCZWFcd5EfaaG2WUcz2mRgjZQvX7I
-         sYmRfbpR+IseCEgAbTH5Bn+opJlsX4ZfxspCHmu9A3c8SEek/YuIvm/cFP5OrHeNHFe/
-         BdcTiywrDF2fz2/ObKt8oQSpRswCnLaFKtec+lVayUGYuDjtu5ZK6pu0aQHWDcDbN549
-         9rQ/NCt7YlabHbtJ3zWZZuRP5o0V7SyMtOly1t6tUkxfb4MdCx91SAQvRGEizvLzl4m1
-         sfu3L6dbozsBeKMorSy+zhQmgMrRiqZ08qO62HDA+NU7PzP/Kff3sJctgFcVpxsU/eIe
-         STBg==
-X-Gm-Message-State: AOAM533YBaSjfDyMtcqdQqslAcp3Hb2Ri+RzN0+KwqkvznGRPAMkHuV3
-        ThfqvmSOBZFlx28sMfcuHb+LgWp+SncVL17ip+3hyq1d12xSWWwysxHCKJB4mc+3vU/qSSjuRkH
-        pAKcNhbTd46wgTVP7ryULPIFwjr0xtd+HjGOgOdh3L2RNBOqemNm1XYuPMmPPoMNajd+hZ5/tJA
-        ==
-X-Received: by 2002:a05:600c:c3:: with SMTP id u3mr10512175wmm.137.1633534368166;
-        Wed, 06 Oct 2021 08:32:48 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxQnWEw8OnSFw6c/U83DcmKnf11Gs3w7WwRutSUaaTj+DpRwg4WZxidh4QqDP/vn7/V76Xlcw==
-X-Received: by 2002:a05:600c:c3:: with SMTP id u3mr10512139wmm.137.1633534367951;
-        Wed, 06 Oct 2021 08:32:47 -0700 (PDT)
-Received: from [192.168.3.132] (p5b0c6529.dip0.t-ipconnect.de. [91.12.101.41])
-        by smtp.gmail.com with ESMTPSA id i3sm5558725wrn.34.2021.10.06.08.32.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Oct 2021 08:32:47 -0700 (PDT)
-Subject: Re: [RFC] pgflags_t
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-fsdevel@vger.kernel.org
-References: <YV25hsgfJ2qAYiRJ@casper.infradead.org>
- <YV2/NZjsmSK6/vlB@zeniv-ca.linux.org.uk>
- <106400c5-d3f2-e858-186a-82f9b517917b@redhat.com>
- <YV3ArQxQ7CFzhBhR@zeniv-ca.linux.org.uk>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Message-ID: <21ce511e-7cde-8bdb-b6c6-e1278681ebf6@redhat.com>
-Date:   Wed, 6 Oct 2021 17:32:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OXGlnNe1yWBSvNniecAJQ/P9MoZJY33TkoAKPrbYOnw=;
+        b=aD0iGkvrtt4F4oFd19xE19fOVGbgaoAHA/6qnkVE6xclHgMpzRAwHFtciBatqv8zq1
+         s8i9S6ohAbUZLcptHrtDATqaG+Egs8wJMt9VyBO4JC0E8XFSlO0omL+00WlpYB/pA+89
+         bG+mUz/tJswzQmqA5zIBTg6HXjQuWsnkn8DFD33oQSt0CayinrMGBa8x5rna0DKlLuWq
+         Mp5FXJ/Yw7kzuGwopltpIkbUjogJKsneFWNWyXpzoCMwlvN8fCAO5wh7R3UsTom9tUos
+         jMm9dqzvRT7nMFT8XU8I87DVcCrrFR8JCULBOOFyO8gbjOkcdMipQODkTXP03vzBgztx
+         Os2Q==
+X-Gm-Message-State: AOAM533qzoXj2EjwJ5f7ezD3OAPKv+rj8fEntYw59ry50hSjua8IbC5Y
+        V/Fjrx8AV1uI/JLRS2GSGymBjw1JxrwD3fLDGe29HFLJ6V29tg==
+X-Google-Smtp-Source: ABdhPJwiOjGX+elH6RoLYAfpIz6u9FQCAwQ90zgFM4YeOO/PwbB6PfGge44MGahOyC2VIBg+9pkmElcw9HXzY6DUn7A=
+X-Received: by 2002:a67:c284:: with SMTP id k4mr6631340vsj.24.1633534399452;
+ Wed, 06 Oct 2021 08:33:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YV3ArQxQ7CFzhBhR@zeniv-ca.linux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210923130814.140814-1-cgxu519@mykernel.net> <20210923130814.140814-4-cgxu519@mykernel.net>
+In-Reply-To: <20210923130814.140814-4-cgxu519@mykernel.net>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 6 Oct 2021 17:33:08 +0200
+Message-ID: <CAJfpegvh9if1tZOdnzn87JmDBZC0XBzf63NoOydkCGyX4ssaag@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 03/10] ovl: implement overlayfs' ->evict_inode operation
+To:     Chengguang Xu <cgxu519@mykernel.net>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 06.10.21 17:28, Al Viro wrote:
-> On Wed, Oct 06, 2021 at 05:23:49PM +0200, David Hildenbrand wrote:
->> On 06.10.21 17:22, Al Viro wrote:
->>> On Wed, Oct 06, 2021 at 03:58:14PM +0100, Matthew Wilcox wrote:
->>>> David expressed some unease about the lack of typesafety in patches
->>>> 1 & 2 of the page->slab conversion [1], and I'll admit to not being
->>>> particularly a fan of passing around an unsigned long.  That crystallised
->>>> in a discussion with Kent [2] about how to lock a page when you don't know
->>>> its type (solution: every memory descriptor type starts with a
->>>> pgflags_t)
->>>
->>> Why bother making it a struct?  What's wrong with __bitwise and letting
->>> sparse catch conversions?
->>>
->>
->> As I raised in my reply, we store all kinds of different things in
->> page->flags ... not sure if that could be worked around somehow.
-> 
-> What of that?  Inline helpers with force-casts for accessing those and
-> that's it...
+On Thu, 23 Sept 2021 at 15:08, Chengguang Xu <cgxu519@mykernel.net> wrote:
+>
+> Implement overlayfs' ->evict_inode operation,
+> so that we can clear dirty flags of overlayfs inode.
+>
+> Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+> ---
+>  fs/overlayfs/super.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index 51886ba6130a..2ab77adf7256 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -406,11 +406,18 @@ static int ovl_remount(struct super_block *sb, int *flags, char *data)
+>         return ret;
+>  }
+>
+> +static void ovl_evict_inode(struct inode *inode)
+> +{
+> +       inode->i_state &= ~I_DIRTY_ALL;
+> +       clear_inode(inode);
 
-It feels to me like using __bitwise for access checks and then still 
-modifying the __bitwise fields randomly via a backdoor. But sure, if it 
-works, I'll be happy if we can use that.
+clear_inode() should already clear the dirty flags; the default
+eviction should work fine without having to define an ->evict_inode.
+What am I missing?
 
--- 
 Thanks,
-
-David / dhildenb
-
+Miklos
