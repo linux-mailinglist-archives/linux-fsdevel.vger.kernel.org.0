@@ -2,132 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB726424962
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 00:02:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94039424968
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 00:03:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239770AbhJFWDy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Oct 2021 18:03:54 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:30024 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230213AbhJFWDy (ORCPT
+        id S239791AbhJFWFP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Oct 2021 18:05:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59134 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230285AbhJFWFO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Oct 2021 18:03:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1633557721;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=KwYOi5FBnZz/GGBHEzCJubt9MvgZTdgF9/2Py157wwg=;
-        b=gTevRTiAb6CA/rjwNIw6TjVuxy1w4I7xdaWCNFMiJl9VkKxv7juND/TvMSSdSBhKFZx7GE
-        IJ9t6WJi+6AiibS3wvbVJrwWiNdMWDCBeBhtDEH6D709mvvHgdRjmD/hJaUQM3/4ViN18F
-        VTEo1Vm6AMe9dl6fBk4seuGJv9Sdy0U=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-238-C157u8G1PLKs22zfTEJFOg-1; Wed, 06 Oct 2021 18:02:00 -0400
-X-MC-Unique: C157u8G1PLKs22zfTEJFOg-1
-Received: by mail-qt1-f197.google.com with SMTP id e5-20020ac84905000000b002a69dc43859so3331406qtq.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Oct 2021 15:01:59 -0700 (PDT)
+        Wed, 6 Oct 2021 18:05:14 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAC54C061746
+        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Oct 2021 15:03:21 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id 133so3739820pgb.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Oct 2021 15:03:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=S8r+rc6bFIU7cXArQnf6Qtpwv2FoCGPsccPj2q+K1zk=;
+        b=BlcpB5NSeXXefPepERXjr0jUHlucP3qusHB3fY//2ntWT4PaA2nle9ET0X3AI1HmEH
+         feGtjzF6zI0ZgP3SazGlzI7XQsy/joCst2lDK+wX83vnR+9++PDS05+ZQtLJy+cp0Zww
+         49ZwkdVQHaEFSC8vTVzcnAqC2r7EwFKG1KnMo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=KwYOi5FBnZz/GGBHEzCJubt9MvgZTdgF9/2Py157wwg=;
-        b=D5m2WKpurb5H2kV4LBcKZZiHkuIbU2KkXb5DVj34ccdTI+FtcU2jfBx5zujqCRLoTr
-         D23D7+L93LyS3ISHRKr5/Ht4Si12ZO5W48Y8NaTPSasks3sGjot7Ydbofr6Eudh52bBM
-         wRvw97vnxFZmXdTEJ43jKiKOtLU/Oav8VClnVEGPCWH/wAj9OWw0VaBJc18EJNg2Y0U0
-         xOwSxeUYEWpbh/SGkFPlL2iGPIvy/kF7YWnb0kP2IImhOeI1tB4qeA9orP8ZTAIVG9qI
-         aMsVGam8mzqkdAKLvQ610twTtJaZLsObmoYRDQZVpJh26IqHp6DDmiVZPw40AG5X1/hi
-         CiDg==
-X-Gm-Message-State: AOAM532jy5IEnYxo/HjiQfPEGIsxXGC/VDHL4Ad7YYFDFattvgY/TVuZ
-        Q4/S5zYwiQYSsdQJXwm4KGc6zXXRbyBIXFOmtiqfobzfCm1xNaOBThA0GLhhltwwG1DAEC/G1bp
-        3FSNUWL/ABngBGTuzhiVNZ4oucg==
-X-Received: by 2002:ac8:72d3:: with SMTP id o19mr799988qtp.19.1633557719536;
-        Wed, 06 Oct 2021 15:01:59 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwUY14CsRfg/wBWv/+kqo9Sz/TvI8iid6C/lEFVyVZtsk5eS9VSjdeR6pwre/6nqu4PMIIBHA==
-X-Received: by 2002:ac8:72d3:: with SMTP id o19mr799947qtp.19.1633557719251;
-        Wed, 06 Oct 2021 15:01:59 -0700 (PDT)
-Received: from t490s ([2607:fea8:56a2:9100::bed8])
-        by smtp.gmail.com with ESMTPSA id o23sm14084849qtl.74.2021.10.06.15.01.57
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=S8r+rc6bFIU7cXArQnf6Qtpwv2FoCGPsccPj2q+K1zk=;
+        b=HknTNIUr5iuxC801cVa5CX7tYRUtgHQkROiJlwG17s3DuRoIp3BZfikkmJgVKIml/I
+         jQDoUoQCf5Xr21E6tgUCxCiNSMg5nZYQljvlJSdni3asMBrdWSsPOMUqQGMDaNYMqZm/
+         eGdNoUfyvv2ePevCR+zvcR0TsfJ3g1pr7yVer+yZMaU3+/22JpApRPFECH1YVoyc4t0V
+         4jnQUCvoUa5FSKfzN2hdbNXx2MHq0Iyz3aTSoO+/vX3IImqaduwXPmENr2k9roXHMkEy
+         967euArSzd/oYH6cCsBrNoZXuvtCizB1iS2JG6UKT6igQINFh0ccXPCZciR+Qq+bDiZa
+         bsvA==
+X-Gm-Message-State: AOAM531cQh1CqKCdAkkcTe9jpJTCKyBzpbzqzibjgD6mSJ5+OGHkHlex
+        SDn0sjyRVWcOya1+IrkkP/sVyg==
+X-Google-Smtp-Source: ABdhPJzouFSoNpCm18n4Iwn3EUMcJjerfXPUN9YpUneFa6F70rdyCB8CBylaxKHlD/YEVHoOYPZFMQ==
+X-Received: by 2002:a63:e651:: with SMTP id p17mr420929pgj.66.1633557801181;
+        Wed, 06 Oct 2021 15:03:21 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id k17sm2947437pff.214.2021.10.06.15.03.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Oct 2021 15:01:58 -0700 (PDT)
-Date:   Wed, 6 Oct 2021 18:01:57 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     naoya.horiguchi@nec.com, hughd@google.com,
-        kirill.shutemov@linux.intel.com, willy@infradead.org,
-        osalvador@suse.de, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [v3 PATCH 3/5] mm: hwpoison: refactor refcount check handling
-Message-ID: <YV4c1dOfctEMnH2s@t490s>
-References: <20210930215311.240774-1-shy828301@gmail.com>
- <20210930215311.240774-4-shy828301@gmail.com>
+        Wed, 06 Oct 2021 15:03:20 -0700 (PDT)
+Date:   Wed, 6 Oct 2021 15:03:19 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     bauen1 <j2468h@googlemail.com>, akpm@linux-foundation.org,
+        arnd@arndb.de, casey@schaufler-ca.com,
+        christian.brauner@ubuntu.com, christian@python.org, corbet@lwn.net,
+        cyphar@cyphar.com, deven.desai@linux.microsoft.com,
+        dvyukov@google.com, ebiggers@kernel.org, ericchiang@google.com,
+        fweimer@redhat.com, geert@linux-m68k.org, jack@suse.cz,
+        jannh@google.com, jmorris@namei.org,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, luto@kernel.org,
+        madvenka@linux.microsoft.com, mjg59@google.com,
+        mszeredi@redhat.com, mtk.manpages@gmail.com,
+        nramas@linux.microsoft.com, philippe.trebuchet@ssi.gouv.fr,
+        scottsh@microsoft.com, sean.j.christopherson@intel.com,
+        sgrubb@redhat.com, shuah@kernel.org, steve.dower@python.org,
+        thibaut.sautereau@clip-os.org, vincent.strubel@ssi.gouv.fr,
+        viro@zeniv.linux.org.uk, willy@infradead.org, zohar@linux.ibm.com
+Subject: Re: [PATCH v12 0/3] Add trusted_for(2) (was O_MAYEXEC)
+Message-ID: <202110061500.B8F821C@keescook>
+References: <20201203173118.379271-1-mic@digikod.net>
+ <d3b0da18-d0f6-3f72-d3ab-6cf19acae6eb@gmail.com>
+ <2a4cf50c-7e79-75d1-7907-8218e669f7fa@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20210930215311.240774-4-shy828301@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2a4cf50c-7e79-75d1-7907-8218e669f7fa@digikod.net>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 30, 2021 at 02:53:09PM -0700, Yang Shi wrote:
-> +/*
-> + * Return true if page is still referenced by others, otherwise return
-> + * false.
-> + *
-> + * The dec is true when one extra refcount is expected.
-> + */
-> +static bool has_extra_refcount(struct page_state *ps, struct page *p,
-> +			       bool dec)
+On Fri, Apr 09, 2021 at 07:15:42PM +0200, Mickaël Salaün wrote:
+> There was no new reviews, probably because the FS maintainers were busy,
+> and I was focused on Landlock (which is now in -next), but I plan to
+> send a new patch series for trusted_for(2) soon.
 
-Nit: would it be nicer to keep using things like "extra_pins", so we pass in 1
-for swapcache dirty case and 0 for the rest?  Then it'll also match with most
-of the similar cases in e.g. huge_memory.c (please try grep "extra_pins" there).
+Hi!
 
-> +{
-> +	int count = page_count(p) - 1;
-> +
-> +	if (dec)
-> +		count -= 1;
-> +
-> +	if (count > 0) {
-> +		pr_err("Memory failure: %#lx: %s still referenced by %d users\n",
-> +		       page_to_pfn(p), action_page_types[ps->type], count);
-> +		return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
->  /*
->   * Error hit kernel page.
->   * Do nothing, try to be lucky and not touch this instead. For a few cases we
->   * could be more sophisticated.
->   */
-> -static int me_kernel(struct page *p, unsigned long pfn)
-> +static int me_kernel(struct page_state *ps, struct page *p)
+Did this ever happen? It looks like it's in good shape, and I think it's
+a nice building block for userspace to have. Are you able to rebase and
+re-send this?
 
-Not sure whether it's intended, but some of the action() hooks do not call the
-refcount check now while in the past they'll all do.  Just to double check
-they're expected, like this one and me_unknown().
+I've tended to aim these things at akpm if Al gets busy. (And since
+you've had past review from Al, that should be hopefully sufficient.)
 
->  {
->  	unlock_page(p);
->  	return MF_IGNORED;
-> @@ -820,9 +852,9 @@ static int me_kernel(struct page *p, unsigned long pfn)
->  /*
->   * Page in unknown state. Do nothing.
->   */
-> -static int me_unknown(struct page *p, unsigned long pfn)
-> +static int me_unknown(struct page_state *ps, struct page *p)
->  {
-> -	pr_err("Memory failure: %#lx: Unknown page state\n", pfn);
-> +	pr_err("Memory failure: %#lx: Unknown page state\n", page_to_pfn(p));
->  	unlock_page(p);
->  	return MF_FAILED;
->  }
+Thanks for chasing this!
 
-Thanks,
+-Kees
 
 -- 
-Peter Xu
-
+Kees Cook
