@@ -2,156 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A0322423A87
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Oct 2021 11:27:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 631AE423A9A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Oct 2021 11:34:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237867AbhJFJ3o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Oct 2021 05:29:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:56739 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237852AbhJFJ3n (ORCPT
+        id S231370AbhJFJfv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Oct 2021 05:35:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53232 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229824AbhJFJfv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Oct 2021 05:29:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1633512471;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7ngYQ8UnRk1ZQG1QBxVMt0vUipJ0oB+rpBaTB/8WXgg=;
-        b=AzZSTP2BTPLej+IZv+m/sekAu9zo1/Aiv5sQ/Yh8qZThGfgJX3yvJfVrA/bFW8tRj/klug
-        qvwwtdsL+F+w4S5sUdWLib/dyajtt5aX/bMnTe+fF0TIewT1JbPF5oLgHg4zGpnYQhN7cO
-        Inqnhq5CoNwtHuku/z3RUD40sPNCMN4=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-443-7z_duv6NMqS-qor_d86TZw-1; Wed, 06 Oct 2021 05:27:50 -0400
-X-MC-Unique: 7z_duv6NMqS-qor_d86TZw-1
-Received: by mail-wr1-f69.google.com with SMTP id d13-20020adf9b8d000000b00160a94c235aso1518692wrc.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Oct 2021 02:27:49 -0700 (PDT)
+        Wed, 6 Oct 2021 05:35:51 -0400
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62D6CC061749;
+        Wed,  6 Oct 2021 02:33:59 -0700 (PDT)
+Received: by mail-pg1-x533.google.com with SMTP id 133so1996228pgb.1;
+        Wed, 06 Oct 2021 02:33:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=ib9q1FXf/davE4MXyLdOzyGSWmIcAUtLGH0oh1ik9BY=;
+        b=TYeai1wIIZiQKY75VQD0vGYcDb448tXeGpDod/3imAgBeBYn+ipnPEaq6K0LnaptUE
+         jENWsqPAcFE7315KkZGrb3G1zlj3E9kwK1udsYRydpCRMMntFr/soSH7QD3j1/gilY8k
+         EG7pc/il1kPLFQ0S/jjdA52yZ82F/MDsJCHcxd5kbAqgFpiUEOiS9IU2X0RqNWmM9SX9
+         /qvpCxMnDrkNhowSzV5wK1IfXFVX4OD2fNf+za0QaeR2j6ubFwRQDHiu+uR1LeDP7883
+         MLImHAQRTu9CdjPwc9x5p9tF2omfpVP0rRg+SpPfA8vKWQbeNkiGiXGNtJ492KlkERbo
+         nMVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=7ngYQ8UnRk1ZQG1QBxVMt0vUipJ0oB+rpBaTB/8WXgg=;
-        b=b7qArSeSpue9L296RuUR0fFmok4e3YXKp8B5gzEvaKxqivIRQgcJ9/lLuy+mAyTJa9
-         F7T+b7ZARXPthEYeig20q5gACOuCbm/yV13KB/b6whdNV1mCdROeieZYtVZ1U2aSoz61
-         vB+RyTQmi6hqtEZELBSGJuPKrOEatIJiHVnlwA+UxynFZTeUFhLlaY9nKByPcL0GQqBk
-         jngML4HXlaCGk68sCDj17BhJRDjzMqeA6DBxypfENtghL96TYXX7ZCfu/scIdPcSAyz8
-         qIM71UcsRKobDUD3j10Jh9yhYkaUVGuPgOyyb2n5od07VTruZ1qkJZ3cEmOr5BT6As9/
-         iLIw==
-X-Gm-Message-State: AOAM532QWEoP7/MeaGjyC5wxUtmAS+5W+qsZyCQdxj32ri3CWP1oVyIG
-        9KAHJGrPhTn0j2lZsmgOLoK4jkT6Xq1FgAIt0ECHtE+jPCfPaQkhJBs5N9iyMhHYlCE96/VPiQZ
-        DgoSEYxwqATem/Lwa6fUV60UUAw==
-X-Received: by 2002:a05:600c:2504:: with SMTP id d4mr8654602wma.53.1633512468947;
-        Wed, 06 Oct 2021 02:27:48 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzGUhy0gAKWUOqrJ1UNTMcU+0gj6b2WgmTy8wezEYe1OO1y1Ud7N7Qy2A2zoM8LgbCxYHGIwg==
-X-Received: by 2002:a05:600c:2504:: with SMTP id d4mr8654537wma.53.1633512468677;
-        Wed, 06 Oct 2021 02:27:48 -0700 (PDT)
-Received: from [192.168.3.132] (p5b0c6529.dip0.t-ipconnect.de. [91.12.101.41])
-        by smtp.gmail.com with ESMTPSA id o26sm4707828wmc.17.2021.10.06.02.27.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Oct 2021 02:27:48 -0700 (PDT)
-Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
-To:     Michal Hocko <mhocko@suse.com>, John Hubbard <jhubbard@nvidia.com>
-Cc:     Suren Baghdasaryan <surenb@google.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Colin Cross <ccross@google.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        vincenzo.frascino@arm.com,
-        =?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= 
-        <chinwen.chang@mediatek.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Jann Horn <jannh@google.com>, apopple@nvidia.com,
-        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
-        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
-        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
-        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
-        chris.hyser@oracle.com, Peter Collingbourne <pcc@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
-        Rolf Eike Beer <eb@emlix.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
-        cxfcosmos@gmail.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>,
-        kernel-team <kernel-team@android.com>
-References: <20211001205657.815551-1-surenb@google.com>
- <20211001205657.815551-3-surenb@google.com>
- <20211005184211.GA19804@duo.ucw.cz>
- <CAJuCfpE5JEThTMhwKPUREfSE1GYcTx4YSLoVhAH97fJH_qR0Zg@mail.gmail.com>
- <20211005200411.GB19804@duo.ucw.cz>
- <CAJuCfpFZkz2c0ZWeqzOAx8KFqk1ge3K-SiCMeu3dmi6B7bK-9w@mail.gmail.com>
- <efdffa68-d790-72e4-e6a3-80f2e194d811@nvidia.com>
- <YV1eCu0eZ+gQADNx@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Message-ID: <6b15c682-72eb-724d-bc43-36ae6b79b91a@redhat.com>
-Date:   Wed, 6 Oct 2021 11:27:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=ib9q1FXf/davE4MXyLdOzyGSWmIcAUtLGH0oh1ik9BY=;
+        b=gyi4VZn5FZ45lQT1Rl7CTnIDQLayRcLtSof62T9WHZ8uzLTEGZY+HvHpsRzYpL+LGV
+         4EFOOXSV/cTjxxNDBn5aHHjVk0Jx7VJjKmj0uCDbLhNuAiIlk0Pfn6D00aP8nMT4KPmn
+         AbP2Nx0BqAZfdTBQWJloo3sRTjnh/knvkwztkh0XDdGiAzUVS5/x5BXlDddyL4/XmmsS
+         jxPOxgvGMgud0beLbSoYwiG0CewbGE7n0MjUoSrZD7uelTKmRhxdSmtPNkKNlbX7IgIr
+         DlStpqyIyLgBzlUejlsbZpBJiQy1jWKg71XAYp6zwiT3sbh/9Ait802pTpz3ptpNfWTa
+         lSQA==
+X-Gm-Message-State: AOAM530mHu6nOmHd6411FFi7LM5MXZcPsH5pspgCqtFIiRmLTPgtCB9S
+        4kqQBOzoBEMBNGloalp2OiNzCyKwHb8WF+/s6VvDFj8cwg/B3i4=
+X-Google-Smtp-Source: ABdhPJz0d/K3zZrOwYOgIohIMdLEfLuWyNC76/iYyFN9gnmhOgno7r66wc4gtZxJw1bMfkoIJw46kDwTksB2rAs2NE0=
+X-Received: by 2002:a63:594a:: with SMTP id j10mr19730031pgm.205.1633512838615;
+ Wed, 06 Oct 2021 02:33:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YV1eCu0eZ+gQADNx@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Hao Sun <sunhao.th@gmail.com>
+Date:   Wed, 6 Oct 2021 17:33:47 +0800
+Message-ID: <CACkBjsbPsmUiC7NFgOZcVcwPA7RLpiCFkgEA=LsnvcFsWFG34Q@mail.gmail.com>
+Subject: WARNING in __kernel_read
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 06.10.21 10:27, Michal Hocko wrote:
-> On Tue 05-10-21 23:57:36, John Hubbard wrote:
-> [...]
->> 1) Yes, just leave the strings in the kernel, that's simple and
->> it works, and the alternatives don't really help your case nearly
->> enough.
-> 
-> I do not have a strong opinion. Strings are easier to use but they
-> are more involved and the necessity of kref approach just underlines
-> that. There are going to be new allocations and that always can lead
-> to surprising side effects.  These are small (80B at maximum) so the
-> overall footpring shouldn't all that large by default but it can grow
-> quite large with a very high max_map_count. There are workloads which
-> really require the default to be set high (e.g. heavy mremap users). So
-> if anything all those should be __GFP_ACCOUNT and memcg accounted.
-> 
-> I do agree that numbers are just much more simpler from accounting,
-> performance and implementation POV.
+Hello,
 
-+1
+When using Healer to fuzz the latest Linux kernel, the following crash
+was triggered.
 
-I can understand that having a string can be quite beneficial e.g., when 
-dumping mmaps. If only user space knows the id <-> string mapping, that 
-can be quite tricky.
+HEAD commit: 0513e464f900 Merge tag 'perf-tools-fixes-for-v5.15-2021-09-27'
+git tree: upstream
+console output:
+https://drive.google.com/file/d/1RomE2Ls4uFB-AfgRtQr6739q4npqS-_Y/view?usp=sharing
+kernel config: https://drive.google.com/file/d/1Jqhc4DpCVE8X7d-XBdQnrMoQzifTG5ho/view?usp=sharing
+C reproducer: https://drive.google.com/file/d/1RzAsyIZzw5X_m340nY9fu4KWjGdG98pv/view?usp=sharing
+Syzlang reproducer:
+https://drive.google.com/file/d/1QqdmE15ktTdJIQK9s6u-btC5YuajI9XH/view?usp=sharing
 
-However, I also do wonder if there would be a way to standardize/reserve 
-ids, such that a given id always corresponds to a specific user. If we 
-use an uint64_t for an id, there would be plenty room to reserve ids ...
+If you fix this issue, please add the following tag to the commit:
+Reported-by: Hao Sun <sunhao.th@gmail.com>
 
-I'd really prefer if we can avoid using strings and instead using ids.
-
--- 
-Thanks,
-
-David / dhildenb
-
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 28082 at fs/read_write.c:429
+__kernel_read+0x3bb/0x410 fs/read_write.c:429
+Modules linked in:
+CPU: 1 PID: 28082 Comm: syz-executor Not tainted 5.15.0-rc3+ #21
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
+RIP: 0010:__kernel_read+0x3bb/0x410 fs/read_write.c:429
+Code: 8b 04 25 40 70 01 00 8b 88 60 05 00 00 4c 8d 80 c8 07 00 00 e8
+88 c7 c6 02 48 c7 c5 ea ff ff ff e9 6a fe ff ff e8 65 cf dd ff <0f> 0b
+48 c7 c5 ea ff ff ff e9 57 fe ff ff e8 52 cf dd ff b9 01 00
+RSP: 0018:ffffc900025e7cf8 EFLAGS: 00010216
+RAX: 00000000000081cb RBX: ffff888109c16c00 RCX: ffffc90002c55000
+RDX: 0000000000040000 RSI: ffffffff8159c1fb RDI: ffff888109c16c00
+RBP: 000000004808801c R08: 0000000000000000 R09: 0000000000000000
+R10: ffffc900025e7d40 R11: 0000000000000000 R12: ffffc9000f315000
+R13: ffffc900025e7df8 R14: 0000000000206590 R15: ffffc9000f315000
+FS:  00007f55dbd06700(0000) GS:ffff88813dc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000003 CR3: 000000001a3ac000 CR4: 0000000000752ee0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000003
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+PKRU: 55555554
+Call Trace:
+ kernel_read+0x47/0x60 fs/read_write.c:461
+ kernel_read_file+0x20a/0x370 fs/kernel_read_file.c:93
+ kernel_read_file_from_fd+0x55/0x90 fs/kernel_read_file.c:184
+ __do_sys_finit_module+0x89/0x110 kernel/module.c:4180
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x34/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x46ae99
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48
+89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f55dbd05c48 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+RAX: ffffffffffffffda RBX: 000000000078c0a0 RCX: 000000000046ae99
+RDX: 0000000000000003 RSI: 00000000200000c0 RDI: 0000000000000003
+RBP: 00000000004e4809 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000078c0a0
+R13: 0000000000000000 R14: 000000000078c0a0 R15: 00007ffeee82e7a0
