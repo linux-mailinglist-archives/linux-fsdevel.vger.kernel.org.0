@@ -2,175 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A4838424786
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Oct 2021 21:51:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7192342478D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Oct 2021 21:54:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232607AbhJFTw5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Oct 2021 15:52:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56888 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232626AbhJFTwy (ORCPT
+        id S229964AbhJFT4S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Oct 2021 15:56:18 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44517 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229761AbhJFT4R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Oct 2021 15:52:54 -0400
-Received: from mail-qv1-xf4a.google.com (mail-qv1-xf4a.google.com [IPv6:2607:f8b0:4864:20::f4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5C89C061755
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Oct 2021 12:51:01 -0700 (PDT)
-Received: by mail-qv1-xf4a.google.com with SMTP id q9-20020ad45749000000b00382b7c83aa1so3574000qvx.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Oct 2021 12:51:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=MHNhaL2DhBIuWauDT+vtiCzNM89DP5+QrC3jaOOyiBk=;
-        b=lfwJqX8cqAa7haAscR+/jA/gMlLMc6ZzbrNcb7IGffT2S2ilBqvEpTf5Wyls7a3fvX
-         Itt6ZdQhhQB/kmP25gyo5s8spF+oQ4yalSQQhZiIHgNnLjUwYaRp0/aTpEJReTWervAc
-         l7czNl7BHdlTjgJLobOfMv5ImWxrLcGrDWnfTy8tm/zODh0FxWSSKO1IKKqcp2mH9vvl
-         xbQpX6BbL8ONk7/oDTQUXgnoLkzXPVD60RJUzmaAU10+5pQi3rhsnIrApiDM46PxtsqT
-         gNnyTYTpM9Rwjz34lGTCyLxij6elj9Dhw9VmcvF9aXc93cVkOKO9ChOKpvJ45+PSyWPP
-         cXNQ==
+        Wed, 6 Oct 2021 15:56:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1633550064;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xnVRUaB8vdHCAs3GIdbbJkvM/qgvDDY4/1PeZEPVaUU=;
+        b=hYHuX3WeVb6Uhgji4Zf0OxnEVO+aP42vZaL/WBNj1vszmwac6JVqxJwGdLAOMcS79EP8GE
+        ovDPFhyLhZf/G0Gk5hYiBg4WX4p4ebaAS+arXsl/S3zVBzhFCktWPZFYDnuQO0RULNDw1R
+        HGO63pBEZm6cGWRnnoEOp4APQZv/y2c=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-547-1KSRd7PBNgeY3VMOFwpziw-1; Wed, 06 Oct 2021 15:54:19 -0400
+X-MC-Unique: 1KSRd7PBNgeY3VMOFwpziw-1
+Received: by mail-qk1-f198.google.com with SMTP id x25-20020a05620a01f900b0045e1c4567ddso3044838qkn.15
+        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Oct 2021 12:54:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=MHNhaL2DhBIuWauDT+vtiCzNM89DP5+QrC3jaOOyiBk=;
-        b=I930r8nK62EkJEa89w80QiF64XxifvmKiCmMIqQxk5iBSYDof70VkvtUFoU94vxFAo
-         CewAAccUQWv14ZwvMabCr3EY+2QOyRa7Aucgo36x3l6FWj5X7E49cUuO9ZoegTt6nB5W
-         JGvDhQu+9Y8xCo1rxrhRt4wpdrODga7ydV53hL5hyJZmd05qFLBraAlt2dHR4ni1IDM/
-         YI+lT/zdRjwMYgBS19gLq3SLEbmHgjd8KQbwkExCXPwZDIh9CYNiMWBaVEBNy7V3P00y
-         f/tIOCfCI6HPPtlgbTzOl77G8QyyNJlv1oxNBNwKn6DIpfY6YwoUDTV5gLkmwll18CG1
-         58zg==
-X-Gm-Message-State: AOAM532z7poNYujRiZvdx+2E90ur8X+j3XSfwSVx/RU8RavYPppFzc2E
-        694CvHxBDmwSVSWPEEdDMqWCYwa22/2f97A=
-X-Google-Smtp-Source: ABdhPJw5D7IIy6F7bebRd9XmMqbRLXvN0obnA6CCI/+0rNwfiD2DZ6KoyuHo+S1HESRhrU9T6rqFFhpwLEq0lO8=
-X-Received: from ramjiyani.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:2edd])
- (user=ramjiyani job=sendgmr) by 2002:ac8:cf:: with SMTP id
- d15mr85681qtg.416.1633549860871; Wed, 06 Oct 2021 12:51:00 -0700 (PDT)
-Date:   Wed,  6 Oct 2021 19:50:29 +0000
-Message-Id: <20211006195029.532034-1-ramjiyani@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.33.0.800.g4c38ced690-goog
-Subject: [PATCH v2] aio: Add support for the POLLFREE
-From:   Ramji Jiyani <ramjiyani@google.com>
-To:     arnd@arndb.de, viro@zeniv.linux.org.uk, bcrl@kvack.org
-Cc:     hch@lst.de, kernel-team@android.com, linux-aio@kvack.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        oleg@redhat.com, Ramji Jiyani <ramjiyani@google.com>,
-        Jeff Moyer <jmoyer@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=xnVRUaB8vdHCAs3GIdbbJkvM/qgvDDY4/1PeZEPVaUU=;
+        b=bqfeNyiSOlrWzJ+lOz548WM//EWav4CmXAji/Sy3iJZMKbe6nYOygi5xj1BgisXJTg
+         4OAefNqOyXvhs51LelF5RZiV/sEWKt0N0kj62elWXEDmfM7K9zNpY41wPWxSUlVGif19
+         ZEgYHnVdJfEQh4WmA29N0C7RtLb9GavZwmXbE19dQ9nv+aVY7Dp8HcEUx6nhywUdUth1
+         m/26yiOD0p0xMr4ZkmQMH/DYqlcvaJdUpEfNrXusyZqZcv0cl30Twzx3IxGeHBJMwJe+
+         qQJEzqiAB5ZCk6R3ygyqbaVmK/0c9Ma/60K3nUSOLMHJkQx8LDHCq6ABieLojiTgTF6z
+         HDXw==
+X-Gm-Message-State: AOAM532NHwdRGo6rOIckjHKJ4e62fnsZMQC5dHBiGijCdGHm5ga6NGsl
+        RGYVUiJBg2fXzvgzsAKGey2OzU//slYkAGbyfMmZLmpMagbYW11fDGm3TTT/+vtcDpS9gwNTfJE
+        n7A5PQ6BRchAIvtS3rG7r0Gd+mA==
+X-Received: by 2002:ac8:7e87:: with SMTP id w7mr136152qtj.166.1633550058704;
+        Wed, 06 Oct 2021 12:54:18 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzxud61YtiV9SX04xSMvTTTcQStB2UjjRUVAnxjj7QxgycMhC+ivJ4xXmzGMmXrNEC//a6L0A==
+X-Received: by 2002:ac8:7e87:: with SMTP id w7mr136117qtj.166.1633550058362;
+        Wed, 06 Oct 2021 12:54:18 -0700 (PDT)
+Received: from t490s ([2607:fea8:56a2:9100::bed8])
+        by smtp.gmail.com with ESMTPSA id b13sm3355666qkh.134.2021.10.06.12.54.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Oct 2021 12:54:17 -0700 (PDT)
+Date:   Wed, 6 Oct 2021 15:54:16 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
+        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
+ for PMD page fault
+Message-ID: <YV3+6K3uupLit3aH@t490s>
+References: <20210930215311.240774-1-shy828301@gmail.com>
+ <20210930215311.240774-3-shy828301@gmail.com>
+ <20211004140637.qejvenbkmrulqdno@box.shutemov.name>
+ <CAHbLzkp5d_j97MizSFCgfnHQj_tUQuHJqxWtrvRo_0kZMKCgtA@mail.gmail.com>
+ <20211004194130.6hdzanjl2e2np4we@box.shutemov.name>
+ <CAHbLzkqcrGCksMXbW5p75ZK2ODv4bLcdQWs7Jz0NG4-=5N20zw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHbLzkqcrGCksMXbW5p75ZK2ODv4bLcdQWs7Jz0NG4-=5N20zw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit f5cb779ba163 ("ANDROID: binder: remove waitqueue when thread
-exits.") fixed the use-after-free in eventpoll but aio still has the
-same issue because it doesn't honor the POLLFREE flag.
+On Mon, Oct 04, 2021 at 01:13:07PM -0700, Yang Shi wrote:
+> On Mon, Oct 4, 2021 at 12:41 PM Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> >
+> > On Mon, Oct 04, 2021 at 11:17:29AM -0700, Yang Shi wrote:
+> > > On Mon, Oct 4, 2021 at 7:06 AM Kirill A. Shutemov <kirill@shutemov.name> wrote:
+> > > >
+> > > > On Thu, Sep 30, 2021 at 02:53:08PM -0700, Yang Shi wrote:
+> > > > > diff --git a/mm/filemap.c b/mm/filemap.c
+> > > > > index dae481293b5d..2acc2b977f66 100644
+> > > > > --- a/mm/filemap.c
+> > > > > +++ b/mm/filemap.c
+> > > > > @@ -3195,12 +3195,12 @@ static bool filemap_map_pmd(struct vm_fault *vmf, struct page *page)
+> > > > >       }
+> > > > >
+> > > > >       if (pmd_none(*vmf->pmd) && PageTransHuge(page)) {
+> > > > > -         vm_fault_t ret = do_set_pmd(vmf, page);
+> > > > > -         if (!ret) {
+> > > > > -                 /* The page is mapped successfully, reference consumed. */
+> > > > > -                 unlock_page(page);
+> > > > > -                 return true;
+> > > > > -         }
+> > > > > +             vm_fault_t ret = do_set_pmd(vmf, page);
+> > > > > +             if (!ret) {
+> > > > > +                     /* The page is mapped successfully, reference consumed. */
+> > > > > +                     unlock_page(page);
+> > > > > +                     return true;
+> > > > > +             }
+> > > > >       }
+> > > > >
+> > > > >       if (pmd_none(*vmf->pmd)) {
+> > > >
+> > > > Hm. Is it unrelated whitespace fix?
+> > >
+> > > It is a coding style clean up. I thought it may be overkilling to have
+> > > a separate patch. Do you prefer separate one?
+> >
+> > Maybe. I tried to find what changed here. It's confusing.
+> 
+> Yeah, maybe. Anyway I will separate the real big fix and the cleanup
+> into two patches. This may be helpful for backporting too.
 
-Add support for the POLLFREE flag to force complete iocb inline in
-aio_poll_wake(). A thread may use it to signal it's exit and/or request
-to cleanup while pending poll request. In this case, aio_poll_wake()
-needs to make sure it doesn't keep any reference to the queue entry
-before returning from wake to avoid possible use after free via
-poll_cancel() path.
+Or maybe we just don't touch it until there's need for a functional change?  I
+feel it a pity to lose the git blame info for reindent-only patches, but no
+strong opinion, because I know many people don't think the same and I'm fine
+with either ways.
 
-The POLLFREE flag is no more exclusive to the epoll and is being
-shared with the aio. Remove comment from poll.h to avoid confusion.
+Another side note: perhaps a comment above pageflags enum on PG_has_hwpoisoned
+would be nice?  I saw that we've got a bunch of those already.
 
-This fixes a use after free issue between binder thread and aio
-interactions in certain sequence of events [1].
+Thanks,
 
-[1] https://lore.kernel.org/all/CAKUd0B_TCXRY4h1hTztfwWbNSFQqsudDLn2S_28csgWZmZAG3Q@mail.gmail.com/
-
-Signed-off-by: Ramji Jiyani <ramjiyani@google.com>
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
----
-Changes since v1:
-- Removed parenthesis around POLLFREE macro definition as per review.
-- Updated description to refer UAF issue discussion this patch fixes.
-- Updated description to remove reference to parenthesis change.
-- Added Reviewed-by
----
- fs/aio.c                        | 45 ++++++++++++++++++---------------
- include/uapi/asm-generic/poll.h |  2 +-
- 2 files changed, 26 insertions(+), 21 deletions(-)
-
-diff --git a/fs/aio.c b/fs/aio.c
-index 51b08ab01dff..5d539c05df42 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -1674,6 +1674,7 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
- {
- 	struct poll_iocb *req = container_of(wait, struct poll_iocb, wait);
- 	struct aio_kiocb *iocb = container_of(req, struct aio_kiocb, poll);
-+	struct kioctx *ctx = iocb->ki_ctx;
- 	__poll_t mask = key_to_poll(key);
- 	unsigned long flags;
- 
-@@ -1683,29 +1684,33 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
- 
- 	list_del_init(&req->wait.entry);
- 
--	if (mask && spin_trylock_irqsave(&iocb->ki_ctx->ctx_lock, flags)) {
--		struct kioctx *ctx = iocb->ki_ctx;
-+	/*
-+	 * Use irqsave/irqrestore because not all filesystems (e.g. fuse)
-+	 * call this function with IRQs disabled and because IRQs have to
-+	 * be disabled before ctx_lock is obtained.
-+	 */
-+	if (mask & POLLFREE) {
-+		/* Force complete iocb inline to remove refs to deleted entry */
-+		spin_lock_irqsave(&ctx->ctx_lock, flags);
-+	} else if (!(mask && spin_trylock_irqsave(&ctx->ctx_lock, flags))) {
-+		/* Can't complete iocb inline; schedule for later */
-+		schedule_work(&req->work);
-+		return 1;
-+	}
- 
--		/*
--		 * Try to complete the iocb inline if we can. Use
--		 * irqsave/irqrestore because not all filesystems (e.g. fuse)
--		 * call this function with IRQs disabled and because IRQs
--		 * have to be disabled before ctx_lock is obtained.
--		 */
--		list_del(&iocb->ki_list);
--		iocb->ki_res.res = mangle_poll(mask);
--		req->done = true;
--		if (iocb->ki_eventfd && eventfd_signal_allowed()) {
--			iocb = NULL;
--			INIT_WORK(&req->work, aio_poll_put_work);
--			schedule_work(&req->work);
--		}
--		spin_unlock_irqrestore(&ctx->ctx_lock, flags);
--		if (iocb)
--			iocb_put(iocb);
--	} else {
-+	/* complete iocb inline */
-+	list_del(&iocb->ki_list);
-+	iocb->ki_res.res = mangle_poll(mask);
-+	req->done = true;
-+	if (iocb->ki_eventfd && eventfd_signal_allowed()) {
-+		iocb = NULL;
-+		INIT_WORK(&req->work, aio_poll_put_work);
- 		schedule_work(&req->work);
- 	}
-+	spin_unlock_irqrestore(&ctx->ctx_lock, flags);
-+	if (iocb)
-+		iocb_put(iocb);
-+
- 	return 1;
- }
- 
-diff --git a/include/uapi/asm-generic/poll.h b/include/uapi/asm-generic/poll.h
-index 41b509f410bf..f9c520ce4bf4 100644
---- a/include/uapi/asm-generic/poll.h
-+++ b/include/uapi/asm-generic/poll.h
-@@ -29,7 +29,7 @@
- #define POLLRDHUP       0x2000
- #endif
- 
--#define POLLFREE	(__force __poll_t)0x4000	/* currently only for epoll */
-+#define POLLFREE	(__force __poll_t)0x4000
- 
- #define POLL_BUSY_LOOP	(__force __poll_t)0x8000
- 
 -- 
-2.33.0.800.g4c38ced690-goog
+Peter Xu
 
