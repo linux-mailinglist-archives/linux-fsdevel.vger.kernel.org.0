@@ -2,111 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 78FD4425ABE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 20:28:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AC92425AC4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 20:29:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241183AbhJGSao (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Oct 2021 14:30:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57244 "EHLO
+        id S243677AbhJGSa5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Oct 2021 14:30:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231340AbhJGSao (ORCPT
+        with ESMTP id S243663AbhJGSa4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Oct 2021 14:30:44 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A538C061570;
-        Thu,  7 Oct 2021 11:28:50 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id g8so26534512edt.7;
-        Thu, 07 Oct 2021 11:28:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=l3qN3MfhA2hn5WSk7ueIGscDIBqNVWdM54go8zsGIic=;
-        b=Auj2KFW+kPtGThvhI+koW38dm6Ae65UgyBYLsvi9U0XXo9T/IielNC2jqDw9Hk4S7K
-         fYVtZFT911RTIffZu7LmOnPmTF1KKDtK2U75lQ65ejFcBSpAN+P2HIh0FY/12zbaRHtf
-         Wi1TsUfYqzj+7qGJ/+L+Kd+gCQ3jJk/55WFjJNZqrDjwcDQvgVle/2a4FR1TUgh6zDZ7
-         Go2uA6U4+bRUdLEs2EPp7ekzffIVKNFEx/jvizl77Fb3J2m5JS4RSQ2Q5cYnnv3fAL9q
-         k1566krTjZnKWC7ueFrkBtcormsgRnk95T32xWXXKca8XQCDePLfHw8N7KNxm/Q7DGby
-         WNYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=l3qN3MfhA2hn5WSk7ueIGscDIBqNVWdM54go8zsGIic=;
-        b=4oGo3fwtmAIX3hJV0QRY5UUI77wLxdwBq7FCuMYCes2cUWw0IYgVCkrw2Y4LvNGtur
-         XIBf4W8w1JUlU+ah1CYPP3bNBitZmqqQlxABlxFg8HvHZCBil0ED4/L5xd+z7DjrNYX9
-         Dcer/gcmD3rbNxR0JEwqKOBasCNXt2hkTEG4f+GVkcqsEIc5AZcDtrIBazCA7Yl044xZ
-         YyV++9jNFeAagmBH/lRRAjeDUNMGUCxS4H2/VRXG8vgr4rxyIA05fnw/RmsWgPB3cdXZ
-         LVyxOfNh3P00HV7OgCpJgojEFuP9f/mnpEZ2eAvJEQjlNRmgL3TWl9ZGe8zxvvIyqYvO
-         /pxg==
-X-Gm-Message-State: AOAM532jiTcb620vm1wrt3MM9OfANdEexMspV2oUx7jsuG3nbXF5E5dF
-        tI8jpafDHXyZqlaAYm9cWebEm0DyrZmgSx7/M+M=
-X-Google-Smtp-Source: ABdhPJxgA18qK6hmXeIHMAGh+5TJ2JdQ0I/UDZzyKNqTvy46A6PUHs1z0LiF4dRutRMHydJpjbA4mGjN7IDVUb7O4C8=
-X-Received: by 2002:a50:8d85:: with SMTP id r5mr8303074edh.312.1633631328877;
- Thu, 07 Oct 2021 11:28:48 -0700 (PDT)
+        Thu, 7 Oct 2021 14:30:56 -0400
+X-Greylist: delayed 324 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 07 Oct 2021 11:29:02 PDT
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fac])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E54DC061755
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Oct 2021 11:29:02 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4HQKbH6sXZzMq0pQ;
+        Thu,  7 Oct 2021 20:28:59 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4HQKbF323jzlhNwp;
+        Thu,  7 Oct 2021 20:28:57 +0200 (CEST)
+Subject: Re: [PATCH v12 0/3] Add trusted_for(2) (was O_MAYEXEC)
+To:     Kees Cook <keescook@chromium.org>
+Cc:     bauen1 <j2468h@googlemail.com>, akpm@linux-foundation.org,
+        arnd@arndb.de, casey@schaufler-ca.com,
+        christian.brauner@ubuntu.com, christian@python.org, corbet@lwn.net,
+        cyphar@cyphar.com, deven.desai@linux.microsoft.com,
+        dvyukov@google.com, ebiggers@kernel.org, ericchiang@google.com,
+        fweimer@redhat.com, geert@linux-m68k.org, jack@suse.cz,
+        jannh@google.com, jmorris@namei.org,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, luto@kernel.org,
+        madvenka@linux.microsoft.com, mjg59@google.com,
+        mszeredi@redhat.com, mtk.manpages@gmail.com,
+        nramas@linux.microsoft.com, philippe.trebuchet@ssi.gouv.fr,
+        scottsh@microsoft.com, sean.j.christopherson@intel.com,
+        sgrubb@redhat.com, shuah@kernel.org, steve.dower@python.org,
+        thibaut.sautereau@clip-os.org, vincent.strubel@ssi.gouv.fr,
+        viro@zeniv.linux.org.uk, willy@infradead.org, zohar@linux.ibm.com
+References: <20201203173118.379271-1-mic@digikod.net>
+ <d3b0da18-d0f6-3f72-d3ab-6cf19acae6eb@gmail.com>
+ <2a4cf50c-7e79-75d1-7907-8218e669f7fa@digikod.net>
+ <202110061500.B8F821C@keescook>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <4c4bbd74-0599-fed5-0340-eff197bafeb1@digikod.net>
+Date:   Thu, 7 Oct 2021 20:29:31 +0200
+User-Agent: 
 MIME-Version: 1.0
-References: <20210930215311.240774-1-shy828301@gmail.com> <20210930215311.240774-3-shy828301@gmail.com>
- <20211004140637.qejvenbkmrulqdno@box.shutemov.name> <CAHbLzkp5d_j97MizSFCgfnHQj_tUQuHJqxWtrvRo_0kZMKCgtA@mail.gmail.com>
- <20211004194130.6hdzanjl2e2np4we@box.shutemov.name> <CAHbLzkqcrGCksMXbW5p75ZK2ODv4bLcdQWs7Jz0NG4-=5N20zw@mail.gmail.com>
- <YV3+6K3uupLit3aH@t490s> <CAHbLzkpWSM_HvCmgaLd748BLcmZ3cnDRQ577o_U+qDi1iSK3Og@mail.gmail.com>
- <YV8c1ZoMveUUlG+v@t490s>
-In-Reply-To: <YV8c1ZoMveUUlG+v@t490s>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Thu, 7 Oct 2021 11:28:36 -0700
-Message-ID: <CAHbLzkrzYfQHh=u5574++s4U6hPK2Cax00W2w3nYDGmmL4=M+g@mail.gmail.com>
-Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
- for PMD page fault
-To:     Peter Xu <peterx@redhat.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <202110061500.B8F821C@keescook>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 7, 2021 at 9:14 AM Peter Xu <peterx@redhat.com> wrote:
->
-> On Wed, Oct 06, 2021 at 04:41:35PM -0700, Yang Shi wrote:
-> > > Or maybe we just don't touch it until there's need for a functional change?  I
-> > > feel it a pity to lose the git blame info for reindent-only patches, but no
-> > > strong opinion, because I know many people don't think the same and I'm fine
-> > > with either ways.
-> >
-> > TBH I really don't think keeping old "git blame" info should be an
-> > excuse to avoid any coding style cleanup.
->
-> Sure.
->
-> >
-> > >
-> > > Another side note: perhaps a comment above pageflags enum on PG_has_hwpoisoned
-> > > would be nice?  I saw that we've got a bunch of those already.
-> >
-> > I was thinking about that, but it seems PG_double_map doesn't have
-> > comment there either so I didn't add.
->
-> IMHO that means we may just need even more documentations? :)
->
-> I won't ask for documenting doublemap bit in this series, but I just don't
-> think it's a good excuse to not provide documentations if we still can.
-> Especially to me PageHasHwpoisoned looks really so like PageHwpoisoned, so
-> it'll be still very nice to have some good document along with the patch it's
-> introduced.
 
-OK, I could add more comments for this flag in the enum. It should be
-just a duplicate of the comment right before the PAGEFLAG definition.
+On 07/10/2021 00:03, Kees Cook wrote:
+> On Fri, Apr 09, 2021 at 07:15:42PM +0200, Mickaël Salaün wrote:
+>> There was no new reviews, probably because the FS maintainers were busy,
+>> and I was focused on Landlock (which is now in -next), but I plan to
+>> send a new patch series for trusted_for(2) soon.
+> 
+> Hi!
+> 
+> Did this ever happen? It looks like it's in good shape, and I think it's
+> a nice building block for userspace to have. Are you able to rebase and
+> re-send this?
 
->
-> Thanks,
->
-> --
-> Peter Xu
->
+I just sent it:
+https://lore.kernel.org/all/20211007182321.872075-1-mic@digikod.net/
+
+Some Signed-off-by would be appreciated. :)
+
+> 
+> I've tended to aim these things at akpm if Al gets busy. (And since
+> you've had past review from Al, that should be hopefully sufficient.)
+> 
+> Thanks for chasing this!
+> 
+> -Kees
+> 
