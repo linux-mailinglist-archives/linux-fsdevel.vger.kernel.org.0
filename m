@@ -2,141 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 954CB424D5A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 08:40:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4314D424E12
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 09:28:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233696AbhJGGme (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Oct 2021 02:42:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60678 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232680AbhJGGmd (ORCPT
+        id S240248AbhJGHaB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Oct 2021 03:30:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:32278 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232512AbhJGHaB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Oct 2021 02:42:33 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D8C3C061746;
-        Wed,  6 Oct 2021 23:40:40 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id c29so4506786pfp.2;
-        Wed, 06 Oct 2021 23:40:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=rchYZ1OmvrTj6Dnb5m6nbANunxf9oFlLci7r8WnLUPs=;
-        b=O+7v3Tfioq20KfK+iM0C+zGiMKkOfAsz+ANPc0m+oNdQQOsOiltCkSWLlWzH3uGSAw
-         6VTdx1hFDFjrc2AKEBhK2aNu1U8F5Dqcef+wgfRGfqO+kA86OnmQL+fAqGMGJ6Cgf794
-         2apr60YhCU8TtaK892mqvAlkPPf54ZQLDkmeB/kp2lU/AGyPMwXSv66laka4M0tQoLZ4
-         uV/ieHXAPFvzBTrBe4C8m4y5/UgTdzQcY9gQ9TvpJpzfeg1V4AEjYblTstjiYX2+8QFR
-         DtVpbsVrNOPBb2jH3eXW1FUjU1hFa90FaXO3MyxAAPeEPXv3qHPjpXb+LZe3H1w8lbKO
-         IsmA==
+        Thu, 7 Oct 2021 03:30:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1633591687;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ry165nxVbeeGg5gTu6DIc5396l+Gq9PRR2heRwKdlqs=;
+        b=TzixtcL+urq/sfEt1bTOlHTHTYXv/pNYIvELC8hZiLEeClrHqriaOiXiApwFDcNHV6UOE0
+        w96/57n5xJOTwwhjKYXiGDRau92tmG4MXBMtu1jOxpm7mBOa7ijK8zGqIpzOnmqRZ3Zxvn
+        zfDCWoPzLiZCuoVQQZjABWuqPec/ykM=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-14-ZRSF9rRKOKKc2fmAJVVOEw-1; Thu, 07 Oct 2021 03:27:43 -0400
+X-MC-Unique: ZRSF9rRKOKKc2fmAJVVOEw-1
+Received: by mail-wr1-f71.google.com with SMTP id 41-20020adf812c000000b00160dfbfe1a2so264157wrm.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Oct 2021 00:27:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=rchYZ1OmvrTj6Dnb5m6nbANunxf9oFlLci7r8WnLUPs=;
-        b=eZB0eAnEDRLkxKE2EbWgwNBPhFZm47FbP7QvcPTTkXxntJooigy0rnoIk/QOUosPmN
-         0Sncq0QRLqQlSaFWS+9OHvb8S9gXqIQqjB8d09C9TzYH82XCtbc54g85oKWIUWnr7fS0
-         VH8qPScG1vtLTI9f2vR681dfzyXu2INoOAcenLLbJXdu5bBSXsB40ECsX8UCM6YNTDfJ
-         JLeG6mMrqlOZM+Y2+rkyuIKzaa3C4hKEKD+MUcel1w6hcdm/eaPVM84kiKqoq5LXcqhz
-         lPsX5TsLVSQHc0LzllZGAwpEu6Ck0ACD1+kPFFh80FzmRDi6brE1fO/IVswUlapCYBHA
-         Jqhg==
-X-Gm-Message-State: AOAM533ZhXfdvv+YYsN8OmLpSvMg08Q21XyzzF7a55xNEFTJSzBkq45u
-        HMx7fVEPCte7a3CHATafbMKi+ffFfKjgPr0IRyp7E6CfaKFB+N0=
-X-Google-Smtp-Source: ABdhPJxrWmcU7AzTy6Llp+zmxjXH3KAy/mRdFUScx+jA5RlbVQ4lgC0RabvXrznpxqpNB3TfgOmg0bxTrCTOmnCrneg=
-X-Received: by 2002:a63:85c6:: with SMTP id u189mr1970797pgd.381.1633588840007;
- Wed, 06 Oct 2021 23:40:40 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Ry165nxVbeeGg5gTu6DIc5396l+Gq9PRR2heRwKdlqs=;
+        b=Edwcr2KqowlhZ/xWs4ICeE1fXAvhcP8W93MK321CDg7A3u1c3UPe2dhfzddgq0LPKw
+         doBN2aVPfaOtp88lZ9QE2iJ1ZbL96U9HIz6IC0SvJ/v3INUnGb0xpsLo4PE5hrKZzK94
+         utP1KdS951CR461z/Z4z+zS/+70H/SWjgaA/ghygwCyF+9Rrgs61/eg6EgeHNRMISnuk
+         rigX5yI/INTUBeI96b6AlexaeCH6/HF9bm37nwLbHkDo4TM73B6Gok/tNV0z3eo/dAKr
+         p3nrJwzo8HY9rNCI1uhtEfF2DTS/Za610QG7q9jbDcErwkxjfutCkVYMC84T/31lJSoe
+         y9+Q==
+X-Gm-Message-State: AOAM533gXJC9Y8f9J0Uhd0iCUyxLNvkW2OVSgbxx31Om7jRT9twXkUL+
+        jnJrKFM+LA6bim2LTK15cdLJw/DChYAMQfxhIMECC1EKw/+OINivP+tQ0fIbhxMPgvjYHs25Kz6
+        GLNja4pV5CtzF/xd+6SOCqwvY7w==
+X-Received: by 2002:a7b:cc88:: with SMTP id p8mr2933859wma.101.1633591662039;
+        Thu, 07 Oct 2021 00:27:42 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyfPPQ0UhVVfB2g4Qm80BYGgXuhoWg2b+qdl06xZYcuNFTPFP6YKFU3oUjgAf+DGohOTWKv8Q==
+X-Received: by 2002:a7b:cc88:: with SMTP id p8mr2933796wma.101.1633591661824;
+        Thu, 07 Oct 2021 00:27:41 -0700 (PDT)
+Received: from [192.168.3.132] (p5b0c6886.dip0.t-ipconnect.de. [91.12.104.134])
+        by smtp.gmail.com with ESMTPSA id s14sm949540wro.76.2021.10.07.00.27.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Oct 2021 00:27:41 -0700 (PDT)
+Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
+To:     Suren Baghdasaryan <surenb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@suse.com>, John Hubbard <jhubbard@nvidia.com>,
+        Pavel Machek <pavel@ucw.cz>, Colin Cross <ccross@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        vincenzo.frascino@arm.com,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jann Horn <jannh@google.com>, apopple@nvidia.com,
+        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
+        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
+        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
+        Chris Hyser <chris.hyser@oracle.com>,
+        Peter Collingbourne <pcc@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
+        Rolf Eike Beer <eb@emlix.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
+        cxfcosmos@gmail.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        kernel-team <kernel-team@android.com>,
+        Tim Murray <timmurray@google.com>
+References: <20211001205657.815551-1-surenb@google.com>
+ <20211001205657.815551-3-surenb@google.com>
+ <20211005184211.GA19804@duo.ucw.cz>
+ <CAJuCfpE5JEThTMhwKPUREfSE1GYcTx4YSLoVhAH97fJH_qR0Zg@mail.gmail.com>
+ <20211005200411.GB19804@duo.ucw.cz>
+ <CAJuCfpFZkz2c0ZWeqzOAx8KFqk1ge3K-SiCMeu3dmi6B7bK-9w@mail.gmail.com>
+ <efdffa68-d790-72e4-e6a3-80f2e194d811@nvidia.com>
+ <YV1eCu0eZ+gQADNx@dhcp22.suse.cz>
+ <6b15c682-72eb-724d-bc43-36ae6b79b91a@redhat.com>
+ <CAJuCfpEPBM6ehQXgzp=g4SqtY6iaC8wuZ-CRE81oR1VOq7m4CA@mail.gmail.com>
+ <192438ab-a095-d441-6843-432fbbb8e38a@redhat.com>
+ <CAJuCfpH4KT=fOAWsYhaAb_LLg-VwPvL4Bmv32NYuUtZ3Ceo+PA@mail.gmail.com>
+ <20211006192927.f7a735f1afe4182bf4693838@linux-foundation.org>
+ <CAJuCfpGLQK5aVe5zQfdkP=K4NBZXPjtG=ycjk3E4D64CAvVPsg@mail.gmail.com>
+ <20211006195342.0503b3a3cbcd2c3c3417df46@linux-foundation.org>
+ <CAJuCfpEZzrN+V2g4+RsRs5v3e60RGvXOCk_X9e3wWkeMBZProg@mail.gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Message-ID: <3645f74d-54b4-9223-1d53-75cade471fad@redhat.com>
+Date:   Thu, 7 Oct 2021 09:27:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-References: <CACkBjsZh7DCs+N+R=0+mnNqFZW8ck5cSgV4MpGM6ySbfenUJ+g@mail.gmail.com>
-In-Reply-To: <CACkBjsZh7DCs+N+R=0+mnNqFZW8ck5cSgV4MpGM6ySbfenUJ+g@mail.gmail.com>
-From:   Hao Sun <sunhao.th@gmail.com>
-Date:   Thu, 7 Oct 2021 14:40:29 +0800
-Message-ID: <CACkBjsb0Hxam_e5+vOOanF_BfGAcf5UY+=Cc-pyphQftETTe8Q@mail.gmail.com>
-Subject: Re: kernel BUG in block_invalidatepage
-To:     Jens Axboe <axboe@kernel.dk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAJuCfpEZzrN+V2g4+RsRs5v3e60RGvXOCk_X9e3wWkeMBZProg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 07.10.21 05:01, Suren Baghdasaryan wrote:
+> On Wed, Oct 6, 2021 at 7:53 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+>>
+>> On Wed, 6 Oct 2021 19:46:57 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
+>>
+>>>>>>> I wish it was that simple and for some names like [anon:.bss] or
+>>>>>>> [anon:dalvik-zygote space] reserving a unique id would work, however
+>>>>>>> some names like [anon:dalvik-/system/framework/boot-core-icu4j.art]
+>>>>>>> are generated dynamically at runtime and include package name.
+>>>>>>
+>>>>>> Valuable information
+>>>>>
+>>>>> Yeah, I should have described it clearer the first time around.
+>>>>
+>>>> If it gets this fancy then the 80 char limit is likely to become a
+>>>> significant limitation and the choice should be explained & justified.
+>>>>
+>>>> Why not 97?  1034?  Why not just strndup_user() and be done with it?
+>>>
+>>> The original patch from 8 years ago used 256 as the limit but Rasmus
+>>> argued that the string content should be human-readable, so 80 chars
+>>> seems to be a reasonable limit (see:
+>>> https://lore.kernel.org/all/d8619a98-2380-ca96-001e-60fe9c6204a6@rasmusvillemoes.dk),
+>>> which makes sense to me. We should be able to handle the 80 char limit
+>>> by trimming it before calling prctl().
+>>
+>> What's the downside to making it unlimited?
+> 
+> If we ignore the human-readability argument, I guess the possibility
+> of abuse and increased memory consumption? I'm guessing parsing such a
+> string is also easier if there is a known limit?
 
-This crash can still be triggered repeatedly on the latest kernel.
+64k * 80 bytes already makes me nervous enough :)
 
-HEAD commit: 60a9483534ed Merge tag 'warning-fixes-20211005'
-git tree: upstream
-kernel config: https://drive.google.com/file/d/1u-ncYGLkq3xqdlNQYJz8-G6Fhf3H-moP/view?usp=sharing
 
-------------[ cut here ]------------
-kernel BUG at fs/buffer.c:1514!
-invalid opcode: 0000 [#1] PREEMPT SMP
-CPU: 3 PID: 25416 Comm: syz-executor Not tainted 5.15.0-rc4+ #22
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
-RIP: 0010:block_invalidatepage+0x27f/0x2a0 fs/buffer.c:1514
-Code: ff ff e8 b4 fd d6 ff b9 02 00 00 00 be 02 00 00 00 4c 89 ff 48
-c7 c2 40 b1 25 84 e8 8b 1b c5 02 e9 c9 fe ff ff e8 91 fd d6 ff <0f> 0b
-e8 8a fd d6 ff 0f 0b e8 83 fd d6 ff 48 8d 5d ff e9 57 ff ff
-RSP: 0018:ffffc9000538fa70 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffffea0004518000 RCX: 0000000000000000
-RDX: ffff88810dd2a280 RSI: ffffffff8160943f RDI: ffffea0004518000
-RBP: ffffea0004518000 R08: 0000000000000001 R09: 0000000000000000
-R10: ffffc9000538f908 R11: 0000000000000001 R12: ffffffff816091c0
-R13: ffffc9000538fb78 R14: 0000000000000000 R15: ffffc9000538fb00
-FS:  0000000000000000(0000) GS:ffff88813dd00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020590008 CR3: 000000000588a000 CR4: 0000000000750ee0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-PKRU: 55555554
-Call Trace:
- do_invalidatepage mm/truncate.c:157 [inline]
- truncate_cleanup_page+0x15c/0x280 mm/truncate.c:176
- truncate_inode_pages_range+0x169/0xc20 mm/truncate.c:325
- kill_bdev.isra.16+0x28/0x30 block/bdev.c:77
- blkdev_flush_mapping+0x4c/0x130 block/bdev.c:658
- blkdev_put_whole+0x54/0x60 block/bdev.c:689
- blkdev_put+0x6f/0x210 block/bdev.c:953
- blkdev_close+0x26/0x30 block/fops.c:460
- __fput+0xdf/0x380 fs/file_table.c:280
- task_work_run+0x86/0xd0 kernel/task_work.c:164
- exit_task_work include/linux/task_work.h:32 [inline]
- do_exit+0x4f1/0x11c0 kernel/exit.c:825
- do_group_exit+0x57/0xe0 kernel/exit.c:922
- get_signal+0x1d0/0x10b0 kernel/signal.c:2868
- arch_do_signal_or_restart+0xa9/0x860 arch/x86/kernel/signal.c:865
- handle_signal_work kernel/entry/common.c:148 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
- exit_to_user_mode_prepare+0xf2/0x280 kernel/entry/common.c:207
- __syscall_exit_to_user_mode_work kernel/entry/common.c:289 [inline]
- syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:300
- do_syscall_64+0x40/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x4196af
-Code: Unable to access opcode bytes at RIP 0x419685.
-RSP: 002b:00007faeee07b9c0 EFLAGS: 00000293 ORIG_RAX: 0000000000000012
-RAX: 0000000000000000 RBX: 0000000000000003 RCX: 00000000004196af
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000003 R15: 000000002059c040
-Modules linked in:
-Dumping ftrace buffer:
-   (ftrace buffer empty)
----[ end trace bb86c370c06fa387 ]---
-RIP: 0010:block_invalidatepage+0x27f/0x2a0 fs/buffer.c:1514
-Code: ff ff e8 b4 fd d6 ff b9 02 00 00 00 be 02 00 00 00 4c 89 ff 48
-c7 c2 40 b1 25 84 e8 8b 1b c5 02 e9 c9 fe ff ff e8 91 fd d6 ff <0f> 0b
-e8 8a fd d6 ff 0f 0b e8 83 fd d6 ff 48 8d 5d ff e9 57 ff ff
-RSP: 0018:ffffc9000538fa70 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffffea0004518000 RCX: 0000000000000000
-RDX: ffff88810dd2a280 RSI: ffffffff8160943f RDI: ffffea0004518000
-RBP: ffffea0004518000 R08: 0000000000000001 R09: 0000000000000000
-R10: ffffc9000538f908 R11: 0000000000000001 R12: ffffffff816091c0
-R13: ffffc9000538fb78 R14: 0000000000000000 R15: ffffc9000538fb00
-FS:  0000000000000000(0000) GS:ffff88813dd00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f397f798010 CR3: 0000000012392000 CR4: 0000000000750ee0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-PKRU: 55555554
+-- 
+Thanks,
+
+David / dhildenb
+
