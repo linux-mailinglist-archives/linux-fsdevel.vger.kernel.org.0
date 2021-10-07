@@ -2,94 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E37D4255AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 16:41:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 866D04255BC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 16:46:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242156AbhJGOnv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Oct 2021 10:43:51 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:38230 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242110AbhJGOnv (ORCPT
+        id S242135AbhJGOsm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Oct 2021 10:48:42 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:57798 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233419AbhJGOsl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Oct 2021 10:43:51 -0400
+        Thu, 7 Oct 2021 10:48:41 -0400
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id A26E522415;
-        Thu,  7 Oct 2021 14:41:56 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id 1A13D200CA;
+        Thu,  7 Oct 2021 14:46:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1633617716; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1633618007; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Wg27QjHqYVAaPstpf7so0rTJ0eaThEY9sMKMxSud6sM=;
-        b=ZNQracSvE5WinILbpjV5/pnPN/WhcsGYEbozg2lYkFmxM8w9LMxyrRLkjz0YkLxLctxJfq
-        Ail7uzAM79IsU/KTJXUQtPiXWN/DOimtNRXCUWg6qz8sWhoIpiaQVNrMZiirTMHSEeif2H
-        EBuLbdN3NiRia3c+RNicp6S3QK6m1rI=
+        bh=bn9jHUhGBy/09SeVT+oXfiBXLQm4zhIk/PLnuS4BfXI=;
+        b=B/xXd3mEz5i39N+aRPpqCSx8dpZC3l3YxzQvpAAzQJ/JuNzH97nq4rXaBGubVqGO/CtkTQ
+        SWV6nwz9TF+X3duxO6WwEvyVVlSmWhwaqBZJEw+u5HY2Eafvwri5A9ZfgfbSp8wxB22C3g
+        vqmjgMO1TUZ/xSV2WFX2aF1Sb5xFhn8=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1633617716;
+        s=susede2_ed25519; t=1633618007;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Wg27QjHqYVAaPstpf7so0rTJ0eaThEY9sMKMxSud6sM=;
-        b=YD5i1L6NIygVjyo/v1tKRFa66cgqmirpQnXpl9Z6oWH6LwcqCTatziIQJZIZiOSAM4pBvO
-        8Ej2oPK7pkC4iYCQ==
+        bh=bn9jHUhGBy/09SeVT+oXfiBXLQm4zhIk/PLnuS4BfXI=;
+        b=ML+pYq8+P53uEk51AL6tU6Xo3jdPHvJ1X3hWA591UWgFCiZ54EKDX0ClBt/zTX0f6p4DHE
+        2ivBMw5ulqfDO0Bg==
 Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id 59C6FA3B87;
-        Thu,  7 Oct 2021 14:41:56 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTP id 026BAA3B83;
+        Thu,  7 Oct 2021 14:46:47 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 34B7D1F2C96; Thu,  7 Oct 2021 16:41:56 +0200 (CEST)
-Date:   Thu, 7 Oct 2021 16:41:56 +0200
+        id D43BF1F2C96; Thu,  7 Oct 2021 16:46:46 +0200 (CEST)
+Date:   Thu, 7 Oct 2021 16:46:46 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Chengguang Xu <cgxu519@mykernel.net>
-Cc:     Jan Kara <jack@suse.cz>, miklos <miklos@szeredi.hu>,
-        amir73il <amir73il@gmail.com>,
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Chengguang Xu <cgxu519@mykernel.net>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-unionfs <linux-unionfs@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
 Subject: Re: [RFC PATCH v5 06/10] ovl: implement overlayfs' ->write_inode
  operation
-Message-ID: <20211007144156.GK12712@quack2.suse.cz>
+Message-ID: <20211007144646.GL12712@quack2.suse.cz>
 References: <20210923130814.140814-1-cgxu519@mykernel.net>
  <20210923130814.140814-7-cgxu519@mykernel.net>
- <20211007090157.GB12712@quack2.suse.cz>
- <17c5ab83d6d.10cdb35ab25883.3563739472838823734@mykernel.net>
+ <CAJfpeguqj2vst4Zj5EovSktJkXiDSCSWY=X12X0Yrz4M8gPRmQ@mail.gmail.com>
+ <17c5aba1fef.c5c03d5825886.6577730832510234905@mykernel.net>
+ <CAJfpegtr1NkOiY9YWd1meU1yiD-LFX-aB55UVJs94FrX0VNEJQ@mail.gmail.com>
+ <17c5adfe5ea.12f1be94625921.4478415437452327206@mykernel.net>
+ <CAJfpegt4jZpSCXGFk2ieqUXVm3m=ng7QtSzZp2bXVs07bfrbXg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <17c5ab83d6d.10cdb35ab25883.3563739472838823734@mykernel.net>
+In-Reply-To: <CAJfpegt4jZpSCXGFk2ieqUXVm3m=ng7QtSzZp2bXVs07bfrbXg@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 07-10-21 20:26:36, Chengguang Xu wrote:
->  ---- 在 星期四, 2021-10-07 17:01:57 Jan Kara <jack@suse.cz> 撰写 ----
->  > 
->  > > +    if (mapping_writably_mapped(upper->i_mapping) ||
->  > > +        mapping_tagged(upper->i_mapping, PAGECACHE_TAG_WRITEBACK))
->  > > +        iflag |= I_DIRTY_PAGES;
->  > > +
->  > > +    iflag |= upper->i_state & I_DIRTY_ALL;
->  > 
->  > Also since you call ->write_inode directly upper->i_state won't be updated
->  > to reflect that inode has been written out (I_DIRTY flags get cleared in
->  > __writeback_single_inode()). So it seems to me overlayfs will keep writing
->  > out upper inode until flush worker on upper filesystem also writes the
->  > inode and clears the dirty flags? So you rather need to call something like
->  > write_inode_now() that will handle the flag clearing and do writeback list
->  > handling for you?
->  > 
+On Thu 07-10-21 15:34:19, Miklos Szeredi wrote:
+> On Thu, 7 Oct 2021 at 15:10, Chengguang Xu <cgxu519@mykernel.net> wrote:
+> >  > However that wasn't what I was asking about.  AFAICS ->write_inode()
+> >  > won't start write back for dirty pages.   Maybe I'm missing something,
+> >  > but there it looks as if nothing will actually trigger writeback for
+> >  > dirty pages in upper inode.
+> >  >
+> >
+> > Actually, page writeback on upper inode will be triggered by overlayfs ->writepages and
+> > overlayfs' ->writepages will be called by vfs writeback function (i.e writeback_sb_inodes).
 > 
-> Calling ->write_inode directly upper->i_state won't be updated, however,
-> I don't think overlayfs will keep writing out upper inode since
-> ->write_inode will be called when only overlay inode itself marked dirty.
-> Am I missing something?
+> Right.
+> 
+> But wouldn't it be simpler to do this from ->write_inode()?
 
-Well, if upper->i_state is not updated, you are more or less guaranteed
-upper->i_state & I_DIRTY_ALL != 0 and thus even overlay inode stays dirty.
-And thus next time writeback runs you will see dirty overlay inode and
-writeback the upper inode again although it is not necessary.
+You could but then you'd have to make sure you have I_DIRTY_SYNC always set
+when I_DIRTY_PAGES is set on the upper inode so that your ->write_inode()
+callback gets called. Overall I agree the logic would be probably simpler.
 
 								Honza
 -- 
