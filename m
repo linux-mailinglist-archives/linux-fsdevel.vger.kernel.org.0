@@ -2,335 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C8E1D425CE3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 22:05:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59371425D38
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 22:27:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233419AbhJGUHU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Oct 2021 16:07:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51614 "EHLO
+        id S233603AbhJGU3U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Oct 2021 16:29:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230060AbhJGUHU (ORCPT
+        with ESMTP id S230060AbhJGU3T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Oct 2021 16:07:20 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1B97C061570;
-        Thu,  7 Oct 2021 13:05:25 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id b20so30161380lfv.3;
-        Thu, 07 Oct 2021 13:05:25 -0700 (PDT)
+        Thu, 7 Oct 2021 16:29:19 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CBC1C061570;
+        Thu,  7 Oct 2021 13:27:25 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id v18so28036926edc.11;
+        Thu, 07 Oct 2021 13:27:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=GdrPLxIt+4l06ZDStQvsA9eNQxoPR6Mc0OkW5r/qjY8=;
-        b=p9wWC8WOBmLVxXG+FbUgl0PhDa7xdfYn7DfGgt4Za10zeZbuuvI+CDQty+ytKgr051
-         bquDTuc/sDoqpnK4MY9dcWDEexn63YrVz9jxD89oADgEfqpGyzy5c0WBR8XaWKxplYrx
-         ErN2hIyWcKQTiQ+c7yJIVrjqmVL5dUFaOy47VcntzzfKw1dmAItQ96mPJCSXgi18ysV6
-         CftAeWC7DEQJjbwusPWFMf+4QO+wrmx7lLazzvzGGvIbY42Ll+Fkgi2EpYmH9EX1ZclH
-         9aWV6wbLFzSK4gLhIYSoNv14I8Y/1lEnQCFFV8oC5I4aLUluC73bTMTo63W0Ez8c5gjJ
-         0QOg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=meVJZ/Jk9W+dixJB/LuoRy3/ra68qi2MQkPwKdp2JR0=;
+        b=dC3cFYY77OUrg+THR4IJ3I2oKuVLU5NSml5IEdGdu6ALMQsgw7cGj1UOTk+KnVafC8
+         WmMnI2+MGrYTNPMEsAYvM4Zu3CRhN0teC0n5DOZhRZciYUG0Fetg16qbxTcZSNhMU3Tp
+         JujjjOUoFS9YamfOmoBzKq+V5TbhO0vk9t7lUAk4L0/vHkvXFyak1xXYvDGIebJ23aq2
+         hi3trJbkmsgYlk7Khk9I6T4vZwH4CJZBuaCXtD+hptTOB3SCIMtJkwQ0mkb5DMCW6IZd
+         nJkx8OiRHss3dQDysCNPuNadNVY6furpZhVuSqTjCWtr3RfsdfqzJJkpTiDpXQsGaCUT
+         1+pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=GdrPLxIt+4l06ZDStQvsA9eNQxoPR6Mc0OkW5r/qjY8=;
-        b=bBKSbwDR58K9d1nFx+S/Neit8tZu1Gx0cMbwxqK2EhZiVzEaPy+SShHb5tgpYW0bPl
-         kAR/wn/e7eUaDVRDrQp/jpjyUVFrvKebAvVdrE9sQIoG002VcoS2NBfbMZU+a7EjiBAF
-         ype7M/lgvUFSUIgKuqKU+/0E6VscE1tNBskg6Tq9EiTmnqvYZGdlm7BLm4Y39pNRWU11
-         iwvxnvJSjuERh/j3keC9F3EoXQfc3stOIQ20LHEjjeJgijDofKIk7NnPlTFJ7rkkOh8V
-         wAu2vkz9/G6hVmrTVdJUP1FrJVe80/SvaTkdgdV19G5e573coX7GE270WdunlhMBnNw+
-         Tn6Q==
-X-Gm-Message-State: AOAM533uaTKhrYxMz2Fge6QdV9Xzz+fAFSE24/Ggnhw9U2ZYo9+DF4Hz
-        gpQ9hAN4aE7pqsdeJL3zWCWWeh4OlbU=
-X-Google-Smtp-Source: ABdhPJzB0ke14BsK9NYlXQJnMII/9+HuFG3m7HOBiL19V6hi+2hvZedCWPb3vKY9XyEc7nepBX0gQQ==
-X-Received: by 2002:a2e:801a:: with SMTP id j26mr6972454ljg.175.1633637124026;
-        Thu, 07 Oct 2021 13:05:24 -0700 (PDT)
-Received: from kari-VirtualBox ([31.132.12.44])
-        by smtp.gmail.com with ESMTPSA id r3sm28081lfc.169.2021.10.07.13.05.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Oct 2021 13:05:23 -0700 (PDT)
-Date:   Thu, 7 Oct 2021 23:05:21 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, mark@harmstone.com
-Subject: Re: [PATCH] fs/ntfs3: Remove bothcase variable
-Message-ID: <20211007200521.fj7aq5wlppxa7xzw@kari-VirtualBox>
-References: <45f2af05-9f5c-bf56-aa91-47d8b0055f5b@paragon-software.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=meVJZ/Jk9W+dixJB/LuoRy3/ra68qi2MQkPwKdp2JR0=;
+        b=BM/9pA0Agfuq5w7F1CJeSiWoJjirD4EQtH4zT0U2gDI1pI7VVsmTPzBQwHn4S6ZOv1
+         8azR8CS+FGhqgAnng5GyxWVAhaiI9C9wAsk5bl07fqV+gljE9Vs8f6mkqS875DceAU82
+         LVIt8ZK9dbR0d9N7uZVPr0l9gJdYlDI33hkpF27Rx4d/s3GX33ckOZvHHDrxTKW+PuPN
+         TdyFsoldK2Do0OWRhPP+XLCtM4RKgGmSLFOWlL86ujY6jZ3uSTgLrD86yyKDVaxyjnII
+         Lb76GmFAFfIfBqxFuNaelc0jSohaCMk5G5+CzRS1ghCJCimfUkeTaPOUlT0CoGlt1nHb
+         Qq0A==
+X-Gm-Message-State: AOAM530H2ZyCHYriK/I3q00Xc5n6kTvxNBiChxwaMsfCq00ezD8o1Bc3
+        E4OBS8X5WYHwSZJRIVhDoGv8WBzhG4DizJnUwBE=
+X-Google-Smtp-Source: ABdhPJyVJJHP5DLZjFy9sZ2fQ4TiUIi7xOmAIdHWsergF9thozLAZHG3qA9EUTfaiTDl1+7P+HlIL3WfongsKIaiFx8=
+X-Received: by 2002:a17:906:c2ca:: with SMTP id ch10mr5567576ejb.311.1633638443670;
+ Thu, 07 Oct 2021 13:27:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <45f2af05-9f5c-bf56-aa91-47d8b0055f5b@paragon-software.com>
+References: <20210930215311.240774-1-shy828301@gmail.com> <20210930215311.240774-3-shy828301@gmail.com>
+ <YV4Dz3y4NXhtqd6V@t490s> <CAHbLzkp8oO9qvDN66_ALOqNrUDrzHH7RZc3G5GQ1pxz8qXJjqw@mail.gmail.com>
+ <YV8bChbXop3FuwPC@t490s> <CAHbLzkq-18rDvfVepNTfKzPbb0+Tg9S=bwFCgjXGv0RxgouptA@mail.gmail.com>
+In-Reply-To: <CAHbLzkq-18rDvfVepNTfKzPbb0+Tg9S=bwFCgjXGv0RxgouptA@mail.gmail.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Thu, 7 Oct 2021 13:27:11 -0700
+Message-ID: <CAHbLzkoRtASPUejXwDJOd9794hXyC9pnccwO1hx8sanpoTECtQ@mail.gmail.com>
+Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
+ for PMD page fault
+To:     Peter Xu <peterx@redhat.com>
+Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 07, 2021 at 06:37:55PM +0300, Konstantin Komarov wrote:
-> bothcase == true when upcase != NULL
-> bothcase == false when upcase == NULL
-> We don't need to have second variable, that is a copy of upcase.
-
-Can I suggest this one. This way we have three possible state. 
-
-/* Note that NTFS_CASE can also have state CASE_BOTH */
-int ntfs_cmp_names(const __le16 *s1, size_t l1, const __le16 *s2, size_t l2,
-		   const u16 *upcase, enum NTFS_CASE case_cmp)
-{
-	int diff1 = 0;
-	int diff2;
-	size_t len = min(l1, l2);
-
-	if (case_cmp == CASE_INSENSITIVE)
-		goto case_insentive;
-
-	for (; len; s1++, s2++, len--) {
-		diff1 = le16_to_cpu(*s1) - le16_to_cpu(*s2);
-		if (diff1) {
-			if (case_cmp != CASE_SENSITIVE)
-				goto case_insentive;
-
-			return diff1;
-		}
-	}
-	return l1 - l2;
-
-case_insentive:
-	for (; len; s1++, s2++, len--) {
-		diff2 = upcase_unicode_char(upcase, le16_to_cpu(*s1)) -
-			upcase_unicode_char(upcase, le16_to_cpu(*s2));
-		if (diff2)
-			return diff2;
-	}
-
-	diff2 = l1 - l2;
-	return diff2 ? diff2 : diff1;
-}
-
-
-It might also be possible to add compile time error for condition
-
-	!upcase && case_cmp != CASE_SENSITIVE
-
-You also wrote [1] this  
-
-On 6.10.2021 17.37 Konstantin Komarov wrote:
+On Thu, Oct 7, 2021 at 11:19 AM Yang Shi <shy828301@gmail.com> wrote:
 >
-> There is indeed some dubious code with ntfs_cmp_names_cpu / ntfs_cmp_names.
-> We must always compare filenames with bothcase == true.
+> On Thu, Oct 7, 2021 at 9:06 AM Peter Xu <peterx@redhat.com> wrote:
+> >
+> > On Wed, Oct 06, 2021 at 04:57:38PM -0700, Yang Shi wrote:
+> > > > For example, I see that both unpoison_memory() and soft_offline_page() will
+> > > > call it too, does it mean that we'll also set the bits e.g. even when we want
+> > > > to inject an unpoison event too?
+> > >
+> > > unpoison_memory() should be not a problem since it will just bail out
+> > > once THP is met as the comment says:
+> > >
+> > > /*
+> > > * unpoison_memory() can encounter thp only when the thp is being
+> > > * worked by memory_failure() and the page lock is not held yet.
+> > > * In such case, we yield to memory_failure() and make unpoison fail.
+> > > */
+> >
+> > But I still think setting the subpage-hwpoison bit hides too deep there, it'll
+> > be great we can keep get_hwpoison_page() as simple as a safe version of getting
+> > the refcount of the page we want.  Or we'd still better touch up the comment
+> > above get_hwpoison_page() to show that side effect.
+> >
+> > >
+> > >
+> > > And I think we should set the flag for soft offline too, right? The
+> >
+> > I'm not familiar with either memory failure or soft offline, so far it looks
+> > right to me.  However..
+> >
+> > > soft offline does set the hwpoison flag for the corrupted sub page and
+> > > doesn't split file THP,
+> >
+> > .. I believe this will become not true after your patch 5, right?
+>
+> But THP split may fail, right?
+>
+> >
+> > > so it should be captured by page fault as well. And yes for poison injection.
+> >
+> > One more thing: besides thp split and page free, do we need to conditionally
+> > drop the HasHwpoisoned bit when received an unpoison event?
+>
+> It seems not to me, as the above comment from unpoison_memory() says
+> unpoison can encounter thp only when the thp is being worked by
+> memory_failure() and the page lock is not held yet. So it just bails
+> out.
+>
+> In addition, unpoison just works for software injected errors, not
+> real hardware failure.
+>
+> >
+> > If my understanding is correct, we may need to scan all the subpages there, to
+> > make sure HasHwpoisoned bit reflects the latest status for the thp in question.
+> >
+> > >
+> > > But your comment reminds me that get_hwpoison_page() is just called
+> > > when !MF_COUNT_INCREASED, so it means MADV_HWPOISON still could
+> > > escape. This needs to be covered too.
+> >
+> > Right, maybe that's also a clue that we shouldn't set the new page flag within
+> > get_hwpoison_page(), since get_hwpoison_page() is actually well coupled with
+> > MF_COUNT_INCREASED and all of them are only about refcounting of the pages.
+>
+> Yeah, maybe, as long as there is not early bail out in some error
+> handling paths.
 
-This I do not understand. If we have upcase and bothcase == false then
-it will mean we are comparing case insentive. bothcase was dubious I
-admit because with two parameters there could be four state and one of
-them did not make any sense. But maybe enum will make it more clear. We
-really need 3 different stage.
+It seems fine to move setting the flag out of get_hwpoison_page() to
+right before splitting THP so that both MF_COUNT_INCREASED and
+!MF_COUNT_INCREASED could be covered.
 
-Your patch cannot actually compare case_insentive at all. Your patch
-will compare case_sensitive or case_both. I think we need to also way to
-compare case_insentive. I also belive that because bothcase was
-everywhere true that it was the real bug. More testing is needed from my
-part before I can make sure. I will test this in weekend and also review
-other patches.
 
-  Argillander
-
-> 
-> Suggested-by: Mark Harmstone <mark@harmstone.com>
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> ---
->  fs/ntfs3/attrlist.c |  8 +++-----
->  fs/ntfs3/frecord.c  |  3 +--
->  fs/ntfs3/index.c    |  6 ++----
->  fs/ntfs3/inode.c    |  2 +-
->  fs/ntfs3/ntfs_fs.h  |  4 ++--
->  fs/ntfs3/record.c   |  2 +-
->  fs/ntfs3/upcase.c   | 18 ++++++------------
->  7 files changed, 16 insertions(+), 27 deletions(-)
-> 
-> diff --git a/fs/ntfs3/attrlist.c b/fs/ntfs3/attrlist.c
-> index bad6d8a849a2..1a31ef4ed92b 100644
-> --- a/fs/ntfs3/attrlist.c
-> +++ b/fs/ntfs3/attrlist.c
-> @@ -194,8 +194,7 @@ struct ATTR_LIST_ENTRY *al_find_ex(struct ntfs_inode *ni,
->  			 * Compare entry names only for entry with vcn == 0.
->  			 */
->  			diff = ntfs_cmp_names(le_name(le), name_len, name,
-> -					      name_len, ni->mi.sbi->upcase,
-> -					      true);
-> +					      name_len, ni->mi.sbi->upcase);
->  			if (diff < 0)
->  				continue;
->  
-> @@ -246,8 +245,7 @@ static struct ATTR_LIST_ENTRY *al_find_le_to_insert(struct ntfs_inode *ni,
->  			 * Compare entry names only for entry with vcn == 0.
->  			 */
->  			diff = ntfs_cmp_names(le_name(le), le->name_len, name,
-> -					      name_len, ni->mi.sbi->upcase,
-> -					      true);
-> +					      name_len, ni->mi.sbi->upcase);
->  			if (diff < 0)
->  				continue;
->  
-> @@ -393,7 +391,7 @@ bool al_delete_le(struct ntfs_inode *ni, enum ATTR_TYPE type, CLST vcn,
->  	if (le->name_len != name_len)
->  		return false;
->  	if (name_len && ntfs_cmp_names(le_name(le), name_len, name, name_len,
-> -				       ni->mi.sbi->upcase, true))
-> +				       ni->mi.sbi->upcase))
->  		return false;
->  	if (le64_to_cpu(le->vcn) != vcn)
->  		return false;
-> diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-> index 007602badd90..ecf982aca437 100644
-> --- a/fs/ntfs3/frecord.c
-> +++ b/fs/ntfs3/frecord.c
-> @@ -1589,8 +1589,7 @@ struct ATTR_FILE_NAME *ni_fname_name(struct ntfs_inode *ni,
->  	if (uni->len != fname->name_len)
->  		goto next;
->  
-> -	if (ntfs_cmp_names_cpu(uni, (struct le_str *)&fname->name_len, NULL,
-> -			       false))
-> +	if (ntfs_cmp_names_cpu(uni, (struct le_str *)&fname->name_len, NULL))
->  		goto next;
->  
->  	return fname;
-> diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
-> index 6f81e3a49abf..a12f6fa0537e 100644
-> --- a/fs/ntfs3/index.c
-> +++ b/fs/ntfs3/index.c
-> @@ -38,7 +38,6 @@ static int cmp_fnames(const void *key1, size_t l1, const void *key2, size_t l2,
->  	const struct ntfs_sb_info *sbi = data;
->  	const struct ATTR_FILE_NAME *f1;
->  	u16 fsize2;
-> -	bool both_case;
->  
->  	if (l2 <= offsetof(struct ATTR_FILE_NAME, name))
->  		return -1;
-> @@ -47,7 +46,6 @@ static int cmp_fnames(const void *key1, size_t l1, const void *key2, size_t l2,
->  	if (l2 < fsize2)
->  		return -1;
->  
-> -	both_case = f2->type != FILE_NAME_DOS /*&& !sbi->options.nocase*/;
->  	if (!l1) {
->  		const struct le_str *s2 = (struct le_str *)&f2->name_len;
->  
-> @@ -55,12 +53,12 @@ static int cmp_fnames(const void *key1, size_t l1, const void *key2, size_t l2,
->  		 * If names are equal (case insensitive)
->  		 * try to compare it case sensitive.
->  		 */
-> -		return ntfs_cmp_names_cpu(key1, s2, sbi->upcase, both_case);
-> +		return ntfs_cmp_names_cpu(key1, s2, sbi->upcase);
->  	}
->  
->  	f1 = key1;
->  	return ntfs_cmp_names(f1->name, f1->name_len, f2->name, f2->name_len,
-> -			      sbi->upcase, both_case);
-> +			      sbi->upcase);
->  }
->  
->  /*
-> diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-> index 7dd162f6a7e2..c7014e5f941c 100644
-> --- a/fs/ntfs3/inode.c
-> +++ b/fs/ntfs3/inode.c
-> @@ -179,7 +179,7 @@ static struct inode *ntfs_read_mft(struct inode *inode,
->  		names += 1;
->  		if (name && name->len == fname->name_len &&
->  		    !ntfs_cmp_names_cpu(name, (struct le_str *)&fname->name_len,
-> -					NULL, false))
-> +					NULL))
->  			is_match = true;
->  
->  		goto next_attr;
-> diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-> index 38b7c1a9dc52..859624d0dccb 100644
-> --- a/fs/ntfs3/ntfs_fs.h
-> +++ b/fs/ntfs3/ntfs_fs.h
-> @@ -830,9 +830,9 @@ int ntfs_trim_fs(struct ntfs_sb_info *sbi, struct fstrim_range *range);
->  
->  /* Globals from upcase.c */
->  int ntfs_cmp_names(const __le16 *s1, size_t l1, const __le16 *s2, size_t l2,
-> -		   const u16 *upcase, bool bothcase);
-> +		   const u16 *upcase);
->  int ntfs_cmp_names_cpu(const struct cpu_str *uni1, const struct le_str *uni2,
-> -		       const u16 *upcase, bool bothcase);
-> +		       const u16 *upcase);
->  
->  /* globals from xattr.c */
->  #ifdef CONFIG_NTFS3_FS_POSIX_ACL
-> diff --git a/fs/ntfs3/record.c b/fs/ntfs3/record.c
-> index 861e35791506..6afd3c20b0d3 100644
-> --- a/fs/ntfs3/record.c
-> +++ b/fs/ntfs3/record.c
-> @@ -23,7 +23,7 @@ static inline int compare_attr(const struct ATTRIB *left, enum ATTR_TYPE type,
->  
->  	/* They have the same type code, so we have to compare the names. */
->  	return ntfs_cmp_names(attr_name(left), left->name_len, name, name_len,
-> -			      upcase, true);
-> +			      upcase);
->  }
->  
->  /*
-> diff --git a/fs/ntfs3/upcase.c b/fs/ntfs3/upcase.c
-> index b5e8256fd710..c15ae0993839 100644
-> --- a/fs/ntfs3/upcase.c
-> +++ b/fs/ntfs3/upcase.c
-> @@ -24,29 +24,26 @@ static inline u16 upcase_unicode_char(const u16 *upcase, u16 chr)
->  /*
->   * ntfs_cmp_names
->   *
-> - * Thanks Kari Argillander <kari.argillander@gmail.com> for idea and implementation 'bothcase'
-> + * Thanks Kari Argillander <kari.argillander@gmail.com> for idea and implementation
->   *
->   * Straight way to compare names:
->   * - Case insensitive
-> - * - If name equals and 'bothcases' then
-> + * - If name equals and 'upcase' then
->   * - Case sensitive
->   * 'Straight way' code scans input names twice in worst case.
->   * Optimized code scans input names only once.
->   */
->  int ntfs_cmp_names(const __le16 *s1, size_t l1, const __le16 *s2, size_t l2,
-> -		   const u16 *upcase, bool bothcase)
-> +		   const u16 *upcase)
->  {
->  	int diff1 = 0;
->  	int diff2;
->  	size_t len = min(l1, l2);
->  
-> -	if (!bothcase && upcase)
-> -		goto case_insentive;
-> -
->  	for (; len; s1++, s2++, len--) {
->  		diff1 = le16_to_cpu(*s1) - le16_to_cpu(*s2);
->  		if (diff1) {
-> -			if (bothcase && upcase)
-> +			if (upcase)
->  				goto case_insentive;
->  
->  			return diff1;
-> @@ -67,7 +64,7 @@ int ntfs_cmp_names(const __le16 *s1, size_t l1, const __le16 *s2, size_t l2,
->  }
->  
->  int ntfs_cmp_names_cpu(const struct cpu_str *uni1, const struct le_str *uni2,
-> -		       const u16 *upcase, bool bothcase)
-> +		       const u16 *upcase)
->  {
->  	const u16 *s1 = uni1->name;
->  	const __le16 *s2 = uni2->name;
-> @@ -77,13 +74,10 @@ int ntfs_cmp_names_cpu(const struct cpu_str *uni1, const struct le_str *uni2,
->  	int diff1 = 0;
->  	int diff2;
->  
-> -	if (!bothcase && upcase)
-> -		goto case_insentive;
-> -
->  	for (; len; s1++, s2++, len--) {
->  		diff1 = *s1 - le16_to_cpu(*s2);
->  		if (diff1) {
-> -			if (bothcase && upcase)
-> +			if (upcase)
->  				goto case_insentive;
->  
->  			return diff1;
-> -- 
-> 2.33.0
-> 
+>
+> >
+> > --
+> > Peter Xu
+> >
