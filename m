@@ -2,62 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FE60424E8E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 10:05:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6B63424ECA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 10:11:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240545AbhJGIHI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Oct 2021 04:07:08 -0400
-Received: from mail.commercoid.pl ([217.61.19.179]:58156 "EHLO
-        mail.commercoid.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240546AbhJGIHH (ORCPT
+        id S240641AbhJGIMz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Oct 2021 04:12:55 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:51366 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240591AbhJGIMy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Oct 2021 04:07:07 -0400
-X-Greylist: delayed 327 seconds by postgrey-1.27 at vger.kernel.org; Thu, 07 Oct 2021 04:07:07 EDT
-Received: by mail.commercoid.pl (Postfix, from userid 1001)
-        id 798D0A1BF7; Thu,  7 Oct 2021 09:00:19 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=commercoid.pl;
-        s=mail; t=1633593628;
-        bh=oc9zX+7z/uddtHo7B9du3NWAUF24fm2EncnZpJE5IRI=;
-        h=Date:From:To:Subject:From;
-        b=E3G8N1kX4ECepzoi53KgTL9Vm5taoVPTgeLgaQ98U6cLizH0hPD1GyTD13GKxApzf
-         nHEC5eTt2FETm3hN1Nnh9T+B6LwjXiqpVNdEFaUzYiDO91Ao+wbafR0BSsFx46P3HD
-         c1xEubqesdermbIZl4oov4kIEMb9d6muCfx2gdFAmgIUKyXGOVBvyMcQzU463x2TCT
-         d6Y4Z0ZMTULDr3hOn4sCJPBxcWTsNMk7CTOi+UuHiy1bHG4KIpHe926+eP3nnrHTiA
-         QlaS/mSAMlRetURWo1Ej4N0Mw6Mu0Ehfb+BxXPTFZS1yYw7IRE4DZd2fvSNMAjj+yv
-         C5uryhz7uCl1w==
-Received: by mail.commercoid.pl for <linux-fsdevel@vger.kernel.org>; Thu,  7 Oct 2021 08:00:12 GMT
-Message-ID: <20211007074500-0.1.15.55lp.0.jck75nnqn2@commercoid.pl>
-Date:   Thu,  7 Oct 2021 08:00:12 GMT
-From:   "Arkadiusz Stryj" <arkadiusz.stryj@commercoid.pl>
-To:     <linux-fsdevel@vger.kernel.org>
-Subject: =?UTF-8?Q?Wdro=C5=BCenie_systemu_ERP?=
-X-Mailer: mail.commercoid.pl
+        Thu, 7 Oct 2021 04:12:54 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id E7E46203C9;
+        Thu,  7 Oct 2021 08:10:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1633594259; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Oc55QYscnPdKzwCjb0ywVfd/doUxkdVcTeLmeqISr7o=;
+        b=M+pb6kZBKTijfupuQci9zI0JzzADDVtW/KDSipGnsBgM01o/2Zfd8Zf2qDwIDRzPapNAPw
+        C/a15erqzs5+/vNjqXtbDZovG90WNGdDWv3/UjXvA8ptySXIDaLgqT+N+M30EdJqu5Rni2
+        QHhYCD82KKUdf/uvulrMMidepD6Q69c=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 43D35A3B85;
+        Thu,  7 Oct 2021 08:10:59 +0000 (UTC)
+Date:   Thu, 7 Oct 2021 10:10:58 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, David Hildenbrand <david@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Colin Cross <ccross@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        vincenzo.frascino@arm.com,
+        Chinwen Chang =?utf-8?B?KOW8temMpuaWhyk=?= 
+        <chinwen.chang@mediatek.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jann Horn <jannh@google.com>, apopple@nvidia.com,
+        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
+        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
+        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
+        Chris Hyser <chris.hyser@oracle.com>,
+        Peter Collingbourne <pcc@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
+        Rolf Eike Beer <eb@emlix.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
+        cxfcosmos@gmail.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        kernel-team <kernel-team@android.com>
+Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
+Message-ID: <YV6rksRHr2iSWR3S@dhcp22.suse.cz>
+References: <20211005184211.GA19804@duo.ucw.cz>
+ <CAJuCfpE5JEThTMhwKPUREfSE1GYcTx4YSLoVhAH97fJH_qR0Zg@mail.gmail.com>
+ <20211005200411.GB19804@duo.ucw.cz>
+ <CAJuCfpFZkz2c0ZWeqzOAx8KFqk1ge3K-SiCMeu3dmi6B7bK-9w@mail.gmail.com>
+ <efdffa68-d790-72e4-e6a3-80f2e194d811@nvidia.com>
+ <YV1eCu0eZ+gQADNx@dhcp22.suse.cz>
+ <6b15c682-72eb-724d-bc43-36ae6b79b91a@redhat.com>
+ <CAJuCfpEPBM6ehQXgzp=g4SqtY6iaC8wuZ-CRE81oR1VOq7m4CA@mail.gmail.com>
+ <20211006175821.GA1941@duo.ucw.cz>
+ <CAJuCfpGuuXOpdYbt3AsNn+WNbavwuEsDfRMYunh+gajp6hOMAg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJuCfpGuuXOpdYbt3AsNn+WNbavwuEsDfRMYunh+gajp6hOMAg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dzie=C5=84 dobry,=20
+On Wed 06-10-21 11:18:31, Suren Baghdasaryan wrote:
+> On Wed, Oct 6, 2021 at 10:58 AM Pavel Machek <pavel@ucw.cz> wrote:
+[...]
+> > That "central facility" option can be as simple as "mkdir
+> > /somewhere/sanitized_id", using inode numbers for example. You don't
+> > really need IPC.
+> 
+> Hmm, so the suggestion is to have some directory which contains files
+> representing IDs, each containing the string name of the associated
+> vma? Then let's say we are creating a new VMA and want to name it. We
+> would have to scan that directory, check all files and see if any of
+> them contain the name we want to reuse the same ID.
 
-zale=C5=BCy mi na kontakcie z Pa=C5=84stwa strony, poniewa=C5=BC jako par=
-tner zajmuj=C4=85cy si=C4=99 usprawnianiem proces=C3=B3w, przygotowa=C5=82=
-em nowoczesne rozwi=C4=85zanie dla Pa=C5=84stwa firmy.=20
+I believe Pavel meant something as simple as
+$ YOUR_FILE=$YOUR_IDS_DIR/my_string_name
+$ touch $YOUR_FILE
+$ stat -c %i $YOUR_FILE
 
-Z my=C5=9Bl=C4=85 o bezpiecze=C5=84stwie i niezawodno=C5=9Bci, opracowali=
-=C5=9Bmy nowoczesne oprogramowanie dla wiod=C4=85cych przedsi=C4=99biorst=
-w du=C5=BCego i =C5=9Bredniego  formatu.=20
+YOUR_IDS_DIR can live on a tmpfs and you can even implement a policy on
+top of that (who can generate new ids, gurantee uniqness etc...).
 
-Bior=C4=85c pod uwag=C4=99 system pracy na jakim opiera si=C4=99 Pa=C5=84=
-stwa organizacja, chcia=C5=82bym zaproponowa=C4=87 nowoczesny program, kt=
-=C3=B3ry znacznie usprawni i przyspieszy obs=C5=82ug=C4=99 zlece=C5=84.=20
-
-Je=C5=BCeli zale=C5=BCy Pa=C5=84stwu na rozwoju biznesu i zwi=C4=99kszeni=
-u rynku zbytu, mogliby=C5=9Bmy si=C4=99 skontaktowa=C4=87 i porozmawia=C4=
-=87 w tej sprawie.=20
-
-Czy s=C4=85 Pa=C5=84stwo zainteresowani prezentacj=C4=85 systemu?=20
-
-Pozdrawiam,
-Arkadiusz Stryj
+The above is certainly not for free of course but if you really need a
+system wide consistency when using names then you need some sort of
+central authority. How you implement that is not all that important
+but I do not think we want to handle that in the kernel.
+-- 
+Michal Hocko
+SUSE Labs
