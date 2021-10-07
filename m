@@ -2,154 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDAFF425B03
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 20:38:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03B22425B13
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 20:43:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243773AbhJGSkm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Oct 2021 14:40:42 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25282 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229490AbhJGSkl (ORCPT
+        id S243737AbhJGSpd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Oct 2021 14:45:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60852 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243545AbhJGSpd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Oct 2021 14:40:41 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 197HX1R0003394;
-        Thu, 7 Oct 2021 14:37:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=Ro9WtJnbWiv79sEcwQ/y9b5di6jNFvxnUqDeKfyVHDA=;
- b=MOnw0Yt6oktVmKt65Phxc0OsQe0NDxyj5kn3l90m0LA5Ic6frzK9U3WIrtKRiRjNmglj
- uUJTqKJxwbIvX3DlNHzZX+Flpix3dNrYYDAeuKGo8GsYHY3lMyylbnMfAQYquk7JpR7j
- HNZlnpwkZk/An0lJLCes41GAObcmEk/NZlRYjPQ4YPX9gIJHEz8A1508X1CelHyQGjLG
- P74z/WDX4a7FmsEfB4XYqzBvebrbZ13Z6GJG8Hn56SWygio/3XeMFL5eLQbKNl1njkJh
- F7co/ywFQQTAxiAU1aY2BKCucTUYmdM0jVnBJwggftfJxrXZ2U6lf8VxrFKTFmV2JJf0 uQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3bhkcxjb99-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Oct 2021 14:37:33 -0400
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 197IQcP3029725;
-        Thu, 7 Oct 2021 14:37:32 -0400
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3bhkcxjb8f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Oct 2021 14:37:32 -0400
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 197IRERb003304;
-        Thu, 7 Oct 2021 18:37:29 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma06fra.de.ibm.com with ESMTP id 3beepk7kpt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Oct 2021 18:37:29 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 197IbQU746989638
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Oct 2021 18:37:26 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 98963A4053;
-        Thu,  7 Oct 2021 18:37:26 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B28DCA404D;
-        Thu,  7 Oct 2021 18:37:18 +0000 (GMT)
-Received: from sig-9-65-203-7.ibm.com (unknown [9.65.203.7])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Oct 2021 18:37:18 +0000 (GMT)
-Message-ID: <7ee6ba1200b854fc6012b0cec49849f7c0789f42.camel@linux.ibm.com>
-Subject: Re: [PATCH v12 0/3] Add trusted_for(2) (was O_MAYEXEC)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        Kees Cook <keescook@chromium.org>
-Cc:     bauen1 <j2468h@googlemail.com>, akpm@linux-foundation.org,
-        arnd@arndb.de, casey@schaufler-ca.com,
-        christian.brauner@ubuntu.com, christian@python.org, corbet@lwn.net,
-        cyphar@cyphar.com, deven.desai@linux.microsoft.com,
-        dvyukov@google.com, ebiggers@kernel.org, ericchiang@google.com,
-        fweimer@redhat.com, geert@linux-m68k.org, jack@suse.cz,
-        jannh@google.com, jmorris@namei.org,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, luto@kernel.org,
-        madvenka@linux.microsoft.com, mjg59@google.com,
-        mszeredi@redhat.com, mtk.manpages@gmail.com,
-        nramas@linux.microsoft.com, philippe.trebuchet@ssi.gouv.fr,
-        scottsh@microsoft.com, sean.j.christopherson@intel.com,
-        sgrubb@redhat.com, shuah@kernel.org, steve.dower@python.org,
-        thibaut.sautereau@clip-os.org, vincent.strubel@ssi.gouv.fr,
-        viro@zeniv.linux.org.uk, willy@infradead.org
-Date:   Thu, 07 Oct 2021 14:37:17 -0400
-In-Reply-To: <4c4bbd74-0599-fed5-0340-eff197bafeb1@digikod.net>
-References: <20201203173118.379271-1-mic@digikod.net>
-         <d3b0da18-d0f6-3f72-d3ab-6cf19acae6eb@gmail.com>
-         <2a4cf50c-7e79-75d1-7907-8218e669f7fa@digikod.net>
-         <202110061500.B8F821C@keescook>
-         <4c4bbd74-0599-fed5-0340-eff197bafeb1@digikod.net>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: jOAagv9-Zy3caZx8ORtgWB-IBZAybLlH
-X-Proofpoint-ORIG-GUID: qojyI-7uaVr1-wTGd2steGJ3omVhfkri
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Thu, 7 Oct 2021 14:45:33 -0400
+Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 178DFC061570
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Oct 2021 11:43:39 -0700 (PDT)
+Received: by mail-ua1-x933.google.com with SMTP id i15so758665uap.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Oct 2021 11:43:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XM+aoTP+lFbICkxTuoQyaeaVXtWWuUoeMP/C/f0Vvkc=;
+        b=YvZDPpoS19oCaPvlFDJaVVZXyiDS8eAE/PtMejLFzRTa46q7dZjgMwO752wqeUVLu+
+         sCLOmUv3bMmlSEFmiFH0fGiZZ7ZEBb9m4DLzl4Kl2mFMooAxBqumNOscqCuqco4/dlop
+         Ai3ls3XRxvUPmOjHxcJwD1RZ8zY5xQmn5QpRU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XM+aoTP+lFbICkxTuoQyaeaVXtWWuUoeMP/C/f0Vvkc=;
+        b=zWwo/5xPvHZqSXRjfhMVckTU1hc9C9eFKyStiNwCE+B10kXi7+QDKNdp5MYwlsAjZE
+         3MV2r/XRAtYhp4hA/ajh2tj/53sfnCvrL/nJDI4B207RCMcnH8eFMM4tgZOf5kI2w5bg
+         WY6MtAcy3Yr61EoHgbKKp59yPFCo1J02bEW9Y57VasSXnrz703jGR+aw9lwWdb3Ozpw/
+         gnnHQcXJ2LyD4fc0U3L7d+O51Z+Oh8r9mpzSs59mKoeF/d48oi34aFxbELIw8daG/eYs
+         kRpZzbzByRa2Nyp5UWWdGzl/+5nB898X/1IXe34ICX6LRZm1IDZYKConT4BReUBgjFmH
+         fAjw==
+X-Gm-Message-State: AOAM5318fcaNJ3fYpUkh5UXTfR8xnq/9V5XNwdQicq2mw0swQz8TpiRg
+        6t84RJwlC2qpN6J3oKb+BENqfjMOdcCXpf3U2Wudcw==
+X-Google-Smtp-Source: ABdhPJyErj0X46uH4LfmAOUeJ7nEvuX6FesTQpX4Hfr3/iZpAUPHCFhnnCLvLxdE5YOMdiOt2IazDjLDYiYnSwUf2Xo=
+X-Received: by 2002:ab0:3b12:: with SMTP id n18mr6709142uaw.9.1633632218203;
+ Thu, 07 Oct 2021 11:43:38 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.391,FMLib:17.0.607.475
- definitions=2021-10-07_03,2021-10-07_02,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- suspectscore=0 bulkscore=0 lowpriorityscore=0 malwarescore=0
- mlxlogscore=373 priorityscore=1501 phishscore=0 spamscore=0
- impostorscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2109230001 definitions=main-2110070119
+References: <20210923130814.140814-1-cgxu519@mykernel.net> <20210923130814.140814-5-cgxu519@mykernel.net>
+In-Reply-To: <20210923130814.140814-5-cgxu519@mykernel.net>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 7 Oct 2021 20:43:27 +0200
+Message-ID: <CAJfpegsRTdEOT6fHg9n8GR3JRQbKUt9N_HvQDD9U6PbCVzygRw@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 04/10] ovl: mark overlayfs' inode dirty on modification
+To:     Chengguang Xu <cgxu519@mykernel.net>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2021-10-07 at 20:29 +0200, Mickaël Salaün wrote:
-> On 07/10/2021 00:03, Kees Cook wrote:
-> > On Fri, Apr 09, 2021 at 07:15:42PM +0200, Mickaël Salaün wrote:
-> >> There was no new reviews, probably because the FS maintainers were busy,
-> >> and I was focused on Landlock (which is now in -next), but I plan to
-> >> send a new patch series for trusted_for(2) soon.
-> > 
-> > Hi!
-> > 
-> > Did this ever happen? It looks like it's in good shape, and I think it's
-> > a nice building block for userspace to have. Are you able to rebase and
-> > re-send this?
-> 
-> I just sent it:
-> https://lore.kernel.org/all/20211007182321.872075-1-mic@digikod.net/
-> 
-> Some Signed-off-by would be appreciated. :)
-> 
+On Thu, 23 Sept 2021 at 15:08, Chengguang Xu <cgxu519@mykernel.net> wrote:
+>
+> Mark overlayfs' inode dirty on modification so that
+> we can recognize and collect target inodes for syncfs.
+>
+> Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+> ---
+>  fs/overlayfs/inode.c     |  1 +
+>  fs/overlayfs/overlayfs.h |  4 ++++
+>  fs/overlayfs/util.c      | 21 +++++++++++++++++++++
+>  3 files changed, 26 insertions(+)
+>
+> diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+> index d854e59a3710..4a03aceaeedc 100644
+> --- a/fs/overlayfs/inode.c
+> +++ b/fs/overlayfs/inode.c
+> @@ -478,6 +478,7 @@ int ovl_update_time(struct inode *inode, struct timespec64 *ts, int flags)
+>                 if (upperpath.dentry) {
+>                         touch_atime(&upperpath);
+>                         inode->i_atime = d_inode(upperpath.dentry)->i_atime;
+> +                       ovl_mark_inode_dirty(inode);
+>                 }
+>         }
+>         return 0;
+> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> index 3894f3347955..5a016baa06dd 100644
+> --- a/fs/overlayfs/overlayfs.h
+> +++ b/fs/overlayfs/overlayfs.h
+> @@ -276,6 +276,7 @@ static inline bool ovl_allow_offline_changes(struct ovl_fs *ofs)
+>
+>
+>  /* util.c */
+> +void ovl_mark_inode_dirty(struct inode *inode);
+>  int ovl_want_write(struct dentry *dentry);
+>  void ovl_drop_write(struct dentry *dentry);
+>  struct dentry *ovl_workdir(struct dentry *dentry);
+> @@ -529,6 +530,9 @@ static inline void ovl_copyattr(struct inode *from, struct inode *to)
+>         to->i_mtime = from->i_mtime;
+>         to->i_ctime = from->i_ctime;
+>         i_size_write(to, i_size_read(from));
+> +
+> +       if (ovl_inode_upper(to) && from->i_state & I_DIRTY_ALL)
+> +               ovl_mark_inode_dirty(to);
 
-From the cover letter, 
+I'd be more comfortable with calling ovl_mark_inode_dirty() unconditionally.
 
-It is important to note that this can only enable to extend access
-control managed by the kernel.  Hence it enables current access control
-mechanism to be extended and become a superset of what they can
-currently control.  Indeed, the security policy could also be delegated
-to an LSM, either a MAC system or an integrity system.  For instance,
-this is required to close a major IMA measurement/appraisal interpreter
-integrity gap by bringing the ability to check the use of scripts [1].
-Other uses are expected, such as for magic-links [2], SGX integration
-[3], bpffs [4].
+Checking if there's an upper seems to make no sense, since we should
+only be copying the attributes if something was changed, and then it
+is an upper inode.
 
-From a quick review of the code, I don't see a new security hook being
-defined to cover these use cases.
+Checking dirty flags on upper inode actually makes this racy:
 
-thanks,
+  - upper inode dirtied through overlayfs
+  - inode writeback starts (e.g. background writeback) on upper inode
+  - dirty flags are cleared
+  - check for dirty flags in upper inode above indicates not dirty,
+ovl inode not dirtied
+  - syncfs called, misses this inode
+  - inode writeback completed after syncfs
 
-Mimi
+>  }
+>
+>  /* vfs inode flags copied from real to ovl inode */
+> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> index f48284a2a896..5441eae2e345 100644
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -25,7 +25,14 @@ int ovl_want_write(struct dentry *dentry)
+>  void ovl_drop_write(struct dentry *dentry)
+>  {
+>         struct ovl_fs *ofs = dentry->d_sb->s_fs_info;
+> +       struct dentry *upper;
+> +
+>         mnt_drop_write(ovl_upper_mnt(ofs));
+> +       if (d_inode(dentry)) {
+> +               upper = ovl_dentry_upper(dentry);
+> +               if (upper && d_inode(upper) && d_inode(upper)->i_state & I_DIRTY_ALL)
+> +                       ovl_mark_inode_dirty(d_inode(dentry));
 
-> > 
-> > I've tended to aim these things at akpm if Al gets busy. (And since
-> > you've had past review from Al, that should be hopefully sufficient.)
-> > 
-> > Thanks for chasing this!
-> > 
-> > -Kees
-> > 
+ovl_want_write/ovl_drop_write means modification of the upper
+filesystem.  It may or may not be the given dentry, so this is not the
+right place to clall ovl_mark_inode_dirty IMO.  Better check all
+instances of these and see if there are cases where ovl_copyattr()
+doesn't handle inode dirtying, and do it explicitly there.
 
 
+> +       }
+>  }
+>
+>  struct dentry *ovl_workdir(struct dentry *dentry)
+> @@ -1060,3 +1067,17 @@ int ovl_sync_status(struct ovl_fs *ofs)
+>
+>         return errseq_check(&mnt->mnt_sb->s_wb_err, ofs->errseq);
+>  }
+> +
+> +/*
+> + * We intentionally add I_DIRTY_SYNC flag regardless dirty flag
+> + * of upper inode so that we have chance to invoke ->write_inode
+> + * to re-dirty overlayfs' inode during writeback process.
+> + */
+> +void ovl_mark_inode_dirty(struct inode *inode)
+> +{
+> +       struct inode *upper = ovl_inode_upper(inode);
+> +       unsigned long iflag = I_DIRTY_SYNC;
+> +
+> +       iflag |= upper->i_state & I_DIRTY_ALL;
+> +       __mark_inode_dirty(inode, iflag);
+> +}
+
+I think ovl_mark_inode_dirty()  can just call mark_inode_dirty().
+And so that can go in "overlayfs.h" file as static inline.
+
+Thanks,
+Miklos
