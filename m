@@ -2,169 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C4AA425B1E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 20:46:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6FE1425B23
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 20:50:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243788AbhJGSsS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Oct 2021 14:48:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33276 "EHLO
+        id S243780AbhJGSwQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Oct 2021 14:52:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243763AbhJGSsR (ORCPT
+        with ESMTP id S233845AbhJGSwP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Oct 2021 14:48:17 -0400
-Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B7F5C061570
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Oct 2021 11:46:23 -0700 (PDT)
-Received: by mail-vs1-xe34.google.com with SMTP id l22so5392729vsq.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Oct 2021 11:46:23 -0700 (PDT)
+        Thu, 7 Oct 2021 14:52:15 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DACBBC061570
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Oct 2021 11:50:21 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id a7so15588645yba.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Oct 2021 11:50:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=PuYqO/zJtQOmgXw2qiQOgqREvWNqtpex61JFiCc79Ko=;
-        b=CCe9Q+Wzt/QEv9979yejyS0tWuJH+dcvGtBBW1bYtkVqjeObvjvXAzy4XCUc1dHK6H
-         25jiPL/FjQlKqZKH51ekonjY7Pk4eccOYYyuN+5i0GhVq1k8DYIt5yvfrkjwqiN1egX8
-         yBDLwKlo3HbldtdGWxmZIQ61rc9kSwZ+1NdB8=
+        bh=E0+5wT+wrdMqcXbNJTk/9zibrUNlQPSrWQVNSFGRH0Q=;
+        b=f+jqxJIJSLt5FZwMq8HxqaGUYxnqZd2XHM9BdnYqSOU2kuqNgIW8wdNJ+eIspkoDj7
+         Y9gcKeC/pYYgB7yyLLyYx+RB+VVGInIY8fY+l7ByRtsBh75EzVZLLHUx0s/JgAaUxjSx
+         hGIwnJa6ufRLm2694PKbR8PkW8ggrSVSF19tXiQkNxjdPHqzGQENgGZtovh4JP3nyBmm
+         km/ahg3AYuRK3xJ3BxULxSYwkGBP+AaFviZfQCvWKnwo6U4m7pnW6dL83ihp8vhP+OEn
+         KjczJIjrhAJYXJHrPGk4lt9lhphV4v8E1sVoy0rsM5C4FRJOlgdvGR8HGAR7WauUTcVs
+         gaxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=PuYqO/zJtQOmgXw2qiQOgqREvWNqtpex61JFiCc79Ko=;
-        b=rM9O/0isyP2WJgYZgXYt/vCWZhHeiIUp8l3wk+NqNr0cbilYFzEiXWk1UEx47n2fvr
-         Fjqk7jAstl6Lpq7Is4ToX5HewjraESMDmTBPkYYsYBzPDVf+9ubKz11Jnsfd9yJ4d/er
-         eXGnqe+PcAxr8OB8LxjQTVAbv0xUYzmnIY6XkFIkqgQCoTKwLb1j60ygf+/31LAf5Wn1
-         sIDj8p+aMSiKvv/rzmkSRX7NZ7N/x1u/I0EksAg0jiyxzlptyzyCK+y2r8qlPhHZ3Hlt
-         lyH66F82pS/EpXrmDk8/KAKgIvrqNcoU0u3v/Hd/TQRyYE2CB5A4X0xPAmSweAGRqHMu
-         dPKw==
-X-Gm-Message-State: AOAM530LwWUBD2ari3pGxq+Il/Z+4L/f+Mmes0VMd4XWgPUfRmckr816
-        vI0cfsx3cZCZjSlKSaBtg/PKliaprRQK0nLj9F5z0kCYuY0=
-X-Google-Smtp-Source: ABdhPJwTaCP56bvX5M9hgOW7LlXFaa8+v54Biywnns5l2vYzpD3LjttZaKzFay3q8jUHNyKP96qcaTz0f8DVSD3tbjc=
-X-Received: by 2002:a67:c284:: with SMTP id k4mr6317059vsj.24.1633632382129;
- Thu, 07 Oct 2021 11:46:22 -0700 (PDT)
+        bh=E0+5wT+wrdMqcXbNJTk/9zibrUNlQPSrWQVNSFGRH0Q=;
+        b=8PK2S2w4TCak9foa3MHHOyXfImL09wmNGGwY1U1JcG0CE9HE7C+yvIHjYl+Rmu4p3s
+         IOXnCAKglTVmgKG2jI9dS4ZVgD7L1lxLl9n4j5kzXOX6cubgPQEHNMVHIIsS7LRqBRfl
+         nS7r+ogtuuojO2Ur+opmWfwRDL1zUzCvYjdQ9MZoK/wPLH7IXJVgb8EzGJUiAjEHT+LK
+         Oysihjrds7MvvHgkIdaYbCE2XWbZOCNIVcOdnSz2oitRey1dxHY7zohiQHR0J/58CVuj
+         6tcwOd8/SlbfBy/c80tFJFS30WUotaSE9mYclXbybFsKF+e8HrLe8XdifGSE0cEjspSO
+         e2nw==
+X-Gm-Message-State: AOAM5305tj87WlKXXgLWTLq9A7eOKjiq3XhiuaHJOG5BoBKBtLq4kWUH
+        Y5sXzbvDhU8ew0VnFLtiKz0Ws6axw3Ef3MymdJNaSA==
+X-Google-Smtp-Source: ABdhPJwX3MSlqHYl/15/mb53bQi9n5NdlsFOxC7cfpcgUkjWDcfJbTPgeVDqsBWb3sDjKC8m87AdHD4J0DwOcD30v/I=
+X-Received: by 2002:a25:5b04:: with SMTP id p4mr6402702ybb.34.1633632620440;
+ Thu, 07 Oct 2021 11:50:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210930143850.1188628-1-vgoyal@redhat.com> <20210930143850.1188628-8-vgoyal@redhat.com>
- <CAJfpegtdftj7jQFu+4LBjysiAJ-hhLHkBC_KhowfJtepvZqaoQ@mail.gmail.com>
- <YV3LBNM3jnGBBzwS@redhat.com> <CAJfpegtoNSXFwiiFuU0tczogS6NFqeodLaxcr0Ax5d=dG0-utw@mail.gmail.com>
- <YV8Ca/wP9HDWJITq@redhat.com> <CAJfpegsguYZ3y5G6Rj4hoxEOn2ObnUVajTVhtyvm4ZSeFqGtFw@mail.gmail.com>
- <YV89S46OMGOVN8zZ@redhat.com>
-In-Reply-To: <YV89S46OMGOVN8zZ@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 7 Oct 2021 20:46:11 +0200
-Message-ID: <CAJfpegsWP7G=PQQRfVnB0kBup9qnOrZBx4VJ+4X1r5u-yqoneQ@mail.gmail.com>
-Subject: Re: [PATCH 7/8] virtiofs: Add new notification type FUSE_NOTIFY_LOCK
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Ioannis Angelakopoulos <iangelak@redhat.com>, jaggel@bu.edu,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+References: <20211006175821.GA1941@duo.ucw.cz> <CAJuCfpGuuXOpdYbt3AsNn+WNbavwuEsDfRMYunh+gajp6hOMAg@mail.gmail.com>
+ <YV6rksRHr2iSWR3S@dhcp22.suse.cz> <92cbfe3b-f3d1-a8e1-7eb9-bab735e782f6@rasmusvillemoes.dk>
+ <20211007101527.GA26288@duo.ucw.cz> <CAJuCfpGp0D9p3KhOWhcxMO1wEbo-J_b2Anc-oNwdycx4NTRqoA@mail.gmail.com>
+ <YV8jB+kwU95hLqTq@dhcp22.suse.cz> <CAJuCfpG-Nza3YnpzvHaS_i1mHds3nJ+PV22xTAfgwvj+42WQNA@mail.gmail.com>
+ <YV8u4B8Y9AP9xZIJ@dhcp22.suse.cz> <CAJuCfpHAG_C5vE-Xkkrm2kynTFF-Jd06tQoCWehHATL0W2mY_g@mail.gmail.com>
+ <202110071111.DF87B4EE3@keescook>
+In-Reply-To: <202110071111.DF87B4EE3@keescook>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Thu, 7 Oct 2021 11:50:09 -0700
+Message-ID: <CAJuCfpFT7qcLM0ygjbzgCj1ScPDkZvv0hcvHkc40s9wgoTov7A@mail.gmail.com>
+Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Michal Hocko <mhocko@suse.com>, Pavel Machek <pavel@ucw.cz>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        David Hildenbrand <david@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Colin Cross <ccross@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        vincenzo.frascino@arm.com,
+        =?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= 
+        <chinwen.chang@mediatek.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jann Horn <jannh@google.com>, apopple@nvidia.com,
+        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
+        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
+        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
+        Chris Hyser <chris.hyser@oracle.com>,
+        Peter Collingbourne <pcc@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
+        Rolf Eike Beer <eb@emlix.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
+        cxfcosmos@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        kernel-team <kernel-team@android.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 7 Oct 2021 at 20:32, Vivek Goyal <vgoyal@redhat.com> wrote:
+On Thu, Oct 7, 2021 at 11:13 AM Kees Cook <keescook@chromium.org> wrote:
 >
-> On Thu, Oct 07, 2021 at 08:11:13PM +0200, Miklos Szeredi wrote:
-> > On Thu, 7 Oct 2021 at 16:22, Vivek Goyal <vgoyal@redhat.com> wrote:
+> On Thu, Oct 07, 2021 at 10:50:24AM -0700, Suren Baghdasaryan wrote:
+> > On Thu, Oct 7, 2021 at 10:31 AM Michal Hocko <mhocko@suse.com> wrote:
 > > >
-> > > On Thu, Oct 07, 2021 at 03:45:40PM +0200, Miklos Szeredi wrote:
-> > > > On Wed, 6 Oct 2021 at 18:13, Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > On Thu 07-10-21 09:58:02, Suren Baghdasaryan wrote:
+> > > > On Thu, Oct 7, 2021 at 9:40 AM Michal Hocko <mhocko@suse.com> wrote:
 > > > > >
-> > > > > On Wed, Oct 06, 2021 at 03:02:36PM +0200, Miklos Szeredi wrote:
-> > > > > > On Thu, 30 Sept 2021 at 16:39, Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > > > On Thu 07-10-21 09:04:09, Suren Baghdasaryan wrote:
+> > > > > > On Thu, Oct 7, 2021 at 3:15 AM Pavel Machek <pavel@ucw.cz> wrote:
 > > > > > > >
-> > > > > > > Add a new notification type FUSE_NOTIFY_LOCK. This notification can be
-> > > > > > > sent by file server to signifiy that a previous locking request has
-> > > > > > > completed and actual caller should be woken up.
+> > > > > > > Hi!
+> > > > > > >
+> > > > > > > > >> Hmm, so the suggestion is to have some directory which contains files
+> > > > > > > > >> representing IDs, each containing the string name of the associated
+> > > > > > > > >> vma? Then let's say we are creating a new VMA and want to name it. We
+> > > > > > > > >> would have to scan that directory, check all files and see if any of
+> > > > > > > > >> them contain the name we want to reuse the same ID.
+> > > > > > > > >
+> > > > > > > > > I believe Pavel meant something as simple as
+> > > > > > > > > $ YOUR_FILE=$YOUR_IDS_DIR/my_string_name
+> > > > > > > > > $ touch $YOUR_FILE
+> > > > > > > > > $ stat -c %i $YOUR_FILE
 > > > > > >
-> > > > > > Shouldn't this also be generic instead of lock specific?
-> > > > > >
-> > > > > > I.e. generic header  + original outarg.
+> > > > > > Ah, ok, now I understand the proposal. Thanks for the clarification!
+> > > > > > So, this would use filesystem as a directory for inode->name mappings.
+> > > > > > One rough edge for me is that the consumer would still need to parse
+> > > > > > /proc/$pid/maps and convert [anon:inode] into [anon:name] instead of
+> > > > > > just dumping the content for the user. Would it be acceptable if we
+> > > > > > require the ID provided by prctl() to always be a valid inode and
+> > > > > > show_map_vma() would do the inode-to-filename conversion when
+> > > > > > generating maps/smaps files? I know that inode->dentry is not
+> > > > > > one-to-one mapping but we can simply output the first dentry name.
+> > > > > > WDYT?
 > > > > >
-> > > > > Hi Miklos,
+> > > > > No. You do not want to dictate any particular way of the mapping. The
+> > > > > above is just one way to do that without developing any actual mapping
+> > > > > yourself. You just use a filesystem for that. Kernel doesn't and
+> > > > > shouldn't understand the meaning of those numbers. It has no business in
+> > > > > that.
 > > > > >
-> > > > > I am not sure I understand the idea. Can you please elaborate a bit more.
-> > > > >
-> > > > > IIUC, "fuse_out_header + original outarg"  is format for responding
-> > > > > to regular fuse requests. If we use that it will become like responding
-> > > > > to same request twice. First time we responded with ->error=1 so that
-> > > > > caller can wait and second time we respond with actual outarg (if
-> > > > > there is one depending on the type of request).
-> > > > >
-> > > > > IOW, this will become more like implementing blocking of request in
-> > > > > client in a more generic manner.
-> > > > >
-> > > > > But outarg, depends on type of request (In case of locking there is
-> > > > > none). And outarg memory is allocated by driver and filled by server.
-> > > > > In case of notifications, driver is allocating the memory but it
-> > > > > does not know what will come in notification and how much memory
-> > > > > to allocate. So it relies on device telling it how much memory
-> > > > > to allocate in general so that bunch of pre-defined notification
-> > > > > types can fit in (fs->notify_buf_size).
-> > > > >
-> > > > > I modeled this on the same lines as other fuse notifications where
-> > > > > server sends notifications with following format.
-> > > > >
-> > > > > fuse_out_header + <structure based on notification type>
-> > > > >
-> > > > > out_header->unique is 0 for notifications to differentiate notifications
-> > > > > from request reply.
-> > > > >
-> > > > > out_header->error contains the code of actual notification being sent.
-> > > > > ex. FUSE_NOTIFY_INVAL_INODE or FUSE_NOTIFY_LOCK or FUSE_NOTIFY_DELETE.
-> > > > > Right now virtiofs supports only one notification type. But in future
-> > > > > we can introduce more types (to support inotify stuff etc).
-> > > > >
-> > > > > In short, I modeled this on existing notion of fuse notifications
-> > > > > (and not fuse reply). And given notifications are asynchronous,
-> > > > > we don't know what were original outarg. In fact they might
-> > > > > be generated not necessarily in response to a request. And that's
-> > > > > why this notion of defining a type of notification (FUSE_NOTIFY_LOCK)
-> > > > > and then let driver decide how to handle this notification.
-> > > > >
-> > > > > I might have completely misunderstood your suggestion. Please help
-> > > > > me understand.
+> > > > > In a way this would be pushing policy into the kernel.
 > > > >
-> > > > Okay, so we are expecting this mechanism to be only used for blocking
-> > > > locks.
+> > > > I can see your point. Any other ideas on how to prevent tools from
+> > > > doing this id-to-name conversion themselves?
 > > >
-> > > Yes, as of now it is only being used only for blocking locks. So there
-> > > are two parts to it.
-> > >
-> > > A. For a blocking operation, server can reply with error=1, and that's
-> > >    a signal to client to wait for a notification to arrive later. And
-> > >    fuse client will not complete the request and instead will queue it
-> > >    in one of the internal lists.
-> > >
-> > > B. Later server will send a fuse notification event (FUSE_NOTIFY_LOCK)
-> > >    when it has acquired the lock. This notification will have unique
-> > >    number of request for which this notification has been generated.
-> > >    Fuse client will search for the request with expected unique number
-> > >    in the list and complete the request.
-> > >
-> > > I think part A is generic in the sense it could be used for other
-> > > kind of blocking requests as well down the line, where server is
-> > > doing the blocking operation on behalf of client and will send
-> > > notification later. Part B is very specific to blocking locks though.
+> > > I really fail to understand why you really want to prevent them from that.
+> > > Really, the whole thing is just a cookie that kernel maintains for memory
+> > > mappings so that two parties can understand what the meaning of that
+> > > mapping is from a higher level. They both have to agree on the naming
+> > > but the kernel shouldn't dictate any specific convention because the
+> > > kernel _doesn't_ _care_. These things are not really anything actionable
+> > > for the kernel. It is just a metadata.
 > >
-> > I don't really get why B is specific to blocking locks. But anyway...
-> > we are only implementing it for blocking locks for now.
+> > The desire is for one of these two parties to be a human who can get
+> > the data and use it as is without additional conversions.
+> > /proc/$pid/maps could report FD numbers instead of pathnames, which
+> > could be converted to pathnames in userspace. However we do not do
+> > that because pathnames are more convenient for humans to identify a
+> > specific resource. Same logic applies here IMHO.
 >
-> Hmm.., I am wondering do I have to make notification specific to
-> lock. All it is doing is returning an "error" code which signifies
-> either operation completed successfully or represents error code
-> if error occurred.
+> Yes, please. It really seems like the folks that are interested in this
+> feature want strings. (I certainly do.) For those not interested in the
+> feature, it sounds like a CONFIG to keep it away would be sufficient.
+> Can we just move forward with that?
+
+Would love to if others are ok with this.
+
 >
-> This probably could be more generic. May be I can call this
-> notification FUSE_NOTIFY_OP_COMPLETE. This notification is
-> just signalling that a previously issued request has completed.
-> Request is identified by notify->unique and result of blocking operation
-> is in notify->error. So that way it is more generic and can be
-> used for other kind of operations too (and not just locking).
-
-That's exactly what I was thinking.   The implementation can remain
-the same for now...
-
-Thanks,
-Miklos
+> --
+> Kees Cook
