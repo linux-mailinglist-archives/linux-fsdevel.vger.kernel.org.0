@@ -2,167 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC74942575A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 18:04:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF65A425761
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 18:06:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242472AbhJGQGQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Oct 2021 12:06:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50248 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242438AbhJGQGP (ORCPT
+        id S242536AbhJGQIf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Oct 2021 12:08:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:56961 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230452AbhJGQIe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Oct 2021 12:06:15 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DA1AC061755
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Oct 2021 09:04:21 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id i84so14425857ybc.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Oct 2021 09:04:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=idsd5mctgolloTq522mlXra0iGlPTwRxJgNy/gnn+wQ=;
-        b=kXYYisjK1xNhb3JOoFrAhJNoJOkeGU9DaJyxG2fvBrDNVdaOmc6g3jNa//6kthDqeG
-         zQxMuDKUOyw9KSRu50Aj3rQlprQSM3QiPHY/4v/gfs/jtmBqZD25r1t8w2gpbY224vgR
-         xOMfkCe7Yx1sFQvabb2bpd3/Zfqv1ZftfZMd+RgN9itmzWRuej+FJ9ZqMlTnWcL0qy1E
-         MXMJUEoVQnMz3Qoxc3FVeY2vG5GGww+t6HbNg1oqLu41PlRbignDbA32LJ+u3yp3Ywe5
-         GYnqJsOJVUBfC+PJaNS6AhT4w3FcDiuVHdNrQuBDl/qY7WauvSAvbPtSzjCehbYqkNhM
-         AowA==
+        Thu, 7 Oct 2021 12:08:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1633622800;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2f7G2WKXlw2VVvH2sPBaPxflHdQi/DqI+SXI7iCozBY=;
+        b=dqnJL0prfXgWYQIQoK/pU5YgSeb/v2fbfGLnAyF30AUtE6Vh8nW9umXp16LNULAHUBhXTe
+        szrw+fDeRgcvblFVKz2Okun4JL4ZxYERgxNSNL8n+Egx8+zNIKhRLblZCTjbfy6g8Haqr6
+        lEqj66akDoAvrADCJRNAfsj3ha+Y8X4=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-48-dHUxFIyQPO64UqCEoWAulg-1; Thu, 07 Oct 2021 12:06:38 -0400
+X-MC-Unique: dHUxFIyQPO64UqCEoWAulg-1
+Received: by mail-qk1-f197.google.com with SMTP id m1-20020a05620a290100b0045e5e0b11e6so5530611qkp.23
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Oct 2021 09:06:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=idsd5mctgolloTq522mlXra0iGlPTwRxJgNy/gnn+wQ=;
-        b=E1J4QJRE77p9CmCZYvbUny3bAiY5Cyz16W2G1fI6O/NPl+7Wb5e9GvkWFbsoa7G6DM
-         vnfJDM47Nh6njw//o2CFQwqETilDyv2Nnw44/SCmGdO96HOWdO6wi7jwgdhE6+yqKS1a
-         pX+STJG5X7DVismkOJS6DrqwA0unaLVhXo68LcGW8Mb1MkIBvT3QN2YigNh9SdzNwsQB
-         iIo/SNfdFsioWC1qedf9Chu7c0bvdwYoAxpudfIAXaPiUCjzEsZOmSy/YVr7v/X66Tgn
-         /+qaikhMq0O709p6G2Y5Ke/BQRR+RLn2elRsqxqzJ5Rs9/Q67QsRiWPGAZTOs5m4DVCK
-         9REg==
-X-Gm-Message-State: AOAM532O199rjwYtETTQ9FItKsLNeuo2kCWR/S2WEpkWOsQAJTgqFDN8
-        ASd7XwkqZBX6G6KYzojEymhGDh/Qu7/z5d3R5FV/UQ==
-X-Google-Smtp-Source: ABdhPJxRZSNNPrKdHDus3HcjlavGjc70+r39LVG0FYYUgfxFDkbPBxwLgqcMcnfSqqkSgGqKj0vntbBJ/ETTWgkukL0=
-X-Received: by 2002:a25:5646:: with SMTP id k67mr5923693ybb.127.1633622660245;
- Thu, 07 Oct 2021 09:04:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211005200411.GB19804@duo.ucw.cz> <CAJuCfpFZkz2c0ZWeqzOAx8KFqk1ge3K-SiCMeu3dmi6B7bK-9w@mail.gmail.com>
- <efdffa68-d790-72e4-e6a3-80f2e194d811@nvidia.com> <YV1eCu0eZ+gQADNx@dhcp22.suse.cz>
- <6b15c682-72eb-724d-bc43-36ae6b79b91a@redhat.com> <CAJuCfpEPBM6ehQXgzp=g4SqtY6iaC8wuZ-CRE81oR1VOq7m4CA@mail.gmail.com>
- <20211006175821.GA1941@duo.ucw.cz> <CAJuCfpGuuXOpdYbt3AsNn+WNbavwuEsDfRMYunh+gajp6hOMAg@mail.gmail.com>
- <YV6rksRHr2iSWR3S@dhcp22.suse.cz> <92cbfe3b-f3d1-a8e1-7eb9-bab735e782f6@rasmusvillemoes.dk>
- <20211007101527.GA26288@duo.ucw.cz>
-In-Reply-To: <20211007101527.GA26288@duo.ucw.cz>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Thu, 7 Oct 2021 09:04:09 -0700
-Message-ID: <CAJuCfpGp0D9p3KhOWhcxMO1wEbo-J_b2Anc-oNwdycx4NTRqoA@mail.gmail.com>
-Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Michal Hocko <mhocko@suse.com>,
-        David Hildenbrand <david@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Colin Cross <ccross@google.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kees Cook <keescook@chromium.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=2f7G2WKXlw2VVvH2sPBaPxflHdQi/DqI+SXI7iCozBY=;
+        b=BJQDG9K4OW/jiKn0QkevFFqJqoyc77S3lSXSY/5NRE4ZT+EMX2GEX9VKtaizcPha+e
+         6+8kjfnNYumUDcWfbBVeYTuY80VV8rj8zKhKBSjHvI9Fv8e0Fcd9EOQYlN9t+pZdE/P2
+         JR18APcxVb8Rhp/c1cjtQ4aAEHRqP3x7lzuFTGENvt0LFH3E5YYAwHEEZXn9MDBu995F
+         sV+H+QsTpzlrq207+wkbhRDT+hucM3wLDZp6qQv5bxYej9zIjhcw0BIcGGuRCn0Sv156
+         sV7cSk45u6H+OJh3ZdsZkBum4oAuMnQmfPlLAWgm2mAId8mvc5BLxyIY6u/g8/HIcRYK
+         AtCQ==
+X-Gm-Message-State: AOAM530cMuyox9thdsWqwO/QXeJTf1ZSfBCZPCaIlyUFUU+JqB8w98Nu
+        xpsqDFeXEdNkTQ9gnJ6K2QnlddFhzdcFVI4DAGLJaMGLXNe+Vkl2UdDnArO8HyhmQu5N11lNPBZ
+        Wl1aJ5QmsBOMbqexCnkj4+eIzrg==
+X-Received: by 2002:a05:622a:316:: with SMTP id q22mr5879947qtw.225.1633622797391;
+        Thu, 07 Oct 2021 09:06:37 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyQLtzYt82r2CQEo/KkLz+OGcn7fBHhOWmfQckkRZ52geA1vPZXzGXWU4k0xWh+LgMLH0BJxA==
+X-Received: by 2002:a05:622a:316:: with SMTP id q22mr5879906qtw.225.1633622797114;
+        Thu, 07 Oct 2021 09:06:37 -0700 (PDT)
+Received: from t490s ([2607:fea8:56a2:9100::bed8])
+        by smtp.gmail.com with ESMTPSA id a16sm13820149qkn.16.2021.10.07.09.06.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Oct 2021 09:06:36 -0700 (PDT)
+Date:   Thu, 7 Oct 2021 12:06:34 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
+        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Matthew Wilcox <willy@infradead.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        vincenzo.frascino@arm.com,
-        =?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= 
-        <chinwen.chang@mediatek.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Jann Horn <jannh@google.com>, apopple@nvidia.com,
-        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
-        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
-        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
-        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
-        Chris Hyser <chris.hyser@oracle.com>,
-        Peter Collingbourne <pcc@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
-        Rolf Eike Beer <eb@emlix.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
-        cxfcosmos@gmail.com, LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>,
-        kernel-team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+        Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
+ for PMD page fault
+Message-ID: <YV8bChbXop3FuwPC@t490s>
+References: <20210930215311.240774-1-shy828301@gmail.com>
+ <20210930215311.240774-3-shy828301@gmail.com>
+ <YV4Dz3y4NXhtqd6V@t490s>
+ <CAHbLzkp8oO9qvDN66_ALOqNrUDrzHH7RZc3G5GQ1pxz8qXJjqw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHbLzkp8oO9qvDN66_ALOqNrUDrzHH7RZc3G5GQ1pxz8qXJjqw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 7, 2021 at 3:15 AM Pavel Machek <pavel@ucw.cz> wrote:
->
-> Hi!
->
-> > >> Hmm, so the suggestion is to have some directory which contains files
-> > >> representing IDs, each containing the string name of the associated
-> > >> vma? Then let's say we are creating a new VMA and want to name it. We
-> > >> would have to scan that directory, check all files and see if any of
-> > >> them contain the name we want to reuse the same ID.
-> > >
-> > > I believe Pavel meant something as simple as
-> > > $ YOUR_FILE=$YOUR_IDS_DIR/my_string_name
-> > > $ touch $YOUR_FILE
-> > > $ stat -c %i $YOUR_FILE
+On Wed, Oct 06, 2021 at 04:57:38PM -0700, Yang Shi wrote:
+> > For example, I see that both unpoison_memory() and soft_offline_page() will
+> > call it too, does it mean that we'll also set the bits e.g. even when we want
+> > to inject an unpoison event too?
+> 
+> unpoison_memory() should be not a problem since it will just bail out
+> once THP is met as the comment says:
+> 
+> /*
+> * unpoison_memory() can encounter thp only when the thp is being
+> * worked by memory_failure() and the page lock is not held yet.
+> * In such case, we yield to memory_failure() and make unpoison fail.
+> */
 
-Ah, ok, now I understand the proposal. Thanks for the clarification!
-So, this would use filesystem as a directory for inode->name mappings.
-One rough edge for me is that the consumer would still need to parse
-/proc/$pid/maps and convert [anon:inode] into [anon:name] instead of
-just dumping the content for the user. Would it be acceptable if we
-require the ID provided by prctl() to always be a valid inode and
-show_map_vma() would do the inode-to-filename conversion when
-generating maps/smaps files? I know that inode->dentry is not
-one-to-one mapping but we can simply output the first dentry name.
-WDYT?
+But I still think setting the subpage-hwpoison bit hides too deep there, it'll
+be great we can keep get_hwpoison_page() as simple as a safe version of getting
+the refcount of the page we want.  Or we'd still better touch up the comment
+above get_hwpoison_page() to show that side effect.
 
-> >
-> > So in terms of syscall overhead, that would be open(..., O_CREAT |
-> > O_CLOEXEC), fstat(), close() - or one could optimistically start by
->
-> You could get to two if you used mkdir instead of open.
->
-> > > YOUR_IDS_DIR can live on a tmpfs and you can even implement a policy on
-> > > top of that (who can generate new ids, gurantee uniqness etc...).
-> > >
-> > > The above is certainly not for free of course but if you really need a
-> > > system wide consistency when using names then you need some sort of
-> > > central authority. How you implement that is not all that important
-> > > but I do not think we want to handle that in the kernel.
+> 
+> 
+> And I think we should set the flag for soft offline too, right? The
 
-Ideally it would be great if $YOUR_IDS_DIR/my_string_name entries
-could be generated by the kernel in response to userspace calling
-prctl(..., name) but I haven't looked into complexity of doing that,
-so I would not propose that at this point.
-Thanks for sharing the ideas!
-Suren.
+I'm not familiar with either memory failure or soft offline, so far it looks
+right to me.  However..
 
-> >
-> > IDK. If the whole thing could be put behind a CONFIG_ knob, with _zero_
-> > overhead when not enabled (and I'm a bit worried about all the functions
-> > that grow an extra argument that gets passed around), I don't mind the
-> > string interface. But I don't really have a say either way.
->
-> If this is ever useful outside of Android, eventually distros will
-> have it enabled.
->
-> Best regards,
->                                                                 Pavel
-> --
-> http://www.livejournal.com/~pavelmachek
+> soft offline does set the hwpoison flag for the corrupted sub page and
+> doesn't split file THP,
+
+.. I believe this will become not true after your patch 5, right?
+
+> so it should be captured by page fault as well. And yes for poison injection.
+
+One more thing: besides thp split and page free, do we need to conditionally
+drop the HasHwpoisoned bit when received an unpoison event?
+
+If my understanding is correct, we may need to scan all the subpages there, to
+make sure HasHwpoisoned bit reflects the latest status for the thp in question.
+
+> 
+> But your comment reminds me that get_hwpoison_page() is just called
+> when !MF_COUNT_INCREASED, so it means MADV_HWPOISON still could
+> escape. This needs to be covered too.
+
+Right, maybe that's also a clue that we shouldn't set the new page flag within
+get_hwpoison_page(), since get_hwpoison_page() is actually well coupled with
+MF_COUNT_INCREASED and all of them are only about refcounting of the pages.
+
+-- 
+Peter Xu
+
