@@ -2,182 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F363425AD2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 20:32:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDAFF425B03
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 20:38:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243666AbhJGSet (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Oct 2021 14:34:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:52053 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233598AbhJGSes (ORCPT
+        id S243773AbhJGSkm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Oct 2021 14:40:42 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25282 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229490AbhJGSkl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Oct 2021 14:34:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1633631574;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=40nSi+bVYpzd6XGa7sWRY+42U6KR+r+yzUydJhIVcEY=;
-        b=RDI54owcw2Ld1MPrbHsIq6u6XyHCnwrZX1kBTF+GUtlc45WzYX0ViIn9Kx+hQ8ofRTtVvO
-        mpwis2rVK95r+aIVDfKmRTdz+44iXXCNneTE+71AGBFxLD/sulLbax59hHJnzKcch6AP9E
-        6D59LyR9E9TiMRRO04yZ9VgW7roUWHU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-525-2nPIV-agMzisOtIh8s7VuA-1; Thu, 07 Oct 2021 14:32:53 -0400
-X-MC-Unique: 2nPIV-agMzisOtIh8s7VuA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 18D861922960;
-        Thu,  7 Oct 2021 18:32:52 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.33.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DD3F85C1B4;
-        Thu,  7 Oct 2021 18:32:43 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 616C92205D6; Thu,  7 Oct 2021 14:32:43 -0400 (EDT)
-Date:   Thu, 7 Oct 2021 14:32:43 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Ioannis Angelakopoulos <iangelak@redhat.com>, jaggel@bu.edu,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH 7/8] virtiofs: Add new notification type FUSE_NOTIFY_LOCK
-Message-ID: <YV89S46OMGOVN8zZ@redhat.com>
-References: <20210930143850.1188628-1-vgoyal@redhat.com>
- <20210930143850.1188628-8-vgoyal@redhat.com>
- <CAJfpegtdftj7jQFu+4LBjysiAJ-hhLHkBC_KhowfJtepvZqaoQ@mail.gmail.com>
- <YV3LBNM3jnGBBzwS@redhat.com>
- <CAJfpegtoNSXFwiiFuU0tczogS6NFqeodLaxcr0Ax5d=dG0-utw@mail.gmail.com>
- <YV8Ca/wP9HDWJITq@redhat.com>
- <CAJfpegsguYZ3y5G6Rj4hoxEOn2ObnUVajTVhtyvm4ZSeFqGtFw@mail.gmail.com>
+        Thu, 7 Oct 2021 14:40:41 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 197HX1R0003394;
+        Thu, 7 Oct 2021 14:37:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=Ro9WtJnbWiv79sEcwQ/y9b5di6jNFvxnUqDeKfyVHDA=;
+ b=MOnw0Yt6oktVmKt65Phxc0OsQe0NDxyj5kn3l90m0LA5Ic6frzK9U3WIrtKRiRjNmglj
+ uUJTqKJxwbIvX3DlNHzZX+Flpix3dNrYYDAeuKGo8GsYHY3lMyylbnMfAQYquk7JpR7j
+ HNZlnpwkZk/An0lJLCes41GAObcmEk/NZlRYjPQ4YPX9gIJHEz8A1508X1CelHyQGjLG
+ P74z/WDX4a7FmsEfB4XYqzBvebrbZ13Z6GJG8Hn56SWygio/3XeMFL5eLQbKNl1njkJh
+ F7co/ywFQQTAxiAU1aY2BKCucTUYmdM0jVnBJwggftfJxrXZ2U6lf8VxrFKTFmV2JJf0 uQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3bhkcxjb99-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Oct 2021 14:37:33 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 197IQcP3029725;
+        Thu, 7 Oct 2021 14:37:32 -0400
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3bhkcxjb8f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Oct 2021 14:37:32 -0400
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 197IRERb003304;
+        Thu, 7 Oct 2021 18:37:29 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma06fra.de.ibm.com with ESMTP id 3beepk7kpt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 07 Oct 2021 18:37:29 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 197IbQU746989638
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 7 Oct 2021 18:37:26 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 98963A4053;
+        Thu,  7 Oct 2021 18:37:26 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B28DCA404D;
+        Thu,  7 Oct 2021 18:37:18 +0000 (GMT)
+Received: from sig-9-65-203-7.ibm.com (unknown [9.65.203.7])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  7 Oct 2021 18:37:18 +0000 (GMT)
+Message-ID: <7ee6ba1200b854fc6012b0cec49849f7c0789f42.camel@linux.ibm.com>
+Subject: Re: [PATCH v12 0/3] Add trusted_for(2) (was O_MAYEXEC)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Kees Cook <keescook@chromium.org>
+Cc:     bauen1 <j2468h@googlemail.com>, akpm@linux-foundation.org,
+        arnd@arndb.de, casey@schaufler-ca.com,
+        christian.brauner@ubuntu.com, christian@python.org, corbet@lwn.net,
+        cyphar@cyphar.com, deven.desai@linux.microsoft.com,
+        dvyukov@google.com, ebiggers@kernel.org, ericchiang@google.com,
+        fweimer@redhat.com, geert@linux-m68k.org, jack@suse.cz,
+        jannh@google.com, jmorris@namei.org,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, luto@kernel.org,
+        madvenka@linux.microsoft.com, mjg59@google.com,
+        mszeredi@redhat.com, mtk.manpages@gmail.com,
+        nramas@linux.microsoft.com, philippe.trebuchet@ssi.gouv.fr,
+        scottsh@microsoft.com, sean.j.christopherson@intel.com,
+        sgrubb@redhat.com, shuah@kernel.org, steve.dower@python.org,
+        thibaut.sautereau@clip-os.org, vincent.strubel@ssi.gouv.fr,
+        viro@zeniv.linux.org.uk, willy@infradead.org
+Date:   Thu, 07 Oct 2021 14:37:17 -0400
+In-Reply-To: <4c4bbd74-0599-fed5-0340-eff197bafeb1@digikod.net>
+References: <20201203173118.379271-1-mic@digikod.net>
+         <d3b0da18-d0f6-3f72-d3ab-6cf19acae6eb@gmail.com>
+         <2a4cf50c-7e79-75d1-7907-8218e669f7fa@digikod.net>
+         <202110061500.B8F821C@keescook>
+         <4c4bbd74-0599-fed5-0340-eff197bafeb1@digikod.net>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: jOAagv9-Zy3caZx8ORtgWB-IBZAybLlH
+X-Proofpoint-ORIG-GUID: qojyI-7uaVr1-wTGd2steGJ3omVhfkri
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegsguYZ3y5G6Rj4hoxEOn2ObnUVajTVhtyvm4ZSeFqGtFw@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.391,FMLib:17.0.607.475
+ definitions=2021-10-07_03,2021-10-07_02,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ suspectscore=0 bulkscore=0 lowpriorityscore=0 malwarescore=0
+ mlxlogscore=373 priorityscore=1501 phishscore=0 spamscore=0
+ impostorscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2109230001 definitions=main-2110070119
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 07, 2021 at 08:11:13PM +0200, Miklos Szeredi wrote:
-> On Thu, 7 Oct 2021 at 16:22, Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > On Thu, Oct 07, 2021 at 03:45:40PM +0200, Miklos Szeredi wrote:
-> > > On Wed, 6 Oct 2021 at 18:13, Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > >
-> > > > On Wed, Oct 06, 2021 at 03:02:36PM +0200, Miklos Szeredi wrote:
-> > > > > On Thu, 30 Sept 2021 at 16:39, Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > > > >
-> > > > > > Add a new notification type FUSE_NOTIFY_LOCK. This notification can be
-> > > > > > sent by file server to signifiy that a previous locking request has
-> > > > > > completed and actual caller should be woken up.
-> > > > >
-> > > > > Shouldn't this also be generic instead of lock specific?
-> > > > >
-> > > > > I.e. generic header  + original outarg.
-> > > >
-> > > > Hi Miklos,
-> > > >
-> > > > I am not sure I understand the idea. Can you please elaborate a bit more.
-> > > >
-> > > > IIUC, "fuse_out_header + original outarg"  is format for responding
-> > > > to regular fuse requests. If we use that it will become like responding
-> > > > to same request twice. First time we responded with ->error=1 so that
-> > > > caller can wait and second time we respond with actual outarg (if
-> > > > there is one depending on the type of request).
-> > > >
-> > > > IOW, this will become more like implementing blocking of request in
-> > > > client in a more generic manner.
-> > > >
-> > > > But outarg, depends on type of request (In case of locking there is
-> > > > none). And outarg memory is allocated by driver and filled by server.
-> > > > In case of notifications, driver is allocating the memory but it
-> > > > does not know what will come in notification and how much memory
-> > > > to allocate. So it relies on device telling it how much memory
-> > > > to allocate in general so that bunch of pre-defined notification
-> > > > types can fit in (fs->notify_buf_size).
-> > > >
-> > > > I modeled this on the same lines as other fuse notifications where
-> > > > server sends notifications with following format.
-> > > >
-> > > > fuse_out_header + <structure based on notification type>
-> > > >
-> > > > out_header->unique is 0 for notifications to differentiate notifications
-> > > > from request reply.
-> > > >
-> > > > out_header->error contains the code of actual notification being sent.
-> > > > ex. FUSE_NOTIFY_INVAL_INODE or FUSE_NOTIFY_LOCK or FUSE_NOTIFY_DELETE.
-> > > > Right now virtiofs supports only one notification type. But in future
-> > > > we can introduce more types (to support inotify stuff etc).
-> > > >
-> > > > In short, I modeled this on existing notion of fuse notifications
-> > > > (and not fuse reply). And given notifications are asynchronous,
-> > > > we don't know what were original outarg. In fact they might
-> > > > be generated not necessarily in response to a request. And that's
-> > > > why this notion of defining a type of notification (FUSE_NOTIFY_LOCK)
-> > > > and then let driver decide how to handle this notification.
-> > > >
-> > > > I might have completely misunderstood your suggestion. Please help
-> > > > me understand.
-> > >
-> > > Okay, so we are expecting this mechanism to be only used for blocking
-> > > locks.
-> >
-> > Yes, as of now it is only being used only for blocking locks. So there
-> > are two parts to it.
-> >
-> > A. For a blocking operation, server can reply with error=1, and that's
-> >    a signal to client to wait for a notification to arrive later. And
-> >    fuse client will not complete the request and instead will queue it
-> >    in one of the internal lists.
-> >
-> > B. Later server will send a fuse notification event (FUSE_NOTIFY_LOCK)
-> >    when it has acquired the lock. This notification will have unique
-> >    number of request for which this notification has been generated.
-> >    Fuse client will search for the request with expected unique number
-> >    in the list and complete the request.
-> >
-> > I think part A is generic in the sense it could be used for other
-> > kind of blocking requests as well down the line, where server is
-> > doing the blocking operation on behalf of client and will send
-> > notification later. Part B is very specific to blocking locks though.
+On Thu, 2021-10-07 at 20:29 +0200, Mickaël Salaün wrote:
+> On 07/10/2021 00:03, Kees Cook wrote:
+> > On Fri, Apr 09, 2021 at 07:15:42PM +0200, Mickaël Salaün wrote:
+> >> There was no new reviews, probably because the FS maintainers were busy,
+> >> and I was focused on Landlock (which is now in -next), but I plan to
+> >> send a new patch series for trusted_for(2) soon.
+> > 
+> > Hi!
+> > 
+> > Did this ever happen? It looks like it's in good shape, and I think it's
+> > a nice building block for userspace to have. Are you able to rebase and
+> > re-send this?
 > 
-> I don't really get why B is specific to blocking locks. But anyway...
-> we are only implementing it for blocking locks for now.
-
-Hmm.., I am wondering do I have to make notification specific to
-lock. All it is doing is returning an "error" code which signifies
-either operation completed successfully or represents error code
-if error occurred.
-
-This probably could be more generic. May be I can call this
-notification FUSE_NOTIFY_OP_COMPLETE. This notification is
-just signalling that a previously issued request has completed.
-Request is identified by notify->unique and result of blocking operation
-is in notify->error. So that way it is more generic and can be
-used for other kind of operations too (and not just locking).
-
+> I just sent it:
+> https://lore.kernel.org/all/20211007182321.872075-1-mic@digikod.net/
 > 
-> >
-> > > That makes sense, but then locking ops should be setting a
-> > > flag indicating that this is locking op.  I.e. in fuse_setlk():
-> > >
-> > >     args.blocking_lock = true;
-> > >
-> > > And this should be verified when the reply with the positive error comes back.
-> >
-> > So this args.blocking_lock, goes to server as well? Or this is something
-> > internal to fuse client so that client can decide whether ->error=1 is
-> > a valid response or not. IOW, client is trying to do verification
-> > whether server should have generated ->error=1 or not for this specific
-> > request.
+> Some Signed-off-by would be appreciated. :)
 > 
-> Right, it's for the client.
 
-Got it. Will implement it.
+From the cover letter, 
 
-Thanks
-Vivek
+It is important to note that this can only enable to extend access
+control managed by the kernel.  Hence it enables current access control
+mechanism to be extended and become a superset of what they can
+currently control.  Indeed, the security policy could also be delegated
+to an LSM, either a MAC system or an integrity system.  For instance,
+this is required to close a major IMA measurement/appraisal interpreter
+integrity gap by bringing the ability to check the use of scripts [1].
+Other uses are expected, such as for magic-links [2], SGX integration
+[3], bpffs [4].
+
+From a quick review of the code, I don't see a new security hook being
+defined to cover these use cases.
+
+thanks,
+
+Mimi
+
+> > 
+> > I've tended to aim these things at akpm if Al gets busy. (And since
+> > you've had past review from Al, that should be hopefully sufficient.)
+> > 
+> > Thanks for chasing this!
+> > 
+> > -Kees
+> > 
+
 
