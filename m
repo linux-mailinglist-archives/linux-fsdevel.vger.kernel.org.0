@@ -2,182 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 70897424B17
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 02:25:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC54B424BCF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 04:29:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240001AbhJGA1I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Oct 2021 20:27:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34780 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239989AbhJGA1G (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Oct 2021 20:27:06 -0400
-Received: from mail-pf1-x44a.google.com (mail-pf1-x44a.google.com [IPv6:2607:f8b0:4864:20::44a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D91B6C061760
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Oct 2021 17:25:13 -0700 (PDT)
-Received: by mail-pf1-x44a.google.com with SMTP id f16-20020a056a0022d000b0044bbc586598so2073616pfj.14
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Oct 2021 17:25:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=7Ja3a3I+8c/EKROv5jASLlm7Xu+rNzxKS6xpAGRef0U=;
-        b=kjyFL9j9zVP1x2XbWEFzkEe955xziyCeATWIBzI7CYQ7+JHl3B8L+4jW1iRs0ID269
-         MAVNpBIfGsGfsPB/Ce75xoR7WIud5sx8ZrFs2hK65z41WqAG3rmLaokrkoKGDZ38cXcc
-         vBOerOGAN9NixyF46PdqExDNzn+ljNEz1AcEMq6LA5tqxPAHvszFgWdItwQgME3jWleQ
-         9/bE/PtKF7nUSS8JibfKUif/BvR4H+i8Lvf0pD1AicPP7CdGnVHQP6Nb76vlM4rQ0Ala
-         d0Dz/6Yr/jCj8h4YTEUMDd958LC+YMikXYQ5MP6ZrSwtksDWoJyF+HF1810V+udRqTgb
-         9gJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=7Ja3a3I+8c/EKROv5jASLlm7Xu+rNzxKS6xpAGRef0U=;
-        b=Gv7HNE+LRVdckeM/H7+pKSY8OsEec75a9oATiV1gQ8LZkaieJ/yTVYayr+QKzqAEXl
-         67id/HxojqWDUEgJen0iUO+IEcOeO39MSUyjgEcmN+TL7vpViub13C65pXO9gxrrJ3H8
-         c56ZhJugii7jlA2ALlwW3UF7UJvDhM9ALsfYo577q72WBKkyZnYCRI9u7FGMzrZFTWqZ
-         sXF4+3v/bqijLMas2hUbqh1i5GLbzHSqVbPG6OIhVeuZokUik9vex3MIvyf7eHib0DhB
-         GlTQg52U0w9wh9/LqFrr2YJvJzg0kxkgVBYgFKv69J2e+Fu2tX4TDpP/MhIX9+Qd16qD
-         vlBw==
-X-Gm-Message-State: AOAM532AYmkFWDWda5Y8rXwa/MrR5U4zzpZPuSQNjbJy0nEuv40tnQc4
-        egc+fLTPldRzOdYzg0obfzp/xHkolN5j0H4=
-X-Google-Smtp-Source: ABdhPJw2y8gkHLZpXISHlXjQTpFGbls2wfalhOcdz3QO9CAc3o6xV7wI77ALfwgRxMNjw3+agg09ZLYLKQEHAs0=
-X-Received: from ramjiyani.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:2edd])
- (user=ramjiyani job=sendgmr) by 2002:a17:902:d203:b0:13e:d053:1aa8 with SMTP
- id t3-20020a170902d20300b0013ed0531aa8mr1023678ply.40.1633566313287; Wed, 06
- Oct 2021 17:25:13 -0700 (PDT)
-Date:   Thu,  7 Oct 2021 00:25:07 +0000
-Message-Id: <20211007002507.42501-1-ramjiyani@google.com>
+        id S232296AbhJGCbX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Oct 2021 22:31:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38384 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230489AbhJGCbW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 6 Oct 2021 22:31:22 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 53E5561215;
+        Thu,  7 Oct 2021 02:29:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1633573770;
+        bh=QKnJdE88voYB/9FaSah2G1VK75svKZo3+imFlVbkWFk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=sy3Id8Xw5K5JSS0QPe6KDaxwGmEsoiHtqVrOeqe1WMmSTAOI9kUw4iT3U1l7U1Buu
+         3w5tGvkoDfNxV23My6X1HDBhvus6DnOB/Q8phFYwuZC071WMp5Bs8FZl11x3GMauiE
+         Im+2fhvnN7zYh48vimu0ZpWrbH7fQ4uo59x+NuAc=
+Date:   Wed, 6 Oct 2021 19:29:27 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Pavel Machek <pavel@ucw.cz>, Colin Cross <ccross@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        vincenzo.frascino@arm.com,
+        Chinwen Chang ( =?UTF-8?Q?=E5=BC=B5=E9=8C=A6=E6=96=87?=) 
+        <chinwen.chang@mediatek.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jann Horn <jannh@google.com>, apopple@nvidia.com,
+        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
+        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
+        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
+        chris.hyser@oracle.com, Peter Collingbourne <pcc@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
+        Rolf Eike Beer <eb@emlix.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
+        cxfcosmos@gmail.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        kernel-team <kernel-team@android.com>
+Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
+Message-Id: <20211006192927.f7a735f1afe4182bf4693838@linux-foundation.org>
+In-Reply-To: <CAJuCfpH4KT=fOAWsYhaAb_LLg-VwPvL4Bmv32NYuUtZ3Ceo+PA@mail.gmail.com>
+References: <20211001205657.815551-1-surenb@google.com>
+        <20211001205657.815551-3-surenb@google.com>
+        <20211005184211.GA19804@duo.ucw.cz>
+        <CAJuCfpE5JEThTMhwKPUREfSE1GYcTx4YSLoVhAH97fJH_qR0Zg@mail.gmail.com>
+        <20211005200411.GB19804@duo.ucw.cz>
+        <CAJuCfpFZkz2c0ZWeqzOAx8KFqk1ge3K-SiCMeu3dmi6B7bK-9w@mail.gmail.com>
+        <efdffa68-d790-72e4-e6a3-80f2e194d811@nvidia.com>
+        <YV1eCu0eZ+gQADNx@dhcp22.suse.cz>
+        <6b15c682-72eb-724d-bc43-36ae6b79b91a@redhat.com>
+        <CAJuCfpEPBM6ehQXgzp=g4SqtY6iaC8wuZ-CRE81oR1VOq7m4CA@mail.gmail.com>
+        <192438ab-a095-d441-6843-432fbbb8e38a@redhat.com>
+        <CAJuCfpH4KT=fOAWsYhaAb_LLg-VwPvL4Bmv32NYuUtZ3Ceo+PA@mail.gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
-X-Mailer: git-send-email 2.33.0.800.g4c38ced690-goog
-Subject: [PATCH v4] aio: Add support for the POLLFREE
-From:   Ramji Jiyani <ramjiyani@google.com>
-To:     arnd@arndb.de, viro@zeniv.linux.org.uk, bcrl@kvack.org
-Cc:     hch@lst.de, kernel-team@android.com, linux-aio@kvack.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, oleg@redhat.com, ebiggers@kernel.org,
-        Ramji Jiyani <ramjiyani@google.com>,
-        Jeff Moyer <jmoyer@redhat.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add support for the POLLFREE flag to force complete iocb inline in
-aio_poll_wake(). A thread may use it to signal it's exit and/or request
-to cleanup while pending poll request. In this case, aio_poll_wake()
-needs to make sure it doesn't keep any reference to the queue entry
-before returning from wake to avoid possible use after free via
-poll_cancel() path.
+On Wed, 6 Oct 2021 08:20:20 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
 
-UAF issue was found during binder and aio interactions in certain
-sequence of events [1].
+> On Wed, Oct 6, 2021 at 8:08 AM David Hildenbrand <david@redhat.com> wrote:
+> >
+> > On 06.10.21 17:01, Suren Baghdasaryan wrote:
+> > > On Wed, Oct 6, 2021 at 2:27 AM David Hildenbrand <david@redhat.com> wrote:
+> > >>
+> > >> On 06.10.21 10:27, Michal Hocko wrote:
+> > >>> On Tue 05-10-21 23:57:36, John Hubbard wrote:
+> > >>> [...]
+> > >>>> 1) Yes, just leave the strings in the kernel, that's simple and
+> > >>>> it works, and the alternatives don't really help your case nearly
+> > >>>> enough.
+> > >>>
+> > >>> I do not have a strong opinion. Strings are easier to use but they
+> > >>> are more involved and the necessity of kref approach just underlines
+> > >>> that. There are going to be new allocations and that always can lead
+> > >>> to surprising side effects.  These are small (80B at maximum) so the
+> > >>> overall footpring shouldn't all that large by default but it can grow
+> > >>> quite large with a very high max_map_count. There are workloads which
+> > >>> really require the default to be set high (e.g. heavy mremap users). So
+> > >>> if anything all those should be __GFP_ACCOUNT and memcg accounted.
+> > >>>
+> > >>> I do agree that numbers are just much more simpler from accounting,
+> > >>> performance and implementation POV.
+> > >>
+> > >> +1
+> > >>
+> > >> I can understand that having a string can be quite beneficial e.g., when
+> > >> dumping mmaps. If only user space knows the id <-> string mapping, that
+> > >> can be quite tricky.
+> > >>
+> > >> However, I also do wonder if there would be a way to standardize/reserve
+> > >> ids, such that a given id always corresponds to a specific user. If we
+> > >> use an uint64_t for an id, there would be plenty room to reserve ids ...
+> > >>
+> > >> I'd really prefer if we can avoid using strings and instead using ids.
+> > >
+> > > I wish it was that simple and for some names like [anon:.bss] or
+> > > [anon:dalvik-zygote space] reserving a unique id would work, however
+> > > some names like [anon:dalvik-/system/framework/boot-core-icu4j.art]
+> > > are generated dynamically at runtime and include package name.
+> >
+> > Valuable information
+> 
+> Yeah, I should have described it clearer the first time around.
 
-The POLLFREE flag is no more exclusive to the epoll and is being
-shared with the aio. Remove comment from poll.h to avoid confusion.
+If it gets this fancy then the 80 char limit is likely to become a
+significant limitation and the choice should be explained & justified.
 
-[1] https://lore.kernel.org/r/CAKUd0B_TCXRY4h1hTztfwWbNSFQqsudDLn2S_28csgWZmZAG3Q@mail.gmail.com/
+Why not 97?  1034?  Why not just strndup_user() and be done with it?
 
-Fixes: af5c72b1fc7a ("Fix aio_poll() races")
-Signed-off-by: Ramji Jiyani <ramjiyani@google.com>
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-Cc: stable@vger.kernel.org # 4.19+
----
-Changes since v1:
-- Removed parenthesis around POLLFREE macro definition as per review.
-- Updated description to refer UAF issue discussion this patch fixes.
-- Updated description to remove reference to parenthesis change.
-- Added Reviewed-by
+> > My question would be, if we really have to expose these strings to the
+> > kernel, or if an id is sufficient. Sure, it would move complexity to
+> > user space, but keeping complexity out of the kernel is usually a good idea.
+> 
+> My worry here is not the additional complexity on the userspace side
+> but the performance hit we would have to endure due to these
+> conversions.
 
-Changes since v2:
-- Added Fixes tag.
-- Added stable tag for backporting on 4.19+ LTS releases
+Has the performance hit been quantified?
 
-Changes since v3:
-- Updated patch description
-- Updated Fixes tag to issue manifestation origin
----
- fs/aio.c                        | 45 ++++++++++++++++++---------------
- include/uapi/asm-generic/poll.h |  2 +-
- 2 files changed, 26 insertions(+), 21 deletions(-)
+I've seen this many times down the ages.  Something which *could* be
+done in userspace is instead done in the kernel because coordinating
+userspace is Just So Damn Hard.  I guess the central problem is that
+userspace isn't centrally coordinated.  I wish we were better at this.
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 51b08ab01dff..5d539c05df42 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -1674,6 +1674,7 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
- {
- 	struct poll_iocb *req = container_of(wait, struct poll_iocb, wait);
- 	struct aio_kiocb *iocb = container_of(req, struct aio_kiocb, poll);
-+	struct kioctx *ctx = iocb->ki_ctx;
- 	__poll_t mask = key_to_poll(key);
- 	unsigned long flags;
- 
-@@ -1683,29 +1684,33 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
- 
- 	list_del_init(&req->wait.entry);
- 
--	if (mask && spin_trylock_irqsave(&iocb->ki_ctx->ctx_lock, flags)) {
--		struct kioctx *ctx = iocb->ki_ctx;
-+	/*
-+	 * Use irqsave/irqrestore because not all filesystems (e.g. fuse)
-+	 * call this function with IRQs disabled and because IRQs have to
-+	 * be disabled before ctx_lock is obtained.
-+	 */
-+	if (mask & POLLFREE) {
-+		/* Force complete iocb inline to remove refs to deleted entry */
-+		spin_lock_irqsave(&ctx->ctx_lock, flags);
-+	} else if (!(mask && spin_trylock_irqsave(&ctx->ctx_lock, flags))) {
-+		/* Can't complete iocb inline; schedule for later */
-+		schedule_work(&req->work);
-+		return 1;
-+	}
- 
--		/*
--		 * Try to complete the iocb inline if we can. Use
--		 * irqsave/irqrestore because not all filesystems (e.g. fuse)
--		 * call this function with IRQs disabled and because IRQs
--		 * have to be disabled before ctx_lock is obtained.
--		 */
--		list_del(&iocb->ki_list);
--		iocb->ki_res.res = mangle_poll(mask);
--		req->done = true;
--		if (iocb->ki_eventfd && eventfd_signal_allowed()) {
--			iocb = NULL;
--			INIT_WORK(&req->work, aio_poll_put_work);
--			schedule_work(&req->work);
--		}
--		spin_unlock_irqrestore(&ctx->ctx_lock, flags);
--		if (iocb)
--			iocb_put(iocb);
--	} else {
-+	/* complete iocb inline */
-+	list_del(&iocb->ki_list);
-+	iocb->ki_res.res = mangle_poll(mask);
-+	req->done = true;
-+	if (iocb->ki_eventfd && eventfd_signal_allowed()) {
-+		iocb = NULL;
-+		INIT_WORK(&req->work, aio_poll_put_work);
- 		schedule_work(&req->work);
- 	}
-+	spin_unlock_irqrestore(&ctx->ctx_lock, flags);
-+	if (iocb)
-+		iocb_put(iocb);
-+
- 	return 1;
- }
- 
-diff --git a/include/uapi/asm-generic/poll.h b/include/uapi/asm-generic/poll.h
-index 41b509f410bf..f9c520ce4bf4 100644
---- a/include/uapi/asm-generic/poll.h
-+++ b/include/uapi/asm-generic/poll.h
-@@ -29,7 +29,7 @@
- #define POLLRDHUP       0x2000
- #endif
- 
--#define POLLFREE	(__force __poll_t)0x4000	/* currently only for epoll */
-+#define POLLFREE	(__force __poll_t)0x4000
- 
- #define POLL_BUSY_LOOP	(__force __poll_t)0x8000
- 
--- 
-2.33.0.800.g4c38ced690-goog
 
