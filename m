@@ -2,140 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 236F64250D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 12:15:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57CE34251C0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 13:10:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240638AbhJGKRY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Oct 2021 06:17:24 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:53276 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230060AbhJGKRX (ORCPT
+        id S232791AbhJGLLx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Oct 2021 07:11:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37680 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232665AbhJGLLv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Oct 2021 06:17:23 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 4515F1C0B87; Thu,  7 Oct 2021 12:15:28 +0200 (CEST)
-Date:   Thu, 7 Oct 2021 12:15:27 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        David Hildenbrand <david@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Colin Cross <ccross@google.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        vincenzo.frascino@arm.com,
-        Chinwen Chang =?utf-8?B?KOW8temMpuaWhyk=?= 
-        <chinwen.chang@mediatek.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Jann Horn <jannh@google.com>, apopple@nvidia.com,
-        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
-        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
-        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
-        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
-        Chris Hyser <chris.hyser@oracle.com>,
-        Peter Collingbourne <pcc@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
-        Rolf Eike Beer <eb@emlix.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
-        cxfcosmos@gmail.com, LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>,
-        kernel-team <kernel-team@android.com>
-Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
-Message-ID: <20211007101527.GA26288@duo.ucw.cz>
-References: <20211005200411.GB19804@duo.ucw.cz>
- <CAJuCfpFZkz2c0ZWeqzOAx8KFqk1ge3K-SiCMeu3dmi6B7bK-9w@mail.gmail.com>
- <efdffa68-d790-72e4-e6a3-80f2e194d811@nvidia.com>
- <YV1eCu0eZ+gQADNx@dhcp22.suse.cz>
- <6b15c682-72eb-724d-bc43-36ae6b79b91a@redhat.com>
- <CAJuCfpEPBM6ehQXgzp=g4SqtY6iaC8wuZ-CRE81oR1VOq7m4CA@mail.gmail.com>
- <20211006175821.GA1941@duo.ucw.cz>
- <CAJuCfpGuuXOpdYbt3AsNn+WNbavwuEsDfRMYunh+gajp6hOMAg@mail.gmail.com>
- <YV6rksRHr2iSWR3S@dhcp22.suse.cz>
- <92cbfe3b-f3d1-a8e1-7eb9-bab735e782f6@rasmusvillemoes.dk>
+        Thu, 7 Oct 2021 07:11:51 -0400
+Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CC24C061760
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Oct 2021 04:09:58 -0700 (PDT)
+Received: by mail-vs1-xe2a.google.com with SMTP id w13so6366314vsa.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Oct 2021 04:09:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HzsMoRJsH8Sqc/5QUEzazNk9LwUNPwGYQgI6XlOhwdM=;
+        b=jjMWBQ2b9mG7NVaxJoDtibQ3OU6rQZ2zpfbaqAgq2HL5qORXLUX1Vi07dspO0J6aAE
+         ICBr2srIBsmVhXWLi/2xcHtw0vRKfJqJudBZZkWofSZIHP70MUigU+lFODf0f10lqDtK
+         UBD1UJGTDLuVUHTwzgYl9626fOtXaPkl82ihM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HzsMoRJsH8Sqc/5QUEzazNk9LwUNPwGYQgI6XlOhwdM=;
+        b=hIOQ7FeovaZ6WaFaKNntU6EPphmRov34vhLhe5iJRupaUzqVIY09m4tIoksNA1fXVX
+         WcH4mLNn8Th0qLiDjBFB7lypjIUE7T6FGPthT4O10ALWwttrOtrG1FxQyY+jsbo6V6sY
+         xGPb4/tQXBwy0oxSctEV9ZvLSTnez7/a/MoBMdJPCCu+dOOHW5ihuW0SA/hyPL9Io23z
+         MZTPXZUmAuXvoURsthl0l1WKIQkTwqtog1l1446f1Ce6z6g1Ej4yYFwsUb506EPb2lPe
+         ycTisl05q2vJ7GvHKJxj3j74/YNP7hl265ydQGGLBPeDOpOGXvEPNtpCveg2GpdSqnxd
+         uciw==
+X-Gm-Message-State: AOAM531VNtnpE5tztvf+JZgMc+RO9XrWxHRifdQExuRyrxNSzOG2o6/Y
+        hnNkNxD6kLKiSEFiIZzDsXN/BXMNUZJGE+jS3XK8uQ==
+X-Google-Smtp-Source: ABdhPJwwlMDrzL1eRmXK79q/c/bQxWvYBLZtluQeSTQttotP78WIpfO7fpUap6vTe2AKIKk7F7bBMi6PJsRRqyRS7HI=
+X-Received: by 2002:a05:6102:3c3:: with SMTP id n3mr3179780vsq.19.1633604997574;
+ Thu, 07 Oct 2021 04:09:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="DocE+STaALJfprDB"
-Content-Disposition: inline
-In-Reply-To: <92cbfe3b-f3d1-a8e1-7eb9-bab735e782f6@rasmusvillemoes.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210923130814.140814-1-cgxu519@mykernel.net> <20210923130814.140814-8-cgxu519@mykernel.net>
+In-Reply-To: <20210923130814.140814-8-cgxu519@mykernel.net>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 7 Oct 2021 13:09:46 +0200
+Message-ID: <CAJfpegtLi1PsfpkohJ-8kTHVazf7cZiX96OSBMn7Q39PY_PXaw@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 07/10] ovl: cache dirty overlayfs' inode
+To:     Chengguang Xu <cgxu519@mykernel.net>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, 23 Sept 2021 at 15:08, Chengguang Xu <cgxu519@mykernel.net> wrote:
+>
+> Now drop overlayfs' inode will sync dirty data,
+> so we change to only drop clean inode.
+>
+> The purpose of doing this is to keep compatible
+> behavior with before because without this change
+> dropping overlayfs inode will not trigger syncing
+> of underlying dirty inode.
+>
+> Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+> ---
+>  fs/overlayfs/super.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index cddae3ca2fa5..bf4000eb9be8 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -441,11 +441,25 @@ static int ovl_write_inode(struct inode *inode,
+>         return ret;
+>  }
+>
+> +/*
+> + * In iput_final(), clean inode will drop directly and dirty inode will
+> + * keep in the cache until write back to sync dirty data then add to lru
+> + * list to wait reclaim.
+> + */
+> +static int ovl_drop_inode(struct inode *inode)
+> +{
+> +       struct inode *upper = ovl_inode_upper(inode);
+> +
+> +       if (!upper || !(inode->i_state & I_DIRTY_ALL))
 
---DocE+STaALJfprDB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Could we check upper dirtyness here? That would give a more precise result.
 
-Hi!
+Alternatively don't set .drop_inode (i.e. use generic_drop_inode())
+and set I_DONTCACHE on overlay inodes.  That would cause the upper
+inode to be always written back before eviction.
 
-> >> Hmm, so the suggestion is to have some directory which contains files
-> >> representing IDs, each containing the string name of the associated
-> >> vma? Then let's say we are creating a new VMA and want to name it. We
-> >> would have to scan that directory, check all files and see if any of
-> >> them contain the name we want to reuse the same ID.
-> >=20
-> > I believe Pavel meant something as simple as
-> > $ YOUR_FILE=3D$YOUR_IDS_DIR/my_string_name
-> > $ touch $YOUR_FILE
-> > $ stat -c %i $YOUR_FILE
->=20
-> So in terms of syscall overhead, that would be open(..., O_CREAT |
-> O_CLOEXEC), fstat(), close() - or one could optimistically start by
+The latter would result in simpler logic, and I think performance-wise
+it wouldn't matter.   But I may be missing something.
 
-You could get to two if you used mkdir instead of open.
-
-> > YOUR_IDS_DIR can live on a tmpfs and you can even implement a policy on
-> > top of that (who can generate new ids, gurantee uniqness etc...).
-> >=20
-> > The above is certainly not for free of course but if you really need a
-> > system wide consistency when using names then you need some sort of
-> > central authority. How you implement that is not all that important
-> > but I do not think we want to handle that in the kernel.
->=20
-> IDK. If the whole thing could be put behind a CONFIG_ knob, with _zero_
-> overhead when not enabled (and I'm a bit worried about all the functions
-> that grow an extra argument that gets passed around), I don't mind the
-> string interface. But I don't really have a say either way.
-
-If this is ever useful outside of Android, eventually distros will
-have it enabled.
-
-Best regards,
-								Pavel
---=20
-http://www.livejournal.com/~pavelmachek
-
---DocE+STaALJfprDB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYV7IvwAKCRAw5/Bqldv6
-8ij3AKCob2c0ihsUF0OGRBWpcwK/HrL/WwCfUjg8l8NuDcUriv7uo2C8eR0uTy8=
-=1GxR
------END PGP SIGNATURE-----
-
---DocE+STaALJfprDB--
+Thanks,
+Miklos
