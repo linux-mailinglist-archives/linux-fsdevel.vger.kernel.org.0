@@ -2,178 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4027F425A74
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 20:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF434425A8B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Oct 2021 20:19:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243540AbhJGSOz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Oct 2021 14:14:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53438 "EHLO
+        id S243559AbhJGSVY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Oct 2021 14:21:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243531AbhJGSOy (ORCPT
+        with ESMTP id S233844AbhJGSVX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Oct 2021 14:14:54 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48B07C061760
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Oct 2021 11:13:00 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id w11so4407365plz.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Oct 2021 11:13:00 -0700 (PDT)
+        Thu, 7 Oct 2021 14:21:23 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4769BC061570;
+        Thu,  7 Oct 2021 11:19:29 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id l7so26600506edq.3;
+        Thu, 07 Oct 2021 11:19:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=o4WwfSdG/6KRIuI/J9zyZX24q26V4qiHr2+KV/sCerI=;
-        b=UFWObsTY+6ez5xDu9StX0xHOEvb0Awqkv0IojxdYI+PxQZVMQnm1+78GXylVO7eQKc
-         unCWRkoNBPz+dlTqyMSHkXjEyBSrxvIoYe8zqlUquJAovzzTTAutOaWA2u7XXWw+cqmI
-         8LjuIEZ3xAwyUSETK/5DPVjRVFkuDfq7sRi3w=
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iLeSFUziBQBa2nfyLYU7/W4j+xBwKu7dSm2xdvN4YL4=;
+        b=m8okmC3zr7UD9/li1nvBU2McS2L9K4AnobrF92DJzJ9Z9tffjsHoSEuW+70rUZvQMN
+         AdcMSJJeZ4ZNvPIRAlqPGej2NlOHfSmJICDdNQgH/RpdSkyZfXsG8EKam4pcUn9IyT9s
+         5kJRYQGC9ejisi2qDiyq3DFRwiYYrkG/iNw4UAlFIZVkn/y6FfgKGZYBJGEBBvl6OzQh
+         lhQMKI95h37zzezwhmFmIazKpRkpY7SDm612HQKvua2Vrzjl3pgSG9KcAJx5FOLl0boW
+         H3jkue6ubrw2SwsdhyhLbt38/7/6b89HifwYOw7fuaEZQGx5GB88NOdRLIkde16ipsdc
+         XdLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=o4WwfSdG/6KRIuI/J9zyZX24q26V4qiHr2+KV/sCerI=;
-        b=ZVNznrGePbYeGR0NlgCG3l3TDgBzOW3UU8a7f0nQUT4q/SFqR/RW7wzVQNHrCenR5Z
-         jdUvmwjsNzfaMoHdLBcMILJ3QBd553Gqzkc5/5Nzr4vgsNP/6J62TnIrFaYnNZgLDSGE
-         rQLCDvf0iTnq8MTXSHcNeBvMiKYt4Yu28RAu5RF0M03OSgMT4MH/JPaCHq8lsqUVyGmw
-         JvYQvCSfH9WpFsx54lcim2wcytlC7E5FbgbGN6HrReNgcGdoJBD5gpOS+DTt9Awa9rHm
-         aVv6uGK8W+XEgXCjOJEc2C98E3Bvl3bgHEluMg3OAdKI1rMRNeZw55mBZuUbUm+10tqi
-         t53w==
-X-Gm-Message-State: AOAM531DlfEU3oNuNc4EgzguRJO8apZdGU7N8iAdESDrHWKkr/3dsLAU
-        hhXwkPc+TlnkvrmUwrjvhU5LBZ8Y4I0+DA==
-X-Google-Smtp-Source: ABdhPJzksZUFHw8GIXRDArO1r3B4Ou0wRQUnhd+Drh3yhu6yWxEjZ26oum5HTJ0UupOTrE/3y3xPaQ==
-X-Received: by 2002:a17:902:c950:b0:13e:fbf9:7939 with SMTP id i16-20020a170902c95000b0013efbf97939mr5395214pla.65.1633630379611;
-        Thu, 07 Oct 2021 11:12:59 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id g14sm6529008pjd.24.2021.10.07.11.12.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Oct 2021 11:12:59 -0700 (PDT)
-Date:   Thu, 7 Oct 2021 11:12:58 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     Michal Hocko <mhocko@suse.com>, Pavel Machek <pavel@ucw.cz>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        David Hildenbrand <david@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Colin Cross <ccross@google.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        vincenzo.frascino@arm.com,
-        Chinwen Chang =?utf-8?B?KOW8temMpuaWhyk=?= 
-        <chinwen.chang@mediatek.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Jann Horn <jannh@google.com>, apopple@nvidia.com,
-        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
-        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
-        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
-        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
-        Chris Hyser <chris.hyser@oracle.com>,
-        Peter Collingbourne <pcc@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
-        Rolf Eike Beer <eb@emlix.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
-        cxfcosmos@gmail.com, LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>,
-        kernel-team <kernel-team@android.com>
-Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
-Message-ID: <202110071111.DF87B4EE3@keescook>
-References: <20211006175821.GA1941@duo.ucw.cz>
- <CAJuCfpGuuXOpdYbt3AsNn+WNbavwuEsDfRMYunh+gajp6hOMAg@mail.gmail.com>
- <YV6rksRHr2iSWR3S@dhcp22.suse.cz>
- <92cbfe3b-f3d1-a8e1-7eb9-bab735e782f6@rasmusvillemoes.dk>
- <20211007101527.GA26288@duo.ucw.cz>
- <CAJuCfpGp0D9p3KhOWhcxMO1wEbo-J_b2Anc-oNwdycx4NTRqoA@mail.gmail.com>
- <YV8jB+kwU95hLqTq@dhcp22.suse.cz>
- <CAJuCfpG-Nza3YnpzvHaS_i1mHds3nJ+PV22xTAfgwvj+42WQNA@mail.gmail.com>
- <YV8u4B8Y9AP9xZIJ@dhcp22.suse.cz>
- <CAJuCfpHAG_C5vE-Xkkrm2kynTFF-Jd06tQoCWehHATL0W2mY_g@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iLeSFUziBQBa2nfyLYU7/W4j+xBwKu7dSm2xdvN4YL4=;
+        b=v8kxt76PzGIJ5Yvb4z9vZ+Qv218tnCXzGWBKCedSAITnB+H7P9WpMEGYC4gCGqeBLO
+         qZN5baoT0p5Xd5LTpA6NGr6uz4dXkpEBHS1DDJAb/vD9huU1QdXbxZYgHEQJUWXpdNjD
+         QlasByzab0tCzT1TDoonoEXbbA5yJ5B95Hx+BFMrGxZ05Cls+admytaekWwU+tdb7dcR
+         g4bvpJJQSd8N1BziH+/tgOkNBmCc4b9wPf3FfsOtggcjL4WxXRHGwmDjVCEiXFuJWK4c
+         oLt5EJWOdtGYVC+rOaF5xUAr7uKKu8LoCNtQWBIBDWq7FxvMFLXmb9ArZ9H72CM6Zcs6
+         EFTA==
+X-Gm-Message-State: AOAM531lv3lzGnsBqn4/ZHMRV8w/afHnRuLv1DRV3Jnm8SiJI8hDUGAi
+        1A60xa+/tXIhuA/Zsr+joObQEmibOEt4YdL5cYo=
+X-Google-Smtp-Source: ABdhPJxoNh6UJJ8wPJQfMSzbLWFicPr+jLK/UU9HxPMV70hLqQy0n9zs3d+z/584Rcc28s0HGFyu+/EKZhfBZCyFhN8=
+X-Received: by 2002:a50:e044:: with SMTP id g4mr8162515edl.46.1633630767900;
+ Thu, 07 Oct 2021 11:19:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJuCfpHAG_C5vE-Xkkrm2kynTFF-Jd06tQoCWehHATL0W2mY_g@mail.gmail.com>
+References: <20210930215311.240774-1-shy828301@gmail.com> <20210930215311.240774-3-shy828301@gmail.com>
+ <YV4Dz3y4NXhtqd6V@t490s> <CAHbLzkp8oO9qvDN66_ALOqNrUDrzHH7RZc3G5GQ1pxz8qXJjqw@mail.gmail.com>
+ <YV8bChbXop3FuwPC@t490s>
+In-Reply-To: <YV8bChbXop3FuwPC@t490s>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Thu, 7 Oct 2021 11:19:15 -0700
+Message-ID: <CAHbLzkq-18rDvfVepNTfKzPbb0+Tg9S=bwFCgjXGv0RxgouptA@mail.gmail.com>
+Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
+ for PMD page fault
+To:     Peter Xu <peterx@redhat.com>
+Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 07, 2021 at 10:50:24AM -0700, Suren Baghdasaryan wrote:
-> On Thu, Oct 7, 2021 at 10:31 AM Michal Hocko <mhocko@suse.com> wrote:
+On Thu, Oct 7, 2021 at 9:06 AM Peter Xu <peterx@redhat.com> wrote:
+>
+> On Wed, Oct 06, 2021 at 04:57:38PM -0700, Yang Shi wrote:
+> > > For example, I see that both unpoison_memory() and soft_offline_page() will
+> > > call it too, does it mean that we'll also set the bits e.g. even when we want
+> > > to inject an unpoison event too?
 > >
-> > On Thu 07-10-21 09:58:02, Suren Baghdasaryan wrote:
-> > > On Thu, Oct 7, 2021 at 9:40 AM Michal Hocko <mhocko@suse.com> wrote:
-> > > >
-> > > > On Thu 07-10-21 09:04:09, Suren Baghdasaryan wrote:
-> > > > > On Thu, Oct 7, 2021 at 3:15 AM Pavel Machek <pavel@ucw.cz> wrote:
-> > > > > >
-> > > > > > Hi!
-> > > > > >
-> > > > > > > >> Hmm, so the suggestion is to have some directory which contains files
-> > > > > > > >> representing IDs, each containing the string name of the associated
-> > > > > > > >> vma? Then let's say we are creating a new VMA and want to name it. We
-> > > > > > > >> would have to scan that directory, check all files and see if any of
-> > > > > > > >> them contain the name we want to reuse the same ID.
-> > > > > > > >
-> > > > > > > > I believe Pavel meant something as simple as
-> > > > > > > > $ YOUR_FILE=$YOUR_IDS_DIR/my_string_name
-> > > > > > > > $ touch $YOUR_FILE
-> > > > > > > > $ stat -c %i $YOUR_FILE
-> > > > >
-> > > > > Ah, ok, now I understand the proposal. Thanks for the clarification!
-> > > > > So, this would use filesystem as a directory for inode->name mappings.
-> > > > > One rough edge for me is that the consumer would still need to parse
-> > > > > /proc/$pid/maps and convert [anon:inode] into [anon:name] instead of
-> > > > > just dumping the content for the user. Would it be acceptable if we
-> > > > > require the ID provided by prctl() to always be a valid inode and
-> > > > > show_map_vma() would do the inode-to-filename conversion when
-> > > > > generating maps/smaps files? I know that inode->dentry is not
-> > > > > one-to-one mapping but we can simply output the first dentry name.
-> > > > > WDYT?
-> > > >
-> > > > No. You do not want to dictate any particular way of the mapping. The
-> > > > above is just one way to do that without developing any actual mapping
-> > > > yourself. You just use a filesystem for that. Kernel doesn't and
-> > > > shouldn't understand the meaning of those numbers. It has no business in
-> > > > that.
-> > > >
-> > > > In a way this would be pushing policy into the kernel.
-> > >
-> > > I can see your point. Any other ideas on how to prevent tools from
-> > > doing this id-to-name conversion themselves?
+> > unpoison_memory() should be not a problem since it will just bail out
+> > once THP is met as the comment says:
 > >
-> > I really fail to understand why you really want to prevent them from that.
-> > Really, the whole thing is just a cookie that kernel maintains for memory
-> > mappings so that two parties can understand what the meaning of that
-> > mapping is from a higher level. They both have to agree on the naming
-> > but the kernel shouldn't dictate any specific convention because the
-> > kernel _doesn't_ _care_. These things are not really anything actionable
-> > for the kernel. It is just a metadata.
-> 
-> The desire is for one of these two parties to be a human who can get
-> the data and use it as is without additional conversions.
-> /proc/$pid/maps could report FD numbers instead of pathnames, which
-> could be converted to pathnames in userspace. However we do not do
-> that because pathnames are more convenient for humans to identify a
-> specific resource. Same logic applies here IMHO.
+> > /*
+> > * unpoison_memory() can encounter thp only when the thp is being
+> > * worked by memory_failure() and the page lock is not held yet.
+> > * In such case, we yield to memory_failure() and make unpoison fail.
+> > */
+>
+> But I still think setting the subpage-hwpoison bit hides too deep there, it'll
+> be great we can keep get_hwpoison_page() as simple as a safe version of getting
+> the refcount of the page we want.  Or we'd still better touch up the comment
+> above get_hwpoison_page() to show that side effect.
+>
+> >
+> >
+> > And I think we should set the flag for soft offline too, right? The
+>
+> I'm not familiar with either memory failure or soft offline, so far it looks
+> right to me.  However..
+>
+> > soft offline does set the hwpoison flag for the corrupted sub page and
+> > doesn't split file THP,
+>
+> .. I believe this will become not true after your patch 5, right?
 
-Yes, please. It really seems like the folks that are interested in this
-feature want strings. (I certainly do.) For those not interested in the
-feature, it sounds like a CONFIG to keep it away would be sufficient.
-Can we just move forward with that?
+But THP split may fail, right?
 
--- 
-Kees Cook
+>
+> > so it should be captured by page fault as well. And yes for poison injection.
+>
+> One more thing: besides thp split and page free, do we need to conditionally
+> drop the HasHwpoisoned bit when received an unpoison event?
+
+It seems not to me, as the above comment from unpoison_memory() says
+unpoison can encounter thp only when the thp is being worked by
+memory_failure() and the page lock is not held yet. So it just bails
+out.
+
+In addition, unpoison just works for software injected errors, not
+real hardware failure.
+
+>
+> If my understanding is correct, we may need to scan all the subpages there, to
+> make sure HasHwpoisoned bit reflects the latest status for the thp in question.
+>
+> >
+> > But your comment reminds me that get_hwpoison_page() is just called
+> > when !MF_COUNT_INCREASED, so it means MADV_HWPOISON still could
+> > escape. This needs to be covered too.
+>
+> Right, maybe that's also a clue that we shouldn't set the new page flag within
+> get_hwpoison_page(), since get_hwpoison_page() is actually well coupled with
+> MF_COUNT_INCREASED and all of them are only about refcounting of the pages.
+
+Yeah, maybe, as long as there is not early bail out in some error
+handling paths.
+
+>
+> --
+> Peter Xu
+>
