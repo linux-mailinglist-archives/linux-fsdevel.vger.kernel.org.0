@@ -2,40 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DE854264B1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Oct 2021 08:34:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A1FA426531
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Oct 2021 09:25:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231485AbhJHGgr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Oct 2021 02:36:47 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:46878 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229661AbhJHGgp (ORCPT
+        id S232116AbhJHH1N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Oct 2021 03:27:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34394 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229830AbhJHH1L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Oct 2021 02:36:45 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 253B7223F3;
-        Fri,  8 Oct 2021 06:34:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1633674889; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CcFIsT1c20GjUuqiYz9PJ+eUk+2oJK91pSz23fk2I9w=;
-        b=X3yuN8h8Wp2n/qIrLAm1bgF3pbs0djN0Upa2GuSzWd7ZMvhNjTMfNGafyZfFa85St77ULb
-        XlR1cukpoUA5j0NlftLczY56Cgls+aCdeZKzQw2YiMOjkGCPiBTNrmZhFC5EIWmx58V6OD
-        Vzq+qZOju9bMpBwfXY2F+X0JZ8+Tp94=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 0E692A3B84;
-        Fri,  8 Oct 2021 06:34:48 +0000 (UTC)
-Date:   Fri, 8 Oct 2021 08:34:47 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Suren Baghdasaryan <surenb@google.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Fri, 8 Oct 2021 03:27:11 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F250C061755
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Oct 2021 00:25:15 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id j21so17505377lfe.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Oct 2021 00:25:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=EaBStkQbJ/56vDWRGxe1cWvLB2apSJpVfbn9rFFy6VQ=;
+        b=PJCmaxvVuKBNAN4Njn5KUcl6g383j4Vb5tnx0nJDv7g7SIS1wkwDlY3kI9KLUtYBGH
+         El6Xpm2x6d5DGTbE+erN2bbm2OaVIeIMjX/QNQC9hjV0HRf8ITLHg98hNuiinUeNzZN4
+         mmP61pgb8No6pnjZtSHAjQdlM19ljPWW9RzTo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=EaBStkQbJ/56vDWRGxe1cWvLB2apSJpVfbn9rFFy6VQ=;
+        b=XDv7qQtwkDJMCM1xQz+Wxf1Uvpv7JHlmXZ992lagyHuoZ7DNZtcdt8/XbUzEmxnbbK
+         qKyHMbtjpU/zPLG/MGS+GJwB/W//tf33HgcVKn2YvBRqfa/KBtLFlILyBFgDcKrGdXX2
+         41ID7qk6sT7VHC7L3OyRrWdgVYTSOmmT5uNHSBwBni7ewYfjAChks/58025k0mT2fPoS
+         H3QhnqB68uiRnBRMQbBAg5f6LSQZ/SaLElVmd3jRHZWfeIa8ofQ2a+Ak55NRSh3uCJ1D
+         UF/kZgc3NQwk1crbuWeudIzDotQLcaBmT2t8v0lz74Mi4MXw8GQhaALwd79qxYf5en+g
+         9Ylg==
+X-Gm-Message-State: AOAM532RilbMTMTeIUG0cVkb8kQrd6WiPjlDI0KjbH/QY/shSXP3S5hH
+        XXI0ucGQ+oXd5OQBg2Jbiz3UyA==
+X-Google-Smtp-Source: ABdhPJyws/BVjzbw9wNLNS1RMYaM2JlFjun6Yxax+9odWgUt7MAIeetzTEZOk8KQrENUxaeIcUJSfw==
+X-Received: by 2002:a05:6512:ace:: with SMTP id n14mr8818303lfu.460.1633677913738;
+        Fri, 08 Oct 2021 00:25:13 -0700 (PDT)
+Received: from [172.16.11.1] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id i12sm168955lfb.234.2021.10.08.00.25.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Oct 2021 00:25:12 -0700 (PDT)
+Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
+To:     John Hubbard <jhubbard@nvidia.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Michal Hocko <mhocko@suse.com>, Pavel Machek <pavel@ucw.cz>,
         David Hildenbrand <david@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Colin Cross <ccross@google.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
@@ -52,7 +68,7 @@ Cc:     Suren Baghdasaryan <surenb@google.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         vincenzo.frascino@arm.com,
-        Chinwen Chang =?utf-8?B?KOW8temMpuaWhyk=?= 
+        =?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= 
         <chinwen.chang@mediatek.com>,
         Axel Rasmussen <axelrasmussen@google.com>,
         Andrea Arcangeli <aarcange@redhat.com>,
@@ -75,9 +91,8 @@ Cc:     Suren Baghdasaryan <surenb@google.com>,
         linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-mm <linux-mm@kvack.org>,
         kernel-team <kernel-team@android.com>
-Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
-Message-ID: <YV/mhyWH1ZwWazdE@dhcp22.suse.cz>
-References: <CAJuCfpGuuXOpdYbt3AsNn+WNbavwuEsDfRMYunh+gajp6hOMAg@mail.gmail.com>
+References: <20211006175821.GA1941@duo.ucw.cz>
+ <CAJuCfpGuuXOpdYbt3AsNn+WNbavwuEsDfRMYunh+gajp6hOMAg@mail.gmail.com>
  <YV6rksRHr2iSWR3S@dhcp22.suse.cz>
  <92cbfe3b-f3d1-a8e1-7eb9-bab735e782f6@rasmusvillemoes.dk>
  <20211007101527.GA26288@duo.ucw.cz>
@@ -87,98 +102,57 @@ References: <CAJuCfpGuuXOpdYbt3AsNn+WNbavwuEsDfRMYunh+gajp6hOMAg@mail.gmail.com>
  <YV8u4B8Y9AP9xZIJ@dhcp22.suse.cz>
  <CAJuCfpHAG_C5vE-Xkkrm2kynTFF-Jd06tQoCWehHATL0W2mY_g@mail.gmail.com>
  <202110071111.DF87B4EE3@keescook>
+ <CAJuCfpFT7qcLM0ygjbzgCj1ScPDkZvv0hcvHkc40s9wgoTov7A@mail.gmail.com>
+ <caa830de-ea66-267d-bafa-369a6175251e@nvidia.com>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <b606021e-0afa-a509-84c4-2988d77f68bc@rasmusvillemoes.dk>
+Date:   Fri, 8 Oct 2021 09:25:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202110071111.DF87B4EE3@keescook>
+In-Reply-To: <caa830de-ea66-267d-bafa-369a6175251e@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 07-10-21 11:12:58, Kees Cook wrote:
-> On Thu, Oct 07, 2021 at 10:50:24AM -0700, Suren Baghdasaryan wrote:
-> > On Thu, Oct 7, 2021 at 10:31 AM Michal Hocko <mhocko@suse.com> wrote:
-> > >
-> > > On Thu 07-10-21 09:58:02, Suren Baghdasaryan wrote:
-> > > > On Thu, Oct 7, 2021 at 9:40 AM Michal Hocko <mhocko@suse.com> wrote:
-> > > > >
-> > > > > On Thu 07-10-21 09:04:09, Suren Baghdasaryan wrote:
-> > > > > > On Thu, Oct 7, 2021 at 3:15 AM Pavel Machek <pavel@ucw.cz> wrote:
-> > > > > > >
-> > > > > > > Hi!
-> > > > > > >
-> > > > > > > > >> Hmm, so the suggestion is to have some directory which contains files
-> > > > > > > > >> representing IDs, each containing the string name of the associated
-> > > > > > > > >> vma? Then let's say we are creating a new VMA and want to name it. We
-> > > > > > > > >> would have to scan that directory, check all files and see if any of
-> > > > > > > > >> them contain the name we want to reuse the same ID.
-> > > > > > > > >
-> > > > > > > > > I believe Pavel meant something as simple as
-> > > > > > > > > $ YOUR_FILE=$YOUR_IDS_DIR/my_string_name
-> > > > > > > > > $ touch $YOUR_FILE
-> > > > > > > > > $ stat -c %i $YOUR_FILE
-> > > > > >
-> > > > > > Ah, ok, now I understand the proposal. Thanks for the clarification!
-> > > > > > So, this would use filesystem as a directory for inode->name mappings.
-> > > > > > One rough edge for me is that the consumer would still need to parse
-> > > > > > /proc/$pid/maps and convert [anon:inode] into [anon:name] instead of
-> > > > > > just dumping the content for the user. Would it be acceptable if we
-> > > > > > require the ID provided by prctl() to always be a valid inode and
-> > > > > > show_map_vma() would do the inode-to-filename conversion when
-> > > > > > generating maps/smaps files? I know that inode->dentry is not
-> > > > > > one-to-one mapping but we can simply output the first dentry name.
-> > > > > > WDYT?
-> > > > >
-> > > > > No. You do not want to dictate any particular way of the mapping. The
-> > > > > above is just one way to do that without developing any actual mapping
-> > > > > yourself. You just use a filesystem for that. Kernel doesn't and
-> > > > > shouldn't understand the meaning of those numbers. It has no business in
-> > > > > that.
-> > > > >
-> > > > > In a way this would be pushing policy into the kernel.
-> > > >
-> > > > I can see your point. Any other ideas on how to prevent tools from
-> > > > doing this id-to-name conversion themselves?
-> > >
-> > > I really fail to understand why you really want to prevent them from that.
-> > > Really, the whole thing is just a cookie that kernel maintains for memory
-> > > mappings so that two parties can understand what the meaning of that
-> > > mapping is from a higher level. They both have to agree on the naming
-> > > but the kernel shouldn't dictate any specific convention because the
-> > > kernel _doesn't_ _care_. These things are not really anything actionable
-> > > for the kernel. It is just a metadata.
-> > 
-> > The desire is for one of these two parties to be a human who can get
-> > the data and use it as is without additional conversions.
-> > /proc/$pid/maps could report FD numbers instead of pathnames, which
-> > could be converted to pathnames in userspace. However we do not do
-> > that because pathnames are more convenient for humans to identify a
-> > specific resource. Same logic applies here IMHO.
+On 07/10/2021 21.02, John Hubbard wrote:
+> On 10/7/21 11:50, Suren Baghdasaryan wrote:
+> ...
+
+>>>> The desire is for one of these two parties to be a human who can get
+>>>> the data and use it as is without additional conversions.
+>>>> /proc/$pid/maps could report FD numbers instead of pathnames, which
+>>>> could be converted to pathnames in userspace. However we do not do
+>>>> that because pathnames are more convenient for humans to identify a
+>>>> specific resource. Same logic applies here IMHO.
+>>>
+>>> Yes, please. It really seems like the folks that are interested in this
+>>> feature want strings. (I certainly do.) For those not interested in the
+>>> feature, it sounds like a CONFIG to keep it away would be sufficient.
+>>> Can we just move forward with that?
+>>
+>> Would love to if others are ok with this.
+>>
 > 
-> Yes, please. It really seems like the folks that are interested in this
-> feature want strings. (I certainly do.)
+> If this doesn't get accepted, then another way forward would to continue
+> the ideas above to their logical conclusion, and create a new file system:
+> vma-fs. 
 
-I am sorry but there were no strong arguments mentioned for strings so
-far. Effectively string require a more complex and more resource hungry
-solution. The only advantage is that strings are nicer to read for
-humans.
+Or: Why can't the library/application that wants a VMA backed by memory
+to have some associated name not just
 
-There hasn't been any plan presented for actual naming convention or how
-those names would be used in practice. Except for a more advanced
-resource management and that sounds like something that can work with
-ids just fine.
+  fd = open("/run/named-vmas/foobar#24", O_CLOEXEC|O_RDWR|O_EXCL|O_CREAT);
+  unlink("/run/named-vmas/foobar#24");
+  ftruncate(fd, ...);
+  mmap(fd);
 
-> For those not interested in the
-> feature, it sounds like a CONFIG to keep it away would be sufficient.
+where /run/named-vmas is a tmpfs (probably with some per-user/per-app
+subdirs). That requires no changes in the kernel at all. Yes, it lacks
+the automatic cleanup of using real anon mmap in case there's a crash
+between open and unlink, but in an environment like Android that should
+be solvable.
 
-CONFIG is not an answer here as already pointed out. Distro kernels will
-be forced to enable this because there might be somebody to use this
-feature.
-
-Initially I was not really feeling strongly one way or other but more we
-are discussing the topic the more I see that strings have a very weak
-justification behind.
-
--- 
-Michal Hocko
-SUSE Labs
+Rasmus
