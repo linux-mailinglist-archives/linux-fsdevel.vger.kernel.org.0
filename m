@@ -2,57 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F17FE4272B1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Oct 2021 22:58:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF47A4272E7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Oct 2021 23:13:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243225AbhJHU77 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Oct 2021 16:59:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52630 "EHLO
+        id S231668AbhJHVPI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Oct 2021 17:15:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243069AbhJHU77 (ORCPT
+        with ESMTP id S243348AbhJHVPH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Oct 2021 16:59:59 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 904A0C061762
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Oct 2021 13:58:03 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id g184so4225354pgc.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Oct 2021 13:58:03 -0700 (PDT)
+        Fri, 8 Oct 2021 17:15:07 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4369C061762
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Oct 2021 14:13:11 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id ls14-20020a17090b350e00b001a00e2251c8so8706733pjb.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Oct 2021 14:13:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=IjJJiWQU/XhRbwSW4a6J5pEI82Dwvbf4Msp/9IsGztA=;
-        b=fuF/48s/XKLjw/WxekTae8fxsnWdv9YZmnzgUBVcpUj7wDFyoAh9dbVeWHwfDtkKDu
-         RiFV0cdkUHd/WrfAjkgqUH34GYwNOU8Km6wcNGt+b1nCWLn47S0Ft8Xq1zZt+StdVMvU
-         jBfM3LscUBzEFw2GiqY3yuUIwXQjskDaNCMz4=
+        bh=F0j9Fen+aM1yxtAVTmt6zwsss9sN5UsLCk44GHH1tRc=;
+        b=I+McrbgmDL8gZ9vmtX1aR7+zkzhDrlHhXT6iEzjY4OCKkruLZDBi+tzb3viHWvPBBY
+         kW2Us4im1MyQTWLJHDidgCouWJsWR1fzIwUGgK8+FBItkM6TWjIfpDSi5vv4VKXHDqoI
+         OyfVYPUddfURQDYvCN/P/GevbyB1QLdePw59Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=IjJJiWQU/XhRbwSW4a6J5pEI82Dwvbf4Msp/9IsGztA=;
-        b=CaXMJinuH71tjGwwzgjx5TS7x+5tWInCgDoWrAI6jPgry8g/Au22pfeIb4B12P1p2S
-         K98G/gKrnWuSog03987DdgTRYad85V6u4TQS8UNhS4TvEXKc9KiJ/PPW3L+UWn917BRJ
-         yIaMXS3xULLaWJ2SADxLzb/uhq60ikZI4lofkfZBumz2/ETbutn/shcek7LSKzvaPU9w
-         dTS/gCGGmUEIDIzqC3+5KGdHKk6xtfa/VOU29tYjoBoP0gvK3ZLQEkvYncyJxO8iltnb
-         Yl0qXJxyZ3tZ3HxaWL6yGEtR67XX99z3VYCjpJerPBgoLsvWOG9mA+OTqJBBJdYfd0I+
-         mLKg==
-X-Gm-Message-State: AOAM533W1wTypzOysV9MSgeRTG48woGtIv6dw7oy+GGRxI9th5l2a/Td
-        miVnmS+MOCPelM43R0Cc5NZgJqV5JhDl6g==
-X-Google-Smtp-Source: ABdhPJxHefRbGsB8dDv6EeaG/8qVxVBDImk6rceziu2jl0eXkTAHs/6SXKFnA7v40j5bJBbeBYntlA==
-X-Received: by 2002:a05:6a00:1481:b0:43d:275b:7ba4 with SMTP id v1-20020a056a00148100b0043d275b7ba4mr12439099pfu.63.1633726682678;
-        Fri, 08 Oct 2021 13:58:02 -0700 (PDT)
+        bh=F0j9Fen+aM1yxtAVTmt6zwsss9sN5UsLCk44GHH1tRc=;
+        b=AU9AMBnZ78l43ZxwjU2C3iFot9u89ANFgzBXYQ6wKznxGcwclZO/PYjfDz5SGllKJr
+         8bRShzAGMbE1x3M5WTLTwkhe8T2MBGv1R0TkLTeiZedHxeWMicG3clwSt858VJYLnmog
+         40A73U1V+zLxNfiMIr8IP4615Bj3dxt1gc1IzWXMsRE18HAgAZgkJRfj2dPIy3yKnBpG
+         R7WRorFfHAnSiFB2c8wu6i0hRUSRXBc3BJRH2X+pyYZLg/3iDTD/k9YsWgDmbfZ+auX3
+         qlRpU2S7RgPizWNCzht1zIDrUkMkSqWV+I0KT4birNL92LCskOpF0XXnXjkXtjuP8YpD
+         VYGA==
+X-Gm-Message-State: AOAM533/u99I+o55NjUL8oro9Ye89i0UexdEsMYhm6iyw5kKze2UyXel
+        2/+/1M6JO9KJmRK09wQUxseWJwhwmTAsIw==
+X-Google-Smtp-Source: ABdhPJw7VKHrHn5Ve+YJUHXmXb4Y/SdM39YgZAgr2mjSF0lGDycy5YuHBe+qaxeygUETUBv7bjuAQg==
+X-Received: by 2002:a17:90a:6c97:: with SMTP id y23mr14115452pjj.117.1633727591243;
+        Fri, 08 Oct 2021 14:13:11 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id e9sm134233pjl.41.2021.10.08.13.58.02
+        by smtp.gmail.com with ESMTPSA id nn14sm147691pjb.27.2021.10.08.14.13.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Oct 2021 13:58:02 -0700 (PDT)
-Date:   Fri, 8 Oct 2021 13:58:01 -0700
+        Fri, 08 Oct 2021 14:13:10 -0700 (PDT)
+Date:   Fri, 8 Oct 2021 14:13:09 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Suren Baghdasaryan <surenb@google.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        David Hildenbrand <david@redhat.com>,
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         John Hubbard <jhubbard@nvidia.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Michal Hocko <mhocko@suse.com>, Pavel Machek <pavel@ucw.cz>,
         Andrew Morton <akpm@linux-foundation.org>,
         Colin Cross <ccross@google.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
@@ -93,65 +92,49 @@ Cc:     Suren Baghdasaryan <surenb@google.com>,
         linux-mm <linux-mm@kvack.org>,
         kernel-team <kernel-team@android.com>
 Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
-Message-ID: <202110081344.FE6A7A82@keescook>
-References: <YV6rksRHr2iSWR3S@dhcp22.suse.cz>
- <92cbfe3b-f3d1-a8e1-7eb9-bab735e782f6@rasmusvillemoes.dk>
- <20211007101527.GA26288@duo.ucw.cz>
- <CAJuCfpGp0D9p3KhOWhcxMO1wEbo-J_b2Anc-oNwdycx4NTRqoA@mail.gmail.com>
+Message-ID: <202110081401.7AB25E4@keescook>
+References: <CAJuCfpGp0D9p3KhOWhcxMO1wEbo-J_b2Anc-oNwdycx4NTRqoA@mail.gmail.com>
  <YV8jB+kwU95hLqTq@dhcp22.suse.cz>
  <CAJuCfpG-Nza3YnpzvHaS_i1mHds3nJ+PV22xTAfgwvj+42WQNA@mail.gmail.com>
  <YV8u4B8Y9AP9xZIJ@dhcp22.suse.cz>
  <CAJuCfpHAG_C5vE-Xkkrm2kynTFF-Jd06tQoCWehHATL0W2mY_g@mail.gmail.com>
  <202110071111.DF87B4EE3@keescook>
- <YV/mhyWH1ZwWazdE@dhcp22.suse.cz>
+ <CAJuCfpFT7qcLM0ygjbzgCj1ScPDkZvv0hcvHkc40s9wgoTov7A@mail.gmail.com>
+ <caa830de-ea66-267d-bafa-369a6175251e@nvidia.com>
+ <b606021e-0afa-a509-84c4-2988d77f68bc@rasmusvillemoes.dk>
+ <eb9fd99e-177e-efe6-667c-f5ff99ad518b@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YV/mhyWH1ZwWazdE@dhcp22.suse.cz>
+In-Reply-To: <eb9fd99e-177e-efe6-667c-f5ff99ad518b@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 08, 2021 at 08:34:47AM +0200, Michal Hocko wrote:
-> I am sorry but there were no strong arguments mentioned for strings so
-> far. Effectively string require a more complex and more resource hungry
-> solution. The only advantage is that strings are nicer to read for
-> humans.
+On Fri, Oct 08, 2021 at 09:43:59AM +0200, David Hildenbrand wrote:
+> I'm going to point out that we already do have names for memfds.
 
-How I see it:
+I just did the same here[1]. :P
 
-- Strings are already present in the "maps" output, so this doesn't
-  create a burden on userspace to grow new parsers.
+> [...] It's also displayed in /proc/self/maps.
 
-- Strings for "anon" specifically have no required format (this is good)
-  it's informational like the task_struct::comm and can (roughly)
-  anything. There's no naming convention for memfds, AF_UNIX, etc. Why
-  is one needed here? That seems like a completely unreasonable
-  requirement.
+I missed that part! /me screams forever
 
-- Strings need to be in kernel space because cross-process GUP has been a
-  constant source of security flaws.
+We really need to filter this at creation time. :( At least
+seq_file_path() escapes "\n" for it, but not "\r", so humans on a
+terminal could get very confused...
 
-> There hasn't been any plan presented for actual naming convention or how
-> those names would be used in practice. Except for a more advanced
-> resource management and that sounds like something that can work with
-> ids just fine.
+$ ./memfd '^M0000000000000000-ffffffffffffffff rwxp 00000000 00:00 0 [stack]' &
+[1] 2953833
+$ cat /proc/2953833/maps
+...
+0000000000000000-ffffffffffffffff rwxp 00000000 00:00 0     [stack] (deleted)
+...
 
-There doesn't need to be and there shouldn't be. Why aren't memfds names
-an id? Because, to quote the man-page, "... serves only for debugging
-purposes. Names do not affect the behavior of the file descriptor, and
-as such multiple files can have the same name without any side effects."
 
-And they aren't filtered _at all_ either. I think the anonymous vma name
-series has gone out of its way to be safe and sane while still providing
-the ease-of-use that it was designed to provide.
+-Kees
 
-> Initially I was not really feeling strongly one way or other but more we
-> are discussing the topic the more I see that strings have a very weak
-> justification behind.
-
-I just don't see any _down_ side to gaining this. There's only resource
-utilization when it's used, and the complexity is minimal.
+[1] https://lore.kernel.org/lkml/202110081344.FE6A7A82@keescook
 
 -- 
 Kees Cook
