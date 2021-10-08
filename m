@@ -2,56 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A1FA426531
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Oct 2021 09:25:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 478E5426554
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Oct 2021 09:44:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232116AbhJHH1N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Oct 2021 03:27:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34394 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229830AbhJHH1L (ORCPT
+        id S229820AbhJHHqC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Oct 2021 03:46:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:54014 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229693AbhJHHqA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Oct 2021 03:27:11 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F250C061755
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Oct 2021 00:25:15 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id j21so17505377lfe.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Oct 2021 00:25:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EaBStkQbJ/56vDWRGxe1cWvLB2apSJpVfbn9rFFy6VQ=;
-        b=PJCmaxvVuKBNAN4Njn5KUcl6g383j4Vb5tnx0nJDv7g7SIS1wkwDlY3kI9KLUtYBGH
-         El6Xpm2x6d5DGTbE+erN2bbm2OaVIeIMjX/QNQC9hjV0HRf8ITLHg98hNuiinUeNzZN4
-         mmP61pgb8No6pnjZtSHAjQdlM19ljPWW9RzTo=
+        Fri, 8 Oct 2021 03:46:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1633679045;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=u7mEpKXIXki4+AfZLhYahWvke1tUWfWxeSdFeF0Y8RQ=;
+        b=EjIuBF/m7p67TShfNm1PpNZaPF1rPelqQjlOWQuOYx1LfGozDxPt8wVED9DbwLanwo7DR1
+        roY4DN3dm5tqALmuwhfEULceDM5SMoNT8yaUTPLi0D9+4FxD9HDhw0ZRUYb0XiLASv2AMz
+        YlbsyQO5V+JiGC04o5AhaWh0A1Z0kv0=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-12-mOhb1t9bP3yg3efuh8hhjA-1; Fri, 08 Oct 2021 03:44:04 -0400
+X-MC-Unique: mOhb1t9bP3yg3efuh8hhjA-1
+Received: by mail-wr1-f70.google.com with SMTP id r16-20020adfbb10000000b00160958ed8acso6607627wrg.16
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Oct 2021 00:44:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EaBStkQbJ/56vDWRGxe1cWvLB2apSJpVfbn9rFFy6VQ=;
-        b=XDv7qQtwkDJMCM1xQz+Wxf1Uvpv7JHlmXZ992lagyHuoZ7DNZtcdt8/XbUzEmxnbbK
-         qKyHMbtjpU/zPLG/MGS+GJwB/W//tf33HgcVKn2YvBRqfa/KBtLFlILyBFgDcKrGdXX2
-         41ID7qk6sT7VHC7L3OyRrWdgVYTSOmmT5uNHSBwBni7ewYfjAChks/58025k0mT2fPoS
-         H3QhnqB68uiRnBRMQbBAg5f6LSQZ/SaLElVmd3jRHZWfeIa8ofQ2a+Ak55NRSh3uCJ1D
-         UF/kZgc3NQwk1crbuWeudIzDotQLcaBmT2t8v0lz74Mi4MXw8GQhaALwd79qxYf5en+g
-         9Ylg==
-X-Gm-Message-State: AOAM532RilbMTMTeIUG0cVkb8kQrd6WiPjlDI0KjbH/QY/shSXP3S5hH
-        XXI0ucGQ+oXd5OQBg2Jbiz3UyA==
-X-Google-Smtp-Source: ABdhPJyws/BVjzbw9wNLNS1RMYaM2JlFjun6Yxax+9odWgUt7MAIeetzTEZOk8KQrENUxaeIcUJSfw==
-X-Received: by 2002:a05:6512:ace:: with SMTP id n14mr8818303lfu.460.1633677913738;
-        Fri, 08 Oct 2021 00:25:13 -0700 (PDT)
-Received: from [172.16.11.1] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id i12sm168955lfb.234.2021.10.08.00.25.10
+        h=x-gm-message-state:to:cc:references:from:organization:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=u7mEpKXIXki4+AfZLhYahWvke1tUWfWxeSdFeF0Y8RQ=;
+        b=iBzAzWeID6KIRTpJJYIg06MbkqEBYNM8a39HHc8IGB7e4NadtCxmcBEE9lFeg0wYyl
+         OnDq2s6EH42uxAOSkIRwd8Ed+QZwFUUvHk8CRAlzo8/340x8FJCryDjk9dQ2WzdV+qEh
+         X734ob1vYsPFXOK9a8L/NQQ/HB8a4wKLCXFFmINL+xzuPDj7OYblQTmew3//txwzuwLP
+         2TWxEhzC2gpz7pCUMkjp1fOSO9h7zzncs9uFFsUJMQJQyMBRNTWiuFG8xrtRn4OCQU2d
+         JJRoY4p+J0I8ZbtcxROOgpJMdGgQUo0d4AWEuM93InkM2rv1KENGwe4pjaZCwxQeulFN
+         x3Hw==
+X-Gm-Message-State: AOAM531YrbLg4OKR1d65wORef+wAMqbqlqZjUamrtmSR1BO89eorm+lB
+        cELqlZcxB4Sb5/8K01byFSvMjMvtmohMKrxJ/zGTI1nnY9Me6CjqvC0OqwbgsKMKIMAT9I0xBKB
+        z7qvbdVHxQjTl/1TBfj1G1UuBwg==
+X-Received: by 2002:a1c:22d7:: with SMTP id i206mr1764276wmi.122.1633679042850;
+        Fri, 08 Oct 2021 00:44:02 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzFPZDiPSVeT3d38H8Z/bNS65Xx9+eqy3hlmwhiYjlLCPHXHl/2fm5Cekwbs4vZT55wYV26kg==
+X-Received: by 2002:a1c:22d7:: with SMTP id i206mr1764260wmi.122.1633679042645;
+        Fri, 08 Oct 2021 00:44:02 -0700 (PDT)
+Received: from [192.168.3.132] (p5b0c676e.dip0.t-ipconnect.de. [91.12.103.110])
+        by smtp.gmail.com with ESMTPSA id u5sm1676921wrg.57.2021.10.08.00.44.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Oct 2021 00:25:12 -0700 (PDT)
-Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
-To:     John Hubbard <jhubbard@nvidia.com>,
+        Fri, 08 Oct 2021 00:44:01 -0700 (PDT)
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        John Hubbard <jhubbard@nvidia.com>,
         Suren Baghdasaryan <surenb@google.com>,
         Kees Cook <keescook@chromium.org>
 Cc:     Michal Hocko <mhocko@suse.com>, Pavel Machek <pavel@ucw.cz>,
-        David Hildenbrand <david@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Colin Cross <ccross@google.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
@@ -104,55 +109,79 @@ References: <20211006175821.GA1941@duo.ucw.cz>
  <202110071111.DF87B4EE3@keescook>
  <CAJuCfpFT7qcLM0ygjbzgCj1ScPDkZvv0hcvHkc40s9wgoTov7A@mail.gmail.com>
  <caa830de-ea66-267d-bafa-369a6175251e@nvidia.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <b606021e-0afa-a509-84c4-2988d77f68bc@rasmusvillemoes.dk>
-Date:   Fri, 8 Oct 2021 09:25:10 +0200
+ <b606021e-0afa-a509-84c4-2988d77f68bc@rasmusvillemoes.dk>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
+Message-ID: <eb9fd99e-177e-efe6-667c-f5ff99ad518b@redhat.com>
+Date:   Fri, 8 Oct 2021 09:43:59 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <caa830de-ea66-267d-bafa-369a6175251e@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <b606021e-0afa-a509-84c4-2988d77f68bc@rasmusvillemoes.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07/10/2021 21.02, John Hubbard wrote:
-> On 10/7/21 11:50, Suren Baghdasaryan wrote:
-> ...
-
->>>> The desire is for one of these two parties to be a human who can get
->>>> the data and use it as is without additional conversions.
->>>> /proc/$pid/maps could report FD numbers instead of pathnames, which
->>>> could be converted to pathnames in userspace. However we do not do
->>>> that because pathnames are more convenient for humans to identify a
->>>> specific resource. Same logic applies here IMHO.
->>>
->>> Yes, please. It really seems like the folks that are interested in this
->>> feature want strings. (I certainly do.) For those not interested in the
->>> feature, it sounds like a CONFIG to keep it away would be sufficient.
->>> Can we just move forward with that?
->>
->> Would love to if others are ok with this.
->>
+On 08.10.21 09:25, Rasmus Villemoes wrote:
+> On 07/10/2021 21.02, John Hubbard wrote:
+>> On 10/7/21 11:50, Suren Baghdasaryan wrote:
+>> ...
 > 
-> If this doesn't get accepted, then another way forward would to continue
-> the ideas above to their logical conclusion, and create a new file system:
-> vma-fs. 
+>>>>> The desire is for one of these two parties to be a human who can get
+>>>>> the data and use it as is without additional conversions.
+>>>>> /proc/$pid/maps could report FD numbers instead of pathnames, which
+>>>>> could be converted to pathnames in userspace. However we do not do
+>>>>> that because pathnames are more convenient for humans to identify a
+>>>>> specific resource. Same logic applies here IMHO.
+>>>>
+>>>> Yes, please. It really seems like the folks that are interested in this
+>>>> feature want strings. (I certainly do.) For those not interested in the
+>>>> feature, it sounds like a CONFIG to keep it away would be sufficient.
+>>>> Can we just move forward with that?
+>>>
+>>> Would love to if others are ok with this.
+>>>
+>>
+>> If this doesn't get accepted, then another way forward would to continue
+>> the ideas above to their logical conclusion, and create a new file system:
+>> vma-fs.
+> 
+> Or: Why can't the library/application that wants a VMA backed by memory
+> to have some associated name not just
+> 
+>    fd = open("/run/named-vmas/foobar#24", O_CLOEXEC|O_RDWR|O_EXCL|O_CREAT);
+>    unlink("/run/named-vmas/foobar#24");
+>    ftruncate(fd, ...);
+>    mmap(fd);
+> 
+> where /run/named-vmas is a tmpfs (probably with some per-user/per-app
+> subdirs). That requires no changes in the kernel at all. Yes, it lacks
+> the automatic cleanup of using real anon mmap in case there's a crash
+> between open and unlink, but in an environment like Android that should
+> be solvable.
 
-Or: Why can't the library/application that wants a VMA backed by memory
-to have some associated name not just
+I'm going to point out that we already do have names for memfds.
 
-  fd = open("/run/named-vmas/foobar#24", O_CLOEXEC|O_RDWR|O_EXCL|O_CREAT);
-  unlink("/run/named-vmas/foobar#24");
-  ftruncate(fd, ...);
-  mmap(fd);
+"The name supplied in name is used as a filename and will be displayed 
+as  the  target  of  the corresponding  symbolic  link  in  the 
+directory /proc/self/fd/." It's also displayed in /proc/self/maps.
 
-where /run/named-vmas is a tmpfs (probably with some per-user/per-app
-subdirs). That requires no changes in the kernel at all. Yes, it lacks
-the automatic cleanup of using real anon mmap in case there's a crash
-between open and unlink, but in an environment like Android that should
-be solvable.
+So theoretically, without any kernel changes one might be able to 
+achieve something as proposed in this patch via memfd_create().
 
-Rasmus
+There is one issue to be fixed:
+
+MAP_PRIVATE on memfd results in a double memory consumption on any 
+access via the mapping last time I checked (one page for pagecache, one 
+page for private mapping).
+
+
+-- 
+Thanks,
+
+David / dhildenb
+
