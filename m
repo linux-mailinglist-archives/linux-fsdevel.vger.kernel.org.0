@@ -2,80 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 10EFE427DED
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Oct 2021 00:41:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D099D4281B7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Oct 2021 16:21:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231301AbhJIWnu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 Oct 2021 18:43:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54714 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230116AbhJIWnt (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 Oct 2021 18:43:49 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1D8AC061570;
-        Sat,  9 Oct 2021 15:41:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=irb6FRwPU2dQSsNxYUCgkPV+9G3ES5Ac2nbK8COEBzU=; b=DXMGHD/JX7AFdlaWO/D2GkVpwP
-        QHCWfAPEgda5tzNYUSnnKZKCGkQknXnodDJbMYotyD8jaVhs69KREgh7jIBPVJ/5E16H/9bcgXTKD
-        IroinWzWCbs73n5/onzduuOpL3gxMExtapMVaQDRRpCm+DFsvm9c3Pm+SfhOnfW5wzJefTXiU1YGc
-        VgkiiMjqM65eIxzikDCe9D2I1XruRKUFEougWAdwFo2xqTsuoZ/gbloLdtivYIomIPmuJTli09DRS
-        c3QhGj6d23zWxNrWup/YMnbaDJBwo5HH6sd5/tN9kVP1mZSgoEURfTGx2vX/FVt2MFL7+d9egwyvg
-        cVv9mw4Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mZL2B-008uuN-8R; Sat, 09 Oct 2021 22:41:39 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D30FD9811D4; Sun, 10 Oct 2021 00:41:38 +0200 (CEST)
-Date:   Sun, 10 Oct 2021 00:41:38 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Pratik R. Sampat" <psampat@linux.ibm.com>
-Cc:     bristot@redhat.com, christian@brauner.io, ebiederm@xmission.com,
-        lizefan.x@bytedance.com, tj@kernel.org, hannes@cmpxchg.org,
-        mingo@kernel.org, juri.lelli@redhat.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, containers@lists.linux.dev,
-        containers@lists.linux-foundation.org, pratik.r.sampat@gmail.com
-Subject: Re: [RFC 0/5] kernel: Introduce CPU Namespace
-Message-ID: <20211009224138.GZ174703@worktop.programming.kicks-ass.net>
-References: <20211009151243.8825-1-psampat@linux.ibm.com>
+        id S232871AbhJJOXc convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 Oct 2021 10:23:32 -0400
+Received: from albireo.enyo.de ([37.24.231.21]:55530 "EHLO albireo.enyo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231846AbhJJOXc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 10 Oct 2021 10:23:32 -0400
+X-Greylist: delayed 628 seconds by postgrey-1.27 at vger.kernel.org; Sun, 10 Oct 2021 10:23:31 EDT
+Received: from [172.17.203.2] (port=48075 helo=deneb.enyo.de)
+        by albireo.enyo.de ([172.17.140.2]) with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        id 1mZZWh-0005qE-Ez; Sun, 10 Oct 2021 14:10:07 +0000
+Received: from fw by deneb.enyo.de with local (Exim 4.94.2)
+        (envelope-from <fw@deneb.enyo.de>)
+        id 1mZZWh-0006hy-5Z; Sun, 10 Oct 2021 16:10:07 +0200
+From:   Florian Weimer <fw@deneb.enyo.de>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FC?= =?iso-8859-1?Q?n?= 
+        <mic@linux.microsoft.com>
+Subject: Re: [PATCH v14 1/3] fs: Add trusted_for(2) syscall implementation
+ and related sysctl
+References: <20211008104840.1733385-1-mic@digikod.net>
+        <20211008104840.1733385-2-mic@digikod.net>
+Date:   Sun, 10 Oct 2021 16:10:07 +0200
+In-Reply-To: <20211008104840.1733385-2-mic@digikod.net>
+ (=?iso-8859-1?Q?=22Micka=EBl_Sala=FCn=22's?=
+        message of "Fri, 8 Oct 2021 12:48:38 +0200")
+Message-ID: <87tuhpynr4.fsf@mid.deneb.enyo.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211009151243.8825-1-psampat@linux.ibm.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 09, 2021 at 08:42:38PM +0530, Pratik R. Sampat wrote:
+* Mickaël Salaün:
 
-> Current shortcomings in the prototype:
-> --------------------------------------
-> 1. Containers also frequently use cfs period and quotas to restrict CPU
->    runtime also known as millicores in modern container runtimes.
->    The RFC interface currently does not account for this in
->    the scheme of things.
-> 2. While /proc/stat is now namespace aware and userspace programs like
->    top will see the CPU utilization for their view of virtual CPUs;
->    if the system or any other application outside the namespace
->    bumps up the CPU utilization it will still show up in sys/user time.
->    This should ideally be shown as stolen time instead.
->    The current implementation plugs into the display of stats rather
->    than accounting which causes incorrect reporting of stolen time.
-> 3. The current implementation assumes that no hotplug operations occur
->    within a container and hence the online and present cpus within a CPU
->    namespace are always the same and query the same CPU namespace mask
-> 4. As this is a proof of concept, currently we do not differentiate
->    between cgroup cpus_allowed and effective_cpus and plugs them into
->    the same virtual CPU map of the namespace
-> 5. As described in a fair use implication earlier, knowledge of the
->    CPU topology can potentially be taken an misused with a flood.
->    While scrambling the CPUset in the namespace can help by
->    obfuscation of information, the topology can still be roughly figured
->    out with the use of IPI latencies to determine siblings or far away
->    cores
+> Being able to restrict execution also enables to protect the kernel by
+> restricting arbitrary syscalls that an attacker could perform with a
+> crafted binary or certain script languages.  It also improves multilevel
+> isolation by reducing the ability of an attacker to use side channels
+> with specific code.  These restrictions can natively be enforced for ELF
+> binaries (with the noexec mount option) but require this kernel
+> extension to properly handle scripts (e.g. Python, Perl).  To get a
+> consistent execution policy, additional memory restrictions should also
+> be enforced (e.g. thanks to SELinux).
 
-6. completely destroys and ignores any machine topology information.
+One example I have come across recently is that code which can be
+safely loaded as a Perl module is definitely not a no-op as a shell
+script: it downloads code and executes it, apparently over an
+untrusted network connection and without signature checking.
+
+Maybe in the IMA world, the expectation is that such ambiguous code
+would not be signed in the first place, but general-purpose
+distributions are heading in a different direction with
+across-the-board signing:
+
+  Signed RPM Contents
+  <https://fedoraproject.org/wiki/Changes/Signed_RPM_Contents>
+
+So I wonder if we need additional context information for a potential
+LSM to identify the intended use case.
