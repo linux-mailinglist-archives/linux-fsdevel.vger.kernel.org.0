@@ -2,133 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE35A4295F5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 19:42:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C20B24295FE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 19:46:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233723AbhJKRoh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Oct 2021 13:44:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33330 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233583AbhJKRo3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Oct 2021 13:44:29 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1AD0C061570;
-        Mon, 11 Oct 2021 10:42:29 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id kk10so13813004pjb.1;
-        Mon, 11 Oct 2021 10:42:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=cv+8p4QBr+yumNO08E52pdNZjmudW0YvW+eKFeVXzNw=;
-        b=X2Ln10Tg4qFyX1S7WwFgytlT9WmcLpxGM4Zit5dEo/o+1WnWYfpNX3gNqY4uzNIAN6
-         Ntyju7CQJyfW85aoc0hfLy+G7n+1MefYEgfBKmm0h1ZuvROPAUWv3EVbcTtD4vcfc+pg
-         XrIwgPiXVy1qkK/HWnDaeiKTRSPRwPmqGK278qGMcqunMoECVG4wY8sKczSXTrp5P7dG
-         p8gHyjLlv03q7Um00Npt36ae6F98ErTGhZoMrEuwsh+yY3MijosVvecksUfE/jMtXzxj
-         vkO9BV7RzVaMhR3xGwb8bNFnp3uyzr8dBPSYQ+ONNzOqyFNGGEhOqfefekQeLs1fMCxj
-         +bCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to;
-        bh=cv+8p4QBr+yumNO08E52pdNZjmudW0YvW+eKFeVXzNw=;
-        b=i/rcDgzX2N5JL9nXwT6WaW8czcuaP285NHTUHpGMFy4ARBmvpcAJ3rZMTomSgdaERH
-         Zovr9/B0fO3OmZFhBBL+EgBgD68a2Vf2nByFq5QVSq93QnTF1cqmHeP1D0cQv2f1rcnl
-         ESP4SyYI6v2m8aXSK6v5BtHuy3WnUzfdTGSkEmFjry/3S/+knXS08LLXdqHikwiiiHYj
-         G1khgsMza/WuqUjfduQkKsHNtv501fXa375Fcsh8YuccTYIgrVHa/70IhXhdlaqZlDOf
-         exhkmyXBDzH7hMLP6OmhptNelF7idScEtxvIKEntrNCi2o5UE4kWK9RYo/ymYJKn9o4f
-         +lDw==
-X-Gm-Message-State: AOAM533vpfs+SFrA3OGS4TcaBP347mhxSUCuNNA2h1fOhNVxwr9a21hU
-        qzYA5sgZ4RAByWK6XezbvCo=
-X-Google-Smtp-Source: ABdhPJzFg5/nX0pFvcYymJXdKatF3YOnKw5en66PJoUNMTNFTwT1k00B02IC7OgL2Qt8J7R1nPrwNQ==
-X-Received: by 2002:a17:90a:8b89:: with SMTP id z9mr367573pjn.89.1633974148929;
-        Mon, 11 Oct 2021 10:42:28 -0700 (PDT)
-Received: from localhost (2603-800c-1a02-1bae-e24f-43ff-fee6-449f.res6.spectrum.com. [2603:800c:1a02:1bae:e24f:43ff:fee6:449f])
-        by smtp.gmail.com with ESMTPSA id e12sm8471062pfl.67.2021.10.11.10.42.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Oct 2021 10:42:28 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Mon, 11 Oct 2021 07:42:27 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        "Pratik R. Sampat" <psampat@linux.ibm.com>, bristot@redhat.com,
-        christian@brauner.io, ebiederm@xmission.com,
-        lizefan.x@bytedance.com, hannes@cmpxchg.org, mingo@kernel.org,
-        juri.lelli@redhat.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        containers@lists.linux.dev, containers@lists.linux-foundation.org,
-        pratik.r.sampat@gmail.com
-Subject: Re: [RFC 0/5] kernel: Introduce CPU Namespace
-Message-ID: <YWR3g+ZE2j3w1Npz@slm.duckdns.org>
-References: <20211009151243.8825-1-psampat@linux.ibm.com>
- <20211011101124.d5mm7skqfhe5g35h@wittgenstein>
- <20211011141737.GA58758@blackbody.suse.cz>
+        id S234050AbhJKRsO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Oct 2021 13:48:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35064 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230102AbhJKRsH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Oct 2021 13:48:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D88D60F11;
+        Mon, 11 Oct 2021 17:46:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1633974366;
+        bh=4TBfE9Rzk3TgLICfxbmtsZgSk07WQpuq6KQNlcoRChM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mAKTONy3TU/ziCpABOZkrPunxgKX0Y13t5JUj+3yISi8P38M0v7ccfzBEAwloWjgN
+         FZ3Tw3aUzUlN13EwdzlzsVlmQvkp5DNFhFC7mBvDLaXVafw89iQyPd5YDzmYv1Mc9d
+         q3TFN2+cOoPRX3u5JDcCeJYjXf+vkq2fck5RVjrU=
+Date:   Mon, 11 Oct 2021 19:46:04 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     bp@suse.de, akpm@linux-foundation.org, josh@joshtriplett.org,
+        rishabhb@codeaurora.org, kubakici@wp.pl, maco@android.com,
+        david.brown@linaro.org, bjorn.andersson@linaro.org,
+        linux-wireless@vger.kernel.org, keescook@chromium.org,
+        shuah@kernel.org, mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com,
+        dhowells@redhat.com, pali.rohar@gmail.com, tiwai@suse.de,
+        arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
+        broonie@kernel.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org,
+        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
+        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
+        andresx7@gmail.com, dan.rue@linaro.org, brendanhiggins@google.com,
+        yzaikin@google.com, sfr@canb.auug.org.au, rdunlap@infradead.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/14] firmware_loader: add built-in firmware kconfig
+ entry
+Message-ID: <YWR4XKrC2Bkr4qKQ@kroah.com>
+References: <20210917182226.3532898-1-mcgrof@kernel.org>
+ <20210917182226.3532898-5-mcgrof@kernel.org>
+ <YVxhbhmNd7tahLV7@kroah.com>
+ <YWR16e/seTx/wxE+@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20211011141737.GA58758@blackbody.suse.cz>
+In-Reply-To: <YWR16e/seTx/wxE+@bombadil.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
-
-On Mon, Oct 11, 2021 at 04:17:37PM +0200, Michal Koutný wrote:
-> The problem as I see it is the mapping from a real dedicated HW to a
-> cgroup restricted environment ("container"), which can be shared. In
-> this instance, the virtualized view would not be able to represent a
-> situation when a CPU is assigned non-exclusively to multiple cpusets.
-
-There is a fundamental problem with trying to represent a resource shared
-environment controlled with cgroup using system-wide interfaces including
-procfs because the goal of many cgroup resource control includes
-work-conservation, which also is one of the main reason why containers are
-more attractive in resource-intense deployments. System-level interfaces
-naturally describe a discrete system, which can't express the dynamic
-distribution with cgroups.
-
-There are aspects of cgroups which are akin to hard partitioning and thus
-can be represented by diddling with system level interfaces. Whether those
-are worthwhile to pursuit depends on how easy and useful they are; however,
-there's no avoiding that each of those is gonna be a very partial and
-fragmented thing, which significantly contributes the default cons list of
-such attempts.
-
-> > Existing solutions to the problem include userspace tools like LXCFS
-> > which can fake the sysfs information by mounting onto the sysfs online
-> > file to be in coherence with the limits set through cgroup cpuset.
-> > However, LXCFS is an external solution and needs to be explicitly setup
-> > for applications that require it. Another concern is also that tools
-> > like LXCFS don't handle all the other display mechanism like procfs load
-> > stats.
-> >
-> > Therefore, the need of a clean interface could be advocated for.
+On Mon, Oct 11, 2021 at 10:35:37AM -0700, Luis Chamberlain wrote:
+> On Tue, Oct 05, 2021 at 04:30:06PM +0200, Greg KH wrote:
+> > On Fri, Sep 17, 2021 at 11:22:16AM -0700, Luis R. Rodriguez wrote:
+> > > From: Luis Chamberlain <mcgrof@kernel.org>
+> > > 
+> > > The built-in firmware is always supported when a user enables
+> > > FW_LOADER=y today, that is, it is built-in to the kernel. When the
+> > > firmware loader is built as a module, support for built-in firmware
+> > > is skipped. This requirement is not really clear to users or even
+> > > developers.
+> > > 
+> > > Also, by default the EXTRA_FIRMWARE is always set to an empty string
+> > > and so by default we really have nothing built-in to that kernel's
+> > > sections for built-in firmware, so today a all FW_LOADER=y kernels
+> > > spins their wheels on an empty set of built-in firmware for each
+> > > firmware request with no true need for it.
+> > > 
+> > > Add a new kconfig entry to represent built-in firmware support more
+> > > clearly. This let's knock 3 birds with one stone:
+> > > 
+> > >  o Clarifies that support for built-in firmware requires the
+> > >    firmware loader to be built-in to the kernel
+> > > 
+> > >  o By default we now always skip built-in firmware even if a FW_LOADER=y
+> > > 
+> > >  o This also lets us make it clear that the EXTRA_FIRMWARE_DIR
+> > >    kconfig entry is only used for built-in firmware
+> > > 
+> > > Reviewed-by: Borislav Petkov <bp@suse.de>
+> > > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > > ---
+> > >  .../driver-api/firmware/built-in-fw.rst       |  2 ++
+> > >  Documentation/x86/microcode.rst               |  5 ++--
+> > >  drivers/base/firmware_loader/Kconfig          | 25 +++++++++++++------
+> > >  drivers/base/firmware_loader/Makefile         |  3 +--
+> > >  drivers/base/firmware_loader/main.c           |  4 +--
+> > >  5 files changed, 26 insertions(+), 13 deletions(-)
+> > > 
+> > > diff --git a/Documentation/driver-api/firmware/built-in-fw.rst b/Documentation/driver-api/firmware/built-in-fw.rst
+> > > index bc1c961bace1..9dd2b1df44f0 100644
+> > > --- a/Documentation/driver-api/firmware/built-in-fw.rst
+> > > +++ b/Documentation/driver-api/firmware/built-in-fw.rst
+> > > @@ -8,6 +8,7 @@ the filesystem. Instead, firmware can be looked for inside the kernel
+> > >  directly. You can enable built-in firmware using the kernel configuration
+> > >  options:
+> > >  
+> > > +  * CONFIG_FW_LOADER_BUILTIN
+> > >    * CONFIG_EXTRA_FIRMWARE
+> > >    * CONFIG_EXTRA_FIRMWARE_DIR
+> > >  
+> > > @@ -17,6 +18,7 @@ into the kernel with CONFIG_EXTRA_FIRMWARE:
+> > >  * Speed
+> > >  * Firmware is needed for accessing the boot device, and the user doesn't
+> > >    want to stuff the firmware into the boot initramfs.
+> > > +* Testing built-in firmware
+> > >  
+> > >  Even if you have these needs there are a few reasons why you may not be
+> > >  able to make use of built-in firmware:
+> > > diff --git a/Documentation/x86/microcode.rst b/Documentation/x86/microcode.rst
+> > > index a320d37982ed..d199f0b98869 100644
+> > > --- a/Documentation/x86/microcode.rst
+> > > +++ b/Documentation/x86/microcode.rst
+> > > @@ -114,11 +114,12 @@ Builtin microcode
+> > >  =================
+> > >  
+> > >  The loader supports also loading of a builtin microcode supplied through
+> > > -the regular builtin firmware method CONFIG_EXTRA_FIRMWARE. Only 64-bit is
+> > > -currently supported.
+> > > +the regular builtin firmware method using CONFIG_FW_LOADER_BUILTIN and
+> > > +CONFIG_EXTRA_FIRMWARE. Only 64-bit is currently supported.
+> > >  
+> > >  Here's an example::
+> > >  
+> > > +  CONFIG_FW_LOADER_BUILTIN=y
+> > >    CONFIG_EXTRA_FIRMWARE="intel-ucode/06-3a-09 amd-ucode/microcode_amd_fam15h.bin"
+> > >    CONFIG_EXTRA_FIRMWARE_DIR="/lib/firmware"
+> > >  
+> > > diff --git a/drivers/base/firmware_loader/Kconfig b/drivers/base/firmware_loader/Kconfig
+> > > index 5b24f3959255..de4fcd9d41f3 100644
+> > > --- a/drivers/base/firmware_loader/Kconfig
+> > > +++ b/drivers/base/firmware_loader/Kconfig
+> > > @@ -29,8 +29,10 @@ if FW_LOADER
+> > >  config FW_LOADER_PAGED_BUF
+> > >  	bool
+> > >  
+> > > -config EXTRA_FIRMWARE
+> > > -	string "Build named firmware blobs into the kernel binary"
+> > > +config FW_LOADER_BUILTIN
+> > > +	bool "Enable support for built-in firmware"
+> > > +	default n
+> > 
+> > n is always the default, no need to list it again.
 > 
-> I'd like to write something in support of your approach but I'm afraid that the
-> problem of the mapping (dedicated vs shared) makes this most suitable for some
-> external/separate entity such as the LCXFS already.
+> Oh, alrighty, I'll remove that line.
+> 
+> > > +	depends on FW_LOADER=y
+> > 
+> > I don't see what this gets us to add another config option.  Are you
+> > making things easier later on?
+> 
+> This makes a few things clearer for both developers and users.
+> The code in question is a *feature* *only* when FW_LOADER=y, by
+> adding a new kconfig to represent this and clearly makeing it
+> depend on FW_LOADER=y it let's us:
+> 
+>   o Clarify that support for built-in firmware requires
+>     the firmware loader to be built-in to the kernel
 
-This is more of a unit problem than an interface one - ie. the existing
-numbers in the system interface doesn't really fit what needs to be
-described.
+That is good.
 
-One approach that we've found useful in practice is dynamically changing
-resource consumption based on shortage, as measured by PSI, rather than some
-number representing what's available. e.g. for a build service, building a
-feedback loop which monitors its own cpu, memory and io pressures and
-modulates the number of concurrent jobs.
+>   o By default we now always skip built-in firmware even if a FW_LOADER=y
 
-There are some numbers which would be fundamentlaly useful - e.g. ballpark
-number of threads needed to saturate the computing capacity available to the
-cgroup, or ballpark bytes of memory available without noticeable contention.
-Those, I think we definitely need to work on, but I don't see much point in
-trying to bend existing /proc numbers for them.
+I do not understand, why would we ever want to skip built-in firmware?
 
-Thanks.
+>   o This also lets us make it clear that the EXTRA_FIRMWARE_DIR
+>     kconfig entry is only used for built-in firmware
 
--- 
-tejun
+How was it ever used for anything else?  :)
+
+> The above is not easily obvious to developers (including myself when
+> I was reviewing this code) or users without this new kconfig entry.
+> 
+> Should I re-send by just removing the one line you asked for?
+
+I can not take this as-is, so yes :)
+
+thanks,
+
+greg k-h
