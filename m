@@ -2,252 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6300D42996E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 00:26:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB003429977
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 00:30:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235517AbhJKW2N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Oct 2021 18:28:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40456 "EHLO
+        id S235575AbhJKWcq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Oct 2021 18:32:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235484AbhJKW2L (ORCPT
+        with ESMTP id S235504AbhJKWcq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Oct 2021 18:28:11 -0400
+        Mon, 11 Oct 2021 18:32:46 -0400
 Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBE97C061570;
-        Mon, 11 Oct 2021 15:26:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9030C061570;
+        Mon, 11 Oct 2021 15:30:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=lyPSIok62utLCmQ4XS6IoW1XOT62RU2rbFfpT1HFMT8=; b=RRjvyhwmsM0XNPnlsbJ5OA6ShL
-        RGPwyPvsjZ1T4+S1dg08rGnJQHcV3gA8cWbgauzip21rH7GHbMqYXxWamSP8Sb2lxS7p9pwmiXmmL
-        FCEYph6e4gt439koJVuoF8F4zaM3ccMwjyl7SHQlrVTYez9s3BNkTCzFPWFaJXGXUI14b+LRKTWmD
-        fIjRrEBdri3OqVE/y6KlfRqKom9mWe3SGtgdE6IkIclGP/8ELY6JY27WkB0abRlU4lSai7iJkhfj3
-        dvy0aMZ+2LRnaRKZWDrydq0PSOMQddh72peNtkMy++CaAMhWRrltC9Vmw1tfuGKIYYOg0F02It4o2
-        ao1ptUwg==;
+        bh=ZtoqcBaFzPa5AYYIfCZ1Qj40E08ooIgKTyRYusPMzBI=; b=cpuIN9YZXOCsiBxVVLI7KhXnLS
+        UxP+3u21RybuHrLitLoMqSGNU3dWJgyT3r3et+cFvmn6MzDT513tTjgoKX1Ob4IiQSSzwbNvniy0L
+        PlOXNS/Y6SFPoaLggvl/a4YnaMI8RYzMjwVW5CYFczKhPNW7MAa+hoDPezMXH60FiO62QJPxkeGTn
+        4+OgcXZ7SgWB6VYI/+zl8EiSljH7goV0zja2XacsUVTwVA9p2Xedy8yNdPLiTyf04WnFwZbmJiwpu
+        cfkTN6HZHUlXKUmNAIqmML7rQYdqvjj6D9EV0H/ScjZN/9p43iypgW/xFOpVlMJ5sGwrFUOvaR2Xf
+        5IypU5Bw==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ma3kA-00AtVE-C9; Mon, 11 Oct 2021 22:26:02 +0000
-Date:   Mon, 11 Oct 2021 15:26:02 -0700
+        id 1ma3oO-00Atie-UD; Mon, 11 Oct 2021 22:30:24 +0000
+Date:   Mon, 11 Oct 2021 15:30:24 -0700
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     tj@kernel.org, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, minchan@kernel.org, jeyu@kernel.org,
-        shuah@kernel.org, bvanassche@acm.org, dan.j.williams@intel.com,
-        joe@perches.com, tglx@linutronix.de, rostedt@goodmis.org,
-        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 09/12] sysfs: fix deadlock race with module removal
-Message-ID: <YWS5+uyDQ4qklTcT@bombadil.infradead.org>
-References: <20210927163805.808907-1-mcgrof@kernel.org>
- <20210927163805.808907-10-mcgrof@kernel.org>
- <202110051315.B2165F455@keescook>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     bp@suse.de, akpm@linux-foundation.org, josh@joshtriplett.org,
+        rishabhb@codeaurora.org, kubakici@wp.pl, maco@android.com,
+        david.brown@linaro.org, bjorn.andersson@linaro.org,
+        linux-wireless@vger.kernel.org, keescook@chromium.org,
+        shuah@kernel.org, mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com,
+        dhowells@redhat.com, pali.rohar@gmail.com, tiwai@suse.de,
+        arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
+        broonie@kernel.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org,
+        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
+        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
+        andresx7@gmail.com, dan.rue@linaro.org, brendanhiggins@google.com,
+        yzaikin@google.com, sfr@canb.auug.org.au, rdunlap@infradead.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/14] firmware_loader: add built-in firmware kconfig
+ entry
+Message-ID: <YWS7ABDdBIpdt/84@bombadil.infradead.org>
+References: <20210917182226.3532898-1-mcgrof@kernel.org>
+ <20210917182226.3532898-5-mcgrof@kernel.org>
+ <YVxhbhmNd7tahLV7@kroah.com>
+ <YWR16e/seTx/wxE+@bombadil.infradead.org>
+ <YWR4XKrC2Bkr4qKQ@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202110051315.B2165F455@keescook>
+In-Reply-To: <YWR4XKrC2Bkr4qKQ@kroah.com>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 05, 2021 at 01:50:31PM -0700, Kees Cook wrote:
-> On Mon, Sep 27, 2021 at 09:38:02AM -0700, Luis Chamberlain wrote:
-> > A sketch of how this can happen follows, consider foo a local mutex
-> > part of a driver, and used on the driver's module exit routine and
-> > on one of its sysfs ops:
+On Mon, Oct 11, 2021 at 07:46:04PM +0200, Greg KH wrote:
+> On Mon, Oct 11, 2021 at 10:35:37AM -0700, Luis Chamberlain wrote:
+> > On Tue, Oct 05, 2021 at 04:30:06PM +0200, Greg KH wrote:
+> > > On Fri, Sep 17, 2021 at 11:22:16AM -0700, Luis R. Rodriguez wrote:
+> > > > From: Luis Chamberlain <mcgrof@kernel.org>
+> > > > 
+> > > > The built-in firmware is always supported when a user enables
+> > > > FW_LOADER=y today, that is, it is built-in to the kernel. When the
+> > > > firmware loader is built as a module, support for built-in firmware
+> > > > is skipped. This requirement is not really clear to users or even
+> > > > developers.
+> > > > 
+> > > > Also, by default the EXTRA_FIRMWARE is always set to an empty string
+> > > > and so by default we really have nothing built-in to that kernel's
+> > > > sections for built-in firmware, so today a all FW_LOADER=y kernels
+> > > > spins their wheels on an empty set of built-in firmware for each
+> > > > firmware request with no true need for it.
+> > > > 
+> > > > Add a new kconfig entry to represent built-in firmware support more
+> > > > clearly. This let's knock 3 birds with one stone:
+> > > > 
+> > > >  o Clarifies that support for built-in firmware requires the
+> > > >    firmware loader to be built-in to the kernel
+> > > > 
+> > > >  o By default we now always skip built-in firmware even if a FW_LOADER=y
+> > > > 
+> > > >  o This also lets us make it clear that the EXTRA_FIRMWARE_DIR
+> > > >    kconfig entry is only used for built-in firmware
+> > > > 
+> > > > Reviewed-by: Borislav Petkov <bp@suse.de>
+> > > > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > > > ---
+> > > >  .../driver-api/firmware/built-in-fw.rst       |  2 ++
+> > > >  Documentation/x86/microcode.rst               |  5 ++--
+> > > >  drivers/base/firmware_loader/Kconfig          | 25 +++++++++++++------
+> > > >  drivers/base/firmware_loader/Makefile         |  3 +--
+> > > >  drivers/base/firmware_loader/main.c           |  4 +--
+> > > >  5 files changed, 26 insertions(+), 13 deletions(-)
+> > > > 
+> > > > diff --git a/Documentation/driver-api/firmware/built-in-fw.rst b/Documentation/driver-api/firmware/built-in-fw.rst
+> > > > index bc1c961bace1..9dd2b1df44f0 100644
+> > > > --- a/Documentation/driver-api/firmware/built-in-fw.rst
+> > > > +++ b/Documentation/driver-api/firmware/built-in-fw.rst
+> > > > @@ -8,6 +8,7 @@ the filesystem. Instead, firmware can be looked for inside the kernel
+> > > >  directly. You can enable built-in firmware using the kernel configuration
+> > > >  options:
+> > > >  
+> > > > +  * CONFIG_FW_LOADER_BUILTIN
+> > > >    * CONFIG_EXTRA_FIRMWARE
+> > > >    * CONFIG_EXTRA_FIRMWARE_DIR
+> > > >  
+> > > > @@ -17,6 +18,7 @@ into the kernel with CONFIG_EXTRA_FIRMWARE:
+> > > >  * Speed
+> > > >  * Firmware is needed for accessing the boot device, and the user doesn't
+> > > >    want to stuff the firmware into the boot initramfs.
+> > > > +* Testing built-in firmware
+> > > >  
+> > > >  Even if you have these needs there are a few reasons why you may not be
+> > > >  able to make use of built-in firmware:
+> > > > diff --git a/Documentation/x86/microcode.rst b/Documentation/x86/microcode.rst
+> > > > index a320d37982ed..d199f0b98869 100644
+> > > > --- a/Documentation/x86/microcode.rst
+> > > > +++ b/Documentation/x86/microcode.rst
+> > > > @@ -114,11 +114,12 @@ Builtin microcode
+> > > >  =================
+> > > >  
+> > > >  The loader supports also loading of a builtin microcode supplied through
+> > > > -the regular builtin firmware method CONFIG_EXTRA_FIRMWARE. Only 64-bit is
+> > > > -currently supported.
+> > > > +the regular builtin firmware method using CONFIG_FW_LOADER_BUILTIN and
+> > > > +CONFIG_EXTRA_FIRMWARE. Only 64-bit is currently supported.
+> > > >  
+> > > >  Here's an example::
+> > > >  
+> > > > +  CONFIG_FW_LOADER_BUILTIN=y
+> > > >    CONFIG_EXTRA_FIRMWARE="intel-ucode/06-3a-09 amd-ucode/microcode_amd_fam15h.bin"
+> > > >    CONFIG_EXTRA_FIRMWARE_DIR="/lib/firmware"
+> > > >  
+> > > > diff --git a/drivers/base/firmware_loader/Kconfig b/drivers/base/firmware_loader/Kconfig
+> > > > index 5b24f3959255..de4fcd9d41f3 100644
+> > > > --- a/drivers/base/firmware_loader/Kconfig
+> > > > +++ b/drivers/base/firmware_loader/Kconfig
+> > > > @@ -29,8 +29,10 @@ if FW_LOADER
+> > > >  config FW_LOADER_PAGED_BUF
+> > > >  	bool
+> > > >  
+> > > > -config EXTRA_FIRMWARE
+> > > > -	string "Build named firmware blobs into the kernel binary"
+> > > > +config FW_LOADER_BUILTIN
+> > > > +	bool "Enable support for built-in firmware"
+> > > > +	default n
+> > > 
+> > > n is always the default, no need to list it again.
 > > 
-> > foo.c:
-> > static DEFINE_MUTEX(foo);
-> > static ssize_t foo_store(struct device *dev,
-> > 			 struct device_attribute *attr,
-> > 			 const char *buf, size_t count)
-> > {
-> > 	...
-> > 	mutex_lock(&foo);
-> > 	...
-> > 	mutex_lock(&foo);
-> > 	...
-> > }
-> > static DEVICE_ATTR_RW(foo);
-> > ...
-> > void foo_exit(void)
-> > {
-> > 	mutex_lock(&foo);
-> > 	...
-> > 	mutex_unlock(&foo);
-> > }
-> > module_exit(foo_exit);
+> > Oh, alrighty, I'll remove that line.
 > > 
-> > And this can lead to this condition:
+> > > > +	depends on FW_LOADER=y
+> > > 
+> > > I don't see what this gets us to add another config option.  Are you
+> > > making things easier later on?
 > > 
-> > CPU A                              CPU B
-> >                                    foo_store()
-> > foo_exit()
-> >   mutex_lock(&foo)
-> >                                    mutex_lock(&foo)
-> >    del_gendisk(some_struct->disk);
-> >      device_del()
-> >        device_remove_groups()
+> > This makes a few things clearer for both developers and users.
+> > The code in question is a *feature* *only* when FW_LOADER=y, by
+> > adding a new kconfig to represent this and clearly makeing it
+> > depend on FW_LOADER=y it let's us:
+> > 
+> >   o Clarify that support for built-in firmware requires
+> >     the firmware loader to be built-in to the kernel
 > 
-> Please expand this further, where does device_remove_groups() end up
-> waiting for that never happens?
-
-Sure. How about:
-
-Furthermore, device_remove_groups() will just go on trying to remove
-the sysfs files, which are kernfs entries. The way kernfs deals with
-removal is that it will wait until all active references for the files
-being removed are done. The active reference is obtained through
-kernfs_get_active(). Removal ends up waiting through kernfs_drain()
-for the active references to be done, and that only happens if the
-kernfs file ops can complete. If these kernfs ops / sysfs files
-are waiting for a mutex which taken by the module's exit routine
-prior to trying to remove the sysfs files we deadlock.
-
-> > In this situation foo_store() is waiting for the mutex foo to
-> > become unlocked, but that won't happen until module removal is complete.
-> > But module removal won't complete until the sysfs file being poked at
-> > completes which is waiting for a lock already held.
-> > 
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > ---
-> >  arch/x86/kernel/cpu/resctrl/rdtgroup.c |  4 +-
-> >  fs/kernfs/dir.c                        | 44 ++++++++++++++++++----
-> >  fs/kernfs/file.c                       |  6 ++-
-> >  fs/kernfs/kernfs-internal.h            |  3 +-
-> >  fs/kernfs/symlink.c                    |  3 +-
-> >  fs/sysfs/dir.c                         |  2 +-
-> >  fs/sysfs/file.c                        |  6 ++-
-> >  fs/sysfs/group.c                       |  3 +-
-> >  include/linux/kernfs.h                 | 14 ++++---
-> >  include/linux/sysfs.h                  | 52 ++++++++++++++++++++------
-> >  kernel/cgroup/cgroup.c                 |  2 +-
-> >  11 files changed, 105 insertions(+), 34 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> > index b57b3db9a6a7..4edf3b37fd2c 100644
-> > --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> > +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> > @@ -209,7 +209,7 @@ static int rdtgroup_add_file(struct kernfs_node *parent_kn, struct rftype *rft)
-> >  
-> >  	kn = __kernfs_create_file(parent_kn, rft->name, rft->mode,
-> >  				  GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
-> > -				  0, rft->kf_ops, rft, NULL, NULL);
-> > +				  0, rft->kf_ops, rft, NULL, NULL, NULL);
-> >  	if (IS_ERR(kn))
-> >  		return PTR_ERR(kn);
-> >  
-> > @@ -2482,7 +2482,7 @@ static int mon_addfile(struct kernfs_node *parent_kn, const char *name,
-> >  
-> >  	kn = __kernfs_create_file(parent_kn, name, 0444,
-> >  				  GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, 0,
-> > -				  &kf_mondata_ops, priv, NULL, NULL);
-> > +				  &kf_mondata_ops, priv, NULL, NULL, NULL);
-> >  	if (IS_ERR(kn))
-> >  		return PTR_ERR(kn);
-> >  
-> > diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-> > index ba581429bf7b..e841201fd11b 100644
-> > --- a/fs/kernfs/dir.c
-> > +++ b/fs/kernfs/dir.c
-> > @@ -14,6 +14,7 @@
-> >  #include <linux/slab.h>
-> >  #include <linux/security.h>
-> >  #include <linux/hash.h>
-> > +#include <linux/module.h>
-> >  
-> >  #include "kernfs-internal.h"
-> >  
-> > @@ -414,12 +415,29 @@ static bool kernfs_unlink_sibling(struct kernfs_node *kn)
-> >   */
-> >  struct kernfs_node *kernfs_get_active(struct kernfs_node *kn)
-> >  {
-> > +	int v;
-> > +
-> >  	if (unlikely(!kn))
-> >  		return NULL;
-> >  
-> >  	if (!atomic_inc_unless_negative(&kn->active))
-> >  		return NULL;
-> >  
-> > +	/*
-> > +	 * If a module created the kernfs_node, the module cannot possibly be
-> > +	 * removed if the above atomic_inc_unless_negative() succeeded. So the
-> > +	 * try_module_get() below is not to protect the lifetime of the module
-> > +	 * as that is already guaranteed. The try_module_get() below is used
-> > +	 * to ensure that we don't deadlock in case a kernfs operation and
-> > +	 * module removal used a shared lock.
-> > +	 */
-> > +	if (!try_module_get(kn->owner)) {
-> > +		v = atomic_dec_return(&kn->active);
-> > +		if (unlikely(v == KN_DEACTIVATED_BIAS))
-> > +			wake_up_all(&kernfs_root(kn)->deactivate_waitq);
-> > +		return NULL;
-> > +	}
+> That is good.
 > 
-> The special casing in here makes me think this isn't happening the right
-> place. (i.e this looks like an open-coded version of kernfs_put_active())
-
-No, well you see, in effect the special care taken in
-kernfs_put_active() *is* the right way to inform a waiter that
-that the *taken* reference right above *also* is no longer active.
-
-The special casing here is because we took the active reference
-before the try_module_get() in the above atomic_inc_unless_negative()
-call. Outside callers deal with this through kernfs_put_active().
-
-We are special casing to deal with the deadlock case.
-
-> > +
-> >  	if (kernfs_lockdep(kn))
-> >  		rwsem_acquire_read(&kn->dep_map, 0, 1, _RET_IP_);
-> >  	return kn;
-> > @@ -442,6 +460,13 @@ void kernfs_put_active(struct kernfs_node *kn)
-> >  	if (kernfs_lockdep(kn))
-> >  		rwsem_release(&kn->dep_map, _RET_IP_);
-> >  	v = atomic_dec_return(&kn->active);
-> > +
-> > +	/*
-> > +	 * We prevent module exit *until* we know for sure all possible
-> > +	 * kernfs ops are done.
-> > +	 */
-> > +	module_put(kn->owner);
-> > +
-> >  	if (likely(v != KN_DEACTIVATED_BIAS))
-> >  		return;
+> >   o By default we now always skip built-in firmware even if a FW_LOADER=y
 > 
-> What I don't understand, however, is what kernfs_get/put_active() is
-> intending to do -- it looks like it's trying to provide an interruption
-> point for open kernfs file operations?
+> I do not understand, why would we ever want to skip built-in firmware?
 
-It is essentially ensuring that removal does not happen if any ops
-are being used.
+Because it is done this way today only implicitly because
+EXTRA_FIRMWARE is empty. Using a kconfig entry makes this
+more obvious.
 
-> This all seems extremely complex for what seems like it should just be a
-> global "am I being removed?" bool?
+> >   o This also lets us make it clear that the EXTRA_FIRMWARE_DIR
+> >     kconfig entry is only used for built-in firmware
+> 
+> How was it ever used for anything else?  :)
 
-It used to be worse :) And Tejun has cleaned this up over time. Yes,
-perhaps we can improve that more but, given how sensible this code
-is I think such improvements should be made separately.
+Well later this patch set also renames this to something more
+sensible, and so that change is clearer through this patch.
 
-> Regardless, while I do see the logic of associating the module get/put
-> with get/put of kernfs "active", why is it not better tied to strictly
-> kernfs open/close? 
+> I can not take this as-is, so yes :)
 
-It's not just files, consider kernfs_iop_mkdir() which also calls
-kernfs_get_active(). How about kernfs_fop_mmap()? And so, the common
-denominator is actually kernfs_get_active().
+Well please let me know again once you read the above explanations.
 
-> That would seem to be much simpler and not require
-> any special handling?
+I think the new kconfig is very well justified given the above.
 
-Yes true, but it I think this would still leave open some other possible
-deadlocks.
-
-> For example, why does this not work?
-
-It does for the write case for sure, but I haven't written tests for the
-other odd cases, but suspect that would deadlock as well.
-
- Luis
+  Luis
