@@ -2,231 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B5F114298A3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 23:08:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85EB34298BF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 23:17:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235207AbhJKVKV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Oct 2021 17:10:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39372 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235137AbhJKVKV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Oct 2021 17:10:21 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 47FA360F43;
-        Mon, 11 Oct 2021 21:08:18 +0000 (UTC)
-Date:   Mon, 11 Oct 2021 22:08:14 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [RFC][arm64] possible infinite loop in btrfs search_ioctl()
-Message-ID: <YWSnvq58jDsDuIik@arm.com>
-References: <CAHk-=wh5p6zpgUUoY+O7e74X9BZyODhnsqvv=xqnTaLRNj3d_Q@mail.gmail.com>
- <YSk7xfcHVc7CxtQO@zeniv-ca.linux.org.uk>
- <CAHk-=wjMyZLH+ta5SohAViSc10iPj-hRnHc-KPDoj1XZCmxdBg@mail.gmail.com>
- <YSk+9cTMYi2+BFW7@zeniv-ca.linux.org.uk>
- <YSldx9uhMYhT/G8X@zeniv-ca.linux.org.uk>
- <YSqOUb7yZ7kBoKRY@zeniv-ca.linux.org.uk>
- <YS40qqmXL7CMFLGq@arm.com>
- <YS5KudP4DBwlbPEp@zeniv-ca.linux.org.uk>
- <YWR2cPKeDrc0uHTK@arm.com>
- <CAHk-=wjvQWj7mvdrgTedUW50c2fkdn6Hzxtsk-=ckkMrFoTXjQ@mail.gmail.com>
+        id S235246AbhJKVTG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Oct 2021 17:19:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53364 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235143AbhJKVTF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Oct 2021 17:19:05 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3848EC061570;
+        Mon, 11 Oct 2021 14:17:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=oHJKmsHD7penyk6OD1+g+sCSq0p6pDMGXXRqG5EFM2c=; b=h/sv7zpH5SRitkNKfrncMjc6+J
+        LyoGPSyYNuJrXTemLutd74V6qekrmUKV0oY7yjjYyyQGJhekRcD4ptrgU/BKG8NpcfVwPfvBXrj2f
+        BCuTVhE5zRs7TPR1VThprQ1Sn0D2E35Yv4+AQuGeNQY2fvKe5EGLAQIfqsSHQ3SUysdkE4oY+6ma6
+        T/UY8u7j8hhNSY8lxlp48NwGVgU4RsLJJYNiX90cuLkPZE3yqFBUuRv8kNwtzGkVEiz8ffozZ2yCw
+        UEqaT6pj2inuyQJnopCZC+YfY8YA5kK2kroSQdm6AkajSrfiGm78OJDH0/h+KIwo0ZzXWMX5hFBRL
+        6y26P6rA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1ma2fK-00Ajc8-3G; Mon, 11 Oct 2021 21:16:58 +0000
+Date:   Mon, 11 Oct 2021 14:16:58 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     tj@kernel.org, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org, minchan@kernel.org, jeyu@kernel.org,
+        shuah@kernel.org, bvanassche@acm.org, dan.j.williams@intel.com,
+        joe@perches.com, tglx@linutronix.de, rostedt@goodmis.org,
+        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 06/12] kernel/module: add documentation for
+ try_module_get()
+Message-ID: <YWSpyrhK4PA6MFro@bombadil.infradead.org>
+References: <20210927163805.808907-1-mcgrof@kernel.org>
+ <20210927163805.808907-7-mcgrof@kernel.org>
+ <202110051252.790B3F2F0@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjvQWj7mvdrgTedUW50c2fkdn6Hzxtsk-=ckkMrFoTXjQ@mail.gmail.com>
+In-Reply-To: <202110051252.790B3F2F0@keescook>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 11, 2021 at 12:15:43PM -0700, Linus Torvalds wrote:
-> On Mon, Oct 11, 2021 at 10:38 AM Catalin Marinas
-> <catalin.marinas@arm.com> wrote:
-> > I cleaned up this patch [1] but I realised it still doesn't solve it.
-> > The arm64 __copy_to_user_inatomic(), while ensuring progress if called
-> > in a loop, it does not guarantee precise copy to the fault position.
+On Tue, Oct 05, 2021 at 12:58:47PM -0700, Kees Cook wrote:
+> On Mon, Sep 27, 2021 at 09:37:59AM -0700, Luis Chamberlain wrote:
+> > diff --git a/include/linux/module.h b/include/linux/module.h
+> > index c9f1200b2312..22eacd5e1e85 100644
+> > --- a/include/linux/module.h
+> > +++ b/include/linux/module.h
+> > @@ -609,10 +609,40 @@ void symbol_put_addr(void *addr);
+> >     to handle the error case (which only happens with rmmod --wait). */
+> >  extern void __module_get(struct module *module);
+> >  
+> > -/* This is the Right Way to get a module: if it fails, it's being removed,
+> > - * so pretend it's not there. */
+> > +/**
+> > + * try_module_get() - yields to module removal and bumps refcnt otherwise
 > 
-> That should be ok., We've always allowed the user copy to return early
-> if it does word copies and hits a page crosser that causes a fault.
-> 
-> Any user then has the choice of:
-> 
->  - partial copies are bad
-> 
->  - partial copies are handled and then you retry from the place
-> copy_to_user() failed at
-> 
-> and in that second case, the next time around, you'll get the fault
-> immediately (or you'll make some more progress - maybe the user copy
-> loop did something different just because the length and/or alignment
-> was different).
-> 
-> If you get the fault immediately, that's -EFAULT.
-> 
-> And if you make some more progress, it's again up to the caller to
-> rinse and repeat.
-> 
-> End result: user copy functions do not have to report errors exactly.
-> It is the caller that has to handle the situation.
-> 
-> Most importantly: "exact error or not" doesn't actually _matter_ to
-> the caller. If the caller does the right thing for an exact error, it
-> will do the right thing for an inexact one too. See above.
+> I find this hard to parse. How about:
+> 	"Take module refcount unless module is being removed"
 
-Yes, that's my expectation (though fixed fairly recently in the arm64
-user copy routines).
+Sure.
 
-> > The copy_to_sk(), after returning an error, starts again from the previous
-> > sizeof(sh) boundary rather than from where the __copy_to_user_inatomic()
-> > stopped. So it can get stuck attempting to copy the same search header.
+> > + * @module: the module we should check for
+> > + *
+> > + * This can be used to try to bump the reference count of a module, so to
+> > + * prevent module removal. The reference count of a module is not allowed
+> > + * to be incremented if the module is already being removed.
 > 
-> That seems to be purely a copy_to_sk() bug.
+> This I understand.
 > 
-> Or rather, it looks like a bug in the caller. copy_to_sk() itself does
+> > + *
+> > + * Care must be taken to ensure the module cannot be removed during the call to
+> > + * try_module_get(). This can be done by having another entity other than the
+> > + * module itself increment the module reference count, or through some other
+> > + * means which guarantees the module could not be removed during an operation.
+> > + * An example of this later case is using try_module_get() in a sysfs file
+> > + * which the module created. The sysfs store / read file operations are
+> > + * gauranteed to exist through the use of kernfs's active reference (see
+> > + * kernfs_active()). If a sysfs file operation is being run, the module which
+> > + * created it must still exist as the module is in charge of removing the same
+> > + * sysfs file being read. Also, a sysfs / kernfs file removal cannot happen
+> > + * unless the same file is not active.
 > 
->                 if (copy_to_user_nofault(ubuf + *sk_offset, &sh, sizeof(sh))) {
->                         ret = 0;
->                         goto out;
->                 }
+> I can't understand this paragraph at all. "Care must be taken ..."? Why?
+
+Because the routine try_module_get() assumes the struct module pointer
+is valid for the entire call. That can only be true if at least one
+reference is held prior to this call.
+
+> Shouldn't callers of try_module_get() be satisfied with the results?
+
+Yes but only with the above care addressed.
+
+> I don't follow the example at all. It seems to just say "sysfs store/read
+> functions don't need try_module_get() because whatever opened the sysfs
+> file is already keeping the module referenced." ?
+
+That is exactly what I intended to clarify with that example, yes, a
+reference is held but this is done implicitly. *If* a kernfs op is
+active module removal waits for that active reference to go down. So
+while a kernfs file is being used it is simply not possible for the
+module to disappear underneath us. And the reason is that the module
+that created the sysfs file must obviously destroy that same sysfs file.
+But since kernfs ensures that sysfs file cannot be removed if a sysfs
+file is being used, this implicitly holds a module reference.
+
+Let me know if y ou can think of a better way to phrase this.
+
+> > + *
+> > + * One of the real values to try_module_get() is the module_is_live() check
+> > + * which ensures this the caller of try_module_get() can yield to userspace
+> > + * module removal requests and fail whatever it was about to process.
 > 
-> and the comment says
-> 
->          *  0: all items from this leaf copied, continue with next
-> 
-> but that comment is then obviously not actually true in that it's not
-> "continue with next" at all.
+> Please document the return value explicitly.
 
-The comments were correct before commit a48b73eca4ce ("btrfs: fix
-potential deadlock in the search ioctl") which introduced the
-potentially infinite loop.
+Sure thing.
 
-Something like this would make the comments match (I think):
-
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index cc61813213d8..1debf6a124e8 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -2161,7 +2161,7 @@ static noinline int copy_to_sk(struct btrfs_path *path,
- 		 * properly this next time through
- 		 */
- 		if (copy_to_user_nofault(ubuf + *sk_offset, &sh, sizeof(sh))) {
--			ret = 0;
-+			ret = -EFAULT;
- 			goto out;
- 		}
-
-@@ -2175,7 +2175,7 @@ static noinline int copy_to_sk(struct btrfs_path *path,
- 			 */
- 			if (read_extent_buffer_to_user_nofault(leaf, up,
- 						item_off, item_len)) {
--				ret = 0;
-+				ret = -EFAULT;
- 				*sk_offset -= sizeof(sh);
- 				goto out;
- 			}
-@@ -2260,12 +2260,8 @@ static noinline int search_ioctl(struct inode *inode,
- 	key.type = sk->min_type;
- 	key.offset = sk->min_offset;
-
--	while (1) {
--		ret = fault_in_pages_writeable(ubuf + sk_offset,
--					       *buf_size - sk_offset);
--		if (ret)
--			break;
--
-+	ret = fault_in_pages_writeable(ubuf, *buf_size);
-+	while (ret == 0) {
- 		ret = btrfs_search_forward(root, &key, path, sk->min_transid);
- 		if (ret != 0) {
- 			if (ret > 0)
-@@ -2275,9 +2271,14 @@ static noinline int search_ioctl(struct inode *inode,
- 		ret = copy_to_sk(path, &key, sk, buf_size, ubuf,
- 				 &sk_offset, &num_found);
- 		btrfs_release_path(path);
--		if (ret)
--			break;
-
-+		/*
-+		 * Fault in copy_to_sk(), attempt to bring the page in after
-+		 * releasing the locks and retry.
-+		 */
-+		if (ret == -EFAULT)
-+			ret = fault_in_pages_writeable(ubuf + sk_offset,
-+				       sizeof(struct btrfs_ioctl_search_header));
- 	}
- 	if (ret > 0)
- 		ret = 0;
-
-> > An ugly fix is to fall back to byte by byte copying so that we can
-> > attempt the actual fault address in fault_in_pages_writeable().
-> 
-> No, changing the user copy machinery is wrong. The caller really has
-> to do the right thing with partial results.
-> 
-> And I think we need to make fault_in_pages_writeable() match the
-> actual faulting cases - maybe remote the "pages" part of the name?
-
-Ah, good point. Without removing "pages" from the name (too late over
-here to grep the kernel), something like below:
-
-diff --git a/arch/arm64/include/asm/page-def.h b/arch/arm64/include/asm/page-def.h
-index 2403f7b4cdbf..3768ac4a6610 100644
---- a/arch/arm64/include/asm/page-def.h
-+++ b/arch/arm64/include/asm/page-def.h
-@@ -15,4 +15,9 @@
- #define PAGE_SIZE		(_AC(1, UL) << PAGE_SHIFT)
- #define PAGE_MASK		(~(PAGE_SIZE-1))
- 
-+#ifdef CONFIG_ARM64_MTE
-+#define FAULT_GRANULE_SIZE	(16)
-+#define FAULT_GRANULE_MASK	(~(FAULT_GRANULE_SIZE-1))
-+#endif
-+
- #endif /* __ASM_PAGE_DEF_H */
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 62db6b0176b9..7aef732e4fa7 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -16,6 +16,11 @@
- #include <linux/hardirq.h> /* for in_interrupt() */
- #include <linux/hugetlb_inline.h>
- 
-+#ifndef FAULT_GRANULE_SIZE
-+#define FAULT_GRANULE_SIZE	PAGE_SIZE
-+#define FAULT_GRANULE_MASK	PAGE_MASK
-+#endif
-+
- struct pagevec;
- 
- static inline bool mapping_empty(struct address_space *mapping)
-@@ -751,12 +756,12 @@ static inline int fault_in_pages_writeable(char __user *uaddr, size_t size)
- 	do {
- 		if (unlikely(__put_user(0, uaddr) != 0))
- 			return -EFAULT;
--		uaddr += PAGE_SIZE;
-+		uaddr += FAULT_GRANULE_SIZE;
- 	} while (uaddr <= end);
- 
--	/* Check whether the range spilled into the next page. */
--	if (((unsigned long)uaddr & PAGE_MASK) ==
--			((unsigned long)end & PAGE_MASK))
-+	/* Check whether the range spilled into the next granule. */
-+	if (((unsigned long)uaddr & FAULT_GRANULE_MASK) ==
-+			((unsigned long)end & FAULT_GRANULE_MASK))
- 		return __put_user(0, end);
- 
- 	return 0;
-
-If this looks in the right direction, I'll do some proper patches
-tomorrow.
-
--- 
-Catalin
+  Luis
