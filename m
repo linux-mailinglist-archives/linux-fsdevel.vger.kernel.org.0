@@ -2,200 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AF9D42955A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 19:14:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FD5F4295C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 19:35:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233606AbhJKRQc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Oct 2021 13:16:32 -0400
-Received: from relayfre-01.paragon-software.com ([176.12.100.13]:42950 "EHLO
-        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232866AbhJKRQb (ORCPT
+        id S231942AbhJKRhv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Oct 2021 13:37:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59970 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231156AbhJKRhv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Oct 2021 13:16:31 -0400
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id D39D042C;
-        Mon, 11 Oct 2021 20:14:28 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1633972468;
-        bh=hP5CrubvbNrj+5YR8Nrl4oDNVEbRN1HW7A+zrUZo4Y4=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=iuBdZVohhoTEp9GoRZx2k6k3ACoHG7Fbgjsyoj6GLj34YfKvXuAOYN6gDZ96jz38V
-         k92DCP+sBQJJPZ0m0dYehjZvCKicpX8FJ79FE0qlQ9qVxvjhje8kwRewpkS64SSha4
-         Njbg2YP1+wQBXos2bMEJ39cKoS4U8PDiuvNLovag=
-Received: from [192.168.211.33] (192.168.211.33) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Mon, 11 Oct 2021 20:14:28 +0300
-Message-ID: <204a5be9-f0a2-1c85-d3a8-3011578b9299@paragon-software.com>
-Date:   Mon, 11 Oct 2021 20:14:28 +0300
+        Mon, 11 Oct 2021 13:37:51 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15B85C061570;
+        Mon, 11 Oct 2021 10:35:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=I6yZ9zx7B4CxK1FcMbBf4dNiqFWQUDhjJKBNKLinZKc=; b=WgW+i+lRiYG5w3GNHZdDYgD3h1
+        F7nq9T466tF0JFQMZxMvZQ5jMMkU1eR/NTRFGdIMYZvoIEov/A2Cm5VcbYz1tgt7fII1FtBj6VpJm
+        rysGbQJJWCPtiYCZLNqqeOAUKkF94GThwcjuFNOFXMPvCr2Toa1L5xhKY79+h+r5UPBlibjMe8j2E
+        svViCRTvnFmkM7iyiLK/ab3RzEsY1F6ZwvawjmK9ljM6EPnjYgxckX+J7cRowQaAYo4vnZ+g7QZdG
+        /Ek4B15RNLd6B0kqiK3irCZ3i3+eme7zVH8glMdZxdTbKgd/G6k4uS87PkAL+MjLJ06fxwExdYNYH
+        6BuPO3hg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mZzD7-00AFE9-DQ; Mon, 11 Oct 2021 17:35:37 +0000
+Date:   Mon, 11 Oct 2021 10:35:37 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     bp@suse.de, akpm@linux-foundation.org, josh@joshtriplett.org,
+        rishabhb@codeaurora.org, kubakici@wp.pl, maco@android.com,
+        david.brown@linaro.org, bjorn.andersson@linaro.org,
+        linux-wireless@vger.kernel.org, keescook@chromium.org,
+        shuah@kernel.org, mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com,
+        dhowells@redhat.com, pali.rohar@gmail.com, tiwai@suse.de,
+        arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
+        broonie@kernel.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org,
+        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
+        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
+        andresx7@gmail.com, dan.rue@linaro.org, brendanhiggins@google.com,
+        yzaikin@google.com, sfr@canb.auug.org.au, rdunlap@infradead.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/14] firmware_loader: add built-in firmware kconfig
+ entry
+Message-ID: <YWR16e/seTx/wxE+@bombadil.infradead.org>
+References: <20210917182226.3532898-1-mcgrof@kernel.org>
+ <20210917182226.3532898-5-mcgrof@kernel.org>
+ <YVxhbhmNd7tahLV7@kroah.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.2
-Subject: Re: [PATCH v4 7/9] fs/ntfs3: Add iocharset= mount option as alias for
- nls=
-Content-Language: en-US
-To:     Kari Argillander <kari.argillander@gmail.com>,
-        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>
-CC:     <ntfs3@lists.linux.dev>, Christoph Hellwig <hch@lst.de>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        <torvalds@linux-foundation.org>
-References: <20210907153557.144391-1-kari.argillander@gmail.com>
- <20210907153557.144391-8-kari.argillander@gmail.com>
- <20210908190938.l32kihefvtfw5tjp@pali> <20211009114252.jn2uehmaveucimp5@pali>
- <20211009143327.mqwwwlc4bgwtpush@kari-VirtualBox>
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <20211009143327.mqwwwlc4bgwtpush@kari-VirtualBox>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [192.168.211.33]
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YVxhbhmNd7tahLV7@kroah.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 09.10.2021 17:33, Kari Argillander wrote:
-> Choose to add Linus to CC so that he also knows whats coming.
+On Tue, Oct 05, 2021 at 04:30:06PM +0200, Greg KH wrote:
+> On Fri, Sep 17, 2021 at 11:22:16AM -0700, Luis R. Rodriguez wrote:
+> > From: Luis Chamberlain <mcgrof@kernel.org>
+> > 
+> > The built-in firmware is always supported when a user enables
+> > FW_LOADER=y today, that is, it is built-in to the kernel. When the
+> > firmware loader is built as a module, support for built-in firmware
+> > is skipped. This requirement is not really clear to users or even
+> > developers.
+> > 
+> > Also, by default the EXTRA_FIRMWARE is always set to an empty string
+> > and so by default we really have nothing built-in to that kernel's
+> > sections for built-in firmware, so today a all FW_LOADER=y kernels
+> > spins their wheels on an empty set of built-in firmware for each
+> > firmware request with no true need for it.
+> > 
+> > Add a new kconfig entry to represent built-in firmware support more
+> > clearly. This let's knock 3 birds with one stone:
+> > 
+> >  o Clarifies that support for built-in firmware requires the
+> >    firmware loader to be built-in to the kernel
+> > 
+> >  o By default we now always skip built-in firmware even if a FW_LOADER=y
+> > 
+> >  o This also lets us make it clear that the EXTRA_FIRMWARE_DIR
+> >    kconfig entry is only used for built-in firmware
+> > 
+> > Reviewed-by: Borislav Petkov <bp@suse.de>
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > ---
+> >  .../driver-api/firmware/built-in-fw.rst       |  2 ++
+> >  Documentation/x86/microcode.rst               |  5 ++--
+> >  drivers/base/firmware_loader/Kconfig          | 25 +++++++++++++------
+> >  drivers/base/firmware_loader/Makefile         |  3 +--
+> >  drivers/base/firmware_loader/main.c           |  4 +--
+> >  5 files changed, 26 insertions(+), 13 deletions(-)
+> > 
+> > diff --git a/Documentation/driver-api/firmware/built-in-fw.rst b/Documentation/driver-api/firmware/built-in-fw.rst
+> > index bc1c961bace1..9dd2b1df44f0 100644
+> > --- a/Documentation/driver-api/firmware/built-in-fw.rst
+> > +++ b/Documentation/driver-api/firmware/built-in-fw.rst
+> > @@ -8,6 +8,7 @@ the filesystem. Instead, firmware can be looked for inside the kernel
+> >  directly. You can enable built-in firmware using the kernel configuration
+> >  options:
+> >  
+> > +  * CONFIG_FW_LOADER_BUILTIN
+> >    * CONFIG_EXTRA_FIRMWARE
+> >    * CONFIG_EXTRA_FIRMWARE_DIR
+> >  
+> > @@ -17,6 +18,7 @@ into the kernel with CONFIG_EXTRA_FIRMWARE:
+> >  * Speed
+> >  * Firmware is needed for accessing the boot device, and the user doesn't
+> >    want to stuff the firmware into the boot initramfs.
+> > +* Testing built-in firmware
+> >  
+> >  Even if you have these needs there are a few reasons why you may not be
+> >  able to make use of built-in firmware:
+> > diff --git a/Documentation/x86/microcode.rst b/Documentation/x86/microcode.rst
+> > index a320d37982ed..d199f0b98869 100644
+> > --- a/Documentation/x86/microcode.rst
+> > +++ b/Documentation/x86/microcode.rst
+> > @@ -114,11 +114,12 @@ Builtin microcode
+> >  =================
+> >  
+> >  The loader supports also loading of a builtin microcode supplied through
+> > -the regular builtin firmware method CONFIG_EXTRA_FIRMWARE. Only 64-bit is
+> > -currently supported.
+> > +the regular builtin firmware method using CONFIG_FW_LOADER_BUILTIN and
+> > +CONFIG_EXTRA_FIRMWARE. Only 64-bit is currently supported.
+> >  
+> >  Here's an example::
+> >  
+> > +  CONFIG_FW_LOADER_BUILTIN=y
+> >    CONFIG_EXTRA_FIRMWARE="intel-ucode/06-3a-09 amd-ucode/microcode_amd_fam15h.bin"
+> >    CONFIG_EXTRA_FIRMWARE_DIR="/lib/firmware"
+> >  
+> > diff --git a/drivers/base/firmware_loader/Kconfig b/drivers/base/firmware_loader/Kconfig
+> > index 5b24f3959255..de4fcd9d41f3 100644
+> > --- a/drivers/base/firmware_loader/Kconfig
+> > +++ b/drivers/base/firmware_loader/Kconfig
+> > @@ -29,8 +29,10 @@ if FW_LOADER
+> >  config FW_LOADER_PAGED_BUF
+> >  	bool
+> >  
+> > -config EXTRA_FIRMWARE
+> > -	string "Build named firmware blobs into the kernel binary"
+> > +config FW_LOADER_BUILTIN
+> > +	bool "Enable support for built-in firmware"
+> > +	default n
 > 
-> On Sat, Oct 09, 2021 at 01:42:52PM +0200, Pali Rohár wrote:
->> Hello!
->>
->> This patch have not been applied yet:
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ntfs3/super.c#n247
->>
->> What happened that in upstream tree is still only nls= option and not
->> this iocharset=?
-> 
-> Very valid question. For some reason Konstantin has not sended pr to
-> Linus. I have also address my concern that pr is not yet sended and he
-> will make very massive "patch dumb" to rc6/rc7. See thread [1]. There is
-> about 50-70 patch already which he will send to rc6/rc7. I have get also
-> impression that patches which are not yet even applied to ntfs3 tree [2]
-> will be also sended to rc6/rc7. There is lot of refactoring and new
-> algorithms which imo are not rc material. I have sended many message to
-> Konstantin about this topic, but basically ignored.
-> 
-> Basically we do not have anything for next merge window and every patch
-> will be sended for 5.15.
-> 
-> [1] lore.kernel.org/lkml/20210925082823.fo2wm62xlcexhwvi@kari-VirtualBox
-> [2] https://github.com/Paragon-Software-Group/linux-ntfs3/commits/master
-> 
->   Argillander
-> 
+> n is always the default, no need to list it again.
 
-Hello.
+Oh, alrighty, I'll remove that line.
 
-I was planning to send pull request on Friday 08.10.
-But there is still one panic, that wasn't resolved [1].
-It seems to be tricky, so I'll be content even with quick band-aid [2].
-After confirming, that it works, I plan on sending pull request.
-I don't want for this panic to remain in 5.15.
+> > +	depends on FW_LOADER=y
+> 
+> I don't see what this gets us to add another config option.  Are you
+> making things easier later on?
 
-[1]: https://lore.kernel.org/ntfs3/f9de5807-2311-7374-afb0-bc5dffb522c0@gmail.com/
-[2]: https://lore.kernel.org/ntfs3/7e5b8dc9-9989-0e8a-9e8d-ae26b6e74df4@paragon-software.com/
+This makes a few things clearer for both developers and users.
+The code in question is a *feature* *only* when FW_LOADER=y, by
+adding a new kconfig to represent this and clearly makeing it
+depend on FW_LOADER=y it let's us:
 
->>
->> On Wednesday 08 September 2021 21:09:38 Pali Rohár wrote:
->>> On Tuesday 07 September 2021 18:35:55 Kari Argillander wrote:
->>>> Other fs drivers are using iocharset= mount option for specifying charset.
->>>> So add it also for ntfs3 and mark old nls= mount option as deprecated.
->>>>
->>>> Signed-off-by: Kari Argillander <kari.argillander@gmail.com>
->>>
->>> Reviewed-by: Pali Rohár <pali@kernel.org>
->>>
->>>> ---
->>>>  Documentation/filesystems/ntfs3.rst |  4 ++--
->>>>  fs/ntfs3/super.c                    | 18 +++++++++++-------
->>>>  2 files changed, 13 insertions(+), 9 deletions(-)
->>>>
->>>> diff --git a/Documentation/filesystems/ntfs3.rst b/Documentation/filesystems/ntfs3.rst
->>>> index af7158de6fde..ded706474825 100644
->>>> --- a/Documentation/filesystems/ntfs3.rst
->>>> +++ b/Documentation/filesystems/ntfs3.rst
->>>> @@ -32,12 +32,12 @@ generic ones.
->>>>  
->>>>  ===============================================================================
->>>>  
->>>> -nls=name		This option informs the driver how to interpret path
->>>> +iocharset=name		This option informs the driver how to interpret path
->>>>  			strings and translate them to Unicode and back. If
->>>>  			this option is not set, the default codepage will be
->>>>  			used (CONFIG_NLS_DEFAULT).
->>>>  			Examples:
->>>> -				'nls=utf8'
->>>> +				'iocharset=utf8'
->>>>  
->>>>  uid=
->>>>  gid=
->>>> diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
->>>> index 729ead6f2fac..503e2e23f711 100644
->>>> --- a/fs/ntfs3/super.c
->>>> +++ b/fs/ntfs3/super.c
->>>> @@ -226,7 +226,7 @@ enum Opt {
->>>>  	Opt_nohidden,
->>>>  	Opt_showmeta,
->>>>  	Opt_acl,
->>>> -	Opt_nls,
->>>> +	Opt_iocharset,
->>>>  	Opt_prealloc,
->>>>  	Opt_no_acs_rules,
->>>>  	Opt_err,
->>>> @@ -245,9 +245,13 @@ static const struct fs_parameter_spec ntfs_fs_parameters[] = {
->>>>  	fsparam_flag_no("hidden",		Opt_nohidden),
->>>>  	fsparam_flag_no("acl",			Opt_acl),
->>>>  	fsparam_flag_no("showmeta",		Opt_showmeta),
->>>> -	fsparam_string("nls",			Opt_nls),
->>>>  	fsparam_flag_no("prealloc",		Opt_prealloc),
->>>>  	fsparam_flag("no_acs_rules",		Opt_no_acs_rules),
->>>> +	fsparam_string("iocharset",		Opt_iocharset),
->>>> +
->>>> +	__fsparam(fs_param_is_string,
->>>> +		  "nls", Opt_iocharset,
->>>> +		  fs_param_deprecated, NULL),
->>>>  	{}
->>>>  };
->>>>  
->>>> @@ -346,7 +350,7 @@ static int ntfs_fs_parse_param(struct fs_context *fc,
->>>>  	case Opt_showmeta:
->>>>  		opts->showmeta = result.negated ? 0 : 1;
->>>>  		break;
->>>> -	case Opt_nls:
->>>> +	case Opt_iocharset:
->>>>  		kfree(opts->nls_name);
->>>>  		opts->nls_name = param->string;
->>>>  		param->string = NULL;
->>>> @@ -380,11 +384,11 @@ static int ntfs_fs_reconfigure(struct fs_context *fc)
->>>>  	new_opts->nls = ntfs_load_nls(new_opts->nls_name);
->>>>  	if (IS_ERR(new_opts->nls)) {
->>>>  		new_opts->nls = NULL;
->>>> -		errorf(fc, "ntfs3: Cannot load nls %s", new_opts->nls_name);
->>>> +		errorf(fc, "ntfs3: Cannot load iocharset %s", new_opts->nls_name);
->>>>  		return -EINVAL;
->>>>  	}
->>>>  	if (new_opts->nls != sbi->options->nls)
->>>> -		return invalf(fc, "ntfs3: Cannot use different nls when remounting!");
->>>> +		return invalf(fc, "ntfs3: Cannot use different iocharset when remounting!");
->>>>  
->>>>  	sync_filesystem(sb);
->>>>  
->>>> @@ -528,9 +532,9 @@ static int ntfs_show_options(struct seq_file *m, struct dentry *root)
->>>>  	if (opts->dmask)
->>>>  		seq_printf(m, ",dmask=%04o", ~opts->fs_dmask_inv);
->>>>  	if (opts->nls)
->>>> -		seq_printf(m, ",nls=%s", opts->nls->charset);
->>>> +		seq_printf(m, ",iocharset=%s", opts->nls->charset);
->>>>  	else
->>>> -		seq_puts(m, ",nls=utf8");
->>>> +		seq_puts(m, ",iocharset=utf8");
->>>>  	if (opts->sys_immutable)
->>>>  		seq_puts(m, ",sys_immutable");
->>>>  	if (opts->discard)
->>>> -- 
->>>> 2.25.1
->>>>
+  o Clarify that support for built-in firmware requires
+    the firmware loader to be built-in to the kernel
+  o By default we now always skip built-in firmware even if a FW_LOADER=y
+  o This also lets us make it clear that the EXTRA_FIRMWARE_DIR
+    kconfig entry is only used for built-in firmware
+
+The above is not easily obvious to developers (including myself when
+I was reviewing this code) or users without this new kconfig entry.
+
+Should I re-send by just removing the one line you asked for?
+
+  Luis
