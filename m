@@ -2,389 +2,237 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9422E429927
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 23:50:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63F8242994E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 00:05:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235446AbhJKVwz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Oct 2021 17:52:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60926 "EHLO
+        id S235468AbhJKWHb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Oct 2021 18:07:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235437AbhJKVwt (ORCPT
+        with ESMTP id S235301AbhJKWH3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Oct 2021 17:52:49 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86033C061749;
-        Mon, 11 Oct 2021 14:50:48 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id j5so79265582lfg.8;
-        Mon, 11 Oct 2021 14:50:48 -0700 (PDT)
+        Mon, 11 Oct 2021 18:07:29 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35FEAC061570;
+        Mon, 11 Oct 2021 15:05:28 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id y15so79277718lfk.7;
+        Mon, 11 Oct 2021 15:05:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=CFOKAogMPVQB4oZNJlqugjaqysN1b1PYFPOt9WrOaLM=;
-        b=nA0+CHF93/xmhq6amcMoaHPsMhXaApVzdhVkN5jWi2UvnLoAtsQb9YyzA4I0WJ3qmI
-         RhAd+LxzrFJTy9m4foJchTdiqMTMOlU9coIQM+UFHhuwOCqv/9+ot+ktYznvBK2ZNWzw
-         QwgBYNjhIzww4+J9B09dh0l8V3pirFrne46ybTSriXLotideg1SA/mdRmtO3+zR/FCY0
-         vvzwcb7/ec7qQgzPyBuEUXBJtqjapKSX3NSPNvl72bSkVxN6ZYoYG1F592KAUdiVgWwT
-         Sngg6Sw1QI6lcVb3dxqoVrUnhxkVfB72l7TQNv/LM++Jiyu6tjcBulHYeGobqhHFcA3E
-         2b6w==
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=t//VfIkjwQXqxb3+6HcAZOI39YFeCdYqc5EmeEugUiM=;
+        b=LRfZYb2oYtFdaCGAqgENP68VqIS3FtOaa4y00ZpjQ73DyqKx7qpIoRptdFkkzi8IZw
+         CvgHnxi6Eiv0ACcze7BW+YCVhYoCTTagnPQID5x//kANR4A5nKGKRIXXDOi/B3Q1aH2c
+         PYhDxJ9n6L0zOr/5pO8hEaBCevc2O3XODIu4F89fi0KCYmaCssnae6gdUZBjTAXG8hyo
+         tqkeBrStIJHUOkQW0iA8RvG7bDWRPzTpg79jaJAEGR2bGAv9EFMbVHsStIjkOv7MNzVm
+         Kcm63wz6L+c0RuJbMV7NWHC7ItQQHdMkmkfS+j26MzU4kWu0nrR/9GrnneWiDzk8kB2y
+         0IJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CFOKAogMPVQB4oZNJlqugjaqysN1b1PYFPOt9WrOaLM=;
-        b=w4cKbAEMEsCmnH8LU4SgnAlpT/DJN6BeEWMyRVjXTlZYG/mJc5cEgFZfATl1ffrf9l
-         SYT7OBNhzQ/XTKXHvxyQ90gQr7hiL/XnQitxauJQ+vwbHMPaqsWA+I8RybLwziK1Alqm
-         UaPiDRp2pMux6yJw4F61XnbEO+sQrzhI0I3qPp9Twfu4nyWZDYUpywJF8iOI0XPep2Xf
-         c7oDdtPyMJFxgQa0AROIOSzdB9xhEolUGYkRGeGHnqC9EDWjWLXRGufjAmXaquWbRgO1
-         xiWYEFBzp1EQOz0jOFHd+dohQggLzm9USXS8a+18K0K235iq4u2gMcihRofXCoURl6Wz
-         +zcw==
-X-Gm-Message-State: AOAM533JzYARlgwPbzf+qkdhoPQVsdx+RlzIWmUTQyaj+/Aavf1dGKwu
-        zF8jL5hoRWSKX0IFrlM5hGoHuoShje4=
-X-Google-Smtp-Source: ABdhPJyV7p5NoQM7I45hzXf6Ifacl28t/3kSejfgMVnTOMkGgFwyBTiZkiRHs/0homVhYv9tMBHrnw==
-X-Received: by 2002:a2e:7205:: with SMTP id n5mr7220886ljc.65.1633989046697;
-        Mon, 11 Oct 2021 14:50:46 -0700 (PDT)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=t//VfIkjwQXqxb3+6HcAZOI39YFeCdYqc5EmeEugUiM=;
+        b=VPZNUkIQ1Thu/q3sScRyJyokcyK0vmBnsk1YFTuSwHV0Uc/6yhHFKNEenukDU20GCI
+         iCUWb46Ycg3iDO0+qYKDGHC/9Dr/LkrF+pYckCM1r7chvbg2diPeNR8qtfhsRa253yDx
+         RFuGtzJU26CX29MJLM5oO42bDRd8rh1EB5AKJmMx1rE1LwUJzLCNGnvGrksGSWoXx5/o
+         x4SxFTenvNobkz7cs/uKngJ2XNNY/aoODkP/rGhvm0lNYiPshppk9S22g9EpgGm5DxZf
+         cUs/ANB6ux8xYrlMCJ0/cO3R9wcV4pYE5rGK2CV4e6/LpyyVYPlJv8zNquoH+W3BlFqz
+         3vNA==
+X-Gm-Message-State: AOAM532mWYw+8aryDjLH+ZixUht2yB+zkyJZuT9hAVmhFsAMyF1ykB7E
+        4noLNozteHBCnJsCyATOZa4=
+X-Google-Smtp-Source: ABdhPJzE2xywrVGoYO6jnH0X0hlidV7nukzzc/FaBfvY3s6ir9rBtVz7eOExZMKV3Bomawxik3twkw==
+X-Received: by 2002:ac2:4e02:: with SMTP id e2mr30412482lfr.264.1633989926514;
+        Mon, 11 Oct 2021 15:05:26 -0700 (PDT)
 Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id w6sm913789lfk.200.2021.10.11.14.50.45
+        by smtp.gmail.com with ESMTPSA id b9sm844307lfe.85.2021.10.11.15.05.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Oct 2021 14:50:46 -0700 (PDT)
-Date:   Tue, 12 Oct 2021 00:50:44 +0300
+        Mon, 11 Oct 2021 15:05:26 -0700 (PDT)
+Date:   Tue, 12 Oct 2021 01:05:24 +0300
 From:   Kari Argillander <kari.argillander@gmail.com>
 To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] fs/ntfs3: Fix memory leak if fill_super failed
-Message-ID: <20211011215044.dwxmyy2o6nqers3i@kari-VirtualBox>
-References: <79791816-db23-f3b4-3ea8-139add705c45@paragon-software.com>
+Cc:     Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, ntfs3@lists.linux.dev,
+        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        torvalds@linux-foundation.org
+Subject: Re: [PATCH v4 7/9] fs/ntfs3: Add iocharset= mount option as alias
+ for nls=
+Message-ID: <20211011220524.azcaxs7y5zgd2uwz@kari-VirtualBox>
+References: <20210907153557.144391-1-kari.argillander@gmail.com>
+ <20210907153557.144391-8-kari.argillander@gmail.com>
+ <20210908190938.l32kihefvtfw5tjp@pali>
+ <20211009114252.jn2uehmaveucimp5@pali>
+ <20211009143327.mqwwwlc4bgwtpush@kari-VirtualBox>
+ <204a5be9-f0a2-1c85-d3a8-3011578b9299@paragon-software.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <79791816-db23-f3b4-3ea8-139add705c45@paragon-software.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <204a5be9-f0a2-1c85-d3a8-3011578b9299@paragon-software.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 05, 2021 at 06:26:53PM +0300, Konstantin Komarov wrote:
-> In ntfs_init_fs_context we allocate memory in fc->s_fs_info.
-> In case of failed mount we must free it in ntfs_fill_super.
-> We can't do it in ntfs_fs_free, because ntfs_fs_free called
-> with fc->s_fs_info == NULL.
-> fc->s_fs_info became NULL in sget_fc.
-
-Thanks for fixing this. You can always ask that person who introduce bug
-will fix it.
-
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-
-Reviewed-by: Kari Argillander <kari.argillander@gmail.com>
-
-> ---
-> v2:
->   Changed fix - now we free memory instead of restoring pointer to memory.
->   Added context how we allocate and free memory.
->   Many commits affected, so no fixes tag.
-
-Many commit affected, but fixed tag is the first one which introduce it.
-This case: 
-
-Fixes: 610f8f5a7baf ("fs/ntfs3: Use new api for mounting")
-
-This will help backporting fixes to stable branches.
-
+On Mon, Oct 11, 2021 at 08:14:28PM +0300, Konstantin Komarov wrote:
 > 
->  fs/ntfs3/super.c | 90 ++++++++++++++++++++++++++++++------------------
->  1 file changed, 56 insertions(+), 34 deletions(-)
 > 
-> diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-> index 705d8b4f4894..d41d76979e12 100644
-> --- a/fs/ntfs3/super.c
-> +++ b/fs/ntfs3/super.c
-> @@ -908,7 +908,8 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	if (IS_ERR(sbi->options->nls)) {
->  		sbi->options->nls = NULL;
->  		errorf(fc, "Cannot load nls %s", sbi->options->nls_name);
-> -		return -EINVAL;
-> +		err = -EINVAL;
-> +		goto out;
->  	}
->  
->  	rq = bdev_get_queue(bdev);
-> @@ -922,7 +923,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	err = ntfs_init_from_boot(sb, rq ? queue_logical_block_size(rq) : 512,
->  				  bdev->bd_inode->i_size);
->  	if (err)
-> -		return err;
-> +		goto out;
->  
->  	/*
->  	 * Load $Volume. This should be done before $LogFile
-> @@ -933,7 +934,8 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	inode = ntfs_iget5(sb, &ref, &NAME_VOLUME);
->  	if (IS_ERR(inode)) {
->  		ntfs_err(sb, "Failed to load $Volume.");
-> -		return PTR_ERR(inode);
-> +		err = PTR_ERR(inode);
-> +		goto out;
->  	}
->  
->  	ni = ntfs_i(inode);
-> @@ -954,19 +956,19 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	} else {
->  		/* Should we break mounting here? */
->  		//err = -EINVAL;
-> -		//goto out;
-> +		//goto put_inode_out;
->  	}
->  
->  	attr = ni_find_attr(ni, attr, NULL, ATTR_VOL_INFO, NULL, 0, NULL, NULL);
->  	if (!attr || is_attr_ext(attr)) {
->  		err = -EINVAL;
-> -		goto out;
-> +		goto put_inode_out;
->  	}
->  
->  	info = resident_data_ex(attr, SIZEOF_ATTRIBUTE_VOLUME_INFO);
->  	if (!info) {
->  		err = -EINVAL;
-> -		goto out;
-> +		goto put_inode_out;
->  	}
->  
->  	sbi->volume.major_ver = info->major_ver;
-> @@ -980,7 +982,8 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	inode = ntfs_iget5(sb, &ref, &NAME_MIRROR);
->  	if (IS_ERR(inode)) {
->  		ntfs_err(sb, "Failed to load $MFTMirr.");
-> -		return PTR_ERR(inode);
-> +		err = PTR_ERR(inode);
-> +		goto out;
->  	}
->  
->  	sbi->mft.recs_mirr =
-> @@ -994,14 +997,15 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	inode = ntfs_iget5(sb, &ref, &NAME_LOGFILE);
->  	if (IS_ERR(inode)) {
->  		ntfs_err(sb, "Failed to load \x24LogFile.");
-> -		return PTR_ERR(inode);
-> +		err = PTR_ERR(inode);
-> +		goto out;
->  	}
->  
->  	ni = ntfs_i(inode);
->  
->  	err = ntfs_loadlog_and_replay(ni, sbi);
->  	if (err)
-> -		goto out;
-> +		goto put_inode_out;
->  
->  	iput(inode);
->  
-> @@ -1009,14 +1013,16 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  		if (!sb_rdonly(sb)) {
->  			ntfs_warn(sb,
->  				  "failed to replay log file. Can't mount rw!");
-> -			return -EINVAL;
-> +			err = -EINVAL;
-> +			goto out;
->  		}
->  	} else if (sbi->volume.flags & VOLUME_FLAG_DIRTY) {
->  		if (!sb_rdonly(sb) && !sbi->options->force) {
->  			ntfs_warn(
->  				sb,
->  				"volume is dirty and \"force\" flag is not set!");
-> -			return -EINVAL;
-> +			err = -EINVAL;
-> +			goto out;
->  		}
->  	}
->  
-> @@ -1027,7 +1033,8 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	inode = ntfs_iget5(sb, &ref, &NAME_MFT);
->  	if (IS_ERR(inode)) {
->  		ntfs_err(sb, "Failed to load $MFT.");
-> -		return PTR_ERR(inode);
-> +		err = PTR_ERR(inode);
-> +		goto out;
->  	}
->  
->  	ni = ntfs_i(inode);
-> @@ -1038,11 +1045,11 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  
->  	err = wnd_init(&sbi->mft.bitmap, sb, tt);
->  	if (err)
-> -		goto out;
-> +		goto put_inode_out;
->  
->  	err = ni_load_all_mi(ni);
->  	if (err)
-> -		goto out;
-> +		goto put_inode_out;
->  
->  	sbi->mft.ni = ni;
->  
-> @@ -1052,7 +1059,8 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	inode = ntfs_iget5(sb, &ref, &NAME_BADCLUS);
->  	if (IS_ERR(inode)) {
->  		ntfs_err(sb, "Failed to load $BadClus.");
-> -		return PTR_ERR(inode);
-> +		err = PTR_ERR(inode);
-> +		goto out;
->  	}
->  
->  	ni = ntfs_i(inode);
-> @@ -1075,13 +1083,14 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	inode = ntfs_iget5(sb, &ref, &NAME_BITMAP);
->  	if (IS_ERR(inode)) {
->  		ntfs_err(sb, "Failed to load $Bitmap.");
-> -		return PTR_ERR(inode);
-> +		err = PTR_ERR(inode);
-> +		goto out;
->  	}
->  
->  #ifndef CONFIG_NTFS3_64BIT_CLUSTER
->  	if (inode->i_size >> 32) {
->  		err = -EINVAL;
-> -		goto out;
-> +		goto put_inode_out;
->  	}
->  #endif
->  
-> @@ -1089,21 +1098,21 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	tt = sbi->used.bitmap.nbits;
->  	if (inode->i_size < bitmap_size(tt)) {
->  		err = -EINVAL;
-> -		goto out;
-> +		goto put_inode_out;
->  	}
->  
->  	/* Not necessary. */
->  	sbi->used.bitmap.set_tail = true;
->  	err = wnd_init(&sbi->used.bitmap, sb, tt);
->  	if (err)
-> -		goto out;
-> +		goto put_inode_out;
->  
->  	iput(inode);
->  
->  	/* Compute the MFT zone. */
->  	err = ntfs_refresh_zone(sbi);
->  	if (err)
-> -		return err;
-> +		goto out;
->  
->  	/* Load $AttrDef. */
->  	ref.low = cpu_to_le32(MFT_REC_ATTR);
-> @@ -1111,18 +1120,19 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	inode = ntfs_iget5(sb, &ref, &NAME_ATTRDEF);
->  	if (IS_ERR(inode)) {
->  		ntfs_err(sb, "Failed to load $AttrDef -> %d", err);
-> -		return PTR_ERR(inode);
-> +		err = PTR_ERR(inode);
-> +		goto out;
->  	}
->  
->  	if (inode->i_size < sizeof(struct ATTR_DEF_ENTRY)) {
->  		err = -EINVAL;
-> -		goto out;
-> +		goto put_inode_out;
->  	}
->  	bytes = inode->i_size;
->  	sbi->def_table = t = kmalloc(bytes, GFP_NOFS);
->  	if (!t) {
->  		err = -ENOMEM;
-> -		goto out;
-> +		goto put_inode_out;
->  	}
->  
->  	for (done = idx = 0; done < bytes; done += PAGE_SIZE, idx++) {
-> @@ -1131,7 +1141,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  
->  		if (IS_ERR(page)) {
->  			err = PTR_ERR(page);
-> -			goto out;
-> +			goto put_inode_out;
->  		}
->  		memcpy(Add2Ptr(t, done), page_address(page),
->  		       min(PAGE_SIZE, tail));
-> @@ -1139,7 +1149,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  
->  		if (!idx && ATTR_STD != t->type) {
->  			err = -EINVAL;
-> -			goto out;
-> +			goto put_inode_out;
->  		}
->  	}
->  
-> @@ -1173,12 +1183,13 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	inode = ntfs_iget5(sb, &ref, &NAME_UPCASE);
->  	if (IS_ERR(inode)) {
->  		ntfs_err(sb, "Failed to load $UpCase.");
-> -		return PTR_ERR(inode);
-> +		err = PTR_ERR(inode);
-> +		goto out;
->  	}
->  
->  	if (inode->i_size != 0x10000 * sizeof(short)) {
->  		err = -EINVAL;
-> -		goto out;
-> +		goto put_inode_out;
->  	}
->  
->  	for (idx = 0; idx < (0x10000 * sizeof(short) >> PAGE_SHIFT); idx++) {
-> @@ -1188,7 +1199,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  
->  		if (IS_ERR(page)) {
->  			err = PTR_ERR(page);
-> -			goto out;
-> +			goto put_inode_out;
->  		}
->  
->  		src = page_address(page);
-> @@ -1214,7 +1225,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  		/* Load $Secure. */
->  		err = ntfs_security_init(sbi);
->  		if (err)
-> -			return err;
-> +			goto out;
->  
->  		/* Load $Extend. */
->  		err = ntfs_extend_init(sbi);
-> @@ -1239,19 +1250,30 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
->  	inode = ntfs_iget5(sb, &ref, &NAME_ROOT);
->  	if (IS_ERR(inode)) {
->  		ntfs_err(sb, "Failed to load root.");
-> -		return PTR_ERR(inode);
-> +		err = PTR_ERR(inode);
-> +		goto out;
->  	}
->  
->  	sb->s_root = d_make_root(inode);
-> -	if (!sb->s_root)
-> -		return -ENOMEM;
-> +	if (!sb->s_root) {
-> +		err = -ENOMEM;
-> +		goto put_inode_out;
-> +	}
->  
->  	fc->fs_private = NULL;
-> -	fc->s_fs_info = NULL;
->  
->  	return 0;
-> -out:
-> +
-> +put_inode_out:
->  	iput(inode);
-> +out:
-> +	/*
-> +	 * Free resources here.
-> +	 * ntfs_fs_free will be called with fc->s_fs_info = NULL
-> +	 */
-> +	put_ntfs(sbi);
-> +	sb->s_fs_info = NULL;
-> +
->  	return err;
->  }
->  
-> -- 
-> 2.33.0
+> On 09.10.2021 17:33, Kari Argillander wrote:
+> > Choose to add Linus to CC so that he also knows whats coming.
+> > 
+> > On Sat, Oct 09, 2021 at 01:42:52PM +0200, Pali Rohár wrote:
+> >> Hello!
+> >>
+> >> This patch have not been applied yet:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/ntfs3/super.c#n247
+> >>
+> >> What happened that in upstream tree is still only nls= option and not
+> >> this iocharset=?
+> > 
+> > Very valid question. For some reason Konstantin has not sended pr to
+> > Linus. I have also address my concern that pr is not yet sended and he
+> > will make very massive "patch dumb" to rc6/rc7. See thread [1]. There is
+> > about 50-70 patch already which he will send to rc6/rc7. I have get also
+> > impression that patches which are not yet even applied to ntfs3 tree [2]
+> > will be also sended to rc6/rc7. There is lot of refactoring and new
+> > algorithms which imo are not rc material. I have sended many message to
+> > Konstantin about this topic, but basically ignored.
+> > 
+> > Basically we do not have anything for next merge window and every patch
+> > will be sended for 5.15.
+> > 
+> > [1] lore.kernel.org/lkml/20210925082823.fo2wm62xlcexhwvi@kari-VirtualBox
+> > [2] https://github.com/Paragon-Software-Group/linux-ntfs3/commits/master
+> > 
+> >   Argillander
+> > 
 > 
+> Hello.
+> 
+> I was planning to send pull request on Friday 08.10.
+> But there is still one panic, that wasn't resolved [1].
+> It seems to be tricky, so I'll be content even with quick band-aid [2].
+> After confirming, that it works, I plan on sending pull request.
+> I don't want for this panic to remain in 5.15.
+
+Of course we won't want panic to remain 5.15, but that does not mean you
+can't send pr for other patches. You can still send other pr later for
+other rc's. If you will send pr late it might be that Linus will not
+apply any of them because it will be too big pr for late rc. I'm sure he
+will be resonable in first time because ntfs3 is new driver and will
+accept pr in this case, but this cannot come habbit.
+
+Normally rc cycle is for this kind of things. We fix things we broke
+during merge window, but right now it is real danger that we introduce
+many bugs because people cannot test ntfs3 because you hold on patches.
+They belong to also to Linus tree not just to linux-next. Many user use
+Linus tree and there are many who send good bug reports.
+
+But do not take this too harsh. I'm just personally worried here. Also I
+think you as maintainer had improved well in short time.
+
+> [1]: https://lore.kernel.org/ntfs3/f9de5807-2311-7374-afb0-bc5dffb522c0@gmail.com/
+> [2]: https://lore.kernel.org/ntfs3/7e5b8dc9-9989-0e8a-9e8d-ae26b6e74df4@paragon-software.com/
+> 
+> >>
+> >> On Wednesday 08 September 2021 21:09:38 Pali Rohár wrote:
+> >>> On Tuesday 07 September 2021 18:35:55 Kari Argillander wrote:
+> >>>> Other fs drivers are using iocharset= mount option for specifying charset.
+> >>>> So add it also for ntfs3 and mark old nls= mount option as deprecated.
+> >>>>
+> >>>> Signed-off-by: Kari Argillander <kari.argillander@gmail.com>
+> >>>
+> >>> Reviewed-by: Pali Rohár <pali@kernel.org>
+> >>>
+> >>>> ---
+> >>>>  Documentation/filesystems/ntfs3.rst |  4 ++--
+> >>>>  fs/ntfs3/super.c                    | 18 +++++++++++-------
+> >>>>  2 files changed, 13 insertions(+), 9 deletions(-)
+> >>>>
+> >>>> diff --git a/Documentation/filesystems/ntfs3.rst b/Documentation/filesystems/ntfs3.rst
+> >>>> index af7158de6fde..ded706474825 100644
+> >>>> --- a/Documentation/filesystems/ntfs3.rst
+> >>>> +++ b/Documentation/filesystems/ntfs3.rst
+> >>>> @@ -32,12 +32,12 @@ generic ones.
+> >>>>  
+> >>>>  ===============================================================================
+> >>>>  
+> >>>> -nls=name		This option informs the driver how to interpret path
+> >>>> +iocharset=name		This option informs the driver how to interpret path
+> >>>>  			strings and translate them to Unicode and back. If
+> >>>>  			this option is not set, the default codepage will be
+> >>>>  			used (CONFIG_NLS_DEFAULT).
+> >>>>  			Examples:
+> >>>> -				'nls=utf8'
+> >>>> +				'iocharset=utf8'
+> >>>>  
+> >>>>  uid=
+> >>>>  gid=
+> >>>> diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+> >>>> index 729ead6f2fac..503e2e23f711 100644
+> >>>> --- a/fs/ntfs3/super.c
+> >>>> +++ b/fs/ntfs3/super.c
+> >>>> @@ -226,7 +226,7 @@ enum Opt {
+> >>>>  	Opt_nohidden,
+> >>>>  	Opt_showmeta,
+> >>>>  	Opt_acl,
+> >>>> -	Opt_nls,
+> >>>> +	Opt_iocharset,
+> >>>>  	Opt_prealloc,
+> >>>>  	Opt_no_acs_rules,
+> >>>>  	Opt_err,
+> >>>> @@ -245,9 +245,13 @@ static const struct fs_parameter_spec ntfs_fs_parameters[] = {
+> >>>>  	fsparam_flag_no("hidden",		Opt_nohidden),
+> >>>>  	fsparam_flag_no("acl",			Opt_acl),
+> >>>>  	fsparam_flag_no("showmeta",		Opt_showmeta),
+> >>>> -	fsparam_string("nls",			Opt_nls),
+> >>>>  	fsparam_flag_no("prealloc",		Opt_prealloc),
+> >>>>  	fsparam_flag("no_acs_rules",		Opt_no_acs_rules),
+> >>>> +	fsparam_string("iocharset",		Opt_iocharset),
+> >>>> +
+> >>>> +	__fsparam(fs_param_is_string,
+> >>>> +		  "nls", Opt_iocharset,
+> >>>> +		  fs_param_deprecated, NULL),
+> >>>>  	{}
+> >>>>  };
+> >>>>  
+> >>>> @@ -346,7 +350,7 @@ static int ntfs_fs_parse_param(struct fs_context *fc,
+> >>>>  	case Opt_showmeta:
+> >>>>  		opts->showmeta = result.negated ? 0 : 1;
+> >>>>  		break;
+> >>>> -	case Opt_nls:
+> >>>> +	case Opt_iocharset:
+> >>>>  		kfree(opts->nls_name);
+> >>>>  		opts->nls_name = param->string;
+> >>>>  		param->string = NULL;
+> >>>> @@ -380,11 +384,11 @@ static int ntfs_fs_reconfigure(struct fs_context *fc)
+> >>>>  	new_opts->nls = ntfs_load_nls(new_opts->nls_name);
+> >>>>  	if (IS_ERR(new_opts->nls)) {
+> >>>>  		new_opts->nls = NULL;
+> >>>> -		errorf(fc, "ntfs3: Cannot load nls %s", new_opts->nls_name);
+> >>>> +		errorf(fc, "ntfs3: Cannot load iocharset %s", new_opts->nls_name);
+> >>>>  		return -EINVAL;
+> >>>>  	}
+> >>>>  	if (new_opts->nls != sbi->options->nls)
+> >>>> -		return invalf(fc, "ntfs3: Cannot use different nls when remounting!");
+> >>>> +		return invalf(fc, "ntfs3: Cannot use different iocharset when remounting!");
+> >>>>  
+> >>>>  	sync_filesystem(sb);
+> >>>>  
+> >>>> @@ -528,9 +532,9 @@ static int ntfs_show_options(struct seq_file *m, struct dentry *root)
+> >>>>  	if (opts->dmask)
+> >>>>  		seq_printf(m, ",dmask=%04o", ~opts->fs_dmask_inv);
+> >>>>  	if (opts->nls)
+> >>>> -		seq_printf(m, ",nls=%s", opts->nls->charset);
+> >>>> +		seq_printf(m, ",iocharset=%s", opts->nls->charset);
+> >>>>  	else
+> >>>> -		seq_puts(m, ",nls=utf8");
+> >>>> +		seq_puts(m, ",iocharset=utf8");
+> >>>>  	if (opts->sys_immutable)
+> >>>>  		seq_puts(m, ",sys_immutable");
+> >>>>  	if (opts->discard)
+> >>>> -- 
+> >>>> 2.25.1
+> >>>>
