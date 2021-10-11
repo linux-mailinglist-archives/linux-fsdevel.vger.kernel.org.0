@@ -2,118 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8564342997C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 00:40:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B25C142998A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 00:57:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235558AbhJKWmb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Oct 2021 18:42:31 -0400
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com ([66.163.184.153]:45548
-        "EHLO sonic309-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235492AbhJKWma (ORCPT
+        id S235593AbhJKW7g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Oct 2021 18:59:36 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:52074 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234328AbhJKW7a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Oct 2021 18:42:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1633992027; bh=jLQluOCMPO5rRjRMl+Q68u9ZH7qqQfyDRJUR6BJ2huY=; h=From:Subject:To:Cc:Date:References:From:Subject:Reply-To; b=ijGoSwinX9Rir2agJRG26TqgBbberIguVcPSmPSJEYVJoD9r//vqNCH1UMhjJap/P+/9Ase4i/7GvPgi/0XmbBru7ZUQoYxw05tZmLWlU8NcJFG1SF8KUOzez2PWDnMwGqjD7r9nOfj0K4dtyHxem3vVk9cplDocX51tDJdqeqN+mBUWqlTMZVopYJBYOjKJbRpEv/YMpd/byBcWCOWUQjTMeMcSJZQ2bZ+p7L3hw6+ebtgpdcU75jgLJmfy6dldZ4NbrEaeVU9RN3YdX5ZEuJTKrCBeg9TX9MJ/vzuUQHTwqGKNJTzns5kdNRQzEHqiVLCrXi4yc8gqKN5xmqRkhg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1633992027; bh=2NSEyr+UEwaAiyOvJyRV5A9MRNYgSMLHldikQZIKAaA=; h=X-Sonic-MF:From:Subject:To:Date:From:Subject; b=nIut1lOmM2ziHv9OOjNQkFojQzm9FU8n8yLpMqdLQHDBezg8GduVBInIv1oQrw4dkcMtaDlFDBHqpIscVn4N9KVIGmwweJyBqChrSoBgK1ap+TKnScJrXvRRt0aFCmDX8DyzWSQnTJzOASqUchfXmSZKGDyLfnrdDjxm+JpdpUiL4nTCMSMOOtElmEKu+gj/qCHLw1D/6r6gpk13GqIHxdUCGyVhhnpKnnNgKNYcYqucr60QOb5gJbPg8Qn/gQQJmwLMOovzspKEGxOn88se6xQxfWEUkWhCyiqXF1BPPw9ss+XCLmR1N4QcqX/g8Cjv+y3TvfXqYifJ6jsd2dUu4w==
-X-YMail-OSG: ul8tsh4VM1kSmoq8PSS.5GHSk2Jrqvk6pvXuXpfWvb7jm8Fsjaqc.fQ_o1gr0Ws
- tgAl.6uBGfMrNNzvu2_VQ3YzrkhMzmzOMgGR7sK0A7.m1sP.utDG1n2jxiahlr1I4dZODwuNwxJR
- MLNPUM5TZDy9aha4eSEL01hQMiv9eiXEAW4_qom_odoG6lkl_lqJEo_XRTAey93NhCl0NHoY6nsX
- v.70p6bZMcK0AMnNOyu6mG7rSzn2r.m2kPhFZNuGcngdNXuDO81u1sA1UsHlXmBBOO.zgNEJm0DF
- m.rnCQU2nrxd4NnSGlvaczYccEsE7RLY8Jqoe3OjM26hxebAgVzIaQB3fNV.eeKiLk03u6VrZ1bH
- aIXvhyusIr.qS7.tfBz5xbBFWi1uEaxB4_K7Pl2STw7iwD5LOc_vr.LwumwO6RDw373ol1CeTen0
- Fq.iiTUNn5McZbCsTyXNrIkjrDXzlJzUhutPxNXTHRftKX_.wfEtCJ7XEOYKYrEPdIesIKaASEZz
- 6Dt7E4whVGuxMLqbIohtsdCyAylD1wX5OuQ1J_VNX2UcWQhbiGmKGvZZYWpf7flGs89Jgp46aWlJ
- Z9jTCcFP.MFthVfj_p.qL1piCgXrX8HJlSiEQyKVWDZd_Krp8c8cgAcY1ohozs35KhpSPCdljJWo
- dlPebdgetxudvj2x3H3ixjMHwBNywQHzsOqeKXvlEOePsZ1lo.U5p.se95Aaizk3OPecB9STaRsW
- DFc4PEOWD7w4xMK2cUqFyTEFAK6Ohp84Z9Q_duVllfVwCj6w4byEwk0eFMoP9rBBmuPlh8sg7.uw
- M6t15i5GpPNsVTOrMUBNq8VBbqhuRARcuXFKVkX2ox6x5J5LWGD.qKckc317OCpEbYAfznsTaUL4
- lqyinpmnMqt4r5x9KPfYq2GInx01BFHkk7hgRcAQLW7Uz3Apf5maf9MFEtWK7hoyIIG1cGVX86e8
- RU.PbjYxqkhlLEfkhZosMUz7yTtUZTpvNtX9HWuIvFwZXVkVzl3.HEUTBw9uo96_2hSss5GArXNe
- dwcd4qPaPP7h2wTcfhOyKf7DXS1sYNfKnAD8d0wdmcFfp2lMS90.P5Yh9_NLXXh0Wl_cfHczYGKt
- O_2WCSubtQzCHgqI7_FuT.mtcIgqMYz6_TCprcv8b8dcFWLXKsbBofBqEbrfywfg10EWipmtm0p3
- rQhk3.RzMGZIOxIBQJ9j8_xp1xBLFm65uLvsyI0hFArW5zyQbKdP1yTQ.LpKsG.6G_eFVqoW5v_M
- kfjPOnx8fa7wGdNnv9q8XygooTwLSsdqB0UvN2ueCX6km21HJZdMEgtSgn.6GuXdA_JZMT44fK71
- LGXPhJfai4ouaXIjj5SWExRCdpWdctV4Q3wrgVx7s.bZOudYIEDnro55YY6j34hds9gxvX73wDJl
- 2wFPkXZypQVR3q4IpePJueHupXtM8OJ5v09HloNZX3b2MwjiG4AUT3tAoqg.l7MN9PROvFEFTysD
- kMIqeVR.OfuvJqL7vF6aagjWQXdrkfnAUqBasVd5Z3Xi2Cfuc7cCEH2YfJecjW7KQuCWJPMOqtaj
- jJSDU0esPrvhI2VDx53h8ONFXBJNqudEk6we8pd9cozFnSYAahygWKFAdHn97YAO4.m8dhH_07SY
- wQe.muuHb7mdPBn_T4TO7WCzC3OJqB1V2HfizSzYU2NnLxmphq79lQ2N3CwjnXE371jFteds9JAB
- L8gmDpDlVOeNglelFDL.RR_ZoqNJyCJUafYJzss1O.HU6j1gqsTB1JIWsEHsKUrQrcS3gUN5ysHz
- fMeqJK5bnNPqxfRZUh.0TrptlIKI7cQMhmaF9XS5hzisS1tBxwKPdlufp_0DxdPwKDcai_fuuwVc
- tfOU7zT.5lGTfqVo0oVBk5tpsgyJzgDd4VvSf8O0ugzvuAzvhnr6RaNI2wa0bzP2YimgY6Gsb184
- YQk7TMWujNZZZQzAzsOynaaEvi2mW_Zy4YxxuYauH4BiMC_pk7B5VaaC8ILchpPaAwJROna0NhaE
- rX44KS2s2AYnnFOplS8igSnmvyRnfz88tkrsyMSRCWf8b8IhoirzsHRViQXnC6ei_oLv7uxfWT_N
- nr6ieCOtUGHUpzVEVU81fbTJirdAIbfFlBxnJc84Uege5WRSmoQaei.Id.e2CltqgN00BH11wDxy
- YjHxdcnWOpP_HdnLWIsMzm30cqY_NHEGYcG0mjSkjVa8tfnY2.rMm97NIfodC3gy2MTNntNUgRLI
- UgSkVUmbSbR179sntPTSM1XQ2yc.0iSe9ezF5PXJ3FX3qEVk-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 11 Oct 2021 22:40:27 +0000
-Received: by kubenode543.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 2e663ab451f2d92c944ad4412edf944a;
-          Mon, 11 Oct 2021 22:40:23 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH] LSM: general protection fault in legacy_parse_param
-To:     Christian Brauner <christian@brauner.io>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com>
-Date:   Mon, 11 Oct 2021 15:40:22 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Mon, 11 Oct 2021 18:59:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1633993049;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qXN/vzdwnclocStV3rAgvMW+lzmIwxCoY9r4CfSlUdw=;
+        b=MP6jGY0QErblbSBquwp4bxT3E1awuFlPntZHbtj2Em9mk4P8cNkIHfhdaCyBmqa5Rin1PQ
+        QxjxACKG8fFRLJukpOJQbXyrRDTVtIpXv7vo10R14k4+7x3fBG22+WlV2V+3HbQ6EubmYp
+        0iFtohas815dv1c0HPXm6PNUWxqH8j4=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-484-iJAHlTevNXWS_gg2cnyzRg-1; Mon, 11 Oct 2021 18:57:28 -0400
+X-MC-Unique: iJAHlTevNXWS_gg2cnyzRg-1
+Received: by mail-pg1-f197.google.com with SMTP id z12-20020a655a4c000000b0029506c80060so7581426pgs.20
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Oct 2021 15:57:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qXN/vzdwnclocStV3rAgvMW+lzmIwxCoY9r4CfSlUdw=;
+        b=NbQaQcFY3NXREWqW+RVW4EvIks8/85YLjJaFVLlq/EgbewNWyBDf3/1DbhsQGq4g1x
+         uWVxqpgWR5Q0jtQwqqiPlZeWQLR5FA6WoW9S+tAHiNXagJNa/26bv5/+WV6TiZFzzkSi
+         78XwfCpoSk5YbL9T4xJid6XF6XRngFC5Nmu/lBvCO3QBDUpuJowyV1sN+6+1LoSFO/zD
+         I+Zr4WqXbxOrxCu8E2S9Ro0s6UfhowU8T/PKfK7B7SdkKI5U8Sn9zzxkoEdujE1ESGPj
+         DhXg5tABuU0CdCJv3/rawj4XW7ixtUQIcoSJSvSM4WdjZhBxzs/QOHm+xMU38O6hCFcA
+         k7nw==
+X-Gm-Message-State: AOAM532cRuiSMlTL6Zp+OtHNK7eR/Ve0rqtlYgJOIrc1Ypy3OASrxOZ8
+        DSqPykDG8pX2OFPauAXBqsYr+FCCfaaiGjs4QO5QA3jzonRyoS9mSBbT0qh5Au1UG6I4s6c7dvE
+        KJdnZ1ApXmDLGWsWRAPMQ55ntzg==
+X-Received: by 2002:a17:903:22cc:b0:13e:fa73:6fef with SMTP id y12-20020a17090322cc00b0013efa736fefmr27329639plg.25.1633993046992;
+        Mon, 11 Oct 2021 15:57:26 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy7tlCmjti8dDtX3s90mHbpNajYA411v7qqZAafpSxBDhxylbZeGvAJU/eVUmaUhZ21fDfU6w==
+X-Received: by 2002:a17:903:22cc:b0:13e:fa73:6fef with SMTP id y12-20020a17090322cc00b0013efa736fefmr27329611plg.25.1633993046632;
+        Mon, 11 Oct 2021 15:57:26 -0700 (PDT)
+Received: from t490s ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id k190sm8664644pfd.211.2021.10.11.15.57.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Oct 2021 15:57:25 -0700 (PDT)
+Date:   Mon, 11 Oct 2021 18:57:18 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Yang Shi <shy828301@gmail.com>,
+        HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
+        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
+ for PMD page fault
+Message-ID: <YWTBTg0JCgBb14Ae@t490s>
+References: <20210930215311.240774-1-shy828301@gmail.com>
+ <20210930215311.240774-3-shy828301@gmail.com>
+ <20211004140637.qejvenbkmrulqdno@box.shutemov.name>
+ <CAHbLzkp5d_j97MizSFCgfnHQj_tUQuHJqxWtrvRo_0kZMKCgtA@mail.gmail.com>
+ <20211004194130.6hdzanjl2e2np4we@box.shutemov.name>
+ <CAHbLzkqcrGCksMXbW5p75ZK2ODv4bLcdQWs7Jz0NG4-=5N20zw@mail.gmail.com>
+ <YV3+6K3uupLit3aH@t490s>
+ <20211008093529.sb54gnlbhuiy6klr@box.shutemov.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-References: <018a9bb4-accb-c19a-5b0a-fde22f4bc822.ref@schaufler-ca.com>
-X-Mailer: WebService/1.1.19116 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Disposition: inline
+In-Reply-To: <20211008093529.sb54gnlbhuiy6klr@box.shutemov.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The usual LSM hook "bail on fail" scheme doesn't work for cases where
-a security module may return an error code indicating that it does not
-recognize an input.  In this particular case Smack sees a mount option
-that it recognizes, and returns 0. A call to a BPF hook follows, which
-returns -ENOPARAM, which confuses the caller because Smack has processed
-its data.
+On Fri, Oct 08, 2021 at 12:35:29PM +0300, Kirill A. Shutemov wrote:
+> JFYI, git blame -w ignores whitespace changes :P
 
-Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
-=C2=A0security/security.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+Thanks, Kirill. :)
 
-diff --git a/security/security.c b/security/security.c
-index 09533cbb7221..3cf0faaf1c5b 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -885,7 +885,19 @@ int security_fs_context_dup(struct fs_context *fc, s=
-truct fs_context *src_fc)
-=20
- int security_fs_context_parse_param(struct fs_context *fc, struct fs_par=
-ameter *param)
- {
--	return call_int_hook(fs_context_parse_param, -ENOPARAM, fc, param);
-+	struct security_hook_list *hp;
-+	int trc;
-+	int rc =3D -ENOPARAM;
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
-+			     list) {
-+		trc =3D hp->hook.fs_context_parse_param(fc, param);
-+		if (trc =3D=3D 0)
-+			rc =3D 0;
-+		else if (trc !=3D -ENOPARAM)
-+			return trc;
-+	}
-+	return rc;
- }
-=20
- int security_sb_alloc(struct super_block *sb)
+I must confess in reality I didn't encounter white-space changes a lot, but
+mostly on moving the code around either e.g. by putting things into, or out of,
+"if/for" blocks, or moving code between files.
 
+I used git-blame a lot not to looking for people to blame but to dig history of
+code changes, not sure about how others do that.  So maybe it's just that I
+didn't do it right beforfe, and I'll be more than glad to learn if there's more
+tricks like the "-w" one (which I don't know before..).
+
+-- 
+Peter Xu
 
