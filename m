@@ -2,129 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 85EB34298BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 23:17:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA8774298D2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 23:25:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235246AbhJKVTG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Oct 2021 17:19:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53364 "EHLO
+        id S235248AbhJKV1z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Oct 2021 17:27:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235143AbhJKVTF (ORCPT
+        with ESMTP id S230114AbhJKV1z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Oct 2021 17:19:05 -0400
+        Mon, 11 Oct 2021 17:27:55 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3848EC061570;
-        Mon, 11 Oct 2021 14:17:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89388C061570;
+        Mon, 11 Oct 2021 14:25:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=oHJKmsHD7penyk6OD1+g+sCSq0p6pDMGXXRqG5EFM2c=; b=h/sv7zpH5SRitkNKfrncMjc6+J
-        LyoGPSyYNuJrXTemLutd74V6qekrmUKV0oY7yjjYyyQGJhekRcD4ptrgU/BKG8NpcfVwPfvBXrj2f
-        BCuTVhE5zRs7TPR1VThprQ1Sn0D2E35Yv4+AQuGeNQY2fvKe5EGLAQIfqsSHQ3SUysdkE4oY+6ma6
-        T/UY8u7j8hhNSY8lxlp48NwGVgU4RsLJJYNiX90cuLkPZE3yqFBUuRv8kNwtzGkVEiz8ffozZ2yCw
-        UEqaT6pj2inuyQJnopCZC+YfY8YA5kK2kroSQdm6AkajSrfiGm78OJDH0/h+KIwo0ZzXWMX5hFBRL
-        6y26P6rA==;
+        bh=rvR++cOV6St/IKyuFj/V4jUUpnc9vYLPZ+efnuLPdWc=; b=25WRJtmBryphhp7aLK/UkJ4aWA
+        tK73XQukZ8oxuJlQ20xqvbyZ2vAL72VzbO+/iHZ5dWu8l0Tc0dS1+X1oi6wITuyN3WczsfC/2TbAS
+        8i+0OvOlvtM+vtQzQDamnzOhvw3FD2fGqvmkfMBXQz9adj5JPXbLeIv0PtKY6JIpjcR0jw/X857w3
+        J7B/ZD3uRcS6NnIiRdDYtHdxi8o/MPiyFEWaeoj8iXZonj6X7sJ91q3TlaR1N3d14Se1r+cs/QHve
+        soiEUlTGPsgb7VMv7J1IS6q03hcBm3HjPypLaF6BEWefYfZdAQ0+Ey1qR/nUTt1ZlL33O807I0Diy
+        iYbx0SOA==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ma2fK-00Ajc8-3G; Mon, 11 Oct 2021 21:16:58 +0000
-Date:   Mon, 11 Oct 2021 14:16:58 -0700
+        id 1ma2nq-00Al54-96; Mon, 11 Oct 2021 21:25:46 +0000
+Date:   Mon, 11 Oct 2021 14:25:46 -0700
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
+To:     Ming Lei <ming.lei@redhat.com>
 Cc:     tj@kernel.org, gregkh@linuxfoundation.org,
         akpm@linux-foundation.org, minchan@kernel.org, jeyu@kernel.org,
         shuah@kernel.org, bvanassche@acm.org, dan.j.williams@intel.com,
-        joe@perches.com, tglx@linutronix.de, rostedt@goodmis.org,
-        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 06/12] kernel/module: add documentation for
- try_module_get()
-Message-ID: <YWSpyrhK4PA6MFro@bombadil.infradead.org>
+        joe@perches.com, tglx@linutronix.de, keescook@chromium.org,
+        rostedt@goodmis.org, linux-spdx@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 09/12] sysfs: fix deadlock race with module removal
+Message-ID: <YWSr2trabEJflzlj@bombadil.infradead.org>
 References: <20210927163805.808907-1-mcgrof@kernel.org>
- <20210927163805.808907-7-mcgrof@kernel.org>
- <202110051252.790B3F2F0@keescook>
+ <20210927163805.808907-10-mcgrof@kernel.org>
+ <YVwZwh7qDKfSM59h@T590>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202110051252.790B3F2F0@keescook>
+In-Reply-To: <YVwZwh7qDKfSM59h@T590>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 05, 2021 at 12:58:47PM -0700, Kees Cook wrote:
-> On Mon, Sep 27, 2021 at 09:37:59AM -0700, Luis Chamberlain wrote:
-> > diff --git a/include/linux/module.h b/include/linux/module.h
-> > index c9f1200b2312..22eacd5e1e85 100644
-> > --- a/include/linux/module.h
-> > +++ b/include/linux/module.h
-> > @@ -609,10 +609,40 @@ void symbol_put_addr(void *addr);
-> >     to handle the error case (which only happens with rmmod --wait). */
-> >  extern void __module_get(struct module *module);
-> >  
-> > -/* This is the Right Way to get a module: if it fails, it's being removed,
-> > - * so pretend it's not there. */
-> > +/**
-> > + * try_module_get() - yields to module removal and bumps refcnt otherwise
+On Tue, Oct 05, 2021 at 05:24:18PM +0800, Ming Lei wrote:
+> On Mon, Sep 27, 2021 at 09:38:02AM -0700, Luis Chamberlain wrote:
+> > When driver sysfs attributes use a lock also used on module removal we
+> > can race to deadlock. This happens when for instance a sysfs file on
+> > a driver is used, then at the same time we have module removal call
+> > trigger. The module removal call code holds a lock, and then the
+> > driver's sysfs file entry waits for the same lock. While holding the
+> > lock the module removal tries to remove the sysfs entries, but these
+> > cannot be removed yet as one is waiting for a lock. This won't complete
+> > as the lock is already held. Likewise module removal cannot complete,
+> > and so we deadlock.
+> > 
+> > This can now be easily reproducible with our sysfs selftest as follows:
+> > 
+> > ./tools/testing/selftests/sysfs/sysfs.sh -t 0027
+> > 
+> > This uses a local driver lock. Test 0028 can also be used, that uses
+> > the rtnl_lock():
+> > 
+> > ./tools/testing/selftests/sysfs/sysfs.sh -t 0028
+> > 
+> > To fix this we extend the struct kernfs_node with a module reference
+> > and use the try_module_get() after kernfs_get_active() is called. As
+> > documented in the prior patch, we now know that once kernfs_get_active()
+> > is called the module is implicitly guarded to exist and cannot be removed.
+> > This is because the module is the one in charge of removing the same
+> > sysfs file it created, and removal of sysfs files on module exit will wait
+> > until they don't have any active references. By using a try_module_get()
+> > after kernfs_get_active() we yield to let module removal trump calls to
+> > process a sysfs operation, while also preventing module removal if a sysfs
+> > operation is in already progress. This prevents the deadlock.
+> > 
+> > This deadlock was first reported with the zram driver, however the live
 > 
-> I find this hard to parse. How about:
-> 	"Take module refcount unless module is being removed"
+> Looks not see the lock pattern you mentioned in zram driver, can you
+> share the related zram code?
 
-Sure.
+I recommend to not look at the zram driver, instead look at the
+test_sysfs driver as that abstracts the issue more clearly and uses
+two different locks as an example. The point is that if on module
+removal *any* lock is used which is *also* used on the sysfs file
+created by the module, you can deadlock.
 
-> > + * @module: the module we should check for
-> > + *
-> > + * This can be used to try to bump the reference count of a module, so to
-> > + * prevent module removal. The reference count of a module is not allowed
-> > + * to be incremented if the module is already being removed.
+> > And this can lead to this condition:
+> > 
+> > CPU A                              CPU B
+> >                                    foo_store()
+> > foo_exit()
+> >   mutex_lock(&foo)
+> >                                    mutex_lock(&foo)
+> >    del_gendisk(some_struct->disk);
+> >      device_del()
+> >        device_remove_groups()
 > 
-> This I understand.
-> 
-> > + *
-> > + * Care must be taken to ensure the module cannot be removed during the call to
-> > + * try_module_get(). This can be done by having another entity other than the
-> > + * module itself increment the module reference count, or through some other
-> > + * means which guarantees the module could not be removed during an operation.
-> > + * An example of this later case is using try_module_get() in a sysfs file
-> > + * which the module created. The sysfs store / read file operations are
-> > + * gauranteed to exist through the use of kernfs's active reference (see
-> > + * kernfs_active()). If a sysfs file operation is being run, the module which
-> > + * created it must still exist as the module is in charge of removing the same
-> > + * sysfs file being read. Also, a sysfs / kernfs file removal cannot happen
-> > + * unless the same file is not active.
-> 
-> I can't understand this paragraph at all. "Care must be taken ..."? Why?
+> I guess the deadlock exists if foo_exit() is called anywhere. If yes,
+> look the issue may not be related with removing module directly, right?
 
-Because the routine try_module_get() assumes the struct module pointer
-is valid for the entire call. That can only be true if at least one
-reference is held prior to this call.
+No, the reason this can deadlock is that the module exit routine will
+patiently wait for the sysfs / kernfs files to be stop being used,
+but clearly they cannot if the exit routine took the mutex also used
+by the sysfs ops. That is, the special condition here is the removal of
+the sysfs files, and the sysfs files using a lock also used on module
+exit.
 
-> Shouldn't callers of try_module_get() be satisfied with the results?
-
-Yes but only with the above care addressed.
-
-> I don't follow the example at all. It seems to just say "sysfs store/read
-> functions don't need try_module_get() because whatever opened the sysfs
-> file is already keeping the module referenced." ?
-
-That is exactly what I intended to clarify with that example, yes, a
-reference is held but this is done implicitly. *If* a kernfs op is
-active module removal waits for that active reference to go down. So
-while a kernfs file is being used it is simply not possible for the
-module to disappear underneath us. And the reason is that the module
-that created the sysfs file must obviously destroy that same sysfs file.
-But since kernfs ensures that sysfs file cannot be removed if a sysfs
-file is being used, this implicitly holds a module reference.
-
-Let me know if y ou can think of a better way to phrase this.
-
-> > + *
-> > + * One of the real values to try_module_get() is the module_is_live() check
-> > + * which ensures this the caller of try_module_get() can yield to userspace
-> > + * module removal requests and fail whatever it was about to process.
-> 
-> Please document the return value explicitly.
-
-Sure thing.
-
-  Luis
+ Luis
