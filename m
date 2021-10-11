@@ -2,164 +2,255 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D99742930D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 17:21:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4C2D4294DA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 18:55:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233673AbhJKPXz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Oct 2021 11:23:55 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:15496 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231951AbhJKPXy (ORCPT
+        id S232517AbhJKQ5k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Oct 2021 12:57:40 -0400
+Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:41681 "EHLO
+        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229816AbhJKQ5k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Oct 2021 11:23:54 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19BFBdkL024351;
-        Mon, 11 Oct 2021 11:20:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=8JdIijDsyFcyUndtQJTDx7Jep7qM7XiDzn473KgSPI8=;
- b=dQeuk1C9NhNv8wdNfiGSpOFgTfDHrohiXCDUCDP5IUolSe+r9oG4EBTCLrxBmE3g4ldl
- K0rRXAreO9pp5ZBO95ygRl8HGWa8QJ4jmfSGC1zr4usjASC9uUwZdIDGsOUt0SSUCPyL
- SLcYS3MmIP/MZCHyHUiir7prXeQocK77DS19YnvHDxN+x8st5D3ZD9ByDscPccaGzSVa
- PNFwZKc7t7oPxHueo6quzngZyne8lIxNR4sFD5c64oLoDIAe8aDyb7c1idDA2Y2VlXNu
- mdEuAkdA3MhFLyNDOL3zW2kidNmOVbd/ARK6guiuUrUU8D745sIAEEoqC0T6htGI4uoi tg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3bmqpmg61b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Oct 2021 11:20:18 -0400
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 19BFF3UR008574;
-        Mon, 11 Oct 2021 11:20:17 -0400
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3bmqpmg602-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Oct 2021 11:20:16 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 19BFDIbC014419;
-        Mon, 11 Oct 2021 15:20:14 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma03ams.nl.ibm.com with ESMTP id 3bk2q97292-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Oct 2021 15:20:14 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 19BFKBKv19268016
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Oct 2021 15:20:11 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9643DAE061;
-        Mon, 11 Oct 2021 15:20:11 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7FCBEAE057;
-        Mon, 11 Oct 2021 15:20:03 +0000 (GMT)
-Received: from sig-9-65-79-79.ibm.com (unknown [9.65.79.79])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 11 Oct 2021 15:20:03 +0000 (GMT)
-Message-ID: <539086ce33ed6417dd1ada1c8f593fc0edeb8f73.camel@linux.ibm.com>
-Subject: Re: [PATCH v14 1/3] fs: Add trusted_for(2) syscall implementation
- and related sysctl
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Florian Weimer <fw@deneb.enyo.de>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Philippe =?ISO-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
-Date:   Mon, 11 Oct 2021 11:20:02 -0400
-In-Reply-To: <87tuhpynr4.fsf@mid.deneb.enyo.de>
-References: <20211008104840.1733385-1-mic@digikod.net>
-         <20211008104840.1733385-2-mic@digikod.net>
-         <87tuhpynr4.fsf@mid.deneb.enyo.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: izC9yhrEe1LpTrA6aSB26JuAwHzBGp1s
-X-Proofpoint-ORIG-GUID: PawvuLLX4xcPVEed7b1tj13LIXgFSuK2
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Mon, 11 Oct 2021 12:57:40 -0400
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id 37F2880901;
+        Mon, 11 Oct 2021 19:55:38 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1633971338;
+        bh=22cj4zb7cIg8ILTzWd3ObiPRTCpiobozufK3uDfMdw8=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=Od5qxkUDoRm3+5BdN0czT2LzjoShwi09s0xfV9JiQ3j9pfx2gOPs8WBwLeQQZSmhp
+         8eDM7L4Iq/nvLg/6JshWnh0vjLMaoFfhsoaRBUJuQi4Kr6LRAsCF16qlCsiZ3Yvmma
+         3Y1FnwMtVCne5+7b1V7xZuyEty5dwfpUYRry0J/0=
+Received: from [192.168.211.33] (192.168.211.33) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Mon, 11 Oct 2021 19:55:37 +0300
+Message-ID: <7e5b8dc9-9989-0e8a-9e8d-ae26b6e74df4@paragon-software.com>
+Date:   Mon, 11 Oct 2021 19:55:37 +0300
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-10-11_05,2021-10-11_01,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- clxscore=1011 lowpriorityscore=0 adultscore=0 mlxscore=0
- priorityscore=1501 bulkscore=0 malwarescore=0 impostorscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109230001 definitions=main-2110110088
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.2
+Subject: Re: [PATCH] fs/ntfs3: Check for NULL if ATTR_EA_INFO is incorrect
+Content-Language: en-US
+To:     Mohammad Rasim <mohammad.rasim96@gmail.com>
+CC:     <ntfs3@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        Kari Argillander <kari.argillander@gmail.com>
+References: <227c13e3-5a22-0cba-41eb-fcaf41940711@paragon-software.com>
+ <20211003175036.ly4m3lw2bjoippsh@kari-VirtualBox>
+ <c892016c-3e50-739b-38d2-010f02d52019@gmail.com>
+ <bcbb8ddc-3ddf-4a91-6e92-d5cee2722bad@paragon-software.com>
+ <2998a9b9-8ea0-6a44-7093-66c7a08dcab2@gmail.com>
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <2998a9b9-8ea0-6a44-7093-66c7a08dcab2@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [192.168.211.33]
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Florian,
+Hello.
 
-On Sun, 2021-10-10 at 16:10 +0200, Florian Weimer wrote:
-> * Micka�l Sala�n:
+Presumably we found the code, that panics.
+But it panics in place, where pointer must be always not NULL.
+Please try patch provided below.
+If it helps (there is no panic), then check dmesg for
+message "Looks like internal error".
+And please compare copied folders.
+This way it will be clear what file / folder cause this logic error.
+
+Thanks for all your help so far.
+
+[PATCH] fs/ntfs3: Check for NULL pointers in ni_try_remove_attr_list
+
+All these checks must be redundant.
+If this commit helps, then there is bug in code.
+
+Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+---
+ fs/ntfs3/frecord.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
+index ecb965e4afd0..37e19fe7d496 100644
+--- a/fs/ntfs3/frecord.c
++++ b/fs/ntfs3/frecord.c
+@@ -705,18 +705,35 @@ static int ni_try_remove_attr_list(struct ntfs_inode *ni)
+ 			continue;
+ 
+ 		mi = ni_find_mi(ni, ino_get(&le->ref));
++		if (!mi) {
++			/* Should never happened, 'cause already checked. */
++			goto bad;
++		}
+ 
+ 		attr = mi_find_attr(mi, NULL, le->type, le_name(le),
+ 				    le->name_len, &le->id);
++		if (!attr) {
++			/* Should never happened, 'cause already checked. */
++			goto bad;
++		}
+ 		asize = le32_to_cpu(attr->size);
+ 
+ 		/* Insert into primary record. */
+ 		attr_ins = mi_insert_attr(&ni->mi, le->type, le_name(le),
+ 					  le->name_len, asize,
+ 					  le16_to_cpu(attr->name_off));
+-		id = attr_ins->id;
++		if (!attr_ins) {
++			/*
++			 * Internal error.
++			 * Either no space in primary record (already checked).
++			 * Either tried to insert another
++			 * non indexed attribute (logic error).
++			 */
++			goto bad;
++		}
+ 
+ 		/* Copy all except id. */
++		id = attr_ins->id;
+ 		memcpy(attr_ins, attr, asize);
+ 		attr_ins->id = id;
+ 
+@@ -732,6 +749,10 @@ static int ni_try_remove_attr_list(struct ntfs_inode *ni)
+ 	ni->attr_list.dirty = false;
+ 
+ 	return 0;
++bad:
++	ntfs_inode_err(&ni->vfs_inode, "Looks like internal error");
++	make_bad_inode(&ni->vfs_inode);
++	return -EINVAL;
+ }
+ 
+ /*
+-- 
+2.33.0
+
+
+
+On 06.10.2021 20:42, Mohammad Rasim wrote:
 > 
-> > Being able to restrict execution also enables to protect the kernel by
-> > restricting arbitrary syscalls that an attacker could perform with a
-> > crafted binary or certain script languages.  It also improves multilevel
-> > isolation by reducing the ability of an attacker to use side channels
-> > with specific code.  These restrictions can natively be enforced for ELF
-> > binaries (with the noexec mount option) but require this kernel
-> > extension to properly handle scripts (e.g. Python, Perl).  To get a
-> > consistent execution policy, additional memory restrictions should also
-> > be enforced (e.g. thanks to SELinux).
+> On 10/6/21 17:47, Konstantin Komarov wrote:
+>>
+>> On 04.10.2021 23:39, Mohammad Rasim wrote:
+>>> On 10/3/21 20:50, Kari Argillander wrote:
+>>>> On Wed, Sep 29, 2021 at 07:35:43PM +0300, Konstantin Komarov wrote:
+>>>>> This can be reason for reported panic.
+>>>>> Fixes: 4342306f0f0d ("fs/ntfs3: Add file operations and implementation")
+>>>> I see that you have include this to devel branch but you did not send V2
+>>>> [1]. I also included Mohammad Rasim to this thread. Maybe they can test
+>>>> this patch. Rasim can you test [2] if your problem will be fixed with
+>>>> this tree. Or just test this patch if you prefer that way.
+>>>>
+>>>> [1]: github.com/Paragon-Software-Group/linux-ntfs3/commit/35afb70dcfe4eb445060dd955e5b67d962869ce5
+>>>> [2]: github.com/Paragon-Software-Group/linux-ntfs3/tree/devel
+>>> Yeah unfortunately the problem still exist, moving the buildroot git tree from my nvme ext4 partition to my wd ntfs partition still causes the panic.
+>>>
+>>> Note that i used the master branch if that matters but it contains the same commit
+>>>
+>>>
+>>> Regards
+>>>
+>> Is panic the same as old one?
+>>
+>> BUG: kernel NULL pointer dereference, address: 000000000000000e
+>> RIP: 0010:ni_write_inode+0xe6b/0xed0 [ntfs3]
+>> etc.
 > 
-> One example I have come across recently is that code which can be
-> safely loaded as a Perl module is definitely not a no-op as a shell
-> script: it downloads code and executes it, apparently over an
-> untrusted network connection and without signature checking.
+> This is the complete panic log:
 > 
-> Maybe in the IMA world, the expectation is that such ambiguous code
-> would not be signed in the first place, but general-purpose
-> distributions are heading in a different direction with
-> across-the-board signing:
-
-Automatically signing code is at least the first step in the right
-direction of only executing code with known provenance.  Perhaps future
-work would address the code signing granularity.
-
+> [  241.985898] ntfs3: sdb1: ino=724a0, "buildroot-raw" add mount option "acl" to use acl
+> [  241.985905] ntfs3: sdb1: ino=724a0, "buildroot-raw" add mount option "acl" to use acl
+> [  241.987109] ntfs3: sdb1: ino=724a1, ".git" add mount option "acl" to use acl
+> [  241.987114] ntfs3: sdb1: ino=724a1, ".git" add mount option "acl" to use acl
+> [  241.987630] ntfs3: sdb1: ino=724af, "branches" add mount option "acl" to use acl
+> [  241.987634] ntfs3: sdb1: ino=724af, "branches" add mount option "acl" to use acl
+> [  241.987645] ntfs3: sdb1: ino=724b0, "hooks" add mount option "acl" to use acl
+> [  241.987647] ntfs3: sdb1: ino=724b0, "hooks" add mount option "acl" to use acl
+> [  241.987670] ntfs3: sdb1: ino=724b1, "info" add mount option "acl" to use acl
+> [  241.987672] ntfs3: sdb1: ino=724b1, "info" add mount option "acl" to use acl
+> [  246.614529] BUG: kernel NULL pointer dereference, address: 000000000000000e
+> [  246.614531] #PF: supervisor read access in kernel mode
+> [  246.614532] #PF: error_code(0x0000) - not-present page
+> [  246.614533] PGD 0 P4D 0
+> [  246.614535] Oops: 0000 [#1] PREEMPT SMP NOPTI
+> [  246.614536] CPU: 8 PID: 196 Comm: kworker/u64:7 Not tainted 5.14.0-rc7-MANJARO+ #51
+> [  246.614538] Hardware name: Micro-Star International Co., Ltd MS-7C02/B450 TOMAHAWK MAX (MS-7C02), BIOS 3.B0 05/12/2021
+> [  246.614539] Workqueue: writeback wb_workfn (flush-8:16)
+> [  246.614543] RIP: 0010:ni_write_inode+0xd69/0xe40
+> [  246.614545] Code: 4f 06 44 8b 40 04 41 8b 37 48 89 c3 44 0f b7 48 0a 48 8b 7c 24 18 4c 01 fa 44 89 44 24 30 e8 ae 32 01 00 8b 54 24 30 48 89 de <44> 0f b7 48 0e 48 89 c7 44 89 4c 24 28 e8 85 fc 97 00 44 8b 4c 24
+> [  246.614546] RSP: 0018:ffffac2dc09cbac8 EFLAGS: 00010286
+> [  246.614548] RAX: 0000000000000000 RBX: ffff98b0d08ac430 RCX: 0000000000000000
+> [  246.614548] RDX: 0000000000000050 RSI: ffff98b0d08ac430 RDI: ffff98b0d88b31a4
+> [  246.614549] RBP: ffff98b0d654f7a0 R08: ffff98b0d5be0000 R09: 0000000000000001
+> [  246.614550] R10: 0000000000000002 R11: 0000000000000002 R12: 0000000000000000
+> [  246.614550] R13: ffff98b0d4f6a000 R14: ffff98b0da2fcc80 R15: ffff98b0d08ab060
+> [  246.614551] FS:  0000000000000000(0000) GS:ffff98b7dea00000(0000) knlGS:0000000000000000
+> [  246.614552] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  246.614553] CR2: 000000000000000e CR3: 00008001011f8000 CR4: 0000000000350ee0
+> [  246.614554] Call Trace:
+> [  246.614558]  __writeback_single_inode+0x25a/0x310
+> [  246.614560]  writeback_sb_inodes+0x1fc/0x480
+> [  246.614562]  __writeback_inodes_wb+0x4c/0xe0
+> [  246.614563]  wb_writeback+0x1ff/0x2f0
+> [  246.614564]  wb_workfn+0x2f8/0x510
+> [  246.614566]  ? psi_task_switch+0xb9/0x1e0
+> [  246.614567]  ? _raw_spin_unlock+0x16/0x30
+> [  246.614570]  process_one_work+0x1e3/0x3b0
+> [  246.614573]  worker_thread+0x50/0x3b0
+> [  246.614574]  ? process_one_work+0x3b0/0x3b0
+> [  246.614575]  kthread+0x141/0x170
+> [  246.614577]  ? set_kthread_struct+0x40/0x40
+> [  246.614579]  ret_from_fork+0x22/0x30
+> [  246.614582] Modules linked in:
+> [  246.614584] CR2: 000000000000000e
+> [  246.614585] ---[ end trace 7c7c742732266d51 ]---
+> [  246.614585] RIP: 0010:ni_write_inode+0xd69/0xe40
+> [  246.614587] Code: 4f 06 44 8b 40 04 41 8b 37 48 89 c3 44 0f b7 48 0a 48 8b 7c 24 18 4c 01 fa 44 89 44 24 30 e8 ae 32 01 00 8b 54 24 30 48 89 de <44> 0f b7 48 0e 48 89 c7 44 89 4c 24 28 e8 85 fc 97 00 44 8b 4c 24
+> [  246.614587] RSP: 0018:ffffac2dc09cbac8 EFLAGS: 00010286
+> [  246.614588] RAX: 0000000000000000 RBX: ffff98b0d08ac430 RCX: 0000000000000000
+> [  246.614589] RDX: 0000000000000050 RSI: ffff98b0d08ac430 RDI: ffff98b0d88b31a4
+> [  246.614589] RBP: ffff98b0d654f7a0 R08: ffff98b0d5be0000 R09: 0000000000000001
+> [  246.614590] R10: 0000000000000002 R11: 0000000000000002 R12: 0000000000000000
+> [  246.614590] R13: ffff98b0d4f6a000 R14: ffff98b0da2fcc80 R15: ffff98b0d08ab060
+> [  246.614591] FS:  0000000000000000(0000) GS:ffff98b7dea00000(0000) knlGS:0000000000000000
+> [  246.614592] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  246.614592] CR2: 000000000000000e CR3: 00008001011f8000 CR4: 0000000000350ee0
+> [  246.991844] ntfs3: 6354 callbacks suppressed
+> [  246.991846] ntfs3: sdb1: ino=73f4b, ".gstreamer1-mm.mk.SxnMfX" add mount option "acl" to use acl
+> [  246.993111] ntfs3: sdb1: ino=73f4c, ".Config.in.2oeC7E" add mount option "acl" to use acl
+> [  246.993135] ntfs3: sdb1: ino=73f4d, ".gstreamer1.hash.MS4lZ2" add mount option "acl" to use acl
+> [  246.993159] ntfs3: sdb1: ino=73f4e, ".gstreamer1.mk.YFKaZf" add mount option "acl" to use acl
+> [  246.993189] ntfs3: sdb1: ino=73f4f, ".Config.in.KMudor" add mount option "acl" to use acl
+> [  246.993360] ntfs3: sdb1: ino=73f50, ".gtest.hash.2RTkJH" add mount option "acl" to use acl
+> [  246.993383] ntfs3: sdb1: ino=73f51, ".gtest.mk.KTCGz4" add mount option "acl" to use acl
+> [  246.993403] ntfs3: sdb1: ino=73f52, ".Config.in.8W4t5y" add mount option "acl" to use acl
+> [  246.993423] ntfs3: sdb1: ino=73f53, ".gtk2-engines.hash.AOVwL1" add mount option "acl" to use acl
+> [  246.994082] ntfs3: sdb1: ino=73f54, ".gtk2-engines.mk.WB8hM4" add mount option "acl" to use acl
 > 
->   Signed RPM Contents
->   <https://fedoraproject.org/wiki/Changes/Signed_RPM_Contents>
 > 
-> So I wonder if we need additional context information for a potential
-> LSM to identify the intended use case.
-
-My first thoughts were an enumeration UNSIGNED_DOWNLOADED_CODE or maybe
-even UNTRUSTED_DOWNLOADED_CODE, but that doesn't seem very
-helpful.  What type of context information were you thinking about?
-
-Mimi
-
+>>>>> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+>>>>> ---
+>>>>>    fs/ntfs3/frecord.c | 4 +++-
+>>>>>    1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
+>>>>> index 9a53f809576d..007602badd90 100644
+>>>>> --- a/fs/ntfs3/frecord.c
+>>>>> +++ b/fs/ntfs3/frecord.c
+>>>>> @@ -3080,7 +3080,9 @@ static bool ni_update_parent(struct ntfs_inode *ni, struct NTFS_DUP_INFO *dup,
+>>>>>                           const struct EA_INFO *info;
+>>>>>                             info = resident_data_ex(attr, sizeof(struct EA_INFO));
+>>>>> -                       dup->ea_size = info->size_pack;
+>>>>> +                       /* If ATTR_EA_INFO exists 'info' can't be NULL. */
+>>>>> +                       if (info)
+>>>>> +                               dup->ea_size = info->size_pack;
+>>>>>                   }
+>>>>>           }
+>>>>>    --
+>>>>> 2.33.0
+>>>>>
