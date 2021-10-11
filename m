@@ -2,195 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB003429977
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 00:30:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8564342997C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 00:40:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235575AbhJKWcq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Oct 2021 18:32:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41434 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235504AbhJKWcq (ORCPT
+        id S235558AbhJKWmb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Oct 2021 18:42:31 -0400
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com ([66.163.184.153]:45548
+        "EHLO sonic309-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235492AbhJKWma (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Oct 2021 18:32:46 -0400
-Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9030C061570;
-        Mon, 11 Oct 2021 15:30:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ZtoqcBaFzPa5AYYIfCZ1Qj40E08ooIgKTyRYusPMzBI=; b=cpuIN9YZXOCsiBxVVLI7KhXnLS
-        UxP+3u21RybuHrLitLoMqSGNU3dWJgyT3r3et+cFvmn6MzDT513tTjgoKX1Ob4IiQSSzwbNvniy0L
-        PlOXNS/Y6SFPoaLggvl/a4YnaMI8RYzMjwVW5CYFczKhPNW7MAa+hoDPezMXH60FiO62QJPxkeGTn
-        4+OgcXZ7SgWB6VYI/+zl8EiSljH7goV0zja2XacsUVTwVA9p2Xedy8yNdPLiTyf04WnFwZbmJiwpu
-        cfkTN6HZHUlXKUmNAIqmML7rQYdqvjj6D9EV0H/ScjZN/9p43iypgW/xFOpVlMJ5sGwrFUOvaR2Xf
-        5IypU5Bw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ma3oO-00Atie-UD; Mon, 11 Oct 2021 22:30:24 +0000
-Date:   Mon, 11 Oct 2021 15:30:24 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     bp@suse.de, akpm@linux-foundation.org, josh@joshtriplett.org,
-        rishabhb@codeaurora.org, kubakici@wp.pl, maco@android.com,
-        david.brown@linaro.org, bjorn.andersson@linaro.org,
-        linux-wireless@vger.kernel.org, keescook@chromium.org,
-        shuah@kernel.org, mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com,
-        dhowells@redhat.com, pali.rohar@gmail.com, tiwai@suse.de,
-        arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
-        broonie@kernel.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org,
-        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
-        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
-        andresx7@gmail.com, dan.rue@linaro.org, brendanhiggins@google.com,
-        yzaikin@google.com, sfr@canb.auug.org.au, rdunlap@infradead.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 04/14] firmware_loader: add built-in firmware kconfig
- entry
-Message-ID: <YWS7ABDdBIpdt/84@bombadil.infradead.org>
-References: <20210917182226.3532898-1-mcgrof@kernel.org>
- <20210917182226.3532898-5-mcgrof@kernel.org>
- <YVxhbhmNd7tahLV7@kroah.com>
- <YWR16e/seTx/wxE+@bombadil.infradead.org>
- <YWR4XKrC2Bkr4qKQ@kroah.com>
+        Mon, 11 Oct 2021 18:42:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1633992027; bh=jLQluOCMPO5rRjRMl+Q68u9ZH7qqQfyDRJUR6BJ2huY=; h=From:Subject:To:Cc:Date:References:From:Subject:Reply-To; b=ijGoSwinX9Rir2agJRG26TqgBbberIguVcPSmPSJEYVJoD9r//vqNCH1UMhjJap/P+/9Ase4i/7GvPgi/0XmbBru7ZUQoYxw05tZmLWlU8NcJFG1SF8KUOzez2PWDnMwGqjD7r9nOfj0K4dtyHxem3vVk9cplDocX51tDJdqeqN+mBUWqlTMZVopYJBYOjKJbRpEv/YMpd/byBcWCOWUQjTMeMcSJZQ2bZ+p7L3hw6+ebtgpdcU75jgLJmfy6dldZ4NbrEaeVU9RN3YdX5ZEuJTKrCBeg9TX9MJ/vzuUQHTwqGKNJTzns5kdNRQzEHqiVLCrXi4yc8gqKN5xmqRkhg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1633992027; bh=2NSEyr+UEwaAiyOvJyRV5A9MRNYgSMLHldikQZIKAaA=; h=X-Sonic-MF:From:Subject:To:Date:From:Subject; b=nIut1lOmM2ziHv9OOjNQkFojQzm9FU8n8yLpMqdLQHDBezg8GduVBInIv1oQrw4dkcMtaDlFDBHqpIscVn4N9KVIGmwweJyBqChrSoBgK1ap+TKnScJrXvRRt0aFCmDX8DyzWSQnTJzOASqUchfXmSZKGDyLfnrdDjxm+JpdpUiL4nTCMSMOOtElmEKu+gj/qCHLw1D/6r6gpk13GqIHxdUCGyVhhnpKnnNgKNYcYqucr60QOb5gJbPg8Qn/gQQJmwLMOovzspKEGxOn88se6xQxfWEUkWhCyiqXF1BPPw9ss+XCLmR1N4QcqX/g8Cjv+y3TvfXqYifJ6jsd2dUu4w==
+X-YMail-OSG: ul8tsh4VM1kSmoq8PSS.5GHSk2Jrqvk6pvXuXpfWvb7jm8Fsjaqc.fQ_o1gr0Ws
+ tgAl.6uBGfMrNNzvu2_VQ3YzrkhMzmzOMgGR7sK0A7.m1sP.utDG1n2jxiahlr1I4dZODwuNwxJR
+ MLNPUM5TZDy9aha4eSEL01hQMiv9eiXEAW4_qom_odoG6lkl_lqJEo_XRTAey93NhCl0NHoY6nsX
+ v.70p6bZMcK0AMnNOyu6mG7rSzn2r.m2kPhFZNuGcngdNXuDO81u1sA1UsHlXmBBOO.zgNEJm0DF
+ m.rnCQU2nrxd4NnSGlvaczYccEsE7RLY8Jqoe3OjM26hxebAgVzIaQB3fNV.eeKiLk03u6VrZ1bH
+ aIXvhyusIr.qS7.tfBz5xbBFWi1uEaxB4_K7Pl2STw7iwD5LOc_vr.LwumwO6RDw373ol1CeTen0
+ Fq.iiTUNn5McZbCsTyXNrIkjrDXzlJzUhutPxNXTHRftKX_.wfEtCJ7XEOYKYrEPdIesIKaASEZz
+ 6Dt7E4whVGuxMLqbIohtsdCyAylD1wX5OuQ1J_VNX2UcWQhbiGmKGvZZYWpf7flGs89Jgp46aWlJ
+ Z9jTCcFP.MFthVfj_p.qL1piCgXrX8HJlSiEQyKVWDZd_Krp8c8cgAcY1ohozs35KhpSPCdljJWo
+ dlPebdgetxudvj2x3H3ixjMHwBNywQHzsOqeKXvlEOePsZ1lo.U5p.se95Aaizk3OPecB9STaRsW
+ DFc4PEOWD7w4xMK2cUqFyTEFAK6Ohp84Z9Q_duVllfVwCj6w4byEwk0eFMoP9rBBmuPlh8sg7.uw
+ M6t15i5GpPNsVTOrMUBNq8VBbqhuRARcuXFKVkX2ox6x5J5LWGD.qKckc317OCpEbYAfznsTaUL4
+ lqyinpmnMqt4r5x9KPfYq2GInx01BFHkk7hgRcAQLW7Uz3Apf5maf9MFEtWK7hoyIIG1cGVX86e8
+ RU.PbjYxqkhlLEfkhZosMUz7yTtUZTpvNtX9HWuIvFwZXVkVzl3.HEUTBw9uo96_2hSss5GArXNe
+ dwcd4qPaPP7h2wTcfhOyKf7DXS1sYNfKnAD8d0wdmcFfp2lMS90.P5Yh9_NLXXh0Wl_cfHczYGKt
+ O_2WCSubtQzCHgqI7_FuT.mtcIgqMYz6_TCprcv8b8dcFWLXKsbBofBqEbrfywfg10EWipmtm0p3
+ rQhk3.RzMGZIOxIBQJ9j8_xp1xBLFm65uLvsyI0hFArW5zyQbKdP1yTQ.LpKsG.6G_eFVqoW5v_M
+ kfjPOnx8fa7wGdNnv9q8XygooTwLSsdqB0UvN2ueCX6km21HJZdMEgtSgn.6GuXdA_JZMT44fK71
+ LGXPhJfai4ouaXIjj5SWExRCdpWdctV4Q3wrgVx7s.bZOudYIEDnro55YY6j34hds9gxvX73wDJl
+ 2wFPkXZypQVR3q4IpePJueHupXtM8OJ5v09HloNZX3b2MwjiG4AUT3tAoqg.l7MN9PROvFEFTysD
+ kMIqeVR.OfuvJqL7vF6aagjWQXdrkfnAUqBasVd5Z3Xi2Cfuc7cCEH2YfJecjW7KQuCWJPMOqtaj
+ jJSDU0esPrvhI2VDx53h8ONFXBJNqudEk6we8pd9cozFnSYAahygWKFAdHn97YAO4.m8dhH_07SY
+ wQe.muuHb7mdPBn_T4TO7WCzC3OJqB1V2HfizSzYU2NnLxmphq79lQ2N3CwjnXE371jFteds9JAB
+ L8gmDpDlVOeNglelFDL.RR_ZoqNJyCJUafYJzss1O.HU6j1gqsTB1JIWsEHsKUrQrcS3gUN5ysHz
+ fMeqJK5bnNPqxfRZUh.0TrptlIKI7cQMhmaF9XS5hzisS1tBxwKPdlufp_0DxdPwKDcai_fuuwVc
+ tfOU7zT.5lGTfqVo0oVBk5tpsgyJzgDd4VvSf8O0ugzvuAzvhnr6RaNI2wa0bzP2YimgY6Gsb184
+ YQk7TMWujNZZZQzAzsOynaaEvi2mW_Zy4YxxuYauH4BiMC_pk7B5VaaC8ILchpPaAwJROna0NhaE
+ rX44KS2s2AYnnFOplS8igSnmvyRnfz88tkrsyMSRCWf8b8IhoirzsHRViQXnC6ei_oLv7uxfWT_N
+ nr6ieCOtUGHUpzVEVU81fbTJirdAIbfFlBxnJc84Uege5WRSmoQaei.Id.e2CltqgN00BH11wDxy
+ YjHxdcnWOpP_HdnLWIsMzm30cqY_NHEGYcG0mjSkjVa8tfnY2.rMm97NIfodC3gy2MTNntNUgRLI
+ UgSkVUmbSbR179sntPTSM1XQ2yc.0iSe9ezF5PXJ3FX3qEVk-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 11 Oct 2021 22:40:27 +0000
+Received: by kubenode543.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 2e663ab451f2d92c944ad4412edf944a;
+          Mon, 11 Oct 2021 22:40:23 +0000 (UTC)
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Subject: [PATCH] LSM: general protection fault in legacy_parse_param
+To:     Christian Brauner <christian@brauner.io>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <018a9bb4-accb-c19a-5b0a-fde22f4bc822@schaufler-ca.com>
+Date:   Mon, 11 Oct 2021 15:40:22 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YWR4XKrC2Bkr4qKQ@kroah.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+References: <018a9bb4-accb-c19a-5b0a-fde22f4bc822.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.19116 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 11, 2021 at 07:46:04PM +0200, Greg KH wrote:
-> On Mon, Oct 11, 2021 at 10:35:37AM -0700, Luis Chamberlain wrote:
-> > On Tue, Oct 05, 2021 at 04:30:06PM +0200, Greg KH wrote:
-> > > On Fri, Sep 17, 2021 at 11:22:16AM -0700, Luis R. Rodriguez wrote:
-> > > > From: Luis Chamberlain <mcgrof@kernel.org>
-> > > > 
-> > > > The built-in firmware is always supported when a user enables
-> > > > FW_LOADER=y today, that is, it is built-in to the kernel. When the
-> > > > firmware loader is built as a module, support for built-in firmware
-> > > > is skipped. This requirement is not really clear to users or even
-> > > > developers.
-> > > > 
-> > > > Also, by default the EXTRA_FIRMWARE is always set to an empty string
-> > > > and so by default we really have nothing built-in to that kernel's
-> > > > sections for built-in firmware, so today a all FW_LOADER=y kernels
-> > > > spins their wheels on an empty set of built-in firmware for each
-> > > > firmware request with no true need for it.
-> > > > 
-> > > > Add a new kconfig entry to represent built-in firmware support more
-> > > > clearly. This let's knock 3 birds with one stone:
-> > > > 
-> > > >  o Clarifies that support for built-in firmware requires the
-> > > >    firmware loader to be built-in to the kernel
-> > > > 
-> > > >  o By default we now always skip built-in firmware even if a FW_LOADER=y
-> > > > 
-> > > >  o This also lets us make it clear that the EXTRA_FIRMWARE_DIR
-> > > >    kconfig entry is only used for built-in firmware
-> > > > 
-> > > > Reviewed-by: Borislav Petkov <bp@suse.de>
-> > > > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > > > ---
-> > > >  .../driver-api/firmware/built-in-fw.rst       |  2 ++
-> > > >  Documentation/x86/microcode.rst               |  5 ++--
-> > > >  drivers/base/firmware_loader/Kconfig          | 25 +++++++++++++------
-> > > >  drivers/base/firmware_loader/Makefile         |  3 +--
-> > > >  drivers/base/firmware_loader/main.c           |  4 +--
-> > > >  5 files changed, 26 insertions(+), 13 deletions(-)
-> > > > 
-> > > > diff --git a/Documentation/driver-api/firmware/built-in-fw.rst b/Documentation/driver-api/firmware/built-in-fw.rst
-> > > > index bc1c961bace1..9dd2b1df44f0 100644
-> > > > --- a/Documentation/driver-api/firmware/built-in-fw.rst
-> > > > +++ b/Documentation/driver-api/firmware/built-in-fw.rst
-> > > > @@ -8,6 +8,7 @@ the filesystem. Instead, firmware can be looked for inside the kernel
-> > > >  directly. You can enable built-in firmware using the kernel configuration
-> > > >  options:
-> > > >  
-> > > > +  * CONFIG_FW_LOADER_BUILTIN
-> > > >    * CONFIG_EXTRA_FIRMWARE
-> > > >    * CONFIG_EXTRA_FIRMWARE_DIR
-> > > >  
-> > > > @@ -17,6 +18,7 @@ into the kernel with CONFIG_EXTRA_FIRMWARE:
-> > > >  * Speed
-> > > >  * Firmware is needed for accessing the boot device, and the user doesn't
-> > > >    want to stuff the firmware into the boot initramfs.
-> > > > +* Testing built-in firmware
-> > > >  
-> > > >  Even if you have these needs there are a few reasons why you may not be
-> > > >  able to make use of built-in firmware:
-> > > > diff --git a/Documentation/x86/microcode.rst b/Documentation/x86/microcode.rst
-> > > > index a320d37982ed..d199f0b98869 100644
-> > > > --- a/Documentation/x86/microcode.rst
-> > > > +++ b/Documentation/x86/microcode.rst
-> > > > @@ -114,11 +114,12 @@ Builtin microcode
-> > > >  =================
-> > > >  
-> > > >  The loader supports also loading of a builtin microcode supplied through
-> > > > -the regular builtin firmware method CONFIG_EXTRA_FIRMWARE. Only 64-bit is
-> > > > -currently supported.
-> > > > +the regular builtin firmware method using CONFIG_FW_LOADER_BUILTIN and
-> > > > +CONFIG_EXTRA_FIRMWARE. Only 64-bit is currently supported.
-> > > >  
-> > > >  Here's an example::
-> > > >  
-> > > > +  CONFIG_FW_LOADER_BUILTIN=y
-> > > >    CONFIG_EXTRA_FIRMWARE="intel-ucode/06-3a-09 amd-ucode/microcode_amd_fam15h.bin"
-> > > >    CONFIG_EXTRA_FIRMWARE_DIR="/lib/firmware"
-> > > >  
-> > > > diff --git a/drivers/base/firmware_loader/Kconfig b/drivers/base/firmware_loader/Kconfig
-> > > > index 5b24f3959255..de4fcd9d41f3 100644
-> > > > --- a/drivers/base/firmware_loader/Kconfig
-> > > > +++ b/drivers/base/firmware_loader/Kconfig
-> > > > @@ -29,8 +29,10 @@ if FW_LOADER
-> > > >  config FW_LOADER_PAGED_BUF
-> > > >  	bool
-> > > >  
-> > > > -config EXTRA_FIRMWARE
-> > > > -	string "Build named firmware blobs into the kernel binary"
-> > > > +config FW_LOADER_BUILTIN
-> > > > +	bool "Enable support for built-in firmware"
-> > > > +	default n
-> > > 
-> > > n is always the default, no need to list it again.
-> > 
-> > Oh, alrighty, I'll remove that line.
-> > 
-> > > > +	depends on FW_LOADER=y
-> > > 
-> > > I don't see what this gets us to add another config option.  Are you
-> > > making things easier later on?
-> > 
-> > This makes a few things clearer for both developers and users.
-> > The code in question is a *feature* *only* when FW_LOADER=y, by
-> > adding a new kconfig to represent this and clearly makeing it
-> > depend on FW_LOADER=y it let's us:
-> > 
-> >   o Clarify that support for built-in firmware requires
-> >     the firmware loader to be built-in to the kernel
-> 
-> That is good.
-> 
-> >   o By default we now always skip built-in firmware even if a FW_LOADER=y
-> 
-> I do not understand, why would we ever want to skip built-in firmware?
+The usual LSM hook "bail on fail" scheme doesn't work for cases where
+a security module may return an error code indicating that it does not
+recognize an input.  In this particular case Smack sees a mount option
+that it recognizes, and returns 0. A call to a BPF hook follows, which
+returns -ENOPARAM, which confuses the caller because Smack has processed
+its data.
 
-Because it is done this way today only implicitly because
-EXTRA_FIRMWARE is empty. Using a kconfig entry makes this
-more obvious.
+Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+=C2=A0security/security.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-> >   o This also lets us make it clear that the EXTRA_FIRMWARE_DIR
-> >     kconfig entry is only used for built-in firmware
-> 
-> How was it ever used for anything else?  :)
+diff --git a/security/security.c b/security/security.c
+index 09533cbb7221..3cf0faaf1c5b 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -885,7 +885,19 @@ int security_fs_context_dup(struct fs_context *fc, s=
+truct fs_context *src_fc)
+=20
+ int security_fs_context_parse_param(struct fs_context *fc, struct fs_par=
+ameter *param)
+ {
+-	return call_int_hook(fs_context_parse_param, -ENOPARAM, fc, param);
++	struct security_hook_list *hp;
++	int trc;
++	int rc =3D -ENOPARAM;
++
++	hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
++			     list) {
++		trc =3D hp->hook.fs_context_parse_param(fc, param);
++		if (trc =3D=3D 0)
++			rc =3D 0;
++		else if (trc !=3D -ENOPARAM)
++			return trc;
++	}
++	return rc;
+ }
+=20
+ int security_sb_alloc(struct super_block *sb)
 
-Well later this patch set also renames this to something more
-sensible, and so that change is clearer through this patch.
 
-> I can not take this as-is, so yes :)
-
-Well please let me know again once you read the above explanations.
-
-I think the new kconfig is very well justified given the above.
-
-  Luis
