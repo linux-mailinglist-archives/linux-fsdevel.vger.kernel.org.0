@@ -2,94 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 60D6B429272
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 16:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D99742930D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 17:21:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238962AbhJKOrb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Oct 2021 10:47:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47624 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239063AbhJKOr2 (ORCPT
+        id S233673AbhJKPXz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Oct 2021 11:23:55 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:15496 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231951AbhJKPXy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Oct 2021 10:47:28 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C05DEC061570
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Oct 2021 07:45:26 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id g8so68826688edt.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Oct 2021 07:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gDPfAzRPCJZekdkJLdiW5yA+Hq7e3NibC9rFYF30teQ=;
-        b=ybBq2sppTGojXohfkwvJ/tGhP9hu5lEL0qh34QPAnDBZKh3j/ZgZ4uLGGEdO547zPi
-         V6iAAyCyIwzp2wHV1Bj+joNqrZWW+QjkJKUcFO0BmtC+B+qlKDuiN8D9t1GjUtXushA6
-         tN5o9WoQerg2r5CV1rD+9gVsCakKeAlVRuG1z24pbKqOfeadMZ7eRyuZKqZrpcqVyaE0
-         F3UD/p7viAoFRJU0JxgrqilcC/fjTLVwyMf7+xgw1OTgsgQRzrgdLpzEKK9pPSkXbtrQ
-         VYKje+Exek3pObA0KvtUbVmawNjNux+m3LZPZ088iOaMccwK+a2dxBuyNi+fJv8gJQFV
-         qB9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gDPfAzRPCJZekdkJLdiW5yA+Hq7e3NibC9rFYF30teQ=;
-        b=1hGdYNlACiptV97HNMvFIv1wLOv16EfqN4RUnnymXOGwAewdpFGV9xyqhp4xq9kxLg
-         yGTNbO9bIVMEVEPpb6X4Xyh/OjwJphOrUodvg4cnOwLb/HNDN7fQRBCEg6WRhxdfku4Q
-         Z7aJEh6BfmmCqecQK8AH96EZT9JwMsRRKN5RvER1LkD4rwi2W52SsCra7zOEVIDwZ/J2
-         f0CX6VIBWRqEK29odJzDcA4W1syTQOKqRSXiH+1P36xyg1XCK8HjH2qlyI3F7WYTHeGq
-         upvAzQzjFBFzHJn/WpruIUw9BLnij+CQPBBS38SE9unk68U6nn3LPhsbHAbqAkSUMZr/
-         LVVQ==
-X-Gm-Message-State: AOAM531Cyl3hR8aM/ktGR5fLXkf0NrnvXlFq6qKRP5arQglFBcn3kcDM
-        4NHEjI+37t41syEYgwJUY6TQwaRXwWf4Ut93c610
-X-Google-Smtp-Source: ABdhPJzQkCGph00c+9GkbTGMxPX7NVio9ILpaaXhuMVlp6Gu4jhrBRHKzVSv2VOT92gNlo920CjU4Ppmq2IlNhN8riU=
-X-Received: by 2002:a05:6402:42d6:: with SMTP id i22mr38752786edc.54.1633963525283;
- Mon, 11 Oct 2021 07:45:25 -0700 (PDT)
+        Mon, 11 Oct 2021 11:23:54 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19BFBdkL024351;
+        Mon, 11 Oct 2021 11:20:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=8JdIijDsyFcyUndtQJTDx7Jep7qM7XiDzn473KgSPI8=;
+ b=dQeuk1C9NhNv8wdNfiGSpOFgTfDHrohiXCDUCDP5IUolSe+r9oG4EBTCLrxBmE3g4ldl
+ K0rRXAreO9pp5ZBO95ygRl8HGWa8QJ4jmfSGC1zr4usjASC9uUwZdIDGsOUt0SSUCPyL
+ SLcYS3MmIP/MZCHyHUiir7prXeQocK77DS19YnvHDxN+x8st5D3ZD9ByDscPccaGzSVa
+ PNFwZKc7t7oPxHueo6quzngZyne8lIxNR4sFD5c64oLoDIAe8aDyb7c1idDA2Y2VlXNu
+ mdEuAkdA3MhFLyNDOL3zW2kidNmOVbd/ARK6guiuUrUU8D745sIAEEoqC0T6htGI4uoi tg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3bmqpmg61b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Oct 2021 11:20:18 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 19BFF3UR008574;
+        Mon, 11 Oct 2021 11:20:17 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3bmqpmg602-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Oct 2021 11:20:16 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 19BFDIbC014419;
+        Mon, 11 Oct 2021 15:20:14 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma03ams.nl.ibm.com with ESMTP id 3bk2q97292-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Oct 2021 15:20:14 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 19BFKBKv19268016
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 Oct 2021 15:20:11 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9643DAE061;
+        Mon, 11 Oct 2021 15:20:11 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7FCBEAE057;
+        Mon, 11 Oct 2021 15:20:03 +0000 (GMT)
+Received: from sig-9-65-79-79.ibm.com (unknown [9.65.79.79])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 11 Oct 2021 15:20:03 +0000 (GMT)
+Message-ID: <539086ce33ed6417dd1ada1c8f593fc0edeb8f73.camel@linux.ibm.com>
+Subject: Re: [PATCH v14 1/3] fs: Add trusted_for(2) syscall implementation
+ and related sysctl
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Florian Weimer <fw@deneb.enyo.de>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Philippe =?ISO-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
+Date:   Mon, 11 Oct 2021 11:20:02 -0400
+In-Reply-To: <87tuhpynr4.fsf@mid.deneb.enyo.de>
+References: <20211008104840.1733385-1-mic@digikod.net>
+         <20211008104840.1733385-2-mic@digikod.net>
+         <87tuhpynr4.fsf@mid.deneb.enyo.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: izC9yhrEe1LpTrA6aSB26JuAwHzBGp1s
+X-Proofpoint-ORIG-GUID: PawvuLLX4xcPVEed7b1tj13LIXgFSuK2
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-References: <20211011090240.97-1-xieyongji@bytedance.com> <CAJfpegvw2F_WbTAk_f92YwBn3YwqbG3Ond74DY7yvMbzeUnMKA@mail.gmail.com>
-In-Reply-To: <CAJfpegvw2F_WbTAk_f92YwBn3YwqbG3Ond74DY7yvMbzeUnMKA@mail.gmail.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Mon, 11 Oct 2021 22:45:14 +0800
-Message-ID: <CACycT3sTarn8BfsGUQsrEbtWt9qeZ8Ph4O3VGpbYi7gbGKgsJA@mail.gmail.com>
-Subject: Re: [RFC] fuse: Avoid invalidating attrs if writeback_cache enabled
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org,
-        =?UTF-8?B?5byg5L2z6L6w?= <zhangjiachen.jaycee@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-10-11_05,2021-10-11_01,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ clxscore=1011 lowpriorityscore=0 adultscore=0 mlxscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 impostorscore=0 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2109230001 definitions=main-2110110088
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 11, 2021 at 9:21 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Mon, 11 Oct 2021 at 11:07, Xie Yongji <xieyongji@bytedance.com> wrote:
-> >
-> > Recently we found the performance of small direct writes is bad
-> > when writeback_cache enabled. This is because we need to get
-> > attrs from userspace in fuse_update_get_attr() on each write.
-> > The timeout for the attributes doesn't work since every direct write
-> > will invalidate the attrs in fuse_direct_IO().
-> >
-> > To fix it, this patch tries to avoid invalidating attrs if writeback_cache
-> > is enabled since we should trust local size/ctime/mtime in this case.
->
-> Hi,
->
-> Thanks for the patch.
->
-> Just pushed an update to
-> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.gitt#for-next
-> (9ca3f8697158 ("fuse: selective attribute invalidation")) that should
-> fix this behavior.
->
+Hi Florian,
 
-Looks like fuse_update_get_attr() will still get attrs from userspace
-each time with this commit applied.
+On Sun, 2021-10-10 at 16:10 +0200, Florian Weimer wrote:
+> * Mickaël Salaün:
+> 
+> > Being able to restrict execution also enables to protect the kernel by
+> > restricting arbitrary syscalls that an attacker could perform with a
+> > crafted binary or certain script languages.  It also improves multilevel
+> > isolation by reducing the ability of an attacker to use side channels
+> > with specific code.  These restrictions can natively be enforced for ELF
+> > binaries (with the noexec mount option) but require this kernel
+> > extension to properly handle scripts (e.g. Python, Perl).  To get a
+> > consistent execution policy, additional memory restrictions should also
+> > be enforced (e.g. thanks to SELinux).
+> 
+> One example I have come across recently is that code which can be
+> safely loaded as a Perl module is definitely not a no-op as a shell
+> script: it downloads code and executes it, apparently over an
+> untrusted network connection and without signature checking.
+> 
+> Maybe in the IMA world, the expectation is that such ambiguous code
+> would not be signed in the first place, but general-purpose
+> distributions are heading in a different direction with
+> across-the-board signing:
 
-> Could you please test?
->
+Automatically signing code is at least the first step in the right
+direction of only executing code with known provenance.  Perhaps future
+work would address the code signing granularity.
 
-I applied the commit 9ca3f8697158 ("fuse: selective attribute
-invalidation")  and tested it. But the issue still exists.
+> 
+>   Signed RPM Contents
+>   <https://fedoraproject.org/wiki/Changes/Signed_RPM_Contents>
+> 
+> So I wonder if we need additional context information for a potential
+> LSM to identify the intended use case.
 
-Thanks,
-Yongji
+My first thoughts were an enumeration UNSIGNED_DOWNLOADED_CODE or maybe
+even UNTRUSTED_DOWNLOADED_CODE, but that doesn't seem very
+helpful.  What type of context information were you thinking about?
+
+Mimi
+
