@@ -2,82 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DAAA2428569
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 05:01:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6D03428579
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 05:10:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233726AbhJKDDC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 Oct 2021 23:03:02 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:51721 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233705AbhJKDC5 (ORCPT
+        id S233799AbhJKDML (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 Oct 2021 23:12:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58946 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233344AbhJKDML (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 Oct 2021 23:02:57 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UrJTOYb_1633921256;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UrJTOYb_1633921256)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 11 Oct 2021 11:00:57 +0800
-From:   Jeffle Xu <jefflexu@linux.alibaba.com>
-To:     vgoyal@redhat.com, stefanha@redhat.com, miklos@szeredi.hub
-Cc:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
-Subject: [PATCH v6 7/7] Documentation/filesystem/dax: record DAX on virtiofs
-Date:   Mon, 11 Oct 2021 11:00:52 +0800
-Message-Id: <20211011030052.98923-8-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
-References: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
+        Sun, 10 Oct 2021 23:12:11 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E24F3C061570;
+        Sun, 10 Oct 2021 20:10:11 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id s11so9478926pgr.11;
+        Sun, 10 Oct 2021 20:10:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sKE37Vzcg9+LHwiEWeLufYL/SNzO2ST/ZEGnzU9bkq8=;
+        b=hfrg3y0aCHXr43ob3bJBuad5QIDCG9lXSL9aOUf9pGEc4MSrwEtp91iCBrcShRgm8w
+         dhSnB1z+otNw2jWe8S0ktt0gEn74l0tk4mfJwdHc3RD+4wJ8mbc4gixsLTL3oStHPUN3
+         bUgIbMMrnhzSMLiuW/bAkDDs8uklzMYPUmA98LzVTNqvWsVWMt3jeC4Nk+eDntr36Czk
+         z3iUIoMJ3pRfUHv9pgFRgDYTbZJgx8KvlXY+frQBpu/qfaLtbpUX+Vs4tjg1VfFVrZcG
+         Jn8LL4xAuR2zskvr/wMgckKsZLu3fU3++cyu4z9GcKLkAvUkXXJfUeVqVJRuq50f8ecH
+         GPVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sKE37Vzcg9+LHwiEWeLufYL/SNzO2ST/ZEGnzU9bkq8=;
+        b=t8OgF2VvqVXb2JPqlNXfAX/FCMtRHSOB6mWKaO6O1u+Sx4R3eXYWEklcn5MLToJjHw
+         6qtTSbKN/rJXytMQOQ7IB+4Ho2Ey5p6pMqAQBEAz631+hF/bKliqayZp9ampND/+R+rT
+         Is37/3inXKMXgizr5EJavPS/vzO/il99aGdxZ2FJ1rzS0SoGdRlSWRWraxYTjacmWy0z
+         3hiLiiZjqdxMl7A0ucsIpsxUvaGPVeKxDrdb1HnZx01EV11ctvetyB4OszDk3U+QBB5p
+         1LU6sA1A7aKI8XFAtOorzaDxdFa5b11sG1Ylrg7AEWq0iQmOiw+pChg/dnyLu80q9i61
+         TzDA==
+X-Gm-Message-State: AOAM530Z4BV9/cNNZQOU1lkGnH/lFuFtXavPgEGh9XEB8TVRjOUJcrwZ
+        tdMllPq0VgCyvAKnKPphj3upO+qUxvgS4OQv
+X-Google-Smtp-Source: ABdhPJwLsGpBUEXcD0l5uiCmjM5PPfSt1CYwOsJymEOYudaTLCjDtFY5B4Vp3afVAU5K0Chl2BO1UQ==
+X-Received: by 2002:a63:5d5f:: with SMTP id o31mr16332181pgm.312.1633921811110;
+        Sun, 10 Oct 2021 20:10:11 -0700 (PDT)
+Received: from localhost.localdomain ([94.177.118.104])
+        by smtp.gmail.com with ESMTPSA id k13sm6121618pfc.197.2021.10.10.20.10.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Oct 2021 20:10:10 -0700 (PDT)
+From:   Dongliang Mu <mudongliangabcd@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Dongliang Mu <mudongliangabcd@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: fix GPF in nilfs_mdt_destroy
+Date:   Mon, 11 Oct 2021 11:09:56 +0800
+Message-Id: <20211011030956.2459172-1-mudongliangabcd@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Record DAX on virtiofs and the semantic difference with that on ext4
-and xfs.
+In alloc_inode, inode_init_always could return -NOMEM if
+security_inode_alloc fails. In its error handling, i_callback and
+nilfs_free_inode will be called. However, because inode->i_private is
+not initialized due to the failure of security_inode_alloc, the function
+nilfs_is_metadata_file_inode can return true and nilfs_mdt_destroy will
+be executed to lead to GPF bug.
 
-Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+Fix this bug by moving the assignment of inode->i_private before
+security_inode_alloc.
+
+BTW, this bug is triggered by fault injection in the syzkaller.
+
+Signed-off-by: Dongliang Mu <mudongliangabcd@gmail.com>
 ---
- Documentation/filesystems/dax.rst | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ fs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/filesystems/dax.rst b/Documentation/filesystems/dax.rst
-index 9a1b8fd9e82b..e3b30429d703 100644
---- a/Documentation/filesystems/dax.rst
-+++ b/Documentation/filesystems/dax.rst
-@@ -23,8 +23,8 @@ on it as usual.  The `DAX` code currently only supports files with a block
- size equal to your kernel's `PAGE_SIZE`, so you may need to specify a block
- size when creating the filesystem.
+diff --git a/fs/inode.c b/fs/inode.c
+index ed0cab8a32db..f6fce84bf550 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -160,6 +160,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+ 	inode->i_dir_seq = 0;
+ 	inode->i_rdev = 0;
+ 	inode->dirtied_when = 0;
++	inode->i_private = NULL;
  
--Currently 3 filesystems support `DAX`: ext2, ext4 and xfs.  Enabling `DAX` on them
--is different.
-+Currently 4 filesystems support `DAX`: ext2, ext4, xfs and virtiofs.
-+Enabling `DAX` on them is different.
- 
- Enabling DAX on ext2
- --------------------
-@@ -168,6 +168,22 @@ if the underlying media does not support dax and/or the filesystem is
- overridden with a mount option.
- 
- 
-+Enabling DAX on virtiofs
-+----------------------------
-+The semantic of DAX on virtiofs is basically equal to that on ext4 and xfs,
-+except that when '-o dax=inode' is specified, virtiofs client derives the hint
-+whether DAX shall be enabled or not from virtiofs server through FUSE protocol,
-+rather than the persistent `FS_XFLAG_DAX` flag. That is, whether DAX shall be
-+enabled or not is completely determined by virtiofs server, while virtiofs
-+server itself may deploy various algorithm making this decision, e.g. depending
-+on the persistent `FS_XFLAG_DAX` flag on the host.
-+
-+It is still supported to set or clear persistent `FS_XFLAG_DAX` flag inside
-+guest, but it is not guaranteed that DAX will be enabled or disabled for
-+corresponding file then. Users inside guest still need to call statx(2) and
-+check the statx flag `STATX_ATTR_DAX` to see if DAX is enabled for this file.
-+
-+
- Implementation Tips for Block Driver Writers
- --------------------------------------------
- 
+ #ifdef CONFIG_CGROUP_WRITEBACK
+ 	inode->i_wb_frn_winner = 0;
+@@ -194,7 +195,6 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+ 	lockdep_set_class_and_name(&mapping->invalidate_lock,
+ 				   &sb->s_type->invalidate_lock_key,
+ 				   "mapping.invalidate_lock");
+-	inode->i_private = NULL;
+ 	inode->i_mapping = mapping;
+ 	INIT_HLIST_HEAD(&inode->i_dentry);	/* buggered by rcu freeing */
+ #ifdef CONFIG_FS_POSIX_ACL
 -- 
-2.27.0
+2.25.1
 
