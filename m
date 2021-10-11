@@ -2,186 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC940429885
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 22:56:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0351A4298A0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 23:08:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235074AbhJKU63 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Oct 2021 16:58:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48780 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235214AbhJKU60 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Oct 2021 16:58:26 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB95FC061570;
-        Mon, 11 Oct 2021 13:56:25 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id ec8so22832456edb.6;
-        Mon, 11 Oct 2021 13:56:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:from:subject:to:cc
-         :references:content-language:in-reply-to:content-transfer-encoding;
-        bh=ou+xUmJ66fQiXPaSvBFHMERJHyRQrKzeVENEuBhsFMw=;
-        b=owW+fhG7GjuwP1vy5pweOXYMtVFuNOKqE9mr2LzmYD4pTxTYggUcNvNs6W/f9y13ep
-         TUYNkj1dOWPbHbdVzOFqUuhKpi4c3SbGhqyy3lqk0HNSmtCmfePBAEwlTbjweruk0CB/
-         My+jLK+fAhlao8lNRgqVtHqldCwin7KnF0nYQYvZcR8Dr1OSl8HVaex9m/+VkQS8C6V+
-         mpnNQ+CG3fOUqMOWrOx3uf79IowRQJheFfAQCbsmhw/yn+3Xc4HoU3dnnd9n+FvaCOMk
-         vtiaipsQZxce2wfvh0I+UiXp//NSxEd1ree+UKYvuTWL+4IdG2mxqUT/OACB3Au+IWZ7
-         Wwqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
-         :subject:to:cc:references:content-language:in-reply-to
-         :content-transfer-encoding;
-        bh=ou+xUmJ66fQiXPaSvBFHMERJHyRQrKzeVENEuBhsFMw=;
-        b=omUXD3lPtq9r33Iikrpehm+ANEVti2c2wR9nvi2ukQvcDWI80NFpllW/0AgkvKRhcK
-         lrM89Qpahuj5VkVtbaE+JigL6uhjmt6G3ArB/G0PgDzUINDiNaJI7zOeUZ0fIF+mv9CP
-         eTIScR/EQ30XaklplphaikbvYyKy4IL18INIFv0jzO4rGAPE5R4NEkoCVyNvHLC+jMSA
-         uH1qNhWIpCk2Pew26EjnQPzyGkVN2rW7O2v8khdUQe+hbIJT0B50cIasmiUT3Lz2xU7+
-         z+Jp5Tquj3yxKZw/erwGsW22kpOFEhRqa5hzUV9Rw83d4gz+BXz/hfxbQISSDX75LjiK
-         QL1w==
-X-Gm-Message-State: AOAM533cMf4t5Im4blgrJNDJ+gN7yr17Vzc6jSIltJL21P//Tv6SgLK1
-        diF/80KHJZO2+DFWeuY+oSo=
-X-Google-Smtp-Source: ABdhPJwSODPcwmzd88n3/Iui5Rdwmxb8aTTUKUAVsLOv+cz4qEqxxTdTPz0CbDqbLD5vNGYWb7JmUQ==
-X-Received: by 2002:a05:6402:5189:: with SMTP id q9mr19506883edd.94.1633985784310;
-        Mon, 11 Oct 2021 13:56:24 -0700 (PDT)
-Received: from [192.168.0.163] ([37.239.218.34])
-        by smtp.gmail.com with ESMTPSA id n6sm4772657eds.10.2021.10.11.13.56.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Oct 2021 13:56:24 -0700 (PDT)
-Message-ID: <0021ec0c-737a-398f-53ca-8daa284744b6@gmail.com>
-Date:   Mon, 11 Oct 2021 23:56:22 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.2
-From:   Mohammad Rasim <mohammad.rasim96@gmail.com>
-Subject: Re: [PATCH] fs/ntfs3: Check for NULL if ATTR_EA_INFO is incorrect
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kari Argillander <kari.argillander@gmail.com>
-References: <227c13e3-5a22-0cba-41eb-fcaf41940711@paragon-software.com>
- <20211003175036.ly4m3lw2bjoippsh@kari-VirtualBox>
- <c892016c-3e50-739b-38d2-010f02d52019@gmail.com>
- <bcbb8ddc-3ddf-4a91-6e92-d5cee2722bad@paragon-software.com>
- <2998a9b9-8ea0-6a44-7093-66c7a08dcab2@gmail.com>
- <7e5b8dc9-9989-0e8a-9e8d-ae26b6e74df4@paragon-software.com>
-Content-Language: en-US
-In-Reply-To: <7e5b8dc9-9989-0e8a-9e8d-ae26b6e74df4@paragon-software.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        id S235190AbhJKVJ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Oct 2021 17:09:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39162 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235137AbhJKVJ6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 11 Oct 2021 17:09:58 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 12E3A60F3A;
+        Mon, 11 Oct 2021 21:07:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1633986478;
+        bh=G+QJPCDxvnQUtik8kLBFGZxfNIXdogXuS2jZAwHj6Xc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=x7blkkuaT8Dg3v6qU7s5DLNPzbv6PIOwN/OI0GTzYNDZNS6HPNm/2zLFI1lULk/TR
+         L7x89LR4YeOzOdZSsubxF2Z5jJyBTk7kFmIUnThAolPk+b6cfIldT6qBtg+k/gvGnq
+         N8uXN6UFds5/xYwzIYkxumbLQP62r5urpxEP3BIc=
+Date:   Mon, 11 Oct 2021 14:07:55 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Philippe =?UTF-8?B?VHLDqWJ1Y2hldA==?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v14 0/3] Add trusted_for(2) (was O_MAYEXEC)
+Message-Id: <20211011140755.a09af989de3ca844577d1ded@linux-foundation.org>
+In-Reply-To: <457941da-c4a4-262f-2981-74a85519c56f@digikod.net>
+References: <20211008104840.1733385-1-mic@digikod.net>
+        <20211010144814.d9fb99de6b0af65b67dc96cb@linux-foundation.org>
+        <457941da-c4a4-262f-2981-74a85519c56f@digikod.net>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, 11 Oct 2021 10:47:04 +0200 Mickaël Salaün <mic@digikod.net> wrote:
 
-On 10/11/21 19:55, Konstantin Komarov wrote:
-> Hello.
->
-> Presumably we found the code, that panics.
-> But it panics in place, where pointer must be always not NULL.
-> Please try patch provided below.
-> If it helps (there is no panic), then check dmesg for
-> message "Looks like internal error".
-> And please compare copied folders.
-> This way it will be clear what file / folder cause this logic error.
->
-> Thanks for all your help so far.
+> 
+> On 10/10/2021 23:48, Andrew Morton wrote:
+> > On Fri,  8 Oct 2021 12:48:37 +0200 Mickaël Salaün <mic@digikod.net> wrote:
+> > 
+> >> The final goal of this patch series is to enable the kernel to be a
+> >> global policy manager by entrusting processes with access control at
+> >> their level.  To reach this goal, two complementary parts are required:
+> >> * user space needs to be able to know if it can trust some file
+> >>   descriptor content for a specific usage;
+> >> * and the kernel needs to make available some part of the policy
+> >>   configured by the system administrator.
+> > 
+> > Apologies if I missed this...
+> > 
+> > It would be nice to see a description of the proposed syscall interface
+> > in these changelogs!  Then a few questions I have will be answered...
+> 
+> I described this syscall and it's semantic in the first patch in
+> Documentation/admin-guide/sysctl/fs.rst
 
-Ok,
+Well, kinda.  It didn't explain why the `usage' and `flags' arguments
+exist and what are the plans for them.
 
-This helped, unfortunately the error is sporadic and i can't easily 
-track down which file caused the crash .
+> Do you want me to copy-paste this content in the cover letter?
 
-In one test it seemd it was caused by files in three directories 
-"package", "system" , "support" (all these directories are from the 
-"buildroot" tree, most of the files that failed to copy were symlinks, 
-don't know if that makes a difference)  but after rebooting and loading 
-the unpatched ntfs3.ko i was able to copy these files without a crash!
+That would be best please.  It's basically the most important thing
+when reviewing the implementation.
 
-It seems that the crash happens when copying large number of files so 
-even a failed file can be copied if it was copied alone (I might be very 
-wrong in my conclusion here)
+> > 
+> > long trusted_for(const int fd,
+> > 		 const enum trusted_for_usage usage,
+> > 		 const u32 flags)
+> > 
+> > - `usage' must be equal to TRUSTED_FOR_EXECUTION, so why does it
+> >   exist?  Some future modes are planned?  Please expand on this.
+> 
+> Indeed, the current use case is to check if the kernel would allow
+> execution of a file. But as Florian pointed out, we may want to add more
+> context in the future, e.g. to enforce signature verification, to check
+> if this is a legitimate (system) library, to check if the file is
+> allowed to be used as (trusted) configuration…
+> 
+> > 
+> > - `flags' is unused (must be zero).  So why does it exist?  What are
+> >   the plans here?
+> 
+> This is mostly to follow syscall good practices for extensibility. It
+> could be used in combination with the usage argument (which defines the
+> user space semantic), e.g. to check for extra properties such as
+> cryptographic or integrity requirements, origin of the file…
+> 
+> > 
+> > - what values does the syscall return and what do they mean?
+> > 
+> 
+> It returns 0 on success, or -EACCES if the kernel policy denies the
+> specified usage.
 
-anyways, i did multiple tests. in the first a few it copied without a 
-crash and skipped a few files( the dmesg didn't contain the "Looks like 
-internal error" message).
+And please document all of this in the changelog also.
 
-on subsequent tests i did get that message like so:
-
-[  186.295722] ntfs3: sdb1: ino=1a, Looks like internal error
-[  186.296219] ntfs3: sdb1: ntfs3_write_inode r=1a failed, -22
-
-That "ino=1a" looks wrong to me !
-
-  I will try to do more tests if i can but it's a bit annoying because 
-each crash causes the file system to be corrupted and "ntfsfix" can't 
-fix these errors so i have to reboot to windows os to be able to use 
-"chkdsk" to fix the filesystem before doing the next test.
-
-It would be nice if Paragon  releases "fsck.ntfs" that works well in 
-these situations so we don't need to boot to windows to fix them
-
-
-Regards
-
-
->
-> [PATCH] fs/ntfs3: Check for NULL pointers in ni_try_remove_attr_list
->
-> All these checks must be redundant.
-> If this commit helps, then there is bug in code.
->
-> Signed-off-by: Konstantin 
-> Komarov<almaz.alexandrovich@paragon-software.com>
-> ---
-> fs/ntfs3/frecord.c | 23 ++++++++++++++++++++++-
-> 1 file changed, 22 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-> index ecb965e4afd0..37e19fe7d496 100644
-> --- a/fs/ntfs3/frecord.c
-> +++ b/fs/ntfs3/frecord.c
-> @@ -705,18 +705,35 @@ static int ni_try_remove_attr_list(struct 
-> ntfs_inode *ni)
-> continue;
-> mi = ni_find_mi(ni, ino_get(&le->ref));
-> + if (!mi) {
-> + /* Should never happened, 'cause already checked. */
-> + goto bad;
-> + }
-> attr = mi_find_attr(mi, NULL, le->type, le_name(le),
-> le->name_len, &le->id);
-> + if (!attr) {
-> + /* Should never happened, 'cause already checked. */
-> + goto bad;
-> + }
-> asize = le32_to_cpu(attr->size);
-> /* Insert into primary record. */
-> attr_ins = mi_insert_attr(&ni->mi, le->type, le_name(le),
-> le->name_len, asize,
-> le16_to_cpu(attr->name_off));
-> - id = attr_ins->id;
-> + if (!attr_ins) {
-> + /*
-> + * Internal error.
-> + * Either no space in primary record (already checked).
-> + * Either tried to insert another
-> + * non indexed attribute (logic error).
-> + */
-> + goto bad;
-> + }
-> /* Copy all except id. */
-> + id = attr_ins->id;
-> memcpy(attr_ins, attr, asize);
-> attr_ins->id = id;
-> @@ -732,6 +749,10 @@ static int ni_try_remove_attr_list(struct 
-> ntfs_inode *ni)
-> ni->attr_list.dirty = false;
-> return 0;
-> +bad:
-> + ntfs_inode_err(&ni->vfs_inode, "Looks like internal error");
-> + make_bad_inode(&ni->vfs_inode);
-> + return -EINVAL;
-> }
-> /*
