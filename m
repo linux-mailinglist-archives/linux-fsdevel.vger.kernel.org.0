@@ -2,99 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 32F744288D0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 10:32:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF6E44288E8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 10:36:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235043AbhJKIe4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Oct 2021 04:34:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46402 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234932AbhJKIez (ORCPT
+        id S235114AbhJKIiG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Oct 2021 04:38:06 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:36992 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235036AbhJKIiF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Oct 2021 04:34:55 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE5E6C06161C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Oct 2021 01:32:55 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id y12so51648497eda.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Oct 2021 01:32:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rOXsNrzY60uI0pgR5Z0rE9TCYzMRKq69zTlRtW3ar3Q=;
-        b=5Txo6x8f7LWi46N7oevu7OqzhT5gQ6mWAJ0kCcEy7l0G5xbs0/cfrXAFjSgzZW7poC
-         xPNpiPAMkDYw0WvSsXVOvtyfVRobeTrXmvFg+uCwQqOajlSd1qQJbdrxrr30tJD8WYNL
-         gd5tFDjPHyLI/HMIO/XjNa6hVC7rA3LaTPW7sShkm5p/y9/uYxFEGp6eWDNRnNTKPbXy
-         x/Xd7D+s4rmvMvZapMyOK/wVnge1mfOlD5mjse2c/uCU1FsiiL/9+qrjcvLQqdciyqZs
-         dk8UVLQRqC8Smgr/o8QSlb9aCgudkRHkkcM6DRh9XLsiCfV2YkpY1ruVRqXnlW2INYt3
-         A+Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rOXsNrzY60uI0pgR5Z0rE9TCYzMRKq69zTlRtW3ar3Q=;
-        b=GRxX9CeBZXOyyPoQTb0hi/ehA5nAsjS3XkBe75tYglINyhpnY1JFEZwIkyMCf+s7Vz
-         SJmYzA9WTzMHrNsus8af4a7J9N4fOcHvpmvM3MjlkFCEv85Swlq4X7reHBCzclLbQIOC
-         okAa0/HCl3YXYHUK2n4VgsgHV7YJCHlpdfPi0S7FwoNFCOWQTnlVnBOKqDr/HfPligI6
-         KTlfWqzhQs0PDs6zsw956XDopT7KUM6mS5a9uUIAGHHdc9u3lh8HovPh8seh9xEN6pZg
-         ceFdS1Ld9BcuMtv4hDTkG3x7RENGaNxgwT9wyG8ZXZZVvVbhClVuq60k+9ToKcMMXkL8
-         VwGg==
-X-Gm-Message-State: AOAM530MfyFK5wqHaWLsqhAtU+7XxG15AugDBG472ZztCX2J/aa7zf5L
-        t0GVie1Q3KxxHCvtTNlmZRTtrv4bjScz/Sh02Mex
-X-Google-Smtp-Source: ABdhPJw0UGeuT5H5fcyL/6kzs+woGkopnu5gM0tI+8BJ6+813tHOWdOiXRVmSnyFXI6wzyWYaRuttbrMNqUffSWsei8=
-X-Received: by 2002:a50:d88b:: with SMTP id p11mr39341822edj.287.1633941174303;
- Mon, 11 Oct 2021 01:32:54 -0700 (PDT)
+        Mon, 11 Oct 2021 04:38:05 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id EA3FC21D8B;
+        Mon, 11 Oct 2021 08:36:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1633941364; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=FPbx2B9Llgf08l9/6ELaloI4uW3syuPUrdAfP+Y5Qqs=;
+        b=sKasgaIoJZe6ADDnCA66rzx+jt4F4vnLrnLMwfaqfATL/9+45+7ZmuriPFRGAG6LJiyZJF
+        kOO4/p0J6FJShwtpAujtTihW8LLk44i0X90xoz92rBoTmSsWxS6Ox2leKwc1BzT/huEcJr
+        eCiBO1hXEuWESlUJergcr5sIKtGge44=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 070EBA3B87;
+        Mon, 11 Oct 2021 08:36:04 +0000 (UTC)
+Date:   Mon, 11 Oct 2021 10:36:03 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Suren Baghdasaryan <surenb@google.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        David Hildenbrand <david@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Colin Cross <ccross@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        vincenzo.frascino@arm.com,
+        Chinwen Chang =?utf-8?B?KOW8temMpuaWhyk=?= 
+        <chinwen.chang@mediatek.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jann Horn <jannh@google.com>, apopple@nvidia.com,
+        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
+        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
+        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
+        Chris Hyser <chris.hyser@oracle.com>,
+        Peter Collingbourne <pcc@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
+        Rolf Eike Beer <eb@emlix.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
+        cxfcosmos@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        kernel-team <kernel-team@android.com>
+Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
+Message-ID: <YWP3c/bozz5npQ8O@dhcp22.suse.cz>
+References: <92cbfe3b-f3d1-a8e1-7eb9-bab735e782f6@rasmusvillemoes.dk>
+ <20211007101527.GA26288@duo.ucw.cz>
+ <CAJuCfpGp0D9p3KhOWhcxMO1wEbo-J_b2Anc-oNwdycx4NTRqoA@mail.gmail.com>
+ <YV8jB+kwU95hLqTq@dhcp22.suse.cz>
+ <CAJuCfpG-Nza3YnpzvHaS_i1mHds3nJ+PV22xTAfgwvj+42WQNA@mail.gmail.com>
+ <YV8u4B8Y9AP9xZIJ@dhcp22.suse.cz>
+ <CAJuCfpHAG_C5vE-Xkkrm2kynTFF-Jd06tQoCWehHATL0W2mY_g@mail.gmail.com>
+ <202110071111.DF87B4EE3@keescook>
+ <YV/mhyWH1ZwWazdE@dhcp22.suse.cz>
+ <202110081344.FE6A7A82@keescook>
 MIME-Version: 1.0
-References: <20210831103634.33-1-xieyongji@bytedance.com> <6163E8A1.8080901@huawei.com>
- <CACycT3tBCdqPfLCTX4-ZDSos_hYPyBQu0xRHRu=ksaFk0k7_hA@mail.gmail.com>
-In-Reply-To: <CACycT3tBCdqPfLCTX4-ZDSos_hYPyBQu0xRHRu=ksaFk0k7_hA@mail.gmail.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Mon, 11 Oct 2021 16:32:43 +0800
-Message-ID: <CACycT3tZbWpHg5D4rQqpSd3Yxz6zFCsUj+R=AGH0JRw0gEBNyg@mail.gmail.com>
-Subject: Re: [PATCH v13 00/13] Introduce VDUSE - vDPA Device in Userspace
-To:     Liuxiangdong <liuxiangdong5@huawei.com>
-Cc:     "Fangyi (Eric)" <eric.fangyi@huawei.com>, yebiaoxiang@huawei.com,
-        x86@kernel.org, kvm <kvm@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202110081344.FE6A7A82@keescook>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 11, 2021 at 4:31 PM Yongji Xie <xieyongji@bytedance.com> wrote:
->
-> Hi Xiaodong,
->
-> On Mon, Oct 11, 2021 at 3:32 PM Liuxiangdong <liuxiangdong5@huawei.com> wrote:
-> >
-> > Hi, Yongji.
-> >
-> > I tried vduse with null-blk:
-> >
-> >    $ qemu-storage-daemon \
-> >        --chardev socket,id=charmonitor,path=/tmp/qmp.sock,server,nowait \
-> >        --monitor chardev=charmonitor \
-> >        --blockdev
-> > driver=host_device,cache.direct=on,aio=native,filename=/dev/nullb0,node-name=disk0
-> > \
-> >        --export
-> > type=vduse-blk,id=test,node-name=disk0,writable=on,name=vduse-null,num-queues=16,queue-size=128
-> >
-> > The qemu-storage-daemon is yours
-> > (https://github.com/bytedance/qemu/tree/vduse)
-> >
-> > And then, how can we use this vduse-null (dev/vduse/vduse-null) in vm(QEMU)?
-> >
->
-> Then we need to attach this device to vdpa bus via vdpa tool [1]:
->
-> # vdpa dev add vduse-null mgmtdev vduse
->
+On Fri 08-10-21 13:58:01, Kees Cook wrote:
+> - Strings for "anon" specifically have no required format (this is good)
+>   it's informational like the task_struct::comm and can (roughly)
+>   anything. There's no naming convention for memfds, AF_UNIX, etc. Why
+>   is one needed here? That seems like a completely unreasonable
+>   requirement.
 
-It should be:
+I might be misreading the justification for the feature. Patch 2 is
+talking about tools that need to understand memeory usage to make
+further actions. Also Suren was suggesting "numbering convetion" as an
+argument against. 
 
-# vdpa dev add name vduse-null mgmtdev vduse
-
-Thanks,
-Yongji
+So can we get a clear example how is this being used actually? If this
+is just to be used to debug by humans than I can see an argument for
+human readable form. If this is, however, meant to be used by tools to
+make some actions then the argument for strings is much weaker.
+-- 
+Michal Hocko
+SUSE Labs
