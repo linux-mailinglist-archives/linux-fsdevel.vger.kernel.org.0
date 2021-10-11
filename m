@@ -2,114 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FE0C4288B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 10:26:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEB274288CA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Oct 2021 10:31:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235054AbhJKI2N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Oct 2021 04:28:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44834 "EHLO
+        id S234999AbhJKIdT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Oct 2021 04:33:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235042AbhJKI2N (ORCPT
+        with ESMTP id S234910AbhJKIdS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Oct 2021 04:28:13 -0400
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 050F6C061745
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Oct 2021 01:26:12 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4HSX1t5y8BzMqJTT;
-        Mon, 11 Oct 2021 10:26:10 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4HSX1q3sgfzlhNx5;
-        Mon, 11 Oct 2021 10:26:07 +0200 (CEST)
-Subject: Re: [PATCH v14 1/3] fs: Add trusted_for(2) syscall implementation and
- related sysctl
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20211008104840.1733385-1-mic@digikod.net>
- <20211008104840.1733385-2-mic@digikod.net> <87tuhpynr4.fsf@mid.deneb.enyo.de>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <334a71c1-b97e-e52e-e772-a9003ec676c3@digikod.net>
-Date:   Mon, 11 Oct 2021 10:26:58 +0200
-User-Agent: 
+        Mon, 11 Oct 2021 04:33:18 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91186C06161C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Oct 2021 01:31:17 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id w14so12862477edv.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Oct 2021 01:31:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ansIydpls6m1U5UqWIdad2N3UObWfiebM00TNpZEqAY=;
+        b=TIWW8982Q+BdDqaM+mbj+l/YQzuXk531tbljt7vKgGO9oa/m8fg73KmkkPhMtWptos
+         ulMn8Z97rq9fVwI/cCS7AHVvwYFC0U8+L5O15p1gHwJIwxk8PyExzCY7do7+gNMyMkfQ
+         zLCSiytz3l/7g40aZmz9Vec4iFuLHhzmZ0sMFdwv3m5fmjHABBXj6aQDWXKjFyFUEmrv
+         Gfz/Nht0CmY59WiNTNmr3dbE9W7TbhbX4MX83U0M/c9aA8k4FC2uhxKO7nda7r/3Dbp3
+         ojVqZv7rGe14KAMMNHrUFENvh4V0yLPJiCQEz8vzf6/msjMW9+voaJgZxCdP9sP8flFi
+         58xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ansIydpls6m1U5UqWIdad2N3UObWfiebM00TNpZEqAY=;
+        b=pZcJQI0YO/wFft58IOyvEseevrvb5800bRjzEkxObrO5BpiPyeu/yquCAkMJZVerQV
+         9Vs+gAEJULHffX5016Pf9zSORVc6t96YIiHNvdlMo5TukU2f8ZVcLV3rbBUEBgYcyKNU
+         cGEX6U6LymhixT3MR+Z5A+/9VqGqn1H4+IQRwfIBogxteYsYGaH2w6+7AUfSSjqHlSoA
+         NcFEf1pGfLJEQ3kwFRT1lhjTKhJDAdWBBKsuEnHPt/IKoHN1z39k8ehgrBEvaCX5Sdkn
+         996b5+hein0mwu/DZvOzH4Vty06fKdFoCAKE7wVOsJutAYjN5GfKqt7X/4zbwnG7XLjF
+         4XTg==
+X-Gm-Message-State: AOAM530V89u8AvI33LGcTvyLtbW+ge1xFfavhbZi5FBoNKt41KZEK65x
+        PEtFeY+63wh6vnbAPzVLrRPdZ9NyTIPpscY4QWIA
+X-Google-Smtp-Source: ABdhPJwHWWKZMdVRBY+KhM8/Mxsd0heuNb4mPMfuhZ9nQLKKdmY9GMewTg3InfLsWTn8tTMygJdLGsym8GZLZpSCJgI=
+X-Received: by 2002:a17:906:ce25:: with SMTP id sd5mr22450654ejb.398.1633941076108;
+ Mon, 11 Oct 2021 01:31:16 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <87tuhpynr4.fsf@mid.deneb.enyo.de>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210831103634.33-1-xieyongji@bytedance.com> <6163E8A1.8080901@huawei.com>
+In-Reply-To: <6163E8A1.8080901@huawei.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Mon, 11 Oct 2021 16:31:05 +0800
+Message-ID: <CACycT3tBCdqPfLCTX4-ZDSos_hYPyBQu0xRHRu=ksaFk0k7_hA@mail.gmail.com>
+Subject: Re: [PATCH v13 00/13] Introduce VDUSE - vDPA Device in Userspace
+To:     Liuxiangdong <liuxiangdong5@huawei.com>
+Cc:     "Fangyi (Eric)" <eric.fangyi@huawei.com>, yebiaoxiang@huawei.com,
+        x86@kernel.org, kvm <kvm@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Xiaodong,
 
-On 10/10/2021 16:10, Florian Weimer wrote:
-> * Mickaël Salaün:
-> 
->> Being able to restrict execution also enables to protect the kernel by
->> restricting arbitrary syscalls that an attacker could perform with a
->> crafted binary or certain script languages.  It also improves multilevel
->> isolation by reducing the ability of an attacker to use side channels
->> with specific code.  These restrictions can natively be enforced for ELF
->> binaries (with the noexec mount option) but require this kernel
->> extension to properly handle scripts (e.g. Python, Perl).  To get a
->> consistent execution policy, additional memory restrictions should also
->> be enforced (e.g. thanks to SELinux).
-> 
-> One example I have come across recently is that code which can be
-> safely loaded as a Perl module is definitely not a no-op as a shell
-> script: it downloads code and executes it, apparently over an
-> untrusted network connection and without signature checking.
-> 
-> Maybe in the IMA world, the expectation is that such ambiguous code
-> would not be signed in the first place, but general-purpose
-> distributions are heading in a different direction with
-> across-the-board signing:
-> 
->   Signed RPM Contents
->   <https://fedoraproject.org/wiki/Changes/Signed_RPM_Contents>
-> 
-> So I wonder if we need additional context information for a potential
-> LSM to identify the intended use case.
-> 
+On Mon, Oct 11, 2021 at 3:32 PM Liuxiangdong <liuxiangdong5@huawei.com> wrote:
+>
+> Hi, Yongji.
+>
+> I tried vduse with null-blk:
+>
+>    $ qemu-storage-daemon \
+>        --chardev socket,id=charmonitor,path=/tmp/qmp.sock,server,nowait \
+>        --monitor chardev=charmonitor \
+>        --blockdev
+> driver=host_device,cache.direct=on,aio=native,filename=/dev/nullb0,node-name=disk0
+> \
+>        --export
+> type=vduse-blk,id=test,node-name=disk0,writable=on,name=vduse-null,num-queues=16,queue-size=128
+>
+> The qemu-storage-daemon is yours
+> (https://github.com/bytedance/qemu/tree/vduse)
+>
+> And then, how can we use this vduse-null (dev/vduse/vduse-null) in vm(QEMU)?
+>
 
-This is an interesting use case. I think such policy enforcement could
-be done either with an existing LSM (e.g. IMA) or a new one (e.g. IPE),
-but it could also partially be enforced by the script interpreter. The
-kernel should have enough context: interpreter process (which could be
-dedicated to a specific usage) and the opened script file, or we could
-add a new usage flag to the trusted_for syscall if that makes sense.
-Either way, this doesn't seem to be an issue for the current patch series.
+Then we need to attach this device to vdpa bus via vdpa tool [1]:
+
+# vdpa dev add vduse-null mgmtdev vduse
+
+With the virtio-vdpa module loaded, we will see the block device in host.
+
+And if we'd like to use it in a VM, we need to load the vhost-vdpa
+module (a /dev/vhost-vdpa-0 char device will be presented) and build a
+new qemu binary with the source code in
+https://github.com/bytedance/qemu/tree/vhost-vdpa-blk. Then we can use
+the below command line to start a VM with the vhost-vdpa-blk device:
+
+./qemu-system-x86_64 -M pc -cpu host --enable-kvm -smp 8 \
+-m 4G -object memory-backend-file,id=mem,size=4G,mem-path=/dev/shm,share=on \
+-numa node,memdev=mem -monitor vc -serial stdio -no-user-config -nodefaults \
+-vnc 0.0.0.0:1 -k en-us -vga cirrus \
+-device vhost-vdpa-blk-pci,num-queues=1,vdpa-dev=/dev/vhost-vdpa-0
+
+[1] https://man7.org/linux/man-pages/man8/vdpa-dev.8.html
+
+Thanks,
+Yongji
