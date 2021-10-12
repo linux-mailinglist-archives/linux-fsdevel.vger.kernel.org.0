@@ -2,148 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FBCD429AA5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 02:55:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8B1E429AEE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 03:19:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232268AbhJLA5j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Oct 2021 20:57:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53385 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231905AbhJLA5i (ORCPT
+        id S235627AbhJLBVL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Oct 2021 21:21:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50282 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235579AbhJLBVG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Oct 2021 20:57:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634000137;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5XDAu3SGcluw99zx826t100OV6JMSzpG+T+53hkiL5g=;
-        b=K09u9CQ4/2KFzfVf43Z08XpiGplBvJdyZZNnZwk6r3z23ioZxkIgxG+kt/spMGIb6us9nm
-        AO+X4/dWyGvUOn+nygdHDuo11AsLb/zvM0hLU+H4FZQZE/tBfiXewQQbC3qxBfmikSWTgL
-        tOT4RtVBm614aE3/jaTBWoWaFx6+t8g=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-293-8HYEjQR_PUC-yhqDTPxAtg-1; Mon, 11 Oct 2021 20:55:36 -0400
-X-MC-Unique: 8HYEjQR_PUC-yhqDTPxAtg-1
-Received: by mail-pj1-f71.google.com with SMTP id oo5-20020a17090b1c8500b0019e585e8f6fso565824pjb.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Oct 2021 17:55:36 -0700 (PDT)
+        Mon, 11 Oct 2021 21:21:06 -0400
+Received: from mail-yb1-xb35.google.com (mail-yb1-xb35.google.com [IPv6:2607:f8b0:4864:20::b35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48874C06161C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Oct 2021 18:19:05 -0700 (PDT)
+Received: by mail-yb1-xb35.google.com with SMTP id s4so42987747ybs.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Oct 2021 18:19:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=407czVbE3e5WcfWCrJgGTmSTywUsN04juLc0rcDIHos=;
+        b=TzwbmzL5U816Bqh9kOlyCsD1sCD6dVJn2Q0kP6rcyb8lKPkHAH+ygv0sec8MKihXkD
+         ohWYsPx597UOJUURiCPg8CepyKL2AjXQwvZ8979WeWLSKPtxHE5knrUhoujX7zgcuX/f
+         E4gU92yKZxrpzWVS4cRDvqdp5VC/CfND05hjJKQc3AK5SQEodjo4wcbFwILdLwtP0k5b
+         S7zFBs1/Jn75JjnSRsw9z2j5huA8PxzJdsHDHBlP0tpkDk9A14MjdrblhO4+htQGh/+j
+         gvri2TKFi3Cym0kqw5rDVLaALHsHDbZG931XjBYJ3r+senO6Kw7oqEg9zq8eVuxlxMiA
+         s0HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=5XDAu3SGcluw99zx826t100OV6JMSzpG+T+53hkiL5g=;
-        b=Iu2JlggpgU7m6IyoyQqcr/FlEYRmWKBGirG9ZtXtrj5xb9/xznpiUqsjzEPAPEimIF
-         ml/1STLgetpdE8Zk6XI4LuzhWH7RUIvifZ3OJ9++c4Vv2/4jmaqSDsl3tgcQ0Ry5QBv+
-         sHnHIjR1lJENeJD9mM58bbijRD1MVMiK8NV34i6xan7xjxQ4cgyRNiNWDJFpQb8UYvXg
-         s2m5I/UpCS/X9pogieosPuv9FiH+UKiRjDPEFxxMKUwCe+EnjmnNgV4Oxsh16giD9NMA
-         u9DuKg3LyZ6f/i18HjEDpPZvAU2quW84XgaFEUM3Bv43I548knqufhkzrRNqnFVWQF2T
-         AwEg==
-X-Gm-Message-State: AOAM531JhQmGOgGBw67zljlO80u9RUeHjEIWDRlq6/1cOok7FAx6LFAX
-        0C2hXrd+/PvYUahhrs01Q3xgnKv3hPtt6boqUqXevpPSPiC/CoSXOF9J1Z8YhUMeBSdRbm+MEyk
-        HA1R+lyVfKDgBZ6yKMyonGOS1qA==
-X-Received: by 2002:a17:90a:5583:: with SMTP id c3mr2475840pji.133.1634000135064;
-        Mon, 11 Oct 2021 17:55:35 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyiMrYc31WKAIet63PwjB3iBU25JIVgyGtttIqJYbNFV+SGkFsxX1I3SP8DPzgGL+Ed6sKQAA==
-X-Received: by 2002:a17:90a:5583:: with SMTP id c3mr2475808pji.133.1634000134583;
-        Mon, 11 Oct 2021 17:55:34 -0700 (PDT)
-Received: from t490s ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id z9sm578759pji.42.2021.10.11.17.55.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Oct 2021 17:55:33 -0700 (PDT)
-Date:   Mon, 11 Oct 2021 20:55:26 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
- for PMD page fault
-Message-ID: <YWTc/n4r6CJdvPpt@t490s>
-References: <20210930215311.240774-1-shy828301@gmail.com>
- <20210930215311.240774-3-shy828301@gmail.com>
- <YV4Dz3y4NXhtqd6V@t490s>
- <CAHbLzkp8oO9qvDN66_ALOqNrUDrzHH7RZc3G5GQ1pxz8qXJjqw@mail.gmail.com>
- <CAHbLzkqm_Os8TLXgbkL-oxQVsQqRbtmjdMdx0KxNke8mUF1mWA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=407czVbE3e5WcfWCrJgGTmSTywUsN04juLc0rcDIHos=;
+        b=3pgeDfoaW94h74hMoTRFNkDX52VtTnWLxLVnMM62Y1Z/3bcrwenawsfiqWBSrPl3l1
+         CezR91KIAVCtCB4EZrHnrnqXl93y55Hh7r/f90Ao62uSXfAV7HqkKjfQpCI+js0S43OC
+         gy2xpuTRWQ5K7vAfcGf470vzsegct5+qbQEt2Hv+7jx2fmBn3qYTdEf9sTur1qR1WSra
+         R+GXoWkHjVFGv3L1OII8oaGqFuOgbTkbcZj0gI8ZtRUCXOtX5J0AifvpbmABxkXZVkQS
+         6PnoJo//Uld7Q9Axut4cYpgUyHH94BW/d8fuWnQ2zPewj+rCuXLjmTpjCsQ7EfKWkRpN
+         BMFg==
+X-Gm-Message-State: AOAM532z2NkFbWYBQuKSKPcRF3usz3uDkMNeGribFrJczsVxfX26K7cG
+        HUCdhNuqu/Ce0yHelLyoKirMHGq+nyvSW+T2Ci4eEg==
+X-Google-Smtp-Source: ABdhPJydBqN1UA6qSG6Yd7QpZaqkzf4R5GfK9WN1SrDGCBvxbOa3Jn4cy0jn1DEmqHVaPdnUwvnrPheLhIM3SXmo6U8=
+X-Received: by 2002:a25:552:: with SMTP id 79mr24303168ybf.202.1634001543876;
+ Mon, 11 Oct 2021 18:19:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHbLzkqm_Os8TLXgbkL-oxQVsQqRbtmjdMdx0KxNke8mUF1mWA@mail.gmail.com>
+References: <92cbfe3b-f3d1-a8e1-7eb9-bab735e782f6@rasmusvillemoes.dk>
+ <20211007101527.GA26288@duo.ucw.cz> <CAJuCfpGp0D9p3KhOWhcxMO1wEbo-J_b2Anc-oNwdycx4NTRqoA@mail.gmail.com>
+ <YV8jB+kwU95hLqTq@dhcp22.suse.cz> <CAJuCfpG-Nza3YnpzvHaS_i1mHds3nJ+PV22xTAfgwvj+42WQNA@mail.gmail.com>
+ <YV8u4B8Y9AP9xZIJ@dhcp22.suse.cz> <CAJuCfpHAG_C5vE-Xkkrm2kynTFF-Jd06tQoCWehHATL0W2mY_g@mail.gmail.com>
+ <202110071111.DF87B4EE3@keescook> <YV/mhyWH1ZwWazdE@dhcp22.suse.cz>
+ <202110081344.FE6A7A82@keescook> <YWP3c/bozz5npQ8O@dhcp22.suse.cz>
+In-Reply-To: <YWP3c/bozz5npQ8O@dhcp22.suse.cz>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Mon, 11 Oct 2021 18:18:52 -0700
+Message-ID: <CAJuCfpHQVMM4+6Lm_EnFk06+KrOjSjGA19K2cv9GmP3k9LW5vg@mail.gmail.com>
+Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Kees Cook <keescook@chromium.org>, Pavel Machek <pavel@ucw.cz>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        David Hildenbrand <david@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Colin Cross <ccross@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        vincenzo.frascino@arm.com,
+        =?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= 
+        <chinwen.chang@mediatek.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jann Horn <jannh@google.com>, apopple@nvidia.com,
+        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
+        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
+        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
+        Chris Hyser <chris.hyser@oracle.com>,
+        Peter Collingbourne <pcc@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
+        Rolf Eike Beer <eb@emlix.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
+        cxfcosmos@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        kernel-team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 07, 2021 at 02:28:35PM -0700, Yang Shi wrote:
-> On Wed, Oct 6, 2021 at 4:57 PM Yang Shi <shy828301@gmail.com> wrote:
-> >
-> > On Wed, Oct 6, 2021 at 1:15 PM Peter Xu <peterx@redhat.com> wrote:
-> > >
-> > > On Thu, Sep 30, 2021 at 02:53:08PM -0700, Yang Shi wrote:
-> > > > @@ -1148,8 +1148,12 @@ static int __get_hwpoison_page(struct page *page)
-> > > >               return -EBUSY;
-> > > >
-> > > >       if (get_page_unless_zero(head)) {
-> > > > -             if (head == compound_head(page))
-> > > > +             if (head == compound_head(page)) {
-> > > > +                     if (PageTransHuge(head))
-> > > > +                             SetPageHasHWPoisoned(head);
-> > > > +
-> > > >                       return 1;
-> > > > +             }
-> > > >
-> > > >               pr_info("Memory failure: %#lx cannot catch tail\n",
-> > > >                       page_to_pfn(page));
-> > >
-> > > Sorry for the late comments.
-> > >
-> > > I'm wondering whether it's ideal to set this bit here, as get_hwpoison_page()
-> > > sounds like a pure helper to get a refcount out of a sane hwpoisoned page.  I'm
-> > > afraid there can be side effect that we set this without being noticed, so I'm
-> > > also wondering we should keep it in memory_failure().
-> > >
-> > > Quotting comments for get_hwpoison_page():
-> > >
-> > >  * get_hwpoison_page() takes a page refcount of an error page to handle memory
-> > >  * error on it, after checking that the error page is in a well-defined state
-> > >  * (defined as a page-type we can successfully handle the memor error on it,
-> > >  * such as LRU page and hugetlb page).
-> > >
-> > > For example, I see that both unpoison_memory() and soft_offline_page() will
-> > > call it too, does it mean that we'll also set the bits e.g. even when we want
-> > > to inject an unpoison event too?
-> >
-> > unpoison_memory() should be not a problem since it will just bail out
-> > once THP is met as the comment says:
-> >
-> > /*
-> > * unpoison_memory() can encounter thp only when the thp is being
-> > * worked by memory_failure() and the page lock is not held yet.
-> > * In such case, we yield to memory_failure() and make unpoison fail.
-> > */
-> >
-> >
-> > And I think we should set the flag for soft offline too, right? The
-> > soft offline does set the hwpoison flag for the corrupted sub page and
-> > doesn't split file THP, so it should be captured by page fault as
-> > well. And yes for poison injection.
-> 
-> Err... I must be blind. The soft offline does *NOT* set hwpoison flag
-> for any page. So your comment does stand. The flag should be set
-> outside get_hwpoison_page().
+On Mon, Oct 11, 2021 at 1:36 AM Michal Hocko <mhocko@suse.com> wrote:
+>
+> On Fri 08-10-21 13:58:01, Kees Cook wrote:
+> > - Strings for "anon" specifically have no required format (this is good)
+> >   it's informational like the task_struct::comm and can (roughly)
+> >   anything. There's no naming convention for memfds, AF_UNIX, etc. Why
+> >   is one needed here? That seems like a completely unreasonable
+> >   requirement.
+>
+> I might be misreading the justification for the feature. Patch 2 is
+> talking about tools that need to understand memeory usage to make
+> further actions. Also Suren was suggesting "numbering convetion" as an
+> argument against.
+>
+> So can we get a clear example how is this being used actually? If this
+> is just to be used to debug by humans than I can see an argument for
+> human readable form. If this is, however, meant to be used by tools to
+> make some actions then the argument for strings is much weaker.
 
-I saw that page_handle_poison() sets it, so perhaps we do need to take care of
-soft offline?  Though I still think the extra bit should be set outside of the
-get_hwpoison_page() function.
+The simplest usecase is when we notice that a process consumes more
+memory than usual and we do "cat /proc/$(pidof my_process)/maps" to
+check which area is contributing to this growth. The names we assign
+to anonymous areas are descriptive enough for a developer to get an
+idea where the increased consumption is coming from and how to proceed
+with their investigation.
+There are of course cases when tools are involved, but the end-user is
+always a human and the final report should contain easily
+understandable data.
 
-Another thing is I noticed soft_offline_in_use_page() will still ignore file
-backed split.  I'm not sure whether it means we'd better also handle that case
-as well, so shmem thp can be split there too?
+IIUC, the main argument here is whether the userspace can provide
+tools to perform the translations between ids and names, with the
+kernel accepting and reporting ids instead of strings. Technically
+it's possible, but to be practical that conversion should be fast
+because we will need to make name->id conversion potentially for each
+mmap. On the consumer side the performance is not as critical, but the
+fact that instead of dumping /proc/$pid/maps we will have to parse the
+file, do id->name conversion and replace all [anon:id] with
+[anon:name] would be an issue when we do that in bulk, for example
+when collecting system-wide data for a bugreport.
 
--- 
-Peter Xu
+I went ahead and implemented the proposed userspace solution involving
+tmpfs as a repository for name->id mapping (more precisely
+filename->inode mapping). Profiling shows that open()+fstat()+close()
+takes:
+- roughly 15 times longer than mmap() with 1000 unique names each
+being reused 50 times.
+- roughly 3 times longer than mmap() with 100 unique names each being
+reused 500 times. This is due to lstat() optimization suggested by
+Rasmus which avoids open() and close().
+For comparison, proposed prctl() takes roughly the same amount of time
+as mmap() and does not depend on the number of unique names.
 
+I'm still evaluating the proposal to use memfds but I'm not sure if
+the issue that David Hildenbrand mentioned about additional memory
+consumed in pagecache (which has to be addressed) is the only one we
+will encounter with this approach. If anyone knows of any potential
+issues with using memfds as named anonymous memory, I would really
+appreciate your feedback before I go too far in that direction.
+Thanks,
+Suren.
+
+> --
+> Michal Hocko
+> SUSE Labs
