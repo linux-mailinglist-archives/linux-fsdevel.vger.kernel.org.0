@@ -2,222 +2,248 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BF52F42AE5A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 22:59:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E713F42AEB0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 23:18:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233114AbhJLVB4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Oct 2021 17:01:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37236 "EHLO
+        id S235598AbhJLVUm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Oct 2021 17:20:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232486AbhJLVBz (ORCPT
+        with ESMTP id S233223AbhJLVUl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Oct 2021 17:01:55 -0400
-Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6800CC061570
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Oct 2021 13:59:53 -0700 (PDT)
-Received: by mail-yb1-xb2b.google.com with SMTP id v195so1549848ybb.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Oct 2021 13:59:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/FM46KTu0fl8cFqAAvga2i5cJZtMLiEZlRnNB5JincE=;
-        b=Wh5JIU1bBIUxbXwo4tp7JMR0cu8a0lDIJia6OgZEgEx72jrSvyydXbNV/+rad2r42T
-         hah7gUOQnYJDVsXVLrHL2P7RzyBcSKTODkVABWXWtjZmFMWcW5EmtRQ8vpl4Gc+ae7Ff
-         pRvMzQJ1iLMkito1wcmawmuKld81XX+yckDiInbDA897OlXQwkXl8+HD6s6+R/r4omMi
-         vO7yrbR9yqS+gW2kbDXz1X/LoLPSdojSS5UTz6i7glen7IZbhAcdFLm3F3TNrEYeJKx/
-         vd2K8RTUnROyejv3lCt/DagoM5MqcIta4pck8EI7wV/sDdUN0r7jbA5aCI2GezvUwclT
-         kO1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/FM46KTu0fl8cFqAAvga2i5cJZtMLiEZlRnNB5JincE=;
-        b=6jPgzbwaMq7U3bU5ta9eZEM0bwrhcBZcxpkmmy4GOtfGky+MLTVksofTB5xmUvq8n0
-         mMYyYZiuVa0oyu8tnbk/w1Zh6hHF3Wlmfsq9yKiE1nCzEbuvPrw2GBB+/pfHZyzqsgIF
-         VNnqYgoIh4vjpMAsDmqlre8BJ7fUO/NJ1hnCg6Za+QdvQMV9DslGQJFCV2WTH+Pnnrnm
-         vbl3ILqkBWz9mYCkZ3DAVHZSvpS3IV3mh3+TpOHSC23SNJ4tU2zoyWPTlOxtn9g2VAiF
-         aUyXgbqEuXRjH8UI9ptjzVbwTzjfrVGNdaFDdWgMhDNQ9zopVxQULV7RDrxayHG5/d+R
-         829w==
-X-Gm-Message-State: AOAM5339Q9FwperenTV2yCL5pARUzwfGSIjnMjfSSFEh/P7sX0kP0RKH
-        iJgx7kDS1gAtwsICE2geLmu7OnwllqNxvzAuO6ULjQ==
-X-Google-Smtp-Source: ABdhPJwPNZ6xWEmHEHVKkMupYSbDAuthuGJ5ScdlxlrBrVVwxeuK3amfjJdR6EAfnsJsKwxGWohMOB2pI59rlY2kN8g=
-X-Received: by 2002:a05:6902:120e:: with SMTP id s14mr34368157ybu.161.1634072392293;
- Tue, 12 Oct 2021 13:59:52 -0700 (PDT)
+        Tue, 12 Oct 2021 17:20:41 -0400
+Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC92C061570;
+        Tue, 12 Oct 2021 14:18:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=vWzGsAV2KWJEGMZ3MY3jerls6czxe/slqAoHxuRSd8g=; b=D6jsX9HUrv8ydp4bNYkgz/pIE2
+        k9+v4Meo0YrAhvRChSvovjxGfOncxPHVch+gsAH7jjX1KMZq0N66TrOTSU4gkmaC+eWOZJqxTB1wy
+        8E29AZmDENJq2hg5JRNSh36Cos1zExkPmaQpMmrkE/2ki9A3RbYGaz5ZoDuWLqFow4bPPH/qDdR1u
+        e2e+Jekrz1JM5zVym6uCCznKWDk8HcaHs1iW01t6SxPcCYsypYEQpnCzD4d/ECV8Y2B5M2m2ljjfg
+        0b3w2RzckXS6m4LFPZNiI7fysi/t/OrRy9OZGKc0BFr4wh21EVG7rWtrywuLTPQzax+aPQ7UuF4e+
+        lHMlbHMg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1maPAK-00E0hW-HR; Tue, 12 Oct 2021 21:18:28 +0000
+Date:   Tue, 12 Oct 2021 14:18:28 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     tj@kernel.org, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org, minchan@kernel.org, jeyu@kernel.org,
+        shuah@kernel.org, bvanassche@acm.org, dan.j.williams@intel.com,
+        joe@perches.com, tglx@linutronix.de, keescook@chromium.org,
+        rostedt@goodmis.org, linux-spdx@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 09/12] sysfs: fix deadlock race with module removal
+Message-ID: <YWX7pAn0YMaJeJBA@bombadil.infradead.org>
+References: <20210927163805.808907-1-mcgrof@kernel.org>
+ <20210927163805.808907-10-mcgrof@kernel.org>
+ <YVwZwh7qDKfSM59h@T590>
+ <YWSr2trabEJflzlj@bombadil.infradead.org>
+ <YWTU3kTlJKONyFjZ@T590>
 MIME-Version: 1.0
-References: <202110071111.DF87B4EE3@keescook> <YV/mhyWH1ZwWazdE@dhcp22.suse.cz>
- <202110081344.FE6A7A82@keescook> <YWP3c/bozz5npQ8O@dhcp22.suse.cz>
- <CAJuCfpHQVMM4+6Lm_EnFk06+KrOjSjGA19K2cv9GmP3k9LW5vg@mail.gmail.com>
- <CAJuCfpHaF1e0V=wAoNO36nRL2A5EaNnuQrvZ2K3wh6PL6FrwZQ@mail.gmail.com>
- <YWT6Ptp/Uo4QGeP4@cmpxchg.org> <CAJuCfpERX-nqHkYzx8FAi_DuOU1vkoV5ppCAhLHziOm7o7wj6g@mail.gmail.com>
- <YWXTZOXQ/NpoDJFI@cmpxchg.org> <CAJuCfpEnad5RhhYS8Z6RXjnrpbUZs4nd99KybUFO34BcTH658w@mail.gmail.com>
- <YWXy4zEGOggb8Nzw@cmpxchg.org>
-In-Reply-To: <YWXy4zEGOggb8Nzw@cmpxchg.org>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Tue, 12 Oct 2021 13:59:40 -0700
-Message-ID: <CAJuCfpEV9ZkF9LeRXUvBP0MVrgg9BQRxN3KiC0QDsY++KzUrOg@mail.gmail.com>
-Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Michal Hocko <mhocko@suse.com>, Kees Cook <keescook@chromium.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        David Hildenbrand <david@redhat.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Colin Cross <ccross@google.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        vincenzo.frascino@arm.com,
-        =?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= 
-        <chinwen.chang@mediatek.com>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Jann Horn <jannh@google.com>, apopple@nvidia.com,
-        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
-        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
-        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
-        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
-        Chris Hyser <chris.hyser@oracle.com>,
-        Peter Collingbourne <pcc@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
-        Rolf Eike Beer <eb@emlix.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
-        cxfcosmos@gmail.com, LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>,
-        kernel-team <kernel-team@android.com>,
-        Tim Murray <timmurray@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YWTU3kTlJKONyFjZ@T590>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 12, 2021 at 1:41 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
->
-> On Tue, Oct 12, 2021 at 11:52:42AM -0700, Suren Baghdasaryan wrote:
-> > On Tue, Oct 12, 2021 at 11:26 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> > >
-> > > On Mon, Oct 11, 2021 at 10:36:24PM -0700, Suren Baghdasaryan wrote:
-> > > > On Mon, Oct 11, 2021 at 8:00 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> > > > >
-> > > > > On Mon, Oct 11, 2021 at 06:20:25PM -0700, Suren Baghdasaryan wrote:
-> > > > > > On Mon, Oct 11, 2021 at 6:18 PM Suren Baghdasaryan <surenb@google.com> wrote:
-> > > > > > >
-> > > > > > > On Mon, Oct 11, 2021 at 1:36 AM Michal Hocko <mhocko@suse.com> wrote:
-> > > > > > > >
-> > > > > > > > On Fri 08-10-21 13:58:01, Kees Cook wrote:
-> > > > > > > > > - Strings for "anon" specifically have no required format (this is good)
-> > > > > > > > >   it's informational like the task_struct::comm and can (roughly)
-> > > > > > > > >   anything. There's no naming convention for memfds, AF_UNIX, etc. Why
-> > > > > > > > >   is one needed here? That seems like a completely unreasonable
-> > > > > > > > >   requirement.
-> > > > > > > >
-> > > > > > > > I might be misreading the justification for the feature. Patch 2 is
-> > > > > > > > talking about tools that need to understand memeory usage to make
-> > > > > > > > further actions. Also Suren was suggesting "numbering convetion" as an
-> > > > > > > > argument against.
-> > > > > > > >
-> > > > > > > > So can we get a clear example how is this being used actually? If this
-> > > > > > > > is just to be used to debug by humans than I can see an argument for
-> > > > > > > > human readable form. If this is, however, meant to be used by tools to
-> > > > > > > > make some actions then the argument for strings is much weaker.
-> > > > > > >
-> > > > > > > The simplest usecase is when we notice that a process consumes more
-> > > > > > > memory than usual and we do "cat /proc/$(pidof my_process)/maps" to
-> > > > > > > check which area is contributing to this growth. The names we assign
-> > > > > > > to anonymous areas are descriptive enough for a developer to get an
-> > > > > > > idea where the increased consumption is coming from and how to proceed
-> > > > > > > with their investigation.
-> > > > > > > There are of course cases when tools are involved, but the end-user is
-> > > > > > > always a human and the final report should contain easily
-> > > > > > > understandable data.
-> > > > > > >
-> > > > > > > IIUC, the main argument here is whether the userspace can provide
-> > > > > > > tools to perform the translations between ids and names, with the
-> > > > > > > kernel accepting and reporting ids instead of strings. Technically
-> > > > > > > it's possible, but to be practical that conversion should be fast
-> > > > > > > because we will need to make name->id conversion potentially for each
-> > > > > > > mmap. On the consumer side the performance is not as critical, but the
-> > > > > > > fact that instead of dumping /proc/$pid/maps we will have to parse the
-> > > > > > > file, do id->name conversion and replace all [anon:id] with
-> > > > > > > [anon:name] would be an issue when we do that in bulk, for example
-> > > > > > > when collecting system-wide data for a bugreport.
-> > > > >
-> > > > > Is that something you need to do client-side? Or could the bug tool
-> > > > > upload the userspace-maintained name:ids database alongside the
-> > > > > /proc/pid/maps dump for external processing?
-> > > >
-> > > > You can generate a bugreport and analyze it locally or submit it as an
-> > > > attachment to a bug for further analyzes.
-> > > > Sure, we can attach the id->name conversion table to the bugreport but
-> > > > either way, some tool would have to post-process it to resolve the
-> > > > ids. If we are not analyzing the results immediately then that step
-> > > > can be postponed and I think that's what you mean? If so, then yes,
-> > > > that is correct.
-> > >
-> > > Right, somebody needs to do it at some point, but I suppose it's less
-> > > of a problem if a developer machine does it than a mobile device.
-> >
-> > True, and that's why I mentioned that it's not as critical as the
-> > efficiency at mmap() time. In any case, if we could avoid translations
-> > at all that would be ideal.
-> >
-> > >
-> > > One advantage of an ID over a string - besides not having to maintain
-> > > a deduplicating arbitrary string storage in the kernel - is that we
-> > > may be able to auto-assign unique IDs to VMAs in the kernel, in a way
-> > > that we could not with strings. You'd still have to do IPC calls to
-> > > write new name mappings into your db, but you wouldn't have to do the
-> > > prctl() to assign stuff in the kernel at all.
-> >
-> > You still have to retrieve that tag from the kernel to record it in
-> > your db, so this would still require some syscall, no?
->
-> Don't you have to do this with the string setting interface as well?
-> How do you know the vma address to pass into the prctl()? Is this
-> somehow coordinated with the mmap()?
+On Tue, Oct 12, 2021 at 08:20:46AM +0800, Ming Lei wrote:
+> On Mon, Oct 11, 2021 at 02:25:46PM -0700, Luis Chamberlain wrote:
+> > On Tue, Oct 05, 2021 at 05:24:18PM +0800, Ming Lei wrote:
+> > > On Mon, Sep 27, 2021 at 09:38:02AM -0700, Luis Chamberlain wrote:
+> > > > When driver sysfs attributes use a lock also used on module removal we
+> > > > can race to deadlock. This happens when for instance a sysfs file on
+> > > > a driver is used, then at the same time we have module removal call
+> > > > trigger. The module removal call code holds a lock, and then the
+> > > > driver's sysfs file entry waits for the same lock. While holding the
+> > > > lock the module removal tries to remove the sysfs entries, but these
+> > > > cannot be removed yet as one is waiting for a lock. This won't complete
+> > > > as the lock is already held. Likewise module removal cannot complete,
+> > > > and so we deadlock.
+> > > > 
+> > > > This can now be easily reproducible with our sysfs selftest as follows:
+> > > > 
+> > > > ./tools/testing/selftests/sysfs/sysfs.sh -t 0027
+> > > > 
+> > > > This uses a local driver lock. Test 0028 can also be used, that uses
+> > > > the rtnl_lock():
+> > > > 
+> > > > ./tools/testing/selftests/sysfs/sysfs.sh -t 0028
+> > > > 
+> > > > To fix this we extend the struct kernfs_node with a module reference
+> > > > and use the try_module_get() after kernfs_get_active() is called. As
+> > > > documented in the prior patch, we now know that once kernfs_get_active()
+> > > > is called the module is implicitly guarded to exist and cannot be removed.
+> > > > This is because the module is the one in charge of removing the same
+> > > > sysfs file it created, and removal of sysfs files on module exit will wait
+> > > > until they don't have any active references. By using a try_module_get()
+> > > > after kernfs_get_active() we yield to let module removal trump calls to
+> > > > process a sysfs operation, while also preventing module removal if a sysfs
+> > > > operation is in already progress. This prevents the deadlock.
+> > > > 
+> > > > This deadlock was first reported with the zram driver, however the live
+> > > 
+> > > Looks not see the lock pattern you mentioned in zram driver, can you
+> > > share the related zram code?
+> > 
+> > I recommend to not look at the zram driver, instead look at the
+> > test_sysfs driver as that abstracts the issue more clearly and uses
+> 
+> Looks test_sysfs isn't in linus tree, where can I find it?
 
-Sure. The sequence is:
+https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux-next.git/log/?h=20210927-sysfs-generic-deadlock-fix
 
-ptr = mmap(NULL, size, ...);
-prctl(PR_SET_VMA, PR_SET_VMA_ANON_NAME, ptr, size, name);
+> Also please
+> update your commit log about this wrong info if it can't be applied on
+> zram.
 
->
-> > > (We'd have to think of a solution of how IDs work with vma merging and
-> > > splitting, but I think to a certain degree that's policy and we should
-> > > be able to find something workable - a MAP_ID flag, using anon_vma as
-> > > identity, assigning IDs at mmap time and do merges only for protection
-> > > changes etc. etc.)
-> >
-> > Overall, I think keeping the kernel out of this and letting it treat
-> > this tag as a cookie which only userspace cares about is simpler.
-> > Unless you see other uses where kernel's involvement is needed.
->
-> It depends on what you consider keeping the kernel out of it. A small
-> extension to assign unique IDs to mappings automatically in an
-> intuitive way (with a compat option to disable) is a much smaller ABI
-> commitment than a prctl()-controlled string storage.
+It does apply to zram, it is just that I have other fixes for zram in
+my pipeline which will change the zram driver further, and so what makes
+more sense is to abstract the issue into a selftest driver to
+demonstrate the issue more clearly.
 
-I'm not saying it's hard or complex. I just don't see the advantage of
-generating these IDs in the kernel vs passing them from userspace.
-Maybe I'm missing some usecase?
+To reproduce the deadlock revert the patch in this thread and then run
+either of these two tests as root:
 
-> When I say policy on how to assign the ID, I didn't mean that it
-> should be a free for all. Rather that we should pick one reasonable
-> way to do it, comparable to picking the parameters for how long the
-> stored strings could be, which characters to allow etc.
+./tools/testing/selftests/sysfs/sysfs.sh -w 0027
+./tools/testing/selftests/sysfs/sysfs.sh -w 0028
+
+You will need to enable the test_sysfs driver.
+
+> > two different locks as an example. The point is that if on module
+> > removal *any* lock is used which is *also* used on the sysfs file
+> > created by the module, you can deadlock.
+> > 
+> > > > And this can lead to this condition:
+> > > > 
+> > > > CPU A                              CPU B
+> > > >                                    foo_store()
+> > > > foo_exit()
+> > > >   mutex_lock(&foo)
+> > > >                                    mutex_lock(&foo)
+> > > >    del_gendisk(some_struct->disk);
+> > > >      device_del()
+> > > >        device_remove_groups()
+> > > 
+> > > I guess the deadlock exists if foo_exit() is called anywhere. If yes,
+> > > look the issue may not be related with removing module directly, right?
+> > 
+> > No, the reason this can deadlock is that the module exit routine will
+> > patiently wait for the sysfs / kernfs files to be stop being used,
+> 
+> Can you share the code which waits for the sysfs / kernfs files to be
+> stop being used?
+
+How about a call trace of the two tasks which deadlock, here is one of
+running test 0027:
+
+kdevops login: [  363.875459] INFO: task sysfs.sh:1271 blocked for more
+than 120 seconds.
+[  363.878341]       Tainted: G            E
+5.15.0-rc3-next-20210927+ #83
+[  363.881218] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[  363.882255] task:sysfs.sh        state:D stack:    0 pid: 1271 ppid:
+1 flags:0x00000004
+[  363.882894] Call Trace:
+[  363.883091]  <TASK>
+[  363.883259]  __schedule+0x2fd/0x990
+[  363.883551]  schedule+0x43/0xe0
+[  363.883800]  schedule_preempt_disabled+0x14/0x20
+[  363.884160]  __mutex_lock.constprop.0+0x249/0x470
+[  363.884524]  test_dev_x_store+0xa5/0xc0 [test_sysfs]
+[  363.884915]  kernfs_fop_write_iter+0x177/0x220
+[  363.885257]  new_sync_write+0x11c/0x1b0
+[  363.885556]  vfs_write+0x20d/0x2a0
+[  363.885821]  ksys_write+0x5f/0xe0
+[  363.886081]  do_syscall_64+0x38/0xc0
+[  363.886359]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+[  363.886748] RIP: 0033:0x7fee00f8bf33
+[  363.887029] RSP: 002b:00007ffd372c5d18 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[  363.887633] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fee00f8bf33
+[  363.888217] RDX: 0000000000000003 RSI: 000055a4d14a0db0 RDI: 0000000000000001
+[  363.888761] RBP: 000055a4d14a0db0 R08: 000000000000000a R09: 0000000000000002
+[  363.889267] R10: 000055a4d1554ac0 R11: 0000000000000246 R12: 0000000000000003
+[  363.889983] R13: 00007fee0105c6a0 R14: 0000000000000003 R15: 00007fee0105c8a0
+[  363.890513]  </TASK>
+[  363.890709] INFO: task modprobe:1276 blocked for more than 120 seconds.
+[  363.891185]       Tainted: G            E 5.15.0-rc3-next-20210927+ #83
+[  363.891781] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  363.892353] task:modprobe        state:D stack:    0 pid: 1276 ppid: 1 flags:0x00004000
+[  363.892955] Call Trace:
+[  363.893141]  <TASK>
+[  363.893457]  __schedule+0x2fd/0x990
+[  363.893865]  schedule+0x43/0xe0
+[  363.894246]  __kernfs_remove.part.0+0x21e/0x2a0
+[  363.894704]  ? do_wait_intr_irq+0xa0/0xa0
+[  363.895142]  kernfs_remove_by_name_ns+0x50/0x90
+[  363.895632]  remove_files+0x2b/0x60
+[  363.896035]  sysfs_remove_group+0x38/0x80
+[  363.896470]  sysfs_remove_groups+0x29/0x40
+[  363.896912]  device_remove_attrs+0x5b/0x90
+[  363.897352]  device_del+0x183/0x400
+[  363.897758]  unregister_test_dev_sysfs+0x5b/0xaa [test_sysfs]
+[  363.898317]  test_sysfs_exit+0x45/0xfb0 [test_sysfs]
+[  363.898833]  __do_sys_delete_module+0x18d/0x2a0
+[  363.899329]  ? fpregs_assert_state_consistent+0x1e/0x40
+[  363.899868]  ? exit_to_user_mode_prepare+0x3a/0x180
+[  363.900390]  do_syscall_64+0x38/0xc0
+[  363.900810]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+[  363.901330] RIP: 0033:0x7f21915c57d7
+[  363.901747] RSP: 002b:00007ffd90869fe8 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
+[  363.902442] RAX: ffffffffffffffda RBX: 000055ce676ffc30 RCX: 00007f21915c57d7
+[  363.903104] RDX: 0000000000000000 RSI: 0000000000000800 RDI: 000055ce676ffc98
+[  363.903782] RBP: 000055ce676ffc30 R08: 0000000000000000 R09: 0000000000000000
+[  363.904462] R10: 00007f2191638ac0 R11: 0000000000000206 R12: 000055ce676ffc98
+[  363.905128] R13: 0000000000000000 R14: 0000000000000000 R15: 000055ce676ffdf0
+[  363.905797]  </TASK>
+
+
+And gdb:
+
+(gdb) l *(__kernfs_remove+0x21e)
+0xffffffff8139288e is in __kernfs_remove (fs/kernfs/dir.c:476).
+471                     if (atomic_read(&kn->active) != KN_DEACTIVATED_BIAS)
+472                             lock_contended(&kn->dep_map, _RET_IP_);
+473             }
+474
+475             /* but everyone should wait for draining */
+476             wait_event(root->deactivate_waitq,
+477                        atomic_read(&kn->active) == KN_DEACTIVATED_BIAS);
+478
+479             if (kernfs_lockdep(kn)) {
+480                     lock_acquired(&kn->dep_map, _RET_IP_);
+
+(gdb) l *(kernfs_remove_by_name_ns+0x50)
+0xffffffff813938d0 is in kernfs_remove_by_name_ns (fs/kernfs/dir.c:1534).
+1529
+1530            kn = kernfs_find_ns(parent, name, ns);
+1531            if (kn)
+1532                    __kernfs_remove(kn);
+1533
+1534            up_write(&kernfs_rwsem);
+1535
+1536            if (kn)
+1537                    return 0;
+1538            else
+
+The same happens for test 0028 except instead of a mutex
+lock an rtnl_lock() is used.
+
+Would this be better for the commit log?
+
+> And why does it make a difference in case of being
+> called from module_exit()?
+
+Well because that is where we remove the sysfs files. *If*
+a developer happens to use a lock on a sysfs op but it is
+also used on module exit, this deadlock is bound to happen.
+
+  Luis
