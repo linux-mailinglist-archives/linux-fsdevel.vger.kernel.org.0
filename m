@@ -2,141 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EA5242AB62
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 19:59:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B1B742AB76
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 20:03:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231691AbhJLSBI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Oct 2021 14:01:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52032 "EHLO
+        id S232404AbhJLSEd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Oct 2021 14:04:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbhJLSBI (ORCPT
+        with ESMTP id S233125AbhJLSEZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Oct 2021 14:01:08 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDC65C061570
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Oct 2021 10:59:05 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id t9so582803lfd.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Oct 2021 10:59:05 -0700 (PDT)
+        Tue, 12 Oct 2021 14:04:25 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B47B9C061767;
+        Tue, 12 Oct 2021 11:02:23 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id d3so2759360edp.3;
+        Tue, 12 Oct 2021 11:02:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fqSNsVOtXYPiifkp+lepAhAhHgqhsFkG1XDADIpg/Pc=;
-        b=FY/BRNyYSoeaiJSrAAHQ3BrZLM0CaAv9w/dXHHjnPfLhtbC9gLNZ9O9rgLQDmfFZ9o
-         8Mgo15NFVUl5gkJg7VmqhjBEsMkyCryU/OfNnkqXoLyp/rMiFDeur2O6jhe6h/s3zLwA
-         o2kFQw8ViM/udeGTcQaOp6dV30r8PdS4IHCjQ=
+        bh=Mt4tK4CWEsYitFNESRdq5gQKepAHPRfQuKWF85se3SU=;
+        b=KB1PXcwmOUmX7nb07cBlXcrMUqLhlGSrYIxMjpNQvY4wp9bhDm/X+x+P+MlBlUNRmo
+         rIAb/7DMPXEKLsynOCMSYU5uqiAb8zEhTTu50wXdi/TVl89hxRGaD3NW+Ihfl/SwKviF
+         geWVOTAaOczrRkmsz3UiQSKCG5mxH5ZJHENLcHTLufWt6j8/ffNepWG6BI9p+z8ZGTym
+         170zYv+VWAbzGe8RRwzh7nNbxmuY6gilJ6/TzK48GNk58FjLLP/cWIjfjAaQ3hsvUczP
+         cEbeMd+UVvXttFIp5v/CZi/qYtWMkT2Fs6/8TSR5lV1D1BSbKl0+I2yj7bCAT1lkUC0+
+         gP6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fqSNsVOtXYPiifkp+lepAhAhHgqhsFkG1XDADIpg/Pc=;
-        b=z8w2qkUGvtDbiQKa0mkthp6MbsLWHw6gjwS+uLUR3ApYd9QUDdw+a+GfArZcp7W0L9
-         r0b8ha4CNPf4uNjkKkd4qXWWvnCy/q0J7j36sPatVIuZWi7yPqkJqnFBstStWhKMKh7U
-         NQf7e2Jhr8BmLmJ7DYw2Bcy6TwJA06pTrqXE4PUqyvXDUdterSxKTebkOVj9ahpQLg+U
-         HXVyKEUCogZ0FjVehyhpqzkJLKO3JfO8+/aZcMAoy29aC7NwTq8EcyE2XMypPPZQmVRA
-         4A41bVs+x3Eq07R+sOFskF+iGLelcczHFWWUUKiDwD87x5mHqJ3oRG+9v6GhwjcN1NGI
-         hwMA==
-X-Gm-Message-State: AOAM530GCYn1CVHwn9Ah4friRbFy5REkkUH6L7m5RqoqzFD5rdt7HTiT
-        VueXEE0zEMTOar6hcqAxroZ9Tr0MGXu3dKoD
-X-Google-Smtp-Source: ABdhPJxCnxJj3hgn+oGfWAvUk7KUxd0+CvFtfasuYF8mGrR+y9fQ9az7zLp+Y67kY+OmQHAW8XSRuw==
-X-Received: by 2002:a05:6512:a8e:: with SMTP id m14mr35526849lfu.575.1634061543874;
-        Tue, 12 Oct 2021 10:59:03 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id a6sm1177560ljd.67.2021.10.12.10.59.02
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Oct 2021 10:59:03 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id x27so418134lfa.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Oct 2021 10:59:02 -0700 (PDT)
-X-Received: by 2002:a05:6512:10d0:: with SMTP id k16mr2835560lfg.150.1634061542163;
- Tue, 12 Oct 2021 10:59:02 -0700 (PDT)
+        bh=Mt4tK4CWEsYitFNESRdq5gQKepAHPRfQuKWF85se3SU=;
+        b=V/et3oqmJB/ohNNTOrOAU5UdDhRIqtbtK/xLJOD3Yc8zwfVTojVy6yTDpX7tKVUgI5
+         XpzNPR1P/XMgxZgJEKpes+ddOMNC+zI0xv3IczKj38W4spThQ8To/N2d2F8k26EiKbME
+         UpSyB44o8MhssYehqVleEHh6EPaEY/NOrFIn3XrBnGYCuTt7NOSqJ6DEFwnakpcZgdvL
+         3RLTrmnGrAgPJuid4Y1cHdezOOYMJd4tuK/VFnSFJ6pNvvzplaL0C9k3vOTTfUJa6PNz
+         5cxNflsNh9LgkXq1vNU6RcCdl726FQcG+R/KAgoc1t/9JLCYsVIC32GB395NVBodyeE3
+         K0gA==
+X-Gm-Message-State: AOAM531SeUGQKd6RBd6xhKw/R9JDP6eY55ma4N7GOUw06X7Rmq6qjPFE
+        JMRFNLm2iN4dBDMcZxC9TDjggbGZduTIXe5jhd0=
+X-Google-Smtp-Source: ABdhPJyuIkpKy+46yE0qflE4D2DsnLc14o01sPyp4dhRjRZbwenXL07HKHkTqE8edAB9lYY5S/VYXvLb6B1Unpm71QE=
+X-Received: by 2002:a05:6402:5112:: with SMTP id m18mr1652051edd.101.1634061742373;
+ Tue, 12 Oct 2021 11:02:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHk-=wjMyZLH+ta5SohAViSc10iPj-hRnHc-KPDoj1XZCmxdBg@mail.gmail.com>
- <YSk+9cTMYi2+BFW7@zeniv-ca.linux.org.uk> <YSldx9uhMYhT/G8X@zeniv-ca.linux.org.uk>
- <YSqOUb7yZ7kBoKRY@zeniv-ca.linux.org.uk> <YS40qqmXL7CMFLGq@arm.com>
- <YS5KudP4DBwlbPEp@zeniv-ca.linux.org.uk> <YWR2cPKeDrc0uHTK@arm.com>
- <CAHk-=wjvQWj7mvdrgTedUW50c2fkdn6Hzxtsk-=ckkMrFoTXjQ@mail.gmail.com>
- <YWSnvq58jDsDuIik@arm.com> <CAHk-=wiNWOY5QW5ZJukt_9pHTWvrJhE2=DxPpEtFHAWdzOPDTg@mail.gmail.com>
- <YWXFagjRVdNanGSy@arm.com>
-In-Reply-To: <YWXFagjRVdNanGSy@arm.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 12 Oct 2021 10:58:46 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg3prAnhWZetJvwZdugn7A7CpP4ruz1tdewha=8ZY8AJw@mail.gmail.com>
-Message-ID: <CAHk-=wg3prAnhWZetJvwZdugn7A7CpP4ruz1tdewha=8ZY8AJw@mail.gmail.com>
-Subject: Re: [RFC][arm64] possible infinite loop in btrfs search_ioctl()
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+References: <20210930215311.240774-1-shy828301@gmail.com> <20210930215311.240774-3-shy828301@gmail.com>
+ <YV4Dz3y4NXhtqd6V@t490s> <CAHbLzkp8oO9qvDN66_ALOqNrUDrzHH7RZc3G5GQ1pxz8qXJjqw@mail.gmail.com>
+ <CAHbLzkqm_Os8TLXgbkL-oxQVsQqRbtmjdMdx0KxNke8mUF1mWA@mail.gmail.com>
+ <YWTc/n4r6CJdvPpt@t490s> <YWTobPkBc3TDtMGd@t490s>
+In-Reply-To: <YWTobPkBc3TDtMGd@t490s>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Tue, 12 Oct 2021 11:02:09 -0700
+Message-ID: <CAHbLzkrOsNygu5x8vbMHedv+P3dEqOxOC6=O6ACSm1qKzmoCng@mail.gmail.com>
+Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
+ for PMD page fault
+To:     Peter Xu <peterx@redhat.com>
+Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Will Deacon <will@kernel.org>
+        Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 12, 2021 at 10:27 AM Catalin Marinas
-<catalin.marinas@arm.com> wrote:
+On Mon, Oct 11, 2021 at 6:44 PM Peter Xu <peterx@redhat.com> wrote:
 >
-> Apart from fault_in_pages_*(), there's also fault_in_user_writeable()
-> called from the futex code which uses the GUP mechanism as the write
-> would be destructive. It looks like it could potentially trigger the
-> same infinite loop on -EFAULT.
+> On Mon, Oct 11, 2021 at 08:55:26PM -0400, Peter Xu wrote:
+> > Another thing is I noticed soft_offline_in_use_page() will still ignore file
+> > backed split.  I'm not sure whether it means we'd better also handle that case
+> > as well, so shmem thp can be split there too?
+>
+> Please ignore this paragraph - I somehow read "!PageHuge(page)" as
+> "PageAnon(page)"...  So I think patch 5 handles soft offline too.
 
-Hmm.
+Yes, exactly. And even though the split is failed (or file THP didn't
+get split before patch 5/5), soft offline would just return -EBUSY
+instead of calling __soft_offline_page->page_handle_poison(). So
+page_handle_poison() should not see THP at all.
 
-I think the reason we do fault_in_user_writeable() using GUP is that
-
- (a) we can avoid the page fault overhead
-
- (b) we don't have any good "atomic_inc_user()" interface or similar
-that could do a write with a zero increment or something like that.
-
-We do have that "arch_futex_atomic_op_inuser()" thing, of course. It's
-all kinds of crazy, but we *could* do
-
-       arch_futex_atomic_op_inuser(FUTEX_OP_ADD, 0, &dummy, uaddr);
-
-instead of doing the fault_in_user_writeable().
-
-That might be a good idea anyway. I dunno.
-
-But I agree other options exist:
-
-> I wonder whether we should actually just disable tag checking around the
-> problematic accesses. What these callers seem to have in common is using
-> pagefault_disable/enable(). We could abuse this to disable tag checking
-> or maybe in_atomic() when handling the exception to lazily disable such
-> faults temporarily.
-
-Hmm. That would work for MTE, but possibly be very inconvenient for
-other situations.
-
-> A more invasive change would be to return a different error for such
-> faults like -EACCESS and treat them differently in the caller.
-
-That's _really_ hard for things like "copy_to_user()", that isn't a
-single operation, and is supposed to return the bytes left.
-
-Adding another error return would be nasty.
-
-We've had hacks like "squirrel away the actual error code in the task
-structure", but that tends to be unmaintainable because we have
-interrupts (and NMI's) doing their own possibly nested atomics, so
-even disabling preemption won't actually fix some of the nesting
-issues.
-
-All of these things make me think that the proper fix ends up being to
-make sure that our "fault_in_xyz()" functions simply should always
-handle all faults.
-
-Another option may be to teach the GUP code to actually check
-architecture-specific sub-page ranges.
-
-        Linus
+>
+> --
+> Peter Xu
+>
