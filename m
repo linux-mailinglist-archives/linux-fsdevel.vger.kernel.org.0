@@ -2,38 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A8CB3429EC3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 09:37:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 143B5429EDC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 09:44:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234310AbhJLHjC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Oct 2021 03:39:02 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:34702 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234164AbhJLHi7 (ORCPT
+        id S234344AbhJLHqo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Oct 2021 03:46:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42738 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234243AbhJLHqk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Oct 2021 03:38:59 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id EA78A22150;
-        Tue, 12 Oct 2021 07:36:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1634024216; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Tue, 12 Oct 2021 03:46:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634024678;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=4nD2ISDAf2TQ3t3VfHUt8r1cCwete3O5TAZWbE4kE7M=;
-        b=C6A/Psx27DoZPrXya2lWB+l7IwGjlMGmwcL8xgtP+rlT5//7r1Ou5LMxdw1roHmjKf3q7F
-        81xK5su5B8gm1HWP+lEF6NWpiv2Ko43ifsKNqSqqA1lnIYYJT+AHiZufyRXlgf0cF/5ivF
-        Cpowdql7MZF6RmK+IF0F45XrHXvkJIE=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 854B8A3B89;
-        Tue, 12 Oct 2021 07:36:54 +0000 (UTC)
-Date:   Tue, 12 Oct 2021 09:36:52 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Suren Baghdasaryan <surenb@google.com>
+        bh=5qXnnlO7kmq8KXinp8tIkwKgaF8XM9siD+0byK0/zq8=;
+        b=PURW0SUzTEZnsShmhYPR70zfxi31XpUysg6nrNzdnSFY8OZn4+onzw5ZMWAFN167nFb0Og
+        0fNLH/f+NJeEFucNcURfmfOTFTspAlmAL9ScrAYQ2SjCrV/fiuAE9f3fN5Q+mcTo3x7hhq
+        lRvYc9YBiJVbuQC47YTz7eOxsWj9+ik=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-565-N9ekFE9dOWuDbVujnvtkTQ-1; Tue, 12 Oct 2021 03:44:37 -0400
+X-MC-Unique: N9ekFE9dOWuDbVujnvtkTQ-1
+Received: by mail-wr1-f70.google.com with SMTP id 41-20020adf802c000000b00161123698e0so3204874wrk.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Oct 2021 00:44:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:to:cc:references:from:organization:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=5qXnnlO7kmq8KXinp8tIkwKgaF8XM9siD+0byK0/zq8=;
+        b=mxjd5+XZBj1AcvP5LZLhjxX1iThP/IqiLohfSiKx6xOq/lvIU4TEsXKID3DjMLE8ho
+         Xvk6mwzFZAl50qsGbsb7iG2yE1tvq7eVovt74vc07uwK4siZzULedNRzSvWicUgVWMDn
+         DfDV+VKGp0GNfdOseJ3qK4Nq0GpgesjiOvs9//iRgd1c4RHrwd8mPeAFTIkmP9RGy2kq
+         G4Ph2domWadRynnVNFK0eR9eS6rANfemSi7WZProoHvX2NqPQ8vGPlRylhOOS9u2Mge6
+         r/diJ9a/4fBhIRfr7KdmEavM56q5OYqo0zdXJ6Zxh3cXLjfRSvY5CRvz743TfKIJer6/
+         hvvQ==
+X-Gm-Message-State: AOAM533eiPHhQ7G5mdElZUaoZPOt5/e+VmfsErs+ezlq8v08+IMl3YUe
+        avqEs0eHUIrVqbbiXwXs5AEsdKXM+OWoaS2RIvoUXgWURXVbwodl7nHhvkFaXIy8IAA76gLVxb3
+        laEFCERRXzvw9NYEKUdkYUC9O4A==
+X-Received: by 2002:adf:ee8a:: with SMTP id b10mr21815789wro.335.1634024676373;
+        Tue, 12 Oct 2021 00:44:36 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxHGKdxQCouYshY4aHJhSF1VyN+YjnwylycEyRo5FvejOGeaHtR7VXF5SvMyOExKtPUdEbvdA==
+X-Received: by 2002:adf:ee8a:: with SMTP id b10mr21815766wro.335.1634024676163;
+        Tue, 12 Oct 2021 00:44:36 -0700 (PDT)
+Received: from [192.168.3.132] (p5b0c6a12.dip0.t-ipconnect.de. [91.12.106.18])
+        by smtp.gmail.com with ESMTPSA id s13sm1740601wmc.47.2021.10.12.00.43.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Oct 2021 00:44:35 -0700 (PDT)
+To:     Suren Baghdasaryan <surenb@google.com>,
+        Michal Hocko <mhocko@suse.com>
 Cc:     Kees Cook <keescook@chromium.org>, Pavel Machek <pavel@ucw.cz>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        David Hildenbrand <david@redhat.com>,
         John Hubbard <jhubbard@nvidia.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Colin Cross <ccross@google.com>,
@@ -51,7 +73,7 @@ Cc:     Kees Cook <keescook@chromium.org>, Pavel Machek <pavel@ucw.cz>,
         Peter Zijlstra <peterz@infradead.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         vincenzo.frascino@arm.com,
-        Chinwen Chang =?utf-8?B?KOW8temMpuaWhyk=?= 
+        =?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= 
         <chinwen.chang@mediatek.com>,
         Axel Rasmussen <axelrasmussen@google.com>,
         Andrea Arcangeli <aarcange@redhat.com>,
@@ -73,100 +95,57 @@ Cc:     Kees Cook <keescook@chromium.org>, Pavel Machek <pavel@ucw.cz>,
         cxfcosmos@gmail.com, LKML <linux-kernel@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-mm <linux-mm@kvack.org>,
-        kernel-team <kernel-team@android.com>,
-        Tim Murray <timmurray@google.com>
-Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
-Message-ID: <YWU7FELcxIFmr9uz@dhcp22.suse.cz>
-References: <YV8jB+kwU95hLqTq@dhcp22.suse.cz>
+        kernel-team <kernel-team@android.com>
+References: <92cbfe3b-f3d1-a8e1-7eb9-bab735e782f6@rasmusvillemoes.dk>
+ <20211007101527.GA26288@duo.ucw.cz>
+ <CAJuCfpGp0D9p3KhOWhcxMO1wEbo-J_b2Anc-oNwdycx4NTRqoA@mail.gmail.com>
+ <YV8jB+kwU95hLqTq@dhcp22.suse.cz>
  <CAJuCfpG-Nza3YnpzvHaS_i1mHds3nJ+PV22xTAfgwvj+42WQNA@mail.gmail.com>
  <YV8u4B8Y9AP9xZIJ@dhcp22.suse.cz>
  <CAJuCfpHAG_C5vE-Xkkrm2kynTFF-Jd06tQoCWehHATL0W2mY_g@mail.gmail.com>
- <202110071111.DF87B4EE3@keescook>
- <YV/mhyWH1ZwWazdE@dhcp22.suse.cz>
- <202110081344.FE6A7A82@keescook>
- <YWP3c/bozz5npQ8O@dhcp22.suse.cz>
+ <202110071111.DF87B4EE3@keescook> <YV/mhyWH1ZwWazdE@dhcp22.suse.cz>
+ <202110081344.FE6A7A82@keescook> <YWP3c/bozz5npQ8O@dhcp22.suse.cz>
  <CAJuCfpHQVMM4+6Lm_EnFk06+KrOjSjGA19K2cv9GmP3k9LW5vg@mail.gmail.com>
- <CAJuCfpHaF1e0V=wAoNO36nRL2A5EaNnuQrvZ2K3wh6PL6FrwZQ@mail.gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
+Message-ID: <26f9db1e-69e9-1a54-6d49-45c0c180067c@redhat.com>
+Date:   Tue, 12 Oct 2021 09:43:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJuCfpHaF1e0V=wAoNO36nRL2A5EaNnuQrvZ2K3wh6PL6FrwZQ@mail.gmail.com>
+In-Reply-To: <CAJuCfpHQVMM4+6Lm_EnFk06+KrOjSjGA19K2cv9GmP3k9LW5vg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 11-10-21 18:20:25, Suren Baghdasaryan wrote:
-> On Mon, Oct 11, 2021 at 6:18 PM Suren Baghdasaryan <surenb@google.com> wrote:
-> >
-> > On Mon, Oct 11, 2021 at 1:36 AM Michal Hocko <mhocko@suse.com> wrote:
-> > >
-> > > On Fri 08-10-21 13:58:01, Kees Cook wrote:
-> > > > - Strings for "anon" specifically have no required format (this is good)
-> > > >   it's informational like the task_struct::comm and can (roughly)
-> > > >   anything. There's no naming convention for memfds, AF_UNIX, etc. Why
-> > > >   is one needed here? That seems like a completely unreasonable
-> > > >   requirement.
-> > >
-> > > I might be misreading the justification for the feature. Patch 2 is
-> > > talking about tools that need to understand memeory usage to make
-> > > further actions. Also Suren was suggesting "numbering convetion" as an
-> > > argument against.
-> > >
-> > > So can we get a clear example how is this being used actually? If this
-> > > is just to be used to debug by humans than I can see an argument for
-> > > human readable form. If this is, however, meant to be used by tools to
-> > > make some actions then the argument for strings is much weaker.
-> >
-> > The simplest usecase is when we notice that a process consumes more
-> > memory than usual and we do "cat /proc/$(pidof my_process)/maps" to
-> > check which area is contributing to this growth. The names we assign
-> > to anonymous areas are descriptive enough for a developer to get an
-> > idea where the increased consumption is coming from and how to proceed
-> > with their investigation.
-> > There are of course cases when tools are involved, but the end-user is
-> > always a human and the final report should contain easily
-> > understandable data.
+> I'm still evaluating the proposal to use memfds but I'm not sure if
+> the issue that David Hildenbrand mentioned about additional memory
+> consumed in pagecache (which has to be addressed) is the only one we
+> will encounter with this approach. If anyone knows of any potential
+> issues with using memfds as named anonymous memory, I would really
+> appreciate your feedback before I go too far in that direction.
 
-OK, it would have been much more preferable to be explicit about this
-main use case from the very beginning. Just to make sure we are at the
-same page. Is the primary usecase usage and bug reporting?
+[MAP_PRIVATE memfd only behave that way with 4k, not with huge pages, so 
+I think it just has to be fixed. It doesn't make any sense to allocate a 
+page for the pagecache ("populate the file") when accessing via a 
+private mapping that's supposed to leave the file untouched]
 
-My initial understanding was that at userspace managed memory management
-could make an educated guess about targeted reclaim (e.g. MADV_{FREE,COLD,PAGEOUT}
-for cached data in memory like uncompressed images/data). Such a usecase
-would clearly require a standardized id/naming convention to be
-application neutral.
+My gut feeling is if you really need a string as identifier, then try 
+going with memfds. Yes, we might hit some road blocks to be sorted out, 
+but it just logically makes sense to me: Files have names. These names 
+exist before mapping and after mapping. They "name" the content.
 
-> > IIUC, the main argument here is whether the userspace can provide
-> > tools to perform the translations between ids and names, with the
-> > kernel accepting and reporting ids instead of strings. Technically
-> > it's possible, but to be practical that conversion should be fast
-> > because we will need to make name->id conversion potentially for each
-> > mmap. On the consumer side the performance is not as critical, but the
-> > fact that instead of dumping /proc/$pid/maps we will have to parse the
-> > file, do id->name conversion and replace all [anon:id] with
-> > [anon:name] would be an issue when we do that in bulk, for example
-> > when collecting system-wide data for a bugreport.
+Maybe it's just me, but the whole interface, setting the name via a 
+prctl after the mapping was already instantiated doesn't really spark 
+joy at my end. That's not a strong pushback, but if we can avoid it 
+using something that's already there, that would be very much preferred.
 
-Whether you use ids or human readable strings you still have to
-understand the underlying meaning to make any educated guess. Let me
-give you an example. Say I have an application with a memory leak. Right
-now I can only tell that it is anonymous memory growing but it is not
-clear who uses that anonymous. You are adding a means to tell different
-users appart. That is really helpful. Now I know this is an anon
-user 1234 or MySuperAnonMemory. Neither of the will not tell me more
-without a id/naming convention or reading the code. A convention can be
-useful for the most common users (e.g. a specific allocator) but I am
-rather dubious there are many more that would be _generally_ recognized
-without some understanding of the said application.
-
-Maybe the situation in Android is different because the runtime is more
-coupled but is it reasonable to expect any common naming conventions for
-general Linux platforms?
-
-I am slightly worried that we have spent way too much time talking
-specifics about id->name translation rather than the actual usability
-of the token.
 -- 
-Michal Hocko
-SUSE Labs
+Thanks,
+
+David / dhildenb
+
