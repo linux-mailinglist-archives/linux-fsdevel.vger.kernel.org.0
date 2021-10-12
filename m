@@ -2,64 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C6A642A4D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 14:49:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B1D642A505
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 15:01:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236494AbhJLMvJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Oct 2021 08:51:09 -0400
-Received: from verein.lst.de ([213.95.11.211]:41317 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236326AbhJLMvI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Oct 2021 08:51:08 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 8972067373; Tue, 12 Oct 2021 14:49:04 +0200 (CEST)
-Date:   Tue, 12 Oct 2021 14:49:04 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Shreeya Patel <shreeya.patel@collabora.com>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH 10/11] unicode: Add utf8-data module
-Message-ID: <20211012124904.GB9518@lst.de>
-References: <20210915070006.954653-1-hch@lst.de> <20210915070006.954653-11-hch@lst.de> <87wnmipjrw.fsf@collabora.com>
+        id S236593AbhJLNDf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Oct 2021 09:03:35 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:13728 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232729AbhJLNDd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 12 Oct 2021 09:03:33 -0400
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.54])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4HTG3F4r5mzWMyF;
+        Tue, 12 Oct 2021 20:59:53 +0800 (CST)
+Received: from dggpeml500017.china.huawei.com (7.185.36.243) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.8; Tue, 12 Oct 2021 21:01:30 +0800
+Received: from huawei.com (10.175.103.91) by dggpeml500017.china.huawei.com
+ (7.185.36.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.8; Tue, 12 Oct
+ 2021 21:01:29 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC:     <viro@zeniv.linux.org.uk>
+Subject: [PATCH] chardev: fix error handling in cdev_device_add()
+Date:   Tue, 12 Oct 2021 21:09:15 +0800
+Message-ID: <20211012130915.3426584-1-yangyingliang@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wnmipjrw.fsf@collabora.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.103.91]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpeml500017.china.huawei.com (7.185.36.243)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[fullquote deleted]
+If dev->devt is not set, cdev_device_add() will not add the cdev,
+when device_add failed, cdev_del() is not needed, so delete cdev
+only when dev->devt is set.
 
-On Tue, Oct 12, 2021 at 08:25:23AM -0300, Gabriel Krisman Bertazi wrote:
-> > @@ -187,6 +207,7 @@ EXPORT_SYMBOL(utf8_load);
-> >  
-> >  void utf8_unload(struct unicode_map *um)
-> >  {
-> > +	symbol_put(utf8_data_table);
-> 
-> This triggers a BUG_ON if the symbol isn't loaded/loadable,
-> i.e. ext4_fill_super fails early.  I'm not sure how to fix it, though.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 233ed09d7fda ("chardev: add helper function to register...")
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+---
+ fs/char_dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Does this fix it?
-
-diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
-index 38ca824f10158..67aaadc3ab072 100644
---- a/fs/unicode/utf8-core.c
-+++ b/fs/unicode/utf8-core.c
-@@ -207,8 +207,10 @@ EXPORT_SYMBOL(utf8_load);
+diff --git a/fs/char_dev.c b/fs/char_dev.c
+index ba0ded7842a7..3f667292608c 100644
+--- a/fs/char_dev.c
++++ b/fs/char_dev.c
+@@ -547,7 +547,7 @@ int cdev_device_add(struct cdev *cdev, struct device *dev)
+ 	}
  
- void utf8_unload(struct unicode_map *um)
- {
--	symbol_put(utf8_data_table);
--	kfree(um);
-+	if (um) {
-+		symbol_put(utf8_data_table);
-+		kfree(um);
-+	}
- }
- EXPORT_SYMBOL(utf8_unload);
+ 	rc = device_add(dev);
+-	if (rc)
++	if (rc && dev->devt)
+ 		cdev_del(cdev);
  
+ 	return rc;
+-- 
+2.25.1
+
