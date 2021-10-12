@@ -2,391 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8892442ABD6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 20:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F5CD42ABE8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 20:26:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233414AbhJLS0a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Oct 2021 14:26:30 -0400
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com ([66.163.184.153]:45784
-        "EHLO sonic309-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233398AbhJLS0a (ORCPT
+        id S233657AbhJLS2t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Oct 2021 14:28:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58430 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232281AbhJLS2s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Oct 2021 14:26:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1634063066; bh=PXqUIl8UCJ3OiQD1QJp7cDSo/kv/f08o4n+Fy86ADvg=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=ukTrz20MxD1PJQq4j9N4Fs4yOzsdbJBNSK83uuqGilLDVxNZNcL+4bhwx9mV9nfGLQLChT4FBz7NYEWn/zYrYlalzIwrbUIkmL0or9VtAh8Vd6rkBxIoMRNBengFffnBaUBLAiNrU6W4bnodlEdyxalfgEbgY/PGdfvur1nDdtXwp8Ydk2i0CXpYQrD42uQl//YhqTLSw1T+F9gi1m2MyvgcCAoa0axkBEt0c9eZABqvSCqeL6d+7ic+C27RBRSun0LVCzC5SwYTacmfjx6OSvxpmhzroUufMB/jo+OxuMnA3sw6rJY5USNROdkLIeAip3J7/AxpACXJDHPIDZtBUg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1634063066; bh=NwvQylKZdXqoQRoranQ0wTIwY+WWHjhl8CR9npAypMN=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=K8zq4qeYpMXUqRWOcNypM26Yk0eD4Fs2xSV2iKCSmqvHRCV+ofAAKOgPla8CzVs/LwMYRWOl7LnF7HjXYRja0pNL1+y9MV82aBmpm8Tpmul4dYkP+vFpVMT3mGKlauSGIbUE4uKzJx8lNrFaE69AG5GqrunzIZ1z/gfF82l4FQgDZgpSI1jrWqupCqPn60nDSB8MLXBsJw+o5oa6Qj+SEpAM85U45+4krC36diBkzFx7dFbMQovj3BzlDraZuyBwlq8RZ+qj/QZF5uKdnbGRh1aIdNiLsXuxi/kRGA+oWRLVZ3p46f4xQmh5n9YjKnDOgfuDJKLz3dsYv1emd6K5qg==
-X-YMail-OSG: bWeKhy8VM1n187rjiOYlgaYUZni0gfPL_ugUXJltgSPKLa9ZwAGfwPiqYlHQFs1
- S38KU2NnP82tLpo5VZTsH7zmlYwZFs1BiTloiHCDrs7mX8w.rBPAMFyIjAdUhtkJiDlmxC9l0hds
- bz2CK.twOU.ynOz_DJiiAOdMCOiKA5HCDrQIRzNynGQYrt.EZ2O9UKtHJsw5Tt3TCwj2JMvP5upj
- d_2CCN2IBoiglnBVoEyqGAIv6TrHcZgCWut_87sS.USZpueKZeROYXDE2K4N.7lruZmXfOJQiPxJ
- 29c0DNLyfzbUWmj2hxpkleQMTdIW1v3TJg7xp1y.6iLg_3oAYoGL4NzCEcJ.in2MFaWbPYZ.n2sI
- aSY1yg5DQEwDj3IUP72jZtAcvIzNUcYuNEcrBdtApLRA5bAFgdvzaAgVd79R3gKoMHp79Aut5sWH
- iD_thj1zr2vW4vaV1CWm9X3TpAN1Yfp1mv5JDB2M5Nhx68pJg6TPQ9n7bCEzpExHdBlDB8kvcbrD
- YJFVn3RFQxj6t1Wn_D30oobScRXWXIiKVGSwg5Dt273MQO_CwUDqYEmH9sRBWC49ZzYSGZAqrEmP
- SviuxXnrU7_irpP5OD5lKZPjKjJBXpFlmVwS75k4S16bpDoMff6ErNGCt2n3hC9AmgyR4BuAvEwU
- 7XTcxi9i.j4jJASlUIIbgseQIXimBwthIcYjtwNv9e.kM5ELj600cx6.e01BlDAXo0IugbEUcx0.
- N.zUaSx_QqtDIXYNfCbVSsO4sqmTVHbn36uxvmG2HzHCqokVGPMN3W27.IlSeTmduQvSavDg73WX
- ynHoCYizLUdipv9RwQiwmpXHUnTdZ8CSZ6ba6KmWJ_0rI68jjuSG07lm3rmiXWbNPblJOUNhEA1n
- 5selaGlTjVJ1QKnT5_qUR1OR4NeDvCebtjURyP0cUmQDPd2Et25F4mG1h.Mj94O.J3wTi3fEAjKf
- zQT.gyXBIu1GnwySQaz9UdMlQvvvLCI3uxYI.9n6_I_Qt0Zf91G.Jf0AfdIKmtv.yyerXOc_rJ79
- KOT6dZH7VJk516OH4SfCi7CR4KexJInvunV04lSArbr00fAHvifFlkk7YWD9gLjJjGrUZmSTW_sh
- gnbwneibGiNaGG5TegrZjhvSIV6bpAXysU_i09M7W7YMKcJn_n3MAXZtUtXy4BGdcM34B.HRMbzY
- cvSo3J5_8t.FPhGzE2bOY3ldjN8SyDZvbnbuuJR3H0s9MOx_kFhzO0JTpueV.XQORXfstw.DvTxB
- gPS_dtxZpkNA2rykDa.0oO6rUbBwvdkLno0SFL50faqfC49DyK3oy4gfolJoqJ.qwJG2A68xIDms
- GYMJtPrO7Mlcm4twLqt3AJ1NrKmXXWdb9Y_vrHAxRsP6ATSq_NOQeAlubXTuPDFvKDlmZqzU0g.Q
- ogMc3evcbdZJWNGjanh67cq.9O2qse1xqyqjEPkCEKhzYQQTC4KyDTkdVGwjy1uwBkRpbsiPH8XO
- zi1tqSzS4xX8tYYu1Bsoan8hFpaJOrxin6Rbe2v_i2fKsTQ9dBttY1LFKZ9j2tP0gilgJL.EaZhx
- AfDs7WSlklHGPptAj0Cqp2OTHJpNyVBt_ZVfOo4ShwAYHtFqMQOcmRDWxhuLx5y4DZTVswnvGKew
- thiGF_xL27jtbg3devb_ZOQc8R2zwG7srkRwBy01preyWajEvWwRm3OqcYc3HGQnVmD4sGCuEYHd
- xAJC7zdM.4rm8lPoHV84Wuf6CAqH3LE0yogk3DcxKEpvWlrD7pVWyuUGnZYSZV6fHk0Hl94.pNxv
- l_kP0T_KCyHkt1Z3aTAq8IUqoDD3tBit6ZJuM1ypnc9zUW7EF89ptHSzu0YNI2fi.EIwd9kjzyjA
- nzO6f_wWCY3CH6Stjr4WzUEpnxjUdpnDyYJRFOzl5dejj04rsxsfZaviD873nUWVM5B8R7fIuztM
- N6QbsOZHg8UtF9a.8X.qvwsDFQXg9kTyCiQFq6xE81FqhLS6CNtJUl7eJ7dYmoL70.xLHYz5yw0d
- t58LnqYdqIkj.nc1dRyf6VTY.G8ytR7VY48eECZdjM4SUmk7dA836kpDbQ.vdKFxCWa0FCd10bJx
- ll31R8YStVjKI40NvjVi.EyAoDRmnmU_DvUKXDZMl4ijKMdngJrjR4sOQNF4g72dDEkIppJIcozE
- Pn49Tlx4y4j4KeOdxEGF681arV6CT1bhY2CTlD79JvDKoyqSUrhKU87wGPydNMg1phhOqNpRpKXA
- mJTH15QY9WH.F6Nqq7ewBfqBvqzitotYm28quQ4oEObVfgNWbJr2cxHnd.JlMyM1epF8G.4aaCrB
- dYOZ2i3KCNw--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Tue, 12 Oct 2021 18:24:26 +0000
-Received: by kubenode510.mail-prod1.omega.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID b106afb164103541d655d2c85a06fb57;
-          Tue, 12 Oct 2021 18:24:23 +0000 (UTC)
-Subject: Re: [PATCH v2 2/2] fuse: Send security context of inode on file
- creation
-To:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        miklos@szeredi.hu
-Cc:     virtio-fs@redhat.com, chirantan@chromium.org,
-        stephen.smalley.work@gmail.com, dwalsh@redhat.com,
-        omosnace@redhat.com, Casey Schaufler <casey@schaufler-ca.com>
-References: <20211012180624.447474-1-vgoyal@redhat.com>
- <20211012180624.447474-3-vgoyal@redhat.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <3ee8ffdb-ab64-4b7d-1030-c370a1c0e3a8@schaufler-ca.com>
-Date:   Tue, 12 Oct 2021 11:24:23 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Tue, 12 Oct 2021 14:28:48 -0400
+Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6564C061570
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Oct 2021 11:26:46 -0700 (PDT)
+Received: by mail-qk1-x734.google.com with SMTP id c7so20282070qka.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Oct 2021 11:26:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=UTuSq4pUiA+lEbguKdAALIojpT52sPH6If+YjkHNeQk=;
+        b=0VGUhp8rfAYh5i2ID6ejSb31wvZKXwBP2ikdcYiyNZDLb52wiJKT8E8mZ7D6P2T2aO
+         T8YT3281DZm0X7na/m1UZbkOy8LfbYQJrgo6GjyLk7r1unw/EwelmR89447vwuH+PcV6
+         GWeavNsaJ0KokPwmAqJpZN6iXbTM7YvKyEYMQ9xdSLic6ENDAhIbilbAlUhcZkOhXWPM
+         EPsBasZbFrlPaLp0UiKdCtM1ULi6hGSvN/BbZaNBbGoayHRrZsCVtXJBz9Fb0evZfcYZ
+         MOiTknGB2T05zFSD0EPWC/e1AQYKxrCITmCoRLSV9z+s2+R+7en/O5gvFz7UEac7GEfW
+         cPkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=UTuSq4pUiA+lEbguKdAALIojpT52sPH6If+YjkHNeQk=;
+        b=aH+n5vqvrYQyL2Lat6anCcas+224HVpPmw+4VRwzFdzQD6laKG3H+NAcQw6ESxPL2N
+         H5jmBpxO0S/fK2lcQoffb2UOL5Bk814cSEZ3614xovjYhdOk7wKyCF/qvDJLAufVBxWu
+         oi1cjVpVsAwcFpp1HJfxjxJ0FrOTaeqhS1s0UBRHbhgmEYR6Zh6eyXGT6RXNf5LYqmL/
+         mCVAWF1IQ/diDyhh7pozkpvyQ4kD5q2O9Exf37C5p+VP+enIo/q/1VSepR6drUb2yzgE
+         vwrh+TYbBHW9+HxGozAeZAnkHfB4J4KuELLNIgd1g14KPQ98Xi0F2BE0OhWX3tWZENQq
+         Gzjw==
+X-Gm-Message-State: AOAM531bu3W0M2GEmNeVKEU57rMlOjWAD4xvOHLihjmIHY/drLuSTIaI
+        g+xIu5IKp3XMeBgyBuhm/rIs4w==
+X-Google-Smtp-Source: ABdhPJyIGKWkZNgBeo4x1xYLqMnW+mHsUQ4qQbb22DOfdPjwgy6Sbpkn6u/PRV2Qrzzp5A7pP2Ve4A==
+X-Received: by 2002:a05:620a:1a12:: with SMTP id bk18mr11319299qkb.266.1634063206025;
+        Tue, 12 Oct 2021 11:26:46 -0700 (PDT)
+Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
+        by smtp.gmail.com with ESMTPSA id b20sm6579357qtt.2.2021.10.12.11.26.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Oct 2021 11:26:45 -0700 (PDT)
+Date:   Tue, 12 Oct 2021 14:26:44 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     Michal Hocko <mhocko@suse.com>, Kees Cook <keescook@chromium.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        David Hildenbrand <david@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Colin Cross <ccross@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        vincenzo.frascino@arm.com,
+        Chinwen Chang =?utf-8?B?KOW8temMpuaWhyk=?= 
+        <chinwen.chang@mediatek.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jann Horn <jannh@google.com>, apopple@nvidia.com,
+        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
+        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
+        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
+        Chris Hyser <chris.hyser@oracle.com>,
+        Peter Collingbourne <pcc@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
+        Rolf Eike Beer <eb@emlix.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
+        cxfcosmos@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        kernel-team <kernel-team@android.com>,
+        Tim Murray <timmurray@google.com>
+Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
+Message-ID: <YWXTZOXQ/NpoDJFI@cmpxchg.org>
+References: <YV8u4B8Y9AP9xZIJ@dhcp22.suse.cz>
+ <CAJuCfpHAG_C5vE-Xkkrm2kynTFF-Jd06tQoCWehHATL0W2mY_g@mail.gmail.com>
+ <202110071111.DF87B4EE3@keescook>
+ <YV/mhyWH1ZwWazdE@dhcp22.suse.cz>
+ <202110081344.FE6A7A82@keescook>
+ <YWP3c/bozz5npQ8O@dhcp22.suse.cz>
+ <CAJuCfpHQVMM4+6Lm_EnFk06+KrOjSjGA19K2cv9GmP3k9LW5vg@mail.gmail.com>
+ <CAJuCfpHaF1e0V=wAoNO36nRL2A5EaNnuQrvZ2K3wh6PL6FrwZQ@mail.gmail.com>
+ <YWT6Ptp/Uo4QGeP4@cmpxchg.org>
+ <CAJuCfpERX-nqHkYzx8FAi_DuOU1vkoV5ppCAhLHziOm7o7wj6g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20211012180624.447474-3-vgoyal@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.19116 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJuCfpERX-nqHkYzx8FAi_DuOU1vkoV5ppCAhLHziOm7o7wj6g@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/12/2021 11:06 AM, Vivek Goyal wrote:
-> When a new inode is created, send its security context to server along
-> with creation request (FUSE_CREAT, FUSE_MKNOD, FUSE_MKDIR and FUSE_SYMLINK).
-> This gives server an opportunity to create new file and set security
-> context (possibly atomically). In all the configurations it might not
-> be possible to set context atomically.
->
-> Like nfs and ceph, use security_dentry_init_security() to dermine security
-> context of inode and send it with create, mkdir, mknod, and symlink requests.
->
-> Following is the information sent to server.
->
-> - struct fuse_secctxs.
->   This contains total number of security contexts being sent.
->
-> - struct fuse_secctx.
->   This contains total size of security context which follows this structure.
->   There is one fuse_secctx instance per security context.
->
-> - xattr name string.
->   This string represents name of xattr which should be used while setting
->   security context. As of now it is hardcoded to "security.selinux".
+On Mon, Oct 11, 2021 at 10:36:24PM -0700, Suren Baghdasaryan wrote:
+> On Mon, Oct 11, 2021 at 8:00 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
+> >
+> > On Mon, Oct 11, 2021 at 06:20:25PM -0700, Suren Baghdasaryan wrote:
+> > > On Mon, Oct 11, 2021 at 6:18 PM Suren Baghdasaryan <surenb@google.com> wrote:
+> > > >
+> > > > On Mon, Oct 11, 2021 at 1:36 AM Michal Hocko <mhocko@suse.com> wrote:
+> > > > >
+> > > > > On Fri 08-10-21 13:58:01, Kees Cook wrote:
+> > > > > > - Strings for "anon" specifically have no required format (this is good)
+> > > > > >   it's informational like the task_struct::comm and can (roughly)
+> > > > > >   anything. There's no naming convention for memfds, AF_UNIX, etc. Why
+> > > > > >   is one needed here? That seems like a completely unreasonable
+> > > > > >   requirement.
+> > > > >
+> > > > > I might be misreading the justification for the feature. Patch 2 is
+> > > > > talking about tools that need to understand memeory usage to make
+> > > > > further actions. Also Suren was suggesting "numbering convetion" as an
+> > > > > argument against.
+> > > > >
+> > > > > So can we get a clear example how is this being used actually? If this
+> > > > > is just to be used to debug by humans than I can see an argument for
+> > > > > human readable form. If this is, however, meant to be used by tools to
+> > > > > make some actions then the argument for strings is much weaker.
+> > > >
+> > > > The simplest usecase is when we notice that a process consumes more
+> > > > memory than usual and we do "cat /proc/$(pidof my_process)/maps" to
+> > > > check which area is contributing to this growth. The names we assign
+> > > > to anonymous areas are descriptive enough for a developer to get an
+> > > > idea where the increased consumption is coming from and how to proceed
+> > > > with their investigation.
+> > > > There are of course cases when tools are involved, but the end-user is
+> > > > always a human and the final report should contain easily
+> > > > understandable data.
+> > > >
+> > > > IIUC, the main argument here is whether the userspace can provide
+> > > > tools to perform the translations between ids and names, with the
+> > > > kernel accepting and reporting ids instead of strings. Technically
+> > > > it's possible, but to be practical that conversion should be fast
+> > > > because we will need to make name->id conversion potentially for each
+> > > > mmap. On the consumer side the performance is not as critical, but the
+> > > > fact that instead of dumping /proc/$pid/maps we will have to parse the
+> > > > file, do id->name conversion and replace all [anon:id] with
+> > > > [anon:name] would be an issue when we do that in bulk, for example
+> > > > when collecting system-wide data for a bugreport.
+> >
+> > Is that something you need to do client-side? Or could the bug tool
+> > upload the userspace-maintained name:ids database alongside the
+> > /proc/pid/maps dump for external processing?
+> 
+> You can generate a bugreport and analyze it locally or submit it as an
+> attachment to a bug for further analyzes.
+> Sure, we can attach the id->name conversion table to the bugreport but
+> either way, some tool would have to post-process it to resolve the
+> ids. If we are not analyzing the results immediately then that step
+> can be postponed and I think that's what you mean? If so, then yes,
+> that is correct.
 
-Where is the name hardcoded? I looks as if you're getting the attribute
-name along with the value from security_dentry_init_security().
+Right, somebody needs to do it at some point, but I suppose it's less
+of a problem if a developer machine does it than a mobile device.
 
->
-> - security context.
->   This is the actual security context whose size is specified in fuse_secctx
->   struct.
->
-> This patch is modified version of patch from
-> Chirantan Ekbote <chirantan@chromium.org>
->
-> v2:
-> - Added "fuse_secctxs" structure where one can specify how many security
->   contexts are being sent. This can be useful down the line if we
->   have more than one security contexts being set.
->
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> ---
->  fs/fuse/dir.c             | 115 ++++++++++++++++++++++++++++++++++++--
->  fs/fuse/fuse_i.h          |   3 +
->  fs/fuse/inode.c           |   4 +-
->  include/uapi/linux/fuse.h |  20 +++++++
->  4 files changed, 136 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index d9b977c0f38d..ce62593a61f9 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -17,6 +17,9 @@
->  #include <linux/xattr.h>
->  #include <linux/iversion.h>
->  #include <linux/posix_acl.h>
-> +#include <linux/security.h>
-> +#include <linux/types.h>
-> +#include <linux/kernel.h>
->  
->  static void fuse_advise_use_readdirplus(struct inode *dir)
->  {
-> @@ -456,6 +459,66 @@ static struct dentry *fuse_lookup(struct inode *dir, struct dentry *entry,
->  	return ERR_PTR(err);
->  }
->  
-> +static int get_security_context(struct dentry *entry, umode_t mode,
-> +				void **security_ctx, u32 *security_ctxlen)
-> +{
-> +	struct fuse_secctx *fsecctx;
-> +	struct fuse_secctxs *fsecctxs;
-> +	void *ctx, *full_ctx;
-> +	u32 ctxlen, full_ctxlen;
-> +	int err = 0;
-> +	const char *name;
-> +
-> +	err = security_dentry_init_security(entry, mode, &entry->d_name,
-> +					    &name, &ctx, &ctxlen);
-> +	if (err) {
-> +		if (err != -EOPNOTSUPP)
-> +			goto out_err;
-> +		/* No LSM is supporting this security hook. Ignore error */
-> +		err = 0;
-> +		ctxlen = 0;
-> +	}
-> +
-> +	if (ctxlen > 0) {
-> +		void *ptr;
-> +
-> +		full_ctxlen = sizeof(*fsecctxs) + sizeof(*fsecctx) +
-> +			      strlen(name) + ctxlen + 1;
-> +		full_ctx = kzalloc(full_ctxlen, GFP_KERNEL);
-> +		if (!full_ctx) {
-> +			err = -ENOMEM;
-> +			kfree(ctx);
-> +			goto out_err;
-> +		}
-> +
-> +		ptr = full_ctx;
-> +		fsecctxs = (struct fuse_secctxs*) ptr;
-> +		fsecctxs->nr_secctx = 1;
-> +		ptr += sizeof(*fsecctxs);
-> +
-> +		fsecctx = (struct fuse_secctx*) ptr;
-> +		fsecctx->size = ctxlen;
-> +		ptr += sizeof(*fsecctx);
-> +
-> +		strcpy(ptr, name);
-> +		ptr += strlen(name) + 1;
-> +		memcpy(ptr, ctx, ctxlen);
-> +		kfree(ctx);
-> +	} else {
-> +		full_ctxlen = sizeof(*fsecctxs);
-> +		full_ctx = kzalloc(full_ctxlen, GFP_KERNEL);
-> +		if (!full_ctx) {
-> +			err = -ENOMEM;
-> +			goto out_err;
-> +		}
-> +	}
-> +
-> +	*security_ctxlen = full_ctxlen;
-> +	*security_ctx = full_ctx;
-> +out_err:
-> +	return err;
-> +}
-> +
->  /*
->   * Atomic create+open operation
->   *
-> @@ -476,6 +539,8 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
->  	struct fuse_entry_out outentry;
->  	struct fuse_inode *fi;
->  	struct fuse_file *ff;
-> +	void *security_ctx = NULL;
-> +	u32 security_ctxlen;
->  
->  	/* Userspace expects S_IFREG in create mode */
->  	BUG_ON((mode & S_IFMT) != S_IFREG);
-> @@ -517,6 +582,18 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
->  	args.out_args[0].value = &outentry;
->  	args.out_args[1].size = sizeof(outopen);
->  	args.out_args[1].value = &outopen;
-> +
-> +	if (fm->fc->init_security) {
-> +		err = get_security_context(entry, mode, &security_ctx,
-> +					   &security_ctxlen);
-> +		if (err)
-> +			goto out_put_forget_req;
-> +
-> +		args.in_numargs = 3;
-> +		args.in_args[2].size = security_ctxlen;
-> +		args.in_args[2].value = security_ctx;
-> +	}
-> +
->  	err = fuse_simple_request(fm, &args);
->  	if (err)
->  		goto out_free_ff;
-> @@ -554,6 +631,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
->  
->  out_free_ff:
->  	fuse_file_free(ff);
-> +	kfree(security_ctx);
->  out_put_forget_req:
->  	kfree(forget);
->  out_err:
-> @@ -613,13 +691,15 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
->   */
->  static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
->  			    struct inode *dir, struct dentry *entry,
-> -			    umode_t mode)
-> +			    umode_t mode, bool init_security)
->  {
->  	struct fuse_entry_out outarg;
->  	struct inode *inode;
->  	struct dentry *d;
->  	int err;
->  	struct fuse_forget_link *forget;
-> +	void *security_ctx = NULL;
-> +	u32 security_ctxlen = 0;
->  
->  	if (fuse_is_bad(dir))
->  		return -EIO;
-> @@ -633,7 +713,29 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
->  	args->out_numargs = 1;
->  	args->out_args[0].size = sizeof(outarg);
->  	args->out_args[0].value = &outarg;
-> +
-> +	if (init_security) {
-> +		unsigned short idx = args->in_numargs;
-> +
-> +		if ((size_t)idx >= ARRAY_SIZE(args->in_args)) {
-> +			err = -ENOMEM;
-> +			goto out_put_forget_req;
-> +		}
-> +
-> +		err = get_security_context(entry, mode, &security_ctx,
-> +					   &security_ctxlen);
-> +		if (err)
-> +			goto out_put_forget_req;
-> +
-> +		if (security_ctxlen > 0) {
-> +			args->in_args[idx].size = security_ctxlen;
-> +			args->in_args[idx].value = security_ctx;
-> +			args->in_numargs++;
-> +		}
-> +	}
-> +
->  	err = fuse_simple_request(fm, args);
-> +	kfree(security_ctx);
->  	if (err)
->  		goto out_put_forget_req;
->  
-> @@ -691,7 +793,7 @@ static int fuse_mknod(struct user_namespace *mnt_userns, struct inode *dir,
->  	args.in_args[0].value = &inarg;
->  	args.in_args[1].size = entry->d_name.len + 1;
->  	args.in_args[1].value = entry->d_name.name;
-> -	return create_new_entry(fm, &args, dir, entry, mode);
-> +	return create_new_entry(fm, &args, dir, entry, mode, fm->fc->init_security);
->  }
->  
->  static int fuse_create(struct user_namespace *mnt_userns, struct inode *dir,
-> @@ -719,7 +821,8 @@ static int fuse_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
->  	args.in_args[0].value = &inarg;
->  	args.in_args[1].size = entry->d_name.len + 1;
->  	args.in_args[1].value = entry->d_name.name;
-> -	return create_new_entry(fm, &args, dir, entry, S_IFDIR);
-> +	return create_new_entry(fm, &args, dir, entry, S_IFDIR,
-> +				fm->fc->init_security);
->  }
->  
->  static int fuse_symlink(struct user_namespace *mnt_userns, struct inode *dir,
-> @@ -735,7 +838,8 @@ static int fuse_symlink(struct user_namespace *mnt_userns, struct inode *dir,
->  	args.in_args[0].value = entry->d_name.name;
->  	args.in_args[1].size = len;
->  	args.in_args[1].value = link;
-> -	return create_new_entry(fm, &args, dir, entry, S_IFLNK);
-> +	return create_new_entry(fm, &args, dir, entry, S_IFLNK,
-> +				fm->fc->init_security);
->  }
->  
->  void fuse_update_ctime(struct inode *inode)
-> @@ -915,7 +1019,8 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
->  	args.in_args[0].value = &inarg;
->  	args.in_args[1].size = newent->d_name.len + 1;
->  	args.in_args[1].value = newent->d_name.name;
-> -	err = create_new_entry(fm, &args, newdir, newent, inode->i_mode);
-> +	err = create_new_entry(fm, &args, newdir, newent, inode->i_mode,
-> +			       false);
->  	/* Contrary to "normal" filesystems it can happen that link
->  	   makes two "logical" inodes point to the same "physical"
->  	   inode.  We invalidate the attributes of the old one, so it
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 319596df5dc6..885f34f9967f 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -765,6 +765,9 @@ struct fuse_conn {
->  	/* Propagate syncfs() to server */
->  	unsigned int sync_fs:1;
->  
-> +	/* Initialize security xattrs when creating a new inode */
-> +	unsigned int init_security:1;
-> +
->  	/** The number of requests waiting for completion */
->  	atomic_t num_waiting;
->  
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 36cd03114b6d..343bc9cfbd92 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1152,6 +1152,8 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
->  			}
->  			if (arg->flags & FUSE_SETXATTR_EXT)
->  				fc->setxattr_ext = 1;
-> +			if (arg->flags & FUSE_SECURITY_CTX)
-> +				fc->init_security = 1;
->  		} else {
->  			ra_pages = fc->max_read / PAGE_SIZE;
->  			fc->no_lock = 1;
-> @@ -1195,7 +1197,7 @@ void fuse_send_init(struct fuse_mount *fm)
->  		FUSE_PARALLEL_DIROPS | FUSE_HANDLE_KILLPRIV | FUSE_POSIX_ACL |
->  		FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
->  		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
-> -		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT;
-> +		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_SECURITY_CTX;
->  #ifdef CONFIG_FUSE_DAX
->  	if (fm->fc->dax)
->  		ia->in.flags |= FUSE_MAP_ALIGNMENT;
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index 2fe54c80051a..b31a0f79fde8 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -986,4 +986,24 @@ struct fuse_syncfs_in {
->  	uint64_t	padding;
->  };
->  
-> +/*
-> + * For each security context, send fuse_secctx with size of security context
-> + * fuse_secctx will be followed by security context name and this in turn
-> + * will be followed by actual context label.
-> + * fuse_secctx, name, context
-> + * */
-> +struct fuse_secctx {
-> +	uint32_t	size;
-> +	uint32_t	padding;
-> +};
-> +
-> +/*
-> + * Contains the information about how many fuse_secctx structures are being
-> + * sent.
-> + */
-> +struct fuse_secctxs {
-> +	uint32_t	nr_secctx;
-> +	uint32_t	padding;
-> +};
-> +
->  #endif /* _LINUX_FUSE_H */
+One advantage of an ID over a string - besides not having to maintain
+a deduplicating arbitrary string storage in the kernel - is that we
+may be able to auto-assign unique IDs to VMAs in the kernel, in a way
+that we could not with strings. You'd still have to do IPC calls to
+write new name mappings into your db, but you wouldn't have to do the
+prctl() to assign stuff in the kernel at all.
+
+(We'd have to think of a solution of how IDs work with vma merging and
+splitting, but I think to a certain degree that's policy and we should
+be able to find something workable - a MAP_ID flag, using anon_vma as
+identity, assigning IDs at mmap time and do merges only for protection
+changes etc. etc.)
