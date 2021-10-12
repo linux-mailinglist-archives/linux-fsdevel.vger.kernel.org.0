@@ -2,91 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AA83429B22
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 03:44:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09F32429B2B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Oct 2021 03:52:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230077AbhJLBqZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Oct 2021 21:46:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:27396 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229677AbhJLBqY (ORCPT
+        id S229835AbhJLByX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Oct 2021 21:54:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57590 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229544AbhJLByX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Oct 2021 21:46:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634003062;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=N7XuxV1xdve3zt5mwi5zf9rSsN0pawUAPW+pIisdSIo=;
-        b=ax131Si4wF6HBCBurh5MKfTQ53AiYwmsU+iAF0zhelt0JGdnFHnA6BtZ2M+ZrzhAXdi1Ca
-        leTF/rVTyfPmV0yiPYI3hJQ3xbtn5lVBfo7q4aplZkd5rzx5kOqtrwGVGUgsu/0VmrFXDc
-        odDzbtOA7xtSXXVFgY/Ku3ots82LYk0=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-35-jnj7QpoNP3GVlP2doqk2vw-1; Mon, 11 Oct 2021 21:44:21 -0400
-X-MC-Unique: jnj7QpoNP3GVlP2doqk2vw-1
-Received: by mail-pg1-f197.google.com with SMTP id u5-20020a63d3450000b029023a5f6e6f9bso7792471pgi.21
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Oct 2021 18:44:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=N7XuxV1xdve3zt5mwi5zf9rSsN0pawUAPW+pIisdSIo=;
-        b=MK2wXi/f0/gM5j8+dXC0OMhM2zqpgQu0xJlnHw3E88z/YVvz9N72CSZU7gqdK42Q4t
-         pGcnfczPrLV2p5f8H4OaX1qSzXmxZ1k5/AvSghnQTlt6eR9+F1S4xZk21VufmYl51ILo
-         J1JfX7fWc+37tYfKWrkwxWRCRE1j7Wec2v/ZtVYgQDMziMlGPCB+za9/LTVOXU8uKrFf
-         sUPZkc80VIxaHp+IqwebbKYcmyfxyTv7t35NnKyr9xXHAIUleCGZG0XmvVCs5DmDxw5C
-         qKgjgzV+pMq2RGsRlgOv5iEdyOpa/bwLCjSM+BiGBrSLwj7l3hx4ggeBxvsdxguwG+a1
-         GGkQ==
-X-Gm-Message-State: AOAM531zU3xMMvjZJzw20UgpfD6Snw5v37f/AhdkQiNoX8RvEuSCWYlC
-        D4KTwy//ImC7Xke90FXZCc4ytqNHWflb6iA5tFJae2a7vUkqxt8n6yqjx7wnvQzfVhK0Xq3zP3H
-        mHua0ZgKUoHo/YMO9kMwfwkOCVg==
-X-Received: by 2002:a17:90b:3852:: with SMTP id nl18mr2829327pjb.9.1634003060507;
-        Mon, 11 Oct 2021 18:44:20 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwlbuOxtzFHegnIMLUhs4POPvF85B+TNSTe0D0W5qKedOJQ0nmMQPvf79G11R3u3blaCXq0jw==
-X-Received: by 2002:a17:90b:3852:: with SMTP id nl18mr2829308pjb.9.1634003060166;
-        Mon, 11 Oct 2021 18:44:20 -0700 (PDT)
-Received: from t490s ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id a22sm9062988pfg.61.2021.10.11.18.44.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Oct 2021 18:44:19 -0700 (PDT)
-Date:   Tue, 12 Oct 2021 09:44:12 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
- for PMD page fault
-Message-ID: <YWTobPkBc3TDtMGd@t490s>
-References: <20210930215311.240774-1-shy828301@gmail.com>
- <20210930215311.240774-3-shy828301@gmail.com>
- <YV4Dz3y4NXhtqd6V@t490s>
- <CAHbLzkp8oO9qvDN66_ALOqNrUDrzHH7RZc3G5GQ1pxz8qXJjqw@mail.gmail.com>
- <CAHbLzkqm_Os8TLXgbkL-oxQVsQqRbtmjdMdx0KxNke8mUF1mWA@mail.gmail.com>
- <YWTc/n4r6CJdvPpt@t490s>
+        Mon, 11 Oct 2021 21:54:23 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56651C061570;
+        Mon, 11 Oct 2021 18:52:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=dd8fiic3/qE9q03XuQ9MOapfyT7FLJ6jvivOZB26mnA=; b=Oz2gjdInsPkhTAMX25u5a08HFk
+        pDYQ8i04D79tm/NhINUzjbgIuZ9avdlFhJpU3BaS+EXIDQWAR+ejPr1RjkBuVynLWBTZL0rimm5Fg
+        Q8JUDnD3kPS5pbKpDIyHunSoE/FWXwMKT8X3jHg653Lh6ow1tVe61ywM3+fkQE9evU3OanzSWBgXq
+        /iwk459XpM6hKeaSv88wEcacpr1Ffbmz99wF+ITlARN4Py09pBkzOG4z5AsWN6VeLhyGLrYZ0DszP
+        1G5boyDk6Uu6AXoRxXPi5iBShlxilCuBWTcKtpP0SqwP8emmnd+FuvBZq1pCXzpyyLK8WC8Qx50u4
+        KAeO5BUg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1ma6wB-0068Pi-5j; Tue, 12 Oct 2021 01:51:00 +0000
+Date:   Tue, 12 Oct 2021 02:50:39 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Rongwei Wang <rongwei.wang@linux.alibaba.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        song@kernel.org, william.kucharski@oracle.com, hughd@google.com,
+        shy828301@gmail.com, linmiaohe@huawei.com, peterx@redhat.com
+Subject: Re: [PATCH 0/3] mm, thp: introduce a new sysfs interface to
+ facilitate file THP for .text
+Message-ID: <YWTp7yjaN8W//Zrf@casper.infradead.org>
+References: <20211009092658.59665-1-rongwei.wang@linux.alibaba.com>
+ <YWPwjTEfeFFrJttQ@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YWTc/n4r6CJdvPpt@t490s>
+In-Reply-To: <YWPwjTEfeFFrJttQ@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 11, 2021 at 08:55:26PM -0400, Peter Xu wrote:
-> Another thing is I noticed soft_offline_in_use_page() will still ignore file
-> backed split.  I'm not sure whether it means we'd better also handle that case
-> as well, so shmem thp can be split there too?
+On Mon, Oct 11, 2021 at 09:06:37AM +0100, Christoph Hellwig wrote:
+> Can we please just get proper pagecache THP (through folios) merged
+> instead of piling hacks over hacks here?  The whole readonly THP already
+> was more than painful enough due to all the hacks involved.
 
-Please ignore this paragraph - I somehow read "!PageHuge(page)" as
-"PageAnon(page)"...  So I think patch 5 handles soft offline too.
+This was my initial reaction too.
 
--- 
-Peter Xu
+But read the patches.  They're nothing to do with the implementation of
+THP / folios in the page cache.  They're all to make sure that mappings
+are PMD aligned.
 
+I think there's a lot to criticise in the patches (eg, a system-wide
+setting is probably a bad idea.  and a lot of this stuff seems to
+be fixing userspace bugs in the kernel).  But let's criticise what's
+actually in the patches, because these are problems that exist regardless
+of RO_THP vs folios.
