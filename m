@@ -2,60 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A61E42B394
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 05:29:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ACB442B3C6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 05:41:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237668AbhJMDbU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Oct 2021 23:31:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38986 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237377AbhJMDbQ (ORCPT
+        id S237407AbhJMDnz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Oct 2021 23:43:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34745 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236287AbhJMDny (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Oct 2021 23:31:16 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B98BC061746;
-        Tue, 12 Oct 2021 20:29:14 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id a25so4116784edx.8;
-        Tue, 12 Oct 2021 20:29:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QQNzKhmWO0HGdKOXS89qG3A9ZaAzZaeuitB9xg0P9Ao=;
-        b=f6qT0uRPXcqOGtMmEVof+51Xl5cKE7prSFUJeMauW7N+C6L3sOqFGwT1ekFZJhEd70
-         vPMywWIudQiUiWUNOVO+yNZVwEQlW4GoGW4O+vqMQTrALs/WY3S45JSTlVEdKOIB/VYQ
-         h40sKy7usu9bba4pLDqe2E6E8CHUZpCu1h1hoUbny22Z/B3p5EugiLiZ4+Fi2zeb8nz1
-         HeeDLamf+P9B/350ATB4/JzLBEWcB6+ET8QxSQ+GQCe2DhIvyeD9vHUfxgdDxMnZ8abz
-         HDfsV+HjTFt9WhpqUOe8LvuF+ez5Qj3fuVOw8eiKpL1xPAApMg9h4zWETOa6NNRUY9V4
-         jFVw==
+        Tue, 12 Oct 2021 23:43:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634096511;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=P9QQpHMzPqOGAUAgrM92CQtjCHKsEXKEq2E7CGbFGTs=;
+        b=FCGuTLXqaKbORxt68jvecb+cOY8K6lYUomVBsY6I8aRuTVdXAKYOVV/9hZcWslkth17u8h
+        mwHnlIVuwKrF+bAdDP5E9Zugx4bOpR9c1P6UuA/1VYkyfekeUMozPbgfhzR3ti4/ok/5Vy
+        f3S0sZsWjgaGRGIbtbpJhLWDt0U4CV0=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-233-NeT5wfcbMzeE3qv1tMTDCg-1; Tue, 12 Oct 2021 23:41:50 -0400
+X-MC-Unique: NeT5wfcbMzeE3qv1tMTDCg-1
+Received: by mail-pj1-f70.google.com with SMTP id nn1-20020a17090b38c100b001a063449823so1017036pjb.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Oct 2021 20:41:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QQNzKhmWO0HGdKOXS89qG3A9ZaAzZaeuitB9xg0P9Ao=;
-        b=6m2adtmo3ihGtF8rvZaSHRrLPHvCT4vjj3cVEndnwam2TpC3E/ViJuJdEI4Z9WUheb
-         s336rj163WBJ65nuajf/6+iQQaqaNMozH6ymlLMr3IcBqqzWu+airxvAmcEO/6XHd2+j
-         OV4uxoGLTbeCHHwaC9HWDqNWf1Duk0QEnlLzvkaEwn4GdRbSzAIbMKSQ9WpbOFlfExP8
-         R73SxBu0g15dzwdMPDleVeoQczh7lvvFc8od3fUTF+2Y/OJS9wslvSeU3XVPYgI/8bhT
-         SDJTEbrFXs7oEQwkQkIT3QVlKXtqS5ohoCGk9WTjRrPbSDl+AbXksYFSl6LfxHnARZFR
-         Dnrg==
-X-Gm-Message-State: AOAM533FXh3YfdVDrI14v+DPStJoSrwwlBSdgQG2gzReF7/171tt4WEi
-        lynOY1KuLitt7jdQgLXdjW6PHS8KbRyWI+mVmkqeNcdo
-X-Google-Smtp-Source: ABdhPJxvk0vJYLQJ1vV4YH05l7GLiZPOWUjnKHqMswz4TzPRmLJueLbEJU0nSPkZJevYe2sl2IKfRHRcOVTIpDwYWKo=
-X-Received: by 2002:a17:907:2bdf:: with SMTP id gv31mr38358350ejc.521.1634095752792;
- Tue, 12 Oct 2021 20:29:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210930215311.240774-1-shy828301@gmail.com> <20210930215311.240774-5-shy828301@gmail.com>
- <YWTrbgf0kpwayWHL@t490s> <CAHbLzkrJ9YZYUS+T64L9vFzg77qVg2SZ4DBGC013kgGTRvpieA@mail.gmail.com>
- <YWYLr3vOTgLDNiNL@t490s> <CAHbLzkrYBpbDN4QHGP_HYwcoxOxOpEK1Q=mUxcos3MtdZ5fEzw@mail.gmail.com>
- <YWZNTUT4HQzdekzt@t490s>
-In-Reply-To: <YWZNTUT4HQzdekzt@t490s>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Tue, 12 Oct 2021 20:29:01 -0700
-Message-ID: <CAHbLzko=_ycgcLrR_70XAAQuJbmpKgXKR5SfxEoFVZADYG+4Pw@mail.gmail.com>
-Subject: Re: [v3 PATCH 4/5] mm: shmem: don't truncate page if memory failure happens
-To:     Peter Xu <peterx@redhat.com>
-Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=P9QQpHMzPqOGAUAgrM92CQtjCHKsEXKEq2E7CGbFGTs=;
+        b=ku+CnN2sT5IOmqaAkjIJtplo/3BsRqDTeU5lDpTsvXLHSaHoMGAevvdnuGM680SNmG
+         bIMOjRJtuU0wiOsbKjA5bK23Ep0bCQptCOLrybI8KT7DJk7omks9WR/5qmYzljoKYKxj
+         Sj5pI7rUAebMtLXYCy9gkppOFnGGipDSYgnZcnEEc1XeYQc9fAs80CdHxbO1oQlbroOl
+         opCzp0sKWnt97jaB2oyMXjsUblapjyuVtPmq7zTJmgnDQrj4qZBZgwXkzl7N6gGOHg1G
+         TRPLo9C4ou7V15cfsO18fPDGBr5A7dapFYCyppMMoDeBsGNwbrMnHCbSNt/XIAJX2ink
+         Py3g==
+X-Gm-Message-State: AOAM531fJsV7Bd3PAdXOAV5ULYtudoDjY7CSOxXEJcf0QTgwjaNiX9K/
+        dym0WCMyCnQ104aOjQpmX2HPpX4ljomie1wGy4IRrZEJ9z5r5KU7/QFIjXRfAiNY8NBq0p0ZuZo
+        yJNHzpB3wc8/D/MtYDgttp42waQ==
+X-Received: by 2002:a62:1b92:0:b0:3eb:3f92:724 with SMTP id b140-20020a621b92000000b003eb3f920724mr35757518pfb.3.1634096508717;
+        Tue, 12 Oct 2021 20:41:48 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwTsSrRU70L24zyehCxjIOcnI0fW5T3TZ6w598G0eEchUTE4T6Elozl+lg8k4lS16yUUCus6A==
+X-Received: by 2002:a62:1b92:0:b0:3eb:3f92:724 with SMTP id b140-20020a621b92000000b003eb3f920724mr35757499pfb.3.1634096508378;
+        Tue, 12 Oct 2021 20:41:48 -0700 (PDT)
+Received: from t490s ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id v13sm12837847pgt.7.2021.10.12.20.41.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Oct 2021 20:41:47 -0700 (PDT)
+Date:   Wed, 13 Oct 2021 11:41:40 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
         <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Matthew Wilcox <willy@infradead.org>,
@@ -64,24 +62,56 @@ Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?=
         Linux MM <linux-mm@kvack.org>,
         Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
+ for PMD page fault
+Message-ID: <YWZVdDSS/4rnFbqK@t490s>
+References: <YV4Dz3y4NXhtqd6V@t490s>
+ <CAHbLzkp8oO9qvDN66_ALOqNrUDrzHH7RZc3G5GQ1pxz8qXJjqw@mail.gmail.com>
+ <CAHbLzkqm_Os8TLXgbkL-oxQVsQqRbtmjdMdx0KxNke8mUF1mWA@mail.gmail.com>
+ <YWTc/n4r6CJdvPpt@t490s>
+ <YWTobPkBc3TDtMGd@t490s>
+ <CAHbLzkrOsNygu5x8vbMHedv+P3dEqOxOC6=O6ACSm1qKzmoCng@mail.gmail.com>
+ <YWYHukJIo8Ol2sHN@t490s>
+ <CAHbLzkp3UXKs_NP9XD_ws=CSSFzUPk7jRxj0K=gvOqoi+GotmA@mail.gmail.com>
+ <YWZMDTwCCZWX5/sQ@t490s>
+ <CAHbLzkp8QkORXK_y8hnrg=2kTRFyoZpJcXbkyj6eyCdcYSbZTw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHbLzkp8QkORXK_y8hnrg=2kTRFyoZpJcXbkyj6eyCdcYSbZTw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 12, 2021 at 8:07 PM Peter Xu <peterx@redhat.com> wrote:
->
-> On Tue, Oct 12, 2021 at 08:00:31PM -0700, Yang Shi wrote:
-> > The page refcount could stop collapsing hwpoison page. One could argue
-> > khugepaged could bail out earlier by checking hwpoison flag, but it is
-> > definitely not a must do. So it relies on refcount now.
->
-> I suppose you mean the page_ref_freeze() in collapse_file()?  Yeah that seems
-> to work too.  Thanks,
+On Tue, Oct 12, 2021 at 08:27:06PM -0700, Yang Shi wrote:
+> > But this also reminded me that shouldn't we be with the page lock already
+> > during the process of "setting hwpoison-subpage bit, split thp, clear
+> > hwpoison-subpage bit"?  If it's only the small window that needs protection,
+> > while when looking up the shmem pagecache we always need to take the page lock
+> > too, then it seems already safe even without the extra bit?  Hmm?
+> 
+> I don't quite get your point. Do you mean memory_failure()? If so the
+> answer is no, outside the page lock. And the window may be indefinite
+> since file THP doesn't get split before this series and the split may
+> fail even after this series.
 
-Yes, exactly.
+What I meant is that we could extend the page_lock in try_to_split_thp_page()
+to cover setting hwpoison-subpage too (and it of course covers the clearing if
+thp split succeeded, as that's part of the split process).  But yeah it's a
+good point that the split may fail, so the extra bit seems still necessary.
 
->
-> --
-> Peter Xu
->
+Maybe that'll be something worth mentioning in the commit message too?  The
+commit message described very well on the overhead of looping over 512 pages,
+however the reader can easily overlook the real reason for needing this bit -
+IMHO it's really for the thp split failure case, as we could also mention that
+if thp split won't fail, page lock should be suffice (imho).  We could also
+mention about why soft offline does not need that extra bit, which seems not
+obvious as well, so imho good material for commit messages.
+
+Sorry to have asked for a lot of commit message changes; I hope they make sense.
+
+Thanks,
+
+-- 
+Peter Xu
+
