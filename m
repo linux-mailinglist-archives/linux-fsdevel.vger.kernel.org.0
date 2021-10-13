@@ -2,105 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D434F42BDC6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 12:49:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F8E842BDE6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 12:55:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229670AbhJMKvN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Oct 2021 06:51:13 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:24308 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbhJMKvM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Oct 2021 06:51:12 -0400
-Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4HTq0m0Y1BzYff7;
-        Wed, 13 Oct 2021 18:44:40 +0800 (CST)
-Received: from kwepemm600015.china.huawei.com (7.193.23.52) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.8; Wed, 13 Oct 2021 18:49:08 +0800
-Received: from [10.174.176.52] (10.174.176.52) by
- kwepemm600015.china.huawei.com (7.193.23.52) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.8; Wed, 13 Oct 2021 18:49:07 +0800
-Subject: Re: [PATCH 4.19,v2] VFS: Fix fuseblk memory leak caused by mount
- concurrency
-From:   "chenxiaosong (A)" <chenxiaosong2@huawei.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     <viro@zeniv.linux.org.uk>, <stable@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dhowells@redhat.com>, <yukuai3@huawei.com>, <yi.zhang@huawei.com>,
-        <zhangxiaoxu5@huawei.com>
-References: <20211013095101.641329-1-chenxiaosong2@huawei.com>
- <YWawy0J9JfStEku0@kroah.com>
- <429d87b0-3a53-052a-a304-0afa8d51900d@huawei.com>
-Message-ID: <860c36c4-3668-1388-66d1-a07d463c2ad9@huawei.com>
-Date:   Wed, 13 Oct 2021 18:49:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.0
+        id S230138AbhJMK5J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Oct 2021 06:57:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55694 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229602AbhJMK5H (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Oct 2021 06:57:07 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B3886610D1;
+        Wed, 13 Oct 2021 10:55:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634122504;
+        bh=cHJwlE/4hKjsg8N9PIPkUgBxfg4CYIeT2a/7mtQ0gV4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Gvd6nNUOzZ1UK/F83pyQaR5TauDo53BnYMnJejta47hA700Gc4nEjGIFnHwmjOADo
+         AKNy+aONpGH/0IsqLm0Dcpm6wjEJavnew940SDLuN/5a6FYUw3ELyYcU0A3Q/NRQek
+         QfoThQlCQv7p+iOVnXWOAHkCznwBtAwOy+ujza96o7WAaFxFjrC8XZ1wckA/fZVTbk
+         VwI4mJWJKdlfyh1Lt6ftM0G3FhFyxA8FUoE+m7e14+8RRL2PlJvv9hf7Oz7NJ/FAwC
+         wgr7gidywOLH4DV+TxM46MeGP/by3gM7M3FjX3pF1U7UjvwkkKAPLPGpJwUDxBDIsM
+         sv3E+u1PeyN3A==
+Received: by mail-wr1-f45.google.com with SMTP id o20so6930614wro.3;
+        Wed, 13 Oct 2021 03:55:04 -0700 (PDT)
+X-Gm-Message-State: AOAM530iZXvF4GxMweqi4kkfiz7ZUk97vL95SLqNn2ulZn679H1I9FS6
+        nYyJQLDddw3zeAFg/BNgI5e/wVU24xPXuOhmPUE=
+X-Google-Smtp-Source: ABdhPJzW6QwF+fpri3xax3BToB6ExyXZ9H+Kw/HXMbby5km4lbFfKsXJq/EA3ZMCLu9RmweZx7YA8FnfMM0PPRf9Pg4=
+X-Received: by 2002:a05:600c:4f42:: with SMTP id m2mr9273874wmq.82.1634122503094;
+ Wed, 13 Oct 2021 03:55:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <429d87b0-3a53-052a-a304-0afa8d51900d@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.176.52]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm600015.china.huawei.com (7.193.23.52)
-X-CFilter-Loop: Reflected
+References: <20211006025350.a5PczFZP4%akpm@linux-foundation.org>
+ <58fbf2ff-b367-2137-aa77-fcde6c46bbb7@infradead.org> <20211006182052.6ecc17cf@canb.auug.org.au>
+ <f877a1c9-1898-23f3-bba3-3442dc1f3979@amd.com> <CAMuHMdV3eMchpgUasU6BBHrDQyjCc2TrqJ+zJgFhgAySpqVGfw@mail.gmail.com>
+In-Reply-To: <CAMuHMdV3eMchpgUasU6BBHrDQyjCc2TrqJ+zJgFhgAySpqVGfw@mail.gmail.com>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Wed, 13 Oct 2021 12:54:47 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a1LLABstZ2rPYpsXRTxMdbSTrh0y753vrfGbRovv9fS8A@mail.gmail.com>
+Message-ID: <CAK8P3a1LLABstZ2rPYpsXRTxMdbSTrh0y753vrfGbRovv9fS8A@mail.gmail.com>
+Subject: Re: mmotm 2021-10-05-19-53 uploaded (drivers/gpu/drm/msm/hdmi/hdmi_phy.o)
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux-Next <linux-next@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.cz>, mm-commits@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-在 2021/10/13 18:38, chenxiaosong (A) 写道:
-> 在 2021/10/13 18:11, Greg KH 写道:
->> On Wed, Oct 13, 2021 at 05:51:01PM +0800, ChenXiaoSong wrote:
->>> If two processes mount same superblock, memory leak occurs:
->>>
->>> CPU0               |  CPU1
->>> do_new_mount       |  do_new_mount
->>>    fs_set_subtype   |    fs_set_subtype
->>>      kstrdup        |
->>>                     |      kstrdup
->>>      memrory leak   |
->>>
->>> Fix this by adding a write lock while calling fs_set_subtype.
->>>
->>> Linus's tree already have refactoring patchset [1], one of them can 
->>> fix this bug:
->>>          c30da2e981a7 (fuse: convert to use the new mount API)
->>>
->>> Since we did not merge the refactoring patchset in this branch, I 
->>> create this patch.
->>>
->>> [1] 
->>> https://patchwork.kernel.org/project/linux-fsdevel/patch/20190903113640.7984-3-mszeredi@redhat.com/ 
->>>
->>>
->>> Fixes: 79c0b2df79eb (add filesystem subtype support)
->>> Cc: David Howells <dhowells@redhat.com>
->>> Signed-off-by: ChenXiaoSong <chenxiaosong2@huawei.com>
->>> ---
->>> v1: Can not mount sshfs ([PATCH linux-4.19.y] VFS: Fix fuseblk memory 
->>> leak caused by mount concurrency)
->>> v2: Use write lock while writing superblock
->>>
->>>   fs/namespace.c | 9 ++++++---
->>>   1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> As you are referring to a fuse-only patch above, why are you trying to
->> resolve this issue in the core namespace code instead?
->>
->> How does fuse have anything to do with this?
->>
->> confused,
->>
->> greg k-h
->> .
->>
-> 
-> Now, only `fuse_fs_type` and `fuseblk_fs_type` has `FS_HAS_SUBTYPE` flag 
-> in kernel code, but maybe there is a filesystem module(`struct 
-> file_system_type` has `FS_HAS_SUBTYPE` flag). And only mounting fuseblk 
-> filesystem(e.g. ntfs) will occur memory leak now.
+On Thu, Oct 7, 2021 at 11:51 AM Geert Uytterhoeven <geert@linux-m68k.org> w=
+rote:
+> On Wed, Oct 6, 2021 at 9:28 AM Christian K=C3=B6nig <christian.koenig@amd=
+.com> wrote:
+> > Am 06.10.21 um 09:20 schrieb Stephen Rothwell:
+> > > On Tue, 5 Oct 2021 22:48:03 -0700 Randy Dunlap <rdunlap@infradead.org=
+> wrote:
+> > >> on i386:
+> > >>
+> > >> ld: drivers/gpu/drm/msm/hdmi/hdmi_phy.o:(.rodata+0x3f0): undefined r=
+eference to `msm_hdmi_phy_8996_cfg'
 
-How about updating the subject as: VFS: Fix memory leak caused by 
-mounting fs with subtype concurrency?
+I ran into the same thing now as well.
+E_TEST) && COMMON_CLK
+>
+> I'd make that:
+>
+>     -        depends on DRM
+>     +       depends on COMMON_CLK && DRM && IOMMU_SUPPORT
+>             depends on ARCH_QCOM || SOC_IMX5 || COMPILE_TEST
+>     -        depends on IOMMU_SUPPORT
+>     -       depends on (OF && COMMON_CLK) || COMPILE_TEST
+>     +       depends on OF || COMPILE_TEST
+>
+> to keep a better separation between hard and soft dependencies.
+>
+> Note that the "depends on OF || COMPILE_TEST" can even be
+> deleted, as the dependency on ARCH_QCOM || SOC_IMX5 implies OF.
+
+Looks good to me, I would also drop that last line in this case, and maybe
+add this change as building without COMMON_CLK is no longer possible:
+
+diff --git a/drivers/gpu/drm/msm/Makefile b/drivers/gpu/drm/msm/Makefile
+index 904535eda0c4..a5d87e03812f 100644
+--- a/drivers/gpu/drm/msm/Makefile
++++ b/drivers/gpu/drm/msm/Makefile
+@@ -116,10 +116,10 @@ msm-$(CONFIG_DRM_MSM_DP)+=3D dp/dp_aux.o \
+  dp/dp_power.o \
+  dp/dp_audio.o
+
+-msm-$(CONFIG_DRM_FBDEV_EMULATION) +=3D msm_fbdev.o
+-msm-$(CONFIG_COMMON_CLK) +=3D disp/mdp4/mdp4_lvds_pll.o
+-msm-$(CONFIG_COMMON_CLK) +=3D hdmi/hdmi_pll_8960.o
+-msm-$(CONFIG_COMMON_CLK) +=3D hdmi/hdmi_phy_8996.o
++msm-$(CONFIG_DRM_FBDEV_EMULATION) +=3D msm_fbdev.o \
++ disp/mdp4/mdp4_lvds_pll.o \
++ hdmi/hdmi_pll_8960.o \
++ hdmi/hdmi_phy_8996.o
+
+ msm-$(CONFIG_DRM_MSM_HDMI_HDCP) +=3D hdmi/hdmi_hdcp.o
+
+Has anyone submitted a patch already, or should I send the version
+that I am using locally now?
+
+        Arnd
