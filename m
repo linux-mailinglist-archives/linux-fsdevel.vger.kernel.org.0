@@ -2,72 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 613E942CB2A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 22:36:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C525542CC98
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 23:14:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229615AbhJMUiX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Oct 2021 16:38:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51062 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbhJMUiW (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Oct 2021 16:38:22 -0400
-Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58156C061746
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 13:36:19 -0700 (PDT)
-Received: by mail-ua1-x92d.google.com with SMTP id q13so7163041uaq.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 13:36:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oxmlE0jWTvIABAOfcWenbXPbvIcFQQi9okWp6MfW2Rk=;
-        b=dSwYr10Czbxlxm7F67KMPvvJG9P3phmX0JBl9Ty+/TuGFPA0rsFQPLdAUoKK7dCh41
-         9uMqVVhVMu8cioCd5Y2rVX+7tzSExeucmzg+GfpGSWafRxGh8Gyy8x1nICbhYFOuPD6D
-         3227y+5cZC8ZqIXulPV6s4wxTMnUNoNxZWlJCUJPUHt7ok0hfsJ1g5kTSrZHeY83Opte
-         PjM3CPJpRBV6Ne9KK7m1wElFoUStioYCCRwZGX4K9me+zIOdMy8qMo85c+Anyhox/lm6
-         iXOplN3FBIrzrEB21N8FpE/yOlyfK5kcbAcrdtkcX8rZY5rZcInFj05k5egv2a7iGkLD
-         SojQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oxmlE0jWTvIABAOfcWenbXPbvIcFQQi9okWp6MfW2Rk=;
-        b=7yHNRw3L05cbt9m/7kVeqzaeVwIfnCQiVbp3cOT6V5HQngVXwVyLc/IwMX2iecdqRS
-         pM4Kddhat+94vcK5i6r5uYfB3ePn9gT0WKj4kdthmKIH+0NtlZ9l6/LE87gHsR0zVuAW
-         brq7ZzDewotd9X7crgs64vIMc7yssvqOciq952OuOomuDWMLbOFqMUAOsciaqCrFhc0h
-         WVuharEvro/DE+kLZh8n4aM56JhcgE3dxyCFUKdkJsc5iIaKKq6TMA0aeDYu1j+ho2LZ
-         5H+B6FTHEceo+VOquRf7tU9oNQGahFNHDN2mQe5S7A+zygqU1IwXIFeaWDx/lg+B7ypb
-         HicA==
-X-Gm-Message-State: AOAM531wkmdcJSmAX2gfrD/MnjDzM9yMlgVMCKtXEJcIsTEd/jmwhahs
-        MVtDkLNmE0tD4RUUr7zD7q8IXByFdSfxFlnX7CVOVwxxK8E=
-X-Google-Smtp-Source: ABdhPJxCWJwH8wsDAPq7q8Ma8DI8v/ghsdOiUWd7ssye0vrKNbb4cbAPYMkSxDl5594oZyze0+c7hz4obonnasO/r/c=
-X-Received: by 2002:ab0:540e:: with SMTP id n14mr1776903uaa.73.1634157378226;
- Wed, 13 Oct 2021 13:36:18 -0700 (PDT)
+        id S229790AbhJMVQu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Oct 2021 17:16:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44862 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230111AbhJMVQt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Oct 2021 17:16:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BCD7761139;
+        Wed, 13 Oct 2021 21:14:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634159685;
+        bh=SlbEmP0SftpYg5Qzgl+3uhbNwtKN42MS1eJbqRVvz8o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hiKscGct16rhTAVFUvB8ulUGFNYX0XJpF+2YqPKF0No0/OTxa8B+FbCYvPeznM3IT
+         o7+9DVjPYoKAxa50QdWsJ1gL4J+4wBU1jNZrm6P/FvNKQ8G7E2qrXO9VM2GBzVJvw8
+         S/gFZjYpmMou1VruRE19i94wuylZi24lJbQ6yAN6OeRqXntYIE5B0JYh+T/uz9ctke
+         L86OtKTf7XCkJxLOyXfeIFv5kZLrR3s6zlWx8Mcxq8cYKDBsASwSQxb8GUZPcnzqgT
+         VFHmPHbz4NrsEHQ/qmk1iEmYL+m9W0ImnKdxKKKAOXKE+hMXaoTAVCJomjq0s1kTjo
+         7pgsY+NMeWiSg==
+Received: by mail-lf1-f54.google.com with SMTP id u18so17428163lfd.12;
+        Wed, 13 Oct 2021 14:14:45 -0700 (PDT)
+X-Gm-Message-State: AOAM532FXiGs1sCaGxNpzsJmeQlJzE+mAIiSokLdcbxAMrOP9h09k+b9
+        RNkm7JcYnOu/qJ5EjWa83slixpHkeaKf2YthUvI=
+X-Google-Smtp-Source: ABdhPJy4PwudaFsA5k7zIKbmlSW7M8/j3iWHJKEthDYdjnMO754KPa3JLlK+wmXJkye7TEJ2vXHzCCixulymuZnDiqk=
+X-Received: by 2002:a2e:6e0b:: with SMTP id j11mr1736234ljc.527.1634159683768;
+ Wed, 13 Oct 2021 14:14:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211007002507.42501-1-ramjiyani@google.com> <20211012085915.GA25069@lst.de>
-In-Reply-To: <20211012085915.GA25069@lst.de>
-From:   Ramji Jiyani <ramjiyani@google.com>
-Date:   Wed, 13 Oct 2021 13:36:06 -0700
-Message-ID: <CAKUd0B8UUFKif0OOQG_4gUcyoWPgsau+KWtWt__Vjuxfw13kmg@mail.gmail.com>
-Subject: Re: [PATCH v4] aio: Add support for the POLLFREE
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     arnd@arndb.de, viro@zeniv.linux.org.uk, bcrl@kvack.org,
-        kernel-team@android.com, linux-aio@kvack.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, oleg@redhat.com, ebiggers@kernel.org,
-        Jeff Moyer <jmoyer@redhat.com>, stable@vger.kernel.org
+References: <20211013051042.1065752-1-hch@lst.de> <20211013051042.1065752-5-hch@lst.de>
+ <202110122311.B43459E21@keescook>
+In-Reply-To: <202110122311.B43459E21@keescook>
+From:   Song Liu <song@kernel.org>
+Date:   Wed, 13 Oct 2021 14:14:32 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6MFRmKfpUxLL3=TRAgNTuTMFySc=_-NA7YOWDAvYAxyQ@mail.gmail.com>
+Message-ID: <CAPhsuW6MFRmKfpUxLL3=TRAgNTuTMFySc=_-NA7YOWDAvYAxyQ@mail.gmail.com>
+Subject: Re: [PATCH 04/29] md: use bdev_nr_sectors instead of open coding it
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, drbd-dev@lists.linbit.com,
+        linux-bcache@vger.kernel.org,
+        linux-raid <linux-raid@vger.kernel.org>,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 12, 2021 at 1:59 AM Christoph Hellwig <hch@lst.de> wrote:
+On Tue, Oct 12, 2021 at 11:12 PM Kees Cook <keescook@chromium.org> wrote:
 >
-> Looks good,
+> On Wed, Oct 13, 2021 at 07:10:17AM +0200, Christoph Hellwig wrote:
+> > Use the proper helper to read the block device size.
+> >
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
 >
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> I think it might make sense, as you suggest earlier, to add a "bytes"
+> helper. This is the first user in the series needing:
+>
+>         bdev_nr_sectors(...bdev) << SECTOR_SHIFT
+>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Thanks, Christoph.
-
-~ Ramji
+Acked-by: Song Liu <song@kernel.org>
