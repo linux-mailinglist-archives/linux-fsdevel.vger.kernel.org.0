@@ -2,66 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 499BC42C045
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 14:42:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F7BE42C12B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 15:16:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232573AbhJMMoG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Oct 2021 08:44:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52540 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230197AbhJMMoG (ORCPT
+        id S235102AbhJMNSd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Oct 2021 09:18:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37985 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233901AbhJMNSb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Oct 2021 08:44:06 -0400
-Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21F66C061570;
-        Wed, 13 Oct 2021 05:42:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ZOJVOG5TPmwro9XVUCu0WLliPWZ0LeekD1uGNl5wZzs=; b=i37otEyCeSc+Ed6QP63HmDUoeK
-        nyEGtCVCdea+zOQT3MR2vMjX2N3nEbH6VeajvaqJCNsy2JKhrs2y7pEZ6SnXyi0QVj23aRsJm6PVa
-        FFIw6hc6ynV2EdXjiuKjytahoIVKcLkHtM9zf6rTdMwn1ujChgk8BK98xOHLJlU791WlJaBfkX35w
-        QxDIXQ3KnNEoAiP4hLSrp68oE1SGAt8phequyiaYWDLk0w3FbCbiOfkLJWj+Nxt8/wQxqec558jly
-        NLNdHzyapNsqVZEXn+FxmyOwcMsL8R55I5P/W4dVtbvPSAjDAcaAsQ8RPgbSUn1QwKImLleH3Ysyd
-        ucatYAkQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mada2-00GdSy-Jx; Wed, 13 Oct 2021 12:41:58 +0000
-Date:   Wed, 13 Oct 2021 05:41:58 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     tj@kernel.org, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, minchan@kernel.org, jeyu@kernel.org,
-        shuah@kernel.org, bvanassche@acm.org, dan.j.williams@intel.com,
-        joe@perches.com, tglx@linutronix.de, rostedt@goodmis.org,
-        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 09/12] sysfs: fix deadlock race with module removal
-Message-ID: <YWbUFnway11HwuZl@bombadil.infradead.org>
-References: <20210927163805.808907-1-mcgrof@kernel.org>
- <20210927163805.808907-10-mcgrof@kernel.org>
- <202110051315.B2165F455@keescook>
- <YWS5+uyDQ4qklTcT@bombadil.infradead.org>
+        Wed, 13 Oct 2021 09:18:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634130988;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3UweUBspHinuJSQhguEdx6WU40R4nh4wg670z3EQDCs=;
+        b=XNP1QDwX2f719a9ZrFnhwucrTmmJi3xG6/ZEi9kIsyI5EgoqN8WKfM1aPjoQSJIbgOQFYV
+        pFRVUyG4/rV6koPl8MKbwi0AXmQTYeRxBCWmzjs1lY2Bl9yZ8PmUbb1llOU47KJzq7j5Ui
+        2AnDvE9EkAQFUkWYniyGFIldV/jAtHA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-397-51EXKiPTPNOe2wB9MiFWRQ-1; Wed, 13 Oct 2021 09:16:25 -0400
+X-MC-Unique: 51EXKiPTPNOe2wB9MiFWRQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 85FDA100A95A;
+        Wed, 13 Oct 2021 13:16:22 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.33.167])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6603219E7E;
+        Wed, 13 Oct 2021 13:16:20 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id DEFAB22023A; Wed, 13 Oct 2021 09:16:19 -0400 (EDT)
+Date:   Wed, 13 Oct 2021 09:16:19 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gonglei <arei.gonglei@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jie Deng <jie.deng@intel.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        David Hildenbrand <david@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Anton Yakovlev <anton.yakovlev@opensynergy.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-um@lists.infradead.org,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, kvm@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH RFC] virtio: wrap config->reset calls
+Message-ID: <YWbcI15YOkhnPh5x@redhat.com>
+References: <20211013105226.20225-1-mst@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YWS5+uyDQ4qklTcT@bombadil.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <20211013105226.20225-1-mst@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 11, 2021 at 03:26:02PM -0700, Luis Chamberlain wrote:
-> On Tue, Oct 05, 2021 at 01:50:31PM -0700, Kees Cook wrote:
-> > For example, why does this not work?
+On Wed, Oct 13, 2021 at 06:55:31AM -0400, Michael S. Tsirkin wrote:
+> This will enable cleanups down the road.
+> The idea is to disable cbs, then add "flush_queued_cbs" callback
+> as a parameter, this way drivers can flush any work
+> queued after callbacks have been disabled.
 > 
-> It does for the write case for sure,
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
+>  arch/um/drivers/virt-pci.c                 | 2 +-
+>  drivers/block/virtio_blk.c                 | 4 ++--
+>  drivers/bluetooth/virtio_bt.c              | 2 +-
+>  drivers/char/hw_random/virtio-rng.c        | 2 +-
+>  drivers/char/virtio_console.c              | 4 ++--
+>  drivers/crypto/virtio/virtio_crypto_core.c | 8 ++++----
+>  drivers/firmware/arm_scmi/virtio.c         | 2 +-
+>  drivers/gpio/gpio-virtio.c                 | 2 +-
+>  drivers/gpu/drm/virtio/virtgpu_kms.c       | 2 +-
+>  drivers/i2c/busses/i2c-virtio.c            | 2 +-
+>  drivers/iommu/virtio-iommu.c               | 2 +-
+>  drivers/net/caif/caif_virtio.c             | 2 +-
+>  drivers/net/virtio_net.c                   | 4 ++--
+>  drivers/net/wireless/mac80211_hwsim.c      | 2 +-
+>  drivers/nvdimm/virtio_pmem.c               | 2 +-
+>  drivers/rpmsg/virtio_rpmsg_bus.c           | 2 +-
+>  drivers/scsi/virtio_scsi.c                 | 2 +-
+>  drivers/virtio/virtio.c                    | 5 +++++
+>  drivers/virtio/virtio_balloon.c            | 2 +-
+>  drivers/virtio/virtio_input.c              | 2 +-
+>  drivers/virtio/virtio_mem.c                | 2 +-
+>  fs/fuse/virtio_fs.c                        | 4 ++--
 
-I mispoke, just for the record, the changes you mentioned actually don't
-suffice for the test cases in question for test_sysfs, the deadlock
-still occurs with those changes. At first I thought it did but I had failed
-to remove my own fix first on fs/kernfs/dir.c. After removing that and
-just trying the proposed changes I confirm it does not fix the deadlock.
+fs/fuse/virtio_fs.c changes look good to me.
 
-  Luis
+Reviewed-by: Vivek Goyal <vgoyal@redhat.com>
+
+Vivek
+
+[..]
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> index 0ad89c6629d7..27c3b74070a2 100644
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -895,7 +895,7 @@ static int virtio_fs_probe(struct virtio_device *vdev)
+>  	return 0;
+>  
+>  out_vqs:
+> -	vdev->config->reset(vdev);
+> +	virtio_reset_device(vdev);
+>  	virtio_fs_cleanup_vqs(vdev, fs);
+>  	kfree(fs->vqs);
+>  
+> @@ -927,7 +927,7 @@ static void virtio_fs_remove(struct virtio_device *vdev)
+>  	list_del_init(&fs->list);
+>  	virtio_fs_stop_all_queues(fs);
+>  	virtio_fs_drain_all_queues_locked(fs);
+> -	vdev->config->reset(vdev);
+> +	virtio_reset_device(vdev);
+>  	virtio_fs_cleanup_vqs(vdev, fs);
+>  
+>  	vdev->priv = NULL;
+
+
+Thanks
+Vivek
+
