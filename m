@@ -2,63 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E7A242BD90
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 12:45:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E3DE42BD9D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 12:46:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230048AbhJMKsB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Oct 2021 06:48:01 -0400
-Received: from mail-wr1-f46.google.com ([209.85.221.46]:33596 "EHLO
-        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229667AbhJMKr7 (ORCPT
+        id S230285AbhJMKsX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Oct 2021 06:48:23 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:33482 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229644AbhJMKsV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Oct 2021 06:47:59 -0400
-Received: by mail-wr1-f46.google.com with SMTP id m22so6995766wrb.0;
-        Wed, 13 Oct 2021 03:45:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-        b=VW45l1InU/0hgcRaSQIqYWKRP/V+IvDGrOgCoOFc6SIBbWwLidPJ/aAhOnbgFMBjfr
-         aAndq0X6eX16IquV47d7WIct7SALYPH/IiZqsCbTTfVrUYxY9g+acxlP7AuszSAnkIQr
-         sCEY5IfRXRAfbt47kCdop9ekl238vLKzUnC6J5ni1JOsrjsttgr78wxOuDZFn8Mx5gBn
-         F6kd+bqgq/XMIfEQjU67++8WjWEajCTqgQIjYjqW9Uw8o43PC3UZC+5eOZMyOumkCNzF
-         kQPsxxefFSHpzMP2nC51ffwP9OTF9d2RP1Jiqs9OJErIC8DglUoqFWSJ7aUhkgRRmyPO
-         Gk/Q==
-X-Gm-Message-State: AOAM533esy3YGt5Alin9RjIMpaJaj/WIe/3vedePc6ACVGrT91bUdobV
-        0pv8jf1E8kTczZD/Vt78kyw=
-X-Google-Smtp-Source: ABdhPJxuCWpusAcRSBUL/YOkPjghlssAoi3ijytswLvfEFC2/EM+Jqn4gCl/ELUOVhnjYe/paL8r6g==
-X-Received: by 2002:adf:bb0a:: with SMTP id r10mr37769054wrg.23.1634121955635;
-        Wed, 13 Oct 2021 03:45:55 -0700 (PDT)
-Received: from [192.168.81.70] (bzq-219-42-90.isdn.bezeqint.net. [62.219.42.90])
-        by smtp.gmail.com with ESMTPSA id w5sm12858163wrq.86.2021.10.13.03.45.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Oct 2021 03:45:55 -0700 (PDT)
-Subject: Re: [PATCH 14/16] block: switch polling to be bio based
-To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-Cc:     Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        "Wunderlich, Mark" <mark.wunderlich@intel.com>,
-        "Vasudevan, Anil" <anil.vasudevan@intel.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-References: <20211012111226.760968-1-hch@lst.de>
- <20211012111226.760968-15-hch@lst.de>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <dde98ff3-0770-69ad-fce7-8efb0a335416@grimberg.me>
-Date:   Wed, 13 Oct 2021 13:45:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Wed, 13 Oct 2021 06:48:21 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id C770222349;
+        Wed, 13 Oct 2021 10:46:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1634121975; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7ReBJ39FQSq2Ri4gzsf/9HN/2AQLJSHkmbvHM+1gQDU=;
+        b=Bs0jLE6dW9R2XV5QAW5PANZfFI55neOv68yBXHDkKdpWkALHM8icU9xbSzdfnCREFrZMct
+        3+2oN3aeDktCUFxEHYH/VXi16HIjV43KTI+7DyCyp9zZ7xbHI93O8kiQ8PoweiysaY4pPN
+        UPyCFVv7pjQ3km4/YPlTqSGByM6p0LI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1634121975;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7ReBJ39FQSq2Ri4gzsf/9HN/2AQLJSHkmbvHM+1gQDU=;
+        b=r7uHZ7+0iVupNri72uYOV4o6jxkgpR8stOFMA8jxvLfFR9bxkjnCTl3Cs+7eA7SAyqgiLY
+        muVAi/A9MWKYZLDw==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id A57B7A3B81;
+        Wed, 13 Oct 2021 10:46:15 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 7FB0E1E11B6; Wed, 13 Oct 2021 12:46:15 +0200 (CEST)
+Date:   Wed, 13 Oct 2021 12:46:15 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Coly Li <colyli@suse.de>,
+        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
+        David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Kees Cook <keescook@chromium.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, drbd-dev@lists.linbit.com,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
+        linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev,
+        reiserfs-devel@vger.kernel.org
+Subject: Re: [PATCH 28/29] reiserfs: use sb_bdev_nr_blocks
+Message-ID: <20211013104615.GH19200@quack2.suse.cz>
+References: <20211013051042.1065752-1-hch@lst.de>
+ <20211013051042.1065752-29-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20211012111226.760968-15-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211013051042.1065752-29-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+On Wed 13-10-21 07:10:41, Christoph Hellwig wrote:
+> Use the sb_bdev_nr_blocks helper instead of open coding it.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
