@@ -2,192 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CCB242BE9D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 13:04:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A4C542BF34
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 13:49:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229757AbhJMLF6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Oct 2021 07:05:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:42794 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230414AbhJMLF4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Oct 2021 07:05:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634123032;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=pm2HFBolkPmIutQKtnGVo/TAfScR5edRGy4d25/SdeA=;
-        b=KD+D5y+PkswhupKI4VOQaOnKEuL0aMqNbVXb4jdTD/yk8hDkQZlx+7FHmnoJ+lbV37WTzE
-        xEQc2FfXE1X0Q4auQ9u3G4Ba2FfjdP8q0Z5E22PxfYNzjaF8ppbeZkvzCaDBUfyJhJGVZH
-        yfr9txkvaxa/rd4zUSbTP5m+ZyV9MCw=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-600-dpVl2g96NGuHIhC7y4J3Jg-1; Wed, 13 Oct 2021 07:03:51 -0400
-X-MC-Unique: dpVl2g96NGuHIhC7y4J3Jg-1
-Received: by mail-wr1-f72.google.com with SMTP id f1-20020a5d64c1000000b001611832aefeso1658967wri.17
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 04:03:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=pm2HFBolkPmIutQKtnGVo/TAfScR5edRGy4d25/SdeA=;
-        b=d3X9DY3POpZ7TCASaN9vgOf2aweit9haP6p5gEXGgPy8Wtus9q9aig2HN6SGiqt7zq
-         AsVG/Vtce5veSXsHrmnF/SVHOSVLdDKcbKRqbxH1R1V+buQ6Z8KMpIYW93ivprDSgQqR
-         kmUZNDvrAthyA5+ePQbMBzI/B13r3Cp45wATdeaa53fRRSnxZQUXhwt8C/R7N2KhKGSU
-         oqAbQqDoJFHssoNOTmZqIrlyxm9eVHpCIMJ6MYLYBDEg3dgkSddquKUp/0WdzO7qHyjN
-         YqlvJ7W3SlxkRhAqsnDCJvwA6CpOuwAtRYcSNtaVx3cdpD5tb5BNhiQ9kXQ0xGD2Kmta
-         8XHQ==
-X-Gm-Message-State: AOAM530xa+NV5+ndYsIPHhx8LK3q0zpQm9BJ+YACZspJMn0JKa+TiRVf
-        41GuTzhhzn2sOPfV9o1aGToLWvgBclwxbi6oODySB1s5Dr6zCjdZkx/8/4yyLvH0vBk2yBUCF2J
-        D9xLOF9zuaboy0dm2kj3WQFWcMA==
-X-Received: by 2002:adf:a194:: with SMTP id u20mr39899232wru.275.1634123030391;
-        Wed, 13 Oct 2021 04:03:50 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJypxsxhU5d6LZPZIfUUDegUVRR2UQLEo64TMqEnAh5Ix5FGAFA1VDGCfrTQu99KLNCm64Sq/Q==
-X-Received: by 2002:adf:a194:: with SMTP id u20mr39899137wru.275.1634123030054;
-        Wed, 13 Oct 2021 04:03:50 -0700 (PDT)
-Received: from [192.168.3.132] (p5b0c6774.dip0.t-ipconnect.de. [91.12.103.116])
-        by smtp.gmail.com with ESMTPSA id m4sm5183560wrz.45.2021.10.13.04.03.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Oct 2021 04:03:49 -0700 (PDT)
-Subject: Re: [PATCH RFC] virtio: wrap config->reset calls
-To:     "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gonglei <arei.gonglei@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        David Airlie <airlied@linux.ie>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jie Deng <jie.deng@intel.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Anton Yakovlev <anton.yakovlev@opensynergy.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-um@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, kvm@vger.kernel.org,
-        alsa-devel@alsa-project.org
-References: <20211013105226.20225-1-mst@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Message-ID: <2060bd96-5884-a1b5-9f29-7fe670dc088d@redhat.com>
-Date:   Wed, 13 Oct 2021 13:03:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        id S231923AbhJMLvO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Oct 2021 07:51:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50628 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229535AbhJMLvN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Oct 2021 07:51:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 481956113E;
+        Wed, 13 Oct 2021 11:49:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634125750;
+        bh=08cmMCW6GG9gWIOhjxYfXSFIYClklm6HhvdpGKvi16g=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=a8/bDma6IeOw47+CVOZM0/AVmVmBWj1bzuEKec7UQcITca/iyIJH9GPAJIvAVnR2H
+         gIj1lAPQWNgzGnxnDjDyDaF32C+R5o6fUz/YUAp3c1YZe/9hIP383TAgZJNW4BPXEl
+         xYD+h/4uCsU8H8vRNmQD46ZYx8EtXiEsgIDmEbcLam7Kgy7p0D1CEyyWBZc8Oo5s4s
+         mKx9gm2Et/G27qN8h5upJOFFpTZWaLQUyDXCOPY+Lk6JU5Ixx50zk5XTqJg6j3RoFm
+         M2wBcpLSkUUaqE3EQb6QT7vjrO8+tWKwpsFH21EvMrrffZtKhX7xSJj6hkqXb9k04J
+         n/uD/fERi9WNA==
+Received: by mail-wr1-f47.google.com with SMTP id u18so7454311wrg.5;
+        Wed, 13 Oct 2021 04:49:10 -0700 (PDT)
+X-Gm-Message-State: AOAM5336sVVSTv4GlHgyv6EXioK/K2NL0aV6Jg7okZrRAzM61oFdCg9f
+        1ZjYZgvJn6hw+C66/MlVwogV4enydqLgkjA86v0=
+X-Google-Smtp-Source: ABdhPJxAPtyVc3G/tOtzJ7z3+RdpcFSsTVHBBrdmAoAeaOD1MZ0LF/ObKmsWMXdtxVVGB9gwLelX+Cl/3S/Jhom+ziQ=
+X-Received: by 2002:a1c:2358:: with SMTP id j85mr12179996wmj.1.1634125748613;
+ Wed, 13 Oct 2021 04:49:08 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20211013105226.20225-1-mst@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20211006025350.a5PczFZP4%akpm@linux-foundation.org>
+ <58fbf2ff-b367-2137-aa77-fcde6c46bbb7@infradead.org> <20211006182052.6ecc17cf@canb.auug.org.au>
+ <f877a1c9-1898-23f3-bba3-3442dc1f3979@amd.com> <CAMuHMdV3eMchpgUasU6BBHrDQyjCc2TrqJ+zJgFhgAySpqVGfw@mail.gmail.com>
+ <CAK8P3a1LLABstZ2rPYpsXRTxMdbSTrh0y753vrfGbRovv9fS8A@mail.gmail.com>
+In-Reply-To: <CAK8P3a1LLABstZ2rPYpsXRTxMdbSTrh0y753vrfGbRovv9fS8A@mail.gmail.com>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Wed, 13 Oct 2021 13:48:52 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a1PoL4KMJfRyOB59tNYR6-cn3rWqDfqXeeW5ggMVGaeVg@mail.gmail.com>
+Message-ID: <CAK8P3a1PoL4KMJfRyOB59tNYR6-cn3rWqDfqXeeW5ggMVGaeVg@mail.gmail.com>
+Subject: Re: mmotm 2021-10-05-19-53 uploaded (drivers/gpu/drm/msm/hdmi/hdmi_phy.o)
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux-Next <linux-next@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.cz>, mm-commits@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 13.10.21 12:55, Michael S. Tsirkin wrote:
-> This will enable cleanups down the road.
-> The idea is to disable cbs, then add "flush_queued_cbs" callback
-> as a parameter, this way drivers can flush any work
-> queued after callbacks have been disabled.
-> 
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
->   arch/um/drivers/virt-pci.c                 | 2 +-
->   drivers/block/virtio_blk.c                 | 4 ++--
->   drivers/bluetooth/virtio_bt.c              | 2 +-
->   drivers/char/hw_random/virtio-rng.c        | 2 +-
->   drivers/char/virtio_console.c              | 4 ++--
->   drivers/crypto/virtio/virtio_crypto_core.c | 8 ++++----
->   drivers/firmware/arm_scmi/virtio.c         | 2 +-
->   drivers/gpio/gpio-virtio.c                 | 2 +-
->   drivers/gpu/drm/virtio/virtgpu_kms.c       | 2 +-
->   drivers/i2c/busses/i2c-virtio.c            | 2 +-
->   drivers/iommu/virtio-iommu.c               | 2 +-
->   drivers/net/caif/caif_virtio.c             | 2 +-
->   drivers/net/virtio_net.c                   | 4 ++--
->   drivers/net/wireless/mac80211_hwsim.c      | 2 +-
->   drivers/nvdimm/virtio_pmem.c               | 2 +-
->   drivers/rpmsg/virtio_rpmsg_bus.c           | 2 +-
->   drivers/scsi/virtio_scsi.c                 | 2 +-
->   drivers/virtio/virtio.c                    | 5 +++++
->   drivers/virtio/virtio_balloon.c            | 2 +-
->   drivers/virtio/virtio_input.c              | 2 +-
->   drivers/virtio/virtio_mem.c                | 2 +-
->   fs/fuse/virtio_fs.c                        | 4 ++--
->   include/linux/virtio.h                     | 1 +
->   net/9p/trans_virtio.c                      | 2 +-
->   net/vmw_vsock/virtio_transport.c           | 4 ++--
->   sound/virtio/virtio_card.c                 | 4 ++--
->   26 files changed, 39 insertions(+), 33 deletions(-)
-> 
-> diff --git a/arch/um/drivers/virt-pci.c b/arch/um/drivers/virt-pci.c
-> index c08066633023..22c4d87c9c15 100644
-> --- a/arch/um/drivers/virt-pci.c
-> +++ b/arch/um/drivers/virt-pci.c
-> @@ -616,7 +616,7 @@ static void um_pci_virtio_remove(struct virtio_device *vdev)
->   	int i;
->   
->           /* Stop all virtqueues */
-> -        vdev->config->reset(vdev);
-> +        virtio_reset_device(vdev);
->           vdev->config->del_vqs(vdev);
+On Wed, Oct 13, 2021 at 12:54 PM Arnd Bergmann <arnd@kernel.org> wrote:
+> On Thu, Oct 7, 2021 at 11:51 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> -msm-$(CONFIG_DRM_FBDEV_EMULATION) += msm_fbdev.o
+> -msm-$(CONFIG_COMMON_CLK) += disp/mdp4/mdp4_lvds_pll.o
+> -msm-$(CONFIG_COMMON_CLK) += hdmi/hdmi_pll_8960.o
+> -msm-$(CONFIG_COMMON_CLK) += hdmi/hdmi_phy_8996.o
+> +msm-$(CONFIG_DRM_FBDEV_EMULATION) += msm_fbdev.o \
+> + disp/mdp4/mdp4_lvds_pll.o \
+> + hdmi/hdmi_pll_8960.o \
+> + hdmi/hdmi_phy_8996.o
+>
+>  msm-$(CONFIG_DRM_MSM_HDMI_HDCP) += hdmi/hdmi_hdcp.o
 
-Nit: virtio_device_reset()?
+I fixed my local copy now after noticing that these should not go
+after CONFIG_DRM_FBDEV_EMULATION but the top-level option:
 
-Because I see:
+@@ -23,8 +23,10 @@ msm-y := \
+        hdmi/hdmi_i2c.o \
+        hdmi/hdmi_phy.o \
+        hdmi/hdmi_phy_8960.o \
++       hdmi/hdmi_phy_8996.o
+        hdmi/hdmi_phy_8x60.o \
+        hdmi/hdmi_phy_8x74.o \
++       hdmi/hdmi_pll_8960.o \
+        edp/edp.o \
+        edp/edp_aux.o \
+        edp/edp_bridge.o \
+@@ -37,6 +39,7 @@ msm-y := \
+        disp/mdp4/mdp4_dtv_encoder.o \
+        disp/mdp4/mdp4_lcdc_encoder.o \
+        disp/mdp4/mdp4_lvds_connector.o \
++       disp/mdp4/mdp4_lvds_pll.o \
+        disp/mdp4/mdp4_irq.o \
+        disp/mdp4/mdp4_kms.o \
+        disp/mdp4/mdp4_plane.o \
 
-int virtio_device_freeze(struct virtio_device *dev);
-int virtio_device_restore(struct virtio_device *dev);
-void virtio_device_ready(struct virtio_device *dev)
-
-But well, there is:
-void virtio_break_device(struct virtio_device *dev);
-
--- 
-Thanks,
-
-David / dhildenb
-
+           Arnd
