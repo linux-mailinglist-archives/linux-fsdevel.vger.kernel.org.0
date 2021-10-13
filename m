@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F32542B4E9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 07:23:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EB7342B504
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 07:24:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236497AbhJMFZT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Oct 2021 01:25:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35918 "EHLO
+        id S237684AbhJMF0y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Oct 2021 01:26:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229603AbhJMFZR (ORCPT
+        with ESMTP id S229514AbhJMF0y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Oct 2021 01:25:17 -0400
+        Wed, 13 Oct 2021 01:26:54 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7928C061570;
-        Tue, 12 Oct 2021 22:23:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9181EC061570;
+        Tue, 12 Oct 2021 22:24:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=TaHNzTEbIlyf8VXszJ+3gUpeBMoLxyPeY6M0WbLeJoE=; b=E+78EEJ2GHUy8Hk4P4DcOEjmwX
-        HIQ2kNmA3WYxpDbTzgmiYyRL2xWCpSEifFW8boMSUF/sGaztAh3FbTDSkpa8miOFEZFNArrh9A/Ki
-        peiQ6gNWuohYoOYEJ2aeJhiJkXX+ruL0fTrfijH7xWchqQ4kexPkIoSShXoyh6yHu37hoO2fDKYzY
-        +yS55l1rIobhbkKzjv6H80Q2JgO7oc8Y8RPhkmll4qN72NgoDdwUDfEOxrfgtQZOXfF2S8EnoANXq
-        9aLLxZ52YRtDKUJr7TbTHvQ6wCqBdpgppsBYsyqry+UY++1dQpz1Bq7l0+coY3Sl5L/KV8yTCbJYt
-        jIiTKAGQ==;
+        bh=NsQsVuWr8bWP70PtWOyIIt7IS6He0KNvqjFlC9dYhZ4=; b=Ew4D4bJU2khGePoaHa7o+E3zV6
+        +YnBcRQumMxslqX1pbHbi2x3aZu0jSa1syVga+ovHnkiUvqmRfI0DSbvlIBIons91q/y7LwBC+rt7
+        ljLUIJKylzikWb8/DDtXWEmbo3PVzdLaD5+UeBoEpdghnuFhnyZ+eFhNlSOqy1C3ILd1RRXjsk4SA
+        TIYdV5+Xjmcbs8sMb8rd9XmMwXKKQ77nz+WFSnQ9FDRqElegNQrC/j0gD+AAXIN5BGiLeFOwPFtc5
+        SSicnwV+Z7JCkg1j3Hfq7OPsge69ggSYDVUW1Y0Wb3vn4pbsJSaM7NthMqM5vfYTZbKzMF89lBaTw
+        B4nut1Lw==;
 Received: from 089144212063.atnat0021.highway.a1.net ([89.144.212.63] helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1maWek-0076NJ-T3; Wed, 13 Oct 2021 05:18:53 +0000
+        id 1maWfl-0076UD-PC; Wed, 13 Oct 2021 05:20:03 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
@@ -51,9 +51,9 @@ Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
         linux-nfs@vger.kernel.org, linux-nilfs@vger.kernel.org,
         linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev,
         reiserfs-devel@vger.kernel.org
-Subject: [PATCH 08/29] fs: use bdev_nr_sectors instead of open coding it in blkdev_max_block
-Date:   Wed, 13 Oct 2021 07:10:21 +0200
-Message-Id: <20211013051042.1065752-9-hch@lst.de>
+Subject: [PATCH 09/29] fs: simplify init_page_buffers
+Date:   Wed, 13 Oct 2021 07:10:22 +0200
+Message-Id: <20211013051042.1065752-10-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211013051042.1065752-1-hch@lst.de>
 References: <20211013051042.1065752-1-hch@lst.de>
@@ -64,7 +64,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use the proper helper to read the block device size.
+No need to convert from bdev to inode and back.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
@@ -72,18 +72,18 @@ Signed-off-by: Christoph Hellwig <hch@lst.de>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/buffer.c b/fs/buffer.c
-index c615387aedcae..3fb9c5b457ab6 100644
+index 3fb9c5b457ab6..ef1fe4f77a952 100644
 --- a/fs/buffer.c
 +++ b/fs/buffer.c
-@@ -878,7 +878,7 @@ link_dev_buffers(struct page *page, struct buffer_head *head)
- static sector_t blkdev_max_block(struct block_device *bdev, unsigned int size)
- {
- 	sector_t retval = ~((sector_t)0);
--	loff_t sz = i_size_read(bdev->bd_inode);
-+	loff_t sz = bdev_nr_sectors(bdev) << SECTOR_SHIFT;
+@@ -897,7 +897,7 @@ init_page_buffers(struct page *page, struct block_device *bdev,
+ 	struct buffer_head *head = page_buffers(page);
+ 	struct buffer_head *bh = head;
+ 	int uptodate = PageUptodate(page);
+-	sector_t end_block = blkdev_max_block(I_BDEV(bdev->bd_inode), size);
++	sector_t end_block = blkdev_max_block(bdev, size);
  
- 	if (sz) {
- 		unsigned int sizebits = blksize_bits(size);
+ 	do {
+ 		if (!buffer_mapped(bh)) {
 -- 
 2.30.2
 
