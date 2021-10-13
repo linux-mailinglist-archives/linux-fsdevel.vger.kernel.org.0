@@ -2,116 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ACB442B3C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 05:41:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 313CB42B3DB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 05:53:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237407AbhJMDnz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Oct 2021 23:43:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34745 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236287AbhJMDny (ORCPT
+        id S237160AbhJMDzQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Oct 2021 23:55:16 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:28923 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229717AbhJMDzP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Oct 2021 23:43:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634096511;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=P9QQpHMzPqOGAUAgrM92CQtjCHKsEXKEq2E7CGbFGTs=;
-        b=FCGuTLXqaKbORxt68jvecb+cOY8K6lYUomVBsY6I8aRuTVdXAKYOVV/9hZcWslkth17u8h
-        mwHnlIVuwKrF+bAdDP5E9Zugx4bOpR9c1P6UuA/1VYkyfekeUMozPbgfhzR3ti4/ok/5Vy
-        f3S0sZsWjgaGRGIbtbpJhLWDt0U4CV0=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-233-NeT5wfcbMzeE3qv1tMTDCg-1; Tue, 12 Oct 2021 23:41:50 -0400
-X-MC-Unique: NeT5wfcbMzeE3qv1tMTDCg-1
-Received: by mail-pj1-f70.google.com with SMTP id nn1-20020a17090b38c100b001a063449823so1017036pjb.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Oct 2021 20:41:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=P9QQpHMzPqOGAUAgrM92CQtjCHKsEXKEq2E7CGbFGTs=;
-        b=ku+CnN2sT5IOmqaAkjIJtplo/3BsRqDTeU5lDpTsvXLHSaHoMGAevvdnuGM680SNmG
-         bIMOjRJtuU0wiOsbKjA5bK23Ep0bCQptCOLrybI8KT7DJk7omks9WR/5qmYzljoKYKxj
-         Sj5pI7rUAebMtLXYCy9gkppOFnGGipDSYgnZcnEEc1XeYQc9fAs80CdHxbO1oQlbroOl
-         opCzp0sKWnt97jaB2oyMXjsUblapjyuVtPmq7zTJmgnDQrj4qZBZgwXkzl7N6gGOHg1G
-         TRPLo9C4ou7V15cfsO18fPDGBr5A7dapFYCyppMMoDeBsGNwbrMnHCbSNt/XIAJX2ink
-         Py3g==
-X-Gm-Message-State: AOAM531fJsV7Bd3PAdXOAV5ULYtudoDjY7CSOxXEJcf0QTgwjaNiX9K/
-        dym0WCMyCnQ104aOjQpmX2HPpX4ljomie1wGy4IRrZEJ9z5r5KU7/QFIjXRfAiNY8NBq0p0ZuZo
-        yJNHzpB3wc8/D/MtYDgttp42waQ==
-X-Received: by 2002:a62:1b92:0:b0:3eb:3f92:724 with SMTP id b140-20020a621b92000000b003eb3f920724mr35757518pfb.3.1634096508717;
-        Tue, 12 Oct 2021 20:41:48 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwTsSrRU70L24zyehCxjIOcnI0fW5T3TZ6w598G0eEchUTE4T6Elozl+lg8k4lS16yUUCus6A==
-X-Received: by 2002:a62:1b92:0:b0:3eb:3f92:724 with SMTP id b140-20020a621b92000000b003eb3f920724mr35757499pfb.3.1634096508378;
-        Tue, 12 Oct 2021 20:41:48 -0700 (PDT)
-Received: from t490s ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id v13sm12837847pgt.7.2021.10.12.20.41.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Oct 2021 20:41:47 -0700 (PDT)
-Date:   Wed, 13 Oct 2021 11:41:40 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
- for PMD page fault
-Message-ID: <YWZVdDSS/4rnFbqK@t490s>
-References: <YV4Dz3y4NXhtqd6V@t490s>
- <CAHbLzkp8oO9qvDN66_ALOqNrUDrzHH7RZc3G5GQ1pxz8qXJjqw@mail.gmail.com>
- <CAHbLzkqm_Os8TLXgbkL-oxQVsQqRbtmjdMdx0KxNke8mUF1mWA@mail.gmail.com>
- <YWTc/n4r6CJdvPpt@t490s>
- <YWTobPkBc3TDtMGd@t490s>
- <CAHbLzkrOsNygu5x8vbMHedv+P3dEqOxOC6=O6ACSm1qKzmoCng@mail.gmail.com>
- <YWYHukJIo8Ol2sHN@t490s>
- <CAHbLzkp3UXKs_NP9XD_ws=CSSFzUPk7jRxj0K=gvOqoi+GotmA@mail.gmail.com>
- <YWZMDTwCCZWX5/sQ@t490s>
- <CAHbLzkp8QkORXK_y8hnrg=2kTRFyoZpJcXbkyj6eyCdcYSbZTw@mail.gmail.com>
+        Tue, 12 Oct 2021 23:55:15 -0400
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4HTdmq3YwSzbn59;
+        Wed, 13 Oct 2021 11:48:43 +0800 (CST)
+Received: from kwepemm600015.china.huawei.com (7.193.23.52) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.8; Wed, 13 Oct 2021 11:53:11 +0800
+Received: from huawei.com (10.175.101.6) by kwepemm600015.china.huawei.com
+ (7.193.23.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.8; Wed, 13 Oct
+ 2021 11:53:09 +0800
+From:   ChenXiaoSong <chenxiaosong2@huawei.com>
+To:     <viro@zeniv.linux.org.uk>, <stable@vger.kernel.org>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dhowells@redhat.com>, <yukuai3@huawei.com>, <yi.zhang@huawei.com>,
+        <chenxiaosong2@huawei.com>
+Subject: [PATCH linux-4.19.y] VFS: Fix fuseblk memory leak caused by mount concurrency
+Date:   Wed, 13 Oct 2021 12:01:32 +0800
+Message-ID: <20211013040132.502406-1-chenxiaosong2@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHbLzkp8QkORXK_y8hnrg=2kTRFyoZpJcXbkyj6eyCdcYSbZTw@mail.gmail.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.101.6]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm600015.china.huawei.com (7.193.23.52)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 12, 2021 at 08:27:06PM -0700, Yang Shi wrote:
-> > But this also reminded me that shouldn't we be with the page lock already
-> > during the process of "setting hwpoison-subpage bit, split thp, clear
-> > hwpoison-subpage bit"?  If it's only the small window that needs protection,
-> > while when looking up the shmem pagecache we always need to take the page lock
-> > too, then it seems already safe even without the extra bit?  Hmm?
-> 
-> I don't quite get your point. Do you mean memory_failure()? If so the
-> answer is no, outside the page lock. And the window may be indefinite
-> since file THP doesn't get split before this series and the split may
-> fail even after this series.
+If two processes mount same superblock, memory leak occurs:
 
-What I meant is that we could extend the page_lock in try_to_split_thp_page()
-to cover setting hwpoison-subpage too (and it of course covers the clearing if
-thp split succeeded, as that's part of the split process).  But yeah it's a
-good point that the split may fail, so the extra bit seems still necessary.
+CPU0               |  CPU1
+do_new_mount       |  do_new_mount
+  fs_set_subtype   |    fs_set_subtype
+    kstrdup        |
+                   |      kstrdup
+    memrory leak   |
 
-Maybe that'll be something worth mentioning in the commit message too?  The
-commit message described very well on the overhead of looping over 512 pages,
-however the reader can easily overlook the real reason for needing this bit -
-IMHO it's really for the thp split failure case, as we could also mention that
-if thp split won't fail, page lock should be suffice (imho).  We could also
-mention about why soft offline does not need that extra bit, which seems not
-obvious as well, so imho good material for commit messages.
+Fix this by moving fs_set_subtype to mount_fs before up_write(&sb->s_umount).
 
-Sorry to have asked for a lot of commit message changes; I hope they make sense.
+Linus's tree already have refactoring patchset [1], one of them can fix this bug:
+	c30da2e981a7 (fuse: convert to use the new mount API)
 
-Thanks,
+Since we did not merge the refactoring patchset in this branch, I create this patch.
 
+[1] https://patchwork.kernel.org/project/linux-fsdevel/patch/20190903113640.7984-3-mszeredi@redhat.com/
+
+Fixes: 9d412a43c3b2 (vfs: split off vfsmount-related parts of vfs_kern_mount())
+Cc: David Howells <dhowells@redhat.com>
+Signed-off-by: ChenXiaoSong <chenxiaosong2@huawei.com>
+---
+ fs/namespace.c | 26 --------------------------
+ fs/super.c     | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+), 26 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 2f3c6a0350a8..556fdd3b6a4e 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2402,29 +2402,6 @@ static int do_move_mount(struct path *path, const char *old_name)
+ 	return err;
+ }
+ 
+-static struct vfsmount *fs_set_subtype(struct vfsmount *mnt, const char *fstype)
+-{
+-	int err;
+-	const char *subtype = strchr(fstype, '.');
+-	if (subtype) {
+-		subtype++;
+-		err = -EINVAL;
+-		if (!subtype[0])
+-			goto err;
+-	} else
+-		subtype = "";
+-
+-	mnt->mnt_sb->s_subtype = kstrdup(subtype, GFP_KERNEL);
+-	err = -ENOMEM;
+-	if (!mnt->mnt_sb->s_subtype)
+-		goto err;
+-	return mnt;
+-
+- err:
+-	mntput(mnt);
+-	return ERR_PTR(err);
+-}
+-
+ /*
+  * add a mount into a namespace's mount tree
+  */
+@@ -2490,9 +2467,6 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
+ 		return -ENODEV;
+ 
+ 	mnt = vfs_kern_mount(type, sb_flags, name, data);
+-	if (!IS_ERR(mnt) && (type->fs_flags & FS_HAS_SUBTYPE) &&
+-	    !mnt->mnt_sb->s_subtype)
+-		mnt = fs_set_subtype(mnt, fstype);
+ 
+ 	put_filesystem(type);
+ 	if (IS_ERR(mnt))
+diff --git a/fs/super.c b/fs/super.c
+index 9fb4553c46e6..b181878753bb 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1240,6 +1240,30 @@ struct dentry *mount_single(struct file_system_type *fs_type,
+ }
+ EXPORT_SYMBOL(mount_single);
+ 
++static int fs_set_subtype(struct super_block *sb)
++{
++	int err;
++	const char *fstype = sb->s_type->name;
++	const char *subtype = strchr(fstype, '.');
++	if (subtype) {
++		subtype++;
++		err = -EINVAL;
++		if (!subtype[0])
++			goto err;
++	} else {
++		subtype = "";
++	}
++
++	sb->s_subtype = kstrdup(subtype, GFP_KERNEL);
++	err = -ENOMEM;
++	if (!sb->s_subtype)
++		goto err;
++	return 0;
++
++err:
++	return err;
++}
++
+ struct dentry *
+ mount_fs(struct file_system_type *type, int flags, const char *name, void *data)
+ {
+@@ -1289,6 +1313,12 @@ mount_fs(struct file_system_type *type, int flags, const char *name, void *data)
+ 	WARN((sb->s_maxbytes < 0), "%s set sb->s_maxbytes to "
+ 		"negative value (%lld)\n", type->name, sb->s_maxbytes);
+ 
++	if ((sb->s_type->fs_flags & FS_HAS_SUBTYPE) && !sb->s_subtype) {
++		error = fs_set_subtype(sb);
++		if (error)
++			goto out_sb;
++	}
++
+ 	up_write(&sb->s_umount);
+ 	free_secdata(secdata);
+ 	return root;
 -- 
-Peter Xu
+2.25.4
 
