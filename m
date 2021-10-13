@@ -2,136 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CB8C42C9F0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 21:23:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15C1742CA06
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 21:29:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237625AbhJMTZm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Oct 2021 15:25:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34224 "EHLO
+        id S233182AbhJMTba (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Oct 2021 15:31:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229941AbhJMTZe (ORCPT
+        with ESMTP id S230474AbhJMTb2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Oct 2021 15:25:34 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 643BAC061570
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 12:23:31 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id k23so3058911pji.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 12:23:31 -0700 (PDT)
+        Wed, 13 Oct 2021 15:31:28 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8F8FC061746
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 12:29:24 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id x130so3373644pfd.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 12:29:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=f83NlsNXjMg5QDwE3dqfC8dTeYtf/vdW3ZOd3Omo9rc=;
-        b=g/vAfOHiq9i34ozOpZngme9idv+KwO6KRzk+EqRmuWrF9SxgrFVCPVp1yzMi5gznyQ
-         qI5Z1X4fdM4w7fJWPVdAU6j4Pn2ymxli4PnNYnxurPuK9y7p3UTd3IR28W1ONqlS8edc
-         YcOC8jv5xaZwTvkt7bsUd+a8OcjLzQIHovzrbzXQKcwtkEzUBPXQmGXPrP5sQk9dbzGf
-         mqfdBsei9udsXlihndHTrjYcP4KYUlb26TqJ6SE2cdCGCEbffjCjukOdsK3y8HqWrIaJ
-         eX2MBqb5EyvxX13QGtrX9E27HrggpQP0cG1pyY4nJ7d9p1wFhCCBBuURlxVDCr8eyEVU
-         CeaQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=HJWlwMc3bcVndzEG3rK1HHM2GpwqaG1vW1trPKMhPTE=;
+        b=ngD+bHowU5GX0hIFoHwCgvBSYL1kIwj5BamgcK2b44Hn0Efa1cJh1BkhvPnJNyXaz+
+         oaTiT+/SvMe6Sna42CuymTahBBHtBTsM99qXGLLWtDgURRrWH7WsP4ESROuTVw/YrLgC
+         CNfDMvuhnaZto7jmQiMkFOCpDK0ROXVXdyYLbaV5tFR9BX0J2eg3sjJpkF1ptwft6sX1
+         FWrvZX8CX+PrVKFcYhPqspYD4+FBt2wBaQ7Ooa8YpeerB3ORiRQFE/S6I6RUkpe3R4PG
+         GECmmS0ixOIVW4fYFpRI7AkWVEQ3gsU1YNKQ5R8s4sfw7DL9MKXo3I22jJxSTVstAuO2
+         yFfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=f83NlsNXjMg5QDwE3dqfC8dTeYtf/vdW3ZOd3Omo9rc=;
-        b=vjlsj7nsH3Q1TGoeMf2WRzVSpoHR9G+HzNM1H/d/IWdPc1QJYyGqbjQNH2iUKHliBY
-         EysoiuwLLArrBRQlZ0g0UmTNHohqZSoKicVdlgqs9dGcWxdCXnzU5AzooUGw2ToiOCh0
-         HJ8TnH6I+7e3xGEIhZap2m2yqIedsguPNOrLpbAadP5IlEb8T1v5MqWFSCJGpB+9mZvw
-         k8ABWLPZaXunNgr86FKf6raEsWeFeSDm4A1TBnF9Uo+ES36M46vxDjsqUI1ez6pxPsmr
-         z1xOKR9xm4YSlkG3F+Qe3BNm16pK+cJcpNWu3a90nscED4oTJnAut9w1KzWN01Y9I9gy
-         EfMA==
-X-Gm-Message-State: AOAM5325EGg7wFeBokzDY9QLagRhqniHkZsWU9iFJAvMk4wSUSmO9TUt
-        Am/Ig6rR9Vt9Xyo7ITwisJz4g2Zg5ls0iWlFAapCaw==
-X-Google-Smtp-Source: ABdhPJx7B4wbxUigj3YkCzr4ajJ5PrOzGyI3Sp5lpbipGlagpogxA6eKEteE1V3/8BXY06a8GNqWVU4AwQRGk530ZBw=
-X-Received: by 2002:a17:903:22cc:b0:13e:fa73:6fef with SMTP id
- y12-20020a17090322cc00b0013efa736fefmr1015863plg.25.1634153010612; Wed, 13
- Oct 2021 12:23:30 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=HJWlwMc3bcVndzEG3rK1HHM2GpwqaG1vW1trPKMhPTE=;
+        b=6zVB9LASw4rvdICYnUcqoNpGgKXCmdMeAx0jsA+I5VrTwi5EMHKn1mHj0q5rID1ev6
+         +VlYB5UqAU95QIZQJ/HgsMwN4bqU00FsXvTdfy1oAKGjIowuz22VhInf6DUE5M2LYG58
+         14KsyouJf2m+gpZqFaWkqwjyQ9Op8CFn6zNc4T3vZulA5v9rAuZBiRAGwfSSfa7y0kRr
+         ILc0indeUCntdSoRmCqYUUkehMrYNnTGGgLp3BgETSfnP5HV9cNWSwPNf+8lZ9KyJ2I2
+         HeLfIqMpZCDf1nc1iKwmLLPfnxd8zY6LuHyIhweD/nXy2Mb+HPYE7xxgvYiXn8wiZ6qp
+         JTNA==
+X-Gm-Message-State: AOAM532/V6USlGVttTWOEbXTRjvkxksEvw0OGrbf1xR4AXbZKuoc3UDZ
+        XtXPeI7GbwCjT03IDGJXnDm4uA==
+X-Google-Smtp-Source: ABdhPJwBnTbMERs0zBoP7LOWHM0wM+4dMwjgOwnXVqj4whYC/0ed3HgNAWHQmB2Rp9Cx46+JjoCGag==
+X-Received: by 2002:a63:2041:: with SMTP id r1mr828228pgm.482.1634153364099;
+        Wed, 13 Oct 2021 12:29:24 -0700 (PDT)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id j6sm302246pgq.0.2021.10.13.12.29.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Oct 2021 12:29:23 -0700 (PDT)
+Date:   Wed, 13 Oct 2021 19:29:20 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Salvatore Bonaccorso <carnil@debian.org>,
+        Stephen <stephenackerman16@gmail.com>, djwong@kernel.org,
+        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, rppt@kernel.org,
+        James.Bottomley@hansenpartnership.com, akpm@linux-foundation.org,
+        david@redhat.com, hagen@jauu.net
+Subject: Re: kvm crash in 5.14.1?
+Message-ID: <YWczkHnrv5ZQAkCH@google.com>
+References: <85e40141-3c17-1dff-1ed0-b016c5d778b6@gmail.com>
+ <2cd8af17-8631-44b5-8580-371527beeb38@gmail.com>
+ <YWcs3XRLdrvyRz31@eldamar.lan>
+ <f430d53f-59cf-a658-a207-1f04adb32c56@redhat.com>
 MIME-Version: 1.0
-From:   Mina Almasry <almasrymina@google.com>
-Date:   Wed, 13 Oct 2021 12:23:19 -0700
-Message-ID: <CAHS8izMpzTvd5=x_xMhDJy1toV-eT3AS=GXM2ObkJoCmbDtz6w@mail.gmail.com>
-Subject: [RFC Proposal] Deterministic memcg charging for shared memory
-To:     Roman Gushchin <songmuchun@bytedance.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Greg Thelen <gthelen@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Hugh Dickins <hughd@google.com>, Tejun Heo <tj@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>, cgroups@vger.kernel.org,
-        riel@surriel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f430d53f-59cf-a658-a207-1f04adb32c56@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Below is a proposal for deterministic charging of shared memory.
-Please take a look and let me know if there are any major concerns:
+On Wed, Oct 13, 2021, Paolo Bonzini wrote:
+> On 13/10/21 21:00, Salvatore Bonaccorso wrote:
+> > Hi,
+> > 
+> > On Sat, Oct 09, 2021 at 12:00:39PM -0700, Stephen wrote:
+> > > > I'll try to report back if I see a crash; or in roughly a week if the
+> > > system seems to have stabilized.
+> > > 
+> > > Just wanted to provide a follow-up here and say that I've run on both
+> > > v5.14.8 and v5.14.9 with this patch and everything seems to be good; no
+> > > further crashes or problems.
+> > 
+> > In Debian we got a report as well related to this issue (cf.
+> > https://bugs.debian.org/996175). Do you know did the patch felt
+> > through the cracks?
+> 
+> Yeah, it's not a KVM patch so the mm maintainers didn't see it.  I'll handle
+> it tomorrow.
 
-Problem:
-Currently shared memory is charged to the memcg of the allocating
-process. This makes memory usage of processes accessing shared memory
-a bit unpredictable since whichever process accesses the memory first
-will get charged. We have a number of use cases where our userspace
-would like deterministic charging of shared memory:
+It's queued in the -mm tree.
 
-1. System services allocating memory for client jobs:
-We have services (namely a network access service[1]) that provide
-functionality for clients running on the machine and allocate memory
-to carry out these services. The memory usage of these services
-depends on the number of jobs running on the machine and the nature of
-the requests made to the service, which makes the memory usage of
-these services hard to predict and thus hard to limit via memory.max.
-These system services would like a way to allocate memory and instruct
-the kernel to charge this memory to the client=E2=80=99s memcg.
-
-2. Shared filesystem between subtasks of a large job
-Our infrastructure has large meta jobs such as kubernetes which spawn
-multiple subtasks which share a tmpfs mount. These jobs and its
-subtasks use that tmpfs mount for various purposes such as data
-sharing or persistent data between the subtask restarts. In kubernetes
-terminology, the meta job is similar to pods and subtasks are
-containers under pods. We want the shared memory to be
-deterministically charged to the kubernetes's pod and independent to
-the lifetime of containers under the pod.
-
-3. Shared libraries and language runtimes shared between independent jobs.
-We=E2=80=99d like to optimize memory usage on the machine by sharing librar=
-ies
-and language runtimes of many of the processes running on our machines
-in separate memcgs. This produces a side effect that one job may be
-unlucky to be the first to access many of the libraries and may get
-oom killed as all the cached files get charged to it.
-
-Design:
-My rough proposal to solve this problem is to simply add a
-=E2=80=98memcg=3D/path/to/memcg=E2=80=99 mount option for filesystems (name=
-ly tmpfs):
-directing all the memory of the file system to be =E2=80=98remote charged=
-=E2=80=99 to
-cgroup provided by that memcg=3D option.
-
-Caveats:
-1. One complication to address is the behavior when the target memcg
-hits its memory.max limit because of remote charging. In this case the
-oom-killer will be invoked, but the oom-killer may not find anything
-to kill in the target memcg being charged. In this case, I propose
-simply failing the remote charge which will cause the process
-executing the remote charge to get an ENOMEM This will be documented
-behavior of remote charging.
-2. I would like to provide an initial implementation that adds this
-support for tmpfs, while leaving the implementation generic enough for
-myself or others to extend to more filesystems where they find the
-feature useful.
-3. I would like to implement this for both cgroups v2 _and_ cgroups
-v1, as we still have cgroup v1 users. If this is unacceptable I can
-provide the v2 implementation only, and maintain a local patch for the
-v1 support.
-
-If this proposal sounds good in principle. I have an experimental
-implementation that I can make ready for review. Please let me know of
-any concerns you may have. Thank you very much in advance!
-Mina Almasry
-
-[1] https://research.google/pubs/pub48630/
+https://lore.kernel.org/mm-commits/20211010224759.Ny1hd1WiD%25akpm@linux-foundation.org/
