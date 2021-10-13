@@ -2,94 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25D1142B2CB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 04:41:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 890D842B2DF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 04:48:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236928AbhJMCnN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Oct 2021 22:43:13 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:21938 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236473AbhJMCnL (ORCPT
+        id S235912AbhJMCu4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Oct 2021 22:50:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58176 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233544AbhJMCuz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Oct 2021 22:43:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634092868;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ft1VC9zrQcW79FB0tNwhaRoMQpMWx16xNlQ9+j3yL0Q=;
-        b=OLZfSMJwGcdFd1OaJkhLELknSJA0auwbTqfYT0N1wHlArQNNKYh0mNK+eAjJyUJq4NJ9p8
-        5imoQ4BvilBjjuTBKmdt3OgVxnLdlg1/KGEWTcwblYB6w/wwjIgvYKf3FYCx5b13yRf+xr
-        gnEsIFAXhEiHqwgCaHLRHznK2vGyjas=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-79-iuVxIIsjPCSFuXA4hFPtWw-1; Tue, 12 Oct 2021 22:41:07 -0400
-X-MC-Unique: iuVxIIsjPCSFuXA4hFPtWw-1
-Received: by mail-pj1-f70.google.com with SMTP id pg13-20020a17090b1e0d00b001a094e26d51so981955pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Oct 2021 19:41:07 -0700 (PDT)
+        Tue, 12 Oct 2021 22:50:55 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12BCEC061570;
+        Tue, 12 Oct 2021 19:48:53 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id g8so3842800edt.7;
+        Tue, 12 Oct 2021 19:48:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JUR/mGvYPsKPEVw6jC+FILMezuz/OqDM8KSj68qp0LY=;
+        b=Yd7IDzDBhs1jYzqUmRgWTj0v0Cnn8J7FLaaZ2l6VmBUNzCK8QG1NW4v9hK40WDpe00
+         saC8+xJ1jSYUK5r0CY4FFwbvodFXwfYR8/Bms20ZkJDcmI3gwQNyvsuxqWQxQoSfIF8K
+         BdI6g/y1ttyMHQWTL+xpRnrTeR26bZF116KpKf1vFwYvDSS0dWcOr111q34shL817go/
+         beFOxa0TXvsVHQqecyLXW1ZTUNRlhDj52ZYeyvwLyzHW8ATTtOlhZ4DX0S+HNmVjXm9V
+         OtzZ2rnbqSoGm+qffj80VdSlCvIOMOP6l3+53d4c/gDekgXWfLTUS9uHjGyUNxa2ylO1
+         8DOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ft1VC9zrQcW79FB0tNwhaRoMQpMWx16xNlQ9+j3yL0Q=;
-        b=xrb5iL5ndMgjLqb5NnXYvMs5xIlIjT2MKPM5STXKAc9rvvK/Tl43suQjOReFKAmhlP
-         k3rnWvMGxoDIsb1gTidb3GSWN0hEcKJKw++nWz+vqLWjLSrLZvfqIkguUEvfBB3nc3wW
-         n8M2hJPd8HC5SZaxDar/U0Y74yL8+6rlw2yZDtbG97Eilw0y3kyTeGC1o6aTVRU5Ao5m
-         mqBjETBGnxio3Q3n+wbSPnPLt9Z6HODM2LsrdL7pfmwyB1nnYAYqpCP8ged7zrA5z9yp
-         u/gaz1wX4fYta3qXs2+2NAbZDQIGiCsUW3VzB7rM0NBdAAFNFRvtL4gEltEvoPFtp0GE
-         P0ag==
-X-Gm-Message-State: AOAM531gCqKzO8Lvzl9hUyHFzpiNifoJKk6iLdR4nkWKn9frbp6dfTPl
-        uWsRQwUewiCj88n4Mb8IbQYFb5y33c0IgcNPIr+CGFjYJGCXewVSy18IAs1bAMBO4Tgl7Ryceon
-        G4vnoq0LF3saF443B9YlUGeqq+g==
-X-Received: by 2002:a17:90a:8b89:: with SMTP id z9mr10389116pjn.89.1634092865742;
-        Tue, 12 Oct 2021 19:41:05 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzv4fE/XpKqdSojl1JvafE8JRzpy63XtSbqmEDaHX4njX6bFnlJqEI2qmA63YhiSVFaEXHm+w==
-X-Received: by 2002:a17:90a:8b89:: with SMTP id z9mr10389092pjn.89.1634092865381;
-        Tue, 12 Oct 2021 19:41:05 -0700 (PDT)
-Received: from t490s ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id p18sm12844157pgk.28.2021.10.12.19.41.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Oct 2021 19:41:04 -0700 (PDT)
-Date:   Wed, 13 Oct 2021 10:40:57 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     naoya.horiguchi@nec.com, hughd@google.com,
-        kirill.shutemov@linux.intel.com, willy@infradead.org,
-        osalvador@suse.de, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 PATCH 0/5] Solve silent data loss caused by poisoned
- page cache (shmem/tmpfs)
-Message-ID: <YWZHOYgFrMYbmNA/@t490s>
-References: <20210930215311.240774-1-shy828301@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JUR/mGvYPsKPEVw6jC+FILMezuz/OqDM8KSj68qp0LY=;
+        b=uEVZtY7ivV1hLv87MdrKAQBl4hhh/lIuUrv/pagwa7gvYx565jw8r0vyDd+OaaEbnN
+         n0JiG1FuxjBNrneeNVBHNCbPc8oU+JU2ZyHuwbkJuXI4URA+LGl4guJ2DDJlB1hPlfPW
+         bQiDBO0Xgw3RbdgiLQLsar4gBBnu7ObBK2Mrvz1c5MApTY9SWXfObQzeMUgssOhadEf6
+         eE4wyJYr54DJbkviCn/kcIVHQklzeO/3DDCLG7cWaH2tWFZpW/LU1zDoyf+ariCI4mmc
+         6n8Q5zf+z16ebqqXT0Vn/ILL3j1ihDqfqRWl44WFGrDU702wgmw/5J4jN2P18t6/3GUm
+         h2Hg==
+X-Gm-Message-State: AOAM531hBvLeWHWcvESnx7d74Mt7V7FazUa0k3AWMq/nM+LVvw3wUMkt
+        iqANBZayJHbKVLNK8uJUivs8YrJmgYpDdxgUa4TIpQgU
+X-Google-Smtp-Source: ABdhPJx0ADpL3IeCPgiQs+btp6hskCDISm/c40aR79xLjBbigm8sdFG+AmdFBaN76EVqmlE6VUa2c///RnYPJ92xsEs=
+X-Received: by 2002:a05:6402:16d2:: with SMTP id r18mr5591511edx.363.1634093331672;
+ Tue, 12 Oct 2021 19:48:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210930215311.240774-1-shy828301@gmail.com>
+References: <20210930215311.240774-1-shy828301@gmail.com> <20210930215311.240774-3-shy828301@gmail.com>
+ <YV4Dz3y4NXhtqd6V@t490s> <CAHbLzkp8oO9qvDN66_ALOqNrUDrzHH7RZc3G5GQ1pxz8qXJjqw@mail.gmail.com>
+ <CAHbLzkqm_Os8TLXgbkL-oxQVsQqRbtmjdMdx0KxNke8mUF1mWA@mail.gmail.com>
+ <YWTc/n4r6CJdvPpt@t490s> <YWTobPkBc3TDtMGd@t490s> <CAHbLzkrOsNygu5x8vbMHedv+P3dEqOxOC6=O6ACSm1qKzmoCng@mail.gmail.com>
+ <YWYHukJIo8Ol2sHN@t490s>
+In-Reply-To: <YWYHukJIo8Ol2sHN@t490s>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Tue, 12 Oct 2021 19:48:39 -0700
+Message-ID: <CAHbLzkp3UXKs_NP9XD_ws=CSSFzUPk7jRxj0K=gvOqoi+GotmA@mail.gmail.com>
+Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
+ for PMD page fault
+To:     Peter Xu <peterx@redhat.com>
+Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
+        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 30, 2021 at 02:53:06PM -0700, Yang Shi wrote:
-> Yang Shi (5):
->       mm: hwpoison: remove the unnecessary THP check
->       mm: filemap: check if THP has hwpoisoned subpage for PMD page fault
->       mm: hwpoison: refactor refcount check handling
->       mm: shmem: don't truncate page if memory failure happens
->       mm: hwpoison: handle non-anonymous THP correctly
+On Tue, Oct 12, 2021 at 3:10 PM Peter Xu <peterx@redhat.com> wrote:
+>
+> On Tue, Oct 12, 2021 at 11:02:09AM -0700, Yang Shi wrote:
+> > On Mon, Oct 11, 2021 at 6:44 PM Peter Xu <peterx@redhat.com> wrote:
+> > >
+> > > On Mon, Oct 11, 2021 at 08:55:26PM -0400, Peter Xu wrote:
+> > > > Another thing is I noticed soft_offline_in_use_page() will still ignore file
+> > > > backed split.  I'm not sure whether it means we'd better also handle that case
+> > > > as well, so shmem thp can be split there too?
+> > >
+> > > Please ignore this paragraph - I somehow read "!PageHuge(page)" as
+> > > "PageAnon(page)"...  So I think patch 5 handles soft offline too.
+> >
+> > Yes, exactly. And even though the split is failed (or file THP didn't
+> > get split before patch 5/5), soft offline would just return -EBUSY
+> > instead of calling __soft_offline_page->page_handle_poison(). So
+> > page_handle_poison() should not see THP at all.
+>
+> I see, so I'm trying to summarize myself on what I see now with the new logic..
+>
+> I think the offline code handles hwpoison differently as it sets PageHWPoison
+> at the end of the process, IOW if anything failed during the offline process
+> the hwpoison bit is not set.
+>
+> That's different from how the memory failure path is handling this, as in that
+> case the hwpoison bit on the subpage is set firstly, e.g. before split thp.  I
+> believe that's also why memory failure requires the extra sub-page-hwpoison bit
+> while offline code shouldn't need to: because for soft offline split happens
+> before setting hwpoison so we just won't ever see a "poisoned file thp", while
+> for memory failure it could happen, and the sub-page-hwpoison will be a temp
+> bit anyway only exist for a very short period right after we set hwpoison on
+> the small page but before we split the thp.
+>
+> Am I right above?
 
-Today I just noticed one more thing: unpoison path has (unpoison_memory):
+Yeah, you are right. I noticed this too, only successfully migrated
+page is marked as hwpoison. But TBH I'm not sure why it does this way.
+Naoya may know. Anyway, THP doesn't get migrated if it can't be split,
+so PageHasHWPoisoned doesn't apply, right?
 
-	if (page_mapping(page)) {
-		unpoison_pr_info("Unpoison: the hwpoison page has non-NULL mapping %#lx\n",
-				 pfn, &unpoison_rs);
-		return 0;
-	}
+>
+> I feel like __soft_offline_page() still has some code that assumes "thp can be
+> there", e.g. iiuc after your change to allow file thp split, "hpage" will
+> always be the same as "page" then in that function, and isolate_page() does not
+> need to pass in a pagelist pointer too as it'll always be handling a small page
+> anyway.  But maybe they're fine to be there for now as they'll just work as
+> before, I think, so just raise it up.
 
-I _think_ it was used to make sure we ignore page that was not successfully
-poisoned/offlined before (for anonymous), so raising this question up on
-whether we should make sure e.g. shmem hwpoisoned pages still can be unpoisoned
-for debugging purposes.
+That compound_head() call seems to be for hugetlb since isolating
+hugetlb needs to pass in the head page IIUC. For the pagelist, I think
+it is just because migrate_pages() requires a list as the second
+parameter.
 
--- 
-Peter Xu
-
+>
+> --
+> Peter Xu
+>
