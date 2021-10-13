@@ -2,83 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F3BA142CAB7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 22:12:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 613E942CB2A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 22:36:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239107AbhJMUO0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Oct 2021 16:14:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45468 "EHLO
+        id S229615AbhJMUiX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Oct 2021 16:38:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236302AbhJMUOX (ORCPT
+        with ESMTP id S229496AbhJMUiW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Oct 2021 16:14:23 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 130ABC061746
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 13:12:20 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id v17so3801228qtp.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 13:12:20 -0700 (PDT)
+        Wed, 13 Oct 2021 16:38:22 -0400
+Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58156C061746
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 13:36:19 -0700 (PDT)
+Received: by mail-ua1-x92d.google.com with SMTP id q13so7163041uaq.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 13:36:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20210112.gappssmtp.com; s=20210112;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=2Aa4y4Us+FR2jyMccX84KTkQsvr7Mr0uoXoatsk4aIU=;
-        b=oY++jyBrNzEdT1LlYyI5ambjGnFGPKL/BS9hKAHoYT2QVdBtKYcUt4dkhXLNiGgV8c
-         QWCe/D1tL6HAFm5xNw9hm4UfDF7SbOJj8S7HBBrUCTlrSWa3CJyMBEPso8/Rlm5zJX2x
-         N6ZU+Xd4fxl6lD5YqSEPqMlKyp+L/d9vweQaoi6FciU/izUTjZz2IbvlG4vnz/2fw/5W
-         oknr1QZmUQHNQyRIMdB1eWK9j7WtBCSSgGRkgyK0dZ0JhTowcpY+gm0OkN4/Uh+4IGvA
-         JIk1yyxLtMUNf7GZFjUaSY7qj0JWClp+0iHymZ3LBna8MExS4qMw9+2CpgJoL1F2vcMz
-         UbtQ==
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oxmlE0jWTvIABAOfcWenbXPbvIcFQQi9okWp6MfW2Rk=;
+        b=dSwYr10Czbxlxm7F67KMPvvJG9P3phmX0JBl9Ty+/TuGFPA0rsFQPLdAUoKK7dCh41
+         9uMqVVhVMu8cioCd5Y2rVX+7tzSExeucmzg+GfpGSWafRxGh8Gyy8x1nICbhYFOuPD6D
+         3227y+5cZC8ZqIXulPV6s4wxTMnUNoNxZWlJCUJPUHt7ok0hfsJ1g5kTSrZHeY83Opte
+         PjM3CPJpRBV6Ne9KK7m1wElFoUStioYCCRwZGX4K9me+zIOdMy8qMo85c+Anyhox/lm6
+         iXOplN3FBIrzrEB21N8FpE/yOlyfK5kcbAcrdtkcX8rZY5rZcInFj05k5egv2a7iGkLD
+         SojQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=2Aa4y4Us+FR2jyMccX84KTkQsvr7Mr0uoXoatsk4aIU=;
-        b=NT/8+0cN3k/AYqkvfV+k7EflHQNH9e/2A/cMYSUBvP/osaWZLk+42hGEl8Y94Nwgce
-         NcQfsKjqTweh/1a2YC2/YE21YGovu1cVF9JElRQlyLv0cYaJmoY9CKL+lVj/SBBpMbmF
-         Tl6Xvqf2unkFd8wWe/KDX/4gxVo8g+iuSIex9WFzUoKKMMsBxx+nCGYxeGiUdb0gDplA
-         wXrqOpyXSawOaDMGWMiy2P6aV5mQnzif7zw7lSwyegczUwujTpRttinWV8PZTqrKqxAJ
-         OEY2uEhq5/2JzQNGr2f9cavov4UD9di3YsTzAsXQts2yiqR3FfmvwcGuPctVia24BX0p
-         ZITg==
-X-Gm-Message-State: AOAM531ycm9r77bnI8Wldd2TfXNW/Jgk93QTj/kyAFqp3uKTXv5i2Hcv
-        e7hLd5Gfl88/o3eHBm8hSRlvvxCc53KJpg==
-X-Google-Smtp-Source: ABdhPJx4zdxYJSt0EevBomv3rQbbQ4b37KN/6V2YFRu2hE3Q4HWDzRT5ObF4KPkBzDyL37PZoHpsLQ==
-X-Received: by 2002:a05:622a:1444:: with SMTP id v4mr1676745qtx.298.1634155938909;
-        Wed, 13 Oct 2021 13:12:18 -0700 (PDT)
-Received: from [192.168.39.11] ([172.58.87.41])
-        by smtp.gmail.com with ESMTPSA id 101sm358957qta.17.2021.10.13.13.12.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Oct 2021 13:12:18 -0700 (PDT)
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-From:   Rob Landley <rob@landley.net>
-Subject: The one and only "permission denied" in find /sys
-Message-ID: <cd81a57e-e2c1-03c5-d0da-f898babf92e7@landley.net>
-Date:   Wed, 13 Oct 2021 15:12:16 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oxmlE0jWTvIABAOfcWenbXPbvIcFQQi9okWp6MfW2Rk=;
+        b=7yHNRw3L05cbt9m/7kVeqzaeVwIfnCQiVbp3cOT6V5HQngVXwVyLc/IwMX2iecdqRS
+         pM4Kddhat+94vcK5i6r5uYfB3ePn9gT0WKj4kdthmKIH+0NtlZ9l6/LE87gHsR0zVuAW
+         brq7ZzDewotd9X7crgs64vIMc7yssvqOciq952OuOomuDWMLbOFqMUAOsciaqCrFhc0h
+         WVuharEvro/DE+kLZh8n4aM56JhcgE3dxyCFUKdkJsc5iIaKKq6TMA0aeDYu1j+ho2LZ
+         5H+B6FTHEceo+VOquRf7tU9oNQGahFNHDN2mQe5S7A+zygqU1IwXIFeaWDx/lg+B7ypb
+         HicA==
+X-Gm-Message-State: AOAM531wkmdcJSmAX2gfrD/MnjDzM9yMlgVMCKtXEJcIsTEd/jmwhahs
+        MVtDkLNmE0tD4RUUr7zD7q8IXByFdSfxFlnX7CVOVwxxK8E=
+X-Google-Smtp-Source: ABdhPJxCWJwH8wsDAPq7q8Ma8DI8v/ghsdOiUWd7ssye0vrKNbb4cbAPYMkSxDl5594oZyze0+c7hz4obonnasO/r/c=
+X-Received: by 2002:ab0:540e:: with SMTP id n14mr1776903uaa.73.1634157378226;
+ Wed, 13 Oct 2021 13:36:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20211007002507.42501-1-ramjiyani@google.com> <20211012085915.GA25069@lst.de>
+In-Reply-To: <20211012085915.GA25069@lst.de>
+From:   Ramji Jiyani <ramjiyani@google.com>
+Date:   Wed, 13 Oct 2021 13:36:06 -0700
+Message-ID: <CAKUd0B8UUFKif0OOQG_4gUcyoWPgsau+KWtWt__Vjuxfw13kmg@mail.gmail.com>
+Subject: Re: [PATCH v4] aio: Add support for the POLLFREE
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     arnd@arndb.de, viro@zeniv.linux.org.uk, bcrl@kvack.org,
+        kernel-team@android.com, linux-aio@kvack.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, oleg@redhat.com, ebiggers@kernel.org,
+        Jeff Moyer <jmoyer@redhat.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is exactly one directory in the whole of sysfs that a normal user can't
-read (at least on my stock devuan laptop):
+On Tue, Oct 12, 2021 at 1:59 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Looks good,
+>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-  $ find /sys -name potato
-  find: ‘/sys/fs/pstore’: Permission denied
+Thanks, Christoph.
 
-It's the "pstore" filesystem, it was explicitly broken by commit d7caa33687ce,
-and the commit seems to say this was to fix an issue that didn't exist yet but
-might someday.
-
-Did whatever issue it was concerned about ever actually start happening? Why did
-you not change the permissions on the files _in_ the directory so they weren't
-world readable instead? Should /dev/shm stop being world ls-able as well?
-
-Confused,
-
-Rob
+~ Ramji
