@@ -2,104 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 65EF042CA23
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 21:33:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DC8842CA5C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 21:45:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237747AbhJMTf7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Oct 2021 15:35:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36654 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230415AbhJMTf6 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Oct 2021 15:35:58 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6448C061570;
-        Wed, 13 Oct 2021 12:33:54 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id r18so11913416wrg.6;
-        Wed, 13 Oct 2021 12:33:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=pwxg+EuC2BMAlI0PMqoPGlNZutsjAEU++EUzVtemrlI=;
-        b=fRuQmKoz2RAOV1ENMnnv6ijypTcOqEEEsZGjCVfrdKYnpjqHpT5g1pekFTVn7yvJtO
-         /x4VkUp67Akxrz3uwQ7jlDM8oc6CIt5g0b+v2myJAA4Gg3JtxO88PCREP5FW/rzOEIIK
-         gxg9OQAxee2SsyJwQ63+aIQQkCOgC0+OOo5bdnwFRJv3KXvzFaXArAQkFD5niuiT3c5G
-         KzQh9OtwaVUqhhgQ15gqfJSC6uEfwqjt+nkHUekxDp3QuZKJNAHDF3X2PeucwMB+n4OG
-         0UVl2En0miZAbmKXq3l39jYmG5tx80B5NN6PfBPqTar66s/xOqVJa0xRRgaJpUVdd0HT
-         Mnqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=pwxg+EuC2BMAlI0PMqoPGlNZutsjAEU++EUzVtemrlI=;
-        b=QD1Pyza1N8sW3A0E6VzYQ07cruBT3F0+dpBmmzOMeTgp8Op3+dAlsufMlMYlIs8iS9
-         upF0mTnmvajjojM8MPdkoGtfhUhBxPYTZjMb/zpGYbhUy3QYKQ1CK5meqIT5gEsJA9ZE
-         CRLrRSO/8geI1quqIMToN4A2ReLUMFCQ3tjESpRvvmUomDnVY6qNtiSLypF5+4KYu+cm
-         4sLw1IHV9b2KJCVufcTHxiA1g+xgPTC65ICSfpQwIT588efN5HXvv5bEdfs4ABywVBUN
-         fIZulbB6cCKs2IhXkwuZNZ0wyULJ9TQLiixtNKAUAB+yjf5IoF9Ry7q5h3Ra4yVJVcvd
-         VJFQ==
-X-Gm-Message-State: AOAM533ty8WDwoSdifQq6Oaq2R9+dWKWwOrvyDsGQ295RHcUSMEvjeB5
-        4FHvVlpkVoVW4KWjFEy/TUo=
-X-Google-Smtp-Source: ABdhPJzgIwtUHqywWSb++SyR+Glcrg7g6wJrKniv/gACQingXXGZbpl4p6QI9ypQQOupz458IXN+QA==
-X-Received: by 2002:adf:9b8a:: with SMTP id d10mr1160468wrc.151.1634153633361;
-        Wed, 13 Oct 2021 12:33:53 -0700 (PDT)
-Received: from eldamar (80-218-24-251.dclient.hispeed.ch. [80.218.24.251])
-        by smtp.gmail.com with ESMTPSA id h1sm304088wmb.7.2021.10.13.12.33.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Oct 2021 12:33:52 -0700 (PDT)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Date:   Wed, 13 Oct 2021 21:33:52 +0200
-From:   Salvatore Bonaccorso <carnil@debian.org>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Stephen <stephenackerman16@gmail.com>, djwong@kernel.org,
-        kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, rppt@kernel.org,
-        James.Bottomley@hansenpartnership.com, akpm@linux-foundation.org,
-        david@redhat.com, hagen@jauu.net
-Subject: Re: kvm crash in 5.14.1?
-Message-ID: <YWc0oInpEu6kxmOv@eldamar.lan>
-References: <85e40141-3c17-1dff-1ed0-b016c5d778b6@gmail.com>
- <2cd8af17-8631-44b5-8580-371527beeb38@gmail.com>
- <YWcs3XRLdrvyRz31@eldamar.lan>
- <f430d53f-59cf-a658-a207-1f04adb32c56@redhat.com>
- <YWczkHnrv5ZQAkCH@google.com>
+        id S239092AbhJMTrK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Oct 2021 15:47:10 -0400
+Received: from p3plsmtp17-02-2.prod.phx3.secureserver.net ([173.201.193.164]:48558
+        "EHLO p3plwbeout17-02.prod.phx3.secureserver.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239100AbhJMTrH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 13 Oct 2021 15:47:07 -0400
+Received: from mailex.mailcore.me ([94.136.40.144])
+        by :WBEOUT: with ESMTP
+        id ak3omy0eyeqB0ak3pma0Pg; Wed, 13 Oct 2021 12:37:09 -0700
+X-CMAE-Analysis: v=2.4 cv=IoLbzJzg c=1 sm=1 tr=0 ts=61673565
+ a=wXHyRMViKMYRd//SnbHIqA==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
+ a=ggZhUymU-5wA:10 a=IkcTkHD0fZMA:10 a=8gfv0ekSlNoA:10 a=FXvPX3liAAAA:8
+ a=Tqnnkb1RH65CB2acoZsA:9 a=QEXdDO2ut3YA:10 a=SM4aVyO6fsoA:10
+ a=UxLD5KG5Eu0A:10 a=OunuuIp3J4_2X_e7vt2U:22 a=fDQtvUcBV1mJc6yKnRhE:22
+ a=UObqyxdv-6Yh2QiB9mM_:22
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk  
+X-SID:  ak3omy0eyeqB0
+Received: from 82-69-79-175.dsl.in-addr.zen.co.uk ([82.69.79.175] helo=[192.168.178.33])
+        by smtp01.mailcore.me with esmtpa (Exim 4.94.2)
+        (envelope-from <phillip@squashfs.org.uk>)
+        id 1mak3n-0001YR-Im; Wed, 13 Oct 2021 20:37:07 +0100
+Subject: Re: [PATCH 22/29] squashfs: use bdev_nr_sectors instead of open
+ coding it
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Song Liu <song@kernel.org>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Kees Cook <keescook@chromium.org>, Jan Kara <jack@suse.com>,
+        linux-block@vger.kernel.org, dm-devel@redhat.com,
+        drbd-dev@lists.linbit.com, linux-bcache@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org
+References: <20211013051042.1065752-1-hch@lst.de>
+ <20211013051042.1065752-23-hch@lst.de>
+From:   Phillip Lougher <phillip@squashfs.org.uk>
+Message-ID: <cbd3585f-87c6-ab31-2911-4d3550287e22@squashfs.org.uk>
+Date:   Wed, 13 Oct 2021 20:37:03 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YWczkHnrv5ZQAkCH@google.com>
+In-Reply-To: <20211013051042.1065752-23-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Mailcore-Auth: 439999529
+X-Mailcore-Domain: 1394945
+X-123-reg-Authenticated:  phillip@squashfs.org.uk  
+X-Originating-IP: 82.69.79.175
+X-CMAE-Envelope: MS4xfH+fINk1bK2uYrlsKzVgiQUDNUof/ZszUIQhfNg9gspQoupRHWcpmWfLdbLmzZ8YNmW5p8B1qpBR0koVdMBgEyElqVpbNhDemdF2RKoQBuA2lGHQ6Jgq
+ Ec+BaTSC1YYU+BehID1flfTiiEeIAxD3HsSHZ3R4+3qs0uffjZZZgvwfydcNVYHownXVRSay3EGlG7e0h/Ft78VqDvxSmJy8qx71DBqiXKgAJ3UxROq7q8Tu
+ i7hRJwxpb10fQ/Lk6LOfZQ==
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-
-On Wed, Oct 13, 2021 at 07:29:20PM +0000, Sean Christopherson wrote:
-> On Wed, Oct 13, 2021, Paolo Bonzini wrote:
-> > On 13/10/21 21:00, Salvatore Bonaccorso wrote:
-> > > Hi,
-> > > 
-> > > On Sat, Oct 09, 2021 at 12:00:39PM -0700, Stephen wrote:
-> > > > > I'll try to report back if I see a crash; or in roughly a week if the
-> > > > system seems to have stabilized.
-> > > > 
-> > > > Just wanted to provide a follow-up here and say that I've run on both
-> > > > v5.14.8 and v5.14.9 with this patch and everything seems to be good; no
-> > > > further crashes or problems.
-> > > 
-> > > In Debian we got a report as well related to this issue (cf.
-> > > https://bugs.debian.org/996175). Do you know did the patch felt
-> > > through the cracks?
-> > 
-> > Yeah, it's not a KVM patch so the mm maintainers didn't see it.  I'll handle
-> > it tomorrow.
+On 13/10/2021 06:10, Christoph Hellwig wrote:
+> Use the proper helper to read the block device size.
 > 
-> It's queued in the -mm tree.
-> 
-> https://lore.kernel.org/mm-commits/20211010224759.Ny1hd1WiD%25akpm@linux-foundation.org/
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Sean and Paolo, thank you, missed the above.
-
-Regards,
-Salvatore
+Acked-by: Phillip Lougher <phillip@squashfs.org.uk>
