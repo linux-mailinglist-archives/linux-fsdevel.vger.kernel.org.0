@@ -2,174 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F7BE42C12B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 15:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60A9842C1C6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Oct 2021 15:52:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235102AbhJMNSd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Oct 2021 09:18:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37985 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233901AbhJMNSb (ORCPT
+        id S232229AbhJMNy5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Oct 2021 09:54:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40990 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229611AbhJMNy4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Oct 2021 09:18:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634130988;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3UweUBspHinuJSQhguEdx6WU40R4nh4wg670z3EQDCs=;
-        b=XNP1QDwX2f719a9ZrFnhwucrTmmJi3xG6/ZEi9kIsyI5EgoqN8WKfM1aPjoQSJIbgOQFYV
-        pFRVUyG4/rV6koPl8MKbwi0AXmQTYeRxBCWmzjs1lY2Bl9yZ8PmUbb1llOU47KJzq7j5Ui
-        2AnDvE9EkAQFUkWYniyGFIldV/jAtHA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-397-51EXKiPTPNOe2wB9MiFWRQ-1; Wed, 13 Oct 2021 09:16:25 -0400
-X-MC-Unique: 51EXKiPTPNOe2wB9MiFWRQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 85FDA100A95A;
-        Wed, 13 Oct 2021 13:16:22 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.33.167])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6603219E7E;
-        Wed, 13 Oct 2021 13:16:20 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id DEFAB22023A; Wed, 13 Oct 2021 09:16:19 -0400 (EDT)
-Date:   Wed, 13 Oct 2021 09:16:19 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gonglei <arei.gonglei@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        David Airlie <airlied@linux.ie>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jie Deng <jie.deng@intel.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        David Hildenbrand <david@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Anton Yakovlev <anton.yakovlev@opensynergy.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-um@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, kvm@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH RFC] virtio: wrap config->reset calls
-Message-ID: <YWbcI15YOkhnPh5x@redhat.com>
-References: <20211013105226.20225-1-mst@redhat.com>
+        Wed, 13 Oct 2021 09:54:56 -0400
+Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7552DC061570
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 06:52:53 -0700 (PDT)
+Received: by mail-ua1-x92a.google.com with SMTP id u5so4549050uao.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 06:52:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pxaBZG3SSxRYAROaf1n89iFwIV9nDCzDr26dh6jtBRM=;
+        b=ZS3hChruB3A/EdbV7+EdcCmNoRkTIvcOaI1y7mMyxBkkaoDg6o3OB79boyFgFIH7ZZ
+         8jjny90rq0FvPOykz1JgmdugE/D5gk9ccs6K0zvpplf8QJVxg+BaBKoRkBtOjgZ1CsNm
+         z7lKAKeP2Rf8GpedWn2I9wH9XEB8wv2PzCgIE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pxaBZG3SSxRYAROaf1n89iFwIV9nDCzDr26dh6jtBRM=;
+        b=jSkMi0qSMxL3i6VVwWbrOooJ5VZxWxYpT49qrJLm3JcfEtzQc14DLYeEXy9BXiQ6EA
+         7MBglZD9XMvT62iqpuxgEebnqYZ1OAW7ftTS/Nf50Ynx7gFdjPwoO/Db/Q87B9D7e4zR
+         9c3Eob+bBB0A+l95czuPKpyWbat6B4qiXwpeU2qXfIrgII3+ZkCweZX7M/CHgLEO3p+C
+         8zI2UoDJWvOws0y7z8B9bqsYwdt1w2u2zFK+ZFyWF0lfm6HxhhNfuZ7emVdxDzC80mhO
+         Tf/G4L2+PQwGgAVdkUyRylnxDlDmQpSsyliUWXoq2h6tzxpYFzXyfjq71zysYIM8gDtc
+         XscA==
+X-Gm-Message-State: AOAM532odqX1CkV/TVxvg3e6rhSl3G3C9j2wAMGcaeanYIC6FWDLWgFs
+        sWgtjLSmDLmqeZkUP73oWdxdJBqLscEKEax0EQPMCSk6t8E=
+X-Google-Smtp-Source: ABdhPJw+sWUGEv2nawnwME7eqi22xUwlkIGYkVx61sgKxQzVT8FjrA7z5+/Yp/NqvZ2jcO/vqdevpWlIfyv6gngjvbA=
+X-Received: by 2002:a67:d504:: with SMTP id l4mr4320059vsj.42.1634133172549;
+ Wed, 13 Oct 2021 06:52:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211013105226.20225-1-mst@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+References: <20211011090240.97-1-xieyongji@bytedance.com> <CAJfpegvw2F_WbTAk_f92YwBn3YwqbG3Ond74DY7yvMbzeUnMKA@mail.gmail.com>
+ <CACycT3sTarn8BfsGUQsrEbtWt9qeZ8Ph4O3VGpbYi7gbGKgsJA@mail.gmail.com>
+In-Reply-To: <CACycT3sTarn8BfsGUQsrEbtWt9qeZ8Ph4O3VGpbYi7gbGKgsJA@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 13 Oct 2021 15:52:41 +0200
+Message-ID: <CAJfpeguaRjQ9Fd1S4NHx5XVF89PGgFBxW3Xf=XNrb1QQRbDbYQ@mail.gmail.com>
+Subject: Re: [RFC] fuse: Avoid invalidating attrs if writeback_cache enabled
+To:     Yongji Xie <xieyongji@bytedance.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        =?UTF-8?B?5byg5L2z6L6w?= <zhangjiachen.jaycee@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 13, 2021 at 06:55:31AM -0400, Michael S. Tsirkin wrote:
-> This will enable cleanups down the road.
-> The idea is to disable cbs, then add "flush_queued_cbs" callback
-> as a parameter, this way drivers can flush any work
-> queued after callbacks have been disabled.
-> 
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
->  arch/um/drivers/virt-pci.c                 | 2 +-
->  drivers/block/virtio_blk.c                 | 4 ++--
->  drivers/bluetooth/virtio_bt.c              | 2 +-
->  drivers/char/hw_random/virtio-rng.c        | 2 +-
->  drivers/char/virtio_console.c              | 4 ++--
->  drivers/crypto/virtio/virtio_crypto_core.c | 8 ++++----
->  drivers/firmware/arm_scmi/virtio.c         | 2 +-
->  drivers/gpio/gpio-virtio.c                 | 2 +-
->  drivers/gpu/drm/virtio/virtgpu_kms.c       | 2 +-
->  drivers/i2c/busses/i2c-virtio.c            | 2 +-
->  drivers/iommu/virtio-iommu.c               | 2 +-
->  drivers/net/caif/caif_virtio.c             | 2 +-
->  drivers/net/virtio_net.c                   | 4 ++--
->  drivers/net/wireless/mac80211_hwsim.c      | 2 +-
->  drivers/nvdimm/virtio_pmem.c               | 2 +-
->  drivers/rpmsg/virtio_rpmsg_bus.c           | 2 +-
->  drivers/scsi/virtio_scsi.c                 | 2 +-
->  drivers/virtio/virtio.c                    | 5 +++++
->  drivers/virtio/virtio_balloon.c            | 2 +-
->  drivers/virtio/virtio_input.c              | 2 +-
->  drivers/virtio/virtio_mem.c                | 2 +-
->  fs/fuse/virtio_fs.c                        | 4 ++--
+On Mon, 11 Oct 2021 at 16:45, Yongji Xie <xieyongji@bytedance.com> wrote:
+>
+> On Mon, Oct 11, 2021 at 9:21 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > On Mon, 11 Oct 2021 at 11:07, Xie Yongji <xieyongji@bytedance.com> wrote:
+> > >
+> > > Recently we found the performance of small direct writes is bad
+> > > when writeback_cache enabled. This is because we need to get
+> > > attrs from userspace in fuse_update_get_attr() on each write.
+> > > The timeout for the attributes doesn't work since every direct write
+> > > will invalidate the attrs in fuse_direct_IO().
+> > >
+> > > To fix it, this patch tries to avoid invalidating attrs if writeback_cache
+> > > is enabled since we should trust local size/ctime/mtime in this case.
+> >
+> > Hi,
+> >
+> > Thanks for the patch.
+> >
+> > Just pushed an update to
+> > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.gitt#for-next
+> > (9ca3f8697158 ("fuse: selective attribute invalidation")) that should
+> > fix this behavior.
+> >
+>
+> Looks like fuse_update_get_attr() will still get attrs from userspace
+> each time with this commit applied.
+>
+> > Could you please test?
+> >
+>
+> I applied the commit 9ca3f8697158 ("fuse: selective attribute
+> invalidation")  and tested it. But the issue still exists.
 
-fs/fuse/virtio_fs.c changes look good to me.
+Yeah, my bad.  Pushed a more complete set of fixes to #for-next ending with
 
-Reviewed-by: Vivek Goyal <vgoyal@redhat.com>
+e15a9a5fca6c ("fuse: take cache_mask into account in getattr")
 
-Vivek
+You should pull or cherry pick the complete branch.
 
-[..]
-> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> index 0ad89c6629d7..27c3b74070a2 100644
-> --- a/fs/fuse/virtio_fs.c
-> +++ b/fs/fuse/virtio_fs.c
-> @@ -895,7 +895,7 @@ static int virtio_fs_probe(struct virtio_device *vdev)
->  	return 0;
->  
->  out_vqs:
-> -	vdev->config->reset(vdev);
-> +	virtio_reset_device(vdev);
->  	virtio_fs_cleanup_vqs(vdev, fs);
->  	kfree(fs->vqs);
->  
-> @@ -927,7 +927,7 @@ static void virtio_fs_remove(struct virtio_device *vdev)
->  	list_del_init(&fs->list);
->  	virtio_fs_stop_all_queues(fs);
->  	virtio_fs_drain_all_queues_locked(fs);
-> -	vdev->config->reset(vdev);
-> +	virtio_reset_device(vdev);
->  	virtio_fs_cleanup_vqs(vdev, fs);
->  
->  	vdev->priv = NULL;
-
-
-Thanks
-Vivek
-
+Thanks,
+Miklos
