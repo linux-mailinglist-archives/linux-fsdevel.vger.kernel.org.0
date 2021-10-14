@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B960142E377
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 23:38:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14EAD42E37A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 23:38:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233558AbhJNVkS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Oct 2021 17:40:18 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54106 "EHLO
+        id S233618AbhJNVk0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Oct 2021 17:40:26 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54124 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233512AbhJNVkR (ORCPT
+        with ESMTP id S233512AbhJNVkX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Oct 2021 17:40:17 -0400
+        Thu, 14 Oct 2021 17:40:23 -0400
 Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1007])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id B21451F44F83;
-        Thu, 14 Oct 2021 22:38:09 +0100 (BST)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id A62CF1F44F83;
+        Thu, 14 Oct 2021 22:38:16 +0100 (BST)
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     jack@suse.com, amir73il@gmail.com
 Cc:     djwong@kernel.org, tytso@mit.edu, dhowells@redhat.com,
         khazhy@google.com, linux-fsdevel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-api@vger.kernel.org,
         repnop@google.com, Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel@collabora.com, Jan Kara <jack@suse.cz>
-Subject: [PATCH v7 10/28] fsnotify: Retrieve super block from the data field
-Date:   Thu, 14 Oct 2021 18:36:28 -0300
-Message-Id: <20211014213646.1139469-11-krisman@collabora.com>
+        kernel@collabora.com
+Subject: [PATCH v7 11/28] fsnotify: Pass group argument to free_event
+Date:   Thu, 14 Oct 2021 18:36:29 -0300
+Message-Id: <20211014213646.1139469-12-krisman@collabora.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211014213646.1139469-1-krisman@collabora.com>
 References: <20211014213646.1139469-1-krisman@collabora.com>
@@ -37,83 +37,86 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Some file system events (i.e. FS_ERROR) might not be associated with an
-inode or directory.  For these, we can retrieve the super block from the
-data field.  But, since the super_block is available in the data field
-on every event type, simplify the code to always retrieve it from there,
-through a new helper.
+For group-wide mempool backed events, like FS_ERROR, the free_event
+callback will need to reference the group's mempool to free the memory.
+Wire that argument into the current callers.
 
-Suggested-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-
---
-Changes since v6:
-  - Always use data field for superblock retrieval
-Changes since v5:
-  - add fsnotify_data_sb handle to retrieve sb from the data field. (jan)
 ---
- fs/notify/fsnotify.c             |  7 +++----
- include/linux/fsnotify_backend.h | 15 +++++++++++++++
- 2 files changed, 18 insertions(+), 4 deletions(-)
+ fs/notify/fanotify/fanotify.c        | 3 ++-
+ fs/notify/group.c                    | 2 +-
+ fs/notify/inotify/inotify_fsnotify.c | 3 ++-
+ fs/notify/notification.c             | 2 +-
+ include/linux/fsnotify_backend.h     | 2 +-
+ 5 files changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 963e6ce75b96..fde3a1115a17 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -455,16 +455,16 @@ static void fsnotify_iter_next(struct fsnotify_iter_info *iter_info)
-  *		@file_name is relative to
-  * @file_name:	optional file name associated with event
-  * @inode:	optional inode associated with event -
-- *		either @dir or @inode must be non-NULL.
-- *		if both are non-NULL event may be reported to both.
-+ *		If @dir and @inode are both non-NULL, event may be
-+ *		reported to both.
-  * @cookie:	inotify rename cookie
-  */
- int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
- 	     const struct qstr *file_name, struct inode *inode, u32 cookie)
- {
- 	const struct path *path = fsnotify_data_path(data, data_type);
-+	struct super_block *sb = fsnotify_data_sb(data, data_type);
- 	struct fsnotify_iter_info iter_info = {};
--	struct super_block *sb;
- 	struct mount *mnt = NULL;
- 	struct inode *parent = NULL;
- 	int ret = 0;
-@@ -483,7 +483,6 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
- 		 */
- 		parent = dir;
- 	}
--	sb = inode->i_sb;
- 
- 	/*
- 	 * Optimization: srcu_read_lock() has a memory barrier which can
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index b323d0c4b967..035438fe4a43 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -289,6 +289,21 @@ static inline const struct path *fsnotify_data_path(const void *data,
- 	}
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index f82e20228999..c620b4f6fe12 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -835,7 +835,8 @@ static void fanotify_free_name_event(struct fanotify_event *event)
+ 	kfree(FANOTIFY_NE(event));
  }
  
-+static inline struct super_block *fsnotify_data_sb(const void *data,
-+						   int data_type)
-+{
-+	switch (data_type) {
-+	case FSNOTIFY_EVENT_INODE:
-+		return ((struct inode *)data)->i_sb;
-+	case FSNOTIFY_EVENT_DENTRY:
-+		return ((struct dentry *)data)->d_sb;
-+	case FSNOTIFY_EVENT_PATH:
-+		return ((const struct path *)data)->dentry->d_sb;
-+	default:
-+		return NULL;
-+	}
-+}
-+
- enum fsnotify_obj_type {
- 	FSNOTIFY_OBJ_TYPE_INODE,
- 	FSNOTIFY_OBJ_TYPE_PARENT,
+-static void fanotify_free_event(struct fsnotify_event *fsn_event)
++static void fanotify_free_event(struct fsnotify_group *group,
++				struct fsnotify_event *fsn_event)
+ {
+ 	struct fanotify_event *event;
+ 
+diff --git a/fs/notify/group.c b/fs/notify/group.c
+index fb89c351295d..6a297efc4788 100644
+--- a/fs/notify/group.c
++++ b/fs/notify/group.c
+@@ -88,7 +88,7 @@ void fsnotify_destroy_group(struct fsnotify_group *group)
+ 	 * that deliberately ignores overflow events.
+ 	 */
+ 	if (group->overflow_event)
+-		group->ops->free_event(group->overflow_event);
++		group->ops->free_event(group, group->overflow_event);
+ 
+ 	fsnotify_put_group(group);
+ }
+diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
+index a96582cbfad1..d92d7b0adc9a 100644
+--- a/fs/notify/inotify/inotify_fsnotify.c
++++ b/fs/notify/inotify/inotify_fsnotify.c
+@@ -177,7 +177,8 @@ static void inotify_free_group_priv(struct fsnotify_group *group)
+ 		dec_inotify_instances(group->inotify_data.ucounts);
+ }
+ 
+-static void inotify_free_event(struct fsnotify_event *fsn_event)
++static void inotify_free_event(struct fsnotify_group *group,
++			       struct fsnotify_event *fsn_event)
+ {
+ 	kfree(INOTIFY_E(fsn_event));
+ }
+diff --git a/fs/notify/notification.c b/fs/notify/notification.c
+index 44bb10f50715..9022ae650cf8 100644
+--- a/fs/notify/notification.c
++++ b/fs/notify/notification.c
+@@ -64,7 +64,7 @@ void fsnotify_destroy_event(struct fsnotify_group *group,
+ 		WARN_ON(!list_empty(&event->list));
+ 		spin_unlock(&group->notification_lock);
+ 	}
+-	group->ops->free_event(event);
++	group->ops->free_event(group, event);
+ }
+ 
+ /*
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index 035438fe4a43..1e69e9fe45c9 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -155,7 +155,7 @@ struct fsnotify_ops {
+ 			    const struct qstr *file_name, u32 cookie);
+ 	void (*free_group_priv)(struct fsnotify_group *group);
+ 	void (*freeing_mark)(struct fsnotify_mark *mark, struct fsnotify_group *group);
+-	void (*free_event)(struct fsnotify_event *event);
++	void (*free_event)(struct fsnotify_group *group, struct fsnotify_event *event);
+ 	/* called on final put+free to free memory */
+ 	void (*free_mark)(struct fsnotify_mark *mark);
+ };
 -- 
 2.33.0
 
