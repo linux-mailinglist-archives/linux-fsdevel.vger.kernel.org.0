@@ -2,265 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4BA842E20C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 21:32:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DFE042E28C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 22:17:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229701AbhJNTer (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Oct 2021 15:34:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46502 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229534AbhJNTeq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Oct 2021 15:34:46 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 79D2860EFF;
-        Thu, 14 Oct 2021 19:32:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634239961;
-        bh=rxi08ohLQ8FMRrydTQRximJyIVu+hc0/kt8nU4Fzuk4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xu215UGyrAM2S57vEgW97n9nsfiNTBDoEl629EN6fyRULDDoc9kPGDHhrnYssM99h
-         ZpZHHh9d1Tu9LVQmXfjfrcxAcJmB1ogLPFVtH9FQNyytpZ4N5qhQHQSp9JiTX5kgN6
-         xM7ByubqqqGgLXoSNaLCfhrX9FTuAkGXQxHfOGoqjamr5kIaUcD5pruilVkyDhMgZN
-         Z1JQIh+JfnqSdHuE1XKVKnz4j7aE/GcN+oXCg/7z5TEuSgCPXmBm8AKCC/N0q064JY
-         xSqqV++YgMBWsyqECUTtmGvZMDgcpAgDPH3bz/QTbwZ7kTjjAp0ZXLBgG05eXLcgO0
-         +YACOfIkQbM5Q==
-Date:   Thu, 14 Oct 2021 12:32:41 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
-        david@fromorbit.com, hch@infradead.org, jane.chu@oracle.com
-Subject: Re: [PATCH v7 6/8] mm: Introduce mf_dax_kill_procs() for fsdax case
-Message-ID: <20211014193241.GK24307@magnolia>
-References: <20210924130959.2695749-1-ruansy.fnst@fujitsu.com>
- <20210924130959.2695749-7-ruansy.fnst@fujitsu.com>
+        id S234093AbhJNUTG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Oct 2021 16:19:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35070 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233615AbhJNUTF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 14 Oct 2021 16:19:05 -0400
+Received: from mail-yb1-xb31.google.com (mail-yb1-xb31.google.com [IPv6:2607:f8b0:4864:20::b31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBF78C061753
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Oct 2021 13:16:59 -0700 (PDT)
+Received: by mail-yb1-xb31.google.com with SMTP id g6so17497139ybb.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Oct 2021 13:16:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=c0cmuWRsBM8lyTJIMBQh8bNKy5hHUkW2gy7WXb11ikU=;
+        b=f0qLDOKzIPAztbLgdkQY2YKlIIwOO4CPZpbMpiSv8Ew9Oil/ath9n07/ohZFTfCchC
+         tUfFpgpxKWGSiuPuGQXa1lAJMzvJ2v2jEgfNJIChSA6p3F/PA65vL35nhyaFPtFPTu49
+         1247Evth3zZtmiV9KJGFY1VnR8L91bL9rPwjPym6PmsUCAowdylHSWXNeLXHESeggihA
+         Vt1lQtjprzK6LMxeZPiVT/NtzOrDnx2xOOG8OJMrpdLwEzixkPIbxPqs1oZmLmYb8uvN
+         owoPUF3VgkSF9BJUFMguFjxt/z84NGzPG34QC62MSK7yEjYhoPlVKw2QYEROpDMnIVFl
+         tCsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=c0cmuWRsBM8lyTJIMBQh8bNKy5hHUkW2gy7WXb11ikU=;
+        b=p55edIL/upwtZUNBi4zKlViOHGNRM3GyHysRNAlBJuVxQIWQhvO+f9JmB3LYmP+yV7
+         hJEEBBt55+EMRFkfcjtdpCLPf/xYVCH9Op2kNhqakVQRt31F0eSWfyhWDttZLWP2JMbD
+         a0juwG0r6Di+giJmHy7JKsOHEf4PoeJylnaxMZtrk+bYdg7QPBUFfKR5vDOLedhXf76H
+         A49eOsVj6YXC+kNJstamXyHmDIFz3e7XaLvfPqQ0Ea2oLtICF2MGMvTaaRfWoEwqLtL+
+         NdH0pwszitP7yyg7mjJJXArE3FV2tuTncMojkRXlLmND74cweCdTT9cA5681tt8UQKIs
+         6Uaw==
+X-Gm-Message-State: AOAM532borpDr/+goPoe3akwptPSo+PE3bP5LJJDKvuR3DpJs26hpKnQ
+        sSz+DlEDaU/GaxZSzDAEPHV/0u9O3cIcUOTy7bBfKQ==
+X-Google-Smtp-Source: ABdhPJyxDeRMapi8KKC0nonneI/eCQ7+kw+lLAqFaMCn23DedEM+4BAtFbvseb+djFd5f1c00tNd4JPLKH7QEDYHlig=
+X-Received: by 2002:a25:5b04:: with SMTP id p4mr8493469ybb.34.1634242618619;
+ Thu, 14 Oct 2021 13:16:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210924130959.2695749-7-ruansy.fnst@fujitsu.com>
+References: <92cbfe3b-f3d1-a8e1-7eb9-bab735e782f6@rasmusvillemoes.dk>
+ <20211007101527.GA26288@duo.ucw.cz> <CAJuCfpGp0D9p3KhOWhcxMO1wEbo-J_b2Anc-oNwdycx4NTRqoA@mail.gmail.com>
+ <YV8jB+kwU95hLqTq@dhcp22.suse.cz> <CAJuCfpG-Nza3YnpzvHaS_i1mHds3nJ+PV22xTAfgwvj+42WQNA@mail.gmail.com>
+ <YV8u4B8Y9AP9xZIJ@dhcp22.suse.cz> <CAJuCfpHAG_C5vE-Xkkrm2kynTFF-Jd06tQoCWehHATL0W2mY_g@mail.gmail.com>
+ <202110071111.DF87B4EE3@keescook> <YV/mhyWH1ZwWazdE@dhcp22.suse.cz>
+ <202110081344.FE6A7A82@keescook> <YWP3c/bozz5npQ8O@dhcp22.suse.cz>
+ <CAJuCfpHQVMM4+6Lm_EnFk06+KrOjSjGA19K2cv9GmP3k9LW5vg@mail.gmail.com>
+ <26f9db1e-69e9-1a54-6d49-45c0c180067c@redhat.com> <CAJuCfpGTCM_Rf3GEyzpR5UOTfgGKTY0_rvAbGdtjbyabFhrRAw@mail.gmail.com>
+In-Reply-To: <CAJuCfpGTCM_Rf3GEyzpR5UOTfgGKTY0_rvAbGdtjbyabFhrRAw@mail.gmail.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Thu, 14 Oct 2021 13:16:47 -0700
+Message-ID: <CAJuCfpE2j91_AOwwRs_pYBs50wfLTwassRqgtqhXsh6fT+4MCg@mail.gmail.com>
+Subject: Re: [PATCH v10 3/3] mm: add anonymous vma name refcounting
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Michal Hocko <mhocko@suse.com>, Kees Cook <keescook@chromium.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Colin Cross <ccross@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Peter Xu <peterx@redhat.com>, rppt@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        vincenzo.frascino@arm.com,
+        =?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= 
+        <chinwen.chang@mediatek.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Jann Horn <jannh@google.com>, apopple@nvidia.com,
+        Yu Zhao <yuzhao@google.com>, Will Deacon <will@kernel.org>,
+        fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        Hugh Dickins <hughd@google.com>, feng.tang@intel.com,
+        Jason Gunthorpe <jgg@ziepe.ca>, Roman Gushchin <guro@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>, krisman@collabora.com,
+        Chris Hyser <chris.hyser@oracle.com>,
+        Peter Collingbourne <pcc@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jens Axboe <axboe@kernel.dk>, legion@kernel.org,
+        Rolf Eike Beer <eb@emlix.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Thomas Cedeno <thomascedeno@google.com>, sashal@kernel.org,
+        cxfcosmos@gmail.com, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        kernel-team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 24, 2021 at 09:09:57PM +0800, Shiyang Ruan wrote:
-> This function is called at the end of RMAP routine, i.e. filesystem
-> recovery function, to collect and kill processes using a shared page of
-> DAX file.  The difference between mf_generic_kill_procs() is,
-> it accepts file's mapping,offset instead of struct page.  Because
-> different file's mappings and offsets may share the same page in fsdax
-> mode.  So, it is called when filesystem RMAP results are found.
-> 
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> ---
->  fs/dax.c            | 10 ------
->  include/linux/dax.h |  9 +++++
->  include/linux/mm.h  |  2 ++
->  mm/memory-failure.c | 83 ++++++++++++++++++++++++++++++++++++++++-----
->  4 files changed, 86 insertions(+), 18 deletions(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 509b65e60478..2536c105ec7f 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -852,16 +852,6 @@ static void *dax_insert_entry(struct xa_state *xas,
->  	return entry;
->  }
->  
-> -static inline
-> -unsigned long pgoff_address(pgoff_t pgoff, struct vm_area_struct *vma)
-> -{
-> -	unsigned long address;
-> -
-> -	address = vma->vm_start + ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
-> -	VM_BUG_ON_VMA(address < vma->vm_start || address >= vma->vm_end, vma);
-> -	return address;
-> -}
-> -
->  /* Walk all mappings of a given index of a file and writeprotect them */
->  static void dax_entry_mkclean(struct address_space *mapping, pgoff_t index,
->  		unsigned long pfn)
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index 65411bee4312..3d90becbd160 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -258,6 +258,15 @@ static inline bool dax_mapping(struct address_space *mapping)
->  {
->  	return mapping->host && IS_DAX(mapping->host);
->  }
-> +static inline unsigned long pgoff_address(pgoff_t pgoff,
-> +		struct vm_area_struct *vma)
-> +{
-> +	unsigned long address;
-> +
-> +	address = vma->vm_start + ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
-> +	VM_BUG_ON_VMA(address < vma->vm_start || address >= vma->vm_end, vma);
-> +	return address;
-> +}
->  
->  #ifdef CONFIG_DEV_DAX_HMEM_DEVICES
->  void hmem_register_device(int target_nid, struct resource *r);
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 73a52aba448f..d06af0051e53 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -3114,6 +3114,8 @@ enum mf_flags {
->  	MF_MUST_KILL = 1 << 2,
->  	MF_SOFT_OFFLINE = 1 << 3,
->  };
-> +extern int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
-> +			     size_t size, int flags);
->  extern int memory_failure(unsigned long pfn, int flags);
->  extern void memory_failure_queue(unsigned long pfn, int flags);
->  extern void memory_failure_queue_kick(int cpu);
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 85eab206b68f..a9d0d487d205 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -302,10 +302,9 @@ void shake_page(struct page *p)
->  }
->  EXPORT_SYMBOL_GPL(shake_page);
->  
-> -static unsigned long dev_pagemap_mapping_shift(struct page *page,
-> +static unsigned long dev_pagemap_mapping_shift(unsigned long address,
->  		struct vm_area_struct *vma)
->  {
-> -	unsigned long address = vma_address(page, vma);
->  	pgd_t *pgd;
->  	p4d_t *p4d;
->  	pud_t *pud;
-> @@ -345,7 +344,7 @@ static unsigned long dev_pagemap_mapping_shift(struct page *page,
->   * Schedule a process for later kill.
->   * Uses GFP_ATOMIC allocations to avoid potential recursions in the VM.
->   */
-> -static void add_to_kill(struct task_struct *tsk, struct page *p,
-> +static void add_to_kill(struct task_struct *tsk, struct page *p, pgoff_t pgoff,
+On Tue, Oct 12, 2021 at 10:01 AM Suren Baghdasaryan <surenb@google.com> wrote:
+>
+> On Tue, Oct 12, 2021 at 12:44 AM David Hildenbrand <david@redhat.com> wrote:
+> >
+> > > I'm still evaluating the proposal to use memfds but I'm not sure if
+> > > the issue that David Hildenbrand mentioned about additional memory
+> > > consumed in pagecache (which has to be addressed) is the only one we
+> > > will encounter with this approach. If anyone knows of any potential
+> > > issues with using memfds as named anonymous memory, I would really
+> > > appreciate your feedback before I go too far in that direction.
+> >
+> > [MAP_PRIVATE memfd only behave that way with 4k, not with huge pages, so
+> > I think it just has to be fixed. It doesn't make any sense to allocate a
+> > page for the pagecache ("populate the file") when accessing via a
+> > private mapping that's supposed to leave the file untouched]
+> >
+> > My gut feeling is if you really need a string as identifier, then try
+> > going with memfds. Yes, we might hit some road blocks to be sorted out,
+> > but it just logically makes sense to me: Files have names. These names
+> > exist before mapping and after mapping. They "name" the content.
+>
+> I'm investigating this direction. I don't have much background with
+> memfds, so I'll need to digest the code first.
 
-Hm, so I guess you're passing the page and the pgoff now because
-page->index is meaningless for shared dax pages?  Ok.
+I've done some investigation into the possibility of using memfds to
+name anonymous VMAs. Here are my findings:
 
->  		       struct vm_area_struct *vma,
->  		       struct list_head *to_kill)
->  {
-> @@ -358,9 +357,15 @@ static void add_to_kill(struct task_struct *tsk, struct page *p,
->  	}
->  
->  	tk->addr = page_address_in_vma(p, vma);
-> -	if (is_zone_device_page(p))
-> -		tk->size_shift = dev_pagemap_mapping_shift(p, vma);
-> -	else
-> +	if (is_zone_device_page(p)) {
-> +		/*
-> +		 * Since page->mapping is no more used for fsdax, we should
-> +		 * calculate the address in a fsdax way.
-> +		 */
-> +		if (p->pgmap->type == MEMORY_DEVICE_FS_DAX)
-> +			tk->addr = pgoff_address(pgoff, vma);
-> +		tk->size_shift = dev_pagemap_mapping_shift(tk->addr, vma);
-> +	} else
->  		tk->size_shift = page_shift(compound_head(p));
->  
->  	/*
-> @@ -508,7 +513,7 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
->  			if (!page_mapped_in_vma(page, vma))
->  				continue;
->  			if (vma->vm_mm == t->mm)
-> -				add_to_kill(t, page, vma, to_kill);
-> +				add_to_kill(t, page, 0, vma, to_kill);
->  		}
->  	}
->  	read_unlock(&tasklist_lock);
-> @@ -544,7 +549,32 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
->  			 * to be informed of all such data corruptions.
->  			 */
->  			if (vma->vm_mm == t->mm)
-> -				add_to_kill(t, page, vma, to_kill);
-> +				add_to_kill(t, page, 0, vma, to_kill);
-> +		}
-> +	}
-> +	read_unlock(&tasklist_lock);
-> +	i_mmap_unlock_read(mapping);
-> +}
-> +
-> +/*
-> + * Collect processes when the error hit a fsdax page.
-> + */
-> +static void collect_procs_fsdax(struct page *page, struct address_space *mapping,
-> +		pgoff_t pgoff, struct list_head *to_kill)
-> +{
-> +	struct vm_area_struct *vma;
-> +	struct task_struct *tsk;
-> +
-> +	i_mmap_lock_read(mapping);
-> +	read_lock(&tasklist_lock);
-> +	for_each_process(tsk) {
-> +		struct task_struct *t = task_early_kill(tsk, true);
-> +
-> +		if (!t)
-> +			continue;
-> +		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
-> +			if (vma->vm_mm == t->mm)
-> +				add_to_kill(t, page, pgoff, vma, to_kill);
->  		}
->  	}
->  	read_unlock(&tasklist_lock);
-> @@ -1503,6 +1533,43 @@ static int mf_generic_kill_procs(unsigned long long pfn, int flags,
->  	return 0;
->  }
->  
-> +/**
-> + * mf_dax_kill_procs - Collect and kill processes who are using this file range
-> + * @mapping:	the file in use
-> + * @index:	start offset of the range
-> + * @size:	length of the range
+1. Forking a process with anonymous vmas named using memfd is 5-15%
+slower than with prctl (depends on the number of VMAs in the process
+being forked). Profiling shows that i_mmap_lock_write() dominates
+dup_mmap(). Exit path is also slower by roughly 9% with
+free_pgtables() and fput() dominating exit_mmap(). Fork performance is
+important for Android because almost all processes are forked from
+zygote, therefore this limitation already makes this approach
+prohibitive.
 
-It feels odd that one argument is in units of pgoff_t but the other is
-in bytes.
+2. mremap() usage to grow the mapping has an issue when used with memfds:
 
-> + * @flags:	memory failure flags
-> + */
-> +int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
-> +		size_t size, int flags)
-> +{
-> +	LIST_HEAD(to_kill);
-> +	dax_entry_t cookie;
-> +	struct page *page;
-> +	size_t end = (index << PAGE_SHIFT) + size;
-> +
-> +	flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
+fd = memfd_create(name, MFD_ALLOW_SEALING);
+ftruncate(fd, size_bytes);
+ptr = mmap(NULL, size_bytes, prot, MAP_PRIVATE, fd, 0);
+close(fd);
+ptr = mremap(ptr, size_bytes, size_bytes * 2, MREMAP_MAYMOVE);
+touch_mem(ptr, size_bytes * 2);
 
-Hm.  What flags will we be passing to the xfs_dax_notify_failure_fn?
-Does XFS itself have to care about what's in the flags values, or is it
-really just a magic cookie to be passed from the mm layer into the fs
-and back to mf_dax_kill_procs?
+This would generate a SIGBUS in touch_mem(). I believe it's because
+ftruncate() specified the size to be size_bytes and we are accessing
+more than that after remapping. prctl() does not have this limitation
+and we do have a usecase for growing a named VMA.
 
---D
+3. Leaves an fd exposed, even briefly, which may lead to unexpected
+flaws (e.g. anything using mmap MAP_SHARED could allow exposures or
+overwrites). Even MAP_PRIVATE, if an attacker writes into the file
+after ftruncate() and before mmap(), can cause private memory to be
+initialized with unexpected data.
 
-> +
-> +	for (; (index << PAGE_SHIFT) < end; index++) {
-> +		page = NULL;
-> +		cookie = dax_lock_mapping_entry(mapping, index, &page);
-> +		if (!cookie)
-> +			return -EBUSY;
-> +		if (!page)
-> +			goto unlock;
-> +
-> +		SetPageHWPoison(page);
-> +
-> +		collect_procs_fsdax(page, mapping, index, &to_kill);
-> +		unmap_and_kill(&to_kill, page_to_pfn(page), mapping,
-> +				index, flags);
-> +unlock:
-> +		dax_unlock_mapping_entry(mapping, index, cookie);
-> +	}
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(mf_dax_kill_procs);
-> +
->  static int memory_failure_hugetlb(unsigned long pfn, int flags)
->  {
->  	struct page *p = pfn_to_page(pfn);
-> -- 
-> 2.33.0
-> 
-> 
-> 
+4. There is a usecase in the Android userspace where vma naming
+happens after memory was allocated. Bionic linker does in-memory
+relocations and then names some relocated sections.
+
+In the light of these findings, could the current patchset be reconsidered?
+Thanks,
+Suren.
+
+
+>
+> >
+> > Maybe it's just me, but the whole interface, setting the name via a
+> > prctl after the mapping was already instantiated doesn't really spark
+> > joy at my end. That's not a strong pushback, but if we can avoid it
+> > using something that's already there, that would be very much preferred.
+>
+> Actually that's one of my worries about using memfds. There might be
+> cases when we need to name a vma after it was mapped. memfd_create()
+> would not allow us to do that AFAIKT. But I need to check all usages
+> to say if that's really an issue.
+> Thanks!
+>
+> >
+> > --
+> > Thanks,
+> >
+> > David / dhildenb
+> >
+> > --
+> > To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
+> >
