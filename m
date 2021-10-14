@@ -2,121 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21F4442CF04
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 01:13:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE00842D008
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 03:48:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229822AbhJMXPe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Oct 2021 19:15:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50999 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229745AbhJMXPd (ORCPT
+        id S229791AbhJNBue (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Oct 2021 21:50:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36536 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229660AbhJNBud (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Oct 2021 19:15:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634166808;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=vHKHqM6joTjLTO+LAIK0a1VhLnO657jhFhkTCdfnQy4=;
-        b=dDyCpTDo6h/3LhFaFxjWIF3jehTC8YmTTsV8mLMm3MmfIQJuujVpJ/Ior1zAaybZa4mYGT
-        XwMN4g5za+DbepyXXFLdiYy5FYLwGeV6CfUnLgb8+hbyKfSoPOLTqxumBLRvT/Xe0AqRbB
-        PtbmgZIAnJGeXKoGKlNWBSr+O4mLvHM=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-157-lXUpQRoBO5CxeZ7CrAGIbg-1; Wed, 13 Oct 2021 19:13:27 -0400
-X-MC-Unique: lXUpQRoBO5CxeZ7CrAGIbg-1
-Received: by mail-pf1-f200.google.com with SMTP id j22-20020a62b616000000b0044d091c3999so2395562pff.16
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 16:13:27 -0700 (PDT)
+        Wed, 13 Oct 2021 21:50:33 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B62BC061746
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 18:48:29 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id a73so4087431pge.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Oct 2021 18:48:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:subject:user-agent:in-reply-to:references:message-id
+         :mime-version:content-transfer-encoding;
+        bh=G1Xpwb6SXyk5zbi6Fvi2E0LkOB6JBHLvcrsIpB5EC3g=;
+        b=PcrvY23euf8D5/i4CMCOuiPO8FAKwfmfwcpHZS1+juqDxXXuqna4otkgpmHvXR8Y+2
+         R/KQ189IJNjEPWnDtRJ6vdS1hTwi5jzN8F4751Z5IyeJWMgInm4EHhoxDVSvZUKsV8hZ
+         46bitD+AWsF3WigZlnAX0S+95uogXU83gnSxk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=vHKHqM6joTjLTO+LAIK0a1VhLnO657jhFhkTCdfnQy4=;
-        b=enrNGDCJFAWjMisjqX45RuzO+63ZfywDA2i1lKF5xNs+UAhhwdxG+cIrCYzXLPZNd+
-         cd7sQOvnZuHV1RrXykILYOcBhfFEV/a8bpX0Y8Q6L/6jyyPUGFamdBwXUSzXR9u0S3Lf
-         0XtEGY7kU5eAa2S/iYyTOQOif1XYYymeoZR69xrytw0VNvvyq7MH13bm30tnVWdAq6ra
-         E9fJC8F30c77eKQ/HNF5+/a6+j2AIQy5FEBh4NiQlz7EtrbOVx9EEZikDwnKKUdxBrbH
-         ffDIWZXj8naXABs+zJxzPH+jQXxXNI89x5u6xoh3AisBQl6Mwn4c703tw8f9qamqJzhs
-         g6bw==
-X-Gm-Message-State: AOAM5327cQGDrZVwH9XoXaHvyX3Xa20PQ4zTG+fg/69RYECSg3A6XY58
-        BAHOds1KsWbBSY0t1tiqLy/VtyGs5Ua/jZyj6SfAsjNxajQyw2QW4jYJtXNQtjhCin/u1eQwj6N
-        8fVm7koCo5FmD4a6fpCkV2vthug==
-X-Received: by 2002:a05:6a00:ac6:b029:374:a33b:a74 with SMTP id c6-20020a056a000ac6b0290374a33b0a74mr2157867pfl.51.1634166806289;
-        Wed, 13 Oct 2021 16:13:26 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyosAo3Rd7PHBy+R/128zfAHbsbgJfHLUuFFIbmXdGJzX054smRXN6zXt9Qeh9AnGI+ZzVpBQ==
-X-Received: by 2002:a05:6a00:ac6:b029:374:a33b:a74 with SMTP id c6-20020a056a000ac6b0290374a33b0a74mr2157843pfl.51.1634166805966;
-        Wed, 13 Oct 2021 16:13:25 -0700 (PDT)
-Received: from t490s ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id t28sm487986pfq.158.2021.10.13.16.13.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Oct 2021 16:13:25 -0700 (PDT)
-Date:   Thu, 14 Oct 2021 07:13:18 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     HORIGUCHI =?utf-8?B?TkFPWUEo5aCA5Y+jIOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [v3 PATCH 2/5] mm: filemap: check if THP has hwpoisoned subpage
- for PMD page fault
-Message-ID: <YWdoDn4uEYG8jpXH@t490s>
-References: <CAHbLzkqm_Os8TLXgbkL-oxQVsQqRbtmjdMdx0KxNke8mUF1mWA@mail.gmail.com>
- <YWTc/n4r6CJdvPpt@t490s>
- <YWTobPkBc3TDtMGd@t490s>
- <CAHbLzkrOsNygu5x8vbMHedv+P3dEqOxOC6=O6ACSm1qKzmoCng@mail.gmail.com>
- <YWYHukJIo8Ol2sHN@t490s>
- <CAHbLzkp3UXKs_NP9XD_ws=CSSFzUPk7jRxj0K=gvOqoi+GotmA@mail.gmail.com>
- <YWZMDTwCCZWX5/sQ@t490s>
- <CAHbLzkp8QkORXK_y8hnrg=2kTRFyoZpJcXbkyj6eyCdcYSbZTw@mail.gmail.com>
- <YWZVdDSS/4rnFbqK@t490s>
- <CAHbLzkrcOpG5AHk934hDJb2d+FocYjUc6nhBRofhTbTxLVWtYA@mail.gmail.com>
+        h=x-gm-message-state:date:from:to:subject:user-agent:in-reply-to
+         :references:message-id:mime-version:content-transfer-encoding;
+        bh=G1Xpwb6SXyk5zbi6Fvi2E0LkOB6JBHLvcrsIpB5EC3g=;
+        b=eSap8R6+ocm/eM6bmoTrqKPr3JsdsG5/4rCt5mFkXo4v6Qf3gOViRQyFO9vuIy3Axi
+         sDldRFHJYE5z7QjnGdJJBzL0l2LiCg4NQuLAfuftgzL4rCKCoz4Wya7T5OFd5sjKfe6h
+         9SkxXeGBHFLBw8l0GJsKlxnfOr4ULMJ5krpmTyF6R5R3goc7yBGcGVmpYRjvgOM0DYxO
+         uxR72ysT9DPqopMHQUiHjEbwGU/G9YDGclQkkj+0aosHnODE/4HvBaD6AFx5sn2zTyg+
+         8h216cK4bkeplryy1vWzEp3uqHxtIaC/bXI1tvSiiONn19LMO9k6IsPmxjJUK2GCFsfh
+         r0bQ==
+X-Gm-Message-State: AOAM531BeKGfWTCV01A1vpqR6IlHyAsWDabMzpn9XxPWXwpg81lRwUaT
+        8YzONMLuzeMjxiVKiQNhHNfqcQ==
+X-Google-Smtp-Source: ABdhPJwMHQ3LniH7fm2Z/mg46eDU77wH2wgb9y+Wuze/dN/pJIVTQ8UH956qdAEsARS5UII7aAWIOw==
+X-Received: by 2002:a05:6a00:a0a:b0:44c:52c9:bf25 with SMTP id p10-20020a056a000a0a00b0044c52c9bf25mr2513803pfh.24.1634176108743;
+        Wed, 13 Oct 2021 18:48:28 -0700 (PDT)
+Received: from [127.0.0.1] (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id u24sm669808pfm.85.2021.10.13.18.48.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Oct 2021 18:48:28 -0700 (PDT)
+Date:   Wed, 13 Oct 2021 18:48:26 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Rob Landley <rob@landley.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: The one and only "permission denied" in find /sys
+User-Agent: K-9 Mail for Android
+In-Reply-To: <cd81a57e-e2c1-03c5-d0da-f898babf92e7@landley.net>
+References: <cd81a57e-e2c1-03c5-d0da-f898babf92e7@landley.net>
+Message-ID: <7042EFC5-DA90-4B9A-951A-036889FD89CA@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHbLzkrcOpG5AHk934hDJb2d+FocYjUc6nhBRofhTbTxLVWtYA@mail.gmail.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 13, 2021 at 02:42:42PM -0700, Yang Shi wrote:
-> On Tue, Oct 12, 2021 at 8:41 PM Peter Xu <peterx@redhat.com> wrote:
-> >
-> > On Tue, Oct 12, 2021 at 08:27:06PM -0700, Yang Shi wrote:
-> > > > But this also reminded me that shouldn't we be with the page lock already
-> > > > during the process of "setting hwpoison-subpage bit, split thp, clear
-> > > > hwpoison-subpage bit"?  If it's only the small window that needs protection,
-> > > > while when looking up the shmem pagecache we always need to take the page lock
-> > > > too, then it seems already safe even without the extra bit?  Hmm?
-> > >
-> > > I don't quite get your point. Do you mean memory_failure()? If so the
-> > > answer is no, outside the page lock. And the window may be indefinite
-> > > since file THP doesn't get split before this series and the split may
-> > > fail even after this series.
-> >
-> > What I meant is that we could extend the page_lock in try_to_split_thp_page()
-> > to cover setting hwpoison-subpage too (and it of course covers the clearing if
-> > thp split succeeded, as that's part of the split process).  But yeah it's a
-> > good point that the split may fail, so the extra bit seems still necessary.
-> >
-> > Maybe that'll be something worth mentioning in the commit message too?  The
-> > commit message described very well on the overhead of looping over 512 pages,
-> > however the reader can easily overlook the real reason for needing this bit -
-> > IMHO it's really for the thp split failure case, as we could also mention that
-> > if thp split won't fail, page lock should be suffice (imho).  We could also
-> 
-> Not only for THP split failure case. Before this series, shmem THP
-> does't get split at all. And this commit is supposed to be backported
-> to the older versions, so saying "page lock is sufficient" is not
-> precise and confusing.
 
-Sure, please feel free to use any wording you prefer as long as the other side
-of the lock besides the performance impact could be mentioned.  Thanks,
 
--- 
-Peter Xu
+On October 13, 2021 1:12:16 PM PDT, Rob Landley <rob@landley=2Enet> wrote:
+>There is exactly one directory in the whole of sysfs that a normal user c=
+an't
+>read (at least on my stock devuan laptop):
+>
+>  $ find /sys -name potato
+>  find: =E2=80=98/sys/fs/pstore=E2=80=99: Permission denied
+>
+>It's the "pstore" filesystem, it was explicitly broken by commit d7caa336=
+87ce,
+>and the commit seems to say this was to fix an issue that didn't exist ye=
+t but
+>might someday=2E
 
+Right, so, the problem did certainly exist: there was a capability check f=
+or opening the files, which made it difficult for pstore collector tools to=
+ run with sane least privileges=2E Adjusting the root directory was the sim=
+plest way to keep the files secure by default, and allow a system owner the=
+ ability to delegate collector permissions to a user or group via just a ch=
+mod on the root directory=2E
+
+>Did whatever issue it was concerned about ever actually start happening? =
+Why did
+>you not change the permissions on the files _in_ the directory so they we=
+ren't
+>world readable instead? Should /dev/shm stop being world ls-able as well?
+
+Making the per-file permissions configurable at runtime was more complex f=
+or little additional gain=2E
+
+/dev/shm has the benefit of having an existing permission model for each c=
+reated file=2E
+
+I wouldn't be opposed to a mount option to specify the default file owner/=
+group, but it makes user space plumbing more difficult (i=2Ee=2E last I che=
+cked, stuff like systemd tends to just mount kernel filesystems without opt=
+ions)=2E
+
+-Kees
+
+--=20
+Kees Cook
