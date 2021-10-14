@@ -2,130 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 560FC42D76D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 12:47:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF26F42D7CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 13:08:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230231AbhJNKtx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Oct 2021 06:49:53 -0400
-Received: from outbound-smtp26.blacknight.com ([81.17.249.194]:56656 "EHLO
-        outbound-smtp26.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230264AbhJNKtw (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Oct 2021 06:49:52 -0400
-Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
-        by outbound-smtp26.blacknight.com (Postfix) with ESMTPS id D87DC1E006
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Oct 2021 11:47:45 +0100 (IST)
-Received: (qmail 19320 invoked from network); 14 Oct 2021 10:47:45 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 14 Oct 2021 10:47:45 -0000
-Date:   Thu, 14 Oct 2021 11:47:44 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Linux-MM <linux-mm@kvack.org>, NeilBrown <neilb@suse.de>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Rik van Riel <riel@surriel.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/8] mm/vmscan: Throttle reclaim until some writeback
- completes if congested
-Message-ID: <20211014104744.GY3959@techsingularity.net>
-References: <20211008135332.19567-1-mgorman@techsingularity.net>
- <20211008135332.19567-2-mgorman@techsingularity.net>
- <63898e7a-0846-3105-96b5-76c89635e499@suse.cz>
+        id S230129AbhJNLLA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Oct 2021 07:11:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53144 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229988AbhJNLK7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 14 Oct 2021 07:10:59 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3385A60F23;
+        Thu, 14 Oct 2021 11:08:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634209735;
+        bh=HHKCYup8+gHVwWVOB+Bc7IT9RNl6ysJ2n6UcEXDuoY4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hyz8gG2uOFBcvyzceZp6eLX2XZd1QxKvaBMJyc6/73HkK5VnezFdl9r1knNnjAR3p
+         Y0vf2QFqesNtP4SLw20sCnrbTk/cbbpwt8Hnb08BZs0ebceYIGTjaCYhDQHb7aY0ga
+         NR/LsBZTL5NAjD2apKANMhFMZPhrn53H8uJdX7m83s43rWy+3z/ZiLzA6F3qtPKvzk
+         aKrogzWNcffeZGq0kBvkjRI7xIjKfNP94iNw2vCiCEnPRVk7/y362lP5sp0KvFJyXE
+         k8moUHzS3OvN8VJKdAVqINg56j5CkbwhHU1PrLe4FbwpduRT6sILNZ/piz21YzY8NT
+         ZFOSSupYLGk/A==
+From:   SeongJae Park <sj@kernel.org>
+To:     akpm@linux-foundation.org
+Cc:     rdunlap@infradead.org, broonie@kernel.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, SeongJae Park <sj@kernel.org>
+Subject: [PATCH] mm/damon/vaddr: Include 'highmem.h' to fix a build failure
+Date:   Thu, 14 Oct 2021 11:08:48 +0000
+Message-Id: <20211014110848.5204-1-sj@kernel.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <63898e7a-0846-3105-96b5-76c89635e499@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks Vlastimil
+Commit 0ff28922686c ("mm/damon/vaddr: separate commonly usable
+functions") in -mm tree[1] moves include of 'highmem.h' from 'vaddr.c'
+to 'prmtv-common.c', though the code for the header is still in
+'vaddr.c'.  As a result, build with 'CONFIG_HIGHPTE' fails as below:
 
-On Wed, Oct 13, 2021 at 05:39:36PM +0200, Vlastimil Babka wrote:
-> > +/*
-> > + * Account for pages written if tasks are throttled waiting on dirty
-> > + * pages to clean. If enough pages have been cleaned since throttling
-> > + * started then wakeup the throttled tasks.
-> > + */
-> > +void __acct_reclaim_writeback(pg_data_t *pgdat, struct page *page,
-> > +							int nr_throttled)
-> > +{
-> > +	unsigned long nr_written;
-> > +
-> > +	__inc_node_page_state(page, NR_THROTTLED_WRITTEN);
-> 
-> Is this intentionally using the __ version that normally expects irqs to be
-> disabled (AFAIK they are not in this path)? I think this is rarely used cold
-> path so it doesn't seem worth to trade off speed for accuracy.
-> 
+    In file included from ../include/linux/mm.h:33:0,
+                      from ../include/linux/kallsyms.h:13,
+                      from ../include/linux/bpf.h:20,
+                      from ../include/linux/bpf-cgroup.h:5,
+                      from ../include/linux/cgroup-defs.h:22,
+                      from ../include/linux/cgroup.h:28,
+                      from ../include/linux/hugetlb.h:9,
+                      from ../mm/damon/vaddr.c:11:
+    ../mm/damon/vaddr.c: In function ‘damon_mkold_pmd_entry’:
+    ../include/linux/pgtable.h:97:12: error: implicit declaration of function ‘kmap_atomic’; did you mean ‘mcopy_atomic’? [-Werror=implicit-function-declaration]
+       ((pte_t *)kmap_atomic(pmd_page(*(dir))) +  \
+                 ^
+    ../include/linux/mm.h:2376:17: note: in expansion of macro ‘pte_offset_map’
+       pte_t *__pte = pte_offset_map(pmd, address); \
+                      ^~~~~~~~~~~~~~
+    ../mm/damon/vaddr.c:387:8: note: in expansion of macro ‘pte_offset_map_lock’
+       pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
+             ^~~~~~~~~~~~~~~~~~~
+    ../include/linux/pgtable.h:99:24: error: implicit declaration of function ‘kunmap_atomic’; did you mean ‘in_atomic’? [-Werror=implicit-function-declaration]
+      #define pte_unmap(pte) kunmap_atomic((pte))
+                             ^
+    ../include/linux/mm.h:2384:2: note: in expansion of macro ‘pte_unmap’
+       pte_unmap(pte);     \
+       ^~~~~~~~~
+    ../mm/damon/vaddr.c:392:2: note: in expansion of macro ‘pte_unmap_unlock’
+       pte_unmap_unlock(pte, ptl);
+       ^~~~~~~~~~~~~~~~
 
-It was intentional because IRQs can be disabled and if it's race-prone,
-it's not overly problematic but you're right, better to be safe.  I changed
-it to the safe type as it's mostly free on x86, arm64 and s390 and for
-other architectures, this is a slow path.
+This commit fixes the issue by moving the include back to 'vaddr.c'.
 
-> > +	nr_written = node_page_state(pgdat, NR_THROTTLED_WRITTEN) -
-> > +		READ_ONCE(pgdat->nr_reclaim_start);
-> 
-> Even if the inc above was safe, node_page_state() will return only the
-> global counter, so the value we read here will only actually increment when
-> some cpu's counter overflows, so it will be "bursty". Maybe it's ok, just
-> worth documenting?
-> 
+[1] https://github.com/hnaz/linux-mm/commit/0ff28922686c
 
-I didn't think the penalty of doing an accurate read while writeback
-throttled is worth it. I'll add a comment.
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: SeongJae Park <sj@kernel.org>
+---
+ mm/damon/prmtv-common.c | 1 -
+ mm/damon/vaddr.c        | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
-> > +
-> > +	if (nr_written > SWAP_CLUSTER_MAX * nr_throttled)
-> > +		wake_up_all(&pgdat->reclaim_wait);
-> 
-> Hm it seems a bit weird that the more tasks are throttled, the more we wait,
-> and then wake up all. Theoretically this will lead to even more
-> bursty/staggering herd behavior. Could be better to wake up single task each
-> SWAP_CLUSTER_MAX, and bump nr_reclaim_start? But maybe it's not a problem in
-> practice due to HZ/10 timeouts being short enough?
-> 
-
-Yes, the more tasks are throttled the longer tasks wait because tasks are
-allocating faster than writeback can complete so I wanted to reduce the
-allocation pressure. I considered waking one task at a time but there is
-no prioritisation of tasks on the waitqueue and it's not clear that the
-additional complexity is justified. With inaccurate counters, a light
-allocator could get throttled for the full timeout unnecessarily.
-
-Even if we were to wake one task at a time, I would prefer it was done
-as a potential optimisation on top.
-
-Diff on top based on review feedback;
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index bcd22e53795f..735b1f2b5d9e 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1048,7 +1048,15 @@ void __acct_reclaim_writeback(pg_data_t *pgdat, struct page *page,
- {
- 	unsigned long nr_written;
+diff --git a/mm/damon/prmtv-common.c b/mm/damon/prmtv-common.c
+index 1768cbe1b9ff..7e62ee54fb54 100644
+--- a/mm/damon/prmtv-common.c
++++ b/mm/damon/prmtv-common.c
+@@ -5,7 +5,6 @@
+  * Author: SeongJae Park <sj@kernel.org>
+  */
  
--	__inc_node_page_state(page, NR_THROTTLED_WRITTEN);
-+	inc_node_page_state(page, NR_THROTTLED_WRITTEN);
-+
-+	/*
-+	 * This is an inaccurate read as the per-cpu deltas may not
-+	 * be synchronised. However, given that the system is
-+	 * writeback throttled, it is not worth taking the penalty
-+	 * of getting an accurate count. At worst, the throttle
-+	 * timeout guarantees forward progress.
-+	 */
- 	nr_written = node_page_state(pgdat, NR_THROTTLED_WRITTEN) -
- 		READ_ONCE(pgdat->nr_reclaim_start);
+-#include <linux/highmem.h>
+ #include <linux/mmu_notifier.h>
+ #include <linux/page_idle.h>
+ #include <linux/pagemap.h>
+diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
+index ce7e36ca1bff..758501b8d97d 100644
+--- a/mm/damon/vaddr.c
++++ b/mm/damon/vaddr.c
+@@ -8,6 +8,7 @@
+ #define pr_fmt(fmt) "damon-va: " fmt
+ 
+ #include <asm-generic/mman-common.h>
++#include <linux/highmem.h>
+ #include <linux/hugetlb.h>
+ #include <linux/mmu_notifier.h>
+ #include <linux/page_idle.h>
+-- 
+2.17.1
 
