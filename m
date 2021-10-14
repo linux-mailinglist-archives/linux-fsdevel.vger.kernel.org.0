@@ -2,131 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B26A42DE89
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 17:45:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14A2242DFDD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 19:04:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231508AbhJNPrZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Oct 2021 11:47:25 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:58268 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbhJNPrY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Oct 2021 11:47:24 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 3CAA41FD3A;
-        Thu, 14 Oct 2021 15:45:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1634226318; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Xlba8fQlLTV+uf/QFNHdvELwK8agBCfU4HJu/918Gg8=;
-        b=PUmxe7JODhvk617rHZJOz6J0mOpqx82GVdbwTSvLRDl2C9tHOK3ag1uG8ee9W5Sgn4HlwO
-        D5Aj1we+h8PYc1Ce46L/fOjYBZfBDzld/geTplXqV7DdNgP2uwQdbpZhDTdNcp8ECT0TXJ
-        JHI+QNX6MznhQ0FYu+LOI2ObSEUKfKo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1634226318;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Xlba8fQlLTV+uf/QFNHdvELwK8agBCfU4HJu/918Gg8=;
-        b=lKB5WgO9+rvi5JqCXTvPW2zGQWlbRr9VQQKOzZpEHUsht0Bd9cR60mMgCn9WjItADyRJ96
-        oGqbSC29tT69nHDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0DE0A13D9F;
-        Thu, 14 Oct 2021 15:45:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id PFOvAo5QaGEXIwAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Thu, 14 Oct 2021 15:45:18 +0000
-Message-ID: <8420753a-1ae0-17ed-f486-c4ae42b040e0@suse.cz>
-Date:   Thu, 14 Oct 2021 17:45:17 +0200
+        id S233170AbhJNRGw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Oct 2021 13:06:52 -0400
+Received: from smtp.hosts.co.uk ([85.233.160.19]:54728 "EHLO smtp.hosts.co.uk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233025AbhJNRGv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 14 Oct 2021 13:06:51 -0400
+X-Greylist: delayed 5331 seconds by postgrey-1.27 at vger.kernel.org; Thu, 14 Oct 2021 13:06:49 EDT
+Received: from host86-155-223-151.range86-155.btcentralplus.com ([86.155.223.151] helo=[192.168.1.65])
+        by smtp.hosts.co.uk with esmtpa (Exim)
+        (envelope-from <antlists@youngman.org.uk>)
+        id 1mb2lr-0006Lw-DM; Thu, 14 Oct 2021 16:35:51 +0100
+Subject: Re: don't use ->bd_inode to access the block device size
+To:     Kees Cook <keescook@chromium.org>,
+        Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
+        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "jfs-discussion@lists.sourceforge.net" 
+        <jfs-discussion@lists.sourceforge.net>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-nilfs@vger.kernel.org" <linux-nilfs@vger.kernel.org>,
+        "linux-ntfs-dev@lists.sourceforge.net" 
+        <linux-ntfs-dev@lists.sourceforge.net>,
+        "ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
+        "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>
+References: <20211013051042.1065752-1-hch@lst.de>
+ <20211014062844.GA25448@lst.de>
+ <3AB8052D-DD45-478B-85F2-BFBEC1C7E9DF@tuxera.com>
+ <a5eb3c18-deb2-6539-cc24-57e6d5d3500c@oracle.com>
+ <202110140813.44C95229@keescook>
+From:   Wol <antlists@youngman.org.uk>
+Message-ID: <e3d2f358-be1a-3413-fdb8-2e86718cde3e@youngman.org.uk>
+Date:   Thu, 14 Oct 2021 16:35:49 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH 3/8] mm/vmscan: Throttle reclaim when no progress is being
- made
-Content-Language: en-US
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Linux-MM <linux-mm@kvack.org>, NeilBrown <neilb@suse.de>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Rik van Riel <riel@surriel.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20211008135332.19567-1-mgorman@techsingularity.net>
- <20211008135332.19567-4-mgorman@techsingularity.net>
- <63336163-e709-65de-6d53-8764facd3924@suse.cz>
- <20211014130312.GA3959@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20211014130312.GA3959@techsingularity.net>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <202110140813.44C95229@keescook>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/14/21 15:03, Mel Gorman wrote:
-> On Thu, Oct 14, 2021 at 02:31:17PM +0200, Vlastimil Babka wrote:
->> On 10/8/21 15:53, Mel Gorman wrote:
->> > Memcg reclaim throttles on congestion if no reclaim progress is made.
->> > This makes little sense, it might be due to writeback or a host of
->> > other factors.
->> > 
->> > For !memcg reclaim, it's messy. Direct reclaim primarily is throttled
->> > in the page allocator if it is failing to make progress. Kswapd
->> > throttles if too many pages are under writeback and marked for
->> > immediate reclaim.
->> > 
->> > This patch explicitly throttles if reclaim is failing to make progress.
->> > 
->> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
->> ...
->> > @@ -3769,6 +3797,16 @@ unsigned long try_to_free_mem_cgroup_pages(struct mem_cgroup *memcg,
->> >  	trace_mm_vmscan_memcg_reclaim_end(nr_reclaimed);
->> >  	set_task_reclaim_state(current, NULL);
->> >  
->> > +	if (!nr_reclaimed) {
->> > +		struct zoneref *z;
->> > +		pg_data_t *pgdat;
->> > +
->> > +		z = first_zones_zonelist(zonelist, sc.reclaim_idx, sc.nodemask);
->> > +		pgdat = zonelist_zone(z)->zone_pgdat;
->> > +
->> > +		reclaim_throttle(pgdat, VMSCAN_THROTTLE_NOPROGRESS, HZ/10);
->> > +	}
->> 
->> Is this necessary? AFAICS here we just returned from:
->> 
->> do_try_to_free_pages()
->>   shrink_zones()
->>    for_each_zone()...
->>      consider_reclaim_throttle()
->> 
->> Which already throttles when needed and using the appropriate pgdat, while
->> here we have to somewhat awkwardly assume the preferred one.
->> 
-> 
-> Yes, you're right, consider_reclaim_throttle not only throttles on the
-> appropriate pgdat but takes priority into account.
-> 
-> Well spotted!
+On 14/10/2021 16:14, Kees Cook wrote:
+>> I don't really mind bdev_size since it's analogous to i_size, but
+>> bdev_nr_bytes seems good to me.
 
-So with that part removed
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> I much prefer bdev_nr_bytes(), as "size" has no units.
 
-Thanks!
+Does it mean size IN bytes, or size OF A byte? :-)
 
+Cheers,
+Wol
