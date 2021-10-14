@@ -2,25 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C05942E394
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 23:39:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9577442E397
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 23:39:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233930AbhJNVlV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Oct 2021 17:41:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53346 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231596AbhJNVlV (ORCPT
+        id S233587AbhJNVl2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Oct 2021 17:41:28 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54260 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231596AbhJNVl2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Oct 2021 17:41:21 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0B44C061570;
-        Thu, 14 Oct 2021 14:39:15 -0700 (PDT)
+        Thu, 14 Oct 2021 17:41:28 -0400
 Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1007])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 537351F44F8C;
-        Thu, 14 Oct 2021 22:39:14 +0100 (BST)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 7A55A1F44F8C;
+        Thu, 14 Oct 2021 22:39:21 +0100 (BST)
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     jack@suse.com, amir73il@gmail.com
 Cc:     djwong@kernel.org, tytso@mit.edu, dhowells@redhat.com,
@@ -28,9 +25,9 @@ Cc:     djwong@kernel.org, tytso@mit.edu, dhowells@redhat.com,
         linux-ext4@vger.kernel.org, linux-api@vger.kernel.org,
         repnop@google.com, Gabriel Krisman Bertazi <krisman@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH v7 19/28] fanotify: Limit number of marks with FAN_FS_ERROR per group
-Date:   Thu, 14 Oct 2021 18:36:37 -0300
-Message-Id: <20211014213646.1139469-20-krisman@collabora.com>
+Subject: [PATCH v7 20/28] fanotify: Support enqueueing of error events
+Date:   Thu, 14 Oct 2021 18:36:38 -0300
+Message-Id: <20211014213646.1139469-21-krisman@collabora.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211014213646.1139469-1-krisman@collabora.com>
 References: <20211014213646.1139469-1-krisman@collabora.com>
@@ -40,64 +37,111 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since FAN_FS_ERROR memory must be pre-allocated, limit a single group
-from watching too many file systems at once.  The current scheme
-guarantees 1 slot per filesystem, so limit the number of marks with
-FAN_FS_ERROR per group.
+Once an error event is triggered, collect the data from the fs error
+report and enqueue it in the notification group, similarly to what is
+done for other events.  FAN_FS_ERROR is no longer handled specially,
+since the memory is now handled by a preallocated mempool.
+
+For now, make the event unhashed.  A future patch implements merging for
+these kinds of events.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 ---
- fs/notify/fanotify/fanotify_user.c | 10 ++++++++++
- include/linux/fsnotify_backend.h   |  1 +
- 2 files changed, 11 insertions(+)
+ fs/notify/fanotify/fanotify.c | 35 +++++++++++++++++++++++++++++++++++
+ fs/notify/fanotify/fanotify.h |  6 ++++++
+ 2 files changed, 41 insertions(+)
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index f1cf863d6f9f..5324890500fc 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -959,6 +959,10 @@ static int fanotify_remove_mark(struct fsnotify_group *group,
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index 01d68dfc74aa..9b970359570a 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -574,6 +574,27 @@ static struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
+ 	return &fne->fae;
+ }
  
- 	removed = fanotify_mark_remove_from_mask(fsn_mark, mask, flags,
- 						 umask, &destroy_mark);
++static struct fanotify_event *fanotify_alloc_error_event(
++						struct fsnotify_group *group,
++						__kernel_fsid_t *fsid,
++						const void *data, int data_type)
++{
++	struct fs_error_report *report =
++			fsnotify_data_error_report(data, data_type);
++	struct fanotify_error_event *fee;
 +
-+	if (removed & FAN_FS_ERROR)
-+		group->fanotify_data.error_event_marks--;
++	if (WARN_ON(!report))
++		return NULL;
 +
- 	if (removed & fsnotify_conn_mask(fsn_mark->connector))
- 		fsnotify_recalc_mask(fsn_mark->connector);
- 	if (destroy_mark)
-@@ -1057,6 +1061,9 @@ static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
++	fee = mempool_alloc(&group->fanotify_data.error_events_pool, GFP_NOFS);
++	if (!fee)
++		return NULL;
++
++	fee->fae.type = FANOTIFY_EVENT_TYPE_FS_ERROR;
++
++	return &fee->fae;
++}
++
+ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+ 						   u32 mask, const void *data,
+ 						   int data_type, struct inode *dir,
+@@ -641,6 +662,9 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
  
- static int fanotify_group_init_error_pool(struct fsnotify_group *group)
+ 	if (fanotify_is_perm_event(mask)) {
+ 		event = fanotify_alloc_perm_event(path, gfp);
++	} else if (fanotify_is_error_event(mask)) {
++		event = fanotify_alloc_error_event(group, fsid, data,
++						   data_type);
+ 	} else if (name_event && (file_name || child)) {
+ 		event = fanotify_alloc_name_event(id, fsid, file_name, child,
+ 						  &hash, gfp);
+@@ -850,6 +874,14 @@ static void fanotify_free_name_event(struct fanotify_event *event)
+ 	kfree(FANOTIFY_NE(event));
+ }
+ 
++static void fanotify_free_error_event(struct fsnotify_group *group,
++				      struct fanotify_event *event)
++{
++	struct fanotify_error_event *fee = FANOTIFY_EE(event);
++
++	mempool_free(fee, &group->fanotify_data.error_events_pool);
++}
++
+ static void fanotify_free_event(struct fsnotify_group *group,
+ 				struct fsnotify_event *fsn_event)
  {
-+	if (group->fanotify_data.error_event_marks >= FANOTIFY_DEFAULT_FEE_POOL)
-+		return -ENOMEM;
+@@ -873,6 +905,9 @@ static void fanotify_free_event(struct fsnotify_group *group,
+ 	case FANOTIFY_EVENT_TYPE_OVERFLOW:
+ 		kfree(event);
+ 		break;
++	case FANOTIFY_EVENT_TYPE_FS_ERROR:
++		fanotify_free_error_event(group, event);
++		break;
+ 	default:
+ 		WARN_ON_ONCE(1);
+ 	}
+diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+index a577e87fac2b..ebef952481fa 100644
+--- a/fs/notify/fanotify/fanotify.h
++++ b/fs/notify/fanotify/fanotify.h
+@@ -298,6 +298,11 @@ static inline struct fanotify_event *FANOTIFY_E(struct fsnotify_event *fse)
+ 	return container_of(fse, struct fanotify_event, fse);
+ }
+ 
++static inline bool fanotify_is_error_event(u32 mask)
++{
++	return mask & FAN_FS_ERROR;
++}
 +
- 	if (mempool_initialized(&group->fanotify_data.error_events_pool))
- 		return 0;
+ static inline bool fanotify_event_has_path(struct fanotify_event *event)
+ {
+ 	return event->type == FANOTIFY_EVENT_TYPE_PATH ||
+@@ -327,6 +332,7 @@ static inline struct path *fanotify_event_path(struct fanotify_event *event)
+ static inline bool fanotify_is_hashed_event(u32 mask)
+ {
+ 	return !(fanotify_is_perm_event(mask) ||
++		 fanotify_is_error_event(mask) ||
+ 		 fsnotify_is_overflow_event(mask));
+ }
  
-@@ -1098,6 +1105,9 @@ static int fanotify_add_mark(struct fsnotify_group *group,
- 	if (added & ~fsnotify_conn_mask(fsn_mark->connector))
- 		fsnotify_recalc_mask(fsn_mark->connector);
- 
-+	if (!(flags & FAN_MARK_IGNORED_MASK) && (mask & FAN_FS_ERROR))
-+		group->fanotify_data.error_event_marks++;
-+
- out:
- 	mutex_unlock(&group->mark_mutex);
- 
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index 9941c06b8c8a..96e1d31394ce 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -247,6 +247,7 @@ struct fsnotify_group {
- 			int f_flags; /* event_f_flags from fanotify_init() */
- 			struct ucounts *ucounts;
- 			mempool_t error_events_pool;
-+			unsigned int error_event_marks;
- 		} fanotify_data;
- #endif /* CONFIG_FANOTIFY */
- 	};
 -- 
 2.33.0
 
