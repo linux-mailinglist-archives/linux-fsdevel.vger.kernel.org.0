@@ -2,79 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B13542E2C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 22:28:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B19D942E34C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 23:34:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231845AbhJNUaH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Oct 2021 16:30:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37556 "EHLO
+        id S233122AbhJNVg0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Oct 2021 17:36:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231408AbhJNUaG (ORCPT
+        with ESMTP id S231180AbhJNVg0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Oct 2021 16:30:06 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FC0AC061570;
-        Thu, 14 Oct 2021 13:28:01 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id n65so17538579ybb.7;
-        Thu, 14 Oct 2021 13:28:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X/5NOuaTC7GdG1HuEPP9I36zK6ViujDRxabRQSupDHo=;
-        b=mZSIsOvJHc61pRh6A/XJqJhCkjUDhzyZEDo0NiXq4EYG0pvrL6zmdtCQRc4MVmsnRu
-         W4bA9WqUDspnIcnE1LObWeijQbP2Fl0/5uDdIQ4qT3nxE/+dCQbziFDKajSfkPbjAgNq
-         IXnp9Qlrkvoc0bTXmxaJD/zWelOAZMHWoSqggSezx//cPL1hGkxfSNQyepSzibIqTrvm
-         VddHdN8lvISRpJDGlimsVktN+y7WaTFkTqlHJbVFTTu76vkxvCwvL+FDp+TCJs7fijDW
-         FNsAfXZsNMCAnyBhw/sxSuF5cmu3+WH911MqcwCx6X0wRCAPkya1XWVHvwxT6JEK/bNO
-         J5sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X/5NOuaTC7GdG1HuEPP9I36zK6ViujDRxabRQSupDHo=;
-        b=j6ZZiBF7dfSnYqJXdTMSD/SZD/e9dDLxbKoW7wnI/Wv7SCiUe7Qf/fhCbCotJKvdZZ
-         2bDD7xEf1C0JInG9FPeiJw3cUosh6T0GcuC5ygbuVoq7MOv0Ud+0dr/Nao+9tJQi41PT
-         YoiDMzsLieXgTnAoLM+yIBky2dNBUqxJi0QZ9PxEfAUCXpqRK/BxoTBY7tfPCdLvN5KQ
-         /tlz/lcY4ChgJQzLdR9hMYATf8N6hp5jI6L4+y1n2bGppsvOqoPfvl6Bpk98FqOnKdbd
-         HRC8+vOmKM0wPYZRXSLAV3lTxD7KWYyuMHbW8e5X/6oEIC4MmZSLXqEdaHol1wbqTRTN
-         WhQg==
-X-Gm-Message-State: AOAM530e7L5UWrGErIpqAHrmh0Vce8Q09GQtb3o80YkzhCfFDIMTbfOY
-        AeSULrKWOhI8jLbkeFgGTTy1cN9UdiewMz/EQfMaHDc6Jx0=
-X-Google-Smtp-Source: ABdhPJwg9lqbsJzFdH/trlT3Wp/VmvB1S90EPeLIHPlWMMDAImHpzO0Jlbu8yUrDRh7Hw2O5YBe/lCa4d7ooWPe4eYg=
-X-Received: by 2002:a25:45c6:: with SMTP id s189mr8443476yba.290.1634243280776;
- Thu, 14 Oct 2021 13:28:00 -0700 (PDT)
+        Thu, 14 Oct 2021 17:36:26 -0400
+Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1CF7C061570;
+        Thu, 14 Oct 2021 14:34:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=3uz2MkNVnJq3tzD89PFjBt7/bgaD45MTB8/bwuUoYEY=; b=U6Y05WuYcP5EXxvp6aXswlEF0b
+        HeYDv9+jGedfXi8wIMy53Lz1SjAGZpmHT+hMGEmn2GhdciXU5OT3ctTGNPM/rjqYDLGn/a6FWlLkQ
+        T9ZJ7GBOeCFVtuNV1fmQpbZ3W9aitEvBcHcvKPphwPAQAi7eYA5nXW872vzoubGQBYDV9tPEkdgmI
+        HIVfZ/26GVFmxyAoP6Fw+72u9eE6kciyb8hPi9Zd7WYr5koVvSanTM0AHZaUl0MR7vdrio5TfiteO
+        EBkgObIK8SLsd6dmX2CGec92o2tu3Ex5Huowc6QOgm7u+1hQe2O2dXLqem4FaVkj2FnTIMibWA2iz
+        gevguIIw==;
+Received: from [2601:1c0:6280:3f0::aa0b]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mb8Ml-004QkI-8N; Thu, 14 Oct 2021 21:34:19 +0000
+Subject: Re: [PATCH] mm/damon/vaddr: Include 'highmem.h' to fix a build
+ failure
+To:     SeongJae Park <sj@kernel.org>, akpm@linux-foundation.org
+Cc:     broonie@kernel.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        sfr@canb.auug.org.au, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20211014110848.5204-1-sj@kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <8e8a5739-59e8-7b73-5fca-1768b3e18ffe@infradead.org>
+Date:   Thu, 14 Oct 2021 14:34:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <20210809141744.1203023-1-hch@lst.de> <20210809141744.1203023-5-hch@lst.de>
- <20211014143123.GA22126@u164.east.ru> <20211014143243.GA25700@lst.de>
-In-Reply-To: <20211014143243.GA25700@lst.de>
-From:   Anatoly Pugachev <matorola@gmail.com>
-Date:   Thu, 14 Oct 2021 23:27:50 +0300
-Message-ID: <CADxRZqxgu_A=BMOPVCAUteLfLUWAmL_b-S8+TBW1j-eW5O6dwA@mail.gmail.com>
-Subject: Re: [sparc64] kernel OOPS (was: [PATCH 4/5] block: move the bdi from
- the request_queue to the gendisk)
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Jan Kara <jack@suse.cz>, linux-block@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>,
-        Sparc kernel list <sparclinux@vger.kernel.org>,
-        Linux Kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20211014110848.5204-1-sj@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 14, 2021 at 5:32 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> Hi Anatoly,
->
-> please try this patchset:
->
-> https://lore.kernel.org/linux-block/CAHj4cs8tYY-ShH=QdrVirwXqX4Uze6ewZAGew_oRKLL_CCLNJg@mail.gmail.com/T/#m6591be7882bf30f3538a8baafbac1712f0763ebb
+On 10/14/21 4:08 AM, SeongJae Park wrote:
+> Commit 0ff28922686c ("mm/damon/vaddr: separate commonly usable
+> functions") in -mm tree[1] moves include of 'highmem.h' from 'vaddr.c'
+> to 'prmtv-common.c', though the code for the header is still in
+> 'vaddr.c'.  As a result, build with 'CONFIG_HIGHPTE' fails as below:
+> 
+>      In file included from ../include/linux/mm.h:33:0,
+>                        from ../include/linux/kallsyms.h:13,
+>                        from ../include/linux/bpf.h:20,
+>                        from ../include/linux/bpf-cgroup.h:5,
+>                        from ../include/linux/cgroup-defs.h:22,
+>                        from ../include/linux/cgroup.h:28,
+>                        from ../include/linux/hugetlb.h:9,
+>                        from ../mm/damon/vaddr.c:11:
+>      ../mm/damon/vaddr.c: In function ‘damon_mkold_pmd_entry’:
+>      ../include/linux/pgtable.h:97:12: error: implicit declaration of function ‘kmap_atomic’; did you mean ‘mcopy_atomic’? [-Werror=implicit-function-declaration]
+>         ((pte_t *)kmap_atomic(pmd_page(*(dir))) +  \
+>                   ^
+>      ../include/linux/mm.h:2376:17: note: in expansion of macro ‘pte_offset_map’
+>         pte_t *__pte = pte_offset_map(pmd, address); \
+>                        ^~~~~~~~~~~~~~
+>      ../mm/damon/vaddr.c:387:8: note: in expansion of macro ‘pte_offset_map_lock’
+>         pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
+>               ^~~~~~~~~~~~~~~~~~~
+>      ../include/linux/pgtable.h:99:24: error: implicit declaration of function ‘kunmap_atomic’; did you mean ‘in_atomic’? [-Werror=implicit-function-declaration]
+>        #define pte_unmap(pte) kunmap_atomic((pte))
+>                               ^
+>      ../include/linux/mm.h:2384:2: note: in expansion of macro ‘pte_unmap’
+>         pte_unmap(pte);     \
+>         ^~~~~~~~~
+>      ../mm/damon/vaddr.c:392:2: note: in expansion of macro ‘pte_unmap_unlock’
+>         pte_unmap_unlock(pte, ptl);
+>         ^~~~~~~~~~~~~~~~
+> 
+> This commit fixes the issue by moving the include back to 'vaddr.c'.
+> 
+> [1] https://github.com/hnaz/linux-mm/commit/0ff28922686c
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: SeongJae Park <sj@kernel.org>
 
-Christoph,
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
 
-thanks. Tested (with 5.15.0-rc5 + patchset) and no-more hangs with the
-test-suite. Thanks again.
+Thanks.
+
+> ---
+>   mm/damon/prmtv-common.c | 1 -
+>   mm/damon/vaddr.c        | 1 +
+>   2 files changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/damon/prmtv-common.c b/mm/damon/prmtv-common.c
+> index 1768cbe1b9ff..7e62ee54fb54 100644
+> --- a/mm/damon/prmtv-common.c
+> +++ b/mm/damon/prmtv-common.c
+> @@ -5,7 +5,6 @@
+>    * Author: SeongJae Park <sj@kernel.org>
+>    */
+>   
+> -#include <linux/highmem.h>
+>   #include <linux/mmu_notifier.h>
+>   #include <linux/page_idle.h>
+>   #include <linux/pagemap.h>
+> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
+> index ce7e36ca1bff..758501b8d97d 100644
+> --- a/mm/damon/vaddr.c
+> +++ b/mm/damon/vaddr.c
+> @@ -8,6 +8,7 @@
+>   #define pr_fmt(fmt) "damon-va: " fmt
+>   
+>   #include <asm-generic/mman-common.h>
+> +#include <linux/highmem.h>
+>   #include <linux/hugetlb.h>
+>   #include <linux/mmu_notifier.h>
+>   #include <linux/page_idle.h>
+> 
+
+
+-- 
+~Randy
