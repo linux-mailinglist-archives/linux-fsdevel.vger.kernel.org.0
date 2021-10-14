@@ -2,195 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 629CA42E424
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 00:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4D7342E409
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 00:14:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234196AbhJNWad (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Oct 2021 18:30:33 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:51220 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229768AbhJNWab (ORCPT
+        id S233837AbhJNWQh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Oct 2021 18:16:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32972 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229829AbhJNWQg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Oct 2021 18:30:31 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id C3A5A1FD37;
-        Thu, 14 Oct 2021 22:28:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1634250504; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XamiXsFb6RQH4eKb4WeCOhk32Zh5qQsoE1V0O9eGBfc=;
-        b=nWjnsuhqzJKhcayDHGPSKVhGlxwOGc1FYOYAIGXOxXi+KmMZ6G3bzFhb35Mrx5ahaR7jZa
-        PWr6UUzOXGL755IhAqhMAkhrgHR9yJnBRad9O7EQTfHSHon1T8eEmBl5qXiJpziDYPszuN
-        WAG3Jp8f1UqTXeD6J2dkg4YKUMAFDi4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1634250504;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XamiXsFb6RQH4eKb4WeCOhk32Zh5qQsoE1V0O9eGBfc=;
-        b=/068GKy8+Es6V00efq8CtbnWkMwkStq+NFkGkSd+LYhmyfVgvIxiSKpOP3WZrHB9q3ZUem
-        aG9MPOMP0uI9AQBw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8EEC313B3A;
-        Thu, 14 Oct 2021 22:28:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id swtxDgKvaGHoPAAAMHmgww
-        (envelope-from <neilb@suse.de>); Thu, 14 Oct 2021 22:28:18 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Thu, 14 Oct 2021 18:16:36 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A19AC061570;
+        Thu, 14 Oct 2021 15:14:31 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id m26so6695308pff.3;
+        Thu, 14 Oct 2021 15:14:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=C5ZuKrGzyI6sXcttUGT8m4bIhAiihLIa6Po9/1DTork=;
+        b=AsE4PDAG7h8rwyf8bL0F9Io1UF0AoB2kT269QADqYzz+dKtUQx60eUE9HUAHP8Z2Bn
+         uC08a/3eAlVxbqwKa/qT8bLYMerUdPOKCGoFBWmLJcRh7g8cFRavDIDHuoNAXemunyc3
+         V6INJTbXAxAS9Jnbszimpa1g+68qh9s0SdjeSYXc0UhbjCvYuKjefabWJe4ojMhhZn+C
+         pbnXxRrC/Eylg/ZBrgx543czX/iLm3zfSmRuuHlLHU/tGce8ckWeiAQkhJHLxrec8wht
+         p4MFNx48pCbGHNwS5DPD82va6P50sWg/rE7o+au6qdSB8gB9Yg3jZXtRzNNJ+QnFrzM1
+         nWvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=C5ZuKrGzyI6sXcttUGT8m4bIhAiihLIa6Po9/1DTork=;
+        b=JCD+u6In0lVwFe/SsLynWOWjaLV+wY3UzALbCuqyPYVi1GQ9D5iHBy24uRCnaA98gC
+         +tyoX97lPaEEohnSdFQ4CJxzhFExsYIMI8Z63eFFsegwWKGhC7ZpJt9wgz0oNRZAHg4M
+         +/w32XX9p+pRiHCSlrp7IAjHq/qoijn8l6NTuhyzpdX4sZ1bsTbcNdRWyqOTCO7ZOYtY
+         to5knIMFdAKd3xxxFgkzi9Z11XVtogZl+tvjPEyY+VkFQYmqjgi4od2ahFqdAZodgfsn
+         Sc5A0TrNt/Cs624K9qh5eo/OCAgGYeklr4aHTIXb6H2yF9P1X5VCMjHCknOljZVC8LWE
+         BVpw==
+X-Gm-Message-State: AOAM532KaH0upLv9iw/+5vGOGW/Zl7aAYPBcCVti4b/QsWlhcHrMCX8T
+        ITiHJPNjY+qbI/vcjMz5Uw16y0jnKlL/7g==
+X-Google-Smtp-Source: ABdhPJwbfxlAoia3kcqBZJw5PExi3eKMTEzSvH3nooHbwUgFD0V2vSQCTqQuhbBWK7latyS5h4Xwzg==
+X-Received: by 2002:a63:2361:: with SMTP id u33mr6168320pgm.369.1634249670578;
+        Thu, 14 Oct 2021 15:14:30 -0700 (PDT)
+Received: from localhost (2603-800c-1a02-1bae-e24f-43ff-fee6-449f.res6.spectrum.com. [2603:800c:1a02:1bae:e24f:43ff:fee6:449f])
+        by smtp.gmail.com with ESMTPSA id l4sm3233910pga.71.2021.10.14.15.14.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Oct 2021 15:14:30 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Thu, 14 Oct 2021 12:14:28 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Pratik Sampat <psampat@linux.ibm.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        bristot@redhat.com, christian@brauner.io, ebiederm@xmission.com,
+        lizefan.x@bytedance.com, hannes@cmpxchg.org, mingo@kernel.org,
+        juri.lelli@redhat.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        containers@lists.linux.dev, containers@lists.linux-foundation.org,
+        pratik.r.sampat@gmail.com
+Subject: Re: [RFC 0/5] kernel: Introduce CPU Namespace
+Message-ID: <YWirxCjschoRJQ14@slm.duckdns.org>
+References: <20211009151243.8825-1-psampat@linux.ibm.com>
+ <20211011101124.d5mm7skqfhe5g35h@wittgenstein>
+ <a0f9ed06-1e5d-d3d0-21a5-710c8e27749c@linux.ibm.com>
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Michal Hocko" <mhocko@suse.com>
-Cc:     "Dave Chinner" <david@fromorbit.com>,
-        "Vlastimil Babka" <vbabka@suse.cz>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        "Andreas Dilger" <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        "Matthew Wilcox" <willy@infradead.org>,
-        "Mel Gorman" <mgorman@suse.de>, "Jonathan Corbet" <corbet@lwn.net>,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/6] MM: improve documentation for __GFP_NOFAIL
-In-reply-to: <YWQmsESyyiea0zle@dhcp22.suse.cz>
-References: <163184698512.29351.4735492251524335974.stgit@noble.brown>,
- <163184741778.29351.16920832234899124642.stgit@noble.brown>,
- <b680fb87-439b-0ba4-cf9f-33d729f27941@suse.cz>,
- <YVwyhDnE/HEnoLAi@dhcp22.suse.cz>,
- <eba04a07-99da-771a-ab6b-36de41f9f120@suse.cz>,
- <20211006231452.GF54211@dread.disaster.area>,
- <YV7G7gyfZkmw7/Ae@dhcp22.suse.cz>,
- <163364854551.31063.4377741712039731672@noble.neil.brown.name>,
- <YV/31+qXwqEgaxJL@dhcp22.suse.cz>,
- <20211008223649.GJ54211@dread.disaster.area>,
- <YWQmsESyyiea0zle@dhcp22.suse.cz>
-Date:   Tue, 12 Oct 2021 08:49:46 +1100
-Message-id: <163398898675.17149.16715168325131099480@noble.neil.brown.name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a0f9ed06-1e5d-d3d0-21a5-710c8e27749c@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 11 Oct 2021, Michal Hocko wrote:
-> On Sat 09-10-21 09:36:49, Dave Chinner wrote:
+Hello,
+
+On Tue, Oct 12, 2021 at 02:12:18PM +0530, Pratik Sampat wrote:
+> > > The control and the display interface is fairly disjoint with each
+> > > other. Restrictions can be set through control interfaces like cgroups,
+> > A task wouldn't really opt-in to cpu isolation with CLONE_NEWCPU it
+> > would only affect resource reporting. So it would be one half of the
+> > semantics of a namespace.
 > > 
-> > Put simply, we want "retry forever" semantics to match what
-> > production kernels have been doing for the past couple of decades,
-> > but all we've been given are "never fail" semantics that also do
-> > something different and potentially much more problematic.
-> > 
-> > Do you see the difference here? __GFP_NOFAIL is not what we
-> > need in the vast majority of cases where it is used. We don't want
-> > the failing allocations to drive the machine hard into critical
-> > reserves, we just want the allocation to -eventually succeed- and if
-> > it doesn't, that's our problem to handle, not kmalloc()....
+> I completely agree with you on this, fundamentally a namespace should
+> isolate both the resource as well as the reporting. As you mentioned
+> too, cgroups handles the resource isolation while this namespace
+> handles the reporting and this seems to break the semantics of what a
+> namespace should really be.
 > 
-> I can see your point. I do have a recollection that there were some
-> instance involved where an emergency access to memory reserves helped
-> in OOM situations.
+> The CPU resource is unique in that sense, at least in this context,
+> which makes it tricky to design a interface that presents coherent
+> information.
 
-It might have been better to annotate those particular calls with
-__GFP_ATOMIC or similar rather then change GFP_NOFAIL for everyone.
-Too late to fix that now though I think.  Maybe the best way forward is
-to discourage new uses of GFP_NOFAIL.  We would need a well-documented
-replacement.
+It's only unique in the context that you're trying to place CPU distribution
+into the namespace framework when the resource in question isn't distributed
+that way. All of the three major local resources - CPU, memory and IO - are
+in the same boat. Computing resources, the physical ones, don't render
+themselves naturally to accounting and ditributing by segmenting _name_
+spaces which ultimately just shows and hides names. This direction is a
+dead-end.
 
+> I too think that having a brand new interface all together and teaching
+> userspace about it is much cleaner approach.
+> On the same lines, if were to do that, we could also add more useful
+> metrics in that interface like ballpark number of threads to saturate
+> usage as well as gather more such metrics as suggested by Tejun Heo.
 > 
-> Anway as I've tried to explain earlier that this all is an
-> implementation detail users of the flag shouldn't really care about. If
-> this heuristic is not doing any good then it should be removed.
+> My only concern for this would be that if today applications aren't
+> modifying their code to read the existing cgroup interface and would
+> rather resort to using userspace side-channel solutions like LXCFS or
+> wrapping them up in kata containers, would it now be compelling enough
+> to introduce yet another interface?
 
-Maybe users shouldn't care about implementation details, but they do
-need to care about semantics and costs.
-We need to know when it is appropriate to use GFP_NOFAIL, and when it is
-not.  And what alternatives there are when it is not appropriate.
-Just saying "try to avoid using it" and "requires careful analysis"
-isn't acceptable.  Sometimes it is unavoidable and analysis can only be
-done with a clear understanding of costs.  Possibly analysis can only be
-done with a clear understanding of the internal implementation details.
+While I'm sympathetic to compatibility argument, identifying available
+resources was never well-define with the existing interfaces. Most of the
+available information is what hardware is available but there's no
+consistent way of knowing what the software environment is like. Is the
+application the only one on the system? How much memory should be set aside
+for system management, monitoring and other administrative operations?
 
+In practice, the numbers that are available can serve as the starting points
+on top of which application and environment specific knoweldge has to be
+applied to actually determine deployable configurations, which in turn would
+go through iterative adjustments unless the workload is self-sizing.
+
+Given such variability in requirements, I'm not sure what numbers should be
+baked into the "namespaced" system metrics. Some numbers, e.g., number of
+CPUs can may be mapped from cpuset configuration but even that requires
+quite a bit of assumptions about how cpuset is configured and the
+expectations the applications would have while other numbers - e.g.
+available memory - is a total non-starter.
+
+If we try to fake these numbers for containers, what's likely to happen is
+that the service owners would end up tuning workload size against whatever
+number the kernel is showing factoring in all the environmental factors
+knowingly or just through iterations. And that's not *really* an interface
+which provides compatibility. We're just piping new numbers which don't
+really mean what they used to mean and whose meanings can change depending
+on configuration through existing interfaces and letting users figure out
+what to do with the new numbers.
+
+To achieve compatibility where applications don't need to be changed, I
+don't think there is a solution which doesn't involve going through
+userspace. For other cases and long term, the right direction is providing
+well-defined resource metrics that applications can make sense of and use to
+size themselves dynamically.
+
+> While I concur with Tejun Heo's comment the mail thread and overloading
+> existing interfaces of sys and proc which were originally designed for
+> system wide resources, may not be a great idea:
 > 
-> > It also points out that the scope API is highly deficient.
-> > We can do GFP_NOFS via the scope API, but we can't
-> > do anything else because *there is no scope API for other GFP
-> > flags*.
-> > 
-> > Why don't we have a GFP_NOFAIL/__GFP_RETRY_FOREVER scope API?
+> > There is a fundamental problem with trying to represent a resource shared
+> > environment controlled with cgroup using system-wide interfaces including
+> > procfs
 > 
-> NO{FS,IO} where first flags to start this approach. And I have to admit
-> the experiment was much less successful then I hoped for. There are
-> still thousands of direct NOFS users so for some reason defining scopes
-> is not an easy thing to do.
+> A fundamental question we probably need to ascertain could be -
+> Today, is it incorrect for applications to look at the sys and procfs to
+> get resource information, regardless of their runtime environment?
 
-I'm not certain your conclusion is valid.  It could be that defining
-scopes is easy enough, but no one feels motivated to do it.
-We need to do more than provide functionality.  We need to tell people. 
-Repeatedly.  And advertise widely.  And propose patches to make use of
-the functionality.  And... and... and...
+Well, it's incomplete even without containerization. Containerization just
+amplifies the shortcomings. All of these problems existed well before
+cgroups / namespaces. How would you know how much resource you can consume
+on a system just looking at hardware resources without implicit knowledge of
+what else is on the system? It's just that we are now more likely to load
+systems dynamically with containerization.
 
-I think changing to the scope API is a good change, but it is
-conceptually a big change.  It needs to be driven.
+> Also, if an application were to only be able to view the resources
+> based on the restrictions set regardless of the interface - would there
+> be a disadvantage for them if they could only see an overloaded context
+> sensitive view rather than the whole system view?
 
-> 
-> I am not against NOFAIL scopes in principle but seeing the nofs
-> "success" I am worried this will not go really well either and it is
-> much more tricky as NOFAIL has much stronger requirements than NOFS.
-> Just imagine how tricky this can be if you just call a library code
-> that is not under your control within a NOFAIL scope. What if that
-> library code decides to allocate (e.g. printk that would attempt to do
-> an optimistic NOWAIT allocation).
+Can you elaborate further? I have a hard time understanding what's being
+asked.
 
-__GFP_NOMEMALLOC holds a lesson worth learning here.  PF_MEMALLOC
-effectively adds __GFP_MEMALLOC to all allocations, but some call sites
-need to over-ride that because there are alternate strategies available.
-This need-to-over-ride doesn't apply to NOFS or NOIO as that really is a
-thread-wide state.  But MEMALLOC and NOFAIL are different.  Some call
-sites can reasonably handle failure locally.
+Thanks.
 
-I imagine the scope-api would say something like "NO_ENOMEM".  i.e.
-memory allocations can fail as long as ENOMEM is never returned.
-Any caller that sets __GFP_RETRY_MAYFAIL or __GFP_NORETRY or maybe some
-others which not be affected by the NO_ENOMEM scope.  But a plain
-GFP_KERNEL would.
-
-Introducing the scope api would be a good opportunity to drop the
-priority boost and *just* block until success.  Priority boosts could
-then be added (possibly as a scope) only where they are measurably needed.
-
-I think we have 28 process flags in use.  So we can probably afford one
-more for PF_MEMALLOC_NO_ENOMEM.  What other scope flags might be useful?
-PF_MEMALLOC_BOOST which added __GFP_ATOMIC but not __GFP_MEMALLOC ??
-PF_MEMALLOC_NORECLAIM ??
-
-> 
-> > That
-> > would save us a lot of bother in XFS. What about GFP_DIRECT_RECLAIM?
-> > I'd really like to turn that off for allocations in the XFS
-> > transaction commit path (as noted already in this thread) because
-> > direct reclaim that can make no progress is actively harmful (as
-> > noted already in this thread)
-> 
-> As always if you have reasonable usecases then it is best to bring them
-> up on the MM list and we can discuss them.
-
-We are on the MM lists now... let's discuss :-)
-
-Dave: How would you feel about an effort to change xfs to stop using
-GFP_NOFS, and to use memalloc_nofs_save/restore instead? Having a major
-filesystem make the transition would be a good test-case, and could be
-used to motivate other filesystems to follow.
-We could add and use memalloc_no_enomem_save() too.
-
-Thanks,
-NeilBrown
+-- 
+tejun
