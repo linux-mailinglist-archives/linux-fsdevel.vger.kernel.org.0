@@ -2,138 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 14E6B42E0BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 20:05:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BDA742E0FC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 20:17:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233816AbhJNSHN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Oct 2021 14:07:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40128 "EHLO mail.kernel.org"
+        id S233744AbhJNSTL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Oct 2021 14:19:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230386AbhJNSHM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Oct 2021 14:07:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7811E61156;
-        Thu, 14 Oct 2021 18:05:07 +0000 (UTC)
+        id S230119AbhJNSTL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 14 Oct 2021 14:19:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D7E8760EBB;
+        Thu, 14 Oct 2021 18:17:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634234707;
-        bh=Rqf9bmS83xeh3gCkrvLoUtzShhDQVtdQ2GWkdDACjQY=;
+        s=k20201202; t=1634235425;
+        bh=nk2O1INGQJeoYK2hz0/chQbDTBJGcPDWQbYrayE/aaM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K2OxDOj4FznqZrubwOPyMGzMHqGX17L7kfeSgXLp/+KyODPMHxpsiFkoPrIKO2qDL
-         mZYZQEuF6syddsDF3heZBQ7jwZIz8dmD0WVRQ2Av5DhkmdY0+22qCGtv809c7Ze8Er
-         WTglLurLQf0WfhK3SZl0nyUuEl+ZaZnB7GVzPx1VXQHwbugLIbDNVp9oMwsNMpGcEt
-         PWY9ml3cpZ2bxt/JUKxCBSYvpYUtpcvyATECCVRF96dhMBlyjygp5xMOkK3kIAxt6C
-         YlXwsKsKMgYGLjV15y4itRVFcpz0qtI2oFKPucHsjl2nH6lbJyZqWP/eJRwfb8lJ7e
-         EA8BlYXkO5PFg==
-Date:   Thu, 14 Oct 2021 11:05:07 -0700
+        b=i+GrwntAyD87EpYdHQzMGU2dlEGyPdLmLrRmggCA7m4PKbBfzhbxM9H54jEdEt4kF
+         LwrGHNmrP8B77ITYnhupmqdyqnYbspZYu1KEpKMRBa2L3NZ5+efhGHMF9wTFm6sdPt
+         4SwK0t0pfsOslTSXJO76mpfsxC13CDfQs+C2TmrdyW3MpPwomgxD5iVmaVWzIsLGze
+         nANB+3Ao+C53dm0OvlLJGSPRppCYDIRaTQUxc4CewrH91C3m32y3RyHBX8l+VarIii
+         QivlIQhM6K0c/F1/qguP1EPvZPZjKp7CpcrxhwEBod+TS+9soi3Y6mOffwsz8gN6Nm
+         nOiIxQWIeqLVA==
+Date:   Thu, 14 Oct 2021 11:17:05 -0700
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
 Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
         nvdimm@lists.linux.dev, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
         david@fromorbit.com, hch@infradead.org, jane.chu@oracle.com
-Subject: Re: [PATCH v7 4/8] pagemap,pmem: Introduce ->memory_failure()
-Message-ID: <20211014180507.GG24307@magnolia>
+Subject: Re: [PATCH v7 5/8] fsdax: Introduce dax_lock_mapping_entry()
+Message-ID: <20211014181705.GH24307@magnolia>
 References: <20210924130959.2695749-1-ruansy.fnst@fujitsu.com>
- <20210924130959.2695749-5-ruansy.fnst@fujitsu.com>
+ <20210924130959.2695749-6-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210924130959.2695749-5-ruansy.fnst@fujitsu.com>
+In-Reply-To: <20210924130959.2695749-6-ruansy.fnst@fujitsu.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 24, 2021 at 09:09:55PM +0800, Shiyang Ruan wrote:
-> When memory-failure occurs, we call this function which is implemented
-> by each kind of devices.  For the fsdax case, pmem device driver
-> implements it.  Pmem device driver will find out the filesystem in which
-> the corrupted page located in.
-> 
-> With dax_holder notify support, we are able to notify the memory failure
-> from pmem driver to upper layers.  If there is something not support in
-> the notify routine, memory_failure will fall back to the generic hanlder.
+On Fri, Sep 24, 2021 at 09:09:56PM +0800, Shiyang Ruan wrote:
+> The current dax_lock_page() locks dax entry by obtaining mapping and
+> index in page.  To support 1-to-N RMAP in NVDIMM, we need a new function
+> to lock a specific dax entry corresponding to this file's mapping,index.
+> And BTW, output the page corresponding to the specific dax entry for
+> caller use.
 > 
 > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
 > ---
->  drivers/nvdimm/pmem.c    | 11 +++++++++++
->  include/linux/memremap.h |  9 +++++++++
->  mm/memory-failure.c      | 14 ++++++++++++++
->  3 files changed, 34 insertions(+)
+>  fs/dax.c            | 65 ++++++++++++++++++++++++++++++++++++++++++++-
+>  include/linux/dax.h | 15 +++++++++++
+>  2 files changed, 79 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index 72de88ff0d30..0dfafad8fcc5 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -362,9 +362,20 @@ static void pmem_release_disk(void *__pmem)
->  	del_gendisk(pmem->disk);
+> diff --git a/fs/dax.c b/fs/dax.c
+> index 798c43f09eee..509b65e60478 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -390,7 +390,7 @@ static struct page *dax_busy_page(void *entry)
 >  }
 >  
-> +static int pmem_pagemap_memory_failure(struct dev_pagemap *pgmap,
-> +		unsigned long pfn, size_t size, int flags)
+>  /*
+> - * dax_lock_mapping_entry - Lock the DAX entry corresponding to a page
+> + * dax_lock_page - Lock the DAX entry corresponding to a page
+>   * @page: The page whose entry we want to lock
+>   *
+>   * Context: Process context.
+> @@ -455,6 +455,69 @@ void dax_unlock_page(struct page *page, dax_entry_t cookie)
+>  	dax_unlock_entry(&xas, (void *)cookie);
+>  }
+>  
+> +/*
+> + * dax_lock_mapping_entry - Lock the DAX entry corresponding to a mapping
+> + * @mapping: the file's mapping whose entry we want to lock
+> + * @index: the offset within this file
+> + * @page: output the dax page corresponding to this dax entry
+> + *
+> + * Return: A cookie to pass to dax_unlock_mapping_entry() or 0 if the entry
+> + * could not be locked.
+> + */
+> +dax_entry_t dax_lock_mapping_entry(struct address_space *mapping, pgoff_t index,
+> +		struct page **page)
 > +{
-> +	struct pmem_device *pmem =
-> +			container_of(pgmap, struct pmem_device, pgmap);
-> +	loff_t offset = PFN_PHYS(pfn) - pmem->phys_addr - pmem->data_offset;
+> +	XA_STATE(xas, NULL, 0);
+> +	void *entry;
 > +
-> +	return dax_holder_notify_failure(pmem->dax_dev, offset, size, flags);
-> +}
+> +	rcu_read_lock();
+> +	for (;;) {
+> +		entry = NULL;
+> +		if (!dax_mapping(mapping))
+> +			break;
 > +
->  static const struct dev_pagemap_ops fsdax_pagemap_ops = {
->  	.kill			= pmem_pagemap_kill,
->  	.cleanup		= pmem_pagemap_cleanup,
-> +	.memory_failure		= pmem_pagemap_memory_failure,
->  };
->  
->  static int pmem_attach_disk(struct device *dev,
-> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-> index c0e9d35889e8..36d47bacd46d 100644
-> --- a/include/linux/memremap.h
-> +++ b/include/linux/memremap.h
-> @@ -87,6 +87,15 @@ struct dev_pagemap_ops {
->  	 * the page back to a CPU accessible page.
->  	 */
->  	vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
-> +
-> +	/*
-> +	 * Handle the memory failure happens on a range of pfns.  Notify the
-> +	 * processes who are using these pfns, and try to recover the data on
-> +	 * them if necessary.  The flag is finally passed to the recover
-> +	 * function through the whole notify routine.
-> +	 */
-> +	int (*memory_failure)(struct dev_pagemap *pgmap, unsigned long pfn,
-> +			      size_t size, int flags);
->  };
->  
->  #define PGMAP_ALTMAP_VALID	(1 << 0)
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 8ff9b52823c0..85eab206b68f 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1605,6 +1605,20 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->  	if (!pgmap_pfn_valid(pgmap, pfn))
->  		goto out;
->  
-> +	/*
-> +	 * Call driver's implementation to handle the memory failure, otherwise
-> +	 * fall back to generic handler.
-> +	 */
-> +	if (pgmap->ops->memory_failure) {
-> +		rc = pgmap->ops->memory_failure(pgmap, pfn, PAGE_SIZE, flags);
-> +		/*
-> +		 * Fall back to generic handler too if operation is not
-> +		 * supported inside the driver/device/filesystem.
-> +		 */
-> +		if (rc != EOPNOTSUPP)
+> +		xas.xa = &mapping->i_pages;
+> +		xas_lock_irq(&xas);
+> +		xas_set(&xas, index);
+> +		entry = xas_load(&xas);
+> +		if (dax_is_locked(entry)) {
+> +			rcu_read_unlock();
+> +			wait_entry_unlocked(&xas, entry);
+> +			rcu_read_lock();
+> +			continue;
+> +		}
+> +		if (!entry ||
+> +		    dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
+> +			/*
+> +			 * Because we are looking for entry from file's mapping
+> +			 * and index, so the entry may not be inserted for now,
+> +			 * or even a zero/empty entry.  We don't think this is
+> +			 * an error case.  So, return a special value and do
+> +			 * not output @page.
+> +			 */
+> +			entry = (void *)~0UL;
 
--EOPNOTSUPP?  (negative errno)
+I kinda wonder if these open-coded magic values ~0UL (no entry) and 0
+(cannot lock) should be #defines that force-cast the magic value to
+dax_entry_t...
+
+...but then I'm not really an expert in the design behind fs/dax.c --
+this part looks reasonable enough to me, but I think Dan or Matthew
+ought to look this over.
 
 --D
 
-> +			goto out;
+> +		} else {
+> +			*page = pfn_to_page(dax_to_pfn(entry));
+> +			dax_lock_entry(&xas, entry);
+> +		}
+> +		xas_unlock_irq(&xas);
+> +		break;
 > +	}
+> +	rcu_read_unlock();
+> +	return (dax_entry_t)entry;
+> +}
 > +
->  	rc = mf_generic_kill_procs(pfn, flags, pgmap);
->  out:
->  	/* drop pgmap ref acquired in caller */
+> +void dax_unlock_mapping_entry(struct address_space *mapping, pgoff_t index,
+> +		dax_entry_t cookie)
+> +{
+> +	XA_STATE(xas, &mapping->i_pages, index);
+> +
+> +	if (cookie == ~0UL)
+> +		return;
+> +
+> +	dax_unlock_entry(&xas, (void *)cookie);
+> +}
+> +
+>  /*
+>   * Find page cache entry at given index. If it is a DAX entry, return it
+>   * with the entry locked. If the page cache doesn't contain an entry at
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index d273d59723cd..65411bee4312 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -156,6 +156,10 @@ struct page *dax_layout_busy_page(struct address_space *mapping);
+>  struct page *dax_layout_busy_page_range(struct address_space *mapping, loff_t start, loff_t end);
+>  dax_entry_t dax_lock_page(struct page *page);
+>  void dax_unlock_page(struct page *page, dax_entry_t cookie);
+> +dax_entry_t dax_lock_mapping_entry(struct address_space *mapping,
+> +		unsigned long index, struct page **page);
+> +void dax_unlock_mapping_entry(struct address_space *mapping,
+> +		unsigned long index, dax_entry_t cookie);
+>  #else
+>  #define generic_fsdax_supported		NULL
+>  
+> @@ -201,6 +205,17 @@ static inline dax_entry_t dax_lock_page(struct page *page)
+>  static inline void dax_unlock_page(struct page *page, dax_entry_t cookie)
+>  {
+>  }
+> +
+> +static inline dax_entry_t dax_lock_mapping_entry(struct address_space *mapping,
+> +		unsigned long index, struct page **page)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline void dax_unlock_mapping_entry(struct address_space *mapping,
+> +		unsigned long index, dax_entry_t cookie)
+> +{
+> +}
+>  #endif
+>  
+>  #if IS_ENABLED(CONFIG_DAX)
 > -- 
 > 2.33.0
 > 
