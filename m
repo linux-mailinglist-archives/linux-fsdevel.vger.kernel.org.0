@@ -2,166 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DE50842E3AF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 23:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBEBE42E3DD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 23:54:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234111AbhJNVmV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Oct 2021 17:42:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53564 "EHLO
+        id S234144AbhJNV4w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Oct 2021 17:56:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232249AbhJNVmT (ORCPT
+        with ESMTP id S232055AbhJNV4v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Oct 2021 17:42:19 -0400
+        Thu, 14 Oct 2021 17:56:51 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F9C2C061570;
-        Thu, 14 Oct 2021 14:40:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E82CC061570;
+        Thu, 14 Oct 2021 14:54:46 -0700 (PDT)
 Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1007])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 9249B1F415A6;
-        Thu, 14 Oct 2021 22:40:12 +0100 (BST)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 869B11F44F68;
+        Thu, 14 Oct 2021 22:54:44 +0100 (BST)
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     jack@suse.com, amir73il@gmail.com
-Cc:     djwong@kernel.org, tytso@mit.edu, dhowells@redhat.com,
-        khazhy@google.com, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-api@vger.kernel.org,
-        repnop@google.com, Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel@collabora.com
-Subject: [PATCH v7 28/28] docs: Document the FAN_FS_ERROR event
-Date:   Thu, 14 Oct 2021 18:36:46 -0300
-Message-Id: <20211014213646.1139469-29-krisman@collabora.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211014213646.1139469-1-krisman@collabora.com>
-References: <20211014213646.1139469-1-krisman@collabora.com>
+To:     "Theodore Ts'o" <tytso@mit.edu>
+Cc:     Shreeya Patel <shreeya.patel@collabora.com>,
+        viro@zeniv.linux.org.uk, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH 2/2] fs: ext4: Fix the inconsistent name exposed by
+ /proc/self/cwd
+Organization: Collabora
+References: <cover.1632909358.git.shreeya.patel@collabora.com>
+        <8402d1c99877a4fcb152de71005fa9cfb25d86a8.1632909358.git.shreeya.patel@collabora.com>
+        <YVdWW0uyRqYWSgVP@mit.edu> <8735pk5zml.fsf@collabora.com>
+        <YVe0HS8HM48LDUDS@mit.edu>
+Date:   Thu, 14 Oct 2021 18:54:31 -0300
+In-Reply-To: <YVe0HS8HM48LDUDS@mit.edu> (Theodore Ts'o's message of "Fri, 1
+        Oct 2021 21:21:33 -0400")
+Message-ID: <8735p3gtm0.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Document the FAN_FS_ERROR event for user administrators and user space
-developers.
+"Theodore Ts'o" <tytso@mit.edu> writes:
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> On Fri, Oct 01, 2021 at 03:11:30PM -0400, Gabriel Krisman Bertazi wrote:
+>> 
+>> The dcache name is exposed in more places, like /proc/mounts.  We have a
+>> bug reported against flatpak where its initialization code bind mounts a
+>> directory that was previously touched with a different case combination,
+>> and then checks /proc/mounts in a case-sensitive way to see if the mount
+>> succeeded.  This code now regresses on CI directories because the name
+>> it asked to bind mount is not found in /proc/mounts.
+>
+> Ah, thanks for the context.  That makes sense.
+>
+>> I think the more reasonable approach is to save the disk exact name on
+>> the dcache, because that is the only version that doesn't change based
+>> on who won the race for the first lookup.
+>
+> What about the alternative of storing the casefolded name?  The
+> advantage of using the casefolded name is that we can always casefold
+> the name, where as in the case of a negative dentry, there is no disk
+> exact name to use (since by definition there is no on-disk name).
 
----
-Changes Since v7:
-  - Update semantics
-Changes Since v6:
-  - English fixes (jan)
-  - Proper document error field (jan)
-Changes Since v4:
-  - Update documentation about reporting non-file error.
-Changes Since v3:
-  - Move FAN_FS_ERROR notification into a subsection of the file.
-Changes Since v2:
-  - NTR
-Changes since v1:
-  - Drop references to location record
-  - Explain that the inode field is optional
-  - Explain we are reporting only the first error
----
- .../admin-guide/filesystem-monitoring.rst     | 76 +++++++++++++++++++
- Documentation/admin-guide/index.rst           |  1 +
- 2 files changed, 77 insertions(+)
- create mode 100644 Documentation/admin-guide/filesystem-monitoring.rst
+That would work.  The casefolded version is always predictable (since
+unicode is stable) and even though is not as easily available as the
+disk name function (getdents), it solves the issue.
 
-diff --git a/Documentation/admin-guide/filesystem-monitoring.rst b/Documentation/admin-guide/filesystem-monitoring.rst
-new file mode 100644
-index 000000000000..f1f6476fa4f3
---- /dev/null
-+++ b/Documentation/admin-guide/filesystem-monitoring.rst
-@@ -0,0 +1,76 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+====================================
-+File system Monitoring with fanotify
-+====================================
-+
-+File system Error Reporting
-+===========================
-+
-+Fanotify supports the FAN_FS_ERROR event type for file system-wide error
-+reporting.  It is meant to be used by file system health monitoring
-+daemons, which listen for these events and take actions (notify
-+sysadmin, start recovery) when a file system problem is detected.
-+
-+By design, A FAN_FS_ERROR notification exposes sufficient information
-+for a monitoring tool to know a problem in the file system has happened.
-+It doesn't necessarily provide a user space application with semantics
-+to verify an IO operation was successfully executed.  That is out of
-+scope for this feature.  Instead, it is only meant as a framework for
-+early file system problem detection and reporting recovery tools.
-+
-+When a file system operation fails, it is common for dozens of kernel
-+errors to cascade after the initial failure, hiding the original failure
-+log, which is usually the most useful debug data to troubleshoot the
-+problem.  For this reason, FAN_FS_ERROR tries to report only the first
-+error that occurred for a process since the last notification, and it
-+simply counts additional errors.  This ensures that the most important
-+pieces of information are never lost.
-+
-+FAN_FS_ERROR requires the fanotify group to be setup with the
-+FAN_REPORT_FID flag.
-+
-+At the time of this writing, the only file system that emits FAN_FS_ERROR
-+notifications is Ext4.
-+
-+A user space example code is provided at ``samples/fanotify/fs-monitor.c``.
-+
-+A FAN_FS_ERROR Notification has the following format::
-+
-+  [ Notification Metadata (Mandatory) ]
-+  [ Generic Error Record  (Mandatory) ]
-+  [ FID record            (Mandatory) ]
-+
-+Generic error record
-+--------------------
-+
-+The generic error record provides enough information for a file system
-+agnostic tool to learn about a problem in the file system, without
-+providing any additional details about the problem.  This record is
-+identified by ``struct fanotify_event_info_header.info_type`` being set
-+to FAN_EVENT_INFO_TYPE_ERROR.
-+
-+  struct fanotify_event_info_error {
-+	struct fanotify_event_info_header hdr;
-+	__s32 error;
-+	__u32 error_count;
-+  };
-+
-+The `error` field identifies the error in a file-system specific way.
-+Ext4, for instance, which is the only file system implementing this
-+interface at the time of this writing, exposes EXT4_ERR_ values in this
-+field.  Please refer to the file system documentation for the meaning of
-+specific error codes.
-+
-+`error_count` tracks the number of errors that occurred and were
-+suppressed to preserve the original error information, since the last
-+notification.
-+
-+FID record
-+----------
-+
-+The FID record can be used to uniquely identify the inode that triggered
-+the error through the combination of fsid and file handle.  A file system
-+specific application can use that information to attempt a recovery
-+procedure.  Errors that are not related to an inode are reported with an
-+empty file handle of type FILEID_INVALID.
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index dc00afcabb95..1bedab498104 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -82,6 +82,7 @@ configure specific aspects of kernel behavior to your liking.
-    edid
-    efi-stub
-    ext4
-+   filesystem-monitoring
-    nfs/index
-    gpio/index
-    highuid
+It would also allow us to use utf8_strncasecmp_folded in the d_compare
+hook, which is nice.
+
+Do you have an implementation suggestion to solve the dcache issue
+pointed by Viro?
+
 -- 
-2.33.0
-
+Gabriel Krisman Bertazi
