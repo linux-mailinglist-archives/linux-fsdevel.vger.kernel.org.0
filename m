@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 144C242E3A7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 23:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C3C142E3AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 23:40:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233909AbhJNVmB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Oct 2021 17:42:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53494 "EHLO
+        id S234070AbhJNVmI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Oct 2021 17:42:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230422AbhJNVmB (ORCPT
+        with ESMTP id S230422AbhJNVmH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Oct 2021 17:42:01 -0400
+        Thu, 14 Oct 2021 17:42:07 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36439C061570;
-        Thu, 14 Oct 2021 14:39:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5921CC061570;
+        Thu, 14 Oct 2021 14:40:02 -0700 (PDT)
 Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1007])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 72A9D1F415A6;
-        Thu, 14 Oct 2021 22:39:54 +0100 (BST)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id B0DE71F415A6;
+        Thu, 14 Oct 2021 22:40:00 +0100 (BST)
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     jack@suse.com, amir73il@gmail.com
 Cc:     djwong@kernel.org, tytso@mit.edu, dhowells@redhat.com,
@@ -28,9 +28,9 @@ Cc:     djwong@kernel.org, tytso@mit.edu, dhowells@redhat.com,
         linux-ext4@vger.kernel.org, linux-api@vger.kernel.org,
         repnop@google.com, Gabriel Krisman Bertazi <krisman@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH v7 25/28] fanotify: Allow users to request FAN_FS_ERROR events
-Date:   Thu, 14 Oct 2021 18:36:43 -0300
-Message-Id: <20211014213646.1139469-26-krisman@collabora.com>
+Subject: [PATCH v7 26/28] ext4: Send notifications on error
+Date:   Thu, 14 Oct 2021 18:36:44 -0300
+Message-Id: <20211014213646.1139469-27-krisman@collabora.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211014213646.1139469-1-krisman@collabora.com>
 References: <20211014213646.1139469-1-krisman@collabora.com>
@@ -40,67 +40,75 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Wire up the FAN_FS_ERROR event in the fanotify_mark syscall, allowing
-user space to request the monitoring of FAN_FS_ERROR events.
+Send a FS_ERROR message via fsnotify to a userspace monitoring tool
+whenever a ext4 error condition is triggered.  This follows the existing
+error conditions in ext4, so it is hooked to the ext4_error* functions.
 
-These events are limited to filesystem marks, so check it is the
-case in the syscall handler.
+It also follows the current dmesg reporting in the format.  The
+filesystem message is composed mostly by the string that would be
+otherwise printed in dmesg.
+
+A new ext4 specific record format is exposed in the uapi, such that a
+monitoring tool knows what to expect when listening errors of an ext4
+filesystem.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
----
- fs/notify/fanotify/fanotify.c      | 2 +-
- fs/notify/fanotify/fanotify_user.c | 5 +++++
- include/linux/fanotify.h           | 6 +++++-
- 3 files changed, 11 insertions(+), 2 deletions(-)
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 47e28f418711..d449a23d603f 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -827,7 +827,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
- 	BUILD_BUG_ON(FAN_OPEN_EXEC_PERM != FS_OPEN_EXEC_PERM);
- 	BUILD_BUG_ON(FAN_FS_ERROR != FS_ERROR);
+---
+Changes since v6:
+  - Report ext4_std_errors agains superblock (jan)
+---
+ fs/ext4/super.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 88d5d274a868..67183e6b1920 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -46,6 +46,7 @@
+ #include <linux/part_stat.h>
+ #include <linux/kthread.h>
+ #include <linux/freezer.h>
++#include <linux/fsnotify.h>
  
--	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 19);
-+	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 20);
- 
- 	mask = fanotify_group_event_mask(group, iter_info, mask, data,
- 					 data_type, dir);
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 8f7c2f4ce674..5edfd7e3f356 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1585,6 +1585,11 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 		fsid = &__fsid;
+ #include "ext4.h"
+ #include "ext4_extents.h"	/* Needed for trace points definition */
+@@ -759,6 +760,8 @@ void __ext4_error(struct super_block *sb, const char *function,
+ 		       sb->s_id, function, line, current->comm, &vaf);
+ 		va_end(args);
  	}
- 
-+	if (mask & FAN_FS_ERROR && mark_type != FAN_MARK_FILESYSTEM) {
-+		ret = -EINVAL;
-+		goto path_put_and_out;
-+	}
++	fsnotify_sb_error(sb, NULL, error);
 +
- 	/* inode held in place by reference to path; group by fget on fd */
- 	if (mark_type == FAN_MARK_INODE)
- 		inode = path.dentry->d_inode;
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index 52d464802d99..616af2ea20f3 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -91,9 +91,13 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
- #define FANOTIFY_INODE_EVENTS	(FANOTIFY_DIRENT_EVENTS | \
- 				 FAN_ATTRIB | FAN_MOVE_SELF | FAN_DELETE_SELF)
+ 	ext4_handle_error(sb, force_ro, error, 0, block, function, line);
+ }
  
-+/* Events that can only be reported with data type FSNOTIFY_EVENT_ERROR */
-+#define FANOTIFY_ERROR_EVENTS	(FAN_FS_ERROR)
+@@ -789,6 +792,8 @@ void __ext4_error_inode(struct inode *inode, const char *function,
+ 			       current->comm, &vaf);
+ 		va_end(args);
+ 	}
++	fsnotify_sb_error(inode->i_sb, inode, error);
 +
- /* Events that user can request to be notified on */
- #define FANOTIFY_EVENTS		(FANOTIFY_PATH_EVENTS | \
--				 FANOTIFY_INODE_EVENTS)
-+				 FANOTIFY_INODE_EVENTS | \
-+				 FANOTIFY_ERROR_EVENTS)
+ 	ext4_handle_error(inode->i_sb, false, error, inode->i_ino, block,
+ 			  function, line);
+ }
+@@ -827,6 +832,8 @@ void __ext4_error_file(struct file *file, const char *function,
+ 			       current->comm, path, &vaf);
+ 		va_end(args);
+ 	}
++	fsnotify_sb_error(inode->i_sb, inode, EFSCORRUPTED);
++
+ 	ext4_handle_error(inode->i_sb, false, EFSCORRUPTED, inode->i_ino, block,
+ 			  function, line);
+ }
+@@ -894,6 +901,7 @@ void __ext4_std_error(struct super_block *sb, const char *function,
+ 		printk(KERN_CRIT "EXT4-fs error (device %s) in %s:%d: %s\n",
+ 		       sb->s_id, function, line, errstr);
+ 	}
++	fsnotify_sb_error(sb, NULL, errno);
  
- /* Events that require a permission response from user */
- #define FANOTIFY_PERM_EVENTS	(FAN_OPEN_PERM | FAN_ACCESS_PERM | \
+ 	ext4_handle_error(sb, false, -errno, 0, 0, function, line);
+ }
 -- 
 2.33.0
 
