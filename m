@@ -2,88 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 486AC42D8D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 14:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2AB442D953
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 14:31:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230338AbhJNMIB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Oct 2021 08:08:01 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:58974 "EHLO
+        id S231414AbhJNMdY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Oct 2021 08:33:24 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:60526 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231410AbhJNMIA (ORCPT
+        with ESMTP id S230177AbhJNMdX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Oct 2021 08:08:00 -0400
+        Thu, 14 Oct 2021 08:33:23 -0400
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 1973B21A73;
-        Thu, 14 Oct 2021 12:05:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1634213155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        by smtp-out1.suse.de (Postfix) with ESMTPS id BB88521981;
+        Thu, 14 Oct 2021 12:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1634214677; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=1lCTGMRX/b9nCVG2qyQaFqQ4VXAM+Au8QJ5IJdpaqz0=;
-        b=cJLBiqP392lvvwTK0oxt/wd6afmkwLcaVSsVZ6YpYsq7u5QFu77T6uQBSggwIYxzj9VBJF
-        wnW+G7QcYhH/oDCtvKScDPCQ9hoYi2s4M2IIcUDbkCnv0XULppin9xL3Qgc8198XaVFQi8
-        6o2YA6yl0/kUd5bsaoti6FH/Sh40RAg=
+        bh=n40SRtgva50SSKl6eT8u22z5biYkfXHzvY/Tg6OKccQ=;
+        b=0ls32B682t/neYUSNUr8zXQaacQZqKZclL6GE6565/a7AZ/+/wk6Q+tpohi0dcJgezb5Fd
+        36rHePtmN0c+xr1bj8a9L6Yf2JvYQRpDOiOB3B4bCzoqmvoK8kP1vG9yKHHfDa+xd3oQ9P
+        ozwK3bq895bxNgnb/Qvfg9RYADmfDGM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1634214677;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=n40SRtgva50SSKl6eT8u22z5biYkfXHzvY/Tg6OKccQ=;
+        b=SiaZeAb3Bsc9kDNRP0Y09OL70P79ppmR7mpZvUOqQsqET3kSk537ChPFTjmYmuifeMQDrm
+        2ORISegYfQ1aMNDA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C7E1813D8D;
-        Thu, 14 Oct 2021 12:05:54 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8707E13D8A;
+        Thu, 14 Oct 2021 12:31:17 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id C6I7LiIdaGG8MgAAMHmgww
-        (envelope-from <nborisov@suse.com>); Thu, 14 Oct 2021 12:05:54 +0000
-Subject: Re: [PATCH v11 03/14] btrfs: don't advance offset for compressed bios
- in btrfs_csum_one_bio()
-To:     Omar Sandoval <osandov@osandov.com>, linux-btrfs@vger.kernel.org
-Cc:     kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-References: <cover.1630514529.git.osandov@fb.com>
- <40d0097d3b5e1ba14e6b6d090ba6d0e5c046985f.1630514529.git.osandov@fb.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Message-ID: <3fa3456d-3d53-6025-e305-8ab8080c9ba5@suse.com>
-Date:   Thu, 14 Oct 2021 15:05:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        id SYk+IBUjaGFLPwAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Thu, 14 Oct 2021 12:31:17 +0000
+Message-ID: <63336163-e709-65de-6d53-8764facd3924@suse.cz>
+Date:   Thu, 14 Oct 2021 14:31:17 +0200
 MIME-Version: 1.0
-In-Reply-To: <40d0097d3b5e1ba14e6b6d090ba6d0e5c046985f.1630514529.git.osandov@fb.com>
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH 3/8] mm/vmscan: Throttle reclaim when no progress is being
+ made
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Linux-MM <linux-mm@kvack.org>
+Cc:     NeilBrown <neilb@suse.de>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Rik van Riel <riel@surriel.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20211008135332.19567-1-mgorman@techsingularity.net>
+ <20211008135332.19567-4-mgorman@techsingularity.net>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20211008135332.19567-4-mgorman@techsingularity.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 1.09.21 г. 20:00, Omar Sandoval wrote:
-> From: Omar Sandoval <osandov@fb.com>
+On 10/8/21 15:53, Mel Gorman wrote:
+> Memcg reclaim throttles on congestion if no reclaim progress is made.
+> This makes little sense, it might be due to writeback or a host of
+> other factors.
 > 
-> btrfs_csum_one_bio() loops over each filesystem block in the bio while
-> keeping a cursor of its current logical position in the file in order to
-> look up the ordered extent to add the checksums to. However, this
-> doesn't make much sense for compressed extents, as a sector on disk does
-> not correspond to a sector of decompressed file data. It happens to work
-> because 1) the compressed bio always covers one ordered extent and 2)
-> the size of the bio is always less than the size of the ordered extent.
-> However, the second point will not always be true for encoded writes.
+> For !memcg reclaim, it's messy. Direct reclaim primarily is throttled
+> in the page allocator if it is failing to make progress. Kswapd
+> throttles if too many pages are under writeback and marked for
+> immediate reclaim.
 > 
-> Let's add a boolean parameter to btrfs_csum_one_bio() to indicate that
-> it can assume that the bio only covers one ordered extent. Since we're
-> already changing the signature, let's get rid of the contig parameter
-> and make it implied by the offset parameter, similar to the change we
-> recently made to btrfs_lookup_bio_sums(). Additionally, let's rename
-> nr_sectors to blockcount to make it clear that it's the number of
-> filesystem blocks, not the number of 512-byte sectors.
+> This patch explicitly throttles if reclaim is failing to make progress.
 > 
-> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> Signed-off-by: Omar Sandoval <osandov@fb.com>
+> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+...
+> @@ -3769,6 +3797,16 @@ unsigned long try_to_free_mem_cgroup_pages(struct mem_cgroup *memcg,
+>  	trace_mm_vmscan_memcg_reclaim_end(nr_reclaimed);
+>  	set_task_reclaim_state(current, NULL);
+>  
+> +	if (!nr_reclaimed) {
+> +		struct zoneref *z;
+> +		pg_data_t *pgdat;
+> +
+> +		z = first_zones_zonelist(zonelist, sc.reclaim_idx, sc.nodemask);
+> +		pgdat = zonelist_zone(z)->zone_pgdat;
+> +
+> +		reclaim_throttle(pgdat, VMSCAN_THROTTLE_NOPROGRESS, HZ/10);
+> +	}
 
-Code-wise this looks, though I don't know why we are guaranteed that a
-compressed extent will only cover a single OE. But I trust you so:
+Is this necessary? AFAICS here we just returned from:
 
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+do_try_to_free_pages()
+  shrink_zones()
+   for_each_zone()...
+     consider_reclaim_throttle()
+
+Which already throttles when needed and using the appropriate pgdat, while
+here we have to somewhat awkwardly assume the preferred one.
+
+> +
+>  	return nr_reclaimed;
+>  }
+>  #endif
+> 
+
