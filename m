@@ -2,102 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8944542DDC4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 17:12:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37FBF42DDD1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 17:14:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230341AbhJNPO6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Oct 2021 11:14:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50112 "EHLO
+        id S232901AbhJNPQi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Oct 2021 11:16:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231299AbhJNPO5 (ORCPT
+        with ESMTP id S231612AbhJNPQh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Oct 2021 11:14:57 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4E9AC061570
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Oct 2021 08:12:51 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id w14so25484548edv.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Oct 2021 08:12:51 -0700 (PDT)
+        Thu, 14 Oct 2021 11:16:37 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 219FFC061753
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Oct 2021 08:14:33 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id k23-20020a17090a591700b001976d2db364so5010822pji.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Oct 2021 08:14:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxtx.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w45cBwWuxt9fV0sH92Mj0nap7150VQi8dWHb0aDrKOs=;
-        b=YRiavibCQ5dBpR8sEKXV0lV/aSByGm8aH6pXObxa96UKqW2Xp1TgT8UGf5o3j2jT/t
-         jXFZUixi63N0FP3Ws+XLyyvnKGZpUghoP0ahHvAw6VC7pjQcj1jJyHHYr5ise4ey/pRz
-         Z5M9nrJ+4T1D4CggdaoFf9LfYJzN+ShVVq6ug=
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=kk58q1N6iOKJV9MmXM4g94KiVUwgBacQdDgb8dq+Hqc=;
+        b=mlZB9Nj4m8jk1JFv+iCH7Znrwanh3CDPQczVzomtmeQ5BLbFN1inwmhXkfQwL1sdEQ
+         hih7m3SNinxkOxv1CMzByR9lFDUUB4oAxo3E3cDYo/S67L6xZfuz5zRsWVJKP1+73Scy
+         QCwjhJQjGzKf7SNt+QV8U3nYErgEHf4yODN/I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w45cBwWuxt9fV0sH92Mj0nap7150VQi8dWHb0aDrKOs=;
-        b=F2E/BR5/zUg1qSnFO0WpO7+nXnlo8WK/Nst52xCDSZR9Og50mf/0DDTdMXheMeiR3N
-         14mcUYCln5bZ/IpegCR1iZIERN2PvOXl4Ire5DFac+O6dOeQuruxG12RKUKFyD1BM2ua
-         vCwd7pvYq+ZV24+Wsx+/W3KpGFTwASMBW0iudDaw07cM0tQE/cZEjsOhRQNWHJKC0Mmo
-         NMzZZjzUXFD38ectWFPaNUYO9AoXJCL0LXd1zUOj/74iwrsp9QWo4HoJm7sjdCQWPnhf
-         bSpCDt8NpKleSIF0Xbb1qWGuLCPVt/grdP6iNEyD6fpSr810CFwrDnJ1I6s4rNESfzKZ
-         JVeA==
-X-Gm-Message-State: AOAM530NPEEBSNG/ZhmVxHRihahTXeOnoX+HAMMxurLbwjFhiaM+uq1K
-        O30Q320TbSrhWsTdN54ufVOldwGABmLgvEHvF2KTDEV/GJM=
-X-Google-Smtp-Source: ABdhPJztOK9YaOX30AT6nvALG6RtdQ68Gh/4hLbQNEaGCI4Bs6r5KjWBzetHRYs7WH5ROQK5mxa/IEUBo/AlCydTWlw=
-X-Received: by 2002:a05:6402:35d1:: with SMTP id z17mr9678857edc.174.1634224293743;
- Thu, 14 Oct 2021 08:11:33 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=kk58q1N6iOKJV9MmXM4g94KiVUwgBacQdDgb8dq+Hqc=;
+        b=E/aw5X5BAwEpXjOyhVElWwcCfkaKPzGK99urt7dokD93hikhkUIUoUTZb9byPYEHX4
+         U5U7Er+2bYx4NmUnoDhRyBYUk43WU0r4Bz3DcgOVfpItE9IRjBy1uOe1Zj7c/uahjFto
+         hU6B2PDZ420l/F59Rxa6dIfp4U8D9+LgTl3YMk2iMEf2IgFbPTBYzEWduzOs5ZFUZWVa
+         sQ6pPC/h+ND9U+sNyvzlgJMevn92Uje1YDipoaZOflN4V3Vel8tnW3/R4vore2qUQS/u
+         nq/2UwHBTPtDdpQ6b00SzJ/FM7Ba+kSlW/p0cLxxD6RzuxrWULTpBTTmA+hkupwNxxUc
+         18Tw==
+X-Gm-Message-State: AOAM532Z5In80F/Rj7ToXi9gLjn+4JD0W+uJTlnptlD9oUU93n5LPT0Y
+        PLtOGaEkqxk5rJiu8yGYOozFpQ==
+X-Google-Smtp-Source: ABdhPJz+A28iMSsGMew00w4bTffNulDM4PlP1p1A1+RouZBKHQoPJUsZrDvvxCBzVTavFWwP5kdepA==
+X-Received: by 2002:a17:90a:86:: with SMTP id a6mr20774739pja.190.1634224472530;
+        Thu, 14 Oct 2021 08:14:32 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id w4sm2822114pfb.3.2021.10.14.08.14.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Oct 2021 08:14:32 -0700 (PDT)
+Date:   Thu, 14 Oct 2021 08:14:31 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc:     Anton Altaparmakov <anton@tuxera.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Song Liu <song@kernel.org>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Jan Kara <jack@suse.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
+        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "jfs-discussion@lists.sourceforge.net" 
+        <jfs-discussion@lists.sourceforge.net>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-nilfs@vger.kernel.org" <linux-nilfs@vger.kernel.org>,
+        "linux-ntfs-dev@lists.sourceforge.net" 
+        <linux-ntfs-dev@lists.sourceforge.net>,
+        "ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
+        "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>
+Subject: Re: don't use ->bd_inode to access the block device size
+Message-ID: <202110140813.44C95229@keescook>
+References: <20211013051042.1065752-1-hch@lst.de>
+ <20211014062844.GA25448@lst.de>
+ <3AB8052D-DD45-478B-85F2-BFBEC1C7E9DF@tuxera.com>
+ <a5eb3c18-deb2-6539-cc24-57e6d5d3500c@oracle.com>
 MIME-Version: 1.0
-References: <163238121836.315941.18066358755443618960.stgit@mickey.themaw.net>
-In-Reply-To: <163238121836.315941.18066358755443618960.stgit@mickey.themaw.net>
-From:   Justin Forbes <jmforbes@linuxtx.org>
-Date:   Thu, 14 Oct 2021 10:11:22 -0500
-Message-ID: <CAFxkdAraAe37_5bGLJtTtxZCaKTqgVPh4hTbcVC=08vRt-Zizg@mail.gmail.com>
-Subject: Re: [PATCH] autofs: fix wait name hash calculation in autofs_wait()
-To:     Ian Kent <raven@themaw.net>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        autofs mailing list <autofs@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a5eb3c18-deb2-6539-cc24-57e6d5d3500c@oracle.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 23, 2021 at 2:20 AM Ian Kent <raven@themaw.net> wrote:
->
-> There's a mistake in commit 2be7828c9fefc ("get rid of autofs_getpath()")
-> that affects kernels from v5.13.0, basically missed because of me not
-> fully testing the change for Al.
->
-> The problem is that the hash calculation for the wait name qstr hasn't
-> been updated to account for the change to use dentry_path_raw(). This
-> prevents the correct matching an existing wait resulting in multiple
-> notifications being sent to the daemon for the same mount which must
-> not occur.
->
-> The problem wasn't discovered earlier because it only occurs when
-> multiple processes trigger a request for the same mount concurrently
-> so it only shows up in more aggressive testing.
+On Thu, Oct 14, 2021 at 08:13:59AM -0500, Dave Kleikamp wrote:
+> On 10/14/21 4:32AM, Anton Altaparmakov wrote:
+> > Hi Christoph,
+> > 
+> > > On 14 Oct 2021, at 07:28, Christoph Hellwig <hch@lst.de> wrote:
+> > > 
+> > > On Wed, Oct 13, 2021 at 07:10:13AM +0200, Christoph Hellwig wrote:
+> > > > I wondered about adding a helper for looking at the size in byte units
+> > > > to avoid the SECTOR_SHIFT shifts in various places.  But given that
+> > > > I could not come up with a good name and block devices fundamentally
+> > > > work in sector size granularity I decided against that.
+> > > 
+> > > So it seems like the biggest review feedback is that we should have
+> > > such a helper.  I think the bdev_size name is the worst as size does
+> > > not imply a particular unit.  bdev_nr_bytes is a little better but I'm
+> > > not too happy.  Any other suggestions or strong opinions?
+> > 
+> > bdev_byte_size() would seem to address your concerns?
+> > 
+> > bdev_nr_bytes() would work though - it is analogous to bdev_nr_sectors() after all.
+> > 
+> > No strong opinion here but I do agree with you that bdev_size() is a bad choice for sure.  It is bound to cause bugs down the line when people forget what unit it is in.
+> 
+> I don't really mind bdev_size since it's analogous to i_size, but
+> bdev_nr_bytes seems good to me.
 
-I suppose it shows up in more than just testing, as we have a bug
-where this is impacting a user doing regular desktop things.
+I much prefer bdev_nr_bytes(), as "size" has no units.
 
-Justin
-
-> Fixes: 2be7828c9fefc ("get rid of autofs_getpath()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Ian Kent <raven@themaw.net>
-> ---
->  fs/autofs/waitq.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/autofs/waitq.c b/fs/autofs/waitq.c
-> index 16b5fca0626e..54c1f8b8b075 100644
-> --- a/fs/autofs/waitq.c
-> +++ b/fs/autofs/waitq.c
-> @@ -358,7 +358,7 @@ int autofs_wait(struct autofs_sb_info *sbi,
->                 qstr.len = strlen(p);
->                 offset = p - name;
->         }
-> -       qstr.hash = full_name_hash(dentry, name, qstr.len);
-> +       qstr.hash = full_name_hash(dentry, qstr.name, qstr.len);
->
->         if (mutex_lock_interruptible(&sbi->wq_mutex)) {
->                 kfree(name);
->
->
+-- 
+Kees Cook
