@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CA5942DE78
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 17:42:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6CBF42DE87
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Oct 2021 17:44:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231559AbhJNPpB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Oct 2021 11:45:01 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:57910 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230199AbhJNPo5 (ORCPT
+        id S231538AbhJNPq5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Oct 2021 11:46:57 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:51834 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230400AbhJNPq4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Oct 2021 11:44:57 -0400
+        Thu, 14 Oct 2021 11:46:56 -0400
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id E10611FD3A;
-        Thu, 14 Oct 2021 15:42:51 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 7B28621A86;
+        Thu, 14 Oct 2021 15:44:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1634226171; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1634226290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ktvk9Ng1I81Xzk6EWOKY2R4gf521naRNNhK9jlq78Og=;
-        b=hbO4M27Gw5GtTGToMZRejX83TiFC517xGyW6eRIvtJacZVTwUDfzrdh3o/jT0zJQufLqbY
-        ObRdI2NxsPhZGV5TC6cCM+MWyXdWvodiP5ZRV7X58VA7LuvBk1kbx2lh0HpPc5csS2zJNI
-        ntYPI0TnDo6QNjHVEZ1B/nPaH8z5iwM=
+        bh=yETFwcK2C7cMJFBaCxWiKVPeEh6TcyAd0FiTesVUB/g=;
+        b=TwwWH2OS7X9f3XQWQTjoJcTt3gtboI1WhZAk/6NCI3VzJPaCmWsECQuECckarHLycxvJpq
+        Z1oe8CgbHh2IAgTtVzhRHmn0f1KxS/zvp8HEVeTac3bqIU7Rj58CvHntNRh+BNeA9CXHwF
+        /3IjEwJmWzuqnon5to8it53gUfJ8lVI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1634226171;
+        s=susede2_ed25519; t=1634226290;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ktvk9Ng1I81Xzk6EWOKY2R4gf521naRNNhK9jlq78Og=;
-        b=a+IgH67l4t2igdJtPHMZecMvUVtlXnin1RqH1L4d7v9/mEce56VdFkA1XVTsWMFkMHAlqg
-        bzOvSxTSmk3jvrBQ==
+        bh=yETFwcK2C7cMJFBaCxWiKVPeEh6TcyAd0FiTesVUB/g=;
+        b=A/SGo819Ji9ZLhA7GV61ByKq6PjHEDjbT7xxWW+BictAko6eFVus07GepPeQCFB066Ia3k
+        U7S0V+km70Dhs8Aw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A21A713D9F;
-        Thu, 14 Oct 2021 15:42:51 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4F48913D9F;
+        Thu, 14 Oct 2021 15:44:50 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id Ox/xJvtPaGHRIQAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Thu, 14 Oct 2021 15:42:51 +0000
-Message-ID: <66e8e0cc-1abb-a283-1e0d-068124a84790@suse.cz>
-Date:   Thu, 14 Oct 2021 17:42:51 +0200
+        id Kgu1EnJQaGG3IgAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Thu, 14 Oct 2021 15:44:50 +0000
+Message-ID: <1953635e-a97a-eff3-8019-3d012b065938@suse.cz>
+Date:   Thu, 14 Oct 2021 17:44:50 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.2.0
-Subject: Re: [PATCH 1/8] mm/vmscan: Throttle reclaim until some writeback
- completes if congested
+Subject: Re: [PATCH 2/8] mm/vmscan: Throttle reclaim and compaction when too
+ may pages are isolated
 Content-Language: en-US
 To:     Mel Gorman <mgorman@techsingularity.net>
 Cc:     Linux-MM <linux-mm@kvack.org>, NeilBrown <neilb@suse.de>,
@@ -68,107 +68,175 @@ Cc:     Linux-MM <linux-mm@kvack.org>, NeilBrown <neilb@suse.de>,
         Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 References: <20211008135332.19567-1-mgorman@techsingularity.net>
- <20211008135332.19567-2-mgorman@techsingularity.net>
- <63898e7a-0846-3105-96b5-76c89635e499@suse.cz>
- <20211014104744.GY3959@techsingularity.net>
+ <20211008135332.19567-3-mgorman@techsingularity.net>
+ <5e2c8c39-29d9-61be-049f-a408f62f5acf@suse.cz>
+ <20211014115632.GZ3959@techsingularity.net>
 From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20211014104744.GY3959@techsingularity.net>
+In-Reply-To: <20211014115632.GZ3959@techsingularity.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/14/21 12:47, Mel Gorman wrote:
-> Thanks Vlastimil
-> 
-> On Wed, Oct 13, 2021 at 05:39:36PM +0200, Vlastimil Babka wrote:
->> > +/*
->> > + * Account for pages written if tasks are throttled waiting on dirty
->> > + * pages to clean. If enough pages have been cleaned since throttling
->> > + * started then wakeup the throttled tasks.
->> > + */
->> > +void __acct_reclaim_writeback(pg_data_t *pgdat, struct page *page,
->> > +							int nr_throttled)
+On 10/14/21 13:56, Mel Gorman wrote:
+> On Thu, Oct 14, 2021 at 10:06:25AM +0200, Vlastimil Babka wrote:
+>> On 10/8/21 15:53, Mel Gorman wrote:
+>> > Page reclaim throttles on congestion if too many parallel reclaim instances
+>> > have isolated too many pages. This makes no sense, excessive parallelisation
+>> > has nothing to do with writeback or congestion.
+>> > 
+>> > This patch creates an additional workqueue to sleep on when too many
+>> > pages are isolated. The throttled tasks are woken when the number
+>> > of isolated pages is reduced or a timeout occurs. There may be
+>> > some false positive wakeups for GFP_NOIO/GFP_NOFS callers but
+>> > the tasks will throttle again if necessary.
+>> > 
+>> > [shy828301@gmail.com: Wake up from compaction context]
+>> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+>> 
+>> ...
+>> 
+>> > diff --git a/mm/internal.h b/mm/internal.h
+>> > index 90764d646e02..06d0c376efcd 100644
+>> > --- a/mm/internal.h
+>> > +++ b/mm/internal.h
+>> > @@ -45,6 +45,15 @@ static inline void acct_reclaim_writeback(struct page *page)
+>> >  		__acct_reclaim_writeback(pgdat, page, nr_throttled);
+>> >  }
+>> >  
+>> > +static inline void wake_throttle_isolated(pg_data_t *pgdat)
 >> > +{
->> > +	unsigned long nr_written;
+>> > +	wait_queue_head_t *wqh;
 >> > +
->> > +	__inc_node_page_state(page, NR_THROTTLED_WRITTEN);
+>> > +	wqh = &pgdat->reclaim_wait[VMSCAN_THROTTLE_ISOLATED];
+>> > +	if (waitqueue_active(wqh))
+>> > +		wake_up_all(wqh);
 >> 
->> Is this intentionally using the __ version that normally expects irqs to be
->> disabled (AFAIK they are not in this path)? I think this is rarely used cold
->> path so it doesn't seem worth to trade off speed for accuracy.
+>> Again, would it be better to wake up just one task to prevent possible
+>> thundering herd? We can assume that that task will call too_many_isolated()
+>> eventually to wake up the next one?
+> 
+> Same problem as the writeback throttling, there is no prioritsation of
+> light vs heavy allocators.
+> 
+>> Although it seems strange that
+>> too_many_isolated() is the place where we detect the situation for wake up.
+>> Simpler than to hook into NR_ISOLATED decrementing I guess.
 >> 
 > 
-> It was intentional because IRQs can be disabled and if it's race-prone,
-> it's not overly problematic but you're right, better to be safe.  I changed
-> it to the safe type as it's mostly free on x86, arm64 and s390 and for
-> other architectures, this is a slow path.
+> Simplier but more costly. Every decrement would have to check
+> too_many_isolated(). I think the cost of that is too high given that the
+> VMSCAN_THROTTLE_ISOLATED is relatively hard to trigger and the minority
+> of throttling events.
 
-Great, thanks.
+Agreed.
 
->> > +	nr_written = node_page_state(pgdat, NR_THROTTLED_WRITTEN) -
->> > +		READ_ONCE(pgdat->nr_reclaim_start);
->> 
->> Even if the inc above was safe, node_page_state() will return only the
->> global counter, so the value we read here will only actually increment when
->> some cpu's counter overflows, so it will be "bursty". Maybe it's ok, just
->> worth documenting?
->> 
-> 
-> I didn't think the penalty of doing an accurate read while writeback
-> throttled is worth it. I'll add a comment.
-> 
+>> > +}
 >> > +
->> > +	if (nr_written > SWAP_CLUSTER_MAX * nr_throttled)
->> > +		wake_up_all(&pgdat->reclaim_wait);
+>> >  vm_fault_t do_swap_page(struct vm_fault *vmf);
+>> >  
+>> >  void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
+>> ...
+>> > --- a/mm/vmscan.c
+>> > +++ b/mm/vmscan.c
+>> > @@ -1006,11 +1006,10 @@ static void handle_write_error(struct address_space *mapping,
+>> >  	unlock_page(page);
+>> >  }
+>> >  
+>> > -static void
+>> > -reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
+>> > +void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
+>> >  							long timeout)
+>> >  {
+>> > -	wait_queue_head_t *wqh = &pgdat->reclaim_wait;
+>> > +	wait_queue_head_t *wqh = &pgdat->reclaim_wait[reason];
 >> 
->> Hm it seems a bit weird that the more tasks are throttled, the more we wait,
->> and then wake up all. Theoretically this will lead to even more
->> bursty/staggering herd behavior. Could be better to wake up single task each
->> SWAP_CLUSTER_MAX, and bump nr_reclaim_start? But maybe it's not a problem in
->> practice due to HZ/10 timeouts being short enough?
+>> It seems weird that later in this function we increase nr_reclaim_throttled
+>> without distinguishing the reason, so effectively throttling for isolated
+>> pages will trigger acct_reclaim_writeback() doing the NR_THROTTLED_WRITTEN
+>> counting, although it's not related at all? Maybe either have separate
+>> nr_reclaim_throttled counters per vmscan_throttle_state (if counter of
+>> isolated is useful, I haven't seen the rest of series yet), or count only
+>> VMSCAN_THROTTLE_WRITEBACK tasks?
 >> 
 > 
-> Yes, the more tasks are throttled the longer tasks wait because tasks are
-> allocating faster than writeback can complete so I wanted to reduce the
-> allocation pressure. I considered waking one task at a time but there is
-> no prioritisation of tasks on the waitqueue and it's not clear that the
-> additional complexity is justified. With inaccurate counters, a light
-> allocator could get throttled for the full timeout unnecessarily.
+> Very good point, it would be more appropriate to only count the
+> writeback reason.
 > 
-> Even if we were to wake one task at a time, I would prefer it was done
-> as a potential optimisation on top.
+> Diff on top is below. It'll cause minor conflicts later in the series.
 
-Fair enough.
-
-> Diff on top based on review feedback;
-
-Thanks, with that you can add
+Looks good, for the updated version:
 
 Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-to the updated version
-
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index ca65d6a64bdd..58a25d42c31c 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -849,7 +849,7 @@ typedef struct pglist_data {
+>  	wait_queue_head_t kswapd_wait;
+>  	wait_queue_head_t pfmemalloc_wait;
+>  	wait_queue_head_t reclaim_wait[NR_VMSCAN_THROTTLE];
+> -	atomic_t nr_reclaim_throttled;	/* nr of throtted tasks */
+> +	atomic_t nr_writeback_throttled;/* nr of writeback-throttled tasks */
+>  	unsigned long nr_reclaim_start;	/* nr pages written while throttled
+>  					 * when throttling started. */
+>  	struct task_struct *kswapd;	/* Protected by
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 06d0c376efcd..3461a1055975 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -39,7 +39,7 @@ void __acct_reclaim_writeback(pg_data_t *pgdat, struct page *page,
+>  static inline void acct_reclaim_writeback(struct page *page)
+>  {
+>  	pg_data_t *pgdat = page_pgdat(page);
+> -	int nr_throttled = atomic_read(&pgdat->nr_reclaim_throttled);
+> +	int nr_throttled = atomic_read(&pgdat->nr_writeback_throttled);
+>  
+>  	if (nr_throttled)
+>  		__acct_reclaim_writeback(pgdat, page, nr_throttled);
 > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index bcd22e53795f..735b1f2b5d9e 100644
+> index 6e198bbbd86a..29434d4fc1c7 100644
 > --- a/mm/vmscan.c
 > +++ b/mm/vmscan.c
-> @@ -1048,7 +1048,15 @@ void __acct_reclaim_writeback(pg_data_t *pgdat, struct page *page,
+> @@ -1011,6 +1011,7 @@ void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
 >  {
->  	unsigned long nr_written;
+>  	wait_queue_head_t *wqh = &pgdat->reclaim_wait[reason];
+>  	long ret;
+> +	bool acct_writeback = (reason == VMSCAN_THROTTLE_WRITEBACK);
+>  	DEFINE_WAIT(wait);
 >  
-> -	__inc_node_page_state(page, NR_THROTTLED_WRITTEN);
-> +	inc_node_page_state(page, NR_THROTTLED_WRITTEN);
+>  	/*
+> @@ -1022,7 +1023,8 @@ void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
+>  	    current->flags & (PF_IO_WORKER|PF_KTHREAD))
+>  		return;
+>  
+> -	if (atomic_inc_return(&pgdat->nr_reclaim_throttled) == 1) {
+> +	if (acct_writeback &&
+> +	    atomic_inc_return(&pgdat->nr_writeback_throttled) == 1) {
+>  		WRITE_ONCE(pgdat->nr_reclaim_start,
+>  			node_page_state(pgdat, NR_THROTTLED_WRITTEN));
+>  	}
+> @@ -1030,7 +1032,9 @@ void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
+>  	prepare_to_wait(wqh, &wait, TASK_UNINTERRUPTIBLE);
+>  	ret = schedule_timeout(timeout);
+>  	finish_wait(wqh, &wait);
+> -	atomic_dec(&pgdat->nr_reclaim_throttled);
 > +
-> +	/*
-> +	 * This is an inaccurate read as the per-cpu deltas may not
-> +	 * be synchronised. However, given that the system is
-> +	 * writeback throttled, it is not worth taking the penalty
-> +	 * of getting an accurate count. At worst, the throttle
-> +	 * timeout guarantees forward progress.
-> +	 */
->  	nr_written = node_page_state(pgdat, NR_THROTTLED_WRITTEN) -
->  		READ_ONCE(pgdat->nr_reclaim_start);
+> +	if (acct_writeback)
+> +		atomic_dec(&pgdat->nr_writeback_throttled);
+>  
+>  	trace_mm_vmscan_throttled(pgdat->node_id, jiffies_to_usecs(timeout),
+>  				jiffies_to_usecs(timeout - ret),
+> @@ -4349,7 +4353,7 @@ static int kswapd(void *p)
+>  
+>  	WRITE_ONCE(pgdat->kswapd_order, 0);
+>  	WRITE_ONCE(pgdat->kswapd_highest_zoneidx, MAX_NR_ZONES);
+> -	atomic_set(&pgdat->nr_reclaim_throttled, 0);
+> +	atomic_set(&pgdat->nr_writeback_throttled, 0);
+>  	for ( ; ; ) {
+>  		bool ret;
+>  
 > 
 
