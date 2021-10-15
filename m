@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8CBB42F277
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 15:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A75E042F28D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 15:28:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239573AbhJON3t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Oct 2021 09:29:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40650 "EHLO
+        id S236311AbhJONaB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Oct 2021 09:30:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239461AbhJON30 (ORCPT
+        with ESMTP id S239489AbhJON3b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Oct 2021 09:29:26 -0400
+        Fri, 15 Oct 2021 09:29:31 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A921C061570;
-        Fri, 15 Oct 2021 06:27:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5B0AC061765;
+        Fri, 15 Oct 2021 06:27:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=Py4SFYmeQI8OzGpoQ9LNr+7lWY6I6fBtz06nY0N1e+8=; b=CCeszTHM74/VSZRJ3pe/w3AsVv
-        d7plrag09NyTO7nPNC9+l1rBhlOiceLDvZ6SdfvTuJxc+NlS50shAoxAo3QujgQXyy9B6fjMDBuAr
-        n0MspaNPmqC4Ew6PFWc5Sc3sX91oadiqq3AnoeBrtGx5Rs6HVlUS+aP5Ay4lMOk9Yc4nGOG1LVpgm
-        5N4/4gTlNnq9HICyQCv5pXNbpVY3kf7mTGfE3gyqJ1nA/yj22vuEkikRTQFbkd+aJtdwcCN0dtvKx
-        7QuV+oiDohQI3nDgIFgYt+spe6WftX4DnRHIUbT2iaRoc89is8NVRQYRvPO8rm4gAqKtW8tG185xu
-        YKk4ul2A==;
+        bh=7Fvhf+wKhm10vM9vEVCTx/h8dtxUHLOhLGNjS8UETqk=; b=AItQqhQ2XYGJN/WD9MrBjK/cyH
+        NBfGMeNQXzuVKCKq+HEtT52BLeFO+VVtGB8MwZeRc2X2Rrqd/K+aFpvHt31ONgdCDVir4TkOxdztH
+        QvXyi6xJqZdD034tBVu/eGya417QgO2eVjLhdic2HeUfOsMgzs0OVvwLtnDbznHvGY/uXXfIGPLXd
+        y7rwERgkJXHWgBgN7zzvcKHePSeuLtWLs+Gsm/tquhDTsHwlU7JXmSwImQa7IqD0GSjNLKTQK12oc
+        TSp1daWgtYYlrTmndy1c6EBPwst5ch8mIBTMKLTxBfe67o+Z1jOJZEuK/7I20TUpVfhvhWZckt/B2
+        7e5tzDUA==;
 Received: from [2001:4bb8:199:73c5:ddfe:9587:819b:83b0] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mbNEm-007CoV-4E; Fri, 15 Oct 2021 13:27:04 +0000
+        id 1mbNEo-007Cqt-S8; Fri, 15 Oct 2021 13:27:07 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
@@ -51,9 +51,9 @@ Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
         linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
         ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org,
         Chaitanya Kulkarni <kch@nvidia.com>
-Subject: [PATCH 07/30] nvmet: use bdev_nr_bytes instead of open coding it
-Date:   Fri, 15 Oct 2021 15:26:20 +0200
-Message-Id: <20211015132643.1621913-8-hch@lst.de>
+Subject: [PATCH 08/30] target/iblock: use bdev_nr_bytes instead of open coding it
+Date:   Fri, 15 Oct 2021 15:26:21 +0200
+Message-Id: <20211015132643.1621913-9-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211015132643.1621913-1-hch@lst.de>
 References: <20211015132643.1621913-1-hch@lst.de>
@@ -69,31 +69,25 @@ Use the proper helper to read the block device size.
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
 ---
- drivers/nvme/target/io-cmd-bdev.c | 4 ++--
+ drivers/target/target_core_iblock.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvme/target/io-cmd-bdev.c b/drivers/nvme/target/io-cmd-bdev.c
-index 6139e1de50a66..70ca9dfc1771a 100644
---- a/drivers/nvme/target/io-cmd-bdev.c
-+++ b/drivers/nvme/target/io-cmd-bdev.c
-@@ -87,7 +87,7 @@ int nvmet_bdev_ns_enable(struct nvmet_ns *ns)
- 		ns->bdev = NULL;
- 		return ret;
- 	}
--	ns->size = i_size_read(ns->bdev->bd_inode);
-+	ns->size = bdev_nr_bytes(ns->bdev);
- 	ns->blksize_shift = blksize_bits(bdev_logical_block_size(ns->bdev));
- 
- 	ns->pi_type = 0;
-@@ -108,7 +108,7 @@ int nvmet_bdev_ns_enable(struct nvmet_ns *ns)
- 
- void nvmet_bdev_ns_revalidate(struct nvmet_ns *ns)
+diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
+index 31df20abe141f..b1ef041cacd81 100644
+--- a/drivers/target/target_core_iblock.c
++++ b/drivers/target/target_core_iblock.c
+@@ -232,9 +232,9 @@ static unsigned long long iblock_emulate_read_cap_with_block_size(
+ 	struct block_device *bd,
+ 	struct request_queue *q)
  {
--	ns->size = i_size_read(ns->bdev->bd_inode);
-+	ns->size = bdev_nr_bytes(ns->bdev);
- }
+-	unsigned long long blocks_long = (div_u64(i_size_read(bd->bd_inode),
+-					bdev_logical_block_size(bd)) - 1);
+ 	u32 block_size = bdev_logical_block_size(bd);
++	unsigned long long blocks_long =
++		div_u64(bdev_nr_bytes(bd), block_size) - 1;
  
- u16 blk_to_nvme_status(struct nvmet_req *req, blk_status_t blk_sts)
+ 	if (block_size == dev->dev_attrib.block_size)
+ 		return blocks_long;
 -- 
 2.30.2
 
