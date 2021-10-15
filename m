@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C3E042F334
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 15:30:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26E5842F345
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 15:30:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239646AbhJONc1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Oct 2021 09:32:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40850 "EHLO
+        id S239785AbhJONcn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Oct 2021 09:32:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236651AbhJONbV (ORCPT
+        with ESMTP id S236275AbhJONbf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Oct 2021 09:31:21 -0400
+        Fri, 15 Oct 2021 09:31:35 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2173CC0613E8;
-        Fri, 15 Oct 2021 06:27:59 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 798DDC0613EB;
+        Fri, 15 Oct 2021 06:28:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=Ce/xbUkNVs/DL/PvHdluKHxtvXGNzoHJMZpOCdwn74E=; b=r/QHR/F6RJsJcfLIVRGjeC5TYi
-        5vsdVf6ApaX1IQECl5wxhGgOynF/Aqp4gEFihxuCKRT2s2aoKg3SDG/LPXP0bGeV+glcs4kj+3Zgq
-        vCHQ77R0gaRd8gPCg3LXCWdFi8b/DgIdfgQprpQHhUT55MbVXSj7vccFpDppmJwX6cAVJCsnuUNyx
-        KawwFXaAxCMSPbAj7bUYyWV1BnqpcYo6SMbBzSiuxZhuLtdUVp2aXUipo78/Nk1bzSV3Qsn5E42V2
-        v5r/BUecEti/NhnmdbhCf0FSHSoSh4DhIpUX5IgHCbWePlBgWfyWJuU/iPatQeIeJ5TsKaDntuWbc
-        J6PmFpPw==;
+        bh=2BXnVjh6IVLffeTtOJ/9VaVUkXZDs6MfXdXoGWHxD+Q=; b=FOn1MgJkWXo7QC8G1ka61gN6Mm
+        f7uNc6GhW6+z4RtlEvC+bcnOy09Lj5c1hgUyq7n7VPEirRdBdirTf1a+0EDGTrFXdd7dSkPCaicPh
+        BM8hdCUoqQWuNZ3X8WqroQYbaSS63d4nVEpz9et1HlzUgVmM+jbXyRYdctoAuOOfUfTjaMY3hmYDp
+        SksQ5ltEbeQLwvi0EhmIb5hIbtmzqBB+X9TlmSiN0890t0yF1fOoJS8ZSMtC97CF4OavuVBE+DV9D
+        x9J3v5oWlzasgOINidBrFKdwb7dkVu1uRXrI8VXV4ZVSW7h0S6tzf9dx3kLQw9vzr0FVgwiZoPbom
+        ifLLrULA==;
 Received: from [2001:4bb8:199:73c5:ddfe:9587:819b:83b0] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mbNFR-007DZR-Me; Fri, 15 Oct 2021 13:27:46 +0000
+        id 1mbNFU-007Dcz-9h; Fri, 15 Oct 2021 13:27:48 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
@@ -49,10 +49,11 @@ Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
         linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
         jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
         linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org
-Subject: [PATCH 23/30] squashfs: use bdev_nr_bytes instead of open coding it
-Date:   Fri, 15 Oct 2021 15:26:36 +0200
-Message-Id: <20211015132643.1621913-24-hch@lst.de>
+        ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Chaitanya Kulkarni <kch@nvidia.com>
+Subject: [PATCH 24/30] block: use bdev_nr_bytes instead of open coding it in blkdev_fallocate
+Date:   Fri, 15 Oct 2021 15:26:37 +0200
+Message-Id: <20211015132643.1621913-25-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211015132643.1621913-1-hch@lst.de>
 References: <20211015132643.1621913-1-hch@lst.de>
@@ -66,34 +67,25 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 Use the proper helper to read the block device size.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Phillip Lougher <phillip@squashfs.org.uk>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
 ---
- fs/squashfs/super.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ block/fops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/squashfs/super.c b/fs/squashfs/super.c
-index 60d6951915f44..bb44ff4c5cc67 100644
---- a/fs/squashfs/super.c
-+++ b/fs/squashfs/super.c
-@@ -16,6 +16,7 @@
+diff --git a/block/fops.c b/block/fops.c
+index 7bb9581a146cf..a6a4d412720cd 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -548,7 +548,7 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+ 		return -EOPNOTSUPP;
  
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
-+#include <linux/blkdev.h>
- #include <linux/fs.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-@@ -179,8 +180,8 @@ static int squashfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	/* Check the filesystem does not extend beyond the end of the
- 	   block device */
- 	msblk->bytes_used = le64_to_cpu(sblk->bytes_used);
--	if (msblk->bytes_used < 0 || msblk->bytes_used >
--			i_size_read(sb->s_bdev->bd_inode))
-+	if (msblk->bytes_used < 0 ||
-+	    msblk->bytes_used > bdev_nr_bytes(sb->s_bdev))
- 		goto failed_mount;
- 
- 	/* Check block size for sanity */
+ 	/* Don't go off the end of the device. */
+-	isize = i_size_read(bdev->bd_inode);
++	isize = bdev_nr_bytes(bdev);
+ 	if (start >= isize)
+ 		return -EINVAL;
+ 	if (end >= isize) {
 -- 
 2.30.2
 
