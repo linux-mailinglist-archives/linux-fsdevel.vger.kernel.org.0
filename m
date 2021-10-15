@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4104042E875
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 07:41:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76EA542E87A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 07:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235416AbhJOFnL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Oct 2021 01:43:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46664 "EHLO
+        id S234292AbhJOFvT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Oct 2021 01:51:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229706AbhJOFnK (ORCPT
+        with ESMTP id S229706AbhJOFvS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Oct 2021 01:43:10 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B613FC061570;
-        Thu, 14 Oct 2021 22:41:04 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id d125so6471851iof.5;
-        Thu, 14 Oct 2021 22:41:04 -0700 (PDT)
+        Fri, 15 Oct 2021 01:51:18 -0400
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0D80C061570;
+        Thu, 14 Oct 2021 22:49:12 -0700 (PDT)
+Received: by mail-il1-x131.google.com with SMTP id i11so5953901ila.12;
+        Thu, 14 Oct 2021 22:49:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=yJic0if03qAgJDXU8K2OH89hzmK7tAPvWQLCw9ePAQ8=;
-        b=iNftvuMMF8k7bxptDP10+bAJor1r50rbziSmaWOYCQtaMlqXR8dVPXl4ERMzVDdlsq
-         WTzqZlfwylWEc58A88bblCjeQScJZvbsiv7d5V8nXgBufE5cFuF0fO8i6SI7hydxJbsJ
-         CVqA9uMDvjKt7Vg35Joww0Fh6mIsjpVMZacHaMRzLytiHM7WWjFlVIeTl35JogSFB/Wn
-         +EixBy6LetsAiKMig/LSLJJf3FfzAyHjI2us5lftR2oc6UJUhcEpGAQ+mkLw0CgsiqYk
-         B29/hg/0ThPm6OhdLkVEbNdDG3J3U+U87TjJ7lmjHxHAKu8EgXWzqR0CM02HVpwG31gE
-         IxBg==
+        bh=KtSR2tvDzCNz1RXAdUkMqN1214rU3gzhBqVCW7f8teA=;
+        b=OcW6z5+rot60yxdedv/Au44PSchJgC4IJNCHB+zwlk6MWhlmEE3hfoVkO2SKjpNKLD
+         IKICKC/owR1kIEFJra4chM9hEc+dVYQwMB+H1G3plv/xjPEX2OPDOIz5LFlBXD2jXEl0
+         dNthO0esLVxWTPS25caEbVpxlWyoFIGi5cC4QrGmYetz0rK3nDRAjcdzLMm89q3Qq0nS
+         bOYEVSq/+bFSvi4vPKdA+IMU1ls/Q3OMgGzggGEKMPfWpJBTBu2fWgbxdVzJxGPZF7DQ
+         h7y3XR4H6akyd6YiV/eMZwHLJAo6MjEhYGbbuEtNICHfFMQdNlYPEojXqM8uTnoOQNa8
+         UBCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=yJic0if03qAgJDXU8K2OH89hzmK7tAPvWQLCw9ePAQ8=;
-        b=YCwV1WCaWHZLfXBdfjIEdahTozYOOYoWUS4FZ+IcajQ5zifxkTlVaIucuhxgyIyfHV
-         3sYGOZ3Z33bNvAe0wIRXlDcapZ6qQl2smIXqBoHkCDhb430oxXTdYbiT/+2FE8yYxi9f
-         Q8o7K+8nypb2IlgarSEO7R7xyj1/U4mT+mJ+nKbp9Nhm6HOf1N2L/ym+dev6mVkCIvVC
-         bzyDSfH+z3zd1zl8ZDtaCBwEx/tGOOnQfqZ+5I8T9rDx0PWNsQXr9iyExLhZPqLfgrd6
-         JUSayPJv3PidZWuW/0UPBXWy9cF+BfFvNEoMKimVkBdZVzts0CPPVeJrxiy9ERBv+zLS
-         G0IQ==
-X-Gm-Message-State: AOAM532j637eLE0Y7+SZt2oLCx1Odi6BMwWjbqts7vrzSHJ/NSClm68F
-        QfmFqrk6pTvnITqpkWPhA2COLwI6k7j88+HdgtglJTZO5eM=
-X-Google-Smtp-Source: ABdhPJxW1cTU+XZmgk0xifkrvKfHj89Jy8LEdvO9s9SLvhYwNNcyzWUluXFHTMhzzo0YAfTQE/AGPxrlhOFIKOJQEiQ=
-X-Received: by 2002:a6b:b5d8:: with SMTP id e207mr2362473iof.52.1634276464152;
- Thu, 14 Oct 2021 22:41:04 -0700 (PDT)
+        bh=KtSR2tvDzCNz1RXAdUkMqN1214rU3gzhBqVCW7f8teA=;
+        b=SDCTbVtyaiNRbnhbo8tIMrFNX3gAJAf8+LfE2N5TzxCszYMMf2iEPelz0GAKtsXQGQ
+         I5OUonknTNuHow68GaZcxwgGHwBPIHRpgIu4na8N1bj23sqbEHfNTUsaNYS4DmOHVb9x
+         yhZ+TgmCcBgV33na+85h8Okdl7tOcpy2pefkdPH0Af1XZcz0fCa+TmANsbaBcm9l4hjK
+         lUYx02ymnzi5JKjll66cF5Pg+diC4TsYAmsOcfnc7FrspZw7NyUrrauF0CSDsRdJd01b
+         GGNveNaqonS7MlmsW7S3X+vK+YN5L/ln7tgSgxNevZ9Tba6ALdzR7xS59pvv9Nsvpoec
+         r6YA==
+X-Gm-Message-State: AOAM5326LvzS/n/e4rl2NBP//G4W95AS+NZnKJg6ipb150iyOGMVLtjF
+        0ESECr2ymGGw/oaROykQMHhQCgkzPPbBM14Sv7Q=
+X-Google-Smtp-Source: ABdhPJzwSFjfUq090BgtjtkcbeaYVZ/WbY+YEfRnSaBQbgsNWSG8qAion3LOliT3eaNgt9JnuP2ORn/NpJbx8dAZx0U=
+X-Received: by 2002:a05:6e02:160e:: with SMTP id t14mr2539077ilu.107.1634276952113;
+ Thu, 14 Oct 2021 22:49:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211014213646.1139469-1-krisman@collabora.com> <20211014213646.1139469-12-krisman@collabora.com>
-In-Reply-To: <20211014213646.1139469-12-krisman@collabora.com>
+References: <20211014213646.1139469-1-krisman@collabora.com> <20211014213646.1139469-13-krisman@collabora.com>
+In-Reply-To: <20211014213646.1139469-13-krisman@collabora.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 15 Oct 2021 08:40:53 +0300
-Message-ID: <CAOQ4uxjvAC=hQUXuhDvAEXBNEijriRRK1xhWs24VV6io+0-7kw@mail.gmail.com>
-Subject: Re: [PATCH v7 11/28] fsnotify: Pass group argument to free_event
+Date:   Fri, 15 Oct 2021 08:49:01 +0300
+Message-ID: <CAOQ4uxjtS1e-SvX+LJhREjAgDqoNAjoBQENpCgK=KV9QSiYvBQ@mail.gmail.com>
+Subject: Re: [PATCH v7 12/28] fanotify: Support null inode event in fanotify_dfid_inode
 To:     Gabriel Krisman Bertazi <krisman@collabora.com>
 Cc:     Jan Kara <jack@suse.com>, "Darrick J. Wong" <djwong@kernel.org>,
         Theodore Tso <tytso@mit.edu>,
@@ -68,88 +68,35 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On Fri, Oct 15, 2021 at 12:38 AM Gabriel Krisman Bertazi
 <krisman@collabora.com> wrote:
 >
-> For group-wide mempool backed events, like FS_ERROR, the free_event
-> callback will need to reference the group's mempool to free the memory.
-> Wire that argument into the current callers.
+> FAN_FS_ERROR doesn't support DFID, but this function is still called for
+> every event.  The problem is that it is not capable of handling null
+> inodes, which now can happen in case of superblock error events.  For
+> this case, just returning dir will be enough.
 >
 > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
+
+Please also fortify fsnotify_handle_inode_event() against calling
+->handle_inode_event() with NULL inode.
+
 > ---
->  fs/notify/fanotify/fanotify.c        | 3 ++-
->  fs/notify/group.c                    | 2 +-
->  fs/notify/inotify/inotify_fsnotify.c | 3 ++-
->  fs/notify/notification.c             | 2 +-
->  include/linux/fsnotify_backend.h     | 2 +-
->  5 files changed, 7 insertions(+), 5 deletions(-)
+>  fs/notify/fanotify/fanotify.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
 > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index f82e20228999..c620b4f6fe12 100644
+> index c620b4f6fe12..397ee623ff1e 100644
 > --- a/fs/notify/fanotify/fanotify.c
 > +++ b/fs/notify/fanotify/fanotify.c
-> @@ -835,7 +835,8 @@ static void fanotify_free_name_event(struct fanotify_event *event)
->         kfree(FANOTIFY_NE(event));
->  }
+> @@ -452,7 +452,7 @@ static struct inode *fanotify_dfid_inode(u32 event_mask, const void *data,
+>         if (event_mask & ALL_FSNOTIFY_DIRENT_EVENTS)
+>                 return dir;
 >
-> -static void fanotify_free_event(struct fsnotify_event *fsn_event)
-> +static void fanotify_free_event(struct fsnotify_group *group,
-> +                               struct fsnotify_event *fsn_event)
->  {
->         struct fanotify_event *event;
+> -       if (S_ISDIR(inode->i_mode))
+> +       if (inode && S_ISDIR(inode->i_mode))
+>                 return inode;
 >
-> diff --git a/fs/notify/group.c b/fs/notify/group.c
-> index fb89c351295d..6a297efc4788 100644
-> --- a/fs/notify/group.c
-> +++ b/fs/notify/group.c
-> @@ -88,7 +88,7 @@ void fsnotify_destroy_group(struct fsnotify_group *group)
->          * that deliberately ignores overflow events.
->          */
->         if (group->overflow_event)
-> -               group->ops->free_event(group->overflow_event);
-> +               group->ops->free_event(group, group->overflow_event);
->
->         fsnotify_put_group(group);
->  }
-> diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
-> index a96582cbfad1..d92d7b0adc9a 100644
-> --- a/fs/notify/inotify/inotify_fsnotify.c
-> +++ b/fs/notify/inotify/inotify_fsnotify.c
-> @@ -177,7 +177,8 @@ static void inotify_free_group_priv(struct fsnotify_group *group)
->                 dec_inotify_instances(group->inotify_data.ucounts);
->  }
->
-> -static void inotify_free_event(struct fsnotify_event *fsn_event)
-> +static void inotify_free_event(struct fsnotify_group *group,
-> +                              struct fsnotify_event *fsn_event)
->  {
->         kfree(INOTIFY_E(fsn_event));
->  }
-> diff --git a/fs/notify/notification.c b/fs/notify/notification.c
-> index 44bb10f50715..9022ae650cf8 100644
-> --- a/fs/notify/notification.c
-> +++ b/fs/notify/notification.c
-> @@ -64,7 +64,7 @@ void fsnotify_destroy_event(struct fsnotify_group *group,
->                 WARN_ON(!list_empty(&event->list));
->                 spin_unlock(&group->notification_lock);
->         }
-> -       group->ops->free_event(event);
-> +       group->ops->free_event(group, event);
->  }
->
->  /*
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-> index 035438fe4a43..1e69e9fe45c9 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -155,7 +155,7 @@ struct fsnotify_ops {
->                             const struct qstr *file_name, u32 cookie);
->         void (*free_group_priv)(struct fsnotify_group *group);
->         void (*freeing_mark)(struct fsnotify_mark *mark, struct fsnotify_group *group);
-> -       void (*free_event)(struct fsnotify_event *event);
-> +       void (*free_event)(struct fsnotify_group *group, struct fsnotify_event *event);
->         /* called on final put+free to free memory */
->         void (*free_mark)(struct fsnotify_mark *mark);
->  };
+>         return dir;
 > --
 > 2.33.0
 >
