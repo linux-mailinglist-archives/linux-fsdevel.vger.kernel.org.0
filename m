@@ -2,65 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 508C342ED6F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 11:18:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9848842ED77
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 11:21:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237236AbhJOJUm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Oct 2021 05:20:42 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:58012 "EHLO
+        id S236492AbhJOJXZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Oct 2021 05:23:25 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:58254 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236454AbhJOJUm (ORCPT
+        with ESMTP id S234769AbhJOJXY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Oct 2021 05:20:42 -0400
+        Fri, 15 Oct 2021 05:23:24 -0400
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id D17221F770;
-        Fri, 15 Oct 2021 09:18:34 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id 6BF821FD39;
+        Fri, 15 Oct 2021 09:21:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1634289514; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1634289677; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=jkqjzEwNHSECoBlQtoTSwpYhMOm5xCv5JA0JJwmOt+4=;
-        b=OI4UzSsvSjSmzyeQjJG1a63SVjVuRDWggn21yfu6Svsv+kl1zXLOBs0ni+mStWHTkecTYO
-        dTt5XVm1fgUucLT2Lm5sHVB7l0fhPZ464+FqOa50ZqOhsvfXWBzbq+W5r68l/rYAL8scfs
-        21R6WykG02lCiuijuZg8ic65Z4SRI08=
+        bh=dVv9mIFIib0sh5t49gp7uep8alWhoBfhNtu2aGFmLLU=;
+        b=DqOKCFvXjtgc5FPO8YgWkyRkHEwUWdWjYVWxdo+X2s8z0X9rdXiOMZ4hXxagkdGn2Xns80
+        U28nAFX+WrNNzxv3XVTulY/QWtZVdOkDCdCyVolQmQVxe6uozrMrXqds7JGMr77N5GTIZd
+        /GkXah2Ix2b17a3dZb9rRI+Sl/rglG0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1634289514;
+        s=susede2_ed25519; t=1634289677;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=jkqjzEwNHSECoBlQtoTSwpYhMOm5xCv5JA0JJwmOt+4=;
-        b=poWKAGXgSuT4jetl0EiizaHCY4q9eF7RzDWUIhl6ge7GnjftG2SBDHU3YGlNDNSPWR5k6s
-        IH26HWwmbjY0sHDw==
+        bh=dVv9mIFIib0sh5t49gp7uep8alWhoBfhNtu2aGFmLLU=;
+        b=kKfnIOi2SLvkFJlw1i7zq51TE3sZ2V1PKHFoPJw+IH2mBhN88WtSgVmUIrIS9yOWJjsouS
+        eZ0fMl6J1T4p8eDw==
 Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id C1949A3B84;
-        Fri, 15 Oct 2021 09:18:34 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTP id 5A45DA3B88;
+        Fri, 15 Oct 2021 09:21:17 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id A40E91E0A40; Fri, 15 Oct 2021 11:18:34 +0200 (CEST)
-Date:   Fri, 15 Oct 2021 11:18:34 +0200
+        id 3C3881E0A40; Fri, 15 Oct 2021 11:21:17 +0200 (CEST)
+Date:   Fri, 15 Oct 2021 11:21:17 +0200
 From:   Jan Kara <jack@suse.cz>
 To:     Gabriel Krisman Bertazi <krisman@collabora.com>
 Cc:     jack@suse.com, amir73il@gmail.com, djwong@kernel.org,
         tytso@mit.edu, dhowells@redhat.com, khazhy@google.com,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-api@vger.kernel.org, repnop@google.com, kernel@collabora.com
-Subject: Re: [PATCH v7 01/28] fsnotify: pass data_type to fsnotify_name()
-Message-ID: <20211015091834.GB23102@quack2.suse.cz>
+Subject: Re: [PATCH v7 03/28] fsnotify: clarify contract for create event
+ hooks
+Message-ID: <20211015092117.GC23102@quack2.suse.cz>
 References: <20211014213646.1139469-1-krisman@collabora.com>
- <20211014213646.1139469-2-krisman@collabora.com>
+ <20211014213646.1139469-4-krisman@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211014213646.1139469-2-krisman@collabora.com>
+In-Reply-To: <20211014213646.1139469-4-krisman@collabora.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 14-10-21 18:36:19, Gabriel Krisman Bertazi wrote:
+On Thu 14-10-21 18:36:21, Gabriel Krisman Bertazi wrote:
 > From: Amir Goldstein <amir73il@gmail.com>
 > 
-> Align the arguments of fsnotify_name() to those of fsnotify().
+> Clarify argument names and contract for fsnotify_create() and
+> fsnotify_mkdir() to reflect the anomaly of kernfs, which leaves dentries
+> negavite after mkdir/create.
 > 
+> Remove the WARN_ON(!inode) in audit code that were added by the Fixes
+> commit under the wrong assumption that dentries cannot be negative after
+> mkdir/create.
+> 
+> Fixes: aa93bdc5500c ("fsnotify: use helpers to access data by data_type")
+> Link: https://lore.kernel.org/linux-fsdevel/87mtp5yz0q.fsf@collabora.com/
+> Reported-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
@@ -70,65 +80,91 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
+
 > ---
->  include/linux/fsnotify.h | 22 +++++++++++++---------
->  1 file changed, 13 insertions(+), 9 deletions(-)
+>  include/linux/fsnotify.h | 22 ++++++++++++++++------
+>  kernel/audit_fsnotify.c  |  3 +--
+>  kernel/audit_watch.c     |  3 +--
+>  3 files changed, 18 insertions(+), 10 deletions(-)
 > 
 > diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-> index 12d3a7d308ab..d1144d7c3536 100644
+> index df0fa4687a18..1e5f7435a4b5 100644
 > --- a/include/linux/fsnotify.h
 > +++ b/include/linux/fsnotify.h
-> @@ -26,20 +26,21 @@
->   * FS_EVENT_ON_CHILD mask on the parent inode and will not be reported if only
->   * the child is interested and not the parent.
+> @@ -192,16 +192,22 @@ static inline void fsnotify_inoderemove(struct inode *inode)
+>  
+>  /*
+>   * fsnotify_create - 'name' was linked in
+> + *
+> + * Caller must make sure that dentry->d_name is stable.
+> + * Note: some filesystems (e.g. kernfs) leave @dentry negative and instantiate
+> + * ->d_inode later
 >   */
-> -static inline void fsnotify_name(struct inode *dir, __u32 mask,
-> -				 struct inode *child,
-> -				 const struct qstr *name, u32 cookie)
-> +static inline int fsnotify_name(__u32 mask, const void *data, int data_type,
-> +				struct inode *dir, const struct qstr *name,
-> +				u32 cookie)
+> -static inline void fsnotify_create(struct inode *inode, struct dentry *dentry)
+> +static inline void fsnotify_create(struct inode *dir, struct dentry *dentry)
 >  {
->  	if (atomic_long_read(&dir->i_sb->s_fsnotify_connectors) == 0)
-> -		return;
-> +		return 0;
+> -	audit_inode_child(inode, dentry, AUDIT_TYPE_CHILD_CREATE);
+> +	audit_inode_child(dir, dentry, AUDIT_TYPE_CHILD_CREATE);
 >  
-> -	fsnotify(mask, child, FSNOTIFY_EVENT_INODE, dir, name, NULL, cookie);
-> +	return fsnotify(mask, data, data_type, dir, name, NULL, cookie);
->  }
->  
->  static inline void fsnotify_dirent(struct inode *dir, struct dentry *dentry,
->  				   __u32 mask)
->  {
-> -	fsnotify_name(dir, mask, d_inode(dentry), &dentry->d_name, 0);
-> +	fsnotify_name(mask, d_inode(dentry), FSNOTIFY_EVENT_INODE,
-> +		      dir, &dentry->d_name, 0);
->  }
->  
->  static inline void fsnotify_inode(struct inode *inode, __u32 mask)
-> @@ -154,8 +155,10 @@ static inline void fsnotify_move(struct inode *old_dir, struct inode *new_dir,
->  		new_dir_mask |= FS_ISDIR;
->  	}
->  
-> -	fsnotify_name(old_dir, old_dir_mask, source, old_name, fs_cookie);
-> -	fsnotify_name(new_dir, new_dir_mask, source, new_name, fs_cookie);
-> +	fsnotify_name(old_dir_mask, source, FSNOTIFY_EVENT_INODE,
-> +		      old_dir, old_name, fs_cookie);
-> +	fsnotify_name(new_dir_mask, source, FSNOTIFY_EVENT_INODE,
-> +		      new_dir, new_name, fs_cookie);
->  
->  	if (target)
->  		fsnotify_link_count(target);
-> @@ -209,7 +212,8 @@ static inline void fsnotify_link(struct inode *dir, struct inode *inode,
->  	fsnotify_link_count(inode);
->  	audit_inode_child(dir, new_dentry, AUDIT_TYPE_CHILD_CREATE);
->  
-> -	fsnotify_name(dir, FS_CREATE, inode, &new_dentry->d_name, 0);
-> +	fsnotify_name(FS_CREATE, inode, FSNOTIFY_EVENT_INODE,
-> +		      dir, &new_dentry->d_name, 0);
+> -	fsnotify_dirent(inode, dentry, FS_CREATE);
+> +	fsnotify_dirent(dir, dentry, FS_CREATE);
 >  }
 >  
 >  /*
+>   * fsnotify_link - new hardlink in 'inode' directory
+> + *
+> + * Caller must make sure that new_dentry->d_name is stable.
+>   * Note: We have to pass also the linked inode ptr as some filesystems leave
+>   *   new_dentry->d_inode NULL and instantiate inode pointer later
+>   */
+> @@ -230,12 +236,16 @@ static inline void fsnotify_unlink(struct inode *dir, struct dentry *dentry)
+>  
+>  /*
+>   * fsnotify_mkdir - directory 'name' was created
+> + *
+> + * Caller must make sure that dentry->d_name is stable.
+> + * Note: some filesystems (e.g. kernfs) leave @dentry negative and instantiate
+> + * ->d_inode later
+>   */
+> -static inline void fsnotify_mkdir(struct inode *inode, struct dentry *dentry)
+> +static inline void fsnotify_mkdir(struct inode *dir, struct dentry *dentry)
+>  {
+> -	audit_inode_child(inode, dentry, AUDIT_TYPE_CHILD_CREATE);
+> +	audit_inode_child(dir, dentry, AUDIT_TYPE_CHILD_CREATE);
+>  
+> -	fsnotify_dirent(inode, dentry, FS_CREATE | FS_ISDIR);
+> +	fsnotify_dirent(dir, dentry, FS_CREATE | FS_ISDIR);
+>  }
+>  
+>  /*
+> diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
+> index 60739d5e3373..02348b48447c 100644
+> --- a/kernel/audit_fsnotify.c
+> +++ b/kernel/audit_fsnotify.c
+> @@ -160,8 +160,7 @@ static int audit_mark_handle_event(struct fsnotify_mark *inode_mark, u32 mask,
+>  
+>  	audit_mark = container_of(inode_mark, struct audit_fsnotify_mark, mark);
+>  
+> -	if (WARN_ON_ONCE(inode_mark->group != audit_fsnotify_group) ||
+> -	    WARN_ON_ONCE(!inode))
+> +	if (WARN_ON_ONCE(inode_mark->group != audit_fsnotify_group))
+>  		return 0;
+>  
+>  	if (mask & (FS_CREATE|FS_MOVED_TO|FS_DELETE|FS_MOVED_FROM)) {
+> diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+> index 2acf7ca49154..223eed7b39cd 100644
+> --- a/kernel/audit_watch.c
+> +++ b/kernel/audit_watch.c
+> @@ -472,8 +472,7 @@ static int audit_watch_handle_event(struct fsnotify_mark *inode_mark, u32 mask,
+>  
+>  	parent = container_of(inode_mark, struct audit_parent, mark);
+>  
+> -	if (WARN_ON_ONCE(inode_mark->group != audit_watch_group) ||
+> -	    WARN_ON_ONCE(!inode))
+> +	if (WARN_ON_ONCE(inode_mark->group != audit_watch_group))
+>  		return 0;
+>  
+>  	if (mask & (FS_CREATE|FS_MOVED_TO) && inode)
 > -- 
 > 2.33.0
 > 
