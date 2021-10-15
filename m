@@ -2,92 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 625AA42E933
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 08:41:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8D4A42E9A3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 09:04:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235597AbhJOGnn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Oct 2021 02:43:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60062 "EHLO
+        id S235851AbhJOHGT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Oct 2021 03:06:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229716AbhJOGnm (ORCPT
+        with ESMTP id S231265AbhJOHGT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Oct 2021 02:43:42 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C454EC061570;
-        Thu, 14 Oct 2021 23:41:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=G5S9y2nrrDptxuOLoJNOSSyaTHp02MaC9gd62byHcIA=; b=R+dIUYtEXxFA2exYyciVgSKT8P
-        qzqHlPTAFgWqgf9++8AocTdLtaWHaPNsLR3dk6Ywj4i49KnXkndgi53DN/al/ZisyhTWfAIXnxZWP
-        HyE6FiUSRwVvz2C5cULLmG1HQ6yEJhFIazKoRlVz3eJEBkP9O09nsq5DE4Gv54sUuA+hIH9i4UcHc
-        gEQSuRUBTFRb/eBYssnKtdYgbFe9Yu6Y9n4YcSruMyGYKcQIoJ9Y+iWBmn3SocGFHdgfH7ZI2YBDx
-        qOaIp8PE0trLuxiaZO6/VNmeJlug089okBR/79IBjBJ8YVQMnTWqt2bLFDXZtdQLvN6FXm/RfdwtF
-        eg4yBWfg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mbGuO-005Zjs-AH; Fri, 15 Oct 2021 06:41:36 +0000
-Date:   Thu, 14 Oct 2021 23:41:36 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, djwong@kernel.org,
-        dan.j.williams@intel.com, david@fromorbit.com, hch@infradead.org,
-        jane.chu@oracle.com
-Subject: Re: [PATCH v7 7/8] xfs: Implement ->notify_failure() for XFS
-Message-ID: <YWkioFQrfKAL8PvR@infradead.org>
-References: <20210924130959.2695749-1-ruansy.fnst@fujitsu.com>
- <20210924130959.2695749-8-ruansy.fnst@fujitsu.com>
+        Fri, 15 Oct 2021 03:06:19 -0400
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E62EDC061570;
+        Fri, 15 Oct 2021 00:04:12 -0700 (PDT)
+Received: by mail-io1-xd2b.google.com with SMTP id y67so6610964iof.10;
+        Fri, 15 Oct 2021 00:04:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O+hAqbWu2mfa+qe+Vt0ceTiplNgxQ0O07PtIOcUZqjc=;
+        b=nkieqHNuB9ycF4I91rX5y21L57X9eEZXB497pbVwMsmhIxmznd0TElDoC7KlJ9KbKC
+         Mh8j1nhuf4q9yofTCpigMQUKHaWTvOO2iIJyTOnXbGeSjpKOb3L5o5ipC+kxE/dLJATY
+         Rql1XidXx4UUrkMlJLtfOIqZ1KdYaEw3v0ElPjuKig+98OO+mOrEDwLzdXb9bxSzWGEF
+         pe7degHcj70i8Nnj/E6BYf5WAPnccAnE7jz9BRZ3P6qNwDGn0iFpkKKrEOVI0KtNnSGk
+         OOFlZKQtLgCZDYspNot0q4EGWc+Djio2u39iJD/n5ASR5SlEtA/jMMQuLKSaYlGy4+nx
+         BKgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=O+hAqbWu2mfa+qe+Vt0ceTiplNgxQ0O07PtIOcUZqjc=;
+        b=z9qXJB6eajRhHMUYEkR/GP1mUIXgwoxgYAl8TjImxSrWhW6Jay4bsVzz7Qojav3Tkh
+         9dYmhQTJ2vYu3ALNXH/sszgO3PnywG+tjVWiJ5Cm/xCTN31/O6iXhW177ghyutyu7Nil
+         b8C8vXDjs3XSjuKnmVFPzynRrmzwvBKCrR0p5MJZCXW4NCQIu2VrIuPRilCSw3Uagibo
+         KgCov8UMahKoNasAGWwRnUZLjWAZsLvDr95tdqULAGeUcRFarnQMVTLQETQV6kzEnYXS
+         AGVV913JjfFk/C+7Yn+7rX0GqHiBaoSAl5mPyZHpGUg2tGhpQPc7sM8Z614h2T81cQvJ
+         pAjw==
+X-Gm-Message-State: AOAM533tnFcgv9hSmuz8/zy0TvORVFCCMRHnBw+5VZowTlI9KPwV2ESh
+        8dhA6PO76U1+bcq8rT1TrLVdr384uQDpIkP6lJ4=
+X-Google-Smtp-Source: ABdhPJwr8IXg5WIX8fKwSqnexqFTk7YLdf5pDPEmi33jsbk5aRJDisrn6IT7QVFUGLM1SGtVkOziEzhkuUyfvXr6DW0=
+X-Received: by 2002:a02:6987:: with SMTP id e129mr7299481jac.136.1634281452402;
+ Fri, 15 Oct 2021 00:04:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210924130959.2695749-8-ruansy.fnst@fujitsu.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20211014213646.1139469-1-krisman@collabora.com> <20211014213646.1139469-21-krisman@collabora.com>
+In-Reply-To: <20211014213646.1139469-21-krisman@collabora.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 15 Oct 2021 10:04:01 +0300
+Message-ID: <CAOQ4uxh91CD1x3WXpV3q-Ct40v7gSrr7bAZ8jKjUyPcQ81Eeqw@mail.gmail.com>
+Subject: Re: [PATCH v7 20/28] fanotify: Support enqueueing of error events
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Jan Kara <jack@suse.com>, "Darrick J. Wong" <djwong@kernel.org>,
+        Theodore Tso <tytso@mit.edu>,
+        David Howells <dhowells@redhat.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Matthew Bobrowski <repnop@google.com>, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 24, 2021 at 09:09:58PM +0800, Shiyang Ruan wrote:
-> +void fs_dax_register_holder(struct dax_device *dax_dev, void *holder,
-> +		const struct dax_holder_operations *ops)
+On Fri, Oct 15, 2021 at 12:39 AM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
+>
+> Once an error event is triggered, collect the data from the fs error
+> report and enqueue it in the notification group, similarly to what is
+> done for other events.  FAN_FS_ERROR is no longer handled specially,
+> since the memory is now handled by a preallocated mempool.
+>
+> For now, make the event unhashed.  A future patch implements merging for
+> these kinds of events.
+>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> ---
+>  fs/notify/fanotify/fanotify.c | 35 +++++++++++++++++++++++++++++++++++
+>  fs/notify/fanotify/fanotify.h |  6 ++++++
+>  2 files changed, 41 insertions(+)
+>
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index 01d68dfc74aa..9b970359570a 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -574,6 +574,27 @@ static struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
+>         return &fne->fae;
+>  }
+>
+> +static struct fanotify_event *fanotify_alloc_error_event(
+> +                                               struct fsnotify_group *group,
+> +                                               __kernel_fsid_t *fsid,
+> +                                               const void *data, int data_type)
 > +{
-> +	dax_set_holder(dax_dev, holder, ops);
-> +}
-> +EXPORT_SYMBOL_GPL(fs_dax_register_holder);
+> +       struct fs_error_report *report =
+> +                       fsnotify_data_error_report(data, data_type);
+> +       struct fanotify_error_event *fee;
 > +
-> +void fs_dax_unregister_holder(struct dax_device *dax_dev)
-> +{
-> +	dax_set_holder(dax_dev, NULL, NULL);
-> +}
-> +EXPORT_SYMBOL_GPL(fs_dax_unregister_holder);
-> +
-> +void *fs_dax_get_holder(struct dax_device *dax_dev)
-> +{
-> +	return dax_get_holder(dax_dev);
-> +}
-> +EXPORT_SYMBOL_GPL(fs_dax_get_holder);
+> +       if (WARN_ON(!report))
 
-These should not be in a XFS patch.  But why do we even need this
-wrappers?
+WARN_ON_ONCE please.
 
-> @@ -377,6 +385,8 @@ xfs_close_devices(
->  
->  		xfs_free_buftarg(mp->m_logdev_targp);
->  		xfs_blkdev_put(logdev);
-> +		if (dax_logdev)
-> +			fs_dax_unregister_holder(dax_logdev);
->  		fs_put_dax(dax_logdev);
+Commit message claims to collect the data from the report,
+but this commit does nothing with the report??
 
-I'd prefer to include the fs_dax_unregister_holder in the fs_put_dax
-call to avoid callers failing to unregister it.
-
-> @@ -411,6 +425,9 @@ xfs_open_devices(
->  	struct block_device	*logdev = NULL, *rtdev = NULL;
->  	int			error;
->  
-> +	if (dax_ddev)
-> +		fs_dax_register_holder(dax_ddev, mp,
-> +				&xfs_dax_holder_operations);
-
-I'd include the holder registration with fs_dax_get_by_bdev as well.
+Thanks,
+Amir.
