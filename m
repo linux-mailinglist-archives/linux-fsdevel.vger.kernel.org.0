@@ -2,167 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD60142E748
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 05:33:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7035342E86F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 07:39:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234150AbhJODfU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Oct 2021 23:35:20 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:35135 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234130AbhJODfT (ORCPT
+        id S235354AbhJOFl7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Oct 2021 01:41:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46400 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229706AbhJOFl6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Oct 2021 23:35:19 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R501e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Us2T8YK_1634268792;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Us2T8YK_1634268792)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 15 Oct 2021 11:33:12 +0800
-Subject: Re: [PATCH v6 0/7] fuse,virtiofs: support per-file DAX
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-To:     vgoyal@redhat.com, stefanha@redhat.com, miklos@szeredi.hub
-Cc:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
-References: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
-Message-ID: <7b87b4c9-374c-f1db-37ac-d34002fc5a05@linux.alibaba.com>
-Date:   Fri, 15 Oct 2021 11:33:12 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
+        Fri, 15 Oct 2021 01:41:58 -0400
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D64F1C061570;
+        Thu, 14 Oct 2021 22:39:52 -0700 (PDT)
+Received: by mail-il1-x12d.google.com with SMTP id d11so5942164ilc.8;
+        Thu, 14 Oct 2021 22:39:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pJH54z5FrApYnv352nJKhrkNVvoyaeKQ0P2zUWx5Lm0=;
+        b=o4uiMlwrKyI52tb61elVw0KsuZ2tRZNqn0oHZUglxYBSgrJ7Zo50pSd39h/jINBarR
+         hzng2IUkAFBHzWo26pbi9gGuK3N0dGx0j1fbkPHMq5t/xQ1FrAv9Vd90ff9UPqu+Uj5H
+         VQW430K09xTbyRJcMVkSdTbr9jiWdDGhmHKRQiJyxeJQU7v+TA9hlOBuDdMKFhARrBNJ
+         si8FoIH4AJ3MeyNH12KlYOSkg6uAeEMIpECljqPLiaUCIpLCpDd42W5+Te7oYk95EIsx
+         3TBmN5Ee05t6hTbvWl4IsIS9kfLIsaoKJIAGNreBT5z/JzkmOS+t9REs1yT7+aSKAjIt
+         DzHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pJH54z5FrApYnv352nJKhrkNVvoyaeKQ0P2zUWx5Lm0=;
+        b=TYl7P6NBg25L8Ljh4+vEK19EIoxdMiytGI/YmdV1RYfJB3hY5hyrg9z1YCkVpH9yoB
+         2Yzrof4LNGYh5xzhScLWCEhpZa8TjdHvGmEe3QdtanHpSGWqB5hry1mUzehM/ltymEH1
+         wghH22TzZcAs2ZsQeP1MyuycQoU/9gA037/tYZlTe9hFsVkV8aJCbOJmHHOZKOu5tfsY
+         PU14S31+YETuY9fLu+wUc8Pd7uYaFFbsqV1VUXrDZ1mb4wBIDo6EUpIBYkpymfLZsb2C
+         OfkRW8QUbGaMZOrWfmq3nH7fEX/UEJmbAE17zJvk9k97jap00yA+EAXebqUvKfwNYDO2
+         iU6g==
+X-Gm-Message-State: AOAM53202ipoSc0ne92ZjbVesUiwaxM47agofONvGXrN0XLvL8eoN3Wt
+        YboKyPpizoPebpq2U+fkIgV7A+MTYTTUQcIyB3K5bIdt1A4=
+X-Google-Smtp-Source: ABdhPJz+zXN8mVBqmPXk3Dlpb7LQQN+eENOE2Z7mVprofVOqD6HhbR+jf7IGnKchfIgBHTlD7Xq9fzd9AQZUj4INd/M=
+X-Received: by 2002:a05:6e02:1be8:: with SMTP id y8mr2458946ilv.24.1634276390657;
+ Thu, 14 Oct 2021 22:39:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20211014213646.1139469-1-krisman@collabora.com> <20211014213646.1139469-11-krisman@collabora.com>
+In-Reply-To: <20211014213646.1139469-11-krisman@collabora.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 15 Oct 2021 08:39:39 +0300
+Message-ID: <CAOQ4uxhNDjPbcdLGYAQp78TwTkPWxfoeQ=7OoKfkQG0SW6X4wg@mail.gmail.com>
+Subject: Re: [PATCH v7 10/28] fsnotify: Retrieve super block from the data field
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Jan Kara <jack@suse.com>, "Darrick J. Wong" <djwong@kernel.org>,
+        Theodore Tso <tytso@mit.edu>,
+        David Howells <dhowells@redhat.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Matthew Bobrowski <repnop@google.com>, kernel@collabora.com,
+        Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, any comment?
+On Fri, Oct 15, 2021 at 12:38 AM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
+>
+> Some file system events (i.e. FS_ERROR) might not be associated with an
+> inode or directory.  For these, we can retrieve the super block from the
+> data field.  But, since the super_block is available in the data field
+> on every event type, simplify the code to always retrieve it from there,
+> through a new helper.
+>
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-On 10/11/21 11:00 AM, Jeffle Xu wrote:
-> changes since v5:
-> Overall Design Changes:
-> 1. virtiofsd now supports ioctl (only FS_IOC_SETFLAGS and
->   FS_IOC_FSSETXATTR), so that users inside guest could set/clear
->   persistent inode flags now. (FUSE kernel module has already supported
->   .ioctl(), virtiofsd need to suuport it.)
-> 2. When FUSE client is mounted with '-o dax=inode', it indicates that
->   whether DAX shall be enabled or not for one specific file is
->   completely determined by FUSE server while FUSE client has no say on
->   it, and the decision whether DAX shall be enabled or not for specific
->   file is communicated through FUSE_ATTR_DAX flag of FUSE protocol. The
->   algorithm used by virtiofsd to determine whether DAX shall be enabled
->   or not is totally implementation specific, and thus the following
->   scenario may exist: users inside guest has already set related persistent
->   inode flag (i.e. FS_XFLAG_DAX) on corresponding file but FUSE server finnaly
->   decides not to enable DAX for this file. This slight semantic difference
->   is documented in patch 7. Also because of this, d_mark_dontcache() is
->   not called when FS_IOC_SETFLAGS/FS_IOC_FSSETXATTR ioctl is done inside
->   guest. It's delayed to be done if the FUSE_ATTR_DAX flag **indeed**
->   changes (as showed in patch 6).
-> 3. patch 1: slightly modify logic of fuse_should_enable_dax()
-> 4. patch 4: add back negotiation during FUSE_INIT. FUSE client shall
->   advertise to FUSE server that it's in per-file DAX mode, so that FUSE
->   server may omit querying persistent inode flags on host if FUSE client
->   is not mounted in per-file DAX mode, giving querying persistent inode
->   flags could be quite expensive.
-> 
-> 
-> chanegs since v4:
-> - drop support for setting/clearing FS_DAX inside guest
-> - and thus drop the negotiation phase during FUSE_INIT
-> 
-> This patchset adds support of per-file DAX for virtiofs, which is
-> inspired by Ira Weiny's work on ext4[1] and xfs[2].
-> 
-> Any comment is welcome.
-> 
-> [1] commit 9cb20f94afcd ("fs/ext4: Make DAX mount option a tri-state")
-> [2] commit 02beb2686ff9 ("fs/xfs: Make DAX mount option a tri-state")
-> 
-> [Purpose]
-> DAX may be limited in some specific situation. When the number of usable
-> DAX windows is under watermark, the recalim routine will be triggered to
-> reclaim some DAX windows. It may have a negative impact on the
-> performance, since some processes may need to wait for DAX windows to be
-> recalimed and reused then. To mitigate the performance degradation, the
-> overall DAX window need to be expanded larger.
-> 
-> However, simply expanding the DAX window may not be a good deal in some
-> scenario. To maintain one DAX window chunk (i.e., 2MB in size), 32KB
-> (512 * 64 bytes) memory footprint will be consumed for page descriptors
-> inside guest, which is greater than the memory footprint if it uses
-> guest page cache when DAX disabled. Thus it'd better disable DAX for
-> those files smaller than 32KB, to reduce the demand for DAX window and
-> thus avoid the unworthy memory overhead.
-> 
-> Per-file DAX feature is introduced to address this issue, by offering a
-> finer grained control for dax to users, trying to achieve a balance
-> between performance and memory overhead.
-> 
-> 
-> [Note]
-> When the per-file DAX hint changes while the file is still *opened*, it
-> is quite complicated and maybe fragile to dynamically change the DAX
-> state, since dynamic switching needs to switch a_ops atomiclly. Ira
-> Weiny had ever implemented a so called i_aops_sem lock [3] but
-> eventually gave up since the complexity of the implementation
-> [4][5][6][7].
-> 
-> Hence mark the inode and corresponding dentries as DONE_CACHE once the
-> per-file DAX hint changes, so that the inode instance will be evicted
-> and freed as soon as possible once the file is closed and the last
-> reference to the inode is put. And then when the file gets reopened next
-> time, the new instantiated inode will reflect the new DAX state.
-> 
-> In summary, when the per-file DAX hint changes for an *opened* file, the
-> DAX state of the file won't be updated until this file is closed and
-> reopened later. This is also how ext4/xfs per-file DAX works.
-> 
-> [3] https://lore.kernel.org/lkml/20200227052442.22524-7-ira.weiny@intel.com/
-> [4] https://patchwork.kernel.org/project/xfs/cover/20200407182958.568475-1-ira.weiny@intel.com/
-> [5] https://lore.kernel.org/lkml/20200305155144.GA5598@lst.de/
-> [6] https://lore.kernel.org/lkml/20200401040021.GC56958@magnolia/
-> [7] https://lore.kernel.org/lkml/20200403182904.GP80283@magnolia/
-> 
-> changes since v3:
-> - bug fix (patch 6): s/"IS_DAX(inode) != newdax"/"!!IS_DAX(inode) !=
->   newdax"
-> - during FUSE_INIT, advertise capability for per-file DAX only when
->   mounted as "-o dax=inode" (patch 4)
-> 
-> changes since v2:
-> - modify fuse_show_options() accordingly to make it compatible with
->   new tri-state mount option (patch 2)
-> - extract FUSE protocol changes into one separate patch (patch 3)
-> - FUSE server/client need to negotiate if they support per-file DAX
->   (patch 4)
-> - extract DONT_CACHE logic into patch 6/7
-> 
-> v5: https://lore.kernel.org/all/20210923092526.72341-1-jefflexu@linux.alibaba.com/
-> v4: https://lore.kernel.org/linux-fsdevel/20210817022220.17574-1-jefflexu@linux.alibaba.com/
-> v3: https://www.spinics.net/lists/linux-fsdevel/msg200852.html
-> v2: https://www.spinics.net/lists/linux-fsdevel/msg199584.html
-> v1: https://www.spinics.net/lists/linux-virtualization/msg51008.html
-> 
-> 
-> Jeffle Xu (7):
->   fuse: add fuse_should_enable_dax() helper
->   fuse: make DAX mount option a tri-state
->   fuse: support per-file DAX in fuse protocol
->   fuse: negotiate per-file DAX in FUSE_INIT
->   fuse: enable per-file DAX
->   fuse: mark inode DONT_CACHE when per-file DAX hint changes
->   Documentation/filesystem/dax: record DAX on virtiofs
-> 
->  Documentation/filesystems/dax.rst | 20 +++++++++++++++--
->  fs/fuse/dax.c                     | 36 ++++++++++++++++++++++++++++---
->  fs/fuse/file.c                    |  4 ++--
->  fs/fuse/fuse_i.h                  | 19 ++++++++++++----
->  fs/fuse/inode.c                   | 17 +++++++++++----
->  fs/fuse/virtio_fs.c               | 16 ++++++++++++--
->  include/uapi/linux/fuse.h         |  9 +++++++-
->  7 files changed, 103 insertions(+), 18 deletions(-)
-> 
-
--- 
-Thanks,
-Jeffle
+>
+> --
+> Changes since v6:
+>   - Always use data field for superblock retrieval
+> Changes since v5:
+>   - add fsnotify_data_sb handle to retrieve sb from the data field. (jan)
+> ---
+>  fs/notify/fsnotify.c             |  7 +++----
+>  include/linux/fsnotify_backend.h | 15 +++++++++++++++
+>  2 files changed, 18 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index 963e6ce75b96..fde3a1115a17 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -455,16 +455,16 @@ static void fsnotify_iter_next(struct fsnotify_iter_info *iter_info)
+>   *             @file_name is relative to
+>   * @file_name: optional file name associated with event
+>   * @inode:     optional inode associated with event -
+> - *             either @dir or @inode must be non-NULL.
+> - *             if both are non-NULL event may be reported to both.
+> + *             If @dir and @inode are both non-NULL, event may be
+> + *             reported to both.
+>   * @cookie:    inotify rename cookie
+>   */
+>  int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
+>              const struct qstr *file_name, struct inode *inode, u32 cookie)
+>  {
+>         const struct path *path = fsnotify_data_path(data, data_type);
+> +       struct super_block *sb = fsnotify_data_sb(data, data_type);
+>         struct fsnotify_iter_info iter_info = {};
+> -       struct super_block *sb;
+>         struct mount *mnt = NULL;
+>         struct inode *parent = NULL;
+>         int ret = 0;
+> @@ -483,7 +483,6 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
+>                  */
+>                 parent = dir;
+>         }
+> -       sb = inode->i_sb;
+>
+>         /*
+>          * Optimization: srcu_read_lock() has a memory barrier which can
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+> index b323d0c4b967..035438fe4a43 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -289,6 +289,21 @@ static inline const struct path *fsnotify_data_path(const void *data,
+>         }
+>  }
+>
+> +static inline struct super_block *fsnotify_data_sb(const void *data,
+> +                                                  int data_type)
+> +{
+> +       switch (data_type) {
+> +       case FSNOTIFY_EVENT_INODE:
+> +               return ((struct inode *)data)->i_sb;
+> +       case FSNOTIFY_EVENT_DENTRY:
+> +               return ((struct dentry *)data)->d_sb;
+> +       case FSNOTIFY_EVENT_PATH:
+> +               return ((const struct path *)data)->dentry->d_sb;
+> +       default:
+> +               return NULL;
+> +       }
+> +}
+> +
+>  enum fsnotify_obj_type {
+>         FSNOTIFY_OBJ_TYPE_INODE,
+>         FSNOTIFY_OBJ_TYPE_PARENT,
+> --
+> 2.33.0
+>
