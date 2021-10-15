@@ -2,92 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D6CC242F97E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 18:59:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AD3A42FA4C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 19:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241893AbhJORBq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Oct 2021 13:01:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34762 "EHLO
+        id S237743AbhJORdt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Oct 2021 13:33:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241879AbhJORBo (ORCPT
+        with ESMTP id S235261AbhJORds (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Oct 2021 13:01:44 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 963E1C061766
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Oct 2021 09:59:37 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id 66so9112935pgc.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 15 Oct 2021 09:59:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=KeY5Iupdn4Pa1b1ywzkz23CB7y+Fa3Cfufu6RZZIPYI=;
-        b=VfHpzO3tYcRdDu0YlVkKzx/ciItoc9jkR356sB11SejVmPNb6TbARwblxJNv77Pw+N
-         f8l5X6Xk6dZ16M5aIo4oyfynzDADoHwHbbl+nEWOg/Hpm3DtdjVVH1S12Q1eI7nmyOz6
-         dWXhnsHrWbhYXafHG9GJqGCTKk1oPJdLtiQOs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=KeY5Iupdn4Pa1b1ywzkz23CB7y+Fa3Cfufu6RZZIPYI=;
-        b=Z2L8P41ocUA89vgVamE17fBF9NsHyZ47n4p5XhSGW/j11eeaeI3Q3yO2zIQm/3V0iP
-         7nlDmMFdq9+hM503cuCoz5h3L2FJVi44JQkEsmAqHHh5CQ7z9q3oLDiDCNS1VBn/2UGV
-         BSBB1uvyo5wT4UYIzduhRFnvwwBpoTC8TZWXJcR1Kzo3f+HEakj+prwxD2WzLHAD+Hbj
-         QLJwtnFHx5lYDdKt18Q8R6Qi8CswGFBwSBIX4TNw3kXDup869X18DAx/+Pdc+TAzb6W6
-         D5vwSGP3MzX+s0Lzv5xUEW5VMmc5RbZ+d0aMsDXdW+NHGO4KgJWG39JjoNDndY1InQVn
-         sMbQ==
-X-Gm-Message-State: AOAM530ZgHQfXeQdw4MySCm1OJ4fE95mQ1EuVHu2o0Mv65kQWaniXvIR
-        lITMbI/Af0zlrOvCDb93R9I4cA==
-X-Google-Smtp-Source: ABdhPJyZcIPxqI061aZSIz4/wOG8MIjCzx1/IGr1O74KMeY0yclhOMeVn1PfQJDWXy+egSNKM0RvAw==
-X-Received: by 2002:a62:1bd2:0:b0:44c:db2e:5a88 with SMTP id b201-20020a621bd2000000b0044cdb2e5a88mr13192615pfb.29.1634317177017;
-        Fri, 15 Oct 2021 09:59:37 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t38sm1001799pfg.102.2021.10.15.09.59.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Oct 2021 09:59:35 -0700 (PDT)
-Date:   Fri, 15 Oct 2021 09:59:35 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Coly Li <colyli@suse.de>,
-        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
-        David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, drbd-dev@lists.linbit.com,
-        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org,
-        Anand Jain <anand.jain@oracle.com>,
-        Chaitanya Kulkarni <kch@nvidia.com>
-Subject: Re: [PATCH 12/30] btrfs: use bdev_nr_bytes instead of open coding it
-Message-ID: <202110150959.D3A3EBD2DD@keescook>
-References: <20211015132643.1621913-1-hch@lst.de>
- <20211015132643.1621913-13-hch@lst.de>
+        Fri, 15 Oct 2021 13:33:48 -0400
+Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26BA6C061570;
+        Fri, 15 Oct 2021 10:31:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=uUlcTDK4XPU+iizrpIkJOrRHPABQ0RGWVp54/0NzJKk=; b=NgbjHiyaDO4zvgJzUVTEBWtoLd
+        MxI2VAOvKixcFxmUR9Q78HrsKsnDB2feafuRocMJlVJca+AtlN2zmCFgfeF73UGfFhvY36HHdpv+c
+        p1/8xX3sPuI7ChCJO1bKSWXZ0nrU7NiH+lVFMaTQ4HoVgLCIiqAeSMRNDIBy98+Bb908T9VbJT4zJ
+        VTKMweCE7STFbx6SekAkMWFyslODFau0/CJz9pXg1M5OcXwK3M7uRgMch3FDaVwHYbHdPwaAjj2ZP
+        IHpqOF83NJkwFyvrlkb19rWiAs7nWP3NODSCnSsYVSn/uKy59n0CpkMd0lNUHlfse0jti5fbGEnEE
+        EJKPi/Fg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mbR3L-008L4Y-Lv; Fri, 15 Oct 2021 17:31:31 +0000
+Date:   Fri, 15 Oct 2021 10:31:31 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     tj@kernel.org, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org, minchan@kernel.org, jeyu@kernel.org,
+        shuah@kernel.org, bvanassche@acm.org, dan.j.williams@intel.com,
+        joe@perches.com, tglx@linutronix.de, keescook@chromium.org,
+        rostedt@goodmis.org, linux-spdx@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
+Message-ID: <YWm68xUnAofop3PZ@bombadil.infradead.org>
+References: <20210927163805.808907-1-mcgrof@kernel.org>
+ <20210927163805.808907-12-mcgrof@kernel.org>
+ <YWeOJP2UJWYF94fu@T590>
+ <YWeR4moCRh+ZHOmH@T590>
+ <YWiSAN6xfYcUDJCb@bombadil.infradead.org>
+ <YWjCpLUNPF3s4P2U@T590>
+ <YWjJ0O7K+31Iz3ox@bombadil.infradead.org>
+ <YWk9e957Hb+I7HvR@T590>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211015132643.1621913-13-hch@lst.de>
+In-Reply-To: <YWk9e957Hb+I7HvR@T590>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 15, 2021 at 03:26:25PM +0200, Christoph Hellwig wrote:
-> Use the proper helper to read the block device size.
+On Fri, Oct 15, 2021 at 04:36:11PM +0800, Ming Lei wrote:
+> On Thu, Oct 14, 2021 at 05:22:40PM -0700, Luis Chamberlain wrote:
+> > On Fri, Oct 15, 2021 at 07:52:04AM +0800, Ming Lei wrote:
+> ...
+> > > 
+> > > We need to understand the exact reason why there is still cpuhp node
+> > > left, can you share us the exact steps for reproducing the issue?
+> > > Otherwise we may have to trace and narrow down the reason.
+> > 
+> > See my commit log for my own fix for this issue.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> OK, thanks!
+> 
+> I can reproduce the issue, and the reason is that reset_store fails
+> zram_remove() when unloading module, then the warning is caused.
+> 
+> The top 3 patches in the following tree can fix the issue:
+> 
+> https://github.com/ming1/linux/commits/my_v5.15-blk-dev
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Thanks for trying an alternative fix! A crash stops yes, however this
+also ends up leaving the driver in an unrecoverable state after a few
+tries. Ie, you CTRL-C the scripts and try again over and over again and
+the driver ends up in a situation where it just says:
 
--- 
-Kees Cook
+zram: Can't change algorithm for initialized device
+
+And the zram module can't be removed at that point.
+
+  Luis
