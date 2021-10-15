@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 918A042F30B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 15:29:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D869742F328
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 15:30:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239743AbhJONcB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Oct 2021 09:32:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40990 "EHLO
+        id S236508AbhJONcP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Oct 2021 09:32:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239692AbhJONav (ORCPT
+        with ESMTP id S235984AbhJONbA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Oct 2021 09:30:51 -0400
+        Fri, 15 Oct 2021 09:31:00 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD3ECC06177E;
-        Fri, 15 Oct 2021 06:27:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D775C0613E4;
+        Fri, 15 Oct 2021 06:27:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=7vy0+8EI8WhVCxcCPpT3E3xZPAv/h7863mIj0HITKC4=; b=xmxZRfmuHz0VqdbUt2oT7Bevb7
-        o4CxF77k0oZ/rzw6OpdJBPS9aNjql5VKLH61Ct4+Yt2AwCG9Jx1/flLXuMKMifBBrYJEUsR3a3fWo
-        B7GgHgzInH6ck+PsWqLyxhKxpsoA7oJm+IkApWIK+2n/B11ik1ZAwOeWyZ+W7My6FzsNx6yCXjDsq
-        WokCivh+P43Uf5GvNl5Jx72fqF06MBW34ChI9M77fHda72O4TYZYenz2y3vZhHHuSCndcxv7KTqfF
-        UOGDQMh4qkLEPZM/+G2Q0iCwlTWD8HrZ5I7oxXkmeQNSJGjTZWeE6ViTYA/CkqLpdtpO7s3ysge5I
-        Nmi3hQXA==;
+        bh=iTkNgdZQfGbb+9lDXMsfvC3u93+ih5z1kRRb3JEnPvg=; b=yDKo1RdywItRfhYIz9Nb0Th3N0
+        jyskvffRONUfYov3ps7NIN2bcYrSY1kVH/rMET0h4mckC5F6Z5dfoDXMuqQR+1A380T69k8/rna8o
+        Sz61wZWc0EMZkOEU0JBxwh/JPH5CogU8brK2JCYi07o9TNH4HLWgRfvZBsQZwDca4qiE6DToo/jRG
+        yEUlxHbhBZjStVK+nmtwj2d+uPVZtVn41SqpXrQ0/faySnYSYItmWfQqRwLSCQyxx5DdPJ3StERqv
+        +1OLTYHNUGVkssS83FORyRn/BoLOKKiLwQ3LHaPXG4WMNyyy/wyjDz8K+PX8AcqkGxM2lnKfOVXAB
+        9IL+N9+A==;
 Received: from [2001:4bb8:199:73c5:ddfe:9587:819b:83b0] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mbNFJ-007DRi-Uj; Fri, 15 Oct 2021 13:27:38 +0000
+        id 1mbNFM-007DUf-Fs; Fri, 15 Oct 2021 13:27:40 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
@@ -50,9 +50,9 @@ Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
         jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
         linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
         ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org
-Subject: [PATCH 20/30] ntfs3: use bdev_nr_bytes instead of open coding it
-Date:   Fri, 15 Oct 2021 15:26:33 +0200
-Message-Id: <20211015132643.1621913-21-hch@lst.de>
+Subject: [PATCH 21/30] pstore/blk: use bdev_nr_bytes instead of open coding it
+Date:   Fri, 15 Oct 2021 15:26:34 +0200
+Message-Id: <20211015132643.1621913-22-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211015132643.1621913-1-hch@lst.de>
 References: <20211015132643.1621913-1-hch@lst.de>
@@ -67,30 +67,39 @@ Use the proper helper to read the block device size.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/ntfs3/super.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/pstore/blk.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index 55bbc9200a10e..7ed2cb5e8b1d9 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -918,7 +918,6 @@ static int ntfs_fill_super(struct super_block *sb, void *data, int silent)
- 	int err;
- 	struct ntfs_sb_info *sbi;
- 	struct block_device *bdev = sb->s_bdev;
--	struct inode *bd_inode = bdev->bd_inode;
- 	struct request_queue *rq = bdev_get_queue(bdev);
- 	struct inode *inode = NULL;
- 	struct ntfs_inode *ni;
-@@ -967,7 +966,7 @@ static int ntfs_fill_super(struct super_block *sb, void *data, int silent)
+diff --git a/fs/pstore/blk.c b/fs/pstore/blk.c
+index 04ce58c939a0b..5d1fbaffd66a1 100644
+--- a/fs/pstore/blk.c
++++ b/fs/pstore/blk.c
+@@ -205,7 +205,6 @@ static ssize_t psblk_generic_blk_write(const char *buf, size_t bytes,
+ static int __register_pstore_blk(struct pstore_device_info *dev,
+ 				 const char *devpath)
+ {
+-	struct inode *inode;
+ 	int ret = -ENODEV;
  
- 	/* Parse boot. */
- 	err = ntfs_init_from_boot(sb, rq ? queue_logical_block_size(rq) : 512,
--				  bd_inode->i_size);
-+				  bdev_nr_bytes(bdev));
- 	if (err)
- 		goto out;
+ 	lockdep_assert_held(&pstore_blk_lock);
+@@ -217,14 +216,13 @@ static int __register_pstore_blk(struct pstore_device_info *dev,
+ 		goto err;
+ 	}
  
+-	inode = file_inode(psblk_file);
+-	if (!S_ISBLK(inode->i_mode)) {
++	if (!S_ISBLK(file_inode(psblk_file)->i_mode)) {
+ 		pr_err("'%s' is not block device!\n", devpath);
+ 		goto err_fput;
+ 	}
+ 
+-	inode = I_BDEV(psblk_file->f_mapping->host)->bd_inode;
+-	dev->zone.total_size = i_size_read(inode);
++	dev->zone.total_size =
++		bdev_nr_bytes(I_BDEV(psblk_file->f_mapping->host));
+ 
+ 	ret = __register_pstore_device(dev);
+ 	if (ret)
 -- 
 2.30.2
 
