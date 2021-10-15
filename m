@@ -2,88 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B76A742EC4F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 10:28:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E52D42EC65
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 10:30:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234301AbhJOIaW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Oct 2021 04:30:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56432 "EHLO
+        id S236961AbhJOIcg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Oct 2021 04:32:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234347AbhJOIaV (ORCPT
+        with ESMTP id S236998AbhJOIcf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Oct 2021 04:30:21 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38ABDC061753;
-        Fri, 15 Oct 2021 01:28:15 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id 187so7747620pfc.10;
-        Fri, 15 Oct 2021 01:28:15 -0700 (PDT)
+        Fri, 15 Oct 2021 04:32:35 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 899DAC061570;
+        Fri, 15 Oct 2021 01:30:29 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id y15so38567077lfk.7;
+        Fri, 15 Oct 2021 01:30:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=0aqBuWR/hjYtneqE/EKmSXtyBEhLi33Qu/EPQ3pbTwk=;
-        b=JNv/uNihnC9ZTKvWuE+dOSpWNoWgeykFPIeW60bQOwVPpbG3xspXVY0q6prlpAwCdi
-         mXLeWr1Wv+JVdxp5kR/6lVDN83tGSveA81mEakrlOb+4j789IWch2QFR17EJTEQnOUvy
-         bCEUASIoVm4zTzXsouTG8xdIL8Uri3dHoYOggLO54e/3VPNTcdyr8IMXujz+p3/WNTlK
-         BoMoQcfQQk9fW5kRVqqyCUGMLAfCLt0L1wvBz070Hqoo3ak1YpnpUMWBpTGhZivHUQru
-         800WLa65auzYDemxZFJkyIO3qY1VHe/9ZsGIM7ADvmf6Iof2Qcm/hXq4fbUcca3KYjYR
-         touA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=LpGoqEWei5FXrKy5qTqsLJCtKd2jpbBDiauT/XgCqN4=;
+        b=H72WQZEscxVJsu+eWElnCHCUXOukvxf46e1VnF83K6j9v7nsP3+19wEpz7B4f1RH7D
+         7CDRwUD6+N8ffcFTc90gVU5pND2FXfQAczcVAyc+7cURXriueOD/4YDedzYVABpNoroD
+         CYbL7Ap6c6L+IZ0oFn6Pp5fXTPK0x0xQ/yv6IXBB+YOnmisCKrOhBEB9/p0/K6f4hgNc
+         4Tugx6JtZJ0lXyGs+rBo7PkhfDGk9dg/c22xac9tr0RwGtyshlFFRFrcoSvnpaHcqizc
+         lv6y93SrtuS8i213itZv+77Ns3DncA1EpLruBOAv5Tasi/5JHb8KOa8ck10lCQclIq9H
+         yYNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=0aqBuWR/hjYtneqE/EKmSXtyBEhLi33Qu/EPQ3pbTwk=;
-        b=z1dmOMw6nwkIPf117MckPHtfFyW4f7JMdEHcfHJDHjrl5gBKcMQucTz5E+k9jTluSu
-         3pCVnNzvcAR+BlOhIEdwP7Rm7sOivXWSyrozlIs+joO5vjfCN5Ez8ryF95PNiuKbsqtz
-         XERB9HPgyH5ETsXINKuCZq23o14v+GjC7gOJhEBx98pzBqv8fr4ymH1w0EectDgh/KnE
-         ePiymd4+FZW60GcAmP8A/h1F72XuD5qWLBxpkDeQPBA4OUf32RbgPoO03l2RpRA6CSwH
-         rTRu+xfLV61GQkbToCOY3RSn6Q7JDUsAIub0Obox29h28Piac0d58Cz1+25CmljhqxI3
-         39Cg==
-X-Gm-Message-State: AOAM533D07z0VKEZM4N3xufMV8E07+97u3XWYsbgHjj8mPhRI0zDTrXm
-        b47BcCrxVkPdrGQQGps119ZpaDcnXa2r55B0
-X-Google-Smtp-Source: ABdhPJyxrCEVpejQ4OJkevuwlmPh1MUAOadDoiEQ7vhRA8mDXeGHPS8knVE5utP08N831l8WtS3gdw==
-X-Received: by 2002:a05:6a00:17a9:b0:44c:b95f:50a4 with SMTP id s41-20020a056a0017a900b0044cb95f50a4mr10189283pfg.6.1634286494401;
-        Fri, 15 Oct 2021 01:28:14 -0700 (PDT)
-Received: from [172.18.2.138] ([137.59.101.13])
-        by smtp.gmail.com with ESMTPSA id k14sm4320162pga.65.2021.10.15.01.28.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Oct 2021 01:28:14 -0700 (PDT)
-Subject: Re: [PATCH] fs: inode: use queue_rcu_work() instead of call_rcu()
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     willy@infradead.org, akpm@linux-foundation.org,
-        sunhao.th@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20211015080216.4871-1-qiang.zhang1211@gmail.com>
- <YWk195naAMYhh3EV@infradead.org>
-From:   Zqiang <qiang.zhang1211@gmail.com>
-Message-ID: <bcc1c2ec-e3f9-34b2-659e-b71fd149f677@gmail.com>
-Date:   Fri, 15 Oct 2021 16:28:10 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=LpGoqEWei5FXrKy5qTqsLJCtKd2jpbBDiauT/XgCqN4=;
+        b=bxssPl+b27tIwn//q/KKfP27Pfp6vRULefCMY7DGvIHKrODsIK7QgUmPH7oTIWQRLN
+         mWbX0j3yQuzcMkPMYOReOR6/cuXVAz8H3tk2t6lQIOb4H8wfHaPKX0YC6wyq1JjXJny4
+         PEhrxoToi/YfCpRf/oRhTFd+zLbLF7DGtnuTCAUxClMNGEI457djFe2DnbMWLXDcacBA
+         qed/b+wXKcE0fMP3NEpmY5PaLEN0YyNBtwSuC1q4+OLlFWQS951NDZln7DgkJMpvdP4X
+         /cqPne4439hYMbmQg7PpVWJv1IbqsQRbIZ2SbobjDgpUnRRNlFf8rRx+KrTM2UyG57Yr
+         DqFg==
+X-Gm-Message-State: AOAM531ypMPuGTvHHbWWxYDgi1FdX51isOlLGBtkWiRgr/STZ5Gkj1bp
+        xUMrsxJ7LwkFxeizBx0VFjQ=
+X-Google-Smtp-Source: ABdhPJyjX7GxxUZgQH2jAvzQ0Vlt+MCNSvpXHNNMMUEhpz//xRQC+cI+Z0eCH4vbBVyhrGxxsefqfg==
+X-Received: by 2002:a2e:9ad6:: with SMTP id p22mr11452577ljj.357.1634286627882;
+        Fri, 15 Oct 2021 01:30:27 -0700 (PDT)
+Received: from localhost (80-62-117-201-mobile.dk.customer.tdc.net. [80.62.117.201])
+        by smtp.gmail.com with ESMTPSA id s12sm438870lfc.256.2021.10.15.01.30.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Oct 2021 01:30:27 -0700 (PDT)
+Date:   Fri, 15 Oct 2021 10:30:26 +0200
+From:   Pankaj Raghav <pankydev8@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "Wunderlich, Mark" <mark.wunderlich@intel.com>,
+        "Vasudevan, Anil" <anil.vasudevan@intel.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nvme@lists.infradead.org,
+        Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH 14/16] block: switch polling to be bio based
+Message-ID: <20211015083026.3geaix6r6kcnncu7@quentin>
+References: <20211012111226.760968-1-hch@lst.de>
+ <20211012111226.760968-15-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <YWk195naAMYhh3EV@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211012111226.760968-15-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Oct 12, 2021 at 01:12:24PM +0200, Christoph Hellwig wrote:
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index 2b80c98fc373e..2a8689e949b4c 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -25,6 +25,7 @@ struct request;
+>  struct sg_io_hdr;
+>  struct blkcg_gq;
+>  struct blk_flush_queue;
+> +struct kiocb;
+>  struct pr_ops;
+>  struct rq_qos;
+>  struct blk_queue_stats;
+> @@ -550,7 +551,7 @@ static inline unsigned int blk_queue_depth(struct request_queue *q)
+>  
+>  extern int blk_register_queue(struct gendisk *disk);
+>  extern void blk_unregister_queue(struct gendisk *disk);
+> -blk_qc_t submit_bio_noacct(struct bio *bio);
+> +void submit_bio_noacct(struct bio *bio);
+>  
+>  extern int blk_lld_busy(struct request_queue *q);
+>  extern void blk_queue_split(struct bio **);
+> @@ -568,7 +569,8 @@ blk_status_t errno_to_blk_status(int errno);
+>  #define BLK_POLL_ONESHOT		(1 << 0)
+>  /* do not sleep to wait for the expected completion time */
+>  #define BLK_POLL_NOSLEEP		(1 << 1)
+Minor comment: Could we also have a flag #define BLK_POLL_SPIN 0?
+It can improve the readability from the caller side instead of having
+just a 0 to indicate spinning.
 
-On 2021/10/15 下午4:04, Christoph Hellwig wrote:
-> NAK.
->
-> 1. We need to sort ounderlying issue first as I already said _twice_.
-> 2. this has a major penality on all file systems
-
-This problem report by sunhao,  the log
-
-https://drive.google.com/file/d/1M5oyA_IcWSDB2XpnoX8SDmKJA3JhKltz/view?usp=sharing
-
-but I can not find useful information, not sure if it is related to the loop device driver.
-are you mean There is a problem about inode lifetime ?
-
-Thanks
-Zqiang
-
+Regards, 
+Pankaj Raghav
