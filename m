@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26E5842F345
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 15:30:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1EBA42F34E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 15:30:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239785AbhJONcn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Oct 2021 09:32:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40862 "EHLO
+        id S239823AbhJONcv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Oct 2021 09:32:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236275AbhJONbf (ORCPT
+        with ESMTP id S239467AbhJONbh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Oct 2021 09:31:35 -0400
+        Fri, 15 Oct 2021 09:31:37 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 798DDC0613EB;
-        Fri, 15 Oct 2021 06:28:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69950C0613EE;
+        Fri, 15 Oct 2021 06:28:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=2BXnVjh6IVLffeTtOJ/9VaVUkXZDs6MfXdXoGWHxD+Q=; b=FOn1MgJkWXo7QC8G1ka61gN6Mm
-        f7uNc6GhW6+z4RtlEvC+bcnOy09Lj5c1hgUyq7n7VPEirRdBdirTf1a+0EDGTrFXdd7dSkPCaicPh
-        BM8hdCUoqQWuNZ3X8WqroQYbaSS63d4nVEpz9et1HlzUgVmM+jbXyRYdctoAuOOfUfTjaMY3hmYDp
-        SksQ5ltEbeQLwvi0EhmIb5hIbtmzqBB+X9TlmSiN0890t0yF1fOoJS8ZSMtC97CF4OavuVBE+DV9D
-        x9J3v5oWlzasgOINidBrFKdwb7dkVu1uRXrI8VXV4ZVSW7h0S6tzf9dx3kLQw9vzr0FVgwiZoPbom
-        ifLLrULA==;
+        bh=kigc0P3dFD0qfhBcYu9B5JW+OSpi6OsZX3RdDiLn0fI=; b=LCt4ntrZkKIcG3YhEqxvrAUtxT
+        V3gC/ilrIwuQ6rMwyBixGsZPIKmIGI5iri2yGEkJgmD9XxkMSz6NT74oEfGFEA7hQHpzJFZ+3leeE
+        NwZam6HF/cTq3dB1ZAm+ZCgCIELOEB+AphB4iZlEdL5XDFyb9fn8I0d0fPTKmXapO75K2Ek2bPdgL
+        pBRNjtr+q3XLSUv6GekhIoXXSJ4MQIJ/ysnnyRWzSBz6l4kL803FFSlJ++APIB5pEcUU0Nl54FD2G
+        56wIKY5m+wHbLh1oZ/LykRavub0YOJ4kIFh5cTla1GyEz0I9addIH9LUh89uBVihmpBJnu4ErIk7G
+        NuUPA2WQ==;
 Received: from [2001:4bb8:199:73c5:ddfe:9587:819b:83b0] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mbNFU-007Dcz-9h; Fri, 15 Oct 2021 13:27:48 +0000
+        id 1mbNFW-007Dfi-S5; Fri, 15 Oct 2021 13:27:51 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
@@ -49,11 +49,10 @@ Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
         linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
         jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
         linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Chaitanya Kulkarni <kch@nvidia.com>
-Subject: [PATCH 24/30] block: use bdev_nr_bytes instead of open coding it in blkdev_fallocate
-Date:   Fri, 15 Oct 2021 15:26:37 +0200
-Message-Id: <20211015132643.1621913-25-hch@lst.de>
+        ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org
+Subject: [PATCH 25/30] block: add a sb_bdev_nr_blocks helper
+Date:   Fri, 15 Oct 2021 15:26:38 +0200
+Message-Id: <20211015132643.1621913-26-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211015132643.1621913-1-hch@lst.de>
 References: <20211015132643.1621913-1-hch@lst.de>
@@ -64,28 +63,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use the proper helper to read the block device size.
+Add a helper to return the size of sb->s_bdev in sb->s_blocksize_bits
+based unites.  Note that SECTOR_SHIFT has to be open coded due to
+include dependency issues for now, but I have a plan to sort that out
+eventually.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
 ---
- block/fops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/genhd.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/block/fops.c b/block/fops.c
-index 7bb9581a146cf..a6a4d412720cd 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -548,7 +548,7 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
- 		return -EOPNOTSUPP;
+diff --git a/include/linux/genhd.h b/include/linux/genhd.h
+index f67db3c5a04b3..70b4ac47e693c 100644
+--- a/include/linux/genhd.h
++++ b/include/linux/genhd.h
+@@ -250,6 +250,12 @@ static inline sector_t get_capacity(struct gendisk *disk)
+ 	return bdev_nr_sectors(disk->part0);
+ }
  
- 	/* Don't go off the end of the device. */
--	isize = i_size_read(bdev->bd_inode);
-+	isize = bdev_nr_bytes(bdev);
- 	if (start >= isize)
- 		return -EINVAL;
- 	if (end >= isize) {
++static inline u64 sb_bdev_nr_blocks(struct super_block *sb)
++{
++	return bdev_nr_sectors(sb->s_bdev) >>
++		(sb->s_blocksize_bits - SECTOR_SHIFT);
++}
++
+ int bdev_disk_changed(struct gendisk *disk, bool invalidate);
+ void blk_drop_partitions(struct gendisk *disk);
+ 
 -- 
 2.30.2
 
