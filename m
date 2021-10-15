@@ -2,86 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B33C542EC7E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 10:36:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18A5C42EC91
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 10:38:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234452AbhJOIio (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Oct 2021 04:38:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:21936 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235320AbhJOIin (ORCPT
+        id S235792AbhJOIk1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Oct 2021 04:40:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58904 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231825AbhJOIk0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Oct 2021 04:38:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634286997;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=jln/0dXddJnV8Enx7M67nr+qrzZMhGUG5wRmnfwIXgc=;
-        b=EHLzL2y9YsDFQnnFvhcIB9OE2QKu50RaBWzsTJhwIR+fzkpgaoYUw532OeXO4aoVSsXKzt
-        hn2f7JLIhORUdas+qEd2J5f64/dk3Q/HpN3imWbI/pyYUGxZhj1gWbuKf91iJx8PBYX3gS
-        jp4QDWsQ7UjwtAF+fZuG42fCJAUxyQE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-301-_IJ435cvMBOZ6mAirGtW1g-1; Fri, 15 Oct 2021 04:36:31 -0400
-X-MC-Unique: _IJ435cvMBOZ6mAirGtW1g-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0B31010B3940;
-        Fri, 15 Oct 2021 08:36:29 +0000 (UTC)
-Received: from T590 (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5326B5BAF8;
-        Fri, 15 Oct 2021 08:36:15 +0000 (UTC)
-Date:   Fri, 15 Oct 2021 16:36:11 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     tj@kernel.org, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, minchan@kernel.org, jeyu@kernel.org,
-        shuah@kernel.org, bvanassche@acm.org, dan.j.williams@intel.com,
-        joe@perches.com, tglx@linutronix.de, keescook@chromium.org,
-        rostedt@goodmis.org, linux-spdx@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
-Message-ID: <YWk9e957Hb+I7HvR@T590>
-References: <20210927163805.808907-1-mcgrof@kernel.org>
- <20210927163805.808907-12-mcgrof@kernel.org>
- <YWeOJP2UJWYF94fu@T590>
- <YWeR4moCRh+ZHOmH@T590>
- <YWiSAN6xfYcUDJCb@bombadil.infradead.org>
- <YWjCpLUNPF3s4P2U@T590>
- <YWjJ0O7K+31Iz3ox@bombadil.infradead.org>
+        Fri, 15 Oct 2021 04:40:26 -0400
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F3ABC061570;
+        Fri, 15 Oct 2021 01:38:20 -0700 (PDT)
+Received: by mail-il1-x12d.google.com with SMTP id d11so6320403ilc.8;
+        Fri, 15 Oct 2021 01:38:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oYX48g/GByb5COiqBCRcxJ2MLkXfZEqi7srhgCtRw9w=;
+        b=DIiUrjFqocE4pTm5C5n+cDKaRzu5e4vYsiMCS38pEl3HYJzLt8s7ahTngoBwNZHP0P
+         uInVxQOppKSheiqgXZMwLLxliHTEFS+eOp9dm4Xi7kdd4luPQUpX9VloZcpQkb1oQJu6
+         GBlOWTvYEshYktFU2eX6JV8TM7uZRfYaLbs75FU/vMAr0G2porxAM4fhasPJOQ7vtmNR
+         1kzKQxJ9z7p+sxteRTbr6hJjY1uim+gb8za0LHERvQ+mQaCiZbfnsUOpfolm1c5fz+ca
+         PTDscvoe9nk3HJg3G0Y3G0q7AkCXc+3i69GGyZFftxIcP7rNORZRmFKfVqhuzHP8rAXC
+         4j5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oYX48g/GByb5COiqBCRcxJ2MLkXfZEqi7srhgCtRw9w=;
+        b=feEd6xFue+/ONKr77mBMNOxyaQ+vtvTLYmbUKv3WJIp+6/Y8/h0EM5RGRUrlUQEC4k
+         Vrc4tsO64LmkJmp5pWU9T2h8UL1JB7kkBXXjaTdgEiBX5EkuJF3nFGKmLhfV/LAKgM/7
+         5bcZl9U5cI5GoUJpg7Bg6gVBRwoQMWozGEwU1epJv6I0ccQOUay1W85TID6xWYJN35GO
+         zR/6fmvduU25ux9E3fm4zt9U2ZbupmnnxdqO2LYj3hi+XlFkUUEHq9MdwSv2LWyIXtfy
+         6ClVwCu/5T2P2mpYlYAQJdvU3DPh5eHzku4fRyh34h/NVbgG+Xg/1R0N57eDLD/yWDYG
+         4x1w==
+X-Gm-Message-State: AOAM532UsvMv/WaWaXdXgMGaG7w5EIyGtUpIzECTqHX/kz/tnXMQimLR
+        E7XLNhDW4PkJNFQ/1j17Ks1pX9H+DFZrS5OxxSnxGtWJ
+X-Google-Smtp-Source: ABdhPJxTVtr48odjWeXRDtCCHSnnKAUFDUKrACrtyeAaHgltYNVp3FAdohLYBL64Dkx5Cfz5bvdM25/zVLu+XAQrC4o=
+X-Received: by 2002:a05:6e02:20ed:: with SMTP id q13mr3032792ilv.254.1634287099558;
+ Fri, 15 Oct 2021 01:38:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YWjJ0O7K+31Iz3ox@bombadil.infradead.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <20211014213646.1139469-1-krisman@collabora.com>
+In-Reply-To: <20211014213646.1139469-1-krisman@collabora.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 15 Oct 2021 11:38:08 +0300
+Message-ID: <CAOQ4uxgZbw1L1=oyFvz1=ZPt8VxgR3cVxVTLzqGg+iBA+ffaCw@mail.gmail.com>
+Subject: Re: [PATCH v7 00/28] file system-wide error monitoring
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Jan Kara <jack@suse.com>, "Darrick J. Wong" <djwong@kernel.org>,
+        Theodore Tso <tytso@mit.edu>,
+        David Howells <dhowells@redhat.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Matthew Bobrowski <repnop@google.com>, kernel@collabora.com,
+        Dave Chinner <david@fromorbit.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 14, 2021 at 05:22:40PM -0700, Luis Chamberlain wrote:
-> On Fri, Oct 15, 2021 at 07:52:04AM +0800, Ming Lei wrote:
-...
-> > 
-> > We need to understand the exact reason why there is still cpuhp node
-> > left, can you share us the exact steps for reproducing the issue?
-> > Otherwise we may have to trace and narrow down the reason.
-> 
-> See my commit log for my own fix for this issue.
+On Fri, Oct 15, 2021 at 12:37 AM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
+>
+> Hi,
+>
+> This attempts to get the ball rolling again for the FAN_FS_ERROR.  This
+> version is slightly different from the previous approaches, since it uses
+> mempool for memory allocation, as suggested by Jan.  It has the
+> advantage of simplifying a lot the enqueue/dequeue, which is now much
+> more similar to other event types, but it also means the guarantee that
+> an error event will be available is diminished.
 
-OK, thanks!
+Makes me very happy not having to worry about new enqueue/dequeue bugs :)
 
-I can reproduce the issue, and the reason is that reset_store fails
-zram_remove() when unloading module, then the warning is caused.
+>
+> The way we propagate superblock errors also changed. Now we use
+> FILEID_ROOT internally, and mangle it prior to copy_to_user.
+>
+> I am no longer sure how to guarantee that at least one mempoll slot will
+> be available for each filesystem.  Since we are now tying the poll to
+> the entire group, a stream of errors in a single file system might
+> prevent others from emitting an error.  The possibility of this is
+> reduced since we merge errors to the same filesystem, but it is still
+> possible that they occur during the small window where the event is
+> dequeued and before it is freed, in which case another filesystem might
+> not be able to obtain a slot.
 
-The top 3 patches in the following tree can fix the issue:
+Double buffering. Each mark/fs should have one slot reserved for equeue
+and one reserved for copying the event to user.
 
-https://github.com/ming1/linux/commits/my_v5.15-blk-dev
+>
+> I'm also creating a poll of 32 entries initially to avoid spending too
+> much memory.  This means that only 32 filesystems can be watched per
+> group with the FAN_FS_ERROR mark, before fanotify_mark starts returning
+> ENOMEM.
 
+I don't see a problem to grow the pool dynamically up to a reasonable
+size, although it is a shame that the pool is not accounted to the group's
+memcg (I think?).
+
+Overall, the series looks very good to me, modulo to above comments
+about the mempool size/resize and a few minor implementation details.
+
+Good job!
 
 Thanks,
-Ming
-
+Amir.
