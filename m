@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23FC742F245
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 15:27:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F78942F220
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 15:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239477AbhJON33 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Oct 2021 09:29:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40598 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239416AbhJON3S (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S239412AbhJON3S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Fri, 15 Oct 2021 09:29:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40592 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229566AbhJON3R (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 15 Oct 2021 09:29:17 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E1D0C061570;
-        Fri, 15 Oct 2021 06:27:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6D79C061570;
+        Fri, 15 Oct 2021 06:27:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=GrMAkYzXypftu2Q93j+7zCry2NCsZMMZP71gZdhVD6M=; b=u0Jh/pk//vKTObitfYlxlIGC4J
-        NliEBUrfu8nRvsuQqfa0JdudddIgT4cUPUUQhhD1H73tpwx2VJ3xZKmlBURkgE0Wlwlj5sC9k38A4
-        Jlulwzv9b+pm5R7pWDiKTLnasKDPcPonGfj+WoDLUsvjVXgS6O9ZPJPNY80acEExcRozq9ODkVYoU
-        cBI8mRHR3nwjqo8o+yLJAkhg4oxrz4AanNeNGgBQGOEB96Mhoi/robn53SwHYX1l6Ozdhd6Bf1imN
-        l3cTw2JImqG5tWyrDjeMpk9nDeFErssO0HV37CTbED9wzNn+MLmDMzWTsxQB0LjQmWxrn+3mG/Bgf
-        rD4cqhcg==;
+        bh=3V9fbTJuZDj71a+9mtkBQXQRRqP9hAgnu+ZIhkaADhI=; b=zDXL/abHH8Hy7DpCzkgiW3Aiv1
+        vdacyZ7SPKBEIXUCbyEsKC0gp64D671n5SCRSmVJigriIQMAA10dYY9IOAlC7vM1GfXcnLtwdsD3O
+        ypu7eCKX1Owu87zR+xuv8SalJND4PppRsawt0gD2aew4jQMKNPsnqvr4GENtTgKm0dkfWS0Ry8Bt9
+        GNrrcHN5Mql2SnbjOZ9yBDofBiARYHY8gUio35POxOUeg1jnPPUYIsTgg/6hrrCyoMGTWjkIExSb3
+        Icg7BYK/HVmnjML6lPWBo2ViaJXsJ4mE7gIS4UnwvqqbKAdg/c4HqbuEOV4byXXt0MBzfo2aXWJOP
+        +y/4a+bA==;
 Received: from [2001:4bb8:199:73c5:ddfe:9587:819b:83b0] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mbNEW-007CcF-HX; Fri, 15 Oct 2021 13:26:48 +0000
+        id 1mbNEZ-007Ce6-3w; Fri, 15 Oct 2021 13:26:51 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
@@ -50,9 +50,9 @@ Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
         jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
         linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
         ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org
-Subject: [PATCH 01/30] block: move the SECTOR_SIZE related definitions to blk_types.h
-Date:   Fri, 15 Oct 2021 15:26:14 +0200
-Message-Id: <20211015132643.1621913-2-hch@lst.de>
+Subject: [PATCH 02/30] block: add a bdev_nr_bytes helper
+Date:   Fri, 15 Oct 2021 15:26:15 +0200
+Message-Id: <20211015132643.1621913-3-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211015132643.1621913-1-hch@lst.de>
 References: <20211015132643.1621913-1-hch@lst.de>
@@ -63,71 +63,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ensure these are always available for inlines in the various block layer
-headers.
+Add a helpe to query the size of a block device in bytes.  This
+will be used to remove open coded access to ->bd_inode.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/blk_types.h | 17 +++++++++++++++++
- include/linux/blkdev.h    | 17 -----------------
- 2 files changed, 17 insertions(+), 17 deletions(-)
+ include/linux/genhd.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 3b967053e9f5a..dc8da0c7fa09b 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -20,6 +20,23 @@ struct cgroup_subsys_state;
- typedef void (bio_end_io_t) (struct bio *);
- struct bio_crypt_ctx;
- 
-+/*
-+ * The basic unit of block I/O is a sector. It is used in a number of contexts
-+ * in Linux (blk, bio, genhd). The size of one sector is 512 = 2**9
-+ * bytes. Variables of type sector_t represent an offset or size that is a
-+ * multiple of 512 bytes. Hence these two constants.
-+ */
-+#ifndef SECTOR_SHIFT
-+#define SECTOR_SHIFT 9
-+#endif
-+#ifndef SECTOR_SIZE
-+#define SECTOR_SIZE (1 << SECTOR_SHIFT)
-+#endif
-+
-+#define PAGE_SECTORS_SHIFT	(PAGE_SHIFT - SECTOR_SHIFT)
-+#define PAGE_SECTORS		(1 << PAGE_SECTORS_SHIFT)
-+#define SECTOR_MASK		(PAGE_SECTORS - 1)
-+
- struct block_device {
- 	sector_t		bd_start_sect;
- 	struct disk_stats __percpu *bd_stats;
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 17705c970d7e1..161496d1aced0 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -571,23 +571,6 @@ static inline struct request_queue *bdev_get_queue(struct block_device *bdev)
- 	return bdev->bd_disk->queue;	/* this is never NULL */
+diff --git a/include/linux/genhd.h b/include/linux/genhd.h
+index 082a3e5fd8fa1..f67db3c5a04b3 100644
+--- a/include/linux/genhd.h
++++ b/include/linux/genhd.h
+@@ -235,9 +235,14 @@ static inline sector_t get_start_sect(struct block_device *bdev)
+ 	return bdev->bd_start_sect;
  }
  
--/*
-- * The basic unit of block I/O is a sector. It is used in a number of contexts
-- * in Linux (blk, bio, genhd). The size of one sector is 512 = 2**9
-- * bytes. Variables of type sector_t represent an offset or size that is a
-- * multiple of 512 bytes. Hence these two constants.
-- */
--#ifndef SECTOR_SHIFT
--#define SECTOR_SHIFT 9
--#endif
--#ifndef SECTOR_SIZE
--#define SECTOR_SIZE (1 << SECTOR_SHIFT)
--#endif
--
--#define PAGE_SECTORS_SHIFT	(PAGE_SHIFT - SECTOR_SHIFT)
--#define PAGE_SECTORS		(1 << PAGE_SECTORS_SHIFT)
--#define SECTOR_MASK		(PAGE_SECTORS - 1)
--
- #ifdef CONFIG_BLK_DEV_ZONED
++static inline sector_t bdev_nr_bytes(struct block_device *bdev)
++{
++	return i_size_read(bdev->bd_inode);
++}
++
+ static inline sector_t bdev_nr_sectors(struct block_device *bdev)
+ {
+-	return i_size_read(bdev->bd_inode) >> 9;
++	return bdev_nr_bytes(bdev) >> SECTOR_SHIFT;
+ }
  
- /* Helper to convert BLK_ZONE_ZONE_XXX to its string format XXX */
+ static inline sector_t get_capacity(struct gendisk *disk)
 -- 
 2.30.2
 
