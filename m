@@ -2,103 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7393C42FDA0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Oct 2021 23:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9206A42FFE9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Oct 2021 05:29:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238634AbhJOVuf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Oct 2021 17:50:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44094 "EHLO
+        id S243638AbhJPDbt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Oct 2021 23:31:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229921AbhJOVue (ORCPT
+        with ESMTP id S243566AbhJPDbf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Oct 2021 17:50:34 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 968E5C061570;
-        Fri, 15 Oct 2021 14:48:27 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id w19so42995557edd.2;
-        Fri, 15 Oct 2021 14:48:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Fy8JX1MISO+E6iiO8M4K0L0jBN1ZBpTt5D/TgO1B54U=;
-        b=U7+cTP+WOIeSHVdUukK9i8mAbLqOyx+qsv7LKqyA1d9LnYKxTxqGp1qFfzQBmZyub+
-         2WS2AsPbS3Bzn0j4xDW2BZBmYT14PRpRBy200SYYKaHLTLw5c++3nj7sinEL6J2+v0Zr
-         rwP3kfkTJquHOTMXOuyjwxtkES4zGr5M9wjHJJZ1J7bAr3qG12JioOORDjt/yCPNKI2e
-         LCBig775MW/n7T7ugT5XMIRgbePHsJppd0XpLXu8CRjlyDYyls5yD3jDl1bWo+cVwgwE
-         tK3WeidHc6CVSXMf6j/+gPQKKU8wM75aPxRVHInezczSE8WO1B73zapsU87whFU0gn35
-         Xgcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Fy8JX1MISO+E6iiO8M4K0L0jBN1ZBpTt5D/TgO1B54U=;
-        b=IS2z4he2rfqmoIqn7vOAUWODR0vH4THyLLPjakhl+4arwJKk0Up2ZdVeFVZPWDeDvI
-         5GJpHKQxcKlfHoqIJM+HwMuQ+WXWQnblrwvHvowiJY6r17qJRLf4M+OPXVjrEnf7Bopf
-         a3AU574tZmFqUkpU8bhMf5PFTSM816mTOyqwxyVfq28XzHyoMdYZv4mAzDD+VLBfOKls
-         6o6JR8UF+Pu6tz8EgrbtAdC7V2zxOO2LhFrbIN3EX7FOzdGHLpPd1r8A6MHiRT06j9TR
-         f2mjm0Paz8MXW5RYP/3eF3l5m6fAeZ8QvNYjB5co1i6xgOo/1SQYvifD5nSTWsGVad2f
-         +JHA==
-X-Gm-Message-State: AOAM531dE+XkkKFXtkWVNBAXPfdKAaOhJ+ka68CEVCjOc1g2RJYZIqm0
-        Eu2NC40lrzWmeSu2K933oDnwEXxjd3PxDCXB9zg=
-X-Google-Smtp-Source: ABdhPJxzPoBGmacpktimn0FUL9PLamaLUctIWvwvIPEK4LcwDaz5KhCkQGyMHTGRHT4amHjaBl4V4kjNsLgEvuuxKys=
-X-Received: by 2002:a17:907:6297:: with SMTP id nd23mr10244354ejc.62.1634334506069;
- Fri, 15 Oct 2021 14:48:26 -0700 (PDT)
+        Fri, 15 Oct 2021 23:31:35 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53FEDC061570;
+        Fri, 15 Oct 2021 20:29:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=p9VpDiEUrsFV9wAfqCcRkrtUgE7eJEP8LO7f/FcU5gQ=; b=cuU4t3Z5hNPZpQuvb6l3XjExqV
+        xf2Q2qb+xTFnAnQBCAKu0/My3ySZhqZTEm6iDKqcKG+GlCujIQgcig5itXgclG4J0ffN4nmwBdf1P
+        MgIcpG1+bpfeP/xkr9e/CJaICX6Q7crIelLnsS05H/V3Bc8oe8E6JcWRtXFRYbahM4J+cmVEjhQO+
+        nFokyJ4aRTprwaWxN7REqT1zsGCKoxVHBh8DRHJ5ncUBI8V73W9moM0pmWdI3YEcqVPIwOcGkhARt
+        Knbv57UoZyGsGaHPIAT5EW/Z7ft1pOl7Isg7SuMKBK8FBDFELP7YioCws2F/PrlBOn++yiPkEI3iz
+        EVXEEadg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mbaMx-009SD8-SF; Sat, 16 Oct 2021 03:28:30 +0000
+Date:   Sat, 16 Oct 2021 04:28:23 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
+Message-ID: <YWpG1xlPbm7Jpf2b@casper.infradead.org>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YTu9HIu+wWWvZLxp@moria.home.lan>
+ <YUfvK3h8w+MmirDF@casper.infradead.org>
+ <YUo20TzAlqz8Tceg@cmpxchg.org>
+ <YUpC3oV4II+u+lzQ@casper.infradead.org>
+ <YUpKbWDYqRB6eBV+@moria.home.lan>
+ <YUpNLtlbNwdjTko0@moria.home.lan>
+ <YUtHCle/giwHvLN1@cmpxchg.org>
 MIME-Version: 1.0
-References: <20211014191615.6674-1-shy828301@gmail.com> <20211015132800.357d891d0b3ad34adb9c7383@linux-foundation.org>
-In-Reply-To: <20211015132800.357d891d0b3ad34adb9c7383@linux-foundation.org>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Fri, 15 Oct 2021 14:48:14 -0700
-Message-ID: <CAHbLzkrRdT1gZm-FBmZU8WKqsLYfC6Q2cF8iGDWqOV6==xfsnA@mail.gmail.com>
-Subject: Re: [RFC v4 PATCH 0/6] Solve silent data loss caused by poisoned page
- cache (shmem/tmpfs)
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Peter Xu <peterx@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YUtHCle/giwHvLN1@cmpxchg.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 15, 2021 at 1:28 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Thu, 14 Oct 2021 12:16:09 -0700 Yang Shi <shy828301@gmail.com> wrote:
->
-> > When discussing the patch that splits page cache THP in order to offline the
-> > poisoned page, Noaya mentioned there is a bigger problem [1] that prevents this
-> > from working since the page cache page will be truncated if uncorrectable
-> > errors happen.  By looking this deeper it turns out this approach (truncating
-> > poisoned page) may incur silent data loss for all non-readonly filesystems if
-> > the page is dirty.  It may be worse for in-memory filesystem, e.g. shmem/tmpfs
-> > since the data blocks are actually gone.
-> >
-> > To solve this problem we could keep the poisoned dirty page in page cache then
-> > notify the users on any later access, e.g. page fault, read/write, etc.  The
-> > clean page could be truncated as is since they can be reread from disk later on.
-> >
-> > The consequence is the filesystems may find poisoned page and manipulate it as
-> > healthy page since all the filesystems actually don't check if the page is
-> > poisoned or not in all the relevant paths except page fault.  In general, we
-> > need make the filesystems be aware of poisoned page before we could keep the
-> > poisoned page in page cache in order to solve the data loss problem.
->
-> Is the "RFC" still accurate, or might it be an accidental leftover?
+On Wed, Sep 22, 2021 at 11:08:58AM -0400, Johannes Weiner wrote:
+>       mm/memcg: Add folio_memcg() and related functions
+>       mm/memcg: Convert commit_charge() to take a folio
+>       mm/memcg: Convert mem_cgroup_charge() to take a folio
+>       mm/memcg: Convert uncharge_page() to uncharge_folio()
+>       mm/memcg: Convert mem_cgroup_uncharge() to take a folio
+>       mm/memcg: Convert mem_cgroup_migrate() to take folios
+>       mm/memcg: Convert mem_cgroup_track_foreign_dirty_slowpath() to folio
+>       mm/memcg: Add folio_memcg_lock() and folio_memcg_unlock()
+>       mm/memcg: Convert mem_cgroup_move_account() to use a folio
+>       mm/memcg: Add folio_lruvec()
+>       mm/memcg: Add folio_lruvec_lock() and similar functions
+>       mm/memcg: Add folio_lruvec_relock_irq() and folio_lruvec_relock_irqsave()
+>       mm/workingset: Convert workingset_activation to take a folio	
+> 
+> 		This is all anon+file stuff, not needed for filesystem
+> 		folios.
 
-Yeah, I think it can be removed.
+No, that's not true.  A number of these functions are called from
+filesystem code.  mem_cgroup_track_foreign_dirty() is only
+called from filesystem code.  We at the very least need wrappers
+like folio_cgroup_charge(), and folio_memcg_lock().
 
->
-> I grabbed this series as-is for some testing, but I do think it wouild
-> be better if it was delivered as two separate series - one series for
-> the -stable material and one series for the 5.16-rc1 material.
+> 		As per the other email, no conceptual entry point for
+> 		tail pages into either subsystem, so no ambiguity
+> 		around the necessity of any compound_head() calls,
+> 		directly or indirectly. It's easy to rule out
+> 		wholesale, so there is no justification for
+> 		incrementally annotating every single use of the page.
 
-Yeah, the patch 1/6 and patch 2/6 should go to -stable, then the
-remaining patches are for 5.16-rc1. Thanks for taking them.
+The justification is that we can remove all those hidden calls to
+compound_head().  Hundreds of bytes of text spread throughout this file.
 
->
+>       mm: Add folio_young and folio_idle
+>       mm/swap: Add folio_activate()
+>       mm/swap: Add folio_mark_accessed()
+> 
+> 		This is anon+file aging stuff, not needed.
+
+Again, very much needed.  Take a look at pagecache_get_page().  In Linus'
+tree today, it calls if (page_is_idle(page)) clear_page_idle(page);
+So either we need wrappers (which are needlessly complicated thanks to
+how page_is_idle() is defined) or we just convert it.
+
+>       mm/rmap: Add folio_mkclean()
+> 
+>       mm/migrate: Add folio_migrate_mapping()
+>       mm/migrate: Add folio_migrate_flags()
+>       mm/migrate: Add folio_migrate_copy()
+> 
+> 		More anon+file conversion, not needed.
+
+As far as I can tell, anon never calls any of these three functions.
+anon calls migrate_page(), which calls migrate_page_move_mapping(),
+but several filesystems do call these individual functions.
+
+>       mm/lru: Add folio_add_lru()
+> 
+> 		LRU code, not needed.
+
+Again, we need folio_add_lru() for filemap.  This one's more
+tractable as a wrapper function.
+
