@@ -2,212 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8696443022D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Oct 2021 12:42:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09EE2430263
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Oct 2021 13:29:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237125AbhJPKoV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 16 Oct 2021 06:44:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43558 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231240AbhJPKoV (ORCPT
+        id S244318AbhJPLbM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 16 Oct 2021 07:31:12 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29222 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229848AbhJPLbL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 16 Oct 2021 06:44:21 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15BD2C061570;
-        Sat, 16 Oct 2021 03:42:13 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id r19so51971537lfe.10;
-        Sat, 16 Oct 2021 03:42:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=JE2ZEhnUZTL3zV3Jn9NvK7Qo/yNCMgF3TmpQvT7J8Zg=;
-        b=T/x9sy7/FO+PHLiFkOYn3cDMPoMa0Vv5EmeswMChUTYXoOPbERNuLBQzKvWguiu61W
-         tf4BnfgZDeRMZ072LrHly+MoZ3O5GMk6uG6LJ10e4u/Pr+4nFQ+pdC3y524BDiIruMxG
-         1ixN6ZlvPtlxGDhv7Thb00oDFC4uzo3v3jvIqmxivov+J/agUsJrSVjgF09FmXwNkEr6
-         nNzj8pdKASz9xpqPfXsnC0iCJuginWVKQcDQPOXBzlLv+PDxllC946aaPOerjBRpHsXk
-         JJqRST//jBeeiioEQ4ZbpF8SJEMo7QpXhS5xUtEB8bYq51oN1tvLatAOUKSvholtsu9w
-         pPgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=JE2ZEhnUZTL3zV3Jn9NvK7Qo/yNCMgF3TmpQvT7J8Zg=;
-        b=BoZf6n4YyuMHbf5KVKWdkJx2HwzjWMsY8tPdr++ck/lHMZgiksgAN6IQc1x8dSzLef
-         d6DeQXbbx41iKxS18DTdiyqCLhzwXvCo7gR6pfjIVYgw5A062TsmsM/GSnyCNdByvaD7
-         cp5Yersgk57wTG+4HmWbBmjZ52wEjgn4X+SA4ZcMvWN3dTolheL08xVOW+5kYu25zgV+
-         M6c+DoezIOeirme/9VMDAtohzGlf4RJ2KosoZAuCf2ndgBxue5DwsxJ/QED9SQrv4SEx
-         WNE1TAeCq1fjv0bLowkSMnDcKJBBIX9P3PoxDnkLJg+IJc7gZAV8/SV1GaY6c6B240kc
-         OmAw==
-X-Gm-Message-State: AOAM5327hwGI+YVtu4gQb2nQBncKjegjdMTn8D97IS0vVgPYbcok+HVp
-        oyOtl70m9G6OTpPV++7jeP60+ccUyl0=
-X-Google-Smtp-Source: ABdhPJz1rS1St0yUfy676/Y4tMxC9j5/ojmJ9VJqWqk2IHUPPHCwGEVV6xyYm24k+7r/G+MAwvAAJQ==
-X-Received: by 2002:a05:6512:3b21:: with SMTP id f33mr16820364lfv.88.1634380931402;
-        Sat, 16 Oct 2021 03:42:11 -0700 (PDT)
-Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id i8sm809164lfb.227.2021.10.16.03.42.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Oct 2021 03:42:10 -0700 (PDT)
-Date:   Sat, 16 Oct 2021 13:42:09 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs/ntfs3: Remove unnecessary functions
-Message-ID: <20211016104209.r6mgz2ote4jcmgcj@kari-VirtualBox>
-References: <992eee8f-bed8-4019-a966-1988bd4dd5de@paragon-software.com>
- <2ce78ab6-453d-d7bf-9969-eb47b7347098@paragon-software.com>
+        Sat, 16 Oct 2021 07:31:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634383742;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=FpnA9lYWxkJjvg75Ewu7vyuMBg8oJ+36xZYExlcfae0=;
+        b=CS+o08AQeAcY9csjeNTtJTSz/HCY6py97u2n6QJQcHZL/2Vx0mbZZJ1ttBwqJQ+SO7mhVD
+        w2l+/Wpb7D6wcYUKTp3upUttkvrTOPK1rpnvb0oAP4nOfCr82HZTrrZo6lbRu0FDZHGv/1
+        N+DBDsdkg92sTnb3XtWLMlRKbjFXJBk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-401-AX-aE8PPOTGtJ1ZuG3mfog-1; Sat, 16 Oct 2021 07:29:00 -0400
+X-MC-Unique: AX-aE8PPOTGtJ1ZuG3mfog-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 91F0010A8E00;
+        Sat, 16 Oct 2021 11:28:57 +0000 (UTC)
+Received: from T590 (ovpn-8-19.pek2.redhat.com [10.72.8.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4C8695DA61;
+        Sat, 16 Oct 2021 11:28:44 +0000 (UTC)
+Date:   Sat, 16 Oct 2021 19:28:39 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     tj@kernel.org, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org, minchan@kernel.org, jeyu@kernel.org,
+        shuah@kernel.org, bvanassche@acm.org, dan.j.williams@intel.com,
+        joe@perches.com, tglx@linutronix.de, keescook@chromium.org,
+        rostedt@goodmis.org, linux-spdx@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
+Message-ID: <YWq3Z++uoJ/kcp+3@T590>
+References: <20210927163805.808907-1-mcgrof@kernel.org>
+ <20210927163805.808907-12-mcgrof@kernel.org>
+ <YWeOJP2UJWYF94fu@T590>
+ <YWeR4moCRh+ZHOmH@T590>
+ <YWiSAN6xfYcUDJCb@bombadil.infradead.org>
+ <YWjCpLUNPF3s4P2U@T590>
+ <YWjJ0O7K+31Iz3ox@bombadil.infradead.org>
+ <YWk9e957Hb+I7HvR@T590>
+ <YWm68xUnAofop3PZ@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2ce78ab6-453d-d7bf-9969-eb47b7347098@paragon-software.com>
+In-Reply-To: <YWm68xUnAofop3PZ@bombadil.infradead.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 01, 2021 at 07:02:12PM +0300, Konstantin Komarov wrote:
-> We don't need ntfs_xattr_get_acl and ntfs_xattr_set_acl.
-> There are ntfs_get_acl_ex and ntfs_set_acl_ex.
-
-I just bisect this commit after tests
-
-"generic/099,generic/105,generic/307,generic/318,generic/319,generic/375,generic/444"
-
-fails for me. Fails happends because mount option acl was not defined.
-Before they where skipped, but now fail occurs. Also generic/099 was
-passing if acl mount option was defined, but after this patch it also
-fail. Every other test fail for me as well, but that is not related to
-this patch.
-
-So should we revert or do you make new patch to fix the issue or do you
-think we won't have any issue here?
-
-  Argillander
-
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> ---
->  fs/ntfs3/xattr.c | 94 ------------------------------------------------
->  1 file changed, 94 deletions(-)
+On Fri, Oct 15, 2021 at 10:31:31AM -0700, Luis Chamberlain wrote:
+> On Fri, Oct 15, 2021 at 04:36:11PM +0800, Ming Lei wrote:
+> > On Thu, Oct 14, 2021 at 05:22:40PM -0700, Luis Chamberlain wrote:
+> > > On Fri, Oct 15, 2021 at 07:52:04AM +0800, Ming Lei wrote:
+> > ...
+> > > > 
+> > > > We need to understand the exact reason why there is still cpuhp node
+> > > > left, can you share us the exact steps for reproducing the issue?
+> > > > Otherwise we may have to trace and narrow down the reason.
+> > > 
+> > > See my commit log for my own fix for this issue.
+> > 
+> > OK, thanks!
+> > 
+> > I can reproduce the issue, and the reason is that reset_store fails
+> > zram_remove() when unloading module, then the warning is caused.
+> > 
+> > The top 3 patches in the following tree can fix the issue:
+> > 
+> > https://github.com/ming1/linux/commits/my_v5.15-blk-dev
 > 
-> diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-> index 83bbee277e12..111355692163 100644
-> --- a/fs/ntfs3/xattr.c
-> +++ b/fs/ntfs3/xattr.c
-> @@ -621,67 +621,6 @@ int ntfs_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  	return ntfs_set_acl_ex(mnt_userns, inode, acl, type, 0);
->  }
->  
-> -static int ntfs_xattr_get_acl(struct user_namespace *mnt_userns,
-> -			      struct inode *inode, int type, void *buffer,
-> -			      size_t size)
-> -{
-> -	struct posix_acl *acl;
-> -	int err;
-> -
-> -	if (!(inode->i_sb->s_flags & SB_POSIXACL)) {
-> -		ntfs_inode_warn(inode, "add mount option \"acl\" to use acl");
-> -		return -EOPNOTSUPP;
-> -	}
-> -
-> -	acl = ntfs_get_acl(inode, type);
-> -	if (IS_ERR(acl))
-> -		return PTR_ERR(acl);
-> -
-> -	if (!acl)
-> -		return -ENODATA;
-> -
-> -	err = posix_acl_to_xattr(mnt_userns, acl, buffer, size);
-> -	ntfs_posix_acl_release(acl);
-> -
-> -	return err;
-> -}
-> -
-> -static int ntfs_xattr_set_acl(struct user_namespace *mnt_userns,
-> -			      struct inode *inode, int type, const void *value,
-> -			      size_t size)
-> -{
-> -	struct posix_acl *acl;
-> -	int err;
-> -
-> -	if (!(inode->i_sb->s_flags & SB_POSIXACL)) {
-> -		ntfs_inode_warn(inode, "add mount option \"acl\" to use acl");
-> -		return -EOPNOTSUPP;
-> -	}
-> -
-> -	if (!inode_owner_or_capable(mnt_userns, inode))
-> -		return -EPERM;
-> -
-> -	if (!value) {
-> -		acl = NULL;
-> -	} else {
-> -		acl = posix_acl_from_xattr(mnt_userns, value, size);
-> -		if (IS_ERR(acl))
-> -			return PTR_ERR(acl);
-> -
-> -		if (acl) {
-> -			err = posix_acl_valid(mnt_userns, acl);
-> -			if (err)
-> -				goto release_and_out;
-> -		}
-> -	}
-> -
-> -	err = ntfs_set_acl(mnt_userns, inode, acl, type);
-> -
-> -release_and_out:
-> -	ntfs_posix_acl_release(acl);
-> -	return err;
-> -}
-> -
->  /*
->   * ntfs_init_acl - Initialize the ACLs of a new inode.
->   *
-> @@ -848,23 +787,6 @@ static int ntfs_getxattr(const struct xattr_handler *handler, struct dentry *de,
->  		goto out;
->  	}
->  
-> -#ifdef CONFIG_NTFS3_FS_POSIX_ACL
-> -	if ((name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 &&
-> -	     !memcmp(name, XATTR_NAME_POSIX_ACL_ACCESS,
-> -		     sizeof(XATTR_NAME_POSIX_ACL_ACCESS))) ||
-> -	    (name_len == sizeof(XATTR_NAME_POSIX_ACL_DEFAULT) - 1 &&
-> -	     !memcmp(name, XATTR_NAME_POSIX_ACL_DEFAULT,
-> -		     sizeof(XATTR_NAME_POSIX_ACL_DEFAULT)))) {
-> -		/* TODO: init_user_ns? */
-> -		err = ntfs_xattr_get_acl(
-> -			&init_user_ns, inode,
-> -			name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1
-> -				? ACL_TYPE_ACCESS
-> -				: ACL_TYPE_DEFAULT,
-> -			buffer, size);
-> -		goto out;
-> -	}
-> -#endif
->  	/* Deal with NTFS extended attribute. */
->  	err = ntfs_get_ea(inode, name, name_len, buffer, size, NULL);
->  
-> @@ -977,22 +899,6 @@ static noinline int ntfs_setxattr(const struct xattr_handler *handler,
->  		goto out;
->  	}
->  
-> -#ifdef CONFIG_NTFS3_FS_POSIX_ACL
-> -	if ((name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 &&
-> -	     !memcmp(name, XATTR_NAME_POSIX_ACL_ACCESS,
-> -		     sizeof(XATTR_NAME_POSIX_ACL_ACCESS))) ||
-> -	    (name_len == sizeof(XATTR_NAME_POSIX_ACL_DEFAULT) - 1 &&
-> -	     !memcmp(name, XATTR_NAME_POSIX_ACL_DEFAULT,
-> -		     sizeof(XATTR_NAME_POSIX_ACL_DEFAULT)))) {
-> -		err = ntfs_xattr_set_acl(
-> -			mnt_userns, inode,
-> -			name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1
-> -				? ACL_TYPE_ACCESS
-> -				: ACL_TYPE_DEFAULT,
-> -			value, size);
-> -		goto out;
-> -	}
-> -#endif
->  	/* Deal with NTFS extended attribute. */
->  	err = ntfs_set_ea(inode, name, name_len, value, size, flags, 0);
->  
-> -- 
-> 2.33.0
+> Thanks for trying an alternative fix! A crash stops yes, however this
+
+I doubt it is alternative since your patchset doesn't mention the exact
+reason of 'Error: Removing state 63 which has instances left.', that is
+simply caused by failing to remove zram because ->claim is set during
+unloading module.
+
+Yeah, you mentioned the race between disksize_store() vs. zram_remove(),
+however I don't think it is reproduced easily in the test because the race
+window is pretty small, also it can be fixed easily in my 3rd path
+without any complicated tricks.
+
+Not dig into details of your patchset via grabbing module reference
+count during show/store attribute of kernfs which is done in your patch
+9, but IMO this way isn't necessary:
+
+1) any driver module has to cleanup anything which may refer to symbols
+or data defined in module_exit of this driver
+
+2) device_del() is often done in module_exit(), once device_del()
+returns, no any new show/store on the device's kobject attribute
+is possible.
+
+3) it is _not_ a must or pattern for fixing bugs to hold one lock before
+calling device_del(), meantime the lock is required in the device's
+attribute show()/store(), which causes AA deadlock easily. Your approach
+just avoids the issue by not releasing module until all show/store are
+done.
+
+Also the model of using module refcount is usually that if anyone will
+use the module, grab one extra ref, and once the use is done, release
+it. For example of block device, the driver's module refcnt is grabbed
+when the disk/part is opened, and released when the disk/part is closed.
+
+
+> also ends up leaving the driver in an unrecoverable state after a few
+> tries. Ie, you CTRL-C the scripts and try again over and over again and
+> the driver ends up in a situation where it just says:
 > 
+> zram: Can't change algorithm for initialized device
+
+It means the algorithm can't be changed for one initialized device
+at the exact time. That is understandable because two zram02.sh are
+running concurrently.
+
+Your test script just runs two ./zram02.sh tasks concurrently forever,
+so what is your expected result for the test? Of course, it can't be
+over.
+
+I can't reproduce the 'unrecoverable' state in my test, can you share the
+stack trace log after that happens?
+
+Is the zram02.sh still running or slept somewhere in the 'unrecoverable'
+state? If it is still running, it means the current sleep point isn't
+interruptable when running 'CTRL-C'. In my test, after several 'CTRL-C',
+both the two zram02.sh started from two terminals can be terminated. If
+it is slept somewhere forever, it can be one problem.
+
+> 
+> And the zram module can't be removed at that point.
+
+It is just that systemd opens the zram or the disk is opened as swap
+disk, and once systemd closes it or after you run swapoff, it can be
+unloaded.
+
+
+Thanks,
+Ming
+
