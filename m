@@ -2,100 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C09CC43046E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Oct 2021 21:08:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3DAB43055D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Oct 2021 00:21:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240855AbhJPTKY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 16 Oct 2021 15:10:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40754 "EHLO
+        id S234675AbhJPWXa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 16 Oct 2021 18:23:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234126AbhJPTKX (ORCPT
+        with ESMTP id S232271AbhJPWXa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 16 Oct 2021 15:10:23 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34BDFC061765;
-        Sat, 16 Oct 2021 12:08:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=YhoZ9iqL7Lt/48xizN3kGQkUKxxKpNWaP56fG+nsLtw=; b=BTa3EpFZlDI9sQ/CGo27JdqpF1
-        zea4OMDz9wdbs9X9mVE4QLL98dKW7zwqVGoola+MsuQ6loexIWIr2vwszhQ+xXMepJafgIofVC4Wm
-        XU9hch2D/PZigjKg/5WZmPn1fJXzgN3wPihZU7PTjKmRftbP05X3VJnq5KIP+1g7+O7Dtw/Tt7vjO
-        bZX4kB4UNeDTt9sVG8/5YH33YZjCIiiTaQbDc8C5xYNKjac+cbe4uvkJ/tPQDLuFPCA6pm5ICEHmN
-        X4hzdX17Q0a/TE87F4fdVRaaSv+xHD7as2g/wqDmzw01C3K/TlwPT9IKivuouEeTn9y/ljEnln2RI
-        WQbXp/Jg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mbp1w-009qFq-NC; Sat, 16 Oct 2021 19:07:46 +0000
-Date:   Sat, 16 Oct 2021 20:07:40 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
-Message-ID: <YWsi/ERcQzY765xj@casper.infradead.org>
-References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
- <YTu9HIu+wWWvZLxp@moria.home.lan>
- <YUfvK3h8w+MmirDF@casper.infradead.org>
- <YUo20TzAlqz8Tceg@cmpxchg.org>
- <YUpC3oV4II+u+lzQ@casper.infradead.org>
- <YUpKbWDYqRB6eBV+@moria.home.lan>
- <YUpNLtlbNwdjTko0@moria.home.lan>
- <YUtHCle/giwHvLN1@cmpxchg.org>
+        Sat, 16 Oct 2021 18:23:30 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CC38C061766
+        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Oct 2021 15:21:21 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id 5so23265505edw.7
+        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Oct 2021 15:21:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=11NI8rJSPz43D1gV7A+JL1F9+LdB46OYj4gEDUOX0Xg=;
+        b=GF+9nhqpBOluFuQibxT2/OKI8O2kYkWPov0QlOb3Mup7J7gOhWH7C4I95DgnYBCMei
+         tBkUDHQMPpbD5BCRrHxPiGS9R/OezX//STkfmrGJ9orTZ5W2a++im8wfCqGDSciCCBWv
+         vENgzT1DT1r9h71lGXNkYevfXJxI5TpoKfPcGsQPW9Ay9Xu8sMJ9YpLyKlqPU+ITFUeY
+         2bKRSnIMLvKK42iuTHcwVw1+g8wt5gejnSkfX4rtuK7dbBN3pAgsaDxDwqCj8gCxlAXz
+         5Egfn0wUPsG8W8CZgfb0Hg4ih6p2ytTImxB2VL1ss3Jow9W32GoxTsic0XiD0Mm8ISjC
+         0xCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=11NI8rJSPz43D1gV7A+JL1F9+LdB46OYj4gEDUOX0Xg=;
+        b=p2diMcl4JptkYyUNRZNBgePG3HyPPilgZoFWzCMEd8Gjt2l2DR1n16t2gMG4dcEHNG
+         YkxNcNBX+BPRWaVWkmeeh1VJIUEJzw2oLglk8Xmy4fCYsM61MAy9tIGtwuRf72JQDRXO
+         6X5DNcCvQznLC+8N0cFIeYtFjcL68QdDhmp85/0AM+9E8yQ4nvVDSVsuOBcFyUwy9Ise
+         8VV24Bofa+AD+8vWnxA10r04lOGGFHK4WhG9xjyp6n8PiSIL9Q8dZ2pcC7t1U3y6pO9I
+         Uojcwi6CsclNx3sx+XXI90SZwW2M0/alZlgTDNrqEGO3Y6juOMkLEeiWxSxX+/3UO8UP
+         NhSA==
+X-Gm-Message-State: AOAM532X3FtsgFeYIh0obHvDO2/ZcnE3TwJ5qp+57JkvhILxZWFZUt+p
+        UP1cywc9z5H+6huDAbwl3A8HK/yeHwFuLymHraE=
+X-Google-Smtp-Source: ABdhPJxZC6TQQX6lR1T9h7xL+EokiDWYtroi/JAbZPN6LHWiSQWAUoN66aloES/f2nkJ8A/k/4Pw6yIHvDW92kAMRxc=
+X-Received: by 2002:a05:6402:350c:: with SMTP id b12mr30532520edd.244.1634422880023;
+ Sat, 16 Oct 2021 15:21:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YUtHCle/giwHvLN1@cmpxchg.org>
+Received: by 2002:ab4:98c3:0:0:0:0:0 with HTTP; Sat, 16 Oct 2021 15:21:19
+ -0700 (PDT)
+Reply-To: ms.lisahugh000@gmail.com
+From:   MS LISA HUGH <olivier.folly0@gmail.com>
+Date:   Sun, 17 Oct 2021 00:21:19 +0200
+Message-ID: <CAG_GOAsf12PZvBp8cqL7znJ++aP_JgY1b8fKG+hO7K3xA4T=Vg@mail.gmail.com>
+Subject: BUSINESS AND DETAILS LATER. >>MS LISA HUGH.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 22, 2021 at 11:08:58AM -0400, Johannes Weiner wrote:
->       mm/lru: Add folio LRU functions
-> 
-> 		The LRU code is used by anon and file and not needed
-> 		for the filesystem API.
-> 
-> 		And as discussed, there is generally no ambiguity of
-> 		tail pages on the LRU list.
+Dear Friend,
 
-One of the assumptions you're making is that the current code is suitable
-for folios.  One of the things that happens in this patch is:
+I am Ms Lisa Hugh accountant and files keeping by profession with the bank.
 
--       update_lru_size(lruvec, lru, page_zonenum(page), thp_nr_pages(page));
-+       update_lru_size(lruvec, lru, folio_zonenum(folio),
-+                       folio_nr_pages(folio));
+I need Your help for this transfer($4,500,000,00 ,U.S.DOLLARS)to your
+bank account with your co-operation for both of us benefit.
 
-static inline long folio_nr_pages(struct folio *folio)
-{
-        return compound_nr(&folio->page);
-}
-
-vs
-
-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-static inline int thp_nr_pages(struct page *page)
-{
-        VM_BUG_ON_PGFLAGS(PageTail(page), page);
-        if (PageHead(page))
-                return HPAGE_PMD_NR;
-        return 1;
-}
-#else
-static inline int thp_nr_pages(struct page *page)
-{
-        VM_BUG_ON_PGFLAGS(PageTail(page), page);
-        return 1;
-}
-#endif
-
-So if you want to leave all the LRU code using pages, all the uses of
-thp_nr_pages() need to be converted to compound_nr().  Or maybe not all
-of them; I don't know which ones might be safe to leave as thp_nr_pages().
-That's one of the reasons I went with a whitelist approach.
+Please send the follow below,
+1)AGE....2)TELEPHONE NUMBER,,,,,...,3)COUNTRY.....4)OCCUPATION......
+Thanks.
+Ms Lisa Hugh
