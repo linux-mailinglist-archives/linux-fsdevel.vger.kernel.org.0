@@ -2,120 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9206A42FFE9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Oct 2021 05:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 378A44300E6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Oct 2021 09:40:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243638AbhJPDbt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Oct 2021 23:31:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34116 "EHLO
+        id S243775AbhJPHmV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 16 Oct 2021 03:42:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243566AbhJPDbf (ORCPT
+        with ESMTP id S243801AbhJPHmU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Oct 2021 23:31:35 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53FEDC061570;
-        Fri, 15 Oct 2021 20:29:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=p9VpDiEUrsFV9wAfqCcRkrtUgE7eJEP8LO7f/FcU5gQ=; b=cuU4t3Z5hNPZpQuvb6l3XjExqV
-        xf2Q2qb+xTFnAnQBCAKu0/My3ySZhqZTEm6iDKqcKG+GlCujIQgcig5itXgclG4J0ffN4nmwBdf1P
-        MgIcpG1+bpfeP/xkr9e/CJaICX6Q7crIelLnsS05H/V3Bc8oe8E6JcWRtXFRYbahM4J+cmVEjhQO+
-        nFokyJ4aRTprwaWxN7REqT1zsGCKoxVHBh8DRHJ5ncUBI8V73W9moM0pmWdI3YEcqVPIwOcGkhARt
-        Knbv57UoZyGsGaHPIAT5EW/Z7ft1pOl7Isg7SuMKBK8FBDFELP7YioCws2F/PrlBOn++yiPkEI3iz
-        EVXEEadg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mbaMx-009SD8-SF; Sat, 16 Oct 2021 03:28:30 +0000
-Date:   Sat, 16 Oct 2021 04:28:23 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
-Message-ID: <YWpG1xlPbm7Jpf2b@casper.infradead.org>
-References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
- <YTu9HIu+wWWvZLxp@moria.home.lan>
- <YUfvK3h8w+MmirDF@casper.infradead.org>
- <YUo20TzAlqz8Tceg@cmpxchg.org>
- <YUpC3oV4II+u+lzQ@casper.infradead.org>
- <YUpKbWDYqRB6eBV+@moria.home.lan>
- <YUpNLtlbNwdjTko0@moria.home.lan>
- <YUtHCle/giwHvLN1@cmpxchg.org>
+        Sat, 16 Oct 2021 03:42:20 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B080CC061765;
+        Sat, 16 Oct 2021 00:40:12 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id n8so51503793lfk.6;
+        Sat, 16 Oct 2021 00:40:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=yeYbTALLt+81wu8WFfyKx0a33Kod/SnDLZRAl1Frm5U=;
+        b=cVnZ6+l+2XB64KtPGPsew2EuurYnsOpcBevvm/IVGVDWp/Lr378D4lUZAb7Ldqn1aU
+         Nechfd+nevnKJt8FFrjsUkhQRsZN4OdAe+y/4UgENJDxkcBm3bvvsqVp0+i7kz/ncskC
+         VTNCGAMRL2zXauGox8hUYH0e6cLX9YNzHMmZx68OgeqDdd/IPTSNwVgM/hhe43XfbD/A
+         Rsr2ngeAq8MwLS8wYqIQpA7q0jGrbmoIHsnPPXNshCS3yofpN7y1D6hLbuTi/3aHu8Hg
+         WHPyyYAgwzwuGQtuqb861mn1fmCGJ4Gxolg4kHeKn8eV14e/nwAYLFHNCnrx2jzkQiPm
+         sdiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=yeYbTALLt+81wu8WFfyKx0a33Kod/SnDLZRAl1Frm5U=;
+        b=1huJ5oysI05xJ1aHtwvlAGyBBPx/KuQAWKBT2mbRy2s/c41Q02EyXPqdoYas7YhLiw
+         aZbl36IYg9/w54HDTlWv4uwV92L/19zz/n+atRnkd5JmwAh2kzomA4aCed4ye4XkwNfx
+         WSvvvAgkB150U5+i7Eleh8RUEYD9u6cQzCrK4rStxxrWjDru8KdQqpcNhWPGLiUUTwg+
+         wFdr2niwD0jSxq5jXhK6t+Vyn/l4eCZUNNNBvs0UsPCami3Ng9vjevcxUAMLmUYIxA3I
+         zf7WZo/4dERpFEWwK9wv8SsuuczE/In0WD4P7RWskmZW1k6qwQKdX2O4YuO2x5Jzxjn8
+         gCMQ==
+X-Gm-Message-State: AOAM532mdIbON8UzZvjWjFYsfzqBlgByhpATVexRGrMZcPUC8hVnqM5c
+        KdHF7iq0yktmgbV/ThcmIrV6DO5XAhPEQA==
+X-Google-Smtp-Source: ABdhPJz42JllLibAuMU4PSsWo9d4pmXBI6FidoZzBNe3/Oe9MjVOfwHK8qKnrFH4pZzBziLDXJNmxQ==
+X-Received: by 2002:a05:6512:3190:: with SMTP id i16mr9019031lfe.224.1634370011048;
+        Sat, 16 Oct 2021 00:40:11 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id a19sm827633ljb.3.2021.10.16.00.40.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Oct 2021 00:40:10 -0700 (PDT)
+Date:   Sat, 16 Oct 2021 10:40:08 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Coly Li <colyli@suse.de>,
+        Mike Snitzer <snitzer@redhat.com>, Song Liu <song@kernel.org>,
+        David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Kees Cook <keescook@chromium.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, drbd-dev@lists.linbit.com,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org
+Subject: Re: [PATCH 20/30] ntfs3: use bdev_nr_bytes instead of open coding it
+Message-ID: <20211016074008.o6wl7uy3vsrz4v3b@kari-VirtualBox>
+References: <20211015132643.1621913-1-hch@lst.de>
+ <20211015132643.1621913-21-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YUtHCle/giwHvLN1@cmpxchg.org>
+In-Reply-To: <20211015132643.1621913-21-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 22, 2021 at 11:08:58AM -0400, Johannes Weiner wrote:
->       mm/memcg: Add folio_memcg() and related functions
->       mm/memcg: Convert commit_charge() to take a folio
->       mm/memcg: Convert mem_cgroup_charge() to take a folio
->       mm/memcg: Convert uncharge_page() to uncharge_folio()
->       mm/memcg: Convert mem_cgroup_uncharge() to take a folio
->       mm/memcg: Convert mem_cgroup_migrate() to take folios
->       mm/memcg: Convert mem_cgroup_track_foreign_dirty_slowpath() to folio
->       mm/memcg: Add folio_memcg_lock() and folio_memcg_unlock()
->       mm/memcg: Convert mem_cgroup_move_account() to use a folio
->       mm/memcg: Add folio_lruvec()
->       mm/memcg: Add folio_lruvec_lock() and similar functions
->       mm/memcg: Add folio_lruvec_relock_irq() and folio_lruvec_relock_irqsave()
->       mm/workingset: Convert workingset_activation to take a folio	
+On Fri, Oct 15, 2021 at 03:26:33PM +0200, Christoph Hellwig wrote:
+> Use the proper helper to read the block device size.
 > 
-> 		This is all anon+file stuff, not needed for filesystem
-> 		folios.
-
-No, that's not true.  A number of these functions are called from
-filesystem code.  mem_cgroup_track_foreign_dirty() is only
-called from filesystem code.  We at the very least need wrappers
-like folio_cgroup_charge(), and folio_memcg_lock().
-
-> 		As per the other email, no conceptual entry point for
-> 		tail pages into either subsystem, so no ambiguity
-> 		around the necessity of any compound_head() calls,
-> 		directly or indirectly. It's easy to rule out
-> 		wholesale, so there is no justification for
-> 		incrementally annotating every single use of the page.
-
-The justification is that we can remove all those hidden calls to
-compound_head().  Hundreds of bytes of text spread throughout this file.
-
->       mm: Add folio_young and folio_idle
->       mm/swap: Add folio_activate()
->       mm/swap: Add folio_mark_accessed()
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/ntfs3/super.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> 		This is anon+file aging stuff, not needed.
+> diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+> index 55bbc9200a10e..7ed2cb5e8b1d9 100644
+> --- a/fs/ntfs3/super.c
+> +++ b/fs/ntfs3/super.c
+> @@ -918,7 +918,6 @@ static int ntfs_fill_super(struct super_block *sb, void *data, int silent)
+>  	int err;
+>  	struct ntfs_sb_info *sbi;
+>  	struct block_device *bdev = sb->s_bdev;
+> -	struct inode *bd_inode = bdev->bd_inode;
 
-Again, very much needed.  Take a look at pagecache_get_page().  In Linus'
-tree today, it calls if (page_is_idle(page)) clear_page_idle(page);
-So either we need wrappers (which are needlessly complicated thanks to
-how page_is_idle() is defined) or we just convert it.
+Linus merged latest ntfs3 stuff and this temp variable is not anymore in
+upstream. So this patch will conflict. Just so that you know.
 
->       mm/rmap: Add folio_mkclean()
+>  	struct request_queue *rq = bdev_get_queue(bdev);
+>  	struct inode *inode = NULL;
+>  	struct ntfs_inode *ni;
+> @@ -967,7 +966,7 @@ static int ntfs_fill_super(struct super_block *sb, void *data, int silent)
+>  
+>  	/* Parse boot. */
+>  	err = ntfs_init_from_boot(sb, rq ? queue_logical_block_size(rq) : 512,
+> -				  bd_inode->i_size);
+> +				  bdev_nr_bytes(bdev));
+>  	if (err)
+>  		goto out;
+>  
+> -- 
+> 2.30.2
 > 
->       mm/migrate: Add folio_migrate_mapping()
->       mm/migrate: Add folio_migrate_flags()
->       mm/migrate: Add folio_migrate_copy()
 > 
-> 		More anon+file conversion, not needed.
-
-As far as I can tell, anon never calls any of these three functions.
-anon calls migrate_page(), which calls migrate_page_move_mapping(),
-but several filesystems do call these individual functions.
-
->       mm/lru: Add folio_add_lru()
-> 
-> 		LRU code, not needed.
-
-Again, we need folio_add_lru() for filemap.  This one's more
-tractable as a wrapper function.
-
