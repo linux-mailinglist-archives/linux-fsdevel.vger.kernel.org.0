@@ -2,69 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A3DAB43055D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Oct 2021 00:21:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 282664306A9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Oct 2021 06:36:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234675AbhJPWXa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 16 Oct 2021 18:23:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54334 "EHLO
+        id S244969AbhJQEiu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Oct 2021 00:38:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232271AbhJPWXa (ORCPT
+        with ESMTP id S232228AbhJQEit (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 16 Oct 2021 18:23:30 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CC38C061766
-        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Oct 2021 15:21:21 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 5so23265505edw.7
-        for <linux-fsdevel@vger.kernel.org>; Sat, 16 Oct 2021 15:21:21 -0700 (PDT)
+        Sun, 17 Oct 2021 00:38:49 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C59CC061765;
+        Sat, 16 Oct 2021 21:36:40 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id e65so10217808pgc.5;
+        Sat, 16 Oct 2021 21:36:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=11NI8rJSPz43D1gV7A+JL1F9+LdB46OYj4gEDUOX0Xg=;
-        b=GF+9nhqpBOluFuQibxT2/OKI8O2kYkWPov0QlOb3Mup7J7gOhWH7C4I95DgnYBCMei
-         tBkUDHQMPpbD5BCRrHxPiGS9R/OezX//STkfmrGJ9orTZ5W2a++im8wfCqGDSciCCBWv
-         vENgzT1DT1r9h71lGXNkYevfXJxI5TpoKfPcGsQPW9Ay9Xu8sMJ9YpLyKlqPU+ITFUeY
-         2bKRSnIMLvKK42iuTHcwVw1+g8wt5gejnSkfX4rtuK7dbBN3pAgsaDxDwqCj8gCxlAXz
-         5Egfn0wUPsG8W8CZgfb0Hg4ih6p2ytTImxB2VL1ss3Jow9W32GoxTsic0XiD0Mm8ISjC
-         0xCw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=SImy2fbcQmbj25MrY7ik0EFCmAboOoUt1YB+3+8VGO8=;
+        b=lFCJuu9LrILjtoPrk1zBQpWcp9vJRNvOa+SyJTdWQ8C5KJlBaAd2sQU2StKnWNw/OM
+         bpi8yFIrF8VWI3nRawpu+BGTr055AM9IQxQnro4ogPPI34ge1JIV86eFQufDn/E0r6Do
+         Q9k690msW5z4pfT23CYYt7qjeFsUDcZqPhvi+4RWPVk4R4N8BinB+rKvPyee5QIAAp1O
+         AAA+eLcvobbseZaK4Dfl/8wrgEfemy1Zz4Zm0MF8sxxkId/G0qdCDDt6tFw+pa9HpqD3
+         MuxeeMnzQ0e3+o/Sh5fymLZgYZOoyzLvcaiMp9yDz6EeWsJnuDvrgrO+HsVQax7oUqfE
+         msDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=11NI8rJSPz43D1gV7A+JL1F9+LdB46OYj4gEDUOX0Xg=;
-        b=p2diMcl4JptkYyUNRZNBgePG3HyPPilgZoFWzCMEd8Gjt2l2DR1n16t2gMG4dcEHNG
-         YkxNcNBX+BPRWaVWkmeeh1VJIUEJzw2oLglk8Xmy4fCYsM61MAy9tIGtwuRf72JQDRXO
-         6X5DNcCvQznLC+8N0cFIeYtFjcL68QdDhmp85/0AM+9E8yQ4nvVDSVsuOBcFyUwy9Ise
-         8VV24Bofa+AD+8vWnxA10r04lOGGFHK4WhG9xjyp6n8PiSIL9Q8dZ2pcC7t1U3y6pO9I
-         Uojcwi6CsclNx3sx+XXI90SZwW2M0/alZlgTDNrqEGO3Y6juOMkLEeiWxSxX+/3UO8UP
-         NhSA==
-X-Gm-Message-State: AOAM532X3FtsgFeYIh0obHvDO2/ZcnE3TwJ5qp+57JkvhILxZWFZUt+p
-        UP1cywc9z5H+6huDAbwl3A8HK/yeHwFuLymHraE=
-X-Google-Smtp-Source: ABdhPJxZC6TQQX6lR1T9h7xL+EokiDWYtroi/JAbZPN6LHWiSQWAUoN66aloES/f2nkJ8A/k/4Pw6yIHvDW92kAMRxc=
-X-Received: by 2002:a05:6402:350c:: with SMTP id b12mr30532520edd.244.1634422880023;
- Sat, 16 Oct 2021 15:21:20 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=SImy2fbcQmbj25MrY7ik0EFCmAboOoUt1YB+3+8VGO8=;
+        b=iPy8yxO2WWmw8zJ8+mnP3COitlgAYrCtoSAC8EEzehPIhQCpy3++cMAcohzKQCVzUn
+         uKCUc1d0RT68/V5EP1Whx/FftLbRGokoAS2yAOiRFKYQPc7P2MrPtnsYfxErThWRZ3Ic
+         k/sGgeDzIC9Yfqx5jx73NBLb+i4hf4fLQ07q1emXtQzND213rOdVEUfx+6/PJCFsFwE2
+         joPwSj1fZDSxiGBYKMkhGQXY1q7qXgN22U/LZUcE+ZobSZUdwxhPWEZzE1WNSrH3+9Nz
+         NlVNjPXjdEY0w0hOhapbcko4YqdrXhLEilRVPO/yXPXIuYM2KpdiequQicZz1qNfuahz
+         aPFQ==
+X-Gm-Message-State: AOAM531SbheWe0civtikrvWZv9EthDMvBKlDfAivnTQv94nVDfbi/ZLR
+        SREEeXafVJ5hfaa6oTO4/CahGof/XZU=
+X-Google-Smtp-Source: ABdhPJyLHqLBFnf6Z6mcJfPemM50Ww8flUSGee23fVZyaHVq8qP45fcNC0+vXR8DV8KvwYzfUms7Xg==
+X-Received: by 2002:a62:84d5:0:b0:44d:7cf:e6dc with SMTP id k204-20020a6284d5000000b0044d07cfe6dcmr20795903pfd.12.1634445399458;
+        Sat, 16 Oct 2021 21:36:39 -0700 (PDT)
+Received: from kvm.asia-northeast3-a.c.our-ratio-313919.internal (24.151.64.34.bc.googleusercontent.com. [34.64.151.24])
+        by smtp.gmail.com with ESMTPSA id e9sm9222768pjl.41.2021.10.16.21.36.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Oct 2021 21:36:39 -0700 (PDT)
+Date:   Sun, 17 Oct 2021 04:36:35 +0000
+From:   Hyeonggon Yoo <42.hyeyoo@gmail.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Roman Gushchin <guro@fb.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] Unit mismatch (Slab/SReclaimable/SUnreclaim) in meminfo
+Message-ID: <20211017043635.GB3050@kvm.asia-northeast3-a.c.our-ratio-313919.internal>
+References: <20211016115429.17226-1-42.hyeyoo@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:ab4:98c3:0:0:0:0:0 with HTTP; Sat, 16 Oct 2021 15:21:19
- -0700 (PDT)
-Reply-To: ms.lisahugh000@gmail.com
-From:   MS LISA HUGH <olivier.folly0@gmail.com>
-Date:   Sun, 17 Oct 2021 00:21:19 +0200
-Message-ID: <CAG_GOAsf12PZvBp8cqL7znJ++aP_JgY1b8fKG+hO7K3xA4T=Vg@mail.gmail.com>
-Subject: BUSINESS AND DETAILS LATER. >>MS LISA HUGH.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211016115429.17226-1-42.hyeyoo@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Friend,
+On Sat, Oct 16, 2021 at 11:54:29AM +0000, Hyeonggon Yoo wrote:
+> Hello, it seems there's mismatch in unit (byte and kB) in meminfo.
+> Would something like this will be acceptable?
+> 
+> commit d42f3245c7e2 ("mm: memcg: convert vmstat slab counters
+> to bytes") changed it to bytes but proc seems to print everything in
+> kilobytes.
+> 
 
-I am Ms Lisa Hugh accountant and files keeping by profession with the bank.
+Ignore this.
 
-I need Your help for this transfer($4,500,000,00 ,U.S.DOLLARS)to your
-bank account with your co-operation for both of us benefit.
+this was my misunderstanding of code :(
+It internally converts to kilobytes when updating its data.
 
-Please send the follow below,
-1)AGE....2)TELEPHONE NUMBER,,,,,...,3)COUNTRY.....4)OCCUPATION......
-Thanks.
-Ms Lisa Hugh
+> ---
+>  fs/proc/meminfo.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+> index 6fa761c9cc78..182376582076 100644
+> --- a/fs/proc/meminfo.c
+> +++ b/fs/proc/meminfo.c
+> @@ -52,8 +52,8 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+>  		pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
+>  
+>  	available = si_mem_available();
+> -	sreclaimable = global_node_page_state_pages(NR_SLAB_RECLAIMABLE_B);
+> -	sunreclaim = global_node_page_state_pages(NR_SLAB_UNRECLAIMABLE_B);
+> +	sreclaimable = global_node_page_state_pages(NR_SLAB_RECLAIMABLE_B) / 1024;
+> +	sunreclaim = global_node_page_state_pages(NR_SLAB_UNRECLAIMABLE_B) / 1024;
+>  
+>  	show_val_kb(m, "MemTotal:       ", i.totalram);
+>  	show_val_kb(m, "MemFree:        ", i.freeram);
+> -- 
+> 2.27.0
+> 
