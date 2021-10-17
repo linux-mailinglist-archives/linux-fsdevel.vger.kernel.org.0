@@ -2,192 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ABD6E4309A4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Oct 2021 16:12:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D3AE430C53
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Oct 2021 23:30:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343818AbhJQOOj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 Oct 2021 10:14:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238183AbhJQOOi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 17 Oct 2021 10:14:38 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8C7F0604DB;
-        Sun, 17 Oct 2021 14:12:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634479948;
-        bh=RmSMKTg5TcL3qjURkxbM+BvVnDKiX6oL/7vB+Xbd55c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p9N+SfeMaoSGCiyxtDBec1UPv6WMgXjFcy/M3JLFPbVafXBNaxdjpG9B30dDW+YCM
-         1w7o17spKr/RDQdS/NDnncfMCzYUuyBikegmGijUFJIAFKXC6JxKBQkOyxWpOPSkMG
-         Xcf3Ny84a19kDTXcxLIlTN6rmnIPZn1mjgXZZ9+Dc8WFgbhY12z4AcuEe7HWqRja5M
-         sJePhxIZkZFRjmpYsRgp1Xe1IXRkzbSJzbuO1E9W0NfEhJS5mWuBnyV95F9ShTR0m/
-         N7QNQaMRxo2QFps6aw3PgKihE2TivErXbQejJdKE4pf9mljG1KyIeEc1cS3pdn6VoR
-         5yxzQIavynIbg==
-Date:   Sun, 17 Oct 2021 16:12:19 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gonglei <arei.gonglei@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        David Airlie <airlied@linux.ie>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jie Deng <jie.deng@intel.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        David Hildenbrand <david@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Anton Yakovlev <anton.yakovlev@opensynergy.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-um@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, kvm@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH RFC] virtio: wrap config->reset calls
-Message-ID: <YWwvQ+YMAKzX1aO3@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org,
-        Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gonglei <arei.gonglei@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jie Deng <jie.deng@intel.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        David Hildenbrand <david@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Anton Yakovlev <anton.yakovlev@opensynergy.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        linux-um@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, kvm@vger.kernel.org,
-        alsa-devel@alsa-project.org
-References: <20211013105226.20225-1-mst@redhat.com>
+        id S234947AbhJQVcc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Oct 2021 17:32:32 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:51784 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233110AbhJQVcc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 17 Oct 2021 17:32:32 -0400
+Received: by mail-io1-f71.google.com with SMTP id i11-20020a056602134b00b005be82e3028bso9163092iov.18
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Oct 2021 14:30:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=3H9FzlmbDVDpsM1j3kVL20tLVe48utjgIWT80u1mu7s=;
+        b=stBOjlo39MOGIpzuFOfKyBYN2//b1mL9/GgG+u/ZgjElCzqM02t36zrg9dq4rU4Mb8
+         cUv/ZB5c9sUZI9ZRmY5HdIEgXd+LEXkzvSxIT86BK/DavQsmpJAachvPijrfE/PvIzWW
+         lKcD8gN+BqbT3tKhZ6PMv3gBRj0steglT1LjHnSYj7kSNYnaZZag3fsXnl4s3CYWHmV8
+         5FtmP5PG18tgu3FQWbhmmfOhh1KyZ7oBf4k07pO2ix2mMpKqKsNcIUvLF2Mm+NM1b5dM
+         cQREBIGl6pFtLIwdtFHovYNjM70v7S2jdDbUQH4uiNtvo9q7MSv4YgeBOnRoEr7jy9Lh
+         05Uw==
+X-Gm-Message-State: AOAM530nufRhWbVTXv8nFC/1SW2Hwhx2HYlBWbeyct+ddeispfAdsqBa
+        h6s9Iltmzizp67YVdZvukrTGCn46NPZJduipg3NqU2iCKsD2
+X-Google-Smtp-Source: ABdhPJwo6Tb1HwOSjoLSaBm9xgWZQ/508DhlbWe378C9CssspaCql6f6jxsYlDfC4egIhTRVkK953+2u+TTsB0FtIcP1EdL4F+/p
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="byZ/nyBYz0KyHzOz"
-Content-Disposition: inline
-In-Reply-To: <20211013105226.20225-1-mst@redhat.com>
+X-Received: by 2002:a05:6638:2650:: with SMTP id n16mr5747471jat.72.1634506222156;
+ Sun, 17 Oct 2021 14:30:22 -0700 (PDT)
+Date:   Sun, 17 Oct 2021 14:30:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c13da605ce9322f7@google.com>
+Subject: [syzbot] WARNING in fuse_evict_inode
+From:   syzbot <syzbot+1a738a54963025fd8ff8@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        miklos@szeredi.hu, mszeredi@redhat.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello,
 
---byZ/nyBYz0KyHzOz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+syzbot found the following issue on:
 
-On Wed, Oct 13, 2021 at 06:55:31AM -0400, Michael S. Tsirkin wrote:
-> This will enable cleanups down the road.
-> The idea is to disable cbs, then add "flush_queued_cbs" callback
-> as a parameter, this way drivers can flush any work
-> queued after callbacks have been disabled.
->=20
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+HEAD commit:    7c832d2f9b95 Add linux-next specific files for 20211015
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=10fe5658b00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f6ac42766a768877
+dashboard link: https://syzkaller.appspot.com/bug?extid=1a738a54963025fd8ff8
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12115e78b00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15ca77f4b00000
 
-Acked-by: Wolfram Sang <wsa@kernel.org> # for I2C changes
+The issue was bisected to:
+
+commit 6e6b45a963c4a962c61ca59982982ddcdc82e651
+Author: Miklos Szeredi <mszeredi@redhat.com>
+Date:   Wed Oct 13 12:33:40 2021 +0000
+
+    fuse: write inode in fuse_vma_close() instead of fuse_release()
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17aff458b00000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=146ff458b00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=106ff458b00000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1a738a54963025fd8ff8@syzkaller.appspotmail.com
+Fixes: 6e6b45a963c4 ("fuse: write inode in fuse_vma_close() instead of fuse_release()")
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6556 at fs/fuse/inode.c:122 fuse_evict_inode+0x365/0x430 fs/fuse/inode.c:122
+Modules linked in:
+CPU: 0 PID: 6556 Comm: syz-executor054 Not tainted 5.15.0-rc5-next-20211015-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:fuse_evict_inode+0x365/0x430 fs/fuse/inode.c:122
+Code: 00 00 00 48 c7 83 a0 04 00 00 00 00 00 00 e9 58 fe ff ff e8 dd 7d c8 fe 48 89 df e8 f5 95 01 00 e9 05 fe ff ff e8 cb 7d c8 fe <0f> 0b e9 e8 fc ff ff 48 89 df e8 4c 10 0f ff e9 53 fe ff ff 48 89
+RSP: 0018:ffffc9000282f8b0 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff88806be58000 RCX: 0000000000000000
+RDX: ffff888017e53a00 RSI: ffffffff82aee6c5 RDI: 0000000000000003
+RBP: 0000000000000004 R08: 0000000000000000 R09: ffff88806be5808b
+R10: ffffffff82aee3ab R11: 0000000000000000 R12: ffff88806be580d8
+R13: ffff88806be58028 R14: ffffffff89e3a8e0 R15: ffff88807806a980
+FS:  0000000000000000(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f4a17dcf568 CR3: 000000000b88e000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ evict+0x2ed/0x6b0 fs/inode.c:592
+ iput_final fs/inode.c:1672 [inline]
+ iput.part.0+0x539/0x850 fs/inode.c:1698
+ iput+0x58/0x70 fs/inode.c:1688
+ dentry_unlink_inode+0x2b1/0x460 fs/dcache.c:376
+ __dentry_kill+0x3c0/0x640 fs/dcache.c:582
+ dentry_kill fs/dcache.c:708 [inline]
+ dput+0x738/0xbc0 fs/dcache.c:888
+ do_one_tree fs/dcache.c:1660 [inline]
+ shrink_dcache_for_umount+0x11f/0x330 fs/dcache.c:1674
+ generic_shutdown_super+0x68/0x370 fs/super.c:447
+ kill_anon_super+0x36/0x60 fs/super.c:1057
+ deactivate_locked_super+0x94/0x160 fs/super.c:335
+ deactivate_super+0xad/0xd0 fs/super.c:366
+ cleanup_mnt+0x3a2/0x540 fs/namespace.c:1137
+ task_work_run+0xdd/0x1a0 kernel/task_work.c:164
+ exit_task_work include/linux/task_work.h:32 [inline]
+ do_exit+0xc16/0x2b40 kernel/exit.c:832
+ do_group_exit+0x125/0x310 kernel/exit.c:929
+ get_signal+0x47d/0x2160 kernel/signal.c:2833
+ arch_do_signal_or_restart+0x2a9/0x1c40 arch/x86/kernel/signal.c:863
+ handle_signal_work kernel/entry/common.c:148 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:172 [inline]
+ exit_to_user_mode_prepare+0x17d/0x290 kernel/entry/common.c:207
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:289 [inline]
+ syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:300
+ do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7f4a17d79ef9
+Code: Unable to access opcode bytes at RIP 0x7f4a17d79ecf.
+RSP: 002b:00007f4a17d2b2f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: 0000000000139000 RBX: 00007f4a17e074e0 RCX: 00007f4a17d79ef9
+RDX: 00000000fffffde4 RSI: 00000000200000c0 RDI: 0000000000000006
+RBP: 00007f4a17dd40d4 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
+R13: 00007f4a17dd00c8 R14: 00007f4a17dd20d0 R15: 00007f4a17e074e8
+ </TASK>
 
 
---byZ/nyBYz0KyHzOz
-Content-Type: application/pgp-signature; name="signature.asc"
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmFsLz8ACgkQFA3kzBSg
-KbbhcRAAqrAP/5XyaQEyoVcqsJ6xfTgBJXC8/fUFVary0yMagmjEQLKzCbVBRQiF
-UyKdQuoAJkemPBp13oZuYHgojk26k9r+hRKLoXigmy0tMboLZisXMh7/pcFDyz2e
-1C+0lbx3IQ5Q9LV590CAlOS1i7wPOXFDW0LkIu1mb8TX2Z2NU4G7Tz9TQlGBXO39
-MhIC6ggPDf141nztlFknKIlcLzpBXatCQrhN7cdcr3LxTjoKa20bHHVIGokKmFma
-sJK0vVc5vuqlye+Ea8AZ1jzol4xFQRcSHoNCC5MfHUfxVaJ3mvYQ6jXl9cAfYkLN
-0V5IehblsGFyBZ/Kpw/9SnPGTBV2Chs/o4JURyiKp3wVIpkAMagVz9OI4cOC+TTt
-8007Fqv9jQtFpu+w9FC3//i0C+JiUH12eYjCt8Me4FZC4EHIosqfm8i7yRB+MZIv
-WtaR04OJSlPS/DVFNb1AhUrvITU7uOw2fvVRyyC33iPXIJpvDoyoS9voJTGWYxRn
-u7CYO2yy9EfLoB6bPLn4wbfk1TUlbBpSuuycqOpSfjJ0CSEK0d/t4fKkwsDZ+gxb
-bS6NiNuzBiaxzsm8EUVR1q+gqY46ywMDIOYmbBykiXipERJofhxjro8Czauj9+b6
-FgdQ6J1aFiV8/k36NqD1M5WdM3VecyPECGa7Ba2Nce+uc/k8jCw=
-=Y+5l
------END PGP SIGNATURE-----
-
---byZ/nyBYz0KyHzOz--
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
