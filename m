@@ -2,177 +2,192 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8064443072B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Oct 2021 10:11:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABD6E4309A4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Oct 2021 16:12:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245036AbhJQIMm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 Oct 2021 04:12:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40000 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232530AbhJQIMl (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 17 Oct 2021 04:12:41 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15B13C061765;
-        Sun, 17 Oct 2021 01:10:32 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id n7so2698595ljp.5;
-        Sun, 17 Oct 2021 01:10:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uVvk0GkTxHaq+zMgcywPyhp00COcyzzLvDsUILCtVnQ=;
-        b=UXS43IeMFnuTbNf0Qx3NrjWUyJBLg0El+hSwvwbl7ZSDbO1ADomHLAd93j/07a4Djj
-         u70rjjmyd0uMiQCkxBqHARA3EyWqnlGQV0leu8vXEAkb6clxBcspBgWsTh+h6MdZouXq
-         /9t2TWyvpRJcwjsrXi1gGy2uX2CScM70vSYp2GI+WPKePpKhOWdsFo2HZNoXj4Zzh3Gr
-         L1O38ov03wliUgnazRd8+SsaWbOjGLPTcsWMGuZw6XXezly/RnjPRASQsShGt0/hbxUl
-         ORy08sM6uAEQdCFCP/XdejoJ3NKULDowqeY2EUnrqb4KF/CAELE4yZ8+UvK5aPkzwQzA
-         uA6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uVvk0GkTxHaq+zMgcywPyhp00COcyzzLvDsUILCtVnQ=;
-        b=G4ANFf7UUApHJhlY+RtM5W5i2qmtGGEd960oKgYAg3Wi68puTfZX3XvILcenECoFbA
-         SIoyg1Am+nE9WjtiR+XiRJgalarZQai8UWNegpn+zqJ8uJycA3STnXagNL7aosVUwkiE
-         W5RqM9UFO+n+ZiWmEFVjTA/9c+upGxUjP/PysCVdxfbNa3ad4OdHZJP29zCck7iWPkqA
-         p6aUcyRpKxDWSRa0hZTuYwVBaFJd7CNQ1mUGwp5zymUuoFaSoSbBnQXQdVnzV2wBr9T1
-         3JWOPi0TkG700zdXBLFZLSTa55BVnYxvRJjIw8dO8OqKT7tCvNUd2kFHmyyMc3XhtTW4
-         clgw==
-X-Gm-Message-State: AOAM533CKc0WSkO12+DwRX6qgM7hzFrgdo5YMao86WgArRnx/8omm2Io
-        a10WUnEhdw4GbjS7+bBUZqpO/o472L0=
-X-Google-Smtp-Source: ABdhPJzh1BYjoxhUnC+38CDk89mP0e2ywkEjhqSnAL9dbH+0/dkLRrAedtdTvbPRq8pNaNT3VJ2/Bw==
-X-Received: by 2002:a2e:361a:: with SMTP id d26mr24619050lja.104.1634458230351;
-        Sun, 17 Oct 2021 01:10:30 -0700 (PDT)
-Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
-        by smtp.gmail.com with ESMTPSA id t13sm1093053lfc.34.2021.10.17.01.10.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Oct 2021 01:10:29 -0700 (PDT)
-Date:   Sun, 17 Oct 2021 11:10:27 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/5] fs/ntfs3: Rework ntfs_utf16_to_nls
-Message-ID: <20211017081027.zxh2hbbxdk7ffwqn@kari-VirtualBox>
-References: <98a166e4-f894-8bff-9479-05ef5435f1ed@paragon-software.com>
- <5f5a0b13-90bd-b97c-aa50-c646bb243bde@paragon-software.com>
+        id S1343818AbhJQOOj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Oct 2021 10:14:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41896 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238183AbhJQOOi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 17 Oct 2021 10:14:38 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8C7F0604DB;
+        Sun, 17 Oct 2021 14:12:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634479948;
+        bh=RmSMKTg5TcL3qjURkxbM+BvVnDKiX6oL/7vB+Xbd55c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=p9N+SfeMaoSGCiyxtDBec1UPv6WMgXjFcy/M3JLFPbVafXBNaxdjpG9B30dDW+YCM
+         1w7o17spKr/RDQdS/NDnncfMCzYUuyBikegmGijUFJIAFKXC6JxKBQkOyxWpOPSkMG
+         Xcf3Ny84a19kDTXcxLIlTN6rmnIPZn1mjgXZZ9+Dc8WFgbhY12z4AcuEe7HWqRja5M
+         sJePhxIZkZFRjmpYsRgp1Xe1IXRkzbSJzbuO1E9W0NfEhJS5mWuBnyV95F9ShTR0m/
+         N7QNQaMRxo2QFps6aw3PgKihE2TivErXbQejJdKE4pf9mljG1KyIeEc1cS3pdn6VoR
+         5yxzQIavynIbg==
+Date:   Sun, 17 Oct 2021 16:12:19 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gonglei <arei.gonglei@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jie Deng <jie.deng@intel.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        David Hildenbrand <david@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Anton Yakovlev <anton.yakovlev@opensynergy.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-um@lists.infradead.org,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, kvm@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH RFC] virtio: wrap config->reset calls
+Message-ID: <YWwvQ+YMAKzX1aO3@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org,
+        Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gonglei <arei.gonglei@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jie Deng <jie.deng@intel.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        David Hildenbrand <david@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Anton Yakovlev <anton.yakovlev@opensynergy.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        linux-um@lists.infradead.org,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, kvm@vger.kernel.org,
+        alsa-devel@alsa-project.org
+References: <20211013105226.20225-1-mst@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="byZ/nyBYz0KyHzOz"
 Content-Disposition: inline
-In-Reply-To: <5f5a0b13-90bd-b97c-aa50-c646bb243bde@paragon-software.com>
+In-Reply-To: <20211013105226.20225-1-mst@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 05, 2021 at 07:47:03PM +0300, Konstantin Komarov wrote:
-> Now ntfs_utf16_to_nls takes length as one of arguments.
-> If length of symlink > 255, then we tried to convert
-> length of symlink +- some random number.
-> Now 255 symbols limit was removed.
-> 
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> ---
->  fs/ntfs3/dir.c     | 19 ++++++++-----------
->  fs/ntfs3/ntfs_fs.h |  2 +-
->  2 files changed, 9 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/ntfs3/dir.c b/fs/ntfs3/dir.c
-> index 785e72d4392e..fb438d604040 100644
-> --- a/fs/ntfs3/dir.c
-> +++ b/fs/ntfs3/dir.c
-> @@ -15,11 +15,10 @@
->  #include "ntfs_fs.h"
->  
->  /* Convert little endian UTF-16 to NLS string. */
-> -int ntfs_utf16_to_nls(struct ntfs_sb_info *sbi, const struct le_str *uni,
-> +int ntfs_utf16_to_nls(struct ntfs_sb_info *sbi, const __le16 *name, u32 len,
->  		      u8 *buf, int buf_len)
 
-I just like to point out that this patch break the build. We cannot
-break build in any commit. If you make change you need to make sure
-everything still works. This is of course now late, but I just bring it
-up if you did not know it already.
+--byZ/nyBYz0KyHzOz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Problem here is that you change callers to match this in patch 2/5. You
-need to make it in same patch. Basically every patch should build it is
-own and even all tests should work.
+On Wed, Oct 13, 2021 at 06:55:31AM -0400, Michael S. Tsirkin wrote:
+> This will enable cleanups down the road.
+> The idea is to disable cbs, then add "flush_queued_cbs" callback
+> as a parameter, this way drivers can flush any work
+> queued after callbacks have been disabled.
+>=20
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
-Reason here is git bisecting. We really want to easy way to bisect bugs
-and if some commit break something then it make bisecting more
-difficult.
+Acked-by: Wolfram Sang <wsa@kernel.org> # for I2C changes
 
-I also wonder why 0day bot did not report this. Maybe because there was
-no base or something, but I have to look into that as for now that is
-only CI system we have. When we get ntfs3 to kernel.org then we also can
-use patchwork and then my first thing to do is to start CI system that
-reports results to patchwork.
 
-I will use Snowpatch to fetch patches from patchwork and Jenkins to CI.
+--byZ/nyBYz0KyHzOz
+Content-Type: application/pgp-signature; name="signature.asc"
 
->  {
-> -	int ret, uni_len, warn;
-> -	const __le16 *ip;
-> +	int ret, warn;
->  	u8 *op;
->  	struct nls_table *nls = sbi->options->nls;
->  
-> @@ -27,18 +26,16 @@ int ntfs_utf16_to_nls(struct ntfs_sb_info *sbi, const struct le_str *uni,
->  
->  	if (!nls) {
->  		/* UTF-16 -> UTF-8 */
-> -		ret = utf16s_to_utf8s((wchar_t *)uni->name, uni->len,
-> -				      UTF16_LITTLE_ENDIAN, buf, buf_len);
-> +		ret = utf16s_to_utf8s(name, len, UTF16_LITTLE_ENDIAN, buf,
-> +				      buf_len);
->  		buf[ret] = '\0';
->  		return ret;
->  	}
->  
-> -	ip = uni->name;
->  	op = buf;
-> -	uni_len = uni->len;
->  	warn = 0;
->  
-> -	while (uni_len--) {
-> +	while (len--) {
->  		u16 ec;
->  		int charlen;
->  		char dump[5];
-> @@ -49,7 +46,7 @@ int ntfs_utf16_to_nls(struct ntfs_sb_info *sbi, const struct le_str *uni,
->  			break;
->  		}
->  
-> -		ec = le16_to_cpu(*ip++);
-> +		ec = le16_to_cpu(*name++);
->  		charlen = nls->uni2char(ec, op, buf_len);
->  
->  		if (charlen > 0) {
-> @@ -304,8 +301,8 @@ static inline int ntfs_filldir(struct ntfs_sb_info *sbi, struct ntfs_inode *ni,
->  	if (sbi->options->nohidden && (fname->dup.fa & FILE_ATTRIBUTE_HIDDEN))
->  		return 0;
->  
-> -	name_len = ntfs_utf16_to_nls(sbi, (struct le_str *)&fname->name_len,
-> -				     name, PATH_MAX);
-> +	name_len = ntfs_utf16_to_nls(sbi, fname->name, fname->name_len, name,
-> +				     PATH_MAX);
->  	if (name_len <= 0) {
->  		ntfs_warn(sbi->sb, "failed to convert name for inode %lx.",
->  			  ino);
-> diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
-> index 38b7c1a9dc52..9277b552f257 100644
-> --- a/fs/ntfs3/ntfs_fs.h
-> +++ b/fs/ntfs3/ntfs_fs.h
-> @@ -475,7 +475,7 @@ bool are_bits_set(const ulong *map, size_t bit, size_t nbits);
->  size_t get_set_bits_ex(const ulong *map, size_t bit, size_t nbits);
->  
->  /* Globals from dir.c */
-> -int ntfs_utf16_to_nls(struct ntfs_sb_info *sbi, const struct le_str *uni,
-> +int ntfs_utf16_to_nls(struct ntfs_sb_info *sbi, const __le16 *name, u32 len,
->  		      u8 *buf, int buf_len);
->  int ntfs_nls_to_utf16(struct ntfs_sb_info *sbi, const u8 *name, u32 name_len,
->  		      struct cpu_str *uni, u32 max_ulen,
-> -- 
-> 2.33.0
-> 
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmFsLz8ACgkQFA3kzBSg
+KbbhcRAAqrAP/5XyaQEyoVcqsJ6xfTgBJXC8/fUFVary0yMagmjEQLKzCbVBRQiF
+UyKdQuoAJkemPBp13oZuYHgojk26k9r+hRKLoXigmy0tMboLZisXMh7/pcFDyz2e
+1C+0lbx3IQ5Q9LV590CAlOS1i7wPOXFDW0LkIu1mb8TX2Z2NU4G7Tz9TQlGBXO39
+MhIC6ggPDf141nztlFknKIlcLzpBXatCQrhN7cdcr3LxTjoKa20bHHVIGokKmFma
+sJK0vVc5vuqlye+Ea8AZ1jzol4xFQRcSHoNCC5MfHUfxVaJ3mvYQ6jXl9cAfYkLN
+0V5IehblsGFyBZ/Kpw/9SnPGTBV2Chs/o4JURyiKp3wVIpkAMagVz9OI4cOC+TTt
+8007Fqv9jQtFpu+w9FC3//i0C+JiUH12eYjCt8Me4FZC4EHIosqfm8i7yRB+MZIv
+WtaR04OJSlPS/DVFNb1AhUrvITU7uOw2fvVRyyC33iPXIJpvDoyoS9voJTGWYxRn
+u7CYO2yy9EfLoB6bPLn4wbfk1TUlbBpSuuycqOpSfjJ0CSEK0d/t4fKkwsDZ+gxb
+bS6NiNuzBiaxzsm8EUVR1q+gqY46ywMDIOYmbBykiXipERJofhxjro8Czauj9+b6
+FgdQ6J1aFiV8/k36NqD1M5WdM3VecyPECGa7Ba2Nce+uc/k8jCw=
+=Y+5l
+-----END PGP SIGNATURE-----
+
+--byZ/nyBYz0KyHzOz--
