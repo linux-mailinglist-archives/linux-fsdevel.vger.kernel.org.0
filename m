@@ -2,120 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C11F8431A69
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 15:09:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4B77431C08
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 15:37:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231713AbhJRNLf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 09:11:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58406 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231167AbhJRNLf (ORCPT
+        id S233368AbhJRNhr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 09:37:47 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:34954 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232302AbhJRNfm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 09:11:35 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BF9CC06161C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 06:09:23 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id w14so70804336edv.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 06:09:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7sfYWvGtF/RT2opW48TGh4cv28uaASbal3erpl/QsMA=;
-        b=qv7jeK9DO5mWPMMGTw7OJ4VbsWTEEuo08heUS9ChqyCcJDhTHv2a4aWa8gZ7x2Puiq
-         NWt5ZwrvvfBgmJoHiPSZvVOOtk48rTKvCvboatN5EbEO/EDxfcPZiB+VWpIA8mRjttvA
-         u/FJf9TNrlmJ16oJcfLC5hMeeXmRJTXV9KxbV/wUDbCJMKzzhLEUMdnSGPEL43wKbXRz
-         DWYauL6xZ0GbWO6DhFGsVVfwzNVLyNYHu6Ktr/0vKSe05hE3zFm0wnpvhrHGdstO+5Xp
-         RA8BggiuvVw7yJ0XB/uZKuDAO1hGkqBtQwW/jkzaX0utBk02jzZL5D+guHg09s/H3i0P
-         MURA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7sfYWvGtF/RT2opW48TGh4cv28uaASbal3erpl/QsMA=;
-        b=qIfJyoBeXVhCHDzfUW/P7t0guNQVJaQPcDVgWqC08vnZNQwp62l1D50v5rIUDdwypR
-         DnsMAUHzU5oUrHBsg8+AF5v1/9VUpHfsmJz5dTbW08Rb2ELr6KOk9PlxqsSSBXoUjFOT
-         2rhMK76lmPfcwMlH+7XnUu1oVpaUVxoETPTvbXo1OIHfuLhoiNPlrkKfqOf1B2GsYmRN
-         wS8pxAisWGx6/VS9iu0Dkz7S13uzofQy86GUZ2zIKR0GpYhZWrOXq1xVTuMMiwWmZGwv
-         ey6UXm9/VjQ5Cw3pd01NOzkhCGXvnV4YXq2XMKAAVtC8GL+AUOYAvkuuqPXL0TqgUF7B
-         tt0g==
-X-Gm-Message-State: AOAM532JIw1V1CM76YyGL4DVpcaH9OGKlxHs9dGYEGf6P5949Yw19W+y
-        dZ+3wdTBu29a1UyOnB3Chgq9v/KFf2cHTIKqHCI8
-X-Google-Smtp-Source: ABdhPJx8sPwahsK+tmVX4AsdUMywiCdG8lbBDT2PwydF1/PjHWbPDuEjH2eEnYLTv9BC5AxvzMN3B6MGeyh1Mn0BFjU=
-X-Received: by 2002:a05:6402:5113:: with SMTP id m19mr44978423edd.231.1634562526268;
- Mon, 18 Oct 2021 06:08:46 -0700 (PDT)
+        Mon, 18 Oct 2021 09:35:42 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 258F21FD6D;
+        Mon, 18 Oct 2021 13:33:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1634564010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=YoCaAIU3gS5Go5DLCN1kv6dXHZiM0iQ6w6RrFGGICso=;
+        b=XmgPTBlbQwJY3r+TZtpbKUocEfQeYD958gxtDPq6oJ1jojMVSpnjhZulUshuSUa25saqEP
+        redaJ3+UFAYoa8FwoqWco0w/CkkO92hkKFZE8UtdZxPTx1LUvS1UkorkJ4jmDW3wvD3xrP
+        MUYOayUfMVAdj3iQs/U9nXSIRCmILGY=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 751B1A3BC8;
+        Mon, 18 Oct 2021 13:33:29 +0000 (UTC)
+Date:   Mon, 18 Oct 2021 15:33:25 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Mina Almasry <almasrymina@google.com>
+Cc:     Roman Gushchin <songmuchun@bytedance.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Greg Thelen <gthelen@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Hugh Dickins <hughd@google.com>, Tejun Heo <tj@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        "open list:FILESYSTEMS (VFS and infrastructure)" 
+        <linux-fsdevel@vger.kernel.org>, cgroups@vger.kernel.org,
+        riel@surriel.com
+Subject: Re: [RFC Proposal] Deterministic memcg charging for shared memory
+Message-ID: <YW13pS716ajeSgXj@dhcp22.suse.cz>
+References: <CAHS8izMpzTvd5=x_xMhDJy1toV-eT3AS=GXM2ObkJoCmbDtz6w@mail.gmail.com>
 MIME-Version: 1.0
-References: <20211011090240.97-1-xieyongji@bytedance.com> <CAJfpegvw2F_WbTAk_f92YwBn3YwqbG3Ond74DY7yvMbzeUnMKA@mail.gmail.com>
- <CACycT3sTarn8BfsGUQsrEbtWt9qeZ8Ph4O3VGpbYi7gbGKgsJA@mail.gmail.com>
- <CAJfpeguaRjQ9Fd1S4NHx5XVF89PGgFBxW3Xf=XNrb1QQRbDbYQ@mail.gmail.com>
- <CACycT3s=aC6eWfo0LHMuE6sVVErjkZPScsgaBGn4QABbZE2a9g@mail.gmail.com> <CAJfpegv51cbjkD6BQ6wUZSbaTpnB1-827G++HQnWX7zGA5fmmA@mail.gmail.com>
-In-Reply-To: <CAJfpegv51cbjkD6BQ6wUZSbaTpnB1-827G++HQnWX7zGA5fmmA@mail.gmail.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Mon, 18 Oct 2021 21:08:35 +0800
-Message-ID: <CACycT3u18XRVs6LbaB0_UNX-_SpH1r=w=N01k61vscenozVj3g@mail.gmail.com>
-Subject: Re: [RFC] fuse: Avoid invalidating attrs if writeback_cache enabled
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org,
-        =?UTF-8?B?5byg5L2z6L6w?= <zhangjiachen.jaycee@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHS8izMpzTvd5=x_xMhDJy1toV-eT3AS=GXM2ObkJoCmbDtz6w@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 18, 2021 at 7:45 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Mon, 18 Oct 2021 at 13:25, Yongji Xie <xieyongji@bytedance.com> wrote:
-> >
-> > On Wed, Oct 13, 2021 at 9:52 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > >
-> > > On Mon, 11 Oct 2021 at 16:45, Yongji Xie <xieyongji@bytedance.com> wrote:
-> > > >
-> > > > On Mon, Oct 11, 2021 at 9:21 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > > > >
-> > > > > On Mon, 11 Oct 2021 at 11:07, Xie Yongji <xieyongji@bytedance.com> wrote:
-> > > > > >
-> > > > > > Recently we found the performance of small direct writes is bad
-> > > > > > when writeback_cache enabled. This is because we need to get
-> > > > > > attrs from userspace in fuse_update_get_attr() on each write.
-> > > > > > The timeout for the attributes doesn't work since every direct write
-> > > > > > will invalidate the attrs in fuse_direct_IO().
-> > > > > >
-> > > > > > To fix it, this patch tries to avoid invalidating attrs if writeback_cache
-> > > > > > is enabled since we should trust local size/ctime/mtime in this case.
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > Thanks for the patch.
-> > > > >
-> > > > > Just pushed an update to
-> > > > > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.gitt#for-next
-> > > > > (9ca3f8697158 ("fuse: selective attribute invalidation")) that should
-> > > > > fix this behavior.
-> > > > >
-> > > >
-> > > > Looks like fuse_update_get_attr() will still get attrs from userspace
-> > > > each time with this commit applied.
-> > > >
-> > > > > Could you please test?
-> > > > >
-> > > >
-> > > > I applied the commit 9ca3f8697158 ("fuse: selective attribute
-> > > > invalidation")  and tested it. But the issue still exists.
-> > >
-> > > Yeah, my bad.  Pushed a more complete set of fixes to #for-next ending with
-> > >
-> > > e15a9a5fca6c ("fuse: take cache_mask into account in getattr")
-> > >
-> > > You should pull or cherry pick the complete branch.
-> > >
-> >
-> > I tested this branch, but it still doesn't fix this issue. The
-> > inval_mask = 0x6C0 and cache_mask = 0x2C0, so we still need to get
-> > attrs from userspace. Should we add STATX_BLOCKS to cache_mask?
->
-> Does the attach incremental ~/gupatch solve this?
+On Wed 13-10-21 12:23:19, Mina Almasry wrote:
+> Below is a proposal for deterministic charging of shared memory.
+> Please take a look and let me know if there are any major concerns:
+> 
+> Problem:
+> Currently shared memory is charged to the memcg of the allocating
+> process. This makes memory usage of processes accessing shared memory
+> a bit unpredictable since whichever process accesses the memory first
+> will get charged. We have a number of use cases where our userspace
+> would like deterministic charging of shared memory:
+> 
+> 1. System services allocating memory for client jobs:
+> We have services (namely a network access service[1]) that provide
+> functionality for clients running on the machine and allocate memory
+> to carry out these services. The memory usage of these services
+> depends on the number of jobs running on the machine and the nature of
+> the requests made to the service, which makes the memory usage of
+> these services hard to predict and thus hard to limit via memory.max.
+> These system services would like a way to allocate memory and instruct
+> the kernel to charge this memory to the client’s memcg.
+> 
+> 2. Shared filesystem between subtasks of a large job
+> Our infrastructure has large meta jobs such as kubernetes which spawn
+> multiple subtasks which share a tmpfs mount. These jobs and its
+> subtasks use that tmpfs mount for various purposes such as data
+> sharing or persistent data between the subtask restarts. In kubernetes
+> terminology, the meta job is similar to pods and subtasks are
+> containers under pods. We want the shared memory to be
+> deterministically charged to the kubernetes's pod and independent to
+> the lifetime of containers under the pod.
+> 
+> 3. Shared libraries and language runtimes shared between independent jobs.
+> We’d like to optimize memory usage on the machine by sharing libraries
+> and language runtimes of many of the processes running on our machines
+> in separate memcgs. This produces a side effect that one job may be
+> unlucky to be the first to access many of the libraries and may get
+> oom killed as all the cached files get charged to it.
+> 
+> Design:
+> My rough proposal to solve this problem is to simply add a
+> ‘memcg=/path/to/memcg’ mount option for filesystems (namely tmpfs):
+> directing all the memory of the file system to be ‘remote charged’ to
+> cgroup provided by that memcg= option.
 
-Yes, this patch solves it.
+Could you be more specific about how this matches the above mentioned
+usecases?
 
-Thanks,
-Yongji
+What would/should happen if the target memcg doesn't or stop existing
+under remote charger feet?
+
+> Caveats:
+> 1. One complication to address is the behavior when the target memcg
+> hits its memory.max limit because of remote charging. In this case the
+> oom-killer will be invoked, but the oom-killer may not find anything
+> to kill in the target memcg being charged. In this case, I propose
+> simply failing the remote charge which will cause the process
+> executing the remote charge to get an ENOMEM This will be documented
+> behavior of remote charging.
+
+Say you are in a page fault (#PF) path. If you just return ENOMEM then
+you will get a system wide OOM killer via pagefault_out_of_memory. This
+is very likely not something you want, right? Even if we remove this
+behavior, which is another story, then the #PF wouldn't have other ways
+than keep retrying which doesn't really look great either.
+
+The only "reasonable" way I can see right now is kill the remote
+charging task. That might result in some other problems though.
+
+> 2. I would like to provide an initial implementation that adds this
+> support for tmpfs, while leaving the implementation generic enough for
+> myself or others to extend to more filesystems where they find the
+> feature useful.
+
+How do you envision other filesystems would implement that? Should the
+information be persisted in some way?
+
+I didn't have time to give this a lot of thought and more questions will
+likely come. My initial reaction is that this will open a lot of
+interesting corner cases which will be hard to deal with.
+-- 
+Michal Hocko
+SUSE Labs
