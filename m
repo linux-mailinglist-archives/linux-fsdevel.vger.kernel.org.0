@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50E244317E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 13:47:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC5494317E7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 13:47:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231665AbhJRLtp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 07:49:45 -0400
-Received: from mail-ed1-f45.google.com ([209.85.208.45]:39690 "EHLO
-        mail-ed1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231167AbhJRLtk (ORCPT
+        id S231759AbhJRLtw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 07:49:52 -0400
+Received: from mail-ed1-f43.google.com ([209.85.208.43]:44919 "EHLO
+        mail-ed1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231709AbhJRLtp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 07:49:40 -0400
-Received: by mail-ed1-f45.google.com with SMTP id ec8so70141558edb.6;
-        Mon, 18 Oct 2021 04:47:28 -0700 (PDT)
+        Mon, 18 Oct 2021 07:49:45 -0400
+Received: by mail-ed1-f43.google.com with SMTP id w14so69741712edv.11;
+        Mon, 18 Oct 2021 04:47:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=u0T7gxYUX1IZe+6zZc2VL/ygWEQ9BUReTwyQ18vECfw=;
-        b=AUplAMrkfyHwatqqx4jbQXuA/2mvs5Q31jn38/g5g4ErdLNa7Uf5+DimQNL5BTUYWt
-         dYqm6GdPrasQ8BwlKi5fjx3URed5zUWj0bYkzcGQ+c7lFAtF8oy39TV0F5WDbnN33faz
-         Zw10mnJBi+fC/SPFo2/eKYQMZ+2M5EX32JVQRpMUyCSHIbZJ4gNyCj+cY+ml0MEeBrTU
-         6VUfH1HGgohfkVh1U4W/Ohinjv+kAJD4kBPi75OeGTZqU591C3YeW1q0aaFzRrZX6ZTU
-         zHYxo39ZeUm02DbeiK9m3AccDdu7eWv3WP9bLSJ4t7/rX4eSLqEGceXZV/Q1By1pkq5w
-         W4LA==
-X-Gm-Message-State: AOAM532YJLeZTzs0aohfQJhIg9/IfeJisM31kjVBwNEVqLKcsWXETvxS
-        teLj1zHVSXhJpXz2y66joeI=
-X-Google-Smtp-Source: ABdhPJzA3Yw8UY1rj4xrYibdkMXEXhftxv4Gy8AnglURF2yg0TH0pLfxdQCB3cT2eLr75LPxwjK2Xg==
-X-Received: by 2002:a17:906:7017:: with SMTP id n23mr29088204ejj.446.1634557647343;
-        Mon, 18 Oct 2021 04:47:27 -0700 (PDT)
+        bh=4L8lFLAdXhWJMY8TqNwD1OY6QC5E8vHIjyqLADqFDA4=;
+        b=47A5OPoc8SPxbGLytX4WskpX1QWqQxD6GtdhwZZtd3crC2CLsUsgtxfC5L4E6AF91x
+         omuOLyX+z8ijIfd6Rh9tvB7cyceolHA7L2lJSbhqF8KUKFEmV4RMTZZjY7MhYjDZISZm
+         gRrxVmZuM4yffDTBypM0wpGF6ahNN0Nh3LIaYgC01tWkSHl0UgzsCj36s72w+Gt+1EtA
+         o74Lo+nkuxvXwl2rB7/8Wcnf4ewMftYUekOb72lyZx90IkytpuT7IdWAYtueCBr6H8ed
+         ASHqjzWVuWXLwDmLAF0/X4Gc1BY45OfCG+3obKKFboqgjQJAPPgpjhclPvjDyvcSXBAh
+         NMAA==
+X-Gm-Message-State: AOAM5315IFF7rwDgVMOUu1Lh4jKK9NhIZucwYI5jGvbDapFR6uzzlL+7
+        AxOKspeWIH0DmKj2Yppaojs=
+X-Google-Smtp-Source: ABdhPJyBgibGZUkyEokdtRYfvSvKNqevOAdvgE5oWJNGtKyZ5EwnZkfw2zWnIDru9DVVWBa+3kOs3g==
+X-Received: by 2002:a17:906:3510:: with SMTP id r16mr30003410eja.209.1634557648625;
+        Mon, 18 Oct 2021 04:47:28 -0700 (PDT)
 Received: from localhost.localdomain (ip-85-160-35-99.eurotel.cz. [85.160.35.99])
-        by smtp.gmail.com with ESMTPSA id b2sm9587458edv.73.2021.10.18.04.47.26
+        by smtp.gmail.com with ESMTPSA id b2sm9587458edv.73.2021.10.18.04.47.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Oct 2021 04:47:26 -0700 (PDT)
+        Mon, 18 Oct 2021 04:47:28 -0700 (PDT)
 From:   Michal Hocko <mhocko@kernel.org>
 To:     <linux-mm@kvack.org>
 Cc:     Dave Chinner <david@fromorbit.com>, Neil Brown <neilb@suse.de>,
@@ -45,9 +45,9 @@ Cc:     Dave Chinner <david@fromorbit.com>, Neil Brown <neilb@suse.de>,
         Ilya Dryomov <idryomov@gmail.com>,
         Jeff Layton <jlayton@kernel.org>,
         Michal Hocko <mhocko@suse.com>
-Subject: [RFC 1/3] mm/vmalloc: alloc GFP_NO{FS,IO} for vmalloc
-Date:   Mon, 18 Oct 2021 13:47:10 +0200
-Message-Id: <20211018114712.9802-2-mhocko@kernel.org>
+Subject: [RFC 2/3] mm/vmalloc: add support for __GFP_NOFAIL
+Date:   Mon, 18 Oct 2021 13:47:11 +0200
+Message-Id: <20211018114712.9802-3-mhocko@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211018114712.9802-1-mhocko@kernel.org>
 References: <20211018114712.9802-1-mhocko@kernel.org>
@@ -59,74 +59,45 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Michal Hocko <mhocko@suse.com>
 
-vmalloc historically hasn't supported GFP_NO{FS,IO} requests because
-page table allocations do not support externally provided gfp mask
-and performed GFP_KERNEL like allocations.
+Dave Chinner has mentioned that some of the xfs code would benefit from
+kvmalloc support for __GFP_NOFAIL because they have allocations that
+cannot fail and they do not fit into a single page.
 
-Since few years we have scope (memalloc_no{fs,io}_{save,restore}) APIs
-to enforce NOFS and NOIO constrains implicitly to all allocators within
-the scope. There was a hope that those scopes would be defined on a
-higher level when the reclaim recursion boundary starts/stops (e.g. when
-a lock required during the memory reclaim is required etc.). It seems
-that not all NOFS/NOIO users have adopted this approach and instead
-they have taken a workaround approach to wrap a single [k]vmalloc
-allocation by a scope API.
-
-These workarounds do not serve the purpose of a better reclaim recursion
-documentation and reduction of explicit GFP_NO{FS,IO} usege so let's
-just provide them with the semantic they are asking for without a need
-for workarounds.
-
-Add support for GFP_NOFS and GFP_NOIO to vmalloc directly. All internal
-allocations already comply with the given gfp_mask. The only current
-exception is vmap_pages_range which maps kernel page tables. Infer the
-proper scope API based on the given gfp mask.
+The larg part of the vmalloc implementation already complies with the
+given gfp flags so there is no work for those to be done. The area
+and page table allocations are an exception to that. Implement a retry
+loop for those.
 
 Signed-off-by: Michal Hocko <mhocko@suse.com>
 ---
- mm/vmalloc.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ mm/vmalloc.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index d77830ff604c..7455c89598d3 100644
+index 7455c89598d3..3a5a178295d1 100644
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
-@@ -2889,6 +2889,8 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
- 	unsigned long array_size;
- 	unsigned int nr_small_pages = size >> PAGE_SHIFT;
- 	unsigned int page_order;
-+	unsigned int flags;
-+	int ret;
+@@ -2941,8 +2941,10 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 	else if (!(gfp_mask & (__GFP_FS | __GFP_IO)))
+ 		flags = memalloc_noio_save();
  
- 	array_size = (unsigned long)nr_small_pages * sizeof(struct page *);
- 	gfp_mask |= __GFP_NOWARN;
-@@ -2930,8 +2932,24 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+-	ret = vmap_pages_range(addr, addr + size, prot, area->pages,
++	do {
++		ret = vmap_pages_range(addr, addr + size, prot, area->pages,
+ 			page_shift);
++	} while ((gfp_mask & __GFP_NOFAIL) && (ret < 0));
+ 
+ 	if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
+ 		memalloc_nofs_restore(flags);
+@@ -3032,6 +3034,8 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+ 		warn_alloc(gfp_mask, NULL,
+ 			"vmalloc error: size %lu, vm_struct allocation failed",
+ 			real_size);
++		if (gfp_mask && __GFP_NOFAIL)
++			goto again;
  		goto fail;
  	}
  
--	if (vmap_pages_range(addr, addr + size, prot, area->pages,
--			page_shift) < 0) {
-+	/*
-+	 * page tables allocations ignore external gfp mask, enforce it
-+	 * by the scope API
-+	 */
-+	if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
-+		flags = memalloc_nofs_save();
-+	else if (!(gfp_mask & (__GFP_FS | __GFP_IO)))
-+		flags = memalloc_noio_save();
-+
-+	ret = vmap_pages_range(addr, addr + size, prot, area->pages,
-+			page_shift);
-+
-+	if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
-+		memalloc_nofs_restore(flags);
-+	else if (!(gfp_mask & (__GFP_FS | __GFP_IO)))
-+		memalloc_noio_restore(flags);
-+
-+	if (ret < 0) {
- 		warn_alloc(gfp_mask, NULL,
- 			"vmalloc error: size %lu, failed to map pages",
- 			area->nr_pages * PAGE_SIZE);
 -- 
 2.30.2
 
