@@ -2,25 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F00D2432A9D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 02:00:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73BDB432AA1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 02:00:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233256AbhJSACu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 20:02:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37684 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbhJSACu (ORCPT
+        id S233389AbhJSAC4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 20:02:56 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:40630 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229529AbhJSAC4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 20:02:50 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67476C06161C;
-        Mon, 18 Oct 2021 17:00:38 -0700 (PDT)
+        Mon, 18 Oct 2021 20:02:56 -0400
 Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1007])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id D17291F41A9C;
-        Tue, 19 Oct 2021 01:00:36 +0100 (BST)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 0131F1F4342C;
+        Tue, 19 Oct 2021 01:00:42 +0100 (BST)
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     jack@suse.com, amir73il@gmail.com
 Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
@@ -29,9 +26,9 @@ Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
         linux-api@vger.kernel.org, kernel@collabora.com,
         Jan Kara <jack@suse.cz>,
         Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: [PATCH v8 02/32] fsnotify: pass dentry instead of inode data
-Date:   Mon, 18 Oct 2021 20:59:45 -0300
-Message-Id: <20211019000015.1666608-3-krisman@collabora.com>
+Subject: [PATCH v8 03/32] fsnotify: clarify contract for create event hooks
+Date:   Mon, 18 Oct 2021 20:59:46 -0300
+Message-Id: <20211019000015.1666608-4-krisman@collabora.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211019000015.1666608-1-krisman@collabora.com>
 References: <20211019000015.1666608-1-krisman@collabora.com>
@@ -43,92 +40,104 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Amir Goldstein <amir73il@gmail.com>
 
-Define a new data type to pass for event - FSNOTIFY_EVENT_DENTRY.
-Use it to pass the dentry instead of it's ->d_inode where available.
+Clarify argument names and contract for fsnotify_create() and
+fsnotify_mkdir() to reflect the anomaly of kernfs, which leaves dentries
+negavite after mkdir/create.
 
-This is needed in preparation to the refactor to retrieve the super
-block from the data field.  In some cases (i.e. mkdir in kernfs), the
-data inode comes from a negative dentry, such that no super block
-information would be available. By receiving the dentry itself, instead
-of the inode, fsnotify can derive the super block even on these cases.
+Remove the WARN_ON(!inode) in audit code that were added by the Fixes
+commit under the wrong assumption that dentries cannot be negative after
+mkdir/create.
 
+Fixes: aa93bdc5500c ("fsnotify: use helpers to access data by data_type")
+Link: https://lore.kernel.org/linux-fsdevel/87mtp5yz0q.fsf@collabora.com/
 Reviewed-by: Jan Kara <jack@suse.cz>
+Reported-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-[Expand explanation in commit message]
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-
 ---
-Changes since v7:
-  - Improve commit message (Jan)
----
- include/linux/fsnotify.h         |  5 ++---
- include/linux/fsnotify_backend.h | 16 ++++++++++++++++
- 2 files changed, 18 insertions(+), 3 deletions(-)
+ include/linux/fsnotify.h | 22 ++++++++++++++++------
+ kernel/audit_fsnotify.c  |  3 +--
+ kernel/audit_watch.c     |  3 +--
+ 3 files changed, 18 insertions(+), 10 deletions(-)
 
 diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index d1144d7c3536..df0fa4687a18 100644
+index df0fa4687a18..1e5f7435a4b5 100644
 --- a/include/linux/fsnotify.h
 +++ b/include/linux/fsnotify.h
-@@ -39,8 +39,7 @@ static inline int fsnotify_name(__u32 mask, const void *data, int data_type,
- static inline void fsnotify_dirent(struct inode *dir, struct dentry *dentry,
- 				   __u32 mask)
- {
--	fsnotify_name(mask, d_inode(dentry), FSNOTIFY_EVENT_INODE,
--		      dir, &dentry->d_name, 0);
-+	fsnotify_name(mask, dentry, FSNOTIFY_EVENT_DENTRY, dir, &dentry->d_name, 0);
- }
+@@ -192,16 +192,22 @@ static inline void fsnotify_inoderemove(struct inode *inode)
  
- static inline void fsnotify_inode(struct inode *inode, __u32 mask)
-@@ -87,7 +86,7 @@ static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
+ /*
+  * fsnotify_create - 'name' was linked in
++ *
++ * Caller must make sure that dentry->d_name is stable.
++ * Note: some filesystems (e.g. kernfs) leave @dentry negative and instantiate
++ * ->d_inode later
   */
- static inline void fsnotify_dentry(struct dentry *dentry, __u32 mask)
+-static inline void fsnotify_create(struct inode *inode, struct dentry *dentry)
++static inline void fsnotify_create(struct inode *dir, struct dentry *dentry)
  {
--	fsnotify_parent(dentry, mask, d_inode(dentry), FSNOTIFY_EVENT_INODE);
-+	fsnotify_parent(dentry, mask, dentry, FSNOTIFY_EVENT_DENTRY);
+-	audit_inode_child(inode, dentry, AUDIT_TYPE_CHILD_CREATE);
++	audit_inode_child(dir, dentry, AUDIT_TYPE_CHILD_CREATE);
+ 
+-	fsnotify_dirent(inode, dentry, FS_CREATE);
++	fsnotify_dirent(dir, dentry, FS_CREATE);
  }
  
- static inline int fsnotify_file(struct file *file, __u32 mask)
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index 1ce66748a2d2..a2db821e8a8f 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -248,6 +248,7 @@ enum fsnotify_data_type {
- 	FSNOTIFY_EVENT_NONE,
- 	FSNOTIFY_EVENT_PATH,
- 	FSNOTIFY_EVENT_INODE,
-+	FSNOTIFY_EVENT_DENTRY,
- };
+ /*
+  * fsnotify_link - new hardlink in 'inode' directory
++ *
++ * Caller must make sure that new_dentry->d_name is stable.
+  * Note: We have to pass also the linked inode ptr as some filesystems leave
+  *   new_dentry->d_inode NULL and instantiate inode pointer later
+  */
+@@ -230,12 +236,16 @@ static inline void fsnotify_unlink(struct inode *dir, struct dentry *dentry)
  
- static inline struct inode *fsnotify_data_inode(const void *data, int data_type)
-@@ -255,6 +256,8 @@ static inline struct inode *fsnotify_data_inode(const void *data, int data_type)
- 	switch (data_type) {
- 	case FSNOTIFY_EVENT_INODE:
- 		return (struct inode *)data;
-+	case FSNOTIFY_EVENT_DENTRY:
-+		return d_inode(data);
- 	case FSNOTIFY_EVENT_PATH:
- 		return d_inode(((const struct path *)data)->dentry);
- 	default:
-@@ -262,6 +265,19 @@ static inline struct inode *fsnotify_data_inode(const void *data, int data_type)
- 	}
+ /*
+  * fsnotify_mkdir - directory 'name' was created
++ *
++ * Caller must make sure that dentry->d_name is stable.
++ * Note: some filesystems (e.g. kernfs) leave @dentry negative and instantiate
++ * ->d_inode later
+  */
+-static inline void fsnotify_mkdir(struct inode *inode, struct dentry *dentry)
++static inline void fsnotify_mkdir(struct inode *dir, struct dentry *dentry)
+ {
+-	audit_inode_child(inode, dentry, AUDIT_TYPE_CHILD_CREATE);
++	audit_inode_child(dir, dentry, AUDIT_TYPE_CHILD_CREATE);
+ 
+-	fsnotify_dirent(inode, dentry, FS_CREATE | FS_ISDIR);
++	fsnotify_dirent(dir, dentry, FS_CREATE | FS_ISDIR);
  }
  
-+static inline struct dentry *fsnotify_data_dentry(const void *data, int data_type)
-+{
-+	switch (data_type) {
-+	case FSNOTIFY_EVENT_DENTRY:
-+		/* Non const is needed for dget() */
-+		return (struct dentry *)data;
-+	case FSNOTIFY_EVENT_PATH:
-+		return ((const struct path *)data)->dentry;
-+	default:
-+		return NULL;
-+	}
-+}
-+
- static inline const struct path *fsnotify_data_path(const void *data,
- 						    int data_type)
- {
+ /*
+diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
+index 60739d5e3373..02348b48447c 100644
+--- a/kernel/audit_fsnotify.c
++++ b/kernel/audit_fsnotify.c
+@@ -160,8 +160,7 @@ static int audit_mark_handle_event(struct fsnotify_mark *inode_mark, u32 mask,
+ 
+ 	audit_mark = container_of(inode_mark, struct audit_fsnotify_mark, mark);
+ 
+-	if (WARN_ON_ONCE(inode_mark->group != audit_fsnotify_group) ||
+-	    WARN_ON_ONCE(!inode))
++	if (WARN_ON_ONCE(inode_mark->group != audit_fsnotify_group))
+ 		return 0;
+ 
+ 	if (mask & (FS_CREATE|FS_MOVED_TO|FS_DELETE|FS_MOVED_FROM)) {
+diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+index 2acf7ca49154..223eed7b39cd 100644
+--- a/kernel/audit_watch.c
++++ b/kernel/audit_watch.c
+@@ -472,8 +472,7 @@ static int audit_watch_handle_event(struct fsnotify_mark *inode_mark, u32 mask,
+ 
+ 	parent = container_of(inode_mark, struct audit_parent, mark);
+ 
+-	if (WARN_ON_ONCE(inode_mark->group != audit_watch_group) ||
+-	    WARN_ON_ONCE(!inode))
++	if (WARN_ON_ONCE(inode_mark->group != audit_watch_group))
+ 		return 0;
+ 
+ 	if (mask & (FS_CREATE|FS_MOVED_TO) && inode)
 -- 
 2.33.0
 
