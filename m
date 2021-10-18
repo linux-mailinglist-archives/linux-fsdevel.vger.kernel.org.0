@@ -2,206 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2F2E4327BC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 21:32:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 098EE432897
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 22:46:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233433AbhJRTen (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 15:34:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34416 "EHLO
+        id S229605AbhJRUsU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 16:48:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231969AbhJRTem (ORCPT
+        with ESMTP id S229554AbhJRUsP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 15:34:42 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7260CC06161C;
-        Mon, 18 Oct 2021 12:32:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=B9bByHMOUaNb4hIzLjt6ee5iMVKuoAuSSlDfjNfXcVw=; b=XtN6iHFYDXFCgENpbEdGOr2pmU
-        yFFYqYJYUwhdr5Zlp2UsdTC2rL+hCJS1bFB6SdwLPL8YHN2d2igwldOx4aN39GeV7zWYehrfXe2jn
-        xPp8Wbs+3g4hxTSveCN7QqtgeFHuYXz8JAy/ZGSgg4zr67ZKFiZkEZvtfzpv+LZY72zafXjqhxeu+
-        5Fsq/DwQleE7J00WQFTjv7uxD1NogvR0qdqKtmAPsd2KXSwIcnQ3dqcWurIfkTXkOc6O9SU7pasYf
-        Jps0O7g4MB47gCoKXLrVqcnjY2O026y80dKCw6tVa5/wa0aFv5cYUejuIFIsV/jimkvEoP7FdHUzf
-        FB3gz3QQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mcYMl-00H11w-Tb; Mon, 18 Oct 2021 19:32:11 +0000
-Date:   Mon, 18 Oct 2021 12:32:11 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Ming Lei <ming.lei@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     tj@kernel.org, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, minchan@kernel.org, jeyu@kernel.org,
-        shuah@kernel.org, bvanassche@acm.org, dan.j.williams@intel.com,
-        joe@perches.com, tglx@linutronix.de, keescook@chromium.org,
-        rostedt@goodmis.org, linux-spdx@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
-Message-ID: <YW3LuzaPhW96jSBK@bombadil.infradead.org>
-References: <20210927163805.808907-1-mcgrof@kernel.org>
- <20210927163805.808907-12-mcgrof@kernel.org>
- <YWeOJP2UJWYF94fu@T590>
- <YWeR4moCRh+ZHOmH@T590>
- <YWiSAN6xfYcUDJCb@bombadil.infradead.org>
- <YWjCpLUNPF3s4P2U@T590>
- <YWjJ0O7K+31Iz3ox@bombadil.infradead.org>
- <YWk9e957Hb+I7HvR@T590>
- <YWm68xUnAofop3PZ@bombadil.infradead.org>
- <YWq3Z++uoJ/kcp+3@T590>
+        Mon, 18 Oct 2021 16:48:15 -0400
+Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9645DC061745
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 13:46:03 -0700 (PDT)
+Received: by mail-qt1-x836.google.com with SMTP id b12so16474859qtq.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 13:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=aN+GBnxvSYxI1CBykhy1W3cisyjCt5R6Tkf+A9sowYI=;
+        b=7HblSRuZT2o71Rzj9KO+L+0WlowU1JnFRhSL6OY6SDP6BXZPP3+f2WK9cDXISXymD7
+         DiFKD/2V+V6ud355yDsI2WDB8+Zl9Qg1aWTI2h9r0iQrcteNGwSew4TDYCNK7o5bJ5UE
+         B00B2MANKfv4s0jrdv0XHCTHS/l8s7d8AxHaV4QLN6jQMDwRs/hly+qikjzcQWadup8S
+         UhSt3ez4l9Bfuo5+C0Rsp3gH42aCY3hGG8MyZZmT0lsmylwQsXjVLhPVnFOGVprqr9mV
+         km9KInz16To2OqJwRmFsmTP72MMbdD64BGYEq+1zsD4hklaiIw8Wxls0D3ejQScWLyPO
+         ZntA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=aN+GBnxvSYxI1CBykhy1W3cisyjCt5R6Tkf+A9sowYI=;
+        b=Udq+LJbXc+ijiXw/o68ZOLkx0sgdsBEDZw86qphjN27IYeLsRHZAiJUfg81+QxnBtU
+         7cmQ1ATVxSNla+DQJ14frQCc++h8B5OPodtYLXi4pz6bxQ9w4rCbmtlkPEAdfFDzPUf9
+         B5iPGKoy9tPpm137qn4U84HWk0yMijbV7tyIU/kr79B99dM3gRV/DG5u7hzvOqWTKgKx
+         AF5iu43KVxkn7gmMpFZR6qNLP5zH6zXbgW0g5XTuvDPgE74f7dP0fRsktj6eBNaHB2Y1
+         H9WLKMc+OiJUz2pqyv6e6R0FMQ+gw80JxPbqfmMxXhbvH1xhbEeFeRhycvPJgia//L/K
+         lyJA==
+X-Gm-Message-State: AOAM531wV3M9XPg9p+FqOYS5HdEXN72FqfI8rQ6ZdUnKdBPFblBFQ/24
+        yO0BqccaKhSbDVeNOMuZfAXYPR7oepw=
+X-Google-Smtp-Source: ABdhPJy8s5gOURjQ9GR8NNLQkQkca1bFVXt6uE9jEnLSM5STxfK9c5OLjEVUT49waHtu8LKhKwCqBQ==
+X-Received: by 2002:ac8:4b57:: with SMTP id e23mr31353689qts.328.1634589961607;
+        Mon, 18 Oct 2021 13:46:01 -0700 (PDT)
+Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
+        by smtp.gmail.com with ESMTPSA id d9sm6859236qtd.76.2021.10.18.13.46.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Oct 2021 13:46:00 -0700 (PDT)
+Date:   Mon, 18 Oct 2021 16:45:59 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
+Message-ID: <YW3dByBWM0dSRw/X@cmpxchg.org>
+References: <YTu9HIu+wWWvZLxp@moria.home.lan>
+ <YUfvK3h8w+MmirDF@casper.infradead.org>
+ <YUo20TzAlqz8Tceg@cmpxchg.org>
+ <YUpC3oV4II+u+lzQ@casper.infradead.org>
+ <YUpKbWDYqRB6eBV+@moria.home.lan>
+ <YUpNLtlbNwdjTko0@moria.home.lan>
+ <YUtHCle/giwHvLN1@cmpxchg.org>
+ <YWpG1xlPbm7Jpf2b@casper.infradead.org>
+ <YW2lKcqwBZGDCz6T@cmpxchg.org>
+ <YW25EDqynlKU14hx@moria.home.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YWq3Z++uoJ/kcp+3@T590>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <YW25EDqynlKU14hx@moria.home.lan>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 16, 2021 at 07:28:39PM +0800, Ming Lei wrote:
-> On Fri, Oct 15, 2021 at 10:31:31AM -0700, Luis Chamberlain wrote:
-> > On Fri, Oct 15, 2021 at 04:36:11PM +0800, Ming Lei wrote:
-> > > On Thu, Oct 14, 2021 at 05:22:40PM -0700, Luis Chamberlain wrote:
-> > > > On Fri, Oct 15, 2021 at 07:52:04AM +0800, Ming Lei wrote:
-> > > ...
-> > > > > 
-> > > > > We need to understand the exact reason why there is still cpuhp node
-> > > > > left, can you share us the exact steps for reproducing the issue?
-> > > > > Otherwise we may have to trace and narrow down the reason.
-> > > > 
-> > > > See my commit log for my own fix for this issue.
-> > > 
-> > > OK, thanks!
-> > > 
-> > > I can reproduce the issue, and the reason is that reset_store fails
-> > > zram_remove() when unloading module, then the warning is caused.
-> > > 
-> > > The top 3 patches in the following tree can fix the issue:
-> > > 
-> > > https://github.com/ming1/linux/commits/my_v5.15-blk-dev
+On Mon, Oct 18, 2021 at 02:12:32PM -0400, Kent Overstreet wrote:
+> On Mon, Oct 18, 2021 at 12:47:37PM -0400, Johannes Weiner wrote:
+> > I find this line of argument highly disingenuous.
 > > 
-> > Thanks for trying an alternative fix! A crash stops yes, however this
+> > No new type is necessary to remove these calls inside MM code. Migrate
+> > them into the callsites and remove the 99.9% very obviously bogus
+> > ones. The process is the same whether you switch to a new type or not.
 > 
-> I doubt it is alternative since your patchset doesn't mention the exact
-> reason of 'Error: Removing state 63 which has instances left.', that is
-> simply caused by failing to remove zram because ->claim is set during
-> unloading module.
-
-Well I disagree because it does explain how the race can happen, and it
-also explains how since the sysfs interface is exposed until module
-removal completes, it leaves exposed knobs to allow re-initializing of a
-struct zcomp for a zram device before the exit.
-
-> Yeah, you mentioned the race between disksize_store() vs. zram_remove(),
-> however I don't think it is reproduced easily in the test because the race
-> window is pretty small, also it can be fixed easily in my 3rd path
-> without any complicated tricks.
-
-Reproducing for me is... extremely easy.
-
-> Not dig into details of your patchset via grabbing module reference
-> count during show/store attribute of kernfs which is done in your patch
-> 9, but IMO this way isn't necessary:
-
-That's to address the deadlock only.
-
-> 1) any driver module has to cleanup anything which may refer to symbols
-> or data defined in module_exit of this driver
-
-Yes, and as the cpu multistate hotplug documentation warns (although
-such documentation is kind of hidden) that driver authors need to be
-careful with module removal too, refer to the warning at the end of
-__cpuhp_remove_state_cpuslocked() about module removal.
-
-> 2) device_del() is often done in module_exit(), once device_del()
-> returns, no any new show/store on the device's kobject attribute
-> is possible.
-
-Right and if a syfs knob is exposed before device_del() completely
-and is allowed to do things, the driver should take care to prevent
-races for CPU multistate support. The small state machine I added ensures
-we don't run over any expectations from cpu hotplug multistate support.
-
-I've *never* suggested there cannot be alternatives to my solution with
-the small state machine, but for you to say it is incorrect is simply
-not right either.
-
-> 3) it is _not_ a must or pattern for fixing bugs to hold one lock before
-> calling device_del(), meantime the lock is required in the device's
-> attribute show()/store(), which causes AA deadlock easily. Your approach
-> just avoids the issue by not releasing module until all show/store are
-> done.
-
-Right, there are two approaches here:
-
-a) Your approach is to accept the deadlock as a requirement and so
-you would prefer to implement an alternative to using a shared lock
-on module exit and sysfs op.
-
-b) While I address such a deadlock head on as I think this sort of locking
-be allowed for two reasons:
-   b1) as we never documented such requirement otherwise.
-   b2) There is a possibility that other drivers already exist too
-       which *do* use a shared lock on module removal and sysfs ops
-       (and I just confirmed this to be true)
-
-By you only addressing the deadlock as a requirement on approach a) you are
-forgetting that there *may* already be present drivers which *do* implement
-such patterns in the kernel. I worked on addressing the deadlock because
-I was informed livepatching *did* have that issue as well and so very
-likely a generic solution to the deadlock could be beneficial to other
-random drivers.
-
-So I *really* don't think it is wise for us to simply accept this new
-found deadlock as a *new* requirement, specially if we can fix it easily.
-
-A cursory review using Coccinelle potential issues with mutex lock
-directly used on module exit (so this doesn't cover drivers like zram
-which uses a routine and then grabs the lock through indirection) and a
-sysfs op shows these drivers are also affected by this deadlock:
-
-  * arch/powerpc/sysdev/fsl_mpic_timer_wakeup.c
-  * lib/test_firmware.c
-
-Note that this cursory review does not cover spin_lock uses, and other
-forms locks. Consider the case where a routine is used and then that
-routine grabs a lock, so one level indirection. There are many levels
-of indirections possible here. And likewise there are different types
-of locks.
-
-> > also ends up leaving the driver in an unrecoverable state after a few
-> > tries. Ie, you CTRL-C the scripts and try again over and over again and
-> > the driver ends up in a situation where it just says:
-> > 
-> > zram: Can't change algorithm for initialized device
+> Conversely, I don't see "leave all LRU code as struct page, and ignore anonymous
+> pages" to be a serious counterargument. I got that you really don't want
+> anonymous pages to be folios from the call Friday, but I haven't been getting
+> anything that looks like a serious counterproposal from you.
 > 
-> It means the algorithm can't be changed for one initialized device
-> at the exact time. That is understandable because two zram02.sh are
-> running concurrently.
+> Think about what our goal is: we want to get to a world where our types describe
+> unambigiuously how our data is used. That means working towards
+>  - getting rid of type punning
+>  - struct fields that are only used for a single purpose
 
-Indeed but with your patch it can get stuck and cannot be taken out of this
-state.
+How is a common type inheritance model with a generic page type and
+subclasses not a counter proposal?
 
-> Your test script just runs two ./zram02.sh tasks concurrently forever,
-> so what is your expected result for the test? Of course, it can't be
-> over.
+And one which actually accomplishes those two things you're saying, as
+opposed to a shared folio where even 'struct address_space *mapping'
+is a total lie type-wise?
+
+Plus, really, what's the *alternative* to doing that anyway? How are
+we going to implement code that operates on folios and other subtypes
+of the page alike? And deal with attributes and properties that are
+shared among them all? Willy's original answer to that was that folio
+is just *going* to be all these things - file, anon, slab, network,
+rando driver stuff. But since that wasn't very popular, would not get
+rid of type punning and overloaded members, would get rid of
+efficiently allocating descriptor memory etc.- what *is* the
+alternative now to common properties between split out subtypes?
+
+I'm not *against* what you and Willy are saying. I have *genuinely
+zero idea what* you are saying.
+
+> Leaving all the LRU code as struct page means leaving a shit ton of type punning
+> in place, and you aren't outlining any alternate ways of dealing with that. As
+> long as all the LRU code is using struct page, that halts efforts towards
+> separately allocating these types and making struct page smaller (which was one
+> of your stated goals as well!), and it would leave a big mess in place for god
+> knows how long.
+
+I don't follow either of these claims.
+
+Converting to a shared anon/file folio makes almost no dent into the
+existing type punning we have, because head/tail page disambiguation
+is a tiny part of the type inferment we do on struct page.
+
+And leaving the LRU linkage in the struct page doesn't get in the way
+of allocating separate subtype descriptors. All these types need a
+list_head anyway, from anon to file to slab to the buddy allocator.
+
+Maybe anon, file, slab don't need it at the 4k granularity all the
+time, but the buddy allocator does anyway as long as it's 4k based and
+I'm sure you don't want to be allocating a new buddy descriptor every
+time we're splitting a larger page block into a smaller one?
+
+I really have no idea how that would even work.
+
+> It's been a massive effort for Willy to get this far, who knows when
+> someone else with the requisite skillset would be summoning up the
+> energy to deal with that - I don't see you or I doing it.
+> 
+> Meanwhile: we've got people working on using folios for anonymous pages to solve
+> some major problems
+> 
+>  - it cleans up all of the if (normalpage) else if (hugepage) mess
+
+No it doesn't.
+
+>  - it'll _majorly_ help with our memory fragmentation problems, as I recently
+>    outlined. As long as we've got a very bimodal distribution in our allocation
+>    sizes where the peaks are at order 0 and HUGEPAGE_ORDER, we're going to have
+>    problems allocating hugepages. If anonymous + file memory can be arbitrary
+>    sized compound pages, we'll end up with more of a poisson distribution in our
+>    allocation sizes, and a _great deal_ of our difficulties with memory
+>    fragmentation are going to be alleviated.
 >
-> I can't reproduce the 'unrecoverable' state in my test, can you share the
-> stack trace log after that happens?
+>  - and on architectures that support merging of TLB entries, folios for
+>    anonymous memory are going to get us some major performance improvements due
+>    to reduced TLB pressure, same as hugepages but without nearly as much memory
+>    fragmetation pain
 
-Try a bit harder, cancel the scripts after running for a while randomly
-(CTRL C a few times until the script finishes) and have them race again.
-Do this a few times.
+It doesn't do those, either.
 
-> > And the zram module can't be removed at that point.
+It's a new name for headpages, that's it.
+
+Converting to arbitrary-order huge pages needs to rework assumptions
+around what THP pages mean in various places of the code. Mainly the
+page table code. Presumably. We don't have anything even resembling a
+proposal on how this is all going to look like implementation-wise.
+
+How does changing the name help with this?
+
+How does not having the new name get in the way of it?
+
+> And on top of all that, file and anonymous pages are just more alike than they
+> are different.
+
+I don't know what you're basing this on, and you can't just keep
+making this claim without showing code to actually unify them.
+
+They have some stuff in common, and some stuff is deeply different.
+All about this screams class & subclass. Meanwhile you and Willy just
+keep coming up with hacks on how we can somehow work around this fact
+and contort the types to work out anyway.
+
+You yourself said that folio including slab and other random stuff is
+a bonkers idea. But that means we need to deal with properties that
+are going to be shared between subtypes, and I'm the only one that has
+come up with a remotely coherent proposal on how to do that.
+
+> > (I'll send more patches like the PageSlab() ones to that effect. It's
+> > easy. The only reason nobody has bothered removing those until now is
+> > that nobody reported regressions when they were added.)
 > 
-> It is just that systemd opens the zram or the disk is opened as swap
-> disk, and once systemd closes it or after you run swapoff, it can be
-> unloaded.
+> I was also pretty frustrated by your response to Willy's struct slab patches.
+> 
+> You claim to be all in favour of introducing more type safety and splitting
+> struct page up into multiple types, but on the basis of one objection - that his
+> patches start marking tail slab pages as PageSlab (and I agree with your
+> objection, FWIW) - instead of just asking for that to be changed, or posting a
+> patch that made that change to his series, you said in effect that we shouldn't
+> be doing any of the struct slab stuff by posting your own much more limited
+> refactoring, that was only targeted at the compound_head() issue, which we all
+> agree is a distraction and not the real issue. Why are you letting yourself get
+> distracted by that?
 
-With my patch this issues does not happen.
+Kent, you can't be serious. I actually did exactly what you suggested
+I should have done.
 
-  Luis
+The struct slab patches are the right thing to do.
+
+I had one minor concern (which you seem to share) and suggested a
+small cleanup. Willy worried about this cleanup adding a needless
+compound_head() call, so *I sent patches to eliminate this call and
+allow this cleanup and the struct slab patches to go ahead.*
+
+My patches are to unblock Willy's. He then moved the goal posts and
+started talking about prefetching, but that isn't my fault. I was
+collaborating and putting my own time and effort where my mouth is.
+
+Can you please debug your own approach to reading these conversations?
