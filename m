@@ -2,140 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C7B94324E6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 19:22:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EF06432482
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 19:16:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234003AbhJRRYQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 13:24:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233984AbhJRRYP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 13:24:15 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A68E3610C8;
-        Mon, 18 Oct 2021 17:13:38 +0000 (UTC)
-Date:   Mon, 18 Oct 2021 18:13:35 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        id S233809AbhJRRSY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 13:18:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59368 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233897AbhJRRSX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 18 Oct 2021 13:18:23 -0400
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4589CC06176A
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 10:16:11 -0700 (PDT)
+Received: by mail-io1-xd2b.google.com with SMTP id 188so17113091iou.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 10:16:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TVetvWb4+B/byEt0HFTw7Li/1VctyD/QgsPHbsid4H8=;
+        b=rkRLnHg1S4u8HX11jOSUsmgOu279172YT/qIHLznH/jwI1IdjUhSA0m6I5uyrdNBJQ
+         GZpTrNqHq3BbgsfYzCH0RiwOG+GG3HdSbaxtt1+taUjeE/o2nf0qjkZ23LPZL14mgyVx
+         r5QceDW/MeG8za7F5qhNzSKPR2x7wRt1a8B5T995CSTZ1u9OS6Ch+FzWEBtUbHpcq9AQ
+         KUlG6PBJnMhvawvbI3ONNOa5vJZRKzg+iSpti1pyNyehN+8MHnCAxM/sIrViilbzyvRG
+         Q5nXCXvu4cEFPGfCltmsbNSsOl86kwWVB1XaqYHb9cyqB+54s92TMxyv7jKS0YWyf0KL
+         kSjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TVetvWb4+B/byEt0HFTw7Li/1VctyD/QgsPHbsid4H8=;
+        b=KsOeni1IfEh8NPAGvpDMbjvcfeXpDuJLHpkBHYdJXnX2FxCzieHEtfEs1AeKfdS4Z3
+         exStd//P2mPnGmg6B23Em7MW4IpZO23DMpSrlAOCGr/evB43EaFan5qNAKFN+sEYQVXI
+         u/ElKMG7ESIqZMtQdRhkMRUvF00RA86VOyTVbLzs2xoYkCsXs5A2vVJiQOGc498zcV9W
+         1mCDmAx1vFdZAqMpqwgv/HAGlpKgpIOigfj+WqQ5ZaVGN1O5hTT4R2nbxe2Z94GOGTq+
+         qkuoEbZuHIzKZSIuAcbuNyQJ6CjSgoQhjUcrMTTKqcdzBSEaRqrRh8Xkks7QuDwqrnbi
+         tZ0Q==
+X-Gm-Message-State: AOAM533XsoCXdwvr+nM3U7pErIytgrfrjvE0/1OywGqioJMyM4JbfYFU
+        ilLrG1UF4n1v8W/eGK7/U9+V3A==
+X-Google-Smtp-Source: ABdhPJz+RKspHd19wACUssDbTNQ6NJRkN4g7OdL6jX2ni5qwlHyFbIbt1tgTl8EVs5WghyoBxus9iA==
+X-Received: by 2002:a02:ac8a:: with SMTP id x10mr745552jan.43.1634577370548;
+        Mon, 18 Oct 2021 10:16:10 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id u12sm7081225ioc.33.2021.10.18.10.16.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Oct 2021 10:16:09 -0700 (PDT)
+Subject: Re: don't use ->bd_inode to access the block device size v3
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Song Liu <song@kernel.org>, David Sterba <dsterba@suse.com>,
         Josef Bacik <josef@toxicpanda.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [RFC][arm64] possible infinite loop in btrfs search_ioctl()
-Message-ID: <YW2rPyvwltDb8wdJ@arm.com>
-References: <YSldx9uhMYhT/G8X@zeniv-ca.linux.org.uk>
- <YSqOUb7yZ7kBoKRY@zeniv-ca.linux.org.uk>
- <YS40qqmXL7CMFLGq@arm.com>
- <YS5KudP4DBwlbPEp@zeniv-ca.linux.org.uk>
- <YWR2cPKeDrc0uHTK@arm.com>
- <CAHk-=wjvQWj7mvdrgTedUW50c2fkdn6Hzxtsk-=ckkMrFoTXjQ@mail.gmail.com>
- <YWSnvq58jDsDuIik@arm.com>
- <CAHk-=wiNWOY5QW5ZJukt_9pHTWvrJhE2=DxPpEtFHAWdzOPDTg@mail.gmail.com>
- <YWXFagjRVdNanGSy@arm.com>
- <CAHk-=wg3prAnhWZetJvwZdugn7A7CpP4ruz1tdewha=8ZY8AJw@mail.gmail.com>
+        Theodore Ts'o <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Kees Cook <keescook@chromium.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, drbd-dev@lists.linbit.com,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org
+References: <20211018101130.1838532-1-hch@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <4a8c3a39-9cd3-5b2f-6d0f-a16e689755e6@kernel.dk>
+Date:   Mon, 18 Oct 2021 11:16:08 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wg3prAnhWZetJvwZdugn7A7CpP4ruz1tdewha=8ZY8AJw@mail.gmail.com>
+In-Reply-To: <20211018101130.1838532-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 12, 2021 at 10:58:46AM -0700, Linus Torvalds wrote:
-> On Tue, Oct 12, 2021 at 10:27 AM Catalin Marinas
-> <catalin.marinas@arm.com> wrote:
-> > Apart from fault_in_pages_*(), there's also fault_in_user_writeable()
-> > called from the futex code which uses the GUP mechanism as the write
-> > would be destructive. It looks like it could potentially trigger the
-> > same infinite loop on -EFAULT.
+On 10/18/21 4:11 AM, Christoph Hellwig wrote:
+> Hi Jens,
 > 
-> Hmm.
-> 
-> I think the reason we do fault_in_user_writeable() using GUP is that
-> 
->  (a) we can avoid the page fault overhead
-> 
->  (b) we don't have any good "atomic_inc_user()" interface or similar
-> that could do a write with a zero increment or something like that.
-> 
-> We do have that "arch_futex_atomic_op_inuser()" thing, of course. It's
-> all kinds of crazy, but we *could* do
-> 
->        arch_futex_atomic_op_inuser(FUTEX_OP_ADD, 0, &dummy, uaddr);
-> 
-> instead of doing the fault_in_user_writeable().
-> 
-> That might be a good idea anyway. I dunno.
+> various drivers currently poke directy at the block device inode, which
+> is a bit of a mess.  This series cleans up the places that read the
+> block device size to use the proper helpers.  I have separate patches
+> for many of the other bd_inode uses, but this series is already big
+> enough as-is,
 
-I gave this a quick try for futex (though MTE is not affected at the
-moment):
+This looks good to me. Followup question, as it's related - I've got a
+hacky patch that caches the inode size in the bdev:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/log/?h=devel/sub-page-faults
+https://git.kernel.dk/cgit/linux-block/commit/?h=perf-wip&id=c754951eb7193258c35a574bd1ccccb7c4946ee4
 
-However, I still have doubts about fault_in_pages_*() probing every 16
-bytes, especially if one decides to change these routines to be
-GUP-based.
-
-> > A more invasive change would be to return a different error for such
-> > faults like -EACCESS and treat them differently in the caller.
-> 
-> That's _really_ hard for things like "copy_to_user()", that isn't a
-> single operation, and is supposed to return the bytes left.
-> 
-> Adding another error return would be nasty.
-> 
-> We've had hacks like "squirrel away the actual error code in the task
-> structure", but that tends to be unmaintainable because we have
-> interrupts (and NMI's) doing their own possibly nested atomics, so
-> even disabling preemption won't actually fix some of the nesting
-> issues.
-
-I think we can do something similar to the __get_user_error() on arm64.
-We can keep the __copy_to_user_inatomic() etc. returning the number of
-bytes left but change the exception handling path in those routines to
-set an error code or boolean to a pointer passed at uaccess routine call
-time. The caller would do something along these lines:
-
-	bool page_fault;
-	left = copy_to_user_inatomic(dst, src, size, &page_fault);
-	if (left && page_fault)
-		goto repeat_fault_in;
-
-copy_to_user_nofault() could also change its return type from -EFAULT to
-something else based on whether page_fault was set or not.
-
-Most architectures will use a generic copy_to_user_inatomic() wrapper
-where page_fault == true for any fault. Arm64 needs some adjustment to
-the uaccess fault handling to pass the fault code down to the exception
-code. This way, at least for arm64, I don't think an interrupt or NMI
-would be problematic.
-
-> All of these things make me think that the proper fix ends up being to
-> make sure that our "fault_in_xyz()" functions simply should always
-> handle all faults.
-> 
-> Another option may be to teach the GUP code to actually check
-> architecture-specific sub-page ranges.
-
-Teaching GUP about this is likely to be expensive. A put_user() for
-probing on arm64 uses a STTR instruction that's run with user privileges
-on the user address and the user tag checking mode. The GUP code for
-MTE, OTOH, would need to explicitly read the tag in memory and compare
-it with the user pointer tag (which is normally cleared in the GUP code
-by untagged_addr()).
-
-To me it makes more sense for the fault_in_*() functions to only deal
-with those permissions the kernel controls, i.e. the pte. Sub-page
-permissions like MTE or CHERI are controlled by the user directly, so
-the kernel cannot fix them up anyway. Rather than overloading
-fault_in_*() with additional checks, I think we should expand the
-in-atomic uaccess API to cover the type of fault.
+so we don't have to dip into the inode itself for the fast path. While
+it's obviously not something being proposed for inclusion right now, is
+there a world in which we can make something like that work?
 
 -- 
-Catalin
+Jens Axboe
+
