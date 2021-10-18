@@ -2,149 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CBF54311C1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 10:02:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BBEE4312D7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 11:11:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231194AbhJRIEc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 04:04:32 -0400
-Received: from mail-eopbgr1320111.outbound.protection.outlook.com ([40.107.132.111]:23472
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231223AbhJRIEZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 04:04:25 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=P8M+UhoRUQodCF8pPV42tJjH7FfgWmVu/zcUrP7sAD9kPlVQAWHAHnyth0706cMFrPmS5fO/by5Wjl9KMFF+369gpa2E18wCWEY3ichwh7sb1hfnyuWyug86tmGREt9meGWF0acmfyc/ic9d+vsY5HYHraisLyhlG4DdC9DaapYpD9KlS5iPT9LOdPBt4oil9O+KtrMwpQjlFBT2Qj+EWeC0B0cE8uimanASfGt8tMTRn/1nDAVoM78ScaHEnt3HC7lIpF080Pu8Watdo5ncj5htIZ/6cutPIbHS+1PFLM9w3nfaHa4h/LMJBGbJUNs8L4NruALtIxDj27zGHNgh+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CTXF4ly5GPJZ6C7q3gTj4faOVfRmGDwKPe4cRiF0Cpg=;
- b=I2cYITcd+KAFL4D2cx+szLgxQwv8JqIuOGuQIxJ4/fSTqaX5fvujIoOpTN7WStsS4aFdmyUUV2K6h9gW5rx/+ZL17BBfiAzqak5UdMcPMIWBrXhZDIWEJyLIYZd/kSVUZSpR/8GvkjmRSW7o1yqene7NSd9yPToVhz5idUf+MtBWZuQHtVYepHobicbSDpUA0WDoEWXlA+zatnW9dA7Q0sxKNyksF96F+S3WKAdD+6I/Y4/iBOM6gjYWiCDTSrrHfPLm1fZTO9uyfHTRsTj0riqLln1QvZ6DrrPTo0i85iaVZ84sNoSw4RXqzyVBLCs6nCainc5UEKfs1ZmyU8DBpA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo0.onmicrosoft.com;
- s=selector2-vivo0-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CTXF4ly5GPJZ6C7q3gTj4faOVfRmGDwKPe4cRiF0Cpg=;
- b=Xo8xnHIgTv7L9f5LMhuAiOHDeWaNXEjmb9jsuVknHPMDfChiZhCVIoLcaqKUtQ2ShmM1YW+S9BKHv+Cwp+4u83+v8sjbyRYECP1tIkWwS9VUAowHcsldD/mr0H3pBKCqiB/Rf1Urocv1dv7YKWupDc5L9Ouh1+yXkCOxi6/ACaY=
-Authentication-Results: zeniv.linux.org.uk; dkim=none (message not signed)
- header.d=none;zeniv.linux.org.uk; dmarc=none action=none
- header.from=vivo.com;
-Received: from SL2PR06MB3082.apcprd06.prod.outlook.com (2603:1096:100:37::17)
- by SL2PR06MB3387.apcprd06.prod.outlook.com (2603:1096:100:3d::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4608.14; Mon, 18 Oct
- 2021 08:01:26 +0000
-Received: from SL2PR06MB3082.apcprd06.prod.outlook.com
- ([fe80::4c9b:b71f:fb67:6414]) by SL2PR06MB3082.apcprd06.prod.outlook.com
- ([fe80::4c9b:b71f:fb67:6414%6]) with mapi id 15.20.4608.018; Mon, 18 Oct 2021
- 08:01:25 +0000
-From:   Qing Wang <wangqing@vivo.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Qing Wang <wangqing@vivo.com>
-Subject: [PATCH] fs: switch over to vmemdup_user()
-Date:   Mon, 18 Oct 2021 01:01:18 -0700
-Message-Id: <1634544078-36968-1-git-send-email-wangqing@vivo.com>
-X-Mailer: git-send-email 2.7.4
-Content-Type: text/plain
-X-ClientProxiedBy: HK0PR01CA0068.apcprd01.prod.exchangelabs.com
- (2603:1096:203:a6::32) To SL2PR06MB3082.apcprd06.prod.outlook.com
- (2603:1096:100:37::17)
+        id S231486AbhJRJOG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 05:14:06 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:22141 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231408AbhJRJNz (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 18 Oct 2021 05:13:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634548304;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0Q56wj21GGdBKSsvdrGkUKMB3bovLQF+EDH+bXTHBkA=;
+        b=N0vaMvauF0ccCq2YZXgMI5mhKzGodUEXPgSRnsH39xAYnZb7rwFoCc1rP+pgNtYe2CahDQ
+        DHr5nqPct8u3d2kwtMraqRZ4xCd0j8EOe4SisWUK0YeXoB3Q93GNCqm/HwnRKOTyY/r7Yh
+        bvVm9G6bVbkOTOgNpE97ZF2hMDrKnHs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-138-xrfhSSOmOkixr02B7l7AAg-1; Mon, 18 Oct 2021 05:11:41 -0400
+X-MC-Unique: xrfhSSOmOkixr02B7l7AAg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 750F619057A4;
+        Mon, 18 Oct 2021 09:11:39 +0000 (UTC)
+Received: from localhost (unknown [10.39.195.158])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3119A5DF36;
+        Mon, 18 Oct 2021 09:11:25 +0000 (UTC)
+Date:   Mon, 18 Oct 2021 10:11:24 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gonglei <arei.gonglei@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jie Deng <jie.deng@intel.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        David Hildenbrand <david@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Anton Yakovlev <anton.yakovlev@opensynergy.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-um@lists.infradead.org,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, kvm@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH RFC] virtio: wrap config->reset calls
+Message-ID: <YW06PCof8Z76MXtC@stefanha-x1.localdomain>
+References: <20211013105226.20225-1-mst@redhat.com>
 MIME-Version: 1.0
-Received: from ubuntu.localdomain (103.220.76.181) by HK0PR01CA0068.apcprd01.prod.exchangelabs.com (2603:1096:203:a6::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.4608.17 via Frontend Transport; Mon, 18 Oct 2021 08:01:25 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 05a98934-a5f8-4a7b-2460-08d9920d7bac
-X-MS-TrafficTypeDiagnostic: SL2PR06MB3387:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <SL2PR06MB33877134200058C2D47A020EBDBC9@SL2PR06MB3387.apcprd06.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2657;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: k4FVJ2aZpqrWtmuro4HfIoTd7Vd5FFdroudRNitmqK9sOgsKX3TCjQyXGUk+T5CGuTTXEaZacsCl3zZ4HZ80zfqF7MEC6T3F+vlc5f0koQYE+hn6HFIahKC+TQmQ2bz+CNcmxZtqaHeSfcYnNfiT2GRskgRdrsSOdaE72Ovr0Ez1i7wipE8kYCE5ZjefWXzMkv2GBZg1d92as5So68AprBXQwzDxyf6lFtRg++H0xHxX+skMYMKe5erWa2yRlgpNe8rdH6GZOiVw5fnIK9KWu17Dp2PnPcKjalUe3dwiVYmlsm7lh4rJw7sEr6jTnCTT+dFmT/QMYedcD3xbM64kb6bkIBiTAV+JVhCnB74Zgu+Z6eQchikJJB236JcofQP919+DCB7xr1Li9qW8plBc5866vBwe3dl8vsdA6PZVm7nswh7hdRl3RIZMsB71WqKJayGmfOHLF2o4AtfD0KGDgjmb4pE9WTyqGaL3jesCTlH5zejUUqvqdk12ZDnIBrrLOtccgjrbBaqBkRbmRjH78pr5I+QI1ma/WIlOf7Ixvr4ZnRp0d2eQIKIWN4PoKKtS68phhfmisuCpZFT35UVT9feeRW2p+gkvVMtGj941TjrPF0Sa/VCNfekk9wtrvORWgwcbNyWOeR5Pq2KqsMgSTweVjVDxY+Zh7b8Cjo0iSL8XmXQe/IlYVIFT2pYjYkdwdaHTFldsHzQ+Fc+35uamIw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SL2PR06MB3082.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(83380400001)(36756003)(52116002)(6666004)(316002)(5660300002)(2906002)(8676002)(186003)(38100700002)(4326008)(38350700002)(86362001)(6486002)(8936002)(508600001)(6512007)(26005)(6506007)(107886003)(956004)(2616005)(66946007)(66476007)(66556008);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?YC1hFE8Ob+ndnwj2UT9ZHDaD8WA28BdmEMpdrBmJm0WS7KzKx8DYVfNRRqBe?=
- =?us-ascii?Q?ikBE2clbOJPBJ8ITqM9LZeGcyxFdgtkPxeK1r3kqMk9lvPKQTFW/Q0hQOaPq?=
- =?us-ascii?Q?Qx8wy3HoyIMDkdX/m4cX2itJI4BGGd0Hw0MK90f2UFni3eYAhQuOqAOTNa47?=
- =?us-ascii?Q?h2fx57milePhTlVWbJkCARZ/RqVBYtWbxRdxG/XIDmjEuy6Pv8WnmJQRx/Z2?=
- =?us-ascii?Q?ZhikLiZ506CUd/kxM8Z8ZwWCR9+WYc9f2KCX2icm6BMXSg+uKHdiwZtP8d/N?=
- =?us-ascii?Q?hl33fb4u9XKN9+Ha54THHQOwr3aA22YTOfu7NFe3AL80UakQKp2+Fy9p8Ffe?=
- =?us-ascii?Q?w/dqYqe8cSkrWbRIPCNZhWdoHGOWCYaFUQujoJLMEelEQj1P39qEdr9xUhd1?=
- =?us-ascii?Q?7lU/9ScfjvFpjfUCIZOL2JWS0t38BiJWnjI3uq/bS2KLXAk9/kfVh1anx8pq?=
- =?us-ascii?Q?zzZqfkA7+tpD6AdbQ3tEsh0YWTpfwvY/L8kr/hNUt1/nQkovlCzfD4BQUXBl?=
- =?us-ascii?Q?CruOqeN4+ZaKB1PGh+nYTl7QMVsKZQYsxe6C9M7dLwDFJmB8Zv4cS2atPGqs?=
- =?us-ascii?Q?AF3wx1uCdgxhSa2UefdGbjT4HAx8PWifYdVmEvlhM5XaBosTI4nBKGiDaWFu?=
- =?us-ascii?Q?8mifi17INBQDXdOO7s0NdW57oM0vEkktvISlZyhjDeqmVnAoiIfOx+yUPQOT?=
- =?us-ascii?Q?M94Ck9MmOHhsvgQ3i63z7/4ksCRH9irv7TMNFehwZSANtXKw8OjC45Y90F+T?=
- =?us-ascii?Q?qnU7+YrLDKWNvcyo6cgvS6ignq2YD8iR5u8/qwzm32JEmltXvT/+lYD5/efc?=
- =?us-ascii?Q?1XQ1HUxUH7pJ6yEOPHJTHYIReIJZbxaoT/h9uxNWnh0KcWLDiYHdDt0vGBbp?=
- =?us-ascii?Q?WpFKcIDaQc7G2GkmH3LwWvsf60sxps0SzcIwU6bvMXrPu19QA8uS40DPbjeK?=
- =?us-ascii?Q?Ktv/UoyoZPb+dh++SqNRXQ1h36Vo2hwqEjVT95ceHlZSIuPf1D9UR95HNK6H?=
- =?us-ascii?Q?deTSmB8/TtNrQ9B+QO9qC95TNdL48t1Ynn7//dcjci1yKoZqxaUEudZ76nj2?=
- =?us-ascii?Q?RW8vYu8KqP3qgLsgJi4xvInc3Pkbl9UOjsf5QM4Lvnyok8p1f0+3+QN22l1x?=
- =?us-ascii?Q?mEgDsbBLS4EVN7Y1/UHi3ykoKEO65bGpnBl6yKSB0Oj6tXf+KbiJl/sJfX10?=
- =?us-ascii?Q?ynz2XWOXrZWJz8vZfOkSXltpC/t4Q7tezElJNUnlaBKunCza5JouGG75CUo6?=
- =?us-ascii?Q?It2cbzlOnwx/SJLZActvuz1dofr5qzUo9WbCa0ifLdQaHyu2xzOTl641JIi3?=
- =?us-ascii?Q?hEspiNUd1sqbCpSfau3U7NZF?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05a98934-a5f8-4a7b-2460-08d9920d7bac
-X-MS-Exchange-CrossTenant-AuthSource: SL2PR06MB3082.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2021 08:01:25.8334
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9z8YtiZO6dFVgQlv3uU6a6LCtZQFwPfybDZ5bu4Hi8iC0xpP60+YIsP2avxSzxRbscFEMIlPBZkd1O6BEtjoTw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SL2PR06MB3387
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nfeOsJT4P4stmsz9"
+Content-Disposition: inline
+In-Reply-To: <20211013105226.20225-1-mst@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch fixes the following Coccinelle warning:
 
-fs/xattr.c:563:8-15: WARNING opportunity for vmemdup_user
+--nfeOsJT4P4stmsz9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Use vmemdup_user rather than duplicating its implementation
-This is a little bit restricted to reduce false positives
+On Wed, Oct 13, 2021 at 06:55:31AM -0400, Michael S. Tsirkin wrote:
+> This will enable cleanups down the road.
+> The idea is to disable cbs, then add "flush_queued_cbs" callback
+> as a parameter, this way drivers can flush any work
+> queued after callbacks have been disabled.
+>=20
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
+>  arch/um/drivers/virt-pci.c                 | 2 +-
+>  drivers/block/virtio_blk.c                 | 4 ++--
+>  drivers/bluetooth/virtio_bt.c              | 2 +-
+>  drivers/char/hw_random/virtio-rng.c        | 2 +-
+>  drivers/char/virtio_console.c              | 4 ++--
+>  drivers/crypto/virtio/virtio_crypto_core.c | 8 ++++----
+>  drivers/firmware/arm_scmi/virtio.c         | 2 +-
+>  drivers/gpio/gpio-virtio.c                 | 2 +-
+>  drivers/gpu/drm/virtio/virtgpu_kms.c       | 2 +-
+>  drivers/i2c/busses/i2c-virtio.c            | 2 +-
+>  drivers/iommu/virtio-iommu.c               | 2 +-
+>  drivers/net/caif/caif_virtio.c             | 2 +-
+>  drivers/net/virtio_net.c                   | 4 ++--
+>  drivers/net/wireless/mac80211_hwsim.c      | 2 +-
+>  drivers/nvdimm/virtio_pmem.c               | 2 +-
+>  drivers/rpmsg/virtio_rpmsg_bus.c           | 2 +-
+>  drivers/scsi/virtio_scsi.c                 | 2 +-
+>  drivers/virtio/virtio.c                    | 5 +++++
+>  drivers/virtio/virtio_balloon.c            | 2 +-
+>  drivers/virtio/virtio_input.c              | 2 +-
+>  drivers/virtio/virtio_mem.c                | 2 +-
+>  fs/fuse/virtio_fs.c                        | 4 ++--
+>  include/linux/virtio.h                     | 1 +
+>  net/9p/trans_virtio.c                      | 2 +-
+>  net/vmw_vsock/virtio_transport.c           | 4 ++--
+>  sound/virtio/virtio_card.c                 | 4 ++--
+>  26 files changed, 39 insertions(+), 33 deletions(-)
 
-Signed-off-by: Qing Wang <wangqing@vivo.com>
----
- fs/xattr.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 5c8c517..288daea
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -560,20 +560,17 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
- 	if (size) {
- 		if (size > XATTR_SIZE_MAX)
- 			return -E2BIG;
--		kvalue = kvmalloc(size, GFP_KERNEL);
--		if (!kvalue)
--			return -ENOMEM;
--		if (copy_from_user(kvalue, value, size)) {
--			error = -EFAULT;
--			goto out;
--		}
-+
-+		kvalue = vmemdup_user(value, size);
-+		if (IS_ERR(kvalue))
-+			return ERR_PTR(PTR_ERR(kvalue));
-+
- 		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
- 		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
- 			posix_acl_fix_xattr_from_user(mnt_userns, kvalue, size);
- 	}
- 
- 	error = vfs_setxattr(mnt_userns, d, kname, kvalue, size, flags);
--out:
- 	kvfree(kvalue);
- 
- 	return error;
--- 
-2.7.4
+--nfeOsJT4P4stmsz9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmFtOjkACgkQnKSrs4Gr
+c8gexAf6AlqH6xn5qy4PTBIyVWqBNKslYRUY3StOZeOLM+CPmkOFP+txQ8EkZk8Q
+CoN3LYe7SYgM+Ta9+IaB/5DMPe0oGp4HL47kDEaEdzoQ9X3xaM5sjDQ7fAauSqhb
+gcL3J12kjjI6wrP3O8u9Dp56doY0k43WCsghVyJ90yZ6C8o9DQEAQZcon2vrQnO7
+dHlQQkT29XNt6VmZeKoyx55lRentw0HeuxR5CBrYMdVDHbL3SoXm3fACGBB2ci5i
+KxES5tR0Wq5ibMq5TbU1/40QKB+JfW8unQNAHCxd0EU2QVWaYe/4eaL1gHLvR1V0
+6Xa1DS0k8l/mV2V9drYFwRnygjMH1Q==
+=g/hu
+-----END PGP SIGNATURE-----
+
+--nfeOsJT4P4stmsz9--
 
