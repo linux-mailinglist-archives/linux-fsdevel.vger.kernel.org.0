@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A6373430F3D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 06:41:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25F60430F42
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 06:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230140AbhJREnv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 00:43:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55082 "EHLO
+        id S230100AbhJREnz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 00:43:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229616AbhJREnr (ORCPT
+        with ESMTP id S230128AbhJREnv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 00:43:47 -0400
+        Mon, 18 Oct 2021 00:43:51 -0400
 Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B97E5C06161C;
-        Sun, 17 Oct 2021 21:41:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65870C06161C;
+        Sun, 17 Oct 2021 21:41:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=NWRSaBjXDrc58K1oj+PE/wR9vn+9X0aQXm/bAOg12tE=; b=1d8cXQVXjk+JGdcI/anFzyAIB+
-        jgB3oMIkS682cycJDTMPg4gPEB3/UnsmiLecgvLUw9Ajih6dFsVYlAJNXr39QLXQx55yPJvt4ci4i
-        ECGp50OerwpW6muAkWZxKjOhppD4FBGWZIWzq3zTd/NIdoHfdANyRQLEYs5l4j6w/hIO46IfrsWCG
-        De9Rt5dzKHh3HIWGA0Wyvl8zgk05HIKasE9OdehfasxF2JNJKXglz5/7bxaXkQpJhu2ZEo5xioeZ5
-        5X8XdkB9I86u11AycCppr1InCFSpK4nFDVxZgzu69RSpqtGxvlhcjrX9ZumEhVNy6f9UAHj3vTQsJ
-        xXuTwgrA==;
+        bh=uLDzNdvlUbSBrRvj7vTZ1yPi5zMIqLpGLzeD42SrdLE=; b=0LfreBwXIkRrDhpgGOavc0Sbac
+        u8D5ZpvkjcMW8tJZH/vGcwrYnvFPYF4DfR5bj3rFCMQZeNjyi8QzpTni2uL7Qs6KlEMxLAXGyHKYs
+        QxVDuo8VxPGqHIVcQz8xSMzWFpWnqcc4t+IrQhfe0Qzhme7PYaVw1T8faWgtU8MBSIRH74P5cx9BP
+        hU6Y67KbQUztMWj0YayZNS0KmMdfS5lb8KTvW8iwZPJhlY2xUUBsQAjGNulA/lftPFaVgLOyxHFIZ
+        apoMSzbK7QjtRmJuHmP8EguhMZcUEzbemOQzieUE9j0OxDv+dHd+qtJbN65P8BGF30FOc7ZmeAjXD
+        O0v9tbGg==;
 Received: from 089144211028.atnat0020.highway.a1.net ([89.144.211.28] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mcKSn-00E3Tr-Rc; Mon, 18 Oct 2021 04:41:30 +0000
+        id 1mcKSr-00E3VA-5M; Mon, 18 Oct 2021 04:41:33 +0000
 From:   Christoph Hellwig <hch@lst.de>
 Cc:     Dan Williams <dan.j.williams@intel.com>,
         Mike Snitzer <snitzer@redhat.com>,
@@ -36,9 +36,9 @@ Cc:     Dan Williams <dan.j.williams@intel.com>,
         linux-s390@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
         virtualization@lists.linux-foundation.org
-Subject: [PATCH 10/11] dm-stripe: add a stripe_dax_pgoff helper
-Date:   Mon, 18 Oct 2021 06:40:53 +0200
-Message-Id: <20211018044054.1779424-11-hch@lst.de>
+Subject: [PATCH 11/11] dax: move bdev_dax_pgoff to fs/dax.c
+Date:   Mon, 18 Oct 2021 06:40:54 +0200
+Message-Id: <20211018044054.1779424-12-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211018044054.1779424-1-hch@lst.de>
 References: <20211018044054.1779424-1-hch@lst.de>
@@ -50,119 +50,79 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a helper to perform the entire remapping for DAX accesses.  This
-helper open codes bdev_dax_pgoff given that the alignment checks have
-already been done by the submitting file system and don't need to be
-repeated.
+No functional changet, but this will allow for a tighter integration
+with the iomap code, including possible passing the partition offset
+in the iomap in the future.  For now it mostly avoids growing more
+callers outside of fs/dax.c.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/md/dm-stripe.c | 63 ++++++++++--------------------------------
- 1 file changed, 15 insertions(+), 48 deletions(-)
+ drivers/dax/super.c | 14 --------------
+ fs/dax.c            | 13 +++++++++++++
+ include/linux/dax.h |  1 -
+ 3 files changed, 13 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/md/dm-stripe.c b/drivers/md/dm-stripe.c
-index f084607220293..50dba3f39274c 100644
---- a/drivers/md/dm-stripe.c
-+++ b/drivers/md/dm-stripe.c
-@@ -301,83 +301,50 @@ static int stripe_map(struct dm_target *ti, struct bio *bio)
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index 803942586d1b6..c0910687fbcb2 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -67,20 +67,6 @@ void dax_remove_host(struct gendisk *disk)
+ }
+ EXPORT_SYMBOL_GPL(dax_remove_host);
+ 
+-int bdev_dax_pgoff(struct block_device *bdev, sector_t sector, size_t size,
+-		pgoff_t *pgoff)
+-{
+-	sector_t start_sect = bdev ? get_start_sect(bdev) : 0;
+-	phys_addr_t phys_off = (start_sect + sector) * 512;
+-
+-	if (pgoff)
+-		*pgoff = PHYS_PFN(phys_off);
+-	if (phys_off % PAGE_SIZE || size % PAGE_SIZE)
+-		return -EINVAL;
+-	return 0;
+-}
+-EXPORT_SYMBOL(bdev_dax_pgoff);
+-
+ /**
+  * dax_get_by_host() - temporary lookup mechanism for filesystem-dax
+  * @bdev: block device to find a dax_device for
+diff --git a/fs/dax.c b/fs/dax.c
+index 4e3e5a283a916..eb715363fd667 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -709,6 +709,19 @@ int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
+ 	return __dax_invalidate_entry(mapping, index, false);
  }
  
- #if IS_ENABLED(CONFIG_FS_DAX)
--static long stripe_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
--		long nr_pages, void **kaddr, pfn_t *pfn)
-+static struct dax_device *stripe_dax_pgoff(struct dm_target *ti, pgoff_t *pgoff)
- {
--	sector_t dev_sector, sector = pgoff * PAGE_SECTORS;
- 	struct stripe_c *sc = ti->private;
--	struct dax_device *dax_dev;
- 	struct block_device *bdev;
-+	sector_t dev_sector;
- 	uint32_t stripe;
--	long ret;
- 
--	stripe_map_sector(sc, sector, &stripe, &dev_sector);
-+	stripe_map_sector(sc, *pgoff * PAGE_SECTORS, &stripe, &dev_sector);
- 	dev_sector += sc->stripe[stripe].physical_start;
--	dax_dev = sc->stripe[stripe].dev->dax_dev;
- 	bdev = sc->stripe[stripe].dev->bdev;
- 
--	ret = bdev_dax_pgoff(bdev, dev_sector, nr_pages * PAGE_SIZE, &pgoff);
--	if (ret)
--		return ret;
-+	*pgoff = (get_start_sect(bdev) + dev_sector) >> PAGE_SECTORS_SHIFT;
-+	return sc->stripe[stripe].dev->dax_dev;
++static int bdev_dax_pgoff(struct block_device *bdev, sector_t sector, size_t size,
++		pgoff_t *pgoff)
++{
++	sector_t start_sect = bdev ? get_start_sect(bdev) : 0;
++	phys_addr_t phys_off = (start_sect + sector) * 512;
++
++	if (pgoff)
++		*pgoff = PHYS_PFN(phys_off);
++	if (phys_off % PAGE_SIZE || size % PAGE_SIZE)
++		return -EINVAL;
++	return 0;
 +}
 +
-+static long stripe_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
-+		long nr_pages, void **kaddr, pfn_t *pfn)
-+{
-+	struct dax_device *dax_dev = stripe_dax_pgoff(ti, &pgoff);
-+
- 	return dax_direct_access(dax_dev, pgoff, nr_pages, kaddr, pfn);
- }
- 
- static size_t stripe_dax_copy_from_iter(struct dm_target *ti, pgoff_t pgoff,
- 		void *addr, size_t bytes, struct iov_iter *i)
+ static int copy_cow_page_dax(struct block_device *bdev, struct dax_device *dax_dev,
+ 			     sector_t sector, struct page *to, unsigned long vaddr)
  {
--	sector_t dev_sector, sector = pgoff * PAGE_SECTORS;
--	struct stripe_c *sc = ti->private;
--	struct dax_device *dax_dev;
--	struct block_device *bdev;
--	uint32_t stripe;
--
--	stripe_map_sector(sc, sector, &stripe, &dev_sector);
--	dev_sector += sc->stripe[stripe].physical_start;
--	dax_dev = sc->stripe[stripe].dev->dax_dev;
--	bdev = sc->stripe[stripe].dev->bdev;
-+	struct dax_device *dax_dev = stripe_dax_pgoff(ti, &pgoff);
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index 439c3c70e347b..324363b798ecd 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -107,7 +107,6 @@ static inline bool daxdev_mapping_supported(struct vm_area_struct *vma,
+ #endif
  
--	if (bdev_dax_pgoff(bdev, dev_sector, ALIGN(bytes, PAGE_SIZE), &pgoff))
--		return 0;
- 	return dax_copy_from_iter(dax_dev, pgoff, addr, bytes, i);
- }
- 
- static size_t stripe_dax_copy_to_iter(struct dm_target *ti, pgoff_t pgoff,
- 		void *addr, size_t bytes, struct iov_iter *i)
- {
--	sector_t dev_sector, sector = pgoff * PAGE_SECTORS;
--	struct stripe_c *sc = ti->private;
--	struct dax_device *dax_dev;
--	struct block_device *bdev;
--	uint32_t stripe;
--
--	stripe_map_sector(sc, sector, &stripe, &dev_sector);
--	dev_sector += sc->stripe[stripe].physical_start;
--	dax_dev = sc->stripe[stripe].dev->dax_dev;
--	bdev = sc->stripe[stripe].dev->bdev;
-+	struct dax_device *dax_dev = stripe_dax_pgoff(ti, &pgoff);
- 
--	if (bdev_dax_pgoff(bdev, dev_sector, ALIGN(bytes, PAGE_SIZE), &pgoff))
--		return 0;
- 	return dax_copy_to_iter(dax_dev, pgoff, addr, bytes, i);
- }
- 
- static int stripe_dax_zero_page_range(struct dm_target *ti, pgoff_t pgoff,
- 				      size_t nr_pages)
- {
--	int ret;
--	sector_t dev_sector, sector = pgoff * PAGE_SECTORS;
--	struct stripe_c *sc = ti->private;
--	struct dax_device *dax_dev;
--	struct block_device *bdev;
--	uint32_t stripe;
-+	struct dax_device *dax_dev = stripe_dax_pgoff(ti, &pgoff);
- 
--	stripe_map_sector(sc, sector, &stripe, &dev_sector);
--	dev_sector += sc->stripe[stripe].physical_start;
--	dax_dev = sc->stripe[stripe].dev->dax_dev;
--	bdev = sc->stripe[stripe].dev->bdev;
--
--	ret = bdev_dax_pgoff(bdev, dev_sector, nr_pages << PAGE_SHIFT, &pgoff);
--	if (ret)
--		return ret;
- 	return dax_zero_page_range(dax_dev, pgoff, nr_pages);
- }
- 
+ struct writeback_control;
+-int bdev_dax_pgoff(struct block_device *, sector_t, size_t, pgoff_t *pgoff);
+ #if IS_ENABLED(CONFIG_FS_DAX)
+ int dax_add_host(struct dax_device *dax_dev, struct gendisk *disk);
+ void dax_remove_host(struct gendisk *disk);
 -- 
 2.30.2
 
