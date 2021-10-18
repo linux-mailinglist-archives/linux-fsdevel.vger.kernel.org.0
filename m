@@ -2,132 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB44F4324F5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 19:25:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF532432539
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 19:41:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234001AbhJRR1P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 13:27:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33208 "EHLO
+        id S234168AbhJRRnO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 13:43:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232469AbhJRR1O (ORCPT
+        with ESMTP id S234165AbhJRRnF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 13:27:14 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DD9AC061745
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 10:25:03 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id c28so15913768qtv.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 10:25:03 -0700 (PDT)
+        Mon, 18 Oct 2021 13:43:05 -0400
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47F74C06176E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 10:40:54 -0700 (PDT)
+Received: by mail-il1-x12d.google.com with SMTP id h27so9985320ila.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 10:40:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=VlN35XgI9PTndq7UxTnTEbK2ldcab2451jgEL0ZSqaM=;
-        b=qK2G14Y736gLbmF8WeKdXEgMl+G2OGQsU1fCBVh2NbNOEaezcH6NAqAKw0aIYyZZCY
-         D0KjQ9Om6zpzcSkUOCw7nfDWo0peXjwGkI0PVkNdxmJdgcW5VWEhKddNxgrVqT2nmUfy
-         plc7yiDP5oXfPS1xwECNcCFkT6kGppEm6PjIDhQB4HmrdzxHbolj95y37Zx6CsefaQyQ
-         xahU65jzImb6I9yVlbqmsRaIV1ZK4BK15bSrjRf+wdsBI/ttB6DKBEtBRe0DJFtAx6ko
-         ZcotXe1B6wFxStVylYj/UWLQq+PxJ01ex7PfDAA/odqk54fL5GJROJWHYW0df8WX5/zE
-         /9AA==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8eHyIh60ZUzo3JWH2PHiHe4cTmG/UJai+TUUoRo1bPo=;
+        b=FxDre2hjyoHZ64BANF3MmORptiQUy9H6AZXx6LsuyaBb3BcaZC0U/QrU21BtTujGBo
+         8pKXev+INoMpwpLRfH86fYXpprj4xYaVKSen9V7xFxUy/Adi3YagOWpZv1TCL1fYRKF4
+         KJjdISFmhkQQ0L4EmrQXCfcR5w3Zzj3aqn6DzOl13eefz8vxGa1vYg1bewxzJ9VB28da
+         3UiILqBGRheOtvSI5gJ9xtk7xHUS/Gucotz2TgqyyRfnlasGRztSAeszEgY1u2mV13ER
+         EMsST0UXfQiH71wz4IGsonA4VDgwXa5gnJGRFiHsgHIEksPy/aZTeVCzAUrIhmXl9xQs
+         p/ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VlN35XgI9PTndq7UxTnTEbK2ldcab2451jgEL0ZSqaM=;
-        b=1yNG6QbalQNAMB44tHE59Gbxsg7sNs8Xn5akUHTXBNokYOdpRNa5nyGuPYx2+Kndgj
-         eOUIFQz4PAXtji3gndzPTJjExL1ej/V7lklo1fTvx9dfXIuoKWGetc8UFU6868fH6lFd
-         opjFziZmvCMspH9d1A+C6GrO2HjXeSH98oElBRharCPS/SJpIpgC6DDAU0F7I04hsFVV
-         3R4ORdUbIVh+gPtl4EEze9wwUGFLY4jsQH5SqX/CCVGYErOUWrginlJcbdakmEkK5Kpx
-         KywYuiXT0xTCaDSQUVEuX4RmfH+fhrOUPxebuew4VW9hhuCP0Fn6NESJy606tNtCfOqV
-         Hl+A==
-X-Gm-Message-State: AOAM532lvsfIbx7BCEGuZGzQtq54CPZzKaI2dvzIi1HpE7B5tvWottDF
-        bJKe3zvoPkV4qc6zHpTJkjOUeA==
-X-Google-Smtp-Source: ABdhPJwbY21FHjl+4IYmDViZ0w3nIjwM1u55QjVUR+U+sgXEVNyv2YYgx3yFKvEqpM+tyxZO17JJRQ==
-X-Received: by 2002:ac8:5cc5:: with SMTP id s5mr31197902qta.256.1634577902431;
-        Mon, 18 Oct 2021 10:25:02 -0700 (PDT)
-Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
-        by smtp.gmail.com with ESMTPSA id t24sm6891783qkj.38.2021.10.18.10.25.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Oct 2021 10:25:01 -0700 (PDT)
-Date:   Mon, 18 Oct 2021 13:25:00 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
-Message-ID: <YW2t7Pq9AIOB2EgF@cmpxchg.org>
-References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
- <YTu9HIu+wWWvZLxp@moria.home.lan>
- <YUfvK3h8w+MmirDF@casper.infradead.org>
- <YUo20TzAlqz8Tceg@cmpxchg.org>
- <YUpC3oV4II+u+lzQ@casper.infradead.org>
- <YUpKbWDYqRB6eBV+@moria.home.lan>
- <YUpNLtlbNwdjTko0@moria.home.lan>
- <YUtHCle/giwHvLN1@cmpxchg.org>
- <YWsi/ERcQzY765xj@casper.infradead.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8eHyIh60ZUzo3JWH2PHiHe4cTmG/UJai+TUUoRo1bPo=;
+        b=Fh1WEuEIAnf50DiHf8BLW5dxPpn0izVZni/RHX0tzsCQ8WLqSQLqcFnVjo7C2M1iaE
+         C92FsVtHSY8RaQIMhMQLDGzp6UFq0QNgXmWyPuKYG12NDaMj3h5Ifgi4y9GLOsY9q/SX
+         uJm7/hQP6rwAGILhhMlIpivX6tTRn0Z3zL2y5FI58rAET9LZYVUY5JoPjkFPCvIDB4nj
+         Nk140/JZqQk+o1GzIiQ82lIo9YuS/W99Mc3iP6abnkzbwxGVm7VOYlDzu5AjG6Mj4uaz
+         QYzk/IvGAgI/437BIzUV3HYik/IPPLPWQLpYi4F356bmA/r4eAbl6R7mYuwifeFCKmvv
+         yrag==
+X-Gm-Message-State: AOAM533QS8j2valEfJL2RE8kNMwIMo0Etn8flO4l9aYhea30T1YxuYoJ
+        dQ/+UdmlObdZ7ZDvBz1ALdgKqA==
+X-Google-Smtp-Source: ABdhPJwRrr1OSerCMeedIq2RIL4WChs1nkzMA+HxEg+LQORSp5DecggK+ro0hO8CL+NowqI2hdNiZw==
+X-Received: by 2002:a05:6e02:14d3:: with SMTP id o19mr15105521ilk.257.1634578853304;
+        Mon, 18 Oct 2021 10:40:53 -0700 (PDT)
+Received: from [192.168.1.30] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id s6sm3131684ilv.18.2021.10.18.10.40.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Oct 2021 10:40:52 -0700 (PDT)
+Subject: Re: don't use ->bd_inode to access the block device size v3
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
+        Song Liu <song@kernel.org>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Kees Cook <keescook@chromium.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        Jan Kara <jack@suse.com>, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, drbd-dev@lists.linbit.com,
+        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org
+References: <20211018101130.1838532-1-hch@lst.de>
+ <4a8c3a39-9cd3-5b2f-6d0f-a16e689755e6@kernel.dk>
+ <20211018171843.GA3338@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <2f5dcf79-8419-45ff-c27c-68d43242ccfe@kernel.dk>
+Date:   Mon, 18 Oct 2021 11:40:51 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YWsi/ERcQzY765xj@casper.infradead.org>
+In-Reply-To: <20211018171843.GA3338@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 16, 2021 at 08:07:40PM +0100, Matthew Wilcox wrote:
-> On Wed, Sep 22, 2021 at 11:08:58AM -0400, Johannes Weiner wrote:
-> >       mm/lru: Add folio LRU functions
-> > 
-> > 		The LRU code is used by anon and file and not needed
-> > 		for the filesystem API.
-> > 
-> > 		And as discussed, there is generally no ambiguity of
-> > 		tail pages on the LRU list.
+On 10/18/21 11:18 AM, Christoph Hellwig wrote:
+> On Mon, Oct 18, 2021 at 11:16:08AM -0600, Jens Axboe wrote:
+>> This looks good to me. Followup question, as it's related - I've got a
+>> hacky patch that caches the inode size in the bdev:
+>>
+>> https://git.kernel.dk/cgit/linux-block/commit/?h=perf-wip&id=c754951eb7193258c35a574bd1ccccb7c4946ee4
+>>
+>> so we don't have to dip into the inode itself for the fast path. While
+>> it's obviously not something being proposed for inclusion right now, is
+>> there a world in which we can make something like that work?
 > 
-> One of the assumptions you're making is that the current code is suitable
-> for folios.  One of the things that happens in this patch is:
-> 
-> -       update_lru_size(lruvec, lru, page_zonenum(page), thp_nr_pages(page));
-> +       update_lru_size(lruvec, lru, folio_zonenum(folio),
-> +                       folio_nr_pages(folio));
-> 
-> static inline long folio_nr_pages(struct folio *folio)
-> {
->         return compound_nr(&folio->page);
-> }
-> 
-> vs
-> 
-> #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> static inline int thp_nr_pages(struct page *page)
-> {
->         VM_BUG_ON_PGFLAGS(PageTail(page), page);
->         if (PageHead(page))
->                 return HPAGE_PMD_NR;
->         return 1;
-> }
-> #else
-> static inline int thp_nr_pages(struct page *page)
-> {
->         VM_BUG_ON_PGFLAGS(PageTail(page), page);
->         return 1;
-> }
-> #endif
-> 
-> So if you want to leave all the LRU code using pages, all the uses of
-> thp_nr_pages() need to be converted to compound_nr().  Or maybe not all
-> of them; I don't know which ones might be safe to leave as thp_nr_pages().
-> That's one of the reasons I went with a whitelist approach.
+> There's just two places that update i_size for block devices:
+> set_capacity and bdev_set_nr_sectors.  So you just need to update
+> bd_nr_sectors there and you're done.
 
-All of them. The only compound pages that can exist on the LRUs are
-THPs, and the only THP pages that can exist on the LRUs are
-compound. There is no plausible scenario where those two functions
-would disagree in the LRU code.
+This on top of your patches should do the trick, then.
 
-Or elsewhere in the kernel, for that matter. Where would
-thp_nr_pages() returning compound_nr() ever be wrong? How else are we
-implementing THPs? I'm not sure that would make sense.
+
+commit eebb7c5048163985fb21d6cb740ebac78cb46051
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Mon Oct 18 11:39:45 2021 -0600
+
+    block: cache inode size in bdev
+    
+    Reading the inode size brings in a new cacheline for IO submit, and
+    it's in the hot path being checked for every single IO. When doing
+    millions of IOs per core per second, this is noticeable overhead.
+    
+    Cache the nr_sectors in the bdev itself.
+    
+    Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+diff --git a/block/genhd.c b/block/genhd.c
+index 759bc06810f8..53495e3391e3 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -58,6 +58,7 @@ void set_capacity(struct gendisk *disk, sector_t sectors)
+ 
+ 	spin_lock(&bdev->bd_size_lock);
+ 	i_size_write(bdev->bd_inode, (loff_t)sectors << SECTOR_SHIFT);
++	bdev->bd_nr_sectors = sectors;
+ 	spin_unlock(&bdev->bd_size_lock);
+ }
+ EXPORT_SYMBOL(set_capacity);
+diff --git a/block/partitions/core.c b/block/partitions/core.c
+index 9dbddc355b40..66ef9bc6d6a1 100644
+--- a/block/partitions/core.c
++++ b/block/partitions/core.c
+@@ -91,6 +91,7 @@ static void bdev_set_nr_sectors(struct block_device *bdev, sector_t sectors)
+ {
+ 	spin_lock(&bdev->bd_size_lock);
+ 	i_size_write(bdev->bd_inode, (loff_t)sectors << SECTOR_SHIFT);
++	bdev->bd_nr_sectors = sectors;
+ 	spin_unlock(&bdev->bd_size_lock);
+ }
+ 
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index 472e55e0e94f..fe065c394fff 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -39,6 +39,7 @@ struct bio_crypt_ctx;
+ 
+ struct block_device {
+ 	sector_t		bd_start_sect;
++	sector_t		bd_nr_sectors;
+ 	struct disk_stats __percpu *bd_stats;
+ 	unsigned long		bd_stamp;
+ 	bool			bd_read_only;	/* read-only policy */
+diff --git a/include/linux/genhd.h b/include/linux/genhd.h
+index 7b0326661a1e..001f617f82da 100644
+--- a/include/linux/genhd.h
++++ b/include/linux/genhd.h
+@@ -238,7 +238,7 @@ static inline sector_t get_start_sect(struct block_device *bdev)
+ 
+ static inline loff_t bdev_nr_bytes(struct block_device *bdev)
+ {
+-	return i_size_read(bdev->bd_inode);
++	return bdev->bd_nr_sectors;
+ }
+ 
+ static inline sector_t bdev_nr_sectors(struct block_device *bdev)
+
+-- 
+Jens Axboe
+
