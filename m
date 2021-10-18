@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B7974314C1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 12:13:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF81B4314C7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 12:13:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231823AbhJRKOw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 06:14:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44690 "EHLO
+        id S231840AbhJRKOy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 06:14:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231570AbhJRKOY (ORCPT
+        with ESMTP id S231612AbhJRKO0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 06:14:24 -0400
+        Mon, 18 Oct 2021 06:14:26 -0400
 Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DCE8C061714;
-        Mon, 18 Oct 2021 03:12:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91CE1C061745;
+        Mon, 18 Oct 2021 03:12:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=Yh+z+whkMCjXlGfSieTjzpMbNq/jpmSmFhhD2XKG2/0=; b=dOgIzGxW11roiePXE+sll361NK
-        LYGpgQMoubpTOVmUT1Y39mMzfmuqwMpOB4ci4j6R2aKMVmlGa/YRIGL/swEN/eVMD0upgNGRukMym
-        izFxF8HQCyYNFQD+qdcgMooZP+Jcoc0WJy2g0E9KmeHryFgXV1nCn4Kt5ZxVjzCv8TvG0Owa1QGvD
-        8ziYgSuAjQVdd1Vzof/owy8oCnxrD0t3lwh0Yf0p/d1MD+K0QGV9OqJAtTDreNuvcdjJNYdURo/Lu
-        61efTOMREqhL58vmBYt27QC3vmE69B9XHhRLLocqerfpU+M3Um5RdX8b3RnokS3Y0wc8leL5UIWTX
-        u5KUMKEw==;
+        bh=ufY1F9BE0hyiVrMwVKJsKp268/NwKnrkH8WRQVRWk5I=; b=RyjaMpOyCyue3pLPX/xNtoj3nq
+        rx8YlEZ705/rKwKdJ5j6ftYyft14Nd5lmeU2HOeoDKNZdZqEFb8tcGWjNKmuyQ7TIVDACuaCybOnF
+        Hw7hxgyG0AEyGPi06m5bGMNWRzADYGd7XSzuDPxw411/azHNisWsvQGdWiHfpPSM0P6iWc2qXN240
+        E4XLB+C9Xw7VXkSnHoTpUosw9MXZHaxgjMd76781ZEP3v48okz1audNZi/h9/XY0+D6BH6eZk/uZZ
+        1gf8QCsBdjVwaclvb0GJThzBZPbjtmteLN0beWWqy3sOAdtJb9q4roLF6oQHM10/X0bdNGgCruID/
+        lsO0NOzw==;
 Received: from [2001:4bb8:199:73c5:c70:4a89:bc61:2] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mcPcd-00EuC1-S3; Mon, 18 Oct 2021 10:12:00 +0000
+        id 1mcPcg-00EuDu-HQ; Mon, 18 Oct 2021 10:12:02 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
@@ -50,10 +50,10 @@ Cc:     Coly Li <colyli@suse.de>, Mike Snitzer <snitzer@redhat.com>,
         jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
         linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
         ntfs3@lists.linux.dev, reiserfs-devel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 10/30] fs: simplify init_page_buffers
-Date:   Mon, 18 Oct 2021 12:11:10 +0200
-Message-Id: <20211018101130.1838532-11-hch@lst.de>
+        Chaitanya Kulkarni <kch@nvidia.com>
+Subject: [PATCH 11/30] affs: use bdev_nr_sectors instead of open coding it
+Date:   Mon, 18 Oct 2021 12:11:11 +0200
+Message-Id: <20211018101130.1838532-12-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211018101130.1838532-1-hch@lst.de>
 References: <20211018101130.1838532-1-hch@lst.de>
@@ -64,28 +64,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-No need to convert from bdev to inode and back.
+Use the proper helper to read the block device size.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
 ---
- fs/buffer.c | 2 +-
+ fs/affs/super.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 156358977249f..46bc589b7a03c 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -897,7 +897,7 @@ init_page_buffers(struct page *page, struct block_device *bdev,
- 	struct buffer_head *head = page_buffers(page);
- 	struct buffer_head *bh = head;
- 	int uptodate = PageUptodate(page);
--	sector_t end_block = blkdev_max_block(I_BDEV(bdev->bd_inode), size);
-+	sector_t end_block = blkdev_max_block(bdev, size);
+diff --git a/fs/affs/super.c b/fs/affs/super.c
+index c6c2a513ec92d..c609005a9eaaa 100644
+--- a/fs/affs/super.c
++++ b/fs/affs/super.c
+@@ -389,7 +389,7 @@ static int affs_fill_super(struct super_block *sb, void *data, int silent)
+ 	 * blocks, we will have to change it.
+ 	 */
  
- 	do {
- 		if (!buffer_mapped(bh)) {
+-	size = i_size_read(sb->s_bdev->bd_inode) >> 9;
++	size = bdev_nr_sectors(sb->s_bdev);
+ 	pr_debug("initial blocksize=%d, #blocks=%d\n", 512, size);
+ 
+ 	affs_set_blocksize(sb, PAGE_SIZE);
 -- 
 2.30.2
 
