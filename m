@@ -2,201 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 092B14326F9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 20:58:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2F2E4327BC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 21:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229696AbhJRTAT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 15:00:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54918 "EHLO
+        id S233433AbhJRTen (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 15:34:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231590AbhJRTAS (ORCPT
+        with ESMTP id S231969AbhJRTem (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 15:00:18 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33A11C061765
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 11:58:07 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id e7so17144480pgk.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 11:58:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=XJpEWR9LdteKJ68LKGtld7IiMgguzW8FmAPi7xScjTE=;
-        b=xyCleYXmJ7DWiTzzNyRVH0LfTyA2Lwwr86nudTgBV7LqFIih28aQ/A+xMDu9wGxiZJ
-         etYHH5vusdEHCn3CmujBsBpYGisp43GlEKRlWZpFEZeGRCKDbifDE2OY/MBbtNdpN5ky
-         8sJBwsCEbiOUry1way1OSWrGZxN55ZwcQW9s2jD8XoyuDdmYxg/Z3s/x139VKhmOmk8O
-         9JPnvcY6YLSS7CFod18/zmmqf0Obh4DdZgjmZc+YnM8k9g+qrNAGu9494TkUgK9/Roiu
-         q0Ttc33ZqQovbxum11nu0yEehxcPCjjZE0O/0rSOIXnznvpCynMQE6O9Y6JwBeXw/oCh
-         suHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=XJpEWR9LdteKJ68LKGtld7IiMgguzW8FmAPi7xScjTE=;
-        b=UuvTCeyamyGLkpWikxC5f6n5LivdDXXo0NzanTBXRwRfcyoFtufoBhoWJBN0OwJtWr
-         yX3EjHzDldKjNdeu5/Q4IipoWQz+qtV65k8S0kgnqTUGfpNJCL1wBM21XoZKt17O6mgp
-         HYNatdNUKDhFD3GR3aEapB33aIWrtvuLELytNutF2ePaBH9hC4UmuKy05SbO4TNHiiBz
-         G0LxOLeq3uXg8SERH6unegEdCCyrYpsonpmmJOTJaTw5gk38YaLr5/4O0ZJ6uHK/zyvI
-         +774pIMoZ+7K+v49p8LNHu9ArEezzgDOP+TzYuzFQwCKxeJJgVJgMx1G1VG/lA9FB5HR
-         BRZQ==
-X-Gm-Message-State: AOAM531aTwR5Eq4PtV2vpwcxDXYd79WBqWcfFe5CgQAm6ONLxV0zh++x
-        HXHeGfMFs2DRKz6ydPiKQEPf9w==
-X-Google-Smtp-Source: ABdhPJz+NIzvfQFRbVRY5oHKTtKd4bzz6stXXvGcyal03Xi8KLTTMyThoLxXbpxRzalcsDYH6reIGg==
-X-Received: by 2002:a63:3c13:: with SMTP id j19mr7929172pga.13.1634583486557;
-        Mon, 18 Oct 2021 11:58:06 -0700 (PDT)
-Received: from relinquished.localdomain ([2620:10d:c090:400::5:b911])
-        by smtp.gmail.com with ESMTPSA id t38sm10212995pfg.102.2021.10.18.11.58.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Oct 2021 11:58:05 -0700 (PDT)
-Date:   Mon, 18 Oct 2021 11:58:04 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Nikolay Borisov <nborisov@suse.com>
-Cc:     linux-btrfs@vger.kernel.org, kernel-team@fb.com,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v11 10/14] btrfs: add send stream v2 definitions
-Message-ID: <YW3DvJBzV1exIF6Q@relinquished.localdomain>
-References: <cover.1630514529.git.osandov@fb.com>
- <ed4dc1c414a6662831e7443335065cb37dddad91.1630514529.git.osandov@fb.com>
- <f94e2e0d-0cf9-1c9d-0dfb-b21438fe852d@suse.com>
+        Mon, 18 Oct 2021 15:34:42 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7260CC06161C;
+        Mon, 18 Oct 2021 12:32:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=B9bByHMOUaNb4hIzLjt6ee5iMVKuoAuSSlDfjNfXcVw=; b=XtN6iHFYDXFCgENpbEdGOr2pmU
+        yFFYqYJYUwhdr5Zlp2UsdTC2rL+hCJS1bFB6SdwLPL8YHN2d2igwldOx4aN39GeV7zWYehrfXe2jn
+        xPp8Wbs+3g4hxTSveCN7QqtgeFHuYXz8JAy/ZGSgg4zr67ZKFiZkEZvtfzpv+LZY72zafXjqhxeu+
+        5Fsq/DwQleE7J00WQFTjv7uxD1NogvR0qdqKtmAPsd2KXSwIcnQ3dqcWurIfkTXkOc6O9SU7pasYf
+        Jps0O7g4MB47gCoKXLrVqcnjY2O026y80dKCw6tVa5/wa0aFv5cYUejuIFIsV/jimkvEoP7FdHUzf
+        FB3gz3QQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mcYMl-00H11w-Tb; Mon, 18 Oct 2021 19:32:11 +0000
+Date:   Mon, 18 Oct 2021 12:32:11 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     tj@kernel.org, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org, minchan@kernel.org, jeyu@kernel.org,
+        shuah@kernel.org, bvanassche@acm.org, dan.j.williams@intel.com,
+        joe@perches.com, tglx@linutronix.de, keescook@chromium.org,
+        rostedt@goodmis.org, linux-spdx@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
+Message-ID: <YW3LuzaPhW96jSBK@bombadil.infradead.org>
+References: <20210927163805.808907-1-mcgrof@kernel.org>
+ <20210927163805.808907-12-mcgrof@kernel.org>
+ <YWeOJP2UJWYF94fu@T590>
+ <YWeR4moCRh+ZHOmH@T590>
+ <YWiSAN6xfYcUDJCb@bombadil.infradead.org>
+ <YWjCpLUNPF3s4P2U@T590>
+ <YWjJ0O7K+31Iz3ox@bombadil.infradead.org>
+ <YWk9e957Hb+I7HvR@T590>
+ <YWm68xUnAofop3PZ@bombadil.infradead.org>
+ <YWq3Z++uoJ/kcp+3@T590>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f94e2e0d-0cf9-1c9d-0dfb-b21438fe852d@suse.com>
+In-Reply-To: <YWq3Z++uoJ/kcp+3@T590>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 18, 2021 at 06:11:54PM +0300, Nikolay Borisov wrote:
-> 
-> 
-> On 1.09.21 г. 20:01, Omar Sandoval wrote:
-> > From: Omar Sandoval <osandov@fb.com>
+On Sat, Oct 16, 2021 at 07:28:39PM +0800, Ming Lei wrote:
+> On Fri, Oct 15, 2021 at 10:31:31AM -0700, Luis Chamberlain wrote:
+> > On Fri, Oct 15, 2021 at 04:36:11PM +0800, Ming Lei wrote:
+> > > On Thu, Oct 14, 2021 at 05:22:40PM -0700, Luis Chamberlain wrote:
+> > > > On Fri, Oct 15, 2021 at 07:52:04AM +0800, Ming Lei wrote:
+> > > ...
+> > > > > 
+> > > > > We need to understand the exact reason why there is still cpuhp node
+> > > > > left, can you share us the exact steps for reproducing the issue?
+> > > > > Otherwise we may have to trace and narrow down the reason.
+> > > > 
+> > > > See my commit log for my own fix for this issue.
+> > > 
+> > > OK, thanks!
+> > > 
+> > > I can reproduce the issue, and the reason is that reset_store fails
+> > > zram_remove() when unloading module, then the warning is caused.
+> > > 
+> > > The top 3 patches in the following tree can fix the issue:
+> > > 
+> > > https://github.com/ming1/linux/commits/my_v5.15-blk-dev
 > > 
-> > This adds the definitions of the new commands for send stream version 2
-> > and their respective attributes: fallocate, FS_IOC_SETFLAGS (a.k.a.
-> > chattr), and encoded writes. It also documents two changes to the send
-> > stream format in v2: the receiver shouldn't assume a maximum command
-> > size, and the DATA attribute is encoded differently to allow for writes
-> > larger than 64k. These will be implemented in subsequent changes, and
-> > then the ioctl will accept the new flags.
-> > 
-> > Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-> > Signed-off-by: Omar Sandoval <osandov@fb.com>
-> > ---
-> >  fs/btrfs/send.c            |  2 +-
-> >  fs/btrfs/send.h            | 30 +++++++++++++++++++++++++++++-
-> >  include/uapi/linux/btrfs.h | 13 +++++++++++++
-> >  3 files changed, 43 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-> > index afdcbe7844e0..2ec07943f173 100644
-> > --- a/fs/btrfs/send.c
-> > +++ b/fs/btrfs/send.c
-> > @@ -7287,7 +7287,7 @@ long btrfs_ioctl_send(struct file *mnt_file, struct btrfs_ioctl_send_args *arg)
-> >  
-> >  	sctx->clone_roots_cnt = arg->clone_sources_count;
-> >  
-> > -	sctx->send_max_size = BTRFS_SEND_BUF_SIZE;
-> > +	sctx->send_max_size = BTRFS_SEND_BUF_SIZE_V1;
-> >  	sctx->send_buf = kvmalloc(sctx->send_max_size, GFP_KERNEL);
-> >  	if (!sctx->send_buf) {
-> >  		ret = -ENOMEM;
-> > diff --git a/fs/btrfs/send.h b/fs/btrfs/send.h
-> > index de91488b7cd0..9f4f7b96b1eb 100644
-> > --- a/fs/btrfs/send.h
-> > +++ b/fs/btrfs/send.h
-> > @@ -12,7 +12,11 @@
-> >  #define BTRFS_SEND_STREAM_MAGIC "btrfs-stream"
-> >  #define BTRFS_SEND_STREAM_VERSION 1
-> >  
-> > -#define BTRFS_SEND_BUF_SIZE SZ_64K
-> > +/*
-> > + * In send stream v1, no command is larger than 64k. In send stream v2, no limit
-> > + * should be assumed.
-> > + */
-> > +#define BTRFS_SEND_BUF_SIZE_V1 SZ_64K
-> >  
-> >  enum btrfs_tlv_type {
-> >  	BTRFS_TLV_U8,
-> > @@ -76,6 +80,13 @@ enum btrfs_send_cmd {
-> >  
-> >  	BTRFS_SEND_C_END,
-> >  	BTRFS_SEND_C_UPDATE_EXTENT,
-> > +
-> > +	/* The following commands were added in send stream v2. */
-> > +
-> > +	BTRFS_SEND_C_FALLOCATE,
-> > +	BTRFS_SEND_C_SETFLAGS,
-> > +	BTRFS_SEND_C_ENCODED_WRITE,
-> > +
-> >  	__BTRFS_SEND_C_MAX,
-> >  };
-> >  #define BTRFS_SEND_C_MAX (__BTRFS_SEND_C_MAX - 1)
-> > @@ -106,6 +117,11 @@ enum {
-> >  	BTRFS_SEND_A_PATH_LINK,
-> >  
-> >  	BTRFS_SEND_A_FILE_OFFSET,
-> > +	/*
-> > +	 * In send stream v2, this attribute is special: it must be the last
-> > +	 * attribute in a command, its header contains only the type, and its
-> > +	 * length is implicitly the remaining length of the command.
-> > +	 */
-> >  	BTRFS_SEND_A_DATA,
+> > Thanks for trying an alternative fix! A crash stops yes, however this
 > 
-> Now that I think more about this, it would be best if this logic is
-> actually codified in the code. I.e first set of SEND_A_DATA would set
-> some bool/flag in the sctx and subsequent calls would be able to
-> ASSERT/WARN ?
+> I doubt it is alternative since your patchset doesn't mention the exact
+> reason of 'Error: Removing state 63 which has instances left.', that is
+> simply caused by failing to remove zram because ->claim is set during
+> unloading module.
 
-I suppose I could do something like this, is that what you had in mind?
+Well I disagree because it does explain how the race can happen, and it
+also explains how since the sysfs interface is exposed until module
+removal completes, it leaves exposed knobs to allow re-initializing of a
+struct zcomp for a zram device before the exit.
 
-diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-index 90ca915fed78..46443d80b431 100644
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -81,6 +81,7 @@ struct send_ctx {
- 	char *send_buf;
- 	u32 send_size;
- 	u32 send_max_size;
-+	bool put_data;
- 	struct page **send_buf_pages;
- 	u64 total_send_size;
- 	u64 cmd_send_size[BTRFS_SEND_C_MAX + 1];
-@@ -575,6 +576,9 @@ static int tlv_put(struct send_ctx *sctx, u16 attr, const void *data, int len)
- 	int total_len = sizeof(*hdr) + len;
- 	int left = sctx->send_max_size - sctx->send_size;
- 
-+	if (WARN_ON(sctx->put_data))
-+		return -EINVAL;
-+
- 	if (unlikely(left < total_len))
- 		return -EOVERFLOW;
- 
-@@ -718,6 +722,7 @@ static int send_cmd(struct send_ctx *sctx)
- 	sctx->total_send_size += sctx->send_size;
- 	sctx->cmd_send_size[get_unaligned_le16(&hdr->cmd)] += sctx->send_size;
- 	sctx->send_size = 0;
-+	sctx->put_data = false;
- 
- 	return ret;
- }
-@@ -4913,6 +4918,9 @@ static inline u64 max_send_read_size(const struct send_ctx *sctx)
- 
- static int put_data_header(struct send_ctx *sctx, u32 len)
- {
-+	if (WARN_ON(sctx->put_data))
-+		return -EINVAL;
-+	sctx->put_data = true;
- 	if (sctx->flags & BTRFS_SEND_FLAG_STREAM_V2) {
- 		/*
- 		 * In v2, the data attribute header doesn't include a length; it
-@@ -5368,6 +5376,7 @@ static int send_encoded_extent(struct send_ctx *sctx, struct btrfs_path *path,
- 	sctx->cmd_send_size[le16_to_cpu(hdr->cmd)] +=
- 		sctx->send_size + block_len;
- 	sctx->send_size = 0;
-+	sctx->put_data = false;
- 
- tlv_put_failure:
- out:
+> Yeah, you mentioned the race between disksize_store() vs. zram_remove(),
+> however I don't think it is reproduced easily in the test because the race
+> window is pretty small, also it can be fixed easily in my 3rd path
+> without any complicated tricks.
+
+Reproducing for me is... extremely easy.
+
+> Not dig into details of your patchset via grabbing module reference
+> count during show/store attribute of kernfs which is done in your patch
+> 9, but IMO this way isn't necessary:
+
+That's to address the deadlock only.
+
+> 1) any driver module has to cleanup anything which may refer to symbols
+> or data defined in module_exit of this driver
+
+Yes, and as the cpu multistate hotplug documentation warns (although
+such documentation is kind of hidden) that driver authors need to be
+careful with module removal too, refer to the warning at the end of
+__cpuhp_remove_state_cpuslocked() about module removal.
+
+> 2) device_del() is often done in module_exit(), once device_del()
+> returns, no any new show/store on the device's kobject attribute
+> is possible.
+
+Right and if a syfs knob is exposed before device_del() completely
+and is allowed to do things, the driver should take care to prevent
+races for CPU multistate support. The small state machine I added ensures
+we don't run over any expectations from cpu hotplug multistate support.
+
+I've *never* suggested there cannot be alternatives to my solution with
+the small state machine, but for you to say it is incorrect is simply
+not right either.
+
+> 3) it is _not_ a must or pattern for fixing bugs to hold one lock before
+> calling device_del(), meantime the lock is required in the device's
+> attribute show()/store(), which causes AA deadlock easily. Your approach
+> just avoids the issue by not releasing module until all show/store are
+> done.
+
+Right, there are two approaches here:
+
+a) Your approach is to accept the deadlock as a requirement and so
+you would prefer to implement an alternative to using a shared lock
+on module exit and sysfs op.
+
+b) While I address such a deadlock head on as I think this sort of locking
+be allowed for two reasons:
+   b1) as we never documented such requirement otherwise.
+   b2) There is a possibility that other drivers already exist too
+       which *do* use a shared lock on module removal and sysfs ops
+       (and I just confirmed this to be true)
+
+By you only addressing the deadlock as a requirement on approach a) you are
+forgetting that there *may* already be present drivers which *do* implement
+such patterns in the kernel. I worked on addressing the deadlock because
+I was informed livepatching *did* have that issue as well and so very
+likely a generic solution to the deadlock could be beneficial to other
+random drivers.
+
+So I *really* don't think it is wise for us to simply accept this new
+found deadlock as a *new* requirement, specially if we can fix it easily.
+
+A cursory review using Coccinelle potential issues with mutex lock
+directly used on module exit (so this doesn't cover drivers like zram
+which uses a routine and then grabs the lock through indirection) and a
+sysfs op shows these drivers are also affected by this deadlock:
+
+  * arch/powerpc/sysdev/fsl_mpic_timer_wakeup.c
+  * lib/test_firmware.c
+
+Note that this cursory review does not cover spin_lock uses, and other
+forms locks. Consider the case where a routine is used and then that
+routine grabs a lock, so one level indirection. There are many levels
+of indirections possible here. And likewise there are different types
+of locks.
+
+> > also ends up leaving the driver in an unrecoverable state after a few
+> > tries. Ie, you CTRL-C the scripts and try again over and over again and
+> > the driver ends up in a situation where it just says:
+> > 
+> > zram: Can't change algorithm for initialized device
+> 
+> It means the algorithm can't be changed for one initialized device
+> at the exact time. That is understandable because two zram02.sh are
+> running concurrently.
+
+Indeed but with your patch it can get stuck and cannot be taken out of this
+state.
+
+> Your test script just runs two ./zram02.sh tasks concurrently forever,
+> so what is your expected result for the test? Of course, it can't be
+> over.
+>
+> I can't reproduce the 'unrecoverable' state in my test, can you share the
+> stack trace log after that happens?
+
+Try a bit harder, cancel the scripts after running for a while randomly
+(CTRL C a few times until the script finishes) and have them race again.
+Do this a few times.
+
+> > And the zram module can't be removed at that point.
+> 
+> It is just that systemd opens the zram or the disk is opened as swap
+> disk, and once systemd closes it or after you run swapoff, it can be
+> unloaded.
+
+With my patch this issues does not happen.
+
+  Luis
