@@ -2,169 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BBEE4312D7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 11:11:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B6524312D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 11:11:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231486AbhJRJOG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 05:14:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:22141 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231408AbhJRJNz (ORCPT
+        id S231469AbhJRJOE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 05:14:04 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:43582 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231411AbhJRJOC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 05:13:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634548304;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Mon, 18 Oct 2021 05:14:02 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 2B77521966;
+        Mon, 18 Oct 2021 09:11:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1634548310; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=0Q56wj21GGdBKSsvdrGkUKMB3bovLQF+EDH+bXTHBkA=;
-        b=N0vaMvauF0ccCq2YZXgMI5mhKzGodUEXPgSRnsH39xAYnZb7rwFoCc1rP+pgNtYe2CahDQ
-        DHr5nqPct8u3d2kwtMraqRZ4xCd0j8EOe4SisWUK0YeXoB3Q93GNCqm/HwnRKOTyY/r7Yh
-        bvVm9G6bVbkOTOgNpE97ZF2hMDrKnHs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-138-xrfhSSOmOkixr02B7l7AAg-1; Mon, 18 Oct 2021 05:11:41 -0400
-X-MC-Unique: xrfhSSOmOkixr02B7l7AAg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 750F619057A4;
-        Mon, 18 Oct 2021 09:11:39 +0000 (UTC)
-Received: from localhost (unknown [10.39.195.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3119A5DF36;
-        Mon, 18 Oct 2021 09:11:25 +0000 (UTC)
-Date:   Mon, 18 Oct 2021 10:11:24 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gonglei <arei.gonglei@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        David Airlie <airlied@linux.ie>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Jie Deng <jie.deng@intel.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        David Hildenbrand <david@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Anton Yakovlev <anton.yakovlev@opensynergy.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-um@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, kvm@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH RFC] virtio: wrap config->reset calls
-Message-ID: <YW06PCof8Z76MXtC@stefanha-x1.localdomain>
-References: <20211013105226.20225-1-mst@redhat.com>
+        bh=eF2Rifqt8ucpeEBozDyQtYsm3MGnDcqBDObeOW5swFI=;
+        b=VfG3XmwopjYLNY8uBIcOV1d5y0rNa6FkQ78ZS2K03/S2kxmcE69Uf+TpXYbfSNbEdlzeTS
+        ExOOFwy9jEP8pe8idUu39zP7Ri48YGgwOApDRrt393B0MAdwqITqK8CuElxlZMRSMRykMF
+        fRoxQ389Ul0CJH9kaxRl5AVy4WIvg+k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1634548310;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=eF2Rifqt8ucpeEBozDyQtYsm3MGnDcqBDObeOW5swFI=;
+        b=E/APmor9UmV+NfDwuczHe7pgy2f2mu/Uff+FJI3QBkWZSNSMLw5bJiKI6rX6l/1HYjHBQ8
+        09USThLyr6QTCfCw==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id 11FD4A3B81;
+        Mon, 18 Oct 2021 09:11:50 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id F0D301E0875; Mon, 18 Oct 2021 11:11:48 +0200 (CEST)
+Date:   Mon, 18 Oct 2021 11:11:48 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     jack@suse.com, amir73il@gmail.com, djwong@kernel.org,
+        tytso@mit.edu, dhowells@redhat.com, khazhy@google.com,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-api@vger.kernel.org, repnop@google.com, kernel@collabora.com
+Subject: Re: [PATCH v7 02/28] fsnotify: pass dentry instead of inode data
+Message-ID: <20211018091148.GB29715@quack2.suse.cz>
+References: <20211014213646.1139469-1-krisman@collabora.com>
+ <20211014213646.1139469-3-krisman@collabora.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nfeOsJT4P4stmsz9"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211013105226.20225-1-mst@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+In-Reply-To: <20211014213646.1139469-3-krisman@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu 14-10-21 18:36:20, Gabriel Krisman Bertazi wrote:
+> From: Amir Goldstein <amir73il@gmail.com>
+> 
+> Define a new data type to pass for event - FSNOTIFY_EVENT_DENTRY.
+> Use it to pass the dentry instead of it's ->d_inode where available.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
---nfeOsJT4P4stmsz9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Looks good. Feel free to add:
 
-On Wed, Oct 13, 2021 at 06:55:31AM -0400, Michael S. Tsirkin wrote:
-> This will enable cleanups down the road.
-> The idea is to disable cbs, then add "flush_queued_cbs" callback
-> as a parameter, this way drivers can flush any work
-> queued after callbacks have been disabled.
->=20
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->  arch/um/drivers/virt-pci.c                 | 2 +-
->  drivers/block/virtio_blk.c                 | 4 ++--
->  drivers/bluetooth/virtio_bt.c              | 2 +-
->  drivers/char/hw_random/virtio-rng.c        | 2 +-
->  drivers/char/virtio_console.c              | 4 ++--
->  drivers/crypto/virtio/virtio_crypto_core.c | 8 ++++----
->  drivers/firmware/arm_scmi/virtio.c         | 2 +-
->  drivers/gpio/gpio-virtio.c                 | 2 +-
->  drivers/gpu/drm/virtio/virtgpu_kms.c       | 2 +-
->  drivers/i2c/busses/i2c-virtio.c            | 2 +-
->  drivers/iommu/virtio-iommu.c               | 2 +-
->  drivers/net/caif/caif_virtio.c             | 2 +-
->  drivers/net/virtio_net.c                   | 4 ++--
->  drivers/net/wireless/mac80211_hwsim.c      | 2 +-
->  drivers/nvdimm/virtio_pmem.c               | 2 +-
->  drivers/rpmsg/virtio_rpmsg_bus.c           | 2 +-
->  drivers/scsi/virtio_scsi.c                 | 2 +-
->  drivers/virtio/virtio.c                    | 5 +++++
->  drivers/virtio/virtio_balloon.c            | 2 +-
->  drivers/virtio/virtio_input.c              | 2 +-
->  drivers/virtio/virtio_mem.c                | 2 +-
->  fs/fuse/virtio_fs.c                        | 4 ++--
->  include/linux/virtio.h                     | 1 +
->  net/9p/trans_virtio.c                      | 2 +-
->  net/vmw_vsock/virtio_transport.c           | 4 ++--
->  sound/virtio/virtio_card.c                 | 4 ++--
->  26 files changed, 39 insertions(+), 33 deletions(-)
-
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-
---nfeOsJT4P4stmsz9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmFtOjkACgkQnKSrs4Gr
-c8gexAf6AlqH6xn5qy4PTBIyVWqBNKslYRUY3StOZeOLM+CPmkOFP+txQ8EkZk8Q
-CoN3LYe7SYgM+Ta9+IaB/5DMPe0oGp4HL47kDEaEdzoQ9X3xaM5sjDQ7fAauSqhb
-gcL3J12kjjI6wrP3O8u9Dp56doY0k43WCsghVyJ90yZ6C8o9DQEAQZcon2vrQnO7
-dHlQQkT29XNt6VmZeKoyx55lRentw0HeuxR5CBrYMdVDHbL3SoXm3fACGBB2ci5i
-KxES5tR0Wq5ibMq5TbU1/40QKB+JfW8unQNAHCxd0EU2QVWaYe/4eaL1gHLvR1V0
-6Xa1DS0k8l/mV2V9drYFwRnygjMH1Q==
-=g/hu
------END PGP SIGNATURE-----
-
---nfeOsJT4P4stmsz9--
-
+>  include/linux/fsnotify.h         |  5 ++---
+>  include/linux/fsnotify_backend.h | 16 ++++++++++++++++
+>  2 files changed, 18 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> index d1144d7c3536..df0fa4687a18 100644
+> --- a/include/linux/fsnotify.h
+> +++ b/include/linux/fsnotify.h
+> @@ -39,8 +39,7 @@ static inline int fsnotify_name(__u32 mask, const void *data, int data_type,
+>  static inline void fsnotify_dirent(struct inode *dir, struct dentry *dentry,
+>  				   __u32 mask)
+>  {
+> -	fsnotify_name(mask, d_inode(dentry), FSNOTIFY_EVENT_INODE,
+> -		      dir, &dentry->d_name, 0);
+> +	fsnotify_name(mask, dentry, FSNOTIFY_EVENT_DENTRY, dir, &dentry->d_name, 0);
+>  }
+>  
+>  static inline void fsnotify_inode(struct inode *inode, __u32 mask)
+> @@ -87,7 +86,7 @@ static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
+>   */
+>  static inline void fsnotify_dentry(struct dentry *dentry, __u32 mask)
+>  {
+> -	fsnotify_parent(dentry, mask, d_inode(dentry), FSNOTIFY_EVENT_INODE);
+> +	fsnotify_parent(dentry, mask, dentry, FSNOTIFY_EVENT_DENTRY);
+>  }
+>  
+>  static inline int fsnotify_file(struct file *file, __u32 mask)
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+> index 1ce66748a2d2..a2db821e8a8f 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -248,6 +248,7 @@ enum fsnotify_data_type {
+>  	FSNOTIFY_EVENT_NONE,
+>  	FSNOTIFY_EVENT_PATH,
+>  	FSNOTIFY_EVENT_INODE,
+> +	FSNOTIFY_EVENT_DENTRY,
+>  };
+>  
+>  static inline struct inode *fsnotify_data_inode(const void *data, int data_type)
+> @@ -255,6 +256,8 @@ static inline struct inode *fsnotify_data_inode(const void *data, int data_type)
+>  	switch (data_type) {
+>  	case FSNOTIFY_EVENT_INODE:
+>  		return (struct inode *)data;
+> +	case FSNOTIFY_EVENT_DENTRY:
+> +		return d_inode(data);
+>  	case FSNOTIFY_EVENT_PATH:
+>  		return d_inode(((const struct path *)data)->dentry);
+>  	default:
+> @@ -262,6 +265,19 @@ static inline struct inode *fsnotify_data_inode(const void *data, int data_type)
+>  	}
+>  }
+>  
+> +static inline struct dentry *fsnotify_data_dentry(const void *data, int data_type)
+> +{
+> +	switch (data_type) {
+> +	case FSNOTIFY_EVENT_DENTRY:
+> +		/* Non const is needed for dget() */
+> +		return (struct dentry *)data;
+> +	case FSNOTIFY_EVENT_PATH:
+> +		return ((const struct path *)data)->dentry;
+> +	default:
+> +		return NULL;
+> +	}
+> +}
+> +
+>  static inline const struct path *fsnotify_data_path(const void *data,
+>  						    int data_type)
+>  {
+> -- 
+> 2.33.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
