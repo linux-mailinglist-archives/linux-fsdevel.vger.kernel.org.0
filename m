@@ -2,152 +2,286 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20A8B4323DE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 18:29:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92CC8432417
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 18:47:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233689AbhJRQbu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 12:31:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48796 "EHLO
+        id S233039AbhJRQtw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 12:49:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232986AbhJRQbu (ORCPT
+        with ESMTP id S231495AbhJRQtv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 12:31:50 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E41DAC06161C;
-        Mon, 18 Oct 2021 09:29:38 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id e10so6731113plh.8;
-        Mon, 18 Oct 2021 09:29:38 -0700 (PDT)
+        Mon, 18 Oct 2021 12:49:51 -0400
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D0AAC061745
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 09:47:40 -0700 (PDT)
+Received: by mail-qt1-x82e.google.com with SMTP id w8so15834298qts.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 09:47:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=5ksCt7zlpqrgcGMQiZq5clTFgO8/Puuoq2CENUP37k8=;
-        b=DmOUcq0lEd+ohmYNEdGCsIeyfkZu+zMJputCe+mbgUr4lL/O3/Lv3NzZXOaVnWs1w7
-         89jQ7lYm78iJUilok+uPRQkz53LGGz1tZiWBra06o41yVN8ovkogmovPiudpPWtiCrYI
-         AnVej3DkKmHOh5GG6zAzYjrQS8DQ4s5ltLEi9iMaXMMIpY2+1hvTT98IMFn7CP2AgUPH
-         fPv5DB8TlTHDAXB6/NrMLDKUad0/oELNy5jW5Mld2+IOzxzVnr3HahtJKF+hwziL15Kr
-         +p7hk+sdZSdYYX5Qtcp4oEfQA8Pa+lQoahSC+Jzx+coY8YpMdc2KBNOqiTEQ/mYdpb6Q
-         ypaA==
+        bh=vVoEj4FpzWuRYVTtT2kVLQ0v62okoy92JquXkv+faYA=;
+        b=Qip6++a3Re69KqbZR+/U+8NTkmjdaQ4owDan2ygPuQ78S81aLt50MNyqVcYGXno1yF
+         asDVCdQiA/CQJyvH2Mu8a2CwOjtuZZcVWK5UotuqSfTzhXpPNlRSYL9qAwXE/Lna9As0
+         T4l7vgk4qqlhYOj0a/28ygNkHtOOjZv3bfQe46KlKO3twnb4viaNHoKn680d+xqoPk3g
+         CSG4S+8nqc57m7yGbSFissjZGZDz5Vh0MWB77jU/OtKIdrAWahdPDLP89XtAWVc1qBQf
+         8DQkh7kmDNiGyTrjVyLmZ9hHvt9aqU3x778soevA+k+CsZx7I2CdG1aeKOlHyG2sDu55
+         ZXmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=5ksCt7zlpqrgcGMQiZq5clTFgO8/Puuoq2CENUP37k8=;
-        b=Ud5p22LClwAX69JdkURBBlwsbtTzkmK9TAqU54cciGDVoTPLFSYRqmRk7+Im7Ildtr
-         rpzxl/XEL7yBpUtO/vPajPOkHTUpfKg/LT9dWPEByzwWe1sIyvtgZnfB86R5xZ7tXqFi
-         ra7KdYtwqg+XY4j1Ii8nTG9tdtqZFPh2A29aDT90U1guEDvDBu/21ru7+Td6Zm1ST+jO
-         mXNC2UznChpiK1pIvZ0lLHjBAxptHmSgYdiod5WcbM9c+OcpCAmiy3k0UKhasG8DUs96
-         sKWgfx5YCzDWrc4Lw+TLAtydjS9TuOxTVD79/BzLyTKFvgCQenl4JJQjMakavuX9wwml
-         W05A==
-X-Gm-Message-State: AOAM5325wD3z06rlNBHmj1I3PlfnJijsyLnjVNh6a40o3YYM63rvRUgh
-        qh1udkrbYaw0lt2WLTRT530=
-X-Google-Smtp-Source: ABdhPJwgLbDX0lF8CC8i7zeZQ6J9fipKJQAPJm0t5aamO0ZHCd1yDSdtxIWyRhPyR0S7DMSdiyy2LA==
-X-Received: by 2002:a17:90a:f0c9:: with SMTP id fa9mr48903828pjb.107.1634574578148;
-        Mon, 18 Oct 2021 09:29:38 -0700 (PDT)
-Received: from localhost (2603-800c-1a02-1bae-e24f-43ff-fee6-449f.res6.spectrum.com. [2603:800c:1a02:1bae:e24f:43ff:fee6:449f])
-        by smtp.gmail.com with ESMTPSA id s8sm19677727pjm.32.2021.10.18.09.29.37
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=vVoEj4FpzWuRYVTtT2kVLQ0v62okoy92JquXkv+faYA=;
+        b=FPed90EGEQedpdE3AThK2eFPKcFKJdvVfCK4rlcuQwWX78p+3eSzv/peonvt6M66V7
+         oZSrv8E+t+JyMXeIWkyoxyx2YuproWP2lk0Mf67nAh0Ca3BGvad3fexfKYwKHY9XBNN9
+         w82o46201Q9e2d8Hx9ueNyOAw5e4SfcLKLS06GV1T1nj6Lm1XF866ckrnqbHy65ev2Ra
+         82a+YZKl87c1qhdyzu7xJtJwKSxhgQ5YfyMyWEly5KM8d/kmymwNJB93yPJ7+oRoOyZT
+         QFvaHt1vjagzCZG1xI5Z5KpEQr3gMcWswxuVZY4P4naCRaEhRSVMoFTW458R6IWkR7hW
+         FwaA==
+X-Gm-Message-State: AOAM530LWkU2hEB1hNZLfjvsjqUgtkPwoK297drLgBTn5dXSqUZ2M4Ku
+        7O1QkRizOAqrAXzlDrZmN3ACVg==
+X-Google-Smtp-Source: ABdhPJxbJdXmCDvREwaQZoi0yXv1ItXbWsTxGWayc1K8F2bwirxfOIzTRON/xIYaquHbtTTdv84Odg==
+X-Received: by 2002:ac8:7dc6:: with SMTP id c6mr24806897qte.333.1634575659455;
+        Mon, 18 Oct 2021 09:47:39 -0700 (PDT)
+Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
+        by smtp.gmail.com with ESMTPSA id f15sm6467222qtm.37.2021.10.18.09.47.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Oct 2021 09:29:37 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Mon, 18 Oct 2021 06:29:35 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Pratik Sampat <psampat@linux.ibm.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        bristot@redhat.com, christian@brauner.io, ebiederm@xmission.com,
-        lizefan.x@bytedance.com, hannes@cmpxchg.org, mingo@kernel.org,
-        juri.lelli@redhat.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        containers@lists.linux.dev, containers@lists.linux-foundation.org,
-        pratik.r.sampat@gmail.com
-Subject: Re: [RFC 0/5] kernel: Introduce CPU Namespace
-Message-ID: <YW2g73Lwmrhjg/sv@slm.duckdns.org>
-References: <20211009151243.8825-1-psampat@linux.ibm.com>
- <20211011101124.d5mm7skqfhe5g35h@wittgenstein>
- <a0f9ed06-1e5d-d3d0-21a5-710c8e27749c@linux.ibm.com>
- <YWirxCjschoRJQ14@slm.duckdns.org>
- <b5f8505c-38d5-af6f-0de7-4f9df7ae9b9b@linux.ibm.com>
+        Mon, 18 Oct 2021 09:47:38 -0700 (PDT)
+Date:   Mon, 18 Oct 2021 12:47:37 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
+Message-ID: <YW2lKcqwBZGDCz6T@cmpxchg.org>
+References: <YSPwmNNuuQhXNToQ@casper.infradead.org>
+ <YTu9HIu+wWWvZLxp@moria.home.lan>
+ <YUfvK3h8w+MmirDF@casper.infradead.org>
+ <YUo20TzAlqz8Tceg@cmpxchg.org>
+ <YUpC3oV4II+u+lzQ@casper.infradead.org>
+ <YUpKbWDYqRB6eBV+@moria.home.lan>
+ <YUpNLtlbNwdjTko0@moria.home.lan>
+ <YUtHCle/giwHvLN1@cmpxchg.org>
+ <YWpG1xlPbm7Jpf2b@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b5f8505c-38d5-af6f-0de7-4f9df7ae9b9b@linux.ibm.com>
+In-Reply-To: <YWpG1xlPbm7Jpf2b@casper.infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-(cc'ing Johannes for memory sizing part)
+On Sat, Oct 16, 2021 at 04:28:23AM +0100, Matthew Wilcox wrote:
+> On Wed, Sep 22, 2021 at 11:08:58AM -0400, Johannes Weiner wrote:
+> >       mm/memcg: Add folio_memcg() and related functions
+> >       mm/memcg: Convert commit_charge() to take a folio
+> >       mm/memcg: Convert mem_cgroup_charge() to take a folio
+> >       mm/memcg: Convert uncharge_page() to uncharge_folio()
+> >       mm/memcg: Convert mem_cgroup_uncharge() to take a folio
+> >       mm/memcg: Convert mem_cgroup_migrate() to take folios
+> >       mm/memcg: Convert mem_cgroup_track_foreign_dirty_slowpath() to folio
+> >       mm/memcg: Add folio_memcg_lock() and folio_memcg_unlock()
+> >       mm/memcg: Convert mem_cgroup_move_account() to use a folio
+> >       mm/memcg: Add folio_lruvec()
+> >       mm/memcg: Add folio_lruvec_lock() and similar functions
+> >       mm/memcg: Add folio_lruvec_relock_irq() and folio_lruvec_relock_irqsave()
+> >       mm/workingset: Convert workingset_activation to take a folio	
+> > 
+> > 		This is all anon+file stuff, not needed for filesystem
+> > 		folios.
+> 
+> No, that's not true.  A number of these functions are called from
+> filesystem code. mem_cgroup_track_foreign_dirty() is only called
+> from filesystem code. We at the very least need wrappers like
+> folio_cgroup_charge(), and folio_memcg_lock().
 
-Hello,
+Well, a handful of exceptions don't refute the broader point.
 
-On Mon, Oct 18, 2021 at 08:59:16PM +0530, Pratik Sampat wrote:
-...
-> Also, I agree with your point about variability of requirements. If the
-> interface we give even though it is in conjunction with the limits set,
-> if the applications have to derive metrics from this or from other
-> kernel information regardless; then the interface would not be useful.
-> If the solution to this problem lies in userspace, then I'm all for it
-> as well. However, the intention is to probe if this could potentially be
-> solved in cleanly in the kernel.
+No objection from me to convert mem_cgroup_track_foreign_dirty().
 
-Just to be clear, avoiding application changes would have to involve
-userspace (at least parameterization from it), and I think to set that as a
-goal for kernel would be more of a distraction. Please note that we should
-definitely provide metrics which actually capture what's going on in terms
-of resource availability in a way which can be used to size workloads
-automatically.
+No objection to add a mem_cgroup_charge_folio(). But I insist on the
+subsystem prefix, because that's in line with how we're charging a
+whole bunch of other different things (swap, skmem, etc.). It'll also
+match a mem_cgroup_charge_anon() if we agree to an anon type.
 
-> Yes, these shortcomings exist even without containerization, on a
-> dynamically loaded multi-tenant system it becomes very difficult to
-> determine what is the maximum amount resource that can be requested
-> before we hurt our own performance.
+folio_memcg_lock() sounds good to me.
 
-As I mentioned before, feedback loop on PSI can work really well in finding
-the saturation points for cpu/mem/io and regulating workload size
-automatically and dynamically. While such dynamic sizing can work without
-any other inputs, it sucks to have to probe the entire range each time and
-it'd be really useful if the kernel can provide ballpark numbers that are
-needed to estimate the saturation points.
+> > 		As per the other email, no conceptual entry point for
+> > 		tail pages into either subsystem, so no ambiguity
+> > 		around the necessity of any compound_head() calls,
+> > 		directly or indirectly. It's easy to rule out
+> > 		wholesale, so there is no justification for
+> > 		incrementally annotating every single use of the page.
+> 
+> The justification is that we can remove all those hidden calls to
+> compound_head().  Hundreds of bytes of text spread throughout this file.
 
-What gets challenging is that there doesn't seem to be a good way to
-consistently describe availability for each of the three resources and the
-different distribution rules they may be under.
+I find this line of argument highly disingenuous.
 
-e.g. For CPU, the affinity restrictions from cpuset determines the maximum
-number of threads that a workload would need to saturate the available CPUs.
-However, conveying the results of cpu.max and cpu.weight controls isn't as
-straight-fowrads.
+No new type is necessary to remove these calls inside MM code. Migrate
+them into the callsites and remove the 99.9% very obviously bogus
+ones. The process is the same whether you switch to a new type or not.
 
-For memory, it's even trickier because in a lot of cases it's impossible to
-tell how much memory is actually available without trying to use them as
-active workingset can only be learned by trying to reclaim memory.
+(I'll send more patches like the PageSlab() ones to that effect. It's
+easy. The only reason nobody has bothered removing those until now is
+that nobody reported regressions when they were added.)
 
-IO is in somewhat similar boat as CPU in that there are both io.max and
-io.weight. However, if io.cost is in use and configured according to the
-hardware, we can map those two in terms iocost.
+But typesafety is an entirely different argument. And to reiterate the
+main point of contention on these patches: there is no concensus among
+MM people how (or whether) we want MM-internal typesafety for pages.
 
-Another thing is that the dynamic nature of these control mechanisms means
-that the numbers can keep changing moment to moment and we'd need to provide
-some time averaged numbers. We can probably take the same approach as PSI
-and load-avgs and provide running avgs of a few time intervals.
+Personally, I think we do, but I don't think head vs tail is the most
+important or the most error-prone aspect of the many identities struct
+page can have. In most cases it's not even in the top 5 of questions I
+have about the page when I see it in a random MM context (outside of
+the very few places that do virt_to_page or pfn_to_page). Therefor
+"folio" is not a very poignant way to name the object that is passed
+around in most MM code. struct anon_page and struct file_page would be
+way more descriptive and would imply the head/tail aspect.
 
-> The question that I have essentially tries to understand the
-> implications of overloading existing interface's definitions to be
-> context sensitive.
-> The way that the prototype works today is that it does not interfere
-> with the information when the system boots or even when it is run in a
-> new namespace.
-> The effects are only observed when restrictions are applied to it.
-> Therefore, what would potentially break if interfaces like these are
-> made to divulge information based on restrictions rather than the whole
-> system view?
+Anyway, the email you are responding to was an offer to split the
+uncontroversial "large pages backing filesystems" part from the
+controversial "MM-internal typesafety" discussion. Several people in
+both the fs space and the mm space have now asked to do this to move
+ahead. Since you have stated in another subthread that you "want to
+get back to working on large pages in the page cache," and you never
+wanted to get involved that deeply in the struct page subtyping
+efforts, it's not clear to me why you are not taking this offer.
 
-I don't think the problem is that something would necessarily break by doing
-that. It's more that it's a dead-end approach which won't get us far for all
-the reasons that have been discussed so far. It'd be more productive to
-focus on long term solutions and leave backward compatibility to the domains
-where they can actually be solved by applying the necessary local knoweldge
-to emulate and fake whatever necessary numbers.
+> >       mm: Add folio_young and folio_idle
+> >       mm/swap: Add folio_activate()
+> >       mm/swap: Add folio_mark_accessed()
+> > 
+> > 		This is anon+file aging stuff, not needed.
+> 
+> Again, very much needed.  Take a look at pagecache_get_page().  In Linus'
+> tree today, it calls if (page_is_idle(page)) clear_page_idle(page);
+> So either we need wrappers (which are needlessly complicated thanks to
+> how page_is_idle() is defined) or we just convert it.
 
-Thanks.
+I'm not sure I understand the complication. That you'd have to do
 
--- 
-tejun
+	if (page_is_idle(folio->page))
+		clear_page_idle(folio->page)
+
+inside code in mm/?
+
+It's either that, or
+
+a) generic code shared with anon pages has to do:
+
+	if (folio_is_idle(page->folio))
+		clear_folio_idle(page->folio)
+
+which is a weird, or
+
+b) both types work with their own wrappers:
+
+	if (page_is_idle(page))
+		clear_page_idle(page)
+
+	if (folio_is_idle(folio))
+		clear_folio_idle(folio)
+
+and it's not obvious at all that they are in fact tracking the same
+state.
+
+State which is exported to userspace through the "page_idle" feature.
+
+Doing the folio->page translation in mm/-private code, and keeping
+this a page interface, is by far the most preferable solution.
+
+> >       mm/rmap: Add folio_mkclean()
+> > 
+> >       mm/migrate: Add folio_migrate_mapping()
+> >       mm/migrate: Add folio_migrate_flags()
+> >       mm/migrate: Add folio_migrate_copy()
+> > 
+> > 		More anon+file conversion, not needed.
+> 
+> As far as I can tell, anon never calls any of these three functions.
+> anon calls migrate_page(), which calls migrate_page_move_mapping(),
+> but several filesystems do call these individual functions.
+
+In the current series, migrate_page_move_mapping() has been replaced,
+and anon pages go through them:
+
+int folio_migrate_mapping(struct address_space *mapping,
+                struct folio *newfolio, struct folio *folio, int extra_count)
+{
+	[...]
+        if (!mapping) {
+                /* Anonymous page without mapping */
+                if (folio_ref_count(folio) != expected_count)
+                        return -EAGAIN;
+
+                /* No turning back from here */
+                newfolio->index = folio->index;
+                newfolio->mapping = folio->mapping;
+                if (folio_test_swapbacked(folio))
+                        __folio_set_swapbacked(newfolio);
+
+That's what I'm objecting to.
+
+I'm not objecting to adding these to the filesystem interface as thin
+folio->page wrappers that call the page implementation.
+
+> >       mm/lru: Add folio_add_lru()
+> > 
+> > 		LRU code, not needed.
+> 
+> Again, we need folio_add_lru() for filemap.  This one's more
+> tractable as a wrapper function.
+
+Please don't quote selectively to the point of it being misleading.
+
+The original block my statement applied to was this:
+
+      mm: Add folio_evictable()
+      mm/lru: Convert __pagevec_lru_add_fn to take a folio
+      mm/lru: Add folio_add_lru()
+
+which goes way behond just being filesystem-interfacing.
+
+I have no objection to a cache interface function for adding a folio
+to the LRU (a wrapper to encapsulate the folio->page transition).
+
+However, like with the memcg code above, the API is called lru_cache:
+we have had lru_cache_add_file() and lru_cache_add_anon() in the past,
+so lru_cache_add_folio() seems more appropriate - especially as long
+as we still have one for pages (and maybe later one for anon pages).
+
+---
+
+All that to say, adding folio as a new type for file headpages with
+API functions like this:
+
+	mem_cgroup_charge_folio()
+	lru_cache_add_folio()
+
+now THAT would be an incremental change to the kernel code.
+
+And if that new type proves like a great idea, we can do the same for
+anon - whether with a shared type or with separate types.
+
+And if it does end up the same type, in the interfaces and in the
+implementation, we can merge
+
+	mem_cgroup_charge_page()	# generic bits
+	mem_cgroup_charge_folio()	# file bits
+	mem_cgroup_charge_anon()	# anon bits
+
+back into a single function, just like we've done it already for the
+anon and file variants of those functions that we have had before.
+
+And if we then want to rename that function to something we agree is
+more appropriate, we can do that as yet another step.
+
+That would actually be incremental refactoring.
