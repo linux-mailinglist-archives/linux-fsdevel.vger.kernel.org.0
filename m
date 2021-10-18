@@ -2,147 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B6524312D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 11:11:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CBA143135D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 11:24:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231469AbhJRJOE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 05:14:04 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:43582 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231411AbhJRJOC (ORCPT
+        id S231610AbhJRJ0c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 05:26:32 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45983 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231528AbhJRJ02 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 05:14:02 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 2B77521966;
-        Mon, 18 Oct 2021 09:11:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1634548310; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Mon, 18 Oct 2021 05:26:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634549057;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=eF2Rifqt8ucpeEBozDyQtYsm3MGnDcqBDObeOW5swFI=;
-        b=VfG3XmwopjYLNY8uBIcOV1d5y0rNa6FkQ78ZS2K03/S2kxmcE69Uf+TpXYbfSNbEdlzeTS
-        ExOOFwy9jEP8pe8idUu39zP7Ri48YGgwOApDRrt393B0MAdwqITqK8CuElxlZMRSMRykMF
-        fRoxQ389Ul0CJH9kaxRl5AVy4WIvg+k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1634548310;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=eF2Rifqt8ucpeEBozDyQtYsm3MGnDcqBDObeOW5swFI=;
-        b=E/APmor9UmV+NfDwuczHe7pgy2f2mu/Uff+FJI3QBkWZSNSMLw5bJiKI6rX6l/1HYjHBQ8
-        09USThLyr6QTCfCw==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id 11FD4A3B81;
-        Mon, 18 Oct 2021 09:11:50 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id F0D301E0875; Mon, 18 Oct 2021 11:11:48 +0200 (CEST)
-Date:   Mon, 18 Oct 2021 11:11:48 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     jack@suse.com, amir73il@gmail.com, djwong@kernel.org,
-        tytso@mit.edu, dhowells@redhat.com, khazhy@google.com,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-api@vger.kernel.org, repnop@google.com, kernel@collabora.com
-Subject: Re: [PATCH v7 02/28] fsnotify: pass dentry instead of inode data
-Message-ID: <20211018091148.GB29715@quack2.suse.cz>
-References: <20211014213646.1139469-1-krisman@collabora.com>
- <20211014213646.1139469-3-krisman@collabora.com>
+        bh=tcERYHsACD8OiG9LERSlpQxmHuHdSGg0GMtHO86OE84=;
+        b=AyGrhM8i9mDj3QLHcrg+gTGbyI6PHy3rsEeHVq8VDXGYGu8MKhRpG6G4e1za8iIahRJSem
+        WZmylplqll/25D0gmJhQS0Y2i2mkaAL1YV71IMKQo2F3fi0MVrkyLsHjuswYn6C8NVbQj/
+        LN7ep9+EZV6FqsxRENUTaW6PrU91h+U=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-342-0JPGE7LxPoq7xStZVfoqEA-1; Mon, 18 Oct 2021 05:24:15 -0400
+X-MC-Unique: 0JPGE7LxPoq7xStZVfoqEA-1
+Received: by mail-ed1-f71.google.com with SMTP id c30-20020a50f61e000000b003daf3955d5aso13800467edn.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 02:24:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=tcERYHsACD8OiG9LERSlpQxmHuHdSGg0GMtHO86OE84=;
+        b=wNHnvT+0UT9mWFQtfOmwezONMqw7bIhRhvghSYMoZkUR2UCfYi6Koocn5/ZIagZGnf
+         cZE09DRug7xFlSenIDtDGaLm2vXlqbZ2+xWHgwJtO5DuBL6H6wEDnbm5LvGnLRoujRCh
+         gs550Apgsh6ClWMkIJrZwWuTplTEhe8S0o9HfFGx86fxcTehB9nKbyoOOilKJ/nzK0n2
+         JSrU0WewfVQ0QUECGUVCNbxjPqRfCyGngu3dA0VtO+RV5Ovzz92IfoDr5+d26xWFv8rt
+         KmMLFVMOkd7+TLcxMeDkJ76lavzvkEvJHuV47NSvbp2OiHRQ5Z0KQzpjrVsW0JUz/hYl
+         p1cg==
+X-Gm-Message-State: AOAM530eubdmczHZxwzmxs1KtQUqU+UHbFJAryGoAB+TwQulF9cWlN2/
+        D4XY0Q5ZWb6H4zvk2xCkLaoW3Iz4O3VHSCue+ccEKpUAqyY6mbJYp4u7pDDCyc/wSaOXS3zCLPa
+        CFpFYTnzvhM4y3rm4QcwHJg2fJw==
+X-Received: by 2002:a50:9d8e:: with SMTP id w14mr42193563ede.74.1634549054628;
+        Mon, 18 Oct 2021 02:24:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxUJYrHxvUXjdPELjIDpPtrZ181C1I4vTJbRWD4jS3vqGv74zCzzGw5AmjDAdcPLpxevcG2mg==
+X-Received: by 2002:a50:9d8e:: with SMTP id w14mr42193472ede.74.1634549054384;
+        Mon, 18 Oct 2021 02:24:14 -0700 (PDT)
+Received: from steredhat (host-79-34-250-211.business.telecomitalia.it. [79.34.250.211])
+        by smtp.gmail.com with ESMTPSA id lm14sm8629911ejb.24.2021.10.18.02.24.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Oct 2021 02:24:13 -0700 (PDT)
+Date:   Mon, 18 Oct 2021 11:24:10 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gonglei <arei.gonglei@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        David Airlie <airlied@linux.ie>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jie Deng <jie.deng@intel.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        David Hildenbrand <david@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Anton Yakovlev <anton.yakovlev@opensynergy.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, linux-um@lists.infradead.org,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-i2c@vger.kernel.org, iommu@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, kvm@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH RFC] virtio: wrap config->reset calls
+Message-ID: <20211018092410.t5hilzz7kbto2mhy@steredhat>
+References: <20211013105226.20225-1-mst@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20211014213646.1139469-3-krisman@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20211013105226.20225-1-mst@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 14-10-21 18:36:20, Gabriel Krisman Bertazi wrote:
-> From: Amir Goldstein <amir73il@gmail.com>
-> 
-> Define a new data type to pass for event - FSNOTIFY_EVENT_DENTRY.
-> Use it to pass the dentry instead of it's ->d_inode where available.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+On Wed, Oct 13, 2021 at 06:55:31AM -0400, Michael S. Tsirkin wrote:
+>This will enable cleanups down the road.
+>The idea is to disable cbs, then add "flush_queued_cbs" callback
+>as a parameter, this way drivers can flush any work
+>queued after callbacks have been disabled.
+>
+>Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+>---
+> arch/um/drivers/virt-pci.c                 | 2 +-
+> drivers/block/virtio_blk.c                 | 4 ++--
+> drivers/bluetooth/virtio_bt.c              | 2 +-
+> drivers/char/hw_random/virtio-rng.c        | 2 +-
+> drivers/char/virtio_console.c              | 4 ++--
+> drivers/crypto/virtio/virtio_crypto_core.c | 8 ++++----
+> drivers/firmware/arm_scmi/virtio.c         | 2 +-
+> drivers/gpio/gpio-virtio.c                 | 2 +-
+> drivers/gpu/drm/virtio/virtgpu_kms.c       | 2 +-
+> drivers/i2c/busses/i2c-virtio.c            | 2 +-
+> drivers/iommu/virtio-iommu.c               | 2 +-
+> drivers/net/caif/caif_virtio.c             | 2 +-
+> drivers/net/virtio_net.c                   | 4 ++--
+> drivers/net/wireless/mac80211_hwsim.c      | 2 +-
+> drivers/nvdimm/virtio_pmem.c               | 2 +-
+> drivers/rpmsg/virtio_rpmsg_bus.c           | 2 +-
+> drivers/scsi/virtio_scsi.c                 | 2 +-
+> drivers/virtio/virtio.c                    | 5 +++++
+> drivers/virtio/virtio_balloon.c            | 2 +-
+> drivers/virtio/virtio_input.c              | 2 +-
+> drivers/virtio/virtio_mem.c                | 2 +-
+> fs/fuse/virtio_fs.c                        | 4 ++--
+> include/linux/virtio.h                     | 1 +
+> net/9p/trans_virtio.c                      | 2 +-
+> net/vmw_vsock/virtio_transport.c           | 4 ++--
 
-Looks good. Feel free to add:
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  include/linux/fsnotify.h         |  5 ++---
->  include/linux/fsnotify_backend.h | 16 ++++++++++++++++
->  2 files changed, 18 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-> index d1144d7c3536..df0fa4687a18 100644
-> --- a/include/linux/fsnotify.h
-> +++ b/include/linux/fsnotify.h
-> @@ -39,8 +39,7 @@ static inline int fsnotify_name(__u32 mask, const void *data, int data_type,
->  static inline void fsnotify_dirent(struct inode *dir, struct dentry *dentry,
->  				   __u32 mask)
->  {
-> -	fsnotify_name(mask, d_inode(dentry), FSNOTIFY_EVENT_INODE,
-> -		      dir, &dentry->d_name, 0);
-> +	fsnotify_name(mask, dentry, FSNOTIFY_EVENT_DENTRY, dir, &dentry->d_name, 0);
->  }
->  
->  static inline void fsnotify_inode(struct inode *inode, __u32 mask)
-> @@ -87,7 +86,7 @@ static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
->   */
->  static inline void fsnotify_dentry(struct dentry *dentry, __u32 mask)
->  {
-> -	fsnotify_parent(dentry, mask, d_inode(dentry), FSNOTIFY_EVENT_INODE);
-> +	fsnotify_parent(dentry, mask, dentry, FSNOTIFY_EVENT_DENTRY);
->  }
->  
->  static inline int fsnotify_file(struct file *file, __u32 mask)
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-> index 1ce66748a2d2..a2db821e8a8f 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -248,6 +248,7 @@ enum fsnotify_data_type {
->  	FSNOTIFY_EVENT_NONE,
->  	FSNOTIFY_EVENT_PATH,
->  	FSNOTIFY_EVENT_INODE,
-> +	FSNOTIFY_EVENT_DENTRY,
->  };
->  
->  static inline struct inode *fsnotify_data_inode(const void *data, int data_type)
-> @@ -255,6 +256,8 @@ static inline struct inode *fsnotify_data_inode(const void *data, int data_type)
->  	switch (data_type) {
->  	case FSNOTIFY_EVENT_INODE:
->  		return (struct inode *)data;
-> +	case FSNOTIFY_EVENT_DENTRY:
-> +		return d_inode(data);
->  	case FSNOTIFY_EVENT_PATH:
->  		return d_inode(((const struct path *)data)->dentry);
->  	default:
-> @@ -262,6 +265,19 @@ static inline struct inode *fsnotify_data_inode(const void *data, int data_type)
->  	}
->  }
->  
-> +static inline struct dentry *fsnotify_data_dentry(const void *data, int data_type)
-> +{
-> +	switch (data_type) {
-> +	case FSNOTIFY_EVENT_DENTRY:
-> +		/* Non const is needed for dget() */
-> +		return (struct dentry *)data;
-> +	case FSNOTIFY_EVENT_PATH:
-> +		return ((const struct path *)data)->dentry;
-> +	default:
-> +		return NULL;
-> +	}
-> +}
-> +
->  static inline const struct path *fsnotify_data_path(const void *data,
->  						    int data_type)
->  {
-> -- 
-> 2.33.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
