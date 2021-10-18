@@ -2,110 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CF70431735
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 13:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B376B431756
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 13:31:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229830AbhJRL1z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 07:27:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33624 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbhJRL1y (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 07:27:54 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 604D1C06161C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 04:25:43 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 5so39169041edw.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 04:25:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gPRa+GSx7RmAe7nuMact+Hy1SGN0pX2ue9iQEqlgDeY=;
-        b=iLOEQy3hLQGxuSpx8nDLpmRexerQ6wUot7MJFQnE03H2rh5fF1infChmnCYW4zcx0I
-         WTcCKlIpCDRclyDGt1v5mCbcXBvJyQWVBXJk8kKtHui8qFeUVgPFtJh+avC5uKjdxbjo
-         x0Nrcj6u8udBdOT6eQ1CCeyn/ybZ2M4w/zl90oUnM6dOhZIx7n1hwqzRDHwtlbdz7dKS
-         e304sTRQpydN3nHa/O2YEMx4S6WoUhYD0a8vzTfbBbLgyxZ3+xFSJNyMYzL03EOolga0
-         2WnV1CqhKXQGhnQ1w+hHpAXKaQ4HIiTXlHAl1l8idVBOu4+2onDrjQsx4rrTsp4D4G9W
-         RK6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gPRa+GSx7RmAe7nuMact+Hy1SGN0pX2ue9iQEqlgDeY=;
-        b=BHM7iXGRzoiBd0oQ35y6RB1DejXe8a0Bch+knZ6IVRxiPJs2fxs3w4VEZyPp3ExQb+
-         y2fPZvRXg05IzDZ+ZFA9pCgF+7gL87uYyAHwpcwOvesKKoo6FYY0mhlRE9CbvuajNjI+
-         wWxnyY5hH8GRfHSu+qbk2KzI+94WfhZSnO5wAxTbKinNTFhFBLvrSOvx88uuMYGs+zow
-         ZHps/bp7e+mvsPHzdiUKNfwb7OA+FJQwo4PSwtrHkTwtsRY8a5Ui3w+TuZR/LgNjZm/m
-         pPzHM6lD6SolUopQEbaTKcw/76ZMjeHk2rZVmQKPJTGPrlQ+7y5PSe4yboAlws4kRjpg
-         VVXA==
-X-Gm-Message-State: AOAM531NvPuulzb1nlau9g5aEijgDpbMqt6/j3fUQCsq/L1sAKK/ha3S
-        dLVNR41yeyhaTJgBt013BrDJ6h/4WyJk8O8zA0o+knK3Pg==
-X-Google-Smtp-Source: ABdhPJwcollHeNMoxnh1JoQySifC4C4NJarUkZe1p+m8UO4YkOdccOn3r5dB3j2q2Umdp9bEkC+aSZRQrRckc/h6xoc=
-X-Received: by 2002:aa7:d8c7:: with SMTP id k7mr38407934eds.85.1634556341848;
- Mon, 18 Oct 2021 04:25:41 -0700 (PDT)
+        id S230476AbhJRLdZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 07:33:25 -0400
+Received: from mail-eopbgr1300098.outbound.protection.outlook.com ([40.107.130.98]:4800
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229491AbhJRLdZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 18 Oct 2021 07:33:25 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kPTOH3DbcWFgE7YSs6Lspca0Ygp6sQLhs/Qk6yTSoSFSVriRRVmG5salPlzedgf7s8phsABzMbdsyw5kArava39fneGky6zw0Yt1nZtrpO2rLyU/sD9YPsoLvdWuW1ftBKvEEIENgvCNWm3Ye/SsAipFL0w/Bi73a4O++O3DA37LugAjz68g55laAZ5Icwj62a19uTL9Aa7fSGaMwKs1wc2NQxSOIK1hNQCUf8Ia+8pxhkncCgPHu02zKzkKP4Fcl/K+jnsB/uQACbNPpZ1GQ+8V/4KnH4VlkChwEjCfq+atg2B0j1Ypppqn+4UFBBZ/xwIB611ObGIGcSAamddnQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ly+ZKQtuQDbWgPZUYwjZn81RF1hjJ6N4vNitvO7evAo=;
+ b=LNiAKDCpXRZ3WlIIAkBtTb32DY5Cf9R+MyjS1RciAuLnHL3E7107wLWrMBPOg9x6sqagpj+VtzvDOSDkKc9Uac5ZgrOC+fZzSFL6KF0omn47JEcodpOH474rOosqFXUOPdfnIrXt13ocP6qIUNWjHRfrjjqqyYgr/ysWdU2t35WwTTTiV8BCr80LlAdN4r01KHXdD4U7t8QK0C8BHEOJ7u9B21flglk1golqLJxopQxr8KAbe0dQkgdq5BXfjaitE2bRi3znKgfaYJ3btiSOFgJrcGxntuoKQO67lmfWDusXlskRg/J6atwCZNXskwS11dNblvg+r7Nrk49/Qk6MDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo0.onmicrosoft.com;
+ s=selector2-vivo0-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ly+ZKQtuQDbWgPZUYwjZn81RF1hjJ6N4vNitvO7evAo=;
+ b=XxlJvSrFNf2/k/RmQ+7mwiIQQbaC33wyA3H2NFP2S6Xe8G8/OFVRu91Qj7JhkN62Ti6DD9UI3Jk3EN7U4m0B08P+LLxh3drj2gY/2oMGyPOiAkOh3vdzef/WCgUUkHIPLiAPVeZzMnZB5VKgLAjKsKVUsO3m2/90RSMQGjGe2l8=
+Authentication-Results: zeniv.linux.org.uk; dkim=none (message not signed)
+ header.d=none;zeniv.linux.org.uk; dmarc=none action=none
+ header.from=vivo.com;
+Received: from SL2PR06MB3082.apcprd06.prod.outlook.com (2603:1096:100:37::17)
+ by SL2PR06MB3034.apcprd06.prod.outlook.com (2603:1096:100:31::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4608.16; Mon, 18 Oct
+ 2021 11:31:12 +0000
+Received: from SL2PR06MB3082.apcprd06.prod.outlook.com
+ ([fe80::4c9b:b71f:fb67:6414]) by SL2PR06MB3082.apcprd06.prod.outlook.com
+ ([fe80::4c9b:b71f:fb67:6414%6]) with mapi id 15.20.4608.018; Mon, 18 Oct 2021
+ 11:31:12 +0000
+From:   Qing Wang <wangqing@vivo.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Qing Wang <wangqing@vivo.com>
+Subject: [PATCH V2] fs: switch over to vmemdup_user()
+Date:   Mon, 18 Oct 2021 04:31:03 -0700
+Message-Id: <1634556663-38749-1-git-send-email-wangqing@vivo.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: HK2PR0302CA0024.apcprd03.prod.outlook.com
+ (2603:1096:202::34) To SL2PR06MB3082.apcprd06.prod.outlook.com
+ (2603:1096:100:37::17)
 MIME-Version: 1.0
-References: <20211011090240.97-1-xieyongji@bytedance.com> <CAJfpegvw2F_WbTAk_f92YwBn3YwqbG3Ond74DY7yvMbzeUnMKA@mail.gmail.com>
- <CACycT3sTarn8BfsGUQsrEbtWt9qeZ8Ph4O3VGpbYi7gbGKgsJA@mail.gmail.com> <CAJfpeguaRjQ9Fd1S4NHx5XVF89PGgFBxW3Xf=XNrb1QQRbDbYQ@mail.gmail.com>
-In-Reply-To: <CAJfpeguaRjQ9Fd1S4NHx5XVF89PGgFBxW3Xf=XNrb1QQRbDbYQ@mail.gmail.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Mon, 18 Oct 2021 19:25:31 +0800
-Message-ID: <CACycT3s=aC6eWfo0LHMuE6sVVErjkZPScsgaBGn4QABbZE2a9g@mail.gmail.com>
-Subject: Re: [RFC] fuse: Avoid invalidating attrs if writeback_cache enabled
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org,
-        =?UTF-8?B?5byg5L2z6L6w?= <zhangjiachen.jaycee@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+Received: from ubuntu.localdomain (218.213.202.189) by HK2PR0302CA0024.apcprd03.prod.outlook.com (2603:1096:202::34) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.4628.11 via Frontend Transport; Mon, 18 Oct 2021 11:31:11 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: c977ff32-8cb4-4d52-cd8e-08d9922ac9a1
+X-MS-TrafficTypeDiagnostic: SL2PR06MB3034:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <SL2PR06MB303475210833CC120C75AD0FBDBC9@SL2PR06MB3034.apcprd06.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2657;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: LclUXn+FKH8MlE+/9eKLCfpNe+wsm2Z7MDplUBpNqK/8MhCjw+7pm6piYrqBVkh48t50HT32TRf8mmaeeoiL/IIUmpKrJOMG44QaVUc7qdJ+wPSV8ME+G3kBWmEiiFtOkR05uNxU2i4j3Nm2qs5grb+vQ4b7IxypzZF07Mk7A6gQn5xlYD9f+a56MzL/TTiIY8uWClIIObFJjYRraCzp8NjnIMLzN362Vc5fATPe5bbYknv/mSfrfme74QchLRIqla443xHQjCFRtm7KGyqSj9JfGTZW4YtEcefPOBN87gs9P2vUlSaf2ghbD1/Vv+17pLlGJaGMjhfFcLoJ6KLGHYRi3zdsv0XijrrBaxBRgoBwgyKhBgbgXDW5PRlISMnHXpwJ9LedZyUaEDxngd0Rfih7Q+xqhqO1soeLxRiDSBrL6vc5e6LlTz5Ueo07btFysiK+zdU2P6gNu8LE6m7GlunR/rx/jEMmXzo8OA73vy6kXq6d2cV43r/3xCxXGpMmyy6CBySc5DizayCYPppj1jrW4G6FHpsuuTR/BeaJ911/0o4SxQsQi9wMdlBl4KG894cYz6MXHCpihXVEcFAn+gBwSXUoupvv4uZmdgGfphPR5HLHQFDey+q1AsghwAXbD0/ZcO4szoNNo7tJfznggbxPLqSgpxxsdLPRzG9ReQyBK7kHLT226WjGBw3O/CQR3qt9s5KkrI3uDIMazw1o+g==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SL2PR06MB3082.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(8936002)(6486002)(52116002)(8676002)(66476007)(2906002)(6666004)(186003)(6512007)(4326008)(6506007)(26005)(66946007)(66556008)(36756003)(107886003)(316002)(83380400001)(956004)(5660300002)(2616005)(86362001)(508600001)(38350700002)(38100700002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?cRu4YG53xGRSIMjJWDywy7P/CTv/RS5Z1a2fKe1z2ZQRokEjXWtmKBrzwmUd?=
+ =?us-ascii?Q?O1AlsTzJEMY1Sj9q+ks05aoNWf3Mf0s4fJnvktyhuldaMCgy7tIS2bDYcQYF?=
+ =?us-ascii?Q?62FwaSIBl7rJWY6bDXGvImN5QeLrU+aeNfE48XlbyN6+FQ6AaCuje8LaMaSr?=
+ =?us-ascii?Q?lOE/ql7CFDBQHQ3VcbUnSSR/XaZ6NPl1KuWXvm0lFeWSWmXuNJsRTwYs5/32?=
+ =?us-ascii?Q?pyHv0nOrCHBZ3pifAOZ+XctT7v8g6RyLQ1mbtsOtlUFtWXUcAC7JuAdmtJhz?=
+ =?us-ascii?Q?R2OTtn/xKb5xnhWiOppn/lgyxAyIcKhZSp7+KWwCHr41yGw4Ln0wOnn2KGOs?=
+ =?us-ascii?Q?NqIBHL60Agg9rUdcoegen+9J/+muws8I5tb+tCuVhiRMc+yH9rU5w5VhwZTz?=
+ =?us-ascii?Q?uxiMqs10iyKqKNI+t/K/vztK3C7efcYcCsdxDy/aTaA8hsTO+XMSXT79N5/4?=
+ =?us-ascii?Q?ofZld9kZjZopNSq2jVKutgFrV5MGgLd6J9e+myMErB3UD0N2J5Uh6EKdxOgE?=
+ =?us-ascii?Q?UTmZU+vHblTbvRxWn+4OyCxeI8nd6PyqEvrU/wWELIL4C/wVbAURtgPbGVEk?=
+ =?us-ascii?Q?Mhi5YNJgrR0/ytY52+AWi95qbhkFsik1EZDd0E6FJL0OwEXuE24/K4tHsb0L?=
+ =?us-ascii?Q?1ld0zaRHWG8D9upYp0PtZwKSOlg9BoodaKOmeNMDKWkoq8pLrubzkOfSqFva?=
+ =?us-ascii?Q?3GifXCbFa/rd87WdncIpuMhZnAqIpb+thepgPZR8pJhb2juzQ5R+iYJowFyE?=
+ =?us-ascii?Q?bVr3EiAnfiSYs5eTZdIeDZ4K1XuCLfWomxZ42B1NjjyPnx5tyCYVnTnwKoKk?=
+ =?us-ascii?Q?DfW/BkJoVJlfLUdak6kSn9VCkGlLlZ+pOaVmgh+BIsHk19T71SKZsMkrysWR?=
+ =?us-ascii?Q?lmjWa3e+lWguNpIQpYPC4gTxnwOSW8jaL2zP/vMAH5hhywOLOeIlxQZ9EBGd?=
+ =?us-ascii?Q?9IAfxKDMQlUi/j5BNcdRraOZE3G53EZaesRbacmMUr7054AQpx8zW2ObZeai?=
+ =?us-ascii?Q?R3eS7pMSg4lB1Cvl7IlS1eoRmP5W+9wfcF8dXsPT2ww0vql17Dm5F1eLpRGV?=
+ =?us-ascii?Q?zVpdWhJ2anp4NKWTbvQl1l6/ruNigAPxHA/TL2V4ouuc45hhzAxs4cHZcFmc?=
+ =?us-ascii?Q?hwWSHnR8kAmpV4IBEtg3eJLWqF3do36JJPUyqbRIKtBraKqd9vCihzrKuhQ/?=
+ =?us-ascii?Q?CIqEtm2BRAJHoRYFvhXxG2WqHZGtBt+CP6a3T9DwXoy778fI1TolgK1TQNc/?=
+ =?us-ascii?Q?r03OU3uAbov+Ftai6tudPBxsZmSHm3fEOCy+DwlHoYEPpC1nD49++lY8ryXB?=
+ =?us-ascii?Q?PI/roEhBLIuVJSY/CxJqMpA3?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c977ff32-8cb4-4d52-cd8e-08d9922ac9a1
+X-MS-Exchange-CrossTenant-AuthSource: SL2PR06MB3082.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2021 11:31:12.0440
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KBS8iFpmbQWRu4khs584lFD18h9RLb68sGFy2B7KfSOuzzDnCQWSEDnPwUK1jxR555xzwgyMjP4HM9pG7UJeJg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SL2PR06MB3034
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 13, 2021 at 9:52 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Mon, 11 Oct 2021 at 16:45, Yongji Xie <xieyongji@bytedance.com> wrote:
-> >
-> > On Mon, Oct 11, 2021 at 9:21 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > >
-> > > On Mon, 11 Oct 2021 at 11:07, Xie Yongji <xieyongji@bytedance.com> wrote:
-> > > >
-> > > > Recently we found the performance of small direct writes is bad
-> > > > when writeback_cache enabled. This is because we need to get
-> > > > attrs from userspace in fuse_update_get_attr() on each write.
-> > > > The timeout for the attributes doesn't work since every direct write
-> > > > will invalidate the attrs in fuse_direct_IO().
-> > > >
-> > > > To fix it, this patch tries to avoid invalidating attrs if writeback_cache
-> > > > is enabled since we should trust local size/ctime/mtime in this case.
-> > >
-> > > Hi,
-> > >
-> > > Thanks for the patch.
-> > >
-> > > Just pushed an update to
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.gitt#for-next
-> > > (9ca3f8697158 ("fuse: selective attribute invalidation")) that should
-> > > fix this behavior.
-> > >
-> >
-> > Looks like fuse_update_get_attr() will still get attrs from userspace
-> > each time with this commit applied.
-> >
-> > > Could you please test?
-> > >
-> >
-> > I applied the commit 9ca3f8697158 ("fuse: selective attribute
-> > invalidation")  and tested it. But the issue still exists.
->
-> Yeah, my bad.  Pushed a more complete set of fixes to #for-next ending with
->
-> e15a9a5fca6c ("fuse: take cache_mask into account in getattr")
->
-> You should pull or cherry pick the complete branch.
->
+This patch fixes the following Coccinelle warning:
 
-I tested this branch, but it still doesn't fix this issue. The
-inval_mask = 0x6C0 and cache_mask = 0x2C0, so we still need to get
-attrs from userspace. Should we add STATX_BLOCKS to cache_mask?
+fs/xattr.c:563:8-15: WARNING opportunity for vmemdup_user
 
-Thanks,
-Yongji
+Use vmemdup_user rather than duplicating its implementation
+This is a little bit restricted to reduce false positives
+
+Signed-off-by: Qing Wang <wangqing@vivo.com>
+---
+ fs/xattr.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 5c8c517..288daea
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -560,20 +560,17 @@ setxattr(struct user_namespace *mnt_userns, struct dentry *d,
+ 	if (size) {
+ 		if (size > XATTR_SIZE_MAX)
+ 			return -E2BIG;
+-		kvalue = kvmalloc(size, GFP_KERNEL);
+-		if (!kvalue)
+-			return -ENOMEM;
+-		if (copy_from_user(kvalue, value, size)) {
+-			error = -EFAULT;
+-			goto out;
+-		}
++
++		kvalue = vmemdup_user(value, size);
++		if (IS_ERR(kvalue))
++			return PTR_ERR(kvalue);
++
+ 		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+ 		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
+ 			posix_acl_fix_xattr_from_user(mnt_userns, kvalue, size);
+ 	}
+ 
+ 	error = vfs_setxattr(mnt_userns, d, kname, kvalue, size, flags);
+-out:
+ 	kvfree(kvalue);
+ 
+ 	return error;
+-- 
+2.7.4
+
