@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD5AD432130
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 17:00:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A04EC432132
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 17:00:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232982AbhJRPCO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 11:02:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:46267 "EHLO
+        id S232701AbhJRPCP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 11:02:15 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45570 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232622AbhJRPCA (ORCPT
+        by vger.kernel.org with ESMTP id S232862AbhJRPCJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 11:02:00 -0400
+        Mon, 18 Oct 2021 11:02:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634569188;
+        s=mimecast20190719; t=1634569198;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=u3eVY7sKaIJbpFTvM7wbMyoLphftgkd/AnG9vQi6mbo=;
-        b=V3Hj9gM0tH1To38OD4A/T4Ker5nOrIEdspizBnkZwIMGm7gThKlEMAuSn/9ocZfSOyyo2b
-        mjts19rzyf/DatyscUy6Ur07R4BTb5xzIi83r/BPOjGRLpiFFG8p+O59UZci0xXR1MCamz
-        II87LDhEXsPVlRJu/o//vexdB9+T/44=
+        bh=jdB/32s/uc8yVIqnMp8H9Wpa3fu6IqGejTkXRVt6ecY=;
+        b=Y8Y7Vxz8ercwX7XdgfP3wgQObjtRR15jv9EoQakCTnAsPucxChVdULL/DfyLE8outl2U6m
+        MNQA+yxPVQwN6Q5Zgf+6kBO6pyhRApXsaCgXV0QAy9/ijBHziRpseB7S4wcY2fUvevXePU
+        6rsJCB4zEw8QO8q6EkEQa4zmSW84QLY=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-298-XkSNNV2nNNKmB6b_yyqTZg-1; Mon, 18 Oct 2021 10:59:45 -0400
-X-MC-Unique: XkSNNV2nNNKmB6b_yyqTZg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-360-NIMBeaJPN3WF7tGHAL-ytg-1; Mon, 18 Oct 2021 10:59:54 -0400
+X-MC-Unique: NIMBeaJPN3WF7tGHAL-ytg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 620D1802575;
-        Mon, 18 Oct 2021 14:59:43 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9D33B80710A;
+        Mon, 18 Oct 2021 14:59:52 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3841760657;
-        Mon, 18 Oct 2021 14:59:40 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 728301037F36;
+        Mon, 18 Oct 2021 14:59:49 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 33/67] cachefiles: Trace decisions in
- cachefiles_prepare_read()
+Subject: [PATCH 34/67] cachefiles: Make cachefiles_write_prepare() check for
+ space
 From:   David Howells <dhowells@redhat.com>
 To:     linux-cachefs@redhat.com
 Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
@@ -55,233 +55,182 @@ Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 18 Oct 2021 15:59:39 +0100
-Message-ID: <163456917935.2614702.1886040219032881319.stgit@warthog.procyon.org.uk>
+Date:   Mon, 18 Oct 2021 15:59:48 +0100
+Message-ID: <163456918862.2614702.15568944072409008939.stgit@warthog.procyon.org.uk>
 In-Reply-To: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
 References: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a tracepoint to log decisions made in cachefiles_prepare_read() about
-what it's going to request for the next subrequest and why.
+Make the cachefiles_write_prepare() function check that there's sufficient
+space to fully satisfy a proposed write.
+
+If we already checked for allocated data during read preparation, then this
+fact can be used to skip the more thorough checks here.
+
+If there's enough space in the cache, we just allow the write.
+
+If we're uncertain, then we use SEEK_DATA/SEEK_HOLE to check if the block
+is already fully allocated - and if it is, we just allow the write.
+
+However, if there's insufficient space for the whole write and there's
+partially allocated data in the file, we punch out that data and disallow
+the write.  This frees up some space and removes old data from the cache.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/cachefiles/io.c                |   22 +++++++++++--
- fs/cachefiles/main.c              |    2 +
- include/trace/events/cachefiles.h |   64 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 85 insertions(+), 3 deletions(-)
+ fs/cachefiles/io.c     |   82 ++++++++++++++++++++++++++++++++++++++++++++----
+ fs/netfs/read_helper.c |    2 +
+ include/linux/netfs.h  |    3 +-
+ 3 files changed, 79 insertions(+), 8 deletions(-)
 
 diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
-index e5c29c0decea..c05f64cdfd0e 100644
+index c05f64cdfd0e..350243b45dd5 100644
 --- a/fs/cachefiles/io.c
 +++ b/fs/cachefiles/io.c
-@@ -303,6 +303,7 @@ static int cachefiles_write(struct netfs_cache_resources *cres,
- static enum netfs_read_source cachefiles_prepare_read(struct netfs_read_subrequest *subreq,
- 						      loff_t i_size)
- {
-+	enum cachefiles_prepare_read_trace why;
- 	struct netfs_read_request *rreq = subreq->rreq;
- 	struct netfs_cache_resources *cres = &rreq->cache_resources;
- 	struct cachefiles_object *object;
-@@ -312,26 +313,31 @@ static enum netfs_read_source cachefiles_prepare_read(struct netfs_read_subreque
- 	struct file *file = cachefiles_cres_file(cres);
- 	enum netfs_read_source ret = NETFS_DOWNLOAD_FROM_SERVER;
- 	loff_t off, to;
-+	ino_t ino = file ? file_inode(file)->i_ino : 0;
- 
- 	_enter("%zx @%llx/%llx", subreq->len, subreq->start, i_size);
- 
- 	if (subreq->start >= i_size) {
- 		ret = NETFS_FILL_WITH_ZEROES;
-+		why = cachefiles_trace_read_after_eof;
- 		goto out_no_object;
- 	}
- 
- 	if (test_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags)) {
- 		__set_bit(NETFS_SREQ_WRITE_TO_CACHE, &subreq->flags);
-+		why = cachefiles_trace_read_no_data;
- 		goto out_no_object;
- 	}
- 
- 	/* The object and the file may be being created in the background. */
- 	if (!file) {
-+		why = cachefiles_trace_read_no_file;
- 		if (!fscache_wait_for_operation(cres, FSCACHE_WANT_READ))
- 			goto out_no_object;
- 		file = cachefiles_cres_file(cres);
- 		if (!file)
- 			goto out_no_object;
-+		ino = file_inode(file)->i_ino;
- 	}
- 
- 	object = cachefiles_cres_object(cres);
-@@ -340,23 +346,31 @@ static enum netfs_read_source cachefiles_prepare_read(struct netfs_read_subreque
- 
- 	off = vfs_llseek(file, subreq->start, SEEK_DATA);
- 	if (off < 0 && off >= (loff_t)-MAX_ERRNO) {
--		if (off == (loff_t)-ENXIO)
-+		if (off == (loff_t)-ENXIO) {
-+			why = cachefiles_trace_read_seek_nxio;
- 			goto download_and_store;
-+		}
-+		why = cachefiles_trace_read_seek_error;
- 		goto out;
- 	}
- 
--	if (off >= subreq->start + subreq->len)
-+	if (off >= subreq->start + subreq->len) {
-+		why = cachefiles_trace_read_found_hole;
- 		goto download_and_store;
-+	}
- 
- 	if (off > subreq->start) {
- 		off = round_up(off, cache->bsize);
- 		subreq->len = off - subreq->start;
-+		why = cachefiles_trace_read_found_part;
- 		goto download_and_store;
- 	}
- 
- 	to = vfs_llseek(file, subreq->start, SEEK_HOLE);
--	if (to < 0 && to >= (loff_t)-MAX_ERRNO)
-+	if (to < 0 && to >= (loff_t)-MAX_ERRNO) {
-+		why = cachefiles_trace_read_seek_error;
- 		goto out;
-+	}
- 
- 	if (to < subreq->start + subreq->len) {
- 		if (subreq->start + subreq->len >= i_size)
-@@ -366,6 +380,7 @@ static enum netfs_read_source cachefiles_prepare_read(struct netfs_read_subreque
- 		subreq->len = to - subreq->start;
- 	}
- 
-+	why = cachefiles_trace_read_have_data;
- 	ret = NETFS_READ_FROM_CACHE;
+@@ -9,6 +9,7 @@
+ #include <linux/slab.h>
+ #include <linux/file.h>
+ #include <linux/uio.h>
++#include <linux/falloc.h>
+ #include <linux/sched/mm.h>
+ #include <trace/events/fscache.h>
+ #include "internal.h"
+@@ -385,8 +386,7 @@ static enum netfs_read_source cachefiles_prepare_read(struct netfs_read_subreque
  	goto out;
  
-@@ -375,6 +390,7 @@ static enum netfs_read_source cachefiles_prepare_read(struct netfs_read_subreque
+ download_and_store:
+-	if (cachefiles_has_space(cache, 0, (subreq->len + PAGE_SIZE - 1) / PAGE_SIZE) == 0)
+-		__set_bit(NETFS_SREQ_WRITE_TO_CACHE, &subreq->flags);
++	__set_bit(NETFS_SREQ_WRITE_TO_CACHE, &subreq->flags);
  out:
  	cachefiles_end_secure(cache, saved_cred);
  out_no_object:
-+	trace_cachefiles_prep_read(subreq, ret, why, ino);
- 	return ret;
+@@ -397,17 +397,87 @@ static enum netfs_read_source cachefiles_prepare_read(struct netfs_read_subreque
+ /*
+  * Prepare for a write to occur.
+  */
+-static int cachefiles_prepare_write(struct netfs_cache_resources *cres,
+-				    loff_t *_start, size_t *_len, loff_t i_size)
++static int __cachefiles_prepare_write(struct netfs_cache_resources *cres,
++				      loff_t *_start, size_t *_len, loff_t i_size,
++				      bool no_space_allocated_yet)
+ {
+-	loff_t start = *_start;
++	struct cachefiles_object *object = cachefiles_cres_object(cres);
++	struct cachefiles_cache *cache = object->volume->cache;
++	struct file *file = cachefiles_cres_file(cres);
++	loff_t start = *_start, pos;
+ 	size_t len = *_len, down;
++	int ret;
+ 
+ 	/* Round to DIO size */
+ 	down = start - round_down(start, PAGE_SIZE);
+ 	*_start = start - down;
+ 	*_len = round_up(down + len, PAGE_SIZE);
+-	return 0;
++
++	/* We need to work out whether there's sufficient disk space to perform
++	 * the write - but we can skip that check if we have space already
++	 * allocated.
++	 */
++	if (no_space_allocated_yet)
++		goto check_space;
++
++	pos = vfs_llseek(file, *_start, SEEK_DATA);
++	if (pos < 0 && pos >= (loff_t)-MAX_ERRNO) {
++		if (pos == -ENXIO)
++			goto check_space; /* Unallocated tail */
++		return pos;
++	}
++	if ((u64)pos >= (u64)*_start + *_len)
++		goto check_space; /* Unallocated region */
++
++	/* We have a block that's at least partially filled - if we're low on
++	 * space, we need to see if it's fully allocated.  If it's not, we may
++	 * want to cull it.
++	 */
++	if (cachefiles_has_space(cache, 0, *_len / PAGE_SIZE) == 0)
++		return 0; /* Enough space to simply overwrite the whole block */
++
++	pos = vfs_llseek(file, *_start, SEEK_HOLE);
++	if (pos < 0 && pos >= (loff_t)-MAX_ERRNO)
++		return pos;
++	if ((u64)pos >= (u64)*_start + *_len)
++		return 0; /* Fully allocated */
++
++	/* Partially allocated, but insufficient space: cull. */
++	ret = vfs_fallocate(file, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
++			    *_start, *_len);
++	if (ret < 0) {
++		cachefiles_io_error_obj(object,
++					"CacheFiles: fallocate failed (%d)\n", ret);
++		ret = -EIO;
++	}
++
++	return ret;
++
++check_space:
++	return cachefiles_has_space(cache, 0, *_len / PAGE_SIZE);
++}
++
++static int cachefiles_prepare_write(struct netfs_cache_resources *cres,
++				    loff_t *_start, size_t *_len, loff_t i_size,
++				    bool no_space_allocated_yet)
++{
++	struct cachefiles_object *object = cachefiles_cres_object(cres);
++	struct cachefiles_cache *cache = object->volume->cache;
++	const struct cred *saved_cred;
++	int ret;
++
++	if (!cachefiles_cres_file(cres)) {
++		if (!fscache_wait_for_operation(cres, FSCACHE_WANT_WRITE))
++			return -ENOBUFS;
++		if (!cachefiles_cres_file(cres))
++			return -ENOBUFS;
++	}
++
++	cachefiles_begin_secure(cache, &saved_cred);
++	ret = __cachefiles_prepare_write(cres, _start, _len, i_size,
++					 no_space_allocated_yet);
++	cachefiles_end_secure(cache, saved_cred);
++	return ret;
  }
  
-diff --git a/fs/cachefiles/main.c b/fs/cachefiles/main.c
-index dc7731812b98..522fda828563 100644
---- a/fs/cachefiles/main.c
-+++ b/fs/cachefiles/main.c
-@@ -18,6 +18,8 @@
- #include <linux/statfs.h>
- #include <linux/sysctl.h>
- #include <linux/miscdevice.h>
-+#include <linux/netfs.h>
-+#include <trace/events/netfs.h>
- #define CREATE_TRACE_POINTS
- #include "internal.h"
- 
-diff --git a/include/trace/events/cachefiles.h b/include/trace/events/cachefiles.h
-index d98adabce92e..d63e5fb46d27 100644
---- a/include/trace/events/cachefiles.h
-+++ b/include/trace/events/cachefiles.h
-@@ -60,6 +60,17 @@ enum cachefiles_trunc_trace {
- 	cachefiles_trunc_shrink,
- };
- 
-+enum cachefiles_prepare_read_trace {
-+	cachefiles_trace_read_after_eof,
-+	cachefiles_trace_read_found_hole,
-+	cachefiles_trace_read_found_part,
-+	cachefiles_trace_read_have_data,
-+	cachefiles_trace_read_no_data,
-+	cachefiles_trace_read_no_file,
-+	cachefiles_trace_read_seek_error,
-+	cachefiles_trace_read_seek_nxio,
-+};
-+
- #endif
- 
  /*
-@@ -103,6 +114,17 @@ enum cachefiles_trunc_trace {
- 	EM(cachefiles_trunc_dio_adjust,		"DIOADJ")		\
- 	E_(cachefiles_trunc_shrink,		"SHRINK")
+diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+index dfc60c79a9f3..80f8e334371d 100644
+--- a/fs/netfs/read_helper.c
++++ b/fs/netfs/read_helper.c
+@@ -323,7 +323,7 @@ static void netfs_rreq_do_write_to_cache(struct netfs_read_request *rreq)
+ 		}
  
-+#define cachefiles_prepare_read_traces					\
-+	EM(cachefiles_trace_read_after_eof,	"after-eof ")		\
-+	EM(cachefiles_trace_read_found_hole,	"found-hole")		\
-+	EM(cachefiles_trace_read_found_part,	"found-part")		\
-+	EM(cachefiles_trace_read_have_data,	"have-data ")		\
-+	EM(cachefiles_trace_read_no_data,	"no-data   ")		\
-+	EM(cachefiles_trace_read_no_file,	"no-file   ")		\
-+	EM(cachefiles_trace_read_seek_error,	"seek-error")		\
-+	E_(cachefiles_trace_read_seek_nxio,	"seek-enxio")
-+
-+
- /*
-  * Export enum symbols via userspace.
-  */
-@@ -115,6 +137,7 @@ cachefiles_obj_kill_traces;
- cachefiles_obj_ref_traces;
- cachefiles_coherency_traces;
- cachefiles_trunc_traces;
-+cachefiles_prepare_read_traces;
+ 		ret = cres->ops->prepare_write(cres, &subreq->start, &subreq->len,
+-					       rreq->i_size);
++					       rreq->i_size, true);
+ 		if (ret < 0) {
+ 			trace_netfs_failure(rreq, subreq, ret, netfs_fail_prepare_write);
+ 			trace_netfs_sreq(subreq, netfs_sreq_trace_write_skip);
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 014fb502fd91..99137486d351 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -220,7 +220,8 @@ struct netfs_cache_ops {
+ 	 * actually do.
+ 	 */
+ 	int (*prepare_write)(struct netfs_cache_resources *cres,
+-			     loff_t *_start, size_t *_len, loff_t i_size);
++			     loff_t *_start, size_t *_len, loff_t i_size,
++			     bool no_space_allocated_yet);
  
- /*
-  * Now redefine the EM() and E_() macros to map the enums to the strings that
-@@ -324,6 +347,47 @@ TRACE_EVENT(cachefiles_coherency,
- 		      __entry->content)
- 	    );
- 
-+TRACE_EVENT(cachefiles_prep_read,
-+	    TP_PROTO(struct netfs_read_subrequest *sreq,
-+		     enum netfs_read_source source,
-+		     enum cachefiles_prepare_read_trace why,
-+		     ino_t cache_inode),
-+
-+	    TP_ARGS(sreq, source, why, cache_inode),
-+
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,		rreq		)
-+		    __field(unsigned short,		index		)
-+		    __field(unsigned short,		flags		)
-+		    __field(enum netfs_read_source,	source		)
-+		    __field(enum cachefiles_prepare_read_trace,	why	)
-+		    __field(size_t,			len		)
-+		    __field(loff_t,			start		)
-+		    __field(unsigned int,		netfs_inode	)
-+		    __field(unsigned int,		cache_inode	)
-+			     ),
-+
-+	    TP_fast_assign(
-+		    __entry->rreq	= sreq->rreq->debug_id;
-+		    __entry->index	= sreq->debug_index;
-+		    __entry->flags	= sreq->flags;
-+		    __entry->source	= source;
-+		    __entry->why	= why;
-+		    __entry->len	= sreq->len;
-+		    __entry->start	= sreq->start;
-+		    __entry->netfs_inode = sreq->rreq->inode->i_ino;
-+		    __entry->cache_inode = cache_inode;
-+			   ),
-+
-+	    TP_printk("R=%08x[%u] %s %s f=%02x s=%llx %zx ni=%x b=%x",
-+		      __entry->rreq, __entry->index,
-+		      __print_symbolic(__entry->source, netfs_sreq_sources),
-+		      __print_symbolic(__entry->why, cachefiles_prepare_read_traces),
-+		      __entry->flags,
-+		      __entry->start, __entry->len,
-+		      __entry->netfs_inode, __entry->cache_inode)
-+	    );
-+
- TRACE_EVENT(cachefiles_read,
- 	    TP_PROTO(struct cachefiles_object *obj,
- 		     struct inode *backer,
+ 	/* Prepare a write operation for the fallback fscache API, working out
+ 	 * whether we can cache a page or not.
 
 
