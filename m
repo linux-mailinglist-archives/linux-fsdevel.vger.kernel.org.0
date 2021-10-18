@@ -2,211 +2,371 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC1CD431FC4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 16:32:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E71D443202D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 16:50:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232049AbhJROeW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 10:34:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49172 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231921AbhJROeV (ORCPT
+        id S232207AbhJROwo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 10:52:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:59936 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232120AbhJROwn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 10:34:21 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94EC2C06161C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 07:32:10 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id q2-20020a17090a2e0200b001a0fd4efd49so81014pjd.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 07:32:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=WWm9aJ7sj7+jdCgWihvW1SzD+d69W9pL0SQGXhJXr1I=;
-        b=ogglsAG7CbcRaju3WkexVJzz6WoLN3CLqMlRm2JJxq+J1mrxRRTdmxvBuRyrBoykut
-         ZURmztVXiPiT2Wi09hNULghIBjvTmSXlewYdsfnlQojO0kfPFDwTG1HYu6GOrrTCZ5nW
-         rFdrUBIsmhuXrcFHI5xzG0VyWX7J/AaNk8d4Zb1gaP85lTtaMWtnDJB52R2m02c7ClKQ
-         VP3tpivoSabcFg7uBNd9ovNGMvCoLJb5D4qWJP5Be5++qlpbJQzuwWffzPC0XrSJRdZj
-         ZBCxlmsdFyWsMXEpPWegjiUeAgMOPpWRKzENgouEg6t/yyFEUYlvGnWHGMWeJiDN0KoP
-         Pm6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=WWm9aJ7sj7+jdCgWihvW1SzD+d69W9pL0SQGXhJXr1I=;
-        b=jPDKWXvsgG2pVszjMLeDfE9BVq13WiK4wmqQp7qIJIB/VY0NTEmpeglRWxBLKr4JqQ
-         CqXQrmCwV00sChGIOvEn+2P4/fnLu0U7Q3s+Tks04RCUnp7FuHKny9YT/MQphs5lybT6
-         Q9IfxbrP/uvvSK4dXzdM2WDvi6+oKOuPeQFKCIPRKpzQSI9Dl1VMk4fw0N+2AYbwoBiZ
-         hzziHFPdYq5l7cQuTUWIthpM6e0Lw08Y02KWlcXFvSXXNE0E/mCmqeVxBI5XGgRnrK03
-         nkj3FG0i03ycoINeVtjlnRfVUrh9iA08Phaiw2wLy46fT6hGnsGh6EeycC1LE8OvQ9ax
-         Cocg==
-X-Gm-Message-State: AOAM532elCuIm959lIizi4bfp3dHr5xig2nF5mlSkmBJKgL/krrT0/Ip
-        gS0Jc+JFjtwwmaGRTfY43PYRZODg8h9f7qd2MzKcLA==
-X-Google-Smtp-Source: ABdhPJywDUyRc0wYjspci/5L7PV7QtxjrEYac/ynHQpCgatgArKWjxzReSm0gwjUhsH76Hi+yRjMruhu0P1YmiZUY9g=
-X-Received: by 2002:a17:90a:62ca:: with SMTP id k10mr33711933pjs.38.1634567529712;
- Mon, 18 Oct 2021 07:32:09 -0700 (PDT)
+        Mon, 18 Oct 2021 10:52:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634568631;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=fTrNJzajY75aEFgr0IJAERmH1kp8ApEHhoqq1c9QWjk=;
+        b=hK5ITbgmAFYVFlH01DXUCaKrr0h7a5xOEYD9AOV3ZBehrOSaeekj1KGtJun5H4SodTLJXl
+        wxlnJO80ZLjWFB7m+UxGzUFhEBGwQvS1M1luLOk6+fTi/2k0i31xSlIPimelEqislGnke/
+        b0DINVsjInPlPXkV4ju7ACA4Rz8cWKE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-494-PW9s4UWuPtah2KXKgvmwwA-1; Mon, 18 Oct 2021 10:50:30 -0400
+X-MC-Unique: PW9s4UWuPtah2KXKgvmwwA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E5D1180A5C4;
+        Mon, 18 Oct 2021 14:50:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A7E005F4F5;
+        Mon, 18 Oct 2021 14:50:16 +0000 (UTC)
+Subject: [PATCH 00/67] fscache: Rewrite index API and management system
+From:   David Howells <dhowells@redhat.com>
+To:     linux-cachefs@redhat.com
+Cc:     ceph-devel@vger.kernel.org, linux-afs@lists.infradead.org,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-nfs@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        v9fs-developer@lists.sourceforge.net, linux-cifs@vger.kernel.org,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Jeff Layton <jlayton@kernel.org>,
+        Steve French <sfrench@samba.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Ilya Dryomov <idryomov@gmail.com>, dhowells@redhat.com,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 18 Oct 2021 15:50:15 +0100
+Message-ID: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-References: <CAHS8izMpzTvd5=x_xMhDJy1toV-eT3AS=GXM2ObkJoCmbDtz6w@mail.gmail.com>
- <YW13pS716ajeSgXj@dhcp22.suse.cz>
-In-Reply-To: <YW13pS716ajeSgXj@dhcp22.suse.cz>
-From:   Mina Almasry <almasrymina@google.com>
-Date:   Mon, 18 Oct 2021 07:31:58 -0700
-Message-ID: <CAHS8izMnkiHtNLEzJXL64zNinbEp0oU96dPCJYfqJqk4AEQW2A@mail.gmail.com>
-Subject: Re: [RFC Proposal] Deterministic memcg charging for shared memory
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Roman Gushchin <songmuchun@bytedance.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Greg Thelen <gthelen@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Hugh Dickins <hughd@google.com>, Tejun Heo <tj@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>, cgroups@vger.kernel.org,
-        riel@surriel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 18, 2021 at 6:33 AM Michal Hocko <mhocko@suse.com> wrote:
->
-> On Wed 13-10-21 12:23:19, Mina Almasry wrote:
-> > Below is a proposal for deterministic charging of shared memory.
-> > Please take a look and let me know if there are any major concerns:
-> >
-> > Problem:
-> > Currently shared memory is charged to the memcg of the allocating
-> > process. This makes memory usage of processes accessing shared memory
-> > a bit unpredictable since whichever process accesses the memory first
-> > will get charged. We have a number of use cases where our userspace
-> > would like deterministic charging of shared memory:
-> >
-> > 1. System services allocating memory for client jobs:
-> > We have services (namely a network access service[1]) that provide
-> > functionality for clients running on the machine and allocate memory
-> > to carry out these services. The memory usage of these services
-> > depends on the number of jobs running on the machine and the nature of
-> > the requests made to the service, which makes the memory usage of
-> > these services hard to predict and thus hard to limit via memory.max.
-> > These system services would like a way to allocate memory and instruct
-> > the kernel to charge this memory to the client=E2=80=99s memcg.
-> >
-> > 2. Shared filesystem between subtasks of a large job
-> > Our infrastructure has large meta jobs such as kubernetes which spawn
-> > multiple subtasks which share a tmpfs mount. These jobs and its
-> > subtasks use that tmpfs mount for various purposes such as data
-> > sharing or persistent data between the subtask restarts. In kubernetes
-> > terminology, the meta job is similar to pods and subtasks are
-> > containers under pods. We want the shared memory to be
-> > deterministically charged to the kubernetes's pod and independent to
-> > the lifetime of containers under the pod.
-> >
-> > 3. Shared libraries and language runtimes shared between independent jo=
-bs.
-> > We=E2=80=99d like to optimize memory usage on the machine by sharing li=
-braries
-> > and language runtimes of many of the processes running on our machines
-> > in separate memcgs. This produces a side effect that one job may be
-> > unlucky to be the first to access many of the libraries and may get
-> > oom killed as all the cached files get charged to it.
-> >
-> > Design:
-> > My rough proposal to solve this problem is to simply add a
-> > =E2=80=98memcg=3D/path/to/memcg=E2=80=99 mount option for filesystems (=
-namely tmpfs):
-> > directing all the memory of the file system to be =E2=80=98remote charg=
-ed=E2=80=99 to
-> > cgroup provided by that memcg=3D option.
->
-> Could you be more specific about how this matches the above mentioned
-> usecases?
->
 
-For the use cases I've listed respectively:
-1. Our network service would mount a tmpfs with 'memcg=3D<path to
-client's memcg>'. Any memory the service is allocating on behalf of
-the client, the service will allocate inside of this tmpfs mount, thus
-charging it to the client's memcg without risk of hitting the
-service's limit.
-2. The large job (kubernetes pod) would mount a tmpfs with
-'memcg=3D<path to large job's memcg>. It will then share this tmpfs
-mount with the subtasks (containers in the pod). The subtasks can then
-allocate memory in the tmpfs, having it charged to the kubernetes job,
-without risk of hitting the container's limit.
-3. We would need to extend this functionality to other file systems of
-persistent disk, then mount that file system with 'memcg=3D<dedicated
-shared library memcg>'. Jobs can then use the shared library and any
-memory allocated due to loading the shared library is charged to a
-dedicated memcg, and not charged to the job using the shared library.
+Here's a set of patches that rewrites and simplifies the fscache index API
+to remove the complex operation scheduling and object state machine in
+favour of something much smaller and simpler.  It is built on top of the
+set of patches that removes the old API[1].
 
-> What would/should happen if the target memcg doesn't or stop existing
-> under remote charger feet?
->
+The operation scheduling API was intended to handle sequencing of cache
+operations, which were all required (where possible) to run asynchronously
+in parallel with the operations being done by the network filesystem, while
+allowing the cache to be brought online and offline and interrupt service
+with invalidation.
 
-My thinking is that the tmpfs acts as a charge target to the memcg and
-blocks the memcg from being removed until the tmpfs mount is
-unmounted, similarly to when a user tries to rmdir a memcg with some
-processes still attached to it. But I don't feel strongly about this,
-and I'm happy to go with another approach if you have a strong opinion
-about this.
+However, with the advent of the tmpfile capacity in the VFS, an opportunity
+arises to do invalidation much more easily, without having to wait for I/O
+that's actually in progress: Cachefiles can simply cut over its file
+pointer for the backing object attached to a cookie and abandon the
+in-progress I/O, dismissing it upon completion.
 
-> > Caveats:
-> > 1. One complication to address is the behavior when the target memcg
-> > hits its memory.max limit because of remote charging. In this case the
-> > oom-killer will be invoked, but the oom-killer may not find anything
-> > to kill in the target memcg being charged. In this case, I propose
-> > simply failing the remote charge which will cause the process
-> > executing the remote charge to get an ENOMEM This will be documented
-> > behavior of remote charging.
->
-> Say you are in a page fault (#PF) path. If you just return ENOMEM then
-> you will get a system wide OOM killer via pagefault_out_of_memory. This
-> is very likely not something you want, right? Even if we remove this
-> behavior, which is another story, then the #PF wouldn't have other ways
-> than keep retrying which doesn't really look great either.
->
-> The only "reasonable" way I can see right now is kill the remote
-> charging task. That might result in some other problems though.
->
+Future work there would involve using Omar Sandoval's vfs_link() with
+AT_LINK_REPLACE[2] to allow an extant file to be displaced by a new hard
+link from a tmpfile as currently I have to unlink the old file first.
 
-Yes! That's exactly what I was thinking, and from discussions with
-userspace folks interested in this it doesn't seem like a problem.
-We'd kill the remote charging task and make it clear in the
-documentation that this is the behavior and the userspace is
-responsible for working around that.
+These patches can also simplify the object state handling as I/O operations
+to the cache don't all have to be brought to a stop in order to invalidate
+a file.  To that end, and with an eye on to writing a new backing cache
+model in the future, I've taken the opportunity to simplify the indexing
+structure.
 
-Worthy of mention is that if processes A and B are sharing memory via
-a tmpfs, they can set memcg=3D<common ancestor memcg of A and B>. Thus
-the memory is charged to a common ancestor of memcgs A and B and if
-the common ancestor hits its limit the oom-killer will get invoked and
-should always find something to kill. This will also be documented and
-the userspace can choose to go this route if they don't want to risk
-being killed on pagefault.
+I've separated the index cookie concept from the file cookie concept by
+type now.  The former is now called a "volume cookie" (struct
+fscache_volume) and there is a container of file cookies.  There are then
+just the two levels.  All the index cookieage is collapsed into a single
+volume cookie, and this has a single printable string as a key.  For
+instance, an AFS volume would have a key of something like
+"afs,example.com,1000555", combining the filesystem name, cell name and
+volume ID.  This is freeform, but must not have '/' chars in it.
 
-> > 2. I would like to provide an initial implementation that adds this
-> > support for tmpfs, while leaving the implementation generic enough for
-> > myself or others to extend to more filesystems where they find the
-> > feature useful.
->
-> How do you envision other filesystems would implement that? Should the
-> information be persisted in some way?
->
+I've also eliminated all pointers back from fscache into the network
+filesystem.  This required the duplication of a little bit of data in the
+cookie (cookie key, coherency data and file size), but it's not actually
+that much.  This gets rid of problems with making sure we keep netfs data
+structures around so that the cache can access them.
 
-Yes my initial implementation has a struct memcg* hanging off the
-super block that is the memcg to charge, but I can move it if there is
-somewhere else you feel is appropriate once I send out the patches.
+I have changed afs throughout the patch series, but I also have patches for
+9p, nfs and cifs.  Jeff Layton is handling ceph support.
 
-> I didn't have time to give this a lot of thought and more questions will
-> likely come. My initial reaction is that this will open a lot of
-> interesting corner cases which will be hard to deal with.
 
-Thank you very much for your review so far and please let me know if
-you think of any more issues. My feeling is that hitting the remote
-memcg limit and the oom-killing behavior surrounding that is by far
-the most contentious issue. You don't seem completely revolted by what
-I'm proposing there so I'm somewhat optimistic we can deal with the
-rest of the corner cases :-)
+BITS THAT MAY BE CONTROVERSIAL
+==============================
 
-> --
-> Michal Hocko
-> SUSE Labs
+There are some bits I've added that may be controversial:
+
+ (1) I've provided a flag, S_KERNEL_FILE, that cachefiles uses to check if
+     a files is already being used by some other kernel service (e.g. a
+     duplicate cachefiles cache in the same directory) and reject it if it
+     is.  This isn't entirely necessary, but it helps prevent accidental
+     data corruption.
+
+     I don't want to use S_SWAPFILE as that has other effects, but quite
+     possibly swapon() should set S_KERNEL_FILE too.
+
+     Note that it doesn't prevent userspace from interfering, though
+     perhaps it should.
+
+ (2) Cachefiles wants to keep the backing file for a cookie open whilst we
+     might need to write to it from network filesystem writeback.  The
+     problem is that the network filesystem unuses its cookie when its file
+     is closed, and so we have nothing pinning the cachefiles file open and
+     it will get closed automatically after a short time to avoid
+     EMFILE/ENFILE problems.
+
+     Reopening the cache file, however, is a problem if this is being done
+     due to writeback triggered by exit().  Some filesystems will oops if
+     we try to open a file in that context because they want to access
+     current->fs or suchlike.
+
+     To get around this, I added the following:
+
+     (A) An inode flag, I_PINNING_FSCACHE_WB, to be set on a network
+     	 filesystem inode to indicate that we have a usage count on the
+     	 cookie caching that inode.
+
+     (B) A flag in struct writeback_control, unpinned_fscache_wb, that is
+     	 set when __writeback_single_inode() clears the last dirty page
+     	 from i_pages - at which point it clears I_PINNING_FSCACHE_WB and
+     	 sets this flag.
+
+	 This has to be done here so that clearing I_PINNING_FSCACHE_WB can
+	 be done atomically with the check of PAGECACHE_TAG_DIRTY that
+	 clears I_DIRTY_PAGES.
+
+     (C) A function, fscache_set_page_dirty(), which if it is not set, sets
+     	 I_PINNING_FSCACHE_WB and calls fscache_use_cookie() to pin the
+     	 cache resources.
+
+     (D) A function, fscache_unpin_writeback(), to be called by
+     	 ->write_inode() to unuse the cookie.
+
+     (E) A function, fscache_clear_inode_writeback(), to be called when the
+     	 inode is evicted, before clear_inode() is called.  This cleans up
+     	 any lingering I_PINNING_FSCACHE_WB.
+
+     The network filesystem can then use these tools to make sure that
+     fscache_write_to_cache() can write locally modified data to the cache
+     as well as to the server.
+
+     For the future, I'm working on write helpers for netfs lib that should
+     allow this facility to be removed by keeping track of the dirty
+     regions separately - but that's incomplete at the moment and is also
+     going to be affected by folios, one way or another, since it deals
+     with pages.
+
+
+These patches can be found also on:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-rewrite-indexing
+
+David
+
+Link: https://lore.kernel.org/r/163363935000.1980952.15279841414072653108.stgit@warthog.procyon.org.uk [1]
+Link: https://lore.kernel.org/r/cover.1580251857.git.osandov@fb.com/ [2]
+
+---
+Dave Wysochanski (3):
+      NFS: Convert fscache_acquire_cookie and fscache_relinquish_cookie
+      NFS: Convert fscache_enable_cookie and fscache_disable_cookie
+      NFS: Convert fscache invalidation and update aux_data and i_size
+
+David Howells (63):
+      mm: Stop filemap_read() from grabbing a superfluous page
+      vfs: Provide S_KERNEL_FILE inode flag
+      vfs, fscache: Force ->write_inode() to occur if cookie pinned for writeback
+      afs: Handle len being extending over page end in write_begin/write_end
+      afs: Fix afs_write_end() to handle len > page size
+      nfs, cifs, ceph, 9p: Disable use of fscache prior to its rewrite
+      fscache: Remove the netfs data from the cookie
+      fscache: Remove struct fscache_cookie_def
+      fscache: Remove store_limit* from struct fscache_object
+      fscache: Remove fscache_check_consistency()
+      fscache: Remove fscache_attr_changed()
+      fscache: Remove obsolete stats
+      fscache: Remove old I/O tracepoints
+      fscache: Temporarily disable fscache_invalidate()
+      fscache: Disable fscache_begin_operation()
+      fscache: Remove the I/O operation manager
+      fscache: Rename fscache_cookie_{get,put,see}()
+      cachefiles: Remove tree of active files and use S_CACHE_FILE inode flag
+      cachefiles: Don't set an xattr on the root of the cache
+      cachefiles: Remove some redundant checks on unsigned values
+      cachefiles: Prevent inode from going away when burying a dentry
+      cachefiles: Simplify the pathwalk and save the filename for an object
+      cachefiles: trace: Improve the lookup tracepoint
+      cachefiles: Remove separate backer dentry from cachefiles_object
+      cachefiles: Fold fscache_object into cachefiles_object
+      cachefiles: Change to storing file* rather than dentry*
+      cachefiles: trace: Log coherency checks
+      cachefiles: Trace truncations
+      cachefiles: Trace read and write operations
+      cachefiles: Round the cachefile size up to DIO block size
+      cachefiles: Don't use XATTR_ flags with vfs_setxattr()
+      fscache: Replace the object management state machine
+      cachefiles: Trace decisions in cachefiles_prepare_read()
+      cachefiles: Make cachefiles_write_prepare() check for space
+      fscache: Automatically close a file that's been unused for a while
+      fscache: Add stats for the cookie commit LRU
+      fscache: Move fscache_update_cookie() complete inline
+      fscache: Remove more obsolete stats
+      fscache: Note the object size during invalidation
+      vfs, fscache: Force ->write_inode() to occur if cookie pinned for writeback
+      afs: Render cache cookie key as big endian
+      cachefiles: Use tmpfile/link
+      fscache: Rewrite invalidation
+      cachefiles: Simplify the file lookup/creation/check code
+      fscache: Provide resize operation
+      cachefiles: Put more information in the xattr attached to the cache file
+      fscache: Implement "will_modify" parameter on fscache_use_cookie()
+      fscache: Add support for writing to the cache
+      fscache: Make fscache_clear_page_bits() conditional on cookie
+      fscache: Make fscache_write_to_cache() conditional on cookie
+      afs: Copy local writes to the cache when writing to the server
+      afs: Invoke fscache_resize_cookie() when handling ATTR_SIZE for setattr
+      afs: Add O_DIRECT read support
+      afs: Skip truncation on the server of data we haven't written yet
+      afs: Make afs_write_begin() return the THP subpage
+      cachefiles, afs: Drive FSCACHE_COOKIE_NO_DATA_TO_READ
+      nfs: Convert to new fscache volume/cookie API
+      9p: Use fscache indexing rewrite and reenable caching
+      9p: Copy local writes to the cache when writing to the server
+      netfs: Display the netfs inode number in the netfs_read tracepoint
+      cachefiles: Add tracepoints to log errors from ops on the backing fs
+      cachefiles: Add error injection support
+      cifs: Support fscache indexing rewrite (untested)
+
+Jeff Layton (1):
+      fscache: disable cookie when doing an invalidation for DIO write
+
+
+ fs/9p/cache.c                     |  184 +----
+ fs/9p/cache.h                     |   23 +-
+ fs/9p/v9fs.c                      |   14 +-
+ fs/9p/v9fs.h                      |   13 +-
+ fs/9p/vfs_addr.c                  |   55 +-
+ fs/9p/vfs_dir.c                   |   13 +-
+ fs/9p/vfs_file.c                  |    7 +-
+ fs/9p/vfs_inode.c                 |   24 +-
+ fs/9p/vfs_inode_dotl.c            |    3 +-
+ fs/9p/vfs_super.c                 |    3 +
+ fs/afs/Makefile                   |    3 -
+ fs/afs/cache.c                    |   68 --
+ fs/afs/cell.c                     |   12 -
+ fs/afs/file.c                     |   83 +-
+ fs/afs/fsclient.c                 |   18 +-
+ fs/afs/inode.c                    |  101 ++-
+ fs/afs/internal.h                 |   36 +-
+ fs/afs/main.c                     |   14 -
+ fs/afs/super.c                    |    1 +
+ fs/afs/volume.c                   |   15 +-
+ fs/afs/write.c                    |  170 +++-
+ fs/afs/yfsclient.c                |   12 +-
+ fs/cachefiles/Kconfig             |    8 +
+ fs/cachefiles/Makefile            |    3 +
+ fs/cachefiles/bind.c              |  186 +++--
+ fs/cachefiles/daemon.c            |   20 +-
+ fs/cachefiles/error_inject.c      |   46 ++
+ fs/cachefiles/interface.c         |  660 +++++++--------
+ fs/cachefiles/internal.h          |  191 +++--
+ fs/cachefiles/io.c                |  310 +++++--
+ fs/cachefiles/key.c               |  203 +++--
+ fs/cachefiles/main.c              |   20 +-
+ fs/cachefiles/namei.c             |  978 ++++++++++------------
+ fs/cachefiles/volume.c            |  128 +++
+ fs/cachefiles/xattr.c             |  367 +++------
+ fs/ceph/Kconfig                   |    2 +-
+ fs/cifs/Makefile                  |    2 +-
+ fs/cifs/cache.c                   |  105 ---
+ fs/cifs/cifsfs.c                  |   11 +-
+ fs/cifs/cifsglob.h                |    5 +-
+ fs/cifs/connect.c                 |    3 -
+ fs/cifs/file.c                    |   37 +-
+ fs/cifs/fscache.c                 |  201 ++---
+ fs/cifs/fscache.h                 |   51 +-
+ fs/cifs/inode.c                   |   18 +-
+ fs/fs-writeback.c                 |    8 +
+ fs/fscache/Kconfig                |    4 +
+ fs/fscache/Makefile               |    6 +-
+ fs/fscache/cache.c                |  541 ++++++-------
+ fs/fscache/cookie.c               | 1262 ++++++++++++++---------------
+ fs/fscache/fsdef.c                |   98 ---
+ fs/fscache/internal.h             |  213 +----
+ fs/fscache/io.c                   |  405 ++++++---
+ fs/fscache/main.c                 |  134 +--
+ fs/fscache/netfs.c                |   74 --
+ fs/fscache/object.c               | 1123 -------------------------
+ fs/fscache/operation.c            |  633 ---------------
+ fs/fscache/page.c                 |   84 --
+ fs/fscache/proc.c                 |   43 +-
+ fs/fscache/stats.c                |  202 ++---
+ fs/fscache/volume.c               |  449 ++++++++++
+ fs/netfs/read_helper.c            |    2 +-
+ fs/nfs/Makefile                   |    2 +-
+ fs/nfs/client.c                   |    4 -
+ fs/nfs/direct.c                   |    2 +
+ fs/nfs/file.c                     |    7 +-
+ fs/nfs/fscache-index.c            |  114 ---
+ fs/nfs/fscache.c                  |  264 ++----
+ fs/nfs/fscache.h                  |   89 +-
+ fs/nfs/inode.c                    |   11 +-
+ fs/nfs/super.c                    |    7 +-
+ fs/nfs/write.c                    |    1 +
+ include/linux/fs.h                |    4 +
+ include/linux/fscache-cache.h     |  463 +++--------
+ include/linux/fscache.h           |  626 +++++++-------
+ include/linux/netfs.h             |    4 +-
+ include/linux/nfs_fs_sb.h         |    9 +-
+ include/linux/writeback.h         |    1 +
+ include/trace/events/cachefiles.h |  483 ++++++++---
+ include/trace/events/fscache.h    |  631 +++++++--------
+ include/trace/events/netfs.h      |    5 +-
+ 81 files changed, 5140 insertions(+), 7295 deletions(-)
+ delete mode 100644 fs/afs/cache.c
+ create mode 100644 fs/cachefiles/error_inject.c
+ create mode 100644 fs/cachefiles/volume.c
+ delete mode 100644 fs/cifs/cache.c
+ delete mode 100644 fs/fscache/fsdef.c
+ delete mode 100644 fs/fscache/netfs.c
+ delete mode 100644 fs/fscache/object.c
+ delete mode 100644 fs/fscache/operation.c
+ create mode 100644 fs/fscache/volume.c
+ delete mode 100644 fs/nfs/fscache-index.c
+
+
