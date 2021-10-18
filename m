@@ -2,136 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D4B77431C08
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 15:37:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90181431F2B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Oct 2021 16:15:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233368AbhJRNhr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 09:37:47 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:34954 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232302AbhJRNfm (ORCPT
+        id S232795AbhJRORZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 10:17:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44230 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231918AbhJRORY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 09:35:42 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 258F21FD6D;
-        Mon, 18 Oct 2021 13:33:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1634564010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YoCaAIU3gS5Go5DLCN1kv6dXHZiM0iQ6w6RrFGGICso=;
-        b=XmgPTBlbQwJY3r+TZtpbKUocEfQeYD958gxtDPq6oJ1jojMVSpnjhZulUshuSUa25saqEP
-        redaJ3+UFAYoa8FwoqWco0w/CkkO92hkKFZE8UtdZxPTx1LUvS1UkorkJ4jmDW3wvD3xrP
-        MUYOayUfMVAdj3iQs/U9nXSIRCmILGY=
-Received: from suse.cz (unknown [10.100.201.86])
+        Mon, 18 Oct 2021 10:17:24 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3521FC048D0F;
+        Mon, 18 Oct 2021 06:55:13 -0700 (PDT)
+Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1007])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 751B1A3BC8;
-        Mon, 18 Oct 2021 13:33:29 +0000 (UTC)
-Date:   Mon, 18 Oct 2021 15:33:25 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Mina Almasry <almasrymina@google.com>
-Cc:     Roman Gushchin <songmuchun@bytedance.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Greg Thelen <gthelen@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Hugh Dickins <hughd@google.com>, Tejun Heo <tj@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>, cgroups@vger.kernel.org,
-        riel@surriel.com
-Subject: Re: [RFC Proposal] Deterministic memcg charging for shared memory
-Message-ID: <YW13pS716ajeSgXj@dhcp22.suse.cz>
-References: <CAHS8izMpzTvd5=x_xMhDJy1toV-eT3AS=GXM2ObkJoCmbDtz6w@mail.gmail.com>
+        (Authenticated sender: krisman)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 7746F1F42152;
+        Mon, 18 Oct 2021 14:55:11 +0100 (BST)
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.com>, "Darrick J. Wong" <djwong@kernel.org>,
+        Theodore Tso <tytso@mit.edu>,
+        David Howells <dhowells@redhat.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Matthew Bobrowski <repnop@google.com>, kernel@collabora.com
+Subject: Re: [PATCH v7 21/28] fanotify: Support merging of error events
+Organization: Collabora
+References: <20211014213646.1139469-1-krisman@collabora.com>
+        <20211014213646.1139469-22-krisman@collabora.com>
+        <CAOQ4uxiOhQjQMruHR-ZM0SNdaRyi7BGsZK=Y_nSh1=361oC81g@mail.gmail.com>
+        <87pms6p6t4.fsf@collabora.com>
+        <CAOQ4uxizDrR=cnPQzSx8C7-b3fUCWujvpKeCrq0kcMK8kw3=mw@mail.gmail.com>
+Date:   Mon, 18 Oct 2021 10:55:06 -0300
+In-Reply-To: <CAOQ4uxizDrR=cnPQzSx8C7-b3fUCWujvpKeCrq0kcMK8kw3=mw@mail.gmail.com>
+        (Amir Goldstein's message of "Fri, 15 Oct 2021 20:52:43 +0300")
+Message-ID: <87ee8iphdx.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHS8izMpzTvd5=x_xMhDJy1toV-eT3AS=GXM2ObkJoCmbDtz6w@mail.gmail.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 13-10-21 12:23:19, Mina Almasry wrote:
-> Below is a proposal for deterministic charging of shared memory.
-> Please take a look and let me know if there are any major concerns:
-> 
-> Problem:
-> Currently shared memory is charged to the memcg of the allocating
-> process. This makes memory usage of processes accessing shared memory
-> a bit unpredictable since whichever process accesses the memory first
-> will get charged. We have a number of use cases where our userspace
-> would like deterministic charging of shared memory:
-> 
-> 1. System services allocating memory for client jobs:
-> We have services (namely a network access service[1]) that provide
-> functionality for clients running on the machine and allocate memory
-> to carry out these services. The memory usage of these services
-> depends on the number of jobs running on the machine and the nature of
-> the requests made to the service, which makes the memory usage of
-> these services hard to predict and thus hard to limit via memory.max.
-> These system services would like a way to allocate memory and instruct
-> the kernel to charge this memory to the client’s memcg.
-> 
-> 2. Shared filesystem between subtasks of a large job
-> Our infrastructure has large meta jobs such as kubernetes which spawn
-> multiple subtasks which share a tmpfs mount. These jobs and its
-> subtasks use that tmpfs mount for various purposes such as data
-> sharing or persistent data between the subtask restarts. In kubernetes
-> terminology, the meta job is similar to pods and subtasks are
-> containers under pods. We want the shared memory to be
-> deterministically charged to the kubernetes's pod and independent to
-> the lifetime of containers under the pod.
-> 
-> 3. Shared libraries and language runtimes shared between independent jobs.
-> We’d like to optimize memory usage on the machine by sharing libraries
-> and language runtimes of many of the processes running on our machines
-> in separate memcgs. This produces a side effect that one job may be
-> unlucky to be the first to access many of the libraries and may get
-> oom killed as all the cached files get charged to it.
-> 
-> Design:
-> My rough proposal to solve this problem is to simply add a
-> ‘memcg=/path/to/memcg’ mount option for filesystems (namely tmpfs):
-> directing all the memory of the file system to be ‘remote charged’ to
-> cgroup provided by that memcg= option.
+Amir Goldstein <amir73il@gmail.com> writes:
 
-Could you be more specific about how this matches the above mentioned
-usecases?
+> On Fri, Oct 15, 2021 at 7:54 PM Gabriel Krisman Bertazi
+> <krisman@collabora.com> wrote:
+>>
+>> Amir Goldstein <amir73il@gmail.com> writes:
+>>
+>> > On Fri, Oct 15, 2021 at 12:39 AM Gabriel Krisman Bertazi
+>> > <krisman@collabora.com> wrote:
+>> >>
+>> >> Error events (FAN_FS_ERROR) against the same file system can be merged
+>> >> by simply iterating the error count.  The hash is taken from the fsid,
+>> >> without considering the FH.  This means that only the first error object
+>> >> is reported.
+>> >>
+>> >> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+>> >> ---
+>> >>  fs/notify/fanotify/fanotify.c | 39 ++++++++++++++++++++++++++++++++---
+>> >>  fs/notify/fanotify/fanotify.h |  4 +++-
+>> >>  2 files changed, 39 insertions(+), 4 deletions(-)
+>> >>
+>> >> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+>> >> index 9b970359570a..7032083df62a 100644
+>> >> --- a/fs/notify/fanotify/fanotify.c
+>> >> +++ b/fs/notify/fanotify/fanotify.c
+>> >> @@ -111,6 +111,16 @@ static bool fanotify_name_event_equal(struct fanotify_name_event *fne1,
+>> >>         return fanotify_info_equal(info1, info2);
+>> >>  }
+>> >>
+>> >> +static bool fanotify_error_event_equal(struct fanotify_error_event *fee1,
+>> >> +                                      struct fanotify_error_event *fee2)
+>> >> +{
+>> >> +       /* Error events against the same file system are always merged. */
+>> >> +       if (!fanotify_fsid_equal(&fee1->fsid, &fee2->fsid))
+>> >> +               return false;
+>> >> +
+>> >> +       return true;
+>> >> +}
+>> >> +
+>> >>  static bool fanotify_should_merge(struct fanotify_event *old,
+>> >>                                   struct fanotify_event *new)
+>> >>  {
+>> >> @@ -141,6 +151,9 @@ static bool fanotify_should_merge(struct fanotify_event *old,
+>> >>         case FANOTIFY_EVENT_TYPE_FID_NAME:
+>> >>                 return fanotify_name_event_equal(FANOTIFY_NE(old),
+>> >>                                                  FANOTIFY_NE(new));
+>> >> +       case FANOTIFY_EVENT_TYPE_FS_ERROR:
+>> >> +               return fanotify_error_event_equal(FANOTIFY_EE(old),
+>> >> +                                                 FANOTIFY_EE(new));
+>> >>         default:
+>> >>                 WARN_ON_ONCE(1);
+>> >>         }
+>> >> @@ -148,6 +161,22 @@ static bool fanotify_should_merge(struct fanotify_event *old,
+>> >>         return false;
+>> >>  }
+>> >>
+>> >> +static void fanotify_merge_error_event(struct fanotify_error_event *dest,
+>> >> +                                      struct fanotify_error_event *origin)
+>> >> +{
+>> >> +       dest->err_count++;
+>> >> +}
+>> >> +
+>> >> +static void fanotify_merge_event(struct fanotify_event *dest,
+>> >> +                                struct fanotify_event *origin)
+>> >> +{
+>> >> +       dest->mask |= origin->mask;
+>> >> +
+>> >> +       if (origin->type == FANOTIFY_EVENT_TYPE_FS_ERROR)
+>> >> +               fanotify_merge_error_event(FANOTIFY_EE(dest),
+>> >> +                                          FANOTIFY_EE(origin));
+>> >> +}
+>> >> +
+>> >>  /* Limit event merges to limit CPU overhead per event */
+>> >>  #define FANOTIFY_MAX_MERGE_EVENTS 128
+>> >>
+>> >> @@ -175,7 +204,7 @@ static int fanotify_merge(struct fsnotify_group *group,
+>> >>                 if (++i > FANOTIFY_MAX_MERGE_EVENTS)
+>> >>                         break;
+>> >>                 if (fanotify_should_merge(old, new)) {
+>> >> -                       old->mask |= new->mask;
+>> >> +                       fanotify_merge_event(old, new);
+>> >>                         return 1;
+>> >>                 }
+>> >>         }
+>> >> @@ -577,7 +606,8 @@ static struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
+>> >>  static struct fanotify_event *fanotify_alloc_error_event(
+>> >>                                                 struct fsnotify_group *group,
+>> >>                                                 __kernel_fsid_t *fsid,
+>> >> -                                               const void *data, int data_type)
+>> >> +                                               const void *data, int data_type,
+>> >> +                                               unsigned int *hash)
+>> >>  {
+>> >>         struct fs_error_report *report =
+>> >>                         fsnotify_data_error_report(data, data_type);
+>> >> @@ -591,6 +621,9 @@ static struct fanotify_event *fanotify_alloc_error_event(
+>> >>                 return NULL;
+>> >>
+>> >>         fee->fae.type = FANOTIFY_EVENT_TYPE_FS_ERROR;
+>> >> +       fee->err_count = 1;
+>> >> +
+>> >> +       *hash ^= fanotify_hash_fsid(fsid);
+>> >>
+>> >>         return &fee->fae;
+>> >>  }
+>> >
+>> > Forgot to store fee->fsid?
+>>
+>> Not really. this is part of the FID info record support, which is done
+>> in patch 23.
+>>
+>
+> Sure, it does not really matter for bisection when FS_ERROR is not yet
+> wired, but it is weird to compare event fsid's when they have not been
+> initialized.
+>
+> Logically, storing the fsid in this patch would be better.
 
-What would/should happen if the target memcg doesn't or stop existing
-under remote charger feet?
+Makes sense.  Will do!
 
-> Caveats:
-> 1. One complication to address is the behavior when the target memcg
-> hits its memory.max limit because of remote charging. In this case the
-> oom-killer will be invoked, but the oom-killer may not find anything
-> to kill in the target memcg being charged. In this case, I propose
-> simply failing the remote charge which will cause the process
-> executing the remote charge to get an ENOMEM This will be documented
-> behavior of remote charging.
+Thanks,
 
-Say you are in a page fault (#PF) path. If you just return ENOMEM then
-you will get a system wide OOM killer via pagefault_out_of_memory. This
-is very likely not something you want, right? Even if we remove this
-behavior, which is another story, then the #PF wouldn't have other ways
-than keep retrying which doesn't really look great either.
 
-The only "reasonable" way I can see right now is kill the remote
-charging task. That might result in some other problems though.
-
-> 2. I would like to provide an initial implementation that adds this
-> support for tmpfs, while leaving the implementation generic enough for
-> myself or others to extend to more filesystems where they find the
-> feature useful.
-
-How do you envision other filesystems would implement that? Should the
-information be persisted in some way?
-
-I didn't have time to give this a lot of thought and more questions will
-likely come. My initial reaction is that this will open a lot of
-interesting corner cases which will be hard to deal with.
 -- 
-Michal Hocko
-SUSE Labs
+Gabriel Krisman Bertazi
