@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DCF5432E2C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 08:26:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B15C5432E30
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 08:26:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229527AbhJSG2C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 02:28:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37778 "EHLO
+        id S234205AbhJSG2R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 02:28:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234220AbhJSG2B (ORCPT
+        with ESMTP id S229649AbhJSG2K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 02:28:01 -0400
+        Tue, 19 Oct 2021 02:28:10 -0400
 Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3702CC061749;
-        Mon, 18 Oct 2021 23:25:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 557D2C06161C;
+        Mon, 18 Oct 2021 23:25:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=S4CUuCzH5lqDJB4MuGXgQVUVRBAgyFaG9eQzfRY3vKs=; b=Y76U8j2/7fMjSInt7+CXGBDOhc
-        CZY3kWorzZ2XPyjb2tyz44lq9E/ZVzRaAEAwhRHsFtJoldrC1Bz7ygkgOAP4PjegThAdcN59PVRnx
-        EoqzxNHR8HF2r+3LHKmbkqPU3gX98CERX8a9xovUUHNUdCqzg/SaZ8TWDCI9dpEkH99+mUQYHjlvH
-        OU4uFyZ0MFPNFVBHys6c+5ihObcQ9kr4ugeCnSkXlolmvravRiugyya4H7qIvrhXaNUnEmvdXsK2i
-        FYUBNrrNufIVcV83q4hcD3MKW8wZif2UlfwLDuf96LNy8crV7wf6vsX/d7s75O4gXzmCvHTEGC2MF
-        3/pQctLQ==;
+        bh=2oPjr/CmcgLY9x84ULlH3Ff6Xbo0qFK9LD8/6togFZA=; b=NmleJeKN1g8pEYKNinAzcH1jFW
+        YVzZPzhzgKyPmp7TB1Ltmv00TeeI/hto2YW37T69//rbf+Nm4+mj9nydcHUW9DrmtRpdHx8Fi/Fzo
+        1NKGKe7HuNLCG/KCOJfbOkFEsBcUQW7is1N0PUDRsGRU4DXtFlkDsK/l979/BPtac6T+tGfM9xbD3
+        lpv4i1Yp/wTNXV/aC+5TgkvwywJ9iElv2wuSnP/vGd3+TpVcWT4Tscb7sXljwDFbVg3Y0SAJMMs+6
+        BzKCsHP8M2Yf6xLFlnmib88C7gbfz+Y0BlNlE5lfDEjfMICHGNJNMYzubZ7YdN9HwDct/4CCIEPFd
+        ma7YqgQg==;
 Received: from 089144192247.atnat0001.highway.a1.net ([89.144.192.247] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mciZE-000HYS-Kb; Tue, 19 Oct 2021 06:25:45 +0000
+        id 1mciZI-000HaB-1X; Tue, 19 Oct 2021 06:25:48 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
@@ -38,9 +38,9 @@ Cc:     =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
         linux-block@vger.kernel.org, xen-devel@lists.xenproject.org,
         linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         ntfs3@lists.linux.dev
-Subject: [PATCH 3/7] xen-blkback: use sync_blockdev
-Date:   Tue, 19 Oct 2021 08:25:26 +0200
-Message-Id: <20211019062530.2174626-4-hch@lst.de>
+Subject: [PATCH 4/7] btrfs: use sync_blockdev
+Date:   Tue, 19 Oct 2021 08:25:27 +0200
+Message-Id: <20211019062530.2174626-5-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211019062530.2174626-1-hch@lst.de>
 References: <20211019062530.2174626-1-hch@lst.de>
@@ -55,22 +55,22 @@ Use sync_blockdev instead of opencoding it.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/block/xen-blkback/xenbus.c | 2 +-
+ fs/btrfs/volumes.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-index 33eba3df4dd9a..914587aabca0c 100644
---- a/drivers/block/xen-blkback/xenbus.c
-+++ b/drivers/block/xen-blkback/xenbus.c
-@@ -98,7 +98,7 @@ static void xen_update_blkif_status(struct xen_blkif *blkif)
- 		return;
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 2ec3b8ac8fa35..b51e4b464103e 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -508,7 +508,7 @@ btrfs_get_bdev_and_sb(const char *device_path, fmode_t flags, void *holder,
  	}
  
--	err = filemap_write_and_wait(blkif->vbd.bdev->bd_inode->i_mapping);
-+	err = sync_blockdev(blkif->vbd.bdev);
- 	if (err) {
- 		xenbus_dev_error(blkif->be->dev, err, "block flush");
- 		return;
+ 	if (flush)
+-		filemap_write_and_wait((*bdev)->bd_inode->i_mapping);
++		sync_blockdev(*bdev);
+ 	ret = set_blocksize(*bdev, BTRFS_BDEV_BLOCKSIZE);
+ 	if (ret) {
+ 		blkdev_put(*bdev, flags);
 -- 
 2.30.2
 
