@@ -2,79 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4545D4337D7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 15:55:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B40DC4337E3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 15:58:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235741AbhJSN5X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 09:57:23 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:44268 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231231AbhJSN5S (ORCPT
+        id S235903AbhJSOAv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 10:00:51 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:58840 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231460AbhJSOAu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 09:57:18 -0400
+        Tue, 19 Oct 2021 10:00:50 -0400
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id A63E321A99;
-        Tue, 19 Oct 2021 13:55:02 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTP id E00771FD66;
+        Tue, 19 Oct 2021 13:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1634651702;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
+        t=1634651916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=lCAmwd04vR+8ISMPrZZs/6BPlrRsuF68LDbyHwEPntQ=;
-        b=tLZsnCbfP/PE33Cg8Lb4wiLOBxR8QveId9HdyLQwr2cih36yShITfbjTETbGmX7qoPSLnV
-        KpgAA8+dbLeP0XdSU+qtQz6RQ6J5EBZxRaplNcIZug7sxD7fof1K7Oihxwjp0TkV6E8qRu
-        UqkFmpgJ7dUVgd+qqNHE1kGVvaHvryE=
+        bh=abLU67Y73wTxtGcuo7U/jTnXBkUbjKwZiGMqSHa4lp0=;
+        b=MFVv/sMFD2ybknsyeCmmca08F6ibvFYkD9cQvfHPi98aXdGjv4iGNWdjD24F9B309wUebX
+        tRj0GJJXtITz9weJSaRxtXKDH0Yl2eFkFhm2bk2E7FuxiR2ktafGUoAo8IAg4qZd2aICse
+        KeC9TjqSl9UfjjvX8I00lH6MnxLcVj0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1634651702;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
+        s=susede2_ed25519; t=1634651916;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=lCAmwd04vR+8ISMPrZZs/6BPlrRsuF68LDbyHwEPntQ=;
-        b=eVe2N40rhMpqpW06F4v/0V4nL0bZy0/F/3sDzYIThe2zCSwt2+BtKDOwwYusSYK+iBuJ9x
-        /SDiTxQlN3QaJABg==
-Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
-        by relay2.suse.de (Postfix) with ESMTP id 0D869A3B85;
-        Tue, 19 Oct 2021 13:55:02 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 8F6DBDA7A3; Tue, 19 Oct 2021 15:54:34 +0200 (CEST)
-Date:   Tue, 19 Oct 2021 15:54:34 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        linux-block@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        ntfs3@lists.linux.dev
-Subject: Re: [PATCH 4/7] btrfs: use sync_blockdev
-Message-ID: <20211019135434.GS30611@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
-        Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        linux-block@vger.kernel.org, xen-devel@lists.xenproject.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        ntfs3@lists.linux.dev
-References: <20211019062530.2174626-1-hch@lst.de>
- <20211019062530.2174626-5-hch@lst.de>
+        bh=abLU67Y73wTxtGcuo7U/jTnXBkUbjKwZiGMqSHa4lp0=;
+        b=eosRPeQGZNZGzTf8LHxo501EwRjXfOMQs1GGqgsdnpus8T1uYhKI5iBmlW/aViNOSDrZff
+        3nh0msIwMHIhi6Ag==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id C72F5A3B83;
+        Tue, 19 Oct 2021 13:58:36 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 99D4E1E0983; Tue, 19 Oct 2021 15:58:36 +0200 (CEST)
+Date:   Tue, 19 Oct 2021 15:58:36 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     jack@suse.com, amir73il@gmail.com, djwong@kernel.org,
+        tytso@mit.edu, david@fromorbit.com, dhowells@redhat.com,
+        khazhy@google.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-api@vger.kernel.org,
+        kernel@collabora.com, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v8 23/32] fanotify: Wrap object_fh inline space in a
+ creator macro
+Message-ID: <20211019135836.GL3255@quack2.suse.cz>
+References: <20211019000015.1666608-1-krisman@collabora.com>
+ <20211019000015.1666608-24-krisman@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211019062530.2174626-5-hch@lst.de>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <20211019000015.1666608-24-krisman@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 19, 2021 at 08:25:27AM +0200, Christoph Hellwig wrote:
-> Use sync_blockdev instead of opencoding it.
+On Mon 18-10-21 21:00:06, Gabriel Krisman Bertazi wrote:
+> fanotify_error_event would duplicate this sequence of declarations that
+> already exist elsewhere with a slight different size.  Create a helper
+> macro to avoid code duplication.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> 
+> ---
+> Among the suggestions, I think this is simpler because it avoids
+> deep nesting the variable-sized attribute, which would have been hidden
+> inside fee->ffe->object_fh.buf.
 
-Acked-by: David Sterba <dsterba@suse.com>
+One nit from me as well :)
+
+> +#define FANOTIFY_INLINE_FH(size)					\
+> +struct {								\
+> +	struct fanotify_fh object_fh;					\
+> +	/* Space for object_fh.buf[] - access with fanotify_fh_buf() */	\
+> +	unsigned char _inline_fh_buf[(size)];				\
+> +}
+> +
+
+Can the macro perhaps take the name of the fanotify_fh member it creates?
+Like:
+
+#define FANOTIFY_INLINE_FH(name, size)
+
+Harcoding _inline_fh_buf is fine since it isn't ever used directly but
+hardcoding object_fh looks ugly to me. With that improved feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
