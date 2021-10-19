@@ -2,122 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 496E0433227
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 11:24:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6098D43327D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 11:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235064AbhJSJ0f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 05:26:35 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:46101 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235055AbhJSJ0d (ORCPT
+        id S235101AbhJSJlF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 05:41:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54096 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235044AbhJSJlE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 05:26:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634635460;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wmbGZV2ZKwLQrOAxpGl2pHHhTDBQE+6LCzInPZcyFEo=;
-        b=hHV+57siKZcYdbWwnqDJirAKS/yKUgDXSSpQUOUfFy6Bc7rgSZ+z5E77P4UEKw8FDlANru
-        boQgcED7MzkcZvHqd8vbsylKKbJiBF5LqnVz5Pocn5yJqCZAXSAHB75fiiX5tMyV0ywcSI
-        sxpzLGKpUOKgK3NxMGNvLnFeBMViQV4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-390-Lm_WcdWwPiKJafreVln3Gg-1; Tue, 19 Oct 2021 05:24:16 -0400
-X-MC-Unique: Lm_WcdWwPiKJafreVln3Gg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9044B802575;
-        Tue, 19 Oct 2021 09:24:12 +0000 (UTC)
-Received: from T590 (ovpn-8-39.pek2.redhat.com [10.72.8.39])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 612425D6D5;
-        Tue, 19 Oct 2021 09:23:55 +0000 (UTC)
-Date:   Tue, 19 Oct 2021 17:23:50 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, tj@kernel.org,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        minchan@kernel.org, jeyu@kernel.org, shuah@kernel.org,
-        bvanassche@acm.org, dan.j.williams@intel.com, joe@perches.com,
-        tglx@linutronix.de, keescook@chromium.org, rostedt@goodmis.org,
-        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ming.lei@redhat.com
-Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
-Message-ID: <YW6OptglA6UykZg/@T590>
-References: <YWeR4moCRh+ZHOmH@T590>
- <YWiSAN6xfYcUDJCb@bombadil.infradead.org>
- <YWjCpLUNPF3s4P2U@T590>
- <YWjJ0O7K+31Iz3ox@bombadil.infradead.org>
- <YWk9e957Hb+I7HvR@T590>
- <YWm68xUnAofop3PZ@bombadil.infradead.org>
- <YWq3Z++uoJ/kcp+3@T590>
- <YW3LuzaPhW96jSBK@bombadil.infradead.org>
- <YW4uwep3BCe9Vxq8@T590>
- <alpine.LSU.2.21.2110190820590.15009@pobox.suse.cz>
+        Tue, 19 Oct 2021 05:41:04 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82EF0C06161C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 02:38:51 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id o184so7583179iof.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 02:38:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=h7Ka/8DlpkXEXF23rPgOfJJ3SyquA2FhD5HYDsybiG4=;
+        b=TOvN/3L74NxJ8jkZLAwc1HWcAigE5PqgL50bgmFqgfF5N3Ni/F/hFF6HKKLKTN31yN
+         HevaAXYbPfypt8hhKvSPyehT5ALdXqczNk+5xUwtC+i5sgHXh2uIQwAecZjfCaWU8ix6
+         IP3iNNDeKzM9Rarn67S7Y6Q5meavaw7Mpk+sez5Jm9gTXVkS2K7rH0HxN0wGBD1vTEZW
+         SlZ7Ohjm5TDffwxVe9psHKkZrw9F8ewS3UJdvRp48BugnVC9N6o6tGt7kOuD9dBL9WOI
+         l1dbXlU20FuuDCR1G9eGV6dpPzPq/obtSd+vSUmjw4dvgQ3M4KndmuUgzevCd5/KLP2j
+         AvJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=h7Ka/8DlpkXEXF23rPgOfJJ3SyquA2FhD5HYDsybiG4=;
+        b=Mzb+kL9dfyqxYSge3LYygmWB1a9EjVsMlpJEdducFAWAIx+37ChKxnW9/jWAiWZ2Nd
+         vNzfeA2bBrQQOirGZ3e1Z9oXOEJ93TXoj4p4s+8ZEPvLSsbFcz8iP0sHCuNXuWy5qMTA
+         z9o3nwv/lD5uujBgJLPQ2+R0J48dE8DW8IhyLFwGRIfbuZf256AyPO+hsWa/8JpSKfRI
+         4QFMSuiT7LynvSSn6nimGL6KlI6Hp+s1eOeYlQDZjEwHalSSKq5Ql+ZUN9C6GOPrGCDj
+         xvlo4t7oESQbJHM4y8Q0tXHNXxW4ts4gmG88JsgeHzl/35tK52aUnQIfe4oh/oYAJNst
+         OZMQ==
+X-Gm-Message-State: AOAM533mzxGb258QkYthx8q9W2C0OiyAmoW4FITHqkpNHUfsvsgdEk5W
+        gbAegvBXIPHtYXB/LCAc8EoSGWyZeDh7PWjETrfVX0NVfQg=
+X-Google-Smtp-Source: ABdhPJzMH7/Viv+gmOFi/wRxRbcc549EbhNxq1WBmFuuCl5Y1sIaNw3hPc5P9A8SHm6QnP1HNGNAvecvirmJS/oiL6w=
+X-Received: by 2002:a02:6f5d:: with SMTP id b29mr3319085jae.113.1634636331013;
+ Tue, 19 Oct 2021 02:38:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.2110190820590.15009@pobox.suse.cz>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Received: by 2002:a92:c7c6:0:0:0:0:0 with HTTP; Tue, 19 Oct 2021 02:38:50
+ -0700 (PDT)
+Reply-To: megaritalouisdrayfu199@yahoo.com
+From:   "Mrs. Margarita Louis-Dreyfus." <anniewei112@gmail.com>
+Date:   Mon, 18 Oct 2021 21:38:50 -1200
+Message-ID: <CAGT4pMkzKn8mfeY05OAG04CCAxodKEVDUk46D=O7cfK8+n1=tA@mail.gmail.com>
+Subject: Charitable funds to help the less privilege!
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 19, 2021 at 08:23:51AM +0200, Miroslav Benes wrote:
-> > > By you only addressing the deadlock as a requirement on approach a) you are
-> > > forgetting that there *may* already be present drivers which *do* implement
-> > > such patterns in the kernel. I worked on addressing the deadlock because
-> > > I was informed livepatching *did* have that issue as well and so very
-> > > likely a generic solution to the deadlock could be beneficial to other
-> > > random drivers.
-> > 
-> > In-tree zram doesn't have such deadlock, if livepatching has such AA deadlock,
-> > just fixed it, and seems it has been fixed by 3ec24776bfd0.
-> 
-> I would not call it a fix. It is a kind of ugly workaround because the 
-> generic infrastructure lacked (lacks) the proper support in my opinion. 
-> Luis is trying to fix that.
+--=20
+Hello,
 
-What is the proper support of the generic infrastructure? I am not
-familiar with livepatching's model(especially with module unload), you mean
-livepatching have to do the following way from sysfs:
+I am sorry to encroach into your privacy in this manner, my name
+Margarita Louis-Dreyfus , I find it pleasurable to offer you my
+partnership in business, i only pray at this time that your email
+address is still valid. I want to solicit your attention to receive
+money on my behalf for humanitarian project to help the less
+priviledge.
 
-1) during module exit:
-	
-	mutex_lock(lp_lock);
-	kobject_put(lp_kobj);
-	mutex_unlock(lp_lock);
-	
-2) show()/store() method of attributes of lp_kobj
-	
-	mutex_lock(lp_lock)
-	...
-	mutex_unlock(lp_lock)
+The purpose of my contacting you is because my status would not permit
+me to do this alone. Given my current state of health, I have decided
+to donate Ninety -Eight Million United State Dollars to establish a
+foundation with your help to reach out to the less privilege, orphans,
+sick and homeless people in your country who will receive their
+blessings as i promised my God before i leave this earth.
 
-IMO, the above usage simply caused AA deadlock. Even in Luis's patch
-'zram: fix crashes with cpu hotplug multistate', new/same AA deadlock
-(hot_remove_store() vs. disksize_store() or reset_store()) is added
-because hot_remove_store() isn't called from module_exit().
+I got your contact through my personal search, you were revealed as
+being quite astute in private entrepreneurship, and i have no doubt
+that you can handle this huge financial transaction. Please contact my
+executor for more information:
 
-Luis tries to delay unloading module until all show()/store() are done. But
-that can be obtained by the following way simply during module_exit():
+Mr. Ford Spencer(Attorney at Law).
+For: Mrs. Margarita Louis-Dreyfus
+LEGAL DEPARTMENT LAWSON & ASSOCIATES
+(JUSTICE, FAIRPLAY & EQUITY)
+Email: fordspencer828@yahoo.com, fordspencereqs828@gmail.com
+Office: +1-970-414-1400
++1-702-714-3422
+Mobile: +1 916 269 2733
+Fax: +1-970-414-1433
+=C2=AE Property of Steven C Spence PA.
 
-	kobject_del(lp_kobj); //all pending store()/show() from lp_kobj are done,
-						  //no new store()/show() can come after
-						  //kobject_del() returns	
-	mutex_lock(lp_lock);
-	kobject_put(lp_kobj);
-	mutex_unlock(lp_lock);
+Your earliest response to this letter will be appreciated.
 
-Or can you explain your requirement on kobject/module unload in a bit
-details?
+Kind Regards,
 
-
-Thanks,
-Ming
-
+Mrs. Margarita Louis-Dreyfus.
