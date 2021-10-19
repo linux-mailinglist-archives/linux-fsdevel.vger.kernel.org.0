@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 350C6432D86
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 07:56:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 920F4432D8C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 07:57:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229927AbhJSF65 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 01:58:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59364 "EHLO
+        id S233904AbhJSF76 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 01:59:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229649AbhJSF64 (ORCPT
+        with ESMTP id S229742AbhJSF76 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 01:58:56 -0400
+        Tue, 19 Oct 2021 01:59:58 -0400
 Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 711ABC06161C;
-        Mon, 18 Oct 2021 22:56:44 -0700 (PDT)
-Received: by mail-il1-x130.google.com with SMTP id i6so75210ila.12;
-        Mon, 18 Oct 2021 22:56:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7CD1C06161C;
+        Mon, 18 Oct 2021 22:57:45 -0700 (PDT)
+Received: by mail-il1-x130.google.com with SMTP id j8so17268927ila.11;
+        Mon, 18 Oct 2021 22:57:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=B3yNLbDICfeua/LhdwVtVCVMzajs527DpJFcM6F62K0=;
-        b=TmZKZKP+GyBB0U025hqaZsQ/0b3+1pPZwrBdu2jTXTIRdW8XDVFf08N5cYy6tVU9PJ
-         8UsPWywvpJEGBHRBekH2IaEE3BX6eD4YyJZSfMI3Csan9K3HNp8cF+64qMJjWW+hSp2D
-         nFlHS7O0zz1e7Ep/9T3xkwHdRtWkdgpWdkx3oeLsH7ob5H6w8yhXLJYiPYIGmQATBAbl
-         LaipfK9qAiYy5od0oXGZeTEanCAh6EhADkH3XKsB87Oy6BTDYPWSHjwX7WG0fsEF0nMz
-         JMHwIP431h2sNfFTK9DK9v+0bnRVFyrftmPY59qwyT48Efb/wQPWqcUqIr1hSomnemto
-         KTkA==
+        bh=5lAUP3jqPno1fIvkezQw6XWrCUmUSD+cCPVURLWlg/4=;
+        b=mAyGW5CrXwFlmdOA6f9e4OuSZTB4edtRyTRWms1JdfnlTN+fkivQ/tjT9cS6hW/0iW
+         fHWfSucuLnWmseQNSpgBd6ah5RQpKCyAz9+TSGMEXaRXs/PV55bUZrn2+RGUAakqt/W0
+         oOXWcuUYx0jLZZ7IAxIWqkqY2vVDN+aibE7ujFty/WE4Ue/rtwfXzDhRbQxKhDAo/ApE
+         rwZkvHRy9dJYPoT66DHYiAecHFqxMVIu/x5SaZOKJalvV4ZIOeqQ1YnzIKOnKNn0SNie
+         YYEztOsIl8KtasrWv9iooXBOxD3aqavIxDPt9SFqhpKJerWwOal+ldWMF2eZiO82tZfe
+         QdEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=B3yNLbDICfeua/LhdwVtVCVMzajs527DpJFcM6F62K0=;
-        b=391BGXkYJE0Sl+hKpm8IOODDsmyaV5u3stylLqWpAkUoqGvI376AGLtRiDbKkK/xre
-         OZtSUr+MHFcNOFsWWGXazHjXsvkxX+yBN2/J7iTR5CAbdeNBU3inmUGt3oiCxgcHVq1l
-         cpqefw2JfbQfqfBuWc69JAKsXEi632qHCj1/6EjV3qPtlAT7wVW7c93txlLh2NUDqUvj
-         s1tvXJxQOl1BnfwtiWWBm49d9RmEEs6Lh0yunOlTGeccrIMKQbdcL8BvSZR4f4/8CK7l
-         GLGbq2rFBoRKFopyvNozvbLuXIj/X55Ex6qTfbJxe/bwhW7HCQimVHndIOaSN/isBL5G
-         grXA==
-X-Gm-Message-State: AOAM531oUeLh3BFc0tFs/oc8bY3rfzF+7gJBQU8VF5ZmyTc+ubQ5H25e
-        hPqmejEkCLcwmMEXSvWo7o+MJk2j283gINjS/98=
-X-Google-Smtp-Source: ABdhPJziM9iXhRB0QxQk6cDlyqZhj7aL696borMxECPr+XBv6lpUf5iQD8cgXCMfP7CFQZ8G6+8hYcxHMXACHbcvBrk=
-X-Received: by 2002:a05:6e02:160e:: with SMTP id t14mr17794948ilu.107.1634623003861;
- Mon, 18 Oct 2021 22:56:43 -0700 (PDT)
+        bh=5lAUP3jqPno1fIvkezQw6XWrCUmUSD+cCPVURLWlg/4=;
+        b=5/F53tVbVhFZr/cB8lkRR0BxgtSbacLZcX97dRG1NPRZ0IGDboajZLB44AYQNowziQ
+         quD1I5WyqUJg7d768zad8fTozwdP/4hWE1iSTxs1ysx0p86sgd92t/Mg3YxZoMYZT/NE
+         /GnAs8Td5Fq2F/nMHDpkL7jVs9WNw5xJ/7i0BBBVt9cMNHoFMKcTJPwFQbG+Iw8cYmln
+         Db0LsubLyevDdPjiilmnPkcyH6IBnS5G3XWDGXHDwDSmJKjnZe1RKYwy0/EuoC/i519X
+         sZSMrfCIumQmFUwwNNAVF1zlRqNGEDCiKJ4qjVX8zSDovSyb4eODnz26gGKiahut5f+E
+         VLdA==
+X-Gm-Message-State: AOAM530Xc6nJKTB4cSQLOxEgLsvy3El3badUtGNU3npQTH4QlmadrR5+
+        hs625W12wAVXUDQjnqvLNRJTD3DdrjpSjNqE9A8=
+X-Google-Smtp-Source: ABdhPJxzbRTIBeUELxAb8n+DpH76vHUZ9PJYFH+ap54i0XtfDfa3OZ+hSmW51oasrrVHSVFjF+Mu5O1ZCQhdP8RGn0w=
+X-Received: by 2002:a05:6e02:1b04:: with SMTP id i4mr17491724ilv.319.1634623065214;
+ Mon, 18 Oct 2021 22:57:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211019000015.1666608-1-krisman@collabora.com> <20211019000015.1666608-23-krisman@collabora.com>
-In-Reply-To: <20211019000015.1666608-23-krisman@collabora.com>
+References: <20211019000015.1666608-1-krisman@collabora.com> <20211019000015.1666608-30-krisman@collabora.com>
+In-Reply-To: <20211019000015.1666608-30-krisman@collabora.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 19 Oct 2021 08:56:32 +0300
-Message-ID: <CAOQ4uxi2D_X1TwajwEUuKz8AzeWyphQTAMZ1S=zioQkLPkUcMA@mail.gmail.com>
-Subject: Re: [PATCH v8 22/32] fanotify: Support merging of error events
+Date:   Tue, 19 Oct 2021 08:57:34 +0300
+Message-ID: <CAOQ4uxhiXdKEo0o9joQ=7PTRkbQAEmFjjD2BgyZTTAdJ_QZ7Vg@mail.gmail.com>
+Subject: Re: [PATCH v8 29/32] fanotify: Allow users to request FAN_FS_ERROR events
 To:     Gabriel Krisman Bertazi <krisman@collabora.com>
 Cc:     Jan Kara <jack@suse.com>, "Darrick J. Wong" <djwong@kernel.org>,
         Theodore Tso <tytso@mit.edu>,
@@ -65,13 +65,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 19, 2021 at 3:03 AM Gabriel Krisman Bertazi
+On Tue, Oct 19, 2021 at 3:04 AM Gabriel Krisman Bertazi
 <krisman@collabora.com> wrote:
 >
-> Error events (FAN_FS_ERROR) against the same file system can be merged
-> by simply iterating the error count.  The hash is taken from the fsid,
-> without considering the FH.  This means that only the first error object
-> is reported.
+> Wire up the FAN_FS_ERROR event in the fanotify_mark syscall, allowing
+> user space to request the monitoring of FAN_FS_ERROR events.
+>
+> These events are limited to filesystem marks, so check it is the
+> case in the syscall handler.
 >
 > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 >
@@ -79,107 +80,60 @@ Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
 > ---
 > Changes since v7:
->   - Move fee->fsid assignment here (Amir)
->   - Open code error event merge logic in fanotify_merge (Jan)
+>   - Move the verification closer to similar code (Amir)
 > ---
->  fs/notify/fanotify/fanotify.c | 26 ++++++++++++++++++++++++--
->  fs/notify/fanotify/fanotify.h |  4 +++-
->  2 files changed, 27 insertions(+), 3 deletions(-)
+>  fs/notify/fanotify/fanotify.c      | 2 +-
+>  fs/notify/fanotify/fanotify_user.c | 4 ++++
+>  include/linux/fanotify.h           | 6 +++++-
+>  3 files changed, 10 insertions(+), 2 deletions(-)
 >
 > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index 1f195c95dfcd..cedcb1546804 100644
+> index 0f6694eadb63..20169b8d5ab7 100644
 > --- a/fs/notify/fanotify/fanotify.c
 > +++ b/fs/notify/fanotify/fanotify.c
-> @@ -111,6 +111,16 @@ static bool fanotify_name_event_equal(struct fanotify_name_event *fne1,
->         return fanotify_info_equal(info1, info2);
->  }
+> @@ -821,7 +821,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
+>         BUILD_BUG_ON(FAN_OPEN_EXEC_PERM != FS_OPEN_EXEC_PERM);
+>         BUILD_BUG_ON(FAN_FS_ERROR != FS_ERROR);
 >
-> +static bool fanotify_error_event_equal(struct fanotify_error_event *fee1,
-> +                                      struct fanotify_error_event *fee2)
-> +{
-> +       /* Error events against the same file system are always merged. */
-> +       if (!fanotify_fsid_equal(&fee1->fsid, &fee2->fsid))
-> +               return false;
-> +
-> +       return true;
-> +}
-> +
->  static bool fanotify_should_merge(struct fanotify_event *old,
->                                   struct fanotify_event *new)
->  {
-> @@ -141,6 +151,9 @@ static bool fanotify_should_merge(struct fanotify_event *old,
->         case FANOTIFY_EVENT_TYPE_FID_NAME:
->                 return fanotify_name_event_equal(FANOTIFY_NE(old),
->                                                  FANOTIFY_NE(new));
-> +       case FANOTIFY_EVENT_TYPE_FS_ERROR:
-> +               return fanotify_error_event_equal(FANOTIFY_EE(old),
-> +                                                 FANOTIFY_EE(new));
->         default:
->                 WARN_ON_ONCE(1);
->         }
-> @@ -176,6 +189,10 @@ static int fanotify_merge(struct fsnotify_group *group,
->                         break;
->                 if (fanotify_should_merge(old, new)) {
->                         old->mask |= new->mask;
-> +
-> +                       if (fanotify_is_error_event(old->mask))
-> +                               FANOTIFY_EE(old)->err_count++;
-> +
->                         return 1;
->                 }
->         }
-> @@ -577,7 +594,8 @@ static struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
->  static struct fanotify_event *fanotify_alloc_error_event(
->                                                 struct fsnotify_group *group,
->                                                 __kernel_fsid_t *fsid,
-> -                                               const void *data, int data_type)
-> +                                               const void *data, int data_type,
-> +                                               unsigned int *hash)
->  {
->         struct fs_error_report *report =
->                         fsnotify_data_error_report(data, data_type);
-> @@ -591,6 +609,10 @@ static struct fanotify_event *fanotify_alloc_error_event(
->                 return NULL;
+> -       BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 19);
+> +       BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 20);
 >
->         fee->fae.type = FANOTIFY_EVENT_TYPE_FS_ERROR;
-> +       fee->err_count = 1;
-> +       fee->fsid = *fsid;
+>         mask = fanotify_group_event_mask(group, iter_info, mask, data,
+>                                          data_type, dir);
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index b83c61c934d0..22dca806c7e2 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -1535,6 +1535,10 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>             group->priority == FS_PRIO_0)
+>                 goto fput_and_out;
+>
+> +       if (mask & FAN_FS_ERROR &&
+> +           mark_type != FAN_MARK_FILESYSTEM)
+> +               goto fput_and_out;
 > +
-> +       *hash ^= fanotify_hash_fsid(fsid);
+>         /*
+>          * Events that do not carry enough information to report
+>          * event->fd require a group that supports reporting fid.  Those
+> diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+> index 52d464802d99..616af2ea20f3 100644
+> --- a/include/linux/fanotify.h
+> +++ b/include/linux/fanotify.h
+> @@ -91,9 +91,13 @@ extern struct ctl_table fanotify_table[]; /* for sysctl */
+>  #define FANOTIFY_INODE_EVENTS  (FANOTIFY_DIRENT_EVENTS | \
+>                                  FAN_ATTRIB | FAN_MOVE_SELF | FAN_DELETE_SELF)
 >
->         return &fee->fae;
->  }
-> @@ -664,7 +686,7 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
->                 event = fanotify_alloc_perm_event(path, gfp);
->         } else if (fanotify_is_error_event(mask)) {
->                 event = fanotify_alloc_error_event(group, fsid, data,
-> -                                                  data_type);
-> +                                                  data_type, &hash);
->         } else if (name_event && (file_name || child)) {
->                 event = fanotify_alloc_name_event(id, fsid, file_name, child,
->                                                   &hash, gfp);
-> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-> index ebef952481fa..2b032b79d5b0 100644
-> --- a/fs/notify/fanotify/fanotify.h
-> +++ b/fs/notify/fanotify/fanotify.h
-> @@ -199,6 +199,9 @@ FANOTIFY_NE(struct fanotify_event *event)
->
->  struct fanotify_error_event {
->         struct fanotify_event fae;
-> +       u32 err_count; /* Suppressed errors count */
+> +/* Events that can only be reported with data type FSNOTIFY_EVENT_ERROR */
+> +#define FANOTIFY_ERROR_EVENTS  (FAN_FS_ERROR)
 > +
-> +       __kernel_fsid_t fsid; /* FSID this error refers to. */
->  };
+>  /* Events that user can request to be notified on */
+>  #define FANOTIFY_EVENTS                (FANOTIFY_PATH_EVENTS | \
+> -                                FANOTIFY_INODE_EVENTS)
+> +                                FANOTIFY_INODE_EVENTS | \
+> +                                FANOTIFY_ERROR_EVENTS)
 >
->  static inline struct fanotify_error_event *
-> @@ -332,7 +335,6 @@ static inline struct path *fanotify_event_path(struct fanotify_event *event)
->  static inline bool fanotify_is_hashed_event(u32 mask)
->  {
->         return !(fanotify_is_perm_event(mask) ||
-> -                fanotify_is_error_event(mask) ||
->                  fsnotify_is_overflow_event(mask));
->  }
->
+>  /* Events that require a permission response from user */
+>  #define FANOTIFY_PERM_EVENTS   (FAN_OPEN_PERM | FAN_ACCESS_PERM | \
 > --
 > 2.33.0
 >
