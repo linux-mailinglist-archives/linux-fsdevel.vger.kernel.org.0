@@ -2,98 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58FB5433B43
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 17:53:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37AEC433B75
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 18:00:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231874AbhJSPzN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 11:55:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56324 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229789AbhJSPzM (ORCPT
+        id S233553AbhJSQDE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 12:03:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36647 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232913AbhJSQDD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 11:55:12 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1709AC06161C;
-        Tue, 19 Oct 2021 08:53:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=L/r8W7OeCFbqHVWl3EceBKDkVDU//3rCuUA5Z221DbI=; b=ufmSm0fgCXPpRU3kuJL6vdob+c
-        dOnKyAFlfO2R4WNkEkGoEI7LEqthAZgCjqmFPCVpSgu7sZ0uhYyKKU7zAMKZjgHo2IcsDvF6+RsIK
-        NKH0zZnEXHfm3rhGzDPvPJ5WlkOsXZmL8r3nSuIJbUjHv4FFIQgu+GsTqi9hDC8euY8KuVBv4af+3
-        YA1IjRVCsppJzdoU/+EmIPHhKB+daoMvsOw1r70oh1c1MybrTGUONYdxjYwqB8mMc12zBHLIPtx9Z
-        VWvTZafpQrwauVGjebkmX2QrOitVSWVoJbbd63MBMDklA/MX+AvyAqKX+ebIkw7RZZkPU9Rjg0Per
-        UN1xQFow==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mcrPu-001lY4-22; Tue, 19 Oct 2021 15:52:42 +0000
-Date:   Tue, 19 Oct 2021 08:52:42 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     bp@suse.de, akpm@linux-foundation.org, josh@joshtriplett.org,
-        rishabhb@codeaurora.org, kubakici@wp.pl, maco@android.com,
-        david.brown@linaro.org, bjorn.andersson@linaro.org,
-        linux-wireless@vger.kernel.org, keescook@chromium.org,
-        shuah@kernel.org, mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com,
-        dhowells@redhat.com, pali.rohar@gmail.com, tiwai@suse.de,
-        arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
-        broonie@kernel.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org,
-        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
-        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
-        andresx7@gmail.com, dan.rue@linaro.org, brendanhiggins@google.com,
-        yzaikin@google.com, sfr@canb.auug.org.au, rdunlap@infradead.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 04/14] firmware_loader: add built-in firmware kconfig
- entry
-Message-ID: <YW7pynWzRHE+MpTC@bombadil.infradead.org>
-References: <20210917182226.3532898-1-mcgrof@kernel.org>
- <20210917182226.3532898-5-mcgrof@kernel.org>
- <YVxhbhmNd7tahLV7@kroah.com>
- <YWR16e/seTx/wxE+@bombadil.infradead.org>
- <YWR4XKrC2Bkr4qKQ@kroah.com>
- <YWS7ABDdBIpdt/84@bombadil.infradead.org>
- <YW3gae4HoUd9izyj@bombadil.infradead.org>
- <YW5irpRIIr0H/tXh@kroah.com>
+        Tue, 19 Oct 2021 12:03:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634659250;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+/pkobYQmFSVPtB7/1zAAgkGIOuOGumz0nqsWSm3uLo=;
+        b=jMplC40vZdm6TXltESiaZ20NdkurOHXwrnhG/taNv3uoHC/443cUy69orPDxPL3yanotWZ
+        hZeRJ4JH0BFvtXf6bCizxJx8kd+kQBJDacfWJrN0LkBKQNc/558udtiMcuK+xHZR3Ufwd4
+        9wXUSsy+A96QkuLENbdKvsBLCG/5ZPs=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-310-3p4Dzoh_O_mlCesOPEKJUw-1; Tue, 19 Oct 2021 12:00:49 -0400
+X-MC-Unique: 3p4Dzoh_O_mlCesOPEKJUw-1
+Received: by mail-io1-f69.google.com with SMTP id a1-20020a5d9801000000b005de11aa60b8so5378831iol.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 09:00:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=+/pkobYQmFSVPtB7/1zAAgkGIOuOGumz0nqsWSm3uLo=;
+        b=u0WDx1rjGTF067g58LtRIlp7g9ZSgb/lmr+fPai1wptCRB6+iTLbsYhVCq1U+S/4sW
+         Od0hfrBr/WkTi9z3vlSMO9T65A0qzh7L/BVhVY22FP2FNM8pq8llmVGaA7ynVubOIAw/
+         lv0f+UwoTu7SLoCOdTlPi2HjYzNb3IdWDMePlzVw40vI+k+yBeSUansB2AzvoGEWSS9A
+         MzKYn4Vnz089xKn/jZQ5BWQ5yTIuwfii2ziYohwp8t58fP/Unnr9Ox9vLj73n8H5Q12Q
+         9mVpIu18U9e99zgmPyb9bGCBU7zI4FpwN2gj+geE9G02hdTi2nTAHGOjcLv4Z9j5iESZ
+         H4Jw==
+X-Gm-Message-State: AOAM533q5NpKMCM/mQqwRKalq9VL/09mBEdCsmZPSfeGDObA++cRYa7z
+        97FDwaoIKQGKLVuvgDfTcZ/TWJz+RO6cxjCzBJvxlSiZYKTdVmWIClIpYL6qW2Muyoqsn2LqeNQ
+        FZQ7MLwtGN19doCX03k0KBDePFA==
+X-Received: by 2002:a92:ad07:: with SMTP id w7mr964698ilh.162.1634659248222;
+        Tue, 19 Oct 2021 09:00:48 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzAZfB7m5Nwi7iGOdqLp7ZjGTVP9iLTlfNdmkJjBBh89jyJbqtVZTUIyhlFM83/SHsC93WNcw==
+X-Received: by 2002:a92:ad07:: with SMTP id w7mr964668ilh.162.1634659248043;
+        Tue, 19 Oct 2021 09:00:48 -0700 (PDT)
+Received: from [172.16.0.19] ([205.214.171.149])
+        by smtp.gmail.com with ESMTPSA id i18sm9324101ila.32.2021.10.19.09.00.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Oct 2021 09:00:47 -0700 (PDT)
+Message-ID: <d28b1ea4-6834-816e-a01a-f1bd0862e84e@redhat.com>
+Date:   Tue, 19 Oct 2021 11:00:45 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YW5irpRIIr0H/tXh@kroah.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.0
+Subject: Re: [PATCH v8 00/17] gfs2: Fix mmap + page fault deadlocks
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+References: <20211019134204.3382645-1-agruenba@redhat.com>
+ <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
+From:   Bob Peterson <rpeterso@redhat.com>
+In-Reply-To: <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 19, 2021 at 08:16:14AM +0200, Greg KH wrote:
-> On Mon, Oct 18, 2021 at 02:00:25PM -0700, Luis Chamberlain wrote:
-> > On Mon, Oct 11, 2021 at 03:30:24PM -0700, Luis Chamberlain wrote:
-> > > On Mon, Oct 11, 2021 at 07:46:04PM +0200, Greg KH wrote:
-> > > > >   o By default we now always skip built-in firmware even if a FW_LOADER=y
-> > > > 
-> > > > I do not understand, why would we ever want to skip built-in firmware?
-> > > 
-> > > Because it is done this way today only implicitly because
-> > > EXTRA_FIRMWARE is empty. Using a kconfig entry makes this
-> > > more obvious.
-> > 
-> > Greg,
-> > 
-> > The fact that it was not obvious to you we were effectively disabling
-> > the built-in firmware functionality by default using side kconfig
-> > symbols is a good reason to clarify this situation with its own kconfig
-> > symbol.
-> > 
-> > And consider what I started below as well.
-> > 
-> > Please let me know why on the other hand we should *not* add this new
-> > kconfig symbol?
+On 10/19/21 10:40 AM, Linus Torvalds wrote:
+> On Tue, Oct 19, 2021 at 3:42 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+>>
+>>  From my point of view, the following questions remain:
+>>
+>>   * I hope these patches will be merged for v5.16, but what process
+>>     should I follow for that?  The patch queue contains mm and iomap
+>>     changes, so a pull request from the gfs2 tree would be unusual.
 > 
-> Because added complexity for no real good reason?  You need to justify
-> why we need yet-another firmware kconfig option here.  We should be
-> working to remove them, not add more, if at all possible.
+> Oh, I'd much rather get these as one pull request from the author and
+> from the person that actually ended up testing this.
 
-I did, it actually simplifies things more and makes the fact that we
-disable the functionality of the built-in firmware by default clearer.
+Hi Linus,
 
-So no, this is not adding complexity.
+FWIW, I've been working with Andreas on this and have tested it quite
+extensively, although only with gfs2. I've tested it with numerous
+scenarios, both stand-alone (xfstests as well as several other test
+programs I have in my collection) and in a cluster with some very heavy
+duty cluster coherency tests. My testing is nearly complete, but not
+quite.
 
- Luis
+Regards,
+
+Bob Peterson
+GFS2 File System
+
