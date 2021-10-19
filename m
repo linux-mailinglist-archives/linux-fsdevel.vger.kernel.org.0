@@ -2,116 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 853FA433CC6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 18:53:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19EAB433CD5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 18:55:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232512AbhJSQzu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 12:55:50 -0400
-Received: from mail-oi1-f173.google.com ([209.85.167.173]:39509 "EHLO
-        mail-oi1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbhJSQzt (ORCPT
+        id S231654AbhJSQ5U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 12:57:20 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50272 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229774AbhJSQ5T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 12:55:49 -0400
-Received: by mail-oi1-f173.google.com with SMTP id s9so3552502oiw.6;
-        Tue, 19 Oct 2021 09:53:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=fnwMHmBtcUTzeN7AT8ukQSoNU1knCjzi3Fwq9Ac0g90=;
-        b=HJdKu9Yc8oALg0EUXoUMBKenRfGSuc1q4BNOBnq1d3QPbXkCq0Q5jlBTo0ea8p8UZl
-         TFoRbrGnbWaGpIrHbQBqSuwUjDBjln3eaN2Tq7E0W56vbVBbTfmfC0AToRtbsfbJrN2f
-         TGQLAwhyx4BbOTgYtABGlXWrUetqHt59xqngUL10JUAD9n2+2D9oWEUJzviJL0Jxj5V5
-         1ehW808u32vCVZl2iVvCq3srHVgLn+AvHiMGVaozwkhe/dawpGSKvp7qDZAT2I5VNhxs
-         BJzngAMZ1t+SxOkjC/HJaDKF7a5CBdMUeB22usBCn/Xn19ZwnQcZOApGMc6tjISI+tdo
-         6Amw==
-X-Gm-Message-State: AOAM531GWuQFQ3L5WRDnGlhygdiI/0FEMysCTKio0KzcAOE7RqhVCKqw
-        nUgroemq5t+BnedFQmoE8w==
-X-Google-Smtp-Source: ABdhPJxG3M4MMDejwrse4k8mTAjT5I/40KR+eLLfq1+ZBF3yaKS308ugfGwsvK1xSATT6JQLbB2GBw==
-X-Received: by 2002:a05:6808:1185:: with SMTP id j5mr5157383oil.16.1634662416108;
-        Tue, 19 Oct 2021 09:53:36 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-148-213.dyn.grandenetworks.net. [66.90.148.213])
-        by smtp.gmail.com with ESMTPSA id l26sm3843004oti.45.2021.10.19.09.53.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Oct 2021 09:53:35 -0700 (PDT)
-Received: (nullmailer pid 427792 invoked by uid 1000);
-        Tue, 19 Oct 2021 16:53:33 -0000
-Date:   Tue, 19 Oct 2021 11:53:33 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Tony Luck <tony.luck@intel.com>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Rob Herring <robh+dt@kernel.org>, bpf@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org,
-        netdev@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        KP Singh <kpsingh@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        linux-fsdevel@vger.kernel.org, Anup Patel <anup.patel@wdc.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Shuah Khan <shuah@kernel.org>,
-        Colin Cross <ccross@android.com>, Alex Shi <alexs@kernel.org>,
-        Yonghong Song <yhs@fb.com>, Kees Cook <keescook@chromium.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>, kvm@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        sparmaintainer@unisys.com,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Atish Patra <atish.patra@wdc.com>, devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH v3 00/23] Fix some issues at documentation
-Message-ID: <YW74Dez4/3cIbe1Q@robh.at.kernel.org>
-References: <cover.1634630485.git.mchehab+huawei@kernel.org>
+        Tue, 19 Oct 2021 12:57:19 -0400
+Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1007])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: krisman)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 0DF1A1F43774;
+        Tue, 19 Oct 2021 17:55:04 +0100 (BST)
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     jack@suse.com, amir73il@gmail.com, djwong@kernel.org,
+        tytso@mit.edu, david@fromorbit.com, dhowells@redhat.com,
+        khazhy@google.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-api@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH v8 30/32] ext4: Send notifications on error
+Organization: Collabora
+References: <20211019000015.1666608-1-krisman@collabora.com>
+        <20211019000015.1666608-31-krisman@collabora.com>
+        <20211019154426.GR3255@quack2.suse.cz>
+        <20211019160152.GT3255@quack2.suse.cz>
+Date:   Tue, 19 Oct 2021 13:54:59 -0300
+In-Reply-To: <20211019160152.GT3255@quack2.suse.cz> (Jan Kara's message of
+        "Tue, 19 Oct 2021 18:01:52 +0200")
+Message-ID: <87o87lnee4.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1634630485.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 19 Oct 2021 09:03:59 +0100, Mauro Carvalho Chehab wrote:
-> Hi Jon,
-> 
-> This series is against today's next (next-20211019) and addresses missing
-> links to Documentation/*.
-> 
-> The best would be to have the patches applied directly to the trees that
-> contain the patches that moved/renamed files, and then apply the
-> remaining ones either later during the merge window or just afterwards,
-> whatever works best for you.
-> 
-> Regards,
-> Mauro
-> 
-> Mauro Carvalho Chehab (23):
->   visorbus: fix a copyright symbol that was bad encoded
->   libbpf: update index.rst reference
->   docs: accounting: update delay-accounting.rst reference
->   MAINTAINERS: update arm,vic.yaml reference
->   MAINTAINERS: update aspeed,i2c.yaml reference
->   MAINTAINERS: update faraday,ftrtc010.yaml reference
->   MAINTAINERS: update ti,sci.yaml reference
->   MAINTAINERS: update intel,ixp46x-rng.yaml reference
->   MAINTAINERS: update nxp,imx8-jpeg.yaml reference
->   MAINTAINERS: update gemini.yaml reference
->   MAINTAINERS: update brcm,unimac-mdio.yaml reference
->   MAINTAINERS: update mtd-physmap.yaml reference
+Jan Kara <jack@suse.cz> writes:
 
-Applied patches 3-12.
+> On Tue 19-10-21 17:44:26, Jan Kara wrote:
+>> On Mon 18-10-21 21:00:13, Gabriel Krisman Bertazi wrote:
+>> > Send a FS_ERROR message via fsnotify to a userspace monitoring tool
+>> > whenever a ext4 error condition is triggered.  This follows the existing
+>> > error conditions in ext4, so it is hooked to the ext4_error* functions.
+>> > 
+>> > It also follows the current dmesg reporting in the format.  The
+>> > filesystem message is composed mostly by the string that would be
+>> > otherwise printed in dmesg.
+>> > 
+>> > A new ext4 specific record format is exposed in the uapi, such that a
+>> > monitoring tool knows what to expect when listening errors of an ext4
+>> > filesystem.
+>> > 
+>> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+>> > Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+>> > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+>> 
+>> Looks good to me. Feel free to add:
+>> 
+>> Reviewed-by: Jan Kara <jack@suse.cz>
+>
+> Hum, I actually retract this because the code doesn't match what is written
+> in the documentation and I'm not 100% sure what is correct. In particular:
+>
+>> > @@ -759,6 +760,8 @@ void __ext4_error(struct super_block *sb, const char *function,
+>> >  		       sb->s_id, function, line, current->comm, &vaf);
+>> >  		va_end(args);
+>> >  	}
+>> > +	fsnotify_sb_error(sb, NULL, error);
+>> > +
+>
+> E.g. here you pass the 'error' to fsnotify. This will be just standard
+> 'errno' number, not ext4 error code as described in the documentation. Also
+> note that frequently 'error' will be 0 which gets magically transformed to
+> EFSCORRUPTED in save_error_info() in the ext4 error handling below. So
+> there's clearly some more work to do...
 
->   Documentation: update vcpu-requests.rst reference
->   bpftool: update bpftool-cgroup.rst reference
->   docs: translations: zn_CN: irq-affinity.rst: add a missing extension
->   docs: translations: zh_CN: memory-hotplug.rst: fix a typo
->   docs: fs: locks.rst: update comment about mandatory file locking
->   fs: remove a comment pointing to the removed mandatory-locking file
->   Documentation/process: fix a cross reference
->   dt-bindings: mfd: update x-powers,axp152.yaml reference
->   regulator: dt-bindings: update samsung,s2mpa01.yaml reference
->   regulator: dt-bindings: update samsung,s5m8767.yaml reference
->   dt-bindings: reserved-memory: ramoops: update ramoops.yaml references
+Nice catch.
+
+The many 0 returns were discussed before, around v3.  You can notice one
+of my LTP tests is designed to catch that.  We agreed ext4 shouldn't be
+returning 0, and that we would write a patch to fix it, but I didn't
+think it belonged as part of this series.
+
+You are also right about the EXT4_ vs. errno.  the documentation is
+buggy, since it was brought from the fs-specific descriptor days, which
+no longer exists.  Nevertheless, I think there is a case for always
+returning file system specific errors here, since they are more
+descriptive.
+
+Should we agree to follow the documentation and return FS specific
+errors instead of errno, then?
+
+Either way, I'm dropping all r-by flags here.
+
+-- 
+Gabriel Krisman Bertazi
