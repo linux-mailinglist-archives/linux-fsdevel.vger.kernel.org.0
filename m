@@ -2,35 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CBF4433E71
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 20:30:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3A2E433EBB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 20:48:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234770AbhJSScN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 14:32:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36194 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232144AbhJSScN (ORCPT
+        id S234124AbhJSSut (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 14:50:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45268 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231355AbhJSSut (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 14:32:13 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12D57C06161C;
-        Tue, 19 Oct 2021 11:30:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=GZ9xrxMcNRI8ZuFFAy2iTPbxahYga2XstNQpPO9cMgE=; b=cn4Pc1pEaoHMVy8gIsrUIPBp6n
-        IvhYVvPxLOGXmopmvPBIi8Z01toSzSmWvibfLFkBjdaHyUYJOrxR08qrwOT8UZ0xqUlec+T5luiVg
-        GzIFfFKh4dwXqT/lDoAJASJwu3IC6cN7Nd7fTUc4kJHy6UjU9MOVZASY6Q/pq5RXGcHm+wZiqO5xJ
-        L7mBvfVKYZM/Ih213xkdpm9shfhx35HfA4lgljh8ZVAEeC0fdP+lXyV7QW2BHwjDKms8f+xacEzUx
-        RYX/9mTfEdCpiyeJAUYH1Hz1l6jJXF6KG6nNRl9qXwdGZU88BN3vWFIH5MDv87MotH6YVNyhJZwtM
-        Byq3EC8w==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mctqE-00Bvpr-F1; Tue, 19 Oct 2021 18:28:14 +0000
-Date:   Tue, 19 Oct 2021 19:28:02 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-cachefs@redhat.com,
+        Tue, 19 Oct 2021 14:50:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634669315;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=W0LKdMZo9vNdqSvore2I0xfjftCA66bzkuaIif0bJYs=;
+        b=g/u2dqnVBOn9FGWhex2r7w76fxIJ4HvlaeOi6Zeb+0yyi4274hKCipMfnNBy9J0X7txm95
+        gETnPuDSrrIfXKZjRHexSwUeHahBCdJdFPn5raUe8jXpMiuZxdxvsycIvgoZ3+m35WLv4e
+        QQuUonyHm7/TurF8rDZs2Nj75pNnrTk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-254-j1U2L1iBM6ODM8XJ0ZVuqg-1; Tue, 19 Oct 2021 14:48:32 -0400
+X-MC-Unique: j1U2L1iBM6ODM8XJ0ZVuqg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2130C19251A1;
+        Tue, 19 Oct 2021 18:48:30 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 965D65DD68;
+        Tue, 19 Oct 2021 18:48:16 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <YW8OMsrEzrY8aSxo@casper.infradead.org>
+References: <YW8OMsrEzrY8aSxo@casper.infradead.org> <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk> <163456863216.2614702.6384850026368833133.stgit@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
         Kent Overstreet <kent.overstreet@gmail.com>,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Trond Myklebust <trondmy@hammerspace.com>,
@@ -44,33 +55,31 @@ Cc:     linux-cachefs@redhat.com,
         linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/67] mm: Stop filemap_read() from grabbing a
- superfluous page
-Message-ID: <YW8OMsrEzrY8aSxo@casper.infradead.org>
-References: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
- <163456863216.2614702.6384850026368833133.stgit@warthog.procyon.org.uk>
+Subject: Re: [PATCH 01/67] mm: Stop filemap_read() from grabbing a superfluous page
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <163456863216.2614702.6384850026368833133.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2971213.1634669295.1@warthog.procyon.org.uk>
+Date:   Tue, 19 Oct 2021 19:48:15 +0100
+Message-ID: <2971214.1634669295@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 18, 2021 at 03:50:32PM +0100, David Howells wrote:
-> @@ -2625,6 +2625,10 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
->  		if ((iocb->ki_flags & IOCB_WAITQ) && already_read)
->  			iocb->ki_flags |= IOCB_NOWAIT;
->  
-> +		isize = i_size_read(inode);
-> +		if (unlikely(iocb->ki_pos >= isize))
-> +			goto put_pages;
-> +
+Matthew Wilcox <willy@infradead.org> wrote:
 
-Is there a good reason to assign to isize here?  I'd rather not,
-because it complicates analysis, and a later change might look at
-the isize read here, not realising it was a racy use.  So I'd
-rather see:
+> > +		isize = i_size_read(inode);
+> > +		if (unlikely(iocb->ki_pos >= isize))
+> > +			goto put_pages;
+> > +
+> 
+> Is there a good reason to assign to isize here?  I'd rather not,
+> because it complicates analysis, and a later change might look at
+> the isize read here, not realising it was a racy use.  So I'd
+> rather see:
 
-		if (unlikely(iocb->ki_pos >= i_size_read(inode)))
-			goto put_pages;
+If we don't set isize, the loop will never end.  Actually, maybe we can just
+break out at that point rather than going to put_pages.
+
+David
+
