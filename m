@@ -2,120 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA5AE433A4C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 17:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91465433ADA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 17:40:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233940AbhJSPat (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 11:30:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50332 "EHLO
+        id S231722AbhJSPmr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 11:42:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232568AbhJSPas (ORCPT
+        with ESMTP id S231250AbhJSPmq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 11:30:48 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B98ABC06161C;
-        Tue, 19 Oct 2021 08:28:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Irq5/RNAL7WL43IvnY258AeD+l1VaGXwOE52U+SqXPo=; b=BqHGICTN9X/CcGdj7L0ihv22zQ
-        9q/SVG92dfC5oLbZmYixLJ1VoeZjUhyTv0j7beDiDnYzqJ574VBpdNozgOG0wpkTvZgUtJfb+eyRU
-        67mH1EwkXdtlZ3p5s0bUScCzno9A7LX9i7efipTyVJ8Wvw3A2x28NbLz1TSEa3PmID9extSQyAg1g
-        Iy6XY94RjdxjfyH304yfNLl/hOiRqm1zKIKcEjznjnyFeorh9b7ERTaNViTYOlgikBzTH5y7st9g2
-        xMUWCCoYsKuj3jtlez6AQl+/jXVPGHzvIk5GfkVgDpt28kwJfj8iFoHzuzjSrPyUkz9cXJgIJB0eg
-        OMGR8F7g==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mcr2L-001gwU-3x; Tue, 19 Oct 2021 15:28:21 +0000
-Date:   Tue, 19 Oct 2021 08:28:21 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, tj@kernel.org,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        minchan@kernel.org, jeyu@kernel.org, shuah@kernel.org,
-        bvanassche@acm.org, dan.j.williams@intel.com, joe@perches.com,
-        tglx@linutronix.de, keescook@chromium.org, rostedt@goodmis.org,
-        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
-Message-ID: <YW7kFXlzRrvwzARP@bombadil.infradead.org>
-References: <YWeOJP2UJWYF94fu@T590>
- <YWeR4moCRh+ZHOmH@T590>
- <YWiSAN6xfYcUDJCb@bombadil.infradead.org>
- <YWjCpLUNPF3s4P2U@T590>
- <YWjJ0O7K+31Iz3ox@bombadil.infradead.org>
- <YWk9e957Hb+I7HvR@T590>
- <YWm68xUnAofop3PZ@bombadil.infradead.org>
- <YWq3Z++uoJ/kcp+3@T590>
- <YW3LuzaPhW96jSBK@bombadil.infradead.org>
- <YW4uwep3BCe9Vxq8@T590>
+        Tue, 19 Oct 2021 11:42:46 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F16DC06161C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 08:40:33 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id r19so8366369lfe.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 08:40:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=M5qLpGOaG+oQiwUY6IZoloZawU2xGFjPWL0KZDD5Sqk=;
+        b=Wmr7RZGDwVuUUI0LgeG+526Yzd808WwmB0Gv3Ef8vlN4fSo+FWdGkt2ewAZlHCizf2
+         AOj6nKdkBK/50v2SslKwFKgXMONLSaQQZm/2hQbpblrN5k/KDVfxEf5XH7GllHiFtRBq
+         4jqVHC4XfB57XB9V0yinVHJ5h8DIkkpImv8f0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M5qLpGOaG+oQiwUY6IZoloZawU2xGFjPWL0KZDD5Sqk=;
+        b=YtLq7nZEU/kahIMjQKzG11XqoPWTSVNqFRSHrRZrXmMhbyQ94SUhK3LW5VPyt26oO4
+         0ALzqFRppS3vpe2ySyJJKVShNCXyPdKvImMiMyPP+4Klu32F+ZlOXeD+tsi7VYyp9yNP
+         zQPt8erkKUGJ0UVZbtNGQJpHZunl4DrasEQsKEZ8TE4q/1b5yuIZW5Mlr7cG1oI3RrnZ
+         TbyydEWKInJLCR4YpxagfTUoRCOin5DTdhC2AB6IXdXngXUvBuu0dkpSESLTunZ8V71t
+         RUFHAb0vsQvYGsWmfIDliZlFDYOrF3NbWsvcTP2sCr2HKOyGNZ0I7736ZAyguroLOnFe
+         BiCg==
+X-Gm-Message-State: AOAM530Rp7XDbNSc9237lUqnvS2YUPm+eeHS/UL8ZZjGpNx4uxCjS7q4
+        hwsttzbk/he2W5ryJdjXDzpzF42ZhP+bRw==
+X-Google-Smtp-Source: ABdhPJzGsbUble03fPcry0UuujGZta5Z8Ba0JfFatmjBca9d3L8nA/4ghv4Fb6Ky9Bf6lH2nYsDKXw==
+X-Received: by 2002:ac2:4bc2:: with SMTP id o2mr6863255lfq.9.1634658031423;
+        Tue, 19 Oct 2021 08:40:31 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id x10sm1696640lff.44.2021.10.19.08.40.29
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Oct 2021 08:40:29 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id x27so8436976lfu.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 08:40:29 -0700 (PDT)
+X-Received: by 2002:a05:6512:398a:: with SMTP id j10mr6559053lfu.402.1634658028835;
+ Tue, 19 Oct 2021 08:40:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YW4uwep3BCe9Vxq8@T590>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+References: <20211019134204.3382645-1-agruenba@redhat.com>
+In-Reply-To: <20211019134204.3382645-1-agruenba@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 19 Oct 2021 05:40:13 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
+Message-ID: <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
+Subject: Re: [PATCH v8 00/17] gfs2: Fix mmap + page fault deadlocks
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 19, 2021 at 10:34:41AM +0800, Ming Lei wrote:
-> Please try the following patch against upstream(linus or next) tree(basically
-> fold revised 2 and 3 of V1, and cover two issues: not fail zram_remove in
-> module_exit(), race between zram_remove() and disksize_store()), and see if
-> everything is fine for you:
+On Tue, Oct 19, 2021 at 3:42 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+>
+> From my point of view, the following questions remain:
+>
+>  * I hope these patches will be merged for v5.16, but what process
+>    should I follow for that?  The patch queue contains mm and iomap
+>    changes, so a pull request from the gfs2 tree would be unusual.
 
-Page fault ...
+Oh, I'd much rather get these as one pull request from the author and
+from the person that actually ended up testing this.
 
-[   18.284256] zram: Removed device: zram0
-[   18.312974] BUG: unable to handle page fault for address:
-ffffad86de903008
-[   18.313707] #PF: supervisor read access in kernel mode
-[   18.314248] #PF: error_code(0x0000) - not-present page
-[   18.314797] PGD 100000067 P4D 100000067 PUD 10031e067 PMD 136a28067
-PTE 0
-[   18.315538] Oops: 0000 [#1] PREEMPT SMP NOPTI
-[   18.316012] CPU: 3 PID: 1198 Comm: rmmod Tainted: G            E
-5.15.0-rc3-next-20210927+ #89
-[   18.316979] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS 1.14.0-2 04/01/2014
-[   18.317876] RIP: 0010:zram_free_page+0x1b/0xf0 [zram]
-[   18.318430] Code: 1f 44 00 00 48 89 c8 c3 0f 1f 80 00 00 00 00 0f 1f
-44 00 00 41 54 49 89 f4 55 89 f5 53 48 8b 17 48 c1 e5 04 48 89 fb 48 01
-ea <48> 8b 42 08 a9 00 00 00 20 74 14 48 25 ff ff ff df 48 89 42 08 48
-[   18.320412] RSP: 0018:ffffad86f8013df8 EFLAGS: 00010286
-[   18.320978] RAX: 0000000000000001 RBX: ffff9b7b435c7800 RCX:
-0000000000000200
-[   18.321758] RDX: ffffad86de903000 RSI: 0000000000000000 RDI:
-ffff9b7b435c7800
-[   18.322524] RBP: 0000000000000000 R08: 0000000000000200 R09:
-0000000000000000
-[   18.323299] R10: 0000000000000200 R11: 0000000000000000 R12:
-0000000000000000
-[   18.324030] R13: ffff9b7b55191800 R14: ffff9b7b435c7820 R15:
-ffff9b7b4677f960
-[   18.324784] FS:  00007fc8e4c90580(0000) GS:ffff9b7c77cc0000(0000)
-knlGS:0000000000000000
-[   18.325651] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   18.326272] CR2: ffffad86de903008 CR3: 000000014f1de003 CR4:
-0000000000370ee0
-[   18.327047] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
-0000000000000000
-[   18.327818] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
-0000000000000400
-[   18.328586] Call Trace:
-[   18.328852]  <TASK>
-[   18.329284]  zram_reset_device+0xd8/0x140 [zram]
-[   18.329983]  zram_remove.cold+0xa/0x20 [zram]
-[   18.330644]  ? hot_remove_store+0xe0/0xe0 [zram]
-[   18.331367]  zram_remove_cb+0xd/0x10 [zram]
-[   18.332010]  idr_for_each+0x5b/0xd0
-[   18.332578]  destroy_devices+0x26/0x50 [zram]
-[   18.333238]  __do_sys_delete_module+0x18d/0x2a0
-[   18.333913]  ? fpregs_assert_state_consistent+0x1e/0x40
-[   18.334665]  ? exit_to_user_mode_prepare+0x3a/0x180
-[   18.335395]  do_syscall_64+0x38/0xc0
-[   18.335966]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-[   18.336681] RIP: 0033:0x7fc8e4db64a7
+It might be "unusual", but it's certainly not unheard of, and trying
+to push different parts of the series through different maintainers
+would just cause lots of extra churn.
 
+Yes, normally I'd expect filesystem changes to have a diffstat that
+clearly shows that "yes, it's all local to this filesystem", and when
+I see anything else it raises red flags.
+
+But it raises red flags not because it would be wrong to have changes
+to other parts, but simply because when cross-subsystem development
+happens, it needs to be discussed and cleared with people. And you've
+done that.
+
+So I'd take this as one pull request from you. You've been doing the
+work, you get the questionable glory of being in charge of it all.
+You'll get the blame too ;)
+
+>  * Will Catalin Marinas's work for supporting arm64 sub-page faults
+>    be queued behind these patches?  We have an overlap in
+>    fault_in_[pages_]readable fault_in_[pages_]writeable, so one of
+>    the two patch queues will need some adjustments.
+
+I think that on the whole they should be developed separately, I don't
+think it's going to be a particularly difficult conflict.
+
+That whole discussion does mean that I suspect that we'll have to
+change fault_in_iov_iter_writeable() to do the "every 16 bytes" or
+whatever thing, and make it use an actual atomic "add zero" or
+whatever rather than walk the page tables. But that's a conceptually
+separate discussion from this one, I wouldn't actually want to mix up
+the two issues too much.
+
+Sure, they touch the same code, so there is _that_ overlap, but one is
+about "the hardware rules are a-changing" and the other is about
+filesystem use of - and expansion of - the things we do. Let's keep
+them separate until ready, and then fix up the fallout at that point
+(either as a merge resolution, or even partly after-the-fact).
+
+                     Linus
