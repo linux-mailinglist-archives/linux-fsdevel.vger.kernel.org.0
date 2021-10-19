@@ -2,126 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91465433ADA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 17:40:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52A23433AF8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 17:44:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231722AbhJSPmr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 11:42:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53438 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231250AbhJSPmq (ORCPT
+        id S232251AbhJSPqq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 11:46:46 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:57342 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229991AbhJSPqn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 11:42:46 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F16DC06161C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 08:40:33 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id r19so8366369lfe.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 08:40:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=M5qLpGOaG+oQiwUY6IZoloZawU2xGFjPWL0KZDD5Sqk=;
-        b=Wmr7RZGDwVuUUI0LgeG+526Yzd808WwmB0Gv3Ef8vlN4fSo+FWdGkt2ewAZlHCizf2
-         AOj6nKdkBK/50v2SslKwFKgXMONLSaQQZm/2hQbpblrN5k/KDVfxEf5XH7GllHiFtRBq
-         4jqVHC4XfB57XB9V0yinVHJ5h8DIkkpImv8f0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=M5qLpGOaG+oQiwUY6IZoloZawU2xGFjPWL0KZDD5Sqk=;
-        b=YtLq7nZEU/kahIMjQKzG11XqoPWTSVNqFRSHrRZrXmMhbyQ94SUhK3LW5VPyt26oO4
-         0ALzqFRppS3vpe2ySyJJKVShNCXyPdKvImMiMyPP+4Klu32F+ZlOXeD+tsi7VYyp9yNP
-         zQPt8erkKUGJ0UVZbtNGQJpHZunl4DrasEQsKEZ8TE4q/1b5yuIZW5Mlr7cG1oI3RrnZ
-         TbyydEWKInJLCR4YpxagfTUoRCOin5DTdhC2AB6IXdXngXUvBuu0dkpSESLTunZ8V71t
-         RUFHAb0vsQvYGsWmfIDliZlFDYOrF3NbWsvcTP2sCr2HKOyGNZ0I7736ZAyguroLOnFe
-         BiCg==
-X-Gm-Message-State: AOAM530Rp7XDbNSc9237lUqnvS2YUPm+eeHS/UL8ZZjGpNx4uxCjS7q4
-        hwsttzbk/he2W5ryJdjXDzpzF42ZhP+bRw==
-X-Google-Smtp-Source: ABdhPJzGsbUble03fPcry0UuujGZta5Z8Ba0JfFatmjBca9d3L8nA/4ghv4Fb6Ky9Bf6lH2nYsDKXw==
-X-Received: by 2002:ac2:4bc2:: with SMTP id o2mr6863255lfq.9.1634658031423;
-        Tue, 19 Oct 2021 08:40:31 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id x10sm1696640lff.44.2021.10.19.08.40.29
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Oct 2021 08:40:29 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id x27so8436976lfu.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 08:40:29 -0700 (PDT)
-X-Received: by 2002:a05:6512:398a:: with SMTP id j10mr6559053lfu.402.1634658028835;
- Tue, 19 Oct 2021 08:40:28 -0700 (PDT)
+        Tue, 19 Oct 2021 11:46:43 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id E6F8521973;
+        Tue, 19 Oct 2021 15:44:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1634658269; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3tZNcR6QrOhRMy1KFcDYAEvnL+dLcBd4uEjJIX0zAXg=;
+        b=CB+xTa+Kx5k+ET/K7Yb7sBC1Hb3df4EFzQArsUn5IOVnWqVnqsGCnFq6ki/4KKWqz+NdgL
+        k2wgWngbyZrZoXbjsaWqQddY+zO8X/I7sFrv4+92CKIWGvWbGPCYd3XtYmAv8maGQc1U0Y
+        E5d9xTWrBlyDKA5ImVAakPfk1iJAboU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1634658269;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3tZNcR6QrOhRMy1KFcDYAEvnL+dLcBd4uEjJIX0zAXg=;
+        b=HAtYGK65SwvJxuD5g3I8SwVBbZRMxNOoDLNkvM5D8iZbMX2PitPJzrxurDzlHI0PEevEDY
+        +BR0oocSdYAcrgAg==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id CA6BAA3B93;
+        Tue, 19 Oct 2021 15:44:29 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id A6B7E1E0983; Tue, 19 Oct 2021 17:44:26 +0200 (CEST)
+Date:   Tue, 19 Oct 2021 17:44:26 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     jack@suse.com, amir73il@gmail.com, djwong@kernel.org,
+        tytso@mit.edu, david@fromorbit.com, dhowells@redhat.com,
+        khazhy@google.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-api@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH v8 30/32] ext4: Send notifications on error
+Message-ID: <20211019154426.GR3255@quack2.suse.cz>
+References: <20211019000015.1666608-1-krisman@collabora.com>
+ <20211019000015.1666608-31-krisman@collabora.com>
 MIME-Version: 1.0
-References: <20211019134204.3382645-1-agruenba@redhat.com>
-In-Reply-To: <20211019134204.3382645-1-agruenba@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 19 Oct 2021 05:40:13 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
-Message-ID: <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
-Subject: Re: [PATCH v8 00/17] gfs2: Fix mmap + page fault deadlocks
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211019000015.1666608-31-krisman@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 19, 2021 at 3:42 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
->
-> From my point of view, the following questions remain:
->
->  * I hope these patches will be merged for v5.16, but what process
->    should I follow for that?  The patch queue contains mm and iomap
->    changes, so a pull request from the gfs2 tree would be unusual.
+On Mon 18-10-21 21:00:13, Gabriel Krisman Bertazi wrote:
+> Send a FS_ERROR message via fsnotify to a userspace monitoring tool
+> whenever a ext4 error condition is triggered.  This follows the existing
+> error conditions in ext4, so it is hooked to the ext4_error* functions.
+> 
+> It also follows the current dmesg reporting in the format.  The
+> filesystem message is composed mostly by the string that would be
+> otherwise printed in dmesg.
+> 
+> A new ext4 specific record format is exposed in the uapi, such that a
+> monitoring tool knows what to expect when listening errors of an ext4
+> filesystem.
+> 
+> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-Oh, I'd much rather get these as one pull request from the author and
-from the person that actually ended up testing this.
+Looks good to me. Feel free to add:
 
-It might be "unusual", but it's certainly not unheard of, and trying
-to push different parts of the series through different maintainers
-would just cause lots of extra churn.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Yes, normally I'd expect filesystem changes to have a diffstat that
-clearly shows that "yes, it's all local to this filesystem", and when
-I see anything else it raises red flags.
+								Honza
 
-But it raises red flags not because it would be wrong to have changes
-to other parts, but simply because when cross-subsystem development
-happens, it needs to be discussed and cleared with people. And you've
-done that.
-
-So I'd take this as one pull request from you. You've been doing the
-work, you get the questionable glory of being in charge of it all.
-You'll get the blame too ;)
-
->  * Will Catalin Marinas's work for supporting arm64 sub-page faults
->    be queued behind these patches?  We have an overlap in
->    fault_in_[pages_]readable fault_in_[pages_]writeable, so one of
->    the two patch queues will need some adjustments.
-
-I think that on the whole they should be developed separately, I don't
-think it's going to be a particularly difficult conflict.
-
-That whole discussion does mean that I suspect that we'll have to
-change fault_in_iov_iter_writeable() to do the "every 16 bytes" or
-whatever thing, and make it use an actual atomic "add zero" or
-whatever rather than walk the page tables. But that's a conceptually
-separate discussion from this one, I wouldn't actually want to mix up
-the two issues too much.
-
-Sure, they touch the same code, so there is _that_ overlap, but one is
-about "the hardware rules are a-changing" and the other is about
-filesystem use of - and expansion of - the things we do. Let's keep
-them separate until ready, and then fix up the fallout at that point
-(either as a merge resolution, or even partly after-the-fact).
-
-                     Linus
+> 
+> ---
+> Changes since v6:
+>   - Report ext4_std_errors agains superblock (jan)
+> ---
+>  fs/ext4/super.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 88d5d274a868..67183e6b1920 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -46,6 +46,7 @@
+>  #include <linux/part_stat.h>
+>  #include <linux/kthread.h>
+>  #include <linux/freezer.h>
+> +#include <linux/fsnotify.h>
+>  
+>  #include "ext4.h"
+>  #include "ext4_extents.h"	/* Needed for trace points definition */
+> @@ -759,6 +760,8 @@ void __ext4_error(struct super_block *sb, const char *function,
+>  		       sb->s_id, function, line, current->comm, &vaf);
+>  		va_end(args);
+>  	}
+> +	fsnotify_sb_error(sb, NULL, error);
+> +
+>  	ext4_handle_error(sb, force_ro, error, 0, block, function, line);
+>  }
+>  
+> @@ -789,6 +792,8 @@ void __ext4_error_inode(struct inode *inode, const char *function,
+>  			       current->comm, &vaf);
+>  		va_end(args);
+>  	}
+> +	fsnotify_sb_error(inode->i_sb, inode, error);
+> +
+>  	ext4_handle_error(inode->i_sb, false, error, inode->i_ino, block,
+>  			  function, line);
+>  }
+> @@ -827,6 +832,8 @@ void __ext4_error_file(struct file *file, const char *function,
+>  			       current->comm, path, &vaf);
+>  		va_end(args);
+>  	}
+> +	fsnotify_sb_error(inode->i_sb, inode, EFSCORRUPTED);
+> +
+>  	ext4_handle_error(inode->i_sb, false, EFSCORRUPTED, inode->i_ino, block,
+>  			  function, line);
+>  }
+> @@ -894,6 +901,7 @@ void __ext4_std_error(struct super_block *sb, const char *function,
+>  		printk(KERN_CRIT "EXT4-fs error (device %s) in %s:%d: %s\n",
+>  		       sb->s_id, function, line, errstr);
+>  	}
+> +	fsnotify_sb_error(sb, NULL, errno);
+>  
+>  	ext4_handle_error(sb, false, -errno, 0, 0, function, line);
+>  }
+> -- 
+> 2.33.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
