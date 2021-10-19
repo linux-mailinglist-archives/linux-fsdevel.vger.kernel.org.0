@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9343A433F53
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 21:37:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02029433F5A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 21:38:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232831AbhJSTjM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 15:39:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51106 "EHLO
+        id S233832AbhJSTlI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 15:41:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230432AbhJSTjM (ORCPT
+        with ESMTP id S230432AbhJSTlH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 15:39:12 -0400
+        Tue, 19 Oct 2021 15:41:07 -0400
 Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49CABC06161C;
-        Tue, 19 Oct 2021 12:36:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 980F3C06161C;
+        Tue, 19 Oct 2021 12:38:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=npiA1/BckufA/m+irMg6eqFPqYx0reNFf9Z4p7vaYXU=; b=HBXrBM4kBn1mIISA6ZRTEsVa/a
-        HbBElJD/ZtV+aPX7EEvN/Ig7haO5MpBSF61XfTafLHBdoosPyZzQkAF2gVZCx44+eUHwMH8ynYmYh
-        d5HggA4pW6WC5wxQPWEA52Fhh9joVMOrt9ac2f8Ytgcl3iwSvkVi6clwuAn7GwJNPk0R9qKP0xzQo
-        TM7za36h8cD0QShOa3WPbe3xYmOxnF64R0jxhDduGpQq7N1QPCyFHW+PscBcEhLiDwoGbMvRHCovb
-        XHUwkw1dDZY01MdpXO0tIa86xh/71FnxSRi30TsVo+CQEepu4V0EW7DLrufD3qQupRSkFWGZgJnTi
-        630Qdx0g==;
+        bh=zY/TOEsZiQ3A5NcBB8ThTVV+O2F16AgeBhmjTIEWu7w=; b=ZStJ/DXqq1wAvyAXrcCXgyZYTL
+        AbzgYczpU5nQMNid+f6J4ibhGfIyJqjlykgL/v5dQDL+HLL2ZsC8YzEuzI0LfocO782ZVzleec++r
+        nemnPop2nMpQedimhX/v2i4cCuXgnPpeK6heH5Ap9yMKk4nh3OaeiJGvI3eUU4XHcMl0vjslhWOe5
+        P9NcT7KFmWZwL11f5OGcZoJ2cX/dR6taK+9lafK+TBHdeohoKfUbhikMaztwxtLSQuiYMrZo2FQTt
+        plVx+iPPZEbaRCRqP6vOSOGjS8ns1X3V2Eebf/S6yYCzwJrYDx99KaEN9zNPeJnEs5Db9Uct4ni5B
+        qMqkvecA==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mcuug-002X6t-6v; Tue, 19 Oct 2021 19:36:42 +0000
-Date:   Tue, 19 Oct 2021 12:36:42 -0700
+        id 1mcuwc-002XBh-TJ; Tue, 19 Oct 2021 19:38:43 +0000
+Date:   Tue, 19 Oct 2021 12:38:42 -0700
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     Ming Lei <ming.lei@redhat.com>
 Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
@@ -40,7 +40,7 @@ Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
-Message-ID: <YW8eSq2B+5FtOLZb@bombadil.infradead.org>
+Message-ID: <YW8ewvAac/T2vxz2@bombadil.infradead.org>
 References: <YWiSAN6xfYcUDJCb@bombadil.infradead.org>
  <YWjCpLUNPF3s4P2U@T590>
  <YWjJ0O7K+31Iz3ox@bombadil.infradead.org>
@@ -49,63 +49,32 @@ References: <YWiSAN6xfYcUDJCb@bombadil.infradead.org>
  <YWq3Z++uoJ/kcp+3@T590>
  <YW3LuzaPhW96jSBK@bombadil.infradead.org>
  <YW4uwep3BCe9Vxq8@T590>
- <YW7kFXlzRrvwzARP@bombadil.infradead.org>
- <YW7ygbLAwm2/LZFl@T590>
+ <YW7pQKi8AlV+ZemU@bombadil.infradead.org>
+ <YW70uklcBWrmJIn8@T590>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YW7ygbLAwm2/LZFl@T590>
+In-Reply-To: <YW70uklcBWrmJIn8@T590>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 20, 2021 at 12:29:53AM +0800, Ming Lei wrote:
-> On Tue, Oct 19, 2021 at 08:28:21AM -0700, Luis Chamberlain wrote:
-> > On Tue, Oct 19, 2021 at 10:34:41AM +0800, Ming Lei wrote:
-> > > Please try the following patch against upstream(linus or next) tree(basically
-> > > fold revised 2 and 3 of V1, and cover two issues: not fail zram_remove in
-> > > module_exit(), race between zram_remove() and disksize_store()), and see if
-> > > everything is fine for you:
+On Wed, Oct 20, 2021 at 12:39:22AM +0800, Ming Lei wrote:
+> On Tue, Oct 19, 2021 at 08:50:24AM -0700, Luis Chamberlain wrote:
+> > So do you want to take the position:
 > > 
-> > Page fault ...
-> > 
-> > [   18.284256] zram: Removed device: zram0
-> > [   18.312974] BUG: unable to handle page fault for address:
-> > ffffad86de903008
-> > [   18.313707] #PF: supervisor read access in kernel mode
-> > [   18.314248] #PF: error_code(0x0000) - not-present page
-> > [   18.314797] PGD 100000067 P4D 100000067 PUD 10031e067 PMD 136a28067
+> > Hey driver authors: you cannot use any shared lock on module removal and
+> > on sysfs ops?
 > 
-> That is another race between zram_reset_device() and disksize_store(),
-> which is supposed to be covered by ->init_lock, and follows the delta fix
-> against the last patch I posted, and the whole patch can be found in the
-> github link:
+> IMO, yes, in your patch of 'zram: fix crashes with cpu hotplug multistate',
+> when you added mutex_lock(zram_index_mutex) to disksize_store() and
+> other attribute show() or store() method. You have added new deadlock
+> between hot_remove_store() and disksize_store() & others, which can't be
+> addressed by your approach of holding module refcnt.
 > 
-> https://github.com/ming1/linux/commit/fa6045b1371eb301f392ac84adaf3ad53bb16894
-> 
-> 
-> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-> index d0cae7a42f4d..a14ba3d350ea 100644
-> --- a/drivers/block/zram/zram_drv.c
-> +++ b/drivers/block/zram/zram_drv.c
-> @@ -1704,12 +1704,12 @@ static void zram_reset_device(struct zram *zram)
->  	set_capacity_and_notify(zram->disk, 0);
->  	part_stat_set_all(zram->disk->part0, 0);
->  
-> -	up_write(&zram->init_lock);
->  	/* I/O operation under all of CPU are done so let's free */
->  	zram_meta_free(zram, disksize);
->  	memset(&zram->stats, 0, sizeof(zram->stats));
->  	zcomp_destroy(comp);
->  	reset_bdev(zram);
-> +	up_write(&zram->init_lock);
->  }
->  
->  static ssize_t disksize_store(struct device *dev,
+> So far not see ltp tests covers hot add/remove interface yet.
 
-With this, it still ends up in a state where we loop and can't get out of:
-
-zram: Can't change algorithm for initialized device
+Care to show what commands to use to cause this deadlock with my patches?
 
   Luis
