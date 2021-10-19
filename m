@@ -2,246 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E249433D2E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 19:15:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F4A1433D3F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 19:23:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232507AbhJSRSG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 13:18:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47536 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231231AbhJSRSF (ORCPT
+        id S229991AbhJSRZJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 13:25:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:34835 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233460AbhJSRZI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 13:18:05 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ABFEC06161C;
-        Tue, 19 Oct 2021 10:15:52 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id g10so15275571edj.1;
-        Tue, 19 Oct 2021 10:15:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4wLiwP4PYVuwZlz+x1fvIxqOli9YkMfOKg6xVp14qC0=;
-        b=WNTE6p3/rRu5nmONgyL2GNOQC7z66zi8i93DgsBF6i+zt5yx88xgKqUiGt0Ln/XRaV
-         9mMC90w/5eGldjApqDvaVEpOXq/vLB5l4ZZXsPI/LlTlOn47m7o1Z+bNdhm13iyODNfU
-         EoTjbEChsVbzByPB0MeDmKl2No3GvLQAtc2w5K0iitmwY3/dNj4rs5FNE1kIKnClCHVJ
-         ZFOWa1c7DtvqyJCzhHX5jpc8yilgkngyR58RE5yrEav2f6tYC276bkZ8/U2hmkYDaQ7Y
-         a0u/CDT6G3/jmqouslWUfQnX0D1F+tBaIpqJb5FRrvZN92Jx4L58XIOTaFVXVeyYledc
-         h71w==
+        Tue, 19 Oct 2021 13:25:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634664174;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JOqfmssTkXXiKThwBGVyyHuYXPo6VBVl8UwOszClJ8c=;
+        b=jEY492oJd7AY7/y8QTlIhGBlNI+BUEiasQjdM0FErq1lybRjx6+n8bN6nIDAa3nvv+9S7N
+        ZgaU60tHV7cS1ndpDimaS7ukHf96GNtQ9E7prb9u7OSdP719czbBnDzuISnIJ8IntbUXvp
+        T4scJRR1n+tpCukbdnMmsELOZjJZ9nE=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-564-qN9JwyreMSeydxru_Dh4Dw-1; Tue, 19 Oct 2021 13:22:53 -0400
+X-MC-Unique: qN9JwyreMSeydxru_Dh4Dw-1
+Received: by mail-qt1-f198.google.com with SMTP id d21-20020ac800d5000000b002a7ae3ec644so430802qtg.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 10:22:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4wLiwP4PYVuwZlz+x1fvIxqOli9YkMfOKg6xVp14qC0=;
-        b=0K34OBDt2BI8ZtUeezgPWeDQ/s/xg7f+n6kcXc+GCByTmU5y7S3L4PuAniHVrniWcy
-         oNSPMIKiczlsFzQWtRpONwh1VQ0DbBTnvdBVQhvTj4VEyQPShn+BPu51tiiBKLv/o8dQ
-         jjE+1paNa4m0+J7eM1hIftgTbquNbV5HEfzqonWHUU4FMeziX85oBWCFffGTZvftSD3d
-         M1zmGF8o4NoPcTs3Zks+wlPrIBiD9pCEBjduugmEh3noW9Rcf6/FNR6qlZy38eWWuPwM
-         WwcEAYMQ5pocpOvzWdV7oQM8H8eQYuMhOgjBbYtgg//yjSFnJjHp6jBvFqejvMYu7vDo
-         icGg==
-X-Gm-Message-State: AOAM533t8ReEOtagLOjx1swOh37fu67yeJK6g1jET0bkN7QAH9w2yoGu
-        w0SMQSusVdPlK9F542VyQ3ggds7C/r3f88QU5uo=
-X-Google-Smtp-Source: ABdhPJw6KRtuVxdOWZolXkTawVlKMD9h6KwTx8eKOvZlJHgz580cbU+s2ftquocEH01jFU+8R96YSNXhuIhD6kky33w=
-X-Received: by 2002:a17:907:170a:: with SMTP id le10mr37958289ejc.537.1634663602907;
- Tue, 19 Oct 2021 10:13:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211014191615.6674-1-shy828301@gmail.com> <20211014191615.6674-3-shy828301@gmail.com>
- <20211019055053.GA2268449@u2004>
-In-Reply-To: <20211019055053.GA2268449@u2004>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Tue, 19 Oct 2021 10:13:11 -0700
-Message-ID: <CAHbLzkqySvKyKu+1GF-j2xpimDO+kiTadEJpBrMUkjwhQXkkpg@mail.gmail.com>
-Subject: Re: [v4 PATCH 2/6] mm: filemap: check if THP has hwpoisoned subpage
- for PMD page fault
-To:     Naoya Horiguchi <naoya.horiguchi@linux.dev>
-Cc:     =?UTF-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPoyDnm7TkuZ8p?= 
-        <naoya.horiguchi@nec.com>, Hugh Dickins <hughd@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=JOqfmssTkXXiKThwBGVyyHuYXPo6VBVl8UwOszClJ8c=;
+        b=4h0vE3FGLT4VvKIxWz3+Gd2tmoDW+0t0XjenOSaadWPfrSQB6f1dvuuSA0TTtaZSxQ
+         7b8cmaJYUYU+5Z/Q1Nm/WChPMTLu91hpKd0c57NSlxcj/2B3lcHrzuXfHqPh37XpRuUY
+         An9O1+JWnZGmg6VjzfeMVt2Grj/A4rjk1nrNb1GipJtoaN/j/SnKhzEcPCAsFEY+zATo
+         iQGbFM2kXajNlSNeApWUqk+6ssBb13jsHY9c7XXx8No+rJbeMDxipueNdoeWyCmfhmQb
+         EyP9KKBw6itP48ocvNboXiM5IdIow0smLdAGZOp/6i3Yf5v/otT3DY9lCs0t0bqSh8Du
+         dakQ==
+X-Gm-Message-State: AOAM5317HRe3EVt/5QqXc/mQMk1d0tPn/4vNdgBctPbhVa6t/ERxNKTM
+        kpUkDkpmFQ8ldjplspVEemq6Z1WkCC70RcpbfpKBBeojHxaliO26HGUHtCIivluSiIq8oXV4NCc
+        aa9nrWPqgYP8dnV7KRBLLObtOtA==
+X-Received: by 2002:ac8:5fc5:: with SMTP id k5mr1372084qta.273.1634664172098;
+        Tue, 19 Oct 2021 10:22:52 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwzp4cr5dV94h+XDRbaJmp+cfMFv4+i32Ye0oINtZE8qF5SrO8m9PjQyUWjQRiUs6vWX+z8ww==
+X-Received: by 2002:ac8:5fc5:: with SMTP id k5mr1372059qta.273.1634664171906;
+        Tue, 19 Oct 2021 10:22:51 -0700 (PDT)
+Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id m66sm8127161qkb.87.2021.10.19.10.22.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Oct 2021 10:22:51 -0700 (PDT)
+Message-ID: <d58335124c7467703201a9cdba765a46a780c855.camel@redhat.com>
+Subject: Re: [PATCH 03/67] vfs, fscache: Force ->write_inode() to occur if
+ cookie pinned for writeback
+From:   Jeff Layton <jlayton@redhat.com>
+To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
         Matthew Wilcox <willy@infradead.org>,
-        Peter Xu <peterx@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Omar Sandoval <osandov@osandov.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 19 Oct 2021 13:22:50 -0400
+In-Reply-To: <163456866523.2614702.2234665737111683988.stgit@warthog.procyon.org.uk>
+References: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
+         <163456866523.2614702.2234665737111683988.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.40.4 (3.40.4-2.fc34) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 18, 2021 at 10:51 PM Naoya Horiguchi
-<naoya.horiguchi@linux.dev> wrote:
->
-> On Thu, Oct 14, 2021 at 12:16:11PM -0700, Yang Shi wrote:
-> > When handling shmem page fault the THP with corrupted subpage could be PMD
-> > mapped if certain conditions are satisfied.  But kernel is supposed to
-> > send SIGBUS when trying to map hwpoisoned page.
-> >
-> > There are two paths which may do PMD map: fault around and regular fault.
-> >
-> > Before commit f9ce0be71d1f ("mm: Cleanup faultaround and finish_fault() codepaths")
-> > the thing was even worse in fault around path.  The THP could be PMD mapped as
-> > long as the VMA fits regardless what subpage is accessed and corrupted.  After
-> > this commit as long as head page is not corrupted the THP could be PMD mapped.
-> >
-> > In the regular fault path the THP could be PMD mapped as long as the corrupted
-> > page is not accessed and the VMA fits.
-> >
-> > This loophole could be fixed by iterating every subpage to check if any
-> > of them is hwpoisoned or not, but it is somewhat costly in page fault path.
-> >
-> > So introduce a new page flag called HasHWPoisoned on the first tail page.  It
-> > indicates the THP has hwpoisoned subpage(s).  It is set if any subpage of THP
-> > is found hwpoisoned by memory failure and after the refcount is bumped
-> > successfully, then cleared when the THP is freed or split.
-> >
-> > The soft offline path doesn't need this since soft offline handler just
-> > marks a subpage hwpoisoned when the subpage is migrated successfully.
-> > But shmem THP didn't get split then migrated at all.
-> >
-> > Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
-> > Cc: <stable@vger.kernel.org>
-> > Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > Signed-off-by: Yang Shi <shy828301@gmail.com>
-> > ---
-> >  include/linux/page-flags.h | 23 +++++++++++++++++++++++
-> >  mm/huge_memory.c           |  2 ++
-> >  mm/memory-failure.c        | 14 ++++++++++++++
-> >  mm/memory.c                |  9 +++++++++
-> >  mm/page_alloc.c            |  4 +++-
-> >  5 files changed, 51 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> > index a558d67ee86f..901723d75677 100644
-> > --- a/include/linux/page-flags.h
-> > +++ b/include/linux/page-flags.h
-> > @@ -171,6 +171,15 @@ enum pageflags {
-> >       /* Compound pages. Stored in first tail page's flags */
-> >       PG_double_map = PG_workingset,
-> >
-> > +#ifdef CONFIG_MEMORY_FAILURE
-> > +     /*
-> > +      * Compound pages. Stored in first tail page's flags.
-> > +      * Indicates that at least one subpage is hwpoisoned in the
-> > +      * THP.
-> > +      */
-> > +     PG_has_hwpoisoned = PG_mappedtodisk,
-> > +#endif
-> > +
-> >       /* non-lru isolated movable page */
-> >       PG_isolated = PG_reclaim,
-> >
-> > @@ -668,6 +677,20 @@ PAGEFLAG_FALSE(DoubleMap)
-> >       TESTSCFLAG_FALSE(DoubleMap)
-> >  #endif
-> >
-> > +#if defined(CONFIG_MEMORY_FAILURE) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
-> > +/*
-> > + * PageHasHWPoisoned indicates that at least on subpage is hwpoisoned in the
->
-> At least "one" subpage?
->
-> > + * compound page.
-> > + *
-> > + * This flag is set by hwpoison handler.  Cleared by THP split or free page.
-> > + */
-> > +PAGEFLAG(HasHWPoisoned, has_hwpoisoned, PF_SECOND)
-> > +     TESTSCFLAG(HasHWPoisoned, has_hwpoisoned, PF_SECOND)
-> > +#else
-> > +PAGEFLAG_FALSE(HasHWPoisoned)
-> > +     TESTSCFLAG_FALSE(HasHWPoisoned)
-> > +#endif
-> > +
-> >  /*
-> >   * Check if a page is currently marked HWPoisoned. Note that this check is
-> >   * best effort only and inherently racy: there is no way to synchronize with
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 5e9ef0fc261e..0574b1613714 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -2426,6 +2426,8 @@ static void __split_huge_page(struct page *page, struct list_head *list,
-> >       /* lock lru list/PageCompound, ref frozen by page_ref_freeze */
-> >       lruvec = lock_page_lruvec(head);
-> >
-> > +     ClearPageHasHWPoisoned(head);
-> > +
-> >       for (i = nr - 1; i >= 1; i--) {
-> >               __split_huge_page_tail(head, i, lruvec, list);
-> >               /* Some pages can be beyond EOF: drop them from page cache */
-> > diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> > index 73f68699e7ab..2809d12f16af 100644
-> > --- a/mm/memory-failure.c
-> > +++ b/mm/memory-failure.c
-> > @@ -1694,6 +1694,20 @@ int memory_failure(unsigned long pfn, int flags)
-> >       }
-> >
-> >       if (PageTransHuge(hpage)) {
-> > +             /*
-> > +              * The flag must be set after the refcount is bumpped
->
-> s/bumpped/bumped/ ?
->
-> > +              * otherwise it may race with THP split.
-> > +              * And the flag can't be set in get_hwpoison_page() since
-> > +              * it is called by soft offline too and it is just called
-> > +              * for !MF_COUNT_INCREASE.  So here seems to be the best
-> > +              * place.
-> > +              *
-> > +              * Don't need care about the above error handling paths for
-> > +              * get_hwpoison_page() since they handle either free page
-> > +              * or unhandlable page.  The refcount is bumpped iff the
->
-> There's another "bumpped".
+On Mon, 2021-10-18 at 15:51 +0100, David Howells wrote:
+> Use an inode flag, I_PINNING_FSCACHE_WB, to indicate that a cookie is
+> pinned in use by that inode for the purposes of writeback.
+> 
+> Pinning is necessary because the in-use pin from the open file is released
+> before the writeback takes place, but if the resources aren't pinned, the
+> dirty data can't be written to the cache.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+> 
+>  fs/fs-writeback.c         |    8 ++++++++
+>  include/linux/fs.h        |    3 +++
+>  include/linux/fscache.h   |    1 +
+>  include/linux/writeback.h |    1 +
+>  4 files changed, 13 insertions(+)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 81ec192ce067..f3122831c4fe 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -1666,6 +1666,13 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
+>  
+>  	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY))
+>  		inode->i_state |= I_DIRTY_PAGES;
+> +	else if (unlikely(inode->i_state & I_PINNING_FSCACHE_WB)) {
+> +		if (!(inode->i_state & I_DIRTY_PAGES)) {
+> +			inode->i_state &= ~I_PINNING_FSCACHE_WB;
+> +			wbc->unpinned_fscache_wb = true;
+> +			dirty |= I_PINNING_FSCACHE_WB; /* Cause write_inode */
+> +		}
+> +	}
 
-Thanks for catching these typos, will fix them in the next version.
+IDGI: how would I_PINNING_FSCACHE_WB get set in the first place? 
 
->
-> Otherwise looks good to me.
->
-> Reviewed-by: Naoya Horiguchi <naoya.horiguchi@nec.com>
->
-> > +              * page is a valid handlable page.
-> > +              */
-> > +             SetPageHasHWPoisoned(hpage);
-> >               if (try_to_split_thp_page(p, "Memory Failure") < 0) {
-> >                       action_result(pfn, MF_MSG_UNSPLIT_THP, MF_IGNORED);
-> >                       res = -EBUSY;
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index adf9b9ef8277..c52be6d6b605 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -3906,6 +3906,15 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
-> >       if (compound_order(page) != HPAGE_PMD_ORDER)
-> >               return ret;
-> >
-> > +     /*
-> > +      * Just backoff if any subpage of a THP is corrupted otherwise
-> > +      * the corrupted page may mapped by PMD silently to escape the
-> > +      * check.  This kind of THP just can be PTE mapped.  Access to
-> > +      * the corrupted subpage should trigger SIGBUS as expected.
-> > +      */
-> > +     if (unlikely(PageHasHWPoisoned(page)))
-> > +             return ret;
-> > +
-> >       /*
-> >        * Archs like ppc64 need additional space to store information
-> >        * related to pte entry. Use the preallocated table for that.
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index b37435c274cf..7f37652f0287 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -1312,8 +1312,10 @@ static __always_inline bool free_pages_prepare(struct page *page,
-> >
-> >               VM_BUG_ON_PAGE(compound && compound_order(page) != order, page);
-> >
-> > -             if (compound)
-> > +             if (compound) {
-> >                       ClearPageDoubleMap(page);
-> > +                     ClearPageHasHWPoisoned(page);
-> > +             }
-> >               for (i = 1; i < (1 << order); i++) {
-> >                       if (compound)
-> >                               bad += free_tail_pages_check(page, page + i);
-> > --
-> > 2.26.2
-> >
+>  
+>  	spin_unlock(&inode->i_lock);
+>  
+> @@ -1675,6 +1682,7 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
+>  		if (ret == 0)
+>  			ret = err;
+>  	}
+> +	wbc->unpinned_fscache_wb = false;
+>  	trace_writeback_single_inode(inode, wbc, nr_to_write);
+>  	return ret;
+>  }
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 197493507744..336739fed3e9 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2420,6 +2420,8 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
+>   *			Used to detect that mark_inode_dirty() should not move
+>   * 			inode between dirty lists.
+>   *
+> + * I_PINNING_FSCACHE_WB	Inode is pinning an fscache object for writeback.
+> + *
+>   * Q: What is the difference between I_WILL_FREE and I_FREEING?
+>   */
+>  #define I_DIRTY_SYNC		(1 << 0)
+> @@ -2442,6 +2444,7 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
+>  #define I_CREATING		(1 << 15)
+>  #define I_DONTCACHE		(1 << 16)
+>  #define I_SYNC_QUEUED		(1 << 17)
+> +#define I_PINNING_FSCACHE_WB	(1 << 18)
+>  
+>  #define I_DIRTY_INODE (I_DIRTY_SYNC | I_DIRTY_DATASYNC)
+>  #define I_DIRTY (I_DIRTY_INODE | I_DIRTY_PAGES)
+> diff --git a/include/linux/fscache.h b/include/linux/fscache.h
+> index 01558d155799..ba4878b56717 100644
+> --- a/include/linux/fscache.h
+> +++ b/include/linux/fscache.h
+> @@ -19,6 +19,7 @@
+>  #include <linux/pagemap.h>
+>  #include <linux/pagevec.h>
+>  #include <linux/list_bl.h>
+> +#include <linux/writeback.h>
+>  #include <linux/netfs.h>
+>  
+>  #if defined(CONFIG_FSCACHE) || defined(CONFIG_FSCACHE_MODULE)
+> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+> index d1f65adf6a26..2fda288600d3 100644
+> --- a/include/linux/writeback.h
+> +++ b/include/linux/writeback.h
+> @@ -69,6 +69,7 @@ struct writeback_control {
+>  	unsigned for_reclaim:1;		/* Invoked from the page allocator */
+>  	unsigned range_cyclic:1;	/* range_start is cyclic */
+>  	unsigned for_sync:1;		/* sync(2) WB_SYNC_ALL writeback */
+> +	unsigned unpinned_fscache_wb:1;	/* Cleared I_PINNING_FSCACHE_WB */
+>  
+>  	/*
+>  	 * When writeback IOs are bounced through async layers, only the
+> 
+> 
+
+-- 
+Jeff Layton <jlayton@redhat.com>
+
