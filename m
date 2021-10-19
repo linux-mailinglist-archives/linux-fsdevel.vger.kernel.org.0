@@ -2,231 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F3B64337BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 15:49:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 114D54337D0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 15:52:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235905AbhJSNva (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 09:51:30 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31902 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235741AbhJSNvW (ORCPT
+        id S235991AbhJSNyv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 09:54:51 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:58074 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235741AbhJSNyv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 09:51:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634651348;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
+        Tue, 19 Oct 2021 09:54:51 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 319321FD66;
+        Tue, 19 Oct 2021 13:52:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1634651557; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=MGsX/Ml84CMC+OjHlH5RDMfLJcW/FIl8Qk/LyCJCDBE=;
-        b=G+ke+Yf1iw4T/OUTKWg64eNhyhtmGfTCDJnJ8qEReMAlFbc/5fyPjSaVVFZjKlZ2uzfCo6
-        cwgo/rKfnBvcs9mvUt35qo5vEzQGfjNxyMCzc3/b5Ag8ncudLrLQ40Dpi19mD5smmnA8Qv
-        IX8pZ5LI6q7kyD53gO9ogchVM9qeuBY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-534-86WeWPCuMNSZLCuVHcUO8Q-1; Tue, 19 Oct 2021 09:46:11 -0400
-X-MC-Unique: 86WeWPCuMNSZLCuVHcUO8Q-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BF6C91006AA5;
-        Tue, 19 Oct 2021 13:46:09 +0000 (UTC)
-Received: from max.com (unknown [10.40.193.143])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3A35A102AE42;
-        Tue, 19 Oct 2021 13:45:59 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Paul Mackerras <paulus@ozlabs.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>, cluster-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
-        linux-btrfs@vger.kernel.org,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH v8 17/17] gfs2: Fix mmap + page fault deadlocks for direct I/O
-Date:   Tue, 19 Oct 2021 15:42:04 +0200
-Message-Id: <20211019134204.3382645-18-agruenba@redhat.com>
-In-Reply-To: <20211019134204.3382645-1-agruenba@redhat.com>
-References: <20211019134204.3382645-1-agruenba@redhat.com>
+        bh=BNc5SonS47DrCer2vgSoP5sU2/PAkUiPIPbWzXD99qM=;
+        b=eU9LIJPCOp+zDJrDARf7FW18nubjdu347sU8StdqOxZvGv+KsKGp6Oh3+SEho6MViejzs4
+        HQg3FhPHRVrYxMTnbCDpJH+AxCwF+YJOt4X3NyTTcJWI2d4tf0HUuCLUhE3jUuWsPUnIgQ
+        UzfRw8L6mBs28HKGWPtXaLxgqtbEM78=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1634651557;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=BNc5SonS47DrCer2vgSoP5sU2/PAkUiPIPbWzXD99qM=;
+        b=bSPMUpzhrhHj63ZVgWV/R7pqkUKPX7g+jAh0LUUA+vgeOpDH1mwWkdO6oLGfaUkx7BmI+z
+        ieI08RM/5B4SUQDQ==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id 151E3A3B83;
+        Tue, 19 Oct 2021 13:52:37 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E7B3C1E0983; Tue, 19 Oct 2021 15:52:36 +0200 (CEST)
+Date:   Tue, 19 Oct 2021 15:52:36 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     jack@suse.com, amir73il@gmail.com, djwong@kernel.org,
+        tytso@mit.edu, david@fromorbit.com, dhowells@redhat.com,
+        khazhy@google.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-api@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH v8 22/32] fanotify: Support merging of error events
+Message-ID: <20211019135236.GK3255@quack2.suse.cz>
+References: <20211019000015.1666608-1-krisman@collabora.com>
+ <20211019000015.1666608-23-krisman@collabora.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211019000015.1666608-23-krisman@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Also disable page faults during direct I/O requests and implement a
-similar kind of retry logic as in the buffered I/O case.
+On Mon 18-10-21 21:00:05, Gabriel Krisman Bertazi wrote:
+> Error events (FAN_FS_ERROR) against the same file system can be merged
+> by simply iterating the error count.  The hash is taken from the fsid,
+> without considering the FH.  This means that only the first error object
+> is reported.
+> 
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-The retry logic in the direct I/O case differs from the buffered I/O
-case in the following way: direct I/O doesn't provide the kinds of
-consistency guarantees between concurrent reads and writes that buffered
-I/O provides, so once we lose the inode glock while faulting in user
-pages, we always resume the operation.  We never need to return a
-partial read or write.
+Looks good to me. Feel free to add:
 
-This locking problem was originally reported by Jan Kara.  Linus came up
-with the idea of disabling page faults.  Many thanks to Al Viro and
-Matthew Wilcox for their feedback.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- fs/gfs2/file.c | 101 +++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 89 insertions(+), 12 deletions(-)
+								Honza
 
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index ae06defcf369..a8e440b4d21c 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -811,22 +811,65 @@ static ssize_t gfs2_file_direct_read(struct kiocb *iocb, struct iov_iter *to,
- {
- 	struct file *file = iocb->ki_filp;
- 	struct gfs2_inode *ip = GFS2_I(file->f_mapping->host);
--	size_t count = iov_iter_count(to);
-+	size_t prev_count = 0, window_size = 0;
-+	size_t written = 0;
- 	ssize_t ret;
- 
--	if (!count)
-+	/*
-+	 * In this function, we disable page faults when we're holding the
-+	 * inode glock while doing I/O.  If a page fault occurs, we indicate
-+	 * that the inode glock may be dropped, fault in the pages manually,
-+	 * and retry.
-+	 *
-+	 * Unlike generic_file_read_iter, for reads, iomap_dio_rw can trigger
-+	 * physical as well as manual page faults, and we need to disable both
-+	 * kinds.
-+	 *
-+	 * For direct I/O, gfs2 takes the inode glock in deferred mode.  This
-+	 * locking mode is compatible with other deferred holders, so multiple
-+	 * processes and nodes can do direct I/O to a file at the same time.
-+	 * There's no guarantee that reads or writes will be atomic.  Any
-+	 * coordination among readers and writers needs to happen externally.
-+	 */
-+
-+	if (!iov_iter_count(to))
- 		return 0; /* skip atime */
- 
- 	gfs2_holder_init(ip->i_gl, LM_ST_DEFERRED, 0, gh);
-+retry:
- 	ret = gfs2_glock_nq(gh);
- 	if (ret)
- 		goto out_uninit;
-+retry_under_glock:
-+	pagefault_disable();
-+	to->nofault = true;
-+	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL,
-+			   IOMAP_DIO_PARTIAL, written);
-+	to->nofault = false;
-+	pagefault_enable();
-+	if (ret > 0)
-+		written = ret;
- 
--	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL, 0, 0);
--	gfs2_glock_dq(gh);
-+	if (unlikely(iov_iter_count(to) && (ret > 0 || ret == -EFAULT)) &&
-+	    should_fault_in_pages(to, &prev_count, &window_size)) {
-+		size_t leftover;
-+
-+		gfs2_holder_allow_demote(gh);
-+		leftover = fault_in_iov_iter_writeable(to, window_size);
-+		gfs2_holder_disallow_demote(gh);
-+		if (leftover != window_size) {
-+			if (!gfs2_holder_queued(gh))
-+				goto retry;
-+			goto retry_under_glock;
-+		}
-+	}
-+	if (gfs2_holder_queued(gh))
-+		gfs2_glock_dq(gh);
- out_uninit:
- 	gfs2_holder_uninit(gh);
--	return ret;
-+	if (ret < 0)
-+		return ret;
-+	return written;
- }
- 
- static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
-@@ -835,10 +878,20 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = file->f_mapping->host;
- 	struct gfs2_inode *ip = GFS2_I(inode);
--	size_t len = iov_iter_count(from);
--	loff_t offset = iocb->ki_pos;
-+	size_t prev_count = 0, window_size = 0;
-+	size_t read = 0;
- 	ssize_t ret;
- 
-+	/*
-+	 * In this function, we disable page faults when we're holding the
-+	 * inode glock while doing I/O.  If a page fault occurs, we indicate
-+	 * that the inode glock may be dropped, fault in the pages manually,
-+	 * and retry.
-+	 *
-+	 * For writes, iomap_dio_rw only triggers manual page faults, so we
-+	 * don't need to disable physical ones.
-+	 */
-+
- 	/*
- 	 * Deferred lock, even if its a write, since we do no allocation on
- 	 * this path. All we need to change is the atime, and this lock mode
-@@ -848,22 +901,46 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
- 	 * VFS does.
- 	 */
- 	gfs2_holder_init(ip->i_gl, LM_ST_DEFERRED, 0, gh);
-+retry:
- 	ret = gfs2_glock_nq(gh);
- 	if (ret)
- 		goto out_uninit;
--
-+retry_under_glock:
- 	/* Silently fall back to buffered I/O when writing beyond EOF */
--	if (offset + len > i_size_read(&ip->i_inode))
-+	if (iocb->ki_pos + iov_iter_count(from) > i_size_read(&ip->i_inode))
- 		goto out;
- 
--	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL, 0, 0);
-+	from->nofault = true;
-+	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL,
-+			   IOMAP_DIO_PARTIAL, read);
-+	from->nofault = false;
-+
- 	if (ret == -ENOTBLK)
- 		ret = 0;
-+	if (ret > 0)
-+		read = ret;
-+
-+	if (unlikely(iov_iter_count(from) && (ret > 0 || ret == -EFAULT)) &&
-+	    should_fault_in_pages(from, &prev_count, &window_size)) {
-+		size_t leftover;
-+
-+		gfs2_holder_allow_demote(gh);
-+		leftover = fault_in_iov_iter_readable(from, window_size);
-+		gfs2_holder_disallow_demote(gh);
-+		if (leftover != window_size) {
-+			if (!gfs2_holder_queued(gh))
-+				goto retry;
-+			goto retry_under_glock;
-+		}
-+	}
- out:
--	gfs2_glock_dq(gh);
-+	if (gfs2_holder_queued(gh))
-+		gfs2_glock_dq(gh);
- out_uninit:
- 	gfs2_holder_uninit(gh);
--	return ret;
-+	if (ret < 0)
-+		return ret;
-+	return read;
- }
- 
- static ssize_t gfs2_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+
+> ---
+> Changes since v7:
+>   - Move fee->fsid assignment here (Amir)
+>   - Open code error event merge logic in fanotify_merge (Jan)
+> ---
+>  fs/notify/fanotify/fanotify.c | 26 ++++++++++++++++++++++++--
+>  fs/notify/fanotify/fanotify.h |  4 +++-
+>  2 files changed, 27 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index 1f195c95dfcd..cedcb1546804 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -111,6 +111,16 @@ static bool fanotify_name_event_equal(struct fanotify_name_event *fne1,
+>  	return fanotify_info_equal(info1, info2);
+>  }
+>  
+> +static bool fanotify_error_event_equal(struct fanotify_error_event *fee1,
+> +				       struct fanotify_error_event *fee2)
+> +{
+> +	/* Error events against the same file system are always merged. */
+> +	if (!fanotify_fsid_equal(&fee1->fsid, &fee2->fsid))
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+>  static bool fanotify_should_merge(struct fanotify_event *old,
+>  				  struct fanotify_event *new)
+>  {
+> @@ -141,6 +151,9 @@ static bool fanotify_should_merge(struct fanotify_event *old,
+>  	case FANOTIFY_EVENT_TYPE_FID_NAME:
+>  		return fanotify_name_event_equal(FANOTIFY_NE(old),
+>  						 FANOTIFY_NE(new));
+> +	case FANOTIFY_EVENT_TYPE_FS_ERROR:
+> +		return fanotify_error_event_equal(FANOTIFY_EE(old),
+> +						  FANOTIFY_EE(new));
+>  	default:
+>  		WARN_ON_ONCE(1);
+>  	}
+> @@ -176,6 +189,10 @@ static int fanotify_merge(struct fsnotify_group *group,
+>  			break;
+>  		if (fanotify_should_merge(old, new)) {
+>  			old->mask |= new->mask;
+> +
+> +			if (fanotify_is_error_event(old->mask))
+> +				FANOTIFY_EE(old)->err_count++;
+> +
+>  			return 1;
+>  		}
+>  	}
+> @@ -577,7 +594,8 @@ static struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
+>  static struct fanotify_event *fanotify_alloc_error_event(
+>  						struct fsnotify_group *group,
+>  						__kernel_fsid_t *fsid,
+> -						const void *data, int data_type)
+> +						const void *data, int data_type,
+> +						unsigned int *hash)
+>  {
+>  	struct fs_error_report *report =
+>  			fsnotify_data_error_report(data, data_type);
+> @@ -591,6 +609,10 @@ static struct fanotify_event *fanotify_alloc_error_event(
+>  		return NULL;
+>  
+>  	fee->fae.type = FANOTIFY_EVENT_TYPE_FS_ERROR;
+> +	fee->err_count = 1;
+> +	fee->fsid = *fsid;
+> +
+> +	*hash ^= fanotify_hash_fsid(fsid);
+>  
+>  	return &fee->fae;
+>  }
+> @@ -664,7 +686,7 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+>  		event = fanotify_alloc_perm_event(path, gfp);
+>  	} else if (fanotify_is_error_event(mask)) {
+>  		event = fanotify_alloc_error_event(group, fsid, data,
+> -						   data_type);
+> +						   data_type, &hash);
+>  	} else if (name_event && (file_name || child)) {
+>  		event = fanotify_alloc_name_event(id, fsid, file_name, child,
+>  						  &hash, gfp);
+> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+> index ebef952481fa..2b032b79d5b0 100644
+> --- a/fs/notify/fanotify/fanotify.h
+> +++ b/fs/notify/fanotify/fanotify.h
+> @@ -199,6 +199,9 @@ FANOTIFY_NE(struct fanotify_event *event)
+>  
+>  struct fanotify_error_event {
+>  	struct fanotify_event fae;
+> +	u32 err_count; /* Suppressed errors count */
+> +
+> +	__kernel_fsid_t fsid; /* FSID this error refers to. */
+>  };
+>  
+>  static inline struct fanotify_error_event *
+> @@ -332,7 +335,6 @@ static inline struct path *fanotify_event_path(struct fanotify_event *event)
+>  static inline bool fanotify_is_hashed_event(u32 mask)
+>  {
+>  	return !(fanotify_is_perm_event(mask) ||
+> -		 fanotify_is_error_event(mask) ||
+>  		 fsnotify_is_overflow_event(mask));
+>  }
+>  
+> -- 
+> 2.33.0
+> 
 -- 
-2.26.3
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
