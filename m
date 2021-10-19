@@ -2,230 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D85AC432B19
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 02:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 757AC432B41
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 02:44:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232424AbhJSANp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 20:13:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40124 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229588AbhJSANp (ORCPT
+        id S232256AbhJSAqX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 20:46:23 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:50482 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230269AbhJSAqX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 20:13:45 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61CADC061745
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 17:11:33 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id e65so15318165pgc.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 17:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=ARK4CV1QCHDnqAC2jNbm2HtT+N4X81UOF1A1BxlVJKw=;
-        b=maB/z56EOiViRmDaFOcRjKQXpDVo9UjXlEHFwOKHKijCm06zqz3YUtJKdTr1Xekdtt
-         aBBjwhHhYYzsbMyq4bhA4QuLOe1aTzjtf9Av5Pe0bRVNZlQp49rfrHbtoHxnIzCk4VaV
-         jpCKQnS0Gm3ypaZDAGgryz5JUO5mJASzSEUaZW2zBdXaOu9GxGHmSSGpYjqoxpm2woaO
-         MFEdY2mQt7RmFBeRQl58MzabrIKrt8sE1LCF5DJN4sJoHmn8zoxs0nIo57uVLYnDKKng
-         RbbLFLzuSC0za6Buhj9BNbGP82sDHcLL/FubB2H3fqOfbwcR9E0CAZB0IIrKhKb3oodb
-         0Mpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=ARK4CV1QCHDnqAC2jNbm2HtT+N4X81UOF1A1BxlVJKw=;
-        b=5nKGDaHQVyeYjy0ytttjifE3+6fGq5xSMH1KaXiuQsNE4vSQQPYzcmdCx0W+1CGZ8p
-         S++ZvyAx6ewagasFPC86MmXWoWGjbeVkCmsgtDDUOsHmuwCRgM1HAtO/QMNBQLHBdEhj
-         MgG6hEfnVeLwX2YT5bzJ/LP63Ess0PYC8BRrj0NDexVxbCD+CFsWSPpvRsbwmmQxnODe
-         FZZ4OAUZaqsa1elLHjxdjElIispIj6ZKu9+k/4UCcKnZsxnLlT9dHxHhg6wUCVFozJsY
-         xqQ678yosgITmlM6n2Up64hnB0dKPNv0S2KE/b+8Oa62vYjGakbZEKOuJSlJJ7PHWDt9
-         ddkQ==
-X-Gm-Message-State: AOAM530r2eslUKi9mI7xJiLk93dRxwibwTVTtVNMnkPvIXtyxAiKn+aT
-        hKzS6BHT0fAU5+YxbZCnJCBQMJCwUf8a9w==
-X-Google-Smtp-Source: ABdhPJwkq+JbuAPjxkqH5uajHT8uTqmxVG6G07sGmUpGKjrYBt7MEogonkifl446sTBWnU+MPHfaMQ==
-X-Received: by 2002:a63:7119:: with SMTP id m25mr14678645pgc.253.1634602292615;
-        Mon, 18 Oct 2021 17:11:32 -0700 (PDT)
-Received: from relinquished.localdomain ([2620:10d:c090:400::5:b911])
-        by smtp.gmail.com with ESMTPSA id x17sm14004418pfa.209.2021.10.18.17.11.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Oct 2021 17:11:32 -0700 (PDT)
-Date:   Mon, 18 Oct 2021 17:11:30 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Nikolay Borisov <nborisov@suse.com>
-Cc:     linux-btrfs@vger.kernel.org, kernel-team@fb.com,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v11 13/14] btrfs: send: send compressed extents with
- encoded writes
-Message-ID: <YW4NMkw0K4uMrckI@relinquished.localdomain>
-References: <cover.1630514529.git.osandov@fb.com>
- <366f92a7ec5a69dc92290dc2cf6e8603f566495c.1630514529.git.osandov@fb.com>
- <58a04b59-a2fb-bd26-606e-6ddf8bd31552@suse.com>
+        Mon, 18 Oct 2021 20:46:23 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 2DC8F1FD80;
+        Tue, 19 Oct 2021 00:44:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1634604250; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+7MDIVddTTR3Nn2OmbQgxanaSoSzcymYHoV7ZFfbLL0=;
+        b=nsmdlgjtsikqzwRYRpA93ruXN5FVrH9vm4r0YkTS49qakVY+NA5qUC5BYQCCr4qaw2iFy3
+        GF2EoGxULtbssiz6Vkb9gmPX5dkerB/ZjJt08i1uoE3w1lpdu8DpDICfRRgsctD/7W0E2j
+        IMH3ydPdO2ZF6GCoE1eeUrAmrQRGBYo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1634604250;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+7MDIVddTTR3Nn2OmbQgxanaSoSzcymYHoV7ZFfbLL0=;
+        b=wPDgyK6vgSH0rWVje3Iv8x1uFmwkDPrXxSkl+b+PvZzB2BL7+BVCGTZ27jgAcRWVmv8CaJ
+        QIAYwO+6p7yZUsBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3679213F09;
+        Tue, 19 Oct 2021 00:44:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id TU7wNNUUbmG3awAAMHmgww
+        (envelope-from <neilb@suse.de>); Tue, 19 Oct 2021 00:44:05 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <58a04b59-a2fb-bd26-606e-6ddf8bd31552@suse.com>
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Michal Hocko" <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, "Dave Chinner" <david@fromorbit.com>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        "Uladzislau Rezki" <urezki@gmail.com>,
+        linux-fsdevel@vger.kernel.org,
+        "LKML" <linux-kernel@vger.kernel.org>,
+        "Ilya Dryomov" <idryomov@gmail.com>,
+        "Jeff Layton" <jlayton@kernel.org>,
+        "Michal Hocko" <mhocko@suse.com>
+Subject: Re: [RFC 1/3] mm/vmalloc: alloc GFP_NO{FS,IO} for vmalloc
+In-reply-to: <20211018114712.9802-2-mhocko@kernel.org>
+References: <20211018114712.9802-1-mhocko@kernel.org>,
+ <20211018114712.9802-2-mhocko@kernel.org>
+Date:   Tue, 19 Oct 2021 11:44:01 +1100
+Message-id: <163460424165.17149.585825289709126969@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 18, 2021 at 02:59:08PM +0300, Nikolay Borisov wrote:
-> 
-> 
-> On 1.09.21 г. 20:01, Omar Sandoval wrote:
-> > From: Omar Sandoval <osandov@fb.com>
-> > 
-> > Now that all of the pieces are in place, we can use the ENCODED_WRITE
-> > command to send compressed extents when appropriate.
-> > 
-> > Signed-off-by: Omar Sandoval <osandov@fb.com>
-> 
-> Overall looks sane but consider some of the nits below.
-> 
-> 
-> <snip>
-> 
-> > +static int send_encoded_extent(struct send_ctx *sctx, struct btrfs_path *path,
-> > +			       u64 offset, u64 len)
-> > +{
-> > +	struct btrfs_root *root = sctx->send_root;
-> > +	struct btrfs_fs_info *fs_info = root->fs_info;
-> > +	struct inode *inode;
-> > +	struct fs_path *p;
-> > +	struct extent_buffer *leaf = path->nodes[0];
-> > +	struct btrfs_key key;
-> > +	struct btrfs_file_extent_item *ei;
-> > +	u64 block_start;
-> > +	u64 block_len;
-> > +	u32 data_offset;
-> > +	struct btrfs_cmd_header *hdr;
-> > +	u32 crc;
-> > +	int ret;
-> > +
-> > +	inode = btrfs_iget(fs_info->sb, sctx->cur_ino, root);
-> > +	if (IS_ERR(inode))
-> > +		return PTR_ERR(inode);
-> > +
-> > +	p = fs_path_alloc();
-> > +	if (!p) {
-> > +		ret = -ENOMEM;
-> > +		goto out;
-> > +	}
-> > +
-> > +	ret = begin_cmd(sctx, BTRFS_SEND_C_ENCODED_WRITE);
-> > +	if (ret < 0)
-> > +		goto out;
-> > +
-> > +	ret = get_cur_path(sctx, sctx->cur_ino, sctx->cur_inode_gen, p);
-> > +	if (ret < 0)
-> > +		goto out;
-> > +
-> > +	btrfs_item_key_to_cpu(leaf, &key, path->slots[0]);
-> > +	ei = btrfs_item_ptr(leaf, path->slots[0],
-> > +			    struct btrfs_file_extent_item);
-> > +	block_start = btrfs_file_extent_disk_bytenr(leaf, ei);
-> 
-> block_start is somewhat ambiguous here, this is just the disk bytenr of
-> the extent.
-> 
-> > +	block_len = btrfs_file_extent_disk_num_bytes(leaf, ei);
-> 
-> Why is this called block_len when it's just the size in bytes on-disk?
+On Mon, 18 Oct 2021, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+>=20
+> vmalloc historically hasn't supported GFP_NO{FS,IO} requests because
+> page table allocations do not support externally provided gfp mask
+> and performed GFP_KERNEL like allocations.
+>=20
+> Since few years we have scope (memalloc_no{fs,io}_{save,restore}) APIs
+> to enforce NOFS and NOIO constrains implicitly to all allocators within
+> the scope. There was a hope that those scopes would be defined on a
+> higher level when the reclaim recursion boundary starts/stops (e.g. when
+> a lock required during the memory reclaim is required etc.). It seems
+> that not all NOFS/NOIO users have adopted this approach and instead
+> they have taken a workaround approach to wrap a single [k]vmalloc
+> allocation by a scope API.
+>=20
+> These workarounds do not serve the purpose of a better reclaim recursion
+> documentation and reduction of explicit GFP_NO{FS,IO} usege so let's
+> just provide them with the semantic they are asking for without a need
+> for workarounds.
+>=20
+> Add support for GFP_NOFS and GFP_NOIO to vmalloc directly. All internal
+> allocations already comply with the given gfp_mask. The only current
+> exception is vmap_pages_range which maps kernel page tables. Infer the
+> proper scope API based on the given gfp mask.
+>=20
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  mm/vmalloc.c | 22 ++++++++++++++++++++--
+>  1 file changed, 20 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index d77830ff604c..7455c89598d3 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2889,6 +2889,8 @@ static void *__vmalloc_area_node(struct vm_struct *ar=
+ea, gfp_t gfp_mask,
+>  	unsigned long array_size;
+>  	unsigned int nr_small_pages =3D size >> PAGE_SHIFT;
+>  	unsigned int page_order;
+> +	unsigned int flags;
+> +	int ret;
+> =20
+>  	array_size =3D (unsigned long)nr_small_pages * sizeof(struct page *);
+>  	gfp_mask |=3D __GFP_NOWARN;
+> @@ -2930,8 +2932,24 @@ static void *__vmalloc_area_node(struct vm_struct *a=
+rea, gfp_t gfp_mask,
+>  		goto fail;
+>  	}
+> =20
+> -	if (vmap_pages_range(addr, addr + size, prot, area->pages,
+> -			page_shift) < 0) {
+> +	/*
+> +	 * page tables allocations ignore external gfp mask, enforce it
+> +	 * by the scope API
+> +	 */
+> +	if ((gfp_mask & (__GFP_FS | __GFP_IO)) =3D=3D __GFP_IO)
+> +		flags =3D memalloc_nofs_save();
+> +	else if (!(gfp_mask & (__GFP_FS | __GFP_IO)))
 
-I copied this naming from extent_map since btrfs_encoded_read() was the
-reference for this code, but I'll change the naming here.
+I would *much* rather this were written
 
-> > +
-> > +	TLV_PUT_PATH(sctx, BTRFS_SEND_A_PATH, p);
-> > +	TLV_PUT_U64(sctx, BTRFS_SEND_A_FILE_OFFSET, offset);
-> > +	TLV_PUT_U64(sctx, BTRFS_SEND_A_UNENCODED_FILE_LEN,
-> > +		    min(key.offset + btrfs_file_extent_num_bytes(leaf, ei) - offset,
-> > +			len));
-> > +	TLV_PUT_U64(sctx, BTRFS_SEND_A_UNENCODED_LEN,
-> > +		    btrfs_file_extent_ram_bytes(leaf, ei));
-> > +	TLV_PUT_U64(sctx, BTRFS_SEND_A_UNENCODED_OFFSET,
-> > +		    offset - key.offset + btrfs_file_extent_offset(leaf, ei));
-> > +	ret = btrfs_encoded_io_compression_from_extent(
-> > +				btrfs_file_extent_compression(leaf, ei));
-> > +	if (ret < 0)
-> > +		goto out;
-> > +	TLV_PUT_U32(sctx, BTRFS_SEND_A_COMPRESSION, ret);
-> > +	TLV_PUT_U32(sctx, BTRFS_SEND_A_ENCRYPTION, 0);
-> > +
-> > +	ret = put_data_header(sctx, block_len);
-> > +	if (ret < 0)
-> > +		goto out;
-> > +
-> > +	data_offset = ALIGN(sctx->send_size, PAGE_SIZE);
-> 
-> nit: The whole data_offset warrants a comment here, since send_buf is
-> now mapped from send_buf_pages, so all the TLV you've put before are
-> actually stored in the beginning of send_buf_pages, so by doing the
-> above you ensure the data write begins on a clean page boundary ...
+        else if ((gfp_mask & (__GFP_FS | __GFP_IO)) =3D=3D 0)
 
-Yup, I'll add a comment.
+so that the comparison with the previous test is more obvious.  Ditto
+for similar code below.
+It could even be
 
-> > +	if (data_offset > sctx->send_max_size ||
-> > +	    sctx->send_max_size - data_offset < block_len) {
-> > +		ret = -EOVERFLOW;
-> > +		goto out;
-> > +	}
-> > +
-> > +	ret = btrfs_encoded_read_regular_fill_pages(inode, block_start,
-> > +						    block_len,
-> > +						    sctx->send_buf_pages +
-> > +						    (data_offset >> PAGE_SHIFT));
-> > +	if (ret)
-> > +		goto out;
-> > +
-> > +	hdr = (struct btrfs_cmd_header *)sctx->send_buf;
-> > +	hdr->len = cpu_to_le32(sctx->send_size + block_len - sizeof(*hdr));
-> > +	hdr->crc = 0;
-> > +	crc = btrfs_crc32c(0, sctx->send_buf, sctx->send_size);
-> > +	crc = btrfs_crc32c(crc, sctx->send_buf + data_offset, block_len);
-> 
-> ... and because of that you can't simply use send_cmd ;(
-> 
-> > +	hdr->crc = cpu_to_le32(crc);
-> > +
-> > +	ret = write_buf(sctx->send_filp, sctx->send_buf, sctx->send_size,
-> > +			&sctx->send_off);
-> > +	if (!ret) {
-> > +		ret = write_buf(sctx->send_filp, sctx->send_buf + data_offset,
-> > +				block_len, &sctx->send_off);
-> > +	}
-> > +	sctx->total_send_size += sctx->send_size + block_len;
-> > +	sctx->cmd_send_size[le16_to_cpu(hdr->cmd)] +=
-> > +		sctx->send_size + block_len;
-> > +	sctx->send_size = 0;
-> > +
-> > +tlv_put_failure:
-> > +out:
-> > +	fs_path_free(p);
-> > +	iput(inode);
-> > +	return ret;
-> > +}
-> > +
-> > +static int send_extent_data(struct send_ctx *sctx, struct btrfs_path *path,
-> > +			    const u64 offset, const u64 len)
-> 
-> nit: Instead of sending around a btrfs_path struct around and
-> "polluting" callees to deal with the oddities of our btree interface i.e
-> btrfs_item_ptr et al. Why not refactor the code so that when we know we
-> are about to send an extent data simply initialize some struct
-> extent_info with all the necessary data items: extent type, compression
-> type, based on the extent type properly initialize a size attribute etc
-> and pass that. Right now you have send_extent_data fiddling with
-> path->nodes[0], then based on that you either call
-> send_encoded_inline_extent or send_encoded_extent, instead pass
-> extent_info to send_extent_data/clone_range and be done with it.
+   switch (gfp_mask & (__GFP_FS | __GFP_IO)) {
+   case __GFP__IO: flags =3D memalloc_nofs_save(); break;
+   case 0:         flags =3D memalloc_noio_save(); break;
+   }
 
-I don't like this for a few reasons:
+But I'm not completely convinced that is an improvement.
 
-* An extra "struct extent_info" layer of abstraction would just be extra
-  cognitive overhead. I hate having to trace back where the fields in
-  some struct came from when it's information that's readily available
-  in more well-known data structures.
-* send_encoded_inline_extent() (called by send_extent_data()) needs the
-  btrfs_path in order to get the inline data anyways.
-* clone_range() also already deals with btrfs_paths, so it's not new.
+In terms of functionality this looks good.
+Thanks,
+NeilBrown
+
+
+> +		flags =3D memalloc_noio_save();
+> +
+> +	ret =3D vmap_pages_range(addr, addr + size, prot, area->pages,
+> +			page_shift);
+> +
+> +	if ((gfp_mask & (__GFP_FS | __GFP_IO)) =3D=3D __GFP_IO)
+> +		memalloc_nofs_restore(flags);
+> +	else if (!(gfp_mask & (__GFP_FS | __GFP_IO)))
+> +		memalloc_noio_restore(flags);
+> +
+> +	if (ret < 0) {
+>  		warn_alloc(gfp_mask, NULL,
+>  			"vmalloc error: size %lu, failed to map pages",
+>  			area->nr_pages * PAGE_SIZE);
+> --=20
+> 2.30.2
+>=20
+>=20
