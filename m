@@ -2,164 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26806432AFE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 02:04:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D85AC432B19
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 02:11:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234113AbhJSAHB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 20:07:01 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:41134 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229529AbhJSAHB (ORCPT
+        id S232424AbhJSANp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Oct 2021 20:13:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40124 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229588AbhJSANp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 20:07:01 -0400
-Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1007])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id E96D01F4321E;
-        Tue, 19 Oct 2021 01:04:47 +0100 (BST)
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     jack@suse.com, amir73il@gmail.com
-Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
-        dhowells@redhat.com, khazhy@google.com,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-api@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel@collabora.com
-Subject: [PATCH v8 32/32] docs: Document the FAN_FS_ERROR event
-Date:   Mon, 18 Oct 2021 21:00:15 -0300
-Message-Id: <20211019000015.1666608-33-krisman@collabora.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211019000015.1666608-1-krisman@collabora.com>
-References: <20211019000015.1666608-1-krisman@collabora.com>
+        Mon, 18 Oct 2021 20:13:45 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61CADC061745
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 17:11:33 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id e65so15318165pgc.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Oct 2021 17:11:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=ARK4CV1QCHDnqAC2jNbm2HtT+N4X81UOF1A1BxlVJKw=;
+        b=maB/z56EOiViRmDaFOcRjKQXpDVo9UjXlEHFwOKHKijCm06zqz3YUtJKdTr1Xekdtt
+         aBBjwhHhYYzsbMyq4bhA4QuLOe1aTzjtf9Av5Pe0bRVNZlQp49rfrHbtoHxnIzCk4VaV
+         jpCKQnS0Gm3ypaZDAGgryz5JUO5mJASzSEUaZW2zBdXaOu9GxGHmSSGpYjqoxpm2woaO
+         MFEdY2mQt7RmFBeRQl58MzabrIKrt8sE1LCF5DJN4sJoHmn8zoxs0nIo57uVLYnDKKng
+         RbbLFLzuSC0za6Buhj9BNbGP82sDHcLL/FubB2H3fqOfbwcR9E0CAZB0IIrKhKb3oodb
+         0Mpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=ARK4CV1QCHDnqAC2jNbm2HtT+N4X81UOF1A1BxlVJKw=;
+        b=5nKGDaHQVyeYjy0ytttjifE3+6fGq5xSMH1KaXiuQsNE4vSQQPYzcmdCx0W+1CGZ8p
+         S++ZvyAx6ewagasFPC86MmXWoWGjbeVkCmsgtDDUOsHmuwCRgM1HAtO/QMNBQLHBdEhj
+         MgG6hEfnVeLwX2YT5bzJ/LP63Ess0PYC8BRrj0NDexVxbCD+CFsWSPpvRsbwmmQxnODe
+         FZZ4OAUZaqsa1elLHjxdjElIispIj6ZKu9+k/4UCcKnZsxnLlT9dHxHhg6wUCVFozJsY
+         xqQ678yosgITmlM6n2Up64hnB0dKPNv0S2KE/b+8Oa62vYjGakbZEKOuJSlJJ7PHWDt9
+         ddkQ==
+X-Gm-Message-State: AOAM530r2eslUKi9mI7xJiLk93dRxwibwTVTtVNMnkPvIXtyxAiKn+aT
+        hKzS6BHT0fAU5+YxbZCnJCBQMJCwUf8a9w==
+X-Google-Smtp-Source: ABdhPJwkq+JbuAPjxkqH5uajHT8uTqmxVG6G07sGmUpGKjrYBt7MEogonkifl446sTBWnU+MPHfaMQ==
+X-Received: by 2002:a63:7119:: with SMTP id m25mr14678645pgc.253.1634602292615;
+        Mon, 18 Oct 2021 17:11:32 -0700 (PDT)
+Received: from relinquished.localdomain ([2620:10d:c090:400::5:b911])
+        by smtp.gmail.com with ESMTPSA id x17sm14004418pfa.209.2021.10.18.17.11.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Oct 2021 17:11:32 -0700 (PDT)
+Date:   Mon, 18 Oct 2021 17:11:30 -0700
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Nikolay Borisov <nborisov@suse.com>
+Cc:     linux-btrfs@vger.kernel.org, kernel-team@fb.com,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v11 13/14] btrfs: send: send compressed extents with
+ encoded writes
+Message-ID: <YW4NMkw0K4uMrckI@relinquished.localdomain>
+References: <cover.1630514529.git.osandov@fb.com>
+ <366f92a7ec5a69dc92290dc2cf6e8603f566495c.1630514529.git.osandov@fb.com>
+ <58a04b59-a2fb-bd26-606e-6ddf8bd31552@suse.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <58a04b59-a2fb-bd26-606e-6ddf8bd31552@suse.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Document the FAN_FS_ERROR event for user administrators and user space
-developers.
+On Mon, Oct 18, 2021 at 02:59:08PM +0300, Nikolay Borisov wrote:
+> 
+> 
+> On 1.09.21 г. 20:01, Omar Sandoval wrote:
+> > From: Omar Sandoval <osandov@fb.com>
+> > 
+> > Now that all of the pieces are in place, we can use the ENCODED_WRITE
+> > command to send compressed extents when appropriate.
+> > 
+> > Signed-off-by: Omar Sandoval <osandov@fb.com>
+> 
+> Overall looks sane but consider some of the nits below.
+> 
+> 
+> <snip>
+> 
+> > +static int send_encoded_extent(struct send_ctx *sctx, struct btrfs_path *path,
+> > +			       u64 offset, u64 len)
+> > +{
+> > +	struct btrfs_root *root = sctx->send_root;
+> > +	struct btrfs_fs_info *fs_info = root->fs_info;
+> > +	struct inode *inode;
+> > +	struct fs_path *p;
+> > +	struct extent_buffer *leaf = path->nodes[0];
+> > +	struct btrfs_key key;
+> > +	struct btrfs_file_extent_item *ei;
+> > +	u64 block_start;
+> > +	u64 block_len;
+> > +	u32 data_offset;
+> > +	struct btrfs_cmd_header *hdr;
+> > +	u32 crc;
+> > +	int ret;
+> > +
+> > +	inode = btrfs_iget(fs_info->sb, sctx->cur_ino, root);
+> > +	if (IS_ERR(inode))
+> > +		return PTR_ERR(inode);
+> > +
+> > +	p = fs_path_alloc();
+> > +	if (!p) {
+> > +		ret = -ENOMEM;
+> > +		goto out;
+> > +	}
+> > +
+> > +	ret = begin_cmd(sctx, BTRFS_SEND_C_ENCODED_WRITE);
+> > +	if (ret < 0)
+> > +		goto out;
+> > +
+> > +	ret = get_cur_path(sctx, sctx->cur_ino, sctx->cur_inode_gen, p);
+> > +	if (ret < 0)
+> > +		goto out;
+> > +
+> > +	btrfs_item_key_to_cpu(leaf, &key, path->slots[0]);
+> > +	ei = btrfs_item_ptr(leaf, path->slots[0],
+> > +			    struct btrfs_file_extent_item);
+> > +	block_start = btrfs_file_extent_disk_bytenr(leaf, ei);
+> 
+> block_start is somewhat ambiguous here, this is just the disk bytenr of
+> the extent.
+> 
+> > +	block_len = btrfs_file_extent_disk_num_bytes(leaf, ei);
+> 
+> Why is this called block_len when it's just the size in bytes on-disk?
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+I copied this naming from extent_map since btrfs_encoded_read() was the
+reference for this code, but I'll change the naming here.
 
----
-Changes Since v7:
-  - Update semantics
-Changes Since v6:
-  - English fixes (jan)
-  - Proper document error field (jan)
-Changes Since v4:
-  - Update documentation about reporting non-file error.
-Changes Since v3:
-  - Move FAN_FS_ERROR notification into a subsection of the file.
-Changes Since v2:
-  - NTR
-Changes since v1:
-  - Drop references to location record
-  - Explain that the inode field is optional
-  - Explain we are reporting only the first error
----
- .../admin-guide/filesystem-monitoring.rst     | 76 +++++++++++++++++++
- Documentation/admin-guide/index.rst           |  1 +
- 2 files changed, 77 insertions(+)
- create mode 100644 Documentation/admin-guide/filesystem-monitoring.rst
+> > +
+> > +	TLV_PUT_PATH(sctx, BTRFS_SEND_A_PATH, p);
+> > +	TLV_PUT_U64(sctx, BTRFS_SEND_A_FILE_OFFSET, offset);
+> > +	TLV_PUT_U64(sctx, BTRFS_SEND_A_UNENCODED_FILE_LEN,
+> > +		    min(key.offset + btrfs_file_extent_num_bytes(leaf, ei) - offset,
+> > +			len));
+> > +	TLV_PUT_U64(sctx, BTRFS_SEND_A_UNENCODED_LEN,
+> > +		    btrfs_file_extent_ram_bytes(leaf, ei));
+> > +	TLV_PUT_U64(sctx, BTRFS_SEND_A_UNENCODED_OFFSET,
+> > +		    offset - key.offset + btrfs_file_extent_offset(leaf, ei));
+> > +	ret = btrfs_encoded_io_compression_from_extent(
+> > +				btrfs_file_extent_compression(leaf, ei));
+> > +	if (ret < 0)
+> > +		goto out;
+> > +	TLV_PUT_U32(sctx, BTRFS_SEND_A_COMPRESSION, ret);
+> > +	TLV_PUT_U32(sctx, BTRFS_SEND_A_ENCRYPTION, 0);
+> > +
+> > +	ret = put_data_header(sctx, block_len);
+> > +	if (ret < 0)
+> > +		goto out;
+> > +
+> > +	data_offset = ALIGN(sctx->send_size, PAGE_SIZE);
+> 
+> nit: The whole data_offset warrants a comment here, since send_buf is
+> now mapped from send_buf_pages, so all the TLV you've put before are
+> actually stored in the beginning of send_buf_pages, so by doing the
+> above you ensure the data write begins on a clean page boundary ...
 
-diff --git a/Documentation/admin-guide/filesystem-monitoring.rst b/Documentation/admin-guide/filesystem-monitoring.rst
-new file mode 100644
-index 000000000000..f1f6476fa4f3
---- /dev/null
-+++ b/Documentation/admin-guide/filesystem-monitoring.rst
-@@ -0,0 +1,76 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+====================================
-+File system Monitoring with fanotify
-+====================================
-+
-+File system Error Reporting
-+===========================
-+
-+Fanotify supports the FAN_FS_ERROR event type for file system-wide error
-+reporting.  It is meant to be used by file system health monitoring
-+daemons, which listen for these events and take actions (notify
-+sysadmin, start recovery) when a file system problem is detected.
-+
-+By design, A FAN_FS_ERROR notification exposes sufficient information
-+for a monitoring tool to know a problem in the file system has happened.
-+It doesn't necessarily provide a user space application with semantics
-+to verify an IO operation was successfully executed.  That is out of
-+scope for this feature.  Instead, it is only meant as a framework for
-+early file system problem detection and reporting recovery tools.
-+
-+When a file system operation fails, it is common for dozens of kernel
-+errors to cascade after the initial failure, hiding the original failure
-+log, which is usually the most useful debug data to troubleshoot the
-+problem.  For this reason, FAN_FS_ERROR tries to report only the first
-+error that occurred for a process since the last notification, and it
-+simply counts additional errors.  This ensures that the most important
-+pieces of information are never lost.
-+
-+FAN_FS_ERROR requires the fanotify group to be setup with the
-+FAN_REPORT_FID flag.
-+
-+At the time of this writing, the only file system that emits FAN_FS_ERROR
-+notifications is Ext4.
-+
-+A user space example code is provided at ``samples/fanotify/fs-monitor.c``.
-+
-+A FAN_FS_ERROR Notification has the following format::
-+
-+  [ Notification Metadata (Mandatory) ]
-+  [ Generic Error Record  (Mandatory) ]
-+  [ FID record            (Mandatory) ]
-+
-+Generic error record
-+--------------------
-+
-+The generic error record provides enough information for a file system
-+agnostic tool to learn about a problem in the file system, without
-+providing any additional details about the problem.  This record is
-+identified by ``struct fanotify_event_info_header.info_type`` being set
-+to FAN_EVENT_INFO_TYPE_ERROR.
-+
-+  struct fanotify_event_info_error {
-+	struct fanotify_event_info_header hdr;
-+	__s32 error;
-+	__u32 error_count;
-+  };
-+
-+The `error` field identifies the error in a file-system specific way.
-+Ext4, for instance, which is the only file system implementing this
-+interface at the time of this writing, exposes EXT4_ERR_ values in this
-+field.  Please refer to the file system documentation for the meaning of
-+specific error codes.
-+
-+`error_count` tracks the number of errors that occurred and were
-+suppressed to preserve the original error information, since the last
-+notification.
-+
-+FID record
-+----------
-+
-+The FID record can be used to uniquely identify the inode that triggered
-+the error through the combination of fsid and file handle.  A file system
-+specific application can use that information to attempt a recovery
-+procedure.  Errors that are not related to an inode are reported with an
-+empty file handle of type FILEID_INVALID.
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index dc00afcabb95..1bedab498104 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -82,6 +82,7 @@ configure specific aspects of kernel behavior to your liking.
-    edid
-    efi-stub
-    ext4
-+   filesystem-monitoring
-    nfs/index
-    gpio/index
-    highuid
--- 
-2.33.0
+Yup, I'll add a comment.
 
+> > +	if (data_offset > sctx->send_max_size ||
+> > +	    sctx->send_max_size - data_offset < block_len) {
+> > +		ret = -EOVERFLOW;
+> > +		goto out;
+> > +	}
+> > +
+> > +	ret = btrfs_encoded_read_regular_fill_pages(inode, block_start,
+> > +						    block_len,
+> > +						    sctx->send_buf_pages +
+> > +						    (data_offset >> PAGE_SHIFT));
+> > +	if (ret)
+> > +		goto out;
+> > +
+> > +	hdr = (struct btrfs_cmd_header *)sctx->send_buf;
+> > +	hdr->len = cpu_to_le32(sctx->send_size + block_len - sizeof(*hdr));
+> > +	hdr->crc = 0;
+> > +	crc = btrfs_crc32c(0, sctx->send_buf, sctx->send_size);
+> > +	crc = btrfs_crc32c(crc, sctx->send_buf + data_offset, block_len);
+> 
+> ... and because of that you can't simply use send_cmd ;(
+> 
+> > +	hdr->crc = cpu_to_le32(crc);
+> > +
+> > +	ret = write_buf(sctx->send_filp, sctx->send_buf, sctx->send_size,
+> > +			&sctx->send_off);
+> > +	if (!ret) {
+> > +		ret = write_buf(sctx->send_filp, sctx->send_buf + data_offset,
+> > +				block_len, &sctx->send_off);
+> > +	}
+> > +	sctx->total_send_size += sctx->send_size + block_len;
+> > +	sctx->cmd_send_size[le16_to_cpu(hdr->cmd)] +=
+> > +		sctx->send_size + block_len;
+> > +	sctx->send_size = 0;
+> > +
+> > +tlv_put_failure:
+> > +out:
+> > +	fs_path_free(p);
+> > +	iput(inode);
+> > +	return ret;
+> > +}
+> > +
+> > +static int send_extent_data(struct send_ctx *sctx, struct btrfs_path *path,
+> > +			    const u64 offset, const u64 len)
+> 
+> nit: Instead of sending around a btrfs_path struct around and
+> "polluting" callees to deal with the oddities of our btree interface i.e
+> btrfs_item_ptr et al. Why not refactor the code so that when we know we
+> are about to send an extent data simply initialize some struct
+> extent_info with all the necessary data items: extent type, compression
+> type, based on the extent type properly initialize a size attribute etc
+> and pass that. Right now you have send_extent_data fiddling with
+> path->nodes[0], then based on that you either call
+> send_encoded_inline_extent or send_encoded_extent, instead pass
+> extent_info to send_extent_data/clone_range and be done with it.
+
+I don't like this for a few reasons:
+
+* An extra "struct extent_info" layer of abstraction would just be extra
+  cognitive overhead. I hate having to trace back where the fields in
+  some struct came from when it's information that's readily available
+  in more well-known data structures.
+* send_encoded_inline_extent() (called by send_extent_data()) needs the
+  btrfs_path in order to get the inline data anyways.
+* clone_range() also already deals with btrfs_paths, so it's not new.
