@@ -2,154 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B89D433553
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 14:03:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 101AA433733
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 15:36:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230506AbhJSMFe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 08:05:34 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:45804 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235431AbhJSMFd (ORCPT
+        id S235904AbhJSNjG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 09:39:06 -0400
+Received: from mail-ed1-f46.google.com ([209.85.208.46]:35684 "EHLO
+        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231564AbhJSNjF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 08:05:33 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id CCFA91FD2D;
-        Tue, 19 Oct 2021 12:03:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1634644999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AOx0YP1UeYYzT4mYlA9g3w+LktMDzaz68AOx+gTw7qw=;
-        b=Al9IiWidJ4t78Vu1mCC9HkCEVzoWENJ2ZN4dhIL0wdB7EGKNzjhvYGeSYTeaWDyUv9lIie
-        25BPUi0XQH4fTtkKt1H8gK2FLJ1FRdRMJD0UFnVA/+DXPqe+QcKKFUJwaPKVfKcPpqdcrM
-        cF+qAmWgTVuqHx0tLnPNNlXLGyiMIl4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1634644999;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AOx0YP1UeYYzT4mYlA9g3w+LktMDzaz68AOx+gTw7qw=;
-        b=u1TPYVZyLyWZr3mebAn/kNtq5LptGoPutV5Age3+pxvEvAJmXG0/LrGDG4l3F130YrEPRx
-        vJnj+OoLL63c0zBw==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id B7C0EA3B9A;
-        Tue, 19 Oct 2021 12:03:19 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 953751E0983; Tue, 19 Oct 2021 14:03:16 +0200 (CEST)
-Date:   Tue, 19 Oct 2021 14:03:16 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Jan Kara <jack@suse.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Theodore Tso <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>,
-        David Howells <dhowells@redhat.com>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>, kernel@collabora.com
-Subject: Re: [PATCH v8 20/32] fanotify: Dynamically resize the FAN_FS_ERROR
- pool
-Message-ID: <20211019120316.GI3255@quack2.suse.cz>
-References: <20211019000015.1666608-1-krisman@collabora.com>
- <20211019000015.1666608-21-krisman@collabora.com>
- <CAOQ4uxi3C7MQxGPc1fD8ZyRTkyJZQac3_M-0aGYzPKbJ6AK8Jg@mail.gmail.com>
+        Tue, 19 Oct 2021 09:39:05 -0400
+Received: by mail-ed1-f46.google.com with SMTP id w19so13045253edd.2;
+        Tue, 19 Oct 2021 06:36:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=l2fMMxDDiXx3vgfR9XbtY8zVEKvNNXiKJ69kmRp4vQM=;
+        b=mCb8jqED0k1GQlElRY/RIaU6/LQcw05GMBYf6vFWLA9vc2DtSanoKswatoZlHXmZeR
+         jxKfUU+m0/uml1+TeZGYzomvq95udLj57/03xWpDUy/P3CqOGD6bCnJBKzlJhShKAqml
+         /NKIpkfkZR8E2C7pWzzyhCN5C7avmhImOUJcNWv522iNnmtPum3Z+C+OmlJmshhiBUyL
+         SdLZ8QfUOh7MIizH83K0nYPshlDdQZHO7fd1jUfNRs1B4rxvOHJw7OsfEgz3GTvdSxC+
+         5+Phg0IXOWQG1NpFvAhdllnkeefXi/zeTMN6v0r7AhGwLpcrlWXIv5TsgHvwW4w7BrEA
+         RMaw==
+X-Gm-Message-State: AOAM532VakqfLcy3QyLtmd9sevati6qN53VSuelDeibLn6VbcZs5ks0t
+        Yi/RFhQVYplSzk6iuYQ5rktFFhBLOee3Zwv7
+X-Google-Smtp-Source: ABdhPJxK5E41qyWGhA8m0/y1a2EmpcFIwcooZQ3yYlMpxn0gc32jmtmTmaGNK+k9ZR0AdgnAjoTadQ==
+X-Received: by 2002:a05:6402:1e8c:: with SMTP id f12mr52173095edf.71.1634650576792;
+        Tue, 19 Oct 2021 06:36:16 -0700 (PDT)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
+        by smtp.gmail.com with ESMTPSA id b2sm11215570edv.73.2021.10.19.06.36.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Oct 2021 06:36:16 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id g39so7785125wmp.3;
+        Tue, 19 Oct 2021 06:36:16 -0700 (PDT)
+X-Received: by 2002:a1c:a443:: with SMTP id n64mr6116840wme.32.1634650175559;
+ Tue, 19 Oct 2021 06:29:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxi3C7MQxGPc1fD8ZyRTkyJZQac3_M-0aGYzPKbJ6AK8Jg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
+In-Reply-To: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
+From:   Marc Dionne <marc.dionne@auristor.com>
+Date:   Tue, 19 Oct 2021 10:29:24 -0300
+X-Gmail-Original-Message-ID: <CAB9dFdumxi0U_339S3PfC4TL83Srqn+qGz2AAbJ995NiLhbxnw@mail.gmail.com>
+Message-ID: <CAB9dFdumxi0U_339S3PfC4TL83Srqn+qGz2AAbJ995NiLhbxnw@mail.gmail.com>
+Subject: Re: [Linux-cachefs] [PATCH 00/67] fscache: Rewrite index API and
+ management system
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-cachefs@redhat.com, Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        linux-mm@kvack.org, linux-afs@lists.infradead.org,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        linux-cifs@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        v9fs-developer@lists.sourceforge.net,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        ceph-devel@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Steve French <sfrench@samba.org>,
+        linux-fsdevel@vger.kernel.org, Omar Sandoval <osandov@osandov.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 19-10-21 08:50:23, Amir Goldstein wrote:
-> On Tue, Oct 19, 2021 at 3:03 AM Gabriel Krisman Bertazi
-> <krisman@collabora.com> wrote:
-> >
-> > Allow the FAN_FS_ERROR group mempool to grow up to an upper limit
-> > dynamically, instead of starting already at the limit.  This doesn't
-> > bother resizing on mark removal, but next time a mark is added, the slot
-> > will be either reused or resized.  Also, if several marks are being
-> > removed at once, most likely the group is going away anyway.
-> >
-> > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> > ---
-> >  fs/notify/fanotify/fanotify_user.c | 26 +++++++++++++++++++++-----
-> >  include/linux/fsnotify_backend.h   |  1 +
-> >  2 files changed, 22 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> > index f77581c5b97f..a860c286e885 100644
-> > --- a/fs/notify/fanotify/fanotify_user.c
-> > +++ b/fs/notify/fanotify/fanotify_user.c
-> > @@ -959,6 +959,10 @@ static int fanotify_remove_mark(struct fsnotify_group *group,
-> >
-> >         removed = fanotify_mark_remove_from_mask(fsn_mark, mask, flags,
-> >                                                  umask, &destroy_mark);
-> > +
-> > +       if (removed & FAN_FS_ERROR)
-> > +               group->fanotify_data.error_event_marks--;
-> > +
-> >         if (removed & fsnotify_conn_mask(fsn_mark->connector))
-> >                 fsnotify_recalc_mask(fsn_mark->connector);
-> >         if (destroy_mark)
-> > @@ -1057,12 +1061,24 @@ static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
-> >
-> >  static int fanotify_group_init_error_pool(struct fsnotify_group *group)
-> >  {
-> > -       if (mempool_initialized(&group->fanotify_data.error_events_pool))
-> > -               return 0;
-> > +       int ret;
-> > +
-> > +       if (group->fanotify_data.error_event_marks >=
-> > +           FANOTIFY_DEFAULT_MAX_FEE_POOL)
-> > +               return -ENOMEM;
-> >
-> > -       return mempool_init_kmalloc_pool(&group->fanotify_data.error_events_pool,
-> > -                                        FANOTIFY_DEFAULT_MAX_FEE_POOL,
-> > -                                        sizeof(struct fanotify_error_event));
-> > +       if (!mempool_initialized(&group->fanotify_data.error_events_pool))
-> > +               ret = mempool_init_kmalloc_pool(
-> > +                               &group->fanotify_data.error_events_pool,
-> > +                                1, sizeof(struct fanotify_error_event));
-> > +       else
-> > +               ret = mempool_resize(&group->fanotify_data.error_events_pool,
-> > +                                    group->fanotify_data.error_event_marks + 1);
-> > +
-> > +       if (!ret)
-> > +               group->fanotify_data.error_event_marks++;
-> > +
-> > +       return ret;
-> >  }
-> 
-> This is not what I had in mind.
-> I was thinking start with ~32 and double each time limit is reached.
+On Mon, Oct 18, 2021 at 11:50 AM David Howells <dhowells@redhat.com> wrote:
+>
+>
+> Here's a set of patches that rewrites and simplifies the fscache index API
+> to remove the complex operation scheduling and object state machine in
+> favour of something much smaller and simpler.  It is built on top of the
+> set of patches that removes the old API[1].
 
-Do you mean when number of FS_ERROR marks reaches the number of preallocated
-events? We could do that but note that due to mempool implementation limits
-there cannot be more than 255 preallocated events, also mempool_resize()
-will only update number of slots for preallocated events but these slots
-will be empty. You have to manually allocate and free events to fill these
-slots with preallocated events.
+Testing this series in our afs test framework, saw the oops pasted below.
 
-> And also, this code grows the pool to infinity with add/remove mark loop.
+cachefiles_begin_operation+0x2d maps to cachefiles/io.c:565, where
+object is probably NULL (object->file is at offset 0x28).
 
-I see a cap at FANOTIFY_DEFAULT_MAX_FEE_POOL in the code there. But I don't
-think there's a good enough reason to hard-limit number of FS_ERROR marks
-at 128. As I explained in the previous version of the series, in vast
-majority of cases we will not use even a single preallocated event...
-
-> Anyway, since I clearly did not understand how mempool works and
-> Jan had some different ideas I would leave it to Jan to explain
-> how he wants the mempool init limit and resize to be implemented.
-
-Honestly, I'm for keeping it simple for now. Just 32 preallocated events
-and try to come up with something more clever only if someone actually
-complains.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Marc
+===
+BUG: kernel NULL pointer dereference, address: 0000000000000028
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 0 P4D 0
+Oops: 0000 [#1] SMP NOPTI
+CPU: 5 PID: 16607 Comm: ar Tainted: G            E
+5.15.0-rc5.kafs_testing+ #37
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.14.0-2.fc34 04/01/2014
+RIP: 0010:cachefiles_begin_operation+0x2d/0x80 [cachefiles]
+Code: 00 00 55 53 48 83 ec 08 48 8b 47 08 48 83 7f 10 00 48 8b 68 20
+74 0c b8 01 00 00 00 48 83 c4 08 5b 5d c3 48 c7 07 a0 12 1b a0 <48> 8b
+45 28 48 89 fb 48 85 c0 74 20 48 8d 7d 04 89 74 24 04 e8 3a
+RSP: 0018:ffffc90000d33b48 EFLAGS: 00010246
+RAX: ffff888014991420 RBX: ffff888100ae9cf0 RCX: 0000000000000000
+RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffff888100ae9cf0
+RBP: 0000000000000000 R08: 00000000000006b8 R09: ffff88810e98e000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff888014991434
+R13: 0000000000000002 R14: ffff888014991420 R15: 0000000000000002
+FS:  00007f72d0486b80(0000) GS:ffff888139940000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000028 CR3: 000000007bac8004 CR4: 0000000000770ee0
+PKRU: 55555554
+Call Trace:
+ fscache_begin_operation.part.0+0x1e3/0x210 [fscache]
+ netfs_write_begin+0x3fb/0x800 [netfs]
+ ? __fscache_use_cookie+0x120/0x200 [fscache]
+ afs_write_begin+0x58/0x2c0 [kafs]
+ ? __vfs_getxattr+0x2a/0x70
+ generic_perform_write+0xb1/0x1b0
+ ? file_update_time+0xcf/0x120
+ __generic_file_write_iter+0x14c/0x1d0
+ generic_file_write_iter+0x5d/0xb0
+ afs_file_write+0x73/0xa0 [kafs]
+ new_sync_write+0x105/0x180
+ vfs_write+0x1cb/0x260
+ ksys_write+0x4f/0xc0
+ do_syscall_64+0x35/0x80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7f72d059a7a7
+Code: 0d 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 f3 0f
+1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d
+00 f0 ff ff 77 51 c3 48 83 ec 28 48 89 54 24 18 48 89 74 24
+RSP: 002b:00007fffc31942b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f72d059a7a7
+RDX: 0000000000000008 RSI: 000055fe42367730 RDI: 0000000000000003
+RBP: 000055fe42367730 R08: 0000000000000000 R09: 00007f72d066ca00
+R10: 000000000000007c R11: 0000000000000246 R12: 0000000000000008
