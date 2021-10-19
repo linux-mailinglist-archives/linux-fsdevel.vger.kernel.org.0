@@ -2,101 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB256433B83
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 18:01:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC880433B8E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 18:03:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233353AbhJSQEH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 12:04:07 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:58914 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229789AbhJSQEG (ORCPT
+        id S233717AbhJSQFX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 12:05:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58776 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232187AbhJSQFW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 12:04:06 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id BF6E221981;
-        Tue, 19 Oct 2021 16:01:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1634659312; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8hIx4eb8RNDvqpfcSYXsTTz8oiHfDvbCGCZib+Ictaw=;
-        b=PpiTBGbBw0Mz+wxjp3SLGi553EsrgcRkICcmK0CqwPPepfUkV/PdHKAJ8qLFFgkcOIMJM8
-        iJnqVEBJg1Ama7ybduuDV5zdzQbH9dQzgQeRF6lzIe1t3hUYBbIULHT9i52HJ2S/zhVeuE
-        nkYKeUfyqB0AsLf+vCA2lO9PjxoCchc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1634659312;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8hIx4eb8RNDvqpfcSYXsTTz8oiHfDvbCGCZib+Ictaw=;
-        b=8bzN2S5Q8vMJhRL9+u61e0yYLZSymEmRUfnEEFU4nwv26As/HmzWbyqtRrzrndJzY8EmhX
-        QCxjlpFles6rxLDQ==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id AA05AA3B8C;
-        Tue, 19 Oct 2021 16:01:52 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 7AF771E0983; Tue, 19 Oct 2021 18:01:52 +0200 (CEST)
-Date:   Tue, 19 Oct 2021 18:01:52 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     jack@suse.com, amir73il@gmail.com, djwong@kernel.org,
-        tytso@mit.edu, david@fromorbit.com, dhowells@redhat.com,
-        khazhy@google.com, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-api@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCH v8 30/32] ext4: Send notifications on error
-Message-ID: <20211019160152.GT3255@quack2.suse.cz>
-References: <20211019000015.1666608-1-krisman@collabora.com>
- <20211019000015.1666608-31-krisman@collabora.com>
- <20211019154426.GR3255@quack2.suse.cz>
+        Tue, 19 Oct 2021 12:05:22 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0970C061749
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 09:03:09 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id t21so5939526plr.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 09:03:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=g/jsHVQAvNzunGQb0wziwjY53g/EPbrMKbfjiqPl4Gc=;
+        b=G4sSHUkJ8erVD2b59qOEY744aPEFAe9AohmIJVKL1ypzhMaHxSBPQuCebyfM0Fwe5M
+         6YQpZBfsWF0I9i41yUbXiVo3xUcNw9pDd1ahgl75/3yJo22iqJaHBzRL26O6WmJ4dsqD
+         CTgAaJNuxDFy8v2WwZ8OQhvASl8w6RNxDdyowUT0CKQIWgYmdvnUa91M3uVcAf2tJfwJ
+         mX7SLbwC8pdJ17FRyL9wIcomyif0V8fYa6lrRo5ERO6JFNOgSOqSB4m6IlcLZhm33Cx+
+         JZ6Rgh+H2cb6efDMIlObcliMmRSEOxDXw9HFz/btrelBKpFSmwPMGrPBCKeCyE8BgFFk
+         0P+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=g/jsHVQAvNzunGQb0wziwjY53g/EPbrMKbfjiqPl4Gc=;
+        b=BPVXqWfZCLKgXeJXzjsvjzQ6zM2q3m5UEmGl051ZrbS6L7YB1XvtunPunD1igZNDwu
+         RHAcCylormPv07GUEMS1a4ujCzTALJYeoLDeRHmBt+f0il1TrAol5tH0X5oqRWhoAUmk
+         p+8DRnUR2X44uhB4aEBUz2OoMAiMVwJTylPBRd6ceJ6k2ZaDUHa8KYBbp//wWKy6N3ND
+         lfpigXi4bFgqCOAnHWjAZmtNdXE8PMORdgsh3nOYR+hCSARIBQJdoixwJbpKwLCLuch6
+         0XWo9NcGMNGZUImpFtHhVtkGCgIrGY+KNzXpQJCLaIOce3AAI3DI2TMQ+99Y7yRpsrWn
+         OJ7Q==
+X-Gm-Message-State: AOAM532ujEaSPg0UqASfnIejp9keFB5faaxYx+rL5t/nG1Tfllo6Vri4
+        4zyryfIKUVxaaRCKn+NgmFlLbw==
+X-Google-Smtp-Source: ABdhPJztw8G4kVbaF5witZLdYipqlYZuPBgEMLJep81ouknAKZ0Uhj1CKGz1mA+hiNDUWYV4H2SO1g==
+X-Received: by 2002:a17:903:22d0:b0:13f:507:6414 with SMTP id y16-20020a17090322d000b0013f05076414mr34148954plg.69.1634659387661;
+        Tue, 19 Oct 2021 09:03:07 -0700 (PDT)
+Received: from localhost.localdomain ([139.177.225.225])
+        by smtp.gmail.com with ESMTPSA id 66sm16431749pfu.185.2021.10.19.09.03.05
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Oct 2021 09:03:07 -0700 (PDT)
+From:   Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+To:     miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xieyongji@bytedance.com,
+        Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+Subject: [RFCv2] fuse: Sync attributes when the inode is clean in writeback mode
+Date:   Wed, 20 Oct 2021 00:02:51 +0800
+Message-Id: <20211019160251.6728-1-zhangjiachen.jaycee@bytedance.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211019154426.GR3255@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 19-10-21 17:44:26, Jan Kara wrote:
-> On Mon 18-10-21 21:00:13, Gabriel Krisman Bertazi wrote:
-> > Send a FS_ERROR message via fsnotify to a userspace monitoring tool
-> > whenever a ext4 error condition is triggered.  This follows the existing
-> > error conditions in ext4, so it is hooked to the ext4_error* functions.
-> > 
-> > It also follows the current dmesg reporting in the format.  The
-> > filesystem message is composed mostly by the string that would be
-> > otherwise printed in dmesg.
-> > 
-> > A new ext4 specific record format is exposed in the uapi, such that a
-> > monitoring tool knows what to expect when listening errors of an ext4
-> > filesystem.
-> > 
-> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> > Reviewed-by: Theodore Ts'o <tytso@mit.edu>
-> > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> 
-> Looks good to me. Feel free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+This is the RFCv2 version of this patch. Compared with the previous
+version, v2 based on the latest fuse for-next branch commit 83d9bf94c077
+("fuse: add cache_mask"). With the new cleanups and fuse interfaces, this
+commit is more clean compared with v1 [1].
 
-Hum, I actually retract this because the code doesn't match what is written
-in the documentation and I'm not 100% sure what is correct. In particular:
+The propose of this commit is still to relax the c/mtime and size updating
+for writeback_cache mode. Because when writeback cache is enabled, kernel
+will locally maintain the attributes, and never trusts any server side
+attribute changes. This limitaion is too strict in some use cases. For
+example, if a file is not actively wrote from the fuse mount in writeback
+mode, the writeback related caches should be clean, and the user may expect
+to see the new size changed from the server side. This commit tires to
+relax the limitation.
 
-> > @@ -759,6 +760,8 @@ void __ext4_error(struct super_block *sb, const char *function,
-> >  		       sb->s_id, function, line, current->comm, &vaf);
-> >  		va_end(args);
-> >  	}
-> > +	fsnotify_sb_error(sb, NULL, error);
-> > +
+If there is no dirty page of an fuse inode, update its ctime, atime and
+size even in writeback_cache mode. The page cache cleaness checking is
+based on a new fuse writeback helper (fuse_file_is_writeback_locked) and a
+mm/filemap helper introduced in a recent commit 63135aa3866d ("mm: provide
+filemap_range_needs_writeback() helper").
 
-E.g. here you pass the 'error' to fsnotify. This will be just standard
-'errno' number, not ext4 error code as described in the documentation. Also
-note that frequently 'error' will be 0 which gets magically transformed to
-EFSCORRUPTED in save_error_info() in the ext4 error handling below. So
-there's clearly some more work to do...
+[1] https://patchwork.kernel.org/project/linux-fsdevel/patch/20211012145558.19137-1-zhangjiachen.jaycee@bytedance.com/
 
-								Honza
+Signed-off-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+---
+ fs/fuse/file.c   | 21 +++++++++++++++++++++
+ fs/fuse/fuse_i.h |  1 +
+ fs/fuse/inode.c  | 10 ++++++++++
+ 3 files changed, 32 insertions(+)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index bc450daf27a2..635624d65c76 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -412,6 +412,27 @@ static struct fuse_writepage_args *fuse_find_writeback(struct fuse_inode *fi,
+ 	return NULL;
+ }
+ 
++/*
++ * Check if any page of this file is under writeback.
++ *
++ * The fuse_inode lock should be held by the caller.
++ */
++bool fuse_file_is_writeback_locked(struct inode *inode)
++{
++	struct fuse_inode *fi = get_fuse_inode(inode);
++	pgoff_t idx_from = 0;
++	pgoff_t idx_to = 0;
++	size_t fuse_inode_size = i_size_read(inode);
++	bool found;
++
++	if (fuse_inode_size > 0)
++		idx_to = (fuse_inode_size - 1) >> PAGE_SHIFT;
++
++	found = fuse_find_writeback(fi, idx_from, idx_to);
++
++	return found;
++}
++
+ /*
+  * Check if any page in a range is under writeback
+  *
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 119459ad9e50..dbb2a5ae99b6 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -1288,5 +1288,6 @@ struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
+ 				 unsigned int open_flags, bool isdir);
+ void fuse_file_release(struct inode *inode, struct fuse_file *ff,
+ 		       unsigned int open_flags, fl_owner_t id, bool isdir);
++bool fuse_file_is_writeback_locked(struct inode *inode);
+ 
+ #endif /* _FS_FUSE_I_H */
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index d1620bf01246..72316ca5ecca 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -23,6 +23,7 @@
+ #include <linux/exportfs.h>
+ #include <linux/posix_acl.h>
+ #include <linux/pid_namespace.h>
++#include <linux/fs.h>
+ 
+ MODULE_AUTHOR("Miklos Szeredi <miklos@szeredi.hu>");
+ MODULE_DESCRIPTION("Filesystem in Userspace");
+@@ -244,8 +245,17 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
+ 	 * In case of writeback_cache enabled, writes update mtime, ctime and
+ 	 * may update i_size.  In these cases trust the cached value in the
+ 	 * inode.
++	 *
++	 * One expection is if the page cache is clean and there is no in-flight
++	 * fuse writeback request. The c/mtime and file size are allowed to be
++	 * updated from server, so clear cache_mask in this case.
+ 	 */
+ 	cache_mask = fuse_get_cache_mask(inode);
++	if (!filemap_range_needs_writeback(inode->i_mapping, 0,
++	    i_size_read(inode) - 1) && !fuse_file_is_writeback_locked(inode)) {
++		cache_mask = 0;
++	}
++
+ 	if (cache_mask & STATX_SIZE)
+ 		attr->size = i_size_read(inode);
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.20.1
+
