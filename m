@@ -2,109 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 37AEC433B75
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 18:00:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB256433B83
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 18:01:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233553AbhJSQDE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 12:03:04 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36647 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232913AbhJSQDD (ORCPT
+        id S233353AbhJSQEH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 12:04:07 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:58914 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229789AbhJSQEG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 12:03:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634659250;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        Tue, 19 Oct 2021 12:04:06 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id BF6E221981;
+        Tue, 19 Oct 2021 16:01:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1634659312; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=+/pkobYQmFSVPtB7/1zAAgkGIOuOGumz0nqsWSm3uLo=;
-        b=jMplC40vZdm6TXltESiaZ20NdkurOHXwrnhG/taNv3uoHC/443cUy69orPDxPL3yanotWZ
-        hZeRJ4JH0BFvtXf6bCizxJx8kd+kQBJDacfWJrN0LkBKQNc/558udtiMcuK+xHZR3Ufwd4
-        9wXUSsy+A96QkuLENbdKvsBLCG/5ZPs=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-310-3p4Dzoh_O_mlCesOPEKJUw-1; Tue, 19 Oct 2021 12:00:49 -0400
-X-MC-Unique: 3p4Dzoh_O_mlCesOPEKJUw-1
-Received: by mail-io1-f69.google.com with SMTP id a1-20020a5d9801000000b005de11aa60b8so5378831iol.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 09:00:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=+/pkobYQmFSVPtB7/1zAAgkGIOuOGumz0nqsWSm3uLo=;
-        b=u0WDx1rjGTF067g58LtRIlp7g9ZSgb/lmr+fPai1wptCRB6+iTLbsYhVCq1U+S/4sW
-         Od0hfrBr/WkTi9z3vlSMO9T65A0qzh7L/BVhVY22FP2FNM8pq8llmVGaA7ynVubOIAw/
-         lv0f+UwoTu7SLoCOdTlPi2HjYzNb3IdWDMePlzVw40vI+k+yBeSUansB2AzvoGEWSS9A
-         MzKYn4Vnz089xKn/jZQ5BWQ5yTIuwfii2ziYohwp8t58fP/Unnr9Ox9vLj73n8H5Q12Q
-         9mVpIu18U9e99zgmPyb9bGCBU7zI4FpwN2gj+geE9G02hdTi2nTAHGOjcLv4Z9j5iESZ
-         H4Jw==
-X-Gm-Message-State: AOAM533q5NpKMCM/mQqwRKalq9VL/09mBEdCsmZPSfeGDObA++cRYa7z
-        97FDwaoIKQGKLVuvgDfTcZ/TWJz+RO6cxjCzBJvxlSiZYKTdVmWIClIpYL6qW2Muyoqsn2LqeNQ
-        FZQ7MLwtGN19doCX03k0KBDePFA==
-X-Received: by 2002:a92:ad07:: with SMTP id w7mr964698ilh.162.1634659248222;
-        Tue, 19 Oct 2021 09:00:48 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzAZfB7m5Nwi7iGOdqLp7ZjGTVP9iLTlfNdmkJjBBh89jyJbqtVZTUIyhlFM83/SHsC93WNcw==
-X-Received: by 2002:a92:ad07:: with SMTP id w7mr964668ilh.162.1634659248043;
-        Tue, 19 Oct 2021 09:00:48 -0700 (PDT)
-Received: from [172.16.0.19] ([205.214.171.149])
-        by smtp.gmail.com with ESMTPSA id i18sm9324101ila.32.2021.10.19.09.00.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Oct 2021 09:00:47 -0700 (PDT)
-Message-ID: <d28b1ea4-6834-816e-a01a-f1bd0862e84e@redhat.com>
-Date:   Tue, 19 Oct 2021 11:00:45 -0500
+        bh=8hIx4eb8RNDvqpfcSYXsTTz8oiHfDvbCGCZib+Ictaw=;
+        b=PpiTBGbBw0Mz+wxjp3SLGi553EsrgcRkICcmK0CqwPPepfUkV/PdHKAJ8qLFFgkcOIMJM8
+        iJnqVEBJg1Ama7ybduuDV5zdzQbH9dQzgQeRF6lzIe1t3hUYBbIULHT9i52HJ2S/zhVeuE
+        nkYKeUfyqB0AsLf+vCA2lO9PjxoCchc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1634659312;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8hIx4eb8RNDvqpfcSYXsTTz8oiHfDvbCGCZib+Ictaw=;
+        b=8bzN2S5Q8vMJhRL9+u61e0yYLZSymEmRUfnEEFU4nwv26As/HmzWbyqtRrzrndJzY8EmhX
+        QCxjlpFles6rxLDQ==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id AA05AA3B8C;
+        Tue, 19 Oct 2021 16:01:52 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 7AF771E0983; Tue, 19 Oct 2021 18:01:52 +0200 (CEST)
+Date:   Tue, 19 Oct 2021 18:01:52 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     jack@suse.com, amir73il@gmail.com, djwong@kernel.org,
+        tytso@mit.edu, david@fromorbit.com, dhowells@redhat.com,
+        khazhy@google.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-api@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH v8 30/32] ext4: Send notifications on error
+Message-ID: <20211019160152.GT3255@quack2.suse.cz>
+References: <20211019000015.1666608-1-krisman@collabora.com>
+ <20211019000015.1666608-31-krisman@collabora.com>
+ <20211019154426.GR3255@quack2.suse.cz>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.0
-Subject: Re: [PATCH v8 00/17] gfs2: Fix mmap + page fault deadlocks
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-References: <20211019134204.3382645-1-agruenba@redhat.com>
- <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
-From:   Bob Peterson <rpeterso@redhat.com>
-In-Reply-To: <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211019154426.GR3255@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/19/21 10:40 AM, Linus Torvalds wrote:
-> On Tue, Oct 19, 2021 at 3:42 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
->>
->>  From my point of view, the following questions remain:
->>
->>   * I hope these patches will be merged for v5.16, but what process
->>     should I follow for that?  The patch queue contains mm and iomap
->>     changes, so a pull request from the gfs2 tree would be unusual.
+On Tue 19-10-21 17:44:26, Jan Kara wrote:
+> On Mon 18-10-21 21:00:13, Gabriel Krisman Bertazi wrote:
+> > Send a FS_ERROR message via fsnotify to a userspace monitoring tool
+> > whenever a ext4 error condition is triggered.  This follows the existing
+> > error conditions in ext4, so it is hooked to the ext4_error* functions.
+> > 
+> > It also follows the current dmesg reporting in the format.  The
+> > filesystem message is composed mostly by the string that would be
+> > otherwise printed in dmesg.
+> > 
+> > A new ext4 specific record format is exposed in the uapi, such that a
+> > monitoring tool knows what to expect when listening errors of an ext4
+> > filesystem.
+> > 
+> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> > Reviewed-by: Theodore Ts'o <tytso@mit.edu>
+> > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 > 
-> Oh, I'd much rather get these as one pull request from the author and
-> from the person that actually ended up testing this.
+> Looks good to me. Feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-Hi Linus,
+Hum, I actually retract this because the code doesn't match what is written
+in the documentation and I'm not 100% sure what is correct. In particular:
 
-FWIW, I've been working with Andreas on this and have tested it quite
-extensively, although only with gfs2. I've tested it with numerous
-scenarios, both stand-alone (xfstests as well as several other test
-programs I have in my collection) and in a cluster with some very heavy
-duty cluster coherency tests. My testing is nearly complete, but not
-quite.
+> > @@ -759,6 +760,8 @@ void __ext4_error(struct super_block *sb, const char *function,
+> >  		       sb->s_id, function, line, current->comm, &vaf);
+> >  		va_end(args);
+> >  	}
+> > +	fsnotify_sb_error(sb, NULL, error);
+> > +
 
-Regards,
+E.g. here you pass the 'error' to fsnotify. This will be just standard
+'errno' number, not ext4 error code as described in the documentation. Also
+note that frequently 'error' will be 0 which gets magically transformed to
+EFSCORRUPTED in save_error_info() in the ext4 error handling below. So
+there's clearly some more work to do...
 
-Bob Peterson
-GFS2 File System
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
