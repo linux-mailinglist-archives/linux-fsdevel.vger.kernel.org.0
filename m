@@ -2,92 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E7A743320D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 11:21:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 496E0433227
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 11:24:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234957AbhJSJXN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 05:23:13 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:39952 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234871AbhJSJXG (ORCPT
+        id S235064AbhJSJ0f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 05:26:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:46101 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235055AbhJSJ0d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 05:23:06 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 076B4219CB;
-        Tue, 19 Oct 2021 09:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1634635253; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        Tue, 19 Oct 2021 05:26:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634635460;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=9VgWU1s/0gfGgLR7Sl7F/C/e7bwTkKRJ55tTUCwUG3Q=;
-        b=I7lUoBhQOzqQfnnYWPGQClpg5p/2Xbgea6OGzW7r0jDuDJQ7+lsXqehJaVWa8FCpHbNy6Z
-        /q53kp04oHpionNd3EDUhoRyaWczReKDVg8b7jiJUFGA439cCaSWqbuoFpeNBhP2zx7t6Y
-        LbQOFHHuqB4WbKkcTXpX4WWzU51OMxE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1634635253;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9VgWU1s/0gfGgLR7Sl7F/C/e7bwTkKRJ55tTUCwUG3Q=;
-        b=CmF3MEuzA5v8iCj1RhQJTAVRZu36POV3h4AmgVINadSaklB0hdDv6xe5H7ucUDE82c2hIE
-        N1nHTvOqJmQQ8ZCg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        bh=wmbGZV2ZKwLQrOAxpGl2pHHhTDBQE+6LCzInPZcyFEo=;
+        b=hHV+57siKZcYdbWwnqDJirAKS/yKUgDXSSpQUOUfFy6Bc7rgSZ+z5E77P4UEKw8FDlANru
+        boQgcED7MzkcZvHqd8vbsylKKbJiBF5LqnVz5Pocn5yJqCZAXSAHB75fiiX5tMyV0ywcSI
+        sxpzLGKpUOKgK3NxMGNvLnFeBMViQV4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-390-Lm_WcdWwPiKJafreVln3Gg-1; Tue, 19 Oct 2021 05:24:16 -0400
+X-MC-Unique: Lm_WcdWwPiKJafreVln3Gg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B713A13FE1;
-        Tue, 19 Oct 2021 09:20:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 2YHCK/SNbmEwKQAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Tue, 19 Oct 2021 09:20:52 +0000
-Message-ID: <2d3d2636-a8ba-4aa1-e7f7-1a00bd7eb097@suse.cz>
-Date:   Tue, 19 Oct 2021 11:20:52 +0200
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9044B802575;
+        Tue, 19 Oct 2021 09:24:12 +0000 (UTC)
+Received: from T590 (ovpn-8-39.pek2.redhat.com [10.72.8.39])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 612425D6D5;
+        Tue, 19 Oct 2021 09:23:55 +0000 (UTC)
+Date:   Tue, 19 Oct 2021 17:23:50 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, tj@kernel.org,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        minchan@kernel.org, jeyu@kernel.org, shuah@kernel.org,
+        bvanassche@acm.org, dan.j.williams@intel.com, joe@perches.com,
+        tglx@linutronix.de, keescook@chromium.org, rostedt@goodmis.org,
+        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ming.lei@redhat.com
+Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
+Message-ID: <YW6OptglA6UykZg/@T590>
+References: <YWeR4moCRh+ZHOmH@T590>
+ <YWiSAN6xfYcUDJCb@bombadil.infradead.org>
+ <YWjCpLUNPF3s4P2U@T590>
+ <YWjJ0O7K+31Iz3ox@bombadil.infradead.org>
+ <YWk9e957Hb+I7HvR@T590>
+ <YWm68xUnAofop3PZ@bombadil.infradead.org>
+ <YWq3Z++uoJ/kcp+3@T590>
+ <YW3LuzaPhW96jSBK@bombadil.infradead.org>
+ <YW4uwep3BCe9Vxq8@T590>
+ <alpine.LSU.2.21.2110190820590.15009@pobox.suse.cz>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH 5/8] mm/page_alloc: Remove the throttling logic from the
- page allocator
-Content-Language: en-US
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     NeilBrown <neilb@suse.de>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Rik van Riel <riel@surriel.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20211019090108.25501-1-mgorman@techsingularity.net>
- <20211019090108.25501-6-mgorman@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20211019090108.25501-6-mgorman@techsingularity.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.2110190820590.15009@pobox.suse.cz>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/19/21 11:01, Mel Gorman wrote:
-> The page allocator stalls based on the number of pages that are
-> waiting for writeback to start but this should now be redundant.
-> shrink_inactive_list() will wake flusher threads if the LRU tail are
-> unqueued dirty pages so the flusher should be active. If it fails to make
-> progress due to pages under writeback not being completed quickly then
-> it should stall on VMSCAN_THROTTLE_WRITEBACK.
+On Tue, Oct 19, 2021 at 08:23:51AM +0200, Miroslav Benes wrote:
+> > > By you only addressing the deadlock as a requirement on approach a) you are
+> > > forgetting that there *may* already be present drivers which *do* implement
+> > > such patterns in the kernel. I worked on addressing the deadlock because
+> > > I was informed livepatching *did* have that issue as well and so very
+> > > likely a generic solution to the deadlock could be beneficial to other
+> > > random drivers.
+> > 
+> > In-tree zram doesn't have such deadlock, if livepatching has such AA deadlock,
+> > just fixed it, and seems it has been fixed by 3ec24776bfd0.
 > 
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+> I would not call it a fix. It is a kind of ugly workaround because the 
+> generic infrastructure lacked (lacks) the proper support in my opinion. 
+> Luis is trying to fix that.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+What is the proper support of the generic infrastructure? I am not
+familiar with livepatching's model(especially with module unload), you mean
+livepatching have to do the following way from sysfs:
 
-(did in v3 already)
+1) during module exit:
+	
+	mutex_lock(lp_lock);
+	kobject_put(lp_kobj);
+	mutex_unlock(lp_lock);
+	
+2) show()/store() method of attributes of lp_kobj
+	
+	mutex_lock(lp_lock)
+	...
+	mutex_unlock(lp_lock)
+
+IMO, the above usage simply caused AA deadlock. Even in Luis's patch
+'zram: fix crashes with cpu hotplug multistate', new/same AA deadlock
+(hot_remove_store() vs. disksize_store() or reset_store()) is added
+because hot_remove_store() isn't called from module_exit().
+
+Luis tries to delay unloading module until all show()/store() are done. But
+that can be obtained by the following way simply during module_exit():
+
+	kobject_del(lp_kobj); //all pending store()/show() from lp_kobj are done,
+						  //no new store()/show() can come after
+						  //kobject_del() returns	
+	mutex_lock(lp_lock);
+	kobject_put(lp_kobj);
+	mutex_unlock(lp_lock);
+
+Or can you explain your requirement on kobject/module unload in a bit
+details?
+
+
+Thanks,
+Ming
+
