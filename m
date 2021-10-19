@@ -2,135 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0750E432D6B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 07:50:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBD1D432D6D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 07:51:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233660AbhJSFwr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 01:52:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57964 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbhJSFwr (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 01:52:47 -0400
-Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2018C06161C;
-        Mon, 18 Oct 2021 22:50:34 -0700 (PDT)
-Received: by mail-il1-x12a.google.com with SMTP id k3so17301323ilu.2;
-        Mon, 18 Oct 2021 22:50:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nB2w38LzezW3Z/eG4neQ0XBbF97Fb0almr5Ic9daItI=;
-        b=gnXToFv1a+cHok9KxBXiqbAxQqReTQM5WNapBiRddbUCDGERG8g3/AAlxNj0wVANVY
-         9J6qmNFB07LU0WAcCynG1RfDUR7WznXuvw6OYBTL07QxZm/K3h+sKKbggnIC33boxk4o
-         KxVe7MAAelmW44O3KVmBzQQmebbMC7dnxkO6SEzIyhy8wiedmBXPDo8Tr5Vmyi3qZnJv
-         3tuMbhShEHWvN0s20L8xz5i9Xx6mB+LGHzzEeGyLymEDfwijl7hIJ2xN7Wkawi/tdbCD
-         KWX4k8axYkw/jGt5IVx6WLF48kC1fcoBzfSFaU9qXMplq8jGua6GI42NEB4PCU1eVn/O
-         k3EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nB2w38LzezW3Z/eG4neQ0XBbF97Fb0almr5Ic9daItI=;
-        b=rFe0Cyb9NRPu/jMw4rcb1LnExPmtsYIOeQn1wXy1IbSSbxqt9Dj4EHtjLj9uCMYSKF
-         D2C10GwXS+Vt4kbCHiCYHegpho6aBOsr3/jBND0gEoTHc9ejApKtpx6NBdOMH7CYVj1E
-         dwbbnstKIQRLya2Z1izFHTON2hDAZ5/pE0SkhN+H09pVkyQaZ5vAfrRrpC9JedCkw+1s
-         NI3asi7wPHKfUwVsHXFVwWaRaRoNOHTAqchcvLiwZXaW8VJw5j88Zzv3P7StDOyrcp79
-         NV+aYyNcLr1aYKZakyCCYEhhvmna80jX5GAxtIx06/VsRwc5gSfYc4e604qqw2ykKp4h
-         X1zw==
-X-Gm-Message-State: AOAM532Kdrb8s0AYrmfhBjy/CF0ynGgeYAadbidCqO1HQskvZk4zKLgh
-        PGCDCDbxtiapvUIwZwvpyRtKu/lDLRsfnRwjU2j5evKF
-X-Google-Smtp-Source: ABdhPJywTCTOSYY4Qdeq+f8bFlsLBdwWXSWwS/5i6K1gtrA3+F7ZXF89Ny3DltDPJ6fJHqgP0eoNPn6/9g3yD1IAWjo=
-X-Received: by 2002:a05:6e02:160e:: with SMTP id t14mr17780921ilu.107.1634622634211;
- Mon, 18 Oct 2021 22:50:34 -0700 (PDT)
+        id S233682AbhJSFxV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 01:53:21 -0400
+Received: from out2.migadu.com ([188.165.223.204]:19926 "EHLO out2.migadu.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229527AbhJSFxU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 Oct 2021 01:53:20 -0400
+Date:   Tue, 19 Oct 2021 14:50:53 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1634622667;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=o8dCSeMyOUiSuKxO7cR8FqW8HXBQGLXF8EXueVMsZqM=;
+        b=wAMZ83lbl2jq1i4d1FqwWRH0HHCmJK+6gXR9OwUwpfj98pULJBsmbRFtfd4oAOSL/yOQsx
+        H1yxqtxz+4wC/d3XQIU9Fz5ze461Y08M3OQf9DHedvA23uKmGv6q1tnthHTaF4ke4YW3Ov
+        P9wQaPluikNNOYQtbHdXNqsurk4ZB0s=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Naoya Horiguchi <naoya.horiguchi@linux.dev>
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     naoya.horiguchi@nec.com, hughd@google.com,
+        kirill.shutemov@linux.intel.com, willy@infradead.org,
+        peterx@redhat.com, osalvador@suse.de, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v4 PATCH 2/6] mm: filemap: check if THP has hwpoisoned subpage
+ for PMD page fault
+Message-ID: <20211019055053.GA2268449@u2004>
+References: <20211014191615.6674-1-shy828301@gmail.com>
+ <20211014191615.6674-3-shy828301@gmail.com>
 MIME-Version: 1.0
-References: <20211019000015.1666608-1-krisman@collabora.com> <20211019000015.1666608-21-krisman@collabora.com>
-In-Reply-To: <20211019000015.1666608-21-krisman@collabora.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 19 Oct 2021 08:50:23 +0300
-Message-ID: <CAOQ4uxi3C7MQxGPc1fD8ZyRTkyJZQac3_M-0aGYzPKbJ6AK8Jg@mail.gmail.com>
-Subject: Re: [PATCH v8 20/32] fanotify: Dynamically resize the FAN_FS_ERROR pool
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     Jan Kara <jack@suse.com>, "Darrick J. Wong" <djwong@kernel.org>,
-        Theodore Tso <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>,
-        David Howells <dhowells@redhat.com>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20211014191615.6674-3-shy828301@gmail.com>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: naoya.horiguchi@linux.dev
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 19, 2021 at 3:03 AM Gabriel Krisman Bertazi
-<krisman@collabora.com> wrote:
->
-> Allow the FAN_FS_ERROR group mempool to grow up to an upper limit
-> dynamically, instead of starting already at the limit.  This doesn't
-> bother resizing on mark removal, but next time a mark is added, the slot
-> will be either reused or resized.  Also, if several marks are being
-> removed at once, most likely the group is going away anyway.
->
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+On Thu, Oct 14, 2021 at 12:16:11PM -0700, Yang Shi wrote:
+> When handling shmem page fault the THP with corrupted subpage could be PMD
+> mapped if certain conditions are satisfied.  But kernel is supposed to
+> send SIGBUS when trying to map hwpoisoned page.
+> 
+> There are two paths which may do PMD map: fault around and regular fault.
+> 
+> Before commit f9ce0be71d1f ("mm: Cleanup faultaround and finish_fault() codepaths")
+> the thing was even worse in fault around path.  The THP could be PMD mapped as
+> long as the VMA fits regardless what subpage is accessed and corrupted.  After
+> this commit as long as head page is not corrupted the THP could be PMD mapped.
+> 
+> In the regular fault path the THP could be PMD mapped as long as the corrupted
+> page is not accessed and the VMA fits.
+> 
+> This loophole could be fixed by iterating every subpage to check if any
+> of them is hwpoisoned or not, but it is somewhat costly in page fault path.
+> 
+> So introduce a new page flag called HasHWPoisoned on the first tail page.  It
+> indicates the THP has hwpoisoned subpage(s).  It is set if any subpage of THP
+> is found hwpoisoned by memory failure and after the refcount is bumped
+> successfully, then cleared when the THP is freed or split.
+> 
+> The soft offline path doesn't need this since soft offline handler just
+> marks a subpage hwpoisoned when the subpage is migrated successfully.
+> But shmem THP didn't get split then migrated at all.
+> 
+> Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
+> Cc: <stable@vger.kernel.org>
+> Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Signed-off-by: Yang Shi <shy828301@gmail.com>
 > ---
->  fs/notify/fanotify/fanotify_user.c | 26 +++++++++++++++++++++-----
->  include/linux/fsnotify_backend.h   |  1 +
->  2 files changed, 22 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index f77581c5b97f..a860c286e885 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -959,6 +959,10 @@ static int fanotify_remove_mark(struct fsnotify_group *group,
->
->         removed = fanotify_mark_remove_from_mask(fsn_mark, mask, flags,
->                                                  umask, &destroy_mark);
+>  include/linux/page-flags.h | 23 +++++++++++++++++++++++
+>  mm/huge_memory.c           |  2 ++
+>  mm/memory-failure.c        | 14 ++++++++++++++
+>  mm/memory.c                |  9 +++++++++
+>  mm/page_alloc.c            |  4 +++-
+>  5 files changed, 51 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> index a558d67ee86f..901723d75677 100644
+> --- a/include/linux/page-flags.h
+> +++ b/include/linux/page-flags.h
+> @@ -171,6 +171,15 @@ enum pageflags {
+>  	/* Compound pages. Stored in first tail page's flags */
+>  	PG_double_map = PG_workingset,
+>  
+> +#ifdef CONFIG_MEMORY_FAILURE
+> +	/*
+> +	 * Compound pages. Stored in first tail page's flags.
+> +	 * Indicates that at least one subpage is hwpoisoned in the
+> +	 * THP.
+> +	 */
+> +	PG_has_hwpoisoned = PG_mappedtodisk,
+> +#endif
 > +
-> +       if (removed & FAN_FS_ERROR)
-> +               group->fanotify_data.error_event_marks--;
-> +
->         if (removed & fsnotify_conn_mask(fsn_mark->connector))
->                 fsnotify_recalc_mask(fsn_mark->connector);
->         if (destroy_mark)
-> @@ -1057,12 +1061,24 @@ static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
->
->  static int fanotify_group_init_error_pool(struct fsnotify_group *group)
->  {
-> -       if (mempool_initialized(&group->fanotify_data.error_events_pool))
-> -               return 0;
-> +       int ret;
-> +
-> +       if (group->fanotify_data.error_event_marks >=
-> +           FANOTIFY_DEFAULT_MAX_FEE_POOL)
-> +               return -ENOMEM;
->
-> -       return mempool_init_kmalloc_pool(&group->fanotify_data.error_events_pool,
-> -                                        FANOTIFY_DEFAULT_MAX_FEE_POOL,
-> -                                        sizeof(struct fanotify_error_event));
-> +       if (!mempool_initialized(&group->fanotify_data.error_events_pool))
-> +               ret = mempool_init_kmalloc_pool(
-> +                               &group->fanotify_data.error_events_pool,
-> +                                1, sizeof(struct fanotify_error_event));
-> +       else
-> +               ret = mempool_resize(&group->fanotify_data.error_events_pool,
-> +                                    group->fanotify_data.error_event_marks + 1);
-> +
-> +       if (!ret)
-> +               group->fanotify_data.error_event_marks++;
-> +
-> +       return ret;
->  }
+>  	/* non-lru isolated movable page */
+>  	PG_isolated = PG_reclaim,
+>  
+> @@ -668,6 +677,20 @@ PAGEFLAG_FALSE(DoubleMap)
+>  	TESTSCFLAG_FALSE(DoubleMap)
+>  #endif
+>  
+> +#if defined(CONFIG_MEMORY_FAILURE) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
+> +/*
+> + * PageHasHWPoisoned indicates that at least on subpage is hwpoisoned in the
 
-This is not what I had in mind.
-I was thinking start with ~32 and double each time limit is reached.
-And also, this code grows the pool to infinity with add/remove mark loop.
+At least "one" subpage?
 
-Anyway, since I clearly did not understand how mempool works and
-Jan had some different ideas I would leave it to Jan to explain
-how he wants the mempool init limit and resize to be implemented.
+> + * compound page.
+> + *
+> + * This flag is set by hwpoison handler.  Cleared by THP split or free page.
+> + */
+> +PAGEFLAG(HasHWPoisoned, has_hwpoisoned, PF_SECOND)
+> +	TESTSCFLAG(HasHWPoisoned, has_hwpoisoned, PF_SECOND)
+> +#else
+> +PAGEFLAG_FALSE(HasHWPoisoned)
+> +	TESTSCFLAG_FALSE(HasHWPoisoned)
+> +#endif
+> +
+>  /*
+>   * Check if a page is currently marked HWPoisoned. Note that this check is
+>   * best effort only and inherently racy: there is no way to synchronize with
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 5e9ef0fc261e..0574b1613714 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -2426,6 +2426,8 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+>  	/* lock lru list/PageCompound, ref frozen by page_ref_freeze */
+>  	lruvec = lock_page_lruvec(head);
+>  
+> +	ClearPageHasHWPoisoned(head);
+> +
+>  	for (i = nr - 1; i >= 1; i--) {
+>  		__split_huge_page_tail(head, i, lruvec, list);
+>  		/* Some pages can be beyond EOF: drop them from page cache */
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 73f68699e7ab..2809d12f16af 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -1694,6 +1694,20 @@ int memory_failure(unsigned long pfn, int flags)
+>  	}
+>  
+>  	if (PageTransHuge(hpage)) {
+> +		/*
+> +		 * The flag must be set after the refcount is bumpped
 
-Thanks,
-Amir.
+s/bumpped/bumped/ ?
+
+> +		 * otherwise it may race with THP split.
+> +		 * And the flag can't be set in get_hwpoison_page() since
+> +		 * it is called by soft offline too and it is just called
+> +		 * for !MF_COUNT_INCREASE.  So here seems to be the best
+> +		 * place.
+> +		 *
+> +		 * Don't need care about the above error handling paths for
+> +		 * get_hwpoison_page() since they handle either free page
+> +		 * or unhandlable page.  The refcount is bumpped iff the
+
+There's another "bumpped".
+
+Otherwise looks good to me.
+
+Reviewed-by: Naoya Horiguchi <naoya.horiguchi@nec.com>
+
+> +		 * page is a valid handlable page.
+> +		 */
+> +		SetPageHasHWPoisoned(hpage);
+>  		if (try_to_split_thp_page(p, "Memory Failure") < 0) {
+>  			action_result(pfn, MF_MSG_UNSPLIT_THP, MF_IGNORED);
+>  			res = -EBUSY;
+> diff --git a/mm/memory.c b/mm/memory.c
+> index adf9b9ef8277..c52be6d6b605 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -3906,6 +3906,15 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
+>  	if (compound_order(page) != HPAGE_PMD_ORDER)
+>  		return ret;
+>  
+> +	/*
+> +	 * Just backoff if any subpage of a THP is corrupted otherwise
+> +	 * the corrupted page may mapped by PMD silently to escape the
+> +	 * check.  This kind of THP just can be PTE mapped.  Access to
+> +	 * the corrupted subpage should trigger SIGBUS as expected.
+> +	 */
+> +	if (unlikely(PageHasHWPoisoned(page)))
+> +		return ret;
+> +
+>  	/*
+>  	 * Archs like ppc64 need additional space to store information
+>  	 * related to pte entry. Use the preallocated table for that.
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index b37435c274cf..7f37652f0287 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -1312,8 +1312,10 @@ static __always_inline bool free_pages_prepare(struct page *page,
+>  
+>  		VM_BUG_ON_PAGE(compound && compound_order(page) != order, page);
+>  
+> -		if (compound)
+> +		if (compound) {
+>  			ClearPageDoubleMap(page);
+> +			ClearPageHasHWPoisoned(page);
+> +		}
+>  		for (i = 1; i < (1 << order); i++) {
+>  			if (compound)
+>  				bad += free_tail_pages_check(page, page + i);
+> -- 
+> 2.26.2
+> 
