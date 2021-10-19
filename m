@@ -2,159 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88A0F432C59
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 05:39:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A988B432C7C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 05:59:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232437AbhJSDmD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Oct 2021 23:42:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57546 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232025AbhJSDmC (ORCPT
+        id S229531AbhJSEBR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 00:01:17 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:40731 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229630AbhJSEBQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Oct 2021 23:42:02 -0400
-Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FF45C06161C;
-        Mon, 18 Oct 2021 20:39:50 -0700 (PDT)
-Received: by mail-io1-xd33.google.com with SMTP id b188so13869928iof.8;
-        Mon, 18 Oct 2021 20:39:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n6lDICXPanQEczqPf1bcFgv6zFUKLXclwZT3Vx8an2c=;
-        b=FMbqaiTr5PEeUP75Jb/aP4hyS7MEL/x+jux2gmx6RlE5rZ137vcbkE6G4dglSyX7Or
-         2Ld2QAK4iBk8ygsowwZ9vBNBin7fVmHNsN9J9SVvQA7Rk4NcLjfLJ4zzUx3Ks3vtsiQS
-         yLthCRU2DkR1Oe4RDnFrc5JkgU/wNxmA53sq2HTbil7N6g0NSVOqA8hdo5MxqDkjhWJG
-         Ol7Aqirb0ATLZF+WuBu9JcsNiSk7Vbz468S5J8q37lKK2tF06bpWrZl81OVgevJkGHzk
-         1IiVmrasxxAKWyMlY/ZYncPWfw2O8h/K1daXQ26p335GGkcsTzeemlFWyn4htDL5GG/z
-         As/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n6lDICXPanQEczqPf1bcFgv6zFUKLXclwZT3Vx8an2c=;
-        b=O37DIE/5zHwXCmPG2++ya4YpSt8e015m7kbeC+e1tNXRBF7y9EXYX3Zms00OQgkI8t
-         sG8/oPB+kxLjtaufpwalOJAHWRnOo6v1lhO1McYOCt4+gvSmSBnVPRdt1pejubXvGAYJ
-         tjx368VIdXuxofUk2dJJcQXctT/c5Ct5uhQlrIdr3+FyapyTsN36MbAYBImyq39OQRqL
-         izEGt0gSa2hQsFuMxr/DeR+Sxc+VsNMhRt6exOyBu/YNQVg6XLSMEQkUvzCJdPle9xKZ
-         V5+H/VmhWJMpwXesi6HBgo2HARJ7ZntVFEFnPcJYQqh64t6U+5RYwrHhujncuM8Qya4O
-         KJcQ==
-X-Gm-Message-State: AOAM533EJL//cEvfCEqrbJNSdjNPbrXdQQOXSd1eZrIsB8UFCvhxvE5T
-        sBvgJUtQslbPRaaPb+1UDzrn1tY14o67OG+fBok=
-X-Google-Smtp-Source: ABdhPJz4nuA7PmwfuBJ5tsyh2CNf4H3pm0RviWHWzHavFd+QgNNxCpNXGjvnjLX2bXNayB6lkBKOMknS//U/nml9C+c=
-X-Received: by 2002:a05:6602:2dd2:: with SMTP id l18mr17560574iow.86.1634614789863;
- Mon, 18 Oct 2021 20:39:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAOOPZo52azGXN-BzWamA38Gu=EkqZScLufM1VEgDuosPoH6TWA@mail.gmail.com>
- <CAOOPZo4ZycbV8W2w48oD+bM8a1+WqejSjjYuheZPyxm2uE-=rA@mail.gmail.com> <20211018114349.b80a27af9bfa7f16162b0ec4@linux-foundation.org>
-In-Reply-To: <20211018114349.b80a27af9bfa7f16162b0ec4@linux-foundation.org>
-From:   Zhengyuan Liu <liuzhengyuang521@gmail.com>
-Date:   Tue, 19 Oct 2021 11:39:38 +0800
-Message-ID: <CAOOPZo4HtGB5MYETpj_q++m+PvomNqasNdaPa65gp2hsQ5H67A@mail.gmail.com>
-Subject: Re: Problem with direct IO
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     viro@zeniv.linux.org.uk, tytso@mit.edu,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        mysql@lists.mysql.com, linux-ext4@vger.kernel.org,
-        =?UTF-8?B?5YiY5LqR?= <liuyun01@kylinos.cn>,
-        Zhengyuan Liu <liuzhengyuan@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 19 Oct 2021 00:01:16 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20211019035902epoutp0172605416c9630a32eb863392c5ff568d~vUooAgZTK2496724967epoutp01e
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 03:59:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20211019035902epoutp0172605416c9630a32eb863392c5ff568d~vUooAgZTK2496724967epoutp01e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1634615942;
+        bh=6Stezxv3+1g4VVikXbO6Xe+Y7JYlfPcCl4cIOXflBUw=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=fDDHBDnJpvfrkgedzGxr+ZodUmLPJ0Uy/d7HiRhSrRq5u6UrQZZU5PZcJhY/IRI1e
+         2ibSGPQXXXbGEIVNEPVr0PPWAPa27MLwO095GHSxj8tWw3O0PR/QkRjJnAKehwQXZE
+         9tb+RCcdM1VmzeEAYnWkKE7CZRfx51T9iLBOMQ2A=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20211019035902epcas1p492c29fc746e50366e8afd6506d6cb1ea~vUonpWS6T1917719177epcas1p4C;
+        Tue, 19 Oct 2021 03:59:02 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.38.243]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4HYKjw03r7z4x9QH; Tue, 19 Oct
+        2021 03:59:00 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        07.D5.09592.3824E616; Tue, 19 Oct 2021 12:58:59 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20211019035859epcas1p2159196db5ecc5d171adc340e527dedb7~vUolByfCr0447604476epcas1p2u;
+        Tue, 19 Oct 2021 03:58:59 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20211019035859epsmtrp16b0e10a0cfea264614b390cfc3cbddb8~vUolBF3rB3273732737epsmtrp14;
+        Tue, 19 Oct 2021 03:58:59 +0000 (GMT)
+X-AuditID: b6c32a37-2a5ff70000002578-8f-616e428315d8
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F8.BD.08902.3824E616; Tue, 19 Oct 2021 12:58:59 +0900 (KST)
+Received: from U14PB1-0870.tn.corp.samsungelectronics.net (unknown
+        [10.253.235.196]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20211019035859epsmtip23b362459e1467924e5d81d07bca60570~vUok1jSv22381023810epsmtip2y;
+        Tue, 19 Oct 2021 03:58:59 +0000 (GMT)
+From:   Sungjong Seo <sj1557.seo@samsung.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linkinjeon@kernel.org, stable@vger.kernel.org,
+        sj1557.seo@samsung.com
+Subject: [PATCH] exfat: fix incorrect loading of i_blocks for large files
+Date:   Tue, 19 Oct 2021 12:58:30 +0900
+Message-Id: <20211019035830.27784-1-sj1557.seo@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKKsWRmVeSWpSXmKPExsWy7bCmgW6zU16iwa5+JYuJ05YyW+zZe5LF
+        Ysu/I6wWCzY+YnRg8di0qpPNo2/LKkaPz5vkApijsm0yUhNTUosUUvOS81My89JtlbyD453j
+        Tc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgLYpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yV
+        UgtScgrMCvSKE3OLS/PS9fJSS6wMDQyMTIEKE7IzVp12L1jEUdHQf5uxgfEXWxcjJ4eEgInE
+        7pMbmLoYuTiEBHYwSkw4O48FwvnEKHHl3Q4o5xujxIFZIBmIlsdb/zNCJPYCtZzvZINwOpkk
+        /u7+AVbFJqAtsbxpGXMXIweHiICixOX3TiBhZgFPiTlL5zOC2MJA9tLrd8BsFgFVifbe20wg
+        Nq+AtUTX1VZWiGXyEqs3HGAGmS8h0M4u0f31ITtEwkViy48LjBC2sMSr41ug4lISL/vboOx6
+        if/z17JDNLcwSjz8tI0J5CAJAXuJ95csQExmAU2J9bv0IcoVJXb+nssIcSefxLuvPawQ1bwS
+        HW1CECUqEt8/7GSB2XTlx1UmCNtD4sScp2BxIYFYifubFjFOYJSdhbBgASPjKkax1ILi3PTU
+        YsMCY3gcJefnbmIEpx8t8x2M095+0DvEyMTBeIhRgoNZSYQ3yTU3UYg3JbGyKrUoP76oNCe1
+        +BCjKTC8JjJLiSbnAxNgXkm8oYmlgYmZkYmFsaWxmZI4r6RodqKQQHpiSWp2ampBahFMHxMH
+        p1QDk335g0SGnMyJmz3LXCSaD8281hvR1574dW/o9AeHf7J2fYx0nsp/PoJtqod4ZIK7jPaj
+        D2e37v4ro5a3dsoXJj69k4wZk/lPLG3jXKvx+05g/d9WPe+1eX0Sm3hyT+1Ys3pK6IeptR+Y
+        2ROdji953rdo/oRHm3L5q52y2DaU6OxJ+jf7yY7b9kfytx6MlFjf+mzN34020w0nPTyvGXz8
+        3PtCfdkXKw3PPX+2wdFFQ+XeZVdN2/LaDf4SWR3Tv099oWty5cGUxJOJy1rmHdKRCQqdJOgs
+        +LV64oP2uSma7tNFmi6HiN5te5moGnWjzurMzOAd7nuMKh58WNhdPL/KbzqL2LMc7nXyzwLl
+        OmL+hymxFGckGmoxFxUnAgCNOYt6yAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIJMWRmVeSWpSXmKPExsWy7bCSvG6zU16iwc1lHBYTpy1lttiz9ySL
+        xZZ/R1gtFmx8xOjA4rFpVSebR9+WVYwenzfJBTBHcdmkpOZklqUW6dslcGWsOu1esIijoqH/
+        NmMD4y+2LkZODgkBE4nHW/8zdjFycQgJ7GaUOHRqAWsXIwdQQkri4D5NCFNY4vDhYoiSdiaJ
+        /q/dLCC9bALaEsubljGD1IgIKEpcfu8EYjIL+EosXl8FUiEs4Cmx9PodRhCbRUBVor33NhOI
+        zStgLdF1tZUV4gJ5idUbDjBPYORZwMiwilEytaA4Nz232LDAMC+1XK84Mbe4NC9dLzk/dxMj
+        OBS0NHcwbl/1Qe8QIxMH4yFGCQ5mJRHeJNfcRCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8F7pO
+        xgsJpCeWpGanphakFsFkmTg4pRqY1vc6Bh3dZaG1Tuqg47sJ3SE/wlYlepjf6lN3VbG2+yJy
+        kcFyf2xd5ofOqN2lv1Zy8/2sXsipFaFk9qWrYEve/bplLTNY87JyGlas0ewQ+dEvVHX60JfS
+        yEVP3RO03U+0/Dq96uaimUKBb/Kktv58yN+ppf3RUOmH7add0fzKdh/OO9Z2ShS/TdrrcXe6
+        YEJw9WPZNY5tijy3ph+qm3S17OjDjp9bC9a5CJU9PbxZcYJ53W2ORUc2zrM28fmy9t2hk2It
+        r4/cXN286pXGdYW/fffmrH7C5baxbt9/l4B3p3Lmq4eJldh+Ovzj5xz2k4kfVreoclRa2RWm
+        LHkplCv789P+378StPUtvewUvP8/VWIpzkg01GIuKk4EALdqr+l0AgAA
+X-CMS-MailID: 20211019035859epcas1p2159196db5ecc5d171adc340e527dedb7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20211019035859epcas1p2159196db5ecc5d171adc340e527dedb7
+References: <CGME20211019035859epcas1p2159196db5ecc5d171adc340e527dedb7@epcas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 19, 2021 at 2:43 AM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Mon, 18 Oct 2021 09:09:06 +0800 Zhengyuan Liu <liuzhengyuang521@gmail.com> wrote:
->
-> > Ping.
-> >
-> > I think this problem is serious and someone may  also encounter it in
-> > the future.
-> >
-> >
-> > On Wed, Oct 13, 2021 at 9:46 AM Zhengyuan Liu
-> > <liuzhengyuang521@gmail.com> wrote:
-> > >
-> > > Hi, all
-> > >
-> > > we are encounting following Mysql crash problem while importing tables :
-> > >
-> > >     2021-09-26T11:22:17.825250Z 0 [ERROR] [MY-013622] [InnoDB] [FATAL]
-> > >     fsync() returned EIO, aborting.
-> > >     2021-09-26T11:22:17.825315Z 0 [ERROR] [MY-013183] [InnoDB]
-> > >     Assertion failure: ut0ut.cc:555 thread 281472996733168
-> > >
-> > > At the same time , we found dmesg had following message:
-> > >
-> > >     [ 4328.838972] Page cache invalidation failure on direct I/O.
-> > >     Possible data corruption due to collision with buffered I/O!
-> > >     [ 4328.850234] File: /data/mysql/data/sysbench/sbtest53.ibd PID:
-> > >     625 Comm: kworker/42:1
-> > >
-> > > Firstly, we doubled Mysql has operating the file with direct IO and
-> > > buffered IO interlaced, but after some checking we found it did only
-> > > do direct IO using aio. The problem is exactly from direct-io
-> > > interface (__generic_file_write_iter) itself.
-> > >
-> > > ssize_t __generic_file_write_iter()
-> > > {
-> > > ...
-> > >         if (iocb->ki_flags & IOCB_DIRECT) {
-> > >                 loff_t pos, endbyte;
-> > >
-> > >                 written = generic_file_direct_write(iocb, from);
-> > >                 /*
-> > >                  * If the write stopped short of completing, fall back to
-> > >                  * buffered writes.  Some filesystems do this for writes to
-> > >                  * holes, for example.  For DAX files, a buffered write will
-> > >                  * not succeed (even if it did, DAX does not handle dirty
-> > >                  * page-cache pages correctly).
-> > >                  */
-> > >                 if (written < 0 || !iov_iter_count(from) || IS_DAX(inode))
-> > >                         goto out;
-> > >
-> > >                 status = generic_perform_write(file, from, pos = iocb->ki_pos);
-> > > ...
-> > > }
-> > >
-> > > From above code snippet we can see that direct io could fall back to
-> > > buffered IO under certain conditions, so even Mysql only did direct IO
-> > > it could interleave with buffered IO when fall back occurred. I have
-> > > no idea why FS(ext3) failed the direct IO currently, but it is strange
-> > > __generic_file_write_iter make direct IO fall back to buffered IO, it
-> > > seems  breaking the semantics of direct IO.
->
-> That makes sense.
->
-> > > The reproduced  environment is:
-> > > Platform:  Kunpeng 920 (arm64)
-> > > Kernel: V5.15-rc
-> > > PAGESIZE: 64K
-> > > Mysql:  V8.0
-> > > Innodb_page_size: default(16K)
->
-> This is all fairly mature code, I think.  Do you know if earlier
-> kernels were OK, and if so which versions?
+When calculating i_blocks, there was a mistake that was masked with a 32-bit
+variable. So i_blocks for files larger than 4 GiB had incorrect values.
+Mask with a 64-bit variable instead of 32-bit one.
 
-we have tested v4.18 and v4.19 and the problem is still here,  the earlier
-version such before v4.12 doesn't support Arm64 well  so we can't test.
+Fixes: 5f2aa075070c ("exfat: add inode operations")
+Cc: stable@vger.kernel.org # v5.7+
+Reported-by: Ganapathi Kamath <hgkamath@hotmail.com>
+Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+---
+ fs/exfat/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think this problem has something to do with page size,  if we change kernel
-page size from 64K to 4k or just set Innodb_page_size to 64K then we cannot
-reproduce this problem.  Typically we use 4k as kernel page size and FS block
-size, if database use more than 4k as IO unit then it won't interleave for each
-IO in kernel page cache as each one will occupy one or more page cache, that
-means it is hard to trigger this problem on x84 or other platforms using 4k page
-size.  But thing got changed when come to Arm64 64K page size, if database uses
-a smaller IO unit, in our Mysql case that is 16K DIO, then two IO
-could share one
-page cache and if one falls back to buffered IO it can trigger the problem. For
-example,  aio got two direct IO which share the same page cache to write , it
-dispatched the first one to storage and begin process the second one before
-the first one completed, if the second one fall back to buffered IO it will been
-copy to page cache and mark the page as dirty, upon that the first one completed
-it will check and invalidate it's page cache, if it is dirty then the
-problem occured.
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index ca37d4344361..1c7aa1ea4724 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -604,7 +604,7 @@ static int exfat_fill_inode(struct inode *inode, struct exfat_dir_entry *info)
+ 	exfat_save_attr(inode, info->attr);
+ 
+ 	inode->i_blocks = ((i_size_read(inode) + (sbi->cluster_size - 1)) &
+-		~(sbi->cluster_size - 1)) >> inode->i_blkbits;
++		~((loff_t)sbi->cluster_size - 1)) >> inode->i_blkbits;
+ 	inode->i_mtime = info->mtime;
+ 	inode->i_ctime = info->mtime;
+ 	ei->i_crtime = info->crtime;
+-- 
+2.17.1
 
-If my analysis isn't correct please point it out, thanks.
