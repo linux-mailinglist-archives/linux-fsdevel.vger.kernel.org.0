@@ -2,85 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A36E8432DF9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 08:16:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88C5B432E1F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Oct 2021 08:23:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234050AbhJSGS3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 02:18:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48854 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233786AbhJSGS2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 02:18:28 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id ACB4E6115B;
-        Tue, 19 Oct 2021 06:16:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1634624176;
-        bh=FeG/qotMCAtt11mlzDTQUemMTc8grksOYH2YcYkz2NA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lg0afarjb/JXs+cYDe2ZtQnrFJR3J8h/C9seWBF8QOrfPEm6YSKILrheQecQ13sp/
-         XtQ4Ld/FMCpATfvZLaqjxSeTlpDtgQ8S3F31aewNRcQsifzyG9A+PBe5rqNWMcDdqS
-         kp4IF8+D53rd5pQi/7eTWLdwt6Z90NX9npx8yWn8=
-Date:   Tue, 19 Oct 2021 08:16:14 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     bp@suse.de, akpm@linux-foundation.org, josh@joshtriplett.org,
-        rishabhb@codeaurora.org, kubakici@wp.pl, maco@android.com,
-        david.brown@linaro.org, bjorn.andersson@linaro.org,
-        linux-wireless@vger.kernel.org, keescook@chromium.org,
-        shuah@kernel.org, mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com,
-        dhowells@redhat.com, pali.rohar@gmail.com, tiwai@suse.de,
-        arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
-        broonie@kernel.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org,
-        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
-        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
-        andresx7@gmail.com, dan.rue@linaro.org, brendanhiggins@google.com,
-        yzaikin@google.com, sfr@canb.auug.org.au, rdunlap@infradead.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 04/14] firmware_loader: add built-in firmware kconfig
- entry
-Message-ID: <YW5irpRIIr0H/tXh@kroah.com>
-References: <20210917182226.3532898-1-mcgrof@kernel.org>
- <20210917182226.3532898-5-mcgrof@kernel.org>
- <YVxhbhmNd7tahLV7@kroah.com>
- <YWR16e/seTx/wxE+@bombadil.infradead.org>
- <YWR4XKrC2Bkr4qKQ@kroah.com>
- <YWS7ABDdBIpdt/84@bombadil.infradead.org>
- <YW3gae4HoUd9izyj@bombadil.infradead.org>
+        id S234199AbhJSG0I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 02:26:08 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:50458 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234165AbhJSG0H (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 Oct 2021 02:26:07 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 346CE2197E;
+        Tue, 19 Oct 2021 06:23:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1634624633; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aNvJPt85vZf9bBMJjbgwMuKxAMmcbsHIJPwZz/3xngo=;
+        b=aPPUZQip1FXzonJxM4wqd/690HrZk6fz9rhHm/1JCFBw9ALlZDpceFtf6flMY3j6oMRMFe
+        AQmevTkq51HUk5WPl3N4P1eN9xv890mbZxJ7GfHV8xreOSPvAbt4ZkskV7eS7JuJeAvANa
+        9uoyyw60aVq6hbOMcli3eofF+oZayMg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1634624633;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=aNvJPt85vZf9bBMJjbgwMuKxAMmcbsHIJPwZz/3xngo=;
+        b=GijXbiZXw/n+u9uG38fm5BwLSEeX5PBkSlrFwGvVSFdmfffvdMVEtRW9XLwkcJp1P8EfmE
+        6ukLpP3n3DF7j3Dw==
+Received: from pobox.suse.cz (pobox.suse.cz [10.100.2.14])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 0341FA3B8A;
+        Tue, 19 Oct 2021 06:23:52 +0000 (UTC)
+Date:   Tue, 19 Oct 2021 08:23:51 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Ming Lei <ming.lei@redhat.com>
+cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, tj@kernel.org,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        minchan@kernel.org, jeyu@kernel.org, shuah@kernel.org,
+        bvanassche@acm.org, dan.j.williams@intel.com, joe@perches.com,
+        tglx@linutronix.de, keescook@chromium.org, rostedt@goodmis.org,
+        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
+In-Reply-To: <YW4uwep3BCe9Vxq8@T590>
+Message-ID: <alpine.LSU.2.21.2110190820590.15009@pobox.suse.cz>
+References: <20210927163805.808907-12-mcgrof@kernel.org> <YWeOJP2UJWYF94fu@T590> <YWeR4moCRh+ZHOmH@T590> <YWiSAN6xfYcUDJCb@bombadil.infradead.org> <YWjCpLUNPF3s4P2U@T590> <YWjJ0O7K+31Iz3ox@bombadil.infradead.org> <YWk9e957Hb+I7HvR@T590>
+ <YWm68xUnAofop3PZ@bombadil.infradead.org> <YWq3Z++uoJ/kcp+3@T590> <YW3LuzaPhW96jSBK@bombadil.infradead.org> <YW4uwep3BCe9Vxq8@T590>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YW3gae4HoUd9izyj@bombadil.infradead.org>
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 18, 2021 at 02:00:25PM -0700, Luis Chamberlain wrote:
-> On Mon, Oct 11, 2021 at 03:30:24PM -0700, Luis Chamberlain wrote:
-> > On Mon, Oct 11, 2021 at 07:46:04PM +0200, Greg KH wrote:
-> > > >   o By default we now always skip built-in firmware even if a FW_LOADER=y
-> > > 
-> > > I do not understand, why would we ever want to skip built-in firmware?
-> > 
-> > Because it is done this way today only implicitly because
-> > EXTRA_FIRMWARE is empty. Using a kconfig entry makes this
-> > more obvious.
+> > By you only addressing the deadlock as a requirement on approach a) you are
+> > forgetting that there *may* already be present drivers which *do* implement
+> > such patterns in the kernel. I worked on addressing the deadlock because
+> > I was informed livepatching *did* have that issue as well and so very
+> > likely a generic solution to the deadlock could be beneficial to other
+> > random drivers.
 > 
-> Greg,
-> 
-> The fact that it was not obvious to you we were effectively disabling
-> the built-in firmware functionality by default using side kconfig
-> symbols is a good reason to clarify this situation with its own kconfig
-> symbol.
-> 
-> And consider what I started below as well.
-> 
-> Please let me know why on the other hand we should *not* add this new
-> kconfig symbol?
+> In-tree zram doesn't have such deadlock, if livepatching has such AA deadlock,
+> just fixed it, and seems it has been fixed by 3ec24776bfd0.
 
-Because added complexity for no real good reason?  You need to justify
-why we need yet-another firmware kconfig option here.  We should be
-working to remove them, not add more, if at all possible.
+I would not call it a fix. It is a kind of ugly workaround because the 
+generic infrastructure lacked (lacks) the proper support in my opinion. 
+Luis is trying to fix that.
 
-thanks,
+Just my two cents.
 
-greg k-h
+Miroslav
