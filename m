@@ -2,125 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0525C4346B0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 10:19:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C41FC4346CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 10:25:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229823AbhJTIVr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Oct 2021 04:21:47 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:57584 "EHLO
+        id S229829AbhJTI12 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Oct 2021 04:27:28 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:57794 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbhJTIVo (ORCPT
+        with ESMTP id S229544AbhJTI1V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Oct 2021 04:21:44 -0400
+        Wed, 20 Oct 2021 04:27:21 -0400
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 349451FD47;
-        Wed, 20 Oct 2021 08:19:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1634717968; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        by smtp-out2.suse.de (Postfix) with ESMTP id B10A61FD9D;
+        Wed, 20 Oct 2021 08:25:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1634718306; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=fF05nAEyjqTbx+MUMonWp9IUBJlR+Dw6z0QwyteEkTw=;
-        b=sQPHPToG2Fvjnup+4BPVwdAuh2cpg/MRibClRF00pE0aOFX5rilYheDOWuia/OCg/V/Zqr
-        6REGrweU2AtByO+aaYSQVXNMPeJju96CaKJFs3yacalq0i8KIy1xtdK+k6XVPL8SZYI+Qk
-        40JHGxGTsVeLpcQkwUsXUKfJpmik9zY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1634717968;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fF05nAEyjqTbx+MUMonWp9IUBJlR+Dw6z0QwyteEkTw=;
-        b=pNe6tBQODotEc2aHu+V64wYMh/dMMgW2yUPDrkGUUEYB33K5zemch5GehR+z1c3tBJETQ5
-        z80x/CcyVZDgqDDQ==
-Received: from pobox.suse.cz (pobox.suse.cz [10.100.2.14])
+        bh=X8kM5MPhqrfnEDHU7vUn3OWBK24lQfifgPAWKlJM6Fw=;
+        b=sY2/IOBwR+E08DVd4U1l0h6736ab9RIlZ26ejS+mfebDxHyqNsShLLL5GO3G8dHBe9CghW
+        hKWyNed18jTBDa8gkmDDUdaMJaZNsV60vG7gQZPSJ4noBV1yX1TWA6cMWD7yd0S0COIhUJ
+        MA36WcUHo7Kb01AXOxBAEIowOoDfXa8=
+Received: from suse.cz (unknown [10.100.201.86])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 8E7F6A3B84;
-        Wed, 20 Oct 2021 08:19:27 +0000 (UTC)
-Date:   Wed, 20 Oct 2021 10:19:27 +0200 (CEST)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Ming Lei <ming.lei@redhat.com>
-cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, tj@kernel.org,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        minchan@kernel.org, jeyu@kernel.org, shuah@kernel.org,
-        bvanassche@acm.org, dan.j.williams@intel.com, joe@perches.com,
-        tglx@linutronix.de, keescook@chromium.org, rostedt@goodmis.org,
-        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
-In-Reply-To: <YW/KEsfWJMIPnz76@T590>
-Message-ID: <alpine.LSU.2.21.2110201014400.26817@pobox.suse.cz>
-References: <YWjCpLUNPF3s4P2U@T590> <YWjJ0O7K+31Iz3ox@bombadil.infradead.org> <YWk9e957Hb+I7HvR@T590> <YWm68xUnAofop3PZ@bombadil.infradead.org> <YWq3Z++uoJ/kcp+3@T590> <YW3LuzaPhW96jSBK@bombadil.infradead.org> <YW4uwep3BCe9Vxq8@T590>
- <alpine.LSU.2.21.2110190820590.15009@pobox.suse.cz> <YW6OptglA6UykZg/@T590> <alpine.LSU.2.21.2110200835490.26817@pobox.suse.cz> <YW/KEsfWJMIPnz76@T590>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        by relay2.suse.de (Postfix) with ESMTPS id 83531A3B84;
+        Wed, 20 Oct 2021 08:25:06 +0000 (UTC)
+Date:   Wed, 20 Oct 2021 10:25:06 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Uladzislau Rezki <urezki@gmail.com>
+Cc:     linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>,
+        Neil Brown <neilb@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [RFC 2/3] mm/vmalloc: add support for __GFP_NOFAIL
+Message-ID: <YW/SYl/ZKp7W60mg@dhcp22.suse.cz>
+References: <20211018114712.9802-1-mhocko@kernel.org>
+ <20211018114712.9802-3-mhocko@kernel.org>
+ <20211019110649.GA1933@pc638.lan>
+ <YW6xZ7vi/7NVzRH5@dhcp22.suse.cz>
+ <20211019194658.GA1787@pc638.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211019194658.GA1787@pc638.lan>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 20 Oct 2021, Ming Lei wrote:
-
-> On Wed, Oct 20, 2021 at 08:43:37AM +0200, Miroslav Benes wrote:
-> > On Tue, 19 Oct 2021, Ming Lei wrote:
-> > 
-> > > On Tue, Oct 19, 2021 at 08:23:51AM +0200, Miroslav Benes wrote:
-> > > > > > By you only addressing the deadlock as a requirement on approach a) you are
-> > > > > > forgetting that there *may* already be present drivers which *do* implement
-> > > > > > such patterns in the kernel. I worked on addressing the deadlock because
-> > > > > > I was informed livepatching *did* have that issue as well and so very
-> > > > > > likely a generic solution to the deadlock could be beneficial to other
-> > > > > > random drivers.
-> > > > > 
-> > > > > In-tree zram doesn't have such deadlock, if livepatching has such AA deadlock,
-> > > > > just fixed it, and seems it has been fixed by 3ec24776bfd0.
+On Tue 19-10-21 21:46:58, Uladzislau Rezki wrote:
+> On Tue, Oct 19, 2021 at 01:52:07PM +0200, Michal Hocko wrote:
+> > On Tue 19-10-21 13:06:49, Uladzislau Rezki wrote:
+> > > > From: Michal Hocko <mhocko@suse.com>
 > > > > 
-> > > > I would not call it a fix. It is a kind of ugly workaround because the 
-> > > > generic infrastructure lacked (lacks) the proper support in my opinion. 
-> > > > Luis is trying to fix that.
+> > > > Dave Chinner has mentioned that some of the xfs code would benefit from
+> > > > kvmalloc support for __GFP_NOFAIL because they have allocations that
+> > > > cannot fail and they do not fit into a single page.
+> > > > 
+> > > > The larg part of the vmalloc implementation already complies with the
+> > > > given gfp flags so there is no work for those to be done. The area
+> > > > and page table allocations are an exception to that. Implement a retry
+> > > > loop for those.
+> > > > 
+> > > > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > > > ---
+> > > >  mm/vmalloc.c | 6 +++++-
+> > > >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > index 7455c89598d3..3a5a178295d1 100644
+> > > > --- a/mm/vmalloc.c
+> > > > +++ b/mm/vmalloc.c
+> > > > @@ -2941,8 +2941,10 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+> > > >  	else if (!(gfp_mask & (__GFP_FS | __GFP_IO)))
+> > > >  		flags = memalloc_noio_save();
+> > > >  
+> > > > -	ret = vmap_pages_range(addr, addr + size, prot, area->pages,
+> > > > +	do {
+> > > > +		ret = vmap_pages_range(addr, addr + size, prot, area->pages,
+> > > >  			page_shift);
+> > > > +	} while ((gfp_mask & __GFP_NOFAIL) && (ret < 0));
+> > > >  
+> > > >  	if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
+> > > >  		memalloc_nofs_restore(flags);
+> > > > @@ -3032,6 +3034,8 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+> > > >  		warn_alloc(gfp_mask, NULL,
+> > > >  			"vmalloc error: size %lu, vm_struct allocation failed",
+> > > >  			real_size);
+> > > > +		if (gfp_mask && __GFP_NOFAIL)
+> > > > +			goto again;
+> > > >  		goto fail;
+> > > >  	}
+> > > >  
+> > > > -- 
+> > > > 2.30.2
+> > > > 
+> > > I have checked the vmap code how it aligns with the __GFP_NOFAIL flag.
+> > > To me it looks correct from functional point of view.
 > > > 
-> > > What is the proper support of the generic infrastructure? I am not
-> > > familiar with livepatching's model(especially with module unload), you mean
-> > > livepatching have to do the following way from sysfs:
+> > > There is one place though it is kasan_populate_vmalloc_pte(). It does
+> > > not use gfp_mask, instead it directly deals with GFP_KERNEL for its
+> > > internal purpose. If it fails the code will end up in loping in the
+> > > __vmalloc_node_range().
 > > > 
-> > > 1) during module exit:
-> > > 	
-> > > 	mutex_lock(lp_lock);
-> > > 	kobject_put(lp_kobj);
-> > > 	mutex_unlock(lp_lock);
-> > > 	
-> > > 2) show()/store() method of attributes of lp_kobj
-> > > 	
-> > > 	mutex_lock(lp_lock)
-> > > 	...
-> > > 	mutex_unlock(lp_lock)
+> > > I am not sure how it is important to pass __GFP_NOFAIL into KASAN code.
+> > > 
+> > > Any thoughts about it?
 > > 
-> > Yes, this was exactly the case. We then reworked it a lot (see 
-> > 958ef1e39d24 ("livepatch: Simplify API by removing registration step"), so 
-> > now the call sequence is different. kobject_put() is basically offloaded 
-> > to a workqueue scheduled right from the store() method. Meaning that 
-> > Luis's work would probably not help us currently, but on the other hand 
-> > the issues with AA deadlock were one of the main drivers of the redesign 
-> > (if I remember correctly). There were other reasons too as the changelog 
-> > of the commit describes.
+> > The flag itself is not really necessary down there as long as we
+> > guarantee that the high level logic doesn't fail. In this case we keep
+> > retrying at __vmalloc_node_range level which should be possible to cover
+> > all callers that can control gfp mask. I was thinking to put it into
+> > __get_vm_area_node but that was slightly more hairy and we would be
+> > losing the warning which might turn out being helpful in cases where the
+> > failure is due to lack of vmalloc space or similar constrain. Btw. do we
+> > want some throttling on a retry?
 > > 
-> > So, from my perspective, if there was a way to easily synchronize between 
-> > a data cleanup from module_exit callback and sysfs/kernfs operations, it 
-> > could spare people many headaches.
-> 
-> kobject_del() is supposed to do so, but you can't hold a shared lock
-> which is required in show()/store() method. Once kobject_del() returns,
-> no pending show()/store() any more.
-> 
-> The question is that why one shared lock is required for livepatching to
-> delete the kobject. What are you protecting when you delete one kobject?
+> I think adding kind of schedule() will not make things worse and in corner
+> cases could prevent a power drain by CPU. It is important for mobile devices. 
 
-I think it boils down to the fact that we embed kobject statically to 
-structures which livepatch uses to maintain data. That is discouraged 
-generally, but all the attempts to implement it correctly were utter 
-failures.
+I suspect you mean schedule_timeout here? Or cond_resched? I went with a
+later for now, I do not have a good idea for how to long to sleep here.
+I am more than happy to change to to a sleep though.
 
-Miroslav
+> As for vmap space, it can be that a user specifies a short range that does
+> not contain any free area. In that case we might never return back to a caller.
+
+This is to be expected. The caller cannot fail and if it would be
+looping around vmalloc it wouldn't return anyway.
+
+> Maybe add a good comment something like: think what you do when deal with the
+> __vmalloc_node_range() and __GFP_NOFAIL?
+
+We have a generic documentation for gfp flags and __GFP_NOFAIL is
+docuemented to "The allocation could block indefinitely but will never
+return with failure." We are discussing improvements for the generic
+documentation in another thread [1] and we will likely extend it so I
+suspect we do not have to repeat drawbacks here again.
+
+[1] http://lkml.kernel.org/r/163184741778.29351.16920832234899124642.stgit@noble.brown
+
+Anyway the gfp mask description and constrains for vmalloc are not
+documented. I will add a new patch to fill that gap and send it as a
+reply to this one
+-- 
+Michal Hocko
+SUSE Labs
