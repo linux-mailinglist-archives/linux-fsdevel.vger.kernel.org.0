@@ -2,211 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C625D4344DC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 07:50:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62F48434554
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 08:43:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229893AbhJTFwy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Oct 2021 01:52:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59420 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229829AbhJTFwx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Oct 2021 01:52:53 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7B637611EF;
-        Wed, 20 Oct 2021 05:50:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634709039;
-        bh=Y/HNCkQN1Dm+Xz7LGNy6kj13dbmiKV6jL2UTzRuCpY0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=aY/iMJmBzRPMOWlea5jYrHiLOtuV8+PJmdylnIE+uk6yvXhayIvbxDZeKriQ80Pp/
-         2Hs+sEoSjjBy3fwKkE58HHDykVwBWwDetqlnNpgcelPwkXGJPixLHtfdNhu0bLwmpA
-         Jm7Tvy0ftkd/urNPNQrrHVLID8K2ry0/MNf6jDQJ4R/eThq2TIo/7VivIqvrV0NPiS
-         IZJIt2O0kdsBYuGf0Ae4Usl/rSwiZrZ65Gq88LT9R3dlKy/X+zDXC0hQoAffbSlVf3
-         eih343gTmfnz/HDoGRWDpifCTp5fW9cJIXLZJYxuQlFwS8qdJO28YSA7Wi2Q2ZyI1k
-         0fvQ9FUljMUpA==
-Date:   Wed, 20 Oct 2021 06:50:33 +0100
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] locks: remove changelog comments
-Message-ID: <20211020065033.032c86f9@sal.lan>
-In-Reply-To: <6f4a14d0a455c5a93eccfdf2dc8555b82b79694b.camel@kernel.org>
-References: <cover.1634630485.git.mchehab+huawei@kernel.org>
-        <887de3a1ecadda3dbfe0adf9df9070f0afa9406c.1634630486.git.mchehab+huawei@kernel.org>
-        <f352a2e4b50a8678a8ddef5177702ecf9040490f.camel@kernel.org>
-        <20211019141427.GA15063@fieldses.org>
-        <e7bdcf0b279989e51c2c333e89acf3e1d476eff0.camel@kernel.org>
-        <20211019161651.GD15063@fieldses.org>
-        <c6d2e1a8691a49afbbc280bb74a05b9b110b7f27.camel@kernel.org>
-        <20211019173835.GE15063@fieldses.org>
-        <6f4a14d0a455c5a93eccfdf2dc8555b82b79694b.camel@kernel.org>
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+        id S229822AbhJTGpy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Oct 2021 02:45:54 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:35098 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229591AbhJTGpx (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Oct 2021 02:45:53 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id E871121A74;
+        Wed, 20 Oct 2021 06:43:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1634712217; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rNHGewS1yJSMHeXcGNkiPH4/vSqZ+kkloqucx8CrHpg=;
+        b=xaE2gnmQOesLnomNZFvJ0r1pNN1Ha5LABsYOH5p9EvC62iNKUw3U+HkW9BHEOSHWmVkg57
+        v3e5QjRkN0kJ1LMa4LOcTq7lEbgvtEmIM7xkdKx+sZpMeGZ9qNOEI0qF8Jua8wWo2GWSXy
+        k1c4uaE+0f7BF7q5mqJQHYQ2yrySS/g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1634712217;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rNHGewS1yJSMHeXcGNkiPH4/vSqZ+kkloqucx8CrHpg=;
+        b=hQautgroTigJwzFHF1d+IXOU6BywnWwjsMxbnt810LVJ8uC7aXRTFWkw0nwWrh6mRaIT74
+        k14k8MQMA7a4pcDQ==
+Received: from pobox.suse.cz (pobox.suse.cz [10.100.2.14])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 25BA9A3B81;
+        Wed, 20 Oct 2021 06:43:37 +0000 (UTC)
+Date:   Wed, 20 Oct 2021 08:43:37 +0200 (CEST)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Ming Lei <ming.lei@redhat.com>
+cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, tj@kernel.org,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        minchan@kernel.org, jeyu@kernel.org, shuah@kernel.org,
+        bvanassche@acm.org, dan.j.williams@intel.com, joe@perches.com,
+        tglx@linutronix.de, keescook@chromium.org, rostedt@goodmis.org,
+        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
+In-Reply-To: <YW6OptglA6UykZg/@T590>
+Message-ID: <alpine.LSU.2.21.2110200835490.26817@pobox.suse.cz>
+References: <YWeR4moCRh+ZHOmH@T590> <YWiSAN6xfYcUDJCb@bombadil.infradead.org> <YWjCpLUNPF3s4P2U@T590> <YWjJ0O7K+31Iz3ox@bombadil.infradead.org> <YWk9e957Hb+I7HvR@T590> <YWm68xUnAofop3PZ@bombadil.infradead.org> <YWq3Z++uoJ/kcp+3@T590> <YW3LuzaPhW96jSBK@bombadil.infradead.org>
+ <YW4uwep3BCe9Vxq8@T590> <alpine.LSU.2.21.2110190820590.15009@pobox.suse.cz> <YW6OptglA6UykZg/@T590>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Em Tue, 19 Oct 2021 14:14:08 -0400
-Jeff Layton <jlayton@kernel.org> escreveu:
+On Tue, 19 Oct 2021, Ming Lei wrote:
 
-> On Tue, 2021-10-19 at 13:38 -0400, J. Bruce Fields wrote:
-> > From: "J. Bruce Fields" <bfields@redhat.com>
+> On Tue, Oct 19, 2021 at 08:23:51AM +0200, Miroslav Benes wrote:
+> > > > By you only addressing the deadlock as a requirement on approach a) you are
+> > > > forgetting that there *may* already be present drivers which *do* implement
+> > > > such patterns in the kernel. I worked on addressing the deadlock because
+> > > > I was informed livepatching *did* have that issue as well and so very
+> > > > likely a generic solution to the deadlock could be beneficial to other
+> > > > random drivers.
+> > > 
+> > > In-tree zram doesn't have such deadlock, if livepatching has such AA deadlock,
+> > > just fixed it, and seems it has been fixed by 3ec24776bfd0.
 > > 
-> > This is only of historical interest, and anyone interested in the
-> > history can dig out an old version of locks.c from from git.
-> > 
-> > Triggered by the observation that it references the now-removed
-> > Documentation/filesystems/mandatory-locking.rst.
-> > 
-> > Reported-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-> > ---
-> >  fs/locks.c | 114 ++---------------------------------------------------
-> >  1 file changed, 4 insertions(+), 110 deletions(-)
-> > 
-> > On Tue, Oct 19, 2021 at 12:27:55PM -0400, Jeff Layton wrote:  
-> > > Yeah, I think that looks great. Send it with a changelog and I'll pull
-> > > it into the branch I have feeding into -next.  
-> > 
-> > OK!--b.
-> > 
-> > diff --git a/fs/locks.c b/fs/locks.c
-> > index 3d6fb4ae847b..b54813eae44f 100644
-> > --- a/fs/locks.c
-> > +++ b/fs/locks.c
-> > @@ -2,117 +2,11 @@
-> >  /*
-> >   *  linux/fs/locks.c
-> >   *
-> > - *  Provide support for fcntl()'s F_GETLK, F_SETLK, and F_SETLKW calls.
-> > - *  Doug Evans (dje@spiff.uucp), August 07, 1992
-> > + * We implement four types of file locks: BSD locks, posix locks, open
-> > + * file description locks, and leases.  For details about BSD locks,
-> > + * see the flock(2) man page; for details about the other three, see
-> > + * fcntl(2).
-> >   *
-> > - *  Deadlock detection added.
-> > - *  FIXME: one thing isn't handled yet:
-> > - *	- mandatory locks (requires lots of changes elsewhere)
-> > - *  Kelly Carmichael (kelly@[142.24.8.65]), September 17, 1994.
-> > - *
-> > - *  Miscellaneous edits, and a total rewrite of posix_lock_file() code.
-> > - *  Kai Petzke (wpp@marie.physik.tu-berlin.de), 1994
-> > - *
-> > - *  Converted file_lock_table to a linked list from an array, which eliminates
-> > - *  the limits on how many active file locks are open.
-> > - *  Chad Page (pageone@netcom.com), November 27, 1994
-> > - *
-> > - *  Removed dependency on file descriptors. dup()'ed file descriptors now
-> > - *  get the same locks as the original file descriptors, and a close() on
-> > - *  any file descriptor removes ALL the locks on the file for the current
-> > - *  process. Since locks still depend on the process id, locks are inherited
-> > - *  after an exec() but not after a fork(). This agrees with POSIX, and both
-> > - *  BSD and SVR4 practice.
-> > - *  Andy Walker (andy@lysaker.kvaerner.no), February 14, 1995
-> > - *
-> > - *  Scrapped free list which is redundant now that we allocate locks
-> > - *  dynamically with kmalloc()/kfree().
-> > - *  Andy Walker (andy@lysaker.kvaerner.no), February 21, 1995
-> > - *
-> > - *  Implemented two lock personalities - FL_FLOCK and FL_POSIX.
-> > - *
-> > - *  FL_POSIX locks are created with calls to fcntl() and lockf() through the
-> > - *  fcntl() system call. They have the semantics described above.
-> > - *
-> > - *  FL_FLOCK locks are created with calls to flock(), through the flock()
-> > - *  system call, which is new. Old C libraries implement flock() via fcntl()
-> > - *  and will continue to use the old, broken implementation.
-> > - *
-> > - *  FL_FLOCK locks follow the 4.4 BSD flock() semantics. They are associated
-> > - *  with a file pointer (filp). As a result they can be shared by a parent
-> > - *  process and its children after a fork(). They are removed when the last
-> > - *  file descriptor referring to the file pointer is closed (unless explicitly
-> > - *  unlocked).
-> > - *
-> > - *  FL_FLOCK locks never deadlock, an existing lock is always removed before
-> > - *  upgrading from shared to exclusive (or vice versa). When this happens
-> > - *  any processes blocked by the current lock are woken up and allowed to
-> > - *  run before the new lock is applied.
-> > - *  Andy Walker (andy@lysaker.kvaerner.no), June 09, 1995
-> > - *
-> > - *  Removed some race conditions in flock_lock_file(), marked other possible
-> > - *  races. Just grep for FIXME to see them.
-> > - *  Dmitry Gorodchanin (pgmdsg@ibi.com), February 09, 1996.
-> > - *
-> > - *  Addressed Dmitry's concerns. Deadlock checking no longer recursive.
-> > - *  Lock allocation changed to GFP_ATOMIC as we can't afford to sleep
-> > - *  once we've checked for blocking and deadlocking.
-> > - *  Andy Walker (andy@lysaker.kvaerner.no), April 03, 1996.
-> > - *
-> > - *  Initial implementation of mandatory locks. SunOS turned out to be
-> > - *  a rotten model, so I implemented the "obvious" semantics.
-> > - *  See 'Documentation/filesystems/mandatory-locking.rst' for details.
-> > - *  Andy Walker (andy@lysaker.kvaerner.no), April 06, 1996.
-> > - *
-> > - *  Don't allow mandatory locks on mmap()'ed files. Added simple functions to
-> > - *  check if a file has mandatory locks, used by mmap(), open() and creat() to
-> > - *  see if system call should be rejected. Ref. HP-UX/SunOS/Solaris Reference
-> > - *  Manual, Section 2.
-> > - *  Andy Walker (andy@lysaker.kvaerner.no), April 09, 1996.
-> > - *
-> > - *  Tidied up block list handling. Added '/proc/locks' interface.
-> > - *  Andy Walker (andy@lysaker.kvaerner.no), April 24, 1996.
-> > - *
-> > - *  Fixed deadlock condition for pathological code that mixes calls to
-> > - *  flock() and fcntl().
-> > - *  Andy Walker (andy@lysaker.kvaerner.no), April 29, 1996.
-> > - *
-> > - *  Allow only one type of locking scheme (FL_POSIX or FL_FLOCK) to be in use
-> > - *  for a given file at a time. Changed the CONFIG_LOCK_MANDATORY scheme to
-> > - *  guarantee sensible behaviour in the case where file system modules might
-> > - *  be compiled with different options than the kernel itself.
-> > - *  Andy Walker (andy@lysaker.kvaerner.no), May 15, 1996.
-> > - *
-> > - *  Added a couple of missing wake_up() calls. Thanks to Thomas Meckel
-> > - *  (Thomas.Meckel@mni.fh-giessen.de) for spotting this.
-> > - *  Andy Walker (andy@lysaker.kvaerner.no), May 15, 1996.
-> > - *
-> > - *  Changed FL_POSIX locks to use the block list in the same way as FL_FLOCK
-> > - *  locks. Changed process synchronisation to avoid dereferencing locks that
-> > - *  have already been freed.
-> > - *  Andy Walker (andy@lysaker.kvaerner.no), Sep 21, 1996.
-> > - *
-> > - *  Made the block list a circular list to minimise searching in the list.
-> > - *  Andy Walker (andy@lysaker.kvaerner.no), Sep 25, 1996.
-> > - *
-> > - *  Made mandatory locking a mount option. Default is not to allow mandatory
-> > - *  locking.
-> > - *  Andy Walker (andy@lysaker.kvaerner.no), Oct 04, 1996.
-> > - *
-> > - *  Some adaptations for NFS support.
-> > - *  Olaf Kirch (okir@monad.swb.de), Dec 1996,
-> > - *
-> > - *  Fixed /proc/locks interface so that we can't overrun the buffer we are handed.
-> > - *  Andy Walker (andy@lysaker.kvaerner.no), May 12, 1997.
-> > - *
-> > - *  Use slab allocator instead of kmalloc/kfree.
-> > - *  Use generic list implementation from <linux/list.h>.
-> > - *  Sped up posix_locks_deadlock by only considering blocked locks.
-> > - *  Matthew Wilcox <willy@debian.org>, March, 2000.
-> > - *
-> > - *  Leases and LOCK_MAND
-> > - *  Matthew Wilcox <willy@debian.org>, June, 2000.
-> > - *  Stephen Rothwell <sfr@canb.auug.org.au>, June, 2000.
-> >   *
-> >   * Locking conflicts and dependencies:
-> >   * If multiple threads attempt to lock the same byte (or flock the same file)  
+> > I would not call it a fix. It is a kind of ugly workaround because the 
+> > generic infrastructure lacked (lacks) the proper support in my opinion. 
+> > Luis is trying to fix that.
 > 
-> Thanks, Bruce (and Mauro). Applied to the locks-next branch (and I
-> dropped Mauro's patch that touched the same area). It should make v5.16.
-
-Thanks! Yeah, it looks a lot cleaner without those changelog-style
-comments.
-
+> What is the proper support of the generic infrastructure? I am not
+> familiar with livepatching's model(especially with module unload), you mean
+> livepatching have to do the following way from sysfs:
 > 
-> Cheers,
+> 1) during module exit:
+> 	
+> 	mutex_lock(lp_lock);
+> 	kobject_put(lp_kobj);
+> 	mutex_unlock(lp_lock);
+> 	
+> 2) show()/store() method of attributes of lp_kobj
+> 	
+> 	mutex_lock(lp_lock)
+> 	...
+> 	mutex_unlock(lp_lock)
+
+Yes, this was exactly the case. We then reworked it a lot (see 
+958ef1e39d24 ("livepatch: Simplify API by removing registration step"), so 
+now the call sequence is different. kobject_put() is basically offloaded 
+to a workqueue scheduled right from the store() method. Meaning that 
+Luis's work would probably not help us currently, but on the other hand 
+the issues with AA deadlock were one of the main drivers of the redesign 
+(if I remember correctly). There were other reasons too as the changelog 
+of the commit describes.
+
+So, from my perspective, if there was a way to easily synchronize between 
+a data cleanup from module_exit callback and sysfs/kernfs operations, it 
+could spare people many headaches.
+ 
+> IMO, the above usage simply caused AA deadlock. Even in Luis's patch
+> 'zram: fix crashes with cpu hotplug multistate', new/same AA deadlock
+> (hot_remove_store() vs. disksize_store() or reset_store()) is added
+> because hot_remove_store() isn't called from module_exit().
+> 
+> Luis tries to delay unloading module until all show()/store() are done. But
+> that can be obtained by the following way simply during module_exit():
+> 
+> 	kobject_del(lp_kobj); //all pending store()/show() from lp_kobj are done,
+> 						  //no new store()/show() can come after
+> 						  //kobject_del() returns	
+> 	mutex_lock(lp_lock);
+> 	kobject_put(lp_kobj);
+> 	mutex_unlock(lp_lock);
+
+kobject_del() already calls kobject_put(). Did you mean __kobject_del(). 
+That one is internal though.
+ 
+> Or can you explain your requirement on kobject/module unload in a bit
+> details?
+
+Does the above makes sense?
+
+Thanks
+
+Miroslav
