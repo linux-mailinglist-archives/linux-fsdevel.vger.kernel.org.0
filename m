@@ -2,82 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C5CD6435608
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 00:44:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4747B435650
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 01:14:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231180AbhJTWqg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Oct 2021 18:46:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39478 "EHLO mail.kernel.org"
+        id S231173AbhJTXQq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Oct 2021 19:16:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229771AbhJTWqf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Oct 2021 18:46:35 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5CBE26115B;
-        Wed, 20 Oct 2021 22:44:18 +0000 (UTC)
-Date:   Wed, 20 Oct 2021 23:44:15 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
+        id S229702AbhJTXQp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Oct 2021 19:16:45 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 3FE85610A2;
+        Wed, 20 Oct 2021 23:14:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634771670;
+        bh=oi8a3JG/XkmKsI8mfGwa2zI65CTPnyciySVi1vE9Ta8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DuiD96fQvwo7N0m8LmOuS8+Hdz9ngko76+qhxxL2fxsJXaxpKzVtaYiPGQsfmlYGj
+         gPMeHy1ITuu+kEC5Qi3LLDIF206EN3X7NGynD9mVS+1u3nLjlUuQ5k9IwpjXhSxOB8
+         VX0OTArOjQ12nYLnGhUWaCRnXFz/U+udE15+x8J3IbiBvlU9PC8DzeC/Gwn8SE4zfL
+         IWxYHkZc/0jbT9uESoX3O9UxsIuA//e50GJJdYUM8Eu/NQeQPyHrSKNlQsZ90hnjOD
+         CzJIgA0PlB23s8aVADlchl99MhNmJmenLIJoRjpLftDol6l/OLkgAv7kaHxYJSIgLy
+         6EVLMm3gnz3LA==
+Date:   Wed, 20 Oct 2021 18:19:10 -0500
+From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Len Baker <len.baker@gmx.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Subject: Re: [PATCH v8 00/17] gfs2: Fix mmap + page fault deadlocks
-Message-ID: <YXCbv5gdfEEtAYo8@arm.com>
-References: <20211019134204.3382645-1-agruenba@redhat.com>
- <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
- <YXBFqD9WVuU8awIv@arm.com>
- <CAHk-=wgv=KPZBJGnx_O5-7hhST8CL9BN4wJwtVuycjhv_1MmvQ@mail.gmail.com>
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] writeback: prefer struct_size over open coded
+ arithmetic
+Message-ID: <20211020231910.GA1313548@embeddedor>
+References: <20210925114308.11455-1-len.baker@gmx.com>
+ <20211020144044.GB16460@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgv=KPZBJGnx_O5-7hhST8CL9BN4wJwtVuycjhv_1MmvQ@mail.gmail.com>
+In-Reply-To: <20211020144044.GB16460@quack2.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 20, 2021 at 10:11:19AM -1000, Linus Torvalds wrote:
-> On Wed, Oct 20, 2021 at 6:37 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > The atomic "add zero" trick isn't that simple for MTE since the arm64
-> > atomic or exclusive instructions run with kernel privileges and
-> > therefore with the kernel tag checking mode.
+On Wed, Oct 20, 2021 at 04:40:44PM +0200, Jan Kara wrote:
+[..]
+> > This code was detected with the help of Coccinelle and audited and fixed
+> > manually.
+> > 
+> > [1] https://www.kernel.org/doc/html/latest/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
+> > 
+> > Signed-off-by: Len Baker <len.baker@gmx.com>
 > 
-> Are there any instructions that are useful for "probe_user_write()"
-> kind of thing?
+> Looks good. Feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> BTW, writeback patches are usually merged by Andrew Morton so probably send
+> it to him. Thanks!
 
-If it's on a user address, the only single-instruction that works with
-MTE is STTR (as in put_user()) but that's destructive. Other "add zero"
-constructs require some potentially expensive system register accesses
-just to set the tag checking mode of the current task.
+I'm taking this in my -next tree.
 
-A probe_user_write() on the kernel linear address involves reading the
-tag from memory and comparing it with the tag in the user pointer. In
-addition, it needs to take into account the current task's tag checking
-mode and the vma vm_flags. We should have most of the information in the
-gup code.
-
-> Although at least for MTE, I think the solution was to do a regular
-> read, and that checks the tag, and then we could use the gup machinery
-> for the writability checks.
-
-Yes, for MTE this should work. For CHERI I think an "add zero" would
-do the trick (it should have atomics that work on capabilities
-directly). However, with MTE doing both get_user() every 16 bytes and
-gup can get pretty expensive. The problematic code is
-fault_in_safe_writable() in this series.
-
-I can give this 16-byte probing in gup a try (on top of -next) but IMHO
-we unnecessarily overload the fault_in_*() logic with something the
-kernel cannot fix up. The only reason we do it is so that we get an
-error code and bail out of a loop but the uaccess routines could be
-extended to report the fault type instead. It looks like we pretty much
-duplicate the uaccess in the fault_in_*() functions (four accesses per
-cache line).
-
--- 
-Catalin
+Thank you both, Len and Jan.
+--
+Gustavo
