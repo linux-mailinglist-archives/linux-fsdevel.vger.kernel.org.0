@@ -2,66 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4747B435650
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 01:14:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D03F9435661
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 01:18:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231173AbhJTXQq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Oct 2021 19:16:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48328 "EHLO mail.kernel.org"
+        id S230481AbhJTXUu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Oct 2021 19:20:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229702AbhJTXQp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Oct 2021 19:16:45 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3FE85610A2;
-        Wed, 20 Oct 2021 23:14:30 +0000 (UTC)
+        id S229702AbhJTXUt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Oct 2021 19:20:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2820560EFE;
+        Wed, 20 Oct 2021 23:18:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634771670;
-        bh=oi8a3JG/XkmKsI8mfGwa2zI65CTPnyciySVi1vE9Ta8=;
+        s=k20201202; t=1634771914;
+        bh=TWlR7qXBnj3Vsm8mAM/r2TdcOX5UhJFd1hVGZd99xyA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DuiD96fQvwo7N0m8LmOuS8+Hdz9ngko76+qhxxL2fxsJXaxpKzVtaYiPGQsfmlYGj
-         gPMeHy1ITuu+kEC5Qi3LLDIF206EN3X7NGynD9mVS+1u3nLjlUuQ5k9IwpjXhSxOB8
-         VX0OTArOjQ12nYLnGhUWaCRnXFz/U+udE15+x8J3IbiBvlU9PC8DzeC/Gwn8SE4zfL
-         IWxYHkZc/0jbT9uESoX3O9UxsIuA//e50GJJdYUM8Eu/NQeQPyHrSKNlQsZ90hnjOD
-         CzJIgA0PlB23s8aVADlchl99MhNmJmenLIJoRjpLftDol6l/OLkgAv7kaHxYJSIgLy
-         6EVLMm3gnz3LA==
-Date:   Wed, 20 Oct 2021 18:19:10 -0500
+        b=M3a8pK8kYSmQLGb6ZHur3eUUUg4KO8gqcz7stt2rlKGzA5S8Aq6tWc5pnzpSDFM1m
+         LQA1MqBbHVoYgewjAQyrxIU/jGNxx5JfLUOyhz75TnACayJyNfo9MLsQdrbmXrB87p
+         iI1bUt/vLXdqSKB8KRjmnVa7D07h7vlcbPV7tedNwTRibOuaIZB/shNklNq/ZlaLL6
+         HYtRX4cK7I5VRBddpEXaubQlNX/SAyXrKjj7GSQulzjW8sAKBcvtHtMInZnK+uUYpa
+         /sVe78yxxgYyvlrRk4HKvsT9mAJ1W6/P23UOiA098H21yuMrfM00ct3m+X98UE5+xP
+         10gBr3gQq30+w==
+Date:   Wed, 20 Oct 2021 18:23:14 -0500
 From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Len Baker <len.baker@gmx.com>,
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Len Baker <len.baker@gmx.com>, Benjamin LaHaise <bcrl@kvack.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
+        Kees Cook <keescook@chromium.org>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] writeback: prefer struct_size over open coded
- arithmetic
-Message-ID: <20211020231910.GA1313548@embeddedor>
-References: <20210925114308.11455-1-len.baker@gmx.com>
- <20211020144044.GB16460@quack2.suse.cz>
+Subject: Re: [PATCH] aio: Prefer struct_size over open coded arithmetic
+Message-ID: <20211020232314.GA1314273@embeddedor>
+References: <20210919094539.30589-1-len.baker@gmx.com>
+ <6cd35222-cc17-b3f5-dad4-ed540e0df79b@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211020144044.GB16460@quack2.suse.cz>
+In-Reply-To: <6cd35222-cc17-b3f5-dad4-ed540e0df79b@embeddedor.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 20, 2021 at 04:40:44PM +0200, Jan Kara wrote:
-[..]
-> > This code was detected with the help of Coccinelle and audited and fixed
-> > manually.
+On Mon, Sep 20, 2021 at 07:11:17PM -0500, Gustavo A. R. Silva wrote:
+> 
+> 
+> On 9/19/21 04:45, Len Baker wrote:
+> > As noted in the "Deprecated Interfaces, Language Features, Attributes,
+> > and Conventions" documentation [1], size calculations (especially
+> > multiplication) should not be performed in memory allocator (or similar)
+> > function arguments due to the risk of them overflowing. This could lead
+> > to values wrapping around and a smaller allocation being made than the
+> > caller was expecting. Using those allocations could lead to linear
+> > overflows of heap memory and other misbehaviors.
+> > 
+> > So, use the struct_size() helper to do the arithmetic instead of the
+> > argument "size + size * count" in the kzalloc() function.
 > > 
 > > [1] https://www.kernel.org/doc/html/latest/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
 > > 
 > > Signed-off-by: Len Baker <len.baker@gmx.com>
 > 
-> Looks good. Feel free to add:
-> 
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> 
-> BTW, writeback patches are usually merged by Andrew Morton so probably send
-> it to him. Thanks!
+> Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
 I'm taking this in my -next tree.
 
-Thank you both, Len and Jan.
+Thanks, Len.
 --
 Gustavo
