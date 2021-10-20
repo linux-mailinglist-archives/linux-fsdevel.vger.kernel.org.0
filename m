@@ -2,122 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 037C0434B1D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 14:25:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE1D0434B29
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 14:30:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230111AbhJTM1R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Oct 2021 08:27:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50964 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229702AbhJTM1R (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Oct 2021 08:27:17 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B3D7C06161C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Oct 2021 05:25:02 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id w14so24390297edv.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Oct 2021 05:25:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JB7H3ohM5l70AQemzmGYYtizSnnDY/xIC1TQbSPrjbg=;
-        b=rLU0zY3vuETlD8DmXa6icR4V0aZP7SDSFOv0A6gC6PjWLkWUnOXPevqNLUuFKMGfRd
-         P3YPsN0m9K+kbIJpG0XJuYnNvFuqUkKY1tqTd83Dgp/ML8j+TqRT2WMJkVKvMM2DrFXM
-         WMikcrl5blUx0kl36C9sOUF8R+OmPP0b7ult7a5I7yAPYzbbutNNxvHbnOzpKZXsUwE9
-         eFdh2zLJ9aRW5t8WLT6PbcQCcdj6qj3XAZu58vuOl6e5ci73vbDUMrlWroby41Ry7drM
-         qsdaWrj3JDOj8QnhA/ow2VgGlOwItBtfQoQCh8HAmXYot9iY0Lxg6OWLD/ccRlL1kMiI
-         kaDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JB7H3ohM5l70AQemzmGYYtizSnnDY/xIC1TQbSPrjbg=;
-        b=TEAq2EFsgj2f/VotT1GvNZDQVCh+neBHHeP0kRuq2/oq6iFXiOgIBgUmfYyHToQsFN
-         NFdgX8m8jRzF0Y3yQ/BX+mcq19TMPPR9cjQOAXqwYsBSCicyhhKuTAj9yfNDUgMIzut/
-         fS4bewGN8RIXZdBsbV+XsV+TT2AIvP9B1nwuUu7HW1L9bt0G4HRM6JnJ2Isbk6DlkCzF
-         aRZEVpoJwjlVGbbxROMwawGFguKKhjntBKnqAsMmf3tayzHUnktpKv3APfbVBEGWWfPQ
-         d5WFeMvwqxAHyJD5YXXb35q+wWyjec0M20aEYYqiz/h+1BmBYUNRZMT+QqgN6GE+SQ04
-         iQEQ==
-X-Gm-Message-State: AOAM5334C4oqcx9j7gNyOqVtcg8ecNiLDVQiOBHA33sdk6Bwk8cP8yOz
-        3bVLbKeWyqiNHtc7e1sD27n4c41luaeSv51nDi5/
-X-Google-Smtp-Source: ABdhPJwXIr+e4+zM4WzBAc+p0tdkWxFt1PkMYpHZJVn7kSklMh9yyHrMX7sFePN1X9RSG+jO5qK0R7JOU1xxwB9QGVw=
-X-Received: by 2002:a05:6402:22d6:: with SMTP id dm22mr63176602edb.209.1634732695469;
- Wed, 20 Oct 2021 05:24:55 -0700 (PDT)
+        id S230176AbhJTMcy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Oct 2021 08:32:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51112 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230077AbhJTMcx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Oct 2021 08:32:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 8CF9161355;
+        Wed, 20 Oct 2021 12:30:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1634733039;
+        bh=LiE/hWTQ5V9XEhRPLyQB9qsB24jCZaZMytc4IqnfsIQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VJhmUgvdf+nNfJtaQ+tmvYAjNLeMkWcdVOxSKh5qHfBm/3xFLe3Uy8u9rFnO6OGFU
+         3Kldf8yXiJejx01qVBeV3oBR6bWGG+1vvMlpnXkVFRWod9iX2+D+oY6d0TqGTD5XT4
+         zFgkBshnc8Rn2Xaq37sfD77eMRxzl8cf3ye92eZs=
+Date:   Wed, 20 Oct 2021 14:30:36 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     "chenxiaosong (A)" <chenxiaosong2@huawei.com>
+Cc:     viro@zeniv.linux.org.uk, stable@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com, yukuai3@huawei.com, yi.zhang@huawei.com,
+        zhangxiaoxu5@huawei.com
+Subject: Re: [PATCH 4.19,v2] VFS: Fix fuseblk memory leak caused by mount
+ concurrency
+Message-ID: <YXAL7K88XGWXckWe@kroah.com>
+References: <20211013095101.641329-1-chenxiaosong2@huawei.com>
+ <YWawy0J9JfStEku0@kroah.com>
+ <429d87b0-3a53-052a-a304-0afa8d51900d@huawei.com>
+ <860c36c4-3668-1388-66d1-a07d463c2ad9@huawei.com>
 MIME-Version: 1.0
-References: <YWWMO/ZDrvDZ5X4c@redhat.com>
-In-Reply-To: <YWWMO/ZDrvDZ5X4c@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 20 Oct 2021 08:24:44 -0400
-Message-ID: <CAHC9VhRv8xOoPtfpSYSvUrcHUjhqQWw5LiDSfwR2f4VJ=9Qr8Q@mail.gmail.com>
-Subject: Re: [PATCH v2] security: Return xattr name from security_dentry_init_security()
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-        virtio-fs@redhat.com, Miklos Szeredi <miklos@szeredi.hu>,
-        Dan Walsh <dwalsh@redhat.com>, jlayton@kernel.org,
-        idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, bfields@fieldses.org,
-        chuck.lever@oracle.com, anna.schumaker@netapp.com,
-        trond.myklebust@hammerspace.com,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        casey@schaufler-ca.com, Ondrej Mosnacek <omosnace@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <860c36c4-3668-1388-66d1-a07d463c2ad9@huawei.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 12, 2021 at 9:23 AM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> Right now security_dentry_init_security() only supports single security
-> label and is used by SELinux only. There are two users of of this hook,
-> namely ceph and nfs.
->
-> NFS does not care about xattr name. Ceph hardcodes the xattr name to
-> security.selinux (XATTR_NAME_SELINUX).
->
-> I am making changes to fuse/virtiofs to send security label to virtiofsd
-> and I need to send xattr name as well. I also hardcoded the name of
-> xattr to security.selinux.
->
-> Stephen Smalley suggested that it probably is a good idea to modify
-> security_dentry_init_security() to also return name of xattr so that
-> we can avoid this hardcoding in the callers.
->
-> This patch adds a new parameter "const char **xattr_name" to
-> security_dentry_init_security() and LSM puts the name of xattr
-> too if caller asked for it (xattr_name != NULL).
->
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> ---
->
-> Changes since v1:
-> - Updated comment to make it clear caller does not have to free the
->   xattr_name. (Jeff Layton).
-> - Captured Jeff's Reviewed-by ack.
->
-> I have tested this patch with virtiofs and compile tested for ceph and nfs.
->
-> NFS changes are trivial. Looking for an ack from NFS maintainers.
->
-> ---
->  fs/ceph/xattr.c               |    3 +--
->  fs/nfs/nfs4proc.c             |    3 ++-
->  include/linux/lsm_hook_defs.h |    3 ++-
->  include/linux/lsm_hooks.h     |    3 +++
->  include/linux/security.h      |    6 ++++--
->  security/security.c           |    7 ++++---
->  security/selinux/hooks.c      |    6 +++++-
->  7 files changed, 21 insertions(+), 10 deletions(-)
+On Wed, Oct 13, 2021 at 06:49:06PM +0800, chenxiaosong (A) wrote:
+> 在 2021/10/13 18:38, chenxiaosong (A) 写道:
+> > 在 2021/10/13 18:11, Greg KH 写道:
+> > > On Wed, Oct 13, 2021 at 05:51:01PM +0800, ChenXiaoSong wrote:
+> > > > If two processes mount same superblock, memory leak occurs:
+> > > > 
+> > > > CPU0               |  CPU1
+> > > > do_new_mount       |  do_new_mount
+> > > >    fs_set_subtype   |    fs_set_subtype
+> > > >      kstrdup        |
+> > > >                     |      kstrdup
+> > > >      memrory leak   |
+> > > > 
+> > > > Fix this by adding a write lock while calling fs_set_subtype.
+> > > > 
+> > > > Linus's tree already have refactoring patchset [1], one of them
+> > > > can fix this bug:
+> > > >          c30da2e981a7 (fuse: convert to use the new mount API)
+> > > > 
+> > > > Since we did not merge the refactoring patchset in this branch,
+> > > > I create this patch.
+> > > > 
+> > > > [1] https://patchwork.kernel.org/project/linux-fsdevel/patch/20190903113640.7984-3-mszeredi@redhat.com/
+> > > > 
+> > > > 
+> > > > Fixes: 79c0b2df79eb (add filesystem subtype support)
+> > > > Cc: David Howells <dhowells@redhat.com>
+> > > > Signed-off-by: ChenXiaoSong <chenxiaosong2@huawei.com>
+> > > > ---
+> > > > v1: Can not mount sshfs ([PATCH linux-4.19.y] VFS: Fix fuseblk
+> > > > memory leak caused by mount concurrency)
+> > > > v2: Use write lock while writing superblock
+> > > > 
+> > > >   fs/namespace.c | 9 ++++++---
+> > > >   1 file changed, 6 insertions(+), 3 deletions(-)
+> > > 
+> > > As you are referring to a fuse-only patch above, why are you trying to
+> > > resolve this issue in the core namespace code instead?
+> > > 
+> > > How does fuse have anything to do with this?
+> > > 
+> > > confused,
+> > > 
+> > > greg k-h
+> > > .
+> > > 
+> > 
+> > Now, only `fuse_fs_type` and `fuseblk_fs_type` has `FS_HAS_SUBTYPE` flag
+> > in kernel code, but maybe there is a filesystem module(`struct
+> > file_system_type` has `FS_HAS_SUBTYPE` flag). And only mounting fuseblk
+> > filesystem(e.g. ntfs) will occur memory leak now.
+> 
+> How about updating the subject as: VFS: Fix memory leak caused by mounting
+> fs with subtype concurrency?
 
-This looks fine to me and considering the trivial nature of the NFS
-changes I'm okay with merging this without an explicit ACK from the
-NFS folks.  Similarly, I generally dislike merging new functionality
-once we hit -rc6, but this is trivial enough that I think it's okay;
-I'm merging this into selinux/next now, thanks everyone.
-
--- 
-paul moore
-www.paul-moore.com
+That would be a better idea, but still, this is not obvious that this is
+the correct fix at all...
