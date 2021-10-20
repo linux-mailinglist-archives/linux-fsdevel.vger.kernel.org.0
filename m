@@ -2,153 +2,279 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 690864352FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 20:48:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07B30435342
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 20:56:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231377AbhJTSuY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Oct 2021 14:50:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55316 "EHLO
+        id S231344AbhJTS6X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Oct 2021 14:58:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230520AbhJTSuX (ORCPT
+        with ESMTP id S230076AbhJTS6W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Oct 2021 14:50:23 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7554C061749
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Oct 2021 11:48:08 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id e10so11879773plh.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Oct 2021 11:48:08 -0700 (PDT)
+        Wed, 20 Oct 2021 14:58:22 -0400
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 126DAC06161C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Oct 2021 11:56:08 -0700 (PDT)
+Received: by mail-io1-xd2b.google.com with SMTP id s17so25857577ioa.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Oct 2021 11:56:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=NQ1EuHM5IgMVtLK2y5+wVaFDOFZIiofPZ6eBCmdV3Pg=;
-        b=zhwmnUwjzipb3ftyn4a+qKNhhOY1B27CWv9LoO6StyINljAjpqYWLauCWORB6O0MPv
-         bwsLO3e1ez3dWyoLlXnmgWoKzWZWg3NNoJgV7eT437Ql0WO4e8two+iA1jUWhNoHGCDt
-         Q76AoWPKZyVX/KzpBU4djhaJ0U0FmZ0FznbVPH2UzpWeBx4x+A5MtV9DbErSFLrnczjE
-         36s7GDUAhqZQnz+W7q6YOx+41YXBP/SPM71iuedVT7ibQNySrpewODLJXiiBNSHzajWG
-         cFtFWra0hgaxgdN3GhpU220SlgK5A2H+ZRW13OX9s5A0RBU29j1I1Ok5/e8Re9UIU/iG
-         5E1w==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=sBiOVQO8Jkvj1cgLTkB6Z1YHjRkBGEmLvET6u6LAmpE=;
+        b=YTsDhaEGwMWn4tv3nQjUWRWSTsxOWZOlBVJ089eVjW1mc2f3ceCC1rbVNMf4rc9t4+
+         NIbTyXwng8wWYSCQRcWSzKlgGWYriJbN0MOq+UB4zjs+BZ17TPSGXoVN0XltopNe3SS4
+         hddAqA2G59DpqQE86vD/P/K2DIUArmCWzOZnz70d5L/cXG6MLrQe5Qs+Em+QucD7q5jf
+         5KZZ1CHp8Ft2N9Z9Y5bYaBuPVCk60tEjsliPSAmM1Vnag+zaShIfLBeuGSBm0QQefi5u
+         WyVPK9ZoFQ+OrqQF+VxpjJbA7S1rXU0Y9o7Dx3Drym/6AkU866nGRC75Nwp8Dv+twXgP
+         OgfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=NQ1EuHM5IgMVtLK2y5+wVaFDOFZIiofPZ6eBCmdV3Pg=;
-        b=jQ3FLAkd8gA5iJU5CriyW3Ob2zJQe0YfyMfbj8kME7xqprzrb+UzxIz+qLh1Tey27Z
-         GilmFAYPpKgkXtAuAER3ET9LXFSB8VjWJkrMqacOot0PDn0hXWyngJgamTuq9k5e3+Jt
-         TTA1jI25KGE+Znx9wEcozjb2xuysVJVjNgzu83NR5ZiyVUt1K4B2hgZWiveKAuQRIv6k
-         4AFwyWKc2Q8KXprqm4ZaIU1WJN9QMeQQau5sdMy6tlVIwCirC9Wck6SgzSKhMRpPuUHY
-         CZ8PpX8eJbsngGVifSqkrwPmgL+E1W+4YPAPUgac3NK2d1UG8JrJKGbs62ar34Cl3hWI
-         2bGA==
-X-Gm-Message-State: AOAM533/aN1o3yLN8/YM0poJeR0By8ZZdE8xRA79c48wLPqwW8VcaxhJ
-        UtHUmN6+T2CbDQ8+Z6CyJeXBMRJO2SU1+w==
-X-Google-Smtp-Source: ABdhPJwrQB0DLaQzr2JASowUXfaOc3ZJfTfRTYifLBwS/p/C6efRjvvNoC+XDq2kIkE9L2MGydpFxA==
-X-Received: by 2002:a17:90a:d311:: with SMTP id p17mr659231pju.155.1634755688287;
-        Wed, 20 Oct 2021 11:48:08 -0700 (PDT)
-Received: from relinquished.localdomain ([2620:10d:c090:400::5:be9d])
-        by smtp.gmail.com with ESMTPSA id om5sm3225914pjb.36.2021.10.20.11.48.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Oct 2021 11:48:07 -0700 (PDT)
-Date:   Wed, 20 Oct 2021 11:48:06 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Nikolay Borisov <nborisov@suse.com>
-Cc:     linux-btrfs@vger.kernel.org, kernel-team@fb.com,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v11 01/10] btrfs-progs: receive: support v2 send stream
- larger tlv_len
-Message-ID: <YXBkZmARzs4jGA92@relinquished.localdomain>
-References: <cover.1630514529.git.osandov@fb.com>
- <8729477d23b83c368a76c4f39b5f73a483a3ad14.1630515568.git.osandov@fb.com>
- <d628363e-295d-8e84-d6f2-85501ada24ed@suse.com>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sBiOVQO8Jkvj1cgLTkB6Z1YHjRkBGEmLvET6u6LAmpE=;
+        b=FiVrhi3YZ6i2LM049J1OmAVCYmiJ5Y80ld3IV/MNDi14Gh5i2O9sPlTfqZd7QVjD1s
+         Tw+bv7ydT17d7yORAyMIHhVDHXHannjWuro77vEf379dIoZNUumfOqZQq7oStcdsNqGp
+         Lh0dA7qZXWCuyU4GVfqh76ulHEifTi+2zgkb1VD9I//9rb47WVqF1H25XdaoECVF/UPk
+         wV+S5sJGmJO1F8Gg9+ic1TQmG7AQ6NbVdKCcbod6uATPmFcpXZ/CBcnfKmSMnPwq6HNR
+         iSv5RFXuWxWaJWSerBylr/AoJaoKwClFVCZZ+lotEugb3QO+W3Tx8gsxOIUA0OXXN+T3
+         wa/Q==
+X-Gm-Message-State: AOAM532uflP4l7xPTm0J3MMHdDjG1bcwK8yVrazWsbfWGurJLK5tFhxw
+        eTVNg1qB18GjkrJsv6MDb0ajyQ==
+X-Google-Smtp-Source: ABdhPJxNdy0wPZ4DHYqCDghMP5WIvR8WQgxtEPsfxpukPj4iMVYYIthopd1ZIJB9HOMQWJEhSJOTyg==
+X-Received: by 2002:a02:6064:: with SMTP id d36mr762041jaf.80.1634756167247;
+        Wed, 20 Oct 2021 11:56:07 -0700 (PDT)
+Received: from [192.168.1.116] ([66.219.217.159])
+        by smtp.gmail.com with ESMTPSA id v63sm1449499ioe.17.2021.10.20.11.56.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Oct 2021 11:56:06 -0700 (PDT)
+Subject: Re: [PATCH] fs: kill unused ret2 argument from iocb->ki_complete()
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Jeff Moyer <jmoyer@redhat.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        linux-aio@kvack.org
+References: <ce839d66-1d05-dab8-4540-71b8485fdaf3@kernel.dk>
+ <x498ryno93g.fsf@segfault.boston.devel.redhat.com>
+ <16a7a029-0d23-6a14-9ae9-79ab8a9adb34@kernel.dk>
+ <x494k9bo84w.fsf@segfault.boston.devel.redhat.com>
+ <80244d5b-692c-35ac-e468-2581ff869395@kernel.dk>
+Message-ID: <8f5fdbbf-dc66-fabe-db3b-01b2085083b0@kernel.dk>
+Date:   Wed, 20 Oct 2021 12:56:05 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <80244d5b-692c-35ac-e468-2581ff869395@kernel.dk>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d628363e-295d-8e84-d6f2-85501ada24ed@suse.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 20, 2021 at 04:49:38PM +0300, Nikolay Borisov wrote:
-> 
-> 
-> On 1.09.21 г. 20:01, Omar Sandoval wrote:
-> > From: Boris Burkov <borisb@fb.com>
-> > 
-> > An encoded extent can be up to 128K in length, which exceeds the largest
-> > value expressible by the current send stream format's 16 bit tlv_len
-> > field. Since encoded writes cannot be split into multiple writes by
-> > btrfs send, the send stream format must change to accommodate encoded
-> > writes.
-> > 
-> > Supporting this changed format requires retooling how we store the
-> > commands we have processed. Since we can no longer use btrfs_tlv_header
-> > to describe every attribute, we define a new struct btrfs_send_attribute
-> > which has a 32 bit length field, and use that to store the attribute
-> > information needed for receive processing. This is transparent to users
-> > of the various TLV_GET macros.
-> > 
-> > Signed-off-by: Boris Burkov <boris@bur.io>
-> > ---
-> >  common/send-stream.c | 34 +++++++++++++++++++++++++---------
-> >  1 file changed, 25 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/common/send-stream.c b/common/send-stream.c
-> > index a0c52f79..cd5aa311 100644
-> > --- a/common/send-stream.c
-> > +++ b/common/send-stream.c
-> > @@ -24,13 +24,23 @@
-> >  #include "crypto/crc32c.h"
-> >  #include "common/utils.h"
-> >  
-> > +struct btrfs_send_attribute {
-> > +	u16 tlv_type;
-> > +	/*
-> > +	 * Note: in btrfs_tlv_header, this is __le16, but we need 32 bits for
-> > +	 * attributes with file data as of version 2 of the send stream format
-> > +	 */
-> > +	u32 tlv_len;
-> > +	char *data;
-> > +};
-> > +
-> >  struct btrfs_send_stream {
-> >  	char read_buf[BTRFS_SEND_BUF_SIZE];
-> >  	int fd;
-> >  
-> >  	int cmd;
-> >  	struct btrfs_cmd_header *cmd_hdr;
-> > -	struct btrfs_tlv_header *cmd_attrs[BTRFS_SEND_A_MAX + 1];
-> > +	struct btrfs_send_attribute cmd_attrs[BTRFS_SEND_A_MAX + 1];
-> 
-> This is subtle and it took me a couple of minutes to get it at first.
-> Currently cmds_attrs holds an array of pointers into the command buffer,
-> with every pointer being the beginning of the tlv_header, whilst with
-> your change cmd_attr now holds actual btrfs_send_attribute structures
-> (52 bytes vs sizeof(uintptr_t)  bytes before). So this increases the
-> overall size of btrfs_send_stream because with  your version of the code
-> you parse the type/length fields and store them directly in the send
-> attribute structure at command parse time rather than just referring to
-> the raw command buffer during read_cmd and referring to them during
-> attribute parsing.
-> 
-> This might seem superficial but this kind of change should really be
-> mentioned explicitly in the changelog to better prepare reviewers what
-> to expect.
-> 
-> 
-> OTOH the code LGTM and actually now it seems less tricky than before so:
-> 
-> Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-> 
-> 
-> David if you deem it necessary adjust the commit message appropriately.
+On 10/20/21 12:41 PM, Jens Axboe wrote:
+> Working on just changing it to a 64-bit type instead, then we can pass
+> in both at once with res2 being the upper 32 bits. That'll keep the same
+> API on the aio side.
 
-I clarified the second paragraph to:
+Here's that as an incremental. Since we can only be passing in 32-bits
+anyway across 32/64-bit, we can just make it an explicit 64-bit instead.
+This generates the same code on 64-bit for calling ->ki_complete, and we
+can trivially ignore the usb gadget issue as we now can pass in both
+values (and fill them in on the aio side).
 
-Supporting this changed format requires retooling how we store the
-commands we have processed. We currently store pointers to the struct
-btrfs_tlv_headers in the command buffer. This is not sufficient to
-represent the new BTRFS_SEND_A_DATA format. Instead, parse the attribute
-headers and store them in a new struct btrfs_send_attribute which has a
-32-bit length field. This is transparent to users of the various TLV_GET
-macros.
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 92b87aa8be86..66c6e0c5d638 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -550,7 +550,7 @@ static void lo_rw_aio_do_completion(struct loop_cmd *cmd)
+ 		blk_mq_complete_request(rq);
+ }
+ 
+-static void lo_rw_aio_complete(struct kiocb *iocb, long ret)
++static void lo_rw_aio_complete(struct kiocb *iocb, u64 ret)
+ {
+ 	struct loop_cmd *cmd = container_of(iocb, struct loop_cmd, iocb);
+ 
+diff --git a/drivers/nvme/target/io-cmd-file.c b/drivers/nvme/target/io-cmd-file.c
+index 80a0f35ae1dc..83a2f5b0a3a0 100644
+--- a/drivers/nvme/target/io-cmd-file.c
++++ b/drivers/nvme/target/io-cmd-file.c
+@@ -123,7 +123,7 @@ static ssize_t nvmet_file_submit_bvec(struct nvmet_req *req, loff_t pos,
+ 	return call_iter(iocb, &iter);
+ }
+ 
+-static void nvmet_file_io_done(struct kiocb *iocb, long ret)
++static void nvmet_file_io_done(struct kiocb *iocb, u64 ret)
+ {
+ 	struct nvmet_req *req = container_of(iocb, struct nvmet_req, f.iocb);
+ 	u16 status = NVME_SC_SUCCESS;
+diff --git a/drivers/target/target_core_file.c b/drivers/target/target_core_file.c
+index 968ace2ddf64..c4ca7fa18e61 100644
+--- a/drivers/target/target_core_file.c
++++ b/drivers/target/target_core_file.c
+@@ -245,7 +245,7 @@ struct target_core_file_cmd {
+ 	struct bio_vec	bvecs[];
+ };
+ 
+-static void cmd_rw_aio_complete(struct kiocb *iocb, long ret)
++static void cmd_rw_aio_complete(struct kiocb *iocb, u64 ret)
+ {
+ 	struct target_core_file_cmd *cmd;
+ 
+diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
+index e20c19a0f106..8536f19d3c9a 100644
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -831,7 +831,7 @@ static void ffs_user_copy_worker(struct work_struct *work)
+ 		kthread_unuse_mm(io_data->mm);
+ 	}
+ 
+-	io_data->kiocb->ki_complete(io_data->kiocb, ret);
++	io_data->kiocb->ki_complete(io_data->kiocb, ((u64) ret << 32) | ret);
+ 
+ 	if (io_data->ffs->ffs_eventfd && !kiocb_has_eventfd)
+ 		eventfd_signal(io_data->ffs->ffs_eventfd, 1);
+diff --git a/drivers/usb/gadget/legacy/inode.c b/drivers/usb/gadget/legacy/inode.c
+index ad1739dbfab9..d3deb23eb2ab 100644
+--- a/drivers/usb/gadget/legacy/inode.c
++++ b/drivers/usb/gadget/legacy/inode.c
+@@ -469,7 +469,7 @@ static void ep_user_copy_worker(struct work_struct *work)
+ 		ret = -EFAULT;
+ 
+ 	/* completing the iocb can drop the ctx and mm, don't touch mm after */
+-	iocb->ki_complete(iocb, ret);
++	iocb->ki_complete(iocb, ((u64) ret << 32) | ret);
+ 
+ 	kfree(priv->buf);
+ 	kfree(priv->to_free);
+@@ -492,14 +492,16 @@ static void ep_aio_complete(struct usb_ep *ep, struct usb_request *req)
+ 	 * complete the aio request immediately.
+ 	 */
+ 	if (priv->to_free == NULL || unlikely(req->actual == 0)) {
++		u64 aio_ret;
++
+ 		kfree(req->buf);
+ 		kfree(priv->to_free);
+ 		kfree(priv);
+ 		iocb->private = NULL;
+ 		/* aio_complete() reports bytes-transferred _and_ faults */
+-
+-		iocb->ki_complete(iocb,
+-				req->actual ? req->actual : (long)req->status);
++		aio_ret = req->actual ? req->actual : (long)req->status;
++		aio_ret |= (u64) req->status << 32;
++		iocb->ki_complete(iocb, aio_ret);
+ 	} else {
+ 		/* ep_copy_to_user() won't report both; we hide some faults */
+ 		if (unlikely(0 != req->status))
+diff --git a/fs/aio.c b/fs/aio.c
+index 836dc7e48db7..e39c61dccf37 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1417,7 +1417,7 @@ static void aio_remove_iocb(struct aio_kiocb *iocb)
+ 	spin_unlock_irqrestore(&ctx->ctx_lock, flags);
+ }
+ 
+-static void aio_complete_rw(struct kiocb *kiocb, long res)
++static void aio_complete_rw(struct kiocb *kiocb, u64 res)
+ {
+ 	struct aio_kiocb *iocb = container_of(kiocb, struct aio_kiocb, rw);
+ 
+@@ -1436,8 +1436,8 @@ static void aio_complete_rw(struct kiocb *kiocb, long res)
+ 		file_end_write(kiocb->ki_filp);
+ 	}
+ 
+-	iocb->ki_res.res = res;
+-	iocb->ki_res.res2 = 0;
++	iocb->ki_res.res = res & 0xffffffff;
++	iocb->ki_res.res2 = res >> 32;
+ 	iocb_put(iocb);
+ }
+ 
+diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
+index effe37ef8629..b2f44ff8eae2 100644
+--- a/fs/cachefiles/io.c
++++ b/fs/cachefiles/io.c
+@@ -37,11 +37,11 @@ static inline void cachefiles_put_kiocb(struct cachefiles_kiocb *ki)
+ /*
+  * Handle completion of a read from the cache.
+  */
+-static void cachefiles_read_complete(struct kiocb *iocb, long ret)
++static void cachefiles_read_complete(struct kiocb *iocb, u64 ret)
+ {
+ 	struct cachefiles_kiocb *ki = container_of(iocb, struct cachefiles_kiocb, iocb);
+ 
+-	_enter("%ld", ret);
++	_enter("%llu", (unsigned long long) ret);
+ 
+ 	if (ki->term_func) {
+ 		if (ret >= 0)
+@@ -159,12 +159,12 @@ static int cachefiles_read(struct netfs_cache_resources *cres,
+ /*
+  * Handle completion of a write to the cache.
+  */
+-static void cachefiles_write_complete(struct kiocb *iocb, long ret)
++static void cachefiles_write_complete(struct kiocb *iocb, u64 ret)
+ {
+ 	struct cachefiles_kiocb *ki = container_of(iocb, struct cachefiles_kiocb, iocb);
+ 	struct inode *inode = file_inode(ki->iocb.ki_filp);
+ 
+-	_enter("%ld", ret);
++	_enter("%llu", (unsigned long long) ret);
+ 
+ 	/* Tell lockdep we inherited freeze protection from submission thread */
+ 	__sb_writers_acquired(inode->i_sb, SB_FREEZE_WRITE);
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 5ad046145f29..0ed6c199f394 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2672,7 +2672,7 @@ static void __io_complete_rw(struct io_kiocb *req, long res, long res2,
+ 	__io_req_complete(req, issue_flags, req->result, io_put_rw_kbuf(req));
+ }
+ 
+-static void io_complete_rw(struct kiocb *kiocb, long res)
++static void io_complete_rw(struct kiocb *kiocb, u64 res)
+ {
+ 	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
+ 
+@@ -2683,7 +2683,7 @@ static void io_complete_rw(struct kiocb *kiocb, long res)
+ 	io_req_task_work_add(req);
+ }
+ 
+-static void io_complete_rw_iopoll(struct kiocb *kiocb, long res)
++static void io_complete_rw_iopoll(struct kiocb *kiocb, u64 res)
+ {
+ 	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
+ 
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index ac461a499882..ff7db16aea2e 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -272,7 +272,7 @@ static void ovl_aio_cleanup_handler(struct ovl_aio_req *aio_req)
+ 	kmem_cache_free(ovl_aio_request_cachep, aio_req);
+ }
+ 
+-static void ovl_aio_rw_complete(struct kiocb *iocb, long res)
++static void ovl_aio_rw_complete(struct kiocb *iocb, u64 res)
+ {
+ 	struct ovl_aio_req *aio_req = container_of(iocb,
+ 						   struct ovl_aio_req, iocb);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 0dcb9020a7b3..3c809ce2518c 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -330,7 +330,7 @@ struct kiocb {
+ 	randomized_struct_fields_start
+ 
+ 	loff_t			ki_pos;
+-	void (*ki_complete)(struct kiocb *iocb, long ret);
++	void (*ki_complete)(struct kiocb *iocb, u64 ret);
+ 	void			*private;
+ 	int			ki_flags;
+ 	u16			ki_hint;
+
+-- 
+Jens Axboe
+
