@@ -2,133 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA033434C9D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 15:49:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDAAA434CCC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 15:56:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230183AbhJTNvz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Oct 2021 09:51:55 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:56266 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbhJTNvz (ORCPT
+        id S230199AbhJTN6l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Oct 2021 09:58:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43750 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230031AbhJTN6k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Oct 2021 09:51:55 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 26C9021A7F;
-        Wed, 20 Oct 2021 13:49:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1634737779; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=sqmM3h9Cy18Yxo/nPKgmZ3B35y5sxcNst1sW2y1M94A=;
-        b=B/OUnEYPKCBPOx/u8qVHxnivSa3DPKeZ0bGeAZ0k/QASEu60oRXpLkYYL5huyQfN7+k4fq
-        h+jgivUaginT9PTBbNOYyR5vpfYh7sizyaUm8eDNQOTLsoTCqDMh9bl6VLasmi8iI+Qo2Z
-        bi5GlaHF3SDu00oQGmzZzAp9pEU6624=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id CF2E013B55;
-        Wed, 20 Oct 2021 13:49:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id eG4BMHIecGFUCAAAMHmgww
-        (envelope-from <nborisov@suse.com>); Wed, 20 Oct 2021 13:49:38 +0000
-Subject: Re: [PATCH v11 01/10] btrfs-progs: receive: support v2 send stream
- larger tlv_len
-To:     Omar Sandoval <osandov@osandov.com>, linux-btrfs@vger.kernel.org
-Cc:     kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-References: <cover.1630514529.git.osandov@fb.com>
- <8729477d23b83c368a76c4f39b5f73a483a3ad14.1630515568.git.osandov@fb.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Message-ID: <d628363e-295d-8e84-d6f2-85501ada24ed@suse.com>
-Date:   Wed, 20 Oct 2021 16:49:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Wed, 20 Oct 2021 09:58:40 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2040EC06161C;
+        Wed, 20 Oct 2021 06:56:26 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id i20so26060100edj.10;
+        Wed, 20 Oct 2021 06:56:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SCdZv2e62ABN56MTTs5oGH5NMRs9ClTsnNTNWpGbnRI=;
+        b=EWbY5Dviy2DZHiyOZzbGQdERHZ5KvL4s7Ss6sUG1m1LFp1YBswM4l3xWhZJ9KBIXSa
+         ZbE/ZcVpj+Bu+ITXVL5JPqRYFCmU9nCrxOYYoWxLI32qSHR71pakJpYF6ecm6HpJ8S70
+         spltE1Vt266lFklnDyfGnTEj8Qc9UxcyrXaPDzp6R+9fYcHPoSYV3HxebnPniplf2W+F
+         HJLBY27lOXxAM/Z129If7+XZHN0TkB5WppNubldHfisAQ2zeMTshWl8NUaqMHWlfbBF5
+         cPdCCdFHumG1gwhRrNh0fg6vxxpiNwxd6ZVCjff13eVd8dfT0ZYG8iuysKU1jAa5h1TZ
+         eyNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SCdZv2e62ABN56MTTs5oGH5NMRs9ClTsnNTNWpGbnRI=;
+        b=Wn9hQhnQtX4uCqcrwgaYsKSMF49hUwyfUcF4i2ynf840jd2z3pgb8WQmP1+u00OYYT
+         slo/eWA1v/44lm4uur+Li9k06s+sf0WlTLNpR8JuqMLBx3WiTgPCZj0cN2YHsXfbXFcu
+         eo0HATmUDAUhpnyL/55Ey89+qU/Pzlj0vpOxKR7QcccbI5GKhvDnkAkropLY/hsVYjrj
+         lyc4b5cGoM2RCPbTnDc1wNebdNl2x8tTbQqBiFXTHlTiqT0G0RHOZFhZI2CzLAlzsu3M
+         o5uCEAmGIPZznQoebPds/sS5nmybdrODEJ5LvlWWy43M/APuQl1DIazISbZy98jcsTOk
+         UqHQ==
+X-Gm-Message-State: AOAM532kX86A2UFc18caMCManMtdHyXm9ObrvAT2w0Xa6Q+ocGRFZRjV
+        Jho3SuZlSGmfV5DCoF6x/Q9xRE8fogEsFPf2j10EVdyE9u9yeA==
+X-Google-Smtp-Source: ABdhPJyFR5arm+ejse92keU//979Z9636AyxL7WCQcldmVzN3fnBF5ek60aXn5jd8eDKIfCmlUL+lgszFqWqOr01MYM=
+X-Received: by 2002:a05:6402:3488:: with SMTP id v8mr218009edc.106.1634738074303;
+ Wed, 20 Oct 2021 06:54:34 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <8729477d23b83c368a76c4f39b5f73a483a3ad14.1630515568.git.osandov@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20211018114712.9802-1-mhocko@kernel.org> <20211018114712.9802-3-mhocko@kernel.org>
+ <20211019110649.GA1933@pc638.lan> <YW6xZ7vi/7NVzRH5@dhcp22.suse.cz>
+ <20211019194658.GA1787@pc638.lan> <YW/SYl/ZKp7W60mg@dhcp22.suse.cz>
+In-Reply-To: <YW/SYl/ZKp7W60mg@dhcp22.suse.cz>
+From:   Uladzislau Rezki <urezki@gmail.com>
+Date:   Wed, 20 Oct 2021 15:54:23 +0200
+Message-ID: <CA+KHdyUopXQVTp2=X-7DYYFNiuTrh25opiUOd1CXED1UXY2Fhg@mail.gmail.com>
+Subject: Re: [RFC 2/3] mm/vmalloc: add support for __GFP_NOFAIL
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Linux Memory Management List <linux-mm@kvack.org>,
+        Dave Chinner <david@fromorbit.com>, Neil Brown <neilb@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+> > >
+> > I think adding kind of schedule() will not make things worse and in corner
+> > cases could prevent a power drain by CPU. It is important for mobile devices.
+>
+> I suspect you mean schedule_timeout here? Or cond_resched? I went with a
+> later for now, I do not have a good idea for how to long to sleep here.
+> I am more than happy to change to to a sleep though.
+>
+cond_resched() reschedules only if TIF_NEED_RESCHED is raised what is not good
+here. Because in our case we know that we definitely would like to
+take a breath. Therefore
+invoking the schedule() is more suitable here. It will give a CPU time
+to another waiting
+process(if exists) in any case putting the "current" one to the tail.
 
+As for adding a delay. I am not sure about for how long to delay or i
+would say i do not
+see a good explanation why for example we delay for 10 milliseconds or so.
 
-On 1.09.21 г. 20:01, Omar Sandoval wrote:
-> From: Boris Burkov <borisb@fb.com>
-> 
-> An encoded extent can be up to 128K in length, which exceeds the largest
-> value expressible by the current send stream format's 16 bit tlv_len
-> field. Since encoded writes cannot be split into multiple writes by
-> btrfs send, the send stream format must change to accommodate encoded
-> writes.
-> 
-> Supporting this changed format requires retooling how we store the
-> commands we have processed. Since we can no longer use btrfs_tlv_header
-> to describe every attribute, we define a new struct btrfs_send_attribute
-> which has a 32 bit length field, and use that to store the attribute
-> information needed for receive processing. This is transparent to users
-> of the various TLV_GET macros.
-> 
-> Signed-off-by: Boris Burkov <boris@bur.io>
-> ---
->  common/send-stream.c | 34 +++++++++++++++++++++++++---------
->  1 file changed, 25 insertions(+), 9 deletions(-)
-> 
-> diff --git a/common/send-stream.c b/common/send-stream.c
-> index a0c52f79..cd5aa311 100644
-> --- a/common/send-stream.c
-> +++ b/common/send-stream.c
-> @@ -24,13 +24,23 @@
->  #include "crypto/crc32c.h"
->  #include "common/utils.h"
->  
-> +struct btrfs_send_attribute {
-> +	u16 tlv_type;
-> +	/*
-> +	 * Note: in btrfs_tlv_header, this is __le16, but we need 32 bits for
-> +	 * attributes with file data as of version 2 of the send stream format
-> +	 */
-> +	u32 tlv_len;
-> +	char *data;
-> +};
-> +
->  struct btrfs_send_stream {
->  	char read_buf[BTRFS_SEND_BUF_SIZE];
->  	int fd;
->  
->  	int cmd;
->  	struct btrfs_cmd_header *cmd_hdr;
-> -	struct btrfs_tlv_header *cmd_attrs[BTRFS_SEND_A_MAX + 1];
-> +	struct btrfs_send_attribute cmd_attrs[BTRFS_SEND_A_MAX + 1];
+> > As for vmap space, it can be that a user specifies a short range that does
+> > not contain any free area. In that case we might never return back to a caller.
+>
+> This is to be expected. The caller cannot fail and if it would be
+> looping around vmalloc it wouldn't return anyway.
+>
+> > Maybe add a good comment something like: think what you do when deal with the
+> > __vmalloc_node_range() and __GFP_NOFAIL?
+>
+> We have a generic documentation for gfp flags and __GFP_NOFAIL is
+> docuemented to "The allocation could block indefinitely but will never
+> return with failure." We are discussing improvements for the generic
+> documentation in another thread [1] and we will likely extend it so I
+> suspect we do not have to repeat drawbacks here again.
+>
+> [1] http://lkml.kernel.org/r/163184741778.29351.16920832234899124642.stgit@noble.brown
+>
+> Anyway the gfp mask description and constrains for vmalloc are not
+> documented. I will add a new patch to fill that gap and send it as a
+> reply to this one
+>
+This is really good. People should be prepared for a case when it
+never returns back
+to a caller :)
 
-This is subtle and it took me a couple of minutes to get it at first.
-Currently cmds_attrs holds an array of pointers into the command buffer,
-with every pointer being the beginning of the tlv_header, whilst with
-your change cmd_attr now holds actual btrfs_send_attribute structures
-(52 bytes vs sizeof(uintptr_t)  bytes before). So this increases the
-overall size of btrfs_send_stream because with  your version of the code
-you parse the type/length fields and store them directly in the send
-attribute structure at command parse time rather than just referring to
-the raw command buffer during read_cmd and referring to them during
-attribute parsing.
-
-This might seem superficial but this kind of change should really be
-mentioned explicitly in the changelog to better prepare reviewers what
-to expect.
-
-
-OTOH the code LGTM and actually now it seems less tricky than before so:
-
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-
-
-David if you deem it necessary adjust the commit message appropriately.
-
-
+-- 
+Uladzislau Rezki
