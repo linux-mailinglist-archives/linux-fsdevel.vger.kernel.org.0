@@ -2,154 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ECD2B4347A8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 11:09:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 069004347C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 11:18:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229600AbhJTJLX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Oct 2021 05:11:23 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:51196 "EHLO
+        id S229677AbhJTJUc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Oct 2021 05:20:32 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:53214 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbhJTJLX (ORCPT
+        with ESMTP id S229663AbhJTJUa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Oct 2021 05:11:23 -0400
+        Wed, 20 Oct 2021 05:20:30 -0400
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 43A7F21A99;
-        Wed, 20 Oct 2021 09:09:08 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTP id DADA321A95;
+        Wed, 20 Oct 2021 09:18:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1634720948; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1634721495; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=WzT2qLfgG2YscoUI3YxI8UvAi7PcCu5x/9bxVFCIq4Y=;
-        b=L/b71nckSReAW33br6iQV/D3eWZe+zZam/HeZAB7HEH8mEr2zRLZfzDAuYI9dj8FUIdC+6
-        aCbzJCsDVpxsWew0OwDp6xm39XRNiV/0G5jaGz5tmxst4ijN2YgQnP1iwWu8RZODJXz4RG
-        JYpB2Ud9leVEYpiCFrpqNdOTT0LNwGY=
+        bh=BPvjtKQOd7fMC/9/+8JIUhUxh+2Qtv3moJhg8NLiHcw=;
+        b=awmXIrfSpc3o/SPaF6WaZAChHlN33ooMtYKNDMhPf/HHkoQk7qfj/Q/spZ5DhVbgTIOoin
+        a2M69P4ECgh8NtrjfRAlZWAqyPTGO1qAFnttsXBpQqEDzzFAjLHG/a1X4dJ1kUlIaMJ3LB
+        SARONEeIU6m24Y5NKJ46AJbENt2wuY4=
 Received: from suse.cz (unknown [10.100.201.86])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 9611FA3C38;
-        Wed, 20 Oct 2021 09:09:07 +0000 (UTC)
-Date:   Wed, 20 Oct 2021 11:09:07 +0200
+        by relay2.suse.de (Postfix) with ESMTPS id A8187A3B81;
+        Wed, 20 Oct 2021 09:18:15 +0000 (UTC)
+Date:   Wed, 20 Oct 2021 11:18:15 +0200
 From:   Michal Hocko <mhocko@suse.com>
-To:     Mina Almasry <almasrymina@google.com>
-Cc:     Roman Gushchin <songmuchun@bytedance.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Greg Thelen <gthelen@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Hugh Dickins <hughd@google.com>, Tejun Heo <tj@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>, cgroups@vger.kernel.org,
-        riel@surriel.com
-Subject: Re: [RFC Proposal] Deterministic memcg charging for shared memory
-Message-ID: <YW/cs51K/GyhhJDk@dhcp22.suse.cz>
-References: <CAHS8izMpzTvd5=x_xMhDJy1toV-eT3AS=GXM2ObkJoCmbDtz6w@mail.gmail.com>
- <YW13pS716ajeSgXj@dhcp22.suse.cz>
- <CAHS8izMnkiHtNLEzJXL64zNinbEp0oU96dPCJYfqJqk4AEQW2A@mail.gmail.com>
+To:     Uladzislau Rezki <urezki@gmail.com>
+Cc:     linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>,
+        Neil Brown <neilb@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [RFC 2/3] mm/vmalloc: add support for __GFP_NOFAIL
+Message-ID: <YW/e19fLyUy7ohR6@dhcp22.suse.cz>
+References: <20211018114712.9802-1-mhocko@kernel.org>
+ <20211018114712.9802-3-mhocko@kernel.org>
+ <20211019110649.GA1933@pc638.lan>
+ <YW6xZ7vi/7NVzRH5@dhcp22.suse.cz>
+ <20211019194658.GA1787@pc638.lan>
+ <YW/SYl/ZKp7W60mg@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHS8izMnkiHtNLEzJXL64zNinbEp0oU96dPCJYfqJqk4AEQW2A@mail.gmail.com>
+In-Reply-To: <YW/SYl/ZKp7W60mg@dhcp22.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 18-10-21 07:31:58, Mina Almasry wrote:
-> On Mon, Oct 18, 2021 at 6:33 AM Michal Hocko <mhocko@suse.com> wrote:
-> >
-> > On Wed 13-10-21 12:23:19, Mina Almasry wrote:
-> > > Below is a proposal for deterministic charging of shared memory.
-> > > Please take a look and let me know if there are any major concerns:
-> > >
-> > > Problem:
-> > > Currently shared memory is charged to the memcg of the allocating
-> > > process. This makes memory usage of processes accessing shared memory
-> > > a bit unpredictable since whichever process accesses the memory first
-> > > will get charged. We have a number of use cases where our userspace
-> > > would like deterministic charging of shared memory:
-> > >
-> > > 1. System services allocating memory for client jobs:
-> > > We have services (namely a network access service[1]) that provide
-> > > functionality for clients running on the machine and allocate memory
-> > > to carry out these services. The memory usage of these services
-> > > depends on the number of jobs running on the machine and the nature of
-> > > the requests made to the service, which makes the memory usage of
-> > > these services hard to predict and thus hard to limit via memory.max.
-> > > These system services would like a way to allocate memory and instruct
-> > > the kernel to charge this memory to the client’s memcg.
-> > >
-> > > 2. Shared filesystem between subtasks of a large job
-> > > Our infrastructure has large meta jobs such as kubernetes which spawn
-> > > multiple subtasks which share a tmpfs mount. These jobs and its
-> > > subtasks use that tmpfs mount for various purposes such as data
-> > > sharing or persistent data between the subtask restarts. In kubernetes
-> > > terminology, the meta job is similar to pods and subtasks are
-> > > containers under pods. We want the shared memory to be
-> > > deterministically charged to the kubernetes's pod and independent to
-> > > the lifetime of containers under the pod.
-> > >
-> > > 3. Shared libraries and language runtimes shared between independent jobs.
-> > > We’d like to optimize memory usage on the machine by sharing libraries
-> > > and language runtimes of many of the processes running on our machines
-> > > in separate memcgs. This produces a side effect that one job may be
-> > > unlucky to be the first to access many of the libraries and may get
-> > > oom killed as all the cached files get charged to it.
-> > >
-> > > Design:
-> > > My rough proposal to solve this problem is to simply add a
-> > > ‘memcg=/path/to/memcg’ mount option for filesystems (namely tmpfs):
-> > > directing all the memory of the file system to be ‘remote charged’ to
-> > > cgroup provided by that memcg= option.
-> >
-> > Could you be more specific about how this matches the above mentioned
-> > usecases?
-> >
+On Wed 20-10-21 10:25:06, Michal Hocko wrote:
+[...]
+> > > The flag itself is not really necessary down there as long as we
+> > > guarantee that the high level logic doesn't fail. In this case we keep
+> > > retrying at __vmalloc_node_range level which should be possible to cover
+> > > all callers that can control gfp mask. I was thinking to put it into
+> > > __get_vm_area_node but that was slightly more hairy and we would be
+> > > losing the warning which might turn out being helpful in cases where the
+> > > failure is due to lack of vmalloc space or similar constrain. Btw. do we
+> > > want some throttling on a retry?
+> > > 
+> > I think adding kind of schedule() will not make things worse and in corner
+> > cases could prevent a power drain by CPU. It is important for mobile devices. 
 > 
-> For the use cases I've listed respectively:
-> 1. Our network service would mount a tmpfs with 'memcg=<path to
-> client's memcg>'. Any memory the service is allocating on behalf of
-> the client, the service will allocate inside of this tmpfs mount, thus
-> charging it to the client's memcg without risk of hitting the
-> service's limit.
-> 2. The large job (kubernetes pod) would mount a tmpfs with
-> 'memcg=<path to large job's memcg>. It will then share this tmpfs
-> mount with the subtasks (containers in the pod). The subtasks can then
-> allocate memory in the tmpfs, having it charged to the kubernetes job,
-> without risk of hitting the container's limit.
+> I suspect you mean schedule_timeout here? Or cond_resched? I went with a
+> later for now, I do not have a good idea for how to long to sleep here.
+> I am more than happy to change to to a sleep though.
 
-There is still a risk that the limit is hit for the memcg of shmem
-owner, right? What happens then? Isn't any of the shmem consumer a
-DoS attack vector for everybody else consuming from that same target
-memcg? In other words aren't all of them in the same memory resource
-domain effectively? If we allow target memcg to live outside of that
-resource domain then this opens interesting questions about resource
-control in general, no? Something the unified hierarchy was aiming to
-fix wrt cgroup v1.
+Forgot to paste the follow up I have staged currently
+--- 
+commit 66fea55e5543fa234692a70144cd63c7a1bca32f
+Author: Michal Hocko <mhocko@suse.com>
+Date:   Wed Oct 20 10:12:45 2021 +0200
 
-You are saying that it is hard to properly set limits for
-respective services but this would simply allow to hide a part of the
-consumption somewhere else. Aren't you just shifting the problem
-elsewhere? How do configure the target memcg?
+    fold me "mm/vmalloc: add support for __GFP_NOFAIL"
+    
+    - add cond_resched
 
-Do you have any numbers about the consumption variation and how big of a
-problem that is in practice?
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 0fb5413d9239..f7098e616883 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -2944,6 +2944,7 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 	do {
+ 		ret = vmap_pages_range(addr, addr + size, prot, area->pages,
+ 			page_shift);
++		cond_resched();
+ 	} while ((gfp_mask & __GFP_NOFAIL) && (ret < 0));
+ 
+ 	if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
+@@ -3034,8 +3035,10 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+ 		warn_alloc(gfp_mask, NULL,
+ 			"vmalloc error: size %lu, vm_struct allocation failed",
+ 			real_size);
+-		if (gfp_mask & __GFP_NOFAIL)
++		if (gfp_mask & __GFP_NOFAIL) {
++			cond_resched();
+ 			goto again;
++		}
+ 		goto fail;
+ 	}
+ 
 
-> 3. We would need to extend this functionality to other file systems of
-> persistent disk, then mount that file system with 'memcg=<dedicated
-> shared library memcg>'. Jobs can then use the shared library and any
-> memory allocated due to loading the shared library is charged to a
-> dedicated memcg, and not charged to the job using the shared library.
-
-This is more of a question for fs people. My understanding is rather
-limited so I cannot even imagine all the possible setups but just from
-a very high level understanding bind mounts can get really interesting.
-Can those disagree on the memcg? 
-
-I am pretty sure I didn't get to think through this very deeply, my gut
-feeling tells me that this will open many interesting questions and I am
-not sure whether it solves more problems than it introduces at this moment.
-I would be really curious what others think about this.
 -- 
 Michal Hocko
 SUSE Labs
