@@ -2,91 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A95643515E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 19:35:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C379C435171
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 19:37:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230387AbhJTRho (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Oct 2021 13:37:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38314 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230134AbhJTRho (ORCPT
+        id S230429AbhJTRjs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Oct 2021 13:39:48 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:41802 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230298AbhJTRjs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Oct 2021 13:37:44 -0400
-Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9D5CC061749
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Oct 2021 10:35:29 -0700 (PDT)
-Received: by mail-ot1-x329.google.com with SMTP id g62-20020a9d2dc4000000b0054752cfbc59so7051294otb.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Oct 2021 10:35:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3qdkGS6nWGa6DIGxTkS5kzwbPgDeOBsvHVNSW721MxI=;
-        b=48WLfHxpTQLpT0tUgWuSt4zXgmR64ij3Ikm8xUySS4voFZjXDqH/9AA3kqxblwubZa
-         OLPsOO2SoGU+5CX+ksD6RkcZhFyMBejnYWIP/4t+clIqrnD/rWsK2UrsqcevALsA5yF4
-         Gjee61YE6DP7+kQG48wPdg0EDzZwNaDVIUQROJd2pCP2w5H2olWdul2nZAYLzd51dor2
-         xxlfFI4Kf9EJ/0HcBfZOZ9t4GcwolTJNgBDo2Xi1n2aE5UpzpJh7wnF/gkrQfvR41Hks
-         9QO+FqYnlm4ugw7sL37KMWtpORpTul7W+y1fk0J/9IGqgka1sAMLFCgk+NulkK2jOBdH
-         Yawg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3qdkGS6nWGa6DIGxTkS5kzwbPgDeOBsvHVNSW721MxI=;
-        b=DwzB/Bu3ybhsQhox3yftlnL1z3MhtiuaYyTXbZUJyyH3dH6a/2Yb5MxxyVQ5Ag6j5N
-         J86AOx3/THPxjtqlmNMOLwjkNDqteEyYsBByjx+nMnarj8y0eRiFP/l7yjY9Sxy8ocgr
-         5NVX9dpSTFuKQSRpP1ozTElDXTdIJP8kn1/Tz5jS/fVEMxgT6giJjPsSf4pOsWhDh0g/
-         PWrGhCbJ3/NkApMnDqEablTITTpeqNfxzl5Q2obxXtKJgdO2MqIHfMoo2BatqhukkMeG
-         Zkm4q2NrUdwGrrx6Edwvn1wBq2kHwsE1KyFN2YjLKWCTe0U8smRTTDxEmEHCcaw/fqJ3
-         tGhQ==
-X-Gm-Message-State: AOAM5329ngVDjuWytIPjpmXewVX7Ek7zCifE6V5kKszlfa7Q4WYgCnH2
-        0/zjLKLwhpk+CRKSjZMq8l8e6w==
-X-Google-Smtp-Source: ABdhPJwZhE5aOVEBJg+B29uGYRLol/63NjjBsjTMQYekIxgCxYCQsJoWJUZ4yRJhVp+j2vsNKAx3MQ==
-X-Received: by 2002:a9d:424:: with SMTP id 33mr512439otc.340.1634751329074;
-        Wed, 20 Oct 2021 10:35:29 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id ay42sm566290oib.22.2021.10.20.10.35.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Oct 2021 10:35:28 -0700 (PDT)
-Subject: Re: [PATCH] fs: kill unused ret2 argument from iocb->ki_complete()
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <ce839d66-1d05-dab8-4540-71b8485fdaf3@kernel.dk>
- <YXBSLweOk1he8DTO@infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <fe54edc2-da83-6dbb-cfb9-ad3a7fbe3780@kernel.dk>
-Date:   Wed, 20 Oct 2021 11:35:27 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 20 Oct 2021 13:39:48 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id A0FBE1F770;
+        Wed, 20 Oct 2021 17:37:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1634751452; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fwUSPhdBez3rOtdXQZGr/c7TTcI5ppZjDsY4VW5mwVw=;
+        b=aUB1mJkA23iGtnk8d4hV70kSXH0UErgLyfLnEk22MEms6lrAjuGhe1dKpHmiGSxPVqESMS
+        OmXRp0EWWTWOPIBPu7LSmeo9Ox3rQ0uiaqXKu6Xjy4RN2qHagZ9wRoKFdkEHP1Kp+IPI2E
+        BWjrzpYWxxtX4Dmi0k+gU/Lgp2xKF/k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1634751452;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=fwUSPhdBez3rOtdXQZGr/c7TTcI5ppZjDsY4VW5mwVw=;
+        b=BKdycMabWA4i1T6wCjXXcMDBiKO49lic7/TZvFZHu312eVRxElPJrI1z/BtMRMGkjxu5cC
+        t+WUbA2LXiWtWtCg==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id A5345A3B84;
+        Wed, 20 Oct 2021 17:37:31 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 3804D1F2C7D; Wed, 20 Oct 2021 19:37:29 +0200 (CEST)
+Date:   Wed, 20 Oct 2021 19:37:29 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Zhengyuan Liu <liuzhengyuang521@gmail.com>
+Cc:     viro@zeniv.linux.org.uk, akpm@linux-foundation.org, tytso@mit.edu,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        mysql@lists.mysql.com, linux-ext4@vger.kernel.org,
+        =?utf-8?B?5YiY5LqR?= <liuyun01@kylinos.cn>,
+        Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+Subject: Re: Problem with direct IO
+Message-ID: <20211020173729.GF16460@quack2.suse.cz>
+References: <CAOOPZo52azGXN-BzWamA38Gu=EkqZScLufM1VEgDuosPoH6TWA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <YXBSLweOk1he8DTO@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOOPZo52azGXN-BzWamA38Gu=EkqZScLufM1VEgDuosPoH6TWA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/20/21 11:30 AM, Christoph Hellwig wrote:
-> On Wed, Oct 20, 2021 at 10:49:07AM -0600, Jens Axboe wrote:
->> It's not used for anything, and we're wasting time passing in zeroes
->> where we could just ignore it instead. Update all ki_complete users in
->> the kernel to drop that last argument.
->>
->> The exception is the USB gadget code, which passes in non-zero. But
->> since nobody every looks at ret2, it's still pointless.
+On Wed 13-10-21 09:46:46, Zhengyuan Liu wrote:
+> Hi, all
 > 
-> Yes, the USB gadget passes non-zero, and aio passes that on to
-> userspace.  So this is an ABI change.  Does it actually matter?
-> I don't know, but you could CC the relevant maintainers and list
-> to try to figure that out.
+> we are encounting following Mysql crash problem while importing tables :
+> 
+>     2021-09-26T11:22:17.825250Z 0 [ERROR] [MY-013622] [InnoDB] [FATAL]
+>     fsync() returned EIO, aborting.
+>     2021-09-26T11:22:17.825315Z 0 [ERROR] [MY-013183] [InnoDB]
+>     Assertion failure: ut0ut.cc:555 thread 281472996733168
+> 
+> At the same time , we found dmesg had following message:
+> 
+>     [ 4328.838972] Page cache invalidation failure on direct I/O.
+>     Possible data corruption due to collision with buffered I/O!
+>     [ 4328.850234] File: /data/mysql/data/sysbench/sbtest53.ibd PID:
+>     625 Comm: kworker/42:1
+> 
+> Firstly, we doubled Mysql has operating the file with direct IO and
+> buffered IO interlaced, but after some checking we found it did only
+> do direct IO using aio. The problem is exactly from direct-io
+> interface (__generic_file_write_iter) itself.
+> 
+> ssize_t __generic_file_write_iter()
+> {
+> ...
+>         if (iocb->ki_flags & IOCB_DIRECT) {
+>                 loff_t pos, endbyte;
+> 
+>                 written = generic_file_direct_write(iocb, from);
+>                 /*
+>                  * If the write stopped short of completing, fall back to
+>                  * buffered writes.  Some filesystems do this for writes to
+>                  * holes, for example.  For DAX files, a buffered write will
+>                  * not succeed (even if it did, DAX does not handle dirty
+>                  * page-cache pages correctly).
+>                  */
+>                 if (written < 0 || !iov_iter_count(from) || IS_DAX(inode))
+>                         goto out;
+> 
+>                 status = generic_perform_write(file, from, pos = iocb->ki_pos);
+> ...
+> }
+> 
+> From above code snippet we can see that direct io could fall back to
+> buffered IO under certain conditions, so even Mysql only did direct IO
+> it could interleave with buffered IO when fall back occurred. I have
+> no idea why FS(ext3) failed the direct IO currently, but it is strange
+> __generic_file_write_iter make direct IO fall back to buffered IO, it
+> seems  breaking the semantics of direct IO.
+> 
+> The reproduced  environment is:
+> Platform:  Kunpeng 920 (arm64)
+> Kernel: V5.15-rc
+> PAGESIZE: 64K
+> Mysql:  V8.0
+> Innodb_page_size: default(16K)
 
-True, guess it does go out to userspace. Greg, is anyone using
-it on the userspace side?
+Thanks for report. I agree this should not happen. How hard is this to
+reproduce? Any idea whether the fallback to buffered IO happens because
+iomap_dio_rw() returns -ENOTBLK or because it returns short write?
 
+Can you post output of "dumpe2fs -h <device>" for the filesystem where the
+problem happens? Thanks!
+
+								Honza
 -- 
-Jens Axboe
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
