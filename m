@@ -2,315 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F9994344D3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 07:48:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C625D4344DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 07:50:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229735AbhJTFuM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Oct 2021 01:50:12 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:38489 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229591AbhJTFuL (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Oct 2021 01:50:11 -0400
-IronPort-Data: =?us-ascii?q?A9a23=3AEOAS+K1vFuavyONW+PbD5bhwkn2cJEfYwER7XOP?=
- =?us-ascii?q?LsXnJhzhz1mMCmGUbUGnSPqmDNmf8f4sgaom+pxwDsJTdztU2QQE+nZ1PZygU8?=
- =?us-ascii?q?JKaX7x1DatR0xu6d5SFFAQ+hyknQoGowPscEzmM+X9BDpC79SMljPnSHuKlYAL?=
- =?us-ascii?q?5EnsZqTFMGX5JZS1Ly7ZRbr5A2bBVMivV0T/Ai5S31GyNh1aYBlkpB5er83uDi?=
- =?us-ascii?q?hhdVAQw5TTSbdgT1LPXeuJ84Jg3fcldJFOgKmVY83LTegrN8F251juxExYFAdX?=
- =?us-ascii?q?jnKv5c1ERX/jZOg3mZnh+AvDk20Yd4HdplPtT2Pk0MC+7jx2Tgtl308QLu5qrV?=
- =?us-ascii?q?S8nI6/NhP8AFRJfFkmSOIUfoeGefCLg4Jz7I0ruNiGEL+9VJE0/I4wU0uhtBmR?=
- =?us-ascii?q?J7/YZNHYGaRXrr+K9wJq6TOd2j8guJcWtO5kQ0llsxDefD7A5QJTHQqzP/vdZ2?=
- =?us-ascii?q?is9goZFGvO2T8Ybdj1pYzzDbgdJN1NRD4gx9M+sh3/iY3hdrXqWu6M84C7U1gM?=
- =?us-ascii?q?Z+L7zPNvQf/SORN5JhQCcp2Tb7yL1Dw9yHN6WzzfD+XKxrujVlCj/VcQZE7jQ3?=
- =?us-ascii?q?vprhkCDg2IIBBAIWF+Tv/a0kAi9VshZJkhS/TAhxYA29Uq2Xpz+Uge+rXqsoBE?=
- =?us-ascii?q?RQZxTHvc85QXLzbDbiy6dB24ZXntRZscOqsA7X3op20WPktevAiZg2IB541r1G?=
- =?us-ascii?q?qy89Gv0YHZKazRZI3JscOfM2PG7yKlbs/4FZowL/HaJs+DI?=
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3ARHDas65JxaMIjv9QSQPXwCzXdLJyesId70hD?=
- =?us-ascii?q?6qhwISY6TiX+rbHWoB17726TtN9/YgBDpTntAsm9qDbnhPlICOoqTNOftWvdyQ?=
- =?us-ascii?q?iVxehZhOOIqVDd8m/Fl9K1vp0NT0ERMrLN5BRB/KPHCReDYqsd6ejC4Ka1nv3f?=
- =?us-ascii?q?0nsoaQlrbptr5wB/Bh3zKDwMeCB2QYo+CIGH5tdK4x6peXEsZMy9AXUfG8fZod?=
- =?us-ascii?q?mjruOdXTc2Qw4g9BKVjS6lrJrzEx2j1B8YVD9VhZcOmFK16zDE2g=3D=3D?=
-X-IronPort-AV: E=Sophos;i="5.87,166,1631548800"; 
-   d="scan'208";a="116152798"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 20 Oct 2021 13:47:55 +0800
-Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
-        by cn.fujitsu.com (Postfix) with ESMTP id 52BD24D100E9;
-        Wed, 20 Oct 2021 13:47:51 +0800 (CST)
-Received: from G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) by
- G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Wed, 20 Oct 2021 13:47:51 +0800
-Received: from [10.167.216.64] (10.167.216.64) by
- G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Wed, 20 Oct 2021 13:47:50 +0800
-Subject: Re: [PATCH v7 6/8] mm: Introduce mf_dax_kill_procs() for fsdax case
-To:     "Darrick J. Wong" <djwong@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <dan.j.williams@intel.com>,
-        <david@fromorbit.com>, <hch@infradead.org>, <jane.chu@oracle.com>
-References: <20210924130959.2695749-1-ruansy.fnst@fujitsu.com>
- <20210924130959.2695749-7-ruansy.fnst@fujitsu.com>
- <20211014193241.GK24307@magnolia>
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Message-ID: <25f86782-ff1f-db4d-d5da-fd1e5bee45f6@fujitsu.com>
-Date:   Wed, 20 Oct 2021 13:47:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        id S229893AbhJTFwy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Oct 2021 01:52:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229829AbhJTFwx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 20 Oct 2021 01:52:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7B637611EF;
+        Wed, 20 Oct 2021 05:50:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634709039;
+        bh=Y/HNCkQN1Dm+Xz7LGNy6kj13dbmiKV6jL2UTzRuCpY0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=aY/iMJmBzRPMOWlea5jYrHiLOtuV8+PJmdylnIE+uk6yvXhayIvbxDZeKriQ80Pp/
+         2Hs+sEoSjjBy3fwKkE58HHDykVwBWwDetqlnNpgcelPwkXGJPixLHtfdNhu0bLwmpA
+         Jm7Tvy0ftkd/urNPNQrrHVLID8K2ry0/MNf6jDQJ4R/eThq2TIo/7VivIqvrV0NPiS
+         IZJIt2O0kdsBYuGf0Ae4Usl/rSwiZrZ65Gq88LT9R3dlKy/X+zDXC0hQoAffbSlVf3
+         eih343gTmfnz/HDoGRWDpifCTp5fW9cJIXLZJYxuQlFwS8qdJO28YSA7Wi2Q2ZyI1k
+         0fvQ9FUljMUpA==
+Date:   Wed, 20 Oct 2021 06:50:33 +0100
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] locks: remove changelog comments
+Message-ID: <20211020065033.032c86f9@sal.lan>
+In-Reply-To: <6f4a14d0a455c5a93eccfdf2dc8555b82b79694b.camel@kernel.org>
+References: <cover.1634630485.git.mchehab+huawei@kernel.org>
+        <887de3a1ecadda3dbfe0adf9df9070f0afa9406c.1634630486.git.mchehab+huawei@kernel.org>
+        <f352a2e4b50a8678a8ddef5177702ecf9040490f.camel@kernel.org>
+        <20211019141427.GA15063@fieldses.org>
+        <e7bdcf0b279989e51c2c333e89acf3e1d476eff0.camel@kernel.org>
+        <20211019161651.GD15063@fieldses.org>
+        <c6d2e1a8691a49afbbc280bb74a05b9b110b7f27.camel@kernel.org>
+        <20211019173835.GE15063@fieldses.org>
+        <6f4a14d0a455c5a93eccfdf2dc8555b82b79694b.camel@kernel.org>
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20211014193241.GK24307@magnolia>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-yoursite-MailScanner-ID: 52BD24D100E9.A140D
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
-X-Spam-Status: No
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Em Tue, 19 Oct 2021 14:14:08 -0400
+Jeff Layton <jlayton@kernel.org> escreveu:
 
-
-在 2021/10/15 3:32, Darrick J. Wong 写道:
-> On Fri, Sep 24, 2021 at 09:09:57PM +0800, Shiyang Ruan wrote:
->> This function is called at the end of RMAP routine, i.e. filesystem
->> recovery function, to collect and kill processes using a shared page of
->> DAX file.  The difference between mf_generic_kill_procs() is,
->> it accepts file's mapping,offset instead of struct page.  Because
->> different file's mappings and offsets may share the same page in fsdax
->> mode.  So, it is called when filesystem RMAP results are found.
->>
->> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
->> ---
->>   fs/dax.c            | 10 ------
->>   include/linux/dax.h |  9 +++++
->>   include/linux/mm.h  |  2 ++
->>   mm/memory-failure.c | 83 ++++++++++++++++++++++++++++++++++++++++-----
->>   4 files changed, 86 insertions(+), 18 deletions(-)
->>
->> diff --git a/fs/dax.c b/fs/dax.c
->> index 509b65e60478..2536c105ec7f 100644
->> --- a/fs/dax.c
->> +++ b/fs/dax.c
->> @@ -852,16 +852,6 @@ static void *dax_insert_entry(struct xa_state *xas,
->>   	return entry;
->>   }
->>   
->> -static inline
->> -unsigned long pgoff_address(pgoff_t pgoff, struct vm_area_struct *vma)
->> -{
->> -	unsigned long address;
->> -
->> -	address = vma->vm_start + ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
->> -	VM_BUG_ON_VMA(address < vma->vm_start || address >= vma->vm_end, vma);
->> -	return address;
->> -}
->> -
->>   /* Walk all mappings of a given index of a file and writeprotect them */
->>   static void dax_entry_mkclean(struct address_space *mapping, pgoff_t index,
->>   		unsigned long pfn)
->> diff --git a/include/linux/dax.h b/include/linux/dax.h
->> index 65411bee4312..3d90becbd160 100644
->> --- a/include/linux/dax.h
->> +++ b/include/linux/dax.h
->> @@ -258,6 +258,15 @@ static inline bool dax_mapping(struct address_space *mapping)
->>   {
->>   	return mapping->host && IS_DAX(mapping->host);
->>   }
->> +static inline unsigned long pgoff_address(pgoff_t pgoff,
->> +		struct vm_area_struct *vma)
->> +{
->> +	unsigned long address;
->> +
->> +	address = vma->vm_start + ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
->> +	VM_BUG_ON_VMA(address < vma->vm_start || address >= vma->vm_end, vma);
->> +	return address;
->> +}
->>   
->>   #ifdef CONFIG_DEV_DAX_HMEM_DEVICES
->>   void hmem_register_device(int target_nid, struct resource *r);
->> diff --git a/include/linux/mm.h b/include/linux/mm.h
->> index 73a52aba448f..d06af0051e53 100644
->> --- a/include/linux/mm.h
->> +++ b/include/linux/mm.h
->> @@ -3114,6 +3114,8 @@ enum mf_flags {
->>   	MF_MUST_KILL = 1 << 2,
->>   	MF_SOFT_OFFLINE = 1 << 3,
->>   };
->> +extern int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
->> +			     size_t size, int flags);
->>   extern int memory_failure(unsigned long pfn, int flags);
->>   extern void memory_failure_queue(unsigned long pfn, int flags);
->>   extern void memory_failure_queue_kick(int cpu);
->> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->> index 85eab206b68f..a9d0d487d205 100644
->> --- a/mm/memory-failure.c
->> +++ b/mm/memory-failure.c
->> @@ -302,10 +302,9 @@ void shake_page(struct page *p)
->>   }
->>   EXPORT_SYMBOL_GPL(shake_page);
->>   
->> -static unsigned long dev_pagemap_mapping_shift(struct page *page,
->> +static unsigned long dev_pagemap_mapping_shift(unsigned long address,
->>   		struct vm_area_struct *vma)
->>   {
->> -	unsigned long address = vma_address(page, vma);
->>   	pgd_t *pgd;
->>   	p4d_t *p4d;
->>   	pud_t *pud;
->> @@ -345,7 +344,7 @@ static unsigned long dev_pagemap_mapping_shift(struct page *page,
->>    * Schedule a process for later kill.
->>    * Uses GFP_ATOMIC allocations to avoid potential recursions in the VM.
->>    */
->> -static void add_to_kill(struct task_struct *tsk, struct page *p,
->> +static void add_to_kill(struct task_struct *tsk, struct page *p, pgoff_t pgoff,
+> On Tue, 2021-10-19 at 13:38 -0400, J. Bruce Fields wrote:
+> > From: "J. Bruce Fields" <bfields@redhat.com>
+> > 
+> > This is only of historical interest, and anyone interested in the
+> > history can dig out an old version of locks.c from from git.
+> > 
+> > Triggered by the observation that it references the now-removed
+> > Documentation/filesystems/mandatory-locking.rst.
+> > 
+> > Reported-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+> > ---
+> >  fs/locks.c | 114 ++---------------------------------------------------
+> >  1 file changed, 4 insertions(+), 110 deletions(-)
+> > 
+> > On Tue, Oct 19, 2021 at 12:27:55PM -0400, Jeff Layton wrote:  
+> > > Yeah, I think that looks great. Send it with a changelog and I'll pull
+> > > it into the branch I have feeding into -next.  
+> > 
+> > OK!--b.
+> > 
+> > diff --git a/fs/locks.c b/fs/locks.c
+> > index 3d6fb4ae847b..b54813eae44f 100644
+> > --- a/fs/locks.c
+> > +++ b/fs/locks.c
+> > @@ -2,117 +2,11 @@
+> >  /*
+> >   *  linux/fs/locks.c
+> >   *
+> > - *  Provide support for fcntl()'s F_GETLK, F_SETLK, and F_SETLKW calls.
+> > - *  Doug Evans (dje@spiff.uucp), August 07, 1992
+> > + * We implement four types of file locks: BSD locks, posix locks, open
+> > + * file description locks, and leases.  For details about BSD locks,
+> > + * see the flock(2) man page; for details about the other three, see
+> > + * fcntl(2).
+> >   *
+> > - *  Deadlock detection added.
+> > - *  FIXME: one thing isn't handled yet:
+> > - *	- mandatory locks (requires lots of changes elsewhere)
+> > - *  Kelly Carmichael (kelly@[142.24.8.65]), September 17, 1994.
+> > - *
+> > - *  Miscellaneous edits, and a total rewrite of posix_lock_file() code.
+> > - *  Kai Petzke (wpp@marie.physik.tu-berlin.de), 1994
+> > - *
+> > - *  Converted file_lock_table to a linked list from an array, which eliminates
+> > - *  the limits on how many active file locks are open.
+> > - *  Chad Page (pageone@netcom.com), November 27, 1994
+> > - *
+> > - *  Removed dependency on file descriptors. dup()'ed file descriptors now
+> > - *  get the same locks as the original file descriptors, and a close() on
+> > - *  any file descriptor removes ALL the locks on the file for the current
+> > - *  process. Since locks still depend on the process id, locks are inherited
+> > - *  after an exec() but not after a fork(). This agrees with POSIX, and both
+> > - *  BSD and SVR4 practice.
+> > - *  Andy Walker (andy@lysaker.kvaerner.no), February 14, 1995
+> > - *
+> > - *  Scrapped free list which is redundant now that we allocate locks
+> > - *  dynamically with kmalloc()/kfree().
+> > - *  Andy Walker (andy@lysaker.kvaerner.no), February 21, 1995
+> > - *
+> > - *  Implemented two lock personalities - FL_FLOCK and FL_POSIX.
+> > - *
+> > - *  FL_POSIX locks are created with calls to fcntl() and lockf() through the
+> > - *  fcntl() system call. They have the semantics described above.
+> > - *
+> > - *  FL_FLOCK locks are created with calls to flock(), through the flock()
+> > - *  system call, which is new. Old C libraries implement flock() via fcntl()
+> > - *  and will continue to use the old, broken implementation.
+> > - *
+> > - *  FL_FLOCK locks follow the 4.4 BSD flock() semantics. They are associated
+> > - *  with a file pointer (filp). As a result they can be shared by a parent
+> > - *  process and its children after a fork(). They are removed when the last
+> > - *  file descriptor referring to the file pointer is closed (unless explicitly
+> > - *  unlocked).
+> > - *
+> > - *  FL_FLOCK locks never deadlock, an existing lock is always removed before
+> > - *  upgrading from shared to exclusive (or vice versa). When this happens
+> > - *  any processes blocked by the current lock are woken up and allowed to
+> > - *  run before the new lock is applied.
+> > - *  Andy Walker (andy@lysaker.kvaerner.no), June 09, 1995
+> > - *
+> > - *  Removed some race conditions in flock_lock_file(), marked other possible
+> > - *  races. Just grep for FIXME to see them.
+> > - *  Dmitry Gorodchanin (pgmdsg@ibi.com), February 09, 1996.
+> > - *
+> > - *  Addressed Dmitry's concerns. Deadlock checking no longer recursive.
+> > - *  Lock allocation changed to GFP_ATOMIC as we can't afford to sleep
+> > - *  once we've checked for blocking and deadlocking.
+> > - *  Andy Walker (andy@lysaker.kvaerner.no), April 03, 1996.
+> > - *
+> > - *  Initial implementation of mandatory locks. SunOS turned out to be
+> > - *  a rotten model, so I implemented the "obvious" semantics.
+> > - *  See 'Documentation/filesystems/mandatory-locking.rst' for details.
+> > - *  Andy Walker (andy@lysaker.kvaerner.no), April 06, 1996.
+> > - *
+> > - *  Don't allow mandatory locks on mmap()'ed files. Added simple functions to
+> > - *  check if a file has mandatory locks, used by mmap(), open() and creat() to
+> > - *  see if system call should be rejected. Ref. HP-UX/SunOS/Solaris Reference
+> > - *  Manual, Section 2.
+> > - *  Andy Walker (andy@lysaker.kvaerner.no), April 09, 1996.
+> > - *
+> > - *  Tidied up block list handling. Added '/proc/locks' interface.
+> > - *  Andy Walker (andy@lysaker.kvaerner.no), April 24, 1996.
+> > - *
+> > - *  Fixed deadlock condition for pathological code that mixes calls to
+> > - *  flock() and fcntl().
+> > - *  Andy Walker (andy@lysaker.kvaerner.no), April 29, 1996.
+> > - *
+> > - *  Allow only one type of locking scheme (FL_POSIX or FL_FLOCK) to be in use
+> > - *  for a given file at a time. Changed the CONFIG_LOCK_MANDATORY scheme to
+> > - *  guarantee sensible behaviour in the case where file system modules might
+> > - *  be compiled with different options than the kernel itself.
+> > - *  Andy Walker (andy@lysaker.kvaerner.no), May 15, 1996.
+> > - *
+> > - *  Added a couple of missing wake_up() calls. Thanks to Thomas Meckel
+> > - *  (Thomas.Meckel@mni.fh-giessen.de) for spotting this.
+> > - *  Andy Walker (andy@lysaker.kvaerner.no), May 15, 1996.
+> > - *
+> > - *  Changed FL_POSIX locks to use the block list in the same way as FL_FLOCK
+> > - *  locks. Changed process synchronisation to avoid dereferencing locks that
+> > - *  have already been freed.
+> > - *  Andy Walker (andy@lysaker.kvaerner.no), Sep 21, 1996.
+> > - *
+> > - *  Made the block list a circular list to minimise searching in the list.
+> > - *  Andy Walker (andy@lysaker.kvaerner.no), Sep 25, 1996.
+> > - *
+> > - *  Made mandatory locking a mount option. Default is not to allow mandatory
+> > - *  locking.
+> > - *  Andy Walker (andy@lysaker.kvaerner.no), Oct 04, 1996.
+> > - *
+> > - *  Some adaptations for NFS support.
+> > - *  Olaf Kirch (okir@monad.swb.de), Dec 1996,
+> > - *
+> > - *  Fixed /proc/locks interface so that we can't overrun the buffer we are handed.
+> > - *  Andy Walker (andy@lysaker.kvaerner.no), May 12, 1997.
+> > - *
+> > - *  Use slab allocator instead of kmalloc/kfree.
+> > - *  Use generic list implementation from <linux/list.h>.
+> > - *  Sped up posix_locks_deadlock by only considering blocked locks.
+> > - *  Matthew Wilcox <willy@debian.org>, March, 2000.
+> > - *
+> > - *  Leases and LOCK_MAND
+> > - *  Matthew Wilcox <willy@debian.org>, June, 2000.
+> > - *  Stephen Rothwell <sfr@canb.auug.org.au>, June, 2000.
+> >   *
+> >   * Locking conflicts and dependencies:
+> >   * If multiple threads attempt to lock the same byte (or flock the same file)  
 > 
-> Hm, so I guess you're passing the page and the pgoff now because
-> page->index is meaningless for shared dax pages?  Ok.
+> Thanks, Bruce (and Mauro). Applied to the locks-next branch (and I
+> dropped Mauro's patch that touched the same area). It should make v5.16.
 
-Yes, it is for that case.
-
-> 
->>   		       struct vm_area_struct *vma,
->>   		       struct list_head *to_kill)
->>   {
->> @@ -358,9 +357,15 @@ static void add_to_kill(struct task_struct *tsk, struct page *p,
->>   	}
->>   
->>   	tk->addr = page_address_in_vma(p, vma);
->> -	if (is_zone_device_page(p))
->> -		tk->size_shift = dev_pagemap_mapping_shift(p, vma);
->> -	else
->> +	if (is_zone_device_page(p)) {
->> +		/*
->> +		 * Since page->mapping is no more used for fsdax, we should
->> +		 * calculate the address in a fsdax way.
->> +		 */
->> +		if (p->pgmap->type == MEMORY_DEVICE_FS_DAX)
->> +			tk->addr = pgoff_address(pgoff, vma);
->> +		tk->size_shift = dev_pagemap_mapping_shift(tk->addr, vma);
->> +	} else
->>   		tk->size_shift = page_shift(compound_head(p));
->>   
->>   	/*
->> @@ -508,7 +513,7 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
->>   			if (!page_mapped_in_vma(page, vma))
->>   				continue;
->>   			if (vma->vm_mm == t->mm)
->> -				add_to_kill(t, page, vma, to_kill);
->> +				add_to_kill(t, page, 0, vma, to_kill);
->>   		}
->>   	}
->>   	read_unlock(&tasklist_lock);
->> @@ -544,7 +549,32 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
->>   			 * to be informed of all such data corruptions.
->>   			 */
->>   			if (vma->vm_mm == t->mm)
->> -				add_to_kill(t, page, vma, to_kill);
->> +				add_to_kill(t, page, 0, vma, to_kill);
->> +		}
->> +	}
->> +	read_unlock(&tasklist_lock);
->> +	i_mmap_unlock_read(mapping);
->> +}
->> +
->> +/*
->> + * Collect processes when the error hit a fsdax page.
->> + */
->> +static void collect_procs_fsdax(struct page *page, struct address_space *mapping,
->> +		pgoff_t pgoff, struct list_head *to_kill)
->> +{
->> +	struct vm_area_struct *vma;
->> +	struct task_struct *tsk;
->> +
->> +	i_mmap_lock_read(mapping);
->> +	read_lock(&tasklist_lock);
->> +	for_each_process(tsk) {
->> +		struct task_struct *t = task_early_kill(tsk, true);
->> +
->> +		if (!t)
->> +			continue;
->> +		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
->> +			if (vma->vm_mm == t->mm)
->> +				add_to_kill(t, page, pgoff, vma, to_kill);
->>   		}
->>   	}
->>   	read_unlock(&tasklist_lock);
->> @@ -1503,6 +1533,43 @@ static int mf_generic_kill_procs(unsigned long long pfn, int flags,
->>   	return 0;
->>   }
->>   
->> +/**
->> + * mf_dax_kill_procs - Collect and kill processes who are using this file range
->> + * @mapping:	the file in use
->> + * @index:	start offset of the range
->> + * @size:	length of the range
-> 
-> It feels odd that one argument is in units of pgoff_t but the other is
-> in bytes.
-
-The index is page aligned but @size may not be.  I will explain it in 
-detail in the comments.
+Thanks! Yeah, it looks a lot cleaner without those changelog-style
+comments.
 
 > 
->> + * @flags:	memory failure flags
->> + */
->> +int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
->> +		size_t size, int flags)
->> +{
->> +	LIST_HEAD(to_kill);
->> +	dax_entry_t cookie;
->> +	struct page *page;
->> +	size_t end = (index << PAGE_SHIFT) + size;
->> +
->> +	flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
-> 
-> Hm.  What flags will we be passing to the xfs_dax_notify_failure_fn?
-> Does XFS itself have to care about what's in the flags values, or is it
-> really just a magic cookie to be passed from the mm layer into the fs
-> and back to mf_dax_kill_procs?
-> 
-
-Just to pass the flag from mm layer to mf_dax_kill_procs().  No one 
-inside this RMAP progress will care about or change it.  As you 
-mentioned in the next patch, I think this should be named with a "mf_" 
-prefix to make it easier to understand.
-
-
---
-Thanks,
-Ruan.
-
-> --D
-> 
->> +
->> +	for (; (index << PAGE_SHIFT) < end; index++) {
->> +		page = NULL;
->> +		cookie = dax_lock_mapping_entry(mapping, index, &page);
->> +		if (!cookie)
->> +			return -EBUSY;
->> +		if (!page)
->> +			goto unlock;
->> +
->> +		SetPageHWPoison(page);
->> +
->> +		collect_procs_fsdax(page, mapping, index, &to_kill);
->> +		unmap_and_kill(&to_kill, page_to_pfn(page), mapping,
->> +				index, flags);
->> +unlock:
->> +		dax_unlock_mapping_entry(mapping, index, cookie);
->> +	}
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(mf_dax_kill_procs);
->> +
->>   static int memory_failure_hugetlb(unsigned long pfn, int flags)
->>   {
->>   	struct page *p = pfn_to_page(pfn);
->> -- 
->> 2.33.0
->>
->>
->>
-
-
+> Cheers,
