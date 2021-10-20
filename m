@@ -2,126 +2,351 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E1991434322
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 03:58:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38DFD434332
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 03:58:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229791AbhJTB4g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 21:56:36 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:54129 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229728AbhJTB4f (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 21:56:35 -0400
-Received: by mail-io1-f71.google.com with SMTP id g9-20020a056602150900b005d6376bdce7so14614020iow.20
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Oct 2021 18:54:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=OhXXtvdf90jdSB49MhADk/GhXUJVepQ8kXUhBdeL8iU=;
-        b=TgDTYVzSeOyworZHDTBMQqzjGZtQAAI1D47crxWaDJ47E5Xfx7Lheuxd0ayw6jLocp
-         JJGr9rsWVd9SHeSkwlfje4t8Io264F/FOiBpYaOZCz4EWcCXy2QxKUVgXW9Jc9LMpG8Z
-         Vz9b56zLnjHOF3fGBK7Ef3yo9zHDEuPWlBlbz5FlSjgxPkpWNedc7wRPI9+Dr/finY+D
-         /tOubmVDy4yqjEE08pXWwU7UBtneHzYJL15zUTk3P6JaWudjp2sutSvKbzLTyPHDdGM0
-         brZgv2Q/qzQjbyzcK7z8iM0t/HwBoz6rnD0mAQ0eUO9U0QPRwpEiNcYZlQEb/GSmfesM
-         Uq/Q==
-X-Gm-Message-State: AOAM5339zbLwIVo6cP6u1ebtFJpJMa3B4MWIM11YX3YD6/htWL4VhJEd
-        v/QActKYFt0P2SUN+9xYKmvHHphYCj6jaAjnBgh5rb+Bfx7x
-X-Google-Smtp-Source: ABdhPJwhDFEZUrxVtCDoKyIHQrJ/xgtgyEER90eXiOsD0yihfEKXIy9OpYpGq+mkVkskKGbBcgA3RAubSK3m/o/E2+JIzsnxYR+s
+        id S229770AbhJTCAE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 22:00:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34166 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229663AbhJTCAE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 19 Oct 2021 22:00:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 550B76113D;
+        Wed, 20 Oct 2021 01:57:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634695070;
+        bh=y26BPYXmZulSRNurgRMnR7PDS+uCfp/gMKplI7R2cPI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=o/VfY+Bux0QhNEozvF2nY9s3BcuxFaFYgMYHAtiQlSWHBZouXprzOfrzyHe8Tywaa
+         o4UK8lRFHWz53L1FZ9U35FiP5aDKs+L+d0fKV8MfW0ugdE8cZCWqulR/uGf9zzgYKX
+         ELSvBC62nHT+wcH7YkA2FYF8CRQzTpITlCQFcUf8XNjd4OTWTPtWqfS9mc/fgCVp66
+         f4hDQNl7dc5ZXEGAH0Yg9tCMW8QCnN3Rde/VISF3tGINlyYnzn5c1vF9LlI2QXzVUu
+         zzYQO2l4D/s2cj4StPBEq+OPee1WGwz+KqQnXoTdi11lpdIMzDNqrHlrHNfM6tNUsm
+         IrHb2QOZkr74A==
+Date:   Tue, 19 Oct 2021 18:57:49 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Paul Mackerras <paulus@ozlabs.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, ocfs2-devel@oss.oracle.com,
+        kvm-ppc@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH v8 14/17] iomap: Add done_before argument to iomap_dio_rw
+Message-ID: <20211020015749.GB24248@magnolia>
+References: <20211019134204.3382645-1-agruenba@redhat.com>
+ <20211019134204.3382645-15-agruenba@redhat.com>
+ <20211019155105.GA24248@magnolia>
+ <CAHc6FU5KGJKxO=OPbiQS915K7nb-kjwxcdABacMcJ6UAtbybVQ@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:214a:: with SMTP id d10mr21688124ilv.290.1634694861229;
- Tue, 19 Oct 2021 18:54:21 -0700 (PDT)
-Date:   Tue, 19 Oct 2021 18:54:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000085145205cebf0e87@google.com>
-Subject: [syzbot] WARNING in fuse_writepages_fill
-From:   syzbot <syzbot+29e1f6075bbe07b2beb6@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        miklos@szeredi.hu, mszeredi@redhat.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHc6FU5KGJKxO=OPbiQS915K7nb-kjwxcdABacMcJ6UAtbybVQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Oct 19, 2021 at 09:30:58PM +0200, Andreas Gruenbacher wrote:
+> On Tue, Oct 19, 2021 at 5:51 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > On Tue, Oct 19, 2021 at 03:42:01PM +0200, Andreas Gruenbacher wrote:
+> > > Add a done_before argument to iomap_dio_rw that indicates how much of
+> > > the request has already been transferred.  When the request succeeds, we
+> > > report that done_before additional bytes were tranferred.  This is
+> > > useful for finishing a request asynchronously when part of the request
+> > > has already been completed synchronously.
+> > >
+> > > We'll use that to allow iomap_dio_rw to be used with page faults
+> > > disabled: when a page fault occurs while submitting a request, we
+> > > synchronously complete the part of the request that has already been
+> > > submitted.  The caller can then take care of the page fault and call
+> > > iomap_dio_rw again for the rest of the request, passing in the number of
+> > > bytes already tranferred.
+> > >
+> > > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> > > ---
+> > >  fs/btrfs/file.c       |  5 +++--
+> > >  fs/erofs/data.c       |  2 +-
+> > >  fs/ext4/file.c        |  5 +++--
+> > >  fs/gfs2/file.c        |  4 ++--
+> > >  fs/iomap/direct-io.c  | 11 ++++++++---
+> > >  fs/xfs/xfs_file.c     |  6 +++---
+> > >  fs/zonefs/super.c     |  4 ++--
+> > >  include/linux/iomap.h |  4 ++--
+> > >  8 files changed, 24 insertions(+), 17 deletions(-)
+> > >
+> > > diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+> > > index f37211d3bb69..9d41b28c67ba 100644
+> > > --- a/fs/btrfs/file.c
+> > > +++ b/fs/btrfs/file.c
+> > > @@ -1957,7 +1957,7 @@ static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
+> > >       }
+> > >
+> > >       dio = __iomap_dio_rw(iocb, from, &btrfs_dio_iomap_ops, &btrfs_dio_ops,
+> > > -                          0);
+> > > +                          0, 0);
+> > >
+> > >       btrfs_inode_unlock(inode, ilock_flags);
+> > >
+> > > @@ -3658,7 +3658,8 @@ static ssize_t btrfs_direct_read(struct kiocb *iocb, struct iov_iter *to)
+> > >               return 0;
+> > >
+> > >       btrfs_inode_lock(inode, BTRFS_ILOCK_SHARED);
+> > > -     ret = iomap_dio_rw(iocb, to, &btrfs_dio_iomap_ops, &btrfs_dio_ops, 0);
+> > > +     ret = iomap_dio_rw(iocb, to, &btrfs_dio_iomap_ops, &btrfs_dio_ops,
+> > > +                        0, 0);
+> > >       btrfs_inode_unlock(inode, BTRFS_ILOCK_SHARED);
+> > >       return ret;
+> > >  }
+> > > diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+> > > index 9db829715652..16a41d0db55a 100644
+> > > --- a/fs/erofs/data.c
+> > > +++ b/fs/erofs/data.c
+> > > @@ -287,7 +287,7 @@ static ssize_t erofs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> > >
+> > >               if (!err)
+> > >                       return iomap_dio_rw(iocb, to, &erofs_iomap_ops,
+> > > -                                         NULL, 0);
+> > > +                                         NULL, 0, 0);
+> > >               if (err < 0)
+> > >                       return err;
+> > >       }
+> > > diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> > > index ac0e11bbb445..b25c1f8f7c4f 100644
+> > > --- a/fs/ext4/file.c
+> > > +++ b/fs/ext4/file.c
+> > > @@ -74,7 +74,7 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> > >               return generic_file_read_iter(iocb, to);
+> > >       }
+> > >
+> > > -     ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL, 0);
+> > > +     ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL, 0, 0);
+> > >       inode_unlock_shared(inode);
+> > >
+> > >       file_accessed(iocb->ki_filp);
+> > > @@ -566,7 +566,8 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> > >       if (ilock_shared)
+> > >               iomap_ops = &ext4_iomap_overwrite_ops;
+> > >       ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
+> > > -                        (unaligned_io || extend) ? IOMAP_DIO_FORCE_WAIT : 0);
+> > > +                        (unaligned_io || extend) ? IOMAP_DIO_FORCE_WAIT : 0,
+> > > +                        0);
+> > >       if (ret == -ENOTBLK)
+> > >               ret = 0;
+> > >
+> > > diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+> > > index b07b9c2d0446..ae06defcf369 100644
+> > > --- a/fs/gfs2/file.c
+> > > +++ b/fs/gfs2/file.c
+> > > @@ -822,7 +822,7 @@ static ssize_t gfs2_file_direct_read(struct kiocb *iocb, struct iov_iter *to,
+> > >       if (ret)
+> > >               goto out_uninit;
+> > >
+> > > -     ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL, 0);
+> > > +     ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL, 0, 0);
+> > >       gfs2_glock_dq(gh);
+> > >  out_uninit:
+> > >       gfs2_holder_uninit(gh);
+> > > @@ -856,7 +856,7 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
+> > >       if (offset + len > i_size_read(&ip->i_inode))
+> > >               goto out;
+> > >
+> > > -     ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL, 0);
+> > > +     ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL, 0, 0);
+> > >       if (ret == -ENOTBLK)
+> > >               ret = 0;
+> > >  out:
+> > > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> > > index a434fb7887b2..fdf68339bc8b 100644
+> > > --- a/fs/iomap/direct-io.c
+> > > +++ b/fs/iomap/direct-io.c
+> > > @@ -31,6 +31,7 @@ struct iomap_dio {
+> > >       atomic_t                ref;
+> > >       unsigned                flags;
+> > >       int                     error;
+> > > +     size_t                  done_before;
+> >
+> > I have basically the same comment as last time[1]:
+> >
+> > "So, now that I actually understand the reason why the count of
+> > previously transferred bytes has to be passed into the iomap_dio, I
+> > would like this field to have a comment so that stupid maintainers like
+> > me don't forget the subtleties again:
+> >
+> >         /*
+> >          * For asynchronous IO, we have one chance to call the iocb
+> >          * completion method with the results of the directio operation.
+> >          * If this operation is a resubmission after a previous partial
+> >          * completion (e.g. page fault), we need to know about that
+> >          * progress so that we can report both the results of the prior
+> >          * completion and the result of the resubmission to the iocb
+> >          * submitter.
+> >          */
+> >         size_t                  done_before;
+> >
+> > With that added, I think I can live with this enough to:
+> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> 
+> Indeed, sorry for missing that. How about the below change instead
+> though; I think that better sums up what's going on?
+> 
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -454,6 +454,14 @@ static loff_t iomap_dio_iter(const struct iomap_iter *iter,
+>   * may be pure data writes. In that case, we still need to do a full data sync
+>   * completion.
+>   *
 
-syzbot found the following issue on:
+What do you think about rearranging the first sentence to mention the
+new flag a bit earlier?  e.g.
 
-HEAD commit:    7c832d2f9b95 Add linux-next specific files for 20211015
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12e15a10b00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f6ac42766a768877
-dashboard link: https://syzkaller.appspot.com/bug?extid=29e1f6075bbe07b2beb6
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13715144b00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b749ccb00000
+"When page faults are disabled and @dio_flags includes IOMAP_DIO_PARTIAL,
+__iomap_dio_rw can return a partial result if it encounters a
+non-resident page in @iter after preparing a transfer.  In that case,
+the non-resident pages can be faulted in and the request resumed with
+@done_before set to the number of bytes previously transferred...
 
-The issue was bisected to:
+--D
 
-commit 6e6b45a963c4a962c61ca59982982ddcdc82e651
-Author: Miklos Szeredi <mszeredi@redhat.com>
-Date:   Wed Oct 13 12:33:40 2021 +0000
-
-    fuse: write inode in fuse_vma_close() instead of fuse_release()
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=133b0194b00000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=10bb0194b00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=173b0194b00000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+29e1f6075bbe07b2beb6@syzkaller.appspotmail.com
-Fixes: 6e6b45a963c4 ("fuse: write inode in fuse_vma_close() instead of fuse_release()")
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 54 at fs/fuse/file.c:1829 fuse_write_file_get fs/fuse/file.c:1829 [inline]
-WARNING: CPU: 0 PID: 54 at fs/fuse/file.c:1829 fuse_write_file_get fs/fuse/file.c:1826 [inline]
-WARNING: CPU: 0 PID: 54 at fs/fuse/file.c:1829 fuse_writepages_fill+0x1591/0x1a40 fs/fuse/file.c:2134
-Modules linked in:
-CPU: 0 PID: 54 Comm: kworker/u4:3 Not tainted 5.15.0-rc5-next-20211015-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: writeback wb_workfn (flush-0:50)
-RIP: 0010:fuse_write_file_get fs/fuse/file.c:1829 [inline]
-RIP: 0010:fuse_write_file_get fs/fuse/file.c:1826 [inline]
-RIP: 0010:fuse_writepages_fill+0x1591/0x1a40 fs/fuse/file.c:2134
-Code: ff 4c 89 f7 e8 90 3c 0f ff e9 71 ec ff ff e8 86 3c 0f ff e9 98 ec ff ff e8 dc a9 c8 fe 4c 89 ff e8 84 82 a1 06 e8 cf a9 c8 fe <0f> 0b 48 b8 00 00 00 00 00 fc ff df 48 8b 54 24 10 48 c1 ea 03 80
-RSP: 0018:ffffc90001a2f428 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffffc90001a2f680 RCX: 0000000000000000
-RDX: ffff888011ba5700 RSI: ffffffff82aebac1 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000000 R09: ffff88806eee85e3
-R10: ffffed100dddd0bc R11: 0000000000000000 R12: ffffea0001b04240
-R13: ffffc90001a2f690 R14: ffff88806eee84c8 R15: ffff88806eee85e0
-FS:  0000000000000000(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000019b88000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- write_cache_pages+0x6f4/0x10c0 mm/page-writeback.c:2255
- fuse_writepages+0x1c9/0x320 fs/fuse/file.c:2236
- do_writepages+0x1a4/0x670 mm/page-writeback.c:2364
- __writeback_single_inode+0x126/0xff0 fs/fs-writeback.c:1616
- writeback_sb_inodes+0x53d/0xf00 fs/fs-writeback.c:1881
- __writeback_inodes_wb+0xc6/0x280 fs/fs-writeback.c:1950
- wb_writeback+0x7f1/0xc30 fs/fs-writeback.c:2055
- wb_check_background_flush fs/fs-writeback.c:2121 [inline]
- wb_do_writeback fs/fs-writeback.c:2209 [inline]
- wb_workfn+0xa21/0x1180 fs/fs-writeback.c:2237
- process_one_work+0x9b2/0x1690 kernel/workqueue.c:2297
- worker_thread+0x658/0x11f0 kernel/workqueue.c:2444
- kthread+0x405/0x4f0 kernel/kthread.c:327
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> + * When page faults are disabled, __iomap_dio_rw has already prepared some data
+> + * to be transferred, @iter references a non-resident page, and @dio_flags
+> + * includes IOMAP_DIO_PARTIAL, __iomap_dio_rw will return a partial result.  In
+> + * that case, the page or pages can be faulted in and the request resumed with
+> + * @done_before set to the number of bytes previously transferred.  The request
+> + * will then complete with the correct total number of bytes transferred; this
+> + * is essential for completing partial requests asynchronously.
+> + *
+>   * Returns -ENOTBLK In case of a page invalidation invalidation failure for
+>   * writes.  The callers needs to fall back to buffered I/O in this case.
+>   */
+> 
+> Thanks,
+> Andreas
+> 
+> >
+> > --D
+> >
+> > [1] https://lore.kernel.org/linux-fsdevel/20210903185351.GD9892@magnolia/
+> >
+> > >       bool                    wait_for_completion;
+> > >
+> > >       union {
+> > > @@ -124,6 +125,9 @@ ssize_t iomap_dio_complete(struct iomap_dio *dio)
+> > >       if (ret > 0 && (dio->flags & IOMAP_DIO_NEED_SYNC))
+> > >               ret = generic_write_sync(iocb, ret);
+> > >
+> > > +     if (ret > 0)
+> > > +             ret += dio->done_before;
+> > > +
+> > >       kfree(dio);
+> > >
+> > >       return ret;
+> > > @@ -456,7 +460,7 @@ static loff_t iomap_dio_iter(const struct iomap_iter *iter,
+> > >  struct iomap_dio *
+> > >  __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> > >               const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> > > -             unsigned int dio_flags)
+> > > +             unsigned int dio_flags, size_t done_before)
+> > >  {
+> > >       struct address_space *mapping = iocb->ki_filp->f_mapping;
+> > >       struct inode *inode = file_inode(iocb->ki_filp);
+> > > @@ -486,6 +490,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> > >       dio->dops = dops;
+> > >       dio->error = 0;
+> > >       dio->flags = 0;
+> > > +     dio->done_before = done_before;
+> > >
+> > >       dio->submit.iter = iter;
+> > >       dio->submit.waiter = current;
+> > > @@ -652,11 +657,11 @@ EXPORT_SYMBOL_GPL(__iomap_dio_rw);
+> > >  ssize_t
+> > >  iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> > >               const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> > > -             unsigned int dio_flags)
+> > > +             unsigned int dio_flags, size_t done_before)
+> > >  {
+> > >       struct iomap_dio *dio;
+> > >
+> > > -     dio = __iomap_dio_rw(iocb, iter, ops, dops, dio_flags);
+> > > +     dio = __iomap_dio_rw(iocb, iter, ops, dops, dio_flags, done_before);
+> > >       if (IS_ERR_OR_NULL(dio))
+> > >               return PTR_ERR_OR_ZERO(dio);
+> > >       return iomap_dio_complete(dio);
+> > > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> > > index 7aa943edfc02..240eb932c014 100644
+> > > --- a/fs/xfs/xfs_file.c
+> > > +++ b/fs/xfs/xfs_file.c
+> > > @@ -259,7 +259,7 @@ xfs_file_dio_read(
+> > >       ret = xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
+> > >       if (ret)
+> > >               return ret;
+> > > -     ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL, 0);
+> > > +     ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL, 0, 0);
+> > >       xfs_iunlock(ip, XFS_IOLOCK_SHARED);
+> > >
+> > >       return ret;
+> > > @@ -569,7 +569,7 @@ xfs_file_dio_write_aligned(
+> > >       }
+> > >       trace_xfs_file_direct_write(iocb, from);
+> > >       ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
+> > > -                        &xfs_dio_write_ops, 0);
+> > > +                        &xfs_dio_write_ops, 0, 0);
+> > >  out_unlock:
+> > >       if (iolock)
+> > >               xfs_iunlock(ip, iolock);
+> > > @@ -647,7 +647,7 @@ xfs_file_dio_write_unaligned(
+> > >
+> > >       trace_xfs_file_direct_write(iocb, from);
+> > >       ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
+> > > -                        &xfs_dio_write_ops, flags);
+> > > +                        &xfs_dio_write_ops, flags, 0);
+> > >
+> > >       /*
+> > >        * Retry unaligned I/O with exclusive blocking semantics if the DIO
+> > > diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+> > > index ddc346a9df9b..6122c38ab44d 100644
+> > > --- a/fs/zonefs/super.c
+> > > +++ b/fs/zonefs/super.c
+> > > @@ -852,7 +852,7 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+> > >               ret = zonefs_file_dio_append(iocb, from);
+> > >       else
+> > >               ret = iomap_dio_rw(iocb, from, &zonefs_iomap_ops,
+> > > -                                &zonefs_write_dio_ops, 0);
+> > > +                                &zonefs_write_dio_ops, 0, 0);
+> > >       if (zi->i_ztype == ZONEFS_ZTYPE_SEQ &&
+> > >           (ret > 0 || ret == -EIOCBQUEUED)) {
+> > >               if (ret > 0)
+> > > @@ -987,7 +987,7 @@ static ssize_t zonefs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> > >               }
+> > >               file_accessed(iocb->ki_filp);
+> > >               ret = iomap_dio_rw(iocb, to, &zonefs_iomap_ops,
+> > > -                                &zonefs_read_dio_ops, 0);
+> > > +                                &zonefs_read_dio_ops, 0, 0);
+> > >       } else {
+> > >               ret = generic_file_read_iter(iocb, to);
+> > >               if (ret == -EIO)
+> > > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> > > index 2a213b0d1e1f..829f2325ecba 100644
+> > > --- a/include/linux/iomap.h
+> > > +++ b/include/linux/iomap.h
+> > > @@ -339,10 +339,10 @@ struct iomap_dio_ops {
+> > >
+> > >  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> > >               const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> > > -             unsigned int dio_flags);
+> > > +             unsigned int dio_flags, size_t done_before);
+> > >  struct iomap_dio *__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> > >               const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+> > > -             unsigned int dio_flags);
+> > > +             unsigned int dio_flags, size_t done_before);
+> > >  ssize_t iomap_dio_complete(struct iomap_dio *dio);
+> > >  int iomap_dio_iopoll(struct kiocb *kiocb, bool spin);
+> > >
+> > > --
+> > > 2.26.3
+> > >
+> >
+> 
