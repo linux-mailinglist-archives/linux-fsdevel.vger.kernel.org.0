@@ -2,108 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A4AC434F3C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 17:45:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA2AF434F4E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 17:48:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230156AbhJTPrW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Oct 2021 11:47:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:38804 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229570AbhJTPrV (ORCPT
+        id S230472AbhJTPue (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Oct 2021 11:50:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41702 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230460AbhJTPud (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Oct 2021 11:47:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634744706;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WuuIsN7C2S1G+5M5cwToPHcThlVfLk7/Vcq15pYpeqw=;
-        b=KtDXpEkXZwUE1Z9Ewa/ApMbZQmDDsRehuh4tPSCnUdCxz7hqImIbE0K5nwGjqP9FyoN2VU
-        9pfS8o2uADU8I7ipyBaB0m6Cmb7Q1n2f56sl/h8psosOVltLDBgvjaV62PSkXZrEymgEqP
-        qkYFnW4FXpppCt+K/OGdA+gLXtMRMdc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-514-0i6RdFSsM1C-FNvWkbccAg-1; Wed, 20 Oct 2021 11:45:03 -0400
-X-MC-Unique: 0i6RdFSsM1C-FNvWkbccAg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A9869801B1C;
-        Wed, 20 Oct 2021 15:45:00 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.33.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C105018032;
-        Wed, 20 Oct 2021 15:44:53 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 160B02256FC; Wed, 20 Oct 2021 11:44:53 -0400 (EDT)
-Date:   Wed, 20 Oct 2021 11:44:53 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     JeffleXu <jefflexu@linux.alibaba.com>
-Cc:     stefanha@redhat.com, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
-Subject: Re: [PATCH v6 4/7] fuse: negotiate per-file DAX in FUSE_INIT
-Message-ID: <YXA5dWiJseIcdxiH@redhat.com>
-References: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
- <20211011030052.98923-5-jefflexu@linux.alibaba.com>
- <YW2E6jaTbv1FcFnu@redhat.com>
- <778cd99d-fb40-1135-5d62-58a008c14919@linux.alibaba.com>
+        Wed, 20 Oct 2021 11:50:33 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAEC4C06161C;
+        Wed, 20 Oct 2021 08:48:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=HBm/Dqi3jW7uqk4DDOcgZCLMM+rxars2xSrNqJBELD4=; b=2Nfb8jhDT8Z/1YppkaaGzMBE5F
+        7DhHQ0SucI4gkSMWSPV7qRIfV71Fm6qrfDrJmlPqzT7KRfnj1yBiDyOvhgFH59z59TYTW1kELLAVg
+        mLk1u/MgB+DYSZ1pYh9quyEyxaf9eS7gY6oh1R2myWpq2f4ZN+t8O9pDmupq3jh8lU1/6coGTgRIG
+        C8k2APmUBWLR1sFqAAQXTM7S5Y5k25OWJXYSBl+d9lruqyMox+TX5UmnYt1ffUmBrwhJfbE6Q8mm2
+        r6X/+eHUQhd8s8zbcTZND5RIi0WiXLOOp5v6be+Wi35/qyZrcuIhl8AEJKo3MYxcs2OMjnbQngNMf
+        RACz1Adg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mdDoy-0057WV-4E; Wed, 20 Oct 2021 15:48:04 +0000
+Date:   Wed, 20 Oct 2021 08:48:04 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, tj@kernel.org,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        minchan@kernel.org, jeyu@kernel.org, shuah@kernel.org,
+        bvanassche@acm.org, dan.j.williams@intel.com, joe@perches.com,
+        tglx@linutronix.de, keescook@chromium.org, rostedt@goodmis.org,
+        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
+Message-ID: <YXA6NMhwoiIMeHji@bombadil.infradead.org>
+References: <YWjJ0O7K+31Iz3ox@bombadil.infradead.org>
+ <YWk9e957Hb+I7HvR@T590>
+ <YWm68xUnAofop3PZ@bombadil.infradead.org>
+ <YWq3Z++uoJ/kcp+3@T590>
+ <YW3LuzaPhW96jSBK@bombadil.infradead.org>
+ <YW4uwep3BCe9Vxq8@T590>
+ <YW7kFXlzRrvwzARP@bombadil.infradead.org>
+ <YW7ygbLAwm2/LZFl@T590>
+ <YW8eSq2B+5FtOLZb@bombadil.infradead.org>
+ <YW9tqPunx5bssxIz@T590>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <778cd99d-fb40-1135-5d62-58a008c14919@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <YW9tqPunx5bssxIz@T590>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 20, 2021 at 11:10:30AM +0800, JeffleXu wrote:
-> 
-> 
-> On 10/18/21 10:30 PM, Vivek Goyal wrote:
-> > On Mon, Oct 11, 2021 at 11:00:49AM +0800, Jeffle Xu wrote:
-> >> Among the FUSE_INIT phase, client shall advertise per-file DAX if it's
-> >> mounted with "-o dax=inode". Then server is aware that client is in
-> >> per-file DAX mode, and will construct per-inode DAX attribute
-> >> accordingly.
-> >>
-> >> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-> >> ---
-> >>  fs/fuse/inode.c | 2 ++
-> >>  1 file changed, 2 insertions(+)
-> >>
-> >> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> >> index b4b41683e97e..f4ad99e2415b 100644
-> >> --- a/fs/fuse/inode.c
-> >> +++ b/fs/fuse/inode.c
-> >> @@ -1203,6 +1203,8 @@ void fuse_send_init(struct fuse_mount *fm)
-> >>  #ifdef CONFIG_FUSE_DAX
-> >>  	if (fm->fc->dax)
-> >>  		ia->in.flags |= FUSE_MAP_ALIGNMENT;
-> >> +	if (fm->fc->dax_mode == FUSE_DAX_INODE)
-> >> +		ia->in.flags |= FUSE_PERFILE_DAX;
+On Wed, Oct 20, 2021 at 09:15:20AM +0800, Ming Lei wrote:
+> On Tue, Oct 19, 2021 at 12:36:42PM -0700, Luis Chamberlain wrote:
+> > On Wed, Oct 20, 2021 at 12:29:53AM +0800, Ming Lei wrote:
+> > > diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+> > > index d0cae7a42f4d..a14ba3d350ea 100644
+> > > --- a/drivers/block/zram/zram_drv.c
+> > > +++ b/drivers/block/zram/zram_drv.c
+> > > @@ -1704,12 +1704,12 @@ static void zram_reset_device(struct zram *zram)
+> > >  	set_capacity_and_notify(zram->disk, 0);
+> > >  	part_stat_set_all(zram->disk->part0, 0);
+> > >  
+> > > -	up_write(&zram->init_lock);
+> > >  	/* I/O operation under all of CPU are done so let's free */
+> > >  	zram_meta_free(zram, disksize);
+> > >  	memset(&zram->stats, 0, sizeof(zram->stats));
+> > >  	zcomp_destroy(comp);
+> > >  	reset_bdev(zram);
+> > > +	up_write(&zram->init_lock);
+> > >  }
+> > >  
+> > >  static ssize_t disksize_store(struct device *dev,
 > > 
-> > Are you not keeping track of server's response whether server supports
-> > per inode dax or not. Client might be new and server might be old and
-> > server might not support per inode dax. In that case, we probably 
-> > should error out if user mounted with "-o dax=inode".
+> > With this, it still ends up in a state where we loop and can't get out of:
 > > 
+> > zram: Can't change algorithm for initialized device
 > 
-> Yes, if guest virtiofs is mounted with '-o dax=inode' while virtiofsd is
-> old and doesn't support per inode dax, then guest virtiofs will never
-> receive FUSE_ATTR_DAX and actually behaves as '-o dax=never'. So the
-> whole system works in this case, though the behavior may be beyond the
-> expectation of users ....
-> 
-> If the behavior really matters, I could change the behavior and fail
-> directly if virtiofsd doesn't advertise supporting per inode DAX.
+> Again, you are running two zram02.sh[1] on /dev/zram0, that isn't unexpected
 
-I think it probably is better to error out if client asked for per-inode
-DAX and server does not support it. 
+You mean that it is not expected? If so then yes, of course.
 
-Vivek
-> 
-> -- 
-> Thanks,
-> Jeffle
-> 
+> behavior. Here the difference is just timing.
 
+Right, but that is what helped reproduce a difficutl to re-produce customer
+bug. Once you find an easy way to reproduce a reported issue you stick
+with it and try to make the situation worse to ensure no more bugs are
+present.
+
+> Also you did not answer my question about your test expected result when
+> running the following script from two terminal concurrently:
+> 
+> 	while true; do
+> 		PATH=$PATH:$PWD:$PWD/../../../lib/ ./zram02.sh;
+> 	done
+
+If you run this, you should see no failures.
+
+Once you start a second script that one should cause odd issues on both
+sides but never crash or stall the module.
+
+A second series of tests is hitting CTRL-C on either randonly and
+restarting testing once again randomly.
+
+Again, neither should crash the kernel or stall the module.
+
+In the end of these tests you should be able to run the script alone
+just once and not see issues.
+
+  Luis
