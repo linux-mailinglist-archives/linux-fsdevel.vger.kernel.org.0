@@ -2,82 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 183B44343B8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 05:10:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C18AB4343BB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 05:11:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229750AbhJTDMr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Oct 2021 23:12:47 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:35695 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229715AbhJTDMq (ORCPT
+        id S229850AbhJTDNn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Oct 2021 23:13:43 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:37608 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229715AbhJTDNn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Oct 2021 23:12:46 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R231e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Ut.VWlg_1634699430;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Ut.VWlg_1634699430)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 20 Oct 2021 11:10:31 +0800
-Subject: Re: [PATCH v6 4/7] fuse: negotiate per-file DAX in FUSE_INIT
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     stefanha@redhat.com, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
-References: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
- <20211011030052.98923-5-jefflexu@linux.alibaba.com>
- <YW2E6jaTbv1FcFnu@redhat.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <778cd99d-fb40-1135-5d62-58a008c14919@linux.alibaba.com>
-Date:   Wed, 20 Oct 2021 11:10:30 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
+        Tue, 19 Oct 2021 23:13:43 -0400
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 19K3BCiq013315
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 19 Oct 2021 23:11:12 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 00A2415C00CA; Tue, 19 Oct 2021 23:11:11 -0400 (EDT)
+Date:   Tue, 19 Oct 2021 23:11:11 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Jan Kara <jack@suse.cz>, jack@suse.com, amir73il@gmail.com,
+        djwong@kernel.org, david@fromorbit.com, dhowells@redhat.com,
+        khazhy@google.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-api@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH v8 30/32] ext4: Send notifications on error
+Message-ID: <YW+Iz82Tug5a2wbL@mit.edu>
+References: <20211019000015.1666608-1-krisman@collabora.com>
+ <20211019000015.1666608-31-krisman@collabora.com>
+ <20211019154426.GR3255@quack2.suse.cz>
+ <20211019160152.GT3255@quack2.suse.cz>
+ <87o87lnee4.fsf@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <YW2E6jaTbv1FcFnu@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87o87lnee4.fsf@collabora.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 10/18/21 10:30 PM, Vivek Goyal wrote:
-> On Mon, Oct 11, 2021 at 11:00:49AM +0800, Jeffle Xu wrote:
->> Among the FUSE_INIT phase, client shall advertise per-file DAX if it's
->> mounted with "-o dax=inode". Then server is aware that client is in
->> per-file DAX mode, and will construct per-inode DAX attribute
->> accordingly.
->>
->> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
->> ---
->>  fs/fuse/inode.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
->> index b4b41683e97e..f4ad99e2415b 100644
->> --- a/fs/fuse/inode.c
->> +++ b/fs/fuse/inode.c
->> @@ -1203,6 +1203,8 @@ void fuse_send_init(struct fuse_mount *fm)
->>  #ifdef CONFIG_FUSE_DAX
->>  	if (fm->fc->dax)
->>  		ia->in.flags |= FUSE_MAP_ALIGNMENT;
->> +	if (fm->fc->dax_mode == FUSE_DAX_INODE)
->> +		ia->in.flags |= FUSE_PERFILE_DAX;
+On Tue, Oct 19, 2021 at 01:54:59PM -0300, Gabriel Krisman Bertazi wrote:
+> >
+> > E.g. here you pass the 'error' to fsnotify. This will be just standard
+> > 'errno' number, not ext4 error code as described in the documentation. Also
+> > note that frequently 'error' will be 0 which gets magically transformed to
+> > EFSCORRUPTED in save_error_info() in the ext4 error handling below. So
+> > there's clearly some more work to do...
 > 
-> Are you not keeping track of server's response whether server supports
-> per inode dax or not. Client might be new and server might be old and
-> server might not support per inode dax. In that case, we probably 
-> should error out if user mounted with "-o dax=inode".
-> 
+> The many 0 returns were discussed before, around v3.  You can notice one
+> of my LTP tests is designed to catch that.  We agreed ext4 shouldn't be
+> returning 0, and that we would write a patch to fix it, but I didn't
+> think it belonged as part of this series.
 
-Yes, if guest virtiofs is mounted with '-o dax=inode' while virtiofsd is
-old and doesn't support per inode dax, then guest virtiofs will never
-receive FUSE_ATTR_DAX and actually behaves as '-o dax=never'. So the
-whole system works in this case, though the behavior may be beyond the
-expectation of users ....
+The fact that ext4 passes 0 into __ext4_error() to mean EFSCORRUPTED
+is an internal implementation detail, and as currently implemented it
+is *not* a bug.  It was just a convenience to minimize the number of
+call sites that needed to be modified when we added the feature of
+storing the error code to be stored in the superblock.
 
-If the behavior really matters, I could change the behavior and fail
-directly if virtiofsd doesn't advertise supporting per inode DAX.
+So I think this is something that should be addressed in this
+patchset, and it's pretty simple to do so.  It's just a matter of
+doing something like this:
 
--- 
-Thanks,
-Jeffle
+      fsnotify_sb_error(sb, NULL, error ? error : EFSCORRUPTED);
+
+
+> You are also right about the EXT4_ vs. errno.  the documentation is
+> buggy, since it was brought from the fs-specific descriptor days, which
+> no longer exists.  Nevertheless, I think there is a case for always
+> returning file system specific errors here, since they are more
+> descriptive.
+
+So the history is that ext4 specific errors were used because we were
+storing them in the superblock --- and so we need an architecture
+independent way of storing the error codes.  (Errno codes are not
+stable across architectures; and consider what might happen if we had
+error codes written on an say, an ARM platform, and then that disk is
+attached to an Alpha, S390, or Power system?)
+
+> Should we agree to follow the documentation and return FS specific
+> errors instead of errno, then?
+
+I disagree.  We should use errno's, for a couple of reasons.  First of
+all, users of fsnotify shouldn't need to know which file system to
+interpret the error codes.
+
+Secondly, the reason why ext4 has file system specific error cdoes is
+because those codes are written into the superblock, and errno's are
+not stable across different architectures.  So for ext4, we needed to
+worry what might happen if the error code was written while the file
+system was mounted on say, an ARM-64 system, and then storage device
+might get attached to a S390, Alpha, or PA-RISC system.  This is not a
+problem that the fsnotify API needs to worry about.
+
+Finally, the error codes that we used for the ext4 superblock are
+*not* more descriptive than errno's --- we only have 16 ext4-specific
+error codes, and there are far more errno values.
+
+Cheers,
+
+					- Ted
