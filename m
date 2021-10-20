@@ -2,121 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B625434FB5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 18:06:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24E0E434FE2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Oct 2021 18:13:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230514AbhJTQIt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Oct 2021 12:08:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36506 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231127AbhJTQIs (ORCPT
+        id S230262AbhJTQPP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Oct 2021 12:15:15 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:36420 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230257AbhJTQPN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Oct 2021 12:08:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634745993;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Wed, 20 Oct 2021 12:15:13 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id B6D431FD33;
+        Wed, 20 Oct 2021 16:12:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1634746377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=mpD7lqeK10V1p5jxWsgBeE3IJHB2sA3gAM212qwyuDQ=;
-        b=M4xwRoDpVYvwwAPTRBePKCg1THUPZW81s0KrmuQJlNoz6awBjzgg6/TfGH8rwR2z1sE5OS
-        dHeXpfPEh1qdKYJDtadIa8G64fOVThJBSGCbCsXzHfTl0cR0VwPX0Rl5g151yxNtOR7J/B
-        iHmRxJW/q4OWYaQRB3k7l1U1+Y4MOp4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-298-tE-ZrEwIMpm3B_bIZFzJug-1; Wed, 20 Oct 2021 12:06:30 -0400
-X-MC-Unique: tE-ZrEwIMpm3B_bIZFzJug-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8CC4A1B18BC1;
-        Wed, 20 Oct 2021 16:06:29 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.33.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9236A7092B;
-        Wed, 20 Oct 2021 16:06:13 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 309EB2256FC; Wed, 20 Oct 2021 12:06:13 -0400 (EDT)
-Date:   Wed, 20 Oct 2021 12:06:13 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     JeffleXu <jefflexu@linux.alibaba.com>
-Cc:     stefanha@redhat.com, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
-Subject: Re: [PATCH v6 0/7] fuse,virtiofs: support per-file DAX
-Message-ID: <YXA+dYmIUGwGVskC@redhat.com>
-References: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
- <YW2Q5Y3u1TMlQEcW@redhat.com>
- <85e66fb6-7587-4b8b-3e6f-0fc1019996fc@linux.alibaba.com>
+        bh=vLul4D/8yAMLAlxlyHQL8FOE6rchzc+UwwIZVRpSnwM=;
+        b=CgrCDhGr32kV69NWuBVEAWhjRo2bgD130IHXbNd3Qoow5s3ALzV97WRiBjpUvbV1RLPreR
+        nqDpPMQD5LgDsmZmZbtRrNR4ekrGRcnRw/7WwCVWS/9yKTFre5fnIAjWvKrSv+ruy7sai7
+        HcUnRRfuwR3j7YmOxuoADoT8ukwcLkc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1634746377;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vLul4D/8yAMLAlxlyHQL8FOE6rchzc+UwwIZVRpSnwM=;
+        b=A47yFVqw6k0Cfj4SEX1EbCfcVjgQCpe3Vh4YCf7olrOz6Z38PH9ZeWd+SoYrRfdoeBZ1ot
+        3ZKhuTSV+fBZDQBg==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id AAEFAA3B84;
+        Wed, 20 Oct 2021 16:12:57 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id EDEC11F2C7D; Wed, 20 Oct 2021 18:12:54 +0200 (CEST)
+Date:   Wed, 20 Oct 2021 18:12:54 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Wen Yang <wenyang@linux.alibaba.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/fs-writeback.c: add a preemption point to
+ move_expired_inodes
+Message-ID: <20211020161254.GC16460@quack2.suse.cz>
+References: <20210928173404.10794-1-wenyang@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <85e66fb6-7587-4b8b-3e6f-0fc1019996fc@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <20210928173404.10794-1-wenyang@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 20, 2021 at 01:22:32PM +0800, JeffleXu wrote:
+On Wed 29-09-21 01:34:04, Wen Yang wrote:
+> We encountered an unrecovered_softlockup issue on !PREEMPT
+> kernel config with 4.9 based kernel.
 > 
+> PID: 185895  TASK: ffff880455dac280  CPU: 8   COMMAND: "kworker/u449:39"
+>  #0 [ffff883f7e803c08] machine_kexec at ffffffff81061578
+>  #1 [ffff883f7e803c68] __crash_kexec at ffffffff81127c19
+>  #2 [ffff883f7e803d30] panic at ffffffff811b2255
+>  #3 [ffff883f7e803db8] unrecovered_softlockup_detect at ffffffff811b2d57
+>  #4 [ffff883f7e803ee0] watchdog_timer_fn at ffffffff8115827e
+>  #5 [ffff883f7e803f18] __hrtimer_run_queues at ffffffff811085e3
+>  #6 [ffff883f7e803f70] hrtimer_interrupt at ffffffff81108d8a
+>  #7 [ffff883f7e803fc0] local_apic_timer_interrupt at ffffffff810580f8
+>  #8 [ffff883f7e803fd8] smp_apic_timer_interrupt at ffffffff81745405
+>  #9 [ffff883f7e803ff0] apic_timer_interrupt at ffffffff81743b90
+>  --- <IRQ stack> ---
+>  #10 [ffffc90086a93b88] apic_timer_interrupt at ffffffff81743b90
+>     [exception RIP: __list_del_entry+44]
+>     RIP: ffffffff813be22c  RSP: ffffc90086a93c30  RFLAGS: 00000202
+>     RAX: ffff88522b8f8418  RBX: ffff88522b8f8418  RCX: dead000000000200
+>     RDX: ffff8816fab00e68  RSI: ffffc90086a93c60  RDI: ffff8816fab01af8
+>     RBP: ffffc90086a93c30   R8: ffff8816fab01af8   R9: 0000000100400018
+>     R10: ffff885ae5ed8280  R11: 0000000000000000  R12: ffff8816fab01af8
+>     R13: ffffc90086a93c60  R14: ffffc90086a93d08  R15: ffff883f631d2000
+>     ORIG_RAX: ffffffffffffff10  CS: 0010  SS: 0000
+>  #11 [ffffc90086a93c38] move_expired_inodes at ffffffff8127c74c
+>  #12 [ffffc90086a93ca8] queue_io at ffffffff8127cde6
+>  #13 [ffffc90086a93cd8] wb_writeback at ffffffff8128121f
+>  #14 [ffffc90086a93d80] wb_workfn at ffffffff812819f4
+>  #15 [ffffc90086a93e18] process_one_work at ffffffff810a5dc9
+>  #16 [ffffc90086a93e60] worker_thread at ffffffff810a60ae
+>  #17 [ffffc90086a93ec0] kthread at ffffffff810ac696
+>  #18 [ffffc90086a93f50] ret_from_fork at ffffffff81741dd9
 > 
-> On 10/18/21 11:21 PM, Vivek Goyal wrote:
-> > On Mon, Oct 11, 2021 at 11:00:45AM +0800, Jeffle Xu wrote:
-> >> changes since v5:
-> >> Overall Design Changes:
-> >> 1. virtiofsd now supports ioctl (only FS_IOC_SETFLAGS and
-> >>   FS_IOC_FSSETXATTR), so that users inside guest could set/clear
-> >>   persistent inode flags now. (FUSE kernel module has already supported
-> >>   .ioctl(), virtiofsd need to suuport it.)
-> > 
-> > So no changes needed in fuse side (kernel) to support FS_IOC_FSSETXATTR?
-> > Only virtiofsd needs to be changed. That sounds good.
-> > 
+> crash> set
+>     PID: 185895
+> COMMAND: "kworker/u449:39"
+>    TASK: ffff880455dac280  [THREAD_INFO: ffff880455dac280]
+>     CPU: 8
+>   STATE: TASK_RUNNING (PANIC)
 > 
-> Yes, the fuse kernel modules has already supported FUSE_IOCTL.
+> It has been running continuously for 53.052, as follows:
+> crash> ps -m | grep 185895
+> [  0 00:00:53.052] [RU]  PID: 185895  TASK: ffff880455dac280  CPU: 8
+> COMMAND: "kworker/u449:39"
 > 
-> Per inode DAX on ext4/xfs will also call d_mark_dontcache() and try to
-> evict this inode as soon as possible when the persistent (DAX) inode
-> attribute has changed, just like [1].
+> And the TIF_NEED_RESCHED flag has been set, as follows:
+> crash> struct thread_info -x ffff880455dac280
+> struct thread_info {
+>   flags = 0x88,
+>   status = 0x0
+> }
 > 
-> But because of following reason:
-> > 
-> >> 2. The
-> >>   algorithm used by virtiofsd to determine whether DAX shall be enabled
-> >>   or not is totally implementation specific, and thus the following
-> >>   scenario may exist: users inside guest has already set related persistent
-> >>   inode flag (i.e. FS_XFLAG_DAX) on corresponding file but FUSE server finnaly
-> >>   decides not to enable DAX for this file.
+> Let's just add cond_resched() within move_expired_inodes()'s list-moving loop in
+> order to avoid the watchdog splats.
 > 
-> If we always call d_mark_dontcache() and try to evict this inode when
-> the persistent (DAX) inode attribute has changed, the DAX state returned
-> by virtiofsd may sustain the same, and thus the previous eviction is
-> totally wasted and unnecessary.
+> Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  fs/fs-writeback.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> So, as the following said,
-> 
-> >> Also because of this, d_mark_dontcache() is
-> >>   not called when FS_IOC_SETFLAGS/FS_IOC_FSSETXATTR ioctl is done inside
-> >>   guest. It's delayed to be done if the FUSE_ATTR_DAX flag **indeed**
-> >>   changes (as showed in patch 6).
-> 
-> the call for d_mark_dontcache() and inode eviction is delayed when the
-> DAX state returned by virtiofsd **indeed** changed (when dentry is timed
-> out and a new FUSE_LOOKUP is requested). But the defect is that, if '-o
-> cache=always' is set for virtiofsd, then the DAX state won't be updated
-> for a long time, after users have changed the persistent (DAX) inode
-> attribute inside guest via FS_IOC_FSSETXATTR ioctl.
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 06d04a7..1546121 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -1404,6 +1404,7 @@ static int move_expired_inodes(struct list_head *delaying_queue,
+>  		if (sb && sb != inode->i_sb)
+>  			do_sb_sort = 1;
+>  		sb = inode->i_sb;
+> +		cond_resched();
 
-Good point. I guess this probably is not too bad. If it becomes a concern,
-we can always mark inode don't cache whenever client changes persistent
-DAX flag.
+Thanks for the patch but you certainly cannot do this since we are holding
+wb->list_lock during the whole move_expired_inodes() duration. It is not
+trivial to implement safe dropping of the lock in move_expired_inodes() (or
+queue_io() for that matter). How many inodes were there on b_dirty, b_io,
+b_more_io, and tmp lists and from how many superblocks?
 
-Vivek
-> 
-> 
-> 
-> [1] https://www.spinics.net/lists/linux-fsdevel/msg200851.html
-> 
-> -- 
-> Thanks,
-> Jeffle
-> 
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
