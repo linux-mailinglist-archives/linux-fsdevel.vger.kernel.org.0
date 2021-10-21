@@ -2,130 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F00FA435F62
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 12:40:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2566C435FCA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 12:57:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230314AbhJUKm7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 06:42:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42018 "EHLO
+        id S230298AbhJUK7Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 06:59:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbhJUKm6 (ORCPT
+        with ESMTP id S230179AbhJUK7Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Oct 2021 06:42:58 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F3E4C06161C;
-        Thu, 21 Oct 2021 03:40:42 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id l5so1084095lja.13;
-        Thu, 21 Oct 2021 03:40:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pOBAuVN6JNFOHIGH5sbYmAMZ0cNNUYNZfaKPm0hr+Wc=;
-        b=d0/P+9UObVdNOed4aqrRly7PMFuynMX/yDkBFl9UO778+dfFMEv0/YhoHpSEkYX4f1
-         HkZSwD77X/OLzHxqpK2eAxNf7v53XaUM6E+V5aGJsp96QIkvNUd21/yhZgtbP3AgQ4Mp
-         Yqt9TRQ2MqlTm5cvYJYCLghY/wBR/ajWSW0XDLgkYjrZCJ9h7QCQcaR/Xx32tvCjA1NR
-         mjQN6AKh/nZXNvFCgG+viQon8U0Q8+/GinC+68Tfdr1ZHEyYdHIOqBflxLN21e4QUb/c
-         kkyckhhfEpvCk4peR94ktXHNtuelWDTUZzljyt9iL4z6J7/jBbhahxj+/NMBo9v8NC03
-         3exA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pOBAuVN6JNFOHIGH5sbYmAMZ0cNNUYNZfaKPm0hr+Wc=;
-        b=jk0x9Sa+WwQJgOBBxfuA1sr/wMXLwdhQA3KPCFxSkz8Cd3iuNyEdR6jEqlPU2nMH32
-         jkL4w5OT837ioQPUi2CKmk/NtMM5aLmYb+i1Sbjsr7kYbCBl78Hk6luu5sQeKc2PlA3k
-         H1HNC5uQmg7PY2tRUkb7Asd6xISjQzvSSFzWWyOqv9hC4mmR+JcNLj6aBQfLTjTMD5Qd
-         GrlIBPOvxq2lZgFVxNB1d+QPXSOPszqOuCCexsRq9VF6aSqYDE9+5MYT0ku1Fmvv0l3W
-         feRwxmgbFi78sYZaYiRsr0ydsac0yFHQ3//jkTGgfM56sc+JxNL+Sm05B+pZUHri1NA/
-         CXeQ==
-X-Gm-Message-State: AOAM531BpaRqCrPXWjg5ivHhtN+9TfGIaWD/irzfNfpev1c8f+Ytst2l
-        dUQofHiG4KuXtC4bikNMDBCRHcw68BDm9Bo8
-X-Google-Smtp-Source: ABdhPJweUAYI/2N+dywQaYjXJ2+lEJoHS1HHsj3N2gjN6fnfyTEbDXWNIR1wpjo2PCCKpwVlKRgNnQ==
-X-Received: by 2002:a05:651c:1201:: with SMTP id i1mr5005242lja.207.1634812841011;
-        Thu, 21 Oct 2021 03:40:41 -0700 (PDT)
-Received: from pc638.lan (h5ef52e3d.seluork.dyn.perspektivbredband.net. [94.245.46.61])
-        by smtp.gmail.com with ESMTPSA id 195sm506199ljf.13.2021.10.21.03.40.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Oct 2021 03:40:40 -0700 (PDT)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
-Date:   Thu, 21 Oct 2021 12:40:38 +0200
-To:     Michal Hocko <mhocko@suse.com>, NeilBrown <neilb@suse.de>
-Cc:     NeilBrown <neilb@suse.de>, Uladzislau Rezki <urezki@gmail.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: [RFC 2/3] mm/vmalloc: add support for __GFP_NOFAIL
-Message-ID: <20211021104038.GA1932@pc638.lan>
-References: <20211019194658.GA1787@pc638.lan>
- <YW/SYl/ZKp7W60mg@dhcp22.suse.cz>
- <CA+KHdyUopXQVTp2=X-7DYYFNiuTrh25opiUOd1CXED1UXY2Fhg@mail.gmail.com>
- <YXAiZdvk8CGvZCIM@dhcp22.suse.cz>
- <CA+KHdyUyObf2m51uFpVd_tVCmQyn_mjMO0hYP+L0AmRs0PWKow@mail.gmail.com>
- <YXAtYGLv/k+j6etV@dhcp22.suse.cz>
- <CA+KHdyVdrfLPNJESEYzxfF+bksFpKGCd8vH=NqdwfPOLV9ZO8Q@mail.gmail.com>
- <20211020192430.GA1861@pc638.lan>
- <163481121586.17149.4002493290882319236@noble.neil.brown.name>
- <YXFAkFx8PCCJC0Iy@dhcp22.suse.cz>
+        Thu, 21 Oct 2021 06:59:24 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3390AC06161C;
+        Thu, 21 Oct 2021 03:57:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=dub8UqOFRYaTWZsCvyLvD1E6FjdsA28JdylaDkp2hpM=; b=g9+VbEern6p9EX4w8aSL7V5UKX
+        l8iS5HfrUU6gNWsA22ENGum0q/RZNGLkmJQJlDHfwLohj5+rKpNnKCo07dEFlMGmd9zf85XKF4egT
+        adseBxHCCQTyTImqmSL6c/X+8mawDFOesTJnS7gpbF7zaL+bYNvr4qQmE+jgzJq78l04g/xwdF+Co
+        eEeZAicjvSWqvjM6zM6jAANn2QY5C6x4aJmgwQI1VnoicgvPZyaMZUKkizHTwg/yKJv7z+Eu2W8c6
+        lLX84QO7k/SRv0emgkq/jQiB5QGa2SyMcfagYZDzV8qiS1DrkbWG6cMCBiQHjuNm3nxpVvysymKWF
+        WEnJMFlA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mdVkx-007Ifc-FC; Thu, 21 Oct 2021 10:57:07 +0000
+Date:   Thu, 21 Oct 2021 03:57:07 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        linux-aio@kvack.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2] fs: replace the ki_complete two integer arguments
+ with a single argument
+Message-ID: <YXFHgy85MpdHpHBE@infradead.org>
+References: <4d409f23-2235-9fa6-4028-4d6c8ed749f8@kernel.dk>
+ <YXElk52IsvCchbOx@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YXFAkFx8PCCJC0Iy@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <YXElk52IsvCchbOx@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On Thu 21-10-21 21:13:35, Neil Brown wrote:
-> > On Thu, 21 Oct 2021, Uladzislau Rezki wrote:
-> > > On Wed, Oct 20, 2021 at 05:00:28PM +0200, Uladzislau Rezki wrote:
-> > > > >
-> > > > > On Wed 20-10-21 16:29:14, Uladzislau Rezki wrote:
-> > > > > > On Wed, Oct 20, 2021 at 4:06 PM Michal Hocko <mhocko@suse.com> wrote:
-> > > > > [...]
-> > > > > > > As I've said I am OK with either of the two. Do you or anybody have any
-> > > > > > > preference? Without any explicit event to wake up for neither of the two
-> > > > > > > is more than just an optimistic retry.
-> > > > > > >
-> > > > > > From power perspective it is better to have a delay, so i tend to say
-> > > > > > that delay is better.
-> > > > >
-> > > > > I am a terrible random number generator. Can you give me a number
-> > > > > please?
-> > > > >
-> > > > Well, we can start from one jiffy so it is one timer tick: schedule_timeout(1)
-> > > > 
-> > > A small nit, it is better to replace it by the simple msleep() call: msleep(jiffies_to_msecs(1));
-> > 
-> > I disagree.  I think schedule_timeout_uninterruptible(1) is the best
-> > wait to sleep for 1 ticl
-> > 
-> > msleep() contains
-> >   timeout = msecs_to_jiffies(msecs) + 1;
-> > and both jiffies_to_msecs and msecs_to_jiffies might round up too.
-> > So you will sleep for at least twice as long as you asked for, possible
-> > more.
+On Thu, Oct 21, 2021 at 01:32:19AM -0700, Christoph Hellwig wrote:
+> > @@ -1436,8 +1436,8 @@ static void aio_complete_rw(struct kiocb *kiocb, long res, long res2)
+> >  		file_end_write(kiocb->ki_filp);
+> >  	}
+> >  
+> > -	iocb->ki_res.res = res;
+> > -	iocb->ki_res.res2 = res2;
+> > +	iocb->ki_res.res = res & 0xffffffff;
+> > +	iocb->ki_res.res2 = res >> 32;
 > 
-> That was my thinking as well. Not to mention jiffies_to_msecs just to do
-> msecs_to_jiffies right after which seems like a pointless wasting of
-> cpu cycle. But maybe I was missing some other reasons why msleep would
-> be superior.
->
+> This needs a big fat comments explaining the historic context.
 
-To me the msleep is just more simpler from semantic point of view, i.e.
-it is as straight forward as it can be. In case of interruptable/uninteraptable
-sleep it can be more confusing for people.
-
-When it comes to rounding and possibility to sleep more than 1 tick, it
-really does not matter here, we do not need to guarantee exact sleeping
-time.
-
-Therefore i proposed to switch to the msleep().
-
---
-Vlad Rezki
+Oh, and please use the upper_32_bits / lower_32_bits helpers.
