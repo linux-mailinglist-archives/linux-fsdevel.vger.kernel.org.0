@@ -2,120 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8337435E99
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 12:06:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C939D435ECD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 12:13:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231671AbhJUKIM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 06:08:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47898 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231334AbhJUKIL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Oct 2021 06:08:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 064A8610FF;
-        Thu, 21 Oct 2021 10:05:53 +0000 (UTC)
-Date:   Thu, 21 Oct 2021 11:05:50 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [RFC][arm64] possible infinite loop in btrfs search_ioctl()
-Message-ID: <YXE7fhDkqJbfDk6e@arm.com>
-References: <YSk+9cTMYi2+BFW7@zeniv-ca.linux.org.uk>
- <YSldx9uhMYhT/G8X@zeniv-ca.linux.org.uk>
- <YSqOUb7yZ7kBoKRY@zeniv-ca.linux.org.uk>
- <YS40qqmXL7CMFLGq@arm.com>
- <YS5KudP4DBwlbPEp@zeniv-ca.linux.org.uk>
- <YWR2cPKeDrc0uHTK@arm.com>
- <CAHk-=wjvQWj7mvdrgTedUW50c2fkdn6Hzxtsk-=ckkMrFoTXjQ@mail.gmail.com>
- <YWSnvq58jDsDuIik@arm.com>
- <CAHk-=wiNWOY5QW5ZJukt_9pHTWvrJhE2=DxPpEtFHAWdzOPDTg@mail.gmail.com>
- <CAHc6FU7bpjAxP+4dfE-C0pzzQJN1p=C2j3vyXwUwf7fF9JF72w@mail.gmail.com>
+        id S230180AbhJUKQA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 06:16:00 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:46792 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230072AbhJUKP7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Oct 2021 06:15:59 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id DC63421989;
+        Thu, 21 Oct 2021 10:13:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1634811222; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kqKaSrVU3TFEpX9K803TdDDSaLm9aRwfDWOI2dQb5l0=;
+        b=LfqQc63IqePPTrGfvArXOgm51JCIHXPNkLSYgA6w521jb1CBbgD7OXJjmlFT8LbQzjnOqY
+        qUg5pOtkLWmn5qQs7R0Ynuor2Sssh3PM7fw9e6NlCyXN1d4UPMBpoedxHbM2kZELMzWEzR
+        OXxMhJQ+uixx0PQlKv+K9HN8Rd1+jHw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1634811222;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kqKaSrVU3TFEpX9K803TdDDSaLm9aRwfDWOI2dQb5l0=;
+        b=H2XjTRNORgvbgaSkMi0HBg+H46kOYPNoxpk6IhC0HhIyKu0ZKqJAKgcgpRdOVeMkA3s0xb
+        SV2t7o+I+B++F1Ag==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5F7C3140DA;
+        Thu, 21 Oct 2021 10:13:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id jhdbBFM9cWHWRQAAMHmgww
+        (envelope-from <neilb@suse.de>); Thu, 21 Oct 2021 10:13:39 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHc6FU7bpjAxP+4dfE-C0pzzQJN1p=C2j3vyXwUwf7fF9JF72w@mail.gmail.com>
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Uladzislau Rezki" <urezki@gmail.com>
+Cc:     "Michal Hocko" <mhocko@suse.com>, "Michal Hocko" <mhocko@suse.com>,
+        "Linux Memory Management List" <linux-mm@kvack.org>,
+        "Dave Chinner" <david@fromorbit.com>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        "LKML" <linux-kernel@vger.kernel.org>,
+        "Ilya Dryomov" <idryomov@gmail.com>,
+        "Jeff Layton" <jlayton@kernel.org>
+Subject: Re: [RFC 2/3] mm/vmalloc: add support for __GFP_NOFAIL
+In-reply-to: <20211020192430.GA1861@pc638.lan>
+References: <20211018114712.9802-3-mhocko@kernel.org>,
+ <20211019110649.GA1933@pc638.lan>, <YW6xZ7vi/7NVzRH5@dhcp22.suse.cz>,
+ <20211019194658.GA1787@pc638.lan>, <YW/SYl/ZKp7W60mg@dhcp22.suse.cz>,
+ <CA+KHdyUopXQVTp2=X-7DYYFNiuTrh25opiUOd1CXED1UXY2Fhg@mail.gmail.com>,
+ <YXAiZdvk8CGvZCIM@dhcp22.suse.cz>,
+ <CA+KHdyUyObf2m51uFpVd_tVCmQyn_mjMO0hYP+L0AmRs0PWKow@mail.gmail.com>,
+ <YXAtYGLv/k+j6etV@dhcp22.suse.cz>,
+ <CA+KHdyVdrfLPNJESEYzxfF+bksFpKGCd8vH=NqdwfPOLV9ZO8Q@mail.gmail.com>,
+ <20211020192430.GA1861@pc638.lan>
+Date:   Thu, 21 Oct 2021 21:13:35 +1100
+Message-id: <163481121586.17149.4002493290882319236@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 21, 2021 at 02:46:10AM +0200, Andreas Gruenbacher wrote:
-> On Tue, Oct 12, 2021 at 1:59 AM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> > On Mon, Oct 11, 2021 at 2:08 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+On Thu, 21 Oct 2021, Uladzislau Rezki wrote:
+> On Wed, Oct 20, 2021 at 05:00:28PM +0200, Uladzislau Rezki wrote:
 > > >
-> > > +#ifdef CONFIG_ARM64_MTE
-> > > +#define FAULT_GRANULE_SIZE     (16)
-> > > +#define FAULT_GRANULE_MASK     (~(FAULT_GRANULE_SIZE-1))
-> >
-> > [...]
-> >
-> > > If this looks in the right direction, I'll do some proper patches
-> > > tomorrow.
-> >
-> > Looks fine to me. It's going to be quite expensive and bad for caches, though.
-> >
-> > That said, fault_in_writable() is _supposed_ to all be for the slow
-> > path when things go south and the normal path didn't work out, so I
-> > think it's fine.
-> 
-> Let me get back to this; I'm actually not convinced that we need to
-> worry about sub-page-size fault granules in fault_in_pages_readable or
-> fault_in_pages_writeable.
-> 
-> From a filesystem point of view, we can get into trouble when a
-> user-space read or write triggers a page fault while we're holding
-> filesystem locks, and that page fault ends up calling back into the
-> filesystem. To deal with that, we're performing those user-space
-> accesses with page faults disabled.
+> > > On Wed 20-10-21 16:29:14, Uladzislau Rezki wrote:
+> > > > On Wed, Oct 20, 2021 at 4:06 PM Michal Hocko <mhocko@suse.com> wrote:
+> > > [...]
+> > > > > As I've said I am OK with either of the two. Do you or anybody have=
+ any
+> > > > > preference? Without any explicit event to wake up for neither of th=
+e two
+> > > > > is more than just an optimistic retry.
+> > > > >
+> > > > From power perspective it is better to have a delay, so i tend to say
+> > > > that delay is better.
+> > >
+> > > I am a terrible random number generator. Can you give me a number
+> > > please?
+> > >
+> > Well, we can start from one jiffy so it is one timer tick: schedule_timeo=
+ut(1)
+> >=20
+> A small nit, it is better to replace it by the simple msleep() call: msleep=
+(jiffies_to_msecs(1));
 
-Yes, this makes sense.
+I disagree.  I think schedule_timeout_uninterruptible(1) is the best
+wait to sleep for 1 ticl
 
-> When a page fault would occur, we
-> get back an error instead, and then we try to fault in the offending
-> pages. If a page is resident and we still get a fault trying to access
-> it, trying to fault in the same page again isn't going to help and we
-> have a true error.
+msleep() contains
+  timeout =3D msecs_to_jiffies(msecs) + 1;
+and both jiffies_to_msecs and msecs_to_jiffies might round up too.
+So you will sleep for at least twice as long as you asked for, possible
+more.
 
-You can't be sure the second fault is a true error. The unlocked
-fault_in_*() may race with some LRU scheme making the pte not accessible
-or a write-back making it clean/read-only. copy_to_user() with
-pagefault_disabled() fails again but that's a benign fault. The
-filesystem should re-attempt the fault-in (gup would correct the pte),
-disable page faults and copy_to_user(), potentially in an infinite loop.
-If you bail out on the second/third uaccess following a fault_in_*()
-call, you may get some unexpected errors (though very rare). Maybe the
-filesystems avoid this problem somehow but I couldn't figure it out.
+NeilBrown
 
-> We're clearly looking at memory at a page
-> granularity; faults at a sub-page level don't matter at this level of
-> abstraction (but they do show similar error behavior). To avoid
-> getting stuck, when it gets a short result or -EFAULT, the filesystem
-> implements the following backoff strategy: first, it tries to fault in
-> a number of pages. When the read or write still doesn't make progress,
-> it scales back and faults in a single page. Finally, when that still
-> doesn't help, it gives up. This strategy is needed for actual page
-> faults, but it also handles sub-page faults appropriately as long as
-> the user-space access functions give sensible results.
 
-As I said above, I think with this approach there's a small chance of
-incorrectly reporting an error when the fault is recoverable. If you
-change it to an infinite loop, you'd run into the sub-page fault
-problem.
-
-There are some places with such infinite loops: futex_wake_op(),
-search_ioctl() in the btrfs code. I still have to get my head around
-generic_perform_write() but I think we get away here because it faults
-in the page with a get_user() rather than gup (and copy_from_user() is
-guaranteed to make progress if any bytes can still be accessed).
-
--- 
-Catalin
+>=20
+> --
+> Vlad Rezki
+>=20
+>=20
