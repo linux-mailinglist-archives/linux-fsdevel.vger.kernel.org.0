@@ -2,114 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A260436D5D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 00:20:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D42EC436D97
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 00:38:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231309AbhJUWW6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 18:22:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35040 "EHLO
+        id S231866AbhJUWkj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 18:40:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231672AbhJUWW5 (ORCPT
+        with ESMTP id S231515AbhJUWki (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Oct 2021 18:22:57 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 282CAC061220
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 15:20:41 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id e5-20020a17090a804500b001a116ad95caso1617332pjw.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 15:20:41 -0700 (PDT)
+        Thu, 21 Oct 2021 18:40:38 -0400
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14029C061764;
+        Thu, 21 Oct 2021 15:38:22 -0700 (PDT)
+Received: by mail-yb1-xb34.google.com with SMTP id v200so2665798ybe.11;
+        Thu, 21 Oct 2021 15:38:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=tSebnyNuofgB+vH+7uyEvZ4tUVxD1t6yZgP5DdCdt6U=;
-        b=F7yvuj7nSVzEl2W8Oqbp8atFxmQ6r9Dbqs8V0fbJgxGY00MyLd4k7jqKWORSw8mHY3
-         IxDvRVo4cDtbcTi+/kKA0Egwg6fwcXP4oiOtpnrGNLmO/C442vDZiAmDs7CTs8KbHnL0
-         kCfPRr95kbaIPqVIEMaFt3kyXUmXLF1FErwp9s/A5nE3+S3NMzLTtwdHdwqBgOjYLvX6
-         WYBTP6OervOJQWbY/Vx42YzjOvR/cqpxNWYc3dmwBm4LRWFBE/nHVqb6lPrrGCjmZ/nt
-         d5x2bQUiW2+vfgaGS/ipy/W+4F2BD7/kMrpChjIWchBsBRmebimx5o7b+OPOqd72o4oe
-         ThBg==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mX0gvzf/8QgI7lZxsXDzZG6vg6V+U9yQ0ZFCiOuBHEo=;
+        b=KonIF20sHgoOuKrWtmsRSJMbRoVsWrVKS7hixfNEbWzYzmdNQOUHSeH2r3EEdg8dx1
+         RrJekPfWfHsiNT+WMokibqdKZN4GBvnyCyDokh2s4wYfQR5Y3xqh/b1LKTpW9f1bnps9
+         hMeTeAn4xtpUCBbol1qcC8fnhs2XLafB/BEmuaPNFcjGCcTiH2+sKDrrUkAPadKzJRMs
+         TRcPZastxBaMNAoROM/WhbhChKVCmOLuScNq5KeWC01+x92K/cSsPZONKzuiAnLjUJCj
+         hxgeEKqqhKqCVQI22wcEcNnQ0E/bxPixyGn/4IXj+kd+lZ69I+IvDw3aWOESF8khVoqd
+         XZJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tSebnyNuofgB+vH+7uyEvZ4tUVxD1t6yZgP5DdCdt6U=;
-        b=br5faC0vjEkxwYjULm0+GJYotGYAG0D0LQV6WrZFb/S0qutJPNKa+j53IvmN6VdqgW
-         WicXFfm/c0s8r8PzbYWRUMTzrMn23SqP73KFjgGHM/G2nGQiaxLcjNM7zH8mrrR+nLhq
-         58EBEr9DqQrcJztZGkQRU9u1I9/N5ZSuA7n2uFfu51TKi0Gh2/kmJY+lnRmA1CFzfewT
-         GdpguvXFkHGfeMSP91M2YMmylNSc2HM2pPC6dOPnrYF7M8Wc2F6haFB2JZdfVvl2AQ/c
-         I0n6uk1p+ifabpcHXQ89616KngQng2q31RXu6ax4jvCLUeZOXb97zL1gOqvAaYH4ysZH
-         IaQw==
-X-Gm-Message-State: AOAM5329iMjjgd7ancLun7RXKCvvvoX3HPnN4NyDmUzNy7+SjpUGPABc
-        6s0RPM6cT7PWrnpsYNOTAaLEnQ==
-X-Google-Smtp-Source: ABdhPJwPCYMB5mXDn/964xDyH1fZwMCe0wUF+PkkOcGHAMNid1VUJ2pJtdpAOgiix5LMUW5jc9KZFg==
-X-Received: by 2002:a17:90b:1041:: with SMTP id gq1mr9693769pjb.31.1634854840491;
-        Thu, 21 Oct 2021 15:20:40 -0700 (PDT)
-Received: from relinquished.localdomain ([2620:10d:c090:400::5:69a9])
-        by smtp.gmail.com with ESMTPSA id n22sm6962317pjv.22.2021.10.21.15.20.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Oct 2021 15:20:40 -0700 (PDT)
-Date:   Thu, 21 Oct 2021 15:20:36 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-cachefs@redhat.com, ceph-devel@vger.kernel.org,
-        linux-afs@lists.infradead.org,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-nfs@vger.kernel.org,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        v9fs-developer@lists.sourceforge.net, linux-cifs@vger.kernel.org,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Jeff Layton <jlayton@kernel.org>,
-        Steve French <sfrench@samba.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/67] fscache: Rewrite index API and management system
-Message-ID: <YXHntB2O0ACr0pbz@relinquished.localdomain>
-References: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mX0gvzf/8QgI7lZxsXDzZG6vg6V+U9yQ0ZFCiOuBHEo=;
+        b=Q/u8i9iN1zdkOv5PA3EWP1ooJBZt7LmZSlR+Zu2bWU7JPrZHKqqeVckbvsC6eXJkEx
+         IJZQa9P+GRBEv5mcELx0OAeLcKWd4kltiGHs6o8hWt7r5ifOku63scHA7KH0EisxDIca
+         L3tYcb7DqW8Haa1xDwVjXX8VW/IxqmHdUn9jIFacBQ7fpN3XQpbvTvfNZO+F6RfgChmv
+         MahtQHwMcHWAEurOm7lHPm2c+nT0woYatyZ74OYwZGIKRCISJAaOn5aQ7jrTgLCoereC
+         dZetLAjNpEUKT0jjP4qow2sJM68PyyII73YQNMPgJrGpGBb65RpQSHpW/tz83waZmO2L
+         ICBQ==
+X-Gm-Message-State: AOAM532kfrKg2QX3mBKvy2NFKzEvHwGlHO84d5CoOAMC6X8em0V8d3hl
+        suWiWNJ4ZQ/1mM/MHT9Rp+qkYgI1lnTJLtsgqfU=
+X-Google-Smtp-Source: ABdhPJxwUn/Nw+hFDNm25s6Pp6fp7TE4u5/M+TC0Rh+aiycuH8FRg6i2NM/ST69jmyv4dEGj0gNMW/Xcj4JwPvITPTg=
+X-Received: by 2002:a25:5606:: with SMTP id k6mr9160954ybb.51.1634855901340;
+ Thu, 21 Oct 2021 15:38:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
+References: <20211021034603.4458-1-laoar.shao@gmail.com> <20211021034603.4458-2-laoar.shao@gmail.com>
+In-Reply-To: <20211021034603.4458-2-laoar.shao@gmail.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Thu, 21 Oct 2021 15:38:10 -0700
+Message-ID: <CAEf4BzbLzVEXd0FO6MRuVJA=CO7zbgSrx8c0JcuR_1K=bq1OcA@mail.gmail.com>
+Subject: Re: [PATCH v5 11/15] tools/bpf/bpftool: use TASK_COMM_LEN_16 instead
+ of hard-coded 16
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Peter Ziljstra <peterz@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        qiang.zhang@windriver.com, robdclark@chromium.org,
+        Christian Brauner <christian@brauner.io>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>, juri.lelli@redhat.com,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        john fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        oliver.sang@intel.com, kbuild test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 18, 2021 at 03:50:15PM +0100, David Howells wrote:
-> 
-> Here's a set of patches that rewrites and simplifies the fscache index API
-> to remove the complex operation scheduling and object state machine in
-> favour of something much smaller and simpler.  It is built on top of the
-> set of patches that removes the old API[1].
-> 
-> The operation scheduling API was intended to handle sequencing of cache
-> operations, which were all required (where possible) to run asynchronously
-> in parallel with the operations being done by the network filesystem, while
-> allowing the cache to be brought online and offline and interrupt service
-> with invalidation.
-> 
-> However, with the advent of the tmpfile capacity in the VFS, an opportunity
-> arises to do invalidation much more easily, without having to wait for I/O
-> that's actually in progress: Cachefiles can simply cut over its file
-> pointer for the backing object attached to a cookie and abandon the
-> in-progress I/O, dismissing it upon completion.
-> 
-> Future work there would involve using Omar Sandoval's vfs_link() with
-> AT_LINK_REPLACE[2] to allow an extant file to be displaced by a new hard
-> link from a tmpfile as currently I have to unlink the old file first.
+On Wed, Oct 20, 2021 at 8:46 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+>
+> Use TASK_COMM_LEN_16 instead of hard-coded 16 to make it more grepable.
+> It uses bpf_probe_read_kernel() to get task comm, which may return a
+> string without nul terminator. We should use bpf_probe_read_kernel_str()
+> instead.
+>
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Petr Mladek <pmladek@suse.com>
+> ---
+>  tools/bpf/bpftool/Makefile                | 1 +
+>  tools/bpf/bpftool/main.h                  | 3 ++-
+>  tools/bpf/bpftool/skeleton/pid_iter.bpf.c | 4 ++--
+>  tools/bpf/bpftool/skeleton/pid_iter.h     | 4 +++-
+>  4 files changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/tools/bpf/bpftool/Makefile b/tools/bpf/bpftool/Makefile
+> index d73232be1e99..33fbde84993c 100644
+> --- a/tools/bpf/bpftool/Makefile
+> +++ b/tools/bpf/bpftool/Makefile
+> @@ -164,6 +164,7 @@ $(OUTPUT)%.bpf.o: skeleton/%.bpf.c $(OUTPUT)vmlinux.h $(LIBBPF)
+>         $(QUIET_CLANG)$(CLANG) \
+>                 -I$(if $(OUTPUT),$(OUTPUT),.) \
+>                 -I$(srctree)/tools/include/uapi/ \
+> +               -I$(srctree)/tools/include/ \
 
-I had forgotten about that. It'd be great to finish that someday, but
-given the dead-end of the last discussion [1], we might need to hash it
-out the next time we can convene in person.
+bpftool shouldn't rely on internal kernel headers for compilation. If
+you want to have TASK_COMM_LEN_16 constant for grep-ability, just
+#define it where appropriate
 
-1:https://lore.kernel.org/linux-fsdevel/364531.1579265357@warthog.procyon.org.uk/ 
+>                 -I$(LIBBPF_PATH) \
+>                 -I$(srctree)/tools/lib \
+>                 -g -O2 -Wall -target bpf -c $< -o $@ && $(LLVM_STRIP) -g $@
+> diff --git a/tools/bpf/bpftool/main.h b/tools/bpf/bpftool/main.h
+> index 90caa42aac4c..5efa27188f68 100644
+> --- a/tools/bpf/bpftool/main.h
+> +++ b/tools/bpf/bpftool/main.h
+> @@ -12,6 +12,7 @@
+>  #include <linux/compiler.h>
+>  #include <linux/kernel.h>
+>  #include <linux/hashtable.h>
+> +#include <linux/sched/task.h>
+>  #include <tools/libc_compat.h>
+>
+
+[...]
