@@ -2,93 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 628AE436829
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 18:40:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28865436861
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 18:53:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232051AbhJUQmw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 12:42:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42670 "EHLO
+        id S229702AbhJUQzP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 12:55:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231439AbhJUQmn (ORCPT
+        with ESMTP id S231873AbhJUQzP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Oct 2021 12:42:43 -0400
-Received: from metanate.com (unknown [IPv6:2001:8b0:1628:5005::111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08951C061764;
-        Thu, 21 Oct 2021 09:40:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=metanate.com; s=stronger; h=Content-Transfer-Encoding:Content-Type:
-        References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID
-        :Content-Description; bh=PSTuS+2kRoxl2cZOxwy2FIn+5gaz/HAlHJRLYgxO/FU=; b=yO+7
-        UjU3QZMeeIx5DkL/dLavKg+WrzAQ0+SztOxQ5QfQ+R+vi3OSIcMZ5pfRSeGgW7jrHAARTnHvpb3Wu
-        5NB0tt7sD7e6o1q19dggFTCJpcXKoQkHehwg2TLJdtcsKNulTPA76DEOfwfJBXxlQJ+F6bmWYu1w6
-        emCQgfWl+iQbCnRgbpNAOHn/uOEOQdRaxswKH9r/t+0X8pAcRFIBhpS7Rqvkz1ttXSH201hXG3j8Z
-        lRN+MHY/rqGVOvNu/+5W3TXlNqZ1GjrtOpGPyWhlUnL4dXQU02HfIpnmnUbepkjnVEF/lUBajX72o
-        ILhsJoalxyKxfncjQuJ6QnvXjGFU5A==;
-Received: from [81.174.171.191] (helo=donbot)
-        by email.metanate.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <john@metanate.com>)
-        id 1mdb78-0005xX-Hz; Thu, 21 Oct 2021 17:40:22 +0100
-Date:   Thu, 21 Oct 2021 17:40:21 +0100
-From:   John Keeping <john@metanate.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-usb@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: [PATCH] fs: kill unused ret2 argument from iocb->ki_complete()
-Message-ID: <20211021174021.273c82b1.john@metanate.com>
-In-Reply-To: <YXBWk8Zzi7yIyTi/@kroah.com>
-References: <ce839d66-1d05-dab8-4540-71b8485fdaf3@kernel.dk>
-        <YXBSLweOk1he8DTO@infradead.org>
-        <fe54edc2-da83-6dbb-cfb9-ad3a7fbe3780@kernel.dk>
-        <YXBWk8Zzi7yIyTi/@kroah.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
+        Thu, 21 Oct 2021 12:55:15 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EADB5C061764
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 09:52:58 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id 187so1153439pfc.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 09:52:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=IcgK3jqVdAfaeLFQJYqlQnHUd7xPkY+EUw9K+n+kqs8=;
+        b=NxX5zcQUO+fne7dKWR46fV4PfZld2HLI49rRywG0foVkSd+cBb+s1hZ40e+nH5onfn
+         kBsEQ3w9oie1KHcQr7FmveD1vCIgEOMIhNzr4IPD+8IFTd7FvWajZC3kIb+OG6OZl7FM
+         V9i2a0bXHzZCPJnk5cFtALFaewEnD0eEm7l3E3fjrX4rZD8Azo7znuj6s+XI6TRo0LEq
+         JhI7rhLSJqOcHFz+QoCPrIW8GTUypGTBPb7DV/uIsFP2z41xHu5DDxIKY1e2FOCWB6Jn
+         9T+VkHm+RKcUZ9P/bDxXDqUgIrGyUCR8dCoWxYYhywAbHUkEBDurwoUVbXsSOf4hPbBs
+         x8BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=IcgK3jqVdAfaeLFQJYqlQnHUd7xPkY+EUw9K+n+kqs8=;
+        b=fAPn9Z/v0b6t4+KxqmZbPmzwz3Z9cH9Me8Sjpg63MKZL2xPn8hNxyXFz9McmKZoVqT
+         8F+1K0u5zeDxg1q6vcwFUXQ8I1M5aHvmYHF/XhYwB+J0ddmnZVhJ/dUoP/uYpEXeFQYu
+         Cwt34DkJq0SUrFkD+z2n7XPpUEpcvHG4RW9elddIAzeu4AZxhY5LMGFMlscu5p2fEvoM
+         +UA1CHI+jBAmgbY0hVh+J+AjpbzjziV9ebo0XlfwF8L27QNm3dcaI1autXdZCLSpyTJ0
+         HiVHhVZK4HHEIxPTIvrzAYhicfdCJEp+CLPdX+/+93pGX8bExB18sk6XakbcYM32UpG1
+         4gdw==
+X-Gm-Message-State: AOAM530KD53yO0EBpd0xEkfqsG2ImiknyIjUilbgThxw3tSfOIezJFY1
+        VwX+FW6hKWi1tGoz/ty74TPjlw==
+X-Google-Smtp-Source: ABdhPJwnRX/13QCgPfeN04lkAFNZK/zCphybLsqgGISYluyjPOdd7zMQGUBgzQJecMMoMzKX5MKdkg==
+X-Received: by 2002:a63:b203:: with SMTP id x3mr5321714pge.239.1634835178331;
+        Thu, 21 Oct 2021 09:52:58 -0700 (PDT)
+Received: from relinquished.localdomain ([2601:602:8b80:8e0::381])
+        by smtp.gmail.com with ESMTPSA id rm6sm6602236pjb.18.2021.10.21.09.52.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Oct 2021 09:52:57 -0700 (PDT)
+Date:   Thu, 21 Oct 2021 09:52:56 -0700
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Nikolay Borisov <nborisov@suse.com>
+Cc:     linux-btrfs@vger.kernel.org, kernel-team@fb.com,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v11 05/10] btrfs-progs: receive: process encoded_write
+ commands
+Message-ID: <YXGa6LWMwRVCnIz8@relinquished.localdomain>
+References: <cover.1630514529.git.osandov@fb.com>
+ <a06e83a401e0f66725975016bf6e6a23d5c8ea3d.1630515568.git.osandov@fb.com>
+ <dff53e1a-9717-4b92-09c3-36127ed966d9@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Authenticated: YES
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dff53e1a-9717-4b92-09c3-36127ed966d9@suse.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 20 Oct 2021 19:49:07 +0200
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-
-> On Wed, Oct 20, 2021 at 11:35:27AM -0600, Jens Axboe wrote:
-> > On 10/20/21 11:30 AM, Christoph Hellwig wrote:  
-> > > On Wed, Oct 20, 2021 at 10:49:07AM -0600, Jens Axboe wrote:  
-> > >> It's not used for anything, and we're wasting time passing in zeroes
-> > >> where we could just ignore it instead. Update all ki_complete users in
-> > >> the kernel to drop that last argument.
-> > >>
-> > >> The exception is the USB gadget code, which passes in non-zero. But
-> > >> since nobody every looks at ret2, it's still pointless.  
-> > > 
-> > > Yes, the USB gadget passes non-zero, and aio passes that on to
-> > > userspace.  So this is an ABI change.  Does it actually matter?
-> > > I don't know, but you could CC the relevant maintainers and list
-> > > to try to figure that out.  
+On Thu, Oct 21, 2021 at 04:33:00PM +0300, Nikolay Borisov wrote:
+> 
+> 
+> On 1.09.21 г. 20:01, Omar Sandoval wrote:
+> > From: Boris Burkov <borisb@fb.com>
 > > 
-> > True, guess it does go out to userspace. Greg, is anyone using
-> > it on the userspace side?  
+> <snip>
 > 
-> I really do not know (adding linux-usb@vger)  My interactions with the
-> gadget code have not been through the aio api, thankfully :)
+> > +/* Data is not compressed. */
+> > +#define BTRFS_ENCODED_IO_COMPRESSION_NONE 0
+> > +/* Data is compressed as a single zlib stream. */
+> > +#define BTRFS_ENCODED_IO_COMPRESSION_ZLIB 1
+> > +/*
+> > + * Data is compressed as a single zstd frame with the windowLog compression
+> > + * parameter set to no more than 17.
+> > + */
+> > +#define BTRFS_ENCODED_IO_COMPRESSION_ZSTD 2
+> > +/*
+> > + * Data is compressed page by page (using the page size indicated by the name of
+> > + * the constant) with LZO1X and wrapped in the format documented in
+> > + * fs/btrfs/lzo.c. For writes, the compression page size must match the
+> > + * filesystem page size.
+> > + */
+> > +#define BTRFS_ENCODED_IO_COMPRESSION_LZO_4K 3
+> > +#define BTRFS_ENCODED_IO_COMPRESSION_LZO_8K 4
+> > +#define BTRFS_ENCODED_IO_COMPRESSION_LZO_16K 5
+> > +#define BTRFS_ENCODED_IO_COMPRESSION_LZO_32K 6
+> > +#define BTRFS_ENCODED_IO_COMPRESSION_LZO_64K 7
+> > +#define BTRFS_ENCODED_IO_COMPRESSION_TYPES 8
 > 
-> Odds are it's fine, I think that something had to be passed in there so
-> that was chosen?  If the aio code didn't do anything with it, I can't
-> see where the gadget code gets it back at anywhere, but I might be
-> looking in the wrong place.
-> 
-> Anyone else here know?
+> nit: Make those an enum ? Same applies for the kernel counterpart patch.
 
-I really doubt anyone uses io_event::res2 with FunctionFS gadgets.  The
-examples in tools/usb/ffs-aio-example/ either check just "res" or ignore
-the status completely.
-
-The only other program I can find using aio FunctionFS is adbd which
-also checks res and ignores res2 [1].  Other examples I know of just use
-synchronous I/O.
-
-[1] https://github.com/aosp-mirror/platform_system_core/blob/34a0e57a257f0081c672c9be0e87230762e677ca/adb/daemon/usb.cpp#L527
+I responded to this before:
+https://lore.kernel.org/linux-btrfs/YR%2Fq69Tiz6PFqFJN@relinquished.localdomain/
