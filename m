@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C670E436708
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 17:59:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7346D4366FA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 17:59:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232077AbhJUQBZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 12:01:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60944 "EHLO
+        id S231915AbhJUQBQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 12:01:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231621AbhJUQBP (ORCPT
+        with ESMTP id S230072AbhJUQBP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 21 Oct 2021 12:01:15 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BE4FC061224;
-        Thu, 21 Oct 2021 08:58:59 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0409AC0613B9;
+        Thu, 21 Oct 2021 08:58:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=7YiB+SuUpWzxbgSIvfSKGbMNmP/IbBzCqpExhHLl7ZY=; b=rV6io0GkGTtXt7UbUYYeVsV3Zk
-        sLPIKUcI3VVXoiB4nP9y/cJLhYSt6Wce28XpSA52rUxLopFx9zWQndwC4mYRCamShxx/Ut1HBPMXr
-        fIe8pSvlQonN499a76/KW1/bSmb4KycyLcv2hzxaCvzIiVONNwUpAJmAGhj+mU5ccAh3jAS1ji9iP
-        w395jKDB57wWX4H4FEs0hZ/Ma3mRfCGtupwmc3qIzOQVP2AadAL9VhIU5XxnE00QpmiRZxuD7ka+p
-        7DCa82/3xXuKy7WosiEoFMTebGR2dLyfFd/ZEn6n+7hjdn384Vu87Kry17fyw8rJEkeMgcX222pTl
-        k7UsCrXw==;
+        bh=cmX5bRyrsH1lBCT6z2hfhCgYvWjFVdqyIKA0Mhmk8aQ=; b=GNOZneOKC2clRX+AHd67cp1eje
+        ktyybOMUfYmIboYWJ8mLQPVjnLLX7n4bp3ih/A2pqPDDCZjuCDCGZBC36TfWvjtp21YYE3DrVGIUt
+        9mr4AHp8qEq49RkljVbKtkjRXgQd9P+Dfpa0o1eoGdUEcGUp29eHvLWf9qEGmlU5Lug0RBAurx+L1
+        toGJVV9sfsa7TWwK4ZJpD4EgZMxa5h+VPGTP/5VMQ8oCufrEIpkuBwd+mQtDKAajJBPhWhnGNIe4x
+        jWLE5wdYylgzgwwnPY6WXFFmWILfIfbvW0gt37Z7tKMNpJGoCdVGhW69r4eGQ4a8kIl/lxm79gXqh
+        zJxpF9lA==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mdaSq-008GM4-GP; Thu, 21 Oct 2021 15:58:44 +0000
+        id 1mdaSq-008GM6-Hv; Thu, 21 Oct 2021 15:58:44 +0000
 From:   "Luis R. Rodriguez" <mcgrof@kernel.org>
 To:     gregkh@linuxfoundation.org
 Cc:     bp@suse.de, akpm@linux-foundation.org, josh@joshtriplett.org,
@@ -43,9 +43,9 @@ Cc:     bp@suse.de, akpm@linux-foundation.org, josh@joshtriplett.org,
         yzaikin@google.com, sfr@canb.auug.org.au, rdunlap@infradead.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH v2 04/10] firmware_loader: move struct builtin_fw to the only place used
-Date:   Thu, 21 Oct 2021 08:58:37 -0700
-Message-Id: <20211021155843.1969401-5-mcgrof@kernel.org>
+Subject: [PATCH v2 05/10] vmlinux.lds.h: wrap built-in firmware support under FW_LOADER
+Date:   Thu, 21 Oct 2021 08:58:38 -0700
+Message-Id: <20211021155843.1969401-6-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211021155843.1969401-1-mcgrof@kernel.org>
 References: <20211021155843.1969401-1-mcgrof@kernel.org>
@@ -58,50 +58,56 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Luis Chamberlain <mcgrof@kernel.org>
 
-Now that x86 doesn't abuse picking at internals to the firmware
-loader move out the built-in firmware struct to its only user.
+The firmware loader built-in firmware is only available when FW_LOADER
+is built-in, so tuck away the sections for built-in firmware under it.
+
+This ensures no oddball user tries to uses these sections without
+first enabling FW_LOADER=y.
 
 Reviewed-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- drivers/base/firmware_loader/builtin/main.c | 6 ++++++
- include/linux/firmware.h                    | 6 ------
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ include/asm-generic/vmlinux.lds.h | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/base/firmware_loader/builtin/main.c b/drivers/base/firmware_loader/builtin/main.c
-index d85626b2fdf5..a065c3150897 100644
---- a/drivers/base/firmware_loader/builtin/main.c
-+++ b/drivers/base/firmware_loader/builtin/main.c
-@@ -7,6 +7,12 @@
- /* Only if FW_LOADER=y */
- #ifdef CONFIG_FW_LOADER
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 8771c435f34b..62351669add4 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -476,13 +476,7 @@
+ 		__end_pci_fixups_suspend_late = .;			\
+ 	}								\
+ 									\
+-	/* Built-in firmware blobs */					\
+-	.builtin_fw : AT(ADDR(.builtin_fw) - LOAD_OFFSET) ALIGN(8) {	\
+-		__start_builtin_fw = .;					\
+-		KEEP(*(.builtin_fw))					\
+-		__end_builtin_fw = .;					\
+-	}								\
+-									\
++	FW_LOADER_BUILT_IN_DATA						\
+ 	TRACEDATA							\
+ 									\
+ 	PRINTK_INDEX							\
+@@ -886,6 +880,18 @@
+ #define ORC_UNWIND_TABLE
+ #endif
  
-+struct builtin_fw {
-+	char *name;
-+	void *data;
-+	unsigned long size;
-+};
++/* Built-in firmware blobs */
++#ifdef CONFIG_FW_LOADER
++#define FW_LOADER_BUILT_IN_DATA						\
++	.builtin_fw : AT(ADDR(.builtin_fw) - LOAD_OFFSET) ALIGN(8) {	\
++		__start_builtin_fw = .;					\
++		KEEP(*(.builtin_fw))					\
++		__end_builtin_fw = .;					\
++	}
++#else
++#define FW_LOADER_BUILT_IN_DATA
++#endif
 +
- extern struct builtin_fw __start_builtin_fw[];
- extern struct builtin_fw __end_builtin_fw[];
- 
-diff --git a/include/linux/firmware.h b/include/linux/firmware.h
-index 34e8d5844fa0..3b057dfc8284 100644
---- a/include/linux/firmware.h
-+++ b/include/linux/firmware.h
-@@ -25,12 +25,6 @@ struct device;
-  * FW_LOADER=m
-  */
- #ifdef CONFIG_FW_LOADER
--struct builtin_fw {
--	char *name;
--	void *data;
--	unsigned long size;
--};
--
- bool firmware_request_builtin(struct firmware *fw, const char *name);
- #else
- static inline bool firmware_request_builtin(struct firmware *fw,
+ #ifdef CONFIG_PM_TRACE
+ #define TRACEDATA							\
+ 	. = ALIGN(4);							\
 -- 
 2.30.2
 
