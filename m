@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D42EC436D97
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 00:38:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93E52436DB2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 00:44:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231866AbhJUWkj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 18:40:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39024 "EHLO
+        id S231895AbhJUWqo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 18:46:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231515AbhJUWki (ORCPT
+        with ESMTP id S229567AbhJUWqn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Oct 2021 18:40:38 -0400
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14029C061764;
-        Thu, 21 Oct 2021 15:38:22 -0700 (PDT)
-Received: by mail-yb1-xb34.google.com with SMTP id v200so2665798ybe.11;
-        Thu, 21 Oct 2021 15:38:22 -0700 (PDT)
+        Thu, 21 Oct 2021 18:46:43 -0400
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1510C061764;
+        Thu, 21 Oct 2021 15:44:26 -0700 (PDT)
+Received: by mail-yb1-xb2f.google.com with SMTP id l201so2727444ybl.9;
+        Thu, 21 Oct 2021 15:44:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=mX0gvzf/8QgI7lZxsXDzZG6vg6V+U9yQ0ZFCiOuBHEo=;
-        b=KonIF20sHgoOuKrWtmsRSJMbRoVsWrVKS7hixfNEbWzYzmdNQOUHSeH2r3EEdg8dx1
-         RrJekPfWfHsiNT+WMokibqdKZN4GBvnyCyDokh2s4wYfQR5Y3xqh/b1LKTpW9f1bnps9
-         hMeTeAn4xtpUCBbol1qcC8fnhs2XLafB/BEmuaPNFcjGCcTiH2+sKDrrUkAPadKzJRMs
-         TRcPZastxBaMNAoROM/WhbhChKVCmOLuScNq5KeWC01+x92K/cSsPZONKzuiAnLjUJCj
-         hxgeEKqqhKqCVQI22wcEcNnQ0E/bxPixyGn/4IXj+kd+lZ69I+IvDw3aWOESF8khVoqd
-         XZJg==
+        bh=09kdkVZkmd58ejES1AAZZfHSG8+rA+GkSwWN7PbT0k0=;
+        b=hLUAMOcL2RTbMgWy6y11jsBkZHOABEo03iqfAd90gR2W4kHPemBNJsnSfuWEuPxQ9l
+         4wqlBNlnOfP7xY76kXIOKT6pPM4p2++hWDHiRJyqKD7Qo8Y6uWidKlbvUmHWxcQfviyv
+         eE1vy/KLTnvKlNrUsWrAXMain0ONjmo9X4k78Lv7i6Yd9MoPZ1v7iEQsHjgtUNs15bdF
+         gqolL+xQdENH3Xfa2TH4TOKhQRZdHTWMeC8aPXvvSqdeJtSOmMPD1pGthL6WLQHjgtPK
+         ZSsPJH+E6LnNdyqFdnIASQFdgxPj6GOrHiy2TstfBCWiS5hM32RiNt/TEGuGvtLvf7jw
+         2JBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=mX0gvzf/8QgI7lZxsXDzZG6vg6V+U9yQ0ZFCiOuBHEo=;
-        b=Q/u8i9iN1zdkOv5PA3EWP1ooJBZt7LmZSlR+Zu2bWU7JPrZHKqqeVckbvsC6eXJkEx
-         IJZQa9P+GRBEv5mcELx0OAeLcKWd4kltiGHs6o8hWt7r5ifOku63scHA7KH0EisxDIca
-         L3tYcb7DqW8Haa1xDwVjXX8VW/IxqmHdUn9jIFacBQ7fpN3XQpbvTvfNZO+F6RfgChmv
-         MahtQHwMcHWAEurOm7lHPm2c+nT0woYatyZ74OYwZGIKRCISJAaOn5aQ7jrTgLCoereC
-         dZetLAjNpEUKT0jjP4qow2sJM68PyyII73YQNMPgJrGpGBb65RpQSHpW/tz83waZmO2L
-         ICBQ==
-X-Gm-Message-State: AOAM532kfrKg2QX3mBKvy2NFKzEvHwGlHO84d5CoOAMC6X8em0V8d3hl
-        suWiWNJ4ZQ/1mM/MHT9Rp+qkYgI1lnTJLtsgqfU=
-X-Google-Smtp-Source: ABdhPJxwUn/Nw+hFDNm25s6Pp6fp7TE4u5/M+TC0Rh+aiycuH8FRg6i2NM/ST69jmyv4dEGj0gNMW/Xcj4JwPvITPTg=
-X-Received: by 2002:a25:5606:: with SMTP id k6mr9160954ybb.51.1634855901340;
- Thu, 21 Oct 2021 15:38:21 -0700 (PDT)
+        bh=09kdkVZkmd58ejES1AAZZfHSG8+rA+GkSwWN7PbT0k0=;
+        b=TqX2eyrdtkRussTMQn8UKBfrVXtZxJzZhzJx71jtqXArkTxRr+YPj8SoHYEVaETRHl
+         s8QKIm2rwj8JIW3VCe0FTYe2VHV1TW4rh2DFxXRByNnDX7NiCjqDHuf7VbKcKVcVJkHo
+         QB+WQqReN1eBo4Flu8PX2VTDZEl9SHa4tSyPMerw17O/PkIagmq4rdfBZu+H/Vk98/ba
+         7OjULym/AlmUZ38MWzvNNyY7GcKmf1RzzI+gQn/mKsxa9gVa35R3Sz5i3ICKrxi9e6RX
+         uC8VxoVNi+OgYv+QwUsnWS1ADL76bsLJyf283zvzVeFsKf4gUo1dZ0ag8b9n6YuOdMmP
+         6PrQ==
+X-Gm-Message-State: AOAM532kdnB/5g1JlPDXIsA9sj+su6sLLgHkBJgDjKHVjPurc4+Z+0Xp
+        VeF+HlMLzzS13kTZLt/ch3Ni8uG6YfJzEGuEJcs=
+X-Google-Smtp-Source: ABdhPJx/E3dp41LdklMiO6BNnVl71z/dxyneF9NI9t0qPB/1mcpduZSBqldy0/PlIUQo005/X1bU0N0lAGv76MWJLis=
+X-Received: by 2002:a25:afcd:: with SMTP id d13mr9586804ybj.504.1634856266057;
+ Thu, 21 Oct 2021 15:44:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211021034603.4458-1-laoar.shao@gmail.com> <20211021034603.4458-2-laoar.shao@gmail.com>
-In-Reply-To: <20211021034603.4458-2-laoar.shao@gmail.com>
+References: <20211021034603.4458-1-laoar.shao@gmail.com> <20211021034603.4458-4-laoar.shao@gmail.com>
+In-Reply-To: <20211021034603.4458-4-laoar.shao@gmail.com>
 From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Thu, 21 Oct 2021 15:38:10 -0700
-Message-ID: <CAEf4BzbLzVEXd0FO6MRuVJA=CO7zbgSrx8c0JcuR_1K=bq1OcA@mail.gmail.com>
-Subject: Re: [PATCH v5 11/15] tools/bpf/bpftool: use TASK_COMM_LEN_16 instead
- of hard-coded 16
+Date:   Thu, 21 Oct 2021 15:44:15 -0700
+Message-ID: <CAEf4BzYTEoDwWzXd91MeMH5Qr9L853Ff3Qq8_wnwfJ8GK0oLnw@mail.gmail.com>
+Subject: Re: [PATCH v5 13/15] tools/testing/selftests/bpf: use
+ TASK_COMM_LEN_16 instead of hard-coded 16
 To:     Yafang Shao <laoar.shao@gmail.com>
 Cc:     Kees Cook <keescook@chromium.org>,
         Steven Rostedt <rostedt@goodmis.org>,
@@ -87,10 +87,26 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Wed, Oct 20, 2021 at 8:46 PM Yafang Shao <laoar.shao@gmail.com> wrote:
 >
-> Use TASK_COMM_LEN_16 instead of hard-coded 16 to make it more grepable.
-> It uses bpf_probe_read_kernel() to get task comm, which may return a
-> string without nul terminator. We should use bpf_probe_read_kernel_str()
-> instead.
+> The hard-coded 16 is used in various bpf progs. These progs get task
+> comm either via bpf_get_current_comm() or prctl() or
+> bpf_core_read_str(), all of which can work well even if the task comm size
+> is changed.
+> Below is the detailed information,
+>
+> bpf_get_current_comm:
+>     progs/test_ringbuf.c
+>     progs/test_ringbuf_multi.c
+>
+> prctl:
+>     prog_tests/test_overhead.c
+>     prog_tests/trampoline_count.c
+>
+> bpf_core_read_str:
+>     progs/test_core_reloc_kernel.c
+>     progs/test_sk_storage_tracing.c
+>
+> We'd better replace the hard-coded 16 with TASK_COMM_LEN_16 to make it
+> more grepable.
 >
 > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
@@ -101,39 +117,81 @@ On Wed, Oct 20, 2021 at 8:46 PM Yafang Shao <laoar.shao@gmail.com> wrote:
 > Cc: Al Viro <viro@zeniv.linux.org.uk>
 > Cc: Petr Mladek <pmladek@suse.com>
 > ---
->  tools/bpf/bpftool/Makefile                | 1 +
->  tools/bpf/bpftool/main.h                  | 3 ++-
->  tools/bpf/bpftool/skeleton/pid_iter.bpf.c | 4 ++--
->  tools/bpf/bpftool/skeleton/pid_iter.h     | 4 +++-
->  4 files changed, 8 insertions(+), 4 deletions(-)
+>  tools/testing/selftests/bpf/Makefile                      | 2 +-
+>  tools/testing/selftests/bpf/prog_tests/ringbuf.c          | 3 ++-
+>  tools/testing/selftests/bpf/prog_tests/ringbuf_multi.c    | 3 ++-
+>  .../testing/selftests/bpf/prog_tests/sk_storage_tracing.c | 3 ++-
+>  tools/testing/selftests/bpf/prog_tests/test_overhead.c    | 3 ++-
+>  tools/testing/selftests/bpf/prog_tests/trampoline_count.c | 3 ++-
+>  tools/testing/selftests/bpf/progs/profiler.h              | 7 ++++---
+>  tools/testing/selftests/bpf/progs/profiler.inc.h          | 8 ++++----
+>  tools/testing/selftests/bpf/progs/pyperf.h                | 4 ++--
+>  tools/testing/selftests/bpf/progs/strobemeta.h            | 6 +++---
+>  .../testing/selftests/bpf/progs/test_core_reloc_kernel.c  | 3 ++-
+>  tools/testing/selftests/bpf/progs/test_ringbuf.c          | 3 ++-
+>  tools/testing/selftests/bpf/progs/test_ringbuf_multi.c    | 3 ++-
+>  .../testing/selftests/bpf/progs/test_sk_storage_tracing.c | 5 +++--
+>  tools/testing/selftests/bpf/progs/test_skb_helpers.c      | 5 ++---
+>  tools/testing/selftests/bpf/progs/test_stacktrace_map.c   | 5 +++--
+>  tools/testing/selftests/bpf/progs/test_tracepoint.c       | 5 +++--
+>  17 files changed, 41 insertions(+), 30 deletions(-)
 >
-> diff --git a/tools/bpf/bpftool/Makefile b/tools/bpf/bpftool/Makefile
-> index d73232be1e99..33fbde84993c 100644
-> --- a/tools/bpf/bpftool/Makefile
-> +++ b/tools/bpf/bpftool/Makefile
-> @@ -164,6 +164,7 @@ $(OUTPUT)%.bpf.o: skeleton/%.bpf.c $(OUTPUT)vmlinux.h $(LIBBPF)
->         $(QUIET_CLANG)$(CLANG) \
->                 -I$(if $(OUTPUT),$(OUTPUT),.) \
->                 -I$(srctree)/tools/include/uapi/ \
-> +               -I$(srctree)/tools/include/ \
+> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+> index 799b88152e9e..5e72d783d3fe 100644
+> --- a/tools/testing/selftests/bpf/Makefile
+> +++ b/tools/testing/selftests/bpf/Makefile
+> @@ -279,7 +279,7 @@ MENDIAN=$(if $(IS_LITTLE_ENDIAN),-mlittle-endian,-mbig-endian)
+>
+>  CLANG_SYS_INCLUDES = $(call get_sys_includes,$(CLANG))
+>  BPF_CFLAGS = -g -D__TARGET_ARCH_$(SRCARCH) $(MENDIAN)                  \
+> -            -I$(INCLUDE_DIR) -I$(CURDIR) -I$(APIDIR)                   \
+> +            -I$(INCLUDE_DIR) -I$(CURDIR) -I$(APIDIR) -I${TOOLSINCDIR}  \
 
-bpftool shouldn't rely on internal kernel headers for compilation. If
-you want to have TASK_COMM_LEN_16 constant for grep-ability, just
-#define it where appropriate
+please don't add new include paths unnecessarily. See my comment on
+another patch, if you add those new constants as enums, they will be
+automatically available in vmlinux BTF and thus in auto-generated
+vmlinux.h header (for those programs using it). For others, I'd just
+leave hard-coded 16 or re-defined TASK_COMM_LEN_16 where appropriate.
 
->                 -I$(LIBBPF_PATH) \
->                 -I$(srctree)/tools/lib \
->                 -g -O2 -Wall -target bpf -c $< -o $@ && $(LLVM_STRIP) -g $@
-> diff --git a/tools/bpf/bpftool/main.h b/tools/bpf/bpftool/main.h
-> index 90caa42aac4c..5efa27188f68 100644
-> --- a/tools/bpf/bpftool/main.h
-> +++ b/tools/bpf/bpftool/main.h
+>              -I$(abspath $(OUTPUT)/../usr/include)
+>
+>  CLANG_CFLAGS = $(CLANG_SYS_INCLUDES) \
+> diff --git a/tools/testing/selftests/bpf/prog_tests/ringbuf.c b/tools/testing/selftests/bpf/prog_tests/ringbuf.c
+> index 4706cee84360..ac82d57c09dc 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/ringbuf.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/ringbuf.c
 > @@ -12,6 +12,7 @@
->  #include <linux/compiler.h>
->  #include <linux/kernel.h>
->  #include <linux/hashtable.h>
+>  #include <sys/sysinfo.h>
+>  #include <linux/perf_event.h>
+>  #include <linux/ring_buffer.h>
 > +#include <linux/sched/task.h>
->  #include <tools/libc_compat.h>
+>  #include "test_ringbuf.lskel.h"
 >
+>  #define EDONE 7777
+> @@ -22,7 +23,7 @@ struct sample {
+>         int pid;
+>         int seq;
+>         long value;
+> -       char comm[16];
+> +       char comm[TASK_COMM_LEN_16];
+
+how much value is in this "grep-ability", really? I'm not convinced
+all this code churn is justified.
+
+>  };
+>
+>  static int sample_cnt;
+> diff --git a/tools/testing/selftests/bpf/prog_tests/ringbuf_multi.c b/tools/testing/selftests/bpf/prog_tests/ringbuf_multi.c
+> index 167cd8a2edfd..f0748305ffd6 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/ringbuf_multi.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/ringbuf_multi.c
+> @@ -2,6 +2,7 @@
+>  #define _GNU_SOURCE
+>  #include <test_progs.h>
+>  #include <sys/epoll.h>
+> +#include <linux/sched/task.h>
+>  #include "test_ringbuf_multi.skel.h"
+>
+>  static int duration = 0;
 
 [...]
