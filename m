@@ -2,120 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C4A724368BE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 19:09:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 915C84368C3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 19:09:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231315AbhJURLw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 13:11:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42682 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230281AbhJURLr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Oct 2021 13:11:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EA4EE61A0A;
-        Thu, 21 Oct 2021 17:09:28 +0000 (UTC)
-Date:   Thu, 21 Oct 2021 18:09:26 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [RFC][arm64] possible infinite loop in btrfs search_ioctl()
-Message-ID: <YXGexrdprC+NTslm@arm.com>
-References: <YSqOUb7yZ7kBoKRY@zeniv-ca.linux.org.uk>
- <YS40qqmXL7CMFLGq@arm.com>
- <YS5KudP4DBwlbPEp@zeniv-ca.linux.org.uk>
- <YWR2cPKeDrc0uHTK@arm.com>
- <CAHk-=wjvQWj7mvdrgTedUW50c2fkdn6Hzxtsk-=ckkMrFoTXjQ@mail.gmail.com>
- <YWSnvq58jDsDuIik@arm.com>
- <CAHk-=wiNWOY5QW5ZJukt_9pHTWvrJhE2=DxPpEtFHAWdzOPDTg@mail.gmail.com>
- <CAHc6FU7bpjAxP+4dfE-C0pzzQJN1p=C2j3vyXwUwf7fF9JF72w@mail.gmail.com>
- <YXE7fhDkqJbfDk6e@arm.com>
- <CAHc6FU5xTMOxuiEDyc9VO_V98=bvoDc-0OFi4jsGPgWJWjRJWQ@mail.gmail.com>
+        id S231745AbhJURL4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 13:11:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49538 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230381AbhJURLv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Oct 2021 13:11:51 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 041D6C0613B9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 10:09:34 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id t5-20020a17090a4e4500b001a0a284fcc2so3639741pjl.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 10:09:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=/h3z+ZI1NEezvcalKf2dOAyWJ+jaOF20N5IW04VxMnA=;
+        b=EDjRl+XfT9L+B0/Ui2ATB7qVPuwaM4acCWeRrcT+9g5GbxL0WJjmTq5c1ovmol2FJ0
+         1fskzEINTfsYw8g8nAAbg2ogfzpc+mC2cO++Uro/3Z17oY0UGCsaxq0L4FpQ5hTR0B+i
+         4F82TStCNcJSBnVJ6HHpuKiPMrmrBZjNNQaQ4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/h3z+ZI1NEezvcalKf2dOAyWJ+jaOF20N5IW04VxMnA=;
+        b=1UEBSMakcnGK8QmUNaRHgIoUbgl1Nuooj7HdSFcTIQXlw7msOA4nSuBJi2C06/zALX
+         +MTWsAZlSy7x4PqJ7OiNK83YcjOnVW+fwW6W779YvqgudrARizQQ3JYb7FJYQU2WRmoB
+         3v4Gas/ERh9v2I/OqR7wv1TupuM6vgaSGxUeizHH69qPBYqfkMoHv7CJ0pK9hM/iwzjP
+         t/FjG1zL07Wv6Buw91Dyhi0giurqDeSyi0m9OgikRr6o686ABfQRYnSXDJZHX4flbgaK
+         nZnQ2UMA36oCjTdKJsLm66Mb8xTw0s9AqjqIKaQNsPAZgsqVt5FSvd/B3wmK7lAOqd1E
+         6Wng==
+X-Gm-Message-State: AOAM533TgygI662SBiDD5fsvthuTNDMmTU4bcSiyLOE7PU/tYlwMzQeD
+        84d6pnOjqO+N8yEJ732kDsDwEAAYtKjmEA==
+X-Google-Smtp-Source: ABdhPJx8xZPWUk8RdvIXPnnT/qf52D2k5QZILuisiCA7VHLuTMbbMXlu18CbRyoTtGgVOEZWXBbOqw==
+X-Received: by 2002:a17:90b:38c6:: with SMTP id nn6mr8039311pjb.246.1634836174380;
+        Thu, 21 Oct 2021 10:09:34 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id y13sm6032193pgc.46.2021.10.21.10.09.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Oct 2021 10:09:34 -0700 (PDT)
+Date:   Thu, 21 Oct 2021 10:09:33 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, Shuah Khan <shuah@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-kselftest@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Gladkov <gladkov.alexey@gmail.com>, jannh@google.com,
+        vcaputo@pengaru.com, mingo@redhat.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, christian.brauner@ubuntu.com,
+        amistry@google.com, Kenta.Tada@sony.com, legion@kernel.org,
+        michael.weiss@aisec.fraunhofer.de, mhocko@suse.com, deller@gmx.de,
+        zhengqi.arch@bytedance.com, me@tobin.cc, tycho@tycho.pizza,
+        tglx@linutronix.de, bp@alien8.de, hpa@zytor.com, axboe@kernel.dk,
+        metze@samba.org, laijs@linux.alibaba.com, luto@kernel.org,
+        dave.hansen@linux.intel.com, ebiederm@xmission.com,
+        ohoono.kwon@samsung.com, kaleshsingh@google.com,
+        yifeifz2@illinois.edu, linux-arch@vger.kernel.org,
+        vgupta@kernel.org, linux@armlinux.org.uk, will@kernel.org,
+        guoren@kernel.org, bcain@codeaurora.org, monstr@monstr.eu,
+        tsbogend@alpha.franken.de, nickhu@andestech.com,
+        jonas@southpole.se, mpe@ellerman.id.au, paul.walmsley@sifive.com,
+        hca@linux.ibm.com, ysato@users.sourceforge.jp, davem@davemloft.net,
+        chris@zankel.net, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] selftests: proc: Make sure wchan works when it exists
+Message-ID: <202110211008.CC8B26A@keescook>
+References: <20211008235504.2957528-1-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHc6FU5xTMOxuiEDyc9VO_V98=bvoDc-0OFi4jsGPgWJWjRJWQ@mail.gmail.com>
+In-Reply-To: <20211008235504.2957528-1-keescook@chromium.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 21, 2021 at 04:42:33PM +0200, Andreas Gruenbacher wrote:
-> On Thu, Oct 21, 2021 at 12:06 PM Catalin Marinas
-> <catalin.marinas@arm.com> wrote:
-> > On Thu, Oct 21, 2021 at 02:46:10AM +0200, Andreas Gruenbacher wrote:
-> > > When a page fault would occur, we
-> > > get back an error instead, and then we try to fault in the offending
-> > > pages. If a page is resident and we still get a fault trying to access
-> > > it, trying to fault in the same page again isn't going to help and we
-> > > have a true error.
-> >
-> > You can't be sure the second fault is a true error. The unlocked
-> > fault_in_*() may race with some LRU scheme making the pte not accessible
-> > or a write-back making it clean/read-only. copy_to_user() with
-> > pagefault_disabled() fails again but that's a benign fault. The
-> > filesystem should re-attempt the fault-in (gup would correct the pte),
-> > disable page faults and copy_to_user(), potentially in an infinite loop.
-> > If you bail out on the second/third uaccess following a fault_in_*()
-> > call, you may get some unexpected errors (though very rare). Maybe the
-> > filesystems avoid this problem somehow but I couldn't figure it out.
+On Fri, Oct 08, 2021 at 04:55:04PM -0700, Kees Cook wrote:
+> This makes sure that wchan contains a sensible symbol when a process is
+> blocked. Specifically this calls the sleep() syscall, and expects the
+> architecture to have called schedule() from a function that has "sleep"
+> somewhere in its name. For example, on the architectures I tested
+> (x86_64, arm64, arm, mips, and powerpc) this is "hrtimer_nanosleep":
 > 
-> Good point, we can indeed only bail out if both the user copy and the
-> fault-in fail.
+> $ tools/testing/selftests/proc/proc-pid-wchan
+> ok: found 'sleep' in wchan 'hrtimer_nanosleep'
 > 
-> But probing the entire memory range in fault domain granularity in the
-> page fault-in functions still doesn't actually make sense. Those
-> functions really only need to guarantee that we'll be able to make
-> progress eventually. From that point of view, it should be enough to
-> probe the first byte of the requested memory range, so when one of
-> those functions reports that the next N bytes should be accessible,
-> this really means that the first byte surely isn't permanently
-> inaccessible and that the rest is likely accessible. Functions
-> fault_in_readable and fault_in_writeable already work that way, so
-> this only leaves function fault_in_safe_writeable to worry about.
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: Alexey Dobriyan <adobriyan@gmail.com>
+> Cc: linux-kselftest@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-I agree, that's why generic_perform_write() works. It does a get_user()
-from the first byte in that range and the subsequent copy_from_user()
-will make progress of at least one byte if it was readable. Eventually
-it will hit the byte that faults. The gup-based fault_in_*() are a bit
-more problematic.
+Friendly ping.
 
-Your series introduces fault_in_safe_writeable() and I think for MTE
-doing a _single_ get_user(uaddr) (in addition to the gup checks for
-write) would be sufficient as long as generic_file_read_iter() advances
-by at least one byte (eventually).
+> ---
+> Hi Peter,
+> 
+> Can you add this to the wchan series, please? This should help wchan from
+> regressing in the future, and allow us to notice if the depth accidentally
+> changes, like Mark saw.
+> ---
 
-This discussion started with the btrfs search_ioctl() where, even if
-some bytes were written in copy_to_sk(), it always restarts from an
-earlier position, reattempting to write the same bytes. Since
-copy_to_sk() doesn't guarantee forward progress even if some bytes are
-writable, Linus' suggestion was for fault_in_writable() to probe the
-whole range. I consider this overkill since btrfs is the only one that
-needs probing every 16 bytes. The other cases like the new
-fault_in_safe_writeable() can be fixed by probing the first byte only
-followed by gup.
+I'd like to make sure we have a regression test for this. Will you add
+this to the wchan series please?
 
-I think we need to better define the semantics of the fault_in + uaccess
-sequences. For uaccess, we document "a hard requirement that not storing
-anything at all (i.e. returning size) should happen only when nothing
-could be copied" (from linux/uaccess.h). I think we can add a
-requirement for the new size_t-based fault_in_* variants without
-mandating that the whole range is probed, something like: "returning
-leftover < size guarantees that a subsequent user access at uaddr copies
-at least one byte eventually". I said "eventually" but maybe we can come
-up with some clearer wording for a liveness property.
-
-Such requirement would ensure that infinite loops of fault_in_* +
-uaccess make progress as long as they don't reset the probed range. Code
-like btrfs search_ioctl() would need to be adjusted to avoid such range
-reset and guarantee forward progress.
+-Kees
 
 -- 
-Catalin
+Kees Cook
