@@ -2,80 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6900743629A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 15:16:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80EC14362EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 15:29:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230375AbhJUNTE convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 09:19:04 -0400
-Received: from mailin.dlr.de ([194.94.201.12]:52009 "EHLO mailin.dlr.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230283AbhJUNTD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Oct 2021 09:19:03 -0400
-X-IPAS-Result: =?us-ascii?q?A2GJBAAIZ3Fh/xaKuApagQmBWYMLgWKaDZdkgXwLAQEBA?=
- =?us-ascii?q?QEBAQEBCAFBBAEBh1AmNgcOAQIEAQEBAQMCAwEBAQEBAQMBAQYBAQEBAQEFB?=
- =?us-ascii?q?AEBAoEghS9GgjUihDVRAT5CJgEEG7J2gTOBAYRphQ+BOoV9VIoVhBABhX6FM?=
- =?us-ascii?q?ASNFsJ7B4IJgTGeXy8Ug1gBkhORMZYNoHGFCQIEAgQFAhaBaASCCnGDOVAXA?=
- =?us-ascii?q?g+ccIEsAgYLAQEDCY88gRABAQ?=
-IronPort-PHdr: A9a23:yUGs/B/w3SEI3v9uWRi8ngc9DxPPW53KNwIYoqAql6hJOvz6uci4Z
- AqFv6sm0Q6BdL6YwsoMs/DRvaHkVD5Iyre6m1dGTqZxUQQYg94dhQ0qDZ3NI0T6KPn3c35yR
- 5waBxdq8H6hLEdaBtv1aUHMrX2u9z4SHQj0ORZoKujvFYPekdi72/qs95HNYghEizqwbLdvJ
- xiqsAvdsdUbj5F/Iagr0BvJpXVIe+VSxWx2IF+Yggjx6MSt8pN96ipco/0u+dJOXqX8ZKQ4U
- KdXDC86PGAv5c3krgfMQA2S7XYBSGoWkx5IAw/Y7BHmW5r6ryX3uvZh1CScIMb7S60/Vza/4
- KdxUBLmiDkJOSMl8G/ZicJwjb5Urh2uqBFk347UeYOVOOZicq/BY98XQ3dKUMZLVyxGB4Oxd
- 4wCAvYAPOlCs4nxvUMArQakBQmjHuzvzj5IiWHo3aAhzushFRvG0BY9EN0QqXnZqsj+O6gOX
- +6v1qbI0SnDYO1M2Tf78IXFfB8srPCQUL9xf8TcylQiGg3KgFiftIHpIzOY2+QQvmSG7uduW
- +Gih3M7pwxsrTaixNshh5TNi48X11zI6St0zYAoLtO7UE52ecOoHIdKuy2HNIZ7TdkuT3xmt
- Ss50LEKp4C3cDAXxJkl2RLTceKLf5WS7h7+VuucIC10iG9jdbminRi961Kgxff5VsSs1VZKq
- TdKncfUu3AW0hzT9tCHSvxg/ke9wTqP1x7c6uVDIU0sm6TVLZAvzLEwmJQTtkrNHSj4ll/og
- KOIeUsr+/al5/7mYrXgup+cLZV7hhvjPaQqgMyzG/k3PRYWU2ia/+SzyqHj8FXkTLlWlPE6j
- 6rUvZ/AKcgGqKO0ABVZ3pg95xqnCjepytUYnX0JLFJffxKHipDkNk3PIf/iEfezmUyikCpxx
- /DJJLLhBpTNIWbdkLr6YLl971RcxBAuwt9B/55UEK0OIOrvWk/ts9zVFhs5Mw2yw+b6B9Rxz
- 40eWXmSDaCHLqPdr1uI6/kxI+mDeoAVoizxK/s76P70i382h1sdcbOu3ZsNZ3DrVshhdhGdY
- HzxkpIPCmsHoAc6ZPLlhUfEUjNJYXu2GaUm6WdoJpihCNKXb5KknPqnwT20F5lXa35uBlSWV
- 3vlIdbXE8wQYT6fd5cy2gcPUqKsHtdJ6A==
-IronPort-Data: A9a23:TCcr8K5HmbFg0qzpCaU6YAxRtKLFchMFZxGqfqrLsTDasY5as4F+v
- mFMUGmObvrcMGX8e9EgOdy29hhSvsLdxtVlSlQ4r3swZn8b8sCt6fZ1j6vT04F+CuWZESqLO
- u1HMoGowPgcFyOa/lH0WlTYhSEUOZugH9IQM8aZfHAuLeNYYH1500s6w7Rg2tcAbeWRWmthh
- /uj+6UzB3f4g1aYAkpMg05UgEoy1BhakGpwUm0WPZinjneH/5UmJM53yZWKEpfNatI88thW5
- gr05OrREmvxp3/BAz4++1rxWhVirrX6ZWBihpfKMkQLb9crSiEai84G2PQghUh/lBzOv+5L9
- I53trurWwIJAI2Pqe4bXEwNe81+FfUuFL7vDVyTnOK96mzjSyG27sVFSkAwIZcRvOpzGydC+
- JT0KhhUNlba177wmenrDLM27iggBJCD0Ic3k2Np0Xf/EOwpSJTCTrvi6dtCmjs97ixLNauPO
- ZFGOGY3BPjGSx1KInYxWKxvp+ChjV28bBB3iHGsjoNitgA/yyQ0itABKuH9ft2MWNUQkF2Uq
- 3zL+0znDRwAct+S0zyI9jSrnOCnoM/gcI4WGLC2+PtrhUXJnGEDA1sXU0ehqL+1jlT4V983x
- 1EoxxfCZJMarCSDJuQRlTXjyJJYlnbwg+ZtLtA=
-IronPort-HdrOrdr: A9a23:AW6uCahgqgOdTawxrzlleRnnZHBQXgMji2hC6mlwRA09TyX4rb
- HSoB1/73TJYVkqOU3I5urwXpVoLUmxyXc32/hpAV7aZnichILwFvAZ0WKA+UydJ8SdzI5gPM
- 5bGsAVNDSXNzdHZK3BjTVQfexP/DH7mJrY/ds2G00dLz2DF8lbnmBE436gYy5Lrf59dP4E/T
- Onl696mwY=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="5.87,169,1631570400"; 
-   d="scan'208";a="59637940"
-From:   <Azat.Nurgaliev@dlr.de>
-To:     <linux-fsdevel@vger.kernel.org>
-Subject: Turn off readahead completely
-Thread-Topic: Turn off readahead completely
-Thread-Index: AdfGfdxpjOk8ymokTbSOj+D6SC4J2w==
-Date:   Thu, 21 Oct 2021 13:16:46 +0000
-Message-ID: <8aa213d5d5464236b7e47aaa6bb93bb8@dlr.de>
-Accept-Language: en-GB, en-US, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-tm-snts-smtp: 4FCDBC6963BD3DC2CEC786D70BB33D9126CF53FAA534CED031CDA00364D96CF72000:8
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S230231AbhJUNby (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 09:31:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53548 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230072AbhJUNbx (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Oct 2021 09:31:53 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99D02C0613B9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 06:29:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=S6fEVf4FCVCGQuOytgp6zxC0eaL+m2tRL4ELpFKYXS4=; b=Kcnqm8FezbF5qRKYoVJWbuc2F4
+        gwGXjwEMVGBPbcKwGQJkhNldp/ApYiqVzTXx+Zljian67SqN+BPv6EfBy1+lyKMs3Ok/a0vVI5QF+
+        QIWf7xKy+n+0wwo7BzMrfkDrXJPnPcgJ502yiaRgrqLmsRznEeMZb8OdbMb8yDSru6mk4XDY+kwjQ
+        k6h0SO9a8emj4CjEOMgtcC2BlnErlzQTmKqMUWvEDVdVEEWzHilSuBV9L1ypc6vQwelXaGprn2GZY
+        ogr2q/je3KnGh2Uw+dV9p+RoyYp3PRpCBCgCAvcFqW82NKjRfUADM4rNl8D0hLS569oYxSIRcVt5k
+        li1JZfJA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mdY6j-00DIAj-Cm; Thu, 21 Oct 2021 13:28:31 +0000
+Date:   Thu, 21 Oct 2021 14:27:45 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Azat.Nurgaliev@dlr.de
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: Turn off readahead completely
+Message-ID: <YXFq0QYhDBQC5G0l@casper.infradead.org>
+References: <8aa213d5d5464236b7e47aaa6bb93bb8@dlr.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8aa213d5d5464236b7e47aaa6bb93bb8@dlr.de>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello everyone,
+On Thu, Oct 21, 2021 at 01:16:46PM +0000, Azat.Nurgaliev@dlr.de wrote:
+> Hello everyone,
+> 
+> I need to turn readahead off completely in order to do my experiments. 
+> Is there any way to turn it off completely?
+> 
+> Setting /sys/block/<dev>/queue/read_ahead_kb to 0 causes readahead to become 4kb.
 
-I need to turn readahead off completely in order to do my experiments. 
-Is there any way to turn it off completely?
-
-Setting /sys/block/<dev>/queue/read_ahead_kb to 0 causes readahead to become 4kb.
-
-Thanks,
-Azat
+That's entirely intentional.  What experiment are you actually trying to
+perform?
