@@ -2,86 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A792435D70
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 10:56:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F345F435DFB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 11:30:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231467AbhJUI6x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 04:58:53 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:52440 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231461AbhJUI6w (ORCPT
+        id S231523AbhJUJcX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 05:32:23 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:45697 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231391AbhJUJcX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Oct 2021 04:58:52 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 413D71FD53;
-        Thu, 21 Oct 2021 08:56:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1634806596; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kpeGLRKbnlmOm6fEFAowHlW4B0c6o3WCsqPV+QnxPs8=;
-        b=lKNuU5yFt7bUcL3PD73O+nTClJA/6RYuQFrJ0DibDtDeDytMFilbotlF9CeMsJ13BP2OCS
-        WWsFb9iX0L3+qqhMYjh47s+6CYsDHeh9vD7kDtkYjXG30MVOJ8uNu88fyyHtrk09BIX/HJ
-        E9kzJTlYqTi9SSrVNAo57T4h25Hh9XA=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 0E64BA3B89;
-        Thu, 21 Oct 2021 08:56:36 +0000 (UTC)
-Date:   Thu, 21 Oct 2021 10:56:34 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Uladzislau Rezki <urezki@gmail.com>
-Cc:     Linux Memory Management List <linux-mm@kvack.org>,
-        Dave Chinner <david@fromorbit.com>, Neil Brown <neilb@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: [RFC 2/3] mm/vmalloc: add support for __GFP_NOFAIL
-Message-ID: <YXErQnjG7VPH28Ab@dhcp22.suse.cz>
-References: <20211019110649.GA1933@pc638.lan>
- <YW6xZ7vi/7NVzRH5@dhcp22.suse.cz>
- <20211019194658.GA1787@pc638.lan>
- <YW/SYl/ZKp7W60mg@dhcp22.suse.cz>
- <CA+KHdyUopXQVTp2=X-7DYYFNiuTrh25opiUOd1CXED1UXY2Fhg@mail.gmail.com>
- <YXAiZdvk8CGvZCIM@dhcp22.suse.cz>
- <CA+KHdyUyObf2m51uFpVd_tVCmQyn_mjMO0hYP+L0AmRs0PWKow@mail.gmail.com>
- <YXAtYGLv/k+j6etV@dhcp22.suse.cz>
- <CA+KHdyVdrfLPNJESEYzxfF+bksFpKGCd8vH=NqdwfPOLV9ZO8Q@mail.gmail.com>
- <20211020192430.GA1861@pc638.lan>
+        Thu, 21 Oct 2021 05:32:23 -0400
+Received: by mail-il1-f200.google.com with SMTP id q14-20020a92750e000000b002589d954013so14295586ilc.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 02:30:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=8PyU5Mj2VjoiXabguVXYfQODn+mSv1LISH3665rY0ms=;
+        b=zVJ76yslnggYYB3+5RbhbeotBE/oCtdTV+ILs66hQJqEUzV/iAfJ2PUFhdySikZ55B
+         XsMbDC1R6P8ws/3pEZpwHm6svmpm2s/Kano09x5Mro3KxJa6vGm50HVKZVBKoJP/JS5S
+         QzYTYoyvb0UZxTJhtwux3nWz81Xo961k6JFDuM0ptZ4HQkmPqCdAHLwoY7BElGfNLnnJ
+         1brOD5ZgPyZ3QmELlSS3pEypKH/mUWhw9IZYBOYjOkXihOmUzYELaPuCrs5v1EFNoMol
+         nCXpbDfTaadxyVu04u5wdEJc7hYtgIbp2bJ8zrF0EkGvqkQqR8sTWhYDvaq+/0jEIHtY
+         oL0Q==
+X-Gm-Message-State: AOAM530uxxR5PU98D85vjnjjQjAGF58T/y7PEmHrhbe9/BQwKyUjegJF
+        kj5XqzSW258CVogIVgZAkwzK/JZt2dhrx6cRiIyGl/FmdNfo
+X-Google-Smtp-Source: ABdhPJzuivB4NB9xmQ9oIDN34OTXIEibrUdziLVht/KsLW7riAywOtkmdpmFE2NkSfJwaM0qnx4LQOG9RGLokYSLPnoMiXC3BQrJ
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211020192430.GA1861@pc638.lan>
+X-Received: by 2002:a92:cda3:: with SMTP id g3mr2716905ild.103.1634808607418;
+ Thu, 21 Oct 2021 02:30:07 -0700 (PDT)
+Date:   Thu, 21 Oct 2021 02:30:07 -0700
+In-Reply-To: <CAJfpegskcCEZAX+EbnBZyva2NDyhJ9k97ZM_E9OBeXRjDsC_BQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000522fda05ced98aac@google.com>
+Subject: Re: [syzbot] general protection fault in fuse_test_super
+From:   syzbot <syzbot+74a15f02ccb51f398601@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 20-10-21 21:24:30, Uladzislau Rezki wrote:
-> On Wed, Oct 20, 2021 at 05:00:28PM +0200, Uladzislau Rezki wrote:
-> > >
-> > > On Wed 20-10-21 16:29:14, Uladzislau Rezki wrote:
-> > > > On Wed, Oct 20, 2021 at 4:06 PM Michal Hocko <mhocko@suse.com> wrote:
-> > > [...]
-> > > > > As I've said I am OK with either of the two. Do you or anybody have any
-> > > > > preference? Without any explicit event to wake up for neither of the two
-> > > > > is more than just an optimistic retry.
-> > > > >
-> > > > From power perspective it is better to have a delay, so i tend to say
-> > > > that delay is better.
-> > >
-> > > I am a terrible random number generator. Can you give me a number
-> > > please?
-> > >
-> > Well, we can start from one jiffy so it is one timer tick: schedule_timeout(1)
+Hello,
 
-OK, I will go with 1 jiffy.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> A small nit, it is better to replace it by the simple msleep() call: msleep(jiffies_to_msecs(1));
+Reported-and-tested-by: syzbot+74a15f02ccb51f398601@syzkaller.appspotmail.com
 
-I have planned to use schedule_timeout_uninterruptible. Why do you think
-msleep is better?
--- 
-Michal Hocko
-SUSE Labs
+Tested on:
+
+commit:         80019f11 fuse: always initialize sb->s_fs_info
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3decadb8235b4dad
+dashboard link: https://syzkaller.appspot.com/bug?extid=74a15f02ccb51f398601
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Note: testing is done by a robot and is best-effort only.
