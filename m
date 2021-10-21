@@ -2,104 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E51C436812
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 18:39:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 628AE436829
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 18:40:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231871AbhJUQlW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 12:41:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42318 "EHLO
+        id S232051AbhJUQmw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 12:42:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229702AbhJUQlW (ORCPT
+        with ESMTP id S231439AbhJUQmn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Oct 2021 12:41:22 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19E64C061764;
-        Thu, 21 Oct 2021 09:39:06 -0700 (PDT)
+        Thu, 21 Oct 2021 12:42:43 -0400
+Received: from metanate.com (unknown [IPv6:2001:8b0:1628:5005::111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08951C061764;
+        Thu, 21 Oct 2021 09:40:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=5Fa6osgzG4VxZaX6kVT87k4aCBY3SA+fIXDyr0H5bnE=; b=fWW+67KN3XFJuIVdLP4+f1eJyf
-        OR/jzg6Rs5PFWWNWnsCldxuJ0lRuI967CxMhJdBVWUsqXs8SMf5X/+HGSk11k6vPQcbMndfz1J2Gd
-        N3nVElpGhlnLbq82g/XXeTs+R/SKFqcrTcV5MEpSM0eY6RLn8kUxgRu9Rp2Q3erouKJNi/VXd3fV7
-        D/KIUulfZ7DfcjtSxa5QIF1iOrrXiWuK7aOdFBXjNiQb2+Th+I8rC4bd7uyEVeUsQ8O/24QjHKRqV
-        qJqWoDVDYmIjRW0KMH4ZhozF2irk/8OC8F1co9A8cnrcfTxzm0zvro1N8+ydfi8U8qalRumDg+WC+
-        6XNRJh7A==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mdb5m-008OZ0-1p; Thu, 21 Oct 2021 16:38:58 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     axboe@kernel.dk, hch@lst.de, penguin-kernel@i-love.sakura.ne.jp,
-        schmitzmic@gmail.com, efremov@linux.com, song@kernel.org,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        viro@zeniv.linux.org.uk, hare@suse.de, jack@suse.cz,
-        ming.lei@redhat.com, tj@kernel.org
-Cc:     linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH v3 3/3] block: add __must_check for *add_disk*() callers
-Date:   Thu, 21 Oct 2021 09:38:56 -0700
-Message-Id: <20211021163856.2000993-4-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211021163856.2000993-1-mcgrof@kernel.org>
-References: <20211021163856.2000993-1-mcgrof@kernel.org>
+        d=metanate.com; s=stronger; h=Content-Transfer-Encoding:Content-Type:
+        References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-ID
+        :Content-Description; bh=PSTuS+2kRoxl2cZOxwy2FIn+5gaz/HAlHJRLYgxO/FU=; b=yO+7
+        UjU3QZMeeIx5DkL/dLavKg+WrzAQ0+SztOxQ5QfQ+R+vi3OSIcMZ5pfRSeGgW7jrHAARTnHvpb3Wu
+        5NB0tt7sD7e6o1q19dggFTCJpcXKoQkHehwg2TLJdtcsKNulTPA76DEOfwfJBXxlQJ+F6bmWYu1w6
+        emCQgfWl+iQbCnRgbpNAOHn/uOEOQdRaxswKH9r/t+0X8pAcRFIBhpS7Rqvkz1ttXSH201hXG3j8Z
+        lRN+MHY/rqGVOvNu/+5W3TXlNqZ1GjrtOpGPyWhlUnL4dXQU02HfIpnmnUbepkjnVEF/lUBajX72o
+        ILhsJoalxyKxfncjQuJ6QnvXjGFU5A==;
+Received: from [81.174.171.191] (helo=donbot)
+        by email.metanate.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <john@metanate.com>)
+        id 1mdb78-0005xX-Hz; Thu, 21 Oct 2021 17:40:22 +0100
+Date:   Thu, 21 Oct 2021 17:40:21 +0100
+From:   John Keeping <john@metanate.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-usb@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: [PATCH] fs: kill unused ret2 argument from iocb->ki_complete()
+Message-ID: <20211021174021.273c82b1.john@metanate.com>
+In-Reply-To: <YXBWk8Zzi7yIyTi/@kroah.com>
+References: <ce839d66-1d05-dab8-4540-71b8485fdaf3@kernel.dk>
+        <YXBSLweOk1he8DTO@infradead.org>
+        <fe54edc2-da83-6dbb-cfb9-ad3a7fbe3780@kernel.dk>
+        <YXBWk8Zzi7yIyTi/@kroah.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Authenticated: YES
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that we have done a spring cleaning on all drivers and added
-error checking / handling, let's keep it that way and ensure
-no new drivers fail to stick with it.
+On Wed, 20 Oct 2021 19:49:07 +0200
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- block/genhd.c         | 6 +++---
- include/linux/genhd.h | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+> On Wed, Oct 20, 2021 at 11:35:27AM -0600, Jens Axboe wrote:
+> > On 10/20/21 11:30 AM, Christoph Hellwig wrote:  
+> > > On Wed, Oct 20, 2021 at 10:49:07AM -0600, Jens Axboe wrote:  
+> > >> It's not used for anything, and we're wasting time passing in zeroes
+> > >> where we could just ignore it instead. Update all ki_complete users in
+> > >> the kernel to drop that last argument.
+> > >>
+> > >> The exception is the USB gadget code, which passes in non-zero. But
+> > >> since nobody every looks at ret2, it's still pointless.  
+> > > 
+> > > Yes, the USB gadget passes non-zero, and aio passes that on to
+> > > userspace.  So this is an ABI change.  Does it actually matter?
+> > > I don't know, but you could CC the relevant maintainers and list
+> > > to try to figure that out.  
+> > 
+> > True, guess it does go out to userspace. Greg, is anyone using
+> > it on the userspace side?  
+> 
+> I really do not know (adding linux-usb@vger)  My interactions with the
+> gadget code have not been through the aio api, thankfully :)
+> 
+> Odds are it's fine, I think that something had to be passed in there so
+> that was chosen?  If the aio code didn't do anything with it, I can't
+> see where the gadget code gets it back at anywhere, but I might be
+> looking in the wrong place.
+> 
+> Anyone else here know?
 
-diff --git a/block/genhd.c b/block/genhd.c
-index 404429e6f06c..51ceb084135a 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -397,8 +397,8 @@ static void disk_scan_partitions(struct gendisk *disk)
-  * This function registers the partitioning information in @disk
-  * with the kernel.
-  */
--int device_add_disk(struct device *parent, struct gendisk *disk,
--		     const struct attribute_group **groups)
-+int __must_check device_add_disk(struct device *parent, struct gendisk *disk,
-+				 const struct attribute_group **groups)
- 
- {
- 	struct device *ddev = disk_to_dev(disk);
-@@ -543,7 +543,7 @@ int device_add_disk(struct device *parent, struct gendisk *disk,
- out_free_ext_minor:
- 	if (disk->major == BLOCK_EXT_MAJOR)
- 		blk_free_ext_minor(disk->first_minor);
--	return WARN_ON_ONCE(ret); /* keep until all callers handle errors */
-+	return ret;
- }
- EXPORT_SYMBOL(device_add_disk);
- 
-diff --git a/include/linux/genhd.h b/include/linux/genhd.h
-index f805173de312..bddcb30d94c1 100644
---- a/include/linux/genhd.h
-+++ b/include/linux/genhd.h
-@@ -205,9 +205,9 @@ static inline dev_t disk_devt(struct gendisk *disk)
- void disk_uevent(struct gendisk *disk, enum kobject_action action);
- 
- /* block/genhd.c */
--int device_add_disk(struct device *parent, struct gendisk *disk,
--		const struct attribute_group **groups);
--static inline int add_disk(struct gendisk *disk)
-+int __must_check device_add_disk(struct device *parent, struct gendisk *disk,
-+				 const struct attribute_group **groups);
-+static inline int __must_check add_disk(struct gendisk *disk)
- {
- 	return device_add_disk(NULL, disk, NULL);
- }
--- 
-2.30.2
+I really doubt anyone uses io_event::res2 with FunctionFS gadgets.  The
+examples in tools/usb/ffs-aio-example/ either check just "res" or ignore
+the status completely.
 
+The only other program I can find using aio FunctionFS is adbd which
+also checks res and ignores res2 [1].  Other examples I know of just use
+synchronous I/O.
+
+[1] https://github.com/aosp-mirror/platform_system_core/blob/34a0e57a257f0081c672c9be0e87230762e677ca/adb/daemon/usb.cpp#L527
