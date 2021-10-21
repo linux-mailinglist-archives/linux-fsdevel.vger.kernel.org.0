@@ -2,104 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 32F3E4365BE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 17:16:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04E634365C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 17:16:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231685AbhJUPSW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 11:18:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50346 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231755AbhJUPSQ (ORCPT
+        id S231774AbhJUPTM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 11:19:12 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:23350 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231909AbhJUPTL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Oct 2021 11:18:16 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 758C6C06122C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 08:16:00 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 84-20020a1c0457000000b003232b0f78f8so110014wme.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 08:16:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=k+el4LssRR48MXi9zHjZky4nWABgnOCsHjGg/d8oAg4=;
-        b=FsnxtymjLqZS2VFG04DvIpLqgieKtVBHjHP93zwTtnR5kU0AQ0H7Txhivy0MI6r3F+
-         4ti4PHUooqoxlBofAnmjSThJWtmu00KP3f4qIow3SpAzH8sOiz2MUHysGzF0AqYS8isQ
-         X/khq1aIqEF1IRXsINLNgw93KFmokB2bYNY5I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=k+el4LssRR48MXi9zHjZky4nWABgnOCsHjGg/d8oAg4=;
-        b=BAHqMHkeyFW9Zu6LfLcGoc8b1CA6W7/7Wb0EpDobZLFQK+cBluI3WFaETBNIszQSUK
-         zz/j5cfdvsKLgvaAO67+ijhCQ6smKVlhAWmxSHoMXbpBZmzJRZ/ybYn6TOr7nfW5pt/r
-         0FwG7G5hgpa0ILZ8Em/JOqrluHXMld4TYxUKZuHZAhK+43SPOw2QrbJ1CRjF2DJ2olXd
-         Wfci9fmvNF6stD3Xc1t7UEfIqRqpJKFgijBwhGMdYw3xZVKm8OUpuyfiPcanuVaa7f2G
-         +6qswDp6zNFCOWREwd7XBLPrl016ZKBiEo/5ys+OUHejYhVda5lQkDo7K+La0KhVsU/f
-         Hl3Q==
-X-Gm-Message-State: AOAM532MsdThpIJFw2G9EDkMQI2DaUezFRPCwnP25ClG4lUySUg0IK9p
-        DSvC9brUrk6NAOmvT54P22Ef0w==
-X-Google-Smtp-Source: ABdhPJy2h51ESbpe/ACQzNHuZP5xG4x2CZXy7D5ddfeiaaqbvULX+oBLkAEKf1/ueSmOhDE9tPdDhg==
-X-Received: by 2002:a7b:c183:: with SMTP id y3mr21815596wmi.2.1634829359046;
-        Thu, 21 Oct 2021 08:15:59 -0700 (PDT)
-Received: from altair.lan (7.2.6.0.8.8.2.4.4.c.c.f.b.1.5.4.f.f.6.2.a.5.a.7.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:7a5a:26ff:451b:fcc4:4288:627])
-        by smtp.googlemail.com with ESMTPSA id z1sm5098562wrt.94.2021.10.21.08.15.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Oct 2021 08:15:58 -0700 (PDT)
-From:   Lorenz Bauer <lmb@cloudflare.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>
-Cc:     kernel-team@cloudflare.com, Lorenz Bauer <lmb@cloudflare.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Subject: [PATCH bpf-next v2 1/3] libfs: support RENAME_EXCHANGE in simple_rename()
-Date:   Thu, 21 Oct 2021 16:15:26 +0100
-Message-Id: <20211021151528.116818-2-lmb@cloudflare.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20211021151528.116818-1-lmb@cloudflare.com>
-References: <20211021151528.116818-1-lmb@cloudflare.com>
+        Thu, 21 Oct 2021 11:19:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634829415;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZuGUCWJesXH8eEfD4uYbvpcQnhlkdtgHDHRl2HOKRu4=;
+        b=Xm8WSnCdPkZFg6GnpN1agPXiaT2xLgxKcZFp7i6w6h/83twpXBZBxUmHC8kl2FOpOatws1
+        YHI5HJo5SXdg/kjHQC2vRybwMDQtTuFyQLpi25TmII1+8Q+W1b9ZuIzhIYXbvcQJJjcOC1
+        2L1djELmh0iEhROyDzgvxIOoqs8T42w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-218-8T2Q3_FoMD6B-Jir8MiN0g-1; Thu, 21 Oct 2021 11:16:51 -0400
+X-MC-Unique: 8T2Q3_FoMD6B-Jir8MiN0g-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 199CC1927801;
+        Thu, 21 Oct 2021 15:16:50 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9042960C13;
+        Thu, 21 Oct 2021 15:16:49 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "linux-fsdevel\@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-block\@vger.kernel.org" <linux-block@vger.kernel.org>,
+        linux-aio@kvack.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2] fs: replace the ki_complete two integer arguments with a single argument
+References: <4d409f23-2235-9fa6-4028-4d6c8ed749f8@kernel.dk>
+        <YXElk52IsvCchbOx@infradead.org> <YXFHgy85MpdHpHBE@infradead.org>
+        <4d3c5a73-889c-2e2c-9bb2-9572acdd11b7@kernel.dk>
+        <YXF8X3RgRfZpL3Cb@infradead.org>
+        <b7b6e63e-8787-f24c-2028-e147b91c4576@kernel.dk>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Thu, 21 Oct 2021 11:18:55 -0400
+In-Reply-To: <b7b6e63e-8787-f24c-2028-e147b91c4576@kernel.dk> (Jens Axboe's
+        message of "Thu, 21 Oct 2021 08:44:16 -0600")
+Message-ID: <x49ee8ev21s.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Allow atomic exchange via RENAME_EXCHANGE when using simple_rename.
-This affects binderfs, ramfs, hubetlbfs and bpffs. There isn't much
-to do except update the various *time fields.
+Jens Axboe <axboe@kernel.dk> writes:
 
-Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
----
- fs/libfs.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+> On 10/21/21 8:42 AM, Christoph Hellwig wrote:
+>> On Thu, Oct 21, 2021 at 08:34:38AM -0600, Jens Axboe wrote:
+>>> Incremental, are you happy with that comment?
+>> 
+>> Looks fine to me.
+>
+> OK good, can I add your ack/review? I can send out a v3 if needed, but
+> seems a bit pointless for that small change.
+>
+> Jeff, are you happy with this one too?
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 51b4de3b3447..93c03d593749 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -455,9 +455,12 @@ int simple_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 	struct inode *inode = d_inode(old_dentry);
- 	int they_are_dirs = d_is_dir(old_dentry);
- 
--	if (flags & ~RENAME_NOREPLACE)
-+	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE))
- 		return -EINVAL;
- 
-+	if (flags & RENAME_EXCHANGE)
-+		goto done;
-+
- 	if (!simple_empty(new_dentry))
- 		return -ENOTEMPTY;
- 
-@@ -472,6 +475,7 @@ int simple_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 		inc_nlink(new_dir);
- 	}
- 
-+done:
- 	old_dir->i_ctime = old_dir->i_mtime = new_dir->i_ctime =
- 		new_dir->i_mtime = inode->i_ctime = current_time(old_dir);
- 
--- 
-2.32.0
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index 397bfafc4c25..66c6e0c5d638 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -550,7 +550,7 @@ static void lo_rw_aio_do_completion(struct loop_cmd *cmd)
+>  		blk_mq_complete_request(rq);
+>  }
+>  
+> -static void lo_rw_aio_complete(struct kiocb *iocb, long ret, long ret2)
+> +static void lo_rw_aio_complete(struct kiocb *iocb, u64 ret)
+>  {
+>  	struct loop_cmd *cmd = container_of(iocb, struct loop_cmd, iocb);
+>  
+> @@ -623,7 +623,7 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+>  	lo_rw_aio_do_completion(cmd);
+>  
+>  	if (ret != -EIOCBQUEUED)
+> -		cmd->iocb.ki_complete(&cmd->iocb, ret, 0);
+> +		lo_rw_aio_complete(&cmd->iocb, ret);
+>  	return 0;
+
+I'm not sure why that was part of this patch, but I think it's fine.
+
+I've still got more testing to do, but you can add:
+
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+
+I'll follow up if there are issues.
+
+Cheers,
+Jeff
 
