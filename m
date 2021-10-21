@@ -2,119 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 915C84368C3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 19:09:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9D564368D7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 19:15:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231745AbhJURL4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 13:11:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49538 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230381AbhJURLv (ORCPT
+        id S231320AbhJURRu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 13:17:50 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:33636 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229567AbhJURRt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Oct 2021 13:11:51 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 041D6C0613B9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 10:09:34 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id t5-20020a17090a4e4500b001a0a284fcc2so3639741pjl.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 10:09:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=/h3z+ZI1NEezvcalKf2dOAyWJ+jaOF20N5IW04VxMnA=;
-        b=EDjRl+XfT9L+B0/Ui2ATB7qVPuwaM4acCWeRrcT+9g5GbxL0WJjmTq5c1ovmol2FJ0
-         1fskzEINTfsYw8g8nAAbg2ogfzpc+mC2cO++Uro/3Z17oY0UGCsaxq0L4FpQ5hTR0B+i
-         4F82TStCNcJSBnVJ6HHpuKiPMrmrBZjNNQaQ4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/h3z+ZI1NEezvcalKf2dOAyWJ+jaOF20N5IW04VxMnA=;
-        b=1UEBSMakcnGK8QmUNaRHgIoUbgl1Nuooj7HdSFcTIQXlw7msOA4nSuBJi2C06/zALX
-         +MTWsAZlSy7x4PqJ7OiNK83YcjOnVW+fwW6W779YvqgudrARizQQ3JYb7FJYQU2WRmoB
-         3v4Gas/ERh9v2I/OqR7wv1TupuM6vgaSGxUeizHH69qPBYqfkMoHv7CJ0pK9hM/iwzjP
-         t/FjG1zL07Wv6Buw91Dyhi0giurqDeSyi0m9OgikRr6o686ABfQRYnSXDJZHX4flbgaK
-         nZnQ2UMA36oCjTdKJsLm66Mb8xTw0s9AqjqIKaQNsPAZgsqVt5FSvd/B3wmK7lAOqd1E
-         6Wng==
-X-Gm-Message-State: AOAM533TgygI662SBiDD5fsvthuTNDMmTU4bcSiyLOE7PU/tYlwMzQeD
-        84d6pnOjqO+N8yEJ732kDsDwEAAYtKjmEA==
-X-Google-Smtp-Source: ABdhPJx8xZPWUk8RdvIXPnnT/qf52D2k5QZILuisiCA7VHLuTMbbMXlu18CbRyoTtGgVOEZWXBbOqw==
-X-Received: by 2002:a17:90b:38c6:: with SMTP id nn6mr8039311pjb.246.1634836174380;
-        Thu, 21 Oct 2021 10:09:34 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y13sm6032193pgc.46.2021.10.21.10.09.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Oct 2021 10:09:34 -0700 (PDT)
-Date:   Thu, 21 Oct 2021 10:09:33 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, Shuah Khan <shuah@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-kselftest@vger.kernel.org,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>, jannh@google.com,
-        vcaputo@pengaru.com, mingo@redhat.com, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, christian.brauner@ubuntu.com,
-        amistry@google.com, Kenta.Tada@sony.com, legion@kernel.org,
-        michael.weiss@aisec.fraunhofer.de, mhocko@suse.com, deller@gmx.de,
-        zhengqi.arch@bytedance.com, me@tobin.cc, tycho@tycho.pizza,
-        tglx@linutronix.de, bp@alien8.de, hpa@zytor.com, axboe@kernel.dk,
-        metze@samba.org, laijs@linux.alibaba.com, luto@kernel.org,
-        dave.hansen@linux.intel.com, ebiederm@xmission.com,
-        ohoono.kwon@samsung.com, kaleshsingh@google.com,
-        yifeifz2@illinois.edu, linux-arch@vger.kernel.org,
-        vgupta@kernel.org, linux@armlinux.org.uk, will@kernel.org,
-        guoren@kernel.org, bcain@codeaurora.org, monstr@monstr.eu,
-        tsbogend@alpha.franken.de, nickhu@andestech.com,
-        jonas@southpole.se, mpe@ellerman.id.au, paul.walmsley@sifive.com,
-        hca@linux.ibm.com, ysato@users.sourceforge.jp, davem@davemloft.net,
-        chris@zankel.net, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] selftests: proc: Make sure wchan works when it exists
-Message-ID: <202110211008.CC8B26A@keescook>
-References: <20211008235504.2957528-1-keescook@chromium.org>
+        Thu, 21 Oct 2021 13:17:49 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52]:37160)
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1mdbf9-000AMa-Iy; Thu, 21 Oct 2021 11:15:31 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95]:57708 helo=email.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1mdbf8-004CFX-64; Thu, 21 Oct 2021 11:15:31 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Pratik Sampat <psampat@linux.ibm.com>
+Cc:     Tejun Heo <tj@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        bristot@redhat.com, christian@brauner.io, lizefan.x@bytedance.com,
+        hannes@cmpxchg.org, mingo@kernel.org, juri.lelli@redhat.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org, containers@lists.linux.dev,
+        containers@lists.linux-foundation.org, pratik.r.sampat@gmail.com,
+        Alexey Gladkov <legion@kernel.org>
+References: <20211009151243.8825-1-psampat@linux.ibm.com>
+        <20211011101124.d5mm7skqfhe5g35h@wittgenstein>
+        <a0f9ed06-1e5d-d3d0-21a5-710c8e27749c@linux.ibm.com>
+        <YWirxCjschoRJQ14@slm.duckdns.org>
+        <b5f8505c-38d5-af6f-0de7-4f9df7ae9b9b@linux.ibm.com>
+        <YW2g73Lwmrhjg/sv@slm.duckdns.org>
+        <77854748-081f-46c7-df51-357ca78b83b3@linux.ibm.com>
+Date:   Thu, 21 Oct 2021 12:15:22 -0500
+In-Reply-To: <77854748-081f-46c7-df51-357ca78b83b3@linux.ibm.com> (Pratik
+        Sampat's message of "Wed, 20 Oct 2021 16:14:25 +0530")
+Message-ID: <87tuha7105.fsf@disp2133>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211008235504.2957528-1-keescook@chromium.org>
+Content-Type: text/plain
+X-XM-SPF: eid=1mdbf8-004CFX-64;;;mid=<87tuha7105.fsf@disp2133>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+k81XzcFL3nUOkF05szMGteN8T3vDwHqg=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4940]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Pratik Sampat <psampat@linux.ibm.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 387 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 14 (3.5%), b_tie_ro: 12 (3.0%), parse: 1.39
+        (0.4%), extract_message_metadata: 4.4 (1.1%), get_uri_detail_list:
+        1.49 (0.4%), tests_pri_-1000: 6 (1.6%), tests_pri_-950: 1.85 (0.5%),
+        tests_pri_-900: 1.45 (0.4%), tests_pri_-90: 120 (31.0%), check_bayes:
+        118 (30.4%), b_tokenize: 8 (2.1%), b_tok_get_all: 7 (1.8%),
+        b_comp_prob: 2.6 (0.7%), b_tok_touch_all: 96 (24.9%), b_finish: 1.14
+        (0.3%), tests_pri_0: 211 (54.6%), check_dkim_signature: 0.71 (0.2%),
+        check_dkim_adsp: 3.1 (0.8%), poll_dns_idle: 0.58 (0.2%), tests_pri_10:
+        4.0 (1.0%), tests_pri_500: 11 (2.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC 0/5] kernel: Introduce CPU Namespace
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 08, 2021 at 04:55:04PM -0700, Kees Cook wrote:
-> This makes sure that wchan contains a sensible symbol when a process is
-> blocked. Specifically this calls the sleep() syscall, and expects the
-> architecture to have called schedule() from a function that has "sleep"
-> somewhere in its name. For example, on the architectures I tested
-> (x86_64, arm64, arm, mips, and powerpc) this is "hrtimer_nanosleep":
-> 
-> $ tools/testing/selftests/proc/proc-pid-wchan
-> ok: found 'sleep' in wchan 'hrtimer_nanosleep'
-> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: Alexey Dobriyan <adobriyan@gmail.com>
-> Cc: linux-kselftest@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+Pratik Sampat <psampat@linux.ibm.com> writes:
 
-Friendly ping.
+> On 18/10/21 9:59 pm, Tejun Heo wrote:
+>> (cc'ing Johannes for memory sizing part)
+>>
+>> For memory, it's even trickier because in a lot of cases it's impossible to
+>> tell how much memory is actually available without trying to use them as
+>> active workingset can only be learned by trying to reclaim memory.
+>
+> Restrictions for memory are even more complicated to model as you have
+> pointed out as well.
 
-> ---
-> Hi Peter,
-> 
-> Can you add this to the wchan series, please? This should help wchan from
-> regressing in the future, and allow us to notice if the depth accidentally
-> changes, like Mark saw.
-> ---
+For memory sizing we currently have MemAvailable in /proc/meminfo which
+makes a global guess at that.
 
-I'd like to make sure we have a regression test for this. Will you add
-this to the wchan series please?
+We still need roughly that same approximation from an applications
+perspective that takes cgroups into account.
 
--Kees
+There was another conversation not too long ago and it was tenatively
+agreed that it could make sense to provide such a number.  However it
+was very much requested that an application that would actually use
+that number be found so it would be possible to tell what makes a
+difference in practice rather than what makes a difference in theory.
 
--- 
-Kees Cook
+Eric
+
+
+
