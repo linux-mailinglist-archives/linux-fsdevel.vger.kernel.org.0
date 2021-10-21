@@ -2,65 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24D634356B6
+	by mail.lfdr.de (Postfix) with ESMTP id 4D3204356B8
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 02:12:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231402AbhJUAOk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Oct 2021 20:14:40 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:25086 "EHLO
+        id S231420AbhJUAOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Oct 2021 20:14:41 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:25878 "EHLO
         mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231286AbhJUAOf (ORCPT
+        by vger.kernel.org with ESMTP id S231311AbhJUAOf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 20 Oct 2021 20:14:35 -0400
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19KM5SgP000812;
-        Thu, 21 Oct 2021 00:11:45 GMT
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19KN63tX025798;
+        Thu, 21 Oct 2021 00:11:48 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references : content-type :
  mime-version; s=corp-2021-07-09;
- bh=1BbWCXWzj9c4p/AtzW6dlJYAODCGWsVna4JLDz5OPJ0=;
- b=FrXhSLWcW3i7r7P08f4694AWr+uORK5tBAr0sUdn3I1dPX1Wo4taniTUpMFw2h9pmQpf
- hhMCGUQjrmVLEH/BjmULiovTQNgRYrK1sRpvQMOZ8/dfIcH8YUDhZlwZtqLaW3ouQwVS
- jQ+ppNY7XSQl5LrEdqChk7lrzWZx+WQMI0TKz2HqH7njgFmrtD+5Xd4oMunjtSsUIkSQ
- nEpkq7szvEkEEUaHlGPNoJmBFnSuMQD4NPqenAkpK7mBGY5VVKgs3kJx2wCWsDcs/G0w
- SVhl63CfhupXI1MLdAIsqL871gL27M76Y1wm0HUR1hIfyWvatN0VNeuHrexS/mv1z+1z Hg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3btkw4ua8f-1
+ bh=ifSBF1RQnUVXGKyvH12egtVGx++r6u9YJdKhok8OWeU=;
+ b=SX8d46bT/dYb1mRTPJFQ0qVXifkiEdw+zmuP/LNkW7mS75YbdHM2PtW1Dyan248J5T2q
+ km9u0NTpsBIAJejvUWfWb+levQwWqg5AA6uqxKXyV6hBxc78hmTD+N1zWkrfC3cyMbgN
+ y/dnR8Pt1d1dfK4ipx9a7cc5n94asHPRUkRAJ9hG9jcyhMGXB7PC+JeG+1PYhmcJVIp4
+ U4LhIivnEPdSvS/bnOsBMEegHX/15Nq7MijqvVJfJjfz3AvlXycUdJ9TcLPWojRnWnI5
+ X+/9dtTzJmmuym8DnbY9cDvroPu6EPmCQTSrOkLo6bm5L+JiU9iCAYHo5dIebH1wYsx+ 6A== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3btrfm1jng-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Oct 2021 00:11:45 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 19L0BacI133105;
-        Thu, 21 Oct 2021 00:11:43 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2047.outbound.protection.outlook.com [104.47.66.47])
-        by userp3020.oracle.com with ESMTP id 3br8gv1krg-1
+        Thu, 21 Oct 2021 00:11:48 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 19L0AsIi065365;
+        Thu, 21 Oct 2021 00:11:47 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2044.outbound.protection.outlook.com [104.47.66.44])
+        by aserp3030.oracle.com with ESMTP id 3bqmsh8r0g-3
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 21 Oct 2021 00:11:43 +0000
+        Thu, 21 Oct 2021 00:11:47 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NLTSSnc8gGWQfyZ5gln495V4Nj1scBvrLjOedM+NTvVpkHuHeAcHoIiG2qShaZGDJ54bYQLxLrVZOjpTplCG8p/EES+UxhQIw/EM9OX4+bKdsugru94sYr2UtFdGIwPAGgA+y4pmbyqg5+FXt+Ad0jKimIc7l7Htv4A5iC/gXaPOJn7Uo+y0yjff0sAnUhrhBV5ZhEkljasNrHV8KEzFGrZFWqV+aT5dy4bum7c1SWd/Tn7CxVaoSTOT82Hfh/Fq9QxSkpt6vd/ZHsOXuyXiUqZ6bk6VZqlVXZs4JLz20IH2ti8jrXyGIGALmADdxVe1HiNVyVcFgQFTe27VUrJWhA==
+ b=mgsZ25HSZmQm122fPMnqVbHw1SeFX7rPKuZ4F6wOtRqM1aP6UXFYw9XYP/kN0mltgF5YV/fiMRxSgtAjM5G9A384xzL6iTSQoNxUrhQzhttnCYWsxWKtqDdfmtQUFHOxHfZ7kuZd7jagkpz+WxPifDAb8r3+MqkD2XqxEgShLKcaVKAtnKCYxAZuSfkLmBHso2fHLQgwR7YcTYJ3kx42RJcyQWoxtjQHgMwp6qPoZFAfCzpaigAKi+C0/R+7LDNGTFJQu75tOY7zw8K5/ulnp2nr58zmsi896v+JAPz4ses7CuH9vHv2NPlUhZ1FxcOx/WD7QEVV80X/zK3ThVeQZw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1BbWCXWzj9c4p/AtzW6dlJYAODCGWsVna4JLDz5OPJ0=;
- b=ayY+IrQQlzdnBQHxY1wB7NMptlDj04Nc8ZN5S46vX9ZhbNhBmaurG1sCo+0iZjP0/Gc0hgLIme/huIb4kRfMBWJeVh6MsIlmucgiO+DiqnLo1OOJYnm4Hs8fyMwhaCSiUT684mcUpc7pfjvvRagjVGdEhGtdOh9cZJ8xEWzArn53yniQ5IxTGFyXveOsMI2xMbBpLj68Lznlg9NRmXmMkanZFk7/XHi9awqCakRTvlB8tZuvYdswS0nsAERUB8Y/naLv6oAUlaq1Heup4u4MPrRHyKK638MZ1bI8Q0skCH7o2frgLRTkZ2qbfIu8JvdQVhOpqfM3AaCe6bQph0llCA==
+ bh=ifSBF1RQnUVXGKyvH12egtVGx++r6u9YJdKhok8OWeU=;
+ b=AWnZ8LhKUrT0jrRWHEHVJub5czvIk8Pzckh0UCDpWJZKupCN/NHHNtgeQ3GFZv8Dp85/eAqZ39WaE+ANQVQWVfClX2g4g21UX4oumvKVcH8nOXnqQMGIk9FRWazpEVmE6D7GVMzSqMz1Q+a5ZZNtAbxhetsDoFM5Ye/LKW0XPtFUHF6uj93XcOpe23j9sXS9rmQi1F2TQiSOEY5ocWbcaPClTsKZkXPNHsvOsE5aFMRHV7iplg7/MoMsAf186wz8tFL8Fh+TIytWjMjG58L7fcEY1+xy5vdIEsvkpKmUDXVJkuzgKBJAjMRtrhskLZxXjDMppMsDPVnMC/eetwgi+g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1BbWCXWzj9c4p/AtzW6dlJYAODCGWsVna4JLDz5OPJ0=;
- b=NqYyeftX8BxVE7NgbOg+MnqW/LNJ0nJnaQXNc8A6MzqnKSp7g9I4jvoBThtnn6jx/VmEE7I5K/yBFgRgs/9ibGZBq+vlHlV/wQjgyjaZWRdsrxabkmf8tWZO1/R72QtCJ+kh8ZoY8TfAO5/ZYxoYFrlb489PP9AFbgwcxPU0Ncg=
+ bh=ifSBF1RQnUVXGKyvH12egtVGx++r6u9YJdKhok8OWeU=;
+ b=zSdaFUz8sQ2vWfz9HiR6QYmMtarccHMcDpE2DmwCd/i/l7v5CC/NOe8h8u1rQX/lDX02LngCh+AzbJlP28k9EdH7smqTiOGwJQPHAree4lZQ9BPrx+Rsq6ruTEtlCvPmEbxnzO7tx+L3X8gWFyc9dY0KP3ktYZFRwelhGAQogKc=
 Authentication-Results: fromorbit.com; dkim=none (message not signed)
  header.d=none;fromorbit.com; dmarc=none action=none header.from=oracle.com;
 Received: from SJ0PR10MB4429.namprd10.prod.outlook.com (2603:10b6:a03:2d1::14)
  by BYAPR10MB2759.namprd10.prod.outlook.com (2603:10b6:a02:b5::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4608.17; Thu, 21 Oct
- 2021 00:11:40 +0000
+ 2021 00:11:44 +0000
 Received: from SJ0PR10MB4429.namprd10.prod.outlook.com
  ([fe80::401:1df2:3e9a:66c]) by SJ0PR10MB4429.namprd10.prod.outlook.com
  ([fe80::401:1df2:3e9a:66c%5]) with mapi id 15.20.4608.018; Thu, 21 Oct 2021
- 00:11:40 +0000
+ 00:11:44 +0000
 From:   Jane Chu <jane.chu@oracle.com>
 To:     david@fromorbit.com, djwong@kernel.org, dan.j.williams@intel.com,
         hch@infradead.org, vishal.l.verma@intel.com, dave.jiang@intel.com,
@@ -68,9 +68,9 @@ To:     david@fromorbit.com, djwong@kernel.org, dan.j.williams@intel.com,
         ira.weiny@intel.com, willy@infradead.org, vgoyal@redhat.com,
         linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
         linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: [PATCH 1/6] dax: introduce RWF_RECOVERY_DATA flag to preadv2() and pwritev2()
-Date:   Wed, 20 Oct 2021 18:10:54 -0600
-Message-Id: <20211021001059.438843-2-jane.chu@oracle.com>
+Subject: [PATCH 2/6] dax: prepare dax_direct_access() API with DAXDEV_F_RECOVERY flag
+Date:   Wed, 20 Oct 2021 18:10:55 -0600
+Message-Id: <20211021001059.438843-3-jane.chu@oracle.com>
 X-Mailer: git-send-email 2.18.4
 In-Reply-To: <20211021001059.438843-1-jane.chu@oracle.com>
 References: <20211021001059.438843-1-jane.chu@oracle.com>
@@ -79,46 +79,46 @@ X-ClientProxiedBy: SN4PR0801CA0003.namprd08.prod.outlook.com
  (2603:10b6:803:29::13) To SJ0PR10MB4429.namprd10.prod.outlook.com
  (2603:10b6:a03:2d1::14)
 MIME-Version: 1.0
-Received: from brm-x62-16.us.oracle.com (2606:b400:8004:44::1d) by SN4PR0801CA0003.namprd08.prod.outlook.com (2603:10b6:803:29::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.16 via Frontend Transport; Thu, 21 Oct 2021 00:11:39 +0000
+Received: from brm-x62-16.us.oracle.com (2606:b400:8004:44::1d) by SN4PR0801CA0003.namprd08.prod.outlook.com (2603:10b6:803:29::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.16 via Frontend Transport; Thu, 21 Oct 2021 00:11:43 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ef4796e8-e358-4a54-5b9f-08d994275b28
+X-MS-Office365-Filtering-Correlation-Id: fde00a49-f921-43cf-a301-08d994275da7
 X-MS-TrafficTypeDiagnostic: BYAPR10MB2759:
-X-Microsoft-Antispam-PRVS: <BYAPR10MB27596F25E8654669D8A79EB1F3BF9@BYAPR10MB2759.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-Microsoft-Antispam-PRVS: <BYAPR10MB2759D77B54626082E4F5A2C4F3BF9@BYAPR10MB2759.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 2AI6XekBnjXoFm//pkIzwPSmpsDAqi18CLAMorG2nVz7LYIxHc7qanPDM5Jfr75kYPrUfXiFWNNaec/8jL49tZamPEXhqx/5co8+KtE975Qy3czsUx2REw8eC5IuHoI4d0Vc7lqgsjA1gJxvbewCB8hQqZmqcwIkMVjC362W9ORu76Ci3VpNwLV0vdiv8uNKAspE0qzaO7rd+7ShNq+HB6pTRT/+OOJzuS/EhXUjHKYyw67TFRmFw7eoPBCkFYLq10GMd9Mj4WOf3jyjMQ8AFrucgGhimc144JJTxG3/HC7FstSoXKi1H++j7OKCTuzPIVJ1xWQbrchwDZO6LJyZrydYns8hmevht52g+wvwm0RohhR9Tm876jXSR31kZe36VXlSzspjEUag1eXzXWstcBm7yckjeFMjL2c9DC2+AjQxnVi9d216CfdwfbHJ8JL1W83jU4Rs3gawAhtMzN75ZM5KJcdkxrLTyalVSUr8yAxL+XUwppMkfNNlsw16CzsXzYaj/RgYMUcy6D+ENFA/OLRz30KQC9vswh6VgGuVtAR8f1YZTnQPwLimjJrvftoRkyKN/paiKI/IRGjSm6gqVoDLpY5T38yasaV6NfIpN50yyf+DpBl0ls74o3KAM7vDh2lag3CoJNVirxJM3gd6Oy/EVaTy+xcNGDQ6yZjSW/fUSUOoqnqY80CARj2ov+Vw
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4429.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(316002)(5660300002)(1076003)(66946007)(66476007)(7416002)(6666004)(38100700002)(83380400001)(36756003)(66556008)(921005)(508600001)(6486002)(8676002)(86362001)(186003)(7696005)(52116002)(8936002)(44832011)(2616005)(2906002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: ZbJa3gxOHifzVqDHqT/5E0T5fxzG5Sp5/YmambrOUPicQdXoJ+PCnMWcmclnmKLBQWBc1a/A2cyXjQfdq4hpxe7kTBq5mKIF2tRl5p0d1DtIrD2HoExDU9JhmJJNOJUAWNqDLdAZkYAWiQzNGzBJe3sv4SHmMn2mlg+hg+tRfBv9U6N+JGZjbORngNdtfU8uPcg5x0qlv5UX8RApiRmU9s68mQ/Wh/tT4dMw67hb0+zPBwp6N7LFVPaZN6sG2BxPcZd8xWvLMfiKOq22G1cgz6WjXhoxvHyegg/6i1Wli9LWiF/kejhD7paKFLZ+BUhmD2V+A/otj9vd7YbhbIsgpL/zMvF+aPNMmDShzQdZ/CMTts8gGouxk4HWq/4P042Hj7r33RRiNaldJjT0qreR5/71NfqoP1pdhIfk0a1Ezm3WTNLeS1DKHvrAm1k0ghe6Sk8YOFWfR5OK0YkVx+YynVuAMbvFWgHSQ4xsf+U4XcEnbCcqdVgs2UWGrCIcmIAcczBzEsxZnJggr4EbfRK4iVCV2/ibu00js7DnfoUTYulO2LjLzmvvcP06mZ1jbU2tulYTM86g+Y2izCvhZ0KI6DPCNaH4Ekx7dvt2zZGgJWWkKp+72N8lKz+ONnN3A3qvmQ+yK3EAMD22h4HOgFhW0OedU1qMVwGvyjblAHHsSftEPeDtQZAIji6On7+BSlXm
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4429.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(316002)(5660300002)(1076003)(66946007)(66476007)(7416002)(6666004)(38100700002)(83380400001)(36756003)(66556008)(921005)(508600001)(6486002)(8676002)(86362001)(186003)(30864003)(7696005)(52116002)(8936002)(44832011)(2616005)(2906002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?9ZFBALpXqz0ghYUUqn6hN5NFhWVBIcAscVYelrsRmo4Ylq4lg5B0W3e3J5Ls?=
- =?us-ascii?Q?Q29MTh0i/4WsXp/gmQtEWjbcFpIvAjZS6OjGGYNHOmuINrmgMzQm5O1HARcL?=
- =?us-ascii?Q?nriyqv68YfkXAh3wZwIQ3ek8CQhXY2zGsUPVC4tUuubn0WE45PgeRu6HmK0+?=
- =?us-ascii?Q?MMsx/6rueKJubN28eYkHXOlXDfh87sqbrPhsMN7+KUWYxd3TQP4LA9ZWAqsR?=
- =?us-ascii?Q?IktToFuzuBLJS/klzAZr+yzUXWQwUsqXQ4lgJDfPik4dcs2pjL/ARDDPSaPf?=
- =?us-ascii?Q?seWPg8sZCIC7MvF61PIWQLi35f5XzCMEWd9ZudmMQRf8YOH16zbkQSDhSquJ?=
- =?us-ascii?Q?DaXIS553SDLqfvBplY1EKva43x087DKJiKPoxwJGnpqRaOaBAXGSPIoOQHL+?=
- =?us-ascii?Q?yBBYJMgZnLGOz55C0oA8EvhSZGHoTh5rt9XpQGW3HeZLViJQ31X7y8B7w51g?=
- =?us-ascii?Q?ZBBnix9njr/MxEWEeQqCvQbd5du/LaFX0bUnTf4N6qlpUUJIweAkzXUed7RO?=
- =?us-ascii?Q?L9OAlciDRDbWtuM01uYYaFLyJkUM/vPAOmjN3V5obKCvM91Uwc/psfTRJJV5?=
- =?us-ascii?Q?Eyplh4PgNWjccNMTKjqT+BAuWZOf0alGExaYhYx9ljQvzW6hkafsug695kD9?=
- =?us-ascii?Q?5Hunbr2hxuZ0AsgQeXZ61cswkbQsFHKnXBMGvyTkOAAVp0AKWFj2SaMXzYZW?=
- =?us-ascii?Q?bRmMiRTxKfzzlBXNZUlGDIp8GbBoEvEh269Z9U5ATk07nENs4sMedr3WYqeZ?=
- =?us-ascii?Q?bvOx2ixHDdfZAqZLAeoRztFagrgXyn7jQw1xvFjKeshJAskQTtdXO0+amjYG?=
- =?us-ascii?Q?Wzcqp3dEKld8DXRWn51fTvlXbVUVkkJ+TZhyziiEuMfZ3kUBtS/9S9dDzoOZ?=
- =?us-ascii?Q?vZtwhIgsvc85t3HtCeEYQWO0b6lwR7SiX6W0TbQkzsamhAthmcTDPsX5/eTy?=
- =?us-ascii?Q?3ATb/v7c4l11vDVsG/1gkIs8tgJh3U6BhM+kZKzLWCQoSl2/DBga8wz4XR2t?=
- =?us-ascii?Q?Iuqf2l/vlOKwATQabKEbB5IgCXnawR7SWaCJvAXwPrgGA1ODUUSu+KW2CIBH?=
- =?us-ascii?Q?EOgFFEQ2DLLEoKmQ+DrUGaWRFw/tjt7BqyOBt6uuD4NVOAe9BHKqCDkbjs/G?=
- =?us-ascii?Q?luEisv6vESsrnIOvsdAuBRW3iqZTZ0oNWJWZNva2pwuQfQLRQXvHJoB4Yawd?=
- =?us-ascii?Q?m5toGo4txqUebXyLOyEyOl3ydRRC6WE7e1P0rB/RASfaYTdZML/uQNwLv1fk?=
- =?us-ascii?Q?Die1tD6gFmgriowA7aTFvhiplsoSHJAMlOpKMEMcBv0ZUALHpv5QL1RF/2W4?=
- =?us-ascii?Q?YYXnXdQsuIoZZ/qY8bix19QPXC2SiVKJQx3J41a5JpLpVg=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?JdNiGkgPN9IIWvbLtjl7RZB5b9rj1LCzPVtgGq8zEnCEl5hSKUbT3zZvGqZ/?=
+ =?us-ascii?Q?Fgh59/LlUzdjURtZwEN+2tBYvMjDAcml/WLVQW9Un52txNcEQSHUbHUm+Lxf?=
+ =?us-ascii?Q?0N6mNPrrOCMjwi3Btr+QHLgqrHRnkZBnQdpwTIGaJzRE9CtRFc84wbgNtn4r?=
+ =?us-ascii?Q?dNcpkepfjXT7SGVyw6E2utpJi+LzmW5+qOk3iBjn9HXdUjH610z7SoYxJhZy?=
+ =?us-ascii?Q?7TL2jQIOnt5Ykzqz7dHhX8LMsHU2zOeSY2sa5FalawdFCIFf2v8syHV3NJeH?=
+ =?us-ascii?Q?DoYZRDLsq5cDiUDjelDcOfAfgpYPRSmG2nm6MmYSPtyiW1zpCivOtqVrrhzf?=
+ =?us-ascii?Q?lk/Yt0L7C1WVwJ7/84xopEbHWqS64IVvcLZgZ7RM9LozGIBQf/Q74DRpTcSC?=
+ =?us-ascii?Q?fNHftreEczVVumoyrZgQFGJjARu0sPWqiR5USbieu/zN0Ic8dT4f5PDUyrg+?=
+ =?us-ascii?Q?hVfJUDISxp5w4MiJQS1WAq67sUb8VgoR4qEEZ0BoSrjri0cL9N+sfd5iyvdU?=
+ =?us-ascii?Q?bEH4XDpzDgQGVeIwxPqz6atrl29Q11wGkdpZtrNWy5KIVwO7MOOIEThpEqHJ?=
+ =?us-ascii?Q?IaKgcfLGSWm68TrJ6YsY9vtXhaZZk66tv4dzii5y7cHm2LthX3/qoIM+2aJA?=
+ =?us-ascii?Q?Vx3mwJUa50RvGirsYb+bSmrO+0TsQ3vZbb1UdQl/8SJTOBoPxWQnwxk+WxMq?=
+ =?us-ascii?Q?9nXUblMjzsNWciJsxmPWfrSFfVqqdILVZkc6N1TgHmDtMzMWQJUiZQ4obQhd?=
+ =?us-ascii?Q?1vbmVSXCB27VftN3VXfMIPoGrbXWPnjV4gikjsEvVBQarz1+9Bh27PiWJFyZ?=
+ =?us-ascii?Q?GYR4qbqyZrlrkDNcrm/U4gfWF8cVyNydsmzA4WXaOJVDz5tT3HWlls5/McG+?=
+ =?us-ascii?Q?XuXxwZiGzEKBcKBicJ28fsH5+5TP33untLatDxTkfPK1H5LWuSSc8qgCez59?=
+ =?us-ascii?Q?jFdWgGescA6x3cdZwc4u1RKT3uCe0MF8+fzYeqIK9eAYpYj3Jv64nWpTu71k?=
+ =?us-ascii?Q?To97GYgGCWjsoQwTBMK8mhxVucVE3TV6ss2W9E1osnxdH0WYJESDasHe1KK6?=
+ =?us-ascii?Q?9HGvZ3IhouvT/RjpmJv3wzi/TrR7ZYbYrUgVAl5QI158M5Xf08H3CYSc4ux7?=
+ =?us-ascii?Q?Py0BjzQHlcx97DIngvr7n+nKemMpixMXhnjsugTK6FHwVNJX6GfKcVI//oul?=
+ =?us-ascii?Q?XImohvCkg7aJQm1xuy3avZ0Li7VcOEYcORXOBvKKmEF5aI66avZWiP+rmha2?=
+ =?us-ascii?Q?cI1G48OYiGyPZNw8kWXyf1aMVSQDSXrRfVmPx7Pi3dEbEs89jEcGS2Pv89pv?=
+ =?us-ascii?Q?SC9QP28fPVW8n4oPZgQb+sboGfs2LFYNRwhY4XqDFX6nTg=3D=3D?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef4796e8-e358-4a54-5b9f-08d994275b28
+X-MS-Exchange-CrossTenant-Network-Message-Id: fde00a49-f921-43cf-a301-08d994275da7
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB4429.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2021 00:11:40.5574
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Oct 2021 00:11:44.7022
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
@@ -126,94 +126,427 @@ X-MS-Exchange-CrossTenant-MailboxType: HOSTED
 X-MS-Exchange-CrossTenant-UserPrincipalName: jane.chu@oracle.com
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB2759
 X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10143 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 adultscore=0
- spamscore=0 phishscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 malwarescore=0
+ phishscore=0 mlxlogscore=999 bulkscore=0 suspectscore=0 mlxscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2109230001
  definitions=main-2110210000
-X-Proofpoint-GUID: Fi4W2rYrk5bNBurtKJbC6_nV14Ouq-fp
-X-Proofpoint-ORIG-GUID: Fi4W2rYrk5bNBurtKJbC6_nV14Ouq-fp
+X-Proofpoint-GUID: dlctoru7oZnGTJA3wIxJpDafsvNLMJiK
+X-Proofpoint-ORIG-GUID: dlctoru7oZnGTJA3wIxJpDafsvNLMJiK
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce RWF_RECOVERY_DATA flag to preadv2() and pwritev2()
-for the purpose of recovering data loss due to dax media error.
-Hence the functionality ties to the underlying media and driver
-with capability to clear media error(s) on the fly.
-
-When this flag is provided with preadv2(), preadv2() will attempt
-to read as much data as possible until the poisoned page is
-encountered.
-
-When the flag is provided with pwritev2(), pwritev2() will attempt
-to clear media error within the user specified range and then write
-the user provided data to the range. Both the range and length
-parameters must be page aligned in order get the recovery process
-to work.
+Prepare dax_direct_access() API with DAXDEV_F_RECOVERY flag
+such that the API may perform device address translation
+in spite of the presence of poison(s) in a given range.
 
 Signed-off-by: Jane Chu <jane.chu@oracle.com>
 ---
- fs/dax.c                | 3 +++
- include/linux/fs.h      | 1 +
- include/linux/iomap.h   | 1 +
- include/uapi/linux/fs.h | 5 ++++-
- 4 files changed, 9 insertions(+), 1 deletion(-)
+ drivers/dax/super.c             |  9 +++++----
+ drivers/md/dm-linear.c          |  4 ++--
+ drivers/md/dm-log-writes.c      |  5 +++--
+ drivers/md/dm-stripe.c          |  4 ++--
+ drivers/md/dm-target.c          |  2 +-
+ drivers/md/dm-writecache.c      |  4 ++--
+ drivers/md/dm.c                 |  4 ++--
+ drivers/nvdimm/pmem.c           |  7 ++++---
+ drivers/nvdimm/pmem.h           |  2 +-
+ drivers/s390/block/dcssblk.c    |  7 ++++---
+ fs/dax.c                        | 12 ++++++++----
+ fs/fuse/dax.c                   |  2 +-
+ fs/fuse/virtio_fs.c             |  4 ++--
+ include/linux/dax.h             |  7 +++++--
+ include/linux/device-mapper.h   |  2 +-
+ tools/testing/nvdimm/pmem-dax.c |  2 +-
+ 16 files changed, 44 insertions(+), 33 deletions(-)
 
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index fc89e91beea7..67093f1c3341 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -156,8 +156,8 @@ bool generic_fsdax_supported(struct dax_device *dax_dev,
+ 	}
+ 
+ 	id = dax_read_lock();
+-	len = dax_direct_access(dax_dev, pgoff, 1, &kaddr, &pfn);
+-	len2 = dax_direct_access(dax_dev, pgoff_end, 1, &end_kaddr, &end_pfn);
++	len = dax_direct_access(dax_dev, pgoff, 1, &kaddr, &pfn, 0);
++	len2 = dax_direct_access(dax_dev, pgoff_end, 1, &end_kaddr, &end_pfn, 0);
+ 
+ 	if (len < 1 || len2 < 1) {
+ 		pr_info("%pg: error: dax access failed (%ld)\n",
+@@ -302,12 +302,13 @@ EXPORT_SYMBOL_GPL(dax_attribute_group);
+  * @nr_pages: number of consecutive pages caller can handle relative to @pfn
+  * @kaddr: output parameter that returns a virtual address mapping of pfn
+  * @pfn: output parameter that returns an absolute pfn translation of @pgoff
++ * @flags: indication whether on dax data recovery code path or not
+  *
+  * Return: negative errno if an error occurs, otherwise the number of
+  * pages accessible at the device relative @pgoff.
+  */
+ long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_pages,
+-		void **kaddr, pfn_t *pfn)
++		void **kaddr, pfn_t *pfn, unsigned long flags)
+ {
+ 	long avail;
+ 
+@@ -321,7 +322,7 @@ long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_pages,
+ 		return -EINVAL;
+ 
+ 	avail = dax_dev->ops->direct_access(dax_dev, pgoff, nr_pages,
+-			kaddr, pfn);
++			kaddr, pfn, flags);
+ 	if (!avail)
+ 		return -ERANGE;
+ 	return min(avail, nr_pages);
+diff --git a/drivers/md/dm-linear.c b/drivers/md/dm-linear.c
+index 679b4c0a2eea..cb7c8518f02d 100644
+--- a/drivers/md/dm-linear.c
++++ b/drivers/md/dm-linear.c
+@@ -165,7 +165,7 @@ static int linear_iterate_devices(struct dm_target *ti,
+ 
+ #if IS_ENABLED(CONFIG_DAX_DRIVER)
+ static long linear_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
+-		long nr_pages, void **kaddr, pfn_t *pfn)
++		long nr_pages, void **kaddr, pfn_t *pfn, unsigned long flags)
+ {
+ 	long ret;
+ 	struct linear_c *lc = ti->private;
+@@ -177,7 +177,7 @@ static long linear_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
+ 	ret = bdev_dax_pgoff(bdev, dev_sector, nr_pages * PAGE_SIZE, &pgoff);
+ 	if (ret)
+ 		return ret;
+-	return dax_direct_access(dax_dev, pgoff, nr_pages, kaddr, pfn);
++	return dax_direct_access(dax_dev, pgoff, nr_pages, kaddr, pfn, flags);
+ }
+ 
+ static size_t linear_dax_copy_from_iter(struct dm_target *ti, pgoff_t pgoff,
+diff --git a/drivers/md/dm-log-writes.c b/drivers/md/dm-log-writes.c
+index d93a4db23512..6d8b88dcce6c 100644
+--- a/drivers/md/dm-log-writes.c
++++ b/drivers/md/dm-log-writes.c
+@@ -950,7 +950,7 @@ static int log_dax(struct log_writes_c *lc, sector_t sector, size_t bytes,
+ }
+ 
+ static long log_writes_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
+-					 long nr_pages, void **kaddr, pfn_t *pfn)
++	long nr_pages, void **kaddr, pfn_t *pfn, unsigned long flags)
+ {
+ 	struct log_writes_c *lc = ti->private;
+ 	sector_t sector = pgoff * PAGE_SECTORS;
+@@ -959,7 +959,8 @@ static long log_writes_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
+ 	ret = bdev_dax_pgoff(lc->dev->bdev, sector, nr_pages * PAGE_SIZE, &pgoff);
+ 	if (ret)
+ 		return ret;
+-	return dax_direct_access(lc->dev->dax_dev, pgoff, nr_pages, kaddr, pfn);
++	return dax_direct_access(lc->dev->dax_dev, pgoff, nr_pages, kaddr, pfn,
++				 flags);
+ }
+ 
+ static size_t log_writes_dax_copy_from_iter(struct dm_target *ti,
+diff --git a/drivers/md/dm-stripe.c b/drivers/md/dm-stripe.c
+index 6660b6b53d5b..0a97d0472a0b 100644
+--- a/drivers/md/dm-stripe.c
++++ b/drivers/md/dm-stripe.c
+@@ -302,7 +302,7 @@ static int stripe_map(struct dm_target *ti, struct bio *bio)
+ 
+ #if IS_ENABLED(CONFIG_DAX_DRIVER)
+ static long stripe_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
+-		long nr_pages, void **kaddr, pfn_t *pfn)
++	long nr_pages, void **kaddr, pfn_t *pfn, unsigned long flags)
+ {
+ 	sector_t dev_sector, sector = pgoff * PAGE_SECTORS;
+ 	struct stripe_c *sc = ti->private;
+@@ -319,7 +319,7 @@ static long stripe_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
+ 	ret = bdev_dax_pgoff(bdev, dev_sector, nr_pages * PAGE_SIZE, &pgoff);
+ 	if (ret)
+ 		return ret;
+-	return dax_direct_access(dax_dev, pgoff, nr_pages, kaddr, pfn);
++	return dax_direct_access(dax_dev, pgoff, nr_pages, kaddr, pfn, flags);
+ }
+ 
+ static size_t stripe_dax_copy_from_iter(struct dm_target *ti, pgoff_t pgoff,
+diff --git a/drivers/md/dm-target.c b/drivers/md/dm-target.c
+index 64dd0b34fcf4..431764b77528 100644
+--- a/drivers/md/dm-target.c
++++ b/drivers/md/dm-target.c
+@@ -142,7 +142,7 @@ static void io_err_release_clone_rq(struct request *clone,
+ }
+ 
+ static long io_err_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
+-		long nr_pages, void **kaddr, pfn_t *pfn)
++	long nr_pages, void **kaddr, pfn_t *pfn, unsigned long flags)
+ {
+ 	return -EIO;
+ }
+diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
+index 18320444fb0a..c523cb911eca 100644
+--- a/drivers/md/dm-writecache.c
++++ b/drivers/md/dm-writecache.c
+@@ -286,7 +286,7 @@ static int persistent_memory_claim(struct dm_writecache *wc)
+ 
+ 	id = dax_read_lock();
+ 
+-	da = dax_direct_access(wc->ssd_dev->dax_dev, offset, p, &wc->memory_map, &pfn);
++	da = dax_direct_access(wc->ssd_dev->dax_dev, offset, p, &wc->memory_map, &pfn, 0);
+ 	if (da < 0) {
+ 		wc->memory_map = NULL;
+ 		r = da;
+@@ -309,7 +309,7 @@ static int persistent_memory_claim(struct dm_writecache *wc)
+ 		do {
+ 			long daa;
+ 			daa = dax_direct_access(wc->ssd_dev->dax_dev, offset + i, p - i,
+-						NULL, &pfn);
++						NULL, &pfn, 0);
+ 			if (daa <= 0) {
+ 				r = daa ? daa : -EINVAL;
+ 				goto err3;
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index a011d09cb0fa..e5a14abd45f9 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -998,7 +998,7 @@ static struct dm_target *dm_dax_get_live_target(struct mapped_device *md,
+ }
+ 
+ static long dm_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+-				 long nr_pages, void **kaddr, pfn_t *pfn)
++	long nr_pages, void **kaddr, pfn_t *pfn, unsigned long flags)
+ {
+ 	struct mapped_device *md = dax_get_private(dax_dev);
+ 	sector_t sector = pgoff * PAGE_SECTORS;
+@@ -1016,7 +1016,7 @@ static long dm_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+ 	if (len < 1)
+ 		goto out;
+ 	nr_pages = min(len, nr_pages);
+-	ret = ti->type->direct_access(ti, pgoff, nr_pages, kaddr, pfn);
++	ret = ti->type->direct_access(ti, pgoff, nr_pages, kaddr, pfn, flags);
+ 
+  out:
+ 	dm_put_live_table(md, srcu_idx);
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 72de88ff0d30..b0b7fd40560e 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -256,7 +256,7 @@ static int pmem_rw_page(struct block_device *bdev, sector_t sector,
+ 
+ /* see "strong" declaration in tools/testing/nvdimm/pmem-dax.c */
+ __weak long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
+-		long nr_pages, void **kaddr, pfn_t *pfn)
++	long nr_pages, void **kaddr, pfn_t *pfn, unsigned long flags)
+ {
+ 	resource_size_t offset = PFN_PHYS(pgoff) + pmem->data_offset;
+ 
+@@ -295,11 +295,12 @@ static int pmem_dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
+ }
+ 
+ static long pmem_dax_direct_access(struct dax_device *dax_dev,
+-		pgoff_t pgoff, long nr_pages, void **kaddr, pfn_t *pfn)
++		pgoff_t pgoff, long nr_pages, void **kaddr, pfn_t *pfn,
++		unsigned long flags)
+ {
+ 	struct pmem_device *pmem = dax_get_private(dax_dev);
+ 
+-	return __pmem_direct_access(pmem, pgoff, nr_pages, kaddr, pfn);
++	return __pmem_direct_access(pmem, pgoff, nr_pages, kaddr, pfn, flags);
+ }
+ 
+ /*
+diff --git a/drivers/nvdimm/pmem.h b/drivers/nvdimm/pmem.h
+index 59cfe13ea8a8..fb769b22777a 100644
+--- a/drivers/nvdimm/pmem.h
++++ b/drivers/nvdimm/pmem.h
+@@ -27,7 +27,7 @@ struct pmem_device {
+ };
+ 
+ long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
+-		long nr_pages, void **kaddr, pfn_t *pfn);
++	long nr_pages, void **kaddr, pfn_t *pfn, unsigned long flags);
+ 
+ #ifdef CONFIG_MEMORY_FAILURE
+ static inline bool test_and_clear_pmem_poison(struct page *page)
+diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
+index 5be3d1c39a78..6ab2f9badc8d 100644
+--- a/drivers/s390/block/dcssblk.c
++++ b/drivers/s390/block/dcssblk.c
+@@ -32,7 +32,7 @@ static int dcssblk_open(struct block_device *bdev, fmode_t mode);
+ static void dcssblk_release(struct gendisk *disk, fmode_t mode);
+ static blk_qc_t dcssblk_submit_bio(struct bio *bio);
+ static long dcssblk_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+-		long nr_pages, void **kaddr, pfn_t *pfn);
++		long nr_pages, void **kaddr, pfn_t *pfn, unsigned long flags);
+ 
+ static char dcssblk_segments[DCSSBLK_PARM_LEN] = "\0";
+ 
+@@ -62,7 +62,7 @@ static int dcssblk_dax_zero_page_range(struct dax_device *dax_dev,
+ 	long rc;
+ 	void *kaddr;
+ 
+-	rc = dax_direct_access(dax_dev, pgoff, nr_pages, &kaddr, NULL);
++	rc = dax_direct_access(dax_dev, pgoff, nr_pages, &kaddr, NULL, 0);
+ 	if (rc < 0)
+ 		return rc;
+ 	memset(kaddr, 0, nr_pages << PAGE_SHIFT);
+@@ -932,7 +932,8 @@ __dcssblk_direct_access(struct dcssblk_dev_info *dev_info, pgoff_t pgoff,
+ 
+ static long
+ dcssblk_dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+-		long nr_pages, void **kaddr, pfn_t *pfn)
++		long nr_pages, void **kaddr, pfn_t *pfn,
++		unsigned long flags)
+ {
+ 	struct dcssblk_dev_info *dev_info = dax_get_private(dax_dev);
+ 
 diff --git a/fs/dax.c b/fs/dax.c
-index 4e3e5a283a91..01118de00011 100644
+index 01118de00011..f603a9ce7f20 100644
 --- a/fs/dax.c
 +++ b/fs/dax.c
-@@ -1288,6 +1288,9 @@ dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	if (iocb->ki_flags & IOCB_NOWAIT)
- 		iomi.flags |= IOMAP_NOWAIT;
+@@ -722,7 +722,7 @@ static int copy_cow_page_dax(struct block_device *bdev, struct dax_device *dax_d
+ 		return rc;
  
-+	if (iocb->ki_flags & IOCB_RECOVERY)
-+		iomi.flags |= IOMAP_RECOVERY;
+ 	id = dax_read_lock();
+-	rc = dax_direct_access(dax_dev, pgoff, 1, &kaddr, NULL);
++	rc = dax_direct_access(dax_dev, pgoff, 1, &kaddr, NULL, 0);
+ 	if (rc < 0) {
+ 		dax_read_unlock(id);
+ 		return rc;
+@@ -1023,7 +1023,7 @@ static int dax_iomap_pfn(const struct iomap *iomap, loff_t pos, size_t size,
+ 		return rc;
+ 	id = dax_read_lock();
+ 	length = dax_direct_access(iomap->dax_dev, pgoff, PHYS_PFN(size),
+-				   NULL, pfnp);
++				   NULL, pfnp, 0);
+ 	if (length < 0) {
+ 		rc = length;
+ 		goto out;
+@@ -1149,7 +1149,7 @@ s64 dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
+ 	if (page_aligned)
+ 		rc = dax_zero_page_range(iomap->dax_dev, pgoff, 1);
+ 	else
+-		rc = dax_direct_access(iomap->dax_dev, pgoff, 1, &kaddr, NULL);
++		rc = dax_direct_access(iomap->dax_dev, pgoff, 1, &kaddr, NULL, 0);
+ 	if (rc < 0) {
+ 		dax_read_unlock(id);
+ 		return rc;
+@@ -1172,6 +1172,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
+ 	struct block_device *bdev = iomap->bdev;
+ 	struct dax_device *dax_dev = iomap->dax_dev;
+ 	loff_t end = pos + length, done = 0;
++	unsigned long dax_flag = 0;
+ 	ssize_t ret = 0;
+ 	size_t xfer;
+ 	int id;
+@@ -1199,6 +1200,9 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
+ 					      (end - 1) >> PAGE_SHIFT);
+ 	}
+ 
++	if (iomi->flags & IOMAP_RECOVERY)
++		dax_flag |= DAXDEV_F_RECOVERY;
 +
- 	while ((ret = iomap_iter(&iomi, ops)) > 0)
- 		iomi.processed = dax_iomap_iter(&iomi, iter);
+ 	id = dax_read_lock();
+ 	while (pos < end) {
+ 		unsigned offset = pos & (PAGE_SIZE - 1);
+@@ -1218,7 +1222,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
+ 			break;
  
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e7a633353fd2..ae138649cbe3 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -311,6 +311,7 @@ enum rw_hint {
- #define IOCB_SYNC		(__force int) RWF_SYNC
- #define IOCB_NOWAIT		(__force int) RWF_NOWAIT
- #define IOCB_APPEND		(__force int) RWF_APPEND
-+#define IOCB_RECOVERY		(__force int) RWF_RECOVERY_DATA
+ 		map_len = dax_direct_access(dax_dev, pgoff, PHYS_PFN(size),
+-				&kaddr, NULL);
++				&kaddr, NULL, dax_flag);
+ 		if (map_len < 0) {
+ 			ret = map_len;
+ 			break;
+diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+index 281d79f8b3d3..2c45b94647f1 100644
+--- a/fs/fuse/dax.c
++++ b/fs/fuse/dax.c
+@@ -1245,7 +1245,7 @@ static int fuse_dax_mem_range_init(struct fuse_conn_dax *fcd)
  
- /* non-RWF related bits - start at 16 */
- #define IOCB_EVENTFD		(1 << 16)
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 24f8489583ca..c13d23328140 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -141,6 +141,7 @@ struct iomap_page_ops {
- #define IOMAP_NOWAIT		(1 << 5) /* do not block */
- #define IOMAP_OVERWRITE_ONLY	(1 << 6) /* only pure overwrites allowed */
- #define IOMAP_UNSHARE		(1 << 7) /* unshare_file_range */
-+#define IOMAP_RECOVERY		(1 << 8) /* data recovery */
+ 	id = dax_read_lock();
+ 	nr_pages = dax_direct_access(fcd->dev, 0, PHYS_PFN(dax_size), NULL,
+-				     NULL);
++				     NULL, 0);
+ 	dax_read_unlock(id);
+ 	if (nr_pages < 0) {
+ 		pr_debug("dax_direct_access() returned %ld\n", nr_pages);
+diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+index 0ad89c6629d7..d201b6e8a190 100644
+--- a/fs/fuse/virtio_fs.c
++++ b/fs/fuse/virtio_fs.c
+@@ -739,7 +739,7 @@ static void virtio_fs_cleanup_vqs(struct virtio_device *vdev,
+  * offset.
+  */
+ static long virtio_fs_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
+-				    long nr_pages, void **kaddr, pfn_t *pfn)
++	    long nr_pages, void **kaddr, pfn_t *pfn, unsigned long flags)
+ {
+ 	struct virtio_fs *fs = dax_get_private(dax_dev);
+ 	phys_addr_t offset = PFN_PHYS(pgoff);
+@@ -773,7 +773,7 @@ static int virtio_fs_zero_page_range(struct dax_device *dax_dev,
+ 	long rc;
+ 	void *kaddr;
  
- struct iomap_ops {
+-	rc = dax_direct_access(dax_dev, pgoff, nr_pages, &kaddr, NULL);
++	rc = dax_direct_access(dax_dev, pgoff, nr_pages, &kaddr, NULL, 0);
+ 	if (rc < 0)
+ 		return rc;
+ 	memset(kaddr, 0, nr_pages << PAGE_SHIFT);
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index 2619d94c308d..0044a5d87e5d 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -9,6 +9,9 @@
+ /* Flag for synchronous flush */
+ #define DAXDEV_F_SYNC (1UL << 0)
+ 
++/* Flag for DAX data recovery */
++#define DAXDEV_F_RECOVERY	(1UL << 1)
++
+ typedef unsigned long dax_entry_t;
+ 
+ struct iomap_ops;
+@@ -21,7 +24,7 @@ struct dax_operations {
+ 	 * number of pages available for DAX at that pfn.
+ 	 */
+ 	long (*direct_access)(struct dax_device *, pgoff_t, long,
+-			void **, pfn_t *);
++			void **, pfn_t *, unsigned long);
  	/*
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index bdf7b404b3e7..febec55ea4b8 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -301,8 +301,11 @@ typedef int __bitwise __kernel_rwf_t;
- /* per-IO O_APPEND */
- #define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
+ 	 * Validate whether this device is usable as an fsdax backing
+ 	 * device.
+@@ -192,7 +195,7 @@ static inline void dax_read_unlock(int id)
+ bool dax_alive(struct dax_device *dax_dev);
+ void *dax_get_private(struct dax_device *dax_dev);
+ long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_pages,
+-		void **kaddr, pfn_t *pfn);
++		void **kaddr, pfn_t *pfn, unsigned long);
+ size_t dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+ 		size_t bytes, struct iov_iter *i);
+ size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
+index 114553b487ef..307c29789332 100644
+--- a/include/linux/device-mapper.h
++++ b/include/linux/device-mapper.h
+@@ -146,7 +146,7 @@ typedef int (*dm_busy_fn) (struct dm_target *ti);
+  * >= 0 : the number of bytes accessible at the address
+  */
+ typedef long (*dm_dax_direct_access_fn) (struct dm_target *ti, pgoff_t pgoff,
+-		long nr_pages, void **kaddr, pfn_t *pfn);
++		long nr_pages, void **kaddr, pfn_t *pfn, unsigned long flags);
+ typedef size_t (*dm_dax_copy_iter_fn)(struct dm_target *ti, pgoff_t pgoff,
+ 		void *addr, size_t bytes, struct iov_iter *i);
+ typedef int (*dm_dax_zero_page_range_fn)(struct dm_target *ti, pgoff_t pgoff,
+diff --git a/tools/testing/nvdimm/pmem-dax.c b/tools/testing/nvdimm/pmem-dax.c
+index af19c85558e7..45dcfffe5575 100644
+--- a/tools/testing/nvdimm/pmem-dax.c
++++ b/tools/testing/nvdimm/pmem-dax.c
+@@ -8,7 +8,7 @@
+ #include <nd.h>
  
-+/* per-IO for data recovery */
-+#define RWF_RECOVERY_DATA	((__force __kernel_rwf_t)0x00000020)
-+
- /* mask of flags supported by the kernel */
- #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
--			 RWF_APPEND)
-+			 RWF_APPEND | RWF_RECOVERY_DATA)
+ long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
+-		long nr_pages, void **kaddr, pfn_t *pfn)
++	long nr_pages, void **kaddr, pfn_t *pfn, unsigned long flags)
+ {
+ 	resource_size_t offset = PFN_PHYS(pgoff) + pmem->data_offset;
  
- #endif /* _UAPI_LINUX_FS_H */
 -- 
 2.18.4
 
