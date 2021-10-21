@@ -2,75 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BBD243620D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 14:45:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9B3E436203
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 14:44:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231204AbhJUMrh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 08:47:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43224 "EHLO
+        id S230347AbhJUMrL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 08:47:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231183AbhJUMrh (ORCPT
+        with ESMTP id S230190AbhJUMrI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Oct 2021 08:47:37 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F9E7C06161C;
-        Thu, 21 Oct 2021 05:45:21 -0700 (PDT)
+        Thu, 21 Oct 2021 08:47:08 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4805C06161C
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 05:44:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=MhYSZk7FAb+xEHuiCzqmgFseK1YofUw99Jp2bva3xY8=; b=wVbv7NUbTjE8dMe69LJ3KyJhcb
-        65x7KsMVnnOpwDx2m5nASW/7LO2m9m+V1QKkFSqW//U1b1RijQxuQlUD4PrsbfPRP6RDx/wdevlOk
-        3T8UwJSjKBVgfKaiDNrCbShQAcmagdvdObG0SVx9XlDZd4fNSD3LGTEytVpaeiKdMF6Y5z1hzz8so
-        Z513j9bejFZRpj1FG1m5QySDRgw23NQi0vNt13lbT8UgVLuqlBz2hyp6hKQ07pkTh3zRx/nyAAsXD
-        k3wZ1SHfCI8//EYUi6XCQJr5G0mxUKylt8S3s+/ky0BTdnO3Tu6gWpvIqOZKk3nbr/D46Gxk92xkR
-        NSjXSV9g==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mdXON-00DGl6-Rc; Thu, 21 Oct 2021 12:42:41 +0000
-Date:   Thu, 21 Oct 2021 13:41:55 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
-Message-ID: <YXFgEzZw/AOJ7AnW@casper.infradead.org>
-References: <YW3tkuCUPVICvMBX@cmpxchg.org>
- <20211018231627.kqrnalsi74bgpoxu@box.shutemov.name>
- <YW7hQlny+Go1K3LT@cmpxchg.org>
- <996b3ac4-1536-2152-f947-aad6074b046a@redhat.com>
- <YXBRPSjPUYnoQU+M@casper.infradead.org>
- <436a9f9c-d5af-7d12-b7d2-568e45ffe0a0@redhat.com>
- <YXEOCIWKEcUOvVtv@infradead.org>
- <f31af20e-245d-a8f1-49fa-e368de9fa95c@redhat.com>
- <YXFXGeYlGFsuHz/T@moria.home.lan>
- <2fc2c5da-c0e9-b954-ba48-e258b88e3271@redhat.com>
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=tyuxQN/9l/MuuY3VK3hJBq6XTpOt/wE7olURc0cZxQU=; b=UhASpoQLMrBRxrddKcCl9CeJ/R
+        4On8jwx63mNHF/qzicrm2l2O6wJUt1wnDB4A/Xstc9HBbDM7NLNY7HL7RYPAhxCdlSx9Sn8tQtG9X
+        9PcpICnBunfWJ25Iks7wCa7CN81x6xfHbHLe17LF6eaeErr7SaPUMc+pD8kWy1VHq05ZjE6sNA/2i
+        9aPUGJFpXTJlvIyP2nAF4JGVEXyXN2VIH8Ve6CAS/Kt8PWTWcvMil1zFCavW+sEUNy9b2sJ+CEA2b
+        MhZl4DODlrxPTSZo8FE3T43KYwa1VgL5N1hxP/F/G/+3VilWc7BmdH8FkvoCItwWbw8znBV5MD5tt
+        WxdZYlVQ==;
+Received: from [2001:4bb8:180:8777:dd70:8011:36d9:4c23] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mdXR8-007WxN-3g; Thu, 21 Oct 2021 12:44:46 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>, Jan Kara <jack@suse.cz>,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: simplify bdi unregistation
+Date:   Thu, 21 Oct 2021 14:44:36 +0200
+Message-Id: <20211021124441.668816-1-hch@lst.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2fc2c5da-c0e9-b954-ba48-e258b88e3271@redhat.com>
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 21, 2021 at 02:35:32PM +0200, David Hildenbrand wrote:
-> My opinion after all the discussions: use a dedicate type with a clear
-> name to solve the immediate filemap API issue. Leave the remainder alone
-> for now. Less code to touch, less subsystems to involve (well, still a
-> lot), less people to upset, less discussions to have, faster review,
-> faster upstream, faster progress. A small but reasonable step.
+Hi Andrew,
 
-I didn't change anything I didn't need to.  File pages go onto the
-LRU list, so I need to change the LRU code to handle arbitrary-sized
-folios instead of pages which are either order-0 or order-9.  Every
-function that I convert in this patchset is either used by another
-function in this patchset, or by the fs/iomap conversion that I have
-staged for the next merge window after folios goes in.
+this series simplifies the BDI code to get tid of the magic
+auto-unregister feature that hid a recent block layer refcounting
+bug.
+
+Diffstat:
+ drivers/mtd/mtdcore.c |    1 +
+ fs/super.c            |    3 +++
+ include/linux/fs.h    |    1 +
+ mm/backing-dev.c      |   17 +++++++----------
+ 4 files changed, 12 insertions(+), 10 deletions(-)
