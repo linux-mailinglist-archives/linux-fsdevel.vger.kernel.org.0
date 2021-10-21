@@ -2,65 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB44C4364A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 16:47:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32F3E4365BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 17:16:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231431AbhJUOtR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 10:49:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43408 "EHLO
+        id S231685AbhJUPSW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 11:18:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230072AbhJUOtR (ORCPT
+        with ESMTP id S231755AbhJUPSQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Oct 2021 10:49:17 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8928AC0613B9;
-        Thu, 21 Oct 2021 07:47:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=+8n4cpY5LuFlx85ZjXXbllJghKIUwt7Uc6uXkpKGh8Q=; b=U+I20vSWI85htnedCO/8fM86d5
-        AE39SBJduLpbQEUmK7Kf7DFivvK5g+8Db/9dgI3aAAGbiIoimu41Nc9DXeA+7MqTyl7OB3Ii7I8vD
-        JVRjOo7to4CwyjgalqQ1XFcQc0Lx6oEYnDxgPlfItajvTLr2KvJ/bbN+uTavflaH3M6Uqa4GSjoId
-        w5yTv3CNv0pp6SW9BXOGyx+OkozfPPRmKEKSUYv5IKCo5Gc0H+uXjANmd78+jRaTvxaot4gzgi2cy
-        ttbtA/NRMjTI/wKekazV3ggnD9kYifscDcHyRz1uL56J2bn6MYO0b222EU3KpR06BktKIBov9IDfb
-        zmbP9ruw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mdZLR-007tV6-44; Thu, 21 Oct 2021 14:47:01 +0000
-Date:   Thu, 21 Oct 2021 07:47:01 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        linux-aio@kvack.org, linux-usb@vger.kernel.org,
-        Jeff Moyer <jmoyer@redhat.com>
-Subject: Re: [PATCH v2] fs: replace the ki_complete two integer arguments
- with a single argument
-Message-ID: <YXF9ZQcrfTnWix2j@infradead.org>
-References: <4d409f23-2235-9fa6-4028-4d6c8ed749f8@kernel.dk>
- <YXElk52IsvCchbOx@infradead.org>
- <YXFHgy85MpdHpHBE@infradead.org>
- <4d3c5a73-889c-2e2c-9bb2-9572acdd11b7@kernel.dk>
- <YXF8X3RgRfZpL3Cb@infradead.org>
- <b7b6e63e-8787-f24c-2028-e147b91c4576@kernel.dk>
+        Thu, 21 Oct 2021 11:18:16 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 758C6C06122C
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 08:16:00 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 84-20020a1c0457000000b003232b0f78f8so110014wme.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 08:16:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=k+el4LssRR48MXi9zHjZky4nWABgnOCsHjGg/d8oAg4=;
+        b=FsnxtymjLqZS2VFG04DvIpLqgieKtVBHjHP93zwTtnR5kU0AQ0H7Txhivy0MI6r3F+
+         4ti4PHUooqoxlBofAnmjSThJWtmu00KP3f4qIow3SpAzH8sOiz2MUHysGzF0AqYS8isQ
+         X/khq1aIqEF1IRXsINLNgw93KFmokB2bYNY5I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=k+el4LssRR48MXi9zHjZky4nWABgnOCsHjGg/d8oAg4=;
+        b=BAHqMHkeyFW9Zu6LfLcGoc8b1CA6W7/7Wb0EpDobZLFQK+cBluI3WFaETBNIszQSUK
+         zz/j5cfdvsKLgvaAO67+ijhCQ6smKVlhAWmxSHoMXbpBZmzJRZ/ybYn6TOr7nfW5pt/r
+         0FwG7G5hgpa0ILZ8Em/JOqrluHXMld4TYxUKZuHZAhK+43SPOw2QrbJ1CRjF2DJ2olXd
+         Wfci9fmvNF6stD3Xc1t7UEfIqRqpJKFgijBwhGMdYw3xZVKm8OUpuyfiPcanuVaa7f2G
+         +6qswDp6zNFCOWREwd7XBLPrl016ZKBiEo/5ys+OUHejYhVda5lQkDo7K+La0KhVsU/f
+         Hl3Q==
+X-Gm-Message-State: AOAM532MsdThpIJFw2G9EDkMQI2DaUezFRPCwnP25ClG4lUySUg0IK9p
+        DSvC9brUrk6NAOmvT54P22Ef0w==
+X-Google-Smtp-Source: ABdhPJy2h51ESbpe/ACQzNHuZP5xG4x2CZXy7D5ddfeiaaqbvULX+oBLkAEKf1/ueSmOhDE9tPdDhg==
+X-Received: by 2002:a7b:c183:: with SMTP id y3mr21815596wmi.2.1634829359046;
+        Thu, 21 Oct 2021 08:15:59 -0700 (PDT)
+Received: from altair.lan (7.2.6.0.8.8.2.4.4.c.c.f.b.1.5.4.f.f.6.2.a.5.a.7.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:7a5a:26ff:451b:fcc4:4288:627])
+        by smtp.googlemail.com with ESMTPSA id z1sm5098562wrt.94.2021.10.21.08.15.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Oct 2021 08:15:58 -0700 (PDT)
+From:   Lorenz Bauer <lmb@cloudflare.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>
+Cc:     kernel-team@cloudflare.com, Lorenz Bauer <lmb@cloudflare.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH bpf-next v2 1/3] libfs: support RENAME_EXCHANGE in simple_rename()
+Date:   Thu, 21 Oct 2021 16:15:26 +0100
+Message-Id: <20211021151528.116818-2-lmb@cloudflare.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20211021151528.116818-1-lmb@cloudflare.com>
+References: <20211021151528.116818-1-lmb@cloudflare.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7b6e63e-8787-f24c-2028-e147b91c4576@kernel.dk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 21, 2021 at 08:44:16AM -0600, Jens Axboe wrote:
-> On 10/21/21 8:42 AM, Christoph Hellwig wrote:
-> > On Thu, Oct 21, 2021 at 08:34:38AM -0600, Jens Axboe wrote:
-> >> Incremental, are you happy with that comment?
-> > 
-> > Looks fine to me.
-> 
-> OK good, can I add your ack/review? I can send out a v3 if needed, but
-> seems a bit pointless for that small change.
+Allow atomic exchange via RENAME_EXCHANGE when using simple_rename.
+This affects binderfs, ramfs, hubetlbfs and bpffs. There isn't much
+to do except update the various *time fields.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
+---
+ fs/libfs.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 51b4de3b3447..93c03d593749 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -455,9 +455,12 @@ int simple_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
+ 	struct inode *inode = d_inode(old_dentry);
+ 	int they_are_dirs = d_is_dir(old_dentry);
+ 
+-	if (flags & ~RENAME_NOREPLACE)
++	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE))
+ 		return -EINVAL;
+ 
++	if (flags & RENAME_EXCHANGE)
++		goto done;
++
+ 	if (!simple_empty(new_dentry))
+ 		return -ENOTEMPTY;
+ 
+@@ -472,6 +475,7 @@ int simple_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
+ 		inc_nlink(new_dir);
+ 	}
+ 
++done:
+ 	old_dir->i_ctime = old_dir->i_mtime = new_dir->i_ctime =
+ 		new_dir->i_mtime = inode->i_ctime = current_time(old_dir);
+ 
+-- 
+2.32.0
+
