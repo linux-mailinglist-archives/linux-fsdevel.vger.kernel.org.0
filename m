@@ -2,173 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 566574357E2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 02:39:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 411114357E9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 02:46:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231383AbhJUAmH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Oct 2021 20:42:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57938 "EHLO
+        id S230338AbhJUAsn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Oct 2021 20:48:43 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27991 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231199AbhJUAmG (ORCPT
+        by vger.kernel.org with ESMTP id S229702AbhJUAsk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Oct 2021 20:42:06 -0400
+        Wed, 20 Oct 2021 20:48:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634776791;
+        s=mimecast20190719; t=1634777184;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=nINcHNP1LunHuFgS+T7bSGFWStA5gFA7A821E6TM/8E=;
-        b=a9Zv1rn/GXs0jDPu1oIgn9ZYIy6qwQSyUVPpGp8vhlgwX41y6yarKinqp5hqn5Ej98tE63
-        DZDwdMBupspCMpk/upzH4UlFCWKYHm9x0j3osc8TagzFDdF1w/FT52P4dMduW0pASQ87dQ
-        QUE9Am7NeeZubgZMRc+VXHvKCEZWJlM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-557-c3Q0yG6OP5e-tVuS9OPEsw-1; Wed, 20 Oct 2021 20:39:45 -0400
-X-MC-Unique: c3Q0yG6OP5e-tVuS9OPEsw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AFD5A1006AA2;
-        Thu, 21 Oct 2021 00:39:42 +0000 (UTC)
-Received: from T590 (ovpn-8-19.pek2.redhat.com [10.72.8.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2231319D9B;
-        Thu, 21 Oct 2021 00:39:10 +0000 (UTC)
-Date:   Thu, 21 Oct 2021 08:39:05 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, tj@kernel.org,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        minchan@kernel.org, jeyu@kernel.org, shuah@kernel.org,
-        bvanassche@acm.org, dan.j.williams@intel.com, joe@perches.com,
-        tglx@linutronix.de, keescook@chromium.org, rostedt@goodmis.org,
-        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ming.lei@redhat.com
-Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
-Message-ID: <YXC2qcx/RlLwjrKx@T590>
-References: <YWk9e957Hb+I7HvR@T590>
- <YWm68xUnAofop3PZ@bombadil.infradead.org>
- <YWq3Z++uoJ/kcp+3@T590>
- <YW3LuzaPhW96jSBK@bombadil.infradead.org>
- <YW4uwep3BCe9Vxq8@T590>
- <YW7kFXlzRrvwzARP@bombadil.infradead.org>
- <YW7ygbLAwm2/LZFl@T590>
- <YW8eSq2B+5FtOLZb@bombadil.infradead.org>
- <YW9tqPunx5bssxIz@T590>
- <YXA6NMhwoiIMeHji@bombadil.infradead.org>
+        bh=GgRzGZvlhKco4vdRDM+mmGlMh4qaw7uLRwsJYM91KRo=;
+        b=IQBwYGfQK15ThPucqyFYj/HScJ3ZaZm3RSKyA7gSM11/++fCdCiDHjp3v606wsWv6jwlCQ
+        EXa2Ux/r/k6c7RIRLeDQ9HkY5gHLg168cNmX/mXtUNi6h5aZYz4VbgW+XFMM8kQOqRhMsO
+        sz3ASGnR2J16cK3fnkpTef5JjMaJHcE=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-501-KI4Gbn8pNXqbUPH3xKKfcg-1; Wed, 20 Oct 2021 20:46:23 -0400
+X-MC-Unique: KI4Gbn8pNXqbUPH3xKKfcg-1
+Received: by mail-wm1-f72.google.com with SMTP id q203-20020a1ca7d4000000b0030dcdcd37c5so1125914wme.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Oct 2021 17:46:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GgRzGZvlhKco4vdRDM+mmGlMh4qaw7uLRwsJYM91KRo=;
+        b=VhY47BZkx282hSLkNF7mbM7+ak1FmHq+TE3Wjs6X/oSTZHMYQvsjr5ON4kGzH6qMHg
+         X5JknPfNpb4OhixSaOiVq4TqAZZa1tAwq7lONHWJ/yvYXPZ0jy4LZnEa7hPpUmY/ZNWT
+         nw8NE8nQZhnfIhNRwNhtD+4PIbntKybp72p7aZW5xp6vBZ86dHtcKNTEGKdOmYR7WfeS
+         3PJI0B4/GPuo37cg73HDr9Ovbc2CSQG5HA6ihaVYyZ4r+TVMb5F+pGdSaD0D8Rlpp2Zu
+         hGZVwoh4axC3dfv3ncqxuDabHSVh3skvpIqtLrzppo4HshtqOlFDOePGGbxf0rBtfP8R
+         2ctg==
+X-Gm-Message-State: AOAM532++qYzlFDDCZGTm1+/CIBhsXI4U6Ug+KN1YwADkAVeyX4VbZhN
+        9Crftg0iQ9vG4xAUqgvRHoMRmA0TKtd5LLzwo2MHKAbfqCH6oaE91/SHRpT01UzYgkDECjeUlVA
+        bt66q6zPIWVGP020YrVXH6wNhLqY8IgmBkh1jOvcdYQ==
+X-Received: by 2002:a1c:4e10:: with SMTP id g16mr588678wmh.128.1634777182189;
+        Wed, 20 Oct 2021 17:46:22 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxRGyQwuX0RWsnHGQyYi/ngKg0rwoZsofzx0FO8yb5Tm0XYCRffyxkRLT6pbnH1pATha3ETgfDhMtMfli9BWdA=
+X-Received: by 2002:a1c:4e10:: with SMTP id g16mr588649wmh.128.1634777181923;
+ Wed, 20 Oct 2021 17:46:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YXA6NMhwoiIMeHji@bombadil.infradead.org>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <CAHk-=wh5p6zpgUUoY+O7e74X9BZyODhnsqvv=xqnTaLRNj3d_Q@mail.gmail.com>
+ <YSk7xfcHVc7CxtQO@zeniv-ca.linux.org.uk> <CAHk-=wjMyZLH+ta5SohAViSc10iPj-hRnHc-KPDoj1XZCmxdBg@mail.gmail.com>
+ <YSk+9cTMYi2+BFW7@zeniv-ca.linux.org.uk> <YSldx9uhMYhT/G8X@zeniv-ca.linux.org.uk>
+ <YSqOUb7yZ7kBoKRY@zeniv-ca.linux.org.uk> <YS40qqmXL7CMFLGq@arm.com>
+ <YS5KudP4DBwlbPEp@zeniv-ca.linux.org.uk> <YWR2cPKeDrc0uHTK@arm.com>
+ <CAHk-=wjvQWj7mvdrgTedUW50c2fkdn6Hzxtsk-=ckkMrFoTXjQ@mail.gmail.com>
+ <YWSnvq58jDsDuIik@arm.com> <CAHk-=wiNWOY5QW5ZJukt_9pHTWvrJhE2=DxPpEtFHAWdzOPDTg@mail.gmail.com>
+In-Reply-To: <CAHk-=wiNWOY5QW5ZJukt_9pHTWvrJhE2=DxPpEtFHAWdzOPDTg@mail.gmail.com>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Thu, 21 Oct 2021 02:46:10 +0200
+Message-ID: <CAHc6FU7bpjAxP+4dfE-C0pzzQJN1p=C2j3vyXwUwf7fF9JF72w@mail.gmail.com>
+Subject: Re: [RFC][arm64] possible infinite loop in btrfs search_ioctl()
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 20, 2021 at 08:48:04AM -0700, Luis Chamberlain wrote:
-> On Wed, Oct 20, 2021 at 09:15:20AM +0800, Ming Lei wrote:
-> > On Tue, Oct 19, 2021 at 12:36:42PM -0700, Luis Chamberlain wrote:
-> > > On Wed, Oct 20, 2021 at 12:29:53AM +0800, Ming Lei wrote:
-> > > > diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-> > > > index d0cae7a42f4d..a14ba3d350ea 100644
-> > > > --- a/drivers/block/zram/zram_drv.c
-> > > > +++ b/drivers/block/zram/zram_drv.c
-> > > > @@ -1704,12 +1704,12 @@ static void zram_reset_device(struct zram *zram)
-> > > >  	set_capacity_and_notify(zram->disk, 0);
-> > > >  	part_stat_set_all(zram->disk->part0, 0);
-> > > >  
-> > > > -	up_write(&zram->init_lock);
-> > > >  	/* I/O operation under all of CPU are done so let's free */
-> > > >  	zram_meta_free(zram, disksize);
-> > > >  	memset(&zram->stats, 0, sizeof(zram->stats));
-> > > >  	zcomp_destroy(comp);
-> > > >  	reset_bdev(zram);
-> > > > +	up_write(&zram->init_lock);
-> > > >  }
-> > > >  
-> > > >  static ssize_t disksize_store(struct device *dev,
-> > > 
-> > > With this, it still ends up in a state where we loop and can't get out of:
-> > > 
-> > > zram: Can't change algorithm for initialized device
-> > 
-> > Again, you are running two zram02.sh[1] on /dev/zram0, that isn't unexpected
-> 
-> You mean that it is not expected? If so then yes, of course.
+On Tue, Oct 12, 2021 at 1:59 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Mon, Oct 11, 2021 at 2:08 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+> >
+> > +#ifdef CONFIG_ARM64_MTE
+> > +#define FAULT_GRANULE_SIZE     (16)
+> > +#define FAULT_GRANULE_MASK     (~(FAULT_GRANULE_SIZE-1))
+>
+> [...]
+>
+> > If this looks in the right direction, I'll do some proper patches
+> > tomorrow.
+>
+> Looks fine to me. It's going to be quite expensive and bad for caches, though.
+>
+> That said, fault_in_writable() is _supposed_ to all be for the slow
+> path when things go south and the normal path didn't work out, so I
+> think it's fine.
 
-My meaning is clear: it is not unexpected, so it is expected.
+Let me get back to this; I'm actually not convinced that we need to
+worry about sub-page-size fault granules in fault_in_pages_readable or
+fault_in_pages_writeable.
 
-> 
-> > behavior. Here the difference is just timing.
-> 
-> Right, but that is what helped reproduce a difficutl to re-produce customer
-> bug. Once you find an easy way to reproduce a reported issue you stick
-> with it and try to make the situation worse to ensure no more bugs are
-> present.
-> 
-> > Also you did not answer my question about your test expected result when
-> > running the following script from two terminal concurrently:
-> > 
-> > 	while true; do
-> > 		PATH=$PATH:$PWD:$PWD/../../../lib/ ./zram02.sh;
-> > 	done
-> 
-> If you run this, you should see no failures.
+From a filesystem point of view, we can get into trouble when a
+user-space read or write triggers a page fault while we're holding
+filesystem locks, and that page fault ends up calling back into the
+filesystem. To deal with that, we're performing those user-space
+accesses with page faults disabled. When a page fault would occur, we
+get back an error instead, and then we try to fault in the offending
+pages. If a page is resident and we still get a fault trying to access
+it, trying to fault in the same page again isn't going to help and we
+have a true error. We're clearly looking at memory at a page
+granularity; faults at a sub-page level don't matter at this level of
+abstraction (but they do show similar error behavior). To avoid
+getting stuck, when it gets a short result or -EFAULT, the filesystem
+implements the following backoff strategy: first, it tries to fault in
+a number of pages. When the read or write still doesn't make progress,
+it scales back and faults in a single page. Finally, when that still
+doesn't help, it gives up. This strategy is needed for actual page
+faults, but it also handles sub-page faults appropriately as long as
+the user-space access functions give sensible results.
 
-OK, not see any failure when running single zram02.sh after applying my
-patch V2.
-
-> 
-> Once you start a second script that one should cause odd issues on both
-> sides but never crash or stall the module.
-
-crash can't be observed with my patch V2, what do you mean 'stall'
-the module? Is that 'zram' can't be unloaded after the test is
-terminated via multiple 'ctrl-c'?
-
-> 
-> A second series of tests is hitting CTRL-C on either randonly and
-> restarting testing once again randomly.
-
-ltp/zram02.sh has cleanup handler via trap to clean everything(swapoff/umount/reset/
-rmmod), ctrl-c will terminate current forground task and cause shell to run the
-cleanup handler first, but further 'ctrl-c' will terminate the cleanup handler,
-then the cleanup won't be done completely, such as zram disk is left as swap
-device and zram can't be unloaded. The idea can be observed via the following
-script:
-
-	#!/bin/bash
-	trap 'echo "enter trap"; sleep 20; echo "exit trap";' INT
-	sleep 30
-
-After the above script is run foreground, when 1st ctrl-c is pressed, 'sleep 30'
-is terminated, then the trap command is run, so you can see "enter trap"
-dumped. Then if you pressed 2nd ctrl-c, 'sleep 20' is terminated immediately.
-So 'swapoff' from zram02.sh's trap function can be terminated in this way.
-
-zram disk being left as swap disk can be observed with your patch too
-after terminating via multiple ctrl-c which has to be done this way because
-the test is dead loop.
-
-So it is hard to cleanup everything completely after multiple 'CTRL-C' is
-involved, and it should be impossible. It needs violent multiple ctrl-c to
-terminate the dealoop test.
-
-So it isn't reasonable to expect that zram can be always unloaded successfully
-after the test script is terminated via multiple ctrl-c.
-
-But zram can be unloaded after running swapoff manually, from driver
-viewpoint, nothing is wrong.
-
-> 
-> Again, neither should crash the kernel or stall the module.
-> 
-> In the end of these tests you should be able to run the script alone
-> just once and not see issues.
-
+What am I missing?
 
 Thanks,
-Ming
+Andreas
+
+> I do wonder how the sub-page granularity works. Is it sufficient to
+> just read from it? Because then a _slightly_ better option might be to
+> do one write per page (to catch page table writability) and then one
+> read per "granule" (to catch pointer coloring or cache poisoning
+> issues)?
+>
+> That said, since this is all preparatory to us wanting to write to it
+> eventually anyway, maybe marking it all dirty in the caches is only
+> good.
+>
+>                 Linus
+>
 
