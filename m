@@ -2,60 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 83395435C97
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 10:06:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24A34435C99
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Oct 2021 10:07:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231233AbhJUIJH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 04:09:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47470 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230385AbhJUIJG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Oct 2021 04:09:06 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C874860EB2;
-        Thu, 21 Oct 2021 08:06:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1634803611;
-        bh=Zc1yLj0ZFLXxAZHRYp8pqj+IaLe9PMu7BPN7eOukJpM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=q1bmAYlu/j3/f+LQGVUFWADL4QwnNGHqPsLFu1G9RlArqYcS51svAqoC1iS5rB1Zs
-         YGKDp7EOspKCHWQGieZYOwNTVuofY/naEWtpIl1i87BL5A1yi2CiwhOySOAMzHglrS
-         Bgbx98V6ymPRDc3cphWsMyHIX2wFojBV1OoXE05s=
-Date:   Thu, 21 Oct 2021 10:06:48 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        linux-aio@kvack.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v2] fs: replace the ki_complete two integer arguments
- with a single argument
-Message-ID: <YXEfmG4l5Y3WxeUp@kroah.com>
-References: <4d409f23-2235-9fa6-4028-4d6c8ed749f8@kernel.dk>
+        id S231313AbhJUIJW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 04:09:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35010 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230385AbhJUIJW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Oct 2021 04:09:22 -0400
+Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6283DC061749
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 01:07:06 -0700 (PDT)
+Received: by mail-ua1-x92d.google.com with SMTP id f4so11625810uad.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 01:07:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=no9cEcbIs5Y7LX0bbr/2ARsL8owG5qfnj1gxm7bjNJ8=;
+        b=YH4Rd8xGVzs1lojatFcKEfHwJ1oeB3KZizRZEHvPbyvW40Nn/dS7lYtcfoMICAFvy1
+         JjAvEFL7kHwo5ljQ/s1ogrloht++yqpAwtNTs1Jcmn2Rja83Jo+VMY5x6BT4e9qY6UwP
+         mmmu6g3v7vdCi+eSOUfGi+P+JQb6ujkkNMrl4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=no9cEcbIs5Y7LX0bbr/2ARsL8owG5qfnj1gxm7bjNJ8=;
+        b=8IRR5BEyrt/ui2xEp47lCinQXXi2AC3PyavwvictNpKtUsrSAdm91ektq18eMVwUA6
+         pERgahcVcg6DLooOjK46mbE0DsuQYoSd2Wl9DarwAsDIPajw53OJkF+Y2UWNOFx1vXhj
+         TYTc5V+awZCiTFTqw4anI/KL9bOhlTvJYRFVCpbYb3E9MOyVfdccNo1tApCQckRQHbpO
+         +QxYRcsZE9V9wuULUALIqTY85Vz06wbvO+yFWnIwxo/orAjtLFa2tXpDFsd+s8e05OHg
+         lUU2HVUOfWutHYuGaTwcIVk1naI5k/15MdMPnVUcQCSpsmoLjXpy72kB+yjs3SN+Zus1
+         bKzw==
+X-Gm-Message-State: AOAM533k5i4JkUOlQIGCcZNbLKpeEAOmnL+ae0HSIpryqV4r0IW5uHD/
+        YGbr83JVY3QtGKWXEST1PTcHOxoVozY/Lm2d4P9sZQ==
+X-Google-Smtp-Source: ABdhPJwOzrU1ve1DcUpTmbtyQFG/OPWr0caKKjsjHToUIfpZYxivocWHmeVwGTZ2iJudsXl2h0Vl+86kFC73/E7MV+Q=
+X-Received: by 2002:ab0:5741:: with SMTP id t1mr4545300uac.72.1634803625576;
+ Thu, 21 Oct 2021 01:07:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4d409f23-2235-9fa6-4028-4d6c8ed749f8@kernel.dk>
+References: <000000000000354def05cc0185ab@google.com>
+In-Reply-To: <000000000000354def05cc0185ab@google.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 21 Oct 2021 10:06:54 +0200
+Message-ID: <CAJfpegskcCEZAX+EbnBZyva2NDyhJ9k97ZM_E9OBeXRjDsC_BQ@mail.gmail.com>
+Subject: Re: [syzbot] general protection fault in fuse_test_super
+To:     syzbot <syzbot+74a15f02ccb51f398601@syzkaller.appspotmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 20, 2021 at 01:08:17PM -0600, Jens Axboe wrote:
-> The second argument is only used by the USB gadget code, yet everyone
-> pays the overhead of passing a zero to be passed into aio, where it
-> ends up being part of the aio res2 value.
-> 
-> Since we pass this value around as long, there's only 32-bits of
-> information in each of these. Linux IO transfers are capped at INT_MAX
-> anyway, so could not be any larger return value. For the one cases where
-> we care about this second result, mask it into the upper bits of the
-> value passed in. aio can then simply shift to get it.
-> 
-> For everyone else, just pass in res as an argument like before. Update
-> all ki_complete handlers to conform to the new prototype.
-> 
-> On 64-bit, this avoids an extra register allocation and clear for the
-> the fast path (non-USB gadget...).
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
-
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
+80019f1138324b6f35ae728b4f25eeb08899b452
