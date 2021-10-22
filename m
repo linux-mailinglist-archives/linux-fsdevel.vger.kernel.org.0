@@ -2,99 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E20B0436E7A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 01:43:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39E3C436EA3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 02:05:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232229AbhJUXpv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Oct 2021 19:45:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229512AbhJUXpu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Oct 2021 19:45:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D7B706120C;
-        Thu, 21 Oct 2021 23:43:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634859814;
-        bh=LE+sfzEXJlFl8jCsBBJvLQfsmo8JPatvzUNz5xSZVrk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=TgMVshk590paFQtbeK7zsyr4l/2uZp8+iGE+Is7GOaqOs2fjIWdb1db0zUOZCD1D/
-         qSIki3hnjNZxvH7hMUKP6OCN5hbiVGAv2XjSk4Vu4n2Brz1rBVrshn8bHukAQnfRRv
-         anWSmxVujkZB4+3Vgc3zvaFf1bGC7CzMWQKe6CW34pKn5QSZJPQUjgeysNPUEJswMd
-         t7htnv6dWAlApcY9+r9kUWKJKLIl3BAtQDDX9NUsRBx84qp+9TOpGx1yTzQZkj0kpU
-         RPr0UXaSlLtDfKfBNDv1hq7rgvpN1ibPs6YRxvIs06BNymtP6Gi5hn9pZzMvTMTSzN
-         l5WRtdh7ClJ1A==
-Message-ID: <d70b28fb4392ac1aafb1b21d1b8da061be16104c.camel@kernel.org>
-Subject: Re: [PATCH 00/67] fscache: Rewrite index API and management system
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Steve French <smfrench@gmail.com>,
-        Omar Sandoval <osandov@osandov.com>
-Cc:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-afs@lists.infradead.org,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-mm <linux-mm@kvack.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        v9fs-developer@lists.sourceforge.net,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Steve French <sfrench@samba.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Thu, 21 Oct 2021 19:43:30 -0400
-In-Reply-To: <CAH2r5msO7-QCXv6JQj2Tado9ZoWAHRkgq6-En18PeKSXFDdBLw@mail.gmail.com>
-References: <163456861570.2614702.14754548462706508617.stgit@warthog.procyon.org.uk>
-         <YXHntB2O0ACr0pbz@relinquished.localdomain>
-         <CAH2r5msO7-QCXv6JQj2Tado9ZoWAHRkgq6-En18PeKSXFDdBLw@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.40.4 (3.40.4-2.fc34) 
+        id S231598AbhJVAID (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Oct 2021 20:08:03 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:43665 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231627AbhJVAIC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 21 Oct 2021 20:08:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634861145;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=N5JfCAsI+inccAUJ1Aaxw45z/l5KEHCFXJn6LAT6Uv8=;
+        b=gs0ydNl57/JUkxjCBrVde3aRhLoLGKgKIlpA5bQR0vwuEWY2XtZUfORY76B2hF91kX5pVQ
+        InFI9AemreBsL3a7DpR/Fg+euxJwKzUDcDik55mxGMJoNHkemeqPtfWYs8qVIWX1go5mq0
+        WQ5/gdYXTh9WB0f+gs9p31IzPPVVaZc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-392-2rnw5DspNCGnqLASt3ZXsg-1; Thu, 21 Oct 2021 20:05:39 -0400
+X-MC-Unique: 2rnw5DspNCGnqLASt3ZXsg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 81E66806688;
+        Fri, 22 Oct 2021 00:05:36 +0000 (UTC)
+Received: from T590 (ovpn-8-17.pek2.redhat.com [10.72.8.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EE0B819D9B;
+        Fri, 22 Oct 2021 00:05:23 +0000 (UTC)
+Date:   Fri, 22 Oct 2021 08:05:18 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, tj@kernel.org,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        minchan@kernel.org, jeyu@kernel.org, shuah@kernel.org,
+        bvanassche@acm.org, dan.j.williams@intel.com, joe@perches.com,
+        tglx@linutronix.de, keescook@chromium.org, rostedt@goodmis.org,
+        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
+Message-ID: <YXIAPtvxW98lyM9r@T590>
+References: <YWq3Z++uoJ/kcp+3@T590>
+ <YW3LuzaPhW96jSBK@bombadil.infradead.org>
+ <YW4uwep3BCe9Vxq8@T590>
+ <YW7kFXlzRrvwzARP@bombadil.infradead.org>
+ <YW7ygbLAwm2/LZFl@T590>
+ <YW8eSq2B+5FtOLZb@bombadil.infradead.org>
+ <YW9tqPunx5bssxIz@T590>
+ <YXA6NMhwoiIMeHji@bombadil.infradead.org>
+ <YXC2qcx/RlLwjrKx@T590>
+ <YXGg95OcaR+5ktAZ@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YXGg95OcaR+5ktAZ@bombadil.infradead.org>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2021-10-21 at 18:15 -0500, Steve French wrote:
-> On Thu, Oct 21, 2021 at 5:21 PM Omar Sandoval <osandov@osandov.com> wrote:
+On Thu, Oct 21, 2021 at 10:18:47AM -0700, Luis Chamberlain wrote:
+> On Thu, Oct 21, 2021 at 08:39:05AM +0800, Ming Lei wrote:
+> > On Wed, Oct 20, 2021 at 08:48:04AM -0700, Luis Chamberlain wrote:
+> > > A second series of tests is hitting CTRL-C on either randonly and
+> > > restarting testing once again randomly.
 > > 
-> > On Mon, Oct 18, 2021 at 03:50:15PM +0100, David Howells wrote:
-> > However, with the advent of the tmpfile capacity in the VFS, an opportunity
-> > arises to do invalidation much more easily, without having to wait for I/O
-> > that's actually in progress: Cachefiles can simply cut over its file
-> > pointer for the backing object attached to a cookie and abandon the
-> > in-progress I/O, dismissing it upon completion.
+> > ltp/zram02.sh has cleanup handler via trap to clean everything(swapoff/umount/reset/
+> > rmmod), ctrl-c will terminate current forground task and cause shell to run the
+> > cleanup handler first, but further 'ctrl-c' will terminate the cleanup handler,
+> > then the cleanup won't be done completely, such as zram disk is left as swap
+> > device and zram can't be unloaded. The idea can be observed via the following
+> > script:
+> > 
+> > 	#!/bin/bash
+> > 	trap 'echo "enter trap"; sleep 20; echo "exit trap";' INT
+> > 	sleep 30
+> > 
+> > After the above script is run foreground, when 1st ctrl-c is pressed, 'sleep 30'
+> > is terminated, then the trap command is run, so you can see "enter trap"
+> > dumped. Then if you pressed 2nd ctrl-c, 'sleep 20' is terminated immediately.
+> > So 'swapoff' from zram02.sh's trap function can be terminated in this way.
+> > 
+> > zram disk being left as swap disk can be observed with your patch too
+> > after terminating via multiple ctrl-c which has to be done this way because
+> > the test is dead loop.
+> > 
+> > So it is hard to cleanup everything completely after multiple 'CTRL-C' is
+> > involved, and it should be impossible. It needs violent multiple ctrl-c to
+> > terminate the dealoop test.
+> > 
+> > So it isn't reasonable to expect that zram can be always unloaded successfully
+> > after the test script is terminated via multiple ctrl-c.
 > 
-> Have changes been made to O_TMPFILE?  It is problematic for network filesystems
-> because it is not an atomic operation, and would be great if it were possible
-> to create a tmpfile and open it atomically (at the file system level).
+> For the life of me, I do not run into these issue with my patch. But
+> with yours I had.
 > 
-> Currently it results in creating a tmpfile (which results in
-> opencreate then close)
-> immediately followed by reopening the tmpfile which is somewhat counter to
-> the whole idea of a tmpfile (ie that it is deleted when closed) since
-> the syscall results
-> in two opens ie open(create)/close/open/close
+> To be clear, I run zram02.sh on two terminals. Then to interrupt I just leave
+> CTRL-C pressed to issue multiple terminations until the script is done
+> on each terminal at a time, until I see both have completed.
 > 
-> 
+> I repeat the same test, noting always that when I start one one terminal
+> the test is succeeding. And also when I cancel completely one script the
+> test continue fine without issue.
 
-In this case, O_TMPFILE is being used on the cachefiles backing store,
-and that usually isn't deployed on a netfs. That said, Steve does have a
-good point...
+As I explained wrt. shell's trap, this issue won't be avoided from
+userspace because trap function can be terminated by ctrl-c too,
+otherwise one shell script may not be terminated at all.
 
-What happens if you do end up without O_TMPFILE support on the backing
-store? Probably just opting to not cache in that case is fine. Does
-cachefiles just shut down in that situation?
--- 
-Jeff Layton <jlayton@kernel.org>
+The unclean shutdown can be observed in single 'while true; do zram02.sh; done'
+too on both your patches and mine.
+
+Also it is insane to write write test in a deadloop, and people seldom
+do that, not see such way in either blktests/xfstests.
+
+I you limit completion time of this test in long enough time(one or
+several hours) or big enough loops, I believe it can be done cleanly,
+such as:
+
+cnt=0
+MAX=10000
+while [ $cnt -lt $MAX ]; do
+	PATH=$PATH:$PWD:$PWD/../../../lib/ ./zram02.sh;
+done
+
+
+Thanks,
+Ming
 
