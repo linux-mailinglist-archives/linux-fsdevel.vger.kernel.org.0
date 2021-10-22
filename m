@@ -2,90 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E1A6F437C74
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 20:07:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD722437CAB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 20:41:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233695AbhJVSJN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 14:09:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50144 "EHLO mail.kernel.org"
+        id S231586AbhJVSnb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 14:43:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233380AbhJVSJL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 14:09:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 32ED1610A4;
-        Fri, 22 Oct 2021 18:06:49 +0000 (UTC)
-Date:   Fri, 22 Oct 2021 19:06:45 +0100
+        id S229463AbhJVSnb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 22 Oct 2021 14:43:31 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CDECA60238;
+        Fri, 22 Oct 2021 18:41:10 +0000 (UTC)
+Date:   Fri, 22 Oct 2021 19:41:07 +0100
 From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
         Matthew Wilcox <willy@infradead.org>,
         cluster-devel <cluster-devel@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Subject: Re: [PATCH v8 00/17] gfs2: Fix mmap + page fault deadlocks
-Message-ID: <YXL9tRher7QVmq6N@arm.com>
-References: <20211019134204.3382645-1-agruenba@redhat.com>
- <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
- <YXBFqD9WVuU8awIv@arm.com>
- <CAHk-=wgv=KPZBJGnx_O5-7hhST8CL9BN4wJwtVuycjhv_1MmvQ@mail.gmail.com>
- <YXCbv5gdfEEtAYo8@arm.com>
- <CAHk-=wgP058PNY8eoWW=5uRMox-PuesDMrLsrCWPS+xXhzbQxQ@mail.gmail.com>
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [RFC][arm64] possible infinite loop in btrfs search_ioctl()
+Message-ID: <YXMFw34ZpW+CwlmI@arm.com>
+References: <YS5KudP4DBwlbPEp@zeniv-ca.linux.org.uk>
+ <YWR2cPKeDrc0uHTK@arm.com>
+ <CAHk-=wjvQWj7mvdrgTedUW50c2fkdn6Hzxtsk-=ckkMrFoTXjQ@mail.gmail.com>
+ <YWSnvq58jDsDuIik@arm.com>
+ <CAHk-=wiNWOY5QW5ZJukt_9pHTWvrJhE2=DxPpEtFHAWdzOPDTg@mail.gmail.com>
+ <CAHc6FU7bpjAxP+4dfE-C0pzzQJN1p=C2j3vyXwUwf7fF9JF72w@mail.gmail.com>
+ <YXE7fhDkqJbfDk6e@arm.com>
+ <CAHc6FU5xTMOxuiEDyc9VO_V98=bvoDc-0OFi4jsGPgWJWjRJWQ@mail.gmail.com>
+ <YXGexrdprC+NTslm@arm.com>
+ <CAHc6FU7im8UzxWCzqUFMKOwyg9zoQ8OZ_M+rRC_E20yE5RNu9g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgP058PNY8eoWW=5uRMox-PuesDMrLsrCWPS+xXhzbQxQ@mail.gmail.com>
+In-Reply-To: <CAHc6FU7im8UzxWCzqUFMKOwyg9zoQ8OZ_M+rRC_E20yE5RNu9g@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 20, 2021 at 08:19:40PM -1000, Linus Torvalds wrote:
-> On Wed, Oct 20, 2021 at 12:44 PM Catalin Marinas
-> <catalin.marinas@arm.com> wrote:
-> >
-> > However, with MTE doing both get_user() every 16 bytes and
-> > gup can get pretty expensive.
+On Thu, Oct 21, 2021 at 08:00:50PM +0200, Andreas Gruenbacher wrote:
+> On Thu, Oct 21, 2021 at 7:09 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > This discussion started with the btrfs search_ioctl() where, even if
+> > some bytes were written in copy_to_sk(), it always restarts from an
+> > earlier position, reattempting to write the same bytes. Since
+> > copy_to_sk() doesn't guarantee forward progress even if some bytes are
+> > writable, Linus' suggestion was for fault_in_writable() to probe the
+> > whole range. I consider this overkill since btrfs is the only one that
+> > needs probing every 16 bytes. The other cases like the new
+> > fault_in_safe_writeable() can be fixed by probing the first byte only
+> > followed by gup.
 > 
-> So I really think that anything that is performance-critical had
-> better only do the "fault_in_write()" code path in the cold error path
-> where you took a page fault.
-[...]
-> So I wouldn't worry too much about the performance concerns. It simply
-> shouldn't be a common or hot path.
-> 
-> And yes, I've seen code that does that "fault_in_xyz()" before the
-> critical operation that cannot take page faults, and does it
-> unconditionally.
-> 
-> But then it isn't the "fault_in_xyz()" that should be blamed if it is
-> slow, but the caller that does things the wrong way around.
+> Hmm. Direct I/O request sizes are multiples of the underlying device
+> block size, so we'll also get stuck there if fault-in won't give us a
+> full block. This is getting pretty ugly. So scratch that idea; let's
+> stick with probing the whole range.
 
-Some more thinking out loud. I did some unscientific benchmarks on a
-Raspberry Pi 4 with the filesystem in a RAM block device and a
-"dd if=/dev/zero of=/mnt/test" writing 512MB in 1MB blocks. I changed
-fault_in_readable() in linux-next to probe every 16 bytes:
-
-- ext4 drops from around 261MB/s to 246MB/s: 5.7% penalty
-
-- btrfs drops from around 360MB/s to 337MB/s: 6.4% penalty
-
-For generic_perform_write() Dave Hansen attempted to move the fault-in
-after the uaccess in commit 998ef75ddb57 ("fs: do not prefault
-sys_write() user buffer pages"). This was reverted as it was exposing an
-ext4 bug. I don't whether it was fixed but re-applying Dave's commit
-avoids the performance drop.
-
-btrfs_buffered_write() has a comment about faulting pages in before
-locking them in prepare_pages(). I suspect it's a similar problem and
-the fault_in() could be moved, though I can't say I understand this code
-well enough.
-
-Probing only the first byte(s) in fault_in() would be ideal, no need to
-go through all filesystems and try to change the uaccess/probing order.
+Ah, I wasn't aware of this. I got lost in the call trees but I noticed
+__iomap_dio_rw() does an iov_iter_revert() only if direction is READ. Is
+this the case for writes as well?
 
 -- 
 Catalin
