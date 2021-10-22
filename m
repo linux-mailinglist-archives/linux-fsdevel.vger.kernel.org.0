@@ -2,171 +2,253 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 348CF4374AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 11:23:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9BA24374C1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 11:31:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232406AbhJVJZg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 05:25:36 -0400
-Received: from mout.gmx.net ([212.227.15.15]:60151 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232465AbhJVJZd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 05:25:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1634894557;
-        bh=wYE5icMGjlbxqUC5vNAl8WPiRJIK0GBgDoDvJbZLhoM=;
-        h=X-UI-Sender-Class:Date:Subject:To:References:From:In-Reply-To;
-        b=kVmflJAuInwl0zPg/sdjb7LPZHWGL7zsQv6uylHvevozFIRi5e52MiCEvjKuSTFr4
-         fTRcVsovAZ7LKb9JzpaLIqklB3PvNHpTFr9ewffQfbsXiQ+ffIXK4zW85MjkSSacAd
-         8xJidmRh6DO7lrh8yMpQEKIsE6JekAlhihXQyULY=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx005
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1MV67o-1mE6g70IXW-00S3VI; Fri, 22
- Oct 2021 11:22:37 +0200
-Message-ID: <62f5f68d-7e3f-9238-5417-c64d8dcf2214@gmx.com>
-Date:   Fri, 22 Oct 2021 17:22:28 +0800
+        id S232400AbhJVJdl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 05:33:41 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:42084 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231563AbhJVJdk (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 22 Oct 2021 05:33:40 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 2C5202197A;
+        Fri, 22 Oct 2021 09:31:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1634895082; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Re6Z+hD2OCPgbW5Kbd7cCqLbxFmo37eYAN4KtUFAFdY=;
+        b=m3OJaBmhfXfIBurvZYW6QASEO3Y1IOBs2uS0m6VSU227lq8QSDYK0b1hRJ254SqGMu2HuF
+        tTSfj8pdJVs8mpBk/SxYc+DwdV3osyIdjSYTs2S6SRtW1O73fr/HDHlwUzVqRUIO7qy5BR
+        TLTyW55h+MKnjSA2bLC969Y2hQjensU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1634895082;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Re6Z+hD2OCPgbW5Kbd7cCqLbxFmo37eYAN4KtUFAFdY=;
+        b=dOwa8ZJKDumhBngx2/KcSiE6iS0CJYsP39w0K5Nw5HtWCu+3SQY8oGYzA5pFUr7TucUUgA
+        9lsYz/psuyzLiMDg==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id D2BCCA3B83;
+        Fri, 22 Oct 2021 09:31:20 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id B61191E11B6; Fri, 22 Oct 2021 11:31:20 +0200 (CEST)
+Date:   Fri, 22 Oct 2021 11:31:20 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Zhengyuan Liu <liuzhengyuang521@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, tytso@mit.edu,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-ext4@vger.kernel.org,
+        =?utf-8?B?5YiY5LqR?= <liuyun01@kylinos.cn>,
+        Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+Subject: Re: Problem with direct IO
+Message-ID: <20211022093120.GG1026@quack2.suse.cz>
+References: <CAOOPZo52azGXN-BzWamA38Gu=EkqZScLufM1VEgDuosPoH6TWA@mail.gmail.com>
+ <20211020173729.GF16460@quack2.suse.cz>
+ <CAOOPZo43cwh5ujm3n-r9Bih=7gS7Oav0B=J_8AepWDgdeBRkYA@mail.gmail.com>
+ <20211021080304.GB5784@quack2.suse.cz>
+ <CAOOPZo7DfbwO5tmpbpNw7T9AgN7ALDc2S8N+0TsDnvEqMZzMmg@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: Readahead for compressed data
-Content-Language: en-US
-To:     Jan Kara <jack@suse.cz>, Phillip Susi <phill@thesusis.net>,
-        linux-ntfs-dev@lists.sourceforge.net,
-        Matthew Wilcox <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        linux-bcache@vger.kernel.org, Hsin-Yi Wang <hsinyi@chromium.org>,
-        linux-fsdevel@vger.kernel.org,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        ntfs3@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-        linux-btrfs@vger.kernel.org
-References: <YXHK5HrQpJu9oy8w@casper.infradead.org>
- <87tuh9n9w2.fsf@vps.thesusis.net> <20211022084127.GA1026@quack2.suse.cz>
- <YXKARs0QpAZWl6Hi@B-P7TQMD6M-0146.local>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-In-Reply-To: <YXKARs0QpAZWl6Hi@B-P7TQMD6M-0146.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Dm44L66HxZZOvJluzMF4iV9LIJ3EEb9YYGAOwv/YTcc29C93Oa8
- 7KnlE2MPl5pfyoJD36N8kmOjeqjj/MpmWbl2IXs3ugp+GogwlG7LLWpfllDVb2bJzUgSjGJ
- U7EozDK5tBZnCu2+1dfjirOPJkP+aIl9u9A0d9s9C1WxWZMltcnqp9oBdgTsGS5P3cDjHNH
- bbmR1YSQ/OF2k5E2mR6oA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ncqkcUNDPZQ=:WDIXBzbRX/r4KBqrMdtwU3
- dvGLa7khY9U1o9cIsEiwIoHhveAmE0q/FeqMbNj6uuNy6r3peUcoo30M6EE6FayctYHn+2eWV
- 0jGMvOfJSWEWuQMigrYO18Ycrc6QfWjFDCiYEngXYPbMWwWIYZVCvg7xtBj4E5qxirSC8StcH
- UDxhMGbrYQRsWXGtJGVeP05WJYinrVBacftKTnDya+trwhORFIL0QD4f9MwGhuYKAbIawWVki
- 426fDcvr3CL8/4BVg94magNsJonUAUhcy40ytV+PFtJ7quCUPC/SSwPnkSoJ01Z+b/ro9qxUl
- VjBPy6rFefcnh3hqjAli5AH7SHW4OLQtf4vg9MaOh8xeizSOjz2mcZoj6cfNEQ7uT4apl7EKb
- KaCP6neLti8g99+RAO/59/TsuBJuXCBpuJBVw0oArUCwSpdMiZlekXp07P2fhRk1wI4nvmI//
- whIfesqLOxHinUnMbp6nU4g3oLCnLRRoifKYNil4fviEhYA8DJ4CDd9t+X2CsPaYqZ5gHY8Z4
- MCGRy2Kc/2R38pPHquvbX4RU7ia+cCVX8BFuVq8Lzpd/grVIyFjDAbJAcQAH8kuVpj2rzu8YR
- IacYZ2f5mZhX6aWw+KIUkjJxrsyuO7w6Sn1fF5e8P0Opzdh8jHvUGjxPMb7F3yAbyPB6+3Y0G
- k7d6fI3Wp+budjM5An2OWBiiXtdyOg/w6HtsYDAfS2CbREisjHKzVy3g9DpUmzyDZCw3rlehR
- SSiLYjG26jB95YdPPVanhepGF0/vJimeT4UzMsgw9fkfgZt0UZA48Ls+FQhExCd/WDvZ6YFoK
- U1GwkwAjiOTtQo6MP+z3Pa1xWOo+M86IAY8OFdiUhcteCXOLKvh1S/jnHncojEy0K9PWkEkD3
- gxZkHdqtahiTTQD6+b1lWDFXMZpp9c7mjja0SpGdemqGGHMGG4bMfIin/gGSSi7kt6g5vwdhR
- GR2UYGrz0mzfo6cK12tdGizDhFxyAscI0YnDOPhkpBBB26ISjaxhW03MlbwxxlHGmmUjIqWil
- TI7SJA/cWuHmMzR7ai5oEw463UaCB+zCg32zWZfvFKkCB6aKIR/oFKqo4rsY76JVvG2SuVIE6
- FLvi4lYqPZKK8o=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOOPZo7DfbwO5tmpbpNw7T9AgN7ALDc2S8N+0TsDnvEqMZzMmg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu 21-10-21 20:11:43, Zhengyuan Liu wrote:
+> On Thu, Oct 21, 2021 at 4:03 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Thu 21-10-21 10:21:55, Zhengyuan Liu wrote:
+> > > On Thu, Oct 21, 2021 at 1:37 AM Jan Kara <jack@suse.cz> wrote:
+> > > > On Wed 13-10-21 09:46:46, Zhengyuan Liu wrote:
+> > > > > we are encounting following Mysql crash problem while importing tables :
+> > > > >
+> > > > >     2021-09-26T11:22:17.825250Z 0 [ERROR] [MY-013622] [InnoDB] [FATAL]
+> > > > >     fsync() returned EIO, aborting.
+> > > > >     2021-09-26T11:22:17.825315Z 0 [ERROR] [MY-013183] [InnoDB]
+> > > > >     Assertion failure: ut0ut.cc:555 thread 281472996733168
+> > > > >
+> > > > > At the same time , we found dmesg had following message:
+> > > > >
+> > > > >     [ 4328.838972] Page cache invalidation failure on direct I/O.
+> > > > >     Possible data corruption due to collision with buffered I/O!
+> > > > >     [ 4328.850234] File: /data/mysql/data/sysbench/sbtest53.ibd PID:
+> > > > >     625 Comm: kworker/42:1
+> > > > >
+> > > > > Firstly, we doubled Mysql has operating the file with direct IO and
+> > > > > buffered IO interlaced, but after some checking we found it did only
+> > > > > do direct IO using aio. The problem is exactly from direct-io
+> > > > > interface (__generic_file_write_iter) itself.
+> > > > >
+> > > > > ssize_t __generic_file_write_iter()
+> > > > > {
+> > > > > ...
+> > > > >         if (iocb->ki_flags & IOCB_DIRECT) {
+> > > > >                 loff_t pos, endbyte;
+> > > > >
+> > > > >                 written = generic_file_direct_write(iocb, from);
+> > > > >                 /*
+> > > > >                  * If the write stopped short of completing, fall back to
+> > > > >                  * buffered writes.  Some filesystems do this for writes to
+> > > > >                  * holes, for example.  For DAX files, a buffered write will
+> > > > >                  * not succeed (even if it did, DAX does not handle dirty
+> > > > >                  * page-cache pages correctly).
+> > > > >                  */
+> > > > >                 if (written < 0 || !iov_iter_count(from) || IS_DAX(inode))
+> > > > >                         goto out;
+> > > > >
+> > > > >                 status = generic_perform_write(file, from, pos = iocb->ki_pos);
+> > > > > ...
+> > > > > }
+> > > > >
+> > > > > From above code snippet we can see that direct io could fall back to
+> > > > > buffered IO under certain conditions, so even Mysql only did direct IO
+> > > > > it could interleave with buffered IO when fall back occurred. I have
+> > > > > no idea why FS(ext3) failed the direct IO currently, but it is strange
+> > > > > __generic_file_write_iter make direct IO fall back to buffered IO, it
+> > > > > seems  breaking the semantics of direct IO.
+> > > > >
+> > > > > The reproduced  environment is:
+> > > > > Platform:  Kunpeng 920 (arm64)
+> > > > > Kernel: V5.15-rc
+> > > > > PAGESIZE: 64K
+> > > > > Mysql:  V8.0
+> > > > > Innodb_page_size: default(16K)
+> > > >
+> > > > Thanks for report. I agree this should not happen. How hard is this to
+> > > > reproduce? Any idea whether the fallback to buffered IO happens because
+> > > > iomap_dio_rw() returns -ENOTBLK or because it returns short write?
+> > >
+> > > It is easy to reproduce in my test environment, as I said in the previous
+> > > email replied to Andrew this problem is related to kernel page size.
+> >
+> > Ok, can you share a reproducer?
+> 
+> I don't have a simple test case to reproduce, the whole procedure shown as
+> following is somewhat complex.
+> 
+> 1. Prepare Mysql installation environment
+> a.  Prepare a SSD partition  (at least 100G) as the Mysql data
+> partition, format to Ext3 and mount to /data
+> # mkfs.ext3 /dev/sdb1
+> # mount /dev/sdb1 /data
+> b. Create Mysql user and user group
+> # groupadd mysql
+> # useradd -g mysql mysql
+> c. Create Mysql directory
+> # mkdir -p /data/mysql
+> # cd /data/mysql
+> #  mkdir data tmp run log
+> 
+> 2. Install Mysql
+> a. Download mysql-8.0.25-1.el8.aarch64.rpm-bundle.tar from
+> https://downloads.mysql.com/archives/community/
+> b. Install Mysql
+> #  tar -xvf mysql-8.0.25-1.el8.aarch64.rpm-bundle.tar
+> # yum install openssl openssl-devel
+> # rpm -ivh mysql-community-common-8.0.25-1.el8.aarch64.rpm
+> mysql-community-client-plugins-8.0.25-1.el8.aarch64.rpm \
+> mysql-community-libs-8.0.25-1.el8.aarch64.rp
+> mysql-community-client-8.0.25-1.el8.aarch64.rpm \
+>  mysql-community-server-8.0.25-1.el8.aarch64.rpm
+> mysql-community-devel-8.0.25-1.el8.aarch64.rpm
+> 
+> 3. Configure Mysql
+> a. # chown mysql:mysql /etc/my.cnf
+> b. # vim /etc/my.cnf
+> innodb_flush_method = O_DIRECT
+> default-storage-engine=INNODB
+> datadir=/data/mysql/data
+> socket=/data/mysql/run/mysql.sock
+> tmpdir=/data/mysql/tmp
+> log-error=/data/mysql/log/mysqld.log
+> pid-file=/data/mysql/run/mysqld.pid
+> port=3306
+> user=mysql
+> c. initialize Mysql (problem may reproduce at this stage)
+> # mysqld --defaults-file=/etc/my.cnf --initialize
+> d. Start Mysql
+> # mysqld --defaults-file=/etc/my.cnf &
+> e. Login into Mysql
+> # mysql -uroot -p -S /data/mysql/run/mysql.sock
+> You can see the temporary password from step 3.c
+> f. Configure access
+> mysql> alter user 'root'@'localhost' identified by "123456";
+> mysql> create user 'root'@'%' identified by '123456';
+> mysql> grant all privileges on *.* to 'root'@'%'; flush privileges;
+> mysql> create database sysbench;
+> 
+> 4. Use sysbench to test Mysql
+> a. Install sysbench from https://github.com/akopytov/sysbench/archive/master.zip
+> b. Use following script to reproduce problem (may need dozens of minutes)
+>     while true ; do
+>       sysbench /usr/local/share/sysbench/oltp_write_only.lua
+> --table-size=1000000 --tables=100 \
+>       --threads=32 --db-driver=mysql --mysql-db=sysbench
+> --mysql-host=127.0.0.1 --mysql- port=3306 \
+>       --mysql-user=root --mysql-password=123456
+> --mysql-socket=/var/lib/mysql/mysql.sock  prepare
+> 
+>       sleep 5
+>       sysbench /usr/local/share/sysbench/oltp_write_only.lua
+> --table-size=1000000 --tables=100 \
+>       --threads=32 --db-driver=mysql --mysql-db=sysbench
+> --mysql-host=127.0.0.1 --mysql- port=3306 \
+>       --mysql-user=root --mysql-password=123456
+> --mysql-socket=/var/lib/mysql/mysql.sock  cleanup
+> 
+>       sleep 5
+>   done
+> 
+> If you can't reproduce, we could provide a remote environment for you or
+> connect to your machine to build a reproduced environment.
 
+Ah, not that simple, also it isn't that easy to get arm64 machine for
+experiments for me. Connecting to your environment would be possible but
+let's try remote debugging for a bit more ;)
 
-On 2021/10/22 17:11, Gao Xiang wrote:
-> On Fri, Oct 22, 2021 at 10:41:27AM +0200, Jan Kara wrote:
->> On Thu 21-10-21 21:04:45, Phillip Susi wrote:
->>>
->>> Matthew Wilcox <willy@infradead.org> writes:
->>>
->>>> As far as I can tell, the following filesystems support compressed da=
-ta:
->>>>
->>>> bcachefs, btrfs, erofs, ntfs, squashfs, zisofs
->>>>
->>>> I'd like to make it easier and more efficient for filesystems to
->>>> implement compressed data.  There are a lot of approaches in use toda=
-y,
->>>> but none of them seem quite right to me.  I'm going to lay out a few
->>>> design considerations next and then propose a solution.  Feel free to
->>>> tell me I've got the constraints wrong, or suggest alternative soluti=
-ons.
->>>>
->>>> When we call ->readahead from the VFS, the VFS has decided which page=
-s
->>>> are going to be the most useful to bring in, but it doesn't know how
->>>> pages are bundled together into blocks.  As I've learned from talking=
- to
->>>> Gao Xiang, sometimes the filesystem doesn't know either, so this isn'=
-t
->>>> something we can teach the VFS.
->>>>
->>>> We (David) added readahead_expand() recently to let the filesystem
->>>> opportunistically add pages to the page cache "around" the area reque=
-sted
->>>> by the VFS.  That reduces the number of times the filesystem has to
->>>> decompress the same block.  But it can fail (due to memory allocation
->>>> failures or pages already being present in the cache).  So filesystem=
-s
->>>> still have to implement some kind of fallback.
->>>
->>> Wouldn't it be better to keep the *compressed* data in the cache and
->>> decompress it multiple times if needed rather than decompress it once
->>> and cache the decompressed data?  You would use more CPU time
->>> decompressing multiple times, but be able to cache more data and avoid
->>> more disk IO, which is generally far slower than the CPU can decompres=
-s
->>> the data.
->>
->> Well, one of the problems with keeping compressed data is that for mmap=
-(2)
->> you have to have pages decompressed so that CPU can access them. So kee=
-ping
->> compressed data in the page cache would add a bunch of complexity. That
->> being said keeping compressed data cached somewhere else than in the pa=
-ge
->> cache may certainly me worth it and then just filling page cache on dem=
-and
->> from this data...
->
-> It can be cached with a special internal inode, so no need to take
-> care of the memory reclaim or migration by yourself.
+> > > > Can you post output of "dumpe2fs -h <device>" for the filesystem where the
+> > > > problem happens? Thanks!
+> > >
+> > > Sure, the output is:
+> > >
+> > > # dumpe2fs -h /dev/sda3
+> > > dumpe2fs 1.45.3 (14-Jul-2019)
+> > > Filesystem volume name:   <none>
+> > > Last mounted on:          /data
+> > > Filesystem UUID:          09a51146-b325-48bb-be63-c9df539a90a1
+> > > Filesystem magic number:  0xEF53
+> > > Filesystem revision #:    1 (dynamic)
+> > > Filesystem features:      has_journal ext_attr resize_inode dir_index
+> > > filetype needs_recovery sparse_super large_file
+> >
+> > Thanks for the data. OK, a filesystem without extents. Does your test by
+> > any chance try to do direct IO to a hole in a file? Because that is not
+> > (and never was) supported without extents. Also the fact that you don't see
+> > the problem with ext4 (which means extents support) would be pointing in
+> > that direction.
+> 
+> I am not sure if it trys to do direct IO to a hole or not, is there any
+> way to check?  If you have a simple test to reproduce please let me know,
+> we are glad to try.
 
-There is another problem for btrfs (and maybe other fses).
+Can you enable following tracing?
 
-Btrfs can refer to part of the uncompressed data extent.
+echo 1 >/sys/kernel/debug/tracing/events/ext4/ext4_ind_map_blocks_exit/enable
+echo iomap_dio_rw >/sys/kernel/debug/tracing/set_ftrace_filter
+echo "function_graph" >/sys/kernel/debug/tracing/current_tracer
 
-Thus we could have the following cases:
+And then gather output from /sys/kernel/debug/tracing/trace_pipe. Once the
+problem reproduces, you can gather the problematic file name from dmesg, find
+inode number from "stat <filename>" and provide that all to me? Thanks!
 
-	0	4K	8K	12K
-	|	|	|	|
-		    |	    \- 4K of an 128K compressed extent,
-		    |		compressed size is 16K
-		    \- 4K of an 64K compressed extent,
-			compressed size is 8K
-
-In above case, we really only need 8K for page cache, but if we're
-caching the compressed extent, it will take extra 24K.
-
-It's definitely not really worthy for this particular corner case.
-
-But it would be pretty common for btrfs, as CoW on compressed data can
-easily lead to above cases.
-
-Thanks,
-Qu
-
->
-> Otherwise, these all need to be take care of. For fixed-sized input
-> compression, since they are reclaimed in page unit, so it won't be
-> quite friendly since such data is all coupling. But for fixed-sized
-> output compression, it's quite natural.
->
-> Thanks,
-> Gao Xiang
->
->>
->> 								Honza
->> --
->> Jan Kara <jack@suse.com>
->> SUSE Labs, CR
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
