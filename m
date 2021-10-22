@@ -2,95 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E07F437389
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 10:14:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AC3A437390
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 10:18:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232139AbhJVIRK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 04:17:10 -0400
-Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:50469 "EHLO
-        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231846AbhJVIRK (ORCPT
+        id S232201AbhJVIVB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 04:21:01 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:48952 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231846AbhJVIVA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 04:17:10 -0400
-Received: from mail.blacknight.com (pemlinmail06.blacknight.ie [81.17.255.152])
-        by outbound-smtp08.blacknight.com (Postfix) with ESMTPS id E559C1C47A7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Oct 2021 09:14:51 +0100 (IST)
-Received: (qmail 24056 invoked from network); 22 Oct 2021 08:14:51 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 22 Oct 2021 08:14:51 -0000
-Date:   Fri, 22 Oct 2021 09:14:50 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
+        Fri, 22 Oct 2021 04:21:00 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 5BE1D1FD58;
+        Fri, 22 Oct 2021 08:18:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1634890722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=udzLvenaNJ3s/w3myOyFSHoI8PZDzLqGtGnzU72grpQ=;
+        b=tZfVS+GsxB4ztBI/PkTVtzq3zqzVa5Ey0BVI3ujAZ+X0/kU0WMm2JFoQ/dI1UFErKreYzj
+        WLhUzybUFXpwzm8xQ1URT+ic7zij5GZvX9+r0TkHTyRNRBc3/vjyF5pfQEJrTUNxJpiAKB
+        SmEwUou+18lgMrN++sJUBE+oi8MDJVg=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 2A969A3B84;
+        Fri, 22 Oct 2021 08:18:42 +0000 (UTC)
+Date:   Fri, 22 Oct 2021 10:18:41 +0200
+From:   Michal Hocko <mhocko@suse.com>
 To:     NeilBrown <neilb@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
+Cc:     Uladzislau Rezki <urezki@gmail.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
         Dave Chinner <david@fromorbit.com>,
-        Rik van Riel <riel@surriel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 7/8] mm/vmscan: Increase the timeout if page reclaim is
- not making progress
-Message-ID: <20211022081450.GH3959@techsingularity.net>
-References: <20211019090108.25501-1-mgorman@techsingularity.net>
- <20211019090108.25501-8-mgorman@techsingularity.net>
- <163486486314.17149.7181265861483962024@noble.neil.brown.name>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [RFC 2/3] mm/vmalloc: add support for __GFP_NOFAIL
+Message-ID: <YXJz4QVsNk4kUZvH@dhcp22.suse.cz>
+References: <CA+KHdyUopXQVTp2=X-7DYYFNiuTrh25opiUOd1CXED1UXY2Fhg@mail.gmail.com>
+ <YXAiZdvk8CGvZCIM@dhcp22.suse.cz>
+ <CA+KHdyUyObf2m51uFpVd_tVCmQyn_mjMO0hYP+L0AmRs0PWKow@mail.gmail.com>
+ <YXAtYGLv/k+j6etV@dhcp22.suse.cz>
+ <CA+KHdyVdrfLPNJESEYzxfF+bksFpKGCd8vH=NqdwfPOLV9ZO8Q@mail.gmail.com>
+ <20211020192430.GA1861@pc638.lan>
+ <163481121586.17149.4002493290882319236@noble.neil.brown.name>
+ <YXFAkFx8PCCJC0Iy@dhcp22.suse.cz>
+ <20211021104038.GA1932@pc638.lan>
+ <163485654850.17149.3604437537345538737@noble.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <163486486314.17149.7181265861483962024@noble.neil.brown.name>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <163485654850.17149.3604437537345538737@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 22, 2021 at 12:07:43PM +1100, NeilBrown wrote:
-> On Tue, 19 Oct 2021, Mel Gorman wrote:
-> > Tracing of the stutterp workload showed the following delays
-> > 
-> >       1 usect_delayed=124000 reason=VMSCAN_THROTTLE_NOPROGRESS
-> >       1 usect_delayed=128000 reason=VMSCAN_THROTTLE_NOPROGRESS
-> >       1 usect_delayed=176000 reason=VMSCAN_THROTTLE_NOPROGRESS
-> >       1 usect_delayed=536000 reason=VMSCAN_THROTTLE_NOPROGRESS
-> >       1 usect_delayed=544000 reason=VMSCAN_THROTTLE_NOPROGRESS
-> >       1 usect_delayed=556000 reason=VMSCAN_THROTTLE_NOPROGRESS
-> >       1 usect_delayed=624000 reason=VMSCAN_THROTTLE_NOPROGRESS
-> >       1 usect_delayed=716000 reason=VMSCAN_THROTTLE_NOPROGRESS
-> >       1 usect_delayed=772000 reason=VMSCAN_THROTTLE_NOPROGRESS
-> >       2 usect_delayed=512000 reason=VMSCAN_THROTTLE_NOPROGRESS
-> >      16 usect_delayed=120000 reason=VMSCAN_THROTTLE_NOPROGRESS
-> >      53 usect_delayed=116000 reason=VMSCAN_THROTTLE_NOPROGRESS
-> >     116 usect_delayed=112000 reason=VMSCAN_THROTTLE_NOPROGRESS
-> >    5907 usect_delayed=108000 reason=VMSCAN_THROTTLE_NOPROGRESS
-> >   71741 usect_delayed=104000 reason=VMSCAN_THROTTLE_NOPROGRESS
-> > 
-> > All the throttling hit the full timeout and then there was wakeup delays
-> > meaning that the wakeups are premature as no other reclaimer such as
-> > kswapd has made progress. This patch increases the maximum timeout.
+On Fri 22-10-21 09:49:08, Neil Brown wrote:
+[...]
+> However now that I've thought about some more, I'd much prefer we
+> introduce something like
+>     memalloc_retry_wait();
 > 
-> Would love to see the comparable tracing results for after the patch.
-> 
+> and use that everywhere that a memory allocation is retried.
+> I'm not convinced that we need to wait at all - at least, not when
+> __GFP_DIRECT_RECLAIM is used, as in that case alloc_page will either
+>   - succeed
+>   - make some progress a reclaiming or
+>   - sleep
 
-They're in the leader. The trace figures in the changelog are the ones I
-had at the time the patch was developed and I didn't keep them up to date
-to reduce overall test time. At the last set of results, some throttling
-was still hitting the full timeout;
-
-  [....]
-    843 usec_timeout=500000 usect_delayed=12000 reason=VMSCAN_THROTTLE_NOPROGRESS
-   1299 usec_timeout=500000 usect_delayed=104000 reason=VMSCAN_THROTTLE_NOPROGRESS
-   2839 usec_timeout=500000 usect_delayed=8000 reason=VMSCAN_THROTTLE_NOPROGRESS
-  10111 usec_timeout=500000 usect_delayed=4000 reason=VMSCAN_THROTTLE_NOPROGRESS
-  21492 usec_timeout=500000 usect_delayed=0 reason=VMSCAN_THROTTLE_NOPROGRESS
-  36441 usec_timeout=500000 usect_delayed=500000 reason=VMSCAN_THROTTLE_NOPROGRESS
-
+There
+are two that we have to do explicitly vmap_pages_range one is due to
+implicit GFP_KERNEL allocations for page tables. Those would likely be a
+good fit for something you suggest above. Then we have __get_vm_area_node
+retry loop which can be either due to vmalloc space reservation failure
+or an implicit GFP_KERNEL allocation by kasan. The first one is not
+really related to the memory availability so it doesn't sound like a
+good fit.
 
 -- 
-Mel Gorman
+Michal Hocko
 SUSE Labs
