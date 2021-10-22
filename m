@@ -2,142 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C544143709F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 06:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3949B437107
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 06:45:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229712AbhJVEDL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 00:03:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54590 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229463AbhJVEDK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 00:03:10 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80EB9C061764
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 21:00:53 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id ls18so1993954pjb.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Oct 2021 21:00:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=63mhhziKLiqFO4zSrh9ukWKmqfg2gNncagqLuotvmtA=;
-        b=X39ypBn4CFGyhh2sL9znOr84NnhkCZ2dA8quRYgjwHWkDgmOEmgYHM8c6Mom/wBP40
-         SU5jAJWBBxqkVabzf7HmWjQafrkN1Yp3s0phP8OooZWlipf8a3KFdcohgAYXL2YE4ddy
-         w0UbekNVppvN0r+cy2CltOEugZ45mOSYsGbO4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=63mhhziKLiqFO4zSrh9ukWKmqfg2gNncagqLuotvmtA=;
-        b=OQFPDjhCfZnhvp2M96B5quakFkSwh/XOcFbb8V0ZuEEzs0extk9y+6dZqC+EORJNEW
-         UvKCJjUYd0D4RZbqUMfw0Wd03lgP9XV1r3vJ0eCIyzMt3hxyef+ggVVjmfrMcU5nexAk
-         4gMW/C3psD0LomwRWyvR/Go+kTl5UbgavdvNqRCEeIQT4IfgRLBkanwIEhGFZMNJX3Im
-         lRpwE40QX0pUsQENVVCTWv89ftdl55XLspCJMone8M4oVPPXAPd+/nbnh04S0BSgAZK5
-         qA+U+Lj31iyPhnMMxYoDcpHKq1h+l6eyL4mcG7U+Tk2wLt6ZluqiNik2zebjvaIs3w7P
-         bgJw==
-X-Gm-Message-State: AOAM530Q3kcyK9QMifvKIfsW7OZYvCSq7wiIfOAdg1XpQvi0FrgEA4Oy
-        9N/AIxROf8DUjTSumxCk7VRyvA==
-X-Google-Smtp-Source: ABdhPJxQzmqVL9IyfLWuElQLRxcTB3CxCGbMXf8BpqcMpBM3XiYUy5l2z9cTTWG+8hwuQBLPHvmRtg==
-X-Received: by 2002:a17:902:a50f:b029:11a:cd45:9009 with SMTP id s15-20020a170902a50fb029011acd459009mr9269460plq.38.1634875252833;
-        Thu, 21 Oct 2021 21:00:52 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a7sm7618987pfo.32.2021.10.21.21.00.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Oct 2021 21:00:52 -0700 (PDT)
-Date:   Thu, 21 Oct 2021 21:00:51 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Yafang Shao <laoar.shao@gmail.com>, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
-        pmladek@suse.com, peterz@infradead.org, viro@zeniv.linux.org.uk,
-        valentin.schneider@arm.com, qiang.zhang@windriver.com,
-        robdclark@chromium.org, christian@brauner.io,
-        dietmar.eggemann@arm.com, mingo@redhat.com, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, davem@davemloft.net, kuba@kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, oliver.sang@intel.com, lkp@intel.com
-Subject: Re: [PATCH v5 00/15] extend task comm from 16 to 24 for
- CONFIG_BASE_FULL
-Message-ID: <202110212053.6F3BB603@keescook>
-References: <20211021034516.4400-1-laoar.shao@gmail.com>
- <20211021205222.714a76c854cc0e7a7d6db890@linux-foundation.org>
+        id S232112AbhJVEqd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 00:46:33 -0400
+Received: from p3plsmtp05-06-02.prod.phx3.secureserver.net ([97.74.135.51]:51999
+        "EHLO p3plwbeout05-06.prod.phx3.secureserver.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232111AbhJVEq3 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 22 Oct 2021 00:46:29 -0400
+Received: from mailex.mailcore.me ([94.136.40.142])
+        by :WBEOUT: with ESMTP
+        id dmHzm4fT2VDBpdmI0mldmt; Thu, 21 Oct 2021 21:36:20 -0700
+X-CMAE-Analysis: v=2.4 cv=A4qpg4aG c=1 sm=1 tr=0 ts=61723fc4
+ a=s1hRAmXuQnGNrIj+3lWWVA==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
+ a=ggZhUymU-5wA:10 a=IkcTkHD0fZMA:10 a=8gfv0ekSlNoA:10
+ a=A-M8zVwSJslglwQpLHsA:9 a=QEXdDO2ut3YA:10
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk  
+X-SID:  dmHzm4fT2VDBp
+Received: from 82-69-79-175.dsl.in-addr.zen.co.uk ([82.69.79.175] helo=[192.168.178.33])
+        by smtp01.mailcore.me with esmtpa (Exim 4.94.2)
+        (envelope-from <phillip@squashfs.org.uk>)
+        id 1mdmHy-0007Zy-7e; Fri, 22 Oct 2021 05:36:19 +0100
+Subject: Re: Readahead for compressed data
+To:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev,
+        linux-bcache@vger.kernel.org
+Cc:     David Howells <dhowells@redhat.com>,
+        Hsin-Yi Wang <hsinyi@chromium.org>
+References: <YXHK5HrQpJu9oy8w@casper.infradead.org>
+From:   Phillip Lougher <phillip@squashfs.org.uk>
+Message-ID: <69359b86-9999-e484-8ca4-ed34b64e65c7@squashfs.org.uk>
+Date:   Fri, 22 Oct 2021 05:36:12 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211021205222.714a76c854cc0e7a7d6db890@linux-foundation.org>
+In-Reply-To: <YXHK5HrQpJu9oy8w@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Mailcore-Auth: 439999529
+X-Mailcore-Domain: 1394945
+X-123-reg-Authenticated:  phillip@squashfs.org.uk  
+X-Originating-IP: 82.69.79.175
+X-CMAE-Envelope: MS4xfOox4aIG2Y366RuPFHj/mqUVZybfwARrqBahgKkFSm+2htF7JdCtnmzytpqVfJyKpo+vFw4BgNPq+bEdTZPsEBiZAByosy0bwWr9hiip+H2NZ7IyKo/c
+ 16GaMUcymgXk7NrnDuMsaVrWkHuoRjg4Li3FcSsoBG6SGX5GDONgowUbrKvK4DuXjMRgAqSq7A0e3W/f6zGBJoeLCFccY89jjCY=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 21, 2021 at 08:52:22PM -0700, Andrew Morton wrote:
-> On Thu, 21 Oct 2021 03:45:07 +0000 Yafang Shao <laoar.shao@gmail.com> wrote:
-> 
-> > This patchset changes files among many subsystems. I don't know which
-> > tree it should be applied to, so I just base it on Linus's tree.
-> 
-> I can do that ;)
-> 
-> > There're many truncated kthreads in the kernel, which may make trouble
-> > for the user, for example, the user can't get detailed device
-> > information from the task comm.
-> 
-> That sucked of us.
-> 
-> > This patchset tries to improve this problem fundamentally by extending
-> > the task comm size from 16 to 24. In order to do that, we have to do
-> > some cleanups first.
-> 
-> It's at v5 and there's no evidence of review activity?  C'mon, folks!
+On 21/10/2021 21:17, Matthew Wilcox wrote:
+ > As far as I can tell, the following filesystems support compressed data:
+ >
+ > bcachefs, btrfs, erofs, ntfs, squashfs, zisofs
+ >
+ > I'd like to make it easier and more efficient for filesystems to
+ > implement compressed data.  There are a lot of approaches in use today,
+ > but none of them seem quite right to me.  I'm going to lay out a few
+ > design considerations next and then propose a solution.  Feel free to
+ > tell me I've got the constraints wrong, or suggest alternative solutions.
+ >
+ > When we call ->readahead from the VFS, the VFS has decided which pages
+ > are going to be the most useful to bring in, but it doesn't know how
+ > pages are bundled together into blocks.  As I've learned from talking to
+ > Gao Xiang, sometimes the filesystem doesn't know either, so this isn't
+ > something we can teach the VFS.
+ >
+ > We (David) added readahead_expand() recently to let the filesystem
+ > opportunistically add pages to the page cache "around" the area requested
+ > by the VFS.  That reduces the number of times the filesystem has to
+ > decompress the same block.  But it can fail (due to memory allocation
+ > failures or pages already being present in the cache).  So filesystems
+ > still have to implement some kind of fallback.
+ >
+ > For many (all?) compression algorithms (all?) the data must be mapped at
+ > all times.  Calling kmap() and kunmap() would be an intolerable overhead.
+ > At the same time, we cannot write to a page in the page cache which is
+ > marked Uptodate.  It might be mapped into userspace, or a read() be in
+ > progress against it.  For writable filesystems, it might even be dirty!
+ > As far as I know, no compression algorithm supports "holes", implying
+ > that we must allocate memory which is then discarded.
+ >
+ > To me, this calls for a vmap() based approach.  So I'm thinking
+ > something like ...
+ >
+ > void *readahead_get_block(struct readahead_control *ractl, loff_t start,
+ > 			size_t len);
+ > void readahead_put_block(struct readahead_control *ractl, void *addr,
+ > 			bool success);
+ >
+ > Once you've figured out which bytes this encrypted block expands to, you
+ > call readahead_get_block(), specifying the offset in the file and length
+ > and get back a pointer.  When you're done decompressing that block of
+ > the file, you get rid of it again.
 
-It's on my list! :) It's a pretty subtle area that rarely changes, so I
-want to make sure I'm a full coffee to do the review. :)
+Hi Matthew,
 
-> > 1. Make the copy of task comm always safe no matter what the task
-> > comm size is. For example,
-> > 
-> >   Unsafe                 Safe
-> >   strlcpy                strscpy_pad
-> >   strncpy                strscpy_pad
-> >   bpf_probe_read_kernel  bpf_probe_read_kernel_str
-> >                          bpf_core_read_str
-> >                          bpf_get_current_comm
-> >                          perf_event__prepare_comm
-> >                          prctl(2)
-> > 
-> > 2. Replace the old hard-coded 16 with a new macro TASK_COMM_LEN_16 to
-> > make it more grepable.
-> > 
-> > 3. Extend the task comm size to 24 for CONFIG_BASE_FULL case and keep it
-> > as 16 for CONFIG_BASE_SMALL.
-> 
-> Is this justified?  How much simpler/more reliable/more maintainable/
-> would the code be if we were to make CONFIG_BASE_SMALL suffer with the
-> extra 8 bytes?
+I quite like this new interface.  It should be fairly straight-forward
+to make Squashfs use this interface, and it will simplify some of the
+code, and make some of the decompressors more efficient.
 
-Does anyone "own" CONFIG_BASE_SMALL? Gonna go with "no":
+As I see it, it removes many of the hoops that Squashfs has to go
+through to push the additional uncompressed data into the page cache.
 
-$ git ann init/Kconfig| grep 'config BASE_SMALL'
-1da177e4c3f41   (Linus Torvalds 2005-04-16 15:20:36 -0700 2054)config BASE_SMALL
+It is also a generic solution, and one which doesn't rely on a 
+particular decompressor API or way of working, which means it shouldn't 
+break any of the existing decompressor usage in the kernel.
 
-And it looks mostly unused:
+The one issue with this generic solution is I fear a lot of people
+will complain it is too generic, and prevents some optimisations
+which they could have made on their particular decompressor or
+filesystem.  The issue that it requires temporary pages to be
+allocated upfront (if the page cannot be added to the page cache) has
+already been brought up.
 
-$ git grep CONFIG_BASE_SMALL | cut -d: -f1 | sort -u | xargs -n1 git ann -f | grep 'CONFIG_BASE_SMALL'
-b2af018ff26f1   (Ingo Molnar    2009-01-28 17:36:56 +0100       18)#if CONFIG_BASE_SMALL == 0
-fcdba07ee390d   ( Jiri Olsa     2011-02-07 19:31:25 +0100       54)#define CON_BUF_SIZE (CONFIG_BASE_SMALL ? 256 : PAGE_SIZE)
-Blaming lines: 100% (46/46), done.
-1da177e4c3f41   (Linus Torvalds 2005-04-16 15:20:36 -0700       28)#define PID_MAX_DEFAULT (CONFIG_BASE_SMALL ? 0x1000 : 0x8000)
-1da177e4c3f41   (Linus Torvalds 2005-04-16 15:20:36 -0700       34)#define PID_MAX_LIMIT (CONFIG_BASE_SMALL ? PAGE_SIZE * 8 : \
-Blaming lines: 100% (162/162), done.
-f86dcc5aa8c79   (Eric Dumazet   2009-10-07 00:37:59 +0000       31)#define UDP_HTABLE_SIZE_MIN     (CONFIG_BASE_SMALL ? 128 : 256)
-02c02bf12c5d8   (Matthew Wilcox 2017-11-03 23:09:45 -0400       1110)#define XA_CHUNK_SHIFT        (CONFIG_BASE_SMALL ? 4 : 6)
-a52b89ebb6d44   (Davidlohr Bueso        2014-01-12 15:31:23 -0800       4249)#if CONFIG_BASE_SMALL
-7b44ab978b77a   (Eric W. Biederman      2011-11-16 23:20:58 -0800       78)#define UIDHASH_BITS (CONFIG_BASE_SMALL ? 3 : 7)
+At this point I will try to play devil's advocate.  What is the
+alternative to passing back a vmapped area of memory to the
+filesystem?  The obvious alternative is to pass back an array
+of pointers to the individual page structures, or a NULL pointer
+representing a hole where the page could not be allocated in the
+cache.
 
+This alternative interface has the advantage that a NULL pointer is
+passed representing a hole, rather than temporary memory being allocated
+upfront.  It is then up to the filesystem and/or decompressor to
+deal with the NULL pointer hole which may avoid the use of so
+much temporary memory.
 
--- 
-Kees Cook
+But the fact is in the kernel there are many different decompressors
+with different APIs and different ways of working.  There are some
+(like zlib, zstd, xz) which are "multi-shot" and some (like lzo, lz4)
+which are "single-shot".
+
+Multi-shot decompressors allow themselves to be called with only a small
+output buffer.  Once the output buffer runs out, they exit and ask to be
+called again with another output buffer.  Squashfs uses that to pass in
+the set of discontiguous PAGE sized buffers allocated from the page
+cache.  Obviously, if Squashfs got a NULL pointer hole, it could switch
+to using a single temporary 4K buffer at that point.
+
+But single-shot decompressors expect to be called once, with a single
+contiguous output buffer.  They don't work with a set of discontiguous 
+PAGE sized buffers.  Due to this Squashfs has to use a contiguous 
+"bounce buffer" which the decompressor outputs to, and then copy it to 
+the page cache buffers.
+
+The vmap based interface proposed is a generic interface, it works with
+both "multi-shot" and "single-shot" decompressors, because it presents
+a single contiguous output buffer, and avoids making the filesystem
+work with page structures.  There is a lot to like about this approach.
+
+Avoiding using page structures also ties in with some of the other
+work Matthew has been doing to clean up the kernel's over reliance
+on page structures.  This is something which I am in agreement.
+
+Phillip
+
