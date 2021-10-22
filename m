@@ -2,126 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 01410437EF4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 21:58:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 446F2437F2D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 22:15:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234145AbhJVUBI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 16:01:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44590 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234043AbhJVUBG (ORCPT
+        id S233721AbhJVURl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 16:17:41 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:57122 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232089AbhJVURl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 16:01:06 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CFBBC061764
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Oct 2021 12:58:48 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id bq11so4889151lfb.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Oct 2021 12:58:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OyTESXkijXq7pnJGTLADUG+9VskuYUOHv78z9I+1K/4=;
-        b=hM/XQhqnuwClqFHl0xmMUwVFiZI2zWX0Fsvmyov2HtrZf+eht/rZgRbn7tgV6JR5/t
-         oaUf+A7xemNq2BqlSo7CgdMlfz4uNIfFdFMMG/GRhS1ONKFBhEIzCT11CSLKS+TAVP9U
-         qBUMJuZF6FSADRHZc19vWgXXWGONFvtcXh0sM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OyTESXkijXq7pnJGTLADUG+9VskuYUOHv78z9I+1K/4=;
-        b=TZbUimVP9IRU4ucj2oXNdihiMdbf0fvK2drnMZL34MDP6CG7XCSt/DRiE+vVsWbtr4
-         1B+toOc7eTAjyxZsod33lGv1BdrHp5Hsu0BhoZ1cx6hQvuWZLSeMeDXj1PbIughg9QW+
-         WTuQDaXPEjWm/a+g/Jv8kHmWSWiZdBNaIqzlOut/X13RKj3/g/FOWX7Q/f9eag3453p3
-         XCXmPXkl99k8RIe7zS+foXAi5gM5Le1lcmjq0MurDRdjN+5E+jznctsOtn7XLhShRwg7
-         v8Ed5glRfK4ImBDEYRldv7N1Qzmzsthx9ksto7a7Sb4arxrWEDHVyqHaMcZ/T248rKV/
-         C0Uw==
-X-Gm-Message-State: AOAM530iMkz/2WsQbKz5nE16eV20ZT76gbL1t/csNIHRd4DG3CZ0xF1l
-        BpYV6V/iiozbQhFZWinQlRFuf/IiCZCmodQ4vmU=
-X-Google-Smtp-Source: ABdhPJxOUXna890qImqqWymnMDINDNzaxIckM8wjA3veoXjtMkMcagvc9KnQeVwZHnkHQk43tUJWww==
-X-Received: by 2002:a05:6512:4027:: with SMTP id br39mr1589943lfb.549.1634932726323;
-        Fri, 22 Oct 2021 12:58:46 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id u4sm814912lfs.153.2021.10.22.12.58.39
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Oct 2021 12:58:43 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id n7so682253ljp.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Oct 2021 12:58:39 -0700 (PDT)
-X-Received: by 2002:a2e:5cc7:: with SMTP id q190mr2066391ljb.494.1634932708154;
- Fri, 22 Oct 2021 12:58:28 -0700 (PDT)
+        Fri, 22 Oct 2021 16:17:41 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 2B0D81FD61;
+        Fri, 22 Oct 2021 20:15:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1634933722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=rq8HbjLBNcuj5Y+rDUERbP3x4jBlExy8N6+dOyBNy1c=;
+        b=CA3h9owT3mQp9SOGGhHRLQhCSAHXVfAY9ssoIJbhrn1Cwe/RW3JfWTx8rh7cjhu0Hq+ILg
+        Zm8kNxnL564YCa1OJ6Ry+jyU9ZUMvmVKVTfj2Kct/UMvZKbDMgPZphATV2JXVMrsFQU7E0
+        D4yQtWbAs7Xq2oCV2yLC+dA3NBnImZ0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1634933722;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=rq8HbjLBNcuj5Y+rDUERbP3x4jBlExy8N6+dOyBNy1c=;
+        b=T0WM7bLdUtZpqVV97hTsJl8/fRxniNCJMQNUm8+0bzeeaFRXxeacYVDftdr7XyXiQOg4zX
+        0Ox4MwUpSNDwA4BQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3A0D11348D;
+        Fri, 22 Oct 2021 20:15:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 0LO/I9gbc2HUdgAAMHmgww
+        (envelope-from <rgoldwyn@suse.de>); Fri, 22 Oct 2021 20:15:20 +0000
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-btrfs@vger.kernel.org, Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: [RFC PATCH 0/5] Shared memory for shared extents
+Date:   Fri, 22 Oct 2021 15:15:00 -0500
+Message-Id: <cover.1634933121.git.rgoldwyn@suse.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-References: <163492911924.1038219.13107463173777870713.stgit@warthog.procyon.org.uk>
- <CAHk-=wjmx7+PD0hzWj5Bg2b807xYD2KCZApTvFje=ufo+MxBMQ@mail.gmail.com> <1041557.1634931616@warthog.procyon.org.uk>
-In-Reply-To: <1041557.1634931616@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 22 Oct 2021 09:58:12 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wg2LQtWC3e4Z4EGQzEmsLjmk6jm67Ga6UMLY1MH6iDcNQ@mail.gmail.com>
-Message-ID: <CAHk-=wg2LQtWC3e4Z4EGQzEmsLjmk6jm67Ga6UMLY1MH6iDcNQ@mail.gmail.com>
-Subject: Re: [PATCH v2 00/53] fscache: Rewrite index API and management system
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Steve French <sfrench@samba.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        v9fs-developer@lists.sourceforge.net,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Jeff Layton <jlayton@kernel.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Omar Sandoval <osandov@osandov.com>,
-        ceph-devel@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 22, 2021 at 9:40 AM David Howells <dhowells@redhat.com> wrote:
->
-> What's the best way to do this?  Is it fine to disable caching in all the
-> network filesystems and then directly remove the fscache and cachefiles
-> drivers and replace them?
+From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-So the basic issue with this whole "total rewrite" is that there's no
-way to bisect anything.
+This is an attempt to reduce the memory footprint by using a shared
+page(s) for shared extent(s) in the filesystem. I am hoping to start a
+discussion to iron out the details for implementation.
 
-And there's no way for people to say "I don't trust the rewrite, I
-want to keep using the old tested model".
+Abstract
+If mutiple files share an extent, reads from each of the files would
+read individual page copies in the inode pagecache mapping, leading to
+waste of memory. Instead add the read pages of the filesystem to
+underlying device's bd_inode as opposed to file's inode mapping. The
+cost is that file offset to device offset conversion happens early in
+the read cycle.
 
-Which makes this all painful and generally the wrong way to do
-anything like this, and there's fundamentally no "best way".
+Motivation:
+ - Reduce memory usage for shared extents
+ - Ease DAX implementation for shared extents
+ - Reduce Container memory utilization
 
-The real best way would be if the conversion could be done truly
-incrementally. Flag-days simply aren't good for development, because
-even if the patch to enable the new code might be some trivial
-one-liner, that doesn't _help_ anything. The switch-over switches from
-one code-base to another, with no help from "this is where the problem
-started".
+Implementation
+In the read path, pages are read and added to the block_device's
+inode's mapping as opposed to the inode's mapping. This is limited
+to reads, while write's (and read before writes) still go through
+inode's i_mapping. The path does check the inode's i_mapping before
+falling back to block device's i_mapping to read pages which may be
+dirty. The cost of the operation is file_to_device_offset() translation
+on reads. The translation should return a valid value only in case
+the file is CoW.
 
-So in order of preference:
+This also means that page->mapping may not point to file's mapping.
 
- (a) actual incremental changes where the code keeps working all the
-time, and no flag days
+Questions:
+1. Are there security implications for performing this for read-only
+pages? An alternate idea is to add a "struct fspage", which would be
+pointed by file's mapping and would point to the block device's page.
+Multiple files with shared extents have their own independent fspage
+pointing to the same page mapped to block device's mapping.
+Any security parameters, if required, would be in this structure. The
+advantage of this approach is it would be more flexible with respect to
+CoW when the page is dirtied after reads. With the current approach, a
+read for write is an independent operation so we can end up with two
+copies of the same page. This implementation got complicated too quickly.
 
- (b) same interfaces, so at least you can do A/B testing and people
-can choose one or the other
+2. Should pages be dropped after writebacks (and clone_range) to avoid
+duplicate copies?
 
- (c) total rewrite
+Limitations:
+1. The filesystem have exactly one underlying device.
+2. Page size should be equal to filesystem block size
 
-and if (c) is the thing that all the network filesystem people want,
-then what the heck is the point in keeping dead code around? At that
-point, all the rename crap is just extra work, extra noise, and only a
-distraction. There's no upside that I can see.
+Goldwyn Rodrigues (5):
+  mm: Use file parameter to determine bdi
+  mm: Switch mapping to device mapping
+  btrfs: Add sharedext mount option
+  btrfs: Set s_bdev for btrfs super block
+  btrfs: function to convert file offset to device offset
 
-                   Linus
+ fs/btrfs/ctree.h   |  1 +
+ fs/btrfs/file.c    | 42 ++++++++++++++++++++++++++++++++++++++++--
+ fs/btrfs/super.c   |  7 +++++++
+ include/linux/fs.h |  7 ++++++-
+ mm/filemap.c       | 34 ++++++++++++++++++++++++++--------
+ mm/readahead.c     |  3 +++
+ 6 files changed, 83 insertions(+), 11 deletions(-)
+
+-- 
+2.33.1
+
