@@ -2,233 +2,488 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D656437924
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 16:40:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07188437933
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 16:47:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233157AbhJVOmw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 10:42:52 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:38724 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233140AbhJVOms (ORCPT
+        id S233097AbhJVOtW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 10:49:22 -0400
+Received: from outbound-smtp24.blacknight.com ([81.17.249.192]:57150 "EHLO
+        outbound-smtp24.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233116AbhJVOtU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 10:42:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634913629;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=S5VYijYo0LM0UNwR49AOTflq9JooV8n64R7vGAicLbM=;
-        b=CWNCwUmpUo/G0C57s8fRFxLGzxgyEV0+W9/SrsdayyEqxcT5d5GgJjP55Rr1EjmPAQA6Ya
-        s2GRS6Ec7VY3OPzP/NHx4Bx+0cQPM4OH9FWD/jtje4KCQkt9M7z67hcvYig2TI7SDOH0gF
-        i/iTgg/kkgw6HeSad7/eBbGsAtBaxEc=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-144-f9OgdITjNVeADsIEhczTLg-1; Fri, 22 Oct 2021 10:40:28 -0400
-X-MC-Unique: f9OgdITjNVeADsIEhczTLg-1
-Received: by mail-wm1-f71.google.com with SMTP id n9-20020a1c7209000000b0030da7d466b8so1119582wmc.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Oct 2021 07:40:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:organization:subject
-         :in-reply-to:content-transfer-encoding;
-        bh=S5VYijYo0LM0UNwR49AOTflq9JooV8n64R7vGAicLbM=;
-        b=5LGZf4fiDXIaM1OH2Gao9RLH+YCrTwPl9+EyFdIOcxmyYQDYT4zCGCTZ4gAC7J3hww
-         7arpseN96husYlk3bujmGk2GcSJ68xLH3fsBofi3Wb42yRESrYujUHySAojWVByBpwiE
-         eB3aZZ/+dXytMmTOvPtnU4DvWYDx52j2ECIUQ6yePYBKUX4vhkMXJTQZWVdSUBCsXyPe
-         fjK59tr/xUf5F4svRI0AKHwYXfX0Iztt95ak+TytE/mI1teIs47heHQMp6gBJ8EAtBRn
-         eXj27yabhJalQYgrMmh7Av2S/8n1TV4TUP6si6S6F34GIdfbiNf7pKvNGrOJiI2jS3fa
-         RChA==
-X-Gm-Message-State: AOAM531eETlgavAnOfORqaD3W5exKE7FFmkqhV3uDOEiLPQo7sIX7Xf/
-        Ft45MzuYHtc0JS0NnTipN+qIwgxdL+jAYgBH7zJplznm0HXKhMJ/uK0Chd4G4XSDftzSBCyG75k
-        VHETzZS0NPLD8msiQHMmRlz9G5Q==
-X-Received: by 2002:a1c:c90f:: with SMTP id f15mr180593wmb.78.1634913626856;
-        Fri, 22 Oct 2021 07:40:26 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyrc/dZo+MdLVpt8cNByGTw3yh/5+A6Y3Y+vnyc+pC35BkkzHjuZ6ObalnuXaN7d0yTLAbOig==
-X-Received: by 2002:a1c:c90f:: with SMTP id f15mr180556wmb.78.1634913626541;
-        Fri, 22 Oct 2021 07:40:26 -0700 (PDT)
-Received: from [192.168.3.132] (p5b0c6324.dip0.t-ipconnect.de. [91.12.99.36])
-        by smtp.gmail.com with ESMTPSA id b207sm200396wmd.3.2021.10.22.07.40.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Oct 2021 07:40:25 -0700 (PDT)
-Message-ID: <c18923a1-8144-785e-5fb3-5cbce4be1310@redhat.com>
-Date:   Fri, 22 Oct 2021 16:40:24 +0200
+        Fri, 22 Oct 2021 10:49:20 -0400
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp24.blacknight.com (Postfix) with ESMTPS id 3A0BB760C1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Oct 2021 15:47:02 +0100 (IST)
+Received: (qmail 28750 invoked from network); 22 Oct 2021 14:47:01 -0000
+Received: from unknown (HELO stampy.112glenside.lan) (mgorman@techsingularity.net@[84.203.17.29])
+  by 81.17.254.9 with ESMTPA; 22 Oct 2021 14:47:01 -0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     NeilBrown <neilb@suse.de>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Rik van Riel <riel@surriel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>
+Subject: [PATCH v5 0/8] Remove dependency on congestion_wait in mm/
+Date:   Fri, 22 Oct 2021 15:46:43 +0100
+Message-Id: <20211022144651.19914-1-mgorman@techsingularity.net>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.0
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Hugh Dickins <hughd@google.com>
-References: <YWpG1xlPbm7Jpf2b@casper.infradead.org>
- <YW2lKcqwBZGDCz6T@cmpxchg.org> <YW28vaoW7qNeX3GP@casper.infradead.org>
- <YW3tkuCUPVICvMBX@cmpxchg.org>
- <20211018231627.kqrnalsi74bgpoxu@box.shutemov.name>
- <YW7hQlny+Go1K3LT@cmpxchg.org> <YXBUPguecSeSO6UD@moria.home.lan>
- <YXHdpQTL1Udz48fc@cmpxchg.org> <YXIZX0truEBv2YSz@casper.infradead.org>
- <326b5796-6ef9-a08f-a671-4da4b04a2b4f@redhat.com>
- <YXK2ICKi6fjNfr4X@casper.infradead.org>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
-In-Reply-To: <YXK2ICKi6fjNfr4X@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22.10.21 15:01, Matthew Wilcox wrote:
-> On Fri, Oct 22, 2021 at 09:59:05AM +0200, David Hildenbrand wrote:
->> something like this would roughly express what I've been mumbling about:
->>
->> anon_mem    file_mem
->>    |            |
->>    ------|------
->>       lru_mem       slab
->>          |           |
->>          -------------
->>                |
->> 	      page
->>
->> I wouldn't include folios in this picture, because IMHO folios as of now
->> are actually what we want to be "lru_mem", just which a much clearer
->> name+description (again, IMHO).
-> 
-> I think folios are a superset of lru_mem.  To enhance your drawing:
-> 
+This series replaces the v4 version in mmotm as the changes caused
+excessive conflicts. This series is also available at
 
-In the picture below we want "folio" to be the abstraction of "mappable
-into user space", after reading your link below and reading your graph,
-correct? Like calling it "user_mem" instead.
+git://git.kernel.org/pub/scm/linux/kernel/git/mel/linux.git mm-reclaimcongest-v5r4
 
-Because any of these types would imply that we're looking at the head
-page (if it's a compound page). And we could (or even already have?)
-have other types that cannot be mapped to user space that are actually a
-compound page.
+Changelog since v4
+o Costmetic changes						(neilb)
+o Correct number of writeback throttled tasks			(neilb)
+o Use wake_up							(neilb)
 
-> page
->    folio
->       lru_mem
->          anon_mem
-> 	 ksm
->          file_mem
->       netpool
->       devmem
->       zonedev
->    slab
->    pgtable
->    buddy
->    zsmalloc
->    vmalloc
-> 
-> I have a little list of memory types here:
-> https://kernelnewbies.org/MemoryTypes
-> 
-> Let me know if anything is missing.
+Changelog since v3
+o Count writeback completions for NR_THROTTLED_WRITTEN only
+o Use IRQ-safe inc_node_page_state
+o Remove redundant throttling
 
-hugetlbfs pages might deserve a dedicated type, right?
+This series that removes all calls to congestion_wait
+in mm/ and deletes wait_iff_congested. It's not a clever
+implementation but congestion_wait has been broken for a long time
+(https://lore.kernel.org/linux-mm/45d8b7a6-8548-65f5-cccf-9f451d4ae3d4@kernel.dk/).
+Even if congestion throttling worked, it was never a great idea. While
+excessive dirty/writeback pages at the tail of the LRU is one possibility
+that reclaim may be slow, there is also the problem of too many pages
+being isolated and reclaim failing for other reasons (elevated references,
+too many pages isolated, excessive LRU contention etc).
 
+This series replaces the "congestion" throttling with 3 different types.
 
-> 
->> Going from file_mem -> page is easy, just casting pointers.
->> Going from page -> file_mem requires going to the head page if it's a
->> compound page.
->>
->> But we expect most interfaces to pass around a proper type (e.g.,
->> lru_mem) instead of a page, which avoids having to lookup the compund
->> head page. And each function can express which type it actually wants to
->> consume. The filmap API wants to consume file_mem, so it should use that.
->>
->> And IMHO, with something above in mind and not having a clue which
->> additional layers we'll really need, or which additional leaves we want
->> to have, we would start with the leaves (e.g., file_mem, anon_mem, slab)
->> and work our way towards the root. Just like we already started with slab.
-> 
-> That assumes that the "root" layers already handle compound pages
-> properly.  For example, nothing in mm/page-writeback.c does; it assumes
-> everything is an order-0 page.  So working in the opposite direction
-> makes sense because it tells us what has already been converted and is
-> thus safe to call.
+o If there are too many dirty/writeback pages, sleep until a timeout
+  or enough pages get cleaned
+o If too many pages are isolated, sleep until enough isolated pages
+  are either reclaimed or put back on the LRU
+o If no progress is being made, direct reclaim tasks sleep until
+  another task makes progress with acceptable efficiency.
 
-Right, as long as the lower layers receive a "struct page", they have to
-assume it's "anything" -- IOW a random base page.
+This was initially tested with a mix of workloads that used to trigger
+corner cases that no longer work. A new test case was created called
+"stutterp" (pagereclaim-stutterp-noreaders in mmtests) using a freshly
+created XFS filesystem. Note that it may be necessary to increase the
+timeout of ssh if executing remotely as ssh itself can get throttled and
+the connection may timeout.
 
-We need some temporary logic when transitioning from "typed" code into
-"struct page" code that doesn't talk compound pages yet, I agree. And I
-think the different types used actually would tell us what has been
-converted and what not. Whenever you have to go from type -> "struct
-page" we have to be very careful.
+stutterp varies the number of "worker" processes from 4 up to NR_CPUS*4
+to check the impact as the number of direct reclaimers increase. It has
+four types of worker.
 
-> 
-> And starting with file_mem makes the supposition that it's worth splitting
-> file_mem from anon_mem.  I believe that's one or two steps further than
-> it's worth, but I can be convinced otherwise.  For example, do we have
-> examples of file pages being passed to routines that expect anon pages?
+o One "anon latency" worker creates small mappings with mmap() and times
+  how long it takes to fault the mapping reading it 4K at a time
+o X file writers which is fio randomly writing X files where the total
+  size of the files add up to the allowed dirty_ratio. fio is allowed
+  to run for a warmup period to allow some file-backed pages to
+  accumulate. The duration of the warmup is based on the best-case
+  linear write speed of the storage.
+o Y file readers which is fio randomly reading small files
+o Z anon memory hogs which continually map (100-dirty_ratio)% of
+  memory
+o Total estimated WSS = (100+dirty_ration) percentage of memory
 
-That would be a BUG, so I hope we don't have it ;)
+X+Y+Z+1 == NR_WORKERS varying from 4 up to NR_CPUS*4
 
-> Most routines that I've looked at expect to see both file & anon pages,
+The intent is to maximise the total WSS with a mix of file and anon memory
+where some anonymous memory must be swapped and there is a high likelihood
+of dirty/writeback pages reaching the end of the LRU.
 
-Right, many of them do. Which tells me that they share a common type in
-many places.
+The test can be configured to have no background readers to stress
+dirty/writeback pages. The results below are based on having zero readers.
 
-Let's consider LRU code
+The short summary of the results is that the series works and stalls
+until some event occurs but the timeouts may need adjustment.
 
-static inline int folio_is_file_lru(struct folio *folio)
-{
-	return !folio_swapbacked(folio);
-}
+The test results are not broken down by patch as the series should be
+treated as one block that replaces a broken throttling mechanism with a
+working one.
 
-I would say we don't really want to pass folios here. We actually want
-to pass something reasonable, like "lru_mem". But yes, it's just doing
-what "struct page" used to do via page_is_file_lru().
+Finally, three machines were tested but I'm reporting the worst set of
+results. The other two machines had much better latencies for example.
 
+First the results of the "anon latency" latency
 
-Let's consider folio_wait_writeback(struct folio *folio)
+stutterp
+                              5.15.0-rc1             5.15.0-rc1
+                                 vanilla mm-reclaimcongest-v5r4
+Amean     mmap-4      31.4003 (   0.00%)   2661.0198 (-8374.52%)
+Amean     mmap-7      38.1641 (   0.00%)    149.2891 (-291.18%)
+Amean     mmap-12     60.0981 (   0.00%)    187.8105 (-212.51%)
+Amean     mmap-21    161.2699 (   0.00%)    213.9107 ( -32.64%)
+Amean     mmap-30    174.5589 (   0.00%)    377.7548 (-116.41%)
+Amean     mmap-48   8106.8160 (   0.00%)   1070.5616 (  86.79%)
+Stddev    mmap-4      41.3455 (   0.00%)  27573.9676 (-66591.66%)
+Stddev    mmap-7      53.5556 (   0.00%)   4608.5860 (-8505.23%)
+Stddev    mmap-12    171.3897 (   0.00%)   5559.4542 (-3143.75%)
+Stddev    mmap-21   1506.6752 (   0.00%)   5746.2507 (-281.39%)
+Stddev    mmap-30    557.5806 (   0.00%)   7678.1624 (-1277.05%)
+Stddev    mmap-48  61681.5718 (   0.00%)  14507.2830 (  76.48%)
+Max-90    mmap-4      31.4243 (   0.00%)     83.1457 (-164.59%)
+Max-90    mmap-7      41.0410 (   0.00%)     41.0720 (  -0.08%)
+Max-90    mmap-12     66.5255 (   0.00%)     53.9073 (  18.97%)
+Max-90    mmap-21    146.7479 (   0.00%)    105.9540 (  27.80%)
+Max-90    mmap-30    193.9513 (   0.00%)     64.3067 (  66.84%)
+Max-90    mmap-48    277.9137 (   0.00%)    591.0594 (-112.68%)
+Max       mmap-4    1913.8009 (   0.00%) 299623.9695 (-15555.96%)
+Max       mmap-7    2423.9665 (   0.00%) 204453.1708 (-8334.65%)
+Max       mmap-12   6845.6573 (   0.00%) 221090.3366 (-3129.64%)
+Max       mmap-21  56278.6508 (   0.00%) 213877.3496 (-280.03%)
+Max       mmap-30  19716.2990 (   0.00%) 216287.6229 (-997.00%)
+Max       mmap-48 477923.9400 (   0.00%) 245414.8238 (  48.65%)
 
-Do we actually want to pass in a folio here? Would we actually want to
-pass in lru_mem here or even something else?
+For most thread counts, the time to mmap() is unfortunately increased.
+In earlier versions of the series, this was lower but a large number of
+throttling events were reaching their timeout increasing the amount of
+inefficient scanning of the LRU. There is no prioritisation of reclaim
+tasks making progress based on each tasks rate of page allocation versus
+progress of reclaim. The variance is also impacted for high worker
+counts but in all cases, the differences in latency are not statistically
+significant due to very large maximum outliers. Max-90 shows that 90% of
+the stalls are comparable but the Max results show the massive outliers
+which are increased to to stalling.
 
-> and treat them either identically or do slightly different things.
-> But those are just the functions I've looked at; your experience may be
-> quite different.
+It is expected that this will be very machine dependant. Due to the
+test design, reclaim is difficult so allocations stall and there are
+variances depending on whether THPs can be allocated or not. The amount
+of memory will affect exactly how bad the corner cases are and how often
+they trigger.  The warmup period calculation is not ideal as it's based
+on linear writes where as fio is randomly writing multiple files from
+multiple tasks so the start state of the test is variable. For
+example, these are the latencies on a single-socket machine that had
+more memory
 
-I assume when it comes to LRU, writeback, ... the behavior is very
-similar or at least the current functions just decide internally what to
-do based on e.g., ..._is_file_lru().
+Amean     mmap-4      42.2287 (   0.00%)     49.6838 * -17.65%*
+Amean     mmap-7     216.4326 (   0.00%)     47.4451 *  78.08%*
+Amean     mmap-12   2412.0588 (   0.00%)     51.7497 (  97.85%)
+Amean     mmap-21   5546.2548 (   0.00%)     51.8862 (  99.06%)
+Amean     mmap-30   1085.3121 (   0.00%)     72.1004 (  93.36%)
 
-I don't know if it's best to keep hiding that functionality within an
-abstracted type or just provide two separate functions for anon and
-file. folios mostly mimic what the old struct page used to do,
-introducing similar functions. Maybe the reason we branch off within
-these functions is because it just made sense when passing around
-"struct page" and not having something clearer at hand that let the
-caller do the branch. For the cases of LRU I looked at it somewhat makes
-sense to just do it internally.
+The overall system CPU usage and elapsed time is as follows
 
-Looking at some core MM code, like mm/huge_memory.c, and seeing all the
-PageAnon() specializations, having a dedicated anon_mem type might be
-valuable. But at this point it's hard to tell if splitting up these
-functions would actually be desirable.
+                  5.15.0-rc3  5.15.0-rc3
+                     vanilla mm-reclaimcongest-v5r4
+Duration User        6989.03      983.42
+Duration System      7308.12      799.68
+Duration Elapsed     2277.67     2092.98
 
-We're knee-deep in the type discussion now and I appreciate it. I can
-understand that folio are currently really just a "not a tail page"
-concept and mimic a lot of what we already inherited from the old
-"struct page" world.
+The patches reduce system CPU usage by 89% as the vanilla kernel is rarely
+stalling.
+
+The high-level /proc/vmstats show
+
+                                     5.15.0-rc1     5.15.0-rc1
+                                        vanilla mm-reclaimcongest-v5r2
+Ops Direct pages scanned          1056608451.00   503594991.00
+Ops Kswapd pages scanned           109795048.00   147289810.00
+Ops Kswapd pages reclaimed          63269243.00    31036005.00
+Ops Direct pages reclaimed          10803973.00     6328887.00
+Ops Kswapd efficiency %                   57.62          21.07
+Ops Kswapd velocity                    48204.98       57572.86
+Ops Direct efficiency %                    1.02           1.26
+Ops Direct velocity                   463898.83      196845.97
+
+Kswapd scanned less pages but the detailed pattern is different. The
+vanilla kernel scans slowly over time where as the patches exhibits burst
+patterns of scan activity. Direct reclaim scanning is reduced by 52%
+due to stalling.
+
+The pattern for stealing pages is also slightly different. Both kernels exhibit
+spikes but the vanilla kernel when reclaiming shows pages being reclaimed over
+a period of time where as the patches tend to reclaim in spikes. The difference
+is that vanilla is not throttling and instead scanning constantly finding some
+pages over time where as the patched kernel throttles and reclaims in spikes.
+
+Ops Percentage direct scans               90.59          77.37
+
+For direct reclaim, vanilla scanned 90.59% of pages where as with the
+patches, 77.37% were direct reclaim due to throttling
+
+Ops Page writes by reclaim           2613590.00     1687131.00
+
+Page writes from reclaim context are reduced.
+
+Ops Page writes anon                 2932752.00     1917048.00
+
+And there is less swapping.
+
+Ops Page reclaim immediate         996248528.00   107664764.00
+
+The number of pages encountered at the tail of the LRU tagged for immediate
+reclaim but still dirty/writeback is reduced by 89%.
+
+Ops Slabs scanned                     164284.00      153608.00
+
+Slab scan activity is similar.
+
+ftrace was used to gather stall activity
+
+Vanilla
+-------
+      1 writeback_wait_iff_congested: usec_timeout=100000 usec_delayed=16000
+      2 writeback_wait_iff_congested: usec_timeout=100000 usec_delayed=12000
+      8 writeback_wait_iff_congested: usec_timeout=100000 usec_delayed=8000
+     29 writeback_wait_iff_congested: usec_timeout=100000 usec_delayed=4000
+  82394 writeback_wait_iff_congested: usec_timeout=100000 usec_delayed=0
+
+The fast majority of wait_iff_congested calls do not stall at all.
+What is likely happening is that cond_resched() reschedules the task for
+a short period when the BDI is not registering congestion (which it never
+will in this test setup).
+
+      1 writeback_congestion_wait: usec_timeout=100000 usec_delayed=120000
+      2 writeback_congestion_wait: usec_timeout=100000 usec_delayed=132000
+      4 writeback_congestion_wait: usec_timeout=100000 usec_delayed=112000
+    380 writeback_congestion_wait: usec_timeout=100000 usec_delayed=108000
+    778 writeback_congestion_wait: usec_timeout=100000 usec_delayed=104000
+
+congestion_wait if called always exceeds the timeout as there is no
+trigger to wake it up.
+
+Bottom line: Vanilla will throttle but it's not effective.
+
+Patch series
+------------
+
+Kswapd throttle activity was always due to scanning pages tagged for
+immediate reclaim at the tail of the LRU
+
+      1 usec_timeout=100000 usect_delayed=72000 reason=VMSCAN_THROTTLE_WRITEBACK
+      4 usec_timeout=100000 usect_delayed=20000 reason=VMSCAN_THROTTLE_WRITEBACK
+      5 usec_timeout=100000 usect_delayed=12000 reason=VMSCAN_THROTTLE_WRITEBACK
+      6 usec_timeout=100000 usect_delayed=16000 reason=VMSCAN_THROTTLE_WRITEBACK
+     11 usec_timeout=100000 usect_delayed=100000 reason=VMSCAN_THROTTLE_WRITEBACK
+     11 usec_timeout=100000 usect_delayed=8000 reason=VMSCAN_THROTTLE_WRITEBACK
+     94 usec_timeout=100000 usect_delayed=0 reason=VMSCAN_THROTTLE_WRITEBACK
+    112 usec_timeout=100000 usect_delayed=4000 reason=VMSCAN_THROTTLE_WRITEBACK
+
+The majority of events did not stall or stalled for a short period.
+Roughly 16% of stalls reached the timeout before expiry. For direct
+reclaim, the number of times stalled for each reason were
+
+   6624 reason=VMSCAN_THROTTLE_ISOLATED
+  93246 reason=VMSCAN_THROTTLE_NOPROGRESS
+  96934 reason=VMSCAN_THROTTLE_WRITEBACK
+
+The most common reason to stall was due to excessive pages tagged for
+immediate reclaim at the tail of the LRU followed by a failure to make
+forward.  A relatively small number were due to too many pages isolated
+from the LRU by parallel threads
+
+For VMSCAN_THROTTLE_ISOLATED, the breakdown of delays was
+ 
+      9 usec_timeout=20000 usect_delayed=4000 reason=VMSCAN_THROTTLE_ISOLATED
+     12 usec_timeout=20000 usect_delayed=16000 reason=VMSCAN_THROTTLE_ISOLATED
+     83 usec_timeout=20000 usect_delayed=20000 reason=VMSCAN_THROTTLE_ISOLATED
+   6520 usec_timeout=20000 usect_delayed=0 reason=VMSCAN_THROTTLE_ISOLATED
+
+Most did not stall at all. A small number reached the timeout.
+
+For VMSCAN_THROTTLE_NOPROGRESS, the breakdown of stalls were all over the
+map
+
+      1 usec_timeout=500000 usect_delayed=324000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      1 usec_timeout=500000 usect_delayed=332000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      1 usec_timeout=500000 usect_delayed=348000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      1 usec_timeout=500000 usect_delayed=360000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      2 usec_timeout=500000 usect_delayed=228000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      2 usec_timeout=500000 usect_delayed=260000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      2 usec_timeout=500000 usect_delayed=340000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      2 usec_timeout=500000 usect_delayed=364000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      2 usec_timeout=500000 usect_delayed=372000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      2 usec_timeout=500000 usect_delayed=428000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      2 usec_timeout=500000 usect_delayed=460000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      2 usec_timeout=500000 usect_delayed=464000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      3 usec_timeout=500000 usect_delayed=244000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      3 usec_timeout=500000 usect_delayed=252000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      3 usec_timeout=500000 usect_delayed=272000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      4 usec_timeout=500000 usect_delayed=188000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      4 usec_timeout=500000 usect_delayed=268000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      4 usec_timeout=500000 usect_delayed=328000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      4 usec_timeout=500000 usect_delayed=380000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      4 usec_timeout=500000 usect_delayed=392000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      4 usec_timeout=500000 usect_delayed=432000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      5 usec_timeout=500000 usect_delayed=204000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      5 usec_timeout=500000 usect_delayed=220000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      5 usec_timeout=500000 usect_delayed=412000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      5 usec_timeout=500000 usect_delayed=436000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      6 usec_timeout=500000 usect_delayed=488000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      7 usec_timeout=500000 usect_delayed=212000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      7 usec_timeout=500000 usect_delayed=300000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      7 usec_timeout=500000 usect_delayed=316000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      7 usec_timeout=500000 usect_delayed=472000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      8 usec_timeout=500000 usect_delayed=248000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      8 usec_timeout=500000 usect_delayed=356000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      8 usec_timeout=500000 usect_delayed=456000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      9 usec_timeout=500000 usect_delayed=124000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      9 usec_timeout=500000 usect_delayed=376000 reason=VMSCAN_THROTTLE_NOPROGRESS
+      9 usec_timeout=500000 usect_delayed=484000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     10 usec_timeout=500000 usect_delayed=172000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     10 usec_timeout=500000 usect_delayed=420000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     10 usec_timeout=500000 usect_delayed=452000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     11 usec_timeout=500000 usect_delayed=256000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     12 usec_timeout=500000 usect_delayed=112000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     12 usec_timeout=500000 usect_delayed=116000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     12 usec_timeout=500000 usect_delayed=144000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     12 usec_timeout=500000 usect_delayed=152000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     12 usec_timeout=500000 usect_delayed=264000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     12 usec_timeout=500000 usect_delayed=384000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     12 usec_timeout=500000 usect_delayed=424000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     12 usec_timeout=500000 usect_delayed=492000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     13 usec_timeout=500000 usect_delayed=184000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     13 usec_timeout=500000 usect_delayed=444000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     14 usec_timeout=500000 usect_delayed=308000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     14 usec_timeout=500000 usect_delayed=440000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     14 usec_timeout=500000 usect_delayed=476000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     16 usec_timeout=500000 usect_delayed=140000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     17 usec_timeout=500000 usect_delayed=232000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     17 usec_timeout=500000 usect_delayed=240000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     17 usec_timeout=500000 usect_delayed=280000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     18 usec_timeout=500000 usect_delayed=404000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     20 usec_timeout=500000 usect_delayed=148000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     20 usec_timeout=500000 usect_delayed=216000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     20 usec_timeout=500000 usect_delayed=468000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     21 usec_timeout=500000 usect_delayed=448000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     23 usec_timeout=500000 usect_delayed=168000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     23 usec_timeout=500000 usect_delayed=296000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     25 usec_timeout=500000 usect_delayed=132000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     25 usec_timeout=500000 usect_delayed=352000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     26 usec_timeout=500000 usect_delayed=180000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     27 usec_timeout=500000 usect_delayed=284000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     28 usec_timeout=500000 usect_delayed=164000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     29 usec_timeout=500000 usect_delayed=136000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     30 usec_timeout=500000 usect_delayed=200000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     30 usec_timeout=500000 usect_delayed=400000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     31 usec_timeout=500000 usect_delayed=196000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     32 usec_timeout=500000 usect_delayed=156000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     33 usec_timeout=500000 usect_delayed=224000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     35 usec_timeout=500000 usect_delayed=128000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     35 usec_timeout=500000 usect_delayed=176000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     36 usec_timeout=500000 usect_delayed=368000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     36 usec_timeout=500000 usect_delayed=496000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     37 usec_timeout=500000 usect_delayed=312000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     38 usec_timeout=500000 usect_delayed=304000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     40 usec_timeout=500000 usect_delayed=288000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     43 usec_timeout=500000 usect_delayed=408000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     55 usec_timeout=500000 usect_delayed=416000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     56 usec_timeout=500000 usect_delayed=76000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     58 usec_timeout=500000 usect_delayed=120000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     59 usec_timeout=500000 usect_delayed=208000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     61 usec_timeout=500000 usect_delayed=68000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     71 usec_timeout=500000 usect_delayed=192000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     71 usec_timeout=500000 usect_delayed=480000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     79 usec_timeout=500000 usect_delayed=60000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     82 usec_timeout=500000 usect_delayed=320000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     82 usec_timeout=500000 usect_delayed=92000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     85 usec_timeout=500000 usect_delayed=64000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     85 usec_timeout=500000 usect_delayed=80000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     88 usec_timeout=500000 usect_delayed=84000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     90 usec_timeout=500000 usect_delayed=160000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     90 usec_timeout=500000 usect_delayed=292000 reason=VMSCAN_THROTTLE_NOPROGRESS
+     94 usec_timeout=500000 usect_delayed=56000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    118 usec_timeout=500000 usect_delayed=88000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    119 usec_timeout=500000 usect_delayed=72000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    126 usec_timeout=500000 usect_delayed=108000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    146 usec_timeout=500000 usect_delayed=52000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    148 usec_timeout=500000 usect_delayed=36000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    148 usec_timeout=500000 usect_delayed=48000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    159 usec_timeout=500000 usect_delayed=28000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    178 usec_timeout=500000 usect_delayed=44000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    183 usec_timeout=500000 usect_delayed=40000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    237 usec_timeout=500000 usect_delayed=100000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    266 usec_timeout=500000 usect_delayed=32000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    313 usec_timeout=500000 usect_delayed=24000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    347 usec_timeout=500000 usect_delayed=96000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    470 usec_timeout=500000 usect_delayed=20000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    559 usec_timeout=500000 usect_delayed=16000 reason=VMSCAN_THROTTLE_NOPROGRESS
+    964 usec_timeout=500000 usect_delayed=12000 reason=VMSCAN_THROTTLE_NOPROGRESS
+   2001 usec_timeout=500000 usect_delayed=104000 reason=VMSCAN_THROTTLE_NOPROGRESS
+   2447 usec_timeout=500000 usect_delayed=8000 reason=VMSCAN_THROTTLE_NOPROGRESS
+   7888 usec_timeout=500000 usect_delayed=4000 reason=VMSCAN_THROTTLE_NOPROGRESS
+  22727 usec_timeout=500000 usect_delayed=0 reason=VMSCAN_THROTTLE_NOPROGRESS
+  51305 usec_timeout=500000 usect_delayed=500000 reason=VMSCAN_THROTTLE_NOPROGRESS
+
+The full timeout is often hit but a large number also do not stall at all.
+The remainder slept a little allowing other reclaim tasks to make progress.
+
+While this timeout could be further increased, it could also negatively
+impact worst-case behaviour when there is no prioritisation of what
+task should make progress.
+
+For VMSCAN_THROTTLE_WRITEBACK, the breakdown was
+
+      1 usec_timeout=100000 usect_delayed=44000 reason=VMSCAN_THROTTLE_WRITEBACK
+      2 usec_timeout=100000 usect_delayed=76000 reason=VMSCAN_THROTTLE_WRITEBACK
+      3 usec_timeout=100000 usect_delayed=80000 reason=VMSCAN_THROTTLE_WRITEBACK
+      5 usec_timeout=100000 usect_delayed=48000 reason=VMSCAN_THROTTLE_WRITEBACK
+      5 usec_timeout=100000 usect_delayed=84000 reason=VMSCAN_THROTTLE_WRITEBACK
+      6 usec_timeout=100000 usect_delayed=72000 reason=VMSCAN_THROTTLE_WRITEBACK
+      7 usec_timeout=100000 usect_delayed=88000 reason=VMSCAN_THROTTLE_WRITEBACK
+     11 usec_timeout=100000 usect_delayed=56000 reason=VMSCAN_THROTTLE_WRITEBACK
+     12 usec_timeout=100000 usect_delayed=64000 reason=VMSCAN_THROTTLE_WRITEBACK
+     16 usec_timeout=100000 usect_delayed=92000 reason=VMSCAN_THROTTLE_WRITEBACK
+     24 usec_timeout=100000 usect_delayed=68000 reason=VMSCAN_THROTTLE_WRITEBACK
+     28 usec_timeout=100000 usect_delayed=32000 reason=VMSCAN_THROTTLE_WRITEBACK
+     30 usec_timeout=100000 usect_delayed=60000 reason=VMSCAN_THROTTLE_WRITEBACK
+     30 usec_timeout=100000 usect_delayed=96000 reason=VMSCAN_THROTTLE_WRITEBACK
+     32 usec_timeout=100000 usect_delayed=52000 reason=VMSCAN_THROTTLE_WRITEBACK
+     42 usec_timeout=100000 usect_delayed=40000 reason=VMSCAN_THROTTLE_WRITEBACK
+     77 usec_timeout=100000 usect_delayed=28000 reason=VMSCAN_THROTTLE_WRITEBACK
+     99 usec_timeout=100000 usect_delayed=36000 reason=VMSCAN_THROTTLE_WRITEBACK
+    137 usec_timeout=100000 usect_delayed=24000 reason=VMSCAN_THROTTLE_WRITEBACK
+    190 usec_timeout=100000 usect_delayed=20000 reason=VMSCAN_THROTTLE_WRITEBACK
+    339 usec_timeout=100000 usect_delayed=16000 reason=VMSCAN_THROTTLE_WRITEBACK
+    518 usec_timeout=100000 usect_delayed=12000 reason=VMSCAN_THROTTLE_WRITEBACK
+    852 usec_timeout=100000 usect_delayed=8000 reason=VMSCAN_THROTTLE_WRITEBACK
+   3359 usec_timeout=100000 usect_delayed=4000 reason=VMSCAN_THROTTLE_WRITEBACK
+   7147 usec_timeout=100000 usect_delayed=0 reason=VMSCAN_THROTTLE_WRITEBACK
+  83962 usec_timeout=100000 usect_delayed=100000 reason=VMSCAN_THROTTLE_WRITEBACK
+
+The majority hit the timeout in direct reclaim context although
+a sizable number did not stall at all. This is very different to
+kswapd where only a tiny percentage of stalls due to writeback
+reached the timeout.
+
+Bottom line, the throttling appears to work and the wakeup events may limit
+worst case stalls. There might be some grounds for adjusting timeouts but
+it's likely futile as the worst-case scenarios depend on the workload,
+memory size and the speed of the storage. A better approach to improve
+the series further would be to prioritise tasks based on their rate of
+allocation with the caveat that it may be very expensive to track.
+
+ include/linux/backing-dev.h      |   1 -
+ include/linux/mmzone.h           |  15 +++
+ include/trace/events/vmscan.h    |  38 ++++++++
+ include/trace/events/writeback.h |   7 --
+ mm/backing-dev.c                 |  48 ----------
+ mm/compaction.c                  |  10 +-
+ mm/filemap.c                     |   1 +
+ mm/internal.h                    |  21 +++++
+ mm/memcontrol.c                  |  10 +-
+ mm/page-writeback.c              |  11 ++-
+ mm/page_alloc.c                  |  26 ++----
+ mm/vmscan.c                      | 151 ++++++++++++++++++++++++++++---
+ mm/vmstat.c                      |   1 +
+ 13 files changed, 237 insertions(+), 103 deletions(-)
 
 -- 
-Thanks,
-
-David / dhildenb
+2.31.1
 
