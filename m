@@ -2,105 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA42A4373BF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 10:39:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B5544373C5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 10:41:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232216AbhJVIlu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 04:41:50 -0400
-Received: from outbound-smtp11.blacknight.com ([46.22.139.106]:40023 "EHLO
-        outbound-smtp11.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231984AbhJVIlr (ORCPT
+        id S232151AbhJVInv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 04:43:51 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:37232 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231773AbhJVInu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 04:41:47 -0400
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp11.blacknight.com (Postfix) with ESMTPS id 5798F1C47B0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Oct 2021 09:39:29 +0100 (IST)
-Received: (qmail 28203 invoked from network); 22 Oct 2021 08:39:29 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 22 Oct 2021 08:39:29 -0000
-Date:   Fri, 22 Oct 2021 09:39:27 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Rik van Riel <riel@surriel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/8] Remove dependency on congestion_wait in mm/
-Message-ID: <20211022083927.GI3959@techsingularity.net>
-References: <20211019090108.25501-1-mgorman@techsingularity.net>
- <163486531001.17149.13533181049212473096@noble.neil.brown.name>
+        Fri, 22 Oct 2021 04:43:50 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 2E471212C8;
+        Fri, 22 Oct 2021 08:41:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1634892092; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jUTA5Jw5vXR7hfBklBPTGzgJVoiY+oGxN0ZIH2ohiuU=;
+        b=hUeet1mvoGA5h/fTMMNRWlNcPBNVd/vMlJXCdqzUYqCN21jWa8ML3xIM6eneby/KN3MBMv
+        r+gStONFMg8gxkY48tjc6Z0Ol2/9ATChBGk3rx5XV2JzpG+CBKffrwj1CzkukmX+P54MoI
+        tG9+6ycKKO6eEOPoQ97jRJBptPjACDA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1634892092;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jUTA5Jw5vXR7hfBklBPTGzgJVoiY+oGxN0ZIH2ohiuU=;
+        b=93TfJ6AlqJHa9yXjCPyODn6CTm5FhUSb9kiJtGJhmueazloUFAr8rZS/ygrMCciVWT+AeN
+        XIUcYzyPA9K4XXCg==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id 0A738A3B81;
+        Fri, 22 Oct 2021 08:41:32 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id B2BB51E11B6; Fri, 22 Oct 2021 10:41:27 +0200 (CEST)
+Date:   Fri, 22 Oct 2021 10:41:27 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Phillip Susi <phill@thesusis.net>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev,
+        linux-bcache@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: Readahead for compressed data
+Message-ID: <20211022084127.GA1026@quack2.suse.cz>
+References: <YXHK5HrQpJu9oy8w@casper.infradead.org>
+ <87tuh9n9w2.fsf@vps.thesusis.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <163486531001.17149.13533181049212473096@noble.neil.brown.name>
+In-Reply-To: <87tuh9n9w2.fsf@vps.thesusis.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 22, 2021 at 12:15:10PM +1100, NeilBrown wrote:
-> On Tue, 19 Oct 2021, Mel Gorman wrote:
-> > Changelog since v3
-> > o Count writeback completions for NR_THROTTLED_WRITTEN only
-> > o Use IRQ-safe inc_node_page_state
-> > o Remove redundant throttling
-> > 
-> > This series is also available at
-> > 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/mel/linux.git mm-reclaimcongest-v4r2
-> > 
-> > This series that removes all calls to congestion_wait
-> > in mm/ and deletes wait_iff_congested. 
+On Thu 21-10-21 21:04:45, Phillip Susi wrote:
 > 
-> Thanks for this.
-> I don't have sufficient expertise for a positive review, but it seems to
-> make sense with one exception which I have commented on separately.
+> Matthew Wilcox <willy@infradead.org> writes:
 > 
-
-A test battering NFS would still be nice!
-
-> In general, I still don't like the use of wake_up_all(), though it won't
-> cause incorrect behaviour.
+> > As far as I can tell, the following filesystems support compressed data:
+> >
+> > bcachefs, btrfs, erofs, ntfs, squashfs, zisofs
+> >
+> > I'd like to make it easier and more efficient for filesystems to
+> > implement compressed data.  There are a lot of approaches in use today,
+> > but none of them seem quite right to me.  I'm going to lay out a few
+> > design considerations next and then propose a solution.  Feel free to
+> > tell me I've got the constraints wrong, or suggest alternative solutions.
+> >
+> > When we call ->readahead from the VFS, the VFS has decided which pages
+> > are going to be the most useful to bring in, but it doesn't know how
+> > pages are bundled together into blocks.  As I've learned from talking to
+> > Gao Xiang, sometimes the filesystem doesn't know either, so this isn't
+> > something we can teach the VFS.
+> >
+> > We (David) added readahead_expand() recently to let the filesystem
+> > opportunistically add pages to the page cache "around" the area requested
+> > by the VFS.  That reduces the number of times the filesystem has to
+> > decompress the same block.  But it can fail (due to memory allocation
+> > failures or pages already being present in the cache).  So filesystems
+> > still have to implement some kind of fallback.
 > 
+> Wouldn't it be better to keep the *compressed* data in the cache and
+> decompress it multiple times if needed rather than decompress it once
+> and cache the decompressed data?  You would use more CPU time
+> decompressing multiple times, but be able to cache more data and avoid
+> more disk IO, which is generally far slower than the CPU can decompress
+> the data.
 
-Removing wake_up_all would be tricky. Ideally it would be prioritised but
-more importantly, some sort of guarantee should exist that enough wakeup
-events trigger to wake tasks before the timeout. That would need careful
-thinking about each reclaim reason. For example, if N tasks throttle on
-NOPROGRESS, there is no guarantee that N tasks are currently in reclaim
-that would wake each sleeping task as progress is made. It's similar
-for writeback, are enough pages under writeback to trigger each wakeup?
-A more subtle issue is if each reason should be strict if waking tasks one
-at a time. For example, a task sleeping on writeback might make progress
-for other reasons such as the working set changing during reclaim or a
-large task exiting. Of course the same concerns exist for the series as
-it stands but the worst case scenarios are mitigated by wake_up_all.
+Well, one of the problems with keeping compressed data is that for mmap(2)
+you have to have pages decompressed so that CPU can access them. So keeping
+compressed data in the page cache would add a bunch of complexity. That
+being said keeping compressed data cached somewhere else than in the page
+cache may certainly me worth it and then just filling page cache on demand
+from this data...
 
-> I would prefer the first patch would:
->  - define NR_VMSCAN_THROTTLE
->  - make reclaim_wait an array
->  - spelled nr_reclaim_throttled as nr_writeback_throttled
-> 
-> rather than leaving those changes for the second patch.  I think that
-> would make review easier.
-> 
-
-I can do this. Normally I try structure series from least-to-most
-controversial so that it can be cut at any point and still make sense
-so the array was defined in the second patch because that's when it is
-required. However, I already had defined the enum in patch 1 for the
-tracepoint so I might as well make it an array too.
-
+								Honza
 -- 
-Mel Gorman
-SUSE Labs
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
