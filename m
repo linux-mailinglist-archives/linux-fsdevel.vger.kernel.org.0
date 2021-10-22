@@ -2,47 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C2D36437E27
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 21:10:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFC16437E2D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 21:10:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234517AbhJVTM6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 15:12:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:48167 "EHLO
+        id S234397AbhJVTNE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 15:13:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:34655 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234241AbhJVTML (ORCPT
+        by vger.kernel.org with ESMTP id S234419AbhJVTMX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 15:12:11 -0400
+        Fri, 22 Oct 2021 15:12:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634929793;
+        s=mimecast20190719; t=1634929805;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=lEv1nCfGI/JTcE65efOImxVTulwl/jl+Qr0vAdPp9Hw=;
-        b=ZY9eUxiHMolbtmYjjcImF6uBw3PasJdx+2oMerdaJd3c5jrcgO5n35QpZuy9GO1aJkQ/Xp
-        i/cLexavXjKmFEw7Vs4a2tQlnbG+XmKkSyTuvXf+OsqSV6yhwxk3OQUpyD/SOEDayxAtAw
-        FU5G/hkpIFifVfv8U3WNF5GxP0i3xcE=
+        bh=pduq8JmaLiep+zXaU6TdGnEE18u1qfpZkDtSvQZfn/k=;
+        b=UvL1uRp7K/yMbNBQoUDuHEjJrSE5hgrEWyUpqgbx5M3JH78J38f0qqRbaVFvg5jiOe8TyZ
+        MZ+yKHCdG9UfDYoAl99MNU1YynjCF0uchkgu9ah6t1MizfL1r+Vcmfu+bieGBv9zCM5Dc8
+        A3xI9SOP4iU8BSeEeA0JAz+ymtWAcrI=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-604-Q5rh-FeANgapRyminxrUKA-1; Fri, 22 Oct 2021 15:09:49 -0400
-X-MC-Unique: Q5rh-FeANgapRyminxrUKA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-44-Jmbd5BFZMeikjuKuqCI06g-1; Fri, 22 Oct 2021 15:10:01 -0400
+X-MC-Unique: Jmbd5BFZMeikjuKuqCI06g-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5B6A4801B26;
-        Fri, 22 Oct 2021 19:09:47 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7468F801FCE;
+        Fri, 22 Oct 2021 19:09:59 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1282960C04;
-        Fri, 22 Oct 2021 19:09:40 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 728CD19723;
+        Fri, 22 Oct 2021 19:09:53 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v2 47/53] afs: Add synchronous O_DIRECT support
+Subject: [PATCH v2 48/53] 9p: Use fscache indexing rewrite and reenable
+ caching
 From:   David Howells <dhowells@redhat.com>
 To:     linux-cachefs@redhat.com
-Cc:     Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org, dhowells@redhat.com,
+Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        v9fs-developer@lists.sourceforge.net, dhowells@redhat.com,
         Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
         Steve French <sfrench@samba.org>,
@@ -56,221 +59,618 @@ Cc:     Marc Dionne <marc.dionne@auristor.com>,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 22 Oct 2021 20:09:40 +0100
-Message-ID: <163492978023.1038219.13345268757845593653.stgit@warthog.procyon.org.uk>
+Date:   Fri, 22 Oct 2021 20:09:52 +0100
+Message-ID: <163492979259.1038219.8722617502632790512.stgit@warthog.procyon.org.uk>
 In-Reply-To: <163492911924.1038219.13107463173777870713.stgit@warthog.procyon.org.uk>
 References: <163492911924.1038219.13107463173777870713.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add synchronous O_DIRECT support to AFS (no AIO yet).  It can theoretically
-handle reads and writes up to the maximum size describable by an s64 - and
-given an iterator with sufficiently capacity to handle that and given
-support on the server.
+Change the 9p filesystem to take account of the changes to fscache's
+indexing rewrite and reenable caching in 9p.
+
+The following changes have been made:
+
+ (1) The fscache_netfs struct is no more, and there's no need to register
+     the filesystem as a whole.
+
+ (2) The session cookie is now an fscache_volume cookie, allocated with
+     fscache_acquire_volume().  That takes three parameters: a string
+     representing the "volume" in the index, a string naming the cache to
+     use (or NULL) and a u64 that conveys coherency metadata for the
+     volume.
+
+     For 9p, I've made it render the volume name string as:
+
+	"9p,<devname>,<cachetag>"
+
+     where the cachetag is replaced by the aname if it wasn't supplied.
+
+     This probably needs rethinking a bit as the aname can have slashes in
+     it.  It might be better to hash the cachetag and use the hash or I
+     could substitute commas for the slashes or something.
+
+ (3) The fscache_cookie_def is no more and needed information is passed
+     directly to fscache_acquire_cookie().  The cache no longer calls back
+     into the filesystem, but rather metadata changes are indicated at
+     other times.
+
+     fscache_acquire_cookie() is passed the same keying and coherency
+     information as before.
+
+ (4) The functions to set/reset/flush cookies are removed and
+     fscache_use_cookie() and fscache_unuse_cookie() are used instead.
+
+     fscache_use_cookie() is passed a flag to indicate if the cookie is
+     opened for writing.  fscache_unuse_cookie() is passed updates for the
+     metadata if we changed it (ie. if the file was opened for writing).
+
+     These are called when the file is opened or closed.
+
+ (5) wait_on_page_bit[_killable]() is replaced with the specific wait
+     functions for the bits waited upon.
+
+ (6) I've got rid of some of the 9p-specific cache helper functions and
+     called things like fscache_relinquish_cookie() directly as they'll
+     optimise away if v9fs_inode_cookie() returns an unconditional NULL
+     (which will be the case if CONFIG_9P_FSCACHE=n).
+
+ (7) v9fs_vfs_setattr() is made to call fscache_resize() to change the size
+     of the cache object.
+
+Notes:
+
+ (A) We should call fscache_invalidate() if we detect that the server's
+     copy of a file got changed by a third party, but I don't know where to
+     do that.  We don't need to do that when allocating the cookie as we
+     get a check-and-invalidate when we initially bind to the cache object.
+
+ (B) The copy-to-cache-on-writeback side of things will be handled in
+     separate patch.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
+cc: Eric Van Hensbergen <ericvh@gmail.com>
+cc: Latchesar Ionkov <lucho@ionkov.net>
+cc: Dominique Martinet <asmadeus@codewreck.org>
+cc: v9fs-developer@lists.sourceforge.net
 cc: linux-cachefs@redhat.com
 ---
 
- fs/afs/file.c     |   59 +++++++++++++++++++++++++++++++++++++++++++
- fs/afs/fsclient.c |    2 +
- fs/afs/internal.h |    1 +
- fs/afs/write.c    |   72 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 133 insertions(+), 1 deletion(-)
+ fs/9p/Kconfig          |    2 -
+ fs/9p/cache.c          |  184 ++++++------------------------------------------
+ fs/9p/cache.h          |   25 +------
+ fs/9p/v9fs.c           |   14 +---
+ fs/9p/v9fs.h           |   13 +++
+ fs/9p/vfs_addr.c       |    2 -
+ fs/9p/vfs_dir.c        |   11 +++
+ fs/9p/vfs_file.c       |    7 +-
+ fs/9p/vfs_inode.c      |   22 +++---
+ fs/9p/vfs_inode_dotl.c |    3 +
+ 10 files changed, 72 insertions(+), 211 deletions(-)
 
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index c0cf8bfa00e8..7fe57f210259 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -28,6 +28,7 @@ static ssize_t afs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter);
- static void afs_vm_open(struct vm_area_struct *area);
- static void afs_vm_close(struct vm_area_struct *area);
- static vm_fault_t afs_vm_map_pages(struct vm_fault *vmf, pgoff_t start_pgoff, pgoff_t end_pgoff);
-+static ssize_t afs_direct_IO(struct kiocb *iocb, struct iov_iter *iter);
+diff --git a/fs/9p/Kconfig b/fs/9p/Kconfig
+index b11c15c30bac..d7bc93447c85 100644
+--- a/fs/9p/Kconfig
++++ b/fs/9p/Kconfig
+@@ -14,7 +14,7 @@ config 9P_FS
+ if 9P_FS
+ config 9P_FSCACHE
+ 	bool "Enable 9P client caching support"
+-	depends on 9P_FS=m && FSCACHE_OLD || 9P_FS=y && FSCACHE_OLD=y
++	depends on 9P_FS=m && FSCACHE || 9P_FS=y && FSCACHE=y
+ 	help
+ 	  Choose Y here to enable persistent, read-only local
+ 	  caching support for 9p clients using FS-Cache
+diff --git a/fs/9p/cache.c b/fs/9p/cache.c
+index 077f0a40aa01..99662920699d 100644
+--- a/fs/9p/cache.c
++++ b/fs/9p/cache.c
+@@ -16,89 +16,26 @@
+ #include "v9fs.h"
+ #include "cache.h"
  
- const struct file_operations afs_file_operations = {
- 	.open		= afs_open,
-@@ -56,6 +57,7 @@ const struct address_space_operations afs_fs_aops = {
- 	.launder_page	= afs_launder_page,
- 	.releasepage	= afs_releasepage,
- 	.invalidatepage	= afs_invalidatepage,
-+	.direct_IO	= afs_direct_IO,
- 	.write_begin	= afs_write_begin,
- 	.write_end	= afs_write_end,
- 	.writepage	= afs_writepage,
-@@ -602,3 +604,60 @@ static ssize_t afs_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+-#define CACHETAG_LEN  11
+-
+-struct fscache_netfs v9fs_cache_netfs = {
+-	.name 		= "9p",
+-	.version 	= 0,
+-};
+-
+-/*
+- * v9fs_random_cachetag - Generate a random tag to be associated
+- *			  with a new cache session.
+- *
+- * The value of jiffies is used for a fairly randomly cache tag.
+- */
+-
+-static
+-int v9fs_random_cachetag(struct v9fs_session_info *v9ses)
+-{
+-	v9ses->cachetag = kmalloc(CACHETAG_LEN, GFP_KERNEL);
+-	if (!v9ses->cachetag)
+-		return -ENOMEM;
+-
+-	return scnprintf(v9ses->cachetag, CACHETAG_LEN, "%lu", jiffies);
+-}
+-
+-const struct fscache_cookie_def v9fs_cache_session_index_def = {
+-	.name		= "9P.session",
+-	.type		= FSCACHE_COOKIE_TYPE_INDEX,
+-};
+-
+-void v9fs_cache_session_get_cookie(struct v9fs_session_info *v9ses)
++void v9fs_cache_session_get_cookie(struct v9fs_session_info *v9ses,
++				   const char *dev_name)
+ {
+-	/* If no cache session tag was specified, we generate a random one. */
+-	if (!v9ses->cachetag) {
+-		if (v9fs_random_cachetag(v9ses) < 0) {
+-			v9ses->fscache = NULL;
+-			kfree(v9ses->cachetag);
+-			v9ses->cachetag = NULL;
+-			return;
+-		}
+-	}
++	char *name, *p;
  
- 	return generic_file_read_iter(iocb, iter);
+-	v9ses->fscache = fscache_acquire_cookie(v9fs_cache_netfs.primary_index,
+-						&v9fs_cache_session_index_def,
+-						v9ses->cachetag,
+-						strlen(v9ses->cachetag),
+-						NULL, 0,
+-						v9ses, 0, true);
+-	p9_debug(P9_DEBUG_FSC, "session %p get cookie %p\n",
+-		 v9ses, v9ses->fscache);
+-}
+-
+-void v9fs_cache_session_put_cookie(struct v9fs_session_info *v9ses)
+-{
+-	p9_debug(P9_DEBUG_FSC, "session %p put cookie %p\n",
+-		 v9ses, v9ses->fscache);
+-	fscache_relinquish_cookie(v9ses->fscache, NULL, false);
+-	v9ses->fscache = NULL;
+-}
+-
+-static enum
+-fscache_checkaux v9fs_cache_inode_check_aux(void *cookie_netfs_data,
+-					    const void *buffer,
+-					    uint16_t buflen,
+-					    loff_t object_size)
+-{
+-	const struct v9fs_inode *v9inode = cookie_netfs_data;
+-
+-	if (buflen != sizeof(v9inode->qid.version))
+-		return FSCACHE_CHECKAUX_OBSOLETE;
++	name = kasprintf(GFP_KERNEL, "9p,%s,%s",
++			 dev_name, v9ses->cachetag ?: v9ses->aname);
++	if (!name)
++		return;
+ 
+-	if (memcmp(buffer, &v9inode->qid.version,
+-		   sizeof(v9inode->qid.version)))
+-		return FSCACHE_CHECKAUX_OBSOLETE;
++	for (p = name; *p; p++)
++		if (*p == '/')
++			*p = ';';
+ 
+-	return FSCACHE_CHECKAUX_OKAY;
++	v9ses->fscache = fscache_acquire_volume(name, NULL, 0);
++	p9_debug(P9_DEBUG_FSC, "session %p get volume %p (%s)\n",
++		 v9ses, v9ses->fscache, name);
++	kfree(name);
  }
-+
-+/*
-+ * Direct file read operation for an AFS file.
-+ *
-+ * TODO: To support AIO, the pages in the iterator have to be copied and
-+ * refs taken on them.  Then -EIOCBQUEUED needs to be returned.
-+ * iocb->ki_complete must then be called upon completion of the operation.
-+ */
-+static ssize_t afs_file_direct_read(struct kiocb *iocb, struct iov_iter *iter)
+ 
+-const struct fscache_cookie_def v9fs_cache_inode_index_def = {
+-	.name		= "9p.inode",
+-	.type		= FSCACHE_COOKIE_TYPE_DATAFILE,
+-	.check_aux	= v9fs_cache_inode_check_aux,
+-};
+-
+ void v9fs_cache_inode_get_cookie(struct inode *inode)
+ {
+ 	struct v9fs_inode *v9inode;
+@@ -108,94 +45,19 @@ void v9fs_cache_inode_get_cookie(struct inode *inode)
+ 		return;
+ 
+ 	v9inode = V9FS_I(inode);
+-	if (v9inode->fscache)
++	if (WARN_ON(v9inode->fscache))
+ 		return;
+ 
+ 	v9ses = v9fs_inode2v9ses(inode);
+-	v9inode->fscache = fscache_acquire_cookie(v9ses->fscache,
+-						  &v9fs_cache_inode_index_def,
+-						  &v9inode->qid.path,
+-						  sizeof(v9inode->qid.path),
+-						  &v9inode->qid.version,
+-						  sizeof(v9inode->qid.version),
+-						  v9inode,
+-						  i_size_read(&v9inode->vfs_inode),
+-						  true);
++	v9inode->fscache =
++		fscache_acquire_cookie(v9fs_session_cache(v9ses),
++				       0,
++				       &v9inode->qid.path,
++				       sizeof(v9inode->qid.path),
++				       &v9inode->qid.version,
++				       sizeof(v9inode->qid.version),
++				       i_size_read(&v9inode->vfs_inode));
+ 
+ 	p9_debug(P9_DEBUG_FSC, "inode %p get cookie %p\n",
+ 		 inode, v9inode->fscache);
+ }
+-
+-void v9fs_cache_inode_put_cookie(struct inode *inode)
+-{
+-	struct v9fs_inode *v9inode = V9FS_I(inode);
+-
+-	if (!v9inode->fscache)
+-		return;
+-	p9_debug(P9_DEBUG_FSC, "inode %p put cookie %p\n",
+-		 inode, v9inode->fscache);
+-
+-	fscache_relinquish_cookie(v9inode->fscache, &v9inode->qid.version,
+-				  false);
+-	v9inode->fscache = NULL;
+-}
+-
+-void v9fs_cache_inode_flush_cookie(struct inode *inode)
+-{
+-	struct v9fs_inode *v9inode = V9FS_I(inode);
+-
+-	if (!v9inode->fscache)
+-		return;
+-	p9_debug(P9_DEBUG_FSC, "inode %p flush cookie %p\n",
+-		 inode, v9inode->fscache);
+-
+-	fscache_relinquish_cookie(v9inode->fscache, NULL, true);
+-	v9inode->fscache = NULL;
+-}
+-
+-void v9fs_cache_inode_set_cookie(struct inode *inode, struct file *filp)
+-{
+-	struct v9fs_inode *v9inode = V9FS_I(inode);
+-
+-	if (!v9inode->fscache)
+-		return;
+-
+-	mutex_lock(&v9inode->fscache_lock);
+-
+-	if ((filp->f_flags & O_ACCMODE) != O_RDONLY)
+-		v9fs_cache_inode_flush_cookie(inode);
+-	else
+-		v9fs_cache_inode_get_cookie(inode);
+-
+-	mutex_unlock(&v9inode->fscache_lock);
+-}
+-
+-void v9fs_cache_inode_reset_cookie(struct inode *inode)
+-{
+-	struct v9fs_inode *v9inode = V9FS_I(inode);
+-	struct v9fs_session_info *v9ses;
+-	struct fscache_cookie *old;
+-
+-	if (!v9inode->fscache)
+-		return;
+-
+-	old = v9inode->fscache;
+-
+-	mutex_lock(&v9inode->fscache_lock);
+-	fscache_relinquish_cookie(v9inode->fscache, NULL, true);
+-
+-	v9ses = v9fs_inode2v9ses(inode);
+-	v9inode->fscache = fscache_acquire_cookie(v9ses->fscache,
+-						  &v9fs_cache_inode_index_def,
+-						  &v9inode->qid.path,
+-						  sizeof(v9inode->qid.path),
+-						  &v9inode->qid.version,
+-						  sizeof(v9inode->qid.version),
+-						  v9inode,
+-						  i_size_read(&v9inode->vfs_inode),
+-						  true);
+-	p9_debug(P9_DEBUG_FSC, "inode %p revalidating cookie old %p new %p\n",
+-		 inode, old, v9inode->fscache);
+-
+-	mutex_unlock(&v9inode->fscache_lock);
+-}
+diff --git a/fs/9p/cache.h b/fs/9p/cache.h
+index b940c5ffd9e3..e485049eec85 100644
+--- a/fs/9p/cache.h
++++ b/fs/9p/cache.h
+@@ -9,25 +9,14 @@
+ #define _9P_CACHE_H
+ 
+ #define FSCACHE_USE_NEW_IO_API
+-#include <linux/fscache_old.h>
++#include <linux/fscache.h>
+ 
+ #ifdef CONFIG_9P_FSCACHE
+ 
+-extern struct fscache_netfs v9fs_cache_netfs;
+-extern const struct fscache_cookie_def v9fs_cache_session_index_def;
+-extern const struct fscache_cookie_def v9fs_cache_inode_index_def;
+-
+-extern void v9fs_cache_session_get_cookie(struct v9fs_session_info *v9ses);
+-extern void v9fs_cache_session_put_cookie(struct v9fs_session_info *v9ses);
++extern void v9fs_cache_session_get_cookie(struct v9fs_session_info *v9ses,
++					  const char *dev_name);
+ 
+ extern void v9fs_cache_inode_get_cookie(struct inode *inode);
+-extern void v9fs_cache_inode_put_cookie(struct inode *inode);
+-extern void v9fs_cache_inode_flush_cookie(struct inode *inode);
+-extern void v9fs_cache_inode_set_cookie(struct inode *inode, struct file *filp);
+-extern void v9fs_cache_inode_reset_cookie(struct inode *inode);
+-
+-extern int __v9fs_cache_register(void);
+-extern void __v9fs_cache_unregister(void);
+ 
+ #else /* CONFIG_9P_FSCACHE */
+ 
+@@ -35,13 +24,5 @@ static inline void v9fs_cache_inode_get_cookie(struct inode *inode)
+ {
+ }
+ 
+-static inline void v9fs_cache_inode_put_cookie(struct inode *inode)
+-{
+-}
+-
+-static inline void v9fs_cache_inode_set_cookie(struct inode *inode, struct file *file)
+-{
+-}
+-
+ #endif /* CONFIG_9P_FSCACHE */
+ #endif /* _9P_CACHE_H */
+diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+index 2e0fa7c932db..ab5b2069b78d 100644
+--- a/fs/9p/v9fs.c
++++ b/fs/9p/v9fs.c
+@@ -468,7 +468,8 @@ struct p9_fid *v9fs_session_init(struct v9fs_session_info *v9ses,
+ 
+ #ifdef CONFIG_9P_FSCACHE
+ 	/* register the session for caching */
+-	v9fs_cache_session_get_cookie(v9ses);
++	if (v9ses->cache == CACHE_LOOSE || v9ses->cache == CACHE_FSCACHE)
++		v9fs_cache_session_get_cookie(v9ses, dev_name);
+ #endif
+ 	spin_lock(&v9fs_sessionlist_lock);
+ 	list_add(&v9ses->slist, &v9fs_sessionlist);
+@@ -501,8 +502,7 @@ void v9fs_session_close(struct v9fs_session_info *v9ses)
+ 	}
+ 
+ #ifdef CONFIG_9P_FSCACHE
+-	if (v9ses->fscache)
+-		v9fs_cache_session_put_cookie(v9ses);
++	fscache_relinquish_volume(v9fs_session_cache(v9ses), 0, false);
+ 	kfree(v9ses->cachetag);
+ #endif
+ 	kfree(v9ses->uname);
+@@ -662,20 +662,12 @@ static int v9fs_cache_register(void)
+ 	ret = v9fs_init_inode_cache();
+ 	if (ret < 0)
+ 		return ret;
+-#ifdef CONFIG_9P_FSCACHE
+-	ret = fscache_register_netfs(&v9fs_cache_netfs);
+-	if (ret < 0)
+-		v9fs_destroy_inode_cache();
+-#endif
+ 	return ret;
+ }
+ 
+ static void v9fs_cache_unregister(void)
+ {
+ 	v9fs_destroy_inode_cache();
+-#ifdef CONFIG_9P_FSCACHE
+-	fscache_unregister_netfs(&v9fs_cache_netfs);
+-#endif
+ }
+ 
+ /**
+diff --git a/fs/9p/v9fs.h b/fs/9p/v9fs.h
+index 92124b235a6d..cf4f645785e0 100644
+--- a/fs/9p/v9fs.h
++++ b/fs/9p/v9fs.h
+@@ -89,7 +89,7 @@ struct v9fs_session_info {
+ 	unsigned int cache;
+ #ifdef CONFIG_9P_FSCACHE
+ 	char *cachetag;
+-	struct fscache_cookie *fscache;
++	struct fscache_volume *fscache;
+ #endif
+ 
+ 	char *uname;		/* user name to mount as */
+@@ -109,7 +109,6 @@ struct v9fs_session_info {
+ 
+ struct v9fs_inode {
+ #ifdef CONFIG_9P_FSCACHE
+-	struct mutex fscache_lock;
+ 	struct fscache_cookie *fscache;
+ #endif
+ 	struct p9_qid qid;
+@@ -133,6 +132,16 @@ static inline struct fscache_cookie *v9fs_inode_cookie(struct v9fs_inode *v9inod
+ #endif
+ }
+ 
++static inline struct fscache_volume *v9fs_session_cache(struct v9fs_session_info *v9ses)
 +{
-+	struct file *file = iocb->ki_filp;
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
-+	struct afs_read *req;
-+	ssize_t ret, transferred;
-+
-+	_enter("%llx,%zx", iocb->ki_pos, iov_iter_count(iter));
-+
-+	req = afs_alloc_read(GFP_KERNEL);
-+	if (!req)
-+		return -ENOMEM;
-+
-+	req->vnode	= vnode;
-+	req->key	= key_get(afs_file_key(file));
-+	req->pos	= iocb->ki_pos;
-+	req->len	= iov_iter_count(iter);
-+	req->iter	= iter;
-+
-+	task_io_account_read(req->len);
-+
-+	// TODO nfs_start_io_direct(inode);
-+	ret = afs_fetch_data(vnode, req);
-+	if (ret == 0)
-+		transferred = req->actual_len;
-+	afs_put_read(req);
-+
-+	// TODO nfs_end_io_direct(inode);
-+
-+	if (ret == 0)
-+		ret = transferred;
-+
-+	BUG_ON(ret == -EIOCBQUEUED); // TODO
-+	//if (iocb->ki_complete)
-+	//	iocb->ki_complete(iocb, ret, 0); // only if ret == -EIOCBQUEUED
-+
-+	_leave(" = %zu", ret);
-+	return ret;
++#ifdef CONFIG_9P_FSCACHE
++	return v9ses->fscache;
++#else
++	return NULL;
++#endif
 +}
 +
-+/*
-+ * Do direct I/O.
-+ */
-+static ssize_t afs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
-+{
-+	if (iov_iter_rw(iter) == READ)
-+		return afs_file_direct_read(iocb, iter);
-+	return afs_file_direct_write(iocb, iter);
-+}
-diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
-index 4943413d9c5f..a7273106803c 100644
---- a/fs/afs/fsclient.c
-+++ b/fs/afs/fsclient.c
-@@ -439,7 +439,7 @@ static void afs_fs_fetch_data64(struct afs_operation *op)
- 	bp[3] = htonl(vp->fid.unique);
- 	bp[4] = htonl(upper_32_bits(req->pos));
- 	bp[5] = htonl(lower_32_bits(req->pos));
--	bp[6] = 0;
-+	bp[6] = htonl(upper_32_bits(req->len));
- 	bp[7] = htonl(lower_32_bits(req->len));
++
+ extern int v9fs_show_options(struct seq_file *m, struct dentry *root);
  
- 	trace_afs_make_fs_call(call, &vp->fid);
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 07d34291bf4f..3d640e84588e 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -1538,6 +1538,7 @@ extern int afs_fsync(struct file *, loff_t, loff_t, int);
- extern vm_fault_t afs_page_mkwrite(struct vm_fault *vmf);
- extern void afs_prune_wb_keys(struct afs_vnode *);
- extern int afs_launder_page(struct page *);
-+extern ssize_t afs_file_direct_write(struct kiocb *, struct iov_iter *);
+ struct p9_fid *v9fs_session_init(struct v9fs_session_info *, const char *,
+diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+index cff99f5c05e3..5bcc2ab5b277 100644
+--- a/fs/9p/vfs_addr.c
++++ b/fs/9p/vfs_addr.c
+@@ -80,7 +80,7 @@ static bool v9fs_is_cache_enabled(struct inode *inode)
+ {
+ 	struct fscache_cookie *cookie = v9fs_inode_cookie(V9FS_I(inode));
  
- /*
-  * xattr.c
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index fa96a65d28be..94a21ee974c0 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -1040,3 +1040,75 @@ static void afs_write_to_cache(struct afs_vnode *vnode,
- 			       vnode->vfs_inode.i_mapping, start, len, i_size,
- 			       afs_write_to_cache_done, vnode);
+-	return fscache_cookie_enabled(cookie) && !hlist_empty(&cookie->backing_objects);
++	return fscache_cookie_enabled(cookie) && cookie->cache_priv;
  }
+ 
+ /**
+diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
+index b6a5a0be444d..676b8b00ef20 100644
+--- a/fs/9p/vfs_dir.c
++++ b/fs/9p/vfs_dir.c
+@@ -19,6 +19,7 @@
+ #include <linux/idr.h>
+ #include <linux/slab.h>
+ #include <linux/uio.h>
++#include <linux/fscache.h>
+ #include <net/9p/9p.h>
+ #include <net/9p/client.h>
+ 
+@@ -205,7 +206,9 @@ static int v9fs_dir_readdir_dotl(struct file *file, struct dir_context *ctx)
+ 
+ int v9fs_dir_release(struct inode *inode, struct file *filp)
+ {
++	struct v9fs_inode *v9inode = V9FS_I(inode);
+ 	struct p9_fid *fid;
++	loff_t i_size;
+ 
+ 	fid = filp->private_data;
+ 	p9_debug(P9_DEBUG_VFS, "inode: %p filp: %p fid: %d\n",
+@@ -216,6 +219,14 @@ int v9fs_dir_release(struct inode *inode, struct file *filp)
+ 		spin_unlock(&inode->i_lock);
+ 		p9_client_clunk(fid);
+ 	}
 +
-+static void afs_dio_store_data_success(struct afs_operation *op)
-+{
-+	struct afs_vnode *vnode = op->file[0].vnode;
-+
-+	op->ctime = op->file[0].scb.status.mtime_client;
-+	afs_vnode_commit_status(op, &op->file[0]);
-+	if (op->error == 0) {
-+		afs_stat_v(vnode, n_stores);
-+		atomic_long_add(op->store.size, &afs_v2net(vnode)->n_store_bytes);
++	if ((filp->f_mode & FMODE_WRITE)) {
++		i_size = i_size_read(inode);
++		fscache_unuse_cookie(v9fs_inode_cookie(v9inode),
++				     &v9inode->qid.version, &i_size);
++	} else {
++		fscache_unuse_cookie(v9fs_inode_cookie(v9inode), NULL, NULL);
 +	}
-+}
-+
-+static const struct afs_operation_ops afs_dio_store_data_operation = {
-+	.issue_afs_rpc	= afs_fs_store_data,
-+	.issue_yfs_rpc	= yfs_fs_store_data,
-+	.success	= afs_dio_store_data_success,
-+};
-+
-+/*
-+ * Direct file write operation for an AFS file.
-+ *
-+ * TODO: To support AIO, the pages in the iterator have to be copied and
-+ * refs taken on them.  Then -EIOCBQUEUED needs to be returned.
-+ * iocb->ki_complete must then be called upon completion of the operation.
-+ */
-+ssize_t afs_file_direct_write(struct kiocb *iocb, struct iov_iter *iter)
-+{
-+	struct file *file = iocb->ki_filp;
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
-+	struct afs_operation *op;
-+	loff_t size = iov_iter_count(iter), i_size;
-+	ssize_t ret;
-+
-+	_enter("%s{%llx:%llu.%u},%llx,%llx",
-+	       vnode->volume->name,
-+	       vnode->fid.vid,
-+	       vnode->fid.vnode,
-+	       vnode->fid.unique,
-+	       size, iocb->ki_pos);
-+
-+	op = afs_alloc_operation(afs_file_key(file), vnode->volume);
-+	if (IS_ERR(op))
-+		return -ENOMEM;
-+
-+	i_size = i_size_read(&vnode->vfs_inode);
-+
-+	afs_op_set_vnode(op, 0, vnode);
-+	op->file[0].dv_delta	= 1;
-+	op->file[0].set_size	= true;
-+	op->file[0].modification = true;
-+	op->store.write_iter	= iter;
-+	op->store.pos		= iocb->ki_pos;
-+	op->store.size		= size;
-+	op->store.i_size	= max(iocb->ki_pos + size, i_size);
-+	op->mtime		= current_time(&vnode->vfs_inode);
-+	op->ops			= &afs_dio_store_data_operation;
-+
-+	//if (!is_sync_kiocb(iocb)) {
-+
-+	ret = afs_do_sync_operation(op);
-+	if (ret == 0)
-+		ret = size;
-+
-+	afs_invalidate_cache(vnode, FSCACHE_INVAL_DIO_WRITE);
-+
-+	//if (iocb->ki_complete)
-+	//	iocb->ki_complete(iocb, ret, 0); // only if ret == -EIOCBQUEUED
-+
-+	_leave(" = %zd", ret);
-+	return ret;
-+}
+ 	return 0;
+ }
+ 
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index 80052497f00f..461a51509300 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -95,7 +95,8 @@ int v9fs_file_open(struct inode *inode, struct file *file)
+ 	}
+ 	mutex_unlock(&v9inode->v_mutex);
+ 	if (v9ses->cache == CACHE_LOOSE || v9ses->cache == CACHE_FSCACHE)
+-		v9fs_cache_inode_set_cookie(inode, file);
++		fscache_use_cookie(v9fs_inode_cookie(v9inode),
++				   file->f_mode & FMODE_WRITE);
+ 	v9fs_open_fid_add(inode, fid);
+ 	return 0;
+ out_error:
+@@ -544,12 +545,12 @@ v9fs_vm_page_mkwrite(struct vm_fault *vmf)
+ 	 */
+ #ifdef CONFIG_9P_FSCACHE
+ 	if (PageFsCache(page) &&
+-	    wait_on_page_bit_killable(page, PG_fscache) < 0)
++	    wait_on_page_fscache_killable(page) < 0)
+ 		return VM_FAULT_RETRY;
+ #endif
+ 
+ 	if (PageWriteback(page) &&
+-	    wait_on_page_bit_killable(page, PG_writeback) < 0)
++	    wait_on_page_writeback_killable(page) < 0)
+ 		return VM_FAULT_RETRY;
+ 
+ 	/* Update file times before taking page lock */
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index 08f48b70a741..83db37bd4252 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -228,7 +228,6 @@ struct inode *v9fs_alloc_inode(struct super_block *sb)
+ 		return NULL;
+ #ifdef CONFIG_9P_FSCACHE
+ 	v9inode->fscache = NULL;
+-	mutex_init(&v9inode->fscache_lock);
+ #endif
+ 	v9inode->writeback_fid = NULL;
+ 	v9inode->cache_validity = 0;
+@@ -381,7 +380,7 @@ void v9fs_evict_inode(struct inode *inode)
+ 	clear_inode(inode);
+ 	filemap_fdatawrite(&inode->i_data);
+ 
+-	v9fs_cache_inode_put_cookie(inode);
++	fscache_relinquish_cookie(v9fs_inode_cookie(v9inode), false);
+ 	/* clunk the fid stashed in writeback_fid */
+ 	if (v9inode->writeback_fid) {
+ 		p9_client_clunk(v9inode->writeback_fid);
+@@ -862,7 +861,8 @@ v9fs_vfs_atomic_open(struct inode *dir, struct dentry *dentry,
+ 
+ 	file->private_data = fid;
+ 	if (v9ses->cache == CACHE_LOOSE || v9ses->cache == CACHE_FSCACHE)
+-		v9fs_cache_inode_set_cookie(d_inode(dentry), file);
++		fscache_use_cookie(v9fs_inode_cookie(v9inode),
++				   file->f_mode & FMODE_WRITE);
+ 	v9fs_open_fid_add(inode, fid);
+ 
+ 	file->f_mode |= FMODE_CREATED;
+@@ -1065,6 +1065,8 @@ static int v9fs_vfs_setattr(struct user_namespace *mnt_userns,
+ 			    struct dentry *dentry, struct iattr *iattr)
+ {
+ 	int retval, use_dentry = 0;
++	struct inode *inode = d_inode(dentry);
++	struct v9fs_inode *v9inode = V9FS_I(inode);
+ 	struct v9fs_session_info *v9ses;
+ 	struct p9_fid *fid = NULL;
+ 	struct p9_wstat wstat;
+@@ -1110,7 +1112,7 @@ static int v9fs_vfs_setattr(struct user_namespace *mnt_userns,
+ 
+ 	/* Write all dirty data */
+ 	if (d_is_reg(dentry))
+-		filemap_write_and_wait(d_inode(dentry)->i_mapping);
++		filemap_write_and_wait(inode->i_mapping);
+ 
+ 	retval = p9_client_wstat(fid, &wstat);
+ 
+@@ -1121,13 +1123,15 @@ static int v9fs_vfs_setattr(struct user_namespace *mnt_userns,
+ 		return retval;
+ 
+ 	if ((iattr->ia_valid & ATTR_SIZE) &&
+-	    iattr->ia_size != i_size_read(d_inode(dentry)))
+-		truncate_setsize(d_inode(dentry), iattr->ia_size);
++	    iattr->ia_size != i_size_read(inode)) {
++		truncate_setsize(inode, iattr->ia_size);
++		fscache_resize_cookie(v9fs_inode_cookie(v9inode), iattr->ia_size);
++	}
+ 
+-	v9fs_invalidate_inode_attr(d_inode(dentry));
++	v9fs_invalidate_inode_attr(inode);
+ 
+-	setattr_copy(&init_user_ns, d_inode(dentry), iattr);
+-	mark_inode_dirty(d_inode(dentry));
++	setattr_copy(&init_user_ns, inode, iattr);
++	mark_inode_dirty(inode);
+ 	return 0;
+ }
+ 
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index 01b9e1281a29..a5058c9a2ab3 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -346,7 +346,8 @@ v9fs_vfs_atomic_open_dotl(struct inode *dir, struct dentry *dentry,
+ 		goto err_clunk_old_fid;
+ 	file->private_data = ofid;
+ 	if (v9ses->cache == CACHE_LOOSE || v9ses->cache == CACHE_FSCACHE)
+-		v9fs_cache_inode_set_cookie(inode, file);
++		fscache_use_cookie(v9fs_inode_cookie(v9inode),
++				   file->f_mode & FMODE_WRITE);
+ 	v9fs_open_fid_add(inode, ofid);
+ 	file->f_mode |= FMODE_CREATED;
+ out:
 
 
