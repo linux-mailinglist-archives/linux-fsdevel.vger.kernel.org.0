@@ -2,95 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5ADC4375AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 12:47:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1F044375F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 13:26:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232586AbhJVKuH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 06:50:07 -0400
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:34583 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232560AbhJVKuG (ORCPT
+        id S232744AbhJVL27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 07:28:59 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:33716 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232741AbhJVL26 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 06:50:06 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id 55FD63200A60;
-        Fri, 22 Oct 2021 06:47:49 -0400 (EDT)
-Received: from imap45 ([10.202.2.95])
-  by compute2.internal (MEProxy); Fri, 22 Oct 2021 06:47:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=
-        mime-version:message-id:date:from:to:subject:content-type
-        :content-transfer-encoding; s=fm3; bh=WMH4rbN2enHzZiUCcClkPCqKqZ
-        +TbZt9htiNG5WTVD4=; b=H9XZteDWQIZ0c7pWy4DRpLcPH+krwNegxNPVbJ2C5e
-        kUzH4m1vyByHKk0uj0keZzSJJgAyVs9b/m9t6SS6uyr3hrD4Jgp2iPyq0gmcODSV
-        3R4Ip52IM/qAm6P4HRyzXdg7vOpPKBvOpLkrpkFpBG/4yuI8A9SWrlEJ+MJ60FVU
-        c9mkzXqNGRJGkdIVkkgbMCcdkeihY/j6INsra+w4nV+dXvClsm2qOaGyYztN7mH6
-        rm1ZYa+xLsuaVBhvvMbm09E2Q42YCEO2XSorWrFsYsZvMyaYeCFOadVxUhWzerKT
-        pWTBHDAu3nMxSQOs+xlt4WHnBrCiMghWLoBvCJvIfwfQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=content-transfer-encoding:content-type
-        :date:from:message-id:mime-version:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=WMH4rb
-        N2enHzZiUCcClkPCqKqZ+TbZt9htiNG5WTVD4=; b=MHt7R9Dv1qrJucMiT4ed8S
-        AyFaBOLGwI+cWE7Sr+QkBsaklBIIcOPH2p/NjdQCpTCVW+ntWlgGHWaxfjW6jDww
-        mM/Ndy2ikHEYpSWzNUh0lTh0TKXugAE0UUu/wQj44TQMOyZfkanw6YdljRFMh2x/
-        kaZiSIfASEh6NYBD/qQE7FuPc3ok4kaAS3wtYeMYZXgbn3B1395Z+ZCcJJflshgI
-        ZJq7BgTJOl2a1/TlyUktN5b9eRElo8Eo6tycvRnu2HuYI+rXJgZkuXOJw44rMCeJ
-        EfWFoJWYj7tOm6wzR81SEJGN/jDK0ZWnkWMdxDJy8VvgU1mZHJwWKFYTrKtrcKWQ
-        ==
-X-ME-Sender: <xms:1JZyYZS32mWqsY-AEPL_42_A-WueCb7DZjM7zm7HThguWJS5xl2aKg>
-    <xme:1JZyYSw-dbs6cnhsK4n9iIuFE3MOrrmsW1gmND8uQPMTE-ewdPeTp_WynKuBteLlW
-    mMwALPl_8p6YpXH>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvtddrvddvkedgfeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkfffhvffutgfgsehtqhertderreejnecuhfhrohhmpedfpfhikhho
-    lhgruhhsucftrghthhdfuceonhhikhholhgruhhssehrrghthhdrohhrgheqnecuggftrf
-    grthhtvghrnhepffffkeetueegteeifeeutdefieehvedvueevhfekueffgfetteduhfeg
-    vefgffeunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epnhhikhholhgruhhssehrrghthhdrohhrgh
-X-ME-Proxy: <xmx:1JZyYe1Yt5YtvETbLIyMuFxPl4kZ3idWOCcLF080mkRKoi9ChYRBPQ>
-    <xmx:1JZyYRA3Vashfkp59o8UAWdJgQOWLnOqVulbZSvTdDvMghOJlr-0PQ>
-    <xmx:1JZyYSiWxGHBNGYZf_7yL1MFn28CKR5P9NKH2UMkNkIal5YpfXknHA>
-    <xmx:1JZyYTsy-VOINkTu5xD9sAc0zMMkXuqFEbdKSaMXeACgmfV4_d9AzQ>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 9A33924A006F; Fri, 22 Oct 2021 06:47:48 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.5.0-alpha0-1369-gd055fb5e7c-fm-20211018.002-gd055fb5e
-Mime-Version: 1.0
-Message-Id: <77b7da23-1c01-46e2-aa90-c08639acb398@www.fastmail.com>
-Date:   Fri, 22 Oct 2021 11:47:28 +0100
-From:   "Nikolaus Rath" <nikolaus@rath.org>
-To:     "Linux FS Devel" <linux-fsdevel@vger.kernel.org>,
-        fuse-devel@lists.sourceforge.net,
-        "Miklos Szeredi" <miklos@szeredi.hu>
-Subject: [FUSE]: io_submit() always blocks?
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        Fri, 22 Oct 2021 07:28:58 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id CE4481FD58;
+        Fri, 22 Oct 2021 11:26:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1634901999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=G+CT6BgCtYpvdAl4MhY2kM2fLPV09SlNX2gZkJNaBZo=;
+        b=DmdRpB0nz/eEkPbaRbG5oT04ItfX62+OAxSQO3vWI+pOdkBg8ek78HvN7hTZwHiZmd6hYU
+        ZG3SCvUAk20HFuSn5Dr5gKZ3zbkw6/AXc1vGYMYgnnkz0WkD+T4o7qzvXNHwRJD8UN3dYK
+        3fFYIBkfAtqPoMqVMpzdBsCp7fcWfrs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1634901999;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=G+CT6BgCtYpvdAl4MhY2kM2fLPV09SlNX2gZkJNaBZo=;
+        b=j7JodYggPkHHKNiWjC6WC+fc7I4Vca5MEAR7EZMkb/nSTIY9J28Lv4ZDsmbb/vE6GGh22S
+        BhWLFwOhBNrySdDQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8228F13CD4;
+        Fri, 22 Oct 2021 11:26:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id EaZRDOqfcmHKIQAAMHmgww
+        (envelope-from <neilb@suse.de>); Fri, 22 Oct 2021 11:26:34 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Mel Gorman" <mgorman@techsingularity.net>
+Cc:     "Andrew Morton" <akpm@linux-foundation.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        "Andreas Dilger" <adilger.kernel@dilger.ca>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        "Matthew Wilcox" <willy@infradead.org>,
+        "Michal Hocko" <mhocko@suse.com>,
+        "Dave Chinner" <david@fromorbit.com>,
+        "Rik van Riel" <riel@surriel.com>,
+        "Vlastimil Babka" <vbabka@suse.cz>,
+        "Johannes Weiner" <hannes@cmpxchg.org>,
+        "Jonathan Corbet" <corbet@lwn.net>,
+        "Linux-MM" <linux-mm@kvack.org>,
+        "Linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
+        "LKML" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 0/8] Remove dependency on congestion_wait in mm/
+In-reply-to: <20211022083927.GI3959@techsingularity.net>
+References: <20211019090108.25501-1-mgorman@techsingularity.net>,
+ <163486531001.17149.13533181049212473096@noble.neil.brown.name>,
+ <20211022083927.GI3959@techsingularity.net>
+Date:   Fri, 22 Oct 2021 22:26:30 +1100
+Message-id: <163490199006.17149.17259708448207042563@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, 22 Oct 2021, Mel Gorman wrote:
+> On Fri, Oct 22, 2021 at 12:15:10PM +1100, NeilBrown wrote:
+> 
+> > In general, I still don't like the use of wake_up_all(), though it won't
+> > cause incorrect behaviour.
+> > 
+> 
+> Removing wake_up_all would be tricky.
 
-I noticed that with a FUSE filesystem, calls to io_submit(2) for read re=
-quests always block if the request would have to be passed on to the FUS=
-E userspace process.=20
+I think there is a misunderstanding.  Removing wake_up_all() is as
+simple as
+   s/wake_up_all/wake_up/
 
-Is that expected?
+If you used prepare_to_wait_exclusive(), then wake_up() would only wake
+one waiter, while wake_up_all() would wake all of them.
+As you use prepare_to_wait(), wake_up() will wake all waiters - as will
+wake_up_all(). 
 
-I would have thought that AIO requests could be mapped directly to FUSE =
-requests, so there shouldn't be an issue having multiple in flight...?
+When I see "wake_up_all()" I assume it is an exclusive wait, and that
+for some reason this particular wake_up needs to wake up all waiters.
+That is not the case here.
 
-(I can't tell if the same happens if the data is already in the page cac=
-he). This happens even when submitting read requests for different inode=
-s.
+I suspect it would be clearer if "wake_up" always woke everything, and
+"wake_up_one" was the special case - but unfortunately that isn't what
+we have.
 
+There are other non-exclusive waiters which use wake_up_all(), but the
+vast majority of wakeups use wake_up(), and most of those are for
+non-exclusive waiters.
 
-Best,
--Nikolaus
-
---
-GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
-
-             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=AB
-
+Thanks,
+NeilBrown
