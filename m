@@ -2,141 +2,233 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3962F4378F2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 16:19:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D656437924
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 16:40:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231741AbhJVOV4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 10:21:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52118 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232985AbhJVOVz (ORCPT
+        id S233157AbhJVOmw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 10:42:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:38724 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233140AbhJVOms (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 10:21:55 -0400
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5F2CC061766
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Oct 2021 07:19:37 -0700 (PDT)
-Received: by mail-oi1-x236.google.com with SMTP id t4so5199293oie.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Oct 2021 07:19:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=k9e8WyMd1qfMhPo9VdVqOG2FyHldcmSV6mWD6oKAoeY=;
-        b=wH/RdseJWRiQhEie1xIATdF2YWf0Tt9II/ETYc5olSHDiNMcJEE3XxjbGIYaUA7iGK
-         XJDmxd5MDYabrWvU6UOcwQ01QNQa704eQNyV/bsaLkJK5akCtKiDxgsE8urY9vt4HL/1
-         spwnTvJHx6CU+On7JPKg+BJiUmmfbnwaC7tH19k/Ws8CShBcXtumhNayUY9ScCkl9AXS
-         seWxMFNbhzV0K26XfBZ3WcnBs0Q6MMjLGhu4+Xn+HjUujBVveMchGtq6gNBLr9jq2oac
-         SIJP3LdiZNbcqJ2bQjfpUKAJoIBjp3JhRSqJGU5QsKMZD+gJ5LqW47gsil7+hcROm4lH
-         vtzw==
+        Fri, 22 Oct 2021 10:42:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1634913629;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=S5VYijYo0LM0UNwR49AOTflq9JooV8n64R7vGAicLbM=;
+        b=CWNCwUmpUo/G0C57s8fRFxLGzxgyEV0+W9/SrsdayyEqxcT5d5GgJjP55Rr1EjmPAQA6Ya
+        s2GRS6Ec7VY3OPzP/NHx4Bx+0cQPM4OH9FWD/jtje4KCQkt9M7z67hcvYig2TI7SDOH0gF
+        i/iTgg/kkgw6HeSad7/eBbGsAtBaxEc=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-144-f9OgdITjNVeADsIEhczTLg-1; Fri, 22 Oct 2021 10:40:28 -0400
+X-MC-Unique: f9OgdITjNVeADsIEhczTLg-1
+Received: by mail-wm1-f71.google.com with SMTP id n9-20020a1c7209000000b0030da7d466b8so1119582wmc.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Oct 2021 07:40:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=k9e8WyMd1qfMhPo9VdVqOG2FyHldcmSV6mWD6oKAoeY=;
-        b=2uDFgPDmnpnqN50A7ZQzUfCX9NxD+TP3vu/q7wDGRlUydEvFaG3XRAkXLnzuTSl1rr
-         fNjMl37+xG07I5S16h2mI7LKwqsyHctwIJ6LpxZBu0frbRVUsYczpz9m/u6U7/ZOK9Oa
-         D2fOGk6RUQVC6XNEYK3AVb8uUH5AC4POnxPPg0vC0EaJs17b4cZhXZM7o7NKYKl/Z0/v
-         usx+vF+/v1PKEdL/vjnBiVW7esYcnfmQGLgj/R48scFq84Q0AfikuqzM27A6KX7yB0qJ
-         Jt4PR/IQHzzTnfs4a/BAwSGMKelSibSbyJHchcCy4zZf59vxMqzoCAlNesbEiJhlwANC
-         8EQQ==
-X-Gm-Message-State: AOAM532joVZXTdQezkY4GVjBV/eY0zbuSwwhEYEranN9BQAMZsbQ1UA3
-        tSzAUFqMFCZKsUWrKZXsILjBLA==
-X-Google-Smtp-Source: ABdhPJz9MHdu+kULCD2Ld82e2jghT/yuW0dOuVAcgAqwROJxs06ZYVe3X6nfvAORBrB2B0QfLBgh6w==
-X-Received: by 2002:aca:c6d8:: with SMTP id w207mr10218293oif.145.1634912377096;
-        Fri, 22 Oct 2021 07:19:37 -0700 (PDT)
-Received: from [172.20.15.86] (rrcs-24-173-18-66.sw.biz.rr.com. [24.173.18.66])
-        by smtp.gmail.com with ESMTPSA id d18sm1489112ook.14.2021.10.22.07.19.36
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:cc:references:from:organization:subject
+         :in-reply-to:content-transfer-encoding;
+        bh=S5VYijYo0LM0UNwR49AOTflq9JooV8n64R7vGAicLbM=;
+        b=5LGZf4fiDXIaM1OH2Gao9RLH+YCrTwPl9+EyFdIOcxmyYQDYT4zCGCTZ4gAC7J3hww
+         7arpseN96husYlk3bujmGk2GcSJ68xLH3fsBofi3Wb42yRESrYujUHySAojWVByBpwiE
+         eB3aZZ/+dXytMmTOvPtnU4DvWYDx52j2ECIUQ6yePYBKUX4vhkMXJTQZWVdSUBCsXyPe
+         fjK59tr/xUf5F4svRI0AKHwYXfX0Iztt95ak+TytE/mI1teIs47heHQMp6gBJ8EAtBRn
+         eXj27yabhJalQYgrMmh7Av2S/8n1TV4TUP6si6S6F34GIdfbiNf7pKvNGrOJiI2jS3fa
+         RChA==
+X-Gm-Message-State: AOAM531eETlgavAnOfORqaD3W5exKE7FFmkqhV3uDOEiLPQo7sIX7Xf/
+        Ft45MzuYHtc0JS0NnTipN+qIwgxdL+jAYgBH7zJplznm0HXKhMJ/uK0Chd4G4XSDftzSBCyG75k
+        VHETzZS0NPLD8msiQHMmRlz9G5Q==
+X-Received: by 2002:a1c:c90f:: with SMTP id f15mr180593wmb.78.1634913626856;
+        Fri, 22 Oct 2021 07:40:26 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyrc/dZo+MdLVpt8cNByGTw3yh/5+A6Y3Y+vnyc+pC35BkkzHjuZ6ObalnuXaN7d0yTLAbOig==
+X-Received: by 2002:a1c:c90f:: with SMTP id f15mr180556wmb.78.1634913626541;
+        Fri, 22 Oct 2021 07:40:26 -0700 (PDT)
+Received: from [192.168.3.132] (p5b0c6324.dip0.t-ipconnect.de. [91.12.99.36])
+        by smtp.gmail.com with ESMTPSA id b207sm200396wmd.3.2021.10.22.07.40.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Oct 2021 07:19:36 -0700 (PDT)
-Subject: Re: [PATCH v2] fs: replace the ki_complete two integer arguments with
- a single argument
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        linux-aio@kvack.org, linux-usb@vger.kernel.org
-References: <4d409f23-2235-9fa6-4028-4d6c8ed749f8@kernel.dk>
- <YXElk52IsvCchbOx@infradead.org> <YXFHgy85MpdHpHBE@infradead.org>
- <4d3c5a73-889c-2e2c-9bb2-9572acdd11b7@kernel.dk>
- <YXF8X3RgRfZpL3Cb@infradead.org>
- <b7b6e63e-8787-f24c-2028-e147b91c4576@kernel.dk>
- <x49ee8ev21s.fsf@segfault.boston.devel.redhat.com>
- <6338ba2b-cd71-f66d-d596-629c2812c332@kernel.dk>
- <x497de6uubq.fsf@segfault.boston.devel.redhat.com>
- <7a697483-8e44-6dc3-361e-ae7b62b82074@kernel.dk>
- <x49wnm6t7r9.fsf@segfault.boston.devel.redhat.com>
- <x49sfwut7i8.fsf@segfault.boston.devel.redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d67c3d6f-56a2-4ace-7b57-cb9c594ad82c@kernel.dk>
-Date:   Fri, 22 Oct 2021 08:19:33 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 22 Oct 2021 07:40:25 -0700 (PDT)
+Message-ID: <c18923a1-8144-785e-5fb3-5cbce4be1310@redhat.com>
+Date:   Fri, 22 Oct 2021 16:40:24 +0200
 MIME-Version: 1.0
-In-Reply-To: <x49sfwut7i8.fsf@segfault.boston.devel.redhat.com>
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.1.0
 Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Hugh Dickins <hughd@google.com>
+References: <YWpG1xlPbm7Jpf2b@casper.infradead.org>
+ <YW2lKcqwBZGDCz6T@cmpxchg.org> <YW28vaoW7qNeX3GP@casper.infradead.org>
+ <YW3tkuCUPVICvMBX@cmpxchg.org>
+ <20211018231627.kqrnalsi74bgpoxu@box.shutemov.name>
+ <YW7hQlny+Go1K3LT@cmpxchg.org> <YXBUPguecSeSO6UD@moria.home.lan>
+ <YXHdpQTL1Udz48fc@cmpxchg.org> <YXIZX0truEBv2YSz@casper.infradead.org>
+ <326b5796-6ef9-a08f-a671-4da4b04a2b4f@redhat.com>
+ <YXK2ICKi6fjNfr4X@casper.infradead.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
+In-Reply-To: <YXK2ICKi6fjNfr4X@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/21/21 3:03 PM, Jeff Moyer wrote:
-> Jeff Moyer <jmoyer@redhat.com> writes:
+On 22.10.21 15:01, Matthew Wilcox wrote:
+> On Fri, Oct 22, 2021 at 09:59:05AM +0200, David Hildenbrand wrote:
+>> something like this would roughly express what I've been mumbling about:
+>>
+>> anon_mem    file_mem
+>>    |            |
+>>    ------|------
+>>       lru_mem       slab
+>>          |           |
+>>          -------------
+>>                |
+>> 	      page
+>>
+>> I wouldn't include folios in this picture, because IMHO folios as of now
+>> are actually what we want to be "lru_mem", just which a much clearer
+>> name+description (again, IMHO).
 > 
->> Jens Axboe <axboe@kernel.dk> writes:
->>
->>> On 10/21/21 12:05 PM, Jeff Moyer wrote:
->>>>
->>>>>> I'll follow up if there are issues.
->>>>
->>>> s390 (big endian, 64 bit) is failing libaio test 21:
->>>>
->>>> # harness/cases/21.p
->>>> Expected -EAGAIN, got 4294967285
->>>>
->>>> If I print out both res and res2 using %lx, you'll see what happened:
->>>>
->>>> Expected -EAGAIN, got fffffff5,ffffffff
->>>>
->>>> The sign extension is being split up.
->>>
->>> Funky, does it work if you apply this on top?
->>>
->>> diff --git a/fs/aio.c b/fs/aio.c
->>> index 3674abc43788..c56437908339 100644
->>> --- a/fs/aio.c
->>> +++ b/fs/aio.c
->>> @@ -1442,8 +1442,8 @@ static void aio_complete_rw(struct kiocb *kiocb, u64 res)
->>>  	 * 32-bits of value at most for either value, bundle these up and
->>>  	 * pass them in one u64 value.
->>>  	 */
->>> -	iocb->ki_res.res = lower_32_bits(res);
->>> -	iocb->ki_res.res2 = upper_32_bits(res);
->>> +	iocb->ki_res.res = (long) (res & 0xffffffff);
->>> +	iocb->ki_res.res2 = (long) (res >> 32);
->>>  	iocb_put(iocb);
->>>  }
->>
->> I think you'll also need to clamp any ki_complete() call sites to 32
->> bits (cast to int, or what have you).  Otherwise that sign extension
->> will spill over into res2.
->>
->> fwiw, I tested with this:
->>
->> 	iocb->ki_res.res = (long)(int)lower_32_bits(res);
->> 	iocb->ki_res.res2 = (long)(int)upper_32_bits(res);
->>
->> Coupled with the call site changes, that made things work for me.
+> I think folios are a superset of lru_mem.  To enhance your drawing:
 > 
-> This is all starting to feel like a minefield.  If you don't have any
-> concrete numbers to show that there is a speedup, I think we should
-> shelf this change.
 
-It's really not a minefield at all, we just need a proper help to encode
-the value. I'm out until Tuesday, but I'll sort it out when I get back.
-Can also provide some numbers on this.
+In the picture below we want "folio" to be the abstraction of "mappable
+into user space", after reading your link below and reading your graph,
+correct? Like calling it "user_mem" instead.
+
+Because any of these types would imply that we're looking at the head
+page (if it's a compound page). And we could (or even already have?)
+have other types that cannot be mapped to user space that are actually a
+compound page.
+
+> page
+>    folio
+>       lru_mem
+>          anon_mem
+> 	 ksm
+>          file_mem
+>       netpool
+>       devmem
+>       zonedev
+>    slab
+>    pgtable
+>    buddy
+>    zsmalloc
+>    vmalloc
+> 
+> I have a little list of memory types here:
+> https://kernelnewbies.org/MemoryTypes
+> 
+> Let me know if anything is missing.
+
+hugetlbfs pages might deserve a dedicated type, right?
+
+
+> 
+>> Going from file_mem -> page is easy, just casting pointers.
+>> Going from page -> file_mem requires going to the head page if it's a
+>> compound page.
+>>
+>> But we expect most interfaces to pass around a proper type (e.g.,
+>> lru_mem) instead of a page, which avoids having to lookup the compund
+>> head page. And each function can express which type it actually wants to
+>> consume. The filmap API wants to consume file_mem, so it should use that.
+>>
+>> And IMHO, with something above in mind and not having a clue which
+>> additional layers we'll really need, or which additional leaves we want
+>> to have, we would start with the leaves (e.g., file_mem, anon_mem, slab)
+>> and work our way towards the root. Just like we already started with slab.
+> 
+> That assumes that the "root" layers already handle compound pages
+> properly.  For example, nothing in mm/page-writeback.c does; it assumes
+> everything is an order-0 page.  So working in the opposite direction
+> makes sense because it tells us what has already been converted and is
+> thus safe to call.
+
+Right, as long as the lower layers receive a "struct page", they have to
+assume it's "anything" -- IOW a random base page.
+
+We need some temporary logic when transitioning from "typed" code into
+"struct page" code that doesn't talk compound pages yet, I agree. And I
+think the different types used actually would tell us what has been
+converted and what not. Whenever you have to go from type -> "struct
+page" we have to be very careful.
+
+> 
+> And starting with file_mem makes the supposition that it's worth splitting
+> file_mem from anon_mem.  I believe that's one or two steps further than
+> it's worth, but I can be convinced otherwise.  For example, do we have
+> examples of file pages being passed to routines that expect anon pages?
+
+That would be a BUG, so I hope we don't have it ;)
+
+> Most routines that I've looked at expect to see both file & anon pages,
+
+Right, many of them do. Which tells me that they share a common type in
+many places.
+
+Let's consider LRU code
+
+static inline int folio_is_file_lru(struct folio *folio)
+{
+	return !folio_swapbacked(folio);
+}
+
+I would say we don't really want to pass folios here. We actually want
+to pass something reasonable, like "lru_mem". But yes, it's just doing
+what "struct page" used to do via page_is_file_lru().
+
+
+Let's consider folio_wait_writeback(struct folio *folio)
+
+Do we actually want to pass in a folio here? Would we actually want to
+pass in lru_mem here or even something else?
+
+> and treat them either identically or do slightly different things.
+> But those are just the functions I've looked at; your experience may be
+> quite different.
+
+I assume when it comes to LRU, writeback, ... the behavior is very
+similar or at least the current functions just decide internally what to
+do based on e.g., ..._is_file_lru().
+
+I don't know if it's best to keep hiding that functionality within an
+abstracted type or just provide two separate functions for anon and
+file. folios mostly mimic what the old struct page used to do,
+introducing similar functions. Maybe the reason we branch off within
+these functions is because it just made sense when passing around
+"struct page" and not having something clearer at hand that let the
+caller do the branch. For the cases of LRU I looked at it somewhat makes
+sense to just do it internally.
+
+Looking at some core MM code, like mm/huge_memory.c, and seeing all the
+PageAnon() specializations, having a dedicated anon_mem type might be
+valuable. But at this point it's hard to tell if splitting up these
+functions would actually be desirable.
+
+We're knee-deep in the type discussion now and I appreciate it. I can
+understand that folio are currently really just a "not a tail page"
+concept and mimic a lot of what we already inherited from the old
+"struct page" world.
 
 -- 
-Jens Axboe
+Thanks,
+
+David / dhildenb
 
