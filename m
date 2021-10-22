@@ -2,112 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 41EF7437BA5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 19:15:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ED2F437BFD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 19:32:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233718AbhJVRRh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 13:17:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35816 "EHLO
+        id S233894AbhJVReh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 13:34:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233552AbhJVRRd (ORCPT
+        with ESMTP id S233841AbhJVReb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 13:17:33 -0400
+        Fri, 22 Oct 2021 13:34:31 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57F30C061764;
-        Fri, 22 Oct 2021 10:15:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D848C061764;
+        Fri, 22 Oct 2021 10:32:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=A2qIKzLmaHiruo4ITVd737DFb76HJfGU1G5yRr7n2nA=; b=rHoviyfXzd/lrQqDvJrWfUZPJb
-        khSzljNSmZgr6NeCLmL2ZONpCIRpKB4oHioCY+rox2FwEHu4Ywt0HONuXefuBv/3UpAur5nkRyFqH
-        J7hTmn+S8ptHG7GDNZkQsDxTGe7GNJdFCUMvsLXKyIEUrYxwnpCxBnNzSCRtUP63ii5JIHDdRbHiS
-        xItouevSX03vuGJ4AWRBwdEVidWlfR+a84nHSvDQSoLkasicCW9qV0Wdkc1U02fJ62Z5EX4JRkSYW
-        8YR2rsMzwlL7ahaWXhIDk4BP1EtoaXVSoklKfpcXL6qO3C3iIfQS4m2fEqm+Mp9587qQjSmZLJysz
-        8qltYNeA==;
+        bh=OKfvrtFBtwiA0Tu1YZOuL3nfKQ8sUH+Zr1oqgjSXc7U=; b=qgxFVFnAlJpx/3AvC78PBLsO+a
+        gq0T00ja3TFC1ADNr09ydJyjAn4ilFNCIxx+RnqYbBPnTYbE14D0Zgqugqu1N5wCZBjMkZ4dLHt/e
+        JkHp9qih5Zmyqc8HBGY7+wGOJ5S56FAbO/sZTDdXPy5dQ9WNCAws4MHzMLXEF5tZaOve6uz8dhXo0
+        ciQEQ0JUP0HBGqz+JK4Lk1znRAD7TLcvhQhum0oApHaXdp9ilGoBRUVMJCYJEKL6v06PZbDsFTp8H
+        6Md/gW0LH/dxz8EQyEe/wJUm7blMlEqGjmJZ1yj1fsxDBHTyH/JR3g2Kt7W0sk4XNNPWBYRy3tJca
+        RUvITziw==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mdy8H-00BbTQ-Sx; Fri, 22 Oct 2021 17:15:05 +0000
-Date:   Fri, 22 Oct 2021 10:15:05 -0700
+        id 1mdyOq-00Bdow-3J; Fri, 22 Oct 2021 17:32:12 +0000
+Date:   Fri, 22 Oct 2021 10:32:12 -0700
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     bp@suse.de, akpm@linux-foundation.org, josh@joshtriplett.org,
-        rishabhb@codeaurora.org, kubakici@wp.pl, maco@android.com,
-        david.brown@linaro.org, bjorn.andersson@linaro.org,
-        linux-wireless@vger.kernel.org, keescook@chromium.org,
-        shuah@kernel.org, mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com,
-        dhowells@redhat.com, pali.rohar@gmail.com, tiwai@suse.de,
-        arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
-        broonie@kernel.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org,
-        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
-        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
-        andresx7@gmail.com, dan.rue@linaro.org, brendanhiggins@google.com,
-        yzaikin@google.com, sfr@canb.auug.org.au, rdunlap@infradead.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 08/10] firmware_loader: move builtin build helper to
- shared library
-Message-ID: <YXLxmbxLU/+eV+JH@bombadil.infradead.org>
-References: <20211021155843.1969401-1-mcgrof@kernel.org>
- <20211021155843.1969401-9-mcgrof@kernel.org>
- <YXKq8gJsQE/U9ZKq@kroah.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     schmitzmic@gmail.com, linux-raid@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        axboe@kernel.dk, hch@lst.de, efremov@linux.com, song@kernel.org,
+        jejb@linux.ibm.com, martin.petersen@oracle.com,
+        viro@zeniv.linux.org.uk, hare@suse.de, jack@suse.cz,
+        ming.lei@redhat.com, tj@kernel.org
+Subject: Re: [PATCH v3 0/3] last batch of add_disk() error handling
+ conversions
+Message-ID: <YXL1nJVQzfDfVyq8@bombadil.infradead.org>
+References: <20211021163856.2000993-1-mcgrof@kernel.org>
+ <66655777-6f9b-adbc-03ff-125aecd3f509@i-love.sakura.ne.jp>
+ <YXLwF1jit131Nb5u@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YXKq8gJsQE/U9ZKq@kroah.com>
+In-Reply-To: <YXLwF1jit131Nb5u@bombadil.infradead.org>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 22, 2021 at 02:13:38PM +0200, Greg KH wrote:
-> On Thu, Oct 21, 2021 at 08:58:41AM -0700, Luis R. Rodriguez wrote:
-> > From: Luis Chamberlain <mcgrof@kernel.org>
+On Fri, Oct 22, 2021 at 10:08:39AM -0700, Luis Chamberlain wrote:
+> On Fri, Oct 22, 2021 at 10:06:07AM +0900, Tetsuo Handa wrote:
+> > On 2021/10/22 1:38, Luis Chamberlain wrote:
+> > > I rebased Tetsuo Handa's patch onto the latest linux-next as this
+> > > series depends on it, and so I am sending it part of this series as
+> > > without it, this won't apply. Tetsuo, does the rebase of your patch
+> > > look OK?
 > > 
-> > If we wanted to use a different directory for building target
-> > builtin firmware it is easier if we just have a shared library
-> > Makefile, and each target directory can then just include it and
-> > populate the respective needed variables. This reduces clutter,
-> > makes things easier to read, and also most importantly allows
-> > us to not have to try to magically adjust only one target
-> > kconfig symbol for built-in firmware files. Trying to do this
-> > can easily end up causing odd build issues if the user is not
-> > careful.
-> > 
-> > As an example issue, if we are going to try to extend the
-> > FW_LOADER_BUILTIN_FILES list and FW_LOADER_BUILTIN_DIR in case
-> > of a new test firmware builtin support currently our only option
-> > would be modify the defaults of each of these in case test firmware
-> > builtin support was enabled. Defaults however won't augment a prior
-> > setting, and so if FW_LOADER_BUILTIN_DIR="/lib/firmware" and you
-> > and want this to be changed to something like
-> > FW_LOADER_BUILTIN_DIR="drivers/base/firmware_loader/test-builtin"
-> > the change will not take effect as a prior build already had it
-> > set, and the build would fail. Trying to augment / append the
-> > variables in the Makefile just makes this very difficult to
-> > read.
-> > 
-> > Using a library let's us split up possible built-in targets so
-> > that the user does not have to be involved. This will be used
-> > in a subsequent patch which will add another user to this
-> > built-in firmware library Makefile and demo how to use it outside
-> > of the default FW_LOADER_BUILTIN_DIR and FW_LOADER_BUILTIN_FILES.
-> > 
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > OK, though I wanted my fix to be sent to upstream and stable before this series.
 > 
-> I'm sorry, but I do not understand the need for this change at all.  You
-> are now building this as a library, but what uses this library?  The
-> patches after this series are just testing patches, to verify that the
-> code previous in this series is working correctly, it should not depend
-> on a new library that only the testing code requires, right?
+> Sure, absolutely, your patch is certainly separate and is needed as a
+> fix downstream to stable it would seem.
+> 
+> > > If it is not too much trouble, I'd like to ask for testing for the
+> > > ataflop changes from Michael Schmitz, if possible, that is he'd just
+> > > have to merge Tetsuo's rebased patch and the 2nd patch in this series.
+> > > This is all rebased on linux-next tag 20211020.
+> > 
+> > Yes, please.
+> > 
+> > After this series, I guess we can remove "bool registered[NUM_DISK_MINORS];" like below
+> > due to (unit[drive].disk[type] != NULL) == (unit[drive].registered[type] == true).
+> 
+> Sounds good.
+> 
+> > Regarding this series, setting unit[drive].registered[type] = true in ataflop_probe() is
+> > pointless because atari_floppy_cleanup() checks unit[i].disk[type] != NULL for calling
+> > del_gendisk().
+> 
+> I see, will fix.
 
-The last patch adds support to test built-in firmware, but most kernels
-will have and do want EXTRA_FIRMWARE="", and so there cannot be anything
-that can be tested. And so we need aother two pair of kconfig symbols
-which are independent to test built-in firmware. The reason for this is
-explained in the commit log, if we try to augment the EXTRA_FIRMWARE
-when enabling testing built-in firmware we can easily end up with odd
-build issues.
-
-So this patch moves the logic to enable us to re-use the same built-in
-magic for two independent kconfig test symbols.
+Actually just not doing it for that case seems odd, so I would prefer
+the removal of the bool registered to be a separate patch to make it
+clearer.
 
   Luis
