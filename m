@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F1EC437938
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 16:47:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8221543793B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 16:47:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233195AbhJVOts (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 10:49:48 -0400
-Received: from outbound-smtp61.blacknight.com ([46.22.136.249]:35139 "EHLO
-        outbound-smtp61.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233192AbhJVOtm (ORCPT
+        id S232999AbhJVOuC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 10:50:02 -0400
+Received: from outbound-smtp55.blacknight.com ([46.22.136.239]:35171 "EHLO
+        outbound-smtp55.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233210AbhJVOtw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 10:49:42 -0400
+        Fri, 22 Oct 2021 10:49:52 -0400
 Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp61.blacknight.com (Postfix) with ESMTPS id 89E4DFB3E1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Oct 2021 15:47:22 +0100 (IST)
-Received: (qmail 29677 invoked from network); 22 Oct 2021 14:47:22 -0000
+        by outbound-smtp55.blacknight.com (Postfix) with ESMTPS id B8485FB3E1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Oct 2021 15:47:32 +0100 (IST)
+Received: (qmail 30208 invoked from network); 22 Oct 2021 14:47:32 -0000
 Received: from unknown (HELO stampy.112glenside.lan) (mgorman@techsingularity.net@[84.203.17.29])
-  by 81.17.254.9 with ESMTPA; 22 Oct 2021 14:47:22 -0000
+  by 81.17.254.9 with ESMTPA; 22 Oct 2021 14:47:32 -0000
 From:   Mel Gorman <mgorman@techsingularity.net>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     NeilBrown <neilb@suse.de>, Theodore Ts'o <tytso@mit.edu>,
@@ -34,9 +34,9 @@ Cc:     NeilBrown <neilb@suse.de>, Theodore Ts'o <tytso@mit.edu>,
         Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 2/8] mm/vmscan: Throttle reclaim and compaction when too may pages are isolated
-Date:   Fri, 22 Oct 2021 15:46:45 +0100
-Message-Id: <20211022144651.19914-3-mgorman@techsingularity.net>
+Subject: [PATCH 3/8] mm/vmscan: Throttle reclaim when no progress is being made
+Date:   Fri, 22 Oct 2021 15:46:46 +0100
+Message-Id: <20211022144651.19914-4-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211022144651.19914-1-mgorman@techsingularity.net>
 References: <20211022144651.19914-1-mgorman@techsingularity.net>
@@ -46,195 +46,129 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Page reclaim throttles on congestion if too many parallel reclaim instances
-have isolated too many pages. This makes no sense, excessive parallelisation
-has nothing to do with writeback or congestion.
+Memcg reclaim throttles on congestion if no reclaim progress is made.
+This makes little sense, it might be due to writeback or a host of
+other factors.
 
-This patch creates an additional workqueue to sleep on when too many
-pages are isolated. The throttled tasks are woken when the number
-of isolated pages is reduced or a timeout occurs. There may be
-some false positive wakeups for GFP_NOIO/GFP_NOFS callers but
-the tasks will throttle again if necessary.
+For !memcg reclaim, it's messy. Direct reclaim primarily is throttled
+in the page allocator if it is failing to make progress. Kswapd
+throttles if too many pages are under writeback and marked for
+immediate reclaim.
 
-[shy828301@gmail.com: Wake up from compaction context]
-[vbabka@suse.cz: Account number of throttled tasks only for writeback]
+This patch explicitly throttles if reclaim is failing to make progress.
+
+[vbabka@suse.cz: Remove redundant code]
 Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 Acked-by: Vlastimil Babka <vbabka@suse.cz>
 ---
  include/linux/mmzone.h        |  1 +
  include/trace/events/vmscan.h |  4 +++-
- mm/compaction.c               | 10 ++++++++--
- mm/internal.h                 | 11 +++++++++++
- mm/vmscan.c                   | 22 ++++++++++++++++------
- 5 files changed, 39 insertions(+), 9 deletions(-)
+ mm/memcontrol.c               | 10 +---------
+ mm/vmscan.c                   | 28 ++++++++++++++++++++++++++++
+ 4 files changed, 33 insertions(+), 10 deletions(-)
 
 diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 419304093610..9ccd8d95291b 100644
+index 9ccd8d95291b..00e305cfb3ec 100644
 --- a/include/linux/mmzone.h
 +++ b/include/linux/mmzone.h
-@@ -275,6 +275,7 @@ enum lru_list {
- 
+@@ -276,6 +276,7 @@ enum lru_list {
  enum vmscan_throttle_state {
  	VMSCAN_THROTTLE_WRITEBACK,
-+	VMSCAN_THROTTLE_ISOLATED,
+ 	VMSCAN_THROTTLE_ISOLATED,
++	VMSCAN_THROTTLE_NOPROGRESS,
  	NR_VMSCAN_THROTTLE,
  };
  
 diff --git a/include/trace/events/vmscan.h b/include/trace/events/vmscan.h
-index c317f9fe0d17..d4905bd9e9c4 100644
+index d4905bd9e9c4..f25a6149d3ba 100644
 --- a/include/trace/events/vmscan.h
 +++ b/include/trace/events/vmscan.h
-@@ -28,10 +28,12 @@
- 		) : "RECLAIM_WB_NONE"
+@@ -29,11 +29,13 @@
  
  #define _VMSCAN_THROTTLE_WRITEBACK	(1 << VMSCAN_THROTTLE_WRITEBACK)
-+#define _VMSCAN_THROTTLE_ISOLATED	(1 << VMSCAN_THROTTLE_ISOLATED)
+ #define _VMSCAN_THROTTLE_ISOLATED	(1 << VMSCAN_THROTTLE_ISOLATED)
++#define _VMSCAN_THROTTLE_NOPROGRESS	(1 << VMSCAN_THROTTLE_NOPROGRESS)
  
  #define show_throttle_flags(flags)						\
  	(flags) ? __print_flags(flags, "|",					\
--		{_VMSCAN_THROTTLE_WRITEBACK,	"VMSCAN_THROTTLE_WRITEBACK"}	\
-+		{_VMSCAN_THROTTLE_WRITEBACK,	"VMSCAN_THROTTLE_WRITEBACK"},	\
-+		{_VMSCAN_THROTTLE_ISOLATED,	"VMSCAN_THROTTLE_ISOLATED"}	\
+ 		{_VMSCAN_THROTTLE_WRITEBACK,	"VMSCAN_THROTTLE_WRITEBACK"},	\
+-		{_VMSCAN_THROTTLE_ISOLATED,	"VMSCAN_THROTTLE_ISOLATED"}	\
++		{_VMSCAN_THROTTLE_ISOLATED,	"VMSCAN_THROTTLE_ISOLATED"},	\
++		{_VMSCAN_THROTTLE_NOPROGRESS,	"VMSCAN_THROTTLE_NOPROGRESS"}	\
  		) : "VMSCAN_THROTTLE_NONE"
  
  
-diff --git a/mm/compaction.c b/mm/compaction.c
-index bfc93da1c2c7..7359093d8ac0 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -761,6 +761,8 @@ isolate_freepages_range(struct compact_control *cc,
- /* Similar to reclaim, but different enough that they don't share logic */
- static bool too_many_isolated(pg_data_t *pgdat)
- {
-+	bool too_many;
-+
- 	unsigned long active, inactive, isolated;
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 6da5020a8656..8b33152c9b85 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -3465,19 +3465,11 @@ static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
  
- 	inactive = node_page_state(pgdat, NR_INACTIVE_FILE) +
-@@ -770,7 +772,11 @@ static bool too_many_isolated(pg_data_t *pgdat)
- 	isolated = node_page_state(pgdat, NR_ISOLATED_FILE) +
- 			node_page_state(pgdat, NR_ISOLATED_ANON);
- 
--	return isolated > (inactive + active) / 2;
-+	too_many = isolated > (inactive + active) / 2;
-+	if (!too_many)
-+		wake_throttle_isolated(pgdat);
-+
-+	return too_many;
- }
- 
- /**
-@@ -822,7 +828,7 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
- 		if (cc->mode == MIGRATE_ASYNC)
- 			return -EAGAIN;
- 
--		congestion_wait(BLK_RW_ASYNC, HZ/10);
-+		reclaim_throttle(pgdat, VMSCAN_THROTTLE_ISOLATED, HZ/10);
- 
- 		if (fatal_signal_pending(current))
+ 	/* try to free all pages in this cgroup */
+ 	while (nr_retries && page_counter_read(&memcg->memory)) {
+-		int progress;
+-
+ 		if (signal_pending(current))
  			return -EINTR;
-diff --git a/mm/internal.h b/mm/internal.h
-index b495e60c955d..c72d3383ef34 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -45,6 +45,15 @@ static inline void acct_reclaim_writeback(struct page *page)
- 		__acct_reclaim_writeback(pgdat, page, nr_throttled);
- }
  
-+static inline void wake_throttle_isolated(pg_data_t *pgdat)
-+{
-+	wait_queue_head_t *wqh;
-+
-+	wqh = &pgdat->reclaim_wait[VMSCAN_THROTTLE_ISOLATED];
-+	if (waitqueue_active(wqh))
-+		wake_up(wqh);
-+}
-+
- vm_fault_t do_swap_page(struct vm_fault *vmf);
+-		progress = try_to_free_mem_cgroup_pages(memcg, 1,
+-							GFP_KERNEL, true);
+-		if (!progress) {
++		if (!try_to_free_mem_cgroup_pages(memcg, 1, GFP_KERNEL, true))
+ 			nr_retries--;
+-			/* maybe some writeback is necessary */
+-			congestion_wait(BLK_RW_ASYNC, HZ/10);
+-		}
+-
+ 	}
  
- void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
-@@ -120,6 +129,8 @@ extern unsigned long highest_memmap_pfn;
-  */
- extern int isolate_lru_page(struct page *page);
- extern void putback_lru_page(struct page *page);
-+extern void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
-+								long timeout);
- 
- /*
-  * in mm/rmap.c:
+ 	return 0;
 diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 0c1595065f49..1e54e636b927 100644
+index 1e54e636b927..0450f6867d61 100644
 --- a/mm/vmscan.c
 +++ b/mm/vmscan.c
-@@ -1006,12 +1006,12 @@ static void handle_write_error(struct address_space *mapping,
- 	unlock_page(page);
+@@ -3323,6 +3323,33 @@ static inline bool compaction_ready(struct zone *zone, struct scan_control *sc)
+ 	return zone_watermark_ok_safe(zone, 0, watermark, sc->reclaim_idx);
  }
  
--static void
--reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
-+void reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
- 							long timeout)
- {
- 	wait_queue_head_t *wqh = &pgdat->reclaim_wait[reason];
- 	long ret;
-+	bool acct_writeback = (reason == VMSCAN_THROTTLE_WRITEBACK);
- 	DEFINE_WAIT(wait);
++static void consider_reclaim_throttle(pg_data_t *pgdat, struct scan_control *sc)
++{
++	/* If reclaim is making progress, wake any throttled tasks. */
++	if (sc->nr_reclaimed) {
++		wait_queue_head_t *wqh;
++
++		wqh = &pgdat->reclaim_wait[VMSCAN_THROTTLE_NOPROGRESS];
++		if (waitqueue_active(wqh))
++			wake_up(wqh);
++
++		return;
++	}
++
++	/*
++	 * Do not throttle kswapd on NOPROGRESS as it will throttle on
++	 * VMSCAN_THROTTLE_WRITEBACK if there are too many pages under
++	 * writeback and marked for immediate reclaim at the tail of
++	 * the LRU.
++	 */
++	if (current_is_kswapd())
++		return;
++
++	/* Throttle if making no progress at high prioities. */
++	if (sc->priority < DEF_PRIORITY - 2)
++		reclaim_throttle(pgdat, VMSCAN_THROTTLE_NOPROGRESS, HZ/10);
++}
++
+ /*
+  * This is the direct reclaim path, for page-allocating processes.  We only
+  * try to reclaim pages from zones which will satisfy the caller's allocation
+@@ -3407,6 +3434,7 @@ static void shrink_zones(struct zonelist *zonelist, struct scan_control *sc)
+ 			continue;
+ 		last_pgdat = zone->zone_pgdat;
+ 		shrink_node(zone->zone_pgdat, sc);
++		consider_reclaim_throttle(zone->zone_pgdat, sc);
+ 	}
  
  	/*
-@@ -1023,7 +1023,8 @@ reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
- 	    current->flags & (PF_IO_WORKER|PF_KTHREAD))
- 		return;
- 
--	if (atomic_inc_return(&pgdat->nr_writeback_throttled) == 1) {
-+	if (acct_writeback &&
-+	    atomic_inc_return(&pgdat->nr_writeback_throttled) == 1) {
- 		WRITE_ONCE(pgdat->nr_reclaim_start,
- 			node_page_state(pgdat, NR_THROTTLED_WRITTEN));
- 	}
-@@ -1031,7 +1032,9 @@ reclaim_throttle(pg_data_t *pgdat, enum vmscan_throttle_state reason,
- 	prepare_to_wait(wqh, &wait, TASK_UNINTERRUPTIBLE);
- 	ret = schedule_timeout(timeout);
- 	finish_wait(wqh, &wait);
--	atomic_dec(&pgdat->nr_writeback_throttled);
-+
-+	if (acct_writeback)
-+		atomic_dec(&pgdat->nr_writeback_throttled);
- 
- 	trace_mm_vmscan_throttled(pgdat->node_id, jiffies_to_usecs(timeout),
- 				jiffies_to_usecs(timeout - ret),
-@@ -2176,6 +2179,7 @@ static int too_many_isolated(struct pglist_data *pgdat, int file,
- 		struct scan_control *sc)
- {
- 	unsigned long inactive, isolated;
-+	bool too_many;
- 
- 	if (current_is_kswapd())
- 		return 0;
-@@ -2199,7 +2203,13 @@ static int too_many_isolated(struct pglist_data *pgdat, int file,
- 	if ((sc->gfp_mask & (__GFP_IO | __GFP_FS)) == (__GFP_IO | __GFP_FS))
- 		inactive >>= 3;
- 
--	return isolated > inactive;
-+	too_many = isolated > inactive;
-+
-+	/* Wake up tasks throttled due to too_many_isolated. */
-+	if (!too_many)
-+		wake_throttle_isolated(pgdat);
-+
-+	return too_many;
- }
- 
- /*
-@@ -2308,8 +2318,8 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
- 			return 0;
- 
- 		/* wait a bit for the reclaimer. */
--		msleep(100);
- 		stalled = true;
-+		reclaim_throttle(pgdat, VMSCAN_THROTTLE_ISOLATED, HZ/10);
- 
- 		/* We are about to die and free our memory. Return now. */
- 		if (fatal_signal_pending(current))
 -- 
 2.31.1
 
