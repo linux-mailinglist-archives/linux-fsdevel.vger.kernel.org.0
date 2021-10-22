@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 399A6437DA7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 21:06:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04CD5437DB0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 21:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234187AbhJVTI0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 15:08:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:55037 "EHLO
+        id S234016AbhJVTIy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 15:08:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:32578 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234218AbhJVTIT (ORCPT
+        by vger.kernel.org with ESMTP id S234258AbhJVTIj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 15:08:19 -0400
+        Fri, 22 Oct 2021 15:08:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634929561;
+        s=mimecast20190719; t=1634929581;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=5u6FsY60ZEf/aq91jODyRvm26gKiZCdUvfiTMHL93vo=;
-        b=K8Uh0sdsYCpL06/PNBQzZ57+B3obWxBJzQZgJCzDxCZJ1vtph1dgHyuwDO8J/KkrsOKadS
-        CkipNUBWT7JFKISME5MXbshVWpHmaNZwy5nI8Ui3OOwxLd2frhfN5DDplr7rlGUPuNIgAl
-        0HECh6nOTAahi5SGsasvjcqZlGJUhLw=
+        bh=jlujGQ7Qnbid1O9Y70w7F89D5LYJGH2xk6TGIvmIM4o=;
+        b=gNwPSli0YRBxVh+wg51suCIFghG4owZ5K+RtZt9TN/51aUnKF8epROAymrC3iFH5pbbLIh
+        UNB6b7lEanglRmD0uTeW1jWwQfsTQCT+cL6h1y5w83sHIfHet/lyxQnfL4XIjlK3G4ter3
+        V+RwYt6ek2MD+xp31ohdW6W4VHXI6iU=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-232-07Qt9FavOLqXEurIohmbUw-1; Fri, 22 Oct 2021 15:05:58 -0400
-X-MC-Unique: 07Qt9FavOLqXEurIohmbUw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+ us-mta-239-BQhezmiFMp6ZgwWLAkbw5Q-1; Fri, 22 Oct 2021 15:06:15 -0400
+X-MC-Unique: BQhezmiFMp6ZgwWLAkbw5Q-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 20D0318D6A2A;
-        Fri, 22 Oct 2021 19:05:56 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 96EEB1006AA2;
+        Fri, 22 Oct 2021 19:06:13 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E20A519D9D;
-        Fri, 22 Oct 2021 19:05:52 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3477FADF9;
+        Fri, 22 Oct 2021 19:06:02 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v2 29/53] cachefiles: Introduce new driver
+Subject: [PATCH v2 30/53] cachefiles: Add some error injection support
 From:   David Howells <dhowells@redhat.com>
 To:     linux-cachefs@redhat.com
 Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
@@ -54,342 +54,200 @@ Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 22 Oct 2021 20:05:52 +0100
-Message-ID: <163492955211.1038219.12440210955398087211.stgit@warthog.procyon.org.uk>
+Date:   Fri, 22 Oct 2021 20:06:01 +0100
+Message-ID: <163492956134.1038219.13857622552568016201.stgit@warthog.procyon.org.uk>
 In-Reply-To: <163492911924.1038219.13107463173777870713.stgit@warthog.procyon.org.uk>
 References: <163492911924.1038219.13107463173777870713.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce basic skeleton of the new, rewritten cachefiles driver.
+Add support for injecting ENOSPC or EIO errors.  This needs to be enabled
+by CONFIG_CACHEFILES_ERROR_INJECTION=y.  Once enabled, ENOSPC on things
+like write and mkdir can be triggered by:
+
+        echo 1 >/proc/sys/cachefiles/error_injection
+
+and EIO can be triggered on most operations by:
+
+        echo 2 >/proc/sys/cachefiles/error_injection
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: linux-cachefs@redhat.com
 ---
 
- fs/Kconfig                        |    1 
- fs/Makefile                       |    1 
- fs/cachefiles/Kconfig             |   21 +++++++
- fs/cachefiles/Makefile            |    9 +++
- fs/cachefiles/internal.h          |  118 +++++++++++++++++++++++++++++++++++++
- fs/cachefiles/main.c              |   53 +++++++++++++++++
- include/trace/events/cachefiles.h |   49 +++++++++++++++
- 7 files changed, 252 insertions(+)
- create mode 100644 fs/cachefiles/Kconfig
- create mode 100644 fs/cachefiles/Makefile
- create mode 100644 fs/cachefiles/internal.h
- create mode 100644 fs/cachefiles/main.c
- create mode 100644 include/trace/events/cachefiles.h
+ fs/cachefiles/Kconfig        |    7 ++++++
+ fs/cachefiles/Makefile       |    2 ++
+ fs/cachefiles/error_inject.c |   46 ++++++++++++++++++++++++++++++++++++++++++
+ fs/cachefiles/internal.h     |   39 ++++++++++++++++++++++++++++++++++++
+ fs/cachefiles/main.c         |   12 +++++++++++
+ 5 files changed, 106 insertions(+)
+ create mode 100644 fs/cachefiles/error_inject.c
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 68f662c09a8d..001fd1a9115c 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -132,6 +132,7 @@ menu "Caches"
- 
- source "fs/netfs/Kconfig"
- source "fs/fscache/Kconfig"
-+source "fs/cachefiles/Kconfig"
- source "fs/fscache_old/Kconfig"
- source "fs/cachefiles_old/Kconfig"
- 
-diff --git a/fs/Makefile b/fs/Makefile
-index 0dd8a4d526ad..09703d49ac90 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -126,6 +126,7 @@ obj-$(CONFIG_AFS_FS)		+= afs/
- obj-$(CONFIG_NILFS2_FS)		+= nilfs2/
- obj-$(CONFIG_BEFS_FS)		+= befs/
- obj-$(CONFIG_HOSTFS)		+= hostfs/
-+obj-$(CONFIG_CACHEFILES)	+= cachefiles/
- obj-$(CONFIG_CACHEFILES_OLD)	+= cachefiles_old/
- obj-$(CONFIG_DEBUG_FS)		+= debugfs/
- obj-$(CONFIG_TRACING)		+= tracefs/
 diff --git a/fs/cachefiles/Kconfig b/fs/cachefiles/Kconfig
-new file mode 100644
-index 000000000000..6827b40f7ddc
---- /dev/null
+index 6827b40f7ddc..719faeeda168 100644
+--- a/fs/cachefiles/Kconfig
 +++ b/fs/cachefiles/Kconfig
-@@ -0,0 +1,21 @@
-+# SPDX-License-Identifier: GPL-2.0-only
+@@ -19,3 +19,10 @@ config CACHEFILES_DEBUG
+ 	  caching on files module.  If this is set, the debugging output may be
+ 	  enabled by setting bits in /sys/modules/cachefiles/parameter/debug or
+ 	  by including a debugging specifier in /etc/cachefilesd.conf.
 +
-+config CACHEFILES
-+	tristate "Filesystem caching on files"
-+	depends on FSCACHE && BLOCK
++config CACHEFILES_ERROR_INJECTION
++	bool "Provide error injection for cachefiles"
++	depends on CACHEFILES && SYSCTL
 +	help
-+	  This permits use of a mounted filesystem as a cache for other
-+	  filesystems - primarily networking filesystems - thus allowing fast
-+	  local disk to enhance the speed of slower devices.
-+
-+	  See Documentation/filesystems/caching/cachefiles.rst for more
-+	  information.
-+
-+config CACHEFILES_DEBUG
-+	bool "Debug CacheFiles"
-+	depends on CACHEFILES
-+	help
-+	  This permits debugging to be dynamically enabled in the filesystem
-+	  caching on files module.  If this is set, the debugging output may be
-+	  enabled by setting bits in /sys/modules/cachefiles/parameter/debug or
-+	  by including a debugging specifier in /etc/cachefilesd.conf.
++	  This permits error injection to be enabled in cachefiles whilst a
++	  cache is in service.
 diff --git a/fs/cachefiles/Makefile b/fs/cachefiles/Makefile
-new file mode 100644
-index 000000000000..a7f3e982e249
---- /dev/null
+index a7f3e982e249..183fb5f3b8b1 100644
+--- a/fs/cachefiles/Makefile
 +++ b/fs/cachefiles/Makefile
-@@ -0,0 +1,9 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Makefile for caching in a mounted filesystem
-+#
+@@ -6,4 +6,6 @@
+ cachefiles-y := \
+ 	main.o
+ 
++cachefiles-$(CONFIG_CACHEFILES_ERROR_INJECTION) += error_inject.o
 +
-+cachefiles-y := \
-+	main.o
-+
-+obj-$(CONFIG_CACHEFILES) := cachefiles.o
-diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+ obj-$(CONFIG_CACHEFILES) := cachefiles.o
+diff --git a/fs/cachefiles/error_inject.c b/fs/cachefiles/error_inject.c
 new file mode 100644
-index 000000000000..55da223e49a9
+index 000000000000..58f8aec964e4
 --- /dev/null
-+++ b/fs/cachefiles/internal.h
-@@ -0,0 +1,118 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* General netfs cache on cache files internal defs
-+ *
-+ * Copyright (C) 2021 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ */
-+
-+#ifdef pr_fmt
-+#undef pr_fmt
-+#endif
-+
-+#define pr_fmt(fmt) "CacheFiles: " fmt
-+
-+
-+#include <linux/fscache-cache.h>
-+#include <linux/timer.h>
-+#include <linux/wait_bit.h>
-+#include <linux/cred.h>
-+#include <linux/workqueue.h>
-+#include <linux/security.h>
-+
-+extern unsigned cachefiles_debug;
-+#define CACHEFILES_DEBUG_KENTER	1
-+#define CACHEFILES_DEBUG_KLEAVE	2
-+#define CACHEFILES_DEBUG_KDEBUG	4
-+
-+
-+/*
-+ * debug tracing
-+ */
-+#define dbgprintk(FMT, ...) \
-+	printk("[%-6.6s] "FMT"\n", current->comm, ##__VA_ARGS__)
-+
-+#define kenter(FMT, ...) dbgprintk("==> %s("FMT")", __func__, ##__VA_ARGS__)
-+#define kleave(FMT, ...) dbgprintk("<== %s()"FMT"", __func__, ##__VA_ARGS__)
-+#define kdebug(FMT, ...) dbgprintk(FMT, ##__VA_ARGS__)
-+
-+
-+#if defined(__KDEBUG)
-+#define _enter(FMT, ...) kenter(FMT, ##__VA_ARGS__)
-+#define _leave(FMT, ...) kleave(FMT, ##__VA_ARGS__)
-+#define _debug(FMT, ...) kdebug(FMT, ##__VA_ARGS__)
-+
-+#elif defined(CONFIG_CACHEFILES_DEBUG)
-+#define _enter(FMT, ...)				\
-+do {							\
-+	if (cachefiles_debug & CACHEFILES_DEBUG_KENTER)	\
-+		kenter(FMT, ##__VA_ARGS__);		\
-+} while (0)
-+
-+#define _leave(FMT, ...)				\
-+do {							\
-+	if (cachefiles_debug & CACHEFILES_DEBUG_KLEAVE)	\
-+		kleave(FMT, ##__VA_ARGS__);		\
-+} while (0)
-+
-+#define _debug(FMT, ...)				\
-+do {							\
-+	if (cachefiles_debug & CACHEFILES_DEBUG_KDEBUG)	\
-+		kdebug(FMT, ##__VA_ARGS__);		\
-+} while (0)
-+
-+#else
-+#define _enter(FMT, ...) no_printk("==> %s("FMT")", __func__, ##__VA_ARGS__)
-+#define _leave(FMT, ...) no_printk("<== %s()"FMT"", __func__, ##__VA_ARGS__)
-+#define _debug(FMT, ...) no_printk(FMT, ##__VA_ARGS__)
-+#endif
-+
-+#if 1 /* defined(__KDEBUGALL) */
-+
-+#define ASSERT(X)							\
-+do {									\
-+	if (unlikely(!(X))) {						\
-+		pr_err("\n");						\
-+		pr_err("Assertion failed\n");		\
-+		BUG();							\
-+	}								\
-+} while (0)
-+
-+#define ASSERTCMP(X, OP, Y)						\
-+do {									\
-+	if (unlikely(!((X) OP (Y)))) {					\
-+		pr_err("\n");						\
-+		pr_err("Assertion failed\n");		\
-+		pr_err("%lx " #OP " %lx is false\n",			\
-+		       (unsigned long)(X), (unsigned long)(Y));		\
-+		BUG();							\
-+	}								\
-+} while (0)
-+
-+#define ASSERTIF(C, X)							\
-+do {									\
-+	if (unlikely((C) && !(X))) {					\
-+		pr_err("\n");						\
-+		pr_err("Assertion failed\n");		\
-+		BUG();							\
-+	}								\
-+} while (0)
-+
-+#define ASSERTIFCMP(C, X, OP, Y)					\
-+do {									\
-+	if (unlikely((C) && !((X) OP (Y)))) {				\
-+		pr_err("\n");						\
-+		pr_err("Assertion failed\n");		\
-+		pr_err("%lx " #OP " %lx is false\n",			\
-+		       (unsigned long)(X), (unsigned long)(Y));		\
-+		BUG();							\
-+	}								\
-+} while (0)
-+
-+#else
-+
-+#define ASSERT(X)			do {} while (0)
-+#define ASSERTCMP(X, OP, Y)		do {} while (0)
-+#define ASSERTIF(C, X)			do {} while (0)
-+#define ASSERTIFCMP(C, X, OP, Y)	do {} while (0)
-+
-+#endif
-diff --git a/fs/cachefiles/main.c b/fs/cachefiles/main.c
-new file mode 100644
-index 000000000000..47bc1cc078de
---- /dev/null
-+++ b/fs/cachefiles/main.c
-@@ -0,0 +1,53 @@
++++ b/fs/cachefiles/error_inject.c
+@@ -0,0 +1,46 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
-+/* Network filesystem caching backend to use cache files on a premounted
-+ * filesystem
++/* Error injection handling.
 + *
 + * Copyright (C) 2021 Red Hat, Inc. All Rights Reserved.
 + * Written by David Howells (dhowells@redhat.com)
 + */
 +
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/sched.h>
-+#include <linux/completion.h>
-+#include <linux/slab.h>
-+#include <linux/fs.h>
-+#include <linux/file.h>
-+#include <linux/namei.h>
-+#include <linux/mount.h>
-+#include <linux/statfs.h>
 +#include <linux/sysctl.h>
-+#include <linux/miscdevice.h>
-+#include <linux/netfs.h>
-+#include <trace/events/netfs.h>
-+#define CREATE_TRACE_POINTS
 +#include "internal.h"
 +
-+unsigned cachefiles_debug;
-+module_param_named(debug, cachefiles_debug, uint, S_IWUSR | S_IRUGO);
-+MODULE_PARM_DESC(cachefiles_debug, "CacheFiles debugging mask");
++unsigned int cachefiles_error_injection_state;
 +
-+MODULE_DESCRIPTION("Mounted-filesystem based cache");
-+MODULE_AUTHOR("Red Hat, Inc.");
-+MODULE_LICENSE("GPL");
++static struct ctl_table_header *cachefiles_sysctl;
++static struct ctl_table cachefiles_sysctls[] = {
++	{
++		.procname	= "error_injection",
++		.data		= &cachefiles_error_injection_state,
++		.maxlen		= sizeof(unsigned int),
++		.mode		= 0644,
++		.proc_handler	= proc_douintvec,
++	},
++	{}
++};
 +
-+/*
-+ * initialise the fs caching module
-+ */
-+static int __init cachefiles_init(void)
++static struct ctl_table cachefiles_sysctls_root[] = {
++	{
++		.procname	= "cachefiles",
++		.mode		= 0555,
++		.child		= cachefiles_sysctls,
++	},
++	{}
++};
++
++int __init cachefiles_register_error_injection(void)
 +{
-+	pr_info("Loaded\n");
++	cachefiles_sysctl = register_sysctl_table(cachefiles_sysctls_root);
++	if (!cachefiles_sysctl)
++		return -ENOMEM;
++	return 0;
++
++}
++
++void cachefiles_unregister_error_injection(void)
++{
++	unregister_sysctl_table(cachefiles_sysctl);
++}
+diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
+index 55da223e49a9..2f8e2835a785 100644
+--- a/fs/cachefiles/internal.h
++++ b/fs/cachefiles/internal.h
+@@ -24,6 +24,45 @@ extern unsigned cachefiles_debug;
+ #define CACHEFILES_DEBUG_KLEAVE	2
+ #define CACHEFILES_DEBUG_KDEBUG	4
+ 
++/*
++ * error_inject.c
++ */
++#ifdef CONFIG_CACHEFILES_ERROR_INJECTION
++extern unsigned int cachefiles_error_injection_state;
++extern int cachefiles_register_error_injection(void);
++extern void cachefiles_unregister_error_injection(void);
++
++#else
++#define cachefiles_error_injection_state 0
++
++static inline int cachefiles_register_error_injection(void)
++{
 +	return 0;
 +}
 +
-+fs_initcall(cachefiles_init);
-+
-+/*
-+ * clean up on module removal
-+ */
-+static void __exit cachefiles_exit(void)
++static inline void cachefiles_unregister_error_injection(void)
 +{
-+	pr_info("Unloading\n");
 +}
-+
-+module_exit(cachefiles_exit);
-diff --git a/include/trace/events/cachefiles.h b/include/trace/events/cachefiles.h
-new file mode 100644
-index 000000000000..5ee0aabb20be
---- /dev/null
-+++ b/include/trace/events/cachefiles.h
-@@ -0,0 +1,49 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* CacheFiles tracepoints
-+ *
-+ * Copyright (C) 2021 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM cachefiles
-+
-+#if !defined(_TRACE_CACHEFILES_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_CACHEFILES_H
-+
-+#include <linux/tracepoint.h>
-+
-+/*
-+ * Define enums for tracing information.
-+ */
-+#ifndef __CACHEFILES_DECLARE_TRACE_ENUMS_ONCE_ONLY
-+#define __CACHEFILES_DECLARE_TRACE_ENUMS_ONCE_ONLY
-+
 +#endif
 +
-+/*
-+ * Define enum -> string mappings for display.
-+ */
 +
++static inline int cachefiles_inject_read_error(void)
++{
++	return cachefiles_error_injection_state & 2 ? -EIO : 0;
++}
 +
-+/*
-+ * Export enum symbols via userspace.
-+ */
-+#undef EM
-+#undef E_
-+#define EM(a, b) TRACE_DEFINE_ENUM(a);
-+#define E_(a, b) TRACE_DEFINE_ENUM(a);
++static inline int cachefiles_inject_write_error(void)
++{
++	return cachefiles_error_injection_state & 2 ? -EIO :
++		cachefiles_error_injection_state & 1 ? -ENOSPC :
++		0;
++}
 +
-+/*
-+ * Now redefine the EM() and E_() macros to map the enums to the strings that
-+ * will be printed in the output.
-+ */
-+#undef EM
-+#undef E_
-+#define EM(a, b)	{ a, b },
-+#define E_(a, b)	{ a, b }
++static inline int cachefiles_inject_remove_error(void)
++{
++	return cachefiles_error_injection_state & 2 ? -EIO : 0;
++}
 +
+ 
+ /*
+  * debug tracing
+diff --git a/fs/cachefiles/main.c b/fs/cachefiles/main.c
+index 47bc1cc078de..387d42c7185f 100644
+--- a/fs/cachefiles/main.c
++++ b/fs/cachefiles/main.c
+@@ -36,8 +36,18 @@ MODULE_LICENSE("GPL");
+  */
+ static int __init cachefiles_init(void)
+ {
++	int ret;
 +
-+#endif /* _TRACE_CACHEFILES_H */
++	ret = cachefiles_register_error_injection();
++	if (ret < 0)
++		goto error_einj;
 +
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
+ 	pr_info("Loaded\n");
+ 	return 0;
++
++error_einj:
++	pr_err("failed to register: %d\n", ret);
++	return ret;
+ }
+ 
+ fs_initcall(cachefiles_init);
+@@ -48,6 +58,8 @@ fs_initcall(cachefiles_init);
+ static void __exit cachefiles_exit(void)
+ {
+ 	pr_info("Unloading\n");
++
++	cachefiles_unregister_error_injection();
+ }
+ 
+ module_exit(cachefiles_exit);
 
 
