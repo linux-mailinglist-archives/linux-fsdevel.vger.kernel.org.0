@@ -2,85 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AC3A437390
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 10:18:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA42A4373BF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 10:39:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232201AbhJVIVB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 04:21:01 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:48952 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231846AbhJVIVA (ORCPT
+        id S232216AbhJVIlu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 04:41:50 -0400
+Received: from outbound-smtp11.blacknight.com ([46.22.139.106]:40023 "EHLO
+        outbound-smtp11.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231984AbhJVIlr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 04:21:00 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 5BE1D1FD58;
-        Fri, 22 Oct 2021 08:18:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1634890722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=udzLvenaNJ3s/w3myOyFSHoI8PZDzLqGtGnzU72grpQ=;
-        b=tZfVS+GsxB4ztBI/PkTVtzq3zqzVa5Ey0BVI3ujAZ+X0/kU0WMm2JFoQ/dI1UFErKreYzj
-        WLhUzybUFXpwzm8xQ1URT+ic7zij5GZvX9+r0TkHTyRNRBc3/vjyF5pfQEJrTUNxJpiAKB
-        SmEwUou+18lgMrN++sJUBE+oi8MDJVg=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 2A969A3B84;
-        Fri, 22 Oct 2021 08:18:42 +0000 (UTC)
-Date:   Fri, 22 Oct 2021 10:18:41 +0200
-From:   Michal Hocko <mhocko@suse.com>
+        Fri, 22 Oct 2021 04:41:47 -0400
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp11.blacknight.com (Postfix) with ESMTPS id 5798F1C47B0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Oct 2021 09:39:29 +0100 (IST)
+Received: (qmail 28203 invoked from network); 22 Oct 2021 08:39:29 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.17.29])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 22 Oct 2021 08:39:29 -0000
+Date:   Fri, 22 Oct 2021 09:39:27 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
 To:     NeilBrown <neilb@suse.de>
-Cc:     Uladzislau Rezki <urezki@gmail.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
         Dave Chinner <david@fromorbit.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: [RFC 2/3] mm/vmalloc: add support for __GFP_NOFAIL
-Message-ID: <YXJz4QVsNk4kUZvH@dhcp22.suse.cz>
-References: <CA+KHdyUopXQVTp2=X-7DYYFNiuTrh25opiUOd1CXED1UXY2Fhg@mail.gmail.com>
- <YXAiZdvk8CGvZCIM@dhcp22.suse.cz>
- <CA+KHdyUyObf2m51uFpVd_tVCmQyn_mjMO0hYP+L0AmRs0PWKow@mail.gmail.com>
- <YXAtYGLv/k+j6etV@dhcp22.suse.cz>
- <CA+KHdyVdrfLPNJESEYzxfF+bksFpKGCd8vH=NqdwfPOLV9ZO8Q@mail.gmail.com>
- <20211020192430.GA1861@pc638.lan>
- <163481121586.17149.4002493290882319236@noble.neil.brown.name>
- <YXFAkFx8PCCJC0Iy@dhcp22.suse.cz>
- <20211021104038.GA1932@pc638.lan>
- <163485654850.17149.3604437537345538737@noble.neil.brown.name>
+        Rik van Riel <riel@surriel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 0/8] Remove dependency on congestion_wait in mm/
+Message-ID: <20211022083927.GI3959@techsingularity.net>
+References: <20211019090108.25501-1-mgorman@techsingularity.net>
+ <163486531001.17149.13533181049212473096@noble.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <163485654850.17149.3604437537345538737@noble.neil.brown.name>
+In-Reply-To: <163486531001.17149.13533181049212473096@noble.neil.brown.name>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 22-10-21 09:49:08, Neil Brown wrote:
-[...]
-> However now that I've thought about some more, I'd much prefer we
-> introduce something like
->     memalloc_retry_wait();
+On Fri, Oct 22, 2021 at 12:15:10PM +1100, NeilBrown wrote:
+> On Tue, 19 Oct 2021, Mel Gorman wrote:
+> > Changelog since v3
+> > o Count writeback completions for NR_THROTTLED_WRITTEN only
+> > o Use IRQ-safe inc_node_page_state
+> > o Remove redundant throttling
+> > 
+> > This series is also available at
+> > 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/mel/linux.git mm-reclaimcongest-v4r2
+> > 
+> > This series that removes all calls to congestion_wait
+> > in mm/ and deletes wait_iff_congested. 
 > 
-> and use that everywhere that a memory allocation is retried.
-> I'm not convinced that we need to wait at all - at least, not when
-> __GFP_DIRECT_RECLAIM is used, as in that case alloc_page will either
->   - succeed
->   - make some progress a reclaiming or
->   - sleep
+> Thanks for this.
+> I don't have sufficient expertise for a positive review, but it seems to
+> make sense with one exception which I have commented on separately.
+> 
 
-There
-are two that we have to do explicitly vmap_pages_range one is due to
-implicit GFP_KERNEL allocations for page tables. Those would likely be a
-good fit for something you suggest above. Then we have __get_vm_area_node
-retry loop which can be either due to vmalloc space reservation failure
-or an implicit GFP_KERNEL allocation by kasan. The first one is not
-really related to the memory availability so it doesn't sound like a
-good fit.
+A test battering NFS would still be nice!
+
+> In general, I still don't like the use of wake_up_all(), though it won't
+> cause incorrect behaviour.
+> 
+
+Removing wake_up_all would be tricky. Ideally it would be prioritised but
+more importantly, some sort of guarantee should exist that enough wakeup
+events trigger to wake tasks before the timeout. That would need careful
+thinking about each reclaim reason. For example, if N tasks throttle on
+NOPROGRESS, there is no guarantee that N tasks are currently in reclaim
+that would wake each sleeping task as progress is made. It's similar
+for writeback, are enough pages under writeback to trigger each wakeup?
+A more subtle issue is if each reason should be strict if waking tasks one
+at a time. For example, a task sleeping on writeback might make progress
+for other reasons such as the working set changing during reclaim or a
+large task exiting. Of course the same concerns exist for the series as
+it stands but the worst case scenarios are mitigated by wake_up_all.
+
+> I would prefer the first patch would:
+>  - define NR_VMSCAN_THROTTLE
+>  - make reclaim_wait an array
+>  - spelled nr_reclaim_throttled as nr_writeback_throttled
+> 
+> rather than leaving those changes for the second patch.  I think that
+> would make review easier.
+> 
+
+I can do this. Normally I try structure series from least-to-most
+controversial so that it can be cut at any point and still make sense
+so the array was defined in the second patch because that's when it is
+required. However, I already had defined the enum in patch 1 for the
+tracepoint so I might as well make it an array too.
 
 -- 
-Michal Hocko
+Mel Gorman
 SUSE Labs
