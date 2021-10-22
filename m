@@ -2,160 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 56F56437433
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 11:02:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 956EE437468
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 11:11:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232353AbhJVJEW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 05:04:22 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:39494 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232314AbhJVJEV (ORCPT
+        id S232479AbhJVJN6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 05:13:58 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:60028 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232161AbhJVJN5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 05:04:21 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id A00702197A;
-        Fri, 22 Oct 2021 09:02:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1634893323; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zL5TWf1TslKGkjBeFt55t2zjOugZfLksrwBt6Qx+crs=;
-        b=JiyKm3wkru6q+8Sl1zyDZDaPoX98q1e/E+OBkJT480GzmUF/rvqlet0yPPj5PJFnGSA9ro
-        stFezVkwiI3fEkal/AZdSa4uLIq1TTOMe19wWTrN0J/aCqJXSEwQ9A/gWmnIbdqNpHtXh6
-        sm6oqmUAGtv1NaYtHuLseYQ83vUuB5Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1634893323;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zL5TWf1TslKGkjBeFt55t2zjOugZfLksrwBt6Qx+crs=;
-        b=YWsU14voVP1mjzOhYe/BxIGTGGFVknMqTV95LiG6RpNDCX5NwIeRkzDkLfbVGlR9j9JGAD
-        wEsSLINUXc/zg2Dw==
-Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id 7047DA3B81;
-        Fri, 22 Oct 2021 09:02:03 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 23CD51E11B6; Fri, 22 Oct 2021 11:02:03 +0200 (CEST)
-Date:   Fri, 22 Oct 2021 11:02:03 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>, Jan Kara <jack@suse.cz>,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 5/5] mm: simplify bdi refcounting
-Message-ID: <20211022090203.GF1026@quack2.suse.cz>
-References: <20211021124441.668816-1-hch@lst.de>
- <20211021124441.668816-6-hch@lst.de>
+        Fri, 22 Oct 2021 05:13:57 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R451e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0UtFDPVc_1634893894;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0UtFDPVc_1634893894)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 22 Oct 2021 17:11:36 +0800
+Date:   Fri, 22 Oct 2021 17:11:34 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Phillip Susi <phill@thesusis.net>,
+        linux-ntfs-dev@lists.sourceforge.net,
+        Matthew Wilcox <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        linux-bcache@vger.kernel.org, Hsin-Yi Wang <hsinyi@chromium.org>,
+        linux-fsdevel@vger.kernel.org,
+        Phillip Lougher <phillip@squashfs.org.uk>,
+        ntfs3@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: Readahead for compressed data
+Message-ID: <YXKARs0QpAZWl6Hi@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Jan Kara <jack@suse.cz>,
+        Phillip Susi <phill@thesusis.net>,
+        linux-ntfs-dev@lists.sourceforge.net,
+        Matthew Wilcox <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>, linux-bcache@vger.kernel.org,
+        Hsin-Yi Wang <hsinyi@chromium.org>, linux-fsdevel@vger.kernel.org,
+        Phillip Lougher <phillip@squashfs.org.uk>, ntfs3@lists.linux.dev,
+        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
+References: <YXHK5HrQpJu9oy8w@casper.infradead.org>
+ <87tuh9n9w2.fsf@vps.thesusis.net>
+ <20211022084127.GA1026@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20211021124441.668816-6-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20211022084127.GA1026@quack2.suse.cz>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 21-10-21 14:44:41, Christoph Hellwig wrote:
-> Move grabbing and releasing the bdi refcount out of the common
-> wb_init/wb_exit helpers into code that is only used for the non-default
-> memcg driven bdi_writeback structures.
+On Fri, Oct 22, 2021 at 10:41:27AM +0200, Jan Kara wrote:
+> On Thu 21-10-21 21:04:45, Phillip Susi wrote:
+> > 
+> > Matthew Wilcox <willy@infradead.org> writes:
+> > 
+> > > As far as I can tell, the following filesystems support compressed data:
+> > >
+> > > bcachefs, btrfs, erofs, ntfs, squashfs, zisofs
+> > >
+> > > I'd like to make it easier and more efficient for filesystems to
+> > > implement compressed data.  There are a lot of approaches in use today,
+> > > but none of them seem quite right to me.  I'm going to lay out a few
+> > > design considerations next and then propose a solution.  Feel free to
+> > > tell me I've got the constraints wrong, or suggest alternative solutions.
+> > >
+> > > When we call ->readahead from the VFS, the VFS has decided which pages
+> > > are going to be the most useful to bring in, but it doesn't know how
+> > > pages are bundled together into blocks.  As I've learned from talking to
+> > > Gao Xiang, sometimes the filesystem doesn't know either, so this isn't
+> > > something we can teach the VFS.
+> > >
+> > > We (David) added readahead_expand() recently to let the filesystem
+> > > opportunistically add pages to the page cache "around" the area requested
+> > > by the VFS.  That reduces the number of times the filesystem has to
+> > > decompress the same block.  But it can fail (due to memory allocation
+> > > failures or pages already being present in the cache).  So filesystems
+> > > still have to implement some kind of fallback.
+> > 
+> > Wouldn't it be better to keep the *compressed* data in the cache and
+> > decompress it multiple times if needed rather than decompress it once
+> > and cache the decompressed data?  You would use more CPU time
+> > decompressing multiple times, but be able to cache more data and avoid
+> > more disk IO, which is generally far slower than the CPU can decompress
+> > the data.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Well, one of the problems with keeping compressed data is that for mmap(2)
+> you have to have pages decompressed so that CPU can access them. So keeping
+> compressed data in the page cache would add a bunch of complexity. That
+> being said keeping compressed data cached somewhere else than in the page
+> cache may certainly me worth it and then just filling page cache on demand
+> from this data...
 
-Can we perhaps add a comment to struct bdi_writeback definition (or maybe
-wb_init()?) mentioning that it holds a reference to 'bdi' if it is
-bdi_writeback struct for a cgroup? I don't see it mentioned anywhere and
-now that you've changed the code, it isn't that obvious from the code
-either... Otherwise the patch looks good so feel free to add:
+It can be cached with a special internal inode, so no need to take
+care of the memory reclaim or migration by yourself.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Otherwise, these all need to be take care of. For fixed-sized input
+compression, since they are reclaimed in page unit, so it won't be
+quite friendly since such data is all coupling. But for fixed-sized
+output compression, it's quite natural.
 
-								Honza
+Thanks,
+Gao Xiang
 
-
-> ---
->  mm/backing-dev.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
 > 
-> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-> index 768e9ae489f66..5ccb250898083 100644
-> --- a/mm/backing-dev.c
-> +++ b/mm/backing-dev.c
-> @@ -291,8 +291,6 @@ static int wb_init(struct bdi_writeback *wb, struct backing_dev_info *bdi,
->  
->  	memset(wb, 0, sizeof(*wb));
->  
-> -	if (wb != &bdi->wb)
-> -		bdi_get(bdi);
->  	wb->bdi = bdi;
->  	wb->last_old_flush = jiffies;
->  	INIT_LIST_HEAD(&wb->b_dirty);
-> @@ -316,7 +314,7 @@ static int wb_init(struct bdi_writeback *wb, struct backing_dev_info *bdi,
->  
->  	err = fprop_local_init_percpu(&wb->completions, gfp);
->  	if (err)
-> -		goto out_put_bdi;
-> +		return err;
->  
->  	for (i = 0; i < NR_WB_STAT_ITEMS; i++) {
->  		err = percpu_counter_init(&wb->stat[i], 0, gfp);
-> @@ -330,9 +328,6 @@ static int wb_init(struct bdi_writeback *wb, struct backing_dev_info *bdi,
->  	while (i--)
->  		percpu_counter_destroy(&wb->stat[i]);
->  	fprop_local_destroy_percpu(&wb->completions);
-> -out_put_bdi:
-> -	if (wb != &bdi->wb)
-> -		bdi_put(bdi);
->  	return err;
->  }
->  
-> @@ -373,8 +368,6 @@ static void wb_exit(struct bdi_writeback *wb)
->  		percpu_counter_destroy(&wb->stat[i]);
->  
->  	fprop_local_destroy_percpu(&wb->completions);
-> -	if (wb != &wb->bdi->wb)
-> -		bdi_put(wb->bdi);
->  }
->  
->  #ifdef CONFIG_CGROUP_WRITEBACK
-> @@ -397,6 +390,7 @@ static void cgwb_release_workfn(struct work_struct *work)
->  	struct bdi_writeback *wb = container_of(work, struct bdi_writeback,
->  						release_work);
->  	struct blkcg *blkcg = css_to_blkcg(wb->blkcg_css);
-> +	struct backing_dev_info *bdi = wb->bdi;
->  
->  	mutex_lock(&wb->bdi->cgwb_release_mutex);
->  	wb_shutdown(wb);
-> @@ -416,6 +410,7 @@ static void cgwb_release_workfn(struct work_struct *work)
->  
->  	percpu_ref_exit(&wb->refcnt);
->  	wb_exit(wb);
-> +	bdi_put(bdi);
->  	WARN_ON_ONCE(!list_empty(&wb->b_attached));
->  	kfree_rcu(wb, rcu);
->  }
-> @@ -497,6 +492,7 @@ static int cgwb_create(struct backing_dev_info *bdi,
->  	INIT_LIST_HEAD(&wb->b_attached);
->  	INIT_WORK(&wb->release_work, cgwb_release_workfn);
->  	set_bit(WB_registered, &wb->state);
-> +	bdi_get(bdi);
->  
->  	/*
->  	 * The root wb determines the registered state of the whole bdi and
-> @@ -528,6 +524,7 @@ static int cgwb_create(struct backing_dev_info *bdi,
->  	goto out_put;
->  
->  err_fprop_exit:
-> +	bdi_put(bdi);
->  	fprop_local_destroy_percpu(&wb->memcg_completions);
->  err_ref_exit:
->  	percpu_ref_exit(&wb->refcnt);
+> 								Honza
 > -- 
-> 2.30.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
