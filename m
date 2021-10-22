@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 72DA6437D19
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 21:01:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEA98437D21
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 21:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233719AbhJVTEA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 15:04:00 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:51490 "EHLO
+        id S233978AbhJVTEM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 15:04:12 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53578 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233568AbhJVTD5 (ORCPT
+        by vger.kernel.org with ESMTP id S234000AbhJVTEJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 15:03:57 -0400
+        Fri, 22 Oct 2021 15:04:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1634929298;
+        s=mimecast20190719; t=1634929310;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=4aDCG26kpPf8CE+R9TGlLXB5nhezdv64wu8OoQs9ano=;
-        b=QKEGEPxNhc8k/1B6XadMQ8zkPyEXLe0DO0D5fDB+jgFmsTchB/ScnXHVrRjX4OFlkXkKTI
-        HG9ePZ5eB41AnV3jKtchEwDpBrW8WghvXohhRcHhMmV2S5lWEe1cgju7dYMdiKXg4QK6qg
-        dp13VLLu8dM9AgxzvzbW46DW6jdKXBI=
+        bh=iIoBd1hTur28kwsr2s9tlNGnGStwWVeFZ9Q9G4haBSs=;
+        b=P25JcTxI8WJ4h+KD+XSrD/ErmumHE4fYCK9sqRUD8toZkcl+ppAWRDfP+U1Brbe4y1sBp8
+        62YKt0MY1f/4YS0WusZF7F+tgHaFLtAMNhS9+XEtpS0ZSYO3+1pVWRoNNE2TriWiM9N/KO
+        nrcEsAeoI11zqvV8QwfBoUxz8McuSps=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-413-CuXi5imOOPiPV4r3E9-3bw-1; Fri, 22 Oct 2021 15:01:35 -0400
-X-MC-Unique: CuXi5imOOPiPV4r3E9-3bw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-97-4qlnal9lM2OFed558KXZEw-1; Fri, 22 Oct 2021 15:01:49 -0400
+X-MC-Unique: 4qlnal9lM2OFed558KXZEw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 592AB18D6A2A;
-        Fri, 22 Oct 2021 19:01:33 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6FB6A10A8E00;
+        Fri, 22 Oct 2021 19:01:45 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5DF185B826;
-        Fri, 22 Oct 2021 19:01:25 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5E30913ABD;
+        Fri, 22 Oct 2021 19:01:39 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v2 09/53] fscache: Implement cache registration
+Subject: [PATCH v2 10/53] fscache: Implement volume registration
 From:   David Howells <dhowells@redhat.com>
 To:     linux-cachefs@redhat.com
 Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
@@ -54,449 +54,688 @@ Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
         linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 22 Oct 2021 20:01:24 +0100
-Message-ID: <163492928450.1038219.14760455745083894643.stgit@warthog.procyon.org.uk>
+Date:   Fri, 22 Oct 2021 20:01:38 +0100
+Message-ID: <163492929857.1038219.13892001687904441360.stgit@warthog.procyon.org.uk>
 In-Reply-To: <163492911924.1038219.13107463173777870713.stgit@warthog.procyon.org.uk>
 References: <163492911924.1038219.13107463173777870713.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement helper functions to acquire a cache record and put a reference on
-it.  These are used both as part of cache registration by the cache backend
-and as part of cache request by the network filesystem.
+Add functions to the fscache API to allow volume indices to be acquired and
+relinquished by the network filesystem.  The filesystem would typically
+create a volume index for a superblock and then create per-inode cookies
+within it.
+
+When it requests a volume, it uses:
+
+	struct fscache_volume *
+	fscache_acquire_volume(const char *volume_key,
+			       const char *cache_name,
+			       u64 coherency_data)
+
+The volume_key is a printable string that is used to look up a volume in
+the cache.  It should not contain any '/' characters.  For AFS, for
+example, this would be "afs,<cellname>,<volume_id>",
+e.g. "afs,example.com,523001".
+
+The cache_name can be NULL, but if not it should be a string indicating the
+name of the cache to use if there's more than one available.
+
+The coherency data is a 64-bit integer that's attached to the volume and is
+compared when the volume is looked up.  If it doesn't match, the old volume
+is judged out of date and it and everything within it is discarded.
+
+This function disallows a volume from being acquired twice in parallel,
+though it will cause the second user to wait if the first is busy
+relinquishing its volume.
+
+
+When a network filesystem has finished with a volume, it should call:
+
+	void
+	fscache_relinquish_volume(struct fscache_volume *volume,
+				  u64 coherency_data,
+				  bool invalidate)
+
+If invalidate is true, the entire volume will be discarded; if false, the
+volume will be synced and the coherency_data will be set.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: linux-cachefs@redhat.com
 ---
 
- fs/fscache/Makefile            |    1 
- fs/fscache/cache.c             |  229 ++++++++++++++++++++++++++++++++++++++++
- fs/fscache/internal.h          |    8 +
- fs/fscache/proc.c              |    4 +
- include/linux/fscache-cache.h  |   60 ++++++++++
- include/trace/events/fscache.h |   37 ++++++
- 6 files changed, 339 insertions(+)
- create mode 100644 fs/fscache/cache.c
+ fs/fscache/Makefile            |    3 
+ fs/fscache/internal.h          |   14 ++
+ fs/fscache/proc.c              |    4 
+ fs/fscache/stats.c             |   12 +
+ fs/fscache/volume.c            |  342 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/fscache.h        |   77 +++++++++
+ include/trace/events/fscache.h |   61 +++++++
+ 7 files changed, 511 insertions(+), 2 deletions(-)
+ create mode 100644 fs/fscache/volume.c
 
 diff --git a/fs/fscache/Makefile b/fs/fscache/Makefile
-index f9722de32247..d9fc22c18090 100644
+index d9fc22c18090..bb5282ae682f 100644
 --- a/fs/fscache/Makefile
 +++ b/fs/fscache/Makefile
-@@ -4,6 +4,7 @@
- #
+@@ -5,7 +5,8 @@
  
  fscache-y := \
-+	cache.o \
- 	main.o
+ 	cache.o \
+-	main.o
++	main.o \
++	volume.o
  
  fscache-$(CONFIG_PROC_FS) += proc.o
-diff --git a/fs/fscache/cache.c b/fs/fscache/cache.c
-new file mode 100644
-index 000000000000..da08e29ee5b9
---- /dev/null
-+++ b/fs/fscache/cache.c
-@@ -0,0 +1,229 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/* FS-Cache cache handling
-+ *
-+ * Copyright (C) 2021 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ */
-+
-+#define FSCACHE_DEBUG_LEVEL CACHE
-+#include <linux/export.h>
-+#include <linux/slab.h>
-+#include "internal.h"
-+
-+static LIST_HEAD(fscache_caches);
-+DECLARE_RWSEM(fscache_addremove_sem);
-+EXPORT_SYMBOL(fscache_addremove_sem);
-+
-+static atomic_t fscache_cache_debug_id;
-+
-+/*
-+ * Allocate a cache cookie.
-+ */
-+static struct fscache_cache *fscache_alloc_cache(const char *name)
-+{
-+	struct fscache_cache *cache;
-+
-+	cache = kzalloc(sizeof(*cache), GFP_KERNEL);
-+	if (cache) {
-+		if (name) {
-+			cache->name = kstrdup(name, GFP_KERNEL);
-+			if (!cache->name) {
-+				kfree(cache);
-+				return NULL;
-+			}
-+		}
-+		refcount_set(&cache->ref, 1);
-+		INIT_LIST_HEAD(&cache->cache_link);
-+		cache->debug_id = atomic_inc_return(&fscache_cache_debug_id);
-+	}
-+	return cache;
-+}
-+
-+static bool fscache_get_cache_maybe(struct fscache_cache *cache,
-+				    enum fscache_cache_trace where)
-+{
-+	bool success;
-+	int ref;
-+
-+	success = __refcount_inc_not_zero(&cache->ref, &ref);
-+	if (success)
-+		trace_fscache_cache(cache->debug_id, ref + 1, where);
-+	return success;
-+}
-+
-+/*
-+ * Look up a cache cookie.
-+ */
-+struct fscache_cache *fscache_lookup_cache(const char *name, bool is_cache)
-+{
-+	struct fscache_cache *candidate, *cache, *unnamed = NULL;
-+
-+	/* firstly check for the existence of the cache under read lock */
-+	down_read(&fscache_addremove_sem);
-+
-+	list_for_each_entry(cache, &fscache_caches, cache_link) {
-+		if (cache->name && name && strcmp(cache->name, name) == 0 &&
-+		    fscache_get_cache_maybe(cache, fscache_cache_get_acquire))
-+			goto got_cache_r;
-+		if (!cache->name && !name &&
-+		    fscache_get_cache_maybe(cache, fscache_cache_get_acquire))
-+			goto got_cache_r;
-+	}
-+
-+	if (!name) {
-+		list_for_each_entry(cache, &fscache_caches, cache_link) {
-+			if (cache->name &&
-+			    fscache_get_cache_maybe(cache, fscache_cache_get_acquire))
-+				goto got_cache_r;
-+		}
-+	}
-+
-+	up_read(&fscache_addremove_sem);
-+
-+	/* the cache does not exist - create a candidate */
-+	candidate = fscache_alloc_cache(name);
-+	if (!candidate)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/* write lock, search again and add if still not present */
-+	down_write(&fscache_addremove_sem);
-+
-+	list_for_each_entry(cache, &fscache_caches, cache_link) {
-+		if (cache->name && name && strcmp(cache->name, name) == 0 &&
-+		    fscache_get_cache_maybe(cache, fscache_cache_get_acquire))
-+			goto got_cache_w;
-+		if (!cache->name) {
-+			unnamed = cache;
-+			if (!name &&
-+			    fscache_get_cache_maybe(cache, fscache_cache_get_acquire))
-+				goto got_cache_w;
-+		}
-+	}
-+
-+	if (unnamed && is_cache &&
-+	    fscache_get_cache_maybe(unnamed, fscache_cache_get_acquire))
-+		goto use_unnamed_cache;
-+
-+	if (!name) {
-+		list_for_each_entry(cache, &fscache_caches, cache_link) {
-+			if (cache->name &&
-+			    fscache_get_cache_maybe(cache, fscache_cache_get_acquire))
-+				goto got_cache_w;
-+		}
-+	}
-+
-+	list_add_tail(&candidate->cache_link, &fscache_caches);
-+	trace_fscache_cache(candidate->debug_id,
-+			    refcount_read(&candidate->ref),
-+			    fscache_cache_new_acquire);
-+	up_write(&fscache_addremove_sem);
-+	return candidate;
-+
-+got_cache_r:
-+	up_read(&fscache_addremove_sem);
-+	return cache;
-+use_unnamed_cache:
-+	cache = unnamed;
-+	cache->name = candidate->name;
-+	candidate->name = NULL;
-+got_cache_w:
-+	up_write(&fscache_addremove_sem);
-+	kfree(candidate->name);
-+	kfree(candidate);
-+	return cache;
-+}
-+
-+/**
-+ * fscache_acquire_cache - Acquire a cache record for a cache.
-+ * @name: The name of the cache.
-+ *
-+ * Get a cache record for a cache.  If there is a nameless cache record
-+ * available, this will acquire that and set its name, directing all the
-+ * volumes using it to this cache.
-+ */
-+struct fscache_cache *fscache_acquire_cache(const char *name)
-+{
-+	ASSERT(name);
-+	return fscache_lookup_cache(name, true);
-+}
-+EXPORT_SYMBOL(fscache_acquire_cache);
-+
-+void fscache_put_cache(struct fscache_cache *cache,
-+		       enum fscache_cache_trace where)
-+{
-+	unsigned int debug_id = cache->debug_id;
-+	bool zero;
-+	int ref;
-+
-+	if (IS_ERR_OR_NULL(cache))
-+		return;
-+
-+	zero = __refcount_dec_and_test(&cache->ref, &ref);
-+	trace_fscache_cache(debug_id, ref - 1, where);
-+
-+	if (zero) {
-+		down_write(&fscache_addremove_sem);
-+		list_del_init(&cache->cache_link);
-+		up_write(&fscache_addremove_sem);
-+		kfree(cache->name);
-+		kfree(cache);
-+	}
-+}
-+EXPORT_SYMBOL(fscache_put_cache);
-+
-+#ifdef CONFIG_PROC_FS
-+static const char fscache_cache_states[NR__FSCACHE_CACHE_STATE] = "-PAEW";
-+
-+/*
-+ * Generate a list of caches in /proc/fs/fscache/caches
-+ */
-+static int fscache_caches_seq_show(struct seq_file *m, void *v)
-+{
-+	struct fscache_cache *cache;
-+
-+	if (v == &fscache_caches) {
-+		seq_puts(m,
-+			 "CACHE    REF   VOLS  OBJS  ACCES S NAME\n"
-+			 "======== ===== ===== ===== ===== = ===============\n"
-+			 );
-+		return 0;
-+	}
-+
-+	cache = list_entry(v, struct fscache_cache, cache_link);
-+	seq_printf(m,
-+		   "%08x %5d %5d %5d %5d %c %s\n",
-+		   cache->debug_id,
-+		   refcount_read(&cache->ref),
-+		   atomic_read(&cache->n_volumes),
-+		   atomic_read(&cache->object_count),
-+		   atomic_read(&cache->n_accesses),
-+		   fscache_cache_states[cache->state],
-+		   cache->name ?: "-");
-+	return 0;
-+}
-+
-+static void *fscache_caches_seq_start(struct seq_file *m, loff_t *_pos)
-+	__acquires(fscache_addremove_sem)
-+{
-+	down_read(&fscache_addremove_sem);
-+	return seq_list_start_head(&fscache_caches, *_pos);
-+}
-+
-+static void *fscache_caches_seq_next(struct seq_file *m, void *v, loff_t *_pos)
-+{
-+	return seq_list_next(v, &fscache_caches, _pos);
-+}
-+
-+static void fscache_caches_seq_stop(struct seq_file *m, void *v)
-+	__releases(fscache_addremove_sem)
-+{
-+	up_read(&fscache_addremove_sem);
-+}
-+
-+const struct seq_operations fscache_caches_seq_ops = {
-+	.start  = fscache_caches_seq_start,
-+	.next   = fscache_caches_seq_next,
-+	.stop   = fscache_caches_seq_stop,
-+	.show   = fscache_caches_seq_show,
-+};
-+#endif /* CONFIG_PROC_FS */
+ fscache-$(CONFIG_FSCACHE_STATS) += stats.o
 diff --git a/fs/fscache/internal.h b/fs/fscache/internal.h
-index 64767992bd15..8ac81294e43e 100644
+index 8ac81294e43e..18c099363b62 100644
 --- a/fs/fscache/internal.h
 +++ b/fs/fscache/internal.h
-@@ -17,6 +17,14 @@
- #include <linux/sched.h>
- #include <linux/seq_file.h>
+@@ -47,6 +47,9 @@ extern void fscache_proc_cleanup(void);
+  * stats.c
+  */
+ #ifdef CONFIG_FSCACHE_STATS
++extern atomic_t fscache_n_volumes;
++extern atomic_t fscache_n_volumes_collision;
++extern atomic_t fscache_n_volumes_nomem;
+ 
+ static inline void fscache_stat(atomic_t *stat)
+ {
+@@ -68,6 +71,17 @@ int fscache_stats_show(struct seq_file *m, void *v);
+ #define fscache_stat_d(stat) do {} while (0)
+ #endif
  
 +/*
-+ * cache.c
++ * volume.c
 + */
-+#ifdef CONFIG_PROC_FS
-+extern const struct seq_operations fscache_caches_seq_ops;
-+#endif
-+struct fscache_cache *fscache_lookup_cache(const char *name, bool is_cache);
++extern const struct seq_operations fscache_volumes_seq_ops;
 +
++struct fscache_volume *fscache_get_volume(struct fscache_volume *volume,
++					  enum fscache_volume_trace where);
++void fscache_put_volume(struct fscache_volume *volume,
++			enum fscache_volume_trace where);
++void fscache_create_volume(struct fscache_volume *volume, bool wait);
++
+ 
+ /*****************************************************************************/
  /*
-  * main.c
-  */
 diff --git a/fs/fscache/proc.c b/fs/fscache/proc.c
-index b28003d7d63f..7400568bf85e 100644
+index 7400568bf85e..c6970d4a44f1 100644
 --- a/fs/fscache/proc.c
 +++ b/fs/fscache/proc.c
-@@ -19,6 +19,10 @@ int __init fscache_proc_init(void)
- 	if (!proc_mkdir("fs/fscache", NULL))
- 		goto error_dir;
+@@ -23,6 +23,10 @@ int __init fscache_proc_init(void)
+ 			     &fscache_caches_seq_ops))
+ 		goto error;
  
-+	if (!proc_create_seq("fs/fscache/caches", S_IFREG | 0444, NULL,
-+			     &fscache_caches_seq_ops))
++	if (!proc_create_seq("fs/fscache/volumes", S_IFREG | 0444, NULL,
++			     &fscache_volumes_seq_ops))
 +		goto error;
 +
  #ifdef CONFIG_FSCACHE_STATS
  	if (!proc_create_single("fs/fscache/stats", S_IFREG | 0444, NULL,
  				fscache_stats_show))
-diff --git a/include/linux/fscache-cache.h b/include/linux/fscache-cache.h
-index d6910a913918..f6429e5ba6e7 100644
---- a/include/linux/fscache-cache.h
-+++ b/include/linux/fscache-cache.h
-@@ -16,6 +16,66 @@
+diff --git a/fs/fscache/stats.c b/fs/fscache/stats.c
+index bd92f93e1680..b811a4d03585 100644
+--- a/fs/fscache/stats.c
++++ b/fs/fscache/stats.c
+@@ -10,12 +10,24 @@
+ #include <linux/seq_file.h>
+ #include "internal.h"
  
- #include <linux/fscache.h>
- 
-+struct fscache_cache;
-+enum fscache_cache_trace;
-+enum fscache_access_trace;
++/*
++ * operation counters
++ */
++atomic_t fscache_n_volumes;
++atomic_t fscache_n_volumes_collision;
++atomic_t fscache_n_volumes_nomem;
 +
-+enum fscache_cache_state {
-+	FSCACHE_CACHE_IS_NOT_PRESENT,	/* No cache is present for this name */
-+	FSCACHE_CACHE_IS_PREPARING,	/* A cache is preparing to come live */
-+	FSCACHE_CACHE_IS_ACTIVE,	/* Attached cache is active and can be used */
-+	FSCACHE_CACHE_GOT_IOERROR,	/* Attached cache stopped on I/O error */
-+	FSCACHE_CACHE_IS_WITHDRAWN,	/* Attached cache is being withdrawn */
-+#define NR__FSCACHE_CACHE_STATE (FSCACHE_CACHE_IS_WITHDRAWN + 1)
-+};
+ /*
+  * display the general statistics
+  */
+ int fscache_stats_show(struct seq_file *m, void *v)
+ {
+ 	seq_puts(m, "FS-Cache statistics\n");
++	seq_printf(m, "Cookies: v=%d vcol=%u voom=%u\n",
++		   atomic_read(&fscache_n_volumes),
++		   atomic_read(&fscache_n_volumes_collision),
++		   atomic_read(&fscache_n_volumes_nomem)
++		   );
+ 
+ 	netfs_stats_show(m);
+ 	return 0;
+diff --git a/fs/fscache/volume.c b/fs/fscache/volume.c
+new file mode 100644
+index 000000000000..924851888f18
+--- /dev/null
++++ b/fs/fscache/volume.c
+@@ -0,0 +1,342 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/* Volume-level cache cookie handling.
++ *
++ * Copyright (C) 2021 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ */
++
++#define FSCACHE_DEBUG_LEVEL COOKIE
++#include <linux/export.h>
++#include <linux/slab.h>
++#include "internal.h"
++
++#define fscache_volume_hash_shift 10
++static struct hlist_bl_head fscache_volume_hash[1 << fscache_volume_hash_shift];
++static atomic_t fscache_volume_debug_id;
++static LIST_HEAD(fscache_volumes);
++
++struct fscache_volume *fscache_get_volume(struct fscache_volume *volume,
++					  enum fscache_volume_trace where)
++{
++	int ref;
++
++	__refcount_inc(&volume->ref, &ref);
++	trace_fscache_volume(volume->debug_id, ref + 1, where);
++	return volume;
++}
++
++static void fscache_see_volume(struct fscache_volume *volume,
++			       enum fscache_volume_trace where)
++{
++	int ref = refcount_read(&volume->ref);
++
++	trace_fscache_volume(volume->debug_id, ref, where);
++}
++
++static long fscache_compare_volume(const struct fscache_volume *a,
++				   const struct fscache_volume *b)
++{
++	size_t klen;
++
++	if (a->key_hash != b->key_hash)
++		return (long)a->key_hash - (long)b->key_hash;
++	if (a->cache != b->cache)
++		return (long)a->cache    - (long)b->cache;
++	if (a->key[0] != b->key[0])
++		return (long)a->key[0]   - (long)b->key[0];
++
++	klen = round_up(a->key[0] + 1, sizeof(unsigned int));
++	return memcmp(a->key, b->key, klen);
++}
++
++static bool fscache_is_acquire_pending(struct fscache_volume *volume)
++{
++	return test_bit(FSCACHE_VOLUME_ACQUIRE_PENDING, &volume->flags);
++}
++
++static void fscache_wait_on_volume_collision(struct fscache_volume *candidate,
++					     unsigned int collidee_debug_id)
++{
++	wait_var_event_timeout(&candidate->flags,
++			       fscache_is_acquire_pending(candidate), 20 * HZ);
++	if (!fscache_is_acquire_pending(candidate)) {
++		pr_notice("Potential volume collision new=%08x old=%08x",
++			  candidate->debug_id, collidee_debug_id);
++		fscache_stat(&fscache_n_volumes_collision);
++		wait_var_event(&candidate->flags, fscache_is_acquire_pending(candidate));
++	}
++}
 +
 +/*
-+ * Cache cookie.
++ * Attempt to insert the new volume into the hash.  If there's a collision, we
++ * wait for the old volume to complete if it's being relinquished and an error
++ * otherwise.
 + */
-+struct fscache_cache {
-+	struct list_head	cache_link;	/* Link in cache list */
-+	void			*cache_priv;	/* Private cache data (or NULL) */
-+	refcount_t		ref;
-+	atomic_t		n_volumes;	/* Number of active volumes; */
-+	atomic_t		n_accesses;	/* Number of in-progress accesses on the cache */
-+	atomic_t		object_count;	/* no. of live objects in this cache */
-+	unsigned int		debug_id;
-+	enum fscache_cache_state state;
-+	char			*name;
-+};
-+
-+static inline enum fscache_cache_state fscache_cache_state(const struct fscache_cache *cache)
++static struct fscache_volume *fscache_hash_volume(struct fscache_volume *candidate)
 +{
-+	return smp_load_acquire(&cache->state);
-+}
++	struct fscache_volume *cursor;
++	struct hlist_bl_head *h;
++	struct hlist_bl_node *p;
++	unsigned int bucket, collidee_debug_id = 0;
 +
-+static inline bool fscache_cache_is_live(const struct fscache_cache *cache)
-+{
-+	return fscache_cache_state(cache) == FSCACHE_CACHE_IS_ACTIVE;
-+}
++	bucket = candidate->key_hash & (ARRAY_SIZE(fscache_volume_hash) - 1);
++	h = &fscache_volume_hash[bucket];
 +
-+static inline void fscache_set_cache_state(struct fscache_cache *cache,
-+					   enum fscache_cache_state new_state)
-+{
-+	smp_store_release(&cache->state, new_state);
++	hlist_bl_lock(h);
++	hlist_bl_for_each_entry(cursor, p, h, hash_link) {
++		if (fscache_compare_volume(candidate, cursor) == 0) {
++			if (!test_bit(FSCACHE_VOLUME_RELINQUISHED, &cursor->flags))
++				goto collision;
++			fscache_see_volume(cursor, fscache_volume_get_hash_collision);
++			set_bit(FSCACHE_VOLUME_COLLIDED_WITH, &cursor->flags);
++			set_bit(FSCACHE_VOLUME_ACQUIRE_PENDING, &candidate->flags);
++			collidee_debug_id = cursor->debug_id;
++			break;
++		}
++	}
 +
-+}
++	hlist_bl_add_head(&candidate->hash_link, h);
++	hlist_bl_unlock(h);
 +
-+static inline bool fscache_set_cache_state_maybe(struct fscache_cache *cache,
-+						 enum fscache_cache_state old_state,
-+						 enum fscache_cache_state new_state)
-+{
-+	return try_cmpxchg_release(&cache->state, &old_state, new_state);
++	if (test_bit(FSCACHE_VOLUME_ACQUIRE_PENDING, &candidate->flags))
++		fscache_wait_on_volume_collision(candidate, collidee_debug_id);
++	return candidate;
++
++collision:
++	fscache_see_volume(cursor, fscache_volume_collision);
++	pr_err("Cache volume already in use\n");
++	hlist_bl_unlock(h);
++	return NULL;
 +}
 +
 +/*
-+ * out-of-line cache backend functions
++ * Allocate and initialise a volume representation cookie.
 + */
-+extern struct rw_semaphore fscache_addremove_sem;
-+extern struct fscache_cache *fscache_acquire_cache(const char *name);
-+extern void fscache_put_cache(struct fscache_cache *cache,
-+			      enum fscache_cache_trace where);
++static struct fscache_volume *fscache_alloc_volume(const char *volume_key,
++						   const char *cache_name,
++						   u64 coherency_data)
++{
++	struct fscache_volume *volume;
++	struct fscache_cache *cache;
++	size_t klen, hlen;
++	char *key;
 +
- extern struct workqueue_struct *fscache_wq;
- 
- #endif /* _LINUX_FSCACHE_CACHE_H */
-diff --git a/include/trace/events/fscache.h b/include/trace/events/fscache.h
-index fe214c5cc87f..3263cbf32961 100644
---- a/include/trace/events/fscache.h
-+++ b/include/trace/events/fscache.h
-@@ -19,11 +19,21 @@
- #ifndef __FSCACHE_DECLARE_TRACE_ENUMS_ONCE_ONLY
- #define __FSCACHE_DECLARE_TRACE_ENUMS_ONCE_ONLY
- 
-+enum fscache_cache_trace {
-+	fscache_cache_collision,
-+	fscache_cache_get_acquire,
-+	fscache_cache_new_acquire,
++	cache = fscache_lookup_cache(cache_name, false);
++	if (!cache)
++		return NULL;
++
++	volume = kzalloc(sizeof(*volume), GFP_KERNEL);
++	if (!volume)
++		goto err_cache;
++
++	volume->cache = cache;
++	volume->coherency = coherency_data;
++	INIT_LIST_HEAD(&volume->proc_link);
++	INIT_WORK(&volume->work, NULL /* PLACEHOLDER */);
++	refcount_set(&volume->ref, 1);
++	spin_lock_init(&volume->lock);
++
++	/* Stick the length on the front of the key and pad it out to make
++	 * hashing easier.
++	 */
++	klen = strlen(volume_key);
++	hlen = round_up(1 + klen + 1, sizeof(unsigned int));
++	key = kzalloc(hlen, GFP_KERNEL);
++	if (!key)
++		goto err_vol;
++	key[0] = klen;
++	memcpy(key + 1, volume_key, klen);
++
++	volume->key = key;
++	volume->key_hash = fscache_hash(0, (unsigned int *)key,
++					hlen / sizeof(unsigned int));
++
++	volume->debug_id = atomic_inc_return(&fscache_volume_debug_id);
++	down_write(&fscache_addremove_sem);
++	atomic_inc(&cache->n_volumes);
++	list_add_tail(&volume->proc_link, &fscache_volumes);
++	fscache_see_volume(volume, fscache_volume_new_acquire);
++	fscache_stat(&fscache_n_volumes);
++	up_write(&fscache_addremove_sem);
++	_leave(" = v=%x", volume->debug_id);
++	return volume;
++
++err_vol:
++	kfree(volume);
++err_cache:
++	fscache_put_cache(cache, fscache_cache_put_alloc_volume);
++	fscache_stat(&fscache_n_volumes_nomem);
++	return NULL;
++}
++
++/*
++ * Acquire a volume representation cookie and link it to a (proposed) cache.
++ */
++struct fscache_volume *__fscache_acquire_volume(const char *volume_key,
++						const char *cache_name,
++						u64 coherency_data)
++{
++	struct fscache_volume *volume;
++
++	volume = fscache_alloc_volume(volume_key, cache_name, coherency_data);
++	if (!volume)
++		return NULL;
++
++	if (!fscache_hash_volume(volume)) {
++		fscache_put_volume(volume, fscache_volume_put_hash_collision);
++		return NULL;
++	}
++
++	// PLACEHOLDER: Create the volume if we have a cache available
++	return volume;
++}
++EXPORT_SYMBOL(__fscache_acquire_volume);
++
++static void fscache_wake_pending_volume(struct fscache_volume *volume,
++					struct hlist_bl_head *h)
++{
++	struct fscache_volume *cursor;
++	struct hlist_bl_node *p;
++
++	hlist_bl_for_each_entry(cursor, p, h, hash_link) {
++		if (fscache_compare_volume(cursor, volume) == 0) {
++			fscache_see_volume(cursor, fscache_volume_see_hash_wake);
++			clear_bit(FSCACHE_VOLUME_ACQUIRE_PENDING, &cursor->flags);
++			wake_up_bit(&cursor->flags, FSCACHE_VOLUME_ACQUIRE_PENDING);
++			return;
++		}
++	}
++}
++
++/*
++ * Remove a volume cookie from the hash table.
++ */
++static void fscache_unhash_volume(struct fscache_volume *volume)
++{
++	struct hlist_bl_head *h;
++	unsigned int bucket;
++
++	bucket = volume->key_hash & (ARRAY_SIZE(fscache_volume_hash) - 1);
++	h = &fscache_volume_hash[bucket];
++
++	hlist_bl_lock(h);
++	hlist_bl_del(&volume->hash_link);
++	if (test_bit(FSCACHE_VOLUME_COLLIDED_WITH, &volume->flags))
++		fscache_wake_pending_volume(volume, h);
++	hlist_bl_unlock(h);
++}
++
++/*
++ * Drop a cache's volume attachments.
++ */
++static void fscache_free_volume(struct fscache_volume *volume)
++{
++	struct fscache_cache *cache = volume->cache;
++
++	if (volume->cache_priv) {
++		// PLACEHOLDER: Detach any attached cache
++	}
++
++	down_write(&fscache_addremove_sem);
++	list_del_init(&volume->proc_link);
++	atomic_dec(&volume->cache->n_volumes);
++	up_write(&fscache_addremove_sem);
++
++	if (!hlist_bl_unhashed(&volume->hash_link))
++		fscache_unhash_volume(volume);
++
++	trace_fscache_volume(volume->debug_id, 0, fscache_volume_free);
++	kfree(volume->key);
++	kfree(volume);
++	fscache_stat_d(&fscache_n_volumes);
++	fscache_put_cache(cache, fscache_cache_put_volume);
++}
++
++/*
++ * Drop a reference to a volume cookie.
++ */
++void fscache_put_volume(struct fscache_volume *volume,
++			enum fscache_volume_trace where)
++{
++	if (volume) {
++		unsigned int debug_id = volume->debug_id;
++		bool zero;
++		int ref;
++
++		zero = __refcount_dec_and_test(&volume->ref, &ref);
++		trace_fscache_volume(debug_id, ref - 1, where);
++		if (zero)
++			fscache_free_volume(volume);
++	}
++}
++
++/*
++ * Relinquish a volume representation cookie.
++ */
++void __fscache_relinquish_volume(struct fscache_volume *volume,
++				 u64 coherency_data,
++				 bool invalidate)
++{
++	if (WARN_ON(test_and_set_bit(FSCACHE_VOLUME_RELINQUISHED, &volume->flags)))
++		return;
++
++	if (invalidate)
++		set_bit(FSCACHE_VOLUME_INVALIDATE, &volume->flags);
++
++	fscache_put_volume(volume, fscache_volume_put_relinquish);
++}
++EXPORT_SYMBOL(__fscache_relinquish_volume);
++
++#ifdef CONFIG_PROC_FS
++/*
++ * Generate a list of volumes in /proc/fs/fscache/volumes
++ */
++static int fscache_volumes_seq_show(struct seq_file *m, void *v)
++{
++	struct fscache_volume *volume;
++
++	if (v == &fscache_volumes) {
++		seq_puts(m,
++			 "VOLUME   REF   nCOOK ACC FL CACHE           KEY\n"
++			 "======== ===== ===== === == =============== ================\n");
++		return 0;
++	}
++
++	volume = list_entry(v, struct fscache_volume, proc_link);
++	seq_printf(m,
++		   "%08x %5d %5d %3d %02lx %-15.15s %s\n",
++		   volume->debug_id,
++		   refcount_read(&volume->ref),
++		   atomic_read(&volume->n_cookies),
++		   atomic_read(&volume->n_accesses),
++		   volume->flags,
++		   volume->cache->name ?: "-",
++		   volume->key + 1);
++	return 0;
++}
++
++static void *fscache_volumes_seq_start(struct seq_file *m, loff_t *_pos)
++	__acquires(&fscache_addremove_sem)
++{
++	down_read(&fscache_addremove_sem);
++	return seq_list_start_head(&fscache_volumes, *_pos);
++}
++
++static void *fscache_volumes_seq_next(struct seq_file *m, void *v, loff_t *_pos)
++{
++	return seq_list_next(v, &fscache_volumes, _pos);
++}
++
++static void fscache_volumes_seq_stop(struct seq_file *m, void *v)
++	__releases(&fscache_addremove_sem)
++{
++	up_read(&fscache_addremove_sem);
++}
++
++const struct seq_operations fscache_volumes_seq_ops = {
++	.start  = fscache_volumes_seq_start,
++	.next   = fscache_volumes_seq_next,
++	.stop   = fscache_volumes_seq_stop,
++	.show   = fscache_volumes_seq_show,
 +};
-+
++#endif /* CONFIG_PROC_FS */
+diff --git a/include/linux/fscache.h b/include/linux/fscache.h
+index 18c5336e41a5..d1ad94e936fc 100644
+--- a/include/linux/fscache.h
++++ b/include/linux/fscache.h
+@@ -25,9 +25,86 @@
+ #if defined(CONFIG_FSCACHE) || defined(CONFIG_FSCACHE_MODULE)
+ #define __fscache_available (1)
+ #define fscache_available() (1)
++#define fscache_volume_valid(volume) (volume)
+ #else
+ #define __fscache_available (0)
+ #define fscache_available() (0)
++#define fscache_volume_valid(volume) (0)
  #endif
  
- /*
-  * Declare tracing information enums and their string mappings for display.
-  */
-+#define fscache_cache_traces						\
-+	EM(fscache_cache_collision,		"*COLLIDE*")		\
-+	EM(fscache_cache_get_acquire,		"GET acq  ")		\
-+	E_(fscache_cache_new_acquire,		"NEW acq  ")
++/*
++ * Volume representation cookie.
++ */
++struct fscache_volume {
++	refcount_t			ref;
++	atomic_t			n_cookies;	/* Number of data cookies in volume */
++	atomic_t			n_accesses;	/* Number of cache accesses in progress */
++	unsigned int			debug_id;
++	unsigned int			key_hash;	/* Hash of key string */
++	char				*key;		/* Volume ID, eg. "afs@example.com@1234" */
++	struct list_head		proc_link;	/* Link in /proc/fs/fscache/volumes */
++	struct hlist_bl_node		hash_link;	/* Link in hash table */
++	struct work_struct		work;
++	struct fscache_cache		*cache;		/* The cache in which this resides */
++	void				*cache_priv;	/* Cache private data */
++	u64				coherency;	/* Coherency data */
++	spinlock_t			lock;
++	unsigned long			flags;
++#define FSCACHE_VOLUME_RELINQUISHED	0	/* Volume is being cleaned up */
++#define FSCACHE_VOLUME_INVALIDATE	1	/* Volume was invalidated */
++#define FSCACHE_VOLUME_COLLIDED_WITH	2	/* Volume was collided with */
++#define FSCACHE_VOLUME_ACQUIRE_PENDING	3	/* Volume is waiting to complete acquisition */
++#define FSCACHE_VOLUME_CREATING		4	/* Volume is being created on disk */
++};
++
++/*
++ * slow-path functions for when there is actually caching available, and the
++ * netfs does actually have a valid token
++ * - these are not to be called directly
++ * - these are undefined symbols when FS-Cache is not configured and the
++ *   optimiser takes care of not using them
++ */
++extern struct fscache_volume *__fscache_acquire_volume(const char *, const char *, u64);
++extern void __fscache_relinquish_volume(struct fscache_volume *, u64, bool);
++
++/**
++ * fscache_acquire_volume - Register a volume as desiring caching services
++ * @volume_key: An identification string for the volume
++ * @cache_name: The name of the cache to use (or NULL for the default)
++ * @coherency_data: Piece of arbitrary coherency data to check
++ *
++ * Register a volume as desiring caching services if they're available.  The
++ * caller must provide an identifier for the volume and may also indicate which
++ * cache it should be in.  If a preexisting volume entry is found in the cache,
++ * the coherency data must match otherwise the entry will be invalidated.
++ */
++static inline
++struct fscache_volume *fscache_acquire_volume(const char *volume_key,
++					      const char *cache_name,
++					      u64 coherency_data)
++{
++	if (!fscache_available())
++		return NULL;
++	return __fscache_acquire_volume(volume_key, cache_name, coherency_data);
++}
++
++/**
++ * fscache_relinquish_volume - Cease caching a volume
++ * @volume: The volume cookie
++ * @coherency_data: Piece of arbitrary coherency data to set
++ * @invalidate: True if the volume should be invalidated
++ *
++ * Indicate that a filesystem no longer desires caching services for a volume.
++ * The caller must have relinquished all file cookies prior to calling this.
++ * The coherency data stored is updated.
++ */
++static inline
++void fscache_relinquish_volume(struct fscache_volume *volume,
++			       u64 coherency_data,
++			       bool invalidate)
++{
++	if (fscache_volume_valid(volume))
++		__fscache_relinquish_volume(volume, coherency_data, invalidate);
++}
++
+ #endif /* _LINUX_FSCACHE_H */
+diff --git a/include/trace/events/fscache.h b/include/trace/events/fscache.h
+index 3263cbf32961..420fd02264f2 100644
+--- a/include/trace/events/fscache.h
++++ b/include/trace/events/fscache.h
+@@ -23,6 +23,23 @@ enum fscache_cache_trace {
+ 	fscache_cache_collision,
+ 	fscache_cache_get_acquire,
+ 	fscache_cache_new_acquire,
++	fscache_cache_put_alloc_volume,
++	fscache_cache_put_volume,
++};
++
++enum fscache_volume_trace {
++	fscache_volume_collision,
++	fscache_volume_get_cookie,
++	fscache_volume_get_create_work,
++	fscache_volume_get_hash_collision,
++	fscache_volume_free,
++	fscache_volume_new_acquire,
++	fscache_volume_put_cookie,
++	fscache_volume_put_create_work,
++	fscache_volume_put_hash_collision,
++	fscache_volume_put_relinquish,
++	fscache_volume_see_create_work,
++	fscache_volume_see_hash_wake,
+ };
+ 
+ #endif
+@@ -33,7 +50,23 @@ enum fscache_cache_trace {
+ #define fscache_cache_traces						\
+ 	EM(fscache_cache_collision,		"*COLLIDE*")		\
+ 	EM(fscache_cache_get_acquire,		"GET acq  ")		\
+-	E_(fscache_cache_new_acquire,		"NEW acq  ")
++	EM(fscache_cache_new_acquire,		"NEW acq  ")		\
++	EM(fscache_cache_put_alloc_volume,	"PUT alvol")		\
++	E_(fscache_cache_put_volume,		"PUT vol  ")
++
++#define fscache_volume_traces						\
++	EM(fscache_volume_collision,		"*COLLIDE*")		\
++	EM(fscache_volume_get_cookie,		"GET cook ")		\
++	EM(fscache_volume_get_create_work,	"GET creat")		\
++	EM(fscache_volume_get_hash_collision,	"GET hcoll")		\
++	EM(fscache_volume_free,			"FREE     ")		\
++	EM(fscache_volume_new_acquire,		"NEW acq  ")		\
++	EM(fscache_volume_put_cookie,		"PUT cook ")		\
++	EM(fscache_volume_put_create_work,	"PUT creat")		\
++	EM(fscache_volume_put_hash_collision,	"PUT hcoll")		\
++	EM(fscache_volume_put_relinquish,	"PUT relnq")		\
++	EM(fscache_volume_see_create_work,	"SEE creat")		\
++	E_(fscache_volume_see_hash_wake,	"SEE hwake")
  
  /*
   * Export enum symbols via userspace.
-@@ -33,6 +43,8 @@
- #define EM(a, b) TRACE_DEFINE_ENUM(a);
+@@ -44,6 +77,7 @@ enum fscache_cache_trace {
  #define E_(a, b) TRACE_DEFINE_ENUM(a);
  
-+fscache_cache_traces;
-+
+ fscache_cache_traces;
++fscache_volume_traces;
+ 
  /*
   * Now redefine the EM() and E_() macros to map the enums to the strings that
-  * will be printed in the output.
-@@ -43,6 +55,31 @@
- #define E_(a, b)	{ a, b }
+@@ -80,6 +114,31 @@ TRACE_EVENT(fscache_cache,
+ 		      __entry->usage)
+ 	    );
  
- 
-+TRACE_EVENT(fscache_cache,
-+	    TP_PROTO(unsigned int cache_debug_id,
++TRACE_EVENT(fscache_volume,
++	    TP_PROTO(unsigned int volume_debug_id,
 +		     int usage,
-+		     enum fscache_cache_trace where),
++		     enum fscache_volume_trace where),
 +
-+	    TP_ARGS(cache_debug_id, usage, where),
++	    TP_ARGS(volume_debug_id, usage, where),
 +
 +	    TP_STRUCT__entry(
-+		    __field(unsigned int,		cache		)
++		    __field(unsigned int,		volume		)
 +		    __field(int,			usage		)
-+		    __field(enum fscache_cache_trace,	where		)
++		    __field(enum fscache_volume_trace,	where		)
 +			     ),
 +
 +	    TP_fast_assign(
-+		    __entry->cache	= cache_debug_id;
++		    __entry->volume	= volume_debug_id;
 +		    __entry->usage	= usage;
 +		    __entry->where	= where;
 +			   ),
 +
-+	    TP_printk("C=%08x %s r=%d",
-+		      __entry->cache,
-+		      __print_symbolic(__entry->where, fscache_cache_traces),
++	    TP_printk("V=%08x %s u=%d",
++		      __entry->volume,
++		      __print_symbolic(__entry->where, fscache_volume_traces),
 +		      __entry->usage)
 +	    );
 +
