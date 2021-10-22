@@ -2,90 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B58DE4376DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 14:22:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D4804377A5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 15:04:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231967AbhJVMYN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 08:24:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53620 "EHLO
+        id S232168AbhJVNHC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 09:07:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230519AbhJVMYK (ORCPT
+        with ESMTP id S229925AbhJVNHB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 08:24:10 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3A09C06122F
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Oct 2021 05:21:52 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id u13so1509604edy.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Oct 2021 05:21:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=EabbjzyBCsHP1Pqryzjhoy0dM3xlyxLmmpO8ACgMTo8=;
-        b=opUIgqVWyZcHOIldu+LgQVfQLu2JLSm4eq0yRYoR8X3EkJ0jJdtgK1LJrEC4fAYG/u
-         x5QndCavFk6KrgrLKL2M04eWhmo9Ht5gsCUOTzm6BFmYlOhPKCnfQmAWRcGWJ3Kgd+Po
-         dxnzE1GzD0Fe/zdoRYGanqsnNZ7HZwcDd5jvb2P53Z7ySB2eUUW5eKcCwJjvHcLwQW3D
-         hmZMQ0WQ67mADARNZlQPTMDFACAa1pT2f55C5E+z5xU/0SGGI05AA1ys/nk/8Z7QRecx
-         rbFLK51ODld/urTp+hjZ3tCNNEiv03NL8R5n8H4ZVv1sIR3Pcfr4FSd/aUugOrtvCJBK
-         4QUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=EabbjzyBCsHP1Pqryzjhoy0dM3xlyxLmmpO8ACgMTo8=;
-        b=VSovddAbtE8LEdNHDCsholiUrJrTgsLVRSd36EJWKPvw1TJ8Djn/IXk8ERxMUqgNFY
-         iSfPxLCB/fGPmWKJj0F5oW87HDZy296lXHEH7UilOYXOBMb+5f6yeX7LqaIm5m6nL3AL
-         NxXL1kjAgqyWazln8dzwb5E+ceAn9IY4DFMDtKqQ9Z5+g4/HtoexTk30u7jr9Yo/phWd
-         MRXNRN/biNmKcJoG3JR5NhZFx3GW7AcZtQfQsRZXZ9yGeCTI1NGMwHdynwT3XTi2v6Zd
-         fUkfzgXFHJ6VSaF9hPT51SLGugtZ+E2RPR5jhd/rkvjXtcSSC8OlcT/f9VbRh5I4yKSe
-         durw==
-X-Gm-Message-State: AOAM533Fe7GoGqQwAvQ5UOPCiIM1D2mQRuf7Ci8saqyIlrxWeezkZg78
-        wUk9DkdlkcoUL/JndAc/6N/9dGFrpldcyPxOf8A=
-X-Google-Smtp-Source: ABdhPJy2Z+mCK6UsBedDHfuHLqHjOelryE6bx9xZ/OavTEghlxY+bPID2uQBe/oD5nVNF4jHf9BZTkpf3h9vpVXzB08=
-X-Received: by 2002:a17:907:1b0a:: with SMTP id mp10mr15488909ejc.29.1634905309828;
- Fri, 22 Oct 2021 05:21:49 -0700 (PDT)
+        Fri, 22 Oct 2021 09:07:01 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F98EC061764;
+        Fri, 22 Oct 2021 06:04:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ceLFPSG9PwcNCS8a9ytFESTTipwib/6u0uhFzDsr/gQ=; b=hgK8dCxE5kiokMvHI8BrX1mKtt
+        uSTgVRfw2SS+zqxcRwMvTW7KsBE/5jLZEwn7AeRau+yKPd1kXQhEaiCKERpKcUoIf65Hgw2fKllDe
+        X05UHY/6IxtRHvBUa6xESlRKmUvsDTvbpwqKsu2TTiJrpx/TWKgfjhNL/i1V8yORkgaF+1HUu9Eyy
+        kaJ9MLr18hdFV8TQYMgTUAj6vDgEJq993PdZtFSnDG4u88Zz1tykYo1vObr+OkkgLMJOIqRk++3Qt
+        YVEoSTdIIbxsgYnMb1pxKO6NR9yz0ZoQsngHLniDwUpyBKIbGuggTXS41E9+zyymcnk8AlPvFWs6q
+        j2CF7SGQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mduAi-00Dud6-RP; Fri, 22 Oct 2021 13:01:52 +0000
+Date:   Fri, 22 Oct 2021 14:01:20 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
+Message-ID: <YXK2ICKi6fjNfr4X@casper.infradead.org>
+References: <YWpG1xlPbm7Jpf2b@casper.infradead.org>
+ <YW2lKcqwBZGDCz6T@cmpxchg.org>
+ <YW28vaoW7qNeX3GP@casper.infradead.org>
+ <YW3tkuCUPVICvMBX@cmpxchg.org>
+ <20211018231627.kqrnalsi74bgpoxu@box.shutemov.name>
+ <YW7hQlny+Go1K3LT@cmpxchg.org>
+ <YXBUPguecSeSO6UD@moria.home.lan>
+ <YXHdpQTL1Udz48fc@cmpxchg.org>
+ <YXIZX0truEBv2YSz@casper.infradead.org>
+ <326b5796-6ef9-a08f-a671-4da4b04a2b4f@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a17:907:7fa7:0:0:0:0 with HTTP; Fri, 22 Oct 2021 05:21:48
- -0700 (PDT)
-Reply-To: bahadur.rayanby@gmail.com
-From:   Ryan Bahadur <dr.philposman7@gmail.com>
-Date:   Fri, 22 Oct 2021 05:21:48 -0700
-Message-ID: <CAMOT=VQ19xGMh1Soq8rNHNKaBCqZh03d0u+Nrf_Ou9bAtd-seQ@mail.gmail.com>
-Subject: CAN I TRUST YOU
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <326b5796-6ef9-a08f-a671-4da4b04a2b4f@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
--- 
-Greetings,
+On Fri, Oct 22, 2021 at 09:59:05AM +0200, David Hildenbrand wrote:
+> something like this would roughly express what I've been mumbling about:
+> 
+> anon_mem    file_mem
+>    |            |
+>    ------|------
+>       lru_mem       slab
+>          |           |
+>          -------------
+>                |
+> 	      page
+> 
+> I wouldn't include folios in this picture, because IMHO folios as of now
+> are actually what we want to be "lru_mem", just which a much clearer
+> name+description (again, IMHO).
 
-Firstly, I apologize for encroaching into your privacy in this manner
-as it may seem unethical though it is a matter of great importance.
+I think folios are a superset of lru_mem.  To enhance your drawing:
 
-I am Mr.Ryan Bahadur, I work with Cayman National Bank (Cayman Islands).
+page
+   folio
+      lru_mem
+         anon_mem
+	 ksm
+         file_mem
+      netpool
+      devmem
+      zonedev
+   slab
+   pgtable
+   buddy
+   zsmalloc
+   vmalloc
 
-I am contacting you because my status would not permit me to do this
-alone as it is concerning our customer and an investment placed under
-our bank's management over 5 years ago.
+I have a little list of memory types here:
+https://kernelnewbies.org/MemoryTypes
 
-I have a proposal I would love to discuss with you which will be very
-beneficial to both of us. It's regarding my late client who has a huge
-deposit with my bank.
+Let me know if anything is missing.
 
-He is from your country and shares the same last name with you.
+> Going from file_mem -> page is easy, just casting pointers.
+> Going from page -> file_mem requires going to the head page if it's a
+> compound page.
+> 
+> But we expect most interfaces to pass around a proper type (e.g.,
+> lru_mem) instead of a page, which avoids having to lookup the compund
+> head page. And each function can express which type it actually wants to
+> consume. The filmap API wants to consume file_mem, so it should use that.
+> 
+> And IMHO, with something above in mind and not having a clue which
+> additional layers we'll really need, or which additional leaves we want
+> to have, we would start with the leaves (e.g., file_mem, anon_mem, slab)
+> and work our way towards the root. Just like we already started with slab.
 
-I want to seek your consent to present you as the next of kin to my
-late client who died and left a huge deposit with my bank.
+That assumes that the "root" layers already handle compound pages
+properly.  For example, nothing in mm/page-writeback.c does; it assumes
+everything is an order-0 page.  So working in the opposite direction
+makes sense because it tells us what has already been converted and is
+thus safe to call.
 
-I would respectfully request that you keep the contents of this mail
-confidential and respect the integrity of the information you come by
-as a result of this mail.
-
-Please kindly get back to me for more details if I can TRUST YOU.{
-bahadur.rayanby@gmail.com}
-
-Regards
-Mr.Ryan Bahadur
-Treasury and Deposit Management,
-Cayman National Bank Cayman Islands.
+And starting with file_mem makes the supposition that it's worth splitting
+file_mem from anon_mem.  I believe that's one or two steps further than
+it's worth, but I can be convinced otherwise.  For example, do we have
+examples of file pages being passed to routines that expect anon pages?
+Most routines that I've looked at expect to see both file & anon pages,
+and treat them either identically or do slightly different things.
+But those are just the functions I've looked at; your experience may be
+quite different.
