@@ -2,80 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 645964371AF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 08:21:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37A2B4371B5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Oct 2021 08:24:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231770AbhJVGXw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Oct 2021 02:23:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57082 "EHLO
+        id S231958AbhJVG0W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Oct 2021 02:26:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbhJVGXw (ORCPT
+        with ESMTP id S229545AbhJVG0U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Oct 2021 02:23:52 -0400
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23843C061764;
-        Thu, 21 Oct 2021 23:21:35 -0700 (PDT)
-Received: by mail-il1-x12c.google.com with SMTP id l7so3135329iln.8;
-        Thu, 21 Oct 2021 23:21:35 -0700 (PDT)
+        Fri, 22 Oct 2021 02:26:20 -0400
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07FDBC061764;
+        Thu, 21 Oct 2021 23:24:04 -0700 (PDT)
+Received: by mail-io1-xd32.google.com with SMTP id y67so3953364iof.10;
+        Thu, 21 Oct 2021 23:24:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DNNio99druR0elADAAcPOSZ030zU5qLnFvTu9F38IWc=;
-        b=YzmqNqCP9Cp5LVSD0RlIftB4FfWguOoayuSEE5WuopGyE58PlQpJqfCzxd6o6dGSWx
-         2c48phwisYcERIRabzsPLq9sTCB4ulAUQp1rKYWnpgLSyvg2wq+RzWXS+LLoonIII9yt
-         ZV6f+LXzWQBw9UfHVolmTh4brVy5PEGmLRvv83RTYDIytO7RkWncXdTB57cnHPC3vL0Y
-         Qlsg1s5Ot77sKsM0FR0anmn1Sshqc5xk/kKJ8CUq4xDW4SWhd2z5omqORdVZDUhOnRFK
-         E2hcEottlm4v5U+6EArh5ixT42zcGFtdfb0yNOF3HFvUjJsHf/y6rr0mUA2sHqyfDJRv
-         /Ufg==
+        bh=Ctmgqf8uxyooX2WRkX0mknbdlJbxHMg1YGMmHUwmvMo=;
+        b=XyZMPi56Rw07CUfQKmDI18LFyvuL2nRgfmj+7iHgcHle79EuBTDTtaH0Mj7Br3D9GX
+         nLQhFIjno3jaMUF2jdbaYrZXedALQlCijEaOrit8/ewXjSzMITu0NjtvDR3wHc5xakIK
+         AE4JBy6BpGRZuJTPoWG4QGvbhuCkPvFQkbOrjsW8Hd9W1EhNrge4A2XFwCJY8T9TrvR2
+         iIXWtOl9DQY0GOfCu+gbmpCQFaRXM1PbOMLIP3O6pm5BRDaV0RndO5O+/xUHY+qEcTNR
+         MdGZsEBRJU92Yb5iRW+HoZTZihEsF8Pg88qYoCq5k6peuh+lTPQXCvrZpNI9Rm9offnx
+         +pnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DNNio99druR0elADAAcPOSZ030zU5qLnFvTu9F38IWc=;
-        b=cdgQ46VuFyJugBz2x2q//cS1Zt8BtS6hdkeqtgi2poEH/G9HIm26ym9MVuQaRnN4Ng
-         oK1BpKRvfT3GkV/S+E4fqYfSLly5qcs6/ZiNw9ZA9/8vLiq84qlpiDvf/OxFkawG0X8x
-         g0HOAtkfKjBG0Z/vPcu7C4+s5n/RsSqQUXJj39OWJ55HGBe7zv6BgrcZD8Lp1H2wvThe
-         MB5QR6WUv+IuKwRAI+QwMEtyC9AO9iLM64OrvUyd3WCnKisl2ovXPnJ0b7LExzKAiaVl
-         J3u2JtPXQCiUgl6wSWNdTZ7Fcmm0M9AjUzSgpyjioL1TE/+lPOGRnl3jsOhWExuILUnp
-         Zz2A==
-X-Gm-Message-State: AOAM533/XGhWUU1IjiYh06UJFjsqgT0KoylRTP46wiOe7T0pUemAZ1mL
-        EaV119jpACNp+s3hyBcIE1MXBCc/E5/jHqs3s/A=
-X-Google-Smtp-Source: ABdhPJxYd6/mVrd3hF58WmjOp1+WhbUVZs/+El8/eNM8DYtcP0VoJnRsr0TQYC2boeYvacEmMDLu2ZlA3P6c6lH6FTM=
-X-Received: by 2002:a92:c24c:: with SMTP id k12mr6666555ilo.52.1634883694484;
- Thu, 21 Oct 2021 23:21:34 -0700 (PDT)
+        bh=Ctmgqf8uxyooX2WRkX0mknbdlJbxHMg1YGMmHUwmvMo=;
+        b=bxM8YJ/GUobiMI3JqYH3nIF/cxFAGp3nUFTmVlwMVBydALPaW35wiLwUjO6aOrNcdM
+         kOfCmsP3RhBwNJiAsmnVZOZEphLtVGYHg5LIy2NdahPMpyuioFtE2NNA9r+F345lm/09
+         moQDsAwQIJ4n8Ysrj9kpAYy6pSF0yR5YYugkBk7p5sRTr5lKC0wOgkNdIi9z6kvqzIBK
+         KGhPKX9kLDsYOoUBZv/m6+Y+o71fvW1DKWQ4uk7rZWrZXnPYP05QsjhsMNKCD6kZCSg5
+         bdUO5tZUGmhqEneVr9NIsJTYc5Y/8ttfulRdcPTJG4oIs5MkVCB8g5jlG1wYfNBQ/9yy
+         Zw5Q==
+X-Gm-Message-State: AOAM533HIict3ryK3a9cpu96ngcA4y43+9PZDAPczd43FgvMfN3H2Ry1
+        KQwWNOJyYcNmNCAUfouDd3W/Kozws8FrFKeWQhI=
+X-Google-Smtp-Source: ABdhPJwLZt7DEWJC59Q0R4KyCJo2IgKLomhbRWM91KQdg87yLztshdMdW65VPa3XJ6qnAbAG+eJ9OnGWBYcCvmnjD6Q=
+X-Received: by 2002:a05:6638:1607:: with SMTP id x7mr6954700jas.128.1634883843551;
+ Thu, 21 Oct 2021 23:24:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211021034516.4400-1-laoar.shao@gmail.com> <20211021205222.714a76c854cc0e7a7d6db890@linux-foundation.org>
- <202110212053.6F3BB603@keescook>
-In-Reply-To: <202110212053.6F3BB603@keescook>
+References: <20211021034516.4400-1-laoar.shao@gmail.com> <20211021034516.4400-4-laoar.shao@gmail.com>
+ <CAEf4Bzb0YSwqoKn2N4gPJS40atWBRHLkK9fBy=wghkXUC5Sqmw@mail.gmail.com>
+In-Reply-To: <CAEf4Bzb0YSwqoKn2N4gPJS40atWBRHLkK9fBy=wghkXUC5Sqmw@mail.gmail.com>
 From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Fri, 22 Oct 2021 14:20:55 +0800
-Message-ID: <CALOAHbDFy5sbAaWt=QoVKnq5jborrxEX1Gyzf5+kcomaXtX3rw@mail.gmail.com>
-Subject: Re: [PATCH v5 00/15] extend task comm from 16 to 24 for CONFIG_BASE_FULL
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
+Date:   Fri, 22 Oct 2021 14:23:27 +0800
+Message-ID: <CALOAHbCu5vXT1DB+d-sv6r2ncBohnqry2uK9R4rYSvbHoVPLOg@mail.gmail.com>
+Subject: Re: [PATCH v5 03/15] sched.h: introduce TASK_COMM_LEN_16
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Kees Cook <keescook@chromium.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
         Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Peter Ziljstra <peterz@infradead.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Valentin Schneider <valentin.schneider@arm.com>,
         Qiang Zhang <qiang.zhang@windriver.com>,
         robdclark <robdclark@chromium.org>,
-        christian <christian@brauner.io>,
+        Christian Brauner <christian@brauner.io>,
         Dietmar Eggemann <dietmar.eggemann@arm.com>,
         Ingo Molnar <mingo@redhat.com>,
         Juri Lelli <juri.lelli@redhat.com>,
         Vincent Guittot <vincent.guittot@linaro.org>,
-        David Miller <davem@davemloft.net>, kuba@kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
         Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, andrii@kernel.org,
-        kafai@fb.com, Song Liu <songliubraving@fb.com>,
-        Yonghong Song <yhs@fb.com>, john.fastabend@gmail.com,
-        kpsingh@kernel.org, netdev <netdev@vger.kernel.org>,
-        bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        john fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
         kernel test robot <oliver.sang@intel.com>,
         kbuild test robot <lkp@intel.com>
 Content-Type: text/plain; charset="UTF-8"
@@ -83,78 +88,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 22, 2021 at 12:00 PM Kees Cook <keescook@chromium.org> wrote:
+On Fri, Oct 22, 2021 at 5:55 AM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
 >
-> On Thu, Oct 21, 2021 at 08:52:22PM -0700, Andrew Morton wrote:
-> > On Thu, 21 Oct 2021 03:45:07 +0000 Yafang Shao <laoar.shao@gmail.com> wrote:
+> On Wed, Oct 20, 2021 at 8:45 PM Yafang Shao <laoar.shao@gmail.com> wrote:
 > >
-> > > This patchset changes files among many subsystems. I don't know which
-> > > tree it should be applied to, so I just base it on Linus's tree.
+> > There're many hard-coded 16 used to store task comm in the kernel, that
+> > makes it error prone if we want to change the value of TASK_COMM_LEN. A
+> > new marco TASK_COMM_LEN_16 is introduced to replace these old ones, then
+> > we can easily grep them.
 > >
-> > I can do that ;)
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Cc: Petr Mladek <pmladek@suse.com>
+> > ---
+> >  include/linux/sched.h | 2 ++
+> >  1 file changed, 2 insertions(+)
 > >
-> > > There're many truncated kthreads in the kernel, which may make trouble
-> > > for the user, for example, the user can't get detailed device
-> > > information from the task comm.
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index c1a927ddec64..62d5b30d310c 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -274,6 +274,8 @@ struct task_group;
 > >
-> > That sucked of us.
+> >  #define get_current_state()    READ_ONCE(current->__state)
 > >
-> > > This patchset tries to improve this problem fundamentally by extending
-> > > the task comm size from 16 to 24. In order to do that, we have to do
-> > > some cleanups first.
-> >
-> > It's at v5 and there's no evidence of review activity?  C'mon, folks!
+> > +/* To replace the old hard-coded 16 */
+> > +#define TASK_COMM_LEN_16               16
+> >  /* Task command name length: */
+> >  #define TASK_COMM_LEN                  16
 >
-> It's on my list! :) It's a pretty subtle area that rarely changes, so I
-> want to make sure I'm a full coffee to do the review. :)
+> Can we please convert these two constants into enum? That will allow
+> BPF applications to deal with such kernel change more easily because
+> these constants will now be available as part of kernel BTF.
 >
-> > > 1. Make the copy of task comm always safe no matter what the task
-> > > comm size is. For example,
-> > >
-> > >   Unsafe                 Safe
-> > >   strlcpy                strscpy_pad
-> > >   strncpy                strscpy_pad
-> > >   bpf_probe_read_kernel  bpf_probe_read_kernel_str
-> > >                          bpf_core_read_str
-> > >                          bpf_get_current_comm
-> > >                          perf_event__prepare_comm
-> > >                          prctl(2)
-> > >
-> > > 2. Replace the old hard-coded 16 with a new macro TASK_COMM_LEN_16 to
-> > > make it more grepable.
-> > >
-> > > 3. Extend the task comm size to 24 for CONFIG_BASE_FULL case and keep it
-> > > as 16 for CONFIG_BASE_SMALL.
-> >
-> > Is this justified?  How much simpler/more reliable/more maintainable/
-> > would the code be if we were to make CONFIG_BASE_SMALL suffer with the
-> > extra 8 bytes?
+> Something like this should be completely equivalent for all the kernel uses:
 >
-> Does anyone "own" CONFIG_BASE_SMALL? Gonna go with "no":
+> enum {
+>     TASK_COMM_LEN = 16,
+>     TASK_COMM_LEN_16 = 16,
+> };
 >
-> $ git ann init/Kconfig| grep 'config BASE_SMALL'
-> 1da177e4c3f41   (Linus Torvalds 2005-04-16 15:20:36 -0700 2054)config BASE_SMALL
+> When later TASK_COMM_LEN is defined as = 24, BPF applications will be
+> able to deal with that by querying BTF through BPF CO-RE.
 >
-> And it looks mostly unused:
->
-> $ git grep CONFIG_BASE_SMALL | cut -d: -f1 | sort -u | xargs -n1 git ann -f | grep 'CONFIG_BASE_SMALL'
-> b2af018ff26f1   (Ingo Molnar    2009-01-28 17:36:56 +0100       18)#if CONFIG_BASE_SMALL == 0
-> fcdba07ee390d   ( Jiri Olsa     2011-02-07 19:31:25 +0100       54)#define CON_BUF_SIZE (CONFIG_BASE_SMALL ? 256 : PAGE_SIZE)
-> Blaming lines: 100% (46/46), done.
-> 1da177e4c3f41   (Linus Torvalds 2005-04-16 15:20:36 -0700       28)#define PID_MAX_DEFAULT (CONFIG_BASE_SMALL ? 0x1000 : 0x8000)
-> 1da177e4c3f41   (Linus Torvalds 2005-04-16 15:20:36 -0700       34)#define PID_MAX_LIMIT (CONFIG_BASE_SMALL ? PAGE_SIZE * 8 : \
-> Blaming lines: 100% (162/162), done.
-> f86dcc5aa8c79   (Eric Dumazet   2009-10-07 00:37:59 +0000       31)#define UDP_HTABLE_SIZE_MIN     (CONFIG_BASE_SMALL ? 128 : 256)
-> 02c02bf12c5d8   (Matthew Wilcox 2017-11-03 23:09:45 -0400       1110)#define XA_CHUNK_SHIFT        (CONFIG_BASE_SMALL ? 4 : 6)
-> a52b89ebb6d44   (Davidlohr Bueso        2014-01-12 15:31:23 -0800       4249)#if CONFIG_BASE_SMALL
-> 7b44ab978b77a   (Eric W. Biederman      2011-11-16 23:20:58 -0800       78)#define UIDHASH_BITS (CONFIG_BASE_SMALL ? 3 : 7)
->
->
-> --
 
-Right. CONFIG_BASE_SMALL is seldomly used in the kernel.
-As you have already removed 64 bytes from task_struct, I think we can
-extend the 8 bytes for CONFIG_BASE_SMALL as well.
+Sure. I will convert it to enum.
+
 
 -- 
 Thanks
