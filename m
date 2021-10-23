@@ -2,59 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AB3B43820E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Oct 2021 08:43:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4239A438289
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Oct 2021 11:09:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229979AbhJWGqA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Oct 2021 02:46:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52642 "EHLO mail.kernel.org"
+        id S230019AbhJWJLs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Oct 2021 05:11:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229446AbhJWGp7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Oct 2021 02:45:59 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 184206108B;
-        Sat, 23 Oct 2021 06:43:40 +0000 (UTC)
+        id S229818AbhJWJLr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 23 Oct 2021 05:11:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9B45761057;
+        Sat, 23 Oct 2021 09:09:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1634971421;
-        bh=gHoao8gzTpde/kTuKW+WnuidInzBHlhdtiTqnneEWSk=;
+        s=korg; t=1634980169;
+        bh=0qKIie6rK3heoVu9MUJbsWqFihiTgEXSv9xNYLKhEfs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=R+61LErIRpavg+8PyPK1q1zjGE+LJkvkYUxw1hgheKU5U6zkGukw59g88Olt0TCzZ
-         dqDsutPMNVv9Xwp0RI/hBI8+gtSSRYl+8agw0XZta/oIKeXQsB7uzXl9hSwU6L36VG
-         Dk+oNUCiYsEUKC1tZc6tkn2MvlpUvQFZ+jXB7Vpo=
-Date:   Sat, 23 Oct 2021 08:43:37 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     bp@suse.de, akpm@linux-foundation.org, josh@joshtriplett.org,
-        rishabhb@codeaurora.org, kubakici@wp.pl, maco@android.com,
-        david.brown@linaro.org, bjorn.andersson@linaro.org,
-        linux-wireless@vger.kernel.org, keescook@chromium.org,
-        shuah@kernel.org, mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com,
-        dhowells@redhat.com, pali.rohar@gmail.com, tiwai@suse.de,
-        arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
-        broonie@kernel.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org,
-        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
-        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
-        andresx7@gmail.com, brendanhiggins@google.com, yzaikin@google.com,
-        sfr@canb.auug.org.au, rdunlap@infradead.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] firmware_loader: rename EXTRA_FIRMWARE and
- EXTRA_FIRMWARE_DIR
-Message-ID: <YXOvGX1O69s0Qaoe@kroah.com>
-References: <20211022174041.2776969-1-mcgrof@kernel.org>
- <20211022174041.2776969-2-mcgrof@kernel.org>
+        b=bLfDWxeBaflKAIgJLwkqC1h0eYRpV7nX8LpHHWfCq/8t5e6o7CpaORPhQHsSS9ghL
+         s9sRE4U6zX+erTLUqYaEfrYF/0raGSVHZlYNExRW08ma2L3N+mCcQ5AWz7lr9TyYyR
+         IevdlXwx5gOQ9Zvgl5iWjmg3eh7eNa7Fc/c5w+lc=
+Date:   Sat, 23 Oct 2021 11:09:21 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     John Keeping <john@metanate.com>, linux-usb@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: [PATCH] fs: kill unused ret2 argument from iocb->ki_complete()
+Message-ID: <YXPRQV1BT2yYYOgN@kroah.com>
+References: <ce839d66-1d05-dab8-4540-71b8485fdaf3@kernel.dk>
+ <YXBSLweOk1he8DTO@infradead.org>
+ <fe54edc2-da83-6dbb-cfb9-ad3a7fbe3780@kernel.dk>
+ <YXBWk8Zzi7yIyTi/@kroah.com>
+ <20211021174021.273c82b1.john@metanate.com>
+ <e39e7f45-1c1e-a9bb-b413-1dfc21b1b20f@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211022174041.2776969-2-mcgrof@kernel.org>
+In-Reply-To: <e39e7f45-1c1e-a9bb-b413-1dfc21b1b20f@kernel.dk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 22, 2021 at 10:40:38AM -0700, Luis Chamberlain wrote:
-> Now that we've tied loose ends on the built-in firmware API,
-> rename the kconfig symbols for it to reflect more that they are
-> associated to the firmware_loader and to make it easier to
-> understand what they are for.
+On Fri, Oct 22, 2021 at 09:44:32AM -0600, Jens Axboe wrote:
+> On 10/21/21 10:40 AM, John Keeping wrote:
+> > On Wed, 20 Oct 2021 19:49:07 +0200
+> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > 
+> >> On Wed, Oct 20, 2021 at 11:35:27AM -0600, Jens Axboe wrote:
+> >>> On 10/20/21 11:30 AM, Christoph Hellwig wrote:  
+> >>>> On Wed, Oct 20, 2021 at 10:49:07AM -0600, Jens Axboe wrote:  
+> >>>>> It's not used for anything, and we're wasting time passing in zeroes
+> >>>>> where we could just ignore it instead. Update all ki_complete users in
+> >>>>> the kernel to drop that last argument.
+> >>>>>
+> >>>>> The exception is the USB gadget code, which passes in non-zero. But
+> >>>>> since nobody every looks at ret2, it's still pointless.  
+> >>>>
+> >>>> Yes, the USB gadget passes non-zero, and aio passes that on to
+> >>>> userspace.  So this is an ABI change.  Does it actually matter?
+> >>>> I don't know, but you could CC the relevant maintainers and list
+> >>>> to try to figure that out.  
+> >>>
+> >>> True, guess it does go out to userspace. Greg, is anyone using
+> >>> it on the userspace side?  
+> >>
+> >> I really do not know (adding linux-usb@vger)  My interactions with the
+> >> gadget code have not been through the aio api, thankfully :)
+> >>
+> >> Odds are it's fine, I think that something had to be passed in there so
+> >> that was chosen?  If the aio code didn't do anything with it, I can't
+> >> see where the gadget code gets it back at anywhere, but I might be
+> >> looking in the wrong place.
+> >>
+> >> Anyone else here know?
+> > 
+> > I really doubt anyone uses io_event::res2 with FunctionFS gadgets.  The
+> > examples in tools/usb/ffs-aio-example/ either check just "res" or ignore
+> > the status completely.
+> > 
+> > The only other program I can find using aio FunctionFS is adbd which
+> > also checks res and ignores res2 [1].  Other examples I know of just use
+> > synchronous I/O.
 > 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> So is there consensus on the USB side that we can just fill res2 with
+> zero? The single cases that does just do res == res2 puts the error
+> in res anyway, which is what you'd expect.
+> 
+> If so, then I do think that'd be cleaner than packing two values into
+> a u64.
 
-This patch has the same bug I pointed out the last time I reviewed it :(
+I think yes, we should try that, and if something breaks, be ready to
+provide a fix for it.
+
+thanks,
+
+greg k-h
