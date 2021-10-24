@@ -2,129 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 144044387C8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Oct 2021 11:14:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B69C43885A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Oct 2021 12:43:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230443AbhJXJQS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Oct 2021 05:16:18 -0400
-Received: from mout.gmx.net ([212.227.17.21]:35965 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229463AbhJXJQP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Oct 2021 05:16:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1635066819;
-        bh=u4BDV842s250WtD/zqx91qjKHjMx0jeT2lBCtVYkKFQ=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=GHr13pDoKDmRCCNwpDSuBRGnFtZsu5hy5iDFBSguvtOFAQHgOgwDFnoJU/fAp9fEe
-         J6NLqE2FJJGscE6oUdB+pQCvdKs3/fY0nUEoysPRUzKVTxZfhhzhfZwLP8wYYsgTW5
-         PIOaiDpYY36+J2atn6N8BRC2MhTLtBm/tlLS4SYY=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from titan ([79.150.72.99]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1N7iCg-1mji0838C2-014ooa; Sun, 24
- Oct 2021 11:13:38 +0200
-Date:   Sun, 24 Oct 2021 11:13:28 +0200
-From:   Len Baker <len.baker@gmx.com>
-To:     Matthew Wilcox <willy@infradead.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Len Baker <len.baker@gmx.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-hardening@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2][next] sysctl: Avoid open coded arithmetic in memory
- allocator functions
-Message-ID: <20211024091328.GA2912@titan>
-References: <20211023105414.7316-1-len.baker@gmx.com>
- <YXQbxSSw9qan87cm@casper.infradead.org>
+        id S230507AbhJXKpm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Oct 2021 06:45:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37916 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229868AbhJXKpl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 24 Oct 2021 06:45:41 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D06E5C061764;
+        Sun, 24 Oct 2021 03:43:20 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id bp15so4980393lfb.4;
+        Sun, 24 Oct 2021 03:43:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=/PS4HUoWODbfm53gN6ZbE+5Fa7xRlCBIs5XoCCtnGv0=;
+        b=TYJcga+Uw6wwBd+n7s+ZgnDbMxgXivieJ0EbY0cKUU6GQkIUYUcC3NhvLwbDDKstoU
+         7NplfkIWBtkNgdvOd6Td6wFLrxPgvtE/76t470Lm+XfxRy1t7EEjRhBDCT2001TCyTl5
+         H0Bt5DH3NQDQI1POsIPrMclvsXXmZKgarkG5sg8hBBlphPrU1YKxcLk2R/Q743zAAtlX
+         tAYtxYTfqixp6Ocm/jYehOGqCp0nucZX69JEyUb70aGwdQG9wdN+bJe+qrwicmH9vPPb
+         /g+0zPbtIWgDsHAfJSMqvcoaf57JStWQlvNoKzvLlxihn2/giuL5dfDgygHGY/GlQPa2
+         Vx2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=/PS4HUoWODbfm53gN6ZbE+5Fa7xRlCBIs5XoCCtnGv0=;
+        b=4Fde0T8OxAco5GJJM0ooS5jGKS3ZXr6YgCLg9LiivAg9Kc01pRk5dhhkprDC4uEWRh
+         7CUlcHb0smXJa9cZE3L3KNkhkjK5s/NZkzhoqr4Wf88APJFLxST/upiDRzyLZDPNKHSw
+         /xDaePf6JnHXPMhuDZzz4Mm8zbqCcs2CDtlu6HnbnbGyPawbeyOqzk5OBFNhuzIUqewj
+         WEX8JINyHosHz5f1b01LJbXK3fDq/rMlbJPwQt0m2H/srtStH1W1t44MwdVLy8IqK0D7
+         jLHpz9+EjmpCy0bItOMEtDhORKNXxYVFVla7jkHQUT/mGtmb+pOrdgiRrhBQ/XSq28p9
+         g9Lg==
+X-Gm-Message-State: AOAM531bwuwxXaANUyZ2RH23PwpR7KVL3/gDg/KPCSbXudXhVIXnQ0sr
+        dQqTRtBLQgO9SswPFvvIA9A=
+X-Google-Smtp-Source: ABdhPJySpeMU1i/IZRzUlnsn9daQL08cAm8SgcyzLqPkfScsgppTJEG0W9uzzLbC9n0FXBtq+Cc3dw==
+X-Received: by 2002:a05:6512:1106:: with SMTP id l6mr10587629lfg.454.1635072198557;
+        Sun, 24 Oct 2021 03:43:18 -0700 (PDT)
+Received: from kari-VirtualBox (85-23-89-224.bb.dnainternet.fi. [85.23.89.224])
+        by smtp.gmail.com with ESMTPSA id 189sm1389892ljj.113.2021.10.24.03.43.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Oct 2021 03:43:17 -0700 (PDT)
+Date:   Sun, 24 Oct 2021 13:43:15 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Ganapathi Kamath <hgkamath@hotmail.com>
+Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        "ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] fs/ntfs3: Keep preallocated only if option prealloc
+ enabled
+Message-ID: <20211024104315.qb3fb6rxbibpk23g@kari-VirtualBox>
+References: <09b42386-3e6d-df23-12c2-23c2718f766b@paragon-software.com>
+ <aaf41f35-b702-b391-1cff-de4688b3bb65@paragon-software.com>
+ <20211023095559.ythxb2z2ptdrlr5s@kari-VirtualBox>
+ <DM6PR04MB49385E765EF33EF4E0B5FF32DA829@DM6PR04MB4938.namprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <YXQbxSSw9qan87cm@casper.infradead.org>
-X-Provags-ID: V03:K1:0wC+Ys0wsn04QEXB/dcut5eKpX4NL21c+/eYDbpuoFecMyvTA/t
- hBDYpHVn/f9unZCu1QOu0CwdHO7JxDDvwoUn+N+PVIRvz1CLNAftsq70oiWVHO1G0ppkx4+
- eZ+DxkTQDuNvd/1whCK5t+PYdK5tqbrMoIijP9e8TxcQqqA21xyeTPvf7+54a7BpVFJzrqD
- dak/+ybJHBGHsECsVf27A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:FDtNjSFQpoY=:8PbrYln+szkKRqFNAdfLBq
- 5AQ6KgEn1JwrOMCIkMVtC7T16zH4cVOHhgseAwX+VW3ozbJICpF1D0LoRpIrQUL5rypzrfn+p
- sfLUrqw838EXTI/k/UUbk4XvLbAkBMKFl8MDI84270oRqed5J92qsPGM69dA++xQjYhNvt7pH
- 7r6uf1eJTWi24k4JP18FvwjmWv/G5t7WHUt+g7VNuk7lzgIfy4C53DXyDCPhXq6/9yKFJg23U
- zMyf91esS35kNsYbbYgq/0MhQBRFFCFBIkiG0nuzmFKaHyo6IE1pgPAp9jGZcldcKXVeX5lm4
- Ys/1vMTpRgRlv/OnZW3uxYMmjZORJnOSCwaKj1GL5sdnLOpsDZay1FqufA4XPwy+PtDFzusfr
- WNJapVLZ2TuHaMKlnmHo2oiyTRVM9aXAAc+ebI35FK2gbXeWT/FUK4Ztu43QLRhalf7l649Qw
- i7/fWaujWmZitCCeOSwRBlPKZY+j3WkflbaK3de0MtPkLRfA/wcmhrRDYtrZfdyL0cHIeQ8Pw
- gTuWNGKyx0OVkbsqPXoIHG/YjLCBqQom22fmsDADo47LOIYIGjZArdXDMBcQym7ezkhinMikR
- l14d7YYenVf7gqm9fnZTBRJwY+IJnwen8syS/axmty6gfvc/414+d7tVdNJ7UQMoxsWiEDkGn
- vWMWUbXIYDpnGI78a2OLYv7X5VU3vWng7+MTmIw1U3hMj3SiO9T7kSVwy8kDTUbZr+4oPzesq
- IL5/bZbCu7TarCYnpjaCEVLsVkHhIzIqNlG9eiMsaAGPVGyMZOeXnITZBFmXFg9By3CBSwDPY
- cD0q0a2iAqwPOJ74WSzbx/6AQayrWAQFRiH1dCZE81WpU8UiVP4UcB12DVCbPg1zywB/8jfYx
- rtTaOmivnqg0vo/g4EXngOVxs1OnNmBPrsm8YeMgED9xBz9fSwgUNowtNQYNIg36eW4bI+9KT
- lVuxa574SAlCG32/iRvc6tE6cbK+kGZhihSCUN6WygYrjHGblgjrRlRlH9Y+92uOtEm/rjSo7
- 7QYojATFHSO42X/cCpqhcK/bfKwyGr+Vj5FcgtqNerePFi3oNHFSmRUFhQKTFA1YgtimwzlhL
- wKbP/vw8SP5ks8=
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DM6PR04MB49385E765EF33EF4E0B5FF32DA829@DM6PR04MB4938.namprd04.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Matthew,
+On Sun, Oct 24, 2021 at 08:35:57AM +0000, Ganapathi Kamath wrote:
+> Hellom 
+> 
+> While compiling, first time around, I got the below.
 
-thanks for looking at this. More below.
+Yeah. Patch was meant for ntfs3/master...
 
-On Sat, Oct 23, 2021 at 03:27:17PM +0100, Matthew Wilcox wrote:
-> On Sat, Oct 23, 2021 at 12:54:14PM +0200, Len Baker wrote:
-> > Changelog v1 -> v2
-> > - Remove the new_dir_size function and its use (Matthew Wilcox).
->
-> Why do you think the other functions are any different?  Please
-> provide reasoning.
+> fs/ntfs3/file.c: In function 'ntfs_truncate': 
+> fs/ntfs3/file.c:498:60: error: invalid type argument of '->' (have 'struct ntfs_mount_options')
+>   498 |                             &new_valid, ni->mi.sbi->options->prealloc, NULL);
+>       |                                                            ^~
+> make[2]: *** [scripts/Makefile.build:277: fs/ntfs3/file.o] Error 1
+> make[1]: *** [scripts/Makefile.build:540: fs/ntfs3] Error 2
+> 
+> So, in the file
+>     fs/ntfs3/file.c
+> I changed 
+>     ni->mi.sbi->options->prealloc
+> to
+>     ni->mi.sbi->options.prealloc
 
-I think it is better to be defensive. IMHO I believe that if the
-struct_size() helper could be used in this patch, it would be more
-easy to ACK. But it is not possible due to the complex memory
-layouts. However, there are a lot of code in the kernel that uses the
-struct_size() helper for memory allocator arguments where we know
-that it don't overflow. For example:
+but with your change it also applies to rc3. Your change was correct and
+it was totally ok to test top of rc3.
 
-1.- Function imx8mm_tmu_probe()
-    Uses: struct_size(tmu, sensors, data->num_sensors)
-    Where: tmu has a sizeof(struct imx8mm_tmu) -> Not very big
-           data->num_sensors -> A little number
+> I don't really follow/understand the code, to understand what exactly
+> the logic is, except that you are trying to set boolean
+> 'keep_prealloc' call-argument for attr_set_size() by using the
+> ntfs_mount_option bit-field 'prealloc' which is to "Preallocate space
+> when file is growing", prototyped in the file fs/ntfs3/ntfs_fs.h
+> 
+> * Built new 5.15.0-0.rc3.20211001git4de593fb965f.30.fc35.x86_64
+> kernel. (4 hrs on my machine)
 
-    So, almost certainly it doesn't overflow.
+I do not know if you used -j flag when making. Just if you did not know
+about it use:
 
-2.- Function igb_alloc_q_vector()
-    Uses: struct_size(q_vector, ring, ring_count)
-    Where: q_vector has a sizeof(struct igb_q_vector) -> Not very big
-           ring_count -> At most two.
+  make -j8
 
-    So, almost certainly it doesn't overflow.
+This will example use 8 threads for compiling. You choose number based
+on how many threads you have in your processor.
 
-3.- And so on...
+> * I was able to include patch into rpmbuild of kernel src patch, with
+> aforementioned correction * first reconfirmed/verified bug on old
+> kernel
+> * installed newly built kernel
+> * attempt reproduction no success meaning bug not present on new
+> kernel, patch/fix makes file size on overwrite to be as expected.
+> 
+> note, I am not an expert, and as a user, I don't know 100% what
+> correct behavior should be, only what seems reasonable expected
+> behavior, But  you are experts, so please excuse me for reiterating
+> what you know. NTFS is a filesystem that was designed by microsoft for
+> windows, and the way its fs-driver must update is so that on-disk
+> structures is suitable for windows in-kernel structures. A kernel
+> driver for linux, only adapts on disk-ntfs structures to something
+> suitable for linux in-kernel structures, but must update the on disk
+> structures the way Windows expects/designed it to.
 
-So, I think that these new functions for the size calculation are
-helpers like struct_size (but specific due to the memory layouts).
-I don't see any difference here. Also, I think that to be defensive
-in memory allocation arguments it is better than a possible heap
-overflow ;)
+Ntfs file structure allows actually many things which even Windows does
+not understand. This is new driver and it will be evolving that user can
+decide what he wants. We will also have to define good defaults so that
+user get good experience.
 
-Also, under the KSPP [1][2][3] there is an effort to keep out of
-code all the open-coded arithmetic (To avoid unwanted overflows).
+> So if you defended old behavior, I wouldn't know.  So its your call,
+> to decide if it is a bug, and whether your patch fixes.  On my side,
+> my machine is one I work on. patch seems to fix claimed bug. So I hope
+> there is no side effect, nothing corrupts or becomes unstable. 
 
-[1] https://github.com/KSPP/linux/issues/83
-[2] https://github.com/KSPP/linux/issues/92
-[3] https://github.com/KSPP/linux/issues/160
+This was bug. Thanks for reporting and testing it.  We really appriciate
+it. This is new driver and there will be bugs so early users who report
+bugs and are even willing to test patches are gold mine for us.
 
-Moreover, after writing these reasons and thinking for a while, I
-think that the v1 it is correct patch to apply. This is my opinion
-but I'm open minded. Any other solution that makes the code more
-secure is welcome.
+We will also add tags to patch:
+Reported-by: Ganapathi Kamath <hgkamath@hotmail.com>
+Tested-by: Ganapathi Kamath <hgkamath@hotmail.com>
 
-As a last point I would like to know the opinion of Kees and
-Gustavo since they are also working on this task.
+if it ok to you. This way if you report new bugs to kernel people will
+know you are good reporter as you have also tested what you have
+reported. If you wanna know more about these tags see [1].
 
-Kees and Gustavo, what do you think?
+[1]: https://www.kernel.org/doc/html/latest/process/submitting-patches.html#using-reported-by-tested-by-reviewed-by-suggested-by-and-fixes
 
-Regards,
-Len
+  Argillander
+
+> That was fast fix. congrats. 
+> 
+> Log:
+> [root@sirius gana]#
+> [root@sirius gana]# mount -t ntfs3 /dev/sda17 /mnt/a17/
+> [root@sirius gana]#
+> [root@sirius gana]# rm -f /mnt/a17/test1.bin /mnt/a17/test2.bin
+> [root@sirius gana]# dd if=/dev/zero of=/mnt/a17/test2.bin bs=1M count=3000
+> 3000+0 records in
+> 3000+0 records out
+> 3145728000 bytes (3.1 GB, 2.9 GiB) copied, 5.40015 s, 583 MB/s
+> [root@sirius gana]# dd if=/dev/zero of=/mnt/a17/test1.bin bs=1M count=6000
+> 6000+0 records in
+> 6000+0 records out
+> 6291456000 bytes (6.3 GB, 5.9 GiB) copied, 16.1809 s, 389 MB/s
+> [root@sirius gana]# ls -ls /mnt/a17/test1.bin /mnt/a17/test2.bin
+> 6144000 -rw-r--r--. 1 root root 6291456000 Oct 24 13:42 /mnt/a17/test1.bin
+> 3072000 -rw-r--r--. 1 root root 3145728000 Oct 24 13:41 /mnt/a17/test2.bin
+> [root@sirius gana]# cp /mnt/a17/test2.bin /mnt/a17/test1.bin
+> cp: overwrite '/mnt/a17/test1.bin'? y
+> [root@sirius gana]# ls -ls /mnt/a17/test1.bin /mnt/a17/test2.bin
+> 3072000 -rw-r--r--. 1 root root 3145728000 Oct 24 13:42 /mnt/a17/test1.bin
+> 3072000 -rw-r--r--. 1 root root 3145728000 Oct 24 13:41 /mnt/a17/test2.bin
+> [root@sirius gana]#  stat /mnt/a17/test1.bin
+>   File: /mnt/a17/test1.bin
+>   Size: 3145728000      Blocks: 6144000    IO Block: 4096   regular file
+> Device: 10301h/66305d   Inode: 44          Links: 1
+> Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)
+> Context: system_u:object_r:unlabeled_t:s0
+> Access: 2021-10-24 13:41:59.265503300 +0530
+> Modify: 2021-10-24 13:42:44.738904000 +0530
+> Change: 2021-10-24 13:42:44.738904000 +0530
+>  Birth: 2021-10-24 13:41:59.265503300 +0530
+> [root@sirius gana]#  stat /mnt/a17/test2.bin
+>   File: /mnt/a17/test2.bin
+>   Size: 3145728000      Blocks: 6144000    IO Block: 4096   regular file
+> Device: 10301h/66305d   Inode: 43          Links: 1
+> Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)
+> Context: system_u:object_r:unlabeled_t:s0
+> Access: 2021-10-24 13:42:40.610776900 +0530
+> Modify: 2021-10-24 13:41:52.684315600 +0530
+> Change: 2021-10-24 13:41:52.684315600 +0530
+>  Birth: 2021-10-24 13:41:47.284266100 +0530
