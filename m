@@ -2,247 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 618FC4385F6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Oct 2021 02:03:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 144044387C8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Oct 2021 11:14:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231331AbhJXAFj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Oct 2021 20:05:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41378 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230284AbhJXAFj (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Oct 2021 20:05:39 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77DD3C061764;
-        Sat, 23 Oct 2021 17:03:19 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id o4-20020a17090a3d4400b001a1c8344c3fso6383022pjf.3;
-        Sat, 23 Oct 2021 17:03:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=PxwtS641WYFpHkOEkJn+avDYn2BdLBo4DP4nO7ftXvU=;
-        b=SL+DviOgCpxPI+EbDKx7sGamzqbXdpRsT5d2ofbPZ+yYodnja4MW8Lad1M/CNZPT64
-         I+U2gmuBI0efwEGbGCqjMvnrDsJTrvKHAfycXNj9L39TUIHasPMQZ1x+J1jXtBoskT12
-         jd6ViLyPLlic6RofzOWCIzMiRJpw5/SGTV+5676o48mQ3AJly+W83rNvwls+6m5Zj0SD
-         r7BOd58BuvuMBpBQeMQjIg0qAsw7QELlYvKOZQI8Ik5V/wK3tHAwKCY1oz/4bvvAh0S9
-         9A0DafTMwU1OJATeuQO/3rE81wt8XY4twDyn8neJ3+TdR9+V1+mAHPSkRhQOdZK2l97v
-         XNjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=PxwtS641WYFpHkOEkJn+avDYn2BdLBo4DP4nO7ftXvU=;
-        b=BUiZZUr/xKRyxbzAExQ6IfzlDpv4E17G6ID5gDNb7omarwLPC65qQvioCE7Wjf6Ely
-         YOCg7CCZaMOy+g9nPYt/9PEJ+fo6ifWFMUZvASagO2Am0oNT1xf3lQojssSySYvTKk/e
-         kV7ah74Z54u61n8fUyVbwsNj3GgaemkqUQjSy1ODV948/HRk+X4uDb7LgXXTBtBbdvyP
-         hdoWvu4mojjLJXpEWhAgOKFbax0Fer7MudLjWZeyllmXL6oxVos5wCVlDq8IlqH0R47l
-         cc2Bpu6n+Wm5cdG3nmI5OWzDCgWZ6hCDNAy75Ffj6Pp1Ozl2D8qnqEU0qnThzJchqZOM
-         CFRA==
-X-Gm-Message-State: AOAM530cL/Bh86SiPWs5MJ0rGvhcJiZ+yjLsAXhuhXOzGDDCy5v66BHN
-        2vXYN64Z+bpMaZLnrokWC4o=
-X-Google-Smtp-Source: ABdhPJyXCyLbpKo7n5tJ9eyNZbqsG3IqcrSFvApjQOyYw/gbVWMlhSJkUplRCpSeujKHRZk9IXEDUg==
-X-Received: by 2002:a17:90b:388a:: with SMTP id mu10mr10384183pjb.0.1635033798833;
-        Sat, 23 Oct 2021 17:03:18 -0700 (PDT)
-Received: from [10.1.1.26] (222-155-4-20-adsl.sparkbb.co.nz. [222.155.4.20])
-        by smtp.gmail.com with ESMTPSA id h1sm15243550pfi.168.2021.10.23.17.03.10
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 23 Oct 2021 17:03:18 -0700 (PDT)
-Subject: Re: [PATCH v3 0/3] last batch of add_disk() error handling
- conversions
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Luis Chamberlain <mcgrof@kernel.org>
-References: <20211021163856.2000993-1-mcgrof@kernel.org>
- <66655777-6f9b-adbc-03ff-125aecd3f509@i-love.sakura.ne.jp>
-Cc:     linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, axboe@kernel.dk, hch@lst.de,
-        efremov@linux.com, song@kernel.org, jejb@linux.ibm.com,
-        martin.petersen@oracle.com, viro@zeniv.linux.org.uk, hare@suse.de,
-        jack@suse.cz, ming.lei@redhat.com, tj@kernel.org
-From:   Michael Schmitz <schmitzmic@gmail.com>
-Message-ID: <ad1546c4-cfb7-3dd2-9592-9916c23ae164@gmail.com>
-Date:   Sun, 24 Oct 2021 13:03:02 +1300
-User-Agent: Mozilla/5.0 (X11; Linux ppc64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        id S230443AbhJXJQS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Oct 2021 05:16:18 -0400
+Received: from mout.gmx.net ([212.227.17.21]:35965 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229463AbhJXJQP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 24 Oct 2021 05:16:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1635066819;
+        bh=u4BDV842s250WtD/zqx91qjKHjMx0jeT2lBCtVYkKFQ=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=GHr13pDoKDmRCCNwpDSuBRGnFtZsu5hy5iDFBSguvtOFAQHgOgwDFnoJU/fAp9fEe
+         J6NLqE2FJJGscE6oUdB+pQCvdKs3/fY0nUEoysPRUzKVTxZfhhzhfZwLP8wYYsgTW5
+         PIOaiDpYY36+J2atn6N8BRC2MhTLtBm/tlLS4SYY=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from titan ([79.150.72.99]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1N7iCg-1mji0838C2-014ooa; Sun, 24
+ Oct 2021 11:13:38 +0200
+Date:   Sun, 24 Oct 2021 11:13:28 +0200
+From:   Len Baker <len.baker@gmx.com>
+To:     Matthew Wilcox <willy@infradead.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Len Baker <len.baker@gmx.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-hardening@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2][next] sysctl: Avoid open coded arithmetic in memory
+ allocator functions
+Message-ID: <20211024091328.GA2912@titan>
+References: <20211023105414.7316-1-len.baker@gmx.com>
+ <YXQbxSSw9qan87cm@casper.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <66655777-6f9b-adbc-03ff-125aecd3f509@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YXQbxSSw9qan87cm@casper.infradead.org>
+X-Provags-ID: V03:K1:0wC+Ys0wsn04QEXB/dcut5eKpX4NL21c+/eYDbpuoFecMyvTA/t
+ hBDYpHVn/f9unZCu1QOu0CwdHO7JxDDvwoUn+N+PVIRvz1CLNAftsq70oiWVHO1G0ppkx4+
+ eZ+DxkTQDuNvd/1whCK5t+PYdK5tqbrMoIijP9e8TxcQqqA21xyeTPvf7+54a7BpVFJzrqD
+ dak/+ybJHBGHsECsVf27A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:FDtNjSFQpoY=:8PbrYln+szkKRqFNAdfLBq
+ 5AQ6KgEn1JwrOMCIkMVtC7T16zH4cVOHhgseAwX+VW3ozbJICpF1D0LoRpIrQUL5rypzrfn+p
+ sfLUrqw838EXTI/k/UUbk4XvLbAkBMKFl8MDI84270oRqed5J92qsPGM69dA++xQjYhNvt7pH
+ 7r6uf1eJTWi24k4JP18FvwjmWv/G5t7WHUt+g7VNuk7lzgIfy4C53DXyDCPhXq6/9yKFJg23U
+ zMyf91esS35kNsYbbYgq/0MhQBRFFCFBIkiG0nuzmFKaHyo6IE1pgPAp9jGZcldcKXVeX5lm4
+ Ys/1vMTpRgRlv/OnZW3uxYMmjZORJnOSCwaKj1GL5sdnLOpsDZay1FqufA4XPwy+PtDFzusfr
+ WNJapVLZ2TuHaMKlnmHo2oiyTRVM9aXAAc+ebI35FK2gbXeWT/FUK4Ztu43QLRhalf7l649Qw
+ i7/fWaujWmZitCCeOSwRBlPKZY+j3WkflbaK3de0MtPkLRfA/wcmhrRDYtrZfdyL0cHIeQ8Pw
+ gTuWNGKyx0OVkbsqPXoIHG/YjLCBqQom22fmsDADo47LOIYIGjZArdXDMBcQym7ezkhinMikR
+ l14d7YYenVf7gqm9fnZTBRJwY+IJnwen8syS/axmty6gfvc/414+d7tVdNJ7UQMoxsWiEDkGn
+ vWMWUbXIYDpnGI78a2OLYv7X5VU3vWng7+MTmIw1U3hMj3SiO9T7kSVwy8kDTUbZr+4oPzesq
+ IL5/bZbCu7TarCYnpjaCEVLsVkHhIzIqNlG9eiMsaAGPVGyMZOeXnITZBFmXFg9By3CBSwDPY
+ cD0q0a2iAqwPOJ74WSzbx/6AQayrWAQFRiH1dCZE81WpU8UiVP4UcB12DVCbPg1zywB/8jfYx
+ rtTaOmivnqg0vo/g4EXngOVxs1OnNmBPrsm8YeMgED9xBz9fSwgUNowtNQYNIg36eW4bI+9KT
+ lVuxa574SAlCG32/iRvc6tE6cbK+kGZhihSCUN6WygYrjHGblgjrRlRlH9Y+92uOtEm/rjSo7
+ 7QYojATFHSO42X/cCpqhcK/bfKwyGr+Vj5FcgtqNerePFi3oNHFSmRUFhQKTFA1YgtimwzlhL
+ wKbP/vw8SP5ks8=
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Tetsuo,
+Hi Matthew,
 
-On 22/10/21 14:06, Tetsuo Handa wrote:
-> On 2021/10/22 1:38, Luis Chamberlain wrote:
->> I rebased Tetsuo Handa's patch onto the latest linux-next as this
->> series depends on it, and so I am sending it part of this series as
->> without it, this won't apply. Tetsuo, does the rebase of your patch
->> look OK?
->
-> OK, though I wanted my fix to be sent to upstream and stable before this series.
->
->>
->> If it is not too much trouble, I'd like to ask for testing for the
->> ataflop changes from Michael Schmitz, if possible, that is he'd just
->> have to merge Tetsuo's rebased patch and the 2nd patch in this series.
->> This is all rebased on linux-next tag 20211020.
->
-> Yes, please.
+thanks for looking at this. More below.
 
-Took a little convincing (patch 2 didn't apply cleanly by 'git am' on 
-yesterday's top of linux-next), but works just fine, thanks.
+On Sat, Oct 23, 2021 at 03:27:17PM +0100, Matthew Wilcox wrote:
+> On Sat, Oct 23, 2021 at 12:54:14PM +0200, Len Baker wrote:
+> > Changelog v1 -> v2
+> > - Remove the new_dir_size function and its use (Matthew Wilcox).
+>
+> Why do you think the other functions are any different?  Please
+> provide reasoning.
 
-I'll submit another patch with ataflop fixes that were used in my tests, 
-but nothing in that interacts with your patches at all.
+I think it is better to be defensive. IMHO I believe that if the
+struct_size() helper could be used in this patch, it would be more
+easy to ACK. But it is not possible due to the complex memory
+layouts. However, there are a lot of code in the kernel that uses the
+struct_size() helper for memory allocator arguments where we know
+that it don't overflow. For example:
 
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+1.- Function imx8mm_tmu_probe()
+    Uses: struct_size(tmu, sensors, data->num_sensors)
+    Where: tmu has a sizeof(struct imx8mm_tmu) -> Not very big
+           data->num_sensors -> A little number
 
+    So, almost certainly it doesn't overflow.
 
-> After this series, I guess we can remove "bool registered[NUM_DISK_MINORS];" like below
-> due to (unit[drive].disk[type] != NULL) == (unit[drive].registered[type] == true).
-> Regarding this series, setting unit[drive].registered[type] = true in ataflop_probe() is
-> pointless because atari_floppy_cleanup() checks unit[i].disk[type] != NULL for calling
-> del_gendisk(). And we need to fix __register_blkdev() in driver/block/floppy.c because
-> floppy_probe_lock is pointless.
->
->  drivers/block/ataflop.c | 75 +++++++++++++++--------------------------
->  1 file changed, 28 insertions(+), 47 deletions(-)
->
-> diff --git a/drivers/block/ataflop.c b/drivers/block/ataflop.c
-> index c58750dcc685..7fedf8506335 100644
-> --- a/drivers/block/ataflop.c
-> +++ b/drivers/block/ataflop.c
-> @@ -299,7 +299,6 @@ static struct atari_floppy_struct {
->  				   disk change detection) */
->  	int flags;		/* flags */
->  	struct gendisk *disk[NUM_DISK_MINORS];
-> -	bool registered[NUM_DISK_MINORS];
->  	int ref;
->  	int type;
->  	struct blk_mq_tag_set tag_set;
-> @@ -1988,41 +1987,20 @@ static int ataflop_probe(dev_t dev)
->  	if (drive >= FD_MAX_UNITS || type >= NUM_DISK_MINORS)
->  		return -EINVAL;
->
-> -	if (!unit[drive].disk[type]) {
-> -		err = ataflop_alloc_disk(drive, type);
-> -		if (err == 0) {
-> -			err = add_disk(unit[drive].disk[type]);
-> -			if (err) {
-> -				blk_cleanup_disk(unit[drive].disk[type]);
-> -				unit[drive].disk[type] = NULL;
-> -			} else
-> -				unit[drive].registered[type] = true;
-> +	if (unit[drive].disk[type])
-> +		return 0;
-> +	err = ataflop_alloc_disk(drive, type);
-> +	if (err == 0) {
-> +		err = add_disk(unit[drive].disk[type]);
-> +		if (err) {
-> +			blk_cleanup_disk(unit[drive].disk[type]);
-> +			unit[drive].disk[type] = NULL;
->  		}
->  	}
->
->  	return err;
->  }
->
-> -static void atari_floppy_cleanup(void)
-> -{
-> -	int i;
-> -	int type;
-> -
-> -	for (i = 0; i < FD_MAX_UNITS; i++) {
-> -		for (type = 0; type < NUM_DISK_MINORS; type++) {
-> -			if (!unit[i].disk[type])
-> -				continue;
-> -			del_gendisk(unit[i].disk[type]);
-> -			blk_cleanup_queue(unit[i].disk[type]->queue);
-> -			put_disk(unit[i].disk[type]);
-> -		}
-> -		blk_mq_free_tag_set(&unit[i].tag_set);
-> -	}
-> -
-> -	del_timer_sync(&fd_timer);
-> -	atari_stram_free(DMABuffer);
-> -}
-> -
->  static void atari_cleanup_floppy_disk(struct atari_floppy_struct *fs)
->  {
->  	int type;
-> @@ -2030,13 +2008,24 @@ static void atari_cleanup_floppy_disk(struct atari_floppy_struct *fs)
->  	for (type = 0; type < NUM_DISK_MINORS; type++) {
->  		if (!fs->disk[type])
->  			continue;
-> -		if (fs->registered[type])
-> -			del_gendisk(fs->disk[type]);
-> +		del_gendisk(fs->disk[type]);
->  		blk_cleanup_disk(fs->disk[type]);
->  	}
->  	blk_mq_free_tag_set(&fs->tag_set);
->  }
->
-> +static void atari_floppy_cleanup(void)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < FD_MAX_UNITS; i++)
-> +		atari_cleanup_floppy_disk(&unit[i]);
-> +
-> +	del_timer_sync(&fd_timer);
-> +	if (DMABuffer)
-> +		atari_stram_free(DMABuffer);
-> +}
-> +
->  static int __init atari_floppy_init (void)
->  {
->  	int i;
-> @@ -2055,13 +2044,10 @@ static int __init atari_floppy_init (void)
->  		unit[i].tag_set.numa_node = NUMA_NO_NODE;
->  		unit[i].tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
->  		ret = blk_mq_alloc_tag_set(&unit[i].tag_set);
-> -		if (ret)
-> -			goto err;
-> -
-> -		ret = ataflop_alloc_disk(i, 0);
->  		if (ret) {
-> -			blk_mq_free_tag_set(&unit[i].tag_set);
-> -			goto err;
-> +			while (--i >= 0)
-> +				blk_mq_free_tag_set(&unit[i].tag_set);
-> +			return ret;
->  		}
->  	}
->
-> @@ -2090,10 +2076,9 @@ static int __init atari_floppy_init (void)
->  	for (i = 0; i < FD_MAX_UNITS; i++) {
->  		unit[i].track = -1;
->  		unit[i].flags = 0;
-> -		ret = add_disk(unit[i].disk[0]);
-> -		if (ret)
-> -			goto err_out_dma;
-> -		unit[i].registered[0] = true;
-> +		ret = ataflop_probe(MKDEV(0, 1 << 2));
-> +		if (err)
-> +			goto err;
->  	}
->
->  	printk(KERN_INFO "Atari floppy driver: max. %cD, %strack buffering\n",
-> @@ -2108,12 +2093,8 @@ static int __init atari_floppy_init (void)
->  	}
->  	return ret;
->
-> -err_out_dma:
-> -	atari_stram_free(DMABuffer);
->  err:
-> -	while (--i >= 0)
-> -		atari_cleanup_floppy_disk(&unit[i]);
-> -
-> +	atari_floppy_cleanup();
->  	return ret;
->  }
->
->
+2.- Function igb_alloc_q_vector()
+    Uses: struct_size(q_vector, ring, ring_count)
+    Where: q_vector has a sizeof(struct igb_q_vector) -> Not very big
+           ring_count -> At most two.
+
+    So, almost certainly it doesn't overflow.
+
+3.- And so on...
+
+So, I think that these new functions for the size calculation are
+helpers like struct_size (but specific due to the memory layouts).
+I don't see any difference here. Also, I think that to be defensive
+in memory allocation arguments it is better than a possible heap
+overflow ;)
+
+Also, under the KSPP [1][2][3] there is an effort to keep out of
+code all the open-coded arithmetic (To avoid unwanted overflows).
+
+[1] https://github.com/KSPP/linux/issues/83
+[2] https://github.com/KSPP/linux/issues/92
+[3] https://github.com/KSPP/linux/issues/160
+
+Moreover, after writing these reasons and thinking for a while, I
+think that the v1 it is correct patch to apply. This is my opinion
+but I'm open minded. Any other solution that makes the code more
+secure is welcome.
+
+As a last point I would like to know the opinion of Kees and
+Gustavo since they are also working on this task.
+
+Kees and Gustavo, what do you think?
+
+Regards,
+Len
