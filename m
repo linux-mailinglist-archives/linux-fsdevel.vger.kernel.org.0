@@ -2,129 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D82C9439DEC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 19:52:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83AD7439E32
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 20:10:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231179AbhJYRzP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 13:55:15 -0400
-Received: from mga02.intel.com ([134.134.136.20]:21686 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230398AbhJYRzO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 13:55:14 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10148"; a="216885060"
-X-IronPort-AV: E=Sophos;i="5.87,181,1631602800"; 
-   d="scan'208";a="216885060"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2021 10:52:52 -0700
-X-IronPort-AV: E=Sophos;i="5.87,181,1631602800"; 
-   d="scan'208";a="485775392"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2021 10:52:52 -0700
-Date:   Mon, 25 Oct 2021 10:52:51 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     JeffleXu <jefflexu@linux.alibaba.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>, stefanha@redhat.com,
-        miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        virtio-fs@redhat.com, bo.liu@linux.alibaba.com,
-        joseph.qi@linux.alibaba.com
-Subject: Re: [PATCH v6 2/7] fuse: make DAX mount option a tri-state
-Message-ID: <20211025175251.GF3465596@iweiny-DESK2.sc.intel.com>
-References: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
- <20211011030052.98923-3-jefflexu@linux.alibaba.com>
- <YW2AU/E0pLHO5Yl8@redhat.com>
- <652ac323-6546-01b8-992e-460ad59577ca@linux.alibaba.com>
- <YXAzB5sOrFRUzTC5@redhat.com>
- <96956132-fced-5739-d69a-7b424dc65f7c@linux.alibaba.com>
+        id S231233AbhJYSMo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 14:12:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35444 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230194AbhJYSMn (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Oct 2021 14:12:43 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DACA6C061745;
+        Mon, 25 Oct 2021 11:10:20 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id f5so11710232pgc.12;
+        Mon, 25 Oct 2021 11:10:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+d0Qbu1iomeuu1b0XB1a5sl30MKuGON4H+QXA4yUgY8=;
+        b=WCK5zsT3weZzmYfIBAoy+kmVYDC0BYJ6lommblY/oHQV/xnwun3Uuo6iPEc6fribAy
+         uKfJmIaAC8d2IH9Fa1mmRfoYRrwRwP1b1mR941fuqAckUxtMloqQ/4udOb2NtHd52T4x
+         btUqWEi40v7aAJ/kn0eITbpogV53PIPoZkWn5/fHVTFIfHYplnOkqXwvA6l4R+9yB/kA
+         ZCzwpDyVG2JvfWhgzh+GsPs4pXSG5nwwiXWwa5IeI0FTbNTdvvfoNGPkZusYqQAVJ3VF
+         seJzxEu8gZIw4wV8yg4cJdTvrUfUi0Edyo4hqlpILDOBWjDUk12ctSH48FWpUaDBvut0
+         TZHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+d0Qbu1iomeuu1b0XB1a5sl30MKuGON4H+QXA4yUgY8=;
+        b=A/wDxE88GQsjbHmTLlAzLMgegmBqezWNRhYgfJtwOh+wRVBYwln9twexl3w/ibVfUj
+         2FvccSjGPdKu1uaO0Px/hvobzKFMF/xcW+0ULsfrhKJaXXz63Nu8+lTyAeXBpYcyEWZ8
+         biJ8lfENGrY5xRYB047sWsGnUfVsoUHZChlUxBlu95G80LX3GJJdqu1S9H8sga5EoTe+
+         q61UQWcsLXs1lDenuvagcURYmJzT8cbkh2bwgHgxiPmFcGSry47b3iew8WlvkF9refUl
+         t6s50krWJlwJX0apv7/aZW7aZNg4O721Ts/fNlxhkGoNzuvIvVSc0GlpgnY7aH7x6Ccj
+         XO/Q==
+X-Gm-Message-State: AOAM531t8kIhvEfjp5fmcWVRxg/kDqzGb8rr5OtGrwuFRPtbz7o3zH+c
+        opr/nDFk7Suu0qB2zOlfPLDt7A6+bPgxkdZdfKo=
+X-Google-Smtp-Source: ABdhPJzwioKhEvGpI9odjpTyYQzGvhTJexObl6tmfLM4u6lVqCdB58boI2emDBXKBO3+eM8Bu2Wsfnb0z1J4L4F8xhg=
+X-Received: by 2002:a65:4008:: with SMTP id f8mr14907559pgp.310.1635185420342;
+ Mon, 25 Oct 2021 11:10:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <96956132-fced-5739-d69a-7b424dc65f7c@linux.alibaba.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <20211025083315.4752-1-laoar.shao@gmail.com>
+In-Reply-To: <20211025083315.4752-1-laoar.shao@gmail.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Mon, 25 Oct 2021 11:10:09 -0700
+Message-ID: <CAADnVQKm0Ljj-w5PbkAu1ugLFnZRRPt-Vk-J7AhXxDD5xVompA@mail.gmail.com>
+Subject: Re: [PATCH v6 00/12] extend task comm from 16 to 24
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        "Zhang, Qiang" <qiang.zhang@windriver.com>, robdclark@chromium.org,
+        Christian Brauner <christian@brauner.io>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        dennis.dalessandro@cornelisnetworks.com,
+        mike.marciniszyn@cornelisnetworks.com,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, linux-perf-users@vger.kernel.org,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        kbuild test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 22, 2021 at 02:54:03PM +0800, JeffleXu wrote:
-> cc [Ira Weiny], author of per inode DAX on xfs/ext4
-> 
-> On 10/20/21 11:17 PM, Vivek Goyal wrote:
-> > On Wed, Oct 20, 2021 at 10:52:38AM +0800, JeffleXu wrote:
-> >>
-> >>
-> >> On 10/18/21 10:10 PM, Vivek Goyal wrote:
-> >>> On Mon, Oct 11, 2021 at 11:00:47AM +0800, Jeffle Xu wrote:
-> >>>> We add 'always', 'never', and 'inode' (default). '-o dax' continues to
-> >>>> operate the same which is equivalent to 'always'. To be consistemt with
-> >>>> ext4/xfs's tri-state mount option, when neither '-o dax' nor '-o dax='
-> >>>> option is specified, the default behaviour is equal to 'inode'.
-> >>>
-> >>> Hi Jeffle,
-> >>>
-> >>> I am not sure when  -o "dax=inode"  is used as a default? If user
-> >>> specifies, "-o dax" then it is equal to "-o dax=always", otherwise
-> >>> user will explicitly specify "-o dax=always/never/inode". So when
-> >>> is dax=inode is used as default?
-> >>
-> >> That means when neither '-o dax' nor '-o dax=always/never/inode' is
-> >> specified, it is actually equal to '-o dax=inode', which is also how
-> >> per-file DAX on ext4/xfs works.
-> > 
+On Mon, Oct 25, 2021 at 1:33 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+>
+> There're many truncated kthreads in the kernel, which may make trouble
+> for the user, for example, the user can't get detailed device
+> information from the task comm.
+>
+> This patchset tries to improve this problem fundamentally by extending
+> the task comm size from 16 to 24. In order to do that, we have to do
+> some cleanups first.
 
-It's been a while so I'm fuzzy on the details of the discussions but yes that
-is the way things are now in the code.
-
-> > [ CC dave chinner] 
-> > 
-> > Is it not change of default behavior for ext4/xfs as well. My
-> > understanding is that prior to this new dax options, "-o dax" enabled
-> > dax on filesystem and if user did not specify it, DAX is disbaled
-> > by default.
-
-Technically it does change default behavior...  However, NOT in a way which
-breaks anything.  See below.
-
-> > 
-> > Now after introduction of "-o dax=always/never/inode", if suddenly
-> > "-o dax=inode" became the default if user did not specify anything,
-> > that's change of behavior.
-
-Technically yes but not in a broken way.
-
-> >
-> > Is that intentional. If given a choice,
-> > I would rather not change default and ask user to opt-in for
-> > appropriate dax functionality.
-
-There is no need for this.
-
-> > 
-> > Dave, you might have thoughts on this. It makes me uncomfortable to
-> > change virtiofs dax default now just because other filesytems did it.
-> > 
-> 
-> I can only find the following discussions about the earliest record on
-> this tri-state mount option:
-> 
-> https://lore.kernel.org/lkml/20200316095509.GA13788@lst.de/
-> https://lore.kernel.org/lkml/20200401040021.GC56958@magnolia/
-> 
-> 
-> Hi, Ira Weiny,
-> 
-> Do you have any thought on this, i.e. why the default behavior has
-> changed after introduction of per inode dax?
-
-While this is 'technically' different behavior the end user does not see any
-difference in behavior if they continue without software changes.  Specifically
-specifying nothing continues to operate with all the files on the FS to be
-'_not_ DAX'.  While specifying '-o dax' forces DAX on all files.
-
-This expands the default behavior in a backwards compatible manner.  The user
-can now enable DAX on some files.  But this is an opt-in on the part of the
-user of the FS and again does not change with existing software/scripts/etc.
-
-Does that make sense?
-
-Ira
-
+It looks like a churn that doesn't really address the problem.
+If we were to allow long names then make it into a pointer and use 16 byte
+as an optimized storage for short names. Any longer name would be a pointer.
+In other words make it similar to dentry->d_iname.
