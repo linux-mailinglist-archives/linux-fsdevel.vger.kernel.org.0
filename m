@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 71FAD43A0CC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 21:33:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B62AB43A0CA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 21:33:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235152AbhJYTff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 15:35:35 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58632 "EHLO
+        id S234361AbhJYTfc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 15:35:32 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58640 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235751AbhJYTce (ORCPT
+        with ESMTP id S235636AbhJYTcf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 15:32:34 -0400
+        Mon, 25 Oct 2021 15:32:35 -0400
 Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1002])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 5A6471F433CD;
-        Mon, 25 Oct 2021 20:29:36 +0100 (BST)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 1E6141F433E1;
+        Mon, 25 Oct 2021 20:29:54 +0100 (BST)
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     amir73il@gmail.com, jack@suse.com
 Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
@@ -26,9 +26,9 @@ Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
         linux-ext4@vger.kernel.org,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
         kernel@collabora.com, Jan Kara <jack@suse.cz>
-Subject: [PATCH v9 15/31] fanotify: Encode empty file handle when no inode is provided
-Date:   Mon, 25 Oct 2021 16:27:30 -0300
-Message-Id: <20211025192746.66445-16-krisman@collabora.com>
+Subject: [PATCH v9 18/31] fanotify: Reserve UAPI bits for FAN_FS_ERROR
+Date:   Mon, 25 Oct 2021 16:27:33 -0300
+Message-Id: <20211025192746.66445-19-krisman@collabora.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211025192746.66445-1-krisman@collabora.com>
 References: <20211025192746.66445-1-krisman@collabora.com>
@@ -38,57 +38,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Instead of failing, encode an invalid file handle in fanotify_encode_fh
-if no inode is provided.  This bogus file handle will be reported by
-FAN_FS_ERROR for non-inode errors.
+FAN_FS_ERROR allows reporting of event type FS_ERROR to userspace, which
+is a mechanism to report file system wide problems via fanotify.  This
+commit preallocate userspace visible bits to match the FS_ERROR event.
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-
 ---
-Changes since v6:
-  - Use FILEID_ROOT as the internal value (jan)
-  - Create an empty FH (jan)
-
-Changes since v5:
-  - Preserve flags initialization (jan)
-  - Add BUILD_BUG_ON (amir)
-  - Require minimum of FANOTIFY_NULL_FH_LEN for fh_len(amir)
-  - Improve comment to explain the null FH length (jan)
-  - Simplify logic
----
- fs/notify/fanotify/fanotify.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ fs/notify/fanotify/fanotify.c | 1 +
+ include/uapi/linux/fanotify.h | 1 +
+ 2 files changed, 2 insertions(+)
 
 diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index ec84fee7ad01..c64d61b673ca 100644
+index c64d61b673ca..8f152445d75c 100644
 --- a/fs/notify/fanotify/fanotify.c
 +++ b/fs/notify/fanotify/fanotify.c
-@@ -370,8 +370,14 @@ static int fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
- 	fh->type = FILEID_ROOT;
- 	fh->len = 0;
- 	fh->flags = 0;
-+
-+	/*
-+	 * Invalid FHs are used by FAN_FS_ERROR for errors not
-+	 * linked to any inode. The f_handle won't be reported
-+	 * back to userspace.
-+	 */
- 	if (!inode)
--		return 0;
-+		goto out;
+@@ -752,6 +752,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
+ 	BUILD_BUG_ON(FAN_ONDIR != FS_ISDIR);
+ 	BUILD_BUG_ON(FAN_OPEN_EXEC != FS_OPEN_EXEC);
+ 	BUILD_BUG_ON(FAN_OPEN_EXEC_PERM != FS_OPEN_EXEC_PERM);
++	BUILD_BUG_ON(FAN_FS_ERROR != FS_ERROR);
  
- 	/*
- 	 * !gpf means preallocated variable size fh, but fh_len could
-@@ -403,6 +409,7 @@ static int fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
- 	fh->type = type;
- 	fh->len = fh_len;
+ 	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 19);
  
-+out:
- 	/*
- 	 * Mix fh into event merge key.  Hash might be NULL in case of
- 	 * unhashed FID events (i.e. FAN_FS_ERROR).
+diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+index 64553df9d735..2990731ddc8b 100644
+--- a/include/uapi/linux/fanotify.h
++++ b/include/uapi/linux/fanotify.h
+@@ -20,6 +20,7 @@
+ #define FAN_OPEN_EXEC		0x00001000	/* File was opened for exec */
+ 
+ #define FAN_Q_OVERFLOW		0x00004000	/* Event queued overflowed */
++#define FAN_FS_ERROR		0x00008000	/* Filesystem error */
+ 
+ #define FAN_OPEN_PERM		0x00010000	/* File open in perm check */
+ #define FAN_ACCESS_PERM		0x00020000	/* File accessed in perm check */
 -- 
 2.33.0
 
