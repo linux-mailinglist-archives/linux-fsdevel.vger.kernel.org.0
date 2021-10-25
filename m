@@ -2,195 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6243843977F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 15:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 360AC439896
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 16:30:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232386AbhJYN1T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 09:27:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40832 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232229AbhJYN1S (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 09:27:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 67C0160FBF;
-        Mon, 25 Oct 2021 13:24:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635168295;
-        bh=reeYv9j8xgCwFBY/XgKvzySo5aLr3ci+jAQrDTHNNss=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gysE1EqPYgTUub79Iq1JzfG3sLWsWmzN4OX4sWidgWKaHq8bRyg9RnqeimMh92+eG
-         lnfrm2aZtxPLa/BQ9CZ6QHaUTOChATlq1NtVjTLrafk/tD8PU3mQvGDfuQZ3zeGVF9
-         1e0g4bOmdOvkLclWpCHt8gbt4rDw6akc6GzerAGqwnx8rxWTy22CXvTk52kRfVxCFc
-         CEaJk9mQXV+MY4sllnEyLzlscLuya6I06ViKe7zQI8m6CSlK8rSD1bhIiVPUhVczBu
-         0Y5JkVZyfiqj+Ut6/EUD6p0sFzFp4oBIUl0w+Cnm9NBxzE8kLX7B12FRuL7+ZOdjvU
-         I+Q65aqnhROvw==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ceph: add fscache writeback support
-Date:   Mon, 25 Oct 2021 09:24:52 -0400
-Message-Id: <20211025132452.101591-3-jlayton@kernel.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211025132452.101591-1-jlayton@kernel.org>
-References: <20211025132452.101591-1-jlayton@kernel.org>
+        id S232937AbhJYOdF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 10:33:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232865AbhJYOdE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Oct 2021 10:33:04 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A8D7C061746;
+        Mon, 25 Oct 2021 07:30:42 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id u13so237719edy.10;
+        Mon, 25 Oct 2021 07:30:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FmXQJiEvyexYZAONYS1YO/YN6HE7AsF0Zix0o2xmTTs=;
+        b=YmjZEhwNJ2zDDKg7PLfT6QNaOw4P3QVEVGpEa2VRRtXHHIKks3DTI2BvjyglKfUxuk
+         0mlJ9CyhXZL91zeGmZlYEy1v7KcEouS/uUKkvHWzW4/xttXtoHXvS+yztHbugX+PQz20
+         zYaKRLql3hMtyMt0/Jq1/kvC2my1hyAcMvIUXfgOwhxsTd7grf5UXfZKshUxHrcF/xel
+         wG82/s7mKbbUlGYrZvde4MyDDb5LN12zm8HHYgwRSEiFy50sBapcBt+quOjvtr8DO9tP
+         ez2wHieQ+AefXVUT9mBA9y2UHnhM3zaeoHusYa/ZqPwFRkOj/4Vb34dGPgLTNqG3y8Ja
+         aUVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FmXQJiEvyexYZAONYS1YO/YN6HE7AsF0Zix0o2xmTTs=;
+        b=2vvklblGBCez9UPMwCuVDcr60Oz8Nu470ut3ylccdaRPhyt8zN8QTx46vCqPRqzBCv
+         u06/nv614kaBSLsPD52HFwdZn3kHFswnAoC6v363nXp61y/cOIxnTXASIY5q56/5OG9P
+         9M7ys7VuxSi/BwHwz2k4//CYirvXZk1BxDuFPKDNemcxtEbOEM1Y22SRbcdcn70+JJw4
+         zxufi3JSw99Sjqku1gd7+YMck+eGc7uMOfn7whgtycgGH3t3m14TmPHTFu+vsBY+h5XR
+         85tCyTdtgZhi5UKgP1GjfHmfD1gjw9qWm9fRtmsOJ+HbvaN0LhhrcBsGEyn1mSLxVD5j
+         nuTQ==
+X-Gm-Message-State: AOAM5311PUIVLzL6IUiT7PEYHJ7eTJRiXtI492gy3tcbPg408+WmTizq
+        A/YK7QuI8a8RSCEkh8jw7ENv20f4YkquO0knoW4=
+X-Google-Smtp-Source: ABdhPJzmdRna3K6azm05c9x9j7TXfHuxwBtu0a80+n+XCgX3jLVIB8JKvIGWBLQfKYgJJaRmcJPVmLRTVJTqIQ5YRhk=
+X-Received: by 2002:a05:6402:22d6:: with SMTP id dm22mr27220376edb.209.1635172235120;
+ Mon, 25 Oct 2021 07:30:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <YXAiZdvk8CGvZCIM@dhcp22.suse.cz> <CA+KHdyUyObf2m51uFpVd_tVCmQyn_mjMO0hYP+L0AmRs0PWKow@mail.gmail.com>
+ <YXAtYGLv/k+j6etV@dhcp22.suse.cz> <CA+KHdyVdrfLPNJESEYzxfF+bksFpKGCd8vH=NqdwfPOLV9ZO8Q@mail.gmail.com>
+ <20211020192430.GA1861@pc638.lan> <163481121586.17149.4002493290882319236@noble.neil.brown.name>
+ <YXFAkFx8PCCJC0Iy@dhcp22.suse.cz> <20211021104038.GA1932@pc638.lan>
+ <163485654850.17149.3604437537345538737@noble.neil.brown.name>
+ <20211025094841.GA1945@pc638.lan> <YXaTBrhEqTZhTJYX@dhcp22.suse.cz>
+In-Reply-To: <YXaTBrhEqTZhTJYX@dhcp22.suse.cz>
+From:   Uladzislau Rezki <urezki@gmail.com>
+Date:   Mon, 25 Oct 2021 16:30:23 +0200
+Message-ID: <CA+KHdyWeQ77uWg5GxJGYiNeG_2ZuKu62-i=L7kqhw__g--XGYg@mail.gmail.com>
+Subject: Re: [RFC 2/3] mm/vmalloc: add support for __GFP_NOFAIL
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     NeilBrown <neilb@suse.de>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When updating the backing store from the pagecache (a'la writepage or
-writepages), write to the cache first. This allows us to keep caching
-files even when they are open for write.
+>
+> I would really prefer if this was not the main point of arguing here.
+> Unless you feel strongly about msleep I would go with schedule_timeout
+> here because this is a more widely used interface in the mm code and
+> also because I feel like that relying on the rounding behavior is just
+> subtle. Here is what I have staged now.
+>
+I have a preference but do not have a strong opinion here. You can go
+either way you want.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/addr.c | 66 ++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 59 insertions(+), 7 deletions(-)
+>
+> Are there any other concerns you see with this or other patches in the
+> series?
+>
+it is better if you could send a new vX version because it is hard to
+combine every "folded"
+into one solid commit. One comment below:
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 09ba8a53c035..c78749ff1587 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -5,7 +5,6 @@
- #include <linux/fs.h>
- #include <linux/mm.h>
- #include <linux/pagemap.h>
--#include <linux/writeback.h>	/* generic_writepages */
- #include <linux/slab.h>
- #include <linux/pagevec.h>
- #include <linux/task_io_accounting_ops.h>
-@@ -383,6 +382,43 @@ static void ceph_readahead(struct readahead_control *ractl)
- 	netfs_readahead(ractl, &ceph_netfs_read_ops, (void *)(uintptr_t)got);
- }
- 
-+#ifdef CONFIG_CEPH_FSCACHE
-+static void ceph_set_page_fscache(struct page *page)
-+{
-+	struct ceph_inode_info *ci = ceph_inode(page->mapping->host);
-+	struct fscache_cookie *cookie = ceph_fscache_cookie(ci);
-+
-+	if  (fscache_cookie_enabled(cookie) &&
-+	     test_bit(FSCACHE_COOKIE_IS_CACHING, &cookie->flags))
-+		set_page_fscache(page);
-+}
-+
-+static void ceph_fscache_write_terminated(void *priv, ssize_t error, bool was_async)
-+{
-+	struct inode *inode = priv;
-+
-+	if (IS_ERR_VALUE(error) && error != -ENOBUFS)
-+		ceph_fscache_invalidate(inode, false);
-+}
-+
-+static void ceph_fscache_write_to_cache(struct inode *inode, u64 off, u64 len)
-+{
-+	struct ceph_inode_info *ci = ceph_inode(inode);
-+	struct fscache_cookie *cookie = ceph_fscache_cookie(ci);
-+
-+	fscache_write_to_cache(cookie, inode->i_mapping, off, len, i_size_read(inode),
-+			       ceph_fscache_write_terminated, inode);
-+}
-+#else
-+static void ceph_set_page_fscache(struct page *page)
-+{
-+}
-+
-+static inline void ceph_fscache_write_to_cache(struct inode *inode, u64 off, u64 len)
-+{
-+}
-+#endif /* CONFIG_CEPH_FSCACHE */
-+
- struct ceph_writeback_ctl
- {
- 	loff_t i_size;
-@@ -491,6 +527,7 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
- 	struct inode *inode = page->mapping->host;
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-+	struct fscache_cookie *cookie = ceph_fscache_cookie(ci);
- 	struct ceph_snap_context *snapc, *oldest;
- 	loff_t page_off = page_offset(page);
- 	int err;
-@@ -536,16 +573,15 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
- 	    CONGESTION_ON_THRESH(fsc->mount_options->congestion_kb))
- 		set_bdi_congested(inode_to_bdi(inode), BLK_RW_ASYNC);
- 
--	set_page_writeback(page);
- 	req = ceph_osdc_new_request(osdc, &ci->i_layout, ceph_vino(inode), page_off, &len, 0, 1,
- 				    CEPH_OSD_OP_WRITE, CEPH_OSD_FLAG_WRITE, snapc,
- 				    ceph_wbc.truncate_seq, ceph_wbc.truncate_size,
- 				    true);
--	if (IS_ERR(req)) {
--		redirty_page_for_writepage(wbc, page);
--		end_page_writeback(page);
-+	if (IS_ERR(req))
- 		return PTR_ERR(req);
--	}
-+
-+	set_page_writeback(page);
-+	ceph_set_page_fscache(page);
- 
- 	/* it may be a short write due to an object boundary */
- 	WARN_ON_ONCE(len > thp_size(page));
-@@ -604,6 +640,9 @@ static int ceph_writepage(struct page *page, struct writeback_control *wbc)
- 	struct inode *inode = page->mapping->host;
- 	BUG_ON(!inode);
- 	ihold(inode);
-+
-+	wait_on_page_fscache(page);
-+
- 	err = writepage_nounlock(page, wbc);
- 	if (err == -ERESTARTSYS) {
- 		/* direct memory reclaimer was killed by SIGKILL. return 0
-@@ -848,7 +887,7 @@ static int ceph_writepages_start(struct address_space *mapping,
- 				unlock_page(page);
- 				break;
- 			}
--			if (PageWriteback(page)) {
-+			if (PageWriteback(page) || PageFsCache(page)) {
- 				if (wbc->sync_mode == WB_SYNC_NONE) {
- 					dout("%p under writeback\n", page);
- 					unlock_page(page);
-@@ -856,6 +895,7 @@ static int ceph_writepages_start(struct address_space *mapping,
- 				}
- 				dout("waiting on writeback %p\n", page);
- 				wait_on_page_writeback(page);
-+				wait_on_page_fscache(page);
- 			}
- 
- 			if (!clear_page_dirty_for_io(page)) {
-@@ -988,9 +1028,19 @@ static int ceph_writepages_start(struct address_space *mapping,
- 		op_idx = 0;
- 		for (i = 0; i < locked_pages; i++) {
- 			u64 cur_offset = page_offset(pages[i]);
-+			/*
-+			 * Discontinuity in page range? Ceph can handle that by just passing
-+			 * multiple extents in the write op.
-+			 */
- 			if (offset + len != cur_offset) {
-+				/* If it's full, stop here */
- 				if (op_idx + 1 == req->r_num_ops)
- 					break;
-+
-+				/* Kick off an fscache write with what we have so far. */
-+				ceph_fscache_write_to_cache(inode, offset, len);
-+
-+				/* Start a new extent */
- 				osd_req_op_extent_dup_last(req, op_idx,
- 							   cur_offset - offset);
- 				dout("writepages got pages at %llu~%llu\n",
-@@ -1007,8 +1057,10 @@ static int ceph_writepages_start(struct address_space *mapping,
- 			}
- 
- 			set_page_writeback(pages[i]);
-+			ceph_set_page_fscache(pages[i]);
- 			len += thp_size(page);
- 		}
-+		ceph_fscache_write_to_cache(inode, offset, len);
- 
- 		if (ceph_wbc.size_stable) {
- 			len = min(len, ceph_wbc.i_size - offset);
+> ---
+> commit c1a7e40e6b56fed5b9e716de7055b77ea29d89d0
+> Author: Michal Hocko <mhocko@suse.com>
+> Date:   Wed Oct 20 10:12:45 2021 +0200
+>
+>     fold me "mm/vmalloc: add support for __GFP_NOFAIL"
+>
+>     Add a short sleep before retrying. 1 jiffy is a completely random
+>     timeout. Ideally the retry would wait for an explicit event - e.g.
+>     a change to the vmalloc space change if the failure was caused by
+>     the space fragmentation or depletion. But there are multiple different
+>     reasons to retry and this could become much more complex. Keep the retry
+>     simple for now and just sleep to prevent from hogging CPUs.
+>
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 0fb5413d9239..a866db0c9c31 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2944,6 +2944,7 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>         do {
+>                 ret = vmap_pages_range(addr, addr + size, prot, area->pages,
+>                         page_shift);
+> +               schedule_timeout_uninterruptible(1);
+>
+We do not want to schedule_timeout_uninterruptible(1); every time.
+Only when an error is detected.
+
 -- 
-2.31.1
-
+Uladzislau Rezki
