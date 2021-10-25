@@ -2,74 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C502B439076
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 09:37:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75A7A43913D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 10:33:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231743AbhJYHjg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 03:39:36 -0400
-Received: from smtp21.cstnet.cn ([159.226.251.21]:53020 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229491AbhJYHjg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 03:39:36 -0400
-X-Greylist: delayed 331 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Oct 2021 03:39:35 EDT
-Received: from localhost.localdomain (unknown [124.16.138.128])
-        by APP-01 (Coremail) with SMTP id qwCowAAHoCBHXXZhWuRJBQ--.64178S2;
-        Mon, 25 Oct 2021 15:31:19 +0800 (CST)
-From:   Jiasheng Jiang <jiasheng@iscas.ac.cn>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiasheng Jiang <jiasheng@iscas.ac.cn>
-Subject: [PATCH] seq_file: Fix potential addition overflow
-Date:   Mon, 25 Oct 2021 07:31:18 +0000
-Message-Id: <1635147078-2409190-1-git-send-email-jiasheng@iscas.ac.cn>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: qwCowAAHoCBHXXZhWuRJBQ--.64178S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZF1rAw1ktFW8AryrWw4xtFb_yoWfXFc_ta
-        9avw1rGr42qa1vvF9rtr409rykAwn7tr4Yq34fX3sxtFWUKr43AF1DCr9xCr1fC395XF1D
-        X34vvF90g3W5ujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbc8FF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-        Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
-        1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
-        cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
-        ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r4xMxAI
-        w28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr
-        4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxG
-        rwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8Jw
-        CI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY
-        6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUekucDUUUU
-X-Originating-IP: [124.16.138.128]
-X-CM-SenderInfo: pmld2xxhqjqxpvfd2hldfou0/
+        id S232119AbhJYIgF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 04:36:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42660 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231241AbhJYIgE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Oct 2021 04:36:04 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0759CC061745;
+        Mon, 25 Oct 2021 01:33:43 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id gn3so7715160pjb.0;
+        Mon, 25 Oct 2021 01:33:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=baWGvL41dy19+4BZX6uDav+aolsx9Dk7kQUgS64bb1g=;
+        b=as4g3fNzeC53JV1QW9l3PceZ7FSLOqm+yJq6vNLpKffQFUNwOQ+76VDeleJozGL7V5
+         iIlFN02m6BFIhPRcEpe89vDEbCKxXwF0QDCz+IjNrDjf7Ob6aZdvBz2N/w4XeY5Fsyo/
+         HVIzT0+QzJxtY5uoGe4XRnu56S79bMx0ec9tlZ7EBU7jt1MXf7O/Ljv5tf7eAYgyeeFB
+         Hr/mNV8SFuF6TX8jVuKlzv985B1MruvJuXFg/kLvO/xXhxVRdiHnIgIRaToqE9uYh8ku
+         UWborlia3oFOLcABtOiMjP7UPbJZuv5ik1GjBmrgKJxHZHS+xlL7r2v7mKniBRH6ng4V
+         3r4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=baWGvL41dy19+4BZX6uDav+aolsx9Dk7kQUgS64bb1g=;
+        b=JyM9pOinhbe3Dx/ak2td5DFtWBMmhhnCWX+3gWwe88vZlf+4bIh3hADgEoA/GCZU1q
+         mHSPxunAFzfViLb2kIQQqAd45wpV4HEbjyTgfQjd60Dq3N5Ng3YyFp88d1T8jBKZsswf
+         Fc2OMQ0ORHPhU06NcvkXDLmQIvE+uscgbCRDcSrjjMjlZEVoDEGha1dZWlkPzylOnbUO
+         n8eqtJo6++t4iHU2tQoXE9pTuF24enBmSS7f7UMut/Avm8XRxwhUcrv4muLYU7yM2Veu
+         b/KCEc9AL5jqOj9CfvBayuj7ybl4SSM+q8t2mpVW8aXma2Rfd0JvJ/HbuAOFptcfEV9R
+         gqHg==
+X-Gm-Message-State: AOAM5332xMsSp74YeD/m6SwoQJRrtUbmEqQoHWP1R53lphvUqu0x1nly
+        ILfwQ/CJGoUFf9NEkWlfjRM=
+X-Google-Smtp-Source: ABdhPJwKKV3YHe5Kx2TD+5yPgrUQbt8S2s5EfBAbZQQPLcMJjqzjQTN1qjux7zaNTymJGxsM9r7acw==
+X-Received: by 2002:a17:90b:2247:: with SMTP id hk7mr4087767pjb.159.1635150822423;
+        Mon, 25 Oct 2021 01:33:42 -0700 (PDT)
+Received: from localhost.localdomain ([140.82.17.67])
+        by smtp.gmail.com with ESMTPSA id p13sm2495694pfo.102.2021.10.25.01.33.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Oct 2021 01:33:42 -0700 (PDT)
+From:   Yafang Shao <laoar.shao@gmail.com>
+To:     akpm@linux-foundation.org, keescook@chromium.org,
+        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        arnaldo.melo@gmail.com, pmladek@suse.com, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, valentin.schneider@arm.com,
+        qiang.zhang@windriver.com, robdclark@chromium.org,
+        christian@brauner.io, dietmar.eggemann@arm.com, mingo@redhat.com,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        davem@davemloft.net, kuba@kernel.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        kpsingh@kernel.org, dennis.dalessandro@cornelisnetworks.com,
+        mike.marciniszyn@cornelisnetworks.com, dledford@redhat.com,
+        jgg@ziepe.ca
+Cc:     linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, oliver.sang@intel.com, lkp@intel.com,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH v6 00/12] extend task comm from 16 to 24
+Date:   Mon, 25 Oct 2021 08:33:03 +0000
+Message-Id: <20211025083315.4752-1-laoar.shao@gmail.com>
+X-Mailer: git-send-email 2.27.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-After seq_hlist_start_percpu(), the value of &iter->li_cpu might be
-MAX_UINT.
-In that case, there will be addition overflow in the cpumask_next().
-Therefore, it might be better to add the check before.
+There're many truncated kthreads in the kernel, which may make trouble
+for the user, for example, the user can't get detailed device
+information from the task comm.
 
-Fixes: 0bc7738 ("seq_file: add seq_list_*_percpu helpers")
-Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
----
- fs/seq_file.c | 3 +++
- 1 file changed, 3 insertions(+)
+This patchset tries to improve this problem fundamentally by extending
+the task comm size from 16 to 24. In order to do that, we have to do
+some cleanups first.
 
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index 5059248..f768c28 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -1105,6 +1105,9 @@ seq_hlist_next_percpu(void *v, struct hlist_head __percpu *head,
- 	if (node->next)
- 		return node->next;
- 
-+	if (*cpu >= nr_cpu_ids)
-+		return NULL;
-+
- 	for (*cpu = cpumask_next(*cpu, cpu_possible_mask); *cpu < nr_cpu_ids;
- 	     *cpu = cpumask_next(*cpu, cpu_possible_mask)) {
- 		struct hlist_head *bucket = per_cpu_ptr(head, *cpu);
+1. Make the copy of task comm always safe no matter what the task
+   comm size is. For example,
+
+      Unsafe                 Safe
+      strlcpy                strscpy_pad
+      strncpy                strscpy_pad
+      bpf_probe_read_kernel  bpf_probe_read_kernel_str
+                             bpf_core_read_str
+                             bpf_get_current_comm
+                             perf_event__prepare_comm
+                             prctl(2)
+
+   After this step, the comm size change won't make any trouble to the 
+   kernel or the in-tree tools for example perf, BPF programs.
+
+2. Cleanup some old hard-coded 16
+   Actually we don't need to convert all of them to TASK_COMM_LEN or
+   TASK_COMM_LEN_16, what we really care about is if the convert can
+   make the code more reasonable or easier to understand. For
+   example, some in-tree tools read the comm from sched:sched_switch
+   tracepoint, as it is derived from the kernel, we'd better make them
+   consistent with the kernel.
+
+3. Extend the task comm size from 16 to 24
+   task_struct is growing rather regularly by 8 bytes. This size change
+   should be acceptable. We used to think about extending the size for
+   CONFIG_BASE_FULL only, but that would be a burden for maintenance 
+   and introduce code complexity.
+
+4. Print a warning if the kthread comm is still truncated.
+
+5. What will happen to the out-of-tree tools after this change?
+   If the tool get task comm through kernel API, for example prctl(2),
+   bpf_get_current_comm() and etc, then it doesn't matter how large the
+   user buffer is, because it will always get a string with a nul
+   terminator. While if it gets the task comm through direct string copy,
+   the user tool must make sure the copied string has a nul terminator
+   itself. As TASK_COMM_LEN is not exposed to userspace, there's no
+   reason that it must require a fixed-size task comm.
+
+Changes since v5:
+- extend the comm size for both CONFIG_BASE_{FULL, SMALL} that could
+  make the code more simple and easier to maintain.
+- avoid changing too much hard-coded 16 in BPF programs per Andrii. 
+
+Changes since v4:
+- introduce TASK_COMM_LEN_16 and TASK_COMM_LEN_24 per Steven
+- replace hard-coded 16 with TASK_COMM_LEN_16 per Kees
+- use strscpy_pad() instead of strlcpy()/strncpy() per Kees
+- make perf test adopt to task comm size change per Arnaldo and Mathieu
+- fix warning reported by kernel test robot
+
+Changes since v3:
+- fixes -Wstringop-truncation warning reported by kernel test robot
+
+Changes since v2:
+- avoid change UAPI code per Kees
+- remove the description of out of tree code from commit log per Peter
+
+Changes since v1:
+- extend task comm to 24bytes, per Petr
+- improve the warning per Petr
+- make the checkpatch warning a separate patch
+
+Yafang Shao (12):
+  fs/exec: make __set_task_comm always set a nul ternimated string
+  fs/exec: make __get_task_comm always get a nul terminated string
+  drivers/connector: make connector comm always nul ternimated
+  drivers/infiniband: make setup_ctxt always get a nul terminated task
+    comm
+  elfcore: make prpsinfo always get a nul terminated task comm
+  samples/bpf/test_overhead_kprobe_kern: make it adopt to task comm size
+    change
+  samples/bpf/offwaketime_kern: make sched_switch tracepoint args adopt
+    to comm size change
+  tools/bpf/bpftool/skeleton: make it adopt to task comm size change
+  tools/perf/test: make perf test adopt to task comm size change
+  tools/testing/selftests/bpf: make it adopt to task comm size change
+  sched.h: extend task comm from 16 to 24
+  kernel/kthread: show a warning if kthread's comm is truncated
+
+ drivers/connector/cn_proc.c                   |  5 +++-
+ drivers/infiniband/hw/qib/qib.h               |  2 +-
+ drivers/infiniband/hw/qib/qib_file_ops.c      |  2 +-
+ fs/binfmt_elf.c                               |  2 +-
+ fs/exec.c                                     |  5 ++--
+ include/linux/elfcore-compat.h                |  3 ++-
+ include/linux/elfcore.h                       |  4 +--
+ include/linux/sched.h                         |  9 +++++--
+ kernel/kthread.c                              |  7 ++++-
+ samples/bpf/offwaketime_kern.c                |  4 +--
+ samples/bpf/test_overhead_kprobe_kern.c       | 11 ++++----
+ samples/bpf/test_overhead_tp_kern.c           |  5 ++--
+ tools/bpf/bpftool/skeleton/pid_iter.bpf.c     |  4 +--
+ tools/include/linux/sched.h                   | 11 ++++++++
+ tools/perf/tests/evsel-tp-sched.c             | 26 ++++++++++++++-----
+ .../selftests/bpf/progs/test_stacktrace_map.c |  6 ++---
+ .../selftests/bpf/progs/test_tracepoint.c     |  6 ++---
+ 17 files changed, 77 insertions(+), 35 deletions(-)
+ create mode 100644 tools/include/linux/sched.h
+
 -- 
-2.7.4
+2.17.1
 
