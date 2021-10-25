@@ -2,183 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0337B439E38
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 20:12:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2978439E5F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 20:20:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231233AbhJYSPJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 14:15:09 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23817 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231331AbhJYSPI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 14:15:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635185565;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=s8ah838eO3168zIaxLRE0mRw++ffFI0IyCYbQEDnzmQ=;
-        b=LC1pxk7c4MjKaabnYaHEhF4msnJs+0KCdxTEVJW4zfRD5105+nC+y/b7GPOOBPdvokbCrm
-        yfvsa9GUqMPKL6N26j0Y1nuWoerDy1xLV2TlJ0Gkoqu39YCUyebAKQMdnlBXlENLX1flfY
-        lVO56DkAgXBNp9p5U2coVYJKpRL3dbY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-375-mS2K43CTNAO9TG5ZMJi3mQ-1; Mon, 25 Oct 2021 14:12:42 -0400
-X-MC-Unique: mS2K43CTNAO9TG5ZMJi3mQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ED17180DDED;
-        Mon, 25 Oct 2021 18:12:40 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.33.170])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 35FC76FEED;
-        Mon, 25 Oct 2021 18:12:11 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id AF3AB22045E; Mon, 25 Oct 2021 14:12:10 -0400 (EDT)
-Date:   Mon, 25 Oct 2021 14:12:10 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     JeffleXu <jefflexu@linux.alibaba.com>,
-        Dave Chinner <dchinner@redhat.com>, stefanha@redhat.com,
-        miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        virtio-fs@redhat.com, bo.liu@linux.alibaba.com,
-        joseph.qi@linux.alibaba.com
-Subject: Re: [PATCH v6 2/7] fuse: make DAX mount option a tri-state
-Message-ID: <YXbzeomdC5cD1xfF@redhat.com>
-References: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
- <20211011030052.98923-3-jefflexu@linux.alibaba.com>
- <YW2AU/E0pLHO5Yl8@redhat.com>
- <652ac323-6546-01b8-992e-460ad59577ca@linux.alibaba.com>
- <YXAzB5sOrFRUzTC5@redhat.com>
- <96956132-fced-5739-d69a-7b424dc65f7c@linux.alibaba.com>
- <20211025175251.GF3465596@iweiny-DESK2.sc.intel.com>
+        id S232819AbhJYSXO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 14:23:14 -0400
+Received: from mail-mw2nam12on2113.outbound.protection.outlook.com ([40.107.244.113]:31841
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232658AbhJYSXJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Oct 2021 14:23:09 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gW0kDQd9PGi+he3BWFPDakDBlT58iGB1pyn4bbzAqAfjnDAH4MdHNiVXHODVnlhlIIVU0TyG/xvUMAWtmMAHVp+54dxsw/+fsDl8yuSPx4C67CdtHzKS+OXw9cLdk5VWmKPLcoCbhhoz6nhexAdAkQsEJII8Pug7dIROc8m2LwaojrO+PedyY8FGTwdGdYQzdDxmnUZiY/QMpNTs1hD+SYJLPGBVqJgLd+p6KCkZK0gHv3P/xLn0PLLgWKqXYG83WbR3VA+ckgdq2DZihgTX2Wb5bVacU9fKzkSKGt/9c0LB9AvebP0oEC0U3R5qgvPe/ysjMMl4V3oOYNjb/TqzJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fp539HxF44tOmwRBNe6Woyi3i0CQf7P2I4MdOclU4m4=;
+ b=YIJY9oWMm2UEHaCEUhnNZNDQ8BYiSVc5Yv1swXDsE/S2sJU6jBb9fIaZepkD7u04+g/13DDZ9lUijvEYiucU677xu16+f6dV0NSgXIbpgbVcSr2L+us1wqZU5Iq+NE3Qvs+On2mCaF3INomXkDtn8iMS7oFYJ0+poheKnxbSg7ZSQAvzWuURoxqMsHEN2J7o/wxJs7SFqKzPWHeX0kB95oSreAmwJvzNoDbkYW6f+5mrc3wFCLxX6IaDjxBTMSgfdPiyrbqatepZFTxfFJmdUB7Tu+X5Y6eiXjK+b4zk8S3z52+PZbiSPeu9fYCE0lanIEarZfBRZW5eFm8ng81o/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cornelisnetworks.com; dmarc=pass action=none
+ header.from=cornelisnetworks.com; dkim=pass header.d=cornelisnetworks.com;
+ arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cornelisnetworks.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fp539HxF44tOmwRBNe6Woyi3i0CQf7P2I4MdOclU4m4=;
+ b=WxpXZRqN6iPDGo2eANjak7KV/K6TceZvYDwYAwoBWiGQU8xWwGBqrjsNfso+yrq0sj/gjO6o7gcNcF7mbs9BbSGPq+cFN7EN0rMiEILqQ1DPaYE6jjlVUIRwVIsPA8Q5iV2h1WhgPEEDkFLE2j/JkY4tKB82HmBHM2y5Hm+sQ/228Jbk1LSb8/avjyWHhh0E8JZtFujhDTTiR7uBYW6fUr7F17zIJEbEfaaY3rnS/Xv6lpQtvsQdRYgizcm5pYcbPrKFXbDTthY9SjHe0mQ3XrMTJ/Wv3brBQXQxDsvdq4dmAyx6jvHuDv9INWTt+XePrxqOHJqmLml4IxdqGbOOxA==
+Authentication-Results: gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=none action=none
+ header.from=cornelisnetworks.com;
+Received: from PH0PR01MB6439.prod.exchangelabs.com (2603:10b6:510:d::22) by
+ PH0PR01MB7476.prod.exchangelabs.com (2603:10b6:510:f3::5) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4628.18; Mon, 25 Oct 2021 18:20:44 +0000
+Received: from PH0PR01MB6439.prod.exchangelabs.com
+ ([fe80::88df:62ca:347:917f]) by PH0PR01MB6439.prod.exchangelabs.com
+ ([fe80::88df:62ca:347:917f%7]) with mapi id 15.20.4628.020; Mon, 25 Oct 2021
+ 18:20:44 +0000
+Message-ID: <e07e29ab-4cae-73b5-0836-c3cf39f3df00@cornelisnetworks.com>
+Date:   Mon, 25 Oct 2021 14:20:36 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.2.1
+Subject: Re: [PATCH v6 04/12] drivers/infiniband: make setup_ctxt always get a
+ nul terminated task comm
+Content-Language: en-US
+To:     Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org,
+        keescook@chromium.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+        pmladek@suse.com, peterz@infradead.org, viro@zeniv.linux.org.uk,
+        valentin.schneider@arm.com, qiang.zhang@windriver.com,
+        robdclark@chromium.org, christian@brauner.io,
+        dietmar.eggemann@arm.com, mingo@redhat.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, davem@davemloft.net, kuba@kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org,
+        mike.marciniszyn@cornelisnetworks.com, dledford@redhat.com,
+        jgg@ziepe.ca
+Cc:     linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, oliver.sang@intel.com, lkp@intel.com,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>
+References: <20211025083315.4752-1-laoar.shao@gmail.com>
+ <20211025083315.4752-5-laoar.shao@gmail.com>
+From:   Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>
+In-Reply-To: <20211025083315.4752-5-laoar.shao@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BLAPR03CA0047.namprd03.prod.outlook.com
+ (2603:10b6:208:32d::22) To PH0PR01MB6439.prod.exchangelabs.com
+ (2603:10b6:510:d::22)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211025175251.GF3465596@iweiny-DESK2.sc.intel.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Received: from [192.168.40.173] (24.154.216.5) by BLAPR03CA0047.namprd03.prod.outlook.com (2603:10b6:208:32d::22) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.18 via Frontend Transport; Mon, 25 Oct 2021 18:20:39 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4bff85a7-4515-4627-275e-08d997e4286f
+X-MS-TrafficTypeDiagnostic: PH0PR01MB7476:
+X-Microsoft-Antispam-PRVS: <PH0PR01MB7476C29755B177CE515380C5F4839@PH0PR01MB7476.prod.exchangelabs.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:741;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: cRCb5gVhKCqifggviULiAHoU6jGgXiHcnagOSDdYi4DbpnKhK4c8DCONfDZEStpcPxSjxtAq1YcvLxUGge/1DjT3vBq4tW5wZNBLt4kLI0wNe+NeJ6aEEf+XbuLcZQPo5mXiZAAlkRGGVy+wMF6mEGE9jSgy2ntLQf9Dq+4E7WtS6IYqiINeX4hidQFU84WMBtesRFCH+qWrSn+3QLwUwJ8UCfl4L7wlC+92rcYyOp1QZ2gRsSD2/L+p7SC2Hpst7AgUKcz2ThWFGkjuw+kiRs+TV40EmqqkuYOw65BrNkO/sBQvskshyi+FRudJaRWV7dKSxlmeFzZzns+lcTIQLzdRrZRfBKfGsrgpr8A9FMYLWo/FCdIEmgHkXFJGs7D5ajmVjMDcjSNPfjW7GQddfIWy/8e8LGBjW15oTSBZaZbBZg9U6xLAUPDQkgp0JGgpV16v21TqR/MgduA8HJ0/BfOllldsR2iwGmXTMKZxhAj/b7cxDxMhgSlq+fgWaJyZMtMaElzhOkn3YQYf5IW9irxgpPdUgkBKytva3Sv0dKBVwDvDV+OAQjNuUWM2WQCk9keIL0un06YE+E3eK9kr57y/DBWBlAdQqgMg2oiPmzOik7jEz2skbjtlFLLqLsRjfAFciavBaEFBEgQXtJke3sgyTFGGSet3WaQR0oU2RDvLVQSnnhQEDk6LVy4ZZuLj0nC5fRg1tsIYPzOCUk3I5JddH0BJP9IjPXXFJDrbnk+d7Lm+MUifNQc0y+Idww0e7a9paWye08Ujh7PbD/JwBlMJyEMH6LbngYTvoU+AKCo=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR01MB6439.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(4636009)(346002)(136003)(376002)(366004)(39840400004)(396003)(8936002)(508600001)(2906002)(52116002)(7416002)(36756003)(7406005)(6666004)(316002)(4326008)(38350700002)(8676002)(38100700002)(31686004)(921005)(4744005)(16576012)(2616005)(44832011)(5660300002)(956004)(83380400001)(6486002)(66476007)(66556008)(66946007)(186003)(86362001)(26005)(31696002)(53546011)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?U2tsT1ppU0ZuZE90RkpYeEd1bE5KN1RwNHpscFhlUElhc3BEVlpLZHNpdkZ1?=
+ =?utf-8?B?ZHRxNmVWcTBlUFFhWnppSXRwYmVvTTBQSXMzMzFEUVpKU3dWdmdOMmpieFV6?=
+ =?utf-8?B?My9wd0tLQ2I5dXMxRTJ1TmlaVFlNOVBVZnpBUEh3MXY4dkxqempyUUVzU0xH?=
+ =?utf-8?B?TS9QdERkaUw1Wnl1OG9iTmxhNW9GZ1h6cUtrN2xaV1o4Ums2NDFwWGRFalNp?=
+ =?utf-8?B?R21EQ0xZR0ZxNWs5VnVTZ2dvUE5PV1JnVEhRVnkxYTFGZklmVjdkREhpRUFj?=
+ =?utf-8?B?Y25MSzJwUGE0U25jVWV2clNzUzFqWlRPSW4zL2RXa0crUTZpVHZDNWhLaEhi?=
+ =?utf-8?B?ZUZVK3FNTDVDZFp2RGZVZE1mblJFLyt4RFJOU0hUaVpDTmxoV1kwdjVpc2VD?=
+ =?utf-8?B?dXRGbzJhRDRFeStPNTJ4eGVaRWFqRXA5R29qendIRnpELzIvMFNWZ1hGS2RK?=
+ =?utf-8?B?K3pjSGZPdGVZcUhXOFh0Q0ZBcWNsdVBPMWlPWnBvTjY0OHM4RGRGQU9LK3I0?=
+ =?utf-8?B?VWV1clRCWXAxTjN4Qk11empVYk5zdHcvZTcwMms5d0ZaMTg3VTlDdVRybXJk?=
+ =?utf-8?B?STFFYnJTQThxakVQQ1dNcGFrWHRFUDRuR3ZuTXQxbVVEV3J2a051emZ2QSth?=
+ =?utf-8?B?clZYWjFYWk9aRC9ZQWh4Qm81bUhuSDhJanNLV0hrRVdyN0Y2Tkpmb1ZmV0FF?=
+ =?utf-8?B?TXJOMCtuKzE3cGQ2VDVFem90dVVUd0FkR09lN1BQaHl3b2tyczArVzNJOVNZ?=
+ =?utf-8?B?Vm9kenpHQk9KdjkvNTJ2a0gzL1g1TmJnTS81NWRoeG5CbVdwZHpPQ3N2K05N?=
+ =?utf-8?B?UUw4TXM1SjU1KzlOUjBaLzNqZW8xZlVPRnJheHNUaEhBRzRTbVEzUDN2TVJD?=
+ =?utf-8?B?NUVvNUpoUmhtVlYyVGExd1pLSFVMaHd5bzNqOFEwOWRQZ3d2cWdjSDh2cURk?=
+ =?utf-8?B?Y3V0bzUrKzVDSGVlZHVDL3kzeHBlVDZqa2dvYnAzay9KRHJqaE9uUjZ2N3FK?=
+ =?utf-8?B?NnlGQ240ejdYMW9FazZzbkZJRHRXdzA1QWQveEJEWXAwUXpEVVdYdzRYSXNx?=
+ =?utf-8?B?eWUvL1FWTHBIWTd0N2dIT05FVGJhb2FOeEgwSDRlYk1VSUZSc2V5WWFCTVpJ?=
+ =?utf-8?B?OEo0VlhoTXVRSzdWdUtVZktTWGVldmtGNWJhSWRNeEgrL0RxdWhlUGdqbjZ2?=
+ =?utf-8?B?clRnMlhFYStCVnViZU1XL3FJRDdLSzQwcVhoT01FSXZ6b2JIVWttejI3cUxE?=
+ =?utf-8?B?NW1ScWhWUDJPQkF0QjVWRUdDd0dTZTRERXZ2SW9wV3Rsak11OVZsVTR1YXg3?=
+ =?utf-8?B?aHFQcTBnSWZMWlZkQ2JJUTdZR284MDlUVk1VMG1zZThxQzJqL0c1NXZTOXNH?=
+ =?utf-8?B?TDlwbStseG5ERFRFamp1bE5FYWU4a25YOVNleEJyd05Ob1poaU5FdUxaU2Yz?=
+ =?utf-8?B?WXoyV3R3OVV5Y0NaNDIyamhzei9TeEZJUWMyRTVmSGFPZ2pKZGpvSVQ0QUFG?=
+ =?utf-8?B?WUtBLzA0cHFFUWZ0SDRGQzVEYmRNTkliaFEvVmNSUmJWUHp5cWE0TnVIUnFw?=
+ =?utf-8?B?ZVNEcHhaZERzcEhzM2lBQ1M4SUE0dkgvREtLUEJkaHJXVEFnbnUrU09lZ2gz?=
+ =?utf-8?B?aGFuVSt0c3pWbHpONXd5bHp1Vkhjdmx0TGt4T1JjdVRjZTVIMFQ0TjR6Q3Y2?=
+ =?utf-8?B?VHdIZDJOWjE0NWEwV3oyWVc5b2VuVDd3OFZDRXB0VUp1OEh3OFU3WGZQemRM?=
+ =?utf-8?B?ZUtyaDk2YUNDMC83R0hWQkVyY0QvK3dHVEFMVTR3N0poUnlPZzlGVnVuLzNF?=
+ =?utf-8?B?SmVxeVd1UGJ1d2tGRDIyeTFXOUd4TlJSQkRXc2dTSnR5ZTlrc0Fkd2VSZFlj?=
+ =?utf-8?B?dS9tem9YdWJPY0lMT0g0TkNDTEZ1cHp3SmwwSWwwQ2Z6R3hYQ0dTODBaYlBM?=
+ =?utf-8?B?ZCs4QjZFRStLMHVlTW91MFZsSytkcm1yaUVucEFxOTdQa1pMWnpZWjVDV1RJ?=
+ =?utf-8?B?bWpiaE5XMWZlelhHeDdIb1k1Znkrd3pZS1NCcnY2UDQ1Ry9rMzZEWGZQeTlW?=
+ =?utf-8?B?ZytRNVIra2lZQWExU2QzUm40SXVkZHJrSkYrMUh2MXYxVXBPVFYxb1VpcFF6?=
+ =?utf-8?B?TUlsOGNTL3VHMXRPOFE2TTRCVVYvVHZ0REltL2NuQlFUdXFyd2tIR1YrOFov?=
+ =?utf-8?B?WmVJZHBDV0ZLT0MwUU5nWkY4VlRVVFVqU09PamoxMk83S25vOTR5aFlERERM?=
+ =?utf-8?B?RXM5NVN0czQvenVJL1hEdDNiMml4Y1N0ZmFUNTdTNjRrZm1BRmNubmxwYzFI?=
+ =?utf-8?B?ZWNJTWhleDBjYmxLdU02VjVKSWMxWnUxSVkxNEYwZWFTMm4vK0FrQT09?=
+X-OriginatorOrg: cornelisnetworks.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4bff85a7-4515-4627-275e-08d997e4286f
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR01MB6439.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2021 18:20:44.0359
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4dbdb7da-74ee-4b45-8747-ef5ce5ebe68a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tUTTpQj2VqJ/riel8HbpjyHdadlzpyWpIpH6diahkVfxLqdSJd51Ux5gWNgfhYNiYFerfkMsVR5SJJxyZ1m94uZPu6KsQoB09RDl2R7+4l8wRrPcRuyL7rDEV1ccTVjm
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR01MB7476
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 10:52:51AM -0700, Ira Weiny wrote:
-> On Fri, Oct 22, 2021 at 02:54:03PM +0800, JeffleXu wrote:
-> > cc [Ira Weiny], author of per inode DAX on xfs/ext4
-> > 
-> > On 10/20/21 11:17 PM, Vivek Goyal wrote:
-> > > On Wed, Oct 20, 2021 at 10:52:38AM +0800, JeffleXu wrote:
-> > >>
-> > >>
-> > >> On 10/18/21 10:10 PM, Vivek Goyal wrote:
-> > >>> On Mon, Oct 11, 2021 at 11:00:47AM +0800, Jeffle Xu wrote:
-> > >>>> We add 'always', 'never', and 'inode' (default). '-o dax' continues to
-> > >>>> operate the same which is equivalent to 'always'. To be consistemt with
-> > >>>> ext4/xfs's tri-state mount option, when neither '-o dax' nor '-o dax='
-> > >>>> option is specified, the default behaviour is equal to 'inode'.
-> > >>>
-> > >>> Hi Jeffle,
-> > >>>
-> > >>> I am not sure when  -o "dax=inode"  is used as a default? If user
-> > >>> specifies, "-o dax" then it is equal to "-o dax=always", otherwise
-> > >>> user will explicitly specify "-o dax=always/never/inode". So when
-> > >>> is dax=inode is used as default?
-> > >>
-> > >> That means when neither '-o dax' nor '-o dax=always/never/inode' is
-> > >> specified, it is actually equal to '-o dax=inode', which is also how
-> > >> per-file DAX on ext4/xfs works.
-> > > 
-> 
-> It's been a while so I'm fuzzy on the details of the discussions but yes that
-> is the way things are now in the code.
-> 
-> > > [ CC dave chinner] 
-> > > 
-> > > Is it not change of default behavior for ext4/xfs as well. My
-> > > understanding is that prior to this new dax options, "-o dax" enabled
-> > > dax on filesystem and if user did not specify it, DAX is disbaled
-> > > by default.
-> 
-> Technically it does change default behavior...  However, NOT in a way which
-> breaks anything.  See below.
-> 
-> > > 
-> > > Now after introduction of "-o dax=always/never/inode", if suddenly
-> > > "-o dax=inode" became the default if user did not specify anything,
-> > > that's change of behavior.
-> 
-> Technically yes but not in a broken way.
-> 
-> > >
-> > > Is that intentional. If given a choice,
-> > > I would rather not change default and ask user to opt-in for
-> > > appropriate dax functionality.
-> 
-> There is no need for this.
-> 
-> > > 
-> > > Dave, you might have thoughts on this. It makes me uncomfortable to
-> > > change virtiofs dax default now just because other filesytems did it.
-> > > 
-> > 
-> > I can only find the following discussions about the earliest record on
-> > this tri-state mount option:
-> > 
-> > https://lore.kernel.org/lkml/20200316095509.GA13788@lst.de/
-> > https://lore.kernel.org/lkml/20200401040021.GC56958@magnolia/
-> > 
-> > 
-> > Hi, Ira Weiny,
-> > 
-> > Do you have any thought on this, i.e. why the default behavior has
-> > changed after introduction of per inode dax?
-> 
-> While this is 'technically' different behavior the end user does not see any
-> difference in behavior if they continue without software changes.  Specifically
-> specifying nothing continues to operate with all the files on the FS to be
-> '_not_ DAX'.  While specifying '-o dax' forces DAX on all files.
-> 
-> This expands the default behavior in a backwards compatible manner.
-
-This is backward compatible in a sense that if somebody upgrades to new
-kernel, things will still be same. 
-
-I think little problematic change is that say I bring in persistent
-memory from another system (which has FS_XFLAGS_DAX set on some inodes)
-and then mount it without andy of the dax mount options, then per
-inode dax will be enabled unexpectedly if I boot with newer kernels
-but it will be disable if I mount with older kernels. Do I understand it
-right.
-
-> The user
-> can now enable DAX on some files.  But this is an opt-in on the part of the
-> user of the FS and again does not change with existing software/scripts/etc.
-
-Don't understand this "opt-in" bit. If user mounts an fs without
-specifying any of the dax options, then per inode dax will still be
-enabled if inode has the correct flag set. So is setting of flag being
-considered as opt-in (insted of mount option).
-
-If setting of flag is being considered as opt-in, that probably will not
-work very well with virtiofs. Because server can enforce a different
-policy for enabling per file dax (instead of FS_XFLAG_DAX).
-
-And given there are two entities here (client and server), I think it
-will be good if if we give client a chance as well to decide whether
-it wants to enable per file dax or not. I know it can alwasy do 
-"dax=never" but it can still be broken if client software remains
-same but host/server software is upgraded or commnad line changed.
-
-So for virtiofs, I think better behavior is to continue to not enable
-any dax until and unless user opts-in using "-o dax=foo" options.
-
-Thanks
-Vivek
 
 
+On 10/25/21 4:33 AM, Yafang Shao wrote:
+> Use strscpy_pad() instead of strlcpy() to make the comm always nul
+> terminated. As the comment above the hard-coded 16, we can replace it
+> with TASK_COMM_LEN, then it will adopt to the comm size change.
+> 
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Petr Mladek <pmladek@suse.com>
+> ---
+>  drivers/infiniband/hw/qib/qib.h          | 2 +-
+>  drivers/infiniband/hw/qib/qib_file_ops.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> Does that make sense?
-> 
-> Ira
-> 
+This qib patch looks fine.
 
+Acked-by: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>
