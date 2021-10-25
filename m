@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C57743A0D2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 21:33:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 736C243A0D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 21:34:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235326AbhJYTfj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 15:35:39 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58724 "EHLO
+        id S236747AbhJYTfn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 15:35:43 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58738 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235819AbhJYTdF (ORCPT
+        with ESMTP id S236028AbhJYTdM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 15:33:05 -0400
+        Mon, 25 Oct 2021 15:33:12 -0400
 Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1002])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id C4F431F4316F;
-        Mon, 25 Oct 2021 20:30:41 +0100 (BST)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 57E401F433DC;
+        Mon, 25 Oct 2021 20:30:48 +0100 (BST)
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     amir73il@gmail.com, jack@suse.com
 Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
@@ -26,9 +26,9 @@ Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
         linux-ext4@vger.kernel.org,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
         kernel@collabora.com, Jan Kara <jack@suse.cz>
-Subject: [PATCH v9 25/31] fanotify: WARN_ON against too large file handles
-Date:   Mon, 25 Oct 2021 16:27:40 -0300
-Message-Id: <20211025192746.66445-26-krisman@collabora.com>
+Subject: [PATCH v9 26/31] fanotify: Report fid info for file related file system errors
+Date:   Mon, 25 Oct 2021 16:27:41 -0300
+Message-Id: <20211025192746.66445-27-krisman@collabora.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211025192746.66445-1-krisman@collabora.com>
 References: <20211025192746.66445-1-krisman@collabora.com>
@@ -38,46 +38,96 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-struct fanotify_error_event, at least, is preallocated and isn't able to
-to handle arbitrarily large file handles.  Future-proof the code by
-complaining loudly if a handle larger than MAX_HANDLE_SZ is ever found.
+Plumb the pieces to add a FID report to error records.  Since all error
+event memory must be pre-allocated, we pre-allocate the maximum file
+handle size possible, such that it should always fit.
+
+For errors that don't expose a file handle report it with an invalid
+FID.
 
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+
 ---
- fs/notify/fanotify/fanotify.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Changes since v8:
+  - Drop comment (Amir)
+  - Move report dereference till after null check (jan)
+  - Move has_object_fh hunk to earlier patch (jan)
+Changes since v7:
+  - Move WARN_ON to separate patch (Amir)
+  - Avoid duplication in the structure definition (Amir)
+Changes since v6:
+  - pass fsid from handle_events
+Changes since v5:
+  - Use preallocated MAX_HANDLE_SZ FH buffer
+  - Report superblock errors with a zerolength INVALID FID (jan, amir)
+---
+ fs/notify/fanotify/fanotify.c | 11 +++++++++++
+ fs/notify/fanotify/fanotify.h |  6 ++++++
+ 2 files changed, 17 insertions(+)
 
 diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index cedcb1546804..45df610debbe 100644
+index 45df610debbe..465f07e70e6d 100644
 --- a/fs/notify/fanotify/fanotify.c
 +++ b/fs/notify/fanotify/fanotify.c
-@@ -360,13 +360,23 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
- static int fanotify_encode_fh_len(struct inode *inode)
+@@ -609,7 +609,9 @@ static struct fanotify_event *fanotify_alloc_error_event(
  {
- 	int dwords = 0;
+ 	struct fs_error_report *report =
+ 			fsnotify_data_error_report(data, data_type);
++	struct inode *inode;
+ 	struct fanotify_error_event *fee;
 +	int fh_len;
  
- 	if (!inode)
- 		return 0;
+ 	if (WARN_ON_ONCE(!report))
+ 		return NULL;
+@@ -622,6 +624,15 @@ static struct fanotify_event *fanotify_alloc_error_event(
+ 	fee->err_count = 1;
+ 	fee->fsid = *fsid;
  
- 	exportfs_encode_inode_fh(inode, NULL, &dwords, NULL);
-+	fh_len = dwords << 2;
- 
--	return dwords << 2;
-+	/*
-+	 * struct fanotify_error_event might be preallocated and is
-+	 * limited to MAX_HANDLE_SZ.  This should never happen, but
-+	 * safeguard by forcing an invalid file handle.
-+	 */
-+	if (WARN_ON_ONCE(fh_len > MAX_HANDLE_SZ))
-+		return 0;
++	inode = report->inode;
++	fh_len = fanotify_encode_fh_len(inode);
 +
-+	return fh_len;
- }
++	/* Bad fh_len. Fallback to using an invalid fh. Should never happen. */
++	if (!fh_len && inode)
++		inode = NULL;
++
++	fanotify_encode_fh(&fee->object_fh, inode, fh_len, NULL, 0);
++
+ 	*hash ^= fanotify_hash_fsid(fsid);
  
- /*
+ 	return &fee->fae;
+diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+index f51ab6e556e8..edd7587adcc5 100644
+--- a/fs/notify/fanotify/fanotify.h
++++ b/fs/notify/fanotify/fanotify.h
+@@ -208,6 +208,8 @@ struct fanotify_error_event {
+ 	u32 err_count; /* Suppressed errors count */
+ 
+ 	__kernel_fsid_t fsid; /* FSID this error refers to. */
++
++	FANOTIFY_INLINE_FH(object_fh, MAX_HANDLE_SZ);
+ };
+ 
+ static inline struct fanotify_error_event *
+@@ -222,6 +224,8 @@ static inline __kernel_fsid_t *fanotify_event_fsid(struct fanotify_event *event)
+ 		return &FANOTIFY_FE(event)->fsid;
+ 	else if (event->type == FANOTIFY_EVENT_TYPE_FID_NAME)
+ 		return &FANOTIFY_NE(event)->fsid;
++	else if (event->type == FANOTIFY_EVENT_TYPE_FS_ERROR)
++		return &FANOTIFY_EE(event)->fsid;
+ 	else
+ 		return NULL;
+ }
+@@ -233,6 +237,8 @@ static inline struct fanotify_fh *fanotify_event_object_fh(
+ 		return &FANOTIFY_FE(event)->object_fh;
+ 	else if (event->type == FANOTIFY_EVENT_TYPE_FID_NAME)
+ 		return fanotify_info_file_fh(&FANOTIFY_NE(event)->info);
++	else if (event->type == FANOTIFY_EVENT_TYPE_FS_ERROR)
++		return &FANOTIFY_EE(event)->object_fh;
+ 	else
+ 		return NULL;
+ }
 -- 
 2.33.0
 
