@@ -2,82 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C63943964D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 14:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72DF8439779
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 15:24:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233055AbhJYM3b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 08:29:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40074 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232951AbhJYM3a (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 08:29:30 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E35CFC061745
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Oct 2021 05:27:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=g8CiSFTvsHWubeN5NteUNrldvXscttE+QlbugViYzU0=; b=f38Wxza+vt9E831L28kPH7GfTl
-        rtQfVmrMJmHPc2OBuUaQtlnhlhx+fQ0f4ylTXePmHJyWk8ojw8B2Dkz6L4mk45xmeY2TDUgeUUWGJ
-        MgkVLsVgB//AWjI9NBOCi7eiUh9SxnUIHLidEVkCgYLhgoI42yOt++6c02ZWYJiy96U3mdINk6qax
-        ndBctwWBPUNAPo9t511XisxOd8WYxi/ARB8k/ppmUfNdwRZ4fPOiV3+ifeWbPFHbwSdPvTbhcmxf6
-        UvsF2E2nvAvM+IzV4NOWchVNR8NNzCxCHz8Bw4rVZdJPC2HfvgesY8Djy2Kk24AMgc2izNkPq2jbE
-        uY4LnFyw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mez2q-00G7HE-5c; Mon, 25 Oct 2021 12:25:55 +0000
-Date:   Mon, 25 Oct 2021 13:25:40 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Azat.Nurgaliev@dlr.de
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: Turn off readahead completely
-Message-ID: <YXaiRCbm9pcG9pur@casper.infradead.org>
-References: <8aa213d5d5464236b7e47aaa6bb93bb8@dlr.de>
- <YXFq0QYhDBQC5G0l@casper.infradead.org>
- <066d9015e3c44c3a84eca5886d80bf04@dlr.de>
+        id S231708AbhJYN1R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 09:27:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40818 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230344AbhJYN1Q (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Oct 2021 09:27:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D6DA060724;
+        Mon, 25 Oct 2021 13:24:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1635168294;
+        bh=7Hhyk6q3EuL8t6Ditlpa37mRN7GRwOvOyf4ieFiMVIE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=f6KEwj+5JMN9YQUR5Vj1XTx/fp7LmrqW+SX9gbt1pGI2XoBPjymEblViW/zPnk3Q3
+         4CveVW68dvuuRueDQ2gkkQhoWHy2HwdW+ImUiPbuumlDZhz6GcH2mwRx4eP7z9c6y/
+         T5GxZrgnNJxfEOucQUtbzdPWs8mUN00KrmmY5HA8/8KMhHlW2yZ8JqZ+cLSOm9E9n+
+         ZPQNh3llaNyjqLrI0+RLDa4hM1nJntIfOBhNbibWbZ8i86rz9pkRsWZrcCOOwrNvbO
+         JtB97HndVeMJr/RZddzF4Dmwx4t8AAuq+QThY3z1IilOs7iWkpxarr4evJ0bz50V5N
+         cBBpvc2LUProQ==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] ceph: conversion to fscache API rewrite
+Date:   Mon, 25 Oct 2021 09:24:50 -0400
+Message-Id: <20211025132452.101591-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <066d9015e3c44c3a84eca5886d80bf04@dlr.de>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 11:55:03AM +0000, Azat.Nurgaliev@dlr.de wrote:
-> Thank you for the reply, Matthew.
-> 
-> I'm experimenting with GDAL and, in particular, working on improving the I/O performance of geo-applications.
-> I wanted to get more control from the application over how the kernel handles I/O requests.
-> But basically all the optimizations are hidden in readahead. Whatever requests are executed are all translated into readahead.
-> 
-> It would be very useful to be able to evaluate the difference with more fine-grained control on the application side.
+Last week, David Howells posted a set of patches to modernize fscache
+and cachefiles [1] (and in the process fix a ton of bugs). The patches
+in this set convert ceph over to use the new API.
 
-Ah!  Then what you've done will be fine for your purpose.
+The first patch in this series switches ceph over to use the new API.
+The second patch adds support for caching files that are open for write.
 
-What's going on here is that the kernel tries to read() from part of
-the file that isn't cached.  So it allocates a page of memory and then
-does a page-sized readahead to that one page.  It then waits for the
-readahead to complete.  If it fails (eg EIO), it'll try to read the
-page using the filesystem's ->readpage operation.
+I've tested caching and non-caching setups with xfstests and it seems to
+work well. The only remaining issue I see is that sometimes fsstress
+will cause the cachefiles backend fs to fill up. When this happens, the
+cache goes offline, but everything otherwise keeps working.
 
-While you see a readahead operation, it's not *really* a readahead
-operation.  It's doing the exact same read that you'd see if there
-were no readahead operation.
+This is still an improvement over the existing code, however, and I
+think that problem may be solveable by a more aggressive culling cycle.
 
-> -----Original Message-----
-> From: Matthew Wilcox <willy@infradead.org> 
-> Sent: Donnerstag, 21. Oktober 2021 15:28
-> To: Nurgaliev, Azat <Azat.Nurgaliev@dlr.de>
-> Cc: linux-fsdevel@vger.kernel.org
-> Subject: Re: Turn off readahead completely
-> 
-> On Thu, Oct 21, 2021 at 01:16:46PM +0000, Azat.Nurgaliev@dlr.de wrote:
-> > Hello everyone,
-> > 
-> > I need to turn readahead off completely in order to do my experiments. 
-> > Is there any way to turn it off completely?
-> > 
-> > Setting /sys/block/<dev>/queue/read_ahead_kb to 0 causes readahead to become 4kb.
-> 
-> That's entirely intentional.  What experiment are you actually trying to perform?
+[1]: https://lore.kernel.org/ceph-devel/CAHk-=wi7K64wo4PtROxq_cLhfq-c-3aCbW5CjRfnKYA439YFUw@mail.gmail.com/T/#t
+
+Jeff Layton (2):
+  ceph: conversion to new fscache API
+  ceph: add fscache writeback support
+
+ fs/ceph/Kconfig |   2 +-
+ fs/ceph/addr.c  |  98 +++++++++++++++++++-----
+ fs/ceph/cache.c | 196 +++++++++++++++++++++---------------------------
+ fs/ceph/cache.h |  96 +++++++++++++++++-------
+ fs/ceph/caps.c  |   3 +-
+ fs/ceph/file.c  |  13 +++-
+ fs/ceph/inode.c |  22 ++++--
+ fs/ceph/super.c |  10 +--
+ fs/ceph/super.h |   4 +-
+ 9 files changed, 263 insertions(+), 181 deletions(-)
+
+-- 
+2.31.1
+
