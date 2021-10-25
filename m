@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A4B2943A575
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 23:07:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82D6D43A581
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 23:09:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231618AbhJYVKI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 17:10:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47220 "EHLO
+        id S234890AbhJYVLW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 17:11:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233150AbhJYVKF (ORCPT
+        with ESMTP id S230162AbhJYVLV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 17:10:05 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDDABC061767
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Oct 2021 14:07:42 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id v193so5473052pfc.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Oct 2021 14:07:42 -0700 (PDT)
+        Mon, 25 Oct 2021 17:11:21 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C65D0C061220
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Oct 2021 14:08:58 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id s24so4793748plp.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Oct 2021 14:08:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=TQztyN+OyqV2EYalpv3OnHEA+p7UGY3ffgQzpyFstrQ=;
-        b=jPJwfXXczwHre/rQIPjK/VoVvO0IuwfH8WIMj2xxEOvALb2VPbYxNoqprq0OQR5nPC
-         o5DyFtXCsBA94PwIkmXaD6fOOn6uzE1vuL8iTIZvpeFHN0NIs19av/f8DymXuOBARNDi
-         6wKlBs2WwIj2FcUduika3D+VnZO1ueK9qaM2o=
+        bh=poLGG9S+mf5XQ/yz4q57CrTw5wKhA6/+9va9QkjuAvg=;
+        b=a0ZVOQhPb030zLbcmC9f4zSVxc0zTc6ElOubuzQwisrkF6vA7Zzgg2w+5d1eHi5oz5
+         DhF3soqW3IPQwH0ga0vF9zPp4eJ6Xhg8luXinN7ypGwUAA/emUHJoyb+lMwZQDfAMFuh
+         IYoCojDm1v82gvLyOdRsOd0z96c5DPkHcgYIw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=TQztyN+OyqV2EYalpv3OnHEA+p7UGY3ffgQzpyFstrQ=;
-        b=qVG/G/L6mPhKfnNp/IYVrTJgi+XNkorFfzjTrmZsWP+XGkwrer0UM/FEcTIuhoxnUh
-         D9hobTrtWCAOcfD9fhT+qW3qel4zdcvW+YfYqqCxU2qoNzKGeOcWkbM4VEt++JYKkzkX
-         9EKj7Zxzw8ZuxUhn+uNpyZoCze69GhxSdoIPULmGI7pA/+VlT+8selcf3grp6GH8MjEM
-         34tZcBsM9fqNeuFU6rK9NSu1OluSJs7SoWjAbXfZjIaig1mOR2ZWmyVNXRkA4e9owrPQ
-         RuMmK5OroCVsaXgcT8DQODx4jSAO0iV47SaUqaCNAIwSIFRG+lGre6ND/J+JADApw7cl
-         cTjw==
-X-Gm-Message-State: AOAM530raBE15+YvuNr/EffcUPpYfBhLg6/LAku5K3LmrJr0s10ps7Ot
-        6ToZFZGnGP3zxrP5mUDtO+m1uw==
-X-Google-Smtp-Source: ABdhPJz7CAVtw2oosUMB+o1UYU5LoroOh/r74Itpx8yjnMxuz2AoHAAIFbT9kzmQ6NZ1Nt3CdMAZTQ==
-X-Received: by 2002:a05:6a00:bc1:b0:47b:f093:eb4e with SMTP id x1-20020a056a000bc100b0047bf093eb4emr8462611pfu.55.1635196062554;
-        Mon, 25 Oct 2021 14:07:42 -0700 (PDT)
+        bh=poLGG9S+mf5XQ/yz4q57CrTw5wKhA6/+9va9QkjuAvg=;
+        b=4eAvLUDRtzUvC6KBwYh/uEqvSQU9AadAIru26/cJDcqIok1hZaa3pu5U+Zh8Y6B9Vz
+         aA4WiXAEymfYv6SyKl1/qppKAjcX/wCJYmjlcGLOQsSIHGHGd6Psrr65VDyNaHmKpi8P
+         ggLVjPaLP9GfHk93+zdqyy3uipKPczM3JCWEsXXw4buhFKxoRcfR0yikdiXHpotavO90
+         2XJWKIwr9/OquKHh4mGWxfY+t6Ug3HZjZNsXIij+AHKpETq9Ng7ApTApgCBrFKz5duH2
+         Wg9rGQjay4w2s1wgCblJet0ejSplfRxZ7y9RkzI8VnfFNWiSIO2hFhzmPAKLajz/RMI6
+         DLFQ==
+X-Gm-Message-State: AOAM530mMOTjqeLVqGfcrT3rKjTkgjogpCiLeDEXWdGs5t5kJbtsumup
+        5DHX/uDhgYYg1nubR/nYgla8lA==
+X-Google-Smtp-Source: ABdhPJxIbyBEZZU8qon/3sXF/Ha0M7vmc/NXiFfHSLsaGzp0MdqqweQ+YxlPpa2ydt+gluSp4zi30w==
+X-Received: by 2002:a17:90a:af93:: with SMTP id w19mr39184637pjq.10.1635196138400;
+        Mon, 25 Oct 2021 14:08:58 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id oj5sm8917184pjb.45.2021.10.25.14.07.41
+        by smtp.gmail.com with ESMTPSA id h19sm22908045pfv.81.2021.10.25.14.08.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Oct 2021 14:07:42 -0700 (PDT)
-Date:   Mon, 25 Oct 2021 14:07:33 -0700
+        Mon, 25 Oct 2021 14:08:58 -0700 (PDT)
+Date:   Mon, 25 Oct 2021 14:08:57 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Yafang Shao <laoar.shao@gmail.com>
 Cc:     akpm@linux-foundation.org, rostedt@goodmis.org,
@@ -65,28 +65,68 @@ Cc:     akpm@linux-foundation.org, rostedt@goodmis.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, oliver.sang@intel.com, lkp@intel.com,
         Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Subject: Re: [PATCH v6 01/12] fs/exec: make __set_task_comm always set a nul
- ternimated string
-Message-ID: <202110251407.6FD1411ECB@keescook>
+Subject: Re: [PATCH v6 02/12] fs/exec: make __get_task_comm always get a nul
+ terminated string
+Message-ID: <202110251408.2E661E70BC@keescook>
 References: <20211025083315.4752-1-laoar.shao@gmail.com>
- <20211025083315.4752-2-laoar.shao@gmail.com>
+ <20211025083315.4752-3-laoar.shao@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211025083315.4752-2-laoar.shao@gmail.com>
+In-Reply-To: <20211025083315.4752-3-laoar.shao@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 08:33:04AM +0000, Yafang Shao wrote:
-> Make sure the string set to task comm is always nul ternimated.
-
-typo nit: "terminated"
-
+On Mon, Oct 25, 2021 at 08:33:05AM +0000, Yafang Shao wrote:
+> If the dest buffer size is smaller than sizeof(tsk->comm), the buffer
+> will be without null ternimator, that may cause problem. We can make sure
+> the buffer size not smaller than comm at the callsite to avoid that
+> problem, but there may be callsite that we can't easily change.
 > 
+> Using strscpy_pad() instead of strncpy() in __get_task_comm() can make
+> the string always nul ternimated.
+> 
+> Suggested-by: Kees Cook <keescook@chromium.org>
+> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
 > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Petr Mladek <pmladek@suse.com>
+> ---
+>  fs/exec.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 404156b5b314..bf2a7a91eeea 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1209,7 +1209,8 @@ static int unshare_sighand(struct task_struct *me)
+>  char *__get_task_comm(char *buf, size_t buf_size, struct task_struct *tsk)
+>  {
+>  	task_lock(tsk);
+> -	strncpy(buf, tsk->comm, buf_size);
+> +	/* The copied value is always null terminated */
+
+This may could say "always NUL terminated and zero-padded"
+
+> +	strscpy_pad(buf, tsk->comm, buf_size);
+>  	task_unlock(tsk);
+>  	return buf;
+>  }
+> -- 
+> 2.17.1
+> 
+
+But for the replacement with strscpy_pad(), yes please:
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
+
 
 -- 
 Kees Cook
