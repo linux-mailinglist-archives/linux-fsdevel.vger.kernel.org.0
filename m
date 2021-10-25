@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4723A43A7F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 00:59:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAA9143A823
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 01:26:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234425AbhJYXCI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 19:02:08 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:47448 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233747AbhJYXCH (ORCPT
+        id S234682AbhJYX2i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 19:28:38 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:56224 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231445AbhJYX2h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 19:02:07 -0400
+        Mon, 25 Oct 2021 19:28:37 -0400
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 558C21FD33;
-        Mon, 25 Oct 2021 22:59:43 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id F358E218BB;
+        Mon, 25 Oct 2021 23:26:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1635202783; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1635204373; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=a1cKWxIeUcucJel063hg8FOuYcQ7CNUDdSMhSQkwdb8=;
-        b=JVBLNg/1G9y82k1V452mb4uLSeNfJrhV6/xpgVjF7hypt21RH8fU8ShHKRaYrFPPiemFXs
-        ykUO0z1Omox6SM+yNDqgNkM3t7Hb1Nk6KEnZI9aR3njTBF0yF93Jw+p/hgi4/17wpP1Zsd
-        Hsoz4oP6/smyyJslkGKL1YUXBeQMZpw=
+        bh=m+IZGWtLl4OAI1X2s3DZ+k9SXIzlQxPOueBj83cICGg=;
+        b=o46aXyIBvq04uicCYVfiWFAdkB0uSORlCyXssW87c2JNPnffaJXld9wNI+lwslecrRwTvd
+        h2OrWNyuJ/hyY7Y9hfDLp7DvyFcMCxy75bIxnS9dnFoCOmKWYrMiBzAhYyatDOHRvNa8L8
+        mPVcjeVNrBCspCBuelG+IGo7PXmhP9Y=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1635202783;
+        s=susede2_ed25519; t=1635204373;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=a1cKWxIeUcucJel063hg8FOuYcQ7CNUDdSMhSQkwdb8=;
-        b=gHKZ5JIItNsnUp4DTnmQiAtvuz4r8DzJ2mUSEAatnc5VU/t17ZsNedIvbLWz4lUNozMg8m
-        9wJ75dOttNFUeFDQ==
+        bh=m+IZGWtLl4OAI1X2s3DZ+k9SXIzlQxPOueBj83cICGg=;
+        b=yyFaepim+hepauLwuzIED+cuD/Vqwybq3vBfs1uaNBttaPuYfnkhsgceoVf7YCnLtzyQbk
+        ss+OdnH9nO5reqBg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 201CC13CB7;
-        Mon, 25 Oct 2021 22:59:39 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D146D13B44;
+        Mon, 25 Oct 2021 23:26:09 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id iiWRM9s2d2GHRgAAMHmgww
-        (envelope-from <neilb@suse.de>); Mon, 25 Oct 2021 22:59:39 +0000
+        id 32KfIxE9d2GoTgAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 25 Oct 2021 23:26:09 +0000
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
@@ -60,12 +60,12 @@ Cc:     linux-mm@kvack.org, "Dave Chinner" <david@fromorbit.com>,
         "Ilya Dryomov" <idryomov@gmail.com>,
         "Jeff Layton" <jlayton@kernel.org>,
         "Michal Hocko" <mhocko@suse.com>
-Subject: Re: [PATCH 2/4] mm/vmalloc: add support for __GFP_NOFAIL
-In-reply-to: <20211025150223.13621-3-mhocko@kernel.org>
+Subject: Re: [PATCH 3/4] mm/vmalloc: be more explicit about supported gfp flags.
+In-reply-to: <20211025150223.13621-4-mhocko@kernel.org>
 References: <20211025150223.13621-1-mhocko@kernel.org>,
- <20211025150223.13621-3-mhocko@kernel.org>
-Date:   Tue, 26 Oct 2021 09:59:36 +1100
-Message-id: <163520277623.16092.15759069160856953654@noble.neil.brown.name>
+ <20211025150223.13621-4-mhocko@kernel.org>
+Date:   Tue, 26 Oct 2021 10:26:06 +1100
+Message-id: <163520436674.16092.18372437960890952300@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -73,67 +73,69 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On Tue, 26 Oct 2021, Michal Hocko wrote:
 > From: Michal Hocko <mhocko@suse.com>
 >=20
-> Dave Chinner has mentioned that some of the xfs code would benefit from
-> kvmalloc support for __GFP_NOFAIL because they have allocations that
-> cannot fail and they do not fit into a single page.
->=20
-> The larg part of the vmalloc implementation already complies with the
-
-*large*
-
-> given gfp flags so there is no work for those to be done. The area
-> and page table allocations are an exception to that. Implement a retry
-> loop for those.
->=20
-> Add a short sleep before retrying. 1 jiffy is a completely random
-> timeout. Ideally the retry would wait for an explicit event - e.g.
-> a change to the vmalloc space change if the failure was caused by
-> the space fragmentation or depletion. But there are multiple different
-> reasons to retry and this could become much more complex. Keep the retry
-> simple for now and just sleep to prevent from hogging CPUs.
+> The core of the vmalloc allocator __vmalloc_area_node doesn't say
+> anything about gfp mask argument. Not all gfp flags are supported
+> though. Be more explicit about constrains.
 >=20
 > Signed-off-by: Michal Hocko <mhocko@suse.com>
 > ---
->  mm/vmalloc.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+>  mm/vmalloc.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
 >=20
 > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index c6cc77d2f366..602649919a9d 100644
+> index 602649919a9d..2199d821c981 100644
 > --- a/mm/vmalloc.c
 > +++ b/mm/vmalloc.c
-> @@ -2941,8 +2941,12 @@ static void *__vmalloc_area_node(struct vm_struct *a=
+> @@ -2980,8 +2980,16 @@ static void *__vmalloc_area_node(struct vm_struct *a=
 rea, gfp_t gfp_mask,
->  	else if ((gfp_mask & (__GFP_FS | __GFP_IO)) =3D=3D 0)
->  		flags =3D memalloc_noio_save();
-> =20
-> -	ret =3D vmap_pages_range(addr, addr + size, prot, area->pages,
-> +	do {
-> +		ret =3D vmap_pages_range(addr, addr + size, prot, area->pages,
->  			page_shift);
-> +		if (ret < 0)
-> +			schedule_timeout_uninterruptible(1);
-> +	} while ((gfp_mask & __GFP_NOFAIL) && (ret < 0));
-> =20
->  	if ((gfp_mask & (__GFP_FS | __GFP_IO)) =3D=3D __GFP_IO)
->  		memalloc_nofs_restore(flags);
-> @@ -3032,6 +3036,10 @@ void *__vmalloc_node_range(unsigned long size, unsig=
-ned long align,
->  		warn_alloc(gfp_mask, NULL,
->  			"vmalloc error: size %lu, vm_struct allocation failed",
->  			real_size);
-> +		if (gfp_mask & __GFP_NOFAIL) {
-> +			schedule_timeout_uninterruptible(1);
-> +			goto again;
-> +		}
+>   * @caller:		  caller's return address
+>   *
+>   * Allocate enough pages to cover @size from the page level
+> - * allocator with @gfp_mask flags.  Map them into contiguous
+> - * kernel virtual space, using a pagetable protection of @prot.
+> + * allocator with @gfp_mask flags. Please note that the full set of gfp
+> + * flags are not supported. GFP_KERNEL would be a preferred allocation mode
+> + * but GFP_NOFS and GFP_NOIO are supported as well. Zone modifiers are not
 
-Shouldn't the retry happen *before* the warning?
+In what sense is GFP_KERNEL "preferred"??
+The choice of GFP_NOFS, when necessary, isn't based on preference but
+on need.
 
+I understand that you would prefer no one ever used GFP_NOFs ever - just
+use the scope API.  I even agree.  But this is not the place to make
+that case.=20
+
+> + * supported. From the reclaim modifiers__GFP_DIRECT_RECLAIM is required (=
+aka
+> + * GFP_NOWAIT is not supported) and only __GFP_NOFAIL is supported (aka
+
+I don't think "aka" is the right thing to use here.  It is short for
+"also known as" and there is nothing that is being known as something
+else.
+It would be appropriate to say (i.e. GFP_NOWAIT is not supported).
+"i.e." is short for the Latin "id est" which means "that is" and
+normally introduces an alternate description (whereas aka introduces an
+alternate name).
+
+
+> + * __GFP_NORETRY and __GFP_RETRY_MAYFAIL are not supported).
+
+Why do you think __GFP_NORETRY and __GFP_RETRY_MAYFAIL are not supported.
+
+> + * __GFP_NOWARN can be used to suppress error messages about failures.
+
+Surely "NOWARN" suppresses warning messages, not error messages ....
+
+Thanks,
 NeilBrown
 
 
->  		goto fail;
->  	}
-> =20
+> + *=20
+> + * Map them into contiguous kernel virtual space, using a pagetable
+> + * protection of @prot.
+>   *
+>   * Return: the address of the area or %NULL on failure
+>   */
 > --=20
 > 2.30.2
 >=20
