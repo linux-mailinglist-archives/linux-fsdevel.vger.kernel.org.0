@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C79C143A0DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 21:34:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D62D243A0D3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 21:33:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235668AbhJYTgA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 15:36:00 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58606 "EHLO
+        id S235590AbhJYTf2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 15:35:28 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58608 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235120AbhJYTc3 (ORCPT
+        with ESMTP id S235781AbhJYTcb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 15:32:29 -0400
+        Mon, 25 Oct 2021 15:32:31 -0400
 Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1002])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 0E0771F433AC;
-        Mon, 25 Oct 2021 20:28:52 +0100 (BST)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 85D801F433B3;
+        Mon, 25 Oct 2021 20:29:05 +0100 (BST)
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     amir73il@gmail.com, jack@suse.com
 Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
@@ -26,9 +26,9 @@ Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
         linux-ext4@vger.kernel.org,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
         kernel@collabora.com, Jan Kara <jack@suse.cz>
-Subject: [PATCH v9 08/31] fsnotify: Add helper to detect overflow_event
-Date:   Mon, 25 Oct 2021 16:27:23 -0300
-Message-Id: <20211025192746.66445-9-krisman@collabora.com>
+Subject: [PATCH v9 10/31] fsnotify: Retrieve super block from the data field
+Date:   Mon, 25 Oct 2021 16:27:25 -0300
+Message-Id: <20211025192746.66445-11-krisman@collabora.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211025192746.66445-1-krisman@collabora.com>
 References: <20211025192746.66445-1-krisman@collabora.com>
@@ -38,48 +38,85 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Similarly to fanotify_is_perm_event and friends, provide a helper
-predicate to say whether a mask is of an overflow event.
+Some file system events (i.e. FS_ERROR) might not be associated with an
+inode or directory.  For these, we can retrieve the super block from the
+data field.  But, since the super_block is available in the data field
+on every event type, simplify the code to always retrieve it from there,
+through a new helper.
 
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
+Suggested-by: Jan Kara <jack@suse.cz>
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
----
- fs/notify/fanotify/fanotify.h    | 3 ++-
- include/linux/fsnotify_backend.h | 5 +++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-index 4a5e555dc3d2..c42cf8fd7d79 100644
---- a/fs/notify/fanotify/fanotify.h
-+++ b/fs/notify/fanotify/fanotify.h
-@@ -315,7 +315,8 @@ static inline struct path *fanotify_event_path(struct fanotify_event *event)
+--
+Changes since v6:
+  - Always use data field for superblock retrieval
+Changes since v5:
+  - add fsnotify_data_sb handle to retrieve sb from the data field. (jan)
+---
+ fs/notify/fsnotify.c             |  7 +++----
+ include/linux/fsnotify_backend.h | 15 +++++++++++++++
+ 2 files changed, 18 insertions(+), 4 deletions(-)
+
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index 963e6ce75b96..fde3a1115a17 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -455,16 +455,16 @@ static void fsnotify_iter_next(struct fsnotify_iter_info *iter_info)
+  *		@file_name is relative to
+  * @file_name:	optional file name associated with event
+  * @inode:	optional inode associated with event -
+- *		either @dir or @inode must be non-NULL.
+- *		if both are non-NULL event may be reported to both.
++ *		If @dir and @inode are both non-NULL, event may be
++ *		reported to both.
+  * @cookie:	inotify rename cookie
   */
- static inline bool fanotify_is_hashed_event(u32 mask)
+ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
+ 	     const struct qstr *file_name, struct inode *inode, u32 cookie)
  {
--	return !fanotify_is_perm_event(mask) && !(mask & FS_Q_OVERFLOW);
-+	return !(fanotify_is_perm_event(mask) ||
-+		 fsnotify_is_overflow_event(mask));
- }
+ 	const struct path *path = fsnotify_data_path(data, data_type);
++	struct super_block *sb = fsnotify_data_sb(data, data_type);
+ 	struct fsnotify_iter_info iter_info = {};
+-	struct super_block *sb;
+ 	struct mount *mnt = NULL;
+ 	struct inode *parent = NULL;
+ 	int ret = 0;
+@@ -483,7 +483,6 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
+ 		 */
+ 		parent = dir;
+ 	}
+-	sb = inode->i_sb;
  
- static inline unsigned int fanotify_event_hash_bucket(
+ 	/*
+ 	 * Optimization: srcu_read_lock() has a memory barrier which can
 diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index a2db821e8a8f..749bc85e1d1c 100644
+index b323d0c4b967..035438fe4a43 100644
 --- a/include/linux/fsnotify_backend.h
 +++ b/include/linux/fsnotify_backend.h
-@@ -510,6 +510,11 @@ static inline void fsnotify_queue_overflow(struct fsnotify_group *group)
- 	fsnotify_add_event(group, group->overflow_event, NULL, NULL);
+@@ -289,6 +289,21 @@ static inline const struct path *fsnotify_data_path(const void *data,
+ 	}
  }
  
-+static inline bool fsnotify_is_overflow_event(u32 mask)
++static inline struct super_block *fsnotify_data_sb(const void *data,
++						   int data_type)
 +{
-+	return mask & FS_Q_OVERFLOW;
++	switch (data_type) {
++	case FSNOTIFY_EVENT_INODE:
++		return ((struct inode *)data)->i_sb;
++	case FSNOTIFY_EVENT_DENTRY:
++		return ((struct dentry *)data)->d_sb;
++	case FSNOTIFY_EVENT_PATH:
++		return ((const struct path *)data)->dentry->d_sb;
++	default:
++		return NULL;
++	}
 +}
 +
- static inline bool fsnotify_notify_queue_is_empty(struct fsnotify_group *group)
- {
- 	assert_spin_locked(&group->notification_lock);
+ enum fsnotify_obj_type {
+ 	FSNOTIFY_OBJ_TYPE_INODE,
+ 	FSNOTIFY_OBJ_TYPE_PARENT,
 -- 
 2.33.0
 
