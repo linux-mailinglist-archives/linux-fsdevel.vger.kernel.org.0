@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4E8443A5B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 23:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 684A943A5BC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 23:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235085AbhJYVVH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 17:21:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49856 "EHLO
+        id S235165AbhJYVXJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 17:23:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235082AbhJYVVG (ORCPT
+        with ESMTP id S235150AbhJYVXJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 17:21:06 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADC12C061243
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Oct 2021 14:18:43 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id m21so11926377pgu.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Oct 2021 14:18:43 -0700 (PDT)
+        Mon, 25 Oct 2021 17:23:09 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BDA0C061767
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Oct 2021 14:20:46 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id m26so12182207pff.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Oct 2021 14:20:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=4dFG4rs8hqlCuz/EfoYAZcUALMQAcileOXiGOM+GvSs=;
-        b=h8zXHApiXwW7BGwOlRTSYeAOiIYlU/hMc4TbALJMI/0cihoZAHnZhaMeTUvABTDXH4
-         5kFUw7f88DKj2ScaqsgEkCUCDGOUXuF76JmStbCrZkEf1poAl1epuiBjB6Wqp4mTm9QZ
-         jt5LcTyHO1dqnK/b81084OhydFJoAMS1MxwZA=
+        bh=NfrrVRCciJICOev8gMVBuAQquLy9VSfP1uEbEqVM24w=;
+        b=H2EpbH8CK+eyq1Svymbl0Dbfo2kpVmHsKpcpd8aOlyPgS9egcampbijVN2rYBa4Rgn
+         p7a+kyLwjWzm6IJXev9oy30YE4CPP1J9p6CFzIEnGFOIGhjk7GBbSz5REtZqbByQpuoA
+         zURwII3gv6rc2pNshcM6TV+ht6kflPX4D3tGE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=4dFG4rs8hqlCuz/EfoYAZcUALMQAcileOXiGOM+GvSs=;
-        b=74IcEnr639rCV8vF/tZwJ0kJUkSjS9C2h/OIDpf1itEjogm47u+i3w5q6OyXNde84Y
-         20uNPdiEO5cWcbqy/J94wm4M4kL2g4Tzlij/3RqMGllyY8E7c2eIxvCcMM2LzvfYxQ/I
-         Cl7NguMRkVm811MuhydorfVgXAC4ITPuSbju3dWgyop0LtQtZxRkImBAiyhC7v9nCRPu
-         /nIEPYT6WsEShZP8Vm+c8ni2MYM7VJKBGM+tvujtS45sv5G+S/iyyquDlAgiVkv8TMAP
-         E84auk32U0cOUJ9W1oodW9EdbzH9ispfZPvTw6MN51WORMHDhZAQ8/6+x44i57P11sUT
-         4EIQ==
-X-Gm-Message-State: AOAM532Yf+TFHx8X4TddWygW7GuWLL8tuyAKoVBBkbhE/hi9Al5280vV
-        EEnCQLggBRl3dsEzSBo1g2NGnA==
-X-Google-Smtp-Source: ABdhPJyS0ge/35NJ840NuvZ4u5yKuw5pNRnD/FZjdif7Rr5/oI4rIsLKUc08UKkwGfL8P+QzRMJDvg==
-X-Received: by 2002:a63:e00b:: with SMTP id e11mr15663430pgh.190.1635196723249;
-        Mon, 25 Oct 2021 14:18:43 -0700 (PDT)
+        bh=NfrrVRCciJICOev8gMVBuAQquLy9VSfP1uEbEqVM24w=;
+        b=c5x53ycxxcaUXWiH6uQL9nY8iYsntCPitCrgcVz9qhzCFxWAw6NAjB+gd599zukgl4
+         6gozcISJg2KjKYybkGAzdWOE3ELeN4Ai0i1LkXSdQqtA3x/EDe9Qf/Gr460OilutwQrP
+         NCL8euCZV9MoZ8ICsYJSy5z79uZIZLPPJUGDTaHQwhoKKB3w6874LuS475unVMoO4Pe9
+         3EaxiK5W/qSMC/dqSICq0vgGCpAhIt7xUuXMRQcnTgbzs3Zpi2wZu19kb6yscWAltKw9
+         yn/HooTStPaubGKXEXRsy8ZpWPPiJkavEaNsrOnNquNubMdsgJSXC1RRNH8hvTIo04XD
+         82wQ==
+X-Gm-Message-State: AOAM530Gcwpd83XJPz+n3DLAFuBAxp8a3N1E4x6Tz5CJ8Vh2WJ1wySE/
+        JR40T8VH54ahOGKf2Sqt3MsuSw==
+X-Google-Smtp-Source: ABdhPJyh2X1uSEHHHblNKO5f1PiBaklcfwz/rKHbsu1YaXrG1EqQDih9hnPhQ9fPP+X9SJoGD+kUag==
+X-Received: by 2002:aa7:8d88:0:b0:47b:d965:fbb2 with SMTP id i8-20020aa78d88000000b0047bd965fbb2mr17526856pfr.16.1635196846138;
+        Mon, 25 Oct 2021 14:20:46 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id d15sm22788279pfu.12.2021.10.25.14.18.42
+        by smtp.gmail.com with ESMTPSA id u4sm20477372pfh.147.2021.10.25.14.20.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Oct 2021 14:18:43 -0700 (PDT)
-Date:   Mon, 25 Oct 2021 14:18:42 -0700
+        Mon, 25 Oct 2021 14:20:45 -0700 (PDT)
+Date:   Mon, 25 Oct 2021 14:20:45 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Yafang Shao <laoar.shao@gmail.com>
 Cc:     akpm@linux-foundation.org, rostedt@goodmis.org,
@@ -65,61 +65,25 @@ Cc:     akpm@linux-foundation.org, rostedt@goodmis.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, oliver.sang@intel.com, lkp@intel.com,
         Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Subject: Re: [PATCH v6 05/12] elfcore: make prpsinfo always get a nul
- terminated task comm
-Message-ID: <202110251417.4D879366@keescook>
+Subject: Re: [PATCH v6 06/12] samples/bpf/test_overhead_kprobe_kern: make it
+ adopt to task comm size change
+Message-ID: <202110251420.9D2C7731@keescook>
 References: <20211025083315.4752-1-laoar.shao@gmail.com>
- <20211025083315.4752-6-laoar.shao@gmail.com>
+ <20211025083315.4752-7-laoar.shao@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211025083315.4752-6-laoar.shao@gmail.com>
+In-Reply-To: <20211025083315.4752-7-laoar.shao@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 08:33:08AM +0000, Yafang Shao wrote:
-> kernel test robot reported a -Wstringop-truncation warning after I
-> extend task comm from 16 to 24. Below is the detailed warning:
+On Mon, Oct 25, 2021 at 08:33:09AM +0000, Yafang Shao wrote:
+> bpf_probe_read_kernel_str() will add a nul terminator to the dst, then
+> we don't care about if the dst size is big enough. This patch also
+> replaces the hard-coded 16 with TASK_COMM_LEN to make it adopt to task
+> comm size change.
 > 
->    fs/binfmt_elf.c: In function 'fill_psinfo.isra':
-> >> fs/binfmt_elf.c:1575:9: warning: 'strncpy' output may be truncated copying 16 bytes from a string of length 23 [-Wstringop-truncation]
->     1575 |         strncpy(psinfo->pr_fname, p->comm, sizeof(psinfo->pr_fname));
->          |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> This patch can fix this warning.
-> 
-> Replacing strncpy() with strscpy_pad() can avoid this warning.
-> 
-> This patch also replace the hard-coded 16 with TASK_COMM_LEN to make it
-> more compatible with task comm size change.
-> 
-> I also verfied if it still work well when I extend the comm size to 24.
-> struct elf_prpsinfo is used to dump the task information in userspace
-> coredump or kernel vmcore. Below is the verfication of vmcore,
-> 
-> crash> ps
->    PID    PPID  CPU       TASK        ST  %MEM     VSZ    RSS  COMM
->       0      0   0  ffffffff9d21a940  RU   0.0       0      0  [swapper/0]
-> >     0      0   1  ffffa09e40f85e80  RU   0.0       0      0  [swapper/1]
-> >     0      0   2  ffffa09e40f81f80  RU   0.0       0      0  [swapper/2]
-> >     0      0   3  ffffa09e40f83f00  RU   0.0       0      0  [swapper/3]
-> >     0      0   4  ffffa09e40f80000  RU   0.0       0      0  [swapper/4]
-> >     0      0   5  ffffa09e40f89f80  RU   0.0       0      0  [swapper/5]
->       0      0   6  ffffa09e40f8bf00  RU   0.0       0      0  [swapper/6]
-> >     0      0   7  ffffa09e40f88000  RU   0.0       0      0  [swapper/7]
-> >     0      0   8  ffffa09e40f8de80  RU   0.0       0      0  [swapper/8]
-> >     0      0   9  ffffa09e40f95e80  RU   0.0       0      0  [swapper/9]
-> >     0      0  10  ffffa09e40f91f80  RU   0.0       0      0  [swapper/10]
-> >     0      0  11  ffffa09e40f93f00  RU   0.0       0      0  [swapper/11]
-> >     0      0  12  ffffa09e40f90000  RU   0.0       0      0  [swapper/12]
-> >     0      0  13  ffffa09e40f9bf00  RU   0.0       0      0  [swapper/13]
-> >     0      0  14  ffffa09e40f98000  RU   0.0       0      0  [swapper/14]
-> >     0      0  15  ffffa09e40f9de80  RU   0.0       0      0  [swapper/15]
-> 
-> It works well as expected.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
 > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
 > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 > Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
@@ -129,70 +93,77 @@ On Mon, Oct 25, 2021 at 08:33:08AM +0000, Yafang Shao wrote:
 > Cc: Al Viro <viro@zeniv.linux.org.uk>
 > Cc: Kees Cook <keescook@chromium.org>
 > Cc: Petr Mladek <pmladek@suse.com>
+
+As these are samples, I guess it's fine to change their sizes.
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
 > ---
->  fs/binfmt_elf.c                | 2 +-
->  include/linux/elfcore-compat.h | 3 ++-
->  include/linux/elfcore.h        | 4 ++--
->  3 files changed, 5 insertions(+), 4 deletions(-)
+>  samples/bpf/test_overhead_kprobe_kern.c | 11 ++++++-----
+>  samples/bpf/test_overhead_tp_kern.c     |  5 +++--
+>  2 files changed, 9 insertions(+), 7 deletions(-)
 > 
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index a813b70f594e..a4ba79fce2a9 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -1572,7 +1572,7 @@ static int fill_psinfo(struct elf_prpsinfo *psinfo, struct task_struct *p,
->  	SET_UID(psinfo->pr_uid, from_kuid_munged(cred->user_ns, cred->uid));
->  	SET_GID(psinfo->pr_gid, from_kgid_munged(cred->user_ns, cred->gid));
->  	rcu_read_unlock();
-> -	strncpy(psinfo->pr_fname, p->comm, sizeof(psinfo->pr_fname));
-> +	strscpy_pad(psinfo->pr_fname, p->comm, sizeof(psinfo->pr_fname));
-
-This should use get_task_comm().
-
->  
->  	return 0;
->  }
-> diff --git a/include/linux/elfcore-compat.h b/include/linux/elfcore-compat.h
-> index e272c3d452ce..afa0eb45196b 100644
-> --- a/include/linux/elfcore-compat.h
-> +++ b/include/linux/elfcore-compat.h
-> @@ -5,6 +5,7 @@
->  #include <linux/elf.h>
->  #include <linux/elfcore.h>
->  #include <linux/compat.h>
+> diff --git a/samples/bpf/test_overhead_kprobe_kern.c b/samples/bpf/test_overhead_kprobe_kern.c
+> index f6d593e47037..8fdd2c9c56b2 100644
+> --- a/samples/bpf/test_overhead_kprobe_kern.c
+> +++ b/samples/bpf/test_overhead_kprobe_kern.c
+> @@ -6,6 +6,7 @@
+>   */
+>  #include <linux/version.h>
+>  #include <linux/ptrace.h>
 > +#include <linux/sched.h>
+>  #include <uapi/linux/bpf.h>
+>  #include <bpf/bpf_helpers.h>
+>  #include <bpf/bpf_tracing.h>
+> @@ -22,17 +23,17 @@ int prog(struct pt_regs *ctx)
+>  {
+>  	struct signal_struct *signal;
+>  	struct task_struct *tsk;
+> -	char oldcomm[16] = {};
+> -	char newcomm[16] = {};
+> +	char oldcomm[TASK_COMM_LEN] = {};
+> +	char newcomm[TASK_COMM_LEN] = {};
+>  	u16 oom_score_adj;
+>  	u32 pid;
 >  
->  /*
->   * Make sure these layouts match the linux/elfcore.h native definitions.
-> @@ -43,7 +44,7 @@ struct compat_elf_prpsinfo
->  	__compat_uid_t			pr_uid;
->  	__compat_gid_t			pr_gid;
->  	compat_pid_t			pr_pid, pr_ppid, pr_pgrp, pr_sid;
-> -	char				pr_fname[16];
-> +	char				pr_fname[TASK_COMM_LEN];
->  	char				pr_psargs[ELF_PRARGSZ];
+>  	tsk = (void *)PT_REGS_PARM1(ctx);
+>  
+>  	pid = _(tsk->pid);
+> -	bpf_probe_read_kernel(oldcomm, sizeof(oldcomm), &tsk->comm);
+> -	bpf_probe_read_kernel(newcomm, sizeof(newcomm),
+> -			      (void *)PT_REGS_PARM2(ctx));
+> +	bpf_probe_read_kernel_str(oldcomm, sizeof(oldcomm), &tsk->comm);
+> +	bpf_probe_read_kernel_str(newcomm, sizeof(newcomm),
+> +				  (void *)PT_REGS_PARM2(ctx));
+>  	signal = _(tsk->signal);
+>  	oom_score_adj = _(signal->oom_score_adj);
+>  	return 0;
+> diff --git a/samples/bpf/test_overhead_tp_kern.c b/samples/bpf/test_overhead_tp_kern.c
+> index eaa32693f8fc..80edadacb692 100644
+> --- a/samples/bpf/test_overhead_tp_kern.c
+> +++ b/samples/bpf/test_overhead_tp_kern.c
+> @@ -4,6 +4,7 @@
+>   * modify it under the terms of version 2 of the GNU General Public
+>   * License as published by the Free Software Foundation.
+>   */
+> +#include <linux/sched.h>
+>  #include <uapi/linux/bpf.h>
+>  #include <bpf/bpf_helpers.h>
+>  
+> @@ -11,8 +12,8 @@
+>  struct task_rename {
+>  	__u64 pad;
+>  	__u32 pid;
+> -	char oldcomm[16];
+> -	char newcomm[16];
+> +	char oldcomm[TASK_COMM_LEN];
+> +	char newcomm[TASK_COMM_LEN];
+>  	__u16 oom_score_adj;
 >  };
->  
-> diff --git a/include/linux/elfcore.h b/include/linux/elfcore.h
-> index 2aaa15779d50..8d79cd58b09a 100644
-> --- a/include/linux/elfcore.h
-> +++ b/include/linux/elfcore.h
-> @@ -65,8 +65,8 @@ struct elf_prpsinfo
->  	__kernel_gid_t	pr_gid;
->  	pid_t	pr_pid, pr_ppid, pr_pgrp, pr_sid;
->  	/* Lots missing */
-> -	char	pr_fname[16];	/* filename of executable */
-> -	char	pr_psargs[ELF_PRARGSZ];	/* initial part of arg list */
-> +	char	pr_fname[TASK_COMM_LEN];	/* filename of executable */
-> +	char	pr_psargs[ELF_PRARGSZ];		/* initial part of arg list */
->  };
->  
->  static inline void elf_core_copy_regs(elf_gregset_t *elfregs, struct pt_regs *regs)
+>  SEC("tracepoint/task/task_rename")
 > -- 
 > 2.17.1
 > 
-
-These structs are externally parsed -- we can't change the size of
-pr_fname AFAICT.
 
 -- 
 Kees Cook
