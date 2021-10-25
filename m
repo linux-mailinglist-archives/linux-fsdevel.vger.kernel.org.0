@@ -2,85 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D1F8439D2F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 19:13:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D82C9439DEC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 19:52:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232968AbhJYRPa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 13:15:30 -0400
-Received: from smtprelay0123.hostedemail.com ([216.40.44.123]:58056 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S234018AbhJYRP3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 13:15:29 -0400
-Received: from omf13.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 1EFBB100E8940;
-        Mon, 25 Oct 2021 17:13:05 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf13.hostedemail.com (Postfix) with ESMTPA id 531121124F7;
-        Mon, 25 Oct 2021 17:13:04 +0000 (UTC)
-Message-ID: <adcb168fc78f62583f8d925bcadbbcda9ba7da20.camel@perches.com>
-Subject: Re: [PATCH 1/4] fs/ntfs3: In function ntfs_set_acl_ex do not change
- inode->i_mode if called from function ntfs_init_acl
-From:   Joe Perches <joe@perches.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        ntfs3@lists.linux.dev
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Mon, 25 Oct 2021 10:13:03 -0700
-In-Reply-To: <67d0c9ca-2531-8a8a-ea0b-270dc921e271@paragon-software.com>
-References: <25b9a1b5-7738-7b36-7ead-c8faa7cacc87@paragon-software.com>
-         <67d0c9ca-2531-8a8a-ea0b-270dc921e271@paragon-software.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4-1 
+        id S231179AbhJYRzP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 13:55:15 -0400
+Received: from mga02.intel.com ([134.134.136.20]:21686 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230398AbhJYRzO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 25 Oct 2021 13:55:14 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10148"; a="216885060"
+X-IronPort-AV: E=Sophos;i="5.87,181,1631602800"; 
+   d="scan'208";a="216885060"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2021 10:52:52 -0700
+X-IronPort-AV: E=Sophos;i="5.87,181,1631602800"; 
+   d="scan'208";a="485775392"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2021 10:52:52 -0700
+Date:   Mon, 25 Oct 2021 10:52:51 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>, stefanha@redhat.com,
+        miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        virtio-fs@redhat.com, bo.liu@linux.alibaba.com,
+        joseph.qi@linux.alibaba.com
+Subject: Re: [PATCH v6 2/7] fuse: make DAX mount option a tri-state
+Message-ID: <20211025175251.GF3465596@iweiny-DESK2.sc.intel.com>
+References: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
+ <20211011030052.98923-3-jefflexu@linux.alibaba.com>
+ <YW2AU/E0pLHO5Yl8@redhat.com>
+ <652ac323-6546-01b8-992e-460ad59577ca@linux.alibaba.com>
+ <YXAzB5sOrFRUzTC5@redhat.com>
+ <96956132-fced-5739-d69a-7b424dc65f7c@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 531121124F7
-X-Spam-Status: No, score=0.10
-X-Stat-Signature: 364jh3s7h6dtmh9kiaz4585thf8ipgad
-X-Rspamd-Server: rspamout01
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1+xHwzyPg1NsBxY0J6qT6BDg9ijgjanve8=
-X-HE-Tag: 1635181984-117484
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <96956132-fced-5739-d69a-7b424dc65f7c@linux.alibaba.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2021-10-25 at 19:58 +0300, Konstantin Komarov wrote:
-> ntfs_init_acl sets mode. ntfs_init_acl calls ntfs_set_acl_ex.
-> ntfs_set_acl_ex must not change this mode.
-> Fixes xfstest generic/444
-> Fixes: 83e8f5032e2d ("fs/ntfs3: Add attrib operations")
+On Fri, Oct 22, 2021 at 02:54:03PM +0800, JeffleXu wrote:
+> cc [Ira Weiny], author of per inode DAX on xfs/ext4
+> 
+> On 10/20/21 11:17 PM, Vivek Goyal wrote:
+> > On Wed, Oct 20, 2021 at 10:52:38AM +0800, JeffleXu wrote:
+> >>
+> >>
+> >> On 10/18/21 10:10 PM, Vivek Goyal wrote:
+> >>> On Mon, Oct 11, 2021 at 11:00:47AM +0800, Jeffle Xu wrote:
+> >>>> We add 'always', 'never', and 'inode' (default). '-o dax' continues to
+> >>>> operate the same which is equivalent to 'always'. To be consistemt with
+> >>>> ext4/xfs's tri-state mount option, when neither '-o dax' nor '-o dax='
+> >>>> option is specified, the default behaviour is equal to 'inode'.
+> >>>
+> >>> Hi Jeffle,
+> >>>
+> >>> I am not sure when  -o "dax=inode"  is used as a default? If user
+> >>> specifies, "-o dax" then it is equal to "-o dax=always", otherwise
+> >>> user will explicitly specify "-o dax=always/never/inode". So when
+> >>> is dax=inode is used as default?
+> >>
+> >> That means when neither '-o dax' nor '-o dax=always/never/inode' is
+> >> specified, it is actually equal to '-o dax=inode', which is also how
+> >> per-file DAX on ext4/xfs works.
+> > 
 
-trivia:
+It's been a while so I'm fuzzy on the details of the discussions but yes that
+is the way things are now in the code.
 
-> diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-[]
-> @@ -538,7 +538,7 @@ struct posix_acl *ntfs_get_acl(struct inode *inode, int type)
->  
->  static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
->  				    struct inode *inode, struct posix_acl *acl,
-> -				    int type)
-> +				    int type, int init_acl)
+> > [ CC dave chinner] 
+> > 
+> > Is it not change of default behavior for ext4/xfs as well. My
+> > understanding is that prior to this new dax options, "-o dax" enabled
+> > dax on filesystem and if user did not specify it, DAX is disbaled
+> > by default.
 
-bool init_acl?
+Technically it does change default behavior...  However, NOT in a way which
+breaks anything.  See below.
 
-> @@ -613,7 +614,7 @@ static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
->  int ntfs_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  		 struct posix_acl *acl, int type)
->  {
-> -	return ntfs_set_acl_ex(mnt_userns, inode, acl, type);
-> +	return ntfs_set_acl_ex(mnt_userns, inode, acl, type, 0);
+> > 
+> > Now after introduction of "-o dax=always/never/inode", if suddenly
+> > "-o dax=inode" became the default if user did not specify anything,
+> > that's change of behavior.
 
-false
+Technically yes but not in a broken way.
 
->  }
->  
->  /*
-> @@ -633,7 +634,7 @@ int ntfs_init_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  
->  	if (default_acl) {
->  		err = ntfs_set_acl_ex(mnt_userns, inode, default_acl,
-> -				      ACL_TYPE_DEFAULT);
-> +				      ACL_TYPE_DEFAULT, 1);
+> >
+> > Is that intentional. If given a choice,
+> > I would rather not change default and ask user to opt-in for
+> > appropriate dax functionality.
 
-true, etc...
+There is no need for this.
 
+> > 
+> > Dave, you might have thoughts on this. It makes me uncomfortable to
+> > change virtiofs dax default now just because other filesytems did it.
+> > 
+> 
+> I can only find the following discussions about the earliest record on
+> this tri-state mount option:
+> 
+> https://lore.kernel.org/lkml/20200316095509.GA13788@lst.de/
+> https://lore.kernel.org/lkml/20200401040021.GC56958@magnolia/
+> 
+> 
+> Hi, Ira Weiny,
+> 
+> Do you have any thought on this, i.e. why the default behavior has
+> changed after introduction of per inode dax?
+
+While this is 'technically' different behavior the end user does not see any
+difference in behavior if they continue without software changes.  Specifically
+specifying nothing continues to operate with all the files on the FS to be
+'_not_ DAX'.  While specifying '-o dax' forces DAX on all files.
+
+This expands the default behavior in a backwards compatible manner.  The user
+can now enable DAX on some files.  But this is an opt-in on the part of the
+user of the FS and again does not change with existing software/scripts/etc.
+
+Does that make sense?
+
+Ira
 
