@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46B7743A4F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 22:47:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B411943A4F3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 22:47:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233716AbhJYUuG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 16:50:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:59051 "EHLO
+        id S233641AbhJYUuF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 16:50:05 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:40747 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233075AbhJYUuA (ORCPT
+        by vger.kernel.org with ESMTP id S233806AbhJYUt7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 16:50:00 -0400
+        Mon, 25 Oct 2021 16:49:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635194857;
+        s=mimecast20190719; t=1635194856;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=LmjTvdLZfKSO97118jaqUqatvqISIHepsxfGh7l9v9g=;
-        b=ea/1Ni7zmiPL7c1SIAhnvp8cMkGyOmDeT0ZE8EPKTJJ9r7Ew45t973AiWl+Hw1rRF8n7Bf
-        pe0tAX696duPyAz2hk/gVIP0JqMLubxWSFtdgqTAldtffGui0yYeIdnDCWpxVWf0iIUv6R
-        aCM/WxDqgdGDVFe4tQvDXvRo1xHQ3Kg=
+        bh=09SGIwvH71lusGh2SsqD4pyPf/FPnpYM6/0fxV5wwro=;
+        b=CfT/52EdtuUxzAy0bMTnfycKItPNopdojPUIEMRKweFaaamucZE1Yc6dlMtS360q/JG1Bo
+        Mex9c/QIg7h4bFllca2D814nc4acmWbD3q3P3T6daR5eFPnaqbxAI9Yt4HGBcIA2mZK7Sm
+        H7JEeucZB6khoPw/t5gPy0gcmcDKbYk=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-488-m0-k7rSfOlu-PiZzgsOlyg-1; Mon, 25 Oct 2021 16:47:34 -0400
-X-MC-Unique: m0-k7rSfOlu-PiZzgsOlyg-1
+ us-mta-258-lDxdUi2eMUGp0VhC-W6jqg-1; Mon, 25 Oct 2021 16:47:34 -0400
+X-MC-Unique: lDxdUi2eMUGp0VhC-W6jqg-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E1E5C8018AC;
-        Mon, 25 Oct 2021 20:47:30 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6F87B10A8E03;
+        Mon, 25 Oct 2021 20:47:33 +0000 (UTC)
 Received: from iangelak.redhat.com (unknown [10.22.32.161])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5FB7A60BF1;
-        Mon, 25 Oct 2021 20:47:26 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7DA6660BF1;
+        Mon, 25 Oct 2021 20:47:32 +0000 (UTC)
 From:   Ioannis Angelakopoulos <iangelak@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
         linux-kernel@vger.kernel.org, jack@suse.cz, amir73il@gmail.com,
         viro@zeniv.linux.org.uk, miklos@szeredi.hu, vgoyal@redhat.com
 Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>
-Subject: [RFC PATCH 4/7] FUSE: Add the fuse_fsnotify_send_request to FUSE
-Date:   Mon, 25 Oct 2021 16:46:31 -0400
-Message-Id: <20211025204634.2517-5-iangelak@redhat.com>
+Subject: [RFC PATCH 5/7] Fsnotify: Add a wrapper around the fsnotify function
+Date:   Mon, 25 Oct 2021 16:46:32 -0400
+Message-Id: <20211025204634.2517-6-iangelak@redhat.com>
 In-Reply-To: <20211025204634.2517-1-iangelak@redhat.com>
 References: <20211025204634.2517-1-iangelak@redhat.com>
 MIME-Version: 1.0
@@ -51,88 +51,126 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The function "fuse_fsnotify_send_request" is responsible for sending an
-fsnotify FUSE request to the FUSE server (virtiofsd).
+Generally, inotify events are generated locally by calling the "fsnotify"
+function in fs/notify/fsnotify.c and various helper functions. However, now
+we expect events to arrive from the FUSE server. Thus, without any
+intervention a user space application will receive two events. One event is
+generated locally and one arrives from the server.
 
-The request contains all the information that is stored within the
-"fuse_notify_fsnotify_in" struct, i.e., the event mask for the inotify
-watch, the action to be performed on the watch (create, modify or delete)
-and the group identifier which is essentially the 64bit (fsnotify_group)
-pointer that corresponds to one inotify instance created by a user space
-process.
+Hence, to avoid duplicate events we need to "suppress" the local events
+generated by the guest kernel for FUSE inodes. To achieve this we add a
+wrapper around the "fsnotify" function in fs/notify/fsnotify.c that
+checks if the remote inotify is enabled and based on the check either it
+"suppresses" or lets through a local event.
 
-Since each group identifier is unique, the FUSE server can create an equal
-number of inotify instances to the ones created by the user space
-processes.
+The wrapper will be called in the place of the original "fsnotify" call
+that is responsible for the event notification (now renamed as
+"__fsnotify").
+
+When the remote inotify is not enabled, all local events will be let
+through as expected. This process is completely transparent to user space.
 
 Signed-off-by: Ioannis Angelakopoulos <iangelak@redhat.com>
 ---
- fs/fuse/dev.c    | 37 +++++++++++++++++++++++++++++++++++++
- fs/fuse/fuse_i.h |  3 +++
- 2 files changed, 40 insertions(+)
+ fs/notify/fsnotify.c             | 35 ++++++++++++++++++++++++++++++--
+ include/linux/fsnotify_backend.h | 14 ++++++++++++-
+ 2 files changed, 46 insertions(+), 3 deletions(-)
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index dde341a6388a..89eea8abac4b 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1795,6 +1795,43 @@ static int fuse_notify(struct fuse_conn *fc, enum fuse_notify_code code,
- 	}
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index 963e6ce75b96..848a824c29c4 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -440,7 +440,7 @@ static void fsnotify_iter_next(struct fsnotify_iter_info *iter_info)
  }
  
-+/* Send a request for a watch placement to the FUSE server */
-+int fuse_fsnotify_send_request(struct inode *inode, uint32_t mask,
-+			       uint32_t action, uint64_t group)
-+{
-+	struct fuse_mount *fm = get_fuse_mount(inode);
-+	struct fuse_notify_fsnotify_in inarg;
-+	int err;
-+	FUSE_ARGS(args);
-+
-+	/* The server does not support remote fsnotify events */
-+	if (fm->fc->no_fsnotify)
-+		return 0;
-+
-+	/*
-+	 * Send the mask the action (remove, add, modify) and the
-+	 * unique identifier that is the fsnotify group that is
-+	 * interested in the watch to the FUSE server
-+	 */
-+	memset(&inarg, 0, sizeof(struct fuse_notify_fsnotify_in));
-+	inarg.mask = mask;
-+	inarg.action = action;
-+	inarg.group = (uint64_t)group;
-+
-+	args.opcode = FUSE_FSNOTIFY;
-+	args.nodeid = get_node_id(inode);
-+	args.in_numargs = 1;
-+	args.in_args[0].size = sizeof(struct fuse_notify_fsnotify_in);
-+	args.in_args[0].value = &inarg;
-+	args.out_numargs = 0;
-+	args.force = true;
-+
-+	err = fuse_simple_request(fm, &args);
-+
-+	return err;
-+}
-+EXPORT_SYMBOL(fuse_fsnotify_send_request);
-+
- /* Look up request on processing list by unique ID */
- static struct fuse_req *request_find(struct fuse_pqueue *fpq, u64 unique)
+ /*
+- * fsnotify - This is the main call to fsnotify.
++ * __fsnotify - This is the main call to fsnotify.
+  *
+  * The VFS calls into hook specific functions in linux/fsnotify.h.
+  * Those functions then in turn call here.  Here will call out to all of the
+@@ -459,7 +459,7 @@ static void fsnotify_iter_next(struct fsnotify_iter_info *iter_info)
+  *		if both are non-NULL event may be reported to both.
+  * @cookie:	inotify rename cookie
+  */
+-int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
++int __fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
+ 	     const struct qstr *file_name, struct inode *inode, u32 cookie)
  {
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index c3cebfb936d2..5c83c4535608 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -1243,6 +1243,9 @@ struct posix_acl *fuse_get_acl(struct inode *inode, int type, bool rcu);
- int fuse_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
- 		 struct posix_acl *acl, int type);
+ 	const struct path *path = fsnotify_data_path(data, data_type);
+@@ -552,6 +552,37 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
  
-+int fuse_fsnotify_send_request(struct inode *inode, uint32_t mask,
-+			       uint32_t action, uint64_t group);
+ 	return ret;
+ }
 +
- /* readdir.c */
- int fuse_readdir(struct file *file, struct dir_context *ctx);
++/*
++ * Wrapper around fsnotify. The main functionality is to filter local events in
++ * case the inode belongs to a filesystem that supports remote events
++ */
++int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
++	     const struct qstr *file_name, struct inode *inode, u32 cookie)
++{
++
++	if (inode != NULL || dir != NULL) {
++		/*
++		 * Check if the fsnotify_event operation is available which
++		 * will let the remote inotify events go through and suppress
++		 * the local events
++		 */
++		if (inode && inode->i_op->fsnotify_event) {
++			return inode->i_op->fsnotify_event(mask, data,
++							   data_type, dir,
++							   file_name, inode,
++							   cookie);
++		}
++		if (dir && dir->i_op->fsnotify_event) {
++			return dir->i_op->fsnotify_event(mask, data,
++							 data_type, dir,
++							 file_name, inode,
++							 cookie);
++		}
++	}
++
++	return __fsnotify(mask, data, data_type, dir, file_name, inode, cookie);
++}
+ EXPORT_SYMBOL_GPL(fsnotify);
  
+ static __init int fsnotify_init(void)
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index 1ce66748a2d2..8cfbd685f1c0 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -408,10 +408,15 @@ struct fsnotify_mark {
+ 
+ /* called from the vfs helpers */
+ 
+-/* main fsnotify call to send events */
++/* fsnotify call wrapper */
+ extern int fsnotify(__u32 mask, const void *data, int data_type,
+ 		    struct inode *dir, const struct qstr *name,
+ 		    struct inode *inode, u32 cookie);
++
++/* main fsnotify call to send events */
++extern int __fsnotify(__u32 mask, const void *data, int data_type,
++		    struct inode *dir, const struct qstr *name,
++		    struct inode *inode, u32 cookie);
+ extern int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
+ 			   int data_type);
+ extern void __fsnotify_inode_delete(struct inode *inode);
+@@ -595,6 +600,13 @@ static inline int fsnotify(__u32 mask, const void *data, int data_type,
+ 	return 0;
+ }
+ 
++static inline int __fsnotify(__u32 mask, const void *data, int data_type,
++			   struct inode *dir, const struct qstr *name,
++			   struct inode *inode, u32 cookie)
++{
++	return 0;
++}
++
+ static inline int __fsnotify_parent(struct dentry *dentry, __u32 mask,
+ 				  const void *data, int data_type)
+ {
 -- 
 2.33.0
 
