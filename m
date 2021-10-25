@@ -2,151 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 096FD43A3EB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 22:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8AEE43A3EF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 22:08:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236550AbhJYUKc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 16:10:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33432 "EHLO
+        id S238058AbhJYUKr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 16:10:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240198AbhJYUKN (ORCPT
+        with ESMTP id S240247AbhJYUKR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 16:10:13 -0400
+        Mon, 25 Oct 2021 16:10:17 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15E55C03AFF1;
-        Mon, 25 Oct 2021 12:27:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A13DDC03AFF7;
+        Mon, 25 Oct 2021 12:28:17 -0700 (PDT)
 Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1002])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 390DC1F430A9;
-        Mon, 25 Oct 2021 20:27:55 +0100 (BST)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id F0FF01F430E8;
+        Mon, 25 Oct 2021 20:28:15 +0100 (BST)
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     amir73il@gmail.com, jack@suse.com
 Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
         dhowells@redhat.com, khazhy@google.com,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel@collabora.com
-Subject: [PATCH v9 00/31] file system-wide error monitoring
-Date:   Mon, 25 Oct 2021 16:27:15 -0300
-Message-Id: <20211025192746.66445-1-krisman@collabora.com>
+        linux-ext4@vger.kernel.org, kernel@collabora.com,
+        Jan Kara <jack@suse.cz>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>
+Subject: [PATCH v9 03/31] fsnotify: clarify contract for create event hooks
+Date:   Mon, 25 Oct 2021 16:27:18 -0300
+Message-Id: <20211025192746.66445-4-krisman@collabora.com>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20211025192746.66445-1-krisman@collabora.com>
+References: <20211025192746.66445-1-krisman@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+From: Amir Goldstein <amir73il@gmail.com>
 
-This is the 9th version of this patch series.  Thank you, Amir, Jan and
-Ted, for the feedback in the previous versions.
+Clarify argument names and contract for fsnotify_create() and
+fsnotify_mkdir() to reflect the anomaly of kernfs, which leaves dentries
+negavite after mkdir/create.
 
-The main difference in this version is that the pool is no longer
-resizeable nor limited in number of marks, even though we only
-pre-allocate 32 slots.  In addition, ext4 was modified to always return
-non-zero errno, and the documentation was fixed accordingly (No longer
-suggests we return EXT4_ERR* values.
+Remove the WARN_ON(!inode) in audit code that were added by the Fixes
+commit under the wrong assumption that dentries cannot be negative after
+mkdir/create.
 
-I also droped the Reviewed-by tags from the ext4 patch, due to the
-changes above.
+Fixes: aa93bdc5500c ("fsnotify: use helpers to access data by data_type")
+Link: https://lore.kernel.org/linux-fsdevel/87mtp5yz0q.fsf@collabora.com/
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reported-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+---
+ include/linux/fsnotify.h | 22 ++++++++++++++++------
+ kernel/audit_fsnotify.c  |  3 +--
+ kernel/audit_watch.c     |  3 +--
+ 3 files changed, 18 insertions(+), 10 deletions(-)
 
-Please let me know what you think.
-
-This was tested with LTP for regressions and also using the sample code
-on the last patch, with a corrupted image.  I wrote a new ltp test for
-this feature which is being reviewed and is available at:
-
-  https://gitlab.collabora.com/krisman/ltp  -b fan-fs-error
-
-In addition, I wrote a man-page that can be pulled from:
-
-  https://gitlab.collabora.com/krisman/man-pages.git -b fan-fs-error
-
-And is being reviewed at the list.
-
-I also pushed this full series to:
-
-  https://gitlab.collabora.com/krisman/linux -b fanotify-notifications-v8
-
-Thank you
-
-Cc: Darrick J. Wong <djwong@kernel.org>
-Cc: Theodore Ts'o <tytso@mit.edu>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: jack@suse.com
-To: amir73il@gmail.com
-Cc: dhowells@redhat.com
-Cc: khazhy@google.com
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-ext4@vger.kernel.org
-Cc: linux-api@vger.kernel.org
-Cc: linux-api@vger.kernel.org
-
-Amir Goldstein (3):
-  fsnotify: pass data_type to fsnotify_name()
-  fsnotify: pass dentry instead of inode data
-  fsnotify: clarify contract for create event hooks
-
-Gabriel Krisman Bertazi (28):
-  fsnotify: Don't insert unmergeable events in hashtable
-  fanotify: Fold event size calculation to its own function
-  fanotify: Split fsid check from other fid mode checks
-  inotify: Don't force FS_IN_IGNORED
-  fsnotify: Add helper to detect overflow_event
-  fsnotify: Add wrapper around fsnotify_add_event
-  fsnotify: Retrieve super block from the data field
-  fsnotify: Protect fsnotify_handle_inode_event from no-inode events
-  fsnotify: Pass group argument to free_event
-  fanotify: Support null inode event in fanotify_dfid_inode
-  fanotify: Allow file handle encoding for unhashed events
-  fanotify: Encode empty file handle when no inode is provided
-  fanotify: Require fid_mode for any non-fd event
-  fsnotify: Support FS_ERROR event type
-  fanotify: Reserve UAPI bits for FAN_FS_ERROR
-  fanotify: Pre-allocate pool of error events
-  fanotify: Support enqueueing of error events
-  fanotify: Support merging of error events
-  fanotify: Wrap object_fh inline space in a creator macro
-  fanotify: Add helpers to decide whether to report FID/DFID
-  fanotify: Report fid entry even for zero-length file_handle
-  fanotify: WARN_ON against too large file handles
-  fanotify: Report fid info for file related file system errors
-  fanotify: Emit generic error info for error event
-  fanotify: Allow users to request FAN_FS_ERROR events
-  ext4: Send notifications on error
-  samples: Add fs error monitoring example
-  docs: Document the FAN_FS_ERROR event
-
- .../admin-guide/filesystem-monitoring.rst     |  74 +++++++++
- Documentation/admin-guide/index.rst           |   1 +
- fs/ext4/super.c                               |   8 +
- fs/nfsd/filecache.c                           |   3 +
- fs/notify/fanotify/fanotify.c                 | 117 +++++++++++--
- fs/notify/fanotify/fanotify.h                 |  54 +++++-
- fs/notify/fanotify/fanotify_user.c            | 156 +++++++++++++-----
- fs/notify/fsnotify.c                          |  10 +-
- fs/notify/group.c                             |   2 +-
- fs/notify/inotify/inotify_fsnotify.c          |   5 +-
- fs/notify/inotify/inotify_user.c              |   6 +-
- fs/notify/notification.c                      |  14 +-
- include/linux/fanotify.h                      |   9 +-
- include/linux/fsnotify.h                      |  58 +++++--
- include/linux/fsnotify_backend.h              |  96 ++++++++++-
- include/uapi/linux/fanotify.h                 |   8 +
- kernel/audit_fsnotify.c                       |   3 +-
- kernel/audit_watch.c                          |   3 +-
- samples/Kconfig                               |   9 +
- samples/Makefile                              |   1 +
- samples/fanotify/Makefile                     |   5 +
- samples/fanotify/fs-monitor.c                 | 142 ++++++++++++++++
- 22 files changed, 685 insertions(+), 99 deletions(-)
- create mode 100644 Documentation/admin-guide/filesystem-monitoring.rst
- create mode 100644 samples/fanotify/Makefile
- create mode 100644 samples/fanotify/fs-monitor.c
-
+diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+index df0fa4687a18..1e5f7435a4b5 100644
+--- a/include/linux/fsnotify.h
++++ b/include/linux/fsnotify.h
+@@ -192,16 +192,22 @@ static inline void fsnotify_inoderemove(struct inode *inode)
+ 
+ /*
+  * fsnotify_create - 'name' was linked in
++ *
++ * Caller must make sure that dentry->d_name is stable.
++ * Note: some filesystems (e.g. kernfs) leave @dentry negative and instantiate
++ * ->d_inode later
+  */
+-static inline void fsnotify_create(struct inode *inode, struct dentry *dentry)
++static inline void fsnotify_create(struct inode *dir, struct dentry *dentry)
+ {
+-	audit_inode_child(inode, dentry, AUDIT_TYPE_CHILD_CREATE);
++	audit_inode_child(dir, dentry, AUDIT_TYPE_CHILD_CREATE);
+ 
+-	fsnotify_dirent(inode, dentry, FS_CREATE);
++	fsnotify_dirent(dir, dentry, FS_CREATE);
+ }
+ 
+ /*
+  * fsnotify_link - new hardlink in 'inode' directory
++ *
++ * Caller must make sure that new_dentry->d_name is stable.
+  * Note: We have to pass also the linked inode ptr as some filesystems leave
+  *   new_dentry->d_inode NULL and instantiate inode pointer later
+  */
+@@ -230,12 +236,16 @@ static inline void fsnotify_unlink(struct inode *dir, struct dentry *dentry)
+ 
+ /*
+  * fsnotify_mkdir - directory 'name' was created
++ *
++ * Caller must make sure that dentry->d_name is stable.
++ * Note: some filesystems (e.g. kernfs) leave @dentry negative and instantiate
++ * ->d_inode later
+  */
+-static inline void fsnotify_mkdir(struct inode *inode, struct dentry *dentry)
++static inline void fsnotify_mkdir(struct inode *dir, struct dentry *dentry)
+ {
+-	audit_inode_child(inode, dentry, AUDIT_TYPE_CHILD_CREATE);
++	audit_inode_child(dir, dentry, AUDIT_TYPE_CHILD_CREATE);
+ 
+-	fsnotify_dirent(inode, dentry, FS_CREATE | FS_ISDIR);
++	fsnotify_dirent(dir, dentry, FS_CREATE | FS_ISDIR);
+ }
+ 
+ /*
+diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
+index 60739d5e3373..02348b48447c 100644
+--- a/kernel/audit_fsnotify.c
++++ b/kernel/audit_fsnotify.c
+@@ -160,8 +160,7 @@ static int audit_mark_handle_event(struct fsnotify_mark *inode_mark, u32 mask,
+ 
+ 	audit_mark = container_of(inode_mark, struct audit_fsnotify_mark, mark);
+ 
+-	if (WARN_ON_ONCE(inode_mark->group != audit_fsnotify_group) ||
+-	    WARN_ON_ONCE(!inode))
++	if (WARN_ON_ONCE(inode_mark->group != audit_fsnotify_group))
+ 		return 0;
+ 
+ 	if (mask & (FS_CREATE|FS_MOVED_TO|FS_DELETE|FS_MOVED_FROM)) {
+diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+index 2acf7ca49154..223eed7b39cd 100644
+--- a/kernel/audit_watch.c
++++ b/kernel/audit_watch.c
+@@ -472,8 +472,7 @@ static int audit_watch_handle_event(struct fsnotify_mark *inode_mark, u32 mask,
+ 
+ 	parent = container_of(inode_mark, struct audit_parent, mark);
+ 
+-	if (WARN_ON_ONCE(inode_mark->group != audit_watch_group) ||
+-	    WARN_ON_ONCE(!inode))
++	if (WARN_ON_ONCE(inode_mark->group != audit_watch_group))
+ 		return 0;
+ 
+ 	if (mask & (FS_CREATE|FS_MOVED_TO) && inode)
 -- 
 2.33.0
 
