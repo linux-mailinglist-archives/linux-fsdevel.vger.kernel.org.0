@@ -2,111 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A121439AE8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 17:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11DAB439AEB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 17:56:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233413AbhJYP6K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 11:58:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60450 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233158AbhJYP6J (ORCPT
+        id S233339AbhJYP63 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 11:58:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:38190 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233425AbhJYP62 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 11:58:09 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23781C061745;
-        Mon, 25 Oct 2021 08:55:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=63/HPzVfsVfvlLUwfHSmj4UKi2rkI606Smp9Pq0RM9c=; b=nG+4lV665EQSy1nSoqAv6NTX/5
-        RAyNrlf56LVCcQMnq2jAutrG2feuzyVbHT4gZ6GWijnvxcxeJcmZRsNlEJwFXRIWpaHpPAuRylqeU
-        hwG0mtAxF1n2hHKe49IW+RY6eOl034N2nbR+kdrRmDNtkaPA/xob9lZGiCXhcLCWDNQ4LZVuv8ghY
-        LY6QxD+H5QT3JKrunKZFL3WHvMD2Y+imRDGQXUlQ5FqmVNqF1hqDgkDK3ZdCj3gqV2bfLp4NTX/2+
-        OX7qktSNamN/HNYjFKQFefApvu6VxmWiJcwldnFc0+uoUN1h65lu2GQY+dbvvUAzoaGeriLCHwP/o
-        iIGyz7ng==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mf2Gm-00GEci-SZ; Mon, 25 Oct 2021 15:53:17 +0000
-Date:   Mon, 25 Oct 2021 16:52:16 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: Folios for 5.15 request - Was: re: Folio discussion recap -
-Message-ID: <YXbSsAnr0vAZVze6@casper.infradead.org>
-References: <YWpG1xlPbm7Jpf2b@casper.infradead.org>
- <YW2lKcqwBZGDCz6T@cmpxchg.org>
- <YW28vaoW7qNeX3GP@casper.infradead.org>
- <YW3tkuCUPVICvMBX@cmpxchg.org>
- <20211018231627.kqrnalsi74bgpoxu@box.shutemov.name>
- <YW7hQlny+Go1K3LT@cmpxchg.org>
- <YXBUPguecSeSO6UD@moria.home.lan>
- <YXHdpQTL1Udz48fc@cmpxchg.org>
- <YXIZX0truEBv2YSz@casper.infradead.org>
- <YXbOvR6jMXZ0WPcM@cmpxchg.org>
+        Mon, 25 Oct 2021 11:58:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635177365;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=6ECqSaHQ0pbEcATw6/3SW1rQoKUfxPdGHecB780Nee0=;
+        b=ZZ70dQ5dy+1jeFLwTMw1CsMcPTyP3aZL+tsavKCGlyTQYv6MpPi4XL6xwheTdSh8R7ioYs
+        XWQ0h5yZJfzFkJtuhXSlo3ORBSxJj8LsDM1XLENiSzS+C3yPBC30zb+dDmd0sFpSLihN4P
+        CF8aposejBRaeoFDoNMLvzH+seMn3jk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-302-8tYJVqH9NhyOo-Qz_oeJfA-1; Mon, 25 Oct 2021 11:56:02 -0400
+X-MC-Unique: 8tYJVqH9NhyOo-Qz_oeJfA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 08827CC628;
+        Mon, 25 Oct 2021 15:56:01 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.33.170])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5455C5C1A1;
+        Mon, 25 Oct 2021 15:55:38 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id E04E222377B; Mon, 25 Oct 2021 11:55:37 -0400 (EDT)
+Date:   Mon, 25 Oct 2021 11:55:37 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     miklos@szeredi.hu
+Cc:     virtio-fs@redhat.com, chirantan@chromium.org,
+        stephen.smalley.work@gmail.com, dwalsh@redhat.com,
+        casey@schaufler-ca.com, omosnace@redhat.com,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] fuse: Send file/inode security context during
+ creation
+Message-ID: <YXbTeb3G810yo216@redhat.com>
+References: <20211012180624.447474-1-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YXbOvR6jMXZ0WPcM@cmpxchg.org>
+In-Reply-To: <20211012180624.447474-1-vgoyal@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 11:35:25AM -0400, Johannes Weiner wrote:
-> On Fri, Oct 22, 2021 at 02:52:31AM +0100, Matthew Wilcox wrote:
-> > > Anyway. I can even be convinved that we can figure out the exact fault
-> > > lines along which we split the page down the road.
-> > > 
-> > > My worry is more about 2). A shared type and generic code is likely to
-> > > emerge regardless of how we split it. Think about it, the only world
-> > > in which that isn't true would be one in which either
-> > > 
-> > > 	a) page subtypes are all the same, or
-> > > 	b) the subtypes have nothing in common
-> > > 
-> > > and both are clearly bogus.
-> > 
-> > Amen!
-> > 
-> > I'm convinced that pgtable, slab and zsmalloc uses of struct page can all
-> > be split out into their own types instead of being folios.  They have
-> > little-to-nothing in common with anon+file; they can't be mapped into
-> > userspace and they can't be on the LRU.  The only situation you can find
-> > them in is something like compaction which walks PFNs.
+On Tue, Oct 12, 2021 at 02:06:22PM -0400, Vivek Goyal wrote:
+> Hi,
 > 
-> They can all be accounted to a cgroup. pgtables are tracked the same
-> as other __GFP_ACCOUNT pages (pipe buffers and kernel stacks right now
-> from a quick grep, but as you can guess that's open-ended).
+> This is V2 of patches. Posted V1 here.
 
-Oh, this is good information!
+Hi Miklos,
 
-> So if those all aren't folios, the generic type and the interfacing
-> object for memcg and accounting would continue to be the page.
+Wondering how do these patches look to you. Can you please consider these
+for inclusion.
+
+These patches are dependent on following patch which Paul Moore is now
+carrying in this tree.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git/commit/?h=next&id=15bf32398ad488c0df1cbaf16431422c87e4feea
+
+Thanks
+Vivek
 > 
-> > Perhaps you could comment on how you'd see separate anon_mem and
-> > file_mem types working for the memcg code?  Would you want to have
-> > separate lock_anon_memcg() and lock_file_memcg(), or would you want
-> > them to be cast to a common type like lock_folio_memcg()?
+> https://lore.kernel.org/linux-fsdevel/20210924192442.916927-1-vgoyal@redhat.com/
 > 
-> That should be lock_<generic>_memcg() since it actually serializes and
-> protects the same thing for all subtypes (unlike lock_page()!).
+> Changes since v1:
 > 
-> The memcg interface is fully type agnostic nowadays, but it also needs
-> to be able to handle any subtype. It should continue to interface with
-> the broadest, most generic definition of "chunk of memory".
+> - Added capability to send multiple security contexts in fuse protocol.
+>   Miklos suggestd this. So now protocol can easily carry multiple
+>   security labels. Just that right now we only send one. When a security
+>   hook becomes available which can handle multiple security labels,
+>   it should be easy to send those.
+> 
+> This patch series is dependent on following patch I have posted to
+> change signature of security_dentry_init_security().
+> 
+> https://lore.kernel.org/linux-fsdevel/YWWMO%2FZDrvDZ5X4c@redhat.com/
+> 
+> Description
+> -----------
+> When a file is created (create, mknod, mkdir, symlink), typically file
+> systems call  security_inode_init_security() to initialize security
+> context of an inode. But this does not very well with remote filesystems
+> as inode is not there yet. Client will send a creation request to
+> server and once server has created the file, client will instantiate
+> the inode.
+> 
+> So filesystems like nfs and ceph use security_dentry_init_security()
+> instead. This takes in a dentry and returns the security context of
+> file if any.
+> 
+> These patches call security_dentry_init_security() and send security
+> label of file along with creation request (FUSE_CREATE, FUSE_MKDIR,
+> FUSE_MKNOD, FUSE_SYMLINK). This will give server an opportunity
+> to create new file and also set security label (possibly atomically
+> where possible).
+> 
+> These patches are based on the work Chirantan Ekbote did some time
+> back but it never got upstreamed. So I have taken his patches,
+> and made modifications on top.
+> 
+> https://listman.redhat.com/archives/virtio-fs/2020-July/msg00014.html
+> https://listman.redhat.com/archives/virtio-fs/2020-July/msg00015.html
+> 
+> These patches will allow us to support SELinux on virtiofs.
+> 
+> Vivek Goyal (2):
+>   fuse: Add a flag FUSE_SECURITY_CTX
+>   fuse: Send security context of inode on file creation
+> 
+>  fs/fuse/dir.c             | 115 ++++++++++++++++++++++++++++++++++++--
+>  fs/fuse/fuse_i.h          |   3 +
+>  fs/fuse/inode.c           |   4 +-
+>  include/uapi/linux/fuse.h |  29 +++++++++-
+>  4 files changed, 144 insertions(+), 7 deletions(-)
+> 
+> -- 
+> 2.31.1
+> 
 
-Some of the memory descriptors might prefer to keep their memcg_data at a
-different offset from the start of the struct.  Can we accommodate that,
-or do we ever get handed a specialised memory descriptor, then have to
-cast back to an unspecialised descriptor?
-
-(the LRU list would be an example of this; the list_head must be at the
-same offset in all memory descriptors which use the LRU list)
