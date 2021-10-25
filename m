@@ -2,84 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A7F9439AB5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 17:45:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA355439AD5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 17:51:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232752AbhJYPrf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 11:47:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58006 "EHLO
+        id S232712AbhJYPxa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 11:53:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232750AbhJYPra (ORCPT
+        with ESMTP id S230070AbhJYPx3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 11:47:30 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A03B9C061745;
-        Mon, 25 Oct 2021 08:45:08 -0700 (PDT)
+        Mon, 25 Oct 2021 11:53:29 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 010CAC061745;
+        Mon, 25 Oct 2021 08:51:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=/4DvD0e1FZPOTxEhYNHi1otDSuS1bS0YBpl8+6thuZA=; b=EWLAZEeDAHe7eHhWv76S28SF5B
-        +zNXkIx+VgqQndT7hBAgmBomvweuitB5mHtJMgAAkts72ISvoadRquNMKlJPiJ/507DGVSfPcjqgc
-        uwVp0bqYUOUO/OOrYdze4fr7jLBVqTjMiKFQWReiM1xWe7z97SGWHSKPL6NIMaFgAbgZZzLP04SUe
-        7qmjyZxR/Y37FjY3h/9+ohKowcIXdc+f1zdb433Iv9ZHpB8xa0uT1g4wsM7BPbUYuzPfKf8YRgAeR
-        /FLvIqxWBr/SCSQ8mgp7BZ1I9N+JsEl0XPSbzgJ5PBNj2BuFmc5M3e0KmdyWtPnZ9/KI3HS1m+8Ez
-        A/OHawDQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mf28B-00GELE-CE; Mon, 25 Oct 2021 15:43:41 +0000
-Date:   Mon, 25 Oct 2021 16:43:23 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [RFC PATCH 0/5] Shared memory for shared extents
-Message-ID: <YXbQm6TxaWcLnpal@casper.infradead.org>
-References: <cover.1634933121.git.rgoldwyn@suse.com>
- <YXNoxZqKPkxZvr3E@casper.infradead.org>
- <20211025145301.hk627p2qcotxegrd@fiona>
+        bh=sD4M77sMZipbi4n7OfMHOpvymBF2RK3PbnXf7BuorEc=; b=D/mocSywZnf9DStUX7jAO45bDE
+        jXrbxJA9a+bFmDHYuO12zo2sZzZKenpvaiEMWVzuTvIY0Rm57D1ERraYjLWtrOT2hWnRVKXN6y1EY
+        6SLUmOlCksFsDoErVjp3PEQ3TsJMkMgixCSTFferPs8k7vP3DT7dovCpirZpBYkB05U39AAMdTshZ
+        sgmgOr0MctOsL62vIk5oE0OyePZ2tSTJ9YdiLqu8Fy5HRgNHuWwF8HxpngFeg0qm1QDoGs5kHa9qM
+        9qqmRtmnUDeHr5O6AUEgrHc85e3EMfJf+j0q7xYxo6A7pcPNp0mVaT2X13rNso1vZr7CX8jt7atLO
+        uMa3toqA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mf2FR-00GvIH-8r; Mon, 25 Oct 2021 15:50:53 +0000
+Date:   Mon, 25 Oct 2021 08:50:53 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     bp@suse.de, akpm@linux-foundation.org, josh@joshtriplett.org,
+        rishabhb@codeaurora.org, kubakici@wp.pl, maco@android.com,
+        david.brown@linaro.org, bjorn.andersson@linaro.org,
+        linux-wireless@vger.kernel.org, keescook@chromium.org,
+        shuah@kernel.org, mfuzzey@parkeon.com, zohar@linux.vnet.ibm.com,
+        dhowells@redhat.com, pali.rohar@gmail.com, tiwai@suse.de,
+        arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
+        broonie@kernel.org, dmitry.torokhov@gmail.com, dwmw2@infradead.org,
+        torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
+        jewalt@lgsinnovations.com, cantabile.desu@gmail.com, ast@fb.com,
+        andresx7@gmail.com, brendanhiggins@google.com, yzaikin@google.com,
+        sfr@canb.auug.org.au, rdunlap@infradead.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] firmware_loader: rename EXTRA_FIRMWARE and
+ EXTRA_FIRMWARE_DIR
+Message-ID: <YXbSXSGO3uK7W3IO@bombadil.infradead.org>
+References: <20211022174041.2776969-1-mcgrof@kernel.org>
+ <20211022174041.2776969-2-mcgrof@kernel.org>
+ <YXOvGX1O69s0Qaoe@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211025145301.hk627p2qcotxegrd@fiona>
+In-Reply-To: <YXOvGX1O69s0Qaoe@kroah.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 09:53:01AM -0500, Goldwyn Rodrigues wrote:
-> On  2:43 23/10, Matthew Wilcox wrote:
-> > On Fri, Oct 22, 2021 at 03:15:00PM -0500, Goldwyn Rodrigues wrote:
-> > > This is an attempt to reduce the memory footprint by using a shared
-> > > page(s) for shared extent(s) in the filesystem. I am hoping to start a
-> > > discussion to iron out the details for implementation.
+On Sat, Oct 23, 2021 at 08:43:37AM +0200, Greg KH wrote:
+> On Fri, Oct 22, 2021 at 10:40:38AM -0700, Luis Chamberlain wrote:
+> > Now that we've tied loose ends on the built-in firmware API,
+> > rename the kconfig symbols for it to reflect more that they are
+> > associated to the firmware_loader and to make it easier to
+> > understand what they are for.
 > > 
-> > When you say "Shared extents", you mean reflinks, which are COW, right?
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 > 
-> Yes, shared extents are extents which are shared on disk by two or more
-> files. Yes, same as reflinks. Just to explain with an example:
-> 
-> If two files, f1 and f2 have shared extent(s), and both files are read. Each
-> file's mapping->i_pages will hold a copy of the contents of the shared
-> extent on disk. So, f1->mapping will have one copy and f2->mapping will
-> have another copy.
-> 
-> For reads (and only reads), if we use underlying device's mapping, we
-> can save on duplicate copy of the pages.
+> This patch has the same bug I pointed out the last time I reviewed it :(
 
-Yes; I'm familiar with the problem.  Dave Chinner and I had a great
-discussion about it at LCA a couple of years ago.
+Sorry I missed it, but I checked and I can't see where, can you point
+that out in the patch?
 
-The implementation I've had in mind for a while is that the filesystem
-either creates a separate inode for a shared extent, or (as you've
-done here) uses the bdev's inode.  We can discuss the pros/cons of
-that separately.
-
-To avoid the double-lookup problem, I was intending to generalise DAX
-entries into PFN entries.  That way, if the read() (or mmap read fault)
-misses in the inode's cache, we can look up the shared extent cache,
-and then cache the physical address of the memory in the inode.
-
-That makes reclaim/eviction of the page in the shared extent more
-expensive because you have to iterate all the inodes which share the
-extent and remove the PFN entries before the page can be reused.
-
-Perhaps we should have a Zoom meeting about this before producing duelling
-patch series?  I can host if you're interested.
+  Luis
