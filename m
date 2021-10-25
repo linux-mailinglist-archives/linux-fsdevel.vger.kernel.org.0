@@ -2,25 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CE0343A41A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 22:10:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9954D43A41E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 22:10:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237255AbhJYUM3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 16:12:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33432 "EHLO
+        id S235605AbhJYUM5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 16:12:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237510AbhJYUMF (ORCPT
+        with ESMTP id S237200AbhJYUMR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 16:12:05 -0400
+        Mon, 25 Oct 2021 16:12:17 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71B68C04A42E;
-        Mon, 25 Oct 2021 12:30:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4BF6C04A437;
+        Mon, 25 Oct 2021 12:31:20 -0700 (PDT)
 Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1002])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id C9BAA1F433E3;
-        Mon, 25 Oct 2021 20:30:54 +0100 (BST)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 45CA11F43465;
+        Mon, 25 Oct 2021 20:31:18 +0100 (BST)
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     amir73il@gmail.com, jack@suse.com
 Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
@@ -28,10 +28,10 @@ Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-ext4@vger.kernel.org,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel@collabora.com, Jan Kara <jack@suse.cz>
-Subject: [PATCH v9 27/31] fanotify: Emit generic error info for error event
-Date:   Mon, 25 Oct 2021 16:27:42 -0300
-Message-Id: <20211025192746.66445-28-krisman@collabora.com>
+        kernel@collabora.com
+Subject: [PATCH v9 31/31] docs: Document the FAN_FS_ERROR event
+Date:   Mon, 25 Oct 2021 16:27:46 -0300
+Message-Id: <20211025192746.66445-32-krisman@collabora.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211025192746.66445-1-krisman@collabora.com>
 References: <20211025192746.66445-1-krisman@collabora.com>
@@ -41,142 +41,129 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The error info is a record sent to users on FAN_FS_ERROR events
-documenting the type of error.  It also carries an error count,
-documenting how many errors were observed since the last reporting.
+Document the FAN_FS_ERROR event for user administrators and user space
+developers.
 
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
 ---
-Changes since v6:
-  - Rebase on top of pidfd patches
-Changes since v5:
-  - Move error code here
+Changes Since v8:
+  - Replace fs-error specific errno bits with generic errno. (Jan)
+  - Explain event order guarantees and point to example parser (Jan)
+Changes Since v7:
+  - Update semantics
+Changes Since v6:
+  - English fixes (jan)
+  - Proper document error field (jan)
+Changes Since v4:
+  - Update documentation about reporting non-file error.
+Changes Since v3:
+  - Move FAN_FS_ERROR notification into a subsection of the file.
+Changes Since v2:
+  - NTR
+Changes since v1:
+  - Drop references to location record
+  - Explain that the inode field is optional
+  - Explain we are reporting only the first error
 ---
- fs/notify/fanotify/fanotify.c      |  1 +
- fs/notify/fanotify/fanotify.h      |  1 +
- fs/notify/fanotify/fanotify_user.c | 35 ++++++++++++++++++++++++++++++
- include/uapi/linux/fanotify.h      |  7 ++++++
- 4 files changed, 44 insertions(+)
+ .../admin-guide/filesystem-monitoring.rst     | 74 +++++++++++++++++++
+ Documentation/admin-guide/index.rst           |  1 +
+ 2 files changed, 75 insertions(+)
+ create mode 100644 Documentation/admin-guide/filesystem-monitoring.rst
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 465f07e70e6d..af61425e6e3b 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -621,6 +621,7 @@ static struct fanotify_event *fanotify_alloc_error_event(
- 		return NULL;
- 
- 	fee->fae.type = FANOTIFY_EVENT_TYPE_FS_ERROR;
-+	fee->error = report->error;
- 	fee->err_count = 1;
- 	fee->fsid = *fsid;
- 
-diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-index edd7587adcc5..d25f500bf7e7 100644
---- a/fs/notify/fanotify/fanotify.h
-+++ b/fs/notify/fanotify/fanotify.h
-@@ -205,6 +205,7 @@ FANOTIFY_NE(struct fanotify_event *event)
- 
- struct fanotify_error_event {
- 	struct fanotify_event fae;
-+	s32 error; /* Error reported by the Filesystem. */
- 	u32 err_count; /* Suppressed errors count */
- 
- 	__kernel_fsid_t fsid; /* FSID this error refers to. */
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index ff4a7373f7a5..97ec5b005b50 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -115,6 +115,8 @@ struct kmem_cache *fanotify_perm_event_cachep __read_mostly;
- 	(sizeof(struct fanotify_event_info_fid) + sizeof(struct file_handle))
- #define FANOTIFY_PIDFD_INFO_HDR_LEN \
- 	sizeof(struct fanotify_event_info_pidfd)
-+#define FANOTIFY_ERROR_INFO_LEN \
-+	(sizeof(struct fanotify_event_info_error))
- 
- static int fanotify_fid_info_len(int fh_len, int name_len)
- {
-@@ -139,6 +141,9 @@ static size_t fanotify_event_len(unsigned int info_mode,
- 	if (!info_mode)
- 		return event_len;
- 
-+	if (fanotify_is_error_event(event->mask))
-+		event_len += FANOTIFY_ERROR_INFO_LEN;
+diff --git a/Documentation/admin-guide/filesystem-monitoring.rst b/Documentation/admin-guide/filesystem-monitoring.rst
+new file mode 100644
+index 000000000000..5a3c84e60095
+--- /dev/null
++++ b/Documentation/admin-guide/filesystem-monitoring.rst
+@@ -0,0 +1,74 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
- 	info = fanotify_event_info(event);
- 
- 	if (fanotify_event_has_dir_fh(event)) {
-@@ -324,6 +329,28 @@ static int process_access_response(struct fsnotify_group *group,
- 	return -ENOENT;
- }
- 
-+static size_t copy_error_info_to_user(struct fanotify_event *event,
-+				      char __user *buf, int count)
-+{
-+	struct fanotify_event_info_error info;
-+	struct fanotify_error_event *fee = FANOTIFY_EE(event);
++====================================
++File system Monitoring with fanotify
++====================================
 +
-+	info.hdr.info_type = FAN_EVENT_INFO_TYPE_ERROR;
-+	info.hdr.pad = 0;
-+	info.hdr.len = FANOTIFY_ERROR_INFO_LEN;
++File system Error Reporting
++===========================
 +
-+	if (WARN_ON(count < info.hdr.len))
-+		return -EFAULT;
++Fanotify supports the FAN_FS_ERROR event type for file system-wide error
++reporting.  It is meant to be used by file system health monitoring
++daemons, which listen for these events and take actions (notify
++sysadmin, start recovery) when a file system problem is detected.
 +
-+	info.error = fee->error;
-+	info.error_count = fee->err_count;
++By design, a FAN_FS_ERROR notification exposes sufficient information
++for a monitoring tool to know a problem in the file system has happened.
++It doesn't necessarily provide a user space application with semantics
++to verify an IO operation was successfully executed.  That is out of
++scope for this feature.  Instead, it is only meant as a framework for
++early file system problem detection and reporting recovery tools.
 +
-+	if (copy_to_user(buf, &info, sizeof(info)))
-+		return -EFAULT;
++When a file system operation fails, it is common for dozens of kernel
++errors to cascade after the initial failure, hiding the original failure
++log, which is usually the most useful debug data to troubleshoot the
++problem.  For this reason, FAN_FS_ERROR tries to report only the first
++error that occurred for a file system since the last notification, and
++it simply counts additional errors.  This ensures that the most
++important pieces of information are never lost.
 +
-+	return info.hdr.len;
-+}
++FAN_FS_ERROR requires the fanotify group to be setup with the
++FAN_REPORT_FID flag.
 +
- static int copy_fid_info_to_user(__kernel_fsid_t *fsid, struct fanotify_fh *fh,
- 				 int info_type, const char *name,
- 				 size_t name_len,
-@@ -530,6 +557,14 @@ static int copy_info_records_to_user(struct fanotify_event *event,
- 		total_bytes += ret;
- 	}
- 
-+	if (fanotify_is_error_event(event->mask)) {
-+		ret = copy_error_info_to_user(event, buf, count);
-+		if (ret < 0)
-+			return ret;
-+		buf += ret;
-+		count -= ret;
-+	}
++At the time of this writing, the only file system that emits FAN_FS_ERROR
++notifications is Ext4.
 +
- 	return total_bytes;
- }
- 
-diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-index 2990731ddc8b..bd1932c2074d 100644
---- a/include/uapi/linux/fanotify.h
-+++ b/include/uapi/linux/fanotify.h
-@@ -126,6 +126,7 @@ struct fanotify_event_metadata {
- #define FAN_EVENT_INFO_TYPE_DFID_NAME	2
- #define FAN_EVENT_INFO_TYPE_DFID	3
- #define FAN_EVENT_INFO_TYPE_PIDFD	4
-+#define FAN_EVENT_INFO_TYPE_ERROR	5
- 
- /* Variable length info record following event metadata */
- struct fanotify_event_info_header {
-@@ -160,6 +161,12 @@ struct fanotify_event_info_pidfd {
- 	__s32 pidfd;
- };
- 
-+struct fanotify_event_info_error {
++A FAN_FS_ERROR Notification has the following format::
++
++  [ Notification Metadata (Mandatory) ]
++  [ Generic Error Record  (Mandatory) ]
++  [ FID record            (Mandatory) ]
++
++The order of records is not guaranteed, and new records might be added
++in the future.  Therefore, applications must not rely on the order and
++must be prepared to skip over unknown records. Please refer to
++``samples/fanotify/fs-monitor.c`` for an example parser.
++
++Generic error record
++--------------------
++
++The generic error record provides enough information for a file system
++agnostic tool to learn about a problem in the file system, without
++providing any additional details about the problem.  This record is
++identified by ``struct fanotify_event_info_header.info_type`` being set
++to FAN_EVENT_INFO_TYPE_ERROR.
++
++  struct fanotify_event_info_error {
 +	struct fanotify_event_info_header hdr;
 +	__s32 error;
 +	__u32 error_count;
-+};
++  };
 +
- struct fanotify_response {
- 	__s32 fd;
- 	__u32 response;
++The `error` field identifies the type of error using errno values.
++`error_count` tracks the number of errors that occurred and were
++suppressed to preserve the original error information, since the last
++notification.
++
++FID record
++----------
++
++The FID record can be used to uniquely identify the inode that triggered
++the error through the combination of fsid and file handle.  A file system
++specific application can use that information to attempt a recovery
++procedure.  Errors that are not related to an inode are reported with an
++empty file handle of type FILEID_INVALID.
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+index dc00afcabb95..1bedab498104 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -82,6 +82,7 @@ configure specific aspects of kernel behavior to your liking.
+    edid
+    efi-stub
+    ext4
++   filesystem-monitoring
+    nfs/index
+    gpio/index
+    highuid
 -- 
 2.33.0
 
