@@ -2,132 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11DAB439AEB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 17:56:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8686E439AEF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 17:57:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233339AbhJYP63 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 11:58:29 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:38190 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233425AbhJYP62 (ORCPT
+        id S233339AbhJYP7k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 11:59:40 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:57588 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232909AbhJYP7i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 11:58:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635177365;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Mon, 25 Oct 2021 11:59:38 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 85FB2218EE;
+        Mon, 25 Oct 2021 15:57:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1635177435; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=6ECqSaHQ0pbEcATw6/3SW1rQoKUfxPdGHecB780Nee0=;
-        b=ZZ70dQ5dy+1jeFLwTMw1CsMcPTyP3aZL+tsavKCGlyTQYv6MpPi4XL6xwheTdSh8R7ioYs
-        XWQ0h5yZJfzFkJtuhXSlo3ORBSxJj8LsDM1XLENiSzS+C3yPBC30zb+dDmd0sFpSLihN4P
-        CF8aposejBRaeoFDoNMLvzH+seMn3jk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-302-8tYJVqH9NhyOo-Qz_oeJfA-1; Mon, 25 Oct 2021 11:56:02 -0400
-X-MC-Unique: 8tYJVqH9NhyOo-Qz_oeJfA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 08827CC628;
-        Mon, 25 Oct 2021 15:56:01 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.33.170])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5455C5C1A1;
-        Mon, 25 Oct 2021 15:55:38 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id E04E222377B; Mon, 25 Oct 2021 11:55:37 -0400 (EDT)
-Date:   Mon, 25 Oct 2021 11:55:37 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     miklos@szeredi.hu
-Cc:     virtio-fs@redhat.com, chirantan@chromium.org,
-        stephen.smalley.work@gmail.com, dwalsh@redhat.com,
-        casey@schaufler-ca.com, omosnace@redhat.com,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] fuse: Send file/inode security context during
- creation
-Message-ID: <YXbTeb3G810yo216@redhat.com>
-References: <20211012180624.447474-1-vgoyal@redhat.com>
+        bh=Sjc87XfL1WuZPJro7Vq4FUjnrPJgaAca3TEnfkMGFQU=;
+        b=y+29YJzTI+Rj/0CN58+POSX0QZMcdtrzVssxi1+pXRJEvRbzvgZEtiHiQ3jaquq723xt8C
+        k/H5xZnWppnhLMNizOAdON59mxMq2zGrNCHH54Q+u4D3DpmByuMgc+SuhohDLyr5v7U1Js
+        qejVkRfxMaK2fOMj+whbhnLafQUNqmU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1635177435;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Sjc87XfL1WuZPJro7Vq4FUjnrPJgaAca3TEnfkMGFQU=;
+        b=wOcxGJuaXT3sNaVtUIfhYyh03F6r5p1HMOOR1lzQKSSCONe4CHh16zsLVdXfJyqM5oq5sz
+        LeYRw1LmZ1nqLLAA==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id 6DBA7A3B81;
+        Mon, 25 Oct 2021 15:57:13 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 45D681E0A2B; Mon, 25 Oct 2021 17:57:13 +0200 (CEST)
+Date:   Mon, 25 Oct 2021 17:57:13 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Zhengyuan Liu <liuzhengyuang521@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, tytso@mit.edu,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-ext4@vger.kernel.org,
+        =?utf-8?B?5YiY5LqR?= <liuyun01@kylinos.cn>,
+        Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+Subject: Re: Problem with direct IO
+Message-ID: <20211025155713.GD12157@quack2.suse.cz>
+References: <CAOOPZo52azGXN-BzWamA38Gu=EkqZScLufM1VEgDuosPoH6TWA@mail.gmail.com>
+ <20211020173729.GF16460@quack2.suse.cz>
+ <CAOOPZo43cwh5ujm3n-r9Bih=7gS7Oav0B=J_8AepWDgdeBRkYA@mail.gmail.com>
+ <20211021080304.GB5784@quack2.suse.cz>
+ <CAOOPZo7DfbwO5tmpbpNw7T9AgN7ALDc2S8N+0TsDnvEqMZzMmg@mail.gmail.com>
+ <20211022093120.GG1026@quack2.suse.cz>
+ <CAOOPZo7E8uw3s0d+XwQnKsq1CC4SuLe6hxEDD-v=cDThwmsMww@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211012180624.447474-1-vgoyal@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <CAOOPZo7E8uw3s0d+XwQnKsq1CC4SuLe6hxEDD-v=cDThwmsMww@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 12, 2021 at 02:06:22PM -0400, Vivek Goyal wrote:
-> Hi,
+On Sat 23-10-21 10:06:24, Zhengyuan Liu wrote:
+> On Fri, Oct 22, 2021 at 5:31 PM Jan Kara <jack@suse.cz> wrote:
+> > > > > > Can you post output of "dumpe2fs -h <device>" for the filesystem where the
+> > > > > > problem happens? Thanks!
+> > > > >
+> > > > > Sure, the output is:
+> > > > >
+> > > > > # dumpe2fs -h /dev/sda3
+> > > > > dumpe2fs 1.45.3 (14-Jul-2019)
+> > > > > Filesystem volume name:   <none>
+> > > > > Last mounted on:          /data
+> > > > > Filesystem UUID:          09a51146-b325-48bb-be63-c9df539a90a1
+> > > > > Filesystem magic number:  0xEF53
+> > > > > Filesystem revision #:    1 (dynamic)
+> > > > > Filesystem features:      has_journal ext_attr resize_inode dir_index
+> > > > > filetype needs_recovery sparse_super large_file
+> > > >
+> > > > Thanks for the data. OK, a filesystem without extents. Does your test by
+> > > > any chance try to do direct IO to a hole in a file? Because that is not
+> > > > (and never was) supported without extents. Also the fact that you don't see
+> > > > the problem with ext4 (which means extents support) would be pointing in
+> > > > that direction.
+> > >
+> > > I am not sure if it trys to do direct IO to a hole or not, is there any
+> > > way to check?  If you have a simple test to reproduce please let me know,
+> > > we are glad to try.
+> >
+> > Can you enable following tracing?
 > 
-> This is V2 of patches. Posted V1 here.
+> Sure, but let's confirm before doing that, it seems Ext4 doesn't
+> support iomap in
+> V4.19 which could also reproduce the problem, so if it is necessary to
+> do the following
+> tracing? or should we modify the tracing if under V4.19?
 
-Hi Miklos,
+Well, iomap is just a different generic framework for doing direct IO. The
+fact that you can observe the problem both with iomap and the old direct IO
+framework is one of the reasons why I think the problem is actually that
+the file has holes (unallocated space in the middle).
+ 
+> > echo 1 >/sys/kernel/debug/tracing/events/ext4/ext4_ind_map_blocks_exit/enable
+> > echo iomap_dio_rw >/sys/kernel/debug/tracing/set_ftrace_filter
+> > echo "function_graph" >/sys/kernel/debug/tracing/current_tracer
 
-Wondering how do these patches look to you. Can you please consider these
-for inclusion.
+If you want to trace a kernel were ext4 direct IO path is not yet
+converted to iomap framework you need to replace tracing of iomap_dio_rw
+with:
 
-These patches are dependent on following patch which Paul Moore is now
-carrying in this tree.
+echo __blockdev_direct_IO >/sys/kernel/debug/tracing/set_ftrace_filter
 
-https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git/commit/?h=next&id=15bf32398ad488c0df1cbaf16431422c87e4feea
+> > And then gather output from /sys/kernel/debug/tracing/trace_pipe. Once the
+> > problem reproduces, you can gather the problematic file name from dmesg, find
+> > inode number from "stat <filename>" and provide that all to me? Thanks!
 
-Thanks
-Vivek
-> 
-> https://lore.kernel.org/linux-fsdevel/20210924192442.916927-1-vgoyal@redhat.com/
-> 
-> Changes since v1:
-> 
-> - Added capability to send multiple security contexts in fuse protocol.
->   Miklos suggestd this. So now protocol can easily carry multiple
->   security labels. Just that right now we only send one. When a security
->   hook becomes available which can handle multiple security labels,
->   it should be easy to send those.
-> 
-> This patch series is dependent on following patch I have posted to
-> change signature of security_dentry_init_security().
-> 
-> https://lore.kernel.org/linux-fsdevel/YWWMO%2FZDrvDZ5X4c@redhat.com/
-> 
-> Description
-> -----------
-> When a file is created (create, mknod, mkdir, symlink), typically file
-> systems call  security_inode_init_security() to initialize security
-> context of an inode. But this does not very well with remote filesystems
-> as inode is not there yet. Client will send a creation request to
-> server and once server has created the file, client will instantiate
-> the inode.
-> 
-> So filesystems like nfs and ceph use security_dentry_init_security()
-> instead. This takes in a dentry and returns the security context of
-> file if any.
-> 
-> These patches call security_dentry_init_security() and send security
-> label of file along with creation request (FUSE_CREATE, FUSE_MKDIR,
-> FUSE_MKNOD, FUSE_SYMLINK). This will give server an opportunity
-> to create new file and also set security label (possibly atomically
-> where possible).
-> 
-> These patches are based on the work Chirantan Ekbote did some time
-> back but it never got upstreamed. So I have taken his patches,
-> and made modifications on top.
-> 
-> https://listman.redhat.com/archives/virtio-fs/2020-July/msg00014.html
-> https://listman.redhat.com/archives/virtio-fs/2020-July/msg00015.html
-> 
-> These patches will allow us to support SELinux on virtiofs.
-> 
-> Vivek Goyal (2):
->   fuse: Add a flag FUSE_SECURITY_CTX
->   fuse: Send security context of inode on file creation
-> 
->  fs/fuse/dir.c             | 115 ++++++++++++++++++++++++++++++++++++--
->  fs/fuse/fuse_i.h          |   3 +
->  fs/fuse/inode.c           |   4 +-
->  include/uapi/linux/fuse.h |  29 +++++++++-
->  4 files changed, 144 insertions(+), 7 deletions(-)
-> 
-> -- 
-> 2.31.1
-> 
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
