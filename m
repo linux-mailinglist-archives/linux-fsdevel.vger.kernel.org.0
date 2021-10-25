@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C8AEE43A3EF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 22:08:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1F9F43A3FB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Oct 2021 22:09:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238058AbhJYUKr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 16:10:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32886 "EHLO
+        id S236097AbhJYULu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 16:11:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240247AbhJYUKR (ORCPT
+        with ESMTP id S237085AbhJYULm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 16:10:17 -0400
+        Mon, 25 Oct 2021 16:11:42 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A13DDC03AFF7;
-        Mon, 25 Oct 2021 12:28:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A79F9C04A409;
+        Mon, 25 Oct 2021 12:30:06 -0700 (PDT)
 Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1002])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id F0FF01F430E8;
-        Mon, 25 Oct 2021 20:28:15 +0100 (BST)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 7A7E41F433B0;
+        Mon, 25 Oct 2021 20:28:59 +0100 (BST)
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     amir73il@gmail.com, jack@suse.com
 Cc:     djwong@kernel.org, tytso@mit.edu, david@fromorbit.com,
         dhowells@redhat.com, khazhy@google.com,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, kernel@collabora.com,
-        Jan Kara <jack@suse.cz>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: [PATCH v9 03/31] fsnotify: clarify contract for create event hooks
-Date:   Mon, 25 Oct 2021 16:27:18 -0300
-Message-Id: <20211025192746.66445-4-krisman@collabora.com>
+        linux-ext4@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel@collabora.com, Jan Kara <jack@suse.cz>
+Subject: [PATCH v9 09/31] fsnotify: Add wrapper around fsnotify_add_event
+Date:   Mon, 25 Oct 2021 16:27:24 -0300
+Message-Id: <20211025192746.66445-10-krisman@collabora.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20211025192746.66445-1-krisman@collabora.com>
 References: <20211025192746.66445-1-krisman@collabora.com>
@@ -41,106 +41,110 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Amir Goldstein <amir73il@gmail.com>
+fsnotify_add_event is growing in number of parameters, which in most
+case are just passed a NULL pointer.  So, split out a new
+fsnotify_insert_event function to clean things up for users who don't
+need an insert hook.
 
-Clarify argument names and contract for fsnotify_create() and
-fsnotify_mkdir() to reflect the anomaly of kernfs, which leaves dentries
-negavite after mkdir/create.
-
-Remove the WARN_ON(!inode) in audit code that were added by the Fixes
-commit under the wrong assumption that dentries cannot be negative after
-mkdir/create.
-
-Fixes: aa93bdc5500c ("fsnotify: use helpers to access data by data_type")
-Link: https://lore.kernel.org/linux-fsdevel/87mtp5yz0q.fsf@collabora.com/
+Suggested-by: Amir Goldstein <amir73il@gmail.com>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
-Reported-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 ---
- include/linux/fsnotify.h | 22 ++++++++++++++++------
- kernel/audit_fsnotify.c  |  3 +--
- kernel/audit_watch.c     |  3 +--
- 3 files changed, 18 insertions(+), 10 deletions(-)
+ fs/notify/fanotify/fanotify.c        |  4 ++--
+ fs/notify/inotify/inotify_fsnotify.c |  2 +-
+ fs/notify/notification.c             | 12 ++++++------
+ include/linux/fsnotify_backend.h     | 23 ++++++++++++++++-------
+ 4 files changed, 25 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index df0fa4687a18..1e5f7435a4b5 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -192,16 +192,22 @@ static inline void fsnotify_inoderemove(struct inode *inode)
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index 310246f8d3f1..f82e20228999 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -781,8 +781,8 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
+ 	}
  
- /*
-  * fsnotify_create - 'name' was linked in
-+ *
-+ * Caller must make sure that dentry->d_name is stable.
-+ * Note: some filesystems (e.g. kernfs) leave @dentry negative and instantiate
-+ * ->d_inode later
+ 	fsn_event = &event->fse;
+-	ret = fsnotify_add_event(group, fsn_event, fanotify_merge,
+-				 fanotify_insert_event);
++	ret = fsnotify_insert_event(group, fsn_event, fanotify_merge,
++				    fanotify_insert_event);
+ 	if (ret) {
+ 		/* Permission events shouldn't be merged */
+ 		BUG_ON(ret == 1 && mask & FANOTIFY_PERM_EVENTS);
+diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
+index d1a64daa0171..a96582cbfad1 100644
+--- a/fs/notify/inotify/inotify_fsnotify.c
++++ b/fs/notify/inotify/inotify_fsnotify.c
+@@ -116,7 +116,7 @@ int inotify_handle_inode_event(struct fsnotify_mark *inode_mark, u32 mask,
+ 	if (len)
+ 		strcpy(event->name, name->name);
+ 
+-	ret = fsnotify_add_event(group, fsn_event, inotify_merge, NULL);
++	ret = fsnotify_add_event(group, fsn_event, inotify_merge);
+ 	if (ret) {
+ 		/* Our event wasn't used in the end. Free it. */
+ 		fsnotify_destroy_event(group, fsn_event);
+diff --git a/fs/notify/notification.c b/fs/notify/notification.c
+index 32f45543b9c6..44bb10f50715 100644
+--- a/fs/notify/notification.c
++++ b/fs/notify/notification.c
+@@ -78,12 +78,12 @@ void fsnotify_destroy_event(struct fsnotify_group *group,
+  * 2 if the event was not queued - either the queue of events has overflown
+  *   or the group is shutting down.
   */
--static inline void fsnotify_create(struct inode *inode, struct dentry *dentry)
-+static inline void fsnotify_create(struct inode *dir, struct dentry *dentry)
+-int fsnotify_add_event(struct fsnotify_group *group,
+-		       struct fsnotify_event *event,
+-		       int (*merge)(struct fsnotify_group *,
+-				    struct fsnotify_event *),
+-		       void (*insert)(struct fsnotify_group *,
+-				      struct fsnotify_event *))
++int fsnotify_insert_event(struct fsnotify_group *group,
++			  struct fsnotify_event *event,
++			  int (*merge)(struct fsnotify_group *,
++				       struct fsnotify_event *),
++			  void (*insert)(struct fsnotify_group *,
++					 struct fsnotify_event *))
  {
--	audit_inode_child(inode, dentry, AUDIT_TYPE_CHILD_CREATE);
-+	audit_inode_child(dir, dentry, AUDIT_TYPE_CHILD_CREATE);
- 
--	fsnotify_dirent(inode, dentry, FS_CREATE);
-+	fsnotify_dirent(dir, dentry, FS_CREATE);
+ 	int ret = 0;
+ 	struct list_head *list = &group->notification_list;
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index 749bc85e1d1c..b323d0c4b967 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -498,16 +498,25 @@ extern int fsnotify_fasync(int fd, struct file *file, int on);
+ extern void fsnotify_destroy_event(struct fsnotify_group *group,
+ 				   struct fsnotify_event *event);
+ /* attach the event to the group notification queue */
+-extern int fsnotify_add_event(struct fsnotify_group *group,
+-			      struct fsnotify_event *event,
+-			      int (*merge)(struct fsnotify_group *,
+-					   struct fsnotify_event *),
+-			      void (*insert)(struct fsnotify_group *,
+-					     struct fsnotify_event *));
++extern int fsnotify_insert_event(struct fsnotify_group *group,
++				 struct fsnotify_event *event,
++				 int (*merge)(struct fsnotify_group *,
++					      struct fsnotify_event *),
++				 void (*insert)(struct fsnotify_group *,
++						struct fsnotify_event *));
++
++static inline int fsnotify_add_event(struct fsnotify_group *group,
++				     struct fsnotify_event *event,
++				     int (*merge)(struct fsnotify_group *,
++						  struct fsnotify_event *))
++{
++	return fsnotify_insert_event(group, event, merge, NULL);
++}
++
+ /* Queue overflow event to a notification group */
+ static inline void fsnotify_queue_overflow(struct fsnotify_group *group)
+ {
+-	fsnotify_add_event(group, group->overflow_event, NULL, NULL);
++	fsnotify_add_event(group, group->overflow_event, NULL);
  }
  
- /*
-  * fsnotify_link - new hardlink in 'inode' directory
-+ *
-+ * Caller must make sure that new_dentry->d_name is stable.
-  * Note: We have to pass also the linked inode ptr as some filesystems leave
-  *   new_dentry->d_inode NULL and instantiate inode pointer later
-  */
-@@ -230,12 +236,16 @@ static inline void fsnotify_unlink(struct inode *dir, struct dentry *dentry)
- 
- /*
-  * fsnotify_mkdir - directory 'name' was created
-+ *
-+ * Caller must make sure that dentry->d_name is stable.
-+ * Note: some filesystems (e.g. kernfs) leave @dentry negative and instantiate
-+ * ->d_inode later
-  */
--static inline void fsnotify_mkdir(struct inode *inode, struct dentry *dentry)
-+static inline void fsnotify_mkdir(struct inode *dir, struct dentry *dentry)
- {
--	audit_inode_child(inode, dentry, AUDIT_TYPE_CHILD_CREATE);
-+	audit_inode_child(dir, dentry, AUDIT_TYPE_CHILD_CREATE);
- 
--	fsnotify_dirent(inode, dentry, FS_CREATE | FS_ISDIR);
-+	fsnotify_dirent(dir, dentry, FS_CREATE | FS_ISDIR);
- }
- 
- /*
-diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
-index 60739d5e3373..02348b48447c 100644
---- a/kernel/audit_fsnotify.c
-+++ b/kernel/audit_fsnotify.c
-@@ -160,8 +160,7 @@ static int audit_mark_handle_event(struct fsnotify_mark *inode_mark, u32 mask,
- 
- 	audit_mark = container_of(inode_mark, struct audit_fsnotify_mark, mark);
- 
--	if (WARN_ON_ONCE(inode_mark->group != audit_fsnotify_group) ||
--	    WARN_ON_ONCE(!inode))
-+	if (WARN_ON_ONCE(inode_mark->group != audit_fsnotify_group))
- 		return 0;
- 
- 	if (mask & (FS_CREATE|FS_MOVED_TO|FS_DELETE|FS_MOVED_FROM)) {
-diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-index 2acf7ca49154..223eed7b39cd 100644
---- a/kernel/audit_watch.c
-+++ b/kernel/audit_watch.c
-@@ -472,8 +472,7 @@ static int audit_watch_handle_event(struct fsnotify_mark *inode_mark, u32 mask,
- 
- 	parent = container_of(inode_mark, struct audit_parent, mark);
- 
--	if (WARN_ON_ONCE(inode_mark->group != audit_watch_group) ||
--	    WARN_ON_ONCE(!inode))
-+	if (WARN_ON_ONCE(inode_mark->group != audit_watch_group))
- 		return 0;
- 
- 	if (mask & (FS_CREATE|FS_MOVED_TO) && inode)
+ static inline bool fsnotify_is_overflow_event(u32 mask)
 -- 
 2.33.0
 
