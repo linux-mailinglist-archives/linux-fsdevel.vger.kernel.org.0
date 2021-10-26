@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7866043AC8A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 09:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B47843AC90
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 09:03:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234494AbhJZHDt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 03:03:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37946 "EHLO
+        id S234095AbhJZHFW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 03:05:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231233AbhJZHDr (ORCPT
+        with ESMTP id S229585AbhJZHFU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 03:03:47 -0400
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92A81C061767;
-        Tue, 26 Oct 2021 00:01:24 -0700 (PDT)
-Received: by mail-il1-x12d.google.com with SMTP id l7so15864160iln.8;
-        Tue, 26 Oct 2021 00:01:24 -0700 (PDT)
+        Tue, 26 Oct 2021 03:05:20 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3285C061745;
+        Tue, 26 Oct 2021 00:02:57 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id z69so18840225iof.9;
+        Tue, 26 Oct 2021 00:02:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=D09RJ9bxsiKuYw4O4J+IukGYc3Ze7wdSQQ4u4VL/QIc=;
-        b=Q9lxXn4UFXUTxiRFpM/DL9Xkv8XeOk0vQwH49BRQBSjpmNK0Ck7dlTPb0i12Swdzls
-         +P6SN36jUpD2JhINSeNuaASWKhqCLfMvw2OwXL+I28DlX6RIzXW3utuGgCMSiH6nYoaU
-         675LuHB7GuK+B4+7OFMepz8sJEGg6fSxGhw1mzNhVeGNIDc4G5Jh7mFO1d8A8PZbrcE+
-         jrv2caLYXsLXey9EUJs071Ztc42tDqI4LyPajnZBtaHaGR3vGTgsswgtmYcjwuFnAyWn
-         mpo6Uc/geYVzRb+X1QB9JhVkz2RQTJGJFS+08+SROvGIyTMgVIPUd0n9OoOPrVZ7J54M
-         0uBw==
+        bh=vqrMvDSGmgeDoEvwt9n0yNpgDU+ylvvpv0ZSDn/6Py0=;
+        b=dO5Dwi6GjaSyp4RB7QN7zcbJ8CXsNT3OsEgKcwUWZyP3YLLrVVWnhx7VQk6zUcwUcN
+         t3Nljsykrvzgr21iAh/l5+45NgQly5lEXsd8ZkTN9IIfO7VcBfC34mdQxxJs49sHjFYQ
+         +kuXZD9hbBVhjgdj8jWbg54xAmXDry68oB7OmY/UgqX/VN4qQR+GcbKeniRezVhVA48y
+         7aXWPGOWrjep3OURqerek/oT6JC4BodmUBwbsNFo9yS6Yg4dDcE5PgH3mYnmPw9gS+ZE
+         +Hy8MnQKoyPR0DPQ2wiy+eP5vNMbx06VEQoRaQNu32KBEu3EknEsntGEQ/SHx0rdHyH2
+         xERA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=D09RJ9bxsiKuYw4O4J+IukGYc3Ze7wdSQQ4u4VL/QIc=;
-        b=0dRGLejZwaGcoAyBr/FaJCfDygfMvQGt9Cnvn0usDJATNVGwHsxWVw4snKEhQpS9NF
-         wAlrXQOsxrrl1Ev0tzcmfFb5ba9uwuqQQkIws0V1uRBft37kf4kQ+witguwCFQixozb/
-         5ma4pymv59BoDjrjmmDEFjus1PPdzwGWLfkqAiySPRlKfdI2fiTU0NSIi5vTCjWgU+7y
-         1gsw5+XNXqxzU+/n85D1qj4vOdrOcvJR2p0r1/NJRMpf4FtJ/e1MDQXOjnVkZ2qqVWFm
-         Qy6mKBElbGlR1lttxgT174Be47i6Y49YmrXCAkAo7jm1l/Q70otBxig6nVr5MEdcMQgV
-         BtPg==
-X-Gm-Message-State: AOAM531MBi6O/pkhSRMxf7hP3ti6ohCkbOWmLByIcywqbRKTMEGI4P/9
-        9CYKXOqDAdEovFu/z9HapMnm0W2ZOVhE488Yla8=
-X-Google-Smtp-Source: ABdhPJzx18dpnuCcn0hYph8KwM0v4FldEHmci+rz3YWq6Cc6r57VuitGisXKxMyxqlKA4MCNyE+4PqSSJZWk2F0LiJ8=
-X-Received: by 2002:a05:6e02:214f:: with SMTP id d15mr12521942ilv.24.1635231684012;
- Tue, 26 Oct 2021 00:01:24 -0700 (PDT)
+        bh=vqrMvDSGmgeDoEvwt9n0yNpgDU+ylvvpv0ZSDn/6Py0=;
+        b=KXJsh42P00O/YKp2S/Rypc8dunBvHuhcRL9aEGlLbOfGbPfMspAVP+XJOqOVHPQamr
+         DspNCNdc8a3z8FXiThC/oenDBbTAyl7DgXdXVIbNv1XIb+z2xaZqkz5qHsdWGG/bUzyG
+         8WQ0HUPImqUzZ2AsRxCgqIkR8a2s6s4BhUOud0PKAue54Rd/bd2wOEWpwIltVV3T59qi
+         lXlUAoAQuENwc8pXfyyvROIn2AH9NeXdunQB7OQZSpQGsZZEz1pVg2aMDQHvzExv69ad
+         cegsF9QESj4mST8vuVjh8k+YtZYx0IgMqk5KUkgYMSUgGKIvw9kSU2E/r88/oaQpizJ0
+         thKw==
+X-Gm-Message-State: AOAM533tayBBxzle8PTn/waWwIF326B20ng0I41OTJuSJFHjTWPN8q53
+        JCJWJ2yBP8b3fCoR+j8agcQdeieaLNa1AgrAg9M=
+X-Google-Smtp-Source: ABdhPJw51TtHWk1hUOE+CWGkUYNAAg8CIWqMVhO9sjnQTL5RJ5AXo8CbZYVx8KjezTpZxwv7BlXYmPEOSRt3tYFnADI=
+X-Received: by 2002:a5d:8792:: with SMTP id f18mr13692155ion.52.1635231776948;
+ Tue, 26 Oct 2021 00:02:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211025192746.66445-1-krisman@collabora.com> <20211025192746.66445-12-krisman@collabora.com>
-In-Reply-To: <20211025192746.66445-12-krisman@collabora.com>
+References: <20211025192746.66445-1-krisman@collabora.com> <20211025192746.66445-24-krisman@collabora.com>
+In-Reply-To: <20211025192746.66445-24-krisman@collabora.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 26 Oct 2021 10:01:12 +0300
-Message-ID: <CAOQ4uxg8Mmi-UH3q3xrxVbrK-GUsF5mTgWG15sfRW3EOJUj3rg@mail.gmail.com>
-Subject: Re: [PATCH v9 11/31] fsnotify: Protect fsnotify_handle_inode_event
- from no-inode events
+Date:   Tue, 26 Oct 2021 10:02:46 +0300
+Message-ID: <CAOQ4uxi9HfMZFLb4joE42AZeVAZPDPPJRREaUdrKwhoQsuRHrQ@mail.gmail.com>
+Subject: Re: [PATCH v9 23/31] fanotify: Add helpers to decide whether to
+ report FID/DFID
 To:     Gabriel Krisman Bertazi <krisman@collabora.com>
 Cc:     Jan Kara <jack@suse.com>, "Darrick J. Wong" <djwong@kernel.org>,
         Theodore Tso <tytso@mit.edu>,
@@ -60,78 +60,102 @@ Cc:     Jan Kara <jack@suse.com>, "Darrick J. Wong" <djwong@kernel.org>,
         Khazhismel Kumykov <khazhy@google.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com
+        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com,
+        Jan Kara <jack@suse.cz>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 10:29 PM Gabriel Krisman Bertazi
+On Mon, Oct 25, 2021 at 10:30 PM Gabriel Krisman Bertazi
 <krisman@collabora.com> wrote:
 >
-> FAN_FS_ERROR allows events without inodes - i.e. for file system-wide
-> errors.  Even though fsnotify_handle_inode_event is not currently used
-> by fanotify, this patch protects other backends from cases where neither
-> inode or dir are provided.  Also document the constraints of the
-> interface (inode and dir cannot be both NULL).
+> Now that there is an event that reports FID records even for a zeroed
+> file handle, wrap the logic that deides whether to issue the records
+> into helper functions.  This shouldn't have any impact on the code, but
+> simplifies further patches.
 >
-> Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
 > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 >
-
 Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
 > ---
 > Changes since v8:
->   - Convert verifications to WARN_ON
->   - Require either inode or dir
->   - Protect nfsd backend from !inode.
+>   - Simplify constructs (Amir)
 > ---
->  fs/nfsd/filecache.c              | 3 +++
->  fs/notify/fsnotify.c             | 3 +++
->  include/linux/fsnotify_backend.h | 1 +
->  3 files changed, 7 insertions(+)
+>  fs/notify/fanotify/fanotify.h      | 10 ++++++++++
+>  fs/notify/fanotify/fanotify_user.c | 13 +++++++------
+>  2 files changed, 17 insertions(+), 6 deletions(-)
 >
-> diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
-> index be3c1aad50ea..fdf89fcf1a0c 100644
-> --- a/fs/nfsd/filecache.c
-> +++ b/fs/nfsd/filecache.c
-> @@ -602,6 +602,9 @@ nfsd_file_fsnotify_handle_event(struct fsnotify_mark *mark, u32 mask,
->                                 struct inode *inode, struct inode *dir,
->                                 const struct qstr *name, u32 cookie)
->  {
-> +       if (WARN_ON_ONCE(!inode))
-> +               return 0;
+> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+> index 3510d06654ed..80af269eebb8 100644
+> --- a/fs/notify/fanotify/fanotify.h
+> +++ b/fs/notify/fanotify/fanotify.h
+> @@ -264,6 +264,16 @@ static inline int fanotify_event_dir_fh_len(struct fanotify_event *event)
+>         return info ? fanotify_info_dir_fh_len(info) : 0;
+>  }
+>
+> +static inline bool fanotify_event_has_object_fh(struct fanotify_event *event)
+> +{
+> +       return fanotify_event_object_fh_len(event) > 0;
+> +}
 > +
->         trace_nfsd_file_fsnotify_handle_event(inode, mask);
->
->         /* Should be no marks on non-regular files */
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index fde3a1115a17..4034ca566f95 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -252,6 +252,9 @@ static int fsnotify_handle_inode_event(struct fsnotify_group *group,
->         if (WARN_ON_ONCE(!ops->handle_inode_event))
->                 return 0;
->
-> +       if (WARN_ON_ONCE(!inode && !dir))
-> +               return 0;
+> +static inline bool fanotify_event_has_dir_fh(struct fanotify_event *event)
+> +{
+> +       return fanotify_event_dir_fh_len(event) > 0;
+> +}
 > +
->         if ((inode_mark->mask & FS_EXCL_UNLINK) &&
->             path && d_unlinked(path->dentry))
->                 return 0;
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-> index 035438fe4a43..b71dc788018e 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -136,6 +136,7 @@ struct mem_cgroup;
->   * @dir:       optional directory associated with event -
->   *             if @file_name is not NULL, this is the directory that
->   *             @file_name is relative to.
-> + *             Either @inode or @dir must be non-NULL.
->   * @file_name: optional file name associated with event
->   * @cookie:    inotify rename cookie
->   *
+>  struct fanotify_path_event {
+>         struct fanotify_event fae;
+>         struct path path;
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 2f4182b754b2..a9b5c36ee49e 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -140,10 +140,9 @@ static size_t fanotify_event_len(unsigned int info_mode,
+>                 return event_len;
+>
+>         info = fanotify_event_info(event);
+> -       dir_fh_len = fanotify_event_dir_fh_len(event);
+> -       fh_len = fanotify_event_object_fh_len(event);
+>
+> -       if (dir_fh_len) {
+> +       if (fanotify_event_has_dir_fh(event)) {
+> +               dir_fh_len = fanotify_event_dir_fh_len(event);
+>                 event_len += fanotify_fid_info_len(dir_fh_len, info->name_len);
+>         } else if ((info_mode & FAN_REPORT_NAME) &&
+>                    (event->mask & FAN_ONDIR)) {
+> @@ -157,8 +156,10 @@ static size_t fanotify_event_len(unsigned int info_mode,
+>         if (info_mode & FAN_REPORT_PIDFD)
+>                 event_len += FANOTIFY_PIDFD_INFO_HDR_LEN;
+>
+> -       if (fh_len)
+> +       if (fanotify_event_has_object_fh(event)) {
+> +               fh_len = fanotify_event_object_fh_len(event);
+>                 event_len += fanotify_fid_info_len(fh_len, dot_len);
+> +       }
+>
+>         return event_len;
+>  }
+> @@ -451,7 +452,7 @@ static int copy_info_records_to_user(struct fanotify_event *event,
+>         /*
+>          * Event info records order is as follows: dir fid + name, child fid.
+>          */
+> -       if (fanotify_event_dir_fh_len(event)) {
+> +       if (fanotify_event_has_dir_fh(event)) {
+>                 info_type = info->name_len ? FAN_EVENT_INFO_TYPE_DFID_NAME :
+>                                              FAN_EVENT_INFO_TYPE_DFID;
+>                 ret = copy_fid_info_to_user(fanotify_event_fsid(event),
+> @@ -467,7 +468,7 @@ static int copy_info_records_to_user(struct fanotify_event *event,
+>                 total_bytes += ret;
+>         }
+>
+> -       if (fanotify_event_object_fh_len(event)) {
+> +       if (fanotify_event_has_object_fh(event)) {
+>                 const char *dot = NULL;
+>                 int dot_len = 0;
+>
 > --
 > 2.33.0
 >
