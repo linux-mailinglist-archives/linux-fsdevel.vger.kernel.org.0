@@ -2,81 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9565143B6FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 18:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01AB643B71A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 18:25:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237510AbhJZQVc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 12:21:32 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:40791 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237456AbhJZQUm (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 12:20:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635265098;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=X8EbW1rPnHxSX+56xXyqE1LJCwOGvkQavcL9P2gnKnc=;
-        b=U3lmegHTSMny720yJwK3Xkt4FjsTgvg4o+tleDceoJovSc6wFo7fX3UQqD1zsijzT8kbtc
-        hoIODbcnwRmucrNjiir+wgMqK+LO+CDVipj0lLPLVoJkZtAhGHQrkFtUDZmbwPd0pSbpjO
-        3mmmH6oHLDKXPJYDbQoZDxUOqmqhXkk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-155-wtd6Btx7P2yewIDxBqm2Qg-1; Tue, 26 Oct 2021 12:18:15 -0400
-X-MC-Unique: wtd6Btx7P2yewIDxBqm2Qg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2892E80A5C0;
-        Tue, 26 Oct 2021 16:18:14 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.17.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0A5AF1981F;
-        Tue, 26 Oct 2021 16:18:14 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 999502204A5; Tue, 26 Oct 2021 12:18:13 -0400 (EDT)
-Date:   Tue, 26 Oct 2021 12:18:13 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>
-Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
-Message-ID: <YXgqRb21hvYyI69D@redhat.com>
-References: <20211025204634.2517-1-iangelak@redhat.com>
- <CAOQ4uxieK3KpY7pf0YTKcrNHW7rnTATTDZdK9L4Mqy32cDwV8w@mail.gmail.com>
+        id S236418AbhJZQ1c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 12:27:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43460 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237382AbhJZQ1Q (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Oct 2021 12:27:16 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1B1FA603E9;
+        Tue, 26 Oct 2021 16:24:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1635265491;
+        bh=4grgM8bgYCxXbzH/TXpocp14Y8X0eHTROfsAj7+b4N0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=WE5w0qRfqMz7e354YtJvjXI9U6HzP2XulVtvN8g+xZ6IO5KEG4gdBbDP8hw6K5d7j
+         gqPzEa7IR49Ks53UnME1S8R8FRYrNT/9JTySRGvq6uw9iCd5XcrGtOUfJj7BGD2Rnt
+         dxxBy3AssDa7oCO5HoOsmZqcIXUCj6Mnje1x/5ryoZbSNK5bYauR/GQOyrMkFRyBOL
+         0lMsrlTYQ2i9DRD5RH1iSVKiofjwWBaGT8R+nT58okpOIA/yXyAZO/eR2TDFB9Ztjp
+         4nCh/ZK76gf7stqZYNcPxm9njOxwNzQmbWUkGSv8tQ1L2PA9jnk1kFioQ4Zjtl9Vs9
+         Ai5ZbC8lljNsQ==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     viro@zeniv.linux.org.uk
+Cc:     bfields@fieldses.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: remove leftover comments from mandatory locking removal
+Date:   Tue, 26 Oct 2021 12:24:49 -0400
+Message-Id: <20211026162449.60283-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxieK3KpY7pf0YTKcrNHW7rnTATTDZdK9L4Mqy32cDwV8w@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 26, 2021 at 06:23:50PM +0300, Amir Goldstein wrote:
+Stragglers from commit f7e33bdbd6d1 ("fs: remove mandatory file locking
+support").
 
-[..]
-> > 3) The lifetime of the local watch in the guest kernel is very
-> > important. Specifically, there is a possibility that the guest does not
-> > receive remote events on time, if it removes its local watch on the
-> > target or deletes the inode (and thus the guest kernel removes the watch).
-> > In these cases the guest kernel removes the local watch before the
-> > remote events arrive from the host (virtiofsd) and as such the guest
-> > kernel drops all the remote events for the target inode (since the
-> > corresponding local watch does not exist anymore).
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/namei.c      | 4 +---
+ fs/read_write.c | 4 ----
+ 2 files changed, 1 insertion(+), 7 deletions(-)
 
-So this is one of the issues which has been haunting us in virtiofs. If
-a file is removed, for local events, event is generated first and
-then watch is removed. But in case of remote filesystems, it is racy.
-It is possible that by the time event arrives, watch is already gone
-and application never sees the delete event.
+Al, I'll plan to merge this along with my locking changes for v5.16. Let
+me know if you'd prefer it to go in via your vfs tree.
 
-Not sure how to address this issue.
+Thanks,
+Jeff
 
-Vivek
+diff --git a/fs/namei.c b/fs/namei.c
+index 95a881e0552b..b05e6840df74 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3074,9 +3074,7 @@ static int handle_truncate(struct user_namespace *mnt_userns, struct file *filp)
+ 	int error = get_write_access(inode);
+ 	if (error)
+ 		return error;
+-	/*
+-	 * Refuse to truncate files with mandatory locks held on them.
+-	 */
++
+ 	error = security_path_truncate(path);
+ 	if (!error) {
+ 		error = do_truncate(mnt_userns, path->dentry, 0,
+diff --git a/fs/read_write.c b/fs/read_write.c
+index af057c57bdc6..0074afa7ecb3 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -368,10 +368,6 @@ int rw_verify_area(int read_write, struct file *file, const loff_t *ppos, size_t
+ 	if (unlikely((ssize_t) count < 0))
+ 		return -EINVAL;
+ 
+-	/*
+-	 * ranged mandatory locking does not apply to streams - it makes sense
+-	 * only for files where position has a meaning.
+-	 */
+ 	if (ppos) {
+ 		loff_t pos = *ppos;
+ 
+-- 
+2.31.1
 
