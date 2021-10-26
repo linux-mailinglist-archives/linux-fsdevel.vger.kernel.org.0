@@ -2,195 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AA7843B22F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 14:19:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 526A043B244
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 14:20:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235875AbhJZMVb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 08:21:31 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:33352 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235872AbhJZMV1 (ORCPT
+        id S235928AbhJZMW5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 08:22:57 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:53308 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234335AbhJZMWx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 08:21:27 -0400
+        Tue, 26 Oct 2021 08:22:53 -0400
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id C20C8217BA;
-        Tue, 26 Oct 2021 12:19:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1635250742; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        by smtp-out2.suse.de (Postfix) with ESMTP id 400B71FD42;
+        Tue, 26 Oct 2021 12:20:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1635250827; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=jcu7Il0G4VW3078wQgXRGqCRURliLfY2H//bqpxAVqs=;
-        b=C8AIp4NuGZPP6m4fAjnAE/tjaRBdiI+gmdx6zTHL0XgMJD/2pvnJJNHdKN4sX5q0LXrq57
-        Lyo9Jn1S1QhqwXIZlpdFACRbFV+cBLavxP8dowCcyW3siVZ+spfGeQpvKBs7Nz5JuHRwRv
-        Cv5Rwslfm5nbP5M0/26rpFx/WfeGb60=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1635250742;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=jcu7Il0G4VW3078wQgXRGqCRURliLfY2H//bqpxAVqs=;
-        b=70ZhZSsaqqlQN/NNYLGBNXgab6zTaK3Fkvn1ZqIYjspjB1HBelDHlZ1uFR7IwY3aX64c84
-        N9HS5hsZD7K/9aAg==
-Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id A70A7A3B87;
-        Tue, 26 Oct 2021 12:19:02 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 841EF1F2C66; Tue, 26 Oct 2021 14:19:02 +0200 (CEST)
-Date:   Tue, 26 Oct 2021 14:19:02 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     amir73il@gmail.com, jack@suse.com, djwong@kernel.org,
-        tytso@mit.edu, david@fromorbit.com, dhowells@redhat.com,
-        khazhy@google.com, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-ext4@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCH v9 31/31] docs: Document the FAN_FS_ERROR event
-Message-ID: <20211026121902.GG21228@quack2.suse.cz>
-References: <20211025192746.66445-1-krisman@collabora.com>
- <20211025192746.66445-32-krisman@collabora.com>
+        bh=nRDIrKl4b/w/2mxvlJtABbHIbMj6KnRgbfHbqHDEfHk=;
+        b=I+7KbVf2VmGpWy+RevMBI+VBV2XOlTmM89mSKyESsX5rMwMiE+7NNdX6+OkhiDJhxcUMhn
+        TBfBhvX3KErpqi7dpfBzd60p7BSg7LxQJau8KugBBw4iaHKZ+y4gSIxkxrl3HoiIZrpba/
+        JdTMWEeXOWrgyUydozWCkRGIht6Nvs8=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id D497CA3B8E;
+        Tue, 26 Oct 2021 12:20:26 +0000 (UTC)
+Date:   Tue, 26 Oct 2021 14:20:23 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     NeilBrown <neilb@suse.de>
+Cc:     linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH 3/4] mm/vmalloc: be more explicit about supported gfp
+ flags.
+Message-ID: <YXfyhzutoR1q85wt@dhcp22.suse.cz>
+References: <20211025150223.13621-1-mhocko@kernel.org>
+ <20211025150223.13621-4-mhocko@kernel.org>
+ <163520436674.16092.18372437960890952300@noble.neil.brown.name>
+ <YXep1ctN1wPP+1a8@dhcp22.suse.cz>
+ <163524499768.8576.4634415079916744478@noble.neil.brown.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211025192746.66445-32-krisman@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <163524499768.8576.4634415079916744478@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 25-10-21 16:27:46, Gabriel Krisman Bertazi wrote:
-> Document the FAN_FS_ERROR event for user administrators and user space
-> developers.
+On Tue 26-10-21 21:43:17, Neil Brown wrote:
+> On Tue, 26 Oct 2021, Michal Hocko wrote:
+> > On Tue 26-10-21 10:26:06, Neil Brown wrote:
+> > > On Tue, 26 Oct 2021, Michal Hocko wrote:
+> > > > From: Michal Hocko <mhocko@suse.com>
+> > > > 
+> > > > The core of the vmalloc allocator __vmalloc_area_node doesn't say
+> > > > anything about gfp mask argument. Not all gfp flags are supported
+> > > > though. Be more explicit about constrains.
+> > > > 
+> > > > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > > > ---
+> > > >  mm/vmalloc.c | 12 ++++++++++--
+> > > >  1 file changed, 10 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > index 602649919a9d..2199d821c981 100644
+> > > > --- a/mm/vmalloc.c
+> > > > +++ b/mm/vmalloc.c
+> > > > @@ -2980,8 +2980,16 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+> > > >   * @caller:		  caller's return address
+> > > >   *
+> > > >   * Allocate enough pages to cover @size from the page level
+> > > > - * allocator with @gfp_mask flags.  Map them into contiguous
+> > > > - * kernel virtual space, using a pagetable protection of @prot.
+> > > > + * allocator with @gfp_mask flags. Please note that the full set of gfp
+> > > > + * flags are not supported. GFP_KERNEL would be a preferred allocation mode
+> > > > + * but GFP_NOFS and GFP_NOIO are supported as well. Zone modifiers are not
+> > > 
+> > > In what sense is GFP_KERNEL "preferred"??
+> > > The choice of GFP_NOFS, when necessary, isn't based on preference but
+> > > on need.
+> > > 
+> > > I understand that you would prefer no one ever used GFP_NOFs ever - just
+> > > use the scope API.  I even agree.  But this is not the place to make
+> > > that case. 
+> > 
+> > Any suggestion for a better wording?
 > 
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+>  "GFP_KERNEL, GFP_NOFS, and GFP_NOIO are all supported".
 
-Looks good. Feel free to add:
+OK. Check the incremental update at the end of the email
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> > > > + * supported. From the reclaim modifiers__GFP_DIRECT_RECLAIM is required (aka
+> > > > + * GFP_NOWAIT is not supported) and only __GFP_NOFAIL is supported (aka
+> > > 
+> > > I don't think "aka" is the right thing to use here.  It is short for
+> > > "also known as" and there is nothing that is being known as something
+> > > else.
+> > > It would be appropriate to say (i.e. GFP_NOWAIT is not supported).
+> > > "i.e." is short for the Latin "id est" which means "that is" and
+> > > normally introduces an alternate description (whereas aka introduces an
+> > > alternate name).
+> > 
+> > OK
+> >  
+> > > > + * __GFP_NORETRY and __GFP_RETRY_MAYFAIL are not supported).
+> > > 
+> > > Why do you think __GFP_NORETRY and __GFP_RETRY_MAYFAIL are not supported.
+> > 
+> > Because they cannot be passed to the page table allocator. In both cases
+> > the allocation would fail when system is short on memory. GFP_KERNEL
+> > used for ptes implicitly doesn't behave that way.
 > 
-> ---
-> Changes Since v8:
->   - Replace fs-error specific errno bits with generic errno. (Jan)
->   - Explain event order guarantees and point to example parser (Jan)
-> Changes Since v7:
->   - Update semantics
-> Changes Since v6:
->   - English fixes (jan)
->   - Proper document error field (jan)
-> Changes Since v4:
->   - Update documentation about reporting non-file error.
-> Changes Since v3:
->   - Move FAN_FS_ERROR notification into a subsection of the file.
-> Changes Since v2:
->   - NTR
-> Changes since v1:
->   - Drop references to location record
->   - Explain that the inode field is optional
->   - Explain we are reporting only the first error
-> ---
->  .../admin-guide/filesystem-monitoring.rst     | 74 +++++++++++++++++++
->  Documentation/admin-guide/index.rst           |  1 +
->  2 files changed, 75 insertions(+)
->  create mode 100644 Documentation/admin-guide/filesystem-monitoring.rst
+> Could you please point me to the particular allocation which uses
+> GFP_KERNEL rather than the flags passed to __vmalloc_node()?  I cannot
+> find it.
 > 
-> diff --git a/Documentation/admin-guide/filesystem-monitoring.rst b/Documentation/admin-guide/filesystem-monitoring.rst
-> new file mode 100644
-> index 000000000000..5a3c84e60095
-> --- /dev/null
-> +++ b/Documentation/admin-guide/filesystem-monitoring.rst
-> @@ -0,0 +1,74 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +====================================
-> +File system Monitoring with fanotify
-> +====================================
-> +
-> +File system Error Reporting
-> +===========================
-> +
-> +Fanotify supports the FAN_FS_ERROR event type for file system-wide error
-> +reporting.  It is meant to be used by file system health monitoring
-> +daemons, which listen for these events and take actions (notify
-> +sysadmin, start recovery) when a file system problem is detected.
-> +
-> +By design, a FAN_FS_ERROR notification exposes sufficient information
-> +for a monitoring tool to know a problem in the file system has happened.
-> +It doesn't necessarily provide a user space application with semantics
-> +to verify an IO operation was successfully executed.  That is out of
-> +scope for this feature.  Instead, it is only meant as a framework for
-> +early file system problem detection and reporting recovery tools.
-> +
-> +When a file system operation fails, it is common for dozens of kernel
-> +errors to cascade after the initial failure, hiding the original failure
-> +log, which is usually the most useful debug data to troubleshoot the
-> +problem.  For this reason, FAN_FS_ERROR tries to report only the first
-> +error that occurred for a file system since the last notification, and
-> +it simply counts additional errors.  This ensures that the most
-> +important pieces of information are never lost.
-> +
-> +FAN_FS_ERROR requires the fanotify group to be setup with the
-> +FAN_REPORT_FID flag.
-> +
-> +At the time of this writing, the only file system that emits FAN_FS_ERROR
-> +notifications is Ext4.
-> +
-> +A FAN_FS_ERROR Notification has the following format::
-> +
-> +  [ Notification Metadata (Mandatory) ]
-> +  [ Generic Error Record  (Mandatory) ]
-> +  [ FID record            (Mandatory) ]
-> +
-> +The order of records is not guaranteed, and new records might be added
-> +in the future.  Therefore, applications must not rely on the order and
-> +must be prepared to skip over unknown records. Please refer to
-> +``samples/fanotify/fs-monitor.c`` for an example parser.
-> +
-> +Generic error record
-> +--------------------
-> +
-> +The generic error record provides enough information for a file system
-> +agnostic tool to learn about a problem in the file system, without
-> +providing any additional details about the problem.  This record is
-> +identified by ``struct fanotify_event_info_header.info_type`` being set
-> +to FAN_EVENT_INFO_TYPE_ERROR.
-> +
-> +  struct fanotify_event_info_error {
-> +	struct fanotify_event_info_header hdr;
-> +	__s32 error;
-> +	__u32 error_count;
-> +  };
-> +
-> +The `error` field identifies the type of error using errno values.
-> +`error_count` tracks the number of errors that occurred and were
-> +suppressed to preserve the original error information, since the last
-> +notification.
-> +
-> +FID record
-> +----------
-> +
-> +The FID record can be used to uniquely identify the inode that triggered
-> +the error through the combination of fsid and file handle.  A file system
-> +specific application can use that information to attempt a recovery
-> +procedure.  Errors that are not related to an inode are reported with an
-> +empty file handle of type FILEID_INVALID.
-> diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-> index dc00afcabb95..1bedab498104 100644
-> --- a/Documentation/admin-guide/index.rst
-> +++ b/Documentation/admin-guide/index.rst
-> @@ -82,6 +82,7 @@ configure specific aspects of kernel behavior to your liking.
->     edid
->     efi-stub
->     ext4
-> +   filesystem-monitoring
->     nfs/index
->     gpio/index
->     highuid
-> -- 
-> 2.33.0
-> 
+
+It is dug 
+__vmalloc_area_node
+  vmap_pages_range
+    vmap_pages_range_noflush
+      vmap_range_noflush || vmap_small_pages_range_noflush
+        vmap_p4d_range
+	  p4d_alloc_track
+	    __p4d_alloc
+	      p4d_alloc_one
+	        get_zeroed_page(GFP_KERNEL_ACCOUNT)
+
+the same applies for all other levels of page tables.
+
+This is what I have currently
+commit ae7fc6c2ef6949a76d697fc61bb350197dfca330
+Author: Michal Hocko <mhocko@suse.com>
+Date:   Tue Oct 26 14:16:32 2021 +0200
+
+    fold me "mm/vmalloc: be more explicit about supported gfp flags."
+
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 2ddaa9410aee..82a07b04317e 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -2981,12 +2981,14 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+  *
+  * Allocate enough pages to cover @size from the page level
+  * allocator with @gfp_mask flags. Please note that the full set of gfp
+- * flags are not supported. GFP_KERNEL would be a preferred allocation mode
+- * but GFP_NOFS and GFP_NOIO are supported as well. Zone modifiers are not
+- * supported. From the reclaim modifiers__GFP_DIRECT_RECLAIM is required (aka
+- * GFP_NOWAIT is not supported) and only __GFP_NOFAIL is supported (aka
+- * __GFP_NORETRY and __GFP_RETRY_MAYFAIL are not supported).
+- * __GFP_NOWARN can be used to suppress error messages about failures.
++ * flags are not supported. GFP_KERNEL, GFP_NOFS, and GFP_NOIO are all
++ * supported.
++ * Zone modifiers are not supported. From the reclaim modifiers
++ * __GFP_DIRECT_RECLAIM is required (aka GFP_NOWAIT is not supported)
++ * and only __GFP_NOFAIL is supported (i.e. __GFP_NORETRY and 
++ * __GFP_RETRY_MAYFAIL are not supported).
++ *
++ * __GFP_NOWARN can be used to suppress failures messages.
+  * 
+  * Map them into contiguous kernel virtual space, using a pagetable
+  * protection of @prot.
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Michal Hocko
+SUSE Labs
