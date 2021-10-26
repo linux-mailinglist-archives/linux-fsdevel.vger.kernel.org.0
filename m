@@ -2,149 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 959C043AA07
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 03:57:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C54943AA2E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 04:18:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232324AbhJZB7x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 21:59:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56038 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbhJZB7x (ORCPT
+        id S233654AbhJZCUk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Oct 2021 22:20:40 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:14864 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230216AbhJZCUj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 21:59:53 -0400
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23DFCC061745;
-        Mon, 25 Oct 2021 18:57:30 -0700 (PDT)
-Received: by mail-il1-x135.google.com with SMTP id w10so15180539ilc.13;
-        Mon, 25 Oct 2021 18:57:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h1mFkqw1bYSFeCSrd/PEtQdSLUT1fyZYNbF/5Y+ggX8=;
-        b=MwNfeqG2aIp1bt36kgpdSUAwOlAC6WEpYKTinXDmuGHvBvwPfR3h7B0nbR9mI3G9XV
-         4tS7PwJgWjgJ6/s3PYwCC/gbeM67Ofj22f56oaF5LRWRRZi50oq781H0CzOaA3QhvD3D
-         DpF3nJ+LB3ABE51rgVQSBySmLhezzoci6ofwgJDEgXZRm1s2uwdWyB646pDAPLjDOsWo
-         5UlQde3obRCPFYkzcrw1qC3BJa1C/eloF6aGI6lTUX+/2jRTZktBqe8GbT33W1OkVMip
-         bp+V/0ju65JpOXFygFAjrHZPlB8qK2p/d3aduS4GRYQQytcd39NpS0FzO+hP6Chi6Hpe
-         dawA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h1mFkqw1bYSFeCSrd/PEtQdSLUT1fyZYNbF/5Y+ggX8=;
-        b=5FA6lSsVwa1KpOp4YF6F0W5sMj8riAX7GO9JS8JqQ48JVSrBz/ajjYqxmnDicd5Uk0
-         NuUAN2j0wqCJc5BFG1rdpuBX8g0IECXq9dBfvC10VULLNK2p54VUwLousHwGolB7seRq
-         GiDQtKRGkZ8wAwYpOYNl7UYRpKTR+uwMFgtRE+LK7HIDQ4BtooErdBR/NUaf6X5v8YwJ
-         G5OqnsfIJC208Vzymd+7Ub7K7cy18nBL/+kah5rwRYxj8inYWFbSqQdLoWC6HRvkfCWC
-         MrHNsXL8tvXwS1TQTkAE4MucNEcTEGkflCZ4F3uayXUDy/yxUiLwd6oCwPmlT6pszYig
-         GW9Q==
-X-Gm-Message-State: AOAM532Unm4wiBJfufE2RhER7IIbKeH0+su+ems/VA5KwuX8z4+jhNCg
-        mNp2b9TiFQdRj+kD9zH8KHJNYtCRFztpPGymYCg=
-X-Google-Smtp-Source: ABdhPJwHUG7WEz08Z8XERQPU7oIm9JZmJrAVZWUlfDNKkrt5XkUcnFIX776HdHhY+ONTUXiXDv4QL+xeFeg1LnRgGFk=
-X-Received: by 2002:a05:6e02:20e7:: with SMTP id q7mr13181212ilv.254.1635213449350;
- Mon, 25 Oct 2021 18:57:29 -0700 (PDT)
+        Mon, 25 Oct 2021 22:20:39 -0400
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.56])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Hdb8M2cNzz90R4;
+        Tue, 26 Oct 2021 10:18:11 +0800 (CST)
+Received: from kwepemm600015.china.huawei.com (7.193.23.52) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.15; Tue, 26 Oct 2021 10:18:13 +0800
+Received: from [10.174.176.52] (10.174.176.52) by
+ kwepemm600015.china.huawei.com (7.193.23.52) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.15; Tue, 26 Oct 2021 10:18:12 +0800
+Subject: Re: [PATCH 4.19,v2] VFS: Fix fuseblk memory leak caused by mount
+ concurrency
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     <viro@zeniv.linux.org.uk>, <stable@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dhowells@redhat.com>, <yukuai3@huawei.com>, <yi.zhang@huawei.com>,
+        <zhangxiaoxu5@huawei.com>
+References: <20211013095101.641329-1-chenxiaosong2@huawei.com>
+ <YWawy0J9JfStEku0@kroah.com>
+ <429d87b0-3a53-052a-a304-0afa8d51900d@huawei.com>
+ <860c36c4-3668-1388-66d1-a07d463c2ad9@huawei.com>
+ <YXAL7K88XGWXckWe@kroah.com>
+From:   "chenxiaosong (A)" <chenxiaosong2@huawei.com>
+Message-ID: <209361bb-9e15-ebaf-2ff8-5846d5bfbbc2@huawei.com>
+Date:   Tue, 26 Oct 2021 10:18:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.0
 MIME-Version: 1.0
-References: <20211025083315.4752-1-laoar.shao@gmail.com> <20211025083315.4752-8-laoar.shao@gmail.com>
- <202110251421.0CD56F8@keescook>
-In-Reply-To: <202110251421.0CD56F8@keescook>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Tue, 26 Oct 2021 09:56:53 +0800
-Message-ID: <CALOAHbAqu3zrFiu-36dnPw-Jchz_Be9W_AbSFXFYsH0kNacGeg@mail.gmail.com>
-Subject: Re: [PATCH v6 07/12] samples/bpf/offwaketime_kern: make sched_switch
- tracepoint args adopt to comm size change
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Qiang Zhang <qiang.zhang@windriver.com>,
-        robdclark <robdclark@chromium.org>,
-        christian <christian@brauner.io>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        john fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        dennis.dalessandro@cornelisnetworks.com,
-        mike.marciniszyn@cornelisnetworks.com, dledford@redhat.com,
-        jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        kbuild test robot <lkp@intel.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <YXAL7K88XGWXckWe@kroah.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.176.52]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm600015.china.huawei.com (7.193.23.52)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 26, 2021 at 5:21 AM Kees Cook <keescook@chromium.org> wrote:
->
-> On Mon, Oct 25, 2021 at 08:33:10AM +0000, Yafang Shao wrote:
-> > The sched:sched_switch tracepoint is derived from kernel, we should make
-> > its args compitable with the kernel.
-> >
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-> > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Petr Mladek <pmladek@suse.com>
-> > ---
-> >  samples/bpf/offwaketime_kern.c | 4 ++--
->
-> Seems this should be merged with the prior bpf samples patch?
->
-
-Sure
-
->
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/samples/bpf/offwaketime_kern.c b/samples/bpf/offwaketime_kern.c
-> > index 4866afd054da..eb4d94742e6b 100644
-> > --- a/samples/bpf/offwaketime_kern.c
-> > +++ b/samples/bpf/offwaketime_kern.c
-> > @@ -113,11 +113,11 @@ static inline int update_counts(void *ctx, u32 pid, u64 delta)
-> >  /* taken from /sys/kernel/debug/tracing/events/sched/sched_switch/format */
-> >  struct sched_switch_args {
-> >       unsigned long long pad;
-> > -     char prev_comm[16];
-> > +     char prev_comm[TASK_COMM_LEN];
-> >       int prev_pid;
-> >       int prev_prio;
-> >       long long prev_state;
-> > -     char next_comm[16];
-> > +     char next_comm[TASK_COMM_LEN];
-> >       int next_pid;
-> >       int next_prio;
-> >  };
-> > --
-> > 2.17.1
-> >
->
-> --
-> Kees Cook
 
 
-
--- 
-Thanks
-Yafang
+在 2021/10/20 20:30, Greg KH 写道:
+> On Wed, Oct 13, 2021 at 06:49:06PM +0800, chenxiaosong (A) wrote:
+>> 在 2021/10/13 18:38, chenxiaosong (A) 写道:
+>>> 在 2021/10/13 18:11, Greg KH 写道:
+>>>> On Wed, Oct 13, 2021 at 05:51:01PM +0800, ChenXiaoSong wrote:
+>>>>> If two processes mount same superblock, memory leak occurs:
+>>>>>
+>>>>> CPU0               |  CPU1
+>>>>> do_new_mount       |  do_new_mount
+>>>>>     fs_set_subtype   |    fs_set_subtype
+>>>>>       kstrdup        |
+>>>>>                      |      kstrdup
+>>>>>       memrory leak   |
+>>>>>
+>>>>> Fix this by adding a write lock while calling fs_set_subtype.
+>>>>>
+>>>>> Linus's tree already have refactoring patchset [1], one of them
+>>>>> can fix this bug:
+>>>>>           c30da2e981a7 (fuse: convert to use the new mount API)
+>>>>>
+>>>>> Since we did not merge the refactoring patchset in this branch,
+>>>>> I create this patch.
+>>>>>
+>>>>> [1] https://patchwork.kernel.org/project/linux-fsdevel/patch/20190903113640.7984-3-mszeredi@redhat.com/
+>>>>>
+>>>>>
+>>>>> Fixes: 79c0b2df79eb (add filesystem subtype support)
+>>>>> Cc: David Howells <dhowells@redhat.com>
+>>>>> Signed-off-by: ChenXiaoSong <chenxiaosong2@huawei.com>
+>>>>> ---
+>>>>> v1: Can not mount sshfs ([PATCH linux-4.19.y] VFS: Fix fuseblk
+>>>>> memory leak caused by mount concurrency)
+>>>>> v2: Use write lock while writing superblock
+>>>>>
+>>>>>    fs/namespace.c | 9 ++++++---
+>>>>>    1 file changed, 6 insertions(+), 3 deletions(-)
+>>>>
+>>>> As you are referring to a fuse-only patch above, why are you trying to
+>>>> resolve this issue in the core namespace code instead?
+>>>>
+>>>> How does fuse have anything to do with this?
+>>>>
+>>>> confused,
+>>>>
+>>>> greg k-h
+>>>> .
+>>>>
+>>>
+>>> Now, only `fuse_fs_type` and `fuseblk_fs_type` has `FS_HAS_SUBTYPE` flag
+>>> in kernel code, but maybe there is a filesystem module(`struct
+>>> file_system_type` has `FS_HAS_SUBTYPE` flag). And only mounting fuseblk
+>>> filesystem(e.g. ntfs) will occur memory leak now.
+>>
+>> How about updating the subject as: VFS: Fix memory leak caused by mounting
+>> fs with subtype concurrency?
+> 
+> That would be a better idea, but still, this is not obvious that this is
+> the correct fix at all...
+> .
+> 
+Why is this patch not correct? Can you tell me more about it? Thanks.
