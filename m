@@ -2,92 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 632B743AB97
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 07:13:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8405743ABD6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 07:45:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234874AbhJZFQM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 01:16:12 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54457 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S234445AbhJZFQK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 01:16:10 -0400
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 19Q5Crw3021006
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 26 Oct 2021 01:12:54 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id C967515C3F84; Tue, 26 Oct 2021 01:12:53 -0400 (EDT)
-Date:   Tue, 26 Oct 2021 01:12:53 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Subject: Re: [PATCH v8 00/17] gfs2: Fix mmap + page fault deadlocks
-Message-ID: <YXeOVZqer+GFBkXO@mit.edu>
-References: <20211019134204.3382645-1-agruenba@redhat.com>
- <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
- <YXBFqD9WVuU8awIv@arm.com>
- <CAHk-=wgv=KPZBJGnx_O5-7hhST8CL9BN4wJwtVuycjhv_1MmvQ@mail.gmail.com>
- <YXCbv5gdfEEtAYo8@arm.com>
- <CAHk-=wgP058PNY8eoWW=5uRMox-PuesDMrLsrCWPS+xXhzbQxQ@mail.gmail.com>
- <YXL9tRher7QVmq6N@arm.com>
- <CAHc6FU6JC4ZOwA8t854WbNdmuiNL9DPq0FPga8guATaoCtvsaw@mail.gmail.com>
+        id S234761AbhJZFsS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 01:48:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42292 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231148AbhJZFsR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Oct 2021 01:48:17 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1AD1060E05;
+        Tue, 26 Oct 2021 05:45:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1635227154;
+        bh=TIjVkFEWJB7q7GF6lS61TRk3nmEo51a0DU9X6QcW9hY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KhbpyYsNXErwr2o99+8NA/bqELaVNukCD+dHr4vMMMnSZ9mSAgrON3mR5Vwt4UOJx
+         V+hL5MeobyUOoRdjGF9LCqyFjkrRhXsatzF6HUrmKMEEIQnY8ZZFi2oJduqYOothtA
+         LFAw0L4KGWtt9o3cuk0IpVlpj0OR4rNqQVc/bEQc=
+Date:   Tue, 26 Oct 2021 07:45:49 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     "chenxiaosong (A)" <chenxiaosong2@huawei.com>
+Cc:     viro@zeniv.linux.org.uk, stable@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com, yukuai3@huawei.com, yi.zhang@huawei.com,
+        zhangxiaoxu5@huawei.com
+Subject: Re: [PATCH 4.19,v2] VFS: Fix fuseblk memory leak caused by mount
+ concurrency
+Message-ID: <YXeWDSLo4+MuOg4+@kroah.com>
+References: <20211013095101.641329-1-chenxiaosong2@huawei.com>
+ <YWawy0J9JfStEku0@kroah.com>
+ <429d87b0-3a53-052a-a304-0afa8d51900d@huawei.com>
+ <860c36c4-3668-1388-66d1-a07d463c2ad9@huawei.com>
+ <YXAL7K88XGWXckWe@kroah.com>
+ <209361bb-9e15-ebaf-2ff8-5846d5bfbbc2@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHc6FU6JC4ZOwA8t854WbNdmuiNL9DPq0FPga8guATaoCtvsaw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <209361bb-9e15-ebaf-2ff8-5846d5bfbbc2@huawei.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 08:24:26PM +0200, Andreas Gruenbacher wrote:
-> > For generic_perform_write() Dave Hansen attempted to move the fault-in
-> > after the uaccess in commit 998ef75ddb57 ("fs: do not prefault
-> > sys_write() user buffer pages"). This was reverted as it was exposing an
-> > ext4 bug. I don't [know] whether it was fixed but re-applying Dave's commit
-> > avoids the performance drop.
+On Tue, Oct 26, 2021 at 10:18:11AM +0800, chenxiaosong (A) wrote:
 > 
-> Interesting. The revert of commit 998ef75ddb57 is in commit
-> 00a3d660cbac. Maybe Dave and Ted can tell us more about what went
-> wrong in ext4 and whether it's still an issue.
+> 
+> 在 2021/10/20 20:30, Greg KH 写道:
+> > On Wed, Oct 13, 2021 at 06:49:06PM +0800, chenxiaosong (A) wrote:
+> > > 在 2021/10/13 18:38, chenxiaosong (A) 写道:
+> > > > 在 2021/10/13 18:11, Greg KH 写道:
+> > > > > On Wed, Oct 13, 2021 at 05:51:01PM +0800, ChenXiaoSong wrote:
+> > > > > > If two processes mount same superblock, memory leak occurs:
+> > > > > > 
+> > > > > > CPU0               |  CPU1
+> > > > > > do_new_mount       |  do_new_mount
+> > > > > >     fs_set_subtype   |    fs_set_subtype
+> > > > > >       kstrdup        |
+> > > > > >                      |      kstrdup
+> > > > > >       memrory leak   |
+> > > > > > 
+> > > > > > Fix this by adding a write lock while calling fs_set_subtype.
+> > > > > > 
+> > > > > > Linus's tree already have refactoring patchset [1], one of them
+> > > > > > can fix this bug:
+> > > > > >           c30da2e981a7 (fuse: convert to use the new mount API)
+> > > > > > 
+> > > > > > Since we did not merge the refactoring patchset in this branch,
+> > > > > > I create this patch.
+> > > > > > 
+> > > > > > [1] https://patchwork.kernel.org/project/linux-fsdevel/patch/20190903113640.7984-3-mszeredi@redhat.com/
+> > > > > > 
+> > > > > > 
+> > > > > > Fixes: 79c0b2df79eb (add filesystem subtype support)
+> > > > > > Cc: David Howells <dhowells@redhat.com>
+> > > > > > Signed-off-by: ChenXiaoSong <chenxiaosong2@huawei.com>
+> > > > > > ---
+> > > > > > v1: Can not mount sshfs ([PATCH linux-4.19.y] VFS: Fix fuseblk
+> > > > > > memory leak caused by mount concurrency)
+> > > > > > v2: Use write lock while writing superblock
+> > > > > > 
+> > > > > >    fs/namespace.c | 9 ++++++---
+> > > > > >    1 file changed, 6 insertions(+), 3 deletions(-)
+> > > > > 
+> > > > > As you are referring to a fuse-only patch above, why are you trying to
+> > > > > resolve this issue in the core namespace code instead?
+> > > > > 
+> > > > > How does fuse have anything to do with this?
+> > > > > 
+> > > > > confused,
+> > > > > 
+> > > > > greg k-h
+> > > > > .
+> > > > > 
+> > > > 
+> > > > Now, only `fuse_fs_type` and `fuseblk_fs_type` has `FS_HAS_SUBTYPE` flag
+> > > > in kernel code, but maybe there is a filesystem module(`struct
+> > > > file_system_type` has `FS_HAS_SUBTYPE` flag). And only mounting fuseblk
+> > > > filesystem(e.g. ntfs) will occur memory leak now.
+> > > 
+> > > How about updating the subject as: VFS: Fix memory leak caused by mounting
+> > > fs with subtype concurrency?
+> > 
+> > That would be a better idea, but still, this is not obvious that this is
+> > the correct fix at all...
+> > .
+> > 
+> Why is this patch not correct? Can you tell me more about it? Thanks.
 
-The context for the revert can be found here[1].
+You need to prove that it is correct, and you need to get maintainers to
+approve it.
 
-[1] https://lore.kernel.org/lkml/20151005152236.GA8140@thunk.org/
+thanks,
 
-And "what went wrong in ext4" was fixed here[2].
-
-[2] https://lore.kernel.org/lkml/20151005152236.GA8140@thunk.org/
-
-which landed upstream as commit b90197b65518 ("ext4: use private
-version of page_zero_new_buffers() for data=journal mode").
-
-So it looks like the original issue which triggered the revert in 2015
-should be addressed, and we can easily test it by using generic/208
-with data=journal mode.
-
-There also seems to be a related discussion about whether we should
-unrevert 998ef75ddb57 here[3].  Hmm. there is a mention on that thread
-in [3], "Side note: search for "iov_iter_fault_in_writeable()" on lkml
-for a gfs2 patch-series that is buggy, exactly because it does *not*
-use the atomic user space accesses, and just tries to do the fault-in
-to hide the real bug."  I assume that's related to the discussion on
-this thread?
-
-[3] https://lore.kernel.org/all/3221175.1624375240@warthog.procyon.org.uk/T/#u
-
-						- Ted
+greg k-h
