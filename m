@@ -2,112 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED1AD43BCD7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 00:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6678543BD45
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 00:33:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239827AbhJZWGr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 18:06:47 -0400
-Received: from gandalf.ozlabs.org ([150.107.74.76]:55517 "EHLO
-        gandalf.ozlabs.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239906AbhJZWEi (ORCPT
+        id S240056AbhJZWft (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 18:35:49 -0400
+Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:52955 "EHLO
+        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230411AbhJZWft (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 18:04:38 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Hf5QW5Hptz4xby;
-        Wed, 27 Oct 2021 09:02:11 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1635285733;
-        bh=SK8GWLv/CoVRrpGWXO+u29Nlyt3+4mB21BnZlcosbsE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=s9ONVChh7b5Z1UZL6CBJ4dl0CrEZAb2+xgFIXA5Etk9C2Ob0Aggau8iCFjs6vV78O
-         DpDew0LfYLkDAFZ1SMglvSPa6TxUttFYGuvA7udKdSaFwWAEftaW7cBLVyDCM0RSxF
-         ElSxx13PfGnNu0SbPdEYUP1JW7XH1ySudnmMlGL5bZ7KMVV3vDbdbBF/zg1yWE2Weq
-         CcQXw67ylKS9elSxIu8hh0RV+uhPtulwt4dKldaMh0ft9wIJp0rFWVCNm0JuxMuqr0
-         wI+usUvrw2dV3raQSEQ1fR6va52lcErDcQn8mByfB7YHTPR0LWxVq8h7u8C1bkl3b7
-         De32l9SwXvraQ==
-Date:   Wed, 27 Oct 2021 09:02:08 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Shreeya Patel <shreeya.patel@collabora.com>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH 10/11] unicode: Add utf8-data module
-Message-ID: <20211027090208.70e88aab@canb.auug.org.au>
-In-Reply-To: <87mtmvevp7.fsf@collabora.com>
-References: <20210915070006.954653-1-hch@lst.de>
-        <20210915070006.954653-11-hch@lst.de>
-        <87wnmipjrw.fsf@collabora.com>
-        <20211012124904.GB9518@lst.de>
-        <87sfx6papz.fsf@collabora.com>
-        <20211026074509.GA594@lst.de>
-        <87mtmvevp7.fsf@collabora.com>
+        Tue, 26 Oct 2021 18:35:49 -0400
+Received: from dread.disaster.area (pa49-180-20-157.pa.nsw.optusnet.com.au [49.180.20.157])
+        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id EC7EC862E6B;
+        Wed, 27 Oct 2021 09:33:20 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1mfV0P-001OjH-W4; Wed, 27 Oct 2021 09:33:18 +1100
+Date:   Wed, 27 Oct 2021 09:33:17 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        JeffleXu <jefflexu@linux.alibaba.com>,
+        Theodore Ts'o <tytso@mit.edu>, adilger.kernel@dilger.ca,
+        ira.weiny@intel.com, linux-xfs@vger.kernel.org,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
+        Christoph Hellwig <hch@lst.de>,
+        Dave Chinner <dchinner@redhat.com>
+Subject: Re: [Question] ext4/xfs: Default behavior changed after per-file DAX
+Message-ID: <20211026223317.GB5111@dread.disaster.area>
+References: <26ddaf6d-fea7-ed20-cafb-decd63b2652a@linux.alibaba.com>
+ <20211026154834.GB24307@magnolia>
+ <YXhWP/FCkgHG/+ou@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/zpAG6xHoBv_D/DEo5Opsu+k";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YXhWP/FCkgHG/+ou@redhat.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=61788232
+        a=t5ERiztT/VoIE8AqcczM6g==:117 a=t5ERiztT/VoIE8AqcczM6g==:17
+        a=kj9zAlcOel0A:10 a=8gfv0ekSlNoA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8
+        a=7-415B0cAAAA:8 a=Yd87Uj8TZwFvIcvWS4wA:9 a=CjuIK1q_8ugA:10
+        a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/zpAG6xHoBv_D/DEo5Opsu+k
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 26, 2021 at 03:25:51PM -0400, Vivek Goyal wrote:
+> On Tue, Oct 26, 2021 at 08:48:34AM -0700, Darrick J. Wong wrote:
+> > On Tue, Oct 26, 2021 at 10:12:17PM +0800, JeffleXu wrote:
+> > > Hi,
+> > > 
+> > > Recently I'm working on supporting per-file DAX for virtiofs [1]. Vivek
+> > > Goyal and I are interested [2] why the default behavior has changed
+> > > since introduction of per-file DAX on ext4 and xfs [3][4].
+> > > 
+> > > That is, before the introduction of per-file DAX, when user doesn't
+> > > specify '-o dax', DAX is disabled for all files. After supporting
+> > > per-file DAX, when neither '-o dax' nor '-o dax=always|inode|never' is
+> > > specified, it actually works in a '-o dax=inode' way if the underlying
+> > > blkdev is DAX capable, i.e. depending on the persistent inode flag. That
+> > > is, the default behavior has changed from user's perspective.
+> > > 
+> > > We are not sure if this is intentional or not. Appreciate if anyone
+> > > could offer some hint.
+> > 
+> > Yes, that was an intentional change to all three filesystems to make the
+> > steps we expose to sysadmins/users consistent and documented officially:
+> > 
+> > https://lore.kernel.org/linux-fsdevel/20200429043328.411431-1-ira.weiny@intel.com/
+> 
+> Ok, so basically new dax options semantics are different from old "-o dax".
 
-Hi Gabriel,
+Well, yes. "-o dax" is exactly equivalent of "-o dax=always", but it
+is deprecated and should be ignored for the purposes of a new FSDAX
+implementation. It will go away eventually.
 
-On Tue, 26 Oct 2021 10:56:20 -0300 Gabriel Krisman Bertazi <krisman@collabo=
-ra.com> wrote:
->
-> Christoph Hellwig <hch@lst.de> writes:
->=20
-> > On Tue, Oct 12, 2021 at 11:40:56AM -0300, Gabriel Krisman Bertazi wrote=
-: =20
-> >> > Does this fix it? =20
-> >>=20
-> >> Yes, it does.
-> >>=20
-> >> I  will fold this into the original patch and queue this series for 5.=
-16. =20
-> >
-> > This series still doesn't seem to be queued up. =20
->=20
-> Hm, I'm keeping it here:
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git/log/?=
-h=3Dfor-next_5.16
->=20
-> Sorry, but I'm not sure what is the process to get tracked by
-> linux-next.  I'm Cc'ing Stephen to hopefully help me figure it out.
+> - dax=inode is default. This is change of behavior from old "-o dax" where
+>   default was *no dax* at all.
 
-You just need to send me a git URL for your tree/branch (not a cgit or
-gitweb URL, please), plus some idea of what the tree include and how it
-is sent to Linus (directly or via another tree).  The branch should
-have a generic name (i.e. not including a version) as I will continuet
-to fetch that branch every day until you tell me to stop.  When your
-code is ready to be included in linux-next, all you have to do is
-update that branch to include the new code.
+No, it's not actually a change of behaviour. The default behaviour
+of a filesystem that supports DAX is identical when you have no
+mount option specified: if you've taken no action to enable DAX,
+then DAX will be disabled and not used.
 
---=20
+We originally implemented DAX with per-inode flags an no mount
+option in XFS - the mount option came along with the ext4 DAX
+implementation for testing because it didn't have on-disk inode
+flags for DAX.
+
+IOWs, the dax=inode default reflects how we originally intended
+FSDAX to be managed and how it originally behaved on XFS when no
+mount option was specified. Then we came across bugs in dynamically
+changing the per-inode DAX state, we temporarily disabled the
+on-disk flags on XFS (because EXPERIMENTAL). Then some people
+started incorrectly associated "no dax option" with "admin wants dax
+disabled". Then we fixed the bugs with changing on-disk inode flags,
+ext4 added an on-disk flag and we re-enabled them. The result was a
+tristate config situation - never, always and per-inode...
+
+> - I tried xfs and mount does not fail even if user mounted with
+>   "-o dax=inode" and underlying block device does not support dax.
+>   That's little strange. Some users might expect a failure if certain
+>   mount option can't be enabled.
+
+It's perfectly reasonable. If the hardware doesn't support DAX, then
+we just always behave as if dax=never is set. IOWs, we simply ignore
+the inode DAX hint, because we can never enable it. There's just no
+reason for being obnoxious and rejecting mounts just because the
+block device doesn't support DAX.
+
+Then we have to consider filesystems with multiple block devices
+that have different DAX capabilities. dax=inode has to transparently
+become dax=never for the block devices that don't support DAX, but
+still operate as dax=inode for the other DAX capable block devices.
+
+We also have to consider that block devices can change configuration
+dynamically - think about teired storage (e.g a dm-cache device)
+that has pmem for hot access and SSDs for backing store. That could
+mean we have DAX capable access for hot data, but not for cold data
+fetched/stored from SSD. We might manually migrate data between
+teirs and so the dax capability of the data sets can change
+dynamically.
+
+The actual presence of DAX should be completely transparent and
+irrelevant to the application unless the application is specifically
+dependent on DAX being enabled (i.e. using application level CPU
+cache flushes for data integrity purposes). If so, it is up to the
+application to check STATX_ATTR_DAX on it's open files and refuse to
+operate.
+
+>   So in general, what's the expected behavior with filesystem mount
+>   options. If user passes a mount option and it can't be enabled,
+>   should filesystem return error and force user to try again without
+>   the certain mount option or silently fallback to something else.
+> 
+>   I think in the past I have come across overlayfs users which demanded
+>   that mount fails if certain overlayfs option they have passed in
+>   can't be honored. They want to know about it so that they can either
+>   fix the configuration or change mount option.
+
+It's up to the filesystem how it handles mount options. XFS just
+turns dax=always into dax=never with a warning and continues
+onwards. There's no point in forcing the user to mount with a
+different mount option - the end result is going to be exactly the
+same (i.e. dax=never because hardware doesn't support it).
+
+> - With xfs, I mounted /dev/pmem0 with "-o dax=inode" and checked
+>   /proc/mounts and I don't see "dax=inode" there. Is that intentional?
+
+Yes, XFS policy is to elide default options from the mount table.
+
+> So following is the side affects of behavior change.
+> 
+> A. If somebody wrote scripts and scanned for mount flags to decide whehter
+>    dax is enabled or not, these will not work anymore.
+
+Correct - this was never supported in the first place and we went
+through this years ago with intel doing dodgy things like this in their
+userspace library that we never intended to support.
+
+>    scripts will have
+>    to be changed to stat() every file in filesystem and look for
+>    STATX_ATTR_DAX flag to determine dax status.
+
+If you are scanning the filesystem for "DAX capability" then you are
+doing it wrong. DAX capability is a property of the underlying block
+device:
+
+$ cat /sys/block/pmem0/queue/dax 
+1
+$
+
+And that tells you if the filesystem is on DAX capable hardware
+and hence can be used if the admin and/or application turns it on.
+
+> I would have thought to not make dax=inode default and let user opt-in
+> for that using "dax=inode" mount option. But I guess people liked 
+> dax=inode default better.
+> 
+> Anway, I guess if we want to keep the behavior of virtiofs in-line with
+> ext4/xfs, we might have to make dax=inode default (atleast in client).
+
+Yes, I've been asking you to make dax=inode the default for some
+time now.
+
+> Server default might be different because querying the state of
+> FS_XFLAG_DAX is extra ioctl() call on each LOOKUP and GETATTR call and
+> those who don't want to use DAX, might not want to pay this cost.
+
+The admin cost of managing per-inode/per-directory DAX capability is
+negliable. It's a "set-once" operation done at application
+installation/configuration/data set initialisation time, and never
+changed again.  Performance/overhead arguments for per-inode flag
+admin hold no water at all.
+
 Cheers,
-Stephen Rothwell
 
---Sig_/zpAG6xHoBv_D/DEo5Opsu+k
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmF4euAACgkQAVBC80lX
-0GwceQgAi6W1qvH8e/YEFcP2VS6b/2KY5DJKr3QEo0s7wxM+T4f+jxvWcAlJ0LFk
-uewS5xgi5RcGUj4HLU517ONP2w3grK5ZCKmg7XAUop+t1YX97EUZa2dNzv4Q35PC
-Fmb/DOTE2i7DIs5/cIipcWqtwewutnDAHFWM1ZmnERWLeKhys3ekgTXPfIypcgxz
-qVDUqUSXhPmda4FugFRfSu5OF4VGk/LmvXca2gwcXjgnrQN4LsjkrbwuQKLDhczc
-A1qyzs8+g7WFGgf1KvEbcHwj5dGwIDgHg/PCxvjf5Q2dUHlELDrCrZ6kxz2f9r/C
-mulbXoc/7UhUjeyrGzi/d+ZJ/YzFjg==
-=a/+i
------END PGP SIGNATURE-----
-
---Sig_/zpAG6xHoBv_D/DEo5Opsu+k--
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
