@@ -2,126 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 64D8F43B61E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 17:52:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E040743B607
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 17:48:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237202AbhJZPzK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 11:55:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46726 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237168AbhJZPyj (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 11:54:39 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 907CDC061348;
-        Tue, 26 Oct 2021 08:52:12 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id g8so14365936edb.2;
-        Tue, 26 Oct 2021 08:52:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dPVlSd43MaGLNnv2bHAgLRIpF45DjHAQcAaR9piQZVw=;
-        b=mL1u3WabTdo6TubLxq+VUVT7yFq5GGUdgPYcF7n8IlsDSrQNG0Ug76qmuYYJ7QiVum
-         E4jqz6ajdkVD9jLrd7X8Ui9LfYUDf4yp2FTkiy/bv71WJbQUVFfzstzUwKolNlPlFE+F
-         Q78qkSFEpvVHrcFqu7VLfrSei2neTDiIoreLkUFHW8+oFW8ZTAASekwr7sN43NHaLVKN
-         CzfkcXDS1X38syzFULd+WLOxJbRE72xfW/2+653wvqexvSE7bAaWMXE1C730dOCGgMTy
-         g4RkQHPFq6Utpb3L2MIyc7F8P9GVZLMPp1r7fj/6e6uHtjmSIi48ydZrl2qByDegCWqx
-         w4vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dPVlSd43MaGLNnv2bHAgLRIpF45DjHAQcAaR9piQZVw=;
-        b=mRZ/X39ua9rKQF1fwR0l7WND+7UObnTbSEXLxgU/XmNrUGjpO0ICLNKk6pJWTyxcSd
-         /q6zDx787GFErHTeR2A5AO/TttpEqipiNK73Lh2n9vHu9M6Ni8TEM0S5pnJST1NGby+K
-         7jsMdvRRtz86ITdqRVpvQOWbW4cjDul9sBbWxc/NTESWHfpGFq9C/TaYAKi54txUdJs0
-         kLo1mJrRvVkv4pnFZvySbfRINnj7zf3AbqN5JUXLUXCEpHz4fUnj2IExNz0CzYz/dQIy
-         YQJv8CupLnPWeuarKXesB9AsHjtDOxSqCxL1+R+ZE0y1o+6tfvcfmef4QurlzutDBpk4
-         YOvQ==
-X-Gm-Message-State: AOAM532dsdDE7mSKo1LFjCvsKhRnETu7Wsf/mpKHHYXn9tC2gEITKFYv
-        wklQvWvWp9IQiyxTFuEkrCGdY1PZHdfRQnNRTTEAlMIfK5/mYQ==
-X-Google-Smtp-Source: ABdhPJxqIn1UxV+0bZlUbnyq6SqlrKSdHvqrBtSN0t8LXMbFZdTV/iOwOHH1bsLWVmn9c4H5Ign0HOLUzi5MW/KlTi4=
-X-Received: by 2002:a05:6402:3488:: with SMTP id v8mr36360121edc.106.1635263323553;
- Tue, 26 Oct 2021 08:48:43 -0700 (PDT)
+        id S237083AbhJZPvC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 11:51:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50898 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237075AbhJZPvA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Oct 2021 11:51:00 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D543160EFE;
+        Tue, 26 Oct 2021 15:48:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1635263314;
+        bh=2+3VUKf/vfToAgnI/bI7hDWfTWfhxBk06YKhqrMekpk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=N9UJUjU3qrxIBg7uUkGgiJRyM3tIoImsPaBaU6CfqzHnz3obYg8pskuAiI4ZbWWw5
+         AGjBRThWSeawlqQGAUz8cCLjcmgYEIWmO/92w30NUKt60GaQNsQh0JpFN9YPnSh6Y2
+         1RyZLpKaNQAE3ZcCDA5+bYN6an2K2GPqd7BoE3qWP6bHrLfenLrHEkHNjlXqzT28PU
+         4aACq+U34GVdjaSs0RATNUSnRiOEY4omYbHhgd61XFofH6ZYekvgJzaOmf5z8NCpZC
+         46kLmaJP6FA79KfizeMEuICrTY2QThx5w3nNLuyeQkllsrjNtNVsK+wvkfCehuDtDX
+         TJiRI+xW1EMyw==
+Date:   Tue, 26 Oct 2021 08:48:34 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>, adilger.kernel@dilger.ca,
+        ira.weiny@intel.com, linux-xfs@vger.kernel.org,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
+        Vivek Goyal <vgoyal@redhat.com>, Christoph Hellwig <hch@lst.de>
+Subject: Re: [Question] ext4/xfs: Default behavior changed after per-file DAX
+Message-ID: <20211026154834.GB24307@magnolia>
+References: <26ddaf6d-fea7-ed20-cafb-decd63b2652a@linux.alibaba.com>
 MIME-Version: 1.0
-References: <20211025150223.13621-1-mhocko@kernel.org> <20211025150223.13621-3-mhocko@kernel.org>
-In-Reply-To: <20211025150223.13621-3-mhocko@kernel.org>
-From:   Uladzislau Rezki <urezki@gmail.com>
-Date:   Tue, 26 Oct 2021 17:48:32 +0200
-Message-ID: <CA+KHdyVqOuKny7bT+CtrCk8BrnARYz744Ze6cKMuy2BXo5e7jw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] mm/vmalloc: add support for __GFP_NOFAIL
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Linux Memory Management List <linux-mm@kvack.org>,
-        Dave Chinner <david@fromorbit.com>, Neil Brown <neilb@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26ddaf6d-fea7-ed20-cafb-decd63b2652a@linux.alibaba.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> From: Michal Hocko <mhocko@suse.com>
->
-> Dave Chinner has mentioned that some of the xfs code would benefit from
-> kvmalloc support for __GFP_NOFAIL because they have allocations that
-> cannot fail and they do not fit into a single page.
->
-> The larg part of the vmalloc implementation already complies with the
-> given gfp flags so there is no work for those to be done. The area
-> and page table allocations are an exception to that. Implement a retry
-> loop for those.
->
-> Add a short sleep before retrying. 1 jiffy is a completely random
-> timeout. Ideally the retry would wait for an explicit event - e.g.
-> a change to the vmalloc space change if the failure was caused by
-> the space fragmentation or depletion. But there are multiple different
-> reasons to retry and this could become much more complex. Keep the retry
-> simple for now and just sleep to prevent from hogging CPUs.
->
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> ---
->  mm/vmalloc.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
->
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index c6cc77d2f366..602649919a9d 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -2941,8 +2941,12 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
->         else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
->                 flags = memalloc_noio_save();
->
-> -       ret = vmap_pages_range(addr, addr + size, prot, area->pages,
-> +       do {
-> +               ret = vmap_pages_range(addr, addr + size, prot, area->pages,
->                         page_shift);
-> +               if (ret < 0)
-> +                       schedule_timeout_uninterruptible(1);
-> +       } while ((gfp_mask & __GFP_NOFAIL) && (ret < 0));
->
+On Tue, Oct 26, 2021 at 10:12:17PM +0800, JeffleXu wrote:
+> Hi,
+> 
+> Recently I'm working on supporting per-file DAX for virtiofs [1]. Vivek
+> Goyal and I are interested [2] why the default behavior has changed
+> since introduction of per-file DAX on ext4 and xfs [3][4].
+> 
+> That is, before the introduction of per-file DAX, when user doesn't
+> specify '-o dax', DAX is disabled for all files. After supporting
+> per-file DAX, when neither '-o dax' nor '-o dax=always|inode|never' is
+> specified, it actually works in a '-o dax=inode' way if the underlying
+> blkdev is DAX capable, i.e. depending on the persistent inode flag. That
+> is, the default behavior has changed from user's perspective.
+> 
+> We are not sure if this is intentional or not. Appreciate if anyone
+> could offer some hint.
 
-1.
-After that change a below code:
+Yes, that was an intentional change to all three filesystems to make the
+steps we expose to sysadmins/users consistent and documented officially:
 
-<snip>
-if (ret < 0) {
-    warn_alloc(orig_gfp_mask, NULL,
-        "vmalloc error: size %lu, failed to map pages",
-        area->nr_pages * PAGE_SIZE);
-    goto fail;
-}
-<snip>
+https://lore.kernel.org/linux-fsdevel/20200429043328.411431-1-ira.weiny@intel.com/
 
-does not make any sense anymore.
+(This was the first step; ext* were converted as separate series around
+the same time.)
 
-2.
-Can we combine two places where we handle __GFP_NOFAIL into one place?
-That would look like as more sorted out.
+--D
 
--- 
-Uladzislau Rezki
+> 
+> 
+> [1] https://lore.kernel.org/all/YW2Oj4FrIB8do3zX@redhat.com/T/
+> [2]
+> https://lore.kernel.org/all/YW2Oj4FrIB8do3zX@redhat.com/T/#mf067498887ca2023c64c8b8f6aec879557eb28f8
+> [3] 9cb20f94afcd2964944f9468e38da736ee855b19 ("fs/ext4: Make DAX mount
+> option a tri-state")
+> [4] 02beb2686ff964884756c581d513e103542dcc6a ("fs/xfs: Make DAX mount
+> option a tri-state")
+> 
+> 
+> -- 
+> Thanks,
+> Jeffle
