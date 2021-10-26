@@ -2,132 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0897643BA93
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 21:18:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40C8143BABD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 21:26:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238657AbhJZTVA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 15:21:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38176 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238643AbhJZTU6 (ORCPT
+        id S238702AbhJZT20 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 15:28:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:25563 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238781AbhJZT2Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 15:20:58 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9173C061570
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 12:18:33 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id l2so590307lji.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 12:18:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VZmINpwcYY7kcvI7sKLaSgNG7WCxmd5BZ4iNpf7lS1s=;
-        b=OsqaCKMuKFeRuWXmhZzecH1PFurN3y1S2AB1+cEKAaxcheLMIwVa1+mU9xaI+48tSD
-         hDW/GsZ40FpWHVKK/6DfQVSTBtioB3fbYc70ILsRQJsX9ufj7I2BdNObVy9O6WfiMW1v
-         DiUsn9LYY/9cPMqSPRQHNfkJU6lnB2qdNQ6Us=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VZmINpwcYY7kcvI7sKLaSgNG7WCxmd5BZ4iNpf7lS1s=;
-        b=VaJxvHZrCj9CCvW9dqUKqYqWZ6vawG8ZyBHHvW5gUXzUTgN1se7D6J7F0woXYKdDZp
-         lOFaZiTk+IrYqwgaPOt3SWB98wKDQZ2bDPauPJiTKu+/OCt2G2eVb6OZBhbHYFK5Kq3S
-         iZQw1czdjWPIiwn5LMRz6uDk1+/GxeRkCKGaAYx6rIMdKIJGDerph2KBHQgcvNQf68J4
-         9Zfu73pZYZnJm4rwTH9Mu1B4Vyof7hEdOYHqr2iPEnrH9bAoSMeGlMmo6H+H8tt1AwGx
-         Hk2BCzgyFGIgm9eDPM142FIu5VTrScwuJ6NesGAQizzSoH7yCthfPGMe1R5EvwoHDq8s
-         SNfA==
-X-Gm-Message-State: AOAM532ca23/x/h18zEPEcwfEsorg3I2l9kE5bosv6qgighzYy8slwyi
-        w3Sq7fekQalsgEvJDkIjYAZFF/QPMyWK5nhi
-X-Google-Smtp-Source: ABdhPJzDY//4YIrVU7Mh9FVgaccP1yjMBD/qh32dcCBvmb765qjRL7ksnzwfnkBs0F9OYNttvOydNg==
-X-Received: by 2002:a05:651c:1541:: with SMTP id y1mr28248123ljp.392.1635275911553;
-        Tue, 26 Oct 2021 12:18:31 -0700 (PDT)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id t18sm2010433lfl.289.2021.10.26.12.18.30
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Oct 2021 12:18:30 -0700 (PDT)
-Received: by mail-lj1-f175.google.com with SMTP id d13so697627ljg.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 12:18:30 -0700 (PDT)
-X-Received: by 2002:a2e:bc24:: with SMTP id b36mr28005819ljf.95.1635275910507;
- Tue, 26 Oct 2021 12:18:30 -0700 (PDT)
+        Tue, 26 Oct 2021 15:28:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635276360;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uMyoPqJ/QkHGpAdsU7Vs4JEa1JKZe97nC5IoasVOAVc=;
+        b=Y1iQ4LsS9OuW7oydUjkvpQcBlQHnBQrjZzd2eDB9+pqyuM+/jElipWYffYM7r2hxdmAE7L
+        p1s+sNI2RCs5QkEQl3q1rtooE2+S1yZKhndOgOXBNIDwv6z2GFWoVY4MRQTSbaC+XSIirA
+        BD0jGoNEKGPLC0VJ8OX3lhG10daXWuY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-174-35zCJcZ4Mn2KP7pFToTZeg-1; Tue, 26 Oct 2021 15:25:56 -0400
+X-MC-Unique: 35zCJcZ4Mn2KP7pFToTZeg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E789D1007905;
+        Tue, 26 Oct 2021 19:25:54 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.17.178])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5DC375F4E0;
+        Tue, 26 Oct 2021 19:25:52 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id BF40A2204A5; Tue, 26 Oct 2021 15:25:51 -0400 (EDT)
+Date:   Tue, 26 Oct 2021 15:25:51 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     JeffleXu <jefflexu@linux.alibaba.com>,
+        Theodore Ts'o <tytso@mit.edu>, adilger.kernel@dilger.ca,
+        ira.weiny@intel.com, linux-xfs@vger.kernel.org,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
+        Christoph Hellwig <hch@lst.de>,
+        Dave Chinner <dchinner@redhat.com>
+Subject: Re: [Question] ext4/xfs: Default behavior changed after per-file DAX
+Message-ID: <YXhWP/FCkgHG/+ou@redhat.com>
+References: <26ddaf6d-fea7-ed20-cafb-decd63b2652a@linux.alibaba.com>
+ <20211026154834.GB24307@magnolia>
 MIME-Version: 1.0
-References: <20211019134204.3382645-1-agruenba@redhat.com> <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
- <YXBFqD9WVuU8awIv@arm.com> <CAHk-=wgv=KPZBJGnx_O5-7hhST8CL9BN4wJwtVuycjhv_1MmvQ@mail.gmail.com>
- <YXCbv5gdfEEtAYo8@arm.com> <CAHk-=wgP058PNY8eoWW=5uRMox-PuesDMrLsrCWPS+xXhzbQxQ@mail.gmail.com>
- <YXL9tRher7QVmq6N@arm.com> <CAHk-=wg4t2t1AaBDyMfOVhCCOiLLjCB5TFVgZcV4Pr8X2qptJw@mail.gmail.com>
- <CAHc6FU7BEfBJCpm8wC3P+8GTBcXxzDWcp6wAcgzQtuaJLHrqZA@mail.gmail.com>
- <YXhH0sBSyTyz5Eh2@arm.com> <CAHk-=wjWDsB-dDj+x4yr8h8f_VSkyB7MbgGqBzDRMNz125sZxw@mail.gmail.com>
-In-Reply-To: <CAHk-=wjWDsB-dDj+x4yr8h8f_VSkyB7MbgGqBzDRMNz125sZxw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 26 Oct 2021 12:18:14 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjm9XwkeqWRy4+OvmdmDojghNSYbu81PxYMoPDJKS_j3A@mail.gmail.com>
-Message-ID: <CAHk-=wjm9XwkeqWRy4+OvmdmDojghNSYbu81PxYMoPDJKS_j3A@mail.gmail.com>
-Subject: Re: [PATCH v8 00/17] gfs2: Fix mmap + page fault deadlocks
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211026154834.GB24307@magnolia>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 26, 2021 at 11:50 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Because for _most_ cases of "copy_to/from_user()" and friends by far,
-> the only thing we look for is "zero for success".
+On Tue, Oct 26, 2021 at 08:48:34AM -0700, Darrick J. Wong wrote:
+> On Tue, Oct 26, 2021 at 10:12:17PM +0800, JeffleXu wrote:
+> > Hi,
+> > 
+> > Recently I'm working on supporting per-file DAX for virtiofs [1]. Vivek
+> > Goyal and I are interested [2] why the default behavior has changed
+> > since introduction of per-file DAX on ext4 and xfs [3][4].
+> > 
+> > That is, before the introduction of per-file DAX, when user doesn't
+> > specify '-o dax', DAX is disabled for all files. After supporting
+> > per-file DAX, when neither '-o dax' nor '-o dax=always|inode|never' is
+> > specified, it actually works in a '-o dax=inode' way if the underlying
+> > blkdev is DAX capable, i.e. depending on the persistent inode flag. That
+> > is, the default behavior has changed from user's perspective.
+> > 
+> > We are not sure if this is intentional or not. Appreciate if anyone
+> > could offer some hint.
+> 
+> Yes, that was an intentional change to all three filesystems to make the
+> steps we expose to sysadmins/users consistent and documented officially:
+> 
+> https://lore.kernel.org/linux-fsdevel/20200429043328.411431-1-ira.weiny@intel.com/
 
-Gaah. Looking around, I almost immediately found some really odd
-exceptions to this.
+Ok, so basically new dax options semantics are different from old "-o dax".
 
-Like parse_write_buffer_into_params() in amdgpu_dm_debugfs.c, which does
+- dax=inode is default. This is change of behavior from old "-o dax" where
+  default was *no dax* at all.
 
-        r = copy_from_user(wr_buf_ptr, buf, wr_buf_size);
+- I tried xfs and mount does not fail even if user mounted with
+  "-o dax=inode" and underlying block device does not support dax.
+  That's little strange. Some users might expect a failure if certain
+  mount option can't be enabled.
 
-                /* r is bytes not be copied */
-        if (r >= wr_buf_size) {
-                DRM_DEBUG_DRIVER("user data not be read\n");
-                return -EINVAL;
-        }
+  So in general, what's the expected behavior with filesystem mount
+  options. If user passes a mount option and it can't be enabled,
+  should filesystem return error and force user to try again without
+  the certain mount option or silently fallback to something else.
 
-and allows a partial copy to justy silently succeed, because all the
-callers have pre-cleared the wr_buf_ptr buffer.
+  I think in the past I have come across overlayfs users which demanded
+  that mount fails if certain overlayfs option they have passed in
+  can't be honored. They want to know about it so that they can either
+  fix the configuration or change mount option.
 
-I have no idea why the code does that - it seems to imply that user
-space could give an invalid 'size' parameter and mean to write only
-the part that didn't succeed.
+- With xfs, I mounted /dev/pmem0 with "-o dax=inode" and checked
+  /proc/mounts and I don't see "dax=inode" there. Is that intentional?
 
-Adding AMD GPU driver people just to point out that this code not only
-has odd whitespace, but that the pattern for "couldn't copy from user
-space" should basically always be
+I am just trying to wrap my head around the new semantics as we are
+trying to implement those for virtiofs.
 
-        if (copy_from_user(wr_buf_ptr, buf, wr_buf_size))
-                return -EFAULT;
+So following is the side affects of behavior change.
 
-because if user-space passes in a partially invalid buffer, you
-generally really shouldn't say "ok, I got part of it and will use that
-part"
+A. If somebody wrote scripts and scanned for mount flags to decide whehter
+   dax is enabled or not, these will not work anymore. scripts will have
+   to be changed to stat() every file in filesystem and look for
+   STATX_ATTR_DAX flag to determine dax status.
 
-There _are_ exceptions. We've had situations where user-space only
-passes in the pointer to the buffer, but not the size. Bad interface,
-but it historically happens for the 'mount()' system call 'data'
-pointer. So then we'll copy "up to a page size".
+I would have thought to not make dax=inode default and let user opt-in
+for that using "dax=inode" mount option. But I guess people liked 
+dax=inode default better.
 
-Anyway, there are clearly some crazy users, and converting them all to
-also check for negative error returns might be more painful than I
-thought it would be.
+Anway, I guess if we want to keep the behavior of virtiofs in-line with
+ext4/xfs, we might have to make dax=inode default (atleast in client).
+Server default might be different because querying the state of
+FS_XFLAG_DAX is extra ioctl() call on each LOOKUP and GETATTR call and
+those who don't want to use DAX, might not want to pay this cost.
 
-                 Linus
+Thanks
+Vivek
+
+> 
+> (This was the first step; ext* were converted as separate series around
+> the same time.)
+> 
+> --D
+> 
+> > 
+> > 
+> > [1] https://lore.kernel.org/all/YW2Oj4FrIB8do3zX@redhat.com/T/
+> > [2]
+> > https://lore.kernel.org/all/YW2Oj4FrIB8do3zX@redhat.com/T/#mf067498887ca2023c64c8b8f6aec879557eb28f8
+> > [3] 9cb20f94afcd2964944f9468e38da736ee855b19 ("fs/ext4: Make DAX mount
+> > option a tri-state")
+> > [4] 02beb2686ff964884756c581d513e103542dcc6a ("fs/xfs: Make DAX mount
+> > option a tri-state")
+> > 
+> > 
+> > -- 
+> > Thanks,
+> > Jeffle
+> 
+
