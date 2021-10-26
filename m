@@ -2,184 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F9F143B5C3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 17:38:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C9D743B5EC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 17:43:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237009AbhJZPkr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 11:40:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:51758 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236984AbhJZPkq (ORCPT
+        id S235846AbhJZPqK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 11:46:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44774 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232651AbhJZPqK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 11:40:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635262702;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=tgrWJ8PuEoolrBiVCHFpjBP16xO1n7Kff2hc+CcZab4=;
-        b=CdhfQH7wnQ5SwFWCJ/I8zP+kAho342gESSs3rNICZdgShibhWPRnxJdVX1uvunNkDlpu/Q
-        uow4V+yAlr/c5d/LkiEoMdxtTDgqke5r8Vvl7rsd7SLl39o6CgpcK1WHtIUBBqaDwvwguG
-        oA+ZPReuQCvwSJxw9zaTprBDR9PAn8I=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-602-k3ShljxvN-6wEqVIly0DxQ-1; Tue, 26 Oct 2021 11:38:19 -0400
-X-MC-Unique: k3ShljxvN-6wEqVIly0DxQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 216881017968;
-        Tue, 26 Oct 2021 15:38:18 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.17.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C8B665DF21;
-        Tue, 26 Oct 2021 15:38:17 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 419D22204A5; Tue, 26 Oct 2021 11:38:17 -0400 (EDT)
-Date:   Tue, 26 Oct 2021 11:38:17 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [RFC PATCH 5/7] Fsnotify: Add a wrapper around the fsnotify
- function
-Message-ID: <YXgg6VkAqe24Isgt@redhat.com>
-References: <20211025204634.2517-1-iangelak@redhat.com>
- <20211025204634.2517-6-iangelak@redhat.com>
- <CAOQ4uxikoipcS9g6ShSovBUN+N=+CZGeKc0J27YQO3LYqcdLnA@mail.gmail.com>
+        Tue, 26 Oct 2021 11:46:10 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8A90C061745;
+        Tue, 26 Oct 2021 08:43:44 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id u13so16074695edy.10;
+        Tue, 26 Oct 2021 08:43:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T4M/22FGw7e6SSuR5+lAvRn2uYeHyXsIaqiFpPFs7GM=;
+        b=fLE5FaJ7rSAWggLqi5i/+7DBIp3Y1MLINJl7IInXpX/M/SMHMaEnlea8EP/eli4Rbi
+         FGnhzsqSa1IHRPlv16Fl3FiQ3037bmP6vCyLIlnT8X9cNn/yERfSSWntfqcBLBZbNBb6
+         CG1OGMgcixKEC73YyzjNFhXFsU8enn7tNqODq1d5LSBPPnW+MZRbOpwxJ52WwCNgx/Tt
+         6KV4cvLRt69SFEuQ2gqa0nOjaRsv7ApGMvTmxh3hFELX69O97XIZF20Tc4PtOD00462w
+         zSraUZQWUCGLDM6RcXBV1tJcX19NTtFcAKhqQ0Tdx2Jo+38EwEuNRCFAPKqcveo5VNb1
+         Ts2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T4M/22FGw7e6SSuR5+lAvRn2uYeHyXsIaqiFpPFs7GM=;
+        b=HnCGDnDJ8Zro5H5qOKn7K2SRCz10/Iydu+XdFIFNZmUUbCZ5c//8vtixJ3LRUN0j+Z
+         aNTl0Ck3iST4xs+7SCBjfvIctdNyCkcyJL7UqqRfHjA7dzZwcYodzjcvnn3U9KGg8KW3
+         jGxsFFoGooZdQW1rTkmp0vAywug1NBCh55PgIW8cp8XuxsPHZYzHefSR/VwjxiOrlA37
+         OuAghle1b6Pw08cL2KZYsgKdwVkVeiCZBVQbj72QKpUETCY9ec36nkYCRwFnkh3p+Kie
+         /loQQs/kbN+pcn8GOuppsew7v6h9CC94bHuGR746XQaUlo9pJ668JryfAUQWiOg5W+qX
+         rSfg==
+X-Gm-Message-State: AOAM531ir1NUNqch2pmgOura8yhlxy5TV9czgeak6Ot+g1d2A/xfZ4Vr
+        +39J+FKYgDXFEWMa0E0CJtKzXkxHQiejIv1FidlCsY+zK9J7zQ==
+X-Google-Smtp-Source: ABdhPJxHqML5RddOenfRBlL1vPTQYiXn+SaTgxIuuPWFvPtteHluOBrnxEczYR4MVa+OooX2R/p1c7LAPGiSDW7qFUY=
+X-Received: by 2002:a05:6402:3488:: with SMTP id v8mr36306045edc.106.1635262845117;
+ Tue, 26 Oct 2021 08:40:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxikoipcS9g6ShSovBUN+N=+CZGeKc0J27YQO3LYqcdLnA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+References: <20211020192430.GA1861@pc638.lan> <163481121586.17149.4002493290882319236@noble.neil.brown.name>
+ <YXFAkFx8PCCJC0Iy@dhcp22.suse.cz> <20211021104038.GA1932@pc638.lan>
+ <163485654850.17149.3604437537345538737@noble.neil.brown.name>
+ <20211025094841.GA1945@pc638.lan> <163520582122.16092.9250045450947778926@noble.neil.brown.name>
+ <YXeraV5idipgWDB+@dhcp22.suse.cz> <163524388152.8576.15706993879941541847@noble.neil.brown.name>
+ <CA+KHdyWev2RwoO1o9OrAkaE2VdC7iSXnJdBR+qzarqYOse3cXA@mail.gmail.com> <YXgUI33cfWYYrjXw@dhcp22.suse.cz>
+In-Reply-To: <YXgUI33cfWYYrjXw@dhcp22.suse.cz>
+From:   Uladzislau Rezki <urezki@gmail.com>
+Date:   Tue, 26 Oct 2021 17:40:33 +0200
+Message-ID: <CA+KHdyV2_s6Jro2JhQ2kNhexN+ktR+fCcMZHW8uq+3X+hak5ow@mail.gmail.com>
+Subject: Re: [RFC 2/3] mm/vmalloc: add support for __GFP_NOFAIL
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     NeilBrown <neilb@suse.de>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 26, 2021 at 05:37:55PM +0300, Amir Goldstein wrote:
-> On Mon, Oct 25, 2021 at 11:47 PM Ioannis Angelakopoulos
-> <iangelak@redhat.com> wrote:
-> >
-> > Generally, inotify events are generated locally by calling the "fsnotify"
-> > function in fs/notify/fsnotify.c and various helper functions. However, now
-> > we expect events to arrive from the FUSE server. Thus, without any
-> > intervention a user space application will receive two events. One event is
-> > generated locally and one arrives from the server.
-> >
-> > Hence, to avoid duplicate events we need to "suppress" the local events
-> > generated by the guest kernel for FUSE inodes. To achieve this we add a
-> > wrapper around the "fsnotify" function in fs/notify/fsnotify.c that
-> > checks if the remote inotify is enabled and based on the check either it
-> > "suppresses" or lets through a local event.
-> >
-> > The wrapper will be called in the place of the original "fsnotify" call
-> > that is responsible for the event notification (now renamed as
-> > "__fsnotify").
-> >
-> > When the remote inotify is not enabled, all local events will be let
-> > through as expected. This process is completely transparent to user space.
-> >
-> > Signed-off-by: Ioannis Angelakopoulos <iangelak@redhat.com>
-> > ---
-> >  fs/notify/fsnotify.c             | 35 ++++++++++++++++++++++++++++++--
-> >  include/linux/fsnotify_backend.h | 14 ++++++++++++-
-> >  2 files changed, 46 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> > index 963e6ce75b96..848a824c29c4 100644
-> > --- a/fs/notify/fsnotify.c
-> > +++ b/fs/notify/fsnotify.c
-> > @@ -440,7 +440,7 @@ static void fsnotify_iter_next(struct fsnotify_iter_info *iter_info)
-> >  }
-> >
-> >  /*
-> > - * fsnotify - This is the main call to fsnotify.
-> > + * __fsnotify - This is the main call to fsnotify.
-> >   *
-> >   * The VFS calls into hook specific functions in linux/fsnotify.h.
-> >   * Those functions then in turn call here.  Here will call out to all of the
-> > @@ -459,7 +459,7 @@ static void fsnotify_iter_next(struct fsnotify_iter_info *iter_info)
-> >   *             if both are non-NULL event may be reported to both.
-> >   * @cookie:    inotify rename cookie
-> >   */
-> > -int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
-> > +int __fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
-> >              const struct qstr *file_name, struct inode *inode, u32 cookie)
-> >  {
-> >         const struct path *path = fsnotify_data_path(data, data_type);
-> > @@ -552,6 +552,37 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
-> >
-> >         return ret;
-> >  }
-> > +
-> > +/*
-> > + * Wrapper around fsnotify. The main functionality is to filter local events in
-> > + * case the inode belongs to a filesystem that supports remote events
-> > + */
-> > +int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
-> > +            const struct qstr *file_name, struct inode *inode, u32 cookie)
-> > +{
-> > +
-> > +       if (inode != NULL || dir != NULL) {
-> > +               /*
-> > +                * Check if the fsnotify_event operation is available which
-> > +                * will let the remote inotify events go through and suppress
-> > +                * the local events
-> > +                */
-> > +               if (inode && inode->i_op->fsnotify_event) {
-> > +                       return inode->i_op->fsnotify_event(mask, data,
-> > +                                                          data_type, dir,
-> > +                                                          file_name, inode,
-> > +                                                          cookie);
-> > +               }
-> > +               if (dir && dir->i_op->fsnotify_event) {
-> > +                       return dir->i_op->fsnotify_event(mask, data,
-> > +                                                        data_type, dir,
-> > +                                                        file_name, inode,
-> > +                                                        cookie);
-> > +               }
-> > +       }
-> > +
-> 
-> That's not the way to accomplish what you want to do.
-> 
-> Assuming that we agree to let filesystem silence VFS fsnotify hooks
-> it should be done using an inode flag, similar to file flag FMODE_NONOTIFY.
+> > > > Is this really required to be part of the initial support?
+> > >
+> > > No.... I was just thinking out-loud.
+> > >
+> > alloc_vmap_area() has an retry path, basically if it fails the code
+> > will try to "purge"
+> > areas and repeat it one more time. So we do not need to purge outside some where
+> > else.
+>
+> I think that Neil was not concerned about the need for purging something
+> but rather a waiting event the retry loop could hook into. So that the
+> sleep wouldn't have to be a random timeout but something that is
+> actually actionable - like somebody freeing an area.
+>
+I see this point. But sometimes it is not as straightforward as it could be. If
+we have lack of vmap space within a specific range, it might be not about
+reclaiming(nobody frees to that area and no outstanding areas) thus we
+can do nothing.
 
-Ok, so basically define a new flag say FMODE_FOO and check that in
-fsnotify() and ignore event if flag is set. And filesystem can set
-that flag if remote events are enabled. And then vfs will ignore
-local events. Sounds reasonable.
-
-> 
-> But the reason you want to do that seems a bit odd.
-
-I gave this idea to Ioannis. But defining a inode flag probably is
-much cheaper as comapred to inode operation.
-
-> Duplicate events are going to be merged with fanotify and I think that
-> you ruled out fanotify for the wrong reasons
-> (you should have only ruled out permission events)
-
-Ioannis was looking at fanoity and wondering if fanotify can be supported
-as well. fanotify seemed to be much more powerful as compared to inotify
-and some of the things looked like not feasible to be supported for
-remote filesystems.
-
-But if it is acceptable to support only limited functionality/events, then
-it probably is a good idea to keep fanotify in mind and somebody can extend
-it for fanotify as well.
-
-Ideally it will be nice to support fanoity as well (as much as possible).
-Just that it seemed more complicated. So we thought that let us start
-with a simpler API (inotify) and try to implement that first.
-
-I don't understand "Duplicate events are going to be merged with
-fanotify". So fanotiy has something to figure out there are duplicate
-events and merge these and user space never sees duplicate events.
-
-Vivek
-
+-- 
+Uladzislau Rezki
