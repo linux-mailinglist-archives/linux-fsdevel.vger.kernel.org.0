@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69BCC43B4EC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 16:56:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6704443B511
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 17:06:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235158AbhJZO6k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 10:58:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33842 "EHLO
+        id S231580AbhJZPIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 11:08:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231178AbhJZO6j (ORCPT
+        with ESMTP id S231184AbhJZPIv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 10:58:39 -0400
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E74A4C061745;
-        Tue, 26 Oct 2021 07:56:15 -0700 (PDT)
-Received: by mail-il1-x12f.google.com with SMTP id l13so6044970ilh.3;
-        Tue, 26 Oct 2021 07:56:15 -0700 (PDT)
+        Tue, 26 Oct 2021 11:08:51 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C2CDC061745;
+        Tue, 26 Oct 2021 08:06:27 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id v65so9297524ioe.5;
+        Tue, 26 Oct 2021 08:06:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=R9HURV+keZ8+RC861ppVS61dq4P1A4mNf2+AcYkA9y0=;
-        b=Cv/et1PndkMkn8UTWO3ufwFO3ktYT4DKlDSaO20ZP9zP0iuOIVbhe0ZJPblA2037zi
-         3Xnv7+QiOHayz4gmA3MJOWDz8NleLjcj4QiK+fM1zhQKU9B+sG5zHXSwXeceIRPz9pgV
-         voPxq5YylpBb0OZWuAg7HsKeB06F/xhY924mfGzG5zXsrtXj6wUcTICoSeq6we7rbnIe
-         rTmRSiVv56NUktYKJEt1vzAPhRKcE5owbJblP0e7nxG3N0Q+C3cOU3SLtCQzqZF2nOvS
-         ir9pOzabDhSqgU3QMb4PK0ytwdr4Og6UImCUH2ai30e/K7aZxxdKgt/CyAAmAcfe2Vwi
-         B+NQ==
+        bh=fNSO23WT7zZsZRgMZvK0/0ybeAEIF30Y5WsrqotWtAI=;
+        b=aEWVpTjtnB7VEjo3Gwwl0mNTkw8d+EJTKLf+Q8LlVQG0hGC82Mu55JTiF/BYbuSTmV
+         FHFjpKjCEg/N4L2F9CT04brq6SZmBT+xeoDp2rzLqxFr8euDiyPQm17Eu1XVyOdexfM4
+         SvuQTA3RwoWRnIHy7AEjfW8bcMnXTYCDbNpRXSf0tadFymKzxsLcFO1fy9KnjsvMcdeH
+         hP/anNt/90jGHqI6wGu/SFlyIWy/eiq1a7+IDfJp//qDPSDFf46tYND4CQ7zCF/X0D4P
+         +MVIlay7tDgqqoX3mJJ3HSH4V8ckMjsP2Urc3jsfR4rvmcKE9wRmu9vGL9XM02rvYsCb
+         sRNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=R9HURV+keZ8+RC861ppVS61dq4P1A4mNf2+AcYkA9y0=;
-        b=2l8tzGdXjeSvml9yGHD5C9ZuZN7Bwgiank+sqm05+b3Ck7meIbxfraSQ7ErfC1neUl
-         H0Zoxl5gsOD31HmPaEJJVnwTlasqlNg3QlMXbHb243s0/FZnyrYLQjPMDm0/3eKg05ay
-         voTo4ZJYd8CamhAyCaWm5IDLpA7t9JHsOxf0eGtpjuh4cwBRBAMJ1ZfjJAtV0JKbDggN
-         9fwbr8zk5aI6PWvtwPS9lWdJri9O9++CFCKUptEhHCa13hL0ecYMUwuiDQtTJWGXtTlH
-         FHLl7Zmp/+dF3lMPH+78YcFhgZOdFRLWGRIoJ2ZpmUjqfjBmDea2kUqMrQKd2j6b/DQy
-         /WZA==
-X-Gm-Message-State: AOAM530ro6OKYSVxFUuPW45tOKRf/rm7hHXiAYoojvRZTlmEU6XVoKKe
-        usbR/eSzcfq6Y/LnMyeDgiI9FpvD5ox+uPhXRz8=
-X-Google-Smtp-Source: ABdhPJyQxAk3RWdnDVx9xb0R6GVIYMqcYvNwcAhAeXE+Y0IjtY12vXvMexhQ8VLMYbkWoW/9FuXedJYwWrcf6YXm1vY=
-X-Received: by 2002:a05:6e02:18cf:: with SMTP id s15mr10170813ilu.198.1635260175196;
- Tue, 26 Oct 2021 07:56:15 -0700 (PDT)
+        bh=fNSO23WT7zZsZRgMZvK0/0ybeAEIF30Y5WsrqotWtAI=;
+        b=64B93edfdv6QKJ7kPNNAPzZ10xNZfG1XlIY1uI0+CBi7N4Xu0oZitU+8VcS+kHgGgs
+         3WtB90FRzRlUxsTDWXJtPGlSS3VXNxucGzM3VNu/acvG0Yi0ZTl+xiCHMj384ZB76pNv
+         WzjsYGN402vv2MoFDHRSPLEyEQNAHgPw73yAIAjBF3mUtUk2P2m8uDhgSyx920nVSsTp
+         J8MfSWMC4ThIfM6CfU3aMvhN7vU46rrpM171LlZmXJ/d6wW80AYHCgin+swSTm/diZv3
+         54Ae1kdX4rEBvtkkBwJtzvg/sqM1dUczksq/3QZctrc0wD4oCKD5knqKMICf20F0T4qq
+         eygg==
+X-Gm-Message-State: AOAM533+VFrCXsUaADqNyFxLRpMRJLIfZK10Pngkb/4DOBreYpmZ1P1E
+        Shp8zDNpAu72gShDms2kTOARagLXml6Uw1kQoTc=
+X-Google-Smtp-Source: ABdhPJzoJo6U7Nfaw1Wxwk6n3IDrennJOt1VTXzYws8awU9aFnzhPwg1gKPc4bhinqKO7/L7IQ/11o2T/JJ1kxMYYBM=
+X-Received: by 2002:a5d:8792:: with SMTP id f18mr15424164ion.52.1635260786931;
+ Tue, 26 Oct 2021 08:06:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211025204634.2517-1-iangelak@redhat.com> <20211025204634.2517-2-iangelak@redhat.com>
-In-Reply-To: <20211025204634.2517-2-iangelak@redhat.com>
+References: <20211025204634.2517-1-iangelak@redhat.com> <20211025204634.2517-4-iangelak@redhat.com>
+In-Reply-To: <20211025204634.2517-4-iangelak@redhat.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 26 Oct 2021 17:56:03 +0300
-Message-ID: <CAOQ4uxinGYb0QtgE8To5wc2iijT9VpTgDiXEp-9YXz=t_6eMbA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/7] FUSE: Add the fsnotify opcode and in/out structs
- to FUSE
+Date:   Tue, 26 Oct 2021 18:06:15 +0300
+Message-ID: <CAOQ4uxjEHQLhB2oWuC4Tba2jpt5RgJvTi8CFiLvsd9C_ydqExA@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/7] FUSE,Inotify,Fsnotify,VFS: Add the
+ fuse_fsnotify_update_mark inode operation
 To:     Ioannis Angelakopoulos <iangelak@redhat.com>
 Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         virtio-fs-list <virtio-fs@redhat.com>,
@@ -67,100 +67,215 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On Mon, Oct 25, 2021 at 11:47 PM Ioannis Angelakopoulos
 <iangelak@redhat.com> wrote:
 >
-> Since fsnotify is the backend for the inotify subsystem all the backend
-> code implementation we add is related to fsnotify.
+> Every time a local watch is placed/modified/removed on/from an inode the
+> same operation has to take place in the FUSE server.
 >
-> To support an fsnotify request in FUSE and specifically virtiofs we add a
-> new opcode for the FSNOTIFY (51) operation request in the "fuse.h" header.
+> Thus add the inode operation "fuse_fsnotify_update_mark", which is
+> specific to FUSE inodes. This operation is called from the
+> "inotify_add_watch" system call in the inotify subsystem.
 >
-> Also add the "fuse_notify_fsnotify_in" and "fuse_notify_fsnotify_out"
-> structs that are responsible for passing the fsnotify/inotify related data
-> to and from the FUSE server.
+> Specifically, the operation is called when a process tries to add, modify
+> or remove a watch from a FUSE inode and the remote fsnotify support is
+> enabled both in the guest kernel and the FUSE server (virtiofsd).
+>
+> Essentially, when the kernel adds/modifies a watch locally, also send a
+> fsnotify request to the FUSE server to do the same. We keep the local watch
+> placement since it is essential for the functionality of the fsnotify
+> notification subsystem. However, the local events generated by the guest
+> kernel will be suppressed if they affect FUSE inodes and the remote
+> fsnotify support is enabled.
+>
+> Also modify the "fsnotify_detach_mark" function in fs/notify/mark.c to add
+> support for the remote deletion of watches for FUSE inodes. In contrast to
+> the add/modify operation we do not modify the inotify subsystem, but the
+> fsnotify subsystem. That is because there are two ways of deleting a watch
+> from an inode. The first is by manually calling the "inotify_rm_watch"
+> system call and the second is automatically by the kernel when the process
+> that has created an inotify instance exits. In that case the kernel is
+> responsible for deleting all the watches corresponding to said inotify
+> instance.
+>
+> Thus we send the fsnotify request for the deletion of the remote watch at
+> the lowest level within "fsnotify_detach_mark" to catch both watch removal
+> cases.
+>
+> The "fuse_fsnotify_update_mark" function in turn calls the
+> "fuse_fsnotify_send_request" function, to send an fsnotify request to the
+> FUSE server related to an inode watch.
+>
 >
 > Signed-off-by: Ioannis Angelakopoulos <iangelak@redhat.com>
 > ---
->  include/uapi/linux/fuse.h | 23 ++++++++++++++++++++++-
->  1 file changed, 22 insertions(+), 1 deletion(-)
+>  fs/fuse/dir.c                    | 29 +++++++++++++++++++++++++++++
+>  fs/notify/inotify/inotify_user.c | 11 +++++++++++
+>  fs/notify/mark.c                 | 10 ++++++++++
+>  include/linux/fs.h               |  2 ++
+>  4 files changed, 52 insertions(+)
 >
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index 46838551ea84..418b7fc72417 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -186,6 +186,9 @@
->   *  - add FUSE_SYNCFS
->   *  7.35
->   *  - add FUSE_NOTIFY_LOCK
-> + *  7.36
-> + *  - add FUSE_HAVE_FSNOTIFY
-> + *  - add fuse_notify_fsnotify_(in,out)
->   */
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index d9b977c0f38d..f666aafc8d3f 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -17,6 +17,8 @@
+>  #include <linux/xattr.h>
+>  #include <linux/iversion.h>
+>  #include <linux/posix_acl.h>
+> +#include <linux/fsnotify_backend.h>
+> +#include <linux/inotify.h>
 >
->  #ifndef _LINUX_FUSE_H
-> @@ -221,7 +224,7 @@
->  #define FUSE_KERNEL_VERSION 7
+>  static void fuse_advise_use_readdirplus(struct inode *dir)
+>  {
+> @@ -1805,6 +1807,30 @@ static int fuse_getattr(struct user_namespace *mnt_userns,
+>         return fuse_update_get_attr(inode, NULL, stat, request_mask, flags);
+>  }
 >
->  /** Minor version number of this interface */
-> -#define FUSE_KERNEL_MINOR_VERSION 35
-> +#define FUSE_KERNEL_MINOR_VERSION 36
->
->  /** The node ID of the root inode */
->  #define FUSE_ROOT_ID 1
-> @@ -338,6 +341,7 @@ struct fuse_file_lock {
->   *                     write/truncate sgid is killed only if file has group
->   *                     execute permission. (Same as Linux VFS behavior).
->   * FUSE_SETXATTR_EXT:  Server supports extended struct fuse_setxattr_in
-> + * FUSE_HAVE_FSNOTIFY: remote fsnotify/inotify event subsystem support
->   */
->  #define FUSE_ASYNC_READ                (1 << 0)
->  #define FUSE_POSIX_LOCKS       (1 << 1)
-> @@ -369,6 +373,7 @@ struct fuse_file_lock {
->  #define FUSE_SUBMOUNTS         (1 << 27)
->  #define FUSE_HANDLE_KILLPRIV_V2        (1 << 28)
->  #define FUSE_SETXATTR_EXT      (1 << 29)
-> +#define FUSE_HAVE_FSNOTIFY     (1 << 30)
->
->  /**
->   * CUSE INIT request/reply flags
-> @@ -515,6 +520,7 @@ enum fuse_opcode {
->         FUSE_SETUPMAPPING       = 48,
->         FUSE_REMOVEMAPPING      = 49,
->         FUSE_SYNCFS             = 50,
-> +       FUSE_FSNOTIFY           = 51,
->
->         /* CUSE specific operations */
->         CUSE_INIT               = 4096,
-> @@ -532,6 +538,7 @@ enum fuse_notify_code {
->         FUSE_NOTIFY_RETRIEVE = 5,
->         FUSE_NOTIFY_DELETE = 6,
->         FUSE_NOTIFY_LOCK = 7,
-> +       FUSE_NOTIFY_FSNOTIFY = 8,
->         FUSE_NOTIFY_CODE_MAX,
+> +static int fuse_fsnotify_update_mark(struct inode *inode, uint32_t action,
+> +                                    uint64_t group, uint32_t mask)
+> +{
+> +       /*
+> +        * We have to remove the bits added to the mask before being attached
+> +        * or detached to the inode, since these bits are going to be
+> +        * added by the "remote" host kernel. If these bits were still enabled
+> +        * in the mask that was sent to the "remote" kernel then the watch would
+> +        * be rejected as an unsupported value. These bits are added by the
+> +        * fsnotify subsystem thus we use the corresponding fsnotify bits here.
+> +        */
+> +       mask = mask & ~(FS_IN_IGNORED | FS_UNMOUNT | FS_IN_ONESHOT |
+> +                       FS_EXCL_UNLINK | FS_EVENT_ON_CHILD);
+> +
+> +       if (!(mask & IN_ALL_EVENTS))
+> +               return -EINVAL;
+> +
+> +       /*
+> +        * Action 0: Remove a watch
+> +        * Action 1: Add/Modify watch
+> +        */
+> +       return fuse_fsnotify_send_request(inode, mask, action, group);
+> +}
+> +
+>  static const struct inode_operations fuse_dir_inode_operations = {
+>         .lookup         = fuse_lookup,
+>         .mkdir          = fuse_mkdir,
+> @@ -1824,6 +1850,7 @@ static const struct inode_operations fuse_dir_inode_operations = {
+>         .set_acl        = fuse_set_acl,
+>         .fileattr_get   = fuse_fileattr_get,
+>         .fileattr_set   = fuse_fileattr_set,
+> +       .fsnotify_update = fuse_fsnotify_update_mark,
 >  };
 >
-> @@ -571,6 +578,20 @@ struct fuse_getattr_in {
->         uint64_t        fh;
+>  static const struct file_operations fuse_dir_operations = {
+> @@ -1846,6 +1873,7 @@ static const struct inode_operations fuse_common_inode_operations = {
+>         .set_acl        = fuse_set_acl,
+>         .fileattr_get   = fuse_fileattr_get,
+>         .fileattr_set   = fuse_fileattr_set,
+> +       .fsnotify_update = fuse_fsnotify_update_mark,
 >  };
 >
-> +struct fuse_notify_fsnotify_out {
-> +       uint64_t inode;
+>  static const struct inode_operations fuse_symlink_inode_operations = {
+> @@ -1853,6 +1881,7 @@ static const struct inode_operations fuse_symlink_inode_operations = {
+>         .get_link       = fuse_get_link,
+>         .getattr        = fuse_getattr,
+>         .listxattr      = fuse_listxattr,
+> +       .fsnotify_update = fuse_fsnotify_update_mark,
+>  };
+>
+>  void fuse_init_common(struct inode *inode)
+> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+> index 62051247f6d2..3a0fee09a7c3 100644
+> --- a/fs/notify/inotify/inotify_user.c
+> +++ b/fs/notify/inotify/inotify_user.c
+> @@ -46,6 +46,8 @@
+>  #define INOTIFY_WATCH_COST     (sizeof(struct inotify_inode_mark) + \
+>                                  2 * sizeof(struct inode))
+>
+> +#define FSNOTIFY_ADD_MODIFY_MARK       1
+> +
+>  /* configurable via /proc/sys/fs/inotify/ */
+>  static int inotify_max_queued_events __read_mostly;
+>
+> @@ -764,6 +766,15 @@ SYSCALL_DEFINE3(inotify_add_watch, int, fd, const char __user *, pathname,
+>
+>         /* create/update an inode mark */
+>         ret = inotify_update_watch(group, inode, mask);
+> +       /*
+> +        * If the inode belongs to a remote filesystem/server that supports
+> +        * remote inotify events then send the mark to the remote server
+> +        */
+> +       if (ret >= 0 && inode->i_op->fsnotify_update) {
+> +               inode->i_op->fsnotify_update(inode,
+> +                                            FSNOTIFY_ADD_MODIFY_MARK,
+> +                                            (uint64_t)group, mask);
+> +       }
+>         path_put(&path);
+>  fput_and_out:
+>         fdput(f);
+> diff --git a/fs/notify/mark.c b/fs/notify/mark.c
+> index fa1d99101f89..f0d37276afcb 100644
+> --- a/fs/notify/mark.c
+> +++ b/fs/notify/mark.c
+> @@ -77,6 +77,7 @@
+>  #include "fsnotify.h"
+>
+>  #define FSNOTIFY_REAPER_DELAY  (1)     /* 1 jiffy */
+> +#define FSNOTIFY_DELETE_MARK 0   /* Delete a mark in remote fsnotify */
 
-64bit inode is not a good unique identifier of the object.
-you need to either include the generation in object identifier
-or much better use the object's nfs file handle, the same way
-that fanotify stores object identifiers.
+This define is part of the vfs API it should be in an include file along side
+FSNOTIFY_ADD_MODIFY_MARK (if we keep them in the API).
 
-> +       uint64_t mask;
-> +       uint32_t namelen;
-> +       uint32_t cookie;
+>
+>  struct srcu_struct fsnotify_mark_srcu;
+>  struct kmem_cache *fsnotify_mark_connector_cachep;
+> @@ -399,6 +400,7 @@ void fsnotify_finish_user_wait(struct fsnotify_iter_info *iter_info)
+>  void fsnotify_detach_mark(struct fsnotify_mark *mark)
+>  {
+>         struct fsnotify_group *group = mark->group;
+> +       struct inode *inode = NULL;
+>
+>         WARN_ON_ONCE(!mutex_is_locked(&group->mark_mutex));
+>         WARN_ON_ONCE(!srcu_read_lock_held(&fsnotify_mark_srcu) &&
+> @@ -411,6 +413,14 @@ void fsnotify_detach_mark(struct fsnotify_mark *mark)
+>                 spin_unlock(&mark->lock);
+>                 return;
+>         }
+> +
+> +       /* Only if the object is an inode send a request to FUSE server */
+> +       inode = fsnotify_conn_inode(mark->connector);
+> +       if (inode && inode->i_op->fsnotify_update) {
+> +               inode->i_op->fsnotify_update(inode, FSNOTIFY_DELETE_MARK,
+> +                                            (uint64_t)group, mark->mask);
+> +       }
+> +
+>         mark->flags &= ~FSNOTIFY_MARK_FLAG_ATTACHED;
+>         list_del_init(&mark->g_list);
+>         spin_unlock(&mark->lock);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index e7a633353fd2..86bcc44e3ab8 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2149,6 +2149,8 @@ struct inode_operations {
+>         int (*fileattr_set)(struct user_namespace *mnt_userns,
+>                             struct dentry *dentry, struct fileattr *fa);
+>         int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
+> +       int (*fsnotify_update)(struct inode *inode, uint32_t action,
+> +                              uint64_t group, uint32_t mask);
+>  } ____cacheline_aligned;
+>
 
-I object to persisting with the two-events-joined-by-cookie design.
-Any new design should include a single event for rename
-with information about src and dst.
+Please split the patch that introduces the API from the FUSE implementation.
 
-I know this is inconvenient, but we are NOT going to create a "remote inotify"
-interface, we need to create a "remote fsnotify" interface and if server wants
-to use inotify, it will need to join the disjoined MOVE_FROM/TO event into
-a single "remote event", that FUSE will use to call fsnotify_move().
+Regarding the API, group does not belong in this interface.
+The inode object has an "aggregated mask" at i_fsnotify_mask
+indicating an interest for an event from any group.
+Remote servers should be notified when the aggregated mask changes.
+
+Hence, Miklos has proposed a "remote fsnotify update" API which does
+not carry the mask nor the action, only the watched object:
+https://lore.kernel.org/linux-fsdevel/20190501205541.GC30899@veci.piliscsaba.redhat.com/
+
+On that same thread, you will see that I also proposed the API to support
+full filesystem watch (by passing sb).
+I am not requiring that you implement sb watch for FUSE/virtiofs, but the
+API should take this future extension into account.
 
 Thanks,
 Amir.
