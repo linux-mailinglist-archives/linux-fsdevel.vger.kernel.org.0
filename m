@@ -2,110 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B80F43B3FB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 16:27:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D147343B43E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 16:33:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235005AbhJZO3m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 10:29:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54810 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233064AbhJZO3l (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 10:29:41 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AD64C061745;
-        Tue, 26 Oct 2021 07:27:17 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id s1so14504724edd.3;
-        Tue, 26 Oct 2021 07:27:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZkJRL0lPRthFxQ90psMtV6Y2lcv2PWeua158fYiZ2tE=;
-        b=VtSn4Qsf+26WNtb9faKkgDJYjE+Y/NifymUBTasTLjEZHV5DjzChjuKMOzrM9ga++F
-         +2LSiHWb+HVvmU70Qason5S/qaPC2Av3LXUmXx9QzXYYMpqvfYqHjuSruE/KAZVkvGLz
-         InCwl55UA0vUpA8Zc3p3TZQYuF0bBNSrD/hLOC65yHokL8hXfHDe2Npgdq7xFEZOf1Se
-         4/aVyntg8sQwpAtHFMH3suBvpy2mQzuIU7IaXbblOMNzfIojyISlS5gqm3pxsJCo83vD
-         sPQFh7HLO1dpSUT0fDnNLNAylF8pOb5oG4/g7EvAs0bZXTW8URjYww9v1aRPdQk+83yL
-         gY3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZkJRL0lPRthFxQ90psMtV6Y2lcv2PWeua158fYiZ2tE=;
-        b=lgNvgGNIP9Z5TX+uLE6zbrxQKCd18O3hHB915xMgUxs8RYUKUnMh9auayzYQbKUpip
-         bcFi9C9BEeBGceOJidCP83kPUVpwm9kq6Q+0nvpAPCEgfW00xOF8rVZOP0Tay6gpW7Em
-         T0d2gad/IhpcUZdsAed6eHX4u0u/TowXe2JNC7s49SMjKQOZUnWX24xZVowx2XuaBM2K
-         Bca1AVeeVAtheo9UDngNw89Rz1H9uI1PliRH/2yGo8M6IWIBtRs1i16NoI4odaZrSStO
-         I8x5tMruOo285aBdPfegE1plnJC1ZVLdm1LdhS7AKC6bT7uFxfLvUzbLFbAxVp6NkB0H
-         ZvsQ==
-X-Gm-Message-State: AOAM5318A394AgJUMpjmSsj/9Ge9orQLysvDMkDefVuL1671oi3k6pKq
-        JcfA0V9ktDWytoF5l6ttXxbNdMKDWKHA7JT/3zo+WW25p/E=
-X-Google-Smtp-Source: ABdhPJzAbha01GzhYnNbtdP2nscjIzf9PN4ekdMn/3Fr8Wwd9C8/kUL/KLZ68gKE8NdMa8m5PpRRMxEYjLqzD9/sJ88=
-X-Received: by 2002:a17:907:d08:: with SMTP id gn8mr30687462ejc.395.1635258318314;
- Tue, 26 Oct 2021 07:25:18 -0700 (PDT)
+        id S235652AbhJZOgC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 10:36:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46752 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234211AbhJZOgC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Oct 2021 10:36:02 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1A491610A0;
+        Tue, 26 Oct 2021 14:33:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1635258818;
+        bh=2DDd82a6pBIXPZXoD4v/5F9Mf9Q9FC+VQw0+Z7QOTKQ=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=qxhovtrPHavixa1LZdhWOwnO6V4lEjEdWdvA/IxLFpeJkxPrt6oIZBpe2dD9T15SE
+         QUM7dmFIf4LACczKunnblhoVmTSJ7Tk3ifqoeMhzQocam/gh/HPnBBGs2UtLx+u9SF
+         j/AJVqcCVpeo+hKkDbnc6xlnuFIycMSjjXA9zatU4NLNeqOC5DvyTBBJA3fXvQxMqZ
+         BEWwGA+NujzkZblCRjWKMEozgicjZZmw+J8dhhiNZQqlJN4JcGMXH0bOfohQ/xqbdj
+         DjubW1NZFltxZMG/2yAuOZ/mfqATHIPUsouDBATGjP3wBKh7ilC2cxdvCp2v5hxEOl
+         6rVKTM8Sn8Esw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id 546755C0D48; Tue, 26 Oct 2021 07:33:37 -0700 (PDT)
+Date:   Tue, 26 Oct 2021 07:33:37 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Marco Elver <elver@google.com>
+Cc:     syzbot <syzbot+4dfb96a94317a78f44d9@syzkaller.appspotmail.com>,
+        rcu@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] KCSAN: data-race in call_rcu / rcu_gp_fqs_loop
+Message-ID: <20211026143337.GA1861432@paulmck-ThinkPad-P17-Gen-1>
+Reply-To: paulmck@kernel.org
+References: <000000000000ddb95c05cf2ad54a@google.com>
+ <CANpmjNPC6Oqq3+8ENDfM=jXUtY+_zWHAkAE5Wq87ZMYZMV6uLg@mail.gmail.com>
+ <20211026140729.GW880162@paulmck-ThinkPad-P17-Gen-1>
 MIME-Version: 1.0
-References: <CA+KHdyUyObf2m51uFpVd_tVCmQyn_mjMO0hYP+L0AmRs0PWKow@mail.gmail.com>
- <YXAtYGLv/k+j6etV@dhcp22.suse.cz> <CA+KHdyVdrfLPNJESEYzxfF+bksFpKGCd8vH=NqdwfPOLV9ZO8Q@mail.gmail.com>
- <20211020192430.GA1861@pc638.lan> <163481121586.17149.4002493290882319236@noble.neil.brown.name>
- <YXFAkFx8PCCJC0Iy@dhcp22.suse.cz> <20211021104038.GA1932@pc638.lan>
- <163485654850.17149.3604437537345538737@noble.neil.brown.name>
- <20211025094841.GA1945@pc638.lan> <163520582122.16092.9250045450947778926@noble.neil.brown.name>
- <YXeraV5idipgWDB+@dhcp22.suse.cz> <163524388152.8576.15706993879941541847@noble.neil.brown.name>
-In-Reply-To: <163524388152.8576.15706993879941541847@noble.neil.brown.name>
-From:   Uladzislau Rezki <urezki@gmail.com>
-Date:   Tue, 26 Oct 2021 16:25:07 +0200
-Message-ID: <CA+KHdyWev2RwoO1o9OrAkaE2VdC7iSXnJdBR+qzarqYOse3cXA@mail.gmail.com>
-Subject: Re: [RFC 2/3] mm/vmalloc: add support for __GFP_NOFAIL
-To:     NeilBrown <neilb@suse.de>, Michal Hocko <mhocko@suse.com>
-Cc:     Linux Memory Management List <linux-mm@kvack.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211026140729.GW880162@paulmck-ThinkPad-P17-Gen-1>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 26, 2021 at 12:24 PM NeilBrown <neilb@suse.de> wrote:
->
-> On Tue, 26 Oct 2021, Michal Hocko wrote:
-> > On Tue 26-10-21 10:50:21, Neil Brown wrote:
-> > > On Mon, 25 Oct 2021, Uladzislau Rezki wrote:
-> > > > On Fri, Oct 22, 2021 at 09:49:08AM +1100, NeilBrown wrote:
-> > > > > However I'm not 100% certain, and the behaviour might change in the
-> > > > > future.  So having one place (the definition of memalloc_retry_wait())
-> > > > > where we can change the sleeping behaviour if the alloc_page behavour
-> > > > > changes, would be ideal.  Maybe memalloc_retry_wait() could take a
-> > > > > gfpflags arg.
-> > > > >
-> > > > At sleeping is required for __get_vm_area_node() because in case of lack
-> > > > of vmap space it will end up in tight loop without sleeping what is
-> > > > really bad.
-> > > >
-> > > So vmalloc() has two failure modes.  alloc_page() failure and
-> > > __alloc_vmap_area() failure.  The caller cannot tell which...
-> > >
-> > > Actually, they can.  If we pass __GFP_NOFAIL to vmalloc(), and it fails,
-> > > then it must have been __alloc_vmap_area() which failed.
-> > > What do we do in that case?
-> > > Can we add a waitq which gets a wakeup when __purge_vmap_area_lazy()
-> > > finishes?
-> > > If we use the spinlock from that waitq in place of free_vmap_area_lock,
-> > > then the wakeup would be nearly free if no-one was waiting, and worth
-> > > while if someone was waiting.
-> >
-> > Is this really required to be part of the initial support?
->
-> No.... I was just thinking out-loud.
->
-alloc_vmap_area() has an retry path, basically if it fails the code
-will try to "purge"
-areas and repeat it one more time. So we do not need to purge outside some where
-else.
+On Tue, Oct 26, 2021 at 07:07:30AM -0700, Paul E. McKenney wrote:
+> On Mon, Oct 25, 2021 at 12:31:53PM +0200, Marco Elver wrote:
+> > +Cc Paul
+> > 
+> > data race is in rcu code, presumably not yet discovered by rcutorture?
+> 
+> Quite possibly, and I will take a look.  Thank you for sending this
+> along.
 
--- 
-Uladzislau Rezki
+And this is (allegedly) fixed by commit 2431774f04d10 ("rcu: Mark accesses
+to rcu_state.n_force_qs"), which is in -rcu and slated for the upcoming
+merge window.  But yes, still a bug in mainline.
+
+							Thanx, Paul
+
+> > On Mon, 25 Oct 2021 at 12:29, syzbot
+> > <syzbot+4dfb96a94317a78f44d9@syzkaller.appspotmail.com> wrote:
+> > >
+> > > Hello,
+> > >
+> > > syzbot found the following issue on:
+> > >
+> > > HEAD commit:    9c0c4d24ac00 Merge tag 'block-5.15-2021-10-22' of git://gi..
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=159c4954b00000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=6339b6ea86d89fd7
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=4dfb96a94317a78f44d9
+> > > compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.2
+> > >
+> > > Unfortunately, I don't have any reproducer for this issue yet.
+> > >
+> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > Reported-by: syzbot+4dfb96a94317a78f44d9@syzkaller.appspotmail.com
+> > >
+> > > ==================================================================
+> > > BUG: KCSAN: data-race in call_rcu / rcu_gp_fqs_loop
+> > >
+> > > write to 0xffffffff837342e0 of 8 bytes by task 11 on cpu 1:
+> > >  rcu_gp_fqs kernel/rcu/tree.c:1910 [inline]
+> > >  rcu_gp_fqs_loop+0x348/0x470 kernel/rcu/tree.c:1971
+> > >  rcu_gp_kthread+0x25/0x1a0 kernel/rcu/tree.c:2130
+> > >  kthread+0x262/0x280 kernel/kthread.c:319
+> > >  ret_from_fork+0x1f/0x30
+> > >
+> > > read to 0xffffffff837342e0 of 8 bytes by task 379 on cpu 0:
+> > >  __call_rcu_core kernel/rcu/tree.c:2904 [inline]
+> > >  __call_rcu kernel/rcu/tree.c:3020 [inline]
+> > >  call_rcu+0x4c0/0x6d0 kernel/rcu/tree.c:3067
+> > >  __dentry_kill+0x3ec/0x4e0 fs/dcache.c:596
+> > >  dput+0xc6/0x360 fs/dcache.c:888
+> > >  do_unlinkat+0x2a8/0x540 fs/namei.c:4172
+> > >  __do_sys_unlink fs/namei.c:4217 [inline]
+> > >  __se_sys_unlink fs/namei.c:4215 [inline]
+> > >  __x64_sys_unlink+0x2c/0x30 fs/namei.c:4215
+> > >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+> > >  do_syscall_64+0x44/0xa0 arch/x86/entry/common.c:80
+> > >  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> > >
+> > > value changed: 0x0000000000005c0d -> 0x0000000000005c0e
+> > >
+> > > Reported by Kernel Concurrency Sanitizer on:
+> > > CPU: 0 PID: 379 Comm: udevd Tainted: G        W         5.15.0-rc6-syzkaller #0
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> > > ==================================================================
+> > >
+> > >
+> > > ---
+> > > This report is generated by a bot. It may contain errors.
+> > > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > >
+> > > syzbot will keep track of this issue. See:
+> > > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
