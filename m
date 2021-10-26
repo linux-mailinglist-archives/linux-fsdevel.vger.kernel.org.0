@@ -2,141 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D93ED43B9BF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 20:40:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6064743B9F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 20:50:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238348AbhJZSnE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 14:43:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57670 "EHLO
+        id S236731AbhJZSwv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 14:52:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235794AbhJZSnD (ORCPT
+        with ESMTP id S236750AbhJZSwu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 14:43:03 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 949EDC061745;
-        Tue, 26 Oct 2021 11:40:39 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id bq11so740436lfb.10;
-        Tue, 26 Oct 2021 11:40:39 -0700 (PDT)
+        Tue, 26 Oct 2021 14:52:50 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4A74C061745
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 11:50:25 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id c28so749928lfv.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 11:50:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=2B7Nuk56PYtXZAcRZA0VYMCuyr74J58C1m8umyHIOaU=;
-        b=ZNeeUJBEHOBELTBzEakgjoftW/Sv91UOnDWRS1R8U0bonwBGmn3exCfmJzAPs16VwJ
-         H3XmoA2iNbwuXpgzss4J2YzVzXg+ZSH04wZ5Q6T2U6pPpMD+2ALMelSEccXDqIzKc1ee
-         JE0nnu2YDRcI6b7Y3v6X/MFy6GUKl2VWwfMhKOQDkM5xh7BUTmbkah+W5aqZNrEKARtA
-         d2sX045a1z/WaBbkGNPIrmNooX4xVtoDxkpHue+L+AiDs7bWqJYr1FnK1dB8o+wMXpld
-         r0Aw4uZHLOw2+Aqq/K9FYEVpMrpz6HNhV4/BAvCevLpTN7g1GLShmt0uv0Rfv4gWtjj+
-         r4hg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=r5Cx2RnmHPH+SxoKka0sJEz3NkssP3YCqbiSsqzadkQ=;
+        b=XWmvXqx6E/lnwqgDlacsJYsSx9OK8zrlmcuZe075Kg2Q7afYrlM28LUphtMnNWBBss
+         19rtrgtkK+y60H9M3H213OTzx4KlKQs5vTnOVoJ7FFgOi4799TI0MlAwQR64ujeGGpUF
+         Ec975XRObLADp1do89z7xhEJGw/WNDenswDZ0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2B7Nuk56PYtXZAcRZA0VYMCuyr74J58C1m8umyHIOaU=;
-        b=f+fQzWW8HykWfaDy9prChtlOG7jKli6951nPBBSBwHNIugH6Ufocl6qWmLFVSrp7eH
-         vFZwueaIVjhsd61I7wTXyhvP5beqWsraOVseMufyWIZpDAPYH5zHt34kuFQKC9aJjJYJ
-         8eJiev5FMgZHZRU30G13jgdtGNsjXVTuGz1QPGf9R3al0MeSwOvCmwCPH8xquR4bIym3
-         EtbGhDQc4lOU5813EtHML5yi2tDWvCHGliAXXA28iHhiBlNNKl4SlhtjFuXGzm12kFZv
-         JXAEk3Kc+V9dtJC7c5ytWbgQLMZYwPXdMFSTvt7d9nuEERO32ARTtPsAI+6/BnqRw0A2
-         cf4w==
-X-Gm-Message-State: AOAM531GaMzNssJn2g+Gzm5V045srr0Sfu+XsMAAqsP0gCFGMT2q7r0Y
-        qWxyEj9xAjwxYvQ0Mno5DJg=
-X-Google-Smtp-Source: ABdhPJwwtAabAKXq8k0TcRyNcUuYLOLsZi/bFhBN5H6Trb/Lr2poDcp2o599QFZ8mkBI4XbNhEJ9tg==
-X-Received: by 2002:a05:6512:2386:: with SMTP id c6mr15352362lfv.55.1635273637533;
-        Tue, 26 Oct 2021 11:40:37 -0700 (PDT)
-Received: from kari-VirtualBox ([31.132.12.44])
-        by smtp.gmail.com with ESMTPSA id s18sm2012983lfg.27.2021.10.26.11.40.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Oct 2021 11:40:37 -0700 (PDT)
-Date:   Tue, 26 Oct 2021 21:40:35 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Joe Perches <joe@perches.com>
-Subject: Re: [PATCH 1/4] fs/ntfs3: In function ntfs_set_acl_ex do not change
- inode->i_mode if called from function ntfs_init_acl
-Message-ID: <20211026184035.jkopoeaqukeofmye@kari-VirtualBox>
-References: <25b9a1b5-7738-7b36-7ead-c8faa7cacc87@paragon-software.com>
- <67d0c9ca-2531-8a8a-ea0b-270dc921e271@paragon-software.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=r5Cx2RnmHPH+SxoKka0sJEz3NkssP3YCqbiSsqzadkQ=;
+        b=YAouCwmD5CqGaI3AH1vjOJ2/BvfvDJIz7+8gbJFj5y4VGhOol6rHjcSLiGEfJ+gbbg
+         3RXaGCNWUSJsoXXr0vupVtQ6hBHZ+UC5+2w81ZejGmyNJsVUGFFml3vjKCG+4iL5ENS5
+         TTMaMYrl4B13y7vkxXR0b73pVNzRxvdMnP+KHeJbNFx2Tx+8J11uZ9mzP6VQepuRjwnJ
+         v8/vQjN/Zjb2Nrbq+axlS5Vsh79McCr+8aAOJnR6xT/vwa5By2qPFBK2oKUDw3A8yjOn
+         2/OMPvnWxT0IYFuqVLm56HDU/HxwOovdDCJ5KPHIF6Yl7JI8k2S1e458FC+yBURecqX/
+         2Luw==
+X-Gm-Message-State: AOAM532N6BEPYImm0nP7WT4b2YaSNQoQIikLflhkeRChnVtG+IkVMF9k
+        typEnM+uEm8yveFCbMhePshPfM8wwPWTCLil
+X-Google-Smtp-Source: ABdhPJxqiI4XKCg0TpaC8FIiNYnE6m25sdrKbAn7lJv29sDbxc/tFFsMQrxfVqW/7NQ5Fxi7JvdmLw==
+X-Received: by 2002:a05:6512:3b9:: with SMTP id v25mr13022262lfp.435.1635274223625;
+        Tue, 26 Oct 2021 11:50:23 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id 13sm2004455lfq.285.2021.10.26.11.50.21
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Oct 2021 11:50:21 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id o26so506530ljj.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 11:50:21 -0700 (PDT)
+X-Received: by 2002:a2e:9e13:: with SMTP id e19mr4519488ljk.494.1635274221013;
+ Tue, 26 Oct 2021 11:50:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67d0c9ca-2531-8a8a-ea0b-270dc921e271@paragon-software.com>
+References: <20211019134204.3382645-1-agruenba@redhat.com> <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
+ <YXBFqD9WVuU8awIv@arm.com> <CAHk-=wgv=KPZBJGnx_O5-7hhST8CL9BN4wJwtVuycjhv_1MmvQ@mail.gmail.com>
+ <YXCbv5gdfEEtAYo8@arm.com> <CAHk-=wgP058PNY8eoWW=5uRMox-PuesDMrLsrCWPS+xXhzbQxQ@mail.gmail.com>
+ <YXL9tRher7QVmq6N@arm.com> <CAHk-=wg4t2t1AaBDyMfOVhCCOiLLjCB5TFVgZcV4Pr8X2qptJw@mail.gmail.com>
+ <CAHc6FU7BEfBJCpm8wC3P+8GTBcXxzDWcp6wAcgzQtuaJLHrqZA@mail.gmail.com> <YXhH0sBSyTyz5Eh2@arm.com>
+In-Reply-To: <YXhH0sBSyTyz5Eh2@arm.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 26 Oct 2021 11:50:04 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjWDsB-dDj+x4yr8h8f_VSkyB7MbgGqBzDRMNz125sZxw@mail.gmail.com>
+Message-ID: <CAHk-=wjWDsB-dDj+x4yr8h8f_VSkyB7MbgGqBzDRMNz125sZxw@mail.gmail.com>
+Subject: Re: [PATCH v8 00/17] gfs2: Fix mmap + page fault deadlocks
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Maybe little too long subject line.
+On Tue, Oct 26, 2021 at 11:24 AM Catalin Marinas
+<catalin.marinas@arm.com> wrote:
+>
+> While more intrusive, I'd rather change copy_page_from_iter_atomic()
+> etc. to take a pointer where to write back an error code.
 
-On Mon, Oct 25, 2021 at 07:58:26PM +0300, Konstantin Komarov wrote:
-> ntfs_init_acl sets mode. ntfs_init_acl calls ntfs_set_acl_ex.
-> ntfs_set_acl_ex must not change this mode.
-> Fixes xfstest generic/444
-> Fixes: 83e8f5032e2d ("fs/ntfs3: Add attrib operations")
+I absolutely hate this model.
 
-Where does this commit id come from? Seems wrong to me.
+The thing is, going down that rat-hole, you'll find that you'll need
+to add it to *all* the "copy_to/from_user()" cases, which isn't
+acceptable. So then you start doing some duplicate versions with
+different calling conventions, just because of things like this.
 
-> 
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-> ---
->  fs/ntfs3/xattr.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-> index 2143099cffdf..97b5f8417d85 100644
-> --- a/fs/ntfs3/xattr.c
-> +++ b/fs/ntfs3/xattr.c
-> @@ -538,7 +538,7 @@ struct posix_acl *ntfs_get_acl(struct inode *inode, int type)
->  
->  static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
->  				    struct inode *inode, struct posix_acl *acl,
-> -				    int type)
-> +				    int type, int init_acl)
+So no, I really don't want a "pass down a reference to an extra error
+code" kind of horror.
 
-Like Joe say. Bool here and use true/false
+That said, the fact that these sub-page faults are always
+non-recoverable might be a hint to a solution to the problem: maybe we
+could extend the existing return code with actual negative error
+numbers.
 
->  {
->  	const char *name;
->  	size_t size, name_len;
-> @@ -551,8 +551,9 @@ static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
->  
->  	switch (type) {
->  	case ACL_TYPE_ACCESS:
-> -		if (acl) {
-> -			umode_t mode = inode->i_mode;
-> +		/* Do not change i_mode if we are in init_acl */
-> +		if (acl && !init_acl) {
-> +			umode_t mode;
->  
->  			err = posix_acl_update_mode(mnt_userns, inode, &mode,
->  						    &acl);
-> @@ -613,7 +614,7 @@ static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
->  int ntfs_set_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  		 struct posix_acl *acl, int type)
->  {
-> -	return ntfs_set_acl_ex(mnt_userns, inode, acl, type);
-> +	return ntfs_set_acl_ex(mnt_userns, inode, acl, type, 0);
->  }
->  
->  /*
-> @@ -633,7 +634,7 @@ int ntfs_init_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  
->  	if (default_acl) {
->  		err = ntfs_set_acl_ex(mnt_userns, inode, default_acl,
-> -				      ACL_TYPE_DEFAULT);
-> +				      ACL_TYPE_DEFAULT, 1);
->  		posix_acl_release(default_acl);
->  	} else {
->  		inode->i_default_acl = NULL;
-> @@ -644,7 +645,7 @@ int ntfs_init_acl(struct user_namespace *mnt_userns, struct inode *inode,
->  	else {
->  		if (!err)
->  			err = ntfs_set_acl_ex(mnt_userns, inode, acl,
-> -					      ACL_TYPE_ACCESS);
-> +					      ACL_TYPE_ACCESS, 1);
->  		posix_acl_release(acl);
->  	}
->  
-> -- 
-> 2.33.0
-> 
+Because for _most_ cases of "copy_to/from_user()" and friends by far,
+the only thing we look for is "zero for success".
+
+We could extend the "number of bytes _not_ copied" semantics to say
+"negative means fatal", and because there are fairly few places that
+actually look at non-zero values, we could have a coccinelle script
+that actually marks those places.
+
+End result: no change in calling conventions, no change to most users,
+and the (relatively few) cases where we look at the "what about
+partial results", we just add a
+
+         .. existing code ..
+         ret = copy_from_user(..);
++        if (ret < 0)
++                break;  // or whatever "fatal error" situation
+         .. existing  code ..
+
+kind of thing that just stops the re-try.
+
+(The coccinelle script couldn't actually do that, but it could add
+some comment marker or something so that it's easy to find and then
+manually fix up the places it finds).
+
+             Linus
