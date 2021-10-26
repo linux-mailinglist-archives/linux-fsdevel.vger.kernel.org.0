@@ -2,140 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC18043B98D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 20:27:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EEC143B991
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 20:28:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238299AbhJZSaP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 14:30:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:55216 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236065AbhJZSaL (ORCPT
+        id S236943AbhJZSal (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 14:30:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54916 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235241AbhJZSak (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 14:30:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635272865;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=EscYdYoKFznsl9xa1uV38OQBXXjCOhTbcZL+lFxVyJE=;
-        b=Hc7ddk2K+vLatIES6rsj2N/pY/VQiWv01n2li96UlGWC+GlJ3D/e64VXhh31vkwNJk1ahB
-        YP5D8YN8vhq9+V6+uS5iKHHroYZdDjAAYA/IAfBAZb6MRxlLDH6qZBUxRfpzLwhAHX7CQ2
-        C12BpyuUfLHvlAKbhAgmlnbyscguC/0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-204-Kd3WGJfrP4GBtBfZszVotw-1; Tue, 26 Oct 2021 14:27:44 -0400
-X-MC-Unique: Kd3WGJfrP4GBtBfZszVotw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0508B19057A0;
-        Tue, 26 Oct 2021 18:27:43 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.17.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E19E65F4E0;
-        Tue, 26 Oct 2021 18:27:39 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 7C2CE2204A5; Tue, 26 Oct 2021 14:27:39 -0400 (EDT)
-Date:   Tue, 26 Oct 2021 14:27:39 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Tue, 26 Oct 2021 14:30:40 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F431C061745;
+        Tue, 26 Oct 2021 11:28:16 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id o184so507601iof.6;
+        Tue, 26 Oct 2021 11:28:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=a1dt/KdKFMZr2JEFVAnzlosUvMAPKJvNUI3HrMGiVQk=;
+        b=bJLutzcpwGRmim77vYeHLzUMGz30PFRESyTQCEj5tmU+htvTwKeM+kVbBJv9RXhapo
+         g4iLeGYtjuN8HzoMbHI7sw3TMCKi5ISgygHKwkYTBuyAb3JHUe7ACvQ2f+MRh2p97zHl
+         gxMzo9HW3joMB2o0Dg4xUpRKCBL+HNXHDWQbcsTp/FjBN76VxtuVWdN2NSFSxl2uNix1
+         jSpv8i028LGdAmbRuk7oJL6MWp0C1qJHsgkovc/7e82KZRIWZWzDKj0jMWOW4pg6Kjsr
+         CVVpLrVDUeS9P2gU90B2hXYFn2y9n6eVXevRBFbjj2OHymCg/yFECxXR7q7SSdQRT60g
+         S/Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a1dt/KdKFMZr2JEFVAnzlosUvMAPKJvNUI3HrMGiVQk=;
+        b=InxS5KoscmytZL5dTsYY/qrusdcLxPemJ5Z/Ktjg8F1YvACFEdebKKz+KCMHwJiPR3
+         EGqYCLYl92RdHXv57xcTwfFfewN3jSZvB3329JqztfBTcdEYgZOJhq6ipzGfmLHkeviQ
+         clIxoQtYM79QCXEZZeXWP9C8O4xupP4Tq5EOVHp8Sy3lV4l0bQW8E43V1542U5l+IWiy
+         XNtHbuhW8TsnXuWNAraSE18rXxrgC+Ur8tRUstFD0dbbPFfmSou/WcP7RdLVBGyI3yAD
+         UjOcfVp4t12ctWZt/JoaKYVyAcsMoy7sGZWPpnzsQICiHYh0p63xHGD0fnxo5lHnqTXK
+         zmtw==
+X-Gm-Message-State: AOAM531vTf55gwtfsU2kHZVp+RHCv05QNXQpqubVvYFt4omeOntK8stN
+        Ds+wmt2p+v5r3ePWXPbCejajrKMyevu7EuET4zZm11iB
+X-Google-Smtp-Source: ABdhPJzatRdI3S4ueB2AsBYRGKzBpbKL6m4OMwo/V5Ew+YT67C41xvY1ezp4E8qQ5S/S8NU0okbMMnouI4DDqp6COoQ=
+X-Received: by 2002:a5d:8792:: with SMTP id f18mr16199689ion.52.1635272895859;
+ Tue, 26 Oct 2021 11:28:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20211025204634.2517-1-iangelak@redhat.com> <20211025204634.2517-2-iangelak@redhat.com>
+ <CAOQ4uxinGYb0QtgE8To5wc2iijT9VpTgDiXEp-9YXz=t_6eMbA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxinGYb0QtgE8To5wc2iijT9VpTgDiXEp-9YXz=t_6eMbA@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 26 Oct 2021 21:28:04 +0300
+Message-ID: <CAOQ4uxj+32zyWNsSVyVO25xCGp+2BjEZtG1S9xmCzjVii4Skiw@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/7] FUSE: Add the fsnotify opcode and in/out structs
+ to FUSE
+To:     Ioannis Angelakopoulos <iangelak@redhat.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         virtio-fs-list <virtio-fs@redhat.com>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
         Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>
-Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
-Message-ID: <YXhIm3mOvPsueWab@redhat.com>
-References: <20211025204634.2517-1-iangelak@redhat.com>
- <CAOQ4uxieK3KpY7pf0YTKcrNHW7rnTATTDZdK9L4Mqy32cDwV8w@mail.gmail.com>
- <YXgqRb21hvYyI69D@redhat.com>
- <CAOQ4uxhpCKK2MYxSmRJYYMEWaHKy5ezyKgxaM+YAKtpjsZkD-g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhpCKK2MYxSmRJYYMEWaHKy5ezyKgxaM+YAKtpjsZkD-g@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+        Vivek Goyal <vgoyal@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 26, 2021 at 08:59:44PM +0300, Amir Goldstein wrote:
-> On Tue, Oct 26, 2021 at 7:18 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+On Tue, Oct 26, 2021 at 5:56 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Mon, Oct 25, 2021 at 11:47 PM Ioannis Angelakopoulos
+> <iangelak@redhat.com> wrote:
 > >
-> > On Tue, Oct 26, 2021 at 06:23:50PM +0300, Amir Goldstein wrote:
+> > Since fsnotify is the backend for the inotify subsystem all the backend
+> > code implementation we add is related to fsnotify.
 > >
-> > [..]
-> > > > 3) The lifetime of the local watch in the guest kernel is very
-> > > > important. Specifically, there is a possibility that the guest does not
-> > > > receive remote events on time, if it removes its local watch on the
-> > > > target or deletes the inode (and thus the guest kernel removes the watch).
-> > > > In these cases the guest kernel removes the local watch before the
-> > > > remote events arrive from the host (virtiofsd) and as such the guest
-> > > > kernel drops all the remote events for the target inode (since the
-> > > > corresponding local watch does not exist anymore).
+> > To support an fsnotify request in FUSE and specifically virtiofs we add a
+> > new opcode for the FSNOTIFY (51) operation request in the "fuse.h" header.
 > >
-> > So this is one of the issues which has been haunting us in virtiofs. If
-> > a file is removed, for local events, event is generated first and
-> > then watch is removed. But in case of remote filesystems, it is racy.
-> > It is possible that by the time event arrives, watch is already gone
-> > and application never sees the delete event.
+> > Also add the "fuse_notify_fsnotify_in" and "fuse_notify_fsnotify_out"
+> > structs that are responsible for passing the fsnotify/inotify related data
+> > to and from the FUSE server.
 > >
-> > Not sure how to address this issue.
-> 
+> > Signed-off-by: Ioannis Angelakopoulos <iangelak@redhat.com>
+> > ---
+> >  include/uapi/linux/fuse.h | 23 ++++++++++++++++++++++-
+> >  1 file changed, 22 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > index 46838551ea84..418b7fc72417 100644
+> > --- a/include/uapi/linux/fuse.h
+> > +++ b/include/uapi/linux/fuse.h
+> > @@ -186,6 +186,9 @@
+> >   *  - add FUSE_SYNCFS
+> >   *  7.35
+> >   *  - add FUSE_NOTIFY_LOCK
+> > + *  7.36
+> > + *  - add FUSE_HAVE_FSNOTIFY
+> > + *  - add fuse_notify_fsnotify_(in,out)
+> >   */
+> >
+> >  #ifndef _LINUX_FUSE_H
+> > @@ -221,7 +224,7 @@
+> >  #define FUSE_KERNEL_VERSION 7
+> >
+> >  /** Minor version number of this interface */
+> > -#define FUSE_KERNEL_MINOR_VERSION 35
+> > +#define FUSE_KERNEL_MINOR_VERSION 36
+> >
+> >  /** The node ID of the root inode */
+> >  #define FUSE_ROOT_ID 1
+> > @@ -338,6 +341,7 @@ struct fuse_file_lock {
+> >   *                     write/truncate sgid is killed only if file has group
+> >   *                     execute permission. (Same as Linux VFS behavior).
+> >   * FUSE_SETXATTR_EXT:  Server supports extended struct fuse_setxattr_in
+> > + * FUSE_HAVE_FSNOTIFY: remote fsnotify/inotify event subsystem support
+> >   */
+> >  #define FUSE_ASYNC_READ                (1 << 0)
+> >  #define FUSE_POSIX_LOCKS       (1 << 1)
+> > @@ -369,6 +373,7 @@ struct fuse_file_lock {
+> >  #define FUSE_SUBMOUNTS         (1 << 27)
+> >  #define FUSE_HANDLE_KILLPRIV_V2        (1 << 28)
+> >  #define FUSE_SETXATTR_EXT      (1 << 29)
+> > +#define FUSE_HAVE_FSNOTIFY     (1 << 30)
+> >
+> >  /**
+> >   * CUSE INIT request/reply flags
+> > @@ -515,6 +520,7 @@ enum fuse_opcode {
+> >         FUSE_SETUPMAPPING       = 48,
+> >         FUSE_REMOVEMAPPING      = 49,
+> >         FUSE_SYNCFS             = 50,
+> > +       FUSE_FSNOTIFY           = 51,
+> >
+> >         /* CUSE specific operations */
+> >         CUSE_INIT               = 4096,
+> > @@ -532,6 +538,7 @@ enum fuse_notify_code {
+> >         FUSE_NOTIFY_RETRIEVE = 5,
+> >         FUSE_NOTIFY_DELETE = 6,
+> >         FUSE_NOTIFY_LOCK = 7,
+> > +       FUSE_NOTIFY_FSNOTIFY = 8,
+> >         FUSE_NOTIFY_CODE_MAX,
+> >  };
+> >
+> > @@ -571,6 +578,20 @@ struct fuse_getattr_in {
+> >         uint64_t        fh;
+> >  };
+> >
+> > +struct fuse_notify_fsnotify_out {
+> > +       uint64_t inode;
+>
+> 64bit inode is not a good unique identifier of the object.
+> you need to either include the generation in object identifier
+> or much better use the object's nfs file handle, the same way
+> that fanotify stores object identifiers.
+>
+> > +       uint64_t mask;
+> > +       uint32_t namelen;
+> > +       uint32_t cookie;
+>
+> I object to persisting with the two-events-joined-by-cookie design.
+> Any new design should include a single event for rename
+> with information about src and dst.
+>
+> I know this is inconvenient, but we are NOT going to create a "remote inotify"
+> interface, we need to create a "remote fsnotify" interface and if server wants
+> to use inotify, it will need to join the disjoined MOVE_FROM/TO event into
+> a single "remote event", that FUSE will use to call fsnotify_move().
+>
 
-> Can you take me through the scenario step by step.
-> I am not sure I understand the exact sequence of the race.
+TBH, the disjoint vs. joint from/to event is an unfinished business
+for fanotify.
+So my objection above is more of a strong wish.
+But I admit that if existing network protocols already encode the disjoint
+from/to events semantics, I may need to fold back on that objection.
 
-Ioannis, please correct me If I get something wrong. You know exact
-details much more than me.
-
-A. Say a guest process unlinks a file.
-B. Fuse sends an unlink request to server (virtiofsd)
-C. File is unlinked on host. Assume there are no other users so inode
-   will be freed as well. And event will be generated on host and watch
-   removed.
-D. Now Fuse server will send a unlink request reply. unlink notification
-   might still be in kernel buffers or still be in virtiofsd or could
-   be in virtiofs virtqueue.
-E. Fuse client will receive unlink reply and remove local watch.
-
-Fuse reply and notification event are now traveling in parallel on
-different virtqueues and there is no connection between these two. And
-it could very well happen that fuse reply comes first, gets processed
-first and local watch is removed. And notification is processed right
-after but by then local watch is gone and filesystem will be forced to
-drop event.
-
-As of now situation is more complicated in virtiofsd. We don't keep
-file handle open for file and keep an O_PATH fd open for each file.
-That means in step D above, inode on host is not freed yet and unlink
-event is not generated yet. When unlink reply reaches fuse client,
-it sends FORGET messages to server, and then server closes O_PATH fd
-and then host generates unlink events. By that time its too late,
-guest has already remove local watches (and triggered removal of
-remote watches too).
-
-This second problem probably can be solved by using file handles, but
-basic race will still continue to be there.
-
-> If it is local file removal that causes watch to be removed,
-> then don't drop local events and you are good to go.
-> Is it something else?
-
-- If remote events are enabled, then idea will be that user space gets
-  and event when file is actually removed from server, right? Now it
-  is possible that another VM has this file open and file has not been
-  yet removed. So local event only tells you that file has been removed
-  in guest VM (or locally) but does not tell anything about the state
-  of file on server. (It has been unlinked on server but inode continues
-  to be alive internall).
-
-- If user receives both local and remote delete event, it will be
-  confusing. I guess if we want to see both the events, then there
-  has to be some sort of info in event which classifies whether event
-  is local or remote. And let application act accordingly.
-
-Thanks
-Vivek
-
+Thanks,
+Amir.
