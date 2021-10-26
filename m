@@ -2,108 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1323743B1E4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 14:06:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6567143B202
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 14:10:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235730AbhJZMJI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 08:09:08 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:60970 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235738AbhJZMJC (ORCPT
+        id S235285AbhJZMM1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 08:12:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:43705 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232378AbhJZMM0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 08:09:02 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 098572193C;
-        Tue, 26 Oct 2021 12:06:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1635249998; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Tue, 26 Oct 2021 08:12:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635250202;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=RyjRbs13Q6FC77TliUQSlFXG3BjAyQNOL98Zw53Q71o=;
-        b=my+j0d0t9CwC5WyZ+iqBY32+ynYT3vWd3h4rmhlfK4G8n3u2BgTVaLyhZyZdiAEMoByh9K
-        RboCe2Q5TpWcaC+dd/w+EuW71LbMqicm1ZTeunStGV972K/LANs6UNs+eDbtMUkvTfapzg
-        23/lFqtZoXeaYWYQGx/vhwiWvRXPBGk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1635249998;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=RyjRbs13Q6FC77TliUQSlFXG3BjAyQNOL98Zw53Q71o=;
-        b=GZUQd92EQNYMhBz+cBvVS5up9G9ce2xHX9rW+5OZc6O+MFp4n4XLfBA4q+fzIBcv77BAdU
-        XYjuTLyvfyelYgDg==
-Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id E6B8FA3B8C;
-        Tue, 26 Oct 2021 12:06:37 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id C34BC1F2C66; Tue, 26 Oct 2021 14:06:37 +0200 (CEST)
-Date:   Tue, 26 Oct 2021 14:06:37 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Jan Kara <jack@suse.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Theodore Tso <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>,
-        David Howells <dhowells@redhat.com>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v9 24/31] fanotify: Report fid entry even for zero-length
- file_handle
-Message-ID: <20211026120637.GD21228@quack2.suse.cz>
-References: <20211025192746.66445-1-krisman@collabora.com>
- <20211025192746.66445-25-krisman@collabora.com>
- <CAOQ4uxhCsCPNN=Xb6Xo9VpW+rYCkMUy-1zEXO41d1D4vN74GcA@mail.gmail.com>
+        bh=VFu990jGZuZSQ6puNWxAX6hSr0vpbWIv4s14VxM/J+U=;
+        b=e4R/K58/3e7GBErkSECyOj45PbkbXI3Rp0+MwBiZpILpDWmRBcL7A6rYQv1cS3Zqpt2IR6
+        f7mWf34Biv26xiAifZVocC65ON2gJtJKuft0u7ph96HtdBFHppoKXSCo/VuobbZQy6S9kO
+        jgyfmicLJvdhTpl35Pt4jIC0TKNkXd8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-53-8VX1YcmkO1WPMoyKKk9vlA-1; Tue, 26 Oct 2021 08:09:59 -0400
+X-MC-Unique: 8VX1YcmkO1WPMoyKKk9vlA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 63D1E806690;
+        Tue, 26 Oct 2021 12:09:58 +0000 (UTC)
+Received: from work (unknown [10.40.194.100])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 740B3641AA;
+        Tue, 26 Oct 2021 12:09:57 +0000 (UTC)
+Date:   Tue, 26 Oct 2021 14:09:53 +0200
+From:   Lukas Czerner <lczerner@redhat.com>
+To:     linux-ext4@vger.kernel.org, tytso@mit.edu,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 11/13] ext4: change token2str() to use ext4_param_specs
+Message-ID: <20211026120953.mropvelvr4id7mej@work>
+References: <20211021114508.21407-1-lczerner@redhat.com>
+ <20211021114508.21407-12-lczerner@redhat.com>
+ <20211026114043.q5kwobv7vlnv2uej@andromeda.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhCsCPNN=Xb6Xo9VpW+rYCkMUy-1zEXO41d1D4vN74GcA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20211026114043.q5kwobv7vlnv2uej@andromeda.lan>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 26-10-21 12:09:19, Amir Goldstein wrote:
-> On Mon, Oct 25, 2021 at 10:30 PM Gabriel Krisman Bertazi
-> <krisman@collabora.com> wrote:
-> >
-> > Non-inode errors will reported with an empty file_handle.  In
-> > preparation for that, allow some events to print the FID record even if
-> > there isn't any file_handle encoded
-> >
-> > Even though FILEID_ROOT is used internally, make zero-length file
-> > handles be reported as FILEID_INVALID.
-> >
-> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> > Reviewed-by: Jan Kara <jack@suse.cz>
-> > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-> >
+On Tue, Oct 26, 2021 at 01:40:43PM +0200, Carlos Maiolino wrote:
+> On Thu, Oct 21, 2021 at 01:45:06PM +0200, Lukas Czerner wrote:
+> > Chage token2str() to use ext4_param_specs instead of tokens so that we
+> 
+> ^ Change.
+> 
+> > can get rid of tokens entirely.
+> 
+> If you're removing tokens entirely, maybe the name token2str() doesn't make
+> sense anymore?
+
+True, I guess it's no longer called "token" so maybe option2str() ?
+
+-Lukas
+
+> 
+> > 
+> > Signed-off-by: Lukas Czerner <lczerner@redhat.com>
 > > ---
-> > Changes since v8:
-> >   - Move fanotify_event_has_object_fh check here (jan)
+> >  fs/ext4/super.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> > index bdcaa158eab8..0ccd47f3fa91 100644
+> > --- a/fs/ext4/super.c
+> > +++ b/fs/ext4/super.c
+> > @@ -3037,12 +3037,12 @@ static inline void ext4_show_quota_options(struct seq_file *seq,
+> >  
+> >  static const char *token2str(int token)
+> >  {
+> > -	const struct match_token *t;
+> > +	const struct fs_parameter_spec *spec;
+> >  
+> > -	for (t = tokens; t->token != Opt_err; t++)
+> > -		if (t->token == token && !strchr(t->pattern, '='))
+> > +	for (spec = ext4_param_specs; spec->name != NULL; spec++)
+> > +		if (spec->opt == token && !spec->type)
+> >  			break;
+> > -	return t->pattern;
+> > +	return spec->name;
+> >  }
+> >  
+> >  /*
+> > -- 
+> > 2.31.1
+> > 
 > 
-> Logically, this move is wrong, because after this patch,
-> copy_fid_info_to_user() can theoretically be called with NULL fh in the
-> existing construct of:
->   if (fanotify_event_has_object_fh(event)) {
->   ...
->     ret = copy_fid_info_to_user(fanotify_event_fsid(event),
+> -- 
+> Carlos
 > 
-> fanotify_event_object_fh(event),
-> 
-> The thing that prevents this case in effect is that FAN_FS_ERROR
-> is not yet wired, but I am not sure if leaving this theoretic bisect
-> issue is a good idea.
-> 
-> Anyway, that's a very minor theoretic issue and I am sure Jan can
-> decide whether to deal with it and how (no need to post v10 IMO).
 
-Hum, correct. I guess I'll just fold this patch into patch 26. Logically
-they are very close anyway.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
