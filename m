@@ -2,134 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A90A43B954
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 20:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8664543B975
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 20:24:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238224AbhJZSWF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 14:22:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52852 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238181AbhJZSWE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 14:22:04 -0400
-Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E53E1C061220;
-        Tue, 26 Oct 2021 11:19:39 -0700 (PDT)
-Received: by mail-io1-xd2a.google.com with SMTP id h196so515953iof.2;
-        Tue, 26 Oct 2021 11:19:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Wf19AOmnfmju4KLabUVTp8hRay8Ue8otowCzGjfToKY=;
-        b=f8GEAYf83UxpdIyaGi4NEiPx6VBACSIK+KCjfr29ACQW3Ni7YME/QAHX/FaCJvYA1z
-         BXpzhqqyPl3FNkJf72KJm7HNZcc/5koHdO0sx+gC8w8Qn5CuBm1A7DIq4i2YU7wCeurf
-         GIjcg5mKGjjUtly5lQSbPNmI+0ym6RGIcZjJI6rD/XmLbYJ8t/tIH4VQ7QlXiNS994vJ
-         QgHuA7cBCoMXf7zVfid/pC63JqWgdp05kdgiG+bXRmyAFJOo6sJMDGfckOL0BPhoO6Kq
-         DK4laQX0ohqnC5vLWy0667CiXe7/MiZEjPxOfuuGC5Q8x85L8K8Mz5rz1+v1N/WCe9MH
-         6Okg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Wf19AOmnfmju4KLabUVTp8hRay8Ue8otowCzGjfToKY=;
-        b=aog8Bko3YEuGFrJS4fekMXmtK7F75Ujyj5dPBWy13LyacEoTFsD1V/Gy1CSa2mXv2v
-         f1rKrvtY7vhU5K4dUPTsWxGkwA4YsMjdnuOJF/NSG8zl+5wvnAfJ9MuHhnV14ru9SRCo
-         nBDEqMcAK5wk7PeBYPqMsnPwMt+se33XroZyRzZq8vNNyi2YGKLijdeQR5ZkFfafwwfe
-         h7aEhOCia6d61rxusbDwDhRsY5QC9P/b4RhuGVYso/IdKWJXEGgmAWHkmyWaIotR/BC4
-         fKSckcyRnopoftxsZe3sc5SIi0CSbfE/8KFC/HvTF8zGafMz+XCXymZhif0fYxVfUHR1
-         nDEg==
-X-Gm-Message-State: AOAM531jxRsFiwCyhjq7Ykunpceth1QkNctPsNU5P8g9C7U0f9ikPEoo
-        6H52EK3U4yfSeYWm5GXNi/l8+D7VoXBHxHLS+28=
-X-Google-Smtp-Source: ABdhPJy9QDP7JK7UoD4tu8AP8q/8LOod4R0KCnSSLL3b++YNrijIXcOdrlZ5jZOgR2D2SCDi8EtKCwCx1ze4jILD5/E=
-X-Received: by 2002:a5d:8792:: with SMTP id f18mr16171056ion.52.1635272379360;
- Tue, 26 Oct 2021 11:19:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20211025204634.2517-1-iangelak@redhat.com> <CAOQ4uxieK3KpY7pf0YTKcrNHW7rnTATTDZdK9L4Mqy32cDwV8w@mail.gmail.com>
- <YXgkTirm5O04xEm5@redhat.com>
-In-Reply-To: <YXgkTirm5O04xEm5@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 26 Oct 2021 21:19:28 +0300
-Message-ID: <CAOQ4uxgmrhMN5smT29mtSC3iV2ht_0a_Z7_ZGyPbA2=yzRG1uQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>,
+        id S236793AbhJZS0u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 14:26:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34294 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231297AbhJZS0t (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Oct 2021 14:26:49 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9302360F9D;
+        Tue, 26 Oct 2021 18:24:21 +0000 (UTC)
+Date:   Tue, 26 Oct 2021 19:24:18 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+Subject: Re: [PATCH v8 00/17] gfs2: Fix mmap + page fault deadlocks
+Message-ID: <YXhH0sBSyTyz5Eh2@arm.com>
+References: <20211019134204.3382645-1-agruenba@redhat.com>
+ <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
+ <YXBFqD9WVuU8awIv@arm.com>
+ <CAHk-=wgv=KPZBJGnx_O5-7hhST8CL9BN4wJwtVuycjhv_1MmvQ@mail.gmail.com>
+ <YXCbv5gdfEEtAYo8@arm.com>
+ <CAHk-=wgP058PNY8eoWW=5uRMox-PuesDMrLsrCWPS+xXhzbQxQ@mail.gmail.com>
+ <YXL9tRher7QVmq6N@arm.com>
+ <CAHk-=wg4t2t1AaBDyMfOVhCCOiLLjCB5TFVgZcV4Pr8X2qptJw@mail.gmail.com>
+ <CAHc6FU7BEfBJCpm8wC3P+8GTBcXxzDWcp6wAcgzQtuaJLHrqZA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHc6FU7BEfBJCpm8wC3P+8GTBcXxzDWcp6wAcgzQtuaJLHrqZA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > > As a result, when an event occures on a inode within the exported
-> > > directory by virtiofs, two events will be generated at the same time; a
-> > > local event (generated by the guest kernel) and a remote event (generated
-> > > by the host), thus the guest will receive duplicate events.
-> > >
-> > > To account for this issue we implemented two modes; one where local events
-> > > function as expected (when virtiofsd does not support the remote
-> > > inotify) and one where the local events are suppressed and only the
-> > > remote events originating from the host side are let through (when
-> > > virtiofsd supports the remote inotify).
+On Mon, Oct 25, 2021 at 09:00:43PM +0200, Andreas Gruenbacher wrote:
+> On Fri, Oct 22, 2021 at 9:23 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> > On Fri, Oct 22, 2021 at 8:06 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > > Probing only the first byte(s) in fault_in() would be ideal, no need to
+> > > go through all filesystems and try to change the uaccess/probing order.
 > >
-> > Dropping events from the local side would be weird.
-> > Avoiding duplicate events is not a good enough reason IMO
-> > compared to the problems this could cause.
-> > I am not convinced this is worth it.
->
-> So what should be done? If we don't drop local events, then application
-> will see both local and remote events. And then we will have to build
-> this knowledge in API that an event can be either local or remote.
-> Application should be able to distinguish between these two and act
-> accordingly. That sounds like a lot. And I am not even sure if application
-> cares about local events in case of a remote shared filesystem.
->
+> > Let's try that. Or rather: probing just the first page - since there
+> > are users like that btrfs ioctl, and the direct-io path.
+> 
+> For direct I/O, we actually only want to trigger page fault-in so that
+> we can grab page references with bio_iov_iter_get_pages. Probing for
+> sub-page error domains will only slow things down. If we hit -EFAULT
+> during the actual copy-in or copy-out, we know that the error can't be
+> page fault related. Similarly, in the buffered I/O case, we only
+> really care about the next byte, so any probing beyond that is
+> unnecessary.
+> 
+> So maybe we should split the sub-page error domain probing off from
+> the fault-in functions. Or at least add an argument to the fault-in
+> functions that specifies the amount of memory to probe.
 
-I am not completely ruling out the S_NONOTIFY inode flag, but I am not
-yet convinced that it is needed.
-So what if applications get duplicate events? What's the worst thing that
-could happen?
-And once again, merging most of the duplicate events is pretty easy
-and fanotify does that already.
+My preferred option is not to touch fault-in for sub-page faults (though
+I have some draft patches, they need testing).
 
-> I have no experience with inotify/fanotify/fsnotify and what people
-> expect from inotify/fanotify API. So we are open to all the ideas
-> w.r.t what will be a good design to support this thing on remote
-> filesystems. Currently whole infrastructure seems to be written with
-> local filesystems in mind.
->
+All this fault-in and uaccess with pagefaults_disabled() is needed to
+avoid a deadlock when the uaccess fault handling would take the same
+lock. With sub-page faults, the kernel cannot fix it up anyway, so the
+arch code won't even attempt call handle_mm_fault() (it is not an mm
+fault). But the problem is the copy_*_user() etc. API that can only
+return the number of bytes not copied. That's what I think should be
+fixed. fault_in() feels like the wrong place to address this when it's
+not an mm fault.
 
-I have no control of what users expect from inotify/fanotify
-but I do know that some users' expectations are misaligned with
-how inotify/fanotify actually works.
+As for fault_in() getting another argument with the amount of sub-page
+probing to do, I think the API gets even more confusing. I was also
+thinking, with your patches for fault_in() now returning size_t, is the
+expectation to be precise in what cannot be copied? We don't have such
+requirement for copy_*_user().
 
-For example, some users may expect events not to be reordered,
-but there is no such guarantee.
+While more intrusive, I'd rather change copy_page_from_iter_atomic()
+etc. to take a pointer where to write back an error code. If it's
+-EFAULT, retry the loop. If it's -EACCES/EPERM just bail out. Or maybe
+simply a bool set if there was an mm fault to be retried. Yet another
+option to return an -EAGAIN if it could not process the mm fault due to
+page faults being disabled.
 
-Some inotify users would expect to find a file with the filename
-in the event without realizing that this is a snapshot of a past
-filename, that may now not exist or be a completely different object.
+Happy to give this a try, unless there's a strong preference for the
+fault_in() fix-up (well, I can do both options and post them).
 
-Those are some misconceptions that we tried to address with
-the fanotify FAN_REPORT_DFID_NAME APIs and hopefully we also
-documented the expectations better in the man page.
-
-The use of NFS file handles to identify objects in the FAN_REPORT_FID
-modes enables getting events also for already dead objects
-(without keeping the inode alive like inotify).
-
-I didn't want to complicate Ioannis in this early stage, but I think
-that FUSE fsnotify should be tied to LOOKUP_HANDLE.
-All FUSE remote objects should be described by file handles
-which is the same manner in which network protocols work
-and file handles should be used to describe objects in
-fsnotify FUSE events.
-
-But I am getting ahead of myself with a lot of hand waving....
-
-Thanks,
-Amir.
+-- 
+Catalin
