@@ -2,117 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8405743ABD6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 07:45:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7866043AC8A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 09:01:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234761AbhJZFsS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 01:48:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231148AbhJZFsR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 01:48:17 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1AD1060E05;
-        Tue, 26 Oct 2021 05:45:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1635227154;
-        bh=TIjVkFEWJB7q7GF6lS61TRk3nmEo51a0DU9X6QcW9hY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KhbpyYsNXErwr2o99+8NA/bqELaVNukCD+dHr4vMMMnSZ9mSAgrON3mR5Vwt4UOJx
-         V+hL5MeobyUOoRdjGF9LCqyFjkrRhXsatzF6HUrmKMEEIQnY8ZZFi2oJduqYOothtA
-         LFAw0L4KGWtt9o3cuk0IpVlpj0OR4rNqQVc/bEQc=
-Date:   Tue, 26 Oct 2021 07:45:49 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "chenxiaosong (A)" <chenxiaosong2@huawei.com>
-Cc:     viro@zeniv.linux.org.uk, stable@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dhowells@redhat.com, yukuai3@huawei.com, yi.zhang@huawei.com,
-        zhangxiaoxu5@huawei.com
-Subject: Re: [PATCH 4.19,v2] VFS: Fix fuseblk memory leak caused by mount
- concurrency
-Message-ID: <YXeWDSLo4+MuOg4+@kroah.com>
-References: <20211013095101.641329-1-chenxiaosong2@huawei.com>
- <YWawy0J9JfStEku0@kroah.com>
- <429d87b0-3a53-052a-a304-0afa8d51900d@huawei.com>
- <860c36c4-3668-1388-66d1-a07d463c2ad9@huawei.com>
- <YXAL7K88XGWXckWe@kroah.com>
- <209361bb-9e15-ebaf-2ff8-5846d5bfbbc2@huawei.com>
+        id S234494AbhJZHDt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 03:03:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37946 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231233AbhJZHDr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Oct 2021 03:03:47 -0400
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92A81C061767;
+        Tue, 26 Oct 2021 00:01:24 -0700 (PDT)
+Received: by mail-il1-x12d.google.com with SMTP id l7so15864160iln.8;
+        Tue, 26 Oct 2021 00:01:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=D09RJ9bxsiKuYw4O4J+IukGYc3Ze7wdSQQ4u4VL/QIc=;
+        b=Q9lxXn4UFXUTxiRFpM/DL9Xkv8XeOk0vQwH49BRQBSjpmNK0Ck7dlTPb0i12Swdzls
+         +P6SN36jUpD2JhINSeNuaASWKhqCLfMvw2OwXL+I28DlX6RIzXW3utuGgCMSiH6nYoaU
+         675LuHB7GuK+B4+7OFMepz8sJEGg6fSxGhw1mzNhVeGNIDc4G5Jh7mFO1d8A8PZbrcE+
+         jrv2caLYXsLXey9EUJs071Ztc42tDqI4LyPajnZBtaHaGR3vGTgsswgtmYcjwuFnAyWn
+         mpo6Uc/geYVzRb+X1QB9JhVkz2RQTJGJFS+08+SROvGIyTMgVIPUd0n9OoOPrVZ7J54M
+         0uBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=D09RJ9bxsiKuYw4O4J+IukGYc3Ze7wdSQQ4u4VL/QIc=;
+        b=0dRGLejZwaGcoAyBr/FaJCfDygfMvQGt9Cnvn0usDJATNVGwHsxWVw4snKEhQpS9NF
+         wAlrXQOsxrrl1Ev0tzcmfFb5ba9uwuqQQkIws0V1uRBft37kf4kQ+witguwCFQixozb/
+         5ma4pymv59BoDjrjmmDEFjus1PPdzwGWLfkqAiySPRlKfdI2fiTU0NSIi5vTCjWgU+7y
+         1gsw5+XNXqxzU+/n85D1qj4vOdrOcvJR2p0r1/NJRMpf4FtJ/e1MDQXOjnVkZ2qqVWFm
+         Qy6mKBElbGlR1lttxgT174Be47i6Y49YmrXCAkAo7jm1l/Q70otBxig6nVr5MEdcMQgV
+         BtPg==
+X-Gm-Message-State: AOAM531MBi6O/pkhSRMxf7hP3ti6ohCkbOWmLByIcywqbRKTMEGI4P/9
+        9CYKXOqDAdEovFu/z9HapMnm0W2ZOVhE488Yla8=
+X-Google-Smtp-Source: ABdhPJzx18dpnuCcn0hYph8KwM0v4FldEHmci+rz3YWq6Cc6r57VuitGisXKxMyxqlKA4MCNyE+4PqSSJZWk2F0LiJ8=
+X-Received: by 2002:a05:6e02:214f:: with SMTP id d15mr12521942ilv.24.1635231684012;
+ Tue, 26 Oct 2021 00:01:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <209361bb-9e15-ebaf-2ff8-5846d5bfbbc2@huawei.com>
+References: <20211025192746.66445-1-krisman@collabora.com> <20211025192746.66445-12-krisman@collabora.com>
+In-Reply-To: <20211025192746.66445-12-krisman@collabora.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 26 Oct 2021 10:01:12 +0300
+Message-ID: <CAOQ4uxg8Mmi-UH3q3xrxVbrK-GUsF5mTgWG15sfRW3EOJUj3rg@mail.gmail.com>
+Subject: Re: [PATCH v9 11/31] fsnotify: Protect fsnotify_handle_inode_event
+ from no-inode events
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Jan Kara <jack@suse.com>, "Darrick J. Wong" <djwong@kernel.org>,
+        Theodore Tso <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>,
+        David Howells <dhowells@redhat.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 26, 2021 at 10:18:11AM +0800, chenxiaosong (A) wrote:
-> 
-> 
-> 在 2021/10/20 20:30, Greg KH 写道:
-> > On Wed, Oct 13, 2021 at 06:49:06PM +0800, chenxiaosong (A) wrote:
-> > > 在 2021/10/13 18:38, chenxiaosong (A) 写道:
-> > > > 在 2021/10/13 18:11, Greg KH 写道:
-> > > > > On Wed, Oct 13, 2021 at 05:51:01PM +0800, ChenXiaoSong wrote:
-> > > > > > If two processes mount same superblock, memory leak occurs:
-> > > > > > 
-> > > > > > CPU0               |  CPU1
-> > > > > > do_new_mount       |  do_new_mount
-> > > > > >     fs_set_subtype   |    fs_set_subtype
-> > > > > >       kstrdup        |
-> > > > > >                      |      kstrdup
-> > > > > >       memrory leak   |
-> > > > > > 
-> > > > > > Fix this by adding a write lock while calling fs_set_subtype.
-> > > > > > 
-> > > > > > Linus's tree already have refactoring patchset [1], one of them
-> > > > > > can fix this bug:
-> > > > > >           c30da2e981a7 (fuse: convert to use the new mount API)
-> > > > > > 
-> > > > > > Since we did not merge the refactoring patchset in this branch,
-> > > > > > I create this patch.
-> > > > > > 
-> > > > > > [1] https://patchwork.kernel.org/project/linux-fsdevel/patch/20190903113640.7984-3-mszeredi@redhat.com/
-> > > > > > 
-> > > > > > 
-> > > > > > Fixes: 79c0b2df79eb (add filesystem subtype support)
-> > > > > > Cc: David Howells <dhowells@redhat.com>
-> > > > > > Signed-off-by: ChenXiaoSong <chenxiaosong2@huawei.com>
-> > > > > > ---
-> > > > > > v1: Can not mount sshfs ([PATCH linux-4.19.y] VFS: Fix fuseblk
-> > > > > > memory leak caused by mount concurrency)
-> > > > > > v2: Use write lock while writing superblock
-> > > > > > 
-> > > > > >    fs/namespace.c | 9 ++++++---
-> > > > > >    1 file changed, 6 insertions(+), 3 deletions(-)
-> > > > > 
-> > > > > As you are referring to a fuse-only patch above, why are you trying to
-> > > > > resolve this issue in the core namespace code instead?
-> > > > > 
-> > > > > How does fuse have anything to do with this?
-> > > > > 
-> > > > > confused,
-> > > > > 
-> > > > > greg k-h
-> > > > > .
-> > > > > 
-> > > > 
-> > > > Now, only `fuse_fs_type` and `fuseblk_fs_type` has `FS_HAS_SUBTYPE` flag
-> > > > in kernel code, but maybe there is a filesystem module(`struct
-> > > > file_system_type` has `FS_HAS_SUBTYPE` flag). And only mounting fuseblk
-> > > > filesystem(e.g. ntfs) will occur memory leak now.
-> > > 
-> > > How about updating the subject as: VFS: Fix memory leak caused by mounting
-> > > fs with subtype concurrency?
-> > 
-> > That would be a better idea, but still, this is not obvious that this is
-> > the correct fix at all...
-> > .
-> > 
-> Why is this patch not correct? Can you tell me more about it? Thanks.
+On Mon, Oct 25, 2021 at 10:29 PM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
+>
+> FAN_FS_ERROR allows events without inodes - i.e. for file system-wide
+> errors.  Even though fsnotify_handle_inode_event is not currently used
+> by fanotify, this patch protects other backends from cases where neither
+> inode or dir are provided.  Also document the constraints of the
+> interface (inode and dir cannot be both NULL).
+>
+> Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+>
 
-You need to prove that it is correct, and you need to get maintainers to
-approve it.
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-thanks,
-
-greg k-h
+> ---
+> Changes since v8:
+>   - Convert verifications to WARN_ON
+>   - Require either inode or dir
+>   - Protect nfsd backend from !inode.
+> ---
+>  fs/nfsd/filecache.c              | 3 +++
+>  fs/notify/fsnotify.c             | 3 +++
+>  include/linux/fsnotify_backend.h | 1 +
+>  3 files changed, 7 insertions(+)
+>
+> diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
+> index be3c1aad50ea..fdf89fcf1a0c 100644
+> --- a/fs/nfsd/filecache.c
+> +++ b/fs/nfsd/filecache.c
+> @@ -602,6 +602,9 @@ nfsd_file_fsnotify_handle_event(struct fsnotify_mark *mark, u32 mask,
+>                                 struct inode *inode, struct inode *dir,
+>                                 const struct qstr *name, u32 cookie)
+>  {
+> +       if (WARN_ON_ONCE(!inode))
+> +               return 0;
+> +
+>         trace_nfsd_file_fsnotify_handle_event(inode, mask);
+>
+>         /* Should be no marks on non-regular files */
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index fde3a1115a17..4034ca566f95 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -252,6 +252,9 @@ static int fsnotify_handle_inode_event(struct fsnotify_group *group,
+>         if (WARN_ON_ONCE(!ops->handle_inode_event))
+>                 return 0;
+>
+> +       if (WARN_ON_ONCE(!inode && !dir))
+> +               return 0;
+> +
+>         if ((inode_mark->mask & FS_EXCL_UNLINK) &&
+>             path && d_unlinked(path->dentry))
+>                 return 0;
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+> index 035438fe4a43..b71dc788018e 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -136,6 +136,7 @@ struct mem_cgroup;
+>   * @dir:       optional directory associated with event -
+>   *             if @file_name is not NULL, this is the directory that
+>   *             @file_name is relative to.
+> + *             Either @inode or @dir must be non-NULL.
+>   * @file_name: optional file name associated with event
+>   * @cookie:    inotify rename cookie
+>   *
+> --
+> 2.33.0
+>
