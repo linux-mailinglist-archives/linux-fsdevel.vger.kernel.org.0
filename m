@@ -2,160 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B47843AC90
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 09:03:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9B4B43AC91
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 09:03:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234095AbhJZHFW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 03:05:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229585AbhJZHFU (ORCPT
+        id S234520AbhJZHF1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 03:05:27 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:43394 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229525AbhJZHF0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 03:05:20 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3285C061745;
-        Tue, 26 Oct 2021 00:02:57 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id z69so18840225iof.9;
-        Tue, 26 Oct 2021 00:02:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vqrMvDSGmgeDoEvwt9n0yNpgDU+ylvvpv0ZSDn/6Py0=;
-        b=dO5Dwi6GjaSyp4RB7QN7zcbJ8CXsNT3OsEgKcwUWZyP3YLLrVVWnhx7VQk6zUcwUcN
-         t3Nljsykrvzgr21iAh/l5+45NgQly5lEXsd8ZkTN9IIfO7VcBfC34mdQxxJs49sHjFYQ
-         +kuXZD9hbBVhjgdj8jWbg54xAmXDry68oB7OmY/UgqX/VN4qQR+GcbKeniRezVhVA48y
-         7aXWPGOWrjep3OURqerek/oT6JC4BodmUBwbsNFo9yS6Yg4dDcE5PgH3mYnmPw9gS+ZE
-         +Hy8MnQKoyPR0DPQ2wiy+eP5vNMbx06VEQoRaQNu32KBEu3EknEsntGEQ/SHx0rdHyH2
-         xERA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vqrMvDSGmgeDoEvwt9n0yNpgDU+ylvvpv0ZSDn/6Py0=;
-        b=KXJsh42P00O/YKp2S/Rypc8dunBvHuhcRL9aEGlLbOfGbPfMspAVP+XJOqOVHPQamr
-         DspNCNdc8a3z8FXiThC/oenDBbTAyl7DgXdXVIbNv1XIb+z2xaZqkz5qHsdWGG/bUzyG
-         8WQ0HUPImqUzZ2AsRxCgqIkR8a2s6s4BhUOud0PKAue54Rd/bd2wOEWpwIltVV3T59qi
-         lXlUAoAQuENwc8pXfyyvROIn2AH9NeXdunQB7OQZSpQGsZZEz1pVg2aMDQHvzExv69ad
-         cegsF9QESj4mST8vuVjh8k+YtZYx0IgMqk5KUkgYMSUgGKIvw9kSU2E/r88/oaQpizJ0
-         thKw==
-X-Gm-Message-State: AOAM533tayBBxzle8PTn/waWwIF326B20ng0I41OTJuSJFHjTWPN8q53
-        JCJWJ2yBP8b3fCoR+j8agcQdeieaLNa1AgrAg9M=
-X-Google-Smtp-Source: ABdhPJw51TtHWk1hUOE+CWGkUYNAAg8CIWqMVhO9sjnQTL5RJ5AXo8CbZYVx8KjezTpZxwv7BlXYmPEOSRt3tYFnADI=
-X-Received: by 2002:a5d:8792:: with SMTP id f18mr13692155ion.52.1635231776948;
- Tue, 26 Oct 2021 00:02:56 -0700 (PDT)
+        Tue, 26 Oct 2021 03:05:26 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 3CAA121957;
+        Tue, 26 Oct 2021 07:03:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1635231782; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Mq9APL2CfqMqjGpYMi+6mlPHzzLvKocGw0zALcVBOW0=;
+        b=QsMNOfPPbHPZ6065oUYV7TFulmvKfp2P+adQeHhtlfwDxkqwJ7UZe5vLBzffqj4jjEYHoN
+        IowE3CSDu+DCuODpoF1WfnuK66SAfBuao8H8OLTK94KcXEIJDxLoupoNMc+8vaevHmeHOt
+        4sSMvc3b1l8i6shOwqSusLLYuR7nZrw=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id EAB4BA3B8C;
+        Tue, 26 Oct 2021 07:03:01 +0000 (UTC)
+Date:   Tue, 26 Oct 2021 09:03:01 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     NeilBrown <neilb@suse.de>
+Cc:     linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH 2/4] mm/vmalloc: add support for __GFP_NOFAIL
+Message-ID: <YXeoJbzICpNsEEBr@dhcp22.suse.cz>
+References: <20211025150223.13621-1-mhocko@kernel.org>
+ <20211025150223.13621-3-mhocko@kernel.org>
+ <163520277623.16092.15759069160856953654@noble.neil.brown.name>
 MIME-Version: 1.0
-References: <20211025192746.66445-1-krisman@collabora.com> <20211025192746.66445-24-krisman@collabora.com>
-In-Reply-To: <20211025192746.66445-24-krisman@collabora.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 26 Oct 2021 10:02:46 +0300
-Message-ID: <CAOQ4uxi9HfMZFLb4joE42AZeVAZPDPPJRREaUdrKwhoQsuRHrQ@mail.gmail.com>
-Subject: Re: [PATCH v9 23/31] fanotify: Add helpers to decide whether to
- report FID/DFID
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     Jan Kara <jack@suse.com>, "Darrick J. Wong" <djwong@kernel.org>,
-        Theodore Tso <tytso@mit.edu>,
-        Dave Chinner <david@fromorbit.com>,
-        David Howells <dhowells@redhat.com>,
-        Khazhismel Kumykov <khazhy@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com,
-        Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <163520277623.16092.15759069160856953654@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 10:30 PM Gabriel Krisman Bertazi
-<krisman@collabora.com> wrote:
->
-> Now that there is an event that reports FID records even for a zeroed
-> file handle, wrap the logic that deides whether to issue the records
-> into helper functions.  This shouldn't have any impact on the code, but
-> simplifies further patches.
->
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
->
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+On Tue 26-10-21 09:59:36, Neil Brown wrote:
+> On Tue, 26 Oct 2021, Michal Hocko wrote:
+[...]
+> > @@ -3032,6 +3036,10 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+> >  		warn_alloc(gfp_mask, NULL,
+> >  			"vmalloc error: size %lu, vm_struct allocation failed",
+> >  			real_size);
+> > +		if (gfp_mask & __GFP_NOFAIL) {
+> > +			schedule_timeout_uninterruptible(1);
+> > +			goto again;
+> > +		}
+> 
+> Shouldn't the retry happen *before* the warning?
 
-> ---
-> Changes since v8:
->   - Simplify constructs (Amir)
-> ---
->  fs/notify/fanotify/fanotify.h      | 10 ++++++++++
->  fs/notify/fanotify/fanotify_user.c | 13 +++++++------
->  2 files changed, 17 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-> index 3510d06654ed..80af269eebb8 100644
-> --- a/fs/notify/fanotify/fanotify.h
-> +++ b/fs/notify/fanotify/fanotify.h
-> @@ -264,6 +264,16 @@ static inline int fanotify_event_dir_fh_len(struct fanotify_event *event)
->         return info ? fanotify_info_dir_fh_len(info) : 0;
->  }
->
-> +static inline bool fanotify_event_has_object_fh(struct fanotify_event *event)
-> +{
-> +       return fanotify_event_object_fh_len(event) > 0;
-> +}
-> +
-> +static inline bool fanotify_event_has_dir_fh(struct fanotify_event *event)
-> +{
-> +       return fanotify_event_dir_fh_len(event) > 0;
-> +}
-> +
->  struct fanotify_path_event {
->         struct fanotify_event fae;
->         struct path path;
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index 2f4182b754b2..a9b5c36ee49e 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -140,10 +140,9 @@ static size_t fanotify_event_len(unsigned int info_mode,
->                 return event_len;
->
->         info = fanotify_event_info(event);
-> -       dir_fh_len = fanotify_event_dir_fh_len(event);
-> -       fh_len = fanotify_event_object_fh_len(event);
->
-> -       if (dir_fh_len) {
-> +       if (fanotify_event_has_dir_fh(event)) {
-> +               dir_fh_len = fanotify_event_dir_fh_len(event);
->                 event_len += fanotify_fid_info_len(dir_fh_len, info->name_len);
->         } else if ((info_mode & FAN_REPORT_NAME) &&
->                    (event->mask & FAN_ONDIR)) {
-> @@ -157,8 +156,10 @@ static size_t fanotify_event_len(unsigned int info_mode,
->         if (info_mode & FAN_REPORT_PIDFD)
->                 event_len += FANOTIFY_PIDFD_INFO_HDR_LEN;
->
-> -       if (fh_len)
-> +       if (fanotify_event_has_object_fh(event)) {
-> +               fh_len = fanotify_event_object_fh_len(event);
->                 event_len += fanotify_fid_info_len(fh_len, dot_len);
-> +       }
->
->         return event_len;
->  }
-> @@ -451,7 +452,7 @@ static int copy_info_records_to_user(struct fanotify_event *event,
->         /*
->          * Event info records order is as follows: dir fid + name, child fid.
->          */
-> -       if (fanotify_event_dir_fh_len(event)) {
-> +       if (fanotify_event_has_dir_fh(event)) {
->                 info_type = info->name_len ? FAN_EVENT_INFO_TYPE_DFID_NAME :
->                                              FAN_EVENT_INFO_TYPE_DFID;
->                 ret = copy_fid_info_to_user(fanotify_event_fsid(event),
-> @@ -467,7 +468,7 @@ static int copy_info_records_to_user(struct fanotify_event *event,
->                 total_bytes += ret;
->         }
->
-> -       if (fanotify_event_object_fh_len(event)) {
-> +       if (fanotify_event_has_object_fh(event)) {
->                 const char *dot = NULL;
->                 int dot_len = 0;
->
-> --
-> 2.33.0
->
+I've done it after to catch the "depleted or fragmented" vmalloc space.
+This is not related to the memory available and therefore it won't be
+handled by the oom killer. The error message shouldn't imply the vmalloc
+allocation failure IMHO but I am open to suggestions.
+
+-- 
+Michal Hocko
+SUSE Labs
