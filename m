@@ -2,99 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3242243BC8B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 23:38:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED1AD43BCD7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 00:04:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235955AbhJZVk2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 17:40:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41762 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231207AbhJZVk1 (ORCPT
+        id S239827AbhJZWGr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 18:06:47 -0400
+Received: from gandalf.ozlabs.org ([150.107.74.76]:55517 "EHLO
+        gandalf.ozlabs.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239906AbhJZWEi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 17:40:27 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9FA6C061570;
-        Tue, 26 Oct 2021 14:38:02 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id x27so1713738lfu.5;
-        Tue, 26 Oct 2021 14:38:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=TIHrps6JiOzeLQIEPEeB6Myv5l+xHPIBmw2UFFzGFO4=;
-        b=N6EBwUks7cf6mmhJfql0FYYO7bBkJygq2VsYxdIXyyEPnFN9UKc7a5irXSeCBhG+2F
-         rAbQOqlwlK0qx89nlJJ9UoLLK4GYS4n7Akwn+7W9c2aMdcC4m3CjDp+R7itTffIVb5Js
-         9A9mlCvEtgLvZimhvgyUgOfVcDRlDdKxKArVLKHy7Ps1rT1mZiuc3vTI5YkCeQtzS5QD
-         uWlTc/8aW6jwH0E6PVWQjZq6mbMvRZrQUQYhurVxK2SmPq7CSkjzjtve+gF742ECG6OI
-         snhIEABgjA3JCmXN3U62Ry/H0ZoQRCk6JSargL3XbsP30KDABziMxT06V7w72qA7hCJE
-         a/Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=TIHrps6JiOzeLQIEPEeB6Myv5l+xHPIBmw2UFFzGFO4=;
-        b=m1Nc0+C4UukkgT3dMZIReYqLESso9s/9NsUeBvkXXxvlyV9fDwUKFqbzhBKrYOncrB
-         mUrsWHFo7tyqNgkLjRmpg0S6P8nXApnbgbZrE7UFd9DobqsNTM9tiliS5cERTefw3csP
-         56nvqGPiR3WndpH/PXYO/Y7L5W8VZNunNxrHKVDgwzjlIy/jhx8+AIiStFrouWOHOjNg
-         qS+y+6CrYXagvZm1LeeMwEkbhTcw/kNSdTlPx0HVHVmucHx1hLWpLakYFdolV7uVnMN2
-         K5LkXxPrx2Hko8lIFKsPfL2WUwZfFOV6yBaF9/PGcNfexoSk2lL1iplXd2W8rQNEvJKS
-         wHCw==
-X-Gm-Message-State: AOAM530fiAd9donQV6Rob4tfvNs17hqxJj92nFeqKWN94BalX7OdFCVu
-        1Mn5ZeBzbEzaDKrWwY8pkWiiArkYDi0=
-X-Google-Smtp-Source: ABdhPJygEa663LGGoKEsOzBLTneQzfW9FEIe8ke8PqQ2pN4pjYP46/zwSwGxpeJn7W1eNR0MM8hEBw==
-X-Received: by 2002:ac2:538d:: with SMTP id g13mr18073540lfh.644.1635284281150;
-        Tue, 26 Oct 2021 14:38:01 -0700 (PDT)
-Received: from kari-VirtualBox ([31.132.12.44])
-        by smtp.gmail.com with ESMTPSA id j15sm2035119lfe.252.2021.10.26.14.38.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Oct 2021 14:38:00 -0700 (PDT)
-Date:   Wed, 27 Oct 2021 00:37:58 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/4] fs/ntfs3: Various fixes for xfstests problems
-Message-ID: <20211026213758.z5f6yuzgrdtedxqr@kari-VirtualBox>
-References: <25b9a1b5-7738-7b36-7ead-c8faa7cacc87@paragon-software.com>
+        Tue, 26 Oct 2021 18:04:38 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Hf5QW5Hptz4xby;
+        Wed, 27 Oct 2021 09:02:11 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1635285733;
+        bh=SK8GWLv/CoVRrpGWXO+u29Nlyt3+4mB21BnZlcosbsE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=s9ONVChh7b5Z1UZL6CBJ4dl0CrEZAb2+xgFIXA5Etk9C2Ob0Aggau8iCFjs6vV78O
+         DpDew0LfYLkDAFZ1SMglvSPa6TxUttFYGuvA7udKdSaFwWAEftaW7cBLVyDCM0RSxF
+         ElSxx13PfGnNu0SbPdEYUP1JW7XH1ySudnmMlGL5bZ7KMVV3vDbdbBF/zg1yWE2Weq
+         CcQXw67ylKS9elSxIu8hh0RV+uhPtulwt4dKldaMh0ft9wIJp0rFWVCNm0JuxMuqr0
+         wI+usUvrw2dV3raQSEQ1fR6va52lcErDcQn8mByfB7YHTPR0LWxVq8h7u8C1bkl3b7
+         De32l9SwXvraQ==
+Date:   Wed, 27 Oct 2021 09:02:08 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Shreeya Patel <shreeya.patel@collabora.com>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH 10/11] unicode: Add utf8-data module
+Message-ID: <20211027090208.70e88aab@canb.auug.org.au>
+In-Reply-To: <87mtmvevp7.fsf@collabora.com>
+References: <20210915070006.954653-1-hch@lst.de>
+        <20210915070006.954653-11-hch@lst.de>
+        <87wnmipjrw.fsf@collabora.com>
+        <20211012124904.GB9518@lst.de>
+        <87sfx6papz.fsf@collabora.com>
+        <20211026074509.GA594@lst.de>
+        <87mtmvevp7.fsf@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <25b9a1b5-7738-7b36-7ead-c8faa7cacc87@paragon-software.com>
+Content-Type: multipart/signed; boundary="Sig_/zpAG6xHoBv_D/DEo5Opsu+k";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 07:57:30PM +0300, Konstantin Komarov wrote:
-> This series fixes generic/444 generic/092 generic/228 generic/240
+--Sig_/zpAG6xHoBv_D/DEo5Opsu+k
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Now that 5.15 is just behind corner we need to start think about stable
-also. Please read [1]. So basically this kind of fixes needs also 
+Hi Gabriel,
 
-Cc: stable@vger.kernel.org
+On Tue, 26 Oct 2021 10:56:20 -0300 Gabriel Krisman Bertazi <krisman@collabo=
+ra.com> wrote:
+>
+> Christoph Hellwig <hch@lst.de> writes:
+>=20
+> > On Tue, Oct 12, 2021 at 11:40:56AM -0300, Gabriel Krisman Bertazi wrote=
+: =20
+> >> > Does this fix it? =20
+> >>=20
+> >> Yes, it does.
+> >>=20
+> >> I  will fold this into the original patch and queue this series for 5.=
+16. =20
+> >
+> > This series still doesn't seem to be queued up. =20
+>=20
+> Hm, I'm keeping it here:
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git/log/?=
+h=3Dfor-next_5.16
+>=20
+> Sorry, but I'm not sure what is the process to get tracked by
+> linux-next.  I'm Cc'ing Stephen to hopefully help me figure it out.
 
-to sign-off-area. I know that stable team will try to pick also fixes
-automatically, but this is "right" way. You can add this Cc lable also
-when you make git am, but it is good the be there right away people can
-discuss if it should be stable or not.
+You just need to send me a git URL for your tree/branch (not a cgit or
+gitweb URL, please), plus some idea of what the tree include and how it
+is sent to Linus (directly or via another tree).  The branch should
+have a generic name (i.e. not including a version) as I will continuet
+to fetch that branch every day until you tell me to stop.  When your
+code is ready to be included in linux-next, all you have to do is
+update that branch to include the new code.
 
-Please also add cc tag to other patch series 1-3 patches.
+--=20
+Cheers,
+Stephen Rothwell
 
-[1]: https://www.kernel.org/doc/Documentation/process/stable-kernel-rules.rst
+--Sig_/zpAG6xHoBv_D/DEo5Opsu+k
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> Konstantin Komarov (4):
->   fs/ntfs3: In function ntfs_set_acl_ex do not change inode->i_mode if
->     called from function ntfs_init_acl
->   fs/ntfs3: Fix fiemap + fix shrink file size (to remove preallocated
->     space)
->   fs/ntfs3: Check new size for limits
->   fs/ntfs3: Update valid size if -EIOCBQUEUED
-> 
->  fs/ntfs3/file.c    | 10 ++++++++--
->  fs/ntfs3/frecord.c | 10 +++++++---
->  fs/ntfs3/inode.c   |  9 +++++++--
->  fs/ntfs3/xattr.c   | 13 +++++++------
->  4 files changed, 29 insertions(+), 13 deletions(-)
-> 
-> -- 
-> 2.33.0
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmF4euAACgkQAVBC80lX
+0GwceQgAi6W1qvH8e/YEFcP2VS6b/2KY5DJKr3QEo0s7wxM+T4f+jxvWcAlJ0LFk
+uewS5xgi5RcGUj4HLU517ONP2w3grK5ZCKmg7XAUop+t1YX97EUZa2dNzv4Q35PC
+Fmb/DOTE2i7DIs5/cIipcWqtwewutnDAHFWM1ZmnERWLeKhys3ekgTXPfIypcgxz
+qVDUqUSXhPmda4FugFRfSu5OF4VGk/LmvXca2gwcXjgnrQN4LsjkrbwuQKLDhczc
+A1qyzs8+g7WFGgf1KvEbcHwj5dGwIDgHg/PCxvjf5Q2dUHlELDrCrZ6kxz2f9r/C
+mulbXoc/7UhUjeyrGzi/d+ZJ/YzFjg==
+=a/+i
+-----END PGP SIGNATURE-----
+
+--Sig_/zpAG6xHoBv_D/DEo5Opsu+k--
