@@ -2,64 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2920143B368
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 15:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B48B43B389
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 16:03:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236307AbhJZN6x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 09:58:53 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40258 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236315AbhJZN6v (ORCPT
+        id S235423AbhJZOFj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 10:05:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49176 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230119AbhJZOFg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 09:58:51 -0400
-Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1002])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 14CAA1F43A4A;
-        Tue, 26 Oct 2021 14:56:25 +0100 (BST)
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Shreeya Patel <shreeya.patel@collabora.com>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH 10/11] unicode: Add utf8-data module
-Organization: Collabora
-References: <20210915070006.954653-1-hch@lst.de>
-        <20210915070006.954653-11-hch@lst.de> <87wnmipjrw.fsf@collabora.com>
-        <20211012124904.GB9518@lst.de> <87sfx6papz.fsf@collabora.com>
-        <20211026074509.GA594@lst.de>
-Date:   Tue, 26 Oct 2021 10:56:20 -0300
-In-Reply-To: <20211026074509.GA594@lst.de> (Christoph Hellwig's message of
-        "Tue, 26 Oct 2021 09:45:09 +0200")
-Message-ID: <87mtmvevp7.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Tue, 26 Oct 2021 10:05:36 -0400
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE0E2C061745;
+        Tue, 26 Oct 2021 07:03:12 -0700 (PDT)
+Received: by mail-io1-xd29.google.com with SMTP id y67so20530792iof.10;
+        Tue, 26 Oct 2021 07:03:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jiKBRIJ90WYjcORFiV3ORltYZSK2q2sAgdSrdSfFfbc=;
+        b=B5oi/7UCVk36Kltqk5jv0UWKsgnlcJbT+p8jfJZ/39b+wWQ3ihMQCSae2vo2AfNYOV
+         rGFEUlC++DoWLCCqPMJWHJOt1HSJyZFJtvVv49eAiawK7btNdoGSa1NDCwrmtXk1QKNU
+         vSBGb2llMudk+OZOc4MAqtj9ZyDt/GRG5Xmh0lZMLJUQfXLqcWmfnbKyPUvZsUevSp7r
+         Uav5pLsgxuo7NBSBiLlXImmOZ8jx2FcsOPxBS44VwbmHXKYUQ4BPjNlZX9zlsc+Tru3f
+         yRRWGvhcXHKmK3hoxpjQGpduRdkJH6Mb3jiEyDSm0HHk/BZg1ycg8Ak+iPaRmnDBUB5W
+         DujA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jiKBRIJ90WYjcORFiV3ORltYZSK2q2sAgdSrdSfFfbc=;
+        b=JKmwxkkuMTKXFa90Thvjdh0ADxxPITJbFnr9TxxQpGIOeClQzQjWpmyC4sAWRawLGJ
+         UzNthgk5zd74rGJTOH4bwhuOUsDDsU9rLlXtFXsONRNuIj7CDlSnkPYa8b7+1aQ9fMtB
+         OrZFOKemdfjfg5j6h9d3S9/2stCoILE7UY9qmrNlefSP8xOQW+7eN+34/rAYuFK0Xg7N
+         wtDu695kVwfiwmpjHz5x5PzL14+HUbZm7YXbtxD7+0ZqIW6+UnH5QIOqCgToqHfTBs/N
+         JKu0W7Rv1zVFpMJr6+a5pqcfKQrrq8mAMv7Ix4Q2u85hVOPFyYHwXpRox4Z9AvacDDiG
+         i3QQ==
+X-Gm-Message-State: AOAM531ZEV9xo19PMmyMOejzjjpz5FduXyXAymyzOSyTQctKxHvf3xsQ
+        4Sh6s3VSDgjC5PogcEDBQm8eDakQ8rVMUrAAtog=
+X-Google-Smtp-Source: ABdhPJxnJMo1zj33+9fiUewOfzyLCzx56/LSGr86u1/7PYep88hWbWvGY1Pv8LiKwv9ITmco8NPZCwRW9GVoSd8560c=
+X-Received: by 2002:a05:6638:2257:: with SMTP id m23mr249515jas.139.1635256992171;
+ Tue, 26 Oct 2021 07:03:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20211025083315.4752-1-laoar.shao@gmail.com> <20211025083315.4752-9-laoar.shao@gmail.com>
+ <202110251421.7056ACF84@keescook> <CALOAHbDPs-pbr5CnmuRv+b+CgMdEkzi4Yr2fSO9pKCE-chr3Yg@mail.gmail.com>
+ <20211026091211.569a7ba2@gandalf.local.home> <CALOAHbBAKqbZEMvk5PVMrqFR_kjbi_kotGTNTGEW+=JWnC+_uA@mail.gmail.com>
+In-Reply-To: <CALOAHbBAKqbZEMvk5PVMrqFR_kjbi_kotGTNTGEW+=JWnC+_uA@mail.gmail.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Tue, 26 Oct 2021 22:02:36 +0800
+Message-ID: <CALOAHbAa-iMD4k2DEOun+RivUXiSMKR6ndCsqGZMseUbX_9+ww@mail.gmail.com>
+Subject: Re: [PATCH v6 08/12] tools/bpf/bpftool/skeleton: make it adopt to
+ task comm size change
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Qiang Zhang <qiang.zhang@windriver.com>,
+        robdclark <robdclark@chromium.org>,
+        christian <christian@brauner.io>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        David Miller <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        john fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        dennis.dalessandro@cornelisnetworks.com,
+        mike.marciniszyn@cornelisnetworks.com, dledford@redhat.com,
+        jgg@ziepe.ca, linux-rdma@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        kbuild test robot <lkp@intel.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@lst.de> writes:
-
-> On Tue, Oct 12, 2021 at 11:40:56AM -0300, Gabriel Krisman Bertazi wrote:
->> > Does this fix it?
->> 
->> Yes, it does.
->> 
->> I  will fold this into the original patch and queue this series for 5.16.
+On Tue, Oct 26, 2021 at 9:55 PM Yafang Shao <laoar.shao@gmail.com> wrote:
 >
-> This series still doesn't seem to be queued up.
+> On Tue, Oct 26, 2021 at 9:12 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > On Tue, 26 Oct 2021 10:18:51 +0800
+> > Yafang Shao <laoar.shao@gmail.com> wrote:
+> >
+> > > > So, if we're ever going to copying these buffers out of the kernel (I
+> > > > don't know what the object lifetime here in bpf is for "e", etc), we
+> > > > should be zero-padding (as get_task_comm() does).
+> > > >
+> > > > Should this, instead, be using a bounce buffer?
+> > >
+> > > The comment in bpf_probe_read_kernel_str_common() says
+> > >
+> > >   :      /*
+> > >   :       * The strncpy_from_kernel_nofault() call will likely not fill the
+> > >   :       * entire buffer, but that's okay in this circumstance as we're probing
+> > >   :       * arbitrary memory anyway similar to bpf_probe_read_*() and might
+> > >   :       * as well probe the stack. Thus, memory is explicitly cleared
+> > >   :       * only in error case, so that improper users ignoring return
+> > >   :       * code altogether don't copy garbage; otherwise length of string
+> > >   :       * is returned that can be used for bpf_perf_event_output() et al.
+> > >   :       */
+> > >
+> > > It seems that it doesn't matter if the buffer is filled as that is
+> > > probing arbitrary memory.
+> > >
+> > > >
+> > > > get_task_comm(comm, task->group_leader);
+> > >
+> > > This helper can't be used by the BPF programs, as it is not exported to BPF.
+> > >
+> > > > bpf_probe_read_kernel_str(&e.comm, sizeof(e.comm), comm);
+> >
+> > I guess Kees is worried that e.comm will have something exported to user
+> > space that it shouldn't. But since e is part of the BPF program, does the
+> > BPF JIT take care to make sure everything on its stack is zero'd out, such
+> > that a user BPF couldn't just read various items off its stack and by doing
+> > so, see kernel memory it shouldn't be seeing?
+> >
+>
 
-Hm, I'm keeping it here:
+Ah, you mean the BPF JIT has already avoided leaking information to user.
+I will check the BPF JIT code first.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git/log/?h=for-next_5.16
+> Understood.
+> It can leak information to the user if the user buffer is large enough.
+>
+>
+> > I'm guessing it does, otherwise this would be a bigger issue than this
+> > patch series.
+> >
+>
+> I will think about how to fix it.
+> At first glance, it seems we'd better introduce a new BPF helper like
+> bpf_probe_read_kernel_str_pad().
+>
+> --
+> Thanks
+> Yafang
 
-Sorry, but I'm not sure what is the process to get tracked by
-linux-next.  I'm Cc'ing Stephen to hopefully help me figure it out.
 
-Thanks,
 
 -- 
-Gabriel Krisman Bertazi
+Thanks
+Yafang
