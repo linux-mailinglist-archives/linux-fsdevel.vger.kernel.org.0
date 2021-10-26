@@ -2,100 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 467D743B007
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 12:31:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3161343B022
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 12:36:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234161AbhJZKdY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 06:33:24 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:55794 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233600AbhJZKdX (ORCPT
+        id S234582AbhJZKip (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 06:38:45 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:47904 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234596AbhJZKiU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 06:33:23 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 7FF9E2195D;
-        Tue, 26 Oct 2021 10:30:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1635244258; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        Tue, 26 Oct 2021 06:38:20 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id CFCFC1FD4C;
+        Tue, 26 Oct 2021 10:35:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1635244551; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=WDeyQBV9DEd0tXGdD1qku14+9u4jb7PKJUH26QFG8DU=;
-        b=cIfY3dnXPMscVImWyijSTbuMwtr/YCMjZw0IyDyoG4QR3wYLXRq5JGSTJKBTs8ufoBoxcB
-        LN0NXPQWvcRfRQ1hrwSmo6WhIySYM5H9L6KR6pfjBPqiB2u1rWKYJp0WIR/6bqrYqwjuE7
-        nEmMDPZV2Nu2pRT7xGdDgJv297WGA70=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1635244258;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WDeyQBV9DEd0tXGdD1qku14+9u4jb7PKJUH26QFG8DU=;
-        b=3lUTKYQ6NxuOyMBjALvs/LScH2rgJneMYKzuxLMCCut4B0rZkFlz+yckRlHbfgJ2+hNwzo
-        YJNaMcVClDDJPmDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        bh=1eIOwvf/mMVcZwym9Rsv9K70HOPBD5q/9n5lAFwsZyI=;
+        b=INOy8JbcR/E0RvXOtZ9l6kLK4ypy5b76OCI5OckfNKpFgnwhlXjEbmuL3zGAyCw8uxdvjj
+        YSpBGCium6DRcUwhe5EC3/On5TQaGYvsiKMxzDZqBKy4LcBGj5EteMRwpKyc5XDj7AZPwm
+        YDf9opjAXlpbqwZAzKOuC4KIFz3WjkU=
+Received: from suse.cz (unknown [10.100.224.162])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9A6AB13D43;
-        Tue, 26 Oct 2021 10:30:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id zbQ2Ft/Yd2GRFgAAMHmgww
-        (envelope-from <neilb@suse.de>); Tue, 26 Oct 2021 10:30:55 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        by relay2.suse.de (Postfix) with ESMTPS id 025E8A3B85;
+        Tue, 26 Oct 2021 10:35:50 +0000 (UTC)
+Date:   Tue, 26 Oct 2021 12:35:47 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        "Zhang, Qiang" <qiang.zhang@windriver.com>, robdclark@chromium.org,
+        Christian Brauner <christian@brauner.io>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        dennis.dalessandro@cornelisnetworks.com,
+        mike.marciniszyn@cornelisnetworks.com,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, linux-perf-users@vger.kernel.org,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH v6 00/12] extend task comm from 16 to 24
+Message-ID: <YXfaA2uSj9JIfZIl@alley>
+References: <20211025083315.4752-1-laoar.shao@gmail.com>
+ <CAADnVQKm0Ljj-w5PbkAu1ugLFnZRRPt-Vk-J7AhXxDD5xVompA@mail.gmail.com>
+ <20211025170503.59830a43@gandalf.local.home>
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Michal Hocko" <mhocko@suse.com>
-Cc:     linux-mm@kvack.org, "Dave Chinner" <david@fromorbit.com>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        "Uladzislau Rezki" <urezki@gmail.com>,
-        linux-fsdevel@vger.kernel.org,
-        "LKML" <linux-kernel@vger.kernel.org>,
-        "Ilya Dryomov" <idryomov@gmail.com>,
-        "Jeff Layton" <jlayton@kernel.org>
-Subject: Re: [PATCH 2/4] mm/vmalloc: add support for __GFP_NOFAIL
-In-reply-to: <YXeoJbzICpNsEEBr@dhcp22.suse.cz>
-References: <20211025150223.13621-1-mhocko@kernel.org>,
- <20211025150223.13621-3-mhocko@kernel.org>,
- <163520277623.16092.15759069160856953654@noble.neil.brown.name>,
- <YXeoJbzICpNsEEBr@dhcp22.suse.cz>
-Date:   Tue, 26 Oct 2021 21:30:52 +1100
-Message-id: <163524425265.8576.7853645770508739439@noble.neil.brown.name>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211025170503.59830a43@gandalf.local.home>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 26 Oct 2021, Michal Hocko wrote:
-> On Tue 26-10-21 09:59:36, Neil Brown wrote:
-> > On Tue, 26 Oct 2021, Michal Hocko wrote:
-> [...]
-> > > @@ -3032,6 +3036,10 @@ void *__vmalloc_node_range(unsigned long size, u=
-nsigned long align,
-> > >  		warn_alloc(gfp_mask, NULL,
-> > >  			"vmalloc error: size %lu, vm_struct allocation failed",
-> > >  			real_size);
-> > > +		if (gfp_mask & __GFP_NOFAIL) {
-> > > +			schedule_timeout_uninterruptible(1);
-> > > +			goto again;
-> > > +		}
-> >=20
-> > Shouldn't the retry happen *before* the warning?
->=20
-> I've done it after to catch the "depleted or fragmented" vmalloc space.
-> This is not related to the memory available and therefore it won't be
-> handled by the oom killer. The error message shouldn't imply the vmalloc
-> allocation failure IMHO but I am open to suggestions.
+On Mon 2021-10-25 17:05:03, Steven Rostedt wrote:
+> On Mon, 25 Oct 2021 11:10:09 -0700
+> Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+> 
+> > It looks like a churn that doesn't really address the problem.
+> > If we were to allow long names then make it into a pointer and use 16 byte
+> > as an optimized storage for short names. Any longer name would be a pointer.
+> > In other words make it similar to dentry->d_iname.
+> 
+> That would be quite a bigger undertaking too, as it is assumed throughout
+> the kernel that the task->comm is TASK_COMM_LEN and is nul terminated. And
+> most locations that save the comm simply use a fixed size string of
+> TASK_COMM_LEN. Not saying its not feasible, but it would require a lot more
+> analysis of the impact by changing such a fundamental part of task struct
+> from a static to something requiring allocation.
 
-The word "failed" does seem to imply what you don't want it to imply...
+I fully agree. The evolution of this patchset clearly shows how many
+code paths depend on the existing behavior.
 
-I guess it is reasonable to have this warning, but maybe add " -- retrying"
-if __GFP_NOFAIL.
 
-Thanks,
-NeilBrown
+> Unless you are suggesting that we truncate like normal the 16 byte names
+> (to a max of 15 characters), and add a way to hold the entire name for
+> those locations that understand it.
+
+Yup. If the problem is only with kthreads, it might be possible to
+store the pointer into "struct kthread" and update proc_task_name().
+It would generalize the solution already used by workqueues.
+I think that something like this was mentioned in the discussion
+about v1.
+
+Best Regards,
+Petr
