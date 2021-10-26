@@ -2,101 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A529743B942
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 20:17:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A90A43B954
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 20:19:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238156AbhJZSTu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 14:19:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52308 "EHLO
+        id S238224AbhJZSWF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 14:22:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232565AbhJZSTt (ORCPT
+        with ESMTP id S238181AbhJZSWE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 14:19:49 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE5CAC061745;
-        Tue, 26 Oct 2021 11:17:24 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id k13so251801ljj.12;
-        Tue, 26 Oct 2021 11:17:24 -0700 (PDT)
+        Tue, 26 Oct 2021 14:22:04 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E53E1C061220;
+        Tue, 26 Oct 2021 11:19:39 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id h196so515953iof.2;
+        Tue, 26 Oct 2021 11:19:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=CbkycfBpiPzNz9mU9kLDzsxQuKQ9vzT3rMC0AKEjNkk=;
-        b=PNi4bZGi9qc5Fq5YyVp5QoxTeUJ4eSQu8LDldDiJBDWYN34lZPCOz3EeFMrhlenKim
-         Fyy/EYZ293+ika4AtxlkXQ4GzvFfrza/RPydEgRtXmV4TDKYnDfTTNwVu3dO6vg5806s
-         EtCO9NN7q75ENNFzuV/qwvS/iKLrwxNbWiQ5oVi2li3YdHqlqCNz+8JOJOdXR5b388D2
-         jM2OW+v/KALLxr5fUHrpIh+Qmujjg56HdN23B/SC5Wg1VLtwiXXwkFbmM+ZwQxL+UEgg
-         DhZO89R+lM/raMYq2nvZ/vQiV9njZ1JzlsG2Y2xpwcnLfjky/Tj5iXNJhN0qBT6mYjWF
-         3PAQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Wf19AOmnfmju4KLabUVTp8hRay8Ue8otowCzGjfToKY=;
+        b=f8GEAYf83UxpdIyaGi4NEiPx6VBACSIK+KCjfr29ACQW3Ni7YME/QAHX/FaCJvYA1z
+         BXpzhqqyPl3FNkJf72KJm7HNZcc/5koHdO0sx+gC8w8Qn5CuBm1A7DIq4i2YU7wCeurf
+         GIjcg5mKGjjUtly5lQSbPNmI+0ym6RGIcZjJI6rD/XmLbYJ8t/tIH4VQ7QlXiNS994vJ
+         QgHuA7cBCoMXf7zVfid/pC63JqWgdp05kdgiG+bXRmyAFJOo6sJMDGfckOL0BPhoO6Kq
+         DK4laQX0ohqnC5vLWy0667CiXe7/MiZEjPxOfuuGC5Q8x85L8K8Mz5rz1+v1N/WCe9MH
+         6Okg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CbkycfBpiPzNz9mU9kLDzsxQuKQ9vzT3rMC0AKEjNkk=;
-        b=5HU5tsoIARgxcOwi/Gds7yaPNspllIB9F4PLmKUPMHGsGUlQQ1ttc23mIbX+LfTxYK
-         lWwuQzGaCnIajAWiJ0getoDLb6auCIJYZv0EbyWQ5vP75QaDQGrMIYKp0ddikivG1KAz
-         uQgTo8zTSGqcr9gXFH6q9RdhXLtdOV4Xdq7Ni1kEyNjvZDHEwobtJKjZLUmk7w1Ohmxd
-         y3f/fnTfBiXmp1epomwbrNYpN18WEGVkOiAIvdWggEDfaD2ugUyIDwWVF7qnUSD3x4IC
-         9ZZcYz7hvnnpBPEatAV0LoyIXVqYRuFNIr8tgPO+hJ6q9b7g3hVRFSJmBbj30aGTU65+
-         /RhA==
-X-Gm-Message-State: AOAM532kvuUMhJOpunlJHz+LVvW+RX0aeFmXeBGjTjBMZoi1yqon4ZGe
-        O2OiDNKEyWS/s59azo4Dsqk=
-X-Google-Smtp-Source: ABdhPJyhMoeGvZPoK9EvZlMCo7em/vPsOoZzfbj4/UKWBmt47d67dHTmk7KQO6SQKGVxSofl3miYrA==
-X-Received: by 2002:a05:651c:617:: with SMTP id k23mr27312236lje.402.1635272243035;
-        Tue, 26 Oct 2021 11:17:23 -0700 (PDT)
-Received: from kari-VirtualBox ([31.132.12.44])
-        by smtp.gmail.com with ESMTPSA id g18sm46711ljl.26.2021.10.26.11.17.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Oct 2021 11:17:22 -0700 (PDT)
-Date:   Tue, 26 Oct 2021 21:17:20 +0300
-From:   Kari Argillander <kari.argillander@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Ganapathi Kamath <hgkamath@hotmail.com>
-Subject: Re: [PATCH 1/4] fs/ntfs3: Keep preallocated only if option prealloc
- enabled
-Message-ID: <20211026181720.46jaw46hn2vwtqgk@kari-VirtualBox>
-References: <a57c1c49-4ef3-15ee-d2cd-d77fb4246b3c@paragon-software.com>
- <19b0fc31-a28f-69aa-27dc-e6514a10643e@paragon-software.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wf19AOmnfmju4KLabUVTp8hRay8Ue8otowCzGjfToKY=;
+        b=aog8Bko3YEuGFrJS4fekMXmtK7F75Ujyj5dPBWy13LyacEoTFsD1V/Gy1CSa2mXv2v
+         f1rKrvtY7vhU5K4dUPTsWxGkwA4YsMjdnuOJF/NSG8zl+5wvnAfJ9MuHhnV14ru9SRCo
+         nBDEqMcAK5wk7PeBYPqMsnPwMt+se33XroZyRzZq8vNNyi2YGKLijdeQR5ZkFfafwwfe
+         h7aEhOCia6d61rxusbDwDhRsY5QC9P/b4RhuGVYso/IdKWJXEGgmAWHkmyWaIotR/BC4
+         fKSckcyRnopoftxsZe3sc5SIi0CSbfE/8KFC/HvTF8zGafMz+XCXymZhif0fYxVfUHR1
+         nDEg==
+X-Gm-Message-State: AOAM531jxRsFiwCyhjq7Ykunpceth1QkNctPsNU5P8g9C7U0f9ikPEoo
+        6H52EK3U4yfSeYWm5GXNi/l8+D7VoXBHxHLS+28=
+X-Google-Smtp-Source: ABdhPJy9QDP7JK7UoD4tu8AP8q/8LOod4R0KCnSSLL3b++YNrijIXcOdrlZ5jZOgR2D2SCDi8EtKCwCx1ze4jILD5/E=
+X-Received: by 2002:a5d:8792:: with SMTP id f18mr16171056ion.52.1635272379360;
+ Tue, 26 Oct 2021 11:19:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19b0fc31-a28f-69aa-27dc-e6514a10643e@paragon-software.com>
+References: <20211025204634.2517-1-iangelak@redhat.com> <CAOQ4uxieK3KpY7pf0YTKcrNHW7rnTATTDZdK9L4Mqy32cDwV8w@mail.gmail.com>
+ <YXgkTirm5O04xEm5@redhat.com>
+In-Reply-To: <YXgkTirm5O04xEm5@redhat.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 26 Oct 2021 21:19:28 +0300
+Message-ID: <CAOQ4uxgmrhMN5smT29mtSC3iV2ht_0a_Z7_ZGyPbA2=yzRG1uQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 26, 2021 at 07:40:57PM +0300, Konstantin Komarov wrote:
-> If size of file was reduced, we still kept allocated blocks.
-> This commit makes ntfs3 work as other fs like btrfs.
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=214719
-> Fixes: 4342306f0f0d ("fs/ntfs3: Add file operations and implementation")
-> 
-> Reported-by: Ganapathi Kamath <hgkamath@hotmail.com>
-> Tested-by: Ganapathi Kamath <hgkamath@hotmail.com>
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> > > As a result, when an event occures on a inode within the exported
+> > > directory by virtiofs, two events will be generated at the same time; a
+> > > local event (generated by the guest kernel) and a remote event (generated
+> > > by the host), thus the guest will receive duplicate events.
+> > >
+> > > To account for this issue we implemented two modes; one where local events
+> > > function as expected (when virtiofsd does not support the remote
+> > > inotify) and one where the local events are suppressed and only the
+> > > remote events originating from the host side are let through (when
+> > > virtiofsd supports the remote inotify).
+> >
+> > Dropping events from the local side would be weird.
+> > Avoiding duplicate events is not a good enough reason IMO
+> > compared to the problems this could cause.
+> > I am not convinced this is worth it.
+>
+> So what should be done? If we don't drop local events, then application
+> will see both local and remote events. And then we will have to build
+> this knowledge in API that an event can be either local or remote.
+> Application should be able to distinguish between these two and act
+> accordingly. That sounds like a lot. And I am not even sure if application
+> cares about local events in case of a remote shared filesystem.
+>
 
-Reviewed-by: Kari Argillander <kari.argillander@gmail.com>
+I am not completely ruling out the S_NONOTIFY inode flag, but I am not
+yet convinced that it is needed.
+So what if applications get duplicate events? What's the worst thing that
+could happen?
+And once again, merging most of the duplicate events is pretty easy
+and fanotify does that already.
 
-> ---
->  fs/ntfs3/file.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-> index 43b1451bff53..3ac0482c6880 100644
-> --- a/fs/ntfs3/file.c
-> +++ b/fs/ntfs3/file.c
-> @@ -494,7 +494,7 @@ static int ntfs_truncate(struct inode *inode, loff_t new_size)
->  
->  	down_write(&ni->file.run_lock);
->  	err = attr_set_size(ni, ATTR_DATA, NULL, 0, &ni->file.run, new_size,
-> -			    &new_valid, true, NULL);
-> +			    &new_valid, ni->mi.sbi->options->prealloc, NULL);
->  	up_write(&ni->file.run_lock);
->  
->  	if (new_valid < ni->i_valid)
-> -- 
-> 2.33.0
-> 
-> 
+> I have no experience with inotify/fanotify/fsnotify and what people
+> expect from inotify/fanotify API. So we are open to all the ideas
+> w.r.t what will be a good design to support this thing on remote
+> filesystems. Currently whole infrastructure seems to be written with
+> local filesystems in mind.
+>
+
+I have no control of what users expect from inotify/fanotify
+but I do know that some users' expectations are misaligned with
+how inotify/fanotify actually works.
+
+For example, some users may expect events not to be reordered,
+but there is no such guarantee.
+
+Some inotify users would expect to find a file with the filename
+in the event without realizing that this is a snapshot of a past
+filename, that may now not exist or be a completely different object.
+
+Those are some misconceptions that we tried to address with
+the fanotify FAN_REPORT_DFID_NAME APIs and hopefully we also
+documented the expectations better in the man page.
+
+The use of NFS file handles to identify objects in the FAN_REPORT_FID
+modes enables getting events also for already dead objects
+(without keeping the inode alive like inotify).
+
+I didn't want to complicate Ioannis in this early stage, but I think
+that FUSE fsnotify should be tied to LOOKUP_HANDLE.
+All FUSE remote objects should be described by file handles
+which is the same manner in which network protocols work
+and file handles should be used to describe objects in
+fsnotify FUSE events.
+
+But I am getting ahead of myself with a lot of hand waving....
+
+Thanks,
+Amir.
