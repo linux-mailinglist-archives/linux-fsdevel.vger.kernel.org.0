@@ -2,112 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3161343B022
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 12:36:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 000A943B064
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 12:43:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234582AbhJZKip (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 06:38:45 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:47904 "EHLO
+        id S234886AbhJZKpt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 06:45:49 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:48706 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234596AbhJZKiU (ORCPT
+        with ESMTP id S231345AbhJZKpr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 06:38:20 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id CFCFC1FD4C;
-        Tue, 26 Oct 2021 10:35:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1635244551; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1eIOwvf/mMVcZwym9Rsv9K70HOPBD5q/9n5lAFwsZyI=;
-        b=INOy8JbcR/E0RvXOtZ9l6kLK4ypy5b76OCI5OckfNKpFgnwhlXjEbmuL3zGAyCw8uxdvjj
-        YSpBGCium6DRcUwhe5EC3/On5TQaGYvsiKMxzDZqBKy4LcBGj5EteMRwpKyc5XDj7AZPwm
-        YDf9opjAXlpbqwZAzKOuC4KIFz3WjkU=
-Received: from suse.cz (unknown [10.100.224.162])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 26 Oct 2021 06:45:47 -0400
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 025E8A3B85;
-        Tue, 26 Oct 2021 10:35:50 +0000 (UTC)
-Date:   Tue, 26 Oct 2021 12:35:47 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        "Zhang, Qiang" <qiang.zhang@windriver.com>, robdclark@chromium.org,
-        Christian Brauner <christian@brauner.io>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        dennis.dalessandro@cornelisnetworks.com,
-        mike.marciniszyn@cornelisnetworks.com,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, linux-perf-users@vger.kernel.org,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH v6 00/12] extend task comm from 16 to 24
-Message-ID: <YXfaA2uSj9JIfZIl@alley>
-References: <20211025083315.4752-1-laoar.shao@gmail.com>
- <CAADnVQKm0Ljj-w5PbkAu1ugLFnZRRPt-Vk-J7AhXxDD5xVompA@mail.gmail.com>
- <20211025170503.59830a43@gandalf.local.home>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 840C31F770;
+        Tue, 26 Oct 2021 10:43:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1635245003; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QUWC6kRvFrBZ/khLHEZn47cIYMvYz0u1VgaJCPHSq0I=;
+        b=yPn8McOOf5tamAdrJt8EEw9IK32OVCG2aiIjBzxckmGtZlQOtzeJ6UodKvNkrw0pipwxmG
+        Ri1o4X9vbX6pQEtkXdwspJ2NOPM20oMxKbWbILyQqjf3ACqmsId/ihNKn2kCTwRxJrf5Xk
+        xng+L5Bg2xiNkQb+9XyYDGrOqduoCB8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1635245003;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QUWC6kRvFrBZ/khLHEZn47cIYMvYz0u1VgaJCPHSq0I=;
+        b=OXoFuXs5TNC+z8W0lHHOg9lP5nbHQv6SjAkAPBrdsLVKQQ/ePJHenaqMoAVFUgmkDq6azi
+        K48YgKsSy1OlHqBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A26E813D43;
+        Tue, 26 Oct 2021 10:43:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Cb4vGMjbd2GBHAAAMHmgww
+        (envelope-from <neilb@suse.de>); Tue, 26 Oct 2021 10:43:20 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211025170503.59830a43@gandalf.local.home>
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Michal Hocko" <mhocko@suse.com>
+Cc:     linux-mm@kvack.org, "Dave Chinner" <david@fromorbit.com>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        "Uladzislau Rezki" <urezki@gmail.com>,
+        linux-fsdevel@vger.kernel.org,
+        "LKML" <linux-kernel@vger.kernel.org>,
+        "Ilya Dryomov" <idryomov@gmail.com>,
+        "Jeff Layton" <jlayton@kernel.org>
+Subject: Re: [PATCH 3/4] mm/vmalloc: be more explicit about supported gfp flags.
+In-reply-to: <YXep1ctN1wPP+1a8@dhcp22.suse.cz>
+References: <20211025150223.13621-1-mhocko@kernel.org>,
+ <20211025150223.13621-4-mhocko@kernel.org>,
+ <163520436674.16092.18372437960890952300@noble.neil.brown.name>,
+ <YXep1ctN1wPP+1a8@dhcp22.suse.cz>
+Date:   Tue, 26 Oct 2021 21:43:17 +1100
+Message-id: <163524499768.8576.4634415079916744478@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 2021-10-25 17:05:03, Steven Rostedt wrote:
-> On Mon, 25 Oct 2021 11:10:09 -0700
-> Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
-> 
-> > It looks like a churn that doesn't really address the problem.
-> > If we were to allow long names then make it into a pointer and use 16 byte
-> > as an optimized storage for short names. Any longer name would be a pointer.
-> > In other words make it similar to dentry->d_iname.
-> 
-> That would be quite a bigger undertaking too, as it is assumed throughout
-> the kernel that the task->comm is TASK_COMM_LEN and is nul terminated. And
-> most locations that save the comm simply use a fixed size string of
-> TASK_COMM_LEN. Not saying its not feasible, but it would require a lot more
-> analysis of the impact by changing such a fundamental part of task struct
-> from a static to something requiring allocation.
+On Tue, 26 Oct 2021, Michal Hocko wrote:
+> On Tue 26-10-21 10:26:06, Neil Brown wrote:
+> > On Tue, 26 Oct 2021, Michal Hocko wrote:
+> > > From: Michal Hocko <mhocko@suse.com>
+> > >=20
+> > > The core of the vmalloc allocator __vmalloc_area_node doesn't say
+> > > anything about gfp mask argument. Not all gfp flags are supported
+> > > though. Be more explicit about constrains.
+> > >=20
+> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > > ---
+> > >  mm/vmalloc.c | 12 ++++++++++--
+> > >  1 file changed, 10 insertions(+), 2 deletions(-)
+> > >=20
+> > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > index 602649919a9d..2199d821c981 100644
+> > > --- a/mm/vmalloc.c
+> > > +++ b/mm/vmalloc.c
+> > > @@ -2980,8 +2980,16 @@ static void *__vmalloc_area_node(struct vm_struc=
+t *area, gfp_t gfp_mask,
+> > >   * @caller:		  caller's return address
+> > >   *
+> > >   * Allocate enough pages to cover @size from the page level
+> > > - * allocator with @gfp_mask flags.  Map them into contiguous
+> > > - * kernel virtual space, using a pagetable protection of @prot.
+> > > + * allocator with @gfp_mask flags. Please note that the full set of gfp
+> > > + * flags are not supported. GFP_KERNEL would be a preferred allocation=
+ mode
+> > > + * but GFP_NOFS and GFP_NOIO are supported as well. Zone modifiers are=
+ not
+> >=20
+> > In what sense is GFP_KERNEL "preferred"??
+> > The choice of GFP_NOFS, when necessary, isn't based on preference but
+> > on need.
+> >=20
+> > I understand that you would prefer no one ever used GFP_NOFs ever - just
+> > use the scope API.  I even agree.  But this is not the place to make
+> > that case.=20
+>=20
+> Any suggestion for a better wording?
 
-I fully agree. The evolution of this patchset clearly shows how many
-code paths depend on the existing behavior.
+ "GFP_KERNEL, GFP_NOFS, and GFP_NOIO are all supported".
+
+>=20
+> > > + * supported. From the reclaim modifiers__GFP_DIRECT_RECLAIM is requir=
+ed (aka
+> > > + * GFP_NOWAIT is not supported) and only __GFP_NOFAIL is supported (aka
+> >=20
+> > I don't think "aka" is the right thing to use here.  It is short for
+> > "also known as" and there is nothing that is being known as something
+> > else.
+> > It would be appropriate to say (i.e. GFP_NOWAIT is not supported).
+> > "i.e." is short for the Latin "id est" which means "that is" and
+> > normally introduces an alternate description (whereas aka introduces an
+> > alternate name).
+>=20
+> OK
+> =20
+> > > + * __GFP_NORETRY and __GFP_RETRY_MAYFAIL are not supported).
+> >=20
+> > Why do you think __GFP_NORETRY and __GFP_RETRY_MAYFAIL are not supported.
+>=20
+> Because they cannot be passed to the page table allocator. In both cases
+> the allocation would fail when system is short on memory. GFP_KERNEL
+> used for ptes implicitly doesn't behave that way.
+
+Could you please point me to the particular allocation which uses
+GFP_KERNEL rather than the flags passed to __vmalloc_node()?  I cannot
+find it.
+
+>=20
+> >=20
+> > > + * __GFP_NOWARN can be used to suppress error messages about failures.
+> >=20
+> > Surely "NOWARN" suppresses warning messages, not error messages ....
+>=20
+> I am not sure I follow. NOWARN means "do not warn" independently on the
+> log level chosen for the message. Is an allocation failure an error
+> message? Is the "vmalloc error: size %lu, failed to map pages" an error
+> message?
+
+If guess working with a C compiler has trained me to think that
+"warnings" are different from "errors".
+
+>=20
+> Anyway I will go with "__GFP_NOWARN can be used to suppress failure message=
+s"
+>=20
+> Is that better?
+
+Yes, that's an excellent solution!  Thanks.
+
+NeilBrown
 
 
-> Unless you are suggesting that we truncate like normal the 16 byte names
-> (to a max of 15 characters), and add a way to hold the entire name for
-> those locations that understand it.
-
-Yup. If the problem is only with kthreads, it might be possible to
-store the pointer into "struct kthread" and update proc_task_name().
-It would generalize the solution already used by workqueues.
-I think that something like this was mentioned in the discussion
-about v1.
-
-Best Regards,
-Petr
+> --=20
+> Michal Hocko
+> SUSE Labs
+>=20
+>=20
