@@ -2,165 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 22DE443BA45
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 21:05:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9489643BA6E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 21:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238501AbhJZTH7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 15:07:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34984 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230324AbhJZTHZ (ORCPT
+        id S236824AbhJZTOC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 15:14:02 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:38620 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235753AbhJZTOB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 15:07:25 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8DFCC061237;
-        Tue, 26 Oct 2021 12:04:27 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id f9so574756ioo.11;
-        Tue, 26 Oct 2021 12:04:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=epgv4bLCSWiNF0QcmAnrlx7DUUJfK4f2X6c0gIIsznU=;
-        b=MU7D8hJtzvP31k/XhtvvRV7DYhSzcZuPP0ADtWsyuegOkQlG6lHXGNnZM7A7aEsA9j
-         tjT/4khAInzChJcMUCM3z1L8Mu61dYKWL9kU0khMN7rzlDNC6W6NWRxCt5m740Bo0MPy
-         Mnq9RVKh6sEHRqRdTqHW+jlh58eFdzgdeDjx6gZsHMl4rf9BVLJPN2hslBFKG1Dds42G
-         51dMXNhlfiNZnkyiPkWxfAD2dLRiLIf6JJGJgyyr0bCtsEg9bjdsuHV+SKlgjbZQlGbt
-         ALeYUFoq2lZiuEuGp7DK8q6X4nE6W1yTI95f5bopi9/rec+NFL4ZqmOZMm4YUI/iueM+
-         3b6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=epgv4bLCSWiNF0QcmAnrlx7DUUJfK4f2X6c0gIIsznU=;
-        b=SyS350Ky76VB4n4p274Z5lmnzN7UFVLDE0rb3+jottDLn5WEbmvl2OzLbFQZhA/wAh
-         VTBHN3Qj9+y/HYatF/4uZkqDBv+Om+jV/o4vuzrhn5iAMokcsdvHuchJSiQFYVqhy9Op
-         QhDfFpR/KZCpVR+Q1kOYziFru8D76A0g7UEaoq2z0/rF9/m7ik3uVr3sMwijimD5nAIX
-         cIG7KUdP4PpPh0cOFYAP85G8DvDMZ4jdMXFsqwqyCndd1isE/OerBeMG+T+mr2yk9KGx
-         mHCi2CZa16Ipdcg1mMqJKdnWfwue5PiDJb22kaCF3W5sOA7vajFDCa6VZsi9z+fc2Fgg
-         s7bg==
-X-Gm-Message-State: AOAM532hkIMV5QjmpmoMR+tGYUl7xIz/9B+FPWiRnhnZgZ69oAqcb2uv
-        O7kNa+z/WlvNpgP6BGuGNOgrdNEhvEYE5Ot4UB0=
-X-Google-Smtp-Source: ABdhPJx25Ggl45TCg2rwU3kFp1iBE/ARGjQ+s87LTmaANuGfIAJBFynMb5ve2pt2Cz7rIj9BkXFJi6NSO/M4GrED/uw=
-X-Received: by 2002:a05:6602:26d2:: with SMTP id g18mr16099209ioo.70.1635275067074;
- Tue, 26 Oct 2021 12:04:27 -0700 (PDT)
+        Tue, 26 Oct 2021 15:14:01 -0400
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19QFXFue025846
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 12:11:37 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=SJD6cKOueuUKfrym0Pm5Fr8iZXjKII2jSXwyHaHYSzI=;
+ b=ViQJFRZ9XOCjxp1XRJO3+C+rc7NUFEmgtL3kCWHO/7kValUOSOu8Od6/cRx3a9TiAz3X
+ 7MpH4v5ZbWT5R3k9OiEDmWJKD0Ltf4JarMWxHIBVAbrzvwP5iXaTXxJvpUxXgn3QwfoV
+ B5D2KtiBCgGsBXou1/+GDVNJy2sQYh2Q+IY= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 3bx4e7qpp4-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 12:11:37 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.14; Tue, 26 Oct 2021 12:11:35 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ix8SoXj0k8AQMjO8aEHBsL2wzvHG3XSmjIJ9KpCiyiQCnWkVtzWJZZHoujtpvhTOP17R7F2H/hwXQt7mreHjvm6PH1iGvcXPOonKm+LUuqSmDL0ocdEo0Ucmkt0VKBIz5Wozhnf3zH+z/AFgjgk4a6JaR6uNLQ9+7NAYRN2Rg0HX5VUhoHwWjqmTEu+q7Nk8mDKe0mIyMmvt6aCqXw7KM/4V8sk/4IaSllhbqcU+rOByoejsJIZipffoKkkFALrak8Yc/cIYjJMP1fnQvj8nJl9l1Mqs/yFHOoH5yzFQVKZHooaEPIB6/94FhsKGzqvljXkL8UlTAN06idmzpfBWAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SJD6cKOueuUKfrym0Pm5Fr8iZXjKII2jSXwyHaHYSzI=;
+ b=njGW8hFkDOCP/SZqq0i3HQ74nriWyCgVu3tuh1TVt/1/1VLKuaCaMJiDcS6YMUYmv5OnQTJT8VHGwiaRIkK0cSpOxgxrbZFWj0V6ZijjXszSTws/O5drtexrTumuHYr6QGoD/aXhldqdfLHIdQ6gJSKg2JxnJrDmesjnpHRalBrVqs1P2toFeFPSjeO+MgUlM7MdQJ1PB3MgRZHEa7mVqjErEnu/7RvwA+WjaR1WSHel1YPUuJo9IIHE/KXZYkix6YniahTH+sztyB4nxTZdt6ZZa2Wo5Obssnc7dp3EZ03PfQLPbNFFpPkzyfZjGDTVlOnmso9J33ZC0ROQFyk2ww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+Received: from CO1PR15MB4924.namprd15.prod.outlook.com (2603:10b6:303:e3::16)
+ by MW4PR15MB4561.namprd15.prod.outlook.com (2603:10b6:303:106::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4628.18; Tue, 26 Oct
+ 2021 19:11:34 +0000
+Received: from CO1PR15MB4924.namprd15.prod.outlook.com
+ ([fe80::85f8:f448:b5cd:9171]) by CO1PR15MB4924.namprd15.prod.outlook.com
+ ([fe80::85f8:f448:b5cd:9171%3]) with mapi id 15.20.4628.020; Tue, 26 Oct 2021
+ 19:11:34 +0000
+From:   Chris Mason <clm@fb.com>
+To:     Jens Axboe <axboe@kernel.dk>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: mm: don't read i_size of inode unless we need it
+Thread-Topic: mm: don't read i_size of inode unless we need it
+Thread-Index: AQHXypVqgjSWReeIZ0mojalRKs7B2qvlpWmA
+Date:   Tue, 26 Oct 2021 19:11:34 +0000
+Message-ID: <9383DBC8-0C0E-4EF7-A3E3-272FFA9F14D2@fb.com>
+References: <6b67981f-57d4-c80e-bc07-6020aa601381@kernel.dk>
+In-Reply-To: <6b67981f-57d4-c80e-bc07-6020aa601381@kernel.dk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3654.120.0.1.13)
+authentication-results: kernel.dk; dkim=none (message not signed)
+ header.d=none;kernel.dk; dmarc=none action=none header.from=fb.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: beab54b5-0705-46ad-1597-08d998b46d41
+x-ms-traffictypediagnostic: MW4PR15MB4561:
+x-microsoft-antispam-prvs: <MW4PR15MB45616134C34A582E0848731DD3849@MW4PR15MB4561.namprd15.prod.outlook.com>
+x-fb-source: Internal
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: kDnSSpQGD3R9iAs9BHRSb6w8HO6YS4c+Qe/S2pdQ2jodrnjnC/9z6hFLzDtwEe2RozvaPOBGT6vnRm1+QUDvtqZNNG/hoU/o25KO3nv+MNKqG5ZlZW1QoVpHse10LrRwCgToywx419jkRCy6aySEV6iprAQT7Pp3zaCU5BG3targmYfM2uh6bxEaw3QPesCi/VReRu6jXYq+lrpWhKFx4KDAer/pEkRdWKSRN3NF8rZLGwU/worZvEEZcMXfKb48JSVzb1WfqO0aOno8LvZxl9pn2KESuXShjt3LNXPn3f+6t35Mr5O1hS5CWYSvqdkJ+eHfxD5HJ1olgQ8ldxBgD9isTE72Go7NutpEaFkMmixGEv4dngKCygRRXKGrdcULy4u2sUdNsd+baX6E06aMSi49kOFufORYl59AlghJe6nmYzonx1V/+e67k/M2X+j+mYXM8aHu5T7nEwtvzqsa+RhUSyDAhsNU1ac4svJfm3yFDKYPHiKnI+DEx2ooywJXnpnLoRK9uzrg5LYgfV5kiGjR5KksRhszIgmHGkYCThtOgNHQfhgpzteqTbWZORF5IikY669qfPSNzjAva8CP4LG3B2F9UdOJO4NpEAWbBVhvxze8a9D6eKKzPQrNTseNNN1JTYCTBzK3CogUy8Veq1asnN11YlJkpBOhOBbkVH1zQeMlFeSr7WT/gTGUErAYiJcfNXBEfyDmMV7O2PJjFpthFNOra7XO2pJLmHMc4hfnwvwS9ezplBFJfKSTN2fv
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR15MB4924.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(66556008)(64756008)(66476007)(36756003)(66946007)(33656002)(316002)(6486002)(8676002)(122000001)(38070700005)(4326008)(6506007)(8936002)(38100700002)(66446008)(83380400001)(2616005)(2906002)(76116006)(71200400001)(54906003)(6916009)(5660300002)(53546011)(186003)(86362001)(508600001)(91956017)(6512007)(45980500001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cVQxdjRpWHJUMjhoZEJqQkQ4MGo1eUtxY2xrVlJTYmFhSHZWcVNOVmZBeUc5?=
+ =?utf-8?B?VlVmc21SaVFKNDlkeFBOOW54YkhFOUJtMVBxRnhSWWw5QXVFNGpMZEJadi91?=
+ =?utf-8?B?ZmRNWVJuYTMvcDlsS0xPTk9hbXZta3BKTEpmSHFLYUtXRW9hMmxOMTlCT1lu?=
+ =?utf-8?B?MDQwd3F5REdLcC9QZFZ0aUFrbEtyY3NLYThzV0l3TUlQcDdlZkhOdnRNZDl1?=
+ =?utf-8?B?d1hsWlg1VHZSVnVRMUxqdlB0UStYU3NnOTFLdEFYaWxRUlJaT0xtU1JLcG9Q?=
+ =?utf-8?B?andHcHZOTWRWdE5RTWNlQlRKamZ6STRKdndvTDBZZ2Rwd0JnRWpqOGVPM2FJ?=
+ =?utf-8?B?cUFZM1JDZitaL3JDaGwvZEJZdzZic3RHYlk0QWYzU2FPVVYvR29MOVptem5R?=
+ =?utf-8?B?T2dlRlEvbEVjbmFHWG52Yk1PSEY2VHJWdEJKRWlpN0Zmb2ZLRndBOE8vZHZw?=
+ =?utf-8?B?NENWdEZvczJRN1RuYm11NDlNVEhQR25CQlFiY08yZEhuS29kWW1XQXZVcHBh?=
+ =?utf-8?B?Vk5lR2lZUE9hcWpDUW51TUI5NisycUdXOEplVlpWdTRNN3FkMklIcFZ6dWx0?=
+ =?utf-8?B?Vi80VGJ3RWduTTZma3lWdFdUejJybHpERlRtdVZyZHhOSm1LampBRmlmV01v?=
+ =?utf-8?B?RVdpdWl2VmZ0c3ZseE5STVdjTVpyb01pQWhEbnNiaUVTb1FLL0c4K2lJVnhB?=
+ =?utf-8?B?YUFJeDU0RXoyM0g0enV0Z29mRzQrVU1RRkdTaVYxRjlHRWNlYktiYzMzMnVX?=
+ =?utf-8?B?Slh4VGh0djR6aTNNTC92TjFLM3kwWlZZOXRoZjA0ekxNd3QxKzUrdXVhUHhR?=
+ =?utf-8?B?QUlGZU5sQ3c5TXNGWFVTRUtaK0hVcXpxTFo3UUYzRVV2a3pNc2M0QU5SSlVQ?=
+ =?utf-8?B?R2pNY3pPZUFhaXUvSW9lWjVtSjNQTWxMNEtRN0FiTWNpaDJUVXlFa1cvdUNK?=
+ =?utf-8?B?WmJ2YXVoRm05dUFlYmRrSDFiSG9sWFk1d3c2Q0JGVVhuMm1xNndvLzZEYUhE?=
+ =?utf-8?B?SWEwODQ5VTBxWnJCTTZCZFVWLzJuQXRaK1l5d1kySWFZcHRmVVVERjcwUUZT?=
+ =?utf-8?B?MXJBR2tLbEh6a0VxMThGSStTTk9NZ01aOGRIOXRlRXYycjNsVW01WjdQRVF2?=
+ =?utf-8?B?cGJTS1JFc05TTGJGOEFXanhETVZ1ZG5oQmZZQVA0RUJ6MmdYYUcrNDkxczc1?=
+ =?utf-8?B?YTVQVlBRRDlsY3dkTnJwZ0htc0ZiSlljcmtGclY4eXEzM2pHNnAvOW9oUlk3?=
+ =?utf-8?B?KytSRFN4NHNXMXgyL0NDY2hBbGlwbnI2YzdsRGFDWDgzVU1wblYrVWFUajI4?=
+ =?utf-8?B?b1B0NFJaUkpIbmRENTBrYjY2MEZpL3N6dzE5Z3ozdVRDZHhhTjVqL2Y2VjJs?=
+ =?utf-8?B?amtvUWZwaXNkMmFyVVQzblN5NS9ibnJtdjlPUGhKOUVhdjdUOUI3dzJiOVRE?=
+ =?utf-8?B?Zk1hVHR5a2V6VkR4RVNVYzg3YVN1YTV3ZDRzMXJnZDZKczZSNjFvS0NUeU9n?=
+ =?utf-8?B?dGFTb01IV3FOeXk4UVZnM2IyU015MmJ1TGxVanJRbmV3eGEvempEQXh4N240?=
+ =?utf-8?B?czVQakhVcnppNEFJdk5XbkY3cmpaYkY5QVVFbWhlbTJ3VFF6TUZud1JmL3g5?=
+ =?utf-8?B?ZktmZHZmcDFhVG9ydXN4MUFuZFNQV3FBL2xmL2REY1REL0l2YmRiQ2dpY25a?=
+ =?utf-8?B?VStibVk5QmpBUURrY012VDFIdm9KOFVLUFZpTWEvNWJoVTFKZmg5WEY0Mk92?=
+ =?utf-8?B?VVhXUlpWb0J1aTIwSHV1MXhXbzdSZ3FxMGo2ZEw2NDR6TGxqYzgwby9VTWJY?=
+ =?utf-8?B?TmQvdmo3dTFyU0tsZUdhNnRQaVZOWjZiQ3pBTG9QUUdMbjZpM212SzRYcHlx?=
+ =?utf-8?B?SEN2a2ZZOTd0VWF0L1BRNU1tTmQxbWZiMjdsY2lzNytZV1AyVCs3RWUyZFFt?=
+ =?utf-8?B?Sjk4eG9LZWRIa1JwbytnZ0VYeWRFY2FKMWNTeWhQTS9sWHlQT2djci93VHdt?=
+ =?utf-8?B?d21KYW1WUFFoY3VzSjJWWmQvZlNnWUJDL0sxVlZyK2NTcnpKZ1ZkSTNyMDIx?=
+ =?utf-8?B?cTZFN29mclQxdkNXNWx4RHNDL2tWWHhnb2tOcDdyRmxRL2Vnb0hiQXE2MUV0?=
+ =?utf-8?B?eWxMUms0bUpxN1JPSGFLUjM1ZkFXcXpoSjkwZkt4TjErZEZZNzRWOGRxWkcz?=
+ =?utf-8?B?UUE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EA7B11D3400E024EBF3686A62A1B1A8F@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20211025204634.2517-1-iangelak@redhat.com> <CAOQ4uxieK3KpY7pf0YTKcrNHW7rnTATTDZdK9L4Mqy32cDwV8w@mail.gmail.com>
- <YXgqRb21hvYyI69D@redhat.com> <CAOQ4uxhpCKK2MYxSmRJYYMEWaHKy5ezyKgxaM+YAKtpjsZkD-g@mail.gmail.com>
- <YXhIm3mOvPsueWab@redhat.com>
-In-Reply-To: <YXhIm3mOvPsueWab@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 26 Oct 2021 22:04:15 +0300
-Message-ID: <CAOQ4uxiYDMXqj2UOVX0Mn5Vp-pSrRNrHn3pnb0UvRF+bcOnqpA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR15MB4924.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: beab54b5-0705-46ad-1597-08d998b46d41
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Oct 2021 19:11:34.3406
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: t+Ba3u63cjXKgCi4vQlPt9lBw3WIwjyE9iln70SmcycLpmyktmT7AkZvCHfM1RJg
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR15MB4561
+X-OriginatorOrg: fb.com
+X-Proofpoint-GUID: LgX-d6RPb2er_VxkhtnkmibMhhcFLax_
+X-Proofpoint-ORIG-GUID: LgX-d6RPb2er_VxkhtnkmibMhhcFLax_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-10-26_05,2021-10-26_01,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 malwarescore=0
+ clxscore=1011 mlxscore=0 spamscore=0 lowpriorityscore=0 mlxlogscore=999
+ phishscore=0 impostorscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2110260107
+X-FB-Internal: deliver
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 26, 2021 at 9:27 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Tue, Oct 26, 2021 at 08:59:44PM +0300, Amir Goldstein wrote:
-> > On Tue, Oct 26, 2021 at 7:18 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > >
-> > > On Tue, Oct 26, 2021 at 06:23:50PM +0300, Amir Goldstein wrote:
-> > >
-> > > [..]
-> > > > > 3) The lifetime of the local watch in the guest kernel is very
-> > > > > important. Specifically, there is a possibility that the guest does not
-> > > > > receive remote events on time, if it removes its local watch on the
-> > > > > target or deletes the inode (and thus the guest kernel removes the watch).
-> > > > > In these cases the guest kernel removes the local watch before the
-> > > > > remote events arrive from the host (virtiofsd) and as such the guest
-> > > > > kernel drops all the remote events for the target inode (since the
-> > > > > corresponding local watch does not exist anymore).
-> > >
-> > > So this is one of the issues which has been haunting us in virtiofs. If
-> > > a file is removed, for local events, event is generated first and
-> > > then watch is removed. But in case of remote filesystems, it is racy.
-> > > It is possible that by the time event arrives, watch is already gone
-> > > and application never sees the delete event.
-> > >
-> > > Not sure how to address this issue.
-> >
->
-> > Can you take me through the scenario step by step.
-> > I am not sure I understand the exact sequence of the race.
->
-> Ioannis, please correct me If I get something wrong. You know exact
-> details much more than me.
->
-> A. Say a guest process unlinks a file.
-> B. Fuse sends an unlink request to server (virtiofsd)
-> C. File is unlinked on host. Assume there are no other users so inode
->    will be freed as well. And event will be generated on host and watch
->    removed.
-> D. Now Fuse server will send a unlink request reply. unlink notification
->    might still be in kernel buffers or still be in virtiofsd or could
->    be in virtiofs virtqueue.
-> E. Fuse client will receive unlink reply and remove local watch.
->
-> Fuse reply and notification event are now traveling in parallel on
-> different virtqueues and there is no connection between these two. And
-> it could very well happen that fuse reply comes first, gets processed
-> first and local watch is removed. And notification is processed right
-> after but by then local watch is gone and filesystem will be forced to
-> drop event.
->
-> As of now situation is more complicated in virtiofsd. We don't keep
-> file handle open for file and keep an O_PATH fd open for each file.
-> That means in step D above, inode on host is not freed yet and unlink
-> event is not generated yet. When unlink reply reaches fuse client,
-> it sends FORGET messages to server, and then server closes O_PATH fd
-> and then host generates unlink events. By that time its too late,
-> guest has already remove local watches (and triggered removal of
-> remote watches too).
->
-> This second problem probably can be solved by using file handles, but
-> basic race will still continue to be there.
->
-> > If it is local file removal that causes watch to be removed,
-> > then don't drop local events and you are good to go.
-> > Is it something else?
->
-> - If remote events are enabled, then idea will be that user space gets
->   and event when file is actually removed from server, right? Now it
->   is possible that another VM has this file open and file has not been
->   yet removed. So local event only tells you that file has been removed
->   in guest VM (or locally) but does not tell anything about the state
->   of file on server. (It has been unlinked on server but inode continues
->   to be alive internall).
->
-> - If user receives both local and remote delete event, it will be
->   confusing. I guess if we want to see both the events, then there
->   has to be some sort of info in event which classifies whether event
->   is local or remote. And let application act accordingly.
->
-
-Maybe. Not sure this is the way to go.
-
-There are several options to deal with this situation.
-The thing is that applications cannot usually rely on getting
-DELETE_SELF events for many different reasons that might
-keep the inode reflink elevated also on local filesystems.
-
-Perhaps the only way for FUSE (or any network) client to
-know if object on server was really deleted is to issue a lookup
-request to the file handle and when getting ESTALE.
-
-It really sounds to me like DELETE_SELF should not be reported
-at all for the first implementation.
-It is very easy to deal with DELETE_SELF events scenario with
-a filesystem watch, so bare that in mind as a possible application level
-solution.
-
-Thanks,
-Amir.
+DQo+IE9uIE9jdCAyNiwgMjAyMSwgYXQgMjoxNSBQTSwgSmVucyBBeGJvZSA8YXhib2VAa2VybmVs
+LmRrPiB3cm90ZToNCj4gDQo+IFdlIGFsd2F5cyBnbyB0aHJvdWdoIGlfc2l6ZV9yZWFkKCksIGFu
+ZCB3ZSByYXJlbHkgZW5kIHVwIG5lZWRpbmcgaXQuIFB1c2gNCj4gdGhlIHJlYWQgdG8gZG93biB3
+aGVyZSB3ZSBuZWVkIHRvIGNoZWNrIGl0LCB3aGljaCBhdm9pZHMgaXQgZm9yIG1vc3QNCj4gY2Fz
+ZXMuDQo+IA0KPiBJdCBsb29rcyBsaWtlIHdlIGNhbiBldmVuIHJlbW92ZSB0aGlzIGNoZWNrIGVu
+dGlyZWx5LCB3aGljaCBtaWdodCBiZQ0KPiB3b3J0aCBwdXJzdWluZy4gQnV0IGF0IGxlYXN0IHRo
+aXMgdGFrZXMgaXQgb3V0IG9mIHRoZSBob3QgcGF0aC4NCj4gDQo+IEFja2VkLWJ5OiBDaHJpcyBN
+YXNvbiA8Y2xtQGZiLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogSmVucyBBeGJvZSA8YXhib2VAa2Vy
+bmVsLmRrPg0KPiANCj4gLS0tDQo+IA0KPiBJIGNhbWUgYWNyb3NzIHRoaXMgYW5kIHdyb3RlIHRo
+ZSBwYXRjaCB0aGUgb3RoZXIgZGF5LCB0aGVuIFBhdmVsIHBvaW50ZWQNCj4gbWUgYXQgaGlzIG9y
+aWdpbmFsIHBvc3Rpbmcgb2YgYSB2ZXJ5IHNpbWlsYXIgcGF0Y2ggYmFjayBpbiBBdWd1c3QuDQo+
+IERpc2N1c3NlZCBpdCB3aXRoIENocmlzLCBhbmQgaXQgc3VyZSBfc2VlbXNfIGxpa2UgdGhpcyB3
+b3VsZCBiZSBmaW5lLg0KPiANCj4gSW4gYW4gYXR0ZW1wdCB0byBtb3ZlIHRoZSBvcmlnaW5hbCBk
+aXNjdXNzaW9uIGZvcndhcmQsIGhlcmUncyB0aGlzDQo+IHBvc3RpbmcuDQo+IA0KDQpJIGhhZCB0
+aGUgc2FtZSBjb25jZXJucyBEYXZlIENoaW5uZXIgZGlkLCBidXQgSSB0aGluayB0aGUgaV9zaXpl
+IGNoZWNrIGluc2lkZSBnZW5lcmljX2ZpbGVfcmVhZF9pdGVyKCkgaXMgZGVhZCBjb2RlIGF0IHRo
+aXMgcG9pbnQuICBDaGVja2luZyBraV9wb3MgYWdhaW5zdCBpX3NpemUgd2FzIGFkZGVkIGZvciBC
+dHJmczoNCg0KY29tbWl0IDY2Zjk5OGY2MTE4OTczMTliNTU1MzY0Y2VmZDVkNmU4OGEyMDU4NjYN
+CkF1dGhvcjogSm9zZWYgQmFjaWsgPGpvc2VmQHJlZGhhdC5jb20+DQpEYXRlOiAgIFN1biBNYXkg
+MjMgMTE6MDA6NTQgMjAxMCAtMDQwMA0KDQogICAgZnM6IGFsbG93IHNob3J0IGRpcmVjdC1pbyBy
+ZWFkcyB0byBiZSBjb21wbGV0ZWQgdmlhIGJ1ZmZlcmVkIElPDQoNCkFuZCB3ZeKAmXZlIHN3aXRj
+aGVkIHRvIGJ0cmZzX2ZpbGVfcmVhZF9pdGVyKCksIHdoaWNoIGRvZXMgdGhlIGNoZWNrIHRoZSBz
+YW1lIHdheSBQYXZlbEplbnMgaGF2ZSBkb25lIGl0IGhlcmUuDQoNCkkgZG9u4oCZdCB0aGluayBj
+aGVja2luZyBpX3NpemUgYmVmb3JlIG9yIGFmdGVyIE9fRElSRUNUIG1ha2VzIHRoZSByYWNlIGZ1
+bmRhbWVudGFsbHkgZGlmZmVyZW50LiAgV2UgbWlnaHQgcmV0dXJuIGEgc2hvcnQgcmVhZCBhdCBk
+aWZmZXJlbnQgIHRpbWVzIHRoYW4gd2UgZGlkIGJlZm9yZSwgYnV0IHdlIHdvbuKAmXQgYmUgcmV0
+dXJuaW5nIHN0YWxlL2luY29ycmVjdCBkYXRhLg0KDQotY2hyaXMNCg0KPiBkaWZmIC0tZ2l0IGEv
+bW0vZmlsZW1hcC5jIGIvbW0vZmlsZW1hcC5jDQo+IGluZGV4IDQ0YjRiNTUxZTQzMC4uODUwOTIw
+Mjc2ODQ2IDEwMDY0NA0KPiAtLS0gYS9tbS9maWxlbWFwLmMNCj4gKysrIGIvbW0vZmlsZW1hcC5j
+DQo+IEBAIC0yNzM2LDkgKzI3MzYsNyBAQCBnZW5lcmljX2ZpbGVfcmVhZF9pdGVyKHN0cnVjdCBr
+aW9jYiAqaW9jYiwgc3RydWN0IGlvdl9pdGVyICppdGVyKQ0KPiAJCXN0cnVjdCBmaWxlICpmaWxl
+ID0gaW9jYi0+a2lfZmlscDsNCj4gCQlzdHJ1Y3QgYWRkcmVzc19zcGFjZSAqbWFwcGluZyA9IGZp
+bGUtPmZfbWFwcGluZzsNCj4gCQlzdHJ1Y3QgaW5vZGUgKmlub2RlID0gbWFwcGluZy0+aG9zdDsN
+Cj4gLQkJbG9mZl90IHNpemU7DQo+IA0KPiAtCQlzaXplID0gaV9zaXplX3JlYWQoaW5vZGUpOw0K
+PiAJCWlmIChpb2NiLT5raV9mbGFncyAmIElPQ0JfTk9XQUlUKSB7DQo+IAkJCWlmIChmaWxlbWFw
+X3JhbmdlX25lZWRzX3dyaXRlYmFjayhtYXBwaW5nLCBpb2NiLT5raV9wb3MsDQo+IAkJCQkJCWlv
+Y2ItPmtpX3BvcyArIGNvdW50IC0gMSkpDQo+IEBAIC0yNzcwLDggKzI3NjgsOSBAQCBnZW5lcmlj
+X2ZpbGVfcmVhZF9pdGVyKHN0cnVjdCBraW9jYiAqaW9jYiwgc3RydWN0IGlvdl9pdGVyICppdGVy
+KQ0KPiAJCSAqIHRoZSByZXN0IG9mIHRoZSByZWFkLiAgQnVmZmVyZWQgcmVhZHMgd2lsbCBub3Qg
+d29yayBmb3INCj4gCQkgKiBEQVggZmlsZXMsIHNvIGRvbid0IGJvdGhlciB0cnlpbmcuDQo+IAkJ
+ICovDQo+IC0JCWlmIChyZXR2YWwgPCAwIHx8ICFjb3VudCB8fCBpb2NiLT5raV9wb3MgPj0gc2l6
+ZSB8fA0KPiAtCQkgICAgSVNfREFYKGlub2RlKSkNCj4gKwkJaWYgKHJldHZhbCA8IDAgfHwgIWNv
+dW50IHx8IElTX0RBWChpbm9kZSkpDQo+ICsJCQlyZXR1cm4gcmV0dmFsOw0KPiArCQlpZiAoaW9j
+Yi0+a2lfcG9zID49IGlfc2l6ZV9yZWFkKGlub2RlKSkNCj4gCQkJcmV0dXJuIHJldHZhbDsNCj4g
+CX0NCj4gDQoNCg0KDQo=
