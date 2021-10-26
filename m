@@ -2,103 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A9ED43B140
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 13:29:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A149243B159
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 13:39:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234903AbhJZLb0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 07:31:26 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:58976 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230442AbhJZLbZ (ORCPT
+        id S235007AbhJZLlt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 07:41:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:40708 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234803AbhJZLls (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 07:31:25 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id E8AC0218A8;
-        Tue, 26 Oct 2021 11:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1635247740; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Tue, 26 Oct 2021 07:41:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635248364;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=1jmbsMYMBnwRLDZZZODInYHlDPDdcNd8+Y3UhCIDNAY=;
-        b=l04Ah1inYgpyluUguCEBsLjXBsuLa8C/kDjPsksFKBY/8/Ii5ws62SBB1cGtlGi+S2a/nz
-        YhcryyBI1BjKnXDEzAdwpmrLLK3N5/MTcGnCBz+fQLUmZzhBxv0WZiCCxqJXMfaXJJda+4
-        Uj+ZSSlzAq1kOhCnw+hzw0rmhqSp80c=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 9F783A3B81;
-        Tue, 26 Oct 2021 11:29:00 +0000 (UTC)
-Date:   Tue, 26 Oct 2021 13:29:00 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     NeilBrown <neilb@suse.de>
-Cc:     linux-mm@kvack.org, Dave Chinner <david@fromorbit.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH 2/4] mm/vmalloc: add support for __GFP_NOFAIL
-Message-ID: <YXfmfKDYE2P1LTUv@dhcp22.suse.cz>
-References: <20211025150223.13621-1-mhocko@kernel.org>
- <20211025150223.13621-3-mhocko@kernel.org>
- <163520277623.16092.15759069160856953654@noble.neil.brown.name>
- <YXeoJbzICpNsEEBr@dhcp22.suse.cz>
- <163524425265.8576.7853645770508739439@noble.neil.brown.name>
+        bh=XU5PbqeylwTiSdIqGz9zsvIHQQKvLuWqZdWiVf/qrQc=;
+        b=S4bA+iUqgDYcWX5x2gH/0uyf8dMDO/ThELldO8445FkYZmh2WtCemVWisz1EW8xzjIziI5
+        zAiCSgs9DMARmKOlxrpnzHIinUG2RbV51KKpMA4JB7mPgezX1/Nt4hFnGmAKqjPqJhtk9u
+        +PaHKiz8W5XAL4xG5tJfgNbfnee+5OU=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-592-myqGOVe7MSWml0NqoEWW_g-1; Tue, 26 Oct 2021 07:39:23 -0400
+X-MC-Unique: myqGOVe7MSWml0NqoEWW_g-1
+Received: by mail-wr1-f70.google.com with SMTP id d13-20020adfa34d000000b00160aa1cc5f1so3901061wrb.14
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 04:39:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=XU5PbqeylwTiSdIqGz9zsvIHQQKvLuWqZdWiVf/qrQc=;
+        b=FwdADXyZPSxn7xaN/dGgYc0ciFtaH1SP7Z6Ul684T1GRFkClA8Pr8OoJeJYWanq+D0
+         J+HXHnGy7m0TNJajJ9OqjuLT7VtgLHJm1f+vhG2Hr5oIKwobNHU3r9yrInMXVmwV96Ge
+         xwwKhJKg1vd7CkMyQvitbHWdAdIP/n5zAWn2LBsQeeqXldAxMwpnt4Sdfw18UQZjoNkq
+         t0MXMiSQ8oMUH7J2W+pixeZCkTkS9tMGGsVUEXjBcmQTCVbKDuFzMz5NB1QWNCSLOzo/
+         urJzylqVNqSRFRG4oUYD/wgiXvSG0IDQ4UHNluNHruN7Vu3ZohEh98/pv/ZtiFyD/4EX
+         D1Yg==
+X-Gm-Message-State: AOAM533lcLdigtbbnFCuJkSoPpsbEd9inPRq4pr6xaLgh83e9byYza/s
+        LtFpNyjLX2E9RGBaLoVdQUQByRgFlmLtnMBXGnuRwlPzT2dO/k0KvXa+7EobvQGkt9s1YWOoifq
+        wChkiET7nitUKaqAbkRIRhevOZQ==
+X-Received: by 2002:adf:d4cc:: with SMTP id w12mr1042784wrk.275.1635248361980;
+        Tue, 26 Oct 2021 04:39:21 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxJUJbTYohBTQQymnO98ec+X7Nnr+4h7GZESd8sTcS7uI/Cta5XQOX81blWxBzpk6/9pT/cNw==
+X-Received: by 2002:adf:d4cc:: with SMTP id w12mr1042749wrk.275.1635248361657;
+        Tue, 26 Oct 2021 04:39:21 -0700 (PDT)
+Received: from andromeda.lan (ip4-46-39-172-19.cust.nbox.cz. [46.39.172.19])
+        by smtp.gmail.com with ESMTPSA id k63sm366066wme.22.2021.10.26.04.39.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Oct 2021 04:39:21 -0700 (PDT)
+Date:   Tue, 26 Oct 2021 13:39:19 +0200
+From:   Carlos Maiolino <cmaiolino@redhat.com>
+To:     Lukas Czerner <lczerner@redhat.com>
+Cc:     linux-ext4@vger.kernel.org, tytso@mit.edu,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 00/13] ext4: new mount API conversion
+Message-ID: <20211026113919.iw7ikkvcdgmrijhf@andromeda.lan>
+Mail-Followup-To: Lukas Czerner <lczerner@redhat.com>,
+        linux-ext4@vger.kernel.org, tytso@mit.edu,
+        linux-fsdevel@vger.kernel.org
+References: <20211021114508.21407-1-lczerner@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <163524425265.8576.7853645770508739439@noble.neil.brown.name>
+In-Reply-To: <20211021114508.21407-1-lczerner@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 26-10-21 21:30:52, Neil Brown wrote:
-> On Tue, 26 Oct 2021, Michal Hocko wrote:
-> > On Tue 26-10-21 09:59:36, Neil Brown wrote:
-> > > On Tue, 26 Oct 2021, Michal Hocko wrote:
-> > [...]
-> > > > @@ -3032,6 +3036,10 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
-> > > >  		warn_alloc(gfp_mask, NULL,
-> > > >  			"vmalloc error: size %lu, vm_struct allocation failed",
-> > > >  			real_size);
-> > > > +		if (gfp_mask & __GFP_NOFAIL) {
-> > > > +			schedule_timeout_uninterruptible(1);
-> > > > +			goto again;
-> > > > +		}
-> > > 
-> > > Shouldn't the retry happen *before* the warning?
-> > 
-> > I've done it after to catch the "depleted or fragmented" vmalloc space.
-> > This is not related to the memory available and therefore it won't be
-> > handled by the oom killer. The error message shouldn't imply the vmalloc
-> > allocation failure IMHO but I am open to suggestions.
+On Thu, Oct 21, 2021 at 01:44:55PM +0200, Lukas Czerner wrote:
+> After some time I am once again resurrecting the patchset to convert the
+> ext4 to use the new mount API
+> (Documentation/filesystems/mount_api.txt).
 > 
-> The word "failed" does seem to imply what you don't want it to imply...
+> The series can be applied on top of the current mainline tree and the work
+> is based on the patches from David Howells (thank you David). It was built
+> and tested with xfstests and a new ext4 mount options regression test that
+> was sent to the fstests list.
 > 
-> I guess it is reasonable to have this warning, but maybe add " -- retrying"
-> if __GFP_NOFAIL.
+> Lukas Czerner (13):
+>   fs_parse: allow parameter value to be empty
+>   ext4: Add fs parameter specifications for mount options
+>   ext4: move option validation to a separate function
+>   ext4: Change handle_mount_opt() to use fs_parameter
+>   ext4: Allow sb to be NULL in ext4_msg()
+>   ext4: move quota configuration out of handle_mount_opt()
+>   ext4: check ext2/3 compatibility outside handle_mount_opt()
+>   ext4: get rid of super block and sbi from handle_mount_ops()
+>   ext4: Completely separate options parsing and sb setup
+>   ext4: clean up return values in handle_mount_opt()
+>   ext4: change token2str() to use ext4_param_specs
+>   ext4: switch to the new mount api
+>   ext4: Remove unused match_table_t tokens
+> 
 
-I do not have a strong opinion on that. I can surely do
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 602649919a9d..3489928fafa2 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -3033,10 +3033,11 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
- 				  VM_UNINITIALIZED | vm_flags, start, end, node,
- 				  gfp_mask, caller);
- 	if (!area) {
-+		bool nofail = gfp_mask & __GFP_NOFAIL;
- 		warn_alloc(gfp_mask, NULL,
--			"vmalloc error: size %lu, vm_struct allocation failed",
--			real_size);
--		if (gfp_mask & __GFP_NOFAIL) {
-+			"vmalloc error: size %lu, vm_struct allocation failed%s",
-+			real_size, (nofail) ? ". Retrying." : "");
-+		if (nofail) {
- 			schedule_timeout_uninterruptible(1);
- 			goto again;
- 		}
+The patches seem ok. I can't review ext4 specific details as naming and code
+style, but the logic applied to the patches are fine. There are a few typos in
+some patches that I pointed, but the patches themselves are fine, so, feel free
+to add:
+
+Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
+
 -- 
-Michal Hocko
-SUSE Labs
+Carlos
+
