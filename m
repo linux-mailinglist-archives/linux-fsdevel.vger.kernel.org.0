@@ -2,96 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4116343AA5A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 04:35:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC0D243AAE3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 06:01:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234241AbhJZChh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Oct 2021 22:37:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36106 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229998AbhJZChg (ORCPT
+        id S229971AbhJZEDa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 00:03:30 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:46725 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229487AbhJZEDI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Oct 2021 22:37:36 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2C3CC061745
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Oct 2021 19:35:13 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id f11so12776971pfc.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Oct 2021 19:35:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Tt4c+HCmkgmidQwqgmKCZfOLXY12bkB9SNOCF2NcB1o=;
-        b=D6z6uOxhi+k1oVEDKVt+wlX1IZQSYksXAFNbhx+cvkUWe48p138cMUeSm8SKEitmVo
-         /HQnluL6RA7geqyuKJEjvtFpzieBFakeuQMNlTTnxqfUbE+FPx3JtDxkvZiLXOKo0id6
-         OZoXJiKx3yKUIjROnH/iPtmisb8aSB/e30/KQWWPkUo6gTi4UBSbrAHemYDcj5+UHCaX
-         MdyhbcNjEghR9ej9R+Ppicq1ojskpu2eCnTr0dAIxP0lKSgAFj57Akf//KiW8XTezDFJ
-         LqZ99DWC18D2n2ZTMQndFAwSJxBkohPC9sEGQEVb4HYZJpi3/Zgan3LdCS32WTpp1YUJ
-         KSsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Tt4c+HCmkgmidQwqgmKCZfOLXY12bkB9SNOCF2NcB1o=;
-        b=lWR6FXuBa3vYNq57DSj5d4xVGOBwNLoWQiPE33gaGpcRYzs3cmcmz+c7Z4fH0JXDiK
-         Zvv6rHBxu86JDy0OZiMVq3t082eSKaKOBe5Ggd2QikYrTf3I2hd+qiJiidxYjDbkBnG/
-         KvhYrLkOY8+NGBr3MC5px2oGjlL2lDQ4RFbrDD7WSs9i6zIeTCdwAHLpbtYkP2ZZJ8O8
-         q+x+9NRGWlBfO8Qok504HAkibTuv60iYCYEL63KuWvJBWO7TmMlPlPpkmPo+bY8CMN7S
-         aU4CtzsMiL4AS0g8IhaALisY+pxEPIqh2VXsoA1R5MjfCeXLtXZpSfnE9p2Zo4Br8a0f
-         grtQ==
-X-Gm-Message-State: AOAM531Sr85wpXMO8/lIpipOUL3YWhxbxP4oC6pamx4WFtUrNUVrkzk4
-        TxW/hHL4NWCtgcCmgUvUWfYkihQwHAOovQ==
-X-Google-Smtp-Source: ABdhPJzMDLkdH4tLSPklaB9Ozvpxp7l++bBtMamAxHkWwwGKAYSzV2EQxh/WkpY08CtRwPQIXFYQhQ==
-X-Received: by 2002:a65:6554:: with SMTP id a20mr16802017pgw.107.1635215713191;
-        Mon, 25 Oct 2021 19:35:13 -0700 (PDT)
-Received: from FLYINGPENG-MB0.tencent.com ([103.7.29.30])
-        by smtp.gmail.com with ESMTPSA id o10sm745246pjh.23.2021.10.25.19.35.12
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Oct 2021 19:35:12 -0700 (PDT)
-From:   Peng Hao <flyingpenghao@gmail.com>
-X-Google-Original-From: Peng Hao <flyingpeng@tencent.com>
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH]  fuse: fix possible write position calculation error
-Date:   Tue, 26 Oct 2021 10:34:42 +0800
-Message-Id: <20211026023442.76544-1-flyingpeng@tencent.com>
-X-Mailer: git-send-email 2.30.1 (Apple Git-130)
+        Tue, 26 Oct 2021 00:03:08 -0400
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 19Q40VAu000440
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 26 Oct 2021 00:00:32 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 573C215C3F84; Tue, 26 Oct 2021 00:00:31 -0400 (EDT)
+Date:   Tue, 26 Oct 2021 00:00:31 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     amir73il@gmail.com, jack@suse.com, djwong@kernel.org,
+        david@fromorbit.com, dhowells@redhat.com, khazhy@google.com,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v9 29/31] ext4: Send notifications on error
+Message-ID: <YXd9X9BSjwzuciAZ@mit.edu>
+References: <20211025192746.66445-1-krisman@collabora.com>
+ <20211025192746.66445-30-krisman@collabora.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211025192746.66445-30-krisman@collabora.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The 'written' that generic_file_direct_write return through
-filemap_write_and_wait_range is not necessarily sequential,
-and its iocb->ki_pos has not been updated.
+On Mon, Oct 25, 2021 at 04:27:44PM -0300, Gabriel Krisman Bertazi wrote:
+> Send a FS_ERROR message via fsnotify to a userspace monitoring tool
+> whenever a ext4 error condition is triggered.  This follows the existing
+> error conditions in ext4, so it is hooked to the ext4_error* functions.
+> 
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-Signed-off-by: Peng Hao <flyingpeng@tencent.com>
----
- fs/fuse/file.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Acked-by: Theodore Ts'o <tytso@mit.edu>
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 26730e699d68..52aaa1fb484d 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1314,14 +1314,12 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		goto out;
- 
- 	if (iocb->ki_flags & IOCB_DIRECT) {
--		loff_t pos = iocb->ki_pos;
-+		loff_t pos;
- 		written = generic_file_direct_write(iocb, from);
- 		if (written < 0 || !iov_iter_count(from))
- 			goto out;
- 
--		pos += written;
--
--		written_buffered = fuse_perform_write(iocb, mapping, from, pos);
-+		written_buffered = fuse_perform_write(iocb, mapping, from, pos = iocb->ki_pos);
- 		if (written_buffered < 0) {
- 			err = written_buffered;
- 			goto out;
--- 
-2.27.0
+Thanks!
 
+					- Ted
