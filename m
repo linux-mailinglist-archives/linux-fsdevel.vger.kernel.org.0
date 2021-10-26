@@ -2,99 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8664543B975
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 20:24:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC18043B98D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 20:27:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236793AbhJZS0u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 14:26:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34294 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231297AbhJZS0t (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 14:26:49 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9302360F9D;
-        Tue, 26 Oct 2021 18:24:21 +0000 (UTC)
-Date:   Tue, 26 Oct 2021 19:24:18 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
+        id S238299AbhJZSaP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 14:30:15 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:55216 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236065AbhJZSaL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 26 Oct 2021 14:30:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635272865;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EscYdYoKFznsl9xa1uV38OQBXXjCOhTbcZL+lFxVyJE=;
+        b=Hc7ddk2K+vLatIES6rsj2N/pY/VQiWv01n2li96UlGWC+GlJ3D/e64VXhh31vkwNJk1ahB
+        YP5D8YN8vhq9+V6+uS5iKHHroYZdDjAAYA/IAfBAZb6MRxlLDH6qZBUxRfpzLwhAHX7CQ2
+        C12BpyuUfLHvlAKbhAgmlnbyscguC/0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-204-Kd3WGJfrP4GBtBfZszVotw-1; Tue, 26 Oct 2021 14:27:44 -0400
+X-MC-Unique: Kd3WGJfrP4GBtBfZszVotw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0508B19057A0;
+        Tue, 26 Oct 2021 18:27:43 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.17.178])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E19E65F4E0;
+        Tue, 26 Oct 2021 18:27:39 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 7C2CE2204A5; Tue, 26 Oct 2021 14:27:39 -0400 (EDT)
+Date:   Tue, 26 Oct 2021 14:27:39 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Subject: Re: [PATCH v8 00/17] gfs2: Fix mmap + page fault deadlocks
-Message-ID: <YXhH0sBSyTyz5Eh2@arm.com>
-References: <20211019134204.3382645-1-agruenba@redhat.com>
- <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
- <YXBFqD9WVuU8awIv@arm.com>
- <CAHk-=wgv=KPZBJGnx_O5-7hhST8CL9BN4wJwtVuycjhv_1MmvQ@mail.gmail.com>
- <YXCbv5gdfEEtAYo8@arm.com>
- <CAHk-=wgP058PNY8eoWW=5uRMox-PuesDMrLsrCWPS+xXhzbQxQ@mail.gmail.com>
- <YXL9tRher7QVmq6N@arm.com>
- <CAHk-=wg4t2t1AaBDyMfOVhCCOiLLjCB5TFVgZcV4Pr8X2qptJw@mail.gmail.com>
- <CAHc6FU7BEfBJCpm8wC3P+8GTBcXxzDWcp6wAcgzQtuaJLHrqZA@mail.gmail.com>
+        virtio-fs-list <virtio-fs@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>
+Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
+Message-ID: <YXhIm3mOvPsueWab@redhat.com>
+References: <20211025204634.2517-1-iangelak@redhat.com>
+ <CAOQ4uxieK3KpY7pf0YTKcrNHW7rnTATTDZdK9L4Mqy32cDwV8w@mail.gmail.com>
+ <YXgqRb21hvYyI69D@redhat.com>
+ <CAOQ4uxhpCKK2MYxSmRJYYMEWaHKy5ezyKgxaM+YAKtpjsZkD-g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHc6FU7BEfBJCpm8wC3P+8GTBcXxzDWcp6wAcgzQtuaJLHrqZA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhpCKK2MYxSmRJYYMEWaHKy5ezyKgxaM+YAKtpjsZkD-g@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 25, 2021 at 09:00:43PM +0200, Andreas Gruenbacher wrote:
-> On Fri, Oct 22, 2021 at 9:23 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> > On Fri, Oct 22, 2021 at 8:06 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > > Probing only the first byte(s) in fault_in() would be ideal, no need to
-> > > go through all filesystems and try to change the uaccess/probing order.
+On Tue, Oct 26, 2021 at 08:59:44PM +0300, Amir Goldstein wrote:
+> On Tue, Oct 26, 2021 at 7:18 PM Vivek Goyal <vgoyal@redhat.com> wrote:
 > >
-> > Let's try that. Or rather: probing just the first page - since there
-> > are users like that btrfs ioctl, and the direct-io path.
+> > On Tue, Oct 26, 2021 at 06:23:50PM +0300, Amir Goldstein wrote:
+> >
+> > [..]
+> > > > 3) The lifetime of the local watch in the guest kernel is very
+> > > > important. Specifically, there is a possibility that the guest does not
+> > > > receive remote events on time, if it removes its local watch on the
+> > > > target or deletes the inode (and thus the guest kernel removes the watch).
+> > > > In these cases the guest kernel removes the local watch before the
+> > > > remote events arrive from the host (virtiofsd) and as such the guest
+> > > > kernel drops all the remote events for the target inode (since the
+> > > > corresponding local watch does not exist anymore).
+> >
+> > So this is one of the issues which has been haunting us in virtiofs. If
+> > a file is removed, for local events, event is generated first and
+> > then watch is removed. But in case of remote filesystems, it is racy.
+> > It is possible that by the time event arrives, watch is already gone
+> > and application never sees the delete event.
+> >
+> > Not sure how to address this issue.
 > 
-> For direct I/O, we actually only want to trigger page fault-in so that
-> we can grab page references with bio_iov_iter_get_pages. Probing for
-> sub-page error domains will only slow things down. If we hit -EFAULT
-> during the actual copy-in or copy-out, we know that the error can't be
-> page fault related. Similarly, in the buffered I/O case, we only
-> really care about the next byte, so any probing beyond that is
-> unnecessary.
-> 
-> So maybe we should split the sub-page error domain probing off from
-> the fault-in functions. Or at least add an argument to the fault-in
-> functions that specifies the amount of memory to probe.
 
-My preferred option is not to touch fault-in for sub-page faults (though
-I have some draft patches, they need testing).
+> Can you take me through the scenario step by step.
+> I am not sure I understand the exact sequence of the race.
 
-All this fault-in and uaccess with pagefaults_disabled() is needed to
-avoid a deadlock when the uaccess fault handling would take the same
-lock. With sub-page faults, the kernel cannot fix it up anyway, so the
-arch code won't even attempt call handle_mm_fault() (it is not an mm
-fault). But the problem is the copy_*_user() etc. API that can only
-return the number of bytes not copied. That's what I think should be
-fixed. fault_in() feels like the wrong place to address this when it's
-not an mm fault.
+Ioannis, please correct me If I get something wrong. You know exact
+details much more than me.
 
-As for fault_in() getting another argument with the amount of sub-page
-probing to do, I think the API gets even more confusing. I was also
-thinking, with your patches for fault_in() now returning size_t, is the
-expectation to be precise in what cannot be copied? We don't have such
-requirement for copy_*_user().
+A. Say a guest process unlinks a file.
+B. Fuse sends an unlink request to server (virtiofsd)
+C. File is unlinked on host. Assume there are no other users so inode
+   will be freed as well. And event will be generated on host and watch
+   removed.
+D. Now Fuse server will send a unlink request reply. unlink notification
+   might still be in kernel buffers or still be in virtiofsd or could
+   be in virtiofs virtqueue.
+E. Fuse client will receive unlink reply and remove local watch.
 
-While more intrusive, I'd rather change copy_page_from_iter_atomic()
-etc. to take a pointer where to write back an error code. If it's
--EFAULT, retry the loop. If it's -EACCES/EPERM just bail out. Or maybe
-simply a bool set if there was an mm fault to be retried. Yet another
-option to return an -EAGAIN if it could not process the mm fault due to
-page faults being disabled.
+Fuse reply and notification event are now traveling in parallel on
+different virtqueues and there is no connection between these two. And
+it could very well happen that fuse reply comes first, gets processed
+first and local watch is removed. And notification is processed right
+after but by then local watch is gone and filesystem will be forced to
+drop event.
 
-Happy to give this a try, unless there's a strong preference for the
-fault_in() fix-up (well, I can do both options and post them).
+As of now situation is more complicated in virtiofsd. We don't keep
+file handle open for file and keep an O_PATH fd open for each file.
+That means in step D above, inode on host is not freed yet and unlink
+event is not generated yet. When unlink reply reaches fuse client,
+it sends FORGET messages to server, and then server closes O_PATH fd
+and then host generates unlink events. By that time its too late,
+guest has already remove local watches (and triggered removal of
+remote watches too).
 
--- 
-Catalin
+This second problem probably can be solved by using file handles, but
+basic race will still continue to be there.
+
+> If it is local file removal that causes watch to be removed,
+> then don't drop local events and you are good to go.
+> Is it something else?
+
+- If remote events are enabled, then idea will be that user space gets
+  and event when file is actually removed from server, right? Now it
+  is possible that another VM has this file open and file has not been
+  yet removed. So local event only tells you that file has been removed
+  in guest VM (or locally) but does not tell anything about the state
+  of file on server. (It has been unlinked on server but inode continues
+  to be alive internall).
+
+- If user receives both local and remote delete event, it will be
+  confusing. I guess if we want to see both the events, then there
+  has to be some sort of info in event which classifies whether event
+  is local or remote. And let application act accordingly.
+
+Thanks
+Vivek
+
