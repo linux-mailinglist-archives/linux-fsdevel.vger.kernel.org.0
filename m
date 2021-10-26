@@ -2,133 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BEFC43B17E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 13:47:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1323743B1E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 14:06:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235086AbhJZLuF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 07:50:05 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:59946 "EHLO
+        id S235730AbhJZMJI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 08:09:08 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:60970 "EHLO
         smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233543AbhJZLuF (ORCPT
+        with ESMTP id S235738AbhJZMJC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 07:50:05 -0400
+        Tue, 26 Oct 2021 08:09:02 -0400
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 53A5021155;
-        Tue, 26 Oct 2021 11:47:40 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTP id 098572193C;
+        Tue, 26 Oct 2021 12:06:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1635248860; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1635249998; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=PGE0snSaCarKzqGQiZVI+d/WqBBBgakc9up3nBxmlvE=;
-        b=rrIOS5yvo7D2mmma9GOesa85R2mkJ7jxrsojk1nEjBjq4bRHb/SipoLqxKZG1y+XvUBrae
-        0RuvnMKjTqQM63ctKw+UYUhX0OdPUpeJGFiljuNO1HMpmCXrRr+oFPWMi+DXjv3cuY0C+C
-        9DBMTdW5z6AqoiU5EEBEcpevznkDZ9c=
+        bh=RyjRbs13Q6FC77TliUQSlFXG3BjAyQNOL98Zw53Q71o=;
+        b=my+j0d0t9CwC5WyZ+iqBY32+ynYT3vWd3h4rmhlfK4G8n3u2BgTVaLyhZyZdiAEMoByh9K
+        RboCe2Q5TpWcaC+dd/w+EuW71LbMqicm1ZTeunStGV972K/LANs6UNs+eDbtMUkvTfapzg
+        23/lFqtZoXeaYWYQGx/vhwiWvRXPBGk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1635248860;
+        s=susede2_ed25519; t=1635249998;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=PGE0snSaCarKzqGQiZVI+d/WqBBBgakc9up3nBxmlvE=;
-        b=RHGQAn1DAtLVjI4+BV6bMlZ/jKZPTCAvEen2rbDk1YMX1ahGy/OrQ/thyTAhKO8bfO3uvN
-        jdqXIYMin3csD/Bg==
+        bh=RyjRbs13Q6FC77TliUQSlFXG3BjAyQNOL98Zw53Q71o=;
+        b=GZUQd92EQNYMhBz+cBvVS5up9G9ce2xHX9rW+5OZc6O+MFp4n4XLfBA4q+fzIBcv77BAdU
+        XYjuTLyvfyelYgDg==
 Received: from quack2.suse.cz (unknown [10.100.224.230])
-        by relay2.suse.de (Postfix) with ESMTP id 2F55AA3B81;
-        Tue, 26 Oct 2021 11:47:40 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTP id E6B8FA3B8C;
+        Tue, 26 Oct 2021 12:06:37 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id F03A31F2C66; Tue, 26 Oct 2021 13:47:36 +0200 (CEST)
-Date:   Tue, 26 Oct 2021 13:47:36 +0200
+        id C34BC1F2C66; Tue, 26 Oct 2021 14:06:37 +0200 (CEST)
+Date:   Tue, 26 Oct 2021 14:06:37 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     amir73il@gmail.com, jack@suse.com, djwong@kernel.org,
-        tytso@mit.edu, david@fromorbit.com, dhowells@redhat.com,
-        khazhy@google.com, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-ext4@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCH v9 11/31] fsnotify: Protect fsnotify_handle_inode_event
- from no-inode events
-Message-ID: <20211026114736.GC21228@quack2.suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Jan Kara <jack@suse.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Theodore Tso <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>,
+        David Howells <dhowells@redhat.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v9 24/31] fanotify: Report fid entry even for zero-length
+ file_handle
+Message-ID: <20211026120637.GD21228@quack2.suse.cz>
 References: <20211025192746.66445-1-krisman@collabora.com>
- <20211025192746.66445-12-krisman@collabora.com>
+ <20211025192746.66445-25-krisman@collabora.com>
+ <CAOQ4uxhCsCPNN=Xb6Xo9VpW+rYCkMUy-1zEXO41d1D4vN74GcA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211025192746.66445-12-krisman@collabora.com>
+In-Reply-To: <CAOQ4uxhCsCPNN=Xb6Xo9VpW+rYCkMUy-1zEXO41d1D4vN74GcA@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 25-10-21 16:27:26, Gabriel Krisman Bertazi wrote:
-> FAN_FS_ERROR allows events without inodes - i.e. for file system-wide
-> errors.  Even though fsnotify_handle_inode_event is not currently used
-> by fanotify, this patch protects other backends from cases where neither
-> inode or dir are provided.  Also document the constraints of the
-> interface (inode and dir cannot be both NULL).
+On Tue 26-10-21 12:09:19, Amir Goldstein wrote:
+> On Mon, Oct 25, 2021 at 10:30 PM Gabriel Krisman Bertazi
+> <krisman@collabora.com> wrote:
+> >
+> > Non-inode errors will reported with an empty file_handle.  In
+> > preparation for that, allow some events to print the FID record even if
+> > there isn't any file_handle encoded
+> >
+> > Even though FILEID_ROOT is used internally, make zero-length file
+> > handles be reported as FILEID_INVALID.
+> >
+> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> > Reviewed-by: Jan Kara <jack@suse.cz>
+> > Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> >
+> > ---
+> > Changes since v8:
+> >   - Move fanotify_event_has_object_fh check here (jan)
 > 
-> Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> Logically, this move is wrong, because after this patch,
+> copy_fid_info_to_user() can theoretically be called with NULL fh in the
+> existing construct of:
+>   if (fanotify_event_has_object_fh(event)) {
+>   ...
+>     ret = copy_fid_info_to_user(fanotify_event_fsid(event),
+> 
+> fanotify_event_object_fh(event),
+> 
+> The thing that prevents this case in effect is that FAN_FS_ERROR
+> is not yet wired, but I am not sure if leaving this theoretic bisect
+> issue is a good idea.
+> 
+> Anyway, that's a very minor theoretic issue and I am sure Jan can
+> decide whether to deal with it and how (no need to post v10 IMO).
 
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
+Hum, correct. I guess I'll just fold this patch into patch 26. Logically
+they are very close anyway.
 
 								Honza
-
-> 
-> ---
-> Changes since v8:
->   - Convert verifications to WARN_ON
->   - Require either inode or dir
->   - Protect nfsd backend from !inode.
-> ---
->  fs/nfsd/filecache.c              | 3 +++
->  fs/notify/fsnotify.c             | 3 +++
->  include/linux/fsnotify_backend.h | 1 +
->  3 files changed, 7 insertions(+)
-> 
-> diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
-> index be3c1aad50ea..fdf89fcf1a0c 100644
-> --- a/fs/nfsd/filecache.c
-> +++ b/fs/nfsd/filecache.c
-> @@ -602,6 +602,9 @@ nfsd_file_fsnotify_handle_event(struct fsnotify_mark *mark, u32 mask,
->  				struct inode *inode, struct inode *dir,
->  				const struct qstr *name, u32 cookie)
->  {
-> +	if (WARN_ON_ONCE(!inode))
-> +		return 0;
-> +
->  	trace_nfsd_file_fsnotify_handle_event(inode, mask);
->  
->  	/* Should be no marks on non-regular files */
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index fde3a1115a17..4034ca566f95 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -252,6 +252,9 @@ static int fsnotify_handle_inode_event(struct fsnotify_group *group,
->  	if (WARN_ON_ONCE(!ops->handle_inode_event))
->  		return 0;
->  
-> +	if (WARN_ON_ONCE(!inode && !dir))
-> +		return 0;
-> +
->  	if ((inode_mark->mask & FS_EXCL_UNLINK) &&
->  	    path && d_unlinked(path->dentry))
->  		return 0;
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-> index 035438fe4a43..b71dc788018e 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -136,6 +136,7 @@ struct mem_cgroup;
->   * @dir:	optional directory associated with event -
->   *		if @file_name is not NULL, this is the directory that
->   *		@file_name is relative to.
-> + *		Either @inode or @dir must be non-NULL.
->   * @file_name:	optional file name associated with event
->   * @cookie:	inotify rename cookie
->   *
-> -- 
-> 2.33.0
-> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
