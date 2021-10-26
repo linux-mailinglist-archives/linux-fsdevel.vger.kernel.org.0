@@ -2,117 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E800E43B93C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 20:15:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A529743B942
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Oct 2021 20:17:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238145AbhJZSRc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 14:17:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51822 "EHLO
+        id S238156AbhJZSTu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 14:19:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236618AbhJZSRc (ORCPT
+        with ESMTP id S232565AbhJZSTt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 14:17:32 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06440C061745
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 11:15:08 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id b188so433570iof.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 11:15:07 -0700 (PDT)
+        Tue, 26 Oct 2021 14:19:49 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE5CAC061745;
+        Tue, 26 Oct 2021 11:17:24 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id k13so251801ljj.12;
+        Tue, 26 Oct 2021 11:17:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=NsCoSRUU4kSoqJKBkCULN+BKiJAeIiTrQ7Zf4BRmkLU=;
-        b=D1RR9QJEaDD2zrBai/+61pncjmtnDAOJhYZoisg4LSpPLL0Y6w+UajRDewdGE5aJpu
-         nOXQneSOZeV8B8tn+OaASBzeUKn81JrjRDrwoaveuduIm9UNMWT/xbf7+0WYmSctA9YB
-         RoSrKR3dLnhrfQSHI4sPB7E6NCvEx8MBQMmwyq32g0IV6yACSGHpPIZLicC3ZrG0Lb9D
-         uYs+0Gry8RLx6eUZqMODvh5l0odGju1SQnJEYC2uompo8rWmjOzi4bUkcNqimKIsI2nZ
-         T2WXZx8wQ2dw442SGmyJj1ZkkYJ5g9Tc/hswiPJ0jxi9dy9WhBQg7dAD+B//mrhkTbDB
-         CNiA==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=CbkycfBpiPzNz9mU9kLDzsxQuKQ9vzT3rMC0AKEjNkk=;
+        b=PNi4bZGi9qc5Fq5YyVp5QoxTeUJ4eSQu8LDldDiJBDWYN34lZPCOz3EeFMrhlenKim
+         Fyy/EYZ293+ika4AtxlkXQ4GzvFfrza/RPydEgRtXmV4TDKYnDfTTNwVu3dO6vg5806s
+         EtCO9NN7q75ENNFzuV/qwvS/iKLrwxNbWiQ5oVi2li3YdHqlqCNz+8JOJOdXR5b388D2
+         jM2OW+v/KALLxr5fUHrpIh+Qmujjg56HdN23B/SC5Wg1VLtwiXXwkFbmM+ZwQxL+UEgg
+         DhZO89R+lM/raMYq2nvZ/vQiV9njZ1JzlsG2Y2xpwcnLfjky/Tj5iXNJhN0qBT6mYjWF
+         3PAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=NsCoSRUU4kSoqJKBkCULN+BKiJAeIiTrQ7Zf4BRmkLU=;
-        b=t2Es++U5D1gXk1qpbMoFeaSObhhSWeh0BpWzZFRt4SCijnTUIUzAqkjiLqXqeiU0gy
-         Ovl15q1d/Pk430yrVRQ10cQqB6A+Z9bKISlw1Ai4+zanfTsWo9meyIl/yQ6Zki7+4k6F
-         d4i1blYi2yvAC1rPcyuLMefEsC9VTI11CFlyx9LqNSMdoBGd8QC30XY/rpoVEKVidgx9
-         lR5yI2G/n58nciOe9+/V7+EoosNjbtXiXBOju7MJvsSWly8AqLuI6+pp71mL53i2AZYK
-         5mep5ggBIwidVaxq0ZVrZI5m8jci4BxDqvv514tB+VMY54pY5m0rMQauz4FNkzg9akmY
-         SAUA==
-X-Gm-Message-State: AOAM533816eDLTYyvBff9bUSpJg7Nkz3wIU7Cv8W+EqzsHfIofD8F3zF
-        P3Pg6pwVzRcZVC14r/AUhBsu1w==
-X-Google-Smtp-Source: ABdhPJxkgWbGaUfFjw5Lssk59vMnzkeEHdQbgnLlkkMVlyiIZSdtEWOH6BPbcrwtKnoFwXG0CdGX3Q==
-X-Received: by 2002:a05:6638:c45:: with SMTP id g5mr12391809jal.16.1635272107353;
-        Tue, 26 Oct 2021 11:15:07 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id x13sm4632914ile.9.2021.10.26.11.15.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Oct 2021 11:15:07 -0700 (PDT)
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Dave Chinner <david@fromorbit.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Chris Mason <clm@fb.com>,
-        Pavel Begunkov <asml.silence@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: mm: don't read i_size of inode unless we need it
-Message-ID: <6b67981f-57d4-c80e-bc07-6020aa601381@kernel.dk>
-Date:   Tue, 26 Oct 2021 12:15:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=CbkycfBpiPzNz9mU9kLDzsxQuKQ9vzT3rMC0AKEjNkk=;
+        b=5HU5tsoIARgxcOwi/Gds7yaPNspllIB9F4PLmKUPMHGsGUlQQ1ttc23mIbX+LfTxYK
+         lWwuQzGaCnIajAWiJ0getoDLb6auCIJYZv0EbyWQ5vP75QaDQGrMIYKp0ddikivG1KAz
+         uQgTo8zTSGqcr9gXFH6q9RdhXLtdOV4Xdq7Ni1kEyNjvZDHEwobtJKjZLUmk7w1Ohmxd
+         y3f/fnTfBiXmp1epomwbrNYpN18WEGVkOiAIvdWggEDfaD2ugUyIDwWVF7qnUSD3x4IC
+         9ZZcYz7hvnnpBPEatAV0LoyIXVqYRuFNIr8tgPO+hJ6q9b7g3hVRFSJmBbj30aGTU65+
+         /RhA==
+X-Gm-Message-State: AOAM532kvuUMhJOpunlJHz+LVvW+RX0aeFmXeBGjTjBMZoi1yqon4ZGe
+        O2OiDNKEyWS/s59azo4Dsqk=
+X-Google-Smtp-Source: ABdhPJyhMoeGvZPoK9EvZlMCo7em/vPsOoZzfbj4/UKWBmt47d67dHTmk7KQO6SQKGVxSofl3miYrA==
+X-Received: by 2002:a05:651c:617:: with SMTP id k23mr27312236lje.402.1635272243035;
+        Tue, 26 Oct 2021 11:17:23 -0700 (PDT)
+Received: from kari-VirtualBox ([31.132.12.44])
+        by smtp.gmail.com with ESMTPSA id g18sm46711ljl.26.2021.10.26.11.17.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Oct 2021 11:17:22 -0700 (PDT)
+Date:   Tue, 26 Oct 2021 21:17:20 +0300
+From:   Kari Argillander <kari.argillander@gmail.com>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Ganapathi Kamath <hgkamath@hotmail.com>
+Subject: Re: [PATCH 1/4] fs/ntfs3: Keep preallocated only if option prealloc
+ enabled
+Message-ID: <20211026181720.46jaw46hn2vwtqgk@kari-VirtualBox>
+References: <a57c1c49-4ef3-15ee-d2cd-d77fb4246b3c@paragon-software.com>
+ <19b0fc31-a28f-69aa-27dc-e6514a10643e@paragon-software.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19b0fc31-a28f-69aa-27dc-e6514a10643e@paragon-software.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We always go through i_size_read(), and we rarely end up needing it. Push
-the read to down where we need to check it, which avoids it for most
-cases.
+On Tue, Oct 26, 2021 at 07:40:57PM +0300, Konstantin Komarov wrote:
+> If size of file was reduced, we still kept allocated blocks.
+> This commit makes ntfs3 work as other fs like btrfs.
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=214719
+> Fixes: 4342306f0f0d ("fs/ntfs3: Add file operations and implementation")
+> 
+> Reported-by: Ganapathi Kamath <hgkamath@hotmail.com>
+> Tested-by: Ganapathi Kamath <hgkamath@hotmail.com>
+> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 
-It looks like we can even remove this check entirely, which might be
-worth pursuing. But at least this takes it out of the hot path.
+Reviewed-by: Kari Argillander <kari.argillander@gmail.com>
 
-Acked-by: Chris Mason <clm@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-I came across this and wrote the patch the other day, then Pavel pointed
-me at his original posting of a very similar patch back in August.
-Discussed it with Chris, and it sure _seems_ like this would be fine.
-
-In an attempt to move the original discussion forward, here's this
-posting.
-
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 44b4b551e430..850920276846 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2736,9 +2736,7 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 		struct file *file = iocb->ki_filp;
- 		struct address_space *mapping = file->f_mapping;
- 		struct inode *inode = mapping->host;
--		loff_t size;
- 
--		size = i_size_read(inode);
- 		if (iocb->ki_flags & IOCB_NOWAIT) {
- 			if (filemap_range_needs_writeback(mapping, iocb->ki_pos,
- 						iocb->ki_pos + count - 1))
-@@ -2770,8 +2768,9 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
- 		 * the rest of the read.  Buffered reads will not work for
- 		 * DAX files, so don't bother trying.
- 		 */
--		if (retval < 0 || !count || iocb->ki_pos >= size ||
--		    IS_DAX(inode))
-+		if (retval < 0 || !count || IS_DAX(inode))
-+			return retval;
-+		if (iocb->ki_pos >= i_size_read(inode))
- 			return retval;
- 	}
- 
--- 
-Jens Axboe
-
+> ---
+>  fs/ntfs3/file.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+> index 43b1451bff53..3ac0482c6880 100644
+> --- a/fs/ntfs3/file.c
+> +++ b/fs/ntfs3/file.c
+> @@ -494,7 +494,7 @@ static int ntfs_truncate(struct inode *inode, loff_t new_size)
+>  
+>  	down_write(&ni->file.run_lock);
+>  	err = attr_set_size(ni, ATTR_DATA, NULL, 0, &ni->file.run, new_size,
+> -			    &new_valid, true, NULL);
+> +			    &new_valid, ni->mi.sbi->options->prealloc, NULL);
+>  	up_write(&ni->file.run_lock);
+>  
+>  	if (new_valid < ni->i_valid)
+> -- 
+> 2.33.0
+> 
+> 
