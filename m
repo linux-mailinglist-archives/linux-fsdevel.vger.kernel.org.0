@@ -2,162 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2052B43D5F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 23:40:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9123643D603
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 23:46:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233423AbhJ0Vmp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Oct 2021 17:42:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58866 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230356AbhJ0Vmp (ORCPT
+        id S229549AbhJ0Vsf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Oct 2021 17:48:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31452 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229437AbhJ0Vse (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Oct 2021 17:42:45 -0400
-Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A5B0C061570;
-        Wed, 27 Oct 2021 14:40:19 -0700 (PDT)
-Received: by mail-il1-x136.google.com with SMTP id s3so4617878ild.0;
-        Wed, 27 Oct 2021 14:40:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=AzYvw54aB4RsKoRa0Qm/BMsYpxOcUkrjvrL29qm6FXw=;
-        b=IuxgtXZ76oydJoP2r1T0WGaEj+blROJYuZNuyep8Kzw4fO0NJShla/Z+Vxzlvc9aGG
-         3xU2LQ50wD/zmpsR4ICzGXLJT8MOkXGuXv983XyHL9AiKm4jQ4Z1VG5ehOQD/+ja41/1
-         s91VrNvxzO7hlTdglJX98mDMeQx9qA9tV/KHPQ/T81gqurjD6c4pMABha7i+/O0ruLlP
-         Jpy4bAhg7z/2GWgvXJD2+YK8p2lk/jxSeOxzshhc72LTn7EmJcbR3rzLIqGzZJfsCxrT
-         ci+Y2/AmE4c0L4DJNg/RJDWObKbrbIxqHJb3YK5zFrkIrG0iEJ2QpyH5K24aOUfuRS7/
-         m6Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=AzYvw54aB4RsKoRa0Qm/BMsYpxOcUkrjvrL29qm6FXw=;
-        b=j+tePfGOzRI/dybCsdHKWhUPyrda1GgRR7mT9JSB4K8gRTz+htQqfAndKTDwUFIuns
-         g5z9cGNVz+zSB49RhR2Ld1p1y9BerDOQsMwkpKjiwHvBIg4TWYdr26haXI6k9E0TGzz+
-         xHUWiVjJnB1JjY9sxRb/LJ54P+96ObnDJaol4wA6V7VwdBKrZ18foPpjU+kwuHMOznCy
-         q29hyQSi4gkAc/86YB+sPe5428xbGHxUCfLbSDTNw2mPHy+Pu/MHsR+oUl98XummHOA7
-         CsR+u1DFsVL/TxcQzixfDU50DqVE+NowH7RjSRbekEoMfpJ7nFGDCuQYds0cjixt036W
-         iBaA==
-X-Gm-Message-State: AOAM532beHPjZjzZpfbjl9fUwPdq8TrfwDqJQLMuUaLLXbSMHIRKdiU9
-        t0oaUvWI9LJQNGpROYRyqRilnbiQu5IwcRvq2BE=
-X-Google-Smtp-Source: ABdhPJyEcjaxr9bHliyhlzzNJ38SD7ZRd2iqQA5ZaxMBlpC/ePRB6aJlA/QFIYz7xDoeIHfnSS8M1exDitOCG2Oiu68=
-X-Received: by 2002:a05:6e02:12e4:: with SMTP id l4mr271672iln.25.1635370818069;
- Wed, 27 Oct 2021 14:40:18 -0700 (PDT)
+        Wed, 27 Oct 2021 17:48:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635371168;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=PpY3g+kdd2h/bCGlCR7H75yg2a+8geFMUXDx9cFt3tY=;
+        b=dwVsRfEswbDq5QDYVLLUTciuP+FX0VQGXrZ4WrLQVYqwdX304hc/wA2qXwzC6oG4JPqGKf
+        c733tDtVhrQb8d9/9JRja+hTBG//RI6npKjGUyHqnVjwa5Dn13UsGotJx8IkVRWsjMFV9E
+        7OTnmqE1FIet79WH0HkX2gtP8G4vEro=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-423-wtTguOCmM9K5PjTvdJexfA-1; Wed, 27 Oct 2021 17:46:04 -0400
+X-MC-Unique: wtTguOCmM9K5PjTvdJexfA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9204C10A8E00;
+        Wed, 27 Oct 2021 21:46:03 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.34.10])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C5CBF607CB;
+        Wed, 27 Oct 2021 21:46:00 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 554A7220562; Wed, 27 Oct 2021 17:46:00 -0400 (EDT)
+Date:   Wed, 27 Oct 2021 17:46:00 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [RFC PATCH 1/7] FUSE: Add the fsnotify opcode and in/out structs
+ to FUSE
+Message-ID: <YXnImHp1QfZYZ1OU@redhat.com>
+References: <20211025204634.2517-1-iangelak@redhat.com>
+ <20211025204634.2517-2-iangelak@redhat.com>
+ <CAOQ4uxinGYb0QtgE8To5wc2iijT9VpTgDiXEp-9YXz=t_6eMbA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20211027141857.33657-1-lczerner@redhat.com>
-In-Reply-To: <20211027141857.33657-1-lczerner@redhat.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Wed, 27 Oct 2021 23:39:42 +0200
-Message-ID: <CA+icZUWXjyZXMUzzKumG0GfHRzpYOXHJFSzvsPwE24B0G_wu=A@mail.gmail.com>
-Subject: Re: [PATCH v4 00/13] ext4: new mount API conversion
-To:     Lukas Czerner <lczerner@redhat.com>
-Cc:     linux-ext4@vger.kernel.org, tytso@mit.edu,
-        linux-fsdevel@vger.kernel.org,
-        Carlos Maiolino <cmaiolino@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxinGYb0QtgE8To5wc2iijT9VpTgDiXEp-9YXz=t_6eMbA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 27, 2021 at 11:27 PM Lukas Czerner <lczerner@redhat.com> wrote:
->
-> After some time I am once again resurrecting the patchset to convert the
-> ext4 to use the new mount API
-> (Documentation/filesystems/mount_api.txt).
->
-> The series can be applied on top of the current mainline tree and the work
-> is based on the patches from David Howells (thank you David). It was built
-> and tested with xfstests and a new ext4 mount options regression test that
-> was sent to the fstests list. You can check it out on github as well.
->
-> https://github.com/lczerner/xfstests/tree/ext4_mount_test
->
-> Here is a high level description of the patchset
->
-> 1. Prepare the ext4 mount parameters required by the new mount API and use
->    it for parsing, while still using the old API to get the options
->    string.
->
->   fs_parse: allow parameter value to be empty
->   ext4: Add fs parameter specifications for mount options
->   ext4: move option validation to a separate function
->   ext4: Change handle_mount_opt() to use fs_parameter
->
-> 2. Remove the use of ext4 super block from all the parsing code, because
->    with the new mount API the parsing is going to be done before we even
->    get the super block.
->
->   ext4: Allow sb to be NULL in ext4_msg()
->   ext4: move quota configuration out of handle_mount_opt()
->   ext4: check ext2/3 compatibility outside handle_mount_opt()
->   ext4: get rid of super block and sbi from handle_mount_ops()
->
-> 3. Actually finish the separation of the parsing and super block setup
->    into distinct steps. This is where the new ext4_fill_super() and
->    ext4_remount() functions are created temporarily before the actual
->    transition to the new API.
->
->   ext4: Completely separate options parsing and sb setup
->
-> 4. Make some last preparations and actually switch the ext4 to use the
->    new mount API.
->
->   ext4: clean up return values in handle_mount_opt()
->   ext4: change token2str() to use ext4_param_specs
->   ext4: switch to the new mount api
->
-> 5. Cleanup the old unused structures and rearrange the parsing function.
->
->   ext4: Remove unused match_table_t tokens
->
-> There is still a potential to do some cleanups and perhaps refactoring
-> such as using the fsparam_flag_no to remove the separate negative
-> options for example. However that can be done later after the conversion
-> to the new mount API which is the main purpose of the patchset.
->
-> Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-> Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
-> ---
+On Tue, Oct 26, 2021 at 05:56:03PM +0300, Amir Goldstein wrote:
+> On Mon, Oct 25, 2021 at 11:47 PM Ioannis Angelakopoulos
+> <iangelak@redhat.com> wrote:
+> >
+> > Since fsnotify is the backend for the inotify subsystem all the backend
+> > code implementation we add is related to fsnotify.
+> >
+> > To support an fsnotify request in FUSE and specifically virtiofs we add a
+> > new opcode for the FSNOTIFY (51) operation request in the "fuse.h" header.
+> >
+> > Also add the "fuse_notify_fsnotify_in" and "fuse_notify_fsnotify_out"
+> > structs that are responsible for passing the fsnotify/inotify related data
+> > to and from the FUSE server.
+> >
+> > Signed-off-by: Ioannis Angelakopoulos <iangelak@redhat.com>
+> > ---
+> >  include/uapi/linux/fuse.h | 23 ++++++++++++++++++++++-
+> >  1 file changed, 22 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > index 46838551ea84..418b7fc72417 100644
+> > --- a/include/uapi/linux/fuse.h
+> > +++ b/include/uapi/linux/fuse.h
+> > @@ -186,6 +186,9 @@
+> >   *  - add FUSE_SYNCFS
+> >   *  7.35
+> >   *  - add FUSE_NOTIFY_LOCK
+> > + *  7.36
+> > + *  - add FUSE_HAVE_FSNOTIFY
+> > + *  - add fuse_notify_fsnotify_(in,out)
+> >   */
+> >
+> >  #ifndef _LINUX_FUSE_H
+> > @@ -221,7 +224,7 @@
+> >  #define FUSE_KERNEL_VERSION 7
+> >
+> >  /** Minor version number of this interface */
+> > -#define FUSE_KERNEL_MINOR_VERSION 35
+> > +#define FUSE_KERNEL_MINOR_VERSION 36
+> >
+> >  /** The node ID of the root inode */
+> >  #define FUSE_ROOT_ID 1
+> > @@ -338,6 +341,7 @@ struct fuse_file_lock {
+> >   *                     write/truncate sgid is killed only if file has group
+> >   *                     execute permission. (Same as Linux VFS behavior).
+> >   * FUSE_SETXATTR_EXT:  Server supports extended struct fuse_setxattr_in
+> > + * FUSE_HAVE_FSNOTIFY: remote fsnotify/inotify event subsystem support
+> >   */
+> >  #define FUSE_ASYNC_READ                (1 << 0)
+> >  #define FUSE_POSIX_LOCKS       (1 << 1)
+> > @@ -369,6 +373,7 @@ struct fuse_file_lock {
+> >  #define FUSE_SUBMOUNTS         (1 << 27)
+> >  #define FUSE_HANDLE_KILLPRIV_V2        (1 << 28)
+> >  #define FUSE_SETXATTR_EXT      (1 << 29)
+> > +#define FUSE_HAVE_FSNOTIFY     (1 << 30)
+> >
+> >  /**
+> >   * CUSE INIT request/reply flags
+> > @@ -515,6 +520,7 @@ enum fuse_opcode {
+> >         FUSE_SETUPMAPPING       = 48,
+> >         FUSE_REMOVEMAPPING      = 49,
+> >         FUSE_SYNCFS             = 50,
+> > +       FUSE_FSNOTIFY           = 51,
+> >
+> >         /* CUSE specific operations */
+> >         CUSE_INIT               = 4096,
+> > @@ -532,6 +538,7 @@ enum fuse_notify_code {
+> >         FUSE_NOTIFY_RETRIEVE = 5,
+> >         FUSE_NOTIFY_DELETE = 6,
+> >         FUSE_NOTIFY_LOCK = 7,
+> > +       FUSE_NOTIFY_FSNOTIFY = 8,
+> >         FUSE_NOTIFY_CODE_MAX,
+> >  };
+> >
+> > @@ -571,6 +578,20 @@ struct fuse_getattr_in {
+> >         uint64_t        fh;
+> >  };
+> >
+> > +struct fuse_notify_fsnotify_out {
+> > +       uint64_t inode;
+> 
+> 64bit inode is not a good unique identifier of the object.
 
-Is this the Git branch to pull from...?
+I think he wants to store 64bit nodeid (internal to fuse so that client
+and server can figure out which inode they are talking about). But I 
+think you are concerned about what happens if an event arrived for an
+inode after inode has been released and nodeid possibly used for some
+other inode. And then we will find that new inode in guest cache and
+end up associating event with wrong inode.
 
-https://github.com/lczerner/linux/tree/ext4_mount_api_rebase
-https://github.com/lczerner/linux/commits/ext4_mount_api_rebase
+Generation number will help in the sense that server has a chance
+to always update generation number on lookup. So even if nodeid
+is reused, generation number will make make sure we don't end
+up associating this event with reused node id inode. I guess
+makes sense.
 
-Any other requirements or recommendations other than "ext4: ext4 mount
-sanity test" (xfstests)?
+> you need to either include the generation in object identifier
+> or much better use the object's nfs file handle, the same way
+> that fanotify stores object identifiers.
 
-Thanks.
+I think nfs file handle is much more complicated and its a separate
+project altogether. I am assuming we are talking about persistent
+nfs file handle as generated by host. I think biggest issue we faced
+with that is that guest is untrusted and we don't want to resolve
+file handle provided by guest on host otherwise guest can craft
+file handles and possibly be able to open other files on same filesystem
+outside shared dir. 
 
-- Sedat -
+> 
+> > +       uint64_t mask;
+> > +       uint32_t namelen;
+> > +       uint32_t cookie;
+> 
+> I object to persisting with the two-events-joined-by-cookie design.
+> Any new design should include a single event for rename
+> with information about src and dst.
+> 
+> I know this is inconvenient, but we are NOT going to create a "remote inotify"
+> interface, we need to create a "remote fsnotify" interface and if server wants
+> to use inotify, it will need to join the disjoined MOVE_FROM/TO event into
+> a single "remote event", that FUSE will use to call fsnotify_move().
 
-> v3 -> v4: Fix some typos, print exact quotafile type in log messages.
->           Remove explicit "Ext4:" from some log messages
-> V2 -> V3: Rebase to the newer kernel, including new mount options.
-> V1 -> V2: Rebase to the newer kernel
->
-> Lukas Czerner (13):
->   fs_parse: allow parameter value to be empty
->   ext4: Add fs parameter specifications for mount options
->   ext4: move option validation to a separate function
->   ext4: Change handle_mount_opt() to use fs_parameter
->   ext4: Allow sb to be NULL in ext4_msg()
->   ext4: move quota configuration out of handle_mount_opt()
->   ext4: check ext2/3 compatibility outside handle_mount_opt()
->   ext4: get rid of super block and sbi from handle_mount_ops()
->   ext4: Completely separate options parsing and sb setup
->   ext4: clean up return values in handle_mount_opt()
->   ext4: change token2str() to use ext4_param_specs
->   ext4: switch to the new mount api
->   ext4: Remove unused match_table_t tokens
->
->  fs/ext4/super.c           | 1848 +++++++++++++++++++++++--------------
->  fs/fs_parser.c            |   31 +-
->  include/linux/fs_parser.h |    2 +-
->  3 files changed, 1189 insertions(+), 692 deletions(-)
->
-> --
-> 2.31.1
->
+man inotify says following.
+
+"       Matching up the IN_MOVED_FROM and IN_MOVED_TO event pair  generated  by
+       rename(2)  is thus inherently racy.  (Don't forget that if an object is
+       renamed outside of a monitored directory, there  may  not  even  be  an
+       IN_MOVED_TO  event.)"
+
+So if guest is no monitoring target dir of renamed file, then we will not
+even get IN_MOVED_TO. In that case we can't merge two events into one.
+
+And this sounds like inotify/fanotify interface needs to come up with
+an merged event and in that case remote filesystem will simply propagate
+that event. (Instead of coming up with a new event only for remote
+filesystems. Sounds like this is not a problem limited to remote
+filesystems only).
+
+Thanks
+Vivek
+
