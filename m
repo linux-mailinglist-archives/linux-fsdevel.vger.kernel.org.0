@@ -2,143 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E0C5243C51A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 10:29:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 307C543C6C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 11:47:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237038AbhJ0Ib1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Oct 2021 04:31:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:43821 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239011AbhJ0IbH (ORCPT
+        id S238905AbhJ0JuU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Oct 2021 05:50:20 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:37324 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232462AbhJ0JuT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Oct 2021 04:31:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635323321;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Wed, 27 Oct 2021 05:50:19 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id DE75D1FD40;
+        Wed, 27 Oct 2021 09:47:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1635328073; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=HMGoUQINrJqZLuW8/A/XeQKi6E97c5XZh4o9JVjLPFA=;
-        b=iGtuLenGldmkyflY+tKrOlQ5FJvt1K8eiSnjS6fCFgfmp1hazOMSmNVhB91FgI4ka5FNn+
-        Js6nJuXvusPLEwbyxTAcuaRZOggJp/MmNRuSh/5JK9WjwBB/M6sRYk80tv5kY2t5j1JTtc
-        vkmH2xW3A0JHMqWucr7f4JVFgJCo49U=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-254-7-wrdy7rNP2kPMff7y0D8w-1; Wed, 27 Oct 2021 04:28:38 -0400
-X-MC-Unique: 7-wrdy7rNP2kPMff7y0D8w-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6F22680A5C3;
-        Wed, 27 Oct 2021 08:28:37 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B192D19D9D;
-        Wed, 27 Oct 2021 08:28:05 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 19R8S4eD010949;
-        Wed, 27 Oct 2021 04:28:04 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 19R8S3sR010945;
-        Wed, 27 Oct 2021 04:28:03 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Wed, 27 Oct 2021 04:28:03 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Dave Chinner <david@fromorbit.com>
-cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Ming Lei <ming.lei@redhat.com>,
-        Zdenek Kabelac <zkabelac@redhat.com>,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4] loop: don't print warnings if the underlying filesystem
- doesn't support discard
-In-Reply-To: <20211027050249.GC5111@dread.disaster.area>
-Message-ID: <alpine.LRH.2.02.2110270421380.10452@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.2109231539520.27863@file01.intranet.prod.int.rdu2.redhat.com> <20210924155822.GA10064@lst.de> <alpine.LRH.2.02.2110040851130.30719@file01.intranet.prod.int.rdu2.redhat.com> <20211012062049.GB17407@lst.de>
- <alpine.LRH.2.02.2110121516440.21015@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.2110130524220.16882@file01.intranet.prod.int.rdu2.redhat.com> <20211027050249.GC5111@dread.disaster.area>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        bh=gPAOC+AGYpK7cN4JnD4gRZanlYWPHwNJlRBhzVQdha8=;
+        b=aKXPiluYUxmVEspGqvlEOh9ULlgxVH6w0YN5t0n2njK0lJa5cYEMg5g5MIGFisOCPH3keW
+        ebAnC0C6KDOML+QcC/xsTfZBLhsHdUE8GpYFfB977bpZ7iWEqAfPeZ+HLOJnPXndLz3nEB
+        H+6StryAAns95yE84QDP5lhJ3bjkch4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1635328073;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=gPAOC+AGYpK7cN4JnD4gRZanlYWPHwNJlRBhzVQdha8=;
+        b=ahlWei9NSuVMm0nMCVPEDWSL8griO/AvExEmsWoqfeHPy1D0D4NvVw0U+DmCdbikh1AtQ+
+        gTJejWkhoTMvAXCA==
+Received: from quack2.suse.cz (unknown [10.100.224.230])
+        by relay2.suse.de (Postfix) with ESMTP id A39CDA3B83;
+        Wed, 27 Oct 2021 09:47:53 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 8A0B21F2C66; Wed, 27 Oct 2021 11:47:53 +0200 (CEST)
+Date:   Wed, 27 Oct 2021 11:47:53 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 5/5] mm: simplify bdi refcounting
+Message-ID: <20211027094753.GB28650@quack2.suse.cz>
+References: <20211021124441.668816-1-hch@lst.de>
+ <20211021124441.668816-6-hch@lst.de>
+ <20211022090203.GF1026@quack2.suse.cz>
+ <20211027074207.GA12793@lst.de>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211027074207.GA12793@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On Wed, 27 Oct 2021, Dave Chinner wrote:
-
-> On Wed, Oct 13, 2021 at 05:28:36AM -0400, Mikulas Patocka wrote:
-> > Hi
+On Wed 27-10-21 09:42:07, Christoph Hellwig wrote:
+> On Fri, Oct 22, 2021 at 11:02:03AM +0200, Jan Kara wrote:
+> > On Thu 21-10-21 14:44:41, Christoph Hellwig wrote:
+> > > Move grabbing and releasing the bdi refcount out of the common
+> > > wb_init/wb_exit helpers into code that is only used for the non-default
+> > > memcg driven bdi_writeback structures.
+> > > 
+> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > > 
-> > Here I'm sending version 4 of the patch. It adds #include <linux/falloc.h> 
-> > to cifs and overlayfs to fix the bugs found out by the kernel test robot.
-> > 
-> > Mikulas
-> > 
-> > 
-> > 
-> > From: Mikulas Patocka <mpatocka@redhat.com>
-> > 
-> > The loop driver checks for the fallocate method and if it is present, it 
-> > assumes that the filesystem can do FALLOC_FL_ZERO_RANGE and 
-> > FALLOC_FL_PUNCH_HOLE requests. However, some filesystems (such as fat, or 
-> > tmpfs) have the fallocate method, but lack the capability to do 
-> > FALLOC_FL_ZERO_RANGE and/or FALLOC_FL_PUNCH_HOLE.
+> > Can we perhaps add a comment to struct bdi_writeback definition (or maybe
+> > wb_init()?) mentioning that it holds a reference to 'bdi' if it is
+> > bdi_writeback struct for a cgroup? I don't see it mentioned anywhere and
+> > now that you've changed the code, it isn't that obvious from the code
+> > either... Otherwise the patch looks good so feel free to add:
 > 
-> This seems like a loopback driver level problem, not something
-> filesystems need to solve. fallocate() is defined to return
-> -EOPNOTSUPP if a flag is passed that it does not support and that's
-> the mechanism used to inform callers that a fallocate function is
-> not supported by the underlying filesystem/storage.
+> Like this?
 > 
-> Indeed, filesystems can support hole punching at the ->fallocate(),
-> but then return EOPNOTSUPP because certain dynamic conditions are
-> not met e.g. CIFS needs sparse file support on the server to support
-> hole punching, but we don't know this until we actually try to 
-> sparsify the file. IOWs, this patch doesn't address all the cases
-> where EOPNOTSUPP might actually get returned from filesystems and/or
-> storage.
-> 
-> > This results in syslog warnings "blk_update_request: operation not 
-> > supported error, dev loop0, sector 0 op 0x9:(WRITE_ZEROES) flags 0x800800 
-> > phys_seg 0 prio class 0". The error can be reproduced with this command: 
-> > "truncate -s 1GiB /tmp/file; losetup /dev/loop0 /tmp/file; blkdiscard -z 
-> > /dev/loop0"
-> 
-> Which I'm assuming comes from this:
-> 
-> 	        if (unlikely(error && !blk_rq_is_passthrough(req) &&
->                      !(req->rq_flags & RQF_QUIET)))
->                 print_req_error(req, error, __func__);
-> 
-> Which means we could supress the error message quite easily in
-> lo_fallocate() by doing:
-> 
-> out:
-> 	if (ret == -EOPNOTSUPP)
-> 		rq->rq_flags |= RQF_QUIET;
-> 	return ret;
+> diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+> index 33207004cfded..a3d7dd1cc30a1 100644
+> --- a/include/linux/backing-dev-defs.h
+> +++ b/include/linux/backing-dev-defs.h
+> @@ -103,6 +103,9 @@ struct wb_completion {
+>   * change as blkcg is disabled and enabled higher up in the hierarchy, a wb
+>   * is tested for blkcg after lookup and removed from index on mismatch so
+>   * that a new wb for the combination can be created.
+> + *
+> + * Each bdi_writeback that is no embedded into the backing_dev_info must hold
+				 ^^^ not
 
-I did this (see 
-https://lore.kernel.org/all/alpine.LRH.2.02.2109231539520.27863@file01.intranet.prod.int.rdu2.redhat.com/ 
-) and Christoph Hellwig asked for a flag in the file_operations structure 
-( https://lore.kernel.org/all/20210924155822.GA10064@lst.de/ ).
+> + * a reference to the parent backing_dev_info.  See cgwb_create() for details.
+>   */
 
-Mikulas
+Otherwise looks nice. Thanks!
 
-> And then we can also run blk_queue_flag_clear(QUEUE_FLAG_DISCARD)
-> (and whatever else is needed to kill discards) to turn off future
-> discard attempts on that loopback device. This way the problem is
-> just quietly and correctly handled by the loop device and everything
-> is good...
-> 
-> Thoughts?
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> 
+								Honza
 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
