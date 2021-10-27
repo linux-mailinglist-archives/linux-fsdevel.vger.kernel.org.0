@@ -2,259 +2,260 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ECA2843D028
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 19:55:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67FAD43D0D7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 20:35:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240153AbhJ0R6W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Oct 2021 13:58:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35538 "EHLO
+        id S243614AbhJ0Shn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Oct 2021 14:37:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236956AbhJ0R6U (ORCPT
+        with ESMTP id S243584AbhJ0Shb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Oct 2021 13:58:20 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70990C061570;
-        Wed, 27 Oct 2021 10:55:54 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id u21so7839139lff.8;
-        Wed, 27 Oct 2021 10:55:54 -0700 (PDT)
+        Wed, 27 Oct 2021 14:37:31 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5FBBC061348
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 11:35:05 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id n11-20020a17090a2bcb00b001a1e7a0a6a6so5879595pje.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 11:35:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rcGfcajvU3WsNLuno0BLLT5c2SXf+7yDyUVgH/5EtJ0=;
-        b=pGgt/sKC5tdZ0XnZWX1AekLlFrJwaVMWQIiXwaHWYYGkQ7viDPhGS7tHaQ+C+HpcJ3
-         NgOLAi9SX5ieR1r+ZRIsikSrizfYlnQ1eqZ5MSSxF0uhPZ5+WCNoDOBI1iu70yZgvFmz
-         LAJ/ikw7O5+f8jJcpV6C1rbIM3lM6avuPvTvIAVGdY7LXnV92m3XCPAKDRYkuSoh9/NK
-         PChdRAcghhXbyeoBX3kaRshkA1etLrbumZkTXaoKTVS9DfV+VlNkfwquevtF0B90FnuA
-         C3cWtyr6JxBWgvPXMu7cqQcV1MCrgwwFVFEJtjoW3HvEveHBbBkOJUTF82JT+R38Gfy1
-         6/UA==
+        d=google.com; s=20210112;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Rvh0EfGrQmW1r7d8yfLYvcYsHPaGB41pg5VPXziGDYo=;
+        b=mcIlhDlKNNVhsI3D11EqXFFOBJLpTqvRWp6AWb0fxJ6W+yrs2mhu0YGjYnG7dYdK8C
+         dRhFNNDMXwTLOwq5kZSyzwSMFNoLcvrN/OsTS29YjHwGDS3DWmUlqnas0j+1T4HPC+4U
+         peab8ZskljC4X5cQqT5w751US6OOaaGgcm9lBF7t7NL6ZoG1MtAnpsLdSPNuidMGkdat
+         dujqy+1Gse1/MjIzYS5rDhSMxxv5j+AihpQcHdVkVxa08i3bNL5jbez0koecn93Dt63s
+         S84GJ0G8ihDX4RgsMn0m5Zzk3i5nYZWd4kj9kP06/CxaEacWkjroJU5TTCQ9Hfwg0o88
+         YilA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rcGfcajvU3WsNLuno0BLLT5c2SXf+7yDyUVgH/5EtJ0=;
-        b=s8IgG6u0B/6bDmHadeXJY4eN+H5I3RU81h6Camsgt5fSGE1Hjv8CKJU308xlFgOPHG
-         8H/nVXVMKGkqH6T8L84iHEr2nKXHNW7O38xyjQHLih+TfkQd/13CybPWj9Z0RFP8tPM6
-         HKBdRlOqn+G4DXVXuGHFy7KeK+VNNfWjjpSiYYXOcnNS441C6V4ANL1sKe3OHIEgsZdL
-         S96kKdE60dlq4hTKvdMDXDvYbgNYoYmnXhZ5kVR1vhlIRr6Cp6hY5ZC5ZGNQXtePq9YA
-         bChZOMejhL6YU40cST3cgyBq9mYNzgB1SLxUdBdUxv3X7zsHNfJw7b1I4o9R9tW+8mhN
-         CHXA==
-X-Gm-Message-State: AOAM530+qQAm9DTzLbWfK4AZKx5LDlRz5+Qq8sak326QNI+jMFYczDvc
-        YMvlM2mhTNAv+jwZAN+W2dw=
-X-Google-Smtp-Source: ABdhPJy3nzz/o1ioToBJAxUtyKS+4YAa4BFU5E5uInLMfnISst6r17sY00QthpTohOrmErmxXSHzqg==
-X-Received: by 2002:a05:6512:ace:: with SMTP id n14mr29804819lfu.460.1635357352725;
-        Wed, 27 Oct 2021 10:55:52 -0700 (PDT)
-Received: from pc638.lan (h5ef52e3d.seluork.dyn.perspektivbredband.net. [94.245.46.61])
-        by smtp.gmail.com with ESMTPSA id d5sm62273lfi.96.2021.10.27.10.55.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Oct 2021 10:55:52 -0700 (PDT)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
-Date:   Wed, 27 Oct 2021 19:55:50 +0200
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Dave Chinner <david@fromorbit.com>, Neil Brown <neilb@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH 2/4] mm/vmalloc: add support for __GFP_NOFAIL
-Message-ID: <20211027175550.GA1776@pc638.lan>
-References: <20211025150223.13621-1-mhocko@kernel.org>
- <20211025150223.13621-3-mhocko@kernel.org>
- <CA+KHdyVqOuKny7bT+CtrCk8BrnARYz744Ze6cKMuy2BXo5e7jw@mail.gmail.com>
- <YXgsxF/NRlHjH+Ng@dhcp22.suse.cz>
- <20211026193315.GA1860@pc638.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211026193315.GA1860@pc638.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Rvh0EfGrQmW1r7d8yfLYvcYsHPaGB41pg5VPXziGDYo=;
+        b=rkC388b1hnWRjWh5rbHCFbEIaJnaLyUt3a5w9arFAiNx24U1J9KcZntF1sOwy2ZXlA
+         vAUzpVynToQCz5HcDBLgLQXnnpbPHMy0xzAY6WJ0SVp+w8ufKWXY87rG1iyBL+7nbWpB
+         m1jDZE9xg8SNBcM+O2u85g7HrawpNeUvHS3jVfEviBFgfSFrA64tY8ji0aCCDKJZ6W7W
+         D9bCbvbdXMJiBEXQl0CQSQg5fRWLq6Fsl32zR+0cKlQAz0vx7bEcBa1MTTxBiUScqzOl
+         vYHkanLXmX3J5PhmiSakRNPgDb/nTKLvjoo8tfFFdMWSu+W7+kmjb8NaHzvMu0N/VBxA
+         BWew==
+X-Gm-Message-State: AOAM532AQuJNGb3khSnsx7Wkcf1Gim3Ns8ku9nSTWODRCbpGVVT5QRHc
+        5zSpIjYUD0IkWZ2n6hqsZOlB+w==
+X-Google-Smtp-Source: ABdhPJwZWsIcYifaWP+5OfBV53sifeG91pW4+UCHb+frPcCBx5HU6CGv1sbVu2jRKwv377aoJ360Yw==
+X-Received: by 2002:a17:90b:1c81:: with SMTP id oo1mr7469688pjb.97.1635359704826;
+        Wed, 27 Oct 2021 11:35:04 -0700 (PDT)
+Received: from smtpclient.apple (c-71-198-45-217.hsd1.ca.comcast.net. [71.198.45.217])
+        by smtp.gmail.com with ESMTPSA id c4sm683417pfl.53.2021.10.27.11.35.02
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Oct 2021 11:35:04 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.120.0.1.13\))
+Subject: Re: [PATCH v11 2/3] mm: add a field to store names for private
+ anonymous memory
+From:   Alexey Alexandrov <aalexand@google.com>
+In-Reply-To: <20211019215511.3771969-2-surenb@google.com>
+Date:   Wed, 27 Oct 2021 11:35:01 -0700
+Cc:     akpm@linux-foundation.org, ccross@google.com,
+        sumit.semwal@linaro.org, mhocko@suse.com, dave.hansen@intel.com,
+        keescook@chromium.org, willy@infradead.org,
+        kirill.shutemov@linux.intel.com, vbabka@suse.cz,
+        hannes@cmpxchg.org, corbet@lwn.net, viro@zeniv.linux.org.uk,
+        rdunlap@infradead.org, kaleshsingh@google.com, peterx@redhat.com,
+        rppt@kernel.org, peterz@infradead.org, catalin.marinas@arm.com,
+        vincenzo.frascino@arm.com, chinwen.chang@mediatek.com,
+        axelrasmussen@google.com, aarcange@redhat.com, jannh@google.com,
+        apopple@nvidia.com, jhubbard@nvidia.com, yuzhao@google.com,
+        will@kernel.org, fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        hughd@google.com, feng.tang@intel.com, jgg@ziepe.ca, guro@fb.com,
+        tglx@linutronix.de, krisman@collabora.com, chris.hyser@oracle.com,
+        pcc@google.com, ebiederm@xmission.com, axboe@kernel.dk,
+        legion@kernel.org, eb@emlix.com, gorcunov@gmail.com, pavel@ucw.cz,
+        songmuchun@bytedance.com, viresh.kumar@linaro.org,
+        thomascedeno@google.com, sashal@kernel.org, cxfcosmos@gmail.com,
+        linux@rasmusvillemoes.dk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@android.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <89664270-4B9F-45E0-AC0B-8A185ED1F531@google.com>
+References: <20211019215511.3771969-1-surenb@google.com>
+ <20211019215511.3771969-2-surenb@google.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+X-Mailer: Apple Mail (2.3654.120.0.1.13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 26, 2021 at 09:33:15PM +0200, Uladzislau Rezki wrote:
-> On Tue, Oct 26, 2021 at 06:28:52PM +0200, Michal Hocko wrote:
-> > On Tue 26-10-21 17:48:32, Uladzislau Rezki wrote:
-> > > > From: Michal Hocko <mhocko@suse.com>
-> > > >
-> > > > Dave Chinner has mentioned that some of the xfs code would benefit from
-> > > > kvmalloc support for __GFP_NOFAIL because they have allocations that
-> > > > cannot fail and they do not fit into a single page.
-> > > >
-> > > > The larg part of the vmalloc implementation already complies with the
-> > > > given gfp flags so there is no work for those to be done. The area
-> > > > and page table allocations are an exception to that. Implement a retry
-> > > > loop for those.
-> > > >
-> > > > Add a short sleep before retrying. 1 jiffy is a completely random
-> > > > timeout. Ideally the retry would wait for an explicit event - e.g.
-> > > > a change to the vmalloc space change if the failure was caused by
-> > > > the space fragmentation or depletion. But there are multiple different
-> > > > reasons to retry and this could become much more complex. Keep the retry
-> > > > simple for now and just sleep to prevent from hogging CPUs.
-> > > >
-> > > > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > > > ---
-> > > >  mm/vmalloc.c | 10 +++++++++-
-> > > >  1 file changed, 9 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > index c6cc77d2f366..602649919a9d 100644
-> > > > --- a/mm/vmalloc.c
-> > > > +++ b/mm/vmalloc.c
-> > > > @@ -2941,8 +2941,12 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
-> > > >         else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
-> > > >                 flags = memalloc_noio_save();
-> > > >
-> > > > -       ret = vmap_pages_range(addr, addr + size, prot, area->pages,
-> > > > +       do {
-> > > > +               ret = vmap_pages_range(addr, addr + size, prot, area->pages,
-> > > >                         page_shift);
-> > > > +               if (ret < 0)
-> > > > +                       schedule_timeout_uninterruptible(1);
-> > > > +       } while ((gfp_mask & __GFP_NOFAIL) && (ret < 0));
-> > > >
-> > > 
-> > > 1.
-> > > After that change a below code:
-> > > 
-> > > <snip>
-> > > if (ret < 0) {
-> > >     warn_alloc(orig_gfp_mask, NULL,
-> > >         "vmalloc error: size %lu, failed to map pages",
-> > >         area->nr_pages * PAGE_SIZE);
-> > >     goto fail;
-> > > }
-> > > <snip>
-> > > 
-> > > does not make any sense anymore.
-> > 
-> > Why? Allocations without __GFP_NOFAIL can still fail, no?
-> > 
-> Right. I meant one thing but wrote slightly differently. In case of
-> vmap_pages_range() fails(if __GFP_NOFAIL is set) should we emit any
-> warning message? Because either we can recover on a future iteration
-> or it stuck there infinitely so a user does not understand what happened.
-> From the other hand this is how __GFP_NOFAIL works, hm..
-> 
-> Another thing, i see that schedule_timeout_uninterruptible(1) is invoked
-> for all cases even when __GFP_NOFAIL is not set, in that scenario we do
-> not want to wait, instead we should return back to a caller asap. Or am
-> i missing something here?
-> 
-> > > 2.
-> > > Can we combine two places where we handle __GFP_NOFAIL into one place?
-> > > That would look like as more sorted out.
-> > 
-> > I have to admit I am not really fluent at vmalloc code so I wanted to
-> > make the code as simple as possible. How would I unwind all the allocated
-> > memory (already allocated as GFP_NOFAIL) before retrying at
-> > __vmalloc_node_range (if that is what you suggest). And isn't that a
-> > bit wasteful?
-> > 
-> > Or did you have anything else in mind?
-> >
-> It depends on how often all this can fail. But let me double check if
-> such combining is easy.
-> 
-I mean something like below. The idea is to not spread the __GFP_NOFAIL
-across the vmalloc file keeping it in one solid place:
+> On Oct 19, 2021, at 2:55 PM, Suren Baghdasaryan <surenb@google.com> =
+wrote:
+>=20
+> From: Colin Cross <ccross@google.com>
+>=20
+> In many userspace applications, and especially in VM based =
+applications
+> like Android uses heavily, there are multiple different allocators in =
+use.
+> At a minimum there is libc malloc and the stack, and in many cases =
+there
+> are libc malloc, the stack, direct syscalls to mmap anonymous memory, =
+and
+> multiple VM heaps (one for small objects, one for big objects, etc.).
+> Each of these layers usually has its own tools to inspect its usage;
+> malloc by compiling a debug version, the VM through heap inspection =
+tools,
+> and for direct syscalls there is usually no way to track them.
+>=20
+> On Android we heavily use a set of tools that use an extended version =
+of
+> the logic covered in Documentation/vm/pagemap.txt to walk all pages =
+mapped
+> in userspace and slice their usage by process, shared (COW) vs.  =
+unique
+> mappings, backing, etc.  This can account for real physical memory =
+usage
+> even in cases like fork without exec (which Android uses heavily to =
+share
+> as many private COW pages as possible between processes), Kernel =
+SamePage
+> Merging, and clean zero pages.  It produces a measurement of the pages
+> that only exist in that process (USS, for unique), and a measurement =
+of
+> the physical memory usage of that process with the cost of shared =
+pages
+> being evenly split between processes that share them (PSS).
+>=20
+> If all anonymous memory is indistinguishable then figuring out the =
+real
+> physical memory usage (PSS) of each heap requires either a pagemap =
+walking
+> tool that can understand the heap debugging of every layer, or for =
+every
+> layer's heap debugging tools to implement the pagemap walking logic, =
+in
+> which case it is hard to get a consistent view of memory across the =
+whole
+> system.
+>=20
+> Tracking the information in userspace leads to all sorts of problems.
+> It either needs to be stored inside the process, which means every
+> process has to have an API to export its current heap information upon
+> request, or it has to be stored externally in a filesystem that
+> somebody needs to clean up on crashes.  It needs to be readable while
+> the process is still running, so it has to have some sort of
+> synchronization with every layer of userspace.  Efficiently tracking
+> the ranges requires reimplementing something like the kernel vma
+> trees, and linking to it from every layer of userspace.  It requires
+> more memory, more syscalls, more runtime cost, and more complexity to
+> separately track regions that the kernel is already tracking.
+>=20
+> This patch adds a field to /proc/pid/maps and /proc/pid/smaps to show =
+a
+> userspace-provided name for anonymous vmas.  The names of named =
+anonymous
+> vmas are shown in /proc/pid/maps and /proc/pid/smaps as [anon:<name>].
+>=20
+> Userspace can set the name for a region of memory by calling
+> prctl(PR_SET_VMA, PR_SET_VMA_ANON_NAME, start, len, (unsigned =
+long)name);
+> Setting the name to NULL clears it. The name length limit is 80 bytes
+> including NUL-terminator and is checked to contain only printable =
+ascii
+> characters (including space), except '[',']','\','$' and '`'. Ascii
+> strings are being used to have a descriptive identifiers for vmas, =
+which
+> can be understood by the users reading /proc/pid/maps or =
+/proc/pid/smaps.
+> Names can be standardized for a given system and they can include some
+> variable parts such as the name of the allocator or a library, tid of
+> the thread using it, etc.
+>=20
+> The name is stored in a pointer in the shared union in vm_area_struct
+> that points to a null terminated string. Anonymous vmas with the same
+> name (equivalent strings) and are otherwise mergeable will be merged.
+> The name pointers are not shared between vmas even if they contain the
+> same name. The name pointer is stored in a union with fields that are
+> only used on file-backed mappings, so it does not increase memory =
+usage.
+>=20
+> CONFIG_ANON_VMA_NAME kernel configuration is introduced to enable this
+> feature. It keeps the feature disabled by default to prevent any
+> additional memory overhead and to avoid confusing procfs parsers on
+> systems which are not ready to support named anonymous vmas.
+>=20
+> The patch is based on the original patch developed by Colin Cross, =
+more
+> specifically on its latest version [1] posted upstream by Sumit =
+Semwal.
+> It used a userspace pointer to store vma names. In that design, name
+> pointers could be shared between vmas. However during the last =
+upstreaming
+> attempt, Kees Cook raised concerns [2] about this approach and =
+suggested
+> to copy the name into kernel memory space, perform validity checks [3]
+> and store as a string referenced from vm_area_struct.
+> One big concern is about fork() performance which would need to strdup
+> anonymous vma names. Dave Hansen suggested experimenting with =
+worst-case
+> scenario of forking a process with 64k vmas having longest possible =
+names
+> [4]. I ran this experiment on an ARM64 Android device and recorded a
+> worst-case regression of almost 40% when forking such a process. This
+> regression is addressed in the followup patch which replaces the =
+pointer
+> to a name with a refcounted structure that allows sharing the name =
+pointer
+> between vmas of the same name. Instead of duplicating the string =
+during
+> fork() or when splitting a vma it increments the refcount.
+>=20
+> [1] =
+https://lore.kernel.org/linux-mm/20200901161459.11772-4-sumit.semwal@linar=
+o.org/
+> [2] https://lore.kernel.org/linux-mm/202009031031.D32EF57ED@keescook/
+> [3] https://lore.kernel.org/linux-mm/202009031022.3834F692@keescook/
+> [4] =
+https://lore.kernel.org/linux-mm/5d0358ab-8c47-2f5f-8e43-23b89d6a8e95@inte=
+l.com/
+>=20
+> Changes for prctl(2) manual page (in the options section):
+>=20
+> PR_SET_VMA
+> 	Sets an attribute specified in arg2 for virtual memory areas
+> 	starting from the address specified in arg3 and spanning the
+> 	size specified	in arg4. arg5 specifies the value of the =
+attribute
+> 	to be set. Note that assigning an attribute to a virtual memory
+> 	area might prevent it from being merged with adjacent virtual
+> 	memory areas due to the difference in that attribute's value.
+>=20
+> 	Currently, arg2 must be one of:
+>=20
+> 	PR_SET_VMA_ANON_NAME
+> 		Set a name for anonymous virtual memory areas. arg5 =
+should
+> 		be a pointer to a null-terminated string containing the
+> 		name. The name length including null byte cannot exceed
+> 		80 bytes. If arg5 is NULL, the name of the appropriate
+> 		anonymous virtual memory areas will be reset. The name
+> 		can contain only printable ascii characters (including
+>                space), except '[',']','\','$' and '`'.
+>=20
+>                This feature is available only if the kernel is built =
+with
+>                the CONFIG_ANON_VMA_NAME option enabled.
 
-<snip>
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index d77830ff604c..f4b7927e217e 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -2889,8 +2889,14 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
- 	unsigned long array_size;
- 	unsigned int nr_small_pages = size >> PAGE_SHIFT;
- 	unsigned int page_order;
-+	unsigned long flags;
-+	int ret;
- 
- 	array_size = (unsigned long)nr_small_pages * sizeof(struct page *);
-+
-+	/*
-+	 * This is i do not understand why we do not want to see warning messages.
-+	 */
- 	gfp_mask |= __GFP_NOWARN;
- 	if (!(gfp_mask & (GFP_DMA | GFP_DMA32)))
- 		gfp_mask |= __GFP_HIGHMEM;
-@@ -2930,8 +2936,23 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
- 		goto fail;
- 	}
- 
--	if (vmap_pages_range(addr, addr + size, prot, area->pages,
--			page_shift) < 0) {
-+	/*
-+	 * page tables allocations ignore external gfp mask, enforce it
-+	 * by the scope API
-+	 */
-+	if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
-+		flags = memalloc_nofs_save();
-+	else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
-+		flags = memalloc_noio_save();
-+
-+	ret = vmap_pages_range(addr, addr + size, prot, area->pages, page_shift);
-+
-+	if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
-+		memalloc_nofs_restore(flags);
-+	else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
-+		memalloc_noio_restore(flags);
-+
-+	if (ret < 0) {
- 		warn_alloc(gfp_mask, NULL,
- 			"vmalloc error: size %lu, failed to map pages",
- 			area->nr_pages * PAGE_SIZE);
-@@ -2984,6 +3005,12 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
- 		return NULL;
- 	}
- 
-+	/*
-+	 * Suppress all warnings for __GFP_NOFAIL allocation.
-+	 */
-+	if (gfp_mask & __GFP_NOFAIL)
-+		gfp_mask |= __GFP_NOWARN;
-+
- 	if (vmap_allow_huge && !(vm_flags & VM_NO_HUGE_VMAP)) {
- 		unsigned long size_per_node;
- 
-@@ -3010,16 +3037,22 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
- 	area = __get_vm_area_node(real_size, align, shift, VM_ALLOC |
- 				  VM_UNINITIALIZED | vm_flags, start, end, node,
- 				  gfp_mask, caller);
--	if (!area) {
--		warn_alloc(gfp_mask, NULL,
--			"vmalloc error: size %lu, vm_struct allocation failed",
--			real_size);
--		goto fail;
--	}
-+	if (area)
-+		addr = __vmalloc_area_node(area, gfp_mask, prot, shift, node);
-+
-+	if (!area || !addr) {
-+		if (gfp_mask & __GFP_NOFAIL) {
-+			schedule_timeout_uninterruptible(1);
-+			goto again;
-+		}
-+
-+		if (!area)
-+			warn_alloc(gfp_mask, NULL,
-+				"vmalloc error: size %lu, vm_struct allocation failed",
-+				real_size);
- 
--	addr = __vmalloc_area_node(area, gfp_mask, prot, shift, node);
--	if (!addr)
- 		goto fail;
-+	}
- 
- 	/*
- 	 * In this function, newly allocated vm_struct has VM_UNINITIALIZED
-<snip>
+For what it=E2=80=99s worth, it=E2=80=99s definitely interesting to see =
+this going upstream.
+In particular, we would use it for high-level grouping of the data in
+production profiling when proper symbolization is not available:
 
---
-Vlad Rezki
+* JVM could associate a name with the memory regions it uses for the JIT
+  code so that Linux perf data are associated with a high level name =
+like
+  "Java JIT" even if the proper Java JIT profiling is not enabled.
+* Similar for other JIT engines like v8 - they could annotate the memory
+  regions they manage and use as well.
+* Traditional memory allocators like tcmalloc can use this as well so
+  that the associated name is used in data access profiling via Linux =
+perf.
+
