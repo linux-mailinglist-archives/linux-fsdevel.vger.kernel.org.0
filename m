@@ -2,115 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C2C943C1FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 07:02:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7543043C203
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 07:05:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238166AbhJ0FFT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Oct 2021 01:05:19 -0400
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:34955 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230349AbhJ0FFT (ORCPT
+        id S238206AbhJ0FH5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Oct 2021 01:07:57 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:48760 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230349AbhJ0FH5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Oct 2021 01:05:19 -0400
-Received: from dread.disaster.area (pa49-180-20-157.pa.nsw.optusnet.com.au [49.180.20.157])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 64CC786330D;
-        Wed, 27 Oct 2021 16:02:50 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1mfb5N-001VI9-R0; Wed, 27 Oct 2021 16:02:49 +1100
-Date:   Wed, 27 Oct 2021 16:02:49 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Ming Lei <ming.lei@redhat.com>,
-        Zdenek Kabelac <zkabelac@redhat.com>,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4] loop: don't print warnings if the underlying
- filesystem doesn't support discard
-Message-ID: <20211027050249.GC5111@dread.disaster.area>
-References: <alpine.LRH.2.02.2109231539520.27863@file01.intranet.prod.int.rdu2.redhat.com>
- <20210924155822.GA10064@lst.de>
- <alpine.LRH.2.02.2110040851130.30719@file01.intranet.prod.int.rdu2.redhat.com>
- <20211012062049.GB17407@lst.de>
- <alpine.LRH.2.02.2110121516440.21015@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2110130524220.16882@file01.intranet.prod.int.rdu2.redhat.com>
+        Wed, 27 Oct 2021 01:07:57 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R391e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Utr92a4_1635311130;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Utr92a4_1635311130)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 27 Oct 2021 13:05:30 +0800
+Subject: Re: [PATCH v6 6/7] fuse: mark inode DONT_CACHE when per-file DAX hint
+ changes
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     stefanha@redhat.com, miklos@szeredi.hub,
+        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
+References: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
+ <20211011030052.98923-7-jefflexu@linux.alibaba.com>
+ <YW2QeIdS2X48FOHk@redhat.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <8d741b29-c116-fbf8-2126-4ba183b7ccf6@linux.alibaba.com>
+Date:   Wed, 27 Oct 2021 13:05:30 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.2110130524220.16882@file01.intranet.prod.int.rdu2.redhat.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=epq8cqlX c=1 sm=1 tr=0 ts=6178dd7d
-        a=t5ERiztT/VoIE8AqcczM6g==:117 a=t5ERiztT/VoIE8AqcczM6g==:17
-        a=kj9zAlcOel0A:10 a=8gfv0ekSlNoA:10 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8
-        a=nlNMiS1GOempI7xxVB0A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <YW2QeIdS2X48FOHk@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 13, 2021 at 05:28:36AM -0400, Mikulas Patocka wrote:
-> Hi
+Sorry for the late reply, as your previous reply was moved to junk box
+by the algorithm...
+
+On 10/18/21 11:19 PM, Vivek Goyal wrote:
+> On Mon, Oct 11, 2021 at 11:00:51AM +0800, Jeffle Xu wrote:
+>> When the per-file DAX hint changes while the file is still *opened*, it
+>> is quite complicated and maybe fragile to dynamically change the DAX
+>> state.
+>>
+>> Hence mark the inode and corresponding dentries as DONE_CACHE once the
+>> per-file DAX hint changes, so that the inode instance will be evicted
+>> and freed as soon as possible once the file is closed and the last
+>> reference to the inode is put. And then when the file gets reopened next
+>> time, the new instantiated inode will reflect the new DAX state.
+>>
+>> In summary, when the per-file DAX hint changes for an *opened* file, the
+>> DAX state of the file won't be updated until this file is closed and
+>> reopened later.
+>>
+>> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+>> ---
+>>  fs/fuse/dax.c    | 9 +++++++++
+>>  fs/fuse/fuse_i.h | 1 +
+>>  fs/fuse/inode.c  | 3 +++
+>>  3 files changed, 13 insertions(+)
+>>
+>> diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
+>> index 15bde36829b8..ca083c13f5e8 100644
+>> --- a/fs/fuse/dax.c
+>> +++ b/fs/fuse/dax.c
+>> @@ -1364,6 +1364,15 @@ void fuse_dax_inode_init(struct inode *inode, unsigned int flags)
+>>  	inode->i_data.a_ops = &fuse_dax_file_aops;
+>>  }
+>>  
+>> +void fuse_dax_dontcache(struct inode *inode, unsigned int flags)
+>> +{
+>> +	struct fuse_conn *fc = get_fuse_conn(inode);
+>> +
+>> +	if (fc->dax_mode == FUSE_DAX_INODE &&
+>> +	    (!!IS_DAX(inode) != !!(flags & FUSE_ATTR_DAX)))
+>> +		d_mark_dontcache(inode);
+>> +}
+>> +
+>>  bool fuse_dax_check_alignment(struct fuse_conn *fc, unsigned int map_alignment)
+>>  {
+>>  	if (fc->dax && (map_alignment > FUSE_DAX_SHIFT)) {
+>> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+>> index 0270a41c31d7..bb2c11e0311a 100644
+>> --- a/fs/fuse/fuse_i.h
+>> +++ b/fs/fuse/fuse_i.h
+>> @@ -1270,6 +1270,7 @@ void fuse_dax_conn_free(struct fuse_conn *fc);
+>>  bool fuse_dax_inode_alloc(struct super_block *sb, struct fuse_inode *fi);
+>>  void fuse_dax_inode_init(struct inode *inode, unsigned int flags);
+>>  void fuse_dax_inode_cleanup(struct inode *inode);
+>> +void fuse_dax_dontcache(struct inode *inode, unsigned int flags);
+>>  bool fuse_dax_check_alignment(struct fuse_conn *fc, unsigned int map_alignment);
+>>  void fuse_dax_cancel_work(struct fuse_conn *fc);
+>>  
+>> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+>> index 73f19cd6e702..cf934c2ba761 100644
+>> --- a/fs/fuse/inode.c
+>> +++ b/fs/fuse/inode.c
+>> @@ -268,6 +268,9 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
+>>  		if (inval)
+>>  			invalidate_inode_pages2(inode->i_mapping);
+>>  	}
+>> +
+>> +	if (IS_ENABLED(CONFIG_FUSE_DAX))
+>> +		fuse_dax_dontcache(inode, attr->flags);
 > 
-> Here I'm sending version 4 of the patch. It adds #include <linux/falloc.h> 
-> to cifs and overlayfs to fix the bugs found out by the kernel test robot.
+> Should we give this function more generic name. Say
+> fuse_dax_change_attributes(). And let that function decide what attributes
+> have changed and does it need to take any action.
 > 
-> Mikulas
-> 
-> 
-> 
-> From: Mikulas Patocka <mpatocka@redhat.com>
-> 
-> The loop driver checks for the fallocate method and if it is present, it 
-> assumes that the filesystem can do FALLOC_FL_ZERO_RANGE and 
-> FALLOC_FL_PUNCH_HOLE requests. However, some filesystems (such as fat, or 
-> tmpfs) have the fallocate method, but lack the capability to do 
-> FALLOC_FL_ZERO_RANGE and/or FALLOC_FL_PUNCH_HOLE.
 
-This seems like a loopback driver level problem, not something
-filesystems need to solve. fallocate() is defined to return
--EOPNOTSUPP if a flag is passed that it does not support and that's
-the mechanism used to inform callers that a fallocate function is
-not supported by the underlying filesystem/storage.
+But currently we only need to handle 'attr->flags & FUSE_ATTR_DAX'. If
+other attributes need to be handled later, then we can expand this
+function and give it a more generic name. But as for now, I prefer to
+keep it simple.
 
-Indeed, filesystems can support hole punching at the ->fallocate(),
-but then return EOPNOTSUPP because certain dynamic conditions are
-not met e.g. CIFS needs sparse file support on the server to support
-hole punching, but we don't know this until we actually try to 
-sparsify the file. IOWs, this patch doesn't address all the cases
-where EOPNOTSUPP might actually get returned from filesystems and/or
-storage.
 
-> This results in syslog warnings "blk_update_request: operation not 
-> supported error, dev loop0, sector 0 op 0x9:(WRITE_ZEROES) flags 0x800800 
-> phys_seg 0 prio class 0". The error can be reproduced with this command: 
-> "truncate -s 1GiB /tmp/file; losetup /dev/loop0 /tmp/file; blkdiscard -z 
-> /dev/loop0"
-
-Which I'm assuming comes from this:
-
-	        if (unlikely(error && !blk_rq_is_passthrough(req) &&
-                     !(req->rq_flags & RQF_QUIET)))
-                print_req_error(req, error, __func__);
-
-Which means we could supress the error message quite easily in
-lo_fallocate() by doing:
-
-out:
-	if (ret == -EOPNOTSUPP)
-		rq->rq_flags |= RQF_QUIET;
-	return ret;
-
-And then we can also run blk_queue_flag_clear(QUEUE_FLAG_DISCARD)
-(and whatever else is needed to kill discards) to turn off future
-discard attempts on that loopback device. This way the problem is
-just quietly and correctly handled by the loop device and everything
-is good...
-
-Thoughts?
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Jeffle
