@@ -2,86 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC0DD43D30F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 22:42:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB9AD43D31A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 22:46:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243996AbhJ0UpL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Oct 2021 16:45:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45534 "EHLO
+        id S240637AbhJ0UtK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Oct 2021 16:49:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241017AbhJ0UpI (ORCPT
+        with ESMTP id S234080AbhJ0UtJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Oct 2021 16:45:08 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 908D2C061570
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 13:42:42 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id m42so3761622wms.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 13:42:42 -0700 (PDT)
+        Wed, 27 Oct 2021 16:49:09 -0400
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8755EC061570
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 13:46:43 -0700 (PDT)
+Received: by mail-pg1-x529.google.com with SMTP id t7so4136026pgl.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 13:46:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=Z5gHQzYD7PoAYoDzL4RlC0n9kbSf85NznLeRtNS5u38=;
-        b=hzJ3Jz0GdhcZROd9SVIMdRYfRnuI2vUvj9DAcLMJ80GrI+O3Vqam1XyRXpRxiXOz0u
-         xnznqNtt5WopHmtexEq6Qo5FL9B4jPEqByuKOTscHxL8+YsandhMGrJRkYmCgLljaolu
-         6XdvLqO3+qsqVw3d5ylDsm+dlv7F6mkJGMeZvp4iW5jVeZL3/F6ngqPZMgG47WWuWMYy
-         RFDgJ5HgqZgps6YfsTTSO1ayFEUft0OnwJrHlNEiKOFlRKffDaAzjXMPZryQCKBSqAcv
-         ugMS3Grjc/o1BlsmY3ziBZCtdw7kml+hEEwyU8Jb1f6VXC9IYsctDSWl/9iKqBkX7pXA
-         hh+w==
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sJa1X8Nq9O3Y4Jpn6QiA74FKvcIV+C24z8IRQUjGGE0=;
+        b=TxZcat++g2F8swI/guncdG9/17Z/6RCDj0O4DaP3V2lEJrBjGy6sZkL1oaiVAPUX7i
+         ibRs8fV27ZpLTrAbifA8zRst6y+Kk83j+VEjhNI+Vbneg5PK76uFu3Pt51HYTeEaMMd/
+         OOX5Fw0eevNVN84NzUSIfUo21BQoeHWua4n8iiMA5hViXFqIkNINp7tTwt6Va0lJxObQ
+         XbAdy+YG2LtzHKedjvpvUxc4S7WGprooI9+nPgi9DghDQrCCLYP8qAZgeT7medHBfAJw
+         WFVgaDdPI0CXvVHu3YcuEB3ai43LJghhdT9dLcGlj4W6soszGfdT20P58PyL1vt7VaVP
+         hqmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=Z5gHQzYD7PoAYoDzL4RlC0n9kbSf85NznLeRtNS5u38=;
-        b=Qn+2W9kxIRLpnekcJjHW98quxXDcGZn68GjYqt7JIM4pjvFcZKKNiPep47sLQbvf/t
-         QRntKkB0VrlOZS+24i5nZOsdN0ZzwwPCZqLW2d+DAkRijnpjfkyFLYI1IZJa7EnC3DHR
-         ssddK5tRiUyFINEe7FcozQvb8O7Z/Ee9CjBGN4fRWQXFvPtuzCPQ5zDBbHU9pzS1mvbU
-         Ru9ay+TNIhfiHsPJ55yTCmPUurfMvHtQZkljEhVsbabBCPGCpzhEJJf46PA7e/Xx+U/E
-         5ARoVBZhPeMxKIWkuGXOHt7wryqsqPCQH8sffJhtYwNfoAs0Wj8mjaI31bbRjH82A0xp
-         NDCw==
-X-Gm-Message-State: AOAM533L+hXtTFeWAcYJiaEamk2Rcp+7payvrLtw/kA1ek9lIp9uNHIX
-        tOD2m4Qju8dsPhgOEQkwOjeRjNzcXBk/hE/ZaZw=
-X-Google-Smtp-Source: ABdhPJxwzAyWkusmoZ9myN2i5G2vZXSFZxQyHURSX/M9vV6TNO50X5LQtgQfBF3qlyx6LPaf7gIF7jJNugD6mt1bh/I=
-X-Received: by 2002:a05:600c:5113:: with SMTP id o19mr7909071wms.104.1635367360817;
- Wed, 27 Oct 2021 13:42:40 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sJa1X8Nq9O3Y4Jpn6QiA74FKvcIV+C24z8IRQUjGGE0=;
+        b=gu76KNMUecNrXgvHASk8KATOzlC9XfCbSq7Q0aSrGNpgJYtUm9sE4AfxFlSBHTFwcV
+         iPzQDrEF7ln/SLU9wQcQqQH4DmthGFKXnWGfE6F6QUrmO383ZnvKuakU/gIE9j3j0RkT
+         e0rde0F5/p1hhtAJJ7oL+aZE9zw27bsvmcMdHO3WNHCpzZHSoqSy1zEEowE06J+SvpVM
+         qGsznyRzDgaqpBf75dbYFDO+SEAaK9UDyjORKPx69xYxsn2LZiwAPMMqmL3FtdWT6WCv
+         IjnWwW3rFWbSC/pIRT5kARauY84nNn9mbB8i8xyCh7HovU6WpsF2oEyJh4grBG/MhDMM
+         dF2w==
+X-Gm-Message-State: AOAM533qqtWoqCJQE9ZTscSktiXAllH32UknBOZxhgIIyIEGnYFs3xeF
+        2fTACtMzhhBP492EtyuMJeJACowAiZi4/qkVHnt5Cw==
+X-Google-Smtp-Source: ABdhPJzuYcyzIFqC2QDapdBCh3wTfdWUrlublr2aq9P2i1Emub6ylFDIqTcshjHDL5pSUpWP0gXhlJZ+k6Puz+OdoJE=
+X-Received: by 2002:a05:6a00:1348:b0:47c:e8f1:69a3 with SMTP id
+ k8-20020a056a00134800b0047ce8f169a3mr433025pfu.86.1635367603066; Wed, 27 Oct
+ 2021 13:46:43 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a05:6000:2ac:0:0:0:0 with HTTP; Wed, 27 Oct 2021 13:42:40
- -0700 (PDT)
-Reply-To: kenndyjohnson080@gmail.com
-From:   kenndy johnson <chichirich666@gmail.com>
-Date:   Wed, 27 Oct 2021 21:42:40 +0100
-Message-ID: <CAEWe2bYn2Tfku4jVVPErh3GT6vDBvV=1mcQG2Fz8bYTQ23=TRw@mail.gmail.com>
-Subject: Dear Friend,
-To:     undisclosed-recipients:;
+References: <20211018044054.1779424-1-hch@lst.de>
+In-Reply-To: <20211018044054.1779424-1-hch@lst.de>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 27 Oct 2021 13:46:31 -0700
+Message-ID: <CAPcyv4iEt78-XSsKjTWcpy71zaduXyyigTro6f3fmRqqFOG98Q@mail.gmail.com>
+Subject: Re: futher decouple DAX from block devices
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Mike Snitzer <snitzer@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Friend,
+[ add sfr ]
 
-My name is Mr. kenndy. johnson I am working with one of the UBA
-banks in Burkina Faso. Here in this bank existed a dormant account for
-many years, which belong to one of our late foreign customer. The
-amount in this account stands at $19 million's dollars
+On Sun, Oct 17, 2021 at 9:41 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Hi Dan,
+>
+> this series cleans up and simplifies the association between DAX and block
+> devices in preparation of allowing to mount file systems directly on DAX
+> devices without a detour through block devices.
 
- US Dollars.
+So I notice that this is based on linux-next while libnvdimm-for-next
+is based on v5.15-rc4. Since I'm not Andrew I went ahead and rebased
+these onto v5.15-rc4, tested that, and then merged with linux-next to
+resolve the conflicts and tested again.
 
-I was very fortunate to come across the deceased customer's security
-file during documentation of old and abandoned customer=E2=80=99s files for=
- an
-official documentation and audit of the year 2021.
+My merge resolution is here [1]. Christoph, please have a look. The
+rebase and the merge result are both passing my test and I'm now going
+to review the individual patches. However, while I do that and collect
+acks from DM and EROFS folks, I want to give Stephen a heads up that
+this is coming. Primarily I want to see if someone sees a better
+strategy to merge this, please let me know, but if not I plan to walk
+Stephen and Linus through the resolution.
 
-I want a foreign account where the bank will transfer this fund. I
-know you would be surprised to read this message, especially from
-someone relatively unknown to you. But, do not worry yourself so much.
-This is a genuine, risk free and legal business transaction. All
-details shall be sent to you as soon as I receive your response.
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/djbw/nvdimm.git/commit/?id=c3894cf6eb8f
 
-If you are really sure of your sincerity, trustworthiness,
-accountability and confidentiality over this transaction, reply back
-to me through my alternative email address: kenndyjohnson080@gmail.com
-Best regards,
 
-Mr. kenndy johnson,
+>
+> Diffstat:
+>  drivers/dax/Kconfig          |    4
+>  drivers/dax/bus.c            |    2
+>  drivers/dax/super.c          |  220 +++++--------------------------------------
+>  drivers/md/dm-linear.c       |   51 +++------
+>  drivers/md/dm-log-writes.c   |   44 +++-----
+>  drivers/md/dm-stripe.c       |   65 +++---------
+>  drivers/md/dm-table.c        |   22 ++--
+>  drivers/md/dm-writecache.c   |    2
+>  drivers/md/dm.c              |   29 -----
+>  drivers/md/dm.h              |    4
+>  drivers/nvdimm/Kconfig       |    2
+>  drivers/nvdimm/pmem.c        |    9 -
+>  drivers/s390/block/Kconfig   |    2
+>  drivers/s390/block/dcssblk.c |   12 +-
+>  fs/dax.c                     |   13 ++
+>  fs/erofs/super.c             |   11 +-
+>  fs/ext2/super.c              |    6 -
+>  fs/ext4/super.c              |    9 +
+>  fs/fuse/Kconfig              |    2
+>  fs/fuse/virtio_fs.c          |    2
+>  fs/xfs/xfs_super.c           |   54 +++++-----
+>  include/linux/dax.h          |   30 ++---
+>  22 files changed, 185 insertions(+), 410 deletions(-)
