@@ -2,120 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DC9343C906
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 13:57:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BF7B43C9CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 14:36:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240199AbhJ0MAK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Oct 2021 08:00:10 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:53634 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236185AbhJ0MAI (ORCPT
+        id S241900AbhJ0MjP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Oct 2021 08:39:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46060 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236394AbhJ0MjP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Oct 2021 08:00:08 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id F3553218A9;
-        Wed, 27 Oct 2021 11:57:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1635335861; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ucBNwEUgb9vfxRGYPNg2vK2KIsHfBEZtfWM5PBLmWd4=;
-        b=ixKOohmvkDm9di9WwT1GMQZWLO+1J5exOJdPzx47qKyKz4qoIdYInX4NfHCljwMY0bJv8a
-        abmLoHEox6YYTy8VwN+l0Kqpy1SIaSGJ5Abc9yjjdrV+ff9a/C3OCjakbves78nrZX56Ec
-        ywlaS6QGVZ5ZlgYwUNCO6+iqpQLUZu8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1635335861;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ucBNwEUgb9vfxRGYPNg2vK2KIsHfBEZtfWM5PBLmWd4=;
-        b=GT8Z/FqWRSbORgwN9CbSBLyNojeiC1sbBLzmQKxC1Cf6eampRug0s4xOjQeTPXUWB+gO3z
-        C4lfQOp5KFaopiAQ==
-Received: from pobox.suse.cz (pobox.suse.cz [10.100.2.14])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 78673A3B81;
-        Wed, 27 Oct 2021 11:57:40 +0000 (UTC)
-Date:   Wed, 27 Oct 2021 13:57:40 +0200 (CEST)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-cc:     Ming Lei <ming.lei@redhat.com>,
-        Julia Lawall <julia.lawall@inria.fr>,
-        Petr Mladek <pmladek@suse.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, tj@kernel.org,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        minchan@kernel.org, jeyu@kernel.org, shuah@kernel.org,
-        bvanassche@acm.org, dan.j.williams@intel.com, joe@perches.com,
-        tglx@linutronix.de, keescook@chromium.org, rostedt@goodmis.org,
-        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
-In-Reply-To: <YXg0dFZ+6qHw7d0g@bombadil.infradead.org>
-Message-ID: <alpine.LSU.2.21.2110271343290.3655@pobox.suse.cz>
-References: <YW3LuzaPhW96jSBK@bombadil.infradead.org> <YW4uwep3BCe9Vxq8@T590> <alpine.LSU.2.21.2110190820590.15009@pobox.suse.cz> <YW6OptglA6UykZg/@T590> <alpine.LSU.2.21.2110200835490.26817@pobox.suse.cz> <YW/KEsfWJMIPnz76@T590> <alpine.LSU.2.21.2110201014400.26817@pobox.suse.cz>
- <YW/q70dLyF+YudyF@T590> <YXfA0jfazCPDTEBw@alley> <YXgguuAY5iEUIV0u@T590> <YXg0dFZ+6qHw7d0g@bombadil.infradead.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Wed, 27 Oct 2021 08:39:15 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4533C061570;
+        Wed, 27 Oct 2021 05:36:49 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id f9so3362716ioo.11;
+        Wed, 27 Oct 2021 05:36:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pEi/weRXqa/dLpw7OFj8SFTr2thtNGQq1YHdMTA3K9Y=;
+        b=iEgrj1H4tmUFkSIc5lW8onL+locWOXWwm0mdp0J7IRnscMPbNqmYkwz9wzRRkFsvdj
+         UGcjiKfxjlVNlq/0ZMPLw9Hh1gpeBqaFBnacsoS3Z0qhIGd4MYbNCsCZBy/F19M4eFwg
+         NLetr78IPP57+EwL0KNWNeK5rCSU6frSp45njcJk/ajTpwZ9tJAVoZCoXd5A0jsAdFTu
+         rg4sL7/9961XGGrR6EZUPgsKET3JepjzbXb6r4qvZxuCHqtK0hJQsKFMa7MpnQwNslOL
+         fO3rX7E9XJAxgnluBZitp71LYWd0TCdvvyYWvPWO94SoqGr64h1gnjlE2tCUOm2PDyLh
+         uHcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pEi/weRXqa/dLpw7OFj8SFTr2thtNGQq1YHdMTA3K9Y=;
+        b=6EwCoT1CRr5471L6PBzYFTSfpjTmAoeVK2x19bUCz+bU6xtZD4HcKBLhxCHDHloQ8j
+         ClFelJl5Sl52RF1SQ1/Wp4dWfFXy7xmwXoghs363cRj0XyXNcATrM2O0G5r1/CxqstM4
+         p9+UQCwnFOUKvEkLdCs/N+98q+xrCtlRvgRUR73sRUCUEacy+yukCTnTLkai6CovttRw
+         5f2+u3BrYGHc/0tk+ZpD2du0pNa2AMcl03zpb3HvyE2c7/NgzUM/qv7cmX8HaVjUafZT
+         96nVJYrN8XDIzvPxmxWAV6lEKcE/aRQ/ndGl1VA2q52YPDzyp3qh3/VtPYX1EzilaJK8
+         jaDQ==
+X-Gm-Message-State: AOAM532nVIk+LzDB91Z1U6bvKmXnBNYIupP1dcqtF4zRwofeNsDE/BjT
+        ebV5y31uqGKiCOmkm+eqgm+v/dNgAnGY8hCFA58=
+X-Google-Smtp-Source: ABdhPJzAkEVaRxSQwVqUsmVQ9WgpfAq6n+K7EmNe5gAO/ucmzfo2JBgvsvGHV2BdtV4grUAMFpk1rJB8BpRjFGo/N/0=
+X-Received: by 2002:a05:6638:2607:: with SMTP id m7mr13595231jat.136.1635338209387;
+ Wed, 27 Oct 2021 05:36:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20211025192746.66445-1-krisman@collabora.com> <CAOQ4uxhth8NP4hS53rhLppK9_8ET41yrAx5d98s1uhSqrSzVHg@mail.gmail.com>
+ <20211027112243.GE28650@quack2.suse.cz>
+In-Reply-To: <20211027112243.GE28650@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 27 Oct 2021 15:36:38 +0300
+Message-ID: <CAOQ4uxgUdvAx6rWTYMROFDX8UOd8eVzKhDcpB0Qne1Uk9oOMAw@mail.gmail.com>
+Subject: Re: [PATCH v9 00/31] file system-wide error monitoring
+To:     Jan Kara <jack@suse.cz>
+Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Jan Kara <jack@suse.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Theodore Tso <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>,
+        David Howells <dhowells@redhat.com>,
+        Khazhismel Kumykov <khazhy@google.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 26 Oct 2021, Luis Chamberlain wrote:
+On Wed, Oct 27, 2021 at 2:22 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Tue 26-10-21 12:12:38, Amir Goldstein wrote:
+> > On Mon, Oct 25, 2021 at 10:27 PM Gabriel Krisman Bertazi
+> > <krisman@collabora.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > This is the 9th version of this patch series.  Thank you, Amir, Jan and
+> > > Ted, for the feedback in the previous versions.
+> > >
+> > > The main difference in this version is that the pool is no longer
+> > > resizeable nor limited in number of marks, even though we only
+> > > pre-allocate 32 slots.  In addition, ext4 was modified to always return
+> > > non-zero errno, and the documentation was fixed accordingly (No longer
+> > > suggests we return EXT4_ERR* values.
+> > >
+> > > I also droped the Reviewed-by tags from the ext4 patch, due to the
+> > > changes above.
+> > >
+> > > Please let me know what you think.
+> > >
+> >
+> > All good on my end.
+> > I've made a couple of minor comments that
+> > could be addressed on commit if no other issues are found.
+>
+> All good on my end as well. I've applied all the minor updates, tested the
+> result and pushed it out to fsnotify branch of my tree. WRT to your new
+> FS_ERROR LTP tests, I've noticed that the testcases 1 and 3 from test
+> fanotify20 fail for me. After a bit of debugging this seems to be a bug in
+> ext4 where it calls ext4_abort() with EXT4_ERR_ESHUTDOWN instead of plain
+> ESHUTDOWN. Not sure if you have that fixed or how come the tests passed for
+> you. After fixing that ext4 bug everything passes for me.
+>
 
-> On Tue, Oct 26, 2021 at 11:37:30PM +0800, Ming Lei wrote:
-> > On Tue, Oct 26, 2021 at 10:48:18AM +0200, Petr Mladek wrote:
-> > > Livepatch code never called kobject_del() under a lock. It would cause
-> > > the obvious deadlock.
-> 
-> Never?
+Gabriel mentioned that bug in the cover letter of the LTP series :-)
+https://lore.kernel.org/linux-ext4/20211026173302.84000-1-krisman@collabora.com/T/#u
 
-kobject_put() to be precise.
-
-When I started working on the support for module/live patches removal, 
-calling kobject_put() under our klp_mutex lock was the obvious first 
-choice given how the code was structured, but I ran into problems with 
-deadlocks immediately. So it was changed to async approach with the 
-workqueue. Thus the mainline code has never suffered from this, but we 
-knew about the issues.
- 
-> > > The historic code only waited in the
-> > > module_exit() callback until the sysfs interface was removed.
-> > 
-> > OK, then Luis shouldn't consider livepatching as one such issue to solve
-> > with one generic solution.
-> 
-> It's not what I was told when the deadlock was found with zram, so I was
-> informed quite the contrary.
-
-From my perspective, it is quite easy to get it wrong due to either a lack 
-of generic support, or missing rules/documentation. So if this thread 
-leads to "do not share locks between a module removal and a sysfs 
-operation" strict rule, it would be at least something. In the same 
-manner as Luis proposed to document try_module_get() expectations.
- 
-> I'm working on a generic coccinelle patch which hunts for actual cases
-> using iteration (a feature of coccinelle for complex searches). The
-> search is pretty involved, so I don't think I'll have an answer to this
-> soon.
-> 
-> Since the question of how generic this deadlock is remains questionable,
-> I think it makes sense to put the generic deadlock fix off the table for
-> now, and we address this once we have a more concrete search with
-> coccinelle.
-> 
-> But to say we *don't* have drivers which can cause this is obviously
-> wrong as well, from a cursory search so far. But let's wait and see how
-> big this list actually is.
-> 
-> I'll drop the deadlock generic fixes and move on with at least a starter
-> kernfs / sysfs tests.
-
-It makes sense to me.
-
-Thanks, Luis, for pursuing it.
-
-Miroslav
+Thanks,
+Amir.
