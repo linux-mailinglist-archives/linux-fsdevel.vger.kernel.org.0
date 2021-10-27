@@ -2,86 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 89BCF43D324
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 22:48:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB84F43D33E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 22:53:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240650AbhJ0UuZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Oct 2021 16:50:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46694 "EHLO
+        id S244094AbhJ0U4A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Oct 2021 16:56:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234080AbhJ0UuW (ORCPT
+        with ESMTP id S234080AbhJ0Uz7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Oct 2021 16:50:22 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13602C061570
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 13:47:57 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id u18so6287151wrg.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 13:47:57 -0700 (PDT)
+        Wed, 27 Oct 2021 16:55:59 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 583A4C061570
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 13:53:33 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id r5so2904108pls.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 13:53:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=Z5gHQzYD7PoAYoDzL4RlC0n9kbSf85NznLeRtNS5u38=;
-        b=Ec1jKuFPO8ungYYOQH88gUBw/Rja6qJY5VHpMfPu5f2yBl0AsorG2HCZPjxR/BZ7Ut
-         jQzxyhOI2nqSaD5HZtqUzcmpFHU0/SA7UW2qI10q32bAsO8c0CshykvmFJeVsfCyeja2
-         D/P5+Ho3XsAi7jusseg7VvD3F6xpxS1TZRaCgzptgNWyyVmqPTV3NnilrPTqqxCkM6Tf
-         3rS2zEZBCS9SAIgW9DaUMEjuTVuXUf+V2GzAr7JrBLHn6XhSiBd1AkJ/ZeYkWdvktX3w
-         K6UiM8+GBv7HhMwJFMq3uruRqe94LXpURoeUCB64Du8sd3zIK5CN1kPwxxpcys3l2aTl
-         ctyA==
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JF27tid0jnJ4Lv4ojsqdS1ywAxF2Yh/rXBicw2Nx/Bg=;
+        b=1isnZNLrwmgFC3LXRliYMUrYtu55I8EQQ7pQxVF+w9vAU0wMFXPxuqqMaEfcBFZxXg
+         qcnLJVTOmdX1rGsKPaKzFF9Qu8Ee1ZOBQ182Hw4pibX9D4X5BrxrW8qLlaMVoa3uA3Tk
+         KGDMGjWdaecMTrVHOCSpZJWK2sZUzx48BP4iJpaAETHGMQ4UeJfwWrv7HXh9aCqjIq+2
+         9ALeonJXxoVD6TAd61eVgIdGSZeRVRycG+QFqApL/sPZtYnF3KhgHnv0ssu3/ANRUj/4
+         POtGkuO11AqaPuPuXfXiiUY+Tsb2EtZLFRQXaHjr8SeP+pOqWQy14Q9lU0490jcBhr1l
+         CXAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=Z5gHQzYD7PoAYoDzL4RlC0n9kbSf85NznLeRtNS5u38=;
-        b=a9rVbKuJnta914qaVe+KU70hFbz4XqPglybtWLzbMlK/nH2xwI4cLkcRMvU+fud3Y+
-         81xxCFe7rqZNfxYkBlax4851zGa34ImRdhYRSO6UKHpLLZWkmaezMXffNlGYAF173Q41
-         LK9HNTkJCqc05GGp810+dT7QHZVlniS0wSuJ79cUowWA5cXisAHCeVVNclsstsTSIttE
-         dLKAaAzrJMx+ob/+3YZYvIJ24td97hxFOZNyawnU4XMSFQfzlLhT7mdJegxU5SkzmyDm
-         aCsBHQZFcMm8tAQ+7hFBHFb9TUCR/ZM/Q5qbr1IMH8PoMrQ19qKXqTTn/pfrZevv6jgI
-         mydw==
-X-Gm-Message-State: AOAM530cc/WeP0B01u4Xno+iQCoqRXkdXOtQCx3IdParCL/Y0nrHyShV
-        E6GXajBvMjYQm2uWdEqTPv59GXyKGW88eIKUzSE=
-X-Google-Smtp-Source: ABdhPJyRa9Cgu8DHqnd17spPsvuNHB4TqbUgrEuUiZiZE7W3jn/zdEce0S7mdZ2+EzPc1q2vFtUjldgsINIvL8QtML4=
-X-Received: by 2002:a5d:500b:: with SMTP id e11mr8299177wrt.205.1635367675410;
- Wed, 27 Oct 2021 13:47:55 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JF27tid0jnJ4Lv4ojsqdS1ywAxF2Yh/rXBicw2Nx/Bg=;
+        b=SoianBLQpPpIkDXDyHcYI3GWmzmzys8nEpGqm8OT6eXzV+vb07DbbbQ65FZL9LsPa3
+         RvM4SBitkcHF4b4z3aFE89ToP1kpn/Qm0eUSwIVtbbK8GEwAlTuxYLq50KL1zK4CNMUW
+         uWebC6p/cNzzHJeOhadGnxcBp7J0OQZgexinougPTZhZ+/bC97v7ZV5VqLbYnEUUnN7y
+         5S0mvB77ReIlrA/8fLpUfuCVR8AwFRW9mXUpcUCz6yDIzCluf7w3PoAouyjMtYmJBEsh
+         MYXhinanB8MEM/iTAdKsvW22QOQKNJ51gzZSyrBZwgo5Uf5P0QNoWmJbPJFcfDEb9bn9
+         d91w==
+X-Gm-Message-State: AOAM532VK1uu4xfzl/RCITElGo8WnUQaCX2ANAOvREjjRO808tuViNVG
+        NXT4P2XsmStmlyeb3zT+dSO2unvPRWFWecofr9qSfYNnNYY=
+X-Google-Smtp-Source: ABdhPJzghlFw+zkjpuNy8dyEqDgjwZ/Nb0+yCd5621faImzBOeUtIgX/3CShbYonbAi1vtWBePJ7pkat1hh6sB8QXRU=
+X-Received: by 2002:a17:90b:3b88:: with SMTP id pc8mr3618pjb.93.1635368012904;
+ Wed, 27 Oct 2021 13:53:32 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a05:6000:2ac:0:0:0:0 with HTTP; Wed, 27 Oct 2021 13:47:55
- -0700 (PDT)
-Reply-To: kenndyjohnson080@gmail.com
-From:   kenndy johnson <chichirich666@gmail.com>
-Date:   Wed, 27 Oct 2021 21:47:55 +0100
-Message-ID: <CAEWe2baC2SspUmUbw+OKKLOUT7vUYmDk-auPb3JCJQZDuiRkPw@mail.gmail.com>
-Subject: Dear Friend,
-To:     undisclosed-recipients:;
+References: <20211018044054.1779424-1-hch@lst.de> <20211018044054.1779424-2-hch@lst.de>
+In-Reply-To: <20211018044054.1779424-2-hch@lst.de>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 27 Oct 2021 13:53:21 -0700
+Message-ID: <CAPcyv4hrEPizMOH-XhCqh=23EJDG=W6VwvQ1pVstfe-Jm-AsiQ@mail.gmail.com>
+Subject: Re: [PATCH 01/11] dm: make the DAX support dependend on CONFIG_FS_DAX
+To:     Christoph Hellwig <hch@lst.de>, Mike Snitzer <snitzer@redhat.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Friend,
+On Sun, Oct 17, 2021 at 9:41 PM Christoph Hellwig <hch@lst.de> wrote:
+>
+> The device mapper DAX support is all hanging off a block device and thus
+> can't be used with device dax.  Make it depend on CONFIG_FS_DAX instead
+> of CONFIG_DAX_DRIVER.  This also means that bdev_dax_pgoff only needs to
+> be built under CONFIG_FS_DAX now.
 
-My name is Mr. kenndy. johnson I am working with one of the UBA
-banks in Burkina Faso. Here in this bank existed a dormant account for
-many years, which belong to one of our late foreign customer. The
-amount in this account stands at $19 million's dollars
+Looks good.
 
- US Dollars.
+Mike, can I get an ack to take this through nvdimm.git? (you'll likely
+see me repeat this question on subsequent patches in this series).
 
-I was very fortunate to come across the deceased customer's security
-file during documentation of old and abandoned customer=E2=80=99s files for=
- an
-official documentation and audit of the year 2021.
-
-I want a foreign account where the bank will transfer this fund. I
-know you would be surprised to read this message, especially from
-someone relatively unknown to you. But, do not worry yourself so much.
-This is a genuine, risk free and legal business transaction. All
-details shall be sent to you as soon as I receive your response.
-
-If you are really sure of your sincerity, trustworthiness,
-accountability and confidentiality over this transaction, reply back
-to me through my alternative email address: kenndyjohnson080@gmail.com
-Best regards,
-
-Mr. kenndy johnson,
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/dax/super.c        | 6 ++----
+>  drivers/md/dm-linear.c     | 2 +-
+>  drivers/md/dm-log-writes.c | 2 +-
+>  drivers/md/dm-stripe.c     | 2 +-
+>  drivers/md/dm-writecache.c | 2 +-
+>  drivers/md/dm.c            | 2 +-
+>  6 files changed, 7 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> index b882cf8106ea3..e20d0cef10a18 100644
+> --- a/drivers/dax/super.c
+> +++ b/drivers/dax/super.c
+> @@ -63,7 +63,7 @@ static int dax_host_hash(const char *host)
+>         return hashlen_hash(hashlen_string("DAX", host)) % DAX_HASH_SIZE;
+>  }
+>
+> -#ifdef CONFIG_BLOCK
+> +#if defined(CONFIG_BLOCK) && defined(CONFIG_FS_DAX)
+>  #include <linux/blkdev.h>
+>
+>  int bdev_dax_pgoff(struct block_device *bdev, sector_t sector, size_t size,
+> @@ -80,7 +80,6 @@ int bdev_dax_pgoff(struct block_device *bdev, sector_t sector, size_t size,
+>  }
+>  EXPORT_SYMBOL(bdev_dax_pgoff);
+>
+> -#if IS_ENABLED(CONFIG_FS_DAX)
+>  /**
+>   * dax_get_by_host() - temporary lookup mechanism for filesystem-dax
+>   * @host: alternate name for the device registered by a dax driver
+> @@ -219,8 +218,7 @@ bool dax_supported(struct dax_device *dax_dev, struct block_device *bdev,
+>         return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(dax_supported);
+> -#endif /* CONFIG_FS_DAX */
+> -#endif /* CONFIG_BLOCK */
+> +#endif /* CONFIG_BLOCK && CONFIG_FS_DAX */
+>
+>  enum dax_device_flags {
+>         /* !alive + rcu grace period == no new operations / mappings */
+> diff --git a/drivers/md/dm-linear.c b/drivers/md/dm-linear.c
+> index 679b4c0a2eea1..32fbab11bf90c 100644
+> --- a/drivers/md/dm-linear.c
+> +++ b/drivers/md/dm-linear.c
+> @@ -163,7 +163,7 @@ static int linear_iterate_devices(struct dm_target *ti,
+>         return fn(ti, lc->dev, lc->start, ti->len, data);
+>  }
+>
+> -#if IS_ENABLED(CONFIG_DAX_DRIVER)
+> +#if IS_ENABLED(CONFIG_FS_DAX)
+>  static long linear_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
+>                 long nr_pages, void **kaddr, pfn_t *pfn)
+>  {
+> diff --git a/drivers/md/dm-log-writes.c b/drivers/md/dm-log-writes.c
+> index d93a4db235124..6d694526881d0 100644
+> --- a/drivers/md/dm-log-writes.c
+> +++ b/drivers/md/dm-log-writes.c
+> @@ -903,7 +903,7 @@ static void log_writes_io_hints(struct dm_target *ti, struct queue_limits *limit
+>         limits->io_min = limits->physical_block_size;
+>  }
+>
+> -#if IS_ENABLED(CONFIG_DAX_DRIVER)
+> +#if IS_ENABLED(CONFIG_FS_DAX)
+>  static int log_dax(struct log_writes_c *lc, sector_t sector, size_t bytes,
+>                    struct iov_iter *i)
+>  {
+> diff --git a/drivers/md/dm-stripe.c b/drivers/md/dm-stripe.c
+> index 6660b6b53d5bf..f084607220293 100644
+> --- a/drivers/md/dm-stripe.c
+> +++ b/drivers/md/dm-stripe.c
+> @@ -300,7 +300,7 @@ static int stripe_map(struct dm_target *ti, struct bio *bio)
+>         return DM_MAPIO_REMAPPED;
+>  }
+>
+> -#if IS_ENABLED(CONFIG_DAX_DRIVER)
+> +#if IS_ENABLED(CONFIG_FS_DAX)
+>  static long stripe_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
+>                 long nr_pages, void **kaddr, pfn_t *pfn)
+>  {
+> diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
+> index 18320444fb0a9..4c3a6e33604d3 100644
+> --- a/drivers/md/dm-writecache.c
+> +++ b/drivers/md/dm-writecache.c
+> @@ -38,7 +38,7 @@
+>  #define BITMAP_GRANULARITY     PAGE_SIZE
+>  #endif
+>
+> -#if IS_ENABLED(CONFIG_ARCH_HAS_PMEM_API) && IS_ENABLED(CONFIG_DAX_DRIVER)
+> +#if IS_ENABLED(CONFIG_ARCH_HAS_PMEM_API) && IS_ENABLED(CONFIG_FS_DAX)
+>  #define DM_WRITECACHE_HAS_PMEM
+>  #endif
+>
+> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> index 7870e6460633f..79737aee516b1 100644
+> --- a/drivers/md/dm.c
+> +++ b/drivers/md/dm.c
+> @@ -1783,7 +1783,7 @@ static struct mapped_device *alloc_dev(int minor)
+>         md->disk->private_data = md;
+>         sprintf(md->disk->disk_name, "dm-%d", minor);
+>
+> -       if (IS_ENABLED(CONFIG_DAX_DRIVER)) {
+> +       if (IS_ENABLED(CONFIG_FS_DAX)) {
+>                 md->dax_dev = alloc_dax(md, md->disk->disk_name,
+>                                         &dm_dax_ops, 0);
+>                 if (IS_ERR(md->dax_dev))
+> --
+> 2.30.2
+>
