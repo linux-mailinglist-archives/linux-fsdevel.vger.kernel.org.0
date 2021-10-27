@@ -2,132 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D92843D72F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 01:07:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4EE743D770
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 01:21:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230070AbhJ0XJp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Oct 2021 19:09:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50098 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229987AbhJ0XJo (ORCPT
+        id S230293AbhJ0XXq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Oct 2021 19:23:46 -0400
+Received: from www62.your-server.de ([213.133.104.62]:41594 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229836AbhJ0XXq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Oct 2021 19:09:44 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E97B5C061745
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 16:07:18 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id gn3so3273160pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 16:07:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3af0vrDw+XvQKylIm0LDLH9D6xoJ74LhsidYuXkOM7g=;
-        b=d6phRBLSNqEavLbFGa7qsltfCwCXOIkQGNewJdYfiMwINhHDbJ+v3Tvr+m7SXCKglh
-         f1Y9JyoYsY7pru2o0qaf9ZrRobsN47Jue96kM8PwOADE6VAIkbXtDJTZy+mzrce1H5ii
-         TDWfFC/E9fe8cXOG72hb4HndsLJ5qovtA1WXr8x1UXXNXsg6OU7/y9sWKZsB9Ro8FzaF
-         3kotXlCmovzhrPQGnkvqh1aQ4+kBEwqSKMSlKnEz5Ahj4QsLMDMTI4jX5+IsmEJsZDOu
-         D4ACx/M3ONMf14xOrt8n/jVyvHMKdyB04vPcp4aB9RBAawLg1e2wm7UXNUEREJEycjA9
-         pSnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3af0vrDw+XvQKylIm0LDLH9D6xoJ74LhsidYuXkOM7g=;
-        b=Snu11KlCn0n37yqnWGm/DioB19fFaFeMjfokmze0H13776Laq/zNv0AHUm40jT90/V
-         RK6tUo7cgaQKRB6og/t2DmQum50QDqQN/pdI0bO3Cjam19Cer9uLH9KhzfynLXKy2W37
-         rsZFplJtsqgBXSpnIgduYFytZSWER+p6UFnbjfg+INn1CH/uoJUQN3YFS/UHyUlBfjn9
-         YeKSJCK3+/6Vvru6S1n9D3qQzHG28J1rpXPFz4WO2A/cDKA+ydsrs7v/CLiPiQTrbVqx
-         yzu6Gegn31KgkMpHlH1ZnZigzQ/9Jq4R2KfSg4aJksRvpjI2pfQin9mswy8X6eQpVIgU
-         X9lw==
-X-Gm-Message-State: AOAM532dREijUvjYS4H97G/toCIwrLissiMv1mz9dFiEAtgPARR0rt7o
-        kh+MIehS1YHPYDQiOkYfCLzrk2SQZZ+1Mp1gAJ6tmQ==
-X-Google-Smtp-Source: ABdhPJxTOfk9fcqxHjqgG3f1vnNsNPlrTHxqnz6/LIE7U1wpYxfkWo7JAy9TqN/B72HDrJA9DjHrJAEIhgWs2Md2+FA=
-X-Received: by 2002:a17:90b:350f:: with SMTP id ls15mr618659pjb.220.1635376038542;
- Wed, 27 Oct 2021 16:07:18 -0700 (PDT)
+        Wed, 27 Oct 2021 19:23:46 -0400
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+        by www62.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92.3)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1mfsEM-000GsC-7q; Thu, 28 Oct 2021 01:21:14 +0200
+Received: from [85.1.206.226] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1mfsEL-00060m-VZ; Thu, 28 Oct 2021 01:21:13 +0200
+Subject: Re: [PATCH bpf-next v2 1/3] libfs: support RENAME_EXCHANGE in
+ simple_rename()
+To:     Lorenz Bauer <lmb@cloudflare.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>
+Cc:     kernel-team@cloudflare.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, mszeredi@redhat.com,
+        gregkh@linuxfoundation.org
+References: <20211021151528.116818-1-lmb@cloudflare.com>
+ <20211021151528.116818-2-lmb@cloudflare.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <b215bb8c-3ffd-2b43-44a3-5b25243db5be@iogearbox.net>
+Date:   Thu, 28 Oct 2021 01:21:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20211018044054.1779424-1-hch@lst.de> <20211018044054.1779424-6-hch@lst.de>
-In-Reply-To: <20211018044054.1779424-6-hch@lst.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 27 Oct 2021 16:07:07 -0700
-Message-ID: <CAPcyv4iqkLQWEyqRYZPaBmA=bXyJy5DR699ch+wfBanY-MKu9g@mail.gmail.com>
-Subject: Re: [PATCH 05/11] dax: move the partition alignment check into fs_dax_get_by_bdev
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Mike Snitzer <snitzer@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20211021151528.116818-2-lmb@cloudflare.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.3/26335/Wed Oct 27 10:28:55 2021)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Oct 17, 2021 at 9:41 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> fs_dax_get_by_bdev is the primary interface to find a dax device for a
-> block device, so move the partition alignment check there instead of
-> wiring it up through ->dax_supported.
+[ Adding Miklos & Greg to Cc for review given e0e0be8a8355 ("libfs: support RENAME_NOREPLACE in
+   simple_rename()"). If you have a chance, would be great if you could take a look, thanks! ]
 
-Looks good.
-
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+On 10/21/21 5:15 PM, Lorenz Bauer wrote:
+> Allow atomic exchange via RENAME_EXCHANGE when using simple_rename.
+> This affects binderfs, ramfs, hubetlbfs and bpffs. There isn't much
+> to do except update the various *time fields.
+> 
+> Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
 > ---
->  drivers/dax/super.c | 23 ++++++-----------------
->  1 file changed, 6 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> index 04fc680542e8d..482fe775324a4 100644
-> --- a/drivers/dax/super.c
-> +++ b/drivers/dax/super.c
-> @@ -93,6 +93,12 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
->         if (!blk_queue_dax(bdev->bd_disk->queue))
->                 return NULL;
->
-> +       if ((get_start_sect(bdev) * SECTOR_SIZE) % PAGE_SIZE ||
-> +           (bdev_nr_sectors(bdev) * SECTOR_SIZE) % PAGE_SIZE) {
-> +               pr_info("%pg: error: unaligned partition for dax\n", bdev);
-> +               return NULL;
-> +       }
+>   fs/libfs.c | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 51b4de3b3447..93c03d593749 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -455,9 +455,12 @@ int simple_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
+>   	struct inode *inode = d_inode(old_dentry);
+>   	int they_are_dirs = d_is_dir(old_dentry);
+>   
+> -	if (flags & ~RENAME_NOREPLACE)
+> +	if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE))
+>   		return -EINVAL;
+>   
+> +	if (flags & RENAME_EXCHANGE)
+> +		goto done;
 > +
->         id = dax_read_lock();
->         dax_dev = xa_load(&dax_hosts, (unsigned long)bdev->bd_disk);
->         if (!dax_dev || !dax_alive(dax_dev) || !igrab(&dax_dev->inode))
-> @@ -107,10 +113,6 @@ bool generic_fsdax_supported(struct dax_device *dax_dev,
->                 struct block_device *bdev, int blocksize, sector_t start,
->                 sector_t sectors)
->  {
-> -       pgoff_t pgoff, pgoff_end;
-> -       sector_t last_page;
-> -       int err;
-> -
->         if (blocksize != PAGE_SIZE) {
->                 pr_info("%pg: error: unsupported blocksize for dax\n", bdev);
->                 return false;
-> @@ -121,19 +123,6 @@ bool generic_fsdax_supported(struct dax_device *dax_dev,
->                 return false;
->         }
->
-> -       err = bdev_dax_pgoff(bdev, start, PAGE_SIZE, &pgoff);
-> -       if (err) {
-> -               pr_info("%pg: error: unaligned partition for dax\n", bdev);
-> -               return false;
-> -       }
-> -
-> -       last_page = PFN_DOWN((start + sectors - 1) * 512) * PAGE_SIZE / 512;
-> -       err = bdev_dax_pgoff(bdev, last_page, PAGE_SIZE, &pgoff_end);
-> -       if (err) {
-> -               pr_info("%pg: error: unaligned partition for dax\n", bdev);
-> -               return false;
-> -       }
-> -
->         return true;
->  }
->  EXPORT_SYMBOL_GPL(generic_fsdax_supported);
-> --
-> 2.30.2
->
+>   	if (!simple_empty(new_dentry))
+>   		return -ENOTEMPTY;
+>   
+> @@ -472,6 +475,7 @@ int simple_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
+>   		inc_nlink(new_dir);
+>   	}
+>   
+> +done:
+>   	old_dir->i_ctime = old_dir->i_mtime = new_dir->i_ctime =
+>   		new_dir->i_mtime = inode->i_ctime = current_time(old_dir);
+>   
+> 
+
