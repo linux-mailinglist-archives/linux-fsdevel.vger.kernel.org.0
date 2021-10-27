@@ -2,136 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB1A343D351
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 22:54:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C19C843D3A8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 23:15:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244144AbhJ0U5G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Oct 2021 16:57:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48252 "EHLO
+        id S244250AbhJ0VRh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Oct 2021 17:17:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234080AbhJ0U5C (ORCPT
+        with ESMTP id S244211AbhJ0VRe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Oct 2021 16:57:02 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBA6DC061745
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 13:54:36 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id 187so3853264pfc.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 13:54:36 -0700 (PDT)
+        Wed, 27 Oct 2021 17:17:34 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19BFEC061745
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 14:15:08 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id l13so8976362lfg.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 14:15:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=MW2+yuOLdVC2FiYNaHWFO+PStoIyhupC83aZvNmdg00=;
-        b=xAWE2Gs6elQhyFnpgWWwNUZcIIN+S0dTB23e1v1SGSkr3xAYgCO6FZbQyPbRQqQf23
-         9I8Y78UczhWRyEynzMK/aUvy5wOw4Vy6/4LxJus/eHVGZMzDNjEAK+zx722FS9qK0he2
-         1U1cd8YzY36X3CDASwjtuR6iKB/eUu6jn2zPH05rfMggNUg3QvABlXcipTgHgz3k7BuS
-         H+rhb1Vq1z7S7EkZGdXP0ONpo163cZlk5BsINHv2ASIpi7dd31Nuhi/Qnq9EJvDvkYxw
-         Pntfc80cc9CfDzJp6vju7flE64Efz7hVPlBsr/GGmt1WhUviknbfEb0n+v3Q2OiU1RqV
-         8kaA==
+        bh=hiXmABk2yLJcTBwV/OV64LUSAMHnd37fHZz79FC6JvU=;
+        b=ZWNMOoSkuRaQ/lv8qizXhk55H0ec5K7RYuCkQOMY0yln4tyxGOGFp3Gs+/CZY7p6bT
+         3CZlT/Neco4TP12/d9wLKcFuseqO24iEpPL6jwtGtY8MUiJAI9mKP12Z7SKjitGg++uj
+         lH3CUAw1rGdqhKUixiRRtsMf0iuWhbOzVZTJw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=MW2+yuOLdVC2FiYNaHWFO+PStoIyhupC83aZvNmdg00=;
-        b=kUu6z5V4fdO/dZcPUdLlhNWbo46ypGJJj8+gFRKAupmeXQS3cPXzk89wqrPB1dmMyz
-         hIPbDaF6B43UeCiEALWh7aOgZQv5akpUZiLpDa/qliAy6HXwxHg5X0mI8R/WvTVLCP5B
-         ujgDlrJ8yXfmrPXwTYUyy1mHh/sxrggGmd4vMCVM8sBUyhbh3NrAlklTHmZzpzkdww4u
-         5RncFFZwjZl+y2qtRgK51ypyZXM6Q08ASt7XuoHftNXpXyxV89D4GOlhszjYxJRNAroX
-         f5FQa+j5DTLb5qQNn3NWsi/ecXsav0MXdeRyLkIDNOwet1WAH12FNAam/RQVtylo9fft
-         eXjg==
-X-Gm-Message-State: AOAM530FihPUk8Twn9p0UalufmULS2yXuPvw5iMdHgucxSkS3ZTvtA7j
-        mq/j6cnGDGIc3aGLVfxa0SmM945Li8nfLnd9/fEJQYQcbTk=
-X-Google-Smtp-Source: ABdhPJxqYRzrssHaaThSAQ3S9v6yHWHIiMadGqtNgSbRxpNG6jDSA2a4I6mJJqbjxV8Pnl8ItfliO9eaeQbTvv574gs=
-X-Received: by 2002:a63:770e:: with SMTP id s14mr43824pgc.377.1635368076533;
- Wed, 27 Oct 2021 13:54:36 -0700 (PDT)
+        bh=hiXmABk2yLJcTBwV/OV64LUSAMHnd37fHZz79FC6JvU=;
+        b=xGPcMFyHgHQRJEZSpJ+2ZzOsJTgtda5vaoyYxF0GRDJNcEA2XXiX9qTvsBIAaL9RMB
+         0GLv+YbtNt5nOAq6DYm7aUZw3nq2M7tt0j0qwemPIigv47rRFDUc/mBMCRhxSXD1FhsS
+         zb9JH4c31GWqLkYkgCmfVOHsgYM4iN82nDfYLK+lHw58uO+CBLu8YerRG337nfUBD1YC
+         qlguCOQOWQSepnj/S/Av4D7U4WVGVqOKYlIqlCgcnKLfoPenbIVtUC3vyKf31PmE+/P1
+         JtTfUqiLaGFVklJW1cFmj1h7E+ijkUGOlvuE6kMyCAfdcgfd3ayc5+s1IumTo2HevDU0
+         0vZg==
+X-Gm-Message-State: AOAM530Ri6ovcsJoqjP8MATLXKNKMTeLV0SJeB/0MBvErf/SEMB+trMP
+        fgVUOJeEMhm3KPOsGjW8or+A6yGEySjvvodN
+X-Google-Smtp-Source: ABdhPJxTxvKipMBhwm1L+pa7yQjXVsbgddr6oPKfeHH+FyrQWiuKrrCkwROwqCKTkXAlKzUgR6JXMA==
+X-Received: by 2002:a19:4951:: with SMTP id l17mr128166lfj.206.1635369305933;
+        Wed, 27 Oct 2021 14:15:05 -0700 (PDT)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id bd19sm93839ljb.28.2021.10.27.14.15.04
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Oct 2021 14:15:05 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id p16so9021967lfa.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 14:15:04 -0700 (PDT)
+X-Received: by 2002:a19:f619:: with SMTP id x25mr90493lfe.141.1635369304547;
+ Wed, 27 Oct 2021 14:15:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211018044054.1779424-1-hch@lst.de> <20211018044054.1779424-3-hch@lst.de>
-In-Reply-To: <20211018044054.1779424-3-hch@lst.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 27 Oct 2021 13:54:25 -0700
-Message-ID: <CAPcyv4jAd5O=keOkvtKzrnqpy21dfH0sJSk7Oo16wYrFfPnk=Q@mail.gmail.com>
-Subject: Re: [PATCH 02/11] dax: remove CONFIG_DAX_DRIVER
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Mike Snitzer <snitzer@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        linux-s390 <linux-s390@vger.kernel.org>,
+References: <CAHk-=wh0_3y5s7-G74U0Pcjm7Y_yHB608NYrQSvgogVNBxsWSQ@mail.gmail.com>
+ <YXBFqD9WVuU8awIv@arm.com> <CAHk-=wgv=KPZBJGnx_O5-7hhST8CL9BN4wJwtVuycjhv_1MmvQ@mail.gmail.com>
+ <YXCbv5gdfEEtAYo8@arm.com> <CAHk-=wgP058PNY8eoWW=5uRMox-PuesDMrLsrCWPS+xXhzbQxQ@mail.gmail.com>
+ <YXL9tRher7QVmq6N@arm.com> <CAHk-=wg4t2t1AaBDyMfOVhCCOiLLjCB5TFVgZcV4Pr8X2qptJw@mail.gmail.com>
+ <CAHc6FU7BEfBJCpm8wC3P+8GTBcXxzDWcp6wAcgzQtuaJLHrqZA@mail.gmail.com>
+ <YXhH0sBSyTyz5Eh2@arm.com> <CAHk-=wjWDsB-dDj+x4yr8h8f_VSkyB7MbgGqBzDRMNz125sZxw@mail.gmail.com>
+ <YXmkvfL9B+4mQAIo@arm.com>
+In-Reply-To: <YXmkvfL9B+4mQAIo@arm.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 27 Oct 2021 14:14:48 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjQqi9cw1Guz6a8oBB0xiQNF_jtFzs3gW0k7+fKN-mB1g@mail.gmail.com>
+Message-ID: <CAHk-=wjQqi9cw1Guz6a8oBB0xiQNF_jtFzs3gW0k7+fKN-mB1g@mail.gmail.com>
+Subject: Re: [PATCH v8 00/17] gfs2: Fix mmap + page fault deadlocks
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        cluster-devel <cluster-devel@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Oct 17, 2021 at 9:41 PM Christoph Hellwig <hch@lst.de> wrote:
+On Wed, Oct 27, 2021 at 12:13 PM Catalin Marinas
+<catalin.marinas@arm.com> wrote:
 >
-> CONFIG_DAX_DRIVER only selects CONFIG_DAX now, so remove it.
+> As an alternative, you mentioned earlier that a per-thread fault status
+> was not feasible on x86 due to races. Was this only for the hw poison
+> case? I think the uaccess is slightly different.
 
-Looks good, I don't think an s390 ack is needed for this one.
+It's not x86-specific, it's very generic.
 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/dax/Kconfig        | 4 ----
->  drivers/nvdimm/Kconfig     | 2 +-
->  drivers/s390/block/Kconfig | 2 +-
->  fs/fuse/Kconfig            | 2 +-
->  4 files changed, 3 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/dax/Kconfig b/drivers/dax/Kconfig
-> index d2834c2cfa10d..954ab14ba7778 100644
-> --- a/drivers/dax/Kconfig
-> +++ b/drivers/dax/Kconfig
-> @@ -1,8 +1,4 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -config DAX_DRIVER
-> -       select DAX
-> -       bool
-> -
->  menuconfig DAX
->         tristate "DAX: direct access to differentiated memory"
->         select SRCU
-> diff --git a/drivers/nvdimm/Kconfig b/drivers/nvdimm/Kconfig
-> index b7d1eb38b27d4..347fe7afa5830 100644
-> --- a/drivers/nvdimm/Kconfig
-> +++ b/drivers/nvdimm/Kconfig
-> @@ -22,7 +22,7 @@ if LIBNVDIMM
->  config BLK_DEV_PMEM
->         tristate "PMEM: Persistent memory block device support"
->         default LIBNVDIMM
-> -       select DAX_DRIVER
-> +       select DAX
->         select ND_BTT if BTT
->         select ND_PFN if NVDIMM_PFN
->         help
-> diff --git a/drivers/s390/block/Kconfig b/drivers/s390/block/Kconfig
-> index d0416dbd0cd81..e3710a762abae 100644
-> --- a/drivers/s390/block/Kconfig
-> +++ b/drivers/s390/block/Kconfig
-> @@ -5,7 +5,7 @@ comment "S/390 block device drivers"
->  config DCSSBLK
->         def_tristate m
->         select FS_DAX_LIMITED
-> -       select DAX_DRIVER
-> +       select DAX
->         prompt "DCSSBLK support"
->         depends on S390 && BLOCK
->         help
-> diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
-> index 40ce9a1c12e5d..038ed0b9aaa5d 100644
-> --- a/fs/fuse/Kconfig
-> +++ b/fs/fuse/Kconfig
-> @@ -45,7 +45,7 @@ config FUSE_DAX
->         select INTERVAL_TREE
->         depends on VIRTIO_FS
->         depends on FS_DAX
-> -       depends on DAX_DRIVER
-> +       depends on DAX
->         help
->           This allows bypassing guest page cache and allows mapping host page
->           cache directly in guest address space.
-> --
-> 2.30.2
->
+If we set some flag in the per-thread status, we'll need to be careful
+about not overwriting it if we then have a subsequent NMI that _also_
+takes a (completely unrelated) page fault - before we then read the
+per-thread flag.
+
+Think 'perf' and fetching backtraces etc.
+
+Note that the NMI page fault can easily also be a pointer coloring
+fault on arm64, for exactly the same reason that whatever original
+copy_from_user() code was. So this is not a "oh, pointer coloring
+faults are different". They have the same re-entrancy issue.
+
+And both the "pagefault_disable" and "fault happens in interrupt
+context" cases are also the exact same 'faulthandler_disabled()'
+thing. So even at fault time they look very similar.
+
+So we'd have to have some way to separate out only the one we care about.
+
+               Linus
