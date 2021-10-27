@@ -2,209 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A96843C278
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 07:59:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8522B43C27B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 08:00:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233440AbhJ0GBy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Oct 2021 02:01:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39872 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230225AbhJ0GBx (ORCPT
+        id S236091AbhJ0GC6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Oct 2021 02:02:58 -0400
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:48119 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230225AbhJ0GC5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Oct 2021 02:01:53 -0400
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B04AC061570;
-        Tue, 26 Oct 2021 22:59:28 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id i14so2196114ioa.13;
-        Tue, 26 Oct 2021 22:59:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZuRz+OYQVMsScVbvmrIx+5JsyCK+sTWUWuau+Q2qn4s=;
-        b=Nq20B0h2nKe5+vdzWT2LlxzQ4Cmtty4hgkMz5EvC2prsFnAoJXVm4QDy3FjJyhbGO8
-         XDKVGwsfgT2AJtWkkYzddeRhJThQ5t2ssBu9uqRodKb1hqeapcGeTD4DjQSBd8ddO9Ko
-         yh0DIk3zOvo5+Oinyz0FjkqPln/ezDfaR4xUne8OMTGhA8kwTg7pE7OIrG7CvBFfD9NR
-         4j2OooZr84h/ehgSyJ3E/OK++Y1YLMSgkdA15fMvjSYk3c+oyHSmfaIHwlUJUFgaJYwM
-         ZwhsZ2E/F4bVlg2Yif6QUsKaxiqLo0bdlbe6Pk55G1avErzhNQbMaX8yClQ661Sr5AlH
-         633g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZuRz+OYQVMsScVbvmrIx+5JsyCK+sTWUWuau+Q2qn4s=;
-        b=oRWueSVzpz56uYRodWJXNLXFvIOhrbinKnXvg9vqh/QxXKK2HXPjQqux+rq+h4QXfs
-         I4xnhHs8lC5z/pmLBclbpD1tzuql16PPrh1sYYV8zWADIx/yNaFuWJeAuQFOqcJlo9lI
-         Kr1KBwONgAYYN4/oJ4MnlnvHF0IGPfQm5Us2G2R28qAMSGQjP7YwdBBUT3dIM4ImlnDl
-         dJf6mT07CPfWVMrsiprt4BNopYjANu9kO1iF5czWQtG0A82YGiPTkzJxWrlx//C5DXB7
-         wMJTrwgBlwTGoPIGo3j3TQbE167gIf6DqTCELVa+Bop3bsLMAcweSIeikk87/1s6aERz
-         JKdQ==
-X-Gm-Message-State: AOAM5320YQ1Grn8ZlxevFUu0pCcZ0wRhnNYLepHL2NQ5RI45RyOAxS3Q
-        cvm3c6loNc9pKml7rhdgKRHAWxoHX25zeTmOkHdLuzX6bnQ=
-X-Google-Smtp-Source: ABdhPJzAcGouJunxLwEmGRXAM5byL65P8M4ZQ72bgADh8UMZBm2e6Ec0jlKfNmdhLHcRis1yx+qEEXtJvnmKaRrQZUE=
-X-Received: by 2002:a5e:c018:: with SMTP id u24mr18431719iol.197.1635314367342;
- Tue, 26 Oct 2021 22:59:27 -0700 (PDT)
+        Wed, 27 Oct 2021 02:02:57 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Utr8PLe_1635314430;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Utr8PLe_1635314430)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 27 Oct 2021 14:00:31 +0800
+Subject: Re: [PATCH v6 2/7] fuse: make DAX mount option a tri-state
+To:     Ira Weiny <ira.weiny@intel.com>, Vivek Goyal <vgoyal@redhat.com>
+Cc:     Dave Chinner <dchinner@redhat.com>, stefanha@redhat.com,
+        miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        virtio-fs@redhat.com, bo.liu@linux.alibaba.com,
+        joseph.qi@linux.alibaba.com
+References: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
+ <20211011030052.98923-3-jefflexu@linux.alibaba.com>
+ <YW2AU/E0pLHO5Yl8@redhat.com>
+ <652ac323-6546-01b8-992e-460ad59577ca@linux.alibaba.com>
+ <YXAzB5sOrFRUzTC5@redhat.com>
+ <96956132-fced-5739-d69a-7b424dc65f7c@linux.alibaba.com>
+ <20211025175251.GF3465596@iweiny-DESK2.sc.intel.com>
+ <YXbzeomdC5cD1xfF@redhat.com>
+ <20211025190201.GG3465596@iweiny-DESK2.sc.intel.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <5cb17c6b-380d-857b-d676-7ab2e8eba731@linux.alibaba.com>
+Date:   Wed, 27 Oct 2021 14:00:30 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.14.0
 MIME-Version: 1.0
-References: <20211025204634.2517-1-iangelak@redhat.com> <CAOQ4uxieK3KpY7pf0YTKcrNHW7rnTATTDZdK9L4Mqy32cDwV8w@mail.gmail.com>
- <YXgqRb21hvYyI69D@redhat.com> <CAOQ4uxhpCKK2MYxSmRJYYMEWaHKy5ezyKgxaM+YAKtpjsZkD-g@mail.gmail.com>
- <YXhIm3mOvPsueWab@redhat.com> <CAO17o20sdKAWQN6w7Oe0Ze06qcK+J=6rrmA_aWGnY__MRVDCKw@mail.gmail.com>
-In-Reply-To: <CAO17o20sdKAWQN6w7Oe0Ze06qcK+J=6rrmA_aWGnY__MRVDCKw@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 27 Oct 2021 08:59:15 +0300
-Message-ID: <CAOQ4uxhA+f-GZs-6SwNtSYZvSwfsYz4_=8_tWAUqt9s-49bqLw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
-To:     Ioannis Angelakopoulos <iangelak@redhat.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Steve French <sfrench@samba.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20211025190201.GG3465596@iweiny-DESK2.sc.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 26, 2021 at 10:14 PM Ioannis Angelakopoulos
-<iangelak@redhat.com> wrote:
->
->
->
-> On Tue, Oct 26, 2021 at 2:27 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->>
->> On Tue, Oct 26, 2021 at 08:59:44PM +0300, Amir Goldstein wrote:
->> > On Tue, Oct 26, 2021 at 7:18 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->> > >
->> > > On Tue, Oct 26, 2021 at 06:23:50PM +0300, Amir Goldstein wrote:
->> > >
->> > > [..]
->> > > > > 3) The lifetime of the local watch in the guest kernel is very
->> > > > > important. Specifically, there is a possibility that the guest does not
->> > > > > receive remote events on time, if it removes its local watch on the
->> > > > > target or deletes the inode (and thus the guest kernel removes the watch).
->> > > > > In these cases the guest kernel removes the local watch before the
->> > > > > remote events arrive from the host (virtiofsd) and as such the guest
->> > > > > kernel drops all the remote events for the target inode (since the
->> > > > > corresponding local watch does not exist anymore).
->> > >
->> > > So this is one of the issues which has been haunting us in virtiofs. If
->> > > a file is removed, for local events, event is generated first and
->> > > then watch is removed. But in case of remote filesystems, it is racy.
->> > > It is possible that by the time event arrives, watch is already gone
->> > > and application never sees the delete event.
->> > >
->> > > Not sure how to address this issue.
->> >
->>
->> > Can you take me through the scenario step by step.
->> > I am not sure I understand the exact sequence of the race.
->>
->> Ioannis, please correct me If I get something wrong. You know exact
->> details much more than me.
->>
->> A. Say a guest process unlinks a file.
->> B. Fuse sends an unlink request to server (virtiofsd)
->> C. File is unlinked on host. Assume there are no other users so inode
->>    will be freed as well. And event will be generated on host and watch
->>    removed.
->> D. Now Fuse server will send a unlink request reply. unlink notification
->>    might still be in kernel buffers or still be in virtiofsd or could
->>    be in virtiofs virtqueue.
->> E. Fuse client will receive unlink reply and remove local watch.
->>
->> Fuse reply and notification event are now traveling in parallel on
->> different virtqueues and there is no connection between these two. And
->> it could very well happen that fuse reply comes first, gets processed
->> first and local watch is removed. And notification is processed right
->> after but by then local watch is gone and filesystem will be forced to
->> drop event.
->>
->> As of now situation is more complicated in virtiofsd. We don't keep
->> file handle open for file and keep an O_PATH fd open for each file.
->> That means in step D above, inode on host is not freed yet and unlink
->> event is not generated yet. When unlink reply reaches fuse client,
->> it sends FORGET messages to server, and then server closes O_PATH fd
->> and then host generates unlink events. By that time its too late,
->> guest has already remove local watches (and triggered removal of
->> remote watches too).
->>
->> This second problem probably can be solved by using file handles, but
->> basic race will still continue to be there.
->>
->> > If it is local file removal that causes watch to be removed,
->> > then don't drop local events and you are good to go.
->> > Is it something else?
->>
->> - If remote events are enabled, then idea will be that user space gets
->>   and event when file is actually removed from server, right? Now it
->>   is possible that another VM has this file open and file has not been
->>   yet removed. So local event only tells you that file has been removed
->>   in guest VM (or locally) but does not tell anything about the state
->>   of file on server. (It has been unlinked on server but inode continues
->>   to be alive internall).
->>
->> - If user receives both local and remote delete event, it will be
->>   confusing. I guess if we want to see both the events, then there
->>   has to be some sort of info in event which classifies whether event
->>   is local or remote. And let application act accordingly.
->>
->> Thanks
->> Vivek
->>
->
-> Hello Amir!
->
-> Sorry for taking part in the conversation a bit late.  Vivek was on point with the
-> example he gave but the race is a bit more generic than only the DELETE event.
->
-> Let's say that a guest process monitors an inode for OPEN events:
->
-> 1) The same guest process or another guest process opens the file (related to the
-> monitored inode), and then closes and immediately deletes the file/inode.
-> 2) The FUSE server (virtiofsd) will mimic the operations of the guest process:
->      a) Will open the file on the host side and thus a remote OPEN event is going to
->      be generated on the host and sent to the guest.
->      b) Will unlink the remote inode and if no other host process uses the inode then the
->      inode will be freed and a DELETE event is going to be generated on the host and sent
->      to the guest (However, due to how virtiofsd works and Vivek mentioned, this step won't
->      happen immediately)
->
+Thanks for your replying, Ira Weiny.
 
-You are confusing DELETE with DELETE_SELF.
-DELETE corresponds to unlink(), so you get a DELETE event even if
-inode is a hardlink
-with nlink > 0 after unlink().
 
-The DELETE event is reported (along with filename) against the parent directory
-inode, so the test case above won't drop the event.
+On 10/26/21 3:02 AM, Ira Weiny wrote:
+> [snippet]
+>>>> Hi, Ira Weiny,
+>>>>
+>>>> Do you have any thought on this, i.e. why the default behavior has
+>>>> changed after introduction of per inode dax?
+>>>
+>>> While this is 'technically' different behavior the end user does not see any
+>>> difference in behavior if they continue without software changes.  Specifically
+>>> specifying nothing continues to operate with all the files on the FS to be
+>>> '_not_ DAX'.  While specifying '-o dax' forces DAX on all files.
+>>>
+>>> This expands the default behavior in a backwards compatible manner.
+>>
+>> This is backward compatible in a sense that if somebody upgrades to new
+>> kernel, things will still be same. 
+>>
+>> I think little problematic change is that say I bring in persistent
+>> memory from another system (which has FS_XFLAGS_DAX set on some inodes)
+>> and then mount it without andy of the dax mount options, then per
+>> inode dax will be enabled unexpectedly if I boot with newer kernels
+>> but it will be disable if I mount with older kernels. Do I understand it
+>> right.
+> 
+> Indeed that will happen.  However, wouldn't the users (software) of those files
+> have knowledge that those files were DAX and want to continue with them in that
+> mode?
+> 
+>>
+>>> The user
+>>> can now enable DAX on some files.  But this is an opt-in on the part of the
+>>> user of the FS and again does not change with existing software/scripts/etc.
+>>
+>> Don't understand this "opt-in" bit. If user mounts an fs without
+>> specifying any of the dax options, then per inode dax will still be
+>> enabled if inode has the correct flag set.
+> 
+> But only users who actually set that flag 'opt-in'.
+> 
+>> So is setting of flag being
+>> considered as opt-in (insted of mount option).
+> 
+> Yes.
+> 
+>>
+>> If setting of flag is being considered as opt-in, that probably will not
+>> work very well with virtiofs. Because server can enforce a different
+>> policy for enabling per file dax (instead of FS_XFLAG_DAX).
+> 
+> I'm not sure I understand how this happens?  I think the server probably has to
+> enable per INODE by default to allow the client to do what the end users wants.
+> 
+> I agree that if the end user is expecting DAX and the server disables it then
+> that is a problem but couldn't that happen before?  Maybe I'm getting confused
+> because I'm not familiar enough with virtiofs.
+> 
+>>
+>> And given there are two entities here (client and server), I think it
+>> will be good if if we give client a chance as well to decide whether
+>> it wants to enable per file dax or not. I know it can alwasy do 
+>> "dax=never" but it can still be broken if client software remains
+>> same but host/server software is upgraded or commnad line changed.
+> 
+> But the files are 'owned' by a single user or group of users who must have
+> placed the file in DAX mode at some point right?
 
-> The problem here is that the OPEN event might still be travelling towards the guest in the
-> virtqueues and arrives after the guest has already deleted its local inode.
-> While the remote event (OPEN) received by the guest is valid, its fsnotify
-> subsystem will drop it since the local inode is not there.
->
+So this is the essence of this issue, i.e. whether those who mount the
+filesystem (responsible for specifying mount options) and those who set
+the persistent inode flag are one same group people.
 
-I have a feeling that we are mixing issues related to shared server
-and remote fsnotify.
-Does virtiofsd support multiple guests already? There are many other
-issues related
-to cache coherency that should be dealt with in this case, some of
-them overlap the
-problem that you describe, so solving the narrow problem of dropped
-remote events
-seems like the wrong way to approach the problem.
+For local filesystem like ext4/xfs, these two entities are most likely
+one group people, so we can say that 'the default behavior is still
+backward compatible'.
 
-I think that in a shared server situation, the simple LOOKUP/FORGET protocol
-will not suffice. I will not even try to solve the generic problem,
-but will just
-mentioned that SMB/NFS protocols use delegations/oplocks in the protocol
-to advertise object usage by other clients to all clients.
+However this semantic can be challenged a little by the example exposed
+by Vivek, that these two entities may not be one group even in local
+filesystem. Though this case may be rare in real world.
 
-I think this issue is far outside the scope of your project and you should
-just leave the dropped events as a known limitation at this point.
-inotify has the event IN_IGNORED that application can use as a hint that some
-events could have been dropped.
+But for remote filesystem like virtiofs, the deviation between these two
+entities can be larger. For example, if the exported directory on host
+is shared by two guest and guest A sets the persistent inode flag for
+one file, then guest B will also see that DAX is enabled for this file
+when the virtiofs is mounted with the default option inside guest B. In
+this case, the persistent indoe flag is not set by guest B itself nor
+the server, and it may break the expectation of guest B.
 
+> 
+>>
+>> So for virtiofs, I think better behavior is to continue to not enable
+>> any dax until and unless user opts-in using "-o dax=foo" options.
+> 
+
+I also prefer keeping the 'dax=never' default behavior for virtiofs.
+
+-- 
 Thanks,
-Amir.
+Jeffle
