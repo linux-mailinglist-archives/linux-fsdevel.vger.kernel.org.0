@@ -2,79 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58F1D43BF5A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 04:13:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40B2143C053
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 04:52:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236520AbhJ0CPq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 22:15:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46254 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237766AbhJ0CPo (ORCPT
+        id S237738AbhJ0CzK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 22:55:10 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:55584 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236497AbhJ0CzK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 22:15:44 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 244E9C061226
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 19:13:20 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id s24so953694plp.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 19:13:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=+OhYyTKGmAf5Y61RBhMkXMlQv+hOjswu4u5NSWPSjMI=;
-        b=EG9Nsjl+Eip141PWF+gaBUl1KOWYkVWkt1OXOEZnqtckn0jrX24eTk8UDRzdanWsjC
-         9yBSsvsQJotknvFKA9EQtwg6TYbjKuB2B6TeA9FpEjuXwfev4spJrb1stelnldSVU05K
-         9gDfyUx9hxjQgXAvSoidRv5/L36SOUZnVcgUrTM9tbDStJSMOyaTK7co10bTYaslWL6G
-         KEMVQ2/UtsJj5Uhe9sAzIbF0NlCUlFDN4b2Grw7CXZCthk66H6QQ7cfpSD7pU+Ay2+Nj
-         Q0QsrrBll0HvZsVEqt8NPrW+XN3K+0FC+b/X0b9b+fJud88cD9kdaePkDe4cxFsTTvDp
-         HYfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=+OhYyTKGmAf5Y61RBhMkXMlQv+hOjswu4u5NSWPSjMI=;
-        b=BZ7MsRXAYBmYHMwjT0Lqie7WzHrNbzA+dQKCi91uwEE1BPtfBYmMeadJ/oSyr10VIA
-         QBsjy36FDZ8UxxOBR4TZAW97FXvHkr41oNdou6zobVxW0o7ObOra+XFdNey9imMQvaQG
-         ZXoUnv0Jn4EElvCfACfIA2F23Uc38R9ASBxhGVXuufnrbjsV4wI7A6DhL71fTDSxrIof
-         0l37VzYgzhVW97cU9Hl8vsIafGUvuvEwKs9VyQUN9TOcw8FF+gs8w8yXQhkECtR0Hm1k
-         2zLuRJAnec1bofjhmALfMATqUw+VfBnCy0GdWCOjKjND2C+dymKXx69obr2RkleRX9BK
-         UXSw==
-X-Gm-Message-State: AOAM532co3BuGpQG2ZqbzNYSuJoXrwD9Vbmae0jMMBfuZxyYlqlwnKg5
-        IdQJz6a9GV/8lGHR57fsRvOaGJSXK8hONxly8+g=
-X-Google-Smtp-Source: ABdhPJzwOfSEFC+ZhBFJFbO7cJJvi3wx28mFQEmwNZmSp0wIuhE8auS2ZQZdxDxGrsxbdq14UKAhXuffjqSVAtd5Ev8=
-X-Received: by 2002:a17:90b:1c02:: with SMTP id oc2mr2782635pjb.52.1635300799308;
- Tue, 26 Oct 2021 19:13:19 -0700 (PDT)
+        Tue, 26 Oct 2021 22:55:10 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0UtqE.Tu_1635303162;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UtqE.Tu_1635303162)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 27 Oct 2021 10:52:43 +0800
+Subject: Re: [Question] ext4/xfs: Default behavior changed after per-file DAX
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+To:     Theodore Ts'o <tytso@mit.edu>, adilger.kernel@dilger.ca,
+        "Darrick J. Wong" <djwong@kernel.org>, ira.weiny@intel.com
+Cc:     linux-xfs@vger.kernel.org,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
+        Vivek Goyal <vgoyal@redhat.com>, Christoph Hellwig <hch@lst.de>
+References: <26ddaf6d-fea7-ed20-cafb-decd63b2652a@linux.alibaba.com>
+Message-ID: <ce055127-5814-5335-43d2-4d0425425ba9@linux.alibaba.com>
+Date:   Wed, 27 Oct 2021 10:52:42 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.14.0
 MIME-Version: 1.0
-Sender: officedeskofgeneral0@gmail.com
-Received: by 2002:a17:90b:4c11:0:0:0:0 with HTTP; Tue, 26 Oct 2021 19:13:18
- -0700 (PDT)
-From:   "Mr. Mustafa Ali." <muafalia@gmail.com>
-Date:   Wed, 27 Oct 2021 03:13:18 +0100
-X-Google-Sender-Auth: -ap4vRnh22PsKG1mBvTJWKrUl0o
-Message-ID: <CAL=mczUC43H-jvBwTepLgLaj-FOUBZcvw1kdD=RpB4-U2MPw0g@mail.gmail.com>
-Subject: Greetings Dear Friend.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <26ddaf6d-fea7-ed20-cafb-decd63b2652a@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Friend,
+Sorry for the noise. Ira Weiny had replied my previous mail [1] but
+unfortunately the reply was moved into junk box, and I didn't note that.
 
-This message might meet you in utmost surprise. However, It's just my
-urgent need for a foreign partner that made me contact you for this
-transaction. I assured you of honesty and reliability to champion this
-business opportunity. I am a banker by profession in Turkey, and
-currently holding the post of Auditor in Standard Chartered Bank.
+[1]
+https://lore.kernel.org/all/YW2Oj4FrIB8do3zX@redhat.com/T/#mb022959fe3b6e9b82e2b066dd8daa301cd2b2c53
 
-I have the opportunity of transferring the leftover funds ($15 Million
-Dollars) of one of my clients who died along with his entire family in
-a crisis in Myanmar Asia. I am inviting you for a business deal where
-this money can be shared between us if you agree to my business
-proposal.
+On 10/26/21 10:12 PM, JeffleXu wrote:
+> Hi,
+> 
+> Recently I'm working on supporting per-file DAX for virtiofs [1]. Vivek
+> Goyal and I are interested [2] why the default behavior has changed
+> since introduction of per-file DAX on ext4 and xfs [3][4].
+> 
+> That is, before the introduction of per-file DAX, when user doesn't
+> specify '-o dax', DAX is disabled for all files. After supporting
+> per-file DAX, when neither '-o dax' nor '-o dax=always|inode|never' is
+> specified, it actually works in a '-o dax=inode' way if the underlying
+> blkdev is DAX capable, i.e. depending on the persistent inode flag. That
+> is, the default behavior has changed from user's perspective.
+> 
+> We are not sure if this is intentional or not. Appreciate if anyone
+> could offer some hint.
+> 
+> 
+> [1] https://lore.kernel.org/all/YW2Oj4FrIB8do3zX@redhat.com/T/
+> [2]
+> https://lore.kernel.org/all/YW2Oj4FrIB8do3zX@redhat.com/T/#mf067498887ca2023c64c8b8f6aec879557eb28f8
+> [3] 9cb20f94afcd2964944f9468e38da736ee855b19 ("fs/ext4: Make DAX mount
+> option a tri-state")
+> [4] 02beb2686ff964884756c581d513e103542dcc6a ("fs/xfs: Make DAX mount
+> option a tri-state")
+> 
+> 
 
-Further details of the transfer will be forwarded to you immediately
-after I receive your return letter.
-
-Best Regards,
-Mr. Mustafa Ali.
-mustafa.ali@rahroco.com
+-- 
+Thanks,
+Jeffle
