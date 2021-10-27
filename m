@@ -2,147 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB04A43BE8C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 02:43:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8780043BEEF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 03:19:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234724AbhJ0Ap5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Oct 2021 20:45:57 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:48244 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230373AbhJ0Ap5 (ORCPT
+        id S236342AbhJ0BVp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Oct 2021 21:21:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34268 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237073AbhJ0BVo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Oct 2021 20:45:57 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 4FD82218F7;
-        Wed, 27 Oct 2021 00:43:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1635295411; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RvmWQZ8FUef1/pzCcXG+8ld2wRn/BMgxM97QzliYX8o=;
-        b=yeJ2tAIusCxl+1cK5wTbRGSjjseBdjgKX3viSptEtw3ez1VlvFxmoJsGyzFYcS3E3s/U32
-        6hF/LXI2leR8R4pSZceocmbAZjqj9raHjGy5JO8sKhKqx/iQIzrIktQC+u8lKlZ8GkaF4l
-        LTEfPkwWVvEIu3BybuY2M8bTtaQQAcQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1635295411;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RvmWQZ8FUef1/pzCcXG+8ld2wRn/BMgxM97QzliYX8o=;
-        b=wLkr3Le61xAdgwL4cWK6b93mUV03kGFjKkMzXMaIgX3BHcJPspVwyzWscPVUzg+1VQ2CvL
-        Qgtt8sgSQohS1cDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D81DB13CBF;
-        Wed, 27 Oct 2021 00:43:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id tW3jJK6geGFjdQAAMHmgww
-        (envelope-from <neilb@suse.de>); Wed, 27 Oct 2021 00:43:26 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Mel Gorman" <mgorman@techsingularity.net>
-Cc:     "Andrew Morton" <akpm@linux-foundation.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        "Andreas Dilger" <adilger.kernel@dilger.ca>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        "Matthew Wilcox" <willy@infradead.org>,
-        "Michal Hocko" <mhocko@suse.com>,
-        "Dave Chinner" <david@fromorbit.com>,
-        "Rik van Riel" <riel@surriel.com>,
-        "Vlastimil Babka" <vbabka@suse.cz>,
-        "Johannes Weiner" <hannes@cmpxchg.org>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        "Linux-MM" <linux-mm@kvack.org>,
-        "Linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "LKML" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/8] Remove dependency on congestion_wait in mm/
-In-reply-to: <20211022131732.GK3959@techsingularity.net>
-References: <20211019090108.25501-1-mgorman@techsingularity.net>,
- <163486531001.17149.13533181049212473096@noble.neil.brown.name>,
- <20211022083927.GI3959@techsingularity.net>,
- <163490199006.17149.17259708448207042563@noble.neil.brown.name>,
- <20211022131732.GK3959@techsingularity.net>
-Date:   Wed, 27 Oct 2021 11:43:22 +1100
-Message-id: <163529540259.8576.9186192891154927096@noble.neil.brown.name>
+        Tue, 26 Oct 2021 21:21:44 -0400
+Received: from mail-qk1-x74a.google.com (mail-qk1-x74a.google.com [IPv6:2607:f8b0:4864:20::74a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACA01C0613B9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 18:19:19 -0700 (PDT)
+Received: by mail-qk1-x74a.google.com with SMTP id q5-20020a05620a0d8500b0045edb4779dbso658703qkl.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 18:19:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=tXBF8IPHrXnSIr0GZNWDZAEr0MXQPNCBVCwEca8TIMo=;
+        b=GU4Dsa3aUhwed3l5u1ByKWWvqupTtfJDlxC2YsdgHB6f0pBuk4ypKJa0/BG7tQ0RCc
+         E0E3RsmDa3L48jL0xzc+0JbNw8zOvjwzTu888jZOCDnw7DFG9987Ij5sYAtn4DoREO9V
+         w2EchOQ30pqD9rqHESWGMZWPSLKBP+0bkBZqBdY+y3qu4YzVKbfobOdI2CyvykQItDIs
+         sfgJK11oQeCuuSYxVDRzEjToiK5pO4E55kOvqaJLLinUGbHVTlxKmec6y1TqochwE9Cb
+         h1W6s1d8MBQRTQPHu6YmnrD1ZDhwylcziXIU4pwpvSoaSKzB0xZG4GXyxtsmzgbiGCwb
+         SyKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=tXBF8IPHrXnSIr0GZNWDZAEr0MXQPNCBVCwEca8TIMo=;
+        b=oaO3QcxWqsrcV7Je1Ad1sH44oM4VDPirmEqGsvqqcy2fjZoekpI8FfWyQJkgQeCbPU
+         87xYp7iuwKNIpBTIG28AXKubnSxhgnssvaonGIxfYfA92I0AX6HjSkeU3DJfIGM5QWIE
+         iRytBccoTcRzK+0mOYManjviSbl4powePhXXaSP+o2gKTWfOVx0UY3fHSYElmNq9XHBH
+         Sa0xMZu4yNoZ/RSIuCVf8vuiU+FZrYI1b/FFNBVEFMQ+ROCEwTCr4zLggnH+Fv5wxOIQ
+         3GQ+xwsrIO59xizs995pYf+0fg38Fr/TnDLQYlBh2r7Yw1d7TL1GHkE+mm8VjvRIqlTm
+         z6XQ==
+X-Gm-Message-State: AOAM532CCeTYIjL3bz9xIufJ01AvYeAkuBa194fo4lMGDVWZBm3Y8S0S
+        PJvY6qcjt1EaGVjVss4yfpZ9LEF6VEGkYsI=
+X-Google-Smtp-Source: ABdhPJyzttHnj9zHmxZU6jm7klx3kEHjC4Jg/LsIuYnI614jmLZSGY9gei/2uiOZloZGh2hKapyF4uQoS76nWmM=
+X-Received: from ramjiyani.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:2edd])
+ (user=ramjiyani job=sendgmr) by 2002:ac8:5b8e:: with SMTP id
+ a14mr28502874qta.391.1635297558699; Tue, 26 Oct 2021 18:19:18 -0700 (PDT)
+Date:   Wed, 27 Oct 2021 01:18:34 +0000
+Message-Id: <20211027011834.2497484-1-ramjiyani@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.33.0.1079.g6e70778dc9-goog
+Subject: [PATCH v5] aio: Add support for the POLLFREE
+From:   Ramji Jiyani <ramjiyani@google.com>
+To:     arnd@arndb.de, viro@zeniv.linux.org.uk, bcrl@kvack.org
+Cc:     hch@lst.de, kernel-team@android.com, linux-aio@kvack.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, oleg@redhat.com, ebiggers@kernel.org,
+        Ramji Jiyani <ramjiyani@google.com>,
+        Jeff Moyer <jmoyer@redhat.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 23 Oct 2021, Mel Gorman wrote:
-> On Fri, Oct 22, 2021 at 10:26:30PM +1100, NeilBrown wrote:
-> > On Fri, 22 Oct 2021, Mel Gorman wrote:
-> > > On Fri, Oct 22, 2021 at 12:15:10PM +1100, NeilBrown wrote:
-> > >=20
-> > > > In general, I still don't like the use of wake_up_all(), though it wo=
-n't
-> > > > cause incorrect behaviour.
-> > > >=20
-> > >=20
-> > > Removing wake_up_all would be tricky.
-> >=20
-> > I think there is a misunderstanding.  Removing wake_up_all() is as
-> > simple as
-> >    s/wake_up_all/wake_up/
-> >=20
-> > If you used prepare_to_wait_exclusive(), then wake_up() would only wake
-> > one waiter, while wake_up_all() would wake all of them.
-> > As you use prepare_to_wait(), wake_up() will wake all waiters - as will
-> > wake_up_all().=20
-> >=20
->=20
-> Ok, yes, there was a misunderstanding. I thought you were suggesting a
-> move to exclusive wakeups. I felt that the wake_up_all was explicit in
-> terms of intent and that I really meant for all tasks to wake instead of
-> one at a time.
+Add support for the POLLFREE flag to force complete iocb inline in
+aio_poll_wake(). A thread may use it to signal it's exit and/or request
+to cleanup while pending poll request. In this case, aio_poll_wake()
+needs to make sure it doesn't keep any reference to the queue entry
+before returning from wake to avoid possible use after free via
+poll_cancel() path.
 
-Fair enough.  Thanks for changing it :-)
+UAF issue was found during binder and aio interactions in certain
+sequence of events [1].
 
-But this prompts me to wonder if exclusive wakeups would be a good idea
-- which is a useful springboard to try to understand the code better.
+The POLLFREE flag is no more exclusive to the epoll and is being
+shared with the aio. Remove comment from poll.h to avoid confusion.
 
-For VMSCAN_THROTTLE_ISOLATED they probably are.
-One pattern for reliable exclusive wakeups is for any thread that
-received a wake-up to then consider sending a wake up.
+[1] https://lore.kernel.org/r/CAKUd0B_TCXRY4h1hTztfwWbNSFQqsudDLn2S_28csgWZmZAG3Q@mail.gmail.com/
 
-Two places receive VMSCAN_THROTTLE_ISOLATED wakeups and both then call
-too_many_isolated() which - on success - sends another wakeup - before
-the caller has had a chance to isolate anything.  If, instead, the
-wakeup was sent sometime later, after pages were isolated by before the
-caller (isoloate_migratepages_block() or shrink_inactive_list())
-returned, then we would get an orderly progression of threads running
-through that code.
+Fixes: af5c72b1fc7a ("Fix aio_poll() races")
+Signed-off-by: Ramji Jiyani <ramjiyani@google.com>
+Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Cc: stable@vger.kernel.org # 4.19+
+---
+Changes since v1:
+- Removed parenthesis around POLLFREE macro definition as per review.
+- Updated description to refer UAF issue discussion this patch fixes.
+- Updated description to remove reference to parenthesis change.
+- Added Reviewed-by from Jeff Moyer
 
-For VMSCAN_THROTTLE_WRITEBACK is a little less straight forward.
-There are two different places that wait for the wakeup, and a wake_up
-is sent to all waiters after a time proportional to the number of
-waiters.  It might make sense to wake one thread per time unit?
-That might work well for do_writepages - every SWAP_CLUSTER_MAX writes
-triggers one wakeup.
-I'm less sure that it would work for shrink_node().  Maybe the
-shrink_node() waiters could be non-exclusive so they get woken as soon a
-SWAP_CLUSTER_MAX writes complete, while do_writepages are exclusive and
-get woken one at a time.
+Changes since v2:
+- Added Fixes tag.
+- Added stable tag for backporting on 4.19+ LTS releases
 
-For VMSCAN_THROTTLE_NOPROGRESS .... I don't understand.
-If one zone isn't making "enough" progress, we throttle before moving on
-to the next zone.  So we delay processing of the next zone, and only
-indirectly delay re-processing of the current congested zone.
-Maybe it make sense, but I don't see it yet.  I note that the commit
-message says "it's messy".  I can't argue with that!
+Changes since v3:
+- Updated patch description
+- Updated Fixes tag to issue manifestation origin
 
-I'll follow up with patches to clarify what I am thinking about the
-first two.  I'm not proposing the patches, just presenting them as part
-of improving my understanding.
+Changes since v4:
+- Added Reviewed-by from Christoph Hellwig
+---
+ fs/aio.c                        | 45 ++++++++++++++++++---------------
+ include/uapi/asm-generic/poll.h |  2 +-
+ 2 files changed, 26 insertions(+), 21 deletions(-)
 
-Thanks,
-NeilBrown
+diff --git a/fs/aio.c b/fs/aio.c
+index 51b08ab01dff..5d539c05df42 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1674,6 +1674,7 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
+ {
+ 	struct poll_iocb *req = container_of(wait, struct poll_iocb, wait);
+ 	struct aio_kiocb *iocb = container_of(req, struct aio_kiocb, poll);
++	struct kioctx *ctx = iocb->ki_ctx;
+ 	__poll_t mask = key_to_poll(key);
+ 	unsigned long flags;
+ 
+@@ -1683,29 +1684,33 @@ static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
+ 
+ 	list_del_init(&req->wait.entry);
+ 
+-	if (mask && spin_trylock_irqsave(&iocb->ki_ctx->ctx_lock, flags)) {
+-		struct kioctx *ctx = iocb->ki_ctx;
++	/*
++	 * Use irqsave/irqrestore because not all filesystems (e.g. fuse)
++	 * call this function with IRQs disabled and because IRQs have to
++	 * be disabled before ctx_lock is obtained.
++	 */
++	if (mask & POLLFREE) {
++		/* Force complete iocb inline to remove refs to deleted entry */
++		spin_lock_irqsave(&ctx->ctx_lock, flags);
++	} else if (!(mask && spin_trylock_irqsave(&ctx->ctx_lock, flags))) {
++		/* Can't complete iocb inline; schedule for later */
++		schedule_work(&req->work);
++		return 1;
++	}
+ 
+-		/*
+-		 * Try to complete the iocb inline if we can. Use
+-		 * irqsave/irqrestore because not all filesystems (e.g. fuse)
+-		 * call this function with IRQs disabled and because IRQs
+-		 * have to be disabled before ctx_lock is obtained.
+-		 */
+-		list_del(&iocb->ki_list);
+-		iocb->ki_res.res = mangle_poll(mask);
+-		req->done = true;
+-		if (iocb->ki_eventfd && eventfd_signal_allowed()) {
+-			iocb = NULL;
+-			INIT_WORK(&req->work, aio_poll_put_work);
+-			schedule_work(&req->work);
+-		}
+-		spin_unlock_irqrestore(&ctx->ctx_lock, flags);
+-		if (iocb)
+-			iocb_put(iocb);
+-	} else {
++	/* complete iocb inline */
++	list_del(&iocb->ki_list);
++	iocb->ki_res.res = mangle_poll(mask);
++	req->done = true;
++	if (iocb->ki_eventfd && eventfd_signal_allowed()) {
++		iocb = NULL;
++		INIT_WORK(&req->work, aio_poll_put_work);
+ 		schedule_work(&req->work);
+ 	}
++	spin_unlock_irqrestore(&ctx->ctx_lock, flags);
++	if (iocb)
++		iocb_put(iocb);
++
+ 	return 1;
+ }
+ 
+diff --git a/include/uapi/asm-generic/poll.h b/include/uapi/asm-generic/poll.h
+index 41b509f410bf..f9c520ce4bf4 100644
+--- a/include/uapi/asm-generic/poll.h
++++ b/include/uapi/asm-generic/poll.h
+@@ -29,7 +29,7 @@
+ #define POLLRDHUP       0x2000
+ #endif
+ 
+-#define POLLFREE	(__force __poll_t)0x4000	/* currently only for epoll */
++#define POLLFREE	(__force __poll_t)0x4000
+ 
+ #define POLL_BUSY_LOOP	(__force __poll_t)0x8000
+ 
+-- 
+2.33.0.1079.g6e70778dc9-goog
+
