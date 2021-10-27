@@ -2,146 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8522B43C27B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 08:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 749D843C323
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Oct 2021 08:42:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236091AbhJ0GC6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Oct 2021 02:02:58 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:48119 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230225AbhJ0GC5 (ORCPT
+        id S239967AbhJ0Gou (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Oct 2021 02:44:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49342 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230342AbhJ0Got (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Oct 2021 02:02:57 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0Utr8PLe_1635314430;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Utr8PLe_1635314430)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 27 Oct 2021 14:00:31 +0800
-Subject: Re: [PATCH v6 2/7] fuse: make DAX mount option a tri-state
-To:     Ira Weiny <ira.weiny@intel.com>, Vivek Goyal <vgoyal@redhat.com>
-Cc:     Dave Chinner <dchinner@redhat.com>, stefanha@redhat.com,
-        miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        virtio-fs@redhat.com, bo.liu@linux.alibaba.com,
-        joseph.qi@linux.alibaba.com
-References: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
- <20211011030052.98923-3-jefflexu@linux.alibaba.com>
- <YW2AU/E0pLHO5Yl8@redhat.com>
- <652ac323-6546-01b8-992e-460ad59577ca@linux.alibaba.com>
- <YXAzB5sOrFRUzTC5@redhat.com>
- <96956132-fced-5739-d69a-7b424dc65f7c@linux.alibaba.com>
- <20211025175251.GF3465596@iweiny-DESK2.sc.intel.com>
- <YXbzeomdC5cD1xfF@redhat.com>
- <20211025190201.GG3465596@iweiny-DESK2.sc.intel.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <5cb17c6b-380d-857b-d676-7ab2e8eba731@linux.alibaba.com>
-Date:   Wed, 27 Oct 2021 14:00:30 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
+        Wed, 27 Oct 2021 02:44:49 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EBAEC061570
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Oct 2021 23:42:24 -0700 (PDT)
+Date:   Wed, 27 Oct 2021 08:42:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1635316942;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5UMH8mrH+wG1Xu18KQSyfaYnndhtorvlL8kFMwF1nBs=;
+        b=0Gr6iATjfU2zpCSJdLQKlmIMR79b+0M21GCJVDos3s11DFD6ljtGcOTLwnHpZw5N6sy1UB
+        dhf1JJ1tFWW23R0aZEDHx2kU3cRp+DUjUl2/o+AK+Z1pIMsli5cp9zvDw38iFN3j1dcHmq
+        7T9fDZvGCPJYloI+0GtTL1EL9wpMvMl3kID0O81s2JofGegmW9kDSonY0Vip5DgF1iHDsV
+        y21Sn4esWi6QDQrd50vt8j2ei/+OHrc6wFcg4J8OcB2yScxr8gWLk3S/YnqTNL4Mmq3KLq
+        TgRu5FiLyLqBYifLgmGLMVaCu+VjqB3AGWkcNNoTdOu+INUC8O9XfGBlFq5OXQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1635316942;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5UMH8mrH+wG1Xu18KQSyfaYnndhtorvlL8kFMwF1nBs=;
+        b=aOSzYwcQd3RQ5VfAdQb1kXrOHQ4xo7DQrQ1wb95BfitKawmQVE3voX4p4lObeeJ2W59Thk
+        f2TycjkazQmE0WDQ==
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] fs/namespace: Boost the mount_lock.lock owner instead of
+ spinning on PREEMPT_RT.
+Message-ID: <20211027064220.sat5rawz3fsa7yq5@linutronix.de>
+References: <20211021220102.bm5bvldjtzsabbfn@linutronix.de>
+ <20211025091504.6k7d57awbfpqmmqs@wittgenstein>
+ <20211025152218.opvcqfku2lhqvp4o@linutronix.de>
+ <20211026210621.yeg56reluq2cqrqs@wittgenstein>
 MIME-Version: 1.0
-In-Reply-To: <20211025190201.GG3465596@iweiny-DESK2.sc.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20211026210621.yeg56reluq2cqrqs@wittgenstein>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks for your replying, Ira Weiny.
+On 2021-10-26 23:06:21 [+0200], Christian Brauner wrote:
+> I'm not an expert in real-time locking but this solution is way less
+> intrusive and easier to explain and understand than the first version.
+> Based on how I understand priority inheritance this solution seems good.
+> 
+> The scenario that we seem to mostly worry is:
+> Let's assume a low-priority task A is holding lock_mount_hash() and
+> writes MNT_WRITE_HOLD to mnt->mnt_flags. Another high-priority task B is
+> spinning waiting for MNT_WRITE_HOLD to be cleared.
+> On rt kernels task A could be scheduled away causing the high-priority
+> task B to spin for a long time. However, if we force the high-priority
 
+s/for a long time/indefinitely
 
-On 10/26/21 3:02 AM, Ira Weiny wrote:
-> [snippet]
->>>> Hi, Ira Weiny,
->>>>
->>>> Do you have any thought on this, i.e. why the default behavior has
->>>> changed after introduction of per inode dax?
->>>
->>> While this is 'technically' different behavior the end user does not see any
->>> difference in behavior if they continue without software changes.  Specifically
->>> specifying nothing continues to operate with all the files on the FS to be
->>> '_not_ DAX'.  While specifying '-o dax' forces DAX on all files.
->>>
->>> This expands the default behavior in a backwards compatible manner.
->>
->> This is backward compatible in a sense that if somebody upgrades to new
->> kernel, things will still be same. 
->>
->> I think little problematic change is that say I bring in persistent
->> memory from another system (which has FS_XFLAGS_DAX set on some inodes)
->> and then mount it without andy of the dax mount options, then per
->> inode dax will be enabled unexpectedly if I boot with newer kernels
->> but it will be disable if I mount with older kernels. Do I understand it
->> right.
-> 
-> Indeed that will happen.  However, wouldn't the users (software) of those files
-> have knowledge that those files were DAX and want to continue with them in that
-> mode?
-> 
->>
->>> The user
->>> can now enable DAX on some files.  But this is an opt-in on the part of the
->>> user of the FS and again does not change with existing software/scripts/etc.
->>
->> Don't understand this "opt-in" bit. If user mounts an fs without
->> specifying any of the dax options, then per inode dax will still be
->> enabled if inode has the correct flag set.
-> 
-> But only users who actually set that flag 'opt-in'.
-> 
->> So is setting of flag being
->> considered as opt-in (insted of mount option).
-> 
-> Yes.
-> 
->>
->> If setting of flag is being considered as opt-in, that probably will not
->> work very well with virtiofs. Because server can enforce a different
->> policy for enabling per file dax (instead of FS_XFLAG_DAX).
-> 
-> I'm not sure I understand how this happens?  I think the server probably has to
-> enable per INODE by default to allow the client to do what the end users wants.
-> 
-> I agree that if the end user is expecting DAX and the server disables it then
-> that is a problem but couldn't that happen before?  Maybe I'm getting confused
-> because I'm not familiar enough with virtiofs.
-> 
->>
->> And given there are two entities here (client and server), I think it
->> will be good if if we give client a chance as well to decide whether
->> it wants to enable per file dax or not. I know it can alwasy do 
->> "dax=never" but it can still be broken if client software remains
->> same but host/server software is upgraded or commnad line changed.
-> 
-> But the files are 'owned' by a single user or group of users who must have
-> placed the file in DAX mode at some point right?
+> task B to grab lock_mount_hash() we thereby priority boost low-priorty
+> task A causing it to relinquish the lock quickly preventing task B from
+> spinning for a long time.
 
-So this is the essence of this issue, i.e. whether those who mount the
-filesystem (responsible for specifying mount options) and those who set
-the persistent inode flag are one same group people.
+Yes. Task B goes idle, Task A continues with B's priority until 
+unlock_mount_hash(). After unlock A gets its old priority back and B
+continues.
 
-For local filesystem like ext4/xfs, these two entities are most likely
-one group people, so we can say that 'the default behavior is still
-backward compatible'.
+Side note: Because task A is holding a spinlock_t (lock_mount_hash()) it
+can't be moved to another CPU (other reasons). Therefore if task B is on
+the same CPU as A with higher priority then the scheduler can't move A
+away and won't move B either because it is running. So the system locks
+up.
 
-However this semantic can be challenged a little by the example exposed
-by Vivek, that these two entities may not be one group even in local
-filesystem. Though this case may be rare in real world.
+> Under the assumption I got this right:
+> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-But for remote filesystem like virtiofs, the deviation between these two
-entities can be larger. For example, if the exported directory on host
-is shared by two guest and guest A sets the persistent inode flag for
-one file, then guest B will also see that DAX is enabled for this file
-when the virtiofs is mounted with the default option inside guest B. In
-this case, the persistent indoe flag is not set by guest B itself nor
-the server, and it may break the expectation of guest B.
+Thanks.
 
+> > --- a/fs/namespace.c
+> > +++ b/fs/namespace.c
+> > @@ -343,8 +343,24 @@ int __mnt_want_write(struct vfsmount *m)
+> >  	 * incremented count after it has set MNT_WRITE_HOLD.
+> >  	 */
+> >  	smp_mb();
+> > -	while (READ_ONCE(mnt->mnt.mnt_flags) & MNT_WRITE_HOLD)
+> > -		cpu_relax();
+> > +	might_lock(&mount_lock.lock);
+> > +	while (READ_ONCE(mnt->mnt.mnt_flags) & MNT_WRITE_HOLD) {
+> > +		if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
+> > +			cpu_relax();
 > 
->>
->> So for virtiofs, I think better behavior is to continue to not enable
->> any dax until and unless user opts-in using "-o dax=foo" options.
-> 
+> IS_ENABLED will have the same effect as using ifdef, i.e. compiling the
+> irrelevant branch out, I hope.
 
-I also prefer keeping the 'dax=never' default behavior for virtiofs.
+Yes. It turns into if (0) or if (1) leading to an elimination of one of
+the branches.
 
--- 
-Thanks,
-Jeffle
+Sebastian
