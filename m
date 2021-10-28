@@ -2,134 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20F4F43DCE6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 10:22:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A967043DD10
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 10:43:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229835AbhJ1IZD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Oct 2021 04:25:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbhJ1IZC (ORCPT
+        id S230016AbhJ1IqX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Oct 2021 04:46:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36624 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229791AbhJ1IqW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Oct 2021 04:25:02 -0400
-Received: from mail-ua1-x92f.google.com (mail-ua1-x92f.google.com [IPv6:2607:f8b0:4864:20::92f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE9FC061570
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 01:22:35 -0700 (PDT)
-Received: by mail-ua1-x92f.google.com with SMTP id ba32so10029469uab.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 01:22:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WFQUl5lQF75lAZY622NXTFhZE7M87GvtIA7Xxf4Z/3A=;
-        b=PEi2o4TK81RcOdu3081y781tOgPnE+qlHNbhOxV4gZ72uIETbXfvk6EciIuOouGps7
-         6RpeYscJAGLO1Am97lSLm/WKz2LNSpZ83zRZGkiNnXRZ2Z7FjrMzaWofR98Z8EXuFaQ2
-         g/PCgh1y5bG/LlfZJOV21Kdbim5oYLsEu1wEc=
+        Thu, 28 Oct 2021 04:46:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635410635;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KccYG4rSdcXMoVRo53pQg4Ozdzh38yw0Q7oh7hWL/OA=;
+        b=W53oVEaDQzM8VF6YoIGich0YcmQU7TxrAmiqolsqmbApNLJD5N0jCCnjEoOjGsd2oNqg2x
+        vIjegVBS5fClyOdzmOHGzoycz8fSkZNNJeLO3f3KXjBC6eJoGv/qXcsDF6b5+9+qTc7Z4K
+        Tn72LK5p6uxxzsfaHbRvF0tZfq88XiU=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-294-2-Ea0XXNNDmdKjjx0Wq8Rw-1; Thu, 28 Oct 2021 04:43:54 -0400
+X-MC-Unique: 2-Ea0XXNNDmdKjjx0Wq8Rw-1
+Received: by mail-qk1-f198.google.com with SMTP id w11-20020a05620a128b00b00462a7984b96so3403091qki.20
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 01:43:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=WFQUl5lQF75lAZY622NXTFhZE7M87GvtIA7Xxf4Z/3A=;
-        b=XyuCuyEFCd7zoQdvPl32JhQ+L3EvSr0U5aH4qNloYAMda4Y+UMVCZybf9pN/IftBy2
-         iUw6ss9rsCn5uR/0w2S4sjLI9H9xHNb72n+dnM5+uJtD0s69Fb/OnLSz9oI85kOvOsvu
-         zazRt53hlCfjk0fMlBopjyerkRpb2OUFFyFc3jEXTKWx7vHRh7NdLIGgr8YR5ZQoLL3S
-         e0mlpYrEWhpHXKq+3Bbe+mbD4d+Xp94Oznq8QBcaYNVzDOYMClG2iXjqCuS3NITZ5oEe
-         xNoL7+3v8YnUe/3Td+dEcahbH/fdkvD1Dw8M0W1FzXZUkd+3DgbXDWa0Elw2NLsIQv2G
-         Uw9A==
-X-Gm-Message-State: AOAM533SQuTObHch6vbF7agc6eUOBY6g6jzJEcY0YkZ1ggZbscdUu9sj
-        0Hh2GjYTljewqKOE/FTRrBRRo3TM7RKVFI7W1/83XA==
-X-Google-Smtp-Source: ABdhPJy7KU9YUyCn3gnaxPMYUm4BOZHDxPW3xzFGmpO+ApLSDI5qoQocrqUcKTVroOxOtiNl66vdNWZvk/uKt/lsqVI=
-X-Received: by 2002:a9f:21b7:: with SMTP id 52mr2809084uac.9.1635409355005;
- Thu, 28 Oct 2021 01:22:35 -0700 (PDT)
+        bh=KccYG4rSdcXMoVRo53pQg4Ozdzh38yw0Q7oh7hWL/OA=;
+        b=yFXswgfIDE/uMU/UQfQZbHC0tu8ydyXuVckGN8/uAd8nRmJHH0ZX5eCZdb/NaCGfm4
+         zAd18uEP22SwtszE7FLMihYQ/qj6VuFOdFKTOxOqSm6V3xic85jhq6dmouNzDRWuvah3
+         fejBfKBBvGvxXVFKVgQpA8+aVq3H1KWJUBVHpXy/njh42CdBvokyWLS+DB8OJABYztWi
+         r9mQKUM47HOhTOb6aGedXABJFxqT9V/zTFTkImKi7ql/isH0AuGDEhbfnt3orcV6tGUY
+         tOX2xH9mAAn/10xlIXcIwdj93eu2ylJHsmgW91oqpKAUeMEMqTx0V1DmpNkvIgsEpFt9
+         KFig==
+X-Gm-Message-State: AOAM5323dJk2wKRBT3UJRh5jSSHGVDZ+mjCA31O8HDkyctbk3E4eitr6
+        Judxx2lHcooA3p6Y/KjWL5h0ouDjknZ2E+uQa7t1FhAXajWTIXt+exF8qRuW+p36M6WWjk4S7I6
+        +r0WL3UtiTyLSnt7UNlrnyfACQeYxyLA+CNeg15urpQ==
+X-Received: by 2002:a05:620a:15f3:: with SMTP id p19mr2422628qkm.337.1635410634134;
+        Thu, 28 Oct 2021 01:43:54 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzArBk6z7YGdByxd/X+igic/KcScZxC371ErWZ5REyS2JhtSA3Npou6sTwbdZL/ZSDM/1i2lyGhR3evMJPw0lI=
+X-Received: by 2002:a05:620a:15f3:: with SMTP id p19mr2422618qkm.337.1635410633974;
+ Thu, 28 Oct 2021 01:43:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211024132607.1636952-1-amir73il@gmail.com> <YXVltvcDKNCqodJz@lpc>
- <CAOQ4uxjV2LXvu0kiLuDR_kvgHxLcwPCT1Y5NyD6aaMWrwg1EiQ@mail.gmail.com>
- <YXV4/u4iryv/sXFX@lpc> <CAOQ4uxjq-HBRQ8DFNTnRobtmAOi6kKs-1WTXeoik_x=_=QDa2g@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjq-HBRQ8DFNTnRobtmAOi6kKs-1WTXeoik_x=_=QDa2g@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 28 Oct 2021 10:22:24 +0200
-Message-ID: <CAJfpegumbz+v4CA7_+cSCKyj2ayhXyGru-oJ07pzKoMtfPbNOw@mail.gmail.com>
-Subject: Re: [PATCH] fuse: add FOPEN_NOFLUSH
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Shachar Sharon <synarete@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20211021151528.116818-1-lmb@cloudflare.com> <20211021151528.116818-2-lmb@cloudflare.com>
+ <b215bb8c-3ffd-2b43-44a3-5b25243db5be@iogearbox.net>
+In-Reply-To: <b215bb8c-3ffd-2b43-44a3-5b25243db5be@iogearbox.net>
+From:   Miklos Szeredi <mszeredi@redhat.com>
+Date:   Thu, 28 Oct 2021 10:43:43 +0200
+Message-ID: <CAOssrKciL5EDhrbQe1mkOrtD1gwkrEBRQyQmVhRE8Z-Kjb0WGw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 1/3] libfs: support RENAME_EXCHANGE in simple_rename()
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Lorenz Bauer <lmb@cloudflare.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        kernel-team@cloudflare.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 24 Oct 2021 at 17:30, Amir Goldstein <amir73il@gmail.com> wrote:
+On Thu, Oct 28, 2021 at 1:46 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
 >
-> On Sun, Oct 24, 2021 at 6:17 PM Shachar Sharon <synarete@gmail.com> wrote:
+> [ Adding Miklos & Greg to Cc for review given e0e0be8a8355 ("libfs: support RENAME_NOREPLACE in
+>    simple_rename()"). If you have a chance, would be great if you could take a look, thanks! ]
+>
+> On 10/21/21 5:15 PM, Lorenz Bauer wrote:
+> > Allow atomic exchange via RENAME_EXCHANGE when using simple_rename.
+> > This affects binderfs, ramfs, hubetlbfs and bpffs. There isn't much
+> > to do except update the various *time fields.
 > >
-> > On Sun, Oct 24, 2021 at 05:21:55PM +0300, Amir Goldstein wrote:
-> > >On Sun, Oct 24, 2021 at 4:55 PM Shachar Sharon <synarete@gmail.com> wrote:
-> > >>
-> > >> On Sun, Oct 24, 2021 at 04:26:07PM +0300, Amir Goldstein wrote:
-> > >> >Add flag returned by OPENDIR request to avoid flushing data cache
-> > >> >on close.
-> > >> >
-> > >> I believe this holds not only for FUSE_OPENDIR but also to FUSE_OPEN and
-> > >> FUSE_CREATE (see 'struct fuse_open_out').
-> > >>
-> > >
-> > >Oops that was a copy&paste typo.
-> > >Of course this is only relevant for FUSE_OPEN and FUSE_CREATE.
+> > Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
+> > ---
+> >   fs/libfs.c | 6 +++++-
+> >   1 file changed, 5 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/libfs.c b/fs/libfs.c
+> > index 51b4de3b3447..93c03d593749 100644
+> > --- a/fs/libfs.c
+> > +++ b/fs/libfs.c
+> > @@ -455,9 +455,12 @@ int simple_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
+> >       struct inode *inode = d_inode(old_dentry);
+> >       int they_are_dirs = d_is_dir(old_dentry);
+> >
+> > -     if (flags & ~RENAME_NOREPLACE)
+> > +     if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE))
+> >               return -EINVAL;
+> >
+> > +     if (flags & RENAME_EXCHANGE)
+> > +             goto done;
+> > +
 
-Fixed up.
+This is not sufficient.   RENAME_EXCHANGE can swap a dir and a
+non-dir, in which case the parent nlink counters need to be fixed up.
 
-> > >> > fs/fuse/file.c            | 3 +++
-> > >> > include/uapi/linux/fuse.h | 3 +++
-> > >> > 2 files changed, 6 insertions(+)
-> > >> >
-> > >> >diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > >> >index 11404f8c21c7..6f502a76f9ac 100644
-> > >> >--- a/fs/fuse/file.c
-> > >> >+++ b/fs/fuse/file.c
-> > >> >@@ -483,6 +483,9 @@ static int fuse_flush(struct file *file, fl_owner_t id)
-> > >> >       if (fuse_is_bad(inode))
-> > >> >               return -EIO;
-> > >> >
-> > >> >+      if (ff->open_flags & FOPEN_NOFLUSH)
-
-This needs to check for !fc->writeback_cache.  Fixed up.
-
-Without this dirty pages could persist after the file is finally
-closed, which is undesirable for several reasons.  One is that a
-writably open file is no longer guaranteed to exist (needed for
-filling fuse_write_in::fh).  Another is that writing out pages from
-memory reclaim is deadlock prone.  So even if we could omit the fh
-field we'd need to make sure that reclaim doesn't wait for fuse
-writeback.  So while having dirty pages beyond last close(2) could be
-really useful, it's not something we can currently do.
-
-Note: while mainline currently does flush pages from ->release(),
-that's wrong, and removed in fuse.git#for_next.
-
-> > >> >--- a/include/uapi/linux/fuse.h
-> > >> >+++ b/include/uapi/linux/fuse.h
-> > >> >@@ -184,6 +184,7 @@
-> > >> >  *
-> > >> >  *  7.34
-> > >> >  *  - add FUSE_SYNCFS
-> > >> Most likely you want to bump to 7.35; 7.34 is already out in the wild
-> > >> (e.g., on my Fedora33 workstation)
-> > >>
-> > >
-> > >Possibly. I wasn't sure what was the rationale behind when the version
-> > >should be bumped.
-> > >One argument against bumping the version is that there is not much
-> > >harm is passing this flag to an old kernel - it just ignored the flag
-> > >and sends the flush requests anyway.
->
-> Miklos, do I need to bump the protocol version?
-
-We've historically done that.   But the last minor version that is
-actually checked by the kernel or libfuse was 23 (the fuse_init_out
-expansion), so nothing bad would happen if for some reason the bump
-was forgotten.
-
-I've fixed this up too and pushed out to #for-next.
+See shmem_exchange().   My suggestion is to move that function to
+libfs.c:simple_rename_exchange().
 
 Thanks,
 Miklos
+
