@@ -2,48 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A283943F28D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 00:16:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D94343F2D5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 00:33:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231235AbhJ1WSf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Oct 2021 18:18:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53848 "EHLO
+        id S231565AbhJ1Wf1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Oct 2021 18:35:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231124AbhJ1WSf (ORCPT
+        with ESMTP id S231579AbhJ1WfL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Oct 2021 18:18:35 -0400
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F06BC061570;
-        Thu, 28 Oct 2021 15:16:07 -0700 (PDT)
-Received: by mail-io1-xd34.google.com with SMTP id n67so10111875iod.9;
-        Thu, 28 Oct 2021 15:16:07 -0700 (PDT)
+        Thu, 28 Oct 2021 18:35:11 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E016C061570
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 15:32:44 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id h11so13351353ljk.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 15:32:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=rg70L5/px9IrBTtKlC6NDcYo4kfwnEG9jTpOWhVqPcc=;
-        b=eLMlkR3CrL/8PKVzyYVcuncnEdxnsfxn3riWgN8oKOQlGwnX+UChUbaymKEw6taCnn
-         T8Axfv4krveNN1JwPJ8iFTOlfd102NDBwnWrreHYu4O3lJvrvpNe2/UNEdxrzQ9SIEC2
-         QLoTJw49KEGspkcIbfmZwhQPQnQHmI3RwBeznARr6NdRUey/+TThUWIxW9Sln8YZy4R8
-         11VLzJvcLrKyWixt2PgLtCOpiAI3GIufYgiUdKrBvJwerHJEVjKfl6H+d48ohmeM6LH4
-         qI+q4pHyEmmlq/Z2OQHtWTRygZ3gz8XwduyZ/uS8/ZOuJq5JPvoIFBAGbgx8he4F1Sb8
-         u0iw==
+        bh=P2oA0jP1wTViA9d0b6XSu2m2Y7tBKqkUPBuDKDK703M=;
+        b=HzbuQnUzqbVH0zR+CZxMx/jYbjOwSKkqX9v1Ii3J+JA3hprq4SQBq/oq1XV2WHbboW
+         GM6mCzsEY8CYnDKile42NhDWBAMmGmwAtNFEXySLaWKfRUD8V0FHk+7TYyOvdi/ZUvfX
+         rOFaS1m2I/gKNLQEoFvUh9TDMESUKJVjJQ7lU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rg70L5/px9IrBTtKlC6NDcYo4kfwnEG9jTpOWhVqPcc=;
-        b=L/DRI1oulBjkW6Rq0CXcppn/FcluXqjQE4oIn+JLyA9t33m+qKb4OViuIQ33dYX60R
-         001EoHXE37qWdx8gTzPi/MvP+0UN/jAjz+UphTB6PZu3DbBt97J7/d40RZsSwzJgNY9Y
-         GlpuQqpzwLP1og4EplBOkxjh+GGeA8a4mHRYSjO25pI0T8fnxwcquDvChSlXldFec5Pj
-         aXNAtzx5fmVOUO2Xdgh5oHpuTy2tlACb16SX/iqb7ULhgL5EJF1XngfyP0dIWs6/kPWa
-         PMH60Ova2gDyBmJBWgGGUgLIqd0lij4W3MPqKDzSOmjHjD3ktpaD9GfSy10g9NwErib2
-         0PWQ==
-X-Gm-Message-State: AOAM530S+Uu4ldN9l126Q2om5ocMNGKP6+14NOqQf4mbs13MQ1WCrDvO
-        fYNvgKUlK8dRx3MS1sKF12BqYVFquYkUq8daKII=
-X-Google-Smtp-Source: ABdhPJwQxQk+UInDEwQGMzT3vtIBaThPNMfpgrXChu4UuLq9KZI3dYCJq/rt6DgOPhDRcNVWlcfUbesD2a/U+JO29i0=
-X-Received: by 2002:a05:6602:736:: with SMTP id g22mr5165002iox.139.1635459366944;
- Thu, 28 Oct 2021 15:16:06 -0700 (PDT)
+        bh=P2oA0jP1wTViA9d0b6XSu2m2Y7tBKqkUPBuDKDK703M=;
+        b=UnOMg26Y1q79gmw3CnN4aGori+3zabAFOZGBZ1jP2GksUFhY0a7l03FQP3lpy0fgd+
+         +jzDcqQNPZgwdEJopQR88aU/WG/PvpzKQnZsgivT3IOXkbfDoN2vsdpJxqvhkBu5E5pq
+         gNHMSH8QeBXTsP7MSN5ggiteGFYmqwFpXHh/6hEzjNcrDx6Kicr7XXYEQPSosrR6Ytz5
+         oubeNMMYF3RdQfkiRMgVxL6lE42bd/VXCBPtXupghPuZW7pxLnDSajZeh4lxFAvJYu6n
+         9DDjay7alRngmH7RRe0g6gi0Mv3sPjka6lH40ZMOYTEP66sqGN8q+DtqVrXTi0Lg4T+J
+         1UxQ==
+X-Gm-Message-State: AOAM5308Ag+bA2T2dHgU4vfoMjz1jn1i6c0KlSoepiQ/ZM5JYWngTjqg
+        8FfrX6sdflXTj7hSSmpZtIlY8ncn1rCM4Ltp
+X-Google-Smtp-Source: ABdhPJyaWA3RQi2BhY6N9ocoqBo05I9McuL07KJnKqBBqQVjq+1B9XC44xlEwxbUPM/7xjhcRg5QIg==
+X-Received: by 2002:a2e:a5c8:: with SMTP id n8mr7801678ljp.367.1635460362308;
+        Thu, 28 Oct 2021 15:32:42 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id 1sm405744lje.8.2021.10.28.15.32.39
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Oct 2021 15:32:40 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id i26so11383809ljg.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 15:32:39 -0700 (PDT)
+X-Received: by 2002:a2e:89d4:: with SMTP id c20mr7772843ljk.191.1635460359642;
+ Thu, 28 Oct 2021 15:32:39 -0700 (PDT)
 MIME-Version: 1.0
 References: <CAHk-=wgv=KPZBJGnx_O5-7hhST8CL9BN4wJwtVuycjhv_1MmvQ@mail.gmail.com>
  <YXCbv5gdfEEtAYo8@arm.com> <CAHk-=wgP058PNY8eoWW=5uRMox-PuesDMrLsrCWPS+xXhzbQxQ@mail.gmail.com>
@@ -53,13 +59,13 @@ References: <CAHk-=wgv=KPZBJGnx_O5-7hhST8CL9BN4wJwtVuycjhv_1MmvQ@mail.gmail.com>
  <YXmkvfL9B+4mQAIo@arm.com> <CAHk-=wjQqi9cw1Guz6a8oBB0xiQNF_jtFzs3gW0k7+fKN-mB1g@mail.gmail.com>
  <YXsUNMWFpmT1eQcX@arm.com>
 In-Reply-To: <YXsUNMWFpmT1eQcX@arm.com>
-From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-Date:   Fri, 29 Oct 2021 00:15:55 +0200
-Message-ID: <CAHpGcMLeiXSjCJGY6SCJJ=bdNOspHLHofmTE8aC_sZtfHRG5ZA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 28 Oct 2021 15:32:23 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgzEKEYKRoR_abQRDO=R8xJX_FK+XC3gNhKfu=KLdxt3g@mail.gmail.com>
+Message-ID: <CAHk-=wgzEKEYKRoR_abQRDO=R8xJX_FK+XC3gNhKfu=KLdxt3g@mail.gmail.com>
 Subject: Re: [PATCH v8 00/17] gfs2: Fix mmap + page fault deadlocks
 To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
         Paul Mackerras <paulus@ozlabs.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -75,96 +81,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am Do., 28. Okt. 2021 um 23:21 Uhr schrieb Catalin Marinas
-<catalin.marinas@arm.com>:
-> One last try on this path before I switch to the other options.
->
-> On Wed, Oct 27, 2021 at 02:14:48PM -0700, Linus Torvalds wrote:
-> > On Wed, Oct 27, 2021 at 12:13 PM Catalin Marinas
-> > <catalin.marinas@arm.com> wrote:
-> > > As an alternative, you mentioned earlier that a per-thread fault status
-> > > was not feasible on x86 due to races. Was this only for the hw poison
-> > > case? I think the uaccess is slightly different.
-> >
-> > It's not x86-specific, it's very generic.
-> >
-> > If we set some flag in the per-thread status, we'll need to be careful
-> > about not overwriting it if we then have a subsequent NMI that _also_
-> > takes a (completely unrelated) page fault - before we then read the
-> > per-thread flag.
-> >
-> > Think 'perf' and fetching backtraces etc.
-> >
-> > Note that the NMI page fault can easily also be a pointer coloring
-> > fault on arm64, for exactly the same reason that whatever original
-> > copy_from_user() code was. So this is not a "oh, pointer coloring
-> > faults are different". They have the same re-entrancy issue.
-> >
-> > And both the "pagefault_disable" and "fault happens in interrupt
-> > context" cases are also the exact same 'faulthandler_disabled()'
-> > thing. So even at fault time they look very similar.
+On Thu, Oct 28, 2021 at 2:21 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
 >
 > They do look fairly similar but we should have the information in the
 > fault handler to distinguish: not a page fault (pte permission or p*d
 > translation), in_task(), user address, fixup handler. But I agree the
 > logic looks fragile.
->
-> I think for nested contexts we can save the uaccess fault state on
-> exception entry, restore it on return. Or (needs some thinking on
-> atomicity) save it in a local variable. The high-level API would look
-> something like:
->
->         unsigned long uaccess_flags;    /* we could use TIF_ flags */
->
->         uaccess_flags = begin_retriable_uaccess();
->         copied = copy_page_from_iter_atomic(...);
->         retry = end_retriable_uaccess(uaccess_flags);
->         ...
->
->         if (!retry)
->                 break;
->
-> I think we'd need a TIF flag to mark the retriable region and another to
-> track whether a non-recoverable fault occurred. It needs prototyping.
->
-> Anyway, if you don't like this approach, I'll look at error codes being
-> returned but rather than changing all copy_from_user() etc., introduce a
-> new API that returns different error codes depending on the fault
-> (e.g -EFAULT vs -EACCES). We already have copy_from_user_nofault(), we'd
-> need something for the iov_iter stuff to use in the fs code.
 
-We won't need any of that on the filesystem read and write paths. The
-two cases there are buffered and direct I/O:
+So thinking about this a bit more, I think I have a possible
+suggestion for how to handle this..
 
-* In the buffered I/O case, the copying happens with page faults
-disabled, at a byte granularity. If that returns a short result, we
-need to enable page faults, check if the exact address that failed
-still fails (in which case we have a sub-page fault),  fault in the
-pages, disable page faults again, and repeat. No probing for sub-page
-faults beyond the first byte of the fault-in address is needed.
-Functions fault_in_{readable,writeable} implicitly have this behavior;
-for fault_in_safe_writeable() the choice we have is to either add
-probing of the first byte for sub-page faults to this function or
-force callers to do that probing separately. At this point, I'd vote
-for the former.
+The pointer color fault (or whatever some other architecture may do to
+generate sub-page faults) is not only not recoverable in the sense
+that we can't fix it up, it also ends up being a forced SIGSEGV (ie it
+can't be blocked - it has to either be caught or cause the process to
+be killed).
 
-* In the direct I/O case, the copying happens while we're holding page
-references, so the only page faults that can occur during copying are
-sub-page faults. When iomap_dio_rw or its legacy counterpart is called
-with page faults disabled, we need to make sure that the caller can
-distinguish between page faults triggered during
-bio_iov_iter_get_pages() and during the copying, but that's a separate
-problem. (At the moment, when iomap_dio_rw fails with -EFAULT, the
-caller *cannot* distinguish between a bio_iov_iter_get_pages failure
-and a failure during synchronous copying, but that could be fixed by
-returning unique error codes from iomap_dio_rw.)
+And the thing is, I think we could just make the rule be that kernel
+code that has this kind of retry loop with fault_in_pages() would
+force an EFAULT on a pending SIGSEGV.
 
-So as far as I can see, the only problematic case we're left with is
-copying bigger than byte-size chunks with page faults disabled when we
-don't know whether the underlying pages are resident or not. My guess
-would be that in this case, if the copying fails, it would be
-perfectly acceptable to explicitly probe the entire chunk for sub-page
-faults.
+IOW, the pending SIGSEGV could effectively be exactly that "thread flag".
 
-Thanks,
-Andreas
+And that means that fault_in_xyz() wouldn't need to worry about this
+situation at all: the regular copy_from_user() (or whatever flavor it
+is - to/from/iter/whatever) would take the fault. And if it's a
+regular page fault,. it would act exactly like it does now, so no
+changes.
+
+If it's a sub-page fault, we'd just make the rule be that we send a
+SIGSEGV even if the instruction in question has a user exception
+fixup.
+
+Then we just need to add the logic somewhere that does "if active
+pending SIGSEGV, return -EFAULT".
+
+Of course, that logic might be in fault_in_xyz(), but it migth also be
+a separate function entirely.
+
+So this does effectively end up being a thread flag, but it's also
+slightly more than that - it's that a sub-page fault from kernel mode
+has semantics that a regular page fault does not.
+
+The whole "kernel access doesn't cause SIGSEGV, but returns -EFAULT
+instead" has always been an odd and somewhat wrong-headed thing. Of
+course it should cause a SIGSEGV, but that's not how Unix traditionall
+worked. We would just say "color faults always raise a signal, even if
+the color fault was triggered in a system call".
+
+(And I didn't check: I say "SIGSEGV" above, but maybe the pointer
+color faults are actually SIGBUS? Doesn't change the end result).
+
+                 Linus
