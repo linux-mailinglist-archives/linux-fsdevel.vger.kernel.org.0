@@ -2,76 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0580D43E6A9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 18:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3D3743E84A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 20:24:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230094AbhJ1Q4b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Oct 2021 12:56:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37148 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229795AbhJ1Q4b (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Oct 2021 12:56:31 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2DE4C061570
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 09:54:03 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id f7-20020a1c1f07000000b0032ee11917ceso1902501wmf.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 09:54:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=ZmsIX2SnwqFBZHN2fNP1qbkHnXkIdl/+axRXcfN/RWk=;
-        b=MIf8zneMWy8xA8fkPrATOTzsUPHCd3VeLBf+8G16JuQRT1WJriBKhA3JVMTb+SEWPs
-         FIRyPe/FgIcq3ivWK4HUu/zFDdtL5Pq7l0hi1vjnTMzN+Tz3+M8H7QYhDQjHKJQfxK0s
-         1DsVC4pd0xit+4FecLOIoVbuwrfJSHB9RGywpK4D5REry0bWt1rptlziPc9debfksYvQ
-         5ZkKnNDrw+VkFStAdb/ZRI8Q4FUvdtau9IgbSQo3f282/ONm4nmysorTqH9YWRs95dQK
-         XMfCvt20fZKDGxjxZ0UKGEdgODwRB+yr6dWzPQ0+U298Sn0RTqG3iBNy0IERhuSkPNn7
-         afFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=ZmsIX2SnwqFBZHN2fNP1qbkHnXkIdl/+axRXcfN/RWk=;
-        b=74pELmrZNagJQGh9Dui2gd+0buZmHHRDfnv/XkroWPuZa+TPvreVevHR74iQncUi0R
-         sTMQKhGUDTBzD/VIAdwysePbb0JlciSOZ2+IDPpr+EjWKoQ6psHpSN3uF6FfydpgvzDH
-         ZUGbP+qP48bx9CZv4KszW6WBxfhpM7IBEN9AyHAtsyS42yupIcu2nMmSsny8+RcQ3fkv
-         7RC1eD9KO3eiLH3Tj0cnwGMZDLXZF/NdDstN+GEsnm6eAmisk5KKm0Myb/mI84o4V+KT
-         gRY9Tc7iy+QgNivZksBsIYyI2voHh+VWtOPexhFRQbLTQ7Nm8VU7lD/G48VC3fH+IBwu
-         NFmA==
-X-Gm-Message-State: AOAM532fCw4bW4dF7lmmpJ7hh6fhw9ngmn19pc0AaK6aY3kwuMjKYN9F
-        dQLdh/lTgSgmlHb8gykJDgBhuWm14CEwkzdjS0E=
-X-Google-Smtp-Source: ABdhPJyMKJ7iDIIsitrNwPEBpGvd4P4Xy8PTfszC4DKUbMl8EnLjYhx82KUNfSuilsOK9NyLzYuTeQF16+hRptZAm7E=
-X-Received: by 2002:a05:600c:1d05:: with SMTP id l5mr5749749wms.97.1635440042570;
- Thu, 28 Oct 2021 09:54:02 -0700 (PDT)
+        id S231175AbhJ1S0g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Oct 2021 14:26:36 -0400
+Received: from mga09.intel.com ([134.134.136.24]:58306 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229645AbhJ1S0g (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Oct 2021 14:26:36 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10151"; a="230336085"
+X-IronPort-AV: E=Sophos;i="5.87,190,1631602800"; 
+   d="scan'208";a="230336085"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2021 11:24:08 -0700
+X-IronPort-AV: E=Sophos;i="5.87,190,1631602800"; 
+   d="scan'208";a="448078729"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2021 11:24:08 -0700
+Date:   Thu, 28 Oct 2021 11:24:08 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>, adilger.kernel@dilger.ca,
+        linux-xfs@vger.kernel.org,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
+        Christoph Hellwig <hch@lst.de>,
+        Dave Chinner <dchinner@redhat.com>
+Subject: Re: [Question] ext4/xfs: Default behavior changed after per-file DAX
+Message-ID: <20211028182407.GG3538886@iweiny-DESK2.sc.intel.com>
+References: <26ddaf6d-fea7-ed20-cafb-decd63b2652a@linux.alibaba.com>
+ <20211026154834.GB24307@magnolia>
+ <YXhWP/FCkgHG/+ou@redhat.com>
+ <20211026205730.GI3465596@iweiny-DESK2.sc.intel.com>
+ <YXlj6GhxkFBQRJYk@redhat.com>
+ <665787d0-f227-a95b-37a3-20f2ea3e09aa@linux.alibaba.com>
 MIME-Version: 1.0
-Sender: rhodamohammed2014@gmail.com
-Received: by 2002:adf:ed91:0:0:0:0:0 with HTTP; Thu, 28 Oct 2021 09:54:02
- -0700 (PDT)
-From:   rhoda mohammed <rhodamohammed01@gmail.com>
-Date:   Thu, 28 Oct 2021 18:54:02 +0200
-X-Google-Sender-Auth: oq3vy7kNru_DoQDTwX9MYoJdvQ4
-Message-ID: <CAJ8HPr9Cc1nn8MRgFSfULSG=MtCjw8tLxL-mb3eGmQBiPK-56Q@mail.gmail.com>
-Subject: From Mrs.Rhoda Ahmmed H.Mohammed/ READ AND ANSWER
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <665787d0-f227-a95b-37a3-20f2ea3e09aa@linux.alibaba.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ahmmed H. Mohammed .Please reply me to my personal email address(
-rhodamohammed02@gmail.com  ) for more  details
+On Thu, Oct 28, 2021 at 01:52:27PM +0800, JeffleXu wrote:
+> 
+> 
+> On 10/27/21 10:36 PM, Vivek Goyal wrote:
+> > [snip]
+> > 
+> >>
+> >> Is the biggest issue the lack of visibility to see if the device supports DAX?
+> > 
+> > Not necessarily. I think for me two biggest issues are.
+> > 
+> > - Should dax be enabled by default in server as well. If we do that,
+> >   server will have to make extra ioctl() call on every LOOKUP and GETATTR
+> >   fuse request. Local filesystems probably can easily query FS_XFLAGS_DAX
+> >   state but doing extra syscall all the time will probably be some cost
+> >   (No idea how much).
+> 
+> I tested the time cost from virtiofsd's perspective (time cost of
+> passthrough_ll.c:lo_do_lookup()):
+> - before per inode DAX feature: 2~4 us
+> - after per inode DAX feature: 7~8 us
+> 
+> It is within expectation, as the introduction of per inode DAX feature,
+> one extra ioctl() system call is introduced.
+> 
+> Also the time cost from client's perspective (time cost of
+> fs/fuse/dir.c:fuse_lookup_name())
+> - before per inode DAX feature: 25~30 us
+> - after per inode DAX feature: 30~35 us
+> 
+> That is, ~15%~20% performance loss.
+> 
+> Currently we do ioctl() to query the persitent inode flags every time
+> FUSE_LOOKUP request is received, maybe we could cache the result of
+> ioctl() on virtiofsd side, but I have no idea how to intercept the
+> runtime modification to these persistent indoe flags from other
+> processes on host, e.g. sysadmin on host, to maintain the cache consistency.
+>
 
-Hello Dear,I am Mrs. Rhoda  Ahmmed Mohammed, the Wife of late Chief
-Ahmmed H.Mohammed, a native of  Mende  district in the northern of
-Sierra Leone, before the death of my late Husband, He was appointed as
-the Director of Sierra Leone mining cooperation (S.L.M.C) Freetown,
-According to my husband, this huge money was accrued from mining
-cooperation, diamonds and Gold sales overdrafts and minor sales, I am
-for a Serious Investor that will help me my late Family wanted to kill
-me and collect the Deposit Certificate and Agreement Certificate from
-me but I run away from my country with the Documents, I want a God
-fearing, honest and trustworthy person thatb will help me receive this
-money in your Bank Account and Invest the money in your country or any
-country of your it is ver urgent, I will give you the full details as
-soon as you get back to me through my personal email addreSs
-rhodamohammed2@gmail.com )Mrs. Rhoda Ahmmed H. Mohammed
+Do you really expect the dax flag to change on individual files a lot?  This in
+itself is an expensive operation as the FS has to flush the inode.
+
+> 
+> So if the default behavior of client side is 'dax=inode', and virtiofsd
+> disables per inode DAX by default (neither '-o dax=server|attr' is
+
+I'm not following what dax=server or dax=attr is?
+
+> specified for virtiofsd) for the sake of performance, then guest won't
+> see DAX enabled and thus won't be surprised. This can reduce the
+> behavior change to the minimum.
+> 
+
+What processes, other than virtiofsd have 'control' of these files?
+
+I know that a sysadmin could come in and change the dax flag but I think that
+is like saying a sys-admin can come in and change your .bashrc and your
+environment is suddenly different.  We have to trust the admins not to do stuff
+like that.  So I don't think admins are going to be changing the dax flag on
+files out from under 'users'; in this case virtiofsd.  Right?
+
+That means that virtiofsd could cache the status and avoid the performance
+issues above correct?
+
+Ira
+
+> 
+> > 
+> > - So far if virtiofs is mounted without any of the dax options, just
+> >   by looking at mount option, I could tell, DAX is not enabled on any
+> >   of the files. But that will not be true anymore. Because dax=inode
+> >   be default, it is possible that server upgrade enabled dax on some
+> >   or all the files.
+> > 
+> >   I guess I will have to stick to same reason given by ext4/xfs. That is
+> >   to determine whether DAX is enabled on a file or not, you need to
+> >   query STATX_ATTR_DAX flag. That's the only way to conclude if DAX is
+> >   being used on a file or not. Don't look at filesystem mount options
+> >   and reach a conclusion (except the case of dax=never).
+> 
+> 
+> -- 
+> Thanks,
+> Jeffle
