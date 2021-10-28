@@ -2,192 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 922EA43D8BA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 03:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB04A43D8C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 03:43:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229735AbhJ1Bnw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Oct 2021 21:43:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56170 "EHLO
+        id S229698AbhJ1Bpz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Oct 2021 21:45:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbhJ1Bnv (ORCPT
+        with ESMTP id S229638AbhJ1Bpy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Oct 2021 21:43:51 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6040C061745
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 18:41:25 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id np13so3466234pjb.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Oct 2021 18:41:25 -0700 (PDT)
+        Wed, 27 Oct 2021 21:45:54 -0400
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2A36C061570;
+        Wed, 27 Oct 2021 18:43:28 -0700 (PDT)
+Received: by mail-io1-xd2b.google.com with SMTP id v65so6113407ioe.5;
+        Wed, 27 Oct 2021 18:43:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+57OykW2c30gUJR4jUskDQk4x1gwxn9Qbm17JsREFMA=;
-        b=GwABTqD6Tkvmyhn2eav2yJwtbW1tJceyJOpR55oElF8Cpl62Tl7fpwDRJSoK85tktg
-         WcSZzYI1J3gqZuBvcpDIMaP3fjxWgAXp2/71GNnfMTHJUKsW82nQtl3PxcHMw5XB0BGj
-         ol0Z6vrOct/ohRKJEQ4971tC4ghv27sixDbbqgpjArwG9QA0di/1K6lcnuWx54KE2Iv0
-         PlLdrGzgfAPZa89z4zZVquTUHRBE3n1XFA2eZslunyTMpQ/h+DaZ/H5bzksM/u3SBYyF
-         eGC2TY3oTZ8dh7yBcSfW5yNsChH5J+OrCKaL/dFJg1o9GeZbeU8dYWzE/mMch4zQe8Vr
-         Evvw==
+        bh=q2MWT3ltBpEutemWMnO5IV+Dli3w0cr7Jk2rYKN1WKo=;
+        b=VYaQyXfWM6sOanx3t6qAvPWFfD338jdnTaM7L2F4EXwJrISOsX2ByFuKTHv7xNRkTG
+         7BWciBeSY2irXsWhnWRi6OVqJxQs7/ZO79rLcIDs/aiVFWgHfJlvuVpfUToWcVFBDw49
+         BCfecdSa2WUEjL+TN94OyEqsucM5rEaK9DgGgCJaOCYNRUwXGRjWaKZseUmGso3F9gxw
+         di+uY+S3e+rK3xyX3eI/JiQ9ICTO+6tm+0hZ1D5dbOqVvxb2fQEWj7uSPsf/vcKdxhy1
+         StoSWoyz4zwvhiyUgYfxfRiYrspymffEwoasFZiknT2hQbvSdzCZRqpNBiWlqe1b6cj1
+         mybQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+57OykW2c30gUJR4jUskDQk4x1gwxn9Qbm17JsREFMA=;
-        b=SA2ejFLjDytujnGca4kn7Td544xiahHl7FTEClIB5e7YsMM8lzi2JZnNrWUPiAgMQz
-         EgNonUhBoiippuz15crkjvynl+/WKpGXg//Jb+jI06tnNxVRGdKXIeMiyygMZ+UH41Jw
-         EtP4XS3YSRwlw0oqzCdjVTlYA/yqeTg/9lSWHdIVAyq9gUnlpEeTAjLapthG2JxVRT5m
-         hFzwzpa2/4iIjpLjRCyWV5A2xA7puhSFNzlHNM7szQvJl9ond12NJLgZTe8ReQPo9PyX
-         V1r4Ab8xO5UIrPjR91WWVxBf80uvg1toeGCyTBIYZ+CSG+ckwSnH5hUbOlK6wfVeYEI+
-         4qsA==
-X-Gm-Message-State: AOAM531aRYvrExw8hKYBOPsDyxLO9RP2JLoz4bkqtc6j7KKAxhSQ4sNM
-        ife21leUx7UfSjdQcklVzwKBe8L/4QdVOM/H3dWscg==
-X-Google-Smtp-Source: ABdhPJy+l4+hDjjFqjiYrNzY24jHwGCV82yPyLMD7+lqHF6GqMdOIsbo6sHeOhaMgqSlqL4IZjgKI/J2hsCPQtYDPIA=
-X-Received: by 2002:a17:902:ab50:b0:13f:4c70:9322 with SMTP id
- ij16-20020a170902ab5000b0013f4c709322mr995386plb.89.1635385285322; Wed, 27
- Oct 2021 18:41:25 -0700 (PDT)
+        bh=q2MWT3ltBpEutemWMnO5IV+Dli3w0cr7Jk2rYKN1WKo=;
+        b=5GtjatUqJ3P9/HnNIN95alD9Bu6whWZ9XVH5ktL/d+9Y3X89z5iUXVvwstLkiMjlFh
+         hC0T0712eP4l1p0mDmyu5STkFNR9g/cCuoBFFLCV62gMSpF4zwqp788gqcLN1dTxVywT
+         5qQ9wYhSEAijAef1im6uXAFA2apjq5ewm3Ae2/isLPWeAutvFD1husaS/pkPBIA3dE8t
+         KCkzdsFUsrcoaeDGsP6trlq2ypDDWFRtQshtZogN5AyzuTfZE+Gi5lx4/KsOtzrHyWBD
+         XM9Dr8AC3LgvMDp0hYdRRLA8ifS6PBqYsQJxe3H0MsMQTWMv0yc2NUF2Pksh870R8cOH
+         SO3Q==
+X-Gm-Message-State: AOAM533MCB28MCWGOamJ3U8rP8FlBSMyDsmopkaAF7lQwf9LT/NoZXEn
+        /S17W2MLejSuW/NLZahlp0d1KcSH8CgbVh6cZdQ=
+X-Google-Smtp-Source: ABdhPJwNQClWNir1jhV830HzS4FTBIIlwJORqskR1S8FYGa8OK7RlivKeHpt/M/ZKHGSsheR5GLY1mxrQk02MMgYFuc=
+X-Received: by 2002:a02:cb9c:: with SMTP id u28mr1005721jap.95.1635385408343;
+ Wed, 27 Oct 2021 18:43:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211018044054.1779424-1-hch@lst.de> <20211018044054.1779424-11-hch@lst.de>
-In-Reply-To: <20211018044054.1779424-11-hch@lst.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 27 Oct 2021 18:41:13 -0700
-Message-ID: <CAPcyv4iLbbqyAsy1yjFXT48D3Ssp+jy4EMJt+Sj_o2W-WMgK9w@mail.gmail.com>
-Subject: Re: [PATCH 10/11] dm-stripe: add a stripe_dax_pgoff helper
-To:     Christoph Hellwig <hch@lst.de>, Mike Snitzer <snitzer@redhat.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org
+References: <20211025083315.4752-1-laoar.shao@gmail.com> <20211025083315.4752-13-laoar.shao@gmail.com>
+ <202110251431.F594652F@keescook> <YXmySeDsxxbA7hcq@alley>
+In-Reply-To: <YXmySeDsxxbA7hcq@alley>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Thu, 28 Oct 2021 09:42:52 +0800
+Message-ID: <CALOAHbB4LT8t6g5NseRygGAaAbHzKXfuWzg+TnLeg1tRUuwePg@mail.gmail.com>
+Subject: Re: [PATCH v6 12/12] kernel/kthread: show a warning if kthread's comm
+ is truncated
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Qiang Zhang <qiang.zhang@windriver.com>,
+        robdclark <robdclark@chromium.org>,
+        christian <christian@brauner.io>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        David Miller <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        john fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>,
+        dennis.dalessandro@cornelisnetworks.com,
+        mike.marciniszyn@cornelisnetworks.com, dledford@redhat.com,
+        jgg@ziepe.ca, linux-rdma@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        kbuild test robot <lkp@intel.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Oct 17, 2021 at 9:41 PM Christoph Hellwig <hch@lst.de> wrote:
+On Thu, Oct 28, 2021 at 4:10 AM Petr Mladek <pmladek@suse.com> wrote:
 >
-> Add a helper to perform the entire remapping for DAX accesses.  This
-> helper open codes bdev_dax_pgoff given that the alignment checks have
-> already been done by the submitting file system and don't need to be
-> repeated.
+> On Mon 2021-10-25 14:35:42, Kees Cook wrote:
+> > On Mon, Oct 25, 2021 at 08:33:15AM +0000, Yafang Shao wrote:
+> > > Show a warning if task comm is truncated. Below is the result
+> > > of my test case:
+> > >
+> > > truncated kthread comm:I-am-a-kthread-with-lon, pid:14 by 6 characters
+> > >
+> > > Suggested-by: Petr Mladek <pmladek@suse.com>
+> > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> > > Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+> > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > > Cc: Kees Cook <keescook@chromium.org>
+> > > Cc: Petr Mladek <pmladek@suse.com>
+> > > ---
+> > >  kernel/kthread.c | 7 ++++++-
+> > >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/kernel/kthread.c b/kernel/kthread.c
+> > > index 5b37a8567168..46b924c92078 100644
+> > > --- a/kernel/kthread.c
+> > > +++ b/kernel/kthread.c
+> > > @@ -399,12 +399,17 @@ struct task_struct *__kthread_create_on_node(int (*threadfn)(void *data),
+> > >     if (!IS_ERR(task)) {
+> > >             static const struct sched_param param = { .sched_priority = 0 };
+> > >             char name[TASK_COMM_LEN];
+> > > +           int len;
+> > >
+> > >             /*
+> > >              * task is already visible to other tasks, so updating
+> > >              * COMM must be protected.
+> > >              */
+> > > -           vsnprintf(name, sizeof(name), namefmt, args);
+> > > +           len = vsnprintf(name, sizeof(name), namefmt, args);
+> > > +           if (len >= TASK_COMM_LEN) {
+> >
+> > And since this failure case is slow-path, we could improve the warning
+> > as other had kind of suggested earlier with something like this instead:
+> >
+> >                       char *full_comm;
+> >
+> >                       full_comm = kvasprintf(GFP_KERNEL, namefmt, args);
+>
+> You need to use va_copy()/va_end() if you want to use the same va_args
+> twice.
+>
+> For example, see how kvasprintf() is implemented. It calls
+> vsnprintf() twice and it uses va_copy()/va_end() around the the first call.
+>
 
-Again, looks good. Kind of embarrassing when the open-coded version is
-less LOC than using the helper.
+Does it mean that if we want to call vsnprintf() three times, we must
+use va_copy()/va_end() around the first call and the second call ?
+IOW, if we call vsnprintf() multiple times, all the calls except the
+last call should be protected by va_copy()/va_end().
+Actually I don't quite understand why we should do it like this. I
+will try to understand it, and appreciate it if you could explain it
+in detail.
 
-Mike, ack?
+BTW,  can we use va_copy()/va_end() in vsnprintf(), then the caller
+doesn't need to care how many times it will call vsnprintf().
+
+> kvasprintf() could also return NULL if there is not enough memory.
+
+Right. We need to do the NULL check.
 
 >
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/md/dm-stripe.c | 63 ++++++++++--------------------------------
->  1 file changed, 15 insertions(+), 48 deletions(-)
+> >                       pr_warn("truncated kthread comm '%s' to '%s' (pid:%d)\n",
+> >                               full_comm, name);
 >
-> diff --git a/drivers/md/dm-stripe.c b/drivers/md/dm-stripe.c
-> index f084607220293..50dba3f39274c 100644
-> --- a/drivers/md/dm-stripe.c
-> +++ b/drivers/md/dm-stripe.c
-> @@ -301,83 +301,50 @@ static int stripe_map(struct dm_target *ti, struct bio *bio)
->  }
+> BTW: Is this message printed during normal boot? I did not tried the
+> patchset myself.
 >
->  #if IS_ENABLED(CONFIG_FS_DAX)
-> -static long stripe_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
-> -               long nr_pages, void **kaddr, pfn_t *pfn)
-> +static struct dax_device *stripe_dax_pgoff(struct dm_target *ti, pgoff_t *pgoff)
->  {
-> -       sector_t dev_sector, sector = pgoff * PAGE_SECTORS;
->         struct stripe_c *sc = ti->private;
-> -       struct dax_device *dax_dev;
->         struct block_device *bdev;
-> +       sector_t dev_sector;
->         uint32_t stripe;
-> -       long ret;
+
+Yes, it will be printed at boot time.
+
+> We should add this warning only if there is a good solution how to
+> avoid the truncated names. And we should me sure that the most common
+> kthreads/workqueues do not trigger it. It would be ugly to print many
+> warnings during boot if people could not get rid of them easily.
 >
-> -       stripe_map_sector(sc, sector, &stripe, &dev_sector);
-> +       stripe_map_sector(sc, *pgoff * PAGE_SECTORS, &stripe, &dev_sector);
->         dev_sector += sc->stripe[stripe].physical_start;
-> -       dax_dev = sc->stripe[stripe].dev->dax_dev;
->         bdev = sc->stripe[stripe].dev->bdev;
+
+As we have extended task comm to 24, there's no such warning printed
+for the existing kthreads/workqueues.
+IOW, it will only print for the newly introduced one if it has a long name.
+That means this printing is under control.
+
+> >                       kfree(full_comm);
+> >               }
+> > >             set_task_comm(task, name);
+> > >             /*
+> > >              * root may have changed our (kthreadd's) priority or CPU mask.
 >
-> -       ret = bdev_dax_pgoff(bdev, dev_sector, nr_pages * PAGE_SIZE, &pgoff);
-> -       if (ret)
-> -               return ret;
-> +       *pgoff = (get_start_sect(bdev) + dev_sector) >> PAGE_SECTORS_SHIFT;
-> +       return sc->stripe[stripe].dev->dax_dev;
-> +}
-> +
-> +static long stripe_dax_direct_access(struct dm_target *ti, pgoff_t pgoff,
-> +               long nr_pages, void **kaddr, pfn_t *pfn)
-> +{
-> +       struct dax_device *dax_dev = stripe_dax_pgoff(ti, &pgoff);
-> +
->         return dax_direct_access(dax_dev, pgoff, nr_pages, kaddr, pfn);
->  }
->
->  static size_t stripe_dax_copy_from_iter(struct dm_target *ti, pgoff_t pgoff,
->                 void *addr, size_t bytes, struct iov_iter *i)
->  {
-> -       sector_t dev_sector, sector = pgoff * PAGE_SECTORS;
-> -       struct stripe_c *sc = ti->private;
-> -       struct dax_device *dax_dev;
-> -       struct block_device *bdev;
-> -       uint32_t stripe;
-> -
-> -       stripe_map_sector(sc, sector, &stripe, &dev_sector);
-> -       dev_sector += sc->stripe[stripe].physical_start;
-> -       dax_dev = sc->stripe[stripe].dev->dax_dev;
-> -       bdev = sc->stripe[stripe].dev->bdev;
-> +       struct dax_device *dax_dev = stripe_dax_pgoff(ti, &pgoff);
->
-> -       if (bdev_dax_pgoff(bdev, dev_sector, ALIGN(bytes, PAGE_SIZE), &pgoff))
-> -               return 0;
->         return dax_copy_from_iter(dax_dev, pgoff, addr, bytes, i);
->  }
->
->  static size_t stripe_dax_copy_to_iter(struct dm_target *ti, pgoff_t pgoff,
->                 void *addr, size_t bytes, struct iov_iter *i)
->  {
-> -       sector_t dev_sector, sector = pgoff * PAGE_SECTORS;
-> -       struct stripe_c *sc = ti->private;
-> -       struct dax_device *dax_dev;
-> -       struct block_device *bdev;
-> -       uint32_t stripe;
-> -
-> -       stripe_map_sector(sc, sector, &stripe, &dev_sector);
-> -       dev_sector += sc->stripe[stripe].physical_start;
-> -       dax_dev = sc->stripe[stripe].dev->dax_dev;
-> -       bdev = sc->stripe[stripe].dev->bdev;
-> +       struct dax_device *dax_dev = stripe_dax_pgoff(ti, &pgoff);
->
-> -       if (bdev_dax_pgoff(bdev, dev_sector, ALIGN(bytes, PAGE_SIZE), &pgoff))
-> -               return 0;
->         return dax_copy_to_iter(dax_dev, pgoff, addr, bytes, i);
->  }
->
->  static int stripe_dax_zero_page_range(struct dm_target *ti, pgoff_t pgoff,
->                                       size_t nr_pages)
->  {
-> -       int ret;
-> -       sector_t dev_sector, sector = pgoff * PAGE_SECTORS;
-> -       struct stripe_c *sc = ti->private;
-> -       struct dax_device *dax_dev;
-> -       struct block_device *bdev;
-> -       uint32_t stripe;
-> +       struct dax_device *dax_dev = stripe_dax_pgoff(ti, &pgoff);
->
-> -       stripe_map_sector(sc, sector, &stripe, &dev_sector);
-> -       dev_sector += sc->stripe[stripe].physical_start;
-> -       dax_dev = sc->stripe[stripe].dev->dax_dev;
-> -       bdev = sc->stripe[stripe].dev->bdev;
-> -
-> -       ret = bdev_dax_pgoff(bdev, dev_sector, nr_pages << PAGE_SHIFT, &pgoff);
-> -       if (ret)
-> -               return ret;
->         return dax_zero_page_range(dax_dev, pgoff, nr_pages);
->  }
->
-> --
-> 2.30.2
->
+> Best Regards,
+> Petr
+
+
+
+-- 
+Thanks
+Yafang
