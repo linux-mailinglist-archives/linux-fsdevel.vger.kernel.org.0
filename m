@@ -2,71 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C736643D915
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 04:01:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F7F543DA27
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 06:13:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229775AbhJ1CDa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Oct 2021 22:03:30 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:36336 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbhJ1CD3 (ORCPT
+        id S229758AbhJ1EPt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Oct 2021 00:15:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33082 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229488AbhJ1EPs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Oct 2021 22:03:29 -0400
-Received: from localhost (unknown [IPv6:2804:14c:124:8a08::1002])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: krisman)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 066AD1F44AB4;
-        Thu, 28 Oct 2021 03:01:01 +0100 (BST)
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Shreeya Patel <shreeya.patel@collabora.com>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Track unicode tree in linux-next (was Re: [PATCH 10/11] unicode:
- Add utf8-data module)
-Organization: Collabora
-References: <20210915070006.954653-1-hch@lst.de>
-        <20210915070006.954653-11-hch@lst.de> <87wnmipjrw.fsf@collabora.com>
-        <20211012124904.GB9518@lst.de> <87sfx6papz.fsf@collabora.com>
-        <20211026074509.GA594@lst.de> <87mtmvevp7.fsf@collabora.com>
-        <20211027090208.70e88aab@canb.auug.org.au>
-Date:   Wed, 27 Oct 2021 23:00:55 -0300
-In-Reply-To: <20211027090208.70e88aab@canb.auug.org.au> (Stephen Rothwell's
-        message of "Wed, 27 Oct 2021 09:02:08 +1100")
-Message-ID: <877ddxdi20.fsf_-_@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Thu, 28 Oct 2021 00:15:48 -0400
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20BA7C061570;
+        Wed, 27 Oct 2021 21:13:22 -0700 (PDT)
+Received: by mail-il1-x12d.google.com with SMTP id h20so5373728ila.4;
+        Wed, 27 Oct 2021 21:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5r+33U1uPYiFPTnh2Xd8jicIMSHfddEZuVW3fEW/Lz8=;
+        b=ZRH/bDHtnLi1gDo9lKFYyuYY/9P8nu3jKlS3XZyDwNAuWzybFmV3ew1ZVrt2w8fHFB
+         zUB/EHZDFSfGR9TxC+q8sdIVTD3pee+AcDE5bynMGU7CXRcgvjXcQVekUbme8LRiPC7/
+         hOc5dHt5v91exsQBT8AQEFO8QGl5xPu1NLiXZBZ1CCCFwIXoExtGAxMHkk1kg0K61zgy
+         RbkRDnI1mW3CNGnnuyL23N8FjEsWeS2qScyTy5XVNAhDsueIov2pio7HcaFpBBwZ0YBg
+         y2gmnfb8wT1V92nA8A3Ao/yjanGtL8nJ3W8feOuFOeUj658LbCmJjURHxLF/wnpPRnMA
+         llFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5r+33U1uPYiFPTnh2Xd8jicIMSHfddEZuVW3fEW/Lz8=;
+        b=d49uUiff6r4MqM7ONDoZsdh1TYhq5h6wpq4FNseaO3MtmHVy8P1xvFI0dts04f5F22
+         9LJ46b3+8hK+ITCOUKGI9ucYHnmCP2kpOYKntfeUArA9KT86kdf7+q+5PEPOLA+KHBa+
+         CPWNMKnHifyqs2NN7f8G52+ZcAA1IhD1eVuY3DKcNln1+PExfdzGIb+yZXO7/u8SFflx
+         XFmhRYTKzO2ZyW53MnFkoBdVdePX/4KWPU+/mSFyrHqcsxK8Og/0q2UbaoU8d0f/vZC3
+         33qhNUWjwoIoqgT1Sgm7+l9bhlrcS/ys3AbUqXQZdgG4s3C2MfRwngBxFh3n5NAhQz+/
+         YnCw==
+X-Gm-Message-State: AOAM531WCTWLXcS/cXfxrYeUblJj0cTVnryMEVvzBdx668VX9RIWbzuX
+        BTbYFihvDFnUnvNZDVeV73+QBbIi6nMoMhVZyK3slWQvrCI=
+X-Google-Smtp-Source: ABdhPJxn5BX5hTZdumQ794jeLL9tPWDCAWi4dHuGb4Wf8faWqts0VksBQb1isn5TnDTIM4RxCu2x53dxlmsR1SW71+k=
+X-Received: by 2002:a05:6e02:20e7:: with SMTP id q7mr1542962ilv.254.1635394401478;
+ Wed, 27 Oct 2021 21:13:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20211025204634.2517-1-iangelak@redhat.com> <20211025204634.2517-2-iangelak@redhat.com>
+ <CAOQ4uxinGYb0QtgE8To5wc2iijT9VpTgDiXEp-9YXz=t_6eMbA@mail.gmail.com> <YXnImHp1QfZYZ1OU@redhat.com>
+In-Reply-To: <YXnImHp1QfZYZ1OU@redhat.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 28 Oct 2021 07:13:10 +0300
+Message-ID: <CAOQ4uxiY=sZVsJF670T73bk2zq+LpG9B5VQA-5rOOpaSrvhdXA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/7] FUSE: Add the fsnotify opcode and in/out structs
+ to FUSE
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> > you need to either include the generation in object identifier
+> > or much better use the object's nfs file handle, the same way
+> > that fanotify stores object identifiers.
+>
+> I think nfs file handle is much more complicated and its a separate
+> project altogether. I am assuming we are talking about persistent
+> nfs file handle as generated by host. I think biggest issue we faced
+> with that is that guest is untrusted and we don't want to resolve
+> file handle provided by guest on host otherwise guest can craft
+> file handles and possibly be able to open other files on same filesystem
+> outside shared dir.
+>
 
-> You just need to send me a git URL for your tree/branch (not a cgit or
-> gitweb URL, please), plus some idea of what the tree include and how it
-> is sent to Linus (directly or via another tree).  The branch should
-> have a generic name (i.e. not including a version) as I will continuet
-> to fetch that branch every day until you tell me to stop.  When your
-> code is ready to be included in linux-next, all you have to do is
-> update that branch to include the new code.
+Right now, virtiofsd keeps all inodes and dentries of live client inodes
+pinned in cache on the server.
+If you switch to file handles design, virtiofsd only need to keep a map
+of all the file handles that server handed out to client to address
+this concern.
 
-Hi Stephen,
+For directories, this practice is not even needed for security, because
+a decoded directory file handle can be verified to be within the shared dir.
+It is only needed to prevent DoS, because a crafted directory file handle
+(outside of shared dir) can be used to generate extra IO and thrash the
+inode/dentry cache on the server.
 
-Thanks for the information.
+> >
+> > > +       uint64_t mask;
+> > > +       uint32_t namelen;
+> > > +       uint32_t cookie;
+> >
+> > I object to persisting with the two-events-joined-by-cookie design.
+> > Any new design should include a single event for rename
+> > with information about src and dst.
+> >
+> > I know this is inconvenient, but we are NOT going to create a "remote inotify"
+> > interface, we need to create a "remote fsnotify" interface and if server wants
+> > to use inotify, it will need to join the disjoined MOVE_FROM/TO event into
+> > a single "remote event", that FUSE will use to call fsnotify_move().
+>
+> man inotify says following.
+>
+> "       Matching up the IN_MOVED_FROM and IN_MOVED_TO event pair  generated  by
+>        rename(2)  is thus inherently racy.  (Don't forget that if an object is
+>        renamed outside of a monitored directory, there  may  not  even  be  an
+>        IN_MOVED_TO  event.)"
+>
+> So if guest is no monitoring target dir of renamed file, then we will not
+> even get IN_MOVED_TO. In that case we can't merge two events into one.
+>
+> And this sounds like inotify/fanotify interface needs to come up with
+> an merged event and in that case remote filesystem will simply propagate
+> that event. (Instead of coming up with a new event only for remote
+> filesystems. Sounds like this is not a problem limited to remote
+> filesystems only).
+>
 
-I'd like to ask you to track the branch 'for-next' of the following repository:
+I don't see it that way.
+I see the "internal protocol" for filesystems/vfs to report rename is
+fsnotify_move() which carries information about both src and target.
+I would like the remote protocol  to carry the same information.
+It is then up to the userspace API whether to report the rename
+as two events or a unified event.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git
+For example, debugfs, calls fsnotify_move() when an object is renamed
+from underneath the vfs. It does not call fsnotify() twice with a cookie,
+because we would not want to change local filesystem nor remote protocols
+when we want to add new userspace APIs for reporting fsevents.
 
-This branch is used as a staging area for development of the Unicode
-subsystem used by native case-insensitive filesystems for file name
-normalization and casefolding.  It goes to Linus through Ted Ts'o's ext4
-tree.
+That comes down to my feeling that this claims to be a proposal
+for "remote fsnotify", but it looks and sounds like a proposal for
+"remote inotify" and this is the core of my objection to passing
+the rename cookie in the protocol.
 
-Thank you,
+Regarding the issue that the src/dst path may not be known
+to the server, as I wrote, it is fine if either the src/dst path information
+is omitted from an event, but the protocol should provide the
+placeholder to report them.
 
--- 
-Gabriel Krisman Bertazi
+After sufficient arguing, I might be convinced that the cookie may be included
+as an optional field in addition to the fields that I requested.
+
+I understand why you write that this sounds like an fanotify interface
+that needs to be resolved and you are correct, but the reason that the
+fanotify interface issue was not yet resolved is that we are trying to not
+repeat the mistakes of the past and for that same reason, I am insisting
+on the protocol.
+
+Thanks,
+Amir.
