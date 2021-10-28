@@ -2,344 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 909DE43E525
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 17:30:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C635443E619
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 18:29:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230281AbhJ1PdA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Oct 2021 11:33:00 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:39352 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230070AbhJ1PdA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Oct 2021 11:33:00 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id B3A50212CC;
-        Thu, 28 Oct 2021 15:30:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1635435031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=T36UwH1/yGl7wulr/lS8k0fNFoAeRpKFikpRqVqZdLw=;
-        b=qzi+TgFcQHGEygIXEJLpSeK6AKJoEq3YAErFHPoGnl/E2zUA7bDs87zQgiVdeIocHX6od5
-        3dNKswNTRQBRxGOTa+KLTQSpq4qJnOUWjkzcfFURoLWz5hZKkIOebWI2DZHE6sgnKBlM0p
-        hOehuShlkx7w+kKhNpn6cLdkw8A4/hk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1635435031;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=T36UwH1/yGl7wulr/lS8k0fNFoAeRpKFikpRqVqZdLw=;
-        b=WhaP+UTdjDByfhpYJ7Tq1osjCTigCpHWYdsBkEuNAA4TwyrqsevSr7aS1fNUQegJKte62/
-        oA1v2EbI+J9T9XDg==
-Received: from suse.de (unknown [10.163.32.246])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S230010AbhJ1Qbh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Oct 2021 12:31:37 -0400
+Received: from sandeen.net ([63.231.237.45]:35518 "EHLO sandeen.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229594AbhJ1Qbg (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Oct 2021 12:31:36 -0400
+Received: from [10.0.0.146] (liberator.sandeen.net [10.0.0.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 8D76FA3B83;
-        Thu, 28 Oct 2021 15:30:30 +0000 (UTC)
-Date:   Thu, 28 Oct 2021 16:30:28 +0100
-From:   Mel Gorman <mgorman@suse.de>
-To:     Gang Li <ligang.bdlg@bytedance.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v1] sched/numa: add per-process numa_balancing
-Message-ID: <20211028153028.GP3891@suse.de>
-References: <20211027132633.86653-1-ligang.bdlg@bytedance.com>
+        by sandeen.net (Postfix) with ESMTPSA id 02EA078D2;
+        Thu, 28 Oct 2021 11:27:41 -0500 (CDT)
+Message-ID: <ef95af19-4b0a-61e8-5dfa-3e223118da8e@sandeen.net>
+Date:   Thu, 28 Oct 2021 11:29:08 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20211027132633.86653-1-ligang.bdlg@bytedance.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.2.1
+Content-Language: en-US
+To:     Vivek Goyal <vgoyal@redhat.com>, Dave Chinner <david@fromorbit.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        JeffleXu <jefflexu@linux.alibaba.com>,
+        Theodore Ts'o <tytso@mit.edu>, adilger.kernel@dilger.ca,
+        ira.weiny@intel.com, linux-xfs@vger.kernel.org,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
+        Christoph Hellwig <hch@lst.de>,
+        Dave Chinner <dchinner@redhat.com>
+References: <26ddaf6d-fea7-ed20-cafb-decd63b2652a@linux.alibaba.com>
+ <20211026154834.GB24307@magnolia> <YXhWP/FCkgHG/+ou@redhat.com>
+ <20211026223317.GB5111@dread.disaster.area> <YXlQyMfXDQnO/5E3@redhat.com>
+From:   Eric Sandeen <sandeen@sandeen.net>
+Subject: Re: [Question] ext4/xfs: Default behavior changed after per-file DAX
+In-Reply-To: <YXlQyMfXDQnO/5E3@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 27, 2021 at 09:26:32PM +0800, Gang Li wrote:
-> This patch add a new api PR_NUMA_BALANCING in prctl.
+On 10/27/21 8:14 AM, Vivek Goyal wrote:
+> On Wed, Oct 27, 2021 at 09:33:17AM +1100, Dave Chinner wrote:
+
+...
+
+> Hi Dave,
 > 
-> A large number of page faults will cause performance loss when numa balancing
-> is performing. Thus those processes which care about worst-case performance
-> need numa balancing disabled. Others, on the contrary, allow a temporary
-> performance loss in exchange for higher average performance, so enable numa
-> balancing is better for them.
+> Thanks for all the explanaiton and background. It helps me a lot in
+> wrapping my head around the rationale for current design.
 > 
-> Numa balancing can only be controlled globally by /proc/sys/kernel/numa_balancing.
-> Due to the above case, we want to disable/enable numa_balancing per-process
-> instead.
+>> It's perfectly reasonable. If the hardware doesn't support DAX, then
+>> we just always behave as if dax=never is set.
 > 
-> Add numa_balancing under mm_struct. Then use it in task_tick_numa.
+> I tried mounting non-DAX block device with dax=always and it failed
+> saying DAX can't be used with reflink.
 > 
-> Disable/enable per-process numa balancing:
-> 	prctl(PR_NUMA_BALANCING, PR_SET_NUMA_BALANCING, 0/1);
-> Get numa_balancing state:
-> 	prctl(PR_NUMA_BALANCING, PR_GET_NUMA_BALANCING, &ret);
-> 	cat /proc/<pid>/status | grep NumaBalancing_enabled
+> [  100.371978] XFS (vdb): DAX unsupported by block device. Turning off DAX.
+> [  100.374185] XFS (vdb): DAX and reflink cannot be used together!
 > 
-> mm->numa_balancing only works when global numa_balancing is enabled.
-> When the global numa_balancing is diabled, mm->numa_blancing will not
-> change, but you will always get 0 while you want to get process
-> numa_balancing state and kernel will return err when you use prctl set
-> it.
-> 
+> So looks like first check tried to fallback to dax=never as device does
+> not support DAX. But later reflink check thought dax is enabled and
+> did not fallback to dax=never.
 
-This would also need a prctl(2) patch.
+We need to think hard about this stuff and audit it to be sure.
 
-That aside though, the configuration space could be better. It's possible
-to selectively disable NUMA balance but not selectively enable because
-prctl is disabled if global NUMA balancing is disabled. That could be
-somewhat achieved by having a default value for mm->numa_balancing based on
-whether the global numa balancing is disabled via command line or sysctl
-and enabling the static branch if prctl is used with an informational
-message. This is not the only potential solution but as it stands,
-there are odd semantic corner cases. For example, explicit enabling
-of NUMA balancing by prctl gets silently revoked if numa balancing is
-disabled via sysctl and prctl(PR_NUMA_BALANCING, PR_SET_NUMA_BALANCING,
-1) means nothing.
+But, I think that reflink check should probably just be removed, now that
+DAX files and reflinked files can co-exist on a filesystem - it's just
+that they can't both be active on the /same file/.
 
-> Signed-off-by: Gang Li <ligang.bdlg@bytedance.com>
-> ---
->  Documentation/filesystems/proc.rst |  2 ++
->  fs/proc/task_mmu.c                 | 16 ++++++++++++
->  include/linux/mm_types.h           |  3 +++
->  include/uapi/linux/prctl.h         |  5 ++++
->  kernel/fork.c                      |  3 +++
->  kernel/sched/fair.c                |  3 +++
->  kernel/sys.c                       | 39 ++++++++++++++++++++++++++++++
->  7 files changed, 71 insertions(+)
-> 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 8d7f141c6fc7..b90f43ed0668 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -192,6 +192,7 @@ read the file /proc/PID/status::
->    VmLib:      1412 kB
->    VmPTE:        20 kb
->    VmSwap:        0 kB
-> +  NumaBalancing_enabled:  1
+I think that even "dax=always" is still just "advisory" - it means,
+try to enable dax on every file. It may still fail in the same ways as
+dax=inode (default) + flag set may fail.
 
-Bit verbose
+But ... we should go through the whole mount option / feature set /
+device capability logic to be sure this is all consistent. Thanks for
+pointing it out!
 
-NumaB_enabled:
+-Eric
 
->    HugetlbPages:          0 kB
->    CoreDumping:    0
->    THP_enabled:	  1
-> @@ -273,6 +274,7 @@ It's slow but very precise.
->   VmPTE                       size of page table entries
->   VmSwap                      amount of swap used by anonymous private data
->                               (shmem swap usage is not included)
-> + NumaBalancing_enabled       numa balancing state, use prctl(PR_NUMA_BALANCING, ...)
-
-s/use/set by/
-
->   HugetlbPages                size of hugetlb memory portions
->   CoreDumping                 process's memory is currently being dumped
->                               (killing the process may lead to a corrupted core)
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index ad667dbc96f5..161295e027d2 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -19,6 +19,7 @@
->  #include <linux/shmem_fs.h>
->  #include <linux/uaccess.h>
->  #include <linux/pkeys.h>
-> +#include <linux/sched/numa_balancing.h>
->  
->  #include <asm/elf.h>
->  #include <asm/tlb.h>
-> @@ -27,14 +28,23 @@
->  
->  #define SEQ_PUT_DEC(str, val) \
->  		seq_put_decimal_ull_width(m, str, (val) << (PAGE_SHIFT-10), 8)
-> +
-> +DECLARE_STATIC_KEY_FALSE(sched_numa_balancing);
-> +
-
-Declare in a header.
-
->  void task_mem(struct seq_file *m, struct mm_struct *mm)
->  {
->  	unsigned long text, lib, swap, anon, file, shmem;
->  	unsigned long hiwater_vm, total_vm, hiwater_rss, total_rss;
-> +#ifdef CONFIG_NUMA_BALANCING
-> +	int numa_balancing;
-> +#endif
->  
-
-rename to numab_enabled, the name as-is gives little hint as to what
-it means. If the prctl works even if numab is globally disabled by
-default then the variable can go away.
-
->  	anon = get_mm_counter(mm, MM_ANONPAGES);
->  	file = get_mm_counter(mm, MM_FILEPAGES);
->  	shmem = get_mm_counter(mm, MM_SHMEMPAGES);
-> +#ifdef CONFIG_NUMA_BALANCING
-> +	numa_balancing = READ_ONCE(mm->numa_balancing);
-> +#endif
->  
-
-The READ_ONCE/WRITE_ONCE may be overkill given that the value is set at
-fork time and doesn't change. I guess an application could be actively
-calling prctl() but it would be inherently race-prone.
-
->  	/*
->  	 * Note: to minimize their overhead, mm maintains hiwater_vm and
-> @@ -75,6 +85,12 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
->  		    " kB\nVmPTE:\t", mm_pgtables_bytes(mm) >> 10, 8);
->  	SEQ_PUT_DEC(" kB\nVmSwap:\t", swap);
->  	seq_puts(m, " kB\n");
-> +#ifdef CONFIG_NUMA_BALANCING
-> +	if (!static_branch_unlikely(&sched_numa_balancing))
-> +		numa_balancing = 0;
-> +
-> +	seq_printf(m, "NumaBalancing_enabled:\t%d\n", numa_balancing);
-> +#endif
->  	hugetlb_report_usage(m, mm);
->  }
->  #undef SEQ_PUT_DEC
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index bb8c6f5f19bc..feeb6f639f87 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -612,6 +612,9 @@ struct mm_struct {
->  
->  		/* numa_scan_seq prevents two threads setting pte_numa */
->  		int numa_scan_seq;
-> +
-> +		/* numa_balancing control the numa balancing of this mm */
-> +		int numa_balancing;
->  #endif
->  		/*
->  		 * An operation with batched TLB flushing is going on. Anything
-
-Rename to numab_enabled. The comment is not that helpful
-
-/* Controls whether NUMA balancing is active for this mm. */
-
-> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> index b2e4dc1449b9..2235b75efd30 100644
-> --- a/include/uapi/linux/prctl.h
-> +++ b/include/uapi/linux/prctl.h
-> @@ -272,4 +272,9 @@ struct prctl_mm_map {
->  # define PR_SCHED_CORE_SCOPE_THREAD_GROUP	1
->  # define PR_SCHED_CORE_SCOPE_PROCESS_GROUP	2
->  
-> +/* Set/get enabled per-process numa_balancing */
-> +#define PR_NUMA_BALANCING		63
-> +# define PR_SET_NUMA_BALANCING		0
-> +# define PR_GET_NUMA_BALANCING		1
-> +
->  #endif /* _LINUX_PRCTL_H */
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 2079f1ebfe63..39e9d5daf00a 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1110,6 +1110,9 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
->  	init_tlb_flush_pending(mm);
->  #if defined(CONFIG_TRANSPARENT_HUGEPAGE) && !USE_SPLIT_PMD_PTLOCKS
->  	mm->pmd_huge_pte = NULL;
-> +#endif
-> +#ifdef CONFIG_NUMA_BALANCING
-> +	mm->numa_balancing = 1;
->  #endif
->  	mm_init_uprobes_state(mm);
->  	hugetlb_count_init(mm);
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 87db481e8a56..1325253e3613 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -2866,6 +2866,9 @@ static void task_tick_numa(struct rq *rq, struct task_struct *curr)
->  	if ((curr->flags & (PF_EXITING | PF_KTHREAD)) || work->next != work)
->  		return;
->  
-> +	if (!READ_ONCE(curr->mm->numa_balancing))
-> +		return;
-> +
->  	/*
->  	 * Using runtime rather than walltime has the dual advantage that
->  	 * we (mostly) drive the selection from busy threads and that the
-> diff --git a/kernel/sys.c b/kernel/sys.c
-> index 8fdac0d90504..64aee3d63ea8 100644
-> --- a/kernel/sys.c
-> +++ b/kernel/sys.c
-> @@ -154,6 +154,8 @@ int fs_overflowgid = DEFAULT_FS_OVERFLOWGID;
->  EXPORT_SYMBOL(fs_overflowuid);
->  EXPORT_SYMBOL(fs_overflowgid);
->  
-> +DECLARE_STATIC_KEY_FALSE(sched_numa_balancing);
-> +
-
-Header.
-
->  /*
->   * Returns true if current's euid is same as p's uid or euid,
->   * or has CAP_SYS_NICE to p's user_ns.
-> @@ -2081,6 +2083,28 @@ static int prctl_set_auxv(struct mm_struct *mm, unsigned long addr,
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_NUMA_BALANCING
-> +static int prctl_pid_numa_balancing_write(int numa_balancing)
-> +{
-> +	if (!static_branch_unlikely(&sched_numa_balancing))
-> +		return -EPERM;
-> +
-
-Obviously this would change again if prctl still has an effect if numa
-balancing is disabled by default.
-
-> +	if (numa_balancing != 0 && numa_balancing != 1)
-> +		return -EINVAL;
-> +
-> +	WRITE_ONCE(current->mm->numa_balancing, numa_balancing);
-> +	return 0;
-> +}
-> +
-> +static int prctl_pid_numa_balancing_read(void)
-> +{
-> +	if (!static_branch_unlikely(&sched_numa_balancing))
-> +		return 0;
-> +	else
-> +		return READ_ONCE(current->mm->numa_balancing);
-> +}
-> +#endif
-> +
->  static int prctl_set_mm(int opt, unsigned long addr,
->  			unsigned long arg4, unsigned long arg5)
->  {
-> @@ -2525,6 +2549,21 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
->  		error = set_syscall_user_dispatch(arg2, arg3, arg4,
->  						  (char __user *) arg5);
->  		break;
-> +#ifdef CONFIG_NUMA_BALANCING
-> +	case PR_NUMA_BALANCING:
-> +		switch (arg2) {
-> +		case PR_SET_NUMA_BALANCING:
-> +			error = prctl_pid_numa_balancing_write((int)arg3);
-> +			break;
-> +		case PR_GET_NUMA_BALANCING:
-> +			put_user(prctl_pid_numa_balancing_read(), (int __user *)arg3);
-> +			break;
-> +		default:
-> +			error = -EINVAL;
-> +			break;
-> +		}
-> +		break;
-> +#endif
->  #ifdef CONFIG_SCHED_CORE
->  	case PR_SCHED_CORE:
->  		error = sched_core_share_pid(arg2, arg3, arg4, arg5);
-> -- 
-> 2.20.1
-> 
-
--- 
-Mel Gorman
-SUSE Labs
+>> IO
