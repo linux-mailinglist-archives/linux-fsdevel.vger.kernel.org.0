@@ -2,155 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F7F543DA27
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 06:13:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15EFB43DA2A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 06:15:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229758AbhJ1EPt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Oct 2021 00:15:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33082 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbhJ1EPs (ORCPT
+        id S229694AbhJ1ERr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Oct 2021 00:17:47 -0400
+Received: from mail109.syd.optusnet.com.au ([211.29.132.80]:58232 "EHLO
+        mail109.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229488AbhJ1ERr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Oct 2021 00:15:48 -0400
-Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20BA7C061570;
-        Wed, 27 Oct 2021 21:13:22 -0700 (PDT)
-Received: by mail-il1-x12d.google.com with SMTP id h20so5373728ila.4;
-        Wed, 27 Oct 2021 21:13:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5r+33U1uPYiFPTnh2Xd8jicIMSHfddEZuVW3fEW/Lz8=;
-        b=ZRH/bDHtnLi1gDo9lKFYyuYY/9P8nu3jKlS3XZyDwNAuWzybFmV3ew1ZVrt2w8fHFB
-         zUB/EHZDFSfGR9TxC+q8sdIVTD3pee+AcDE5bynMGU7CXRcgvjXcQVekUbme8LRiPC7/
-         hOc5dHt5v91exsQBT8AQEFO8QGl5xPu1NLiXZBZ1CCCFwIXoExtGAxMHkk1kg0K61zgy
-         RbkRDnI1mW3CNGnnuyL23N8FjEsWeS2qScyTy5XVNAhDsueIov2pio7HcaFpBBwZ0YBg
-         y2gmnfb8wT1V92nA8A3Ao/yjanGtL8nJ3W8feOuFOeUj658LbCmJjURHxLF/wnpPRnMA
-         llFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5r+33U1uPYiFPTnh2Xd8jicIMSHfddEZuVW3fEW/Lz8=;
-        b=d49uUiff6r4MqM7ONDoZsdh1TYhq5h6wpq4FNseaO3MtmHVy8P1xvFI0dts04f5F22
-         9LJ46b3+8hK+ITCOUKGI9ucYHnmCP2kpOYKntfeUArA9KT86kdf7+q+5PEPOLA+KHBa+
-         CPWNMKnHifyqs2NN7f8G52+ZcAA1IhD1eVuY3DKcNln1+PExfdzGIb+yZXO7/u8SFflx
-         XFmhRYTKzO2ZyW53MnFkoBdVdePX/4KWPU+/mSFyrHqcsxK8Og/0q2UbaoU8d0f/vZC3
-         33qhNUWjwoIoqgT1Sgm7+l9bhlrcS/ys3AbUqXQZdgG4s3C2MfRwngBxFh3n5NAhQz+/
-         YnCw==
-X-Gm-Message-State: AOAM531WCTWLXcS/cXfxrYeUblJj0cTVnryMEVvzBdx668VX9RIWbzuX
-        BTbYFihvDFnUnvNZDVeV73+QBbIi6nMoMhVZyK3slWQvrCI=
-X-Google-Smtp-Source: ABdhPJxn5BX5hTZdumQ794jeLL9tPWDCAWi4dHuGb4Wf8faWqts0VksBQb1isn5TnDTIM4RxCu2x53dxlmsR1SW71+k=
-X-Received: by 2002:a05:6e02:20e7:: with SMTP id q7mr1542962ilv.254.1635394401478;
- Wed, 27 Oct 2021 21:13:21 -0700 (PDT)
+        Thu, 28 Oct 2021 00:17:47 -0400
+Received: from dread.disaster.area (pa49-180-20-157.pa.nsw.optusnet.com.au [49.180.20.157])
+        by mail109.syd.optusnet.com.au (Postfix) with ESMTPS id 17790FC73AF;
+        Thu, 28 Oct 2021 15:15:14 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1mfwor-001sv4-Eh; Thu, 28 Oct 2021 15:15:13 +1100
+Date:   Thu, 28 Oct 2021 15:15:13 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Ming Lei <ming.lei@redhat.com>,
+        Zdenek Kabelac <zkabelac@redhat.com>,
+        linux-block@vger.kernel.org, dm-devel@redhat.com,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4] loop: don't print warnings if the underlying
+ filesystem doesn't support discard
+Message-ID: <20211028041513.GD4821@dread.disaster.area>
+References: <alpine.LRH.2.02.2109231539520.27863@file01.intranet.prod.int.rdu2.redhat.com>
+ <20210924155822.GA10064@lst.de>
+ <alpine.LRH.2.02.2110040851130.30719@file01.intranet.prod.int.rdu2.redhat.com>
+ <20211012062049.GB17407@lst.de>
+ <alpine.LRH.2.02.2110121516440.21015@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.2110130524220.16882@file01.intranet.prod.int.rdu2.redhat.com>
+ <20211027050249.GC5111@dread.disaster.area>
+ <alpine.LRH.2.02.2110270421380.10452@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
-References: <20211025204634.2517-1-iangelak@redhat.com> <20211025204634.2517-2-iangelak@redhat.com>
- <CAOQ4uxinGYb0QtgE8To5wc2iijT9VpTgDiXEp-9YXz=t_6eMbA@mail.gmail.com> <YXnImHp1QfZYZ1OU@redhat.com>
-In-Reply-To: <YXnImHp1QfZYZ1OU@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 28 Oct 2021 07:13:10 +0300
-Message-ID: <CAOQ4uxiY=sZVsJF670T73bk2zq+LpG9B5VQA-5rOOpaSrvhdXA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/7] FUSE: Add the fsnotify opcode and in/out structs
- to FUSE
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.2110270421380.10452@file01.intranet.prod.int.rdu2.redhat.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=617a23d5
+        a=t5ERiztT/VoIE8AqcczM6g==:117 a=t5ERiztT/VoIE8AqcczM6g==:17
+        a=kj9zAlcOel0A:10 a=8gfv0ekSlNoA:10 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8
+        a=7-415B0cAAAA:8 a=a5nNtdR3IqEc3FIJ3gUA:9 a=CjuIK1q_8ugA:10
+        a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > you need to either include the generation in object identifier
-> > or much better use the object's nfs file handle, the same way
-> > that fanotify stores object identifiers.
->
-> I think nfs file handle is much more complicated and its a separate
-> project altogether. I am assuming we are talking about persistent
-> nfs file handle as generated by host. I think biggest issue we faced
-> with that is that guest is untrusted and we don't want to resolve
-> file handle provided by guest on host otherwise guest can craft
-> file handles and possibly be able to open other files on same filesystem
-> outside shared dir.
->
+On Wed, Oct 27, 2021 at 04:28:03AM -0400, Mikulas Patocka wrote:
+> 
+> 
+> On Wed, 27 Oct 2021, Dave Chinner wrote:
+> 
+> > On Wed, Oct 13, 2021 at 05:28:36AM -0400, Mikulas Patocka wrote:
+> > > Hi
+> > > 
+> > > Here I'm sending version 4 of the patch. It adds #include <linux/falloc.h> 
+> > > to cifs and overlayfs to fix the bugs found out by the kernel test robot.
+> > > 
+> > > Mikulas
+> > > 
+> > > 
+> > > 
+> > > From: Mikulas Patocka <mpatocka@redhat.com>
+> > > 
+> > > The loop driver checks for the fallocate method and if it is present, it 
+> > > assumes that the filesystem can do FALLOC_FL_ZERO_RANGE and 
+> > > FALLOC_FL_PUNCH_HOLE requests. However, some filesystems (such as fat, or 
+> > > tmpfs) have the fallocate method, but lack the capability to do 
+> > > FALLOC_FL_ZERO_RANGE and/or FALLOC_FL_PUNCH_HOLE.
+> > 
+> > This seems like a loopback driver level problem, not something
+> > filesystems need to solve. fallocate() is defined to return
+> > -EOPNOTSUPP if a flag is passed that it does not support and that's
+> > the mechanism used to inform callers that a fallocate function is
+> > not supported by the underlying filesystem/storage.
+> > 
+> > Indeed, filesystems can support hole punching at the ->fallocate(),
+> > but then return EOPNOTSUPP because certain dynamic conditions are
+> > not met e.g. CIFS needs sparse file support on the server to support
+> > hole punching, but we don't know this until we actually try to 
+> > sparsify the file. IOWs, this patch doesn't address all the cases
+> > where EOPNOTSUPP might actually get returned from filesystems and/or
+> > storage.
+> > 
+> > > This results in syslog warnings "blk_update_request: operation not 
+> > > supported error, dev loop0, sector 0 op 0x9:(WRITE_ZEROES) flags 0x800800 
+> > > phys_seg 0 prio class 0". The error can be reproduced with this command: 
+> > > "truncate -s 1GiB /tmp/file; losetup /dev/loop0 /tmp/file; blkdiscard -z 
+> > > /dev/loop0"
+> > 
+> > Which I'm assuming comes from this:
+> > 
+> > 	        if (unlikely(error && !blk_rq_is_passthrough(req) &&
+> >                      !(req->rq_flags & RQF_QUIET)))
+> >                 print_req_error(req, error, __func__);
+> > 
+> > Which means we could supress the error message quite easily in
+> > lo_fallocate() by doing:
+> > 
+> > out:
+> > 	if (ret == -EOPNOTSUPP)
+> > 		rq->rq_flags |= RQF_QUIET;
+> > 	return ret;
+> 
+> I did this (see 
+> https://lore.kernel.org/all/alpine.LRH.2.02.2109231539520.27863@file01.intranet.prod.int.rdu2.redhat.com/ 
 
-Right now, virtiofsd keeps all inodes and dentries of live client inodes
-pinned in cache on the server.
-If you switch to file handles design, virtiofsd only need to keep a map
-of all the file handles that server handed out to client to address
-this concern.
+Ok, you need to keep a changelog with the patch so that it's clear
+what the history of it is....
 
-For directories, this practice is not even needed for security, because
-a decoded directory file handle can be verified to be within the shared dir.
-It is only needed to prevent DoS, because a crafted directory file handle
-(outside of shared dir) can be used to generate extra IO and thrash the
-inode/dentry cache on the server.
+> ) and Christoph Hellwig asked for a flag in the file_operations structure 
+> ( https://lore.kernel.org/all/20210924155822.GA10064@lst.de/ ).
 
-> >
-> > > +       uint64_t mask;
-> > > +       uint32_t namelen;
-> > > +       uint32_t cookie;
-> >
-> > I object to persisting with the two-events-joined-by-cookie design.
-> > Any new design should include a single event for rename
-> > with information about src and dst.
-> >
-> > I know this is inconvenient, but we are NOT going to create a "remote inotify"
-> > interface, we need to create a "remote fsnotify" interface and if server wants
-> > to use inotify, it will need to join the disjoined MOVE_FROM/TO event into
-> > a single "remote event", that FUSE will use to call fsnotify_move().
->
-> man inotify says following.
->
-> "       Matching up the IN_MOVED_FROM and IN_MOVED_TO event pair  generated  by
->        rename(2)  is thus inherently racy.  (Don't forget that if an object is
->        renamed outside of a monitored directory, there  may  not  even  be  an
->        IN_MOVED_TO  event.)"
->
-> So if guest is no monitoring target dir of renamed file, then we will not
-> even get IN_MOVED_TO. In that case we can't merge two events into one.
->
-> And this sounds like inotify/fanotify interface needs to come up with
-> an merged event and in that case remote filesystem will simply propagate
-> that event. (Instead of coming up with a new event only for remote
-> filesystems. Sounds like this is not a problem limited to remote
-> filesystems only).
->
+Looking at the code that has resulted, I think Christoph's
+suggestion is a poor one. Code duplication is bad enough, worse is
+that it's duplicating the open coding of non-trivial flag
+combinations. Given that it is only needed for a single calling
+context and it is unnecessary to solve the unique problem at hand
+(suppress warning and turn off discard support) this makes it seem
+like a case of over-engineering.
 
-I don't see it that way.
-I see the "internal protocol" for filesystems/vfs to report rename is
-fsnotify_move() which carries information about both src and target.
-I would like the remote protocol  to carry the same information.
-It is then up to the userspace API whether to report the rename
-as two events or a unified event.
+Further, it doesn't avoid the need for the loop device to handle
+EOPNOTSUPP from fallocate directly, either, because as I explained
+above "filesystem type supports the FALLOC_FL_PUNCH_HOLE API flag"
+is not the same as "filesystem and/or file instance can execute
+FALLOC_FL_PUNCH_HOLE"....
 
-For example, debugfs, calls fsnotify_move() when an object is renamed
-from underneath the vfs. It does not call fsnotify() twice with a cookie,
-because we would not want to change local filesystem nor remote protocols
-when we want to add new userspace APIs for reporting fsevents.
+Cheers,
 
-That comes down to my feeling that this claims to be a proposal
-for "remote fsnotify", but it looks and sounds like a proposal for
-"remote inotify" and this is the core of my objection to passing
-the rename cookie in the protocol.
-
-Regarding the issue that the src/dst path may not be known
-to the server, as I wrote, it is fine if either the src/dst path information
-is omitted from an event, but the protocol should provide the
-placeholder to report them.
-
-After sufficient arguing, I might be convinced that the cookie may be included
-as an optional field in addition to the fields that I requested.
-
-I understand why you write that this sounds like an fanotify interface
-that needs to be resolved and you are correct, but the reason that the
-fanotify interface issue was not yet resolved is that we are trying to not
-repeat the mistakes of the past and for that same reason, I am insisting
-on the protocol.
-
-Thanks,
-Amir.
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
