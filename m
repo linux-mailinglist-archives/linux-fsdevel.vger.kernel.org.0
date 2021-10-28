@@ -2,187 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EFE0E43E8F2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 21:19:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D665C43E923
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 21:56:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231169AbhJ1TWU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Oct 2021 15:22:20 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:41485 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230481AbhJ1TWT (ORCPT
+        id S230526AbhJ1T7R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Oct 2021 15:59:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50284 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230104AbhJ1T7R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Oct 2021 15:22:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635448792;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=itVqLjWPvjd96pFjKmpiNF0U4CjfqdxXKr0YqA5Ss10=;
-        b=TBb3Ue181EUPv7EsQ/hAnONuLgTJRnADl830dYdeEWKW39EiPSxfO0xyV5qum3IswkzhU1
-        vXUoSCXZDceGVFmlHY8c5b3Kl7L24MhY1ghrGEyEzeAe5ewcW6uep6ZDndMQJJw8YJsynf
-        OW1Om6BxAUPdpkvhTzOpqYCSEkAPB8I=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-144-Cz9pkv1FM7iqfDz_qk42oA-1; Thu, 28 Oct 2021 15:19:48 -0400
-X-MC-Unique: Cz9pkv1FM7iqfDz_qk42oA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E2CD1806688;
-        Thu, 28 Oct 2021 19:19:46 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.9.143])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 86DB02657F;
-        Thu, 28 Oct 2021 19:19:46 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id DA429220562; Thu, 28 Oct 2021 15:19:45 -0400 (EDT)
-Date:   Thu, 28 Oct 2021 15:19:45 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     JeffleXu <jefflexu@linux.alibaba.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>, adilger.kernel@dilger.ca,
-        linux-xfs@vger.kernel.org,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
-        Christoph Hellwig <hch@lst.de>,
-        Dave Chinner <dchinner@redhat.com>
-Subject: Re: [Question] ext4/xfs: Default behavior changed after per-file DAX
-Message-ID: <YXr30ZHODgKjZU2R@redhat.com>
-References: <26ddaf6d-fea7-ed20-cafb-decd63b2652a@linux.alibaba.com>
- <20211026154834.GB24307@magnolia>
- <YXhWP/FCkgHG/+ou@redhat.com>
- <20211026205730.GI3465596@iweiny-DESK2.sc.intel.com>
- <YXlj6GhxkFBQRJYk@redhat.com>
- <665787d0-f227-a95b-37a3-20f2ea3e09aa@linux.alibaba.com>
- <20211028182407.GG3538886@iweiny-DESK2.sc.intel.com>
+        Thu, 28 Oct 2021 15:59:17 -0400
+Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD5B3C061570;
+        Thu, 28 Oct 2021 12:56:49 -0700 (PDT)
+Received: by mail-ot1-x329.google.com with SMTP id x16-20020a9d7050000000b00553d5d169f7so8519872otj.6;
+        Thu, 28 Oct 2021 12:56:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Aak0WtxCK0j+PLN6qPbUpAPMN8pjL5YEDqdesj0sHso=;
+        b=qqd0wZoN+xBz8fE9Rh+h0/0svB4rXHug2LFk6wlbgDpdf7UrBYzsrCNgaLQurlp+n3
+         NOozGrA+LIIBA6U9mzzlg3HxbiZGIzP9IcIk1Z17gvlE5Td3Bwj8tZpG4+8lO55K/Tis
+         xcc3A2m470Te5QqzVty56GqosmqDH9m2tUYjHisV/QxMzm9uvfbDjHP4paKByROkFvtz
+         onyrDq8vG4sDalfVqva/ddI5rHXvBChv0d+rCF56M0HPOUgnRT4ZfmfIHw2WOiqSWg94
+         +wmkQHt+8Dy/gbiHTarKPjmXRbZKHmoxbVO9GfJTPPcrhhXPQawKN3qeJ4BiH1XPLXZA
+         prBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=Aak0WtxCK0j+PLN6qPbUpAPMN8pjL5YEDqdesj0sHso=;
+        b=Low7IXm04EbSj/C4NxAfj51HveOQazh3l++5gVWPa0lmV/qrxf5SY1LWbqz1euT+6T
+         XmZISUokp6U3tAMvbQ7Lre45jBC318rPlqRfh7jHky4K14eQOM3hRNqnB5lSEMpL/ytm
+         bXPA1o8VQqLIBMoA8JNfkSFABitehsIrBC87XOZ25wge/RB7v7lwySA/MowkHZXlBpTD
+         vR7hvqnMIhE6p3LinahUzPz9eebPbiLxqmxAlK4H8Hsii6g8yxXfTgvki41exv5EmMPR
+         BdBYE29AQnI6/RZQ6Bqg1nU3XbfW7zvoLuWK0SvtKPqjGnUT4PoR9R6ZO+IaP6vxFoom
+         7jwg==
+X-Gm-Message-State: AOAM531PMNyb0B5G7dUWRD5gnvVd3JpXf52xHzchP4JgkYWZDvozHQpg
+        FWU/SoMYb1Rdw9KvHHUMy+RD3AJB2T0=
+X-Google-Smtp-Source: ABdhPJxWjVYYNRZ4pv4iZvJGtxrZ/WoQ/oKbP8OY0Mtjc97K6COsubBavvYW4gCK/fVfeujMEdcARQ==
+X-Received: by 2002:a9d:ba5:: with SMTP id 34mr5073772oth.108.1635451009303;
+        Thu, 28 Oct 2021 12:56:49 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id i15sm1270940otu.67.2021.10.28.12.56.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Oct 2021 12:56:48 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Thu, 28 Oct 2021 12:56:47 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     jack@suse.com, amir73il@gmail.com, djwong@kernel.org,
+        tytso@mit.edu, david@fromorbit.com, dhowells@redhat.com,
+        khazhy@google.com, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-api@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH v8 31/32] samples: Add fs error monitoring example
+Message-ID: <20211028195647.GB739110@roeck-us.net>
+References: <20211019000015.1666608-1-krisman@collabora.com>
+ <20211019000015.1666608-32-krisman@collabora.com>
+ <20211028151834.GA423440@roeck-us.net>
+ <87fsslasgz.fsf@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211028182407.GG3538886@iweiny-DESK2.sc.intel.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <87fsslasgz.fsf@collabora.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 28, 2021 at 11:24:08AM -0700, Ira Weiny wrote:
-> On Thu, Oct 28, 2021 at 01:52:27PM +0800, JeffleXu wrote:
-> > 
-> > 
-> > On 10/27/21 10:36 PM, Vivek Goyal wrote:
-> > > [snip]
-> > > 
-> > >>
-> > >> Is the biggest issue the lack of visibility to see if the device supports DAX?
-> > > 
-> > > Not necessarily. I think for me two biggest issues are.
-> > > 
-> > > - Should dax be enabled by default in server as well. If we do that,
-> > >   server will have to make extra ioctl() call on every LOOKUP and GETATTR
-> > >   fuse request. Local filesystems probably can easily query FS_XFLAGS_DAX
-> > >   state but doing extra syscall all the time will probably be some cost
-> > >   (No idea how much).
-> > 
-> > I tested the time cost from virtiofsd's perspective (time cost of
-> > passthrough_ll.c:lo_do_lookup()):
-> > - before per inode DAX feature: 2~4 us
-> > - after per inode DAX feature: 7~8 us
-> > 
-> > It is within expectation, as the introduction of per inode DAX feature,
-> > one extra ioctl() system call is introduced.
-> > 
-> > Also the time cost from client's perspective (time cost of
-> > fs/fuse/dir.c:fuse_lookup_name())
-> > - before per inode DAX feature: 25~30 us
-> > - after per inode DAX feature: 30~35 us
-> > 
-> > That is, ~15%~20% performance loss.
-> > 
-> > Currently we do ioctl() to query the persitent inode flags every time
-> > FUSE_LOOKUP request is received, maybe we could cache the result of
-> > ioctl() on virtiofsd side, but I have no idea how to intercept the
-> > runtime modification to these persistent indoe flags from other
-> > processes on host, e.g. sysadmin on host, to maintain the cache consistency.
+On Thu, Oct 28, 2021 at 03:56:28PM -0300, Gabriel Krisman Bertazi wrote:
+> Guenter Roeck <linux@roeck-us.net> writes:
+> 
+> > On Mon, Oct 18, 2021 at 09:00:14PM -0300, Gabriel Krisman Bertazi wrote:
+> >> Introduce an example of a FAN_FS_ERROR fanotify user to track filesystem
+> >> errors.
+> >> 
+> >> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> >> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> >> Reviewed-by: Jan Kara <jack@suse.cz>
+> >> ---
+> >> Changes since v4:
+> >>   - Protect file_handle defines with ifdef guards
+> >> 
+> >> Changes since v1:
+> >>   - minor fixes
+> >> ---
+> >>  samples/Kconfig               |   9 +++
+> >>  samples/Makefile              |   1 +
+> >>  samples/fanotify/Makefile     |   5 ++
+> >>  samples/fanotify/fs-monitor.c | 142 ++++++++++++++++++++++++++++++++++
+> >>  4 files changed, 157 insertions(+)
+> >>  create mode 100644 samples/fanotify/Makefile
+> >>  create mode 100644 samples/fanotify/fs-monitor.c
+> >> 
+> >> diff --git a/samples/Kconfig b/samples/Kconfig
+> >> index b0503ef058d3..88353b8eac0b 100644
+> >> --- a/samples/Kconfig
+> >> +++ b/samples/Kconfig
+> >> @@ -120,6 +120,15 @@ config SAMPLE_CONNECTOR
+> >>  	  with it.
+> >>  	  See also Documentation/driver-api/connector.rst
+> >>  
+> >> +config SAMPLE_FANOTIFY_ERROR
+> >> +	bool "Build fanotify error monitoring sample"
+> >> +	depends on FANOTIFY
 > >
+> > This needs something like
+> > 	depends on CC_CAN_LINK
+> > or possibly even
+> > 	depends on CC_CAN_LINK && HEADERS_INSTALL
+> > to avoid compilation errors such as
+> >
+> > samples/fanotify/fs-monitor.c:7:10: fatal error: errno.h: No such file or directory
+> >     7 | #include <errno.h>
+> >       |          ^~~~~~~~~
+> > compilation terminated.
+> >
+> > when using a toolchain without C library support, such as those provided
+> > on kernel.org.
 > 
-> Do you really expect the dax flag to change on individual files a lot?  This in
-> itself is an expensive operation as the FS has to flush the inode.
-
-No, we do not expect it to change often. But in a shared filesystem it
-could be changed by somebody else. So we can't cache it in virtiofsd.
-Even if we cache it we will need mechanism to invalidate cache if
-some other client changed it. 
-
+> Thank you, Guenter.
 > 
-> > 
-> > So if the default behavior of client side is 'dax=inode', and virtiofsd
-> > disables per inode DAX by default (neither '-o dax=server|attr' is
+> We discussed this, but I wasn't sure how to silence the error and it
+> didn't trigger in the past versions.
 > 
-> I'm not following what dax=server or dax=attr is?
-
-These are just the virtiofs daemon option names we are considering to
-allow daemon to switch between different kind of policies. These names
-are not final. As of now dax=attr is suggesting that look for FS_XFLAG_DAX
-flag on inode and enable DAX on inode accordingly. dax=server means
-that server can choose other policy to enable/disable DAX on an inode
-(and can ignore FS_XFLAG_DAX). 
-
+> The original patch is already in Jan's tree.  Jan, would you pick the
+> pack below to address it?  Feel free to squash it into the original
+> commit, if you think it is saner..
 > 
-> > specified for virtiofsd) for the sake of performance, then guest won't
-> > see DAX enabled and thus won't be surprised. This can reduce the
-> > behavior change to the minimum.
-> > 
+> Thanks,
 > 
-> What processes, other than virtiofsd have 'control' of these files?
-
-Guest process  or user can change these flags. virtiofsd is not going
-to modify this flag. It will just query this flag and respond to client
-to enable DAX if this flag/attr is set on inode.
-
+> -- >8 --
+> From: Gabriel Krisman Bertazi <krisman@collabora.com>
+> Date: Thu, 28 Oct 2021 15:34:46 -0300
+> Subject: [PATCH] samples: Make fs-monitor depend on libc and headers
 > 
-> I know that a sysadmin could come in and change the dax flag but I think that
-> is like saying a sys-admin can come in and change your .bashrc and your
-> environment is suddenly different.  We have to trust the admins not to do stuff
-> like that.  So I don't think admins are going to be changing the dax flag on
-> files out from under 'users'; in this case virtiofsd.  Right?
-
-Right. Generally I don't expect that on host anybody will change it. But I
-will not rule it out because host is the one preparing initial filesystem
-for the guest and if admin/tools on host want to set FS_XFLAG_DAX on
-some of the inodes to begin with, so be it. Guest will boot with that
-initial filesystem state.
-
+> Prevent build errors when headers or libc are not available, such as on
+> kernel build bots, like the below:
 > 
-> That means that virtiofsd could cache the status and avoid the performance
-> issues above correct?
-
-This directory could be shared also. That means multiple guests are
-sharing same directory (each guest has one corresponding virtiofsd
-instance running). That means if one guest changes the property of
-one of the files, other guests/virtiofsd will have no idea that property
-has changed.
-
-Vivek
-
+> samples/fanotify/fs-monitor.c:7:10: fatal error: errno.h: No such file
+> or directory
+>   7 | #include <errno.h>
+>     |          ^~~~~~~~~
 > 
-> Ira
-> 
-> > 
-> > > 
-> > > - So far if virtiofs is mounted without any of the dax options, just
-> > >   by looking at mount option, I could tell, DAX is not enabled on any
-> > >   of the files. But that will not be true anymore. Because dax=inode
-> > >   be default, it is possible that server upgrade enabled dax on some
-> > >   or all the files.
-> > > 
-> > >   I guess I will have to stick to same reason given by ext4/xfs. That is
-> > >   to determine whether DAX is enabled on a file or not, you need to
-> > >   query STATX_ATTR_DAX flag. That's the only way to conclude if DAX is
-> > >   being used on a file or not. Don't look at filesystem mount options
-> > >   and reach a conclusion (except the case of dax=never).
-> > 
-> > 
-> > -- 
-> > Thanks,
-> > Jeffle
-> 
+> Suggested-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+>  samples/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/samples/Kconfig b/samples/Kconfig
+> index 88353b8eac0b..56539b21f2c7 100644
+> --- a/samples/Kconfig
+> +++ b/samples/Kconfig
+> @@ -122,7 +122,7 @@ config SAMPLE_CONNECTOR
+>  
+>  config SAMPLE_FANOTIFY_ERROR
+>  	bool "Build fanotify error monitoring sample"
+> -	depends on FANOTIFY
+> +	depends on FANOTIFY && CC_CAN_LINK && HEADERS_INSTALL
+>  	help
+>  	  When enabled, this builds an example code that uses the
+>  	  FAN_FS_ERROR fanotify mechanism to monitor filesystem
+> -- 
+> 2.33.0
