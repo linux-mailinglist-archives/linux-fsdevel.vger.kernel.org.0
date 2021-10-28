@@ -2,97 +2,274 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FFEB43F1FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 23:40:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B27D43F25C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 00:08:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231423AbhJ1Vm7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Oct 2021 17:42:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231401AbhJ1Vm6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Oct 2021 17:42:58 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4FD7360FF2;
-        Thu, 28 Oct 2021 21:40:28 +0000 (UTC)
-Date:   Thu, 28 Oct 2021 22:40:25 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Subject: Re: [PATCH v8 00/17] gfs2: Fix mmap + page fault deadlocks
-Message-ID: <YXsYyWIKjvm6a9GX@arm.com>
-References: <YXCbv5gdfEEtAYo8@arm.com>
- <CAHk-=wgP058PNY8eoWW=5uRMox-PuesDMrLsrCWPS+xXhzbQxQ@mail.gmail.com>
- <YXL9tRher7QVmq6N@arm.com>
- <CAHk-=wg4t2t1AaBDyMfOVhCCOiLLjCB5TFVgZcV4Pr8X2qptJw@mail.gmail.com>
- <CAHc6FU7BEfBJCpm8wC3P+8GTBcXxzDWcp6wAcgzQtuaJLHrqZA@mail.gmail.com>
- <YXhH0sBSyTyz5Eh2@arm.com>
- <CAHk-=wjWDsB-dDj+x4yr8h8f_VSkyB7MbgGqBzDRMNz125sZxw@mail.gmail.com>
- <YXmkvfL9B+4mQAIo@arm.com>
- <CAHk-=wjQqi9cw1Guz6a8oBB0xiQNF_jtFzs3gW0k7+fKN-mB1g@mail.gmail.com>
- <YXsUNMWFpmT1eQcX@arm.com>
+        id S231424AbhJ1WLR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Oct 2021 18:11:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52022 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231361AbhJ1WLP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 28 Oct 2021 18:11:15 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71CADC061745
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 15:08:48 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id v138so13521986ybb.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 15:08:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=qm6KqyCh6s0Db7a+T/+DuLHBM+rJYYR5RLGGVD59fuY=;
+        b=Sh1Bd5kKhILHTCResq1388lC+BE5pcYLn/0MBWKRorH6mH/iK/R2oaPQiH0wjMExNp
+         AEBNHWOAUBaVrblPzJIAVBI7vr7gibYD8zCRjc4SI4KHrPbgyzefkoRYBjkAMZZ3CUvA
+         sFLoW+kusBtkBXNLGHyGRnhxGvoj7cOqm8f/xYpwjzEjizNFe9HWEmoQU9YDuDD548k9
+         a86nKDOHeXSnGs3zIk5XMvI0PvDQ6KXa9etHeOo0Uy/BCTY0o7EQ++RetJDrbVtM9TpS
+         DZ+EXkqW2XIsfPD/xMpFNTsFiM7OwOG8+4VX3Gx15WigpJKi7iglw2dzp1uz9F7Jp8BB
+         Vxzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=qm6KqyCh6s0Db7a+T/+DuLHBM+rJYYR5RLGGVD59fuY=;
+        b=mhf/bWWuUV5nd273ylHTCXtpyyDEmwZkA/+yyRFXlzuXxOfKkRQ4dCv2k5JlYmmO3F
+         SizCbkErFrEzrq3OsaIXGmffVsUzaRmPQ2I/Kguh7lUgLtOfmmwxRFDpIyT26AsyiWIc
+         rNTQaI6MqrlIC55DidbwviMce/HaPkZpTAS54E/rLdRm6xnGoQ1hry+ZlpXOiCfp75bc
+         A43f8ezHoajVIPACX0VpNAgjEtonFZqyOEflSrV/Zo3uWfGeQMPhGcCxOyXiG0dHt8m/
+         +zpYreb5CS6O5omnQugpj5Eq3EFLpmwZQfinjv5TIeTJM5w3P/ZiuHqkHdbeHiScMRQ6
+         Hzyg==
+X-Gm-Message-State: AOAM531YGOXBgYIyFwMjmzw0VD9QFWCud9TA0I/HnD+shvZp3Sld+ArT
+        NnapiofEwDcgymmzWKn854dJVKlBet+u31+VErmUew==
+X-Google-Smtp-Source: ABdhPJwnzzRsTfPkuWSzHHEmlmQjZFJywGAm5qnIBvHY0JL+ekjndbfCBQf9A6OEYyQnwYuRhybTQm05z08xfsNjZ80=
+X-Received: by 2002:a25:2f58:: with SMTP id v85mr341366ybv.487.1635458927369;
+ Thu, 28 Oct 2021 15:08:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YXsUNMWFpmT1eQcX@arm.com>
+References: <20211019215511.3771969-1-surenb@google.com> <20211019215511.3771969-2-surenb@google.com>
+ <89664270-4B9F-45E0-AC0B-8A185ED1F531@google.com> <CAJuCfpE-fR+M_funJ4Kd+gMK9q0QHyOUD7YK0ES6En4y7E1tjg@mail.gmail.com>
+In-Reply-To: <CAJuCfpE-fR+M_funJ4Kd+gMK9q0QHyOUD7YK0ES6En4y7E1tjg@mail.gmail.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Thu, 28 Oct 2021 15:08:36 -0700
+Message-ID: <CAJuCfpHfnG8b4_RkkGhu+HveF-K_7o9UVGdToVuUCf-qD05Q4Q@mail.gmail.com>
+Subject: Re: [PATCH v11 2/3] mm: add a field to store names for private
+ anonymous memory
+To:     akpm@linux-foundation.org
+Cc:     Alexey Alexandrov <aalexand@google.com>, ccross@google.com,
+        sumit.semwal@linaro.org, mhocko@suse.com, dave.hansen@intel.com,
+        keescook@chromium.org, willy@infradead.org,
+        kirill.shutemov@linux.intel.com, vbabka@suse.cz,
+        hannes@cmpxchg.org, corbet@lwn.net, viro@zeniv.linux.org.uk,
+        rdunlap@infradead.org, kaleshsingh@google.com, peterx@redhat.com,
+        rppt@kernel.org, peterz@infradead.org, catalin.marinas@arm.com,
+        vincenzo.frascino@arm.com, chinwen.chang@mediatek.com,
+        axelrasmussen@google.com, aarcange@redhat.com, jannh@google.com,
+        apopple@nvidia.com, jhubbard@nvidia.com, yuzhao@google.com,
+        will@kernel.org, fenghua.yu@intel.com, thunder.leizhen@huawei.com,
+        hughd@google.com, feng.tang@intel.com, jgg@ziepe.ca, guro@fb.com,
+        tglx@linutronix.de, krisman@collabora.com, chris.hyser@oracle.com,
+        pcc@google.com, ebiederm@xmission.com, axboe@kernel.dk,
+        legion@kernel.org, eb@emlix.com, gorcunov@gmail.com, pavel@ucw.cz,
+        songmuchun@bytedance.com, viresh.kumar@linaro.org,
+        thomascedeno@google.com, sashal@kernel.org, cxfcosmos@gmail.com,
+        linux@rasmusvillemoes.dk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 28, 2021 at 10:20:52PM +0100, Catalin Marinas wrote:
-> On Wed, Oct 27, 2021 at 02:14:48PM -0700, Linus Torvalds wrote:
-> > On Wed, Oct 27, 2021 at 12:13 PM Catalin Marinas
-> > <catalin.marinas@arm.com> wrote:
-> > > As an alternative, you mentioned earlier that a per-thread fault status
-> > > was not feasible on x86 due to races. Was this only for the hw poison
-> > > case? I think the uaccess is slightly different.
-> > 
-> > It's not x86-specific, it's very generic.
-> > 
-> > If we set some flag in the per-thread status, we'll need to be careful
-> > about not overwriting it if we then have a subsequent NMI that _also_
-> > takes a (completely unrelated) page fault - before we then read the
-> > per-thread flag.
-> > 
-> > Think 'perf' and fetching backtraces etc.
-> > 
-> > Note that the NMI page fault can easily also be a pointer coloring
-> > fault on arm64, for exactly the same reason that whatever original
-> > copy_from_user() code was. So this is not a "oh, pointer coloring
-> > faults are different". They have the same re-entrancy issue.
-> > 
-> > And both the "pagefault_disable" and "fault happens in interrupt
-> > context" cases are also the exact same 'faulthandler_disabled()'
-> > thing. So even at fault time they look very similar.
-> 
-> They do look fairly similar but we should have the information in the
-> fault handler to distinguish: not a page fault (pte permission or p*d
-> translation), in_task(), user address, fixup handler. But I agree the
-> logic looks fragile.
-> 
-> I think for nested contexts we can save the uaccess fault state on
-> exception entry, restore it on return. Or (needs some thinking on
-> atomicity) save it in a local variable. The high-level API would look
-> something like:
-> 
-> 	unsigned long uaccess_flags;	/* we could use TIF_ flags */
-> 
-> 	uaccess_flags = begin_retriable_uaccess();
-> 	copied = copy_page_from_iter_atomic(...);
-> 	retry = end_retriable_uaccess(uaccess_flags);
+On Wed, Oct 27, 2021 at 1:01 PM Suren Baghdasaryan <surenb@google.com> wrot=
+e:
+>
+> On Wed, Oct 27, 2021 at 11:35 AM Alexey Alexandrov <aalexand@google.com> =
+wrote:
+> >
+> > > On Oct 19, 2021, at 2:55 PM, Suren Baghdasaryan <surenb@google.com> w=
+rote:
+> > >
+> > > From: Colin Cross <ccross@google.com>
+> > >
+> > > In many userspace applications, and especially in VM based applicatio=
+ns
+> > > like Android uses heavily, there are multiple different allocators in=
+ use.
+> > > At a minimum there is libc malloc and the stack, and in many cases th=
+ere
+> > > are libc malloc, the stack, direct syscalls to mmap anonymous memory,=
+ and
+> > > multiple VM heaps (one for small objects, one for big objects, etc.).
+> > > Each of these layers usually has its own tools to inspect its usage;
+> > > malloc by compiling a debug version, the VM through heap inspection t=
+ools,
+> > > and for direct syscalls there is usually no way to track them.
+> > >
+> > > On Android we heavily use a set of tools that use an extended version=
+ of
+> > > the logic covered in Documentation/vm/pagemap.txt to walk all pages m=
+apped
+> > > in userspace and slice their usage by process, shared (COW) vs.  uniq=
+ue
+> > > mappings, backing, etc.  This can account for real physical memory us=
+age
+> > > even in cases like fork without exec (which Android uses heavily to s=
+hare
+> > > as many private COW pages as possible between processes), Kernel Same=
+Page
+> > > Merging, and clean zero pages.  It produces a measurement of the page=
+s
+> > > that only exist in that process (USS, for unique), and a measurement =
+of
+> > > the physical memory usage of that process with the cost of shared pag=
+es
+> > > being evenly split between processes that share them (PSS).
+> > >
+> > > If all anonymous memory is indistinguishable then figuring out the re=
+al
+> > > physical memory usage (PSS) of each heap requires either a pagemap wa=
+lking
+> > > tool that can understand the heap debugging of every layer, or for ev=
+ery
+> > > layer's heap debugging tools to implement the pagemap walking logic, =
+in
+> > > which case it is hard to get a consistent view of memory across the w=
+hole
+> > > system.
+> > >
+> > > Tracking the information in userspace leads to all sorts of problems.
+> > > It either needs to be stored inside the process, which means every
+> > > process has to have an API to export its current heap information upo=
+n
+> > > request, or it has to be stored externally in a filesystem that
+> > > somebody needs to clean up on crashes.  It needs to be readable while
+> > > the process is still running, so it has to have some sort of
+> > > synchronization with every layer of userspace.  Efficiently tracking
+> > > the ranges requires reimplementing something like the kernel vma
+> > > trees, and linking to it from every layer of userspace.  It requires
+> > > more memory, more syscalls, more runtime cost, and more complexity to
+> > > separately track regions that the kernel is already tracking.
+> > >
+> > > This patch adds a field to /proc/pid/maps and /proc/pid/smaps to show=
+ a
+> > > userspace-provided name for anonymous vmas.  The names of named anony=
+mous
+> > > vmas are shown in /proc/pid/maps and /proc/pid/smaps as [anon:<name>]=
+.
+> > >
+> > > Userspace can set the name for a region of memory by calling
+> > > prctl(PR_SET_VMA, PR_SET_VMA_ANON_NAME, start, len, (unsigned long)na=
+me);
+> > > Setting the name to NULL clears it. The name length limit is 80 bytes
+> > > including NUL-terminator and is checked to contain only printable asc=
+ii
+> > > characters (including space), except '[',']','\','$' and '`'. Ascii
+> > > strings are being used to have a descriptive identifiers for vmas, wh=
+ich
+> > > can be understood by the users reading /proc/pid/maps or /proc/pid/sm=
+aps.
+> > > Names can be standardized for a given system and they can include som=
+e
+> > > variable parts such as the name of the allocator or a library, tid of
+> > > the thread using it, etc.
+> > >
+> > > The name is stored in a pointer in the shared union in vm_area_struct
+> > > that points to a null terminated string. Anonymous vmas with the same
+> > > name (equivalent strings) and are otherwise mergeable will be merged.
+> > > The name pointers are not shared between vmas even if they contain th=
+e
+> > > same name. The name pointer is stored in a union with fields that are
+> > > only used on file-backed mappings, so it does not increase memory usa=
+ge.
+> > >
+> > > CONFIG_ANON_VMA_NAME kernel configuration is introduced to enable thi=
+s
+> > > feature. It keeps the feature disabled by default to prevent any
+> > > additional memory overhead and to avoid confusing procfs parsers on
+> > > systems which are not ready to support named anonymous vmas.
+> > >
+> > > The patch is based on the original patch developed by Colin Cross, mo=
+re
+> > > specifically on its latest version [1] posted upstream by Sumit Semwa=
+l.
+> > > It used a userspace pointer to store vma names. In that design, name
+> > > pointers could be shared between vmas. However during the last upstre=
+aming
+> > > attempt, Kees Cook raised concerns [2] about this approach and sugges=
+ted
+> > > to copy the name into kernel memory space, perform validity checks [3=
+]
+> > > and store as a string referenced from vm_area_struct.
+> > > One big concern is about fork() performance which would need to strdu=
+p
+> > > anonymous vma names. Dave Hansen suggested experimenting with worst-c=
+ase
+> > > scenario of forking a process with 64k vmas having longest possible n=
+ames
+> > > [4]. I ran this experiment on an ARM64 Android device and recorded a
+> > > worst-case regression of almost 40% when forking such a process. This
+> > > regression is addressed in the followup patch which replaces the poin=
+ter
+> > > to a name with a refcounted structure that allows sharing the name po=
+inter
+> > > between vmas of the same name. Instead of duplicating the string duri=
+ng
+> > > fork() or when splitting a vma it increments the refcount.
+> > >
+> > > [1] https://lore.kernel.org/linux-mm/20200901161459.11772-4-sumit.sem=
+wal@linaro.org/
+> > > [2] https://lore.kernel.org/linux-mm/202009031031.D32EF57ED@keescook/
+> > > [3] https://lore.kernel.org/linux-mm/202009031022.3834F692@keescook/
+> > > [4] https://lore.kernel.org/linux-mm/5d0358ab-8c47-2f5f-8e43-23b89d6a=
+8e95@intel.com/
+> > >
+> > > Changes for prctl(2) manual page (in the options section):
+> > >
+> > > PR_SET_VMA
+> > >       Sets an attribute specified in arg2 for virtual memory areas
+> > >       starting from the address specified in arg3 and spanning the
+> > >       size specified  in arg4. arg5 specifies the value of the attrib=
+ute
+> > >       to be set. Note that assigning an attribute to a virtual memory
+> > >       area might prevent it from being merged with adjacent virtual
+> > >       memory areas due to the difference in that attribute's value.
+> > >
+> > >       Currently, arg2 must be one of:
+> > >
+> > >       PR_SET_VMA_ANON_NAME
+> > >               Set a name for anonymous virtual memory areas. arg5 sho=
+uld
+> > >               be a pointer to a null-terminated string containing the
+> > >               name. The name length including null byte cannot exceed
+> > >               80 bytes. If arg5 is NULL, the name of the appropriate
+> > >               anonymous virtual memory areas will be reset. The name
+> > >               can contain only printable ascii characters (including
+> > >                space), except '[',']','\','$' and '`'.
+> > >
+> > >                This feature is available only if the kernel is built =
+with
+> > >                the CONFIG_ANON_VMA_NAME option enabled.
+> >
+> > For what it=E2=80=99s worth, it=E2=80=99s definitely interesting to see=
+ this going upstream.
+> > In particular, we would use it for high-level grouping of the data in
+> > production profiling when proper symbolization is not available:
+> >
+> > * JVM could associate a name with the memory regions it uses for the JI=
+T
+> >   code so that Linux perf data are associated with a high level name li=
+ke
+> >   "Java JIT" even if the proper Java JIT profiling is not enabled.
+> > * Similar for other JIT engines like v8 - they could annotate the memor=
+y
+> >   regions they manage and use as well.
+> > * Traditional memory allocators like tcmalloc can use this as well so
+> >   that the associated name is used in data access profiling via Linux p=
+erf.
+>
+> Hi Alexey,
+> Thanks for providing your feedback! Nice to hear that this can be
+> useful outside of Android.
 
-It doesn't work with local flags, so it would need to be saved on
-exception entry (interrupt, breakpoint etc.) on the stack, restore on
-return. But the API would return pretty close (and probably still more
-complicated than copy_*() returning an error code).
-
--- 
-Catalin
+Folks, it has been almost two weeks since I posted this v11 patchset.
+Is there anything else I can do to advance it towards merging?
