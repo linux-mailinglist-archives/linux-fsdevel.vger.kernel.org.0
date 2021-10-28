@@ -2,90 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B36ED43E481
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 17:00:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7B0943E486
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 17:03:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231258AbhJ1PDE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Oct 2021 11:03:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39126 "EHLO
+        id S231184AbhJ1PFh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Oct 2021 11:05:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230258AbhJ1PDD (ORCPT
+        with ESMTP id S230406AbhJ1PFg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Oct 2021 11:03:03 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E34CCC061570
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 08:00:36 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id f9so8375094ioo.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 08:00:36 -0700 (PDT)
+        Thu, 28 Oct 2021 11:05:36 -0400
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF1A7C061570;
+        Thu, 28 Oct 2021 08:03:07 -0700 (PDT)
+Received: by mail-il1-x12e.google.com with SMTP id j3so7215817ilr.6;
+        Thu, 28 Oct 2021 08:03:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OvysEMLpCWgv7nMDrXo9isdyt1MuhyUfY0l+6gwvOII=;
-        b=1hyPM7a1nffa0V/4nJ7UZKypI9Q+LD282OvBS/Ci5fBw7QB9eOsuvGYxmkG7Vv+w2X
-         9UTmlxRi+JxjrAWKuUASOIgMzo2iHpJA+o71gy96KVSFOVlvDQlk1jVceNvO+2h9IeaA
-         jLmjVKCO5d6bib5KqqNHcYvVtiK1V1BIbQVIZcH3t8/MuNs4U+NbRq3AIr0Inkoc3gRc
-         dW9W0tQpcL0g94QtTTZfrfmhZ8mdPIvDEh9CqFRmrQyfQ/IaD6Qk7OHZhpEnVhcTwjxF
-         HtxZDoKoZOB5A1FuVjbuyOVtQcac0+e7AIW8YwaGL/Z8+TLgeiiaUip/z5JQTTQy+HJX
-         2pbA==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aTWh4Okm1+p/YQAesadMe8LIMp+KQN7lDMfYNMC59vk=;
+        b=I49wb6nTPYEiCcPmqQj2n46yc6VDg5xJgv+Od4DeshlfH84fQ3GMV4aaWszeHc5rdm
+         uJDqP1NyNCGpOdtxQFuEAF5aghmyjwERCNz9Y+UFgSNvFDl1ne81cjxI3abKWSImzohh
+         ggt95mbS0NdwPCb4NHlpHTYQ7eZI2UHW9xgzltEdBdtbbhBW+TPAV/6qfA50qIznebpP
+         VlnKLs9+jwZ6e5K5b5AgL7Qy+a6G0e4e0jlUPKZxvg2TpmdKJf8juQBpIE2gokpYyaHY
+         N4Mi4dRdfg5JLmO6F3QXg152B7uyzrKHjfLyPfszJ5xTNp3QTCiXEpcBhpBNUqxQ7LGi
+         njrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OvysEMLpCWgv7nMDrXo9isdyt1MuhyUfY0l+6gwvOII=;
-        b=KwurXGI0+yyWE2B5lU0+iYUyQLO7Yo+rkWpIJGss+OknnKmxm+4zUSZEngwVXGS6lX
-         06M/6c3G+fiQMyaUSQODEAbNLajkGNuoSLKzURKtXEn9iL+kzljo47z4nplPUszucKAF
-         6cWc0ZoTXahcNfloFqYvTHq88ZwNfCbbTvOd7bDcEGyQvgjCGeZMw1h9GsCeqe1Kz2el
-         DhCtqV2xUAmn/2yq93MzUYiBnSWfULypUGCuWvJ2UbTlo9wubVcAth7QAZwcPbYBRmk9
-         c+7bQ7cMb+mqwgm1u65G+A3OURIAE972IebC82rJyBGGSKSme5Vjrcb7WQnAO0F0mxI6
-         iaOw==
-X-Gm-Message-State: AOAM533913XVoUH9q2OBwzP23stfpegUnAdOAAUV9W7moBxzKCKZoOEo
-        7orT8WlQfXoU175JbvJgBJV2pA==
-X-Google-Smtp-Source: ABdhPJyGyQFJfrbjCwShQcQGgYq3VDwz5I/myxpK3tu5MmJm0lqGmO7XNRsNaQKLwj1wSfd3bQ9Aww==
-X-Received: by 2002:a6b:f816:: with SMTP id o22mr3605990ioh.106.1635433236229;
-        Thu, 28 Oct 2021 08:00:36 -0700 (PDT)
-Received: from [192.168.1.30] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id x9sm1806103ill.83.2021.10.28.08.00.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Oct 2021 08:00:34 -0700 (PDT)
-Subject: Re: mm: don't read i_size of inode unless we need it
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dave Chinner <david@fromorbit.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Chris Mason <clm@fb.com>,
-        Pavel Begunkov <asml.silence@gmail.com>
-References: <6b67981f-57d4-c80e-bc07-6020aa601381@kernel.dk>
- <YXqxXXDYtKetgZY0@infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <d8118299-6576-fae6-e02c-8ae1e25c5d68@kernel.dk>
-Date:   Thu, 28 Oct 2021 09:00:32 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aTWh4Okm1+p/YQAesadMe8LIMp+KQN7lDMfYNMC59vk=;
+        b=mvDmMUIBv1GJQzg5y8Fuk/szCxEbrIQUNY3XVcKZXBoAKHTK05vbr+N7VzZtfkSEA2
+         4e0g9c3yJgf1V/hWk8+72FPiRvtA/RxNgkFCK6zj7eoS0bj4JSf9YiMCHjBeZVMC9QNo
+         4gGkLpF4etvAg7L9cRRCoeFhEN4/ELxtd/UXKWjTTfh0xWJmWkfYNcjgEpMUyhner3Gg
+         aizUrXBK9GKSbMrhRYMCsASvXVbSojmLHOI3tgIiTI0uLdCymgli/uDlahOp/bJVA5tI
+         ZffWglVCiWg86r/+GY10vUGkGP5SE0Ypwu0elFbWS+STBoe8hmSXzby60tIZzFB6FljM
+         SlxQ==
+X-Gm-Message-State: AOAM531mNQboerjkfB4wtl5vb7IKKa+hB00+NHNbN5a9fMBq1gGp4Czz
+        WGg881mxxwIv23WPUS+h30gD+PTFEHsxWcAm6zE=
+X-Google-Smtp-Source: ABdhPJwm7cZOSkD4PDVjAKfDvpzMKJHc86x0QxxDtkB6D7ZEBvFKVv7YgkT+HMOK7q7M6BWeZYGIgOl3bBCrMNO7ds8=
+X-Received: by 2002:a05:6e02:2169:: with SMTP id s9mr3630226ilv.27.1635433386956;
+ Thu, 28 Oct 2021 08:03:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YXqxXXDYtKetgZY0@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAOOPZo52azGXN-BzWamA38Gu=EkqZScLufM1VEgDuosPoH6TWA@mail.gmail.com>
+ <20211020173729.GF16460@quack2.suse.cz> <CAOOPZo43cwh5ujm3n-r9Bih=7gS7Oav0B=J_8AepWDgdeBRkYA@mail.gmail.com>
+ <20211021080304.GB5784@quack2.suse.cz> <CAOOPZo7DfbwO5tmpbpNw7T9AgN7ALDc2S8N+0TsDnvEqMZzMmg@mail.gmail.com>
+ <20211022093120.GG1026@quack2.suse.cz> <CAOOPZo7E8uw3s0d+XwQnKsq1CC4SuLe6hxEDD-v=cDThwmsMww@mail.gmail.com>
+ <20211025155713.GD12157@quack2.suse.cz>
+In-Reply-To: <20211025155713.GD12157@quack2.suse.cz>
+From:   Zhengyuan Liu <liuzhengyuang521@gmail.com>
+Date:   Thu, 28 Oct 2021 23:02:55 +0800
+Message-ID: <CAOOPZo4Chk-Ac8f=gKa3jQZgYjt3CC6x5+Ff=zaAEPLHG==_+g@mail.gmail.com>
+Subject: Re: Problem with direct IO
+To:     Jan Kara <jack@suse.cz>
+Cc:     viro@zeniv.linux.org.uk, Andrew Morton <akpm@linux-foundation.org>,
+        tytso@mit.edu, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-ext4@vger.kernel.org,
+        =?UTF-8?B?5YiY5LqR?= <liuyun01@kylinos.cn>,
+        Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/28/21 8:19 AM, Christoph Hellwig wrote:
-> Btw, given that you're micro-optimizing in this area:
-> 
-> block devices still use ->direct_IO in the I/O path.  It might make
-> sense to switch to the model of the file systems that use iomap where
-> we avoid that indirect call and can optimize the code for the direct
-> I/O fast path.  With that you woudn't even end up using this i_size_read
-> at all
+On Mon, Oct 25, 2021 at 11:57 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Sat 23-10-21 10:06:24, Zhengyuan Liu wrote:
+> > On Fri, Oct 22, 2021 at 5:31 PM Jan Kara <jack@suse.cz> wrote:
+> > > > > > > Can you post output of "dumpe2fs -h <device>" for the filesystem where the
+> > > > > > > problem happens? Thanks!
+> > > > > >
+> > > > > > Sure, the output is:
+> > > > > >
+> > > > > > # dumpe2fs -h /dev/sda3
+> > > > > > dumpe2fs 1.45.3 (14-Jul-2019)
+> > > > > > Filesystem volume name:   <none>
+> > > > > > Last mounted on:          /data
+> > > > > > Filesystem UUID:          09a51146-b325-48bb-be63-c9df539a90a1
+> > > > > > Filesystem magic number:  0xEF53
+> > > > > > Filesystem revision #:    1 (dynamic)
+> > > > > > Filesystem features:      has_journal ext_attr resize_inode dir_index
+> > > > > > filetype needs_recovery sparse_super large_file
+> > > > >
+> > > > > Thanks for the data. OK, a filesystem without extents. Does your test by
+> > > > > any chance try to do direct IO to a hole in a file? Because that is not
+> > > > > (and never was) supported without extents. Also the fact that you don't see
+> > > > > the problem with ext4 (which means extents support) would be pointing in
+> > > > > that direction.
+> > > >
+> > > > I am not sure if it trys to do direct IO to a hole or not, is there any
+> > > > way to check?  If you have a simple test to reproduce please let me know,
+> > > > we are glad to try.
+> > >
+> > > Can you enable following tracing?
+> >
+> > Sure, but let's confirm before doing that, it seems Ext4 doesn't
+> > support iomap in
+> > V4.19 which could also reproduce the problem, so if it is necessary to
+> > do the following
+> > tracing? or should we modify the tracing if under V4.19?
+>
+> Well, iomap is just a different generic framework for doing direct IO. The
+> fact that you can observe the problem both with iomap and the old direct IO
+> framework is one of the reasons why I think the problem is actually that
+> the file has holes (unallocated space in the middle).
+>
+> > > echo 1 >/sys/kernel/debug/tracing/events/ext4/ext4_ind_map_blocks_exit/enable
+> > > echo iomap_dio_rw >/sys/kernel/debug/tracing/set_ftrace_filter
+> > > echo "function_graph" >/sys/kernel/debug/tracing/current_tracer
+>
+> If you want to trace a kernel were ext4 direct IO path is not yet
+> converted to iomap framework you need to replace tracing of iomap_dio_rw
+> with:
+>
+> echo __blockdev_direct_IO >/sys/kernel/debug/tracing/set_ftrace_filter
 
-It's not a bad idea, we do kind of jump through some hoops here by
-calling generic_file_iter_read(), we should just check for dio upfront
-and handle that, falling back to filemap_read() if needed.
+Sorry for the late reply, because it is hard to reproduce when enabling ftrace.
+I'll post here right after getting useful data.
 
--- 
-Jens Axboe
-
+> > > And then gather output from /sys/kernel/debug/tracing/trace_pipe. Once the
+> > > problem reproduces, you can gather the problematic file name from dmesg, find
+> > > inode number from "stat <filename>" and provide that all to me? Thanks!
+>
