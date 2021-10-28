@@ -2,120 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E979743DDF9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 11:47:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D23EE43DE04
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 11:48:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230101AbhJ1Jti (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Oct 2021 05:49:38 -0400
-Received: from gandalf.ozlabs.org ([150.107.74.76]:36969 "EHLO
-        gandalf.ozlabs.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbhJ1Jth (ORCPT
+        id S230183AbhJ1Jux (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Oct 2021 05:50:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51130 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230110AbhJ1Jut (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Oct 2021 05:49:37 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Hg11S2T3qz4xbr;
-        Thu, 28 Oct 2021 20:47:08 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1635414429;
-        bh=JAy5EQiMGHwZGBz0rz91x7YvEwCL5YFS18MMfr4ubrM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PHNh108rq8G4lmGpwdjVSZziH+oU62FurnqtS/qwLBowk9hHwnFgFfAJcI6Md7iMF
-         CuePF4pf8ZHRKSoONBBfb/Cfqi5bvx4g18/0TGMiRr3zMUnhW3AnGAiQR59UaqVKHK
-         K3fAXh8YO25yXxMMUo+I+RqS12SXkKptg3yQ4mkjOWGXbEfP5Iurf6qL/f1xOei2bf
-         WBEIQPFy59LQCy6h2PMYV81bajVWVTtZXk0hM1GNYF9n0Jr3PtyLfKcRV/H7sFiv/Q
-         tfEB3VfWHyRLNcw8HBbQcxNDldEJj7usToC495nI+1mQJ5wjksdxIdjG65mzvIQ+3S
-         NWFWhDecOs0Dg==
-Date:   Thu, 28 Oct 2021 20:47:06 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Shreeya Patel <shreeya.patel@collabora.com>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: Track unicode tree in linux-next (was Re: [PATCH 10/11]
- unicode: Add utf8-data module)
-Message-ID: <20211028204706.7c3aee30@canb.auug.org.au>
-In-Reply-To: <877ddxdi20.fsf_-_@collabora.com>
-References: <20210915070006.954653-1-hch@lst.de>
-        <20210915070006.954653-11-hch@lst.de>
-        <87wnmipjrw.fsf@collabora.com>
-        <20211012124904.GB9518@lst.de>
-        <87sfx6papz.fsf@collabora.com>
-        <20211026074509.GA594@lst.de>
-        <87mtmvevp7.fsf@collabora.com>
-        <20211027090208.70e88aab@canb.auug.org.au>
-        <877ddxdi20.fsf_-_@collabora.com>
+        Thu, 28 Oct 2021 05:50:49 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50001C061745
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 02:48:22 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id v17so9055086wrv.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 02:48:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=TDEJin9Wub/pTmZCaG0ahvo3TESho8nP0MZ/DG5F4bU=;
+        b=Fq7FjlAbZV5zR/iWtDoqRfxsQKOz3/NHuIDK/MgY5Uz+X8Bzve19JOmFMCKZtHnc6C
+         3JxZxqr5idu9by/1C9tNk29r5SoxWsPFNh4ZvUOyQuzMqlwxlTBnfcpI7COiVFzwU5i7
+         Kh46iOm6VO6gPmtmj2vn2dabUejlwv7uesL9o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=TDEJin9Wub/pTmZCaG0ahvo3TESho8nP0MZ/DG5F4bU=;
+        b=a4fsuBgIuQ3w/innWcd6JsSXszddVBOhsKSvjGfm3rwu6wcpVpK+MdYNUinA8SoyI9
+         3l4Ualp5T7eBrdxPWjh+1W79m5ldwy4Atho7aO3zpwHCZDnL2bJ3KYFPeL7SJWBkPoFg
+         jQzrVpbItAqViAeFM2vsLQFlajfS33MAjhClXzB2eLhl6nrYmisKacVwTa8KAlFnyUWT
+         KXTb+1X2bpPEanaJw8R0aGBYrf2FW+aYl4VcxL6hmgVpHjNJCuc1VpVOedE8OYrMdco2
+         noiZ/qQIwxcP5xSOWGS4I+YTIyquVDFAKxjEGTjGmMXM6mcfBZdoub/thHaLiyG/32nY
+         QB/A==
+X-Gm-Message-State: AOAM530LI9/CufDg8YqIvE/Bf2Tgx+9suv8+IImaM15k4wavMqPpV+SC
+        ihMxXUTVwUqe+tUC469UCPAE0ltm0UclAg==
+X-Google-Smtp-Source: ABdhPJzuPEadJHFC6DHS+OKXKCrBNBoHbYtFLfXrapFarUbsAE/PiuGk7n5gPew0+g/APt+J5HIwJA==
+X-Received: by 2002:a5d:4d52:: with SMTP id a18mr4233102wru.406.1635414500859;
+        Thu, 28 Oct 2021 02:48:20 -0700 (PDT)
+Received: from altair.lan (2.f.6.6.b.3.3.0.3.a.d.b.6.0.6.0.f.f.6.2.a.5.a.7.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:7a5a:26ff:606:bda3:33b:66f2])
+        by smtp.googlemail.com with ESMTPSA id i6sm3378029wry.71.2021.10.28.02.48.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Oct 2021 02:48:20 -0700 (PDT)
+From:   Lorenz Bauer <lmb@cloudflare.com>
+To:     viro@zeniv.linux.org.uk, Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>
+Cc:     mszeredi@redhat.com, gregkh@linuxfoundation.org,
+        Lorenz Bauer <lmb@cloudflare.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH bpf-next v3 1/4] libfs: move shmem_exchange to simple_rename_exchange
+Date:   Thu, 28 Oct 2021 10:47:21 +0100
+Message-Id: <20211028094724.59043-2-lmb@cloudflare.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20211028094724.59043-1-lmb@cloudflare.com>
+References: <20211028094724.59043-1-lmb@cloudflare.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/VYwQvd5q37uHoWwiQmRtnt2";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/VYwQvd5q37uHoWwiQmRtnt2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Move shmem_exchange and make it available to other callers.
 
-Hi Gabriel,
+Suggested-by: <mszeredi@redhat.com>
+Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
+---
+ fs/libfs.c         | 24 ++++++++++++++++++++++++
+ include/linux/fs.h |  2 ++
+ mm/shmem.c         | 24 +-----------------------
+ 3 files changed, 27 insertions(+), 23 deletions(-)
 
-On Wed, 27 Oct 2021 23:00:55 -0300 Gabriel Krisman Bertazi <krisman@collabo=
-ra.com> wrote:
->>=20
-> I'd like to ask you to track the branch 'for-next' of the following repos=
-itory:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git
->=20
-> This branch is used as a staging area for development of the Unicode
-> subsystem used by native case-insensitive filesystems for file name
-> normalization and casefolding.  It goes to Linus through Ted Ts'o's ext4
-> tree.
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 51b4de3b3447..1cf144dc9ed2 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -448,6 +448,30 @@ int simple_rmdir(struct inode *dir, struct dentry *dentry)
+ }
+ EXPORT_SYMBOL(simple_rmdir);
+ 
++int simple_rename_exchange(struct inode *old_dir, struct dentry *old_dentry,
++			   struct inode *new_dir, struct dentry *new_dentry)
++{
++	bool old_is_dir = d_is_dir(old_dentry);
++	bool new_is_dir = d_is_dir(new_dentry);
++
++	if (old_dir != new_dir && old_is_dir != new_is_dir) {
++		if (old_is_dir) {
++			drop_nlink(old_dir);
++			inc_nlink(new_dir);
++		} else {
++			drop_nlink(new_dir);
++			inc_nlink(old_dir);
++		}
++	}
++	old_dir->i_ctime = old_dir->i_mtime =
++	new_dir->i_ctime = new_dir->i_mtime =
++	d_inode(old_dentry)->i_ctime =
++	d_inode(new_dentry)->i_ctime = current_time(old_dir);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(simple_rename_exchange);
++
+ int simple_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
+ 		  struct dentry *old_dentry, struct inode *new_dir,
+ 		  struct dentry *new_dentry, unsigned int flags)
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e7a633353fd2..333b8af405ce 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3383,6 +3383,8 @@ extern int simple_open(struct inode *inode, struct file *file);
+ extern int simple_link(struct dentry *, struct inode *, struct dentry *);
+ extern int simple_unlink(struct inode *, struct dentry *);
+ extern int simple_rmdir(struct inode *, struct dentry *);
++extern int simple_rename_exchange(struct inode *old_dir, struct dentry *old_dentry,
++				  struct inode *new_dir, struct dentry *new_dentry);
+ extern int simple_rename(struct user_namespace *, struct inode *,
+ 			 struct dentry *, struct inode *, struct dentry *,
+ 			 unsigned int);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index b5860f4a2738..a18dde3d3092 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2945,28 +2945,6 @@ static int shmem_rmdir(struct inode *dir, struct dentry *dentry)
+ 	return shmem_unlink(dir, dentry);
+ }
+ 
+-static int shmem_exchange(struct inode *old_dir, struct dentry *old_dentry, struct inode *new_dir, struct dentry *new_dentry)
+-{
+-	bool old_is_dir = d_is_dir(old_dentry);
+-	bool new_is_dir = d_is_dir(new_dentry);
+-
+-	if (old_dir != new_dir && old_is_dir != new_is_dir) {
+-		if (old_is_dir) {
+-			drop_nlink(old_dir);
+-			inc_nlink(new_dir);
+-		} else {
+-			drop_nlink(new_dir);
+-			inc_nlink(old_dir);
+-		}
+-	}
+-	old_dir->i_ctime = old_dir->i_mtime =
+-	new_dir->i_ctime = new_dir->i_mtime =
+-	d_inode(old_dentry)->i_ctime =
+-	d_inode(new_dentry)->i_ctime = current_time(old_dir);
+-
+-	return 0;
+-}
+-
+ static int shmem_whiteout(struct user_namespace *mnt_userns,
+ 			  struct inode *old_dir, struct dentry *old_dentry)
+ {
+@@ -3012,7 +2990,7 @@ static int shmem_rename2(struct user_namespace *mnt_userns,
+ 		return -EINVAL;
+ 
+ 	if (flags & RENAME_EXCHANGE)
+-		return shmem_exchange(old_dir, old_dentry, new_dir, new_dentry);
++		return simple_rename_exchange(old_dir, old_dentry, new_dir, new_dentry);
+ 
+ 	if (!simple_empty(new_dentry))
+ 		return -ENOTEMPTY;
+-- 
+2.32.0
 
-Added from today.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/VYwQvd5q37uHoWwiQmRtnt2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmF6cZoACgkQAVBC80lX
-0GxCkgf+PRokTvbLrCptDmsPCL72nWIaurHRH1t55hy8HX9+KcrrWeqGFCdw3eoe
-h4hUhjAmAV9zvOJLMf+SCLcsGt4xURHCm3rXZIFfWkxJI7nDRnAnmZtBB6LsUBJV
-Q/bIqQmYLQB2qBjhl4Mlf2EpbpbXFUG5MVIhVjHhTDhBVXRuiNf9mT4ZAHq3DXEo
-RSgxFDlO2lBxTyfmA3JGZ+DgZEc1FZA8OC3BMBEvEtMvmAZpZtPPNdTfEGGxCZPl
-Byh9b9ON4jFYXQRqOQ3oR1OWEpfaKCsWLeIKVtEAY9NOYNMKetctoA8LKzETfN3e
-hHGD4pxSpBBxRTVM9RCfTMENUE/z/g==
-=dAt4
------END PGP SIGNATURE-----
-
---Sig_/VYwQvd5q37uHoWwiQmRtnt2--
