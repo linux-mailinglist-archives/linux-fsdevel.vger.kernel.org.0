@@ -2,56 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2009A43E354
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 16:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52C7E43E378
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 16:21:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230406AbhJ1OVi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Oct 2021 10:21:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57384 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230376AbhJ1OVh (ORCPT
+        id S231441AbhJ1OX1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Oct 2021 10:23:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:21931 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231319AbhJ1OXS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Oct 2021 10:21:37 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EB99C061570
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 07:19:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=qBYvabBzUrmfcwMkMp4699k+QSkrdWrgSn+jwNNlusU=; b=4v86oPQHA1+wLH9XP+zcWkpp93
-        oAH1vxjvEni54qeWnn+/zn48QkFsg4bbJslfbVuLu4fEUGx5htY+3Q95VHLqaAulTk4GaSmavoZAm
-        n9DSeW2xE7pWwPFv5U7MwZY/G2Z0yl7VRpFKI2CMtd1wyM7UxocgU1Jkf7eBSeAn3tt1EX2K7+pYN
-        noz/qV8RDFn5pcyR3xRkETbgdjDl3GqpZpdxfv7i7PBppF55ceIOmzRumGpE75wNyEPJUnDEh/iDJ
-        28HpfCSvTjEgomNS8cMYpZCsFSp/CBN9zwqbdzJwVPg7m9lObrptct8ym6dIpW4CmSyrrB/mRz98C
-        9P0pQQgA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mg6FJ-00868c-R8; Thu, 28 Oct 2021 14:19:09 +0000
-Date:   Thu, 28 Oct 2021 07:19:09 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dave Chinner <david@fromorbit.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Chris Mason <clm@fb.com>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: mm: don't read i_size of inode unless we need it
-Message-ID: <YXqxXXDYtKetgZY0@infradead.org>
-References: <6b67981f-57d4-c80e-bc07-6020aa601381@kernel.dk>
+        Thu, 28 Oct 2021 10:23:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635430851;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0ACHZw6gZCSMFI1V1OWrwm+s4ColIYm0RTLQm70jRkM=;
+        b=fmVyoc+SXw0xgiB+syI18V3Wvm0w2xhAVydf8VFiok1Py9OB+Wnwi5G5Msy1v7VX04DTVy
+        +Lz0We0fsQ658WcUkFN75xUuyvsT+5m4H7gH0pMHJlOC7eyDrCcKgT++vE0hn2Ts20SjKr
+        QqkBbFAuCrGogauGnXJMePRSSZykUSA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-548-CfdvRAgjMwu6KH9dDOuK-Q-1; Thu, 28 Oct 2021 10:20:46 -0400
+X-MC-Unique: CfdvRAgjMwu6KH9dDOuK-Q-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 860F5BBEE4;
+        Thu, 28 Oct 2021 14:20:44 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.9.143])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 304745D9DE;
+        Thu, 28 Oct 2021 14:20:44 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id C04D0220562; Thu, 28 Oct 2021 10:20:43 -0400 (EDT)
+Date:   Thu, 28 Oct 2021 10:20:43 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Ioannis Angelakopoulos <iangelak@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [RFC PATCH 1/7] FUSE: Add the fsnotify opcode and in/out structs
+ to FUSE
+Message-ID: <YXqxu3iks1Skjhwi@redhat.com>
+References: <20211025204634.2517-1-iangelak@redhat.com>
+ <20211025204634.2517-2-iangelak@redhat.com>
+ <CAOQ4uxinGYb0QtgE8To5wc2iijT9VpTgDiXEp-9YXz=t_6eMbA@mail.gmail.com>
+ <YXnImHp1QfZYZ1OU@redhat.com>
+ <CAOQ4uxiY=sZVsJF670T73bk2zq+LpG9B5VQA-5rOOpaSrvhdXA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6b67981f-57d4-c80e-bc07-6020aa601381@kernel.dk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAOQ4uxiY=sZVsJF670T73bk2zq+LpG9B5VQA-5rOOpaSrvhdXA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Btw, given that you're micro-optimizing in this area:
+On Thu, Oct 28, 2021 at 07:13:10AM +0300, Amir Goldstein wrote:
+> > > you need to either include the generation in object identifier
+> > > or much better use the object's nfs file handle, the same way
+> > > that fanotify stores object identifiers.
+> >
+> > I think nfs file handle is much more complicated and its a separate
+> > project altogether. I am assuming we are talking about persistent
+> > nfs file handle as generated by host. I think biggest issue we faced
+> > with that is that guest is untrusted and we don't want to resolve
+> > file handle provided by guest on host otherwise guest can craft
+> > file handles and possibly be able to open other files on same filesystem
+> > outside shared dir.
+> >
+> 
+> Right now, virtiofsd keeps all inodes and dentries of live client inodes
+> pinned in cache on the server.
+> If you switch to file handles design, virtiofsd only need to keep a map
+> of all the file handles that server handed out to client to address
+> this concern.
 
-block devices still use ->direct_IO in the I/O path.  It might make
-sense to switch to the model of the file systems that use iomap where
-we avoid that indirect call and can optimize the code for the direct
-I/O fast path.  With that you woudn't even end up using this i_size_read
-at all
+Keeping a map of all file handles server handed out to client, should work.
+But that means these file handles are not persistent and can't be used after
+a vritiofsd restart (virtiofsd will lose its map over restart). And that
+means one can not pass these file handles to user space. And that rules out
+giving file handle to user space as part of fanotify API, IIUC.
+
+So in practice it is as good as (nodeid, generation) solution. And using
+file handles means giving CAP_DAC_READ_SEARCH to virtiofsd daemon. Will
+really like to run virtiofsd unrpviliged (in a user namespace) and be
+able to support as many features as possible.
+
+> 
+> For directories, this practice is not even needed for security, because
+> a decoded directory file handle can be verified to be within the shared dir.
+> It is only needed to prevent DoS, because a crafted directory file handle
+> (outside of shared dir) can be used to generate extra IO and thrash the
+> inode/dentry cache on the server.
+
+Good to know that for directories only DOS is a concern.
+
+> 
+> > >
+> > > > +       uint64_t mask;
+> > > > +       uint32_t namelen;
+> > > > +       uint32_t cookie;
+> > >
+> > > I object to persisting with the two-events-joined-by-cookie design.
+> > > Any new design should include a single event for rename
+> > > with information about src and dst.
+> > >
+> > > I know this is inconvenient, but we are NOT going to create a "remote inotify"
+> > > interface, we need to create a "remote fsnotify" interface and if server wants
+> > > to use inotify, it will need to join the disjoined MOVE_FROM/TO event into
+> > > a single "remote event", that FUSE will use to call fsnotify_move().
+> >
+> > man inotify says following.
+> >
+> > "       Matching up the IN_MOVED_FROM and IN_MOVED_TO event pair  generated  by
+> >        rename(2)  is thus inherently racy.  (Don't forget that if an object is
+> >        renamed outside of a monitored directory, there  may  not  even  be  an
+> >        IN_MOVED_TO  event.)"
+> >
+> > So if guest is no monitoring target dir of renamed file, then we will not
+> > even get IN_MOVED_TO. In that case we can't merge two events into one.
+> >
+> > And this sounds like inotify/fanotify interface needs to come up with
+> > an merged event and in that case remote filesystem will simply propagate
+> > that event. (Instead of coming up with a new event only for remote
+> > filesystems. Sounds like this is not a problem limited to remote
+> > filesystems only).
+> >
+> 
+> I don't see it that way.
+> I see the "internal protocol" for filesystems/vfs to report rename is
+> fsnotify_move() which carries information about both src and target.
+> I would like the remote protocol  to carry the same information.
+> It is then up to the userspace API whether to report the rename
+> as two events or a unified event.
+
+Sure not a bad idea and allowing "cookie" does not stop remote filesystems
+from reporting single rename event.
+
+In this case virtiofs is just a passthrough filesystem. It simply reports
+back what underlying filesystem is reporting. So if inotify interface
+reports two events, it will simply send that. In fact old users will
+expect that.
+
+I understand that you don't like two separate events and hence wants
+to kill cookie. But how will we fix that when underlying inotify API
+reports two separate events. If we try to merge these there is no
+guarantee that we can do that because we might get only one events
+as we might not be watching either source/target directory. We place
+watches only as specified by client. 
+
+> 
+> For example, debugfs, calls fsnotify_move() when an object is renamed
+> from underneath the vfs. It does not call fsnotify() twice with a cookie,
+> because we would not want to change local filesystem nor remote protocols
+> when we want to add new userspace APIs for reporting fsevents.
+> 
+> That comes down to my feeling that this claims to be a proposal
+> for "remote fsnotify", but it looks and sounds like a proposal for
+> "remote inotify" and this is the core of my objection to passing
+> the rename cookie in the protocol.
+
+We are starting with remote inotify support and hoping it can be extended
+to remote fanotify in limited feature form. So want to make modifications
+in such a way so that one can easily extend it for fanotify as well.
+
+Now question is, that should there be separate fuse commands for inotify
+and fanotify request/events. Or we should try to merge these two and
+design fuse_notify_fsnotify_out{} and fuse_notify_fsnotify_in{} in such
+a way so that it could support both inotify/fanotify. I guess later will
+make more sense. Just that it will be more complicated as well because
+fanotify API can send much more information to user space. Like, file
+handles, "fd", "pid" etc.
+
+I think "pid" might not make much sense in the context of remote filesystem.
+In case of virtiofsd, it will simply be pid of another virtiofsd instance
+most likely which does not mean anything for guest process. In fact,
+there is a chance that it could be same pid as of guest process.
+
+> 
+> Regarding the issue that the src/dst path may not be known
+> to the server, as I wrote, it is fine if either the src/dst path information
+> is omitted from an event, but the protocol should provide the
+> placeholder to report them.
+
+This kind of makes more sense. That protocol should have capability to report
+a rename event with both src/dst path to future proof it. That way when
+inotify/fanotify APIs start reporting a single rename event, we will be
+able to simply send it back to client without any fuse protocol
+modifications.
+
+One risk of adding space for src/dst path info in fuse_notify_fsnotify_out{}
+is that we don't know how this information will end up looking like when
+inotify/fanotify actually start supporting single rename event. It is
+possible that we add some fields now and final single event format looks
+different and now we have unused fields.
+
+> 
+> After sufficient arguing, I might be convinced that the cookie may be included
+> as an optional field in addition to the fields that I requested.
+
+But we should allow cookie as well so that older inotify API continues
+to be supported as well.
+> 
+> I understand why you write that this sounds like an fanotify interface
+> that needs to be resolved and you are correct, but the reason that the
+> fanotify interface issue was not yet resolved is that we are trying to not
+> repeat the mistakes of the past and for that same reason, I am insisting
+> on the protocol.
+
+Right now we are writing protocol fields based on what inotify (and
+possibly fanotify) are supporting. But if you want to extend it further
+so that it can report something which you intend to introduce in future,
+I think that's fine too.
+
+So how will additional fields will look like to support this signle
+rename event.
+
+Vivek
+
