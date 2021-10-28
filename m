@@ -2,110 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A967043DD10
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 10:43:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D58D843DDF6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 11:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230016AbhJ1IqX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Oct 2021 04:46:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36624 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229791AbhJ1IqW (ORCPT
+        id S230110AbhJ1Jr7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Oct 2021 05:47:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50522 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229850AbhJ1Jr6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Oct 2021 04:46:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635410635;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=KccYG4rSdcXMoVRo53pQg4Ozdzh38yw0Q7oh7hWL/OA=;
-        b=W53oVEaDQzM8VF6YoIGich0YcmQU7TxrAmiqolsqmbApNLJD5N0jCCnjEoOjGsd2oNqg2x
-        vIjegVBS5fClyOdzmOHGzoycz8fSkZNNJeLO3f3KXjBC6eJoGv/qXcsDF6b5+9+qTc7Z4K
-        Tn72LK5p6uxxzsfaHbRvF0tZfq88XiU=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-294-2-Ea0XXNNDmdKjjx0Wq8Rw-1; Thu, 28 Oct 2021 04:43:54 -0400
-X-MC-Unique: 2-Ea0XXNNDmdKjjx0Wq8Rw-1
-Received: by mail-qk1-f198.google.com with SMTP id w11-20020a05620a128b00b00462a7984b96so3403091qki.20
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 01:43:54 -0700 (PDT)
+        Thu, 28 Oct 2021 05:47:58 -0400
+Received: from mail-ua1-x92e.google.com (mail-ua1-x92e.google.com [IPv6:2607:f8b0:4864:20::92e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32BB9C061570
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 02:45:31 -0700 (PDT)
+Received: by mail-ua1-x92e.google.com with SMTP id h4so10382223uaw.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 02:45:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wurG6bZCTWtDemH1Pac8iQjbnRro1K9EHAYSZqtL0qQ=;
+        b=imXdOUoGJMp6ac0Zc8O/oCD6C5xDcqWj8OmTB+4FM8S1c8LpLflEaHWk3FC+2CPz13
+         BAKE0ALssRHLHnY7KhcXYnSqyNUBf5ONx0lwzOWjEIJre3tvr+hRiaeWU3sWviYWgiqK
+         Q2/2knAAtFsa+2GnJJa1YD4TMUylU3JAoUcjg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KccYG4rSdcXMoVRo53pQg4Ozdzh38yw0Q7oh7hWL/OA=;
-        b=yFXswgfIDE/uMU/UQfQZbHC0tu8ydyXuVckGN8/uAd8nRmJHH0ZX5eCZdb/NaCGfm4
-         zAd18uEP22SwtszE7FLMihYQ/qj6VuFOdFKTOxOqSm6V3xic85jhq6dmouNzDRWuvah3
-         fejBfKBBvGvxXVFKVgQpA8+aVq3H1KWJUBVHpXy/njh42CdBvokyWLS+DB8OJABYztWi
-         r9mQKUM47HOhTOb6aGedXABJFxqT9V/zTFTkImKi7ql/isH0AuGDEhbfnt3orcV6tGUY
-         tOX2xH9mAAn/10xlIXcIwdj93eu2ylJHsmgW91oqpKAUeMEMqTx0V1DmpNkvIgsEpFt9
-         KFig==
-X-Gm-Message-State: AOAM5323dJk2wKRBT3UJRh5jSSHGVDZ+mjCA31O8HDkyctbk3E4eitr6
-        Judxx2lHcooA3p6Y/KjWL5h0ouDjknZ2E+uQa7t1FhAXajWTIXt+exF8qRuW+p36M6WWjk4S7I6
-        +r0WL3UtiTyLSnt7UNlrnyfACQeYxyLA+CNeg15urpQ==
-X-Received: by 2002:a05:620a:15f3:: with SMTP id p19mr2422628qkm.337.1635410634134;
-        Thu, 28 Oct 2021 01:43:54 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzArBk6z7YGdByxd/X+igic/KcScZxC371ErWZ5REyS2JhtSA3Npou6sTwbdZL/ZSDM/1i2lyGhR3evMJPw0lI=
-X-Received: by 2002:a05:620a:15f3:: with SMTP id p19mr2422618qkm.337.1635410633974;
- Thu, 28 Oct 2021 01:43:53 -0700 (PDT)
+        bh=wurG6bZCTWtDemH1Pac8iQjbnRro1K9EHAYSZqtL0qQ=;
+        b=4KSYSmtfJBwrXsf8ME8TFGbTbDa8ahFaiGM3VrW89D4AoQdTvlJivKBxLofVSz7361
+         rLikv5bao/Y++11vGQgEpsD0i3ObCJAoYkgf5gErQRYffGrBb4upp9FE0/bMVMeedU5p
+         VABw0n7tU6Dl0fBafle6K0xn3kCDrkAnt0J16uKCIc7+rHyp3g8HtO83teYRFQykPCEU
+         g11/HWZmpJFcexyWiY7Z3kArYW6f+pM8SB/JaKay39VbEr21guh3IhK/gQov01U7ApT6
+         y4vT5slbvuLAm5TUIxANzt3+0khsptLjS6ijoToy3eZ9oKYiIOv9p35QPMoutZIPhf/y
+         DPfw==
+X-Gm-Message-State: AOAM531d3Tf4gqcMTk5cI+FCnG5MmnsX8dfr30rIquVd9ZQhrsMWfhdv
+        Kia9PgJ41rPFOwu7cE0yWyGijStmH7Zm9dUZCSyWFA==
+X-Google-Smtp-Source: ABdhPJxAuUIdzGMLQjP05GpmooZX64lzvO3cOVscFUUVgZp6WJZO+pHB/FH4mu2b3yy+GQ+E6gTsB2IxY4obStvj9tI=
+X-Received: by 2002:a05:6102:3e84:: with SMTP id m4mr2677770vsv.51.1635414330372;
+ Thu, 28 Oct 2021 02:45:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211021151528.116818-1-lmb@cloudflare.com> <20211021151528.116818-2-lmb@cloudflare.com>
- <b215bb8c-3ffd-2b43-44a3-5b25243db5be@iogearbox.net>
-In-Reply-To: <b215bb8c-3ffd-2b43-44a3-5b25243db5be@iogearbox.net>
-From:   Miklos Szeredi <mszeredi@redhat.com>
-Date:   Thu, 28 Oct 2021 10:43:43 +0200
-Message-ID: <CAOssrKciL5EDhrbQe1mkOrtD1gwkrEBRQyQmVhRE8Z-Kjb0WGw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 1/3] libfs: support RENAME_EXCHANGE in simple_rename()
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Lorenz Bauer <lmb@cloudflare.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        kernel-team@cloudflare.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <CAAmZXrsGg2xsP1CK+cbuEMumtrqdvD-NKnWzhNcvn71RV3c1yw@mail.gmail.com>
+ <CAJfpeguXW=Xz-sRUjwOhwinRKpEo8tyxfe_ofhhRPsZreBoQSw@mail.gmail.com> <CAAmZXrtiJcmLzf6eb90RKdCs3Q=mFNCqAD86nZQJmVwr6YwEmA@mail.gmail.com>
+In-Reply-To: <CAAmZXrtiJcmLzf6eb90RKdCs3Q=mFNCqAD86nZQJmVwr6YwEmA@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 28 Oct 2021 11:45:19 +0200
+Message-ID: <CAJfpegvtn-bQZV8-dU+YJYZ7f=3p0gF1966amKGL4k=GHZUcuw@mail.gmail.com>
+Subject: Re: fuse: kernel panic while using splice (lru corruption)
+To:     Frank Dinoff <fdinoff@google.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 28, 2021 at 1:46 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
->
-> [ Adding Miklos & Greg to Cc for review given e0e0be8a8355 ("libfs: support RENAME_NOREPLACE in
->    simple_rename()"). If you have a chance, would be great if you could take a look, thanks! ]
->
-> On 10/21/21 5:15 PM, Lorenz Bauer wrote:
-> > Allow atomic exchange via RENAME_EXCHANGE when using simple_rename.
-> > This affects binderfs, ramfs, hubetlbfs and bpffs. There isn't much
-> > to do except update the various *time fields.
-> >
-> > Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
-> > ---
-> >   fs/libfs.c | 6 +++++-
-> >   1 file changed, 5 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/libfs.c b/fs/libfs.c
-> > index 51b4de3b3447..93c03d593749 100644
-> > --- a/fs/libfs.c
-> > +++ b/fs/libfs.c
-> > @@ -455,9 +455,12 @@ int simple_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
-> >       struct inode *inode = d_inode(old_dentry);
-> >       int they_are_dirs = d_is_dir(old_dentry);
-> >
-> > -     if (flags & ~RENAME_NOREPLACE)
-> > +     if (flags & ~(RENAME_NOREPLACE | RENAME_EXCHANGE))
-> >               return -EINVAL;
-> >
-> > +     if (flags & RENAME_EXCHANGE)
-> > +             goto done;
-> > +
+On Wed, 20 Oct 2021 at 23:27, Frank Dinoff <fdinoff@google.com> wrote:
 
-This is not sufficient.   RENAME_EXCHANGE can swap a dir and a
-non-dir, in which case the parent nlink counters need to be fixed up.
+> Ping, any thoughts on how to fix this?
 
-See shmem_exchange().   My suggestion is to move that function to
-libfs.c:simple_rename_exchange().
+Looking into it now.
 
 Thanks,
 Miklos
-
