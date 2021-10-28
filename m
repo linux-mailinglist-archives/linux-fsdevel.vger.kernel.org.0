@@ -2,66 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D58D843DDF6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 11:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E979743DDF9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Oct 2021 11:47:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230110AbhJ1Jr7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Oct 2021 05:47:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50522 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229850AbhJ1Jr6 (ORCPT
+        id S230101AbhJ1Jti (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Oct 2021 05:49:38 -0400
+Received: from gandalf.ozlabs.org ([150.107.74.76]:36969 "EHLO
+        gandalf.ozlabs.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229626AbhJ1Jth (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Oct 2021 05:47:58 -0400
-Received: from mail-ua1-x92e.google.com (mail-ua1-x92e.google.com [IPv6:2607:f8b0:4864:20::92e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32BB9C061570
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 02:45:31 -0700 (PDT)
-Received: by mail-ua1-x92e.google.com with SMTP id h4so10382223uaw.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Oct 2021 02:45:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wurG6bZCTWtDemH1Pac8iQjbnRro1K9EHAYSZqtL0qQ=;
-        b=imXdOUoGJMp6ac0Zc8O/oCD6C5xDcqWj8OmTB+4FM8S1c8LpLflEaHWk3FC+2CPz13
-         BAKE0ALssRHLHnY7KhcXYnSqyNUBf5ONx0lwzOWjEIJre3tvr+hRiaeWU3sWviYWgiqK
-         Q2/2knAAtFsa+2GnJJa1YD4TMUylU3JAoUcjg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wurG6bZCTWtDemH1Pac8iQjbnRro1K9EHAYSZqtL0qQ=;
-        b=4KSYSmtfJBwrXsf8ME8TFGbTbDa8ahFaiGM3VrW89D4AoQdTvlJivKBxLofVSz7361
-         rLikv5bao/Y++11vGQgEpsD0i3ObCJAoYkgf5gErQRYffGrBb4upp9FE0/bMVMeedU5p
-         VABw0n7tU6Dl0fBafle6K0xn3kCDrkAnt0J16uKCIc7+rHyp3g8HtO83teYRFQykPCEU
-         g11/HWZmpJFcexyWiY7Z3kArYW6f+pM8SB/JaKay39VbEr21guh3IhK/gQov01U7ApT6
-         y4vT5slbvuLAm5TUIxANzt3+0khsptLjS6ijoToy3eZ9oKYiIOv9p35QPMoutZIPhf/y
-         DPfw==
-X-Gm-Message-State: AOAM531d3Tf4gqcMTk5cI+FCnG5MmnsX8dfr30rIquVd9ZQhrsMWfhdv
-        Kia9PgJ41rPFOwu7cE0yWyGijStmH7Zm9dUZCSyWFA==
-X-Google-Smtp-Source: ABdhPJxAuUIdzGMLQjP05GpmooZX64lzvO3cOVscFUUVgZp6WJZO+pHB/FH4mu2b3yy+GQ+E6gTsB2IxY4obStvj9tI=
-X-Received: by 2002:a05:6102:3e84:: with SMTP id m4mr2677770vsv.51.1635414330372;
- Thu, 28 Oct 2021 02:45:30 -0700 (PDT)
+        Thu, 28 Oct 2021 05:49:37 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Hg11S2T3qz4xbr;
+        Thu, 28 Oct 2021 20:47:08 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1635414429;
+        bh=JAy5EQiMGHwZGBz0rz91x7YvEwCL5YFS18MMfr4ubrM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PHNh108rq8G4lmGpwdjVSZziH+oU62FurnqtS/qwLBowk9hHwnFgFfAJcI6Md7iMF
+         CuePF4pf8ZHRKSoONBBfb/Cfqi5bvx4g18/0TGMiRr3zMUnhW3AnGAiQR59UaqVKHK
+         K3fAXh8YO25yXxMMUo+I+RqS12SXkKptg3yQ4mkjOWGXbEfP5Iurf6qL/f1xOei2bf
+         WBEIQPFy59LQCy6h2PMYV81bajVWVTtZXk0hM1GNYF9n0Jr3PtyLfKcRV/H7sFiv/Q
+         tfEB3VfWHyRLNcw8HBbQcxNDldEJj7usToC495nI+1mQJ5wjksdxIdjG65mzvIQ+3S
+         NWFWhDecOs0Dg==
+Date:   Thu, 28 Oct 2021 20:47:06 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Shreeya Patel <shreeya.patel@collabora.com>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: Track unicode tree in linux-next (was Re: [PATCH 10/11]
+ unicode: Add utf8-data module)
+Message-ID: <20211028204706.7c3aee30@canb.auug.org.au>
+In-Reply-To: <877ddxdi20.fsf_-_@collabora.com>
+References: <20210915070006.954653-1-hch@lst.de>
+        <20210915070006.954653-11-hch@lst.de>
+        <87wnmipjrw.fsf@collabora.com>
+        <20211012124904.GB9518@lst.de>
+        <87sfx6papz.fsf@collabora.com>
+        <20211026074509.GA594@lst.de>
+        <87mtmvevp7.fsf@collabora.com>
+        <20211027090208.70e88aab@canb.auug.org.au>
+        <877ddxdi20.fsf_-_@collabora.com>
 MIME-Version: 1.0
-References: <CAAmZXrsGg2xsP1CK+cbuEMumtrqdvD-NKnWzhNcvn71RV3c1yw@mail.gmail.com>
- <CAJfpeguXW=Xz-sRUjwOhwinRKpEo8tyxfe_ofhhRPsZreBoQSw@mail.gmail.com> <CAAmZXrtiJcmLzf6eb90RKdCs3Q=mFNCqAD86nZQJmVwr6YwEmA@mail.gmail.com>
-In-Reply-To: <CAAmZXrtiJcmLzf6eb90RKdCs3Q=mFNCqAD86nZQJmVwr6YwEmA@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 28 Oct 2021 11:45:19 +0200
-Message-ID: <CAJfpegvtn-bQZV8-dU+YJYZ7f=3p0gF1966amKGL4k=GHZUcuw@mail.gmail.com>
-Subject: Re: fuse: kernel panic while using splice (lru corruption)
-To:     Frank Dinoff <fdinoff@google.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/VYwQvd5q37uHoWwiQmRtnt2";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 20 Oct 2021 at 23:27, Frank Dinoff <fdinoff@google.com> wrote:
+--Sig_/VYwQvd5q37uHoWwiQmRtnt2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Ping, any thoughts on how to fix this?
+Hi Gabriel,
 
-Looking into it now.
+On Wed, 27 Oct 2021 23:00:55 -0300 Gabriel Krisman Bertazi <krisman@collabo=
+ra.com> wrote:
+>>=20
+> I'd like to ask you to track the branch 'for-next' of the following repos=
+itory:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git
+>=20
+> This branch is used as a staging area for development of the Unicode
+> subsystem used by native case-insensitive filesystems for file name
+> normalization and casefolding.  It goes to Linus through Ted Ts'o's ext4
+> tree.
 
-Thanks,
-Miklos
+Added from today.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/VYwQvd5q37uHoWwiQmRtnt2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmF6cZoACgkQAVBC80lX
+0GxCkgf+PRokTvbLrCptDmsPCL72nWIaurHRH1t55hy8HX9+KcrrWeqGFCdw3eoe
+h4hUhjAmAV9zvOJLMf+SCLcsGt4xURHCm3rXZIFfWkxJI7nDRnAnmZtBB6LsUBJV
+Q/bIqQmYLQB2qBjhl4Mlf2EpbpbXFUG5MVIhVjHhTDhBVXRuiNf9mT4ZAHq3DXEo
+RSgxFDlO2lBxTyfmA3JGZ+DgZEc1FZA8OC3BMBEvEtMvmAZpZtPPNdTfEGGxCZPl
+Byh9b9ON4jFYXQRqOQ3oR1OWEpfaKCsWLeIKVtEAY9NOYNMKetctoA8LKzETfN3e
+hHGD4pxSpBBxRTVM9RCfTMENUE/z/g==
+=dAt4
+-----END PGP SIGNATURE-----
+
+--Sig_/VYwQvd5q37uHoWwiQmRtnt2--
