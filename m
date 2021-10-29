@@ -2,88 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0586943F8CC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 10:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 038F043F8F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 10:33:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232371AbhJ2I2x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Oct 2021 04:28:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232305AbhJ2I2x (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Oct 2021 04:28:53 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id F2B776115C;
-        Fri, 29 Oct 2021 08:26:22 +0000 (UTC)
-Date:   Fri, 29 Oct 2021 10:26:20 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     andriy.shevchenko@linux.intel.com, akpm@linux-foundation.org,
-        sfr@canb.auug.org.au, revest@chromium.org, adobriyan@gmail.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] seq_file: fix passing wrong private data
-Message-ID: <20211029082620.jlnauplkyqmaz3ze@wittgenstein>
-References: <20211029032638.84884-1-songmuchun@bytedance.com>
+        id S232490AbhJ2Ifi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Oct 2021 04:35:38 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:60746 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232413AbhJ2Ifh (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 Oct 2021 04:35:37 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R981e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Uu6a2.v_1635496386;
+Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Uu6a2.v_1635496386)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 29 Oct 2021 16:33:07 +0800
+Subject: Re: [PATCH v6 2/7] fuse: make DAX mount option a tri-state
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     stefanha@redhat.com, miklos@szeredi.hub,
+        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
+References: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
+ <20211011030052.98923-3-jefflexu@linux.alibaba.com>
+ <YW2AU/E0pLHO5Yl8@redhat.com>
+ <652ac323-6546-01b8-992e-460ad59577ca@linux.alibaba.com>
+ <YXAsV3xp3aeOjaeh@redhat.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+Message-ID: <eb0c9711-66cb-bf79-0cf6-c6d6eec5ceea@linux.alibaba.com>
+Date:   Fri, 29 Oct 2021 16:33:06 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.14.0
 MIME-Version: 1.0
+In-Reply-To: <YXAsV3xp3aeOjaeh@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20211029032638.84884-1-songmuchun@bytedance.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 29, 2021 at 11:26:38AM +0800, Muchun Song wrote:
-> DEFINE_PROC_SHOW_ATTRIBUTE() is supposed to be used to define a series
-> of functions and variables to register proc file easily. And the users
-> can use proc_create_data() to pass their own private data and get it
-> via seq->private in the callback. Unfortunately, the proc file system
-> use PDE_DATA() to get private data instead of inode->i_private. So fix
-> it. Fortunately, there only one user of it which does not pass any
-> private data, so this bug does not break any in-tree codes.
+
+
+On 10/20/21 10:48 PM, Vivek Goyal wrote:
+> On Wed, Oct 20, 2021 at 10:52:38AM +0800, JeffleXu wrote:
+>>
+>>
+>> On 10/18/21 10:10 PM, Vivek Goyal wrote:
+>>> On Mon, Oct 11, 2021 at 11:00:47AM +0800, Jeffle Xu wrote:
+>>>> We add 'always', 'never', and 'inode' (default). '-o dax' continues to
+>>>> operate the same which is equivalent to 'always'. To be consistemt with
+>>>> ext4/xfs's tri-state mount option, when neither '-o dax' nor '-o dax='
+>>>> option is specified, the default behaviour is equal to 'inode'.
+>>>
+>>> Hi Jeffle,
+>>>
+>>> I am not sure when  -o "dax=inode"  is used as a default? If user
+>>> specifies, "-o dax" then it is equal to "-o dax=always", otherwise
+>>> user will explicitly specify "-o dax=always/never/inode". So when
+>>> is dax=inode is used as default?
+>>
+>> That means when neither '-o dax' nor '-o dax=always/never/inode' is
+>> specified, it is actually equal to '-o dax=inode', which is also how
+>> per-file DAX on ext4/xfs works.
+>>
+>> This default behaviour for local filesystem, e.g. ext4/xfs, may be
+>> straightforward, since the disk inode will be read into memory during
+>> the inode instantiation, and checking for persistent inode attribute
+>> shall be realatively cheap, except that the default behaviour has
+>> changed from 'dax=never' to 'dax=inode'.
 > 
-> Fixes: 97a32539b956 ("proc: convert everything to "struct proc_ops"")
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> ---
->  include/linux/seq_file.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Interesting that ext4/xfs allowed for this behavior change.
 > 
-> diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
-> index 103776e18555..72dbb44a4573 100644
-> --- a/include/linux/seq_file.h
-> +++ b/include/linux/seq_file.h
-> @@ -209,7 +209,7 @@ static const struct file_operations __name ## _fops = {			\
->  #define DEFINE_PROC_SHOW_ATTRIBUTE(__name)				\
->  static int __name ## _open(struct inode *inode, struct file *file)	\
->  {									\
-> -	return single_open(file, __name ## _show, inode->i_private);	\
-> +	return single_open(file, __name ## _show, PDE_DATA(inode));	\
->  }									\
->  									\
->  static const struct proc_ops __name ## _proc_ops = {			\
+>>
+>> Come back to virtiofs, when neither '-o dax' nor '-o
+>> dax=always/never/inode' is specified, and it actually behaves as '-o
+>> dax=inode', as long as '-o dax=server/attr' option is not specified for
+>> virtiofsd, virtiofsd will always clear FUSE_ATTR_DAX and thus guest will
+>> always disable DAX. IOWs, the guest virtiofs atually behaves as '-o
+>> dax=never' when neither '-o dax' nor '-o dax=always/never/inode' is
+>> specified, and '-o dax=server/attr' option is not specified for virtiofsd.
+>>
+>> But I'm okay if we need to change the default behaviour for virtiofs.
+> 
+> This is change of behavior from client's perspective. Even if client
+> did not opt-in for DAX, DAX can be enabled based on server's setting.
+> Not that there is anything wrong with it, but change of behavior part
+> concerns me.
+> 
+> In case of virtiofs, lot of features we are controlling from server.
+> Client typically just calls "mount" and there are not many options
+> users can specify for mount.  
+> 
+> Given we already allowed to make client a choice about DAX behavior,
+> I will feel more comfortable that we don't change it and let client
+> request a specific DAX mode and if client does not specify anything,
+> then DAX is not enabled.
+> 
 
-Hm, after your change DEFINE_SHOW_ATTRIBUTE() and
-DEFINE_PROC_SHOW_ATTRIBUTE() macros do exactly the same things, right?:
+Hi Vivek,
 
-#define DEFINE_SHOW_ATTRIBUTE(__name)					\
-static int __name ## _open(struct inode *inode, struct file *file)	\
-{									\
-	return single_open(file, __name ## _show, inode->i_private);	\
-}									\
-									\
-static const struct file_operations __name ## _fops = {			\
-	.owner		= THIS_MODULE,					\
-	.open		= __name ## _open,				\
-	.read		= seq_read,					\
-	.llseek		= seq_lseek,					\
-	.release	= single_release,				\
-}
+How about the following design about the default behavior to move this
+patchset forward, considering the discussion on another thread [1]?
 
-#define DEFINE_PROC_SHOW_ATTRIBUTE(__name)				\
-static int __name ## _open(struct inode *inode, struct file *file)	\
-{									\
-	return single_open(file, __name ## _show, inode->i_private);	\
-}									\
+- guest side: '-o dax=inode' acts as the default, keeping consistent
+with xfs/ext4
+- virtiofsd: the default behavior is like, neither file size based
+policy ('dax=server') nor persistent inode flags based policy
+('dax=attr') is used, though virtiofsd indeed advertises that
+it supports per inode DAX feature (so that it won't fail FUSE_INIT
+negotiation phase when guest advertises dax=inode by default)... In
+fact, it acts like 'dax=never' in this case.
 
-Can't you just replace the single instance where
-DEFINE_PROC_SHOW_ATTRIBUTE with DEFINE_SHOW_ATTRIBUTE() and remove
-DEFINE_PROC_SHOW_ATTRIBUTE completely?
+Then when guest opts-in and specifies '-o dax=inode' manually, then it
+shall realize that proper configuration for virtiofsd is also needed (-o
+dax=server|attr).
 
-Christian
+[1] https://www.spinics.net/lists/linux-xfs/msg56642.html
+
+-- 
+Thanks,
+Jeffle
