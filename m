@@ -2,174 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8354F43FEC2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 16:55:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D7A043FF79
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 17:28:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229626AbhJ2O54 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Oct 2021 10:57:56 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:57225 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbhJ2O54 (ORCPT
+        id S229851AbhJ2PbC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Oct 2021 11:31:02 -0400
+Received: from www62.your-server.de ([213.133.104.62]:56324 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229527AbhJ2PbC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Oct 2021 10:57:56 -0400
-Received: by mail-io1-f72.google.com with SMTP id z1-20020a056602004100b005e1759b24f8so931957ioz.23
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Oct 2021 07:55:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Nc6eX6JxrBpodsbbP9rc/IvjwCtF/vxxtgIRwubdq1g=;
-        b=5R68QHwvmbuNnAWT54hP0zxYhQXjomd6e0SJlNKZCkdHo0mBDEmBN5q0qHezmt4i8g
-         I/LzAcSl9+t4kASb1o1CPWwJ9uXIDYKrOCkyYlvK2Keq4gtdkIpTSXKEYWcSIWO/uYJj
-         PZqctZr4GSlKxOAq+7p67djCeU65sla8TI5oVGeOFGXibA3F+LyOyABQyseaDcx/zRKw
-         bpM/XuV53RZe197jewEKj6Im5rUR+5qeoSOF4o+awLnAPksQDzAXjniXO3B/kbBzX4gD
-         hci/r+ITDdRGTb7quX4BU2A9fAt+RzThffilwqGLTF1KromXMNUt42WVX1iCKvXCUyLP
-         Zubg==
-X-Gm-Message-State: AOAM532wHGw4wobHem61PeL1BfSB3Bcm7LKlyy5DtT0uBO/QEyOj4Drs
-        4JhdBmF8zeIxMiazFccK6QuZC8HqiBWGTdPBJgaFuDdICzTs
-X-Google-Smtp-Source: ABdhPJzr5U/5+ySyD7OcHEbSRzLjiyj5aoj6n/nbMvJctfo85r247GhnxBcu3wCfQstkQ9vGrIF8++emiyBUi4InUhcZhq7lw2iT
+        Fri, 29 Oct 2021 11:31:02 -0400
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+        by www62.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92.3)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1mgTnm-000DRl-Hy; Fri, 29 Oct 2021 17:28:18 +0200
+Received: from [85.1.206.226] (helo=linux.home)
+        by sslproxy01.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1mgTnm-00091V-8q; Fri, 29 Oct 2021 17:28:18 +0200
+Subject: Re: [PATCH bpf-next v3 1/4] libfs: move shmem_exchange to
+ simple_rename_exchange
+To:     Lorenz Bauer <lmb@cloudflare.com>, viro@zeniv.linux.org.uk,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>
+Cc:     mszeredi@redhat.com, gregkh@linuxfoundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org, bpf@vger.kernel.org
+References: <20211028094724.59043-1-lmb@cloudflare.com>
+ <20211028094724.59043-2-lmb@cloudflare.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <0c957c87-cfd1-fceb-ce18-54274eee9fc2@iogearbox.net>
+Date:   Fri, 29 Oct 2021 17:28:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-Received: by 2002:a02:cac8:: with SMTP id f8mr8615519jap.65.1635519327045;
- Fri, 29 Oct 2021 07:55:27 -0700 (PDT)
-Date:   Fri, 29 Oct 2021 07:55:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000830d1205cf7f0477@google.com>
-Subject: [syzbot] KASAN: use-after-free Read in LZ4_decompress_safe_partial
-From:   syzbot <syzbot+63d688f1d899c588fb71@syzkaller.appspotmail.com>
-To:     chao@kernel.org, gaoxiang25@huawei.com, gregkh@linuxfoundation.org,
-        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, xiang@kernel.org, yuchao0@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20211028094724.59043-2-lmb@cloudflare.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.3/26337/Fri Oct 29 10:19:12 2021)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 10/28/21 11:47 AM, Lorenz Bauer wrote:
+> Move shmem_exchange and make it available to other callers.
+> 
+> Suggested-by: <mszeredi@redhat.com>
 
-syzbot found the following issue on:
+nit: Should say proper name, but we can fix it up while applying.
 
-HEAD commit:    87066fdd2e30 Revert "mm/secretmem: use refcount_t instead ..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10c2c88cb00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=59f3ef2b4077575
-dashboard link: https://syzkaller.appspot.com/bug?extid=63d688f1d899c588fb71
-compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17032c4ab00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=170f8c3cb00000
+Miklos, does the below look good to you? Would be good to have an ACK from fs
+folks before applying, please take a look if you have a chance. Thanks!
 
-The issue was bisected to:
+> Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
+> ---
+>   fs/libfs.c         | 24 ++++++++++++++++++++++++
+>   include/linux/fs.h |  2 ++
+>   mm/shmem.c         | 24 +-----------------------
+>   3 files changed, 27 insertions(+), 23 deletions(-)
+> 
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 51b4de3b3447..1cf144dc9ed2 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -448,6 +448,30 @@ int simple_rmdir(struct inode *dir, struct dentry *dentry)
+>   }
+>   EXPORT_SYMBOL(simple_rmdir);
+>   
+> +int simple_rename_exchange(struct inode *old_dir, struct dentry *old_dentry,
+> +			   struct inode *new_dir, struct dentry *new_dentry)
+> +{
+> +	bool old_is_dir = d_is_dir(old_dentry);
+> +	bool new_is_dir = d_is_dir(new_dentry);
+> +
+> +	if (old_dir != new_dir && old_is_dir != new_is_dir) {
+> +		if (old_is_dir) {
+> +			drop_nlink(old_dir);
+> +			inc_nlink(new_dir);
+> +		} else {
+> +			drop_nlink(new_dir);
+> +			inc_nlink(old_dir);
+> +		}
+> +	}
+> +	old_dir->i_ctime = old_dir->i_mtime =
+> +	new_dir->i_ctime = new_dir->i_mtime =
+> +	d_inode(old_dentry)->i_ctime =
+> +	d_inode(new_dentry)->i_ctime = current_time(old_dir);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(simple_rename_exchange);
+> +
+>   int simple_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
+>   		  struct dentry *old_dentry, struct inode *new_dir,
+>   		  struct dentry *new_dentry, unsigned int flags)
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index e7a633353fd2..333b8af405ce 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3383,6 +3383,8 @@ extern int simple_open(struct inode *inode, struct file *file);
+>   extern int simple_link(struct dentry *, struct inode *, struct dentry *);
+>   extern int simple_unlink(struct inode *, struct dentry *);
+>   extern int simple_rmdir(struct inode *, struct dentry *);
+> +extern int simple_rename_exchange(struct inode *old_dir, struct dentry *old_dentry,
+> +				  struct inode *new_dir, struct dentry *new_dentry);
+>   extern int simple_rename(struct user_namespace *, struct inode *,
+>   			 struct dentry *, struct inode *, struct dentry *,
+>   			 unsigned int);
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index b5860f4a2738..a18dde3d3092 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2945,28 +2945,6 @@ static int shmem_rmdir(struct inode *dir, struct dentry *dentry)
+>   	return shmem_unlink(dir, dentry);
+>   }
+>   
+> -static int shmem_exchange(struct inode *old_dir, struct dentry *old_dentry, struct inode *new_dir, struct dentry *new_dentry)
+> -{
+> -	bool old_is_dir = d_is_dir(old_dentry);
+> -	bool new_is_dir = d_is_dir(new_dentry);
+> -
+> -	if (old_dir != new_dir && old_is_dir != new_is_dir) {
+> -		if (old_is_dir) {
+> -			drop_nlink(old_dir);
+> -			inc_nlink(new_dir);
+> -		} else {
+> -			drop_nlink(new_dir);
+> -			inc_nlink(old_dir);
+> -		}
+> -	}
+> -	old_dir->i_ctime = old_dir->i_mtime =
+> -	new_dir->i_ctime = new_dir->i_mtime =
+> -	d_inode(old_dentry)->i_ctime =
+> -	d_inode(new_dentry)->i_ctime = current_time(old_dir);
+> -
+> -	return 0;
+> -}
+> -
+>   static int shmem_whiteout(struct user_namespace *mnt_userns,
+>   			  struct inode *old_dir, struct dentry *old_dentry)
+>   {
+> @@ -3012,7 +2990,7 @@ static int shmem_rename2(struct user_namespace *mnt_userns,
+>   		return -EINVAL;
+>   
+>   	if (flags & RENAME_EXCHANGE)
+> -		return shmem_exchange(old_dir, old_dentry, new_dir, new_dentry);
+> +		return simple_rename_exchange(old_dir, old_dentry, new_dir, new_dentry);
+>   
+>   	if (!simple_empty(new_dentry))
+>   		return -ENOTEMPTY;
+> 
 
-commit f86cf25a609107960cf05263e491463feaae1f99
-Author: Gao Xiang <gaoxiang25@huawei.com>
-Date:   Tue Aug 28 03:39:48 2018 +0000
-
-    Revert "staging: erofs: disable compiling temporarile"
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11de0328b00000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=13de0328b00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=15de0328b00000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+63d688f1d899c588fb71@syzkaller.appspotmail.com
-Fixes: f86cf25a6091 ("Revert "staging: erofs: disable compiling temporarile"")
-
-==================================================================
-BUG: KASAN: use-after-free in get_unaligned_le16 include/asm-generic/unaligned.h:27 [inline]
-BUG: KASAN: use-after-free in LZ4_readLE16 lib/lz4/lz4defs.h:132 [inline]
-BUG: KASAN: use-after-free in LZ4_decompress_generic lib/lz4/lz4_decompress.c:285 [inline]
-BUG: KASAN: use-after-free in LZ4_decompress_safe_partial+0xff8/0x1580 lib/lz4/lz4_decompress.c:469
-Read of size 2 at addr ffff88806dd1f000 by task kworker/u5:0/150
-
-CPU: 1 PID: 150 Comm: kworker/u5:0 Not tainted 5.15.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: erofs_unzipd z_erofs_decompressqueue_work
-Call Trace:
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1dc/0x2d8 lib/dump_stack.c:106
- print_address_description+0x66/0x3e0 mm/kasan/report.c:256
- __kasan_report mm/kasan/report.c:442 [inline]
- kasan_report+0x19a/0x1f0 mm/kasan/report.c:459
- get_unaligned_le16 include/asm-generic/unaligned.h:27 [inline]
- LZ4_readLE16 lib/lz4/lz4defs.h:132 [inline]
- LZ4_decompress_generic lib/lz4/lz4_decompress.c:285 [inline]
- LZ4_decompress_safe_partial+0xff8/0x1580 lib/lz4/lz4_decompress.c:469
- z_erofs_lz4_decompress+0x4c3/0x1100 fs/erofs/decompressor.c:226
- z_erofs_decompress_generic fs/erofs/decompressor.c:354 [inline]
- z_erofs_decompress+0xa8e/0xe30 fs/erofs/decompressor.c:407
- z_erofs_decompress_pcluster+0x15e4/0x2550 fs/erofs/zdata.c:977
- z_erofs_decompress_queue fs/erofs/zdata.c:1055 [inline]
- z_erofs_decompressqueue_work+0x123/0x1a0 fs/erofs/zdata.c:1066
- process_one_work+0x853/0x1140 kernel/workqueue.c:2297
- worker_thread+0xac1/0x1320 kernel/workqueue.c:2444
- kthread+0x453/0x480 kernel/kthread.c:319
- ret_from_fork+0x1f/0x30
-
-The buggy address belongs to the page:
-page:ffffea0001b747c0 refcount:0 mapcount:0 mapping:0000000000000000 index:0x1 pfn:0x6dd1f
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 ffffea0001b74408 ffffea0001b74ac8 0000000000000000
-raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as freed
-page last allocated via order 0, migratetype Movable, gfp_mask 0x1100dca(GFP_HIGHUSER_MOVABLE|__GFP_ZERO), pid 6527, ts 51734930672, free_ts 51749499849
- prep_new_page mm/page_alloc.c:2424 [inline]
- get_page_from_freelist+0x779/0xa30 mm/page_alloc.c:4153
- __alloc_pages+0x255/0x580 mm/page_alloc.c:5375
- alloc_pages_vma+0x668/0x1030 mm/mempolicy.c:2152
- do_anonymous_page+0x31b/0x14b0 mm/memory.c:3768
- handle_pte_fault mm/memory.c:4557 [inline]
- __handle_mm_fault mm/memory.c:4694 [inline]
- handle_mm_fault+0x1860/0x2560 mm/memory.c:4792
- do_user_addr_fault+0x8ce/0x10c0 arch/x86/mm/fault.c:1397
- handle_page_fault arch/x86/mm/fault.c:1485 [inline]
- exc_page_fault+0xa1/0x1e0 arch/x86/mm/fault.c:1541
- asm_exc_page_fault+0x1e/0x30
-page last free stack trace:
- reset_page_owner include/linux/page_owner.h:24 [inline]
- free_pages_prepare mm/page_alloc.c:1338 [inline]
- free_pcp_prepare+0xc29/0xd20 mm/page_alloc.c:1389
- free_unref_page_prepare mm/page_alloc.c:3315 [inline]
- free_unref_page_list+0x11f/0xa50 mm/page_alloc.c:3431
- release_pages+0x18cb/0x1b00 mm/swap.c:963
- tlb_batch_pages_flush mm/mmu_gather.c:49 [inline]
- tlb_flush_mmu_free mm/mmu_gather.c:242 [inline]
- tlb_flush_mmu+0x780/0x910 mm/mmu_gather.c:249
- tlb_finish_mmu+0xcb/0x200 mm/mmu_gather.c:340
- exit_mmap+0x3dd/0x6f0 mm/mmap.c:3173
- __mmput+0x111/0x3a0 kernel/fork.c:1115
- exec_mmap+0x53e/0x640 fs/exec.c:1030
- begin_new_exec+0x6c9/0x1180 fs/exec.c:1288
- load_elf_binary+0x836/0x3bc0 fs/binfmt_elf.c:1001
- search_binary_handler fs/exec.c:1725 [inline]
- exec_binprm fs/exec.c:1766 [inline]
- bprm_execve+0x8eb/0x1470 fs/exec.c:1835
- do_execveat_common+0x44c/0x590 fs/exec.c:1924
- do_execve fs/exec.c:1992 [inline]
- __do_sys_execve fs/exec.c:2068 [inline]
- __se_sys_execve fs/exec.c:2063 [inline]
- __x64_sys_execve+0x8e/0xa0 fs/exec.c:2063
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-Memory state around the buggy address:
- ffff88806dd1ef00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff88806dd1ef80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff88806dd1f000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                   ^
- ffff88806dd1f080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff88806dd1f100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
