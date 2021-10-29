@@ -2,185 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FB474403C8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 22:04:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EBF74403D9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 22:09:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231425AbhJ2UHQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Oct 2021 16:07:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37364 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231562AbhJ2UHE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Oct 2021 16:07:04 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF3F7C0613F5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Oct 2021 13:04:35 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id n23so212906pgh.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Oct 2021 13:04:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YPlRuudRvswXk7E3B3ka8rl3JZvCvqQzeFmVZcMQuPI=;
-        b=N2IJwnyD/f2Knhs9wKjiOPxN6iDWj6WpWK/SSri5mVxDrNVpDuJfyxK8Kmozd+4RLB
-         TpsvhIAYZ1/wjA1438WQa94stcZ1ZuS+/J4/WXhl5NJYy7nFltD+GXVpsl4owLSmtm36
-         mpP4MaUWVhsyIvei1aRNMbFtX8bishmT/B+1zV5LGxIhmcBZfXOk2ClOH0N9skyCOEX1
-         u8k72XPm7HX2gpnc+he11ZT2pVvvOaxU+L/cBW2ivcQG8B4E1+t5KAs4NoH0TahPfJV+
-         mRZ/v+ISB1S1X3pq2nNJeBk1VleX/dSiTA0sPHRmvDdSbLpGrGlm4gqztAjcXgAaCBeM
-         fyiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YPlRuudRvswXk7E3B3ka8rl3JZvCvqQzeFmVZcMQuPI=;
-        b=zF1j7QBDaHu+5hCg+msRcKD/DWUJeqsuOtFD0dyZKL3NKrNlJwzZL/VdTeqGOzZ3KH
-         Yj+zAy7Aq7Bih2TrVG1lvPBMrl+R53a2AHa3sxCvMu6SPidRZfKvE1rhD/1Ikf9LI7TU
-         N3SCaxAV2Puz+20zm2Y5xQjbv8Eo8h2/qQBsjZtQ7HqdXQ0KHTtvSnOxsWoNpY554UfI
-         JVfRuyIGhvA/FrHfkcCnGnUCL0zOJKYdW2expsGd5gMEiS8rysO+U5uzazsOsKJknO8Y
-         RRtwECt1a2h/1sAnKm+OBZktcemoJ4O40j3CNwqP5Feb0hwOFbJ+04d/xeY1bBEXDDBQ
-         Y35g==
-X-Gm-Message-State: AOAM5304Q/vhcO6iGdB6iZNwAizTuwkpVHDksQl7PgWT1e/ie+PrsYyM
-        jix3qggrDMzHKJTqFhDcJD6LdaMGXUtZ3iENIww0Xg==
-X-Google-Smtp-Source: ABdhPJw/j8i7NsUhJpP541ghCDtcejh2n/V3NAQ2aIDQ/IaiHSEP1CSrecXGtsu9g9a1Jnij8KhB2DTYkqQgtLhLabw=
-X-Received: by 2002:a63:9042:: with SMTP id a63mr7505878pge.369.1635537873674;
- Fri, 29 Oct 2021 13:04:33 -0700 (PDT)
+        id S229458AbhJ2UL1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Oct 2021 16:11:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40300 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229979AbhJ2UL1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 Oct 2021 16:11:27 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 04AFE6101E;
+        Fri, 29 Oct 2021 20:08:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1635538138;
+        bh=B1lpTPBJKOUOmSSKH19PhuTop/N0Fuwt4VAFYWghRIY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sWYWqoF+5pjy039ODvqWeSBLMYGKelDrJ38RQS6nAHJSSAWTsdfWU/0OWoHMO/rCi
+         xqLEKiWBWfmTGlDLdcWGd43ynnFsicOBT/CvQ1ED/ymVzO1gAA9Aj3Sg8YhB+lzV6x
+         dRGmux0PtIWmJ7LOjiWcwlN2OqaHOlv9ySZCJBYtCqzBWP+bS1O11D4teuq7k2TLTv
+         szA7y9vYu8QEiQVw1pUudI2183e2QzXHeyB2Gj4CnWB/DgFNkl7P/zoNIb46C+cgVd
+         uevIyZn8ygAjR+k5wKmPde74jNEw0Jc5TyCV3OqTfmBB2trksX1/u2vxqVKlVcdMia
+         vlse3EPsZ577g==
+Date:   Fri, 29 Oct 2021 13:08:57 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jane Chu <jane.chu@oracle.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
+        "dave.jiang@intel.com" <dave.jiang@intel.com>,
+        "agk@redhat.com" <agk@redhat.com>,
+        "snitzer@redhat.com" <snitzer@redhat.com>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "ira.weiny@intel.com" <ira.weiny@intel.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "vgoyal@redhat.com" <vgoyal@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
+Subject: Re: [dm-devel] [PATCH 0/6] dax poison recovery with
+ RWF_RECOVERY_DATA flag
+Message-ID: <20211029200857.GD2237511@magnolia>
+References: <YXFPfEGjoUaajjL4@infradead.org>
+ <e89a2b17-3f03-a43e-e0b9-5d2693c3b089@oracle.com>
+ <YXJN4s1HC/Y+KKg1@infradead.org>
+ <2102a2e6-c543-2557-28a2-8b0bdc470855@oracle.com>
+ <YXj2lwrxRxHdr4hb@infradead.org>
+ <20211028002451.GB2237511@magnolia>
+ <20211028225955.GA449541@dread.disaster.area>
+ <22255117-52de-4b2d-822e-b4bc50bbc52b@gmail.com>
+ <20211029165747.GC2237511@magnolia>
+ <f3e14569-a399-f6da-fd3e-993b579eaf74@gmail.com>
 MIME-Version: 1.0
-References: <20211028205854.830200-1-almasrymina@google.com> <2fede4d2-9d82-eac9-002b-9a7246b2c3f8@redhat.com>
-In-Reply-To: <2fede4d2-9d82-eac9-002b-9a7246b2c3f8@redhat.com>
-From:   Mina Almasry <almasrymina@google.com>
-Date:   Fri, 29 Oct 2021 13:04:22 -0700
-Message-ID: <CAHS8izMckg03uLB0vrTGv2g-_xmTh1LPRc2P8sfnmL-FK5A8hg@mail.gmail.com>
-Subject: Re: [PATCH v1] mm: Add /proc/$PID/pageflags
-To:     David Hildenbrand <david@redhat.com>, Nathan Lewis <npl@google.com>
-Cc:     Yu Zhao <yuzhao@google.com>,
-        "Paul E . McKenney" <paulmckrcu@fb.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Xu <peterx@redhat.com>,
-        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        Florian Schmidt <florian.schmidt@nutanix.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f3e14569-a399-f6da-fd3e-993b579eaf74@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 29, 2021 at 12:11 AM David Hildenbrand <david@redhat.com> wrote:
->
-> On 28.10.21 22:58, Mina Almasry wrote:
-> > From: Yu Zhao <yuzhao@google.com>
-> >
-> > This file lets a userspace process know the page flags of each of its virtual
-> > pages.  It contains a 64-bit set of flags for each virtual page, containing
-> > data identical to that emitted by /proc/kpageflags.  This allows the user-space
-> > task can learn the kpageflags for the pages backing its address-space by
-> > consulting one file, without needing to be root.
-> >
-> > Example use case is a performance sensitive user-space process querying the
-> > hugepage backing of its own memory without the root access required to access
-> > /proc/kpageflags, and without accessing /proc/self/smaps_rollup which can be
-> > slow and needs to hold mmap_lock.
->
-> Can you elaborate on
->
-> a) The target use case. Are you primarily interested to see if a page
-> given base page is head or tail?
->
+On Fri, Oct 29, 2021 at 08:23:53PM +0100, Pavel Begunkov wrote:
+> On 10/29/21 17:57, Darrick J. Wong wrote:
+> > On Fri, Oct 29, 2021 at 12:46:14PM +0100, Pavel Begunkov wrote:
+> > > On 10/28/21 23:59, Dave Chinner wrote:
+> > > [...]
+> > > > > > Well, my point is doing recovery from bit errors is by definition not
+> > > > > > the fast path.  Which is why I'd rather keep it away from the pmem
+> > > > > > read/write fast path, which also happens to be the (much more important)
+> > > > > > non-pmem read/write path.
+> > > > > 
+> > > > > The trouble is, we really /do/ want to be able to (re)write the failed
+> > > > > area, and we probably want to try to read whatever we can.  Those are
+> > > > > reads and writes, not {pre,f}allocation activities.  This is where Dave
+> > > > > and I arrived at a month ago.
+> > > > > 
+> > > > > Unless you'd be ok with a second IO path for recovery where we're
+> > > > > allowed to be slow?  That would probably have the same user interface
+> > > > > flag, just a different path into the pmem driver.
+> > > > 
+> > > > I just don't see how 4 single line branches to propage RWF_RECOVERY
+> > > > down to the hardware is in any way an imposition on the fast path.
+> > > > It's no different for passing RWF_HIPRI down to the hardware *in the
+> > > > fast path* so that the IO runs the hardware in polling mode because
+> > > > it's faster for some hardware.
+> > > 
+> > > Not particularly about this flag, but it is expensive. Surely looks
+> > > cheap when it's just one feature, but there are dozens of them with
+> > > limited applicability, default config kernels are already sluggish
+> > > when it comes to really fast devices and it's not getting better.
+> > > Also, pretty often every of them will add a bunch of extra checks
+> > > to fix something of whatever it would be.
+> > 
+> > So we can't have data recovery because moving fast the only goal?
+> 
+> That's not what was said and you missed the point, which was in
+> the rest of the message.
 
-Not quite. Generally some userspace process (most notably our network
-service) has a region of performance critical memory and would like to
-know if this memory is backed by hugepages or not. It uses
-/proc/self/pageflags to inspect the pageflags of the pages backing
-this region, and counts how many ranges are backed by hugepages and
-how many are not. Generally we export this data to metrics, and if the
-hugepage backing drops or is insufficient we look into the issue
-postmortem.
+...whatever point you were trying to make was so vague that it was
+totally uninformative and I completely missed it.
 
-> b) Your mmap_lock comment. pagemap_read() needs to hold the mmap lock in
-> read mode while walking process page tables via walk_page_range().
->
+What does "callbacks or bit masks" mean, then, specifically?  How
+*exactly* would you solve the problem that Jane is seeking to solve by
+using callbacks?
 
-Gah, I'm _very_ sorry for the misinformation. I was (very incorrectly)
-under the impression that /proc/self/smaps_rollup required holding the
-mmap lock but /proc/self/pageflags didn't. I'll remove the comment
-about the mmap lock from the commit message in V2.
+Actually, you know what?  I'm so fed up with every single DAX
+conversation turning into a ****storm of people saying NO NO NO NO NO NO
+NO NO to everything proposed that I'm actually going to respond to
+whatever I think your point is, and you can defend whatever I come up
+with.
 
-> Also, do you have a rough performance comparison?
->
+> > 
+> > That's so meta.
+> > 
+> > --D
+> > 
+> > > So let's add a bit of pragmatism to the picture, if there is just one
+> > > user of a feature but it adds overhead for millions of machines that
+> > > won't ever use it, it's expensive.
 
-So from my tests with simple processes querying smaps/pageflags I
-don't see any performance difference, but I suspect it's due to my
-test cases not mapping much memory or regions.
+Errors are infrequent, and since everything is cloud-based and disposble
+now, we can replace error handling with BUG_ON().  This will reduce code
+complexity, which will reduce code size, and improve icache usage.  Win!
 
-I've CC'd Nathan who works on our network service and has run into
-performance issues with smaps. Nathan, do you have a rough performance
-comparison? If so please do share.
+> > > This one doesn't spill yet into paths I care about,
 
-> >
-> > Similar to /proc/kpageflags, the flags printed out by the kernel for
-> > each page are provided by stable_page_flags(), which exports flag bits
-> > that are user visible and stable over time.
->
-> It exports flags (documented for pageflags_read()) that are not
-> applicable to processes, like OFFLINE. BUDDY, SLAB, PGTABLE ... and can
-> never happen. Some of these kpageflags are not even page->flags, they
-> include abstracted types we use for physical memory pages based on other
-> struct page members (OFFLINE, BUDDY, MMAP, PGTABLE, ...). This feels wrong.
->
-> Also, to me it feels like we are exposing too much internal information
-> to the user, essentially making it ABI that user space processes will
-> rely on.
->
+...so you sail in and say 'no' even though you don't yet care...
 
-I'm honestly a bit surprised by this comment because AFAIU (sorry if
-wrong) we are already exporting this information via /proc/kpageflags
-and therefore it's already somewhat part of an ABI, and the
-stable_page_flags() output already needs to be stable and backwards
-compatible due to potential root users being affected by any
-non-backwards compatible changes. I am yes extending access to this
-information to non-root users.
+> > > but in general
+> > > it'd be great if we start thinking more about such stuff instead of
+> > > throwing yet another if into the path, e.g. by shifting the overhead
+> > > from linear to a constant for cases that don't use it, for instance
+> > > with callbacks
 
-> Did you investigate
->
-> a) Reducing the flags we expose to a bare minimum necessary for your use
-> case (and actually applicable to mmaped pages).
->
+Ok so after userspace calls into pread to access a DAX file, hits the
+poisoned memory line and the machinecheck fires, what then?  I guess we
+just have to figure out how to get from the MCA handler (assuming the
+machine doesn't just reboot instantly) all the way back into memcpy?
+Ok, you're in charge of figuring that out because I don't know how to do
+that.
 
-To be honest I haven't, but this is something that's certainly doable.
-I'm not sure it's easier for processes to understand or the kernel to
-maintain. My thinking:
-1. Processes parsing /proc/kpageflags can also easily parse
-/proc/self/pageflags and re-use code/implementations between them.
-2. Userspace code can extract the flags they need and ignore the ones
-they don't need or are not applicable.
-3. For kernel it's maybe easier to maintain 1 set of
-stable_page_flags() and keep that list backwards compatible. To
-address your comment I'd need to create a subset,
-stable_ps_page_flags(), and both lists now need to be backwards
-compatible.
+Notably, RWF_DATA_RECOVERY is the flag that we're calling *from* a
+callback that happens after memory controller realizes it's lost
+something, kicks a notification to the OS kernel through ACPI, and the
+kernel signal userspace to do something about it.  Yeah, that's dumb
+since spinning rust already does all this for us, but that's pmem.
 
-But I hear you, and if you feel strongly about this I'm more than
-happy to oblige. Please confirm if this is something you would like to
-see in V2.
+> > > or bit masks.
 
-> b) Extending pagemap output instead.
->
+WTF does this even mean?
 
-No I have not until you mentioned it, but even now AFAIU (and again
-sorry if wrong, please correct) all the bits exposed by pagemap as
-documented in pagemap.rst are in use, and it's a non-starter for me to
-modify how pagemap works because it'd break backwards compatibility.
-But if you see a way I'm happy to oblige :-)
+--D
 
-Thanks for your review!
-
-> You seem to be interested in the "hugepage backing", which smells like
-> "what is mapped" as in "pagemap".
->
->
-> --
-> Thanks,
->
-> David / dhildenb
->
+> > > 
+> > > > IOWs, saying that we shouldn't implement RWF_RECOVERY because it
+> > > > adds a handful of branches 	 the fast path is like saying that we
+> > > > shouldn't implement RWF_HIPRI because it slows down the fast path
+> > > > for non-polled IO....
+> > > > 
+> > > > Just factor the actual recovery operations out into a separate
+> > > > function like:
+> > > 
+> > > -- 
+> > > Pavel Begunkov
+> 
+> -- 
+> Pavel Begunkov
