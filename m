@@ -2,152 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 03C1D43F924
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 10:44:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADFED43F93D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 10:50:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232416AbhJ2Iqs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Oct 2021 04:46:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47178 "EHLO mail.kernel.org"
+        id S231555AbhJ2IxW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Oct 2021 04:53:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229874AbhJ2Iqp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Oct 2021 04:46:45 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6904660FE3;
-        Fri, 29 Oct 2021 08:44:14 +0000 (UTC)
-Date:   Fri, 29 Oct 2021 10:44:11 +0200
+        id S231533AbhJ2IxO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 Oct 2021 04:53:14 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 574DE61075;
+        Fri, 29 Oct 2021 08:50:44 +0000 (UTC)
+Date:   Fri, 29 Oct 2021 10:50:41 +0200
 From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Lukas Czerner <lczerner@redhat.com>
-Cc:     linux-ext4@vger.kernel.org, tytso@mit.edu,
-        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Carlos Maiolino <cmaiolino@redhat.com>
-Subject: Re: [PATCH v4 01/13] fs_parse: allow parameter value to be empty
-Message-ID: <20211029084411.zk32u3hflf2vdzmx@wittgenstein>
-References: <20211027141857.33657-1-lczerner@redhat.com>
- <20211027141857.33657-2-lczerner@redhat.com>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     andriy.shevchenko@linux.intel.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, revest@chromium.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] seq_file: fix passing wrong private data
+Message-ID: <20211029085041.fhyi2kn3bdmxt6h4@wittgenstein>
+References: <20211029032638.84884-1-songmuchun@bytedance.com>
+ <20211029082620.jlnauplkyqmaz3ze@wittgenstein>
+ <CAMZfGtUMLD183qHVt6=8gU4nnQD2pn1gZwZJOjCHFK73wK0=kQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20211027141857.33657-2-lczerner@redhat.com>
+In-Reply-To: <CAMZfGtUMLD183qHVt6=8gU4nnQD2pn1gZwZJOjCHFK73wK0=kQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 27, 2021 at 04:18:45PM +0200, Lukas Czerner wrote:
-> Allow parameter value to be empty by specifying fs_param_can_be_empty
-> flag.
-
-Hey Lukas,
-
-what option is this for? Usually this should be handled by passing
-FSCONFIG_SET_FLAG. Doesn't seem like a good idea to let the string value
-be optionally empty. I'd rather have the guarantee that it has to be
-something instead of having to be extra careful because it could be NULL.
-
+On Fri, Oct 29, 2021 at 04:43:40PM +0800, Muchun Song wrote:
+> On Fri, Oct 29, 2021 at 4:26 PM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> >
+> > On Fri, Oct 29, 2021 at 11:26:38AM +0800, Muchun Song wrote:
+> > > DEFINE_PROC_SHOW_ATTRIBUTE() is supposed to be used to define a series
+> > > of functions and variables to register proc file easily. And the users
+> > > can use proc_create_data() to pass their own private data and get it
+> > > via seq->private in the callback. Unfortunately, the proc file system
+> > > use PDE_DATA() to get private data instead of inode->i_private. So fix
+> > > it. Fortunately, there only one user of it which does not pass any
+> > > private data, so this bug does not break any in-tree codes.
+> > >
+> > > Fixes: 97a32539b956 ("proc: convert everything to "struct proc_ops"")
+> > > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > > ---
+> > >  include/linux/seq_file.h | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
+> > > index 103776e18555..72dbb44a4573 100644
+> > > --- a/include/linux/seq_file.h
+> > > +++ b/include/linux/seq_file.h
+> > > @@ -209,7 +209,7 @@ static const struct file_operations __name ## _fops = {                   \
+> > >  #define DEFINE_PROC_SHOW_ATTRIBUTE(__name)                           \
+> > >  static int __name ## _open(struct inode *inode, struct file *file)   \
+> > >  {                                                                    \
+> > > -     return single_open(file, __name ## _show, inode->i_private);    \
+> > > +     return single_open(file, __name ## _show, PDE_DATA(inode));     \
+> > >  }                                                                    \
+> > >                                                                       \
+> > >  static const struct proc_ops __name ## _proc_ops = {                 \
+> >
+> > Hm, after your change DEFINE_SHOW_ATTRIBUTE() and
+> > DEFINE_PROC_SHOW_ATTRIBUTE() macros do exactly the same things, right?:
 > 
-> Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
-> ---
->  fs/fs_parser.c            | 31 +++++++++++++++++++++++--------
->  include/linux/fs_parser.h |  2 +-
->  2 files changed, 24 insertions(+), 9 deletions(-)
+> Unfortunately, they are not the same. The difference is the
+> operation structure, namely "struct file_operations" and
+> "struct proc_ops".
 > 
-> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-> index 3df07c0e32b3..ed40ce5742fd 100644
-> --- a/fs/fs_parser.c
-> +++ b/fs/fs_parser.c
-> @@ -199,6 +199,8 @@ int fs_param_is_bool(struct p_log *log, const struct fs_parameter_spec *p,
->  	int b;
->  	if (param->type != fs_value_is_string)
->  		return fs_param_bad_value(log, param);
-> +	if (!*param->string && (p->flags & fs_param_can_be_empty))
-> +		return 0;
->  	b = lookup_constant(bool_names, param->string, -1);
->  	if (b == -1)
->  		return fs_param_bad_value(log, param);
-> @@ -211,8 +213,11 @@ int fs_param_is_u32(struct p_log *log, const struct fs_parameter_spec *p,
->  		    struct fs_parameter *param, struct fs_parse_result *result)
->  {
->  	int base = (unsigned long)p->data;
-> -	if (param->type != fs_value_is_string ||
-> -	    kstrtouint(param->string, base, &result->uint_32) < 0)
-> +	if (param->type != fs_value_is_string)
-> +		return fs_param_bad_value(log, param);
-> +	if (!*param->string && (p->flags & fs_param_can_be_empty))
-> +		return 0;
-> +	if (kstrtouint(param->string, base, &result->uint_32) < 0)
->  		return fs_param_bad_value(log, param);
->  	return 0;
->  }
-> @@ -221,8 +226,11 @@ EXPORT_SYMBOL(fs_param_is_u32);
->  int fs_param_is_s32(struct p_log *log, const struct fs_parameter_spec *p,
->  		    struct fs_parameter *param, struct fs_parse_result *result)
->  {
-> -	if (param->type != fs_value_is_string ||
-> -	    kstrtoint(param->string, 0, &result->int_32) < 0)
-> +	if (param->type != fs_value_is_string)
-> +		return fs_param_bad_value(log, param);
-> +	if (!*param->string && (p->flags & fs_param_can_be_empty))
-> +		return 0;
-> +	if (kstrtoint(param->string, 0, &result->int_32) < 0)
->  		return fs_param_bad_value(log, param);
->  	return 0;
->  }
-> @@ -231,8 +239,11 @@ EXPORT_SYMBOL(fs_param_is_s32);
->  int fs_param_is_u64(struct p_log *log, const struct fs_parameter_spec *p,
->  		    struct fs_parameter *param, struct fs_parse_result *result)
->  {
-> -	if (param->type != fs_value_is_string ||
-> -	    kstrtoull(param->string, 0, &result->uint_64) < 0)
-> +	if (param->type != fs_value_is_string)
-> +		return fs_param_bad_value(log, param);
-> +	if (!*param->string && (p->flags & fs_param_can_be_empty))
-> +		return 0;
-> +	if (kstrtoull(param->string, 0, &result->uint_64) < 0)
->  		return fs_param_bad_value(log, param);
->  	return 0;
->  }
-> @@ -244,6 +255,8 @@ int fs_param_is_enum(struct p_log *log, const struct fs_parameter_spec *p,
->  	const struct constant_table *c;
->  	if (param->type != fs_value_is_string)
->  		return fs_param_bad_value(log, param);
-> +	if (!*param->string && (p->flags & fs_param_can_be_empty))
-> +		return 0;
->  	c = __lookup_constant(p->data, param->string);
->  	if (!c)
->  		return fs_param_bad_value(log, param);
-> @@ -255,7 +268,8 @@ EXPORT_SYMBOL(fs_param_is_enum);
->  int fs_param_is_string(struct p_log *log, const struct fs_parameter_spec *p,
->  		       struct fs_parameter *param, struct fs_parse_result *result)
->  {
-> -	if (param->type != fs_value_is_string || !*param->string)
-> +	if (param->type != fs_value_is_string ||
-> +	    (!*param->string && !(p->flags & fs_param_can_be_empty)))
->  		return fs_param_bad_value(log, param);
->  	return 0;
->  }
-> @@ -275,7 +289,8 @@ int fs_param_is_fd(struct p_log *log, const struct fs_parameter_spec *p,
->  {
->  	switch (param->type) {
->  	case fs_value_is_string:
-> -		if (kstrtouint(param->string, 0, &result->uint_32) < 0)
-> +		if ((!*param->string && !(p->flags & fs_param_can_be_empty)) ||
-> +		    kstrtouint(param->string, 0, &result->uint_32) < 0)
->  			break;
->  		if (result->uint_32 <= INT_MAX)
->  			return 0;
-> diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
-> index aab0ffc6bac6..f103c91139d4 100644
-> --- a/include/linux/fs_parser.h
-> +++ b/include/linux/fs_parser.h
-> @@ -42,7 +42,7 @@ struct fs_parameter_spec {
->  	u8			opt;	/* Option number (returned by fs_parse()) */
->  	unsigned short		flags;
->  #define fs_param_neg_with_no	0x0002	/* "noxxx" is negative param */
-> -#define fs_param_neg_with_empty	0x0004	/* "xxx=" is negative param */
-> +#define fs_param_can_be_empty	0x0004	/* "xxx=" is allowed */
->  #define fs_param_deprecated	0x0008	/* The param is deprecated */
->  	const void		*data;
->  };
-> -- 
-> 2.31.1
-> 
+> DEFINE_SHOW_ATTRIBUTE() is usually used by
+> debugfs while DEFINE_SHOW_ATTRIBUTE() is
+> used by procfs.
+
+Ugh, right, thanks for pointing that out. I overlooked the _proc_ops
+appendix. Not sure what's right here. There seem to have been earlier
+callers to DEFINE_PROC_SHOW_ATTRIBUTE() that relied on PDE_DATA() but
+there's only one caller so that change wouldn't be too bad, I guess.
