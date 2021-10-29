@@ -2,125 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E89243FDCD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 16:03:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A719B43FDD6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 16:05:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231610AbhJ2OFs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Oct 2021 10:05:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:27239 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229692AbhJ2OFr (ORCPT
+        id S230064AbhJ2OIP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Oct 2021 10:08:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40024 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229603AbhJ2OIP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Oct 2021 10:05:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635516198;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=UAO5hlBNRIsi6HHTbgauN8V1YNxASqG4MUTjtXwDRGE=;
-        b=Y8AmLnA+D2zkO7aTWrP+JbDv85yfqKC8fyV+oQ9lYVqBMvs0J7opiDGw88zZQI3kpDjqat
-        G3UpyrkTEne77ij/KbM2yRrsDnJySI3fpFoPlxO0nJR/ELHUiOQuTgctTaSTKPqJefqUl9
-        nFWFZWL1y/+LyO74V4kMzmw+qXKo/30=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-34-6oVbE3goM2C8LodwzHbb4Q-1; Fri, 29 Oct 2021 10:03:15 -0400
-X-MC-Unique: 6oVbE3goM2C8LodwzHbb4Q-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C248236304;
-        Fri, 29 Oct 2021 14:03:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5727F79452;
-        Fri, 29 Oct 2021 14:02:37 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <163363944839.1980952.3311507543724895463.stgit@warthog.procyon.org.uk>
-References: <163363944839.1980952.3311507543724895463.stgit@warthog.procyon.org.uk> <163363935000.1980952.15279841414072653108.stgit@warthog.procyon.org.uk>
-Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        linux-cifs@vger.kernel.org, linux-cachefs@redhat.com,
-        Jeff Layton <jlayton@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 07/10] cifs: (untested) Move to using the alternate fallback fscache I/O API
+        Fri, 29 Oct 2021 10:08:15 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A811C061570;
+        Fri, 29 Oct 2021 07:05:46 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id r4so38459479edi.5;
+        Fri, 29 Oct 2021 07:05:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hvaOZ+L7Q/hsGmgFIj1Fd0g2K7g1gQBbyCtdTWJts7g=;
+        b=k3ESfV5YtenEJ/NOkxsM84lYLQWIN00Dm9aqiA9jgI4swsqfLAEkI/ab/eKHSqMRQr
+         Zj6jmYK3kTsyMGKTF46IYBnC65esbPtG9eEg6U7YAKzp5N3GvpBL7m57hAAQ2hClX4oL
+         0XtFIryldx8HXL7f4vipSifahc6nJv6O/REYNJB9+04h4Yp2kRwNK/u3tDU+ZzV/FjrO
+         2PaoSXeQpwQ3EhZKPi4HSaQWhasznxo33DgG2xTeSJof53lpP4JqDCPOZGCNGPLVBvkw
+         RRvkCxr1Gj1KxPALv6tPGhGscizSde7P2504Tp9EpMbS0ki3n59anIoFZcvNSHrfmJqM
+         yW5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hvaOZ+L7Q/hsGmgFIj1Fd0g2K7g1gQBbyCtdTWJts7g=;
+        b=ncqDEzdp/RET4q9jvA0bH71Q8nRJgreqnJ8Jz223h4/Y/mEBEB5mLCWjnv/jz5nnKe
+         XHv9CxQ6D1v6ktNVxGK7DbJNbhmxIMD+7yOUeLFO6EaCZB8mqRLpn+wuR8Ud7oshwRgV
+         j3Yl4HjEN9GEItKybCNJ1kXYd5433KxBiRT6M74w0J+/6rPX12j13E+eXvanuX+s3saQ
+         J9vv8xF9KQMCqLJDMsPSwJK1K1Iy8t+6amJWyd4W3EVP80kflAX5JJWYFkwfb/r+y3g0
+         2Flu02NOGL+zIeY7U3w/aPw9qluiRAyOg/9BkhRCI7po5bbsEVxcbt5JSmzMXxph6i5g
+         mR8Q==
+X-Gm-Message-State: AOAM5337tUpx4PMyjjDYR+xWAq9C1cxA4cgoqlnc/XOz8MWLjdQlGO/u
+        bVzqteo7FR8NiTgXXQs/dh4Mlgwn5MgQcZVL+EI=
+X-Google-Smtp-Source: ABdhPJwtVXLFoFhFJUkbD073vlIqpwXOQ4Dd3cpc71Nl6L3ircqX5Unm2vzoFJ+Zbc907xuOR/EA9TYdqu94eALaABk=
+X-Received: by 2002:a17:906:58d3:: with SMTP id e19mr13384663ejs.350.1635516343380;
+ Fri, 29 Oct 2021 07:05:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1876664.1635516156.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Fri, 29 Oct 2021 15:02:36 +0100
-Message-ID: <1876665.1635516156@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-To:     unlisted-recipients:; (no To-header on input)
+References: <20211025150223.13621-1-mhocko@kernel.org> <20211025150223.13621-3-mhocko@kernel.org>
+ <CA+KHdyVqOuKny7bT+CtrCk8BrnARYz744Ze6cKMuy2BXo5e7jw@mail.gmail.com>
+ <YXgsxF/NRlHjH+Ng@dhcp22.suse.cz> <20211026193315.GA1860@pc638.lan>
+ <20211027175550.GA1776@pc638.lan> <YXupZjQgLAi6ClRi@dhcp22.suse.cz>
+In-Reply-To: <YXupZjQgLAi6ClRi@dhcp22.suse.cz>
+From:   Uladzislau Rezki <urezki@gmail.com>
+Date:   Fri, 29 Oct 2021 16:05:32 +0200
+Message-ID: <CA+KHdyX_0B-hM8m0eZBetcdBC9X3ddnA4dMyZvA2_xCjJJeJCA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] mm/vmalloc: add support for __GFP_NOFAIL
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Linux Memory Management List <linux-mm@kvack.org>,
+        Dave Chinner <david@fromorbit.com>, Neil Brown <neilb@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > index d77830ff604c..f4b7927e217e 100644
+> > --- a/mm/vmalloc.c
+> > +++ b/mm/vmalloc.c
+> > @@ -2889,8 +2889,14 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+> >       unsigned long array_size;
+> >       unsigned int nr_small_pages = size >> PAGE_SHIFT;
+> >       unsigned int page_order;
+> > +     unsigned long flags;
+> > +     int ret;
+> >
+> >       array_size = (unsigned long)nr_small_pages * sizeof(struct page *);
+> > +
+> > +     /*
+> > +      * This is i do not understand why we do not want to see warning messages.
+> > +      */
+> >       gfp_mask |= __GFP_NOWARN;
+>
+> I suspect this is becauser vmalloc wants to have its own failure
+> reporting.
+>
+But as i see it is broken. All three warn_alloc() reports in the
+__vmalloc_area_node()
+are useless because the __GFP_NOWARN is added on top of gfp_mask:
 
-> Move cifs/smb to using the alternate fallback fscache I/O API instead of
-> the old upstream I/O API as that is about to be deleted.  The alternate =
-API
-> will also be deleted at some point in the future as it's dangerous (as i=
-s
-> the old API) and can lead to data corruption if the backing filesystem c=
-an
-> insert/remove bridging blocks of zeros into its extent list[1].
-> =
+void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...)
+{
+        struct va_format vaf;
+        va_list args;
+        static DEFINE_RATELIMIT_STATE(nopage_rs, 10*HZ, 1);
 
-> The alternate API reads and writes pages synchronously, with the intenti=
-on
-> of allowing removal of the operation management framework and thence the
-> object management framework from fscache.
-> =
+        if ((gfp_mask & __GFP_NOWARN) || !__ratelimit(&nopage_rs))
+                return;
+...
 
-> The preferred change would be to use the netfs lib, but the new I/O API =
-can
-> be used directly.  It's just that as the cache now needs to track data f=
-or
-> itself, caching blocks may exceed page size...
-> =
+everything with the __GFP_NOWARN is just reverted.
 
-> Changes
-> =3D=3D=3D=3D=3D=3D=3D
-> ver #2:
->   - Changed "deprecated" to "fallback" in the new function names[2].
+> [...]
+> > @@ -3010,16 +3037,22 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+> >       area = __get_vm_area_node(real_size, align, shift, VM_ALLOC |
+> >                                 VM_UNINITIALIZED | vm_flags, start, end, node,
+> >                                 gfp_mask, caller);
+> > -     if (!area) {
+> > -             warn_alloc(gfp_mask, NULL,
+> > -                     "vmalloc error: size %lu, vm_struct allocation failed",
+> > -                     real_size);
+> > -             goto fail;
+> > -     }
+> > +     if (area)
+> > +             addr = __vmalloc_area_node(area, gfp_mask, prot, shift, node);
+> > +
+> > +     if (!area || !addr) {
+> > +             if (gfp_mask & __GFP_NOFAIL) {
+> > +                     schedule_timeout_uninterruptible(1);
+> > +                     goto again;
+> > +             }
+> > +
+> > +             if (!area)
+> > +                     warn_alloc(gfp_mask, NULL,
+> > +                             "vmalloc error: size %lu, vm_struct allocation failed",
+> > +                             real_size);
+> >
+> > -     addr = __vmalloc_area_node(area, gfp_mask, prot, shift, node);
+> > -     if (!addr)
+> >               goto fail;
+> > +     }
+> >
+> >       /*
+> >        * In this function, newly allocated vm_struct has VM_UNINITIALIZED
+> > <snip>
+>
+> OK, this looks easier from the code reading but isn't it quite wasteful
+> to throw all the pages backing the area (all of them allocated as
+> __GFP_NOFAIL) just to then fail to allocate few page tables pages and
+> drop all of that on the floor (this will happen in __vunmap AFAICS).
+>
+> I mean I do not care all that strongly but it seems to me that more
+> changes would need to be done here and optimizations can be done on top.
+>
+> Is this something you feel strongly about?
+>
+Will try to provide some motivations :)
 
-I've managed to test this now.  There was a bug in it, fixed by the follow=
-ing
-incremental change:
+It depends on how to look at it. My view is as follows a more simple code
+is preferred. It is not considered as a hot path and it is rather a corner
+case to me. I think "unwinding" has some advantage. At least one motivation
+is to release a memory(on failure) before a delay that will prevent holding
+of extra memory in case of __GFP_NOFAIL infinitelly does not succeed, i.e.
+if a process stuck due to __GFP_NOFAIL it does not "hold" an extra memory
+forever.
 
---- a/fs/cifs/fscache.h
-+++ b/fs/cifs/fscache.h
-@@ -75,7 +75,7 @@ static inline int cifs_readpage_from_fscache(struct inod=
-e *inode,
- static inline void cifs_readpage_to_fscache(struct inode *inode,
- 					    struct page *page)
- {
--	if (PageFsCache(page))
-+	if (CIFS_I(inode)->fscache)
- 		__cifs_readpage_to_fscache(inode, page);
- }
- =
-
-
-It shouldn't be using PageFsCache() here.  That's only used to indicate th=
-at
-an async DIO is in progress on the page, but since we're using the synchro=
-nous
-fallback API, that should not happen.  Also, it's no longer used to indica=
-te
-that a page is being cached and trigger writeback that way.
-
-David
-
+-- 
+Uladzislau Rezki
