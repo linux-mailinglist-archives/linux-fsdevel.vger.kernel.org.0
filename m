@@ -2,154 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DF4644029F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 20:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD8CB440289
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 20:52:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230204AbhJ2S6R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Oct 2021 14:58:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49830 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229897AbhJ2S6Q (ORCPT
+        id S231397AbhJ2Syb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Oct 2021 14:54:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:56461 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230204AbhJ2Sya (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Oct 2021 14:58:16 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A5FDC061570
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Oct 2021 11:55:47 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id f3so14660377lfu.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Oct 2021 11:55:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uGPiPKSphOUEs2fEDAQ1oyHUSr8W7H4wPzT5A6mID2k=;
-        b=PwcTyiA+l0irgoS20hv3ruCOgqQ9pk+pMaL//cWuIfytOjzpNyUjD0wheL47Rw4p5e
-         XrhsN1D22td0eNyy9FTurkcJuSyIf4PSSbRhWBWg03sYd3a5zne0nY8hIhl5wl5Iiq0/
-         rwXzrUhn5/fXzh2aHHrpyapZm5QCvdomJAv4A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uGPiPKSphOUEs2fEDAQ1oyHUSr8W7H4wPzT5A6mID2k=;
-        b=60jl+u2dyWzZ7auv3SJat2zGHWnnTjfYVgscNaCeUHxGW97simc/5oymX+fJE+D6sD
-         9ThbUfjhCUaQ+whNOBiPusiEKlfnKvVhssKa98z2SwHKmSHV2+DXDZfh2eGPo1lkyVYh
-         vXRA7cAHwRWVYL6m3qW03aQctxPV4qR+JF4XjYv8sLmOLJBatse2DP+CCrpdIEg2qJ8i
-         uLNi5wo/lIgnQwhUH0yhm45vtua+SbQx8ctfmMN9a8BifwAM58wuaCbCEzBYLPGDr2cY
-         QHLi9PsyduvKOtt04k76xHcTwN5VMRtUH5fiYFCqD1MGR7NiFGak086HeQo+UtCj+ZTz
-         VzRg==
-X-Gm-Message-State: AOAM533MgzTxJFS6jcKi3oxc72GoWTqSyTPAoMMK9cvgeLb68N3etjJ6
-        8haBpqRzdQUQhPxk92UREBFiKx+cuUdmhuvEQ5I=
-X-Google-Smtp-Source: ABdhPJxDfcp0KO86m+QU+3JchdiUFbSwUI04IXBKrYq+NMALo01CbtjO609kakX1G8VYCxwrJ/iBBw==
-X-Received: by 2002:a19:3846:: with SMTP id d6mr11824624lfj.541.1635533745406;
-        Fri, 29 Oct 2021 11:55:45 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id z3sm184155ljm.113.2021.10.29.11.55.45
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Oct 2021 11:55:45 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id q16so18368862ljg.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Oct 2021 11:55:45 -0700 (PDT)
-X-Received: by 2002:a05:651c:17a6:: with SMTP id bn38mr13088470ljb.56.1635533269069;
- Fri, 29 Oct 2021 11:47:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHk-=wgP058PNY8eoWW=5uRMox-PuesDMrLsrCWPS+xXhzbQxQ@mail.gmail.com>
- <YXL9tRher7QVmq6N@arm.com> <CAHk-=wg4t2t1AaBDyMfOVhCCOiLLjCB5TFVgZcV4Pr8X2qptJw@mail.gmail.com>
- <CAHc6FU7BEfBJCpm8wC3P+8GTBcXxzDWcp6wAcgzQtuaJLHrqZA@mail.gmail.com>
- <YXhH0sBSyTyz5Eh2@arm.com> <CAHk-=wjWDsB-dDj+x4yr8h8f_VSkyB7MbgGqBzDRMNz125sZxw@mail.gmail.com>
- <YXmkvfL9B+4mQAIo@arm.com> <CAHk-=wjQqi9cw1Guz6a8oBB0xiQNF_jtFzs3gW0k7+fKN-mB1g@mail.gmail.com>
- <YXsUNMWFpmT1eQcX@arm.com> <CAHk-=wgzEKEYKRoR_abQRDO=R8xJX_FK+XC3gNhKfu=KLdxt3g@mail.gmail.com>
- <YXw0a9n+/PLAcObB@arm.com>
-In-Reply-To: <YXw0a9n+/PLAcObB@arm.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 29 Oct 2021 11:47:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgNV5Ka0yTssic0JbZEcO3wvoTC65budK88k4D-34v0xA@mail.gmail.com>
-Message-ID: <CAHk-=wgNV5Ka0yTssic0JbZEcO3wvoTC65budK88k4D-34v0xA@mail.gmail.com>
-Subject: Re: [PATCH v8 00/17] gfs2: Fix mmap + page fault deadlocks
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Jan Kara <jack@suse.cz>,
+        Fri, 29 Oct 2021 14:54:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635533520;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/vX1aXmgWDOmHXytC/xtmTFfVJMO+hskcobUwtJeMmI=;
+        b=Yv0gB3sH5jozAb/rSNn5KmILJhJsMcCxFib0aZWc2pZ9u7I/AnwubtrMd+RafKknYUC3oS
+        7U3UIQZgiVtEKZyVLxTW17sNeX6OGXvfZyq3HkAGAsPeW5RcL+7QLczeeeFTrGrrmPXslf
+        /aGppnum1vwMSTk6qNop/s6qzKbgx3I=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-475-p1zGB8TrMduU9GKrjace1w-1; Fri, 29 Oct 2021 14:51:55 -0400
+X-MC-Unique: p1zGB8TrMduU9GKrjace1w-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 008188F515;
+        Fri, 29 Oct 2021 18:51:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E18845D6CF;
+        Fri, 29 Oct 2021 18:51:34 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wg_C6V_S+Aox5Fn7MuFe13ADiRVnh6UcvY4WX9JjXn3dg@mail.gmail.com>
+References: <CAHk-=wg_C6V_S+Aox5Fn7MuFe13ADiRVnh6UcvY4WX9JjXn3dg@mail.gmail.com> <163551653404.1877519.12363794970541005441.stgit@warthog.procyon.org.uk> <CAHk-=wiy4KNREEqvd10Ku8VVSY1Lb=fxTA1TzGmqnLaHM3gdTg@mail.gmail.com> <1889041.1635530124@warthog.procyon.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        v9fs-developer@lists.sourceforge.net,
+        CIFS <linux-cifs@vger.kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        linux-cachefs@redhat.com, Dave Wysochanski <dwysocha@redhat.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Jeff Layton <jlayton@redhat.com>,
         Matthew Wilcox <willy@infradead.org>,
-        cluster-devel <cluster-devel@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 00/10] fscache: Replace and remove old I/O API
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1891410.1635533494.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Fri, 29 Oct 2021 19:51:34 +0100
+Message-ID: <1891411.1635533494@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 29, 2021 at 10:50 AM Catalin Marinas
-<catalin.marinas@arm.com> wrote:
->
-> First of all, a uaccess in interrupt should not force such signal as it
-> had nothing to do with the interrupted context. I guess we can do an
-> in_task() check in the fault handler.
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Yeah. It ends up being similar to the thread flag in that you still
-end up having to protect against NMI and other users of asynchronous
-page faults.
+> But:
+> =
 
-So the suggestion was more of a "mindset" difference and modified
-version of the task flag rather than anything fundamentally different.
+> > However, if you would rather I just removed all of fscache and (most o=
+f[*])
+> > cachefiles, that I can do.
+> =
 
-> Second, is there a chance that we enter the fault-in loop with a SIGSEGV
-> already pending? Maybe it's not a problem, we just bail out of the loop
-> early and deliver the signal, though unrelated to the actual uaccess in
-> the loop.
+> I assume and think that if you just do that part first, then the
+> "convert to netfslib" of afs and ceph at that later stage will mean
+> that the fallback code will never be needed?
 
-If we ever run in user space with a pending per-thread SIGSEGV, that
-would already be a fairly bad bug. The intent of "force_sig()" is not
-only to make sure you can't block the signal, but also that it targets
-the particular thread that caused the problem: unlike other random
-"send signal to process", a SIGSEGV caused by a bad memory access is
-really local to that _thread_, not the signal thread group.
+The netfslib coversions for afs and ceph are already in your tree and I ha=
+ve a
+patch here to do that for 9p (if you're willing to take that in the upcomi=
+ng
+merge window?).
 
-So somebody else sending a SIGSEGV asynchronsly is actually very
-different - it goes to the thread group (although you can specify
-individual threads too - but once you do that you're already outside
-of POSIX).
+The issue is cifs[*] and nfs.  I could leave caching in those disabled,
+pending approved patches for those filesystems.  This would mean that I
+wouldn't need the fallback code.
 
-That said, the more I look at it, the more I think I was wrong. I
-think the "we have a SIGSEGV pending" could act as the per-thread
-flag, but the complexity of the signal handling is probably an
-argument against it.
+An alternative is that I could move the "fallback" code into fs/nfs/fscach=
+e.c
+and fs/cifs/fscache.c if that would be easier and merge it into the functi=
+ons
+there.  The problem will come when the cache wants to do I/O in larger uni=
+ts
+than page size to suit its own block size[**].
 
-Not because a SIGSEGV could already be pending, but because so many
-other situations could be pending.
+David
 
-In particular, the signal code won't send new signals to a thread if
-that thread group is already exiting. So another thread may have
-already started the exit and core dump sequence, and is in the process
-of killing the shared signal threads, and if one of those threads is
-now in the kernel and goes through the copy_from_user() dance, that
-whole "thread group is exiting" will mean that the signal code won't
-add a new SIGSEGV to the queue.
+[*] As it happens, it turns out that cifs seems to have a bug in it that
+causes the entire cache for a superblock to be discarded each time that
+superblock is mounted.
 
-So the signal could conceptually be used as the flag to stop looping,
-but it ends up being such a complicated flag that I think it's
-probably not worth it after all. Even if it semantically would be
-fairly nice to use pre-existing machinery.
+[**] At some point the cache *has* to start keeping track of what data it =
+is
+holding rather than relying on bmap/SEEK_DATA/SEEK_HOLE to get round the
+extent-bridging problem.  I'm trying to take a leaf out of the book of oth=
+er
+caching filesystems and use larger block sizes (e.g. 256K) to reduce the
+overhead of cache metadata.
 
-Could it be worked around? Sure. That kernel loop probably has to
-check for fatal_signal_pending() anyway, so it would all work even in
-the presense of the above kinds of issues. But just the fact that I
-went and looked at just how exciting the signal code is made me think
-"ok, conceptually nice, but we take a lot of locks and we do a lot of
-special things even in the 'simple' force_sig() case".
-
-> Third is the sigcontext.pc presented to the signal handler. Normally for
-> SIGSEGV it points to the address of a load/store instruction and a
-> handler could disable MTE and restart from that point. With a syscall we
-> don't want it to point to the syscall place as it shouldn't be restarted
-> in case it copied something.
-
-I think this is actually independent of the whole "how to return
-errors". We'll still need to return an error from the system call,
-even if we also have a signal pending.
-
-                  Linus
