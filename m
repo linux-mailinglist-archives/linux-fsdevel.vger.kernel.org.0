@@ -2,128 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DE5743F9A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 11:17:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CB4F43FB8A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 13:40:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231602AbhJ2JUO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Oct 2021 05:20:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58552 "EHLO
+        id S231986AbhJ2LnF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Oct 2021 07:43:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231493AbhJ2JTP (ORCPT
+        with ESMTP id S231950AbhJ2LnB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Oct 2021 05:19:15 -0400
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30560C061227
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Oct 2021 02:16:47 -0700 (PDT)
-Received: by mail-yb1-xb34.google.com with SMTP id v138so17146836ybb.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Oct 2021 02:16:47 -0700 (PDT)
+        Fri, 29 Oct 2021 07:43:01 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4F49C061570;
+        Fri, 29 Oct 2021 04:40:32 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id o14so15668447wra.12;
+        Fri, 29 Oct 2021 04:40:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ii1VwS4bdocl/9x/wQu5Dr4Dw4xnbfm4TdQdq5Q+Azo=;
-        b=tm8FL5NwJB2u6qrHnZtD84LIMRI/iboApguCXaLUq9SaX/qb19ml1AcKQ5CH/E5h3w
-         S9284fol2t6LhXShzy6SrMbZi0J6usF0oon3W6pWM2clShpwDU9VOz67NU9Cb5OUDXV2
-         m/wWU94FmxgrtjlewS0P+DH13dd98L+7UgsawCrJQNo+3+Rm+mLWAmCFh+KiX4xwbd5n
-         kFAr/FEBKKvEUJ+v76aHUXx/FLgFjl6axzWrtcSI7kT//aqC4IIz0+4fnT7uhBbsoNHq
-         7IhyXKurVXnHNSNJ4YpxGWCVkY6iPwQrMXjRT1215vFhwZxrdXCuFYpo4RZUfAEMV2pV
-         BafA==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tf5MEVKIATJIzwg6BIIoE8KMovLDQE6vEgjfBVthkE0=;
+        b=cC2e8YtgwuR2bWrJfzYmMGq7L+sspWczRSzEKTa0IaYsETw9L1u43mGHWLqo/7cwz5
+         taH1HeRSy/QReZ/9dPercp07PFcbN2mWU8Fx2b/ULBTCcT4GNM5LVvjrfkxt6k28v4mp
+         0fWXz4ZjJa1rUbYaufC110Fvxcs6kvSuEbtXF03i7sW4C1CZaML/R9MwXe0j+D6x1wh6
+         oIFs9Oa5+P19mc8X4spM0sy7jKr09Onp20+EaiOHEWfnX/O3cnMQUSg0P8ZC2Kg1HmNc
+         UQy9B3mhhuLEbl8hlO5kkPNlDk6HGZrriSCkFrVUi/H/FR7UCaUi/fwmfLZZ6J1nETBZ
+         zWTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ii1VwS4bdocl/9x/wQu5Dr4Dw4xnbfm4TdQdq5Q+Azo=;
-        b=XweCa9h4F1jszccYvpKbE82ULzNmqQUI3/kNEdv4H+FpszbHlT4kixiHNkUtJSctxq
-         fRlI8DojwQM8emRa8+NAx1/6b/skkpYX5AqXz5bAbh6uCTND3prD8sAyeLh3MPKP0SR0
-         p198S2OgH1W3jhsHY/5od9XqF8lSe85V7wc3eMmiN1tIlmdr/zSDe6nFXcIjMMnt7bef
-         gf/Qgi1UcVzWdA1BuvxYOl6WYS97B8gv1k7JYRXV1E5q+F8WaIDT26+L3E6ddqi0crss
-         kXU7x7pbbgPHpXjgKN53uEoWmN2L+J3m4BNJ+955WN2Zlu18QHXsokGq5//tQKjmHFnV
-         AZYA==
-X-Gm-Message-State: AOAM532EJRFtQix/bOpmOw2ZI8T2Wb6kCLrFRcCm1XzQPsVChsXlJEcR
-        CS+ZXVNzCsoV0/KbO3f8Ye/4FB0ZK/esiFPp/Vy4IQ==
-X-Google-Smtp-Source: ABdhPJwW4nO+fDJURAek2VDCfkH2XNLlc3gfnKCDXjWDPT8d0Z9cEu/hrBUNVInc9gyOaceJ1Hk/R0u7QAnkp0Ry9yc=
-X-Received: by 2002:a25:ad02:: with SMTP id y2mr10644935ybi.141.1635499006377;
- Fri, 29 Oct 2021 02:16:46 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tf5MEVKIATJIzwg6BIIoE8KMovLDQE6vEgjfBVthkE0=;
+        b=hW4mAkgZtYpFNM3GGcyxD3YNvbX6le9/ZVF7kYKX2t+o7QoELEySsASko0qzWPx1FI
+         mkKGwgqNoBvEmCK+2u8b8hw2O86WQ5pLZQyeiJOT2lO3/OoGuduW6Jc4s53BddvB4oCo
+         K3KvR5LKRc1Az1uqU+lusokn1Hs7A8+5odBtQAqi/ASf4e6nYEZnOmVI5rISqaLWyyYp
+         zLd7DEvlQPh9FbX3zJnbnghCIjIwqfzTIcWpMihGRyzwvaGieVN93ZGo1KDRE0EzbVrT
+         oQdZ0MZDVEM+/UsFASdhV0eRIYPZSgAJ2VMd1nN+IIf/4jrV63pZU78Ng4DmZkpEOK8T
+         ejTQ==
+X-Gm-Message-State: AOAM530gZOAFBUpFGQDZT6W7n78F+mID5N/qXCXxLn7K3uBwFj4IXQwd
+        z+IPw5zyA3hQHnKOR2vrBeGHtiJon2M=
+X-Google-Smtp-Source: ABdhPJxotIZO9tZ0qRRMDRUCMKHBccCrdBkbq0Ro4GFGfQgEnO6jITfFldOZ7qNxsQAldA1rp7F7tg==
+X-Received: by 2002:a05:6000:2a3:: with SMTP id l3mr13420381wry.12.1635507631330;
+        Fri, 29 Oct 2021 04:40:31 -0700 (PDT)
+Received: from localhost.localdomain ([82.114.46.186])
+        by smtp.gmail.com with ESMTPSA id t3sm8178643wma.38.2021.10.29.04.40.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Oct 2021 04:40:30 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: [PATCH 0/7] Report more information in fanotify dirent events
+Date:   Fri, 29 Oct 2021 14:40:21 +0300
+Message-Id: <20211029114028.569755-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-References: <20211029032638.84884-1-songmuchun@bytedance.com>
- <20211029082620.jlnauplkyqmaz3ze@wittgenstein> <CAMZfGtUMLD183qHVt6=8gU4nnQD2pn1gZwZJOjCHFK73wK0=kQ@mail.gmail.com>
- <20211029085041.fhyi2kn3bdmxt6h4@wittgenstein>
-In-Reply-To: <20211029085041.fhyi2kn3bdmxt6h4@wittgenstein>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Fri, 29 Oct 2021 17:16:10 +0800
-Message-ID: <CAMZfGtXMKSiOoswVNLCp41kMkK0o5WVyhQSeEpzUT-D-yf9V1w@mail.gmail.com>
-Subject: Re: [PATCH] seq_file: fix passing wrong private data
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     andriy.shevchenko@linux.intel.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, revest@chromium.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 29, 2021 at 4:50 PM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
->
-> On Fri, Oct 29, 2021 at 04:43:40PM +0800, Muchun Song wrote:
-> > On Fri, Oct 29, 2021 at 4:26 PM Christian Brauner
-> > <christian.brauner@ubuntu.com> wrote:
-> > >
-> > > On Fri, Oct 29, 2021 at 11:26:38AM +0800, Muchun Song wrote:
-> > > > DEFINE_PROC_SHOW_ATTRIBUTE() is supposed to be used to define a series
-> > > > of functions and variables to register proc file easily. And the users
-> > > > can use proc_create_data() to pass their own private data and get it
-> > > > via seq->private in the callback. Unfortunately, the proc file system
-> > > > use PDE_DATA() to get private data instead of inode->i_private. So fix
-> > > > it. Fortunately, there only one user of it which does not pass any
-> > > > private data, so this bug does not break any in-tree codes.
-> > > >
-> > > > Fixes: 97a32539b956 ("proc: convert everything to "struct proc_ops"")
-> > > > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> > > > ---
-> > > >  include/linux/seq_file.h | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
-> > > > index 103776e18555..72dbb44a4573 100644
-> > > > --- a/include/linux/seq_file.h
-> > > > +++ b/include/linux/seq_file.h
-> > > > @@ -209,7 +209,7 @@ static const struct file_operations __name ## _fops = {                   \
-> > > >  #define DEFINE_PROC_SHOW_ATTRIBUTE(__name)                           \
-> > > >  static int __name ## _open(struct inode *inode, struct file *file)   \
-> > > >  {                                                                    \
-> > > > -     return single_open(file, __name ## _show, inode->i_private);    \
-> > > > +     return single_open(file, __name ## _show, PDE_DATA(inode));     \
-> > > >  }                                                                    \
-> > > >                                                                       \
-> > > >  static const struct proc_ops __name ## _proc_ops = {                 \
-> > >
-> > > Hm, after your change DEFINE_SHOW_ATTRIBUTE() and
-> > > DEFINE_PROC_SHOW_ATTRIBUTE() macros do exactly the same things, right?:
-> >
-> > Unfortunately, they are not the same. The difference is the
-> > operation structure, namely "struct file_operations" and
-> > "struct proc_ops".
-> >
-> > DEFINE_SHOW_ATTRIBUTE() is usually used by
-> > debugfs while DEFINE_SHOW_ATTRIBUTE() is
-> > used by procfs.
->
-> Ugh, right, thanks for pointing that out. I overlooked the _proc_ops
-> appendix. Not sure what's right here. There seem to have been earlier
-> callers to DEFINE_PROC_SHOW_ATTRIBUTE() that relied on PDE_DATA() but
-> there's only one caller so that change wouldn't be too bad, I guess.
+Jan,
 
-From my point of view, I think the macro is useful which can
-simplify the code. However there is only one user of it. I suppose
-few people know about it. For instance, the following ops can
-become the user of it.
+This patch set follows up on the discussion on FAN_REPORT_TARGET_FID [1]
+from 3 months ago.
 
-    cifs_mount_params_proc_ops
-    nfsd_proc_ops
-    rpc_proc_ops
+With FAN_REPORT_PIDFD in 5.15 and FAN_FS_ERROR on its way to 5.16,
+I figured we could get an early (re)start of the discussion on
+FAN_REPORT_TARGET_FID towards 5.17.
 
-Thanks.
+The added information in dirent events solves problems for my use case -
+It helps getting the following information in a race free manner:
+1. fid of a created directory on mkdir
+2. from/to path information on rename of non-dir
+
+I realize those are two different API traits, but they are close enough
+so I preferred not to clutter the REPORT flags space any further than it
+already is. The single added flag FAN_REPORT_TARGET_FID adds:
+1. child fid info to CREATE/DELETE/MOVED_* events
+2. new parent+name info to MOVED_FROM event
+
+Instead of going the "inotify way" and trying to join the MOVED_FROM/
+MOVED_TO events using a cookie, I chose to incorporate the new
+parent+name intomation only in the MOVED_FROM event.
+I made this choice for several reasons:
+1. Availability of the moved dentry in the hook and event data
+2. First info record is the old parent+name, like FAN_REPORT_DFID_NAME
+3. Unlike, MOVED_TO, MOVED_FROM was useless for applications that use
+   DFID_NAME info to statat(2) the object as we suggested
+
+I chose to reduce testing complexity and require all other FID
+flags with FAN_REPORT_TARGET_FID and there is a convenience
+macro FAN_REPORT_ALL_FIDS that application can use.
+This restriction could be relaxed in the future if we have a good reason
+to do so.
+
+Since the POC branch 3 months ago, I dropped the 'sub_type' field of
+the info header, because it did not add much value IMO.
+
+Patches [2] and LTP test [3] are available on my github.
+
+Thanks,
+Amir.
+
+[1] https://lore.kernel.org/linux-fsdevel/CAOQ4uxjYDDk00VPdWtRB1_tf+gCoPFgSQ9O0p0fGaW_JiFUUKA@mail.gmail.com/
+[2] https://github.com/amir73il/linux/commits/fanotify_target_fid
+[3] https://github.com/amir73il/ltp/commits/fanotify_target_fid
+
+Amir Goldstein (7):
+  fsnotify: pass dentry instead of inode data for move events
+  fanotify: introduce group flag FAN_REPORT_TARGET_FID
+  fanotify: use macros to get the offset to fanotify_info buffer
+  fanotify: support secondary dir fh and name in fanotify_info
+  fanotify: record new parent and name in MOVED_FROM event
+  fanotify: report new parent and name in MOVED_FROM event
+  fanotify: enable the FAN_REPORT_TARGET_FID flag
+
+ fs/notify/fanotify/fanotify.c      | 108 ++++++++++++++++++++++-----
+ fs/notify/fanotify/fanotify.h      | 113 +++++++++++++++++++++++++----
+ fs/notify/fanotify/fanotify_user.c |  43 +++++++++--
+ include/linux/fanotify.h           |   2 +-
+ include/linux/fsnotify.h           |   7 +-
+ include/uapi/linux/fanotify.h      |   5 ++
+ 6 files changed, 235 insertions(+), 43 deletions(-)
+
+-- 
+2.33.1
+
