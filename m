@@ -2,160 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D7A043FF79
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 17:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 353B243FFA5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 17:34:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229851AbhJ2PbC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Oct 2021 11:31:02 -0400
-Received: from www62.your-server.de ([213.133.104.62]:56324 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229527AbhJ2PbC (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Oct 2021 11:31:02 -0400
-Received: from sslproxy01.your-server.de ([78.46.139.224])
-        by www62.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.3)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1mgTnm-000DRl-Hy; Fri, 29 Oct 2021 17:28:18 +0200
-Received: from [85.1.206.226] (helo=linux.home)
-        by sslproxy01.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1mgTnm-00091V-8q; Fri, 29 Oct 2021 17:28:18 +0200
-Subject: Re: [PATCH bpf-next v3 1/4] libfs: move shmem_exchange to
- simple_rename_exchange
-To:     Lorenz Bauer <lmb@cloudflare.com>, viro@zeniv.linux.org.uk,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>
-Cc:     mszeredi@redhat.com, gregkh@linuxfoundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org, bpf@vger.kernel.org
-References: <20211028094724.59043-1-lmb@cloudflare.com>
- <20211028094724.59043-2-lmb@cloudflare.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <0c957c87-cfd1-fceb-ce18-54274eee9fc2@iogearbox.net>
-Date:   Fri, 29 Oct 2021 17:28:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S229723AbhJ2PhS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Oct 2021 11:37:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49380 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229527AbhJ2PhR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 Oct 2021 11:37:17 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7E7276117A;
+        Fri, 29 Oct 2021 15:33:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1635521689;
+        bh=qT1Szh+ndbqyM/0hD/TUs97RBYUAdlEIkgLut+Otmpo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZUpHS5YENNdKqDKeqXpArD4masKrX19zCdqZAKUBnvaRpCueOfO5EVEm/qojbtjHU
+         iM0wfvxXPiXWRNyNweDxXfKaEjvbUOD5L3BWpwkiAEKAefr8TXZvd7YQXHaJn/y4l8
+         cB6WJfQmYgA1WvctwHjphAABAYWhG/1nzHJCZTHSU/knO79aJj2P0v8894DehJdwfy
+         RufeOY1eUUwxP9/dvmNCyLbA9mTL5EEV04U6E0oVJ6uwEv2nxRAatAp2e2olhu8r8S
+         9H4+bWQfkCsqftZ92pXl/5RDbYXCFg6BKNx00t5S7nZMphKh3R0bIL29Zjoi4hmdPK
+         zV2OjXitr8+Lw==
+Date:   Fri, 29 Oct 2021 23:32:21 +0800
+From:   Gao Xiang <xiang@kernel.org>
+To:     syzbot <syzbot+63d688f1d899c588fb71@syzkaller.appspotmail.com>
+Cc:     chao@kernel.org, gaoxiang25@huawei.com, gregkh@linuxfoundation.org,
+        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, xiang@kernel.org, yuchao0@huawei.com,
+        Chengyang Fan <cy.fan@huawei.com>
+Subject: Re: [syzbot] KASAN: use-after-free Read in
+ LZ4_decompress_safe_partial
+Message-ID: <20211029153214.GA15359@hsiangkao-HP-ZHAN-66-Pro-G1>
+Mail-Followup-To: syzbot <syzbot+63d688f1d899c588fb71@syzkaller.appspotmail.com>,
+        chao@kernel.org, gaoxiang25@huawei.com, gregkh@linuxfoundation.org,
+        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, xiang@kernel.org, yuchao0@huawei.com,
+        Chengyang Fan <cy.fan@huawei.com>
+References: <000000000000830d1205cf7f0477@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20211028094724.59043-2-lmb@cloudflare.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.3/26337/Fri Oct 29 10:19:12 2021)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <000000000000830d1205cf7f0477@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/28/21 11:47 AM, Lorenz Bauer wrote:
-> Move shmem_exchange and make it available to other callers.
-> 
-> Suggested-by: <mszeredi@redhat.com>
+Hi,
 
-nit: Should say proper name, but we can fix it up while applying.
+(+cc Chengyang Fan)
 
-Miklos, does the below look good to you? Would be good to have an ACK from fs
-folks before applying, please take a look if you have a chance. Thanks!
+On Fri, Oct 29, 2021 at 07:55:27AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    87066fdd2e30 Revert "mm/secretmem: use refcount_t instead ..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10c2c88cb00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=59f3ef2b4077575
+> dashboard link: https://syzkaller.appspot.com/bug?extid=63d688f1d899c588fb71
+> compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.2
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17032c4ab00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=170f8c3cb00000
+> 
+> The issue was bisected to:
+> 
+> commit f86cf25a609107960cf05263e491463feaae1f99
+> Author: Gao Xiang <gaoxiang25@huawei.com>
+> Date:   Tue Aug 28 03:39:48 2018 +0000
+> 
+>     Revert "staging: erofs: disable compiling temporarile"
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11de0328b00000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=13de0328b00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15de0328b00000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+63d688f1d899c588fb71@syzkaller.appspotmail.com
+> Fixes: f86cf25a6091 ("Revert "staging: erofs: disable compiling temporarile"")
+> 
+> ==================================================================
+> BUG: KASAN: use-after-free in get_unaligned_le16 include/asm-generic/unaligned.h:27 [inline]
+> BUG: KASAN: use-after-free in LZ4_readLE16 lib/lz4/lz4defs.h:132 [inline]
+> BUG: KASAN: use-after-free in LZ4_decompress_generic lib/lz4/lz4_decompress.c:285 [inline]
+> BUG: KASAN: use-after-free in LZ4_decompress_safe_partial+0xff8/0x1580 lib/lz4/lz4_decompress.c:469
+> Read of size 2 at addr ffff88806dd1f000 by task kworker/u5:0/150
+> 
+> CPU: 1 PID: 150 Comm: kworker/u5:0 Not tainted 5.15.0-rc6-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Workqueue: erofs_unzipd z_erofs_decompressqueue_work
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0x1dc/0x2d8 lib/dump_stack.c:106
+>  print_address_description+0x66/0x3e0 mm/kasan/report.c:256
+>  __kasan_report mm/kasan/report.c:442 [inline]
+>  kasan_report+0x19a/0x1f0 mm/kasan/report.c:459
+>  get_unaligned_le16 include/asm-generic/unaligned.h:27 [inline]
+>  LZ4_readLE16 lib/lz4/lz4defs.h:132 [inline]
+>  LZ4_decompress_generic lib/lz4/lz4_decompress.c:285 [inline]
+>  LZ4_decompress_safe_partial+0xff8/0x1580 lib/lz4/lz4_decompress.c:469
+>  z_erofs_lz4_decompress+0x4c3/0x1100 fs/erofs/decompressor.c:226
+>  z_erofs_decompress_generic fs/erofs/decompressor.c:354 [inline]
+>  z_erofs_decompress+0xa8e/0xe30 fs/erofs/decompressor.c:407
+>  z_erofs_decompress_pcluster+0x15e4/0x2550 fs/erofs/zdata.c:977
+>  z_erofs_decompress_queue fs/erofs/zdata.c:1055 [inline]
+>  z_erofs_decompressqueue_work+0x123/0x1a0 fs/erofs/zdata.c:1066
+>  process_one_work+0x853/0x1140 kernel/workqueue.c:2297
+>  worker_thread+0xac1/0x1320 kernel/workqueue.c:2444
+>  kthread+0x453/0x480 kernel/kthread.c:319
+>  ret_from_fork+0x1f/0x30
+> 
 
-> Signed-off-by: Lorenz Bauer <lmb@cloudflare.com>
-> ---
->   fs/libfs.c         | 24 ++++++++++++++++++++++++
->   include/linux/fs.h |  2 ++
->   mm/shmem.c         | 24 +-----------------------
->   3 files changed, 27 insertions(+), 23 deletions(-)
-> 
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index 51b4de3b3447..1cf144dc9ed2 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -448,6 +448,30 @@ int simple_rmdir(struct inode *dir, struct dentry *dentry)
->   }
->   EXPORT_SYMBOL(simple_rmdir);
->   
-> +int simple_rename_exchange(struct inode *old_dir, struct dentry *old_dentry,
-> +			   struct inode *new_dir, struct dentry *new_dentry)
-> +{
-> +	bool old_is_dir = d_is_dir(old_dentry);
-> +	bool new_is_dir = d_is_dir(new_dentry);
-> +
-> +	if (old_dir != new_dir && old_is_dir != new_is_dir) {
-> +		if (old_is_dir) {
-> +			drop_nlink(old_dir);
-> +			inc_nlink(new_dir);
-> +		} else {
-> +			drop_nlink(new_dir);
-> +			inc_nlink(old_dir);
-> +		}
-> +	}
-> +	old_dir->i_ctime = old_dir->i_mtime =
-> +	new_dir->i_ctime = new_dir->i_mtime =
-> +	d_inode(old_dentry)->i_ctime =
-> +	d_inode(new_dentry)->i_ctime = current_time(old_dir);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(simple_rename_exchange);
-> +
->   int simple_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
->   		  struct dentry *old_dentry, struct inode *new_dir,
->   		  struct dentry *new_dentry, unsigned int flags)
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e7a633353fd2..333b8af405ce 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3383,6 +3383,8 @@ extern int simple_open(struct inode *inode, struct file *file);
->   extern int simple_link(struct dentry *, struct inode *, struct dentry *);
->   extern int simple_unlink(struct inode *, struct dentry *);
->   extern int simple_rmdir(struct inode *, struct dentry *);
-> +extern int simple_rename_exchange(struct inode *old_dir, struct dentry *old_dentry,
-> +				  struct inode *new_dir, struct dentry *new_dentry);
->   extern int simple_rename(struct user_namespace *, struct inode *,
->   			 struct dentry *, struct inode *, struct dentry *,
->   			 unsigned int);
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index b5860f4a2738..a18dde3d3092 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2945,28 +2945,6 @@ static int shmem_rmdir(struct inode *dir, struct dentry *dentry)
->   	return shmem_unlink(dir, dentry);
->   }
->   
-> -static int shmem_exchange(struct inode *old_dir, struct dentry *old_dentry, struct inode *new_dir, struct dentry *new_dentry)
-> -{
-> -	bool old_is_dir = d_is_dir(old_dentry);
-> -	bool new_is_dir = d_is_dir(new_dentry);
-> -
-> -	if (old_dir != new_dir && old_is_dir != new_is_dir) {
-> -		if (old_is_dir) {
-> -			drop_nlink(old_dir);
-> -			inc_nlink(new_dir);
-> -		} else {
-> -			drop_nlink(new_dir);
-> -			inc_nlink(old_dir);
-> -		}
-> -	}
-> -	old_dir->i_ctime = old_dir->i_mtime =
-> -	new_dir->i_ctime = new_dir->i_mtime =
-> -	d_inode(old_dentry)->i_ctime =
-> -	d_inode(new_dentry)->i_ctime = current_time(old_dir);
-> -
-> -	return 0;
-> -}
-> -
->   static int shmem_whiteout(struct user_namespace *mnt_userns,
->   			  struct inode *old_dir, struct dentry *old_dentry)
->   {
-> @@ -3012,7 +2990,7 @@ static int shmem_rename2(struct user_namespace *mnt_userns,
->   		return -EINVAL;
->   
->   	if (flags & RENAME_EXCHANGE)
-> -		return shmem_exchange(old_dir, old_dentry, new_dir, new_dentry);
-> +		return simple_rename_exchange(old_dir, old_dentry, new_dir, new_dentry);
->   
->   	if (!simple_empty(new_dentry))
->   		return -ENOTEMPTY;
-> 
+It's quite similar to
+https://lore.kernel.org/r/CC666AE8-4CA4-4951-B6FB-A2EFDE3AC03B@fb.com
+
+But I'm not sure if Chengyang Fan is still working on this stuff.
+
+Anyway, it can only be reproduced by specific craft compressed data.
+
+Thanks,
+Gao Xiang
 
