@@ -2,95 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A81743FFE5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 17:55:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F3CE44001A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 18:13:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229971AbhJ2P5z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Oct 2021 11:57:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52876 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229607AbhJ2P5y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Oct 2021 11:57:54 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4AB5F60FC4;
-        Fri, 29 Oct 2021 15:55:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1635522925;
-        bh=/k26Brg4+jtEQ3L7YzlxV5wwLsjmiyhBtI1Xv0qe4jM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VNGR/oT5nGHHvMugzkATBbYvd9F6fQA09UpjqWqVPxKBtrRkcFw10uYcU96r4Y5e9
-         BaNLU2TAu5G25fISB6pXK1/JZX+S4dr/HMvRmPUH8Edr/t1LiljcPus0OjDWw7ypW0
-         4EPLVRfxgon+ImToi17MZEqzKb5Gh5cbLmWGIGdu44rLX++iOPCkcVZzYN1iNPUdhu
-         ig+H9p46kun6H4yKSgjvS5hza9PP1p3D/4d0Z6Z7UeMhh3RdseFcOspVpYbIXEaaVD
-         z3vlYv7WtW9WWwh+XaOu1OGv6Th/km6Qop9MOz3Oco0bjW7QLca7ef5pWDU57NAWBq
-         P70mxqn/wKgSA==
-Date:   Fri, 29 Oct 2021 08:55:24 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Christoph Hellwig <hch@lst.de>,
-        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org
-Subject: Re: futher decouple DAX from block devices
-Message-ID: <20211029155524.GE24307@magnolia>
-References: <20211018044054.1779424-1-hch@lst.de>
- <CAPcyv4iEt78-XSsKjTWcpy71zaduXyyigTro6f3fmRqqFOG98Q@mail.gmail.com>
- <20211029105139.1194bb7f@canb.auug.org.au>
- <CAPcyv4g8iEyN5UN1w1xBqQDYSb3HCh7_smsmjt-PiHORRK+X9Q@mail.gmail.com>
+        id S229894AbhJ2QPi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Oct 2021 12:15:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41110 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229772AbhJ2QPi (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 Oct 2021 12:15:38 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F2BCC061570;
+        Fri, 29 Oct 2021 09:13:09 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id z20so40717129edc.13;
+        Fri, 29 Oct 2021 09:13:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0wvzHoUOEfSo0QpbymG71OXbWd0opNeWs5Mvq+1kJHs=;
+        b=bttkRNnwDVZGZ/506wkfjbdj4MbdiwdXcjXepVjxY6RlXLPW0JoGna2rKlMRho/QsF
+         CUboZ2XXsB1Gixrkq+Wryu8Rg7jOhaX1IVBA+rL/JcPi+TKwGxQrf52qrKOZ8Y64pMRr
+         3hg34vj7Sac9UUVNkFkTA1EV5tXlrKo0p0HvyEcNTWpb5RFHAmGEp8NrqfCnQ/QpIU5i
+         zDrxZ7aXNZP8XmPIEwbKxwD5tJ+A3tpuIVlm4HBmS9Cm7mUO+eUdBL1WthVMU2nWIzzS
+         1RAT9OMIbeJS+KCOIFBrnbZRKuCpLbHE2GuwtlhUYh//TlOYv+kJEZaTPS5FMMOgY4+M
+         VDjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0wvzHoUOEfSo0QpbymG71OXbWd0opNeWs5Mvq+1kJHs=;
+        b=rV2z28sEVMIPwx9JWCy1iZhq1qul4EoqQTsbG48pFOAu3i2DMTuW9esJMtMEIKg+N+
+         7uCXtApoXP/PBewxUC35JPJAvly1ex9U/opPR5Ntg87izGR+FmnMNXa0xKY9WaVs788S
+         fIc83ULQY7xtRUvjoOJhqSBK62OOYtECBdmlRWa7Bg6G9Qs42rkQVe+2EJ30nSKTzLv5
+         T9s6FdJ4XcANdsOjNupeg2KDRZFw57iCEWg8f0CBREOXsebOWPaG/Fx9dLCojo9NUT3Y
+         sEgwx+Ij02Q35XrpOqBxDDSsJm0TiDRpsp1SfWhtX4QEAUT3nOWbInbRPYy7sYXGzWMA
+         Tj/Q==
+X-Gm-Message-State: AOAM531hdjCVdVE8s5zh1A+gKBVzVheCc1cOCV6+0wfTXOyxxvqmEKQ5
+        WUGtD7LRRi3TkgOofcd6U+BctoWkICijDRPLWCjsly/8qboe1g==
+X-Google-Smtp-Source: ABdhPJzdQkG5B+bZTPGh0PQuLtcPMbFfSIS5r54brUfY+4yiYodQuzSWzST1ZdK4jctl+4Y+AjBBqCQU9lJF/eEi1yk=
+X-Received: by 2002:a17:906:1db2:: with SMTP id u18mr14568403ejh.227.1635523987737;
+ Fri, 29 Oct 2021 09:13:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4g8iEyN5UN1w1xBqQDYSb3HCh7_smsmjt-PiHORRK+X9Q@mail.gmail.com>
+References: <CAOuPNLjzyG_2wGDYmwgeoQuuQ7cykJ11THf8jMrOFXZ7vXheJQ@mail.gmail.com>
+ <CAOuPNLh_KY4NaVWSEV2JPp8fx0iy8E1MU8GHT-w7-hMXrvSaeA@mail.gmail.com>
+ <1556211076.48404.1626763215205.JavaMail.zimbra@nod.at> <CAOuPNLhti3tocN-_D7Q0QaAx5acHpb3AQyWaUKgQPNW3XWu58g@mail.gmail.com>
+ <2132615832.4458.1626900868118.JavaMail.zimbra@nod.at> <CAOuPNLhCMT7QTF+QadJyGDFNshH9VjEAzWStRpe8itw7HXve=A@mail.gmail.com>
+ <CAFLxGvywv29u6DJZrJxnJJmUDSQ4xpbT0u5LNKY1uGKyQom+WA@mail.gmail.com>
+ <CAAEAJfCY+X-G=7Oe9NqrJ4yQZ29DBA78jOFAX44GD0g6=s7qhg@mail.gmail.com>
+ <1668790824.35266.1627559144878.JavaMail.zimbra@nod.at> <CAAEAJfDDtGcUquyP7Jn0Urttt4kSfAQbJ_qPQ90ROtWLavW9EA@mail.gmail.com>
+ <CAOuPNLj+DSigRY_AgHQnGKCK-Vm4ykQBR8UfnTi2UObORTcBFg@mail.gmail.com>
+ <CAOuPNLgfJGzp-RJBjydFDL1ZAvOd7=-MgXhnsb2eb_xFSLC66w@mail.gmail.com>
+ <CAAEAJfBuut7VSbrrz6CxOC+Cke36eGGv8VUvfdbfLwvSBxOAAA@mail.gmail.com> <CAOuPNLjJMCyxK8mvnBo2aZQXSNqY47YeXCxWmtPECq-=csz6bQ@mail.gmail.com>
+In-Reply-To: <CAOuPNLjJMCyxK8mvnBo2aZQXSNqY47YeXCxWmtPECq-=csz6bQ@mail.gmail.com>
+From:   Pintu Agarwal <pintu.ping@gmail.com>
+Date:   Fri, 29 Oct 2021 21:42:56 +0530
+Message-ID: <CAOuPNLghc1ktLrOEf8PN+snMB3QZG-LwzPbd3kGzrhGz8mEAVg@mail.gmail.com>
+Subject: Re: MTD: How to get actual image size from MTD partition
+To:     Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Kernelnewbies <kernelnewbies@kernelnewbies.org>,
+        Greg KH <greg@kroah.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Sean Nyekjaer <sean@geanix.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Phillip Lougher <phillip@squashfs.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 29, 2021 at 08:42:29AM -0700, Dan Williams wrote:
-> On Thu, Oct 28, 2021 at 4:52 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi All,
+
+On Mon, 30 Aug 2021 at 21:28, Pintu Agarwal <pintu.ping@gmail.com> wrote:
+>
+> On Sun, 22 Aug 2021 at 19:51, Ezequiel Garcia
+> <ezequiel@vanguardiasur.com.ar> wrote:
+>
+> > In other words, IMO it's best to expose the NAND through UBI
+> > for both read-only and read-write access, using a single UBI device,
+> > and then creating UBI volumes as needed. This will allow UBI
+> > to spread wear leveling across the whole device, which is expected
+> > to increase the flash lifetime.
 > >
-> > Hi Dan,
+> > For instance, just as some silly example, you could have something like this:
 > >
-> > On Wed, 27 Oct 2021 13:46:31 -0700 Dan Williams <dan.j.williams@intel.com> wrote:
-> > >
-> > > My merge resolution is here [1]. Christoph, please have a look. The
-> > > rebase and the merge result are both passing my test and I'm now going
-> > > to review the individual patches. However, while I do that and collect
-> > > acks from DM and EROFS folks, I want to give Stephen a heads up that
-> > > this is coming. Primarily I want to see if someone sees a better
-> > > strategy to merge this, please let me know, but if not I plan to walk
-> > > Stephen and Linus through the resolution.
+> >                                | RootFS SquashFS  |
+> >                                | UBI block        | UBIFS User R-W area
+> > ------------------------------------------------------------------------
+> > Kernel A | Kernel B | RootFS A | RootFS B         | User
+> > ------------------------------------------------------------------------
+> >                                  UBIX
+> > ------------------------------------------------------------------------
+> >                                  /dev/mtdX
 > >
-> > It doesn't look to bad to me (however it is a bit late in the cycle :-(
-> > ).  Once you are happy, just put it in your tree (some of the conflicts
-> > are against the current -rc3 based version of your tree anyway) and I
-> > will cope with it on Monday.
-> 
-> Christoph, Darrick, Shiyang,
-> 
-> I'm losing my nerve to try to jam this into v5.16 this late in the
-> cycle.
+> > This setup allows safe kernel and rootfs upgrading. The RootFS is read-only
+> > via SquashFS and there's a read-write user area. UBI is supporting all
+> > the volumes, handling bad blocks and wear leveling.
+> >
+> Dear Ezequiel,
+> Thank you so much for your reply.
+>
+> This is exactly what we are also doing :)
+> In our system we have a mix of raw and ubi partitions.
+> The ubi partitioning is done almost exactly the same way.
+> Only for the rootfs (squashfs) I see we were using /mtd/block<id> to
+> mount the rootfs.
+> Now, I understood we should change it to use /dev/ubiblock<id>
+> This might have several benefits, but one most important could be,
+> using ubiblock can handle bad-blocks/wear-leveling automatically,
+> whereas mtdblocks access the flash directly ?
+> I found some references for these..
+> So, this seems good for my proposal.
+>
+> Another thing that is still open for us is:
+> How do we calculate the exact image size from a raw mtd partition ?
+> For example, support for one of the raw nand partitions, the size is
+> defined as 15MB but we flash the actual image of size only 2.5MB.
+> So, in the runtime how to determine the image size as ~2.5MB (at least
+> roughly) ?
+> Is it still possible ?
+>
 
-Always a solid choice to hold off for a little more testing and a little
-less anxiety. :)
+I am happy to inform you that using "ubiblock" for squashfs mounting
+seems very helpful for us.
+We have seen almost the double performance boost when using ubiblock
+for rootfs as well as other read-only volume mounting.
 
-I don't usually accept new code patches for iomap after rc4 anyway.
+However, we have found few issues while defining the read only volume as STATIC.
+With static volume we see that OTA update is failing during "fsync".
+That is ota_fsync is failing from here:
+https://gerrit.pixelexperience.org/plugins/gitiles/bootable_recovery/+/ff6df890a2a01bf3bf56d3f430b17a5ef69055cf%5E%21/otafault/ota_io.cpp
+int status = fsync(fd);
+if (status == -1 && errno == EIO)
+*
+{ have_eio_error = true; }
+*
+return status;
+}
 
-> I do want to get dax+reflink squared away as soon as possible,
-> but that looks like something that needs to build on top of a
-> v5.16-rc1 at this point. If Linus does a -rc8 then maybe it would have
-> enough soak time, but otherwise I want to take the time to collect the
-> acks and queue up some more follow-on cleanups to prepare for
-> block-less-dax.
+Is this the known issue with static volume?
 
-I think that hwpoison-calls-xfs-rmap patchset is a prerequisite for
-dax+reflink anyway, right?  /me had concluded both were 5.17 things.
+For now we are using dynamic volume itself but the problem is that
+with dynamic volume we cannot get the exact image size from:
+$ cat /sys/class/ubi/ubi0_0/data_bytes
+==> In case of dynamic volume this will return the total volume size.
+==> Thus our md5 integrity check does not match exactly with the
+flashed image size.
 
---D
+Is there an alternate way to handle this issue ?
+
+
+Thanks,
+Pintu
