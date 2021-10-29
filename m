@@ -2,161 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A719B43FDD6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 16:05:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FF5443FDE0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 16:09:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230064AbhJ2OIP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Oct 2021 10:08:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40024 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229603AbhJ2OIP (ORCPT
+        id S231495AbhJ2OLt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Oct 2021 10:11:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:55619 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231523AbhJ2OLs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Oct 2021 10:08:15 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A811C061570;
-        Fri, 29 Oct 2021 07:05:46 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id r4so38459479edi.5;
-        Fri, 29 Oct 2021 07:05:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hvaOZ+L7Q/hsGmgFIj1Fd0g2K7g1gQBbyCtdTWJts7g=;
-        b=k3ESfV5YtenEJ/NOkxsM84lYLQWIN00Dm9aqiA9jgI4swsqfLAEkI/ab/eKHSqMRQr
-         Zj6jmYK3kTsyMGKTF46IYBnC65esbPtG9eEg6U7YAKzp5N3GvpBL7m57hAAQ2hClX4oL
-         0XtFIryldx8HXL7f4vipSifahc6nJv6O/REYNJB9+04h4Yp2kRwNK/u3tDU+ZzV/FjrO
-         2PaoSXeQpwQ3EhZKPi4HSaQWhasznxo33DgG2xTeSJof53lpP4JqDCPOZGCNGPLVBvkw
-         RRvkCxr1Gj1KxPALv6tPGhGscizSde7P2504Tp9EpMbS0ki3n59anIoFZcvNSHrfmJqM
-         yW5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hvaOZ+L7Q/hsGmgFIj1Fd0g2K7g1gQBbyCtdTWJts7g=;
-        b=ncqDEzdp/RET4q9jvA0bH71Q8nRJgreqnJ8Jz223h4/Y/mEBEB5mLCWjnv/jz5nnKe
-         XHv9CxQ6D1v6ktNVxGK7DbJNbhmxIMD+7yOUeLFO6EaCZB8mqRLpn+wuR8Ud7oshwRgV
-         j3Yl4HjEN9GEItKybCNJ1kXYd5433KxBiRT6M74w0J+/6rPX12j13E+eXvanuX+s3saQ
-         J9vv8xF9KQMCqLJDMsPSwJK1K1Iy8t+6amJWyd4W3EVP80kflAX5JJWYFkwfb/r+y3g0
-         2Flu02NOGL+zIeY7U3w/aPw9qluiRAyOg/9BkhRCI7po5bbsEVxcbt5JSmzMXxph6i5g
-         mR8Q==
-X-Gm-Message-State: AOAM5337tUpx4PMyjjDYR+xWAq9C1cxA4cgoqlnc/XOz8MWLjdQlGO/u
-        bVzqteo7FR8NiTgXXQs/dh4Mlgwn5MgQcZVL+EI=
-X-Google-Smtp-Source: ABdhPJwtVXLFoFhFJUkbD073vlIqpwXOQ4Dd3cpc71Nl6L3ircqX5Unm2vzoFJ+Zbc907xuOR/EA9TYdqu94eALaABk=
-X-Received: by 2002:a17:906:58d3:: with SMTP id e19mr13384663ejs.350.1635516343380;
- Fri, 29 Oct 2021 07:05:43 -0700 (PDT)
+        Fri, 29 Oct 2021 10:11:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635516559;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=gK1f2sX/Nqb18ZiigNY6DjbIw0YlFX88ZN/1XEK2ndo=;
+        b=DuFXpyR2VpNIOQ6bnsEIjgf0deNuv9LmTzf38sg3WjoneXrbzCrkK568wKX6j/YFMB/hzQ
+        rUuLNiWh07dHMxk+/KjVWgO4+9hfRZX5fVOtBdkED4Z0XsB2JgQlHwwLct+jd3MdPyGSCE
+        4TIWCBHoY5BfVciaCyVSAVwDGfTXbTA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-450-0LrvafprOD6VQdhjqIpV_A-1; Fri, 29 Oct 2021 10:09:16 -0400
+X-MC-Unique: 0LrvafprOD6VQdhjqIpV_A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2858C80668B;
+        Fri, 29 Oct 2021 14:09:14 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EDED860936;
+        Fri, 29 Oct 2021 14:08:54 +0000 (UTC)
+Subject: [PATCH v4 00/10] fscache: Replace and remove old I/O API
+From:   David Howells <dhowells@redhat.com>
+To:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>
+Cc:     v9fs-developer@lists.sourceforge.net, linux-cifs@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        linux-nfs@vger.kernel.org, linux-cachefs@redhat.com,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>, dhowells@redhat.com,
+        Jeff Layton <jlayton@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 29 Oct 2021 15:08:54 +0100
+Message-ID: <163551653404.1877519.12363794970541005441.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-References: <20211025150223.13621-1-mhocko@kernel.org> <20211025150223.13621-3-mhocko@kernel.org>
- <CA+KHdyVqOuKny7bT+CtrCk8BrnARYz744Ze6cKMuy2BXo5e7jw@mail.gmail.com>
- <YXgsxF/NRlHjH+Ng@dhcp22.suse.cz> <20211026193315.GA1860@pc638.lan>
- <20211027175550.GA1776@pc638.lan> <YXupZjQgLAi6ClRi@dhcp22.suse.cz>
-In-Reply-To: <YXupZjQgLAi6ClRi@dhcp22.suse.cz>
-From:   Uladzislau Rezki <urezki@gmail.com>
-Date:   Fri, 29 Oct 2021 16:05:32 +0200
-Message-ID: <CA+KHdyX_0B-hM8m0eZBetcdBC9X3ddnA4dMyZvA2_xCjJJeJCA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] mm/vmalloc: add support for __GFP_NOFAIL
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Linux Memory Management List <linux-mm@kvack.org>,
-        Dave Chinner <david@fromorbit.com>, Neil Brown <neilb@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > index d77830ff604c..f4b7927e217e 100644
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -2889,8 +2889,14 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
-> >       unsigned long array_size;
-> >       unsigned int nr_small_pages = size >> PAGE_SHIFT;
-> >       unsigned int page_order;
-> > +     unsigned long flags;
-> > +     int ret;
-> >
-> >       array_size = (unsigned long)nr_small_pages * sizeof(struct page *);
-> > +
-> > +     /*
-> > +      * This is i do not understand why we do not want to see warning messages.
-> > +      */
-> >       gfp_mask |= __GFP_NOWARN;
->
-> I suspect this is becauser vmalloc wants to have its own failure
-> reporting.
->
-But as i see it is broken. All three warn_alloc() reports in the
-__vmalloc_area_node()
-are useless because the __GFP_NOWARN is added on top of gfp_mask:
 
-void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...)
-{
-        struct va_format vaf;
-        va_list args;
-        static DEFINE_RATELIMIT_STATE(nopage_rs, 10*HZ, 1);
+Here's a set of patches that removes the old fscache I/O API by the following
+means:
 
-        if ((gfp_mask & __GFP_NOWARN) || !__ratelimit(&nopage_rs))
-                return;
-...
+ (1) A simple fallback API is added that can read or write a single page
+     synchronously.  The functions for this have "fallback" in their names
+     as they have to be removed at some point.
 
-everything with the __GFP_NOWARN is just reverted.
+ (2) An implementation of this is provided in cachefiles.  It creates a kiocb
+     to use DIO to the backing file rather than calling readpage on the
+     backing filesystem page and then snooping the page wait queue.
 
-> [...]
-> > @@ -3010,16 +3037,22 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
-> >       area = __get_vm_area_node(real_size, align, shift, VM_ALLOC |
-> >                                 VM_UNINITIALIZED | vm_flags, start, end, node,
-> >                                 gfp_mask, caller);
-> > -     if (!area) {
-> > -             warn_alloc(gfp_mask, NULL,
-> > -                     "vmalloc error: size %lu, vm_struct allocation failed",
-> > -                     real_size);
-> > -             goto fail;
-> > -     }
-> > +     if (area)
-> > +             addr = __vmalloc_area_node(area, gfp_mask, prot, shift, node);
-> > +
-> > +     if (!area || !addr) {
-> > +             if (gfp_mask & __GFP_NOFAIL) {
-> > +                     schedule_timeout_uninterruptible(1);
-> > +                     goto again;
-> > +             }
-> > +
-> > +             if (!area)
-> > +                     warn_alloc(gfp_mask, NULL,
-> > +                             "vmalloc error: size %lu, vm_struct allocation failed",
-> > +                             real_size);
-> >
-> > -     addr = __vmalloc_area_node(area, gfp_mask, prot, shift, node);
-> > -     if (!addr)
-> >               goto fail;
-> > +     }
-> >
-> >       /*
-> >        * In this function, newly allocated vm_struct has VM_UNINITIALIZED
-> > <snip>
->
-> OK, this looks easier from the code reading but isn't it quite wasteful
-> to throw all the pages backing the area (all of them allocated as
-> __GFP_NOFAIL) just to then fail to allocate few page tables pages and
-> drop all of that on the floor (this will happen in __vunmap AFAICS).
->
-> I mean I do not care all that strongly but it seems to me that more
-> changes would need to be done here and optimizations can be done on top.
->
-> Is this something you feel strongly about?
->
-Will try to provide some motivations :)
+ (3) NFS is switched to use the fallback API.
 
-It depends on how to look at it. My view is as follows a more simple code
-is preferred. It is not considered as a hot path and it is rather a corner
-case to me. I think "unwinding" has some advantage. At least one motivation
-is to release a memory(on failure) before a delay that will prevent holding
-of extra memory in case of __GFP_NOFAIL infinitelly does not succeed, i.e.
-if a process stuck due to __GFP_NOFAIL it does not "hold" an extra memory
-forever.
+ (4) CIFS is switched to use the fallback API also for the moment.
 
--- 
-Uladzislau Rezki
+ (5) 9P is switched to using netfslib.
+
+ (6) The old I/O API is removed from fscache and the page snooping
+     implementation is removed from cachefiles.
+
+The reasons for doing this are:
+
+ (A) Using a kiocb to do asynchronous DIO from/to the pages of the backing
+     file is now a possibility that didn't exist when cachefiles was created.
+     This is much simpler than the snooping mechanism with a proper callback
+     path and it also requires fewer copies and less memory.
+
+ (B) We have to stop using bmap() or SEEK_DATA/SEEK_HOLE to work out what
+     blocks are present in the backing file is dangerous and can lead to data
+     corruption if the backing filesystem can insert or remove blocks of zeros
+     arbitrarily in order to optimise its extent list[1].
+
+     Whilst this patchset doesn't fix that yet, it does simplify the code and
+     the fix for that can be made in a subsequent patchset.
+
+ (C) In order to fix (B), the cache will need to keep track itself of what
+     data is present.  To make this easier to manage, the intention is to
+     increase the cache block granularity to, say, 256KiB - importantly, a
+     size that will span multiple pages - which means the single-page
+     interface will have to go away.  netfslib is designed to deal with
+     that on behalf of a filesystem, though a filesystem could use raw
+     cache calls instead and manage things itself.
+
+These patches can be found also on:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=fscache-remove-old-io
+
+David
+
+Changes
+=======
+ver #4:
+  - Fixed cifs to not check PG_fscache before writing a page to the cache.
+
+ver #3:
+  - Added a patch to make fscache_cookie_enabled() handle a NULL cookie.
+  - Added a patch to make cachefiles_prepare_read() indicate that the
+    caller should fill a block with zeros if it's beyond EOF rather than
+    risking the read get marked invalid and trigger a warning.
+  - Merged fixes from Dave Wysochanski for the NFS patch[4].
+
+ver #2:
+  - Changed "deprecated" to "fallback" in the new function names[2].
+  - Cleaned up some kernel test robot warnings[3].
+  - Made the netfs read helpers use NETFS_READ_HOLE_* flags.
+
+
+References
+==========
+
+Link: https://lore.kernel.org/r/YO17ZNOcq+9PajfQ@mit.edu [1]
+Link: https://lore.kernel.org/r/CAHk-=wiVK+1CyEjW8u71zVPK8msea=qPpznX35gnX+s8sXnJTg@mail.gmail.com/ [2]
+Link: https://lore.kernel.org/r/202109150420.QX7dDzSE-lkp@intel.com/ [3]
+Link: https://listman.redhat.com/archives/linux-cachefs/2021-October/msg00011.html [4]
+
+Older postings
+==============
+
+Link: https://lore.kernel.org/r/163162767601.438332.9017034724960075707.stgit@warthog.procyon.org.uk/ # rfc v1
+Link: https://lore.kernel.org/r/163189104510.2509237.10805032055807259087.stgit@warthog.procyon.org.uk/ # rfc v2
+
+Note that some of this was seen in previous patchsets too:
+
+# [RFC PATCH 00/61] fscache, cachefiles: Rewrite the I/O interface in terms of kiocb/iov_iter
+Link: https://lore.kernel.org/r/158861203563.340223.7585359869938129395.stgit@warthog.procyon.org.uk/
+# [PATCH 00/14] fscache: Rewrite 1: Disable and clean in preparation for rewrite
+Link: https://lore.kernel.org/r/159465766378.1376105.11619976251039287525.stgit@warthog.procyon.org.uk/
+# [RFC PATCH 00/76] fscache: Modernisation
+Link: https://lore.kernel.org/r/160588455242.3465195.3214733858273019178.stgit@warthog.procyon.org.uk/
+
+---
+David Howells (10):
+      fscache: Generalise the ->begin_read_operation method
+      fscache: Fix fscache_cookie_enabled() to handle NULL cookie
+      cachefiles: Always indicate we should fill a post-EOF page with zeros
+      fscache: Implement a fallback I/O interface to replace the old API
+      nfs: Move to using the alternate fallback fscache I/O API
+      9p: Convert to using the netfs helper lib to do reads and caching
+      cifs: Move to using the alternate fallback fscache I/O API
+      fscache: Remove the old I/O API
+      fscache: Remove stats that are no longer used
+      fscache: Update the documentation to reflect I/O API changes
+
+
+ .../filesystems/caching/backend-api.rst       |  138 +--
+ .../filesystems/caching/netfs-api.rst         |  385 +-----
+ fs/9p/Kconfig                                 |    1 +
+ fs/9p/cache.c                                 |  137 ---
+ fs/9p/cache.h                                 |   98 +-
+ fs/9p/v9fs.h                                  |    9 +
+ fs/9p/vfs_addr.c                              |  195 ++-
+ fs/9p/vfs_file.c                              |   21 +-
+ fs/cachefiles/Makefile                        |    1 -
+ fs/cachefiles/interface.c                     |   15 -
+ fs/cachefiles/internal.h                      |   38 -
+ fs/cachefiles/io.c                            |   57 +-
+ fs/cachefiles/main.c                          |    1 -
+ fs/cachefiles/rdwr.c                          |  972 ---------------
+ fs/cifs/file.c                                |   64 +-
+ fs/cifs/fscache.c                             |  105 +-
+ fs/cifs/fscache.h                             |   76 +-
+ fs/fscache/cache.c                            |    6 -
+ fs/fscache/cookie.c                           |   10 -
+ fs/fscache/internal.h                         |   58 +-
+ fs/fscache/io.c                               |  137 ++-
+ fs/fscache/object.c                           |    2 -
+ fs/fscache/page.c                             | 1066 -----------------
+ fs/fscache/stats.c                            |   73 +-
+ fs/netfs/read_helper.c                        |    8 +-
+ fs/nfs/file.c                                 |   14 +-
+ fs/nfs/fscache-index.c                        |   26 -
+ fs/nfs/fscache.c                              |  170 +--
+ fs/nfs/fscache.h                              |   84 +-
+ fs/nfs/read.c                                 |   25 +-
+ fs/nfs/write.c                                |    7 +-
+ include/linux/fscache-cache.h                 |  131 --
+ include/linux/fscache.h                       |  445 ++-----
+ include/linux/netfs.h                         |   17 +-
+ 34 files changed, 569 insertions(+), 4023 deletions(-)
+ delete mode 100644 fs/cachefiles/rdwr.c
+
+
