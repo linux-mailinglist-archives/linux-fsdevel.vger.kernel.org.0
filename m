@@ -2,222 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50CFA43F7F5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 09:45:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5394A43F81A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 09:49:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232229AbhJ2HsG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Oct 2021 03:48:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38056 "EHLO
+        id S232389AbhJ2Hv7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Oct 2021 03:51:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230247AbhJ2HsF (ORCPT
+        with ESMTP id S232299AbhJ2Hvb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Oct 2021 03:48:05 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A40AEC061570;
-        Fri, 29 Oct 2021 00:45:37 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id n67so11489652iod.9;
-        Fri, 29 Oct 2021 00:45:37 -0700 (PDT)
+        Fri, 29 Oct 2021 03:51:31 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CEC2C061570
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Oct 2021 00:49:03 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id g10so35346606edj.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Oct 2021 00:49:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=YvS3OEojn6WlgoM5Pok9+XWG3Yikban/dCaVMqXh6O4=;
-        b=j0ZYEwfg/RFP3vZ0NF45LNbXn0FXnpRrSZKuYBz/v3Ti0BTmeyp9N7VQZHJ0MOpaHc
-         SyOFdeQmIvmzNxRqDvY36MWKL4TN4GyGqlch3Oic3ZzzQtFJzSqAx6Sncn84ySZo0K/U
-         CDVKvtPGDJyopdDodidwBiFnONnN0Y+zPuafOQ6zzwcj0xmqQruYxufDtrGqgVTm197X
-         YD7WbaChlI8ZDicXCuH4XD1MpdTyJ50sTFdy4MOyQqgKK1CXkRLKfxaPvxQqnar8Ew15
-         4rzhCfQnHV9Kq+c95oj4HnQu6n4EutKUy+lqQDB3VSiBsBk12fvwsyMW/u3N12jhBu3l
-         Yg8A==
+        bh=vjqTlAq/8atUNGknBengC56rv9Dz2YcbvxQpL6f31NE=;
+        b=4NWQ97D8av1bcOmAuQzWks2cBvv6sEDFs9N8sqanD4uhWTidcfYo3hBwx+DyCNFz1K
+         P4C+s2YWl0gtXhIEz4s/whnD2DqPHxtpemt8r9bU+0/beruJ6D0okHZ8gattocaYAXEv
+         Zybb+4y2JNS6+rpvFo4Ectd4zS13QmraLGofH2mPNjDu9wd4ORTSd/6hT5VwdRxXkLxn
+         F1ewJRoO/QNgJhKynXm88FBtssDG+yUlM9zauo+3ocX/ytwveSWrB/tl11tDpcdmyEHQ
+         cxqna2wQ4HpL7O/dzDhj25Kv2djOE8/xDRnIPI1r/h0QlWADoXnouRt9Tdu3nKvKCxTs
+         dQkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=YvS3OEojn6WlgoM5Pok9+XWG3Yikban/dCaVMqXh6O4=;
-        b=Dy+L2AIyx8TPFQn9HjDpaganSZ4/9hXjfefaJa5ZQ+Ao0OlHtHnsgU2/ANFCz027DB
-         OzcpXx7w5abhPDzg6FKagaZ0pci1jadnof3uroSqKjOP1qV0ReILwvxbYRmioikToxOR
-         CBwpMeVdB2gIg80oLTSZSHbVGvPX6NH5Ql2YL+sQTzEId9hGtr39ssnZPmNCs8nCQpfl
-         1uNJQ1bRaCyjWOvcE4ovJ5buqaIcRwO2ySeuD6ST7//Wnrw35DabK/wTIfQwCRtRT8Qe
-         run0JpMf41CZOxGtnqbQux9wy8skHBdexwjzlbDkTEJScEvBlt4xjjJ4UCzVax+weyJw
-         jITg==
-X-Gm-Message-State: AOAM530kgGMKBstBxKTuI/V7O59d1ylMJumuc/VM7XjstAdqzehCCevV
-        6DJp11l0OzhHkDqGwo+SFs0Pxb9375Pbo9YkjiI=
-X-Google-Smtp-Source: ABdhPJyETE/qLAF0grfwPy1l00eM4REeeLtmeoBWL6wOt59OXeZvcrCFeFwAw5oh/9q3xbShCHKFcImikiHaH3niayk=
-X-Received: by 2002:a05:6602:27d4:: with SMTP id l20mr6774818ios.94.1635493536891;
- Fri, 29 Oct 2021 00:45:36 -0700 (PDT)
+        bh=vjqTlAq/8atUNGknBengC56rv9Dz2YcbvxQpL6f31NE=;
+        b=TnfjsjSR8MbRvZEXX/dTOgO3f7bv9vSjBd3BrSztTHF4M6LiijywHf6xcmAm0Lrly1
+         YzFPjgPSUTaUUbW3fBPHnVUlHYKxFsUgH+afWJJbWy6d+BksY7X8memp3iAZPC/sL1sI
+         9apyUmy4e/n3y5TxIZUEBxvzQO2KgmMK31qVoQerGux6u1xxIV2/gtdV9U0AWaT0k5DK
+         kwwtluxzaa6VIgaMeqdfXfYB+2P/uH3o1dw1ECC7Vt74CTgqtrC9whXWqalB/oFHVhLc
+         w17+rCqOkj4p6fZ8m8cHYpDhvaFGMHhMfgYO2cbKvqQoTGKBSym94z6WuNNSAMuIWPxD
+         NaWQ==
+X-Gm-Message-State: AOAM533IIONr78hlyF+jJBRXiqEr8vb+LtJYxNHavSRDk0Hrz3ekZVth
+        HjGFinuVmVbz0pty/acj7eii0OyF1SF29Pzp1mY1AQ==
+X-Google-Smtp-Source: ABdhPJwjitD9q7llnX4M3SYof8U1mUQbFwcD39eUp1B6VYUJIc75/H1aw9+QzCU4himzNKQr5lfz8Bq83cIf+yo39EY=
+X-Received: by 2002:a17:906:c18c:: with SMTP id g12mr11994765ejz.458.1635493741880;
+ Fri, 29 Oct 2021 00:49:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20211025083315.4752-1-laoar.shao@gmail.com> <20211025083315.4752-13-laoar.shao@gmail.com>
- <202110251431.F594652F@keescook> <YXmySeDsxxbA7hcq@alley>
-In-Reply-To: <YXmySeDsxxbA7hcq@alley>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Fri, 29 Oct 2021 15:44:47 +0800
-Message-ID: <CALOAHbDQkfdpW4hktPCcstEAYG6ecEan_b095NeanA7sC1K=-w@mail.gmail.com>
-Subject: Re: [PATCH v6 12/12] kernel/kthread: show a warning if kthread's comm
- is truncated
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+References: <20211027132633.86653-1-ligang.bdlg@bytedance.com> <20211028153028.GP3891@suse.de>
+In-Reply-To: <20211028153028.GP3891@suse.de>
+From:   =?UTF-8?B?5p2O5riv?= <ligang.bdlg@bytedance.com>
+Date:   Fri, 29 Oct 2021 15:48:50 +0800
+Message-ID: <CAMx52AR2h_RifrFPyu4WA3YDij9epuApOzG1zbH9F6pK4m7b9Q@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v1] sched/numa: add per-process numa_balancing
+To:     Mel Gorman <mgorman@suse.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Qiang Zhang <qiang.zhang@windriver.com>,
-        robdclark <robdclark@chromium.org>,
-        christian <christian@brauner.io>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
         Juri Lelli <juri.lelli@redhat.com>,
         Vincent Guittot <vincent.guittot@linaro.org>,
-        David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        john fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        dennis.dalessandro@cornelisnetworks.com,
-        mike.marciniszyn@cornelisnetworks.com, dledford@redhat.com,
-        jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        kbuild test robot <lkp@intel.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 28, 2021 at 4:10 AM Petr Mladek <pmladek@suse.com> wrote:
+On Thu, Oct 28, 2021 at 11:30 PM Mel Gorman <mgorman@suse.de> wrote:
 >
-> On Mon 2021-10-25 14:35:42, Kees Cook wrote:
-> > On Mon, Oct 25, 2021 at 08:33:15AM +0000, Yafang Shao wrote:
-> > > Show a warning if task comm is truncated. Below is the result
-> > > of my test case:
-> > >
-> > > truncated kthread comm:I-am-a-kthread-with-lon, pid:14 by 6 characters
-> > >
-> > > Suggested-by: Petr Mladek <pmladek@suse.com>
-> > > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > > Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-> > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > Cc: Kees Cook <keescook@chromium.org>
-> > > Cc: Petr Mladek <pmladek@suse.com>
-> > > ---
-> > >  kernel/kthread.c | 7 ++++++-
-> > >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/kernel/kthread.c b/kernel/kthread.c
-> > > index 5b37a8567168..46b924c92078 100644
-> > > --- a/kernel/kthread.c
-> > > +++ b/kernel/kthread.c
-> > > @@ -399,12 +399,17 @@ struct task_struct *__kthread_create_on_node(int (*threadfn)(void *data),
-> > >     if (!IS_ERR(task)) {
-> > >             static const struct sched_param param = { .sched_priority = 0 };
-> > >             char name[TASK_COMM_LEN];
-> > > +           int len;
-> > >
-> > >             /*
-> > >              * task is already visible to other tasks, so updating
-> > >              * COMM must be protected.
-> > >              */
-> > > -           vsnprintf(name, sizeof(name), namefmt, args);
-> > > +           len = vsnprintf(name, sizeof(name), namefmt, args);
-> > > +           if (len >= TASK_COMM_LEN) {
-> >
-> > And since this failure case is slow-path, we could improve the warning
-> > as other had kind of suggested earlier with something like this instead:
-> >
-> >                       char *full_comm;
-> >
-> >                       full_comm = kvasprintf(GFP_KERNEL, namefmt, args);
->
-> You need to use va_copy()/va_end() if you want to use the same va_args
-> twice.
->
+> That aside though, the configuration space could be better. It's possible
+> to selectively disable NUMA balance but not selectively enable because
+> prctl is disabled if global NUMA balancing is disabled. That could be
+> somewhat achieved by having a default value for mm->numa_balancing based on
+> whether the global numa balancing is disabled via command line or sysctl
+> and enabling the static branch if prctl is used with an informational
+> message. This is not the only potential solution but as it stands,
+> there are odd semantic corner cases. For example, explicit enabling
+> of NUMA balancing by prctl gets silently revoked if numa balancing is
+> disabled via sysctl and prctl(PR_NUMA_BALANCING, PR_SET_NUMA_BALANCING,
+> 1) means nothing.
 
-Now I understand it.
-So the patch will be:
+static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
+{
+    ...
+    if (static_branch_unlikely(&sched_numa_balancing))
+        task_tick_numa(rq, curr);
+    ...
+}
 
-diff --git a/kernel/kthread.c b/kernel/kthread.c
-index 5b37a8567168..c1ff67283725 100644
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -399,12 +399,29 @@ struct task_struct *__kthread_create_on_node(int
-(*threadfn)(void *data),
-        if (!IS_ERR(task)) {
-                static const struct sched_param param = { .sched_priority = 0 };
-                char name[TASK_COMM_LEN];
-+               char *full_comm;
-+               va_list aq;
-+               int len;
+static void task_tick_numa(struct rq *rq, struct task_struct *curr)
+{
+    ...
+    if (!READ_ONCE(curr->mm->numa_balancing))
+        return;
+    ...
+}
 
-                /*
-                 * task is already visible to other tasks, so updating
-                 * COMM must be protected.
-                 */
--               vsnprintf(name, sizeof(name), namefmt, args);
-+               va_copy(aq, args);
-+               len = vsnprintf(name, sizeof(name), namefmt, aq);
-+               va_end(aq);
-+               if (len >= TASK_COMM_LEN) {
-+                       full_comm = kvasprintf(GFP_KERNEL, namefmt, args);
-+                       if (full_comm) {
-+                               pr_warn("truncated kthread comm '%s'
-to '%s' (pid:%d)\n",
-+                                       full_comm, name, task->pid);
-+                               kfree(full_comm);
-+                       } else {
-+                               pr_warn("truncated kthread comm '%s'
-(pid:%d) by %d characters\n",
-+                                       name, task->pid, len -
-TASK_COMM_LEN + 1);
-+
-+                       }
-+               }
-                set_task_comm(task, name);
-                /*
-                 * root may have changed our (kthreadd's) priority or CPU mask.
+When global numa_balancing is disabled, mm->numa_balancing is useless.
+So I think
+prctl(PR_NUMA_BALANCING, PR_SET_NUMA_BALANCING,0/1) should return an
+error instead of modifying mm->numa_balancing.
 
-That seems a little overkill to me.
-I prefer to keep the v6 as-is.
-
-> For example, see how kvasprintf() is implemented. It calls
-> vsnprintf() twice and it uses va_copy()/va_end() around the the first call.
->
-> kvasprintf() could also return NULL if there is not enough memory.
->
-> >                       pr_warn("truncated kthread comm '%s' to '%s' (pid:%d)\n",
-> >                               full_comm, name);
->
-> BTW: Is this message printed during normal boot? I did not tried the
-> patchset myself.
->
-> We should add this warning only if there is a good solution how to
-> avoid the truncated names. And we should me sure that the most common
-> kthreads/workqueues do not trigger it. It would be ugly to print many
-> warnings during boot if people could not get rid of them easily.
->
-> >                       kfree(full_comm);
-> >               }
-> > >             set_task_comm(task, name);
-> > >             /*
-> > >              * root may have changed our (kthreadd's) priority or CPU mask.
->
-> Best Regards,
-> Petr
-
-
-
--- 
-Thanks
-Yafang
+Is it reasonable that prctl(PR_NUMA_BALANCING,PR_SET_NUMA_BALANCING,0/1)
+can still change the value of mm->numa_balancing when global numa_balancing is
+disabled?
