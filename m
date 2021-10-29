@@ -2,122 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 038F043F8F3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 10:33:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E062643F909
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 10:38:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232490AbhJ2Ifi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Oct 2021 04:35:38 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:60746 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232413AbhJ2Ifh (ORCPT
+        id S232484AbhJ2Ik1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Oct 2021 04:40:27 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:44990 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232313AbhJ2Ik0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Oct 2021 04:35:37 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R981e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Uu6a2.v_1635496386;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Uu6a2.v_1635496386)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 29 Oct 2021 16:33:07 +0800
-Subject: Re: [PATCH v6 2/7] fuse: make DAX mount option a tri-state
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     stefanha@redhat.com, miklos@szeredi.hub,
-        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
-References: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
- <20211011030052.98923-3-jefflexu@linux.alibaba.com>
- <YW2AU/E0pLHO5Yl8@redhat.com>
- <652ac323-6546-01b8-992e-460ad59577ca@linux.alibaba.com>
- <YXAsV3xp3aeOjaeh@redhat.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <eb0c9711-66cb-bf79-0cf6-c6d6eec5ceea@linux.alibaba.com>
-Date:   Fri, 29 Oct 2021 16:33:06 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
+        Fri, 29 Oct 2021 04:40:26 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 8DF1621979;
+        Fri, 29 Oct 2021 08:37:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1635496677; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qZJtw3MieBAJxz2bywPNILccd9LrIRNQXFA0JlaFMeY=;
+        b=t6GZqZ2ZrA/zWvBOmb2gYMX4wpzmCFE/5vROmmF10stABpPd4Vix4z1Av+pYE9LvhJqnJg
+        XSGg1+c6+utFRvFbwllDCEwAkiejlzTQqeHcgSDCiefdpUUc91ZU6EbZCCgVxeEnvEfmLU
+        +8yKiddofh2oiONcJ5SAK3Vch4rgK/E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1635496677;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qZJtw3MieBAJxz2bywPNILccd9LrIRNQXFA0JlaFMeY=;
+        b=6v5ygUCQdTegipKV02UYgWAHs+kPuWGntkmtDP/e3QhMktilEhvPCS/5fzjCEcqJGMyixs
+        Y/gQKRaBvasxCQAA==
+Received: from suse.de (mgorman.udp.ovpn2.nue.suse.de [10.163.43.106])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id CED32A3B83;
+        Fri, 29 Oct 2021 08:37:55 +0000 (UTC)
+Date:   Fri, 29 Oct 2021 09:37:51 +0100
+From:   Mel Gorman <mgorman@suse.de>
+To:     Gang Li <ligang.bdlg@bytedance.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: Re: [PATCH v1] sched/numa: add per-process numa_balancing
+Message-ID: <20211029083751.GR3891@suse.de>
+References: <20211027132633.86653-1-ligang.bdlg@bytedance.com>
+ <20211028153028.GP3891@suse.de>
+ <b884ad7d-48d3-fcc8-d199-9e7643552a9a@bytedance.com>
 MIME-Version: 1.0
-In-Reply-To: <YXAsV3xp3aeOjaeh@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <b884ad7d-48d3-fcc8-d199-9e7643552a9a@bytedance.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Oct 29, 2021 at 02:12:28PM +0800, Gang Li wrote:
+> On 10/28/21 11:30 PM, Mel Gorman wrote:
+> > 
+> > That aside though, the configuration space could be better. It's possible
+> > to selectively disable NUMA balance but not selectively enable because
+> > prctl is disabled if global NUMA balancing is disabled. That could be
+> > somewhat achieved by having a default value for mm->numa_balancing based on
+> > whether the global numa balancing is disabled via command line or sysctl
+> > and enabling the static branch if prctl is used with an informational
+> > message. This is not the only potential solution but as it stands,
+> > there are odd semantic corner cases. For example, explicit enabling
+> > of NUMA balancing by prctl gets silently revoked if numa balancing is
+> > disabled via sysctl and prctl(PR_NUMA_BALANCING, PR_SET_NUMA_BALANCING,
+> > 1) means nothing.
+> > 
+> static void task_tick_fair(struct rq *rq, struct task_struct *curr, int
+> queued)
+> {
+> 	...
+> 	if (static_branch_unlikely(&sched_numa_balancing))
+> 		task_tick_numa(rq, curr);
+> 	...
+> }
+> 
+> static void task_tick_numa(struct rq *rq, struct task_struct *curr)
+> {
+> 	...
+> 	if (!READ_ONCE(curr->mm->numa_balancing))
+> 		return;
+> 	...
+> }
+> 
+> When global numa_balancing is disabled, mm->numa_balancing is useless.
 
+I'm aware that this is the behaviour of the patch as-is.
 
-On 10/20/21 10:48 PM, Vivek Goyal wrote:
-> On Wed, Oct 20, 2021 at 10:52:38AM +0800, JeffleXu wrote:
->>
->>
->> On 10/18/21 10:10 PM, Vivek Goyal wrote:
->>> On Mon, Oct 11, 2021 at 11:00:47AM +0800, Jeffle Xu wrote:
->>>> We add 'always', 'never', and 'inode' (default). '-o dax' continues to
->>>> operate the same which is equivalent to 'always'. To be consistemt with
->>>> ext4/xfs's tri-state mount option, when neither '-o dax' nor '-o dax='
->>>> option is specified, the default behaviour is equal to 'inode'.
->>>
->>> Hi Jeffle,
->>>
->>> I am not sure when  -o "dax=inode"  is used as a default? If user
->>> specifies, "-o dax" then it is equal to "-o dax=always", otherwise
->>> user will explicitly specify "-o dax=always/never/inode". So when
->>> is dax=inode is used as default?
->>
->> That means when neither '-o dax' nor '-o dax=always/never/inode' is
->> specified, it is actually equal to '-o dax=inode', which is also how
->> per-file DAX on ext4/xfs works.
->>
->> This default behaviour for local filesystem, e.g. ext4/xfs, may be
->> straightforward, since the disk inode will be read into memory during
->> the inode instantiation, and checking for persistent inode attribute
->> shall be realatively cheap, except that the default behaviour has
->> changed from 'dax=never' to 'dax=inode'.
+> So I
+> think prctl(PR_NUMA_BALANCING, PR_SET_NUMA_BALANCING,0/1) should return
+> error instead of modify mm->numa_balancing.
 > 
-> Interesting that ext4/xfs allowed for this behavior change.
-> 
->>
->> Come back to virtiofs, when neither '-o dax' nor '-o
->> dax=always/never/inode' is specified, and it actually behaves as '-o
->> dax=inode', as long as '-o dax=server/attr' option is not specified for
->> virtiofsd, virtiofsd will always clear FUSE_ATTR_DAX and thus guest will
->> always disable DAX. IOWs, the guest virtiofs atually behaves as '-o
->> dax=never' when neither '-o dax' nor '-o dax=always/never/inode' is
->> specified, and '-o dax=server/attr' option is not specified for virtiofsd.
->>
->> But I'm okay if we need to change the default behaviour for virtiofs.
-> 
-> This is change of behavior from client's perspective. Even if client
-> did not opt-in for DAX, DAX can be enabled based on server's setting.
-> Not that there is anything wrong with it, but change of behavior part
-> concerns me.
-> 
-> In case of virtiofs, lot of features we are controlling from server.
-> Client typically just calls "mount" and there are not many options
-> users can specify for mount.  
-> 
-> Given we already allowed to make client a choice about DAX behavior,
-> I will feel more comfortable that we don't change it and let client
-> request a specific DAX mode and if client does not specify anything,
-> then DAX is not enabled.
+> Is it reasonable that prctl(PR_NUMA_BALANCING,PR_SET_NUMA_BALANCING,0/1)
+> can still change the value of mm->numa_balancing when global numa_balancing
+> is disabled?
 > 
 
-Hi Vivek,
-
-How about the following design about the default behavior to move this
-patchset forward, considering the discussion on another thread [1]?
-
-- guest side: '-o dax=inode' acts as the default, keeping consistent
-with xfs/ext4
-- virtiofsd: the default behavior is like, neither file size based
-policy ('dax=server') nor persistent inode flags based policy
-('dax=attr') is used, though virtiofsd indeed advertises that
-it supports per inode DAX feature (so that it won't fail FUSE_INIT
-negotiation phase when guest advertises dax=inode by default)... In
-fact, it acts like 'dax=never' in this case.
-
-Then when guest opts-in and specifies '-o dax=inode' manually, then it
-shall realize that proper configuration for virtiofsd is also needed (-o
-dax=server|attr).
-
-[1] https://www.spinics.net/lists/linux-xfs/msg56642.html
+My point is that as it stands,
+prctl(PR_NUMA_BALANCING,PR_SET_NUMA_BALANCING,1) either does nothing or
+fails. If per-process numa balancing is to be introduced, it should have
+meaning with the global tuning affecting default behaviour and the prctl
+affecting specific behaviour.
 
 -- 
-Thanks,
-Jeffle
+Mel Gorman
+SUSE Labs
