@@ -2,119 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F37743FFDD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 17:51:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A81743FFE5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 17:55:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230030AbhJ2PyP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Oct 2021 11:54:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36344 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229662AbhJ2PyO (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Oct 2021 11:54:14 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAF54C061714;
-        Fri, 29 Oct 2021 08:51:45 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id s1so40256164edd.3;
-        Fri, 29 Oct 2021 08:51:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NESlwwMORorwSWYzWjNc0O70aEVgaVjtuvkdZI1/8es=;
-        b=KtJDps6dyol74mgZwTFC89lUznMWMTflRjyEGBQg8fGTIHN4eS84jauTuUjHSkxHST
-         dg466nqGzuri8/DlWUUN8zd2NaCCz0U8kvOGxHCqjTMGdZ6iMDYunWvuGt2cOtXkcv/e
-         Ue2xn0HPWcE13DrP2OOnzAVehZzgf7sonec4sRhiS1xjKpw6AHFzBdaM06bbQlJ7Ja6j
-         DqvSlb2Et8rx+kql0yC4WX+v7blifYbbw8XxCxbiTrhkRNvvRa2UjvXED5+77b1wlOPY
-         lBS+nUPNJn2q/KU3a4esLsUmSIB7aVNfjuXrsKyw+tg80XBA+VjpMSYDL8e2U0sAf4mG
-         8W+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NESlwwMORorwSWYzWjNc0O70aEVgaVjtuvkdZI1/8es=;
-        b=IL3WJ5eAgcGwVVL69Y8FLZVE3zcGbUKQ/yzWZyy+Q8uu9RV8i2Ro2GZWqFz6DnlAMp
-         ankvuDDSM+lAHUj/Gwtwm06bYSQGxvoqlAEdfToDAScoRjcbn9ulyzYSkKPuWwzC323x
-         qJzbRENJky/4iqUhePkcCutt2ESqhFJnH6j9bIHMJjthColtEmKK05lP9H0kEVyb/1Tp
-         8UkrQvF54Xhc7Wwtcmt+1dUfgSL58IXb2QFOmOQFcQQoDZguc2EM82xJ7ksr4Nil9dxR
-         zOpWG822uXhTbisrDi2BCLq42uLYaGUah0jxjZGzybFU0Wi4wcmScaDK1gjNoeUtmpc0
-         QkBA==
-X-Gm-Message-State: AOAM530/+CbR+RScdKX4btlx+OjU2X+KAxSMQW0OCxDxwQ1TIqlooTy9
-        CyjvUQgMevWwyU42kUasL1hCpiDqYUExXei0wmU=
-X-Google-Smtp-Source: ABdhPJwaZoIDWVCGaHYKcnttqgtKxA/h8msb9rhToLx+whKahsfVfCWinU7ltf1BsXNc6XsBxJ1fumjug1/uaYuC90g=
-X-Received: by 2002:a05:6402:274f:: with SMTP id z15mr16361253edd.306.1635522704379;
- Fri, 29 Oct 2021 08:51:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAOuPNLhh_LkLQ8mSA4eoUDLCLzHo5zHXsiQZXUB_-T_F1_v6-g@mail.gmail.com>
- <alpine.LRH.2.02.2107211300520.10897@file01.intranet.prod.int.rdu2.redhat.com>
- <CAOuPNLi-xz_4P+v45CHLx00ztbSwU3_maf4tuuyso5RHyeOytg@mail.gmail.com>
- <CAOuPNLg0m-Q7Vhp4srbQrjXHsxVhOr-K2dvnNqzdR6Dr4kioqA@mail.gmail.com>
- <20210830185541.715f6a39@windsurf> <CAOuPNLhTidgLNWUbtUgdESYcKcE1C4SOdzKeQVhFGQvEoc0QEg@mail.gmail.com>
- <20210830211224.76391708@windsurf> <CAOuPNLgMd0AThhmSknbmKqp3_P8PFhBGr-jW0Mqjb6K6NchEMg@mail.gmail.com>
- <CAOuPNLiW10-E6F_Ndte7U9NPBKa9Y_UuLhgdwAYTc0eYMk5Mqg@mail.gmail.com>
- <CAOuPNLj2Xmx52Gtzx5oEKif4Qz-Tz=vaxhRvHQG-5emO7ewRhg@mail.gmail.com> <YTinqiH9h+Q9bYsr@kroah.com>
-In-Reply-To: <YTinqiH9h+Q9bYsr@kroah.com>
-From:   Pintu Agarwal <pintu.ping@gmail.com>
-Date:   Fri, 29 Oct 2021 21:21:33 +0530
-Message-ID: <CAOuPNLhzfGDoQsEZB5eH30WvH2w9hyMEU8Bt81SzK-scaAwgwA@mail.gmail.com>
-Subject: Re: Kernel 4.14: Using dm-verity with squashfs rootfs - mounting issue
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Sami Tolvanen <samitolvanen@google.com>, snitzer@redhat.com,
-        Kernelnewbies <kernelnewbies@kernelnewbies.org>,
-        open list <linux-kernel@vger.kernel.org>, dm-devel@redhat.com,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
+        id S229971AbhJ2P5z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Oct 2021 11:57:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52876 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229607AbhJ2P5y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 Oct 2021 11:57:54 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4AB5F60FC4;
+        Fri, 29 Oct 2021 15:55:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1635522925;
+        bh=/k26Brg4+jtEQ3L7YzlxV5wwLsjmiyhBtI1Xv0qe4jM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VNGR/oT5nGHHvMugzkATBbYvd9F6fQA09UpjqWqVPxKBtrRkcFw10uYcU96r4Y5e9
+         BaNLU2TAu5G25fISB6pXK1/JZX+S4dr/HMvRmPUH8Edr/t1LiljcPus0OjDWw7ypW0
+         4EPLVRfxgon+ImToi17MZEqzKb5Gh5cbLmWGIGdu44rLX++iOPCkcVZzYN1iNPUdhu
+         ig+H9p46kun6H4yKSgjvS5hza9PP1p3D/4d0Z6Z7UeMhh3RdseFcOspVpYbIXEaaVD
+         z3vlYv7WtW9WWwh+XaOu1OGv6Th/km6Qop9MOz3Oco0bjW7QLca7ef5pWDU57NAWBq
+         P70mxqn/wKgSA==
+Date:   Fri, 29 Oct 2021 08:55:24 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Christoph Hellwig <hch@lst.de>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        linux-s390 <linux-s390@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>, agk@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+        linux-erofs@lists.ozlabs.org,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: futher decouple DAX from block devices
+Message-ID: <20211029155524.GE24307@magnolia>
+References: <20211018044054.1779424-1-hch@lst.de>
+ <CAPcyv4iEt78-XSsKjTWcpy71zaduXyyigTro6f3fmRqqFOG98Q@mail.gmail.com>
+ <20211029105139.1194bb7f@canb.auug.org.au>
+ <CAPcyv4g8iEyN5UN1w1xBqQDYSb3HCh7_smsmjt-PiHORRK+X9Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4g8iEyN5UN1w1xBqQDYSb3HCh7_smsmjt-PiHORRK+X9Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi All,
-
-On Wed, 8 Sept 2021 at 17:38, Greg KH <gregkh@linuxfoundation.org> wrote:
-
-> > > > > No, but you can backport it easily. Back at
-> > > > > http://lists.infradead.org/pipermail/openwrt-devel/2019-November/025967.html
-> > > > > I provided backports of this feature to OpenWrt, for the 4.14 and 4.19
-> > > > > kernels.
+On Fri, Oct 29, 2021 at 08:42:29AM -0700, Dan Williams wrote:
+> On Thu, Oct 28, 2021 at 4:52 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > >
-> > Can you please let me know where to get the below patches for
-> > backporting to our kernel:
-> >  create mode 100644
-> > target/linux/generic/backport-4.14/390-dm-add-support-to-directly-boot-to-a-mapped-device.patch
-> >  create mode 100644
-> > target/linux/generic/backport-4.14/391-dm-init-fix-max-devices-targets-checks.patch
-> >  create mode 100644
-> > target/linux/generic/backport-4.14/392-dm-ioctl-fix-hang-in-early-create-error-condition.patch
-> >  create mode 100644
-> > target/linux/generic/backport-4.14/393-Documentation-dm-init-fix-multi-device-example.patch
->
-> If you are stuck on an older kernel version, then you need to get
-> support from the vendor that is forcing you to be on that kernel
-> version, as you are already paying them for support.  Please take
-> advantage of that, as no one knows what is really in "your kernel".
->
+> > Hi Dan,
+> >
+> > On Wed, 27 Oct 2021 13:46:31 -0700 Dan Williams <dan.j.williams@intel.com> wrote:
+> > >
+> > > My merge resolution is here [1]. Christoph, please have a look. The
+> > > rebase and the merge result are both passing my test and I'm now going
+> > > to review the individual patches. However, while I do that and collect
+> > > acks from DM and EROFS folks, I want to give Stephen a heads up that
+> > > this is coming. Primarily I want to see if someone sees a better
+> > > strategy to merge this, please let me know, but if not I plan to walk
+> > > Stephen and Linus through the resolution.
+> >
+> > It doesn't look to bad to me (however it is a bit late in the cycle :-(
+> > ).  Once you are happy, just put it in your tree (some of the conflicts
+> > are against the current -rc3 based version of your tree anyway) and I
+> > will cope with it on Monday.
+> 
+> Christoph, Darrick, Shiyang,
+> 
+> I'm losing my nerve to try to jam this into v5.16 this late in the
+> cycle.
 
-This is to update this thread that now I am able to successfully
-bring-up dm-verity with NAND+ubiblock+squashfs on our 4.14 kernel
-itself without backporting the patches.
-Now, I am able to boot dm-verity using both initramfs and bootloader approach.
-The initramfs booting issue was our internal issue which was related
-to Kernel size configuration in UEFI.
-The bootloader approach issue was related to system image size issue,
-where we need to pass the exact image size to find the verity-metadata
-offset at the end of system image.
+Always a solid choice to hold off for a little more testing and a little
+less anxiety. :)
 
-However, I felt that dm-verity documentation still needs to be
-enhanced further with a better example.
-With the 5.4 Kernel, I may further explore the option of using
-dm-mod.create option, then I might get more clarity on how best to use
-it.
+I don't usually accept new code patches for iomap after rc4 anyway.
 
-Thank you all for your help and support!
+> I do want to get dax+reflink squared away as soon as possible,
+> but that looks like something that needs to build on top of a
+> v5.16-rc1 at this point. If Linus does a -rc8 then maybe it would have
+> enough soak time, but otherwise I want to take the time to collect the
+> acks and queue up some more follow-on cleanups to prepare for
+> block-less-dax.
 
-Regards,
-Pintu
+I think that hwpoison-calls-xfs-rmap patchset is a prerequisite for
+dax+reflink anyway, right?  /me had concluded both were 5.17 things.
+
+--D
