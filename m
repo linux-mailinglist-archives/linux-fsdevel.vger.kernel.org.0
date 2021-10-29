@@ -2,212 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58D0143F84E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 09:57:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0586943F8CC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Oct 2021 10:26:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232314AbhJ2H75 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Oct 2021 03:59:57 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:34806 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232243AbhJ2H74 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Oct 2021 03:59:56 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 415AC1FD5C;
-        Fri, 29 Oct 2021 07:57:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1635494247; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=FlivbYwS5gofQ32MIR1pehLeT+z7pyR3VleP+HxZjy4=;
-        b=KJL61TUdZkK2YX3YO83Ki+43ubq3UVSh8je4M+TGe1XRLtT7ZkepWVDJY2XvpF53O670hm
-        qiAUGz2BZLw9qJyjEDX2AY7jpl5vIKp1dUxncnAZKIhX7wtJu7Hv0ql2Omi98nqY39m2UF
-        nNaMc7jYBxlIkqn033SbCboS5l86EIo=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 0DD98A3B83;
-        Fri, 29 Oct 2021 07:57:27 +0000 (UTC)
-Date:   Fri, 29 Oct 2021 09:57:26 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Uladzislau Rezki <urezki@gmail.com>
-Cc:     Linux Memory Management List <linux-mm@kvack.org>,
-        Dave Chinner <david@fromorbit.com>, Neil Brown <neilb@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH 2/4] mm/vmalloc: add support for __GFP_NOFAIL
-Message-ID: <YXupZjQgLAi6ClRi@dhcp22.suse.cz>
-References: <20211025150223.13621-1-mhocko@kernel.org>
- <20211025150223.13621-3-mhocko@kernel.org>
- <CA+KHdyVqOuKny7bT+CtrCk8BrnARYz744Ze6cKMuy2BXo5e7jw@mail.gmail.com>
- <YXgsxF/NRlHjH+Ng@dhcp22.suse.cz>
- <20211026193315.GA1860@pc638.lan>
- <20211027175550.GA1776@pc638.lan>
+        id S232371AbhJ2I2x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Oct 2021 04:28:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42892 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232305AbhJ2I2x (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 29 Oct 2021 04:28:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id F2B776115C;
+        Fri, 29 Oct 2021 08:26:22 +0000 (UTC)
+Date:   Fri, 29 Oct 2021 10:26:20 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     andriy.shevchenko@linux.intel.com, akpm@linux-foundation.org,
+        sfr@canb.auug.org.au, revest@chromium.org, adobriyan@gmail.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] seq_file: fix passing wrong private data
+Message-ID: <20211029082620.jlnauplkyqmaz3ze@wittgenstein>
+References: <20211029032638.84884-1-songmuchun@bytedance.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20211027175550.GA1776@pc638.lan>
+In-Reply-To: <20211029032638.84884-1-songmuchun@bytedance.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 27-10-21 19:55:50, Uladzislau Rezki wrote:
-> On Tue, Oct 26, 2021 at 09:33:15PM +0200, Uladzislau Rezki wrote:
-> > On Tue, Oct 26, 2021 at 06:28:52PM +0200, Michal Hocko wrote:
-> > > On Tue 26-10-21 17:48:32, Uladzislau Rezki wrote:
-> > > > > From: Michal Hocko <mhocko@suse.com>
-> > > > >
-> > > > > Dave Chinner has mentioned that some of the xfs code would benefit from
-> > > > > kvmalloc support for __GFP_NOFAIL because they have allocations that
-> > > > > cannot fail and they do not fit into a single page.
-> > > > >
-> > > > > The larg part of the vmalloc implementation already complies with the
-> > > > > given gfp flags so there is no work for those to be done. The area
-> > > > > and page table allocations are an exception to that. Implement a retry
-> > > > > loop for those.
-> > > > >
-> > > > > Add a short sleep before retrying. 1 jiffy is a completely random
-> > > > > timeout. Ideally the retry would wait for an explicit event - e.g.
-> > > > > a change to the vmalloc space change if the failure was caused by
-> > > > > the space fragmentation or depletion. But there are multiple different
-> > > > > reasons to retry and this could become much more complex. Keep the retry
-> > > > > simple for now and just sleep to prevent from hogging CPUs.
-> > > > >
-> > > > > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > > > > ---
-> > > > >  mm/vmalloc.c | 10 +++++++++-
-> > > > >  1 file changed, 9 insertions(+), 1 deletion(-)
-> > > > >
-> > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > > index c6cc77d2f366..602649919a9d 100644
-> > > > > --- a/mm/vmalloc.c
-> > > > > +++ b/mm/vmalloc.c
-> > > > > @@ -2941,8 +2941,12 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
-> > > > >         else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
-> > > > >                 flags = memalloc_noio_save();
-> > > > >
-> > > > > -       ret = vmap_pages_range(addr, addr + size, prot, area->pages,
-> > > > > +       do {
-> > > > > +               ret = vmap_pages_range(addr, addr + size, prot, area->pages,
-> > > > >                         page_shift);
-> > > > > +               if (ret < 0)
-> > > > > +                       schedule_timeout_uninterruptible(1);
-> > > > > +       } while ((gfp_mask & __GFP_NOFAIL) && (ret < 0));
-> > > > >
-> > > > 
-> > > > 1.
-> > > > After that change a below code:
-> > > > 
-> > > > <snip>
-> > > > if (ret < 0) {
-> > > >     warn_alloc(orig_gfp_mask, NULL,
-> > > >         "vmalloc error: size %lu, failed to map pages",
-> > > >         area->nr_pages * PAGE_SIZE);
-> > > >     goto fail;
-> > > > }
-> > > > <snip>
-> > > > 
-> > > > does not make any sense anymore.
-> > > 
-> > > Why? Allocations without __GFP_NOFAIL can still fail, no?
-> > > 
-> > Right. I meant one thing but wrote slightly differently. In case of
-> > vmap_pages_range() fails(if __GFP_NOFAIL is set) should we emit any
-> > warning message? Because either we can recover on a future iteration
-> > or it stuck there infinitely so a user does not understand what happened.
-> > From the other hand this is how __GFP_NOFAIL works, hm..
-> > 
-> > Another thing, i see that schedule_timeout_uninterruptible(1) is invoked
-> > for all cases even when __GFP_NOFAIL is not set, in that scenario we do
-> > not want to wait, instead we should return back to a caller asap. Or am
-> > i missing something here?
-> > 
-> > > > 2.
-> > > > Can we combine two places where we handle __GFP_NOFAIL into one place?
-> > > > That would look like as more sorted out.
-> > > 
-> > > I have to admit I am not really fluent at vmalloc code so I wanted to
-> > > make the code as simple as possible. How would I unwind all the allocated
-> > > memory (already allocated as GFP_NOFAIL) before retrying at
-> > > __vmalloc_node_range (if that is what you suggest). And isn't that a
-> > > bit wasteful?
-> > > 
-> > > Or did you have anything else in mind?
-> > >
-> > It depends on how often all this can fail. But let me double check if
-> > such combining is easy.
-> > 
-> I mean something like below. The idea is to not spread the __GFP_NOFAIL
-> across the vmalloc file keeping it in one solid place:
+On Fri, Oct 29, 2021 at 11:26:38AM +0800, Muchun Song wrote:
+> DEFINE_PROC_SHOW_ATTRIBUTE() is supposed to be used to define a series
+> of functions and variables to register proc file easily. And the users
+> can use proc_create_data() to pass their own private data and get it
+> via seq->private in the callback. Unfortunately, the proc file system
+> use PDE_DATA() to get private data instead of inode->i_private. So fix
+> it. Fortunately, there only one user of it which does not pass any
+> private data, so this bug does not break any in-tree codes.
 > 
-> <snip>
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index d77830ff604c..f4b7927e217e 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -2889,8 +2889,14 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
->  	unsigned long array_size;
->  	unsigned int nr_small_pages = size >> PAGE_SHIFT;
->  	unsigned int page_order;
-> +	unsigned long flags;
-> +	int ret;
->  
->  	array_size = (unsigned long)nr_small_pages * sizeof(struct page *);
-> +
-> +	/*
-> +	 * This is i do not understand why we do not want to see warning messages.
-> +	 */
->  	gfp_mask |= __GFP_NOWARN;
+> Fixes: 97a32539b956 ("proc: convert everything to "struct proc_ops"")
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> ---
+>  include/linux/seq_file.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
+> index 103776e18555..72dbb44a4573 100644
+> --- a/include/linux/seq_file.h
+> +++ b/include/linux/seq_file.h
+> @@ -209,7 +209,7 @@ static const struct file_operations __name ## _fops = {			\
+>  #define DEFINE_PROC_SHOW_ATTRIBUTE(__name)				\
+>  static int __name ## _open(struct inode *inode, struct file *file)	\
+>  {									\
+> -	return single_open(file, __name ## _show, inode->i_private);	\
+> +	return single_open(file, __name ## _show, PDE_DATA(inode));	\
+>  }									\
+>  									\
+>  static const struct proc_ops __name ## _proc_ops = {			\
 
-I suspect this is becauser vmalloc wants to have its own failure
-reporting.
+Hm, after your change DEFINE_SHOW_ATTRIBUTE() and
+DEFINE_PROC_SHOW_ATTRIBUTE() macros do exactly the same things, right?:
 
-[...]
-> @@ -3010,16 +3037,22 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
->  	area = __get_vm_area_node(real_size, align, shift, VM_ALLOC |
->  				  VM_UNINITIALIZED | vm_flags, start, end, node,
->  				  gfp_mask, caller);
-> -	if (!area) {
-> -		warn_alloc(gfp_mask, NULL,
-> -			"vmalloc error: size %lu, vm_struct allocation failed",
-> -			real_size);
-> -		goto fail;
-> -	}
-> +	if (area)
-> +		addr = __vmalloc_area_node(area, gfp_mask, prot, shift, node);
-> +
-> +	if (!area || !addr) {
-> +		if (gfp_mask & __GFP_NOFAIL) {
-> +			schedule_timeout_uninterruptible(1);
-> +			goto again;
-> +		}
-> +
-> +		if (!area)
-> +			warn_alloc(gfp_mask, NULL,
-> +				"vmalloc error: size %lu, vm_struct allocation failed",
-> +				real_size);
->  
-> -	addr = __vmalloc_area_node(area, gfp_mask, prot, shift, node);
-> -	if (!addr)
->  		goto fail;
-> +	}
->  
->  	/*
->  	 * In this function, newly allocated vm_struct has VM_UNINITIALIZED
-> <snip>
+#define DEFINE_SHOW_ATTRIBUTE(__name)					\
+static int __name ## _open(struct inode *inode, struct file *file)	\
+{									\
+	return single_open(file, __name ## _show, inode->i_private);	\
+}									\
+									\
+static const struct file_operations __name ## _fops = {			\
+	.owner		= THIS_MODULE,					\
+	.open		= __name ## _open,				\
+	.read		= seq_read,					\
+	.llseek		= seq_lseek,					\
+	.release	= single_release,				\
+}
 
-OK, this looks easier from the code reading but isn't it quite wasteful
-to throw all the pages backing the area (all of them allocated as
-__GFP_NOFAIL) just to then fail to allocate few page tables pages and
-drop all of that on the floor (this will happen in __vunmap AFAICS).
+#define DEFINE_PROC_SHOW_ATTRIBUTE(__name)				\
+static int __name ## _open(struct inode *inode, struct file *file)	\
+{									\
+	return single_open(file, __name ## _show, inode->i_private);	\
+}									\
 
-I mean I do not care all that strongly but it seems to me that more
-changes would need to be done here and optimizations can be done on top.
+Can't you just replace the single instance where
+DEFINE_PROC_SHOW_ATTRIBUTE with DEFINE_SHOW_ATTRIBUTE() and remove
+DEFINE_PROC_SHOW_ATTRIBUTE completely?
 
-Is this something you feel strongly about?
--- 
-Michal Hocko
-SUSE Labs
+Christian
