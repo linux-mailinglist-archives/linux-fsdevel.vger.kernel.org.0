@@ -2,204 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F117440EAA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Oct 2021 14:30:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36AB2440EFC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 31 Oct 2021 16:20:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229863AbhJaNcw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 31 Oct 2021 09:32:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37526 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229662AbhJaNcw (ORCPT
+        id S229853AbhJaPXP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 31 Oct 2021 11:23:15 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:24352 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229838AbhJaPXO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 31 Oct 2021 09:32:52 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E12FC061570;
-        Sun, 31 Oct 2021 06:30:20 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id d5so8966991wrc.1;
-        Sun, 31 Oct 2021 06:30:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=h+YIJYU/CGpYORXj2rCNOHj6NcB2hgHRFq3Y9666r90=;
-        b=LD28/wA2KmhiC3i90xJLFb78E+2twkKR1B8iIGy1bnvuIaJQhWM4XXT8HawRT0uG0h
-         sykupdQV6oTshxzHi9W1gdlJfRWgXvXX4SDjBfT6ZmNaFF09cslX6St4nmUWpz+vmKYb
-         lHDfh+1JS6iLdVXo+WoMvz6Q5cGgFWacIL0hzOvrw82blmJpXE5mqSOQnaBHorvcFMav
-         TgefEQcBGp6/Lv4W7MKXndAI4WqzvgC+ZM4Yi/ycp878O89txr6idexRhUBq7Mw+pZpp
-         rjOW7Q9cr8EClzi8oC656CkqoWLNwDjdh2wvWvpeknDmm8m3dt+Rqqr1KuKPfbH9cfRB
-         bPYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=h+YIJYU/CGpYORXj2rCNOHj6NcB2hgHRFq3Y9666r90=;
-        b=EzY3vSukcDUJgBwHK5MBYaNFHEHH+LEDiZIpUg50SoY62tg0GNThVJdBL6y2+okor9
-         zwD0m3XzL62hE9y3WYjpbWdp2sga4jCaocUsVZVGczy4otAAs4ORw/FbwQAVGc5EvggJ
-         gU4WCMyCswoVmtRHlYHHVzUEbkWBFm/Q7VB9ADHsSgDCkU4Vu8P1hu1Tcd5vs6Tb+otY
-         j5MvHe0u7pCuPfClicUA9Ww5s5cFqUZdqFtXN5WjxhDAbMxF4vkxXP8Emtxy4zhRLXix
-         4cngjEmmiDLzkP7P8jLgOnFJyFRqISBpzt+Vp9PLfdmSRgRL4RS45fwc08ov2/2TCOXN
-         CeTg==
-X-Gm-Message-State: AOAM530Q6YaCV8jZIHpmSVbH7FamebAEuB4M9Ulf3eGRW04NhFkTtb9e
-        cqoccqhE2LP9gz/3T5czL5E=
-X-Google-Smtp-Source: ABdhPJyMAWA1Sez2ro/vxgbmSjihRwHdwamFfBYiCrFoLhmm0D7ZUE8z8CTE6ZXwZnPzfddj0lZYow==
-X-Received: by 2002:a5d:5287:: with SMTP id c7mr31452951wrv.236.1635687018879;
-        Sun, 31 Oct 2021 06:30:18 -0700 (PDT)
-Received: from [192.168.8.198] ([85.255.232.29])
-        by smtp.gmail.com with ESMTPSA id n9sm10326016wmq.6.2021.10.31.06.30.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 31 Oct 2021 06:30:18 -0700 (PDT)
-Message-ID: <5f295bd5-8440-267e-f2e8-01572eddbbd6@gmail.com>
-Date:   Sun, 31 Oct 2021 13:27:08 +0000
+        Sun, 31 Oct 2021 11:23:14 -0400
+IronPort-Data: =?us-ascii?q?A9a23=3AaZa+X6BTL0XmRBVW/0Liw5YqxClBgxIJ4g17XOL?=
+ =?us-ascii?q?fBgnv1Gsm0DwGm2RLXj3XPvuLZGD8Ld1/aYqz9x4FucSAx9UxeLYW3SszFioV8?=
+ =?us-ascii?q?6IpJjg4wn/YZnrUdouaJK5ex512huLocYZkERcwmj/3auK49CEnjPnRLlbBILW?=
+ =?us-ascii?q?s1h5ZFFYMpBgJ2UoLd94R2uaEsPDha++/kYqaT/73ZDdJ7wVJ3lc8sMpvnv/AU?=
+ =?us-ascii?q?MPa41v0tnRmDRxCUcS3e3M9VPrzLonpR5f0rxU9IwK0ewrD5OnREmLx9BFrBM6?=
+ =?us-ascii?q?nk6rgbwsBRbu60Qqm0yIQAvb9xEMZ4HFaPqUTbZLwbW9NljyPhME3xtNWqbS+V?=
+ =?us-ascii?q?AUoIrbR3u8aVnG0FgknZPMYp+CWfyHXXcu7iheun2HX6/lnEkA6FYMC/eNwG2t?=
+ =?us-ascii?q?P6boTLzVlRhCIh8q3xryhQ+Vhj8hlK9PkVKsTs3cmz3fGDPIiQJnGWI3L48NV2?=
+ =?us-ascii?q?HE7gcUmNfrceM0fZhJsYQ7GbhkJPU0YYLo6neG1ljz6dhVbtluepuww+We75Ap?=
+ =?us-ascii?q?v3LnoNfLRe8eWXoNRn0CFtiTK8nqRKhMTMtHZwjqY2nW2j+TLkGXwX4d6PLm58?=
+ =?us-ascii?q?ON6xVOIymENBRk+S1S2u7+6h1S4VtYZLFYbkgIqrK4v5AmoQ8P7UhmQvnGJpFg?=
+ =?us-ascii?q?fVsBWHul87xuCooLQ4gCEFi0UQCVpdtMrrok1SCYs21vPmMnmbQGDGpX9pWm1r?=
+ =?us-ascii?q?+/S9G3tf3NOazJqWMPNdiNdi/GLnW35pkunog5fLZOI?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AKVah96PMLSKxg8BcTv2jsMiBIKoaSvp037BL?=
+ =?us-ascii?q?7TEUdfUxSKGlfq+V8sjzqiWftN98YhAdcLO7Scy9qBHnhP1ICOAqVN/MYOCMgh?=
+ =?us-ascii?q?rLEGgN1+vf6gylMyj/28oY7q14bpV5YeeaMXFKyer8/ym0euxN/OW6?=
+X-IronPort-AV: E=Sophos;i="5.87,197,1631548800"; 
+   d="scan'208";a="116677961"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 31 Oct 2021 23:20:41 +0800
+Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
+        by cn.fujitsu.com (Postfix) with ESMTP id C4B004D0DC6D;
+        Sun, 31 Oct 2021 23:20:35 +0800 (CST)
+Received: from G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) by
+ G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Sun, 31 Oct 2021 23:20:34 +0800
+Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
+ G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Sun, 31 Oct 2021 23:20:36 +0800
+Received: from irides.mr.mr.mr (10.167.225.141) by
+ G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.23 via Frontend Transport; Sun, 31 Oct 2021 23:20:33 +0800
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <djwong@kernel.org>, <dan.j.williams@intel.com>,
+        <david@fromorbit.com>, <hch@infradead.org>, <jane.chu@oracle.com>
+Subject: [PATCH v8 0/8] fsdax: introduce fs query to support reflink
+Date:   Sun, 31 Oct 2021 23:20:20 +0800
+Message-ID: <20211031152028.3724121-1-ruansy.fnst@fujitsu.com>
+X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [dm-devel] [PATCH 0/6] dax poison recovery with RWF_RECOVERY_DATA
- flag
-Content-Language: en-US
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jane Chu <jane.chu@oracle.com>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-        "dave.jiang@intel.com" <dave.jiang@intel.com>,
-        "agk@redhat.com" <agk@redhat.com>,
-        "snitzer@redhat.com" <snitzer@redhat.com>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "ira.weiny@intel.com" <ira.weiny@intel.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "vgoyal@redhat.com" <vgoyal@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
-References: <YXFPfEGjoUaajjL4@infradead.org>
- <e89a2b17-3f03-a43e-e0b9-5d2693c3b089@oracle.com>
- <YXJN4s1HC/Y+KKg1@infradead.org>
- <2102a2e6-c543-2557-28a2-8b0bdc470855@oracle.com>
- <YXj2lwrxRxHdr4hb@infradead.org> <20211028002451.GB2237511@magnolia>
- <20211028225955.GA449541@dread.disaster.area>
- <22255117-52de-4b2d-822e-b4bc50bbc52b@gmail.com>
- <20211029165747.GC2237511@magnolia>
- <f3e14569-a399-f6da-fd3e-993b579eaf74@gmail.com>
- <20211029200857.GD2237511@magnolia>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20211029200857.GD2237511@magnolia>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: C4B004D0DC6D.A123B
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/29/21 21:08, Darrick J. Wong wrote:
-> On Fri, Oct 29, 2021 at 08:23:53PM +0100, Pavel Begunkov wrote:
->> On 10/29/21 17:57, Darrick J. Wong wrote:
->>> On Fri, Oct 29, 2021 at 12:46:14PM +0100, Pavel Begunkov wrote:
->>>> On 10/28/21 23:59, Dave Chinner wrote:
->>>> [...]
->>>>>>> Well, my point is doing recovery from bit errors is by definition not
->>>>>>> the fast path.  Which is why I'd rather keep it away from the pmem
->>>>>>> read/write fast path, which also happens to be the (much more important)
->>>>>>> non-pmem read/write path.
->>>>>>
->>>>>> The trouble is, we really /do/ want to be able to (re)write the failed
->>>>>> area, and we probably want to try to read whatever we can.  Those are
->>>>>> reads and writes, not {pre,f}allocation activities.  This is where Dave
->>>>>> and I arrived at a month ago.
->>>>>>
->>>>>> Unless you'd be ok with a second IO path for recovery where we're
->>>>>> allowed to be slow?  That would probably have the same user interface
->>>>>> flag, just a different path into the pmem driver.
->>>>>
->>>>> I just don't see how 4 single line branches to propage RWF_RECOVERY
->>>>> down to the hardware is in any way an imposition on the fast path.
->>>>> It's no different for passing RWF_HIPRI down to the hardware *in the
->>>>> fast path* so that the IO runs the hardware in polling mode because
->>>>> it's faster for some hardware.
->>>>
->>>> Not particularly about this flag, but it is expensive. Surely looks
->>>> cheap when it's just one feature, but there are dozens of them with
->>>> limited applicability, default config kernels are already sluggish
->>>> when it comes to really fast devices and it's not getting better.
->>>> Also, pretty often every of them will add a bunch of extra checks
->>>> to fix something of whatever it would be.
->>>
->>> So we can't have data recovery because moving fast the only goal?
->>
->> That's not what was said and you missed the point, which was in
->> the rest of the message.
-> 
-> ...whatever point you were trying to make was so vague that it was
-> totally uninformative and I completely missed it.
-> 
-> What does "callbacks or bit masks" mean, then, specifically?  How
-> *exactly* would you solve the problem that Jane is seeking to solve by
-> using callbacks?
-> 
-> Actually, you know what?  I'm so fed up with every single DAX
-> conversation turning into a ****storm of people saying NO NO NO NO NO NO
-> NO NO to everything proposed that I'm actually going to respond to
-> whatever I think your point is, and you can defend whatever I come up
-> with.
+This patchset is aimed to support shared pages tracking for fsdax.
 
-Interesting, I don't want to break it to you but nobody is going to
-defend against yours made up out of thin air interpretations. I think
-there is one thing we can relate, I wonder as well what the bloody
-hell that opus of yours was
+Changes from V7:
+  - Change dax lock from global rwsem to per-device percpu_rwsem
+  - Change type of range length from size_t to u64
+  - Rename 'flags' to 'mf_flags'
+  - Fix mistakes in XFS code
+  - Add cow branch for dax_assocaite_entry()
+  - Rebased to v5.15-rc7
 
+This patchset moves owner tracking from dax_assocaite_entry() to pmem
+device driver, by introducing an interface ->memory_failure() for struct
+pagemap.  This interface is called by memory_failure() in mm, and
+implemented by pmem device.
 
-> 
->>>
->>> That's so meta.
->>>
->>> --D
->>>
->>>> So let's add a bit of pragmatism to the picture, if there is just one
->>>> user of a feature but it adds overhead for millions of machines that
->>>> won't ever use it, it's expensive.
-> 
-> Errors are infrequent, and since everything is cloud-based and disposble
-> now, we can replace error handling with BUG_ON().  This will reduce code
-> complexity, which will reduce code size, and improve icache usage.  Win!
-> 
->>>> This one doesn't spill yet into paths I care about,
-> 
-> ...so you sail in and say 'no' even though you don't yet care...
-> 
->>>> but in general
->>>> it'd be great if we start thinking more about such stuff instead of
->>>> throwing yet another if into the path, e.g. by shifting the overhead
->>>> from linear to a constant for cases that don't use it, for instance
->>>> with callbacks
-> 
-> Ok so after userspace calls into pread to access a DAX file, hits the
-> poisoned memory line and the machinecheck fires, what then?  I guess we
-> just have to figure out how to get from the MCA handler (assuming the
-> machine doesn't just reboot instantly) all the way back into memcpy?
-> Ok, you're in charge of figuring that out because I don't know how to do
-> that.
-> 
-> Notably, RWF_DATA_RECOVERY is the flag that we're calling *from* a
-> callback that happens after memory controller realizes it's lost
-> something, kicks a notification to the OS kernel through ACPI, and the
-> kernel signal userspace to do something about it.  Yeah, that's dumb
-> since spinning rust already does all this for us, but that's pmem.
-> 
->>>> or bit masks.
-> 
-> WTF does this even mean?
-> 
-> --D
-> 
->>>>
->>>>> IOWs, saying that we shouldn't implement RWF_RECOVERY because it
->>>>> adds a handful of branches 	 the fast path is like saying that we
->>>>> shouldn't implement RWF_HIPRI because it slows down the fast path
->>>>> for non-polled IO....
->>>>>
->>>>> Just factor the actual recovery operations out into a separate
->>>>> function like:
+Then call holder operations to find the filesystem which the corrupted
+data located in, and call filesystem handler to track files or metadata
+associated with this page.
+
+Finally we are able to try to fix the corrupted data in filesystem and
+do other necessary processing, such as killing processes who are using
+the files affected.
+
+The call trace is like this:
+memory_failure()
+|* fsdax case
+|------------
+|pgmap->ops->memory_failure()      => pmem_pgmap_memory_failure()
+| dax_holder_notify_failure()      =>
+|  dax_device->holder_ops->notify_failure() =>
+|                                     - xfs_dax_notify_failure()
+|  |* xfs_dax_notify_failure()
+|  |--------------------------
+|  |   xfs_rmap_query_range()
+|  |    xfs_dax_notify_failure_fn()
+|  |    * corrupted on metadata
+|  |       try to recover data, call xfs_force_shutdown()
+|  |    * corrupted on file data
+|  |       try to recover data, call mf_dax_kill_procs()
+|* normal case
+|-------------
+ mf_generic_kill_procs()
+
+The fsdax & reflink support for XFS is not contained in this patchset.
+
+(Rebased on v5.15-rc7)
+==
+Shiyang Ruan (8):
+  dax: Use rwsem for dax_{read,write}_lock()
+  dax: Introduce holder for dax_device
+  mm: factor helpers for memory_failure_dev_pagemap
+  pagemap,pmem: Introduce ->memory_failure()
+  fsdax: Introduce dax_lock_mapping_entry()
+  mm: Introduce mf_dax_kill_procs() for fsdax case
+  xfs: Implement ->notify_failure() for XFS
+  fsdax: add exception for reflinked files
+
+ drivers/dax/device.c       |  11 +-
+ drivers/dax/super.c        | 131 +++++++++++++++++----
+ drivers/md/dm-writecache.c |   7 +-
+ drivers/nvdimm/pmem.c      |  11 ++
+ fs/dax.c                   | 140 +++++++++++++++++------
+ fs/xfs/xfs_fsops.c         |   3 +
+ fs/xfs/xfs_mount.h         |   1 +
+ fs/xfs/xfs_super.c         | 207 +++++++++++++++++++++++++++++++++
+ include/linux/dax.h        |  76 ++++++++++++-
+ include/linux/memremap.h   |   9 ++
+ include/linux/mm.h         |   2 +
+ mm/memory-failure.c        | 226 ++++++++++++++++++++++++++-----------
+ 12 files changed, 687 insertions(+), 137 deletions(-)
 
 -- 
-Pavel Begunkov
+2.33.0
+
+
+
