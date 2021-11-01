@@ -2,85 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B04B7441DB5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Nov 2021 17:06:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A169D441DCA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Nov 2021 17:13:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232626AbhKAQJT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Nov 2021 12:09:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37154 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230517AbhKAQJS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Nov 2021 12:09:18 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D66A610FC;
-        Mon,  1 Nov 2021 16:06:39 +0000 (UTC)
-Date:   Mon, 1 Nov 2021 12:06:36 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Yafang Shao <laoar.shao@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Qiang Zhang <qiang.zhang@windriver.com>,
-        robdclark <robdclark@chromium.org>,
-        christian <christian@brauner.io>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        john fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        dennis.dalessandro@cornelisnetworks.com,
-        mike.marciniszyn@cornelisnetworks.com, dledford@redhat.com,
-        jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH v7 00/11] extend task comm from 16 to 24
-Message-ID: <20211101120636.3cfc5afa@gandalf.local.home>
-In-Reply-To: <YYAPhE9uX7OYTlpv@alley>
-References: <20211101060419.4682-1-laoar.shao@gmail.com>
-        <YX/0h7j/nDwoBA+J@alley>
-        <CALOAHbA61RyGVzG8SVcNG=0rdqnUCt4AxCKmtuxRnbS_SH=+MQ@mail.gmail.com>
-        <YYAPhE9uX7OYTlpv@alley>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        id S232659AbhKAQPb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Nov 2021 12:15:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58528 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232478AbhKAQPa (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 1 Nov 2021 12:15:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635783176;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+G6SzjVTR+LCyYNlG0zbcp2+gduPxDNU+2Zc+nwBRpo=;
+        b=OSGCzH7a9iwXipiTHXUGo0ViW4DQj+HOpxAD9jdj6SQT3OMsIMINUJqLIoxrv37CEdPivy
+        BBYalGl+Hf/j1rPWI5ToSbwXQmb4zIXtemJC726Rt+HykiFddlTIctqsfIt08KH+Wtk5NW
+        nmF8FM6EQKMZHFJ7vPOmuIz1BuWLhjk=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-459-QwIbFUFHPvK-rEVlCGY7TA-1; Mon, 01 Nov 2021 12:12:55 -0400
+X-MC-Unique: QwIbFUFHPvK-rEVlCGY7TA-1
+Received: by mail-qv1-f71.google.com with SMTP id o15-20020a0cc38f000000b0038455e36f89so16724278qvi.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Nov 2021 09:12:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=+G6SzjVTR+LCyYNlG0zbcp2+gduPxDNU+2Zc+nwBRpo=;
+        b=vNDVVyaEpAugWR6q9tfAHcWg2zCLvKp+tgzJGNcT5In1dDl0nqQ3a4Ium/+8XEtQZX
+         D31DlrVnQpG/1RPXVhd9nxV36fmVm1nQDU+imlgl8yAYo1gEJmevZgX7j0wAvnUTNZUC
+         A2qFR4cSdTCwKmgGB28f1OfILGIGU8MxfonK9so2odM2XYQ4k06DrUKf9qlJNW3I5WKF
+         rdKBNnwgHCnPSNdXTXMssxtPtbkcTCYCPBh4MHm8Hv0/kGwbN2H+pi3+XJBOnETqca1t
+         AdAe3OQeKQSjtEEL+/vxVNjmXZm19HO4AHtAxgbqRbVnDZdsIiuHstwdiz87xplVG//T
+         kQpw==
+X-Gm-Message-State: AOAM532Gl06VGzOZjV4pPN/C9PZt/DOXehk6vNTwRG54aIUxlPR12Cgr
+        D+H1AsSp156SGK/c1Hg8csN/UGTC2Uokkh2/4ZOCrQ0nWTDnqOddtZbfvtePtA67ZWhAx7+9gOi
+        U9H7KtB3J64MTRVdEBRQQgTy4
+X-Received: by 2002:a0c:e708:: with SMTP id d8mr23264796qvn.62.1635783175420;
+        Mon, 01 Nov 2021 09:12:55 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJx/H7B1fdn7PP13//AwKmpta1av9FRTtOajPRoBskVHgoJcCnXd+0D44u/s4udzcALoTqA+Rw==
+X-Received: by 2002:a0c:e708:: with SMTP id d8mr23264758qvn.62.1635783175189;
+        Mon, 01 Nov 2021 09:12:55 -0700 (PDT)
+Received: from localhost (pool-68-160-176-52.bstnma.fios.verizon.net. [68.160.176.52])
+        by smtp.gmail.com with ESMTPSA id v16sm167031qtw.90.2021.11.01.09.12.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Nov 2021 09:12:54 -0700 (PDT)
+Date:   Mon, 1 Nov 2021 12:12:53 -0400
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Ira Weiny <ira.weiny@intel.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 01/11] dm: make the DAX support dependend on CONFIG_FS_DAX
+Message-ID: <YYASBVuorCedsnRL@redhat.com>
+References: <20211018044054.1779424-1-hch@lst.de>
+ <20211018044054.1779424-2-hch@lst.de>
+ <CAPcyv4hrEPizMOH-XhCqh=23EJDG=W6VwvQ1pVstfe-Jm-AsiQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4hrEPizMOH-XhCqh=23EJDG=W6VwvQ1pVstfe-Jm-AsiQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 1 Nov 2021 17:02:12 +0100
-Petr Mladek <pmladek@suse.com> wrote:
+On Wed, Oct 27 2021 at  4:53P -0400,
+Dan Williams <dan.j.williams@intel.com> wrote:
 
-> > I thought Steven[1] and  Kees[2] have already clearly explained why we
-> > do it like that, so I didn't give any more words on it.
-> > 
-> > [1]. https://lore.kernel.org/all/20211025170503.59830a43@gandalf.local.home/  
+> On Sun, Oct 17, 2021 at 9:41 PM Christoph Hellwig <hch@lst.de> wrote:
+> >
+> > The device mapper DAX support is all hanging off a block device and thus
+> > can't be used with device dax.  Make it depend on CONFIG_FS_DAX instead
+> > of CONFIG_DAX_DRIVER.  This also means that bdev_dax_pgoff only needs to
+> > be built under CONFIG_FS_DAX now.
 > 
-> Steven was against switching task->comm[16] into a dynamically
-> allocated pointer. But he was not against storing longer names
-> separately.
+> Looks good.
+> 
+> Mike, can I get an ack to take this through nvdimm.git? (you'll likely
+> see me repeat this question on subsequent patches in this series).
 
-Just to be clear. I was recommending that the comm[16] would still behave
-like it does today. Where it is truncated. But if the name is longer, it
-could be stored in a separate location if the caller wanted to know the
-full name.
+Sorry for late reply, but I see you punted on pushing for 5.16 merge
+anyway (I'm sure my lack of response didn't help, sorry about that).
 
--- Steve
+Acked-by: Mike Snitzer <snitzer@redhat.com>
+
+Thanks!
+
