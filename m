@@ -2,179 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC63F44195E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Nov 2021 11:04:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6318D441ACD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Nov 2021 12:42:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231975AbhKAKHB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Nov 2021 06:07:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53016 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232146AbhKAKGo (ORCPT
+        id S232339AbhKALpB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Nov 2021 07:45:01 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:43496 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232365AbhKALo5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Nov 2021 06:06:44 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77326C046388
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Nov 2021 02:38:14 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id om14so11729750pjb.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Nov 2021 02:38:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Y6yohF2CSWjC3LsvVI22Z8PlivnfwVBj5ZtiMUVaGtY=;
-        b=mzuvMX+4chqMVT0iYc+IhCfBAqatIym+HQ1bjJlyTR6q4qhAXhWl2wBw+jgE+KB7zQ
-         cOuHGsAkMIabUSMjfGoRteLsWroEQRZx6958z1jWSGFf6Ltl+jwZHQ5aNX4HlqoNLslo
-         FSoQgmzp3/wfn4CP/DUlh09YOY2TSyNVanfhkjL927OnkgIv1QwpBGGezEzLzV5PC5EW
-         VRz5pBfiSBDBTUHzVsY5zswUXubDoW8EQcJgOtZGZOOw4a+0qdIVjwbMZ/SIfu7NIEqv
-         zjA7kQmPvGh+TWf+Fmoe3XQ0+ZFhFGwlRmU559PdXX6pzbRf235XjPOaGBxL//8B/wIc
-         2ruw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Y6yohF2CSWjC3LsvVI22Z8PlivnfwVBj5ZtiMUVaGtY=;
-        b=oo7c4rsRo8haXeK3Z+PVfHmREod22QrV2d5LYxWXs7YK7RSATgTP51L1tbenYXuQop
-         Qk2KZf053uhMsMcCYZRyVi+6UnMpAcBKzS454FSgmypVQUUugnacJLquf5X8hSMxWGZr
-         C4JIgGZUVlkOQS5N3Vd+LI8nLldHYKgnosl8zD0k5RDlGXSgVXjw/iMmZLqzGlUnl4nC
-         yIZlcDIrd7j2MD5ntwjUFR3OpDhEbdoYQqhX4Gnqeo0hvK0LfgHn3eAYoSFOzvi1u110
-         uBL4XPLhi+Ocrf45gQSbgRU9zM6DGob6Y2KlNFtbR86emCDdzvD7x5DNCprYhORxhAaN
-         M74A==
-X-Gm-Message-State: AOAM533tz8lMaVakE2NJbblM/zVqfX8PWqZ4H0I4MqPCfLqJN8naqZlw
-        TGA8DDIQeq7xS3AubEMfHvDfBA==
-X-Google-Smtp-Source: ABdhPJwn5N0tQoKNKwyBnrs3GBXI5qSniHBxGzqSUvkTmDtkXbSjuDos5b4Uq5S6uORQYX54zbRtew==
-X-Received: by 2002:a17:90a:49:: with SMTP id 9mr36945036pjb.80.1635759494060;
-        Mon, 01 Nov 2021 02:38:14 -0700 (PDT)
-Received: from localhost.localdomain ([139.177.225.242])
-        by smtp.gmail.com with ESMTPSA id p16sm15738259pfh.97.2021.11.01.02.38.11
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Nov 2021 02:38:13 -0700 (PDT)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     akpm@linux-foundation.org, adobriyan@gmail.com,
-        gladkov.alexey@gmail.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH 4/4] fs: proc: use DEFINE_PROC_SHOW_ATTRIBUTE() to simplify the code
-Date:   Mon,  1 Nov 2021 17:35:18 +0800
-Message-Id: <20211101093518.86845-5-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.21.0 (Apple Git-122)
-In-Reply-To: <20211101093518.86845-1-songmuchun@bytedance.com>
-References: <20211101093518.86845-1-songmuchun@bytedance.com>
+        Mon, 1 Nov 2021 07:44:57 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 487171FD6F;
+        Mon,  1 Nov 2021 11:42:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1635766943; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5+UZ2j8LT45fgqOAv0Vr6ez6FSL6G50V8K6dC/keqBw=;
+        b=TpxQF6XkaQ4sHXFLHRKTujdwKdEcQ3Wxqz7N2HhNThXxseVCuEiHp/GrSyujTn3z92eWSl
+        brvTK7RPJ7Xy2uvk0OCSjQK5b08Qgfptl+vYiz2luwB2noLA0pde8QTx3Zo1IMAhFhxSP5
+        a+7SnrlVcp9uVdLb9Q6fDXrA1IM8a1Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1635766943;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5+UZ2j8LT45fgqOAv0Vr6ez6FSL6G50V8K6dC/keqBw=;
+        b=VcmHWF5BTXOtCHI147RmuzHfL1k+o+u55tYqmccO0oz5vdCGgnb/5ZDnos6+N/oy+b+Sh5
+        75W1t868sxM6+bAQ==
+Received: from quack2.suse.cz (unknown [10.163.28.18])
+        by relay2.suse.de (Postfix) with ESMTP id 0709AA3B81;
+        Mon,  1 Nov 2021 11:42:22 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id CD7281E0922; Mon,  1 Nov 2021 12:42:22 +0100 (CET)
+Date:   Mon, 1 Nov 2021 12:42:22 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>, jack@suse.com,
+        amir73il@gmail.com, djwong@kernel.org, tytso@mit.edu,
+        david@fromorbit.com, dhowells@redhat.com, khazhy@google.com,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-api@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v8 31/32] samples: Add fs error monitoring example
+Message-ID: <20211101114222.GA21679@quack2.suse.cz>
+References: <20211019000015.1666608-1-krisman@collabora.com>
+ <20211019000015.1666608-32-krisman@collabora.com>
+ <20211028151834.GA423440@roeck-us.net>
+ <87fsslasgz.fsf@collabora.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87fsslasgz.fsf@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-DEFINE_PROC_SHOW_ATTRIBUTE() can be used here to simplify the code.
+On Thu 28-10-21 15:56:28, Gabriel Krisman Bertazi wrote:
+> Guenter Roeck <linux@roeck-us.net> writes:
+> 
+> > On Mon, Oct 18, 2021 at 09:00:14PM -0300, Gabriel Krisman Bertazi wrote:
+> >> Introduce an example of a FAN_FS_ERROR fanotify user to track filesystem
+> >> errors.
+> >> 
+> >> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> >> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> >> Reviewed-by: Jan Kara <jack@suse.cz>
+> >> ---
+> >> Changes since v4:
+> >>   - Protect file_handle defines with ifdef guards
+> >> 
+> >> Changes since v1:
+> >>   - minor fixes
+> >> ---
+> >>  samples/Kconfig               |   9 +++
+> >>  samples/Makefile              |   1 +
+> >>  samples/fanotify/Makefile     |   5 ++
+> >>  samples/fanotify/fs-monitor.c | 142 ++++++++++++++++++++++++++++++++++
+> >>  4 files changed, 157 insertions(+)
+> >>  create mode 100644 samples/fanotify/Makefile
+> >>  create mode 100644 samples/fanotify/fs-monitor.c
+> >> 
+> >> diff --git a/samples/Kconfig b/samples/Kconfig
+> >> index b0503ef058d3..88353b8eac0b 100644
+> >> --- a/samples/Kconfig
+> >> +++ b/samples/Kconfig
+> >> @@ -120,6 +120,15 @@ config SAMPLE_CONNECTOR
+> >>  	  with it.
+> >>  	  See also Documentation/driver-api/connector.rst
+> >>  
+> >> +config SAMPLE_FANOTIFY_ERROR
+> >> +	bool "Build fanotify error monitoring sample"
+> >> +	depends on FANOTIFY
+> >
+> > This needs something like
+> > 	depends on CC_CAN_LINK
+> > or possibly even
+> > 	depends on CC_CAN_LINK && HEADERS_INSTALL
+> > to avoid compilation errors such as
+> >
+> > samples/fanotify/fs-monitor.c:7:10: fatal error: errno.h: No such file or directory
+> >     7 | #include <errno.h>
+> >       |          ^~~~~~~~~
+> > compilation terminated.
+> >
+> > when using a toolchain without C library support, such as those provided
+> > on kernel.org.
+> 
+> Thank you, Guenter.
+> 
+> We discussed this, but I wasn't sure how to silence the error and it
+> didn't trigger in the past versions.
+> 
+> The original patch is already in Jan's tree.  Jan, would you pick the
+> pack below to address it?  Feel free to squash it into the original
+> commit, if you think it is saner..
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
----
- fs/cifs/cifs_debug.c | 17 ++---------------
- fs/nfsd/stats.c      | 15 ++-------------
- net/sunrpc/stats.c   | 15 ++-------------
- 3 files changed, 6 insertions(+), 41 deletions(-)
+Thanks guys, I've added the patch to my tree. If we had more time, I'd
+probably squash it but given I'd like to send Linus a pull request at the
+end of the week I don't want to touch commits that are already in next.
 
-diff --git a/fs/cifs/cifs_debug.c b/fs/cifs/cifs_debug.c
-index de2c12bcfa4b..52afe68dc7d0 100644
---- a/fs/cifs/cifs_debug.c
-+++ b/fs/cifs/cifs_debug.c
-@@ -1002,7 +1002,7 @@ static const struct proc_ops cifs_security_flags_proc_ops = {
- };
- 
- /* To make it easier to debug, can help to show mount params */
--static int cifs_mount_params_proc_show(struct seq_file *m, void *v)
-+static int cifs_mount_params_show(struct seq_file *m, void *v)
- {
- 	const struct fs_parameter_spec *p;
- 	const char *type;
-@@ -1030,20 +1030,7 @@ static int cifs_mount_params_proc_show(struct seq_file *m, void *v)
- 
- 	return 0;
- }
--
--static int cifs_mount_params_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, cifs_mount_params_proc_show, NULL);
--}
--
--static const struct proc_ops cifs_mount_params_proc_ops = {
--	.proc_open	= cifs_mount_params_proc_open,
--	.proc_read	= seq_read,
--	.proc_lseek	= seq_lseek,
--	.proc_release	= single_release,
--	/* No need for write for now */
--	/* .proc_write	= cifs_mount_params_proc_write, */
--};
-+DEFINE_PROC_SHOW_ATTRIBUTE(cifs_mount_params);
- 
- #else
- inline void cifs_proc_init(void)
-diff --git a/fs/nfsd/stats.c b/fs/nfsd/stats.c
-index 1d3b881e7382..47af3e7bfe9a 100644
---- a/fs/nfsd/stats.c
-+++ b/fs/nfsd/stats.c
-@@ -32,7 +32,7 @@ struct svc_stat		nfsd_svcstats = {
- 	.program	= &nfsd_program,
- };
- 
--static int nfsd_proc_show(struct seq_file *seq, void *v)
-+static int nfsd_show(struct seq_file *seq, void *v)
- {
- 	int i;
- 
-@@ -71,18 +71,7 @@ static int nfsd_proc_show(struct seq_file *seq, void *v)
- 
- 	return 0;
- }
--
--static int nfsd_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, nfsd_proc_show, NULL);
--}
--
--static const struct proc_ops nfsd_proc_ops = {
--	.proc_open	= nfsd_proc_open,
--	.proc_read	= seq_read,
--	.proc_lseek	= seq_lseek,
--	.proc_release	= single_release,
--};
-+DEFINE_PROC_SHOW_ATTRIBUTE(nfsd);
- 
- int nfsd_percpu_counters_init(struct percpu_counter counters[], int num)
- {
-diff --git a/net/sunrpc/stats.c b/net/sunrpc/stats.c
-index 3d1c4f9a5191..110bbc260933 100644
---- a/net/sunrpc/stats.c
-+++ b/net/sunrpc/stats.c
-@@ -34,7 +34,7 @@
- /*
-  * Get RPC client stats
-  */
--static int rpc_proc_show(struct seq_file *seq, void *v) {
-+static int rpc_show(struct seq_file *seq, void *v) {
- 	const struct rpc_stat	*statp = seq->private;
- 	const struct rpc_program *prog = statp->program;
- 	unsigned int i, j;
-@@ -63,18 +63,7 @@ static int rpc_proc_show(struct seq_file *seq, void *v) {
- 	}
- 	return 0;
- }
--
--static int rpc_proc_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, rpc_proc_show, inode->i_private);
--}
--
--static const struct proc_ops rpc_proc_ops = {
--	.proc_open	= rpc_proc_open,
--	.proc_read	= seq_read,
--	.proc_lseek	= seq_lseek,
--	.proc_release	= single_release,
--};
-+DEFINE_PROC_SHOW_ATTRIBUTE(rpc);
- 
- /*
-  * Get RPC server stats
+								Honza
+
+> -- >8 --
+> From: Gabriel Krisman Bertazi <krisman@collabora.com>
+> Date: Thu, 28 Oct 2021 15:34:46 -0300
+> Subject: [PATCH] samples: Make fs-monitor depend on libc and headers
+> 
+> Prevent build errors when headers or libc are not available, such as on
+> kernel build bots, like the below:
+> 
+> samples/fanotify/fs-monitor.c:7:10: fatal error: errno.h: No such file
+> or directory
+>   7 | #include <errno.h>
+>     |          ^~~~~~~~~
+> 
+> Suggested-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> ---
+>  samples/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/samples/Kconfig b/samples/Kconfig
+> index 88353b8eac0b..56539b21f2c7 100644
+> --- a/samples/Kconfig
+> +++ b/samples/Kconfig
+> @@ -122,7 +122,7 @@ config SAMPLE_CONNECTOR
+>  
+>  config SAMPLE_FANOTIFY_ERROR
+>  	bool "Build fanotify error monitoring sample"
+> -	depends on FANOTIFY
+> +	depends on FANOTIFY && CC_CAN_LINK && HEADERS_INSTALL
+>  	help
+>  	  When enabled, this builds an example code that uses the
+>  	  FAN_FS_ERROR fanotify mechanism to monitor filesystem
+> -- 
+> 2.33.0
+> 
 -- 
-2.11.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
