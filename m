@@ -2,133 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA3F441395
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Nov 2021 07:06:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FA564414F0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Nov 2021 09:06:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231963AbhKAGIW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Nov 2021 02:08:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55272 "EHLO
+        id S231777AbhKAIJD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Nov 2021 04:09:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231663AbhKAGHn (ORCPT
+        with ESMTP id S231817AbhKAIIt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Nov 2021 02:07:43 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D3B8C06122C;
-        Sun, 31 Oct 2021 23:04:55 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id l13so5851568pls.3;
-        Sun, 31 Oct 2021 23:04:55 -0700 (PDT)
+        Mon, 1 Nov 2021 04:08:49 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 736EFC06120F
+        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Nov 2021 01:06:12 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id l13so34794454lfg.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Nov 2021 01:06:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=QKwddORb13OigBCy9mDZcUnsG5h+t9yQLv8LVp5siCU=;
-        b=j5LFKzVUzTdpQtOquEYQiQ93/QxNXDe/080ZPzqen1nnJEcnWv0Arg1m3H5YGUWw8M
-         stUDWkjS1zFBojQqjlqwmgBfiFDvw/FY5w1DdoEUTOEo04//87rHjl76eKfDkRV6JYaD
-         wHniweh+Bt9WBNr9zbaJOafXiibJeSYbktM2cOjCLSm/QMXoinVi4CBxQO0XAGBypciT
-         vft62rQAmLIxRWsns2FxpBvhq592YznXCJfnsuQVHL7l548rjILVi1WcAe1E24RkOJBv
-         6xba3tgT8iJOTopxgjfSx7YFqWx5gxJbgzz6VMxiVUScwsGxaEWyzxex2OUaialtPu/r
-         8Emw==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=J/sLAHxRh6EjJh2rcjPDJLzA40VXjb4DP54UXQAr8IU=;
+        b=jTwGY7UqyQ8YIhJUDjrqZPtk3LzrWCAUOAMDPLz5M7CqLBHqNsFTo9C861qV1B25Xf
+         r5L553Wxmro5Ww3I0Kz3a52AwkmZqFToii6+0ZOhpUkOfcb53PnNGE9m6Sqik3zmhZwo
+         n/R9HTp53zn5NI3DbL08muEwIh9gH7g9lDe2tstM5tUGQD80ibC8oJ7RZsh0jabUj80l
+         TjW7jDszyj0LgBKofuNs3yAxUhi8ze1MSxaF3AEB8qSt1N3bygNegk5wBFiWacOIsTYm
+         giGQNkRW+M+En5ZqEkyuSVwtFALtbKc66CUkcVFPmwMgTZmFkWlfrtrQ91sQ12FB43ir
+         IgcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=QKwddORb13OigBCy9mDZcUnsG5h+t9yQLv8LVp5siCU=;
-        b=ejNQ3ZWHYJ19MF44lpdAswwzMjH2DL96bejXoDBGJAc0yB6p4zPTy9VxORoYptl/eq
-         /9vgSu2bQPmJid/zehsBnikd2cp2bT23NCEQdWNwdRjjYOKp/Qinu5nlmoTIE8I+yv0e
-         SqeZ34xks1kPdOcxHMPmSKeh1c0ccqEmY7MzcexY4yjw28vkYUcChIepqZ48NPmavZbj
-         3H2PAQbaeqACGG+kANVuRKRu/KQESYdVYfbI5dj1mPck5c/toMUY3itLBn9HQNPCkL91
-         U0guMUc42RUlVvy5PzTDkCaMz9mS8uB4dEiGatyk5IEkgBMnfKrN8QDCMuts4vW9LZ5o
-         wLoQ==
-X-Gm-Message-State: AOAM532L6cDo/KB5/i9IBKqGbrfkTDURPrr5iLGtUPKy58Ek0xVOsbo6
-        0zbbSb4qccEH7vl3mgus5ck=
-X-Google-Smtp-Source: ABdhPJyrJq+mOKZ0lf2kZ6Y6bPXWfxcFbUFKsxFZDJ2CDMm20OFCcbYj+83X+q3vioiE0f2mNOqwFQ==
-X-Received: by 2002:a17:90a:930c:: with SMTP id p12mr36038293pjo.176.1635746695055;
-        Sun, 31 Oct 2021 23:04:55 -0700 (PDT)
-Received: from localhost.localdomain ([144.202.123.152])
-        by smtp.gmail.com with ESMTPSA id g8sm3277586pfc.65.2021.10.31.23.04.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Oct 2021 23:04:54 -0700 (PDT)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     akpm@linux-foundation.org, keescook@chromium.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        arnaldo.melo@gmail.com, pmladek@suse.com, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, valentin.schneider@arm.com,
-        qiang.zhang@windriver.com, robdclark@chromium.org,
-        christian@brauner.io, dietmar.eggemann@arm.com, mingo@redhat.com,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        davem@davemloft.net, kuba@kernel.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
-        kpsingh@kernel.org, dennis.dalessandro@cornelisnetworks.com,
-        mike.marciniszyn@cornelisnetworks.com, dledford@redhat.com,
-        jgg@ziepe.ca
-Cc:     linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, oliver.sang@intel.com, lkp@intel.com,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Subject: [PATCH v7 11/11] kernel/kthread: show a warning if kthread's comm is truncated
-Date:   Mon,  1 Nov 2021 06:04:19 +0000
-Message-Id: <20211101060419.4682-12-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20211101060419.4682-1-laoar.shao@gmail.com>
-References: <20211101060419.4682-1-laoar.shao@gmail.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=J/sLAHxRh6EjJh2rcjPDJLzA40VXjb4DP54UXQAr8IU=;
+        b=NQxeR1QL1W2LqTpchPo+aW+0VNe3snS8ri2GFq5D8GCyMpTdTEvd79JgaCqqiKifDe
+         Bb3f2EaViPPbINlvV/2j22/KtHovlCIN5QHVxbSakq4qhhTh2M6zX9nq4OeL83mT1OI+
+         4XGMeIUcr0Ao+1nXkklMAcKfhYCGvmBjd8+nDeDs4UorTB1e+2W2V2kidEEfAHuVVl5u
+         UZbu/2JkzLrHSLaKVajb76duIS74dfePSn2+gddIYHYxWJeQjlBaq6jZh/ihD5xBicO1
+         f3f0w/8Pmvo/p2DR1h6d1LdvodjKrQ7aGHNWFacsmhsW4ZOKCUv7SEyUw3iU38DMvAuc
+         xDHg==
+X-Gm-Message-State: AOAM530h1v3h6u8c7SnWi92F251rAjewTNOMYFDNsvzVBDHE9fZMtejp
+        ztqCdby6Fqy9VXOc+IjDdvO8H0pfoqco3f7Z+pP1/xlzVO8=
+X-Google-Smtp-Source: ABdhPJxmqEVdpxtX6Hrcfxe4l+hmj7ibNqiYjCRoHEGQmkHQsxyv4j0y0ocCVsmwYp4ABnpO0ho1EyHAGzTI8DbI2zw=
+X-Received: by 2002:a05:6512:3696:: with SMTP id d22mr7627111lfs.659.1635753959932;
+ Mon, 01 Nov 2021 01:05:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a05:6512:304b:0:0:0:0 with HTTP; Mon, 1 Nov 2021 01:05:59
+ -0700 (PDT)
+Reply-To: aisha.7d@yahoo.com
+From:   Aisha AG <rbx17058@gmail.com>
+Date:   Mon, 1 Nov 2021 00:05:59 -0800
+Message-ID: <CA+KbyychNgycp0rGBpdptJEdAFJQQCku4iDOhYe4CxitYXaueA@mail.gmail.com>
+Subject: Hello Dear,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Show a warning if task comm is truncated. Below is the result
-of my test case:
-
-truncated kthread comm:I-am-a-kthread-with-a-l (pid:178) by 8 characters
-
-As we have extended task comm to 24, all the existing in-tree
-kthreads/workqueues are not truncated anymore. So this warning will only
-be printed for the newly introduced one if it has a long name.
-
-Suggested-by: Petr Mladek <pmladek@suse.com>
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Petr Mladek <pmladek@suse.com>
----
- kernel/kthread.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/kthread.c b/kernel/kthread.c
-index 5b37a8567168..63f38d3a4f62 100644
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -399,12 +399,17 @@ struct task_struct *__kthread_create_on_node(int (*threadfn)(void *data),
- 	if (!IS_ERR(task)) {
- 		static const struct sched_param param = { .sched_priority = 0 };
- 		char name[TASK_COMM_LEN];
-+		int len;
- 
- 		/*
- 		 * task is already visible to other tasks, so updating
- 		 * COMM must be protected.
- 		 */
--		vsnprintf(name, sizeof(name), namefmt, args);
-+		len = vsnprintf(name, sizeof(name), namefmt, args);
-+		if (len >= TASK_COMM_LEN) {
-+			pr_warn("truncated kthread comm:%s (pid:%d) by %d characters\n",
-+				name, task->pid, len - TASK_COMM_LEN + 1);
-+		}
- 		set_task_comm(task, name);
- 		/*
- 		 * root may have changed our (kthreadd's) priority or CPU mask.
 -- 
-2.17.1
 
+Hello Dear,
+
+I came across your e-mail contact prior to a private search while in
+need of your assistance. I am Aisha Al-Qaddafi, the only biological
+Daughter of Former President of Libya Col.Muammar Al-Qaddafi.
+Am a Widow and a single Mother with three Children.
+
+I have investment funds worth Twenty Seven Million Five Hundred
+Thousand United State Dollar $27.500.000.00, and i need a trusted
+investment Manager/Partner because of my current refugee status,
+however, I am interested in you for investment project assistance in
+your country,may be from there,we can build business relationship
+in the nearest future.
+
+I am willing to negotiate an investment/business profit sharing ratio
+with you based on the future investment earning profits.
+
+If you are willing to handle this project on my behalf kindly reply
+urgently to enable me to provide you more information about the
+investment funds.
+Best Regards
+Mrs Aisha Al-Qaddafi.
