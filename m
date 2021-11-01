@@ -2,158 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1741C44153D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Nov 2021 09:21:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E54E4416DC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Nov 2021 10:27:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231364AbhKAIYZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Nov 2021 04:24:25 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:52075 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229933AbhKAIYZ (ORCPT
+        id S232770AbhKAJaS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Nov 2021 05:30:18 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:47980 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233041AbhKAJ2R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Nov 2021 04:24:25 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0UuVu2BP_1635754909;
-Received: from admindeMacBook-Pro-2.local(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UuVu2BP_1635754909)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 01 Nov 2021 16:21:50 +0800
-Subject: Re: [PATCH v6 2/7] fuse: make DAX mount option a tri-state
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     stefanha@redhat.com, miklos@szeredi.hub,
-        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
-        bo.liu@linux.alibaba.com, joseph.qi@linux.alibaba.com
-References: <20211011030052.98923-1-jefflexu@linux.alibaba.com>
- <20211011030052.98923-3-jefflexu@linux.alibaba.com>
- <YW2AU/E0pLHO5Yl8@redhat.com>
- <652ac323-6546-01b8-992e-460ad59577ca@linux.alibaba.com>
- <YXAsV3xp3aeOjaeh@redhat.com>
- <eb0c9711-66cb-bf79-0cf6-c6d6eec5ceea@linux.alibaba.com>
- <YXvxOEbGxqhoG7Ti@redhat.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-Message-ID: <18ec4862-8bdc-7a6b-c5b2-6c39d5968ba4@linux.alibaba.com>
-Date:   Mon, 1 Nov 2021 16:21:49 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
+        Mon, 1 Nov 2021 05:28:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635758743;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=53OXlpDvni31LvIaln3YOdZGCjMTf4uZ9h8tjAcr9uc=;
+        b=VSkBpMt9safA+wf+/e1/a9yk+QNgzzaOg8KpCBhFyC1/vPvhaEolxlAlp7Ln22UJUte4FJ
+        7kBsMEZENVUaLVUQ9ceo39cyl8123AVjcjOFDPPvkNKH2+3boMdDfjDKeG4dl4Oh3LG26c
+        +Z46ol0NlyHSA4YFCO4Mp81I7+/6Jws=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-304-oEMrv1l3OUeU-98a7vTv4w-1; Mon, 01 Nov 2021 05:25:40 -0400
+X-MC-Unique: oEMrv1l3OUeU-98a7vTv4w-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2149610A8E00;
+        Mon,  1 Nov 2021 09:25:39 +0000 (UTC)
+Received: from work (unknown [10.40.194.95])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 86EE41007605;
+        Mon,  1 Nov 2021 09:25:29 +0000 (UTC)
+Date:   Mon, 1 Nov 2021 10:25:25 +0100
+From:   Lukas Czerner <lczerner@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     linux-ext4@vger.kernel.org, tytso@mit.edu,
+        linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Carlos Maiolino <cmaiolino@redhat.com>
+Subject: Re: [PATCH v4 01/13] fs_parse: allow parameter value to be empty
+Message-ID: <20211101092525.pdwtufampfajze5l@work>
+References: <20211027141857.33657-1-lczerner@redhat.com>
+ <20211027141857.33657-2-lczerner@redhat.com>
+ <20211029084411.zk32u3hflf2vdzmx@wittgenstein>
 MIME-Version: 1.0
-In-Reply-To: <YXvxOEbGxqhoG7Ti@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211029084411.zk32u3hflf2vdzmx@wittgenstein>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Oct 29, 2021 at 10:44:11AM +0200, Christian Brauner wrote:
+> On Wed, Oct 27, 2021 at 04:18:45PM +0200, Lukas Czerner wrote:
+> > Allow parameter value to be empty by specifying fs_param_can_be_empty
+> > flag.
+> 
+> Hey Lukas,
+> 
+> what option is this for? Usually this should be handled by passing
+> FSCONFIG_SET_FLAG. Doesn't seem like a good idea to let the string value
+> be optionally empty. I'd rather have the guarantee that it has to be
+> something instead of having to be extra careful because it could be NULL.
 
+Hi Christian,
 
-On 10/29/21 9:03 PM, Vivek Goyal wrote:
-> On Fri, Oct 29, 2021 at 04:33:06PM +0800, JeffleXu wrote:
->>
->>
->> On 10/20/21 10:48 PM, Vivek Goyal wrote:
->>> On Wed, Oct 20, 2021 at 10:52:38AM +0800, JeffleXu wrote:
->>>>
->>>>
->>>> On 10/18/21 10:10 PM, Vivek Goyal wrote:
->>>>> On Mon, Oct 11, 2021 at 11:00:47AM +0800, Jeffle Xu wrote:
->>>>>> We add 'always', 'never', and 'inode' (default). '-o dax' continues to
->>>>>> operate the same which is equivalent to 'always'. To be consistemt with
->>>>>> ext4/xfs's tri-state mount option, when neither '-o dax' nor '-o dax='
->>>>>> option is specified, the default behaviour is equal to 'inode'.
->>>>>
->>>>> Hi Jeffle,
->>>>>
->>>>> I am not sure when  -o "dax=inode"  is used as a default? If user
->>>>> specifies, "-o dax" then it is equal to "-o dax=always", otherwise
->>>>> user will explicitly specify "-o dax=always/never/inode". So when
->>>>> is dax=inode is used as default?
->>>>
->>>> That means when neither '-o dax' nor '-o dax=always/never/inode' is
->>>> specified, it is actually equal to '-o dax=inode', which is also how
->>>> per-file DAX on ext4/xfs works.
->>>>
->>>> This default behaviour for local filesystem, e.g. ext4/xfs, may be
->>>> straightforward, since the disk inode will be read into memory during
->>>> the inode instantiation, and checking for persistent inode attribute
->>>> shall be realatively cheap, except that the default behaviour has
->>>> changed from 'dax=never' to 'dax=inode'.
->>>
->>> Interesting that ext4/xfs allowed for this behavior change.
->>>
->>>>
->>>> Come back to virtiofs, when neither '-o dax' nor '-o
->>>> dax=always/never/inode' is specified, and it actually behaves as '-o
->>>> dax=inode', as long as '-o dax=server/attr' option is not specified for
->>>> virtiofsd, virtiofsd will always clear FUSE_ATTR_DAX and thus guest will
->>>> always disable DAX. IOWs, the guest virtiofs atually behaves as '-o
->>>> dax=never' when neither '-o dax' nor '-o dax=always/never/inode' is
->>>> specified, and '-o dax=server/attr' option is not specified for virtiofsd.
->>>>
->>>> But I'm okay if we need to change the default behaviour for virtiofs.
->>>
->>> This is change of behavior from client's perspective. Even if client
->>> did not opt-in for DAX, DAX can be enabled based on server's setting.
->>> Not that there is anything wrong with it, but change of behavior part
->>> concerns me.
->>>
->>> In case of virtiofs, lot of features we are controlling from server.
->>> Client typically just calls "mount" and there are not many options
->>> users can specify for mount.  
->>>
->>> Given we already allowed to make client a choice about DAX behavior,
->>> I will feel more comfortable that we don't change it and let client
->>> request a specific DAX mode and if client does not specify anything,
->>> then DAX is not enabled.
->>>
->>
->> Hi Vivek,
->>
->> How about the following design about the default behavior to move this
->> patchset forward, considering the discussion on another thread [1]?
->>
->> - guest side: '-o dax=inode' acts as the default, keeping consistent
->> with xfs/ext4
-> 
-> This sounds good.
-> 
->> - virtiofsd: the default behavior is like, neither file size based
->> policy ('dax=server') nor persistent inode flags based policy
->> ('dax=attr') is used, though virtiofsd indeed advertises that
->> it supports per inode DAX feature (so that it won't fail FUSE_INIT
->> negotiation phase when guest advertises dax=inode by default)... In
->> fact, it acts like 'dax=never' in this case.
-> 
-> Not sure why virtiofsd needs to advertise that it supports per inode
-> DAX even if no per inode dax policy is in affect. Guest will know that
-> server is not supporting per inode DAX. But it will not return an
-> error to user space (because dax=inode seems to be advisory).
-> 
-> IOW, this is very similar to the case of using dax=inode on a block
-> device which does not support DAX. No errors and no warnings.
+this is for ext4 mount options usrjquota and grpjquota that will treat
+empty parameter, that is "grpjquota=" and "usrjquota=", as a means to
+disable those. I agree that it's not ideal, but if I don't want to break
+compatibilily when converting ext4 to this new mount API I have to keep
+that option the way it is.
 
-OK. I will adopt this behavior. That is, if virtiofsd is not specified
-with 'dax=server|attr' option, it won't advertise support for per inode
-DAX in FUSE_INIT either. And then client will fallback to 'dax=never'
-even if it is mounted with 'dax=inode'.
+I share your concern, but for the string to be empty, the
+fs_param_can_be_empty flag must be used intentionaly and so the code
+handling this must expect the string to be empty in some cases.
+
+Another option would be to use a flag parameter with the name including
+the egual sign. Not sure if that's currently possible. But that would
+require us to use separtate parameter and it feels even more clunky to
+me especially since we can easly detect empty string instead.
+
+Thanks!
+-Lukas
 
 > 
->>
->> Then when guest opts-in and specifies '-o dax=inode' manually, then it
->> shall realize that proper configuration for virtiofsd is also needed (-o
->> dax=server|attr).
+> > 
+> > Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Reviewed-by: Carlos Maiolino <cmaiolino@redhat.com>
+> > ---
+> >  fs/fs_parser.c            | 31 +++++++++++++++++++++++--------
+> >  include/linux/fs_parser.h |  2 +-
+> >  2 files changed, 24 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+> > index 3df07c0e32b3..ed40ce5742fd 100644
+> > --- a/fs/fs_parser.c
+> > +++ b/fs/fs_parser.c
+> > @@ -199,6 +199,8 @@ int fs_param_is_bool(struct p_log *log, const struct fs_parameter_spec *p,
+> >  	int b;
+> >  	if (param->type != fs_value_is_string)
+> >  		return fs_param_bad_value(log, param);
+> > +	if (!*param->string && (p->flags & fs_param_can_be_empty))
+> > +		return 0;
+> >  	b = lookup_constant(bool_names, param->string, -1);
+> >  	if (b == -1)
+> >  		return fs_param_bad_value(log, param);
+> > @@ -211,8 +213,11 @@ int fs_param_is_u32(struct p_log *log, const struct fs_parameter_spec *p,
+> >  		    struct fs_parameter *param, struct fs_parse_result *result)
+> >  {
+> >  	int base = (unsigned long)p->data;
+> > -	if (param->type != fs_value_is_string ||
+> > -	    kstrtouint(param->string, base, &result->uint_32) < 0)
+> > +	if (param->type != fs_value_is_string)
+> > +		return fs_param_bad_value(log, param);
+> > +	if (!*param->string && (p->flags & fs_param_can_be_empty))
+> > +		return 0;
+> > +	if (kstrtouint(param->string, base, &result->uint_32) < 0)
+> >  		return fs_param_bad_value(log, param);
+> >  	return 0;
+> >  }
+> > @@ -221,8 +226,11 @@ EXPORT_SYMBOL(fs_param_is_u32);
+> >  int fs_param_is_s32(struct p_log *log, const struct fs_parameter_spec *p,
+> >  		    struct fs_parameter *param, struct fs_parse_result *result)
+> >  {
+> > -	if (param->type != fs_value_is_string ||
+> > -	    kstrtoint(param->string, 0, &result->int_32) < 0)
+> > +	if (param->type != fs_value_is_string)
+> > +		return fs_param_bad_value(log, param);
+> > +	if (!*param->string && (p->flags & fs_param_can_be_empty))
+> > +		return 0;
+> > +	if (kstrtoint(param->string, 0, &result->int_32) < 0)
+> >  		return fs_param_bad_value(log, param);
+> >  	return 0;
+> >  }
+> > @@ -231,8 +239,11 @@ EXPORT_SYMBOL(fs_param_is_s32);
+> >  int fs_param_is_u64(struct p_log *log, const struct fs_parameter_spec *p,
+> >  		    struct fs_parameter *param, struct fs_parse_result *result)
+> >  {
+> > -	if (param->type != fs_value_is_string ||
+> > -	    kstrtoull(param->string, 0, &result->uint_64) < 0)
+> > +	if (param->type != fs_value_is_string)
+> > +		return fs_param_bad_value(log, param);
+> > +	if (!*param->string && (p->flags & fs_param_can_be_empty))
+> > +		return 0;
+> > +	if (kstrtoull(param->string, 0, &result->uint_64) < 0)
+> >  		return fs_param_bad_value(log, param);
+> >  	return 0;
+> >  }
+> > @@ -244,6 +255,8 @@ int fs_param_is_enum(struct p_log *log, const struct fs_parameter_spec *p,
+> >  	const struct constant_table *c;
+> >  	if (param->type != fs_value_is_string)
+> >  		return fs_param_bad_value(log, param);
+> > +	if (!*param->string && (p->flags & fs_param_can_be_empty))
+> > +		return 0;
+> >  	c = __lookup_constant(p->data, param->string);
+> >  	if (!c)
+> >  		return fs_param_bad_value(log, param);
+> > @@ -255,7 +268,8 @@ EXPORT_SYMBOL(fs_param_is_enum);
+> >  int fs_param_is_string(struct p_log *log, const struct fs_parameter_spec *p,
+> >  		       struct fs_parameter *param, struct fs_parse_result *result)
+> >  {
+> > -	if (param->type != fs_value_is_string || !*param->string)
+> > +	if (param->type != fs_value_is_string ||
+> > +	    (!*param->string && !(p->flags & fs_param_can_be_empty)))
+> >  		return fs_param_bad_value(log, param);
+> >  	return 0;
+> >  }
+> > @@ -275,7 +289,8 @@ int fs_param_is_fd(struct p_log *log, const struct fs_parameter_spec *p,
+> >  {
+> >  	switch (param->type) {
+> >  	case fs_value_is_string:
+> > -		if (kstrtouint(param->string, 0, &result->uint_32) < 0)
+> > +		if ((!*param->string && !(p->flags & fs_param_can_be_empty)) ||
+> > +		    kstrtouint(param->string, 0, &result->uint_32) < 0)
+> >  			break;
+> >  		if (result->uint_32 <= INT_MAX)
+> >  			return 0;
+> > diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+> > index aab0ffc6bac6..f103c91139d4 100644
+> > --- a/include/linux/fs_parser.h
+> > +++ b/include/linux/fs_parser.h
+> > @@ -42,7 +42,7 @@ struct fs_parameter_spec {
+> >  	u8			opt;	/* Option number (returned by fs_parse()) */
+> >  	unsigned short		flags;
+> >  #define fs_param_neg_with_no	0x0002	/* "noxxx" is negative param */
+> > -#define fs_param_neg_with_empty	0x0004	/* "xxx=" is negative param */
+> > +#define fs_param_can_be_empty	0x0004	/* "xxx=" is allowed */
+> >  #define fs_param_deprecated	0x0008	/* The param is deprecated */
+> >  	const void		*data;
+> >  };
+> > -- 
+> > 2.31.1
+> > 
 > 
-> I gave some comments w.r.t dax=server naming in your posting. Not sure if
-> you got a chance to look at it.
-> 
-> Thanks
-> Vivek
-> 
->>
->> [1] https://www.spinics.net/lists/linux-xfs/msg56642.html
->>
->> -- 
->> Thanks,
->> Jeffle
->>
 
--- 
-Thanks,
-Jeffle
