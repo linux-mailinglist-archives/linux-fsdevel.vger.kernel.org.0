@@ -2,82 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 61072441BEB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Nov 2021 14:48:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D61A441C3E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  1 Nov 2021 15:07:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231847AbhKANvD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Nov 2021 09:51:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47244 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231366AbhKANu7 (ORCPT
+        id S232299AbhKAOKO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Nov 2021 10:10:14 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:48592 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232157AbhKAOKO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Nov 2021 09:50:59 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7AA8C061764
-        for <linux-fsdevel@vger.kernel.org>; Mon,  1 Nov 2021 06:48:25 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id f4so6345977edx.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 01 Nov 2021 06:48:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=CygXIz9rc0c6aqQz/R6v/ztEYHTU5zSeJB7dBalxjlM=;
-        b=G6uWuqnVEu2vMV4BckLcrmHNCSzfmWhssO5vbJOBTlln3Q5PSqvYWicWrEM5ypKQhH
-         35Z2MR/N2wMJAb9IgVRBnPsDw9Jy3u0ZTd7ecnRfwDlnNcTfkOR7N2weF6/mAAQkB2Y4
-         eopfDXw6tImiteGrRqBCx6o5FlulgLyfAw01BTgY3ph2N65O+N1jCCzNipITQUFq51ek
-         GmhRcdEEY13ZVv4dh4gpD1OJohSdztzZQdr0f8Y2uQig7GgwLRoxw6jUk4ND6okySHK8
-         /eXV5m8eSvsfc2ti4rjrDCYZ655Hh8h1SvG2fGW1GzSbqrewsWJfboSDzOTjqRm575bw
-         fIfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=CygXIz9rc0c6aqQz/R6v/ztEYHTU5zSeJB7dBalxjlM=;
-        b=FXJgJ1Li4zA9sE9k8dE/ZqpM1HHfHkgIhXZZwj9FIsaovBWtVXA40ucha4qQyNRl7f
-         Zi8SIH8rzXXI0uC+l71GpxisxODlN2R7IN5LZEI4gjN130fdxX7T6KeopP9h05rhAVf3
-         zBPEzMsYY5DXZAE+51/f2897FH/eWzsrAhucmkBMYuMMgyTUFgNqyCJ+aPtcYqivrqdv
-         GAlPJA3vMQRg4ZlGEtcuqHvVmbd9CDHuVu9PxUR0aJu6ZL+82XHveKu2aO0w1IY0q1lH
-         Udlbu7cHT6n8+UC4mw9keQNumuwUKbXO2+adwGrqfrr7+RZcUuiWJTaGY4guaoqYkEXh
-         tHrg==
-X-Gm-Message-State: AOAM53331itkks8vV/Wcshu1orGjF3FWsQ7exOsvDmFS3f08GqIYsBGa
-        S/b+E/yV7D0gNpYJA15Fg0IcwisgEDUIzKdBecY=
-X-Google-Smtp-Source: ABdhPJwlSY+BdsrwRb0D7k+gGaqkvtJXF58hBM2go+Ajso3p3mT1DcWbRbWLkV2sCM1xqRIDyrPS8z3HXpmf7bRRV0k=
-X-Received: by 2002:a17:907:60cc:: with SMTP id hv12mr36955548ejc.86.1635774504321;
- Mon, 01 Nov 2021 06:48:24 -0700 (PDT)
+        Mon, 1 Nov 2021 10:10:14 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 25DFD1FD73;
+        Mon,  1 Nov 2021 14:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1635775659; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=JCO02YOtqC3o+QYpVWZbFnMlxhlNKWkgnCq9GR7eOfY=;
+        b=rCpSfWbAI96JJfPfUefp3YNvUeZTDPGjfKjwkZITw2oSVBOuuD44X8+Tf2EqJP3BTjF9sx
+        GG4pyJNuna9fIR4vJ6+gx8wG2f3v9Lgqc6xO5cHqly6ACyATUhIAjBQ0Wzw/mAXTJkynZw
+        xDiFcGbJyW1/WHoPxB6gspVnXb/SGiI=
+Received: from suse.cz (unknown [10.100.224.162])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id F02FCA3B81;
+        Mon,  1 Nov 2021 14:07:37 +0000 (UTC)
+Date:   Mon, 1 Nov 2021 15:07:03 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     akpm@linux-foundation.org, keescook@chromium.org,
+        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        arnaldo.melo@gmail.com, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, valentin.schneider@arm.com,
+        qiang.zhang@windriver.com, robdclark@chromium.org,
+        christian@brauner.io, dietmar.eggemann@arm.com, mingo@redhat.com,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        davem@davemloft.net, kuba@kernel.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        kpsingh@kernel.org, dennis.dalessandro@cornelisnetworks.com,
+        mike.marciniszyn@cornelisnetworks.com, dledford@redhat.com,
+        jgg@ziepe.ca, linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, oliver.sang@intel.com, lkp@intel.com
+Subject: Re: [PATCH v7 00/11] extend task comm from 16 to 24
+Message-ID: <YX/0h7j/nDwoBA+J@alley>
+References: <20211101060419.4682-1-laoar.shao@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a54:2d0b:0:0:0:0:0 with HTTP; Mon, 1 Nov 2021 06:48:24 -0700 (PDT)
-Reply-To: mralisonandrew1954@gmail.com
-From:   "Mr.Alison Andrew" <mrcaraluda@gmail.com>
-Date:   Mon, 1 Nov 2021 06:48:24 -0700
-Message-ID: <CABg+cK3=LnSg19g1ndzxb=zWdtwFWZnoYWJz=yoS0VJ-5A+_Aw@mail.gmail.com>
-Subject: VERY URGENT!!
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211101060419.4682-1-laoar.shao@gmail.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear friend.
-I assume you and your family are in good health. I am the Foreign
-operations Manager at one of the leading generation bank here in West
-Africa.
+On Mon 2021-11-01 06:04:08, Yafang Shao wrote:
+> There're many truncated kthreads in the kernel, which may make trouble
+> for the user, for example, the user can't get detailed device
+> information from the task comm.
+> 
+> This patchset tries to improve this problem fundamentally by extending
+> the task comm size from 16 to 24, which is a very simple way. 
+> 
+> In order to do that, we have to do some cleanups first.
+> 
+> 1. Make the copy of task comm always safe no matter what the task
+>    comm size is. For example,
+> 
+>       Unsafe                 Safe
+>       strlcpy                strscpy_pad
+>       strncpy                strscpy_pad
+>       bpf_probe_read_kernel  bpf_probe_read_kernel_str
+>                              bpf_core_read_str
+>                              bpf_get_current_comm
+>                              perf_event__prepare_comm
+>                              prctl(2)
+> 
+>    After this step, the comm size change won't make any trouble to the
+>    kernel or the in-tree tools for example perf, BPF programs.
+> 
+> 2. Cleanup some old hard-coded 16
+>    Actually we don't need to convert all of them to TASK_COMM_LEN or
+>    TASK_COMM_LEN_16, what we really care about is if the convert can
+>    make the code more reasonable or easier to understand. For
+>    example, some in-tree tools read the comm from sched:sched_switch
+>    tracepoint, as it is derived from the kernel, we'd better make them
+>    consistent with the kernel.
 
-This being a wide world in which it can be difficult to make new
-acquaintances and because it is virtually impossible to know who is
-trustworthy and who can be believed, i have decided to repose
-confidence in you after much fasting and prayer. It is only because of
-this that I have decided to confide in you and to share with you this
-confidential business.
+The above changes make sense even if we do not extend comm[] array in
+task_struct.
 
-In my bank; there resides an overdue and unclaimed sum of $15.5m,
-(Fifteen Million Five Hundred Thousand Dollars Only) When the account
-holder suddenly passed on, he left no beneficiary who would be
-entitled to the receipt of this fund. For this reason, I have found it
-expedient to transfer this fund to a trustworthy individual with
-capacity to act as foreign business partner. Thus i humbly request
-your assistance to claim this fund.
-Upon the transfer of this fund in your account, you will take 45% as
-your share from the total fund, 10% will be shared to Charity
-Organizations in both country and 45% will be for me. Please if you
-are really sure you can handle this project, contact me immediately.
-Yours Faithful,
-Mr. Alison Andrew
+
+> 3. Extend the task comm size from 16 to 24
+>    task_struct is growing rather regularly by 8 bytes. This size change
+>    should be acceptable. We used to think about extending the size for
+>    CONFIG_BASE_FULL only, but that would be a burden for maintenance
+>    and introduce code complexity.
+> 
+> 4. Print a warning if the kthread comm is still truncated.
+> 
+> 5. What will happen to the out-of-tree tools after this change?
+>    If the tool get task comm through kernel API, for example prctl(2),
+>    bpf_get_current_comm() and etc, then it doesn't matter how large the
+>    user buffer is, because it will always get a string with a nul
+>    terminator. While if it gets the task comm through direct string copy,
+>    the user tool must make sure the copied string has a nul terminator
+>    itself. As TASK_COMM_LEN is not exposed to userspace, there's no
+>    reason that it must require a fixed-size task comm.
+
+The amount of code that has to be updated is really high. I am pretty
+sure that there are more potential buffer overflows left.
+
+You did not commented on the concerns in the thread
+https://lore.kernel.org/all/CAADnVQKm0Ljj-w5PbkAu1ugLFnZRRPt-Vk-J7AhXxDD5xVompA@mail.gmail.com/
+
+Several people suggested to use a more conservative approach. I mean
+to keep comm[16] as is and add a new pointer to the full name. The buffer
+for the long name might be dynamically allocated only when needed.
+
+The pointer might be either in task_struct or struct kthread. It might
+be used the same way as the full name stored by workqueue kthreads.
+
+The advantage of the separate pointer:
+
+   + would work for names longer than 32
+   + will not open security holes in code
+
+Best Regards,
+Petr
