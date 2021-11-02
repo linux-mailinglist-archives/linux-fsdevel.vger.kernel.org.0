@@ -2,424 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 57E9C443757
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 21:29:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D182744375F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 21:34:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231867AbhKBUcV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Nov 2021 16:32:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41436 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231745AbhKBUcM (ORCPT
+        id S230445AbhKBUhQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Nov 2021 16:37:16 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:24334 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229813AbhKBUhP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Nov 2021 16:32:12 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8ACEC061714;
-        Tue,  2 Nov 2021 13:29:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=MDFLuYwTkVWAP8Wd0LIjwjhnZe3FADNYzm/dMfSrFqw=; b=pze0fQGi1AfyoSkUt8SAg4qnJX
-        EUla1pItKXKJJhCf8dz/t1Gz/ZbOroJ3+ipAICEQG9VCl8sM8Fj8oXXUi4JppyhdTv2XJMq45Cm18
-        8FGvgM1OoXA7Bcrg+QewkMaGYIJFMBo6GfIm8IM8Zef7vYnIAdXOGRi79QK/FUiiLhIDSyq1q/Wf/
-        /tAXamEWaBw2Co1nd6b5o/SEf3as5/2Bn32pIc3QCxis8FG5b+J8ElpE8nPXgR0JjHczZwbS5BSii
-        Yn0tEPO3YcOAgK77zqyE+0cBC2vR7n6Lf+ih18Ho6fFmEesJie1MhYAP9AkAxeWYxSb+xvlaR9M2z
-        yoZslK/A==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mi0O2-004kNu-3k; Tue, 02 Nov 2021 20:28:29 +0000
-Date:   Tue, 2 Nov 2021 20:28:02 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH 18/21] iomap: Convert iomap_add_to_ioend to take a folio
-Message-ID: <YYGfUuItAyTNax5V@casper.infradead.org>
-References: <20211101203929.954622-1-willy@infradead.org>
- <20211101203929.954622-19-willy@infradead.org>
- <YYDoMltwjNKtJaWR@infradead.org>
+        Tue, 2 Nov 2021 16:37:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1635885279;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DiiRsZdQ8OIlrThW8zEI6oQz9jwKfgzxxMTuP5JA/HE=;
+        b=J68120A1fGhErc4fTu8RIpDFyrC+hR/b1CqhUyKyYszvbIP/B389FQWrUUdHQLjqyglhdf
+        wmA2NiPaRaDAbGm7cIByH0vqs6lQEnxvVDfDgUqKs3s+iCeVE3HZSPX4Ziui0y5XLoSSp3
+        vLwulIwhjL2hUQBy2HZRB08L9o2TUtU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-502-LLPi4ZgsNqyGur4cvw06kA-1; Tue, 02 Nov 2021 16:34:36 -0400
+X-MC-Unique: LLPi4ZgsNqyGur4cvw06kA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7B77B9F92D;
+        Tue,  2 Nov 2021 20:34:35 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.9.72])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2EA525F4F5;
+        Tue,  2 Nov 2021 20:34:32 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 9DDA8222F94; Tue,  2 Nov 2021 16:34:31 -0400 (EDT)
+Date:   Tue, 2 Nov 2021 16:34:31 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Ioannis Angelakopoulos <iangelak@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>
+Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
+Message-ID: <YYGg1w/q31SC3PQ8@redhat.com>
+References: <CAOQ4uxieK3KpY7pf0YTKcrNHW7rnTATTDZdK9L4Mqy32cDwV8w@mail.gmail.com>
+ <YXgqRb21hvYyI69D@redhat.com>
+ <CAOQ4uxhpCKK2MYxSmRJYYMEWaHKy5ezyKgxaM+YAKtpjsZkD-g@mail.gmail.com>
+ <YXhIm3mOvPsueWab@redhat.com>
+ <CAO17o20sdKAWQN6w7Oe0Ze06qcK+J=6rrmA_aWGnY__MRVDCKw@mail.gmail.com>
+ <CAOQ4uxhA+f-GZs-6SwNtSYZvSwfsYz4_=8_tWAUqt9s-49bqLw@mail.gmail.com>
+ <20211027132319.GA7873@quack2.suse.cz>
+ <YXm2tAMYwFFVR8g/@redhat.com>
+ <20211102110931.GD12774@quack2.suse.cz>
+ <CAOQ4uxiYQYG8Ta=MNJKpa_0pAPd0MS9PL2r_0ZRD+_TKOw6C7g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YYDoMltwjNKtJaWR@infradead.org>
+In-Reply-To: <CAOQ4uxiYQYG8Ta=MNJKpa_0pAPd0MS9PL2r_0ZRD+_TKOw6C7g@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 02, 2021 at 12:26:42AM -0700, Christoph Hellwig wrote:
-> Looking at the code not part of the context this looks fine.  But I
-> really wonder if this (and also the blocks change above) would be
-> better off being split into separate, clearly documented patches.
+On Tue, Nov 02, 2021 at 02:54:01PM +0200, Amir Goldstein wrote:
+> On Tue, Nov 2, 2021 at 1:09 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Wed 27-10-21 16:29:40, Vivek Goyal wrote:
+> > > On Wed, Oct 27, 2021 at 03:23:19PM +0200, Jan Kara wrote:
+> > > > On Wed 27-10-21 08:59:15, Amir Goldstein wrote:
+> > > > > On Tue, Oct 26, 2021 at 10:14 PM Ioannis Angelakopoulos
+> > > > > <iangelak@redhat.com> wrote:
+> > > > > > On Tue, Oct 26, 2021 at 2:27 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > > > > The problem here is that the OPEN event might still be travelling towards the guest in the
+> > > > > > virtqueues and arrives after the guest has already deleted its local inode.
+> > > > > > While the remote event (OPEN) received by the guest is valid, its fsnotify
+> > > > > > subsystem will drop it since the local inode is not there.
+> > > > > >
+> > > > >
+> > > > > I have a feeling that we are mixing issues related to shared server
+> > > > > and remote fsnotify.
+> > > >
+> > > > I don't think Ioannis was speaking about shared server case here. I think
+> > > > he says that in a simple FUSE remote notification setup we can loose OPEN
+> > > > events (or basically any other) if the inode for which the event happens
+> > > > gets deleted sufficiently early after the event being generated. That seems
+> > > > indeed somewhat unexpected and could be confusing if it happens e.g. for
+> > > > some directory operations.
+> > >
+> > > Hi Jan,
+> > >
+> > > Agreed. That's what Ioannis is trying to say. That some of the remote events
+> > > can be lost if fuse/guest local inode is unlinked. I think problem exists
+> > > both for shared and non-shared directory case.
+> > >
+> > > With local filesystems we have a control that we can first queue up
+> > > the event in buffer before we remove local watches. With events travelling
+> > > from a remote server, there is no such control/synchronization. It can
+> > > very well happen that events got delayed in the communication path
+> > > somewhere and local watches went away and now there is no way to
+> > > deliver those events to the application.
+> >
+> > So after thinking for some time about this I have the following question
+> > about the architecture of this solution: Why do you actually have local
+> > fsnotify watches at all? They seem to cause quite some trouble... I mean
+> > cannot we have fsnotify marks only on FUSE server and generate all events
+> > there?
 
-How do these three patches look?  I retained your R-b on all three since
-I figured the one you offered below was good for all of them.
+I think currently we are already implementing this part of the proposal.
+We are sending "group" pointer to server while updating a watch. And server
+is managing watches per inode per group. IOW, if client has group1 wanting
+mask A and group2 wanting mask B, then server is going to add two watches
+with two masks on same inotify fd instance.
 
-From ab7cace8f325ca5cc1b1e62e6a8498c84738bc10 Mon Sep 17 00:00:00 2001
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Date: Tue, 2 Nov 2021 10:51:55 -0400
-Subject: [PATCH 1/3] iomap: Simplify iomap_writepage_map()
+Admittedly we did this because we did not know that an aggregate mask
+exists. And using an aggregate mask in guest kernel and then server
+putting a single watch for that inode based on aggregate mask simplifies
+server implementation.
 
-Rename end_offset to end_pos and file_offset to pos to match the
-rest of the file.  Simplify the loop by calculating nblocks
-up front instead of each time around the loop.
+One downside of this approach is more complexity on server. Also more
+number of events will be travelling from host to guest. So if two groups
+are watching same events on same inode, then I think two copies of
+events will travel to guest. One for the group1 and one for group2 (as
+we are having separate watches on host). If we use aggregate watch on
+host, then only one event can travel between host and guest and I am
+assuming same event can be replicated among multiple groups, depending
+on their interest.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- fs/iomap/buffered-io.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+> When e.g. file is created from the client, client tells the server
+> > about creation, the server performs the creation which generates the
+> > fsnotify event, that is received by the server and forwared back to the
+> > client which just queues it into notification group's queue for userspace
+> > to read it.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 8f47879f9f05..e32e3cb2cf86 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1296,37 +1296,36 @@ iomap_add_to_ioend(struct inode *inode, loff_t offset, struct page *page,
- static int
- iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 		struct writeback_control *wbc, struct inode *inode,
--		struct page *page, u64 end_offset)
-+		struct page *page, loff_t end_pos)
- {
- 	struct folio *folio = page_folio(page);
- 	struct iomap_page *iop = iomap_page_create(inode, folio);
- 	struct iomap_ioend *ioend, *next;
- 	unsigned len = i_blocksize(inode);
--	u64 file_offset; /* file offset of page */
-+	unsigned nblocks = i_blocks_per_folio(inode, folio);
-+	loff_t pos = folio_pos(folio);
- 	int error = 0, count = 0, i;
- 	LIST_HEAD(submit_list);
- 
- 	WARN_ON_ONCE(iop && atomic_read(&iop->write_bytes_pending) != 0);
- 
- 	/*
--	 * Walk through the page to find areas to write back. If we run off the
--	 * end of the current map or find the current map invalid, grab a new
--	 * one.
-+	 * Walk through the folio to find areas to write back. If we
-+	 * run off the end of the current map or find the current map
-+	 * invalid, grab a new one.
- 	 */
--	for (i = 0, file_offset = page_offset(page);
--	     i < (PAGE_SIZE >> inode->i_blkbits) && file_offset < end_offset;
--	     i++, file_offset += len) {
-+	for (i = 0; i < nblocks && pos < end_pos; i++, pos += len) {
- 		if (iop && !test_bit(i, iop->uptodate))
- 			continue;
- 
--		error = wpc->ops->map_blocks(wpc, inode, file_offset);
-+		error = wpc->ops->map_blocks(wpc, inode, pos);
- 		if (error)
- 			break;
- 		if (WARN_ON_ONCE(wpc->iomap.type == IOMAP_INLINE))
- 			continue;
- 		if (wpc->iomap.type == IOMAP_HOLE)
- 			continue;
--		iomap_add_to_ioend(inode, file_offset, page, iop, wpc, wbc,
-+		iomap_add_to_ioend(inode, pos, page, iop, wpc, wbc,
- 				 &submit_list);
- 		count++;
- 	}
-@@ -1350,7 +1349,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 		 * now.
- 		 */
- 		if (wpc->ops->discard_folio)
--			wpc->ops->discard_folio(page_folio(page), file_offset);
-+			wpc->ops->discard_folio(folio, pos);
- 		if (!count) {
- 			ClearPageUptodate(page);
- 			unlock_page(page);
--- 
-2.33.0
+This is the part we have not implemented. When we generate the event,
+we just generate the event for the inode. There is no notion
+of that this event has been generated for a specific group with-in
+this inode. As of now that's left to the local fsnotify code to manage
+and figure out.
 
+So the idea is, that when event arrives from remote, queue it up directly
+into the group (without having to worry about inode). Hmm.., how do we do
+that. That means we need to return that group identifier in notification
+event atleast so that client can find out the group (without having to
+worry about inode?).
 
-From 07c994353e357c3b4252595a80b86e8565deb09c Mon Sep 17 00:00:00 2001
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Date: Tue, 2 Nov 2021 11:41:16 -0400
-Subject: [PATCH 2/3] iomap: Simplify iomap_do_writepage()
+So group will basically become part of the remote protocol if we were
+to go this way. And implementation becomes more complicated.
 
-Rename end_offset to end_pos and offset_into_page to poff to match the
-rest of the file.  Simplify the handling of the last page straddling
-i_size.
+> >
+> > Now with this architecture there's no problem with duplicate events for
+> > local & server notification marks,
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- fs/iomap/buffered-io.c | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+I guess supressing local events is really trivial. Either we have that
+inode flag Amir suggested or have an inode operation to let file system
+decide.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index e32e3cb2cf86..4f4f33849417 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1397,9 +1397,7 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
- {
- 	struct iomap_writepage_ctx *wpc = data;
- 	struct inode *inode = page->mapping->host;
--	pgoff_t end_index;
--	u64 end_offset;
--	loff_t offset;
-+	loff_t end_pos, isize;
- 
- 	trace_iomap_writepage(inode, page_offset(page), PAGE_SIZE);
- 
-@@ -1430,11 +1428,9 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
- 	 * |     desired writeback range    |      see else    |
- 	 * ---------------------------------^------------------|
- 	 */
--	offset = i_size_read(inode);
--	end_index = offset >> PAGE_SHIFT;
--	if (page->index < end_index)
--		end_offset = (loff_t)(page->index + 1) << PAGE_SHIFT;
--	else {
-+	isize = i_size_read(inode);
-+	end_pos = page_offset(page) + PAGE_SIZE;
-+	if (end_pos - 1 >= isize) {
- 		/*
- 		 * Check whether the page to write out is beyond or straddles
- 		 * i_size or not.
-@@ -1446,7 +1442,8 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
- 		 * |				    |      Straddles     |
- 		 * ---------------------------------^-----------|--------|
- 		 */
--		unsigned offset_into_page = offset & (PAGE_SIZE - 1);
-+		size_t poff = offset_in_page(isize);
-+		pgoff_t end_index = isize >> PAGE_SHIFT;
- 
- 		/*
- 		 * Skip the page if it's fully outside i_size, e.g. due to a
-@@ -1466,7 +1463,7 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
- 		 * offset is just equal to the EOF.
- 		 */
- 		if (page->index > end_index ||
--		    (page->index == end_index && offset_into_page == 0))
-+		    (page->index == end_index && poff == 0))
- 			goto redirty;
- 
- 		/*
-@@ -1477,13 +1474,13 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
- 		 * memory is zeroed when mapped, and writes to that region are
- 		 * not written out to the file."
- 		 */
--		zero_user_segment(page, offset_into_page, PAGE_SIZE);
-+		zero_user_segment(page, poff, PAGE_SIZE);
- 
- 		/* Adjust the end_offset to the end of file */
--		end_offset = offset;
-+		end_pos = isize;
- 	}
- 
--	return iomap_writepage_map(wpc, wbc, inode, page, end_offset);
-+	return iomap_writepage_map(wpc, wbc, inode, page, end_pos);
- 
- redirty:
- 	redirty_page_for_writepage(wbc, page);
--- 
-2.33.0
+> similarly there's no problem with lost
+> > events after inode deletion because events received by the client are
+> > directly queued into notification queue without any checking whether inode
+> > is still alive etc. Would this work or am I missing something?
 
 
-From d5412657a503ae27efb5770fbc1c5c980180c9c4 Mon Sep 17 00:00:00 2001
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Date: Tue, 2 Nov 2021 12:45:12 -0400
-Subject: [PATCH 3/3] iomap: Convert iomap_add_to_ioend to take a folio
+So when will the watches on remote go away. When a file is unlinked and
+inode is going away we call fsnotify_inoderemove(). This generates
+FS_DELETE_SELF and then seems to remove all local marks on the inode.
 
-We still iterate one block at a time, but now we call compound_head()
-less often.
+Now if we don't have local marks and guest inode is going away, and client
+sends FUSE_FORGET message, I am assuming that will be the time to cleanup
+all the remote watches and groups etc. And if file is open by some other
+guest, then DELETE_SELF event will not have been generated by then and
+we will clean remote watches.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- fs/iomap/buffered-io.c | 70 ++++++++++++++++++++----------------------
- 1 file changed, 34 insertions(+), 36 deletions(-)
+Even if other guest did not have file open, cleanup of remote watches
+and DELETE_SELF will be parallel operation and can be racy. So if
+thread reading inotify descriptor gets little late in reading DELETE_SELF,
+it is possible another thread in virtiofsd cleaned up all remote
+watches and associated groups. And now there is no way to send event
+back to guest and we lost event?
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 4f4f33849417..8908368abd49 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1252,29 +1252,29 @@ iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t offset,
-  * first; otherwise finish off the current ioend and start another.
-  */
- static void
--iomap_add_to_ioend(struct inode *inode, loff_t offset, struct page *page,
-+iomap_add_to_ioend(struct inode *inode, loff_t pos, struct folio *folio,
- 		struct iomap_page *iop, struct iomap_writepage_ctx *wpc,
- 		struct writeback_control *wbc, struct list_head *iolist)
- {
--	sector_t sector = iomap_sector(&wpc->iomap, offset);
-+	sector_t sector = iomap_sector(&wpc->iomap, pos);
- 	unsigned len = i_blocksize(inode);
--	unsigned poff = offset & (PAGE_SIZE - 1);
-+	size_t poff = offset_in_folio(folio, pos);
- 
--	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, offset, sector)) {
-+	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, pos, sector)) {
- 		if (wpc->ioend)
- 			list_add(&wpc->ioend->io_list, iolist);
--		wpc->ioend = iomap_alloc_ioend(inode, wpc, offset, sector, wbc);
-+		wpc->ioend = iomap_alloc_ioend(inode, wpc, pos, sector, wbc);
- 	}
- 
--	if (bio_add_page(wpc->ioend->io_bio, page, len, poff) != len) {
-+	if (!bio_add_folio(wpc->ioend->io_bio, folio, len, poff)) {
- 		wpc->ioend->io_bio = iomap_chain_bio(wpc->ioend->io_bio);
--		__bio_add_page(wpc->ioend->io_bio, page, len, poff);
-+		bio_add_folio(wpc->ioend->io_bio, folio, len, poff);
- 	}
- 
- 	if (iop)
- 		atomic_add(len, &iop->write_bytes_pending);
- 	wpc->ioend->io_size += len;
--	wbc_account_cgroup_owner(wbc, page, len);
-+	wbc_account_cgroup_owner(wbc, &folio->page, len);
- }
- 
- /*
-@@ -1296,9 +1296,8 @@ iomap_add_to_ioend(struct inode *inode, loff_t offset, struct page *page,
- static int
- iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 		struct writeback_control *wbc, struct inode *inode,
--		struct page *page, loff_t end_pos)
-+		struct folio *folio, loff_t end_pos)
- {
--	struct folio *folio = page_folio(page);
- 	struct iomap_page *iop = iomap_page_create(inode, folio);
- 	struct iomap_ioend *ioend, *next;
- 	unsigned len = i_blocksize(inode);
-@@ -1325,15 +1324,15 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 			continue;
- 		if (wpc->iomap.type == IOMAP_HOLE)
- 			continue;
--		iomap_add_to_ioend(inode, pos, page, iop, wpc, wbc,
-+		iomap_add_to_ioend(inode, pos, folio, iop, wpc, wbc,
- 				 &submit_list);
- 		count++;
- 	}
- 
- 	WARN_ON_ONCE(!wpc->ioend && !list_empty(&submit_list));
--	WARN_ON_ONCE(!PageLocked(page));
--	WARN_ON_ONCE(PageWriteback(page));
--	WARN_ON_ONCE(PageDirty(page));
-+	WARN_ON_ONCE(!folio_test_locked(folio));
-+	WARN_ON_ONCE(folio_test_writeback(folio));
-+	WARN_ON_ONCE(folio_test_dirty(folio));
- 
- 	/*
- 	 * We cannot cancel the ioend directly here on error.  We may have
-@@ -1351,14 +1350,14 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 		if (wpc->ops->discard_folio)
- 			wpc->ops->discard_folio(folio, pos);
- 		if (!count) {
--			ClearPageUptodate(page);
--			unlock_page(page);
-+			folio_clear_uptodate(folio);
-+			folio_unlock(folio);
- 			goto done;
- 		}
- 	}
- 
--	set_page_writeback(page);
--	unlock_page(page);
-+	folio_start_writeback(folio);
-+	folio_unlock(folio);
- 
- 	/*
- 	 * Preserve the original error if there was one; catch
-@@ -1379,9 +1378,9 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- 	 * with a partial page truncate on a sub-page block sized filesystem.
- 	 */
- 	if (!count)
--		end_page_writeback(page);
-+		folio_end_writeback(folio);
- done:
--	mapping_set_error(page->mapping, error);
-+	mapping_set_error(folio->mapping, error);
- 	return error;
- }
- 
-@@ -1395,14 +1394,15 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
- static int
- iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
- {
-+	struct folio *folio = page_folio(page);
- 	struct iomap_writepage_ctx *wpc = data;
--	struct inode *inode = page->mapping->host;
-+	struct inode *inode = folio->mapping->host;
- 	loff_t end_pos, isize;
- 
--	trace_iomap_writepage(inode, page_offset(page), PAGE_SIZE);
-+	trace_iomap_writepage(inode, folio_pos(folio), folio_size(folio));
- 
- 	/*
--	 * Refuse to write the page out if we're called from reclaim context.
-+	 * Refuse to write the folio out if we're called from reclaim context.
- 	 *
- 	 * This avoids stack overflows when called from deeply used stacks in
- 	 * random callers for direct reclaim or memcg reclaim.  We explicitly
-@@ -1416,10 +1416,10 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
- 		goto redirty;
- 
- 	/*
--	 * Is this page beyond the end of the file?
-+	 * Is this folio beyond the end of the file?
- 	 *
--	 * The page index is less than the end_index, adjust the end_offset
--	 * to the highest offset that this page should represent.
-+	 * The folio index is less than the end_index, adjust the end_pos
-+	 * to the highest offset that this folio should represent.
- 	 * -----------------------------------------------------
- 	 * |			file mapping	       | <EOF> |
- 	 * -----------------------------------------------------
-@@ -1429,7 +1429,7 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
- 	 * ---------------------------------^------------------|
- 	 */
- 	isize = i_size_read(inode);
--	end_pos = page_offset(page) + PAGE_SIZE;
-+	end_pos = folio_pos(folio) + folio_size(folio);
- 	if (end_pos - 1 >= isize) {
- 		/*
- 		 * Check whether the page to write out is beyond or straddles
-@@ -1442,7 +1442,7 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
- 		 * |				    |      Straddles     |
- 		 * ---------------------------------^-----------|--------|
- 		 */
--		size_t poff = offset_in_page(isize);
-+		size_t poff = offset_in_folio(folio, isize);
- 		pgoff_t end_index = isize >> PAGE_SHIFT;
- 
- 		/*
-@@ -1462,8 +1462,8 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
- 		 * checking if the page is totally beyond i_size or if its
- 		 * offset is just equal to the EOF.
- 		 */
--		if (page->index > end_index ||
--		    (page->index == end_index && poff == 0))
-+		if (folio->index > end_index ||
-+		    (folio->index == end_index && poff == 0))
- 			goto redirty;
- 
- 		/*
-@@ -1474,17 +1474,15 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
- 		 * memory is zeroed when mapped, and writes to that region are
- 		 * not written out to the file."
- 		 */
--		zero_user_segment(page, poff, PAGE_SIZE);
--
--		/* Adjust the end_offset to the end of file */
-+		zero_user_segment(&folio->page, poff, folio_size(folio));
- 		end_pos = isize;
- 	}
- 
--	return iomap_writepage_map(wpc, wbc, inode, page, end_pos);
-+	return iomap_writepage_map(wpc, wbc, inode, folio, end_pos);
- 
- redirty:
--	redirty_page_for_writepage(wbc, page);
--	unlock_page(page);
-+	folio_redirty_for_writepage(wbc, folio);
-+	folio_unlock(folio);
- 	return 0;
- }
- 
--- 
-2.33.0
+My understanding of this notification magic is very primitive. So it
+is very much possible I am misunderstanding how remote watches and
+groups will be managed and reported back. But my current assumption
+is that their life time will have to be tied to remote inode we
+are managing. Otherwise when will remote server clean its own
+internal state (watch descriptors), when inode goes away. 
+
+> >
+> 
+> What about group #1 that wants mask A and group #2 that wants mask B
+> events?
+> 
+> Do you propose to maintain separate event queues over the protocol?
+> Attach a "recipient list" to each event?
+> 
+> I just don't see how this can scale other than:
+> - Local marks and connectors manage the subscriptions on local machine
+> - Protocol updates the server with the combined masks for watched objects
+> 
+> I think that the "post-mortem events" issue could be solved by keeping an
+> S_DEAD fuse inode object in limbo just for the mark.
+> When a remote server sends FS_IN_IGNORED or FS_DELETE_SELF for
+> an inode, the fuse client inode can be finally evicted.
+
+There is no guarantee that FS_IN_IGNORED or FS_DELETE_SELF will come
+or when will it come. If another guest has reference on inode it might
+not come for a long time. And this will kind of become a mechanism
+for one guest to keep other's inode cache full of such objects.
+
+If event queue becomes too full, we might drop these events. But I guess
+in that case we will have to generate IN_Q_OVERFLOW and that can somehow
+be used to cleanup such S_DEAD inodes?
+
+nodeid is managed by server. So I am assuming that FORGET messages will
+not be sent to server for this inode till we have seen FS_IN_IGNORED
+and FS_DELETE_SELF events?
+
+Thanks
+Vivek
+
+> I haven't tried to see how hard that would be to implement.
+> 
+> Thanks,
+> Amir.
+> 
 
