@@ -2,119 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81758442FE1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 15:09:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E9344430D7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 15:51:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231526AbhKBOMJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Nov 2021 10:12:09 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:25345 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231663AbhKBOMI (ORCPT
+        id S233688AbhKBOyS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Nov 2021 10:54:18 -0400
+Received: from smtp-out1.suse.de ([195.135.220.28]:54500 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233657AbhKBOyM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Nov 2021 10:12:08 -0400
-Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.57])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4HkBVJ2k4mzbhWs;
-        Tue,  2 Nov 2021 22:04:40 +0800 (CST)
-Received: from kwepemm600015.china.huawei.com (7.193.23.52) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.15; Tue, 2 Nov 2021 22:09:24 +0800
-Received: from huawei.com (10.175.127.227) by kwepemm600015.china.huawei.com
- (7.193.23.52) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.15; Tue, 2 Nov
- 2021 22:09:23 +0800
-From:   ChenXiaoSong <chenxiaosong2@huawei.com>
-To:     <viro@zeniv.linux.org.uk>, <stable@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dhowells@redhat.com>, <yukuai3@huawei.com>, <yi.zhang@huawei.com>,
-        <zhangxiaoxu5@huawei.com>, <chenxiaosong2@huawei.com>
-Subject: [PATCH 4.19,v3] VFS: Fix memory leak caused by concurrently mounting fs with subtype
-Date:   Tue, 2 Nov 2021 22:22:06 +0800
-Message-ID: <20211102142206.3972465-1-chenxiaosong2@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Tue, 2 Nov 2021 10:54:12 -0400
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id C6FDC218DF;
+        Tue,  2 Nov 2021 14:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1635864695; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=UFNoUWc0AZc9WUSca1S+eN9tmYLlYuOWyX2traTgthA=;
+        b=REnrQBUIZHLPwnPamGCk1suZ2rJ/dU4SDyZTSsXR9/abMy14g0KAbcxRcodPwYgf3CCebu
+        LZhw3EhN8IRUyla4yH4fr7xb0yFWGsQYo30lZZW7uL/XywOIfPaoMdhqTyuZVFVnGvDeDE
+        yaa2kF8VchFwSkTFJf3yoOD+VKyZKJ4=
+Received: from suse.cz (unknown [10.100.216.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 519D4A3B85;
+        Tue,  2 Nov 2021 14:51:35 +0000 (UTC)
+Date:   Tue, 2 Nov 2021 15:51:33 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Miroslav Benes <mbenes@suse.cz>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, tj@kernel.org,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        minchan@kernel.org, jeyu@kernel.org, shuah@kernel.org,
+        bvanassche@acm.org, dan.j.williams@intel.com, joe@perches.com,
+        tglx@linutronix.de, keescook@chromium.org, rostedt@goodmis.org,
+        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v8 11/12] zram: fix crashes with cpu hotplug multistate
+Message-ID: <YYFQdWvpXOV4foyS@alley>
+References: <YW4uwep3BCe9Vxq8@T590>
+ <alpine.LSU.2.21.2110190820590.15009@pobox.suse.cz>
+ <YW6OptglA6UykZg/@T590>
+ <alpine.LSU.2.21.2110200835490.26817@pobox.suse.cz>
+ <YW/KEsfWJMIPnz76@T590>
+ <alpine.LSU.2.21.2110201014400.26817@pobox.suse.cz>
+ <YW/q70dLyF+YudyF@T590>
+ <YXfA0jfazCPDTEBw@alley>
+ <YXgguuAY5iEUIV0u@T590>
+ <YYFH85CmVOYIMdYh@alley>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm600015.china.huawei.com (7.193.23.52)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YYFH85CmVOYIMdYh@alley>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If two processes mount same superblock, memory leak occurs:
+On Tue 2021-11-02 15:15:19, Petr Mladek wrote:
+> On Tue 2021-10-26 23:37:30, Ming Lei wrote:
+> > On Tue, Oct 26, 2021 at 10:48:18AM +0200, Petr Mladek wrote:
+> > > Below are more details about the livepatch code. I hope that it will
+> > > help you to see if zram has similar problems or not.
+> > > 
+> > > We have kobject in three structures: klp_func, klp_object, and
+> > > klp_patch, see include/linux/livepatch.h.
+> > > 
+> > > These structures have to be statically defined in the module sources
+> > > because they define what is livepatched, see
+> > > samples/livepatch/livepatch-sample.c
+> > > 
+> > > The kobject is used there to show information about the patch, patched
+> > > objects, and patched functions, in sysfs. And most importantly,
+> > > the sysfs interface can be used to disable the livepatch.
+> > > 
+> > > The problem with static structures is that the module must stay
+> > > in the memory as long as the sysfs interface exists. It can be
+> > > solved in module_exit() callback. It could wait until the sysfs
+> > > interface is destroyed.
+> > > 
+> > > kobject API does not support this scenario. The relase() callbacks
+> > 
+> > kobject_delete() is for supporting this scenario, that is why we don't
+> > need to grab module refcnt before calling show()/store() of the
+> > kobject's attributes.
+> > 
+> > kobject_delete() can be called in module_exit(), then any show()/store()
+> > will be done after kobject_delete() returns.
+> 
+> I am a bit confused. I do not see kobject_delete() anywhere in kernel
+> sources.
+> 
+> I see only kobject_del() and kobject_put(). AFAIK, they do _not_
+> guarantee that either the sysfs interface was destroyed or
+> the release callbacks were called. For example, see
+> schedule_delayed_work(&kobj->release, delay) in kobject_release().
 
-CPU0               |  CPU1
-do_new_mount       |  do_new_mount
-  fs_set_subtype   |    fs_set_subtype
-    kstrdup        |
-                   |      kstrdup
-    memrory leak   |
+Grr, I always get confused by the code. kobject_del() actually waits
+until the sysfs interface gets destroyed. This is why there is
+the deadlock.
 
-The following reproducer triggers the problem:
+But kobject_put() is _not_ synchronous. And the comment above
+kobject_add() repeat 3 times that kobject_put() must be called
+on success:
 
-1. shell command: mount -t ntfs /dev/sda1 /mnt &
-2. c program: mount("/dev/sda1", "/mnt", "fuseblk", 0, "...")
+ * Return: If this function returns an error, kobject_put() must be
+ *         called to properly clean up the memory associated with the
+ *         object.  Under no instance should the kobject that is passed
+ *         to this function be directly freed with a call to kfree(),
+ *         that can leak memory.
+ *
+ *         If this function returns success, kobject_put() must also be called
+ *         in order to properly clean up the memory associated with the object.
+ *
+ *         In short, once this function is called, kobject_put() MUST be called
+ *         when the use of the object is finished in order to properly free
+ *         everything.
 
-with kmemleak report being along the lines of
+and similar text in Documentation/core-api/kobject.rst
 
-unreferenced object 0xffff888235f1a5c0 (size 8):
-  comm "mount.ntfs", pid 2860, jiffies 4295757824 (age 43.423s)
-  hex dump (first 8 bytes):
-    00 a5 f1 35 82 88 ff ff                          ...5....
-  backtrace:
-    [<00000000656e30cc>] __kmalloc_track_caller+0x16e/0x430
-    [<000000008e591727>] kstrdup+0x3e/0x90
-    [<000000008430d12b>] do_mount.cold+0x7b/0xd9
-    [<0000000078d639cd>] ksys_mount+0xb2/0x150
-    [<000000006015988d>] __x64_sys_mount+0x29/0x40
-    [<00000000e0a7c118>] do_syscall_64+0xc1/0x1d0
-    [<00000000bcea7df5>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-    [<00000000803a4067>] 0xffffffffffffffff
+  After a kobject has been registered with the kobject core successfully, it
+  must be cleaned up when the code is finished with it.  To do that, call
+  kobject_put().
 
-Linus's tree already have refactoring patchset [1], one of them can fix this bug:
-        c30da2e981a7 ("fuse: convert to use the new mount API")
-After refactoring, init super_block->s_subtype in fuse_fill_super.
 
-Since we did not merge the refactoring patchset in this branch, I create this patch.
-This patch fix this by adding a write lock while calling fs_set_subtype.
+If I read the code correctly then kobject_put() calls kref_put()
+that might call kobject_delayed_cleanup(). This function does a lot
+of things and need to access struct kobject.
 
-[1] https://patchwork.kernel.org/project/linux-fsdevel/patch/20190903113640.7984-3-mszeredi@redhat.com/
+> IMHO, kobject API does not support static structures and module
+> removal.
 
-Fixes: 79c0b2df79eb ("add filesystem subtype support")
-Cc: David Howells <dhowells@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: ChenXiaoSong <chenxiaosong2@huawei.com>
----
-v1: Can not mount sshfs ([PATCH linux-4.19.y] VFS: Fix fuseblk memory leak caused by mount concurrency)
-v2: Use write lock while writing superblock ([PATCH 4.19,v2] VFS: Fix fuseblk memory leak caused by mount concurrency)
-v3: Update commit message
+If kobject_put() has to be called also for static structures then
+module_exit() must explicitly wait until the clean up is finished.
 
- fs/namespace.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 2f3c6a0350a8..396ff1bcfdad 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2490,9 +2490,12 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
- 		return -ENODEV;
- 
- 	mnt = vfs_kern_mount(type, sb_flags, name, data);
--	if (!IS_ERR(mnt) && (type->fs_flags & FS_HAS_SUBTYPE) &&
--	    !mnt->mnt_sb->s_subtype)
--		mnt = fs_set_subtype(mnt, fstype);
-+	if (!IS_ERR(mnt) && (type->fs_flags & FS_HAS_SUBTYPE)) {
-+		down_write(&mnt->mnt_sb->s_umount);
-+		if (!mnt->mnt_sb->s_subtype)
-+			mnt = fs_set_subtype(mnt, fstype);
-+		up_write(&mnt->mnt_sb->s_umount);
-+	}
- 
- 	put_filesystem(type);
- 	if (IS_ERR(mnt))
--- 
-2.31.1
-
+Best Regards,
+Petr
