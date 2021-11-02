@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E3A7442DFD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 13:30:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F8B9442E02
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 13:30:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231605AbhKBMdO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Nov 2021 08:33:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34392 "EHLO
+        id S231829AbhKBMdV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Nov 2021 08:33:21 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:46441 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230349AbhKBMcw (ORCPT
+        by vger.kernel.org with ESMTP id S231639AbhKBMc4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Nov 2021 08:32:52 -0400
+        Tue, 2 Nov 2021 08:32:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635856217;
+        s=mimecast20190719; t=1635856221;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=NoiN9kFSHMUgAXsXPm6fNLFcb7wCYNnzRF4D7OsOJeU=;
-        b=KQglidtmp2ftAzgGg7nUVbb2YjzNfucro84dKGZzRmdzhzMFpWy5hdR9yRvhgqj9XpipHk
-        DkFB2fIEUccdHuqNiArnd5AKEuWLnT10PIqdvbUohPxKrVA0xZckK/9Kqs8WBhCLYp9SaT
-        TYHlu9s+VzVa0SYKIvb21Nj4f3RxO9o=
+        bh=EYmLjqixLlmd+Cj1TfBY0T9jgTNOz+7tqEqST0ynino=;
+        b=H51xuS8QcwsIIh4zkxOxIDOxVNZ0Vd/KHjW/1nnWhEgWvF3sv+3Wt9BDYaA/MgRtjzVW5Q
+        /r5dUwSU7ea0cz48BVGslrKT92yl4NuMFilHPrblLejqgz90fjQFsRxOUXwZRLADiL0AdT
+        Ukvrorxazd7LkPjHcQuyYKhh5jz41/Q=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-249-4XwaNQwQOQq47LDcfxtSfQ-1; Tue, 02 Nov 2021 08:30:14 -0400
-X-MC-Unique: 4XwaNQwQOQq47LDcfxtSfQ-1
+ us-mta-208-tFW_RAAGNhiXL0JYxEGa9w-1; Tue, 02 Nov 2021 08:30:17 -0400
+X-MC-Unique: tFW_RAAGNhiXL0JYxEGa9w-1
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6D4B91005E4D;
-        Tue,  2 Nov 2021 12:30:12 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1143A19200C0;
+        Tue,  2 Nov 2021 12:30:16 +0000 (UTC)
 Received: from max.localdomain (unknown [10.40.195.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3C20667840;
-        Tue,  2 Nov 2021 12:30:09 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C46C52B060;
+        Tue,  2 Nov 2021 12:30:12 +0000 (UTC)
 From:   Andreas Gruenbacher <agruenba@redhat.com>
 To:     cluster-devel@redhat.com
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -47,9 +47,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
         linux-btrfs@vger.kernel.org,
         Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH v9 06/17] gfs2: Add wrapper for iomap_file_buffered_write
-Date:   Tue,  2 Nov 2021 13:29:34 +0100
-Message-Id: <20211102122945.117744-7-agruenba@redhat.com>
+Subject: [PATCH v9 07/17] gfs2: Clean up function may_grant
+Date:   Tue,  2 Nov 2021 13:29:35 +0100
+Message-Id: <20211102122945.117744-8-agruenba@redhat.com>
 In-Reply-To: <20211102122945.117744-1-agruenba@redhat.com>
 References: <20211102122945.117744-1-agruenba@redhat.com>
 MIME-Version: 1.0
@@ -59,74 +59,195 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a wrapper around iomap_file_buffered_write.  We'll add code for when
-the operation needs to be retried here later.
+Pass the first current glock holder into function may_grant and
+deobfuscate the logic there.
+
+While at it, switch from BUG_ON to GLOCK_BUG_ON in may_grant.  To make
+that build cleanly, de-constify the may_grant arguments.
+
+We're now using function find_first_holder in do_promote, so move the
+function's definition above do_promote.
 
 Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 ---
- fs/gfs2/file.c | 27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+ fs/gfs2/glock.c | 119 ++++++++++++++++++++++++++++--------------------
+ 1 file changed, 69 insertions(+), 50 deletions(-)
 
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index c559827cb6f9..da742b470f23 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -876,6 +876,20 @@ static ssize_t gfs2_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	return written ? written : ret;
+diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+index e0eaa9cf9fb6..bffd9c20f2de 100644
+--- a/fs/gfs2/glock.c
++++ b/fs/gfs2/glock.c
+@@ -301,46 +301,59 @@ void gfs2_glock_put(struct gfs2_glock *gl)
  }
  
-+static ssize_t gfs2_file_buffered_write(struct kiocb *iocb, struct iov_iter *from)
+ /**
+- * may_grant - check if its ok to grant a new lock
++ * may_grant - check if it's ok to grant a new lock
+  * @gl: The glock
++ * @current_gh: One of the current holders of @gl
+  * @gh: The lock request which we wish to grant
+  *
+- * Returns: true if its ok to grant the lock
++ * With our current compatibility rules, if a glock has one or more active
++ * holders (HIF_HOLDER flag set), any of those holders can be passed in as
++ * @current_gh; they are all the same as far as compatibility with the new @gh
++ * goes.
++ *
++ * Returns true if it's ok to grant the lock.
+  */
+ 
+-static inline int may_grant(const struct gfs2_glock *gl, const struct gfs2_holder *gh)
+-{
+-	const struct gfs2_holder *gh_head = list_first_entry(&gl->gl_holders, const struct gfs2_holder, gh_list);
++static inline bool may_grant(struct gfs2_glock *gl,
++			     struct gfs2_holder *current_gh,
++			     struct gfs2_holder *gh)
 +{
-+	struct file *file = iocb->ki_filp;
-+	struct inode *inode = file_inode(file);
-+	ssize_t ret;
++	if (current_gh) {
++		GLOCK_BUG_ON(gl, !test_bit(HIF_HOLDER, &current_gh->gh_iflags));
 +
-+	current->backing_dev_info = inode_to_bdi(inode);
-+	ret = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
-+	current->backing_dev_info = NULL;
-+	if (ret > 0)
-+		iocb->ki_pos += ret;
-+	return ret;
++		switch(current_gh->gh_state) {
++		case LM_ST_EXCLUSIVE:
++			/*
++			 * Here we make a special exception to grant holders
++			 * who agree to share the EX lock with other holders
++			 * who also have the bit set. If the original holder
++			 * has the LM_FLAG_NODE_SCOPE bit set, we grant more
++			 * holders with the bit set.
++			 */
++			return gh->gh_state == LM_ST_EXCLUSIVE &&
++			       (current_gh->gh_flags & LM_FLAG_NODE_SCOPE) &&
++			       (gh->gh_flags & LM_FLAG_NODE_SCOPE);
+ 
+-	if (gh != gh_head) {
+-		/**
+-		 * Here we make a special exception to grant holders who agree
+-		 * to share the EX lock with other holders who also have the
+-		 * bit set. If the original holder has the LM_FLAG_NODE_SCOPE bit
+-		 * is set, we grant more holders with the bit set.
+-		 */
+-		if (gh_head->gh_state == LM_ST_EXCLUSIVE &&
+-		    (gh_head->gh_flags & LM_FLAG_NODE_SCOPE) &&
+-		    gh->gh_state == LM_ST_EXCLUSIVE &&
+-		    (gh->gh_flags & LM_FLAG_NODE_SCOPE))
+-			return 1;
+-		if ((gh->gh_state == LM_ST_EXCLUSIVE ||
+-		     gh_head->gh_state == LM_ST_EXCLUSIVE))
+-			return 0;
++		case LM_ST_SHARED:
++		case LM_ST_DEFERRED:
++			return gh->gh_state == current_gh->gh_state;
++
++		default:
++			return false;
++		}
+ 	}
++
+ 	if (gl->gl_state == gh->gh_state)
+-		return 1;
++		return true;
+ 	if (gh->gh_flags & GL_EXACT)
+-		return 0;
++		return false;
+ 	if (gl->gl_state == LM_ST_EXCLUSIVE) {
+-		if (gh->gh_state == LM_ST_SHARED && gh_head->gh_state == LM_ST_SHARED)
+-			return 1;
+-		if (gh->gh_state == LM_ST_DEFERRED && gh_head->gh_state == LM_ST_DEFERRED)
+-			return 1;
++		return gh->gh_state == LM_ST_SHARED ||
++		       gh->gh_state == LM_ST_DEFERRED;
+ 	}
+-	if (gl->gl_state != LM_ST_UNLOCKED && (gh->gh_flags & LM_FLAG_ANY))
+-		return 1;
+-	return 0;
++	if (gh->gh_flags & LM_FLAG_ANY)
++		return gl->gl_state != LM_ST_UNLOCKED;
++	return false;
+ }
+ 
+ static void gfs2_holder_wake(struct gfs2_holder *gh)
+@@ -380,6 +393,24 @@ static void do_error(struct gfs2_glock *gl, const int ret)
+ 	}
+ }
+ 
++/**
++ * find_first_holder - find the first "holder" gh
++ * @gl: the glock
++ */
++
++static inline struct gfs2_holder *find_first_holder(const struct gfs2_glock *gl)
++{
++	struct gfs2_holder *gh;
++
++	if (!list_empty(&gl->gl_holders)) {
++		gh = list_first_entry(&gl->gl_holders, struct gfs2_holder,
++				      gh_list);
++		if (test_bit(HIF_HOLDER, &gh->gh_iflags))
++			return gh;
++	}
++	return NULL;
 +}
 +
  /**
-  * gfs2_file_write_iter - Perform a write to a file
-  * @iocb: The io context
-@@ -927,9 +941,7 @@ static ssize_t gfs2_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 			goto out_unlock;
+  * do_promote - promote as many requests as possible on the current queue
+  * @gl: The glock
+@@ -393,14 +424,15 @@ __releases(&gl->gl_lockref.lock)
+ __acquires(&gl->gl_lockref.lock)
+ {
+ 	const struct gfs2_glock_operations *glops = gl->gl_ops;
+-	struct gfs2_holder *gh, *tmp;
++	struct gfs2_holder *gh, *tmp, *first_gh;
+ 	int ret;
  
- 		iocb->ki_flags |= IOCB_DSYNC;
--		current->backing_dev_info = inode_to_bdi(inode);
--		buffered = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
--		current->backing_dev_info = NULL;
-+		buffered = gfs2_file_buffered_write(iocb, from);
- 		if (unlikely(buffered <= 0)) {
- 			if (!ret)
- 				ret = buffered;
-@@ -943,7 +955,6 @@ static ssize_t gfs2_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		 * the direct I/O range as we don't know if the buffered pages
- 		 * made it to disk.
- 		 */
--		iocb->ki_pos += buffered;
- 		ret2 = generic_write_sync(iocb, buffered);
- 		invalidate_mapping_pages(mapping,
- 				(iocb->ki_pos - buffered) >> PAGE_SHIFT,
-@@ -951,13 +962,9 @@ static ssize_t gfs2_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		if (!ret || ret2 > 0)
- 			ret += ret2;
- 	} else {
--		current->backing_dev_info = inode_to_bdi(inode);
--		ret = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
--		current->backing_dev_info = NULL;
--		if (likely(ret > 0)) {
--			iocb->ki_pos += ret;
-+		ret = gfs2_file_buffered_write(iocb, from);
-+		if (likely(ret > 0))
- 			ret = generic_write_sync(iocb, ret);
--		}
+ restart:
++	first_gh = find_first_holder(gl);
+ 	list_for_each_entry_safe(gh, tmp, &gl->gl_holders, gh_list) {
+ 		if (test_bit(HIF_HOLDER, &gh->gh_iflags))
+ 			continue;
+-		if (may_grant(gl, gh)) {
++		if (may_grant(gl, first_gh, gh)) {
+ 			if (gh->gh_list.prev == &gl->gl_holders &&
+ 			    glops->go_lock) {
+ 				spin_unlock(&gl->gl_lockref.lock);
+@@ -722,23 +754,6 @@ __acquires(&gl->gl_lockref.lock)
+ 	spin_lock(&gl->gl_lockref.lock);
+ }
+ 
+-/**
+- * find_first_holder - find the first "holder" gh
+- * @gl: the glock
+- */
+-
+-static inline struct gfs2_holder *find_first_holder(const struct gfs2_glock *gl)
+-{
+-	struct gfs2_holder *gh;
+-
+-	if (!list_empty(&gl->gl_holders)) {
+-		gh = list_first_entry(&gl->gl_holders, struct gfs2_holder, gh_list);
+-		if (test_bit(HIF_HOLDER, &gh->gh_iflags))
+-			return gh;
+-	}
+-	return NULL;
+-}
+-
+ /**
+  * run_queue - do all outstanding tasks related to a glock
+  * @gl: The glock in question
+@@ -1354,8 +1369,12 @@ __acquires(&gl->gl_lockref.lock)
+ 		GLOCK_BUG_ON(gl, true);
+ 
+ 	if (gh->gh_flags & (LM_FLAG_TRY | LM_FLAG_TRY_1CB)) {
+-		if (test_bit(GLF_LOCK, &gl->gl_flags))
+-			try_futile = !may_grant(gl, gh);
++		if (test_bit(GLF_LOCK, &gl->gl_flags)) {
++			struct gfs2_holder *first_gh;
++
++			first_gh = find_first_holder(gl);
++			try_futile = !may_grant(gl, first_gh, gh);
++		}
+ 		if (test_bit(GLF_INVALIDATE_IN_PROGRESS, &gl->gl_flags))
+ 			goto fail;
  	}
- 
- out_unlock:
 -- 
 2.31.1
 
