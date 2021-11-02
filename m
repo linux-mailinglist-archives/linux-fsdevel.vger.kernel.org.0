@@ -2,82 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4632A4426B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 06:26:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3E7A442708
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 07:19:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229566AbhKBF2u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Nov 2021 01:28:50 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:49996 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229659AbhKBF2o (ORCPT
+        id S229587AbhKBGV7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Nov 2021 02:21:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42942 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229497AbhKBGV7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Nov 2021 01:28:44 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UuiHHSD_1635830768;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0UuiHHSD_1635830768)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 02 Nov 2021 13:26:08 +0800
-From:   Jeffle Xu <jefflexu@linux.alibaba.com>
-To:     vgoyal@redhat.com, stefanha@redhat.com, miklos@szeredi.hu
-Cc:     virtio-fs@redhat.com, linux-fsdevel@vger.kernel.org,
-        joseph.qi@linux.alibaba.com
-Subject: [PATCH v7 7/7] Documentation/filesystem/dax: record DAX on virtiofs
-Date:   Tue,  2 Nov 2021 13:26:04 +0800
-Message-Id: <20211102052604.59462-8-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20211102052604.59462-1-jefflexu@linux.alibaba.com>
-References: <20211102052604.59462-1-jefflexu@linux.alibaba.com>
+        Tue, 2 Nov 2021 02:21:59 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2654C061714;
+        Mon,  1 Nov 2021 23:19:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=KdIhbeTBoLRUYR2IAPFmlM4VoN/TtUZV3//iIpzahwM=; b=gEliM4LypGip4U+QMQe7n5WPg+
+        8eF6rmeTZnEHXk8zsn5+LTsHo0ig9kZOyN4e+FFEa6YZuPTo4iSXZQcldSvGmvKpllSlorZqwbgkT
+        HKffEXvbAOcbwfsYA2+uU33ejwxMPoLiSRNY+d4hmrEY3vg4fS1/7E6nKilyDH/PiQvr7n9mSYnNs
+        jikQKAvqUFNTxA184hcFBlOilNj0XyLf3a0Uy2RsW8ZONVAYEDmx+GxVHvRm0MqozQH3lYB1ZPVt5
+        LxffLGlx8Gc5jttGyxDUerEAc3tqqv3LLUkq8lU5Hg3zMTTpnUOVYjoNmero8H6QeZnp+UkWZVzeg
+        THCpn1ug==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mhn8K-000eBZ-KX; Tue, 02 Nov 2021 06:18:56 +0000
+Date:   Mon, 1 Nov 2021 23:18:56 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Jane Chu <jane.chu@oracle.com>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
+        "dave.jiang@intel.com" <dave.jiang@intel.com>,
+        "agk@redhat.com" <agk@redhat.com>,
+        "snitzer@redhat.com" <snitzer@redhat.com>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "ira.weiny@intel.com" <ira.weiny@intel.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "vgoyal@redhat.com" <vgoyal@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
+Subject: Re: [dm-devel] [PATCH 0/6] dax poison recovery with
+ RWF_RECOVERY_DATA flag
+Message-ID: <YYDYUCCiEPXhZEw0@infradead.org>
+References: <20211021001059.438843-1-jane.chu@oracle.com>
+ <YXFPfEGjoUaajjL4@infradead.org>
+ <e89a2b17-3f03-a43e-e0b9-5d2693c3b089@oracle.com>
+ <YXJN4s1HC/Y+KKg1@infradead.org>
+ <2102a2e6-c543-2557-28a2-8b0bdc470855@oracle.com>
+ <YXj2lwrxRxHdr4hb@infradead.org>
+ <20211028002451.GB2237511@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20211028002451.GB2237511@magnolia>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Record DAX on virtiofs and the semantic difference with that on ext4
-and xfs.
+On Wed, Oct 27, 2021 at 05:24:51PM -0700, Darrick J. Wong wrote:
+> ...so would you happen to know if anyone's working on solving this
+> problem for us by putting the memory controller in charge of dealing
+> with media errors?
 
-Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
----
- Documentation/filesystems/dax.rst | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+The only one who could know is Intel..
 
-diff --git a/Documentation/filesystems/dax.rst b/Documentation/filesystems/dax.rst
-index 9a1b8fd9e82b..e3b30429d703 100644
---- a/Documentation/filesystems/dax.rst
-+++ b/Documentation/filesystems/dax.rst
-@@ -23,8 +23,8 @@ on it as usual.  The `DAX` code currently only supports files with a block
- size equal to your kernel's `PAGE_SIZE`, so you may need to specify a block
- size when creating the filesystem.
- 
--Currently 3 filesystems support `DAX`: ext2, ext4 and xfs.  Enabling `DAX` on them
--is different.
-+Currently 4 filesystems support `DAX`: ext2, ext4, xfs and virtiofs.
-+Enabling `DAX` on them is different.
- 
- Enabling DAX on ext2
- --------------------
-@@ -168,6 +168,22 @@ if the underlying media does not support dax and/or the filesystem is
- overridden with a mount option.
- 
- 
-+Enabling DAX on virtiofs
-+----------------------------
-+The semantic of DAX on virtiofs is basically equal to that on ext4 and xfs,
-+except that when '-o dax=inode' is specified, virtiofs client derives the hint
-+whether DAX shall be enabled or not from virtiofs server through FUSE protocol,
-+rather than the persistent `FS_XFLAG_DAX` flag. That is, whether DAX shall be
-+enabled or not is completely determined by virtiofs server, while virtiofs
-+server itself may deploy various algorithm making this decision, e.g. depending
-+on the persistent `FS_XFLAG_DAX` flag on the host.
-+
-+It is still supported to set or clear persistent `FS_XFLAG_DAX` flag inside
-+guest, but it is not guaranteed that DAX will be enabled or disabled for
-+corresponding file then. Users inside guest still need to call statx(2) and
-+check the statx flag `STATX_ATTR_DAX` to see if DAX is enabled for this file.
-+
-+
- Implementation Tips for Block Driver Writers
- --------------------------------------------
- 
--- 
-2.27.0
+> The trouble is, we really /do/ want to be able to (re)write the failed
+> area, and we probably want to try to read whatever we can.  Those are
+> reads and writes, not {pre,f}allocation activities.  This is where Dave
+> and I arrived at a month ago.
+> 
+> Unless you'd be ok with a second IO path for recovery where we're
+> allowed to be slow?  That would probably have the same user interface
+> flag, just a different path into the pmem driver.
 
+Which is fine with me.  If you look at the API here we do have the
+RWF_ API, which them maps to the IOMAP API, which maps to the DAX_
+API which then gets special casing over three methods.
+
+And while Pavel pointed out that he and Jens are now optimizing for
+single branches like this.  I think this actually is silly and it is
+not my point.
+
+The point is that the DAX in-kernel API is a mess, and before we make
+it even worse we need to sort it first.  What is directly relevant
+here is that the copy_from_iter and copy_to_iter APIs do not make
+sense.  Most of the DAX API is based around getting a memory mapping
+using ->direct_access, it is just the read/write path which is a slow
+path that actually uses this.  I have a very WIP patch series to try
+to sort this out here:
+
+http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dax-devirtualize
+
+But back to this series.  The basic DAX model is that the callers gets a
+memory mapping an just works on that, maybe calling a sync after a write
+in a few cases.  So any kind of recovery really needs to be able to
+work with that model as going forward the copy_to/from_iter path will
+be used less and less.  i.e. file systems can and should use
+direct_access directly instead of using the block layer implementation
+in the pmem driver.  As an example the dm-writecache driver, the pending
+bcache nvdimm support and the (horribly and out of tree) nova file systems
+won't even use this path.  We need to find a way to support recovery
+for them.  And overloading it over the read/write path which is not
+the main path for DAX, but the absolutely fast path for 99% of the
+kernel users is a horrible idea.
+
+So how can we work around the horrible nvdimm design for data recovery
+in a way that:
+
+   a) actually works with the intended direct memory map use case
+   b) doesn't really affect the normal kernel too much
+
+?
