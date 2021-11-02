@@ -2,230 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AFF0442E33
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 13:33:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7420F442E86
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 13:54:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231247AbhKBMfm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Nov 2021 08:35:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:59226 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229530AbhKBMfl (ORCPT
+        id S230347AbhKBM4t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Nov 2021 08:56:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48192 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229924AbhKBM4s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Nov 2021 08:35:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635856386;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=faLoLpLyKy/Ab8XQ27t5jmK0JEkq3soAYUpBSCy17oY=;
-        b=IK+AjIu611fdTN+F3jj2S9My+NFiyQvlN3s0ALv3BEmR79E/LiK0/USNJeOCg+ysAu2NpF
-        IWIi6++YA9YFZzUN4r02jvOk9O9AyEp3BOYIL9V421un3yZ5HslyOWdeO0atS8rBVTa9b3
-        qNbqdGLYX6/de3BUgcRkD5zk/tuGBoU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-460-Ww8bC-2wMe2RsfP5VGf83w-1; Tue, 02 Nov 2021 08:33:03 -0400
-X-MC-Unique: Ww8bC-2wMe2RsfP5VGf83w-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4574B802682;
-        Tue,  2 Nov 2021 12:33:01 +0000 (UTC)
-Received: from max.localdomain (unknown [10.40.195.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 06EF769119;
-        Tue,  2 Nov 2021 12:32:08 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     cluster-devel@redhat.com
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Paul Mackerras <paulus@ozlabs.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
-        linux-btrfs@vger.kernel.org,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH v9 17/17] gfs2: Fix mmap + page fault deadlocks for direct I/O
-Date:   Tue,  2 Nov 2021 13:29:45 +0100
-Message-Id: <20211102122945.117744-18-agruenba@redhat.com>
-In-Reply-To: <20211102122945.117744-1-agruenba@redhat.com>
-References: <20211102122945.117744-1-agruenba@redhat.com>
+        Tue, 2 Nov 2021 08:56:48 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89C3EC061714;
+        Tue,  2 Nov 2021 05:54:13 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id 62so17925486iou.2;
+        Tue, 02 Nov 2021 05:54:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vysOZ84N4xhaVF/+iiQESao5k1Y7S6h5dGJxcoMMDOI=;
+        b=NtRwR84M4D0tSqdUcfJvEfm0AfU65ybnuQOn/cgYn09J17lnNzJ4K4H4WsATaBLFNK
+         1mQBMYE+1B9DXOMFf0wAL/xFE87y0CcjrDQKNiruUG4Sxy9YBcBKl41otAT966Q/NaAV
+         silof7LbUWGn7xGeRyVFhjd4KQ9+rT6wn0iAfDdegUbvdWSpzXHkLR7Crk3XQ59MxmbG
+         J386uxmDsQD7vIpkAqTG+Dga7PPnK5ZiAuB7vDHnThzRH59HAwQJk984w89+pWNbMzSX
+         23bVCXs+3+YSuyyvrgmfn7k78gJR23SNlKpxoCP1P3230jRJ32BH/uAC4zwhhJuXSL2V
+         CBVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vysOZ84N4xhaVF/+iiQESao5k1Y7S6h5dGJxcoMMDOI=;
+        b=bP/xJGSeBXoFupGJS+XZW5WZG/Lrq6isaD11YjIoXHfwFJjlYNZgkY0jIlTHTrHYPC
+         ijL/i7xQI/mX2f0Gnfb6tJmxSs85eN8iw0Y9OON+HqXS0KnpLZzhWQz13mH/LdB7+cCT
+         PPcKJz1/C413JtmfDJZjvMRtiSmKv+kalsXu+2odpO2tDPnYRRv+MwlneqM9/NROsH/E
+         +f8uaXM0uiPu86WLv8+R5VdJfUwGGXHy6Oe+8AC1HvXYJRf4SsjLWxJMTx0HRpdacIcr
+         ZLt7h+L0NSb+UOQn1OE3EnM+yUG/1nmmgFFzEn/m8y8jqNqhodvjZM0XqiQBs7VqiJEo
+         DJ6w==
+X-Gm-Message-State: AOAM530Z70p+XK8ausi3rX5bQDc4enQUbciZQFBGILurcEX0OyT4s+P0
+        UkaEM6GN3vJgUw7HcRX2D3CI3JF2/z1xcvC7S63v1Rq9pJU=
+X-Google-Smtp-Source: ABdhPJwp5enssFc8Qs0ff2bxqAs/t5B6pNuoPWW/zA7qy1T1xfgtxsOV2xFAQzPDW75BWjoQL3Y3Aw94wExTgdEnH9Y=
+X-Received: by 2002:a5e:8d0a:: with SMTP id m10mr13069192ioj.196.1635857652978;
+ Tue, 02 Nov 2021 05:54:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+References: <20211025204634.2517-1-iangelak@redhat.com> <CAOQ4uxieK3KpY7pf0YTKcrNHW7rnTATTDZdK9L4Mqy32cDwV8w@mail.gmail.com>
+ <YXgqRb21hvYyI69D@redhat.com> <CAOQ4uxhpCKK2MYxSmRJYYMEWaHKy5ezyKgxaM+YAKtpjsZkD-g@mail.gmail.com>
+ <YXhIm3mOvPsueWab@redhat.com> <CAO17o20sdKAWQN6w7Oe0Ze06qcK+J=6rrmA_aWGnY__MRVDCKw@mail.gmail.com>
+ <CAOQ4uxhA+f-GZs-6SwNtSYZvSwfsYz4_=8_tWAUqt9s-49bqLw@mail.gmail.com>
+ <20211027132319.GA7873@quack2.suse.cz> <YXm2tAMYwFFVR8g/@redhat.com> <20211102110931.GD12774@quack2.suse.cz>
+In-Reply-To: <20211102110931.GD12774@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 2 Nov 2021 14:54:01 +0200
+Message-ID: <CAOQ4uxiYQYG8Ta=MNJKpa_0pAPd0MS9PL2r_0ZRD+_TKOw6C7g@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
+To:     Jan Kara <jack@suse.cz>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Ioannis Angelakopoulos <iangelak@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Also disable page faults during direct I/O requests and implement a
-similar kind of retry logic as in the buffered I/O case.
+On Tue, Nov 2, 2021 at 1:09 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Wed 27-10-21 16:29:40, Vivek Goyal wrote:
+> > On Wed, Oct 27, 2021 at 03:23:19PM +0200, Jan Kara wrote:
+> > > On Wed 27-10-21 08:59:15, Amir Goldstein wrote:
+> > > > On Tue, Oct 26, 2021 at 10:14 PM Ioannis Angelakopoulos
+> > > > <iangelak@redhat.com> wrote:
+> > > > > On Tue, Oct 26, 2021 at 2:27 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > > > The problem here is that the OPEN event might still be travelling towards the guest in the
+> > > > > virtqueues and arrives after the guest has already deleted its local inode.
+> > > > > While the remote event (OPEN) received by the guest is valid, its fsnotify
+> > > > > subsystem will drop it since the local inode is not there.
+> > > > >
+> > > >
+> > > > I have a feeling that we are mixing issues related to shared server
+> > > > and remote fsnotify.
+> > >
+> > > I don't think Ioannis was speaking about shared server case here. I think
+> > > he says that in a simple FUSE remote notification setup we can loose OPEN
+> > > events (or basically any other) if the inode for which the event happens
+> > > gets deleted sufficiently early after the event being generated. That seems
+> > > indeed somewhat unexpected and could be confusing if it happens e.g. for
+> > > some directory operations.
+> >
+> > Hi Jan,
+> >
+> > Agreed. That's what Ioannis is trying to say. That some of the remote events
+> > can be lost if fuse/guest local inode is unlinked. I think problem exists
+> > both for shared and non-shared directory case.
+> >
+> > With local filesystems we have a control that we can first queue up
+> > the event in buffer before we remove local watches. With events travelling
+> > from a remote server, there is no such control/synchronization. It can
+> > very well happen that events got delayed in the communication path
+> > somewhere and local watches went away and now there is no way to
+> > deliver those events to the application.
+>
+> So after thinking for some time about this I have the following question
+> about the architecture of this solution: Why do you actually have local
+> fsnotify watches at all? They seem to cause quite some trouble... I mean
+> cannot we have fsnotify marks only on FUSE server and generate all events
+> there? When e.g. file is created from the client, client tells the server
+> about creation, the server performs the creation which generates the
+> fsnotify event, that is received by the server and forwared back to the
+> client which just queues it into notification group's queue for userspace
+> to read it.
+>
+> Now with this architecture there's no problem with duplicate events for
+> local & server notification marks, similarly there's no problem with lost
+> events after inode deletion because events received by the client are
+> directly queued into notification queue without any checking whether inode
+> is still alive etc. Would this work or am I missing something?
+>
 
-The retry logic in the direct I/O case differs from the buffered I/O
-case in the following way: direct I/O doesn't provide the kinds of
-consistency guarantees between concurrent reads and writes that buffered
-I/O provides, so once we lose the inode glock while faulting in user
-pages, we always resume the operation.  We never need to return a
-partial read or write.
+What about group #1 that wants mask A and group #2 that wants mask B
+events?
 
-This locking problem was originally reported by Jan Kara.  Linus came up
-with the idea of disabling page faults.  Many thanks to Al Viro and
-Matthew Wilcox for their feedback.
+Do you propose to maintain separate event queues over the protocol?
+Attach a "recipient list" to each event?
 
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- fs/gfs2/file.c | 99 ++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 87 insertions(+), 12 deletions(-)
+I just don't see how this can scale other than:
+- Local marks and connectors manage the subscriptions on local machine
+- Protocol updates the server with the combined masks for watched objects
 
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index f772ee0fcae3..40e6501c02e5 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -811,22 +811,64 @@ static ssize_t gfs2_file_direct_read(struct kiocb *iocb, struct iov_iter *to,
- {
- 	struct file *file = iocb->ki_filp;
- 	struct gfs2_inode *ip = GFS2_I(file->f_mapping->host);
--	size_t count = iov_iter_count(to);
-+	size_t prev_count = 0, window_size = 0;
-+	size_t written = 0;
- 	ssize_t ret;
- 
--	if (!count)
-+	/*
-+	 * In this function, we disable page faults when we're holding the
-+	 * inode glock while doing I/O.  If a page fault occurs, we indicate
-+	 * that the inode glock may be dropped, fault in the pages manually,
-+	 * and retry.
-+	 *
-+	 * Unlike generic_file_read_iter, for reads, iomap_dio_rw can trigger
-+	 * physical as well as manual page faults, and we need to disable both
-+	 * kinds.
-+	 *
-+	 * For direct I/O, gfs2 takes the inode glock in deferred mode.  This
-+	 * locking mode is compatible with other deferred holders, so multiple
-+	 * processes and nodes can do direct I/O to a file at the same time.
-+	 * There's no guarantee that reads or writes will be atomic.  Any
-+	 * coordination among readers and writers needs to happen externally.
-+	 */
-+
-+	if (!iov_iter_count(to))
- 		return 0; /* skip atime */
- 
- 	gfs2_holder_init(ip->i_gl, LM_ST_DEFERRED, 0, gh);
-+retry:
- 	ret = gfs2_glock_nq(gh);
- 	if (ret)
- 		goto out_uninit;
-+retry_under_glock:
-+	pagefault_disable();
-+	to->nofault = true;
-+	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL,
-+			   IOMAP_DIO_PARTIAL, written);
-+	to->nofault = false;
-+	pagefault_enable();
-+	if (ret > 0)
-+		written = ret;
- 
--	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL, 0, 0);
--	gfs2_glock_dq(gh);
-+	if (should_fault_in_pages(ret, to, &prev_count, &window_size)) {
-+		size_t leftover;
-+
-+		gfs2_holder_allow_demote(gh);
-+		leftover = fault_in_iov_iter_writeable(to, window_size);
-+		gfs2_holder_disallow_demote(gh);
-+		if (leftover != window_size) {
-+			if (!gfs2_holder_queued(gh))
-+				goto retry;
-+			goto retry_under_glock;
-+		}
-+	}
-+	if (gfs2_holder_queued(gh))
-+		gfs2_glock_dq(gh);
- out_uninit:
- 	gfs2_holder_uninit(gh);
--	return ret;
-+	if (ret < 0)
-+		return ret;
-+	return written;
- }
- 
- static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
-@@ -835,10 +877,20 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = file->f_mapping->host;
- 	struct gfs2_inode *ip = GFS2_I(inode);
--	size_t len = iov_iter_count(from);
--	loff_t offset = iocb->ki_pos;
-+	size_t prev_count = 0, window_size = 0;
-+	size_t read = 0;
- 	ssize_t ret;
- 
-+	/*
-+	 * In this function, we disable page faults when we're holding the
-+	 * inode glock while doing I/O.  If a page fault occurs, we indicate
-+	 * that the inode glock may be dropped, fault in the pages manually,
-+	 * and retry.
-+	 *
-+	 * For writes, iomap_dio_rw only triggers manual page faults, so we
-+	 * don't need to disable physical ones.
-+	 */
-+
- 	/*
- 	 * Deferred lock, even if its a write, since we do no allocation on
- 	 * this path. All we need to change is the atime, and this lock mode
-@@ -848,22 +900,45 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from,
- 	 * VFS does.
- 	 */
- 	gfs2_holder_init(ip->i_gl, LM_ST_DEFERRED, 0, gh);
-+retry:
- 	ret = gfs2_glock_nq(gh);
- 	if (ret)
- 		goto out_uninit;
--
-+retry_under_glock:
- 	/* Silently fall back to buffered I/O when writing beyond EOF */
--	if (offset + len > i_size_read(&ip->i_inode))
-+	if (iocb->ki_pos + iov_iter_count(from) > i_size_read(&ip->i_inode))
- 		goto out;
- 
--	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL, 0, 0);
-+	from->nofault = true;
-+	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL,
-+			   IOMAP_DIO_PARTIAL, read);
-+	from->nofault = false;
-+
- 	if (ret == -ENOTBLK)
- 		ret = 0;
-+	if (ret > 0)
-+		read = ret;
-+
-+	if (should_fault_in_pages(ret, from, &prev_count, &window_size)) {
-+		size_t leftover;
-+
-+		gfs2_holder_allow_demote(gh);
-+		leftover = fault_in_iov_iter_readable(from, window_size);
-+		gfs2_holder_disallow_demote(gh);
-+		if (leftover != window_size) {
-+			if (!gfs2_holder_queued(gh))
-+				goto retry;
-+			goto retry_under_glock;
-+		}
-+	}
- out:
--	gfs2_glock_dq(gh);
-+	if (gfs2_holder_queued(gh))
-+		gfs2_glock_dq(gh);
- out_uninit:
- 	gfs2_holder_uninit(gh);
--	return ret;
-+	if (ret < 0)
-+		return ret;
-+	return read;
- }
- 
- static ssize_t gfs2_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
--- 
-2.31.1
+I think that the "post-mortem events" issue could be solved by keeping an
+S_DEAD fuse inode object in limbo just for the mark.
+When a remote server sends FS_IN_IGNORED or FS_DELETE_SELF for
+an inode, the fuse client inode can be finally evicted.
+I haven't tried to see how hard that would be to implement.
 
+Thanks,
+Amir.
