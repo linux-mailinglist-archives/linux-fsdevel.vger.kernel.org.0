@@ -2,133 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DACA1443647
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 20:09:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52C124436C3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 20:52:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229981AbhKBTLo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Nov 2021 15:11:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:50934 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229530AbhKBTLn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Nov 2021 15:11:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635880148;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=doMZ0eRqCZW9lV+d3+3sJlDFNI0EgereCdR+DU6HYmI=;
-        b=MzAWAG/LmsR4xcpW76IDWJErohTMNQaVHJIfNPKL+Vv+BX00SPkZ0Rb3KAQznvAjX2QrCZ
-        BNBvY0vbyH2U2fQLf5YzAPQXFK1LPOi93Y0a8R8EAatZ3M4fEc/186RvmaAMCh3STIWW5v
-        IEFEtVzabhtCA/XEV+ns1zesIYNO6Ek=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-550-7JjlXjHFMDmnbPjb_To_yQ-1; Tue, 02 Nov 2021 15:09:05 -0400
-X-MC-Unique: 7JjlXjHFMDmnbPjb_To_yQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BC308106B7D9;
-        Tue,  2 Nov 2021 19:09:03 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.9.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8A62A57CD2;
-        Tue,  2 Nov 2021 19:09:03 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 0D03F222F94; Tue,  2 Nov 2021 15:09:03 -0400 (EDT)
-Date:   Tue, 2 Nov 2021 15:09:02 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Chirantan Ekbote <chirantan@chromium.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>
-Subject: Re: [PATCH v2 2/2] fuse: Send security context of inode on file
- creation
-Message-ID: <YYGMzi2EJwIX4cIn@redhat.com>
-References: <20211012180624.447474-1-vgoyal@redhat.com>
- <20211012180624.447474-3-vgoyal@redhat.com>
- <CAJfpegs-EHBjjnsVQdPWfH=idVENj9Aw0e-L4tjcgx3v38NJtg@mail.gmail.com>
- <YYFZl3egeX88G3FQ@redhat.com>
- <CAJfpeguMLE1rgpuP7gWWNcip6R+cgp-BdDfdQGtV=TouOVEn4A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpeguMLE1rgpuP7gWWNcip6R+cgp-BdDfdQGtV=TouOVEn4A@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+        id S231138AbhKBTzE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Nov 2021 15:55:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40496 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230348AbhKBTzB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 2 Nov 2021 15:55:01 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id C70D06103C;
+        Tue,  2 Nov 2021 19:52:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1635882745;
+        bh=X2PNqZfaK8dci6B7EhGiHQeTSB7DIKM8msjsuYmgJqE=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=D3JslLL0mbr/iPjCxFpC3ZdvuGh8/cWmm1KOwzaZCtB0S5cfvFwwOv6uHNe48DKhG
+         RJJMOva5Lg76lvfwBCe5+FkWgzwWp4G9TKIDRk1KECGQMe7WdxJu/B3TzVNmE8+LLh
+         z7WSHtxAHXj9p7bxvc1ikI4D0OElDddDu6EzSC260Xk9rEAnSpVMiq2I3LM1QRwI20
+         YbVx8bGPPWnOz22VUn2IorFsS5fkopSUUWbZCBXOpsCvoSSNwucBbh7SbF8sSpJCTQ
+         7O++A9ftoogC6wfRyBZ027dFVDSYtCKwEL3wZgaaZZIT8fGkb7DxjJJ1JAhseyr/M8
+         INMj9MVtmiHfQ==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id BFA6E60A90;
+        Tue,  2 Nov 2021 19:52:25 +0000 (UTC)
+Subject: Re: [GIT PULL] xfs: new code for 5.16
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20211102184650.GH24307@magnolia>
+References: <20211102184650.GH24307@magnolia>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20211102184650.GH24307@magnolia>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.16-merge-4
+X-PR-Tracked-Commit-Id: 2a09b575074ff3ed23907b6f6f3da87af41f592b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: bba7d682277c09373b56b0461b0abbd0b3d1e872
+Message-Id: <163588274577.22794.1156896528638745710.pr-tracker-bot@kernel.org>
+Date:   Tue, 02 Nov 2021 19:52:25 +0000
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 02, 2021 at 04:38:06PM +0100, Miklos Szeredi wrote:
-> On Tue, 2 Nov 2021 at 16:30, Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > On Tue, Nov 02, 2021 at 03:00:30PM +0100, Miklos Szeredi wrote:
-> > > On Tue, 12 Oct 2021 at 20:06, Vivek Goyal <vgoyal@redhat.com> wrote:
-> 
-> > > > @@ -633,7 +713,29 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
-> > > >         args->out_numargs = 1;
-> > > >         args->out_args[0].size = sizeof(outarg);
-> > > >         args->out_args[0].value = &outarg;
-> > > > +
-> > > > +       if (init_security) {
-> > >
-> >
-> > Hi Miklos,
-> >
-> > > Instead of a new arg to create_new_entry(), this could check
-> > > args.opcode != FUSE_LINK.
-> >
-> > Will do.
-> >
-> > >
-> > > > +               unsigned short idx = args->in_numargs;
-> > > > +
-> > > > +               if ((size_t)idx >= ARRAY_SIZE(args->in_args)) {
-> > > > +                       err = -ENOMEM;
-> > > > +                       goto out_put_forget_req;
-> > > > +               }
-> > > > +
-> > > > +               err = get_security_context(entry, mode, &security_ctx,
-> > > > +                                          &security_ctxlen);
-> > > > +               if (err)
-> > > > +                       goto out_put_forget_req;
-> > > > +
-> > > > +               if (security_ctxlen > 0) {
-> > >
-> > > This doesn't seem right.  How would the server know if this is arg is missing?
-> > >
-> > > I think if FUSE_SECURITY_CTX was negotiated, then the secctx header
-> > > will always need to be added to the MK* requests.
-> >
-> > Even for the case of FUSE_LINK request? I think I put this check because
-> > FUSE_LINK is not sending secctx header. Other requests are appending
-> > this header even if a security module is not loaded/enabled.
-> 
-> No, FUSE_LINK wouldn't even get this far.
+The pull request you sent on Tue, 2 Nov 2021 11:46:50 -0700:
 
-You are right. My bad. So looks like this check will always be true
-given the current code. get_security_context() will either all
-headers with security context or just return zeroed "struct fuse_secctxs",
-indicating there are no security context. 
+> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.16-merge-4
 
-If that's the case, I should be able to get rid of this check. I will
-do some more testing.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/bba7d682277c09373b56b0461b0abbd0b3d1e872
 
-> 
-> > I guess it makes more sense to add secctx header even for FUSE_LINK
-> > request. Just that header will mention 0 security contexts are
-> > following. This will interface more uniform. I will make this change.
-> 
-> Why? FUSE_LINK is not an inode creation op, it just shares the
-> instantiation part with creation.
+Thank you!
 
-Ok, got it. Makes sense. So no sending of zeroed security context header
-with FUSE_LINK.
-
-Vivek
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
