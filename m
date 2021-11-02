@@ -2,162 +2,402 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FAC8442F7F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 14:54:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81621442FA4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 15:00:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231347AbhKBN5R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Nov 2021 09:57:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:58821 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229530AbhKBN5R (ORCPT
+        id S231312AbhKBODT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Nov 2021 10:03:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35094 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230370AbhKBODR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Nov 2021 09:57:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635861281;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=ZIml53bo0PEw+1GPldGqxvXRU9sgyca3MuCiU7dOmOM=;
-        b=Ib+QstJ3Oc7eezAQvEX/9m8FjvoCVGiEXPh4kywf/VaH8c0XBjrd+bg5gCc0nNgn04PA9f
-        1mhxacom+yad6inwzi3UBf3Q7ifOUgPoikx6ew7f0F82WaN5/JPu4ykrmmDcinOVZZDfz+
-        hG7D6WRfoIgqFYNRwVjtyj7mfgGcU88=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-36-MREFlxGwObSgtBCBzsMCpg-1; Tue, 02 Nov 2021 09:54:38 -0400
-X-MC-Unique: MREFlxGwObSgtBCBzsMCpg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3AD4E100C665;
-        Tue,  2 Nov 2021 13:54:36 +0000 (UTC)
-Received: from max.localdomain (unknown [10.40.195.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BBD771017CF5;
-        Tue,  2 Nov 2021 13:54:23 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Paul Mackerras <paulus@ozlabs.org>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>, cluster-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: [GIT PULL] gfs2: Fix mmap + page fault deadlocks
-Date:   Tue,  2 Nov 2021 14:54:22 +0100
-Message-Id: <20211102135422.121093-1-agruenba@redhat.com>
+        Tue, 2 Nov 2021 10:03:17 -0400
+Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E3E0C061767
+        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Nov 2021 07:00:42 -0700 (PDT)
+Received: by mail-ua1-x92d.google.com with SMTP id i6so23896013uae.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Nov 2021 07:00:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XKRSF6c/DmbtPVq1mlYxGANP5GLjrBjlESQv0EVA9n4=;
+        b=IBRfrt0Sco5aw8dZ/hQ7JVTZo4ara5XAzA7LJCYTYn96HC6qgWyZAaRYNV3tEK4ITX
+         0o9zUNtgcoJuve31Dyhl0wdZpG5HdsdEXoxAX+qTWJYphOPpShI7hPd2AM4OoPlvObqK
+         W/d5z7YvemKn/JISzn/rfH+jhOp4dheNiEfOo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XKRSF6c/DmbtPVq1mlYxGANP5GLjrBjlESQv0EVA9n4=;
+        b=6Ey90mxdS/oK9sy8PAB6q47LglNZh0J6HcJ5OZXkI39ubfxascpTav9bzhpvcdF1+x
+         aWDxJq2/hWBZ9TWVR1qJ3gZEkciFBoXricRUVkxB++5BxHkYQ6+mMJfTO8/ovfev+6TU
+         edAGPliDM+FgfD2S9MbTI29RxCgSu4IgoBZX1XCRKcRrMLEqsSwr/fQ8AFkr5aKEJG2H
+         GHnlUeoKJFc5iF/hF1wSvlmzH40KATluZA1GFF74G8esMnwj7dIzHxL0Gp/qq67BK2p4
+         zWfPl6zVvNYxpJblDm3Ocm9okGWRiLMITXrkNjtS5x8RWmtsNjmHAaDwF/pCD1ymjbuj
+         28hQ==
+X-Gm-Message-State: AOAM53233gFga1nJRaRTzco/0jwpTXfsjOIYFmzz/DckfQlN8dt0q5SC
+        /mKLeB0ThnzgINHQdde3qmX5aoNEoHI98zDqSe5k/g==
+X-Google-Smtp-Source: ABdhPJxnoVVNrBmO3kDlu7vYjTCrQn92pEnFKIiItBBjj5kgQe+Jr6UKb5PS3F1CQBucExepu9LeAlqK099vXRvTAcM=
+X-Received: by 2002:a05:6102:c89:: with SMTP id f9mr18861777vst.19.1635861641500;
+ Tue, 02 Nov 2021 07:00:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <20211012180624.447474-1-vgoyal@redhat.com> <20211012180624.447474-3-vgoyal@redhat.com>
+In-Reply-To: <20211012180624.447474-3-vgoyal@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 2 Nov 2021 15:00:30 +0100
+Message-ID: <CAJfpegs-EHBjjnsVQdPWfH=idVENj9Aw0e-L4tjcgx3v38NJtg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] fuse: Send security context of inode on file creation
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Chirantan Ekbote <chirantan@chromium.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Tue, 12 Oct 2021 at 20:06, Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> When a new inode is created, send its security context to server along
+> with creation request (FUSE_CREAT, FUSE_MKNOD, FUSE_MKDIR and FUSE_SYMLINK).
+> This gives server an opportunity to create new file and set security
+> context (possibly atomically). In all the configurations it might not
+> be possible to set context atomically.
+>
+> Like nfs and ceph, use security_dentry_init_security() to dermine security
+> context of inode and send it with create, mkdir, mknod, and symlink requests.
+>
+> Following is the information sent to server.
+>
+> - struct fuse_secctxs.
+>   This contains total number of security contexts being sent.
+>
+> - struct fuse_secctx.
+>   This contains total size of security context which follows this structure.
+>   There is one fuse_secctx instance per security context.
+>
+> - xattr name string.
+>   This string represents name of xattr which should be used while setting
+>   security context. As of now it is hardcoded to "security.selinux".
+>
+> - security context.
+>   This is the actual security context whose size is specified in fuse_secctx
+>   struct.
+>
+> This patch is modified version of patch from
+> Chirantan Ekbote <chirantan@chromium.org>
+>
+> v2:
+> - Added "fuse_secctxs" structure where one can specify how many security
+>   contexts are being sent. This can be useful down the line if we
+>   have more than one security contexts being set.
+>
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
+>  fs/fuse/dir.c             | 115 ++++++++++++++++++++++++++++++++++++--
+>  fs/fuse/fuse_i.h          |   3 +
+>  fs/fuse/inode.c           |   4 +-
+>  include/uapi/linux/fuse.h |  20 +++++++
+>  4 files changed, 136 insertions(+), 6 deletions(-)
+>
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index d9b977c0f38d..ce62593a61f9 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -17,6 +17,9 @@
+>  #include <linux/xattr.h>
+>  #include <linux/iversion.h>
+>  #include <linux/posix_acl.h>
+> +#include <linux/security.h>
+> +#include <linux/types.h>
+> +#include <linux/kernel.h>
+>
+>  static void fuse_advise_use_readdirplus(struct inode *dir)
+>  {
+> @@ -456,6 +459,66 @@ static struct dentry *fuse_lookup(struct inode *dir, struct dentry *entry,
+>         return ERR_PTR(err);
+>  }
+>
+> +static int get_security_context(struct dentry *entry, umode_t mode,
+> +                               void **security_ctx, u32 *security_ctxlen)
+> +{
+> +       struct fuse_secctx *fsecctx;
+> +       struct fuse_secctxs *fsecctxs;
+> +       void *ctx, *full_ctx;
+> +       u32 ctxlen, full_ctxlen;
+> +       int err = 0;
+> +       const char *name;
+> +
+> +       err = security_dentry_init_security(entry, mode, &entry->d_name,
+> +                                           &name, &ctx, &ctxlen);
+> +       if (err) {
+> +               if (err != -EOPNOTSUPP)
+> +                       goto out_err;
+> +               /* No LSM is supporting this security hook. Ignore error */
+> +               err = 0;
+> +               ctxlen = 0;
+> +       }
+> +
+> +       if (ctxlen > 0) {
+> +               void *ptr;
+> +
+> +               full_ctxlen = sizeof(*fsecctxs) + sizeof(*fsecctx) +
+> +                             strlen(name) + ctxlen + 1;
+> +               full_ctx = kzalloc(full_ctxlen, GFP_KERNEL);
+> +               if (!full_ctx) {
+> +                       err = -ENOMEM;
+> +                       kfree(ctx);
+> +                       goto out_err;
+> +               }
+> +
+> +               ptr = full_ctx;
+> +               fsecctxs = (struct fuse_secctxs*) ptr;
+> +               fsecctxs->nr_secctx = 1;
+> +               ptr += sizeof(*fsecctxs);
+> +
+> +               fsecctx = (struct fuse_secctx*) ptr;
+> +               fsecctx->size = ctxlen;
+> +               ptr += sizeof(*fsecctx);
+> +
+> +               strcpy(ptr, name);
+> +               ptr += strlen(name) + 1;
+> +               memcpy(ptr, ctx, ctxlen);
+> +               kfree(ctx);
+> +       } else {
+> +               full_ctxlen = sizeof(*fsecctxs);
+> +               full_ctx = kzalloc(full_ctxlen, GFP_KERNEL);
+> +               if (!full_ctx) {
+> +                       err = -ENOMEM;
+> +                       goto out_err;
+> +               }
+> +       }
+> +
+> +       *security_ctxlen = full_ctxlen;
+> +       *security_ctx = full_ctx;
+> +out_err:
+> +       return err;
+> +}
+> +
+>  /*
+>   * Atomic create+open operation
+>   *
+> @@ -476,6 +539,8 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>         struct fuse_entry_out outentry;
+>         struct fuse_inode *fi;
+>         struct fuse_file *ff;
+> +       void *security_ctx = NULL;
+> +       u32 security_ctxlen;
+>
+>         /* Userspace expects S_IFREG in create mode */
+>         BUG_ON((mode & S_IFMT) != S_IFREG);
+> @@ -517,6 +582,18 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>         args.out_args[0].value = &outentry;
+>         args.out_args[1].size = sizeof(outopen);
+>         args.out_args[1].value = &outopen;
+> +
+> +       if (fm->fc->init_security) {
+> +               err = get_security_context(entry, mode, &security_ctx,
+> +                                          &security_ctxlen);
+> +               if (err)
+> +                       goto out_put_forget_req;
+> +
+> +               args.in_numargs = 3;
+> +               args.in_args[2].size = security_ctxlen;
+> +               args.in_args[2].value = security_ctx;
+> +       }
+> +
+>         err = fuse_simple_request(fm, &args);
+>         if (err)
+>                 goto out_free_ff;
+> @@ -554,6 +631,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>
+>  out_free_ff:
+>         fuse_file_free(ff);
+> +       kfree(security_ctx);
+>  out_put_forget_req:
+>         kfree(forget);
+>  out_err:
+> @@ -613,13 +691,15 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+>   */
+>  static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
+>                             struct inode *dir, struct dentry *entry,
+> -                           umode_t mode)
+> +                           umode_t mode, bool init_security)
+>  {
+>         struct fuse_entry_out outarg;
+>         struct inode *inode;
+>         struct dentry *d;
+>         int err;
+>         struct fuse_forget_link *forget;
+> +       void *security_ctx = NULL;
+> +       u32 security_ctxlen = 0;
+>
+>         if (fuse_is_bad(dir))
+>                 return -EIO;
+> @@ -633,7 +713,29 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
+>         args->out_numargs = 1;
+>         args->out_args[0].size = sizeof(outarg);
+>         args->out_args[0].value = &outarg;
+> +
+> +       if (init_security) {
 
-please consider pulling these fixes for the gfs2 memory map + page fault
-deadlocks.
+Instead of a new arg to create_new_entry(), this could check
+args.opcode != FUSE_LINK.
 
-Stephen Rothwell has pointed out the following merge conflict between
-commit:
+> +               unsigned short idx = args->in_numargs;
+> +
+> +               if ((size_t)idx >= ARRAY_SIZE(args->in_args)) {
+> +                       err = -ENOMEM;
+> +                       goto out_put_forget_req;
+> +               }
+> +
+> +               err = get_security_context(entry, mode, &security_ctx,
+> +                                          &security_ctxlen);
+> +               if (err)
+> +                       goto out_put_forget_req;
+> +
+> +               if (security_ctxlen > 0) {
 
-  bb523b406c84 ("gup: Turn fault_in_pages_{readable,writeable} into fault_in_{readable,writeable}")
+This doesn't seem right.  How would the server know if this is arg is missing?
 
-from this patch set and the following two commits in your tree:
+I think if FUSE_SECURITY_CTX was negotiated, then the secctx header
+will always need to be added to the MK* requests.
 
-  fcfb7163329c ("x86/fpu/signal: Move xstate clearing out of copy_fpregs_to_sigframe()")
-  a2a8fd9a3efd ("x86/fpu/signal: Change return code of restore_fpregs_from_user() to boolean")
+> +                       args->in_args[idx].size = security_ctxlen;
+> +                       args->in_args[idx].value = security_ctx;
+> +                       args->in_numargs++;
+> +               }
+> +       }
+> +
+>         err = fuse_simple_request(fm, args);
+> +       kfree(security_ctx);
+>         if (err)
+>                 goto out_put_forget_req;
+>
+> @@ -691,7 +793,7 @@ static int fuse_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+>         args.in_args[0].value = &inarg;
+>         args.in_args[1].size = entry->d_name.len + 1;
+>         args.in_args[1].value = entry->d_name.name;
+> -       return create_new_entry(fm, &args, dir, entry, mode);
+> +       return create_new_entry(fm, &args, dir, entry, mode, fm->fc->init_security);
+>  }
+>
+>  static int fuse_create(struct user_namespace *mnt_userns, struct inode *dir,
+> @@ -719,7 +821,8 @@ static int fuse_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
+>         args.in_args[0].value = &inarg;
+>         args.in_args[1].size = entry->d_name.len + 1;
+>         args.in_args[1].value = entry->d_name.name;
+> -       return create_new_entry(fm, &args, dir, entry, S_IFDIR);
+> +       return create_new_entry(fm, &args, dir, entry, S_IFDIR,
+> +                               fm->fc->init_security);
+>  }
+>
+>  static int fuse_symlink(struct user_namespace *mnt_userns, struct inode *dir,
+> @@ -735,7 +838,8 @@ static int fuse_symlink(struct user_namespace *mnt_userns, struct inode *dir,
+>         args.in_args[0].value = entry->d_name.name;
+>         args.in_args[1].size = len;
+>         args.in_args[1].value = link;
+> -       return create_new_entry(fm, &args, dir, entry, S_IFLNK);
+> +       return create_new_entry(fm, &args, dir, entry, S_IFLNK,
+> +                               fm->fc->init_security);
+>  }
+>
+>  void fuse_update_ctime(struct inode *inode)
+> @@ -915,7 +1019,8 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
+>         args.in_args[0].value = &inarg;
+>         args.in_args[1].size = newent->d_name.len + 1;
+>         args.in_args[1].value = newent->d_name.name;
+> -       err = create_new_entry(fm, &args, newdir, newent, inode->i_mode);
+> +       err = create_new_entry(fm, &args, newdir, newent, inode->i_mode,
+> +                              false);
+>         /* Contrary to "normal" filesystems it can happen that link
+>            makes two "logical" inodes point to the same "physical"
+>            inode.  We invalidate the attributes of the old one, so it
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 319596df5dc6..885f34f9967f 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -765,6 +765,9 @@ struct fuse_conn {
+>         /* Propagate syncfs() to server */
+>         unsigned int sync_fs:1;
+>
+> +       /* Initialize security xattrs when creating a new inode */
+> +       unsigned int init_security:1;
+> +
+>         /** The number of requests waiting for completion */
+>         atomic_t num_waiting;
+>
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 36cd03114b6d..343bc9cfbd92 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1152,6 +1152,8 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+>                         }
+>                         if (arg->flags & FUSE_SETXATTR_EXT)
+>                                 fc->setxattr_ext = 1;
+> +                       if (arg->flags & FUSE_SECURITY_CTX)
+> +                               fc->init_security = 1;
+>                 } else {
+>                         ra_pages = fc->max_read / PAGE_SIZE;
+>                         fc->no_lock = 1;
+> @@ -1195,7 +1197,7 @@ void fuse_send_init(struct fuse_mount *fm)
+>                 FUSE_PARALLEL_DIROPS | FUSE_HANDLE_KILLPRIV | FUSE_POSIX_ACL |
+>                 FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
+>                 FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
+> -               FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT;
+> +               FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_SECURITY_CTX;
+>  #ifdef CONFIG_FUSE_DAX
+>         if (fm->fc->dax)
+>                 ia->in.flags |= FUSE_MAP_ALIGNMENT;
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index 2fe54c80051a..b31a0f79fde8 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
 
-This is due to the fault_in_{pages_ =>}readable rename, and commit
-fcfb7163329c eliminating the call to fault_in_pages_writeable() from
-copy_fpstate_to_sigframe().  Stephen's conflict notification can be
-found here:
+I don't see why the API changes are split between the first and the
+second patch in the series.   Please either move all API changes to
+1/2 or fold 1/2 into this patch.
 
-https://lore.kernel.org/linux-next/20211015150420.617125bd@canb.auug.org.au/
+> @@ -986,4 +986,24 @@ struct fuse_syncfs_in {
+>         uint64_t        padding;
+>  };
+>
+> +/*
+> + * For each security context, send fuse_secctx with size of security context
+> + * fuse_secctx will be followed by security context name and this in turn
+> + * will be followed by actual context label.
+> + * fuse_secctx, name, context
+> + * */
+> +struct fuse_secctx {
+> +       uint32_t        size;
+> +       uint32_t        padding;
+> +};
+> +
+> +/*
+> + * Contains the information about how many fuse_secctx structures are being
+> + * sent.
+> + */
+> +struct fuse_secctxs {
+> +       uint32_t        nr_secctx;
+> +       uint32_t        padding;
+> +};
+
+The name of this struct is very confusing due to similarity with
+fuse_secctx.  How about "fuse_secctx_header"?
+
+Also I'd add the total length of the security context (including the
+header), otherwise further args would need to parse the security
+context completely to find the position of the next arg.   The
+counterexample is null-terminated names; while parsing these is pretty
+trivial,  in hindsight it would probably have been better to add a
+header to names as well.
 
 Thanks,
-Andreas
-
-
-The following changes since commit 64570fbc14f8d7cb3fe3995f20e26bc25ce4b2cc:
-
-  Linux 5.15-rc5 (2021-10-10 17:01:59 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/gfs2-v5.15-rc5-mmap-fault
-
-for you to fetch changes up to b01b2d72da25c000aeb124bc78daf3fb998be2b6:
-
-  gfs2: Fix mmap + page fault deadlocks for direct I/O (2021-10-25 08:42:14 +0200)
-
-----------------------------------------------------------------
-gfs2: Fix mmap + page fault deadlocks
-
-Functions gfs2_file_read_iter and gfs2_file_write_iter are both
-accessing the user buffer to write to or read from while holding the
-inode glock.  In the most basic scenario, that buffer will not be
-resident and it will be mapped to the same file.  Accessing the buffer
-will trigger a page fault, and gfs2 will deadlock trying to take the
-same inode glock again while trying to handle that fault.
-
-Fix that and similar, more complex scenarios by disabling page faults
-while accessing user buffers.  To make this work, introduce a small
-amount of new infrastructure and fix some bugs that didn't trigger so
-far, with page faults enabled.
-
-----------------------------------------------------------------
-Andreas Gruenbacher (16):
-      iov_iter: Fix iov_iter_get_pages{,_alloc} page fault return value
-      powerpc/kvm: Fix kvm_use_magic_page
-      gup: Turn fault_in_pages_{readable,writeable} into fault_in_{readable,writeable}
-      iov_iter: Turn iov_iter_fault_in_readable into fault_in_iov_iter_readable
-      iov_iter: Introduce fault_in_iov_iter_writeable
-      gfs2: Add wrapper for iomap_file_buffered_write
-      gfs2: Clean up function may_grant
-      gfs2: Move the inode glock locking to gfs2_file_buffered_write
-      gfs2: Eliminate ip->i_gh
-      gfs2: Fix mmap + page fault deadlocks for buffered I/O
-      iomap: Fix iomap_dio_rw return value for user copies
-      iomap: Support partial direct I/O on user copy failures
-      iomap: Add done_before argument to iomap_dio_rw
-      gup: Introduce FOLL_NOFAULT flag to disable page faults
-      iov_iter: Introduce nofault flag to disable page faults
-      gfs2: Fix mmap + page fault deadlocks for direct I/O
-
-Bob Peterson (1):
-      gfs2: Introduce flag for glock holder auto-demotion
-
- arch/powerpc/kernel/kvm.c           |   3 +-
- arch/powerpc/kernel/signal_32.c     |   4 +-
- arch/powerpc/kernel/signal_64.c     |   2 +-
- arch/x86/kernel/fpu/signal.c        |   7 +-
- drivers/gpu/drm/armada/armada_gem.c |   7 +-
- fs/btrfs/file.c                     |   7 +-
- fs/btrfs/ioctl.c                    |   5 +-
- fs/erofs/data.c                     |   2 +-
- fs/ext4/file.c                      |   5 +-
- fs/f2fs/file.c                      |   2 +-
- fs/fuse/file.c                      |   2 +-
- fs/gfs2/bmap.c                      |  60 +------
- fs/gfs2/file.c                      | 252 ++++++++++++++++++++++++---
- fs/gfs2/glock.c                     | 330 +++++++++++++++++++++++++++---------
- fs/gfs2/glock.h                     |  20 +++
- fs/gfs2/incore.h                    |   4 +-
- fs/iomap/buffered-io.c              |   2 +-
- fs/iomap/direct-io.c                |  29 +++-
- fs/ntfs/file.c                      |   2 +-
- fs/ntfs3/file.c                     |   2 +-
- fs/xfs/xfs_file.c                   |   6 +-
- fs/zonefs/super.c                   |   4 +-
- include/linux/iomap.h               |  11 +-
- include/linux/mm.h                  |   3 +-
- include/linux/pagemap.h             |  58 +------
- include/linux/uio.h                 |   4 +-
- lib/iov_iter.c                      | 103 ++++++++---
- mm/filemap.c                        |   4 +-
- mm/gup.c                            | 139 ++++++++++++++-
- 29 files changed, 793 insertions(+), 286 deletions(-)
-
+Miklos
