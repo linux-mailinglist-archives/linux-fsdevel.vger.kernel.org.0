@@ -2,162 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FCD2442520
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 02:27:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 512144425B6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 03:47:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229541AbhKBB3s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 1 Nov 2021 21:29:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35642 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbhKBB3r (ORCPT
+        id S231278AbhKBCtr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 1 Nov 2021 22:49:47 -0400
+Received: from smtpbguseast2.qq.com ([54.204.34.130]:49015 "EHLO
+        smtpbguseast2.qq.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231766AbhKBCtq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 1 Nov 2021 21:29:47 -0400
-Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9287BC061714;
-        Mon,  1 Nov 2021 18:27:12 -0700 (PDT)
-Received: by mail-il1-x12b.google.com with SMTP id i12so14135511ila.12;
-        Mon, 01 Nov 2021 18:27:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1A7HDzhjdY5hn/pnJsq/whbXnb304U4AQcYBouiJz5U=;
-        b=gVAfAFQLVbuCYZGlc3nitOWxinUlm2TcBUuG/WlQGM3BrLv5p4TXRDeodF26CWvRzs
-         ZGoGjmKunynS9wI1VaetPAatDYGmGJHYGKakCPE7PdTAGHIowtgrLF8h/wBOMRpSmkCb
-         h/nLqK0DU9zeU/OwhhKE90uSO4CvWpQm9iqyCuXODjos8g2s1kMZesERgRTUZgBZD3hA
-         bQc949JPfUmv2wtymyRRvl4GWMCziqOLyoYioMRGj/UOo0gPWXWfr8aqG3uh3K8MlYYU
-         7i5UGljnYemx6aIldJ5YDFDeSCl9AcggxU81rjZqNGVsyR+s5CPE+VNzSLVbI8Ux/vQ/
-         zeLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1A7HDzhjdY5hn/pnJsq/whbXnb304U4AQcYBouiJz5U=;
-        b=BPP4MAwJJbN55XQ2uUHVoXEAaZhhWTYrWHPiJi1OOnXeiE4EzYGMs0N3EcfgQ01Xcm
-         hyzrcidDfgUy/epJBkbLIrh5RZgP9kJw7aSK3CHZKQdp0NqXzU8OjUoid5/anI1wrBCm
-         G4kjiUxuzgkJvLnv4d1S+b7Pxyv5bGWzpPhB5JlGHzCXx4spYKtw1dXBd94YTx3E2WCo
-         AWuvTTQfEHsMSI9ubEGQMRvxE2wAU9smoMAo6ReSXLIRRa16NSOcVEFS1xGUI1Tz38V0
-         /5GfKlySCtKu47dzafnkIJykmzhoPvGj6CF4HijloCE9ImM56VJjSPF+mxGMD3su2tmU
-         ap9Q==
-X-Gm-Message-State: AOAM532k/lYdwXizavHtzqNSoPe4KWp5t1NMoavObu8aBnSitsNqstno
-        szPgK4RrunHvRN/tV7ox0JvhFfFT6cPx18xgLqg=
-X-Google-Smtp-Source: ABdhPJwJBgI9aj//vf3EJRPnVnyMFDHNeTLdubr4rkK45Z1kExg7tk3zFAbc3ycTSpUCPYjcZYjJcVnOD/l3RuhtfVg=
-X-Received: by 2002:a92:c112:: with SMTP id p18mr18365849ile.52.1635816431697;
- Mon, 01 Nov 2021 18:27:11 -0700 (PDT)
+        Mon, 1 Nov 2021 22:49:46 -0400
+X-QQ-mid: bizesmtp49t1635821222tdyjsnyr
+Received: from localhost.localdomain (unknown [113.200.76.118])
+        by esmtp6.qq.com (ESMTP) with 
+        id ; Tue, 02 Nov 2021 10:47:00 +0800 (CST)
+X-QQ-SSF: 01400000002000C0E000B00C0000000
+X-QQ-FEAT: FXvDfBZI5O7KJUiSdc+ua464MSTTQNnKWcPonMNU3zFtXHzp+Kh89BV4O7IMO
+        IKdIPyi2upu0x3oPBoT34xf1Gybyn6gbdkgfMmqXjVEB5+mVVT5+eWkDrKgMAZIuaVpYLno
+        H+5q9y7Et9gWgypkysypaEn1vxlrtaOZi306waIeXldiqxV7/3nuKy1KkavzO+lAEohEvgx
+        vFnhMcLwaVEmPWyMbJPlKvDciGF/FYrJaMaoB/CRvUA0zamKzqtcOfTnm/bFhPp/Zu/8UTl
+        VSjtfU1kCnL59cvilUPK7xLlsf6+xpHs1O3OXYT3PDorBwzvoom75I5RfxZdqJrosVjaOOG
+        OUmRS7ckgcXx7+8gM+QH+GW2KwnwKte0XOZOz0WVVyzTy3JZaI=
+X-QQ-GoodBg: 2
+From:   Gou Hao <gouhao@uniontech.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jiaofenfang@uniontech.com, willy@infradead.org
+Subject: [PATCH V2] fs: remove fget_many and fput_many interface
+Date:   Tue,  2 Nov 2021 10:46:48 +0800
+Message-Id: <20211102024648.14578-1-gouhao@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20211101060419.4682-1-laoar.shao@gmail.com> <YX/0h7j/nDwoBA+J@alley>
- <CALOAHbA61RyGVzG8SVcNG=0rdqnUCt4AxCKmtuxRnbS_SH=+MQ@mail.gmail.com>
- <YYAPhE9uX7OYTlpv@alley> <CALOAHbAx55AUo3bm8ZepZSZnw7A08cvKPdPyNTf=E_tPqmw5hw@mail.gmail.com>
- <20211101211845.20ff5b2e@gandalf.local.home>
-In-Reply-To: <20211101211845.20ff5b2e@gandalf.local.home>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Tue, 2 Nov 2021 09:26:35 +0800
-Message-ID: <CALOAHbCgaJ83qZVj6qt8tgJBd4ojuLfgSp2Ce7CgzQYshM-amQ@mail.gmail.com>
-Subject: Re: [PATCH v7 00/11] extend task comm from 16 to 24
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Qiang Zhang <qiang.zhang@windriver.com>,
-        robdclark <robdclark@chromium.org>,
-        christian <christian@brauner.io>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        David Miller <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>, Martin Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        john fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        dennis.dalessandro@cornelisnetworks.com,
-        mike.marciniszyn@cornelisnetworks.com, dledford@redhat.com,
-        jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        kbuild test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybgforeign:qybgforeign6
+X-QQ-Bgrelay: 1
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 2, 2021 at 9:18 AM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Tue, 2 Nov 2021 09:09:50 +0800
-> Yafang Shao <laoar.shao@gmail.com> wrote:
->
-> > So if no one against, I will do it in two steps,
-> >
-> > 1. Send the task comm cleanups in a separate patchset named "task comm cleanups"
-> >     This patchset includes patch #1, #2, #4,  #5, #6, #7 and #9.
-> >     Cleaning them up can make it less error prone, and it will be
-> > helpful if we want to extend task comm in the future :)
->
-> Agreed.
->
-> >
-> > 2.  Keep the current comm[16] as-is and introduce a separate pointer
-> > to store kthread's long name
->
-> I'm OK with this. Hopefully more would chime in too.
->
-> >      Now we only care about kthread, so we can put the pointer into a
-> > kthread specific struct.
-> >      For example in the struct kthread, or in kthread->data (which may
-> > conflict with workqueue).
->
-> No, add a new field to the structure. "full_name" or something like that.
-> I'm guessing it should be NULL if the name fits in TASK_COMM_LEN and
-> allocated if the name had to be truncated.
->
-> Do not overload data with this. That will just make things confusing.
-> There's not that many kthreads, where an addition of an 8 byte pointer is
-> going to cause issues.
->
+These two interface were added in 091141a42 commit,
+but now there is no place to call them.
 
-Sure, I will add a new field named "full_name", which only be
-allocated if the kthread's comm is truncated.
+The only user of fput/fget_many() was removed in commit
+62906e89e63b ("io_uring: remove file batch-get optimisation").
 
-> >
-> >      And then dynamically allocate a longer name if it is truncated,
-> > for example,
-> >      __kthread_create_on_node
-> >          len = vsnprintf(name, sizeof(name), namefmt, args);
-> >          if (len >= TASK_COMM_LEN) {
-> >              /* create a longer name */
->
-> And make sure you have it fail the kthread allocation if it fails to
-> allocate.
->
-> >          }
-> >
-> >      And then we modify proc_task_name(), so the user can get
-> > kthread's longer name via /proc/[pid]/comm.
->
-> Agreed.
->
-> >
-> >      And then free the allocated memory when the kthread is destroyed.
->
-> Correct.
->
-> Thanks,
->
-> -- Steve
+A user of get_file_rcu_many() were removed in commit 
+f073531070d2 ("init: add an init_dup helper").
 
+And replace atomic_long_sub/add to atomic_long_dec/inc
+can improve performance.
 
+Here are the test results of unixbench:
 
+Cmd: ./Run -c 64 context1
+
+Without patch:
+System Benchmarks Partial Index              BASELINE       RESULT    INDEX
+Pipe-based Context Switching                   4000.0    2798407.0   6996.0
+                                                                   ========
+System Benchmarks Index Score (Partial Only)                         6996.0
+
+With patch:
+System Benchmarks Partial Index              BASELINE       RESULT    INDEX
+Pipe-based Context Switching                   4000.0    3486268.8   8715.7
+                                                                   ========
+System Benchmarks Index Score (Partial Only)                         8715.7
+
+Signed-off-by: Gou Hao <gouhao@uniontech.com>
+---
+ fs/file.c            | 22 ++++++++--------------
+ fs/file_table.c      |  9 ++-------
+ include/linux/file.h |  2 --
+ include/linux/fs.h   |  4 +---
+ 4 files changed, 11 insertions(+), 26 deletions(-)
+
+diff --git a/fs/file.c b/fs/file.c
+index 8627dacfc..49fbb6313 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -842,7 +842,7 @@ void do_close_on_exec(struct files_struct *files)
+ }
+ 
+ static struct file *__fget_files(struct files_struct *files, unsigned int fd,
+-				 fmode_t mask, unsigned int refs)
++				 fmode_t mask)
+ {
+ 	struct file *file;
+ 
+@@ -856,7 +856,7 @@ loop:
+ 		 */
+ 		if (file->f_mode & mask)
+ 			file = NULL;
+-		else if (!get_file_rcu_many(file, refs))
++		else if (!get_file_rcu(file))
+ 			goto loop;
+ 	}
+ 	rcu_read_unlock();
+@@ -864,26 +864,20 @@ loop:
+ 	return file;
+ }
+ 
+-static inline struct file *__fget(unsigned int fd, fmode_t mask,
+-				  unsigned int refs)
++static inline struct file *__fget(unsigned int fd, fmode_t mask)
+ {
+-	return __fget_files(current->files, fd, mask, refs);
+-}
+-
+-struct file *fget_many(unsigned int fd, unsigned int refs)
+-{
+-	return __fget(fd, FMODE_PATH, refs);
++	return __fget_files(current->files, fd, mask);
+ }
+ 
+ struct file *fget(unsigned int fd)
+ {
+-	return __fget(fd, FMODE_PATH, 1);
++	return __fget(fd, FMODE_PATH);
+ }
+ EXPORT_SYMBOL(fget);
+ 
+ struct file *fget_raw(unsigned int fd)
+ {
+-	return __fget(fd, 0, 1);
++	return __fget(fd, 0);
+ }
+ EXPORT_SYMBOL(fget_raw);
+ 
+@@ -893,7 +887,7 @@ struct file *fget_task(struct task_struct *task, unsigned int fd)
+ 
+ 	task_lock(task);
+ 	if (task->files)
+-		file = __fget_files(task->files, fd, 0, 1);
++		file = __fget_files(task->files, fd, 0);
+ 	task_unlock(task);
+ 
+ 	return file;
+@@ -962,7 +956,7 @@ static unsigned long __fget_light(unsigned int fd, fmode_t mask)
+ 			return 0;
+ 		return (unsigned long)file;
+ 	} else {
+-		file = __fget(fd, mask, 1);
++		file = __fget(fd, mask);
+ 		if (!file)
+ 			return 0;
+ 		return FDPUT_FPUT | (unsigned long)file;
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 45437f8e1..10781a901 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -331,9 +331,9 @@ EXPORT_SYMBOL_GPL(flush_delayed_fput);
+ 
+ static DECLARE_DELAYED_WORK(delayed_fput_work, delayed_fput);
+ 
+-void fput_many(struct file *file, unsigned int refs)
++void fput(struct file *file)
+ {
+-	if (atomic_long_sub_and_test(refs, &file->f_count)) {
++	if (atomic_long_dec_and_test(&file->f_count)) {
+ 		struct task_struct *task = current;
+ 
+ 		if (likely(!in_interrupt() && !(task->flags & PF_KTHREAD))) {
+@@ -352,11 +352,6 @@ void fput_many(struct file *file, unsigned int refs)
+ 	}
+ }
+ 
+-void fput(struct file *file)
+-{
+-	fput_many(file, 1);
+-}
+-
+ /*
+  * synchronous analog of fput(); for kernel threads that might be needed
+  * in some umount() (and thus can't use flush_delayed_fput() without
+diff --git a/include/linux/file.h b/include/linux/file.h
+index 51e830b4f..39704eae8 100644
+--- a/include/linux/file.h
++++ b/include/linux/file.h
+@@ -14,7 +14,6 @@
+ struct file;
+ 
+ extern void fput(struct file *);
+-extern void fput_many(struct file *, unsigned int);
+ 
+ struct file_operations;
+ struct task_struct;
+@@ -47,7 +46,6 @@ static inline void fdput(struct fd fd)
+ }
+ 
+ extern struct file *fget(unsigned int fd);
+-extern struct file *fget_many(unsigned int fd, unsigned int refs);
+ extern struct file *fget_raw(unsigned int fd);
+ extern struct file *fget_task(struct task_struct *task, unsigned int fd);
+ extern unsigned long __fdget(unsigned int fd);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e7a633353..600470c2c 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1015,9 +1015,7 @@ static inline struct file *get_file(struct file *f)
+ 	atomic_long_inc(&f->f_count);
+ 	return f;
+ }
+-#define get_file_rcu_many(x, cnt)	\
+-	atomic_long_add_unless(&(x)->f_count, (cnt), 0)
+-#define get_file_rcu(x) get_file_rcu_many((x), 1)
++#define get_file_rcu(x) atomic_long_inc_not_zero(&(x)->f_count)
+ #define file_count(x)	atomic_long_read(&(x)->f_count)
+ 
+ #define	MAX_NON_LFS	((1UL<<31) - 1)
 -- 
-Thanks
-Yafang
+2.20.1
+
+
+
