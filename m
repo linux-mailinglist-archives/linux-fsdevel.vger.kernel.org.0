@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69991442DE9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 13:30:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB2CF442DF3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  2 Nov 2021 13:30:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231450AbhKBMco (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Nov 2021 08:32:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35663 "EHLO
+        id S231475AbhKBMcz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 2 Nov 2021 08:32:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:24669 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231365AbhKBMck (ORCPT
+        by vger.kernel.org with ESMTP id S231527AbhKBMcp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Nov 2021 08:32:40 -0400
+        Tue, 2 Nov 2021 08:32:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635856205;
+        s=mimecast20190719; t=1635856210;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=XLXPjjXDAuVKKqW9A/ea/TopU4i5oW+qzBR9Wsv36NI=;
-        b=G4GmVGmYdeNG/5lWRoS0kZWAo/V+JAznZm75+9ePquKiONJGL77P4GQ0VO9v2HvnbZxoAI
-        EqZoYYr0dZCpsq3RBiQycFUN5ZQGpg9b01hYf3/fVaoGFekFcAcUrMOhUNY8rJ6BbPXBYC
-        z6T0Jiql7eDJ6fNlUNwSHIqcZQ/5Olo=
+        bh=/UbEKOEjuEBf0ESv+4xLl4syhrRMqk6/DeGkUllIat0=;
+        b=F7e9ZF4w+k8Ci2utLhPo2qeD9H7JiGpoPljutQleMVyMPz19aHaoNVlbwJOHzugMnURUks
+        bNGLmDKHp7eGtcioPSKMUIhhY+CBSzXhgR1Uqj129cwD2ZfkLQC9yHrUPAMVVgz/z3+E+5
+        CY2q/5S9f506FvkM8bL8VFBc+PLWg+I=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-313-XU5f8vvmMg-YEIm9-mvN4g-1; Tue, 02 Nov 2021 08:30:03 -0400
-X-MC-Unique: XU5f8vvmMg-YEIm9-mvN4g-1
+ us-mta-70-_GbDSNK3MYyEn1lSYl_MOw-1; Tue, 02 Nov 2021 08:30:07 -0400
+X-MC-Unique: _GbDSNK3MYyEn1lSYl_MOw-1
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CDFDE50750;
-        Tue,  2 Nov 2021 12:30:01 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 599E880A5C0;
+        Tue,  2 Nov 2021 12:30:05 +0000 (UTC)
 Received: from max.localdomain (unknown [10.40.195.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A3F4E19811;
-        Tue,  2 Nov 2021 12:29:58 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3276819811;
+        Tue,  2 Nov 2021 12:30:02 +0000 (UTC)
 From:   Andreas Gruenbacher <agruenba@redhat.com>
 To:     cluster-devel@redhat.com
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -47,9 +47,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         ocfs2-devel@oss.oracle.com, kvm-ppc@vger.kernel.org,
         linux-btrfs@vger.kernel.org,
         Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH v9 03/17] gup: Turn fault_in_pages_{readable,writeable} into fault_in_{readable,writeable}
-Date:   Tue,  2 Nov 2021 13:29:31 +0100
-Message-Id: <20211102122945.117744-4-agruenba@redhat.com>
+Subject: [PATCH v9 04/17] iov_iter: Turn iov_iter_fault_in_readable into fault_in_iov_iter_readable
+Date:   Tue,  2 Nov 2021 13:29:32 +0100
+Message-Id: <20211102122945.117744-5-agruenba@redhat.com>
 In-Reply-To: <20211102122945.117744-1-agruenba@redhat.com>
 References: <20211102122945.117744-1-agruenba@redhat.com>
 MIME-Version: 1.0
@@ -59,352 +59,191 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Turn fault_in_pages_{readable,writeable} into versions that return the
-number of bytes not faulted in, similar to copy_to_user, instead of
-returning a non-zero value when any of the requested pages couldn't be
-faulted in.  This supports the existing users that require all pages to
-be faulted in as well as new users that are happy if any pages can be
-faulted in.
+Turn iov_iter_fault_in_readable into a function that returns the number
+of bytes not faulted in, similar to copy_to_user, instead of returning a
+non-zero value when any of the requested pages couldn't be faulted in.
+This supports the existing users that require all pages to be faulted in
+as well as new users that are happy if any pages can be faulted in.
 
-Rename the functions to fault_in_{readable,writeable} to make sure
-this change doesn't silently break things.
-
-Neither of these functions is entirely trivial and it doesn't seem
-useful to inline them, so move them to mm/gup.c.
+Rename iov_iter_fault_in_readable to fault_in_iov_iter_readable to make
+sure this change doesn't silently break things.
 
 Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 ---
- arch/powerpc/kernel/kvm.c           |  3 +-
- arch/powerpc/kernel/signal_32.c     |  4 +-
- arch/powerpc/kernel/signal_64.c     |  2 +-
- arch/x86/kernel/fpu/signal.c        |  7 ++-
- drivers/gpu/drm/armada/armada_gem.c |  7 ++-
- fs/btrfs/ioctl.c                    |  5 +-
- include/linux/pagemap.h             | 57 ++---------------------
- lib/iov_iter.c                      | 10 ++--
- mm/filemap.c                        |  2 +-
- mm/gup.c                            | 72 +++++++++++++++++++++++++++++
- 10 files changed, 93 insertions(+), 76 deletions(-)
+ fs/btrfs/file.c        |  2 +-
+ fs/f2fs/file.c         |  2 +-
+ fs/fuse/file.c         |  2 +-
+ fs/iomap/buffered-io.c |  2 +-
+ fs/ntfs/file.c         |  2 +-
+ fs/ntfs3/file.c        |  2 +-
+ include/linux/uio.h    |  2 +-
+ lib/iov_iter.c         | 33 +++++++++++++++++++++------------
+ mm/filemap.c           |  2 +-
+ 9 files changed, 29 insertions(+), 20 deletions(-)
 
-diff --git a/arch/powerpc/kernel/kvm.c b/arch/powerpc/kernel/kvm.c
-index d89cf802d9aa..6568823cf306 100644
---- a/arch/powerpc/kernel/kvm.c
-+++ b/arch/powerpc/kernel/kvm.c
-@@ -669,7 +669,8 @@ static void __init kvm_use_magic_page(void)
- 	on_each_cpu(kvm_map_magic_page, &features, 1);
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 7ff577005d0f..f37211d3bb69 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -1710,7 +1710,7 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
+ 		 * Fault pages before locking them in prepare_pages
+ 		 * to avoid recursive lock
+ 		 */
+-		if (unlikely(iov_iter_fault_in_readable(i, write_bytes))) {
++		if (unlikely(fault_in_iov_iter_readable(i, write_bytes))) {
+ 			ret = -EFAULT;
+ 			break;
+ 		}
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 9c8ef33bd8d3..eb971e1e7227 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4276,7 +4276,7 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		size_t target_size = 0;
+ 		int err;
  
- 	/* Quick self-test to see if the mapping works */
--	if (fault_in_pages_readable((const char *)KVM_MAGIC_PAGE, sizeof(u32))) {
-+	if (fault_in_readable((const char __user *)KVM_MAGIC_PAGE,
-+			      sizeof(u32))) {
- 		kvm_patching_worked = false;
- 		return;
- 	}
-diff --git a/arch/powerpc/kernel/signal_32.c b/arch/powerpc/kernel/signal_32.c
-index 0608581967f0..38c3eae40c14 100644
---- a/arch/powerpc/kernel/signal_32.c
-+++ b/arch/powerpc/kernel/signal_32.c
-@@ -1048,7 +1048,7 @@ SYSCALL_DEFINE3(swapcontext, struct ucontext __user *, old_ctx,
- 	if (new_ctx == NULL)
- 		return 0;
- 	if (!access_ok(new_ctx, ctx_size) ||
--	    fault_in_pages_readable((u8 __user *)new_ctx, ctx_size))
-+	    fault_in_readable((char __user *)new_ctx, ctx_size))
- 		return -EFAULT;
+-		if (iov_iter_fault_in_readable(from, iov_iter_count(from)))
++		if (fault_in_iov_iter_readable(from, iov_iter_count(from)))
+ 			set_inode_flag(inode, FI_NO_PREALLOC);
  
- 	/*
-@@ -1237,7 +1237,7 @@ SYSCALL_DEFINE3(debug_setcontext, struct ucontext __user *, ctx,
- #endif
+ 		if ((iocb->ki_flags & IOCB_NOWAIT)) {
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 11404f8c21c7..4b6d8e13322d 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1164,7 +1164,7 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
  
- 	if (!access_ok(ctx, sizeof(*ctx)) ||
--	    fault_in_pages_readable((u8 __user *)ctx, sizeof(*ctx)))
-+	    fault_in_readable((char __user *)ctx, sizeof(*ctx)))
- 		return -EFAULT;
- 
- 	/*
-diff --git a/arch/powerpc/kernel/signal_64.c b/arch/powerpc/kernel/signal_64.c
-index 1831bba0582e..9f471b4a11e3 100644
---- a/arch/powerpc/kernel/signal_64.c
-+++ b/arch/powerpc/kernel/signal_64.c
-@@ -688,7 +688,7 @@ SYSCALL_DEFINE3(swapcontext, struct ucontext __user *, old_ctx,
- 	if (new_ctx == NULL)
- 		return 0;
- 	if (!access_ok(new_ctx, ctx_size) ||
--	    fault_in_pages_readable((u8 __user *)new_ctx, ctx_size))
-+	    fault_in_readable((char __user *)new_ctx, ctx_size))
- 		return -EFAULT;
- 
- 	/*
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index fa17a27390ab..164c96434704 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -205,7 +205,7 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
- 	fpregs_unlock();
- 
- 	if (ret) {
--		if (!fault_in_pages_writeable(buf_fx, fpu_user_xstate_size))
-+		if (!fault_in_writeable(buf_fx, fpu_user_xstate_size))
- 			goto retry;
- 		return -EFAULT;
- 	}
-@@ -278,10 +278,9 @@ static int restore_fpregs_from_user(void __user *buf, u64 xrestore,
- 		if (ret != -EFAULT)
- 			return -EINVAL;
- 
--		ret = fault_in_pages_readable(buf, size);
--		if (!ret)
-+		if (!fault_in_readable(buf, size))
- 			goto retry;
--		return ret;
-+		return -EFAULT;
- 	}
- 
- 	/*
-diff --git a/drivers/gpu/drm/armada/armada_gem.c b/drivers/gpu/drm/armada/armada_gem.c
-index 21909642ee4c..8fbb25913327 100644
---- a/drivers/gpu/drm/armada/armada_gem.c
-+++ b/drivers/gpu/drm/armada/armada_gem.c
-@@ -336,7 +336,7 @@ int armada_gem_pwrite_ioctl(struct drm_device *dev, void *data,
- 	struct drm_armada_gem_pwrite *args = data;
- 	struct armada_gem_object *dobj;
- 	char __user *ptr;
--	int ret;
-+	int ret = 0;
- 
- 	DRM_DEBUG_DRIVER("handle %u off %u size %u ptr 0x%llx\n",
- 		args->handle, args->offset, args->size, args->ptr);
-@@ -349,9 +349,8 @@ int armada_gem_pwrite_ioctl(struct drm_device *dev, void *data,
- 	if (!access_ok(ptr, args->size))
- 		return -EFAULT;
- 
--	ret = fault_in_pages_readable(ptr, args->size);
--	if (ret)
--		return ret;
-+	if (fault_in_readable(ptr, args->size))
-+		return -EFAULT;
- 
- 	dobj = armada_gem_object_lookup(file, args->handle);
- 	if (dobj == NULL)
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index cc61813213d8..c0739f0af634 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -2261,9 +2261,8 @@ static noinline int search_ioctl(struct inode *inode,
- 	key.offset = sk->min_offset;
- 
- 	while (1) {
--		ret = fault_in_pages_writeable(ubuf + sk_offset,
--					       *buf_size - sk_offset);
--		if (ret)
-+		ret = -EFAULT;
-+		if (fault_in_writeable(ubuf + sk_offset, *buf_size - sk_offset))
+  again:
+ 		err = -EFAULT;
+-		if (iov_iter_fault_in_readable(ii, bytes))
++		if (fault_in_iov_iter_readable(ii, bytes))
  			break;
  
- 		ret = btrfs_search_forward(root, &key, path, sk->min_transid);
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 62db6b0176b9..9fe94f7a4f7e 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -733,61 +733,10 @@ int wait_on_page_private_2_killable(struct page *page);
- extern void add_page_wait_queue(struct page *page, wait_queue_entry_t *waiter);
+ 		err = -ENOMEM;
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 9cc5798423d1..1753c26c8e76 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -750,7 +750,7 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+ 		 * same page as we're writing to, without it being marked
+ 		 * up-to-date.
+ 		 */
+-		if (unlikely(iov_iter_fault_in_readable(i, bytes))) {
++		if (unlikely(fault_in_iov_iter_readable(i, bytes))) {
+ 			status = -EFAULT;
+ 			break;
+ 		}
+diff --git a/fs/ntfs/file.c b/fs/ntfs/file.c
+index ab4f3362466d..a43adeacd930 100644
+--- a/fs/ntfs/file.c
++++ b/fs/ntfs/file.c
+@@ -1829,7 +1829,7 @@ static ssize_t ntfs_perform_write(struct file *file, struct iov_iter *i,
+ 		 * pages being swapped out between us bringing them into memory
+ 		 * and doing the actual copying.
+ 		 */
+-		if (unlikely(iov_iter_fault_in_readable(i, bytes))) {
++		if (unlikely(fault_in_iov_iter_readable(i, bytes))) {
+ 			status = -EFAULT;
+ 			break;
+ 		}
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index 424450e77ad5..a52388387175 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -987,7 +987,7 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
+ 		frame_vbo = pos & ~(frame_size - 1);
+ 		index = frame_vbo >> PAGE_SHIFT;
  
- /*
-- * Fault everything in given userspace address range in.
-+ * Fault in userspace address range.
-  */
--static inline int fault_in_pages_writeable(char __user *uaddr, size_t size)
--{
--	char __user *end = uaddr + size - 1;
--
--	if (unlikely(size == 0))
--		return 0;
--
--	if (unlikely(uaddr > end))
--		return -EFAULT;
--	/*
--	 * Writing zeroes into userspace here is OK, because we know that if
--	 * the zero gets there, we'll be overwriting it.
--	 */
--	do {
--		if (unlikely(__put_user(0, uaddr) != 0))
--			return -EFAULT;
--		uaddr += PAGE_SIZE;
--	} while (uaddr <= end);
--
--	/* Check whether the range spilled into the next page. */
--	if (((unsigned long)uaddr & PAGE_MASK) ==
--			((unsigned long)end & PAGE_MASK))
--		return __put_user(0, end);
--
--	return 0;
--}
--
--static inline int fault_in_pages_readable(const char __user *uaddr, size_t size)
--{
--	volatile char c;
--	const char __user *end = uaddr + size - 1;
--
--	if (unlikely(size == 0))
--		return 0;
--
--	if (unlikely(uaddr > end))
--		return -EFAULT;
--
--	do {
--		if (unlikely(__get_user(c, uaddr) != 0))
--			return -EFAULT;
--		uaddr += PAGE_SIZE;
--	} while (uaddr <= end);
--
--	/* Check whether the range spilled into the next page. */
--	if (((unsigned long)uaddr & PAGE_MASK) ==
--			((unsigned long)end & PAGE_MASK)) {
--		return __get_user(c, end);
--	}
--
--	(void)c;
--	return 0;
--}
-+size_t fault_in_writeable(char __user *uaddr, size_t size);
-+size_t fault_in_readable(const char __user *uaddr, size_t size);
- 
- int add_to_page_cache_locked(struct page *page, struct address_space *mapping,
- 				pgoff_t index, gfp_t gfp_mask);
+-		if (unlikely(iov_iter_fault_in_readable(from, bytes))) {
++		if (unlikely(fault_in_iov_iter_readable(from, bytes))) {
+ 			err = -EFAULT;
+ 			goto out;
+ 		}
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 207101a9c5c3..d18458af6681 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -133,7 +133,7 @@ size_t copy_page_from_iter_atomic(struct page *page, unsigned offset,
+ 				  size_t bytes, struct iov_iter *i);
+ void iov_iter_advance(struct iov_iter *i, size_t bytes);
+ void iov_iter_revert(struct iov_iter *i, size_t bytes);
+-int iov_iter_fault_in_readable(const struct iov_iter *i, size_t bytes);
++size_t fault_in_iov_iter_readable(const struct iov_iter *i, size_t bytes);
+ size_t iov_iter_single_seg_count(const struct iov_iter *i);
+ size_t copy_page_to_iter(struct page *page, size_t offset, size_t bytes,
+ 			 struct iov_iter *i);
 diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 60b5e6edfbaa..c88908f0f138 100644
+index c88908f0f138..ce3d4f610626 100644
 --- a/lib/iov_iter.c
 +++ b/lib/iov_iter.c
-@@ -191,7 +191,7 @@ static size_t copy_page_to_iter_iovec(struct page *page, size_t offset, size_t b
- 	buf = iov->iov_base + skip;
- 	copy = min(bytes, iov->iov_len - skip);
+@@ -430,33 +430,42 @@ static size_t copy_page_to_iter_pipe(struct page *page, size_t offset, size_t by
+ }
  
--	if (IS_ENABLED(CONFIG_HIGHMEM) && !fault_in_pages_writeable(buf, copy)) {
-+	if (IS_ENABLED(CONFIG_HIGHMEM) && !fault_in_writeable(buf, copy)) {
- 		kaddr = kmap_atomic(page);
- 		from = kaddr + offset;
+ /*
++ * fault_in_iov_iter_readable - fault in iov iterator for reading
++ * @i: iterator
++ * @size: maximum length
++ *
+  * Fault in one or more iovecs of the given iov_iter, to a maximum length of
+- * bytes.  For each iovec, fault in each page that constitutes the iovec.
++ * @size.  For each iovec, fault in each page that constitutes the iovec.
++ *
++ * Returns the number of bytes not faulted in (like copy_to_user() and
++ * copy_from_user()).
+  *
+- * Return 0 on success, or non-zero if the memory could not be accessed (i.e.
+- * because it is an invalid address).
++ * Always returns 0 for non-userspace iterators.
+  */
+-int iov_iter_fault_in_readable(const struct iov_iter *i, size_t bytes)
++size_t fault_in_iov_iter_readable(const struct iov_iter *i, size_t size)
+ {
+ 	if (iter_is_iovec(i)) {
++		size_t count = min(size, iov_iter_count(i));
+ 		const struct iovec *p;
+ 		size_t skip;
  
-@@ -275,7 +275,7 @@ static size_t copy_page_from_iter_iovec(struct page *page, size_t offset, size_t
- 	buf = iov->iov_base + skip;
- 	copy = min(bytes, iov->iov_len - skip);
- 
--	if (IS_ENABLED(CONFIG_HIGHMEM) && !fault_in_pages_readable(buf, copy)) {
-+	if (IS_ENABLED(CONFIG_HIGHMEM) && !fault_in_readable(buf, copy)) {
- 		kaddr = kmap_atomic(page);
- 		to = kaddr + offset;
- 
-@@ -446,13 +446,11 @@ int iov_iter_fault_in_readable(const struct iov_iter *i, size_t bytes)
- 			bytes = i->count;
- 		for (p = i->iov, skip = i->iov_offset; bytes; p++, skip = 0) {
- 			size_t len = min(bytes, p->iov_len - skip);
--			int err;
+-		if (bytes > i->count)
+-			bytes = i->count;
+-		for (p = i->iov, skip = i->iov_offset; bytes; p++, skip = 0) {
+-			size_t len = min(bytes, p->iov_len - skip);
++		size -= count;
++		for (p = i->iov, skip = i->iov_offset; count; p++, skip = 0) {
++			size_t len = min(count, p->iov_len - skip);
++			size_t ret;
  
  			if (unlikely(!len))
  				continue;
--			err = fault_in_pages_readable(p->iov_base + skip, len);
--			if (unlikely(err))
--				return err;
-+			if (fault_in_readable(p->iov_base + skip, len))
-+				return -EFAULT;
- 			bytes -= len;
+-			if (fault_in_readable(p->iov_base + skip, len))
+-				return -EFAULT;
+-			bytes -= len;
++			ret = fault_in_readable(p->iov_base + skip, len);
++			count -= len - ret;
++			if (ret)
++				break;
  		}
++		return count + size;
  	}
+ 	return 0;
+ }
+-EXPORT_SYMBOL(iov_iter_fault_in_readable);
++EXPORT_SYMBOL(fault_in_iov_iter_readable);
+ 
+ void iov_iter_init(struct iov_iter *i, unsigned int direction,
+ 			const struct iovec *iov, unsigned long nr_segs,
 diff --git a/mm/filemap.c b/mm/filemap.c
-index dae481293b5d..ff34f4087f87 100644
+index ff34f4087f87..4dd5edcd39fd 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -90,7 +90,7 @@
-  *      ->lock_page		(filemap_fault, access_process_vm)
-  *
-  *  ->i_rwsem			(generic_perform_write)
-- *    ->mmap_lock		(fault_in_pages_readable->do_page_fault)
-+ *    ->mmap_lock		(fault_in_readable->do_page_fault)
-  *
-  *  bdi->wb.list_lock
-  *    sb_lock			(fs/fs-writeback.c)
-diff --git a/mm/gup.c b/mm/gup.c
-index 886d6148d3d0..a7efb027d6cf 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1656,6 +1656,78 @@ static long __get_user_pages_locked(struct mm_struct *mm, unsigned long start,
- }
- #endif /* !CONFIG_MMU */
- 
-+/**
-+ * fault_in_writeable - fault in userspace address range for writing
-+ * @uaddr: start of address range
-+ * @size: size of address range
-+ *
-+ * Returns the number of bytes not faulted in (like copy_to_user() and
-+ * copy_from_user()).
-+ */
-+size_t fault_in_writeable(char __user *uaddr, size_t size)
-+{
-+	char __user *start = uaddr, *end;
-+
-+	if (unlikely(size == 0))
-+		return 0;
-+	if (!PAGE_ALIGNED(uaddr)) {
-+		if (unlikely(__put_user(0, uaddr) != 0))
-+			return size;
-+		uaddr = (char __user *)PAGE_ALIGN((unsigned long)uaddr);
-+	}
-+	end = (char __user *)PAGE_ALIGN((unsigned long)start + size);
-+	if (unlikely(end < start))
-+		end = NULL;
-+	while (uaddr != end) {
-+		if (unlikely(__put_user(0, uaddr) != 0))
-+			goto out;
-+		uaddr += PAGE_SIZE;
-+	}
-+
-+out:
-+	if (size > uaddr - start)
-+		return size - (uaddr - start);
-+	return 0;
-+}
-+EXPORT_SYMBOL(fault_in_writeable);
-+
-+/**
-+ * fault_in_readable - fault in userspace address range for reading
-+ * @uaddr: start of user address range
-+ * @size: size of user address range
-+ *
-+ * Returns the number of bytes not faulted in (like copy_to_user() and
-+ * copy_from_user()).
-+ */
-+size_t fault_in_readable(const char __user *uaddr, size_t size)
-+{
-+	const char __user *start = uaddr, *end;
-+	volatile char c;
-+
-+	if (unlikely(size == 0))
-+		return 0;
-+	if (!PAGE_ALIGNED(uaddr)) {
-+		if (unlikely(__get_user(c, uaddr) != 0))
-+			return size;
-+		uaddr = (const char __user *)PAGE_ALIGN((unsigned long)uaddr);
-+	}
-+	end = (const char __user *)PAGE_ALIGN((unsigned long)start + size);
-+	if (unlikely(end < start))
-+		end = NULL;
-+	while (uaddr != end) {
-+		if (unlikely(__get_user(c, uaddr) != 0))
-+			goto out;
-+		uaddr += PAGE_SIZE;
-+	}
-+
-+out:
-+	(void)c;
-+	if (size > uaddr - start)
-+		return size - (uaddr - start);
-+	return 0;
-+}
-+EXPORT_SYMBOL(fault_in_readable);
-+
- /**
-  * get_dump_page() - pin user page in memory while writing it to core dump
-  * @addr: user address
+@@ -3757,7 +3757,7 @@ ssize_t generic_perform_write(struct file *file,
+ 		 * same page as we're writing to, without it being marked
+ 		 * up-to-date.
+ 		 */
+-		if (unlikely(iov_iter_fault_in_readable(i, bytes))) {
++		if (unlikely(fault_in_iov_iter_readable(i, bytes))) {
+ 			status = -EFAULT;
+ 			break;
+ 		}
 -- 
 2.31.1
 
