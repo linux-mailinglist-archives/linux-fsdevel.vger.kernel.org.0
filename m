@@ -2,102 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50974444643
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Nov 2021 17:49:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7E1E444657
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Nov 2021 17:53:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232937AbhKCQwE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Nov 2021 12:52:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34362 "EHLO
+        id S233025AbhKCQ41 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Nov 2021 12:56:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232997AbhKCQwD (ORCPT
+        with ESMTP id S233019AbhKCQ40 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Nov 2021 12:52:03 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94AEBC061714
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Nov 2021 09:49:24 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id k1so3202878ilo.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Nov 2021 09:49:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=RkjMpeIuQ6aVWCs6FPMVIVUmVZwq7aWhwwHDvLPHoTA=;
-        b=KicifnRFUfO4N9gaBjWUeuCchiYARsN8O1co+rO5IPT91uvvueOb0wsNsI11GdxVwJ
-         dr9v6erho2NSiuAeQPjWWXr80/aDVX4ZDGtF2bYMrGeduV8774afaJs3cID0VrxXXw7W
-         JDNCz20doyAvjpa932g4VxBDygv/KK4Hwh9BB6Swam9PLtudLuRnmWMqKFmrCPti0oN6
-         3OZoxOISvBEHzZfHQFfitqzxdyzkjiYvSP50xycioY8b7q/U3fNpFPjIe+8bUg6ZzHGT
-         Rdiyer48xVYTxzp41hAy+B1fxpvmAGO5SZ5uQpOd5wdpNL64m7eSnlE6qoHNEWewrATl
-         tLUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=RkjMpeIuQ6aVWCs6FPMVIVUmVZwq7aWhwwHDvLPHoTA=;
-        b=lA8HCf57Jjtq8cmfqaMzMfL1WVgFDu1/1cEwxjrtrOweskvjS9gH54DRZbbWMe5U3v
-         HaAsCjNIgZjNk1muASx0761mnEhnrRsvOTh6ZWIszjCSZdEoo4PJzm688aXLhby5lmuR
-         3PwVMbOqS5zhkHm4SVZoNIqJamSYqQPJ2eclr6kuyJi8NBD4ojWSjrJPOUNPlE0wpsp9
-         zN4hCRJMGBAEgwGjNwOeQ0S53G5sImBKOgA70FWRASB6Egij8+Ahb+SDlKfS/9byvuuR
-         yAitTVmNBFU6zUqIGA/2dGmsBOrUA7uX/fY+gPqSyrN6Oyt8wxOMO98fjMSn7j97WjR5
-         yRUQ==
-X-Gm-Message-State: AOAM533bfGGA90VtOV5Ftg1ZfcVR0gHUkAOmCoRUQHrbtn9yx3B+kd/k
-        3epGk6eChC/SfSQzg2sLYFMU4diVvV+2XmxKCnI=
-X-Google-Smtp-Source: ABdhPJzDZdGYiXBK4LHoEf4nsJbCPFz0PgWUFSUy6M3Q4PINGqDOM979ILAXeEjz4rLCT609Uhbd5D7Dop6EpQ1n0zc=
-X-Received: by 2002:a05:6e02:1848:: with SMTP id b8mr6349174ilv.299.1635958163970;
- Wed, 03 Nov 2021 09:49:23 -0700 (PDT)
+        Wed, 3 Nov 2021 12:56:26 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F839C061714;
+        Wed,  3 Nov 2021 09:53:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ySf8hnRGgcGBFPw1OqHjYfFXWjAWp6d1U3iHxpW19Ys=; b=ldSzTLqtpw/28nPKVoQb8qdoIl
+        adNO9XYwY4XgBBEak4LtLCfJawj4TSHN1Zs1ixHSOgc9FVO2phfzsIPyw7GhYQHx9Ip/VTlSKHepv
+        9JoeYyoxUB8qpgUiLTH+CFDqvflsyuoCMgCWDQpoOgmRvESUSiaGVSm90mSXGWiG0rQrXPd6eq2n/
+        WS0RM0xU89huiOSx4wU5D5N+09BOBbDCOjPyDYyOQOMcTnikykET90sbRn+DNK8WXwWQDTswR1iTL
+        RUddkojWuOMhQTYIT33jxUp03PILjo25IBZW8Nj6+xtkJ2LboKVAHqbZyfpfKgaj83OHbb/24fWJM
+        1v8+APyA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1miJVt-005rED-HI; Wed, 03 Nov 2021 16:53:25 +0000
+Date:   Wed, 3 Nov 2021 09:53:25 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Jane Chu <jane.chu@oracle.com>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
+        "dave.jiang@intel.com" <dave.jiang@intel.com>,
+        "agk@redhat.com" <agk@redhat.com>,
+        "snitzer@redhat.com" <snitzer@redhat.com>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "ira.weiny@intel.com" <ira.weiny@intel.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "vgoyal@redhat.com" <vgoyal@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
+Subject: Re: [dm-devel] [PATCH 0/6] dax poison recovery with
+ RWF_RECOVERY_DATA flag
+Message-ID: <YYK+hfmB05URYO75@infradead.org>
+References: <20211021001059.438843-1-jane.chu@oracle.com>
+ <YXFPfEGjoUaajjL4@infradead.org>
+ <e89a2b17-3f03-a43e-e0b9-5d2693c3b089@oracle.com>
+ <YXJN4s1HC/Y+KKg1@infradead.org>
+ <2102a2e6-c543-2557-28a2-8b0bdc470855@oracle.com>
+ <YXj2lwrxRxHdr4hb@infradead.org>
+ <CAPcyv4hK18DetEf9+NcDqM5y07Vp-=nhysHJ3JSnKbS-ET2ppw@mail.gmail.com>
 MIME-Version: 1.0
-Reply-To: mrsdaniella.kyle@yandex.com
-Sender: marksmithtinufelix@gmail.com
-Received: by 2002:a05:6638:16ce:0:0:0:0 with HTTP; Wed, 3 Nov 2021 09:49:23
- -0700 (PDT)
-From:   Mrs Daniella Kyle <mrsdaniellakyle6@gmail.com>
-Date:   Wed, 3 Nov 2021 09:49:23 -0700
-X-Google-Sender-Auth: kY5Mgx72WX63GBhVTYyCO1hJNRE
-Message-ID: <CA+EzCkr4+A=h3ZA1jNaO5PpgS4M7LpScPb39OCAVex9JAy9qwA@mail.gmail.com>
-Subject: Re:ATM Visa card compensation, Thanks for your past effort
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4hK18DetEf9+NcDqM5y07Vp-=nhysHJ3JSnKbS-ET2ppw@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Good Day,
+On Tue, Nov 02, 2021 at 09:03:55AM -0700, Dan Williams wrote:
+> > why devices are built to handle them.  It is just the Intel-style
+> > pmem interface to handle them which is completely broken.
+> 
+> No, any media can report checksum / parity errors. NVME also seems to
+> do a poor job with multi-bit ECC errors consumed from DRAM. There is
+> nothing "pmem" or "Intel" specific here.
 
-This message may actually come to you as surprises today, To be very
-honest with you, It is a joyful moment for me and my family right now,
-so therefore am using this opportunity to inform you that have
-successfully move to Vietnam where am currently living with my
-business partner who assisted me to complete the transfer, but due to
-the willingness and acceptance you showed during my pain have decided
-to willingly compensated you and show my gratitude to you with these
-sum of $950,000.00 Nine Hundred and fifty Thousand US Dollars).
+If you do get data corruption from NVMe (which yes can happen despite
+the typical very good UBER rate) you just write over it again.  You
+don't need to magically whack the underlying device.  Same for hard
+drives.
 
-I want you to accept this amount it=E2=80=99s from the bottom of my heart,
-have issued the check and instructed the bank to roll the fund on a
-master card for security reasons, you can use the card to withdraw
-money from any ATM machine worldwide with a maximum of US$10,000 per
-day. My bank account manager said you can receive the card and use it
-anywhere in this global world.
+> > Well, my point is doing recovery from bit errors is by definition not
+> > the fast path.  Which is why I'd rather keep it away from the pmem
+> > read/write fast path, which also happens to be the (much more important)
+> > non-pmem read/write path.
+> 
+> I would expect this interface to be useful outside of pmem as a
+> "failfast" or "try harder to recover" flag for reading over media
+> errors.
 
- Go ahead contact the Global ATM Alliance directly with this below
-information. Email Address:   maastercarddeptme20@yahoo.com
-
-The Company Name: ........... ....... Global Alliance Burkina Faso
-Company Address; ...... 01BP 23 Rue Des Grands Moulins.Ouagadougou, Burkina=
- Faso
-Email Address: ..... [maastercarddeptme20@yahoo.com]
-Name of Manager In charge: Mrs Zoure Gueratou
-
-Presently, I am very busy here in Vietnam because of the investment
-projects which I and my new partner are having at hand, I have given
-instructions to the ATM Visa card office on your behalf to release the
-ATM card which I gave to you as compensation. Therefore feel free and
-get in touch with her and she will send the card and the pin code to
-you in your location in order for you to start withdrawing the
-compensation money without delay.
-
-Let me know as soon you received the card together with the pin code.
-
-Thank you
-Yours Sincerely
-Daniela Angelo Kyle
+Maybe we need to sit down and define useful semantics then?  The problem
+on the write side isn't really that the behavior with the flag is
+undefined, it is more that writes without the flag have horrible
+semantics if they don't just clear the error.
