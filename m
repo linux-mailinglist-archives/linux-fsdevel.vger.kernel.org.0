@@ -2,96 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ADF1443ACA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Nov 2021 02:16:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15974443B01
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Nov 2021 02:26:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232073AbhKCBSf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 2 Nov 2021 21:18:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49314 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231982AbhKCBSe (ORCPT
+        id S233205AbhKCB2h convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Tue, 2 Nov 2021 21:28:37 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:30905 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231219AbhKCB2g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 2 Nov 2021 21:18:34 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DD20C061714
-        for <linux-fsdevel@vger.kernel.org>; Tue,  2 Nov 2021 18:15:59 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id o14so681103pfu.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 02 Nov 2021 18:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Tt4c+HCmkgmidQwqgmKCZfOLXY12bkB9SNOCF2NcB1o=;
-        b=lSNSFe25IYMAeT8CIcXQluTA9wzPmfYqpoE8woQMBo4WqCnaS77gfr2fh1AoakB8Z9
-         xeWcbH1SnWm/fQ5+FFy23dbrwn6ENaigmax3dcDwCD/Q9zg0d2ZSxDM9EsM4LAK+UGTU
-         rF2748mNYFlF4mGZy9X8Vpy5uZS8GEa7cerFRcge4BLJ6lPWzPuPHU7dusDa7fftszKP
-         1quaHDNvobAFkeP/Ic4SKHhXBqkVxsI/eanI48ytay7A4oNmAF+0wSc5S4ySkTzkLIEw
-         623cTHjp/VcgP4W8vCKIqXXOSaVJVE4h2QVgYBWvd/VIwBvxHjuihqAVvGGfSUtXWDgq
-         z4NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Tt4c+HCmkgmidQwqgmKCZfOLXY12bkB9SNOCF2NcB1o=;
-        b=mRIwUEkfrfGhH8mQ8QE4pqomutsh89zXf40Rp++OjTizhuS1fKsNp4dI/HMwlOcCWO
-         8Q+k+JiWfSjtW/zZXvT/l+DY60rcDURfeK48Gf9RzZePaxlrnV23TmOBRVfmqRG3LKB1
-         6kBl8K6UlXD9nEEGaDU/ax5ddf9W5iCy/oXBo7wSmtCJKH3w0RExZHhVlDrtxLwq+myk
-         Pagns1mrY64N9ViJL5Zg+xxJsZMJ6LQ2M7CAZy+fhakFujlU3xtYmxzGnS8XID03lYpZ
-         Cef3MPejilcLqywNlVZoudTzjveRjmo1R3HmuVHnxXlZ/cDKXTDcYYTTIJ71QhXengkQ
-         BitQ==
-X-Gm-Message-State: AOAM530wBtIHZKVeiSXJipehocDU+FYjV4gk9iderAaT8hU19xZqI92A
-        zuFyxq1Rc75MHZE89R+NM57iy7dCJcGmbg==
-X-Google-Smtp-Source: ABdhPJwqqBD3RMnjMvr7zL1EvPl2XS8FyaoubSMiZ6QRDhaG+QQK34N4RGUg11mTpFUE/AW6fjWa1Q==
-X-Received: by 2002:a63:2bd5:: with SMTP id r204mr30593985pgr.407.1635902158899;
-        Tue, 02 Nov 2021 18:15:58 -0700 (PDT)
-Received: from FLYINGPENG-MB0.tencent.com ([103.7.29.30])
-        by smtp.gmail.com with ESMTPSA id na15sm4116862pjb.31.2021.11.02.18.15.57
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 02 Nov 2021 18:15:58 -0700 (PDT)
-From:   Peng Hao <flyingpenghao@gmail.com>
-X-Google-Original-From: Peng Hao <flyingpeng@tencent.com>
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH]  fuse: fix possible write position calculation error
-Date:   Wed,  3 Nov 2021 09:15:27 +0800
-Message-Id: <20211103011527.42711-1-flyingpeng@tencent.com>
-X-Mailer: git-send-email 2.30.1 (Apple Git-130)
+        Tue, 2 Nov 2021 21:28:36 -0400
+Received: from dggeme752-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4HkTVy11MXzcZyC;
+        Wed,  3 Nov 2021 09:21:14 +0800 (CST)
+Received: from dggeme751-chm.china.huawei.com (10.3.19.97) by
+ dggeme752-chm.china.huawei.com (10.3.19.98) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2308.15; Wed, 3 Nov 2021 09:25:58 +0800
+Received: from dggeme751-chm.china.huawei.com ([169.254.210.30]) by
+ dggeme751-chm.china.huawei.com ([169.254.210.30]) with mapi id
+ 15.01.2308.015; Wed, 3 Nov 2021 09:25:58 +0800
+From:   "wangjianjian (C)" <wangjianjian3@huawei.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>
+CC:     "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: RE: [PATCH 02/21] block: Add bio_add_folio()
+Thread-Topic: [PATCH 02/21] block: Add bio_add_folio()
+Thread-Index: AQHXz2GCGZfotygsu0GMr7Q1z+eru6vxBCEA
+Date:   Wed, 3 Nov 2021 01:25:57 +0000
+Message-ID: <d1d037a13796462a968b5de97c459ecc@huawei.com>
+References: <20211101203929.954622-1-willy@infradead.org>
+ <20211101203929.954622-3-willy@infradead.org>
+In-Reply-To: <20211101203929.954622-3-willy@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.108.234.122]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The 'written' that generic_file_direct_write return through
-filemap_write_and_wait_range is not necessarily sequential,
-and its iocb->ki_pos has not been updated.
-
-Signed-off-by: Peng Hao <flyingpeng@tencent.com>
----
- fs/fuse/file.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 26730e699d68..52aaa1fb484d 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1314,14 +1314,12 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		goto out;
+diff --git a/block/bio.c b/block/bio.c
+index 15ab0d6d1c06..0e911c4fb9f2 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1033,6 +1033,28 @@ int bio_add_page(struct bio *bio, struct page *page,  }  EXPORT_SYMBOL(bio_add_page);
  
- 	if (iocb->ki_flags & IOCB_DIRECT) {
--		loff_t pos = iocb->ki_pos;
-+		loff_t pos;
- 		written = generic_file_direct_write(iocb, from);
- 		if (written < 0 || !iov_iter_count(from))
- 			goto out;
- 
--		pos += written;
--
--		written_buffered = fuse_perform_write(iocb, mapping, from, pos);
-+		written_buffered = fuse_perform_write(iocb, mapping, from, pos = iocb->ki_pos);
- 		if (written_buffered < 0) {
- 			err = written_buffered;
- 			goto out;
--- 
-2.27.0
++/**
++ * bio_add_folio - Attempt to add part of a folio to a bio.
++ * @bio: BIO to add to.
++ * @folio: Folio to add.
++ * @len: How many bytes from the folio to add.
++ * @off: First byte in this folio to add.
++ *
++ * Filesystems that use folios can call this function instead of 
++calling
++ * bio_add_page() for each page in the folio.  If @off is bigger than
++ * PAGE_SIZE, this function can create a bio_vec that starts in a page
++ * after the bv_page.  BIOs do not support folios that are 4GiB or larger.
++ *
++ * Return: Whether the addition was successful.
++ */
++bool bio_add_folio(struct bio *bio, struct folio *folio, size_t len,
++		size_t off)
++{
++	if (len > UINT_MAX || off > UINT_MAX)
++		return 0;
++	return bio_add_page(bio, &folio->page, len, off) > 0; }
++
 
+
+Newline.
