@@ -2,44 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A240D443FDA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Nov 2021 11:09:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1021244406A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  3 Nov 2021 12:17:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231623AbhKCKLi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Nov 2021 06:11:38 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:40820 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231338AbhKCKLi (ORCPT
+        id S230462AbhKCLUY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Nov 2021 07:20:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42340 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230291AbhKCLUY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Nov 2021 06:11:38 -0400
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 115AF218B5;
-        Wed,  3 Nov 2021 10:09:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1635934141; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8HGD5RvVZwoEhr+bbkXYrRWnUZwarkL/HucXToSOAbs=;
-        b=IX66hhWVPi9mOYHEdPgcUJCG7A9Il1FwpUsCqdb7Chm+agQYlGRhPNAC1TeBNnyhGP1Gcg
-        LCdV6gZu0V4ddhHcAdYB/iDJTwH7U/gii8Vq5lZ57WcRHPUla32zqLB+B2kpyhAkG5uWR1
-        sAkWKnkLgm+FtW1c95A4PDS50/VwPYU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1635934141;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8HGD5RvVZwoEhr+bbkXYrRWnUZwarkL/HucXToSOAbs=;
-        b=7BjsoI+5w30r2BNvryLHqsy7Q6tJErMo6B81zt7YccGt544T5beFoG2z9rz2IRPq1nl57N
-        pZYkkNgaAz2vHcCw==
-Received: from quack2.suse.cz (unknown [10.163.28.18])
-        by relay2.suse.de (Postfix) with ESMTP id E54C1A3B84;
-        Wed,  3 Nov 2021 10:09:00 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id BDC9C1E0BEA; Wed,  3 Nov 2021 11:09:00 +0100 (CET)
-Date:   Wed, 3 Nov 2021 11:09:00 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Vivek Goyal <vgoyal@redhat.com>,
+        Wed, 3 Nov 2021 07:20:24 -0400
+Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00836C061714;
+        Wed,  3 Nov 2021 04:17:47 -0700 (PDT)
+Received: by mail-il1-x12f.google.com with SMTP id h2so2073282ili.11;
+        Wed, 03 Nov 2021 04:17:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=N6CWlPXCZHmGfkZsvLD13mAwtxT+iLGphnQfenoSF7w=;
+        b=FD7FiUZp/2HxqP6Ff7fRRDrwbtQ1RMV+WAv5q+kTq0KL8LTSW8Zhcan5dkIS5O5YnV
+         jf88ZDUcnNpAgkrVLw7ULJTxQCy4BmwW4pSRQYfjT1iZxWCt8WuDGVAAEUcYIY5roQri
+         3UAsxVGxmErg12EQgyAixHebV9833dGa4aWsEL/oJlaTygwOk319rBv4j34MsSUGK53b
+         ce2rdBs9Cy3BK7p5H4qu9u1d+Qus6IdWWW1T41GLTymqV71dXGRs5PuMaTph6cgvNp3R
+         LhLHYxyCxTpO/yakr75Nhc+yvdrbVS1epLPT6a4tRAsmpvOjEtuvQJyJhv7DmFj6td/B
+         uYeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N6CWlPXCZHmGfkZsvLD13mAwtxT+iLGphnQfenoSF7w=;
+        b=duBMTGMSpiHrwtVXO0d0+Uqrj8o+vEO2yqM2sIZnJic08mSKXjY2ag61vJbbx2ikME
+         ZyarioNqUash1QAO3QcVYwrsQV5ujll45V+DDHhNAuWQ1sLs775IOkvcp7a8+WGFIrbz
+         N7nxmtvlEIVBcgXm5AxgTa7e8x18F3KwUQ6hf5XGMVz86ZM13IQ3nDwMu/TjWUmC2iXJ
+         3LaQE5Pq8GCMcfUcZ2seB7JxpaXi4BSOrLilCrhOfSOdK1+HHRxnQPD0ZiEbsap5zyhk
+         3syn5cpBrjpI86FjI7Mmcd5mTqOCh+UjTvXh+w9KmOFemn2Guu0WlwAZZXoUdoW/O1I8
+         NipQ==
+X-Gm-Message-State: AOAM532fc7Tis2paoGLyIydHLfrNRrD+XmuJf1rKUqGg5F7opFs+nAyW
+        ydd42ftKL0P98twitaanOtfiv4nvyIyNqDdxjLLarHrQ
+X-Google-Smtp-Source: ABdhPJzFVYXNV4Gp/Qk2fMyddtd9mnvaaFcchbsYPDW3RN0QdgSuTMELl+wE49Lq7JIpikdC360GcvJJv6UOBYo3Acg=
+X-Received: by 2002:a05:6e02:19ca:: with SMTP id r10mr30548365ill.319.1635938267350;
+ Wed, 03 Nov 2021 04:17:47 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAOQ4uxieK3KpY7pf0YTKcrNHW7rnTATTDZdK9L4Mqy32cDwV8w@mail.gmail.com>
+ <YXgqRb21hvYyI69D@redhat.com> <CAOQ4uxhpCKK2MYxSmRJYYMEWaHKy5ezyKgxaM+YAKtpjsZkD-g@mail.gmail.com>
+ <YXhIm3mOvPsueWab@redhat.com> <CAO17o20sdKAWQN6w7Oe0Ze06qcK+J=6rrmA_aWGnY__MRVDCKw@mail.gmail.com>
+ <CAOQ4uxhA+f-GZs-6SwNtSYZvSwfsYz4_=8_tWAUqt9s-49bqLw@mail.gmail.com>
+ <20211027132319.GA7873@quack2.suse.cz> <YXm2tAMYwFFVR8g/@redhat.com>
+ <20211102110931.GD12774@quack2.suse.cz> <CAOQ4uxiYQYG8Ta=MNJKpa_0pAPd0MS9PL2r_0ZRD+_TKOw6C7g@mail.gmail.com>
+ <20211103100900.GB20482@quack2.suse.cz>
+In-Reply-To: <20211103100900.GB20482@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 3 Nov 2021 13:17:36 +0200
+Message-ID: <CAOQ4uxjsULgLuOFUYkEePySx6iPXRczgCZMxx8E5ncw=oarLPg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
+To:     Jan Kara <jack@suse.cz>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
         Ioannis Angelakopoulos <iangelak@redhat.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         virtio-fs-list <virtio-fs@redhat.com>,
@@ -47,128 +66,110 @@ Cc:     Jan Kara <jack@suse.cz>, Vivek Goyal <vgoyal@redhat.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Miklos Szeredi <miklos@szeredi.hu>,
         Steve French <sfrench@samba.org>
-Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
-Message-ID: <20211103100900.GB20482@quack2.suse.cz>
-References: <CAOQ4uxieK3KpY7pf0YTKcrNHW7rnTATTDZdK9L4Mqy32cDwV8w@mail.gmail.com>
- <YXgqRb21hvYyI69D@redhat.com>
- <CAOQ4uxhpCKK2MYxSmRJYYMEWaHKy5ezyKgxaM+YAKtpjsZkD-g@mail.gmail.com>
- <YXhIm3mOvPsueWab@redhat.com>
- <CAO17o20sdKAWQN6w7Oe0Ze06qcK+J=6rrmA_aWGnY__MRVDCKw@mail.gmail.com>
- <CAOQ4uxhA+f-GZs-6SwNtSYZvSwfsYz4_=8_tWAUqt9s-49bqLw@mail.gmail.com>
- <20211027132319.GA7873@quack2.suse.cz>
- <YXm2tAMYwFFVR8g/@redhat.com>
- <20211102110931.GD12774@quack2.suse.cz>
- <CAOQ4uxiYQYG8Ta=MNJKpa_0pAPd0MS9PL2r_0ZRD+_TKOw6C7g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxiYQYG8Ta=MNJKpa_0pAPd0MS9PL2r_0ZRD+_TKOw6C7g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 02-11-21 14:54:01, Amir Goldstein wrote:
-> On Tue, Nov 2, 2021 at 1:09 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Wed 27-10-21 16:29:40, Vivek Goyal wrote:
-> > > On Wed, Oct 27, 2021 at 03:23:19PM +0200, Jan Kara wrote:
-> > > > On Wed 27-10-21 08:59:15, Amir Goldstein wrote:
-> > > > > On Tue, Oct 26, 2021 at 10:14 PM Ioannis Angelakopoulos
-> > > > > <iangelak@redhat.com> wrote:
-> > > > > > On Tue, Oct 26, 2021 at 2:27 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > > > > The problem here is that the OPEN event might still be travelling towards the guest in the
-> > > > > > virtqueues and arrives after the guest has already deleted its local inode.
-> > > > > > While the remote event (OPEN) received by the guest is valid, its fsnotify
-> > > > > > subsystem will drop it since the local inode is not there.
-> > > > > >
-> > > > >
-> > > > > I have a feeling that we are mixing issues related to shared server
-> > > > > and remote fsnotify.
+> > > > Hi Jan,
 > > > >
-> > > > I don't think Ioannis was speaking about shared server case here. I think
-> > > > he says that in a simple FUSE remote notification setup we can loose OPEN
-> > > > events (or basically any other) if the inode for which the event happens
-> > > > gets deleted sufficiently early after the event being generated. That seems
-> > > > indeed somewhat unexpected and could be confusing if it happens e.g. for
-> > > > some directory operations.
+> > > > Agreed. That's what Ioannis is trying to say. That some of the remote events
+> > > > can be lost if fuse/guest local inode is unlinked. I think problem exists
+> > > > both for shared and non-shared directory case.
+> > > >
+> > > > With local filesystems we have a control that we can first queue up
+> > > > the event in buffer before we remove local watches. With events travelling
+> > > > from a remote server, there is no such control/synchronization. It can
+> > > > very well happen that events got delayed in the communication path
+> > > > somewhere and local watches went away and now there is no way to
+> > > > deliver those events to the application.
 > > >
-> > > Hi Jan,
+> > > So after thinking for some time about this I have the following question
+> > > about the architecture of this solution: Why do you actually have local
+> > > fsnotify watches at all? They seem to cause quite some trouble... I mean
+> > > cannot we have fsnotify marks only on FUSE server and generate all events
+> > > there? When e.g. file is created from the client, client tells the server
+> > > about creation, the server performs the creation which generates the
+> > > fsnotify event, that is received by the server and forwared back to the
+> > > client which just queues it into notification group's queue for userspace
+> > > to read it.
 > > >
-> > > Agreed. That's what Ioannis is trying to say. That some of the remote events
-> > > can be lost if fuse/guest local inode is unlinked. I think problem exists
-> > > both for shared and non-shared directory case.
+> > > Now with this architecture there's no problem with duplicate events for
+> > > local & server notification marks, similarly there's no problem with lost
+> > > events after inode deletion because events received by the client are
+> > > directly queued into notification queue without any checking whether inode
+> > > is still alive etc. Would this work or am I missing something?
 > > >
-> > > With local filesystems we have a control that we can first queue up
-> > > the event in buffer before we remove local watches. With events travelling
-> > > from a remote server, there is no such control/synchronization. It can
-> > > very well happen that events got delayed in the communication path
-> > > somewhere and local watches went away and now there is no way to
-> > > deliver those events to the application.
 > >
-> > So after thinking for some time about this I have the following question
-> > about the architecture of this solution: Why do you actually have local
-> > fsnotify watches at all? They seem to cause quite some trouble... I mean
-> > cannot we have fsnotify marks only on FUSE server and generate all events
-> > there? When e.g. file is created from the client, client tells the server
-> > about creation, the server performs the creation which generates the
-> > fsnotify event, that is received by the server and forwared back to the
-> > client which just queues it into notification group's queue for userspace
-> > to read it.
+> > What about group #1 that wants mask A and group #2 that wants mask B
+> > events?
 > >
-> > Now with this architecture there's no problem with duplicate events for
-> > local & server notification marks, similarly there's no problem with lost
-> > events after inode deletion because events received by the client are
-> > directly queued into notification queue without any checking whether inode
-> > is still alive etc. Would this work or am I missing something?
-> >
-> 
-> What about group #1 that wants mask A and group #2 that wants mask B
-> events?
-> 
-> Do you propose to maintain separate event queues over the protocol?
-> Attach a "recipient list" to each event?
+> > Do you propose to maintain separate event queues over the protocol?
+> > Attach a "recipient list" to each event?
+>
+> Yes, that was my idea. Essentially when we see group A creates mark on FUSE
+> for path P, we notify server, it will create notification group A on the
+> server (if not already existing - there we need some notification group
+> identifier unique among all clients), and place mark for it on path P. Then
+> the full stream of notification events generated for group A on the server
+> will just be forwarded to the client and inserted into the A's notification
+> queue. IMO this is very simple solution to implement - you just need to
+> forward mark addition / removal events from the client to the server and you
+> forward event stream from the server to the client. Everything else is
+> handled by the fsnotify infrastructure on the server.
+>
+> > I just don't see how this can scale other than:
+> > - Local marks and connectors manage the subscriptions on local machine
+> > - Protocol updates the server with the combined masks for watched objects
+>
+> I agree that depending on the usecase and particular FUSE filesystem
+> performance of this solution may be a concern. OTOH the only additional
+> cost of this solution I can see (compared to all those processes just
+> watching files locally) is the passing of the events from the server to the
+> client. For local FUSE filesystems such as virtiofs this should be rather
+> cheap since you have to do very little processing for each generated event.
+> For filesystems such as sshfs, I can imagine this would be a bigger deal.
+>
+> Also one problem I can see with my proposal is that it will have problems
+> with stuff such as leases - i.e., if the client does not notify the server
+> of the changes quickly but rather batches local operations and tells the
+> server about them only on special occasions. I don't know enough about FUSE
+> filesystems to tell whether this is a frequent problem or not.
+>
+> > I think that the "post-mortem events" issue could be solved by keeping an
+> > S_DEAD fuse inode object in limbo just for the mark.
+> > When a remote server sends FS_IN_IGNORED or FS_DELETE_SELF for
+> > an inode, the fuse client inode can be finally evicted.
+> > I haven't tried to see how hard that would be to implement.
+>
+> Sure, there can be other solutions to this particular problem. I just
+> want to discuss the other architecture to see why we cannot to it in a
+> simple way :).
+>
 
-Yes, that was my idea. Essentially when we see group A creates mark on FUSE
-for path P, we notify server, it will create notification group A on the
-server (if not already existing - there we need some notification group
-identifier unique among all clients), and place mark for it on path P. Then
-the full stream of notification events generated for group A on the server
-will just be forwarded to the client and inserted into the A's notification
-queue. IMO this is very simple solution to implement - you just need to
-forward mark addition / removal events from the client to the server and you
-forward event stream from the server to the client. Everything else is
-handled by the fsnotify infrastructure on the server.
+Fair enough.
 
-> I just don't see how this can scale other than:
-> - Local marks and connectors manage the subscriptions on local machine
-> - Protocol updates the server with the combined masks for watched objects
+Beyond the scalability aspects, I think that a design that exposes the group
+to the remote server and allows to "inject" events to the group queue
+will prevent
+users from useful features going forward.
 
-I agree that depending on the usecase and particular FUSE filesystem
-performance of this solution may be a concern. OTOH the only additional
-cost of this solution I can see (compared to all those processes just
-watching files locally) is the passing of the events from the server to the
-client. For local FUSE filesystems such as virtiofs this should be rather
-cheap since you have to do very little processing for each generated event.
-For filesystems such as sshfs, I can imagine this would be a bigger deal.
+For example, fanotify ignored_mask could be added to a group, even on
+a mount mark, even if the remote server only supports inode marks and it
+would just work.
 
-Also one problem I can see with my proposal is that it will have problems
-with stuff such as leases - i.e., if the client does not notify the server
-of the changes quickly but rather batches local operations and tells the
-server about them only on special occasions. I don't know enough about FUSE
-filesystems to tell whether this is a frequent problem or not.
+Another point of view for the post-mortem events:
+As Miklos once noted and as you wrote above, for cache coherency and leases,
+an async notification queue is not adequate and synchronous notifications are
+too costly, so there needs to be some shared memory solution involving guest
+cache invalidation by host.
 
-> I think that the "post-mortem events" issue could be solved by keeping an
-> S_DEAD fuse inode object in limbo just for the mark.
-> When a remote server sends FS_IN_IGNORED or FS_DELETE_SELF for
-> an inode, the fuse client inode can be finally evicted.
-> I haven't tried to see how hard that would be to implement.
+Suppose said cache invalidation solution would be able to set a variety of
+"dirty" flags, not just one type of dirty or to call in another way -
+an "event mask".
+If that is available, then when a fuse inode gets evicted, the events from the
+"event mask" can be queued before destroying the inode and mark -
+post mortem event issue averted...
 
-Sure, there can be other solutions to this particular problem. I just
-want to discuss the other architecture to see why we cannot to it in a
-simple way :).
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Amir.
