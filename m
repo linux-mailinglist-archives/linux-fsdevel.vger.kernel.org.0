@@ -2,115 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 14CE844555A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Nov 2021 15:32:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C701744561F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Nov 2021 16:15:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230409AbhKDOfT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Nov 2021 10:35:19 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23389 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231129AbhKDOfT (ORCPT
+        id S231340AbhKDPSJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Nov 2021 11:18:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54302 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231265AbhKDPSI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Nov 2021 10:35:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636036360;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OPjgKPP44SXIrxLx8CNgjbtemUL2QQQynBIl4LnWo2g=;
-        b=HhWKadzg/tLnrtT+RskucLhmJhKnJHdP41++LpzMlJ2wiXu4FWBsN+IHAg+ygmt8gWM4eD
-        eH0lXZ94KOabjqsotct2l4uAmECMXUvE7a9y3jRy7sbuDrMBNOYrq+Wdvw2yzUM77v+WGh
-        bxoz6WofEPzCdK+aY+CZyty4urm8a/Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-321-jIvx4JasMH27MVkeYdVBDA-1; Thu, 04 Nov 2021 10:32:37 -0400
-X-MC-Unique: jIvx4JasMH27MVkeYdVBDA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5890F87D548;
-        Thu,  4 Nov 2021 14:32:35 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.144])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 22BD856A94;
-        Thu,  4 Nov 2021 14:32:18 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <YYK4YKCnDyoJx5eW@casper.infradead.org>
-References: <YYK4YKCnDyoJx5eW@casper.infradead.org> <YYKa3bfQZxK5/wDN@casper.infradead.org> <163584174921.4023316.8927114426959755223.stgit@warthog.procyon.org.uk> <163584187452.4023316.500389675405550116.stgit@warthog.procyon.org.uk> <1038257.1635951492@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        devel@lists.orangefs.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] netfs, 9p, afs, ceph: Use folios
+        Thu, 4 Nov 2021 11:18:08 -0400
+Received: from sequoia-grove.ad.secure-endpoints.com (sequoia-grove.secure-endpoints.com [IPv6:2001:470:1f07:f77:70f5:c082:a96a:5685])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4B89C06127A
+        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Nov 2021 08:15:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/relaxed;
+        d=auristor.com; s=MDaemon; r=y; t=1636038928; x=1636643728;
+        i=jaltman@auristor.com; q=dns/txt; h=Message-ID:Date:
+        MIME-Version:User-Agent:Subject:Content-Language:To:Cc:
+        References:From:Organization:In-Reply-To:Content-Type; bh=HwKjf7
+        WHOX86SNs2/b/Tyq0nadJz8ke0RewmsmiZfRo=; b=xFy6Qe/E5PtpTSiBktrR0X
+        HsObfvuryxU/GaG8yfzc2wEc3pWQNSv/9tJNOOBzlkUt7vclA/pJriWzu4t7cLR7
+        SKfVdxeJj9WWrIZ7WEU85w6JrJhhWw6jig5jr27HXVgZPUhesU9YrUA5DNJNTFBV
+        gUwHS9aUxkNYmPT2D8WgQ=
+X-MDAV-Result: clean
+X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 04 Nov 2021 11:15:28 -0400
+Received: by auristor.com (208.125.0.235) (MDaemon PRO v21.5.0) with ESMTPSA id md5001003025231.msg; 
+        Thu, 04 Nov 2021 11:15:28 -0400
+X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Thu, 04 Nov 2021 11:15:28 -0400
+        (not processed: message from trusted or authenticated source)
+X-MDRemoteIP: 50.204.136.171
+X-MDArrival-Date: Thu, 04 Nov 2021 11:15:28 -0400
+X-MDOrigin-Country: US, NA
+X-Authenticated-Sender: jaltman@auristor.com
+X-Return-Path: prvs=194251a06c=jaltman@auristor.com
+X-Envelope-From: jaltman@auristor.com
+X-MDaemon-Deliver-To: linux-fsdevel@vger.kernel.org
+Message-ID: <9924e31b-9f31-bf81-7a10-c95b93e2999e@auristor.com>
+Date:   Thu, 4 Nov 2021 08:15:25 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1760414.1636036338.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 04 Nov 2021 14:32:18 +0000
-Message-ID: <1760415.1636036338@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH] afs: Fix ENOSPC, EDQUOT and other errors to fail a write
+ rather than retrying
+Content-Language: en-US
+To:     "Matthew Wilcox (willy@infradead.org)" <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     marc.dionne@auristor.com, linux-afs@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeff Layton <jlayton@kernel.org>
+References: <163598300034.1327800.8060660349996331911.stgit@warthog.procyon.org.uk>
+ <YYNR2t+RmtFd+bT/@casper.infradead.org>
+From:   Jeffrey E Altman <jaltman@auristor.com>
+Organization: AuriStor, Inc.
+In-Reply-To: <YYNR2t+RmtFd+bT/@casper.infradead.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms050106020304020807070302"
+X-MDCFSigsAdded: auristor.com
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
+This is a cryptographically signed message in MIME format.
 
-> On Wed, Nov 03, 2021 at 02:58:12PM +0000, David Howells wrote:
-> > Matthew Wilcox <willy@infradead.org> wrote:
-> > =
+--------------ms050106020304020807070302
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> > > > +	len =3D (size >=3D start + gran) ? gran : size - start;
-> > > =
+On 11/3/2021 8:22 PM, Matthew Wilcox (willy@infradead.org) wrote:
+> On Wed, Nov 03, 2021 at 11:43:20PM +0000, David Howells wrote:
+>> Currently, at the completion of a storage RPC from writepages, the errors
+>> ENOSPC, EDQUOT, ENOKEY, EACCES, EPERM, EKEYREJECTED and EKEYREVOKED cause
+>> the pages involved to be redirtied and the write to be retried by the VM at
+>> a future time.
+>>
+>> However, this is probably not the right thing to do, and, instead, the
+>> writes should be discarded so that the system doesn't get blocked (though
+>> unmounting will discard the uncommitted writes anyway).
+> umm.  I'm not sure that throwing away the write is the best answer
+> for some of these errors.  Our whole story around error handling in
+> filesystems, the page cache and the VFS is pretty sad, but I don't think
+> that this is the right approach.
+>
+> Ideally, we'd hold onto the writes in the page cache until (eg for ENOSPC
+> / EDQUOT), the user has deleted some files, then retry the writes.
 
-> > > This seems like the most complicated way to write this ... how about=
-:
-> > > =
+Hi Matthew,
 
-> > >         size_t len =3D min_t(loff_t, isize - start, folio_size(folio=
-));
-> > =
+I agree that it would be desirable to avoid discarding user data but in
+practice that is hard to do.  The proposed behavior change is consistent
+with other Unix AFS/AuriStorFS cache manager implementations.   There
+are many situations which can result in an out of quota or out of space
+error where the end user has absolutely no ability to do anything about it.
 
-> > I was trying to hedge against isize-start going negative.  Can this co=
-de race
-> > against truncate?  truncate_setsize() changes i_size *before* invalida=
-ting the
-> > pages.
-> =
+An EDQUOT error might occur because the AFS volume has reached its
+quota.  However, the writer only has insert privilege and cannot
+delete.  The user might not even be able to list the contents of the
+volume.   
 
-> We should check for isize < start separately, and skip the writeback
-> entirely.
+An ENOSPC error might be the result of the backing store for AFS vice
+partitions filling due to data being written to other AFS volumes that
+the writer has no ability to access or manage.
 
-So, something like the following
+AFS cache managers frequently implement write-on-close semantics and
+will flush dirty content to the fileserver only when the file is closed
+or the local cache is out-of-space.   Holding onto dirty data that
+cannot be flushed to the server on a multi-user timeshare system can
+result on unwanted negative impacts on other users of the system.
 
-	static int v9fs_vfs_write_folio_locked(struct folio *folio)
-	{
-		struct inode *inode =3D folio_inode(folio);
-		struct v9fs_inode *v9inode =3D V9FS_I(inode);
-		loff_t start =3D folio_pos(folio);
-		loff_t i_size =3D i_size_read(inode);
-		struct iov_iter from;
-		size_t len =3D folio_size(folio);
-		int err;
+Another risk is that if dirty data persists locally that the
+EDQUOT/ENOSPC errors will be replaced by EACCES or EPERM errors when the
+associated authentication credentials expire.
 
-		if (start >=3D i_size)
-			return 0; /* Simultaneous truncation occurred */
+If a back-off strategy is to be implemented in the future, AFS does
+provide RPCs that can be used to query the volume's online status, the
+maximum quota in one KiB blocks, the blocks in use, the available blocks
+in the partition, and the maximum number of blocks in the partition.  
+Querying RXAFS_GetVolumeStatus or RXYFS_GetVolumeStatus can avoid the
+overhead of issuing a StoreData operation that is likely to fail.
 
-		len =3D min_t(loff_t, i_size - start, len);
+Jeffrey Altman
 
-		iov_iter_xarray(&from, ..., start, len);
-		...
-	}
 
-David
+
+--------------ms050106020304020807070302
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+DGswggXSMIIEuqADAgECAhBAAW0B1qVVQ32wvx2EXYU6MA0GCSqGSIb3DQEBCwUAMDoxCzAJ
+BgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEy
+MB4XDTE5MDkwNTE0MzE0N1oXDTIyMTEwMTE0MzE0N1owcDEvMC0GCgmSJomT8ixkAQETH0Ew
+MTQxMEMwMDAwMDE2RDAxRDZBNTQwMDAwMDQ0NDcxGTAXBgNVBAMTEEplZmZyZXkgRSBBbHRt
+YW4xFTATBgNVBAoTDEF1cmlTdG9yIEluYzELMAkGA1UEBhMCVVMwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQCY1TC9QeWnUgEoJ81FcAVnhGn/AWuzvkYRUG5/ZyXDdaM212e8
+ybCklgSmZweqNdrfaaHXk9vwjpvpD4YWgb07nJ1QBwlvRV/VPAaDdneIygJJWBCzaMVLttKO
+0VimH/I/HUwFBQT2mrktucCEf2qogdi2P+p5nuhnhIUiyZ71Fo43gF6cuXIMV/1rBNIJDuwM
+Q3H8zi6GL0p4mZFZDDKtbYq2l8+MNxFvMrYcLaJqejQNQRBuZVfv0Fq9pOGwNLAk19baIw3U
+xdwx+bGpTtS63Py1/57MQ0W/ZXE/Ocnt1qoDLpJeZIuEBKgMcn5/iN9+Ro5zAuOBEKg34wBS
+8QCTAgMBAAGjggKcMIICmDAOBgNVHQ8BAf8EBAMCBPAwgYQGCCsGAQUFBwEBBHgwdjAwBggr
+BgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVudHJ1c3QuY29tMEIGCCsGAQUF
+BzAChjZodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NlcnRzL3RydXN0aWRjYWEx
+Mi5wN2MwHwYDVR0jBBgwFoAUpHPa72k1inXMoBl7CDL4a4nkQuwwCQYDVR0TBAIwADCCASsG
+A1UdIASCASIwggEeMIIBGgYLYIZIAYb5LwAGAgEwggEJMEoGCCsGAQUFBwIBFj5odHRwczov
+L3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRt
+bDCBugYIKwYBBQUHAgIwga0MgapUaGlzIFRydXN0SUQgQ2VydGlmaWNhdGUgaGFzIGJlZW4g
+aXNzdWVkIGluIGFjY29yZGFuY2Ugd2l0aCBJZGVuVHJ1c3QncyBUcnVzdElEIENlcnRpZmlj
+YXRlIFBvbGljeSBmb3VuZCBhdCBodHRwczovL3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRp
+ZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDBFBgNVHR8EPjA8MDqgOKA2hjRodHRwOi8v
+dmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NybC90cnVzdGlkY2FhMTIuY3JsMB8GA1UdEQQY
+MBaBFGphbHRtYW5AYXVyaXN0b3IuY29tMB0GA1UdDgQWBBR7pHsvL4H5GdzNToI9e5BuzV19
+bzAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAFlm
+JYk4Ff1v/n0foZkv661W4LCRtroBaVykOXetrDDOQNK2N6JdTa146uIZVgBeU+S/0DLvJBKY
+tkUHQ9ovjXJTsuCBmhIIw3YlHoFxbku0wHEpXMdFUHV3tUodFJJKF3MbC8j7dOMkag59/Mdz
+Sjszdvit0av9nTxWs/tRKKtSQQlxtH34TouIke2UgP/Nn901QLOrJYJmtjzVz8DW3IYVxfci
+SBHhbhJTdley5cuEzphELo5NR4gFjBNlxH7G57Hno9+EWILpx302FJMwTgodIBJbXLbPMHou
+xQbOL2anOTUMKO8oH0QdQHCtC7hpgoQa7UJYJxDBI+PRaQ/HObkwggaRMIIEeaADAgECAhEA
++d5Wf8lNDHdw+WAbUtoVOzANBgkqhkiG9w0BAQsFADBKMQswCQYDVQQGEwJVUzESMBAGA1UE
+ChMJSWRlblRydXN0MScwJQYDVQQDEx5JZGVuVHJ1c3QgQ29tbWVyY2lhbCBSb290IENBIDEw
+HhcNMTUwMjE4MjIyNTE5WhcNMjMwMjE4MjIyNTE5WjA6MQswCQYDVQQGEwJVUzESMBAGA1UE
+ChMJSWRlblRydXN0MRcwFQYDVQQDEw5UcnVzdElEIENBIEExMjCCASIwDQYJKoZIhvcNAQEB
+BQADggEPADCCAQoCggEBANGRTTzPCic0kq5L6ZrUJWt5LE/n6tbPXPhGt2Egv7plJMoEpvVJ
+JDqGqDYymaAsd8Hn9ZMAuKUEFdlx5PgCkfu7jL5zgiMNnAFVD9PyrsuF+poqmlxhlQ06sFY2
+hbhQkVVQ00KCNgUzKcBUIvjv04w+fhNPkwGW5M7Ae5K5OGFGwOoRck9GG6MUVKvTNkBw2/vN
+MOd29VGVTtR0tjH5PS5yDXss48Yl1P4hDStO2L4wTsW2P37QGD27//XGN8K6amWB6F2XOgff
+/PmlQjQOORT95PmLkwwvma5nj0AS0CVp8kv0K2RHV7GonllKpFDMT0CkxMQKwoj+tWEWJTiD
+KSsCAwEAAaOCAoAwggJ8MIGJBggrBgEFBQcBAQR9MHswMAYIKwYBBQUHMAGGJGh0dHA6Ly9j
+b21tZXJjaWFsLm9jc3AuaWRlbnRydXN0LmNvbTBHBggrBgEFBQcwAoY7aHR0cDovL3ZhbGlk
+YXRpb24uaWRlbnRydXN0LmNvbS9yb290cy9jb21tZXJjaWFscm9vdGNhMS5wN2MwHwYDVR0j
+BBgwFoAU7UQZwNPwBovupHu+QucmVMiONnYwDwYDVR0TAQH/BAUwAwEB/zCCASAGA1UdIASC
+ARcwggETMIIBDwYEVR0gADCCAQUwggEBBggrBgEFBQcCAjCB9DBFFj5odHRwczovL3NlY3Vy
+ZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDADAgEB
+GoGqVGhpcyBUcnVzdElEIENlcnRpZmljYXRlIGhhcyBiZWVuIGlzc3VlZCBpbiBhY2NvcmRh
+bmNlIHdpdGggSWRlblRydXN0J3MgVHJ1c3RJRCBDZXJ0aWZpY2F0ZSBQb2xpY3kgZm91bmQg
+YXQgaHR0cHM6Ly9zZWN1cmUuaWRlbnRydXN0LmNvbS9jZXJ0aWZpY2F0ZXMvcG9saWN5L3Rz
+L2luZGV4Lmh0bWwwSgYDVR0fBEMwQTA/oD2gO4Y5aHR0cDovL3ZhbGlkYXRpb24uaWRlbnRy
+dXN0LmNvbS9jcmwvY29tbWVyY2lhbHJvb3RjYTEuY3JsMB0GA1UdJQQWMBQGCCsGAQUFBwMC
+BggrBgEFBQcDBDAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0OBBYEFKRz2u9pNYp1zKAZewgy+GuJ
+5ELsMA0GCSqGSIb3DQEBCwUAA4ICAQAN4YKu0vv062MZfg+xMSNUXYKvHwvZIk+6H1pUmivy
+DI4I6A3wWzxlr83ZJm0oGIF6PBsbgKJ/fhyyIzb+vAYFJmyI8I/0mGlc+nIQNuV2XY8cypPo
+VJKgpnzp/7cECXkX8R4NyPtEn8KecbNdGBdEaG4a7AkZ3ujlJofZqYdHxN29tZPdDlZ8fR36
+/mAFeCEq0wOtOOc0Eyhs29+9MIZYjyxaPoTS+l8xLcuYX3RWlirRyH6RPfeAi5kySOEhG1qu
+NHe06QIwpigjyFT6v/vRqoIBr7WpDOSt1VzXPVbSj1PcWBgkwyGKHlQUOuSbHbHcjOD8w8wH
+SDbL+L2he8hNN54doy1e1wJHKmnfb0uBAeISoxRbJnMMWvgAlH5FVrQWlgajeH/6NbYbBSRx
+ALuEOqEQepmJM6qz4oD2sxdq4GMN5adAdYEswkY/o0bRKyFXTD3mdqeRXce0jYQbWm7oapqS
+ZBccFvUgYOrB78tB6c1bxIgaQKRShtWR1zMM0JfqUfD9u8Fg7G5SVO0IG/GcxkSvZeRjhYcb
+TfqF2eAgprpyzLWmdr0mou3bv1Sq4OuBhmTQCnqxAXr4yVTRYHkp5lCvRgeJAme1OTVpVPth
+/O7HJ7VuEP9GOr6kCXCXmjB4P3UJ2oU0NqfoQdcSSSt9hliALnExTEjii20B2nSDojGCAxQw
+ggMQAgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUGA1UEAxMO
+VHJ1c3RJRCBDQSBBMTICEEABbQHWpVVDfbC/HYRdhTowDQYJYIZIAWUDBAIBBQCgggGXMBgG
+CSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIxMTEwNDE1MTUyNVow
+LwYJKoZIhvcNAQkEMSIEIAwFhtC1kfgflF4VVmenOKyuW/dcmWTu2ChogjHZTQkZMF0GCSsG
+AQQBgjcQBDFQME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUGA1UE
+AxMOVHJ1c3RJRCBDQSBBMTICEEABbQHWpVVDfbC/HYRdhTowXwYLKoZIhvcNAQkQAgsxUKBO
+MDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQg
+Q0EgQTEyAhBAAW0B1qVVQ32wvx2EXYU6MGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUDBAEq
+MAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwIC
+AUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEAAfryAC4SQme+
+fJtrxFCsYyHKVSDGqEYmruUk5HKH3Vqs4N7Y8Bz54IRAuALOqPpaKnPPtP4mLa4BqZkZY0v5
+YlKrfERbRELVSQriZP1a02ydYvq9SXCDCE2kYuhSQo3kCxRkqI/6A0/dXaFsfoRxEmInMWAZ
+IEx+iH9gTUM6IMcy2snxosoBPGHNUH9W5xrwMLOdiSEgJR2vNljs3ZvvDij3pSOMusJWQpfA
+VgVD8y9ikLccffW2gMNlHK0zO6t+o0202q3CVXcV6mJl48YUOII1Pst0vUER3/wIH5ouzUID
+rrFU3JNqyxlIRKPb4rhi/B0RNcdU8qOOZEIcFAZ04gAAAAAAAA==
+--------------ms050106020304020807070302--
 
