@@ -2,123 +2,216 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0A33444BC2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Nov 2021 00:43:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33468444CF6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Nov 2021 02:22:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229792AbhKCXqY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 3 Nov 2021 19:46:24 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:38126 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229561AbhKCXqX (ORCPT
+        id S231848AbhKDBYr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 3 Nov 2021 21:24:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37110 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231129AbhKDBYr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 3 Nov 2021 19:46:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1635983026;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=TY3Hzrdo8eAbxokPf+Hgzthrnx4D+WJ0/5UlAdCUFUc=;
-        b=APiF7uycoEBv0IIllGbL9EuRRTU9GbtNpYNBxMejV8uH/09omfzTpP7fdM87YJh2cRxdz8
-        w02JT1Rlxn9b4HqM5m2ASg9N/HHpsjpfiqOSKp6lrhRKPZLuWiXfnYdVjLqeqsnHM41299
-        IhcI7GL1luJscSPkpqSOE0Ow/eScd90=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-331-_5gveUDqMF2UbP-vjO6A3Q-1; Wed, 03 Nov 2021 19:43:45 -0400
-X-MC-Unique: _5gveUDqMF2UbP-vjO6A3Q-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3BF9B8066F4;
-        Wed,  3 Nov 2021 23:43:44 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.144])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 55F9E19C79;
-        Wed,  3 Nov 2021 23:43:21 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] afs: Fix ENOSPC,
- EDQUOT and other errors to fail a write rather than retrying
-From:   David Howells <dhowells@redhat.com>
-To:     marc.dionne@auristor.com
-Cc:     Jeffrey E Altman <jaltman@auristor.com>,
-        linux-afs@lists.infradead.org, dhowells@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 03 Nov 2021 23:43:20 +0000
-Message-ID: <163598300034.1327800.8060660349996331911.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        Wed, 3 Nov 2021 21:24:47 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4495C061714
+        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Nov 2021 18:22:09 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id y1so4511858plk.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Nov 2021 18:22:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eHqAIzV719j9lAkpwSrBfwZkYLTO2TUYbW63qRGOcw8=;
+        b=JcDp7is6r26TrSdZ0q88ZPFszRzkzCKWQuNv8lvraPDM50WH6GhwKYgOTd+Poe0Ofp
+         QiM3HSyb4VpWvdmvy9DS4EXMAwF1O98JlIHepU7K6N1uvq7ZKDEVSF6UMUH7qK0weYfj
+         Zdf9LX/SDC7/oaD+O2O6l8WzEQ8kRkgvi1+ZaxeOIO9pEyhFQizHWDo2TN7bvLisVjw/
+         8zfaxAEbz8xiKC/8jf6PcRpABdpSNl1gUW3XVc1Sw/0YercramVOWNYxhSqZPBrnMzXI
+         oA+tcKwZ3CT+uz6qG4g9D8WmSpaGxCwLLwmqfcm192cSLTDtmHCI5rhoByBpWMdoFfmJ
+         +Xkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eHqAIzV719j9lAkpwSrBfwZkYLTO2TUYbW63qRGOcw8=;
+        b=iEWoEk4JUI1/rIw6ev/Z7B2UbGZdySg/myD/n3DiVHhXu2XrwP0nOl9QuPMNnOePsp
+         312Da1gL8pBIIe4QmjzmhRy7JfVGQhvxR4+jMM6B829MBvkqCG3Zpg11aMiiGIJhv+s9
+         lbMTkd7cGq2eVlzHhxa/dPTf/1x5WxG7Eym203qXrtL1Z0ILuPVV8IURY41J44iNeuFW
+         Y+0Ob3HWn21/fC3pbmfyaQNbjZqrXUczDP21VzJRiw8N3cdJJAZPOMu2sMCEXUUdaSs/
+         istfA78IIs8j5JxihXBFcSEb/7vWdYIUV8CGb28ibZiRN+KSRDZUqWmG8eCnxzI1NeDT
+         zFrw==
+X-Gm-Message-State: AOAM530NsSysoVf4HtJPKhDWaCLNaadqmRxcgPkMidm7cAdJtWXyxMxU
+        oL0UvMBrsHY/SMzWYsZZiDnAWw==
+X-Google-Smtp-Source: ABdhPJx6xhIDWyRA1hCuL+WEEewz3TJLvBAIAp/NDnCi6Iky/USsaRIUt3iyHq1gKN1wqrr1GE5tgw==
+X-Received: by 2002:a17:90a:9501:: with SMTP id t1mr18921689pjo.134.1635988929371;
+        Wed, 03 Nov 2021 18:22:09 -0700 (PDT)
+Received: from localhost.localdomain ([50.39.160.154])
+        by smtp.gmail.com with ESMTPSA id jz24sm2663464pjb.19.2021.11.03.18.22.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Nov 2021 18:22:08 -0700 (PDT)
+From:   Tadeusz Struk <tadeusz.struk@linaro.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Tadeusz Struk <tadeusz.struk@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        syzbot+6055980d041c8ac23307@syzkaller.appspotmail.com
+Subject: [PATCH] io_uring: prevent io_put_identity() from freeing a static identity
+Date:   Wed,  3 Nov 2021 18:21:20 -0700
+Message-Id: <20211104012120.729261-1-tadeusz.struk@linaro.org>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently, at the completion of a storage RPC from writepages, the errors
-ENOSPC, EDQUOT, ENOKEY, EACCES, EPERM, EKEYREJECTED and EKEYREVOKED cause
-the pages involved to be redirtied and the write to be retried by the VM at
-a future time.
+Note: this applies to 5.10 stable only. It doesn't trigger on anything
+above 5.10 as the code there has been substantially reworked. This also
+doesn't apply to any stable kernel below 5.10 afaict.
 
-However, this is probably not the right thing to do, and, instead, the
-writes should be discarded so that the system doesn't get blocked (though
-unmounting will discard the uncommitted writes anyway).
+Syzbot found a bug: KASAN: invalid-free in io_dismantle_req
+https://syzkaller.appspot.com/bug?id=123d9a852fc88ba573ffcb2dbcf4f9576c3b0559
 
-Fix this by making afs_write_back_from_locked_page() call afs_kill_pages()
-instead of afs_redirty_pages() in those cases.
+The test submits bunch of io_uring writes and exits, which then triggers
+uring_task_cancel() and io_put_identity(), which in some corner cases,
+tries to free a static identity. This causes a panic as shown in the
+trace below:
 
-EKEYEXPIRED is left to redirty the pages on the assumption that the caller
-just needs to renew their key.  Unknown errors also do that, though it
-might be better to squelch those too.
+ BUG: KASAN: double-free or invalid-free in kfree+0xd5/0x310
+ CPU: 0 PID: 4618 Comm: repro Not tainted 5.10.76-05281-g4944ec82ebb9-dirty #17
+ Call Trace:
+  dump_stack_lvl+0x1b2/0x21b
+  print_address_description+0x8d/0x3b0
+  kasan_report_invalid_free+0x58/0x130
+  ____kasan_slab_free+0x14b/0x170
+  __kasan_slab_free+0x11/0x20
+  slab_free_freelist_hook+0xcc/0x1a0
+  kfree+0xd5/0x310
+  io_dismantle_req+0x9b0/0xd90
+  io_do_iopoll+0x13a4/0x23e0
+  io_iopoll_try_reap_events+0x116/0x290
+  io_uring_cancel_task_requests+0x197d/0x1ee0
+  io_uring_flush+0x170/0x6d0
+  filp_close+0xb0/0x150
+  put_files_struct+0x1d4/0x350
+  exit_files+0x80/0xa0
+  do_exit+0x6d9/0x2390
+  do_group_exit+0x16a/0x2d0
+  get_signal+0x133e/0x1f80
+  arch_do_signal+0x7b/0x610
+  exit_to_user_mode_prepare+0xaa/0xe0
+  syscall_exit_to_user_mode+0x24/0x40
+  do_syscall_64+0x3d/0x70
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-This can be triggered by the generic/285 xfstest.  The writes can be
-observed in the server logs.  If a write fails with ENOSPC (ie. CODE
-49733403, UAENOSPC) because a file is made really large, e.g.:
+ Allocated by task 4611:
+  ____kasan_kmalloc+0xcd/0x100
+  __kasan_kmalloc+0x9/0x10
+  kmem_cache_alloc_trace+0x208/0x390
+  io_uring_alloc_task_context+0x57/0x550
+  io_uring_add_task_file+0x1f7/0x290
+  io_uring_create+0x2195/0x3490
+  __x64_sys_io_uring_setup+0x1bf/0x280
+  do_syscall_64+0x31/0x70
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Wed Nov 03 23:21:35.794133 2021 [1589] EVENT YFS_SRX_StData CODE 49733403 NAME --UnAuth-- HOST [192.168.1.2]:7001 ID 32766 FID 1048664:0.172306:30364251 UINT64 17592187027456 UINT64 65536 UINT64 17592187092992 UINT64 0
+ The buggy address belongs to the object at ffff88810732b500
+  which belongs to the cache kmalloc-192 of size 192
+ The buggy address is located 88 bytes inside of
+  192-byte region [ffff88810732b500, ffff88810732b5c0)
+ Kernel panic - not syncing: panic_on_warn set ...
 
-this should be seen once and not repeated.
+This issue bisected to this commit:
+commit 186725a80c4e ("io_uring: fix skipping disabling sqo on exec")
 
-Reported-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jeffrey E Altman <jaltman@auristor.com>
-cc: linux-afs@lists.infradead.org
+Simple reverting the offending commit doesn't work as it hits some
+other, related issues like:
+
+/* sqo_dead check is for when this happens after cancellation */
+WARN_ON_ONCE(ctx->sqo_task == current && !ctx->sqo_dead &&
+	     !xa_load(&tctx->xa, (unsigned long)file));
+
+ ------------[ cut here ]------------
+ WARNING: CPU: 1 PID: 5622 at fs/io_uring.c:8960 io_uring_flush+0x5bc/0x6d0
+ Modules linked in:
+ CPU: 1 PID: 5622 Comm: repro Not tainted 5.10.76-05281-g4944ec82ebb9-dirty #16
+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-6.fc35 04/01/2014
+ RIP: 0010:io_uring_flush+0x5bc/0x6d0
+ Call Trace:
+ filp_close+0xb0/0x150
+ put_files_struct+0x1d4/0x350
+ reset_files_struct+0x88/0xa0
+ bprm_execve+0x7f2/0x9f0
+ do_execveat_common+0x46f/0x5d0
+ __x64_sys_execve+0x92/0xb0
+ do_syscall_64+0x31/0x70
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Changing __io_uring_task_cancel() to call io_disable_sqo_submit() directly,
+as the comment suggests, only if __io_uring_files_cancel() is not executed
+seems to fix the issue.
+
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: <io-uring@vger.kernel.org>
+Cc: <linux-fsdevel@vger.kernel.org>
+Cc: <linux-kernel@vger.kernel.org>
+Cc: <stable@vger.kernel.org>
+Reported-by: syzbot+6055980d041c8ac23307@syzkaller.appspotmail.com
+Signed-off-by: Tadeusz Struk <tadeusz.struk@linaro.org>
 ---
+ fs/io_uring.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
- fs/afs/write.c |   14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
-
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 8b1d9c2f6bec..04f3f87b15cb 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -620,22 +620,18 @@ static ssize_t afs_write_back_from_locked_page(struct address_space *mapping,
- 	default:
- 		pr_notice("kAFS: Unexpected error from FS.StoreData %d\n", ret);
- 		fallthrough;
--	case -EACCES:
--	case -EPERM:
--	case -ENOKEY:
- 	case -EKEYEXPIRED:
--	case -EKEYREJECTED:
--	case -EKEYREVOKED:
- 		afs_redirty_pages(wbc, mapping, start, len);
- 		mapping_set_error(mapping, ret);
- 		break;
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 0736487165da..fcf9ffe9b209 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8882,20 +8882,18 @@ void __io_uring_task_cancel(void)
+ 	struct io_uring_task *tctx = current->io_uring;
+ 	DEFINE_WAIT(wait);
+ 	s64 inflight;
++	int canceled = 0;
  
-+	case -EACCES:
-+	case -EPERM:
-+	case -ENOKEY:
-+	case -EKEYREJECTED:
-+	case -EKEYREVOKED:
- 	case -EDQUOT:
- 	case -ENOSPC:
--		afs_redirty_pages(wbc, mapping, start, len);
--		mapping_set_error(mapping, -ENOSPC);
--		break;
+ 	/* make sure overflow events are dropped */
+ 	atomic_inc(&tctx->in_idle);
+ 
+-	/* trigger io_disable_sqo_submit() */
+-	if (tctx->sqpoll)
+-		__io_uring_files_cancel(NULL);
 -
- 	case -EROFS:
- 	case -EIO:
- 	case -EREMOTEIO:
-
+ 	do {
+ 		/* read completions before cancelations */
+ 		inflight = tctx_inflight(tctx);
+ 		if (!inflight)
+ 			break;
+ 		__io_uring_files_cancel(NULL);
++		canceled = 1;
+ 
+ 		prepare_to_wait(&tctx->wait, &wait, TASK_UNINTERRUPTIBLE);
+ 
+@@ -8909,6 +8907,21 @@ void __io_uring_task_cancel(void)
+ 		finish_wait(&tctx->wait, &wait);
+ 	} while (1);
+ 
++	/*
++	 * trigger io_disable_sqo_submit()
++	 * if not already done by __io_uring_files_cancel()
++	 */
++	if (tctx->sqpoll && !canceled) {
++		struct file *file;
++		unsigned long index;
++
++		xa_for_each(&tctx->xa, index, file) {
++			struct io_ring_ctx *ctx = file->private_data;
++
++			io_disable_sqo_submit(ctx);
++		}
++	}
++
+ 	atomic_dec(&tctx->in_idle);
+ 
+ 	io_uring_remove_task_files(tctx);
+-- 
+2.33.1
 
