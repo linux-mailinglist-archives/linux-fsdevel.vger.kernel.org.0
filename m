@@ -2,137 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 36F61444DE5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Nov 2021 05:20:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00218444E28
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Nov 2021 06:19:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229866AbhKDEXS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Nov 2021 00:23:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47914 "EHLO
+        id S230363AbhKDFW1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Nov 2021 01:22:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbhKDEXS (ORCPT
+        with ESMTP id S230011AbhKDFW0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Nov 2021 00:23:18 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBCFCC061714
-        for <linux-fsdevel@vger.kernel.org>; Wed,  3 Nov 2021 21:20:40 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id s5so4629698pfg.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 03 Nov 2021 21:20:40 -0700 (PDT)
+        Thu, 4 Nov 2021 01:22:26 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16215C061714;
+        Wed,  3 Nov 2021 22:19:49 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id q203so5479390iod.12;
+        Wed, 03 Nov 2021 22:19:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=KUODgu3W4FcAvayfaJlfGS9hr1Jt/95YZDXl59Il7DU=;
-        b=CsghQpHWIiv5MGiO1rC46d7NF245fDoL78JMHz6hkeVvjG8/Qi+MOSKm3PwyExJTBE
-         1ztvP2uInLeq/GciGhijezE6oZiKuC5qNqVn5EI3MvpQwaW9GPHdDzndvELq+wJg4Yz6
-         WSRPySKhS2rxLf9jVAWXzV5wnw7v9rcTs9TEEOydipRF3bBr47UbSpF+LcG2mIxVSIZv
-         9Jypkyq1q8nW90X2pxauuWC+2tati8npIr26bhHIR9qoDs15df+qEgoA9/3wlAZXlaJe
-         3Q8sndFoTDndOxXXaG9xTY6Wz0VJtPXhnXZUAX4pEzUzWbIr67DRjcegFXqSLzjspwiF
-         aveQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dAk5/osJZq4gVCoii5+s2PH0Pm1YjVcsN6t5OCUDyZc=;
+        b=V9s4kTZyRzgPv0jMoeyWoFlHUpjs92Fa96lGXL6b/N0v6WABgS/X35nmdrJ6I221rU
+         0fSa6WgWd4eZsumy+f90w4t7c8TiRpZ/QnBCskfqitrmBptdaPoD5d4taHYlm6a+OtqI
+         6kPmHx7136SfGlHm9r4zAYNJdxFJDuuhmDqW7l8Zw5cmc1NvjKwbAt6cu+VTwbGyeP0q
+         rkt+Heb9ExtdsOXPxCAQTZjMqpoihft7Ri08/lC+yKhef8/MB4XyQcgdfWw8eXld3bYv
+         QfO33OBzcVMT1PdpUrI/S7rTAXmX+UDmhrwGtN2WHXUiAoTGb8Ym9gvJKcgB/FqwNCUj
+         P+0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=KUODgu3W4FcAvayfaJlfGS9hr1Jt/95YZDXl59Il7DU=;
-        b=hWo6qQZSNJWrBC/fueQ1q7bGKxCmTMAngx9Fe7DvuMweEd4I6NLmDsRsuFYi4xZkKW
-         zk45R/8d31/L90iKGEyjK/QKOrGOhxU/g426RqiE8XrK5Bw6Oe6N+1xT9KdALxIxFb9B
-         zcDOA6lQ7wdyCc0u6hsUV0nUl0008B0MpqwfFSFRf5XllwTrdWYVl9b7ow0TwNo5pYkk
-         sKE64ltar14XzxI713U3GwpsQA1WPd8AME+jeVDziHlssB+gu2saQ9mZOid4Wu1+foQT
-         uuItXAX83Ny8pzUjfbrEtffASpJ6l0RB0saFwiPZYTbuQxlVNOGVTZYNfkfXjB/4cZRz
-         n31A==
-X-Gm-Message-State: AOAM5338NHqABfOzz/Q+2sOSBhbvCuy+DmFECcCKH6dH4ZuD/oUMY585
-        PjOoJK5OnE9Wz4wse8G8DxI=
-X-Google-Smtp-Source: ABdhPJySJltqcd3wEE0VCXEFx7ozoW1b6gxVLcEZpWI4yWx199qfrNdxZ3+4QZr5bO4BDV33KTFHJA==
-X-Received: by 2002:a63:c103:: with SMTP id w3mr3822309pgf.101.1635999640336;
-        Wed, 03 Nov 2021 21:20:40 -0700 (PDT)
-Received: from localhost ([43.224.245.235])
-        by smtp.gmail.com with ESMTPSA id y4sm3995436pfi.178.2021.11.03.21.20.39
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Nov 2021 21:20:40 -0700 (PDT)
-Date:   Thu, 4 Nov 2021 12:20:37 +0800
-From:   Lianjun Huang <hljhnu@gmail.com>
-To:     miklos@szeredi.hu
-Cc:     hljhnu@gmail.com, linux-fsdevel@vger.kernel.org,
-        fuse-devel@lists.sourceforge.net
-Subject: [PATCH] fuse: add tracepoints for request
-Message-ID: <20211104042037.GA7088@ubuntu-PC>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dAk5/osJZq4gVCoii5+s2PH0Pm1YjVcsN6t5OCUDyZc=;
+        b=ClRWHSgi3+tBZohp6iQH7IaGkH88QfsCut1hrKQSUNuv0P1VcdnVE+W4FnOs6H9GOj
+         Q6e305R179VOc2BpfE2lp1OmW9YRW6OL5BjVxPmm+YB9AbrWEgDxCnFDh02J1tEoWlEv
+         uC4IJcv2LJz7jd6nDH+hfCQqzeHm/IuMiQMkz/OSPOhu2/6+O/OtG591dqmD/a42yLfA
+         sRIg7SnxlxK79JK2Bzmvz8eNtbzCbhp8ubDP2i5Hkn8lQTbDjxr0/Y/6IBhOwXTIHH/x
+         Xb9ZFfrWeJEky2Ex7v63APdQXyxvraaZN23RVH2Pfv1vjcfBYFaBspLiSe0sdolHh6p9
+         VWZg==
+X-Gm-Message-State: AOAM531DtMmetSfXnikQqgXDO7rr4IAGHrTS5aHPoW0smtWn7+qTLlj9
+        s/4fD5syQxq+ykHk85rVakdrQ63dBEbzCSOzvPB5v/Xzbjo=
+X-Google-Smtp-Source: ABdhPJzXL0rW/i5L7VGc9E5w7geJK7pJl8tuFE+6e9T0eoeItHquDmwugueG2+qEdywG8B7Nx5+3SlfXXUFuRZW12EA=
+X-Received: by 2002:a05:6638:1249:: with SMTP id o9mr2128265jas.47.1636003188415;
+ Wed, 03 Nov 2021 22:19:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <CAOQ4uxhpCKK2MYxSmRJYYMEWaHKy5ezyKgxaM+YAKtpjsZkD-g@mail.gmail.com>
+ <YXhIm3mOvPsueWab@redhat.com> <CAO17o20sdKAWQN6w7Oe0Ze06qcK+J=6rrmA_aWGnY__MRVDCKw@mail.gmail.com>
+ <CAOQ4uxhA+f-GZs-6SwNtSYZvSwfsYz4_=8_tWAUqt9s-49bqLw@mail.gmail.com>
+ <20211027132319.GA7873@quack2.suse.cz> <YXm2tAMYwFFVR8g/@redhat.com>
+ <20211102110931.GD12774@quack2.suse.cz> <CAOQ4uxiYQYG8Ta=MNJKpa_0pAPd0MS9PL2r_0ZRD+_TKOw6C7g@mail.gmail.com>
+ <YYGg1w/q31SC3PQ8@redhat.com> <CAOQ4uxg_KAg34TgmVRQ5nrfgHddzQepVv_bAUAhqtkDfHB7URw@mail.gmail.com>
+ <YYMNPqVnOWD3gNsw@redhat.com>
+In-Reply-To: <YYMNPqVnOWD3gNsw@redhat.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 4 Nov 2021 07:19:37 +0200
+Message-ID: <CAOQ4uxjTw+4ReoxdMKN-EX0q1dwtLCZgZq4A9qdWhgnOiRb1vg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Ioannis Angelakopoulos <iangelak@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Steve French <sfrench@samba.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Change-Id: I361d582f30a04040969f1774064d5d1a4b646389
-Signed-off-by: Lianjun Huang <hljhnu@gmail.com>
----
- fs/fuse/dev.c               |  4 ++++
- include/trace/events/fuse.h | 27 +++++++++++++++++++++++++++
- 2 files changed, 31 insertions(+)
- create mode 100644 include/trace/events/fuse.h
+> > > If event queue becomes too full, we might drop these events. But I guess
+> > > in that case we will have to generate IN_Q_OVERFLOW and that can somehow
+> > > be used to cleanup such S_DEAD inodes?
+> >
+> > That depends on the server implementation.
+> > If the server is watching host fs using fanotify filesystem mark, then
+> > an overflow
+> > event does NOT mean that other new events on inode may be missed only
+> > that old events could have been missed.
+> > Server should know about all the watched inodes, so it can check on overflow
+> > if any of the watched inodes were deleted and notify the client using a reliable
+> > channel.
+>
+> Ok. We have only one channel for notifications. I guess we can program
+> the channel in such a way so that it does not drop overflow events but
+> can drop other kind of events if things get crazy. If too many overflow
+> events and we allocate too much of memory, I guess at some point of
+> time, oom killer will kick in a kill server.
+>
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 9d2d321bd60b..83f20799683d 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -23,6 +23,8 @@
- #include <linux/splice.h>
- #include <linux/sched.h>
- #include <linux/freezer.h>
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/fuse.h>
- 
- MODULE_ALIAS_MISCDEV(FUSE_MINOR);
- MODULE_ALIAS("devname:fuse");
-@@ -323,6 +325,7 @@ static u64 fuse_get_unique(struct fuse_iqueue *fiq)
- 
- static void queue_request(struct fuse_iqueue *fiq, struct fuse_req *req)
- {
-+	trace_fuse_info(req->in.h.opcode, req->in.h.unique, req->in.h.nodeid, "queue request");
- 	req->in.h.len = sizeof(struct fuse_in_header) +
- 		len_args(req->in.numargs, (struct fuse_arg *) req->in.args);
- 	list_add_tail(&req->list, &fiq->pending);
-@@ -417,6 +420,7 @@ static void request_end(struct fuse_conn *fc, struct fuse_req *req)
- 	if (req->end)
- 		req->end(fc, req);
- put_request:
-+	trace_fuse_info(req->in.h.opcode, req->in.h.unique, req->in.h.nodeid, "request end");
- 	fuse_put_request(fc, req);
- }
- 
-diff --git a/include/trace/events/fuse.h b/include/trace/events/fuse.h
-new file mode 100644
-index 000000000000..da471c0db9b6
---- /dev/null
-+++ b/include/trace/events/fuse.h
-@@ -0,0 +1,27 @@
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM fuse
-+#if !defined(_TRACE_FUSE_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_FUSE_H
-+#include <linux/tracepoint.h>
-+
-+TRACE_EVENT(fuse_info,
-+		TP_PROTO(uint32_t opcode, uint64_t unique, uint64_t nodeid, const char *info),
-+		TP_ARGS(opcode, unique, nodeid, info),
-+		TP_STRUCT__entry(
-+			__field(uint32_t, opcode)
-+			__field(uint64_t, unique)
-+			__field(uint64_t, nodeid)
-+			__string(info, info)
-+			),
-+		TP_fast_assign(
-+			__entry->opcode	= opcode;
-+			__entry->unique = unique;
-+			__entry->nodeid = nodeid;
-+			__assign_str(info, info);
-+			),
-+		TP_printk("fuse: opcode %u, unique %lu, nodeid %lu %s\n",
-+			__entry->opcode, __entry->unique, __entry->nodeid, __get_str(info))
-+	   );
-+#endif
-+
-+#include <trace/define_trace.h>
--- 
-2.17.1
+The kernel implementation of fsnotify events queue pre-allocates
+a single overflow event and never queues more than a single overflow
+event. IN_Q_OVERFLOW must be delivered reliably, but delivering one
+overflow event is enough (until it is consumed).
 
+> >
+> > Given the current server implementation with inotify, IN_Q_OVERFLOW
+> > means server may have lost an IN_IGNORED event and may not get any
+> > more events on inode, so server should check all the watched inodes after
+> > overflow, notify the client of all deleted inodes and try to re-create
+> > the watches
+> > for all inodes with known path or use magic /prod/pid/fd path if that
+> > works (??).
+>
+> Re-doing the watches sounds very painful.
+
+Event overflow is a painful incident and systems usually pay a large
+penalty when it happens (e.g. full recrawl of watched tree).
+If virtiofsd is going to use inotify, it is no different than any other inotify
+application that needs to bear the consequence of event overflow.
+
+> That means we will need to
+> keep track of aggregated mask in server side inode as well. As of
+> now we just pass mask to kernel using inotify_add_watch() and forget
+> about it.
+>
+
+It costs nothing to keep the aggregated mask in server side inode
+and it makes sense to do that anyway.
+This allows an implementation to notify about changes that the server
+itself handles even if there is no backing filesystem behind it or
+host OS has no fs notification support.
+
+> /proc/pid/fd should work because I think that's how ioannis is putting
+> current watches on inodes. We don't send path info to server.
+>
+> >
+> > >
+> > > nodeid is managed by server. So I am assuming that FORGET messages will
+> > > not be sent to server for this inode till we have seen FS_IN_IGNORED
+> > > and FS_DELETE_SELF events?
+> > >
+> >
+> > Or until the application that requested the watch calls
+> > inotify_rm_watch() or closes
+> > the inotify fd.
+> >
+> > IOW, when fs implements remote fsnotify, the local watch keeps the local deleted
+> > inode object in limbo until the local watch is removed.
+> > When the remote fsnotify server informs that the remote watch (or remote inode)
+> > is gone, the local watch is removed as well and then the inotify
+> > application also gets
+> > an FS_IN_IGNORED event.
+>
+> Hmm.., I guess remote server will simply send IN_DELETE event when it
+> gets it and forward to client. And client will have to then cleanup
+> this S_DEAD inode which is in limbo waiting for IN_DELETE_SELF event.
+> And that should trigger cleanup of marks/local-watches on the inode, IIUC.
+>
+
+In very broad lines, but the server notification must be delivered reliably.
+
+> >
+> > Lifetime of local inode is complicated and lifetime of this "shared inode"
+> > is much more complicated, so I am not pretending to claim that I have this all
+> > figured out or that it could be reliably done at all.
+>
+> Yes this handling of IN_DELETE_SELF is turning out to be the most
+> complicated piece of this proposal. I wish initial implementation
+> could just be designed that it does not send IN_DELETE_SELF and
+> IN_INGORED is generated locally. And later enhance it to support
+> reliable delivery of IN_DELETE_SELF.
+>
+
+Not allowing DELETE_SELF in the mask sounds reasonable, but
+as Ioannis explained, other events can be missed on local file delete.
+If you want to preserve inotify semantics, you could queue an overflow
+event if a fuse inode that gets evicted still has inotify marks.
+That's a bit harsh though.
+Alternatively, you could document in inotify man page that IN_INGORED
+could mean that some events were dropped and hope for the best...
+
+Thanks,
+Amir.
