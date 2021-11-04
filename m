@@ -2,70 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 98C5A4452D5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Nov 2021 13:18:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E024E445309
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Nov 2021 13:31:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231286AbhKDMUl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Nov 2021 08:20:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41868 "EHLO
+        id S231267AbhKDMeI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Nov 2021 08:34:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229960AbhKDMUk (ORCPT
+        with ESMTP id S229809AbhKDMeH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Nov 2021 08:20:40 -0400
-Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DA47C061714
-        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Nov 2021 05:18:02 -0700 (PDT)
-Received: by mail-ua1-x92a.google.com with SMTP id i6so10369071uae.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Nov 2021 05:18:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RTUOBigYprSDOSFBZlrdvWF0TjMaLEUW+f2tRV3OT6g=;
-        b=QE8m3S5NxgzsIFqtQEzvK04sRrsFyJtjg3I5B1NHEonhKYNOxow7yFp6OU2O8iqyyf
-         IhMsIYIfd04WYLwn0Vq/BGM+K0dV48DlMnrlhAnqL3JmeuAxXH6bK48DL4PdEERAKQ8A
-         rc/gVTG4M/S9Bh6TkVLg/lg27r8MUfbIVcRns=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RTUOBigYprSDOSFBZlrdvWF0TjMaLEUW+f2tRV3OT6g=;
-        b=U00HIlOjfN3nzVr0UwQICHlShTIvgrn8Q0jjXMWdS/qWSt3diPmP67ow+7oTBDOjvq
-         FrlDMZ+Uo1RDyUIrAAAogbtnKA0LNCul364ci222+4/1bLBktKFpi7rPTDEg18X8/cyg
-         egQo0IvYX3lw7Y2Hiii72wzAnAZAK5HepJJw79odh8qdTt7Hf6oSjh547knRglh25qyw
-         7RxptLkEo4qGjWFl9K/GEfyQ0LDz4NePYN83w85rUreAI0FyVJbuT0vcG6WrsJzMG3J2
-         sAjpwTQsNXwk60/FLRVnw6KX2ZGYsmw/fsvdRMCctGbS0A7ocHl9wSZmgkfFX+HYN13i
-         9P4g==
-X-Gm-Message-State: AOAM532lQ36rf69nVvvKPT7QL1jxmqFriN5pwjfRrTmuqUj5UyL7V/YT
-        vXasE/NbG7Lc6DO2W1aKEXRa1GvV0F3Vej+aI/8l+mw+C2c=
-X-Google-Smtp-Source: ABdhPJwWg6oh7iHifKyoltzizBmtDg8ZnKqtRi+i/OSK2axZR0pJdZTFXXfJZC6C6WKCi+xkMN8x49JTJEGWJgBT2P4=
-X-Received: by 2002:a05:6102:3e84:: with SMTP id m4mr60444007vsv.51.1636028281822;
- Thu, 04 Nov 2021 05:18:01 -0700 (PDT)
+        Thu, 4 Nov 2021 08:34:07 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93B3FC061714;
+        Thu,  4 Nov 2021 05:31:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=iQDesZV5L2mroTI3Kp4Q9Tkxn1uaR3bTz2ke0CiK9wE=; b=l05sE+7qLWw6hasWyI/n0sgCrx
+        1gk2a/tDTo4hfhxCY2tx9KEeS3Me3gh5TO/MYJsvwrTQ7Uk2XzOQGVGEMRKLI0tl9ouAAsajZAYQQ
+        qScYChjvl1Mx+k3w3OHPSsjy5wz1TeQFTAVbPl7mJTLC5cHnGIhKhN5wdbQ3QGtSMGeCl+zqA7hp2
+        NUJ72xXrPItCUBAWEQGuvyeMknqkRWwyQVRjCFS2B/hFsjoTkXs0Y5uFTY1Z1L03Sl+V6x8ko9F25
+        HEy9RYwqNe19PXKLzMA3IoGWaMQYYlH6x+koORZ53RoCD2TIuFZVTG2orIoah0SlzuiAe3oRIVf0i
+        7wQ3cDPA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mibrf-005rYi-P5; Thu, 04 Nov 2021 12:29:31 +0000
+Date:   Thu, 4 Nov 2021 12:29:07 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Jane Chu <jane.chu@oracle.com>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
+        "dave.jiang@intel.com" <dave.jiang@intel.com>,
+        "agk@redhat.com" <agk@redhat.com>,
+        "snitzer@redhat.com" <snitzer@redhat.com>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "ira.weiny@intel.com" <ira.weiny@intel.com>,
+        "vgoyal@redhat.com" <vgoyal@redhat.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
+Subject: Re: [dm-devel] [PATCH 0/6] dax poison recovery with
+ RWF_RECOVERY_DATA flag
+Message-ID: <YYPSE4XACpqs21Yl@casper.infradead.org>
+References: <e89a2b17-3f03-a43e-e0b9-5d2693c3b089@oracle.com>
+ <YXJN4s1HC/Y+KKg1@infradead.org>
+ <2102a2e6-c543-2557-28a2-8b0bdc470855@oracle.com>
+ <YXj2lwrxRxHdr4hb@infradead.org>
+ <20211028002451.GB2237511@magnolia>
+ <YYDYUCCiEPXhZEw0@infradead.org>
+ <CAPcyv4j8snuGpy=z6BAXogQkP5HmTbqzd6e22qyERoNBvFKROw@mail.gmail.com>
+ <YYK/tGfpG0CnVIO4@infradead.org>
+ <CAPcyv4it2_PVaM8z216AXm6+h93frg79WM-ziS9To59UtEQJTA@mail.gmail.com>
+ <YYOaOBKgFQYzT/s/@infradead.org>
 MIME-Version: 1.0
-References: <20211103011527.42711-1-flyingpeng@tencent.com>
-In-Reply-To: <20211103011527.42711-1-flyingpeng@tencent.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 4 Nov 2021 13:17:50 +0100
-Message-ID: <CAJfpeguWtPFG_daMNA7=T-kQmgkcTPugMj7HWhh2mu+cwRWbxw@mail.gmail.com>
-Subject: Re: [PATCH] fuse: fix possible write position calculation error
-To:     Peng Hao <flyingpenghao@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YYOaOBKgFQYzT/s/@infradead.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 3 Nov 2021 at 02:15, Peng Hao <flyingpenghao@gmail.com> wrote:
->
-> The 'written' that generic_file_direct_write return through
-> filemap_write_and_wait_range is not necessarily sequential,
-> and its iocb->ki_pos has not been updated.
+On Thu, Nov 04, 2021 at 01:30:48AM -0700, Christoph Hellwig wrote:
+> Well, the whole problem is that we should not have to manage this at
+> all, and this is where I blame Intel.  There is no good reason to not
+> slightly overprovision the nvdimms and just do internal bad page
+> remapping like every other modern storage device.
 
-I don't see the bug, but maybe I'm missing something.  Can you please
-explain in detail?
+What makes you think they don't?
 
-The patch looks good as a cleanup, but I'd very much like to know
-first if it fixes a bug or not.
-
-Thanks,
-Miklos
+The problem is persuading the CPU to do writes without doing reads.
+That's where magic instructions or out of band IO is needed.
