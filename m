@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00218444E28
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Nov 2021 06:19:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 726FB444E60
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Nov 2021 06:29:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230363AbhKDFW1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Nov 2021 01:22:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60788 "EHLO
+        id S230472AbhKDFcK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Nov 2021 01:32:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230011AbhKDFW0 (ORCPT
+        with ESMTP id S230478AbhKDFcJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Nov 2021 01:22:26 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16215C061714;
-        Wed,  3 Nov 2021 22:19:49 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id q203so5479390iod.12;
-        Wed, 03 Nov 2021 22:19:49 -0700 (PDT)
+        Thu, 4 Nov 2021 01:32:09 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFAFEC06127A;
+        Wed,  3 Nov 2021 22:29:31 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id d70so4687695iof.7;
+        Wed, 03 Nov 2021 22:29:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=dAk5/osJZq4gVCoii5+s2PH0Pm1YjVcsN6t5OCUDyZc=;
-        b=V9s4kTZyRzgPv0jMoeyWoFlHUpjs92Fa96lGXL6b/N0v6WABgS/X35nmdrJ6I221rU
-         0fSa6WgWd4eZsumy+f90w4t7c8TiRpZ/QnBCskfqitrmBptdaPoD5d4taHYlm6a+OtqI
-         6kPmHx7136SfGlHm9r4zAYNJdxFJDuuhmDqW7l8Zw5cmc1NvjKwbAt6cu+VTwbGyeP0q
-         rkt+Heb9ExtdsOXPxCAQTZjMqpoihft7Ri08/lC+yKhef8/MB4XyQcgdfWw8eXld3bYv
-         QfO33OBzcVMT1PdpUrI/S7rTAXmX+UDmhrwGtN2WHXUiAoTGb8Ym9gvJKcgB/FqwNCUj
-         P+0w==
+        bh=KCzyf93QJNuKwifW+Nffo8te0nxMymfSTSoBlo601P0=;
+        b=Tq4ABWi0eLIi+uMMQ2zAh3NtcSCzbrCCjBP+97a4kJuAOsZBpbT0Jsz8ZqSYRQV8pX
+         JRE0V2pUUdeUsMYuVzDdpGNNh08NcdFnfA6hWOm3OFAPcitql7b54iUhtzsP8lDRcOZx
+         qMG+Uz/9prIbxU8JatcU+DqPzgp6CZEDDdeSM8KFaO8MEuJxT65q4U3oZmoK+TIQBr08
+         xCEOXit8pcgzQGHpPhpfc5Y3aMsdjGMi9Gc5swwzwYu+7G/Pjj4SEhFUnpUfjxCfvd9r
+         lwu9zAhLDI2lgY0nwkwwwA0u/I1Xo5l6zK3lOdkfZ7xopxxoOqJuk6coXiIc9PJHTjbd
+         E5KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dAk5/osJZq4gVCoii5+s2PH0Pm1YjVcsN6t5OCUDyZc=;
-        b=ClRWHSgi3+tBZohp6iQH7IaGkH88QfsCut1hrKQSUNuv0P1VcdnVE+W4FnOs6H9GOj
-         Q6e305R179VOc2BpfE2lp1OmW9YRW6OL5BjVxPmm+YB9AbrWEgDxCnFDh02J1tEoWlEv
-         uC4IJcv2LJz7jd6nDH+hfCQqzeHm/IuMiQMkz/OSPOhu2/6+O/OtG591dqmD/a42yLfA
-         sRIg7SnxlxK79JK2Bzmvz8eNtbzCbhp8ubDP2i5Hkn8lQTbDjxr0/Y/6IBhOwXTIHH/x
-         Xb9ZFfrWeJEky2Ex7v63APdQXyxvraaZN23RVH2Pfv1vjcfBYFaBspLiSe0sdolHh6p9
-         VWZg==
-X-Gm-Message-State: AOAM531DtMmetSfXnikQqgXDO7rr4IAGHrTS5aHPoW0smtWn7+qTLlj9
-        s/4fD5syQxq+ykHk85rVakdrQ63dBEbzCSOzvPB5v/Xzbjo=
-X-Google-Smtp-Source: ABdhPJzXL0rW/i5L7VGc9E5w7geJK7pJl8tuFE+6e9T0eoeItHquDmwugueG2+qEdywG8B7Nx5+3SlfXXUFuRZW12EA=
-X-Received: by 2002:a05:6638:1249:: with SMTP id o9mr2128265jas.47.1636003188415;
- Wed, 03 Nov 2021 22:19:48 -0700 (PDT)
+        bh=KCzyf93QJNuKwifW+Nffo8te0nxMymfSTSoBlo601P0=;
+        b=q9+3rAVH6sskyP35BK9Vb1WiGgfeSm4xp7RILMFgICqe6klZ3tUefaKVKwzCGJlSDX
+         uzvumrXRm14Og0Hkn/L9C0Xq9cacwakRulVaONuxNAWO5yS5udANCttYY74p2ZGB4FFL
+         JDUz1rdUg9bhWUDYSXBb6WoZrbskCr7J9n5xcLCX6d3cYb4wVdjpsQ2VQOGtm9og4NFG
+         TdImu7fs49aDxeSSEoXBbX8ix2Pbh5wpApAAGtMU/Pc/L4gH1b0zAAkSbxLFxh+uCSLC
+         H93D9//tf6id1YDI6he/bolYr7bfBkydYRlE+Z24VaDiP+iy8f8AD9h3rGLwLnzPkmqH
+         5oDQ==
+X-Gm-Message-State: AOAM532SZiZYhE5Ghah6kup3WNe4wRX+MNWv+ENfDyJCMoaEwSbWPfNy
+        R0m8zSFoUYjZAxlpCZHfLyIP6RfGJGBS8BVHMgg=
+X-Google-Smtp-Source: ABdhPJywDa8jsIgtGGwXf7g8AWAWDYNMQ+O3xmpQbu1jacEQgLYA2Qt+XfoJDnueSAyliXWf9lgBoI5xwxKz1F0gk9g=
+X-Received: by 2002:a5d:804a:: with SMTP id b10mr32344378ior.197.1636003771181;
+ Wed, 03 Nov 2021 22:29:31 -0700 (PDT)
 MIME-Version: 1.0
 References: <CAOQ4uxhpCKK2MYxSmRJYYMEWaHKy5ezyKgxaM+YAKtpjsZkD-g@mail.gmail.com>
  <YXhIm3mOvPsueWab@redhat.com> <CAO17o20sdKAWQN6w7Oe0Ze06qcK+J=6rrmA_aWGnY__MRVDCKw@mail.gmail.com>
  <CAOQ4uxhA+f-GZs-6SwNtSYZvSwfsYz4_=8_tWAUqt9s-49bqLw@mail.gmail.com>
  <20211027132319.GA7873@quack2.suse.cz> <YXm2tAMYwFFVR8g/@redhat.com>
  <20211102110931.GD12774@quack2.suse.cz> <CAOQ4uxiYQYG8Ta=MNJKpa_0pAPd0MS9PL2r_0ZRD+_TKOw6C7g@mail.gmail.com>
- <YYGg1w/q31SC3PQ8@redhat.com> <CAOQ4uxg_KAg34TgmVRQ5nrfgHddzQepVv_bAUAhqtkDfHB7URw@mail.gmail.com>
- <YYMNPqVnOWD3gNsw@redhat.com>
-In-Reply-To: <YYMNPqVnOWD3gNsw@redhat.com>
+ <20211103100900.GB20482@quack2.suse.cz> <CAOQ4uxjsULgLuOFUYkEePySx6iPXRczgCZMxx8E5ncw=oarLPg@mail.gmail.com>
+ <YYMO1ip9ynXFXc8f@redhat.com>
+In-Reply-To: <YYMO1ip9ynXFXc8f@redhat.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 4 Nov 2021 07:19:37 +0200
-Message-ID: <CAOQ4uxjTw+4ReoxdMKN-EX0q1dwtLCZgZq4A9qdWhgnOiRb1vg@mail.gmail.com>
+Date:   Thu, 4 Nov 2021 07:29:20 +0200
+Message-ID: <CAOQ4uxioM+Tnm-rJ0ZJk=0JHrL31FSyZqYfx2wX9oU0tpGJT-Q@mail.gmail.com>
 Subject: Re: [RFC PATCH 0/7] Inotify support in FUSE and virtiofs
 To:     Vivek Goyal <vgoyal@redhat.com>
 Cc:     Jan Kara <jack@suse.cz>,
@@ -71,107 +71,137 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > > If event queue becomes too full, we might drop these events. But I guess
-> > > in that case we will have to generate IN_Q_OVERFLOW and that can somehow
-> > > be used to cleanup such S_DEAD inodes?
-> >
-> > That depends on the server implementation.
-> > If the server is watching host fs using fanotify filesystem mark, then
-> > an overflow
-> > event does NOT mean that other new events on inode may be missed only
-> > that old events could have been missed.
-> > Server should know about all the watched inodes, so it can check on overflow
-> > if any of the watched inodes were deleted and notify the client using a reliable
-> > channel.
+On Thu, Nov 4, 2021 at 12:36 AM Vivek Goyal <vgoyal@redhat.com> wrote:
 >
-> Ok. We have only one channel for notifications. I guess we can program
-> the channel in such a way so that it does not drop overflow events but
-> can drop other kind of events if things get crazy. If too many overflow
-> events and we allocate too much of memory, I guess at some point of
-> time, oom killer will kick in a kill server.
->
-
-The kernel implementation of fsnotify events queue pre-allocates
-a single overflow event and never queues more than a single overflow
-event. IN_Q_OVERFLOW must be delivered reliably, but delivering one
-overflow event is enough (until it is consumed).
-
-> >
-> > Given the current server implementation with inotify, IN_Q_OVERFLOW
-> > means server may have lost an IN_IGNORED event and may not get any
-> > more events on inode, so server should check all the watched inodes after
-> > overflow, notify the client of all deleted inodes and try to re-create
-> > the watches
-> > for all inodes with known path or use magic /prod/pid/fd path if that
-> > works (??).
->
-> Re-doing the watches sounds very painful.
-
-Event overflow is a painful incident and systems usually pay a large
-penalty when it happens (e.g. full recrawl of watched tree).
-If virtiofsd is going to use inotify, it is no different than any other inotify
-application that needs to bear the consequence of event overflow.
-
-> That means we will need to
-> keep track of aggregated mask in server side inode as well. As of
-> now we just pass mask to kernel using inotify_add_watch() and forget
-> about it.
->
-
-It costs nothing to keep the aggregated mask in server side inode
-and it makes sense to do that anyway.
-This allows an implementation to notify about changes that the server
-itself handles even if there is no backing filesystem behind it or
-host OS has no fs notification support.
-
-> /proc/pid/fd should work because I think that's how ioannis is putting
-> current watches on inodes. We don't send path info to server.
->
-> >
+> On Wed, Nov 03, 2021 at 01:17:36PM +0200, Amir Goldstein wrote:
+> > > > > > Hi Jan,
+> > > > > >
+> > > > > > Agreed. That's what Ioannis is trying to say. That some of the remote events
+> > > > > > can be lost if fuse/guest local inode is unlinked. I think problem exists
+> > > > > > both for shared and non-shared directory case.
+> > > > > >
+> > > > > > With local filesystems we have a control that we can first queue up
+> > > > > > the event in buffer before we remove local watches. With events travelling
+> > > > > > from a remote server, there is no such control/synchronization. It can
+> > > > > > very well happen that events got delayed in the communication path
+> > > > > > somewhere and local watches went away and now there is no way to
+> > > > > > deliver those events to the application.
+> > > > >
+> > > > > So after thinking for some time about this I have the following question
+> > > > > about the architecture of this solution: Why do you actually have local
+> > > > > fsnotify watches at all? They seem to cause quite some trouble... I mean
+> > > > > cannot we have fsnotify marks only on FUSE server and generate all events
+> > > > > there? When e.g. file is created from the client, client tells the server
+> > > > > about creation, the server performs the creation which generates the
+> > > > > fsnotify event, that is received by the server and forwared back to the
+> > > > > client which just queues it into notification group's queue for userspace
+> > > > > to read it.
+> > > > >
+> > > > > Now with this architecture there's no problem with duplicate events for
+> > > > > local & server notification marks, similarly there's no problem with lost
+> > > > > events after inode deletion because events received by the client are
+> > > > > directly queued into notification queue without any checking whether inode
+> > > > > is still alive etc. Would this work or am I missing something?
+> > > > >
+> > > >
+> > > > What about group #1 that wants mask A and group #2 that wants mask B
+> > > > events?
+> > > >
+> > > > Do you propose to maintain separate event queues over the protocol?
+> > > > Attach a "recipient list" to each event?
 > > >
-> > > nodeid is managed by server. So I am assuming that FORGET messages will
-> > > not be sent to server for this inode till we have seen FS_IN_IGNORED
-> > > and FS_DELETE_SELF events?
+> > > Yes, that was my idea. Essentially when we see group A creates mark on FUSE
+> > > for path P, we notify server, it will create notification group A on the
+> > > server (if not already existing - there we need some notification group
+> > > identifier unique among all clients), and place mark for it on path P. Then
+> > > the full stream of notification events generated for group A on the server
+> > > will just be forwarded to the client and inserted into the A's notification
+> > > queue. IMO this is very simple solution to implement - you just need to
+> > > forward mark addition / removal events from the client to the server and you
+> > > forward event stream from the server to the client. Everything else is
+> > > handled by the fsnotify infrastructure on the server.
+> > >
+> > > > I just don't see how this can scale other than:
+> > > > - Local marks and connectors manage the subscriptions on local machine
+> > > > - Protocol updates the server with the combined masks for watched objects
+> > >
+> > > I agree that depending on the usecase and particular FUSE filesystem
+> > > performance of this solution may be a concern. OTOH the only additional
+> > > cost of this solution I can see (compared to all those processes just
+> > > watching files locally) is the passing of the events from the server to the
+> > > client. For local FUSE filesystems such as virtiofs this should be rather
+> > > cheap since you have to do very little processing for each generated event.
+> > > For filesystems such as sshfs, I can imagine this would be a bigger deal.
+> > >
+> > > Also one problem I can see with my proposal is that it will have problems
+> > > with stuff such as leases - i.e., if the client does not notify the server
+> > > of the changes quickly but rather batches local operations and tells the
+> > > server about them only on special occasions. I don't know enough about FUSE
+> > > filesystems to tell whether this is a frequent problem or not.
+> > >
+> > > > I think that the "post-mortem events" issue could be solved by keeping an
+> > > > S_DEAD fuse inode object in limbo just for the mark.
+> > > > When a remote server sends FS_IN_IGNORED or FS_DELETE_SELF for
+> > > > an inode, the fuse client inode can be finally evicted.
+> > > > I haven't tried to see how hard that would be to implement.
+> > >
+> > > Sure, there can be other solutions to this particular problem. I just
+> > > want to discuss the other architecture to see why we cannot to it in a
+> > > simple way :).
 > > >
 > >
-> > Or until the application that requested the watch calls
-> > inotify_rm_watch() or closes
-> > the inotify fd.
+> > Fair enough.
 > >
-> > IOW, when fs implements remote fsnotify, the local watch keeps the local deleted
-> > inode object in limbo until the local watch is removed.
-> > When the remote fsnotify server informs that the remote watch (or remote inode)
-> > is gone, the local watch is removed as well and then the inotify
-> > application also gets
-> > an FS_IN_IGNORED event.
+> > Beyond the scalability aspects, I think that a design that exposes the group
+> > to the remote server and allows to "inject" events to the group queue
+> > will prevent
+> > users from useful features going forward.
+> >
+> > For example, fanotify ignored_mask could be added to a group, even on
+> > a mount mark, even if the remote server only supports inode marks and it
+> > would just work.
+> >
+> > Another point of view for the post-mortem events:
+> > As Miklos once noted and as you wrote above, for cache coherency and leases,
+> > an async notification queue is not adequate and synchronous notifications are
+> > too costly, so there needs to be some shared memory solution involving guest
+> > cache invalidation by host.
 >
-> Hmm.., I guess remote server will simply send IN_DELETE event when it
-> gets it and forward to client. And client will have to then cleanup
-> this S_DEAD inode which is in limbo waiting for IN_DELETE_SELF event.
-> And that should trigger cleanup of marks/local-watches on the inode, IIUC.
+> Any shared memory solution works only limited setup. If server is remote
+> on other machine, there is no sharing. I am hoping that this can be
+> generic enough to support other remote filesystems down the line.
 >
 
-In very broad lines, but the server notification must be delivered reliably.
+I do too :)
 
 > >
-> > Lifetime of local inode is complicated and lifetime of this "shared inode"
-> > is much more complicated, so I am not pretending to claim that I have this all
-> > figured out or that it could be reliably done at all.
+> > Suppose said cache invalidation solution would be able to set a variety of
+> > "dirty" flags, not just one type of dirty or to call in another way -
+> > an "event mask".
+> > If that is available, then when a fuse inode gets evicted, the events from the
+> > "event mask" can be queued before destroying the inode and mark -
+> > post mortem event issue averted...
 >
-> Yes this handling of IN_DELETE_SELF is turning out to be the most
-> complicated piece of this proposal. I wish initial implementation
-> could just be designed that it does not send IN_DELETE_SELF and
-> IN_INGORED is generated locally. And later enhance it to support
-> reliable delivery of IN_DELETE_SELF.
+> This is assuming that that server itself got the "IN_DELETE_SELF" event
+> when fuse is destroying its inode. But if inode might be alive due to
+> other client having fd open.
+>
+> Even if other client does not have fd open, this still sounds racy. By
+> the time we set inode event_mask (using shared memory, instead of
+> sending an event notifiation), fuse might have cleaned up its inode.
 >
 
-Not allowing DELETE_SELF in the mask sounds reasonable, but
-as Ioannis explained, other events can be missed on local file delete.
-If you want to preserve inotify semantics, you could queue an overflow
-event if a fuse inode that gets evicted still has inotify marks.
-That's a bit harsh though.
-Alternatively, you could document in inotify man page that IN_INGORED
-could mean that some events were dropped and hope for the best...
+There is no escape from some sort of leases design for a reliable
+and efficient shared remote fs.
+Unless the client has an exclusive lease on the inode, it must provide
+enough grace period before cleaning the inode to wait for an update
+from the server if the client cares about getting all events on inode.
+
+> There is a good chance I completely misunderstood what you are suggesting
+> here. :-)
+>
+
+There is a good chance that I am talking nonsense :-)
 
 Thanks,
 Amir.
