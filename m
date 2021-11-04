@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06C91444F42
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Nov 2021 07:48:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFD1F444F55
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Nov 2021 07:50:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230468AbhKDGvZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Nov 2021 02:51:25 -0400
-Received: from mail-bn7nam10on2070.outbound.protection.outlook.com ([40.107.92.70]:43328
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        id S231129AbhKDGxR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Nov 2021 02:53:17 -0400
+Received: from mail-bn1nam07on2048.outbound.protection.outlook.com ([40.107.212.48]:50474
+        "EHLO NAM02-BN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S230404AbhKDGvR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Nov 2021 02:51:17 -0400
+        id S229994AbhKDGvo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 4 Nov 2021 02:51:44 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kDf/bigtcD9hSFeCyTxGCzuKkvtd4fA220LLjejGiQf3hcI1A5qhjj1mHNgRy9IsxPgaXeFpP5yT55bR2WJqLVZsxkab6TkiqUr0Zj5DkwjJ3AJTAwE1/9R6niiE03rhbZcoLBWufJsvF42k/Hs6Uvvi564Y7STB96U6B+ldqyZPPluznWvqi9SsiXFj+ZOqsFM5HcroXPNmoZH/RQ3G3E0zNflYGkKvQ/FiYDgIiotSxceVL4IjKbArEeLKJSt39guF8GxYU2jw8hdaEeOrByCam3yJKzy2ZdpWVkCjhhxJaFC3eFJp1gGuTXyTO3z6Dj4Dyz76ZbGeKhVE5MwBFA==
+ b=aJskllJqQwotBXb3J2viKO4N6Aul5OQ2c2UVUYrEERPQWnfETlCBe47v3oWnUOJCScvXx3jumk0xyf5Lp49p3Z1j7juVWREJerTTWzYXxVAnQKFccOqtv1YVJ+g/8dlCsqgXQUiq/t+eTdo4Wx/cl2Smyu41WJKpl22NNYXNMy/LSRmb1c2ix3Bw1HxzGs8ydAYU35Mr5IbimdOV2jRilr9mx4YZ0833pn0OPn9AaUXsxEfrHZ9yfqYp210HzZkcWDCIenvXUZ+tNxAJqQDAxLCtD3eZBre+tCv8FQCyc793rpp5xiGOx5mGQLY/o5Mt3Hq/qr3fg6KB92X19ETavw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gjcVHWbnAEecA915XA0wQ3vH3zi30J91BMVloHaQxR4=;
- b=LTBA8cFlD7p8HA4YlLqNRshVxPj6ddLA3OgAMwQ2wCBHL/UsYFpA1cUif75OzNGmmBiCoEHSYkMfHE1Tj5dvZWARVhAtYPTPc8NWS8O8VJfTlZc8+S50Y5PkMZ+lhfb+7Om3xg0rYQ5Dcctx0lwjBOmYrzBxEECu3AbiLsW7IQlbbj6cReYP7CaDImrkrUapDdTiytKjO6MFF7rgIy5qllxQdWI6fZ5Z5hZyxsKf8JwtXHyCny1NU7wfS6ogiC0OU8INexsiXqRy1XknxRmzWqaagJUVsZBXwEelnT1Z2DXmtCwCAr2fM2FNS18eB4vWccRB+FxsXgNBNNbmG8NHYA==
+ bh=Ju12ToF3CoDMSM61YGAPFWiQ1megGESJmZMzLjgYiNs=;
+ b=MffrzDwlv3F/o7Nb/U9AFvPPcoXYg3DhAnztqbJV6ZJvhbjnsniDf+sam6I+Ipz+GQju3Upm5x0UKa6MoHtEalJqt6EZgkI/N9hsBP5HfRacRnZCDeX+zPDBKF2AVagCcAHZUlFoV4Hw6fU70d0b09oS8LAKuLYpVRjFpCo8tJuLen4UmJy2hYEfqOefQFvTWm8ZS15qpTtShr8qT+yqK6m2rAdCEQue92RsCn66PmwwWxDYWVQPRndxKZg1tDulwbeK6pe8FF+rVjtsZC5KrFS4HrtiwBUCxufLb+TWeISsOEX3YhtwwGnsFz+epnYIp2M0M4KYP89zBzl01ttgAQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.112.34) smtp.rcpttodomain=infradead.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
@@ -26,18 +26,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gjcVHWbnAEecA915XA0wQ3vH3zi30J91BMVloHaQxR4=;
- b=UyIDrB2kOwKKYJqyzDLPNFYR13zjLS70PI6dudbRmUBTWb/9DUy/I2jDd56Tc412Set/hIQ3n4WUKrUIep7OtTRj16zeaj8Om59Bn+BxWxYCbJKvgh/Q7ipceivkSvvfG5rcEK5JyLxHtlC6NyZXizT+cCBKOgpdG1C5i2rgDMkS2qk2ANr08NBlWgxt19qT2kEo6+v13Z9u9NwHJRZRIVFfXhw4JHzwMXdFbbevNkk3Wo0sOPx/9uNTGPSyL6eW+SUNZ2vX3Z9O3pgeuYdA8NjZPZGktLzISxtUY6yTMzstAOZozPi6z2QlJCZ+NUaMx4OrWOI9pbdCj7/GHaKe/Q==
-Received: from BN6PR22CA0049.namprd22.prod.outlook.com (2603:10b6:404:ca::11)
- by CH2PR12MB4922.namprd12.prod.outlook.com (2603:10b6:610:65::22) with
+ bh=Ju12ToF3CoDMSM61YGAPFWiQ1megGESJmZMzLjgYiNs=;
+ b=YI4kPyNySVCbxmD710wfEi48PEvc4fpt+iqOQ9HC8K/+6cfg9rGycvmAzTR/vQL4r9FiQdFMHJ9Ni7BVORdg0YAEcLnljJBB6fF7/zt95hIhviYsVCFPFbDHHH5fJC+ldlNEGK5ROQvSUBhXwUNIz9E9SX09wHbk5VHZKhEeZOB68cSthjD3iRfjx6Xk0OUUSS+V2QKoX0M2o4Ng+uWguq89DbSThnp0jk7PfxrPuKoHRXmdrHiL6H6S9vesz14opagNoVulqiTylTuVNGd+h1N6aOzemNeh5GYQsE0xE7LsVk/D/sWUhl4hIVaJ6pYrVzakmPjIln8yh7sbMKQz2Q==
+Received: from MWHPR15CA0042.namprd15.prod.outlook.com (2603:10b6:300:ad::28)
+ by SN1PR12MB2509.namprd12.prod.outlook.com (2603:10b6:802:29::24) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4649.14; Thu, 4 Nov
- 2021 06:48:36 +0000
-Received: from BN8NAM11FT039.eop-nam11.prod.protection.outlook.com
- (2603:10b6:404:ca:cafe::ec) by BN6PR22CA0049.outlook.office365.com
- (2603:10b6:404:ca::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4649.15 via Frontend
- Transport; Thu, 4 Nov 2021 06:48:36 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4649.15; Thu, 4 Nov
+ 2021 06:49:02 +0000
+Received: from CO1NAM11FT054.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:300:ad:cafe::b3) by MWHPR15CA0042.outlook.office365.com
+ (2603:10b6:300:ad::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.10 via Frontend
+ Transport; Thu, 4 Nov 2021 06:49:02 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.112.34)
  smtp.mailfrom=nvidia.com; infradead.org; dkim=none (message not signed)
  header.d=none;infradead.org; dmarc=pass action=none header.from=nvidia.com;
@@ -45,12 +45,12 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.112.34 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.112.34; helo=mail.nvidia.com;
 Received: from mail.nvidia.com (216.228.112.34) by
- BN8NAM11FT039.mail.protection.outlook.com (10.13.177.169) with Microsoft SMTP
+ CO1NAM11FT054.mail.protection.outlook.com (10.13.174.70) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.4669.10 via Frontend Transport; Thu, 4 Nov 2021 06:48:36 +0000
-Received: from dev.nvidia.com (172.20.187.6) by HQMAIL107.nvidia.com
+ 15.20.4669.10 via Frontend Transport; Thu, 4 Nov 2021 06:49:01 +0000
+Received: from dev.nvidia.com (172.20.187.5) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1497.18; Thu, 4 Nov
- 2021 06:48:34 +0000
+ 2021 06:48:57 +0000
 From:   Chaitanya Kulkarni <chaitanyak@nvidia.com>
 To:     <linux-block@vger.kernel.org>, <linux-raid@vger.kernel.org>,
         <linux-nvme@lists.infradead.org>, <linux-scsi@vger.kernel.org>,
@@ -69,210 +69,231 @@ CC:     <axboe@kernel.dk>, <agk@redhat.com>, <snitzer@redhat.com>,
         <idryomov@gmail.com>, <danil.kipnis@cloud.ionos.com>,
         <ebiggers@google.com>, <jinpu.wang@cloud.ionos.com>,
         Chaitanya Kulkarni <kch@nvidia.com>
-Subject: [RFC PATCH 5/8] nvmet: add Verify emulation support for bdev-ns
-Date:   Wed, 3 Nov 2021 23:46:31 -0700
-Message-ID: <20211104064634.4481-6-chaitanyak@nvidia.com>
+Subject: [RFC PATCH 6/8] nvmet: add verify emulation support for file-ns
+Date:   Wed, 3 Nov 2021 23:46:32 -0700
+Message-ID: <20211104064634.4481-7-chaitanyak@nvidia.com>
 X-Mailer: git-send-email 2.29.0
 In-Reply-To: <20211104064634.4481-1-chaitanyak@nvidia.com>
 References: <20211104064634.4481-1-chaitanyak@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [172.20.187.6]
+X-Originating-IP: [172.20.187.5]
 X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
  HQMAIL107.nvidia.com (172.20.187.13)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d463c2a0-3cc9-4ef9-715f-08d99f5f205d
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4922:
-X-Microsoft-Antispam-PRVS: <CH2PR12MB49221098D02442DD978C64ECA38D9@CH2PR12MB4922.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
+X-MS-Office365-Filtering-Correlation-Id: a61fc49e-d383-4a8c-dfd4-08d99f5f2f86
+X-MS-TrafficTypeDiagnostic: SN1PR12MB2509:
+X-Microsoft-Antispam-PRVS: <SN1PR12MB2509414E229FC2A0956109C1A38D9@SN1PR12MB2509.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3826;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: gLwEKNl/4NCZ2aXAcasSAQW/zJDJM2GuhK8L/BvmKkaQA4L+RDYpQZZrg3dCMopLZ9YgDUiqIntp8Jv+unb3obuOoQb0aFNTgEj/DRn40UHsElmL6Vgyasza905kvDkueExaOlyuKX6KKX5x1UD8oSHUHeXQd9N9+QVthtbE+6hdBtwDwXlJGjWo73HU6BD2GtIXXDPz/+BiHsdNGb5daYb7MdyvVNhF2vgVVCLiNY5dojm5ntd/cmijm5Xqh7J7zzuNIr1UjdwgSRw5vS9YiwTXO1CFg5l6fg2HD4KAnMqvNNFwC3Tx/f0II1YG9D2qpsOOnqkDMBVbktrunPlxK07bmHdQrm1EuySCQ/FcwSGY9cNlV4W255mJb+sNkVqGah6rozTO8ttomqDk388bNioAcb4ausqBFrgX8ffV8XV/hgq2Pzpa64VqeNwDDuGMORbB/lGPaJWsaD23L/NG3USaxpJH8Cwz3xBS6dds3ZQq5NUuJtgsfLSkJunSTy70KIrrFPH76GQiW7QocO+mjuFRCKVSWv+8rwvPkNHZoLgcnSqRjuIyBETVxbSIEnjbOgCm7W9ZCELS8LcGGomYbY9FWllovcTtvfXDyO0L5lhtkh+rsWwGAZB5FX+7L5yDr6/RH7KeOgFeS5IvzOMLpUHllH8z0c0V5uGQGD/IGtfJn8BMqTaojKC4Fa54KqbkqmDUI7xhiYXhg7lXGSroFKwm/q9fAFYUVAUnGIkEsJB5D+QPcsc8IrDhjCUC59yy
-X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(46966006)(36840700001)(36860700001)(36756003)(70586007)(336012)(26005)(186003)(5660300002)(82310400003)(7696005)(107886003)(16526019)(2906002)(86362001)(15650500001)(4326008)(70206006)(2616005)(8936002)(316002)(36906005)(7636003)(1076003)(54906003)(110136005)(8676002)(356005)(7416002)(426003)(508600001)(7406005)(6666004)(83380400001)(47076005)(21314003)(2101003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: rnqQjkkgXo+euQ0U/XF7ZpgapkaSySwPee2l3GAUzTO2MbUOAsITMBSmaEIBLKz7qmzl6FkAsbLYgVpFdCtFQUfuUKfrke5ueMKTIcGvdzlrB4Y0t5/1dxSrLHbLMigdXUsoCdsZyPlITuGQgIzcsbg7p44TBdN5lwIPXKZrKgCfDeSZwF5N9TNi/Q9bd3w3BVHYQUDBdJoPQTRFaYLe4MCsAapvi9ZmdQYie87NaV95dEbVwHEXhPnwUV3lmuti6lnCP9NJhwALcpnjKCDHSfpZeZEMLN0Tiee8myRn6Nkg37UI5milL9fkYu3c8ITcuinQbf4WSIEPYqY32rlTE8fIQ9yef/b3GwRWUwi2kT/2pt8VuqRYmpfLnFxJW4UGHi7d+kB+QFqeULxb23JSUr0hqmlTU2ksHyXozuHjXKqrb/7EL/OmYQ6Q+37wmd6mkiayeOg2MW9WOwmlGByBVsifKGJpep9PUoM2tqJvrrn4wU+WfBdEWKyEqRTZ2MHM+w2X3z8cLIwYq7lhbQlNwDjO7OY0two9hKLf7tr0skpynbXyaKmjtW17YXxRs+lytgYBjCmZmMQ2+VU0PtQk/SMxfqGTwYKgSU0zpwaWfc9EzEB4iz1kxqP3nboLpOFyA2wZuV4f0SYzdo7VoxH0sEdIkRYhSl9wyUUwQAiNBr6DJndYycWSRrWmgj2y1h+lnm04j36WUskXMz8vLAOur28m89rXeQE3ED9wjvy+61c=
+X-Forefront-Antispam-Report: CIP:216.228.112.34;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:schybrid03.nvidia.com;CAT:NONE;SFS:(4636009)(36840700001)(46966006)(70206006)(110136005)(356005)(316002)(86362001)(54906003)(8936002)(4326008)(15650500001)(6666004)(36860700001)(83380400001)(7696005)(7636003)(70586007)(36756003)(5660300002)(336012)(2616005)(426003)(2906002)(1076003)(508600001)(16526019)(7406005)(186003)(26005)(47076005)(107886003)(8676002)(7416002)(82310400003)(2101003);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2021 06:48:36.1661
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Nov 2021 06:49:01.6624
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d463c2a0-3cc9-4ef9-715f-08d99f5f205d
+X-MS-Exchange-CrossTenant-Network-Message-Id: a61fc49e-d383-4a8c-dfd4-08d99f5f2f86
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.112.34];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT039.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT054.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4922
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2509
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Chaitanya Kulkarni <kch@nvidia.com>
 
-Not all devices can support verify requests which can be mapped to
-the controller specific command. This patch adds a way to emulate
-REQ_OP_VERIFY for NVMeOF block device namespace. We add a new
-workqueue to offload the emulation with the help of
-__blkdev_emulate_verify().
+For now, there is no way to map verify operation to the VFS layer API.
+This patch emulates verify operation by offloading it to the workqueue
+and reading the data using vfs layer APIs for both buffered io and
+direct io mode.
 
 Signed-off-by: Chaitanya Kulkarni <kch@nvidia.com>
 ---
- drivers/nvme/target/core.c        | 12 +++++++-
- drivers/nvme/target/io-cmd-bdev.c | 51 ++++++++++++++++++++++++++-----
- drivers/nvme/target/nvmet.h       |  3 ++
- 3 files changed, 57 insertions(+), 9 deletions(-)
+ drivers/nvme/target/io-cmd-file.c | 151 ++++++++++++++++++++++++++++++
+ 1 file changed, 151 insertions(+)
 
-diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
-index 8ce4d59cc9e7..8a17a6479073 100644
---- a/drivers/nvme/target/core.c
-+++ b/drivers/nvme/target/core.c
-@@ -16,6 +16,7 @@
- #include "nvmet.h"
+diff --git a/drivers/nvme/target/io-cmd-file.c b/drivers/nvme/target/io-cmd-file.c
+index 0abbefd9925e..2b0291c4164c 100644
+--- a/drivers/nvme/target/io-cmd-file.c
++++ b/drivers/nvme/target/io-cmd-file.c
+@@ -12,6 +12,7 @@
  
- struct workqueue_struct *buffered_io_wq;
-+struct workqueue_struct *verify_wq;
- static const struct nvmet_fabrics_ops *nvmet_transports[NVMF_TRTYPE_MAX];
- static DEFINE_IDA(cntlid_ida);
+ #define NVMET_MAX_MPOOL_BVEC		16
+ #define NVMET_MIN_MPOOL_OBJ		16
++#define NVMET_VERIFY_BUF_LEN		(BIO_MAX_PAGES << PAGE_SHIFT)
  
-@@ -1546,11 +1547,17 @@ static int __init nvmet_init(void)
+ int nvmet_file_ns_revalidate(struct nvmet_ns *ns)
+ {
+@@ -381,6 +382,153 @@ static void nvmet_file_execute_write_zeroes(struct nvmet_req *req)
+ 	schedule_work(&req->f.work);
+ }
  
- 	nvmet_ana_group_enabled[NVMET_DEFAULT_ANA_GRPID] = 1;
- 
-+	verify_wq = alloc_workqueue("nvmet-verify-wq", WQ_MEM_RECLAIM, 0);
-+	if (!verify_wq) {
-+		error = -ENOMEM;
-+		goto out;
++static void __nvmet_req_to_verify_offset(struct nvmet_req *req, loff_t *offset,
++		ssize_t *len)
++{
++	struct nvme_verify_cmd *verify = &req->cmd->verify;
++
++	*offset = le64_to_cpu(verify->slba) << req->ns->blksize_shift;
++	*len = (((sector_t)le16_to_cpu(verify->length) + 1) <<
++			req->ns->blksize_shift);
++}
++
++static int do_buffered_io_emulate_verify(struct file *f, loff_t offset,
++		ssize_t len)
++{
++	char *buf = NULL;
++	int ret = 0;
++	ssize_t rc;
++
++	buf = kmalloc(NVMET_VERIFY_BUF_LEN, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	while (len > 0) {
++		ssize_t curr_len = min_t(ssize_t, len, NVMET_VERIFY_BUF_LEN);
++
++		rc = kernel_read(f, buf, curr_len, &offset);
++		if (rc != curr_len) {
++			pr_err("kernel_read %lu curr_len %lu\n", rc, curr_len);
++			ret = -EINVAL;
++			break;
++		}
++
++		len -= curr_len;
++		offset += curr_len;
++		cond_resched();
 +	}
 +
- 	buffered_io_wq = alloc_workqueue("nvmet-buffered-io-wq",
- 			WQ_MEM_RECLAIM, 0);
- 	if (!buffered_io_wq) {
- 		error = -ENOMEM;
--		goto out;
-+		goto out_free_verify_work_queue;
- 	}
- 
- 	error = nvmet_init_discovery();
-@@ -1566,6 +1573,8 @@ static int __init nvmet_init(void)
- 	nvmet_exit_discovery();
- out_free_work_queue:
- 	destroy_workqueue(buffered_io_wq);
-+out_free_verify_work_queue:
-+	destroy_workqueue(verify_wq);
- out:
- 	return error;
- }
-@@ -1576,6 +1585,7 @@ static void __exit nvmet_exit(void)
- 	nvmet_exit_discovery();
- 	ida_destroy(&cntlid_ida);
- 	destroy_workqueue(buffered_io_wq);
-+	destroy_workqueue(verify_wq);
- 
- 	BUILD_BUG_ON(sizeof(struct nvmf_disc_rsp_page_entry) != 1024);
- 	BUILD_BUG_ON(sizeof(struct nvmf_disc_rsp_page_hdr) != 1024);
-diff --git a/drivers/nvme/target/io-cmd-bdev.c b/drivers/nvme/target/io-cmd-bdev.c
-index 5a888cdadfea..80b8e7bfd1ae 100644
---- a/drivers/nvme/target/io-cmd-bdev.c
-+++ b/drivers/nvme/target/io-cmd-bdev.c
-@@ -433,25 +433,60 @@ static void nvmet_bdev_execute_write_zeroes(struct nvmet_req *req)
- 	}
- }
- 
--static void nvmet_bdev_execute_verify(struct nvmet_req *req)
-+static void __nvmet_req_to_verify_sectors(struct nvmet_req *req,
-+		sector_t *sects, sector_t *nr_sects)
- {
- 	struct nvme_verify_cmd *verify = &req->cmd->verify;
-+
-+	*sects = le64_to_cpu(verify->slba) << (req->ns->blksize_shift - 9);
-+	*nr_sects = (((sector_t)le16_to_cpu(verify->length) + 1) <<
-+			(req->ns->blksize_shift - 9));
++	kfree(buf);
++	return ret;
 +}
 +
-+static void nvmet_bdev_emulate_verify_work(struct work_struct *w)
++static int do_direct_io_emulate_verify(struct file *f, loff_t offset,
++		ssize_t len)
 +{
-+	struct nvmet_req *req = container_of(w, struct nvmet_req, b.work);
-+	sector_t nr_sector;
-+	sector_t sector;
++	struct scatterlist *sgl = NULL;
++	struct bio_vec *bvec = NULL;
++	struct iov_iter iter = { 0 };
++	struct kiocb iocb = { 0 };
++	unsigned int sgl_nents;
++	ssize_t ret = 0;
++	int i;
++
++	while (len > 0) {
++		ssize_t curr_len = min_t(ssize_t, len, NVMET_VERIFY_BUF_LEN);
++		struct scatterlist *sg = NULL;
++		unsigned int bv_len = 0;
++		ssize_t rc;
++
++		sgl = sgl_alloc(curr_len, GFP_KERNEL, &sgl_nents);
++		if (!sgl) {
++			ret = -ENOMEM;
++			break;
++		}
++
++		bvec = kmalloc_array(sgl_nents, sizeof(struct bio_vec),
++				GFP_KERNEL);
++		if (!bvec) {
++			ret = -ENOMEM;
++			break;
++		}
++
++		for_each_sg(sgl, sg, sgl_nents, i) {
++			nvmet_file_init_bvec(&bvec[i], sg);
++			bv_len += sg->length;
++		}
++
++		if (bv_len != curr_len) {
++			pr_err("length mismatch sgl & bvec\n");
++			ret = -EINVAL;
++			break;
++		}
++
++		iocb.ki_pos = offset;
++		iocb.ki_filp = f;
++		iocb.ki_complete = NULL; /* Sync I/O */
++		iocb.ki_flags |= IOCB_DIRECT;
++
++		iov_iter_bvec(&iter, READ, bvec, sgl_nents, bv_len);
++
++		rc = call_read_iter(f, &iocb, &iter);
++		if (rc != curr_len) {
++			pr_err("read len mismatch expected %lu got %ld\n",
++					curr_len, rc);
++			ret = -EINVAL;
++			break;
++		}
++
++		cond_resched();
++
++		len -= curr_len;
++		offset += curr_len;
++
++		kfree(bvec);
++		sgl_free(sgl);
++		bvec = NULL;
++		sgl = NULL;
++		memset(&iocb, 0, sizeof(iocb));
++		memset(&iter, 0, sizeof(iter));
++	}
++
++	kfree(bvec);
++	sgl_free(sgl);
++	return ret;
++}
++
++static void nvmet_file_emulate_verify_work(struct work_struct *w)
++{
++	struct nvmet_req *req = container_of(w, struct nvmet_req, f.work);
++	loff_t offset;
++	ssize_t len;
 +	int ret = 0;
 +
-+	__nvmet_req_to_verify_sectors(req, &sector, &nr_sector);
-+	if (!nr_sector)
++	__nvmet_req_to_verify_offset(req, &offset, &len);
++	if (!len)
 +		goto out;
 +
-+	ret = blkdev_emulate_verify(req->ns->bdev, sector, nr_sector,
-+			GFP_KERNEL);
-+out:
-+	nvmet_req_complete(req,
-+			   blk_to_nvme_status(req, errno_to_blk_status(ret)));
-+}
++	if (unlikely(offset + len > req->ns->size)) {
++		nvmet_req_complete(req, errno_to_nvme_status(req, -ENOSPC));
++		return;
++	}
 +
-+static void nvmet_bdev_submit_emulate_verify(struct nvmet_req *req)
-+{
-+	INIT_WORK(&req->b.work, nvmet_bdev_emulate_verify_work);
-+	queue_work(verify_wq, &req->b.work);
-+}
-+
-+
-+static void nvmet_bdev_execute_verify(struct nvmet_req *req)
-+{
- 	struct bio *bio = NULL;
- 	sector_t nr_sector;
- 	sector_t sector;
--	int ret;
-+	int ret = 0;
- 
- 	if (!nvmet_check_transfer_len(req, 0))
- 		return;
- 
-+	/* offload emulation */
- 	if (!bdev_verify_sectors(req->ns->bdev)) {
--		nvmet_req_complete(req, NVME_SC_INTERNAL | NVME_SC_DNR);
-+		nvmet_bdev_submit_emulate_verify(req);
- 		return;
- 	}
- 
--	sector = le64_to_cpu(verify->slba) << (req->ns->blksize_shift - 9);
--	nr_sector = (((sector_t)le16_to_cpu(verify->length) + 1) <<
--			(req->ns->blksize_shift - 9));
-+	__nvmet_req_to_verify_sectors(req, &sector, &nr_sector);
-+	if (!nr_sector)
-+		goto out;
- 
- 	ret = __blkdev_issue_verify(req->ns->bdev, sector, nr_sector,
- 			GFP_KERNEL, &bio);
-@@ -459,9 +494,9 @@ static void nvmet_bdev_execute_verify(struct nvmet_req *req)
- 		bio->bi_private = req;
- 		bio->bi_end_io = nvmet_bio_done;
- 		submit_bio(bio);
--	} else {
--		nvmet_req_complete(req, errno_to_nvme_status(req, ret));
- 	}
++	if (req->ns->buffered_io)
++		ret = do_buffered_io_emulate_verify(req->ns->file, offset, len);
++	else
++		ret = do_direct_io_emulate_verify(req->ns->file, offset, len);
 +out:
 +	nvmet_req_complete(req, errno_to_nvme_status(req, ret));
- }
- 
- u16 nvmet_bdev_parse_io_cmd(struct nvmet_req *req)
-diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
-index 8776dd1a0490..7f3f584b1e7b 100644
---- a/drivers/nvme/target/nvmet.h
-+++ b/drivers/nvme/target/nvmet.h
-@@ -323,6 +323,8 @@ struct nvmet_req {
- 	union {
- 		struct {
- 			struct bio      inline_bio;
-+			/* XXX: should we take work out of union ? */
-+			struct work_struct      work;
- 		} b;
- 		struct {
- 			bool			mpool_alloc;
-@@ -355,6 +357,7 @@ struct nvmet_req {
- };
- 
- extern struct workqueue_struct *buffered_io_wq;
-+extern struct workqueue_struct *verify_wq;
- 
- static inline void nvmet_set_result(struct nvmet_req *req, u32 result)
++}
++
++static void nvmet_file_execute_verify(struct nvmet_req *req)
++{
++	if (!nvmet_check_data_len_lte(req, 0))
++		return;
++
++	INIT_WORK(&req->f.work, nvmet_file_emulate_verify_work);
++	queue_work(verify_wq, &req->f.work);
++}
++
+ u16 nvmet_file_parse_io_cmd(struct nvmet_req *req)
  {
+ 	struct nvme_command *cmd = req->cmd;
+@@ -399,6 +547,9 @@ u16 nvmet_file_parse_io_cmd(struct nvmet_req *req)
+ 	case nvme_cmd_write_zeroes:
+ 		req->execute = nvmet_file_execute_write_zeroes;
+ 		return 0;
++	case nvme_cmd_verify:
++		req->execute = nvmet_file_execute_verify;
++		return 0;
+ 	default:
+ 		pr_err("unhandled cmd for file ns %d on qid %d\n",
+ 				cmd->common.opcode, req->sq->qid);
 -- 
 2.22.1
 
