@@ -2,98 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2A4D445C5E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Nov 2021 23:45:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55C00445C5F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  4 Nov 2021 23:45:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232134AbhKDWrn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Nov 2021 18:47:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42874 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230436AbhKDWrm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Nov 2021 18:47:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 34F0561220;
-        Thu,  4 Nov 2021 22:45:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636065903;
-        bh=ULRO/b21e2jF5Il9UheXH6nsdKwZYueNSl7SVt5O9zM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZUlP9UzxX3fkNEDMeQgJtLu4w9c+qEK9huvXYqqHBTEkI3uCuqX0tLz5RVvdLWyh/
-         hZ8PhEBO4htT2iwl68hfYDFMT0oyEA9gelhnZ4O4FxB+iv3cAPiOIZr8G3sshzoooj
-         Df8MZwd+A2ohPEGqD8UoQcly2xD1WL9Wyp4vXPhDmviwFLLDhqb68g1n9gqXVHMizl
-         dpwXmmfrHcKHvT3m3c8DH0lW0s4UTfcbIw75uZFJSLVW6Y3erFMaBpiAyjTvKeuWhs
-         rHGgvZikJbnsNW9oovgkNlETNpgHvyVU3jrmTV6/dRMoC2wTI6ORrvKvxCBKcr888g
-         8tVcvq2G9A3rQ==
-Date:   Thu, 4 Nov 2021 15:44:59 -0700
-From:   Keith Busch <kbusch@kernel.org>
-To:     Chaitanya Kulkarni <chaitanyak@nvidia.com>
-Cc:     linux-block@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, dm-devel@redhat.com, axboe@kernel.dk,
-        agk@redhat.com, snitzer@redhat.com, song@kernel.org,
-        djwong@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        viro@zeniv.linux.org.uk, javier@javigon.com,
-        johannes.thumshirn@wdc.com, bvanassche@acm.org,
-        dongli.zhang@oracle.com, ming.lei@redhat.com, osandov@fb.com,
-        willy@infradead.org, jefflexu@linux.alibaba.com,
-        josef@toxicpanda.com, clm@fb.com, dsterba@suse.com, jack@suse.com,
-        tytso@mit.edu, adilger.kernel@dilger.ca, jlayton@kernel.org,
-        idryomov@gmail.com, danil.kipnis@cloud.ionos.com,
-        ebiggers@google.com, jinpu.wang@cloud.ionos.com,
-        Chaitanya Kulkarni <kch@nvidia.com>
-Subject: Re: [RFC PATCH 3/8] nvme: add support for the Verify command
-Message-ID: <20211104224459.GB2655721@dhcp-10-100-145-180.wdc.com>
-References: <20211104064634.4481-1-chaitanyak@nvidia.com>
- <20211104064634.4481-4-chaitanyak@nvidia.com>
+        id S232221AbhKDWsB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Nov 2021 18:48:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43358 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232167AbhKDWr6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 4 Nov 2021 18:47:58 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBD39C061714
+        for <linux-fsdevel@vger.kernel.org>; Thu,  4 Nov 2021 15:45:19 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id p8so5365802pgh.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 04 Nov 2021 15:45:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ez2Kc0qXfdZyVoueN+pRzSOTizwvVrWSdL7MhI68c/Y=;
+        b=Nc5Ztqd9MT0ZUdLObZFAeRL2+SQYPyGlV4Sarkhyd9wRLOOShAuNS1GkpBUPRmdOOd
+         RoESPqO/cJ9pKhy4ylZ6iQ6OPwTbZ59cKJPiceR2v/IjjCoEK/qHC6YuIgQHW/646zvB
+         pTVMgjhR61eVK/HSdy/hDG07731O6d4qkxk87l31AN3nEHU0nYr8y0RoG5P9moF3KQZP
+         216NP565fi5Fxy+ffK3IjZr/furTG0zHEtzabwmGV9VeTwvsRJQ6fN9CHXgv42XpPUSJ
+         b+X5cHlQEKE9qvf6xVJqm8Vw47LAaYS0E6zaLZZBX5hhvc59cs6AJfoKBh92BvtsuDNB
+         WrFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ez2Kc0qXfdZyVoueN+pRzSOTizwvVrWSdL7MhI68c/Y=;
+        b=vJQmx7sEKBxnNmPGpt1jLN/7rUCOQfHwP8lvPTPOEHxQfwZS9TQ872XuKgxGBEOa7A
+         3ICRmRk1yXYJqFMGn6Z4fxe+JjzWu+GxKuQyl6lWCra4ff09Ll/6qqCLay4ELlMeMYlv
+         daveArjv2EEGlNvRTnD0n7Tyx/NssLPqL81N/aMsJvgqSiH8QP8IjyPcVCPzC5riH58B
+         LkE9KpcqjXOB/WErI0I/8e6ZK8oeMf90xAjyXyBb5iecgSCN7c7a+n9fv48YCC1mY47p
+         kuQtLQBMjIzfxebcHZHQlXfr+h3sBw3FGuB1jDsuGpDQ6i+QqYvEgo3wJm1lzUVuI6Vh
+         J16Q==
+X-Gm-Message-State: AOAM532hB/1rzeqI5JdkUx0meTe6PGHlR4kJwIai/xa7eA0UsuNza3U7
+        1EzRAJzkvw1xRVgmeQ6glHvuRBYxc98/pZqO1s9nrA==
+X-Google-Smtp-Source: ABdhPJyyaBvoljTK7Xrm6XhzgfUQ/jdbwXvs/7ewAf+ELaJzbp6FekSKyfbkoStxKxUZyf/31byNV+ks+CYodyeVKYM=
+X-Received: by 2002:a05:6a00:1484:b0:48c:2e58:8d39 with SMTP id
+ v4-20020a056a00148400b0048c2e588d39mr18010577pfu.13.1636065919224; Thu, 04
+ Nov 2021 15:45:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20211104064634.4481-4-chaitanyak@nvidia.com>
+References: <20211104214636.450782-1-almasrymina@google.com> <YYRZNWZqHy9+11KW@casper.infradead.org>
+In-Reply-To: <YYRZNWZqHy9+11KW@casper.infradead.org>
+From:   Mina Almasry <almasrymina@google.com>
+Date:   Thu, 4 Nov 2021 15:45:07 -0700
+Message-ID: <CAHS8izPisLXTmAsvZR6w2piSXPidVvJMHfQR7oikJgkuTJyRQA@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: Add PM_THP to /proc/pid/pagemap
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Paul E . McKenney" <paulmckrcu@fb.com>,
+        Yu Zhao <yuzhao@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Xu <peterx@redhat.com>,
+        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
+        David Hildenbrand <david@redhat.com>,
+        Florian Schmidt <florian.schmidt@nutanix.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 03, 2021 at 11:46:29PM -0700, Chaitanya Kulkarni wrote:
-> +static inline blk_status_t nvme_setup_verify(struct nvme_ns *ns,
-> +		struct request *req, struct nvme_command *cmnd)
-> +{
+On Thu, Nov 4, 2021 at 3:08 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Thu, Nov 04, 2021 at 02:46:35PM -0700, Mina Almasry wrote:
+> > Add PM_THP to allow userspace to detect whether a given virt address is
+> > currently mapped by a hugepage or not.
+>
+> Well, no, that's not what that means.
+>
 
-Due to recent driver changes, you need a "memset(cmnd, 0, sizeof(*cmnd))"
-prior to setting up the rest of the command, or you need to set each
-command dword individually.
+Sorry, that was the intention, but I didn't implement the intention correctly.
 
-> +	cmnd->verify.opcode = nvme_cmd_verify;
-> +	cmnd->verify.nsid = cpu_to_le32(ns->head->ns_id);
-> +	cmnd->verify.slba =
-> +		cpu_to_le64(nvme_sect_to_lba(ns, blk_rq_pos(req)));
-> +	cmnd->verify.length =
-> +		cpu_to_le16((blk_rq_bytes(req) >> ns->lba_shift) - 1);
-> +	cmnd->verify.control = 0;
-> +	return BLK_STS_OK;
-> +}
+> > @@ -1396,6 +1397,8 @@ static pagemap_entry_t pte_to_pagemap_entry(struct pagemapread *pm,
+> >               flags |= PM_FILE;
+> >       if (page && page_mapcount(page) == 1)
+> >               flags |= PM_MMAP_EXCLUSIVE;
+> > +     if (page && PageTransCompound(page))
+> > +             flags |= PM_THP;
+>
+> All that PageTransCompound() does is call PageCompound().  It doesn't
+> tell you if the underlying allocation is PMD sized, nor properly aligned.
+>
+> And you didn't answer my question about whether you want information about
+> whether a large page is being used that's not quite as large as a PMD.
+>
 
-> +static void nvme_config_verify(struct gendisk *disk, struct nvme_ns *ns)
-> +{
-> +	u64 max_blocks;
-> +
-> +	if (!(ns->ctrl->oncs & NVME_CTRL_ONCS_VERIFY))
-> +		return;
-> +
-> +	if (ns->ctrl->max_hw_sectors == UINT_MAX)
-> +		max_blocks = (u64)USHRT_MAX + 1;
-> +	else
-> +		max_blocks = ns->ctrl->max_hw_sectors + 1;
+Sorry, I thought the implementation would make it clear but I didn't
+do that correctly. Right now and for the foreseeable future what I
+want to know is whether the page is mapped by a PMD. All the below
+work for me:
 
-If supported by the controller, this maximum is defined in the non-mdts
-command limits in NVM command set specific Identify Controller VSL field.
+1. Flag is set if the page is either a PMD size THP page.
+2. Flag is set if the page is either a PMD size THP page or PMD size
+hugetlbfs page.
+3. Flag is set if the page is either a PMD size THP page or PMD size
+hugetlbfs page or contig PTE size hugetlbfs page.
 
-> +
-> +	/* keep same as discard */
-> +	if (blk_queue_flag_test_and_set(QUEUE_FLAG_VERIFY, disk->queue))
-> +		return;
-> +
-> +	blk_queue_max_verify_sectors(disk->queue,
-> +				     nvme_lba_to_sect(ns, max_blocks));
-> +
-> +}
+I prefer #2 and I think it's maybe most extensible for future use
+cases that 1 flag tells whether the page is PMD hugepage and another
+flag is a large cont PTE page.
