@@ -2,249 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E517E445DD9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Nov 2021 03:14:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D574445E73
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  5 Nov 2021 04:09:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231842AbhKECR1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 4 Nov 2021 22:17:27 -0400
-Received: from mail.hallyn.com ([178.63.66.53]:46418 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230514AbhKECR0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 4 Nov 2021 22:17:26 -0400
-X-Greylist: delayed 442 seconds by postgrey-1.27 at vger.kernel.org; Thu, 04 Nov 2021 22:17:25 EDT
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 9E9BF96F; Thu,  4 Nov 2021 21:07:22 -0500 (CDT)
-Date:   Thu, 4 Nov 2021 21:07:22 -0500
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
-        Kees Cook <keescook@chromium.org>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Serge Hallyn <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Henning Schild <henning.schild@siemens.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Laurent Vivier <laurent@vivier.eu>,
-        Matthew Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, containers@lists.linux.dev,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH 1/2] binfmt_misc: cleanup on filesystem umount
-Message-ID: <20211105020722.GA24590@mail.hallyn.com>
-References: <20211028103114.2849140-1-brauner@kernel.org>
+        id S231222AbhKEDMe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 4 Nov 2021 23:12:34 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:34350 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229647AbhKEDMd (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 4 Nov 2021 23:12:33 -0400
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 1A539JCp001043
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 4 Nov 2021 23:09:19 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 215AA15C00B9; Thu,  4 Nov 2021 23:09:19 -0400 (EDT)
+Date:   Thu, 4 Nov 2021 23:09:19 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: futher decouple DAX from block devices
+Message-ID: <YYSgX9FI0kaGLeR0@mit.edu>
+References: <20211018044054.1779424-1-hch@lst.de>
+ <21ff4333-e567-2819-3ae0-6a2e83ec7ce6@sandeen.net>
+ <20211104081740.GA23111@lst.de>
+ <20211104173417.GJ2237511@magnolia>
+ <20211104173559.GB31740@lst.de>
+ <CAPcyv4jbjc+XtX5RX5OL3vPadsYZwoK1NG1qC5AcpySBu5tL4g@mail.gmail.com>
+ <20211104190443.GK24333@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20211028103114.2849140-1-brauner@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20211104190443.GK24333@magnolia>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 28, 2021 at 12:31:13PM +0200, Christian Brauner wrote:
-> From: Christian Brauner <christian.brauner@ubuntu.com>
+On Thu, Nov 04, 2021 at 12:04:43PM -0700, Darrick J. Wong wrote:
+> > Note that I've avoided implementing read/write fops for dax devices
+> > partly out of concern for not wanting to figure out shared-mmap vs
+> > write coherence issues, but also because of a bet with Dave Hansen
+> > that device-dax not grow features like what happened to hugetlbfs. So
+> > it would seem mkfs would need to switch to mmap I/O, or bite the
+> > bullet and implement read/write fops in the driver.
 > 
-> Currently, registering a new binary type pins the binfmt_misc
-> filesystem. Specifically, this means that as long as there is at least
-> one binary type registered the binfmt_misc filesystem survives all
-> umounts, i.e. the superblock is not destroyed. Meaning that a umount
-> followed by another mount will end up with the same superblock and the
-> same binary type handlers. This is a behavior we tend to discourage for
-> any new filesystems (apart from a few special filesystems such as e.g.
-> configfs or debugfs). A umount operation without the filesystem being
-> pinned - by e.g. someone holding a file descriptor to an open file -
-> should usually result in the destruction of the superblock and all
-> associated resources. This makes introspection easier and leads to
-> clearly defined, simple and clean semantics. An administrator can rely
-> on the fact that a umount will guarantee a clean slate making it
-> possible to reinitialize a filesystem. Right now all binary types would
-> need to be explicitly deleted before that can happen.
+> That ... would require a fair amount of userspace changes, though at
+> least e2fsprogs has pluggable io drivers, which would make mmapping a
+> character device not too awful.
 > 
-> This allows us to remove the heavy-handed calls to simple_pin_fs() and
-> simple_release_fs() when creating and deleting binary types. This in
-> turn allows us to replace the current brittle pinning mechanism abusing
-> dget() which has caused a range of bugs judging from prior fixes in [2]
-> and [3]. The additional dget() in load_misc_binary() pins the dentry but
-> only does so for the sake to prevent ->evict_inode() from freeing the
-> node when a user removes the binary type and kill_node() is run. Which
-> would mean ->interpreter and ->interp_file would be freed causing a UAF.
-> 
-> This isn't really nicely documented nor is it very clean because it
-> relies on simple_pin_fs() pinning the filesystem as long as at least one
-> binary type exists. Otherwise it would cause load_misc_binary() to hold
-> on to a dentry belonging to a superblock that has been shutdown.
-> Replace that implicit pinning with a clean and simple per-node refcount
-> and get rid of the ugly dget() pinning. A similar mechanism exists for
-> e.g. binderfs (cf. [4]). All the cleanup work can now be done in
-> ->evict_inode().
-> 
-> In a follow-up patch we will make it possible to use binfmt_misc in
-> sandboxes. We will use the cleaner semantics where a umount for the
-> filesystem will cause the superblock and all resources to be
-> deallocated. In preparation for this apply the same semantics to the
-> initial binfmt_misc mount. Note, that this is a user-visible change and
-> as such a uapi change but one that we can reasonably risk. We've
-> discussed this in earlier versions of this patchset (cf. [1]).
-> 
-> The main user and provider of binfmt_misc is systemd. Systemd provides
-> binfmt_misc via autofs since it is configurable as a kernel module and
-> is used by a few exotic packages and users. As such a binfmt_misc mount
-> is triggered when /proc/sys/fs/binfmt_misc is accessed and is only
-> provided on demand. Other autofs on demand filesystems include EFI ESP
-> which systemd umounts if the mountpoint stays idle for a certain amount
-> of time. This doesn't apply to the binfmt_misc autofs mount which isn't
-> touched once it is mounted meaning this change can't accidently wipe
-> binary type handlers without someone having explicitly unmounted
-> binfmt_misc. After speaking to systemd folks they don't expect this
-> change to affect them.
-> 
-> In line with our general policy, if we see a regression for systemd or
-> other users with this change we will switch back to the old behavior for
-> the initial binfmt_misc mount and have binary types pin the filesystem
-> again. But while we touch this code let's take the chance and let's
-> improve on the status quo.
-> 
-> [1]: https://lore.kernel.org/r/20191216091220.465626-2-laurent@vivier.eu
-> [2]: commit 43a4f2619038 ("exec: binfmt_misc: fix race between load_misc_binary() and kill_node()"
-> [3]: commit 83f918274e4b ("exec: binfmt_misc: shift filp_close(interp_file) from kill_node() to bm_evict_inode()")
-> [4]: commit f0fe2c0f050d ("binder: prevent UAF for binderfs devices II")
-> Cc: Sargun Dhillon <sargun@sargun.me>
-> Cc: Serge Hallyn <serge@hallyn.com>
+> xfsprogs would be another story -- porting the buffer cache mignt not be
+> too bad, but mkfs and repair seem to issue pread/pwrite calls directly.
+> Note that xfsprogs explicitly screens out chardevs.
 
-This *looks* right to me.  I'll keep looking back at this one while I
-look at the second patch, but
+It's not just e2fsprogs and xfsprogs.  There's also udev, blkid,
+potententially systemd unit generators to kick off fsck runs, etc.
+There are probably any number of user scripts which assume that file
+systems are mounted on block devices --- for example, by looking at
+the output of lsblk, etc.
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+Also note that block devices have O_EXCL support to provide locking
+against attempts to run mkfs on a mounted file system.  If you move
+dax file systems to be mounted on a character mode device, that would
+have to be replicated as well, etc.  So I suspect that a large number
+of subtle things would break, and I'd strongly recommend against going
+down that path.
 
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Henning Schild <henning.schild@siemens.com>
-> Cc: Andrei Vagin <avagin@gmail.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Laurent Vivier <laurent@vivier.eu>
-> Cc: linux-fsdevel@vger.kernel.org
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> ---
->  fs/binfmt_misc.c | 56 +++++++++++++++++++++++++++++++-----------------
->  1 file changed, 36 insertions(+), 20 deletions(-)
-> 
-> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-> index e1eae7ea823a..5a9d5e44c750 100644
-> --- a/fs/binfmt_misc.c
-> +++ b/fs/binfmt_misc.c
-> @@ -60,12 +60,11 @@ typedef struct {
->  	char *name;
->  	struct dentry *dentry;
->  	struct file *interp_file;
-> +	refcount_t ref;
->  } Node;
->  
->  static DEFINE_RWLOCK(entries_lock);
->  static struct file_system_type bm_fs_type;
-> -static struct vfsmount *bm_mnt;
-> -static int entry_count;
->  
->  /*
->   * Max length of the register string.  Determined by:
-> @@ -126,6 +125,16 @@ static Node *check_file(struct linux_binprm *bprm)
->  	return NULL;
->  }
->  
-> +/* Free node if we are sure load_misc_binary() is done with it. */
-> +static void put_node(Node *e)
-> +{
-> +	if (refcount_dec_and_test(&e->ref)) {
-> +		if (e->flags & MISC_FMT_OPEN_FILE)
-> +			filp_close(e->interp_file, NULL);
-> +		kfree(e);
-> +	}
-> +}
-> +
->  /*
->   * the loader itself
->   */
-> @@ -142,8 +151,9 @@ static int load_misc_binary(struct linux_binprm *bprm)
->  	/* to keep locking time low, we copy the interpreter string */
->  	read_lock(&entries_lock);
->  	fmt = check_file(bprm);
-> +	/* Make sure the node isn't freed behind our back. */
->  	if (fmt)
-> -		dget(fmt->dentry);
-> +		refcount_inc(&fmt->ref);
->  	read_unlock(&entries_lock);
->  	if (!fmt)
->  		return retval;
-> @@ -198,7 +208,16 @@ static int load_misc_binary(struct linux_binprm *bprm)
->  
->  	retval = 0;
->  ret:
-> -	dput(fmt->dentry);
-> +
-> +	/*
-> +	 * If we actually put the node here all concurrent calls to
-> +	 * load_misc_binary() will have finished. We also know
-> +	 * that for the refcount to be zero ->evict_inode() must have removed
-> +	 * the node to be deleted from the list. All that is left for us is to
-> +	 * close and free.
-> +	 */
-> +	put_node(fmt);
-> +
->  	return retval;
->  }
->  
-> @@ -557,26 +576,29 @@ static void bm_evict_inode(struct inode *inode)
->  {
->  	Node *e = inode->i_private;
->  
-> -	if (e && e->flags & MISC_FMT_OPEN_FILE)
-> -		filp_close(e->interp_file, NULL);
-> -
->  	clear_inode(inode);
-> -	kfree(e);
-> +
-> +	if (e) {
-> +		write_lock(&entries_lock);
-> +		list_del_init(&e->list);
-> +		write_unlock(&entries_lock);
-> +		put_node(e);
-> +	}
->  }
->  
->  static void kill_node(Node *e)
->  {
->  	struct dentry *dentry;
->  
-> -	write_lock(&entries_lock);
-> -	list_del_init(&e->list);
-> -	write_unlock(&entries_lock);
-> -
-> +	/*
-> +	 * It's fine to unconditionally drop the dentry since ->evict_inode()
-> +	 * will check the refcount before freeing the node and so it can't go
-> +	 * away behind load_misc_binary()'s back.
-> +	 */
->  	dentry = e->dentry;
->  	drop_nlink(d_inode(dentry));
->  	d_drop(dentry);
->  	dput(dentry);
-> -	simple_release_fs(&bm_mnt, &entry_count);
->  }
->  
->  /* /<entry> */
-> @@ -683,13 +705,7 @@ static ssize_t bm_register_write(struct file *file, const char __user *buffer,
->  	if (!inode)
->  		goto out2;
->  
-> -	err = simple_pin_fs(&bm_fs_type, &bm_mnt, &entry_count);
-> -	if (err) {
-> -		iput(inode);
-> -		inode = NULL;
-> -		goto out2;
-> -	}
-> -
-> +	refcount_set(&e->ref, 1);
->  	e->dentry = dget(dentry);
->  	inode->i_private = e;
->  	inode->i_fop = &bm_entry_operations;
-> 
-> base-commit: 3906fe9bb7f1a2c8667ae54e967dc8690824f4ea
-> -- 
-> 2.30.2
+						- Ted
