@@ -2,59 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ACD9447106
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Nov 2021 00:50:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7519C4473FF
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  7 Nov 2021 17:48:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231373AbhKFXxI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 6 Nov 2021 19:53:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49548 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231743AbhKFXxH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 6 Nov 2021 19:53:07 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 2D16E61139;
-        Sat,  6 Nov 2021 23:50:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636242626;
-        bh=nd3MvovGtumotB9ddSZQu0gmg2bO6cjLdSrfRoAMp/0=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=fNV4JOSn33WELYB9Y+IPVGCur7TAbGmLIG2pIVf98o0ai7wPL/dK8bpkakBcQOFdg
-         DomGjeC5Qv/I0iwRX94EYeZYqdyhaK721qfvgDMwRgyjvLQOOkSYzAbfoUxhvE+7QR
-         Zr5elmFpR1b1+T4GGreigVpc0QFqo4DCdIpJko93XImz8y6uoDM6qLMtGRYn9xlbm0
-         TeyEBzNQ8z4ypeR5wQ2PQeCYBVzXWUOcx4JNljbQhRUw4/wbY6apKtNBZq8K6FOJ3h
-         09HU8KYxvG/lJ/WS3y8K/eN0l9G46kQWy4/GI0EIy8mbcIMqL8+hGs7V2zUAFiYuLz
-         avzFPLOslWq0A==
-Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 27AA560981;
-        Sat,  6 Nov 2021 23:50:26 +0000 (UTC)
-Subject: Re: [GIT PULL] Fsnotify changes for 5.16-rc1
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20211105140027.GB5691@quack2.suse.cz>
-References: <20211105140027.GB5691@quack2.suse.cz>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20211105140027.GB5691@quack2.suse.cz>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v5.16-rc1
-X-PR-Tracked-Commit-Id: 15c72660fe9a3fddb301ac90175860b14c63ff03
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2acda7549e7081f75bac6e1e51518eb8a3bf5d5d
-Message-Id: <163624262615.31518.9141174164185231474.pr-tracker-bot@kernel.org>
-Date:   Sat, 06 Nov 2021 23:50:26 +0000
-To:     Jan Kara <jack@suse.cz>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
+        id S235858AbhKGQvd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Nov 2021 11:51:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35198 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235846AbhKGQva (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 7 Nov 2021 11:51:30 -0500
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91E22C061210
+        for <linux-fsdevel@vger.kernel.org>; Sun,  7 Nov 2021 08:48:47 -0800 (PST)
+Received: by mail-pj1-x1035.google.com with SMTP id np3so6416941pjb.4
+        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Nov 2021 08:48:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=3KhLtwCKP93j3EcWq+BGTsAWsp8Oi4eBuXX0Ov40ah8=;
+        b=TNg4tHoQw5kKoLZkiGTAZIxJzUBBq4ejYt4ncgOecgNOvSUwtqqwittPPI+7pJVjX+
+         GpTp2M0KfhRYRUpBRXEYVXnxqP/7lqMWjwkVgxSXQTHg4r801CGBH3Cxkr2xCA8iHpDQ
+         PkNioeCtNa8D4FxZOybE5F6kFZNCXIj5SS/5dluRY9kmgQGkqsgb/0EL9qYgh0jdJYEk
+         mgqrImAxVO9xLB3ph2REOdqPQUk3eSUgj070IZGlv2zYI0h97xHGiGSssFFZrlwEHWTd
+         7gJa3FlCIyQYHI4/knwR34TShiwqFLlPcy+ypePmUlRAZLKNrHzuj6T1hpUgZdGxUgLr
+         tNtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=3KhLtwCKP93j3EcWq+BGTsAWsp8Oi4eBuXX0Ov40ah8=;
+        b=d2+/UmnPNEM6q1eEtXPfSmyMleXgmCkzLY7p9RkW6ojpOJMZ3YzA3I7M5oNQtiWXZK
+         V6OwdSrpliDUEe1/FlJ3WWo1aBxHfggQ7se3g2HKqS2Ly9VhW3hEy+qQF8Ow7xNus7pM
+         Co5BREJ7iI8nY1d95y7CF3Kq6caZI7ZzqhIL8I0MUgJzwa6ihFEBBGMby51XDd1U/ANV
+         Xc4J3p+e/mjiIKBebZmVB6gzatKkGfHhb4IH1yV20yjeWNIED6PphpcBuRnCcs93wXrH
+         JvOQeruU5Gpp5x5RebaC1qqNmwlNmiF+JVeW52bdRiizYIozlr7uxdFdawo2HnHP6F9K
+         ewug==
+X-Gm-Message-State: AOAM532tR/FeNWntNwssfcGhgleY9rbj2CiFwftNcXzIbn6riSMmC0W7
+        K+VIpGskCl0tOUP/ozsyHSPcA+lnVSoy5EYaK80=
+X-Google-Smtp-Source: ABdhPJxAeCOxzzTO2bC1ebInPX7TK42gu5RWx2Xb9R/R8imfArbHNs+vmtD0xqJ/WYY5NVOuLREd2E+dZSLVoRt6leo=
+X-Received: by 2002:a17:902:a60b:b0:142:7621:be0b with SMTP id
+ u11-20020a170902a60b00b001427621be0bmr4070721plq.58.1636303726736; Sun, 07
+ Nov 2021 08:48:46 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a05:6a10:4a14:0:0:0:0 with HTTP; Sun, 7 Nov 2021 08:48:46
+ -0800 (PST)
+Reply-To: amabenchambers00@gmail.com
+From:   Amadou Benjamin <ousmanekarim54@gmail.com>
+Date:   Sun, 7 Nov 2021 08:48:46 -0800
+Message-ID: <CAJFAt4Zwu2DZNzEx2mhTp73fqWvHNwMrUMgOFZ==TBGW8S=HkA@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Fri, 5 Nov 2021 15:00:27 +0100:
-
-> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v5.16-rc1
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2acda7549e7081f75bac6e1e51518eb8a3bf5d5d
-
-Thank you!
-
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Hello good day.
+
+I am Barrister Amadou Benjamin by name, with due respect, I am
+contacting you to help get the deposit 10.5 million Dollars, my late
+client Engineer Vasiliy left in his Bank before his sudden death on
+April 21, 2007, to avoid confiscation by Lloyds bank. Please write me
+back through this email (amabenchambers00@gmail.com)for more
+information about this transaction or send me your private email to
+Contact you myself.
+
+Sincerely,
+Barrister Amadou Benjamin Esq
