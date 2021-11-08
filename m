@@ -2,241 +2,509 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 73331449D84
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Nov 2021 22:02:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2324449DEC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Nov 2021 22:20:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239154AbhKHVFk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 8 Nov 2021 16:05:40 -0500
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:59068 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230126AbhKHVFi (ORCPT
+        id S240037AbhKHVWz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 8 Nov 2021 16:22:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49960 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240014AbhKHVWv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 8 Nov 2021 16:05:38 -0500
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1A8KwSH1031546;
-        Mon, 8 Nov 2021 21:02:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=1QDy7qV5F0LQWp20lgFpbTVoXPuoGdTbFQXR1gybb1w=;
- b=O1Vtt1To4RcQ2s7TfToMVnb7HJt3chfNCS4KqYQIrkf2qAa43pxWABUAl2bvCK71ti+i
- yMHHXl7DsjMdDbiYMBdFuAMeuLq6pIfugSN+4DfmXr3Erl25+as6iIl5g7hFyJVcH3JH
- mdIv8Q0eQWfAUyV9KSECGPARWA/I6thRQpgYWlp5f9Uuwc19KD1dWMa9/147ZkXZHPDx
- HtYdi4rjlhuJEEN3OhaMIg5sjB1aXYKFhfn6q5yOv/CZa2IR74NLRHaogBLouYP8y9u0
- HmwMDWbPSQ0eaBZDSUMgEMxWbMYIwD4VRmwqSEAH+sGYNKFWZjRcVlqQPHHn0cVBjijB ww== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3c6usne8jt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 08 Nov 2021 21:02:34 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1A8L0dWC133780;
-        Mon, 8 Nov 2021 21:02:32 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
-        by userp3020.oracle.com with ESMTP id 3c63frw3hb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 08 Nov 2021 21:02:32 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Dy29i2JP3cJuLnjTpRHxfbeJ43GEJTHCs+tdvnIJxLYiBDiLCQRCXXCW84c2KhKMyhjeY9s+56hQa8h7Y70YaANPHCNuEXmSRHkdTSuy5cgqT8Ld+KN63oJrPlSZYprWR0INjrBgvCaD21rGKMdLufomzHvpljH4IG62/ORIIlDcBnASwNkH9V1gnp6Sqv+OVbRt0PNqz/MpIMYA+HUJWoBgwOk7RrpRuecL/Axu1wo62dnfTuJPRMyZfqLv5ZxQVOM3lmk3l1eoQXvv0YTPguvE2UV0C2ieInhLDH5gsWW2TSDKvdBZWQYbfXBP5kUm/mlt80+43BgyUfuBbm1ICA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1QDy7qV5F0LQWp20lgFpbTVoXPuoGdTbFQXR1gybb1w=;
- b=IgE+4hot74Zg0BKaENW5VmpmGUygUOH3Z3Eau4MuId3B0N1K0jL+8JuGcuG6StcstM9rhLBFkt6JIe7v7fHPZgE0IPDI23y40t886g3Bf+YqDooqOgaQjZF26gPhiST871OcqsrL9uf2l+diolFlJhVepnYzHz3kloXyk5dFoYUGexf64r76zeeQ2IuE1hJQH+ffBDXqZICmMJwGDt0EzXAFp4Bu2a+DX/CIRCstXn0ffoPfCubqyCFEws49L0ALATfn1iEiM4narm/f5pHUH5d24a/3GkM0sdKi7/wp5h9Al2VjU/cfCa3JsOMJ6svr3Jt9X1yNkS9s7JMXh9Jkdg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Mon, 8 Nov 2021 16:22:51 -0500
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0118C061714
+        for <linux-fsdevel@vger.kernel.org>; Mon,  8 Nov 2021 13:20:06 -0800 (PST)
+Received: by mail-yb1-xb4a.google.com with SMTP id g25-20020a25b119000000b005c5e52a0574so3264246ybj.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 08 Nov 2021 13:20:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1QDy7qV5F0LQWp20lgFpbTVoXPuoGdTbFQXR1gybb1w=;
- b=kmm+QC1+0dNpdCx4oY9YQqWXxfsClpZdpvruuXHwn5+wvH9qEdD6DozEr2foYfajIgW7qyXzlxMi385fXPbxy7UhC/o751WonmMoefMgXwWglpmOIqKV7T4AKq+8paCr8akBTicazylh5SUOe4YX7rzhAOue1uIKzZTvZcASwWo=
-Received: from SJ0PR10MB4429.namprd10.prod.outlook.com (2603:10b6:a03:2d1::14)
- by BYAPR10MB3335.namprd10.prod.outlook.com (2603:10b6:a03:15d::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4669.16; Mon, 8 Nov
- 2021 21:02:29 +0000
-Received: from SJ0PR10MB4429.namprd10.prod.outlook.com
- ([fe80::418c:dfe4:f3ee:feaa]) by SJ0PR10MB4429.namprd10.prod.outlook.com
- ([fe80::418c:dfe4:f3ee:feaa%6]) with mapi id 15.20.4669.016; Mon, 8 Nov 2021
- 21:02:29 +0000
-From:   Jane Chu <jane.chu@oracle.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-CC:     david <david@fromorbit.com>, "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        "Weiny, Ira" <ira.weiny@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] dax: Introduce normal and recovery dax operation
- modes
-Thread-Topic: [PATCH v2 1/2] dax: Introduce normal and recovery dax operation
- modes
-Thread-Index: AQHX0qwD5+Ie66qqNUGG2WP/amHP1av2tvUAgANrlIA=
-Date:   Mon, 8 Nov 2021 21:02:29 +0000
-Message-ID: <63f89475-7a1f-e79e-7785-ba996211615b@oracle.com>
-References: <20211106011638.2613039-1-jane.chu@oracle.com>
- <20211106011638.2613039-2-jane.chu@oracle.com>
- <CAPcyv4jcgFxgoXFhWL9+BReY8vFtgjb_=Lfai-adFpdzc4-35Q@mail.gmail.com>
-In-Reply-To: <CAPcyv4jcgFxgoXFhWL9+BReY8vFtgjb_=Lfai-adFpdzc4-35Q@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.1
-authentication-results: intel.com; dkim=none (message not signed)
- header.d=none;intel.com; dmarc=none action=none header.from=oracle.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: be211d7c-7795-446a-9989-08d9a2fb1387
-x-ms-traffictypediagnostic: BYAPR10MB3335:
-x-microsoft-antispam-prvs: <BYAPR10MB3335F92E042F027BAF0F8B34F3919@BYAPR10MB3335.namprd10.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2043;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: nHPOoHYgKNxd9S2wYOnW0zE/E3bRbriOhZxvihR7Rzj/8TKbArdBYcYb4/GIu6Qbp384oPX8UxPxgdjt0rD6Jo3h8NAVfG8VHIxWzYGFJo5BowWeY5oayer+c2qUcCAun0IuCUPboE4Agw78Rv3O85+TidkMOyY7XgpEKwayIlVepJ+HX1COkcPNujM/daDYOsKXIiImTfUB8GSL5kAhMyoiH5MoyuvGQCdyCx5yiGr0ZKaAGWcltu79Zo2hn37JJ5YxMJSIcOr+QLJyTIMX9Jaf4qr1lbQTUEI676lnhNQ2pbeX9fvH7EUJn9w4f1zEP6hEB4/WdzoU3wyeQJqmxgRZ47ddLPWAeJk6RJDDAR+/JEA9CO78NKcKHJNvK98TJofqD0GYwlF77SjVHdt2C0hQ3IPndFuJ3lYdggTdH3eiPuGRDrc2OomgMFFUUPO5dZrW831pbGOGxpQSu2WsltiF2LQtapIut0BEgLHWcM8gvojTe7rDBLzk9iB4EZf+msxywyZoNYt7xbNyJb90W/o1rVjHdXEtoNPQuivmpGNaK9D/QS+U1LuRLTWmLdb1akrHDEGJ6rYGAY25fhwGCfjj4ZIlAWbACOmkFPMVohBo5MGsPz4C9uDVrpNlWD3r0Pzi+Gw1zzW4gqVOMlQa/v9uCB1263E2RfjChZcgfzEXV2TmyLodem3IPuSedbd4m+YpEcwFEM8nWYn1h++sMhA+QFFyAsta1tmHU/Y2AJuVM8Iapzl41N8DutpXgh3I3a5H0RzaCmxRc2tunA71ig==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4429.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(31686004)(91956017)(83380400001)(316002)(66476007)(122000001)(66556008)(66446008)(53546011)(38070700005)(64756008)(36756003)(86362001)(76116006)(54906003)(5660300002)(38100700002)(66946007)(8936002)(508600001)(6512007)(6506007)(71200400001)(2906002)(186003)(6486002)(2616005)(31696002)(7416002)(44832011)(6916009)(8676002)(4326008)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MGMrOHZkVHBrazJpWjlrQnFKT1hieDFMZVdYZjlkdmQ1ckNrMkpxZmFJWkhv?=
- =?utf-8?B?YllYa0hFckVybUVrUUw0L05FTjhscEhRb3MrZGVobUJTZ3dkR0JDRmVxSlkz?=
- =?utf-8?B?WmhzUEkwbHo4WFhaWUdWU1dCcnFrUFpzTlZHcmlPa0ZlME9TTHdYMDh1V2Yx?=
- =?utf-8?B?SVk0dm1vUzcrVVd0bWZyVEVpbEI1TG5nNnZkT0RQK093ZXczNkZvcDFUT1Vq?=
- =?utf-8?B?Y0h2blYxcmpSblo5YXNjWXBwZGw3dzF0SUMrdlgwTktQNVZtcnRWUmRWQ2dr?=
- =?utf-8?B?TDVJMjVSb1pIc3NOVnVUbDN5TndmUmMvQkpEWmJkdCtGZDZ5UTcyTWV6QURW?=
- =?utf-8?B?cEtDS1NDbzA2SWNMd0MxQU9HeTBVaSt4ZFNPZldySFRuaHU2SXhKZTlVQUgv?=
- =?utf-8?B?QnlYNm5SUTZOczJscVEzd3AwVjNaNDFDT2h6dXNIK3NMU3p6ZkJreUQ3VHJ2?=
- =?utf-8?B?dVhoejZvSGcvL2Y1ODA2d0lZZ0V0MlVpQnlnTG5sOHoxeDErL09PM3NWVHNy?=
- =?utf-8?B?b2ZSMk9vL3BUNFhSRXRHUThJK2s2SDk1dzlTMmM2RVpwaFZHOVU4NXQzWmtX?=
- =?utf-8?B?UnhVbXJhWE5yTlZONi9ubkd6cXAwQSt3VkJnQ2NQNFAxZmdFREJjMjQ2NG5D?=
- =?utf-8?B?ZnRWWHc4VW5ybnpMRFdTTU9VSUQxL2J2d0NLZXJ6ZnYvRmlJa1BVNTJpeHUy?=
- =?utf-8?B?MDdmOFRQQjVCelp0bDliMkNNMmJMY250dWRrc1VVaUJXT3ZxZkphTHVWYXpo?=
- =?utf-8?B?NHgrRmh5YmQ1d0h0V2ladjFCbnRybnk2N3owdnpnbWdkSlRsWWhoVGpTbnFm?=
- =?utf-8?B?c0dhMlB6V2FBV1l0THRSRmx6MjdvVjdQVjZoYW1BMEtPd2p2eUtIdVdPL3Vk?=
- =?utf-8?B?Yld3Uk9RUFRvdk5LUk5RbnY3Smd2MUxia2Z1VVVQS2VyUExiVCtBdjhUdThr?=
- =?utf-8?B?RlNqVTVESVkzTEZmT094OVlSV2xCVVpmdUJYSWtYSzdvM1RNSG1LNGE4K0p0?=
- =?utf-8?B?TnkyeUx6ZWtGa0tzNE5hMmNnQjY4aHhEaUtJMjNzM3N3STZBaCtjK3RpZ0Zw?=
- =?utf-8?B?Tm4vSDFIU0pvZHQ5eVJMdzJWVldJbXdEajdTQjNVTSsvdUZsWXJwNlF0RFFS?=
- =?utf-8?B?YUcrMTYwUDgxWnpEc1EvSW9XRHl2N095bG5ONDg0Tm1tNkF6MUZYcnNYQ3lq?=
- =?utf-8?B?N1FXQnppSTZYVm85UlVYaTF2bDBiSHVLd25tU21oV0RLdlNGUEVSM1FKYlFC?=
- =?utf-8?B?R2MvTUpTUUlGS1Y4NVA2S1BsbzlCSFpDRnF2QU5jR3NzVExTZ2lUeStCOXJV?=
- =?utf-8?B?ZGpuWlRSQUxTZkl2OXR0dHN6RHdkbXppY1doWE5KL0laKzdYL0NUa3ZBVkZk?=
- =?utf-8?B?UCtEYmxWRGV0cENTRG9TMUN1ZlE2WlpKbjZQVENpWllRbGVYaW9hS3lEVnd1?=
- =?utf-8?B?Q0hXS2NienVsQVZabjBxbldUeEJWU1pyKzVZQTgvQnpPSEpvUXJuSk1EbEFz?=
- =?utf-8?B?bVFaNVFmcmZ1WXc4ZHF2Q1NHUG1QM0kyYlhwUkVyc0tzRzErdE9RNFVFcnRw?=
- =?utf-8?B?eWowUTdKUEZ0RkhEUko0ZnZ3RnUrbitvM3pBcDVhUk1JL0VRV0pXdStSUlU4?=
- =?utf-8?B?L3JBbTlEeUJMWmVaVXdINU5la1hJME8yRURtZ2ZXeHRrMDVsQUNTdUVpY0Jp?=
- =?utf-8?B?NVJnejkxVUkyTG5GMCtSYktVWVUwT290WWM3Q2xJMWVuUTVmcUpEMDFLbUlq?=
- =?utf-8?B?RGJNNE5qMytxWCs2bE5MTHNpYnRvV2hpT0dvU3RSZ05BSGdjd1hEczAvUnpW?=
- =?utf-8?B?SVFyV2RvZ1hYOTBSNzlhcUQ5TDNoTGtBejRUYUwrN0lMN21NRy9EejF5TVZE?=
- =?utf-8?B?NTl4QjI5Mng2UUJVMWloY2ROYTM3c0NjMlByYU1RckR5NHB6cXJvMkI5ZlhX?=
- =?utf-8?B?L2w4eVNzQXdZSGVRSlNqeG0vcnF6WS90b0xFVXdoajROMmFpb1h6d1NKSnJy?=
- =?utf-8?B?TjAxeldsMGE4d256TTdiYVpBVEprNDZqL0FVa0x2UGRkTkprNHI4bFMwd0NW?=
- =?utf-8?B?TDFvMTNJZjhmWmgwMGVhdWpqak9SenBJS1U3cVBHSk1LUkNQNEdGS1B3NGsr?=
- =?utf-8?B?ZFo3MVFGbERpc2lDS201dEUySmp6VlpTdFBuUHA1UStOeUFrRU11SUllRG1S?=
- =?utf-8?Q?6TSVcPKuTHruS2/No1VtSq1lz2XluELnUF0kqYrm93Pt?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3AF8D5C40A3AF6408C3AC88A3D3ECC1E@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB4429.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be211d7c-7795-446a-9989-08d9a2fb1387
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2021 21:02:29.6725
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CHqYZte8HsmAX212q12TExnemHUEoh2FnVILcgXFtSKdv0OnpKqhDCirkgJ6/fQ2ayP8yhG96VjptZo/gHK54Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB3335
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10162 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 spamscore=0 mlxscore=0
- bulkscore=0 phishscore=0 suspectscore=0 adultscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
- definitions=main-2111080124
-X-Proofpoint-ORIG-GUID: 7AJ5FWTfkqp49jGYuzKUx2k233Fkdrzy
-X-Proofpoint-GUID: 7AJ5FWTfkqp49jGYuzKUx2k233Fkdrzy
+        d=google.com; s=20210112;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:cc;
+        bh=zVeQGTqO4yrZIJdGZXiUweQmgL96nl5isxRapgZhTQ8=;
+        b=bSjwqOIRF175FXI/JaJgPUi97vnEQj89YKHRYiosJj4YHcKTNyFDssvZ/HcCV9yiWt
+         i2XZHALoFJZvJbeu69RSuRiQBerATpSzTpx78EHqoDnh5PwVFu0KLk9RbJJG2Wd/NXtc
+         bwqUaD0fNzk8Cif31JYb47qcaJ/JrT4cQzeTyUdD34pKyqrtQ7EWSy8HYLFpcAYzIVDM
+         peEZjAylvtBhdz5/M6zOsnm17XjUqHzrbbD0dHBRwY1cSzp5E6lC8fHrH8clThvYvAG2
+         l/J28AcKZ6pIICOui9D0Y5h3R3xKoLxeM3LneLlVYxArLmvwT1TzsBSJhBT/rrQ420k7
+         w0kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:cc;
+        bh=zVeQGTqO4yrZIJdGZXiUweQmgL96nl5isxRapgZhTQ8=;
+        b=XlB/qnFSKibBrrC3xOj0uO4lybPpaNiy9oOEDDkpV3n54E/Zl5PfkPltgyGfPwMtk8
+         mELMGPwhdY5x+2HQYsgx/Q9cUDKlRcsxGwgelwdoCe3dEeZqj0gf5bQMgex7wa99QYaU
+         7qn8CD0ehxab410P8ZuHZ7orDhaEddGZrINAq2a4yyUV4VujmDwb9tsas9o5xJxDsNeM
+         xZ0sHn4+lIl3Or7RejmEWYObya1o/Ubl66ih3D4J922mVRzcoQkwJid5T4gS/HXGyUlr
+         HO4vaYCuhmgyfN7I59ekS+zRrhhPPoPMTOF0JqkChbZOJUfrsagm+k2Q6suLDKHMM43W
+         2+qA==
+X-Gm-Message-State: AOAM533YRtlsu3C0AuB23cjNmkfss6D9IOdNLp31n/o7atpY0nmd5MCP
+        4GtNU0oBtZjpysRKxpJ7e0lqD75KmC3GBtp94Q==
+X-Google-Smtp-Source: ABdhPJzTHw6oqG6AiSf3Kr3pTcKuNjPhm96OIbGQULeQ9Rn0mcghP9uLa+I5NP9i6IULx/Pj1GRCd9wLDx6C5TKX5A==
+X-Received: from almasrymina.svl.corp.google.com ([2620:15c:2cd:202:8717:7707:fb59:664e])
+ (user=almasrymina job=sendgmr) by 2002:a05:6902:725:: with SMTP id
+ l5mr3139301ybt.314.1636406405747; Mon, 08 Nov 2021 13:20:05 -0800 (PST)
+Date:   Mon,  8 Nov 2021 13:19:55 -0800
+In-Reply-To: <20211108211959.1750915-1-almasrymina@google.com>
+Message-Id: <20211108211959.1750915-2-almasrymina@google.com>
+Mime-Version: 1.0
+References: <20211108211959.1750915-1-almasrymina@google.com>
+X-Mailer: git-send-email 2.34.0.rc0.344.g81b53c2807-goog
+Subject: [PATCH v1 1/5] mm/shmem: support deterministic charging of tmpfs
+From:   Mina Almasry <almasrymina@google.com>
+Cc:     Mina Almasry <almasrymina@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Greg Thelen <gthelen@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Roman Gushchin <songmuchun@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, riel@surriel.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gMTEvNi8yMDIxIDk6NDggQU0sIERhbiBXaWxsaWFtcyB3cm90ZToNCj4gT24gRnJpLCBOb3Yg
-NSwgMjAyMSBhdCA2OjE3IFBNIEphbmUgQ2h1IDxqYW5lLmNodUBvcmFjbGUuY29tPiB3cm90ZToN
-Cj4+DQo+PiBJbnRyb2R1Y2UgREFYX09QX05PUk1BTCBhbmQgREFYX09QX1JFQ09WRVJZIG9wZXJh
-dGlvbiBtb2RlcyB0bw0KPj4ge2RheF9kaXJlY3RfYWNjZXNzLCBkYXhfY29weV9mcm9tX2l0ZXIs
-IGRheF9jb3B5X3RvX2l0ZXJ9Lg0KPj4gREFYX09QX05PUk1BTCBpcyB0aGUgZGVmYXVsdCBvciB0
-aGUgZXhpc3RpbmcgbW9kZSwgYW5kDQo+PiBEQVhfT1BfUkVDT1ZFUlkgaXMgYSBuZXcgbW9kZSBm
-b3IgZGF0YSByZWNvdmVyeSBwdXJwb3NlLg0KPj4NCj4+IFdoZW4gZGF4LUZTIHN1c3BlY3RzIGRh
-eCBtZWRpYSBlcnJvciBtaWdodCBiZSBlbmNvdW50ZXJlZA0KPj4gb24gYSByZWFkIG9yIHdyaXRl
-LCBpdCBjYW4gZW5hY3QgdGhlIHJlY292ZXJ5IG1vZGUgcmVhZCBvciB3cml0ZQ0KPj4gYnkgc2V0
-dGluZyBEQVhfT1BfUkVDT1ZFUlkgaW4gdGhlIGFmb3JlbWVudGlvbmVkIEFQSXMuIEEgcmVhZA0K
-Pj4gaW4gcmVjb3ZlcnkgbW9kZSBhdHRlbXB0cyB0byBmZXRjaCBhcyBtdWNoIGRhdGEgYXMgcG9z
-c2libGUNCj4+IHVudGlsIHRoZSBmaXJzdCBwb2lzb25lZCBwYWdlIGlzIGVuY291bnRlcmVkLiBB
-IHdyaXRlIGluIHJlY292ZXJ5DQo+PiBtb2RlIGF0dGVtcHRzIHRvIGNsZWFyIHBvaXNvbihzKSBp
-biBhIHBhZ2UtYWxpZ25lZCByYW5nZSBhbmQNCj4+IHRoZW4gd3JpdGUgdGhlIHVzZXIgcHJvdmlk
-ZWQgZGF0YSBvdmVyLg0KPj4NCj4+IERBWF9PUF9OT1JNQUwgc2hvdWxkIGJlIHVzZWQgZm9yIGFs
-bCBub24tcmVjb3ZlcnkgY29kZSBwYXRoLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IEphbmUgQ2h1
-IDxqYW5lLmNodUBvcmFjbGUuY29tPg0KPiBbLi5dDQo+PiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9s
-aW51eC9kYXguaCBiL2luY2x1ZGUvbGludXgvZGF4LmgNCj4+IGluZGV4IDMyNDM2M2I3OThlYy4u
-OTMxNTg2ZGYyOTA1IDEwMDY0NA0KPj4gLS0tIGEvaW5jbHVkZS9saW51eC9kYXguaA0KPj4gKysr
-IGIvaW5jbHVkZS9saW51eC9kYXguaA0KPj4gQEAgLTksNiArOSwxMCBAQA0KPj4gICAvKiBGbGFn
-IGZvciBzeW5jaHJvbm91cyBmbHVzaCAqLw0KPj4gICAjZGVmaW5lIERBWERFVl9GX1NZTkMgKDFV
-TCA8PCAwKQ0KPj4NCj4+ICsvKiBkYXggb3BlcmF0aW9uIG1vZGUgZHluYW1pY2FsbHkgc2V0IGJ5
-IGNhbGxlciAqLw0KPj4gKyNkZWZpbmUgICAgICAgIERBWF9PUF9OT1JNQUwgICAgICAgICAgIDAN
-Cj4gDQo+IFBlcmhhcHMgdGhpcyBzaG91bGQgYmUgY2FsbGVkIERBWF9PUF9GQUlMRkFTVD8NCg0K
-U3VyZS4NCg0KPiANCj4+ICsjZGVmaW5lICAgICAgICBEQVhfT1BfUkVDT1ZFUlkgICAgICAgICAx
-DQo+PiArDQo+PiAgIHR5cGVkZWYgdW5zaWduZWQgbG9uZyBkYXhfZW50cnlfdDsNCj4+DQo+PiAg
-IHN0cnVjdCBkYXhfZGV2aWNlOw0KPj4gQEAgLTIyLDggKzI2LDggQEAgc3RydWN0IGRheF9vcGVy
-YXRpb25zIHsNCj4+ICAgICAgICAgICAqIGxvZ2ljYWwtcGFnZS1vZmZzZXQgaW50byBhbiBhYnNv
-bHV0ZSBwaHlzaWNhbCBwZm4uIFJldHVybiB0aGUNCj4+ICAgICAgICAgICAqIG51bWJlciBvZiBw
-YWdlcyBhdmFpbGFibGUgZm9yIERBWCBhdCB0aGF0IHBmbi4NCj4+ICAgICAgICAgICAqLw0KPj4g
-LSAgICAgICBsb25nICgqZGlyZWN0X2FjY2Vzcykoc3RydWN0IGRheF9kZXZpY2UgKiwgcGdvZmZf
-dCwgbG9uZywNCj4+IC0gICAgICAgICAgICAgICAgICAgICAgIHZvaWQgKiosIHBmbl90ICopOw0K
-Pj4gKyAgICAgICBsb25nICgqZGlyZWN0X2FjY2Vzcykoc3RydWN0IGRheF9kZXZpY2UgKiwgcGdv
-ZmZfdCwgbG9uZywgaW50LA0KPiANCj4gV291bGQgYmUgbmljZSBpZiB0aGF0ICdpbnQnIHdhcyBh
-biBlbnVtLCBidXQgSSdtIG5vdCBzdXJlIGEgbmV3DQo+IHBhcmFtZXRlciBpcyBuZWVkZWQgYXQg
-YWxsLCBzZWUgYmVsb3cuLi4NCg0KTGV0J3MgZG8geW91ciBzdWdnZXN0aW9uIGJlbG93LiA6KQ0K
-DQo+IA0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB2b2lkICoqLCBwZm5fdCAq
-KTsNCj4+ICAgICAgICAgIC8qDQo+PiAgICAgICAgICAgKiBWYWxpZGF0ZSB3aGV0aGVyIHRoaXMg
-ZGV2aWNlIGlzIHVzYWJsZSBhcyBhbiBmc2RheCBiYWNraW5nDQo+PiAgICAgICAgICAgKiBkZXZp
-Y2UuDQo+PiBAQCAtMzIsMTAgKzM2LDEwIEBAIHN0cnVjdCBkYXhfb3BlcmF0aW9ucyB7DQo+PiAg
-ICAgICAgICAgICAgICAgICAgICAgICAgc2VjdG9yX3QsIHNlY3Rvcl90KTsNCj4+ICAgICAgICAg
-IC8qIGNvcHlfZnJvbV9pdGVyOiByZXF1aXJlZCBvcGVyYXRpb24gZm9yIGZzLWRheCBkaXJlY3Qt
-aS9vICovDQo+PiAgICAgICAgICBzaXplX3QgKCpjb3B5X2Zyb21faXRlcikoc3RydWN0IGRheF9k
-ZXZpY2UgKiwgcGdvZmZfdCwgdm9pZCAqLCBzaXplX3QsDQo+PiAtICAgICAgICAgICAgICAgICAg
-ICAgICBzdHJ1Y3QgaW92X2l0ZXIgKik7DQo+PiArICAgICAgICAgICAgICAgICAgICAgICBzdHJ1
-Y3QgaW92X2l0ZXIgKiwgaW50KTsNCj4gDQo+IEknbSBub3Qgc3VyZSB0aGUgZmxhZyBpcyBuZWVk
-ZWQgaGVyZSBhcyB0aGUgInZvaWQgKiIgY291bGQgY2FycnkgYQ0KPiBmbGFnIGluIHRoZSBwb2lu
-dGVyIHRvIGluZGljYXRlIHRoYXQgaXMgYSByZWNvdmVyeSBrYWRkci4NCg0KQWdyZWVkLg0KDQo+
-IA0KPj4gICAgICAgICAgLyogY29weV90b19pdGVyOiByZXF1aXJlZCBvcGVyYXRpb24gZm9yIGZz
-LWRheCBkaXJlY3QtaS9vICovDQo+PiAgICAgICAgICBzaXplX3QgKCpjb3B5X3RvX2l0ZXIpKHN0
-cnVjdCBkYXhfZGV2aWNlICosIHBnb2ZmX3QsIHZvaWQgKiwgc2l6ZV90LA0KPj4gLSAgICAgICAg
-ICAgICAgICAgICAgICAgc3RydWN0IGlvdl9pdGVyICopOw0KPj4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgc3RydWN0IGlvdl9pdGVyICosIGludCk7DQo+IA0KPiBTYW1lIGNvbW1lbnQgaGVyZS4N
-Cj4gDQo+PiAgICAgICAgICAvKiB6ZXJvX3BhZ2VfcmFuZ2U6IHJlcXVpcmVkIG9wZXJhdGlvbi4g
-WmVybyBwYWdlIHJhbmdlICAgKi8NCj4+ICAgICAgICAgIGludCAoKnplcm9fcGFnZV9yYW5nZSko
-c3RydWN0IGRheF9kZXZpY2UgKiwgcGdvZmZfdCwgc2l6ZV90KTsNCj4+ICAgfTsNCj4+IEBAIC0x
-ODYsMTEgKzE5MCwxMSBAQCBzdGF0aWMgaW5saW5lIHZvaWQgZGF4X3JlYWRfdW5sb2NrKGludCBp
-ZCkNCj4+ICAgYm9vbCBkYXhfYWxpdmUoc3RydWN0IGRheF9kZXZpY2UgKmRheF9kZXYpOw0KPj4g
-ICB2b2lkICpkYXhfZ2V0X3ByaXZhdGUoc3RydWN0IGRheF9kZXZpY2UgKmRheF9kZXYpOw0KPj4g
-ICBsb25nIGRheF9kaXJlY3RfYWNjZXNzKHN0cnVjdCBkYXhfZGV2aWNlICpkYXhfZGV2LCBwZ29m
-Zl90IHBnb2ZmLCBsb25nIG5yX3BhZ2VzLA0KPj4gLSAgICAgICAgICAgICAgIHZvaWQgKiprYWRk
-ciwgcGZuX3QgKnBmbik7DQo+PiArICAgICAgICAgICAgICAgaW50IG1vZGUsIHZvaWQgKiprYWRk
-ciwgcGZuX3QgKnBmbik7DQo+IA0KPiBIb3cgYWJvdXQgZGF4X2RpcmVjdF9hY2Nlc3MoKSBjYWxs
-aW5nIGNvbnZlbnRpb24gc3RheXMgdGhlIHNhbWUsIGJ1dA0KPiB0aGUga2FkZHIgaXMgb3B0aW9u
-YWxseSB1cGRhdGVkIHRvIGNhcnJ5IGEgZmxhZyBpbiB0aGUgbG93ZXIgdW51c2VkDQo+IGJpdHMu
-IFNvOg0KPiANCj4gdm9pZCAqKmthZGRyID0gTlVMTDsgLyogY2FsbGVyIG9ubHkgY2FyZXMgYWJv
-dXQgdGhlIHBmbiAqLw0KPiANCj4gdm9pZCAqZmFpbGZhc3QgPSBOVUxMOw0KPiB2b2lkICoqa2Fk
-ZHIgPSAmZmFpbGZhc3Q7IC8qIGNhbGxlciB3YW50cyAtRUlPIG5vdCByZWNvdmVyeSAqLw0KPiAN
-Cj4gdm9pZCAqcmVjb3ZlcnkgPSAodm9pZCAqKSBEQVhfT1BfUkVDT1ZFUlk7DQo+IHZvaWQgKipr
-YWRkciA9ICZyZWNvdmVyeTsgLyogY2FsbGVyIHdhbnRzIHRvIGNhcmVmdWxseSBhY2Nlc3MgcGFn
-ZShzKQ0KPiBjb250YWluaW5nIHBvaXNvbiAqLw0KPiANCg0KR290IGl0Lg0KDQp0aGFua3MhDQot
-amFuZQ0KDQo=
+Add memcg= option to shmem mount.
+
+Users can specify this option at mount time and all data page charges
+will be charged to the memcg supplied.
+
+Signed-off-by: Mina Almasry <almasrymina@google.com>
+
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Greg Thelen <gthelen@google.com>
+Cc: Shakeel Butt <shakeelb@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Roman Gushchin <songmuchun@bytedance.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Muchun Song <songmuchun@bytedance.com>
+Cc: riel@surriel.com
+Cc: linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: cgroups@vger.kernel.org
+
+---
+ fs/super.c                 |   3 ++
+ include/linux/fs.h         |   5 ++
+ include/linux/memcontrol.h |  46 ++++++++++++++--
+ mm/filemap.c               |   2 +-
+ mm/memcontrol.c            | 104 ++++++++++++++++++++++++++++++++++++-
+ mm/shmem.c                 |  50 +++++++++++++++++-
+ 6 files changed, 201 insertions(+), 9 deletions(-)
+
+diff --git a/fs/super.c b/fs/super.c
+index 3bfc0f8fbd5bc..8aafe5e4e6200 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -24,6 +24,7 @@
+ #include <linux/export.h>
+ #include <linux/slab.h>
+ #include <linux/blkdev.h>
++#include <linux/memcontrol.h>
+ #include <linux/mount.h>
+ #include <linux/security.h>
+ #include <linux/writeback.h>		/* for the emergency remount stuff */
+@@ -180,6 +181,7 @@ static void destroy_unused_super(struct super_block *s)
+ 	up_write(&s->s_umount);
+ 	list_lru_destroy(&s->s_dentry_lru);
+ 	list_lru_destroy(&s->s_inode_lru);
++	mem_cgroup_set_charge_target(&s->s_memcg_to_charge, NULL);
+ 	security_sb_free(s);
+ 	put_user_ns(s->s_user_ns);
+ 	kfree(s->s_subtype);
+@@ -292,6 +294,7 @@ static void __put_super(struct super_block *s)
+ 		WARN_ON(s->s_dentry_lru.node);
+ 		WARN_ON(s->s_inode_lru.node);
+ 		WARN_ON(!list_empty(&s->s_mounts));
++		mem_cgroup_set_charge_target(&s->s_memcg_to_charge, NULL);
+ 		security_sb_free(s);
+ 		fscrypt_sb_free(s);
+ 		put_user_ns(s->s_user_ns);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 3afca821df32e..59407b3e7aee3 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1567,6 +1567,11 @@ struct super_block {
+ 	struct workqueue_struct *s_dio_done_wq;
+ 	struct hlist_head s_pins;
+
++#ifdef CONFIG_MEMCG
++	/* memcg to charge for pages allocated to this filesystem */
++	struct mem_cgroup *s_memcg_to_charge;
++#endif
++
+ 	/*
+ 	 * Owning user namespace and default context in which to
+ 	 * interpret filesystem uids, gids, quotas, device nodes,
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 0c5c403f4be6b..e9a64c1b8295b 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -27,6 +27,7 @@ struct obj_cgroup;
+ struct page;
+ struct mm_struct;
+ struct kmem_cache;
++struct super_block;
+
+ /* Cgroup-specific page state, on top of universal node page state */
+ enum memcg_stat_item {
+@@ -689,7 +690,8 @@ static inline bool mem_cgroup_below_min(struct mem_cgroup *memcg)
+ 		page_counter_read(&memcg->memory);
+ }
+
+-int __mem_cgroup_charge(struct folio *folio, struct mm_struct *mm, gfp_t gfp);
++int __mem_cgroup_charge(struct folio *folio, struct mm_struct *mm, gfp_t gfp,
++			struct address_space *mapping);
+
+ /**
+  * mem_cgroup_charge - Charge a newly allocated folio to a cgroup.
+@@ -710,7 +712,7 @@ static inline int mem_cgroup_charge(struct folio *folio, struct mm_struct *mm,
+ {
+ 	if (mem_cgroup_disabled())
+ 		return 0;
+-	return __mem_cgroup_charge(folio, mm, gfp);
++	return __mem_cgroup_charge(folio, mm, gfp, NULL);
+ }
+
+ int mem_cgroup_swapin_charge_page(struct page *page, struct mm_struct *mm,
+@@ -923,6 +925,16 @@ static inline bool mem_cgroup_online(struct mem_cgroup *memcg)
+ 	return !!(memcg->css.flags & CSS_ONLINE);
+ }
+
++bool is_remote_oom(struct mem_cgroup *memcg_under_oom);
++void mem_cgroup_set_charge_target(struct mem_cgroup **target,
++				  struct mem_cgroup *memcg);
++struct mem_cgroup *mem_cgroup_get_from_path(const char *path);
++/**
++ * User is responsible for providing a buffer @buf of length @len and freeing
++ * it.
++ */
++int mem_cgroup_get_name_from_sb(struct super_block *sb, char *buf, size_t len);
++
+ void mem_cgroup_update_lru_size(struct lruvec *lruvec, enum lru_list lru,
+ 		int zid, int nr_pages);
+
+@@ -1217,8 +1229,15 @@ static inline bool mem_cgroup_below_min(struct mem_cgroup *memcg)
+ 	return false;
+ }
+
+-static inline int mem_cgroup_charge(struct folio *folio,
+-		struct mm_struct *mm, gfp_t gfp)
++static inline int __mem_cgroup_charge(struct folio *folio, struct mm_struct *mm,
++				      gfp_t gfp_mask,
++				      struct address_space *mapping)
++{
++	return 0;
++}
++
++static inline int mem_cgroup_charge(struct folio *folio, struct mm_struct *mm,
++				    gfp_t gfp_mask)
+ {
+ 	return 0;
+ }
+@@ -1326,6 +1345,25 @@ static inline void mem_cgroup_iter_break(struct mem_cgroup *root,
+ {
+ }
+
++static inline bool is_remote_oom(struct mem_cgroup *memcg_under_oom)
++{
++	return false;
++}
++
++static inline void mem_cgroup_set_charge_target(struct mem_cgroup **target,
++						struct mem_cgroup *memcg)
++{
++}
++
++static inline int mem_cgroup_get_name_from_sb(struct super_block *sb, char *buf,
++					      size_t len)
++{
++	if (len < 1)
++		return -EINVAL;
++	buf[0] = '\0';
++	return 0;
++}
++
+ static inline int mem_cgroup_scan_tasks(struct mem_cgroup *memcg,
+ 		int (*fn)(struct task_struct *, void *), void *arg)
+ {
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 6844c9816a864..75e81dfd2c580 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -903,7 +903,7 @@ noinline int __filemap_add_folio(struct address_space *mapping,
+ 	folio->index = index;
+
+ 	if (!huge) {
+-		error = mem_cgroup_charge(folio, NULL, gfp);
++		error = __mem_cgroup_charge(folio, NULL, gfp, mapping);
+ 		VM_BUG_ON_FOLIO(index & (folio_nr_pages(folio) - 1), folio);
+ 		if (error)
+ 			goto error;
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 781605e920153..389d2f2be9674 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2580,6 +2580,103 @@ void mem_cgroup_handle_over_high(void)
+ 	css_put(&memcg->css);
+ }
+
++/*
++ * Non error return value must eventually be released with css_put().
++ */
++struct mem_cgroup *mem_cgroup_get_from_path(const char *path)
++{
++	struct file *file;
++	struct cgroup_subsys_state *css;
++	struct mem_cgroup *memcg;
++
++	file = filp_open(path, O_DIRECTORY | O_RDONLY, 0);
++	if (IS_ERR(file))
++		return (struct mem_cgroup *)file;
++
++	css = css_tryget_online_from_dir(file->f_path.dentry,
++					 &memory_cgrp_subsys);
++	if (IS_ERR(css))
++		memcg = (struct mem_cgroup *)css;
++	else
++		memcg = container_of(css, struct mem_cgroup, css);
++
++	fput(file);
++	return memcg;
++}
++
++/*
++ * Get the name of the optional charge target memcg associated with @sb.  This
++ * is the cgroup name, not the cgroup path.
++ */
++int mem_cgroup_get_name_from_sb(struct super_block *sb, char *buf, size_t len)
++{
++	struct mem_cgroup *memcg;
++	int ret = 0;
++
++	buf[0] = '\0';
++
++	rcu_read_lock();
++	memcg = rcu_dereference(sb->s_memcg_to_charge);
++	if (memcg && !css_tryget_online(&memcg->css))
++		memcg = NULL;
++	rcu_read_unlock();
++
++	if (!memcg)
++		return 0;
++
++	ret = cgroup_path(memcg->css.cgroup, buf + len / 2, len / 2);
++	if (ret >= len / 2)
++		strcpy(buf, "?");
++	else {
++		char *p = mangle_path(buf, buf + len / 2, " \t\n\\");
++
++		if (p)
++			*p = '\0';
++		else
++			strcpy(buf, "?");
++	}
++
++	css_put(&memcg->css);
++	return ret < 0 ? ret : 0;
++}
++
++/*
++ * Set or clear (if @memcg is NULL) charge association from file system to
++ * memcg.  If @memcg != NULL, then a css reference must be held by the caller to
++ * ensure that the cgroup is not deleted during this operation.
++ */
++void mem_cgroup_set_charge_target(struct mem_cgroup **target,
++				  struct mem_cgroup *memcg)
++{
++	if (memcg)
++		css_get(&memcg->css);
++	memcg = xchg(target, memcg);
++	if (memcg)
++		css_put(&memcg->css);
++}
++
++/*
++ * Returns the memcg to charge for inode pages.  If non-NULL is returned, caller
++ * must drop reference with css_put().  NULL indicates that the inode does not
++ * have a memcg to charge, so the default process based policy should be used.
++ */
++static struct mem_cgroup *
++mem_cgroup_mapping_get_charge_target(struct address_space *mapping)
++{
++	struct mem_cgroup *memcg;
++
++	if (!mapping)
++		return NULL;
++
++	rcu_read_lock();
++	memcg = rcu_dereference(mapping->host->i_sb->s_memcg_to_charge);
++	if (memcg && !css_tryget_online(&memcg->css))
++		memcg = NULL;
++	rcu_read_unlock();
++
++	return memcg;
++}
++
+ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 			unsigned int nr_pages)
+ {
+@@ -6678,12 +6775,15 @@ static int charge_memcg(struct folio *folio, struct mem_cgroup *memcg,
+ 	return ret;
+ }
+
+-int __mem_cgroup_charge(struct folio *folio, struct mm_struct *mm, gfp_t gfp)
++int __mem_cgroup_charge(struct folio *folio, struct mm_struct *mm, gfp_t gfp,
++			struct address_space *mapping)
+ {
+ 	struct mem_cgroup *memcg;
+ 	int ret;
+
+-	memcg = get_mem_cgroup_from_mm(mm);
++	memcg = mem_cgroup_mapping_get_charge_target(mapping);
++	if (!memcg)
++		memcg = get_mem_cgroup_from_mm(mm);
+ 	ret = charge_memcg(folio, memcg, gfp);
+ 	css_put(&memcg->css);
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 23c91a8beb781..01510fa8ab725 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -115,10 +115,14 @@ struct shmem_options {
+ 	bool full_inums;
+ 	int huge;
+ 	int seen;
++#if CONFIG_MEMCG
++	struct mem_cgroup *memcg;
++#endif
+ #define SHMEM_SEEN_BLOCKS 1
+ #define SHMEM_SEEN_INODES 2
+ #define SHMEM_SEEN_HUGE 4
+ #define SHMEM_SEEN_INUMS 8
++#define SHMEM_SEEN_MEMCG 16
+ };
+
+ #ifdef CONFIG_TMPFS
+@@ -709,7 +713,8 @@ static int shmem_add_to_page_cache(struct page *page,
+ 	page->index = index;
+
+ 	if (!PageSwapCache(page)) {
+-		error = mem_cgroup_charge(page_folio(page), charge_mm, gfp);
++		error = __mem_cgroup_charge(page_folio(page), charge_mm, gfp,
++					    mapping);
+ 		if (error) {
+ 			if (PageTransHuge(page)) {
+ 				count_vm_event(THP_FILE_FALLBACK);
+@@ -3342,6 +3347,7 @@ static const struct export_operations shmem_export_ops = {
+ enum shmem_param {
+ 	Opt_gid,
+ 	Opt_huge,
++	Opt_memcg,
+ 	Opt_mode,
+ 	Opt_mpol,
+ 	Opt_nr_blocks,
+@@ -3363,6 +3369,7 @@ static const struct constant_table shmem_param_enums_huge[] = {
+ const struct fs_parameter_spec shmem_fs_parameters[] = {
+ 	fsparam_u32   ("gid",		Opt_gid),
+ 	fsparam_enum  ("huge",		Opt_huge,  shmem_param_enums_huge),
++	fsparam_string("memcg",		Opt_memcg),
+ 	fsparam_u32oct("mode",		Opt_mode),
+ 	fsparam_string("mpol",		Opt_mpol),
+ 	fsparam_string("nr_blocks",	Opt_nr_blocks),
+@@ -3379,6 +3386,7 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
+ 	struct shmem_options *ctx = fc->fs_private;
+ 	struct fs_parse_result result;
+ 	unsigned long long size;
++	struct mem_cgroup *memcg;
+ 	char *rest;
+ 	int opt;
+
+@@ -3412,6 +3420,17 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
+ 			goto bad_value;
+ 		ctx->seen |= SHMEM_SEEN_INODES;
+ 		break;
++#ifdef CONFIG_MEMCG
++	case Opt_memcg:
++		if (ctx->memcg)
++			css_put(&ctx->memcg->css);
++		memcg = mem_cgroup_get_from_path(param->string);
++		if (IS_ERR(memcg))
++			goto bad_value;
++		ctx->memcg = memcg;
++		ctx->seen |= SHMEM_SEEN_MEMCG;
++		break;
++#endif
+ 	case Opt_mode:
+ 		ctx->mode = result.uint_32 & 07777;
+ 		break;
+@@ -3573,6 +3592,14 @@ static int shmem_reconfigure(struct fs_context *fc)
+ 	}
+ 	raw_spin_unlock(&sbinfo->stat_lock);
+ 	mpol_put(mpol);
++#if CONFIG_MEMCG
++	if (ctx->seen & SHMEM_SEEN_MEMCG && ctx->memcg) {
++		mem_cgroup_set_charge_target(&fc->root->d_sb->s_memcg_to_charge,
++					     ctx->memcg);
++		css_put(&ctx->memcg->css);
++		ctx->memcg = NULL;
++	}
++#endif
+ 	return 0;
+ out:
+ 	raw_spin_unlock(&sbinfo->stat_lock);
+@@ -3582,6 +3609,11 @@ static int shmem_reconfigure(struct fs_context *fc)
+ static int shmem_show_options(struct seq_file *seq, struct dentry *root)
+ {
+ 	struct shmem_sb_info *sbinfo = SHMEM_SB(root->d_sb);
++	int err;
++	char *buf = __getname();
++
++	if (!buf)
++		return -ENOMEM;
+
+ 	if (sbinfo->max_blocks != shmem_default_max_blocks())
+ 		seq_printf(seq, ",size=%luk",
+@@ -3625,7 +3657,13 @@ static int shmem_show_options(struct seq_file *seq, struct dentry *root)
+ 		seq_printf(seq, ",huge=%s", shmem_format_huge(sbinfo->huge));
+ #endif
+ 	shmem_show_mpol(seq, sbinfo->mpol);
+-	return 0;
++	/* Memory cgroup binding: memcg=cgroup_name */
++	err = mem_cgroup_get_name_from_sb(root->d_sb, buf, PATH_MAX);
++	if (!err && buf[0] != '\0')
++		seq_printf(seq, ",memcg=%s", buf);
++
++	__putname(buf);
++	return err;
+ }
+
+ #endif /* CONFIG_TMPFS */
+@@ -3710,6 +3748,14 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sb->s_flags |= SB_POSIXACL;
+ #endif
+ 	uuid_gen(&sb->s_uuid);
++#if CONFIG_MEMCG
++	if (ctx->memcg) {
++		mem_cgroup_set_charge_target(&sb->s_memcg_to_charge,
++					     ctx->memcg);
++		css_put(&ctx->memcg->css);
++		ctx->memcg = NULL;
++	}
++#endif
+
+ 	inode = shmem_get_inode(sb, NULL, S_IFDIR | sbinfo->mode, 0, VM_NORESERVE);
+ 	if (!inode)
+--
+2.34.0.rc0.344.g81b53c2807-goog
