@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62DF9447962
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Nov 2021 05:30:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A01CE447967
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Nov 2021 05:32:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237458AbhKHEdG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Nov 2021 23:33:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47042 "EHLO
+        id S236522AbhKHEfI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Nov 2021 23:35:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231463AbhKHEdF (ORCPT
+        with ESMTP id S231463AbhKHEfH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Nov 2021 23:33:05 -0500
+        Sun, 7 Nov 2021 23:35:07 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0497DC061570;
-        Sun,  7 Nov 2021 20:30:22 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C5FEC061570;
+        Sun,  7 Nov 2021 20:32:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=vOKnloFwyILMUGc+FrSHFMnIPkUr1ZUZ+n3e/FqYtOo=; b=d5z4YzmzsXCT/4NnmIscKUefxI
-        943tpjLInSam89eqPVdbcEqKd0sWaNIDENIu6dK9pEOcWBm/oxbZcxXXG3pgalms681dWBaS/htlf
-        eWJH5kG5f33HbKg/9v2kll3Dig52QvTBPzCEuSD9WBhgN/VyteHsrbMM1gdHypicPAlgMegqaVEY7
-        PMLvamWSvjUsAZJwInmY+4JJ1PFsxf6N45VhNrdLcsRi5aj8rYoaQDvnEI2Ny3oz/RSbknGOvP676
-        hAFpIERpMcXTHRi5fnKLrtUYM3C6SA6p+zwvVYNwkLcOZUyL8O8HrJA56NthtOkwI7DYSZvSFBDbx
-        zHinNoNg==;
+        bh=RSWa6K0pUAnHxgFaPZenOcWe2pyN0Haz/Bc0OfYIlB0=; b=uCfwPUlzhfTU/iXLoZUGvNx9D+
+        SxGdFls4BJLDRdCdZjr25+ugez6vrsos6bQ5APzH2w3Gu8K/mkggVHVpqE/pm+F94MLqufMVCUdiV
+        +Ozu8y85oV0kgKE/JuYrBboAohXGv0WFb9ZAyTRlFO2JFgJCuMm5lvX1PvPQNrXdw/DGlyvNNRXRX
+        MfF5xqDbsPY+UoyDTham/rhUzbU/suYPTtaQs4OIQLWfBECYWe7lqRjaXSRJbeFyojhNSJHm7toZq
+        fsexzEYPz5BbuSzhd17MFiNHlMrdCrIiAx6kE4+/BIMC7xLOAmoCshiFkC0jGSpDYblJiFpKLVTnY
+        2TY62HYA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mjwEU-0089vQ-Qs; Mon, 08 Nov 2021 04:27:09 +0000
+        id 1mjwH2-0089yn-4m; Mon, 08 Nov 2021 04:29:22 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     "Darrick J . Wong " <djwong@kernel.org>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -35,9 +35,9 @@ Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Jens Axboe <axboe@kernel.dk>,
         Christoph Hellwig <hch@infradead.org>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v2 08/28] iomap: Convert to_iomap_page to take a folio
-Date:   Mon,  8 Nov 2021 04:05:31 +0000
-Message-Id: <20211108040551.1942823-9-willy@infradead.org>
+Subject: [PATCH v2 09/28] iomap: Convert iomap_page_create to take a folio
+Date:   Mon,  8 Nov 2021 04:05:32 +0000
+Message-Id: <20211108040551.1942823-10-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211108040551.1942823-1-willy@infradead.org>
 References: <20211108040551.1942823-1-willy@infradead.org>
@@ -47,102 +47,101 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The big comment about only using a head page can go away now that
-it takes a folio argument.
+This function already assumed it was being passed a head page, so
+just formalise that.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/iomap/buffered-io.c | 32 +++++++++++++++-----------------
- 1 file changed, 15 insertions(+), 17 deletions(-)
+ fs/iomap/buffered-io.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 4e09ea823148..236beeeaef42 100644
+index 236beeeaef42..6972ac8fda77 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -22,8 +22,8 @@
- #include "../internal.h"
+@@ -42,11 +42,10 @@ static inline struct iomap_page *to_iomap_page(struct folio *folio)
+ static struct bio_set iomap_ioend_bioset;
  
- /*
-- * Structure allocated for each page or THP when block size < page size
-- * to track sub-page uptodate status and I/O completions.
-+ * Structure allocated for each folio when block size < folio size
-+ * to track sub-folio uptodate status and I/O completions.
-  */
- struct iomap_page {
- 	atomic_t		read_bytes_pending;
-@@ -32,17 +32,10 @@ struct iomap_page {
- 	unsigned long		uptodate[];
- };
- 
--static inline struct iomap_page *to_iomap_page(struct page *page)
-+static inline struct iomap_page *to_iomap_page(struct folio *folio)
- {
--	/*
--	 * per-block data is stored in the head page.  Callers should
--	 * not be dealing with tail pages, and if they are, they can
--	 * call thp_head() first.
--	 */
--	VM_BUG_ON_PGFLAGS(PageTail(page), page);
--
--	if (page_has_private(page))
--		return (struct iomap_page *)page_private(page);
-+	if (folio_test_private(folio))
-+		return folio_get_private(folio);
- 	return NULL;
- }
- 
-@@ -51,7 +44,8 @@ static struct bio_set iomap_ioend_bioset;
  static struct iomap_page *
- iomap_page_create(struct inode *inode, struct page *page)
+-iomap_page_create(struct inode *inode, struct page *page)
++iomap_page_create(struct inode *inode, struct folio *folio)
  {
--	struct iomap_page *iop = to_iomap_page(page);
-+	struct folio *folio = page_folio(page);
-+	struct iomap_page *iop = to_iomap_page(folio);
- 	unsigned int nr_blocks = i_blocks_per_page(inode, page);
+-	struct folio *folio = page_folio(page);
+ 	struct iomap_page *iop = to_iomap_page(folio);
+-	unsigned int nr_blocks = i_blocks_per_page(inode, page);
++	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
  
  	if (iop || nr_blocks <= 1)
-@@ -144,7 +138,8 @@ iomap_adjust_read_range(struct inode *inode, struct iomap_page *iop,
- static void
- iomap_iop_set_range_uptodate(struct page *page, unsigned off, unsigned len)
- {
--	struct iomap_page *iop = to_iomap_page(page);
-+	struct folio *folio = page_folio(page);
-+	struct iomap_page *iop = to_iomap_page(folio);
- 	struct inode *inode = page->mapping->host;
- 	unsigned first = off >> inode->i_blkbits;
- 	unsigned last = (off + len - 1) >> inode->i_blkbits;
-@@ -173,7 +168,8 @@ static void
- iomap_read_page_end_io(struct bio_vec *bvec, int error)
- {
- 	struct page *page = bvec->bv_page;
--	struct iomap_page *iop = to_iomap_page(page);
-+	struct folio *folio = page_folio(page);
-+	struct iomap_page *iop = to_iomap_page(folio);
+ 		return iop;
+@@ -54,9 +53,9 @@ iomap_page_create(struct inode *inode, struct page *page)
+ 	iop = kzalloc(struct_size(iop, uptodate, BITS_TO_LONGS(nr_blocks)),
+ 			GFP_NOFS | __GFP_NOFAIL);
+ 	spin_lock_init(&iop->uptodate_lock);
+-	if (PageUptodate(page))
++	if (folio_test_uptodate(folio))
+ 		bitmap_fill(iop->uptodate, nr_blocks);
+-	attach_page_private(page, iop);
++	folio_attach_private(folio, iop);
+ 	return iop;
+ }
  
- 	if (unlikely(error)) {
- 		ClearPageUptodate(page);
-@@ -427,7 +423,8 @@ int
- iomap_is_partially_uptodate(struct page *page, unsigned long from,
- 		unsigned long count)
+@@ -204,6 +203,7 @@ struct iomap_readpage_ctx {
+ static loff_t iomap_read_inline_data(const struct iomap_iter *iter,
+ 		struct page *page)
  {
--	struct iomap_page *iop = to_iomap_page(page);
 +	struct folio *folio = page_folio(page);
-+	struct iomap_page *iop = to_iomap_page(folio);
- 	struct inode *inode = page->mapping->host;
- 	unsigned len, first, last;
- 	unsigned i;
-@@ -1006,7 +1003,8 @@ static void
- iomap_finish_page_writeback(struct inode *inode, struct page *page,
- 		int error, unsigned int len)
- {
--	struct iomap_page *iop = to_iomap_page(page);
-+	struct folio *folio = page_folio(page);
-+	struct iomap_page *iop = to_iomap_page(folio);
+ 	const struct iomap *iomap = iomap_iter_srcmap(iter);
+ 	size_t size = i_size_read(iter->inode) - iomap->offset;
+ 	size_t poff = offset_in_page(iomap->offset);
+@@ -220,7 +220,7 @@ static loff_t iomap_read_inline_data(const struct iomap_iter *iter,
+ 	if (WARN_ON_ONCE(size > iomap->length))
+ 		return -EIO;
+ 	if (poff > 0)
+-		iomap_page_create(iter->inode, page);
++		iomap_page_create(iter->inode, folio);
  
- 	if (error) {
- 		SetPageError(page);
+ 	addr = kmap_local_page(page) + poff;
+ 	memcpy(addr, iomap->inline_data, size);
+@@ -247,6 +247,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+ 	loff_t pos = iter->pos + offset;
+ 	loff_t length = iomap_length(iter) - offset;
+ 	struct page *page = ctx->cur_page;
++	struct folio *folio = page_folio(page);
+ 	struct iomap_page *iop;
+ 	loff_t orig_pos = pos;
+ 	unsigned poff, plen;
+@@ -256,7 +257,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+ 		return min(iomap_read_inline_data(iter, page), length);
+ 
+ 	/* zero post-eof blocks as the page may be mapped */
+-	iop = iomap_page_create(iter->inode, page);
++	iop = iomap_page_create(iter->inode, folio);
+ 	iomap_adjust_read_range(iter->inode, iop, &pos, length, &poff, &plen);
+ 	if (plen == 0)
+ 		goto done;
+@@ -536,8 +537,9 @@ iomap_read_page_sync(loff_t block_start, struct page *page, unsigned poff,
+ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+ 		unsigned len, struct page *page)
+ {
++	struct folio *folio = page_folio(page);
+ 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+-	struct iomap_page *iop = iomap_page_create(iter->inode, page);
++	struct iomap_page *iop = iomap_page_create(iter->inode, folio);
+ 	loff_t block_size = i_blocksize(iter->inode);
+ 	loff_t block_start = round_down(pos, block_size);
+ 	loff_t block_end = round_up(pos + len, block_size);
+@@ -1290,7 +1292,8 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 		struct writeback_control *wbc, struct inode *inode,
+ 		struct page *page, u64 end_offset)
+ {
+-	struct iomap_page *iop = iomap_page_create(inode, page);
++	struct folio *folio = page_folio(page);
++	struct iomap_page *iop = iomap_page_create(inode, folio);
+ 	struct iomap_ioend *ioend, *next;
+ 	unsigned len = i_blocksize(inode);
+ 	u64 file_offset; /* file offset of page */
 -- 
 2.33.0
 
