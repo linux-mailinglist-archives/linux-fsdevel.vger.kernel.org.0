@@ -2,75 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E6C644790D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Nov 2021 05:03:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62316447925
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Nov 2021 05:10:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237263AbhKHEFs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Nov 2021 23:05:48 -0500
-Received: from smtprelay0037.hostedemail.com ([216.40.44.37]:50062 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S235502AbhKHEFr (ORCPT
+        id S237353AbhKHENT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Nov 2021 23:13:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42574 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236536AbhKHENS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Nov 2021 23:05:47 -0500
-Received: from omf20.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 6583E1010DF67;
-        Mon,  8 Nov 2021 04:03:01 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf20.hostedemail.com (Postfix) with ESMTPA id 5720F18A60C;
-        Mon,  8 Nov 2021 04:03:00 +0000 (UTC)
-Message-ID: <d405db9dd4ff587093539a602c45a2aeb85db90c.camel@perches.com>
-Subject: Re: [PATCH] fs: direct-io: use DIV_ROUND_UP helper macro for
- calculations
-From:   Joe Perches <joe@perches.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Wu Bo <wubo40@huawei.com>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linfeilong@huawei.com
-Date:   Sun, 07 Nov 2021 20:02:59 -0800
-In-Reply-To: <YYie4D0U59hurOOd@casper.infradead.org>
-References: <1636341011-6494-1-git-send-email-wubo40@huawei.com>
-         <3b7c6fa1183d4567403382ae8ba439dcea4b7e02.camel@perches.com>
-         <YYie4D0U59hurOOd@casper.infradead.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.40.4-1 
+        Sun, 7 Nov 2021 23:13:18 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B981FC061570;
+        Sun,  7 Nov 2021 20:10:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=ktUs3uTQ8/E5fdzFkqY1zH7fnzNTHiKLIPKl79EDTvQ=; b=rz69hoxIcde3ZSkZGxzrx8B3G3
+        NZ6ipfKdYo7Dgv0EQAZqiT/2KjOgglkGFI5PCGdSzPIFGuNMW7Pg6mYhHUqsdM2/uAWAfEcIZdixl
+        dri2cK+oMRkmy/8S11UkympF9k6ohjmCUXcasgTnz1SpbJEy8bvwlPeuSB9EH8ju9xPAGstrkMhA+
+        VN1hfVqbAuwlG+Krp34Fg6ez5l2mxpIboxKVvpzl1ASZvTKcOBquL19nrC9NL14ro8LjvQrl5JSAD
+        ae4HVB0MXWulOgw5oTH1VoWBTwWupJgDaOi29ZoE5sG6qg8QXyndUsWfjxEjr3a9hyLoLSTg3kkTd
+        O1qRXaZA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mjvur-0089Qy-Hv; Mon, 08 Nov 2021 04:06:26 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     "Darrick J . Wong " <djwong@kernel.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH v2 00/28] iomap/xfs folio patches
+Date:   Mon,  8 Nov 2021 04:05:23 +0000
+Message-Id: <20211108040551.1942823-1-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.25
-X-Stat-Signature: z6m45bzpaqmq7mj5ade68bmwpe31jdax
-X-Rspamd-Server: rspamout02
-X-Rspamd-Queue-Id: 5720F18A60C
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1/U21IkYUoZsjaivmPaxUhf0MAlvfim9b4=
-X-HE-Tag: 1636344180-699605
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2021-11-08 at 03:52 +0000, Matthew Wilcox wrote:
-> On Sun, Nov 07, 2021 at 07:17:07PM -0800, Joe Perches wrote:
-> > If you are interested, there are definitely a few more opportunities
-> > to use this DIV_ROUND_UP macro in the kernel:
-> > 
-> > $ git grep -P -n '\(\s*([\w\.\>\[\]\-]+)\s*\+\s*([\w\.\>\[\]\-]+)\s*-\s*1\s*\)\s*/\s*(?:\1|\2)\b'
-> > arch/alpha/boot/tools/objstrip.c:260:	mem_size = ((mem_size + pad - 1) / pad) * pad;
-> 
-> Might want to exclude 'tools' ...
-> 
-> > tools/bpf/bpftool/gen.c:184:		align_off = (off + align - 1) / align * align;
-> > tools/io_uring/io_uring-bench.c:140:	return (DEPTH + s->nr_files - 1) / s->nr_files;
-> > tools/lib/bpf/linker.c:1115:	dst_align_sz = (dst->sec_sz + dst_align - 1) / dst_align * dst_align;
-> > tools/lib/subcmd/help.c:119:	rows = (cmds->cnt + cols - 1) / cols;
-> > tools/testing/selftests/bpf/prog_tests/core_reloc.c:804:	return (sz + page_size - 1) / page_size * page_size;
-> > tools/testing/selftests/bpf/prog_tests/mmap.c:13:	return (sz + page_size - 1) / page_size * page_size;
-> > tools/testing/selftests/net/forwarding/sch_red.sh:202:		local pkts=$(((diff + PKTSZ - 1) / PKTSZ))
-> > tools/vm/page-types.c:943:			size, (size + page_size - 1) / page_size);
-> 
-> ... because most of these files won't have access to that macro.
-> Definitely compile-test before sending a patch.
+This patchset converts XFS & iomap to use folios, and gets them to a
+state where they can handle multi-page folios.  Applying these patches
+is not yet sufficient to actually start using multi-page folios for
+XFS; more page cache changes are needed.  I don't anticipate needing to
+touch XFS again until we're at the point where we want to convert the
+aops to be type-safe.  It completes an xfstests run with no unexpected
+failures.  Most of these patches have been posted before and I've retained
+acks/reviews where I thought them reasonable.  Some patches are new.
 
-Always.
+v2:
+ - Added review tags from Jens, Darrick & Christoph (thanks!)
+ - Added folio_zero_* wrappers around zero_user_*()
+ - Added a patch to rename AS_THP_SUPPORT
+ - Added a patch to convert __block_write_begin_int() to take a folio
+ - Split the iomap_add_to_ioend() patch into three
+ - Updated changelog of bio_add_folio() (Jens)
+ - Adjusted whitespace of bio patches (Christoph, Jens)
+ - Improved changelog of readahead conversion to explain why the put_page()
+   disappeared (Christoph)
+ - Add a patch to zero an entire folio at a time, instead of limiting to
+   a page
+ - Switch pos & end_pos back to being u64 from loff_t
+ - Call block_write_end() and ->page_done with the head page of the folio,
+   as that's what those functions expect.
 
-btw:
+I intend to push patch 1 upstream myself (before 5.16), but I've included
+it here to avoid nasty messages from the build-bots.  I can probably
+persuade Linus to take patches 2-4 as well if Darrick's not comfortable
+taking them as part of the iomap changes.
 
-tools/include/linux/kernel.h:#define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
+These changes are also available at:
+  git://git.infradead.org/users/willy/pagecache.git heads/folio-iomap
 
+I intend to rebase that branch to include any further R-b tags (some of
+the patches are new and don't have reviews).
+
+Matthew Wilcox (Oracle) (28):
+  csky,sparc: Declare flush_dcache_folio()
+  mm: Add functions to zero portions of a folio
+  fs: Remove FS_THP_SUPPORT
+  fs: Rename AS_THP_SUPPORT and mapping_thp_support
+  block: Add bio_add_folio()
+  block: Add bio_for_each_folio_all()
+  fs/buffer: Convert __block_write_begin_int() to take a folio
+  iomap: Convert to_iomap_page to take a folio
+  iomap: Convert iomap_page_create to take a folio
+  iomap: Convert iomap_page_release to take a folio
+  iomap: Convert iomap_releasepage to use a folio
+  iomap: Add iomap_invalidate_folio
+  iomap: Pass the iomap_page into iomap_set_range_uptodate
+  iomap: Convert bio completions to use folios
+  iomap: Use folio offsets instead of page offsets
+  iomap: Convert iomap_read_inline_data to take a folio
+  iomap: Convert readahead and readpage to use a folio
+  iomap: Convert iomap_page_mkwrite to use a folio
+  iomap: Convert __iomap_zero_iter to use a folio
+  iomap: Convert iomap_write_begin() and iomap_write_end() to folios
+  iomap: Convert iomap_write_end_inline to take a folio
+  iomap,xfs: Convert ->discard_page to ->discard_folio
+  iomap: Simplify iomap_writepage_map()
+  iomap: Simplify iomap_do_writepage()
+  iomap: Convert iomap_add_to_ioend() to take a folio
+  iomap: Convert iomap_migrate_page() to use folios
+  iomap: Support multi-page folios in invalidatepage
+  xfs: Support multi-page folios
+
+ Documentation/core-api/kernel-api.rst  |   1 +
+ arch/csky/abiv1/inc/abi/cacheflush.h   |   1 +
+ arch/csky/abiv2/inc/abi/cacheflush.h   |   2 +
+ arch/sparc/include/asm/cacheflush_32.h |   1 +
+ arch/sparc/include/asm/cacheflush_64.h |   1 +
+ block/bio.c                            |  22 ++
+ fs/buffer.c                            |  22 +-
+ fs/inode.c                             |   2 -
+ fs/internal.h                          |   2 +-
+ fs/iomap/buffered-io.c                 | 506 +++++++++++++------------
+ fs/xfs/xfs_aops.c                      |  24 +-
+ fs/xfs/xfs_icache.c                    |   2 +
+ include/linux/bio.h                    |  56 ++-
+ include/linux/fs.h                     |   1 -
+ include/linux/highmem.h                |  44 ++-
+ include/linux/iomap.h                  |   3 +-
+ include/linux/pagemap.h                |  26 +-
+ mm/highmem.c                           |   2 -
+ mm/shmem.c                             |   3 +-
+ 19 files changed, 431 insertions(+), 290 deletions(-)
+
+-- 
+2.33.0
 
