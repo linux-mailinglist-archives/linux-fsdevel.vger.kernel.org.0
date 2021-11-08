@@ -2,198 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CBAD4476C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Nov 2021 00:58:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF00D44787E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Nov 2021 03:22:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236102AbhKHAAm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Nov 2021 19:00:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44268 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234334AbhKHAAl (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Nov 2021 19:00:41 -0500
-Received: from mail-pf1-x449.google.com (mail-pf1-x449.google.com [IPv6:2607:f8b0:4864:20::449])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33DB4C061570
-        for <linux-fsdevel@vger.kernel.org>; Sun,  7 Nov 2021 15:57:58 -0800 (PST)
-Received: by mail-pf1-x449.google.com with SMTP id l7-20020a622507000000b00494608c84a4so7530467pfl.6
-        for <linux-fsdevel@vger.kernel.org>; Sun, 07 Nov 2021 15:57:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:message-id:mime-version:subject:from:cc;
-        bh=R+t/urldu9YHqL+lDHl0HSLrbce7ecQGyIl+/EPH9I8=;
-        b=jtvTOQvOVdGNvyQyeQqOgGXvjQRC942kwerWX6M5FsjL3Tf2acXkUvzNi3m/soosln
-         smuise7b6YoEQSDMWni5RrgsRkFHhCkqDkNg/SvV2OrqbcUp89NTGHyz9K3zMkml9h8C
-         H2FfEfYy8l1yITzXaM5pqtHa+/VgyFAP57qmtbkovAq/FbBzve5NMVOD0aeba8x4rKyf
-         w5sBJ5g/iG7tk815O9LKpRjk0SZdl8e7vfYWFMybz0XoV7TCIsdNqjcKcLv3ChUSt6Op
-         ftNIT54rBT3hSlbv8PxpftPfFCmvpmlYscqi3G7h6BTnfPp/UC/ZGZJxL78o0aupiqgV
-         BpcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:cc;
-        bh=R+t/urldu9YHqL+lDHl0HSLrbce7ecQGyIl+/EPH9I8=;
-        b=AzPrXg07AVBw92o7yRV+ePfff4S4IAJ8jPNA9AtBA+U3ZxwTIYnXLJq7PQHdb4WQPz
-         hGxtaADTfk5+pM7JP89N4h0f7AlB76CV/3zxZT03vDnN2NF33PFFQ4Rn4GkCgVqxXqW7
-         7LK0nU0S6oDIiWxCrYwF04tNKJSGmEEA7brz8n67S9rAR6/b2hixfIwCmogYwLod4SGo
-         3GeWILZDumRiJ/NrjzaOaswvfCSDdH5kwzjdIPGg4+/0IhakoUXOubo0S8x0dPQQjute
-         1vbtDImLC9FWkZVaYNYijaVh6s8LJbLyFSwh/twP9qLt4FEk0IYaQb3PdwCmniRhNvvm
-         OUxg==
-X-Gm-Message-State: AOAM532e55Kzrw4Hizbf298EAnEb0nsJBZzHxzXzvD5MxwQsyYqpIbGa
-        TA91GtzDVrv61uOjZgBa8lCdhO2QDeo/dZAEzw==
-X-Google-Smtp-Source: ABdhPJxvrhLtle5SS8aEghWIfAk3tWnJrCeqtk4DE1GvfdAPQan5xzgUAyKoMUQEhK3rRNz7sYMbQHZHVKUni4iHPw==
-X-Received: from almasrymina.svl.corp.google.com ([2620:15c:2cd:202:86c8:d4b:a94b:a8fe])
- (user=almasrymina job=sendgmr) by 2002:a63:4847:: with SMTP id
- x7mr47288917pgk.239.1636329477365; Sun, 07 Nov 2021 15:57:57 -0800 (PST)
-Date:   Sun,  7 Nov 2021 15:57:54 -0800
-Message-Id: <20211107235754.1395488-1-almasrymina@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.34.0.rc0.344.g81b53c2807-goog
-Subject: [PATCH v4] mm: Add PM_HUGE_THP_MAPPING to /proc/pid/pagemap
-From:   Mina Almasry <almasrymina@google.com>
-Cc:     Mina Almasry <almasrymina@google.com>,
-        David Hildenbrand <david@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Paul E . McKenney" <paulmckrcu@fb.com>,
-        Yu Zhao <yuzhao@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Xu <peterx@redhat.com>,
-        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        Florian Schmidt <florian.schmidt@nutanix.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-To:     unlisted-recipients:; (no To-header on input)
+        id S236412AbhKHCZH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Nov 2021 21:25:07 -0500
+Received: from mout.gmx.net ([212.227.17.21]:43331 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229757AbhKHCZG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 7 Nov 2021 21:25:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1636338141;
+        bh=D09j6Et2tmoIoG66YxFPqLC9WuMJxc1MY1FDxXcsbRY=;
+        h=X-UI-Sender-Class:Date:To:From:Subject;
+        b=COWybPKJcH8JnVIDcp6NCaLgRzI1Ggo+bYJRk27teczT/aKElhLZG8qVOdQ/N+OjT
+         lJM2IX6gU7iGMg3tnXVuyvAtMk5vVtagFUnREA6BtK2IfFcpexEEkMtxoQB4ulcIil
+         Smgr4eUcyPVJgMgi3Z55vnu118/9aPlIFIJY2Dq8=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MXGr8-1nEGzS1mRy-00YeEZ; Mon, 08
+ Nov 2021 03:22:21 +0100
+Message-ID: <a5c2941f-b3df-b811-a8a9-860309b03c32@gmx.com>
+Date:   Mon, 8 Nov 2021 10:22:16 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Content-Language: en-US
+To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+Subject: FUSE: anyway to return different stat::st_dev inside one filesystem?
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:u2rD58JpA3MhRvGiZCk61wWmYJavPBpVDMJ1lTqg66lox4IbxXa
+ XbO8L2suwYch67fRKuB5qvh2zKd+mgHl+XW5GWlETKj5y0l1TqKpfGD5RU1HuMGJ/BpV60V
+ UVZJB12MdxGILxwXGbOfOXOHo6R73y8IGVdwkOrc6XL5M3nGgSeOG8zajEGNpsIOLaepxmZ
+ LXygInM/4u7KFjL1L5/FA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:uHKMBGI7O2Y=:AtZurqP2pWAuRF/mizkNC1
+ 4EYDB/w2uCXqletidiU2fG44ZczBfKuoGzqsmE0mKDRQeGTenPTGuQS0AuYkbwJzRUAaTfJzb
+ XhzKPgq7nrcg+iaNpfjUeOzk9wDS07FXrvbQ8fLSnAE4EVDliLKC1ve9WlB1jr58thhUONH46
+ 4gzLZPp6N34UUhb3MzSr16x4eTlcOyUJ6h5zV3PL3FXJFdaY5b8bpd7TB77J2Bra6RX690/HA
+ EMiYLbBbD5yMH93aBtHXqqsHjauvC8pg1zvb4ixZNk++Gl69h0OOU+GUAhqQzcZRVEY/HxfQQ
+ KUjKJc9tpa3lbK0Kf29soqbiw/WlrEzrIHizuBpKMN5zGaYE/hzuy7KRWeS2PiKpnWhEIPH9C
+ 9IoGc5Zylo9mnY55susQY5PJ68ykL5uzARm77ChJCsemcC7M+WxYxaOqNE6DHZG6apJmoL9Z5
+ wtVf7y7AdBqqG1wGat4OgpzjiaKP4TcsjLaFWSDRPhFBJSB3w256cE2VXhWa3ZiN5J9jrEUXT
+ cB0/ETE+4SbTLd8+vcL8A0GjCY35wFx/Wodf2wwrNOZQX8r4VZr87+WRCa/p3jcejR2u+uFbG
+ rpiUEnLjSWtSs5A3ZrjavZE9zYUPx1D8F8LFrNDOc07SvDROR6xUaea0YH6Q2XR3bOMNTpNnQ
+ Uw/ehFIcqaWPBjeznS+UOiwKK2S4sbHkYR5EWH0t1ntYxxqcu2Tf1XZXTEefWgaAuFAPvQdQu
+ 72ENppaKIiZWzZ9P+dNdU0Fcjp5DL567Wtnq/15Z2/eijxWr5x9ZG1bhx99jhBlIkTvvPnbXL
+ 51TdDZBspzyjQuqiyBW/g7oki/7W+gke62hoyrIVRQIXBhPgtwyGrJxaJgxeB9/GVW2bP9wx+
+ 64mjbSaf+pZhYwPUoxf5Up3PcHNGz3QNIYBPMZfsTZ3622wTzyXZo2UmODcC2yenIO5C5tMfY
+ Gn7GHFbvEIT1fYghZLaLcdcU4vXCvk0Mw4PTPLgXMksW3yD1km5S8na8nSSctE0ncQu05cF8S
+ RX1SKj2/uDWOgE0nAm/0BNvpxTb7GqmfeVxP/ObaWu1aXKYyeBYs1GEb/E6YjiAO/8E6ZK2vW
+ Dcx3C7+E6sdnL0=
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add PM_HUGE_THP MAPPING to allow userspace to detect whether a given virt
-address is currently mapped by a transparent huge page or not.
+Hi FUSE guys,
 
-Example use case is a process requesting THPs from the kernel (via
-a huge tmpfs mount for example), for a performance critical region of
-memory.  The userspace may want to query whether the kernel is actually
-backing this memory by hugepages or not.
+Normally it's completely sane to let FUSE manage stat::st_dev, and most
+FUSE filesystems are fine with that.
 
-PM_HUGE_THP_MAPPING bit is set if the virt address is mapped at the PMD
-level and the underlying page is a transparent huge page.
+But there comes one problem, as I'm working on a FUSE btrfs read-only
+implementation (*).
 
-Tested manually by adding logging into transhuge-stress, and by
-allocating THP and querying the PM_HUGE_THP_MAPPING flag at those
-virtual addresses.
+This limitation is getting more user affecting, as btrfs has subvolumes
+which are completely different inode spaces.
 
-Signed-off-by: Mina Almasry <almasrymina@google.com>
+Furthermore, all subvolume roots shares the same inode number (256),
+thus if user space tool like "find" gets a inode number 256 with same
+the st_dev number, it will treat it as a known directory, and skip its
+content completely.
 
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: David Rientjes rientjes@google.com
-Cc: Paul E. McKenney <paulmckrcu@fb.com>
-Cc: Yu Zhao <yuzhao@google.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: Ivan Teterevkov <ivan.teterevkov@nutanix.com>
-Cc: Florian Schmidt <florian.schmidt@nutanix.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-mm@kvack.org
+For kernel btrfs, it's not a big deal, as we will return different
+st_dev for each subvolume.
+
+But in FUSE, we don't have such ability, resulting "find" can only work
+inside one subvolume, and nothing more.
+
+So is there any limitation why FUSE can't not return different st_dev?
 
 
----
+*: The project is here:
+https://github.com/adam900710/btrfs-fuse
 
-Changes in v4:
-- Removed unnecessary moving of flags variable declaration
+The reason I created such project is as an educational project, also an
+alternative btrfs reference implementation for bootloaders.
 
-Changes in v3:
-- Renamed PM_THP to PM_HUGE_THP_MAPPING
-- Fixed checks to set PM_HUGE_THP_MAPPING
-- Added PM_HUGE_THP_MAPPING docs
+Currently one can already explore the directory/files structure, and
+proper data read with checksum verification/recovery is WIP.
 
----
- Documentation/admin-guide/mm/pagemap.rst      |  3 ++-
- fs/proc/task_mmu.c                            |  3 +++
- tools/testing/selftests/vm/transhuge-stress.c | 21 +++++++++++++++----
- 3 files changed, 22 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
-index fdc19fbc10839..8a0f0064ff336 100644
---- a/Documentation/admin-guide/mm/pagemap.rst
-+++ b/Documentation/admin-guide/mm/pagemap.rst
-@@ -23,7 +23,8 @@ There are four components to pagemap:
-     * Bit  56    page exclusively mapped (since 4.2)
-     * Bit  57    pte is uffd-wp write-protected (since 5.13) (see
-       :ref:`Documentation/admin-guide/mm/userfaultfd.rst <userfaultfd>`)
--    * Bits 57-60 zero
-+    * Bit  58    page is a huge (PMD size) THP mapping
-+    * Bits 59-60 zero
-     * Bit  61    page is file-page or shared-anon (since 3.5)
-     * Bit  62    page swapped
-     * Bit  63    page present
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index ad667dbc96f5c..6f1403f83b310 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -1302,6 +1302,7 @@ struct pagemapread {
- #define PM_SOFT_DIRTY		BIT_ULL(55)
- #define PM_MMAP_EXCLUSIVE	BIT_ULL(56)
- #define PM_UFFD_WP		BIT_ULL(57)
-+#define PM_HUGE_THP_MAPPING	BIT_ULL(58)
- #define PM_FILE			BIT_ULL(61)
- #define PM_SWAP			BIT_ULL(62)
- #define PM_PRESENT		BIT_ULL(63)
-@@ -1456,6 +1457,8 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
-
- 		if (page && page_mapcount(page) == 1)
- 			flags |= PM_MMAP_EXCLUSIVE;
-+		if (page && is_transparent_hugepage(page))
-+			flags |= PM_HUGE_THP_MAPPING;
-
- 		for (; addr != end; addr += PAGE_SIZE) {
- 			pagemap_entry_t pme = make_pme(frame, flags);
-diff --git a/tools/testing/selftests/vm/transhuge-stress.c b/tools/testing/selftests/vm/transhuge-stress.c
-index fd7f1b4a96f94..7dce18981fff5 100644
---- a/tools/testing/selftests/vm/transhuge-stress.c
-+++ b/tools/testing/selftests/vm/transhuge-stress.c
-@@ -16,6 +16,12 @@
- #include <string.h>
- #include <sys/mman.h>
-
-+/*
-+ * We can use /proc/pid/pagemap to detect whether the kernel was able to find
-+ * hugepages or no. This can be very noisy, so is disabled by default.
-+ */
-+#define NO_DETECT_HUGEPAGES
-+
- #define PAGE_SHIFT 12
- #define HPAGE_SHIFT 21
-
-@@ -23,6 +29,7 @@
- #define HPAGE_SIZE (1 << HPAGE_SHIFT)
-
- #define PAGEMAP_PRESENT(ent)	(((ent) & (1ull << 63)) != 0)
-+#define PAGEMAP_THP(ent)	(((ent) & (1ull << 58)) != 0)
- #define PAGEMAP_PFN(ent)	((ent) & ((1ull << 55) - 1))
-
- int pagemap_fd;
-@@ -47,10 +54,16 @@ int64_t allocate_transhuge(void *ptr)
- 			(uintptr_t)ptr >> (PAGE_SHIFT - 3)) != sizeof(ent))
- 		err(2, "read pagemap");
-
--	if (PAGEMAP_PRESENT(ent[0]) && PAGEMAP_PRESENT(ent[1]) &&
--	    PAGEMAP_PFN(ent[0]) + 1 == PAGEMAP_PFN(ent[1]) &&
--	    !(PAGEMAP_PFN(ent[0]) & ((1 << (HPAGE_SHIFT - PAGE_SHIFT)) - 1)))
--		return PAGEMAP_PFN(ent[0]);
-+	if (PAGEMAP_PRESENT(ent[0]) && PAGEMAP_PRESENT(ent[1])) {
-+#ifndef NO_DETECT_HUGEPAGES
-+		if (!PAGEMAP_THP(ent[0]))
-+			fprintf(stderr, "WARNING: detected non THP page\n");
-+#endif
-+		if (PAGEMAP_PFN(ent[0]) + 1 == PAGEMAP_PFN(ent[1]) &&
-+		    !(PAGEMAP_PFN(ent[0]) &
-+		      ((1 << (HPAGE_SHIFT - PAGE_SHIFT)) - 1)))
-+			return PAGEMAP_PFN(ent[0]);
-+	}
-
- 	return -1;
- }
---
-2.34.0.rc0.344.g81b53c2807-goog
+Thanks,
+Qu
