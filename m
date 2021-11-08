@@ -2,41 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B5D8844798F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Nov 2021 05:50:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 383C7447993
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  8 Nov 2021 05:51:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237596AbhKHExY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 7 Nov 2021 23:53:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51496 "EHLO
+        id S237575AbhKHExq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 7 Nov 2021 23:53:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237563AbhKHExJ (ORCPT
+        with ESMTP id S237588AbhKHExl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 7 Nov 2021 23:53:09 -0500
+        Sun, 7 Nov 2021 23:53:41 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53FB0C061570;
-        Sun,  7 Nov 2021 20:50:25 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5F1DC061766;
+        Sun,  7 Nov 2021 20:50:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=MSwGyyjT2OJm0b6d3Edmw5CIN5pGSRTORzn8ma//Evg=; b=b0QJFIpClhnpFSpHXXRIQC80Fh
-        fbupHNSyuqKh1xIoLHBc4OwtUoGnP/FfYlUSzHadvFEeZLWI4CO2GgiV5LlO83K54MB3FD+QnU+RV
-        ugrMYyDm+xKHJMnAk0ZbBSY8doJchhB41gL5BqbIhzKE2ixYi+Ws2cB6Y8NhTPI4mojvFKkqDF1Yb
-        b86zXJbZb0Wn/5QGNvSd7DuTfIt4ikrOFhgISw19COwlpll+BWX9HWTzMqvhwyTakGvIHEDMG71TT
-        iAkyIp1fB7Ie1aKEuqXrUOLZA/hAaneHUA2G9pLv+vX/+GR9ZHijnQVQiOmqRcHztY4LhyslPaeBm
-        g7Kp+NxA==;
+        bh=ABOv/y8+NXP2UR+IqvkpxutjcwPquj4gNrIuYlOU0hA=; b=dYwvRN3+fqkPpLR/io9BmJ/HK3
+        SSWPMVurgAaiwUidE1ZChcbkoLpNs9gcLYLNkagI8RaqK7exsY4UuMwMP8h9VJjq/U3fZcmC9XZDM
+        5cMH+AkFN/y1pKVv4veEjRxN4+nvb8HQFB6PUDHNegiyB1IaR0EjVf4W2iC9naTGZIKLqs/qzzLpq
+        /Q7bsJ+PTY7So+foG/oZZr+FNhSzQEhD8nDLUzl7usPcXNXs5x+XH5A+G0rt3Z3oHeFV7KwYMIjjZ
+        0glVYzT8b60+h9zscisMdMX39uVOk8pfDRvjWCfb9a1WRjs5l1M/EQsDC+4FZT4MX5GYiXljg04PA
+        y/Dfb8KA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mjwXz-008AOm-RX; Mon, 08 Nov 2021 04:46:51 +0000
+        id 1mjwZX-008AQX-Vg; Mon, 08 Nov 2021 04:48:20 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     "Darrick J . Wong " <djwong@kernel.org>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH v2 17/28] iomap: Convert readahead and readpage to use a folio
-Date:   Mon,  8 Nov 2021 04:05:40 +0000
-Message-Id: <20211108040551.1942823-18-willy@infradead.org>
+        Christoph Hellwig <hch@infradead.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v2 18/28] iomap: Convert iomap_page_mkwrite to use a folio
+Date:   Mon,  8 Nov 2021 04:05:41 +0000
+Message-Id: <20211108040551.1942823-19-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20211108040551.1942823-1-willy@infradead.org>
 References: <20211108040551.1942823-1-willy@infradead.org>
@@ -46,138 +47,80 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Handle folios of arbitrary size instead of working in PAGE_SIZE units.
-readahead_folio() decreases the page refcount for you, so this is not
-quite a mechanical change.
+If we write to any page in a folio, we have to mark the entire
+folio as dirty, and potentially COW the entire folio, because it'll
+all get written back as one unit.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/iomap/buffered-io.c | 53 +++++++++++++++++++++---------------------
- 1 file changed, 26 insertions(+), 27 deletions(-)
+ fs/iomap/buffered-io.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 96a404f11a3b..b0b402e1779e 100644
+index b0b402e1779e..64e54981b651 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -188,8 +188,8 @@ static void iomap_read_end_io(struct bio *bio)
+@@ -960,10 +960,9 @@ iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
  }
+ EXPORT_SYMBOL_GPL(iomap_truncate_page);
  
- struct iomap_readpage_ctx {
--	struct page		*cur_page;
--	bool			cur_page_in_bio;
-+	struct folio		*cur_folio;
-+	bool			cur_folio_in_bio;
- 	struct bio		*bio;
- 	struct readahead_control *rac;
- };
-@@ -243,8 +243,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 	const struct iomap *iomap = &iter->iomap;
- 	loff_t pos = iter->pos + offset;
- 	loff_t length = iomap_length(iter) - offset;
--	struct page *page = ctx->cur_page;
--	struct folio *folio = page_folio(page);
-+	struct folio *folio = ctx->cur_folio;
- 	struct iomap_page *iop;
- 	loff_t orig_pos = pos;
- 	size_t poff, plen;
-@@ -265,7 +264,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 		goto done;
- 	}
- 
--	ctx->cur_page_in_bio = true;
-+	ctx->cur_folio_in_bio = true;
- 	if (iop)
- 		atomic_add(plen, &iop->read_bytes_pending);
- 
-@@ -273,7 +272,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- 	if (!ctx->bio ||
- 	    bio_end_sector(ctx->bio) != sector ||
- 	    !bio_add_folio(ctx->bio, folio, plen, poff)) {
--		gfp_t gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
-+		gfp_t gfp = mapping_gfp_constraint(folio->mapping, GFP_KERNEL);
- 		gfp_t orig_gfp = gfp;
- 		unsigned int nr_vecs = DIV_ROUND_UP(length, PAGE_SIZE);
- 
-@@ -312,30 +311,31 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
- int
- iomap_readpage(struct page *page, const struct iomap_ops *ops)
+-static loff_t iomap_page_mkwrite_iter(struct iomap_iter *iter,
+-		struct page *page)
++static loff_t iomap_folio_mkwrite_iter(struct iomap_iter *iter,
++		struct folio *folio)
  {
-+	struct folio *folio = page_folio(page);
- 	struct iomap_iter iter = {
--		.inode		= page->mapping->host,
--		.pos		= page_offset(page),
--		.len		= PAGE_SIZE,
-+		.inode		= folio->mapping->host,
-+		.pos		= folio_pos(folio),
-+		.len		= folio_size(folio),
- 	};
- 	struct iomap_readpage_ctx ctx = {
--		.cur_page	= page,
-+		.cur_folio	= folio,
- 	};
+-	struct folio *folio = page_folio(page);
+ 	loff_t length = iomap_length(iter);
  	int ret;
  
--	trace_iomap_readpage(page->mapping->host, 1);
-+	trace_iomap_readpage(iter.inode, 1);
+@@ -972,10 +971,10 @@ static loff_t iomap_page_mkwrite_iter(struct iomap_iter *iter,
+ 					      &iter->iomap);
+ 		if (ret)
+ 			return ret;
+-		block_commit_write(page, 0, length);
++		block_commit_write(&folio->page, 0, length);
+ 	} else {
+-		WARN_ON_ONCE(!PageUptodate(page));
+-		set_page_dirty(page);
++		WARN_ON_ONCE(!folio_test_uptodate(folio));
++		folio_mark_dirty(folio);
+ 	}
  
+ 	return length;
+@@ -987,24 +986,24 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
+ 		.inode		= file_inode(vmf->vma->vm_file),
+ 		.flags		= IOMAP_WRITE | IOMAP_FAULT,
+ 	};
+-	struct page *page = vmf->page;
++	struct folio *folio = page_folio(vmf->page);
+ 	ssize_t ret;
+ 
+-	lock_page(page);
+-	ret = page_mkwrite_check_truncate(page, iter.inode);
++	folio_lock(folio);
++	ret = folio_mkwrite_check_truncate(folio, iter.inode);
+ 	if (ret < 0)
+ 		goto out_unlock;
+-	iter.pos = page_offset(page);
++	iter.pos = folio_pos(folio);
+ 	iter.len = ret;
  	while ((ret = iomap_iter(&iter, ops)) > 0)
- 		iter.processed = iomap_readpage_iter(&iter, &ctx, 0);
+-		iter.processed = iomap_page_mkwrite_iter(&iter, page);
++		iter.processed = iomap_folio_mkwrite_iter(&iter, folio);
  
  	if (ret < 0)
--		SetPageError(page);
-+		folio_set_error(folio);
- 
- 	if (ctx.bio) {
- 		submit_bio(ctx.bio);
--		WARN_ON_ONCE(!ctx.cur_page_in_bio);
-+		WARN_ON_ONCE(!ctx.cur_folio_in_bio);
- 	} else {
--		WARN_ON_ONCE(ctx.cur_page_in_bio);
--		unlock_page(page);
-+		WARN_ON_ONCE(ctx.cur_folio_in_bio);
-+		folio_unlock(folio);
- 	}
- 
- 	/*
-@@ -354,15 +354,15 @@ static loff_t iomap_readahead_iter(const struct iomap_iter *iter,
- 	loff_t done, ret;
- 
- 	for (done = 0; done < length; done += ret) {
--		if (ctx->cur_page && offset_in_page(iter->pos + done) == 0) {
--			if (!ctx->cur_page_in_bio)
--				unlock_page(ctx->cur_page);
--			put_page(ctx->cur_page);
--			ctx->cur_page = NULL;
-+		if (ctx->cur_folio &&
-+		    offset_in_folio(ctx->cur_folio, iter->pos + done) == 0) {
-+			if (!ctx->cur_folio_in_bio)
-+				folio_unlock(ctx->cur_folio);
-+			ctx->cur_folio = NULL;
- 		}
--		if (!ctx->cur_page) {
--			ctx->cur_page = readahead_page(ctx->rac);
--			ctx->cur_page_in_bio = false;
-+		if (!ctx->cur_folio) {
-+			ctx->cur_folio = readahead_folio(ctx->rac);
-+			ctx->cur_folio_in_bio = false;
- 		}
- 		ret = iomap_readpage_iter(iter, ctx, done);
- 	}
-@@ -403,10 +403,9 @@ void iomap_readahead(struct readahead_control *rac, const struct iomap_ops *ops)
- 
- 	if (ctx.bio)
- 		submit_bio(ctx.bio);
--	if (ctx.cur_page) {
--		if (!ctx.cur_page_in_bio)
--			unlock_page(ctx.cur_page);
--		put_page(ctx.cur_page);
-+	if (ctx.cur_folio) {
-+		if (!ctx.cur_folio_in_bio)
-+			folio_unlock(ctx.cur_folio);
- 	}
+ 		goto out_unlock;
+-	wait_for_stable_page(page);
++	folio_wait_stable(folio);
+ 	return VM_FAULT_LOCKED;
+ out_unlock:
+-	unlock_page(page);
++	folio_unlock(folio);
+ 	return block_page_mkwrite_return(ret);
  }
- EXPORT_SYMBOL_GPL(iomap_readahead);
+ EXPORT_SYMBOL_GPL(iomap_page_mkwrite);
 -- 
 2.33.0
 
