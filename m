@@ -2,139 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D20D744B121
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Nov 2021 17:26:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC6B844B152
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Nov 2021 17:39:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239765AbhKIQ3n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Nov 2021 11:29:43 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:38580 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238397AbhKIQ3m (ORCPT
+        id S237454AbhKIQmm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Nov 2021 11:42:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58740 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237041AbhKIQml (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Nov 2021 11:29:42 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 22DFC21B0F;
-        Tue,  9 Nov 2021 16:26:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1636475214; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=W8Yqvda4MK4hO1EoRB5r6GQpCOHroX0LfHlyY83Mevo=;
-        b=n8ph54cGxVOKEPgM+5p+AqZuytCKD7lxxc15YQWS+b1GoVVNoE7JvM7hjMyftp49vlScBU
-        f2/eNLWys935rjcfCs1KkeQk4OlCtKccHw7Gpz+zZAZKvlPMvPkKrYLmIrBn9bQnrkLEOa
-        cPl2eGrYMSNatVZji2GFhQsf56KKYgo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1636475214;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=W8Yqvda4MK4hO1EoRB5r6GQpCOHroX0LfHlyY83Mevo=;
-        b=qwFDV487ASDanqQnKIcVp/7as4MKVz9GWVpyA/v0PuOU7WIQy6b0ukq0Y9msnQ0/vN84P0
-        lHzuydjgE/8IlqDQ==
-Received: from suse.de (mgorman.tcp.ovpn2.nue.suse.de [10.163.32.246])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 818C3A3B88;
-        Tue,  9 Nov 2021 16:26:52 +0000 (UTC)
-Date:   Tue, 9 Nov 2021 16:26:47 +0000
-From:   Mel Gorman <mgorman@suse.de>
-To:     Gang Li <ligang.bdlg@bytedance.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: Re: Re: Re: Re: [PATCH v1] sched/numa: add per-process
- numa_balancing
-Message-ID: <20211109162647.GY3891@suse.de>
-References: <20211027132633.86653-1-ligang.bdlg@bytedance.com>
- <20211028153028.GP3891@suse.de>
- <b884ad7d-48d3-fcc8-d199-9e7643552a9a@bytedance.com>
- <20211029083751.GR3891@suse.de>
- <CAMx52ARF1fVH9=YLQMjE=8ckKJ=q3X2-ovtKuQcoTyo564mQnQ@mail.gmail.com>
- <20211109091951.GW3891@suse.de>
- <7de25e1b-e548-b8b5-dda5-6a2e001f3c1a@bytedance.com>
- <20211109121222.GX3891@suse.de>
- <117d5b88-b62b-f50b-32ff-1a9fe35b9e2e@bytedance.com>
+        Tue, 9 Nov 2021 11:42:41 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2466C061764;
+        Tue,  9 Nov 2021 08:39:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=HrXSYw8rk4n+A4PZtzybK6DqKpPd/fbVLmvWcN7MKLY=; b=UHjJm/M0a6jysVzwv55hP5Uzm0
+        iK1H669wXcWisFWKFSki4/Ys5QBVqbHMvV9j2k8nqyNM2wfyzFm1sVQxeLirA/z0jTWRoCPP0jO8M
+        KmZIOk1hXTrQTzbFuA8PdQs0Os9FYtElATLiI7crSQ80+LzhHhQv8XqmgGw0RQQaGQLmPZXUDDU14
+        5sJDCSUVxgsqpXXmdRzhqe/Vqbfa/OLUXDh9qrjUv4iVCt453PNSWAurV7//B1mbO0jcfcw+0EQr5
+        5/kAikwmtzYqjPKAdTUG5Ach3mso5A+4FGI0aXzIHzmhmsCBmOlChE2ehNLtUdC6qiDBT4cI1zT4C
+        evdBOVbw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mkUA5-002iSj-NZ; Tue, 09 Nov 2021 16:39:53 +0000
+Date:   Tue, 9 Nov 2021 08:39:53 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] f2fs: provide a way to attach HIPRI for Direct IO
+Message-ID: <YYqkWWZZsMW49/xu@infradead.org>
+References: <20211109021336.3796538-1-jaegeuk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <117d5b88-b62b-f50b-32ff-1a9fe35b9e2e@bytedance.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20211109021336.3796538-1-jaegeuk@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 09, 2021 at 09:58:34PM +0800, Gang Li wrote:
-> On 11/9/21 8:12 PM, Mel Gorman wrote:
-> > 
-> > That would be a policy decision on how existing tasks should be tuned
-> > if NUMA balancing is enabled at runtime after being disabled at boot
-> > (or some arbitrary time in the past). Introducing the prctl does mean
-> > that there is a semantic change for the runtime enabling/disabling
-> > of NUMA balancing because previously, enabling global balancing affects
-> > existing tasks and with prctl, it affects only future tasks. It could
-> > be handled in the sysctl to some exist
-> > 
-> > 0. Disable for all but prctl specifications
-> > 1. Enable for all tasks unless disabled by prctl
-> > 2. Ignore all existing tasks, enable for future tasks
-> > 
-> > While this is more legwork, it makes more sense as an interface than
-> > prctl(PR_NUMA_BALANCING,PR_SET_NUMA_BALANCING,1) failing if global
-> > NUMA balancing is disabled.
-> > 
+On Mon, Nov 08, 2021 at 06:13:36PM -0800, Jaegeuk Kim wrote:
+> This patch adds a way to attach HIPRI by expanding the existing sysfs's
+> data_io_flag. User can measure IO performance by enabling it.
+
+NAK.  This flag should only be used when explicitly specified by
+the submitter of the I/O.
+
 > 
-> Why prctl(PR_NUMA_BALANCING,PR_SET_NUMA_BALANCING,1) must work while global
-> numa_balancing is disabled? No offense, I think that is a bit redundant.
-
-For symmetry and consistency of the tuning. Either there is per-process
-control or there is not. Right now, there is only the ability to turn
-off NUMA balancing via prctl if globally enabled. There is no option to
-turn NUMA balancing on for a single task if globally disabled.
-
-> And
-> it's complicated to implement.
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  Documentation/ABI/testing/sysfs-fs-f2fs | 16 +++++++++-------
+>  fs/f2fs/data.c                          |  2 ++
+>  fs/f2fs/f2fs.h                          |  3 +++
+>  3 files changed, 14 insertions(+), 7 deletions(-)
 > 
-
-That is true.
-
-> It's hard for me to understand the whole vision of your idea. I'm very
-> sorry. Can you explain your full thoughts more specifically?
+> diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+> index b268e3e18b4a..ac52e1c6bcbc 100644
+> --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+> +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+> @@ -369,13 +369,15 @@ Contact:	"Jaegeuk Kim" <jaegeuk@kernel.org>
+>  Description:	Give a way to attach REQ_META|FUA to data writes
+>  		given temperature-based bits. Now the bits indicate:
+>  
+> -		+-------------------+-------------------+
+> -		|      REQ_META     |      REQ_FUA      |
+> -		+------+------+-----+------+------+-----+
+> -		|    5 |    4 |   3 |    2 |    1 |   0 |
+> -		+------+------+-----+------+------+-----+
+> -		| Cold | Warm | Hot | Cold | Warm | Hot |
+> -		+------+------+-----+------+------+-----+
+> +		+------------+-------------------+-------------------+
+> +		| HIPRI_DIO  |      REQ_META     |      REQ_FUA      |
+> +		+------------+------+------+-----+------+------+-----+
+> +		|          6 |    5 |    4 |   3 |    2 |    1 |   0 |
+> +		+------------+------+------+-----+------+------+-----+
+> +		|        All | Cold | Warm | Hot | Cold | Warm | Hot |
+> +		+------------+------+------+-----+------+------+-----+
+> +
+> +		Note that, HIPRI_DIO bit is only for direct IO path.
+>  
+>  What:		/sys/fs/f2fs/<disk>/node_io_flag
+>  Date:		June 2020
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 9f754aaef558..faa40aca2848 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -3707,6 +3707,8 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>  		if (do_opu)
+>  			down_read(&fi->i_gc_rwsem[READ]);
+>  	}
+> +	if (sbi->data_io_flag & HIPRI_DIO)
+> +		iocb->ki_flags |= IOCB_HIPRI;
+>  
+>  	err = __blockdev_direct_IO(iocb, inode, inode->i_sb->s_bdev,
+>  			iter, rw == WRITE ? get_data_block_dio_write :
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index ce9fc9f13000..094f1e8ff82b 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1557,6 +1557,9 @@ struct decompress_io_ctx {
+>  #define MAX_COMPRESS_LOG_SIZE		8
+>  #define MAX_COMPRESS_WINDOW_SIZE(log_size)	((PAGE_SIZE) << (log_size))
+>  
+> +/* HIPRI for direct IO used in sysfs/data_io_flag */
+> +#define HIPRI_DIO			(1 << 6)
+> +
+>  struct f2fs_sb_info {
+>  	struct super_block *sb;			/* pointer to VFS super block */
+>  	struct proc_dir_entry *s_proc;		/* proc entry */
+> -- 
+> 2.34.0.rc0.344.g81b53c2807-goog
 > 
-
-I'm not sure how I can be more clear.
-
-> ----------------------------------------------------
-> 
-> Also in case of misunderstanding, let me re-explain my patch using circuit
-> diagram.
-> 
-
-I understood what you are proposing. In your case, global disabling
-is an absolute -- it's disabled regardless of prctl therefore
-prctl(PR_NUMA_BALANCING,PR_SET_NUMA_BALANCING,1) has no meaning and it
-either does nothing at all or fails so why does the option even exist?
-
-> Why global numa_balancing has high priority? There are two reasons:
-> 1. numa_balancing is useful to most processes, so there is no need to
-> consider how to enable numa_balancing for a few processes while disabling it
-> globally.
-> 2. It is easy to implement. The more we think, the more complex the code
-> becomes.
-
-Of those two, I agree with the second one, it would be tricky to implement
-but the first one is less clear. This is based on an assumption. If prctl
-exists to enable/disable NUMA baalancing, it's possible that someone
-else would want to control NUMA balancing on a cgroup basis instead of
-globally which would run into the same type of concerns -- different
-semantics depending on the global tunable.
-
--- 
-Mel Gorman
-SUSE Labs
+---end quoted text---
