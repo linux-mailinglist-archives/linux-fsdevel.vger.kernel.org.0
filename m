@@ -2,209 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C076744ACDB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Nov 2021 12:48:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5142644AD38
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Nov 2021 13:12:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343583AbhKILvg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Nov 2021 06:51:36 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:51008 "EHLO
+        id S238733AbhKIMPQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Nov 2021 07:15:16 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:51854 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242051AbhKILvf (ORCPT
+        with ESMTP id S236245AbhKIMPQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Nov 2021 06:51:35 -0500
+        Tue, 9 Nov 2021 07:15:16 -0500
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id C67C71FDB7;
-        Tue,  9 Nov 2021 11:48:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1636458528; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=RNH1zhG55lKiISJ8oySE9cPF7clUgLqqBnz7BLeCSjg=;
-        b=fGkzfezjACCpwJxgYx0E67X3GtPDJwVk6Kict2uP6aTfQ+/DVO2yEuDhj2U7r+jmuO//JT
-        OBjioEDP5krP9odKma1fU0NInJsKhW+sbuaShvgehQ+vQSPK7L+d0O651/Bn/jYhJ2bleG
-        Ouxtb+KrhOD6ZHyEmUQFBtBz3ku3pLI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1636458528;
+        by smtp-out2.suse.de (Postfix) with ESMTP id F17EB1FD58;
+        Tue,  9 Nov 2021 12:12:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1636459948; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kR89D7ZrZQRdZQaPTOGekyWIy76pSZM8sfCYDY4AP7s=;
+        b=dJBhGZiVxcndU7kGad1tFglxyaE9whOIVSc5X4oSrKlgOFFqOE8mGMBQgHzkOJH7wBcddz
+        8iFfQsHvBwkYx887ZytRBcYa/G0UGd0IY/ZcVQZUek3CrOajxxJiz3pASZPUxg8ySK4oFq
+        FLSm/ktLYjHn3RimRRc0aqOp5vvC4MI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1636459948;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=RNH1zhG55lKiISJ8oySE9cPF7clUgLqqBnz7BLeCSjg=;
-        b=Y6CClXUnTfDRXRXYtJ7f3wR8058hld0yRoPZkIZzWybpb9ngDVUVvrXmLkEFIU+rS3at8S
-        FYAMLkvx/bTzAODg==
-Received: from quack2.suse.cz (unknown [10.100.200.198])
-        by relay2.suse.de (Postfix) with ESMTP id B8358A3B87;
-        Tue,  9 Nov 2021 11:48:48 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 694BF1E14ED; Tue,  9 Nov 2021 12:48:48 +0100 (CET)
-From:   Jan Kara <jack@suse.cz>
-To:     <linux-fsdevel@vger.kernel.org>
-Cc:     Nathan Wilson <nate@chickenbrittle.com>, Jan Kara <jack@suse.cz>,
-        stable@vger.kernel.org
-Subject: [PATCH] udf: Fix crash after seekdir
-Date:   Tue,  9 Nov 2021 12:48:41 +0100
-Message-Id: <20211109114841.30310-1-jack@suse.cz>
-X-Mailer: git-send-email 2.26.2
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kR89D7ZrZQRdZQaPTOGekyWIy76pSZM8sfCYDY4AP7s=;
+        b=ZJxTwqsUWeGgSPBJlLfPpOlFsFFFGLeTRB7UpANTCWi3uFlO1xyMya1qJhleEoiN/9peS1
+        ckc1oKaIjvOrv/Cg==
+Received: from suse.de (mgorman.tcp.ovpn2.nue.suse.de [10.163.32.246])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 99194A3B87;
+        Tue,  9 Nov 2021 12:12:27 +0000 (UTC)
+Date:   Tue, 9 Nov 2021 12:12:22 +0000
+From:   Mel Gorman <mgorman@suse.de>
+To:     Gang Li <ligang.bdlg@bytedance.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: Re: Re: Re: [PATCH v1] sched/numa: add per-process numa_balancing
+Message-ID: <20211109121222.GX3891@suse.de>
+References: <20211027132633.86653-1-ligang.bdlg@bytedance.com>
+ <20211028153028.GP3891@suse.de>
+ <b884ad7d-48d3-fcc8-d199-9e7643552a9a@bytedance.com>
+ <20211029083751.GR3891@suse.de>
+ <CAMx52ARF1fVH9=YLQMjE=8ckKJ=q3X2-ovtKuQcoTyo564mQnQ@mail.gmail.com>
+ <20211109091951.GW3891@suse.de>
+ <7de25e1b-e548-b8b5-dda5-6a2e001f3c1a@bytedance.com>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5229; h=from:subject; bh=WDh3QibNLGEWnbd4eCBgrER5UCOMYnAUKorpJO6XCuE=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBhil/vatT7CbVbhpHvpz5eaOCkE0pIhghOcOThpD92 vKP0dhKJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCYYpf7wAKCRCcnaoHP2RA2ZamCA DfwNk1m8Pbxt+COqFRSMWyIzmTUIwZrlxSpWCfwdmS+Mwlfe2ugvqEaQd/O9bYS8jlC78SLrBFmb4D xLY1GviRurndiI/fy8Nd96hfuBeOtA3UEJbo3f7+S5WlcIMNDvIEcilkjd3oE/01J32nBEZHih4h1t SQGfgovq++cjy7EHiJDJe4eo8JWIEb25zoAtviEQS5Y4bawC239ZQ8eVVVCkYM4v6Is1JoITr0hRxb Qpg18iGTTH+bnTp91QhLjeLvgAR2ROpk/RCnq7cSWpdwOxz9dU6ZR2oPKcH6BbYSGGsgFxsRWjM/ZQ pynkeiRtQ/9KwM0T32HevswadfZAcG
-X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <7de25e1b-e548-b8b5-dda5-6a2e001f3c1a@bytedance.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-udf_readdir() didn't validate the directory position it should start
-reading from. Thus when user uses lseek(2) on directory file descriptor
-it can trick udf_readdir() into reading from a position in the middle of
-directory entry which then upsets directory parsing code resulting in
-errors or even possible kernel crashes. Similarly when the directory is
-modified between two readdir calls, the directory position need not be
-valid anymore.
+On Tue, Nov 09, 2021 at 06:40:43PM +0800, Gang Li wrote:
+> On 11/9/21 5:19 PM, Mel Gorman wrote:
+> > On Tue, Nov 09, 2021 at 04:28:28PM +0800, Gang Li wrote:
+> > > If the global tuning affects default behaviour and the prctl
+> > > affects specific behaviour.  Then when prctl specifies
+> > > numa_balancing for a process, there is no way for the
+> > > global tuning to affect that process.
+> > 
+> > While I think it's very likely that the common case will be to disable
+> > NUMA balancing for specific processes,
+> > prctl(PR_NUMA_BALANCING,PR_SET_NUMA_BALANCING,1) should still be
+> > meaningful.
+> > 
+> 
+> I'm still a bit confused.
+> 
+> If we really want to enable/disable numa_balancing for all processes, but
+> some of them override the global numa_balancing using prctl, what should we
+> do?
+> 
+> Do we iterate through these processes to enable/disable them individually?
+> 
 
-Add code to validate current offset in the directory. This is actually
-rather expensive for UDF as we need to read from the beginning of the
-directory and parse all directory entries. This is because in UDF a
-directory is just a stream of data containing directory entries and
-since file names are fully under user's control we cannot depend on
-detecting magic numbers and checksums in the header of directory entry
-as a malicious attacker could fake them. We skip this step if we detect
-that nothing changed since the last readdir call.
+That would be a policy decision on how existing tasks should be tuned
+if NUMA balancing is enabled at runtime after being disabled at boot
+(or some arbitrary time in the past). Introducing the prctl does mean
+that there is a semantic change for the runtime enabling/disabling
+of NUMA balancing because previously, enabling global balancing affects
+existing tasks and with prctl, it affects only future tasks. It could
+be handled in the sysctl to some exist
 
-Reported-by: Nathan Wilson <nate@chickenbrittle.com>
-CC: stable@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/udf/dir.c   | 32 ++++++++++++++++++++++++++++++--
- fs/udf/namei.c |  3 +++
- fs/udf/super.c |  2 ++
- 3 files changed, 35 insertions(+), 2 deletions(-)
+0. Disable for all but prctl specifications
+1. Enable for all tasks unless disabled by prctl
+2. Ignore all existing tasks, enable for future tasks
 
-I plan to merge this patch through my tree.
+While this is more legwork, it makes more sense as an interface than
+prctl(PR_NUMA_BALANCING,PR_SET_NUMA_BALANCING,1) failing if global
+NUMA balancing is disabled.
 
-diff --git a/fs/udf/dir.c b/fs/udf/dir.c
-index 70abdfad2df1..42e3e551fa4c 100644
---- a/fs/udf/dir.c
-+++ b/fs/udf/dir.c
-@@ -31,6 +31,7 @@
- #include <linux/mm.h>
- #include <linux/slab.h>
- #include <linux/bio.h>
-+#include <linux/iversion.h>
- 
- #include "udf_i.h"
- #include "udf_sb.h"
-@@ -43,7 +44,7 @@ static int udf_readdir(struct file *file, struct dir_context *ctx)
- 	struct fileIdentDesc *fi = NULL;
- 	struct fileIdentDesc cfi;
- 	udf_pblk_t block, iblock;
--	loff_t nf_pos;
-+	loff_t nf_pos, emit_pos = 0;
- 	int flen;
- 	unsigned char *fname = NULL, *copy_name = NULL;
- 	unsigned char *nameptr;
-@@ -57,6 +58,7 @@ static int udf_readdir(struct file *file, struct dir_context *ctx)
- 	int i, num, ret = 0;
- 	struct extent_position epos = { NULL, 0, {0, 0} };
- 	struct super_block *sb = dir->i_sb;
-+	bool pos_valid = false;
- 
- 	if (ctx->pos == 0) {
- 		if (!dir_emit_dot(file, ctx))
-@@ -67,6 +69,21 @@ static int udf_readdir(struct file *file, struct dir_context *ctx)
- 	if (nf_pos >= size)
- 		goto out;
- 
-+	/*
-+	 * Something changed since last readdir (either lseek was called or dir
-+	 * changed)?  We need to verify the position correctly points at the
-+	 * beginning of some dir entry so that the directory parsing code does
-+	 * not get confused. Since UDF does not have any reliable way of
-+	 * identifying beginning of dir entry (names are under user control),
-+	 * we need to scan the directory from the beginning.
-+	 */
-+	if (!inode_eq_iversion(dir, file->f_version)) {
-+		emit_pos = nf_pos;
-+		nf_pos = 0;
-+	} else {
-+		pos_valid = true;
-+	}
-+
- 	fname = kmalloc(UDF_NAME_LEN, GFP_NOFS);
- 	if (!fname) {
- 		ret = -ENOMEM;
-@@ -122,13 +139,21 @@ static int udf_readdir(struct file *file, struct dir_context *ctx)
- 
- 	while (nf_pos < size) {
- 		struct kernel_lb_addr tloc;
-+		loff_t cur_pos = nf_pos;
- 
--		ctx->pos = (nf_pos >> 2) + 1;
-+		/* Update file position only if we got past the current one */
-+		if (nf_pos >= emit_pos) {
-+			ctx->pos = (nf_pos >> 2) + 1;
-+			pos_valid = true;
-+		}
- 
- 		fi = udf_fileident_read(dir, &nf_pos, &fibh, &cfi, &epos, &eloc,
- 					&elen, &offset);
- 		if (!fi)
- 			goto out;
-+		/* Still not at offset where user asked us to read from? */
-+		if (cur_pos < emit_pos)
-+			continue;
- 
- 		liu = le16_to_cpu(cfi.lengthOfImpUse);
- 		lfi = cfi.lengthFileIdent;
-@@ -186,8 +211,11 @@ static int udf_readdir(struct file *file, struct dir_context *ctx)
- 	} /* end while */
- 
- 	ctx->pos = (nf_pos >> 2) + 1;
-+	pos_valid = true;
- 
- out:
-+	if (pos_valid)
-+		file->f_version = inode_query_iversion(dir);
- 	if (fibh.sbh != fibh.ebh)
- 		brelse(fibh.ebh);
- 	brelse(fibh.sbh);
-diff --git a/fs/udf/namei.c b/fs/udf/namei.c
-index caeef08efed2..0ed4861b038f 100644
---- a/fs/udf/namei.c
-+++ b/fs/udf/namei.c
-@@ -30,6 +30,7 @@
- #include <linux/sched.h>
- #include <linux/crc-itu-t.h>
- #include <linux/exportfs.h>
-+#include <linux/iversion.h>
- 
- static inline int udf_match(int len1, const unsigned char *name1, int len2,
- 			    const unsigned char *name2)
-@@ -134,6 +135,8 @@ int udf_write_fi(struct inode *inode, struct fileIdentDesc *cfi,
- 			mark_buffer_dirty_inode(fibh->ebh, inode);
- 		mark_buffer_dirty_inode(fibh->sbh, inode);
- 	}
-+	inode_inc_iversion(inode);
-+
- 	return 0;
- }
- 
-diff --git a/fs/udf/super.c b/fs/udf/super.c
-index b2d7c57d0688..aa2f6093d3f6 100644
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -57,6 +57,7 @@
- #include <linux/crc-itu-t.h>
- #include <linux/log2.h>
- #include <asm/byteorder.h>
-+#include <linux/iversion.h>
- 
- #include "udf_sb.h"
- #include "udf_i.h"
-@@ -149,6 +150,7 @@ static struct inode *udf_alloc_inode(struct super_block *sb)
- 	init_rwsem(&ei->i_data_sem);
- 	ei->cached_extent.lstart = -1;
- 	spin_lock_init(&ei->i_extent_cache_lock);
-+	inode_set_iversion(&ei->vfs_inode, 1);
- 
- 	return &ei->vfs_inode;
- }
 -- 
-2.26.2
-
+Mel Gorman
+SUSE Labs
