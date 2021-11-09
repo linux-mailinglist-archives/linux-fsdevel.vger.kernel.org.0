@@ -2,91 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 97E1344AB0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Nov 2021 10:58:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F56044ABB1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Nov 2021 11:40:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244160AbhKIKAx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Nov 2021 05:00:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51546 "EHLO
+        id S245425AbhKIKni (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Nov 2021 05:43:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243350AbhKIKAw (ORCPT
+        with ESMTP id S245420AbhKIKnh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Nov 2021 05:00:52 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C3A0C061767
-        for <linux-fsdevel@vger.kernel.org>; Tue,  9 Nov 2021 01:58:05 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:9dc9:efd5:4c6f:baa9])
-        by baptiste.telenet-ops.be with bizsmtp
-        id G9y2260031LAWtA019y27b; Tue, 09 Nov 2021 10:58:02 +0100
-Received: from geert (helo=localhost)
-        by ramsan.of.borg with local-esmtp (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mkNtB-00BCSN-OV; Tue, 09 Nov 2021 10:58:01 +0100
-Date:   Tue, 9 Nov 2021 10:58:01 +0100 (CET)
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-X-X-Sender: geert@ramsan.of.borg
-To:     Jan Kara <jack@suse.cz>
-cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-fsdevel@vger.kernel.org,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Nov 9
-In-Reply-To: <20211109135543.00b9f6a4@canb.auug.org.au>
-Message-ID: <alpine.DEB.2.22.394.2111091051380.2669071@ramsan.of.borg>
-References: <20211109135449.7850eac3@canb.auug.org.au> <20211109135543.00b9f6a4@canb.auug.org.au>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+        Tue, 9 Nov 2021 05:43:37 -0500
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A9BCC061767
+        for <linux-fsdevel@vger.kernel.org>; Tue,  9 Nov 2021 02:40:52 -0800 (PST)
+Received: by mail-pl1-x629.google.com with SMTP id t21so20141198plr.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Nov 2021 02:40:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ijkZGpaFpq6LV8Gg8reo+SGCxLMW6UmnTU/srKB0UIc=;
+        b=T3YiUPJYSknWJO0k0ZBPc+Hfc2pdbROPOfOnZ4i3Bzpubl9KUT7aLNzl70vpfrZFd4
+         S8PgbtElpzfz+ter7uV5y4U8QWPW0Md0+qantVOPX3mxmhU//7vzBGlJ7L/jxFxuU3dF
+         be45f4qIlcndP6Em8lOmWG6KHlo6gZsW20iKtn/FmXagbz8rKmwu10WBo+M3RWJo7qQC
+         LLjeIxWF61EQUqZa2aIO+rWRbG2+wVmDr6cpa9AWL16MI5lAeaPKFMjAACnqAOtmH8Xd
+         j0UA8kXzVVj+gd/r9HnVZiYnP+wKj9L9NR/RjfVPuejWnVT6CvC6rv1GPRvJ24UJPl/u
+         DUmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ijkZGpaFpq6LV8Gg8reo+SGCxLMW6UmnTU/srKB0UIc=;
+        b=VJ/W2UqHljYQU4+TpHs5gPsCqQMH+oHUsERE7Zhu3Ek/YWqI1IGzbf1VwY+dJMDdFp
+         bKYasRhHxaJTPcegraUTrfL9kftn9OemW6ajNv2+yAIaiOxkVykUbktAS43w+ot8N3MF
+         rMIN2G7fDZNLN2AucrUHvsWzgHxtIitYut5rjVsJoSmnew9vZmb4zjhJSMlt+zUiy3F9
+         Bkee54Ilmr52VjDGkWUgNmqBegm0oF4lW3KY6pIdLxBV4ML38ngdfNE3c96F9Wa5Fc0q
+         XPdxkC2QQzcN/+uOv+kK7cfKCTAZIMSUxemdgt8dlbBiU7HQ+BixrSqPiPAIcdCjnpwY
+         Z3rw==
+X-Gm-Message-State: AOAM531hbd5/COAqLJfabN+9zjD+W87ItC3dta13UHx3vvmpfX7sVXdI
+        2smqqmI5CWmIkCLiUY2QFlpOjQ==
+X-Google-Smtp-Source: ABdhPJyh2eh8cVDZfvZs49FwaWVzUtwCEWQ1SARsnhb2KFJzuK+iPRCqbAddHfiRgdFarLhZ85oEzA==
+X-Received: by 2002:a17:90a:2fc7:: with SMTP id n7mr6006745pjm.141.1636454451646;
+        Tue, 09 Nov 2021 02:40:51 -0800 (PST)
+Received: from [10.254.105.98] ([139.177.225.240])
+        by smtp.gmail.com with ESMTPSA id s2sm8895919pfg.124.2021.11.09.02.40.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Nov 2021 02:40:51 -0800 (PST)
+Subject: Re: Re: Re: Re: [PATCH v1] sched/numa: add per-process numa_balancing
+To:     Mel Gorman <mgorman@suse.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20211027132633.86653-1-ligang.bdlg@bytedance.com>
+ <20211028153028.GP3891@suse.de>
+ <b884ad7d-48d3-fcc8-d199-9e7643552a9a@bytedance.com>
+ <20211029083751.GR3891@suse.de>
+ <CAMx52ARF1fVH9=YLQMjE=8ckKJ=q3X2-ovtKuQcoTyo564mQnQ@mail.gmail.com>
+ <20211109091951.GW3891@suse.de>
+From:   Gang Li <ligang.bdlg@bytedance.com>
+Message-ID: <7de25e1b-e548-b8b5-dda5-6a2e001f3c1a@bytedance.com>
+Date:   Tue, 9 Nov 2021 18:40:43 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+In-Reply-To: <20211109091951.GW3891@suse.de>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- 	Hi Jan,
+On 11/9/21 5:19 PM, Mel Gorman wrote:
+> On Tue, Nov 09, 2021 at 04:28:28PM +0800, Gang Li wrote:
+>> If the global tuning affects default behaviour and the prctl
+>> affects specific behaviour.  Then when prctl specifies
+>> numa_balancing for a process, there is no way for the
+>> global tuning to affect that process.
+> 
+> While I think it's very likely that the common case will be to disable
+> NUMA balancing for specific processes,
+> prctl(PR_NUMA_BALANCING,PR_SET_NUMA_BALANCING,1) should still be
+> meaningful.
+> 
 
-As lore doesn't seem to have the original patch, I'm replying here.
+I'm still a bit confused.
 
-On Tue, 9 Nov 2021, Stephen Rothwell wrote:
-> Merging ext3/for_next (39a464de961f udf: Fix crash after seekdir)
+If we really want to enable/disable numa_balancing for all processes, 
+but some of them override the global numa_balancing using prctl, what 
+should we do?
 
-noreply@ellerman.id.au reported for m68k/allmodconfig:
-fs/udf/dir.c:78:18: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
-fs/udf/dir.c:211:23: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
+Do we iterate through these processes to enable/disable them individually?
 
-The actual code does:
 
-         * Did our position change since last readdir (likely lseek was
-         * called)? We need to verify the position correctly points at the
-         * beginning of some dir entry so that the directory parsing code does
-         * not get confused. Since UDF does not have any reliable way of
-         * identifying beginning of dir entry (names are under user control),
-         * we need to scan the directory from the beginning.
-         */
-        if (ctx->pos != (loff_t)file->private_data) {
-                emit_pos = nf_pos;
-                nf_pos = 0;
-        }
-
-and:
-
-        /* Store position where we've ended */
-        file->private_data = (void *)ctx->pos;
-
-Obviously this is not going to fly on 32-bit systems, as
-file->private_data is 32-bit or 64-bit unsigned long, but ctx->pos is
-always 64-bit loff_t.
-
-I do not know if UDF supports files larger than 4 GiB (DVDs can be
-larger).
-If it doesn't, you need intermediate casts to uintptr_t.
-If it does, you need a different solution.
-
-Gr{oetje,eeting}s,
-
- 						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
- 							    -- Linus Torvalds
