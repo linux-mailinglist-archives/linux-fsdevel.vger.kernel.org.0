@@ -2,141 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A752644AF1C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Nov 2021 14:58:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 166E344AFD5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Nov 2021 15:57:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237074AbhKIOB2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Nov 2021 09:01:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50050 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232738AbhKIOB1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Nov 2021 09:01:27 -0500
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 916E2C061764
-        for <linux-fsdevel@vger.kernel.org>; Tue,  9 Nov 2021 05:58:41 -0800 (PST)
-Received: by mail-pg1-x52a.google.com with SMTP id p17so18561536pgj.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 09 Nov 2021 05:58:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Y30tES1mRbobBQ+m/yFfcYggfkhOFouTPN0eCLqdkac=;
-        b=Uxmdf4znCpTXGzwMRB/AMMCqss7/LZk+9jxusKZRrq3r5+Tb+7PwY3/Uz+yuixUuTc
-         a7KF+nrZAsxO0ezbYvMvahzD9nRoKh1K1Y1fhWIYzbjkVQNwkF1Ldmtg7D7xKs02Bx1I
-         +2Qzciv5ZLtEFIgXWj5hLSZStRi/GVrOhKefP5n/45RUXE4BVstirUAKlQSzaIJXE8Mq
-         vOrCFmoZzUJaJnuqw3nYonp0nWKmW4aN55IH3I6CW3GGxxPXkU8syNSvsXMgoAqw69r5
-         efJwpH4k6IteCT9DfyhNnHVnPdsfftpuObaExxMpZ/URQma3NEkYdYudn92CR7TZgE7B
-         hKqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Y30tES1mRbobBQ+m/yFfcYggfkhOFouTPN0eCLqdkac=;
-        b=WelG3XNrsjTJ0aHnPWD0RtZlCeSt7/gajzFkEdJJVffluewMcXxkYix0ROgDW9gOSG
-         SNIxIG0+PjdixChn5yC9tHIgKXXmSY44uIzF/i7UKrZ8nvguTn4FvgFrOnICOxICuXHb
-         2kkcPe0bAMRJgw2/ZCoRMX4hU1SGe8/iI0KbVgWDaPi9Oq7OvH1wimT9OB4TiIFcWI9z
-         ZeSDLNdndrmd3eGOLctLP39Rvf+2yC8RrcVvVeRb8bBC5gM9bIaOHjAQ4CKqITekeq35
-         9p8uD920aQphqptasPJmnKGHsx12Mb0G+SN4+8gnawbRp87q3IwK9mlwJ5SY7JvJnc8a
-         aZGQ==
-X-Gm-Message-State: AOAM5314d7e3E/+w8GSyf7uQt5ZAr0NFOVjBlzvDH2pbXNFTYp6PIOZO
-        F9RftzAPukm8kf5p47hJtaEBOG20vgD7mg==
-X-Google-Smtp-Source: ABdhPJzWFlZcFbzZsn65SN5dY7OVkgY7rcUmnQO3V4I/9mqB60l/OLip0qZ0tcw0tPBNnSncs09/Uw==
-X-Received: by 2002:a63:9042:: with SMTP id a63mr5939760pge.345.1636466321161;
-        Tue, 09 Nov 2021 05:58:41 -0800 (PST)
-Received: from [10.254.105.98] ([139.177.225.240])
-        by smtp.gmail.com with ESMTPSA id p3sm18854221pfb.205.2021.11.09.05.58.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Nov 2021 05:58:40 -0800 (PST)
-From:   Gang Li <ligang.bdlg@bytedance.com>
-Subject: Re: Re: Re: Re: Re: [PATCH v1] sched/numa: add per-process
- numa_balancing
-To:     Mel Gorman <mgorman@suse.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20211027132633.86653-1-ligang.bdlg@bytedance.com>
- <20211028153028.GP3891@suse.de>
- <b884ad7d-48d3-fcc8-d199-9e7643552a9a@bytedance.com>
- <20211029083751.GR3891@suse.de>
- <CAMx52ARF1fVH9=YLQMjE=8ckKJ=q3X2-ovtKuQcoTyo564mQnQ@mail.gmail.com>
- <20211109091951.GW3891@suse.de>
- <7de25e1b-e548-b8b5-dda5-6a2e001f3c1a@bytedance.com>
- <20211109121222.GX3891@suse.de>
-Message-ID: <117d5b88-b62b-f50b-32ff-1a9fe35b9e2e@bytedance.com>
-Date:   Tue, 9 Nov 2021 21:58:34 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.14.0
+        id S232521AbhKIPAn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Nov 2021 10:00:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60794 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230007AbhKIPAh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 9 Nov 2021 10:00:37 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B129B61051;
+        Tue,  9 Nov 2021 14:57:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1636469871;
+        bh=15wgt7NzUxew6ROY5i2SeMYHMVK9xta2nRdGJISFzds=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Q5XEvod7Yjesf/zce0S8YkCR+RnVWN9I6wlU/vX+PVtZeHRQVZXPsbtLTUSb6rkec
+         HSEmP2GfKBUw1TKVe/Cl75b5HX7Cx7WnCK0mNjzcdhBUL9CCp9veuxUUDAtBOWbh3z
+         uPCnBLo+FIDfJcyoz7a8xoxBlPkbGAHeuWpGhBVhOyDO3aMX7j7TkEvrHzI5OeT/Nc
+         fNc3hdTJB8YMyIiDHZRncdSerYZghFCq/hkR3rmUuer/SC5xlShgW9qVp6bVdk4+r1
+         niw3ME2y0b4yn7qO2JpYScdbVdtLbdjVegZfNVY9C/ZyRbbYwWSG+lExSiiGrB2crU
+         RKz0qFHy5Pzbw==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Cc:     Seth Forshee <seth.forshee@digitalocean.com>,
+        stable@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 1/2] fs: handle circular mappings correctly
+Date:   Tue,  9 Nov 2021 15:57:12 +0100
+Message-Id: <20211109145713.1868404-1-brauner@kernel.org>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20211109121222.GX3891@suse.de>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3900; h=from:subject; bh=irbN+xRAs6TsbrbgOeyzP6xiRkJv+dBh9g1xw9O2BIw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSR29binVTy7H3xjwZ/4+hSlOTzuDJttf566wX5/ss+R3XxT eOLmdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkRTojw+d0x16R3q7/K78e/bnzgW IYx+r/zq+fOe+dz7/EP0hq3xJGhk+reE2PLj0m9UTpwISppwL76hOOJaVrS92J6tTLc+tbzQEA
+X-Developer-Key: i=christian.brauner@ubuntu.com; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/9/21 8:12 PM, Mel Gorman wrote:
-> 
-> That would be a policy decision on how existing tasks should be tuned
-> if NUMA balancing is enabled at runtime after being disabled at boot
-> (or some arbitrary time in the past). Introducing the prctl does mean
-> that there is a semantic change for the runtime enabling/disabling
-> of NUMA balancing because previously, enabling global balancing affects
-> existing tasks and with prctl, it affects only future tasks. It could
-> be handled in the sysctl to some exist
-> 
-> 0. Disable for all but prctl specifications
-> 1. Enable for all tasks unless disabled by prctl
-> 2. Ignore all existing tasks, enable for future tasks
-> 
-> While this is more legwork, it makes more sense as an interface than
-> prctl(PR_NUMA_BALANCING,PR_SET_NUMA_BALANCING,1) failing if global
-> NUMA balancing is disabled.
-> 
+From: Christian Brauner <christian.brauner@ubuntu.com>
 
-Why prctl(PR_NUMA_BALANCING,PR_SET_NUMA_BALANCING,1) must work while 
-global numa_balancing is disabled? No offense, I think that is a bit 
-redundant. And it's complicated to implement.
+When calling setattr_prepare() to determine the validity of the attributes the
+ia_{g,u}id fields contain the value that will be written to inode->i_{g,u}id.
+When the {g,u}id attribute of the file isn't altered and the caller's fs{g,u}id
+matches the current {g,u}id attribute the attribute change is allowed.
 
-It's hard for me to understand the whole vision of your idea. I'm very 
-sorry. Can you explain your full thoughts more specifically?
+The value in ia_{g,u}id does already account for idmapped mounts and will have
+taken the relevant idmapping into account. So in order to verify that the
+{g,u}id attribute isn't changed we simple need to compare the ia_{g,u}id value
+against the inode's i_{g,u}id value.
 
-----------------------------------------------------
+This only has any meaning for idmapped mounts as idmapping helpers are
+idempotent without them. And for idmapped mounts this really only has a meaning
+when circular idmappings are used, i.e. mappings where e.g. id 1000 is mapped
+to id 1001 and id 1001 is mapped to id 1000. Such ciruclar mappings can e.g. be
+useful when sharing the same home directory between multiple users at the same
+time.
 
-Also in case of misunderstanding, let me re-explain my patch using 
-circuit diagram.
+As an example consider a directory with two files: /source/file1 owned by
+{g,u}id 1000 and /source/file2 owned by {g,u}id 1001. Assume we create an
+idmapped mount at /target with an idmapping that maps files owned by {g,u}id
+1000 to being owned by {g,u}id 1001 and files owned by {g,u}id 1001 to being
+owned by {g,u}id 1000. In effect, the idmapped mount at /target switches the
+ownership of /source/file1 and source/file2, i.e. /target/file1 will be owned
+by {g,u}id 1001 and /target/file2 will be owned by {g,u}id 1000.
 
-Before my patch, there is only one switch to control numa_balancing.
+This means that a user with fs{g,u}id 1000 must be allowed to setattr
+/target/file2 from {g,u}id 1000 to {g,u}id 1000. Similar, a user with fs{g,u}id
+1001 must be allowed to setattr /target/file1 from {g,u}id 1001 to {g,u}id
+1001. Conversely, a user with fs{g,u}id 1000 must fail to setattr /target/file1
+from {g,u}id 1001 to {g,u}id 1000. And a user with fs{g,u}id 1001 must fail to
+setattr /target/file2 from {g,u}id 1000 to {g,u}id 1000. Both cases must fail
+with EPERM for non-capable callers.
 
-             ______process1_
-...____/ __|______process2_|__...
-            |______process3_|
+Before this patch we could end up denying legitimate attribute changes and
+allowing invalid attribute changes when circular mappings are used. To even get
+into this situation the caller must've been privileged both to create that
+mapping and to create that idmapped mount.
 
-        |
-     global numa_balancing
+This hasn't been seen in the wild anywhere but came up when expanding the
+testsuite during work on a series of hardening patches. All idmapped fstests
+pass without any regressions and we add new tests to verify the behavior of
+circular mappings.
 
-After my patch, we can selectively disable numa_balancing for processes.
-And global switch has a high priority.
+Fixes: 2f221d6f7b88 ("attr: handle idmapped mounts")
+Cc: Seth Forshee <seth.forshee@digitalocean.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: stable@vger.kernel.org
+CC: linux-fsdevel@vger.kernel.org
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ fs/attr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-             __/ __process1_
-...____/ __|__/ __process2_|__...
-            |__/ __process3_|
+diff --git a/fs/attr.c b/fs/attr.c
+index 473d21b3a86d..66899b6e9bd8 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -35,7 +35,7 @@ static bool chown_ok(struct user_namespace *mnt_userns,
+ 		     kuid_t uid)
+ {
+ 	kuid_t kuid = i_uid_into_mnt(mnt_userns, inode);
+-	if (uid_eq(current_fsuid(), kuid) && uid_eq(uid, kuid))
++	if (uid_eq(current_fsuid(), kuid) && uid_eq(uid, inode->i_uid))
+ 		return true;
+ 	if (capable_wrt_inode_uidgid(mnt_userns, inode, CAP_CHOWN))
+ 		return true;
+@@ -62,7 +62,7 @@ static bool chgrp_ok(struct user_namespace *mnt_userns,
+ {
+ 	kgid_t kgid = i_gid_into_mnt(mnt_userns, inode);
+ 	if (uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode)) &&
+-	    (in_group_p(gid) || gid_eq(gid, kgid)))
++	    (in_group_p(gid) || gid_eq(gid, inode->i_gid)))
+ 		return true;
+ 	if (capable_wrt_inode_uidgid(mnt_userns, inode, CAP_CHOWN))
+ 		return true;
 
-        |       |
-     global  per-process
+base-commit: 8bb7eca972ad531c9b149c0a51ab43a417385813
+-- 
+2.30.2
 
-Why global numa_balancing has high priority? There are two reasons:
-1. numa_balancing is useful to most processes, so there is no need to 
-consider how to enable numa_balancing for a few processes while 
-disabling it globally.
-2. It is easy to implement. The more we think, the more complex the code 
-becomes.
