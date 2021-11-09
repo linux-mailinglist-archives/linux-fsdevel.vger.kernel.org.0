@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D80B44A879
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Nov 2021 09:33:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A0DB44A887
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  9 Nov 2021 09:33:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244149AbhKIIgS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 9 Nov 2021 03:36:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59844 "EHLO
+        id S244172AbhKIIgY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 9 Nov 2021 03:36:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244131AbhKIIgP (ORCPT
+        with ESMTP id S244161AbhKIIgU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 9 Nov 2021 03:36:15 -0500
+        Tue, 9 Nov 2021 03:36:20 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1720BC061764;
-        Tue,  9 Nov 2021 00:33:30 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 328FAC061767;
+        Tue,  9 Nov 2021 00:33:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=PrmU1McI9Lz9rWePxXHiZdW7Le1GN8Zv7TzW7GRRfmk=; b=CuJDt0FnnSJ1eRr3YU30gflIA6
-        5CCyiEF5PJ92FLWSC5MIrL2oH/HvW4JocKHiNlKk53JCqDzd/ckeXXc2zjfc+Q5VpKYbrY6owJYE1
-        bd4bldr9fdxNNWB/TJ3uOl0qQSqz847WVXvuknaL4G1y9MO7XW5obvlN+sFSF2aPN7NtTYpBfBBCk
-        lCOIJmFMmk2HWX/bA8RoUdDE2LpUM3knxONSKfFdJTzGHFn3Eh/RmVJo4ZhGtXdzyxdB041usXmfr
-        YPoaGNkMnx0dmYe61d55DOrfJlq0O0+WS5XMVD8VYwZ8QNZlI2PRnvOg/51w4Q6RBTR0HukCpwuWF
-        b0zyKNrw==;
+        bh=9DfHXjXpwPV16JwxKDzlwLsQrCaf21dbRLJzYHAhNZM=; b=k+J4p1sxv4GIaf/pZry1mADwB+
+        Ar1HiQrfR69z+VUk+LXPZwyTUodROP6Ve2JzAJaLMLYKGRK2OL7DDKMIHeGPn3jFxKNlLvXYsyelf
+        TOkCDzO0pNwMWvfo4xkbl6QMwmB+MsxPivzTRf3Y41pDkQ+OnrH5ig+xpkzEFpmu8x16htqod2pJy
+        /G/Yvb1ksftU66dUi9xDWAuBfQYqIfgnrrTnDC1t60iM2U8YX9P9wjw1hVd9b8Nwa/CIq2Yf1kEUT
+        WAiAtLf9ZLb3DGoYBWz/exnngImMfLdkhciTOz/OKeKkkIWbM0lVNy3hRWeXtiPMoMqgcdTTivSmi
+        q/cr92yQ==;
 Received: from [2001:4bb8:19a:7ee7:fb46:2fe1:8652:d9d4] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mkMZI-000rzk-Aa; Tue, 09 Nov 2021 08:33:25 +0000
+        id 1mkMZK-000s09-9X; Tue, 09 Nov 2021 08:33:27 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Dan Williams <dan.j.williams@intel.com>
 Cc:     Mike Snitzer <snitzer@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
@@ -36,9 +36,9 @@ Cc:     Mike Snitzer <snitzer@redhat.com>, Ira Weiny <ira.weiny@intel.com>,
         linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
         linux-ext4@vger.kernel.org,
         virtualization@lists.linux-foundation.org
-Subject: [PATCH 06/29] dax: move the partition alignment check into fs_dax_get_by_bdev
-Date:   Tue,  9 Nov 2021 09:32:46 +0100
-Message-Id: <20211109083309.584081-7-hch@lst.de>
+Subject: [PATCH 07/29] xfs: factor out a xfs_setup_dax_always helper
+Date:   Tue,  9 Nov 2021 09:32:47 +0100
+Message-Id: <20211109083309.584081-8-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211109083309.584081-1-hch@lst.de>
 References: <20211109083309.584081-1-hch@lst.de>
@@ -49,63 +49,81 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fs_dax_get_by_bdev is the primary interface to find a dax device for a
-block device, so move the partition alignment check there instead of
-wiring it up through ->dax_supported.
+Factor out another DAX setup helper to simplify future changes.  Also
+move the experimental warning after the checks to not clutter the log
+too much if the setup failed.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/dax/super.c | 23 ++++++-----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
+ fs/xfs/xfs_super.c | 47 +++++++++++++++++++++++++++-------------------
+ 1 file changed, 28 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index 04fc680542e8d..482fe775324a4 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -93,6 +93,12 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
- 	if (!blk_queue_dax(bdev->bd_disk->queue))
- 		return NULL;
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index e21459f9923a8..875fd3151d6c9 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -340,6 +340,32 @@ xfs_buftarg_is_dax(
+ 			bdev_nr_sectors(bt->bt_bdev));
+ }
  
-+	if ((get_start_sect(bdev) * SECTOR_SIZE) % PAGE_SIZE ||
-+	    (bdev_nr_sectors(bdev) * SECTOR_SIZE) % PAGE_SIZE) {
-+		pr_info("%pg: error: unaligned partition for dax\n", bdev);
-+		return NULL;
++static int
++xfs_setup_dax_always(
++	struct xfs_mount	*mp)
++{
++	struct super_block	*sb = mp->m_super;
++
++	if (!xfs_buftarg_is_dax(sb, mp->m_ddev_targp) &&
++	   (!mp->m_rtdev_targp || !xfs_buftarg_is_dax(sb, mp->m_rtdev_targp))) {
++		xfs_alert(mp,
++			"DAX unsupported by block device. Turning off DAX.");
++		goto disable_dax;
 +	}
 +
- 	id = dax_read_lock();
- 	dax_dev = xa_load(&dax_hosts, (unsigned long)bdev->bd_disk);
- 	if (!dax_dev || !dax_alive(dax_dev) || !igrab(&dax_dev->inode))
-@@ -107,10 +113,6 @@ bool generic_fsdax_supported(struct dax_device *dax_dev,
- 		struct block_device *bdev, int blocksize, sector_t start,
- 		sector_t sectors)
- {
--	pgoff_t pgoff, pgoff_end;
--	sector_t last_page;
--	int err;
++	if (xfs_has_reflink(mp)) {
++		xfs_alert(mp, "DAX and reflink cannot be used together!");
++		return -EINVAL;
++	}
++
++	xfs_warn(mp, "DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
++	return 0;
++
++disable_dax:
++	xfs_mount_set_dax_mode(mp, XFS_DAX_NEVER);
++	return 0;
++}
++
+ STATIC int
+ xfs_blkdev_get(
+ 	xfs_mount_t		*mp,
+@@ -1593,26 +1619,9 @@ xfs_fs_fill_super(
+ 		sb->s_flags |= SB_I_VERSION;
+ 
+ 	if (xfs_has_dax_always(mp)) {
+-		bool rtdev_is_dax = false, datadev_is_dax;
 -
- 	if (blocksize != PAGE_SIZE) {
- 		pr_info("%pg: error: unsupported blocksize for dax\n", bdev);
- 		return false;
-@@ -121,19 +123,6 @@ bool generic_fsdax_supported(struct dax_device *dax_dev,
- 		return false;
+-		xfs_warn(mp,
+-		"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
+-
+-		datadev_is_dax = xfs_buftarg_is_dax(sb, mp->m_ddev_targp);
+-		if (mp->m_rtdev_targp)
+-			rtdev_is_dax = xfs_buftarg_is_dax(sb,
+-						mp->m_rtdev_targp);
+-		if (!rtdev_is_dax && !datadev_is_dax) {
+-			xfs_alert(mp,
+-			"DAX unsupported by block device. Turning off DAX.");
+-			xfs_mount_set_dax_mode(mp, XFS_DAX_NEVER);
+-		}
+-		if (xfs_has_reflink(mp)) {
+-			xfs_alert(mp,
+-		"DAX and reflink cannot be used together!");
+-			error = -EINVAL;
++		error = xfs_setup_dax_always(mp);
++		if (error)
+ 			goto out_filestream_unmount;
+-		}
  	}
  
--	err = bdev_dax_pgoff(bdev, start, PAGE_SIZE, &pgoff);
--	if (err) {
--		pr_info("%pg: error: unaligned partition for dax\n", bdev);
--		return false;
--	}
--
--	last_page = PFN_DOWN((start + sectors - 1) * 512) * PAGE_SIZE / 512;
--	err = bdev_dax_pgoff(bdev, last_page, PAGE_SIZE, &pgoff_end);
--	if (err) {
--		pr_info("%pg: error: unaligned partition for dax\n", bdev);
--		return false;
--	}
--
- 	return true;
- }
- EXPORT_SYMBOL_GPL(generic_fsdax_supported);
+ 	if (xfs_has_discard(mp)) {
 -- 
 2.30.2
 
