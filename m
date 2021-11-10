@@ -2,317 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 87B9744CB36
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 22:20:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF62444CC55
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 23:17:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233427AbhKJVW5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Nov 2021 16:22:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51152 "EHLO
+        id S233490AbhKJWUF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Nov 2021 17:20:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233433AbhKJVW4 (ORCPT
+        with ESMTP id S233585AbhKJWTx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Nov 2021 16:22:56 -0500
-Received: from mail-pf1-x449.google.com (mail-pf1-x449.google.com [IPv6:2607:f8b0:4864:20::449])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30F51C06127A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 13:20:08 -0800 (PST)
-Received: by mail-pf1-x449.google.com with SMTP id e12-20020aa7980c000000b0049fa3fc29d0so2646808pfl.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 13:20:08 -0800 (PST)
+        Wed, 10 Nov 2021 17:19:53 -0500
+Received: from mail-pg1-x54a.google.com (mail-pg1-x54a.google.com [IPv6:2607:f8b0:4864:20::54a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3D60C0254FE
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 14:11:23 -0800 (PST)
+Received: by mail-pg1-x54a.google.com with SMTP id 65-20020a630344000000b002d9865f61efso2175892pgd.16
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 14:11:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:cc;
-        bh=XWUyVcqFDorfkxK8BmUlQ2jLw5lcWmVuPPsoovex71Y=;
-        b=G2nMJLGxPIMyEeUfb/vaasX85o5Sfnbuzq+2YEd/YK686uuZTNaruqnosc1t/nwbaF
-         m5N05wjs10IyzymZE1gJ6SWhZ1AMTcdNqaVe9/ePQ2lp28a0MtFXaJFaLSD8rvEzo5Wh
-         arhruu4iKXYXKUfbZPe5gNtak87IS9WUPyWzKzMJN8Yxwl5hewD/kaNYM4lIxyeTf+fa
-         nBx6tWsFO5qj9ltm0CS79xcUMAQAurs6zyFOmzCmBBqH4fRRF/TfEkkeKLL+FAEsaSzs
-         RtO8Yf1co/HOZQINwy2CIqTxLQgBoMSO3o/5uxwPDjYidsajo4DRAO7ZTOxHZhxVZTK5
-         Ornw==
+        h=date:message-id:mime-version:subject:from:cc;
+        bh=v8H09r/rEbSUS7qLFj/cfoJge3XtWP5j00NAM9JQP/A=;
+        b=nusR9Rb3OkVDT1Bifyl87B+zxqQGPPKcs8suHSsmgd3VeoicUED4dcmA1mN0QN4/+N
+         OCKKSWVcqWYlAH3CbXlZFpLfOyW58ky23J3jpJMJoP3YruUDtZmdXacxQ6AXOCJatpDn
+         4eXiqzjSLdR5x4jfzGyPc/ZlVHE4uReCGr8qNQTGLltJKHeX95WTUhLU6YKhVZ95XqUW
+         qBy4zuP7sLkIW4f9D+FPz/UjlWMcIgWajqldCY16ZcwPnzsZlc9eIwMht9hcigQMhMh3
+         b/KsRhsDaBBbIEcmS0aGsriHzPyDUhxmdAODNmSopOryDCcUl3wZrqK2Okih1EIi1eB4
+         88xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:cc;
-        bh=XWUyVcqFDorfkxK8BmUlQ2jLw5lcWmVuPPsoovex71Y=;
-        b=C7PdMTNFgCdYpsfgssAV3vYo576p/Ceevq6zJIj17vuB4w+UnyfZgRi/OSQsAt4fqF
-         JMWmpoOvsu+CUn0uYDVsAyvIz10NU14dFn3BvlfE6XUn4pIl2m2kD5yl6eEqDUYTdDNq
-         NDtCL2YyYWoU1zZ1d/ERISPaQ2/zjVPcqbrx2AiEoLPrL7WHX1ImOwFpSwmXB/Q0FVEc
-         UWCrfwMCpJtw52IBY2O0PjDoM6SwTEMrdvh4rELosZ5GTHyIEd1jnHtErxxin6GAfMgL
-         qtbXrT6QO7jIbgRmgwAuoVRIMT8InAI0L4jexP8rGJw4nEQGZB059tXQphTfx0zwZwLo
-         4Oiw==
-X-Gm-Message-State: AOAM530ii/JRUGaLKn4VsDaJWGGglO9+ZxqyeToN2ldTByRGGiATfH8M
-        lBano9dWNCBe90F5Mck86qyGjGSMMPidtPng8A==
-X-Google-Smtp-Source: ABdhPJwgK2AbRmOmsVL7fZ0uDB5Xq1S64WUY/kQU6kiEqA95TWLlPwwtuaHfqsCtshAjZpFdVr+GfBeRh9uNMzO7/w==
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:cc;
+        bh=v8H09r/rEbSUS7qLFj/cfoJge3XtWP5j00NAM9JQP/A=;
+        b=MRNBZ/aQpnbf0Z7Xs162rG7U5rp0cihXwLRKfPLd6vbMkx6EnGDaKHZ9LymBkNIicH
+         rMDgcbh7U7aErX1jgs6ZhghMSJAFEm1FzvIKI8LVHXMt+loMoMMAVVw4zdILm65nsR8Q
+         hhelild5G/koTZyqKKNc0+uKWeQNtCupSqh7uBl25mwYypRC5YDH6hrHLkhaws/ytkoS
+         JYV8j0RNcjj/smymIkceysRwcHj2cOj34f54HlcnICUnylmeF4f+EUU2zV4wtlPDPwld
+         fphD2WbE7OQ1XOFvYCiyqYN1uctxsd3XCb1z2olfI4nYN4SfhffgrrEIQmO+0IBO/lGj
+         05Gw==
+X-Gm-Message-State: AOAM5325bGlra9qPUt4hREmyuB13TjZVRdvp4WNNng9tmvae3S5fI8cm
+        qYx8/MREihNxYeql82b793fyO4b5/CjXcKTxHw==
+X-Google-Smtp-Source: ABdhPJybvdFJpiMChKdShyThUJHkZm5Fi3ii66PueltUfyE9ZGbCvH7JaR2k7AFvI21B4kp62P3Pt4fRqIjU/ejNNA==
 X-Received: from almasrymina.svl.corp.google.com ([2620:15c:2cd:202:59c8:7b4e:e859:9db0])
- (user=almasrymina job=sendgmr) by 2002:a62:4e87:0:b0:47b:dbbf:c6f0 with SMTP
- id c129-20020a624e87000000b0047bdbbfc6f0mr2005596pfb.47.1636579207325; Wed,
- 10 Nov 2021 13:20:07 -0800 (PST)
-Date:   Wed, 10 Nov 2021 13:19:50 -0800
-In-Reply-To: <20211110211951.3730787-1-almasrymina@google.com>
-Message-Id: <20211110211951.3730787-5-almasrymina@google.com>
+ (user=almasrymina job=sendgmr) by 2002:a17:902:ea05:b0:141:c6c8:824c with
+ SMTP id s5-20020a170902ea0500b00141c6c8824cmr2277755plg.86.1636582283375;
+ Wed, 10 Nov 2021 14:11:23 -0800 (PST)
+Date:   Wed, 10 Nov 2021 14:11:20 -0800
+Message-Id: <20211110221120.3833294-1-almasrymina@google.com>
 Mime-Version: 1.0
-References: <20211110211951.3730787-1-almasrymina@google.com>
 X-Mailer: git-send-email 2.34.0.rc0.344.g81b53c2807-goog
-Subject: [PATCH v2 4/4] mm, shmem, selftests: add tmpfs memcg= mount option tests
+Subject: [PATCH v5] mm: Add PM_HUGE_THP_MAPPING to /proc/pid/pagemap
 From:   Mina Almasry <almasrymina@google.com>
 Cc:     Mina Almasry <almasrymina@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Greg Thelen <gthelen@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
+        David Hildenbrand <david@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Paul E . McKenney" <paulmckrcu@fb.com>,
+        Yu Zhao <yuzhao@google.com>, Jonathan Corbet <corbet@lwn.net>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Muchun Song <songmuchun@bytedance.com>, riel@surriel.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org
+        Peter Xu <peterx@redhat.com>,
+        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
+        Florian Schmidt <florian.schmidt@nutanix.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Add PM_HUGE_THP MAPPING to allow userspace to detect whether a given virt
+address is currently mapped by a transparent huge page or not.  Example
+use case is a process requesting THPs from the kernel (via a huge tmpfs
+mount for example), for a performance critical region of memory.  The
+userspace may want to query whether the kernel is actually backing this
+memory by hugepages or not.
+
+PM_HUGE_THP_MAPPING bit is set if the virt address is mapped at the PMD
+level and the underlying page is a transparent huge page.
+
+A few options were considered:
+1. Add /proc/pid/pageflags that exports the same info as
+   /proc/kpageflags.  This is not appropriate because many kpageflags are
+   inappropriate to expose to userspace processes.
+2. Simply get this info from the existing /proc/pid/smaps interface.
+   There are a couple of issues with that:
+   1. /proc/pid/smaps output is human readable and unfriendly to
+      programatically parse.
+   2. /proc/pid/smaps is slow.  The cost of reading /proc/pid/smaps into
+      userspace buffers is about ~800us per call, and this doesn't
+      include parsing the output to get the information you need. The
+      cost of querying 1 virt address in /proc/pid/pagemaps however is
+      around 5-7us.
+
+Tested manually by adding logging into transhuge-stress, and by
+allocating THP and querying the PM_HUGE_THP_MAPPING flag at those
+virtual addresses.
+
 Signed-off-by: Mina Almasry <almasrymina@google.com>
 
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Theodore Ts'o <tytso@mit.edu>
-Cc: Greg Thelen <gthelen@google.com>
-Cc: Shakeel Butt <shakeelb@google.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: David Rientjes rientjes@google.com
+Cc: Paul E. McKenney <paulmckrcu@fb.com>
+Cc: Yu Zhao <yuzhao@google.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: Muchun Song <songmuchun@bytedance.com>
-Cc: riel@surriel.com
-Cc: linux-mm@kvack.org
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Ivan Teterevkov <ivan.teterevkov@nutanix.com>
+Cc: Florian Schmidt <florian.schmidt@nutanix.com>
+Cc: linux-kernel@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org
-Cc: cgroups@vger.kernel.org
+Cc: linux-mm@kvack.org
+
 
 ---
- tools/testing/selftests/vm/.gitignore     |   1 +
- tools/testing/selftests/vm/mmap_write.c   | 103 ++++++++++++++++++++++
- tools/testing/selftests/vm/tmpfs-memcg.sh |  87 ++++++++++++++++++
- 3 files changed, 191 insertions(+)
- create mode 100644 tools/testing/selftests/vm/mmap_write.c
- create mode 100755 tools/testing/selftests/vm/tmpfs-memcg.sh
 
-diff --git a/tools/testing/selftests/vm/.gitignore b/tools/testing/selftests/vm/.gitignore
-index 2e7e86e852828..cb229974c5f15 100644
---- a/tools/testing/selftests/vm/.gitignore
-+++ b/tools/testing/selftests/vm/.gitignore
-@@ -19,6 +19,7 @@ madv_populate
- userfaultfd
- mlock-intersect-test
- mlock-random-test
-+mmap_write
- virtual_address_range
- gup_test
- va_128TBswitch
-diff --git a/tools/testing/selftests/vm/mmap_write.c b/tools/testing/selftests/vm/mmap_write.c
-new file mode 100644
-index 0000000000000..88a8468f2128c
---- /dev/null
-+++ b/tools/testing/selftests/vm/mmap_write.c
-@@ -0,0 +1,103 @@
-+// SPDX-License-Identifier: GPL-2.0
+Changes in v5:
+- Added justification for this interface in the commit message!
+
+Changes in v4:
+- Removed unnecessary moving of flags variable declaration
+
+Changes in v3:
+- Renamed PM_THP to PM_HUGE_THP_MAPPING
+- Fixed checks to set PM_HUGE_THP_MAPPING
+- Added PM_HUGE_THP_MAPPING docs
+---
+ Documentation/admin-guide/mm/pagemap.rst      |  3 ++-
+ fs/proc/task_mmu.c                            |  3 +++
+ tools/testing/selftests/vm/transhuge-stress.c | 21 +++++++++++++++----
+ 3 files changed, 22 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
+index fdc19fbc10839..8a0f0064ff336 100644
+--- a/Documentation/admin-guide/mm/pagemap.rst
++++ b/Documentation/admin-guide/mm/pagemap.rst
+@@ -23,7 +23,8 @@ There are four components to pagemap:
+     * Bit  56    page exclusively mapped (since 4.2)
+     * Bit  57    pte is uffd-wp write-protected (since 5.13) (see
+       :ref:`Documentation/admin-guide/mm/userfaultfd.rst <userfaultfd>`)
+-    * Bits 57-60 zero
++    * Bit  58    page is a huge (PMD size) THP mapping
++    * Bits 59-60 zero
+     * Bit  61    page is file-page or shared-anon (since 3.5)
+     * Bit  62    page swapped
+     * Bit  63    page present
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index ad667dbc96f5c..6f1403f83b310 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -1302,6 +1302,7 @@ struct pagemapread {
+ #define PM_SOFT_DIRTY		BIT_ULL(55)
+ #define PM_MMAP_EXCLUSIVE	BIT_ULL(56)
+ #define PM_UFFD_WP		BIT_ULL(57)
++#define PM_HUGE_THP_MAPPING	BIT_ULL(58)
+ #define PM_FILE			BIT_ULL(61)
+ #define PM_SWAP			BIT_ULL(62)
+ #define PM_PRESENT		BIT_ULL(63)
+@@ -1456,6 +1457,8 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+
+ 		if (page && page_mapcount(page) == 1)
+ 			flags |= PM_MMAP_EXCLUSIVE;
++		if (page && is_transparent_hugepage(page))
++			flags |= PM_HUGE_THP_MAPPING;
+
+ 		for (; addr != end; addr += PAGE_SIZE) {
+ 			pagemap_entry_t pme = make_pme(frame, flags);
+diff --git a/tools/testing/selftests/vm/transhuge-stress.c b/tools/testing/selftests/vm/transhuge-stress.c
+index fd7f1b4a96f94..7dce18981fff5 100644
+--- a/tools/testing/selftests/vm/transhuge-stress.c
++++ b/tools/testing/selftests/vm/transhuge-stress.c
+@@ -16,6 +16,12 @@
+ #include <string.h>
+ #include <sys/mman.h>
+
 +/*
-+ * This program faults memory in tmpfs
++ * We can use /proc/pid/pagemap to detect whether the kernel was able to find
++ * hugepages or no. This can be very noisy, so is disabled by default.
 + */
++#define NO_DETECT_HUGEPAGES
 +
-+#include <err.h>
-+#include <errno.h>
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <fcntl.h>
-+#include <sys/types.h>
-+#include <sys/shm.h>
-+#include <sys/stat.h>
-+#include <sys/mman.h>
-+
-+/* Global definitions. */
-+
-+/* Global variables. */
-+static const char *self;
-+static char *shmaddr;
-+static int shmid;
-+
-+/*
-+ * Show usage and exit.
-+ */
-+static void exit_usage(void)
-+{
-+	printf("Usage: %s -p <path to tmpfs file> -s <size to map>\n", self);
-+	exit(EXIT_FAILURE);
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	int fd = 0;
-+	int key = 0;
-+	int *ptr = NULL;
-+	int c = 0;
-+	int size = 0;
-+	char path[256] = "";
-+	int want_sleep = 0, private = 0;
-+	int populate = 0;
-+	int write = 0;
-+	int reserve = 1;
-+
-+	/* Parse command-line arguments. */
-+	setvbuf(stdout, NULL, _IONBF, 0);
-+	self = argv[0];
-+
-+	while ((c = getopt(argc, argv, ":s:p:")) != -1) {
-+		switch (c) {
-+		case 's':
-+			size = atoi(optarg);
-+			break;
-+		case 'p':
-+			strncpy(path, optarg, sizeof(path));
-+			break;
-+		default:
-+			errno = EINVAL;
-+			perror("Invalid arg");
-+			exit_usage();
-+		}
+ #define PAGE_SHIFT 12
+ #define HPAGE_SHIFT 21
+
+@@ -23,6 +29,7 @@
+ #define HPAGE_SIZE (1 << HPAGE_SHIFT)
+
+ #define PAGEMAP_PRESENT(ent)	(((ent) & (1ull << 63)) != 0)
++#define PAGEMAP_THP(ent)	(((ent) & (1ull << 58)) != 0)
+ #define PAGEMAP_PFN(ent)	((ent) & ((1ull << 55) - 1))
+
+ int pagemap_fd;
+@@ -47,10 +54,16 @@ int64_t allocate_transhuge(void *ptr)
+ 			(uintptr_t)ptr >> (PAGE_SHIFT - 3)) != sizeof(ent))
+ 		err(2, "read pagemap");
+
+-	if (PAGEMAP_PRESENT(ent[0]) && PAGEMAP_PRESENT(ent[1]) &&
+-	    PAGEMAP_PFN(ent[0]) + 1 == PAGEMAP_PFN(ent[1]) &&
+-	    !(PAGEMAP_PFN(ent[0]) & ((1 << (HPAGE_SHIFT - PAGE_SHIFT)) - 1)))
+-		return PAGEMAP_PFN(ent[0]);
++	if (PAGEMAP_PRESENT(ent[0]) && PAGEMAP_PRESENT(ent[1])) {
++#ifndef NO_DETECT_HUGEPAGES
++		if (!PAGEMAP_THP(ent[0]))
++			fprintf(stderr, "WARNING: detected non THP page\n");
++#endif
++		if (PAGEMAP_PFN(ent[0]) + 1 == PAGEMAP_PFN(ent[1]) &&
++		    !(PAGEMAP_PFN(ent[0]) &
++		      ((1 << (HPAGE_SHIFT - PAGE_SHIFT)) - 1)))
++			return PAGEMAP_PFN(ent[0]);
 +	}
-+
-+	printf("%s\n", path);
-+	if (strncmp(path, "", sizeof(path)) != 0) {
-+		printf("Writing to this path: %s\n", path);
-+	} else {
-+		errno = EINVAL;
-+		perror("path not found");
-+		exit_usage();
-+	}
-+
-+	if (size != 0) {
-+		printf("Writing this size: %d\n", size);
-+	} else {
-+		errno = EINVAL;
-+		perror("size not found");
-+		exit_usage();
-+	}
-+
-+	fd = open(path, O_CREAT | O_RDWR, 0777);
-+	if (fd == -1)
-+		err(1, "Failed to open file.");
-+
-+	if (ftruncate(fd, size))
-+		err(1, "failed to ftruncate %s", path);
-+
-+	ptr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-+	if (ptr == MAP_FAILED) {
-+		close(fd);
-+		err(1, "Error mapping the file");
-+	}
-+
-+	printf("Writing to memory.\n");
-+	memset(ptr, 1, size);
-+	printf("Done writing to memory.\n");
-+	close(fd);
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/vm/tmpfs-memcg.sh b/tools/testing/selftests/vm/tmpfs-memcg.sh
-new file mode 100755
-index 0000000000000..eb584ddcbae5f
---- /dev/null
-+++ b/tools/testing/selftests/vm/tmpfs-memcg.sh
-@@ -0,0 +1,87 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+
-+CGROUP_PATH=/dev/cgroup/memory/tmpfs-memcg-test
-+
-+function cleanup() {
-+  rm -rf /mnt/tmpfs/*
-+  umount /mnt/tmpfs
-+  rm -rf /mnt/tmpfs
-+
-+  rmdir $CGROUP_PATH
-+
-+  echo CLEANUP DONE
-+}
-+
-+function setup() {
-+  mkdir -p $CGROUP_PATH
-+  echo $((10 * 1024 * 1024)) > $CGROUP_PATH/memory.limit_in_bytes
-+  echo 0 > $CGROUP_PATH/cpuset.cpus
-+  echo 0 > $CGROUP_PATH/cpuset.mems
-+
-+  mkdir -p /mnt/tmpfs
-+
-+  echo SETUP DONE
-+}
-+
-+function expect_equal() {
-+  local expected="$1"
-+  local actual="$2"
-+  local error="$3"
-+
-+  if [[ "$actual" != "$expected" ]]; then
-+    echo "expected ($expected) != actual ($actual): $3" >&2
-+    cleanup
-+    exit 1
-+  fi
-+}
-+
-+function expect_ge() {
-+  local expected="$1"
-+  local actual="$2"
-+  local error="$3"
-+
-+  if [[ "$actual" -lt "$expected" ]]; then
-+    echo "expected ($expected) < actual ($actual): $3" >&2
-+    cleanup
-+    exit 1
-+  fi
-+}
-+
-+cleanup
-+setup
-+
-+mount -t tmpfs -o memcg=$CGROUP_PATH tmpfs /mnt/tmpfs
-+
-+TARGET_MEMCG_USAGE=$(cat $CGROUP_PATH/memory.usage_in_bytes)
-+expect_equal 0 "$TARGET_MEMCG_USAGE" "Before echo, memcg usage should be 0"
-+
-+# Echo to allocate a page in the tmpfs
-+echo hello > /mnt/tmpfs/test
-+TARGET_MEMCG_USAGE=$(cat $CGROUP_PATH/memory.usage_in_bytes)
-+expect_ge 4096 "$TARGET_MEMCG_USAGE" "After echo, memcg usage should be greater than 4096"
-+echo "Echo test succeeded"
-+
-+tools/testing/selftests/vm/mmap_write -p /mnt/tmpfs/test -s $((1 * 1024 * 1024))
-+TARGET_MEMCG_USAGE=$(cat $CGROUP_PATH/memory.usage_in_bytes)
-+expect_ge $((1 * 1024 * 1024)) "$TARGET_MEMCG_USAGE" "After echo, memcg usage should greater than 1MB"
-+echo "Write succeeded"
-+
-+# OOM the remote container on pagefault.
-+echo
-+echo
-+echo "OOMing the remote container using pagefault."
-+echo "This will take a long time because the kernel goes through reclaim retries,"
-+echo "but should eventually be OOM-killed by 'Out of memory (Killing remote allocating task)'"
-+#tools/testing/selftests/vm/mmap_write -p /mnt/tmpfs/test -s $((11 * 1024 * 1024))
-+
-+# OOM the remote container on non pagefault.
-+echo
-+echo
-+echo "OOMing the remote container using cat (non-pagefault)"
-+echo "This will take a long time because the kernel goes through reclaim retries,"
-+echo "but should eventually the cat command should receive an ENOMEM"
-+cat /dev/random > /mnt/tmpfs/random
-+
-+cleanup
-+echo SUCCESS
+
+ 	return -1;
+ }
 --
 2.34.0.rc0.344.g81b53c2807-goog
