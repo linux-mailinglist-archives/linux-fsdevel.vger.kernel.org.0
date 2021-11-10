@@ -2,179 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF3FC44C620
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 18:42:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2178A44C62B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 18:45:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231418AbhKJRp3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Nov 2021 12:45:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58106 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230230AbhKJRp1 (ORCPT
+        id S232625AbhKJRsO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Nov 2021 12:48:14 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:31257 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232601AbhKJRsM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Nov 2021 12:45:27 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 284E7C061766
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 09:42:39 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id 77-20020a1c0450000000b0033123de3425so5323532wme.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 09:42:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BmJmTnzPfpqvgfeS3ZzzZ3LIV2vZGhaQGUrN4OQ9GVc=;
-        b=A7oSaQ/R3coHeHC40rJ1CdryOdtv8cF/yEknlJz/6t2IQ9dnili9EARfpQDCBm28ji
-         +wyP8Y4NxaIga5rYkU9newjPK83r3XxBCUjtZFwOW/TvYSLyjyj+BCBKGQ1IGfRjvLI8
-         2bECtGd3vIUMuWU3wVJSqgwLGQZUAMpg38XCzAk9lIWGt7kzaxFdOuGOsCLoEz1YLXcz
-         FbsqZ6pCB+WNLHTk5aAH5wn6EMrs4x60kSWI9cwwRUcg6kgOoVefgrL+ipnZsugspW4J
-         yV0/8taOfuVhsurV1P76C8PWRMlnTr9vtgqt8XYUynssRc4DoF4uB61vyljyljf85GDs
-         0/BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BmJmTnzPfpqvgfeS3ZzzZ3LIV2vZGhaQGUrN4OQ9GVc=;
-        b=4mawB9GojFfOEBLBv8LV6CAf29pUKt7rAUOsAd0qpDILRbYkY39AoY5iOHk/ZVAfMQ
-         OX/22/1nWTaloQIow5fAcilcj+pgEov4Qj9LRX5fYdupduVG3XpFGCfCKyFHt333VBxu
-         Dv93qKh2ZTeqPYjJPSB+NBpp7RA2ckcdRbGR4Sf2sPp8i/mH3cmFuSsZO34HrmQKhmA0
-         2i7wzX4yJmv6QJxck5cN+6ScxU1hyZtkbgqBivwUyirlrB0x54Yu/06CrHTEmb8PMYpU
-         1GfQkcbo5P/jkx2Fpwm4jaxJysm/g3a2bLvS42l/LGJ+clS0kQKf2CAvxcdSOuHNNrl9
-         rpiw==
-X-Gm-Message-State: AOAM533DsErUe3BhKU+qi93Fr+9WY0066oN3oC9cYEPSxQHi4INO/jbb
-        J9UES2hYmyD7Rd7wmOZWzgHYWQ66uTtA/LsoZCSRaA==
-X-Google-Smtp-Source: ABdhPJzaIRfLIlvC2xdnSw40WJRg4en26VatfTndhl34g3jZs25Ylo2D5RvkxNkOG3tMYShQ+X6yeP3O+PNjG70M6HA=
-X-Received: by 2002:a05:600c:190b:: with SMTP id j11mr1023411wmq.112.1636566157490;
- Wed, 10 Nov 2021 09:42:37 -0800 (PST)
+        Wed, 10 Nov 2021 12:48:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1636566324;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=so+sBHeqgvGbAB6xWn0/t+WSQWf4kEYIfTA/NVWhLec=;
+        b=a5v8sfocXf8d37zIqAAuvKDO73QjThyv0QlMTrlwex4LWTGDM/gISNr2I/3WEyWkCbIT9P
+        eQNccQoaI8gy2TJX2bmhra3VfTxgRcb078ng8clBp70fP3wSgCALi4dQLybz55bE6fV36I
+        Y8iHdhUx79RHRmDPiT0/GJLi9xMQRFA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-476-TFgoIEASPvmUOv5u9kZK0Q-1; Wed, 10 Nov 2021 12:45:19 -0500
+X-MC-Unique: TFgoIEASPvmUOv5u9kZK0Q-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 084D1100C612;
+        Wed, 10 Nov 2021 17:45:18 +0000 (UTC)
+Received: from max.localdomain (unknown [10.40.195.95])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7173367854;
+        Wed, 10 Nov 2021 17:44:58 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com
+Subject: [RFC] gfs2: Prevent endless loops in gfs2_file_buffered_write
+Date:   Wed, 10 Nov 2021 18:44:57 +0100
+Message-Id: <20211110174457.533866-1-agruenba@redhat.com>
 MIME-Version: 1.0
-References: <20211107235754.1395488-1-almasrymina@google.com>
- <YYtuqsnOSxA44AUX@t490s> <c5ed86d0-8af6-f54f-e352-8871395ad62e@redhat.com>
- <YYuCaNXikls/9JhS@t490s> <793685d2-be3f-9a74-c9a3-65c486e0ef1f@redhat.com>
- <YYuJd9ZBQiY50dVs@xz-m1.local> <8032a24c-3800-16e5-41b7-5565e74d3863@redhat.com>
-In-Reply-To: <8032a24c-3800-16e5-41b7-5565e74d3863@redhat.com>
-From:   Mina Almasry <almasrymina@google.com>
-Date:   Wed, 10 Nov 2021 09:42:25 -0800
-Message-ID: <CAHS8izPKN96M2GbHBC6_-XCr1pYy7uA-vNw2FHe01XbYMVdKUQ@mail.gmail.com>
-Subject: Re: [PATCH v4] mm: Add PM_HUGE_THP_MAPPING to /proc/pid/pagemap
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
-        "Paul E . McKenney" <paulmckrcu@fb.com>,
-        Yu Zhao <yuzhao@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        Florian Schmidt <florian.schmidt@nutanix.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 10, 2021 at 12:57 AM Peter Xu <peterx@redhat.com> wrote:
->
->
-> This also reminded me that we've got issue with smaps being too slow, and in
-> many cases we're only interested in a small portion of the whole memory.  This
-> made me wonder how about a new smaps interface taking memory range as input.
->
+Hi Linus,
 
-Does a patch like I'm providing here address the perf issues you're seeing?
+in commit 00bfe02f4796 ("gfs2: Fix mmap + page fault deadlocks for
+buffered I/O"), I've managed to introduce a hang in gfs2 due to the
+following check in iomap_write_iter:
 
-> Thanks,
->
-> --
-> Peter Xu
->
+  if (unlikely(fault_in_iov_iter_readable(i, bytes))) {
 
-On Wed, Nov 10, 2021 at 2:24 AM David Hildenbrand <david@redhat.com> wrote:
->
-> On 10.11.21 09:57, Peter Xu wrote:
-> > On Wed, Nov 10, 2021 at 09:30:50AM +0100, David Hildenbrand wrote:
-> >> On 10.11.21 09:27, Peter Xu wrote:
-> >>> On Wed, Nov 10, 2021 at 09:14:42AM +0100, David Hildenbrand wrote:
-> >>>> On 10.11.21 08:03, Peter Xu wrote:
-> >>>>> Hi, Mina,
-> >>>>>
-> >>>>> Sorry to comment late.
-> >>>>>
-> >>>>> On Sun, Nov 07, 2021 at 03:57:54PM -0800, Mina Almasry wrote:
-> >>>>>> diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
-> >>>>>> index fdc19fbc10839..8a0f0064ff336 100644
-> >>>>>> --- a/Documentation/admin-guide/mm/pagemap.rst
-> >>>>>> +++ b/Documentation/admin-guide/mm/pagemap.rst
-> >>>>>> @@ -23,7 +23,8 @@ There are four components to pagemap:
-> >>>>>>      * Bit  56    page exclusively mapped (since 4.2)
-> >>>>>>      * Bit  57    pte is uffd-wp write-protected (since 5.13) (see
-> >>>>>>        :ref:`Documentation/admin-guide/mm/userfaultfd.rst <userfaultfd>`)
-> >>>>>> -    * Bits 57-60 zero
-> >>>>>> +    * Bit  58    page is a huge (PMD size) THP mapping
-> >>>>>> +    * Bits 59-60 zero
-> >>>>>>      * Bit  61    page is file-page or shared-anon (since 3.5)
-> >>>>>>      * Bit  62    page swapped
-> >>>>>>      * Bit  63    page present
-> >>>>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> >>>>>> index ad667dbc96f5c..6f1403f83b310 100644
-> >>>>>> --- a/fs/proc/task_mmu.c
-> >>>>>> +++ b/fs/proc/task_mmu.c
-> >>>>>> @@ -1302,6 +1302,7 @@ struct pagemapread {
-> >>>>>>  #define PM_SOFT_DIRTY           BIT_ULL(55)
-> >>>>>>  #define PM_MMAP_EXCLUSIVE       BIT_ULL(56)
-> >>>>>>  #define PM_UFFD_WP              BIT_ULL(57)
-> >>>>>> +#define PM_HUGE_THP_MAPPING     BIT_ULL(58)
-> >>>>>
-> >>>>> The ending "_MAPPING" seems redundant to me, how about just call it "PM_THP" or
-> >>>>> "PM_HUGE" (as THP also means HUGE already)?
-> >>>>>
-> >>>>> IMHO the core problem is about permission controls, and it seems to me we're
-> >>>>> actually trying to workaround it by duplicating some information we have.. so
-> >>>>> it's kind of a pity.  Totally not against this patch, but imho it'll be nicer
-> >>>>> if it's the permission part that to be enhanced, rather than a new but slightly
-> >>>>> duplicated interface.
-> >>>>
-> >>>> It's not a permission problem AFAIKS: even with permissions "changed",
-> >>>> any attempt to use /proc/kpageflags is just racy. Let's not go down that
-> >>>> path, it's really the wrong mechanism to export to random userspace.
-> >>>
-> >>> I agree it's racy, but IMHO that's fine.  These are hints for userspace to make
-> >>> decisions, they cannot be always right.  Even if we fetch atomically and seeing
-> >>> that this pte is swapped out, it can be quickly accessed at the same time and
-> >>> it'll be in-memory again.  Only if we can freeze the whole pgtable but we
-> >>> can't, so they can only be used as hints.
-> >>
-> >> Sorry, I don't think /proc/kpageflags (or exporting the PFNs to random
-> >> users via /proc/self/pagemap) is the way to go.
-> >>
-> >> "Since Linux 4.0 only users with the CAP_SYS_ADMIN capability can get
-> >> PFNs. In 4.0 and 4.1 opens by unprivileged fail with -EPERM.  Starting
-> >> from 4.2 the PFN field is zeroed if the user does not have
-> >> CAP_SYS_ADMIN. Reason: information about PFNs helps in exploiting
-> >> Rowhammer vulnerability."
-> >
-> > IMHO these are two problems that you mentioned.  That's also what I was
-> > wondering about: could the app be granted with CAP_SYS_ADMIN then?
-> >
-> > I am not sure whether that'll work well with /proc/kpage* though, as it's by
-> > default 0400.  So perhaps we need to manual adjust the file permission too to
-> > make sure the app can both access PFNs (with SYS_ADMIN) and the flags.  Totally
-> > no expert on the permissions..
->
-> Me too :)
->
-> IIRC changing permissions that was not an option -- which is why the
-> first approach suggested a new /proc/self/pageflags. But I guess Mina
-> can remind us (and eventually document all that in the patch description
-> :) ).
->
+which fails if any of the iov iterator cannot be faulted in for reading.
+At the filesystem level, we're retrying the rest of the write if any of
+the iov iterator can be faulted in, so we can end up in a loop without
+ever making progress.  The fix in iomap_write_iter would be as follows:
 
-Sorry, yes I should update the commit message with this info. The
-issues with smaps are:
-1. Performance: I've pinged our network service folks to obtain a
-rough perf comparison but I haven't been able to get one. I can try to
-get a performance measurement myself but Peter seems to be also seeing
-this.
-2. smaps output is human readable and a bit convoluted for userspace to parse.
+  if (unlikely(fault_in_iov_iter_readable(i, bytes) == bytes)) {
 
->
-> --
-> Thanks,
->
-> David / dhildenb
->
+The same bug exists in generic_perform_write, but I'm not aware of any
+callers of generic_perform_write that have page faults turned off.
+
+Is this fix still appropriate for 5.16, or should we work around it in
+the filesystem as below for now?
+
+A related post-5.16 option would be to turn the pre-faulting in
+iomap_write_iter and generic_perform_write into post-faulting, but at
+the very least, that still needs a bit of performance analysis:
+
+  https://lore.kernel.org/linux-fsdevel/20211026094430.3669156-1-agruenba@redhat.com/
+  https://lore.kernel.org/linux-fsdevel/20211027212138.3722977-1-agruenba@redhat.com/
+
+Thanks,
+Andreas
+
+---
+ fs/gfs2/file.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index c486b702e00f..3e718cfc19a7 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -1013,6 +1013,7 @@ static ssize_t gfs2_file_buffered_write(struct kiocb *iocb,
+ 	struct gfs2_sbd *sdp = GFS2_SB(inode);
+ 	struct gfs2_holder *statfs_gh = NULL;
+ 	size_t prev_count = 0, window_size = 0;
++	size_t orig_count = iov_iter_count(from);
+ 	size_t read = 0;
+ 	ssize_t ret;
+ 
+@@ -1057,6 +1058,7 @@ static ssize_t gfs2_file_buffered_write(struct kiocb *iocb,
+ 	if (inode == sdp->sd_rindex)
+ 		gfs2_glock_dq_uninit(statfs_gh);
+ 
++	from->count = orig_count - read;
+ 	if (should_fault_in_pages(ret, from, &prev_count, &window_size)) {
+ 		size_t leftover;
+ 
+@@ -1064,6 +1066,7 @@ static ssize_t gfs2_file_buffered_write(struct kiocb *iocb,
+ 		leftover = fault_in_iov_iter_readable(from, window_size);
+ 		gfs2_holder_disallow_demote(gh);
+ 		if (leftover != window_size) {
++			from->count = min(from->count, window_size - leftover);
+ 			if (!gfs2_holder_queued(gh)) {
+ 				if (read)
+ 					goto out_uninit;
+-- 
+2.31.1
+
