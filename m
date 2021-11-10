@@ -2,160 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 196D044BD95
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 10:06:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6482D44BE52
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 11:14:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230404AbhKJJJJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Nov 2021 04:09:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52540 "EHLO
+        id S231126AbhKJKRC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Nov 2021 05:17:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229831AbhKJJJI (ORCPT
+        with ESMTP id S230456AbhKJKRB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Nov 2021 04:09:08 -0500
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E205C061764;
-        Wed, 10 Nov 2021 01:06:21 -0800 (PST)
-Received: by mail-qk1-x731.google.com with SMTP id bk22so1847021qkb.6;
-        Wed, 10 Nov 2021 01:06:21 -0800 (PST)
+        Wed, 10 Nov 2021 05:17:01 -0500
+Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3E66C061764
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 02:14:14 -0800 (PST)
+Received: by mail-ua1-x92d.google.com with SMTP id v3so3601692uam.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 02:14:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ImnqB797AKnJuD4oPIYf8Tox3YCxcvXVphwHiRaIbIY=;
-        b=oMfCBYvauO8zRBwa2KehEw6l9I/gVh/IsHK2ianpEu/xIihkSVB/V6SY3F/ttzaM9E
-         nezbT4CmBgHKehn2yU5PaH/ZIe37KBZYxptntmlE84NkrCX9sBVx5fvOJ97WuHyjLu81
-         ySMip7zDVDJzC8Ud+eLEDqMIyFDT68YJu/vMGfrUMMkvIb9Gy3UDZ9KieYePa59ndf9w
-         2iNH/0Swtlcmca7uxTSVZ6+cgn0aA6kyAsyRtDOUv343TMFcvYUnDbmDYL36Evv24Use
-         DEXFPEpNZYt0Ltjw511zdD5Yt5ts2oQXhSF1bjzx+hLVoi83rzncSdyXWjhsWQZSkQMW
-         9DAA==
+         :cc:content-transfer-encoding;
+        bh=SqXsWUWLuu2Lv2utTh99gbwZolV4BkldqDlDA1egnC8=;
+        b=l7XA1pQhBw6cOkiC1AG35S51Bj0N0dsusjKtYcTDgpRDZsReQAcmomKZqBuMUEsTqh
+         LaCts1qPui4kpYnuf956Zb7slJteFX3QcatRbn8INecCe3RCT3umsNZp2Gxa0Rd1RVYr
+         k2oC+rvWE3Sh9xTpPTlJ/rLqyRdTyqE/DOWcQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ImnqB797AKnJuD4oPIYf8Tox3YCxcvXVphwHiRaIbIY=;
-        b=ZHPMhG1+eAE+XkQoyRl7mhWJuUqqVqyiabOx+0COCv+ahau8SNoIei1BkhJyn2eeot
-         1YIkXijJhN9Ln70UBrF31t4+Z4LjdJGA3F1qzThf0RlEJ4v5RFtpjhQch4gLc/v0agiu
-         3EiGG5g3VEU3+8n/CJfREpxT2pFNL8jCcnDgBbKsVAMhFYzceBM+vcErw9JDFMHesUf9
-         LqaUG1f2s+kDSd9KWQ+RGOlrrg7HYlm9BuRMA8xHwV8bfY7zRumokPUA3s3YI/LKq/sx
-         g/JYDrxWjzr/ecqV5dhBWbjBTq6Yt/Av17ngtpdYOS5l4gvIUcXnsZXYJlusSJLg/lN6
-         sCtg==
-X-Gm-Message-State: AOAM531D3c52Gu8LD0gPKcS8wwpSsqrtLyYN5fbPMu8bEOQtyae8VYBQ
-        EaoPcF8GYwcUbVyOnb7f9my+n8QMiZYGdxqp+Gk=
-X-Google-Smtp-Source: ABdhPJxecwxlgh5Be+apIVbyhK9b5EOBmc1BMU6ZqqxInFojT85GAhLJhs4ImfIMb89COAJxX42mTS13PbNiDO5tpM0=
-X-Received: by 2002:a37:e97:: with SMTP id 145mr11499308qko.116.1636535180801;
- Wed, 10 Nov 2021 01:06:20 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=SqXsWUWLuu2Lv2utTh99gbwZolV4BkldqDlDA1egnC8=;
+        b=ZCRPYscd6Z41hNmHNGTIXH3h3c5r1TrfO+fnI5VI+bG+xd/Kjs66V/2NzS5/GR70Li
+         9ejekW77gnpa3rFpAQoIh5qbRiQBB6oJN5xkjYxNsQrkqNQMDolzoP9hFtT0gXZV23xz
+         ukzyvsZvoV8ACtvqO43Qo9SgNVTg49tNdAyn/mE4MXWsQXF5An2mcUf6AGC8ObITZpFp
+         RSjUDoTt9fKINW7E7zVGMNvsDOpgeMlKAkJnJ2FublJr0juD8PAzXzkiMoH/l7FuBFI9
+         ZhCw141ACapS0A1fu6GppcD2BtUzcBW1kDEEmobtcUqt9SAaXjxfd32QR6baPNDIh4SA
+         cEsA==
+X-Gm-Message-State: AOAM530N0P1pz47AykuLybRJJ+h889iPzU0i1sFW0Csds8vOS+kFu5es
+        tEGGqH4BmbUicaRNogo6mn+e8hRAoSHJQACal0o7dnyWiqI=
+X-Google-Smtp-Source: ABdhPJzs+k7RupuvFwaut3KFRVC7pzrhqyVRA/QoHQm4vfUN9HYD4Msd+OypbK8+Fs5Z92j/KunCfVp9kTTOc2DoJJw=
+X-Received: by 2002:a67:782:: with SMTP id 124mr46509269vsh.24.1636539253815;
+ Wed, 10 Nov 2021 02:14:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20211108083840.4627-1-laoar.shao@gmail.com> <20211108083840.4627-2-laoar.shao@gmail.com>
- <c3571571-320a-3e25-8409-5653ddca895c@redhat.com>
-In-Reply-To: <c3571571-320a-3e25-8409-5653ddca895c@redhat.com>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Wed, 10 Nov 2021 17:05:44 +0800
-Message-ID: <CALOAHbCexkBs7FCdmQcatQbc+RsGTSoJkNBop0khsZX=g8Ftkg@mail.gmail.com>
-Subject: Re: [PATCH 1/7] fs/exec: make __set_task_comm always set a nul
- terminated string
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel test robot <oliver.sang@intel.com>,
-        kbuild test robot <lkp@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Petr Mladek <pmladek@suse.com>
+References: <CAPm50a+j8UL9g3UwpRsye5e+a=M0Hy7Tf1FdfwOrUUBWMyosNg@mail.gmail.com>
+ <CAJfpegtbdz-wzfiKXAaFYoW-Hqw6Wm17hhMgWMqpTCtNXgAnew@mail.gmail.com>
+ <CAPm50aKJ4ckQJw=iYDOCqvm=VTYaEcfgNL52dsj+FX8pcVYNmw@mail.gmail.com>
+ <CAJfpegt9J75jAXWo=r+EOmextpSze0LFDUV1=TamxNoPchBSUQ@mail.gmail.com>
+ <CAPm50aLPuqZoP+eSAGKOo+8DjKFR5akWUhTg=WFp11vLiC=HOA@mail.gmail.com> <CAPm50aLuK8Smy4NzdytUPmGM1vpzokKJdRuwxawUDA4jnJg=Fg@mail.gmail.com>
+In-Reply-To: <CAPm50aLuK8Smy4NzdytUPmGM1vpzokKJdRuwxawUDA4jnJg=Fg@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 10 Nov 2021 11:14:02 +0100
+Message-ID: <CAJfpegs1Ue3-EFYuKfqb0jagfftgHdhDts7C7k+8hUg1eWcung@mail.gmail.com>
+Subject: Re: [PATCH] fuse: add a dev ioctl for recovery
+To:     Hao Peng <flyingpenghao@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 10, 2021 at 4:28 PM David Hildenbrand <david@redhat.com> wrote:
+On Wed, 10 Nov 2021 at 04:43, Hao Peng <flyingpenghao@gmail.com> wrote:
 >
-> On 08.11.21 09:38, Yafang Shao wrote:
-> > Make sure the string set to task comm is always nul terminated.
+> On Wed, Sep 8, 2021 at 5:27 PM Hao Peng <flyingpenghao@gmail.com> wrote:
 > >
->
-> strlcpy: "the result is always a valid NUL-terminated string that fits
-> in the buffer"
->
-> The only difference seems to be that strscpy_pad() pads the remainder
-> with zeroes.
->
-> Is this description correct and I am missing something important?
->
-
-In a earlier version [1], the checkpatch.py found a warning:
-WARNING: Prefer strscpy over strlcpy - see:
-https://lore.kernel.org/r/CAHk-=wgfRnXz0W3D37d01q3JFkr_i_uTL=V6A6G1oUZcprmknw@mail.gmail.com/
-So I replaced strlcpy() with strscpy() to fix this warning.
-And then in v5[2], the strscpy() was replaced with strscpy_pad() to
-make sure there's no garbade data and also make get_task_comm() be
-consistent with get_task_comm().
-
-This commit log didn't clearly describe the historical changes.  So I
-think we can update the commit log and subject with:
-
-Subject: use strscpy_pad with strlcpy in __set_task_comm
-Commit log:
-strlcpy is not suggested to use by the checkpatch.pl, so we'd better
-recplace it with strscpy.
-To avoid leaving garbage data and be consistent with the usage in
-__get_task_comm(), the strscpy_pad is used here.
-
-WDYT?
-
-[1]. https://lore.kernel.org/lkml/20211007120752.5195-3-laoar.shao@gmail.com/
-[2]. https://lore.kernel.org/lkml/20211021034516.4400-2-laoar.shao@gmail.com/
-
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-> > Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-> > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > Cc: Michal Miroslaw <mirq-linux@rere.qmqm.pl>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Cc: Matthew Wilcox <willy@infradead.org>
-> > Cc: David Hildenbrand <david@redhat.com>
-> > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Petr Mladek <pmladek@suse.com>
-> > ---
-> >  fs/exec.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > On Wed, Sep 8, 2021 at 5:08 PM Miklos Szeredi <miklos@szeredi.hu> wrote=
+:
+> > >
+> > > On Wed, 8 Sept 2021 at 04:25, Hao Peng <flyingpenghao@gmail.com> wrot=
+e:
+> > > >
+> > > > On Tue, Sep 7, 2021 at 5:34 PM Miklos Szeredi <miklos@szeredi.hu> w=
+rote:
+> > > > >
+> > > > > On Mon, 6 Sept 2021 at 14:36, Hao Peng <flyingpenghao@gmail.com> =
+wrote:
+> > > > > >
+> > > > > > For a simple read-only file system, as long as the connection
+> > > > > > is not broken, the recovery of the user-mode read-only file
+> > > > > > system can be realized by putting the request of the processing
+> > > > > > list back into the pending list.
+> > > > >
+> > > > > Thanks for the patch.
+> > > > >
+> > > > > Do you have example userspace code for this?
+> > > > >
+> > > > Under development. When the fuse user-mode file system process is a=
+bnormal,
+> > > > the process does not terminate (/dev/fuse will not be closed), ente=
+r
+> > > > the reset procedure,
+> > > > and will not open /dev/fuse again during the reinitialization.
+> > > > Of course, this can only solve part of the abnormal problem.
+> > >
+> > > Yes, that's what I'm mainly worried about.   Replaying the few
+> > > currently pending requests is easy, but does that really help in real
+> > > situations?
+> > >
+> > > Much more information is needed about what you are trying to achieve
+> > > and how, as well as a working userspace implementation to be able to
+> > > judge this patch.
+> > >
+> > I will provide a simple example in a few days. The effect achieved is t=
+hat the
+> > user process will not perceive the abnormal restart of the read-only fi=
+le system
+> > process based on fuse.
 > >
-> > diff --git a/fs/exec.c b/fs/exec.c
-> > index a098c133d8d7..404156b5b314 100644
-> > --- a/fs/exec.c
-> > +++ b/fs/exec.c
-> > @@ -1224,7 +1224,7 @@ void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
-> >  {
-> >       task_lock(tsk);
-> >       trace_task_rename(tsk, buf);
-> > -     strlcpy(tsk->comm, buf, sizeof(tsk->comm));
-> > +     strscpy_pad(tsk->comm, buf, sizeof(tsk->comm));
-> >       task_unlock(tsk);
-> >       perf_event_comm(tsk, exec);
-> >  }
-> >
->
->
-> --
-> Thanks,
->
-> David / dhildenb
->
+> > > Thanks,
+> > > Miklos
+> Hi=EF=BC=8CI have implemented a small test program to illustrate this new=
+ feature.
+> After downloading and compiling from
+> https://github.com/flying-122/libfuse/tree/flying
+> #gcc -o testfile testfile.c -D_GNU_SOURCE
+> #./example/passthrough_ll -o debug -s  /mnt3
+> #./testfile (on another console)
+> #ps aux | grep pass
+> #root       34889  0.0  0.0   8848   864 pts/2    S+   13:10   0:00
+> ./example/passthrough_ll -o debug -s /mnt3
+> #root       34896  0.0  0.0   9880   128 pts/2    S+   13:10   0:00
+> ./example/passthrough_ll -o debug -s /mnt3
+> #root       34913  0.0  0.0  12112  1060 pts/1    S+   13:10   0:00
+> grep --color=3Dauto pass
+> // kill child process
+> #kill 34896
+> You will see that ./testfile continues to execute without noticing the
+> abnormal restart of the fuse file system.
 
+This is a very good first example demonstrating the limits of the
+recovery.   The only state saved is the actual device file descriptor
+and the result of the INIT negotiation.
 
--- 
-Thanks
-Yafang
+It works if there are a fixed number of files, e.g. a read only
+filesystem, where the files can be enumerated (i.e. a file or
+directory can be found  based on a single 64bit index)
+
+Is this your use case?
+
+Are you ever planning to extend this to read-write filesystems?
+
+Thanks,
+Miklos
