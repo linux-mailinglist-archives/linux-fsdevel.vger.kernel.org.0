@@ -2,83 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0906844BF54
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 11:59:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBDC944C02F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 12:35:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231303AbhKJLBr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Nov 2021 06:01:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38592 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229653AbhKJLBo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Nov 2021 06:01:44 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 127CC61078;
-        Wed, 10 Nov 2021 10:58:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1636541936;
-        bh=gHSBa8ivw9GQcEbo5ekqR+sipOS0BWUuUGJifY7Y8z4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Ss/3sKIqZSWKLG//I6LhznU/o/oQhNgWFtj/L/G3W1W5mogp1JUdf3iiS0R7oydKG
-         jGk7q4jGqvdiL/X07sU4NZFsSrW6DF95qDI8Bc4xoHCZquRZDnf/dPKUp8Kyaw+0iK
-         xe6R2A4bmBIwF5dVYDT09SEfetcWxSIueXWnaZ8jcHNVtIHTHb6Ifd2hKsha/zxQsg
-         E16CtSOe1O3Qh3TxSc1eub4jsoHB4xGcWVlNCV2sap0ZL6UdciIdpS4t4zVyXdi6Ct
-         K2oZpcFqgEeqox27qEjuBvIiaCQTNwDPd7Kd264K9N+uFJ+DYH0xzLBzkk3P72EY20
-         7reB7G4SndwRg==
-Message-ID: <70778cdf726d59d852a3b1262760fb71574f0e91.camel@kernel.org>
-Subject: Re: [PATCH] fasync: Use tabs instead of spaces in code indent
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Wen Gu <guwen@linux.alibaba.com>, viro@zeniv.linux.org.uk,
-        bfields@fieldses.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dust.li@linux.alibaba.com, tonylu@linux.alibaba.com,
-        xuanzhuo@linux.alibaba.com
-Date:   Wed, 10 Nov 2021 05:58:54 -0500
-In-Reply-To: <1636525756-68970-1-git-send-email-guwen@linux.alibaba.com>
-References: <1636525756-68970-1-git-send-email-guwen@linux.alibaba.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.1 (3.42.1-1.fc35) 
+        id S231499AbhKJLiZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Nov 2021 06:38:25 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:41992 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231460AbhKJLiV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 10 Nov 2021 06:38:21 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 567991FD43;
+        Wed, 10 Nov 2021 11:35:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1636544133; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=6srsL7vTMG8eDCjtld9gs4O/t8JoHE+gnO+/i9FChDY=;
+        b=lQIK2LYdIk/xK50a4cmJdF/JVAbtW1VIwmF6kfpcQLz6Heiv4aAqx5Pk5d0dLWuq3UlpJn
+        TqjTitQmR3+HXkT0mhPQrBBLrWwEaQ4xAurmoXjeAkxnbeWccwC6wjuiYSCZqsCZTleD+c
+        3VtA9tfrs8otZJiT55OEM3HPDvRXC+s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1636544133;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=6srsL7vTMG8eDCjtld9gs4O/t8JoHE+gnO+/i9FChDY=;
+        b=9b9jX5qwGRPIY5rXsVSFLvb8IjyMj6HVjSMIfZesMRnBOMoXRoTUmuNJq7p0eceQMV7L+w
+        /roIvghhQ0CZ5pBA==
+Received: from quack2.suse.cz (unknown [10.100.200.198])
+        by relay2.suse.de (Postfix) with ESMTP id 48125A3B81;
+        Wed, 10 Nov 2021 11:35:33 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 6560E1E1649; Wed, 10 Nov 2021 12:35:30 +0100 (CET)
+Date:   Wed, 10 Nov 2021 12:35:30 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        Nathan Wilson <nate@chickenbrittle.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] udf: Fix crash after seekdir
+Message-ID: <20211110113530.GB4048@quack2.suse.cz>
+References: <20211109114841.30310-1-jack@suse.cz>
+ <YYqhRmm/+XHrCgxP@casper.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YYqhRmm/+XHrCgxP@casper.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2021-11-10 at 14:29 +0800, Wen Gu wrote:
-> When I investigated about fasync_list in SMC network subsystem,
-> I happened to find that here uses spaces instead of tabs in code
-> indent and fix this by the way.
+On Tue 09-11-21 16:26:46, Matthew Wilcox wrote:
+> On Tue, Nov 09, 2021 at 12:48:41PM +0100, Jan Kara wrote:
+> > udf_readdir() didn't validate the directory position it should start
+> > reading from. Thus when user uses lseek(2) on directory file descriptor
+> > it can trick udf_readdir() into reading from a position in the middle of
+> > directory entry which then upsets directory parsing code resulting in
+> > errors or even possible kernel crashes. Similarly when the directory is
+> > modified between two readdir calls, the directory position need not be
+> > valid anymore.
 > 
-> Fixes: f7347ce4ee7c ("fasync: re-organize fasync entry insertion to
-> allow it under a spinlock")
-> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
-> Reviewed-by: Tony Lu <tonylu@linux.alibaba.com>
-> ---
->  fs/fcntl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/fcntl.c b/fs/fcntl.c
-> index 9c6c6a3..36ba188 100644
-> --- a/fs/fcntl.c
-> +++ b/fs/fcntl.c
-> @@ -927,7 +927,7 @@ void fasync_free(struct fasync_struct *new)
->   */
->  struct fasync_struct *fasync_insert_entry(int fd, struct file *filp, struct fasync_struct **fapp, struct fasync_struct *new)
->  {
-> -        struct fasync_struct *fa, **fp;
-> +	struct fasync_struct *fa, **fp;
->  
->  	spin_lock(&filp->f_lock);
->  	spin_lock(&fasync_lock);
+> ... We don't have an xfstest for this already?  Actually, two.  One for
+> lseek() and one for modifying the directory as it's being read.
 
-Hi Wen,
+Good question which I also wanted to investigate. We do have generic/310
+which tests the seek + readdir case (but for some reason it does not hit
+any problem with udf). Also tests using fsstress can in principle hit the
+readdir + dir modification case although because glibc implementation of
+readdir(3) does a lot of caching (directories smaller than 32k worth of dir
+entries are read in one go), hiting some problematic cornercase is rare I
+guess. So I guess the coverage needs some expansion.  I'll have a look into
+it.
 
-I usually don't take patches that just fix whitespace like this. The
-reason is that these sorts of patches tend to make backporting difficult
-as they introduce merge conflicts for no good reason.
-
-When you're making substantial changes in an area, then please do go
-ahead and fix up whitespace in the same area, but patches that just fix
-up whitespace are more trouble than they are worth.
-
-Sorry,
+								Honza
 -- 
-Jeff Layton <jlayton@kernel.org>
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
