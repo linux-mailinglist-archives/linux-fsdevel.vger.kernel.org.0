@@ -2,172 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6261544BD56
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 09:52:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03DCE44BD73
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 09:57:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230410AbhKJIz3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Nov 2021 03:55:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49374 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230388AbhKJIz1 (ORCPT
+        id S230141AbhKJJAZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Nov 2021 04:00:25 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:23869 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230037AbhKJJAY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Nov 2021 03:55:27 -0500
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [IPv6:2001:1600:4:17::42a8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EEA4C061767
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 00:52:40 -0800 (PST)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4HpzBX2JmZzMprpP;
-        Wed, 10 Nov 2021 09:52:36 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4HpzBQ4NYzzlh8Tm;
-        Wed, 10 Nov 2021 09:52:30 +0100 (CET)
-Subject: Re: [fs] a0918006f9: netperf.Throughput_tps -11.6% regression
-To:     Kees Cook <keescook@chromium.org>,
-        kernel test robot <oliver.sang@intel.com>
-Cc:     lkp@lists.01.org, lkp@intel.com, ying.huang@intel.com,
-        feng.tang@intel.com, zhengjun.xing@linux.intel.com,
-        fengwei.yin@intel.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
+        Wed, 10 Nov 2021 04:00:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1636534657;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3KAQ2TyWknxx/QWCYCyvuZx1be3dMQ9P5XgzUpSmndc=;
+        b=MZDhOT/lTm7o5GtbTCHSDiqSXaqNIowNt3b2ThU7g3/lLA3BRVjcb9L4FuuI2FhTJ3kgk9
+        GDdrv7R2i+nsD8UPYQAsVt5a1nP4OYu3CtJ9wh8r1x6yVlvLW/SvK44Fk1Ghsae5SNefEv
+        +6anAF9MAvvuXpTZCTXl6qMlMIcmkjU=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-157-IoL9pQJCM4iYQhd5iL68JA-1; Wed, 10 Nov 2021 03:57:36 -0500
+X-MC-Unique: IoL9pQJCM4iYQhd5iL68JA-1
+Received: by mail-pj1-f71.google.com with SMTP id x6-20020a17090a6c0600b001a724a5696cso693134pjj.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 00:57:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=3KAQ2TyWknxx/QWCYCyvuZx1be3dMQ9P5XgzUpSmndc=;
+        b=YF2AaSNJNZUyf9xHwe0aNnq1vNCeJJYPqoSdJvDEr+upgNIyIqwLPGEq0aFoW2zMGN
+         HXycPQ/DT7UNe8QWgSJURcfKkm910M0tbPCmw45m9JOdg8SE+KIA0bEqaDzucylsfrHx
+         N5h9PoRThhN5NNbqmqTE1YHc0blzLVGWjNCIW7BWWcJsGQh6XtknlacBdyA2YPNM/WPR
+         GFySU72BUnzaELtpyUnI9Qnn1fOjpYXJhut/YPryV8RXMh2alioX3FBxErHdXhvBxAvw
+         eOM1XI8ONhNVRP2+u5wuJ0PXgOxzhXPcOgtG1aEcv1AooN/yU1RWZra29iOjS+xtvPNV
+         zUsA==
+X-Gm-Message-State: AOAM531jNrFvvommHSQaCKx9+mhVZI2DGddf0EA9bdsjfJRbqJPHG5jE
+        ndIFADLj3sO8ChR+cmGIBFKKlDHMRiaUfWNCAUsR/UT6PVEs8R3VTR/b0RGfuafSLEHvz9yv9tk
+        gUuoaH/I8zz9kZFillOUN2T37eQ==
+X-Received: by 2002:a63:8b4b:: with SMTP id j72mr10705952pge.10.1636534655294;
+        Wed, 10 Nov 2021 00:57:35 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyYVeA1YbnxCLJHeUVTE40Yp83p8k+PlYnN0X+h7COcawOK6O3AMBdyxxdFewwYzccU/o+c1Q==
+X-Received: by 2002:a63:8b4b:: with SMTP id j72mr10705930pge.10.1636534654994;
+        Wed, 10 Nov 2021 00:57:34 -0800 (PST)
+Received: from xz-m1.local ([94.177.118.35])
+        by smtp.gmail.com with ESMTPSA id x33sm11454976pfh.133.2021.11.10.00.57.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Nov 2021 00:57:34 -0800 (PST)
+Date:   Wed, 10 Nov 2021 16:57:27 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Mina Almasry <almasrymina@google.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20211012192410.2356090-2-mic@digikod.net>
- <20211105064159.GB17949@xsang-OptiPlex-9020>
- <202111090920.4958E610D1@keescook>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <95966337-b36e-f45e-6b16-f433bcb90c4d@digikod.net>
-Date:   Wed, 10 Nov 2021 09:52:51 +0100
-User-Agent: 
+        "Paul E . McKenney" <paulmckrcu@fb.com>,
+        Yu Zhao <yuzhao@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
+        Florian Schmidt <florian.schmidt@nutanix.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v4] mm: Add PM_HUGE_THP_MAPPING to /proc/pid/pagemap
+Message-ID: <YYuJd9ZBQiY50dVs@xz-m1.local>
+References: <20211107235754.1395488-1-almasrymina@google.com>
+ <YYtuqsnOSxA44AUX@t490s>
+ <c5ed86d0-8af6-f54f-e352-8871395ad62e@redhat.com>
+ <YYuCaNXikls/9JhS@t490s>
+ <793685d2-be3f-9a74-c9a3-65c486e0ef1f@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <202111090920.4958E610D1@keescook>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <793685d2-be3f-9a74-c9a3-65c486e0ef1f@redhat.com>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 09/11/2021 18:21, Kees Cook wrote:
-> On Fri, Nov 05, 2021 at 02:41:59PM +0800, kernel test robot wrote:
->>
->>
->> Greeting,
->>
->> FYI, we noticed a -11.6% regression of netperf.Throughput_tps due to commit:
->>
->>
->> commit: a0918006f9284b77397ae4f163f055c3e0f987b2 ("[PATCH v15 1/3] fs: Add trusted_for(2) syscall implementation and related sysctl")
->> url: https://github.com/0day-ci/linux/commits/Micka-l-Sala-n/Add-trusted_for-2-was-O_MAYEXEC/20211013-032533
->> patch link: https://lore.kernel.org/kernel-hardening/20211012192410.2356090-2-mic@digikod.net
->>
->> in testcase: netperf
->> on test machine: 192 threads 4 sockets Intel(R) Xeon(R) Platinum 9242 CPU @ 2.30GHz with 192G memory
->> with following parameters:
->>
->> 	ip: ipv4
->> 	runtime: 300s
->> 	nr_threads: 16
->> 	cluster: cs-localhost
->> 	test: TCP_CRR
->> 	cpufreq_governor: performance
->> 	ucode: 0x5003006
->>
->> test-description: Netperf is a benchmark that can be use to measure various aspect of networking performance.
->> test-url: http://www.netperf.org/netperf/
->>
->>
->> please be noted we made out some further analysis/tests, as Fengwei mentioned:
->> ==============================================================================
->> Here is my investigation result of this regression:
->>
->> If I add patch to make sure the kernel function address and data address is
->> almost same even with this patch, there is almost no performance delta(0.1%)
->> w/o the patch.
->>
->> And if I only make sure function address same w/o the patch, the performance
->> delta is about 5.1%.
->>
->> So suppose this regression is triggered by different function and data address.
->> We don't know why the different address could bring such kind of regression yet
->> ===============================================================================
->>
->>
->> we also tested on other platforms.
->> on a Cooper Lake (Intel(R) Xeon(R) Gold 5318H CPU @ 2.50GHz with 128G memory),
->> we also observed regression but the gap is smaller:
->> =========================================================================================
->> cluster/compiler/cpufreq_governor/ip/kconfig/nr_threads/rootfs/runtime/tbox_group/test/testcase/ucode:
->>   cs-localhost/gcc-9/performance/ipv4/x86_64-rhel-8.3/16/debian-10.4-x86_64-20200603.cgz/300s/lkp-cpl-4sp1/TCP_CRR/netperf/0x700001e
->>
->> commit:
->>   v5.15-rc4
->>   a0918006f9284b77397ae4f163f055c3e0f987b2
->>
->>        v5.15-rc4 a0918006f9284b77397ae4f163f
->> ---------------- ---------------------------
->>          %stddev     %change         %stddev
->>              \          |                \
->>     333492            -5.7%     314346 ±  2%  netperf.Throughput_total_tps
->>      20843            -4.5%      19896        netperf.Throughput_tps
->>
->>
->> but no regression on a 96 threads 2 sockets Ice Lake with 256G memory:
->> =========================================================================================
->> cluster/compiler/cpufreq_governor/ip/kconfig/nr_threads/rootfs/runtime/tbox_group/test/testcase/ucode:
->>   cs-localhost/gcc-9/performance/ipv4/x86_64-rhel-8.3/16/debian-10.4-x86_64-20200603.cgz/300s/lkp-icl-2sp1/TCP_CRR/netperf/0xb000280
->>
->> commit:
->>   v5.15-rc4
->>   a0918006f9284b77397ae4f163f055c3e0f987b2
->>
->>        v5.15-rc4 a0918006f9284b77397ae4f163f
->> ---------------- ---------------------------
->>          %stddev     %change         %stddev
->>              \          |                \
->>     555600            -0.1%     555305        netperf.Throughput_total_tps
->>      34725            -0.1%      34706        netperf.Throughput_tps
->>
->>
->> Fengwei also helped review these results and commented:
->> I suppose these three CPUs have different cache policy. It also could be
->> related with netperf throughput testing.
+On Wed, Nov 10, 2021 at 09:30:50AM +0100, David Hildenbrand wrote:
+> On 10.11.21 09:27, Peter Xu wrote:
+> > On Wed, Nov 10, 2021 at 09:14:42AM +0100, David Hildenbrand wrote:
+> >> On 10.11.21 08:03, Peter Xu wrote:
+> >>> Hi, Mina,
+> >>>
+> >>> Sorry to comment late.
+> >>>
+> >>> On Sun, Nov 07, 2021 at 03:57:54PM -0800, Mina Almasry wrote:
+> >>>> diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
+> >>>> index fdc19fbc10839..8a0f0064ff336 100644
+> >>>> --- a/Documentation/admin-guide/mm/pagemap.rst
+> >>>> +++ b/Documentation/admin-guide/mm/pagemap.rst
+> >>>> @@ -23,7 +23,8 @@ There are four components to pagemap:
+> >>>>      * Bit  56    page exclusively mapped (since 4.2)
+> >>>>      * Bit  57    pte is uffd-wp write-protected (since 5.13) (see
+> >>>>        :ref:`Documentation/admin-guide/mm/userfaultfd.rst <userfaultfd>`)
+> >>>> -    * Bits 57-60 zero
+> >>>> +    * Bit  58    page is a huge (PMD size) THP mapping
+> >>>> +    * Bits 59-60 zero
+> >>>>      * Bit  61    page is file-page or shared-anon (since 3.5)
+> >>>>      * Bit  62    page swapped
+> >>>>      * Bit  63    page present
+> >>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> >>>> index ad667dbc96f5c..6f1403f83b310 100644
+> >>>> --- a/fs/proc/task_mmu.c
+> >>>> +++ b/fs/proc/task_mmu.c
+> >>>> @@ -1302,6 +1302,7 @@ struct pagemapread {
+> >>>>  #define PM_SOFT_DIRTY		BIT_ULL(55)
+> >>>>  #define PM_MMAP_EXCLUSIVE	BIT_ULL(56)
+> >>>>  #define PM_UFFD_WP		BIT_ULL(57)
+> >>>> +#define PM_HUGE_THP_MAPPING	BIT_ULL(58)
+> >>>
+> >>> The ending "_MAPPING" seems redundant to me, how about just call it "PM_THP" or
+> >>> "PM_HUGE" (as THP also means HUGE already)?
+> >>>
+> >>> IMHO the core problem is about permission controls, and it seems to me we're
+> >>> actually trying to workaround it by duplicating some information we have.. so
+> >>> it's kind of a pity.  Totally not against this patch, but imho it'll be nicer
+> >>> if it's the permission part that to be enhanced, rather than a new but slightly
+> >>> duplicated interface.
+> >>
+> >> It's not a permission problem AFAIKS: even with permissions "changed",
+> >> any attempt to use /proc/kpageflags is just racy. Let's not go down that
+> >> path, it's really the wrong mechanism to export to random userspace.
+> > 
+> > I agree it's racy, but IMHO that's fine.  These are hints for userspace to make
+> > decisions, they cannot be always right.  Even if we fetch atomically and seeing
+> > that this pte is swapped out, it can be quickly accessed at the same time and
+> > it'll be in-memory again.  Only if we can freeze the whole pgtable but we
+> > can't, so they can only be used as hints.
 > 
-> Does moving the syscall implementation somewhere else change things?
-> That's a _huge_ performance change for something that isn't even called.
-> What's going on here?
+> Sorry, I don't think /proc/kpageflags (or exporting the PFNs to random
+> users via /proc/self/pagemap) is the way to go.
+> 
+> "Since Linux 4.0 only users with the CAP_SYS_ADMIN capability can get
+> PFNs. In 4.0 and 4.1 opens by unprivileged fail with -EPERM.  Starting
+> from 4.2 the PFN field is zeroed if the user does not have
+> CAP_SYS_ADMIN. Reason: information about PFNs helps in exploiting
+> Rowhammer vulnerability."
 
-This regression doesn't make sense. I guess this is the result of a
-flaky netperf test, maybe because the test machine was overloaded at
-that time.
+IMHO these are two problems that you mentioned.  That's also what I was
+wondering about: could the app be granted with CAP_SYS_ADMIN then?
+
+I am not sure whether that'll work well with /proc/kpage* though, as it's by
+default 0400.  So perhaps we need to manual adjust the file permission too to
+make sure the app can both access PFNs (with SYS_ADMIN) and the flags.  Totally
+no expert on the permissions..
+
+> 
+> > 
+> >>
+> >> We do have an interface to access this information from userspace
+> >> already: /proc/self/smaps IIRC. Mina commented that they are seeing
+> >> performance issues with that approach.
+> >>
+> >> It would be valuable to add these details to the patch description,
+> >> including a performance difference when using both interfaces we have
+> >> available. As the patch description stands, there is no explanation
+> >> "why" we want this change.
+> > 
+> > I didn't notice Mina mention about performance issues with kpageflags, if so
+> > then I agree this solution helps. 
+> The performance issue seems to be with /proc/self/smaps.
+
+This also reminded me that we've got issue with smaps being too slow, and in
+many cases we're only interested in a small portion of the whole memory.  This
+made me wonder how about a new smaps interface taking memory range as input.
+
+Thanks,
+
+-- 
+Peter Xu
+
