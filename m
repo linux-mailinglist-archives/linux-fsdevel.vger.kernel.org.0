@@ -2,172 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 03DCE44BD73
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 09:57:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 196D044BD95
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 10:06:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230141AbhKJJAZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Nov 2021 04:00:25 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:23869 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230037AbhKJJAY (ORCPT
+        id S230404AbhKJJJJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Nov 2021 04:09:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52540 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229831AbhKJJJI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Nov 2021 04:00:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636534657;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3KAQ2TyWknxx/QWCYCyvuZx1be3dMQ9P5XgzUpSmndc=;
-        b=MZDhOT/lTm7o5GtbTCHSDiqSXaqNIowNt3b2ThU7g3/lLA3BRVjcb9L4FuuI2FhTJ3kgk9
-        GDdrv7R2i+nsD8UPYQAsVt5a1nP4OYu3CtJ9wh8r1x6yVlvLW/SvK44Fk1Ghsae5SNefEv
-        +6anAF9MAvvuXpTZCTXl6qMlMIcmkjU=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-157-IoL9pQJCM4iYQhd5iL68JA-1; Wed, 10 Nov 2021 03:57:36 -0500
-X-MC-Unique: IoL9pQJCM4iYQhd5iL68JA-1
-Received: by mail-pj1-f71.google.com with SMTP id x6-20020a17090a6c0600b001a724a5696cso693134pjj.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 00:57:36 -0800 (PST)
+        Wed, 10 Nov 2021 04:09:08 -0500
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E205C061764;
+        Wed, 10 Nov 2021 01:06:21 -0800 (PST)
+Received: by mail-qk1-x731.google.com with SMTP id bk22so1847021qkb.6;
+        Wed, 10 Nov 2021 01:06:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ImnqB797AKnJuD4oPIYf8Tox3YCxcvXVphwHiRaIbIY=;
+        b=oMfCBYvauO8zRBwa2KehEw6l9I/gVh/IsHK2ianpEu/xIihkSVB/V6SY3F/ttzaM9E
+         nezbT4CmBgHKehn2yU5PaH/ZIe37KBZYxptntmlE84NkrCX9sBVx5fvOJ97WuHyjLu81
+         ySMip7zDVDJzC8Ud+eLEDqMIyFDT68YJu/vMGfrUMMkvIb9Gy3UDZ9KieYePa59ndf9w
+         2iNH/0Swtlcmca7uxTSVZ6+cgn0aA6kyAsyRtDOUv343TMFcvYUnDbmDYL36Evv24Use
+         DEXFPEpNZYt0Ltjw511zdD5Yt5ts2oQXhSF1bjzx+hLVoi83rzncSdyXWjhsWQZSkQMW
+         9DAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=3KAQ2TyWknxx/QWCYCyvuZx1be3dMQ9P5XgzUpSmndc=;
-        b=YF2AaSNJNZUyf9xHwe0aNnq1vNCeJJYPqoSdJvDEr+upgNIyIqwLPGEq0aFoW2zMGN
-         HXycPQ/DT7UNe8QWgSJURcfKkm910M0tbPCmw45m9JOdg8SE+KIA0bEqaDzucylsfrHx
-         N5h9PoRThhN5NNbqmqTE1YHc0blzLVGWjNCIW7BWWcJsGQh6XtknlacBdyA2YPNM/WPR
-         GFySU72BUnzaELtpyUnI9Qnn1fOjpYXJhut/YPryV8RXMh2alioX3FBxErHdXhvBxAvw
-         eOM1XI8ONhNVRP2+u5wuJ0PXgOxzhXPcOgtG1aEcv1AooN/yU1RWZra29iOjS+xtvPNV
-         zUsA==
-X-Gm-Message-State: AOAM531jNrFvvommHSQaCKx9+mhVZI2DGddf0EA9bdsjfJRbqJPHG5jE
-        ndIFADLj3sO8ChR+cmGIBFKKlDHMRiaUfWNCAUsR/UT6PVEs8R3VTR/b0RGfuafSLEHvz9yv9tk
-        gUuoaH/I8zz9kZFillOUN2T37eQ==
-X-Received: by 2002:a63:8b4b:: with SMTP id j72mr10705952pge.10.1636534655294;
-        Wed, 10 Nov 2021 00:57:35 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyYVeA1YbnxCLJHeUVTE40Yp83p8k+PlYnN0X+h7COcawOK6O3AMBdyxxdFewwYzccU/o+c1Q==
-X-Received: by 2002:a63:8b4b:: with SMTP id j72mr10705930pge.10.1636534654994;
-        Wed, 10 Nov 2021 00:57:34 -0800 (PST)
-Received: from xz-m1.local ([94.177.118.35])
-        by smtp.gmail.com with ESMTPSA id x33sm11454976pfh.133.2021.11.10.00.57.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Nov 2021 00:57:34 -0800 (PST)
-Date:   Wed, 10 Nov 2021 16:57:27 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Mina Almasry <almasrymina@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Paul E . McKenney" <paulmckrcu@fb.com>,
-        Yu Zhao <yuzhao@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        Florian Schmidt <florian.schmidt@nutanix.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v4] mm: Add PM_HUGE_THP_MAPPING to /proc/pid/pagemap
-Message-ID: <YYuJd9ZBQiY50dVs@xz-m1.local>
-References: <20211107235754.1395488-1-almasrymina@google.com>
- <YYtuqsnOSxA44AUX@t490s>
- <c5ed86d0-8af6-f54f-e352-8871395ad62e@redhat.com>
- <YYuCaNXikls/9JhS@t490s>
- <793685d2-be3f-9a74-c9a3-65c486e0ef1f@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ImnqB797AKnJuD4oPIYf8Tox3YCxcvXVphwHiRaIbIY=;
+        b=ZHPMhG1+eAE+XkQoyRl7mhWJuUqqVqyiabOx+0COCv+ahau8SNoIei1BkhJyn2eeot
+         1YIkXijJhN9Ln70UBrF31t4+Z4LjdJGA3F1qzThf0RlEJ4v5RFtpjhQch4gLc/v0agiu
+         3EiGG5g3VEU3+8n/CJfREpxT2pFNL8jCcnDgBbKsVAMhFYzceBM+vcErw9JDFMHesUf9
+         LqaUG1f2s+kDSd9KWQ+RGOlrrg7HYlm9BuRMA8xHwV8bfY7zRumokPUA3s3YI/LKq/sx
+         g/JYDrxWjzr/ecqV5dhBWbjBTq6Yt/Av17ngtpdYOS5l4gvIUcXnsZXYJlusSJLg/lN6
+         sCtg==
+X-Gm-Message-State: AOAM531D3c52Gu8LD0gPKcS8wwpSsqrtLyYN5fbPMu8bEOQtyae8VYBQ
+        EaoPcF8GYwcUbVyOnb7f9my+n8QMiZYGdxqp+Gk=
+X-Google-Smtp-Source: ABdhPJxecwxlgh5Be+apIVbyhK9b5EOBmc1BMU6ZqqxInFojT85GAhLJhs4ImfIMb89COAJxX42mTS13PbNiDO5tpM0=
+X-Received: by 2002:a37:e97:: with SMTP id 145mr11499308qko.116.1636535180801;
+ Wed, 10 Nov 2021 01:06:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <793685d2-be3f-9a74-c9a3-65c486e0ef1f@redhat.com>
+References: <20211108083840.4627-1-laoar.shao@gmail.com> <20211108083840.4627-2-laoar.shao@gmail.com>
+ <c3571571-320a-3e25-8409-5653ddca895c@redhat.com>
+In-Reply-To: <c3571571-320a-3e25-8409-5653ddca895c@redhat.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Wed, 10 Nov 2021 17:05:44 +0800
+Message-ID: <CALOAHbCexkBs7FCdmQcatQbc+RsGTSoJkNBop0khsZX=g8Ftkg@mail.gmail.com>
+Subject: Re: [PATCH 1/7] fs/exec: make __set_task_comm always set a nul
+ terminated string
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        netdev <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        "linux-perf-use." <linux-perf-users@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel test robot <oliver.sang@intel.com>,
+        kbuild test robot <lkp@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Petr Mladek <pmladek@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 10, 2021 at 09:30:50AM +0100, David Hildenbrand wrote:
-> On 10.11.21 09:27, Peter Xu wrote:
-> > On Wed, Nov 10, 2021 at 09:14:42AM +0100, David Hildenbrand wrote:
-> >> On 10.11.21 08:03, Peter Xu wrote:
-> >>> Hi, Mina,
-> >>>
-> >>> Sorry to comment late.
-> >>>
-> >>> On Sun, Nov 07, 2021 at 03:57:54PM -0800, Mina Almasry wrote:
-> >>>> diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
-> >>>> index fdc19fbc10839..8a0f0064ff336 100644
-> >>>> --- a/Documentation/admin-guide/mm/pagemap.rst
-> >>>> +++ b/Documentation/admin-guide/mm/pagemap.rst
-> >>>> @@ -23,7 +23,8 @@ There are four components to pagemap:
-> >>>>      * Bit  56    page exclusively mapped (since 4.2)
-> >>>>      * Bit  57    pte is uffd-wp write-protected (since 5.13) (see
-> >>>>        :ref:`Documentation/admin-guide/mm/userfaultfd.rst <userfaultfd>`)
-> >>>> -    * Bits 57-60 zero
-> >>>> +    * Bit  58    page is a huge (PMD size) THP mapping
-> >>>> +    * Bits 59-60 zero
-> >>>>      * Bit  61    page is file-page or shared-anon (since 3.5)
-> >>>>      * Bit  62    page swapped
-> >>>>      * Bit  63    page present
-> >>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> >>>> index ad667dbc96f5c..6f1403f83b310 100644
-> >>>> --- a/fs/proc/task_mmu.c
-> >>>> +++ b/fs/proc/task_mmu.c
-> >>>> @@ -1302,6 +1302,7 @@ struct pagemapread {
-> >>>>  #define PM_SOFT_DIRTY		BIT_ULL(55)
-> >>>>  #define PM_MMAP_EXCLUSIVE	BIT_ULL(56)
-> >>>>  #define PM_UFFD_WP		BIT_ULL(57)
-> >>>> +#define PM_HUGE_THP_MAPPING	BIT_ULL(58)
-> >>>
-> >>> The ending "_MAPPING" seems redundant to me, how about just call it "PM_THP" or
-> >>> "PM_HUGE" (as THP also means HUGE already)?
-> >>>
-> >>> IMHO the core problem is about permission controls, and it seems to me we're
-> >>> actually trying to workaround it by duplicating some information we have.. so
-> >>> it's kind of a pity.  Totally not against this patch, but imho it'll be nicer
-> >>> if it's the permission part that to be enhanced, rather than a new but slightly
-> >>> duplicated interface.
-> >>
-> >> It's not a permission problem AFAIKS: even with permissions "changed",
-> >> any attempt to use /proc/kpageflags is just racy. Let's not go down that
-> >> path, it's really the wrong mechanism to export to random userspace.
-> > 
-> > I agree it's racy, but IMHO that's fine.  These are hints for userspace to make
-> > decisions, they cannot be always right.  Even if we fetch atomically and seeing
-> > that this pte is swapped out, it can be quickly accessed at the same time and
-> > it'll be in-memory again.  Only if we can freeze the whole pgtable but we
-> > can't, so they can only be used as hints.
-> 
-> Sorry, I don't think /proc/kpageflags (or exporting the PFNs to random
-> users via /proc/self/pagemap) is the way to go.
-> 
-> "Since Linux 4.0 only users with the CAP_SYS_ADMIN capability can get
-> PFNs. In 4.0 and 4.1 opens by unprivileged fail with -EPERM.  Starting
-> from 4.2 the PFN field is zeroed if the user does not have
-> CAP_SYS_ADMIN. Reason: information about PFNs helps in exploiting
-> Rowhammer vulnerability."
+On Wed, Nov 10, 2021 at 4:28 PM David Hildenbrand <david@redhat.com> wrote:
+>
+> On 08.11.21 09:38, Yafang Shao wrote:
+> > Make sure the string set to task comm is always nul terminated.
+> >
+>
+> strlcpy: "the result is always a valid NUL-terminated string that fits
+> in the buffer"
+>
+> The only difference seems to be that strscpy_pad() pads the remainder
+> with zeroes.
+>
+> Is this description correct and I am missing something important?
+>
 
-IMHO these are two problems that you mentioned.  That's also what I was
-wondering about: could the app be granted with CAP_SYS_ADMIN then?
+In a earlier version [1], the checkpatch.py found a warning:
+WARNING: Prefer strscpy over strlcpy - see:
+https://lore.kernel.org/r/CAHk-=wgfRnXz0W3D37d01q3JFkr_i_uTL=V6A6G1oUZcprmknw@mail.gmail.com/
+So I replaced strlcpy() with strscpy() to fix this warning.
+And then in v5[2], the strscpy() was replaced with strscpy_pad() to
+make sure there's no garbade data and also make get_task_comm() be
+consistent with get_task_comm().
 
-I am not sure whether that'll work well with /proc/kpage* though, as it's by
-default 0400.  So perhaps we need to manual adjust the file permission too to
-make sure the app can both access PFNs (with SYS_ADMIN) and the flags.  Totally
-no expert on the permissions..
+This commit log didn't clearly describe the historical changes.  So I
+think we can update the commit log and subject with:
 
-> 
-> > 
-> >>
-> >> We do have an interface to access this information from userspace
-> >> already: /proc/self/smaps IIRC. Mina commented that they are seeing
-> >> performance issues with that approach.
-> >>
-> >> It would be valuable to add these details to the patch description,
-> >> including a performance difference when using both interfaces we have
-> >> available. As the patch description stands, there is no explanation
-> >> "why" we want this change.
-> > 
-> > I didn't notice Mina mention about performance issues with kpageflags, if so
-> > then I agree this solution helps. 
-> The performance issue seems to be with /proc/self/smaps.
+Subject: use strscpy_pad with strlcpy in __set_task_comm
+Commit log:
+strlcpy is not suggested to use by the checkpatch.pl, so we'd better
+recplace it with strscpy.
+To avoid leaving garbage data and be consistent with the usage in
+__get_task_comm(), the strscpy_pad is used here.
 
-This also reminded me that we've got issue with smaps being too slow, and in
-many cases we're only interested in a small portion of the whole memory.  This
-made me wonder how about a new smaps interface taking memory range as input.
+WDYT?
 
-Thanks,
+[1]. https://lore.kernel.org/lkml/20211007120752.5195-3-laoar.shao@gmail.com/
+[2]. https://lore.kernel.org/lkml/20211021034516.4400-2-laoar.shao@gmail.com/
+
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> > Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+> > Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> > Cc: Michal Miroslaw <mirq-linux@rere.qmqm.pl>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Cc: Matthew Wilcox <willy@infradead.org>
+> > Cc: David Hildenbrand <david@redhat.com>
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Petr Mladek <pmladek@suse.com>
+> > ---
+> >  fs/exec.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/exec.c b/fs/exec.c
+> > index a098c133d8d7..404156b5b314 100644
+> > --- a/fs/exec.c
+> > +++ b/fs/exec.c
+> > @@ -1224,7 +1224,7 @@ void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
+> >  {
+> >       task_lock(tsk);
+> >       trace_task_rename(tsk, buf);
+> > -     strlcpy(tsk->comm, buf, sizeof(tsk->comm));
+> > +     strscpy_pad(tsk->comm, buf, sizeof(tsk->comm));
+> >       task_unlock(tsk);
+> >       perf_event_comm(tsk, exec);
+> >  }
+> >
+>
+>
+> --
+> Thanks,
+>
+> David / dhildenb
+>
+
 
 -- 
-Peter Xu
-
+Thanks
+Yafang
