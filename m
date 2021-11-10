@@ -2,100 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C6FE144C613
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 18:39:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF3FC44C620
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 18:42:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232340AbhKJRmZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Nov 2021 12:42:25 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44484 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230230AbhKJRmY (ORCPT
+        id S231418AbhKJRp3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Nov 2021 12:45:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58106 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230230AbhKJRp1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Nov 2021 12:42:24 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AAHCQ7w011648;
-        Wed, 10 Nov 2021 17:39:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=DsmJTDmYa8Ou29XXykXIjUTIY5EdNVZGfdayt//X1SI=;
- b=IFU9TaKB+ZFGGaz6licffK4uHbty8THDCH7Hj6LC2KcUFOvKhWeVl5ijW/nXY9Zztive
- 5JHCmDUTBUl/a6jIdq0AaCwW7rufgDwdYjGsulZcDVebI9WkwJv7ipBJvOn8edDyeBpc
- YmcDaTUl/GKz16efuq2ZrL9Jjqn39Tmv5gVra+k8b+6wdckFm64N7QoEQEZ1jB3Jr9pd
- 7ten2aXSudrLibS2toDXj4kPQs+OlNq4dvbACnUuj2LzMD7ZTVwyJ1y5vBLmaKUePhVn
- tuVfPWapNlQXhARmn9hYGJ4f4F5cMkiX4dDqnssskovEa2UKwgyrc2iYzLfj0N57bDj7 2A== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3c8j9e0qtv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 10 Nov 2021 17:39:35 +0000
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1AAHCs5L014537;
-        Wed, 10 Nov 2021 17:39:35 GMT
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3c8j9e0qt4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 10 Nov 2021 17:39:35 +0000
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1AAHXqCp005851;
-        Wed, 10 Nov 2021 17:39:32 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma06fra.de.ibm.com with ESMTP id 3c5gykb91t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 10 Nov 2021 17:39:32 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1AAHWpE751315172
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 10 Nov 2021 17:32:51 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7557D52050;
-        Wed, 10 Nov 2021 17:39:30 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.122.189])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 7024F52087;
-        Wed, 10 Nov 2021 17:39:29 +0000 (GMT)
-Message-ID: <6213c2f886637f824b14c67de7f9534349417b49.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH] ima: differentiate overlay, pivot_root, and other
- pathnames
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Michael Peters <michael00peters@gmail.com>
-Cc:     amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, miklos@szeredi.hu
-Date:   Wed, 10 Nov 2021 12:39:28 -0500
-In-Reply-To: <CAJQqANe-SFvPEEQcQrGUsn9n1aFybCOQaofvnmS+qZGvnNh7nQ@mail.gmail.com>
-References: <CAJQqANe-SFvPEEQcQrGUsn9n1aFybCOQaofvnmS+qZGvnNh7nQ@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: bzOCqSqLSHHbM0ebbLhv52CMp5eObhbZ
-X-Proofpoint-GUID: G5MeeHsLaLTk7BHMG7xNU-B0ujXzhGA3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-11-10_06,2021-11-08_02,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- mlxscore=0 adultscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501
- bulkscore=0 spamscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
- definitions=main-2111100087
+        Wed, 10 Nov 2021 12:45:27 -0500
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 284E7C061766
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 09:42:39 -0800 (PST)
+Received: by mail-wm1-x32a.google.com with SMTP id 77-20020a1c0450000000b0033123de3425so5323532wme.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 09:42:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BmJmTnzPfpqvgfeS3ZzzZ3LIV2vZGhaQGUrN4OQ9GVc=;
+        b=A7oSaQ/R3coHeHC40rJ1CdryOdtv8cF/yEknlJz/6t2IQ9dnili9EARfpQDCBm28ji
+         +wyP8Y4NxaIga5rYkU9newjPK83r3XxBCUjtZFwOW/TvYSLyjyj+BCBKGQ1IGfRjvLI8
+         2bECtGd3vIUMuWU3wVJSqgwLGQZUAMpg38XCzAk9lIWGt7kzaxFdOuGOsCLoEz1YLXcz
+         FbsqZ6pCB+WNLHTk5aAH5wn6EMrs4x60kSWI9cwwRUcg6kgOoVefgrL+ipnZsugspW4J
+         yV0/8taOfuVhsurV1P76C8PWRMlnTr9vtgqt8XYUynssRc4DoF4uB61vyljyljf85GDs
+         0/BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BmJmTnzPfpqvgfeS3ZzzZ3LIV2vZGhaQGUrN4OQ9GVc=;
+        b=4mawB9GojFfOEBLBv8LV6CAf29pUKt7rAUOsAd0qpDILRbYkY39AoY5iOHk/ZVAfMQ
+         OX/22/1nWTaloQIow5fAcilcj+pgEov4Qj9LRX5fYdupduVG3XpFGCfCKyFHt333VBxu
+         Dv93qKh2ZTeqPYjJPSB+NBpp7RA2ckcdRbGR4Sf2sPp8i/mH3cmFuSsZO34HrmQKhmA0
+         2i7wzX4yJmv6QJxck5cN+6ScxU1hyZtkbgqBivwUyirlrB0x54Yu/06CrHTEmb8PMYpU
+         1GfQkcbo5P/jkx2Fpwm4jaxJysm/g3a2bLvS42l/LGJ+clS0kQKf2CAvxcdSOuHNNrl9
+         rpiw==
+X-Gm-Message-State: AOAM533DsErUe3BhKU+qi93Fr+9WY0066oN3oC9cYEPSxQHi4INO/jbb
+        J9UES2hYmyD7Rd7wmOZWzgHYWQ66uTtA/LsoZCSRaA==
+X-Google-Smtp-Source: ABdhPJzaIRfLIlvC2xdnSw40WJRg4en26VatfTndhl34g3jZs25Ylo2D5RvkxNkOG3tMYShQ+X6yeP3O+PNjG70M6HA=
+X-Received: by 2002:a05:600c:190b:: with SMTP id j11mr1023411wmq.112.1636566157490;
+ Wed, 10 Nov 2021 09:42:37 -0800 (PST)
+MIME-Version: 1.0
+References: <20211107235754.1395488-1-almasrymina@google.com>
+ <YYtuqsnOSxA44AUX@t490s> <c5ed86d0-8af6-f54f-e352-8871395ad62e@redhat.com>
+ <YYuCaNXikls/9JhS@t490s> <793685d2-be3f-9a74-c9a3-65c486e0ef1f@redhat.com>
+ <YYuJd9ZBQiY50dVs@xz-m1.local> <8032a24c-3800-16e5-41b7-5565e74d3863@redhat.com>
+In-Reply-To: <8032a24c-3800-16e5-41b7-5565e74d3863@redhat.com>
+From:   Mina Almasry <almasrymina@google.com>
+Date:   Wed, 10 Nov 2021 09:42:25 -0800
+Message-ID: <CAHS8izPKN96M2GbHBC6_-XCr1pYy7uA-vNw2FHe01XbYMVdKUQ@mail.gmail.com>
+Subject: Re: [PATCH v4] mm: Add PM_HUGE_THP_MAPPING to /proc/pid/pagemap
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+        "Paul E . McKenney" <paulmckrcu@fb.com>,
+        Yu Zhao <yuzhao@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
+        Florian Schmidt <florian.schmidt@nutanix.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2021-11-10 at 10:28 -0500, Michael Peters wrote:
+On Wed, Nov 10, 2021 at 12:57 AM Peter Xu <peterx@redhat.com> wrote:
+>
+>
+> This also reminded me that we've got issue with smaps being too slow, and in
+> many cases we're only interested in a small portion of the whole memory.  This
+> made me wonder how about a new smaps interface taking memory range as input.
+>
 
-> This looks good, but would be even better if the flag that controlled
-> this was settable in the ima_policy. That's much easier to work with
-> in a lot of DevOps toolchains and pipelines and is similar to how the
-> other ima configuration is done.
+Does a patch like I'm providing here address the perf issues you're seeing?
 
-Thanks, Michael.  Agreed, which is one of the reasons for posting this
-patch as an RFC.  The other reason is that it is an incomplete
-solution, since it doesn't address mount namespaces.  Any suggestions
-for addressing mount namespaces would be appreciated. Assuming there is
-a benefit for a partial solution, I'll add the per policy rule support.
+> Thanks,
+>
+> --
+> Peter Xu
+>
 
-thanks,
+On Wed, Nov 10, 2021 at 2:24 AM David Hildenbrand <david@redhat.com> wrote:
+>
+> On 10.11.21 09:57, Peter Xu wrote:
+> > On Wed, Nov 10, 2021 at 09:30:50AM +0100, David Hildenbrand wrote:
+> >> On 10.11.21 09:27, Peter Xu wrote:
+> >>> On Wed, Nov 10, 2021 at 09:14:42AM +0100, David Hildenbrand wrote:
+> >>>> On 10.11.21 08:03, Peter Xu wrote:
+> >>>>> Hi, Mina,
+> >>>>>
+> >>>>> Sorry to comment late.
+> >>>>>
+> >>>>> On Sun, Nov 07, 2021 at 03:57:54PM -0800, Mina Almasry wrote:
+> >>>>>> diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
+> >>>>>> index fdc19fbc10839..8a0f0064ff336 100644
+> >>>>>> --- a/Documentation/admin-guide/mm/pagemap.rst
+> >>>>>> +++ b/Documentation/admin-guide/mm/pagemap.rst
+> >>>>>> @@ -23,7 +23,8 @@ There are four components to pagemap:
+> >>>>>>      * Bit  56    page exclusively mapped (since 4.2)
+> >>>>>>      * Bit  57    pte is uffd-wp write-protected (since 5.13) (see
+> >>>>>>        :ref:`Documentation/admin-guide/mm/userfaultfd.rst <userfaultfd>`)
+> >>>>>> -    * Bits 57-60 zero
+> >>>>>> +    * Bit  58    page is a huge (PMD size) THP mapping
+> >>>>>> +    * Bits 59-60 zero
+> >>>>>>      * Bit  61    page is file-page or shared-anon (since 3.5)
+> >>>>>>      * Bit  62    page swapped
+> >>>>>>      * Bit  63    page present
+> >>>>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> >>>>>> index ad667dbc96f5c..6f1403f83b310 100644
+> >>>>>> --- a/fs/proc/task_mmu.c
+> >>>>>> +++ b/fs/proc/task_mmu.c
+> >>>>>> @@ -1302,6 +1302,7 @@ struct pagemapread {
+> >>>>>>  #define PM_SOFT_DIRTY           BIT_ULL(55)
+> >>>>>>  #define PM_MMAP_EXCLUSIVE       BIT_ULL(56)
+> >>>>>>  #define PM_UFFD_WP              BIT_ULL(57)
+> >>>>>> +#define PM_HUGE_THP_MAPPING     BIT_ULL(58)
+> >>>>>
+> >>>>> The ending "_MAPPING" seems redundant to me, how about just call it "PM_THP" or
+> >>>>> "PM_HUGE" (as THP also means HUGE already)?
+> >>>>>
+> >>>>> IMHO the core problem is about permission controls, and it seems to me we're
+> >>>>> actually trying to workaround it by duplicating some information we have.. so
+> >>>>> it's kind of a pity.  Totally not against this patch, but imho it'll be nicer
+> >>>>> if it's the permission part that to be enhanced, rather than a new but slightly
+> >>>>> duplicated interface.
+> >>>>
+> >>>> It's not a permission problem AFAIKS: even with permissions "changed",
+> >>>> any attempt to use /proc/kpageflags is just racy. Let's not go down that
+> >>>> path, it's really the wrong mechanism to export to random userspace.
+> >>>
+> >>> I agree it's racy, but IMHO that's fine.  These are hints for userspace to make
+> >>> decisions, they cannot be always right.  Even if we fetch atomically and seeing
+> >>> that this pte is swapped out, it can be quickly accessed at the same time and
+> >>> it'll be in-memory again.  Only if we can freeze the whole pgtable but we
+> >>> can't, so they can only be used as hints.
+> >>
+> >> Sorry, I don't think /proc/kpageflags (or exporting the PFNs to random
+> >> users via /proc/self/pagemap) is the way to go.
+> >>
+> >> "Since Linux 4.0 only users with the CAP_SYS_ADMIN capability can get
+> >> PFNs. In 4.0 and 4.1 opens by unprivileged fail with -EPERM.  Starting
+> >> from 4.2 the PFN field is zeroed if the user does not have
+> >> CAP_SYS_ADMIN. Reason: information about PFNs helps in exploiting
+> >> Rowhammer vulnerability."
+> >
+> > IMHO these are two problems that you mentioned.  That's also what I was
+> > wondering about: could the app be granted with CAP_SYS_ADMIN then?
+> >
+> > I am not sure whether that'll work well with /proc/kpage* though, as it's by
+> > default 0400.  So perhaps we need to manual adjust the file permission too to
+> > make sure the app can both access PFNs (with SYS_ADMIN) and the flags.  Totally
+> > no expert on the permissions..
+>
+> Me too :)
+>
+> IIRC changing permissions that was not an option -- which is why the
+> first approach suggested a new /proc/self/pageflags. But I guess Mina
+> can remind us (and eventually document all that in the patch description
+> :) ).
+>
 
-Mimi
+Sorry, yes I should update the commit message with this info. The
+issues with smaps are:
+1. Performance: I've pinged our network service folks to obtain a
+rough perf comparison but I haven't been able to get one. I can try to
+get a performance measurement myself but Peter seems to be also seeing
+this.
+2. smaps output is human readable and a bit convoluted for userspace to parse.
 
+>
+> --
+> Thanks,
+>
+> David / dhildenb
+>
