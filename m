@@ -2,39 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E61D144CD2F
+	by mail.lfdr.de (Postfix) with ESMTP id 9C45844CD2E
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 23:56:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233911AbhKJW6t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Nov 2021 17:58:49 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.129.124]:41039 "EHLO
+        id S233908AbhKJW6s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Nov 2021 17:58:48 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37498 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233852AbhKJW6r (ORCPT
+        by vger.kernel.org with ESMTP id S233719AbhKJW6q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Nov 2021 17:58:47 -0500
+        Wed, 10 Nov 2021 17:58:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636584959;
+        s=mimecast20190719; t=1636584958;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=ffRLM5/6i0/EpV2nOMpGLKukcrPEwSXDgFx3WFdW8vs=;
-        b=VUcHQHnvof1DJcW1Dd6nUYTM5vFlqgke8dzxYwhrRYDhWuSvOSJ1zWPvZySCIE+VqxUGZm
-        hFwY2Nwo10GK1wI0gUwxv9j/lztfpnIKx37js79P6zpP1mOPZm209ePdBQFKi3yCSi3abx
-        ETG5iNP1Yt4FsG0RhclLmoHLVYgzMvA=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=cNRi1cDrDrXamK3Yu/V+uQyJiC2xtVnl13TmSopMBNM=;
+        b=Y7IrzO/pTNweW49NRSUMlR82hd3LqgBRvYWk0TsOCeDtE2RxeVCt8tHCHy0G5fLTA11SQu
+        4eSvPgyUjM1L19qOvNC9KCZcs4Zsfa2gN4pisbeTuJizcjiCTm1Dh0TlSbTWVllwskmsK+
+        zbwesWAHPSgRj5Z05SiDVd9R0uq2Q/s=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-153-fdGcCOIZNzarAtBdzxH2FQ-1; Wed, 10 Nov 2021 17:55:55 -0500
-X-MC-Unique: fdGcCOIZNzarAtBdzxH2FQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-148-Q9JKohqWO5q_7JtVXTercA-1; Wed, 10 Nov 2021 17:55:52 -0500
+X-MC-Unique: Q9JKohqWO5q_7JtVXTercA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4ED7319253C0;
-        Wed, 10 Nov 2021 22:55:54 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 36649BAF80;
+        Wed, 10 Nov 2021 22:55:51 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.22.10.9])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 542A869FBD;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 681DA104A9C6;
         Wed, 10 Nov 2021 22:55:43 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id E1F75223DF5; Wed, 10 Nov 2021 17:55:42 -0500 (EST)
+        id E5073224A82; Wed, 10 Nov 2021 17:55:42 -0500 (EST)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     miklos@szeredi.hu
 Cc:     linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
@@ -42,44 +43,330 @@ Cc:     linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
         chirantan@chromium.org, vgoyal@redhat.com,
         stephen.smalley.work@gmail.com, dwalsh@redhat.com,
         casey@schaufler-ca.com, omosnace@redhat.com
-Subject: [PATCH v3 0/1] fuse: Send file/inode security context during creation
-Date:   Wed, 10 Nov 2021 17:55:27 -0500
-Message-Id: <20211110225528.48601-1-vgoyal@redhat.com>
+Subject: [PATCH v3 1/1] fuse: Send security context of inode on file creation
+Date:   Wed, 10 Nov 2021 17:55:28 -0500
+Message-Id: <20211110225528.48601-2-vgoyal@redhat.com>
+In-Reply-To: <20211110225528.48601-1-vgoyal@redhat.com>
+References: <20211110225528.48601-1-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+When a new inode is created, send its security context to server along
+with creation request (FUSE_CREAT, FUSE_MKNOD, FUSE_MKDIR and FUSE_SYMLINK).
+This gives server an opportunity to create new file and set security
+context (possibly atomically). In all the configurations it might not
+be possible to set context atomically.
 
-This is V3 of the patch. V2 was posted here.
+Like nfs and ceph, use security_dentry_init_security() to dermine security
+context of inode and send it with create, mkdir, mknod, and symlink requests.
 
-https://lore.kernel.org/linux-fsdevel/20210924192442.916927-1-vgoyal@redhat.com/
+Following is the information sent to server.
 
-I took care of feedback from Miklos. Changes since v2 are.
+fuse_sectx_header, fuse_secctx, xattr_name, security_context
 
-- Merged two patches into one. (Miklos)
-- Renamed fuse_secctxs to fuse_secctx_header (Miklos)
-- Added total size of all contexts (including fuse_secctx_header) field
-  in fuse_secctx_header. (Miklos)
-- Fixed changelogs (Casey Schaufler)
-- Removed one unnecessary if condition check (Miklos)
-- Removed a function argument to function create_new_entry() (Miklos)
+- struct fuse_secctx_header
+  This contains total number of security contexts being sent and total
+  size of all the security contexts (including size of fuse_secctx_header).
 
-Thanks
-Vivek
+- struct fuse_secctx.
+  This contains size of security context which follows this structure.
+  There is one fuse_secctx instance per security context.
 
-Vivek Goyal (1):
-  fuse: Send security context of inode on file creation
+- xattr name string.
+  This string represents name of xattr which should be used while setting
+  security context.
 
+- security context.
+  This is the actual security context whose size is specified in fuse_secctx
+  struct.
+
+Also add the FUSE_SECURITY_CTX flag for the `flags` field of the
+fuse_init_out struct.  When this flag is set the kernel will append the
+security context for a newly created inode to the request (create,
+mkdir, mknod, and symlink).  The server is responsible for ensuring that
+the inode appears atomically (preferrably) with the requested security
+context.
+
+For example, If the server is using SELinux and backed by a "real" linux
+file system that supports extended attributes it can write the security
+context value to /proc/thread-self/attr/fscreate before making the syscall
+to create the inode.
+
+This patch is based on patch from Chirantan Ekbote <chirantan@chromium.org>.
+
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+---
  fs/fuse/dir.c             | 103 ++++++++++++++++++++++++++++++++++++++
  fs/fuse/fuse_i.h          |   3 ++
  fs/fuse/inode.c           |   4 +-
  include/uapi/linux/fuse.h |  31 +++++++++++-
  4 files changed, 139 insertions(+), 2 deletions(-)
 
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index d9b977c0f38d..69398eb7b325 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -17,6 +17,9 @@
+ #include <linux/xattr.h>
+ #include <linux/iversion.h>
+ #include <linux/posix_acl.h>
++#include <linux/security.h>
++#include <linux/types.h>
++#include <linux/kernel.h>
+ 
+ static void fuse_advise_use_readdirplus(struct inode *dir)
+ {
+@@ -456,6 +459,69 @@ static struct dentry *fuse_lookup(struct inode *dir, struct dentry *entry,
+ 	return ERR_PTR(err);
+ }
+ 
++static int get_security_context(struct dentry *entry, umode_t mode,
++				void **security_ctx, u32 *security_ctxlen)
++{
++	struct fuse_secctx *fsecctx;
++	struct fuse_secctx_header *fsecctx_header;
++	void *ctx, *full_ctx;
++	u32 ctxlen, full_ctxlen;
++	int err = 0;
++	const char *name;
++
++	err = security_dentry_init_security(entry, mode, &entry->d_name,
++					    &name, &ctx, &ctxlen);
++	if (err) {
++		if (err != -EOPNOTSUPP)
++			goto out_err;
++		/* No LSM is supporting this security hook. Ignore error */
++		err = 0;
++		ctxlen = 0;
++	}
++
++	if (ctxlen > 0) {
++		void *ptr;
++
++		full_ctxlen = sizeof(*fsecctx_header) + sizeof(*fsecctx) +
++			      strlen(name) + ctxlen + 1;
++		full_ctx = kzalloc(full_ctxlen, GFP_KERNEL);
++		if (!full_ctx) {
++			err = -ENOMEM;
++			kfree(ctx);
++			goto out_err;
++		}
++
++		ptr = full_ctx;
++		fsecctx_header = (struct fuse_secctx_header*) ptr;
++		fsecctx_header->nr_secctx = 1;
++		fsecctx_header->size = full_ctxlen;
++		ptr += sizeof(*fsecctx_header);
++
++		fsecctx = (struct fuse_secctx*) ptr;
++		fsecctx->size = ctxlen;
++		ptr += sizeof(*fsecctx);
++
++		strcpy(ptr, name);
++		ptr += strlen(name) + 1;
++		memcpy(ptr, ctx, ctxlen);
++		kfree(ctx);
++	} else {
++		full_ctxlen = sizeof(*fsecctx_header);
++		full_ctx = kzalloc(full_ctxlen, GFP_KERNEL);
++		if (!full_ctx) {
++			err = -ENOMEM;
++			goto out_err;
++		}
++		fsecctx_header = full_ctx;
++		fsecctx_header->size = full_ctxlen;
++	}
++
++	*security_ctxlen = full_ctxlen;
++	*security_ctx = full_ctx;
++out_err:
++	return err;
++}
++
+ /*
+  * Atomic create+open operation
+  *
+@@ -476,6 +542,8 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+ 	struct fuse_entry_out outentry;
+ 	struct fuse_inode *fi;
+ 	struct fuse_file *ff;
++	void *security_ctx = NULL;
++	u32 security_ctxlen;
+ 
+ 	/* Userspace expects S_IFREG in create mode */
+ 	BUG_ON((mode & S_IFMT) != S_IFREG);
+@@ -517,6 +585,18 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+ 	args.out_args[0].value = &outentry;
+ 	args.out_args[1].size = sizeof(outopen);
+ 	args.out_args[1].value = &outopen;
++
++	if (fm->fc->init_security) {
++		err = get_security_context(entry, mode, &security_ctx,
++					   &security_ctxlen);
++		if (err)
++			goto out_put_forget_req;
++
++		args.in_numargs = 3;
++		args.in_args[2].size = security_ctxlen;
++		args.in_args[2].value = security_ctx;
++	}
++
+ 	err = fuse_simple_request(fm, &args);
+ 	if (err)
+ 		goto out_free_ff;
+@@ -554,6 +634,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+ 
+ out_free_ff:
+ 	fuse_file_free(ff);
++	kfree(security_ctx);
+ out_put_forget_req:
+ 	kfree(forget);
+ out_err:
+@@ -620,6 +701,8 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
+ 	struct dentry *d;
+ 	int err;
+ 	struct fuse_forget_link *forget;
++	void *security_ctx = NULL;
++	u32 security_ctxlen = 0;
+ 
+ 	if (fuse_is_bad(dir))
+ 		return -EIO;
+@@ -633,7 +716,27 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
+ 	args->out_numargs = 1;
+ 	args->out_args[0].size = sizeof(outarg);
+ 	args->out_args[0].value = &outarg;
++
++	if (fm->fc->init_security && args->opcode != FUSE_LINK) {
++		unsigned short idx = args->in_numargs;
++
++		if ((size_t)idx >= ARRAY_SIZE(args->in_args)) {
++			err = -ENOMEM;
++			goto out_put_forget_req;
++		}
++
++		err = get_security_context(entry, mode, &security_ctx,
++					   &security_ctxlen);
++		if (err)
++			goto out_put_forget_req;
++
++		args->in_args[idx].size = security_ctxlen;
++		args->in_args[idx].value = security_ctx;
++		args->in_numargs++;
++	}
++
+ 	err = fuse_simple_request(fm, args);
++	kfree(security_ctx);
+ 	if (err)
+ 		goto out_put_forget_req;
+ 
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index f55f9f94b1a4..0d257c4eeb70 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -765,6 +765,9 @@ struct fuse_conn {
+ 	/* Propagate syncfs() to server */
+ 	unsigned int sync_fs:1;
+ 
++	/* Initialize security xattrs when creating a new inode */
++	unsigned int init_security:1;
++
+ 	/** The number of requests waiting for completion */
+ 	atomic_t num_waiting;
+ 
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 12d49a1914e8..40c5533243c0 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1143,6 +1143,8 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+ 			}
+ 			if (arg->flags & FUSE_SETXATTR_EXT)
+ 				fc->setxattr_ext = 1;
++			if (arg->flags & FUSE_SECURITY_CTX)
++				fc->init_security = 1;
+ 		} else {
+ 			ra_pages = fc->max_read / PAGE_SIZE;
+ 			fc->no_lock = 1;
+@@ -1186,7 +1188,7 @@ void fuse_send_init(struct fuse_mount *fm)
+ 		FUSE_PARALLEL_DIROPS | FUSE_HANDLE_KILLPRIV | FUSE_POSIX_ACL |
+ 		FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
+ 		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
+-		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT;
++		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_SECURITY_CTX;
+ #ifdef CONFIG_FUSE_DAX
+ 	if (fm->fc->dax)
+ 		ia->in.flags |= FUSE_MAP_ALIGNMENT;
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 36ed092227fa..710cdf20608d 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -184,6 +184,10 @@
+  *
+  *  7.34
+  *  - add FUSE_SYNCFS
++ *
++ *  7.35
++ *  - add FUSE_SECURITY_CTX flag for fuse_init_out
++ *  - add security context to create, mkdir, symlink, and mknod requests
+  */
+ 
+ #ifndef _LINUX_FUSE_H
+@@ -219,7 +223,7 @@
+ #define FUSE_KERNEL_VERSION 7
+ 
+ /** Minor version number of this interface */
+-#define FUSE_KERNEL_MINOR_VERSION 34
++#define FUSE_KERNEL_MINOR_VERSION 35
+ 
+ /** The node ID of the root inode */
+ #define FUSE_ROOT_ID 1
+@@ -336,6 +340,8 @@ struct fuse_file_lock {
+  *			write/truncate sgid is killed only if file has group
+  *			execute permission. (Same as Linux VFS behavior).
+  * FUSE_SETXATTR_EXT:	Server supports extended struct fuse_setxattr_in
++ * FUSE_SECURITY_CTX:	add security context to create, mkdir, symlink, and
++ * 			mknod
+  */
+ #define FUSE_ASYNC_READ		(1 << 0)
+ #define FUSE_POSIX_LOCKS	(1 << 1)
+@@ -367,6 +373,7 @@ struct fuse_file_lock {
+ #define FUSE_SUBMOUNTS		(1 << 27)
+ #define FUSE_HANDLE_KILLPRIV_V2	(1 << 28)
+ #define FUSE_SETXATTR_EXT	(1 << 29)
++#define FUSE_SECURITY_CTX	(1 << 30)
+ 
+ /**
+  * CUSE INIT request/reply flags
+@@ -979,4 +986,26 @@ struct fuse_syncfs_in {
+ 	uint64_t	padding;
+ };
+ 
++/*
++ * For each security context, send fuse_secctx with size of security context
++ * fuse_secctx will be followed by security context name and this in turn
++ * will be followed by actual context label.
++ * fuse_secctx, name, context
++ * */
++struct fuse_secctx {
++	uint32_t	size;
++	uint32_t	padding;
++};
++
++/*
++ * Contains the information about how many fuse_secctx structures are being
++ * sent and what's the total size of all security contexts (including
++ * size of fuse_secctx_header).
++ *
++ */
++struct fuse_secctx_header {
++	uint32_t	size;
++	uint32_t	nr_secctx;
++};
++
+ #endif /* _LINUX_FUSE_H */
 -- 
 2.31.1
 
