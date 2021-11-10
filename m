@@ -2,147 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC0AF44BCD4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 09:27:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FA5E44BCD8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 09:28:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230257AbhKJIaU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Nov 2021 03:30:20 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:57894 "EHLO
+        id S230203AbhKJIbG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Nov 2021 03:31:06 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:24306 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230235AbhKJIaQ (ORCPT
+        by vger.kernel.org with ESMTP id S230073AbhKJIbG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Nov 2021 03:30:16 -0500
+        Wed, 10 Nov 2021 03:31:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636532849;
+        s=mimecast20190719; t=1636532898;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zky/vWToC3C8LiDo8BNPLluCNBMJ39ylhYqpXz2GoPI=;
-        b=DLqjjdQfCGUdtqTHSdnziDN9igmqtS9QEXT5Nxe8P86BW7Pbk64rEOGfz8+eWDKIEOKXsF
-        jI1uPZeuet/cfkP0qnMmkkRkeVq/B2rQ7AOxI3tJ8BqcY72SZAxalUyY+ZLdCVY2Zz07n1
-        sPPJNVfOFVpBq7wo5qJQ1yh8Sseijp0=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-250-EqWLK0QsPduKEd8M2sz4qA-1; Wed, 10 Nov 2021 03:27:27 -0500
-X-MC-Unique: EqWLK0QsPduKEd8M2sz4qA-1
-Received: by mail-pg1-f200.google.com with SMTP id v63-20020a632f42000000b002cc65837088so1172925pgv.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 00:27:27 -0800 (PST)
+        bh=U3N/QwJx99Htv9Bvod8btoHFfpBRUV5/sWEz28i4RYo=;
+        b=FsESyu9r1b/v48FiWdwordYEPGOp+otgPYa6y7o9y4EvfSmvA2VBK5+rN3C0v1/TOeu1AA
+        P2POoRa0I+R+PL9oBuMmDxLhPE53TbqvDSTbAABXAoGO0BEYlMRzRuTg3ovb4mwr336+l+
+        IQxjOzkBVddcCUJ+YwBv7Ds3XY/iJkE=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-274-m-TwzbTcOp6Bk-1vwZTBpw-1; Wed, 10 Nov 2021 03:28:17 -0500
+X-MC-Unique: m-TwzbTcOp6Bk-1vwZTBpw-1
+Received: by mail-wm1-f72.google.com with SMTP id k5-20020a7bc3050000b02901e081f69d80so771124wmj.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 00:28:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zky/vWToC3C8LiDo8BNPLluCNBMJ39ylhYqpXz2GoPI=;
-        b=XDo04DCvklyA0nXegJqu4sU8sMKoZpCJn+TSFpi7aDfdN9ah6zCLjIvU8iFhiTl/Yw
-         QkebfoBUTRduwofIye6vN5U0e8GJsMf4zBKheoxhF3L/8M9+wyMuGP67ve9GUQGiRAKX
-         85p3HgzY4ddKmqaojP64b2QeYsLfFVtTtLaJ++AfCspNOkiCmtuHGU0H3rTruGG+HOhj
-         x/dI68vF3ZrPUsIONOJpjNns91ThtRBa54ENmhfwcqOVuSf9fEC6QyZXE26YjpKEc8AT
-         u9tO9OM0L0ZFNHEteVTk/7JG5RH8rujaeQSH1GHgJkAbEzmDxBxRICES19fv7TIO0wbE
-         ymlA==
-X-Gm-Message-State: AOAM532u2I/jwC/mzA1h3PPz7Z5gx9K08gF4VI+O4CjTGeiFVOjeDKMI
-        QwmJECC//omaGPz9iat8TaQURX2QrQdnNM9aKlV5Z9kq5ieI57NopX6YlsEAu4s1sFUb0B0zZcp
-        ZAE0Rhn2gd9GU6i/RPg5cRXkUPw==
-X-Received: by 2002:a05:6a00:1151:b0:492:62e1:5968 with SMTP id b17-20020a056a00115100b0049262e15968mr14506323pfm.75.1636532846742;
-        Wed, 10 Nov 2021 00:27:26 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyOKflnGQgX7O2PA+X5kdlAqd3MkOusyaBbTGvH2hKDFVlvijLehbB5yQCaRdyGTfDaYWw8ZA==
-X-Received: by 2002:a05:6a00:1151:b0:492:62e1:5968 with SMTP id b17-20020a056a00115100b0049262e15968mr14506300pfm.75.1636532846480;
-        Wed, 10 Nov 2021 00:27:26 -0800 (PST)
-Received: from t490s ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id u10sm21143749pfh.49.2021.11.10.00.27.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Nov 2021 00:27:25 -0800 (PST)
-Date:   Wed, 10 Nov 2021 16:27:20 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Mina Almasry <almasrymina@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Paul E . McKenney" <paulmckrcu@fb.com>,
-        Yu Zhao <yuzhao@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
-        Florian Schmidt <florian.schmidt@nutanix.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v4] mm: Add PM_HUGE_THP_MAPPING to /proc/pid/pagemap
-Message-ID: <YYuCaNXikls/9JhS@t490s>
-References: <20211107235754.1395488-1-almasrymina@google.com>
- <YYtuqsnOSxA44AUX@t490s>
- <c5ed86d0-8af6-f54f-e352-8871395ad62e@redhat.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=U3N/QwJx99Htv9Bvod8btoHFfpBRUV5/sWEz28i4RYo=;
+        b=DxJz/A57edTcbIEwG55/MDMng/hnrdFBMJ0mo5BlpLvsFn7HSZEx9QRvE0z0UkqxXw
+         7pkyQF7BiVqXyrM9Pj8N94sVzWotQgshfOm8bePKJ44pzY88ggJFzd3CjkLgmYD6BIrA
+         ykhN7NA3Rq6M9DeFIOowmlfvBnmPFdxTSKDIRMwHVSDY728ZFZLzTuQ4Uw1ABfE3KUpB
+         hHGKXTa5+Xv9RJhzu5DhbSxfXH4wxRraFxgeszYTCeNTIc3sWyHXyvqsAYLNINHLzeSt
+         +Y7+JTOdgn0hIId1LWdj40pJPfePmFA+uNmvx3kzg2qAwh4mSbxZN9/HvfFHns8MbHzu
+         y+3Q==
+X-Gm-Message-State: AOAM533tOmn+k7x6kVAfQt0ZKg0khSGAMYe3aGGxo7QL7T9Z6sYuhICQ
+        fTnXES126/XjMWF+dYpTqMgbTokux6HDp6dnJ9jOi9iPW8ZjwNsZV3676b4fn7UfHuC36IQD5vW
+        h8SyKqJAnYP0bwf1NJhFG/hSxCw==
+X-Received: by 2002:adf:ba0d:: with SMTP id o13mr17628076wrg.339.1636532896089;
+        Wed, 10 Nov 2021 00:28:16 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwQ/2kqjTXPkYPHvyddhqvtTW4vWEhMZpSvnii4YyiM1CY6/ErutfetxXoUCqfLbvvZpl1HaA==
+X-Received: by 2002:adf:ba0d:: with SMTP id o13mr17628047wrg.339.1636532895920;
+        Wed, 10 Nov 2021 00:28:15 -0800 (PST)
+Received: from [192.168.3.132] (p5b0c604f.dip0.t-ipconnect.de. [91.12.96.79])
+        by smtp.gmail.com with ESMTPSA id u23sm15854437wru.21.2021.11.10.00.28.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Nov 2021 00:28:14 -0800 (PST)
+Message-ID: <c3571571-320a-3e25-8409-5653ddca895c@redhat.com>
+Date:   Wed, 10 Nov 2021 09:28:12 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c5ed86d0-8af6-f54f-e352-8871395ad62e@redhat.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH 1/7] fs/exec: make __set_task_comm always set a nul
+ terminated string
+Content-Language: en-US
+To:     Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org
+Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        oliver.sang@intel.com, lkp@intel.com,
+        Kees Cook <keescook@chromium.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Michal Miroslaw <mirq-linux@rere.qmqm.pl>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Petr Mladek <pmladek@suse.com>
+References: <20211108083840.4627-1-laoar.shao@gmail.com>
+ <20211108083840.4627-2-laoar.shao@gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20211108083840.4627-2-laoar.shao@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 10, 2021 at 09:14:42AM +0100, David Hildenbrand wrote:
-> On 10.11.21 08:03, Peter Xu wrote:
-> > Hi, Mina,
-> > 
-> > Sorry to comment late.
-> > 
-> > On Sun, Nov 07, 2021 at 03:57:54PM -0800, Mina Almasry wrote:
-> >> diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
-> >> index fdc19fbc10839..8a0f0064ff336 100644
-> >> --- a/Documentation/admin-guide/mm/pagemap.rst
-> >> +++ b/Documentation/admin-guide/mm/pagemap.rst
-> >> @@ -23,7 +23,8 @@ There are four components to pagemap:
-> >>      * Bit  56    page exclusively mapped (since 4.2)
-> >>      * Bit  57    pte is uffd-wp write-protected (since 5.13) (see
-> >>        :ref:`Documentation/admin-guide/mm/userfaultfd.rst <userfaultfd>`)
-> >> -    * Bits 57-60 zero
-> >> +    * Bit  58    page is a huge (PMD size) THP mapping
-> >> +    * Bits 59-60 zero
-> >>      * Bit  61    page is file-page or shared-anon (since 3.5)
-> >>      * Bit  62    page swapped
-> >>      * Bit  63    page present
-> >> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> >> index ad667dbc96f5c..6f1403f83b310 100644
-> >> --- a/fs/proc/task_mmu.c
-> >> +++ b/fs/proc/task_mmu.c
-> >> @@ -1302,6 +1302,7 @@ struct pagemapread {
-> >>  #define PM_SOFT_DIRTY		BIT_ULL(55)
-> >>  #define PM_MMAP_EXCLUSIVE	BIT_ULL(56)
-> >>  #define PM_UFFD_WP		BIT_ULL(57)
-> >> +#define PM_HUGE_THP_MAPPING	BIT_ULL(58)
-> > 
-> > The ending "_MAPPING" seems redundant to me, how about just call it "PM_THP" or
-> > "PM_HUGE" (as THP also means HUGE already)?
-> > 
-> > IMHO the core problem is about permission controls, and it seems to me we're
-> > actually trying to workaround it by duplicating some information we have.. so
-> > it's kind of a pity.  Totally not against this patch, but imho it'll be nicer
-> > if it's the permission part that to be enhanced, rather than a new but slightly
-> > duplicated interface.
+On 08.11.21 09:38, Yafang Shao wrote:
+> Make sure the string set to task comm is always nul terminated.
 > 
-> It's not a permission problem AFAIKS: even with permissions "changed",
-> any attempt to use /proc/kpageflags is just racy. Let's not go down that
-> path, it's really the wrong mechanism to export to random userspace.
 
-I agree it's racy, but IMHO that's fine.  These are hints for userspace to make
-decisions, they cannot be always right.  Even if we fetch atomically and seeing
-that this pte is swapped out, it can be quickly accessed at the same time and
-it'll be in-memory again.  Only if we can freeze the whole pgtable but we
-can't, so they can only be used as hints.
+strlcpy: "the result is always a valid NUL-terminated string that fits
+in the buffer"
 
+The only difference seems to be that strscpy_pad() pads the remainder
+with zeroes.
+
+Is this description correct and I am missing something important?
+
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+> Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> Cc: Michal Miroslaw <mirq-linux@rere.qmqm.pl> 
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Petr Mladek <pmladek@suse.com>
+> ---
+>  fs/exec.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> We do have an interface to access this information from userspace
-> already: /proc/self/smaps IIRC. Mina commented that they are seeing
-> performance issues with that approach.
+> diff --git a/fs/exec.c b/fs/exec.c
+> index a098c133d8d7..404156b5b314 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1224,7 +1224,7 @@ void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
+>  {
+>  	task_lock(tsk);
+>  	trace_task_rename(tsk, buf);
+> -	strlcpy(tsk->comm, buf, sizeof(tsk->comm));
+> +	strscpy_pad(tsk->comm, buf, sizeof(tsk->comm));
+>  	task_unlock(tsk);
+>  	perf_event_comm(tsk, exec);
+>  }
 > 
-> It would be valuable to add these details to the patch description,
-> including a performance difference when using both interfaces we have
-> available. As the patch description stands, there is no explanation
-> "why" we want this change.
 
-I didn't notice Mina mention about performance issues with kpageflags, if so
-then I agree this solution helps.  I doubt the performance is an issue, though,
-as THP info shouldn't be something changing rapidly so it should be some hint
-to do sanity checks only (e.g., to make sure no unwanted split of THP
-happening, but the scanning should not require to be super fast; it could be
-done with a relatively long scanning period).  If there's a performance
-concern, yes it would be great to mention it too in the commit message.
 
 -- 
-Peter Xu
+Thanks,
+
+David / dhildenb
 
