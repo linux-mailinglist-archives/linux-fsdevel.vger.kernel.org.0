@@ -2,116 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2178A44C62B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 18:45:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A410144C673
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 10 Nov 2021 18:50:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232625AbhKJRsO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 10 Nov 2021 12:48:14 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:31257 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232601AbhKJRsM (ORCPT
+        id S232519AbhKJRxO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 10 Nov 2021 12:53:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59930 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230400AbhKJRxO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 10 Nov 2021 12:48:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1636566324;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=so+sBHeqgvGbAB6xWn0/t+WSQWf4kEYIfTA/NVWhLec=;
-        b=a5v8sfocXf8d37zIqAAuvKDO73QjThyv0QlMTrlwex4LWTGDM/gISNr2I/3WEyWkCbIT9P
-        eQNccQoaI8gy2TJX2bmhra3VfTxgRcb078ng8clBp70fP3wSgCALi4dQLybz55bE6fV36I
-        Y8iHdhUx79RHRmDPiT0/GJLi9xMQRFA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-476-TFgoIEASPvmUOv5u9kZK0Q-1; Wed, 10 Nov 2021 12:45:19 -0500
-X-MC-Unique: TFgoIEASPvmUOv5u9kZK0Q-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 084D1100C612;
-        Wed, 10 Nov 2021 17:45:18 +0000 (UTC)
-Received: from max.localdomain (unknown [10.40.195.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7173367854;
-        Wed, 10 Nov 2021 17:44:58 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-fsdevel@vger.kernel.org, cluster-devel@redhat.com
-Subject: [RFC] gfs2: Prevent endless loops in gfs2_file_buffered_write
-Date:   Wed, 10 Nov 2021 18:44:57 +0100
-Message-Id: <20211110174457.533866-1-agruenba@redhat.com>
+        Wed, 10 Nov 2021 12:53:14 -0500
+Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48E3EC061764
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 09:50:26 -0800 (PST)
+Received: by mail-io1-xd2b.google.com with SMTP id m9so3862186iop.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 10 Nov 2021 09:50:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0S9sZv9rv1MLrkq7aAvaZJLfChB0QbHa6Bap7OCVON4=;
+        b=Mpj3q9y8P8tXTskEXoJ+jEkJNmYg08YiZzsMCwx006007UkWib0VzvWz+XRgkwol5g
+         Cq2E/j2ydmsTRrr6KctSBpI480yI3FutqwVcqwb2VlKHUwJWTSsJTCzxJGnIs6kVN/3O
+         DGBhPSDpOxGfegmMhpOX5LX4qoDI1mjiVhMW60IwBCuqrEqdpCvWOXNc2veK2u35aN08
+         9ckXcJZs87m5QlP77fFFqpf/4jYJaI9QF6U+YIzxX/8Yk9uT+ZKlfuBEgd4y9TQUghkw
+         qaMwa1ayBoLvEKFMLOFsRyir02bszFEdJx/Mmy+VsMnvsU7c1SxsVicijg0LX8EzhIH2
+         MSxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0S9sZv9rv1MLrkq7aAvaZJLfChB0QbHa6Bap7OCVON4=;
+        b=IgNrVHpaVJ6X5azfAWDFH61Itw4t+O8yZofh8ZsXdVKbye6bDpOLmVCtTYgV2cfYtY
+         8sy/Yo7P7xkU4jxSlPQP6Jr9PiZjPQrrbQbplIwOmn3RSR2oxYWErrbue75HGgW49jFI
+         16PC2r1PsVBDPgrouNZJGfL1E+NJ3tHt1SpCaW05KQYb718ZtqZm6XO0oSbeEV+bfRsL
+         JeZzR8oqcwlQx8aPdkJBE1o+kNunKh3B7kuDxaDmDA9WJvrQ5tPEXtXwIrH2xrn/9QZv
+         PEtKWksKTAeo5VNUobgpBFfI5BRgZeeDMvPYZfbxYWvprYkG1IeVXEAKXgYqXg5+s+Uk
+         I6lQ==
+X-Gm-Message-State: AOAM531bREB1bjgjlvsbXyyju7KORYhiTEoUWs8GzuxI3r3om9lluPYz
+        f+Q9Iw/p3plth3JORhZN1+tsdwuZtVL2FHCRH4P/FMbTdSg=
+X-Google-Smtp-Source: ABdhPJx8SVMZqY/M+G/wfHByt0Gdg7mcZQx8twUBaM2wGi8juiZIcAzzBUsezhqV/JnXuzMhcKYRZ7I6PzZJKf5g7kI=
+X-Received: by 2002:a02:c559:: with SMTP id g25mr489184jaj.123.1636566625557;
+ Wed, 10 Nov 2021 09:50:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+References: <20211107235754.1395488-1-almasrymina@google.com> <YYtuqsnOSxA44AUX@t490s>
+In-Reply-To: <YYtuqsnOSxA44AUX@t490s>
+From:   Mina Almasry <almasrymina@google.com>
+Date:   Wed, 10 Nov 2021 09:50:13 -0800
+Message-ID: <CAHS8izP9zJYfqmDouA1otnD-CsQtWJSta0KhOQq81qLSTOHB4Q@mail.gmail.com>
+Subject: Re: [PATCH v4] mm: Add PM_HUGE_THP_MAPPING to /proc/pid/pagemap
+To:     Peter Xu <peterx@redhat.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Paul E . McKenney" <paulmckrcu@fb.com>,
+        Yu Zhao <yuzhao@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ivan Teterevkov <ivan.teterevkov@nutanix.com>,
+        Florian Schmidt <florian.schmidt@nutanix.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Tue, Nov 9, 2021 at 11:03 PM Peter Xu <peterx@redhat.com> wrote:
+>
+> The ending "_MAPPING" seems redundant to me, how about just call it "PM_THP" or
+> "PM_HUGE" (as THP also means HUGE already)?
+>
 
-in commit 00bfe02f4796 ("gfs2: Fix mmap + page fault deadlocks for
-buffered I/O"), I've managed to introduce a hang in gfs2 due to the
-following check in iomap_write_iter:
-
-  if (unlikely(fault_in_iov_iter_readable(i, bytes))) {
-
-which fails if any of the iov iterator cannot be faulted in for reading.
-At the filesystem level, we're retrying the rest of the write if any of
-the iov iterator can be faulted in, so we can end up in a loop without
-ever making progress.  The fix in iomap_write_iter would be as follows:
-
-  if (unlikely(fault_in_iov_iter_readable(i, bytes) == bytes)) {
-
-The same bug exists in generic_perform_write, but I'm not aware of any
-callers of generic_perform_write that have page faults turned off.
-
-Is this fix still appropriate for 5.16, or should we work around it in
-the filesystem as below for now?
-
-A related post-5.16 option would be to turn the pre-faulting in
-iomap_write_iter and generic_perform_write into post-faulting, but at
-the very least, that still needs a bit of performance analysis:
-
-  https://lore.kernel.org/linux-fsdevel/20211026094430.3669156-1-agruenba@redhat.com/
-  https://lore.kernel.org/linux-fsdevel/20211027212138.3722977-1-agruenba@redhat.com/
-
-Thanks,
-Andreas
-
----
- fs/gfs2/file.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index c486b702e00f..3e718cfc19a7 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -1013,6 +1013,7 @@ static ssize_t gfs2_file_buffered_write(struct kiocb *iocb,
- 	struct gfs2_sbd *sdp = GFS2_SB(inode);
- 	struct gfs2_holder *statfs_gh = NULL;
- 	size_t prev_count = 0, window_size = 0;
-+	size_t orig_count = iov_iter_count(from);
- 	size_t read = 0;
- 	ssize_t ret;
- 
-@@ -1057,6 +1058,7 @@ static ssize_t gfs2_file_buffered_write(struct kiocb *iocb,
- 	if (inode == sdp->sd_rindex)
- 		gfs2_glock_dq_uninit(statfs_gh);
- 
-+	from->count = orig_count - read;
- 	if (should_fault_in_pages(ret, from, &prev_count, &window_size)) {
- 		size_t leftover;
- 
-@@ -1064,6 +1066,7 @@ static ssize_t gfs2_file_buffered_write(struct kiocb *iocb,
- 		leftover = fault_in_iov_iter_readable(from, window_size);
- 		gfs2_holder_disallow_demote(gh);
- 		if (leftover != window_size) {
-+			from->count = min(from->count, window_size - leftover);
- 			if (!gfs2_holder_queued(gh)) {
- 				if (read)
- 					goto out_uninit;
--- 
-2.31.1
-
+So I want to make it clear that the flag is set only when the page is
+PMD mappend and is a THP (not hugetlbfs or some other PMD device
+mapping). PM_THP would imply the flag is set only if the underlying
+page is THP without regard to whether it's actually PMD mapped or not.
