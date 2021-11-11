@@ -2,35 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C70BF44D5DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 12:35:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E04C744D60B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 11 Nov 2021 12:47:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232952AbhKKLhx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 11 Nov 2021 06:37:53 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:54172 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232256AbhKKLhw (ORCPT
+        id S232256AbhKKLu1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 11 Nov 2021 06:50:27 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:32089 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232570AbhKKLu0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 11 Nov 2021 06:37:52 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 8CAEA21B35;
-        Thu, 11 Nov 2021 11:35:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1636630501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Thu, 11 Nov 2021 06:50:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1636631257;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=JF8tqJ/qYg7iprU4Smn80buBhFNtzpmt6OjhcdUzme4=;
-        b=tQs9jwdvsxjCgUy1YjhWC29W8ruybAG4J6MEmsTVUl02QFHxRH/s1s/9OHEiuUPFVici7l
-        a7IIKOvAHN0uhNPRfQ9w31C41z0iH87gt/kcggUdS4rbeZX90inzrYufC8X4JKmsrqAU/J
-        8qSJkb29gfd827eZ2067ocolEPYIeIc=
-Received: from suse.cz (unknown [10.100.216.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id D0F91A3B83;
-        Thu, 11 Nov 2021 11:35:00 +0000 (UTC)
-Date:   Thu, 11 Nov 2021 12:34:57 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     David Hildenbrand <david@redhat.com>
+        bh=3FPfS7kZXFceS9Lgp1RH/lsyVsBLRGLqfS3FoOXYSuE=;
+        b=JUG0zHkr9XKE+vyp2JQ6ZOnO7o1vblP3jalWF4kINFFMYiaplaDm9Z8PxGwLW6pMoGFutK
+        wClQirNVbisXCdAvgSvn5/0BWygrFVn7hTc6h0yMsuV02eUZe+0OWYyMOyWav098hjC4q7
+        vgY/hnArrBuzrOh7X+lXS0JHzwP2DMc=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-524-ZSgwm7-oNKid5VRirbY5Bw-1; Thu, 11 Nov 2021 06:47:35 -0500
+X-MC-Unique: ZSgwm7-oNKid5VRirbY5Bw-1
+Received: by mail-wm1-f71.google.com with SMTP id 144-20020a1c0496000000b003305ac0e03aso4653112wme.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 11 Nov 2021 03:47:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=3FPfS7kZXFceS9Lgp1RH/lsyVsBLRGLqfS3FoOXYSuE=;
+        b=zgSe4tsw/GkmV5+sFV/C4QFMuD3uxCYDozLEl0Hrk1oGc5BMR2WBfCe7RGsIAoVbDa
+         HhVsOVFWS1g8c372Lt6SVXFd1AkbBCYonJSiSLRsrDPkHSn7J8XlAqsCjUvxZy7sY+p6
+         gSxBfLe2cB7yHAHXIiMZxcE4OAUQpqpOABdwkGPvHG3t3rPC3az5y1LaEaQnmMiLgCte
+         tXzO0Rkvcoc18O2pu7Pyg5oH2m03nRHxjn5AQQmOZ3KcHqTut1is/JNZVCP9NRzwxjlL
+         QFFHCwcNvegHmAARhfd6AKor0sIFpIDX4Fsx5qN7Rv9sQiswHHI4SNjGIYknPKMmGG6a
+         Iayg==
+X-Gm-Message-State: AOAM531HB2CvVAJVMYX4NTBtxoyu+b6iKnIdiBLjngK3uRz4Z1M9LhEq
+        7Zoo6MZIGYxOsrszeegiYvcFoI+dn4qkJAhoHLRzDoO7e0A7emjRDnKMy7cSsdbQCJxcxSGUJBc
+        0MAKCEH6l09Re0+AKzouOJ2RoqA==
+X-Received: by 2002:a5d:45cc:: with SMTP id b12mr8082380wrs.164.1636631254684;
+        Thu, 11 Nov 2021 03:47:34 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwO566pckJvXEcwz+OG93YPsApF+toGZKExvaMFLBrnliRRTv/LgjAiYUOFAAaeaDr4bLvTMw==
+X-Received: by 2002:a5d:45cc:: with SMTP id b12mr8082352wrs.164.1636631254480;
+        Thu, 11 Nov 2021 03:47:34 -0800 (PST)
+Received: from [192.168.3.132] (p4ff23ee8.dip0.t-ipconnect.de. [79.242.62.232])
+        by smtp.gmail.com with ESMTPSA id d8sm2782565wrm.76.2021.11.11.03.47.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Nov 2021 03:47:33 -0800 (PST)
+Message-ID: <70dd5e1c-99c9-c1ca-4e3f-1a894896cf06@redhat.com>
+Date:   Thu, 11 Nov 2021 12:47:33 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH 4/7] fs/binfmt_elf: use get_task_comm instead of
+ open-coded string copy
+Content-Language: en-US
+To:     Petr Mladek <pmladek@suse.com>
 Cc:     Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org,
         netdev@vger.kernel.org, bpf@vger.kernel.org,
         linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -45,101 +75,102 @@ Cc:     Yafang Shao <laoar.shao@gmail.com>, akpm@linux-foundation.org,
         Steven Rostedt <rostedt@goodmis.org>,
         Matthew Wilcox <willy@infradead.org>,
         Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 4/7] fs/binfmt_elf: use get_task_comm instead of
- open-coded string copy
-Message-ID: <YYz/4bSdSXR3Palz@alley>
 References: <20211108083840.4627-1-laoar.shao@gmail.com>
  <20211108083840.4627-5-laoar.shao@gmail.com>
  <a13c0541-59a3-6561-6d42-b51fef9f7c8b@redhat.com>
- <b495d38d-5cdd-8a33-b9d3-de721095ccab@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b495d38d-5cdd-8a33-b9d3-de721095ccab@redhat.com>
+ <b495d38d-5cdd-8a33-b9d3-de721095ccab@redhat.com> <YYz/4bSdSXR3Palz@alley>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <YYz/4bSdSXR3Palz@alley>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 2021-11-11 11:06:04, David Hildenbrand wrote:
-> On 11.11.21 11:03, David Hildenbrand wrote:
-> > On 08.11.21 09:38, Yafang Shao wrote:
-> >> It is better to use get_task_comm() instead of the open coded string
-> >> copy as we do in other places.
-> >>
-> >> struct elf_prpsinfo is used to dump the task information in userspace
-> >> coredump or kernel vmcore. Below is the verfication of vmcore,
-> >>
-> >> crash> ps
-> >>    PID    PPID  CPU       TASK        ST  %MEM     VSZ    RSS  COMM
-> >>       0      0   0  ffffffff9d21a940  RU   0.0       0      0  [swapper/0]
-> >>>     0      0   1  ffffa09e40f85e80  RU   0.0       0      0  [swapper/1]
-> >>>     0      0   2  ffffa09e40f81f80  RU   0.0       0      0  [swapper/2]
-> >>>     0      0   3  ffffa09e40f83f00  RU   0.0       0      0  [swapper/3]
-> >>>     0      0   4  ffffa09e40f80000  RU   0.0       0      0  [swapper/4]
-> >>>     0      0   5  ffffa09e40f89f80  RU   0.0       0      0  [swapper/5]
-> >>       0      0   6  ffffa09e40f8bf00  RU   0.0       0      0  [swapper/6]
-> >>>     0      0   7  ffffa09e40f88000  RU   0.0       0      0  [swapper/7]
-> >>>     0      0   8  ffffa09e40f8de80  RU   0.0       0      0  [swapper/8]
-> >>>     0      0   9  ffffa09e40f95e80  RU   0.0       0      0  [swapper/9]
-> >>>     0      0  10  ffffa09e40f91f80  RU   0.0       0      0  [swapper/10]
-> >>>     0      0  11  ffffa09e40f93f00  RU   0.0       0      0  [swapper/11]
-> >>>     0      0  12  ffffa09e40f90000  RU   0.0       0      0  [swapper/12]
-> >>>     0      0  13  ffffa09e40f9bf00  RU   0.0       0      0  [swapper/13]
-> >>>     0      0  14  ffffa09e40f98000  RU   0.0       0      0  [swapper/14]
-> >>>     0      0  15  ffffa09e40f9de80  RU   0.0       0      0  [swapper/15]
-> >>
-> >> It works well as expected.
-> >>
-> >> Suggested-by: Kees Cook <keescook@chromium.org>
-> >> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> >> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> >> Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-> >> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> >> Cc: Michal Miroslaw <mirq-linux@rere.qmqm.pl>
-> >> Cc: Peter Zijlstra <peterz@infradead.org>
-> >> Cc: Steven Rostedt <rostedt@goodmis.org>
-> >> Cc: Matthew Wilcox <willy@infradead.org>
-> >> Cc: David Hildenbrand <david@redhat.com>
-> >> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> >> Cc: Kees Cook <keescook@chromium.org>
-> >> Cc: Petr Mladek <pmladek@suse.com>
-> >> ---
-> >>  fs/binfmt_elf.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> >> index a813b70f594e..138956fd4a88 100644
-> >> --- a/fs/binfmt_elf.c
-> >> +++ b/fs/binfmt_elf.c
-> >> @@ -1572,7 +1572,7 @@ static int fill_psinfo(struct elf_prpsinfo *psinfo, struct task_struct *p,
-> >>  	SET_UID(psinfo->pr_uid, from_kuid_munged(cred->user_ns, cred->uid));
-> >>  	SET_GID(psinfo->pr_gid, from_kgid_munged(cred->user_ns, cred->gid));
-> >>  	rcu_read_unlock();
-> >> -	strncpy(psinfo->pr_fname, p->comm, sizeof(psinfo->pr_fname));
-> >> +	get_task_comm(psinfo->pr_fname, p);
-> >>  
-> >>  	return 0;
-> >>  }
-> >>
-> > 
-> > We have a hard-coded "pr_fname[16]" as well, not sure if we want to
-> > adjust that to use TASK_COMM_LEN?
+On 11.11.21 12:34, Petr Mladek wrote:
+> On Thu 2021-11-11 11:06:04, David Hildenbrand wrote:
+>> On 11.11.21 11:03, David Hildenbrand wrote:
+>>> On 08.11.21 09:38, Yafang Shao wrote:
+>>>> It is better to use get_task_comm() instead of the open coded string
+>>>> copy as we do in other places.
+>>>>
+>>>> struct elf_prpsinfo is used to dump the task information in userspace
+>>>> coredump or kernel vmcore. Below is the verfication of vmcore,
+>>>>
+>>>> crash> ps
+>>>>    PID    PPID  CPU       TASK        ST  %MEM     VSZ    RSS  COMM
+>>>>       0      0   0  ffffffff9d21a940  RU   0.0       0      0  [swapper/0]
+>>>>>     0      0   1  ffffa09e40f85e80  RU   0.0       0      0  [swapper/1]
+>>>>>     0      0   2  ffffa09e40f81f80  RU   0.0       0      0  [swapper/2]
+>>>>>     0      0   3  ffffa09e40f83f00  RU   0.0       0      0  [swapper/3]
+>>>>>     0      0   4  ffffa09e40f80000  RU   0.0       0      0  [swapper/4]
+>>>>>     0      0   5  ffffa09e40f89f80  RU   0.0       0      0  [swapper/5]
+>>>>       0      0   6  ffffa09e40f8bf00  RU   0.0       0      0  [swapper/6]
+>>>>>     0      0   7  ffffa09e40f88000  RU   0.0       0      0  [swapper/7]
+>>>>>     0      0   8  ffffa09e40f8de80  RU   0.0       0      0  [swapper/8]
+>>>>>     0      0   9  ffffa09e40f95e80  RU   0.0       0      0  [swapper/9]
+>>>>>     0      0  10  ffffa09e40f91f80  RU   0.0       0      0  [swapper/10]
+>>>>>     0      0  11  ffffa09e40f93f00  RU   0.0       0      0  [swapper/11]
+>>>>>     0      0  12  ffffa09e40f90000  RU   0.0       0      0  [swapper/12]
+>>>>>     0      0  13  ffffa09e40f9bf00  RU   0.0       0      0  [swapper/13]
+>>>>>     0      0  14  ffffa09e40f98000  RU   0.0       0      0  [swapper/14]
+>>>>>     0      0  15  ffffa09e40f9de80  RU   0.0       0      0  [swapper/15]
+>>>>
+>>>> It works well as expected.
+>>>>
+>>>> Suggested-by: Kees Cook <keescook@chromium.org>
+>>>> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+>>>> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>>>> Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+>>>> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+>>>> Cc: Michal Miroslaw <mirq-linux@rere.qmqm.pl>
+>>>> Cc: Peter Zijlstra <peterz@infradead.org>
+>>>> Cc: Steven Rostedt <rostedt@goodmis.org>
+>>>> Cc: Matthew Wilcox <willy@infradead.org>
+>>>> Cc: David Hildenbrand <david@redhat.com>
+>>>> Cc: Al Viro <viro@zeniv.linux.org.uk>
+>>>> Cc: Kees Cook <keescook@chromium.org>
+>>>> Cc: Petr Mladek <pmladek@suse.com>
+>>>> ---
+>>>>  fs/binfmt_elf.c | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+>>>> index a813b70f594e..138956fd4a88 100644
+>>>> --- a/fs/binfmt_elf.c
+>>>> +++ b/fs/binfmt_elf.c
+>>>> @@ -1572,7 +1572,7 @@ static int fill_psinfo(struct elf_prpsinfo *psinfo, struct task_struct *p,
+>>>>  	SET_UID(psinfo->pr_uid, from_kuid_munged(cred->user_ns, cred->uid));
+>>>>  	SET_GID(psinfo->pr_gid, from_kgid_munged(cred->user_ns, cred->gid));
+>>>>  	rcu_read_unlock();
+>>>> -	strncpy(psinfo->pr_fname, p->comm, sizeof(psinfo->pr_fname));
+>>>> +	get_task_comm(psinfo->pr_fname, p);
+>>>>  
+>>>>  	return 0;
+>>>>  }
+>>>>
+>>>
+>>> We have a hard-coded "pr_fname[16]" as well, not sure if we want to
+>>> adjust that to use TASK_COMM_LEN?
+>>
+>> But if the intention is to chance TASK_COMM_LEN later, we might want to
+>> keep that unchanged.
 > 
-> But if the intention is to chance TASK_COMM_LEN later, we might want to
-> keep that unchanged.
+> It seems that len will not change in the end. Another solution is
+> going to be used for the long names, see
+> https://lore.kernel.org/r/20211108084142.4692-1-laoar.shao@gmail.com.
 
-It seems that len will not change in the end. Another solution is
-going to be used for the long names, see
-https://lore.kernel.org/r/20211108084142.4692-1-laoar.shao@gmail.com.
+Yes, that's what I recall as well. The I read the patch
+subjects+descriptions in this series "make it adopt to task comm size
+change" and was slightly confused.
 
-> (replacing the 16 by a define might still be a good idea, similar to how
-> it's done for ELF_PRARGSZ, but just a thought)
+Maybe we should just remove any notion of "task comm size change" from
+this series and instead just call it a cleanup.
 
-If the code would need some tweaking when the size changes, you could
-still use TASK_COMM_LEN and trigger a compilation error when the size
-gets modified. For example, static_assert(TASK_COMM_LEN == 16);
 
-It will make it clear that it needs attention if the size is ever modified.
+-- 
+Thanks,
 
-Best Regards,
-Petr
+David / dhildenb
+
